@@ -49,7 +49,7 @@ namespace System.Web.Configuration {
 			Type settingsType = Type.GetType (providerSettings.Type);
 			
 			if (settingsType == null)
-				settingsType = HttpApplication.LoadTypeFromPrivateBin (providerSettings.Type);
+				settingsType = HttpApplication.LoadTypeFromBin (providerSettings.Type);
 
 			// check App_Code dlls
 			if (settingsType == null) {

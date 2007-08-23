@@ -372,7 +372,7 @@ namespace System.Web.UI {
 			AddDependency (location);
 			string dirname = Path.GetDirectoryName (location);
 			bool doAddAssembly = true;
-			foreach (string dir in HttpApplication.PrivateBinPath) {
+			foreach (string dir in HttpApplication.BinDirectories) {
 				if (dirname == dir) {
 					doAddAssembly = false;
 					break;
@@ -387,14 +387,8 @@ namespace System.Web.UI {
 
 		void AddAssembliesInBin ()
 		{
-			foreach (string bindir in HttpApplication.PrivateBinPath) {
-				if (!Directory.Exists (bindir))
-					continue;
-
-				string [] binDlls = Directory.GetFiles (bindir, "*.dll");
-				foreach (string s in binDlls)
-					assemblies.Add (s);
-			}
+			foreach (string s in HttpApplication.BinDirectoryAssemblies)
+				assemblies.Add (s);
 		}
 		
 		internal virtual void AddInterface (string iface)

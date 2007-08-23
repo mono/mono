@@ -1,3 +1,9 @@
+2007-08-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: set AppDomainSetup.PrivateBinPath to "bin"
+	if running on Windows or with MONO_IOMAP in effect, and to
+	"Bin:bin" otherwise.
+
 2007-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: AppDomainSetup.PrivateBinPath should contain

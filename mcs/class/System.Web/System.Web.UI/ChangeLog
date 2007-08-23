@@ -1,3 +1,15 @@
+2007-08-23  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: use
+	HttpApplication.BinDirectoryAssemblies in AddAssembliesInBin and
+	LoadAssemblyFromBin.
+	Restore the old logic in GetTypeFromBin, also use
+	HttpApplication.BinDirectoryAssemblies there.
+
+	* TemplateParser.cs: use HttpApplication.BinDirectories to
+	interate over the list of bin dirs.
+	Use HttpApplication.BinDirectoryAssemblies in AddAssembliesInBin.
+
 2007-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ClientScriptManager.cs: encode values of hidden fields. 

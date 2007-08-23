@@ -88,6 +88,8 @@ namespace System.Web {
 	[ToolboxItem(false)]
 	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
 		object this_lock = new object();
+
+		internal static readonly string [] BinDirs = {"Bin", "bin"};
 		
 		HttpContext context;
 		HttpSessionState session;
@@ -1305,7 +1307,53 @@ namespace System.Web {
 					yield return Path.Combine (baseDir, d);
 			}
 		}
-			
+
+		internal static bool IsRunningOnWindows {
+                        get {
+				PlatformID pid = Environment.OSVersion.Platform;	
+				return ((int) pid != 128 && (int) pid != 4);
+			}
+                }
+		
+		internal static IEnumerable BinDirectories
+		{
+			get {
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				string baseDir = setup.ApplicationBase;
+				string bindir;
+
+				if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || IsRunningOnWindows)
+					yield return Path.Combine (baseDir, "bin");
+				else {
+					foreach (string dir in BinDirs) {
+						bindir = Path.Combine (baseDir, dir);
+						if (!Directory.Exists (bindir))
+							continue;
+						yield return bindir;
+					}
+				}
+			}
+		}
+
+		internal static string[] BinDirectoryAssemblies
+		{
+			get {
+				ArrayList binDlls = null;
+				string[] dlls;
+				
+				foreach (string bindir in BinDirectories) {
+					if (binDlls == null)
+						binDlls = new ArrayList ();
+					dlls = Directory.GetFiles (bindir, "*.dll");
+					binDlls.AddRange (dlls);
+				}
+
+				if (binDlls == null)
+					return new string[] {};
+				return (string[])binDlls.ToArray (typeof (string));
+			}
+		}
+					
 		internal static Type LoadType (string typeName)
 		{
 			return LoadType (typeName, false);
@@ -1337,7 +1385,7 @@ namespace System.Web {
 			}
 #endif
 
-			type = LoadTypeFromPrivateBin (typeName);
+			type = LoadTypeFromBin (typeName);
 			if (type != null)
 				return type;
 			
@@ -1347,23 +1395,17 @@ namespace System.Web {
 			return null;
 		}
 
-		internal static Type LoadTypeFromPrivateBin (string typeName)
+		internal static Type LoadTypeFromBin (string typeName)
 		{
 			Type type = null;
 			
-			foreach (string dir in PrivateBinPath) {
-				if (!Directory.Exists (dir))
+			foreach (string s in BinDirectoryAssemblies) {
+				Assembly binA = Assembly.LoadFrom (s);
+				type = binA.GetType (typeName, false);
+				if (type == null)
 					continue;
-			
-				string[] binDlls = Directory.GetFiles(dir, "*.dll");
-				foreach (string s in binDlls) {
-					Assembly binA = Assembly.LoadFrom (s);
-					type = binA.GetType (typeName, false);
-					if (type == null)
-						continue;
 				
-					return type;
-				}
+				return type;
 			}
 
 			return null;

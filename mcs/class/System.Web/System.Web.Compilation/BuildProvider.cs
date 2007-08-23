@@ -93,15 +93,9 @@ namespace System.Web.Compilation {
 
 		void AddAssembliesInBin (StringCollection coll)
 		{
-			foreach (string private_bin_path in HttpApplication.PrivateBinPath) {
-				if (!Directory.Exists (private_bin_path))
-					continue;
-
-				string [] binDlls = Directory.GetFiles (private_bin_path, "*.dll");
-				foreach (string s in binDlls) {
-					coll.Add (s);
-					ref_assemblies.Add (s);
-				}
+			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
+				coll.Add (s);
+				ref_assemblies.Add (s);
 			}
 		}
 

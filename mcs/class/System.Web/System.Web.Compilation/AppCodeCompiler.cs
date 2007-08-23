@@ -639,18 +639,7 @@ namespace System.Web.Compilation
 				return;
 
 			HttpRuntime.EnableAssemblyMapping (true);
-			ArrayList binAssembliesAl = null;
-			string[] binAssemblies = null;
-			
-			foreach (string bindir in HttpApplication.PrivateBinPath) {
-				if (!Directory.Exists (bindir))
-					continue;
-				if (binAssemblies == null)
-					binAssembliesAl = new ArrayList ();
-				binAssembliesAl.AddRange (Directory.GetFiles (bindir, "*.dll"));
-			}
-			if (binAssembliesAl != null)
-				binAssemblies = (string[])binAssembliesAl.ToArray (typeof (string));
+			string[] binAssemblies = HttpApplication.BinDirectoryAssemblies;
 			
 			foreach (AppCodeAssembly aca in assemblies)
 				aca.Build (binAssemblies);
@@ -669,7 +658,7 @@ namespace System.Web.Compilation
 				} else
 					return;
 
-				if (HttpApplication.LoadTypeFromPrivateBin (providerTypeName) == null)
+				if (HttpApplication.LoadTypeFromBin (providerTypeName) == null)
 					throw new HttpException (String.Format ("Profile provider type not found: {0}",
 										providerTypeName));
 			}

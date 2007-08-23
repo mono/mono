@@ -1,3 +1,18 @@
+2007-08-23  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: added a static array BinDirs which contains
+	the common bin directory names we can encounter.
+	Added internal static property IsRunningOnWindows.
+	Added internal enumerable property BinDirectories to iterate over
+	the full paths of the available binary directories.
+	Added internal enumerable property BinDirectoryAssemblies to
+	iterate over .dll files in the bin directories.
+	LoadTypeFromPrivateBin renamed to LoadTypeFromBin.
+	LoadTypeFromBin uses BinDirectoryAssemblies.
+	
+	* HttpApplicationFactory.cs: use HttpApplication.BinDirectories to
+	interate over the list of bin dirs.
+
 2007-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: watch for changes in all the

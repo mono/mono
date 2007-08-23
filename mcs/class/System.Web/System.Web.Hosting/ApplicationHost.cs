@@ -35,8 +35,7 @@ namespace System.Web.Hosting {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class ApplicationHost {
-
+	public sealed class ApplicationHost {		
 		static string [] types = { "Web.config", "Web.Config", "web.config" };
 
 		private ApplicationHost ()
@@ -155,11 +154,10 @@ namespace System.Web.Hosting {
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
 
-			//
-			// We use Path.PathSeparator even though MSDN says semicolons are used. Our
-			// runtime expects a Path.PathSeparator.
-			//
-			setup.PrivateBinPath = String.Format ("Bin{0}bin", Path.PathSeparator);
+			if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || HttpApplication.IsRunningOnWindows)
+				setup.PrivateBinPath = "bin";
+			else
+				setup.PrivateBinPath = String.Join (Path.PathSeparator.ToString (), HttpApplication.BinDirs);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
 			setup.ShadowCopyDirectories = setup.PrivateBinPath;
