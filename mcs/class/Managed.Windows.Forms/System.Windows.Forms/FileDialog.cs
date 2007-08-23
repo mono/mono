@@ -949,6 +949,8 @@ namespace System.Windows.Forms
 				// remove items above the maximum items that we want to display
 				while (fileNameComboBox.Items.Count > MaxFileNameItems)
 					fileNameComboBox.Items.RemoveAt (MaxFileNameItems);
+			} else {
+				return;
 			}
 
 			if (checkPathExists && mwfFileView.CurrentRealFolder != null) {
@@ -1189,7 +1191,6 @@ namespace System.Windows.Forms
 
 		private void UpdateRecentFiles ()
 		{
-			Console.WriteLine ("UpdateRecentFiles");
 			fileNameComboBox.Items.Clear ();
 			if (configFileNames != null) {
 				foreach (string configFileName in configFileNames) {
@@ -1199,7 +1200,6 @@ namespace System.Windows.Forms
 					if (fileNameComboBox.Items.Count >= MaxFileNameItems)
 						break;
 					fileNameComboBox.Items.Add (configFileName);
-Console.WriteLine ("> {0} {1}", GetExtension (configFileName), configFileName);
 				}
 			}
 		}
@@ -3419,20 +3419,20 @@ Console.WriteLine ("> {0} {1}", GetExtension (configFileName), configFileName);
 			directories_out = new ArrayList ();
 			
 			DirectoryInfo[] dirs = null;
-			
+
 			try {
 				dirs = dirinfo.GetDirectories ();
 			} catch (Exception) {}
-			
+
 			if (dirs != null)
 				for (int i = 0; i < dirs.Length; i++) {
 					directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
 				}
-			
+
 			files_out = new ArrayList ();
 			
 			ArrayList files = new ArrayList ();
-			
+
 			try {
 				if (filters == null) {
 					files.AddRange (dirinfo.GetFiles ());
@@ -3443,14 +3443,14 @@ Console.WriteLine ("> {0} {1}", GetExtension (configFileName), configFileName);
 					files.Sort (fileInfoComparer);
 				}
 			} catch (Exception) {}
-			
+
 			for (int i = 0; i < files.Count; i++) {
 				FSEntry fs = GetFileFSEntry (files [i] as FileInfo);
 				if (fs != null)
 					files_out.Add (fs);
 			}
 		}
-		
+
 		protected ArrayList GetNormalFolders (string from_folder)
 		{
 			DirectoryInfo dirinfo = new DirectoryInfo (from_folder);

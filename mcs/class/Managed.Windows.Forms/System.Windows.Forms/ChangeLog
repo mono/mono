@@ -1,3 +1,9 @@
+2007-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileDialog.cs: When Save/Open is clicked and no filename is selected
+	or entered then do not close the dialog. Fixes bug #82539. Removed
+	CWLs.
+
 2007-08-22  Everaldo Canuto  <ecanuto@novell.com>
 
 	* FileDialog.cs: Create UpdateRecentFiles and move the recent files refresh
