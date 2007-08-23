@@ -1,3 +1,7 @@
+2007-08-23  Marek Safar  <marek.safar@gmail.com>
+
+	* DateTimeOffset.cs: New .NET 3.5 struct for 2.0 mscorlib.
+	
 2007-08-23  Eyal Alaluf <eyala@mainsoft.com>
 
 	* DateTime.cs: Numerous improvements to DateTime.Parse. It handles a lot

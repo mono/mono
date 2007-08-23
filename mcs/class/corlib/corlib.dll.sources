@@ -126,6 +126,7 @@ System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DateTime.cs
 System/DateTimeKind.cs
+System/DateTimeOffset.cs
 System/DayOfWeek.cs
 System/DBNull.cs
 System/Decimal.cs
