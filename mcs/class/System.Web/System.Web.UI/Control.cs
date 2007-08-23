@@ -783,7 +783,8 @@ namespace System.Web.UI
 				return _controlsCache;
 
 			if ((this.stateMask & IS_NAMING_CONTAINER) != 0 || Parent == null)
-				_controlsCache = new Hashtable ();
+				//LAMESPEC: MS' docs don't mention it, but FindControl is case insensitive.
+				_controlsCache = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 			else
 				_controlsCache = Parent.InitControlsCache ();
 
