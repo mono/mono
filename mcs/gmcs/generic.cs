@@ -2676,22 +2676,16 @@ namespace Mono.CSharp {
 				rtype = g_args[rtype.GenericParameterPosition];
 #endif
 
-				if (!rtype.IsGenericParameter)
-					continue;
-
-				if (tic.IsUnfixed (rtype) < 0)
-					continue;
-
-				ParameterData d_parameters = TypeManager.GetParameterData (mi);
-				bool all_params_fixed = true;
-				foreach (Type t in d_parameters.Types) {
-					if (!t.IsGenericParameter)
-						continue;
-
-					if (tic.IsUnfixed (t) >= 0) {
-						all_params_fixed = false;
-						break;
-					}
+				bool all_params_fixed = false;
+				if (rtype.IsGenericParameter) {
+					all_params_fixed = tic.IsTypeNonDependent (mi, rtype);
+				} else if (rtype.IsGenericType) {
+					all_params_fixed = true;
+					foreach (Type t in rtype.GetGenericArguments ())
+						if (!tic.IsTypeNonDependent (mi, t)) {
+							all_params_fixed = false;
+							break;
+						}
 				}
 
 				if (all_params_fixed)
@@ -2828,7 +2822,7 @@ namespace Mono.CSharp {
 
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;
-				if (!rtype.IsGenericParameter)
+				if (!rtype.IsGenericParameter && !rtype.IsGenericType)
 					continue;
 
 #if MS_COMPATIBLE
@@ -2839,16 +2833,17 @@ namespace Mono.CSharp {
 
 				rtype = g_args [rtype.GenericParameterPosition];
 #endif
-				if (rtype.IsGenericParameter)
-					types_to_fix [rtype.GenericParameterPosition] = null;
+				// Remove dependent types, they cannot be fixed yet
+				RemoveDependentTypes (types_to_fix, rtype);
 			}
 
 			foreach (Type t in types_to_fix) {
 				if (t == null)
 					continue;
 
-				if (!FixType (IsUnfixed (t)))
+				if (!FixType (IsUnfixed (t))) {
 					return false;
+				}
 			}
 
 			fixed_any = types_to_fix.Count > 0;
@@ -2902,6 +2897,23 @@ namespace Mono.CSharp {
 
 			unfixed_types[i] = null;
 			fixed_types[i] = best_candidate;
+			return true;
+		}
+
+		public bool IsTypeNonDependent (MethodInfo mi, Type type)
+		{
+			if (IsUnfixed (type) < 0)
+				return false;
+
+			ParameterData d_parameters = TypeManager.GetParameterData (mi);
+			foreach (Type t in d_parameters.Types) {
+				if (!t.IsGenericParameter)
+					continue;
+
+				if (IsUnfixed (t) >= 0)
+					return false;
+			}
+
 			return true;
 		}
 
@@ -3024,6 +3036,20 @@ namespace Mono.CSharp {
 			// a lower-bound inference is made from U for T
 			//
 			LowerBoundInference (e.Type, t);
+		}
+
+		static void RemoveDependentTypes (ArrayList types, Type returnType)
+		{
+			if (returnType.IsGenericParameter) {
+				types [returnType.GenericParameterPosition] = null;
+				return;
+			}
+
+			if (returnType.IsGenericType) {
+				foreach (Type t in returnType.GetGenericArguments ()) {
+					RemoveDependentTypes (types, t);
+				}
+			}
 		}
 
 		public bool UnfixedVariableExists {
