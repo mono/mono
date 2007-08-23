@@ -1,3 +1,8 @@
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBoxTest.cs, ListViewTest.cs, TreeViewTest.cs: Add tests that show
+	IsInputChar should always return true for these controls.
+
 2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Add test for AutoSize behavior.

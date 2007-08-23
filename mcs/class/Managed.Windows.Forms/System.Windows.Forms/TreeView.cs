@@ -1172,6 +1172,11 @@ namespace System.Windows.Forms {
 			return (IntPtr) handle_count++;
 		}
 
+		internal override bool IsInputCharInternal (char charCode)
+		{
+			return true;
+		}
+
 		internal TreeNode NodeFromHandle (IntPtr handle)
 		{
 			// This method is called rarely, so instead of maintaining a table

@@ -1346,6 +1346,11 @@ namespace System.Windows.Forms
 			return -1;
 		}
 
+		internal override bool IsInputCharInternal (char charCode)
+		{
+			return true;
+		}
+
 		private int LastVisibleItem ()
 		{
 			Rectangle item_rect;

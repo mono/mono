@@ -433,6 +433,28 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 #endif
+
+		[Test]
+		public void MethodIsInputChar ()
+		{
+			// Basically, show that this method always returns true
+			InputCharControl m = new InputCharControl ();
+			bool result = true;
+
+			for (int i = 0; i < 256; i++)
+				result &= m.PublicIsInputChar ((char)i);
+
+			Assert.AreEqual (true, result, "I1");
+		}
+
+		private class InputCharControl : ListBox
+		{
+			public bool PublicIsInputChar (char charCode)
+			{
+				return base.IsInputChar (charCode);
+			}
+		}
+
 		//
 		// Events
 		//

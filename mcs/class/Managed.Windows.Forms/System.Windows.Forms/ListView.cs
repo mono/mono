@@ -2885,6 +2885,11 @@ namespace System.Windows.Forms
 				XplatUI.ScrollWindow (item_control.Handle, area, 0, pixels, false);
 			}
 		}
+
+		internal override bool IsInputCharInternal (char charCode)
+		{
+			return true;
+		}
 		#endregion	// Internal Methods Properties
 
 		#region Protected Methods

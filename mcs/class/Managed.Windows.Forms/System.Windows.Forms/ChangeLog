@@ -1,5 +1,10 @@
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs, ListView.cs, TreeView.cs: Override IsInputCharInternal
+	and always return true.  [Fixes bug #81616]
+
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Allow 2.0 AutoSize to change the height of the
 	TextBox.  [Fixes bug #82549]
 

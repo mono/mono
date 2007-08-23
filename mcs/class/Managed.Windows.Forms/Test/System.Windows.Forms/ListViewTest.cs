@@ -2022,5 +2022,26 @@ namespace MonoTests.System.Windows.Forms
 					return String.Compare (item_x.Text, item_y.Text);
 			}
 		}
+
+		[Test]
+		public void MethodIsInputChar ()
+		{
+			// Basically, show that this method always returns true
+			InputCharControl m = new InputCharControl ();
+			bool result = true;
+
+			for (int i = 0; i < 256; i++)
+				result &= m.PublicIsInputChar ((char)i);
+
+			Assert.AreEqual (true, result, "I1");
+		}
+
+		private class InputCharControl : ListView
+		{
+			public bool PublicIsInputChar (char charCode)
+			{
+				return base.IsInputChar (charCode);
+			}
+		}
 	}
 }
