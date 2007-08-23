@@ -1,3 +1,10 @@
+2007-08-23  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousMethodExpressin.ExplicitTypeInference): 
+	The number of delegate parameters has to match.
+	(AnonymousMethodExpressin.VerifyParameterCompatibility): Handles generic
+	arrays.
+
 2007-08-21  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymousMethod): Generate private anonymous method

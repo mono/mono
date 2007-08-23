@@ -1225,8 +1225,13 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				Type type = invoke_pd.Types [i];
+				
 				// We assume that generic parameters are always inflated
-				if (TypeManager.IsGenericParameter (invoke_pd.Types[i]))
+				if (TypeManager.IsGenericParameter (type))
+					continue;
+				
+				if (TypeManager.HasElementType (type) && TypeManager.IsGenericParameter (TypeManager.GetElementType (type)))
 					continue;
 				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
@@ -1256,12 +1261,18 @@ namespace Mono.CSharp {
 				return;
 
 			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
+			if (d_params.Count != Parameters.Count)
+				return;
 
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Type itype = d_params.Types [i];
-				if (!TypeManager.IsGenericParameter (itype))
-					continue;
-
+				if (!TypeManager.IsGenericParameter (itype)) {
+					if (!itype.HasElementType)
+						continue;
+					
+					if (!TypeManager.IsGenericParameter (itype.GetElementType ()))
+					    continue;
+				}
 				typeInference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
 			}
 		}
