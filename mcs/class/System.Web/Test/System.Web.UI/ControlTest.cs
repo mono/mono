@@ -64,6 +64,54 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (true, ((IDataBindingsAccessor) c).HasDataBindings);
 		}
 
+		[Test] // bug #82546
+		public void FindControl_NamingContainer ()
+		{
+			Control topControl = new NamingContainer ();
+			topControl.ID = "top";
+
+			Control controlLevel1A = new Control ();
+			controlLevel1A.ID = "Level1#A";
+			topControl.Controls.Add (controlLevel1A);
+
+			Control controlLevel1B = new Control ();
+			controlLevel1B.ID = "Level1#B";
+			topControl.Controls.Add (controlLevel1B);
+
+			Control controlLevel2AA = new Control ();
+			controlLevel2AA.ID = "Level2#AA";
+			controlLevel1A.Controls.Add (controlLevel2AA);
+
+			Control controlLevel2AB = new Control ();
+			controlLevel2AB.ID = "Level2#AB";
+			controlLevel1A.Controls.Add (controlLevel2AB);
+
+			Control foundControl = topControl.FindControl ("Level1#A");
+			Assert.IsNotNull (foundControl, "#A1");
+			Assert.AreSame (controlLevel1A, foundControl, "#A2");
+
+			foundControl = topControl.FindControl ("LEVEL1#B");
+			Assert.IsNotNull (foundControl, "#B1");
+			Assert.AreSame (controlLevel1B, foundControl, "#B2");
+
+			foundControl = topControl.FindControl ("LeVeL2#AB");
+			Assert.IsNotNull (foundControl, "#C1");
+			Assert.AreSame (controlLevel2AB, foundControl, "#C2");
+
+			foundControl = topControl.FindControl ("doesnotexist");
+			Assert.IsNull (foundControl, "#D1");
+			foundControl = topControl.FindControl ("top");
+			Assert.IsNull (foundControl, "#D2");
+
+			foundControl = controlLevel1A.FindControl ("Level2#AA");
+			Assert.IsNotNull (foundControl, "#E1");
+			Assert.AreSame (controlLevel2AA, foundControl, "#E2");
+
+			foundControl = controlLevel1A.FindControl ("LEveL2#ab");
+			Assert.IsNotNull (foundControl, "#F1");
+			Assert.AreSame (controlLevel2AB, foundControl, "#F2");
+		}
+
 		[Test]
 		public void UniqueID1 ()
 		{
@@ -231,16 +279,16 @@ namespace MonoTests.System.Web.UI
 		[Category("NunitWeb")]
 		public void AppRelativeTemplateSourceDirectory ()
 		{
-		            new WebTest(PageInvoker.CreateOnLoad(AppRelativeTemplateSourceDirectory_Load)).Run();
+			new WebTest(PageInvoker.CreateOnLoad(AppRelativeTemplateSourceDirectory_Load)).Run();
 		}
 		
 		public static void AppRelativeTemplateSourceDirectory_Load(Page p)
 		{
-		            Control ctrl = new Control();
-		            Assert.AreEqual("~/", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#1");
-		            ctrl.AppRelativeTemplateSourceDirectory = "~/Fake";
-		            Assert.AreEqual("~/Fake", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#2");
-        	}
+			Control ctrl = new Control();
+			Assert.AreEqual("~/", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#1");
+			ctrl.AppRelativeTemplateSourceDirectory = "~/Fake";
+			Assert.AreEqual("~/Fake", ctrl.AppRelativeTemplateSourceDirectory, "AppRelativeTemplateSourceDirectory#2");
+		}
 
 		[Test]
 		public void ApplyStyleSheetSkin ()
@@ -895,6 +943,7 @@ namespace MonoTests.System.Web.UI
 			// cause CreateChildControls called
 			c.FindControl ("stam");
 		}
+
 		static void BindingContainer_BuildTemplate (Control control)
 		{
 			Control child1 = new Control ();
@@ -1159,8 +1208,3 @@ namespace MonoTests.System.Web.UI
 		}
 	}
 }
-
-
-
-
-

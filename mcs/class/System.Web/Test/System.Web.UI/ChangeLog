@@ -1,7 +1,10 @@
-2007-08-06 Igor Zelmanovich <igorz@mainsoft.com>
+2007-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* ControlTest.cs:
-	Added new tests.
+	* ControlTest.cs: Added test for bug #82546. Spaces to tabs.
+
+2007-08-06  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ControlTest.cs: Added new tests.
 
 2007-06-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
