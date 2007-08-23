@@ -1,3 +1,7 @@
+2007-08-23  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* FlowPanelTests.cs: Add PreferredSize test.
+
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBoxTest.cs, ListViewTest.cs, TreeViewTest.cs: Add tests that show

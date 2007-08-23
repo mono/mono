@@ -1270,6 +1270,38 @@ namespace MonoTests.System.Windows.Forms
 			return b;
 		}
 
+		#region PreferredSize
+		[Test]
+		public void PreferredSize ()
+		{
+			FlowLayoutPanel panel = new FlowLayoutPanel ();
+			panel.Controls.AddRange (new Control [] { new PreferredSizeControl (), new PreferredSizeControl () });
+			Assert.AreEqual (new Size (212, 106), panel.PreferredSize, "1");
+			Assert.AreEqual (new Size (106, 212), panel.GetPreferredSize (new Size (150, 150)), "2");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (1000, 1000)) , "3");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (0, 0)), "4");
+			Assert.AreEqual (new Size (106, 212), panel.GetPreferredSize (new Size (1, 1)), "5");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (0, 150)), "6");
+			Assert.AreEqual (new Size (106, 212), panel.GetPreferredSize (new Size (150, 0)), "7");
+			panel.WrapContents = false;
+			Assert.AreEqual (new Size (212, 106), panel.PreferredSize, "1, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (150, 150)), "2, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (1000, 1000)) , "3, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (0, 0)), "4, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (1, 1)), "5, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (0, 150)), "6, WrapContents");
+			Assert.AreEqual (new Size (212, 106), panel.GetPreferredSize (new Size (150, 0)), "7, WrapContents");
+		}
+
+		class PreferredSizeControl : Control
+		{
+			protected override Size DefaultSize {
+				get {
+					return new Size (100, 100);
+				}
+			}
+		}
+		#endregion
 	}
 }
 #endif
