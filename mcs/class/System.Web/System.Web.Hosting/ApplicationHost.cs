@@ -157,7 +157,7 @@ namespace System.Web.Hosting {
 			if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || HttpApplication.IsRunningOnWindows)
 				setup.PrivateBinPath = "bin";
 			else
-				setup.PrivateBinPath = String.Join (Path.PathSeparator.ToString (), HttpApplication.BinDirs);
+				setup.PrivateBinPath = String.Join (";", HttpApplication.BinDirs);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
 			setup.ShadowCopyDirectories = setup.PrivateBinPath;

@@ -1,3 +1,8 @@
+2007-08-24  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHostTest.cs: use ; as the separator in the
+	PrivateBinPath test.
+
 2007-08-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHostTest.cs: adjust the test for the PrivateBinPath
