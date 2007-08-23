@@ -1,3 +1,7 @@
+2007-08-23  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* FlowLayoutPanel.cs: Add GetPreferredSizeCore.  [Fixes bug #82537]
+
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: IsInputKey: don't ask for any keys if the handle hasn't
