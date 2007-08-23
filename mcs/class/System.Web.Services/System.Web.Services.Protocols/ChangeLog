@@ -1,3 +1,8 @@
+2007-08-21  Robert Jordan  <robertj@gmx.net>
+
+	* ValueCollectionParameterReader.cs (Read):
+	Add support for array parameters. Fixes #82519.
+
 2007-07-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TypeStubManager.cs: fixed BindingInfo.ctor, reverted to ONLY_1_1

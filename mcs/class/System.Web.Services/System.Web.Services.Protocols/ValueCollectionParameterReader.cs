@@ -90,18 +90,39 @@ namespace System.Web.Services.Protocols {
 			object[] res = new object [parameters.Length];
 			for (int n=0; n<res.Length; n++)
 			{
-				string val = collection [parameters[n].Name];
-				if (val == null) throw new InvalidOperationException ("Missing parameter: " + parameters[n].Name);
-				try
-				{
-					res [n] = StringToObj (parameters[n].ParameterType, val);
-				}
-				catch (Exception ex)
-				{
-					string error = "Cannot convert '" + val + "' to " + parameters[n].ParameterType.FullName + "\n";
-					error += "Parameter name: " + parameters[n].Name + " --> " + ex.Message;
-					throw new InvalidOperationException (error);
-				}
+				ParameterInfo pi = parameters [n];
+
+				if (pi.ParameterType.IsArray) {
+					string[] values = collection.GetValues (pi.Name);
+					if (values == null)
+						throw new InvalidOperationException ("Missing parameter: " + pi.Name);
+					Type elemType = pi.ParameterType.GetElementType ();
+					Array a = Array.CreateInstance (elemType, values.Length);
+					for (int i = 0; i < values.Length; i++) {
+						try {
+							a.SetValue (StringToObj (elemType, values [i]), i);							
+						} catch (Exception ex) {
+							string error = "Cannot convert '" + values [i] + "' to " + elemType + "\n";
+							error += "Parameter name: " + pi.Name + " --> " + ex.Message;
+							throw new InvalidOperationException (error);
+						}
+					}
+					res [n] = a;
+				} else {
+					string val = collection [pi.Name];
+					if (val == null)
+						throw new InvalidOperationException ("Missing parameter: " + pi.Name);
+					try
+					{
+						res [n] = StringToObj (pi.ParameterType, val);
+					}
+					catch (Exception ex)
+					{
+						string error = "Cannot convert '" + val + "' to " + pi.ParameterType + "\n";
+						error += "Parameter name: " + pi.Name + " --> " + ex.Message;
+						throw new InvalidOperationException (error);
+					}
+				}	
 			}
 			return res;
 		}
