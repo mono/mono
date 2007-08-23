@@ -1,3 +1,9 @@
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* WebConfigurationSettings.cs: Move RemotingConfiguration to
+	System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs.
+	Fixes #19384.
+
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PagesConfigurationHandler.cs: Use enum for EnableSessionState.

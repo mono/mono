@@ -1,3 +1,8 @@
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* HttpRemotingHandlerFactory.cs: configure Remoting because
+	System.Web doesn't anymore. Fixes #81831.
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpServerChannel.cs: The remoting infrastructure does not call

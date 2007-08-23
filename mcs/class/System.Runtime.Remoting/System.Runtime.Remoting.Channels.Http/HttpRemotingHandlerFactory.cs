@@ -61,6 +61,10 @@ namespace System.Runtime.Remoting.Channels.Http
 			lock (GetType())
 			{
 				if (webConfigLoaded) return;
+
+				string appConfig = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+				if (File.Exists (appConfig))
+					RemotingConfiguration.Configure (appConfig);
 							
 				// Look for a channel that wants to receive http request
 				IChannelReceiverHook chook = null;

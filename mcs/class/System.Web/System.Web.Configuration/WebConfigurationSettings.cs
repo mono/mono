@@ -33,7 +33,6 @@ using System.Configuration;
 using System.Collections;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Remoting;
 using System.Web.Util;
 using System.Xml;
 #if TARGET_J2EE
@@ -249,7 +248,6 @@ namespace System.Web.Configuration
 				data.DirName = dir;
 				data.LoadFromFile (wcfile);
 				fileToConfig [dir] = data;
-				RemotingConfiguration.Configure (wcfile);
 			}
 
 			return data;
@@ -317,8 +315,6 @@ namespace System.Web.Configuration
 			lock (data) {
 				cacheTable.Clear ();
 				data.Reset ();
-				if (args.ChangeType == WatcherChangeTypes.Created)
-					RemotingConfiguration.Configure (args.FullPath);
 
 				if (args.ChangeType != WatcherChangeTypes.Deleted)
 					data.LoadFromFile (args.FullPath);
