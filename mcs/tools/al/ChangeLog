@@ -1,3 +1,9 @@
+2007-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Al.cs: Ignore AssemblyKeyAttribute in template when KeyFile is null 
+	or a zero-length string. Ignore AssemblyKeyNameAtribute in template
+	when KeyName is null or a zero-length string. Fixes bug #82550.
+
 2007-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Al.cs: Use DelaySign enum to capture whether a delaysign (+ or -)

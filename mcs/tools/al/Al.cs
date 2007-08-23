@@ -556,7 +556,7 @@ namespace Mono.AssemblyLinker
 					Report (1044, String.Format ("Couldn't open '{0}' key file.", keyfile));
 				}
 
-#if ONLY_1_1			
+#if ONLY_1_1
 				AddCattr (typeof (AssemblyKeyFileAttribute),
 					keyfile);
 #endif
@@ -627,6 +627,9 @@ namespace Mono.AssemblyLinker
 							// ignore if specified on command line
 							continue;
 						AssemblyKeyFileAttribute keyFileAttr = (AssemblyKeyFileAttribute) o;
+						// ignore null or zero-length keyfile
+						if (keyFileAttr.KeyFile == null || keyFileAttr.KeyFile.Length == 0)
+							continue;
 						keyfile = Path.Combine (Path.GetDirectoryName(templateFile),
 							keyFileAttr.KeyFile);
 					} else if (o is AssemblyDelaySignAttribute) {
@@ -641,6 +644,9 @@ namespace Mono.AssemblyLinker
 							// ignore if specified on command line
 							continue;
 						AssemblyKeyNameAttribute keynameAttr = (AssemblyKeyNameAttribute) o;
+						// ignore null or zero-length keyname
+						if (keynameAttr.KeyName == null || keynameAttr.KeyName.Length == 0)
+							continue;
 						keyname = keynameAttr.KeyName;
 					}
 				}
