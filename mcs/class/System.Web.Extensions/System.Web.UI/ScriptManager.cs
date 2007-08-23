@@ -1328,7 +1328,7 @@ namespace System.Web.UI
 				if (String.IsNullOrEmpty (value))
 					return;
 
-				ScriptManager.WriteCallbackOutput (_responseOutput, ScriptManager.hiddenField, _currentField ["name"], value);
+				ScriptManager.WriteCallbackOutput (_responseOutput, hiddenField, _currentField ["name"], HttpUtility.HtmlDecode (value));
 			}
 		}
 
