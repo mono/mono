@@ -866,19 +866,23 @@ namespace System.Windows.Forms {
 
 		protected override bool IsInputKey (Keys key_data)
 		{
-			if ((key_data & Keys.Alt) == 0) {
+			if (IsHandleCreated && (key_data & Keys.Alt) == 0) {
 				switch (key_data & Keys.KeyCode) {
+				case Keys.Left:
+				case Keys.Up:
+				case Keys.Right:
+				case Keys.Down:
+					return true;
 				case Keys.Enter:
 				case Keys.Escape:
 				case Keys.Prior:
 				case Keys.Next:
 				case Keys.End:
 				case Keys.Home:
-				case Keys.Left:
-				case Keys.Up:
-				case Keys.Right:
-				case Keys.Down:
-					return true;
+					if (edit_node != null)
+						return true;
+						
+					break;
 				}
 			}
 			return base.IsInputKey (key_data);

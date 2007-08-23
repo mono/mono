@@ -1,5 +1,12 @@
 2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: IsInputKey: don't ask for any keys if the handle hasn't
+	been created.  If handle is created, we want arror keys.  If we are editing
+	a node, we want things like enter, esc, home, end, page up, page down.
+	Allows Esc to work for FolderBrowserDialog.
+
+2007-08-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ColorDialog.cs, FontDialog.cs: Set the form's CancelButton so that
 	they close when ESC is pressed.  Thanks Andy!
 
