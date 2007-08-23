@@ -3,7 +3,6 @@
 ../corlib/Mono/DataConverter.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
-System/DateTimeOffset.cs
 System/Funcs.cs
 System/InvalidTimeZoneException.cs
 System/TimeZoneInfo.AdjustmentRule.cs
