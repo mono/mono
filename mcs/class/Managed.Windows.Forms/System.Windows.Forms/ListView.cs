@@ -1428,6 +1428,20 @@ namespace System.Windows.Forms
 			item_control.Invalidate (new Rectangle (GetItemLocation (index), item_size));
 		}
 
+#if NET_2_0
+		// When using groups, the items with no group assigned
+		// belong to the DefaultGroup
+		int GetDefaultGroupItems ()
+		{
+			int count = 0;
+			foreach (ListViewItem item in items)
+				if (item.Group == null)
+					count++;
+
+			return count;
+		}
+#endif
+
 		int rows;
 		int cols;
 		int[,] item_index_matrix;
@@ -1438,24 +1452,34 @@ namespace System.Windows.Forms
 #if NET_2_0
 			if (show_groups && groups.Count > 0 && view != View.List) {
 				// When groups are used the alignment is always top-aligned
+				int y = 0;
 				rows = 0;
 				cols = 0;
 
-				for (int i = 0; i < groups.Count; i++) {
-					ListViewGroup group = groups [i];
+				groups.DefaultGroup.ItemCount = GetDefaultGroupItems ();
+				for (int i = 0; i < groups.InternalCount; i++) {
+					ListViewGroup group = groups.GetInternalGroup (i);
+					int items_in_group = group.ItemCount;
+
+					if (items_in_group == 0)
+						continue;
+
 					group.starting_row = rows;
+					group.current_item = 0;
 
 					int group_cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
 					if (group_cols <= 0)
 						group_cols = 1;
-					int group_rows = (int) Math.Ceiling ((double)group.Items.Count / (double)group_cols);
+					int group_rows = (int) Math.Ceiling ((double)items_in_group / (double)group_cols);
+
+					y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, group_rows);
 
 					cols = Math.Max (group_cols, cols);
 					rows += group_rows;
 				}
-			} 
-			else {
+			} else
 #endif
+			{
 				// Simple matrix if no groups are used
 				if (left_aligned) {
 					rows = (int) Math.Floor ((double)(area.Height - h_scroll.Height + y_spacing) / (double)(item_size.Height + y_spacing));
@@ -1468,9 +1492,7 @@ namespace System.Windows.Forms
 						cols = 1;
 					rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
 				}
-#if NET_2_0
 			}
-#endif
 
 			item_index_matrix = new int [rows, cols];
 		}
@@ -1493,88 +1515,75 @@ namespace System.Windows.Forms
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
 
-			Size item_spacing = new Size (x_spacing, y_spacing);
-#if NET_2_0
-			if (show_groups && groups.Count > 0 && view != View.List) {
-				int current_y = 0;
-
-				for (int i = 0; i < groups.Count; i++) {
-					ListViewGroup group = groups [i];
-					if (group.Items.Count == 0)
-						continue;
-					
-					current_y += LayoutGroupHeader (group, current_y);
-					current_y += LayoutIconsSection (group.Items, left_aligned, group.starting_row, current_y, item_spacing);
-				}
-
-				layout_ht = current_y; // Adjust with the header heights
-
-			} else
-#endif
-				// Layout the entire ListView as a single section
-				LayoutIconsSection (items, left_aligned, 0, 0, item_spacing);
-
-			item_control.Size = new Size (layout_wd, layout_ht);
-		}
-
-#if NET_2_0
-		int LayoutGroupHeader (ListViewGroup group, int y_origin)
-		{
-			Rectangle client_area = ClientRectangle;
-			int header_height = text_size.Height + 10;
-
-			group.HeaderBounds = new Rectangle (0, y_origin, client_area.Width - v_scroll.Width, header_height);
-
-			return header_height;
-		}
-#endif
-
-		int LayoutIconsSection (ListView.ListViewItemCollection items_collection, bool left_aligned, int current_global_row, int y_origin, 
-				Size item_spacing)
-		{
-			// current_global_row is the global one, and
-			// row is the local one for the current group
-			int x, y = 0;
 			int row = 0, col = 0;
-			int x_spacing = item_spacing.Width;
-			int y_spacing = item_spacing.Height;
-			Size item_size = ItemSize;
+			int x = 0, y = 0;
 
-			for (int i = 0; i < items_collection.Count; i++) {
-				ListViewItem item = items_collection [i];
-				if (item.ListView == null)
-					continue; // Not part of the main collection yet
-
-				x = col * (item_size.Width + x_spacing);
-				y = row * (item_size.Height + y_spacing) + y_origin;
-
-				int item_index = item.Index;
-				SetItemLocation (item_index, x, y, current_global_row, col);
-				item_index_matrix [current_global_row, col] = item_index;
+			for (int i = 0; i < items.Count; i++) {
+				ListViewItem item = items [i];
 #if NET_2_0
 				if (!virtual_mode)
 #endif
 					item.Layout ();
 
-				if (left_aligned) {
-					current_global_row++;
-					row++;
-					if (row == rows) {
-						current_global_row = row = 0;
-						col++;
-					}
-				} else {
-					if (++col == cols) {
-						col = 0;
+#if NET_2_0
+				if (show_groups && groups.Count > 0 && view != View.List) {
+					ListViewGroup group = item.Group;
+					if (group == null)
+						group = groups.DefaultGroup;
+
+					Point group_items_loc = group.items_area_location;
+					int current_item = group.current_item++;
+					int starting_row = group.starting_row;
+
+					row = (current_item / cols);
+					col = current_item % cols;
+
+					x = col * (item_size.Width + x_spacing);
+					y = row * (item_size.Height + y_spacing) + group_items_loc.Y;
+
+					SetItemLocation (i, x, y, row + starting_row, col);
+					item_index_matrix [row + starting_row, col] = i;
+				} else
+#endif
+				{
+					x = col * (item_size.Width + x_spacing);
+					y = row * (item_size.Height + y_spacing);
+
+					SetItemLocation (i, x, y, row, col);
+					item_index_matrix [row, col] = i;
+
+					if (left_aligned) {
 						row++;
-						current_global_row++;
+						if (row == rows) {
+							row = 0;
+							col++;
+						}
+					} else {
+						if (++col == cols) {
+							col = 0;
+							row++;
+						}
 					}
 				}
+
 			}
 
-			// Return the groups section height plus an extra space
-			return (y + item_size.Height + 10) - y_origin;
+			item_control.Size = new Size (layout_wd, layout_ht);
 		}
+
+#if NET_2_0
+		int LayoutGroupHeader (ListViewGroup group, int y_origin, int item_height, int y_spacing, int rows)
+		{
+			Rectangle client_area = ClientRectangle;
+			int header_height = text_size.Height + 10;
+
+			group.HeaderBounds = new Rectangle (0, y_origin, client_area.Width - v_scroll.Width, header_height);
+			group.items_area_location = new Point (0, y_origin + header_height);
+
+			int items_area_height = ((item_height + y_spacing) * rows);
+			return header_height + items_area_height + 10; // Add a small bottom margin
+		}
+#endif
 
 		void LayoutHeader ()
 		{
@@ -1603,7 +1612,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Put in the right order the item_height param
 		int LayoutDetailsSection (ListViewItemCollection items_collection, int item_height, int y_origin, ref int current_item)
 		{
 			int y = y_origin;
@@ -1651,7 +1659,6 @@ namespace System.Windows.Forms
 					if (group.Items.Count == 0)
 						continue;
 
-					y += LayoutGroupHeader (group, y);
 					y += LayoutDetailsSection (group.Items, item_height, y, ref current_item);
 				}
 			} else

@@ -1,3 +1,18 @@
+2007-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Do some reorganization to support sorting in groups,
+	by doing the layout sequentially in ListView.Items. Also add support
+	for the Default Group, which should be available for items with no
+	group assigned.
+	* ListViewGroup.cs: Add support for DefaultGroup. Include new members
+	for storing layout info also.
+	* ListViewGroupCollection.cs: Add a DefaultGroup as part of the
+	collection, as well as providing internal members to do a traversal
+	including the default group (needed when doing layout/drawing).
+	* ThemeWin32Classic.cs: When drawing group headers use internal
+	ListViewGroupCollection members to take into account the default
+	group.
+
 2007-08-23  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* FlowLayoutPanel.cs: Add GetPreferredSizeCore.  [Fixes bug #82537]

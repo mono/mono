@@ -41,7 +41,7 @@ namespace System.Windows.Forms
 	[DefaultProperty("Header")]
 	public sealed class ListViewGroup : ISerializable
 	{
-		private string header = string.Empty;
+		internal string header = string.Empty;
 		private string name = null;
 		private HorizontalAlignment header_alignment = HorizontalAlignment.Left;
 		private ListView list_view_owner = null;
@@ -49,6 +49,10 @@ namespace System.Windows.Forms
 		private object tag = null;
 		private Rectangle header_bounds = Rectangle.Empty;
 		internal int starting_row;	// At which row the group starts
+		internal int current_item;	// Current item when doing layout
+		internal Point items_area_location;
+		bool is_default_group;
+		int item_count; // Used by default group to store item count
 
 		#region ListViewGroup constructors
 
@@ -149,7 +153,8 @@ namespace System.Windows.Forms
 			get { return list_view_owner; }
 			set { 
 				list_view_owner = value; 
-				items.Owner = value;
+				if (!is_default_group)
+					items.Owner = value;
 			}
 		}
 
@@ -161,9 +166,35 @@ namespace System.Windows.Forms
 				return retval;
 			}
 			set { 
-				list_view_owner.item_control.Invalidate (HeaderBounds);
+				if (list_view_owner != null)
+					list_view_owner.item_control.Invalidate (HeaderBounds);
+
 				header_bounds = value; 
-				list_view_owner.item_control.Invalidate (HeaderBounds);
+
+				if (list_view_owner != null)
+					list_view_owner.item_control.Invalidate (HeaderBounds);
+
+			}
+		}
+
+		internal bool IsDefault {
+			get {
+				return is_default_group;
+			}
+			set {
+				is_default_group = value;
+			}
+		}
+
+		internal int ItemCount {
+			get {
+				return is_default_group ? item_count : items.Count;
+			}
+			set {
+				if (!is_default_group)
+					throw new InvalidOperationException ("ItemCount cannot be set for non-default groups.");
+
+				item_count = value;
 			}
 		}
 

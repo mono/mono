@@ -2464,11 +2464,11 @@ namespace System.Windows.Forms
 			}	
 
 #if NET_2_0
-			// draw group headers
-			if (control.ShowGroups && control.View != View.List) {
-				for (int i = 0; i < control.Groups.Count; i++) {
-					ListViewGroup group = control.Groups [i];
-					if (group.Items.Count > 0 && clip.IntersectsWith (group.HeaderBounds))
+			if (control.ShowGroups && control.View != View.List && control.Groups.Count > 0) {
+				// Use InternalCount instead of Count to take into account Default Group as needed
+				for (int i = 0; i < control.Groups.InternalCount; i++) {
+					ListViewGroup group = control.Groups.GetInternalGroup (i);
+					if (group.ItemCount > 0 && clip.IntersectsWith (group.HeaderBounds))
 						DrawListViewGroupHeader (dc, control, group);
 				}
 			}

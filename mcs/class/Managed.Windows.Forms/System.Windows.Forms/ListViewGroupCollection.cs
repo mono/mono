@@ -41,15 +41,20 @@ namespace System.Windows.Forms
 	{
 		private List<ListViewGroup> list = null;
 		private ListView list_view_owner = null;
+		private ListViewGroup default_group;
 
 		ListViewGroupCollection()
 		{
 			list = new List<ListViewGroup> ();
+
+			default_group = new ListViewGroup ("Default Group");
+			default_group.IsDefault = true;
 		}
 
 		internal ListViewGroupCollection(ListView listViewOwner) : this()
 		{
 			list_view_owner = listViewOwner;
+			default_group.ListViewOwner = listViewOwner;
 		}
 
 		internal ListView ListViewOwner {
@@ -283,6 +288,26 @@ namespace System.Windows.Forms
 
 			if (list_view_owner != null)
 				list_view_owner.Redraw (true);
+		}
+
+		internal ListViewGroup GetInternalGroup (int index) 
+		{
+			if (index == 0)
+				return default_group;
+
+			return list [index - 1];
+		}
+
+		internal int InternalCount {
+			get {
+				return list.Count + 1;
+			}
+		}
+
+		internal ListViewGroup DefaultGroup {
+			get {
+				return default_group;
+			}
 		}
 
 		void AddGroup (ListViewGroup group)
