@@ -1,3 +1,12 @@
+2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FolderBrowserDialog.cs: Modifies form caption and text of new folder
+	button to match MS. Provide more meaningful exception message for
+	invalid RootFolder value. Use zero-length string when SelectedPath
+	is set to null. Allow non-rooted paths in SelectedPath, but ignore
+	them in FolderBrowserTreeView. Allow folders to be created in
+	RootFolder. Fixes bug #82576.
+
 2007-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Correctly compute the layout_ht (height) when using groups,

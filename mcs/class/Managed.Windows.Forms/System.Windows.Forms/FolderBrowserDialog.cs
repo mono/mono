@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private string description = "";
 		private Environment.SpecialFolder rootFolder = Environment.SpecialFolder.Desktop;
-		private string selectedPath = "";
+		private string selectedPath = string.Empty;
 		private bool showNewFolderButton = true;
 		
 		private Label descriptionLabel;
@@ -93,7 +93,7 @@ namespace System.Windows.Forms {
 			form.SuspendLayout ();
 			form.ClientSize = new Size (322, 324);
 			form.MinimumSize = new Size (310, 254);
-			form.Text = "Search Folder";
+			form.Text = "Browse For Folder";
 			form.SizeGripStyle = SizeGripStyle.Show;
 
 			newFolderMenuItem = new MenuItem("New Folder", new EventHandler (OnClickNewFolderButton));
@@ -129,13 +129,13 @@ namespace System.Windows.Forms {
 			newFolderButton.Location = new Point (15, 285);
 			newFolderButton.Size = new Size (105, 23);
 			newFolderButton.TabIndex = 2;
-			newFolderButton.Text = "New Folder";
+			newFolderButton.Text = "Make New Folder";
 			newFolderButton.Enabled = true;
 			
 			// okButton
 			okButton.Anchor = ((AnchorStyles)((AnchorStyles.Bottom | AnchorStyles.Right)));
 			okButton.FlatStyle = FlatStyle.System;
-			okButton.Location = new Point (142, 285);
+			okButton.Location = new Point (135, 285);
 			okButton.Size = new Size (80, 23);
 			okButton.TabIndex = 3;
 			okButton.Text = "OK";
@@ -198,9 +198,11 @@ namespace System.Windows.Forms {
 		public Environment.SpecialFolder RootFolder {
 			set {
 				int v = (int)value;
-				
-				if (!Enum.IsDefined(typeof(Environment.SpecialFolder), v))
-					throw new InvalidEnumArgumentException ();
+
+				Type enumType = typeof (Environment.SpecialFolder);
+				if (!Enum.IsDefined (enumType, v))
+					throw new InvalidEnumArgumentException (
+						"value", v, enumType);
 				
 				if (rootFolder != value)
 					rootFolder = value;
@@ -219,9 +221,8 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public string SelectedPath {
 			set {
-				if (!Path.IsPathRooted(value))
-					return;
-				
+				if (value == null)
+					value = string.Empty;
 				selectedPath = value;
 				old_selectedPath = value;
 				folderBrowserTreeView.SelectedPath = selectedPath;
@@ -361,6 +362,12 @@ namespace System.Windows.Forms {
 			
 			public string SelectedPath {
 				set {
+					if (value.Length == 0)
+						return;
+
+					if (!Path.IsPathRooted (value))
+						return;
+
 					if (Check_if_path_is_child_of_RootFolder (value)) {
 						SetSelectedPath (Path.GetFullPath (value));
 					}
@@ -374,10 +381,7 @@ namespace System.Windows.Forms {
 			{
 				FBTreeNode fbnode = SelectedNode as FBTreeNode;
 				
-				if (fbnode == null || fbnode.Parent == null)
-					return;
-				
-				if (fbnode.RealPath == null)
+				if (fbnode == null || fbnode.RealPath == null)
 					return;
 				
 				string tmp_filename = "New Folder";
@@ -527,7 +531,7 @@ namespace System.Windows.Forms {
 			
 			private bool Check_if_path_is_child_of_RootFolder (string path)
 			{
-				string root_path = (string)root_node.RealPath;
+				string root_path = (string) root_node.RealPath;
 				
 				if (root_path != null) {
 					try {

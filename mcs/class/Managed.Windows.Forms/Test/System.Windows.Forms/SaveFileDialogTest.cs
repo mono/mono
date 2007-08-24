@@ -36,7 +36,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	public class SaveDialogTest
+	public class SaveFileDialogTest
 	{
 		[Test]
 		public void AddExtension ()
@@ -249,6 +249,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, sfd.FilterIndex, "#1");
 			sfd.FilterIndex = 99;
 			Assert.AreEqual (99, sfd.FilterIndex, "#2");
+			sfd.FilterIndex = -5;
+			Assert.AreEqual (-5, sfd.FilterIndex, "#3");
 		}
 
 		[Test]
