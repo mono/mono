@@ -622,7 +622,8 @@ namespace System.Collections
 
 				while (x <= y) 
 				{
-					z = (x + y) / 2;
+					// Be careful with overflows
+					z = x + ((y - x) / 2);
 				
 					r = comparer.Compare(value, m_Adaptee[z]);
 				
@@ -716,7 +717,8 @@ namespace System.Collections
 
 				// Pick the pivot using the median-of-three strategy.
 
-				middle = (left + right) / 2;
+				// Be careful with overflows
+				middle = left + ((right - left) / 2);
 
 				if (comparer.Compare(list[middle], list[left]) < 0) 
 				{
