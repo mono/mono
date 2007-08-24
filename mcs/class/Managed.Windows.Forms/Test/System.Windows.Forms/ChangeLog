@@ -1,3 +1,7 @@
+2007-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewGroupTest.cs: New assertions for a pair of tests.
+
 2007-08-23  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* FlowPanelTests.cs: Add PreferredSize test.

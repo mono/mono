@@ -77,6 +77,10 @@ namespace MonoTests.System.Windows.Forms
 			lv.Groups.Add (lg1);
 			Assert.AreEqual (null, lg1.Items[0].ListView, "#B3");
 			Assert.AreEqual (false, lv.Items.Contains(lg1.Items[0]), "#B4");
+
+			ListViewItem lvi = lg1.Items.Add ("Item1");
+			Assert.AreEqual (null, lvi.ListView, "#C1");
+			Assert.AreEqual (lg1, lvi.Group, "#C2");
 		}
 
         	[Test]
@@ -89,7 +93,24 @@ namespace MonoTests.System.Windows.Forms
 
             		Assert.AreEqual (1, lg1.Items.Count, "#C1");
             		Assert.AreEqual (0, lv.Items.Count, "#C2");
-            		Assert.AreEqual (false, lv.Items.Contains (lg1.Items[0]), "#C3");
+			Assert.AreEqual (false, lv.Items.Contains (lg1.Items [0]), "#C3");
+
+			lg1.Items.Clear ();
+			lv.Groups.Add (lg1);
+			ListViewItem lvi = lv.Items.Add ("Item1");
+			lg1.Items.Add (lvi);
+
+			Assert.AreEqual (1, lg1.Items.Count, "#D1");
+			Assert.AreEqual (1, lv.Items.Count, "#D2");
+			Assert.AreEqual (lv, lvi.ListView, "#D3");
+			Assert.AreEqual (lg1, lvi.Group, "#D4");
+				
+			lg1.Items.Remove (lvi);
+				
+			Assert.AreEqual (0, lg1.Items.Count, "#E1");
+			Assert.AreEqual (1, lv.Items.Count, "#E2");
+			Assert.AreEqual (lv, lvi.ListView, "#E3");
+			Assert.AreEqual (null, lvi.Group, "#E4");
         	}
 	}
 }
