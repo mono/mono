@@ -1,3 +1,10 @@
+2007-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_close): Move the closing of the referenced assemblies to
+	...
+
+	* image.c (mono_image_close): Here. Hopefully fixes #82510.
+
 2007-08-24  Mark Probst  <mark.probst@gmail.com>
 
 	* monodiet.c (handle_cattrs): Fixed a custom attr leak.
