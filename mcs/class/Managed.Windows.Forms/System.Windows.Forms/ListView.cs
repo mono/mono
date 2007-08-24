@@ -1517,7 +1517,7 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			if (using_groups)
-				CalculateGroupsLayout (sz, y_spacing);
+				CalculateGroupsLayout (sz, y_spacing, 0);
 #endif
 
 			int row = 0, col = 0;
@@ -1577,9 +1577,10 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		void CalculateGroupsLayout (Size item_size, int y_spacing)
+		void CalculateGroupsLayout (Size item_size, int y_spacing, int y_origin)
 		{
-			int y = 0;
+			int y = y_origin;
+			bool details = view == View.Details;
 
 			for (int i = 0; i < groups.InternalCount; i++) {
 				ListViewGroup group = groups.GetInternalGroup (i);
@@ -1587,7 +1588,7 @@ namespace System.Windows.Forms
 					continue;
 
 				group.current_item = 0; // Reset layout
-				y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, group.rows);
+				y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, details ? group.ItemCount : group.rows);
 			}
 
 			layout_ht = y; // Update height taking into account Groups' headers heights
@@ -1633,26 +1634,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		int LayoutDetailsSection (ListViewItemCollection items_collection, int item_height, int y_origin, ref int current_item)
-		{
-			int y = y_origin;
-
-			for (int i = 0; i < items_collection.Count; i++) {
-				ListViewItem item = items_collection [i];
-				SetItemLocation (current_item, 0, y, 0, 0);
-				current_item++;
-#if NET_2_0
-				if (!virtual_mode) // Virtual mode sets Layout until draw time
-#endif
-					item.Layout ();
-					
-				y += item_height + 2;
-			}
-
-			// Return height of groups section
-			return (y + 10) - y_origin;
-		}
-
 		void LayoutDetails ()
 		{
 			LayoutHeader ();
@@ -1670,27 +1651,46 @@ namespace System.Windows.Forms
 
 			int item_height = GetDetailsItemHeight ();
 			ItemSize = new Size (0, item_height); // We only cache Height for details view
-
 			int y = header_control.Height;
-			int current_item = 0;
 #if NET_2_0
-			if (show_groups && groups.Count > 0 && view != View.List) {
-				for (int i = 0; i < groups.Count; i++) {
-					ListViewGroup group = groups [i];
-					if (group.Items.Count == 0)
-						continue;
-
-					y += LayoutDetailsSection (group.Items, item_height, y, ref current_item);
-				}
-			} else
+			bool using_groups = show_groups && groups.Count > 0 && view != View.List;
+			if (using_groups) 
+				CalculateGroupsLayout (ItemSize, 2, y);
 #endif
-				y += LayoutDetailsSection (items, item_height, y, ref current_item);
+
+			for (int i = 0; i < items.Count; i++) {
+				ListViewItem item = items [i];
+#if NET_2_0
+				if (!virtual_mode) // Virtual mode sets Layout until draw time
+#endif
+					item.Layout ();
+
+#if NET_2_0
+				if (using_groups) {
+					ListViewGroup group = item.Group;
+					if (group == null)
+						group = groups.DefaultGroup;
+
+					int current_item = group.current_item++;
+					Point group_items_loc = group.items_area_location;
+
+					SetItemLocation (i, 0, current_item * (item_height + 2) + group_items_loc.Y, 0, 0);
+				} else
+#endif
+				{
+					SetItemLocation (i, 0, y, 0, 0);
+					y += item_height + 4;
+				}
+			}
 
 			// some space for bottom gridline
 			if (items.Count > 0 && grid_lines)
 				y += 2;
 
-			layout_ht = y;
+#if NET_2_0
+			if (!using_groups) // With groups it has been previously computed
+#endif
+				layout_ht = y;
 		}
 
 		private void AdjustItemsPositionArray (int count)
