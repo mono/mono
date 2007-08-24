@@ -40,6 +40,8 @@ SECURITY_DEP := Mono.Security.dll
 SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
 CONFIGURATION_DEP := System.Configuration.dll
 CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
+PREBUILT_DEP := System.dll
+PREBUILT_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(PREBUILT_DEP))
 CYCLIC_DEPS += $(SECURITY_DEP) $(CONFIGURATION_DEP)
 CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE) $(CONFIGURATION_DEP_FILE)
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
@@ -95,8 +97,12 @@ $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
 ifdef CONFIGURATION_DEP_FILE
-LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP) -r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
+LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP)
 $(the_lib): $(CONFIGURATION_DEP_FILE)
+endif
+
+ifdef PREBUILT_DEP_FILE
+LIB_MCS_FLAGS += -r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
 endif
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)

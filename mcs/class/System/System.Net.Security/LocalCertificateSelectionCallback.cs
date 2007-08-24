@@ -29,9 +29,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 
+#if NET_2_0 && SECURITY_DEP
+extern alias PrebuiltSystem;
 
 using System.Security.Cryptography.X509Certificates;
+
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
 
 namespace System.Net.Security 
 {

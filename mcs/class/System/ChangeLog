@@ -1,3 +1,8 @@
+2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : split PREBUILT_DEP from CONFIGURATION_DEP so that the
+	  prebuilt System.dll could be referenced for security stuff too.
+
 2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_System.dll.sources :

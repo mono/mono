@@ -1,0 +1,4 @@
+2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, msslserver.cs, mutual.pem : ported from Mono.Security.
+	* README : forwarding.
