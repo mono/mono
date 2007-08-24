@@ -118,7 +118,6 @@ System.Windows.Forms.Design/IMenuEditorService.cs
 System.Windows.Forms.Design/ImageCollectionEditor.cs
 System.Windows.Forms.Design/IOleDragClient.cs
 System.Windows.Forms.Design/ISelectionUIHandler.cs
-System.Windows.Forms.Design/MenuCommands.cs
 System.Windows.Forms.Design/ParentControlDesigner.cs
 System.Windows.Forms.Design/ScrollableControlDesigner.cs
 System.Windows.Forms.Design/SelectionRules.cs
