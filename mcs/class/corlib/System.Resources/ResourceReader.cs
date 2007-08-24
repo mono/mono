@@ -87,7 +87,7 @@ namespace System.Resources
 		public ResourceReader (Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException ("Value cannot be null.");
+				throw new ArgumentNullException ("stream");
 			
 			if (!stream.CanRead)
 				throw new ArgumentException ("Stream was not readable.");
@@ -100,12 +100,6 @@ namespace System.Resources
 		
 		public ResourceReader (string fileName)
 		{
-			if (fileName == null)
-				throw new ArgumentNullException ("Path cannot be null.");
-
-			if (!System.IO.File.Exists (fileName)) 
-				throw new FileNotFoundException ("Could not find file " + Path.GetFullPath(fileName));
-
 			reader = new BinaryReader (new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read));
 			formatter = new BinaryFormatter(null, new StreamingContext(StreamingContextStates.File|StreamingContextStates.Persistence));
 

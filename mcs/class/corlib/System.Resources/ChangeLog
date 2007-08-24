@@ -1,3 +1,8 @@
+2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceReader.cs: Fixed exception message to match MS. Removed
+	duplicate checks from string ctor.
+
 2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResourceReader.cs : implemented GetResourceData(). Resources with
