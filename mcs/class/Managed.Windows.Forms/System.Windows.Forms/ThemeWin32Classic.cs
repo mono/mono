@@ -938,7 +938,7 @@ namespace System.Windows.Forms
 			content_rect.Width -= check_size;
 			content_rect.Offset (check_size, 0);
 			
-			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, content_rect.Size, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, Size.Empty, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			Size image_size = image == null ? Size.Empty : image.Size;
 
 			textRectangle = Rectangle.Empty;
@@ -947,8 +947,8 @@ namespace System.Windows.Forms
 			switch (button.TextImageRelation) {
 				case TextImageRelation.Overlay:
 					// Overlay is easy, text always goes here
-					textRectangle = Rectangle.Inflate (content_rect, -4, -4);
-					textRectangle.Offset (0, -2);
+					textRectangle = content_rect;
+					textRectangle.Offset (2, -1);
 
 					// Image is dependent on ImageAlign
 					if (image == null)

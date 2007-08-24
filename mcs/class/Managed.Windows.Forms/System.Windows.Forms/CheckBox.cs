@@ -114,6 +114,9 @@ namespace System.Windows.Forms {
 			check_alignment = ContentAlignment.MiddleLeft;
 			TextAlign = ContentAlignment.MiddleLeft;
 			SetStyle(ControlStyles.StandardDoubleClick, false);
+#if NET_2_0
+			SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
+#endif
 		}
 		#endregion	// Public Constructors
 

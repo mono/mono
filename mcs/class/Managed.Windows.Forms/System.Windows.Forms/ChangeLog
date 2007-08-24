@@ -1,5 +1,13 @@
 2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* CheckBox.cs: Set the AutoSizeMode to GrowAndShrink.
+	* Form.cs, GroupBox.cs: Don't skip Right or Bottom anchored 
+	controls in GetPreferredSizeCore.
+	* ThemeWin32Classic.cs: Tweak text drawing of CheckBoxes.
+	[Fixes bug #82488]
+
+2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* PrintDialog.cs: Need to instantiate the form variable here too.
 
 2007-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>

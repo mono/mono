@@ -330,13 +330,13 @@ namespace System.Windows.Forms
 				if (child.Dock == DockStyle.Fill) {
 					if (child.Bounds.Right > retsize.Width)
 						retsize.Width = child.Bounds.Right;
-				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
+				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
 					retsize.Width = child.Bounds.Right + child.Margin.Right;
 
 				if (child.Dock == DockStyle.Fill) {
 					if (child.Bounds.Bottom > retsize.Height)
 						retsize.Height = child.Bounds.Bottom;
-				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
+				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
 					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
 			}
 
