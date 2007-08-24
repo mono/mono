@@ -840,7 +840,9 @@ namespace System
 			int iCmp = 0;
 			try {
 				while (iMin <= iMax) {
-					int iMid = (iMin + iMax) / 2;
+					// Be careful with overflow
+					// http://googleresearch.blogspot.com/2006/06/extra-extra-read-all-about-it-nearly.html
+					int iMid = iMin + ((iMax - iMin) / 2);
 					object elt = array.GetValueImpl (iMid);
 
 					iCmp = comparer.Compare (elt, value);
@@ -1486,7 +1488,9 @@ namespace System
 			int low = low0;
 			int high = high0;
 
-			object objPivot = keys.GetValueImpl ((low + high) / 2);
+			// Be careful with overflows
+			int mid = low + ((high - low) / 2);
+			object objPivot = keys.GetValueImpl (mid);
 
 			while (low <= high) {
 				// Move the walls in
@@ -1684,7 +1688,9 @@ namespace System
 			int low = low0;
 			int high = high0;
 
-			K keyPivot = keys [(low + high) / 2];
+			// Be careful with overflows
+			int mid = low + ((high - low) / 2);
+			K keyPivot = keys [mid];
 
 			while (low <= high) {
 				// Move the walls in
@@ -1733,7 +1739,9 @@ namespace System
 			int low = low0;
 			int high = high0;
 
-			T keyPivot = array [(low + high) / 2];
+			// Be careful with overflows
+			int mid = low + ((high - low) / 2);
+			T keyPivot = array [mid];
 
 			while (low <= high) {
 				// Move the walls in
@@ -2050,7 +2058,8 @@ namespace System
 			int iCmp = 0;
 			try {
 				while (iMin <= iMax) {
-					int iMid = (iMin + iMax) / 2;
+					// Be careful with overflows
+					int iMid = iMin + ((iMax - iMin) / 2);
 					iCmp = comparer.Compare (value, array [iMid]);
 
 					if (iCmp == 0)

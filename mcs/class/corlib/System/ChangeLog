@@ -1,3 +1,8 @@
+2007-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Array.cs: Fix min + max / 2 overflows in the BinarySearch and qsort methods.
+	Fixes #82469.
+
 2007-08-23  Marek Safar  <marek.safar@gmail.com>
 
 	* DateTimeOffset.cs: New .NET 3.5 struct for 2.0 mscorlib.
