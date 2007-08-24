@@ -121,34 +121,34 @@ namespace System.IO
 
 		// construct from filename
 		
-		public FileStream (string name, FileMode mode)
-			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, FileOptions.None)
+		public FileStream (string path, FileMode mode)
+			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, FileOptions.None)
 		{
 		}
 
-		public FileStream (string name, FileMode mode, FileAccess access)
-			: this (name, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false, false)
+		public FileStream (string path, FileMode mode, FileAccess access)
+			: this (path, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false, false)
 		{
 		}
 
-		public FileStream (string name, FileMode mode, FileAccess access, FileShare share)
-			: this (name, mode, access, share, DefaultBufferSize, false, FileOptions.None)
-		{
-		}
-		
-		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize)
-			: this (name, mode, access, share, bufferSize, false, FileOptions.None)
+		public FileStream (string path, FileMode mode, FileAccess access, FileShare share)
+			: this (path, mode, access, share, DefaultBufferSize, false, FileOptions.None)
 		{
 		}
 
-		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
-			: this (name, mode, access, share, bufferSize, isAsync, FileOptions.None)
+		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize)
+			: this (path, mode, access, share, bufferSize, false, FileOptions.None)
+		{
+		}
+
+		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
+			: this (path, mode, access, share, bufferSize, isAsync, FileOptions.None)
 		{
 		}
 
 #if NET_2_0
-		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
-			: this (name, mode, access, share, bufferSize, false, options)
+		public FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, FileOptions options)
+			: this (path, mode, access, share, bufferSize, false, options)
 		{
 		}
 
@@ -186,19 +186,19 @@ namespace System.IO
 		}
 #endif
 
-		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
-			: this (name, mode, access, share, bufferSize, anonymous, isAsync ? FileOptions.Asynchronous : FileOptions.None)
+		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
+			: this (path, mode, access, share, bufferSize, anonymous, isAsync ? FileOptions.Asynchronous : FileOptions.None)
 		{
 		}
 
-		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
+		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
-			if (name == null) {
-				throw new ArgumentNullException ("name");
+			if (path == null) {
+				throw new ArgumentNullException ("path");
 			}
-			
-			if (name.Length == 0) {
-				throw new ArgumentException ("Name is empty");
+
+			if (path.Length == 0) {
+				throw new ArgumentException ("Path is empty");
 			}
 
 #if NET_2_0
@@ -223,14 +223,14 @@ namespace System.IO
 #endif
 				throw new ArgumentOutOfRangeException ("share", "Enum value was out of legal range.");
 
-			if (name.IndexOfAny (Path.InvalidPathChars) != -1) {
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1) {
 				throw new ArgumentException ("Name has invalid chars");
 			}
 
-			if (Directory.Exists (name)) {
+			if (Directory.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Access to the path '{0}' is denied.");
-				string fname = (anonymous) ? Path.GetFileName (name) : Path.GetFullPath (name);
+				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
 				throw new UnauthorizedAccessException (String.Format (msg, fname));
 			}
 
@@ -249,37 +249,37 @@ namespace System.IO
 				throw new ArgumentException (string.Format (msg, access, mode));
 			}
 
-			string dname = Path.GetDirectoryName (name);
+			string dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
 				string fp = Path.GetFullPath (dname);
 				if (!Directory.Exists (fp)) {
 					// don't leak the path information for isolated storage
 					string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
-					string fname = (anonymous) ? dname : Path.GetFullPath (name);
+					string fname = (anonymous) ? dname : Path.GetFullPath (path);
 					throw new DirectoryNotFoundException (String.Format (msg, fname));
 				}
 			}
 
 			if (access == FileAccess.Read && mode != FileMode.Create && mode != FileMode.OpenOrCreate &&
-					mode != FileMode.CreateNew && !File.Exists (name)) {
+					mode != FileMode.CreateNew && !File.Exists (path)) {
 				// don't leak the path information for isolated storage
 				string msg = Locale.GetText ("Could not find file \"{0}\".");
-				string fname = (anonymous) ? Path.GetFileName (name) : Path.GetFullPath (name);
+				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
 				throw new FileNotFoundException (String.Format (msg, fname), fname);
 			}
 
 			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
 			if (!anonymous)
-				this.name = name;
+				this.name = path;
 
 			// TODO: demand permissions
 
 			MonoIOError error;
 
-			this.handle = MonoIO.Open (name, mode, access, share, options, out error);
+			this.handle = MonoIO.Open (path, mode, access, share, options, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
-				string fname = (anonymous) ? Path.GetFileName (name) : Path.GetFullPath (name);
+				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
 				throw MonoIO.GetException (fname, error);
 			}
 
@@ -325,18 +325,18 @@ namespace System.IO
 			}
 		}
 
-                public override bool CanWrite {
-                        get {
+		public override bool CanWrite {
+			get {
 				return access == FileAccess.Write ||
-				       access == FileAccess.ReadWrite;
-                        }
-                }
+					access == FileAccess.ReadWrite;
+			}
+		}
 		
 		public override bool CanSeek {
-                        get {
-                                return(canseek);
-                        }
-                }
+			get {
+				return(canseek);
+			}
+		}
 
 		public virtual bool IsAsync {
 			get {
@@ -567,7 +567,7 @@ namespace System.IO
 				return base.BeginRead (buffer, offset, count, cback, state);
 
 			ReadDelegate r = new ReadDelegate (ReadInternal);
-			return r.BeginInvoke (buffer, offset, count, cback, state);			
+			return r.BeginInvoke (buffer, offset, count, cback, state);
 		}
 		
 		public override int EndRead (IAsyncResult async_result)
@@ -1096,4 +1096,3 @@ namespace System.IO
 		IntPtr handle;				// handle to underlying file
 	}
 }
-
