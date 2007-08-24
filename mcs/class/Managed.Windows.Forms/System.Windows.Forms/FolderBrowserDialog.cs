@@ -38,7 +38,6 @@ namespace System.Windows.Forms {
 	public sealed class FolderBrowserDialog : CommonDialog
 	{
 		#region Local Variables
-		private string description = "";
 		private Environment.SpecialFolder rootFolder = Environment.SpecialFolder.Desktop;
 		private string selectedPath = string.Empty;
 		private bool showNewFolderButton = true;
@@ -51,7 +50,7 @@ namespace System.Windows.Forms {
 		private ContextMenu folderBrowserTreeViewContextMenu;
 		private MenuItem newFolderMenuItem;
 		
-		private string old_selectedPath = "";
+		private string old_selectedPath = string.Empty;
 		
 		private readonly string folderbrowserdialog_string = "FolderBrowserDialog";
 		private readonly string width_string = "Width";
@@ -105,7 +104,7 @@ namespace System.Windows.Forms {
 			descriptionLabel.Location = new Point (15, 14);
 			descriptionLabel.Size = new Size (292, 40);
 			descriptionLabel.TabIndex = 0;
-			descriptionLabel.Text = "";
+			descriptionLabel.Text = string.Empty;
 			
 			// folderBrowserTreeView
 			folderBrowserTreeView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom)
@@ -115,7 +114,7 @@ namespace System.Windows.Forms {
 			folderBrowserTreeView.Location = new Point (15, 60);
 			folderBrowserTreeView.SelectedImageIndex = -1;
 			folderBrowserTreeView.Size = new Size (292, 212);
-			folderBrowserTreeView.TabIndex = 1;
+			folderBrowserTreeView.TabIndex = 3;
 			folderBrowserTreeView.ShowLines = false;
 			folderBrowserTreeView.ShowPlusMinus = true;
 			folderBrowserTreeView.HotTracking = true;
@@ -128,7 +127,7 @@ namespace System.Windows.Forms {
 			newFolderButton.FlatStyle = FlatStyle.System;
 			newFolderButton.Location = new Point (15, 285);
 			newFolderButton.Size = new Size (105, 23);
-			newFolderButton.TabIndex = 2;
+			newFolderButton.TabIndex = 4;
 			newFolderButton.Text = "Make New Folder";
 			newFolderButton.Enabled = true;
 			
@@ -137,7 +136,7 @@ namespace System.Windows.Forms {
 			okButton.FlatStyle = FlatStyle.System;
 			okButton.Location = new Point (135, 285);
 			okButton.Size = new Size (80, 23);
-			okButton.TabIndex = 3;
+			okButton.TabIndex = 1;
 			okButton.Text = "OK";
 			
 			// cancelButton
@@ -146,7 +145,7 @@ namespace System.Windows.Forms {
 			cancelButton.FlatStyle = FlatStyle.System;
 			cancelButton.Location = new Point (227, 285);
 			cancelButton.Size = new Size (80, 23);
-			cancelButton.TabIndex = 4;
+			cancelButton.TabIndex = 2;
 			cancelButton.Text = "Cancel";
 			
 			form.Controls.Add (cancelButton);
@@ -168,6 +167,8 @@ namespace System.Windows.Forms {
 			okButton.Click += new EventHandler (OnClickOKButton);
 			cancelButton.Click += new EventHandler (OnClickCancelButton);
 			newFolderButton.Click += new EventHandler (OnClickNewFolderButton);
+
+			form.VisibleChanged += new EventHandler (OnFormVisibleChanged);
 			
 			RootFolder = rootFolder;
 		}
@@ -180,12 +181,11 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public string Description {
 			set {
-				description = value;
-				descriptionLabel.Text = description;
+				descriptionLabel.Text = value;
 			}
 			
 			get {
-				return description;
+				return descriptionLabel.Text;
 			}
 		}
 		
@@ -204,12 +204,8 @@ namespace System.Windows.Forms {
 					throw new InvalidEnumArgumentException (
 						"value", v, enumType);
 				
-				if (rootFolder != value)
-					rootFolder = value;
-				
-				folderBrowserTreeView.RootFolder = rootFolder;
+				rootFolder = value;
 			}
-			
 			get {
 				return rootFolder;
 			}
@@ -225,9 +221,7 @@ namespace System.Windows.Forms {
 					value = string.Empty;
 				selectedPath = value;
 				old_selectedPath = value;
-				folderBrowserTreeView.SelectedPath = selectedPath;
 			}
-			
 			get {
 				return selectedPath;
 			}
@@ -239,11 +233,8 @@ namespace System.Windows.Forms {
 		public bool ShowNewFolderButton {
 			set {
 				if (value != showNewFolderButton) {
+					newFolderButton.Visible = value;
 					showNewFolderButton = value;
-					if (showNewFolderButton)
-						newFolderButton.Show ();
-					else
-						newFolderButton.Hide ();
 				}
 			}
 			
@@ -256,14 +247,17 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public override void Reset ()
 		{
-			Description = "";
+			Description = string.Empty;
 			RootFolder = Environment.SpecialFolder.Desktop;
-			selectedPath = "";
+			selectedPath = string.Empty;
 			ShowNewFolderButton = true;
 		}
 		
 		protected override bool RunDialog (IntPtr hwndOwner)
 		{
+			folderBrowserTreeView.RootFolder = RootFolder;
+			folderBrowserTreeView.SelectedPath = SelectedPath;
+
 			form.Refresh ();
 			
 			return true;
@@ -289,6 +283,12 @@ namespace System.Windows.Forms {
 		void OnClickNewFolderButton (object sender, EventArgs e)
 		{
 			folderBrowserTreeView.CreateNewFolder ();
+		}
+
+		void OnFormVisibleChanged (object sender, EventArgs e)
+		{
+			if (form.Visible && okButton.Enabled)
+				okButton.Select ();
 		}
 		
 		private void WriteConfigValues ()
@@ -321,6 +321,7 @@ namespace System.Windows.Forms {
 			public FolderBrowserTreeView (FolderBrowserDialog parent_dialog)
 			{
 				parentDialog = parent_dialog;
+				HideSelection = false;
 				ImageList = imageList;
 				SetupImageList ();
 			}
@@ -329,14 +330,18 @@ namespace System.Windows.Forms {
 				set {
 					rootFolder = value;
 					
-					string root_path = "";
+					string root_path = string.Empty;
 					
 					switch (rootFolder) {
-						default:
 						case Environment.SpecialFolder.Desktop:
 							root_node = new FBTreeNode ("Desktop");
 							root_node.RealPath = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
 							root_path = MWFVFS.DesktopPrefix;
+							break;
+						case Environment.SpecialFolder.Recent:
+							root_node = new FBTreeNode ("My Recent Documents");
+							root_node.RealPath = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
+							root_path = MWFVFS.RecentlyUsedPrefix;
 							break;
 						case Environment.SpecialFolder.MyComputer:
 							root_node = new FBTreeNode ("My Computer");
@@ -347,11 +352,20 @@ namespace System.Windows.Forms {
 							root_path = MWFVFS.PersonalPrefix;
 							root_node.RealPath = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
 							break;
+						default:
+							root_node = new FBTreeNode (rootFolder.ToString ());
+							root_node.RealPath = Environment.GetFolderPath (rootFolder);
+							root_path = root_node.RealPath;
+							break;
 					}
 					
 					root_node.Tag = root_path;
 					root_node.ImageIndex = NodeImageIndex (root_path);
-					
+
+					BeginUpdate ();
+					Nodes.Clear ();
+					EndUpdate ();
+
 					FillNode (root_node);
 					
 					root_node.Expand ();
@@ -375,7 +389,7 @@ namespace System.Windows.Forms {
 			}
 			
 			private string parent_real_path;
-			private bool dont_do_onbeforeexpand = false;
+			private bool dont_do_onbeforeexpand;
 			
 			public void CreateNewFolder ()
 			{
@@ -463,7 +477,7 @@ namespace System.Windows.Forms {
 						
 						if (node == null) {
 							string path_cut_new = path_cut.Substring (0, path_cut.LastIndexOf (Path.AltDirectorySeparatorChar));
-							string leftover = path_cut.Replace (path_cut_new, "");
+							string leftover = path_cut.Replace (path_cut_new, string.Empty);
 							
 							stack.Push (leftover);
 							
@@ -608,17 +622,13 @@ namespace System.Windows.Forms {
 				
 				if (path == MWFVFS.DesktopPrefix)
 					index = 1;
-				else 
-				if (path == MWFVFS.RecentlyUsedPrefix)
+				else if (path == MWFVFS.RecentlyUsedPrefix)
 					index = 0;
-				else
-				if (path == MWFVFS.PersonalPrefix)
+				else if (path == MWFVFS.PersonalPrefix)
 					index = 2;
-				else
-				if (path == MWFVFS.MyComputerPrefix)
+				else if (path == MWFVFS.MyComputerPrefix)
 					index = 3;
-				else
-				if (path == MWFVFS.MyNetworkPrefix)
+				else if (path == MWFVFS.MyNetworkPrefix)
 					index = 4;
 				
 				return index;

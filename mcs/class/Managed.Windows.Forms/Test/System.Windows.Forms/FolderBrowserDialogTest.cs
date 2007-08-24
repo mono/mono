@@ -19,6 +19,19 @@ namespace MonoTests.System.Windows.Forms
 	public class FolderBrowserDialogTest
 	{
 		[Test]
+		public void Description ()
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog ();
+			Assert.AreEqual (string.Empty, fbd.Description, "#1");
+			fbd.Description = null;
+			Assert.AreEqual (string.Empty, fbd.Description, "#2");
+			fbd.Description = "Select a folder";
+			Assert.AreEqual ("Select a folder", fbd.Description, "#3");
+			fbd.Description = null;
+			Assert.AreEqual (string.Empty, fbd.Description, "#4");
+		}
+
+		[Test]
 		public void SelectedPath ()
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog ();
@@ -27,6 +40,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, fbd.SelectedPath, "#2");
 			fbd.SelectedPath = "{}###()";
 			Assert.AreEqual ("{}###()", fbd.SelectedPath, "#3");
+			fbd.SelectedPath = null;
+			Assert.AreEqual (string.Empty, fbd.SelectedPath, "#4");
+		}
+
+		[Test]
+		public void ShowNewFolderButton ()
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog ();
+			Assert.IsTrue (fbd.ShowNewFolderButton, "#1");
+			fbd.ShowNewFolderButton = false;
+			Assert.IsFalse (fbd.ShowNewFolderButton, "#2");
+			fbd.ShowNewFolderButton = true;
+			Assert.IsTrue (fbd.ShowNewFolderButton, "#3");
 		}
 
 		[Test]

@@ -1,3 +1,13 @@
+2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FolderBrowserDialog.cs: Removed need for separate description field.
+	Replaced "" with string.Empty. Fixed tabindex. Ensure OK button
+	has focus when dialog box is displayed again, regardless of what
+	button was pressed the previous time. Set RootFolder and SelectedPath
+	each time dialog box is displayed. This ensures the treeview is
+	refreshed, and fixes bug #82579. Do no hide selected node in TreeView
+	when it does not have focus. Added support for more special folders.
+
 2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Create a CancelEdit method.  Clone the edit_args in EndEdit
