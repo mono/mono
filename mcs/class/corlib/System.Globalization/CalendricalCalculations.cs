@@ -1956,8 +1956,6 @@ internal class CCEastAsianLunisolarCalendar
 			}
 		}
 		return false;
-
-		throw new Exception ("IsLeapMonth");
 	}
 
 	public static bool IsLeapYear (int gyear)
