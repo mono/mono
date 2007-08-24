@@ -496,6 +496,19 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (t.GetField ("field"));
 			Assert.IsNull (t.GetProperty ("property"));
 		}
+		
+		[Test]
+		public void TestAssemblyQualifiedName ()
+		{
+			Type t = Type.GetType ("System.Byte[]&");
+			Assert.IsTrue (t.AssemblyQualifiedName.StartsWith ("System.Byte[]&"));
+			
+			t = Type.GetType ("System.Byte*&");
+			Assert.IsTrue (t.AssemblyQualifiedName.StartsWith ("System.Byte*&"));
+			
+			t = Type.GetType ("System.Byte&");
+			Assert.IsTrue (t.AssemblyQualifiedName.StartsWith ("System.Byte&"));
+		}
 
 		struct B
 		{
