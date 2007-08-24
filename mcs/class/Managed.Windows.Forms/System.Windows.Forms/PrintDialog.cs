@@ -82,6 +82,7 @@ namespace System.Windows.Forms
 
 		public PrintDialog ()
 		{
+			form = new DialogForm (this);
 			help_button = null;
 			installed_printers = System.Drawing.Printing.PrinterSettings.InstalledPrinters;
 

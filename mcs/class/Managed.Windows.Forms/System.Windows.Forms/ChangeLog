@@ -1,3 +1,7 @@
+2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PrintDialog.cs: Need to instantiate the form variable here too.
+
 2007-08-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Do some reorganization to support sorting in groups,
