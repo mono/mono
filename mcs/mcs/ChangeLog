@@ -1,3 +1,8 @@
+2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : catch other types of exception than XmlException to
+	  report CS1570. Fixed bug #82565.
+
 2007-08-23  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymousMethodExpressin.ExplicitTypeInference): 

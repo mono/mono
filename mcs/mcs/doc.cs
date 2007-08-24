@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 				el.InnerXml = line_head + String.Join (
 					line_head, split, 0, j);
 				return el;
-			} catch (XmlException ex) {
+			} catch (Exception ex) {
 				Report.Warning (1570, 1, mc.Location, "XML comment on `{0}' has non-well-formed XML ({1})", name, ex.Message);
 				XmlComment com = doc.CreateComment (String.Format ("FIXME: Invalid documentation markup was found for member {0}", name));
 				return com;

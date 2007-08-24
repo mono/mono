@@ -1,3 +1,7 @@
+2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs1570-12.cs : new test (bug #82565).
+
 2007-06-07  Raja R Harinath  <harinath@gmail.com>
 
 	* cs0135-2.cs, cs0135-3.cs: New tests for parameter name
