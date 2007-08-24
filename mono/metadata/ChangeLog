@@ -1,3 +1,8 @@
+2007-08-24  Jb Evain  <jbevain@novell.com>
+
+	* class.c (mono_type_get_name_recurse): fix AssemblyQualifiedName
+	for byref types.
+
 2007-08-24  Mark Probst  <mark.probst@gmail.com>
 
 	* threads.c: Make sure a thread gets cleaned up only once.  Fixes
