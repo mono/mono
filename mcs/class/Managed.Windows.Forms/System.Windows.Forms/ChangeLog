@@ -1,3 +1,8 @@
+2007-08-24  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* DateTimePicker.cs: The MS' MTB has a really stupid year formatting.
+	  Anyways, let's just follow the lead.
+
 2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* CheckBox.cs: Set the AutoSizeMode to GrowAndShrink.

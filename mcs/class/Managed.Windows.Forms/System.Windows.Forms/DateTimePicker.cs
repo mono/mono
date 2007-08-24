@@ -1823,6 +1823,8 @@ namespace System.Windows.Forms {
 					return " ";
 				else if (format.Length == 1)
 					return date.ToString ("%" + format);
+				else if (format == "yyyyy" || format == "yyyyyy" || format == "yyyyyyy" || format == "yyyyyyyy")
+					return date.ToString ("yyyy");
 				else if (format.Length > 1)
 					return date.ToString (format);
 				else
