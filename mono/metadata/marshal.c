@@ -10673,7 +10673,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, i
 	}
 
 #ifdef PLATFORM_WIN32
-	res = GlobalReAlloc (ptr, (gulong)size, 0);
+	res = GlobalReAlloc (ptr, (gulong)size, GMEM_MOVEABLE);
 #else
 	res = g_try_realloc (ptr, (gulong)size);
 #endif
