@@ -348,8 +348,11 @@ namespace System.Net.Security
 
 			if (validation_callback != null)
 				s.ServerCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
-					X509Chain chain = new X509Chain ();
-					chain.Build (cert);
+					X509Chain chain = null;
+					if (cert is X509Certificate2) {
+						chain = new X509Chain ();
+						chain.Build ((X509Certificate2) cert);
+					}
 					// FIXME: SslPolicyErrors is incomplete
 					SslPolicyErrors errors = certErrors.Length > 0 ? SslPolicyErrors.RemoteCertificateChainErrors : SslPolicyErrors.None;
 					return validation_callback (this, cert, chain, errors);
@@ -394,8 +397,11 @@ namespace System.Net.Security
 
 			if (validation_callback != null)
 				s.ClientCertValidationDelegate = delegate (X509Certificate cert, int [] certErrors) {
-					X509Chain chain = new X509Chain ();
-					chain.Build (cert);
+					X509Chain chain = null;
+					if (cert is X509Certificate2) {
+						chain = new X509Chain ();
+						chain.Build ((X509Certificate2) cert);
+					}
 					// FIXME: SslPolicyErrors is incomplete
 					SslPolicyErrors errors = certErrors.Length > 0 ? SslPolicyErrors.RemoteCertificateChainErrors : SslPolicyErrors.None;
 					return validation_callback (this, cert, chain, errors);

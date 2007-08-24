@@ -1,5 +1,9 @@
 2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SslStream.cs : uh, fixed the build.
+
+2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SslStream.cs : implemented, based on Mono.Security.
 	* LocalCertificateSelectionCallback.cs : extern alias is needed.
 
