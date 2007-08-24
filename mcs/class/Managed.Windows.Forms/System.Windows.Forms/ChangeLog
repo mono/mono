@@ -1,3 +1,10 @@
+
+2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* NodeLabelEditEventArgs.cs: EndEdit immediately when CancelEdit is called.
+	Not a big fan of reacting immediately to a field in an EventArg, but that's
+	the way it's done.  (This is part of the previous commit that got left out.)
+
 2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FolderBrowserDialog.cs: Removed need for separate description field.

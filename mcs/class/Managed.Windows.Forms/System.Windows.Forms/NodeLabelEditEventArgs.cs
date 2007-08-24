@@ -45,7 +45,12 @@ namespace System.Windows.Forms {
 
 		public bool CancelEdit {
 			get { return cancel; }
-			set { cancel = value; }
+			set {
+				cancel = value;
+				
+				if (cancel)
+					node.EndEdit (true);
+			}
 		}
 
 		public TreeNode Node {
