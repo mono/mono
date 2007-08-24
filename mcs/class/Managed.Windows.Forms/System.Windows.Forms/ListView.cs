@@ -1452,7 +1452,6 @@ namespace System.Windows.Forms
 #if NET_2_0
 			if (show_groups && groups.Count > 0 && view != View.List) {
 				// When groups are used the alignment is always top-aligned
-				int y = 0;
 				rows = 0;
 				cols = 0;
 
@@ -1464,15 +1463,13 @@ namespace System.Windows.Forms
 					if (items_in_group == 0)
 						continue;
 
-					group.starting_row = rows;
-					group.current_item = 0;
-
 					int group_cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
 					if (group_cols <= 0)
 						group_cols = 1;
 					int group_rows = (int) Math.Ceiling ((double)items_in_group / (double)group_cols);
 
-					y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, group_rows);
+					group.starting_row = rows;
+					group.rows = group_rows;
 
 					cols = Math.Max (group_cols, cols);
 					rows += group_rows;
@@ -1509,11 +1506,19 @@ namespace System.Windows.Forms
 				return;
 
 			Size sz = item_size;
+#if NET_2_0
+			bool using_groups = show_groups && groups.Count > 0 && view != View.List;
+#endif
 
 			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
 
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
 			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
+
+#if NET_2_0
+			if (using_groups)
+				CalculateGroupsLayout (sz, y_spacing);
+#endif
 
 			int row = 0, col = 0;
 			int x = 0, y = 0;
@@ -1526,7 +1531,7 @@ namespace System.Windows.Forms
 					item.Layout ();
 
 #if NET_2_0
-				if (show_groups && groups.Count > 0 && view != View.List) {
+				if (using_groups) {
 					ListViewGroup group = item.Group;
 					if (group == null)
 						group = groups.DefaultGroup;
@@ -1572,6 +1577,22 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		void CalculateGroupsLayout (Size item_size, int y_spacing)
+		{
+			int y = 0;
+
+			for (int i = 0; i < groups.InternalCount; i++) {
+				ListViewGroup group = groups.GetInternalGroup (i);
+				if (group.ItemCount == 0)
+					continue;
+
+				group.current_item = 0; // Reset layout
+				y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, group.rows);
+			}
+
+			layout_ht = y; // Update height taking into account Groups' headers heights
+		}
+
 		int LayoutGroupHeader (ListViewGroup group, int y_origin, int item_height, int y_spacing, int rows)
 		{
 			Rectangle client_area = ClientRectangle;
