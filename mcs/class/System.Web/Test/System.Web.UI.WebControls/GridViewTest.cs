@@ -50,7 +50,6 @@ using System.Collections.Generic;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
-
 	class PokerGridView : GridView
 	{
 		public bool ifPagerInitilized;
@@ -121,8 +120,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			return CreateDataSourceSelectArguments();
 		}
 
-		public DataSourceView DoGetData () {
-			return GetData ();		
+		public DataSourceView DoGetData ()
+		{
+			return GetData ();
 		}
 
 		public GridViewRow doCreateRow (int rowIndex, int dataSourceIndex, DataControlRowType rowType, DataControlRowState rowState)
@@ -253,7 +253,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.OnRowUpdating (e);
 		}
 
-	        public void DoOnSelectedIndexChanged (EventArgs e)
+		public void DoOnSelectedIndexChanged (EventArgs e)
 		{
 			base.OnSelectedIndexChanged (e);
 		}
@@ -304,7 +304,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			RequiresDataBinding = value;
 		}
 
-		public bool GetRequiresDataBinding () {
+		public bool GetRequiresDataBinding ()
+		{
 			return RequiresDataBinding;
 		}
 	}
@@ -335,19 +336,23 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		public class DataSourceObject
 		{
-			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows) {
+			public static List<string> GetList (string sortExpression, int startRowIndex, int maximumRows)
+			{
 				return GetList ();
 			}
 
-			public static List<string> GetList (int startRowIndex, int maximumRows) {
+			public static List<string> GetList (int startRowIndex, int maximumRows)
+			{
 				return GetList ();
 			}
 
-			public static List<string> GetList (string sortExpression) {
+			public static List<string> GetList (string sortExpression)
+			{
 				return GetList ();
 			}
 
-			public static List<string> GetList () {
+			public static List<string> GetList ()
+			{
 				List<string> list = new List<string> ();
 				list.Add ("Norway");
 				list.Add ("Sweden");
@@ -358,7 +363,8 @@ namespace MonoTests.System.Web.UI.WebControls
 				return list;
 			}
 
-			public static int GetCount () {
+			public static int GetCount ()
+			{
 				return GetList ().Count;
 			}
 		}
@@ -367,19 +373,23 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			private static ArrayList _data = new ArrayList ();
 
-			static data () {
+			static data ()
+			{
 				_data.Add (new DataItem (1, "heh1"));
 				_data.Add (new DataItem (2, "heh2"));
 			}
 
-			public data () {
+			public data ()
+			{
 			}
 
-			public ArrayList GetAllItems () {
+			public ArrayList GetAllItems ()
+			{
 				return _data;
 			}
 
-			public void UpdateItem (int id, string name) {
+			public void UpdateItem (int id, string name)
+			{
 				foreach (DataItem i in _data) {
 					if (i.ID == id) {
 						i.Name = name;
@@ -394,7 +404,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			int _id = 0;
 			string _name = "";
 
-			public DataItem (int id, string name) {
+			public DataItem (int id, string name)
+			{
 				_id = id;
 				_name = name;
 			}
@@ -425,8 +436,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			myds.Add ("Israel");
 			myds.Add ("Russia");
 #if VISUAL_STUDIO
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
-                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridViewUpdate.aspx", "GridViewUpdate.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
 #else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
@@ -472,15 +483,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (null, g.PagerTemplate, "PagerTemplate");
 			Assert.AreEqual (10, g.PageSize, "PageSize");
 			Assert.AreEqual ("", g.RowHeaderColumn, "RowHeaderColumn");
-			// ToDo: The Rows property is tested by the GridViewRowCollection and GridViewRow test			
+			// ToDo: The Rows property is tested by the GridViewRowCollection and GridViewRow test
 			// The RowStyle property is tested by the TableItemStyle test (already exists)
-			Assert.AreEqual (false, g.ShowFooter, "ShowFooter");				
+			Assert.AreEqual (false, g.ShowFooter, "ShowFooter");
 			Assert.AreEqual (true, g.ShowHeader, "ShowHeader");
-			Assert.AreEqual (SortDirection.Ascending, g.SortDirection, "SortDirection");			
-			Assert.AreEqual (null, g.TopPagerRow, "TopPagerRow");				
-			Assert.AreEqual (true, g.UseAccessibleHeader, "UseAccessibleHeader");				
+			Assert.AreEqual (SortDirection.Ascending, g.SortDirection, "SortDirection");
+			Assert.AreEqual (null, g.TopPagerRow, "TopPagerRow");
+			Assert.AreEqual (true, g.UseAccessibleHeader, "UseAccessibleHeader");
 		}
-
 
 		[Test]
 		public void GridView_DefaultPropertiesNotWorking ()
@@ -490,9 +500,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (null, g.HeaderRow, "HeaderRow");
 			Assert.AreEqual (true, g.Visible, "ViewVisible");
 			Assert.AreEqual (0, g.PageCount, "PageCount");
-			Assert.AreEqual ("", g.SortExpression, "SortExpression");						
+			Assert.AreEqual ("", g.SortExpression, "SortExpression");
 		}
-
 
 		[Test]
 		public void GridView_AssignedProperties ()
@@ -541,7 +550,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			g.EmptyDataTemplate = template;
 			Assert.IsNotNull (g.EmptyDataTemplate, "EmptyDataTemplate");
-			g.EmptyDataText = "test";			
+			g.EmptyDataText = "test";
 			Assert.AreEqual ("test", g.EmptyDataText, "EmptyDataText");
 
 			g.EnableSortingAndPagingCallbacks = true;
@@ -582,7 +591,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void GridView_Sort_and_DataSourceSelectArguments () {
+		public void GridView_Sort_and_DataSourceSelectArguments ()
+		{
 			DataSourceView view;
 			DataSourceSelectArguments arg;
 			Page p = new Page ();
@@ -619,7 +629,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			g.AllowSorting = false;
 			arg = g.DoCreateDataSourceSelectArguments ();
 			Assert.AreEqual ("sort DESC", arg.SortExpression, "AllowSorting = false, Bound by DataSourceID");
-		
 		}
 
 		[Test]
@@ -654,7 +663,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void GridView_DataKeys () {
+		public void GridView_DataKeys ()
+		{
 			Page p = new Page ();
 
 			PokerGridView gv = new PokerGridView ();
@@ -704,7 +714,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		// contains the arguments passed to the data source. In this implementation, 
 		// the DataSourceSelectArguments object contains the arguments for paging operations.
 		[Test]
-		public void GridView_CreateDataSourceSelectArguments () {
+		public void GridView_CreateDataSourceSelectArguments ()
+		{
 			DataSourceView view;
 			Page p = new Page ();
 
@@ -777,10 +788,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, g.SortExpression, "SortExpression, Bound by DataSource");
 			Assert.AreEqual (SortDirection.Ascending, g.SortDirection, "SortDirection, Bound by DataSource");
 			Assert.IsTrue (arg.Equals (DataSourceSelectArguments.Empty), "AllowSorting = true, Bound by DataSource");
-
 		}
 
-		static void g_Sorting (object sender, GridViewSortEventArgs e) {
+		static void g_Sorting (object sender, GridViewSortEventArgs e)
+		{
 			Assert.AreEqual ("sort", e.SortExpression, "GridViewSortEventArgs.SortExpression");
 			Assert.AreEqual (SortDirection.Descending, e.SortDirection, "GridViewSortEventArgs.SortDirection");
 		}
@@ -799,7 +810,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void GridView_DataBind_NoDataSource () {
+		public void GridView_DataBind_NoDataSource ()
+		{
 			PokerGridView g = new PokerGridView ();
 			g.DataBind ();
 			Assert.AreEqual (0, g.Rows.Count, "GridView_DataBind_NoDataSource");
@@ -808,7 +820,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		bool rowcreatedchecker;
 		bool deleteitemchecker;
 		bool sortingaction;
-
 
 		[Test]
 		public void GridView_DeleteItem ()
@@ -963,8 +974,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			#region IEnumerable Members
 
-			public IEnumerator GetEnumerator () {
-
+			public IEnumerator GetEnumerator ()
+			{
 				for (int i = 0; i < _count; i++)
 					yield return i;
 			}
@@ -973,7 +984,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void GridView_CreateChildControls_2 () {
+		public void GridView_CreateChildControls_2 ()
+		{
 			PokerGridView g = new PokerGridView ();
 			g.AutoGenerateColumns = false;
 			g.AutoGenerateSelectButton = true;
@@ -1005,7 +1017,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void GridView_CreateChildTable () {
+		public void GridView_CreateChildTable ()
+		{
 			PokerGridView g = new PokerGridView ();
 			g.ID = "PokerGridView";
 			g.Caption = "Caption";
@@ -1047,9 +1060,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerGridView g = new PokerGridView ();
 			page.Controls.Add (g);
 			string s = g.doGetCallbackResult ();
-			if (s == null || s == string.Empty) {
+			if (s == null || s == string.Empty)
 				Assert.Fail ("GetCallbackResult");
-			}
 		}
 
 		[Test]
@@ -1603,7 +1615,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		public void GridView_RenderAllowPaging2 () {
+		public void GridView_RenderAllowPaging2 ()
+		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (RenderAllowPaging2)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
 			string OriginControlHtml = @"<div>
@@ -1626,7 +1639,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "RenderDefault");
 		}
 
-		public static void RenderAllowPaging2 (Page p) {
+		public static void RenderAllowPaging2 (Page p)
+		{
 			ArrayList myds = new ArrayList ();
 			myds.Add ("Norway");
 			myds.Add ("Sweden");
@@ -1937,9 +1951,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			IDataItemContainer Container;
 			Target = (TextBox) sender;
 			Container = (IDataItemContainer) Target.BindingContainer;
-			if ((Target.Page.GetDataItem () != null)) {
+			if ((Target.Page.GetDataItem () != null))
 				Target.Text = Convert.ToString (DataBinder.Eval (Target.Page.GetDataItem(),"str"));
-			}
 		}
 
 
@@ -2101,7 +2114,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		///////////////////////////////////////////////////////
 
 		[Test]
-		public void GridView_GetPostBackOptions () {
+		public void GridView_GetPostBackOptions ()
+		{
 			GridView gv = new GridView ();
 			gv.Page = new Page ();
 			IButtonControl btn = new Button ();
@@ -2143,7 +2157,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void GridView_GetPostBackOptions_CausesValidation () {
+		public void GridView_GetPostBackOptions_CausesValidation ()
+		{
 			GridView gv = new GridView ();
 			gv.Page = new Page ();
 			IButtonControl btn = new Button ();
@@ -2157,7 +2172,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		[Test]
 		[ExpectedException(typeof(ArgumentNullException))]
-		public void GridView_GetPostBackOptions_Null_Argument () {
+		public void GridView_GetPostBackOptions_Null_Argument ()
+		{
 			GridView gv = new GridView ();
 			gv.Page = new Page ();
 			PostBackOptions options = ((IPostBackContainer) gv).GetPostBackOptions (null);
@@ -2178,9 +2194,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("SortingSuccess") < 0) {
+			if (pageHTML.IndexOf ("SortingSuccess") < 0)
 				Assert.Fail ("SortingFail");
-			}
 		}
 
 		[Test]
@@ -2198,9 +2213,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("PagingSuccess") < 0) {
+			if (pageHTML.IndexOf ("PagingSuccess") < 0)
 				Assert.Fail ("PagingFail");
-			}
 		}
 
 		[Test]
@@ -2218,9 +2232,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("DeleteSuccess") < 0) {
+			if (pageHTML.IndexOf ("DeleteSuccess") < 0)
 				Assert.Fail ("DeleteFail");
-			}
 		}
 
 		[Test]
@@ -2292,14 +2305,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			pd.PreRenderComplete = GridView_checkrowsupdate;
 			t.Invoker = new PageInvoker (pd);
 			string pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("Edit") < 0) {
+			if (pageHTML.IndexOf ("Edit") < 0)
 				Assert.Fail ("BeforeEdit");
-			}
 
 			string[] merged_data = t.UserData as string[];
-			if (merged_data == null) {
+			if (merged_data == null)
 				Assert.Fail ("Grid rows not created#1");
-			}
 			
 			Assert.AreEqual ("1001", merged_data[1], "Row before update#1");
 			Assert.AreEqual ("Mahesh", merged_data[2], "Row before update#2");
@@ -2315,9 +2326,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHTML = t.Run ();
 
 			merged_data = t.UserData as string[];
-			if (merged_data == null) {
+			if (merged_data == null)
 				Assert.Fail ("Grid rows not created#2");
-			}
 
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -2335,9 +2345,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHTML = t.Run ();
 
 			merged_data = t.UserData as string[];
-			if (merged_data == null) {
+			if (merged_data == null)
 				Assert.Fail ("Grid rows not created#3");
-			}
 
 			Assert.AreEqual ("1001", merged_data[1], "Row before update#1");
 			Assert.AreEqual ("TestEname", merged_data[2], "Row before update#2");
@@ -2392,22 +2401,19 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static void GridView_checkrowsupdate (Page p)
 		{
 			GridView grid = p.FindControl ("Grid") as GridView;
-			if (grid == null) {
+			if (grid == null)
 				Assert.Fail ("Gridview does not been created");
-			}
+
 			string[] data = new string[7];
 			try {
 				data[0] = grid.Rows[0].Cells[0].Controls[0].UniqueID;
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				Assert.Fail ("Update button not been created" + e.Message);
 			}
 			
 			data[1] = grid.Rows[0].Cells[1].Text;
 			data[2] = grid.Rows[0].Cells[2].Text;
 			data[3] = grid.Rows[0].Cells[3].Text;
-
-			
 
 			if (grid.Rows[0].Cells[1].Controls.Count > 0) {
 				data[4] = grid.Rows[0].Cells[1].Controls[0].UniqueID;
@@ -2433,14 +2439,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			t.Invoker = PageInvoker.CreateOnLoad (GridView_postback);
 			pageHTML = t.Run ();
-			if (pageHTML.IndexOf ("EditSuccess") < 0) {
+			if (pageHTML.IndexOf ("EditSuccess") < 0)
 				Assert.Fail ("EditFail");
-			}
 		}
 
 		public void GridView_postback (Page p)
 		{
-
 			PokerGridView b = new PokerGridView ();
 			b.ID = "mygrid";
 			b.PageIndexChanging += new GridViewPageEventHandler (b_PageIndexChanging);
@@ -2825,113 +2829,99 @@ namespace MonoTests.System.Web.UI.WebControls
 		static void grid_SelectedIndexChanging (object sender, GridViewSelectEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "SelectedIndexChanging");
-			}
 		}
 
 		static void grid_SelectedIndexChanged (object sender, EventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "SelectedIndexChanged");
-			}
 		}
 
 		static void grid_PageIndexChanging (object sender, GridViewPageEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "PageIndexChanging");
-			}
 		}
 
 		static void grid_PageIndexChanged (object sender, EventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "PageIndexChanged");
-			}
 		}
 
 		public static void grid_RowUpdated (object sender, GridViewUpdatedEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowUpdated");
-			}
 		}
 
 		public static void grid_RowUpdating (object sender, GridViewUpdateEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowUpdating");
-			}
 		}
 
 		public static void grid_RowEditing (object sender, GridViewEditEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowEditing");
-			}
 		}
 
 		public static void grid_RowDataBound (object sender, GridViewRowEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowDataBound");
-			}
 		}
 
 		public static void grid_RowCreated (object sender, GridViewRowEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowCreated");
-			}
 		}
 
 		public static void grid_RowCommand (object sender, GridViewCommandEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowCommand");
-			}
 		}
 
 		public static void grid_RowCancelingEdit (object sender, GridViewCancelEditEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowCancelingEdit");
-			}
 		}
 
 		public static void grid__RowEditing (object sender, GridViewEditEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "RowEditing");
-			}
 		}
 
 		static void grid_Sorting (object sender, GridViewSortEventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "Sorting");
-			}
 		}
 
 		static void grid_Sorted (object sender, EventArgs e)
 		{
 			Hashtable local = WebTest.CurrentTest.UserData as Hashtable;
-			if (local != null) {
+			if (local != null)
 				local.Add (local.Count, "Sorted");
-			}
 		}
 
 		#endregion
@@ -2939,8 +2929,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		/// <summary>
 		/// All possible exceptions what can be thrown 
 		/// </summary>
-				
-		[Test]	
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GridView_GetDefaultSelectedValue ()
 		{
@@ -2951,7 +2940,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		[Category ("NunitWeb")]
 		[Category ("NotDotNet")]
-		public void GridViewUpdate () {
+		public void GridViewUpdate ()
+		{
 			WebTest t = new WebTest ("GridViewUpdate.aspx");
 			string pageHTML = HtmlDiff.GetControlFromPageHtml (t.Run ());
 			
@@ -3060,7 +3050,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		public void GridView_RequiresDataBinding () {
+		public void GridView_RequiresDataBinding ()
+		{
 			PageDelegates delegates = new PageDelegates ();
 			delegates.LoadComplete = GridView_RequiresDataBinding_LoadComplete;
 			PageInvoker invoker = new PageInvoker (delegates);
@@ -3068,7 +3059,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Run ();
 		}
 
-		public static void GridView_RequiresDataBinding_LoadComplete (Page p) {
+		public static void GridView_RequiresDataBinding_LoadComplete (Page p)
+		{
 			PokerGridView grid = new PokerGridView ();
 			p.Form.Controls.Add (grid);
 
@@ -3084,11 +3076,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (false, grid.GetRequiresDataBinding (), "PagerTemplate was set");
 		}
 
-		public static void BuildTemplateMethod (Control c) { }
+		public static void BuildTemplateMethod (Control c)
+		{
+		}
 
 		[Test]
 		[Category ("NunitWeb")]
-		public void GridView_Pager () {
+		public void GridView_Pager ()
+		{
 			PageDelegates delegates = new PageDelegates ();
 			delegates.Load = GridView_Pager_Load;
 			PageInvoker invoker = new PageInvoker (delegates);
@@ -3096,7 +3091,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = t.Run ();
 		}
 
-		public static void GridView_Pager_Load (Page p) {
+		public static void GridView_Pager_Load (Page p)
+		{
 			// TopAndBottom, PageCount = 1
 			PokerGridView grid = new PokerGridView ();
 			grid.PagerSettings.Position = PagerPosition.TopAndBottom;
@@ -3163,12 +3159,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.IsNull (grid.BottomPagerRow, "#3#BottomPagerRow");
 		}
 
-        [TestFixtureTearDown]
-        public void TearDown()
-        {
-            WebTest.Unload();
-        }
-
+		[TestFixtureTearDown]
+		public void TearDown()
+		{
+			WebTest.Unload();
+		}
 
 		public static DataTable CreateDataSource ()
 		{
@@ -3245,9 +3240,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static DataTable Delete (string ID, string FName, string LName)
 		{
 			DataRow dr = ds.Rows.Find (ID);
-			if (dr != null) {
+			if (dr != null)
 				ds.Rows.Remove (dr);
-			}
 			return ds;
 		}
 
@@ -3336,9 +3330,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static DataTable Delete (string ID, string FName, string LName)
 		{
 			DataRow dr = ds.Rows.Find (ID);
-			if (dr != null) {
+			if (dr != null)
 				ds.Rows.Remove (dr);
-			}
 			return ds;
 		}
 
@@ -3419,11 +3412,3 @@ namespace MonoTests.System.Web.UI.WebControls
 }
 
 #endif
-
-
-
-
-
-
-
-
