@@ -771,6 +771,8 @@ namespace System.Windows.Forms {
 			TreeView tv = TreeView;
 			if (!cancel && tv != null)
 				tv.EndEdit (this);
+			else if (cancel && tv != null)
+				tv.CancelEdit (this);
 		}
 
 		public void Expand () {

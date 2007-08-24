@@ -1,3 +1,11 @@
+2007-08-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Create a CancelEdit method.  Clone the edit_args in EndEdit
+	before calling AfterLabelEdit.  If the user calls BeginEdit in that event,
+	it resets the edit_args.
+	* TreeNode.cs: Call CancelEdit if the user passes cancel = true to EndEdit.
+	[Fixes bug #82577]
+
 2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FolderBrowserDialog.cs: Modifies form caption and text of new folder

@@ -1657,15 +1657,28 @@ namespace System.Windows.Forms {
 			}
 
 			if (edit_node != null && edit_node == node) {
-				
-				OnAfterLabelEdit (edit_args);
+				NodeLabelEditEventArgs e = new NodeLabelEditEventArgs (edit_args.Node, edit_args.Label);
 
-				if (!edit_args.CancelEdit) {
-					if (edit_args.Label != null)
-						edit_node.Text = edit_args.Label;
-				}
+				OnAfterLabelEdit (e);
+
+				if (e.CancelEdit)
+					return;
+
+				if (e.Label != null)
+					edit_node.Text = e.Label;
 			}
 			
+			edit_node = null;
+			UpdateNode (node);
+		}
+
+		internal void CancelEdit (TreeNode node)
+		{
+			edit_args.SetLabel (null);
+			
+			if (edit_text_box != null && edit_text_box.Visible)
+				edit_text_box.Visible = false;
+
 			edit_node = null;
 			UpdateNode (node);
 		}
