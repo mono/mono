@@ -1,3 +1,7 @@
+2007-08-24  Ivan N. Zlatev <contact@i-nz.net>
+
+	* System.Design.dll.sources: add MultilineStringEditor.cs.
+
 2006-12-19  Chris Toshok  <toshok@ximian.com>
 
 	* System.Design.dll.sources: add DataSourceConverter.cs and

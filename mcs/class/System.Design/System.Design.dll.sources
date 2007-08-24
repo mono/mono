@@ -18,6 +18,7 @@ System.ComponentModel.Design/ComponentDesigner.cs
 System.ComponentModel.Design/DateTimeEditor.cs
 System.ComponentModel.Design/InheritanceService.cs
 System.ComponentModel.Design/LocalizationExtenderProvider.cs
+System.ComponentModel.Design/MultilineStringEditor.cs
 System.ComponentModel.Design/ObjectSelectorEditor.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializer.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializerException.cs
