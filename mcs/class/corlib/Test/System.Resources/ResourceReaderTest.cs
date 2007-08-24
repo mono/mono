@@ -53,27 +53,41 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorString_Null ()
+		public void ConstructorString_Path_Null ()
 		{
-			string s = null;
-			ResourceReader r = new ResourceReader (s);
+			try {
+				new ResourceReader ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("path", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void ConstructorString_Empty ()
+		public void ConstructorString_Path_Empty ()
 		{
-			ResourceReader r = new ResourceReader (String.Empty);
+			try {
+				new ResourceReader (String.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty path name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
-
 
 		[Test]
 		[ExpectedException (typeof (FileNotFoundException))]
 		public void ConstructorString_NotFound ()
 		{
 			// use a file name that is *very* unlikely to exsist
-			ResourceReader r = new ResourceReader ("j38f8axvnn9h38hfa9nxn93f8hav4zvag87vvah32o");
+			new ResourceReader ("j38f8axvnn9h38hfa9nxn93f8hav4zvag87vvah32o");
 		}
 
 		[Test]
@@ -82,7 +96,7 @@ namespace MonoTests.System.Resources
 		public void ConstructorString_Bad ()
 		{
 			Assert.IsTrue (File.Exists (m_BadResourceFile));
-			ResourceReader r = new ResourceReader (m_BadResourceFile);
+			new ResourceReader (m_BadResourceFile);
 		}
 
 		[Test]
@@ -97,20 +111,36 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorStream_Null ()
 		{
-			Stream s = null;
-			ResourceReader r = new ResourceReader (s);
+			try {
+				new ResourceReader ((Stream) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("stream", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConstructorStream_Closed ()
 		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
 			stream.Close ();
-			ResourceReader r = new ResourceReader (stream);
+
+			try {
+				new ResourceReader (stream);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Stream was not readable
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -171,6 +201,7 @@ namespace MonoTests.System.Resources
 					Assert.AreEqual (0, entryCount, "#3");
 					entryCount++;
 				}
+				Assert.AreEqual (1, entryCount, "#4");
 			}
 		}
 #endif
@@ -211,13 +242,24 @@ namespace MonoTests.System.Resources
 
 #if NET_2_0
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetResourceDataNullName ()
 		{
 			ResourceReader r = new ResourceReader ("Test/resources/StreamTest.resources");
 			string type;
 			byte [] bytes;
-			r.GetResourceData (null, out type, out bytes);
+
+			try {
+				r.GetResourceData (null, out type, out bytes);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("resourceName", ex.ParamName, "#6");
+			} finally {
+				r.Close ();
+			}
 		}
 
 		[Test]
@@ -247,6 +289,8 @@ namespace MonoTests.System.Resources
 			p = (DictionaryEntry) items ["test3"];
 			Assert.AreEqual ("ResourceTypeCode.ByteArray", p.Key as string, "#3-1");
 			Assert.AreEqual (t3, p.Value as byte [], "#3-2");
+
+			r.Close ();
 		}
 
 		[Test]
@@ -281,6 +325,7 @@ namespace MonoTests.System.Resources
 			// Note that const should not be used here.
 			Assert.AreEqual ("System.Drawing.Size, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", type, "#1");
 			Assert.AreEqual (expected, bytes, "#2");
+			r.Close ();
 		}
 
 		// we currently do not support writing v2 resource files

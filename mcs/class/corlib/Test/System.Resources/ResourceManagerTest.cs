@@ -69,19 +69,29 @@ namespace MonoTests.System.Resources
 				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
 			Assert.AreEqual ("Hello World", rm.GetString ("HelloWorld"), "#01");
 			Assert.AreEqual ("Hello World", rm.GetObject ("HelloWorld"), "#02");
+			rm.ReleaseAllResources ();
 		}
 
 #if NET_2_0
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetStreamOverNonStream ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManager rm = ResourceManager.
 				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
-			UnmanagedMemoryStream s = rm.GetStream ("HelloWorld");
-			Assert.AreEqual (10, s.Length, "#1");
-			Assert.AreEqual ("Hello World", new StreamReader (s).ReadToEnd (), "#2");
+
+			try {
+				rm.GetStream ("HelloWorld");
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Resource 'HelloWorld' was not a Stream - call
+				// GetObject instead
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			} finally {
+				rm.ReleaseAllResources ();
+			}
 		}
 
 		[Test]
@@ -91,6 +101,7 @@ namespace MonoTests.System.Resources
 			ResourceManager rm = ResourceManager.
 				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
 			Assert.IsNull (rm.GetStream ("HelloWorld")); // no such resource
+			rm.ReleaseAllResources ();
 		}
 
 		[Test]
@@ -102,6 +113,8 @@ namespace MonoTests.System.Resources
 			UnmanagedMemoryStream s = rm.GetStream ("test");
 			Assert.AreEqual (22, s.Length, "#1");
 			Assert.AreEqual ("veritas vos liberabit\n", new StreamReader (s).ReadToEnd (), "#2");
+			s.Close ();
+			rm.ReleaseAllResources ();
 		}
 
 		[Test]
@@ -113,6 +126,8 @@ namespace MonoTests.System.Resources
 			UnmanagedMemoryStream s = rm.GetStream ("test", new CultureInfo ("ja-JP"));
 			Assert.AreEqual (22, s.Length, "#1");
 			Assert.AreEqual ("Veritas Vos Liberabit\n", new StreamReader (s).ReadToEnd (), "#2");
+			s.Close ();
+			rm.ReleaseAllResources ();
 		}
 #endif
 
@@ -126,6 +141,7 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual ("Hello World", rm.GetObject ("HelloWorld"), "#02");
 			Assert.AreEqual ("Hallo Welt", rm.GetString ("deHelloWorld"), "#03");
 			Assert.AreEqual ("Hallo Welt", rm.GetObject ("deHelloWorld"), "#04");
+			rm.ReleaseAllResources ();
 		}
 
 		[Test]
@@ -177,10 +193,11 @@ namespace MonoTests.System.Resources
 						true, true);
 			
 			Assert.AreEqual (1, rm.GetResourceSets().Keys.Count, "#03");
+
+			rm.ReleaseAllResources ();
 		}
 		
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestResourceManagerResourceSetClosedException ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -193,8 +210,18 @@ namespace MonoTests.System.Resources
 			rs.Close ();
 			rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
 						true, true);
-			
-			rm.GetString ("HelloWorld");
+
+			try {
+				rm.GetString ("HelloWorld");
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ResourceSet is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			} finally {
+				rm.ReleaseAllResources ();
+			}
 		}
 	}
 }

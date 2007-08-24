@@ -39,5 +39,37 @@ namespace MonoTests.System.Resources
 			}
 		}
 #endif
+
+		[Test] // bug #82566
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
+		public void WriteEnum ()
+		{
+			MemoryStream ms = new MemoryStream ();
+
+			ResourceWriter writer = new ResourceWriter (ms);
+			writer.AddResource ("Targets", AttributeTargets.Assembly);
+			writer.Generate ();
+
+			ms.Position = 0;
+
+			bool found = false;
+
+			ResourceReader reader = new ResourceReader (ms);
+			foreach (DictionaryEntry de in reader) {
+				string name = de.Key as string;
+				Assert.IsNotNull (name, "#1");
+				Assert.AreEqual ("Targets", name, "#2");
+				Assert.IsNotNull (de.Value, "#3");
+				Assert.AreEqual (AttributeTargets.Assembly, de.Value, "#4");
+				found = true;
+			}
+
+			Assert.IsTrue (found, "#5");
+
+			writer.Dispose ();
+		}
+
 	}
 }
