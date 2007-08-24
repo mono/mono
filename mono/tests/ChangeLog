@@ -1,3 +1,8 @@
+2007-08-24  Mark Probst  <mark.probst@gmail.com>
+
+	* coreclr-security.cs, Makefile.am: Added test for CoreCLR
+	security.
+
 2007-08-21  Massimiliano Mantione  <massi@ximian.com>
 
 	* bug-81466.il, bug-81466-lib.il, Makefile.am:
