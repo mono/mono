@@ -1,5 +1,13 @@
 2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FolderBrowserDialog.cs: When adding folder, immediately create the
+	directory with temporary name and rename the directory when editing
+	finishes. This matches MS. Ensure the node for the new folder is 
+	selected and LabelEdit is disabled, when editing is either finished
+	or cancelled.
+
+2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TreeView.cs: When editing label of node, ensure node is visible.
 
 2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>

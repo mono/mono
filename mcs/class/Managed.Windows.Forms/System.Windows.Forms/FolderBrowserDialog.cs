@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Alexander Olk (alex.olk@googlemail.com)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 //
 
@@ -418,22 +419,27 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
-				
+
 				parent_real_path = fbnode.RealPath;
-				
-				FBTreeNode new_node = new FBTreeNode (tmp_filename);
-				new_node.ImageIndex = NodeImageIndex(tmp_filename);
 				
 				FillNode (fbnode);
 				dont_do_onbeforeexpand = true;
 				fbnode.Expand ();
 				dont_do_onbeforeexpand = false;
-				
+
+				// to match MS, immediately creates the new folder
+				// and rename it once the label edit completes
+				string fullPath = Path.Combine (fbnode.RealPath, tmp_filename);
+				if (!vfs.CreateFolder (fullPath))
+					return;
+
+				FBTreeNode new_node = new FBTreeNode (tmp_filename);
+				new_node.ImageIndex = NodeImageIndex (tmp_filename);
+				new_node.RealPath = fullPath;
 				fbnode.Nodes.Add (new_node);
-				
+
 				LabelEdit = true;
-				if (!new_node.IsEditing)
-					new_node.BeginEdit();
+				new_node.BeginEdit();
 			}
 			
 			protected override void OnAfterLabelEdit (NodeLabelEditEventArgs e)
@@ -441,24 +447,31 @@ namespace System.Windows.Forms {
 				if (e.Label != null) {
 					if (e.Label.Length > 0) {
 						FBTreeNode fbnode = e.Node as FBTreeNode;
-						
-						fbnode.RealPath = Path.Combine(parent_real_path, e.Label);
-						
-						if (vfs.CreateFolder (fbnode.RealPath)) {
-							SelectedNode = e.Node;
+
+						string originalPath = fbnode.RealPath;
+						string newPath = Path.Combine (parent_real_path, e.Label);
+
+						if (vfs.MoveFolder (originalPath, newPath)) {
+							fbnode.RealPath = newPath;
 						} else {
-							SelectedNode = e.Node.Parent;
-							e.Node.Parent.Nodes.Remove(e.Node);
+							e.CancelEdit = true;
+							e.Node.BeginEdit ();
+							return;
 						}
-						
-						e.Node.EndEdit (false);
 					} else {
 						e.CancelEdit = true;
-						e.Node.BeginEdit();
+						e.Node.BeginEdit ();
+						return;
 					}
-					
-					LabelEdit = false;
 				}
+
+				// select new folder
+				SelectedNode = e.Node;
+
+				// disable LabelEdit when either edit has finished
+				// or has been cancelled, to prevent the user from
+				// editing label of existing folders
+				LabelEdit = false;
 			}
 			
 			private void SetSelectedPath (string path)
