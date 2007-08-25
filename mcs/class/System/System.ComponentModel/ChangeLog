@@ -1,5 +1,9 @@
 2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* NestedContainer.cs: implemented.
+
+2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TypeDescriptionProvider.cs: implemented.
 	* TypeDescriptionProviderAttribute.cs: implemented.
 	* CustomTypeDescriptor.cs: implemented.
