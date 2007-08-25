@@ -1,11 +1,10 @@
 //
-// TypeDescriptionProvider.cs
+// System.ComponentModel.TypeDescriptionProvider
 //
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
+// Authors:		
+//		Ivan N. Zlatev (contact i-nZ.net)
 //
-// Copyright (C) 2007 Novell, Inc. http://www.novell.com
-//
+// (C) 2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,78 +34,117 @@ using System.Collections;
 
 namespace System.ComponentModel
 {
+
 	public abstract class TypeDescriptionProvider
 	{
+
+		private sealed class EmptyCustomTypeDescriptor : CustomTypeDescriptor 
+		{
+		}
+
+		private EmptyCustomTypeDescriptor _emptyCustomTypeDescriptor;
+		private TypeDescriptionProvider _parent;
+		
 		protected TypeDescriptionProvider ()
 		{
 		}
-
-		[MonoTODO]
-		protected TypeDescriptionProvider (TypeDescriptionProvider other)
+		
+		protected TypeDescriptionProvider (TypeDescriptionProvider parent)
 		{
-			throw new NotImplementedException ();
+			_parent = parent;
 		}
 
-		[MonoTODO]
-		public virtual Object CreateInstance (IServiceProvider provider, Type objectType, Type [] argTypes, object [] args)
+		public virtual object CreateInstance (IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.CreateInstance (provider, objectType, argTypes, args);
+			
+			return System.Activator.CreateInstance (objectType, args);
 		}
 
-		[MonoTODO]
+
 		public virtual IDictionary GetCache (object instance)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetCache (instance);
+
+			return null;
 		}
 
-		[MonoTODO]
+		
 		public virtual ICustomTypeDescriptor GetExtendedTypeDescriptor (object instance)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetExtendedTypeDescriptor (instance);
+
+			if (_emptyCustomTypeDescriptor == null)
+				_emptyCustomTypeDescriptor = new EmptyCustomTypeDescriptor ();
+						
+			return _emptyCustomTypeDescriptor;
 		}
 
-		[MonoTODO]
+		
 		public virtual string GetFullComponentName (object component)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetFullComponentName (component);
+
+			return GetTypeDescriptor (component).GetComponentName ();
 		}
 
-		[MonoTODO]
-		public Type GetReflectionType (Type objectType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
+		
 		public Type GetReflectionType (object instance)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			return GetReflectionType (instance.GetType (), instance);
 		}
 
-		[MonoTODO]
+		
+		public Type GetReflectionType (Type objectType)
+		{
+			return GetReflectionType (objectType, null);
+		}
+
+
 		public virtual Type GetReflectionType (Type objectType, object instance)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetReflectionType (objectType, instance);
+
+			return objectType;
 		}
 
-		[MonoTODO]
-		public ICustomTypeDescriptor GetTypeDescriptor (Type objectType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
+		
 		public ICustomTypeDescriptor GetTypeDescriptor (object instance)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			return GetTypeDescriptor (instance.GetType (), instance);
 		}
 
-		[MonoTODO]
+		
+		public ICustomTypeDescriptor GetTypeDescriptor (Type objectType)
+		{
+			return GetTypeDescriptor (objectType, null);
+		}
+
+		
 		public virtual ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				_parent.GetTypeDescriptor (objectType, instance);
+
+			if (_emptyCustomTypeDescriptor == null)
+				_emptyCustomTypeDescriptor = new EmptyCustomTypeDescriptor ();
+			
+			return _emptyCustomTypeDescriptor;
 		}
+
 	}
+
 }
 
 #endif

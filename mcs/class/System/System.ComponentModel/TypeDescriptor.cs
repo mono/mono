@@ -87,10 +87,26 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
-	[MonoNotSupported("")]
+	[MonoTODO]
 	public static object CreateInstance (IServiceProvider provider, Type objectType, Type [] argTypes, object [] args)
 	{
-		throw new NotImplementedException ();
+		if (objectType == null)
+			throw new ArgumentNullException ("objectType");
+
+		object instance = null;
+
+		if (provider != null) {
+			TypeDescriptionProvider typeDescrProvider = provider.GetService (typeof (TypeDescriptionProvider)) as TypeDescriptionProvider;
+			if (typeDescrProvider != null)
+				instance = typeDescrProvider.CreateInstance (provider, objectType, argTypes, args);
+		}
+
+		// TODO: also search and use the internal providers table once Add/RemoveProvider have been implemented
+
+		if (instance == null)
+			instance = Activator.CreateInstance (objectType, args);
+
+		return instance;
 	}
 #endif
 

@@ -1,11 +1,10 @@
 //
-// TypeDescriptionProviderAttribute.cs
+// System.ComponentModel.TypeDescriptionProviderAttribute
 //
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
+// Authors:		
+//		Ivan N. Zlatev (contact i-nZ.net)
 //
-// Copyright (C) 2007 Novell, Inc. http://www.novell.com
-//
+// (C) 2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,35 +29,34 @@
 
 #if NET_2_0
 
-using System;
-
 namespace System.ComponentModel
 {
-	[AttributeUsage (AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, Inherited=true)]
 	public sealed class TypeDescriptionProviderAttribute : Attribute
 	{
-		string type;
+		private string typeName;
 
-		[MonoTODO]
+		public string TypeName { 
+			get { return this.typeName; }
+		}
+
 		public TypeDescriptionProviderAttribute (string typeName)
 		{
 			if (typeName == null)
-				throw new ArgumentNullException ("typeName");
-			type = typeName;
-		}
+				throw new System.ArgumentNullException ("typeName");
 
-		[MonoTODO]
+			this.typeName = typeName;
+		}
+		
 		public TypeDescriptionProviderAttribute (Type type)
 		{
-			if (type== null)
-				throw new ArgumentNullException ("type");
-			this.type = type.AssemblyQualifiedName;
-		}
+			if (type == null)
+				throw new System.ArgumentNullException ("type");
 
-		public string TypeName {
-			get { return type; }
+			this.typeName = type.AssemblyQualifiedName;
 		}
+		
 	}
-}
 
+}
 #endif

@@ -1,11 +1,10 @@
 //
-// CustomTypeDescriptor.cs
+// System.ComponentModel.CustomTypeDescriptor
 //
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
+// Authors:		
+//		Ivan N. Zlatev (contact i-nZ.net)
 //
-// Copyright (C) 2007 Novell, Inc. http://www.novell.com
-//
+// (C) 2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -34,90 +33,132 @@ using System;
 
 namespace System.ComponentModel
 {
+
 	public abstract class CustomTypeDescriptor : ICustomTypeDescriptor
 	{
+
+		private ICustomTypeDescriptor _parent;
+		
 		protected CustomTypeDescriptor ()
 		{
 		}
 
-		[MonoTODO]
-		protected CustomTypeDescriptor (ICustomTypeDescriptor other)
+		
+		protected CustomTypeDescriptor (ICustomTypeDescriptor parent)
 		{
-			throw new NotImplementedException ();
+			_parent = parent;
 		}
 
-		[MonoTODO]
+
 		public virtual AttributeCollection GetAttributes ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetAttributes ();
+
+			return AttributeCollection.Empty;
 		}
 
-		[MonoTODO]
+
 		public virtual string GetClassName ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetClassName ();
+
+			return null;
 		}
 
-		[MonoTODO]
+
 		public virtual string GetComponentName ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetComponentName ();
+
+			return null;
 		}
 
-		[MonoTODO]
+
 		public virtual TypeConverter GetConverter ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetConverter ();
+
+			return new TypeConverter();
 		}
 
-		[MonoTODO]
-		public virtual EventDescriptor GetDefaultEvent ()
+
+		public virtual EventDescriptor GetDefaultEvent()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetDefaultEvent ();
+			
+			return null;
 		}
 
-		[MonoTODO]
+
 		public virtual PropertyDescriptor GetDefaultProperty ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetDefaultProperty ();
+			
+			return null;
 		}
 
-		[MonoTODO]
-		public virtual Object GetEditor (Type editorBaseType)
+		
+		public virtual object GetEditor (Type editorBaseType)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetEditor (editorBaseType);
+
+			return null;
 		}
 
-		[MonoTODO]
+
 		public virtual EventDescriptorCollection GetEvents ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetEvents ();
+			
+			return EventDescriptorCollection.Empty;
 		}
 
-		[MonoTODO]
-		public virtual EventDescriptorCollection GetEvents (Attribute [] attributes)
+ 
+		public virtual EventDescriptorCollection GetEvents (Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetEvents(attributes);
+			
+			return EventDescriptorCollection.Empty;
 		}
 
-		[MonoTODO]
+ 
 		public virtual PropertyDescriptorCollection GetProperties ()
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetProperties ();
+			
+			return PropertyDescriptorCollection.Empty;
 		}
 
-		[MonoTODO]
-		public virtual PropertyDescriptorCollection GetProperties (Attribute [] attributes)
+		
+		public virtual PropertyDescriptorCollection GetProperties (Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetProperties (attributes);
+			
+			return PropertyDescriptorCollection.Empty;
 		}
 
-		[MonoTODO]
-		public virtual Object GetPropertyOwner (PropertyDescriptor pd)
+
+		public virtual object GetPropertyOwner (PropertyDescriptor pd)
 		{
-			throw new NotImplementedException ();
+			if (_parent != null)
+				return _parent.GetPropertyOwner (pd);
+			
+			return null;
 		}
+		
 	}
+	
 }
 
 #endif
