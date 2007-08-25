@@ -698,13 +698,25 @@ namespace System
 			case 0:
 				return new DateTime (dateData, DateTimeKind.Unspecified);
 			default:
-				return new DateTime (((dateData << 2) >> 2), DateTimeKind.Local);
+				return new DateTime (dateData & 0x3fffffffffffffff, DateTimeKind.Local);
 			}
 		}
 
 		public static DateTime SpecifyKind (DateTime value, DateTimeKind kind)
 		{
 			return new DateTime (value.Ticks, kind);
+		}
+
+#else
+
+		internal long ToBinary ()
+		{
+			return Ticks;
+		}
+
+		internal static DateTime FromBinary (long dateData)
+		{
+			return new DateTime (dateData & 0x3fffffffffffffff);
 		}
 #endif
 
