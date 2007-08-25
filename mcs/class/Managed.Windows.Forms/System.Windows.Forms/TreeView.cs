@@ -1619,6 +1619,8 @@ namespace System.Windows.Forms {
 				Controls.Add (edit_text_box);
 			}
 
+			node.EnsureVisible ();
+
 			edit_text_box.Bounds = node.Bounds;
 			edit_text_box.Width += 4;
 
@@ -1635,7 +1637,7 @@ namespace System.Windows.Forms {
 			if (edit_args.CancelEdit) {
 				edit_node = null;
 				EndEdit (node);
-			}			
+			}
 		}
 
 		private void LabelEditCancelled (object sender, EventArgs e)

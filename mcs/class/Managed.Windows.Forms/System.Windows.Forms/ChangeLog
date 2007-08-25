@@ -1,3 +1,7 @@
+2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TreeView.cs: When editing label of node, ensure node is visible.
+
 2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: Set the value only if it has changed.
