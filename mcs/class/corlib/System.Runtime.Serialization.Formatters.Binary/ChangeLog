@@ -1,3 +1,8 @@
+2007-08-25  Robert Jordan  <robertj@gmx.net>
+
+	* ObjectReader.cs, ObjectWriter.cs, CodeGenerator.cs:
+	Use DateTime.From/ToBinary. Fixes #82400.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* ObjectReader.cs, ObjectReader.cs: Map between System.MonoType[] and
