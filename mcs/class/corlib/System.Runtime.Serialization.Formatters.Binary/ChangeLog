@@ -1,3 +1,8 @@
+2007-08-25  Alan McGovern  <amcgovern@novell.com>
+
+	* ObjectReader.cs, ObjectWriter.cs, CodeGenerator.cs:
+	Reverted fix for #82400.
+
 2007-08-25  Robert Jordan  <robertj@gmx.net>
 
 	* ObjectReader.cs, ObjectWriter.cs, CodeGenerator.cs:

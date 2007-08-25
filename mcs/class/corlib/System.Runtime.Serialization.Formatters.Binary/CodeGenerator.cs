@@ -341,7 +341,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 					
 				case TypeCode.DateTime: 
-					gen.EmitCall (OpCodes.Call, typeof(DateTime).GetMethod("ToBinary", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance), null);
+					gen.EmitCall (OpCodes.Call, typeof(DateTime).GetProperty("Ticks").GetGetMethod(), null);
 					EmitWrite (gen, typeof(long));
 					break;
 					

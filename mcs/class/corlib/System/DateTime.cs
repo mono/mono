@@ -708,18 +708,6 @@ namespace System
 		}
 #endif
 
-#if ONLY_1_1
-		internal long ToBinary ()
-		{
-			return Ticks;
-		}
-
-		internal static DateTime FromBinary (long dateData)
-		{
-			return new DateTime (((dateData << 2) >> 2));
-		}
-#endif
-
 		public static int DaysInMonth (int year, int month)
 		{
 			int[] days ;

@@ -399,7 +399,15 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				case TypeCode.DateTime: {
 					DateTime[] arr = new DateTime [length];
 					for (int n = 0; n < length; n++) {
-						arr [n] = DateTime.FromBinary (reader.ReadInt64 ());
+						ulong nr = reader.ReadUInt64 ();
+						const ulong mask = (1ul << 62) - 1;
+						long ticks = (long) (nr & mask);
+#if NET_2_0
+						DateTimeKind kind = (DateTimeKind) (nr >> 62);
+						arr [n] = new DateTime (ticks, kind);
+#else
+						arr [n] = new DateTime (ticks);
+#endif
 					}
 					val = arr;
 					break;
@@ -875,7 +883,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return reader.ReadChar();
 
 				case TypeCode.DateTime: 
-					return DateTime.FromBinary (reader.ReadInt64());
+					return new DateTime (reader.ReadInt64());
 
 				case TypeCode.Decimal:
 					return Decimal.Parse (reader.ReadString(), CultureInfo.InvariantCulture);
