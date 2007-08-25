@@ -865,8 +865,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				(ITypeDescriptorContext)property_grid.SelectedGridItem,
 				service_container,
 				initial_value);
-
-			SetPropertyValue (value);
+			if (value != initial_value)
+				SetPropertyValue (value);
 		}
 		
 		private void DialogButtonClicked(object sender, EventArgs e) {
