@@ -1,3 +1,8 @@
+2007-08-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Skip the first frame for
+	exceptions raised in unmanaged code. Fixes part of #82594.
+
 2007-08-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (mono_method_to_ir), declsec.c
