@@ -1,3 +1,7 @@
+2007-08-26  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs (IsClsCompliant): Add nullable types test.
+	
 2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : catch other types of exception than XmlException to
