@@ -189,6 +189,7 @@
     <None Include="aspnetconfig\SecurError.aspx" />
     <Content Include="aspnetconfig\Util.Master" />
     <None Include="Controls\Searcher.ascx" />
+    <None Include="nomd5" />
     <EmbeddedResource Include="resources\mainsoft.jpg" />
     <EmbeddedResource Include="resources\untitled.bmp" />
   </ItemGroup>
