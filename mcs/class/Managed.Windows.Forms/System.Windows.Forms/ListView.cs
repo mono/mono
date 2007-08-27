@@ -4696,9 +4696,22 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public ListViewItem Insert (int index, string key, string text, int imageIndex)
+			public ListViewItem Insert (int index, string text, string imageKey)
+			{
+				ListViewItem lvi = new ListViewItem (text, imageKey);
+				return Insert (index, lvi);
+			}
+
+			public virtual ListViewItem Insert (int index, string key, string text, int imageIndex)
 			{
 				ListViewItem lvi = new ListViewItem (text, imageIndex);
+				lvi.Name = key;
+				return Insert (index, lvi);
+			}
+
+			public virtual ListViewItem Insert (int index, string key, string text, string imageKey)
+			{
+				ListViewItem lvi = new ListViewItem (text, imageKey);
 				lvi.Name = key;
 				return Insert (index, lvi);
 			}

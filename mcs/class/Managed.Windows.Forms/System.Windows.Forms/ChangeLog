@@ -1,5 +1,10 @@
 2007-08-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Add a pair of missing 2.0 ListViewItemCollection.Insert
+	methods.
+
+2007-08-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewInsertionMark.cs: New stubbed class.
 
 2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
