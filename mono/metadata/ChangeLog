@@ -1,4 +1,9 @@
 
+Mon Aug 27 18:29:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: unregister thread data structures with a pthread_key_t
+	dtor.
+
 Mon Aug 27 18:27:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: free the thread static data on thread exit.
