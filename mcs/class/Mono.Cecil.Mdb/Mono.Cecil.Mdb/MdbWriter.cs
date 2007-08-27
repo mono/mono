@@ -104,6 +104,8 @@ namespace Mono.Cecil.Mdb {
 
 			Instruction [] instructions = GetInstructions (body);
 			int length = instructions.Length;
+			if (length == 0)
+				return;
 
 			int [] offsets = new int [length];
 			int [] startRows = new int [length];
