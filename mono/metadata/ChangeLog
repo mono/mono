@@ -1,4 +1,8 @@
 
+Mon Aug 27 18:27:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: free the thread static data on thread exit.
+
 Mon Aug 27 10:55:54 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: walk the hierarchy to find the generic definition for
