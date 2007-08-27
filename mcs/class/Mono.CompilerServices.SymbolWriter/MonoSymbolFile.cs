@@ -72,7 +72,8 @@ namespace Mono.CompilerServices.SymbolWriter
 			return base.Read7BitEncodedInt ();
 		}
 	}
-	
+
+#if !CECIL
 	internal class MonoDebuggerSupport
 	{
 		static GetMethodTokenFunc get_method_token;
@@ -122,6 +123,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			return get_local_index (local);
 		}
 	}
+#endif
 
 	public class MonoSymbolFile : IDisposable
 	{
@@ -271,7 +273,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		Guid guid;
 
-		protected MonoSymbolFile (string filename, Assembly assembly)
+		MonoSymbolFile (string filename)
 		{
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
 			reader = new MyBinaryReader (stream);
@@ -297,21 +299,44 @@ namespace Mono.CompilerServices.SymbolWriter
 					"Cannot read symbol file `{0}'", filename);
 			}
 
-			if (assembly != null) {
-				// Check that the MDB file matches the assembly, if we have been
-				// passed an assembly.
-				
-				Module[] modules = assembly.GetModules ();
-				Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
-
-				if (guid != assembly_guid)
-					throw new MonoSymbolFileException (
-						"Symbol file `{0}' does not match assembly `{1}'",
-						filename, assembly.Location);
-			}
-			
 			method_hash = new Hashtable ();
 			source_file_hash = new Hashtable ();
+		}
+
+		void CheckGuidMatch (Guid other, string filename, string assembly)
+		{
+			if (other == guid)
+				return;
+
+			throw new MonoSymbolFileException (
+				"Symbol file `{0}' does not match assembly `{1}'",
+				filename, assembly);
+		}
+
+#if CECIL
+		protected MonoSymbolFile (string filename, Mono.Cecil.AssemblyDefinition assembly) : this (filename)
+		{
+			Guid mvid = assembly.MainModule.Mvid;
+
+			CheckGuidMatch (mvid, filename, assembly.MainModule.Image.FileInformation.FullName);
+		}
+
+		public static MonoSymbolFile ReadSymbolFile (Mono.Cecil.AssemblyDefinition assembly, string filename)
+		{
+			string name = filename + ".mdb";
+
+			return new MonoSymbolFile (name, assembly);
+		}
+#else
+		protected MonoSymbolFile (string filename, Assembly assembly) : this (filename)
+		{
+			// Check that the MDB file matches the assembly, if we have been
+			// passed an assembly.
+
+			Module[] modules = assembly.GetModules ();
+			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
+
+			CheckGuidMatch (assembly_guid, filename, assembly.Location);
 		}
 
 		public static MonoSymbolFile ReadSymbolFile (Assembly assembly)
@@ -321,6 +346,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			return new MonoSymbolFile (name, assembly);
 		}
+#endif
 
 		public static MonoSymbolFile ReadSymbolFile (string mdbFilename)
 		{
@@ -413,6 +439,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			return GetMethod ((int) value);
 		}
 
+#if !CECIL
 		public MethodEntry GetMethod (MethodBase method)
 		{
 			if (reader == null)
@@ -420,7 +447,8 @@ namespace Mono.CompilerServices.SymbolWriter
 			int token = MonoDebuggerSupport.GetMethodToken (method);
 			return GetMethodByToken (token);
 		}
-
+#endif
+		
 		public MethodEntry GetMethod (int index)
 		{
 			if ((index < 1) || (index > ot.MethodCount))

@@ -1,3 +1,7 @@
+2007-08-27  Jb Evain  <jbevain@novell.com>
+
+	* MonoSymbolFile.cs, SymbolWriterImpl.cs: add some Cecil specific
+	code protected by a CECIL defined.
 
 Mon Jan 29 16:51:33 CET 2007 Paolo Molaro <lupus@ximian.com>
 

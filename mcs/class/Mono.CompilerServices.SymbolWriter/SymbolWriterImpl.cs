@@ -41,18 +41,19 @@ namespace Mono.CompilerServices.SymbolWriter
 	public class SymbolWriterImpl: ISymbolWriter
 	{
 		MonoSymbolWriter msw;
-		ModuleBuilder mb;
 
-		delegate Guid GetGuidFunc (ModuleBuilder mb);
-		GetGuidFunc get_guid_func;
-		
 		int nextLocalIndex;
 		int currentToken;
 		string methodName;
 		Stack namespaceStack = new Stack ();
 		bool methodOpened;
-		
+
 		Hashtable documents = new Hashtable ();
+
+#if !CECIL
+		ModuleBuilder mb;
+		delegate Guid GetGuidFunc (ModuleBuilder mb);
+		GetGuidFunc get_guid_func;
 		
 		public SymbolWriterImpl (ModuleBuilder mb)
 		{
@@ -72,6 +73,19 @@ namespace Mono.CompilerServices.SymbolWriter
 			
 			msw.WriteSymbolFile (get_guid_func (mb));
 		}
+#else
+		Guid guid;
+
+		public SymbolWriterImpl (Guid guid)
+		{
+			this.guid = guid;
+		}
+
+		public void Close ()
+		{
+			msw.WriteSymbolFile (guid);
+		}
+#endif
 		
 		public void CloseMethod ()
 		{
