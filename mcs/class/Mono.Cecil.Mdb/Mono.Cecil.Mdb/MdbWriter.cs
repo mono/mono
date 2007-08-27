@@ -2,9 +2,9 @@
 // MdbWriter.cs
 //
 // Author:
-//   Jb Evain (jbevain@gmail.com)
+//   Jb Evain (jbevain@novell.com)
 //
-// (C) 2006 Jb Evain
+// (C) 2007 Novell, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,146 +26,142 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+// Inspired by the pdb2mdb tool written by Robert Jordan, thanks Robert!
+
 namespace Mono.Cecil.Mdb {
 
+	using System;
 	using System.Collections;
-	using SDS = System.Diagnostics.SymbolStore;
+
 	using Mono.CompilerServices.SymbolWriter;
+
+	using Mono.Cecil;
 	using Mono.Cecil.Cil;
 
 	class MdbWriter : ISymbolWriter {
 
-		SymbolWriterImpl m_writer;
+		Guid m_mvid;
+		MonoSymbolWriter m_writer;
+
 		Hashtable m_documents;
 
-		public MdbWriter (SymbolWriterImpl writer)
+		public MdbWriter (Guid mvid, string assembly)
 		{
-			m_writer = writer;
+			m_mvid = mvid;
+			m_writer = new MonoSymbolWriter (assembly);
 			m_documents = new Hashtable ();
+		}
+
+		static Instruction [] GetInstructions (MethodBody body)
+		{
+			ArrayList list = new ArrayList ();
+			foreach (Instruction instruction in body.Instructions)
+				if (instruction.SequencePoint != null)
+					list.Add (instruction);
+
+			return list.ToArray (typeof (Instruction)) as Instruction [];
+		}
+
+		SourceFile GetSourceFile (Document document)
+		{
+			string url = document.Url;
+			SourceFile file = m_documents [url] as SourceFile;
+			if (file != null)
+				return file;
+
+			file = new SourceFile (m_writer.DefineDocument (url));
+			m_documents [url] = file;
+			return file;
+		}
+
+		void Populate (Instruction [] instructions, int [] offsets,
+			int [] startRows, int [] startCols, int [] endRows, int [] endCols,
+			out SourceFile file)
+		{
+			SourceFile document = null;
+
+			for (int i = 0; i < instructions.Length; i++) {
+				Instruction instr = (Instruction) instructions [i];
+				offsets [i] = instr.Offset;
+
+				if (document == null)
+					document = GetSourceFile (instr.SequencePoint.Document);
+
+				startRows [i] = instr.SequencePoint.StartLine;
+				startCols [i] = instr.SequencePoint.StartColumn;
+				endRows [i] = instr.SequencePoint.EndLine;
+				endCols [i] = instr.SequencePoint.EndColumn;
+			}
+
+			file = document;
 		}
 
 		public void Write (MethodBody body, byte [][] variables)
 		{
-			Document document = CreateDocuments (body);
-			if (document != null) {
-				SDS.ISymbolDocumentWriter docWriter = GetDocument (document);
-				m_writer.SetMethodSourceRange (docWriter, 1, 1, docWriter, int.MaxValue, int.MaxValue);
-			}
+			SourceMethod meth = new SourceMethod (body.Method);
 
-			m_writer.OpenMethod (new SDS.SymbolToken ((int) body.Method.MetadataToken.ToUInt ()));
-			m_writer.SetSymAttribute (new SDS.SymbolToken (), "__name", System.Text.Encoding.UTF8.GetBytes (body.Method.Name));
+			SourceFile file;
 
-			CreateScopes (body, body.Scopes, variables);
+			Instruction [] instructions = GetInstructions (body);
+			int length = instructions.Length;
+
+			int [] offsets = new int [length];
+			int [] startRows = new int [length];
+			int [] startCols = new int [length];
+			int [] endRows = new int [length];
+			int [] endCols = new int [length];
+
+			Populate (instructions, offsets, startRows, startCols, endRows, endCols, out file);
+
+			m_writer.OpenMethod (file, meth,
+				startRows [0], startCols [0],
+				endRows [length - 1], endCols [length - 1]);
+
+			for (int i = 0; i < length; i++)
+				m_writer.MarkSequencePoint (offsets [i], startRows [i], startCols [i]);
+			
 			m_writer.CloseMethod ();
-		}
-
-		void CreateScopes (MethodBody body, ScopeCollection scopes, byte [][] variables)
-		{
-			foreach (Scope s in scopes) {
-				int startOffset = s.Start.Offset;
-				int endOffset = s.End == body.Instructions.Outside ?
-					body.Instructions[body.Instructions.Count - 1].Offset + 1 :
-					s.End.Offset;
-
-				m_writer.OpenScope (startOffset);
-				m_writer.UsingNamespace (body.Method.DeclaringType.Namespace);
-				m_writer.OpenNamespace (body.Method.DeclaringType.Namespace);
-
-				int start = body.Instructions.IndexOf (s.Start);
-				int end = s.End == body.Instructions.Outside ?
-					body.Instructions.Count - 1 :
-					body.Instructions.IndexOf (s.End);
-
-				ArrayList instructions = new ArrayList();
-				for (int i = start; i <= end; i++)
-					if (body.Instructions [i].SequencePoint != null)
-						instructions.Add (body.Instructions [i]);
-
-				Document doc = null;
-
-				int [] offsets = new int [instructions.Count];
-				int [] startRows = new int [instructions.Count];
-				int [] startCols = new int [instructions.Count];
-				int [] endRows = new int [instructions.Count];
-				int [] endCols = new int [instructions.Count];
-
-				for (int i = 0; i < instructions.Count; i++) {
-					Instruction instr = (Instruction) instructions [i];
-					offsets [i] = instr.Offset;
-
-					if (doc == null)
-						doc = instr.SequencePoint.Document;
-
-					startRows [i] = instr.SequencePoint.StartLine;
-					startCols [i] = instr.SequencePoint.StartColumn;
-					endRows [i] = instr.SequencePoint.EndLine;
-					endCols [i] = instr.SequencePoint.EndColumn;
-				}
-
-				m_writer.DefineSequencePoints (GetDocument (doc),
-					offsets, startRows, startCols, endRows, endCols);
-
-				CreateLocalVariables (s, startOffset, endOffset, variables);
-
-				CreateScopes (body, s.Scopes, variables);
-				m_writer.CloseNamespace ();
-
-				m_writer.CloseScope (endOffset);
-			}
-		}
-
-		void CreateLocalVariables (Scope s, int startOffset, int endOffset, byte [][] variables)
-		{
-			for (int i = 0; i < s.Variables.Count; i++) {
-				VariableDefinition var = s.Variables [i];
-				m_writer.DefineLocalVariable (
-					var.Name,
-					0,
-					variables [var.Index],
-					0,
-					0,
-					0,
-					0,
-					startOffset,
-					endOffset);
-			}
-		}
-
-		Document CreateDocuments (MethodBody body)
-		{
-			Document doc = null;
-			foreach (Instruction instr in body.Instructions) {
-				if (instr.SequencePoint == null)
-					continue;
-
-				if (doc == null)
-					doc = instr.SequencePoint.Document;
-
-				GetDocument (instr.SequencePoint.Document);
-			}
-
-			return doc;
-		}
-
-		SDS.ISymbolDocumentWriter GetDocument (Document document)
-		{
-			SDS.ISymbolDocumentWriter docWriter = m_documents [document.Url] as SDS.ISymbolDocumentWriter;
-			if (docWriter != null)
-				return docWriter;
-
-			docWriter = m_writer.DefineDocument (
-				document.Url,
-				GuidAttribute.GetGuidFromValue ((int) document.Language, typeof (DocumentLanguage)),
-				GuidAttribute.GetGuidFromValue ((int) document.LanguageVendor, typeof (DocumentLanguageVendor)),
-				GuidAttribute.GetGuidFromValue ((int) document.Type, typeof (DocumentType)));
-
-			m_documents [document.Url] = docWriter;
-			return docWriter;
 		}
 
 		public void Dispose ()
 		{
-			m_writer.Close ();
+			m_writer.WriteSymbolFile (m_mvid);
+		}
+
+		class SourceFile : ISourceFile {
+
+			SourceFileEntry m_entry;
+
+			public SourceFileEntry Entry {
+				get { return m_entry; }
+			}
+
+			public SourceFile (SourceFileEntry entry)
+			{
+				m_entry = entry;
+			}
+		}
+
+		class SourceMethod : ISourceMethod {
+
+			MethodDefinition m_method;
+
+			public string Name {
+				get { return m_method.Name; }
+			}
+
+			public int NamespaceID {
+				get { return 0; }
+			}
+
+			public int Token {
+				get { return (int) m_method.MetadataToken.ToUInt (); }
+			}
+
+			public SourceMethod (MethodDefinition method)
+			{
+				m_method = method;
+			}
 		}
 	}
 }

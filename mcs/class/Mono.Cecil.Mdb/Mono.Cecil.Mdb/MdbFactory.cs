@@ -43,9 +43,7 @@ namespace Mono.Cecil.Mdb {
 
 		public ISymbolWriter CreateWriter (ModuleDefinition module, string assembly)
 		{
-			SymbolWriterImpl writer = new SymbolWriterImpl (module.Mvid);
-			writer.Initialize (IntPtr.Zero, assembly, true);
-			return new MdbWriter (writer);
+			return new MdbWriter (module.Mvid, assembly);
 		}
 	}
 }
