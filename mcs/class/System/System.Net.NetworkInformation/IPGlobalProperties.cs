@@ -27,8 +27,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.Collections.Specialized;
+using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Net.NetworkInformation {
 	public abstract class IPGlobalProperties {
@@ -41,7 +44,9 @@ namespace System.Net.NetworkInformation {
 		{
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
-				throw new NotImplementedException ();
+				if (File.Exists (MibIPGlobalProperties.StatisticsFile))
+					return new MibIPGlobalProperties ();
+				throw new NotSupportedException ("This platform is not supported");
 			default:
 				return new Win32IPGlobalProperties ();
 			}
@@ -64,6 +69,162 @@ namespace System.Net.NetworkInformation {
 		public abstract string HostName { get; }
 		public abstract bool IsWinsProxy { get; }
 		public abstract NetBiosNodeType NodeType { get; }
+	}
+
+	// It expects /proc/net/snmp file formattes as:
+	// http://www.linuxdevcenter.com/linux/2000/11/16/example5.html
+	class MibIPGlobalProperties : IPGlobalProperties
+	{
+		public const string StatisticsFile = "/proc/net/snmp";
+		public const string StatisticsFileIPv6 = "/proc/net/snmp6";
+
+		StringDictionary GetProperties4 (string item)
+		{
+			string file = StatisticsFile;
+
+			string head = item + ": ";
+			using (StreamReader sr = new StreamReader (file, Encoding.ASCII)) {
+				string [] keys = null;
+				string [] values = null;
+				string s = String.Empty;
+				do {
+					s = sr.ReadLine ();
+					if (String.IsNullOrEmpty (s))
+						continue;
+					if (s.Length <= head.Length || String.CompareOrdinal (s, 0, head, 0, head.Length) != 0)
+						continue;
+					if (keys == null)
+						keys = s.Substring (head.Length).Split (' ');
+					else if (values != null)
+						// hmm, there may be better error type...
+						throw CreateException (file, String.Format ("Found duplicate line for values for the same item '{0}'", item));
+					else {
+						values = s.Substring (head.Length).Split (' ');
+						break;
+					}
+				} while (!sr.EndOfStream);
+
+				if (values == null)
+					throw CreateException (file, String.Format ("No corresponding line was not found for '{0}'", item));
+				if (keys.Length != values.Length)
+					throw CreateException (file, String.Format ("The counts in the header line and the value line do not match for '{0}'", item));
+				StringDictionary dic = new StringDictionary ();
+				for (int i = 0; i < keys.Length; i++)
+					dic [keys [i]] = values [i];
+				return dic;
+			}
+		}
+
+		StringDictionary GetProperties6 (string item)
+		{
+			if (!File.Exists (StatisticsFileIPv6))
+				throw new NetworkInformationException ();
+
+			string file = StatisticsFileIPv6;
+
+			string head = item;
+			using (StreamReader sr = new StreamReader (file, Encoding.ASCII)) {
+				StringDictionary dic = new StringDictionary ();
+				string s = String.Empty;
+				do {
+					s = sr.ReadLine ();
+					if (String.IsNullOrEmpty (s))
+						continue;
+					if (s.Length <= head.Length || String.CompareOrdinal (s, 0, head, 0, head.Length) != 0)
+						continue;
+					int idx = s.IndexOfAny (wsChars, head.Length);
+					if (idx < 0)
+						throw CreateException (file, null);
+					dic [s.Substring (head.Length, idx - head.Length)] = s.Substring (idx + 1).Trim (wsChars);
+				} while (!sr.EndOfStream);
+
+				return dic;
+			}
+		}
+
+		static readonly char [] wsChars = new char [] {' ', '\t'};
+
+		Exception CreateException (string file, string msg)
+		{
+			return new InvalidOperationException (String.Format ("Unsupported (unexpected) '{0}' file format. ", file) + msg);
+		}
+
+		public override TcpConnectionInformation [] GetActiveTcpConnections ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IPEndPoint [] GetActiveTcpListeners ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IPEndPoint [] GetActiveUdpListeners ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IcmpV4Statistics GetIcmpV4Statistics ()
+		{
+			return new MibIcmpV4Statistics (GetProperties4 ("Icmp"));
+		}
+
+		public override IcmpV6Statistics GetIcmpV6Statistics ()
+		{
+			return new MibIcmpV6Statistics (GetProperties6 ("Icmp6"));
+		}
+
+		public override IPGlobalStatistics GetIPv4GlobalStatistics ()
+		{
+			return new MibIPGlobalStatistics (GetProperties4 ("Ip"));
+		}
+
+		public override IPGlobalStatistics GetIPv6GlobalStatistics ()
+		{
+			return new MibIPGlobalStatistics (GetProperties6 ("Ip6"));
+		}
+
+		public override TcpStatistics GetTcpIPv4Statistics ()
+		{
+			return new MibTcpStatistics (GetProperties4 ("Tcp"));
+		}
+
+		public override TcpStatistics GetTcpIPv6Statistics ()
+		{
+			// There is no TCP info in /proc/net/snmp,
+			// so it is shared with IPv4 info.
+			return new MibTcpStatistics (GetProperties4 ("Tcp"));
+		}
+
+		public override UdpStatistics GetUdpIPv4Statistics ()
+		{
+			return new MibUdpStatistics (GetProperties4 ("Udp"));
+		}
+
+		public override UdpStatistics GetUdpIPv6Statistics ()
+		{
+			return new MibUdpStatistics (GetProperties6 ("Udp6"));
+		}
+
+		public override string DhcpScopeName {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string DomainName {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override string HostName {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override bool IsWinsProxy {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override NetBiosNodeType NodeType {
+			get { throw new NotImplementedException (); }
+		}
 	}
 
 	class Win32IPGlobalProperties : IPGlobalProperties
@@ -404,7 +565,6 @@ namespace System.Net.NetworkInformation {
 				get { return new IPEndPoint (new IPAddress (LocalAddr.Bytes, LocalScopeId), LocalPort); }
 			}
 		}
-
 	}
 }
 #endif

@@ -1,5 +1,12 @@
 2007-08-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* IPGlobalProperties.cs, TcpStatistics.cs,
+	  IPGlobalStatistics.cs, IcmpV4Statistics.cs,
+	  IcmpV6Statistics.cs, UdpStatistics.cs :
+	  and here is non-Windows version, based on /proc/net/snmp(6).
+
+2007-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IPGlobalProperties.cs, TcpConnectionInformation.cs,
 	  TcpStatistics.cs, IPGlobalStatistics.cs, IcmpV4Statistics.cs,
 	  IcmpV6Statistics.cs, UdpStatistics.cs :

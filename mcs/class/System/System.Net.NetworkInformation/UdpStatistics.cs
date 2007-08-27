@@ -27,6 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.Collections.Specialized;
+using System.Globalization;
+
 namespace System.Net.NetworkInformation {
 	public abstract class UdpStatistics {
 		protected UdpStatistics ()
@@ -38,6 +41,37 @@ namespace System.Net.NetworkInformation {
 		public abstract long IncomingDatagramsDiscarded { get; }
 		public abstract long IncomingDatagramsWithErrors { get; }
 		public abstract int UdpListeners { get; }
+	}
+
+	class MibUdpStatistics : UdpStatistics
+	{
+		StringDictionary dic;
+
+		public MibUdpStatistics (StringDictionary dic)
+		{
+			this.dic = dic;
+		}
+
+		long Get (string name)
+		{
+			return dic [name] != null ? long.Parse (dic [name], NumberFormatInfo.InvariantInfo) : 0;
+		}
+
+		public override long DatagramsReceived {
+			get { return Get ("InDatagrams"); }
+		}
+		public override long DatagramsSent {
+			get { return Get ("OutDatagrams"); }
+		}
+		public override long IncomingDatagramsDiscarded {
+			get { return Get ("NoPorts"); }
+		}
+		public override long IncomingDatagramsWithErrors {
+			get { return Get ("InErrors"); }
+		}
+		public override int UdpListeners {
+			get { return (int) Get ("NumAddrs"); }
+		}
 	}
 
 	class Win32UdpStatistics : UdpStatistics
