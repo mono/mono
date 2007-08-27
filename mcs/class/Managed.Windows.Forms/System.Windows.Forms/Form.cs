@@ -1885,7 +1885,7 @@ namespace System.Windows.Forms {
 
 			if ((XplatUI.SupportsTransparency() & TransparencySupport.Set) != 0) {
 				if (allow_transparency) {
-					XplatUI.SetWindowTransparency(Handle, Opacity, TransparencyKey);
+					XplatUI.SetWindowTransparency(Handle, opacity, TransparencyKey);
 				}
 			}
 

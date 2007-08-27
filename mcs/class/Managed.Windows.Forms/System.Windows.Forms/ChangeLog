@@ -1,5 +1,11 @@
 2007-08-27  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Form.cs: Uses opacity var instead of Opacity property in CreateHandle
+	because getter dont returns right value before handle creation. Thanks 
+	to George. Fixes #82569.  
+
+2007-08-27  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Theme.cs: Revert last patch, it causes error under win32. 
 
 2007-08-27  Everaldo Canuto  <ecanuto@novell.com>
