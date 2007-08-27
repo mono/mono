@@ -1,3 +1,7 @@
+2007-08-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewInsertionMark.cs: New stubbed class.
+
 2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FolderBrowserDialog.cs: When adding folder, immediately create the
