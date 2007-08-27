@@ -273,14 +273,18 @@ namespace System.Web.UI.HtmlControls
 			w.WriteAttribute ("method", Method);
 			w.WriteAttribute ("action", action);
 
+			/*
+			 * This is a hack that guarantees the ID is set properly for HtmlControl to
+			 * render it later on. As ugly as it is, we use it here because of the way
+			 * the ID, ClientID and UniqueID properties work internally in our Control
+			 * code.
+			 *
+			 * Fixes bug #82596
+			 */
 			if (ID == null) {
-				/* If ID != null then HtmlControl will
-				 * write the id attribute
-				 */
-				w.WriteAttribute ("id", ClientID);
-				Attributes.Remove ("id");
+				string client = ClientID;
 			}
-
+			
 			string submit = Page.GetSubmitStatements ();
 			if (submit != null && submit != "") {
 				Attributes.Remove ("onsubmit");

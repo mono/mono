@@ -1,3 +1,8 @@
+2007-08-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlForm.cs: make sure the ID is set before HtmlControls renders
+	the attributes. Fixes bug #82596
+
 2007-08-05  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HtmlHead.cs: refactoring, used AddAttribute overload without encoding
