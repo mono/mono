@@ -232,7 +232,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test] // bug #81333
-		[Category ("NotWorking")]
 		public void ToStringTest ()
 		{
 			HttpCookie cookie;

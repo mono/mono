@@ -1,3 +1,7 @@
+2007-08-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpCookieTest.cs: the ToStringTest works now.
+
 2007-07-30 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* HttpResponseTest.cs: Test_Response, TestResponse_Chunked marked as

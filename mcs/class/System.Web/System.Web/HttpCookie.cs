@@ -243,7 +243,7 @@ namespace System.Web {
 
                                        string[] vals = GetValues (key);
                                        if(vals == null)
-                                               vals = new string[0];
+                                               vals = new string[1] {String.Empty};
 
 				       bool first_val = true;
                                        foreach (string v in vals) {
@@ -278,12 +278,11 @@ namespace System.Web {
 					Clear();
 					name = string.Empty;
 				}
-				if (value == null)
-					value = string.Empty;
+//				if (value == null)
+//					value = string.Empty;
 
 				base.Set (name, value);
 			}
 		}
 	}
-
 }
