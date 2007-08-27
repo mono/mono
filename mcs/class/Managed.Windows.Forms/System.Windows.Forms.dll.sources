@@ -442,6 +442,7 @@ System.Windows.Forms/ListViewGroup.cs
 System.Windows.Forms/ListViewGroupCollection.cs
 System.Windows.Forms/ListViewHitTestInfo.cs
 System.Windows.Forms/ListViewHitTestLocations.cs
+System.Windows.Forms/ListViewInsertionMark.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
 System.Windows.Forms/ListViewItemMouseHoverEventArgs.cs
