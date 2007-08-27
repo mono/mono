@@ -1,5 +1,9 @@
 2007-08-27  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Theme.cs: Revert last patch, it causes error under win32. 
+
+2007-08-27  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Theme.cs: Uses Environment.SpecialFolder.DesktopDirectory instead of 
 	Environment.SpecialFolder.Desktop in Places method, Desktop returns the 
 	logical Desktop rather than the physical file system location. Fixes #82603. 
