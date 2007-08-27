@@ -1656,6 +1656,7 @@ namespace System.Windows.Forms {
 		{
 			if (edit_text_box != null && edit_text_box.Visible) {
 				edit_text_box.Visible = false;
+				Focus ();
 			}
 
 			if (edit_node != null && edit_node == node) {
@@ -1678,8 +1679,10 @@ namespace System.Windows.Forms {
 		{
 			edit_args.SetLabel (null);
 			
-			if (edit_text_box != null && edit_text_box.Visible)
+			if (edit_text_box != null && edit_text_box.Visible) {
 				edit_text_box.Visible = false;
+				Focus ();
+			}
 
 			edit_node = null;
 			UpdateNode (node);

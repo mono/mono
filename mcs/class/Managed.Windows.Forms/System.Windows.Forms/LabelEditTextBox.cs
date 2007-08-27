@@ -57,11 +57,13 @@ namespace System.Windows.Forms {
 			switch (e.KeyCode) {
 				case Keys.Return:
 					Visible = false;
+					Parent.Focus ();
 					e.Handled = true;
 					OnEditingFinished (e);
 					break;
 				case Keys.Escape:
 					Visible = false;
+					Parent.Focus ();
 					e.Handled = true;
 					OnEditingCancelled (e);
 					break;

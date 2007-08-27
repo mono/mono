@@ -1,3 +1,9 @@
+2007-08-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LabelEditTextBox.cs, TreeView.cs: After hiding the textbox used
+	for label editting, make sure we focus back on the TreeView.
+	[Fixes bug #82590]
+
 2007-08-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add some 2.0 overrides.
