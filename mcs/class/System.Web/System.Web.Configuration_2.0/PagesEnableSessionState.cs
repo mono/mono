@@ -28,17 +28,14 @@
 
 using System.Resources;
 
+#if NET_2_0
 namespace System.Web.Configuration
 {
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		enum PagesEnableSessionState
-		{
-			False = 0,
-			ReadOnly = 1,
-			True = 2
-		}
+        public enum PagesEnableSessionState
+        {
+                False = 0,
+                ReadOnly = 1,
+                True = 2
+        }
 }
+#endif

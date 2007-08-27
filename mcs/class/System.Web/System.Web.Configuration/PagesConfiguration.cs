@@ -36,7 +36,7 @@ namespace System.Web.Configuration
 	class PagesConfiguration
 	{
 		internal bool Buffer = true;
-		internal PagesEnableSessionState EnableSessionState = PagesEnableSessionState.True;
+		internal string EnableSessionState = "true";
 		internal bool EnableViewState = true;
 		internal bool EnableViewStateMac = false;
 		internal bool SmartNavigation = false;

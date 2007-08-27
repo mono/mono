@@ -1,8 +1,3 @@
-2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* PagesConfigurationHandler.cs: Use enum for EnableSessionState.
-	* PagesConfiguration.cs: Use enum for EnableSessionState.
-
 2007-05-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCapabilitiesBase.cs: move the User-Agent code to a separate

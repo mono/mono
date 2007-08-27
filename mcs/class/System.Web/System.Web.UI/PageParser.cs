@@ -43,13 +43,14 @@ namespace System.Web.UI
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PageParser : TemplateControlParser
 	{
-		PagesEnableSessionState enableSessionState = PagesEnableSessionState.True;
+		bool enableSessionState = true;
 		bool enableViewStateMac = true;
-		bool smartNavigation;
+		bool smartNavigation = false;
 		bool haveTrace;
 		bool trace;
 		bool notBuffer;
 		TraceMode tracemode;
+		bool readonlySessionState;
 		string responseEncoding;
 		string contentType;
 		int codepage = -1;
@@ -111,7 +112,24 @@ namespace System.Web.UI
 #endif
 
 			notBuffer = !ps.Buffer;
-			enableSessionState = ps.EnableSessionState;
+#if NET_2_0
+			switch (ps.EnableSessionState) {
+				case PagesEnableSessionState.True:
+				case PagesEnableSessionState.ReadOnly:
+					enableSessionState = true;
+					break;
+
+				default:
+					enableSessionState = false;
+					break;
+			}
+#else
+			if (String.Compare (ps.EnableSessionState, "true", true, CultureInfo.InvariantCulture) == 0)
+				enableSessionState = true;
+			else
+				enableSessionState = false;
+#endif
+			
 			enableViewStateMac = ps.EnableViewStateMac;
 			smartNavigation = ps.SmartNavigation;
 			validateRequest = ps.ValidateRequest;
@@ -147,23 +165,23 @@ namespace System.Web.UI
 			// note: the 'enableSessionState' configuration property is
 			// processed in a case-sensitive manner while the page-level
 			// attribute is processed case-insensitive
-			string enabless = GetString (atts, "EnableSessionState", null);
+			string enabless = GetString (atts, "EnableSessionState", enableSessionState.ToString ());
 			if (enabless != null) {
-				if (String.Compare (enabless, "readonly", true) == 0)
-					enableSessionState = PagesEnableSessionState.ReadOnly;
-				else if (String.Compare (enabless, "true", true) == 0)
-					enableSessionState = PagesEnableSessionState.True;
-				else if (String.Compare (enabless, "false", true) == 0)
-					enableSessionState = PagesEnableSessionState.False;
-				else
+				readonlySessionState = (String.Compare (enabless, "readonly", true) == 0);
+				if (readonlySessionState == true || String.Compare (enabless, "true", true) == 0) {
+					enableSessionState = true;
+				} else if (String.Compare (enabless, "false", true) == 0) {
+					enableSessionState = false;
+				} else {
 					ThrowParseException ("Invalid value for enableSessionState: " + enabless);
+				}
 			}
 
 			string cp = GetString (atts, "CodePage", null);
 			if (cp != null) {
 				if (responseEncoding != null)
 					ThrowParseException ("CodePage and ResponseEncoding are " +
-						"mutually exclusive.");
+							     "mutually exclusive.");
 
 				int codepage = 0;
 				try {
@@ -418,10 +436,7 @@ namespace System.Web.UI
 		}
 
 		internal bool EnableSessionState {
-			get {
-				return enableSessionState == PagesEnableSessionState.True ||
-					ReadOnlySessionState;
-			}
+			get { return enableSessionState; }
 		}
 
 		internal bool EnableViewStateMac {
@@ -433,9 +448,7 @@ namespace System.Web.UI
 		}
 		
 		internal bool ReadOnlySessionState {
-			get {
-				return enableSessionState == PagesEnableSessionState.ReadOnly;
-			}
+			get { return readonlySessionState; }
 		}
 
 		internal bool HaveTrace {
