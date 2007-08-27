@@ -332,7 +332,9 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			// Check that the MDB file matches the assembly, if we have been
 			// passed an assembly.
-
+			if (assembly == null)
+				return;
+			
 			Module[] modules = assembly.GetModules ();
 			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
 
