@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.TcpConnectionInformation
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +38,30 @@ namespace System.Net.NetworkInformation {
 		public abstract IPEndPoint LocalEndPoint { get; }
 		public abstract IPEndPoint RemoteEndPoint { get; }
 		public abstract TcpState State { get; }
+	}
+
+	class TcpConnectionInformationImpl : TcpConnectionInformation
+	{
+		IPEndPoint local;
+		IPEndPoint remote;
+		TcpState state;
+
+		public TcpConnectionInformationImpl (IPEndPoint local, IPEndPoint remote, TcpState state)
+		{
+			this.local = local;
+			this.remote = remote;
+			this.state = state;
+		}
+
+		public override IPEndPoint LocalEndPoint {
+			get { return local; }
+		}
+		public override IPEndPoint RemoteEndPoint {
+			get { return remote; }
+		}
+		public override TcpState State {
+			get { return state; }
+		}
 	}
 }
 #endif

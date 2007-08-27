@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.UdpStatistics
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +38,45 @@ namespace System.Net.NetworkInformation {
 		public abstract long IncomingDatagramsDiscarded { get; }
 		public abstract long IncomingDatagramsWithErrors { get; }
 		public abstract int UdpListeners { get; }
+	}
+
+	class Win32UdpStatistics : UdpStatistics
+	{
+		Win32_MIB_UDPSTATS info;
+
+		public Win32UdpStatistics (Win32_MIB_UDPSTATS info)
+		{
+			this.info = info;
+		}
+
+		public override long DatagramsReceived {
+			get { return info.InDatagrams; }
+		}
+
+		public override long DatagramsSent {
+			get { return info.OutDatagrams; }
+		}
+
+		public override long IncomingDatagramsDiscarded {
+			get { return info.NoPorts; }
+		}
+
+		public override long IncomingDatagramsWithErrors {
+			get { return info.InErrors; }
+		}
+
+		public override int UdpListeners {
+			get { return info.NumAddrs; }
+		}
+	}
+
+	struct Win32_MIB_UDPSTATS
+	{
+		public uint InDatagrams;
+		public uint NoPorts;
+		public uint InErrors;
+		public uint OutDatagrams;
+		public int NumAddrs;
 	}
 }
 #endif

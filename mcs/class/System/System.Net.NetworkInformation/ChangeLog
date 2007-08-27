@@ -1,3 +1,12 @@
+2007-08-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPGlobalProperties.cs, TcpConnectionInformation.cs,
+	  TcpStatistics.cs, IPGlobalStatistics.cs, IcmpV4Statistics.cs,
+	  IcmpV6Statistics.cs, UdpStatistics.cs :
+	  initial implementation of IPGlobalProperties and its children
+	  for Win32 API, mostly done. Non-Windows implementation should
+	  follow.
+
 2007-08-13  Alan McGovern  <amcgovern@novell.com>
 
 	* PhysicalAddress.cs: Added patch for #82403 to fix some parsing
