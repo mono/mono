@@ -27,7 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -39,13 +41,22 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO ("Unimplemented on non-Windows. A marshalling issue on Windows")]
+		[MonoTODO ("Properties are not implemented in every platform. A marshalling issue on Windows")]
 		public static IPGlobalProperties GetIPGlobalProperties ()
 		{
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
-				if (File.Exists (MibIPGlobalProperties.StatisticsFile))
-					return new MibIPGlobalProperties ();
+				MibIPGlobalProperties impl = null;
+				if (Directory.Exists (MibIPGlobalProperties.ProcDir)) {
+					impl = new MibIPGlobalProperties (MibIPGlobalProperties.ProcDir);
+					if (File.Exists (impl.StatisticsFile))
+						return impl;
+				}
+				if (Directory.Exists (MibIPGlobalProperties.CompatProcDir)) {
+					impl = new MibIPGlobalProperties (MibIPGlobalProperties.CompatProcDir);
+					if (File.Exists (impl.StatisticsFile))
+						return impl;
+				}
 				throw new NotSupportedException ("This platform is not supported");
 			default:
 				return new Win32IPGlobalProperties ();
@@ -71,12 +82,26 @@ namespace System.Net.NetworkInformation {
 		public abstract NetBiosNodeType NodeType { get; }
 	}
 
-	// It expects /proc/net/snmp file formattes as:
+	// It expects /proc/net/snmp (or /usr/compat/linux/proc/net/snmp),
+	// formatted like:
 	// http://www.linuxdevcenter.com/linux/2000/11/16/example5.html
+	// http://www.linuxdevcenter.com/linux/2000/11/16/example2.html
 	class MibIPGlobalProperties : IPGlobalProperties
 	{
-		public const string StatisticsFile = "/proc/net/snmp";
-		public const string StatisticsFileIPv6 = "/proc/net/snmp6";
+		public const string ProcDir = "/proc";
+		public const string CompatProcDir = "/usr/compat/linux/proc";
+
+		public readonly string StatisticsFile, StatisticsFileIPv6, TcpFile, Tcp6File, UdpFile, Udp6File;
+
+		public MibIPGlobalProperties (string procDir)
+		{
+			StatisticsFile = Path.Combine (procDir, "net/snmp");
+			StatisticsFileIPv6 = Path.Combine (procDir, "net/snmp6");
+			TcpFile = Path.Combine (procDir,"net/tcp");
+			Tcp6File = Path.Combine (procDir,"net/tcp6");
+			UdpFile = Path.Combine (procDir,"net/udp");
+			Udp6File = Path.Combine (procDir,"net/udp6");
+		}
 
 		StringDictionary GetProperties4 (string item)
 		{
@@ -148,20 +173,67 @@ namespace System.Net.NetworkInformation {
 		{
 			return new InvalidOperationException (String.Format ("Unsupported (unexpected) '{0}' file format. ", file) + msg);
 		}
+		IPEndPoint [] GetLocalAddresses (List<string []> list)
+		{
+			IPEndPoint [] ret = new IPEndPoint [list.Count];
+			for (int i = 0; i < ret.Length; i++)
+				ret [i] = ToEndpoint (list [i] [1]);
+			return ret;
+		}
+
+		IPEndPoint ToEndpoint (string s)
+		{
+			int idx = s.IndexOf (':');
+			return new IPEndPoint (long.Parse (s.Substring (0, idx), NumberStyles.HexNumber),
+						  int.Parse (s.Substring (idx + 1), NumberStyles.HexNumber));
+		}
+
+		void GetRows (string file, List<string []> list)
+		{
+			if (!File.Exists (file))
+				return;
+			using (StreamReader sr = new StreamReader (file, Encoding.ASCII)) {
+				sr.ReadLine (); // skip first line
+				while (!sr.EndOfStream) {
+					string [] item = sr.ReadLine ().Split (wsChars, StringSplitOptions.RemoveEmptyEntries);
+					if (item.Length < 4)
+						throw CreateException (file, null);
+					list.Add (item);
+				}
+			}
+		}
 
 		public override TcpConnectionInformation [] GetActiveTcpConnections ()
 		{
-			throw new NotImplementedException ();
+			List<string []> list = new List<string []> ();
+			GetRows (TcpFile, list);
+			GetRows (Tcp6File, list);
+
+			TcpConnectionInformation [] ret = new TcpConnectionInformation [list.Count];
+			for (int i = 0; i < ret.Length; i++) {
+				// sl  local_address rem_address   st tx_queue rx_queue tr tm->when retrnsmt   uid  timeout inode
+				IPEndPoint local = ToEndpoint (list [i] [1]);
+				IPEndPoint remote = ToEndpoint (list [i] [2]);
+				TcpState state = (TcpState) int.Parse (list [i] [3], NumberStyles.HexNumber);
+				ret [i] = new TcpConnectionInformationImpl (local, remote, state);
+			}
+			return ret;
 		}
 
 		public override IPEndPoint [] GetActiveTcpListeners ()
 		{
-			throw new NotImplementedException ();
+			List<string []> list = new List<string []> ();
+			GetRows (TcpFile, list);
+			GetRows (Tcp6File, list);
+			return GetLocalAddresses (list);
 		}
 
 		public override IPEndPoint [] GetActiveUdpListeners ()
 		{
-			throw new NotImplementedException ();
+			List<string []> list = new List<string []> ();
+			GetRows (UdpFile, list);
+			GetRows (Udp6File, list);
+			return GetLocalAddresses (list);
 		}
 
 		public override IcmpV4Statistics GetIcmpV4Statistics ()
