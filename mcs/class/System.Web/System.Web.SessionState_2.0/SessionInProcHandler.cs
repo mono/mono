@@ -77,7 +77,7 @@ namespace System.Web.SessionState
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
 		{
 			return new SessionStateStoreData (new SessionStateItemCollection (),
-							  SessionStateUtility.GetSessionStaticObjects(context),
+							  HttpApplicationFactory.ApplicationState.SessionObjects,
 							  timeout);
 		}
 
@@ -156,7 +156,7 @@ namespace System.Web.SessionState
 					item.items = new SessionStateItemCollection ();
 				}
 				return new SessionStateStoreData (item.items,
-								  SessionStateUtility.GetSessionStaticObjects(context),
+								  HttpApplicationFactory.ApplicationState.SessionObjects,
 								  item.timeout);
 			} catch {
 				// we want such errors to be passed to the application.
@@ -344,7 +344,7 @@ namespace System.Web.SessionState
 					expireCallback (key,
 							new SessionStateStoreData (
 								item.items,
-								SessionStateUtility.GetSessionStaticObjects (HttpContext.Current),
+								HttpApplicationFactory.ApplicationState.SessionObjects,
 								item.timeout));
 				} else
 					expireCallback (key, null);
