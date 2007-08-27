@@ -68,8 +68,8 @@ namespace Mono.Cecil.Mdb {
 					s.End.Offset;
 
 				m_writer.OpenScope (startOffset);
-				//m_writer.UsingNamespace (body.Method.DeclaringType.Namespace);
-				//m_writer.OpenNamespace (body.Method.DeclaringType.Namespace);
+				m_writer.UsingNamespace (body.Method.DeclaringType.Namespace);
+				m_writer.OpenNamespace (body.Method.DeclaringType.Namespace);
 
 				int start = body.Instructions.IndexOf (s.Start);
 				int end = s.End == body.Instructions.Outside ?
