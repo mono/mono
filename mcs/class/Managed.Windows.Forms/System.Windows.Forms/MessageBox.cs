@@ -297,7 +297,38 @@ namespace System.Windows.Forms
 					return true;
 				}
 
+				if (((keyData & Keys.Modifiers) == Keys.Control) &&
+					(((keyData & Keys.KeyCode) == Keys.C) ||
+					 ((keyData & Keys.KeyCode) == Keys.Insert))) {  
+					Copy();
+				}
+
 				return base.ProcessDialogKey (keyData);
+			}
+
+			private void Copy ()
+			{
+				string separator = "---------------------------" + Environment.NewLine;
+
+				System.Text.StringBuilder contents = new System.Text.StringBuilder ();
+
+				contents.Append (separator);
+				contents.Append (this.Text).Append (Environment.NewLine);
+				contents.Append (separator);
+				contents.Append (msgbox_text).Append (Environment.NewLine);
+				contents.Append (separator);
+
+				foreach (Button btn in buttons) {
+					if (btn == null)
+						break;
+					contents.Append (btn.Text).Append ("   ");;
+				}
+
+				contents.Append (Environment.NewLine);
+				contents.Append (separator);
+
+				DataObject obj = new DataObject(DataFormats.Text, contents.ToString());
+				Clipboard.SetDataObject (obj);
 			}
 
 			#endregion	// MessageBoxForm Methods

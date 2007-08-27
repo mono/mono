@@ -1,3 +1,8 @@
+2007-08-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MessageBox.cs: Add clipboard copy (ctrl+c) to messagebox. Thanks Andy Hume
+	for the patch. Fixes #82568.
+
 2007-08-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add a pair of missing 2.0 ListViewItemCollection.Insert
