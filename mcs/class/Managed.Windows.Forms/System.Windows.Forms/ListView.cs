@@ -357,6 +357,16 @@ namespace System.Windows.Forms
 		protected override Size DefaultSize {
 			get { return ThemeEngine.Current.ListViewDefaultSize; }
 		}
+#if NET_2_0
+		protected override bool DoubleBuffered {
+			get {
+				return base.DoubleBuffered;
+			}
+			set {
+				base.DoubleBuffered = value;
+			}
+		}
+#endif
 		#endregion	// Protected Properties
 
 		#region Public Instance Properties
@@ -2978,6 +2988,13 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
+#if NET_2_0
+		protected override void OnBackgroundImageChanged (EventArgs args)
+		{
+			base.OnBackgroundImageChanged (args);
+		}
+#endif
+
 		protected virtual void OnBeforeLabelEdit (LabelEditEventArgs e)
 		{
 			LabelEditEventHandler eh = (LabelEditEventHandler)(Events [BeforeLabelEditEvent]);
@@ -3085,6 +3102,16 @@ namespace System.Windows.Forms
 				(ListViewItemSelectionChangedEventHandler) Events [ItemSelectionChangedEvent];
 			if (eh != null)
 				eh (this, args);
+		}
+
+		protected override void OnMouseHover (EventArgs args)
+		{
+			base.OnMouseHover (args);
+		}
+
+		protected override void OnParentChanged (EventArgs args)
+		{
+			base.OnParentChanged (args);
 		}
 #endif
 
