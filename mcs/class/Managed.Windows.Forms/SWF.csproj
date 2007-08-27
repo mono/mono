@@ -1909,6 +1909,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\HtmlElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HtmlElementCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HtmlElementEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HtmlElementEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\HtmlElementInsertionOrientation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2330,6 +2350,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ListViewHitTestLocations.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ListViewInsertionMark.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4130,6 +4155,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Theming\Default\ButtonPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\Default\CheckBoxPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

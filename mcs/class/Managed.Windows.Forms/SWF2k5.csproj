@@ -491,6 +491,10 @@
     <Compile Include="System.Windows.Forms\HorizontalAlignment.cs" />
     <Compile Include="System.Windows.Forms\HScrollProperties.cs" />
     <Compile Include="System.Windows.Forms\HtmlDocument.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElement.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElementCollection.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElementEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElementEventHandler.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementInsertionOrientation.cs" />
     <Compile Include="System.Windows.Forms\Hwnd.cs" />
     <Compile Include="System.Windows.Forms\IButtonControl.cs" />
@@ -576,6 +580,7 @@
     <Compile Include="System.Windows.Forms\ListViewGroupCollection.cs" />
     <Compile Include="System.Windows.Forms\ListViewHitTestInfo.cs" />
     <Compile Include="System.Windows.Forms\ListViewHitTestLocations.cs" />
+    <Compile Include="System.Windows.Forms\ListViewInsertionMark.cs" />
     <Compile Include="System.Windows.Forms\ListViewItem.cs" />
     <Compile Include="System.Windows.Forms\ListViewItemConverter.cs" />
     <Compile Include="System.Windows.Forms\ListViewItemMouseHoverEventArgs.cs" />
@@ -936,6 +941,7 @@
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsGtk.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsNice.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Default\CheckBoxPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ToolStripPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />

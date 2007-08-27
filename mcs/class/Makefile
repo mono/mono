@@ -45,6 +45,7 @@ common_dirs := \
 	Mono.C5				\
 	Mono.Data.Tds			\
 	Mono.Cecil			\
+	Mono.Cecil.Mdb		\
 	System.Transactions		\
 	System.Data			\
 	Mono.Data			\

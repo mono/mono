@@ -1,3 +1,7 @@
+2007-08-27  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: integrate Mono.Cecil.Mdb in the build.
+
 2007-08-11  Andreia Gaita  <avidigal@novell.com>
 
 	* Makefile: Ooops, Mono.Mozilla is being built out of
