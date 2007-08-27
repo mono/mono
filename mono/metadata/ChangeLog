@@ -1,3 +1,7 @@
+2007-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Only do the struct alignment hack on
+	platforms which need it.
 
 Mon Aug 27 18:29:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
