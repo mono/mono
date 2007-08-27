@@ -1,3 +1,9 @@
+
+Mon Aug 27 10:55:54 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: walk the hierarchy to find the generic definition for
+	a class (fixes runtime part of bug #82498).
+
 2007-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_close): Move the closing of the referenced assemblies to
