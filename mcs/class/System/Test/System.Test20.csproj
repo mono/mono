@@ -182,12 +182,15 @@
     <Compile Include="System.ComponentModel\DefaultBindingPropertyAttributeTest.cs" />
     <Compile Include="System.ComponentModel\DisplayNameAttributeTests.cs" />
     <Compile Include="System.ComponentModel\DoubleConverterTests.cs" />
+    <Compile Include="System.ComponentModel\EnumConverterTests.cs" />
     <Compile Include="System.ComponentModel\EventHandlerListTests.cs" />
     <Compile Include="System.ComponentModel\Int16ConverterTests.cs" />
     <Compile Include="System.ComponentModel\Int32ConverterTests.cs" />
     <Compile Include="System.ComponentModel\Int64ConverterTests.cs" />
     <Compile Include="System.ComponentModel\LicenseManagerTests.cs" />
     <!-- <Compile Include="System.ComponentModel\MaskedTextProviderTest.cs" /> -->
+    <Compile Include="System.ComponentModel\LookupBindingPropertiesAttributeTest.cs" />
+    <Compile Include="System.ComponentModel\NestedContainerTest.cs" />
     <Compile Include="System.ComponentModel\PropertyDescriptorCollectionTests.cs" />
     <Compile Include="System.ComponentModel\PropertyDescriptorTests.cs" />
     <Compile Include="System.ComponentModel\SByteConverterTests.cs" />
@@ -206,6 +209,8 @@
     <Compile Include="System.Configuration\ApplicationSettingsBaseTest.cs" />
     <Compile Include="System.Configuration\LocalFileSettingsProviderTest.cs" />
     <Compile Include="System.Configuration\ProviderCollectionTest.cs" />
+    <Compile Include="System.Configuration\SettingElementTest.cs" />
+    <Compile Include="System.Configuration\SettingsBaseTest.cs" />
     <Compile Include="System.Configuration\SettingsPropertyCollectionTest.cs" />
     <Compile Include="System.Configuration\SettingsPropertyTest.cs" />
     <Compile Include="System.Configuration\SettingsPropertyValueCollectionTest.cs" />
