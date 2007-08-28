@@ -1,5 +1,9 @@
 2007-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor): New icall.
+
+2007-08-28  Zoltan Varga  <vargaz@gmail.com>
+
 	* object.c (mono_class_proxy_vtable): Use max_interface_id instead of
 	class->max_interface_id in a one place. Fixes transparentproxy.exe test on ia64.
 
