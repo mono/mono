@@ -1,5 +1,13 @@
 2007-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (handle_initobj): Handle alignment properly.
+
+	* inssel.brg (mini_emit_memset): Ditto.	
+
+	* inssel.brg (mini_emit_memcpy): Ditto.	
+
+	* inssel-sparc.brg: Ditto.		
+
 	* mini.h mini.c inssel-*.brg: Pass alignment information to OP_MEMCPY/MEMSET.
 
 2007-08-26  Zoltan Varga  <vargaz@gmail.com>
