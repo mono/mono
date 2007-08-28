@@ -240,6 +240,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO ("Implemented for Win32, X11 always returns 0,0")]
+		public Point HotSpot {
+			get {
+				int cursor_w, cursor_h, hot_x, hot_y;
+				XplatUI.GetCursorInfo (Handle, out cursor_w, out cursor_h, out hot_x, out hot_y);
+
+				return new Point (hot_x, hot_y);
+			}
+		}
+#endif
 		public Size Size {
 			get {
 				return size;

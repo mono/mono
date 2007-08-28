@@ -275,6 +275,15 @@ namespace System.Windows.Forms {
 			internal short wParamH;
 		}
 
+		[StructLayout (LayoutKind.Sequential)]
+		internal struct ICONINFO {
+			internal bool fIcon;
+			internal Int32 xHotspot;
+			internal Int32 yHotspot;
+			internal IntPtr hbmMask;
+			internal IntPtr hbmColor;
+		}    
+		
 		[StructLayout(LayoutKind.Explicit)]
 		internal struct INPUT {
 			[FieldOffset(0)]
@@ -2360,10 +2369,15 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
+			ICONINFO ii = new ICONINFO ();
+			
+			if (!Win32GetIconInfo (cursor, out ii))
+				throw new Win32Exception ();
+				
 			width = 20;
 			height = 20;
-			hotspot_x = 0;
-			hotspot_y = 0;
+			hotspot_x = ii.xHotspot;
+			hotspot_y = ii.yHotspot;
 		}
 
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
@@ -3561,6 +3575,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("kernel32.dll", EntryPoint = "GetSystemPowerStatus", CallingConvention = CallingConvention.StdCall)]
 		internal static extern Boolean Win32GetSystemPowerStatus (SYSTEMPOWERSTATUS sps);
+
+		[DllImport ("user32.dll", EntryPoint = "GetIconInfo", CallingConvention = CallingConvention.StdCall)]
+		internal static extern bool Win32GetIconInfo (IntPtr hIcon, out ICONINFO piconinfo);
 		#endregion
 	}
 }

@@ -1,5 +1,10 @@
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Cursor.cs: Add HotSpot, hook into XPlatUI.GetCursorInfo.
+	* XPlatUIWin32.cs: Implement hotspot lookup in GetCursorInfo.
+
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* RadioButton.cs: Use 2.0 rendering.  Use base implementation of TextAlign.
 	* Theme.cs, ThemeWin32Classic.cs: Implement 2.0 rendering for RadioButton.
 
