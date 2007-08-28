@@ -1,3 +1,12 @@
+2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+	* DataMemberFieldEditor.cs: stubbed.
+	* DataMemberListEditor.cs: stubbed.
+	* FormatStringEditor.cs: stubbed.
+	* StringCollectionEditor.cs: implemented.
+	* StringArrayEditor.cs: implemented.
+	* TabPageCollectionEditor.cs: implemented.
+	* ListControlStringCollectionEditor.cs: implemented.
+
 2007-08-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ImageIndexEditor.cs: empty class to prevent propertygrid crash.
