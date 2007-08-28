@@ -1503,10 +1503,9 @@ namespace Mono.Cecil {
 			return signatures;
 		}
 
-		byte [] GetVariableSig (VariableDefinition definition)
+		byte [] GetVariableSig (VariableDefinition var)
 		{
-			return m_sigWriter.CompressFieldSig (
-				GetFieldSig (new FieldReference (string.Empty, definition.VariableType)));
+			return m_sigWriter.CompressLocalVar (m_codeWriter.GetLocalVariableSig (var));
 		}
 	}
 }

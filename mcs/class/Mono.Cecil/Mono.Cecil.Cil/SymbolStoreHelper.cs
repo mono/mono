@@ -29,7 +29,6 @@
 namespace Mono.Cecil.Cil {
 
 	using System;
-	using System.IO;
 	using SR = System.Reflection;
 
 	class SymbolStoreHelper {

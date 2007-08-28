@@ -1,3 +1,12 @@
+2007-08-28  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/CodeWriter.cs
+	  Mono.Cecil/ReflectionWriter.cs
+	  Mono.Cecil.Cil/SymbolStoreHelper.cs
+	  Mono.Cecil.Signatures/SignatureWriter.cs:
+		Generate proper variables signatures for symbols
+		stores.
+
 2007-08-19  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CodeReader.cs:

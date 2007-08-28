@@ -124,6 +124,13 @@ namespace Mono.Cecil.Signatures {
 			return m_sigWriter.ToArray ();
 		}
 
+		public byte [] CompressLocalVar (LocalVarSig.LocalVariable var)
+		{
+			m_sigWriter.Empty ();
+			Write (var);
+			return m_sigWriter.ToArray ();
+		}
+
 		void CompressCustomAttribute (CustomAttrib ca, MethodReference ctor, MemoryBinaryWriter writer)
 		{
 			m_sigWriter.Empty ();

@@ -420,32 +420,38 @@ namespace Mono.Cecil.Cil {
 				(int) (m_binaryWriter.BaseStream.Position - pos));
 		}
 
-		LocalVarSig GetLocalVarSig (VariableDefinitionCollection vars)
+		public LocalVarSig.LocalVariable GetLocalVariableSig (VariableDefinition var)
+		{
+			LocalVarSig.LocalVariable lv = new LocalVarSig.LocalVariable ();
+			TypeReference type = var.VariableType;
+
+			lv.CustomMods = m_reflectWriter.GetCustomMods (type);
+
+			if (type is PinnedType) {
+				lv.Constraint |= Constraint.Pinned;
+				type = (type as PinnedType).ElementType;
+			}
+
+			if (type is ReferenceType) {
+				lv.ByRef = true;
+				type = (type as ReferenceType).ElementType;
+			}
+
+			lv.Type = m_reflectWriter.GetSigType (type);
+
+			return lv;
+		}
+
+		public LocalVarSig GetLocalVarSig (VariableDefinitionCollection vars)
 		{
 			LocalVarSig lvs = new LocalVarSig ();
 			lvs.CallingConvention |= 0x7;
 			lvs.Count = vars.Count;
 			lvs.LocalVariables = new LocalVarSig.LocalVariable [lvs.Count];
 			for (int i = 0; i < lvs.Count; i++) {
-				LocalVarSig.LocalVariable lv = new LocalVarSig.LocalVariable ();
-				TypeReference type = vars [i].VariableType;
-
-				lv.CustomMods = m_reflectWriter.GetCustomMods (type);
-
-				if (type is PinnedType) {
-					lv.Constraint |= Constraint.Pinned;
-					type = (type as PinnedType).ElementType;
-				}
-
-				if (type is ReferenceType) {
-					lv.ByRef = true;
-					type = (type as ReferenceType).ElementType;
-				}
-
-				lv.Type = m_reflectWriter.GetSigType (type);
-
-				lvs.LocalVariables [i] = lv;
+				lvs.LocalVariables [i] = GetLocalVariableSig (vars [i]);
 			}
+
 			return lvs;
 		}
 
