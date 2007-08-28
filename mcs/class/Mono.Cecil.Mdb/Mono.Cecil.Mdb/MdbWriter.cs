@@ -121,8 +121,18 @@ namespace Mono.Cecil.Mdb {
 
 			for (int i = 0; i < length; i++)
 				m_writer.MarkSequencePoint (offsets [i], startRows [i], startCols [i]);
-			
+
+			MarkVariables (body, variables);
+
 			m_writer.CloseMethod ();
+		}
+
+		void MarkVariables (MethodBody body, byte [][] variables)
+		{
+			for (int i = 0; i < body.Variables.Count; i++) {
+				VariableDefinition var = body.Variables [i];
+				m_writer.DefineLocalVariable (i, var.Name, variables [i]);
+			}
 		}
 
 		public void Dispose ()

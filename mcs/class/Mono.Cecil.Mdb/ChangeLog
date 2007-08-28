@@ -1,3 +1,8 @@
+2007-08-28  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Mdb/MdbWriter.cs:
+		Rewrite variables infos.
+
 2007-08-27  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Mdb/MdbWriter.cs:
