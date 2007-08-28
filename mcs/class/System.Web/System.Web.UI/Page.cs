@@ -199,14 +199,12 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public HttpApplicationState Application
-	{
+	public HttpApplicationState Application {
 		get { return _application; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected bool AspCompatMode
-	{
+	protected bool AspCompatMode {
 #if NET_2_0
 		get { return false; }
 #endif
@@ -217,22 +215,19 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public bool Buffer
-	{
+	public bool Buffer {
 		get { return Response.BufferOutput; }
 		set { Response.BufferOutput = value; }
 	}
 #else
-	protected bool Buffer
-	{
+	protected bool Buffer {
 		set { Response.BufferOutput = value; }
 	}
 #endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public Cache Cache
-	{
+	public Cache Cache {
 		get {
 			if (_cache == null)
 				throw new HttpException ("Cache is not available.");
@@ -246,8 +241,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("Value do override the automatic browser detection and force the page to use the specified browser.")]
-	public string ClientTarget
-	{
+	public string ClientTarget {
 		get { return (clientTarget == null) ? "" : clientTarget; }
 		set {
 			clientTarget = value;
@@ -260,14 +254,12 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public int CodePage
-	{
+	public int CodePage {
 		get { return Response.ContentEncoding.CodePage; }
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 #else
-	protected int CodePage
-	{
+	protected int CodePage {
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 #endif
@@ -276,20 +268,17 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public string ContentType
-	{
+	public string ContentType {
 		get { return Response.ContentType; }
 		set { Response.ContentType = value; }
 	}
 #else
-	protected string ContentType
-	{
+	protected string ContentType {
 		set { Response.ContentType = value; }
 	}
 #endif
 
-	protected override HttpContext Context
-	{
+	protected override HttpContext Context {
 		get {
 			if (_context == null)
 				return HttpContext.Current;
@@ -302,15 +291,13 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public string Culture
-	{
+	public string Culture {
 		get { return Thread.CurrentThread.CurrentCulture.Name; }
 		set { Thread.CurrentThread.CurrentCulture = GetPageCulture (value, Thread.CurrentThread.CurrentCulture); }
 	}
 #else
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected string Culture
-	{
+	protected string Culture {
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
 #endif
@@ -331,8 +318,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 	[Browsable (false)]
-	public override bool EnableViewState
-	{
+	public override bool EnableViewState {
 		get { return _viewState; }
 		set { _viewState = value; }
 	}
@@ -347,8 +333,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #else
 	protected
 #endif
-	bool EnableViewStateMac
-	{
+	bool EnableViewStateMac {
 		get { return _viewStateMac; }
 		set { _viewStateMac = value; }
 	}
@@ -363,8 +348,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("The URL of a page used for error redirection.")]
-	public string ErrorPage
-	{
+	public string ErrorPage {
 		get { return _errorPage; }
 		set {
 			HttpContext ctx = Context;
@@ -379,8 +363,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[Obsolete]
 #endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected ArrayList FileDependencies
-	{
+	protected ArrayList FileDependencies {
 		set {
 			if (Response != null)
 				Response.AddFileDependencies (value);
@@ -391,16 +374,14 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
-	public override string ID
-	{
+	public override string ID {
 		get { return base.ID; }
 		set { base.ID = value; }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public bool IsPostBack
-	{
+	public bool IsPostBack {
 		get {
 #if NET_2_0
 			return isPostBack;
@@ -487,8 +468,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public HttpRequest Request
-	{
+	public HttpRequest Request {
 		get {
 			if (_request == null)
 				throw new HttpException("Request is not available in this context.");
@@ -498,8 +478,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public HttpResponse Response
-	{
+	public HttpResponse Response {
 		get {
 			if (_response == null)
 				throw new HttpException ("Response is not available in this context.");
@@ -511,31 +490,25 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public string ResponseEncoding
-	{
+	public string ResponseEncoding {
 		get { return Response.ContentEncoding.WebName; }
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 #else
-	protected string ResponseEncoding
-	{
+	protected string ResponseEncoding {
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 #endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public HttpServerUtility Server
-	{
-		get {
-			return Context.Server;
-		}
+	public HttpServerUtility Server {
+		get { return Context.Server; }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public virtual HttpSessionState Session
-	{
+	public virtual HttpSessionState Session {
 		get {
 			if (_session != null)
 				return _session;
@@ -560,8 +533,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[Obsolete]
 #endif
 	[Browsable (false)]
-	public bool SmartNavigation
-	{
+	public bool SmartNavigation {
 		get { return _smartNavigation; }
 		set { _smartNavigation = value; }
 	}
@@ -632,8 +604,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public TraceContext Trace
-	{
+	public TraceContext Trace {
 		get { return Context.Trace; }
 	}
 
@@ -641,14 +612,12 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public bool TraceEnabled
-	{
+	public bool TraceEnabled {
 		get { return Trace.IsEnabled; }
 		set { Trace.IsEnabled = value; }
 	}
 #else
-	protected bool TraceEnabled
-	{
+	protected bool TraceEnabled {
 		set { Trace.IsEnabled = value; }
 	}
 #endif
@@ -657,21 +626,18 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public TraceMode TraceModeValue
-	{
+	public TraceMode TraceModeValue {
 		get { return Trace.TraceMode; }
 		set { Trace.TraceMode = value; }
 	}
 #else
-	protected TraceMode TraceModeValue
-	{
+	protected TraceMode TraceModeValue {
 		set { Trace.TraceMode = value; }
 	}
 #endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected int TransactionMode
-	{
+	protected int TransactionMode {
 #if NET_2_0
 		get { return _transactionMode; }
 #endif
@@ -693,30 +659,26 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-	public string UICulture
-	{
+	public string UICulture {
 		get { return Thread.CurrentThread.CurrentUICulture.Name; }
 		set { Thread.CurrentThread.CurrentUICulture = GetPageCulture (value, Thread.CurrentThread.CurrentUICulture); }
 	}
 #else
 	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected string UICulture
-	{
+	protected string UICulture {
 		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
 	}
 #endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public IPrincipal User
-	{
+	public IPrincipal User {
 		get { return Context.User; }
 	}
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public ValidatorCollection Validators
-	{
+	public ValidatorCollection Validators {
 		get { 
 			if (_validators == null)
 				_validators = new ValidatorCollection ();
@@ -732,8 +694,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[Browsable (false)]
-	public override bool Visible
-	{
+	public override bool Visible {
 		get { return base.Visible; }
 		set { base.Visible = value; }
 	}
@@ -888,16 +849,16 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-    [MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, NoStore, SqlDependency")]
-    protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
-    {
-        if (cacheSettings.Enabled)
-            InitOutputCache(cacheSettings.Duration,
-                cacheSettings.VaryByHeader,
-                cacheSettings.VaryByCustom,
-                cacheSettings.Location,
-                cacheSettings.VaryByParam);
-    }
+	[MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, NoStore, SqlDependency")]
+	protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
+	{
+		if (cacheSettings.Enabled)
+			InitOutputCache(cacheSettings.Duration,
+					cacheSettings.VaryByHeader,
+					cacheSettings.VaryByCustom,
+					cacheSettings.Location,
+					cacheSettings.VaryByParam);
+	}
 #endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -913,28 +874,28 @@ public partial class Page : TemplateControl, IHttpHandler
 		DateTime timestamp = ctx != null ? ctx.Timestamp : DateTime.Now;
 		
 		switch (location) {
-		case OutputCacheLocation.Any:
-			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));
-			cache.SetLastModified (timestamp);
-			set_vary = true;
-			break;
-		case OutputCacheLocation.Client:
-			cache.SetCacheability (HttpCacheability.Private);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));
-			cache.SetLastModified (timestamp);
-			break;
-		case OutputCacheLocation.Downstream:
-			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));
-			cache.SetLastModified (timestamp);
-			break;
-		case OutputCacheLocation.Server:			
-			cache.SetCacheability (HttpCacheability.Server);
-			set_vary = true;
-			break;
-		case OutputCacheLocation.None:
-			break;
+			case OutputCacheLocation.Any:
+				cache.SetCacheability (HttpCacheability.Public);
+				cache.SetMaxAge (new TimeSpan (0, 0, duration));
+				cache.SetLastModified (timestamp);
+				set_vary = true;
+				break;
+			case OutputCacheLocation.Client:
+				cache.SetCacheability (HttpCacheability.Private);
+				cache.SetMaxAge (new TimeSpan (0, 0, duration));
+				cache.SetLastModified (timestamp);
+				break;
+			case OutputCacheLocation.Downstream:
+				cache.SetCacheability (HttpCacheability.Public);
+				cache.SetMaxAge (new TimeSpan (0, 0, duration));
+				cache.SetLastModified (timestamp);
+				break;
+			case OutputCacheLocation.Server:			
+				cache.SetCacheability (HttpCacheability.Server);
+				set_vary = true;
+				break;
+			case OutputCacheLocation.None:
+				break;
 		}
 
 		if (set_vary) {
@@ -1030,8 +991,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (IsMultiForm) {
 			writer.WriteLine ("{0}._form = {0};", theForm);
 			writer.Write (theForm + ".");
-		}
-		else {
+		} else {
 			writer.WriteLine ("window._form = {0};", theForm);
 		}
 		writer.WriteLine ("__doPostBack = function (eventTarget, eventArgument) {");
@@ -2126,8 +2086,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	private List<PageAsyncTask> ParallelTasks {
-		get
-		{
+		get {
 			if (parallelTasks == null) {
 				parallelTasks = new List<PageAsyncTask>();
 			}
