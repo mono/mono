@@ -1,5 +1,9 @@
 2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CursorConverter.cs: Implement conversion to InstanceDescriptor.
+
+2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GridEntry.cs: Implement GetService.
 
 2007-08-27  Jonathan Pobst  <monkey@jpobst.com>

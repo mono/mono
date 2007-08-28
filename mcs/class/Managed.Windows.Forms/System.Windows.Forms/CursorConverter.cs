@@ -29,6 +29,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -52,7 +53,7 @@ namespace System.Windows.Forms {
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type dest_type)
 		{
-			if (dest_type == typeof (byte []))
+			if (dest_type == typeof (byte []) || dest_type == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, dest_type);
 		}
@@ -93,6 +94,13 @@ namespace System.Windows.Forms {
 				((ISerializable)c).GetObjectData(si, new StreamingContext(StreamingContextStates.Remoting));
 
 				return (byte[])si.GetValue("CursorData", typeof(byte[]));
+			} else if (dest_type == typeof (InstanceDescriptor)) {
+				PropertyInfo[] properties = typeof (Cursors).GetProperties ();
+				foreach (PropertyInfo propInfo in properties) {
+					if (propInfo.GetValue (null, null) == value) {
+						return new InstanceDescriptor (propInfo, null);
+					}
+				}
 			}
 			return base.ConvertTo (context, culture, value, dest_type);
 		}
