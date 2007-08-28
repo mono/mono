@@ -1,3 +1,7 @@
+2007-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* DateTime.cs: Fix a warning.
+
 2007-08-25  Robert Jordan  <robertj@gmx.net>
 
 	* DateTime.cs: Implement internal To/FromBinary for the 1.1 profile.

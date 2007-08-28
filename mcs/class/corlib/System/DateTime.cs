@@ -884,7 +884,9 @@ namespace System
 		{
 			
 			const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
+#if !NET_2_0
 			const string argumentYearRangeExceptionMessage = "Valid values are between 1 and 9999, inclusive.";
+#endif
 			
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
