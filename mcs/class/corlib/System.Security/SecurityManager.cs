@@ -668,8 +668,12 @@ namespace System.Security {
 		}
 
 		// we try to provide as much details as possible to help debugging
-		private static void LinkDemandSecurityException (int securityViolation, Assembly a, MethodInfo method)
+		private static void LinkDemandSecurityException (int securityViolation, IntPtr methodHandle)
 		{
+			RuntimeMethodHandle runtimeHandle = new RuntimeMethodHandle (methodHandle);
+			MethodInfo method = (MethodInfo)(MethodBase.GetMethodFromHandle (runtimeHandle));
+			Assembly a = method.DeclaringType.Assembly;
+
 			string message = null;
 			AssemblyName an = null;
 			PermissionSet granted = null;
