@@ -3471,6 +3471,21 @@ namespace System.Windows.Forms
 			return Control.ControlNativeWindow.ControlFromHandle(handle);
 		}
 
+#if NET_2_0
+		[MonoTODO ("Only implemented for Win32, others always return false")]
+		public static bool IsKeyLocked (Keys keyVal)
+		{
+			switch (keyVal) {
+				case Keys.CapsLock:
+				case Keys.NumLock:
+				case Keys.Scroll:
+					return XplatUI.IsKeyLocked ((VirtualKeys)keyVal);
+				default:
+					throw new NotSupportedException ("keyVal must be CapsLock, NumLock, or ScrollLock");
+			}
+		}
+#endif
+
 		public static bool IsMnemonic(char charCode, string text) {
 			int amp;
 

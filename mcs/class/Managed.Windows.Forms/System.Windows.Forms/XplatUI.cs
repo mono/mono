@@ -746,6 +746,14 @@ namespace System.Windows.Forms {
 			return driver.IsEnabled(handle);
 		}
 
+		internal static bool IsKeyLocked (VirtualKeys key)
+		{
+			#if DriverDebug || DriverDebugState
+				Console.WriteLine("IsKeyLocked({0}): Called, Result={1}", key, driver.IsKeyLocked(key));
+			#endif
+			return driver.IsKeyLocked (key);
+		}
+
 		internal static bool IsVisible(IntPtr handle) {
 			#if DriverDebug || DriverDebugState
 				Console.WriteLine("IsVisible({0}): Called, Result={1}", Window(handle), driver.IsVisible(handle));

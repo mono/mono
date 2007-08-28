@@ -280,6 +280,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SetVisible(IntPtr handle, bool visible, bool activate);
 		internal abstract bool IsVisible(IntPtr handle);
 		internal abstract bool IsEnabled(IntPtr handle);
+		internal virtual bool IsKeyLocked (VirtualKeys key) { return false; }
 		internal abstract IntPtr SetParent(IntPtr handle, IntPtr parent);
 		internal abstract IntPtr GetParent(IntPtr handle);
 

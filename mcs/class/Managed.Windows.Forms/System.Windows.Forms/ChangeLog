@@ -1,5 +1,10 @@
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs, XPlatUI.cs, XPlatUIDriver.cs, XPlatUIWin32.cs: Implement
+	IsKeyLocked.
+
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Cursor.cs: Add HotSpot, hook into XPlatUI.GetCursorInfo.
 	* XPlatUIWin32.cs: Implement hotspot lookup in GetCursorInfo.
 

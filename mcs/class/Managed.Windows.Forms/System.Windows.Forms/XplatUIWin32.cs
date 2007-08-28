@@ -2155,6 +2155,11 @@ namespace System.Windows.Forms {
 		internal override bool IsEnabled(IntPtr handle) {
 			return IsWindowEnabled (handle);
 		}
+
+		internal override bool IsKeyLocked (VirtualKeys key)
+		{
+			return (Win32GetKeyState (key) & 1) == 1;
+		}
 		
 		internal override bool IsVisible(IntPtr handle) {
 			return IsWindowVisible (handle);
