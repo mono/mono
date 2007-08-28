@@ -61,13 +61,15 @@ namespace System.Web.UI.WebControls {
 
 		private ListItemCollection items;
 #if NET_2_0
+		bool dataAlreadyBound;
+		
 		int _selectedIndex = -2;
 		string _selectedValue;
 #else		
 		int saved_selected_index = -2;
 		string saved_selected_value;
 #endif
-
+		
 		public ListControl () : base (HtmlTextWriterTag.Select)
 		{
 		}
@@ -411,7 +413,10 @@ namespace System.Web.UI.WebControls {
 			if (dataSource == null)
 				return;
 #if NET_2_0
-			if (!AppendDataBoundItems)
+			if (AppendDataBoundItems) {
+				if (dataAlreadyBound)
+					return;
+			} else
 #endif
 				Items.Clear ();
 
@@ -447,9 +452,10 @@ namespace System.Web.UI.WebControls {
 					text = val;
 
 				coll.Add (new ListItem (text, val));
-			}
+			}			
 
 #if NET_2_0
+			dataAlreadyBound = true;
 			if (!String.IsNullOrEmpty (_selectedValue)) {
 				if (!SetSelectedValue (_selectedValue))
 					throw new ArgumentOutOfRangeException ("value", String.Format ("'{0}' has a SelectedValue which is invalid because it does not exist in the list of items.", ID));
@@ -476,7 +482,7 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
-			OnDataBinding (EventArgs.Empty);
+			OnDataBinding (EventArgs.Empty);			
 			RequiresDataBinding = false;
 			MarkAsDataBound ();
 			OnDataBound (EventArgs.Empty);
