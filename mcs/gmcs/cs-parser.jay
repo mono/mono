@@ -3527,19 +3527,26 @@ anonymous_type_parameters
 	;
 
 anonymous_type_parameter
-	: variable_declarator
+	: IDENTIFIER ASSIGN variable_initializer
 	  {
-	  	VariableDeclaration v = (VariableDeclaration) $1;
-	  	Expression e = v.expression_or_array_initializer;
-	  	if (e == null) {
-	  		e = new LocalVariableReference (current_block, v.identifier, lexer.Location);
-	  	}
-	  	$$ = new AnonymousTypeParameter (e, v.identifier, v.Location);
+		LocatedToken lt = (LocatedToken)$1;
+	  	$$ = new AnonymousTypeParameter ((Expression)$3, lt.Value, lt.Location);
+	  }
+	| IDENTIFIER
+	  {
+		LocatedToken lt = (LocatedToken)$1;
+	  	$$ = new AnonymousTypeParameter (new SimpleName (lt.Value, lt.Location),
+	  		lt.Value, lt.Location);
 	  }
 	| member_access
 	  {
 	  	MemberAccess ma = (MemberAccess) $1;
 	  	$$ = new AnonymousTypeParameter (ma, ma.Identifier, ma.Location);
+	  }
+	| error
+	  {
+		Report.Error (746, lexer.Location, "Invalid anonymous type member declarator. " +
+		"Anonymous type members must be a member assignment, simple name or member access expression");
 	  }
 	;
 

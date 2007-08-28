@@ -1,3 +1,8 @@
+2007-08-28  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Anonymous type arguments can be simple name, syntax error
+	handling.
+
 2007-08-23  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (TypeInferenceV3.DoSecondPhase): Handle nested delegate
