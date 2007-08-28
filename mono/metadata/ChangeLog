@@ -1,3 +1,8 @@
+2007-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_proxy_vtable): Use max_interface_id instead of
+	class->max_interface_id in a one place. Fixes transparentproxy.exe test on ia64.
+
 2007-08-28  Mark Probst  <mark.probst@gmail.com>
 
 	* security-manager.c (mono_security_manager_get_methods):
