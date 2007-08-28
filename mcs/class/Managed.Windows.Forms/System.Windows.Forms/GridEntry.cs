@@ -193,7 +193,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 		#region IServiceProvider Members
 
 		object IServiceProvider.GetService(Type serviceType) {
-			// TODO:  Add SystemComp.GetService implementation
+			IComponent selectedComponent = property_grid_view.property_grid.SelectedObject as IComponent;
+			if (selectedComponent != null && selectedComponent.Site != null)
+				return selectedComponent.Site.GetService (serviceType);
 			return null;
 		}
 

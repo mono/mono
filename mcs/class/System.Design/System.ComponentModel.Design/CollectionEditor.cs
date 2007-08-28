@@ -4,9 +4,11 @@
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//      Ivan N. Zlatev (contact@i-nz.net)
 // 
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2007 Andreas Nahr
+// (C) 2007 Ivan N. Zlatev
 //
 
 //
@@ -81,7 +83,11 @@ namespace System.ComponentModel.Design
 			protected object[] Items
 			{
 				get { return editor.GetItems (editValue); }
-				set { editor.SetItems (editValue, value); }
+				set {
+					object val = editor.SetItems (editValue, value);
+					if (val != EditValue)
+						EditValue = val;
+				}
 			}
 
 			protected Type[] NewItemTypes
@@ -559,17 +565,30 @@ namespace System.ComponentModel.Design
 
 		protected virtual Type CreateCollectionItemType ()
 		{
-			PropertyInfo info = type.GetProperty ("Item");
-			return info.PropertyType;
+			PropertyInfo[] properties = type.GetProperties ();
+			foreach (PropertyInfo property in properties)
+				if (property.Name == "Item")
+					return property.PropertyType;
+			return typeof (object);
 		}
 		
 		protected virtual object CreateInstance (Type itemType)
 		{
+			object instance = null;
+			if (typeof (IComponent).IsAssignableFrom (itemType)) {
+				IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+				if (host != null)
+					instance = host.CreateComponent (itemType);
+			}
+
+			if (instance == null) {
 #if NET_2_0
-			return TypeDescriptor.CreateInstance (provider, itemType, null, null);
+				instance = TypeDescriptor.CreateInstance (provider, itemType, null, null);
 #else
-			return Activator.CreateInstance (itemType);
+				instance =  Activator.CreateInstance (itemType);
 #endif
+			}
+			return instance;
 		}
 		
 		protected virtual Type[] CreateNewItemTypes ()
@@ -579,7 +598,12 @@ namespace System.ComponentModel.Design
 
 		protected virtual void DestroyInstance (object instance)
 		{
-			//FIXME: I've got NO clue what this does and the documentation isn't helpfull either
+			IComponent component = instance as IComponent;
+			if (component != null) {
+				IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+				if (host != null)
+					host.DestroyComponent (component);
+			}
 		}
 
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)

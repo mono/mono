@@ -1,3 +1,11 @@
+2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
+	* CollectionEditor.cs: 
+	 - Fix CreateCollectionItemType to deal with "Item" overloads.
+	 - Implement Create/DestroyInstance to check for the 
+	   IDesignerHost service and use that.
+	 - Check if SetItems produces a new object(will happen for arrays)
+	   and update EditValue.
+
 2007-07-12  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* CollectionEditor.cs: Implement CreateInstance for 1.1 profile (patch
