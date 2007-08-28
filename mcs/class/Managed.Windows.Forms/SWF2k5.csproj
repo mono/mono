@@ -49,6 +49,8 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -71,6 +73,8 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug 1.1|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -93,6 +97,8 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release 1.1|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -115,6 +121,8 @@
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType>
+    <AssemblyName>System.Windows.Forms</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
@@ -135,6 +143,12 @@
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Mozilla\Mono.Mozilla2K5.csproj">
+      <Project>{3A1F2BAF-B92F-4F90-8250-A0F04ACCEAD0}</Project>
+      <Name>Mono.Mozilla2K5</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="common\Consts.cs" />
@@ -1197,5 +1211,6 @@
     </PreBuildEvent>
     <PostBuildEvent>
     </PostBuildEvent>
+    <ProjectGuid>{5E6430B2-6B9F-4E76-802E-20207EF80391}</ProjectGuid>
   </PropertyGroup>
 </Project>
