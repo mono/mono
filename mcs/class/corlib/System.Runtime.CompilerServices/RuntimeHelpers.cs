@@ -30,6 +30,7 @@
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Reflection;
 #endif
 
 namespace System.Runtime.CompilerServices
@@ -135,10 +136,16 @@ namespace System.Runtime.CompilerServices
 		{
 		}
 
-		[MonoTODO("Currently a no-op")]
 		public static void RunModuleConstructor (ModuleHandle module)
 		{
+			if (module == ModuleHandle.EmptyHandle)
+				throw new ArgumentException ("Handle is not initialized.", "module");
+
+			RunModuleConstructor (module.Value);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern void RunModuleConstructor (IntPtr module);
 #endif
 	}
 }
