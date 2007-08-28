@@ -1,3 +1,14 @@
+2007-08-28  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: The following property values are returned from cached
+	fields instead of looking them up on Context: Application,
+	Response, Request, Cache (as determined by the tests).
+	Added a backing field for the Session property.
+	Session doesn't throw an exception when Context is null - it
+	silently ignores it and throws a session not available exception.
+	_context is never used directly, the Context property is used
+	instead. Fixes bug #82606
+
 2007-08-23  Juraj Skripsky <js@hotfeet.ch>
 
 	* Control.cs (InitControlsCache): Make the hash table case insensitive to

@@ -167,6 +167,37 @@ namespace MonoTests.System.Web.UI {
 			Assert.IsNotNull (page.HttpContext.Request, "Request");
 		}
 
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Response_OverridenContext ()
+		{
+			TestPage2 page = new TestPage2 ();
+			Assert.IsNotNull (page.Response, "Response");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Cache_OverridenContext ()
+		{
+			TestPage2 page = new TestPage2 ();
+			Assert.IsNotNull (page.Cache, "Cache");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void Session_OverridenContext ()
+		{
+			TestPage2 page = new TestPage2 ();
+			Assert.IsNotNull (page.Session, "Session");
+		}
+
+		[Test]
+		public void Application_OverridenContext ()
+		{
+			TestPage2 page = new TestPage2 ();
+			Assert.IsNull (page.Application, "Application");
+		}
+		
 #if NET_2_0
 		[Test]
 		[Category ("NunitWeb")]

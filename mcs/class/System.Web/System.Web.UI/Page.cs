@@ -87,7 +87,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	private bool is_validated;
 	private bool _smartNavigation;
 	private int _transactionMode;
-	private HttpContext _context;
 	private ValidatorCollection _validators;
 	private bool renderingForm;
 	private string _savedViewState;
@@ -106,6 +105,17 @@ public partial class Page : TemplateControl, IHttpHandler
 	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
 	PageStatePersister page_state_persister;
 
+	// The initial context
+	private HttpContext _context;
+	
+	// cached from the initial context
+	HttpApplicationState _application;
+	HttpResponse _response;
+	HttpRequest _request;
+	Cache _cache;
+	
+	HttpSessionState _session;
+	
 	[EditorBrowsable (EditorBrowsableState.Never)]
 #if NET_2_0
 	public
@@ -191,11 +201,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public HttpApplicationState Application
 	{
-		get {
-			if (_context == null)
-				return null;
-			return _context.Application;
-		}
+		get { return _application; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -228,9 +234,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	public Cache Cache
 	{
 		get {
-			if (_context == null)
-				throw new HttpException ("No cache available without a context.");
-			return _context.Cache;
+			if (_cache == null)
+				throw new HttpException ("Cache is not available.");
+			return _cache;
 		}
 	}
 
@@ -361,9 +367,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		get { return _errorPage; }
 		set {
+			HttpContext ctx = Context;
+			
 			_errorPage = value;
-			if (_context != null)
-				_context.ErrorPage = value;
+			if (ctx != null)
+				ctx.ErrorPage = value;
 		}
 	}
 
@@ -482,10 +490,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	public HttpRequest Request
 	{
 		get {
-			if (_context != null)
-				return _context.Request;
-
-			throw new HttpException("Request is not available without context");
+			if (_request == null)
+				throw new HttpException("Request is not available in this context.");
+			return _request;
 		}
 	}
 
@@ -494,10 +501,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	public HttpResponse Response
 	{
 		get {
-			if (_context != null)
-				return _context.Response;
-
-			throw new HttpException ("Response is not available without context");
+			if (_response == null)
+				throw new HttpException ("Response is not available in this context.");
+			return _response;
 		}
 	}
 
@@ -531,18 +537,21 @@ public partial class Page : TemplateControl, IHttpHandler
 	public virtual HttpSessionState Session
 	{
 		get {
-			if (_context == null)
-				_context = HttpContext.Current;
+			if (_session != null)
+				return _session;
 
-			if (_context == null)
-				throw new HttpException ("Session is not available without context");
-
-			if (_context.Session == null)
+			try {
+				_session = Context.Session;
+			} catch {
+				// ignore, should not throw
+			}
+			
+			if (_session == null)
 				throw new HttpException ("Session state can only be used " +
 						"when enableSessionState is set to true, either " +
 						"in a configuration file or in the Page directive.");
 
-			return _context.Session;
+			return _session;
 		}
 	}
 
@@ -581,7 +590,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				_styleSheetTheme = ps.StyleSheetTheme;
 		}
 		if (_styleSheetTheme != null && _styleSheetTheme != "")
-			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_styleSheetTheme, _context);
+			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_styleSheetTheme, Context);
 	}
 
 	void InitializeTheme ()
@@ -592,7 +601,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				_theme = ps.Theme;
 		}
 		if (_theme != null && _theme != "") {
-			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, _context);
+			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, Context);
 			_pageTheme.SetPage (this);
 		}
 	}
@@ -789,10 +798,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
-		if (_context == null)
-			return null;
-
-		HttpRequest req = _context.Request;
+		HttpRequest req = Request;
 		if (req == null)
 			return null;
 
@@ -901,25 +907,27 @@ public partial class Page : TemplateControl, IHttpHandler
 						OutputCacheLocation location,
 						string varyByParam)
 	{
-		HttpCachePolicy cache = _context.Response.Cache;
+		HttpCachePolicy cache = Response.Cache;
 		bool set_vary = false;
-
+		HttpContext ctx = Context;
+		DateTime timestamp = ctx != null ? ctx.Timestamp : DateTime.Now;
+		
 		switch (location) {
 		case OutputCacheLocation.Any:
 			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
-			cache.SetLastModified (_context.Timestamp);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));
+			cache.SetLastModified (timestamp);
 			set_vary = true;
 			break;
 		case OutputCacheLocation.Client:
 			cache.SetCacheability (HttpCacheability.Private);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
-			cache.SetLastModified (_context.Timestamp);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));
+			cache.SetLastModified (timestamp);
 			break;
 		case OutputCacheLocation.Downstream:
 			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
-			cache.SetLastModified (_context.Timestamp);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));
+			cache.SetLastModified (timestamp);
 			break;
 		case OutputCacheLocation.Server:			
 			cache.SetCacheability (HttpCacheability.Server);
@@ -950,7 +958,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 			
 		cache.Duration = duration;
-		cache.SetExpires (_context.Timestamp.AddSeconds (duration));
+		cache.SetExpires (timestamp.AddSeconds (duration));
 	}
 
 #if NET_2_0
@@ -1195,6 +1203,12 @@ public partial class Page : TemplateControl, IHttpHandler
 		_lifeCycle = PageLifeCycle.Unknown;
 #endif
 		_context = context;
+
+		_application = context.Application;
+		_response = context.Response;
+		_request = context.Request;
+		_cache = context.Cache;
+		
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
 
@@ -1327,10 +1341,12 @@ public partial class Page : TemplateControl, IHttpHandler
 				_focusedControlID = UniqueID2ClientID (lastFocus);
 			}
 		}
+
+		HttpContext ctx = Context;
 		
 		// if request was transfered from other page - track Prev. Page
-		previousPage = _context.LastPage;
-		_context.LastPage = this;
+		previousPage = ctx.LastPage;
+		ctx.LastPage = this;
 
 		_lifeCycle = PageLifeCycle.PreInit;
 		OnPreInit (EventArgs.Empty);
@@ -1403,7 +1419,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		if (IsCallback) {
 			string result = ProcessCallbackData ();
-			HtmlTextWriter callbackOutput = new HtmlTextWriter (_context.Response.Output);
+			HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
 			callbackOutput.Write (result);
 			callbackOutput.Flush ();
 			return;
@@ -1443,7 +1459,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
-		HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
+		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
 	}
@@ -1461,7 +1477,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 
 		if (!traceManager.LocalOnly || Context.Request.IsLocal) {
-			HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
+			HtmlTextWriter output = new HtmlTextWriter (Response.Output);
 			Trace.Render (output);
 		}
 	}
@@ -1778,7 +1794,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
-		if (_context == null)
+		if (Context == null)
 			return;
 #if NET_2_0
 		if (IsCallback)
@@ -2506,7 +2522,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
 				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
-				previousPage.ProcessCrossPagePostBack (_context);
+				previousPage.ProcessCrossPagePostBack (Context);
 			} 
 		}
 	}

@@ -1,3 +1,11 @@
+2007-08-28  Marek Habersack  <mhabersack@novell.com>
+
+	* PageTest.cs: added tests for exceptions that should be thrown
+	when the following properties are accessed from a Page descendant
+	that overrides the Context property: Response, Cache, Session. The
+	Application property test was also added, to check if it is
+	properly set to null when no request has been served by the page.
+
 2007-08-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ControlTest.cs: Added test for bug #82546. Spaces to tabs.
