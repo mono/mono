@@ -5,6 +5,11 @@ using System.Collections;
 
 public class Test
 {
+	static object TestA (string s)
+	{
+		return new { s };
+	}
+	
 	static int Main ()
 	{
 		string Foo = "Bar";
@@ -15,7 +20,11 @@ public class Test
 			return 1;
 		if (v.Baz != 42)
 			return 2;
+			
+		if (!TestA ("foo").Equals (new { s = "foo" }))
+			return 3;
 		
+		Console.WriteLine ("OK");
 		return 0;
 	}
 }
