@@ -426,7 +426,9 @@
     <Compile Include="System.ComponentModel\ComponentEditor.cs" />
     <Compile Include="System.ComponentModel\ComponentResourceManager.cs" />
     <Compile Include="System.ComponentModel\Container.cs" />
+    <Compile Include="System.ComponentModel\ContainerFilterService.cs" />
     <Compile Include="System.ComponentModel\CultureInfoConverter.cs" />
+    <Compile Include="System.ComponentModel\CustomTypeDescriptor.cs" />
     <Compile Include="System.ComponentModel\DataObjectAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectFieldAttribute.cs" />
     <Compile Include="System.ComponentModel\DataObjectMethodAttribute.cs" />
@@ -482,9 +484,11 @@
     <Compile Include="System.ComponentModel\InitializationEventAttribute.cs" />
     <Compile Include="System.ComponentModel\INotifyPropertyChanged.cs" />
     <Compile Include="System.ComponentModel\InstallerTypeAttribute.cs" />
+    <Compile Include="System.ComponentModel\InstanceCreationEditor.cs" />
     <Compile Include="System.ComponentModel\Int16Converter.cs" />
     <Compile Include="System.ComponentModel\Int32Converter.cs" />
     <Compile Include="System.ComponentModel\Int64Converter.cs" />
+    <Compile Include="System.ComponentModel\InvalidAsynchronousStateException.cs" />
     <Compile Include="System.ComponentModel\InvalidEnumArgumentException.cs" />
     <Compile Include="System.ComponentModel\IRaiseItemChangedEvents.cs" />
     <Compile Include="System.ComponentModel\IRevertibleChangeTracking.cs" />
@@ -510,12 +514,16 @@
     <Compile Include="System.ComponentModel\ListSortDescriptionCollection.cs" />
     <Compile Include="System.ComponentModel\ListSortDirection.cs" />
     <Compile Include="System.ComponentModel\LocalizableAttribute.cs" />
+    <Compile Include="System.ComponentModel\LookupBindingPropertiesAttribute.cs" />
     <Compile Include="System.ComponentModel\MarshalByValueComponent.cs" />
     <Compile Include="System.ComponentModel\MaskedTextProvider.cs" />
     <Compile Include="System.ComponentModel\MaskedTextResultHint.cs" />
     <Compile Include="System.ComponentModel\MemberDescriptor.cs" />
     <Compile Include="System.ComponentModel\MergablePropertyAttribute.cs" />
+    <Compile Include="System.ComponentModel\MultilineStringConverter.cs" />
+    <Compile Include="System.ComponentModel\NestedContainer.cs" />
     <Compile Include="System.ComponentModel\NotifyParentPropertyAttribute.cs" />
+    <Compile Include="System.ComponentModel\NullableConverter.cs" />
     <Compile Include="System.ComponentModel\ParenthesizePropertyNameAttribute.cs" />
     <Compile Include="System.ComponentModel\PasswordPropertyTextAttribute.cs" />
     <Compile Include="System.ComponentModel\ProgressChangedEventArgs.cs" />
@@ -739,8 +747,6 @@
     <Compile Include="System.Net.NetworkInformation\IPAddressCollection.cs" />
     <Compile Include="System.Net.NetworkInformation\IPAddressInformation.cs" />
     <Compile Include="System.Net.NetworkInformation\IPAddressInformationCollection.cs" />
-    <Compile Include="System.Net.NetworkInformation\IPGlobalProperties.cs" />
-    <Compile Include="System.Net.NetworkInformation\IPGlobalStatistics.cs" />
     <Compile Include="System.Net.NetworkInformation\IPInterfaceProperties.cs" />
     <Compile Include="System.Net.NetworkInformation\IPStatus.cs" />
     <Compile Include="System.Net.NetworkInformation\IPv4InterfaceProperties.cs" />
