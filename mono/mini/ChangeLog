@@ -1,3 +1,10 @@
+2007-08-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (check_linkdemand): Remove embedded reference object in
+	call to LinkDemandSecurityException.
+	(mono_jit_compile_method_inner): Call LinkDemandSecurityException
+	with an IntPtr instead of a reference object.
+
 2007-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (handle_initobj): Handle alignment properly.

@@ -1,3 +1,8 @@
+2007-08-28  Mark Probst  <mark.probst@gmail.com>
+
+	* security-manager.c (mono_security_manager_get_methods):
+	LinkDemandSecurityException now has 2 arguments instead of 3.
+
 2007-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_layout_fields): Only do the struct alignment hack on
