@@ -804,6 +804,7 @@ System.Windows.Forms.Theming/ThemeElementsGtk.cs
 System.Windows.Forms.Theming/ThemeElementsNice.cs
 System.Windows.Forms.Theming/Default/ButtonPainter.cs
 System.Windows.Forms.Theming/Default/CheckBoxPainter.cs
+System.Windows.Forms.Theming/Default/RadioButtonPainter.cs
 System.Windows.Forms.Theming/Default/TabControlPainter.cs
 System.Windows.Forms.Theming/Default/ToolStripPainter.cs
 System.Windows.Forms.Theming/Nice/TabControlPainter.cs

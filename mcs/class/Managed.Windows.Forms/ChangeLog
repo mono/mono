@@ -1,3 +1,7 @@
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Add RadioButtonPainter.cs.
+
 2007-08-28  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* build-csproj2k5: Add Mono.Mozilla as a reference.

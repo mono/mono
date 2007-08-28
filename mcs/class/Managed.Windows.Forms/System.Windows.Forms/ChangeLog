@@ -1,3 +1,8 @@
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* RadioButton.cs: Use 2.0 rendering.  Use base implementation of TextAlign.
+	* Theme.cs, ThemeWin32Classic.cs: Implement 2.0 rendering for RadioButton.
+
 2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CursorConverter.cs: Implement conversion to InstanceDescriptor.

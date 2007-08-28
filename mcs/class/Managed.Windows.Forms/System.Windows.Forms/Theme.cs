@@ -727,7 +727,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		public abstract Size CalculateCheckBoxAutoSize (CheckBox checkBox);
 		public abstract void CalculateCheckBoxTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
-		public abstract void DrawCheckBox (Graphics g, CheckBox cb, Rectangle textBounds, Rectangle glyphArea, Rectangle imageBounds, Rectangle clipRectangle);
+		public abstract void DrawCheckBox (Graphics g, CheckBox cb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 #endif
 		public abstract void DrawCheckBox (Graphics dc, Rectangle clip_area, CheckBox checkbox);
 
@@ -879,6 +879,11 @@ namespace System.Windows.Forms
 
 		#region RadioButton
 		// Drawing
+#if NET_2_0
+		public abstract Size CalculateRadioButtonAutoSize (RadioButton rb);
+		public abstract void CalculateRadioButtonTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle);
+		public abstract void DrawRadioButton (Graphics g, RadioButton rb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
+#endif
 		public abstract void DrawRadioButton (Graphics dc, Rectangle clip_rectangle, RadioButton radio_button);
 
 		// Sizing

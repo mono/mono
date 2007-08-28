@@ -65,6 +65,15 @@ namespace System.Windows.Forms.Theming
 				return checkBoxPainter;
 			}
 		}
+
+		protected Default.RadioButtonPainter radioButtonPainter;
+		public virtual Default.RadioButtonPainter RadioButtonPainter {
+			get {
+				if (radioButtonPainter == null)
+					radioButtonPainter = new Default.RadioButtonPainter ();
+				return radioButtonPainter;
+			}
+		}
 #endif
 	}
 }

@@ -4298,6 +4298,110 @@ namespace System.Windows.Forms
 				return new Size (104,24);
 			}
 		}
+
+#if NET_2_0
+		public override void DrawRadioButton (Graphics g, RadioButton rb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		{
+			// Draw Button Background
+			if (rb.FlatStyle == FlatStyle.Flat || rb.FlatStyle == FlatStyle.Popup) {
+				glyphArea.Height -= 2;
+				glyphArea.Width -= 2;
+			}
+			
+			DrawRadioButtonGlyph (g, rb, glyphArea);
+
+			// If we have an image, draw it
+			if (imageBounds.Size != Size.Empty)
+				DrawRadioButtonImage (g, rb, imageBounds);
+
+			if (rb.Focused && rb.Enabled && rb.ShowKeyboardCuesInternal && textBounds != Rectangle.Empty)
+				DrawRadioButtonFocus (g, rb, textBounds);
+
+			// If we have text, draw it
+			if (textBounds != Rectangle.Empty)
+				DrawRadioButtonText (g, rb, textBounds);
+		}
+
+		public virtual void DrawRadioButtonGlyph (Graphics g, RadioButton rb, Rectangle glyphArea)
+		{
+			if (rb.Pressed)
+				ThemeElements.CurrentTheme.RadioButtonPainter.PaintRadioButton (g, glyphArea, rb.BackColor, rb.ForeColor, ElementState.Pressed, rb.FlatStyle, rb.Checked);
+			else if (rb.InternalSelected)
+				ThemeElements.CurrentTheme.RadioButtonPainter.PaintRadioButton (g, glyphArea, rb.BackColor, rb.ForeColor, ElementState.Normal, rb.FlatStyle, rb.Checked);
+			else if (rb.Entered)
+				ThemeElements.CurrentTheme.RadioButtonPainter.PaintRadioButton (g, glyphArea, rb.BackColor, rb.ForeColor, ElementState.Hot, rb.FlatStyle, rb.Checked);
+			else if (!rb.Enabled)
+				ThemeElements.CurrentTheme.RadioButtonPainter.PaintRadioButton (g, glyphArea, rb.BackColor, rb.ForeColor, ElementState.Disabled, rb.FlatStyle, rb.Checked);
+			else
+				ThemeElements.CurrentTheme.RadioButtonPainter.PaintRadioButton (g, glyphArea, rb.BackColor, rb.ForeColor, ElementState.Normal, rb.FlatStyle, rb.Checked);
+		}
+
+		public virtual void DrawRadioButtonFocus (Graphics g, RadioButton rb, Rectangle focusArea)
+		{
+			ControlPaint.DrawFocusRectangle (g, focusArea);
+		}
+
+		public virtual void DrawRadioButtonImage (Graphics g, RadioButton rb, Rectangle imageBounds)
+		{
+			if (rb.Enabled)
+				g.DrawImage (rb.Image, imageBounds);
+			else
+				CPDrawImageDisabled (g, rb.Image, imageBounds.Left, imageBounds.Top, ColorControl);
+		}
+
+		public virtual void DrawRadioButtonText (Graphics g, RadioButton rb, Rectangle textBounds)
+		{
+			if (rb.Enabled)
+				TextRenderer.DrawTextInternal (g, rb.Text, rb.Font, textBounds, rb.ForeColor, rb.TextFormatFlags, rb.UseCompatibleTextRendering);
+			else
+				DrawStringDisabled20 (g, rb.Text, rb.Font, textBounds, rb.BackColor, rb.TextFormatFlags, rb.UseCompatibleTextRendering);
+		}
+
+		public override Size CalculateRadioButtonAutoSize (RadioButton rb)
+		{
+			Size ret_size = Size.Empty;
+			Size text_size = TextRenderer.MeasureTextInternal (rb.Text, rb.Font, rb.UseCompatibleTextRendering);
+			Size image_size = rb.Image == null ? Size.Empty : rb.Image.Size;
+
+			// Pad the text size
+			if (rb.Text.Length != 0) {
+				text_size.Height += 4;
+				text_size.Width += 4;
+			}
+
+			switch (rb.TextImageRelation) {
+				case TextImageRelation.Overlay:
+					ret_size.Height = Math.Max (rb.Text.Length == 0 ? 0 : text_size.Height, image_size.Height);
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageAboveText:
+				case TextImageRelation.TextAboveImage:
+					ret_size.Height = text_size.Height + image_size.Height;
+					ret_size.Width = Math.Max (text_size.Width, image_size.Width);
+					break;
+				case TextImageRelation.ImageBeforeText:
+				case TextImageRelation.TextBeforeImage:
+					ret_size.Height = Math.Max (text_size.Height, image_size.Height);
+					ret_size.Width = text_size.Width + image_size.Width;
+					break;
+			}
+
+			// Pad the result
+			ret_size.Height += (rb.Padding.Vertical);
+			ret_size.Width += (rb.Padding.Horizontal) + 15;
+
+			// There seems to be a minimum height
+			if (ret_size.Height == rb.Padding.Vertical)
+				ret_size.Height += 14;
+
+			return ret_size;
+		}
+
+		public override void CalculateRadioButtonTextAndImageLayout (ButtonBase b, Point offset, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle)
+		{
+			CalculateCheckBoxTextAndImageLayout (b, offset, out glyphArea, out textRectangle, out imageRectangle);
+		}
+#endif
 		#endregion	// RadioButton
 
 		#region ScrollBar

@@ -1,3 +1,7 @@
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeElementsDefault.cs: Add accessor for RadioButtonPainter.
+
 2007-08-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeElementsDefault.cs: Add accessor for CheckBoxPainter.

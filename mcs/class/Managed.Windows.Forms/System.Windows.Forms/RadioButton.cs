@@ -112,7 +112,7 @@ namespace System.Windows.Forms {
 			appearance = Appearance.Normal;
 			auto_check = true;
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
-			text_alignment = ContentAlignment.MiddleLeft;
+			TextAlign = ContentAlignment.MiddleLeft;
 			TabStop = false;
 		}
 		#endregion	// Public Constructors
@@ -142,7 +142,25 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Draw (PaintEventArgs pe) {
+#if NET_2_0
+			// FIXME: This should be called every time something that can affect it
+			// is changed, not every paint.  Can only change so many things at a time.
+
+			// Figure out where our text and image should go
+			Rectangle glyph_rectangle;
+			Rectangle text_rectangle;
+			Rectangle image_rectangle;
+
+			ThemeEngine.Current.CalculateRadioButtonTextAndImageLayout (this, Point.Empty, out glyph_rectangle, out text_rectangle, out image_rectangle);
+
+			// Draw our button
+			if (FlatStyle != FlatStyle.System)
+				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this, glyph_rectangle, text_rectangle, image_rectangle, pe.ClipRectangle);
+			else
+				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
+#else
 			ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
+#endif
 		}
 		#endregion	// Private Methods
 
@@ -231,16 +249,8 @@ namespace System.Windows.Forms {
 		[DefaultValue(ContentAlignment.MiddleLeft)]
 		[Localizable(true)]
 		public override ContentAlignment TextAlign {
-			get {
-				return text_alignment;
-			}
-
-			set {
-				if (value != text_alignment) {
-					text_alignment = value;
-					Invalidate();
-				}
-			}
+			get { return base.TextAlign; }
+			set { base.TextAlign = value; }
 		}
 		#endregion	// Public Instance Properties
 
