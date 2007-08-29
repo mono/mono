@@ -44,6 +44,7 @@ namespace System.Web.UI {
 		string text;
 		TemplateContainerAttribute containerAttribute;
 #if NET_2_0
+		TemplateInstanceAttribute instanceAttribute;
 		ArrayList bindings;
 #endif
 
@@ -53,10 +54,15 @@ namespace System.Web.UI {
 
 		internal TemplateBuilder (ICustomAttributeProvider prov)
 		{
-			object[] ats = prov.GetCustomAttributes (typeof(TemplateContainerAttribute), true);
-			if (ats.Length > 0) {
+			object[] ats = prov.GetCustomAttributes (typeof (TemplateContainerAttribute), true);
+			if (ats.Length > 0)
 				containerAttribute = (TemplateContainerAttribute) ats [0];
-			}
+
+#if NET_2_0
+			ats = prov.GetCustomAttributes (typeof (TemplateInstanceAttribute), true);
+			if (ats.Length > 0)
+				instanceAttribute = (TemplateInstanceAttribute) ats [0];
+#endif
 		}
 
 		public virtual string Text {
@@ -69,6 +75,10 @@ namespace System.Web.UI {
 		}
 		
 #if NET_2_0
+		internal TemplateInstance? TemplateInstance {
+			get { return instanceAttribute != null ? instanceAttribute.Instances : (TemplateInstance?)null; }
+		}
+					
 		internal BindingDirection BindingDirection {
 			get { return containerAttribute != null ? containerAttribute.BindingDirection : BindingDirection.TwoWay; }
 		}

@@ -81,13 +81,14 @@ namespace System.Web.Compilation
 		}
 
 		void CreateField (ControlBuilder builder, bool check)
-		{
+		{			
 			if (builder == null || builder.ID == null || builder.ControlType == null)
 				return;
 #if NET_2_0
 			if (partialNameOverride [builder.ID] != null)
 				return;
 #endif
+
 			MemberAttributes ma = MemberAttributes.Family;
 			currentLocation = builder.location;
 			if (check && CheckBaseFieldOrProperty (builder.ID, builder.ControlType, ref ma))
@@ -97,6 +98,8 @@ namespace System.Web.Compilation
 			field = new CodeMemberField (builder.ControlType.FullName, builder.ID);
 			field.Attributes = ma;
 #if NET_2_0
+			field.Type.Options |= CodeTypeReferenceOptions.GlobalReference;
+
 			if (partialClass != null)
 				partialClass.Members.Add (field);
 			else
@@ -1247,10 +1250,16 @@ namespace System.Web.Compilation
 		{
 			EnsureID (builder);
 			bool isTemplate = (typeof (TemplateBuilder).IsAssignableFrom (builder.GetType ()));
+			
 			if (!isTemplate && !inTemplate) {
 				CreateField (builder, true);
 			} else if (!isTemplate) {
-				builder.ID = builder.GetNextID (null);
+#if NET_2_0
+				TemplateBuilder pb = builder.parentBuilder as TemplateBuilder;
+				if (pb == null || pb.TemplateInstance != TemplateInstance.Single)
+#endif
+					builder.ID = builder.GetNextID (null);
+				
 				CreateField (builder, false);
 			}
 
@@ -1263,7 +1272,6 @@ namespace System.Web.Compilation
 
 				StringBuilder sb = new StringBuilder ();
 				foreach (object b in builder.Children) {
-
 					if (b is string) {
 						sb.Append ((string) b);
 						continue;

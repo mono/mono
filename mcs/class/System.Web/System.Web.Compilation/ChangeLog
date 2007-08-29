@@ -1,3 +1,13 @@
+2007-08-29  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: mark fields corresponding to the
+	controls as global references.
+	When control tree is constructed and the parent of the current
+	builder is a TemplateBuilder marked with the TemplateInstance
+	attribute set to Single, use the control's ID as the field
+	name. This makes it possible to refer to controls inside templates
+	by name instead of by using FindControl.
+
 2007-08-23  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: use HttpApplication.BinDirectoryAssemblies

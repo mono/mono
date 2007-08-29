@@ -1,3 +1,9 @@
+2007-08-29  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuilder.cs: check for and store for later use the
+	TemplateContainerAttribute. Added a nullable property
+	TemplateInstance to return the value of the attribute.
+
 2007-08-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Control.cs: optimized performance in InitControlsCache()
