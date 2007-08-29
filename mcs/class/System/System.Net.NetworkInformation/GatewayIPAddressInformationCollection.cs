@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.GatewayIPAddressInformationCollection
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +29,11 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	public class GatewayIPAddressInformationCollection : ICollection<GatewayIPAddressInformation>, IEnumerable<GatewayIPAddressInformation>, IEnumerable {
-		List<GatewayIPAddressInformation> list;
+		List<GatewayIPAddressInformation> list = new List<GatewayIPAddressInformation> ();
 		
 		protected GatewayIPAddressInformationCollection ()
 		{
@@ -39,12 +41,16 @@ namespace System.Net.NetworkInformation {
 
 		public virtual void Add (GatewayIPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Add (address);
 		}
 
 		public virtual void Clear ()
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Clear ();
 		}
 
 		public virtual bool Contains (GatewayIPAddressInformation address)
@@ -64,7 +70,9 @@ namespace System.Net.NetworkInformation {
 
 		public virtual bool Remove (GatewayIPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			return list.Remove (address);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -82,6 +90,42 @@ namespace System.Net.NetworkInformation {
 
 		public virtual GatewayIPAddressInformation this [int index] {
 			get { return list [index]; }
+		}
+	}
+
+	class Win32GatewayIPAddressInformationCollection : GatewayIPAddressInformationCollection
+	{
+		public static readonly Win32GatewayIPAddressInformationCollection Empty = new Win32GatewayIPAddressInformationCollection (true);
+
+		bool is_readonly;
+
+		private Win32GatewayIPAddressInformationCollection (bool isReadOnly)
+		{
+			this.is_readonly = isReadOnly;
+		}
+
+		public Win32GatewayIPAddressInformationCollection (params Win32_IP_ADDR_STRING [] al)
+		{
+			foreach (Win32_IP_ADDR_STRING a in al) {
+				if (String.IsNullOrEmpty (a.IpAddress))
+					continue;
+				Add (new GatewayIPAddressInformationImpl (IPAddress.Parse (a.IpAddress)));
+				AddSubsequently (a.Next);
+			}
+			is_readonly = true;
+		}
+
+		void AddSubsequently (IntPtr head)
+		{
+			Win32_IP_ADDR_STRING a;
+			for (IntPtr p = head; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADDR_STRING) Marshal.PtrToStructure (p, typeof (Win32_IP_ADDR_STRING));
+				Add (new GatewayIPAddressInformationImpl (IPAddress.Parse (a.IpAddress)));
+			}
+		}
+
+		public override bool IsReadOnly {
+			get { return is_readonly; }
 		}
 	}
 }

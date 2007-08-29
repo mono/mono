@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.GatewayIPAddressInformation
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +34,20 @@ namespace System.Net.NetworkInformation {
 		}
 		
 		public abstract IPAddress Address { get; }
+	}
+
+	class GatewayIPAddressInformationImpl : GatewayIPAddressInformation
+	{
+		IPAddress address;
+
+		public GatewayIPAddressInformationImpl (IPAddress address)
+		{
+			this.address = address;
+		}
+		
+		public override IPAddress Address {
+			get { return address; }
+		}
 	}
 }
 #endif

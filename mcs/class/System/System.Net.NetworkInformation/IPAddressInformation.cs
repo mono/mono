@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.IPAddressInformation
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +38,31 @@ namespace System.Net.NetworkInformation {
 		public abstract IPAddress Address { get; }
 		public abstract bool IsDnsEligible { get; }
 		public abstract bool IsTransient { get; }
+	}
+
+	class IPAddressInformationImpl : IPAddressInformation 
+	{
+		IPAddress address;
+		bool is_dns_eligible, is_transient;
+
+		public IPAddressInformationImpl (IPAddress address, bool isDnsEligible, bool isTransient)
+		{
+			this.address = address;
+			this.is_dns_eligible = isDnsEligible;
+			this.is_transient = isTransient;
+		}
+
+		public override IPAddress Address {
+			get { return address; }
+		}
+
+		public override bool IsDnsEligible {
+			get { return is_dns_eligible; }
+		}
+
+		public override bool IsTransient {
+			get { return is_transient; }
+		}
 	}
 }
 #endif

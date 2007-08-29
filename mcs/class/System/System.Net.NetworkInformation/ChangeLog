@@ -1,3 +1,25 @@
+2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetworkInterface.cs,
+	  IPv4InterfaceStatistics.cs
+	  IPInterfaceProperties.cs
+	  IPv4InterfaceProperties.cs
+	  IPv6InterfaceProperties.cs
+	  IPAddressCollection.cs
+	  GatewayIPAddressInformation.cs
+	  GatewayIPAddressInformationCollection.cs
+	  IPAddressInformation.cs
+	  IPAddressInformationCollection.cs
+	  MulticastIPAddressInformation.cs
+	  MulticastIPAddressInformationCollection.cs
+	  UnicastIPAddressInformation.cs
+	  UnicastIPAddressInformationCollection.cs
+	  Win32NetworkInterfaceMarshal.cs (new) :
+	  NetworkInterface implementation using Win32 API.
+
+	  Not sure how MIB-based implementation (for Linux) is possible but
+	  it will follow.
+
 2007-08-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPGlobalProperties.cs : implemented remaining methods in

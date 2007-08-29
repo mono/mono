@@ -1,3 +1,7 @@
+2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added Win32NetworkInterfaceMarshal.cs.
+
 2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : split PREBUILT_DEP from CONFIGURATION_DEP so that the

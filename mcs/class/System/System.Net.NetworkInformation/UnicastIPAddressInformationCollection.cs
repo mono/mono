@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.UnicastIPAddressInformationCollection
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +30,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	public class UnicastIPAddressInformationCollection : ICollection<UnicastIPAddressInformation>,
 						IEnumerable<UnicastIPAddressInformation> {
 
-		List<UnicastIPAddressInformation> list;
+		List<UnicastIPAddressInformation> list = new List<UnicastIPAddressInformation> ();
 
 		protected internal UnicastIPAddressInformationCollection ()
 		{
@@ -42,12 +44,16 @@ namespace System.Net.NetworkInformation {
 
 		public virtual void Add (UnicastIPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Add (address);
 		}
 
 		public virtual void Clear ()
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Clear ();
 		}
 
 		public virtual bool Contains (UnicastIPAddressInformation address)
@@ -67,7 +73,9 @@ namespace System.Net.NetworkInformation {
 
 		public virtual bool Remove (UnicastIPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			return list.Remove (address);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -85,6 +93,35 @@ namespace System.Net.NetworkInformation {
 
 		public virtual UnicastIPAddressInformation this [int index] {
 			get { return list [index]; }
+		}
+	}
+
+	class Win32UnicastIPAddressInformationCollection : UnicastIPAddressInformationCollection
+	{
+		public static readonly Win32UnicastIPAddressInformationCollection Empty = new Win32UnicastIPAddressInformationCollection (true);
+
+		bool is_readonly;
+
+		// for static methods
+		Win32UnicastIPAddressInformationCollection (bool isReadOnly)
+		{
+			is_readonly = isReadOnly;
+		}
+
+		public override bool IsReadOnly {
+			get { return is_readonly; }
+		}
+
+		public static Win32UnicastIPAddressInformationCollection FromUnicast (IntPtr ptr)
+		{
+			Win32UnicastIPAddressInformationCollection c = new Win32UnicastIPAddressInformationCollection (false);
+			Win32_IP_ADAPTER_UNICAST_ADDRESS a;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADAPTER_UNICAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_UNICAST_ADDRESS));
+				c.Add (new Win32UnicastIPAddressInformation (a));
+			}
+			c.is_readonly = true;
+			return c;
 		}
 	}
 }

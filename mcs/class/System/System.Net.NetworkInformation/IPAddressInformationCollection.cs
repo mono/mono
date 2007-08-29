@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.IPAddressInformationCollection
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,10 +30,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	public class IPAddressInformationCollection : ICollection<IPAddressInformation>, IEnumerable<IPAddressInformation>, IEnumerable {
-		List <IPAddressInformation> list;
+		List <IPAddressInformation> list = new List <IPAddressInformation> ();
 
 		internal IPAddressInformationCollection ()
 		{
@@ -40,12 +42,16 @@ namespace System.Net.NetworkInformation {
 
 		public virtual void Add (IPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Add (address);
 		}
 
 		public virtual void Clear ()
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			list.Clear ();
 		}
 
 		public virtual bool Contains (IPAddressInformation address)
@@ -65,7 +71,9 @@ namespace System.Net.NetworkInformation {
 
 		public virtual bool Remove (IPAddressInformation address)
 		{
-			throw new NotSupportedException ("The collection is read-only.");
+			if (IsReadOnly)
+				throw new NotSupportedException ("The collection is read-only.");
+			return list.Remove (address);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -83,6 +91,38 @@ namespace System.Net.NetworkInformation {
 
 		public virtual IPAddressInformation this [int index] {
 			get { return list [index]; }
+		}
+	}
+
+	class IPAddressInformationImplCollection : IPAddressInformationCollection
+	{
+		public static readonly IPAddressInformationImplCollection Empty = new IPAddressInformationImplCollection (true);
+
+		bool is_readonly;
+
+		// for static methods
+		IPAddressInformationImplCollection (bool isReadOnly)
+		{
+			is_readonly = isReadOnly;
+		}
+
+		public override bool IsReadOnly {
+			get { return is_readonly; }
+		}
+
+		public static IPAddressInformationImplCollection FromAnycast (IntPtr ptr)
+		{
+			IPAddressInformationImplCollection c = new IPAddressInformationImplCollection (false);
+			Win32_IP_ADAPTER_ANYCAST_ADDRESS a;
+			for (IntPtr p = ptr; p != IntPtr.Zero; p = a.Next) {
+				a = (Win32_IP_ADAPTER_ANYCAST_ADDRESS) Marshal.PtrToStructure (p, typeof (Win32_IP_ADAPTER_ANYCAST_ADDRESS));
+				c.Add (new IPAddressInformationImpl (
+				       a.Address.GetIPAddress (),
+				       a.LengthFlags.IsDnsEligible,
+				       a.LengthFlags.IsTransient));
+			}
+			c.is_readonly = true;
+			return c;
 		}
 	}
 }

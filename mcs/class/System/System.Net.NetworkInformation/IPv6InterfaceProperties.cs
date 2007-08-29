@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.IPv6InterfaceProperties
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +35,24 @@ namespace System.Net.NetworkInformation {
 
 		public abstract int Index { get; }
 		public abstract int Mtu { get; }
+	}
+
+	class Win32IPv6InterfaceProperties : IPv6InterfaceProperties
+	{
+		Win32_MIB_IFROW mib;
+
+		public Win32IPv6InterfaceProperties (Win32_MIB_IFROW mib)
+		{
+			this.mib = mib;
+		}
+
+		public override int Index {
+			get { return mib.Index; }
+		}
+
+		public override int Mtu {
+			get { return mib.Mtu; }
+		}
 	}
 }
 #endif

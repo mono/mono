@@ -1,10 +1,11 @@
 //
 // System.Net.NetworkInformation.MulticastIPAddressInformation
 //
-// Author:
+// Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.Runtime.InteropServices;
+
 namespace System.Net.NetworkInformation {
 	public abstract class MulticastIPAddressInformation : IPAddressInformation {
 		protected MulticastIPAddressInformation ()
@@ -38,6 +41,57 @@ namespace System.Net.NetworkInformation {
 		public abstract DuplicateAddressDetectionState DuplicateAddressDetectionState { get; }
 		public abstract PrefixOrigin PrefixOrigin { get; }
 		public abstract SuffixOrigin SuffixOrigin { get; }
+	}
+
+	// So, why are there many pointless members in the base class?
+	class Win32MulticastIPAddressInformation : MulticastIPAddressInformation
+	{
+		IPAddress address;
+		bool is_dns_eligible, is_transient;
+
+		public Win32MulticastIPAddressInformation (IPAddress address, bool isDnsEligible, bool isTransient)
+		{
+			this.address = address;
+			this.is_dns_eligible = isDnsEligible;
+			this.is_transient = isTransient;
+		}
+
+		public override IPAddress Address {
+			get { return address; }
+		}
+
+		public override bool IsDnsEligible {
+			get { return is_dns_eligible; }
+		}
+
+		public override bool IsTransient {
+			get { return is_transient; }
+		}
+
+		public override long AddressPreferredLifetime {
+			get { return 0; }
+		}
+
+		public override long AddressValidLifetime {
+			get { return 0; }
+		}
+
+		public override long DhcpLeaseLifetime {
+			get { return 0; }
+		}
+
+		public override DuplicateAddressDetectionState DuplicateAddressDetectionState {
+			get { return DuplicateAddressDetectionState.Invalid; }
+		}
+
+		public override PrefixOrigin PrefixOrigin {
+			get { return PrefixOrigin.Other; }
+		}
+
+		public override SuffixOrigin SuffixOrigin {
+			get { return SuffixOrigin.Other; }
+		}
+
 	}
 }
 #endif
