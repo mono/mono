@@ -710,6 +710,7 @@ System.Net.NetworkInformation/TcpStatistics.cs
 System.Net.NetworkInformation/UdpStatistics.cs
 System.Net.NetworkInformation/UnicastIPAddressInformationCollection.cs
 System.Net.NetworkInformation/UnicastIPAddressInformation.cs
+System.Net.NetworkInformation/Win32NetworkInterfaceMarshal.cs
 System.Net/NtlmClient.cs
 System/NetPipeStyleUriParser.cs
 System.Net/ProtocolViolationException.cs
