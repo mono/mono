@@ -217,6 +217,7 @@ System.ComponentModel.Design/ComponentEventHandler.cs
 System.ComponentModel.Design/ComponentRenameEventArgs.cs
 System.ComponentModel.Design/ComponentRenameEventHandler.cs
 System.ComponentModel.Design/DesignerCollection.cs
+System.ComponentModel.Design/DesignerOptionService.cs
 System.ComponentModel.Design/DesignerEventArgs.cs
 System.ComponentModel.Design/DesignerEventHandler.cs
 System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs
@@ -253,12 +254,14 @@ System.ComponentModel.Design/IResourceService.cs
 System.ComponentModel.Design/IRootDesigner.cs
 System.ComponentModel.Design/ISelectionService.cs
 System.ComponentModel.Design/IServiceContainer.cs
+System.ComponentModel.Design/ITreeDesigner.cs
 System.ComponentModel.Design/ITypeDescriptorFilterService.cs
 System.ComponentModel.Design/ITypeResolutionService.cs
 System.ComponentModel.Design/MenuCommand.cs
 System.ComponentModel/DesignOnlyAttribute.cs
 System.ComponentModel.Design/RuntimeLicenseContext.cs
 System.ComponentModel.Design/SelectionTypes.cs
+System.ComponentModel.Design.Serialization/ComponentSerializationService.cs
 System.ComponentModel.Design.Serialization/ContextStack.cs
 System.ComponentModel.Design.Serialization/DesignerLoader.cs
 System.ComponentModel.Design.Serialization/DesignerSerializerAttribute.cs
@@ -269,9 +272,13 @@ System.ComponentModel.Design.Serialization/IDesignerSerializationProvider.cs
 System.ComponentModel.Design.Serialization/IDesignerSerializationService.cs
 System.ComponentModel.Design.Serialization/INameCreationService.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
+System.ComponentModel.Design.Serialization/MemberRelationship.cs
+System.ComponentModel.Design.Serialization/MemberRelationshipService.cs
 System.ComponentModel.Design.Serialization/ResolveNameEventArgs.cs
 System.ComponentModel.Design.Serialization/ResolveNameEventHandler.cs
 System.ComponentModel.Design.Serialization/RootDesignerSerializerAttribute.cs
+System.ComponentModel.Design.Serialization/SerializationStore.cs
+System.ComponentModel.Design.Serialization/DefaultSerializationProviderAttribute.cs
 System.ComponentModel.Design/ServiceContainer.cs
 System.ComponentModel.Design/ServiceCreatorCallback.cs
 System.ComponentModel.Design/StandardCommands.cs

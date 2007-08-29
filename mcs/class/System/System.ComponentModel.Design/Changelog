@@ -1,3 +1,10 @@
+2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DefaultSerializationProviderAttribute.cs: implemented.
+	* ComponentSerializationService.cs: implemented.
+	* MemberRelationship.cs: implemented.
+        * SerializationStore.cs: implemented.
+
 2007-06-06  Ivan N. Zlatev <contact@i-nz.net>
 
 	* IComponentInitialization.cs: New 2.0 interface

@@ -1,10 +1,10 @@
 //
-// System.Windows.Forms.Design.ScrollableControlDesigner
+// System.Windows.Forms.Design.SplitContainerDesigner
 //
 // Authors:
 //	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2006-2007 Ivan N. Zlatev
+// (C) 2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
 
 using System;
 using System.ComponentModel;
@@ -41,43 +42,45 @@ using System.Collections;
 namespace System.Windows.Forms.Design
 {
 
-	public class ScrollableControlDesigner : ParentControlDesigner
+	public class SplitContainerDesigner : ParentControlDesigner
 	{
 
-		public ScrollableControlDesigner ()
+		public SplitContainerDesigner ()
 		{
 		}
 
-		private const int HTHSCROLL = 6;
-		private const int HTVSCROLL = 7;
-
-		protected override bool GetHitTest (Point point)
+		public override void Initialize (IComponent component)
 		{
-			if (base.GetHitTest (point)) {
-				return true;
-			}
-
-			// Check if the user has clicked on the scroll bars and forward the message to
-			// the ScrollableControl. (Don't filter out the scrolling.). Keep in mind that scrollbars
-			// will be shown only if ScrollableControl.AutoScroll = true
-			//
-			if (this.Control is ScrollableControl && ((ScrollableControl)Control).AutoScroll) {
-				int hitTestResult = (int) Native.SendMessage (this.Control.Handle,
-																	 Native.Msg.WM_NCHITTEST,
-																	 IntPtr.Zero,
-																	(IntPtr) Native.LParam (point.X, point.Y));
-				if (hitTestResult == HTHSCROLL || hitTestResult == HTVSCROLL)
-					return true;
-			}
-			return false;
+			base.Initialize (component);
+			SplitContainer container = (SplitContainer) component;
+			base.EnableDesignMode (container.Panel1, "Panel1");
+			base.EnableDesignMode (container.Panel2, "Panel2");
 		}
 
-
-		protected override void WndProc (ref Message m)
+		public override ControlDesigner InternalControlDesigner (int internalControlIndex)
 		{
-			base.WndProc (ref m);
-			if (m.Msg == (int)Native.Msg.WM_HSCROLL || m.Msg == (int)Native.Msg.WM_VSCROLL)
-				this.DefWndProc (ref m);
+			switch (internalControlIndex) {
+				case 0:
+					return GetDesigner (((SplitContainer)this.Control).Panel1);
+				case 1:
+					return GetDesigner (((SplitContainer)this.Control).Panel2);
+			}
+			return null;
+		}
+
+		private ControlDesigner GetDesigner (IComponent component)
+		{
+			IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
+			if (host != null)
+				return host.GetDesigner (component) as ControlDesigner;
+			else
+				return null;
+		}
+
+		public override int NumberOfInternalControlDesigners ()
+		{
+			return 2;
 		}
 	}
 }
+#endif

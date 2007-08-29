@@ -2,16 +2,9 @@
 // System.ComponentModel.Design.ComponentDesigner
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//	  Ivan N. Zlatev (contact i-nZ.net)
 //
-// (C) 2003 Martin Willemoes Hansen
-//
-// An implementation should be derived from the description here:
-// "Writing Custom Designers for .NET Components"
-//
-// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dndotnet/html/custdsgnrdotnet.asp
-//
-//
+// (C) 2006-2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -21,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -34,50 +27,329 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
+using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.ComponentModel.Design
 {
+
+#if NET_2_0
+	public class ComponentDesigner : ITreeDesigner, IDesigner, IDisposable, IDesignerFilter, IComponentInitializer
+#else
 	public class ComponentDesigner : IDesigner, IDisposable, IDesignerFilter
+#endif
 	{
+
+#region ShadowPropertyCollection
+
 		protected sealed class ShadowPropertyCollection
 		{
-			Hashtable collection;
-			
-			public object this[string propertyName] {
-				get {
-					if (collection == null)
-						return null;
-					
-					return collection [propertyName];
-				}
 
+			private Hashtable _properties = null;
+			private IComponent _component;
+
+			internal ShadowPropertyCollection (IComponent component)
+			{
+				_component = component;
+			}
+
+			// Returns Control's property value (if available) if there is no shadowed one.
+			//
+			public object this[string propertyName]
+			{
+				get {
+					if (propertyName == null)
+						throw new System.ArgumentNullException("propertyName");
+
+					if (_properties != null && _properties.ContainsKey (propertyName))
+						return _properties[propertyName];
+
+					PropertyDescriptor property = TypeDescriptor.GetProperties (_component.GetType ())[propertyName];
+					if (property != null)
+						return property.GetValue (_component);
+					else
+						throw new System.Exception ("Propery not found!");
+				}
 				set {
-					if (collection == null)
-						collection = new Hashtable ();
-					
-					collection [propertyName] = value;
+					if (_properties == null)
+						_properties = new Hashtable ();
+					_properties[propertyName] = value;
 				}
 			}
 
 			public bool Contains (string propertyName)
 			{
-				if (collection == null)
+				if (_properties != null)
+					return _properties.ContainsKey (propertyName);
+				else
 					return false;
-
-				return collection.Contains (propertyName);
 			}
-		}
 
-		IComponent component;
-		ShadowPropertyCollection shadow_property_collection;
-		DesignerVerbCollection verbs;
-		
+		} // ShadowPropertyCollection
+#endregion
+
 		public ComponentDesigner ()
 		{
 		}
 
-		#region Implementation of IDesignerFilter
+
+		private IComponent _component;
+		private DesignerVerbCollection _verbs;
+		private ShadowPropertyCollection _shadowPropertyCollection;
+#if NET_2_0
+		private DesignerActionListCollection _designerActionList;
+#endif
+
+		// This property indicates any components to copy or move along with the component managed
+		// by the designer during a copy, drag, or move operation.
+		// If this collection contains references to other components in the current design mode document,
+		// those components will be copied along with the component managed by the designer during a copy operation.
+		// When the component managed by the designer is selected, this collection is filled with any nested controls.
+		// This collection can also include other components, such as the buttons of a toolbar.
+		//
+		// supposedly contains all the children of the component, thus used for ITreeDesigner.Children
+		//
+		public virtual ICollection AssociatedComponents {
+			get { return new IComponent[0]; }
+		}
+
+		public IComponent Component {
+			get { return _component; }
+		}
+
+		public virtual DesignerVerbCollection Verbs {
+			get {
+				if (_verbs == null)
+					_verbs = new DesignerVerbCollection ();
+
+				return _verbs;
+			}
+		}
+
+		protected InheritanceAttribute InheritanceAttribute {
+			get {
+				IInheritanceService service = (IInheritanceService) this.GetService (typeof (IInheritanceService));
+				if (service != null)
+					return service.GetInheritanceAttribute (_component);
+				else
+					return InheritanceAttribute.Default;
+			}
+		}
+
+		protected bool Inherited {
+			get { return !this.InheritanceAttribute.Equals (InheritanceAttribute.NotInherited); }
+		}
+
+		//Gets a collection of property values that override user settings.
+		//
+		protected ShadowPropertyCollection ShadowProperties {
+			get {
+				if (_shadowPropertyCollection == null) {
+					_shadowPropertyCollection = new ShadowPropertyCollection(_component);
+				}
+				return _shadowPropertyCollection;
+			}
+		}
+
+#if NET_2_0
+		public virtual DesignerActionListCollection ActionLists {
+			get {
+				if (_designerActionList == null)
+					_designerActionList = new DesignerActionListCollection ();
+
+				return _designerActionList;
+			}
+		}
+
+		protected virtual IComponent ParentComponent {
+			get {
+				IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+				if (host != null) {
+					IComponent rootComponent = host.RootComponent;
+					if (rootComponent != _component)
+						return rootComponent;
+				}
+				return null;
+			}
+		}
+
+		public virtual void InitializeNewComponent (IDictionary defaultValues)
+		{
+			// Reset
+			//
+			OnSetComponentDefaults ();
+		}
+
+		// MSDN: The default implementation of this method does nothing.
+		//
+		public virtual void InitializeExistingComponent (IDictionary defaultValues)
+		{
+			InitializeNonDefault ();
+		}
+#endif
+
+
+		public virtual void Initialize (IComponent component)
+		{
+			if (component == null)
+				throw new ArgumentNullException ("component");
+								
+			_component = component;
+		}
+
+#if NET_2_0
+		[Obsolete ("This method has been deprecated. Use InitializeExistingComponent instead.")]
+#endif
+		public virtual void InitializeNonDefault ()
+		{
+		}
+
+
+		// This method is called when a user double-clicks (the representation of) a component.
+		// Tries to bind the default event to a method or creates a new one.
+		// 
+		public virtual void DoDefaultAction()
+		{
+			IDesignerHost host = (IDesignerHost) this.GetService(typeof(IDesignerHost));
+			DesignerTransaction transaction = null;
+			if (host != null)
+				transaction = host.CreateTransaction ("ComponentDesigner_AddEvent");
+
+			IEventBindingService eventBindingService = GetService (typeof(IEventBindingService)) as IEventBindingService;
+			EventDescriptor defaultEventDescriptor = null;
+
+			if (eventBindingService != null) {
+				ISelectionService selectionService = this.GetService (typeof (ISelectionService)) as ISelectionService;
+				try {
+					if (selectionService != null) {
+						ICollection selectedComponents = selectionService.GetSelectedComponents ();
+
+						foreach (IComponent component in selectedComponents) {
+							EventDescriptor eventDescriptor = TypeDescriptor.GetDefaultEvent (component);
+							if (eventDescriptor != null) {
+								PropertyDescriptor eventProperty = eventBindingService.GetEventProperty (eventDescriptor);
+								if (eventProperty != null && !eventProperty.IsReadOnly) {
+									string methodName = eventProperty.GetValue (component) as string;
+									bool newMethod = true;
+
+									if (methodName != null || methodName != String.Empty) {
+										ICollection compatibleMethods = eventBindingService.GetCompatibleMethods (eventDescriptor);
+										foreach (string signature in compatibleMethods) {
+											if (signature == methodName) {
+												newMethod = false;
+												break;
+											}
+										}
+									}
+									if (newMethod) {
+										if (methodName == null)
+											methodName = eventBindingService.CreateUniqueMethodName (component, eventDescriptor);
+															
+										eventProperty.SetValue (component, methodName);
+									}
+
+									if (component == _component)
+										defaultEventDescriptor = eventDescriptor;
+								}
+							}
+						}
+
+					}
+				}
+				catch {
+					if (transaction != null) {
+						transaction.Cancel ();
+						transaction = null;
+					}
+				}
+				finally {
+					if (transaction != null)
+						transaction.Commit ();
+				}
+
+				if (defaultEventDescriptor != null)
+					eventBindingService.ShowCode (_component, defaultEventDescriptor);
+			}
+		}
+
+
+
+#if NET_2_0
+		[Obsolete ("This method has been deprecated. Use InitializeNewComponent instead.")]
+#endif
+		// The default implementation of this method sets the default property of the component to
+		// the name of the component if the default property is a string and the property is not already set.
+		// This method can be implemented in a derived class to customize the initialization of the component
+		// that this designer is designing.
+		//
+		public virtual void OnSetComponentDefaults ()
+		{
+			if (_component != null && _component.Site != null) {
+				PropertyDescriptor property = TypeDescriptor.GetDefaultProperty (_component);
+				if (property != null && property.PropertyType.Equals (typeof (string))) {
+					string propertyValue = (string)property.GetValue (_component);
+					if (propertyValue != null && propertyValue.Length != 0)
+						property.SetValue (_component, _component.Site.Name);
+				}
+			}
+		}
+
+
+
+
+		protected InheritanceAttribute InvokeGetInheritanceAttribute (ComponentDesigner toInvoke)
+		{
+			return toInvoke.InheritanceAttribute;
+		}
+
+#region IDesignerFilter
+
+		// TypeDescriptor queries the component's site for ITypeDescriptorFilterService 
+		// then invokes ITypeDescriptorFilterService.XXXX before retrieveing props/event/attributes, 
+		// which then invokes the IDesignerFilter implementation of the component
+		// 
+		protected virtual void PostFilterAttributes (IDictionary attributes)
+		{
+		}
+
+		protected virtual void PostFilterEvents (IDictionary events)
+		{
+		}
+
+		protected virtual void PostFilterProperties (IDictionary properties)
+		{
+		}
+
+		protected virtual void PreFilterAttributes (IDictionary attributes)
+		{
+		}
+
+		protected virtual void PreFilterEvents (IDictionary events)
+		{
+		}
+
+		protected virtual void PreFilterProperties (IDictionary properties)
+		{
+		}
+#endregion
+
+		protected void RaiseComponentChanged (MemberDescriptor member, object oldValue, object newValue)
+		{
+			IComponentChangeService service = GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (service != null)
+				service.OnComponentChanged (_component, member, oldValue, newValue);
+		}
+
+		protected void RaiseComponentChanging (MemberDescriptor member)
+		{
+			IComponentChangeService service = GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (service != null)
+				service.OnComponentChanging (_component, member);
+		}
+
+#region Implementation of IDesignerFilter
 
 		void IDesignerFilter.PostFilterAttributes (IDictionary attributes)
 		{
@@ -109,150 +381,71 @@ namespace System.ComponentModel.Design
 			PreFilterProperties (properties);
 		}
 
-		#endregion Implementation of IDesignerFilter
+#endregion
 
-		public virtual ICollection AssociatedComponents
-		{
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
+#if NET_2_0
 
-		public IComponent Component
-		{
+#region ITreeDesigner
+		// Returns a collection of the designers of the associated components
+		//
+		ICollection ITreeDesigner.Children {
 			get {
-				return component;
+				ICollection components = this.AssociatedComponents;
+				IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+				
+				if (host != null) {
+					ArrayList designers = new ArrayList ();
+					foreach (IComponent component in components) {
+						IDesigner designer = host.GetDesigner (component);
+						if (designer != null)
+							designers.Add (designer);
+					}
+					IDesigner[] result = new IDesigner[designers.Count];
+					designers.CopyTo (result);
+					return result;
+				}
+				return new IDesigner[0];
 			}
 		}
 
-		public virtual DesignerVerbCollection Verbs
-		{
-			[MonoTODO]
+		IDesigner ITreeDesigner.Parent {
 			get {
-				if (verbs == null) 
-					verbs = new DesignerVerbCollection();
-
-				return verbs;
+				IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+				if (host != null && this.ParentComponent != null)
+					return host.GetDesigner (this.ParentComponent);
+	
+				return null;
 			}
+		}
+#endregion
+
+#endif
+		// Helper method - not an ISerivceProvider
+		//
+		protected virtual object GetService (Type service)
+		{
+			if (_component != null && _component.Site != null)
+				return _component.Site.GetService (service);
+
+			return null;
 		}
 
 		public void Dispose ()
 		{
-			Dispose (true);
+			this.Dispose (true);
 			GC.SuppressFinalize (this);
 		}
 
+
 		protected virtual void Dispose (bool disposing)
 		{
-		}
-
-		[MonoTODO("Not implemented, currently does nothing")]
-		public virtual void DoDefaultAction ()
-		{
-			
-		}
-
-		public virtual void Initialize (IComponent component)
-		{
-			this.component = component;
-		}
-
-		[MonoTODO]
-		public virtual void InitializeNonDefault ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void OnSetComponentDefaults ()
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		protected InheritanceAttribute InheritanceAttribute
-		{
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		protected bool Inherited
-		{
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
-
-		protected ShadowPropertyCollection ShadowProperties
-		{
-			get {
-				if (shadow_property_collection == null)
-					shadow_property_collection = new ShadowPropertyCollection ();
-				return shadow_property_collection;
-			}
-		}
-
-		[MonoTODO("No designers services are provided in Mono")]
-		protected virtual object GetService (Type serviceType)
-		{
-			return null;
-		}
-
-		[MonoTODO]
-		protected InheritanceAttribute InvokeGetInheritanceAttribute (ComponentDesigner toInvoke)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PostFilterAttributes (IDictionary attributes)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PostFilterEvents (IDictionary events)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PostFilterProperties (IDictionary properties)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PreFilterAttributes (IDictionary attributes)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PreFilterEvents (IDictionary events)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void PreFilterProperties (IDictionary properties)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO("Currently no event is raised")]
-		protected void RaiseComponentChanged (MemberDescriptor member, object oldValue, object newValue)
-		{
-			// FIXME: Should notify the IComponentChangeService
-			// that this component has changed
-		}
-
-		[MonoTODO("Currently no event is raised")]
-		protected void RaiseComponentChanging (MemberDescriptor member)
-		{
-			
+			if (disposing)
+				_component = null;
 		}
 
 		~ComponentDesigner ()
 		{
+			this.Dispose (false);
 		}
 	}
 }

@@ -1,3 +1,27 @@
+2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomComponentSerializationService.cs: implemented.
+	* CollectionCodeDomSerializer.cs: implemented.
+	* CodeDomDesignerLoader.cs: implemented.
+	* CodeDomSerializationProvider.cs: implemented.
+	* ComponentCodeDomSerializer.cs: implemented.
+	* RootContext.cs: implemented.
+	* BasicDesignerLoader.cs: implemented.
+	* DesignerSerializationManager.cs: implemented.
+	* EnumCodeDomSerializer.cs: implemented.
+	* SerializeAbsoluteContext.cs: implemented.
+	* MemberCodeDomSerializer.cs: implemented.
+	* PrimitiveCodeDomSerializer.cs: implemented.
+	* CodeDomSerializerBase.cs: implemented.
+	* CodeDomSerializer.cs: implemented.
+	* ExpressionContext.cs: implemented.
+	* EventCodeDomSerializer.cs: implemented.
+	* TypeCodeDomSerializer.cs: implemented.
+	* ObjectStatementCollection.cs: implemented.
+	* RootCodeDomSerializer.cs: implemented.
+	* PropertyCodeDomSerializer.cs: implemented.
+	* StatementContext.cs: implemented.
+
 2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 	* DataMemberFieldEditor.cs: stubbed.
 	* DataMemberListEditor.cs: stubbed.

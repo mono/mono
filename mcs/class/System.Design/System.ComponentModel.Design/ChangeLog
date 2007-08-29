@@ -1,3 +1,27 @@
+2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignSurfaceManager.cs: implemented.
+	* DesignerEventService.cs: implemented.
+	* ComponentDesigner.cs: implemented.
+	* ActiveDesignSurfaceChangedEventHandler.cs: implemented.
+	* LoadedEventHandler.cs: implemented.
+	* DesignSurfaceCollection.cs: implemented.
+	* DesignerHost.cs: implemented.
+	* ExtenderService.cs: implemented.
+	* DesignModeSite.cs: implemented.
+	* SelectionService.cs: implemented.
+	* DesignSurfaceServiceContainer.cs: implemented.
+	* DesignerActionListCollection.cs: implemented.
+	* ActiveDesignSurfaceChangedEventArgs.cs: implemented.
+	* LoadedEventArgs.cs: implemented.
+	* TypeDescriptorFilterService.cs: implemented.
+	* ReferenceService.cs: implemented.
+	* DesignSurface.cs: implemented.
+	* DesignSurfaceEventHandler.cs: implemented.
+	* DesignModeNestedContainer.cs: implemented.
+	* EventBindingService.cs: implemented.
+	* DesignSurfaceEventArgs.cs: implemented.
+
 2007-08-27  Ivan N. Zlatev  <contact@i-nz.net>
 	* CollectionEditor.cs: 
 	 - Fix CreateCollectionItemType to deal with "Item" overloads.

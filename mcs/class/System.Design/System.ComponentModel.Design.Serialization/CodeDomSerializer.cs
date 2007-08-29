@@ -1,10 +1,10 @@
-// System.ComponentModel.Design.Serialization.CodeDomSerializer.cs
 //
-// Author:
-// 	Alejandro Sánchez Acosta   <raciel@gnome.org>
+// System.ComponentModel.Design.Serialization.CodeDomSerializer
 //
-// (C) Alejandro Sánchez Acosta
+// Authors:
+//	  Ivan N. Zlatev (contact i-nZ.net)
 //
+// (C) 2007 Ivan N. Zlatev
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,81 +27,181 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+
 using System.CodeDom;
-using System.Web.UI.Design;
 
 namespace System.ComponentModel.Design.Serialization
 {
-	public abstract class CodeDomSerializer
+	public class CodeDomSerializer : CodeDomSerializerBase
 	{
-		[MonoTODO]
-		protected CodeDomSerializer() {
-			throw new NotImplementedException ();
-		}
 
-		public abstract object Deserialize (IDesignerSerializationManager manager, object codeObject);
-
-		[MonoTODO]
-		protected void DeserializePropertiesFromResources (IDesignerSerializationManager manager, object value, Attribute[] filter) 
+		public CodeDomSerializer ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected object DeserializeExpression (IDesignerSerializationManager manager, string name, CodeExpression expression) 
+
+		public object SerializeAbsolute (IDesignerSerializationManager manager, object value)
 		{
-			throw new NotImplementedException (); 
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (manager == null)
+				throw new ArgumentNullException ("manager");
+
+			SerializeAbsoluteContext context = new SerializeAbsoluteContext ();
+			manager.Context.Push (context);
+			object result = this.Serialize (manager, value);
+			manager.Context.Pop ();
+			return result;
 		}
 
-		[MonoTODO]		
-		protected void DeserializeStatement (IDesignerSerializationManager manager, CodeStatement statement) 
-		{	
-			throw new NotImplementedException ();
-		}
-
-		public abstract object Serialize (IDesignerSerializationManager manager, object value);
-
-		[MonoTODO]
-		protected void SerializeEvents (IDesignerSerializationManager manager, CodeStatementCollection statements, object value, Attribute[] filter) 
+		public virtual object Serialize (IDesignerSerializationManager manager, object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (manager == null)
+				throw new ArgumentNullException ("manager");
+
+			object serialized = null;
+			bool isComplete = false;
+			CodeExpression createExpr = base.SerializeCreationExpression (manager, value, out isComplete);
+			if (isComplete) {
+				serialized = createExpr;
+				base.SetExpression (manager, value, createExpr);
+			} else {
+				ExpressionContext context = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
+				if (context != null && context.PresetValue == value) {
+					CodeStatementCollection statements = new CodeStatementCollection ();
+					statements.Add (new CodeAssignStatement (context.Expression, createExpr));
+					base.SerializeProperties (manager, statements, value, new Attribute[0]);
+					base.SerializeEvents (manager, statements, value, new Attribute[0]);
+				} else {
+					CodeExpression expression = base.GetExpression (manager, value);
+					if (expression == null) {
+						serialized = expression = createExpr;
+						base.SetExpression (manager, value, expression);
+					}
+				}
+			}
+			return serialized;
 		}
 
-		[MonoTODO]
-		protected void SerializeProperties (IDesignerSerializationManager manager, CodeStatementCollection statements, object value, Attribute[] filter) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void SerializePropertiesToResources (IDesignerSerializationManager manager, CodeStatementCollection statements, object value, Attribute[] filter) 
-		{
-			throw new NotImplementedException ();
-		}
-			 
-
-		[MonoTODO]
-		protected void SerializeResource (IDesignerSerializationManager manager, string resourceName, object value) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected void SerializeResourceInvariant (IDesignerSerializationManager manager, string resourceName, object value) 
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected CodeExpression SerializeToExpression (IDesignerSerializationManager manager, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
+        [Obsolete ("This method has been deprecated. Use SerializeToExpression or GetExpression instead.")] 
 		protected CodeExpression SerializeToReferenceExpression (IDesignerSerializationManager manager, object value)
 		{
-			throw new NotImplementedException ();
+			return base.SerializeToExpression (manager, value);
+		}
+
+		// I am not sure what this does, but the only name I can think of this can get is a variable name from 
+		// the expression
+		public virtual string GetTargetComponentName (CodeStatement statement, CodeExpression expression, Type targetType)
+		{
+			if (expression is CodeFieldReferenceExpression)
+				return ((CodeFieldReferenceExpression) expression).FieldName;
+			else if (expression is CodeVariableReferenceExpression)
+				return ((CodeVariableReferenceExpression) expression).VariableName;
+			return null;
+		}
+
+		public virtual CodeStatementCollection SerializeMember (IDesignerSerializationManager manager, 
+																object owningobject, MemberDescriptor member)
+		{
+			if (member == null)
+				throw new ArgumentNullException ("member");
+			if (owningobject == null)
+				throw new ArgumentNullException ("owningobject");
+			if (manager == null)
+				throw new ArgumentNullException ("manager");
+
+			CodeStatementCollection statements = new CodeStatementCollection ();
+
+			CodeExpression expression = base.GetExpression (manager, owningobject);
+			if (expression == null) {
+				string name = manager.GetName (owningobject);
+				if (name == null)
+					name = base.GetUniqueName (manager, owningobject);
+				expression = new CodeVariableReferenceExpression (name);
+				base.SetExpression (manager, owningobject, expression);
+			}
+
+			manager.Context.Push (new ExpressionContext (expression, expression.GetType (), null, owningobject));
+
+			if (member is PropertyDescriptor)
+				base.SerializeProperty (manager, statements, owningobject, (PropertyDescriptor) member);
+			if (member is EventDescriptor)
+				base.SerializeEvent (manager, statements, owningobject, (EventDescriptor) member);
+
+			manager.Context.Pop ();
+
+			return statements;
+		}
+
+		public virtual CodeStatementCollection SerializeMemberAbsolute (IDesignerSerializationManager manager, 
+																		object owningobject, MemberDescriptor member)
+		{
+			if (member == null)
+				throw new ArgumentNullException ("member");
+			if (owningobject == null)
+				throw new ArgumentNullException ("owningobject");
+			if (manager == null)
+				throw new ArgumentNullException ("manager");
+
+			SerializeAbsoluteContext context = new SerializeAbsoluteContext (member);
+			manager.Context.Push (context);
+			CodeStatementCollection result = this.SerializeMember (manager, owningobject, member);
+			manager.Context.Pop ();
+			return result;
+		}
+
+
+		public virtual object Deserialize (IDesignerSerializationManager manager, object codeObject)
+		{
+			object deserialized = null;
+
+			CodeExpression expression = codeObject as CodeExpression;
+			if (expression != null)
+				deserialized = base.DeserializeExpression (manager, null, expression);
+
+			CodeStatement statement = codeObject as CodeStatement;
+			if (statement != null)
+				deserialized = DeserializeStatementToInstance (manager, statement);
+
+			CodeStatementCollection statements = codeObject as CodeStatementCollection;
+			if (statements != null) {
+				foreach (CodeStatement s in statements) {
+					if (deserialized == null)
+						deserialized = DeserializeStatementToInstance (manager, s);
+					else
+						break;
+				}
+			}
+
+			return deserialized;
+		}
+
+		protected object DeserializeStatementToInstance (IDesignerSerializationManager manager, CodeStatement statement)
+		{
+			object deserialized = null;
+
+			CodeAssignStatement assignment = statement as CodeAssignStatement;
+			if (assignment == null)
+				return null;
+
+			// CodeFieldReferenceExpression
+			//
+			CodeFieldReferenceExpression fieldRef = assignment.Left as CodeFieldReferenceExpression;
+			if (fieldRef != null)
+				deserialized = base.DeserializeExpression (manager, fieldRef.FieldName, assignment.Right);
+
+			base.DeserializeStatement (manager, statement);
+
+			return deserialized;
 		}
 	}
 }
+#endif

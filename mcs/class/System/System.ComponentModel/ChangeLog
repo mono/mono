@@ -1,3 +1,8 @@
+2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignerOptionService.cs: implemented.
+	* ITreeDesigner.cs: implemented.
+
 2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* NestedContainer.cs: implemented.

@@ -1,3 +1,19 @@
+2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ParentControlDesigner.cs: implemented.
+	* IUISelectionService.cs: implemented.
+	* WndProcRouter.cs: implemented.
+	* SelectionFrame.cs: implemented.
+	* ControlDesigner.cs: implemented.
+	* ControlDataObject.cs: implemented.
+	* ComponentTray.cs: implemented.
+	* ScrollableControlDesigner.cs: implemented.
+	* UISelectionService.cs: implemented.
+	* SplitContainerDesigner.cs: implemented.
+	* IMessageReceiver.cs: implemented.
+	* Native.cs: implemented.
+	* DocumentDesigner.cs: implemented.
+
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* CodeDomSerializerException.cs: removed default public
