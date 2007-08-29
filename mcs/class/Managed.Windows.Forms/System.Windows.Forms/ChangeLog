@@ -1,3 +1,9 @@
+2007-08-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add/fix some override differences between 1.1 and 2.0,
+	as well as add new ones. This should make work the BackgroundImage
+	property for ListView again.
+
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGrid.cs, DataGridViewButtonColumn.cs, DataGridViewCheckBoxColumn.cs,

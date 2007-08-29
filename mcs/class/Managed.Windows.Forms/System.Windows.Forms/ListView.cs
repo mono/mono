@@ -141,12 +141,23 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (AfterLabelEditEvent, value); }
 		}
 
+#if !NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }
 		}
+#endif
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
 
 		public event LabelEditEventHandler BeforeLabelEdit {
 			add { Events.AddHandler (BeforeLabelEditEvent, value); }
@@ -206,6 +217,11 @@ namespace System.Windows.Forms
 		public event ListViewItemSelectionChangedEventHandler ItemSelectionChanged {
 			add { Events.AddHandler (ItemSelectionChangedEvent, value); }
 			remove { Events.RemoveHandler (ItemSelectionChangedEvent, value); }
+		}
+
+		public new event EventHandler PaddingChanged {
+			add { base.PaddingChanged += value; }
+			remove { base.PaddingChanged -= value; }
 		}
 #endif
 
@@ -437,12 +453,27 @@ namespace System.Windows.Forms
 			set { background_color = value; }
 		}
 
+#if !NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
 		}
+#endif
+
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get {
+				return base.BackgroundImageLayout;
+			}
+			set {
+				base.BackgroundImageLayout = value;
+			}
+		}
+#endif
 
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId (-504)]
@@ -669,6 +700,16 @@ namespace System.Windows.Forms
 			set { 
 				owner_draw = value;
 				Redraw (true);
+			}
+		}
+
+		[Browsable (false)]
+		public new Padding Padding {
+			get {
+				return base.Padding;
+			}
+			set {
+				base.Padding = value;
 			}
 		}
 #endif
