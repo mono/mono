@@ -1,3 +1,9 @@
+2007-08-29  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c (cominterop_get_ccw): Walk up interface hierarchy
+	if interface is marked with CoClassAttribute. 
+   
+	Code is contributed under MIT/X11 license.
 
 Wed Aug 29 19:27:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
