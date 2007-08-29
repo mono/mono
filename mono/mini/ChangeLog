@@ -1,3 +1,9 @@
+
+Wed Aug 29 18:26:20 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, inssel-float.brg: fix soft-float constant loads on big
+	endian systems (partially from Dean Jenkins, bug #81924).
+
 2007-08-28  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (check_linkdemand): Remove embedded reference object in
