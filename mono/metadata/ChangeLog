@@ -1,4 +1,9 @@
 
+Wed Aug 29 18:43:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: properly account the number of disappearing links when
+	they are nullified.
+
 Wed Aug 29 18:37:37 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: share the code to scan the registered roots between the
