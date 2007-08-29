@@ -1,4 +1,10 @@
 
+Wed Aug 29 18:46:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: big objects are not copied to the gray area, but they
+	need to be considered for scanning, too, if they are brought alive
+	by an object ready for finalizations or a survived one.
+
 Wed Aug 29 18:43:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: properly account the number of disappearing links when
