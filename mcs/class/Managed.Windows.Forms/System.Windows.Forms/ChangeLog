@@ -1,5 +1,12 @@
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TabControl.cs: I was looking into the MonoTODO on TabPageCollection.
+	Add (string,string,string) to implement the imagekey.  It turns out, we
+	use the requested imagekey whereas .Net does not.  So I broke ours to match
+	theirs.  :(
+
+2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs, UserControl.cs: Override ValidateChildren, AutoValidate.
 
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>

@@ -1570,13 +1570,13 @@ namespace System.Windows.Forms {
 				this.Add (page);
 			}
 
-			[MonoTODO("Implement imagekey")]
+			// .Net sets the ImageKey, but does not show the image when this is used
 			public void Add (string key, string text, string imageKey)
 			{
 				TabPage page = new TabPage (text);
 				page.Name = key;
-				this.Add (page);
 				page.ImageKey = imageKey;
+				this.Add (page);
 			}
 #endif
 
