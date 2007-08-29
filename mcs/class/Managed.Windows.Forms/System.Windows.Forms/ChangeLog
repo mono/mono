@@ -1,5 +1,11 @@
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGrid.cs, DataGridViewButtonColumn.cs, DataGridViewCheckBoxColumn.cs,
+	DataGridViewComboBoxColumn.cs, DataGridViewImageColumn.cs, DataGridViewLinkColumn.cs,
+	DataGridViewTextBoxColumn.cs, ToolTip.cs: corcompare stuffs.
+
+2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs, XPlatUI.cs, XPlatUIDriver.cs, XPlatUIWin32.cs: Implement
 	IsKeyLocked.
 

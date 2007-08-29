@@ -31,6 +31,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 
+	[ToolboxBitmap ("")]
 	public class DataGridViewImageColumn : DataGridViewColumn {
 
 		private Icon icon;

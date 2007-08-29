@@ -25,11 +25,12 @@
 
 
 #if NET_2_0
-
+using System.Drawing;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[ToolboxBitmap ("")]
 	public class DataGridViewButtonColumn : DataGridViewColumn {
 
 		private FlatStyle flatStyle;

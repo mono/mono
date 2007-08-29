@@ -656,10 +656,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
 		protected void StopTimer ()
 		{
 			timer.Stop ();
 		}
+#endif
 		#endregion	// Protected Instance Methods
 
 		enum TipState {

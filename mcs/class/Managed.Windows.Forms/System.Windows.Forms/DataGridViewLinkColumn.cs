@@ -34,6 +34,7 @@ using System.Drawing;
 
 namespace System.Windows.Forms
 {
+	[ToolboxBitmap ("")]
 	public class DataGridViewLinkColumn : DataGridViewColumn
 	{
 		

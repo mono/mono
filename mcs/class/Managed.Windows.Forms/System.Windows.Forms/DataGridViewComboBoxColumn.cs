@@ -28,9 +28,11 @@
 
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Drawing;
 
 namespace System.Windows.Forms {
 
+	[ToolboxBitmap ("")]
 	[Designer ("System.Windows.Forms.Design.DataGridViewComboBoxColumnDesigner, " + Consts.AssemblySystem_Design,
 		   "System.ComponentModel.Design.IDesigner")]
 	public class DataGridViewComboBoxColumn : DataGridViewColumn

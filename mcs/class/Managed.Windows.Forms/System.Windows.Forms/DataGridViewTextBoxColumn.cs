@@ -31,6 +31,7 @@ using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
+	[ToolboxBitmap ("")]
 	public class DataGridViewTextBoxColumn : DataGridViewColumn {
 
 		private int maxInputLength;
