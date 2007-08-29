@@ -561,6 +561,13 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override AutoValidate AutoValidate {
+			get { return base.AutoValidate; }
+			set { base.AutoValidate = value; }
+		}
 #endif
 
 		public override Color BackColor {
@@ -1749,6 +1756,22 @@ namespace System.Windows.Forms {
 		public override string ToString() {
 			return GetType().FullName.ToString() + ", Text: " + Text;
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override bool ValidateChildren ()
+		{
+			return base.ValidateChildren ();
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override bool ValidateChildren (ValidationConstraints validationConstraints)
+		{
+			return base.ValidateChildren (validationConstraints);
+		}
+#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods

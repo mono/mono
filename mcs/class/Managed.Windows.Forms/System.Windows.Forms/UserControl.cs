@@ -68,6 +68,13 @@ namespace System.Windows.Forms {
 				}
 			} 
 		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override AutoValidate AutoValidate {
+			get { return base.AutoValidate; }
+			set { base.AutoValidate = value; }
+		}
 #endif
 		protected override Size DefaultSize {
 			get {
@@ -91,6 +98,24 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Instance Properties
 
+		#region Public Instance Methods
+#if NET_2_0
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override bool ValidateChildren ()
+		{
+			return base.ValidateChildren ();
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public override bool ValidateChildren (ValidationConstraints validationConstraints)
+		{
+			return base.ValidateChildren (validationConstraints);
+		}
+#endif
+		#endregion
+		
 		#region Protected Instance Methods
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnCreateControl() {
@@ -140,6 +165,13 @@ namespace System.Windows.Forms {
 		public new event EventHandler AutoSizeChanged {
 			add { base.AutoSizeChanged += value; }
 			remove { base.AutoSizeChanged -= value; }
+		}
+
+		[Browsable (true)]
+		[EditorBrowsable (EditorBrowsableState.Always)]
+		public new event EventHandler AutoValidateChanged {
+			add { base.AutoValidateChanged += value; }
+			remove { base.AutoValidateChanged -= value; }
 		}
 #endif
 

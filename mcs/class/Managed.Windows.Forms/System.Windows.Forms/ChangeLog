@@ -1,5 +1,9 @@
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs, UserControl.cs: Override ValidateChildren, AutoValidate.
+
+2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ContainerControl.cs: Implement ValidateChildren and new Validate overload.
 
 2007-08-29  Gert Driesen  <drieseng@users.sourceforge.net>
