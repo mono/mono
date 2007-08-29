@@ -1,3 +1,7 @@
+2007-08-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Control.cs: optimized performance in InitControlsCache()
+
 2007-08-28  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: The following property values are returned from cached

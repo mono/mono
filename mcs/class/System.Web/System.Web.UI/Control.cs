@@ -769,7 +769,7 @@ namespace System.Web.UI
 
 #endif
 
-		internal void ResetControlsCache ()
+		void ResetControlsCache ()
 		{
 			_controlsCache = null;
 
@@ -777,14 +777,18 @@ namespace System.Web.UI
 				Parent.ResetControlsCache ();
 		}
 
-		internal Hashtable InitControlsCache ()
+		Hashtable InitControlsCache ()
 		{
 			if (_controlsCache != null)
 				return _controlsCache;
 
 			if ((this.stateMask & IS_NAMING_CONTAINER) != 0 || Parent == null)
 				//LAMESPEC: MS' docs don't mention it, but FindControl is case insensitive.
+#if NET_2_0
+				_controlsCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
+#else
 				_controlsCache = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+#endif
 			else
 				_controlsCache = Parent.InitControlsCache ();
 
