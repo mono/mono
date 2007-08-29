@@ -401,7 +401,9 @@ namespace System.Windows.Forms {
 
 				document.ResumeRecalc (true);
 
-				// CalculateDocument();
+				if (IsHandleCreated)
+					CalculateDocument ();
+
 				OnTextChanged(EventArgs.Empty);
 			}
 		}
