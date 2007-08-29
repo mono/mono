@@ -540,7 +540,7 @@ namespace System.Reflection.Emit {
 			if (!File.Exists (iconFileName) || Directory.Exists (iconFileName))
 				throw new FileNotFoundException ("File '" + iconFileName + "' does not exists or is a directory.");
 
-			using (FileStream fs = new FileStream (iconFileName, FileMode.Open)) {
+			using (FileStream fs = new FileStream (iconFileName, FileMode.Open, FileAccess.Read)) {
 				Win32IconFileReader reader = new Win32IconFileReader (fs);
 				
 				ICONDIRENTRY[] entries = reader.ReadIcons ();

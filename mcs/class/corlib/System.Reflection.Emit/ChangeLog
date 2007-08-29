@@ -1,3 +1,8 @@
+2007-08-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilder.cs: In DefineIconResource, open icon in read-only
+	mode. Fixes bug #82617.
+
 2007-08-17  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ILGenerator.cs: Change BeginCatchBlock to end the current filter block if called with a null exceptionType. Added ILExceptionBlock.FILTER_START to be able to track if we're in a filter block or not. Renamed PatchLastClauseStart to PatchFilterClause to match better what it does, and make it update the handler's type to FILTER. Fixes #81431.
