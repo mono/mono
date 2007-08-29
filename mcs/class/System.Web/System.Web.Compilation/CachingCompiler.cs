@@ -47,7 +47,8 @@ namespace System.Web.Compilation
 		static Hashtable compilationTickets = new Hashtable ();
 		const string cachePrefix = "@@Assembly";
 		const string cacheTypePrefix = "@@@Type";
-
+		static Hashtable assemblyCache = new Hashtable ();
+		
 		public static void InsertTypeFileDep (Type type, string filename)
 		{
 			CacheDependency dep = new CacheDependency (filename);
@@ -91,9 +92,7 @@ namespace System.Web.Compilation
 					return results;
 
 				ICodeCompiler comp = compiler.Compiler;
-#if NET_2_0
 				GetExtraAssemblies (compiler.CompilerParameters);
-#endif
 				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
@@ -126,9 +125,7 @@ namespace System.Web.Compilation
 				SimpleWebHandlerParser parser = compiler.Parser;
 				CompilerParameters options = compiler.CompilerOptions;
 				options.IncludeDebugInformation = parser.Debug;
-#if NET_2_0
 				GetExtraAssemblies (options);
-#endif
 				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
@@ -149,9 +146,7 @@ namespace System.Web.Compilation
 				foreach (string str in assemblies)
 					coll.Add (str);
 			}
-#if NET_2_0
 			GetExtraAssemblies (options);
-#endif
 			return options;
 		}
 
@@ -233,12 +228,13 @@ namespace System.Web.Compilation
 			return type;
 		}
 
-#if NET_2_0
 		static void GetExtraAssemblies (CompilerParameters options)
 		{
-			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			StringCollection refAsm = options.ReferencedAssemblies;
-			string asmName;
+			string asmName, asmLocation;
+			
+#if NET_2_0
+			ArrayList al = WebConfigurationManager.ExtraAssemblies;
 			
 			if (al != null && al.Count > 0) {
 				foreach (object o in al) {
@@ -272,9 +268,55 @@ namespace System.Web.Compilation
 						refAsm.Add (asmName);
 				}
 			}
-		}
-#endif
 
+			CompilationSection cfg = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			AssemblyCollection asmcoll = cfg != null ? cfg.Assemblies : null;
+
+			if (asmcoll == null)
+				return;
+
+			foreach (AssemblyInfo ai in asmcoll) {
+				asmLocation = GetAssemblyLocationFromName (ai.Assembly);
+				
+				if (asmLocation == null || refAsm.Contains (asmLocation))
+					continue;
+				refAsm.Add (asmLocation);
+			}
+#else
+			CompilationConfiguration cfg = CompilationConfiguration.GetInstance (HttpContext.Current);
+			ArrayList asmcoll = cfg != null ? cfg.Assemblies : null;
+
+			if (asmcoll == null)
+				return;
+
+			foreach (string asm in asmcoll) {
+				asmLocation = GetAssemblyLocationFromName (asm);
+				
+				if (asmLocation == null || refAsm.Contains (asmLocation))
+					continue;
+				refAsm.Add (asmLocation);
+			}
+#endif
+		}
+
+		static string GetAssemblyLocationFromName (string name)
+		{
+			Assembly asm = assemblyCache [name] as Assembly;
+			if (asm != null)
+				return asm.Location;
+
+			try {
+				asm = Assembly.Load (name);
+			} catch {
+			}
+
+			if (asm == null)
+				return null;
+
+			assemblyCache [name] = asm;
+			return asm.Location;
+		}
+		
 		static bool AcquireCompilationTicket (string key, out object ticket)
 		{
 			lock (compilationTickets.SyncRoot) {

@@ -1,5 +1,9 @@
 2007-08-29  Marek Habersack  <mhabersack@novell.com>
 
+	* CachingCompiler.cs: consider contents of the
+	<compilation><assemblies> section when constructing a list of
+	assemblies during compilation.
+
 	* TemplateControlCompiler.cs: mark fields corresponding to the
 	controls as global references.
 	When control tree is constructed and the parent of the current
