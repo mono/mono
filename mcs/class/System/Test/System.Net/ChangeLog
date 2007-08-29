@@ -1,3 +1,8 @@
+2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddressTest.cs : added an address with scope id to parse/format
+	  test.
+
 2007-06-28  Chris Howie  <cdhowie@nerdshack.com>
 
 	* ServicePointTest.cs: Add some loose tests for

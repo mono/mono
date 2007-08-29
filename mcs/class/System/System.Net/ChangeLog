@@ -1,3 +1,7 @@
+2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPAddress.cs, IPv6Address.cs : (ToString) output ScopeId.
+
 2007-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpWebRequest_2_1.cs, HttpWebResponse_2_1.cs :

@@ -395,7 +395,9 @@ namespace System.Net {
 				for(int i=0; i<numbers.Length; i++)
 					numbers[i] = (ushort)NetworkToHostOrder((short)numbers[i]);
 
-				return new IPv6Address(numbers).ToString();
+				IPv6Address v6 = new IPv6Address(numbers);
+				v6.ScopeId = ScopeId;
+				return v6.ToString();
 			}
 		}
 

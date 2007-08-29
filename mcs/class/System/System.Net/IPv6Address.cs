@@ -344,6 +344,8 @@ namespace System.Net {
 					if (i < 7) s.Append (':');
 				}
 			}
+			if (scopeId != 0)
+				s.Append ('%').Append (scopeId);
 			return s.ToString ();
 		}
 
