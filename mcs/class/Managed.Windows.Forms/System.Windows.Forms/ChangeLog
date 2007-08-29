@@ -1,3 +1,8 @@
+2007-08-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FolderBrowserDialog.cs: Set Tag of newly created node, and keep it
+	up-to-date. Fixes bug #82618.
+
 2007-05-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* TextBoxBase.cs: Call CalculateDocument after changes Lines property to

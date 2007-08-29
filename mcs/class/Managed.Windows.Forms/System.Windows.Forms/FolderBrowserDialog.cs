@@ -427,7 +427,7 @@ namespace System.Windows.Forms {
 				fbnode.Expand ();
 				dont_do_onbeforeexpand = false;
 
-				// to match MS, immediately creates the new folder
+				// to match MS, immediately create the new folder
 				// and rename it once the label edit completes
 				string fullPath = Path.Combine (fbnode.RealPath, tmp_filename);
 				if (!vfs.CreateFolder (fullPath))
@@ -435,7 +435,7 @@ namespace System.Windows.Forms {
 
 				FBTreeNode new_node = new FBTreeNode (tmp_filename);
 				new_node.ImageIndex = NodeImageIndex (tmp_filename);
-				new_node.RealPath = fullPath;
+				new_node.Tag = new_node.RealPath = fullPath;
 				fbnode.Nodes.Add (new_node);
 
 				LabelEdit = true;
@@ -452,7 +452,7 @@ namespace System.Windows.Forms {
 						string newPath = Path.Combine (parent_real_path, e.Label);
 
 						if (vfs.MoveFolder (originalPath, newPath)) {
-							fbnode.RealPath = newPath;
+							fbnode.Tag = fbnode.RealPath = newPath;
 						} else {
 							e.CancelEdit = true;
 							e.Node.BeginEdit ();
