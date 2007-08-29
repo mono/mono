@@ -1,4 +1,9 @@
 
+Wed Aug 29 19:27:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: ensure no object from the to space is copied again or finalized
+	if it's seen twice in major collections.
+
 Wed Aug 29 18:46:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* sgen-gc.c: big objects are not copied to the gray area, but they
