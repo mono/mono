@@ -1302,7 +1302,7 @@ namespace System.Web {
 				
 				string pbp = setup.PrivateBinPath;
 				if (pbp == null || pbp.Length == 0)
-					return false;
+					yield break;
 				foreach (string d in pbp.Split (Path.PathSeparator))
 					yield return Path.Combine (baseDir, d);
 			}
