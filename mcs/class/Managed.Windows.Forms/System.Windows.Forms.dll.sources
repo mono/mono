@@ -355,6 +355,8 @@ System.Windows.Forms/HScrollProperties.cs
 System.Windows.Forms/HtmlDocument.cs
 System.Windows.Forms/HtmlElement.cs
 System.Windows.Forms/HtmlElementCollection.cs
+System.Windows.Forms/HtmlElementErrorEventArgs.cs
+System.Windows.Forms/HtmlElementErrorEventHandler.cs
 System.Windows.Forms/HtmlElementEventArgs.cs
 System.Windows.Forms/HtmlElementEventHandler.cs
 System.Windows.Forms/HtmlElementInsertionOrientation.cs
