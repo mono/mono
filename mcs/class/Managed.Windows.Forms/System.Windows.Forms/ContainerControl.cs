@@ -364,6 +364,36 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+#if NET_2_0
+		public bool Validate (bool checkAutoValidate)
+		{
+			if ((checkAutoValidate && (AutoValidate != AutoValidate.Disable)) || !checkAutoValidate)
+				return Validate ();
+				
+			return true;
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public virtual bool ValidateChildren ()
+		{
+			return ValidateChildren (ValidationConstraints.Selectable);
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public virtual bool ValidateChildren (ValidationConstraints validationConstraints)
+		{
+			bool recurse = !((validationConstraints & ValidationConstraints.ImmediateChildren) == ValidationConstraints.ImmediateChildren);
+			
+			foreach (Control control in Controls)
+				if (!ValidateNestedControls (control, validationConstraints, recurse))
+					return false;
+
+			return true;
+		}
+#endif
+
 		bool IContainerControl.ActivateControl(Control control) {
 			return Select(control);
 		}
@@ -547,6 +577,47 @@ namespace System.Windows.Forms {
 		{
 			// do nothing here, only called if it is a Form
 		}
+
+#if NET_2_0
+		private bool ValidateNestedControls (Control c, ValidationConstraints constraints, bool recurse)
+		{
+			bool validate_result = true;
+
+			if (!c.CausesValidation)
+				validate_result = true;
+			else if (!ValidateThisControl (c, constraints))
+				validate_result = true;
+			else if (!ValidateControl (c))
+				validate_result = false;
+
+			if (recurse)
+				foreach (Control control in c.Controls)
+					if (!ValidateNestedControls (control, constraints, recurse))
+						return false;
+
+			return validate_result;
+		}
+
+		private bool ValidateThisControl (Control c, ValidationConstraints constraints)
+		{
+			if (constraints == ValidationConstraints.None)
+				return true;
+
+			if ((constraints & ValidationConstraints.Enabled) == ValidationConstraints.Enabled && !c.Enabled)
+				return false;
+
+			if ((constraints & ValidationConstraints.Selectable) == ValidationConstraints.Selectable && !c.GetStyle (ControlStyles.Selectable))
+				return false;
+
+			if ((constraints & ValidationConstraints.TabStop) == ValidationConstraints.TabStop && !c.TabStop)
+				return false;
+
+			if ((constraints & ValidationConstraints.Visible) == ValidationConstraints.Visible && !c.Visible)
+				return false;
+
+			return true;
+		}
+#endif
 		#endregion	// Internal Methods
 
 #if NET_2_0

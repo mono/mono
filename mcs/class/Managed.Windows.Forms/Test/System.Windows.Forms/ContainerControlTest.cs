@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using System.Collections;
 using NUnit.Framework;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace MonoTests.System.Windows.Forms {
 
@@ -298,7 +299,7 @@ namespace MonoTests.System.Windows.Forms {
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]  // Depends on fonts *AND* DPI, how useless is that? (Values are Vista/96DPI)
+		[NUnit.Framework.Category ("NotWorking")]  // Depends on fonts *AND* DPI, how useless is that? (Values are Vista/96DPI)
 		public void AutoScaling ()
 		{
 			ContainerControl c = new ContainerControl ();
@@ -332,6 +333,97 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (new SizeF (10, 21), c.CurrentAutoScaleDimensions, "A16");
 			Assert.AreEqual (new SizeF (10, 21), c.AutoScaleDimensions, "A17");
 			Assert.AreEqual (new Size (167, 161), c.ClientSize, "A18");
+		}
+		
+		[Test]
+		public void ValidationChildren ()
+		{
+			string validating = string.Empty;
+			string validated = string.Empty;
+			
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			ContainerControl cc = new ContainerControl ();
+			f.Controls.Add (cc);
+			
+			TextBox t = new TextBox ();
+			t.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("t;"); });
+			t.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("t;"); });
+			cc.Controls.Add (t);
+
+			TextBox t1 = new TextBox ();
+			t1.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("t1;"); });
+			t1.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("t1;"); });
+			t1.TabStop = false;
+			cc.Controls.Add (t1);
+
+			TextBox t2 = new TextBox ();
+			t2.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("t2;"); });
+			t2.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("t2;"); });
+			t2.Visible = false;
+			cc.Controls.Add (t2);
+
+			TextBox t3 = new TextBox ();
+			t3.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("t3;"); });
+			t3.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("t3;"); });
+			t3.Enabled = false;
+			cc.Controls.Add (t3);
+
+			Panel p = new Panel ();
+			cc.Controls.Add (p);
+			
+			TextBox t4 = new TextBox ();
+			t4.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("t4;"); });
+			t4.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("t4;"); });
+			p.Controls.Add (t4);
+
+			Label l = new Label ();
+			l.Validating += new CancelEventHandler (delegate (Object obj, CancelEventArgs e) { validating += ("l;"); });
+			l.Validated += new EventHandler (delegate (Object obj, EventArgs e) { validated += ("l;"); });
+			cc.Controls.Add (l);
+	
+			f.Show ();
+			
+			cc.ValidateChildren ();
+			Assert.AreEqual ("t;t1;t2;t3;t4;", validating, "A4a");
+			Assert.AreEqual ("t;t1;t2;t3;t4;", validated, "A4b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.Enabled);
+			Assert.AreEqual ("t;t1;t2;t4;l;", validating, "A5a");
+			Assert.AreEqual ("t;t1;t2;t4;l;", validated, "A5b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.ImmediateChildren);
+			Assert.AreEqual ("t;t1;t2;t3;l;", validating, "A6a");
+			Assert.AreEqual ("t;t1;t2;t3;l;", validated, "A6b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.None);
+			Assert.AreEqual ("t;t1;t2;t3;t4;l;", validating, "A7a");
+			Assert.AreEqual ("t;t1;t2;t3;t4;l;", validated, "A7b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.Selectable);
+			Assert.AreEqual ("t;t1;t2;t3;t4;", validating, "A8a");
+			Assert.AreEqual ("t;t1;t2;t3;t4;", validated, "A8b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.TabStop);
+			Assert.AreEqual ("t;t2;t3;t4;", validating, "A9a");
+			Assert.AreEqual ("t;t2;t3;t4;", validated, "A9b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.Visible);
+			Assert.AreEqual ("t;t1;t3;t4;l;", validating, "A10a");
+			Assert.AreEqual ("t;t1;t3;t4;l;", validated, "A10b");
+			validating = string.Empty; validated = string.Empty;
+
+			cc.ValidateChildren (ValidationConstraints.Enabled | ValidationConstraints.Visible | ValidationConstraints.Selectable);
+			Assert.AreEqual ("t;t1;t4;", validating, "A11a");
+			Assert.AreEqual ("t;t1;t4;", validated, "A11b");
+			validating = string.Empty; validated = string.Empty;
 		}
 #endif
 	}

@@ -1,3 +1,7 @@
+2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs: Implement ValidateChildren and new Validate overload.
+
 2007-08-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FolderBrowserDialog.cs: Set Tag of newly created node, and keep it

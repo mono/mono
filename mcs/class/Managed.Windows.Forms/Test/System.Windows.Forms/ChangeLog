@@ -1,3 +1,7 @@
+2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControlTest.cs: Added test for ValidateChildren.
+
 2007-08-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FolderBrowserDialogTest.cs: Added tests for Description and
