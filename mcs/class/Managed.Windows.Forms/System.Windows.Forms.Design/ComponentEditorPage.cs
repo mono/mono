@@ -47,7 +47,18 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-		public bool CommitOnDeactivate {
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		new public virtual bool AutoSize {
+			get { return base.AutoSize; }
+			set { base.AutoSize = value; }
+		}
+#endif
+
+		public bool CommitOnDeactivate
+		{
 			get { return commitOnDeactivate; }
 			set { commitOnDeactivate = value; }
 		}
@@ -189,5 +200,16 @@ namespace System.Windows.Forms.Design
 		{
 			return false;
 		}
+
+		#region Public Events
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler AutoSizeChanged {
+			add { base.AutoSizeChanged += value; }
+			remove { base.AutoSizeChanged -= value; }
+		}
+#endif
+		#endregion
 	}
 }
