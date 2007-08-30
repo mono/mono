@@ -1,4 +1,8 @@
 
+Thu Aug 30 16:17:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, driver.c: don't include the cil-coff.h header.
+
 Thu Aug 30 14:50:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: flag places that needs fixes fo soft-float support.
