@@ -4817,14 +4817,14 @@ Sys.Net.WebServiceProxy.invoke = function Sys$Net$WebServiceProxy$invoke(service
 
         var request = new Sys.Net.WebRequest();
 
-if(TARGET_J2EE)
+if(window.TARGET_J2EE)
     request.get_headers()['Content-Type'] = 'application/json; charset=utf-8; action='+methodName;
 else
     request.get_headers()['Content-Type'] = 'application/json; charset=utf-8';
     if (!params) params = {};
     var urlParams = params;
         if (!useGet || !urlParams) urlParams = {};
-if(TARGET_J2EE)
+if(window.TARGET_J2EE)
     request.set_url(Sys.Net.WebRequest._createUrl(servicePath, urlParams));
 else
     request.set_url(Sys.Net.WebRequest._createUrl(servicePath+"/"+methodName, urlParams));
