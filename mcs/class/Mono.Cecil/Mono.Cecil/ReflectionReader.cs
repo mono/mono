@@ -489,7 +489,7 @@ namespace Mono.Cecil {
 			IMetadataScope scope = null;
 			TypeReference parent = null;
 
-			if (type.ResolutionScope != MetadataToken.Zero) {
+			if (type.ResolutionScope.RID != 0) {
 				int rid = (int) type.ResolutionScope.RID - 1;
 				switch (type.ResolutionScope.TokenType) {
 				case TokenType.AssemblyRef:
