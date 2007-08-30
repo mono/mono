@@ -954,17 +954,19 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			ClientScript.RegisterHiddenField (ScrollPositionXID, Request [ScrollPositionXID]);
 			ClientScript.RegisterHiddenField (ScrollPositionYID, Request [ScrollPositionYID]);
-			
+
+			string webForm = IsMultiForm ? theForm + "." : null;
+
 			StringBuilder script = new StringBuilder ();
 			script.AppendLine ("<script type=\"text/javascript\">");
 			script.AppendLine ("<!--");
 			script.AppendLine (theForm + ".oldSubmit = " + theForm + ".submit;");
-			script.AppendLine (theForm + ".submit = WebForm_SaveScrollPositionSubmit;");
+			script.AppendLine (theForm + ".submit = function () { " + webForm + "WebForm_SaveScrollPositionSubmit(); }");
 			script.AppendLine (theForm + ".oldOnSubmit = " + theForm + ".onsubmit;");
-			script.AppendLine (theForm + ".onsubmit = WebForm_SaveScrollPositionOnSubmit;");
+			script.AppendLine (theForm + ".onsubmit = function () { " + webForm + "WebForm_SaveScrollPositionOnSubmit(); }");
 			if (IsPostBack) {
 				script.AppendLine (theForm + ".oldOnLoad = window.onload;");
-				script.AppendLine ("window.onload = function () { WebForm_RestoreScrollPosition (" + theForm + "); };");
+				script.AppendLine ("window.onload = function () { " + webForm + "WebForm_RestoreScrollPosition (); };");
 			}
 			script.AppendLine ("// -->");
 			script.AppendLine ("</script>");

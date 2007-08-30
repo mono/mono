@@ -1,3 +1,7 @@
+2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* webform.js: fixed MaintainScrollPositionOnPostBack feature.
+
 2007-08-19  Marek Habersack  <mhabersack@novell.com>
 
 	* webform.js: __doPostBack is a function defined in the self
