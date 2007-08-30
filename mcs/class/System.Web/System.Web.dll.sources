@@ -103,6 +103,7 @@ System.Web.Configuration/HttpRuntimeConfig.cs
 System.Web.Configuration/HttpRuntimeConfigurationHandler.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/MachineKeyConfigHandler.cs
+System.Web.Configuration/MachineKeyRegistryStorage.cs
 System.Web.Configuration/MachineKeyValidation.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/PagesConfiguration.cs

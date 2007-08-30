@@ -1,3 +1,7 @@
+2007-08-30  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added MachineKeyRegistryStorage.cs
+
 2007-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Web_test.dll.sources: Added AggregateCacheDependencyTest.cs.

@@ -1,3 +1,7 @@
+2007-08-30  Marek Habersack  <mhabersack@novell.com>
+
+	* MachineKeyRegistryStorage.cs: added
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* WebConfigurationSettings.cs: Move RemotingConfiguration to

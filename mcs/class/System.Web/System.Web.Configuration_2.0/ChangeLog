@@ -1,3 +1,8 @@
+2007-08-30  Marek Habersack  <mhabersack@novell.com>
+
+	* MachineKeySection.cs: retrieve the keys from the registry before
+	falling back to the old method. Fixes bug #76606
+
 2007-08-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ProvidersHelper.cs: HttpApplication.LoadTypeFromPrivateBin
