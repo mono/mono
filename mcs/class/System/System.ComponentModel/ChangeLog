@@ -1,3 +1,8 @@
+2007-08-30  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* EnumConverter.cs: Implemented conversion to InstanceDescriptor
+	for enums with a FlagsAttribute. Fixes #82118.
+
 2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignerOptionService.cs: implemented.
