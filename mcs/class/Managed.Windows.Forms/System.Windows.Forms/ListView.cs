@@ -219,6 +219,8 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ItemSelectionChangedEvent, value); }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler PaddingChanged {
 			add { base.PaddingChanged += value; }
 			remove { base.PaddingChanged -= value; }
@@ -512,6 +514,9 @@ namespace System.Windows.Forms
 			get { return checked_items; }
 		}
 
+#if NET_2_0
+		[Editor ("System.Windows.Forms.Design.ColumnHeaderCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[MergableProperty (false)]
@@ -636,6 +641,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Editor ("System.Windows.Forms.Design.ListViewItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[Localizable (true)]
 		[MergableProperty (false)]
@@ -704,6 +712,8 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new Padding Padding {
 			get {
 				return base.Padding;
@@ -752,6 +762,7 @@ namespace System.Windows.Forms
 		[LocalizableAttribute (true)]
 		[MergableProperty (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Windows.Forms.Design.ListViewGroupCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public ListViewGroupCollection Groups {
 			get { return groups; }
 		}
@@ -3414,6 +3425,7 @@ namespace System.Windows.Forms
 			return new ListViewHitTestInfo (item, subitem, locations);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public void RedrawItems (int startIndex, int endIndex, bool invalidateOnly)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
@@ -3704,6 +3716,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -3837,6 +3852,9 @@ namespace System.Windows.Forms
 			}
 		}	// CheckedIndexCollection
 
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class CheckedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -4039,6 +4057,9 @@ namespace System.Windows.Forms
 			}
 		}	// CheckedListViewItemCollection
 
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class ColumnHeaderCollection : IList, ICollection, IEnumerable
 		{
 			internal ArrayList list;
@@ -4366,6 +4387,9 @@ namespace System.Windows.Forms
 
 		}	// ColumnHeaderCollection
 
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class ListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ArrayList list;
@@ -4926,6 +4950,9 @@ namespace System.Windows.Forms
 		//
 		// In virtual mode, SelectedIndexCollection directly saves the selection
 		// information, instead of getting it from Items, making List read-and-write
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;
@@ -5162,6 +5189,9 @@ namespace System.Windows.Forms
 
 		}	// SelectedIndexCollection
 
+#if NET_2_0
+		[ListBindable (false)]
+#endif
 		public class SelectedListViewItemCollection : IList, ICollection, IEnumerable
 		{
 			private readonly ListView owner;

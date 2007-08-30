@@ -338,7 +338,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 #if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-		// [TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 #else
 		[TypeConverter (typeof (ImageIndexConverter))]
 #endif
@@ -366,7 +366,7 @@ namespace System.Windows.Forms
 		[Editor ("System.Windows.Forms.Design.ImageIndexEditor, " + Consts.AssemblySystem_Design,
 			 typeof (System.Drawing.Design.UITypeEditor))]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		// XXX [TypeConverter (typeof (ImageKeyConverter))
+		[TypeConverter (typeof (ImageKeyConverter))]
 		public string ImageKey {
 			get {
 				return image_key;
@@ -480,8 +480,8 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 #if NET_2_0
 		[RefreshProperties (RefreshProperties.Repaint)]
-		// XXX [RelatedImageListAttribute ("ListView.StateImageList")]
-		// XXX [TypeConverter (typeof (NoneExcludedImageIndexConverter))]
+		[RelatedImageListAttribute ("ListView.StateImageList")]
+		[TypeConverter (typeof (NoneExcludedImageIndexConverter))]
 #else
 		[TypeConverter (typeof (ImageIndexConverter))]
 #endif
@@ -1035,6 +1035,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			[Browsable (false)]
 			public 
 #else
 				

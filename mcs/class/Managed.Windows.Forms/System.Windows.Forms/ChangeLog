@@ -1,5 +1,9 @@
 2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListView.cs, ListViewItem.cs: corcompare stuffs.
+
+2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* BindingMemberInfo.cs: Implement == and != operators.
 
 2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
