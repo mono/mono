@@ -1163,6 +1163,7 @@ namespace System.Web.UI.WebControls
 			
 			string cmenu = ClientID + "_data";
 			string script = string.Concat ("var ", cmenu, " = new Object ();\n");
+			script += string.Format ("{0}.webForm = {1};\n", cmenu, Page.IsMultiForm ? Page.theForm : "window");
 			script += string.Format ("{0}.disappearAfter = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DisappearAfter));
 			script += string.Format ("{0}.vertical = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (Orientation == Orientation.Vertical));
 			if (DynamicHorizontalOffset != 0)
