@@ -1,5 +1,9 @@
 2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ListControl.cs: fixed selected items state management.
+
+2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseCompareValidator.cs:
 	* BaseValidator.cs:
 	* CompareValidator.cs:
