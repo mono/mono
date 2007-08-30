@@ -74,7 +74,7 @@ struct sigcontext {
 };
 #endif  // sun, Solaris x86
 
-#define MONO_ARCH_SIGNAL_STACK_SIZE (64 * 1024)
+#define MONO_ARCH_SIGNAL_STACK_SIZE (16 * 1024)
 
 #define MONO_ARCH_CPU_SPEC amd64_desc
 
@@ -182,11 +182,17 @@ typedef struct {
 
 #else
 
+/* 
+ * __builtin_frame_address () is broken on some older gcc versions in the presence of
+ * frame pointer elimination, see bug #82095.
+ */
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
+        int tmp; \
+        guint64 stackptr = (guint64)&tmp; \
 		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
-		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
-		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
+		MONO_CONTEXT_SET_BP ((ctx), stackptr);	\
+		MONO_CONTEXT_SET_SP ((ctx), stackptr);	\
 	} while (0)
 
 #endif
@@ -257,6 +263,10 @@ typedef struct {
 #define MONO_ARCH_HAVE_CREATE_VARS 1
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
+#define MONO_ARCH_HAVE_IMT 1
+#define MONO_ARCH_IMT_REG AMD64_R11
+
+#define MONO_ARCH_AOT_SUPPORTED 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)

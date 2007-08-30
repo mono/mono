@@ -16,9 +16,22 @@ static MonoSecurityManager secman;
 static MonoBoolean mono_security_manager_activated = FALSE;
 static MonoBoolean mono_security_manager_enabled = TRUE;
 static MonoBoolean mono_security_manager_execution = TRUE;
+static MonoSecurityMode mono_security_mode = MONO_SECURITY_MODE_NONE;
 
 
 /* Public stuff */
+
+void
+mono_security_set_mode (MonoSecurityMode mode)
+{
+	mono_security_mode = mode;
+}
+
+MonoSecurityMode
+mono_security_get_mode (void)
+{
+	return mono_security_mode;
+}
 
 MonoSecurityManager*
 mono_security_manager_get_methods (void)
@@ -67,7 +80,7 @@ mono_security_manager_get_methods (void)
 	g_assert (secman.linkdemandfulltrust);
 
 	secman.linkdemandsecurityexception = mono_class_get_method_from_name (secman.securitymanager,
-		"LinkDemandSecurityException", 3);
+		"LinkDemandSecurityException", 2);
 	g_assert (secman.linkdemandsecurityexception);
 
 	secman.allowpartiallytrustedcallers = mono_class_from_name (mono_defaults.corlib, "System.Security", 

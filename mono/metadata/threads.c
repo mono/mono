@@ -33,6 +33,8 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/mono-debug-debugger.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-membar.h>
 
 #include <mono/os/gc_wrapper.h>
 
@@ -71,10 +73,23 @@ typedef union {
 	gdouble fval;
 } LongDoubleUnion;
  
+typedef struct _MonoThreadDomainTls MonoThreadDomainTls;
+struct _MonoThreadDomainTls {
+	MonoThreadDomainTls *next;
+	guint32 offset;
+	guint32 size;
+};
+
 typedef struct {
 	int idx;
 	int offset;
+	MonoThreadDomainTls *freelist;
 } StaticDataInfo;
+
+typedef struct {
+	gpointer p;
+	MonoHazardousFreeFunc free_func;
+} DelayedFreeItem;
 
 /* Number of cached culture objects in the MonoThread->cached_culture_info array
  * (per-type): we use the first NUM entries for CultureInfo and the last for
@@ -152,6 +167,23 @@ static gint32 thread_interruption_requested = 0;
 /* Event signaled when a thread changes its background mode */
 static HANDLE background_change_event;
 
+/* The table for small ID assignment */
+static CRITICAL_SECTION small_id_mutex;
+static int small_id_table_size = 0;
+static int small_id_next = 0;
+static int highest_small_id = -1;
+static MonoThread **small_id_table = NULL;
+
+/* The hazard table */
+#define HAZARD_TABLE_MAX_SIZE	16384 /* There cannot be more threads than this number. */
+static volatile int hazard_table_size = 0;
+static MonoThreadHazardPointers * volatile hazard_table = NULL;
+
+/* The table where we keep pointers to blocks to be freed but that
+   have to wait because they're guarded by a hazard pointer. */
+static CRITICAL_SECTION delayed_free_table_mutex;
+static GArray *delayed_free_table = NULL;
+
 guint32
 mono_thread_get_tls_key (void)
 {
@@ -189,15 +221,31 @@ static void handle_store(MonoThread *thread)
 	mono_threads_unlock ();
 }
 
-static void handle_remove(gsize tid)
+static gboolean handle_remove(MonoThread *thread)
 {
+	gboolean ret;
+	gsize tid = thread->tid;
+
 	THREAD_DEBUG (g_message ("%s: thread ID %"G_GSIZE_FORMAT, __func__, tid));
 
 	mono_threads_lock ();
-	
 
-	if (threads)
-		mono_g_hash_table_remove (threads, (gpointer)tid);
+	if (threads) {
+		/* We have to check whether the thread object for the
+		 * tid is still the same in the table because the
+		 * thread might have been destroyed and the tid reused
+		 * in the meantime, in which case the tid would be in
+		 * the table, but with another thread object.
+		 */
+		if (mono_g_hash_table_lookup (threads, (gpointer)tid) == thread) {
+			mono_g_hash_table_remove (threads, (gpointer)tid);
+			ret = TRUE;
+		} else {
+			ret = FALSE;
+		}
+	}
+	else
+		ret = FALSE;
 	
 	mono_threads_unlock ();
 
@@ -214,12 +262,189 @@ static void handle_remove(gsize tid)
 	 * thread calling Join() still has a reference to the first
 	 * thread's object.
 	 */
+	return ret;
 }
 
+/*
+ * Allocate a small thread id.
+ *
+ * FIXME: The biggest part of this function is very similar to
+ * domain_id_alloc() in domain.c and should be merged.
+ */
+static int
+small_id_alloc (MonoThread *thread)
+{
+	int id = -1, i;
+
+	EnterCriticalSection (&small_id_mutex);
+
+	if (!small_id_table) {
+		small_id_table_size = 2;
+		small_id_table = mono_gc_alloc_fixed (small_id_table_size * sizeof (MonoThread*), NULL);
+	}
+	for (i = small_id_next; i < small_id_table_size; ++i) {
+		if (!small_id_table [i]) {
+			id = i;
+			break;
+		}
+	}
+	if (id == -1) {
+		for (i = 0; i < small_id_next; ++i) {
+			if (!small_id_table [i]) {
+				id = i;
+				break;
+			}
+		}
+	}
+	if (id == -1) {
+		MonoThread **new_table;
+		int new_size = small_id_table_size * 2;
+		if (new_size >= (1 << 16))
+			g_assert_not_reached ();
+		id = small_id_table_size;
+		new_table = mono_gc_alloc_fixed (new_size * sizeof (MonoThread*), NULL);
+		memcpy (new_table, small_id_table, small_id_table_size * sizeof (void*));
+		mono_gc_free_fixed (small_id_table);
+		small_id_table = new_table;
+		small_id_table_size = new_size;
+	}
+	thread->small_id = id;
+	g_assert (small_id_table [id] == NULL);
+	small_id_table [id] = thread;
+	small_id_next++;
+	if (small_id_next > small_id_table_size)
+		small_id_next = 0;
+
+	if (id >= hazard_table_size) {
+		gpointer page_addr;
+		int pagesize = mono_pagesize ();
+		int num_pages = (hazard_table_size * sizeof (MonoThreadHazardPointers) + pagesize - 1) / pagesize;
+
+		if (hazard_table == NULL) {
+			hazard_table = mono_valloc (NULL,
+				sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE,
+				MONO_MMAP_NONE);
+		}
+
+		g_assert (hazard_table != NULL);
+		page_addr = (guint8*)hazard_table + num_pages * pagesize;
+
+		g_assert (id < HAZARD_TABLE_MAX_SIZE);
+
+		mono_mprotect (page_addr, pagesize, MONO_MMAP_READ | MONO_MMAP_WRITE);
+
+		++num_pages;
+		hazard_table_size = num_pages * pagesize / sizeof (MonoThreadHazardPointers);
+
+		g_assert (id < hazard_table_size);
+
+		hazard_table [id].hazard_pointers [0] = NULL;
+		hazard_table [id].hazard_pointers [1] = NULL;
+	}
+
+	if (id > highest_small_id) {
+		highest_small_id = id;
+		mono_memory_write_barrier ();
+	}
+
+	LeaveCriticalSection (&small_id_mutex);
+
+	return id;
+}
+
+static void
+small_id_free (int id)
+{
+	g_assert (id >= 0 && id < small_id_table_size);
+	g_assert (small_id_table [id] != NULL);
+
+	small_id_table [id] = NULL;
+}
+
+static gboolean
+is_pointer_hazardous (gpointer p)
+{
+	int i;
+	int highest = highest_small_id;
+
+	g_assert (highest < hazard_table_size);
+
+	for (i = 0; i <= highest; ++i) {
+		if (hazard_table [i].hazard_pointers [0] == p
+				|| hazard_table [i].hazard_pointers [1] == p)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+MonoThreadHazardPointers*
+mono_hazard_pointer_get (void)
+{
+	MonoThread *current_thread = mono_thread_current ();
+
+	g_assert (current_thread && current_thread->small_id >= 0);
+
+	return &hazard_table [current_thread->small_id];
+}
+
+void
+mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func)
+{
+	int i;
+
+	/* First try to free a few entries in the delayed free
+	   table. */
+	for (i = 2; i >= 0; --i) {
+		if (delayed_free_table->len > i) {
+			DelayedFreeItem item;
+
+			item.p = NULL;
+			EnterCriticalSection (&delayed_free_table_mutex);
+			/* We have to check the length again because another
+			   thread might have freed an item before we acquired
+			   the lock. */
+			if (delayed_free_table->len > i) {
+				item = g_array_index (delayed_free_table, DelayedFreeItem, i);
+
+				if (!is_pointer_hazardous (item.p))
+					g_array_remove_index_fast (delayed_free_table, i);
+				else
+					item.p = NULL;
+			}
+			LeaveCriticalSection (&delayed_free_table_mutex);
+
+			if (item.p != NULL)
+				item.free_func (item.p);
+		}
+	}
+
+	/* Now see if the pointer we're freeing is hazardous.  If it
+	   isn't, free it.  Otherwise put it in the delay list. */
+	if (is_pointer_hazardous (p)) {
+		DelayedFreeItem item = { p, free_func };
+
+		++mono_stats.hazardous_pointer_count;
+
+		EnterCriticalSection (&delayed_free_table_mutex);
+		g_array_append_val (delayed_free_table, item);
+		LeaveCriticalSection (&delayed_free_table_mutex);
+	} else
+		free_func (p);
+}
+
+/*
+ * NOTE: this function can be called also for threads different from the current one:
+ * make sure no code called from it will ever assume it is run on the thread that is
+ * getting cleaned up.
+ */
 static void thread_cleanup (MonoThread *thread)
 {
 	g_assert (thread != NULL);
 
+	/* if the thread is not in the hash it has been removed already */
+	if (!handle_remove (thread))
+		return;
 	mono_release_type_locks (thread);
 
 	if (!mono_monitor_enter (thread->synch_lock))
@@ -230,17 +455,23 @@ static void thread_cleanup (MonoThread *thread)
 	mono_monitor_exit (thread->synch_lock);
 
 	mono_profiler_thread_end (thread->tid);
-	handle_remove (thread->tid);
 
-	mono_thread_pop_appdomain_ref ();
+	if (thread == mono_thread_current ())
+		mono_thread_pop_appdomain_ref ();
 
 	if (thread->serialized_culture_info)
 		g_free (thread->serialized_culture_info);
 
 	thread->cached_culture_info = NULL;
 
+	mono_gc_free_fixed (thread->static_data);
+	thread->static_data = NULL;
+
 	if (mono_thread_cleanup_fn)
 		mono_thread_cleanup_fn (thread);
+
+	small_id_free (thread->small_id);
+	thread->small_id = -2;
 }
 
 static guint32 WINAPI start_wrapper(void *data)
@@ -402,6 +633,7 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 	thread->handle=thread_handle;
 	thread->tid=tid;
 	thread->apartment_state=ThreadApartmentState_Unknown;
+	small_id_alloc (thread);
 
 	MONO_OBJECT_SETREF (thread, synch_lock, mono_object_new (domain, mono_defaults.object_class));
 						  
@@ -416,7 +648,7 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
  *   Return the address and size of the current threads stack. Return NULL as the stack
  * address if the stack address cannot be determined.
  */
-static void
+void
 mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
 #ifndef PLATFORM_WIN32
@@ -485,6 +717,7 @@ mono_thread_attach (MonoDomain *domain)
 	thread->handle=thread_handle;
 	thread->tid=tid;
 	thread->apartment_state=ThreadApartmentState_Unknown;
+	small_id_alloc (thread);
 	thread->stack_ptr = &tid;
 	MONO_OBJECT_SETREF (thread, synch_lock, mono_object_new (domain, mono_defaults.object_class));
 
@@ -519,7 +752,7 @@ mono_thread_detach (MonoThread *thread)
 {
 	g_return_if_fail (thread != NULL);
 
-	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %"G_GSIZE_FORMAT, __func__, (gsize)thread->tid));
+	THREAD_DEBUG (g_message ("%s: mono_thread_detach for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 	
 	thread_cleanup (thread);
 
@@ -535,6 +768,8 @@ void
 mono_thread_exit ()
 {
 	MonoThread *thread = mono_thread_current ();
+
+	THREAD_DEBUG (g_message ("%s: mono_thread_exit for %p (%"G_GSIZE_FORMAT")", __func__, thread, (gsize)thread->tid));
 
 	thread_cleanup (thread);
 	SET_CURRENT_OBJECT (NULL);
@@ -564,6 +799,8 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 		mono_raise_exception (mono_get_exception_thread_state ("Thread has already been started."));
 		return NULL;
 	}
+
+	this->small_id = -1;
 
 	if ((this->state & ThreadState_Aborted) != 0) {
 		mono_monitor_exit (this->synch_lock);
@@ -596,6 +833,7 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 		
 		this->handle=thread;
 		this->tid=tid;
+		small_id_alloc (this);
 
 		/* Don't call handle_store() here, delay it to Start.
 		 * We can't join a thread (trying to will just block
@@ -1885,9 +2123,12 @@ ves_icall_System_Threading_Thread_VolatileWriteIntPtr (void *ptr, void *value)
 void mono_thread_init (MonoThreadStartCB start_cb,
 		       MonoThreadAttachCB attach_cb)
 {
+	MONO_GC_REGISTER_ROOT (small_id_table);
 	InitializeCriticalSection(&threads_mutex);
 	InitializeCriticalSection(&interlocked_mutex);
 	InitializeCriticalSection(&contexts_mutex);
+	InitializeCriticalSection(&delayed_free_table_mutex);
+	InitializeCriticalSection(&small_id_mutex);
 	background_change_event = CreateEvent (NULL, TRUE, FALSE, NULL);
 	g_assert(background_change_event != NULL);
 	
@@ -1899,6 +2140,8 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 
 	mono_thread_start_cb = start_cb;
 	mono_thread_attach_cb = attach_cb;
+
+	delayed_free_table = g_array_new (FALSE, FALSE, sizeof (DelayedFreeItem));
 
 	/* Get a pseudo handle to the current process.  This is just a
 	 * kludge so that wapi can build a process handle if needed.
@@ -1932,8 +2175,12 @@ void mono_thread_cleanup (void)
 	DeleteCriticalSection (&threads_mutex);
 	DeleteCriticalSection (&interlocked_mutex);
 	DeleteCriticalSection (&contexts_mutex);
+	DeleteCriticalSection (&delayed_free_table_mutex);
+	DeleteCriticalSection (&small_id_mutex);
 	CloseHandle (background_change_event);
 #endif
+
+	g_array_free (delayed_free_table, TRUE);
 
 	TlsFree (current_object_key);
 }
@@ -1986,6 +2233,7 @@ static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 	for(i=0; i<wait->num; i++) {
 		gsize tid = wait->threads[i]->tid;
 		
+		mono_threads_lock ();
 		if(mono_g_hash_table_lookup (threads, (gpointer)tid)!=NULL) {
 			/* This thread must have been killed, because
 			 * it hasn't cleaned itself up. (It's just
@@ -1998,8 +2246,11 @@ static void wait_for_tids (struct wait_data *wait, guint32 timeout)
 			 * same thread.)
 			 */
 	
-			THREAD_DEBUG (g_message ("%s: cleaning up after thread %"G_GSIZE_FORMAT, __func__, tid));
+			mono_threads_unlock ();
+			THREAD_DEBUG (g_message ("%s: cleaning up after thread %p (%"G_GSIZE_FORMAT")", __func__, wait->threads[i], tid));
 			thread_cleanup (wait->threads[i]);
+		} else {
+			mono_threads_unlock ();
 		}
 	}
 }
@@ -2443,7 +2694,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 	abort_appdomain_data user_data;
 	guint32 start_time;
 
-	/* printf ("ABORT BEGIN.\n"); */
+	THREAD_DEBUG (g_message ("%s: starting abort", __func__));
 
 	start_time = GetTickCount ();
 	do {
@@ -2470,7 +2721,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 	}
 	while (user_data.wait.num > 0);
 
-	/* printf ("ABORT DONE.\n"); */
+	THREAD_DEBUG (g_message ("%s: abort done", __func__));
 
 	return TRUE;
 }
@@ -2574,6 +2825,7 @@ static void mono_init_static_data_info (StaticDataInfo *static_data)
 {
 	static_data->idx = 0;
 	static_data->offset = 0;
+	static_data->freelist = NULL;
 }
 
 /*
@@ -2599,15 +2851,6 @@ mono_alloc_static_data_slot (StaticDataInfo *static_data, guint32 size, guint32 
 	if (static_data->offset + size >= static_data_size [static_data->idx]) {
 		static_data->idx ++;
 		g_assert (size <= static_data_size [static_data->idx]);
-		/* 
-		 * massive unloading and reloading of domains with thread-static
-		 * data may eventually exceed the allocated storage...
-		 * Need to check what the MS runtime does in that case.
-		 * Note that for each appdomain, we need to allocate a separate
-		 * thread data slot for security reasons. We could keep track
-		 * of the slots per-domain and when the domain is unloaded
-		 * out the slots on a sort of free list.
-		 */
 		g_assert (static_data->idx < NUM_STATIC_DATA_IDX);
 		static_data->offset = 0;
 	}
@@ -2643,6 +2886,24 @@ alloc_thread_static_data_helper (gpointer key, gpointer value, gpointer user)
 	mono_alloc_static_data (&(thread->static_data), offset);
 }
 
+static MonoThreadDomainTls*
+search_tls_slot_in_freelist (StaticDataInfo *static_data, guint32 size, guint32 align)
+{
+	MonoThreadDomainTls* prev = NULL;
+	MonoThreadDomainTls* tmp = static_data->freelist;
+	while (tmp) {
+		if (tmp->size == size) {
+			if (prev)
+				prev->next = tmp->next;
+			else
+				static_data->freelist = tmp->next;
+			return tmp;
+		}
+		tmp = tmp->next;
+	}
+	return NULL;
+}
+
 /*
  * The offset for a special static variable is composed of three parts:
  * a bit that indicates the type of static data (0:thread, 1:context),
@@ -2657,8 +2918,16 @@ mono_alloc_special_static_data (guint32 static_type, guint32 size, guint32 align
 	guint32 offset;
 	if (static_type == SPECIAL_STATIC_THREAD)
 	{
+		MonoThreadDomainTls *item;
 		mono_threads_lock ();
-		offset = mono_alloc_static_data_slot (&thread_static_info, size, align);
+		item = search_tls_slot_in_freelist (&thread_static_info, size, align);
+		/*g_print ("TLS alloc: %d in domain %p (total: %d), cached: %p\n", size, mono_domain_get (), thread_static_info.offset, item);*/
+		if (item) {
+			offset = item->offset;
+			g_free (item);
+		} else {
+			offset = mono_alloc_static_data_slot (&thread_static_info, size, align);
+		}
 		/* This can be called during startup */
 		if (threads != NULL)
 			mono_g_hash_table_foreach (threads, alloc_thread_static_data_helper, GUINT_TO_POINTER (offset));
@@ -2705,6 +2974,59 @@ mono_get_special_static_data (guint32 offset)
 		}
 		return ((char*) context->static_data [idx]) + (offset & 0xffffff);	
 	}
+}
+
+typedef struct {
+	guint32 offset;
+	guint32 size;
+} TlsOffsetSize;
+
+static void 
+free_thread_static_data_helper (gpointer key, gpointer value, gpointer user)
+{
+	MonoThread *thread = value;
+	TlsOffsetSize *data = user;
+	int idx = (data->offset >> 24) - 1;
+	char *ptr;
+
+	if (!thread->static_data || !thread->static_data [idx])
+		return;
+	ptr = ((char*) thread->static_data [idx]) + (data->offset & 0xffffff);
+	memset (ptr, 0, data->size);
+}
+
+static void
+do_free_special (gpointer key, gpointer value, gpointer data)
+{
+	MonoClassField *field = key;
+	guint32 offset = GPOINTER_TO_UINT (value);
+	guint32 static_type = (offset & 0x80000000);
+	gint32 align;
+	guint32 size;
+	size = mono_type_size (field->type, &align);
+	/*g_print ("free %s , size: %d, offset: %x\n", field->name, size, offset);*/
+	if (static_type == 0) {
+		TlsOffsetSize data;
+		MonoThreadDomainTls *item = g_new0 (MonoThreadDomainTls, 1);
+		data.offset = offset & 0x7fffffff;
+		data.size = size;
+		if (threads != NULL)
+			mono_g_hash_table_foreach (threads, free_thread_static_data_helper, &data);
+		item->offset = offset;
+		item->size = size;
+		item->next = thread_static_info.freelist;
+		thread_static_info.freelist = item;
+	} else {
+		/* FIXME: free context static data as well */
+	}
+}
+
+void
+mono_alloc_special_static_data_free (GHashTable *special_static_fields)
+{
+	mono_threads_lock ();
+	g_hash_table_foreach (special_static_fields, do_free_special, NULL);
+	mono_threads_unlock ();
 }
 
 static MonoClassField *local_slots = NULL;

@@ -678,7 +678,8 @@ reg: OP_LOCALLOC (OP_ICONST) {
 
 # Optimized version for initializing valuetypes on the stack
 stmt: OP_MEMSET (OP_LDADDR(OP_REGOFFSET)) "0" {
-	int size = tree->backend.size;
+	int size = tree->backend.memcpy_args->size;
+	int align = tree->backend.memcpy_args->align;
 	int offset = state->left->left->tree->inst_offset;
 	int destreg = state->left->left->tree->inst_basereg;
 	int val_reg;
@@ -689,6 +690,16 @@ stmt: OP_MEMSET (OP_LDADDR(OP_REGOFFSET)) "0" {
 	}
 	else
 		val_reg = sparc_g0;
+
+	if (align < 4) {
+		/* This could be optimized further if neccesary */
+		while (size >= 1) {
+			MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STOREI1_MEMBASE_REG, destreg, offset, val_reg);
+			offset += 1;
+			size -= 1;
+		}
+		return;
+	}	
 
 	/* Target address must be dword aligned */
 	if ((tree->inst_imm == 0) && (size >= 8) && 
@@ -731,7 +742,8 @@ stmt: OP_MEMSET (OP_LDADDR(OP_REGOFFSET)) "0" {
 }		
 
 stmt: OP_MEMSET (reg) "0" {
-	int size = tree->backend.size;
+	int size = tree->backend.memcpy_args->size;
+	int align = tree->backend.memcpy_args->align;
 	int offset = 0;
 	int destreg = state->left->reg1;
 	int val_reg;
@@ -743,17 +755,16 @@ stmt: OP_MEMSET (reg) "0" {
 	else
 		val_reg = sparc_g0;
 
-	/* FIXME: This assumes the destination is dword aligned */
-	/*
-	if ((tree->inst_imm == 0) && (size >= 8)) {
-		while (size >= 8) {
-			MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STOREI8_MEMBASE_IMM, destreg, offset, sparc_g0);
-			offset += 8;
-			size -= 8;
+	if (align < 4) {
+		/* This could be optimized further if neccesary */
+		while (size >= 1) {
+			MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STOREI1_MEMBASE_REG, destreg, offset, val_reg);
+			offset += 1;
+			size -= 1;
 		}
-	}
-	*/
-		
+		return;
+	}	
+
 	while (size >= 4) {
 		MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STOREI4_MEMBASE_REG, destreg, offset, val_reg);
 		offset += 4;

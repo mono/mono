@@ -16,8 +16,8 @@ typedef struct
 
 extern GCThreadFunctions *gc_thread_vtable;
 
-extern void
-GC_mono_debugger_add_all_threads (void);
+extern void *
+GC_mono_debugger_get_stack_ptr (void);
 
 #else
 #error "This header is only intended to be used by the Mono Debugger"

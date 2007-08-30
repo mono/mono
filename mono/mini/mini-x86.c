@@ -932,6 +932,33 @@ emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call)
 	call->out_args = arg;
 }
 
+/*
+ * It is expensive to adjust esp for each individual fp argument pushed on the stack
+ * so we try to do it just once when we have multiple fp arguments in a row.
+ * We don't use this mechanism generally because for int arguments the generated code
+ * is slightly bigger and new generation cpus optimize away the dependency chains
+ * created by push instructions on the esp value.
+ * fp_arg_setup is the first argument in the execution sequence where the esp register
+ * is modified.
+ */
+static int
+collect_fp_stack_space (MonoMethodSignature *sig, int start_arg, int *fp_arg_setup)
+{
+	int fp_space = 0;
+	MonoType *t;
+
+	for (; start_arg < sig->param_count; ++start_arg) {
+		t = mono_type_get_underlying_type (sig->params [start_arg]);
+		if (!t->byref && t->type == MONO_TYPE_R8) {
+			fp_space += sizeof (double);
+			*fp_arg_setup = start_arg;
+		} else {
+			break;
+		}
+	}
+	return fp_space;
+}
+
 /* 
  * take the arguments and generate the arch-specific
  * instructions to properly call the function in call.
@@ -945,6 +972,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	int i, n;
 	CallInfo *cinfo;
 	int sentinelpos = 0;
+	int fp_args_space = 0, fp_args_offset = 0, fp_arg_setup = -1;
 
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
@@ -1009,11 +1037,30 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				case ArgOnStack:
 					arg->opcode = OP_OUTARG;
 					if (!t->byref) {
-						if (t->type == MONO_TYPE_R4)
+						if (t->type == MONO_TYPE_R4) {
 							arg->opcode = OP_OUTARG_R4;
-						else
-							if (t->type == MONO_TYPE_R8)
-								arg->opcode = OP_OUTARG_R8;
+						} else if (t->type == MONO_TYPE_R8) {
+							arg->opcode = OP_OUTARG_R8;
+							/* we store in the upper bits of backen.arg_info the needed
+							 * esp adjustment and in the lower bits the offset from esp
+							 * where the arg needs to be stored
+							 */
+							if (!fp_args_space) {
+								fp_args_space = collect_fp_stack_space (sig, i - sig->hasthis, &fp_arg_setup);
+								fp_args_offset = fp_args_space;
+							}
+							arg->backend.arg_info = fp_args_space - fp_args_offset;
+							fp_args_offset -= sizeof (double);
+							if (i - sig->hasthis == fp_arg_setup) {
+								arg->backend.arg_info |= fp_args_space << 16;
+							}
+							if (fp_args_offset == 0) {
+								/* the allocated esp stack is finished:
+								 * prepare for an eventual second run of fp args
+								 */
+								fp_args_space = 0;
+							}
+						}
 					}
 					break;
 				default:
@@ -4209,6 +4256,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	guint8 *code;
 
 	cfg->code_size =  MAX (mono_method_get_header (method)->code_size * 4, 256);
+
+	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
+		cfg->code_size += 512;
+
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
 	x86_push_reg (code, X86_EBP);
@@ -4265,8 +4316,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			/* %eax = previous_lmf */
 			x86_prefix (code, X86_GS_PREFIX);
 			x86_mov_reg_mem (code, X86_EAX, lmf_tls_offset, 4);
-			/* skip method_info + lmf */
-			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
+			/* skip esp + method_info + lmf */
+			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 12);
 			/* push previous_lmf */
 			x86_push_reg (code, X86_EAX);
 			/* new lmf = ESP */
@@ -4291,8 +4342,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_get_lmf_addr");
 			}
 
-			/* Skip method info */
-			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 4);
+			/* Skip esp + method info */
+			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 8);
 
 			/* push lmf */
 			x86_push_reg (code, X86_EAX); 
@@ -4418,9 +4469,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	
 	if (cfg->method->save_lmf)
 		max_epilog_size += 128;
-	
-	if (mono_jit_trace_calls != NULL)
-		max_epilog_size += 50;
 
 	while (cfg->code_len + max_epilog_size > (cfg->code_size - 16)) {
 		cfg->code_size *= 2;
@@ -4785,6 +4833,132 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	}
 }
 
+#ifdef MONO_ARCH_HAVE_IMT
+
+// Linear handler, the bsearch head compare is shorter
+//[2 + 4] x86_alu_reg_imm (code, X86_CMP, ins->sreg1, ins->inst_imm);
+//[1 + 1] x86_branch8(inst,cond,imm,is_signed)
+//        x86_patch(ins,target)
+//[1 + 5] x86_jump_mem(inst,mem)
+
+#define CMP_SIZE 6
+#define BR_SMALL_SIZE 2
+#define BR_LARGE_SIZE 5
+#define JUMP_IMM_SIZE 6
+
+static int
+imt_branch_distance (MonoIMTCheckItem **imt_entries, int start, int target)
+{
+	int i, distance = 0;
+	for (i = start; i < target; ++i)
+		distance += imt_entries [i]->chunk_size;
+	return distance;
+}
+
+/*
+ * LOCKING: called with the domain lock held
+ */
+gpointer
+mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count)
+{
+	int i;
+	int size = 0;
+	guint8 *code, *start;
+
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done)
+					item->chunk_size += CMP_SIZE;
+				item->chunk_size += BR_SMALL_SIZE + JUMP_IMM_SIZE;
+			} else {
+				item->chunk_size += JUMP_IMM_SIZE;
+				/* with assert below:
+				 * item->chunk_size += CMP_SIZE + BR_SMALL_SIZE + 1;
+				 */
+			}
+		} else {
+			item->chunk_size += CMP_SIZE + BR_LARGE_SIZE;
+			imt_entries [item->check_target_idx]->compare_done = TRUE;
+		}
+		size += item->chunk_size;
+	}
+	code = mono_code_manager_reserve (domain->code_mp, size);
+	start = code;
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		item->code_target = code;
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done)
+					x86_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)item->method);
+				item->jmp_code = code;
+				x86_branch8 (code, X86_CC_NE, 0, FALSE);
+				x86_jump_mem (code, & (vtable->vtable [item->vtable_slot]));
+			} else {
+				/* enable the commented code to assert on wrong method */
+				/*x86_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)item->method);
+				item->jmp_code = code;
+				x86_branch8 (code, X86_CC_NE, 0, FALSE);*/
+				x86_jump_mem (code, & (vtable->vtable [item->vtable_slot]));
+				/*x86_patch (item->jmp_code, code);
+				x86_breakpoint (code);
+				item->jmp_code = NULL;*/
+			}
+		} else {
+			x86_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)item->method);
+			item->jmp_code = code;
+			if (x86_is_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
+				x86_branch8 (code, X86_CC_GE, 0, FALSE);
+			else
+				x86_branch32 (code, X86_CC_GE, 0, FALSE);
+		}
+	}
+	/* patch the branches to get to the target items */
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->jmp_code) {
+			if (item->check_target_idx) {
+				x86_patch (item->jmp_code, imt_entries [item->check_target_idx]->code_target);
+			}
+		}
+	}
+		
+	mono_stats.imt_thunks_size += code - start;
+	g_assert (code - start <= size);
+	return start;
+}
+
+MonoMethod*
+mono_arch_find_imt_method (gpointer *regs, guint8 *code)
+{
+	return (MonoMethod*) regs [MONO_ARCH_IMT_REG];
+}
+
+MonoObject*
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+{
+	MonoMethodSignature *sig = mono_method_signature (method);
+	CallInfo *cinfo = get_call_info (NULL, sig, FALSE);
+	int this_argument_offset;
+	MonoObject *this_argument;
+
+	/* 
+	 * this is the offset of the this arg from esp as saved at the start of 
+	 * mono_arch_create_trampoline_code () in tramp-x86.c.
+	 */
+	this_argument_offset = 5;
+	if (MONO_TYPE_ISSTRUCT (sig->ret) && (cinfo->ret.storage == ArgOnStack))
+		this_argument_offset++;
+
+	this_argument = * (MonoObject**) (((guint8*) regs [X86_ESP]) + this_argument_offset * sizeof (gpointer));
+
+	g_free (cinfo);
+	return this_argument;
+}
+#endif
+
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -4995,6 +5169,15 @@ mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
 		 */
 		reg = x86_modrm_rm (code [5]);
 		disp = 0;
+#ifdef MONO_ARCH_HAVE_IMT
+	} else if ((code [-2] == 0xba) && (code [3] == 0xff) && (x86_modrm_mod (code [4]) == 1) && (x86_modrm_reg (code [4]) == 2) && ((signed char)code [5] < 0)) {
+		/* IMT-based interface calls: with MONO_ARCH_IMT_REG == edx
+		 * ba 14 f8 28 08          mov    $0x828f814,%edx
+		 * ff 50 fc                call   *0xfffffffc(%eax)
+		 */
+		reg = code [4] & 0x07;
+		disp = (signed char)code [5];
+#endif
 	} else if ((code [1] != 0xe8) && (code [3] == 0xff) && ((code [4] & 0x18) == 0x10) && ((code [4] >> 6) == 1)) {
 		reg = code [4] & 0x07;
 		disp = (signed char)code [5];

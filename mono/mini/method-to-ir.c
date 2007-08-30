@@ -20,7 +20,6 @@
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/loader.h>
-#include <mono/metadata/cil-coff.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/class.h>
 #include <mono/metadata/object.h>
@@ -45,6 +44,7 @@
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/rawbuffer.h>
+#include <mono/metadata/security-core-clr.h>
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/os/gc_wrapper.h>
@@ -64,6 +64,28 @@
 #define INLINE_FAILURE do {\
 		if ((cfg->method != method) && (method->wrapper_type == MONO_WRAPPER_NONE))\
 			goto inline_failure;\
+	} while (0)
+#define CHECK_CFG_EXCEPTION do {\
+		if (cfg->exception_type != MONO_EXCEPTION_NONE)\
+			goto exception_exit;\
+	} while (0)
+#define METHOD_ACCESS_FAILURE do {	\
+		char *method_fname = mono_method_full_name (method, TRUE);	\
+		char *cil_method_fname = mono_method_full_name (cil_method, TRUE);	\
+		cfg->exception_type = MONO_EXCEPTION_METHOD_ACCESS;	\
+		cfg->exception_message = g_strdup_printf ("Method `%s' is inaccessible from method `%s'\n", cil_method_fname, method_fname);	\
+		g_free (method_fname);	\
+		g_free (cil_method_fname);	\
+		goto exception_exit;	\
+	} while (0)
+#define FIELD_ACCESS_FAILURE do {	\
+		char *method_fname = mono_method_full_name (method, TRUE);	\
+		char *field_fname = mono_field_full_name (field);	\
+		cfg->exception_type = MONO_EXCEPTION_FIELD_ACCESS;	\
+		cfg->exception_message = g_strdup_printf ("Field `%s' is inaccessible from method `%s'\n", field_fname, method_fname);	\
+		g_free (method_fname);	\
+		g_free (field_fname);	\
+		goto exception_exit;	\
 	} while (0)
 
 /* 
@@ -1954,6 +1976,7 @@ handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
 	return 0;
 }
 
+#ifndef MONO_ARCH_HAVE_IMT
 /* Emit code which loads interface_offsets [klass->interface_id]
  * The array is stored in memory before vtable.
 */
@@ -1972,7 +1995,7 @@ mini_emit_load_intf_reg_vtable (MonoCompile *cfg, int intf_reg, int vtable_reg, 
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, intf_reg, vtable_reg, -((klass->interface_id + 1) * SIZEOF_VOID_P));
 	}
 }
-
+#endif
 
 /* 
  * Emit code which loads into "intf_bit_reg" a nonzero value if the MonoKlass
@@ -2614,6 +2637,30 @@ callvirt_to_call_membase (int opcode)
 	return -1;
 }
 
+#ifdef MONO_ARCH_HAVE_IMT
+static void
+emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
+{
+#ifdef MONO_ARCH_IMT_REG
+	int method_reg = alloc_preg (cfg);
+
+	if (cfg->compile_aot) {
+		MONO_EMIT_NEW_AOTCONST (cfg, method_reg, call->method, MONO_PATCH_INFO_METHODCONST);
+	} else {
+		MonoInst *ins;
+		MONO_INST_NEW (cfg, ins, OP_PCONST);
+		ins->inst_p0 = call->method;
+		ins->dreg = method_reg;
+		MONO_ADD_INS (cfg->cbb, ins);
+	}
+
+	mono_call_inst_add_outarg_reg (cfg, call, method_reg, MONO_ARCH_IMT_REG, FALSE);
+#else
+	mono_arch_emit_imt_argument (cfg, call);
+#endif
+}
+#endif
+
 inline static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
 		     MonoInst **args, int calli, int virtual)
@@ -2763,9 +2810,16 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 		vtable_reg = alloc_preg (cfg);
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, this_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		if (method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+#ifdef MONO_ARCH_HAVE_IMT
+			guint32 imt_slot = mono_method_get_imt_slot (method);
+			emit_imt_argument (cfg, call);
+			slot_reg = vtable_reg;
+			call->inst.inst_offset = (imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
+#else
 			slot_reg = alloc_preg (cfg);
 			mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
 			call->inst.inst_offset = method->slot * SIZEOF_VOID_P;
+#endif
 		} else {
 			slot_reg = vtable_reg;
 			call->inst.inst_offset = G_STRUCT_OFFSET (MonoVTable, vtable) + (method->slot * SIZEOF_VOID_P);
@@ -3997,6 +4051,8 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	unsigned char* prev_cil_start;
 	guint32 prev_cil_offset_to_bb_len;
 
+	g_assert (cfg->exception_type == MONO_EXCEPTION_NONE);
+
 #if (MONO_INLINE_CALLED_LIMITED_METHODS)
 	if ((! inline_allways) && ! check_inline_called_method_name_limit (cmethod))
 		return 0;
@@ -4132,6 +4188,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	} else {
 		if (cfg->verbose_level > 2)
 			printf ("INLINE ABORTED %s\n", mono_method_full_name (cmethod, TRUE));
+		cfg->exception_type = MONO_EXCEPTION_NONE;
 
 		/* This gets rid of the newly added bblocks */
 		cfg->cbb = prev_cbb;
@@ -4287,9 +4344,6 @@ mini_get_method (MonoMethod *m, guint32 token, MonoClass *klass, MonoGenericCont
 
 	method = mono_get_method_full (m->klass->image, token, klass, context);
 
-	if (method && method->is_inflated)
-		method = mono_get_inflated_method (method);
-
 	return method;
 }
 
@@ -4326,23 +4380,96 @@ gboolean check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *cal
 
 	if (result == MONO_JIT_LINKDEMAND_ECMA) {
 		/* Generate code to throw a SecurityException before the actual call/link */
-		MonoAssembly *assembly = mono_image_get_assembly (caller->klass->image);
-		MonoReflectionAssembly *refass = (MonoReflectionAssembly*) mono_assembly_get_object (cfg->domain, assembly);
-		MonoReflectionMethod *refmet = mono_method_get_object (cfg->domain, caller, NULL);
 		MonoSecurityManager *secman = mono_security_manager_get_methods ();
-		MonoInst *args [3];
+		MonoInst *args [2];
 
 		NEW_ICONST (cfg, args [0], 4);
-		NEW_PCONST (cfg, args [1], refass);
-		NEW_PCONST (cfg, args [2], refmet);
+		NEW_METHODCONST (cfg, args [1], caller);
 		mono_emit_method_call (cfg, secman->linkdemandsecurityexception, mono_method_signature (secman->linkdemandsecurityexception), args, NULL);
 	} else if (cfg->exception_type == MONO_EXCEPTION_NONE) {
 		 /* don't hide previous results */
 		cfg->exception_type = MONO_EXCEPTION_SECURITY_LINKDEMAND;
 		cfg->exception_data = result;
+		return TRUE;
 	}
 	
 	return FALSE;
+}
+
+static MonoMethod*
+method_access_exception (void)
+{
+	static MonoMethod *method = NULL;
+
+	if (!method) {
+		MonoSecurityManager *secman = mono_security_manager_get_methods ();
+		method = mono_class_get_method_from_name (secman->securitymanager,
+							  "MethodAccessException", 2);
+	}
+	g_assert (method);
+	return method;
+}
+
+static void
+emit_throw_method_access_exception (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
+				    MonoBasicBlock *bblock, unsigned char *ip)
+{
+	MonoMethod *thrower = method_access_exception ();
+	MonoInst *args [2];
+
+	EMIT_NEW_METHODCONST (cfg, args [0], caller);
+	EMIT_NEW_METHODCONST (cfg, args [1], callee);
+	mono_emit_method_call (cfg, thrower, mono_method_signature (thrower), args, NULL);
+}
+
+static MonoMethod*
+verification_exception (void)
+{
+	static MonoMethod *method = NULL;
+
+	if (!method) {
+		MonoSecurityManager *secman = mono_security_manager_get_methods ();
+		method = mono_class_get_method_from_name (secman->securitymanager,
+							  "VerificationException", 0);
+	}
+	g_assert (method);
+	return method;
+}
+
+static void
+emit_throw_verification_exception (MonoCompile *cfg, MonoBasicBlock *bblock, unsigned char *ip)
+{
+	MonoMethod *thrower = verification_exception ();
+
+	mono_emit_method_call (cfg, thrower, mono_method_signature (thrower), NULL, NULL);
+}
+
+static void
+ensure_method_is_allowed_to_call_method (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee,
+					 MonoBasicBlock *bblock, unsigned char *ip)
+{
+	MonoSecurityCoreCLRLevel caller_level = mono_security_core_clr_method_level (caller, TRUE);
+	MonoSecurityCoreCLRLevel callee_level = mono_security_core_clr_method_level (callee, TRUE);
+	gboolean is_safe = TRUE;
+
+	if (!(caller_level >= callee_level ||
+			caller_level == MONO_SECURITY_CORE_CLR_SAFE_CRITICAL ||
+			callee_level == MONO_SECURITY_CORE_CLR_SAFE_CRITICAL)) {
+		is_safe = FALSE;
+	}
+
+	if (!is_safe)
+		emit_throw_method_access_exception (cfg, caller, callee, bblock, ip);
+}
+
+static gboolean
+method_is_safe (MonoMethod *method)
+{
+	/*
+	if (strcmp (method->name, "unsafeMethod") == 0)
+		return FALSE;
+	*/
+	return TRUE;
 }
 
 static gboolean
@@ -4511,6 +4638,17 @@ initialize_array_data (MonoMethod *method, gboolean aot, unsigned char *ip, Mono
 		return data_ptr;
 	}
 	return NULL;
+}
+
+static void
+set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsigned char *ip)
+{
+	char *method_fname = mono_method_full_name (method, TRUE);
+	char *method_code = mono_disasm_code_one (NULL, method, ip, NULL);
+	cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
+	cfg->exception_message = g_strdup_printf ("Invalid IL code in %s: %s\n", method_fname, method_code);
+	g_free (method_fname);
+	g_free (method_code);
 }
 
 /*
@@ -5691,6 +5829,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP;
 	dont_verify |= method->wrapper_type == MONO_WRAPPER_COMINTEROP_INVOKE;
 
+	dont_verify |= mono_security_get_mode () == MONO_SECURITY_MODE_SMCS_HACK;
+
 	/* still some type unsafety issues in marshal wrappers... (unknown is PtrToStructure) */
 	dont_verify_stloc = method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE;
 	dont_verify_stloc |= method->wrapper_type == MONO_WRAPPER_UNKNOWN;
@@ -5835,7 +5975,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		}
 	}
 
-	if (mono_use_security_manager)
+	if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS)
 		secman = mono_security_manager_get_methods ();
 
 	security = (secman && mono_method_has_declsec (method));
@@ -5858,12 +5998,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (custom && mono_custom_attrs_has_attr (custom, secman->suppressunmanagedcodesecurity)) {
 				pinvoke = FALSE;
 			}
+			if (custom)
+				mono_custom_attrs_free (custom);
 
 			if (pinvoke) {
 				custom = mono_custom_attrs_from_class (wrapped->klass);
 				if (custom && mono_custom_attrs_has_attr (custom, secman->suppressunmanagedcodesecurity)) {
 					pinvoke = FALSE;
 				}
+				if (custom)
+					mono_custom_attrs_free (custom);
 			}
 		} else {
 			/* not a P/Invoke after all */
@@ -5920,6 +6064,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	/* we must Demand SecurityPermission.Unmanaged before p/invoking */
 	if (pinvoke) {
 		mono_emit_method_call (cfg, secman->demandunmanaged, mono_method_signature (secman->demandunmanaged), NULL, NULL);
+	}
+
+	if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+		if (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+			MonoMethod *wrapped = mono_marshal_method_from_wrapper (method);
+			if (wrapped && (wrapped->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+				if (!(method->klass && method->klass->image &&
+						mono_security_core_clr_is_platform_image (method->klass->image))) {
+					emit_throw_method_access_exception (cfg, method, wrapped, bblock, ip);
+				}
+			}
+		}
+		if (!method_is_safe (method))
+			emit_throw_verification_exception (cfg, bblock, ip);
 	}
 
 	if (get_basic_blocks (cfg, header, cfg->real_offset, ip, end, &err_pos)) {
@@ -6301,10 +6459,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!cmethod)
 				goto load_error;
 
-			if (mono_use_security_manager) {
-				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
-					INLINE_FAILURE;
-			}
+			if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
+ 				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+ 					INLINE_FAILURE;
+				CHECK_CFG_EXCEPTION;
+ 			}
 
 			ins->inst_p0 = cmethod;
 			MONO_ADD_INS (bblock, ins);
@@ -6345,7 +6504,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					cil_method = cmethod;
 				} else if (constrained_call) {
 					cmethod = mono_get_method_constrained (image, token, constrained_call, generic_context, &cil_method);
-					cmethod = mono_get_inflated_method (cmethod);
 				} else {
 					cmethod = mini_get_method (method, token, NULL, generic_context);
 					cil_method = cmethod;
@@ -6354,7 +6512,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (!cmethod)
 					goto load_error;
 				if (!dont_verify && !cfg->skip_visibility && !can_access_method (method, cil_method))
-					UNVERIFIED;
+					METHOD_ACCESS_FAILURE;
+
+				if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
+					ensure_method_is_allowed_to_call_method (cfg, method, cil_method, bblock, ip);
 
 				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
 					/* MS.NET seems to silently convert this to a callvirt */
@@ -6377,9 +6538,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				n = fsig->param_count + fsig->hasthis;
 
-				if (mono_use_security_manager) {
+				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
 						INLINE_FAILURE;
+					CHECK_CFG_EXCEPTION;
 				}
 
 				if (cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL &&
@@ -7290,10 +7452,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!mono_class_init (cmethod->klass))
 				goto load_error;
 
-			if (mono_use_security_manager) {
+			if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
 					INLINE_FAILURE;
-			}
+				CHECK_CFG_EXCEPTION;
+			} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+				ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
+ 			}
 
 			n = fsig->param_count;
 			CHECK_STACK (n);
@@ -7624,7 +7789,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!field)
 				goto load_error;
 			if (!dont_verify && !cfg->skip_visibility && !can_access_field (method, field))
-				UNVERIFIED;
+				FIELD_ACCESS_FAILURE;
 			mono_class_init (klass);
 
 			foffset = klass->valuetype? field->offset - sizeof (MonoObject): field->offset;
@@ -7732,6 +7897,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!field)
 				goto load_error;
 			mono_class_init (klass);
+			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
+				FIELD_ACCESS_FAILURE;
 
 			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
 
@@ -8671,10 +8838,13 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					goto load_error;
 				mono_class_init (cmethod->klass);
 
-				if (mono_use_security_manager) {
+				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
 						INLINE_FAILURE;
-				}
+					CHECK_CFG_EXCEPTION;
+				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+					ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
+ 				}
 
 				EMIT_NEW_METHODCONST (cfg, argconst, cmethod);
 				if (method->wrapper_type != MONO_WRAPPER_SYNCHRONIZED)
@@ -8698,9 +8868,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					goto load_error;
 				mono_class_init (cmethod->klass);
 
-				if (mono_use_security_manager) {
+				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
 						INLINE_FAILURE;
+					CHECK_CFG_EXCEPTION;
+				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+					ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
 				}
 
 				--sp;
@@ -9091,6 +9264,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		mono_print_code (cfg, "AFTER METHOD-TO-IR");
 
 	return inline_costs;
+ 
+ exception_exit:
+	g_assert (cfg->exception_type != MONO_EXCEPTION_NONE);
+	g_slist_free (class_inits);
+	dont_inline = g_list_remove (dont_inline, method);
+	return -1;
 
  inline_failure:
 	g_slist_free (class_inits);
@@ -9106,9 +9285,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
  unverified:
 	g_slist_free (class_inits);
 	dont_inline = g_list_remove (dont_inline, method);
-	cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
-	cfg->exception_message = g_strdup_printf ("Invalid IL code in %s: %s\n",
- 		 mono_method_full_name (method, TRUE), mono_disasm_code_one (NULL, method, ip, NULL));
+	set_exception_type_from_invalid_il (cfg, method, ip);
 	return -1;
 }
 
@@ -10281,7 +10458,9 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - LAST MERGE: 81357.
+ * - test the CAS/core clr/verifier stuff.
+ * - merge the memcpy/memset changes.
+ * - LAST MERGE: 85064.
  */
 
 /*

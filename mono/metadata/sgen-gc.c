@@ -127,7 +127,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
 #include <semaphore.h>
 #include <signal.h>
 #include <errno.h>
@@ -145,6 +144,7 @@
 #include "metadata/threads.h"
 #include "metadata/sgen-gc.h"
 #include "metadata/mono-gc.h"
+#include "utils/mono-mmap.h"
 
 
 /*
@@ -224,7 +224,8 @@ struct _LOSObject {
 	LOSObject *next;
 	mword size; /* this is the object size */
 	int dummy; /* to have a sizeof (LOSObject) a multiple of ALLOC_ALIGN  and data starting at same alignment */
-	int role;
+	guint16 role;
+	guint16 scanned;
 	char data [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -325,6 +326,7 @@ enum {
 };
 
 static __thread RememberedSet *remembered_set MONO_TLS_FAST;
+static pthread_key_t remembered_set_key;
 static RememberedSet *global_remset;
 static int store_to_global_remset = 0;
 
@@ -411,7 +413,7 @@ safe_object_get_size (MonoObject* o)
  * ########  Global data.
  * ######################################################################
  */
-static pthread_mutex_t gc_mutex = PTHREAD_MUTEX_INITIALIZER;
+static LOCK_DECLARE (gc_mutex);
 static int gc_disabled = 0;
 static int num_minor_gcs = 0;
 static int num_major_gcs = 0;
@@ -432,7 +434,7 @@ static int num_major_gcs = 0;
 /* This is a fixed value used for pinned chunks, not the system pagesize */
 #define FREELIST_PAGESIZE 4096
 
-static mword pagesize = 4096; /* FIXME */
+static mword pagesize = 4096;
 static mword nursery_size = DEFAULT_NURSERY_SIZE;
 static mword next_section_size = DEFAULT_NURSERY_SIZE * 4;
 static mword max_section_size = DEFAULT_MAX_SECTION;
@@ -565,12 +567,6 @@ static GCMemSection *to_space_section = NULL;
  * ########  Macros and function declarations.
  * ######################################################################
  */
-
-/*
- * Recursion is not allowed for the thread lock.
- */
-#define LOCK_GC pthread_mutex_lock (&gc_mutex)
-#define UNLOCK_GC pthread_mutex_unlock (&gc_mutex)
 
 #define UPDATE_HEAP_BOUNDARIES(low,high) do {	\
 		if ((mword)(low) < lowest_heap_address)	\
@@ -1251,7 +1247,7 @@ add_to_global_remset (gpointer ptr)
 static char* __attribute__((noinline))
 copy_object (char *obj, char *from_space_start, char *from_space_end)
 {
-	if (obj >= from_space_start && obj < from_space_end) {
+	if (obj >= from_space_start && obj < from_space_end && (obj < to_space || obj >= to_space_end)) {
 		MonoVTable *vt;
 		char *forwarded;
 		mword objsize;
@@ -1860,12 +1856,28 @@ add_nursery_frag (size_t frag_size, char* frag_start, char* frag_end)
 	}
 }
 
+static int
+scan_needed_big_objects (char *start_addr, char *end_addr)
+{
+	LOSObject *big_object;
+	int count = 0;
+	for (big_object = los_object_list; big_object; big_object = big_object->next) {
+		if (!big_object->scanned && object_is_pinned (big_object->data)) {
+			DEBUG (5, fprintf (gc_debug_file, "Scan of big object: %p (%s), size: %d\n", big_object->data, safe_name (big_object->data), big_object->size));
+			scan_object (big_object->data, start_addr, end_addr);
+			big_object->scanned = TRUE;
+			count++;
+		}
+	}
+	return count;
+}
+
 static void
 drain_gray_stack (char *start_addr, char *end_addr)
 {
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
-	int fin_ready;
+	int fin_ready, bigo_scanned_num;
 	char *gray_start;
 
 	/*
@@ -1900,6 +1912,7 @@ drain_gray_stack (char *start_addr, char *end_addr)
 	do {
 		fin_ready = num_ready_finalizers;
 		finalize_in_range ((void**)start_addr, (void**)end_addr);
+		bigo_scanned_num = scan_needed_big_objects (start_addr, end_addr);
 
 		/* drain the new stack that might have been created */
 		DEBUG (6, fprintf (gc_debug_file, "Precise scan of gray area post fin: %p-%p, size: %d\n", gray_start, gray_objects, (int)(gray_objects - gray_start)));
@@ -1907,7 +1920,7 @@ drain_gray_stack (char *start_addr, char *end_addr)
 			DEBUG (9, fprintf (gc_debug_file, "Precise gray object scan %p (%s)\n", gray_start, safe_name (gray_start)));
 			gray_start = scan_object (gray_start, start_addr, end_addr);
 		}
-	} while (fin_ready != num_ready_finalizers);
+	} while (fin_ready != num_ready_finalizers || bigo_scanned_num);
 
 	DEBUG (2, fprintf (gc_debug_file, "Copied to old space: %d bytes\n", (int)(gray_objects - to_space)));
 	to_space = gray_start;
@@ -1988,7 +2001,11 @@ build_section_fragments (GCMemSection *section)
 		frag_end = pin_queue [i];
 		/* remove the pin bit from pinned objects */
 		unpin_object (frag_end);
-		section->scan_starts [((char*)frag_end - (char*)section->data)/SCAN_START_SIZE] = frag_end;
+		if (frag_end >= section->data + section->size) {
+			frag_end = section->data + section->size;
+		} else {
+			section->scan_starts [((char*)frag_end - (char*)section->data)/SCAN_START_SIZE] = frag_end;
+		}
 		frag_size = frag_end - frag_start;
 		if (frag_size)
 			memset (frag_start, 0, frag_size);
@@ -2004,6 +2021,22 @@ build_section_fragments (GCMemSection *section)
 		memset (frag_start, 0, frag_size);
 }
 
+static void
+scan_from_registered_roots (char *addr_start, char *addr_end)
+{
+	int i;
+	RootRecord *root;
+	for (i = 0; i < roots_hash_size; ++i) {
+		for (root = roots_hash [i]; root; root = root->next) {
+			/* if desc is non-null it has precise info */
+			if (!root->root_desc)
+				continue;
+			DEBUG (6, fprintf (gc_debug_file, "Precise root scan %p-%p (desc: %p)\n", root->start_root, root->end_root, (void*)root->root_desc));
+			precisely_scan_objects_from ((void**)root->start_root, root->end_root, addr_start, addr_end, root->root_desc);
+		}
+	}
+}
+
 /*
  * Collect objects in the nursery.
  */
@@ -2013,7 +2046,6 @@ collect_nursery (size_t requested_size)
 	GCMemSection *section;
 	size_t max_garbage_amount;
 	int i;
-	RootRecord *root;
 	TV_DECLARE (atv);
 	TV_DECLARE (btv);
 
@@ -2070,15 +2102,7 @@ collect_nursery (size_t requested_size)
 		scan_object (pin_queue [i], nursery_start, nursery_next);
 	}
 	/* registered roots, this includes static fields */
-	for (i = 0; i < roots_hash_size; ++i) {
-		for (root = roots_hash [i]; root; root = root->next) {
-			/* if desc is non-null it has precise info */
-			if (!root->root_desc)
-				continue;
-			DEBUG (6, fprintf (gc_debug_file, "Precise root scan %p-%p (desc: %p)\n", root->start_root, root->end_root, (void*)root->root_desc));
-			precisely_scan_objects_from ((void**)root->start_root, root->end_root, nursery_start, nursery_next, root->root_desc);
-		}
-	}
+	scan_from_registered_roots (nursery_start, nursery_next);
 	TV_GETTIME (btv);
 	DEBUG (2, fprintf (gc_debug_file, "Root scan: %d usecs\n", TV_ELAPSED (atv, btv)));
 
@@ -2107,7 +2131,6 @@ major_collection (void)
 	GCMemSection *section, *prev_section;
 	LOSObject *bigobj, *prevbo;
 	int i;
-	RootRecord *root;
 	PinnedChunk *chunk;
 	FinalizeEntry *fin;
 	int count;
@@ -2144,7 +2167,7 @@ major_collection (void)
 	TV_GETTIME (atv);
 	DEBUG (6, fprintf (gc_debug_file, "Pinning from sections\n"));
 	for (section = section_list; section; section = section->next) {
-		section->pin_queue_start = count = next_pin_slot;
+		section->pin_queue_start = count = section->pin_queue_end = next_pin_slot;
 		pin_from_roots (section->data, section->next_data);
 		if (count != next_pin_slot) {
 			int reduced_to;
@@ -2196,21 +2219,14 @@ major_collection (void)
 	 * mark any section without pinned objects, so we can free it since we will be able to
 	 * move all the objects.
 	 */
-	/* the pinned objects are roots */
+	/* the pinned objects are roots (big objects are included in this list, too) */
 	for (i = 0; i < next_pin_slot; ++i) {
 		DEBUG (6, fprintf (gc_debug_file, "Precise object scan %d of pinned %p (%s)\n", i, pin_queue [i], safe_name (pin_queue [i])));
 		scan_object (pin_queue [i], heap_start, heap_end);
 	}
 	/* registered roots, this includes static fields */
-	for (i = 0; i < roots_hash_size; ++i) {
-		for (root = roots_hash [i]; root; root = root->next) {
-			/* if desc is non-null it has precise info */
-			if (!root->root_desc)
-				continue;
-			DEBUG (6, fprintf (gc_debug_file, "Precise root scan %p-%p (desc: %p)\n", root->start_root, root->end_root, (void*)root->root_desc));
-			precisely_scan_objects_from ((void**)root->start_root, root->end_root, heap_start, heap_end, root->root_desc);
-		}
-	}
+	scan_from_registered_roots (heap_start, heap_end);
+
 	/* scan the list of objects ready for finalization */
 	for (fin = fin_ready_list; fin; fin = fin->next) {
 		DEBUG (5, fprintf (gc_debug_file, "Scan of fin ready object: %p (%s)\n", fin->object, safe_name (fin->object)));
@@ -2219,6 +2235,11 @@ major_collection (void)
 	TV_GETTIME (atv);
 	DEBUG (2, fprintf (gc_debug_file, "Root scan: %d usecs\n", TV_ELAPSED (btv, atv)));
 
+	/* we need to go over the big object list to see if any was marked and scan it
+	 * And we need to make this in a loop, considering that objects referenced by finalizable
+	 * objects could reference big objects (this happens in drain_gray_stack ())
+	 */
+	scan_needed_big_objects (heap_start, heap_end);
 	/* all the objects in the heap */
 	drain_gray_stack (heap_start, heap_end);
 
@@ -2227,6 +2248,7 @@ major_collection (void)
 	for (bigobj = los_object_list; bigobj;) {
 		if (object_is_pinned (bigobj->data)) {
 			unpin_object (bigobj->data);
+			bigobj->scanned = FALSE;
 		} else {
 			LOSObject *to_free;
 			/* not referenced anywhere, so we can free it */
@@ -2397,21 +2419,12 @@ static void*
 get_os_memory (size_t size, int activate)
 {
 	void *ptr;
-	unsigned long prot_flags = activate? PROT_READ|PROT_WRITE: PROT_NONE;
+	unsigned long prot_flags = activate? MONO_MMAP_READ|MONO_MMAP_WRITE: MONO_MMAP_NONE;
 
+	prot_flags |= MONO_MMAP_PRIVATE | MONO_MMAP_ANON;
 	size += pagesize - 1;
 	size &= ~(pagesize - 1);
-	ptr = mmap (0, size, prot_flags, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-	if (ptr == (void*)-1) {
-		int fd = open ("/dev/zero", O_RDONLY);
-		if (fd != -1) {
-			ptr = mmap (0, size, prot_flags, MAP_PRIVATE, fd, 0);
-			close (fd);
-		}
-		if (ptr == (void*)-1) {
-			return NULL;
-		}
-	}
+	ptr = mono_valloc (0, size, prot_flags);
 	return ptr;
 }
 
@@ -2999,7 +3012,7 @@ finalize_in_range (void **start, void **end)
 	for (i = 0; i < finalizable_hash_size; ++i) {
 		prev = NULL;
 		for (entry = finalizable_hash [i]; entry;) {
-			if (entry->object >= start && entry->object < end) {
+			if (entry->object >= start && entry->object < end && (entry->object < to_space || entry->object >= to_space_end)) {
 				if (object_is_fin_ready (entry->object)) {
 					char *from;
 					FinalizeEntry *next;
@@ -3039,7 +3052,7 @@ null_link_in_range (void **start, void **end)
 	for (i = 0; i < disappearing_link_hash_size; ++i) {
 		prev = NULL;
 		for (entry = disappearing_link_hash [i]; entry;) {
-			if (entry->object >= start && entry->object < end) {
+			if (entry->object >= start && entry->object < end && (entry->object < to_space || entry->object >= to_space_end)) {
 				if (object_is_fin_ready (entry->object)) {
 					void **p = entry->data;
 					FinalizeEntry *old;
@@ -3053,6 +3066,7 @@ null_link_in_range (void **start, void **end)
 					old = entry->next;
 					free_internal_mem (entry);
 					entry = old;
+					num_disappearing_links--;
 					continue;
 				} else {
 					void **link;
@@ -3408,23 +3422,12 @@ mono_gc_deregister_root (char* addr)
  * ######################################################################
  */
 
-#undef pthread_create
-#undef pthread_join
-#undef pthread_detach
-
-typedef struct {
-	void *(*start_routine) (void *);
-	void *arg;
-	int flags;
-	sem_t registered;
-} SgenThreadStartInfo;
-
 /* eventually share with MonoThread? */
 typedef struct _SgenThreadInfo SgenThreadInfo;
 
 struct _SgenThreadInfo {
 	SgenThreadInfo *next;
-	pthread_t id;
+	ARCH_THREAD_TYPE id;
 	unsigned int stop_count; /* to catch duplicate signals */
 	int signal;
 	int skip;
@@ -3438,6 +3441,9 @@ struct _SgenThreadInfo {
 #define HASH_PTHREAD_T(id) (((unsigned int)(id) >> 4) * 2654435761u)
 
 static SgenThreadInfo* thread_table [THREAD_HASH_SIZE];
+
+#if USE_SIGNAL_BASED_START_STOP_WORLD
+
 static sem_t suspend_ack_semaphore;
 static unsigned int global_stop_count = 0;
 static int suspend_signal_num = SIGPWR;
@@ -3447,13 +3453,13 @@ static mword cur_thread_regs [ARCH_NUM_REGS] = {0};
 
 /* LOCKING: assumes the GC lock is held */
 static SgenThreadInfo*
-thread_info_lookup (pthread_t id)
+thread_info_lookup (ARCH_THREAD_TYPE id)
 {
 	unsigned int hash = HASH_PTHREAD_T (id) % THREAD_HASH_SIZE;
 	SgenThreadInfo *info;
 
 	info = thread_table [hash];
-	while (info && !pthread_equal (info->id, id)) {
+	while (info && !ARCH_THREAD_EQUALS (info->id, id)) {
 		info = info->next;
 	}
 	return info;
@@ -3463,7 +3469,7 @@ static void
 update_current_thread_stack (void *start)
 {
 	void *ptr = cur_thread_regs;
-	SgenThreadInfo *info = thread_info_lookup (pthread_self ());
+	SgenThreadInfo *info = thread_info_lookup (ARCH_GET_THREAD ());
 	info->stack_start = align_pointer (&ptr);
 	ARCH_STORE_REGS (ptr);
 }
@@ -3490,7 +3496,7 @@ thread_handshake (int signum)
 	for (i = 0; i < THREAD_HASH_SIZE; ++i) {
 		for (info = thread_table [i]; info; info = info->next) {
 			DEBUG (4, fprintf (gc_debug_file, "considering thread %p for signal %d (%s)\n", info, signum, signal_desc (signum)));
-			if (pthread_equal (info->id, me)) {
+			if (ARCH_THREAD_EQUALS (info->id, me)) {
 				DEBUG (4, fprintf (gc_debug_file, "Skip (equal): %p, %p\n", (void*)me, (void*)info->id));
 				continue;
 			}
@@ -3581,7 +3587,7 @@ stop_world (void)
 	int count;
 
 	global_stop_count++;
-	DEBUG (3, fprintf (gc_debug_file, "stopping world n %d from %p %p\n", global_stop_count, thread_info_lookup (pthread_self ()), (gpointer)pthread_self ()));
+	DEBUG (3, fprintf (gc_debug_file, "stopping world n %d from %p %p\n", global_stop_count, thread_info_lookup (ARCH_GET_THREAD ()), (gpointer)ARCH_GET_THREAD ()));
 	TV_GETTIME (stop_world_time);
 	count = thread_handshake (suspend_signal_num);
 	DEBUG (3, fprintf (gc_debug_file, "world stopped %d thread(s)\n", count));
@@ -3603,6 +3609,8 @@ restart_world (void)
 	DEBUG (2, fprintf (gc_debug_file, "restarted %d thread(s) (pause time: %d usec, max: %d)\n", count, (int)usec, (int)max_pause_usec));
 	return count;
 }
+
+#endif /* USE_SIGNAL_BASED_START_STOP_WORLD */
 
 /*
  * Identify objects pinned in a thread stack and its registers.
@@ -3786,7 +3794,7 @@ gc_register_current_thread (void *addr)
 	SgenThreadInfo* info = malloc (sizeof (SgenThreadInfo));
 	if (!info)
 		return NULL;
-	info->id = pthread_self ();
+	info->id = ARCH_GET_THREAD ();
 	info->stop_count = -1;
 	info->skip = 0;
 	info->signal = 0;
@@ -3801,6 +3809,7 @@ gc_register_current_thread (void *addr)
 		pthread_getattr_np (pthread_self (), &attr);
 		pthread_attr_getstack (&attr, &sstart, &size);
 		info->stack_end = (char*)sstart + size;
+		pthread_attr_destroy (&attr);
 	}
 #elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 		 info->stack_end = (char*)pthread_get_stackaddr_np (pthread_self ());
@@ -3820,6 +3829,7 @@ gc_register_current_thread (void *addr)
 	thread_table [hash] = info;
 
 	remembered_set = info->remset = alloc_remset (DEFAULT_REMSET_SIZE, info);
+	pthread_setspecific (remembered_set_key, remembered_set);
 	DEBUG (3, fprintf (gc_debug_file, "registered thread %p (%p) (hash: %d)\n", info, (gpointer)info->id, hash));
 	return info;
 }
@@ -3830,13 +3840,14 @@ unregister_current_thread (void)
 	int hash;
 	SgenThreadInfo *prev = NULL;
 	SgenThreadInfo *p;
-	pthread_t id = pthread_self ();
+	RememberedSet *rset;
+	ARCH_THREAD_TYPE id = ARCH_GET_THREAD ();
 
 	hash = HASH_PTHREAD_T (id) % THREAD_HASH_SIZE;
 	p = thread_table [hash];
 	assert (p);
 	DEBUG (3, fprintf (gc_debug_file, "unregister thread %p (%p)\n", p, (gpointer)p->id));
-	while (!pthread_equal (p->id, id)) {
+	while (!ARCH_THREAD_EQUALS (p->id, id)) {
 		prev = p;
 		p = p->next;
 	}
@@ -3845,9 +3856,48 @@ unregister_current_thread (void)
 	} else {
 		prev->next = p->next;
 	}
+	rset = p->remset;
 	/* FIXME: transfer remsets if any */
+	while (rset) {
+		RememberedSet *next = rset->next;
+		free_internal_mem (rset);
+		rset = next;
+	}
 	free (p);
 }
+
+static void
+unregister_thread (void *k)
+{
+	LOCK_GC;
+	unregister_current_thread ();
+	UNLOCK_GC;
+}
+
+gboolean
+mono_gc_register_thread (void *baseptr)
+{
+	SgenThreadInfo *info;
+	LOCK_GC;
+	info = thread_info_lookup (ARCH_GET_THREAD ());
+	if (info == NULL)
+		info = gc_register_current_thread (baseptr);
+	UNLOCK_GC;
+	return info != NULL;
+}
+
+#if USE_PTHREAD_INTERCEPT
+
+#undef pthread_create
+#undef pthread_join
+#undef pthread_detach
+
+typedef struct {
+	void *(*start_routine) (void *);
+	void *arg;
+	int flags;
+	sem_t registered;
+} SgenThreadStartInfo;
 
 static void*
 gc_start_thread (void *arg)
@@ -3863,9 +3913,12 @@ gc_start_thread (void *arg)
 	UNLOCK_GC;
 	sem_post (&(start_info->registered));
 	result = start_func (t_arg);
+	/*
+	 * this is done by the pthread key dtor
 	LOCK_GC;
 	unregister_current_thread ();
 	UNLOCK_GC;
+	*/
 
 	return result;
 }
@@ -3906,17 +3959,7 @@ mono_gc_pthread_detach (pthread_t thread)
 	return pthread_detach (thread);
 }
 
-gboolean
-mono_gc_register_thread (void *baseptr)
-{
-	SgenThreadInfo *info;
-	LOCK_GC;
-	info = thread_info_lookup (pthread_self ());
-	if (info == NULL)
-		info = gc_register_current_thread (baseptr);
-	UNLOCK_GC;
-	return info != NULL;
-}
+#endif /* USE_PTHREAD_INTERCEPT */
 
 /*
  * ######################################################################
@@ -3960,7 +4003,7 @@ mono_gc_wbarrier_set_field (MonoObject *obj, gpointer field_ptr, MonoObject* val
 	rs = alloc_remset (rs->end_set - rs->data, (void*)1);
 	rs->next = remembered_set;
 	remembered_set = rs;
-	thread_info_lookup (pthread_self())->remset = rs;
+	thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 	*(rs->store_next++) = (mword)field_ptr;
 	*(void**)field_ptr = value;
 }
@@ -3982,7 +4025,7 @@ mono_gc_wbarrier_set_arrayref (MonoArray *arr, gpointer slot_ptr, MonoObject* va
 	rs = alloc_remset (rs->end_set - rs->data, (void*)1);
 	rs->next = remembered_set;
 	remembered_set = rs;
-	thread_info_lookup (pthread_self())->remset = rs;
+	thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 	*(rs->store_next++) = (mword)slot_ptr;
 	*(void**)slot_ptr = value;
 }
@@ -4002,7 +4045,7 @@ mono_gc_wbarrier_arrayref_copy (MonoArray *arr, gpointer slot_ptr, int count)
 	rs = alloc_remset (rs->end_set - rs->data, (void*)1);
 	rs->next = remembered_set;
 	remembered_set = rs;
-	thread_info_lookup (pthread_self())->remset = rs;
+	thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 	*(rs->store_next++) = (mword)slot_ptr | REMSET_RANGE;
 	*(rs->store_next++) = count;
 }
@@ -4026,7 +4069,7 @@ mono_gc_wbarrier_generic_store (gpointer ptr, MonoObject* value)
 	rs = alloc_remset (rs->end_set - rs->data, (void*)1);
 	rs->next = remembered_set;
 	remembered_set = rs;
-	thread_info_lookup (pthread_self())->remset = rs;
+	thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 	*(rs->store_next++) = (mword)ptr;
 	*(void**)ptr = value;
 }
@@ -4057,7 +4100,7 @@ mono_gc_wbarrier_object (MonoObject* obj)
 	rs = alloc_remset (rs->end_set - rs->data, (void*)1);
 	rs->next = remembered_set;
 	remembered_set = rs;
-	thread_info_lookup (pthread_self())->remset = rs;
+	thread_info_lookup (ARCH_GET_THREAD ())->remset = rs;
 	*(rs->store_next++) = (mword)obj | REMSET_OBJECT;
 }
 
@@ -4211,7 +4254,7 @@ mono_gc_is_gc_thread (void)
 {
 	gboolean result;
 	LOCK_GC;
-        result = thread_info_lookup (pthread_self ()) != NULL;
+        result = thread_info_lookup (ARCH_GET_THREAD ()) != NULL;
 	UNLOCK_GC;
 	return result;
 }
@@ -4222,12 +4265,13 @@ mono_gc_base_init (void)
 	char *env;
 	struct sigaction sinfo;
 
+	LOCK_INIT (gc_mutex);
 	LOCK_GC;
 	if (gc_initialized) {
 		UNLOCK_GC;
 		return;
 	}
-	gc_initialized = TRUE;
+	pagesize = mono_pagesize ();
 	gc_debug_file = stderr;
 	/* format: MONO_GC_DEBUG=l[,filename] where l is a debug level 0-9 */
 	if ((env = getenv ("MONO_GC_DEBUG"))) {
@@ -4266,6 +4310,8 @@ mono_gc_base_init (void)
 	global_remset = alloc_remset (1024, NULL);
 	global_remset->next = NULL;
 
+	pthread_key_create (&remembered_set_key, unregister_thread);
+	gc_initialized = TRUE;
 	UNLOCK_GC;
 	mono_gc_register_thread (&sinfo);
 }

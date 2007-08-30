@@ -56,6 +56,7 @@ enum {
 	} while (0)
 
 #define UNMASK_TYPE(type) ((type) & TYPE_MASK)
+#define IS_MANAGED_POINTER(type) (((type) & POINTER_MASK) == POINTER_MASK)
 
 enum {
 	IL_CODE_FLAG_NOT_PROCESSED  = 0,
@@ -434,7 +435,7 @@ verify_class_layout_table (MonoImage *image, GSList *list, int level)
 				 * assemblies, though (the spec claims we didn't have to, bah).
 				 */
 				/* 
-				 * We need to check that the parent types have the samme layout 
+				 * We need to check that the parent types have the same layout 
 				 * type as well.
 				 */
 			}
@@ -639,7 +640,7 @@ verify_field_table (MonoImage *image, GSList *list, int level)
 			if ((flags & FIELD_ATTRIBUTE_RT_SPECIAL_NAME) && !(flags & FIELD_ATTRIBUTE_SPECIAL_NAME))
 				ADD_ERROR (list, g_strdup_printf ("RTSpecialName needs also SpecialName set in Field row %d", i + 1));
 			/*
-			 * FIXME: check there is only ono owner in the respective table.
+			 * FIXME: check there is only one owner in the respective table.
 			 * if (flags & FIELD_ATTRIBUTE_HAS_FIELD_MARSHAL)
 			 * if (flags & FIELD_ATTRIBUTE_HAS_DEFAULT)
 			 * if (flags & FIELD_ATTRIBUTE_HAS_FIELD_RVA)
@@ -1076,9 +1077,9 @@ in_same_block (MonoMethodHeader *header, guint offset, guint target)
 
 	for (i = 0; i < header->num_clauses; ++i) {
 		clause = &header->clauses [i];
-		if (MONO_OFFSET_IN_CLAUSE (clause, offset) && !MONO_OFFSET_IN_CLAUSE (clause, target))
+		if (MONO_OFFSET_IN_CLAUSE (clause, offset) ^ MONO_OFFSET_IN_CLAUSE (clause, target))
 			return 0;
-		if (MONO_OFFSET_IN_HANDLER (clause, offset) && !MONO_OFFSET_IN_HANDLER (clause, target))
+		if (MONO_OFFSET_IN_HANDLER (clause, offset) ^ MONO_OFFSET_IN_HANDLER (clause, target))
 			return 0;
 		/* need to check filter ... */
 	}
@@ -1121,7 +1122,7 @@ can_merge_stack (ILCodeDesc *a, ILCodeDesc *b)
 static gboolean
 is_valid_bool_arg (ILStackDesc *arg)
 {
-	if (arg->stype & POINTER_MASK)
+	if (IS_MANAGED_POINTER (arg->stype))
 		return TRUE;
 	switch (arg->stype) {
 	case TYPE_I4:
@@ -1230,6 +1231,22 @@ stind_type (int op, int type) {
 }
 
 
+/*Type manipulation helper*/
+
+/*Returns the byref version of the supplied MonoType*/
+static MonoType*
+mono_type_get_type_byref (MonoType *type)
+{
+	return &mono_class_from_mono_type (type)->this_arg;
+}
+
+
+/*Returns the byval version of the supplied MonoType*/
+static MonoType*
+mono_type_get_type_byval (MonoType *type)
+{
+	return &mono_class_from_mono_type (type)->byval_arg;
+}
 
 
 /*Stack manipulation code*/
@@ -1261,7 +1278,7 @@ static int
 check_underflow (VerifyContext *ctx, int size)
 {
 	if (ctx->eval.size < size) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Stack underflow, required %d, but have %d", size, ctx->eval.size));
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Stack underflow, required %d, but have %d at 0x%04x", size, ctx->eval.size, ctx->ip_offset));
 		return 0;
 	}
 	return 1;
@@ -1271,7 +1288,7 @@ static int
 check_overflow (VerifyContext *ctx)
 {
 	if (ctx->eval.size >= ctx->max_stack) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have stack-depth %d", ctx->eval.size + 1));
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have stack-depth %d at 0x%04x", ctx->eval.size + 1, ctx->ip_offset));
 		return 0;
 	}
 	return 1;
@@ -1288,10 +1305,14 @@ check_unmanaged_pointer (VerifyContext *ctx, ILStackDesc *value)
 }
 
 static gboolean
-check_unmanaged_pointer_type (VerifyContext *ctx, MonoType *type)
+check_unverifiable_type (VerifyContext *ctx, MonoType *type)
 {
 	if (type->type == MONO_TYPE_PTR || type->type == MONO_TYPE_FNPTR) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Unmanaged pointer is not a verifiable type at 0x%04x", ctx->ip_offset));
+		return 0;
+	}
+	if (type->type == MONO_TYPE_TYPEDBYREF) {
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("TypedByRef is not a verifiable type at 0x%04x", ctx->ip_offset));
 		return 0;
 	}
 	return 1;
@@ -1329,6 +1350,29 @@ static inline ILStackDesc *
 stack_get (VerifyContext *ctx, int distance)
 {
 	return ctx->eval.stack + (ctx->eval.size - distance - 1);
+}
+
+/* Returns the MonoType associated with the token, or NULL if it is invalid.
+ * 
+ * A boxable type can be either a reference or value type, but cannot be a byref type or an unmanaged pointer   
+ * */
+static MonoType*
+get_boxable_mono_type (VerifyContext* ctx, int token)
+{
+	MonoType *type = mono_type_get_full (ctx->image, token, ctx->generic_context);
+
+	if (!type) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Type (0x%08x) not found at 0x%04x", token, ctx->ip_offset));
+		return NULL;
+	}
+
+	if (type->byref && type->type != MONO_TYPE_TYPEDBYREF) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid use of byref type at 0x%04x", ctx->ip_offset));
+		return NULL;
+	}
+
+	check_unverifiable_type (ctx, type);
+	return type;
 }
 
 
@@ -1406,10 +1450,10 @@ dump_stack_value (ILStackDesc *value)
 	if (value->stype & CMMP_MASK)
 		printf ("Controled Mutability MP: ");
 
-	if (value->stype & POINTER_MASK)
+	if (IS_MANAGED_POINTER (value->stype))
 		printf ("Managed Pointer to: ");
 
-	switch (value->stype & TYPE_MASK) {
+	switch (UNMASK_TYPE (value->stype)) {
 		case TYPE_INV:
 			printf ("invalid type]"); 
 			return;
@@ -1429,10 +1473,36 @@ dump_stack_value (ILStackDesc *value)
 			printf ("unmanaged pointer]"); 
 			return;
 		case TYPE_COMPLEX:
-			printf ("complex]"); 
-			return;
+			switch (value->type->type) {
+			case MONO_TYPE_CLASS:
+			case MONO_TYPE_VALUETYPE:
+				printf ("complex] (%s)", value->type->data.klass->name);
+				return;
+			case MONO_TYPE_STRING:
+				printf ("complex] (string)");
+				return;
+			case MONO_TYPE_OBJECT:
+				printf ("complex] (object)");
+				return;
+			case MONO_TYPE_SZARRAY:
+				printf ("complex] (%s [])", value->type->data.klass->name);
+				return;
+			case MONO_TYPE_ARRAY:
+				printf ("complex] (%s [%d %d %d])",
+					value->type->data.array->eklass->name,
+					value->type->data.array->rank,
+					value->type->data.array->numsizes,
+					value->type->data.array->numlobounds);
+				return;
+			case MONO_TYPE_GENERICINST:
+				printf ("complex] (inst of %s )", value->type->data.generic_class->container_class->name);
+				return;
+			default:
+				printf ("unknown complex %d type]\n", value->type->type);
+				g_assert_not_reached ();
+			}
 		default:
-			printf ("unknown %d type]", value->stype);
+			printf ("unknown stack %d type]\n", value->stype);
 			g_assert_not_reached ();
 	}
 }
@@ -1519,6 +1589,7 @@ handle_enum:
 	/* FIXME: the spec says that you cannot have a pointer to method pointer, do we need to check this here? */ 
 	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_PTR:
+	case MONO_TYPE_TYPEDBYREF:
 		return TYPE_PTR | mask;
 
 	case MONO_TYPE_CLASS:
@@ -1526,7 +1597,6 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_TYPEDBYREF:
 	case MONO_TYPE_GENERICINST:
 		return TYPE_COMPLEX | mask;
 
@@ -1586,6 +1656,7 @@ handle_enum:
 	/*FIXME: Do we need to check if it's a pointer to the method pointer? The spec says it' illegal to have that.*/
 	case MONO_TYPE_FNPTR:
 	case MONO_TYPE_PTR:
+	case MONO_TYPE_TYPEDBYREF:
 		stack->stype = TYPE_PTR | mask;
 		return;
 
@@ -1594,7 +1665,6 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_TYPEDBYREF:
 
 	case MONO_TYPE_GENERICINST:
 		stack->stype = TYPE_COMPLEX | mask;
@@ -1617,7 +1687,7 @@ handle_enum:
 			return;
 		}
 	default:
-		VERIFIER_DEBUG ( printf ("unknown type %02x in eval stack type\n", type->type); );
+		VERIFIER_DEBUG ( printf ("unknown type 0x%02x in eval stack type\n", type->type); );
 		g_assert_not_reached ();
 	}
 	return;
@@ -1791,6 +1861,9 @@ mono_is_generic_instance_compatible (MonoGenericClass *target, MonoGenericClass 
  */
 static gboolean
 verify_stack_type_compatibility (VerifyContext *ctx, MonoType *target, MonoType *candidate, gboolean strict) {
+#define IS_ONE_OF3(T, A, B, C) (T == A || T == B || T == C)
+#define IS_ONE_OF2(T, A, B) (T == A || T == B)
+
 	VERIFIER_DEBUG ( printf ("checking type compatibility %p %p[%d][%d] %p[%d][%d]\n", ctx, target, target->type, target->byref, candidate, candidate->type, candidate->byref); );
 
  	/*only one is byref */
@@ -1808,32 +1881,40 @@ handle_enum:
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
+		if (strict)
+			return IS_ONE_OF3 (candidate->type, MONO_TYPE_I1, MONO_TYPE_U1, MONO_TYPE_BOOLEAN);
 	case MONO_TYPE_I2:
 	case MONO_TYPE_U2:
 	case MONO_TYPE_CHAR:
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
 		if (strict)
-			return candidate->type == target->type;
+			return IS_ONE_OF3 (candidate->type, MONO_TYPE_I2, MONO_TYPE_U2, MONO_TYPE_CHAR);
 		return get_stack_type (candidate) == TYPE_I4;
+
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4: {
+		gboolean is_native_int = IS_ONE_OF2 (candidate->type, MONO_TYPE_I, MONO_TYPE_U);
+		gboolean is_int4 = IS_ONE_OF2 (candidate->type, MONO_TYPE_I4, MONO_TYPE_U4);
+		if (strict)
+			return is_native_int || is_int4;
+		return is_native_int || get_stack_type (candidate) == TYPE_I4;
+	}
 
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
-		if (strict)
-			return candidate->type == target->type;
-		return get_stack_type (candidate)  == TYPE_I8;
+		return IS_ONE_OF2 (candidate->type, MONO_TYPE_I8, MONO_TYPE_U8);
 
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
 		if (strict)
 			return candidate->type == target->type;
-		return get_stack_type (target)  == TYPE_R8;
+		return IS_ONE_OF2 (candidate->type, MONO_TYPE_R4, MONO_TYPE_R8);
 
 	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-		if (strict)
-			return candidate->type == target->type;
-		return get_stack_type (target)  == TYPE_NATIVE_INT;
+	case MONO_TYPE_U: {
+		gboolean is_native_int = IS_ONE_OF2 (candidate->type, MONO_TYPE_I, MONO_TYPE_U);
+		gboolean is_int4 = IS_ONE_OF2 (candidate->type, MONO_TYPE_I4, MONO_TYPE_U4);
+		return is_native_int || is_int4;
+	}
 
 	case MONO_TYPE_PTR:
 		if (candidate->type != MONO_TYPE_PTR)
@@ -1841,10 +1922,20 @@ handle_enum:
 		/* check the underlying type */
 		return verify_stack_type_compatibility (ctx, target->data.type, candidate->data.type, TRUE);
 
+	case MONO_TYPE_FNPTR: {
+		MonoMethodSignature *left, *right;
+		if (candidate->type != MONO_TYPE_FNPTR)
+			return FALSE;
+
+		left = mono_type_get_signature (target);
+		right = mono_type_get_signature (candidate);
+		return mono_metadata_signature_equal (left, right) && left->call_convention == right->call_convention;
+	}
+
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericClass *left;
 		MonoGenericClass *right;
-		if (target->type != MONO_TYPE_GENERICINST)
+		if (candidate->type != MONO_TYPE_GENERICINST)
 			return FALSE;
 		left = target->data.generic_class;
 		right = candidate->data.generic_class;
@@ -1866,7 +1957,7 @@ handle_enum:
 	case MONO_TYPE_SZARRAY: {
 		MonoClass *left;
 		MonoClass *right;
-		if (target->type != MONO_TYPE_SZARRAY)
+		if (candidate->type != MONO_TYPE_SZARRAY)
 			return FALSE;
 
 		left = target->data.klass;
@@ -1881,7 +1972,7 @@ handle_enum:
 
 	//TODO verify aditional checks that needs to be done
 	case MONO_TYPE_TYPEDBYREF:
-		return candidate->type != MONO_TYPE_TYPEDBYREF;
+		return candidate->type == MONO_TYPE_TYPEDBYREF;
 
 	case MONO_TYPE_VALUETYPE:
 		if (target->data.klass->enumtype) {
@@ -1899,19 +1990,26 @@ handle_enum:
 		return FALSE;
 	}
 	return 1;
+#undef IS_ONE_OF3
+#undef IS_ONE_OF2
 }
 
 static int
 verify_type_compat (VerifyContext *ctx, MonoType *type, ILStackDesc *stack) {
 	int stack_type = stack->stype;
-	VERIFIER_DEBUG ( printf ("checking compatibility %p %p %p\n", ctx, stack, type); );
-	if (type->byref) {
-		if (stack_type == TYPE_NATIVE_INT) {
+	VERIFIER_DEBUG ( printf ("checking compatibility %p %p[%d] %p[%d]\n", ctx, type, type->type, stack, stack_type ); );
+
+ 	/*only one is byref */
+	if (type->byref ^ IS_MANAGED_POINTER (stack_type)) {
+		/* converting from native int to byref*/
+		if (type->byref && stack_type == TYPE_NATIVE_INT) {
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("using byref native int at 0x%04x", ctx->ip_offset));
 			return TRUE;
 		}
 		return FALSE;
 	}
+ 	if (type->byref)
+		return verify_stack_type_compatibility (ctx, type, mono_type_get_type_byref (stack->type), TRUE);
 
 handle_enum:
 	switch (type->type) {
@@ -1935,7 +2033,7 @@ handle_enum:
 
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
-		return stack_type == TYPE_NATIVE_INT;
+		return stack_type == TYPE_NATIVE_INT || stack_type == TYPE_I4;
 
 	case MONO_TYPE_PTR:
 		if (stack_type != TYPE_PTR || stack->type->type != MONO_TYPE_PTR)
@@ -2006,16 +2104,16 @@ handle_enum:
 		if (stack_type != TYPE_COMPLEX)
 			return FALSE;
 		g_assert (stack->type);
-		if (stack->type->type != type->type)
+		if (stack->type->type != MONO_TYPE_ARRAY)
 			return FALSE;
 		return is_array_type_compatible (type, stack->type);
 
 	/*TODO verify aditional checks that needs to be done */
 	case MONO_TYPE_TYPEDBYREF:
-	if (stack_type != TYPE_COMPLEX)
+		if (stack_type != TYPE_PTR)
 			return FALSE;
 		g_assert (stack->type);
-		if (stack->type->type != type->type)
+		if (stack->type->type != MONO_TYPE_TYPEDBYREF)
 			return FALSE;
 		return TRUE;
 
@@ -2027,7 +2125,7 @@ handle_enum:
 			if (stack_type != TYPE_COMPLEX)
 				return FALSE;
 			g_assert (stack->type);
-			if (stack->type->type != type->type)
+			if (stack->type->type != MONO_TYPE_VALUETYPE)
 				return FALSE;
 			return stack->type->data.klass == type->data.klass;
 		}
@@ -2045,11 +2143,19 @@ static void
 push_arg (VerifyContext *ctx, unsigned int arg, int take_addr) 
 {
 	if (arg >= ctx->max_args) {
-		ADD_VERIFY_ERROR(ctx, g_strdup_printf ("Method doesn't have argument %d", arg + 1));
+		if (take_addr) 
+			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have argument %d", arg + 1));
+		else {
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Method doesn't have argument %d", arg + 1));
+			if (check_overflow (ctx)) //FIXME: what sane value could we ever push?
+				stack_push_val (ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
+		}
 	} else if (check_overflow (ctx)) {
 		gboolean override_byref;
 		/*We must let the value be pushed, otherwise we would get an underflow error*/
-		check_unmanaged_pointer_type (ctx, ctx->params [arg]);
+		check_unverifiable_type (ctx, ctx->params [arg]);
+		if (ctx->params [arg]->byref && take_addr)
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("ByRef of ByRef at 0x%04x", ctx->ip_offset));
 
 		/*the 'this' argument is byref, which is not right for reference types,
 		 We override the byref only here, since it's the only point that push ctx->params values*/
@@ -2065,7 +2171,10 @@ push_local (VerifyContext *ctx, guint32 arg, int take_addr)
 		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have local %d", arg + 1));
 	} else if (check_overflow (ctx)) {
 		/*We must let the value be pushed, otherwise we would get an underflow error*/
-		check_unmanaged_pointer_type (ctx, ctx->locals [arg]);
+		check_unverifiable_type (ctx, ctx->locals [arg]);
+		if (ctx->locals [arg]->byref && take_addr)
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("ByRef of ByRef at 0x%04x", ctx->ip_offset));
+
 		set_stack_value (stack_push (ctx), ctx->locals [arg], take_addr, FALSE);
 	} 
 }
@@ -2076,14 +2185,16 @@ store_arg (VerifyContext *ctx, guint32 arg)
 	ILStackDesc *value;
 
 	if (arg >= ctx->max_args) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Method doesn't have local var %d at 0x%04x", arg + 1, ctx->ip_offset));
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Method doesn't have local var %d at 0x%04x", arg + 1, ctx->ip_offset));
+		check_underflow (ctx, 1);
+		stack_pop (ctx);
 		return;
 	}
 
 	if (check_underflow (ctx, 1)) {
 		value = stack_pop (ctx);
 		if (!verify_type_compat (ctx, ctx->params [arg], value)) {
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in local store at 0x%04x", type_names [value->stype & TYPE_MASK], ctx->ip_offset));
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in local store at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));
 		}
 	}
 }
@@ -2101,7 +2212,7 @@ store_local (VerifyContext *ctx, guint32 arg)
 	if (check_underflow (ctx, 1)) {
 		value = stack_pop(ctx);
 		if (!verify_type_compat (ctx, ctx->locals [arg], value)) {
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in local store at 0x%04x", type_names [value->stype & TYPE_MASK], ctx->ip_offset));	
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in local store at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));	
 		}
 	}
 }
@@ -2119,13 +2230,13 @@ do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TY
 	b = stack_top (ctx);
 
 	idxa = a->stype;
-	if (idxa & POINTER_MASK) {
+	if (IS_MANAGED_POINTER (idxa)) {
 		idxa = TYPE_PTR;
 		complexMerge = 1;
 	}
 
 	idxb = b->stype;
-	if (idxb & POINTER_MASK) {
+	if (IS_MANAGED_POINTER (idxb)) {
 		idxb = TYPE_PTR;
 		complexMerge = 2;
 	}
@@ -2137,16 +2248,15 @@ do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TY
 	VERIFIER_DEBUG ( printf ("binop res %d\n", res); );
 	VERIFIER_DEBUG ( printf ("idxa %d idxb %d\n", idxa, idxb); );
 
+	ctx->eval.size--;
 	if (res == TYPE_INV) {
-		ADD_VERIFY_ERROR(ctx, g_strdup_printf (
-			"Binary instruction applyed to ill formed stack (%s x %s)", 
-			type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK]));
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Binary instruction applyed to ill formed stack (%s x %s)", type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)]));
 		return;
 	}
 
  	if (res & NON_VERIFIABLE_RESULT) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Binary instruction is not verifiable (%s x %s)", 
-			type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK]));
+			type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)]));
 
  		res = res & ~NON_VERIFIABLE_RESULT;
  	}
@@ -2165,7 +2275,6 @@ do_binop (VerifyContext *ctx, unsigned int opcode, const unsigned char table [TY
  	} else
 		stack_top (ctx)->stype = res;
  	
-	ctx->eval.size--;
 }
 
 
@@ -2194,7 +2303,7 @@ do_boolean_branch_op (VerifyContext *ctx, int delta)
 
 	top = stack_pop (ctx);
 	if (!is_valid_bool_arg (top))
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Argument type %s not valid for brtrue/brfalse at 0x%04x", type_names [stack_get (ctx, -1)->stype & TYPE_MASK], ctx->ip_offset));
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Argument type %s not valid for brtrue/brfalse at 0x%04x", type_names [UNMASK_TYPE (stack_get (ctx, -1)->stype)], ctx->ip_offset));
 
 	check_unmanaged_pointer (ctx, top);
 }
@@ -2229,11 +2338,11 @@ do_branch_op (VerifyContext *ctx, signed int delta, const unsigned char table [T
 	a = stack_pop (ctx);
 
 	idxa = a->stype;
-	if (idxa & POINTER_MASK)
+	if (IS_MANAGED_POINTER (idxa))
 		idxa = TYPE_PTR;
 
 	idxb = b->stype;
-	if (idxb & POINTER_MASK)
+	if (IS_MANAGED_POINTER (idxb))
 		idxb = TYPE_PTR;
 
 	--idxa;
@@ -2246,10 +2355,10 @@ do_branch_op (VerifyContext *ctx, signed int delta, const unsigned char table [T
 	if (res == TYPE_INV) {
 		ADD_VERIFY_ERROR (ctx,
 			g_strdup_printf ("Compare and Branch instruction applyed to ill formed stack (%s x %s) at 0x%04x",
-				type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK], ctx->ip_offset));
+				type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)], ctx->ip_offset));
 	} else if (res & NON_VERIFIABLE_RESULT) {
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Compare and Branch instruction is not verifiable (%s x %s) at 0x%04x",
-				type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK], ctx->ip_offset)); 
+				type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)], ctx->ip_offset)); 
  		res = res & ~NON_VERIFIABLE_RESULT;
  	}
 }
@@ -2267,29 +2376,25 @@ do_cmp_op (VerifyContext *ctx, const unsigned char table [TYPE_MAX][TYPE_MAX])
 	a = stack_pop (ctx);
 
 	idxa = a->stype;
-	if (idxa & POINTER_MASK)
+	if (IS_MANAGED_POINTER (idxa))
 		idxa = TYPE_PTR;
 
 	idxb = b->stype;
-	if (idxb & POINTER_MASK)
+	if (IS_MANAGED_POINTER (idxb)) 
 		idxb = TYPE_PTR;
 
 	--idxa;
 	--idxb;
 	res = table [idxa][idxb];
 
-	printf("binop res %d\n", res);
-	printf("idxa %d idxb %d\n", idxa, idxb);
-
 	if(res == TYPE_INV) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf("Compare instruction applyed to ill formed stack (%s x %s) at 0x%04x", type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK], ctx->ip_offset));
-		return;
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf("Compare instruction applyed to ill formed stack (%s x %s) at 0x%04x", type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)], ctx->ip_offset));
 	} else if (res & NON_VERIFIABLE_RESULT) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Compare instruction is not verifiable (%s x %s) at 0x%04x",
-			type_names [idxa & TYPE_MASK], type_names [idxb & TYPE_MASK], ctx->ip_offset)); 
+			type_names [UNMASK_TYPE (idxa)], type_names [UNMASK_TYPE (idxb)], ctx->ip_offset)); 
  		res = res & ~NON_VERIFIABLE_RESULT;
  	}
- 	stack_push_val (ctx, TYPE_I4, &mono_defaults.int_class->byval_arg);
+ 	stack_push_val (ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
 }
 
 static void
@@ -2310,8 +2415,9 @@ do_ret (VerifyContext *ctx)
 	}
 
 	if (ctx->eval.size > 0) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Stack not empty (%d) after ret at 0x%04x", ctx->eval.size, ctx->ip_offset));
-	} else if (in_any_block (ctx->header, ctx->ip_offset))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Stack not empty (%d) after ret at 0x%04x", ctx->eval.size, ctx->ip_offset));
+	} 
+	if (in_any_block (ctx->header, ctx->ip_offset))
 		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("ret cannot escape exception blocks at 0x%04x", ctx->ip_offset));
 }
 
@@ -2319,6 +2425,8 @@ do_ret (VerifyContext *ctx)
  * TODO handle vararg calls
  * TODO handle non virt calls to non-final virtual calls (from the verifiability clause in page 52 of partition 3)
  * TODO handle abstract calls
+ * TODO handle calling .ctor outside one or calling the .ctor for other class but super
+ * TODO handle call invoking virtual methods (only allowed to invoke super)  
  */
 static void
 do_invoke_method (VerifyContext *ctx, int method_token)
@@ -2344,8 +2452,11 @@ do_invoke_method (VerifyContext *ctx, int method_token)
 		VERIFIER_DEBUG ( printf ("verifying argument %d\n", i); );
 		value = stack_pop (ctx);
 		if (!verify_type_compat (ctx, sig->params[i], value)) {
-			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Incompatible parameter value with function signature at 0x%04x", ctx->ip_offset));
-			return;
+			if (sig->params [i]->type == MONO_TYPE_TYPEDBYREF) {
+				ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Typedbyref field is an unverfiable type for a call parameter at 0x%04x", ctx->ip_offset));
+				return;
+			}
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible parameter value with function signature at 0x%04x", ctx->ip_offset));
 		}
 	}
 
@@ -2355,10 +2466,12 @@ do_invoke_method (VerifyContext *ctx, int method_token)
 		VERIFIER_DEBUG ( printf ("verifying this argument\n"); );
 		value = stack_pop (ctx);
 		if (!verify_type_compat (ctx, type, value)) {
-			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Incompatible return value on stack with method signature ret at 0x%04x", ctx->ip_offset));
+			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Incompatible this argument on stack with method signature ret at 0x%04x", ctx->ip_offset));
 			return;
 		}
 	}
+	if (!mono_method_can_access_method (ctx->method, method))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Method is not accessible at 0x%04x", ctx->ip_offset));
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		if (check_overflow (ctx))
@@ -2387,6 +2500,9 @@ do_push_static_field (VerifyContext *ctx, int token, gboolean take_addr)
 		!(field->parent == ctx->method->klass && (ctx->method->flags & (METHOD_ATTRIBUTE_SPECIAL_NAME | METHOD_ATTRIBUTE_STATIC)) && !strcmp (".cctor", ctx->method->name)))
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot take the address of a init-only field at 0x%04x", ctx->ip_offset));
 
+	if (!mono_method_can_access_field (ctx->method, field))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Type at stack is not accessible at 0x%04x", ctx->ip_offset));
+
 	set_stack_value (stack_push (ctx), field->type, take_addr, FALSE);
 }
 
@@ -2412,8 +2528,16 @@ do_store_static_field (VerifyContext *ctx, int token) {
 		return;
 	}
 
+	if (field->type->type == MONO_TYPE_TYPEDBYREF) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Typedbyref field is an unverfiable type in store static field at 0x%04x", ctx->ip_offset));
+		return;
+	}
+
+	if (!mono_method_can_access_field (ctx->method, field))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Type at stack is not accessible at 0x%04x", ctx->ip_offset));
+
 	if (!verify_type_compat (ctx, field->type, value))
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Incompatible type %s in static field store at 0x%04x", type_names [value->stype & TYPE_MASK], ctx->ip_offset));	
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in static field store at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));	
 }
 
 static gboolean
@@ -2425,12 +2549,11 @@ check_is_valid_type_for_field_ops (VerifyContext *ctx, int token, ILStackDesc *o
 	/*must be one of: object type, managed pointer, unmanaged pointer (native int) or an instance of a value type */
 	if (!((obj->stype == TYPE_COMPLEX)
 		/* the managed reference must be to an object or value type */
-		|| ((obj->stype & POINTER_MASK) && (UNMASK_TYPE (obj->stype) == TYPE_COMPLEX))
+		|| (( IS_MANAGED_POINTER (obj->stype)) && (UNMASK_TYPE (obj->stype) == TYPE_COMPLEX))
 		|| (obj->stype == TYPE_NATIVE_INT)
 		|| (obj->stype == TYPE_PTR)
 		|| (obj->stype == TYPE_COMPLEX))) {
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid argument %s to load field at 0x%04x", type_names [UNMASK_TYPE (obj->stype)], ctx->ip_offset));
-		return FALSE;
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid argument %s to load field at 0x%04x", type_names [UNMASK_TYPE (obj->stype)], ctx->ip_offset));
 	}
 
 	field = mono_field_from_token (ctx->image, token, &klass, ctx->generic_context);
@@ -2441,6 +2564,10 @@ check_is_valid_type_for_field_ops (VerifyContext *ctx, int token, ILStackDesc *o
 
 	*ret_field = field;
 
+	if (field->type->type == MONO_TYPE_TYPEDBYREF) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Typedbyref field is an unverfiable type at 0x%04x", ctx->ip_offset));
+		return FALSE;
+	}
 	g_assert (obj->type);
 
 	/*The value on the stack must be a subclass of the defining type of the field*/ 
@@ -2449,12 +2576,15 @@ check_is_valid_type_for_field_ops (VerifyContext *ctx, int token, ILStackDesc *o
 		MonoType *type = obj->type->byref ? &field->parent->this_arg : &field->parent->byval_arg;
 
 		if (!verify_stack_type_compatibility (ctx, type, obj->type, FALSE)) {
-			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Type at stack is not compatible to reference the field at 0x%04x", ctx->ip_offset));
-			return FALSE;
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Type at stack is not compatible to reference the field at 0x%04x", ctx->ip_offset));
 		}
+
+		if (!mono_method_can_access_field (ctx->method, field))
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Type at stack is not accessible at 0x%04x", ctx->ip_offset));
 	}
 
-	/*TODO: implement acess checks */
+	if (!mono_method_can_access_field (ctx->method, field))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Type at stack is not accessible at 0x%04x", ctx->ip_offset));
 
 	if (obj->stype == TYPE_NATIVE_INT)
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Native int is not a verifiable type to reference a field at 0x%04x", ctx->ip_offset));
@@ -2475,6 +2605,9 @@ do_push_field (VerifyContext *ctx, int token, gboolean take_addr)
 
 	if (!check_is_valid_type_for_field_ops (ctx, token, obj, &field))
 		return;
+
+	if (take_addr && field->parent->valuetype && !IS_MANAGED_POINTER (obj->stype))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot take the address of a temporary value-type at 0x%04x", ctx->ip_offset));
 
 	if (take_addr && (field->type->attrs & FIELD_ATTRIBUTE_INIT_ONLY) &&
 		!(field->parent == ctx->method->klass && (ctx->method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME) && !strcmp (".ctor", ctx->method->name)))
@@ -2499,7 +2632,178 @@ do_store_field (VerifyContext *ctx, int token)
 		return;
 
 	if (!verify_type_compat (ctx, field->type, value))
-		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Incompatible type %s in field store at 0x%04x", type_names [value->stype & TYPE_MASK], ctx->ip_offset));	
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in field store at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));	
+}
+
+/*TODO proper handle for Nullable<T>*/
+static void
+do_box_value (VerifyContext *ctx, int klass_token)
+{
+	ILStackDesc *value;
+	MonoType *type = get_boxable_mono_type (ctx, klass_token);
+
+	if (!type)
+		return;
+
+	if (!check_underflow (ctx, 1))
+		return;
+
+	value = stack_top (ctx);
+	/*box is a nop for reference types*/
+	if (value->stype == TYPE_COMPLEX && MONO_TYPE_IS_REFERENCE (value->type) && MONO_TYPE_IS_REFERENCE (type))
+		return;
+
+	value = stack_pop (ctx);
+
+	if (!verify_type_compat (ctx, type, value))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for boxing operation at 0x%04x", ctx->ip_offset));
+
+	stack_push_val (ctx, TYPE_COMPLEX, mono_class_get_type (mono_defaults.object_class));
+}
+
+static void
+do_unbox_value (VerifyContext *ctx, int klass_token)
+{
+	ILStackDesc *value;
+	MonoType *type = get_boxable_mono_type (ctx, klass_token);
+
+	if (!type)
+		return;
+ 
+	if (!check_underflow (ctx, 1))
+		return;
+
+	value = stack_pop (ctx);
+
+	if (value->stype != TYPE_COMPLEX || value->type->type != MONO_TYPE_OBJECT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type %s at stack for unbox operation at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));
+
+	//TODO Pushed managed pointer is haver controled mutability (CMMP) 
+	set_stack_value (stack_push (ctx), mono_type_get_type_byref (type), FALSE, FALSE);
+}
+
+static void
+do_unary_math_op (VerifyContext *ctx, int op)
+{
+	ILStackDesc *value;
+	if (!check_underflow (ctx, 1))
+		return;
+	value = stack_top (ctx);
+	switch(value->stype) {
+	case TYPE_I4:
+	case TYPE_I8:
+	case TYPE_NATIVE_INT:
+		break;
+	case TYPE_R8:
+		if (op == CEE_NEG)
+			break;
+	case TYPE_COMPLEX: /*only enums are ok*/
+		if (value->type->type == MONO_TYPE_VALUETYPE && value->type->data.klass->enumtype)
+			break;
+	default:
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for unary not at 0x%04x", ctx->ip_offset));
+	}
+}
+
+static void
+do_conversion (VerifyContext *ctx, int kind) 
+{
+	ILStackDesc *value;
+	if (!check_underflow (ctx, 1))
+		return;
+	value = stack_pop (ctx);
+
+	switch(value->stype) {
+	case TYPE_I4:
+	case TYPE_I8:
+	case TYPE_NATIVE_INT:
+	case TYPE_R8:
+		break;
+	default:
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for conversion operation at 0x%04x", ctx->ip_offset));
+	}
+
+	switch (kind) {
+	case TYPE_I4:
+		stack_push_val (ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
+		break;
+	case TYPE_I8:
+		stack_push_val (ctx,TYPE_I8, &mono_defaults.int64_class->byval_arg);
+		break;
+	case TYPE_R8:
+		stack_push_val (ctx, TYPE_R8, &mono_defaults.double_class->byval_arg);
+		break;
+	case TYPE_NATIVE_INT:
+		stack_push_val (ctx, TYPE_NATIVE_INT, &mono_defaults.int_class->byval_arg);
+		break;
+	default:
+		g_error ("unknown type %02x in conversion", kind);
+
+	}
+}
+
+static void
+do_load_token (VerifyContext *ctx, int token) 
+{
+	gpointer handle;
+	MonoClass *handle_class;
+	if (!check_overflow (ctx))
+		return;
+	handle = mono_ldtoken (ctx->image, token, &handle_class, ctx->generic_context);
+	if (!handle) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid token 0x%x for ldtoken at 0x%04x", token, ctx->ip_offset));
+		return;
+	}
+	stack_push_val (ctx, TYPE_COMPLEX, mono_class_get_type (handle_class));
+}
+
+static void
+do_ldobj_value (VerifyContext *ctx, int token) 
+{
+	ILStackDesc *value;
+	MonoType *type = get_boxable_mono_type (ctx, token);
+
+	if (!type)
+		return;
+
+	if (!check_underflow (ctx, 1))
+		return;
+
+	value = stack_pop (ctx);
+	if (!IS_MANAGED_POINTER (value->stype) 
+			&& value->stype != TYPE_NATIVE_INT
+			&& !(value->stype == TYPE_PTR && value->type->type != MONO_TYPE_FNPTR)) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid argument %s to ldobj at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));
+		return;
+	}
+
+	if (value->stype == TYPE_NATIVE_INT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Using native pointer to ldobj at 0x%04x", ctx->ip_offset));
+
+	/*We have a byval on the stack, we */
+	if (!verify_stack_type_compatibility (ctx, type, mono_type_get_type_byval (value->type), TRUE))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for ldojb operation at 0x%04x", ctx->ip_offset));
+
+	set_stack_value (stack_push (ctx), type, FALSE, FALSE);
+}
+
+static void
+do_newarr (VerifyContext *ctx, int token) 
+{
+	ILStackDesc *value;
+	MonoType *type = get_boxable_mono_type (ctx, token);
+
+	if (!type)
+		return;
+
+	if (!check_underflow (ctx, 1))
+		return;
+
+	value = stack_pop (ctx);
+	if (value->stype != TYPE_I4 && value->stype != TYPE_NATIVE_INT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Array size type on stack (%s) is not a verifiable type at 0x%04x", type_names [UNMASK_TYPE (value->stype)], ctx->ip_offset));
+
+	set_stack_value (stack_push (ctx), mono_class_get_type (mono_array_class_get (mono_class_from_mono_type (type), 1)), FALSE, FALSE);
 }
 
 /*Merge the stacks and perform compat checks*/
@@ -2535,23 +2839,30 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, int start)
 		int from_stype = from_slot->stype;
 		int to_stype = to_slot->stype;
 
-		/* This is the only case of merging between verification types*/
-		if ((from_stype == TYPE_I4 && to_stype == TYPE_NATIVE_INT) ||
-			(from_stype == TYPE_NATIVE_INT && to_stype == TYPE_I4)) {
+#define IS_NATIVE_INT_AND_I4(val0, val1) (UNMASK_TYPE(val0) == TYPE_NATIVE_INT && \
+			UNMASK_TYPE(val1->stype) == TYPE_I4 && (val1->type->type == MONO_TYPE_I4 || val1->type->type == MONO_TYPE_U4))
+		/* This is the only case of merging between verification types.
+		 * Both stack values must be either native int or int4, and both must be either byref or not.*/
+		if ((IS_NATIVE_INT_AND_I4 (from_stype, to_slot) || IS_NATIVE_INT_AND_I4 (to_stype, from_slot)) &&
+			!(IS_MANAGED_POINTER (from_stype) ^ IS_MANAGED_POINTER (to_stype))) {
+			printf ("----is native int\n");
 			to_slot->stype = TYPE_NATIVE_INT;
-			continue;	 	
-		} 
+			if (UNMASK_TYPE(from_stype) == TYPE_NATIVE_INT)
+				to_slot->type = from_slot->type;
+			continue;
+		}
+#undef IS_NATIVE_INT_OR_I4
 
 		if (from_stype != to_stype) {
 			VERIFIER_DEBUG ( printf ("diferent stack types %d x %d\n", from_stype, to_stype); );
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Could not merge stacks, diferent verification types (%s x %s)",
-				type_names [from_stype & TYPE_MASK], type_names [to_stype & TYPE_MASK])); 
+				type_names [UNMASK_TYPE (from_stype)], type_names [UNMASK_TYPE (to_stype)])); 
 			goto end_verify;
 		}
 
-		if (from_stype & POINTER_MASK) {
-			from_stype &= ~POINTER_MASK;
-			to_stype &= ~POINTER_MASK;
+		if (IS_MANAGED_POINTER (from_stype)) {
+			from_stype = UNMASK_TYPE (from_stype);
+			to_stype = UNMASK_TYPE (to_stype);
 
 			if (from_slot->type && !verify_stack_type_compatibility (ctx, to_slot->type, from_slot->type, TRUE)) {
 				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Could not merge stacks, managed pointer types not compatible")); 
@@ -2602,6 +2913,7 @@ mono_method_verify (MonoMethod *method, int level)
 	MonoGenericContext *generic_context = NULL;
 	MonoImage *image;
 	VerifyContext ctx;
+	VERIFIER_DEBUG ( printf ("Verify IL for method %s %s\n",  method->klass->name, method->name); );
 
 	if (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME) ||
 			(method->flags & (METHOD_ATTRIBUTE_PINVOKE_IMPL | METHOD_ATTRIBUTE_ABSTRACT))) {
@@ -2611,7 +2923,15 @@ mono_method_verify (MonoMethod *method, int level)
 	memset (&ctx, 0, sizeof (VerifyContext));
 
 	ctx.signature = mono_method_signature (method);
+	if (!ctx.signature) {
+		ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Could not decode method signature"));
+		return ctx.list;
+	}
 	ctx.header = mono_method_get_header (method);
+	if (!ctx.header) {
+		ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Could not decode method header"));
+		return ctx.list;
+	}
 	ctx.method = method;
 	ip = ctx.header->code;
 	end = ip + ctx.header->code_size;
@@ -2643,18 +2963,30 @@ mono_method_verify (MonoMethod *method, int level)
 	if (ctx.signature->is_inflated)
 		ctx.generic_context = generic_context = mono_method_get_context (method);
 
-	stack_init(&ctx, &ctx.eval);
+	stack_init (&ctx, &ctx.eval);
 
 
-	/* TODO implement exception entry
-	for (i = 0; i < header->num_clauses; ++i) {
-		MonoExceptionClause *clause = &header->clauses [i];
-		// catch blocks have the exception on the stack. 
+	for (i = 0; i < ctx.header->num_clauses; ++i) {
+		MonoExceptionClause *clause = ctx.header->clauses + i;
+		/* catch blocks and filter have the exception on the stack. */
+		/* must check boundaries for handler_offset and handler_start < handler_start*/
 		if (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) {
-			code [clause->handler_offset].size = 1;
-			code [clause->handler_offset].flags |= IL_CODE_FLAG_SEEN;
+			ILCodeDesc *code = ctx.code + clause->handler_offset;
+			stack_init (&ctx, code);
+			code->stack [0].stype = TYPE_COMPLEX;
+			code->stack [0].type = &clause->data.catch_class->byval_arg;
+			code->size = 1;
+			code->flags = IL_CODE_FLAG_SEEN;
 		}
-	}*/
+		else if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+			ILCodeDesc *code = ctx.code + clause->data.filter_offset;
+			stack_init (&ctx, code);
+			code->stack [0].stype = TYPE_COMPLEX;
+			code->stack [0].type = &mono_defaults.exception_class->byval_arg;
+			code->size = 1;
+			code->flags = IL_CODE_FLAG_SEEN;
+		}
+	}
 
 	while (ip < end && ctx.valid) {
 		ctx.ip_offset = ip_offset = ip - ctx.header->code;
@@ -2786,19 +3118,19 @@ mono_method_verify (MonoMethod *method, int level)
 		case CEE_LDC_I4_7:
 		case CEE_LDC_I4_8:
 			if (check_overflow (&ctx))
-				stack_push_val (&ctx, TYPE_I4, &mono_defaults.int_class->byval_arg);
+				stack_push_val (&ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
 			++ip;
 			break;
 
 		case CEE_LDC_I4_S:
 			if (check_overflow (&ctx))
-				stack_push_val (&ctx, TYPE_I4, &mono_defaults.int_class->byval_arg);
+				stack_push_val (&ctx, TYPE_I4, &mono_defaults.int32_class->byval_arg);
 			ip += 2;
 			break;
 
 		case CEE_LDC_I4:
 			if (check_overflow (&ctx))
-				stack_push_val (&ctx,TYPE_I4, &mono_defaults.int_class->byval_arg);
+				stack_push_val (&ctx,TYPE_I4, &mono_defaults.int32_class->byval_arg);
 			ip += 5;
 			break;
 
@@ -2995,22 +3327,42 @@ mono_method_verify (MonoMethod *method, int level)
 			++ip;
 			break;
 
-		case CEE_NEG:
 		case CEE_NOT:
+		case CEE_NEG:
+			do_unary_math_op (&ctx, *ip);
+			++ip;
+			break;
+
+		//TODO: implement proper typecheck
 		case CEE_CONV_I1:
 		case CEE_CONV_I2:
 		case CEE_CONV_I4:
+		case CEE_CONV_U1:
+		case CEE_CONV_U2:
+		case CEE_CONV_U4:
+			do_conversion (&ctx, TYPE_I4);
+			++ip;
+			break;			
+
 		case CEE_CONV_I8:
+		case CEE_CONV_U8:
+			do_conversion (&ctx, TYPE_I8);
+			++ip;
+			break;			
+
 		case CEE_CONV_R4:
 		case CEE_CONV_R8:
-		case CEE_CONV_U4:
-		case CEE_CONV_U8:
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (type_from_op (*ip, stack_top (&ctx)) == TYPE_INV)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid arguments to opcode 0x%02x at 0x%04x", *ip, ip_offset));
+		case CEE_CONV_R_UN:
+			do_conversion (&ctx, TYPE_R8);
+			++ip;
+			break;			
+
+		case CEE_CONV_I:
+		case CEE_CONV_U:
+			do_conversion (&ctx, TYPE_NATIVE_INT);
 			++ip;
 			break;
+
 		case CEE_CPOBJ:
 			token = read32 (ip + 1);
 			if (!check_underflow (&ctx, 2))
@@ -3018,21 +3370,12 @@ mono_method_verify (MonoMethod *method, int level)
 			ctx.eval.size -= 2;
 			ip += 5;
 			break;
+
 		case CEE_LDOBJ:
-			token = read32 (ip + 1);
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid argument to ldobj at 0x%04x", ip_offset));
-			klass = mono_class_get_full (image, token, generic_context);
-			if (!klass)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Cannot load class from token 0x%08x at 0x%04x", token, ip_offset));
-			if (!klass->valuetype)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Class is not a valuetype at 0x%04x", ip_offset));
-			stack_top (&ctx)->stype = TYPE_COMPLEX;
-			stack_top (&ctx)->type = &klass->byval_arg;
+			do_ldobj_value (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_LDSTR:
 			/*TODO verify if token is a valid string literal*/
 			token = read32 (ip + 1);
@@ -3064,24 +3407,12 @@ mono_method_verify (MonoMethod *method, int level)
 				break;
 			ip += 5;
 			break;
-		case CEE_CONV_R_UN:
-			if (!check_underflow (&ctx, 1))
-				break;
-			++ip;
-			break;
 		case CEE_UNUSED58:
 		case CEE_UNUSED1:
 			++ip; /* warn, error ? */
 			break;
 		case CEE_UNBOX:
-			token = read32 (ip + 1);
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid argument %s to unbox at 0x%04x", type_names [stack_top (&ctx)->stype], ip_offset));
-
-			stack_top (&ctx)->stype = TYPE_COMPLEX;
-			stack_top (&ctx)->type = NULL;
+			do_unbox_value (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
 		case CEE_THROW:
@@ -3120,44 +3451,45 @@ mono_method_verify (MonoMethod *method, int level)
 			token = read32 (ip + 1);
 			ip += 5;
 			break;
+
 		case CEE_CONV_OVF_I1_UN:
 		case CEE_CONV_OVF_I2_UN:
 		case CEE_CONV_OVF_I4_UN:
-		case CEE_CONV_OVF_I8_UN:
 		case CEE_CONV_OVF_U1_UN:
 		case CEE_CONV_OVF_U2_UN:
 		case CEE_CONV_OVF_U4_UN:
+			do_conversion (&ctx, TYPE_I4);
+			++ip;
+			break;			
+
+		case CEE_CONV_OVF_I8_UN:
 		case CEE_CONV_OVF_U8_UN:
+			do_conversion (&ctx, TYPE_I8);
+			++ip;
+			break;			
+
 		case CEE_CONV_OVF_I_UN:
 		case CEE_CONV_OVF_U_UN:
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (type_from_op (*ip, stack_top (&ctx)) == TYPE_INV)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid arguments to opcode 0x%02x at 0x%04x", *ip, ip_offset));
+			do_conversion (&ctx, TYPE_NATIVE_INT);
 			++ip;
 			break;
+
 		case CEE_BOX:
-			if (!check_underflow (&ctx, 1))
-				break;
-			token = read32 (ip + 1);
-			if ( stack_top (&ctx)->stype == TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid argument %s to box at 0x%04x", type_names [stack_top (&ctx)->stype], ip_offset));
-			stack_top (&ctx)->stype = TYPE_COMPLEX;
+			do_box_value (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_NEWARR:
-			if (!check_underflow (&ctx, 1))
-				break;
-			token = read32 (ip + 1);
-			stack_top (&ctx)->stype = TYPE_COMPLEX;
+			do_newarr (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_LDLEN:
 			if (!check_underflow (&ctx, 1))
 				break;
 			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
 				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid argument to ldlen at 0x%04x", ip_offset));
-			stack_top (&ctx)->type = &mono_defaults.int_class->byval_arg; /* FIXME: use a native int type */
+			stack_top (&ctx)->type = &mono_defaults.int32_class->byval_arg; /* FIXME: use a native int type */
 			stack_top (&ctx)->stype = TYPE_PTR;
 			++ip;
 			break;
@@ -3225,20 +3557,29 @@ mono_method_verify (MonoMethod *method, int level)
 		case CEE_UNUSED17:
 			++ip; /* warn, error ? */
 			break;
+
 		case CEE_CONV_OVF_I1:
 		case CEE_CONV_OVF_U1:
 		case CEE_CONV_OVF_I2:
 		case CEE_CONV_OVF_U2:
 		case CEE_CONV_OVF_I4:
 		case CEE_CONV_OVF_U4:
-		case CEE_CONV_OVF_I8:
-		case CEE_CONV_OVF_U8:
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (type_from_op (*ip, stack_top (&ctx)) == TYPE_INV)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid arguments to opcode 0x%02x at 0x%04x", *ip, ip_offset));
+			do_conversion (&ctx, TYPE_I4);
 			++ip;
 			break;
+
+		case CEE_CONV_OVF_I8:
+		case CEE_CONV_OVF_U8:
+			do_conversion (&ctx, TYPE_I8);
+			++ip;
+			break;
+
+		case CEE_CONV_OVF_I:
+		case CEE_CONV_OVF_U:
+			do_conversion (&ctx, TYPE_NATIVE_INT);
+			++ip;
+			break;
+
 		case CEE_UNUSED50:
 		case CEE_UNUSED18:
 		case CEE_UNUSED19:
@@ -3280,23 +3621,10 @@ mono_method_verify (MonoMethod *method, int level)
 			++ip; /* warn, error ? */
 			break;
 		case CEE_LDTOKEN:
-			if (!check_overflow (&ctx))
-				break;
-			token = read32 (ip + 1);
-			++ctx.eval.size;
+			do_load_token (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
-		case CEE_CONV_U2:
-		case CEE_CONV_U1:
-		case CEE_CONV_I:
-		case CEE_CONV_OVF_I:
-		case CEE_CONV_OVF_U:
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (type_from_op (*ip, stack_top (&ctx)) == TYPE_INV)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid arguments to opcode 0x%02x at 0x%04x", *ip, ip_offset));
-			++ip;
-			break;
+
 		case CEE_ADD_OVF:
 		case CEE_ADD_OVF_UN:
 		case CEE_MUL_OVF:
@@ -3334,11 +3662,6 @@ mono_method_verify (MonoMethod *method, int level)
 			if (!check_underflow (&ctx, 2))
 				break;
 			ctx.eval.size -= 2;
-			++ip;
-			break;
-		case CEE_CONV_U:
-			if (!check_underflow (&ctx, 1))
-				break;
 			++ip;
 			break;
 		case CEE_UNUSED26:
@@ -3503,7 +3826,7 @@ mono_method_verify (MonoMethod *method, int level)
 					break;
 				token = read32 (ip + 1);
 				ip += 5;
-				stack_top (&ctx)->type = &mono_defaults.uint_class->byval_arg;
+				stack_top (&ctx)->type = &mono_defaults.uint32_class->byval_arg;
 				stack_top (&ctx)->stype = TYPE_I4;
 				ctx.eval.size++;
 				break;
@@ -3537,8 +3860,10 @@ invalid_cil:
 		}
 	}
 
-	g_free (ctx.eval.stack);
-	g_free (ctx.code);
+	if (ctx.eval.stack)
+		g_free (ctx.eval.stack);
+	if (ctx.code)
+		g_free (ctx.code);
 	if (ctx.signature->hasthis)
 		g_free (ctx.params);
 

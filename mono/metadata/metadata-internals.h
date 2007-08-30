@@ -387,7 +387,8 @@ mono_metadata_parse_generic_inst            (MonoImage             *image,
 					     const char           **rptr) MONO_INTERNAL;
 
 MonoGenericInst *
-mono_metadata_lookup_generic_inst           (MonoGenericInst       *ginst) MONO_INTERNAL;
+mono_metadata_get_generic_inst              (int 		    type_argc,
+					     MonoType 		  **type_argv) MONO_INTERNAL;
 
 MonoGenericClass *
 mono_metadata_lookup_generic_class          (MonoClass		   *gclass,
@@ -398,8 +399,9 @@ MonoGenericInst *
 mono_metadata_inflate_generic_inst          (MonoGenericInst       *ginst,
 					     MonoGenericContext    *context) MONO_INTERNAL;
 
-void mono_dynamic_stream_reset (MonoDynamicStream* stream) MONO_INTERNAL;
-void mono_assembly_addref      (MonoAssembly *assembly) MONO_INTERNAL;
+void mono_dynamic_stream_reset  (MonoDynamicStream* stream) MONO_INTERNAL;
+void mono_assembly_addref       (MonoAssembly *assembly) MONO_INTERNAL;
+void mono_assembly_load_friends (MonoAssembly* ass);
 
 void mono_config_parse_publisher_policy (const char *filename, MonoAssemblyBindingInfo *binding_info) MONO_INTERNAL;
 
@@ -414,7 +416,7 @@ guint32 mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, gu
 void mono_unload_interface_ids (MonoBitSet *bitset) MONO_INTERNAL;
 
 
-MonoType *mono_metadata_type_dup_mp (MonoImage *image, const MonoType *original) MONO_INTERNAL;
+MonoType *mono_metadata_type_dup (MonoMemPool *mp, const MonoType *original) MONO_INTERNAL;
 
 MonoGenericInst *
 mono_get_shared_generic_inst (MonoGenericContainer *container) MONO_INTERNAL;

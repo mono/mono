@@ -1,3 +1,8 @@
+2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : for Euskara culture (eu_ES) do not trim dd which is
+	  laid after 'ren' in the long format.
+
 2007-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfoEntry.cs : output Territory, which is used for RegionInfo.

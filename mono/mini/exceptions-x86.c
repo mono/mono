@@ -20,6 +20,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-mmap.h>
 
 #include "mini.h"
 #include "mini-x86.h"
@@ -627,7 +628,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 
 		if (*lmf && (MONO_CONTEXT_GET_BP (ctx) >= (gpointer)(*lmf)->ebp)) {
 			/* remove any unused lmf */
-			*lmf = (*lmf)->previous_lmf;
+			*lmf = (gpointer)(((guint32)(*lmf)->previous_lmf) & ~1);
 		}
 
 		/* Pop EBP and the return address */
@@ -664,11 +665,28 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls, MonoJitInf
 		new_ctx->ebx = (*lmf)->ebx;
 		new_ctx->ebp = (*lmf)->ebp;
 		new_ctx->eip = (*lmf)->eip;
-		/* the lmf is always stored on the stack, so the following
-		 * expression points to a stack location which can be used as ESP */
-		new_ctx->esp = (unsigned long)&((*lmf)->eip);
 
-		*lmf = (*lmf)->previous_lmf;
+		/* Check if we are in a trampoline LMF frame */
+		if ((guint32)((*lmf)->previous_lmf) & 1) {
+			/* lmf->esp is set by the trampoline code */
+			new_ctx->esp = (*lmf)->esp;
+
+			/* Pop arguments off the stack */
+			/* FIXME: Handle the delegate case too ((*lmf)->method == NULL) */
+			if ((*lmf)->method) {
+				MonoMethod *method = (*lmf)->method;
+				MonoJitArgumentInfo *arg_info = g_newa (MonoJitArgumentInfo, mono_method_signature (method)->param_count + 1);
+
+				guint32 stack_to_pop = mono_arch_get_argument_info (mono_method_signature (method), mono_method_signature (method)->param_count, arg_info);
+				new_ctx->esp += stack_to_pop;
+			}
+		}
+		else
+			/* the lmf is always stored on the stack, so the following
+			 * expression points to a stack location which can be used as ESP */
+			new_ctx->esp = (unsigned long)&((*lmf)->eip);
+
+		*lmf = (gpointer)(((guint32)(*lmf)->previous_lmf) & ~1);
 
 		return ji ? ji : res;
 	}
@@ -802,3 +820,89 @@ mono_arch_handle_exception (void *sigctx, gpointer obj, gboolean test_only)
 
 	return TRUE;
 }
+
+static void
+restore_soft_guard_pages (void)
+{
+	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);
+	if (jit_tls->stack_ovf_guard_base)
+		mono_mprotect (jit_tls->stack_ovf_guard_base, jit_tls->stack_ovf_guard_size, MONO_MMAP_NONE);
+}
+
+/* 
+ * this function modifies mctx so that when it is restored, it
+ * won't execcute starting at mctx.eip, but in a function that
+ * will restore the protection on the soft-guard pages and return back to
+ * continue at mctx.eip.
+ */
+static void
+prepare_for_guard_pages (MonoContext *mctx)
+{
+	gpointer *sp;
+	sp = (gpointer)(mctx->esp);
+	sp -= 1;
+	/* the resturn addr */
+	sp [0] = (gpointer)(mctx->eip);
+	mctx->eip = (unsigned long)restore_soft_guard_pages;
+	mctx->esp = (unsigned long)sp;
+}
+
+static void
+altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
+{
+	void (*restore_context) (MonoContext *);
+	MonoContext mctx;
+
+	restore_context = mono_arch_get_restore_context ();
+	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
+	mono_handle_exception (&mctx, obj, (gpointer)mctx.eip, FALSE);
+	if (stack_ovf)
+		prepare_for_guard_pages (&mctx);
+	restore_context (&mctx);
+}
+
+void
+mono_arch_handle_altstack_exception (void *sigctx, gpointer fault_addr, gboolean stack_ovf)
+{
+#ifdef MONO_ARCH_USE_SIGACTION
+	MonoException *exc = NULL;
+	ucontext_t *ctx = (ucontext_t*)sigctx;
+	MonoJitInfo *ji = mono_jit_info_table_find (mono_domain_get (), (gpointer)UCONTEXT_REG_EIP (ctx));
+	gpointer *sp;
+	int frame_size;
+
+	if (stack_ovf)
+		exc = mono_domain_get ()->stack_overflow_ex;
+	if (!ji)
+		mono_handle_native_sigsegv (SIGSEGV, sigctx);
+	/* setup a call frame on the real stack so that control is returned there
+	 * and exception handling can continue.
+	 * If this was a stack overflow the caller already ensured the stack pages
+	 * needed have been unprotected.
+	 * The frame looks like:
+	 *   ucontext struct
+	 *   test_only arg
+	 *   exception arg
+	 *   ctx arg
+	 *   return ip
+	 */
+	frame_size = sizeof (ucontext_t) + sizeof (gpointer) * 4;
+	frame_size += 15;
+	frame_size &= ~15;
+	sp = (gpointer)(UCONTEXT_REG_ESP (ctx) & ~15);
+	sp = (gpointer)((char*)sp - frame_size);
+	/* the incoming arguments are aligned to 16 bytes boundaries, so the return address IP
+	 * goes at sp [-1]
+	 */
+	sp [-1] = (gpointer)UCONTEXT_REG_EIP (ctx);
+	sp [0] = sp + 4;
+	sp [1] = exc;
+	sp [2] = (gpointer)stack_ovf;
+	/* may need to adjust pointers in the new struct copy, depending on the OS */
+	memcpy (sp + 4, ctx, sizeof (ucontext_t));
+	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
+	UCONTEXT_REG_EIP (ctx) = (unsigned long)altstack_handle_and_restore;
+	UCONTEXT_REG_ESP (ctx) = (unsigned long)(sp - 1);
+#endif
+}
+

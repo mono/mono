@@ -40,16 +40,16 @@
 
 /* for 32 bit systems */
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define MINI_LS_WORD_OFFSET 0
-#define MINI_MS_WORD_OFFSET 4
-#define inst_ls_word data.op[0].const_val
-#define inst_ms_word data.op[1].const_val
+#define MINI_LS_WORD_IDX 0
+#define MINI_MS_WORD_IDX 1
 #else
-#define MINI_LS_WORD_OFFSET 4
-#define MINI_MS_WORD_OFFSET 0
-#define inst_ls_word data.op[1].const_val
-#define inst_ms_word data.op[0].const_val
+#define MINI_LS_WORD_IDX 1
+#define MINI_MS_WORD_IDX 0
 #endif
+#define MINI_LS_WORD_OFFSET (MINI_LS_WORD_IDX * 4)
+#define MINI_MS_WORD_OFFSET (MINI_MS_WORD_IDX * 4)
+#define inst_ls_word data.op[MINI_LS_WORD_IDX].const_val
+#define inst_ms_word data.op[MINI_MS_WORD_IDX].const_val
 
 /* Version number of the AOT file format */
 #define MONO_AOT_FILE_VERSION "32"
@@ -155,7 +155,6 @@ extern int mono_exc_esp_offset;
 #else
 extern gboolean mono_compile_aot;
 #endif
-extern gboolean mono_use_security_manager;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 
@@ -298,6 +297,10 @@ enum {
 	BB_EXCEPTION_HANDLER  = 1 << 4
 };
 
+typedef struct MonoMemcpyArgs {
+	int size, align;
+} MonoMemcpyArgs;
+
 struct MonoInst {
 	union {
 		union {
@@ -329,7 +332,8 @@ struct MonoInst {
 	union {
 		gint32 reg3;
 		gint32 arg_info;
-		gint32 size; /* in OP_MEMSET and OP_MEMCPY */
+		gint32 size;
+		MonoMemcpyArgs *memcpy_args; /* in OP_MEMSET and OP_MEMCPY */
 		gint shift_amount;
 		gboolean is_pinvoke; /* for variables in the unmanaged marshal format */
 	} backend;
@@ -483,6 +487,8 @@ typedef struct {
 	MonoLMF          *first_lmf;
 	gpointer         signal_stack;
 	guint32          signal_stack_size;
+	gpointer         stack_ovf_guard_base;
+	guint32          stack_ovf_guard_size;
 	void            (*abort_func) (MonoObject *object);
 } MonoJitTlsData;
 
@@ -1164,6 +1170,7 @@ MonoJitInfo *mono_arch_find_jit_info            (MonoDomain *domain,
 gpointer mono_arch_get_call_filter              (void) MONO_INTERNAL;
 gpointer mono_arch_get_restore_context          (void) MONO_INTERNAL;
 gboolean mono_arch_handle_exception             (void *sigctx, gpointer obj, gboolean test_only) MONO_INTERNAL;
+void     mono_arch_handle_altstack_exception    (void *sigctx, gpointer fault_addr, gboolean stack_ovf) MONO_INTERNAL;
 gpointer mono_arch_ip_from_context              (void *sigctx) MONO_INTERNAL;
 void     mono_arch_sigctx_to_monoctx            (void *sigctx, MonoContext *ctx) MONO_INTERNAL;
 void     mono_arch_monoctx_to_sigctx            (MonoContext *mctx, void *ctx) MONO_INTERNAL;
@@ -1188,6 +1195,10 @@ void     mono_arch_patch_delegate_trampoline    (guint8 *code, guint8 *tramp, gs
 gpointer mono_arch_get_this_arg_from_call       (MonoMethodSignature *sig, gssize *regs, guint8 *code);
 gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target);
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
+void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst *call) MONO_INTERNAL;
+MonoMethod* mono_arch_find_imt_method           (gpointer *regs, guint8 *code) MONO_INTERNAL;
+MonoObject* mono_arch_find_this_argument        (gpointer *regs, MonoMethod *method) MONO_INTERNAL;
+gpointer    mono_arch_build_imt_thunk           (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count) MONO_INTERNAL;
 
 /* Exception handling */
 gboolean mono_handle_exception                  (MonoContext *ctx, gpointer obj,

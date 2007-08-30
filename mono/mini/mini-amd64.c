@@ -4906,6 +4906,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	gint32 lmf_offset = cfg->arch.lmf_offset;
 
 	cfg->code_size =  MAX (((MonoMethodNormal *)method)->header->code_size * 4, 512);
+
+	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
+		cfg->code_size += 512;
+
 	code = cfg->native_code = g_malloc (cfg->code_size);
 
 	/* Amount of stack space allocated by register saving code */
@@ -5774,7 +5778,7 @@ gpointer*
 mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 {
 	guint32 reg;
-	guint32 disp;
+	gint32 disp;
 	guint8 rex = 0;
 
 	/* go to the start of the call instruction
@@ -5791,7 +5795,22 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	 * really careful about the ordering of the cases. Longer sequences
 	 * come first.
 	 */
-	if ((code [-1] == 0x8b) && (amd64_modrm_mod (code [0]) == 0x2) && (code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x0)) {
+#ifdef MONO_ARCH_HAVE_IMT
+	if ((code [-2] == 0x41) && (code [-1] == 0xbb) && (code [4] == 0xff) && (x86_modrm_mod (code [5]) == 1) && (x86_modrm_reg (code [5]) == 2) && ((signed char)code [6] < 0)) {
+		/* IMT-based interface calls: with MONO_ARCH_IMT_REG == r11
+		 * 41 bb 14 f8 28 08       mov    $0x828f814,%r11d
+		 * ff 50 fc                call   *0xfffffffc(%rax)
+		 */
+		reg = amd64_modrm_rm (code [5]);
+		disp = (signed char)code [6];
+		/* R10 is clobbered by the IMT thunk code */
+		g_assert (reg != AMD64_R10);
+	}
+#else
+	if (0) {
+	}
+#endif
+	else if ((code [-1] == 0x8b) && (amd64_modrm_mod (code [0]) == 0x2) && (code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x0)) {
 			/*
 			 * This is a interface call
 			 * 48 8b 80 f0 e8 ff ff   mov    0xffffffffffffe8f0(%rax),%rax
@@ -5801,8 +5820,9 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 			rex = code [4];
 		reg = amd64_modrm_rm (code [6]);
 		disp = 0;
-	}
-	else if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
+		/* R10 is clobbered by the IMT thunk code */
+		g_assert (reg != AMD64_R10);
+	} else if ((code [0] == 0x41) && (code [1] == 0xff) && (code [2] == 0x15)) {
 		/* call OFFSET(%rip) */
 		disp = *(guint32*)(code + 3);
 		return (gpointer*)(code + disp + 7);
@@ -5812,8 +5832,9 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 		if (IS_REX (code [0]))
 			rex = code [0];
 		reg = amd64_modrm_rm (code [2]);
-		disp = *(guint32*)(code + 3);
-		//printf ("B: [%%r%d+0x%x]\n", reg, disp);
+		disp = *(gint32*)(code + 3);
+		/* R10 is clobbered by the IMT thunk code */
+		g_assert (reg != AMD64_R10);
 	}
 	else if (code [2] == 0xe8) {
 		/* call <ADDR> */
@@ -5828,7 +5849,7 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 		if (IS_REX (code [3]))
 			rex = code [3];
 		reg = amd64_modrm_rm (code [5]);
-		disp = *(guint8*)(code + 6);
+		disp = *(gint8*)(code + 6);
 		//printf ("B: [%%r%d+0x%x]\n", reg, disp);
 	}
 	else if ((code [5] == 0xff) && (amd64_modrm_reg (code [6]) == 0x2) && (amd64_modrm_mod (code [6]) == 0x0)) {
@@ -5982,6 +6003,194 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		mono_call_inst_add_outarg_reg (cfg, call, this->dreg, cinfo->args [0].reg, FALSE);
 	}
 }
+
+#ifdef MONO_ARCH_HAVE_IMT
+
+#define CMP_SIZE (6 + 1)
+#define CMP_REG_REG_SIZE (4 + 1)
+#define BR_SMALL_SIZE 2
+#define BR_LARGE_SIZE 6
+#define MOV_REG_IMM_SIZE 10
+#define MOV_REG_IMM_32BIT_SIZE 6
+#define JUMP_REG_SIZE (2 + 1)
+
+static int
+imt_branch_distance (MonoIMTCheckItem **imt_entries, int start, int target)
+{
+	int i, distance = 0;
+	for (i = start; i < target; ++i)
+		distance += imt_entries [i]->chunk_size;
+	return distance;
+}
+
+/*
+ * LOCKING: called with the domain lock held
+ */
+gpointer
+mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count)
+{
+	int i;
+	int size = 0;
+	guint8 *code, *start;
+	gboolean vtable_is_32bit = ((long)(vtable) == (long)(int)(long)(vtable));
+
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done) {
+					if (amd64_is_imm32 (item->method))
+						item->chunk_size += CMP_SIZE;
+					else
+						item->chunk_size += MOV_REG_IMM_SIZE + CMP_REG_REG_SIZE;
+				}
+				if (vtable_is_32bit)
+					item->chunk_size += MOV_REG_IMM_32BIT_SIZE;
+				else
+					item->chunk_size += MOV_REG_IMM_SIZE;
+				item->chunk_size += BR_SMALL_SIZE + JUMP_REG_SIZE;
+			} else {
+				if (vtable_is_32bit)
+					item->chunk_size += MOV_REG_IMM_32BIT_SIZE;
+				else
+					item->chunk_size += MOV_REG_IMM_SIZE;
+				item->chunk_size += JUMP_REG_SIZE;
+				/* with assert below:
+				 * item->chunk_size += CMP_SIZE + BR_SMALL_SIZE + 1;
+				 */
+			}
+		} else {
+			if (amd64_is_imm32 (item->method))
+				item->chunk_size += CMP_SIZE;
+			else
+				item->chunk_size += MOV_REG_IMM_SIZE + CMP_REG_REG_SIZE;
+			item->chunk_size += BR_LARGE_SIZE;
+			imt_entries [item->check_target_idx]->compare_done = TRUE;
+		}
+		size += item->chunk_size;
+	}
+	code = mono_code_manager_reserve (domain->code_mp, size);
+	start = code;
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		item->code_target = code;
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done) {
+					if (amd64_is_imm32 (item->method))
+						amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->method);
+					else {
+						amd64_mov_reg_imm (code, AMD64_R10, item->method);
+						amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+					}
+				}
+				item->jmp_code = code;
+				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
+				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R11, 0);
+			} else {
+				/* enable the commented code to assert on wrong method */
+#if 0
+				if (amd64_is_imm32 (item->method))
+					amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->method);
+				else {
+					amd64_mov_reg_imm (code, AMD64_R10, item->method);
+					amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+				}
+				item->jmp_code = code;
+				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
+				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R11, 0);
+				amd64_patch (item->jmp_code, code);
+				amd64_breakpoint (code);
+				item->jmp_code = NULL;
+#else
+				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R11, 0);
+#endif
+			}
+		} else {
+			if (amd64_is_imm32 (item->method))
+				amd64_alu_reg_imm (code, X86_CMP, MONO_ARCH_IMT_REG, (guint32)(gssize)item->method);
+			else {
+				amd64_mov_reg_imm (code, AMD64_R10, item->method);
+				amd64_alu_reg_reg (code, X86_CMP, MONO_ARCH_IMT_REG, AMD64_R10);
+			}
+			item->jmp_code = code;
+			if (x86_is_imm8 (imt_branch_distance (imt_entries, i, item->check_target_idx)))
+				x86_branch8 (code, X86_CC_GE, 0, FALSE);
+			else
+				x86_branch32 (code, X86_CC_GE, 0, FALSE);
+		}
+		g_assert (code - item->code_target <= item->chunk_size);
+	}
+	/* patch the branches to get to the target items */
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->jmp_code) {
+			if (item->check_target_idx) {
+				amd64_patch (item->jmp_code, imt_entries [item->check_target_idx]->code_target);
+			}
+		}
+	}
+		
+	mono_stats.imt_thunks_size += code - start;
+	g_assert (code - start <= size);
+
+	return start;
+}
+
+MonoMethod*
+mono_arch_find_imt_method (gpointer *regs, guint8 *code)
+{
+	/* 
+	 * R11 is clobbered by the trampoline code, so we have to retrieve the method 
+	 * from the code.
+	 * 41 bb c0 f7 89 00     mov    $0x89f7c0,%r11d
+	 * ff 90 68 ff ff ff     callq  *0xffffffffffffff68(%rax)
+	 */
+	/* Similar to get_vcall_slot_addr () */
+
+	/* Find the start of the call instruction */
+	code -= 7;
+	if ((code [-2] == 0x41) && (code [-1] == 0xbb) && (code [4] == 0xff) && (x86_modrm_mod (code [5]) == 1) && (x86_modrm_reg (code [5]) == 2) && ((signed char)code [6] < 0)) {
+		/* IMT-based interface calls
+		 * 41 bb 14 f8 28 08       mov    $0x828f814,%r11
+		 * ff 50 fc                call   *0xfffffffc(%rax)
+		 */
+		code += 4;
+	} else if ((code [1] == 0xff) && (amd64_modrm_reg (code [2]) == 0x2) && (amd64_modrm_mod (code [2]) == 0x2)) {
+		/* call *[reg+disp32] */
+		code += 1;
+	} else if ((code [4] == 0xff) && (amd64_modrm_reg (code [5]) == 0x2) && (amd64_modrm_mod (code [5]) == 0x1)) {
+		/* call *[reg+disp8] */
+		code += 4;
+	} else
+		g_assert_not_reached ();
+
+	/* Find the start of the mov instruction */
+	code -= 10;
+	if (code [0] == 0x49 && code [1] == 0xbb) {
+		return (MonoMethod*)*(gssize*)(code + 2);
+	} else if (code [4] == 0x41 && code [5] == 0xbb) {
+		return (MonoMethod*)(gssize)*(guint32*)(code + 6);
+	} else {
+		int i;
+
+		printf ("Unknown call sequence: ");
+		for (i = -10; i < 20; ++i)
+			printf ("%x ", code [i]);
+		g_assert_not_reached ();
+		return NULL;
+	}
+}
+
+MonoObject*
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+{
+	return mono_arch_get_this_arg_from_call (mono_method_signature (method), (gssize*)regs, NULL);
+}
+#endif
 
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)

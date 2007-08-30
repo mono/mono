@@ -12,9 +12,11 @@ RUNTIME_ARGS=--config tests-config --optimize=all
 
 with_mono_path = MONO_PATH=$(mcs_topdir)/class/lib/default
 with_mono_path2 = MONO_PATH=$(mcs_topdir)/class/lib/net_2_0
+with_mono_path21 = MONO_PATH=$(mcs_topdir)/class/lib/net_2_1
 
 RUNTIME = $(with_mono_path) $(top_builddir)/runtime/mono-wrapper
 RUNTIME2 = $(with_mono_path2) $(top_builddir)/runtime/mono-wrapper
+RUNTIME21 = $(with_mono_path21) $(top_builddir)/runtime/mono-wrapper
 
 MKBUNDLE = \
 	PKG_CONFIG_PATH=$(top_builddir):$(PKG_CONFIG_PATH) \
@@ -22,6 +24,7 @@ MKBUNDLE = \
 
 MCS = $(RUNTIME) $(mcs_topdir)/class/lib/default/mcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
 GMCS = $(RUNTIME2) $(mcs_topdir)/class/lib/net_2_0/gmcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
+SMCS = $(RUNTIME21) $(mcs_topdir)/class/lib/net_2_1/smcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
 ILASM = $(RUNTIME) $(mcs_topdir)/class/lib/default/ilasm.exe
 ILASM2 = $(RUNTIME2) $(mcs_topdir)/class/lib/net_2_0/ilasm.exe
 
@@ -208,6 +211,7 @@ TEST_CS_SRC=			\
 	bug-78311.cs		\
 	bug-78653.cs		\
 	bug-78656.cs		\
+	bug-77127.cs		\
 	interlocked.cs		\
 	cross-domain.cs		\
 	appdomain-exit.cs	\
@@ -228,7 +232,8 @@ TEST_CS_SRC=			\
 	desweak.cs		\
 	cominterop.cs		\
 	exists.cs		\
-	handleref.cs
+	handleref.cs	\
+	transparentproxy.cs
 
 if X86
 # bug #71274
@@ -251,6 +256,8 @@ TEST_CSC_SRC=			\
 	vararg.cs
 
 TEST_IL_SRC=			\
+	field-access.il		\
+	method-access.il	\
 	cpblkTest.il		\
 	vbinterface.il		\
 	jmpTest.il		\
@@ -268,7 +275,9 @@ TEST_IL_SRC=			\
 	reload-at-bb-end.il	\
 	test-enum-indstoreil.il	\
 	filter-bug.il		\
-	even-odd.il
+	even-odd.il		\
+	bug-82022.il	\
+	enum_types.il
 
 TEST_CS2_SRC = \
 	interlocked-2.2.cs	\
@@ -281,16 +290,20 @@ TEST_CS2_SRC = \
 	stackframes-async.2.cs		\
 	module-cctor-loader.2.cs	\
 	generics-invoke-byref.2.cs	\
-	bug-80392.2.cs
+	bug-80392.2.cs		\
+	bug-82194.2.cs
 
 TEST_IL2_SRC = find-method.2.il	\
 	bug-79215.2.il	\
-	bug-79956.2.il
+	bug-79956.2.il	\
+	ldtoken_with_byref_typespec.2.il
 
 # pre-requisite test sources: files that are not test themselves
 # but that need to be compiled
 PREREQ_IL_SRC=event-il.il module-cctor.il
 PREREQ_CS_SRC=
+PREREQ_IL_DLL_SRC=event-il.il module-cctor.il
+PREREQ_CS_DLL_SRC=
 
 PREREQSI_IL=$(PREREQ_IL_SRC:.il=.exe)
 PREREQSI_CS=$(PREREQ_CS_SRC:.cs=.exe)
@@ -318,14 +331,18 @@ EXTRA_DIST=test-driver $(TEST_CS_SRC) $(TEST_CS2_SRC) $(TEST_IL_SRC) $(TEST_IL2_
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
 if POWERPC
-test:	testjit test-type-load test-inline-call-stack test-bug-80307
+test:	testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
 else
 # Can't use mkbundle on win32 since there is no static build there
 if PLATFORM_WIN32
-test:   testjit test-type-load test-inline-call-stack test-bug-80307
+test:   testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
 else
-test:	testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307
+test:	testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
 endif
+endif
+
+if INSTALL_2_1
+test : test-coreclr-security
 endif
 
 TestDriver.dll:
@@ -506,6 +523,42 @@ bug-80307.exe: $(srcdir)/bug-80307.cs
 test-bug-80307: bug-80307.exe
 	cd $(top_builddir)/runtime && $(MAKE) test-support-files
 	$(RUNTIME) bug-80307.exe
+
+EXTRA_DIST += bug-81673.cs bug-81673-interface.cs
+bug-81673.exe bug-81673-interface.dll: $(srcdir)/bug-81673.cs $(srcdir)/bug-81673-interface.cs
+	$(MCS) -target:library -out:bug-81673-interface.dll $(srcdir)/bug-81673-interface.cs
+	$(MCS) -out:bug-81673.exe -r:bug-81673-interface.dll $(srcdir)/bug-81673.cs
+	$(MCS) -define:WITH_STOP -target:library -out:bug-81673-interface.dll $(srcdir)/bug-81673-interface.cs
+
+test-bug-81673 : bug-81673.exe bug-81673-interface.dll
+	$(RUNTIME) bug-81673.exe
+
+EXTRA_DIST += bug-81691.cs bug-81691-a.cs bug-81691-b.cs
+bug-81691.exe bug-81691-b.dll: $(srcdir)/bug-81691.cs $(srcdir)/bug-81691-a.cs $(srcdir)/bug-81691-b.cs
+	$(GMCS) -target:library -out:bug-81691-a.dll $(srcdir)/bug-81691-a.cs
+	$(GMCS) -target:library -out:bug-81691-b.dll -r:bug-81691-a.dll $(srcdir)/bug-81691-b.cs
+	$(GMCS) -r:bug-81691-b.dll -out:bug-81691.exe $(srcdir)/bug-81691.cs
+	rm -f bug-81691-a.dll
+
+test-bug-81691 : bug-81691.exe bug-81691-b.dll
+	$(RUNTIME) bug-81691.exe
+
+EXTRA_DIST += bug-81466.il bug-81466-lib.il
+bug-81466-lib.dll: bug-81466-lib.il
+	$(ILASM) /dll /output:bug-81466-lib.dll $(srcdir)/bug-81466-lib.il
+bug-81466.exe: bug-81466.il bug-81466-lib.dll
+	$(ILASM) /exe /output:bug-81466.exe $(srcdir)/bug-81466.il
+test-bug-81466: bug-81466.exe bug-81466-lib.dll
+	$(RUNTIME) bug-81466.exe
+
+if INSTALL_2_1
+EXTRA_DIST += coreclr-security.cs
+coreclr-security.exe : coreclr-security.cs
+	$(SMCS) -out:coreclr-security.exe $(srcdir)/coreclr-security.cs
+
+test-coreclr-security : coreclr-security.exe
+	$(RUNTIME21) --security=core-clr-test coreclr-security.exe
+endif
 
 # Useful if mono is compiled with --enable-shared=no
 patch-libtool:

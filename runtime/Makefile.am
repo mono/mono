@@ -19,7 +19,11 @@ $(symlinks):
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
+if INSTALL_2_1
+build_profiles = default net_2_0 net_2_1
+else
 build_profiles = default net_2_0
+endif
 else
 build_profiles = default
 endif

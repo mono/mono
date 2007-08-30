@@ -26,7 +26,6 @@
 #include <mono/metadata/image.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
-#include <mono/metadata/cil-coff.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/loader.h>
@@ -100,7 +99,7 @@ mono_loader_set_error_assembly_load (const char *assembly_name, gboolean ref_onl
 		return;
 
 	error = g_new0 (MonoLoaderError, 1);
-	error->kind = MONO_LOADER_ERROR_ASSEMBLY;
+	error->exception_type = MONO_EXCEPTION_FILE_NOT_FOUND;
 	error->assembly_name = g_strdup (assembly_name);
 	error->ref_only = ref_only;
 
@@ -131,7 +130,7 @@ mono_loader_set_error_type_load (const char *class_name, const char *assembly_na
 		return;
 
 	error = g_new0 (MonoLoaderError, 1);
-	error->kind = MONO_LOADER_ERROR_TYPE;
+	error->exception_type = MONO_EXCEPTION_TYPE_LOAD;
 	error->class_name = g_strdup (class_name);
 	error->assembly_name = g_strdup (assembly_name);
 
@@ -161,7 +160,7 @@ mono_loader_set_error_method_load (const char *class_name, const char *member_na
 		return;
 
 	error = g_new0 (MonoLoaderError, 1);
-	error->kind = MONO_LOADER_ERROR_METHOD;
+	error->exception_type = MONO_EXCEPTION_MISSING_METHOD;
 	error->class_name = g_strdup (class_name);
 	error->member_name = member_name;
 
@@ -184,7 +183,7 @@ mono_loader_set_error_field_load (MonoClass *klass, const char *member_name)
 		return;
 
 	error = g_new0 (MonoLoaderError, 1);
-	error->kind = MONO_LOADER_ERROR_FIELD;
+	error->exception_type = MONO_EXCEPTION_MISSING_FIELD;
 	error->klass = klass;
 	error->member_name = member_name;
 
@@ -235,8 +234,8 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 {
 	MonoException *ex = NULL;
 
-	switch (error->kind) {
-	case MONO_LOADER_ERROR_TYPE: {
+	switch (error->exception_type) {
+	case MONO_EXCEPTION_TYPE_LOAD: {
 		char *cname = g_strdup (error->class_name);
 		char *aname = g_strdup (error->assembly_name);
 		MonoString *class_name;
@@ -250,7 +249,7 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 		g_free (aname);
                 break;
         }
-	case MONO_LOADER_ERROR_METHOD: {
+	case MONO_EXCEPTION_MISSING_METHOD: {
 		char *cname = g_strdup (error->class_name);
 		char *aname = g_strdup (error->member_name);
 		
@@ -261,7 +260,7 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 		break;
 	}
 		
-	case MONO_LOADER_ERROR_FIELD: {
+	case MONO_EXCEPTION_MISSING_FIELD: {
 		char *cnspace = g_strdup (*error->klass->name_space ? error->klass->name_space : "");
 		char *cname = g_strdup (error->klass->name);
 		char *cmembername = g_strdup (error->member_name);
@@ -278,7 +277,7 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
                 break;
         }
 	
-	case MONO_LOADER_ERROR_ASSEMBLY: {
+	case MONO_EXCEPTION_FILE_NOT_FOUND: {
 		char *msg;
 		char *filename;
 
@@ -470,7 +469,8 @@ find_method_in_class (MonoClass *in_class, const char *name, const char *qname, 
 		MonoMethod *m = in_class->methods [i];
 
 		if (!((fqname && !strcmp (m->name, fqname)) ||
-		      (qname && !strcmp (m->name, qname)) || !strcmp (m->name, name)))
+		      (qname && !strcmp (m->name, qname)) ||
+		      (name && !strcmp (m->name, name))))
 			continue;
 
 		if (sig->call_convention == MONO_CALL_VARARG) {
@@ -524,8 +524,19 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 		for (i = 0; i < in_class->interface_count; i++) {
 			MonoClass *ic = in_class->interfaces [i];
 			MonoClass *from_ic = from_class->interfaces [i];
+			char *ic_qname, *ic_fqname, *ic_class_name;
+			
+			ic_class_name = mono_type_get_name_full (&ic->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
+			ic_qname = g_strconcat (ic_class_name, ".", name, NULL); 
+			if (ic->name_space && ic->name_space [0])
+				ic_fqname = g_strconcat (ic->name_space, ".", ic_class_name, ".", name, NULL);
+			else
+				ic_fqname = NULL;
 
-			result = find_method_in_class (ic, name, qname, fqname, sig, from_ic);
+			result = find_method_in_class (ic, NULL, ic_qname, ic_fqname, sig, from_ic);
+			g_free (ic_class_name);
+			g_free (ic_fqname);
+			g_free (ic_qname);
 			if (result)
 				goto out;
 		}
@@ -827,7 +838,6 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	MonoTableInfo *tables = image->tables;
 	MonoGenericContext new_context;
 	MonoGenericInst *inst;
-	MonoGenericContainer *container = NULL;
 	const char *ptr;
 	guint32 cols [MONO_METHODSPEC_SIZE];
 	guint32 token, nindex, param_count;
@@ -874,8 +884,6 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	else
 		method = method_from_memberref (image, nindex, context, NULL);
 
-	method = mono_get_inflated_method (method);
-
 	klass = method->klass;
 
 	/* FIXME: Is this invalid metadata?  Should we throw an exception instead?  */
@@ -885,9 +893,6 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 		g_assert (method->is_inflated);
 		method = ((MonoMethodInflated *) method)->declaring;
 	}
-
-	container = method->generic_container;
-	g_assert (container);
 
 	new_context.class_inst = klass->generic_class ? klass->generic_class->context.class_inst : NULL;
 
@@ -919,18 +924,7 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 
 	new_context.method_inst = inst;
 
-	if (!container->method_hash)
-		container->method_hash = g_hash_table_new (
-			(GHashFunc)mono_metadata_generic_context_hash, (GEqualFunc)mono_metadata_generic_context_equal);
-
-	inflated = g_hash_table_lookup (container->method_hash, &new_context);
-	if (inflated)
-		return inflated;
-
-	mono_stats.generics_metadata_size += param_count * sizeof (MonoType);
-
 	inflated = mono_class_inflate_generic_method_full (method, klass, &new_context);
-	g_hash_table_insert (container->method_hash, mono_method_get_context (inflated), inflated);
 
 	return inflated;
 }
@@ -1315,6 +1309,9 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	return piinfo->addr;
 }
 
+/*
+ * LOCKING: assumes the loader lock to be taken.
+ */
 static MonoMethod *
 mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 			    MonoGenericContext *context, gboolean *used_context)
@@ -1482,7 +1479,7 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 	}
 
 	mono_class_init (constrained_class);
-	method = mono_get_inflated_method (*cil_method);
+	method = *cil_method;
 	sig = mono_method_signature (method);
 
 	if (method->is_inflated && sig->generic_param_count) {
@@ -1607,9 +1604,6 @@ mono_method_get_param_token (MonoMethod *method, int index)
 	MonoTableInfo *methodt;
 	guint32 idx;
 
-	if (klass->generic_class)
-		g_assert_not_reached ();
-
 	mono_class_init (klass);
 
 	if (klass->image->dynamic) {
@@ -1621,7 +1615,11 @@ mono_method_get_param_token (MonoMethod *method, int index)
 	if (idx > 0) {
 		guint param_index = mono_metadata_decode_row_col (methodt, idx - 1, MONO_METHOD_PARAMLIST);
 
-		return mono_metadata_make_token (MONO_TABLE_PARAM, param_index + index);
+		if (index == -1)
+			/* Return value */
+			return mono_metadata_make_token (MONO_TABLE_PARAM, 0);
+		else
+			return mono_metadata_make_token (MONO_TABLE_PARAM, param_index + index);
 	}
 
 	return 0;

@@ -14,11 +14,18 @@
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/threads-types.h>
+
+#define _IN_THE_MONO_DEBUGGER
 #include <mono/metadata/mono-debug-debugger.h>
 #include "debug-mini.h"
 
 #ifdef HAVE_VALGRIND_H
 #include <valgrind/valgrind.h>
+#endif
+
+#ifdef MONO_DEBUGGER_SUPPORTED
+#include <libgc/include/libgc-mono-debugger.h>
 #endif
 
 typedef struct {
@@ -30,6 +37,7 @@ typedef struct
 {
 	guint64 index;
 	MonoMethod *method;
+	MonoDebugMethodAddressList *address_list;
 } MiniDebugMethodBreakpointInfo;
 
 typedef struct
@@ -40,8 +48,32 @@ typedef struct
 	guint32 breakpoint_id;
 } MiniDebugMethodInfo;
 
+struct _MonoDebuggerThreadInfo {
+	guint64 tid;
+	guint64 lmf_addr;
+	guint64 end_stack;
+
+	/* Next pointer. */
+	MonoDebuggerThreadInfo *next;
+
+	/*
+	 * The stack bounds are only used when reading a core file.
+	 */
+	guint64 stack_start;
+	guint64 signal_stack_start;
+	guint32 stack_size;
+	guint32 signal_stack_size;
+
+	/*
+	 * The debugger doesn't access anything beyond this point.
+	 */
+	MonoJitTlsData *jit_tls;
+};
+
+MonoDebuggerThreadInfo *mono_debugger_thread_table = NULL;
+
 static void
-mono_debugger_check_breakpoints (MonoMethod *method, gconstpointer address);
+mono_debugger_check_breakpoints (MonoMethod *method, MonoDebugMethodAddress *debug_info);
 
 static inline void
 record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
@@ -52,6 +84,16 @@ record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
 	lne.il_offset = offset;
 
 	g_array_append_val (info->line_numbers, lne);
+}
+
+static void
+mono_debug_free_method_jit_info (MonoDebugMethodJitInfo *jit)
+{
+	g_free (jit->line_numbers);
+	g_free (jit->this_var);
+	g_free (jit->params);
+	g_free (jit->locals);
+	g_free (jit);
 }
 
 void
@@ -259,7 +301,7 @@ mono_debug_close_method (MonoCompile *cfg)
 	if (info->breakpoint_id)
 		mono_debugger_breakpoint_callback (method, info->breakpoint_id);
 
-	mono_debugger_check_breakpoints (method, jit->code_start);
+	mono_debugger_check_breakpoints (method, debug_info);
 
 	mono_debug_free_method_jit_info (jit);
 	g_array_free (info->line_numbers, TRUE);
@@ -553,12 +595,6 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 
 	jit = deserialize_debug_info (method, code_start, debug_info, debug_info_len);
 
-#if 0
-	jit = mono_debug_read_method ((MonoDebugMethodAddress *) debug_info);
-	jit->code_start = code_start;
-	jit->wrapper_addr = NULL;
-#endif
-
 	mono_debug_add_method (method, jit, domain);
 
 	mono_debug_add_vg_method (method, jit);
@@ -607,18 +643,13 @@ mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
-	MonoDebugMethodInfo *minfo;
 	MonoDebugMethodJitInfo *jit;
 	int i;
 
 	if (!ji)
 		return;
 
-	minfo = mono_debug_lookup_method (mono_jit_info_get_method (ji));
-	if (!minfo)
-		return;
-
-	jit = mono_debug_find_method (minfo, domain);
+	jit = mono_debug_find_method (mono_jit_info_get_method (ji), domain);
 	if (!jit)
 		return;
 
@@ -650,7 +681,7 @@ mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 
 static GPtrArray *method_breakpoints = NULL;
 
-void
+MonoDebugMethodAddressList *
 mono_debugger_insert_method_breakpoint (MonoMethod *method, guint64 index)
 {
 	MiniDebugMethodBreakpointInfo *info;
@@ -659,10 +690,14 @@ mono_debugger_insert_method_breakpoint (MonoMethod *method, guint64 index)
 	info->method = method;
 	info->index = index;
 
+	info->address_list = mono_debug_lookup_method_addresses (method);
+
 	if (!method_breakpoints)
 		method_breakpoints = g_ptr_array_new ();
 
 	g_ptr_array_add (method_breakpoints, info);
+
+	return info->address_list;
 }
 
 int
@@ -680,6 +715,7 @@ mono_debugger_remove_method_breakpoint (guint64 index)
 			continue;
 
 		g_ptr_array_remove (method_breakpoints, info);
+		g_free (info->address_list);
 		g_free (info);
 		return 1;
 	}
@@ -688,13 +724,15 @@ mono_debugger_remove_method_breakpoint (guint64 index)
 }
 
 static void
-mono_debugger_check_breakpoints (MonoMethod *method, gconstpointer address)
+mono_debugger_check_breakpoints (MonoMethod *method, MonoDebugMethodAddress *debug_info)
 {
-	gboolean first = TRUE;
 	int i;
 
 	if (!method_breakpoints)
 		return;
+
+	if (method->is_inflated)
+		method = ((MonoMethodInflated *) method)->declaring;
 
 	for (i = 0; i < method_breakpoints->len; i++) {
 		MiniDebugMethodBreakpointInfo *info = g_ptr_array_index (method_breakpoints, i);
@@ -702,15 +740,8 @@ mono_debugger_check_breakpoints (MonoMethod *method, gconstpointer address)
 		if (method != info->method)
 			continue;
 
-		if (first) {
-			mono_debugger_event (
-				MONO_DEBUGGER_EVENT_METHOD_COMPILED, (guint64) (gsize) method,
-				(guint64) (gsize) address);
-			first = FALSE;
-		}
-
 		mono_debugger_event (MONO_DEBUGGER_EVENT_JIT_BREAKPOINT,
-				     (guint64) (gsize) address, info->index);
+				     (guint64) (gsize) debug_info, info->index);
 	}
 }
 
@@ -801,4 +832,60 @@ void
 mono_debugger_breakpoint_callback (MonoMethod *method, guint32 index)
 {
 	mono_debugger_event (MONO_DEBUGGER_EVENT_JIT_BREAKPOINT, (guint64) (gsize) method, index);
+}
+
+void
+mono_debugger_thread_created (gsize tid, MonoJitTlsData *jit_tls)
+{
+#ifdef MONO_DEBUGGER_SUPPORTED
+	size_t stsize = 0;
+	guint8 *staddr = NULL;
+	MonoDebuggerThreadInfo *info;
+
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return;
+
+	mono_thread_get_stack_bounds (&staddr, &stsize);
+
+	info = g_new0 (MonoDebuggerThreadInfo, 1);
+	info->tid = tid;
+	info->stack_start = (guint64) (gsize) staddr;
+	info->signal_stack_start = (guint64) (gsize) jit_tls->signal_stack;
+	info->stack_size = stsize;
+	info->signal_stack_size = jit_tls->signal_stack_size;
+	info->end_stack = (guint64) (gsize) GC_mono_debugger_get_stack_ptr ();
+	info->lmf_addr = (guint64) (gsize) mono_get_lmf_addr ();
+	info->jit_tls = jit_tls;
+
+	info->next = mono_debugger_thread_table;
+	mono_debugger_thread_table = info;
+
+	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CREATED,
+			     tid, (guint64) (gsize) info);
+#endif /* MONO_DEBUGGER_SUPPORTED */
+}
+
+void
+mono_debugger_thread_cleanup (MonoJitTlsData *jit_tls)
+{
+#ifdef MONO_DEBUGGER_SUPPORTED
+	MonoDebuggerThreadInfo **ptr;
+
+	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+		return;
+
+	for (ptr = &mono_debugger_thread_table; *ptr; ptr = &(*ptr)->next) {
+		MonoDebuggerThreadInfo *info = *ptr;
+
+		if (info->jit_tls != jit_tls)
+			continue;
+
+		mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CLEANUP,
+				     info->tid, (guint64) (gsize) info);
+
+		*ptr = info->next;
+		g_free (info);
+		break;
+	}
+#endif
 }

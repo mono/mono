@@ -15,7 +15,6 @@
 #include <stdlib.h>
 #include "assembly.h"
 #include "image.h"
-#include "cil-coff.h"
 #include "rawbuffer.h"
 #include <mono/metadata/loader.h>
 #include <mono/metadata/tabledefs.h>
@@ -23,6 +22,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/mono-endian.h>
+#include <mono/metadata/mono-debug.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/mono-uri.h>
 #include <mono/metadata/mono-config.h>
@@ -1340,15 +1340,19 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 }
 
 /*
- * load_friend_assemblies:
+ * mono_load_friend_assemblies:
  * @ass: an assembly
  *
  * Load the list of friend assemblies that are allowed to access
  * the assembly's internal types and members. They are stored as assembly
  * names in custom attributes.
+ *
+ * This is an internal method, we need this because when we load mscorlib
+ * we do not have the mono_defaults.internals_visible_class loaded yet,
+ * so we need to load these after we initialize the runtime. 
  */
-static void
-load_friend_assemblies (MonoAssembly* ass)
+void
+mono_assembly_load_friends (MonoAssembly* ass)
 {
 	int i;
 	MonoCustomAttrInfo* attrs = mono_custom_attrs_from_assembly (ass);
@@ -1509,7 +1513,7 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	if (mono_defaults.internals_visible_class)
-		load_friend_assemblies (ass);
+		mono_assembly_load_friends (ass);
 	mono_assemblies_unlock ();
 
 	mono_assembly_invoke_load_hook (ass);
@@ -1805,7 +1809,8 @@ probe_for_partial_name (const char *basepath, const char *fullname, MonoAssembly
 	while ((direntry = g_dir_read_name (dirhandle))) {
 		gboolean match = TRUE;
 		
-		parse_assembly_directory_name (aname->name, direntry, &gac_aname);
+		if(!parse_assembly_directory_name (aname->name, direntry, &gac_aname))
+			continue;
 		
 		if (aname->culture != NULL && strcmp (aname->culture, gac_aname.culture) != 0)
 			match = FALSE;
@@ -2327,21 +2332,11 @@ mono_assembly_close (MonoAssembly *assembly)
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading assembly %s [%p].", assembly->aname.name, assembly);
 
+	mono_debug_close_image (assembly->image);
+
 	mono_assemblies_lock ();
 	loaded_assemblies = g_list_remove (loaded_assemblies, assembly);
 	mono_assemblies_unlock ();
-
-	if (assembly->image->references) {
-		int i;
-
-		for (i = 0; assembly->image->references [i]; i++) {
-			if (assembly->image->references [i])
-				mono_assembly_close (assembly->image->references [i]);
-		}
-
-		g_free (assembly->image->references);
-		assembly->image->references = NULL;
-	}
 
 	assembly->image->assembly = NULL;
 

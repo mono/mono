@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.2.4)
+AM_INIT_AUTOMAKE(mono,1.2.5)
 AM_MAINTAINER_MODE
 
 API_VER=1.0
@@ -222,7 +222,7 @@ case "$host" in
 	*-*-darwin*)
 		platform_win32=no
 		CPPFLAGS="$CPPFLAGS -no-cpp-precomp -D_THREAD_SAFE -DGC_MACOSX_THREADS -DPLATFORM_MACOSX -DUSE_MMAP -DUSE_MUNMAP"
-		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess"
+		CPPFLAGS="$CPPFLAGS -DGetCurrentProcess=MonoGetCurrentProcess -DGetCurrentThread=MonoGetCurrentThread -DCreateEvent=MonoCreateEvent"
 		libmono_cflags="-D_THREAD_SAFE"
 		LDFLAGS="$LDFLAGS -pthread"
 		libmono_ldflags="-pthread"
@@ -503,7 +503,7 @@ AC_ARG_WITH(tls, [  --with-tls=__thread,pthread       select Thread Local Storag
 
 # Enable support for using sigaltstack for SIGSEGV and stack overflow handling
 # This does not work on some platforms (bug #55253)
-AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack],[],[with_sigaltstack=no])
+AC_ARG_WITH(sigaltstack, [  --with-sigaltstack=yes,no      enable/disable support for sigaltstack],[],[with_sigaltstack=yes])
 
 AC_ARG_WITH(static_mono, [  --with-static_mono=yes,no      link mono statically to libmono (faster)],[],[with_static_mono=yes])
 
@@ -773,6 +773,9 @@ if test x$platform_win32 = xno; then
 	AC_CHECK_FUNCS(mkstemp)
 	AC_CHECK_FUNCS(mmap)
 	AC_CHECK_FUNCS(madvise)
+	AC_CHECK_FUNCS(getrusage)
+	AC_CHECK_FUNCS(getpriority)
+	AC_CHECK_FUNCS(setpriority)
 
 	AC_CHECK_FUNCS(sched_setaffinity)
 
@@ -1922,15 +1925,23 @@ if test ${ACCESS_UNALIGNED} = no; then
 fi
 
 PREVIEW=yes
-AC_ARG_WITH(preview, [ --with-preview=yes,no     If you want to install the 2.0 FX preview],[
+AC_ARG_WITH(preview,  [ --with-preview=yes,no     If you want to install the 2.0 FX preview],[
 	if test x$with_preview = xno; then
 	      PREVIEW=no
+	fi
+])
+
+MOONLIGHT=no
+AC_ARG_WITH(moonlight,[ --with-moonlight=yes,no   If you want to build the Moonlight 2.1 assemblies],[
+	if test x$with_moonlight = xyes; then
+	      MOONLIGHT=yes
 	fi
 ])
 
 libmono_ldflags="$libmono_ldflags $LIBS"
 
 AM_CONDITIONAL(INSTALL_2_0, test x$PREVIEW = xyes)
+AM_CONDITIONAL(INSTALL_2_1, test x$MOONLIGHT = xyes)
 
 AM_CONDITIONAL(MIPS_GCC, test ${TARGET}${ac_cv_prog_gcc} = MIPSyes)
 AM_CONDITIONAL(MIPS_SGI, test ${TARGET}${ac_cv_prog_gcc} = MIPSno)
@@ -2043,10 +2054,6 @@ AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
 
 AC_OUTPUT([
 Makefile
-mint.pc
-mono.pc
-mono-cairo.pc
-dotnet.pc
 mono-uninstalled.pc
 scripts/mono-nunit.pc
 scripts/mono-find-provides
@@ -2092,6 +2099,11 @@ docs/Makefile
 data/Makefile
 data/net_1_1/Makefile
 data/net_2_0/Makefile
+data/mint.pc
+data/mono.pc
+data/mono-cairo.pc
+data/dotnet.pc
+data/cecil.pc
 samples/Makefile
 support/Makefile
 data/config
@@ -2159,7 +2171,8 @@ echo "
 	TLS:         $with_tls
 	SIGALTSTACK: $with_sigaltstack
 	Engine:      $jit_status
-	2.0 Alpha:   $PREVIEW
+	2.0 Beta:    $PREVIEW
+	2.1 Alpha:   $MOONLIGHT
 	JNI support: $jdk_headers_found
 	libgdiplus:  $libgdiplus_msg
 	zlib:        $zlib_msg

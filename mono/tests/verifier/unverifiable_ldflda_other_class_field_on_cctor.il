@@ -25,21 +25,23 @@
 }
 
 .class public BadClass {
+	.method private static specialname rtspecialname default void .cctor ()
+	{
+	    .maxstack 8
+	    .locals (GoodClass V_1)
+	   	ldloca.s 0
+		ldflda valuetype MyValueType GoodClass::x
+		pop
+		ret 
+	}
 
-
-.method private static specialname rtspecialname default void .cctor ()
-{
-    .maxstack 8
-    .locals (
-    	GoodClass V_1
-   	)
-   	
-   	ldloc.0
-
-	ldflda valuetype MyValueType GoodClass::x
-	pop
-	ret 
-}
+	.method public hidebysig specialname rtspecialname instance default void .ctor () cil managed
+	{
+		.maxstack 8
+		ldarg.0 
+		call instance void object::.ctor()
+		ret
+	}
 
 }
 
@@ -47,6 +49,8 @@
 {
 	.maxstack 2
 	.entrypoint
+	newobj instance void BadClass::.ctor()
+	pop
 	ret
 }
 

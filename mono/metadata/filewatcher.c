@@ -48,7 +48,6 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	return 3;
 #else
 	MonoDl *fam_module;
-	gchar *filename;
 	int lib_used = 4; /* gamin */
 	int inotify_instance;
 	void *iter;
@@ -63,16 +62,11 @@ ves_icall_System_IO_FSW_SupportsFSW (void)
 	}
 
 	iter = NULL;
-	/* the build_path calls here should be avoided, since we provide the full name */
-	filename = mono_dl_build_path (NULL, "libgamin-1.so.0", &iter);
-	fam_module = mono_dl_open (filename, MONO_DL_LAZY, NULL);
-	g_free (filename);
+	fam_module = mono_dl_open ("libgamin-1.so", MONO_DL_LAZY, NULL);
 	if (fam_module == NULL) {
 		lib_used = 2; /* FAM */
 		iter = NULL;
-		filename = mono_dl_build_path (NULL, "libfam.so.0", &iter);
-		fam_module = mono_dl_open (filename, MONO_DL_LAZY, NULL);
-		g_free (filename);
+		fam_module = mono_dl_open ("libfam.so", MONO_DL_LAZY, NULL);
 	}
 
 	if (fam_module == NULL)

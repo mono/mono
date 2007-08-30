@@ -561,19 +561,13 @@ void GC_stop_init()
 
 GCThreadFunctions *gc_thread_vtable = NULL;
 
-void
-GC_mono_debugger_add_all_threads (void)
+void *
+GC_mono_debugger_get_stack_ptr (void)
 {
-    GC_thread p;
-    int i;
+	GC_thread me;
 
-    if (gc_thread_vtable && gc_thread_vtable->thread_created) {
-	for (i = 0; i < THREAD_TABLE_SZ; i++) {
-	    for (p = GC_threads[i]; p != 0; p = p -> next) {
-		gc_thread_vtable->thread_created (p->id, &p->stop_info.stack_ptr);
-	    }
-	}
-    }
+	me = GC_lookup_thread (pthread_self ());
+	return &me->stop_info.stack_ptr;
 }
 
 #endif

@@ -50,13 +50,20 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #ifndef PLATFORM_WIN32
 
 #ifdef HAVE_WORKING_SIGALTSTACK
+/* 
+ * solaris doesn't have pthread_getattr_np () needed by the sigaltstack setup
+ * code.
+ */
+#ifndef __sun
 #define MONO_ARCH_SIGSEGV_ON_ALTSTACK
+#endif
 #define MONO_ARCH_USE_SIGACTION
 
 #endif /* HAVE_WORKING_SIGALTSTACK */
 #endif /* !PLATFORM_WIN32 */
 
-#define MONO_ARCH_SIGNAL_STACK_SIZE (64 * 1024)
+/* we should lower this size and make sure we don't call heavy stack users in the segv handler */
+#define MONO_ARCH_SIGNAL_STACK_SIZE (16 * 1024)
 
 #define MONO_ARCH_CPU_SPEC x86_desc
 
@@ -113,9 +120,13 @@ LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
 #define inst_sreg2_high sreg2>>3
 
 struct MonoLMF {
-	gpointer    previous_lmf;
+	/* Offset by 1 if this is a trampoline LMF frame */
+	guint32    previous_lmf;
 	gpointer    lmf_addr;
+	/* Only set in trampoline LMF frames */
 	MonoMethod *method;
+	/* Only set in trampoline LMF frames */
+	guint32     esp;
 	guint32     ebx;
 	guint32     edi;
 	guint32     esi;
@@ -255,6 +266,10 @@ typedef struct {
 #define MONO_ARCH_HAVE_CREATE_VARS 1
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
+#define MONO_ARCH_HAVE_IMT 1
+#define MONO_ARCH_IMT_REG X86_EDX
+
+#define MONO_ARCH_AOT_SUPPORTED 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)

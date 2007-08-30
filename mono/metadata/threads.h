@@ -11,6 +11,7 @@
 #ifndef _MONO_METADATA_THREADS_H_
 #define _MONO_METADATA_THREADS_H_
 
+#include <mono/utils/mono-membar.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/appdomain.h>
 

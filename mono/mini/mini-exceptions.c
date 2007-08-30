@@ -24,29 +24,17 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
+#include <mono/metadata/threads-types.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/profiler.h>
+#include <mono/utils/mono-mmap.h>
 
 #include "mini.h"
 #include "trace.h"
-
-#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 #include <unistd.h>
-#include <sys/mman.h>
-#endif
-
-/* FreeBSD and NetBSD need SA_STACK and MAP_ANON re-definitions */
-#	if defined(__FreeBSD__) || defined(__NetBSD__) 
-#		ifndef SA_STACK
-#			define SA_STACK SA_ONSTACK
-#		endif
-#		ifndef MAP_ANONYMOUS
-#			define MAP_ANONYMOUS MAP_ANON
-#		endif
-#	endif /* BSDs */
 
 #define IS_ON_SIGALTSTACK(jit_tls) ((jit_tls) && ((guint8*)&(jit_tls) > (guint8*)(jit_tls)->signal_stack) && ((guint8*)&(jit_tls) < ((guint8*)(jit_tls)->signal_stack + (jit_tls)->signal_stack_size)))
 
@@ -310,7 +298,7 @@ mono_jit_walk_stack_from_ctx (MonoStackWalk func, MonoContext *start_ctx, gboole
 #endif
 	}
 
-	while (MONO_CONTEXT_GET_BP (&ctx) < jit_tls->end_of_stack) {
+	while (MONO_CONTEXT_GET_SP (&ctx) < jit_tls->end_of_stack) {
 		ji = mono_find_jit_info (domain, jit_tls, &rji, NULL, &ctx, &new_ctx, NULL, &lmf, &native_offset, &managed);
 		g_assert (ji);
 
@@ -373,7 +361,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 
 	do {
 		ji = mono_find_jit_info (domain, jit_tls, &rji, NULL, &ctx, &new_ctx, NULL, &lmf, native_offset, NULL);
-
+		
 		ctx = new_ctx;
 		
 		if (!ji || ji == (gpointer)-1 || MONO_CONTEXT_GET_SP (&ctx) >= jit_tls->end_of_stack)
@@ -608,26 +596,9 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 	gboolean stack_overflow = FALSE;
 	MonoContext initial_ctx;
 	int frame_count = 0;
-	gboolean gc_disabled = FALSE;
 	gboolean has_dynamic_methods = FALSE;
 	gint32 filter_idx, first_filter_idx;
 	
-	/*
-	 * This function might execute on an alternate signal stack, and Boehm GC
-	 * can't handle that.
-	 * Also, since the altstack is small, stack space intensive operations like
-	 * JIT compilation should be avoided.
-	 */
-	if (IS_ON_SIGALTSTACK (jit_tls)) {
-		/* 
-		 * FIXME: disabling/enabling GC while already on a signal stack might
-		 * not be safe either.
-		 */
-		/* Have to reenable it later */
-		gc_disabled = TRUE;
-		mono_gc_disable ();
-	}
-
 	g_assert (ctx != NULL);
 	if (!obj) {
 		MonoException *ex = mono_get_exception_null_reference ();
@@ -704,6 +675,15 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		if (!ji) {
 			g_warning ("Exception inside function without unwind info");
 			g_assert_not_reached ();
+		}
+
+		if (ji != (gpointer)-1 && !(ji->code_start <= MONO_CONTEXT_GET_IP (ctx) && (((guint8*)ji->code_start + ji->code_size >= (guint8*)MONO_CONTEXT_GET_IP (ctx))))) {
+			/*
+			 * The exception was raised in native code and we got back to managed code 
+			 * using the LMF.
+			 */
+			*ctx = new_ctx;
+			continue;
 		}
 
 		if (ji != (gpointer)-1) {
@@ -791,8 +771,6 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 								}
 								g_list_free (trace_ips);
 
-								if (gc_disabled)
-									mono_gc_enable ();
 								return TRUE;
 							}
 							if (mono_trace_is_enabled () && mono_trace_eval (ji->method))
@@ -802,8 +780,6 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 							MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 							*(mono_get_lmf_addr ()) = lmf;
 
-							if (gc_disabled)
-								mono_gc_enable ();
 							return 0;
 						}
 						if (!test_only && ei->try_start <= MONO_CONTEXT_GET_IP (ctx) && 
@@ -835,8 +811,6 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		*ctx = new_ctx;
 
 		if (ji == (gpointer)-1) {
-			if (gc_disabled)
-				mono_gc_enable ();
 
 			if (!test_only) {
 				*(mono_get_lmf_addr ()) = lmf;
@@ -939,44 +913,36 @@ mono_handle_exception (MonoContext *ctx, gpointer obj, gpointer original_ip, gbo
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 
+#ifndef MONO_ARCH_USE_SIGACTION
+#error "Can't use sigaltstack without sigaction"
+#endif
+
 void
 mono_setup_altstack (MonoJitTlsData *tls)
 {
-	pthread_t self = pthread_self();
-	pthread_attr_t attr;
 	size_t stsize = 0;
 	struct sigaltstack sa;
 	guint8 *staddr = NULL;
-	guint8 *current = (guint8*)&staddr;
 
 	if (mono_running_on_valgrind ())
 		return;
 
-	/* Determine stack boundaries */
-	pthread_attr_init( &attr );
-#ifdef HAVE_PTHREAD_GETATTR_NP
-	pthread_getattr_np( self, &attr );
-#else
-#ifdef HAVE_PTHREAD_ATTR_GET_NP
-	pthread_attr_get_np( self, &attr );
-#elif defined(sun)
-	pthread_attr_getstacksize( &attr, &stsize );
-#else
-#error "Not implemented"
-#endif
-#endif
-
-#ifndef sun
-	pthread_attr_getstack( &attr, (void**)&staddr, &stsize );
-#endif
-
-	pthread_attr_destroy (&attr); 
+	mono_thread_get_stack_bounds (&staddr, &stsize);
 
 	g_assert (staddr);
 
-	g_assert ((current > staddr) && (current < staddr + stsize));
-
 	tls->end_of_stack = staddr + stsize;
+
+	/*g_print ("thread %p, stack_base: %p, stack_size: %d\n", (gpointer)pthread_self (), staddr, stsize);*/
+
+	tls->stack_ovf_guard_base = staddr + mono_pagesize ();
+	tls->stack_ovf_guard_size = mono_pagesize () * 8;
+
+	if (mono_mprotect (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE)) {
+		/* mprotect can fail for the main thread stack */
+		gpointer gaddr = mono_valloc (tls->stack_ovf_guard_base, tls->stack_ovf_guard_size, MONO_MMAP_NONE|MONO_MMAP_PRIVATE|MONO_MMAP_ANON|MONO_MMAP_FIXED);
+		g_assert (gaddr == tls->stack_ovf_guard_base);
+	}
 
 	/*
 	 * threads created by nptl does not seem to have a guard page, and
@@ -984,10 +950,10 @@ mono_setup_altstack (MonoJitTlsData *tls)
 	 * Increasing stsize fools the SIGSEGV signal handler into thinking this
 	 * is a stack overflow exception.
 	 */
-	tls->stack_size = stsize + getpagesize ();
+	tls->stack_size = stsize + mono_pagesize ();
 
 	/* Setup an alternate signal stack */
-	tls->signal_stack = mmap (0, MONO_ARCH_SIGNAL_STACK_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	tls->signal_stack = mono_valloc (0, MONO_ARCH_SIGNAL_STACK_SIZE, MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC|MONO_MMAP_PRIVATE|MONO_MMAP_ANON);
 	tls->signal_stack_size = MONO_ARCH_SIGNAL_STACK_SIZE;
 
 	g_assert (tls->signal_stack);
@@ -1011,7 +977,19 @@ mono_free_altstack (MonoJitTlsData *tls)
 	g_assert (err == 0);
 
 	if (tls->signal_stack)
-		munmap (tls->signal_stack, MONO_ARCH_SIGNAL_STACK_SIZE);
+		mono_vfree (tls->signal_stack, MONO_ARCH_SIGNAL_STACK_SIZE);
+}
+
+#else /* !MONO_ARCH_SIGSEGV_ON_ALTSTACK */
+
+void
+mono_setup_altstack (MonoJitTlsData *tls)
+{
+}
+
+void
+mono_free_altstack (MonoJitTlsData *tls)
+{
 }
 
 #endif /* MONO_ARCH_SIGSEGV_ON_ALTSTACK */
@@ -1131,7 +1109,7 @@ void
 mono_print_thread_dump (void *sigctx)
 {
 	MonoThread *thread = mono_thread_current ();
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 	MonoContext ctx;
 #endif
 	char *name;
@@ -1149,7 +1127,7 @@ mono_print_thread_dump (void *sigctx)
 	fprintf (stdout, " tid=0x%p this=0x%p:\n", (gpointer)(gsize)thread->tid, thread);
 
 	/* FIXME: */
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 
 	mono_jit_walk_stack_from_ctx (print_stack_frame, &ctx, TRUE, stdout);

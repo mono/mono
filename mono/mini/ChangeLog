@@ -72,6 +72,406 @@
 
 	* linear-scan.c (mono_linear_scan): Update mono_jit_stats.regvars.
 
+Thu Aug 30 16:17:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, driver.c: don't include the cil-coff.h header.
+
+Thu Aug 30 14:50:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: flag places that needs fixes fo soft-float support.
+
+Wed Aug 29 18:26:20 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, inssel-float.brg: fix soft-float constant loads on big
+	endian systems (partially from Dean Jenkins, bug #81924).
+
+2007-08-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (check_linkdemand): Remove embedded reference object in
+	call to LinkDemandSecurityException.
+	(mono_jit_compile_method_inner): Call LinkDemandSecurityException
+	with an IntPtr instead of a reference object.
+
+2007-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_initobj): Handle alignment properly.
+
+	* inssel.brg (mini_emit_memset): Ditto.	
+
+	* inssel.brg (mini_emit_memcpy): Ditto.	
+
+	* inssel-sparc.brg: Ditto.		
+
+	* mini.h mini.c inssel-*.brg: Pass alignment information to OP_MEMCPY/MEMSET.
+
+2007-08-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Skip the first frame for
+	exceptions raised in unmanaged code. Fixes part of #82594.
+
+2007-08-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (mono_method_to_ir), declsec.c
+	(mono_declsec_linkdemand_aptc): Fixed custom attr leaks.
+
+2007-08-22  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.h
+	(MonoDebuggerThreadInfo): New typedef.
+	(mono_debugger_thread_table): New global variable.
+	(mono_debugger_thread_created): New public function.
+	(mono_debugger_thread_cleanup): New public function.
+
+	* debug-debugger.h
+	(MonoDebuggerInfo):
+	- removed `get_current_thread' and `lookup_assembly'.
+	- removed `data_table'.
+	- added `thread_table'.
+
+	* mini.c
+	(mono_thread_start_cb): Call mono_debugger_thread_created().
+	(mono_thread_attach_cb): Likewise.
+	(mini_thread_cleanup): Call mono_debugger_thread_cleanup().
+	(mini_cleanup): Move mono_debug_cleanup() down, after free'ing the
+	initial domain.
+
+	* driver.c (mono_main): Move mono_debug_init() up, before calling
+	mini_init(); mono_debug_init_1() and mono_debug_init_2() are gone.
+
+Tue Aug 21 16:40:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, inssel-x86.brg: group multiple stack adjustments
+	together when passing several arguments of type double (gives a small
+	speedup and saves a few bytes of generated code).
+
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* mini.c (mono_method_to_ir): fix leak on InvalidProgramException.
+
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* mini.c (mono_method_to_ir): throw MethodAccessException
+	and FieldAccessException instead of InvalidProgramException.
+
+2007-08-20  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: CoreCLR security checks.
+
+	* mini.h: Removed MonoSecurityMode (moved to
+	metadata/security-manager.h) and mono_security_mode global var
+	(replaced by set/get functions in security-manager.h).
+
+	* driver.c: Added "core-clr-test" security mode for testing.  Used
+	set-function for setting security mode.
+
+2007-08-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: MonoJitInfo's are freed hazardously now.  Statistics for
+	the new jit_info_table.
+
+	* driver.c: Test code for the new jit_info_table (enabled by the
+	define MONO_JIT_INFO_TABLE_TEST).
+
+2007-08-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix
+	detection of call <REG> instruction sequence. Fixes build on freebsd.
+
+2007-08-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Fix a warning.
+
+2007-08-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_handle_altstack_exception): Enable the new
+	stack overflow handling code on amd64 too.
+
+	* mini-exceptions.c (mono_setup_altstack): Make this use 
+	mono_thread_get_stack_bounds ().
+
+	* mini-x86.h: Disable sigaltstack on solaris x86.
+
+2007-08-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_setup_altstack): Enable this to work on solaris x86.
+
+2007-08-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* tramp-x86.c: Remove some unneeded alignment changes on Apple.  Fixes #82387.
+
+2007-08-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Enable this on amd64 too.
+
+	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Fix a warning.
+
+2007-08-03  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390.c (add_general): Adjust offset calculation to take into account of rounding up
+	due to alignment.
+
+Thu Aug 2 17:36:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: avoid an invalid encoding of unsigned right shift by 0
+	to be emitted (bug #82281).
+
+2007-08-01  Martin Baulig  <martin@ximian.com>
+
+	Merged the `debugger-dublin' branch.
+
+	* debug-debugger.h (MonoDebuggerInfo):
+	Removed the `old_*' compatibility entries.
+	Added `debugger_version' and `data_table'.
+	Renamed `get_method_addr_or_bpt' -> `insert_breakpoint'.
+	Renamed `remove_method_breakpoint' -> `remove_breakpoint'.
+
+	* debug-mini.c
+	(MiniDebugMethodBreakpointInfo): Add `address_list'.
+	(mono_debugger_check_breakpoints): Take a `MonoDebugMethodAddress *'
+	instead of a `gconstpointer'.
+	(mono_debugger_insert_method_breakpoint): Return a
+	`MonoDebugMethodAddressList *'.
+
+2007-06-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `debugger_version'.
+
+2007-08-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h (MONO_INIT_CONTEXT_FROM_FUNC): Avoid using 
+	__builtin_frame_address () since it is broken on older gcc versions.
+
+Tue Jul 31 17:34:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-exceptions.c: added a bit of documentation
+	on the stack overflow handling and made the managed stack overflows
+	catchable in most cases using soft guard pages.
+	* exceptions-x86.c: added code to restore the protection in the soft
+	guard pages at the end of exception handling.
+
+2007-07-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix a warning.
+
+Mon Jul 30 17:43:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h: arch-specific stack overflow
+	exception handling.
+
+Mon Jul 30 17:38:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-alpha.h, mini-ia64.h, mini-sparc.h: disable the altstack
+	signal handling support until it has been ported to the new mechanism.
+	* mini.c: fixed stack overflow detection and use the new
+	architecture code  to handle signals on the altstack.
+
+Mon Jul 30 17:33:02 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-amd64.c, mini-amd64.h: amd64 code to handle
+	stack overflows on the alt stack.
+
+Mon Jul 30 17:29:56 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c, mini-x86.h, mini.h: new code to handle
+	stack overflows on the alt stack.
+
+Mon Jul 30 11:50:06 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: cleanup preparing for altstack support.
+
+Mon Jul 30 11:31:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c: cleanup preparing for altstack support.
+
+2007-07-27  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (print_jit_stats): Output hazard pointer stats.
+
+2007-07-26  Mark Probst  <mark.probst@gmail.com>
+
+	* driver.c, mini.c: Replaced security mode flags with a single
+	enum variable.
+
+Thu Jul 26 20:12:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-exceptions.c: cleanup the sigaltstack code.
+
+2007-07-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini.h, driver.c (mono_main): Added command-line flag
+	(which doesn't do anything yet) for activating Core CLR
+	(Silverlight) security.
+
+Tue Jul 24 21:16:17 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-codegen.c: work around a possible gcc bug on arm.
+
+Tue Jul 24 17:20:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, mini-x86.h, mini-amd64.h: print a nice error
+	message for platforms that don't support AOT compilation.
+
+Mon Jul 23 10:29:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini.c, driver.c: temporary smcs hack.
+
+Mon Jul 23 09:29:34 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.h, mini-arm.c: arm EABI fixes.
+
+2007-07-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Handle the lmf->method == NULL
+	case.
+
+	* tramp-x86.c (mono_arch_create_trampoline_code): Only set lmf->method for
+	trampolines taking a method argument.
+
+	* mini-x86.h (MonoLMF): Add an 'esp' field plus comments.
+
+	* mini-x86.c (mono_arch_emit_prolog): Update after changes to the LMF structure.
+	* tramp-x86.c (mono_arch_create_trampoline_code): Ditto.
+
+	* exceptions-x86.c (mono_arch_get_jit_info): Properly clean up the stack after
+	JIT compilation throws an exception. Fixes #82050.
+
+2007-07-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Removed the MonoLoaderErrorKind enum and replaced it
+	with the MONO_EXCEPTION_ defines.
+
+2007-07-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_find_imt_method): Handle mov reg,IMM64 case. Fixes
+	#82117.
+	
+	* mini-amd64.c (mono_arch_find_imt_method): Add some debug code to help find out
+	the cause of an assertion.
+
+Mon Jul 16 19:31:21 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c: mono_get_inflated_method() is obsolete,
+	removed.
+
+2007-07-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Remove the non-32bit MonoMethod
+	assert. Should fix #82103.
+
+2007-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_jit_walk_stack_from_ctx): Use MONO_CONTEXT_GET_SP ()
+	here too. Fixes #82095.
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Add support for non-32bit MonoMethod
+	addresses.
+
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add a couple asserts.
+
+	* mini-amd64.h: Enable IMT for amd64.
+	
+	* mini-amd64.c (mono_arch_build_imt_thunk): Optimize IMT thunk size.
+
+2007-07-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Add support for IMT call sequences.
+
+2007-07-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (check_linkdemand, mono_method_to_ir): Abort compilation
+	as soon as check_linkdemand sets an exception_type.
+
+Thu Jul 12 12:18:22 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: fixed offsets for IMT call sequence.
+	* mini-x86.h: enable IMT again.
+
+2007-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* trace.c (mono_trace_enter_method): Decode MonoType too.
+
+	* mini-amd64.c (mono_arch_get_vcall_slot_addr): Handle signed displacements too.
+
+	* mini.h mini-x86.h mini-trampolines.c: Change the signature of mono_arch_find_imt_method () to pass the calling code address too.
+
+	* mini-amd64.c: Add preliminary IMT implementation.
+	
+Wed Jul 11 18:21:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: adjusted mono_arch_get_vcall_slot_addr () to
+	understand the new IMT-base interface invocation (thanks to
+	Daniel Nauck for the report and the remote debugging session).
+
+Wed Jul 11 14:54:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: size and speed optimizations for the IMT bsearch.
+
+2007-07-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (aotcheck): Make this actually use the AOTed code.
+
+Wed Jul 11 12:41:32 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: implement AOT IMT support.
+	* mini-x86.h: enable IMT support for wider testing.
+
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (emit_imt_argument): Add aot support here.
+
+	* aot-runtime.c (decode_patch_info): Fix reading of MONO_PATCH_INFO_METHOD.
+
+Tue Jul 10 17:50:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-x86.h, tramp-x86.c: x86 arch-specific changes
+	of the IMT implementation, partially from massi, with my
+	implementation of the bsearch sequence. Disabled by default until
+	the AOT code is implemented.
+
+2007-07-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-x86.md: The source argument of sext_i1/i2 must by a byte reg.
+
+	* inssel-x86.brg: Add reg:ldind.i1(regvar) rules. Fixes #82056.
+
+Tue Jul 10 17:33:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, mini.c, mini.h, mini-trampolines.c:
+	arch-independent IMT JIT code from Massimiliano
+	Mantione (massi@ximian.com) with small cleanups from me.
+
+Tue Jul 10 13:07:24 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: fix svn invocation to get the svn revision to be
+	independent of the local language (build fix).
+
+2007-07-09  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c (inline_method): Reset cfg->exception_type if the
+	inlining is aborted.  Fixes: 82049.
+
+Mon Jul 9 17:26:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: remove assert from exception handling code when exception_ptr
+	is not set.
+
+2007-07-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_codegen): Add an assert.
+
+	* mini-x86.c (mono_arch_emit_prolog): Allocate space for the profiler method 
+	enter and leave code.
+	* mini-amd64.c (mono_arch_emit_prolog): Likewise.
+
+Thu Jul 5 20:12:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed memory corruption for localloc(0)
+	(bug #81852).
+
+2007-07-05  Zoltan Varga  <vargaz@gmail.com>
+	
+	* mini.c: Fix warnings.
+
 Wed Jul 4 15:30:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* optflags-def.h, mini-x86.c: added sse2 optimization flag and use it
@@ -752,7 +1152,6 @@ Thu Mar 8 19:36:13 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c (mono_method_to_ir): Add a workaround for bug #80733.
 
->>>>>>> .merge-right.r76259
 2007-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (type_from_op): Convert CEE_CONV_U to OP_LCONV_TO_U when the argument is
@@ -1731,7 +2130,6 @@ Mon Sep 25 11:05:24 CEST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* method-to-ir.c (mono_method_check_inlining): Fix warnings.
 
-=======
 2006-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (add_valuetype): Fix an uninitialized memory issue.
@@ -2353,7 +2751,6 @@ Sun May 21 12:22:29 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* debug-debugger.c: fix the build. Again. Hopefully Martin will stop
 	reverting changes without reason and without changelog entries.
 
->>>>>>> .merge-right.r61211
 2006-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Add support for large stack offets

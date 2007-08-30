@@ -70,6 +70,8 @@
 
 static MonoReflectionAssembly* ves_icall_System_Reflection_Assembly_GetCallingAssembly (void);
 
+static MonoArray*
+type_array_from_modifiers (MonoImage *image, MonoType *type, int optional);
 
 static inline MonoBoolean
 is_generic_parameter (MonoType *type)
@@ -692,6 +694,25 @@ ves_icall_System_Array_GetGenericValueImpl (MonoObject *this, guint32 pos, gpoin
 }
 
 static void
+ves_icall_System_Array_SetGenericValueImpl (MonoObject *this, guint32 pos, gpointer value)
+{
+	MonoClass *ac;
+	MonoArray *ao;
+	gint32 esize;
+	gpointer *ea;
+
+	MONO_ARCH_SAVE_REGS;
+
+	ao = (MonoArray *)this;
+	ac = (MonoClass *)ao->obj.vtable->klass;
+
+	esize = mono_array_element_size (ac);
+	ea = (gpointer*)((char*)ao->vector + (pos * esize));
+
+	memcpy (ea, value, esize);
+}
+
+static void
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_InitializeArray (MonoArray *array, MonoClassField *field_handle)
 {
 	MonoClass *klass = array->obj.vtable->klass;
@@ -783,6 +804,18 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 	/* This will call the type constructor */
 	if (! (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
 		mono_runtime_class_init (mono_class_vtable (mono_domain_get (), klass));
+}
+
+static void
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (MonoImage *image)
+{
+	MONO_ARCH_SAVE_REGS;
+
+	mono_image_check_for_module_cctor (image);
+	if (image->has_module_cctor) {
+		MonoClass *module_klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | 1);
+		mono_runtime_class_init (mono_class_vtable (mono_domain_get (), module_klass));
+	}
 }
 
 static MonoObject *
@@ -1346,15 +1379,20 @@ ves_icall_System_Reflection_FieldInfo_internal_from_handle (MonoClassField *hand
 	return mono_field_get_object (mono_domain_get (), handle->parent, handle);
 }
 
+static MonoArray*
+ves_icall_System_Reflection_FieldInfo_GetTypeModifiers (MonoReflectionField *field, MonoBoolean optional)
+{
+	MonoType *type = field->field->type;
+
+	return type_array_from_modifiers (field->field->parent->image, type, optional);
+}
+
 static void
 ves_icall_get_method_info (MonoMethod *method, MonoMethodInfo *info)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoMethodSignature* sig;
 	MONO_ARCH_SAVE_REGS;
-
-	if (method->is_inflated)
-		method = mono_get_inflated_method (method);
 
 	sig = mono_method_signature (method);
 	if (!sig) {
@@ -1382,11 +1420,6 @@ ves_icall_get_parameter_info (MonoMethod *method)
 {
 	MonoDomain *domain = mono_domain_get (); 
 
-	MONO_ARCH_SAVE_REGS;
-
-	if (method->is_inflated)
-		method = mono_get_inflated_method (method);
-
 	return mono_param_get_objects (domain, method);
 }
 
@@ -1397,11 +1430,6 @@ ves_icall_System_MonoMethodInfo_get_retval_marshal (MonoMethod *method)
 	MonoReflectionMarshal* res = NULL;
 	MonoMarshalSpec **mspecs;
 	int i;
-
-	MONO_ARCH_SAVE_REGS;
-
-	if (method->is_inflated)
-		method = mono_get_inflated_method (method);
 
 	mspecs = g_new (MonoMarshalSpec*, mono_method_signature (method)->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
@@ -1583,19 +1611,18 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 
 			if (mono_class_is_nullable (mono_class_from_mono_type (cf->type))) {
 				MonoClass *nklass = mono_class_from_mono_type (cf->type);
-				guint8 *buf;
+				MonoObject *nullable;
 
 				/* 
 				 * Convert the boxed vtype into a Nullable structure.
 				 * This is complicated by the fact that Nullables have
 				 * a variable structure.
 				 */
-				/* Allocate using alloca so it gets GC tracking */
-				buf = alloca (nklass->instance_size);
+				nullable = mono_object_new (mono_domain_get (), nklass);
 
-				mono_nullable_init (buf, value, nklass);
+				mono_nullable_init (mono_object_unbox (nullable), value, nklass);
 
-				v = (gchar*)buf;
+				v = mono_object_unbox (nullable);
 			}
 			else 
 				if (gclass->container_class->valuetype && (v != NULL))
@@ -1622,7 +1649,7 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 static MonoReflectionType*
 ves_icall_MonoGenericMethod_get_ReflectedType (MonoReflectionGenericMethod *rmethod)
 {
-	MonoMethod *method = mono_get_inflated_method (rmethod->method.method);
+	MonoMethod *method = rmethod->method.method;
 
 	return mono_type_get_object (mono_object_domain (rmethod), &method->klass->byval_arg);
 }
@@ -2595,12 +2622,11 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 
 	MONO_ARCH_SAVE_REGS;
 
-	if (!method->method->is_inflated) {
-		if (mono_method_signature (method->method)->generic_param_count)
-			return method;
+	if (method->method->generic_container)
+		return method;
 
+	if (!method->method->is_inflated)
 		return NULL;
-	}
 
 	imethod = (MonoMethodInflated *) method->method;
 
@@ -2624,8 +2650,7 @@ ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method
 {
 	MONO_ARCH_SAVE_REGS;
 
-	return method->method->generic_container &&
-		(mono_method_signature (method->method)->generic_param_count != 0);
+	return method->method->generic_container != NULL;
 }
 
 static MonoArray*
@@ -2674,7 +2699,7 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	 * is stupid), mono_runtime_invoke_*() calls the provided method, allowing
 	 * greater flexibility.
 	 */
-	MonoMethod *m = mono_get_inflated_method (method->method);
+	MonoMethod *m = method->method;
 	int pcount;
 	void *obj = this;
 
@@ -3073,9 +3098,15 @@ ves_icall_Type_GetField (MonoReflectionType *type, MonoString *name, guint32 bfl
 	compare_func = (bflags & BFLAGS_IgnoreCase) ? g_strcasecmp : strcmp;
 
 handle_parent:
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	iter = NULL;
 	while ((field = mono_class_get_fields (klass, &iter))) {
 		match = 0;
+
+		if (field->type == NULL)
+			continue;
 		if (mono_field_is_deleted (field))
 			continue;
 		if ((field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) == FIELD_ATTRIBUTE_PUBLIC) {
@@ -3139,6 +3170,9 @@ ves_icall_Type_GetFields_internal (MonoReflectionType *type, guint32 bflags, Mon
 	len = 2;
 	res = mono_array_new (domain, mono_defaults.field_info_class, len);
 handle_parent:	
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	iter = NULL;
 	while ((field = mono_class_get_fields (klass, &iter))) {
 		match = 0;
@@ -3222,7 +3256,10 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 
 	mono_class_setup_vtable (klass);
 
-	nslots = MONO_CLASS_IS_INTERFACE (klass) ? mono_class_num_methods (klass) : klass->vtable_size;
+	if (is_generic_parameter (type->type))
+		nslots = klass->parent->vtable_size;
+	else
+		nslots = MONO_CLASS_IS_INTERFACE (klass) ? mono_class_num_methods (klass) : klass->vtable_size;
 	if (nslots >= sizeof (method_slots_default) * 8) {
 		method_slots = g_new0 (guint32, nslots / 32 + 1);
 	} else {
@@ -3234,6 +3271,9 @@ ves_icall_Type_GetMethodsByName (MonoReflectionType *type, MonoString *name, gui
 	res = mono_array_new (domain, mono_defaults.method_info_class, len);
 handle_parent:
 	mono_class_setup_vtable (klass);
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
 		match = 0;
@@ -3322,6 +3362,9 @@ ves_icall_Type_GetConstructors_internal (MonoReflectionType *type, guint32 bflag
 		return mono_array_new (domain, mono_defaults.method_info_class, 0);
 	klass = startklass = mono_class_from_mono_type (type->type);
 	refklass = mono_class_from_mono_type (reftype->type);
+
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
 
 	if (!System_Reflection_ConstructorInfo)
 		System_Reflection_ConstructorInfo = mono_class_from_name (
@@ -3426,6 +3469,14 @@ ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, 
 	res = mono_array_new (domain, System_Reflection_PropertyInfo, len);
 handle_parent:
 	mono_class_setup_vtable (klass);
+	if (klass->exception_type != MONO_EXCEPTION_NONE) {
+		if (method_slots != method_slots_default)
+			g_free (method_slots);
+		if (name != NULL)
+			g_free (propname);
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+	}
+
 	iter = NULL;
 	while ((prop = mono_class_get_properties (klass, &iter))) {
 		match = 0;
@@ -3522,6 +3573,9 @@ ves_icall_MonoType_GetEvent (MonoReflectionType *type, MonoString *name, guint32
 	domain = mono_object_domain (type);
 
 handle_parent:	
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	iter = NULL;
 	while ((event = mono_class_get_events (klass, &iter))) {
 		if (strcmp (event->name, event_name))
@@ -3583,6 +3637,9 @@ ves_icall_Type_GetEvents_internal (MonoReflectionType *type, guint32 bflags, Mon
 	len = 2;
 	res = mono_array_new (domain, System_Reflection_EventInfo, len);
 handle_parent:	
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	iter = NULL;
 	while ((event = mono_class_get_events (klass, &iter))) {
 		match = 0;
@@ -3663,6 +3720,9 @@ ves_icall_Type_GetNestedType (MonoReflectionType *type, MonoString *name, guint3
 	str = mono_string_to_utf8 (name);
 
  handle_parent:
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
+
 	/*
 	 * If a nested type is generic, return its generic type definition.
 	 * Note that this means that the return value is essentially a
@@ -3715,6 +3775,8 @@ ves_icall_Type_GetNestedTypes (MonoReflectionType *type, guint32 bflags)
 	if (type->type->byref)
 		return mono_array_new (domain, mono_defaults.monotype_class, 0);
 	klass = mono_class_from_mono_type (type->type);
+	if (klass->exception_type != MONO_EXCEPTION_NONE)
+		mono_raise_exception (mono_class_get_exception_for_failure (klass));
 
 	/*
 	 * If a nested type is generic, return its generic type definition.
@@ -4463,8 +4525,10 @@ ves_icall_System_MonoType_getFullName (MonoReflectionType *object, gboolean full
 	if (!name)
 		return NULL;
 
-	if (full_name && (object->type->type == MONO_TYPE_VAR || object->type->type == MONO_TYPE_MVAR))
+	if (full_name && (object->type->type == MONO_TYPE_VAR || object->type->type == MONO_TYPE_MVAR)) {
+		g_free (name);
 		return NULL;
+	}
 
 	res = mono_string_new (domain, name);
 	g_free (name);
@@ -4869,13 +4933,8 @@ ves_icall_System_Reflection_Module_GetPEKind (MonoImage *image, gint32 *pe_kind,
 }
 
 static gint32
-ves_icall_System_Reflection_Module_get_MDStreamVersion (MonoReflectionModule *module)
+ves_icall_System_Reflection_Module_GetMDStreamVersion (MonoImage *image)
 {
-	MonoImage *image = module->image;
-
-	if (!image)
-		mono_raise_exception (mono_get_exception_not_supported (""));
-	
 	return (image->md_version_major << 16) | (image->md_version_minor);
 }
 
@@ -4901,12 +4960,28 @@ mono_metadata_memberref_is_method (MonoImage *image, guint32 token)
 	return (*sig != 0x6);
 }
 
+static void
+init_generic_context_from_args (MonoGenericContext *context, MonoArray *type_args, MonoArray *method_args)
+{
+	if (type_args)
+		context->class_inst = mono_metadata_get_generic_inst (mono_array_length (type_args),
+								      mono_array_addr (type_args, MonoType*, 0));
+	else
+		context->class_inst = NULL;
+	if (method_args)
+		context->method_inst = mono_metadata_get_generic_inst (mono_array_length (method_args),
+								       mono_array_addr (method_args, MonoType*, 0));
+	else
+		context->method_inst = NULL;
+}
+
 static MonoType*
-ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 token, MonoResolveTokenError *error)
+ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 token, MonoArray *type_args, MonoArray *method_args, MonoResolveTokenError *error)
 {
 	MonoClass *klass;
 	int table = mono_metadata_token_table (token);
 	int index = mono_metadata_token_index (token);
+	MonoGenericContext context;
 
 	*error = ResolveTokenError_Other;
 
@@ -4917,15 +4992,20 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 		return NULL;
 	}
 
-	if (image->dynamic)
+	if (image->dynamic) {
+		if (type_args || method_args)
+			mono_raise_exception (mono_get_exception_not_implemented (NULL));
 		return mono_lookup_dynamic_token (image, token);
+	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
 		*error = ResolveTokenError_OutOfRange;
 		return NULL;
 	}
 
-	klass = mono_class_get (image, token);
+	init_generic_context_from_args (&context, type_args, method_args);
+	klass = mono_class_get_full (image, token, &context);
+
 	if (klass)
 		return &klass->byval_arg;
 	else
@@ -4933,10 +5013,12 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 }
 
 static MonoMethod*
-ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32 token, MonoResolveTokenError *error)
+ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32 token, MonoArray *type_args, MonoArray *method_args, MonoResolveTokenError *error)
 {
 	int table = mono_metadata_token_table (token);
 	int index = mono_metadata_token_index (token);
+	MonoGenericContext context;
+	MonoMethod *method;
 
 	*error = ResolveTokenError_Other;
 
@@ -4947,9 +5029,12 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 		return NULL;
 	}
 
-	if (image->dynamic)
+	if (image->dynamic) {
+		if (type_args || method_args)
+			mono_raise_exception (mono_get_exception_not_implemented (NULL));
 		/* FIXME: validate memberref token type */
 		return mono_lookup_dynamic_token (image, token);
+	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
 		*error = ResolveTokenError_OutOfRange;
@@ -4960,7 +5045,10 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 		return NULL;
 	}
 
-	return mono_get_method (image, token, NULL);
+	init_generic_context_from_args (&context, type_args, method_args);
+	method = mono_get_method_full (image, token, NULL, &context);
+
+	return method;
 }
 
 static MonoString*
@@ -4990,11 +5078,13 @@ ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32
 }
 
 static MonoClassField*
-ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 token, MonoResolveTokenError *error)
+ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 token, MonoArray *type_args, MonoArray *method_args, MonoResolveTokenError *error)
 {
 	MonoClass *klass;
 	int table = mono_metadata_token_table (token);
 	int index = mono_metadata_token_index (token);
+	MonoGenericContext context;
+	MonoClassField *field;
 
 	*error = ResolveTokenError_Other;
 
@@ -5004,9 +5094,12 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 		return NULL;
 	}
 
-	if (image->dynamic)
+	if (image->dynamic) {
+		if (type_args || method_args)
+			mono_raise_exception (mono_get_exception_not_implemented (NULL));
 		/* FIXME: validate memberref token type */
 		return mono_lookup_dynamic_token (image, token);
+	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
 		*error = ResolveTokenError_OutOfRange;
@@ -5017,12 +5110,15 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 		return NULL;
 	}
 
-	return mono_field_from_token (image, token, &klass, NULL);
+	init_generic_context_from_args (&context, type_args, method_args);
+	field = mono_field_from_token (image, token, &klass, &context);
+	
+	return field;
 }
 
 
 static MonoObject*
-ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32 token, MonoResolveTokenError *error)
+ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32 token, MonoArray *type_args, MonoArray *method_args, MonoResolveTokenError *error)
 {
 	int table = mono_metadata_token_table (token);
 
@@ -5032,7 +5128,7 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	case MONO_TABLE_TYPEDEF:
 	case MONO_TABLE_TYPEREF:
 	case MONO_TABLE_TYPESPEC: {
-		MonoType *t = ves_icall_System_Reflection_Module_ResolveTypeToken (image, token, error);
+		MonoType *t = ves_icall_System_Reflection_Module_ResolveTypeToken (image, token, type_args, method_args, error);
 		if (t)
 			return (MonoObject*)mono_type_get_object (mono_domain_get (), t);
 		else
@@ -5040,14 +5136,14 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	}
 	case MONO_TABLE_METHOD:
 	case MONO_TABLE_METHODSPEC: {
-		MonoMethod *m = ves_icall_System_Reflection_Module_ResolveMethodToken (image, token, error);
+		MonoMethod *m = ves_icall_System_Reflection_Module_ResolveMethodToken (image, token, type_args, method_args, error);
 		if (m)
 			return (MonoObject*)mono_method_get_object (mono_domain_get (), m, m->klass);
 		else
 			return NULL;
 	}		
 	case MONO_TABLE_FIELD: {
-		MonoClassField *f = ves_icall_System_Reflection_Module_ResolveFieldToken (image, token, error);
+		MonoClassField *f = ves_icall_System_Reflection_Module_ResolveFieldToken (image, token, type_args, method_args, error);
 		if (f)
 			return (MonoObject*)mono_field_get_object (mono_domain_get (), f->parent, f);
 		else
@@ -5055,14 +5151,14 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	}
 	case MONO_TABLE_MEMBERREF:
 		if (mono_metadata_memberref_is_method (image, token)) {
-			MonoMethod *m = ves_icall_System_Reflection_Module_ResolveMethodToken (image, token, error);
+			MonoMethod *m = ves_icall_System_Reflection_Module_ResolveMethodToken (image, token, type_args, method_args, error);
 			if (m)
 				return (MonoObject*)mono_method_get_object (mono_domain_get (), m, m->klass);
 			else
 				return NULL;
 		}
 		else {
-			MonoClassField *f = ves_icall_System_Reflection_Module_ResolveFieldToken (image, token, error);
+			MonoClassField *f = ves_icall_System_Reflection_Module_ResolveFieldToken (image, token, type_args, method_args, error);
 			if (f)
 				return (MonoObject*)mono_field_get_object (mono_domain_get (), f->parent, f);
 			else
@@ -5075,6 +5171,38 @@ ves_icall_System_Reflection_Module_ResolveMemberToken (MonoImage *image, guint32
 	}
 
 	return NULL;
+}
+
+static MonoArray*
+ves_icall_System_Reflection_Module_ResolveSignature (MonoImage *image, guint32 token, MonoResolveTokenError *error)
+{
+	int table = mono_metadata_token_table (token);
+	int idx = mono_metadata_token_index (token);
+	MonoTableInfo *tables = image->tables;
+	guint32 sig, len;
+	const char *ptr;
+	MonoArray *res;
+
+	*error = ResolveTokenError_OutOfRange;
+
+	/* FIXME: Support other tables ? */
+	if (table != MONO_TABLE_STANDALONESIG)
+		return NULL;
+
+	if (image->dynamic)
+		return NULL;
+
+	if ((idx == 0) || (idx > tables [MONO_TABLE_STANDALONESIG].rows))
+		return NULL;
+
+	sig = mono_metadata_decode_row_col (&tables [MONO_TABLE_STANDALONESIG], idx - 1, 0);
+
+	ptr = mono_metadata_blob_heap (image, sig);
+	len = mono_metadata_decode_blob_size (ptr, &ptr);
+
+	res = mono_array_new (mono_domain_get (), mono_defaults.byte_class, len);
+	memcpy (mono_array_addr (res, guint8, 0), ptr, len);
+	return res;
 }
 
 static MonoReflectionType*
@@ -6400,7 +6528,7 @@ ves_icall_MonoDebugger_GetMethodToken (MonoReflectionMethod *method)
 }
 
 /*
- * We eturn NULL for no modifiers so the corlib code can return Type.EmptyTypes
+ * We return NULL for no modifiers so the corlib code can return Type.EmptyTypes
  * and avoid useless allocations.
  */
 static MonoArray*

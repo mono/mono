@@ -171,7 +171,10 @@ enum {
 	MONO_EXCEPTION_UNVERIFIABLE_IL = 4,
 	MONO_EXCEPTION_MISSING_METHOD = 5,
 	MONO_EXCEPTION_MISSING_FIELD = 6,
-	MONO_EXCEPTION_TYPE_LOAD = 7
+	MONO_EXCEPTION_TYPE_LOAD = 7,
+	MONO_EXCEPTION_FILE_NOT_FOUND = 8,
+	MONO_EXCEPTION_METHOD_ACCESS = 9,
+	MONO_EXCEPTION_FIELD_ACCESS = 10,
 	/* add other exception type */
 };
 
@@ -337,9 +340,12 @@ struct MonoVTable {
 	guint remote          : 1; /* class is remotely activated */
 	guint initialized     : 1; /* cctor has been run */
 	guint init_failed     : 1; /* cctor execution failed */
+	guint32     imt_collisions_bitmap;
 	/* do not add any fields after vtable, the structure is dynamically extended */
         gpointer    vtable [MONO_ZERO_LEN_ARRAY];	
 };
+
+#define MONO_VTABLE_IMPLEMENTS_INTERFACE(vt,uiid) (((uiid) <= (vt)->max_interface_id) && ((vt)->interface_bitmap [(uiid) >> 3] & (1 << ((uiid)&7))))
 
 /*
  * Generic instantiation data type encoding.
@@ -355,7 +361,6 @@ struct _MonoGenericInst {
 	guint id;			/* unique ID for debugging */
 	guint type_argc    : 22;	/* number of type arguments */
 	guint is_open      :  1;	/* if this is an open type */
-	guint is_reference :  1;	/* if this is a reference type */
 	MonoType **type_argv;
 };
 
@@ -426,8 +431,6 @@ struct _MonoGenericContainer {
 	/* If we're a generic method definition in a generic type definition,
 	   the generic container of the containing class. */
 	MonoGenericContainer *parent;
-	/* If we're a generic method definition, caches all their instantiations. */
-	GHashTable *method_hash;
 	/* the generic type definition or the generic method definition corresponding to this container */
 	union {
 		MonoClass *klass;
@@ -486,18 +489,8 @@ typedef struct {
 	MonoMethodSignature *sig;
 } MonoJitICallInfo;
 
-/*
- * Information about a type load error encountered by the loader.
- */
-typedef enum {
-	MONO_LOADER_ERROR_TYPE,
-	MONO_LOADER_ERROR_METHOD,
-	MONO_LOADER_ERROR_FIELD,
-	MONO_LOADER_ERROR_ASSEMBLY
-} MonoLoaderErrorKind;
-
 typedef struct {
-	MonoLoaderErrorKind kind;
+	guint8 exception_type;
 	char *class_name; /* If kind == TYPE */
 	char *assembly_name; /* If kind == TYPE or ASSEMBLY */
 	MonoClass *klass; /* If kind != TYPE */
@@ -524,6 +517,18 @@ typedef struct {
 	gulong dynamic_code_alloc_count;
 	gulong dynamic_code_bytes_count;
 	gulong dynamic_code_frees_count;
+	gulong imt_tables_size;
+	gulong imt_number_of_tables;
+	gulong imt_number_of_methods;
+	gulong imt_used_slots;
+	gulong imt_slots_with_collisions;
+	gulong imt_max_collisions_in_slot;
+	gulong imt_method_count_when_max_collisions;
+	gulong imt_thunks_size;
+	gulong jit_info_table_insert_count;
+	gulong jit_info_table_remove_count;
+	gulong jit_info_table_lookup_count;
+	gulong hazardous_pointer_count;
 	gboolean enabled;
 } MonoStats;
 
@@ -648,6 +653,8 @@ mono_generic_class_get_class (MonoGenericClass *gclass) MONO_INTERNAL;
 MonoMethod*
 mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context);
 
+MonoMethodInflated*
+mono_method_inflated_lookup (MonoMethodInflated* method, gboolean cache) MONO_INTERNAL;
 
 typedef struct {
 	MonoImage *corlib;
@@ -819,6 +826,16 @@ void mono_object_describe        (MonoObject *obj);
 void mono_object_describe_fields (MonoObject *obj);
 void mono_value_describe_fields  (MonoClass* klass, const char* addr);
 void mono_class_describe_statics (MonoClass* klass);
+
+/*Enum validation related functions*/
+gboolean
+mono_type_is_valid_enum_basetype (MonoType * type);
+
+gboolean
+mono_class_is_valid_enum (MonoClass *klass);
+
+MonoType *
+mono_type_get_full        (MonoImage *image, guint32 type_token, MonoGenericContext *context) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */
 

@@ -31,9 +31,34 @@ typedef struct {
 	int loader_optimization;
 	MonoBoolean disallow_binding_redirects;
 	MonoBoolean disallow_code_downloads;
+	MonoObject *activation_arguments; /* it is System.Object in 1.x, ActivationArguments in 2.0 */
+	MonoObject *domain_initializer;
+	MonoArray *domain_initializer_args;
+	MonoObject *application_trust; /* it is System.Object in 1.x, ApplicationTrust in 2.0 */
+	MonoBoolean disallow_appbase_probe;
+	MonoArray *configuration_bytes;
 } MonoAppDomainSetup;
 
-typedef GArray MonoJitInfoTable;
+typedef struct _MonoJitInfoTable MonoJitInfoTable;
+typedef struct _MonoJitInfoTableChunk MonoJitInfoTableChunk;
+
+#define MONO_JIT_INFO_TABLE_CHUNK_SIZE		64
+
+struct _MonoJitInfoTableChunk
+{
+	int		       refcount;
+	volatile int           num_elements;
+	volatile gint8        *last_code_end;
+	MonoJitInfo * volatile data [MONO_JIT_INFO_TABLE_CHUNK_SIZE];
+};
+
+struct _MonoJitInfoTable
+{
+	int			num_chunks;
+	MonoJitInfoTableChunk  *chunks [MONO_ZERO_LEN_ARRAY];
+};
+
+typedef GArray MonoAotModuleInfoTable;
 
 typedef struct {
 	guint32  flags;
@@ -121,6 +146,7 @@ struct _MonoDomain {
 	guint32            state;
 	/* Needed by Thread:GetDomainID() */
 	gint32             domain_id;
+	gint32             shadow_serial;
 	GSList             *domain_assemblies;
 	MonoAssembly       *entry_assembly;
 	char               *friendly_name;
@@ -130,9 +156,12 @@ struct _MonoDomain {
 	MonoInternalHashTable jit_code_hash;
 	/* maps MonoMethod -> MonoJitDynamicMethodInfo */
 	GHashTable         *dynamic_code_hash;
-	MonoJitInfoTable   *jit_info_table;
+	MonoJitInfoTable * 
+	  volatile          jit_info_table;
 	/* Used when loading assemblies */
 	gchar **search_path;
+	gchar *private_bin_path;
+	
 	/* Used by remoting proxies */
 	MonoMethod         *create_proxy_for_type_method;
 	MonoMethod         *private_invoke_method;

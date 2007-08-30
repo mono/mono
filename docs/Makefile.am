@@ -1,15 +1,34 @@
 EXTRA_DIST = \
+	abc-removal.txt		\
 	aot-compiler.txt	\
 	assembly-bundle		\
-	embedded-api 		\
-	exceptions  		\
-	gc-issues  		\
+	embedded-api		\
+	exception-handling.txt	\
+	exceptions		\
+	file-share-modes	\
+	gc-issues		\
+	gc-variables-in-c	\
+	glossary.txt		\
+	internal-calls		\
+	ir-desc			\
+	jit-imt			\
+	jit-regalloc		\
 	jit-thoughts		\
 	jit-trampolines		\
 	local-regalloc.txt	\
+	magic.diff		\
 	mini-doc.txt		\
 	mini-porting.txt	\
+	mono_handle_d		\
+	new-regalloc		\
+	object-layout		\
 	opcode-decomp.txt	\
-	object-layout	 	\
-	unmanaged-calls 	\
-	stack-alignment
+	precise-gc		\
+	release-notes-1.0.html	\
+	remoting		\
+	ssapre.txt		\
+	stack-alignment		\
+	threading		\
+	thread-safety.txt	\
+	tree-mover.txt		\
+	unmanaged-calls	

@@ -1,3 +1,8 @@
+
+Mon Jul 16 19:45:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* get.c: mono_get_inflated_method () is obsolete, removed.
+
 2007-06-15  Raja R Harinath  <rharinath@novell.com>
 
 	* get.c (dis_stringify_object_with_class): Update to changes in

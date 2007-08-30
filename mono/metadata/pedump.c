@@ -262,6 +262,14 @@ dsh (const char *label, MonoImage *meta, MonoStreamHeader *sh)
 }
 
 static void
+dump_metadata_header (MonoImage *meta)
+{
+	printf ("\nMetadata header:\n");
+	printf ("           Version: %d.%d\n", meta->md_version_major, meta->md_version_minor);
+	printf ("    Version string: %s\n", meta->version);
+}
+
+static void
 dump_metadata_ptrs (MonoImage *meta)
 {
 	printf ("\nMetadata pointers:\n");
@@ -276,7 +284,9 @@ static void
 dump_metadata (MonoImage *meta)
 {
 	int table;
-	
+
+	dump_metadata_header (meta);
+
 	dump_metadata_ptrs (meta);
 
 	printf ("Rows:\n");
@@ -414,10 +424,10 @@ main (int argc, char *argv [])
 		usage ();
 
 	mono_metadata_init ();
-        mono_raw_buffer_init ();
-        mono_images_init ();
-        mono_assemblies_init ();
-        mono_loader_init ();
+	mono_raw_buffer_init ();
+	mono_images_init ();
+	mono_assemblies_init ();
+	mono_loader_init ();
  
 	image = mono_image_open (file, NULL);
 	if (!image){
@@ -442,7 +452,7 @@ main (int argc, char *argv [])
 				g_print ("Unknown verify flag %s\n", tok);
 			tok = strtok (NULL, ",");
 		}
-		mono_init (file);
+		mono_init_from_assembly (file, file);
 		assembly = mono_assembly_open (file, NULL);
 
 		if (!assembly) {

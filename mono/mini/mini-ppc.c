@@ -2806,7 +2806,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_srawi (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
 			break;
 		case OP_SHR_UN_IMM:
-			ppc_rlwinm (code, ins->dreg, ins->sreg1, (32 - (ins->inst_imm & 0x1f)), (ins->inst_imm & 0x1f), 31);
+			if (ins->inst_imm)
+				ppc_rlwinm (code, ins->dreg, ins->sreg1, (32 - (ins->inst_imm & 0x1f)), (ins->inst_imm & 0x1f), 31);
+			else
+				ppc_mr (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_SHR_UN:
 			ppc_srw (code, ins->dreg, ins->sreg1, ins->sreg2);
@@ -2985,8 +2988,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_rlwinm (code, ppc_r11, ppc_r11, 0, 0, 27);
 			/* use ctr to store the number of words to 0 if needed */
 			if (ins->flags & MONO_INST_INIT) {
-				/* we zero 4 bytes at a time */
-				ppc_addi (code, ppc_r0, ins->sreg1, 3);
+				/* we zero 4 bytes at a time:
+				 * we add 7 instead of 3 so that we set the counter to
+				 * at least 1, otherwise the bdnz instruction will make
+				 * it negative and iterate billions of times.
+				 */
+				ppc_addi (code, ppc_r0, ins->sreg1, 7);
 				ppc_srawi (code, ppc_r0, ppc_r0, 2);
 				ppc_mtctr (code, ppc_r0);
 			}
@@ -2996,7 +3003,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			
 			if (ins->flags & MONO_INST_INIT) {
 				/* adjust the dest reg by -4 so we can use stwu */
-				ppc_addi (code, ins->dreg, ppc_sp, (area_offset - 4));
+				/* we actually adjust -8 because we let the loop
+				 * run at least once
+				 */
+				ppc_addi (code, ins->dreg, ppc_sp, (area_offset - 8));
 				ppc_li (code, ppc_r11, 0);
 				zero_loop_start = code;
 				ppc_stwu (code, ppc_r11, 4, ins->dreg);

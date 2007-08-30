@@ -45,6 +45,13 @@
 
 #define MONO_CORLIB_VERSION 58
 
+typedef struct
+{
+	int runtime_count;
+	int assemblybinding_count;
+	MonoDomain *domain;
+} RuntimeConfig;
+
 CRITICAL_SECTION mono_delegate_section;
 
 static gunichar2 process_guid [36];
@@ -222,6 +229,10 @@ mono_runtime_cleanup (MonoDomain *domain)
 	mono_type_initialization_cleanup ();
 
 	mono_monitor_cleanup ();
+
+#ifndef PLATFORM_WIN32
+	_wapi_cleanup ();
+#endif
 }
 
 static MonoDomainFunc quit_function = NULL;
@@ -480,6 +491,111 @@ ves_icall_System_AppDomain_getRootDomain ()
 	return root->domain;
 }
 
+static char*
+get_attribute_value (const gchar **attribute_names, 
+		     const gchar **attribute_values, 
+		     const char *att_name)
+{
+	int n;
+	for (n = 0; attribute_names [n] != NULL; n++) {
+		if (strcmp (attribute_names [n], att_name) == 0)
+			return g_strdup (attribute_values [n]);
+	}
+	return NULL;
+}
+
+static void
+start_element (GMarkupParseContext *context, 
+	       const gchar         *element_name,
+	       const gchar        **attribute_names,
+	       const gchar        **attribute_values,
+	       gpointer             user_data,
+	       GError             **error)
+{
+	RuntimeConfig *runtime_config = user_data;
+	
+	if (strcmp (element_name, "runtime") == 0) {
+		runtime_config->runtime_count++;
+		return;
+	}
+
+	if (strcmp (element_name, "assemblyBinding") == 0) {
+		runtime_config->assemblybinding_count++;
+		return;
+	}
+	
+	if (runtime_config->runtime_count != 1 || runtime_config->assemblybinding_count != 1)
+		return;
+
+	if (strcmp (element_name, "probing") != 0)
+		return;
+
+	g_free (runtime_config->domain->private_bin_path);
+	runtime_config->domain->private_bin_path = get_attribute_value (attribute_names, attribute_values, "privatePath");
+	if (runtime_config->domain->private_bin_path && !runtime_config->domain->private_bin_path [0]) {
+		g_free (runtime_config->domain->private_bin_path);
+		runtime_config->domain->private_bin_path = NULL;
+		return;
+	}
+}
+
+static void
+end_element (GMarkupParseContext *context,
+	     const gchar         *element_name,
+	     gpointer             user_data,
+	     GError             **error)
+{
+	RuntimeConfig *runtime_config = user_data;
+	if (strcmp (element_name, "runtime") == 0)
+		runtime_config->runtime_count--;
+	else if (strcmp (element_name, "assemblyBinding") == 0)
+		runtime_config->assemblybinding_count--;
+}
+
+static const GMarkupParser
+mono_parser = {
+	start_element,
+	end_element,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void
+mono_set_private_bin_path_from_config (MonoDomain *domain)
+{
+	gchar *config_file, *text;
+	gsize len;
+	struct stat sbuf;
+	GMarkupParseContext *context;
+	RuntimeConfig runtime_config;
+	
+	if (!domain || !domain->setup || !domain->setup->configuration_file)
+		return;
+
+	config_file = mono_string_to_utf8 (domain->setup->configuration_file);
+	if (stat (config_file, &sbuf) != 0) {
+		g_free (config_file);
+		return;
+	}
+
+	if (!g_file_get_contents (config_file, &text, &len, NULL)) {
+		g_free (config_file);
+		return;
+	}
+	g_free (config_file);
+
+	runtime_config.runtime_count = 0;
+	runtime_config.assemblybinding_count = 0;
+	runtime_config.domain = domain;
+	
+	context = g_markup_parse_context_new (&mono_parser, 0, &runtime_config, NULL);
+	if (g_markup_parse_context_parse (context, text, len, NULL))
+		g_markup_parse_context_end_parse (context, NULL);
+	g_markup_parse_context_free (context);
+	g_free (text);
+}
+
 MonoAppDomain *
 ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomainSetup *setup)
 {
@@ -508,6 +624,8 @@ ves_icall_System_AppDomain_createDomain (MonoString *friendly_name, MonoAppDomai
 			MONO_OBJECT_SETREF (setup, application_base, mono_string_new_utf16 (data, mono_string_chars (root->setup->application_base), mono_string_length (root->setup->application_base)));
 	}
 
+	mono_set_private_bin_path_from_config (data);
+	
 	mono_context_init (data);
 
 	add_assemblies_to_domain (data, mono_defaults.corlib->assembly, NULL);
@@ -696,7 +814,7 @@ set_domain_search_path (MonoDomain *domain)
 {
 	MonoAppDomainSetup *setup;
 	gchar **tmp;
-	gchar *utf8;
+	gchar *search_path = NULL;
 	gint i;
 	gint npaths = 0;
 	gchar **pvt_split = NULL;
@@ -713,10 +831,43 @@ set_domain_search_path (MonoDomain *domain)
 		return; /* Must set application base to get private path working */
 
 	npaths++;
-	if (setup->private_bin_path) {
-		utf8 = mono_string_to_utf8 (setup->private_bin_path);
-		pvt_split = g_strsplit (utf8, G_SEARCHPATH_SEPARATOR_S, 1000);
-		g_free (utf8);
+	
+	if (setup->private_bin_path)
+		search_path = mono_string_to_utf8 (setup->private_bin_path);
+	
+	if (domain->private_bin_path) {
+		if (search_path == NULL)
+			search_path = domain->private_bin_path;
+		else {
+			gchar *tmp2 = search_path;
+			search_path = g_strjoin (";", search_path, domain->private_bin_path, NULL);
+			g_free (tmp2);
+		}
+	}
+	
+	if (search_path) {
+		/*
+		 * As per MSDN documentation, AppDomainSetup.PrivateBinPath contains a list of
+		 * directories relative to ApplicationBase separated by semicolons (see
+		 * http://msdn2.microsoft.com/en-us/library/system.appdomainsetup.privatebinpath.aspx)
+		 * The loop below copes with the fact that some Unix applications may use ':' (or
+		 * System.IO.Path.PathSeparator) as the path search separator. We replace it with
+		 * ';' for the subsequent split.
+		 *
+		 * The issue was reported in bug #81446
+		 */
+
+#ifndef PLATFORM_WIN32
+		gint slen;
+
+		slen = strlen (search_path);
+		for (i = 0; i < slen; i++)
+			if (search_path [i] == ':')
+				search_path [i] = ';';
+#endif
+		
+		pvt_split = g_strsplit (search_path, ";", 1000);
+		g_free (search_path);
 		for (tmp = pvt_split; *tmp; tmp++, npaths++);
 	}
 
@@ -819,6 +970,7 @@ shadow_copy_sibling (gchar *src, gint srclen, const char *extension, gchar *targ
 	strcpy (target + targetlen - tail_len, extension);
 	dest = g_utf8_to_utf16 (target, strlen (target), NULL, NULL, NULL);
 	
+	DeleteFile (dest);
 	copy_result = CopyFile (orig, dest, FALSE);
 	g_free (orig);
 	g_free (dest);
@@ -851,21 +1003,22 @@ get_shadow_assembly_location (const char *filename)
 {
 	gint32 hash = 0, hash2 = 0;
 	char name_hash [9];
-	char path_hash [19];
+	char path_hash [30];
 	char *bname = g_path_get_basename (filename);
+	char *dirname = g_path_get_dirname (filename);
+	char *location, *dyn_base;
 	MonoDomain *domain = mono_domain_get ();
 	
 	hash = get_cstring_hash (bname);
-	hash2 = get_cstring_hash (g_path_get_dirname (filename));
+	hash2 = get_cstring_hash (dirname);
 	g_snprintf (name_hash, sizeof (name_hash), "%08x", hash);
-	g_snprintf (path_hash, sizeof (path_hash), "%08x_%08x", hash ^ hash2, hash2);
-	return g_build_filename (mono_string_to_utf8 (domain->setup->dynamic_base), 
-				 "assembly", 
-				 "shadow", 
-				 name_hash,
-				 path_hash,
-				 bname, 
-				 NULL);
+	g_snprintf (path_hash, sizeof (path_hash), "%08x_%08x_%08x", hash ^ hash2, hash2, domain->shadow_serial);
+	dyn_base = mono_string_to_utf8 (domain->setup->dynamic_base);
+	location = g_build_filename (dyn_base, "assembly", "shadow", name_hash, path_hash, bname, NULL);
+	g_free (dyn_base);
+	g_free (bname);
+	g_free (dirname);
+	return location;
 }
 
 static gboolean
@@ -969,6 +1122,7 @@ make_shadow_copy (const char *filename)
 
 	orig = g_utf8_to_utf16 (filename, strlen (filename), NULL, NULL, NULL);
 	dest = g_utf8_to_utf16 (shadow, strlen (shadow), NULL, NULL, NULL);
+	DeleteFile (dest);
 	copy_result = CopyFile (orig, dest, FALSE);
 	g_free (dest);
 	g_free (orig);
@@ -1166,9 +1320,9 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoString *fname, MonoBoolean re
 
 MonoReflectionAssembly *
 ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomain *ad, 
-											MonoArray *raw_assembly,
-											MonoArray *raw_symbol_store, MonoObject *evidence,
-											MonoBoolean refonly)
+					    MonoArray *raw_assembly,
+					    MonoArray *raw_symbol_store, MonoObject *evidence,
+					    MonoBoolean refonly)
 {
 	MonoAssembly *ass;
 	MonoReflectionAssembly *refass = NULL;
@@ -1183,7 +1337,7 @@ ves_icall_System_AppDomain_LoadAssemblyRaw (MonoAppDomain *ad,
 	}
 
 	if (raw_symbol_store != NULL)
-		mono_debug_init_2_memory (image, mono_array_addr (raw_symbol_store, guint8, 0), mono_array_length (raw_symbol_store));
+		mono_debug_open_image_from_memory (image, mono_array_addr (raw_symbol_store, guint8, 0), mono_array_length (raw_symbol_store));
 
 	ass = mono_assembly_load_from_full (image, "", &status, refonly);
 

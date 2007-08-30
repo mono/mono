@@ -126,10 +126,30 @@ void ves_icall_System_Threading_Thread_MemoryBarrier (void) MONO_INTERNAL;
 extern void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj) MONO_INTERNAL;
 extern void ves_icall_System_Threading_Thread_SpinWait_internal (gint32) MONO_INTERNAL;
 
+void mono_alloc_special_static_data_free (GHashTable *special_static_fields) MONO_INTERNAL;
 void mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local) MONO_INTERNAL;
 extern void mono_thread_current_check_pending_interrupt (void) MONO_INTERNAL;
+extern void mono_thread_get_stack_bounds (guint8 **staddr, size_t *stsize) MONO_INTERNAL;
 
 extern void mono_thread_init_apartment_state (void) MONO_INTERNAL;
 extern void mono_thread_cleanup_apartment_state (void) MONO_INTERNAL;
+
+typedef struct {
+	gpointer hazard_pointers [2];
+} MonoThreadHazardPointers;
+
+typedef void (*MonoHazardousFreeFunc) (gpointer p);
+
+extern void mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func);
+
+extern MonoThreadHazardPointers* mono_hazard_pointer_get (void);
+
+#define mono_hazard_pointer_set(hp,i,v)	\
+	( g_assert ((i) == 0 || (i) == 1), \
+		(hp)->hazard_pointers [(i)] = (v), \
+		mono_memory_write_barrier () )
+#define mono_hazard_pointer_clear(hp,i)	\
+	( g_assert ((i) == 0 || (i) == 1), \
+		(hp)->hazard_pointers [(i)] = NULL )
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

@@ -1,3 +1,92 @@
+2007-08-16 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_newarr_test.sh (added):  Generate newarr related tests.
+	* make_tests.sh: Addes tests for newarr.
+
+
+2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_unbox_test.sh (added):  Generate unbox related tests.
+	* make_tests.sh: Addes tests for unbox.
+
+
+2007-08-15 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_ldobj_test.sh (added):  Generate ldobj related tests.
+	* make_tests.sh: Addes tests for ldobj.
+
+2007-08-13 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_ldtoken_test.sh (added):  Generate ldtoken related tests
+	* make_tests.sh: Addes tests for ldtoken, conv.*.* and visibility checks
+	for nested classes mixed with inheritance
+
+2007-08-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: Added new visibility tests and not/neg tests
+	* make_cross_nested_access_test.sh: new test script for visibility
+	between two classes nested in the same class
+	* unverifiable_ldsfld_no_fld.il: added main method
+	* make_unary_test.sh: added some types to make room for more tests
+	* make_exception_branch_test.sh: fix the test to trigger the right error
+
+
+2007-08-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_exception_branch_test.sh: Fix the generation of the tests, so only
+	branching problems are validated.
+
+2007-07-20 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added more visibility tests
+	* Makefile: changed again the clean target to work with the larger number of tests
+	* make_self_nested_test.sh: new visibility tests
+
+2007-07-19 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added reference compatibility tests
+
+2007-07-05 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* AssemblyRunner.cs: bug fix: handles missing fields corrently
+	* make_test.sh: correct some tests based on fixed AssemblyRunner
+	
+2007-07-05 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* AssemblyRunner.cs: Allow running the test suite from the same VM instance
+	* make_tests.sh: improved the test-suite, now it works running under a VM, not just the verifier
+	* unverifiable_ldflda_other_class_on_simple_method.il: same
+	* unverifiable_ptr_nop.il: same
+	* unverifiable_ldsflda_other_class_field_on_cctor.il: same
+	* make_load_test.sh: same
+	* make_stack_0_test.sh: same
+	* make_obj_store_test.sh: same
+	* unverifiable_m_ptr_ldloc.il: same
+	* make_ret_test.sh: same
+	* make_store_test.sh: same
+	* unverifiable_ldsflda_other_class_on_simple_method.il: same
+	* make_access_test.sh: same
+	* unverifiable_ptr_ldloc.il: same
+	* invalid_call_no_method.il: same
+	* unverifiable_ldsfld_no_fld.il: same
+	* unverifiable_ldflda_owner_class_on_simple_method.il: same
+	* unverifiable_m_ptr_ldarg.il: same
+	* make_stack_merge_test.sh: same
+	* unverifiable_stack_2_ret.il: same
+	* unverifiable_ldflda_other_class_field_on_ctor.il: same
+	* unverifiable_ldflda_other_class_field_on_cctor.il: same
+	* make_field_store_test.sh: same
+	* invalid_backward_branch.il: same
+	* unverifiable_ldfld_initonly.il: same
+	* make_nested_access_test.sh: same
+	* invalid_stack_2_ret.il: same
+	* unverifiable_ldsflda_owner_class_on_simple_method.il: same
+	* unverifiable_ptr_ldarg.il: same
+	* valid_fld_initonly.il: same
+	* make_bin_test.sh: same
+	* make_field_valuetype_test.sh: new tests
+	
+
 2007-07-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_tests.sh: new access verification tests

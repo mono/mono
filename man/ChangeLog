@@ -1,3 +1,20 @@
+2007-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* permview.1: add documentation for the -xml option now available
+	with the Cecil-enabled version of permview.
+
+2007-07-17  Jb Evain <jbevain@novell.com>
+
+	* monolinker.1: add monolinker man page.
+
+2007-07-11  Jb Evain <jbevain@novell.com>
+
+	* mcs.1: add info about smcs.
+
+2007-07-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* mcs.1 : we do not use fixed Latin1 by default.
+
 2007-07-02  Jackson Harper  <jackson@ximian.com>
 
 	* xamlg.1:

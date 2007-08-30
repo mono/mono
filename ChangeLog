@@ -1,3 +1,48 @@
+
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* configure.in: add get|setpriority detection.
+
+Mon Aug 20 15:23:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: use more symbol renaming fo OSX (bug #82463).
+
+2007-08-20  Jb Evain  <jbevain@novell.com>
+
+	* scripts/smcs.in: use --runtime=moonlight instead of
+	forcing MONO_PATH.
+
+Mon Aug 20 12:34:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: check for gerusage().
+
+Mon Jul 30 17:59:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* configure.in: Enable sigaltstack handling check by default to get
+	wider testing.
+
+2007-07-26  Jb Evain  <jbevain@novell.com>
+
+	* scripts/smcs.in: use smcs.exe.
+
+2007-07-24  Wade Berrier  <wberrier@novell.com>
+
+	* configure.in: version bump -> 1.2.5
+
+2007-07-17  Jb Evain  <jbevain@novell.com>
+
+	* scripts/Makefile.am: new monolinker script.
+
+2007-07-11  Jb Evain  <jbevain@novell.com>
+
+	* scripts/smcs.in, scripts/Makefile.am: new smcs script.
+
+2007-07-05  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: add special 64bit case for ia64.
+	(rpm used to provide libname as well as libname()(64bit) on ia64, but 
+	now it only provides the first.)
+
 2007-06-28  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* configure.in: Add a check for `struct utimbuf'; needed by MonoPosixHelper.

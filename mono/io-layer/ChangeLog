@@ -1,3 +1,85 @@
+2007-08-23  Robert Jordan  <robertj@gmx.net>
+
+	* processes.[c|h]: Implement Get|SetPriorityClass ().
+	Code is contributed under MIT/X11 license.
+
+Tue Aug 21 20:08:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* io.c: made convert_arg_to_utf8() and write_file() static.
+	Worked around gcc's incorrect warning.
+
+2007-08-20  William Holmes  <billholmes54@gmail.com>
+
+	*io.c: Added implementation for ReplaceFile.
+	*io.h: Added deceleration for ReplaceFile method.
+
+	Code is contributed under MIT/X11 license.
+
+2007-08-20  Wade Berrier  <wberrier@novell.com>
+
+	* processes.c: include sys/resource.h for rusage to fix 
+	mac 10.3 build
+
+Mon Aug 20 12:36:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* processes.c: implemented query for user/system times using
+	getrusage ().
+
+2007-08-10  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_getsockopt, _wapi_setsockopt): Check the option
+	level as well as the name when mangling some of the values.  Fixes
+	bug 82000.
+
+2007-08-02  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: Changes in error handling, and move the SO_REUSEADDR
+	setting from metadata/socket-io.c.
+
+2007-08-01  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_io_scandir): Special-case patterns
+	ending in '.*' so that files with no extension are also matched.
+	Fixes bug 82212.
+
+	* wapi_glob.h: 
+	* wapi_glob.c: Reinstate WAPI_GLOB_APPEND, and add
+	WAPI_GLOB_UNIQUE to avoid matching the same entry twice when
+	appending.
+
+2007-07-26  Dick Porter  <dick@ximian.com>
+
+	* handles-private.h: 
+	* thread-private.h: 
+	* handles.h: 
+	* critical-sections.c: 
+	* handles.c: 
+	* critical-section-private.h:
+	* error.h: 
+	* threads.c: 
+	* error.c: Clean up TLS and pthreads structures.  Finishes off bug
+	78739.
+
+	* collection.c (collection_thread): Exit the collection thread if
+	the io-layer has been cleaned up.
+
+	* mono-mutex.h (mono_mutexattr_destroy): Add this define too
+
+Mon Jul 23 10:40:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* timefuncs.c: make TickCount measure from boot time if it's
+	available.
+
+2007-07-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* io.c (MoveFile): Fix a leak. 
+
+Fri Jul 13 12:46:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* handles-private.h, handles.c, thread-private.h, threads.c,
+	uglify.h, wait.c: temporarily revert the alertable wait changes
+	(r79386) until the deadlock issues are fixed.
+
 2007-06-22  Dick Porter  <dick@ximian.com>
 
 	* shared.c: The non-shared mutexes weren't being initialised properly

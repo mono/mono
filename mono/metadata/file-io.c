@@ -10,6 +10,11 @@
  */
 
 #include <config.h>
+
+#ifdef PLATFORM_WIN32
+#define _WIN32_WINNT 0x0500
+#endif
+
 #include <glib.h>
 #include <string.h>
 #include <errno.h>
@@ -95,31 +100,25 @@ static guint32 convert_access(MonoFileAccess mono_access)
 
 static guint32 convert_share(MonoFileShare mono_share)
 {
-	guint32 share;
+	guint32 share = 0;
 	
-	switch(mono_share) {
-	case FileShare_None:
-		share=0;
-		break;
-	case FileShare_Read:
-		share=FILE_SHARE_READ;
-		break;
-	case FileShare_Write:
-		share=FILE_SHARE_WRITE;
-		break;
-	case FileShare_ReadWrite:
-		share=FILE_SHARE_READ|FILE_SHARE_WRITE;
-		break;
-	case FileShare_Delete:
-		share=FILE_SHARE_DELETE;
-		break;
-	default:
+	if (mono_share & FileShare_Read) {
+		share |= FILE_SHARE_READ;
+	}
+	if (mono_share & FileShare_Write) {
+		share |= FILE_SHARE_WRITE;
+	}
+	if (mono_share & FileShare_Delete) {
+		share |= FILE_SHARE_DELETE;
+	}
+	
+	if (mono_share & ~(FileShare_Read|FileShare_Write|FileShare_Delete)) {
 		g_warning("System.IO.FileShare has unknown value 0x%x",
 			  mono_share);
 		/* Safe fallback */
 		share=0;
 	}
-	
+
 	return(share);
 }
 
@@ -307,17 +306,17 @@ ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
 
 	if (FindClose (find_handle) == FALSE) {
 		*error = GetLastError ();
-		g_ptr_array_free (names, TRUE);
-		g_free (utf8_path);
-		return(NULL);
+		result = NULL;
+	} else {
+		result = mono_array_new (domain, mono_defaults.string_class, names->len);
+		for (i = 0; i < names->len; i++) {
+			mono_array_setref (result, i, mono_string_new (domain, g_ptr_array_index (names, i)));
+		}
 	}
 
-	result = mono_array_new (domain, mono_defaults.string_class,
-				 names->len);
 	for (i = 0; i < names->len; i++) {
-		mono_array_setref (result, i, mono_string_new (domain, g_ptr_array_index (names, i)));
+		g_free (g_ptr_array_index (names, i));
 	}
-
 	g_ptr_array_free (names, TRUE);
 	g_free (utf8_path);
 	
@@ -387,6 +386,36 @@ ves_icall_System_IO_MonoIO_MoveFile (MonoString *path, MonoString *dest,
 	}
 	
 	return(ret);
+}
+
+MonoBoolean
+ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *destinationFileName,
+					MonoString *destinationBackupFileName, MonoBoolean ignoreMetadataErrors,
+					gint32 *error)
+{
+	gboolean ret;
+	gunichar2 *utf16_sourceFileName = NULL, *utf16_destinationFileName = NULL, *utf16_destinationBackupFileName = NULL;
+	guint32 replaceFlags = REPLACEFILE_WRITE_THROUGH;
+
+	MONO_ARCH_SAVE_REGS;
+
+	if (sourceFileName)
+		utf16_sourceFileName = mono_string_chars (sourceFileName);
+	if (destinationFileName)
+		utf16_destinationFileName = mono_string_chars (destinationFileName);
+	if (destinationBackupFileName)
+		utf16_destinationBackupFileName = mono_string_chars (destinationBackupFileName);
+
+	*error = ERROR_SUCCESS;
+	if (ignoreMetadataErrors)
+		replaceFlags |= REPLACEFILE_IGNORE_MERGE_ERRORS;
+
+	ret = ReplaceFile (utf16_destinationFileName, utf16_sourceFileName, utf16_destinationBackupFileName,
+			 replaceFlags, NULL, NULL);
+	if (ret == FALSE)
+		*error = GetLastError ();
+
+	return ret;
 }
 
 MonoBoolean

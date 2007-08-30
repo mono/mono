@@ -6,6 +6,14 @@ al, al2 \- Mono Assembly Linker
 .SH DESCRIPTION
 AL is the Mono assembly linkder. 
 .PP
+This linker is used to put together assemblies from a collection of
+modules (.netmodule files), assembly manifest files and resources.
+.PP
+Do not confuse this with the 
+.B monolinker,
+which is a tool to reduce the size of assemblies based on the code
+used. 
+.PP
 Use al for processing 1.0 assemblies, use al2 to process 2.0 assemblies.
 .SH OPTIONS
 .TP
@@ -139,7 +147,7 @@ Specifies the Win32 resource file.
 Display information about AL
 .PP
 .SH SEE ALSO
-sn(1)
+sn(1), monolinker(1)
 .SH COPYRIGHT
 Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 .SH MAILING LISTS

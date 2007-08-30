@@ -1,3 +1,6 @@
+2007-07-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h: Remove some unused rex prefixes.
 
 Wed Jul 4 15:29:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

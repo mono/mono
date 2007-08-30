@@ -30,6 +30,7 @@
 #include <mono/io-layer/shared.h>
 #include <mono/io-layer/collection.h>
 #include <mono/io-layer/process-private.h>
+#include <mono/io-layer/critical-section-private.h>
 
 #undef DEBUG
 #undef DEBUG_REFS
@@ -106,11 +107,11 @@ struct _WapiFileShareLayout *_wapi_fileshare_layout = NULL;
 
 guint32 _wapi_fd_reserve;
 
-mono_mutex_t _wapi_alertable_mutex;
 mono_mutex_t _wapi_global_signal_mutex;
 pthread_cond_t _wapi_global_signal_cond;
 
 int _wapi_sem_id;
+gboolean _wapi_has_shut_down = FALSE;
 
 /* Use this instead of getpid(), to cope with linuxthreads.  It's a
  * function rather than a variable lookup because we need to get at
@@ -185,6 +186,20 @@ static void handle_cleanup (void)
 	}
 	
 	_wapi_shm_semaphores_remove ();
+
+	mono_mutex_destroy(&_wapi_global_signal_mutex);
+	pthread_cond_destroy(&_wapi_global_signal_cond);
+}
+
+void _wapi_cleanup ()
+{
+	g_assert (_wapi_has_shut_down == FALSE);
+	
+	_wapi_has_shut_down = TRUE;
+
+	_wapi_critical_section_cleanup ();
+	_wapi_error_cleanup ();
+	_wapi_thread_cleanup ();
 }
 
 static mono_once_t shared_init_once = MONO_ONCE_INIT;
@@ -221,9 +236,6 @@ static void shared_init (void)
 	thr_ret = mono_mutex_init(&_wapi_global_signal_mutex, NULL);
 	g_assert (thr_ret == 0);
 
-	thr_ret = mono_mutex_init (&_wapi_alertable_mutex, NULL);
-	g_assert (thr_ret == 0);
-
 	/* Using g_atexit here instead of an explicit function call in
 	 * a cleanup routine lets us cope when a third-party library
 	 * calls exit (eg if an X client loses the connection to its
@@ -236,6 +248,8 @@ static void _wapi_handle_init_shared (struct _WapiHandleShared *handle,
 				      WapiHandleType type,
 				      gpointer handle_specific)
 {
+	g_assert (_wapi_has_shut_down == FALSE);
+	
 	handle->type = type;
 	handle->timestamp = (guint32)(time (NULL) & 0xFFFFFFFF);
 	handle->signalled = FALSE;
@@ -250,6 +264,8 @@ static void _wapi_handle_init (struct _WapiHandleUnshared *handle,
 			       WapiHandleType type, gpointer handle_specific)
 {
 	int thr_ret;
+	
+	g_assert (_wapi_has_shut_down == FALSE);
 	
 	handle->type = type;
 	handle->signalled = FALSE;
@@ -275,6 +291,8 @@ static guint32 _wapi_handle_new_shared (WapiHandleType type,
 	guint32 offset;
 	static guint32 last = 1;
 	int thr_ret;
+	
+	g_assert (_wapi_has_shut_down == FALSE);
 	
 	/* Leave the first slot empty as a guard */
 again:
@@ -331,6 +349,8 @@ static guint32 _wapi_handle_new_internal (WapiHandleType type,
 	static guint32 last = 0;
 	gboolean retry = FALSE;
 	
+	g_assert (_wapi_has_shut_down == FALSE);
+	
 	/* A linear scan should be fast enough.  Start from the last
 	 * allocation, assuming that handles are allocated more often
 	 * than they're freed. Leave the space reserved for file
@@ -375,6 +395,8 @@ gpointer _wapi_handle_new (WapiHandleType type, gpointer handle_specific)
 	guint32 handle_idx = 0;
 	gpointer handle;
 	int thr_ret;
+	
+	g_assert (_wapi_has_shut_down == FALSE);
 	
 	mono_once (&shared_init_once, shared_init);
 	
@@ -456,6 +478,8 @@ gpointer _wapi_handle_new_from_offset (WapiHandleType type, guint32 offset,
 	int thr_ret, i, k;
 	struct _WapiHandleShared *shared;
 	guint32 now = (guint32)(time (NULL) & 0xFFFFFFFF);
+	
+	g_assert (_wapi_has_shut_down == FALSE);
 	
 	mono_once (&shared_init_once, shared_init);
 
@@ -569,6 +593,8 @@ gpointer _wapi_handle_new_fd (WapiHandleType type, int fd,
 {
 	struct _WapiHandleUnshared *handle;
 	int thr_ret;
+	
+	g_assert (_wapi_has_shut_down == FALSE);
 	
 	mono_once (&shared_init_once, shared_init);
 	
@@ -1405,76 +1431,47 @@ void _wapi_handle_unlock_handles (guint32 numhandles, gpointer *handles)
 	}
 }
 
-static int timedwait_signal_wait_cond (pthread_cond_t *cond, mono_mutex_t *mutex, struct timespec *timeout, gboolean alertable, gpointer waiting_on)
+static int timedwait_signal_poll_cond (pthread_cond_t *cond, mono_mutex_t *mutex, struct timespec *timeout, gboolean alertable)
 {
+	struct timespec fake_timeout;
 	int ret;
 
-#ifdef DEBUG
-	g_message ("%s: %s wait on %p", __func__, alertable?"Alertable":"Non-alertable", waiting_on);
-#endif
-	
-	if (alertable && waiting_on != NULL) {
-		/* set up the object that can interrupt us */
-		_wapi_handle_current_thread_set_waiting_on (waiting_on);
-	}
-
-	if (timeout) {
-		ret = mono_cond_timedwait (cond, mutex, timeout);
+	if (!alertable) {
+		if (timeout)
+			ret=mono_cond_timedwait (cond, mutex, timeout);
+		else
+			ret=mono_cond_wait (cond, mutex);
 	} else {
-		ret = mono_cond_wait (cond, mutex);
-	}
+		_wapi_calc_timeout (&fake_timeout, 100);
 	
-	if (alertable && waiting_on != NULL) {
-		/* Unset the object that can interrupt us */
-		_wapi_handle_current_thread_set_waiting_on (NULL);
+		if (timeout != NULL && ((fake_timeout.tv_sec > timeout->tv_sec) ||
+								(fake_timeout.tv_sec == timeout->tv_sec &&
+								 fake_timeout.tv_nsec > timeout->tv_nsec))) {
+			/* Real timeout is less than 100ms time */
+			ret=mono_cond_timedwait (cond, mutex, timeout);
+		} else {
+			ret=mono_cond_timedwait (cond, mutex, &fake_timeout);
+
+			/* Mask the fake timeout, this will cause
+			 * another poll if the cond was not really signaled
+			 */
+			if (ret==ETIMEDOUT) {
+				ret=0;
+			}
+		}
 	}
 	
 	return(ret);
 }
 
-static int timedwait_signal_poll (gpointer handle, struct timespec *timeout)
+int _wapi_handle_wait_signal (void)
 {
-	if (timeout != NULL) {
-		struct timespec fake_timeout;
-		_wapi_calc_timeout (&fake_timeout, 100);
-		
-		if ((fake_timeout.tv_sec > timeout->tv_sec) ||
-		    (fake_timeout.tv_sec == timeout->tv_sec &&
-		     fake_timeout.tv_nsec > timeout->tv_nsec)) {
-			/* FIXME: Real timeout is less than 100ms
-			 * time, but is it really worth calculating to
-			 * the exact ms?
-			 */
-			_wapi_handle_spin (100);
-
-			if (handle != INVALID_HANDLE_VALUE &&
-			    WAPI_SHARED_HANDLE_DATA(handle).signalled == TRUE) {
-				return (0);
-			} else {
-				return (ETIMEDOUT);
-			}
-		}
-	}
-	_wapi_handle_spin (100);
-	return(0);
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, NULL, TRUE);
 }
 
-int _wapi_handle_wait_signal (gboolean shared)
+int _wapi_handle_timedwait_signal (struct timespec *timeout)
 {
-	if (shared) {
-		return(timedwait_signal_poll (INVALID_HANDLE_VALUE, NULL));
-	} else {
-		return(timedwait_signal_wait_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, NULL, TRUE, INVALID_HANDLE_VALUE));
-	}
-}
-
-int _wapi_handle_timedwait_signal (struct timespec *timeout, gboolean shared)
-{
-	if (shared) {
-		return(timedwait_signal_poll (INVALID_HANDLE_VALUE, timeout));
-	} else {
-		return(timedwait_signal_wait_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, timeout, TRUE, INVALID_HANDLE_VALUE));
-	}
+	return timedwait_signal_poll_cond (&_wapi_global_signal_cond, &_wapi_global_signal_mutex, timeout, TRUE);
 }
 
 int _wapi_handle_wait_signal_handle (gpointer handle, gboolean alertable)
@@ -1498,10 +1495,32 @@ int _wapi_handle_timedwait_signal_handle (gpointer handle,
 		if (WAPI_SHARED_HANDLE_DATA(handle).signalled == TRUE) {
 			return (0);
 		}
-		return(timedwait_signal_poll (handle, timeout));
+		if (timeout != NULL) {
+			struct timespec fake_timeout;
+			_wapi_calc_timeout (&fake_timeout, 100);
+		
+			if ((fake_timeout.tv_sec > timeout->tv_sec) ||
+				(fake_timeout.tv_sec == timeout->tv_sec &&
+				 fake_timeout.tv_nsec > timeout->tv_nsec)) {
+				/* FIXME: Real timeout is less than
+				 * 100ms time, but is it really worth
+				 * calculating to the exact ms?
+				 */
+				_wapi_handle_spin (100);
+
+				if (WAPI_SHARED_HANDLE_DATA(handle).signalled == TRUE) {
+					return (0);
+				} else {
+					return (ETIMEDOUT);
+				}
+			}
+		}
+		_wapi_handle_spin (100);
+		return (0);
+		
 	} else {
 		guint32 idx = GPOINTER_TO_UINT(handle);
-		return timedwait_signal_wait_cond (&_WAPI_PRIVATE_HANDLES(idx).signal_cond, &_WAPI_PRIVATE_HANDLES(idx).signal_mutex, timeout, alertable, handle);
+		return timedwait_signal_poll_cond (&_WAPI_PRIVATE_HANDLES(idx).signal_cond, &_WAPI_PRIVATE_HANDLES(idx).signal_mutex, timeout, alertable);
 	}
 }
 

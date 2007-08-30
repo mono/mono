@@ -65,6 +65,17 @@ static void thread_ops_init (void)
 					    WAPI_HANDLE_CAP_WAIT);
 }
 
+void _wapi_thread_cleanup (void)
+{
+	int ret;
+	
+	ret = pthread_key_delete (thread_hash_key);
+	g_assert (ret == 0);
+	
+	ret = pthread_key_delete (thread_attached_key);
+	g_assert (ret == 0);
+}
+
 /* Called by thread_exit(), but maybe indirectly by
  * mono_thread_manage() via mono_thread_signal_self() too
  */
@@ -1057,23 +1068,6 @@ static void _wapi_thread_queue_apc (struct _WapiHandle_thread *thread,
 	thread->apc_queue = g_slist_append (thread->apc_queue, apc);
 	
 	thr_ret = mono_mutex_unlock (&apc_mutex);
-	g_assert (thr_ret == 0);
-	pthread_cleanup_pop (0);
-
-	pthread_cleanup_push ((void(*)(void *))mono_mutex_unlock_in_cleanup,
-			      (void *)&_wapi_alertable_mutex);
-	thr_ret = mono_mutex_lock (&_wapi_alertable_mutex);
-	g_assert (thr_ret == 0);
-
-	if (thread->waiting_on != NULL) {
-		/* this thread is in an alertable wait, so trip the
-		 * pthread_cond_t of the object the thread is waiting
-		 * on so wait will be interrupted
-		 */
-		_wapi_handle_trip_signal (thread->waiting_on);
-	}
-	
-	thr_ret = mono_mutex_unlock (&_wapi_alertable_mutex);
 	g_assert (thr_ret == 0);
 	pthread_cleanup_pop (0);
 }

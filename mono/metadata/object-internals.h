@@ -129,6 +129,7 @@ struct _MonoException {
 	gint32	    remote_stack_index;
 	gint32	    hresult;
 	MonoString *source;
+	MonoObject *_data;
 };
 
 typedef struct {
@@ -275,7 +276,9 @@ struct _MonoThread {
 	gpointer end_stack; /* This is only used when running in the debugger. */
 	MonoBoolean thread_interrupt_requested;
 	guint8	apartment_state;
-	gpointer unused5;
+	gssize small_id;    /* A small, unique id, used for the hazard
+			       pointer table.  Should be changed to a
+			       guint32 at the next corlib version bump. */
 	gpointer unused6;
 	gpointer unused7;
 };
@@ -1132,6 +1135,37 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass) MONO_INTER
 
 MonoObject*
 mono_nullable_box (guint8 *buf, MonoClass *klass) MONO_INTERNAL;
+
+#define MONO_IMT_SIZE 19
+
+typedef struct _MonoImtBuilderEntry {
+	MonoMethod *method;
+	struct _MonoImtBuilderEntry *next;
+	int vtable_slot;
+	int children;
+} MonoImtBuilderEntry;
+
+typedef struct _MonoIMTCheckItem MonoIMTCheckItem;
+
+struct _MonoIMTCheckItem {
+	MonoMethod       *method;
+	int               check_target_idx;
+	int               vtable_slot;
+	guint8           *jmp_code;
+	guint8           *code_target;
+	guint8            is_equals;
+	guint8            compare_done;
+	guint8            chunk_size;
+	guint8            short_branch;
+};
+
+typedef gpointer (*MonoImtThunkBuilder) (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count);
+
+void
+mono_install_imt_thunk_builder (MonoImtThunkBuilder func) MONO_INTERNAL;
+
+guint32
+mono_method_get_imt_slot (MonoMethod *method) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 
