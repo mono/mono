@@ -1,3 +1,9 @@
+
+Thu Aug 30 16:47:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, class.c, domain.c, loader.c: remove useless
+	inclusion of cil-coff.h.
+
 2007-08-29  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c (cominterop_get_ccw): Walk up interface hierarchy
