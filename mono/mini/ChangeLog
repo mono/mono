@@ -1,5 +1,8 @@
 2007-08-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Remove the can_access_ functions and use the 
+	mono_method_can_access_ functions instead.
+
 	* method-to-ir.c: Merge the memcpy/memset changes.
 
 2007-07-04  Zoltan Varga  <vargaz@gmail.com>

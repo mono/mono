@@ -4495,108 +4495,6 @@ method_is_safe (MonoMethod *method)
 	return TRUE;
 }
 
-static gboolean
-can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
-{
-	GSList *tmp;
-	if (accessing == accessed)
-		return TRUE;
-	if (!accessed || !accessing)
-		return FALSE;
-	for (tmp = accessed->friend_assembly_names; tmp; tmp = tmp->next) {
-		MonoAssemblyName *friend = tmp->data;
-		/* Be conservative with checks */
-		if (!friend->name)
-			continue;
-		if (strcmp (accessing->aname.name, friend->name))
-			continue;
-		if (friend->public_key_token [0]) {
-			if (!accessing->aname.public_key_token [0])
-				continue;
-			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
-				continue;
-		}
-		return TRUE;
-	}
-	return FALSE;
-}
-
-/* FIXME: check visibility of type, too */
-static gboolean
-can_access_member (MonoClass *access_klass, MonoClass *member_klass, int access_level)
-{
-	/* Partition I 8.5.3.2 */
-	/* the access level values are the same for fields and methods */
-	switch (access_level) {
-	case FIELD_ATTRIBUTE_COMPILER_CONTROLLED:
-		/* same compilation unit */
-		return access_klass->image == member_klass->image;
-	case FIELD_ATTRIBUTE_PRIVATE:
-		if (access_klass->generic_class && member_klass->generic_class && member_klass->generic_class->container_class)
-			return member_klass->generic_class->container_class == access_klass->generic_class->container_class;
-	case FIELD_ATTRIBUTE_FAM_AND_ASSEM:
-		if (mono_class_has_parent (access_klass, member_klass) &&
-				can_access_internals (access_klass->image->assembly, member_klass->image->assembly))
-			return TRUE;
-		return FALSE;
-	case FIELD_ATTRIBUTE_ASSEMBLY:
-		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
-	case FIELD_ATTRIBUTE_FAMILY:
-		if (mono_class_has_parent (access_klass, member_klass))
-			return TRUE;
-		return FALSE;
-	case FIELD_ATTRIBUTE_FAM_OR_ASSEM:
-		if (mono_class_has_parent (access_klass, member_klass))
-			return TRUE;
-		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
-	case FIELD_ATTRIBUTE_PUBLIC:
-		return TRUE;
-	}
-	return FALSE;
-}
-
-static gboolean
-can_access_field (MonoMethod *method, MonoClassField *field)
-{
-	/* FIXME: check all overlapping fields */
-	int can = can_access_member (method->klass, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
-	if (!can) {
-		MonoClass *nested = method->klass->nested_in;
-		while (nested) {
-			can = can_access_member (nested, field->parent, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
-			if (can)
-				return TRUE;
-			nested = nested->nested_in;
-		}
-	}
-	return can;
-}
-
-static gboolean
-can_access_method (MonoMethod *method, MonoMethod *called)
-{
-	int can = can_access_member (method->klass, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
-	if (!can) {
-		MonoClass *nested = method->klass->nested_in;
-		while (nested) {
-			can = can_access_member (nested, called->klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
-			if (can)
-				return TRUE;
-			nested = nested->nested_in;
-		}
-	}
-	/* 
-	 * FIXME:
-	 * with generics calls to explicit interface implementations can be expressed
-	 * directly: the method is private, but we must allow it. This may be opening
-	 * a hole or the generics code should handle this differently.
-	 * Maybe just ensure the interface type is public.
-	 */
-	if ((called->flags & METHOD_ATTRIBUTE_VIRTUAL) && (called->flags & METHOD_ATTRIBUTE_FINAL))
-		return TRUE;
-	return can;
-}
-
 /*
  * Check that the IL instructions at ip are the array initialization
  * sequence and return the pointer to the data and the size.
@@ -6534,7 +6432,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				if (!cmethod)
 					goto load_error;
-				if (!dont_verify && !cfg->skip_visibility && !can_access_method (method, cil_method))
+				if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cil_method))
 					METHOD_ACCESS_FAILURE;
 
 				if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
@@ -7811,7 +7709,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			if (!field)
 				goto load_error;
-			if (!dont_verify && !cfg->skip_visibility && !can_access_field (method, field))
+			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE;
 			mono_class_init (klass);
 
