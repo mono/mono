@@ -1,3 +1,8 @@
+2007-08-30  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Initialise synch_cs to null now we aren't using it as
+	a monitor lock
+
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Thread.cs: Throw ThreadStateException when retrieving ApartmentState
