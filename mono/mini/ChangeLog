@@ -1,4 +1,8 @@
 
+Thu Aug 30 14:50:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: flag places that needs fixes fo soft-float support.
+
 Wed Aug 29 18:26:20 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, inssel-float.brg: fix soft-float constant loads on big
