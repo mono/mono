@@ -1,4 +1,9 @@
 
+Thu Aug 30 18:34:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cil-coff.h, image.c: updated assembly loader to cope with the
+	PE32+ 64 bit file format.
+
 Thu Aug 30 16:47:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c, class.c, domain.c, loader.c: remove useless
