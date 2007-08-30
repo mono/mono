@@ -161,7 +161,7 @@ namespace Microsoft.Win32 {
 					values [name] = Int32.Parse (se.Text);
 					break;
 				case "bytearray":
-					Convert.FromBase64String (se.Text);
+					values [name] = Convert.FromBase64String (se.Text);
 					break;
 				case "string":
 					values [name] = se.Text;

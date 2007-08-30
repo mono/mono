@@ -1,3 +1,8 @@
+2007-08-30  Marek Habersack  <mhabersack@novell.com>
+
+	* UnixRegistryApi.cs: properly retrieve values of type
+	'bytearray'.
+
 2007-08-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyPermissionCheck.cs: Do not include in 1.0 profile.
