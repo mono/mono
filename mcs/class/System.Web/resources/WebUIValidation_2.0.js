@@ -59,6 +59,8 @@ webForm.ValidatorOnLoad = function  ()
 
 		if (vo.getAttribute ("validationgroup") == null)
 			vo.setAttribute ("validationgroup", "");
+			
+		vo.evaluationfunction = this [vo.getAttribute ("evaluationfunction")];
 	}
 
 	this.Page_ValidationActive = true;
@@ -211,7 +213,7 @@ webForm.Page_ClientValidate = function (group)
 	var invalidControlHasBeenFocused = false;
 	for (var v = 0; v < this.Page_Validators.length; v++) {
 		var vo = this.Page_Validators [v];
-		var evalfunc = this[vo.getAttribute ("evaluationfunction")];
+		var evalfunc = vo.evaluationfunction;
 		var result = false;
 
 		if (vo.getAttribute ("enabled").toLowerCase() == "false" || !this.IsValidationGroupMatch(vo, group)) {

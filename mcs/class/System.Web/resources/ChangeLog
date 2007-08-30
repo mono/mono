@@ -1,5 +1,11 @@
 2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* WebUIValidation_2.0.js: refactoring.
+	initialize evaluationfunction property for validator on client.
+	makes it compatible with AjaxControlToolkit.	
+
+2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* webform.js: fixed MaintainScrollPositionOnPostBack feature.
 
 2007-08-19  Marek Habersack  <mhabersack@novell.com>
