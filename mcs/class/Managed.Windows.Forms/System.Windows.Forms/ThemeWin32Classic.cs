@@ -2848,7 +2848,7 @@ namespace System.Windows.Forms
 			Rectangle sub_item_rect = subItem.Bounds;
 			Rectangle sub_item_text_rect = sub_item_rect;
 			sub_item_text_rect.X += 3;
-			sub_item_text_rect.Width -= 6;
+			sub_item_text_rect.Width -= ListViewItemPaddingWidth;
 						
 			SolidBrush sub_item_back_br = null;
 			SolidBrush sub_item_fore_br = null;
@@ -2970,6 +2970,10 @@ namespace System.Windows.Forms
 
 		public override int ListViewHorizontalSpacing {
 			get { return 4; }
+		}
+
+		public override int ListViewItemPaddingWidth {
+			get { return 6; }
 		}
 
 		public override Size ListViewDefaultSize {

@@ -1,5 +1,13 @@
 2007-08-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Put item padding info in a single place
+	(Theme.ListViewItemPaddingWidth) to have working AutoResize on
+	columns again.
+	* ThemeWin32Classic.cs:
+	* Theme.cs: Likewise.
+
+2007-08-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When a ListViewSubItem instance is invalidated,
 	invoke Invalidate on parent ListViewItem, not parent ListView.
 	Fixes #81570.

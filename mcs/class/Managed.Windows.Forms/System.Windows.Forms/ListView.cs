@@ -1159,7 +1159,7 @@ namespace System.Windows.Forms
 
 			// adjustment for space
 			if (!ret_size.IsEmpty)
-				ret_size.Width += 4;
+				ret_size.Width += ThemeEngine.Current.ListViewItemPaddingWidth;
 
 			return ret_size;
 		}

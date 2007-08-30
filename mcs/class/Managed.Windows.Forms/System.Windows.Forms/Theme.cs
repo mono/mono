@@ -833,6 +833,7 @@ namespace System.Windows.Forms
 		public abstract int ListViewHorizontalSpacing { get; }
 		public abstract Size ListViewDefaultSize { get; }
 		public abstract int ListViewGroupHeight { get; }
+		public abstract int ListViewItemPaddingWidth { get; }
 		public abstract int ListViewTileWidthFactor { get; }
 		public abstract int ListViewTileHeightFactor { get; }
 		#endregion	// ListView
