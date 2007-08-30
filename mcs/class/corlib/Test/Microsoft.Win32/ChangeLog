@@ -1,3 +1,9 @@
+2007-08-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyTest.cs: Improve SetValue tests to ensure values are
+	persisted properly on Linux, since the unix implementation performs
+	caching.
+
 2006-09-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Added RunningOnUnix property that is used

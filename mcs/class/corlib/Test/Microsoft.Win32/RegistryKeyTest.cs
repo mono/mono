@@ -1800,20 +1800,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Installed"), "#1");
-				// create value
-				createdKey.SetValue ("Installed", true);
-				// get value
-				object value = createdKey.GetValue ("Installed");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual (true.ToString (), value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Installed"), "#A1");
+					// create value
+					createdKey.SetValue ("Installed", true);
+					// get value
+					object value = createdKey.GetValue ("Installed");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual (true.ToString (), value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Installed");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
+					Assert.AreEqual (true.ToString (), value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1825,20 +1833,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Flags"), "#1");
-				// create value
-				createdKey.SetValue ("Flags", (byte) 5);
-				// get value
-				object value = createdKey.GetValue ("Flags");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual ("5", value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Flags"), "#A1");
+					// create value
+					createdKey.SetValue ("Flags", (byte) 5);
+					// get value
+					object value = createdKey.GetValue ("Flags");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual ("5", value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Flags");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
+					Assert.AreEqual ("5", value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1850,20 +1866,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Flags"), "#1");
-				// create value
-				createdKey.SetValue ("Flags", new byte[] { 1, 5 });
-				// get value
-				object value = createdKey.GetValue ("Flags");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (byte[]), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual (new byte[] { 1, 5 }, value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Flags"), "#A1");
+					// create value
+					createdKey.SetValue ("Flags", new byte [] { 1, 5 });
+					// get value
+					object value = createdKey.GetValue ("Flags");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (byte []), value.GetType (), "#3");
+					// ensure value matches
+					Assert.AreEqual (new byte [] { 1, 5 }, value, "#4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Flags");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (byte []), value.GetType (), "#B2");
+					Assert.AreEqual (new byte [] { 1, 5 }, value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1875,22 +1899,30 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
 				object rawValue = DateTime.Now;
 
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Path"), "#1");
-				// create value
-				createdKey.SetValue ("Path", rawValue);
-				// get value
-				object value = createdKey.GetValue ("Path");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual (rawValue.ToString (), value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Path"), "#A1");
+					// create value
+					createdKey.SetValue ("Path", rawValue);
+					// get value
+					object value = createdKey.GetValue ("Path");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual (rawValue.ToString (), value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Path");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
+					Assert.AreEqual (rawValue.ToString (), value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1902,20 +1934,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("RefCount"), "#1");
-				// create value
-				createdKey.SetValue ("RefCount", 5);
-				// get value
-				object value = createdKey.GetValue ("RefCount");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be int
-				Assert.AreEqual (typeof (int), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual (5, value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("RefCount"), "#A1");
+					// create value
+					createdKey.SetValue ("RefCount", 5);
+					// get value
+					object value = createdKey.GetValue ("RefCount");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be int
+					Assert.AreEqual (typeof (int), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual (5, value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("RefCount");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (int), value.GetType (), "#B2");
+					Assert.AreEqual (5, value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1927,20 +1967,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Ticks"), "#1");
-				// create value
-				createdKey.SetValue ("Ticks", 500L);
-				// get value
-				object value = createdKey.GetValue ("Ticks");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual ("500", value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Ticks"), "#A1");
+					// create value
+					createdKey.SetValue ("Ticks", 500L);
+					// get value
+					object value = createdKey.GetValue ("Ticks");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual ("500", value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Ticks");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
+					Assert.AreEqual ("500", value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1952,20 +2000,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("Path"), "#1");
-				// create value
-				createdKey.SetValue ("Path", "/usr/lib/whatever");
-				// get value
-				object value = createdKey.GetValue ("Path");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual ("/usr/lib/whatever", value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Path"), "#A1");
+					// create value
+					createdKey.SetValue ("Path", "/usr/lib/whatever");
+					// get value
+					object value = createdKey.GetValue ("Path");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual ("/usr/lib/whatever", value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("Path");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
+					Assert.AreEqual ("/usr/lib/whatever", value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
@@ -1977,20 +2033,28 @@ namespace MonoTests.Microsoft.Win32
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
-			RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName);
 			try {
-				// we created a new subkey, so value should not exist
-				Assert.IsNull (createdKey.GetValue ("DependsOnGroup"), "#1");
-				// create value
-				createdKey.SetValue ("DependsOnGroup", new string[] { "A", "B" });
-				// get value
-				object value = createdKey.GetValue ("DependsOnGroup");
-				// value should exist
-				Assert.IsNotNull (value, "#2");
-				// type of value should be string
-				Assert.AreEqual (typeof (string[]), value.GetType (), "#3");
-				// ensure value matches
-				Assert.AreEqual (new string[] { "A", "B" }, value, "#4");
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("DependsOnGroup"), "#A1");
+					// create value
+					createdKey.SetValue ("DependsOnGroup", new string [] { "A", "B" });
+					// get value
+					object value = createdKey.GetValue ("DependsOnGroup");
+					// value should exist
+					Assert.IsNotNull (value, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string []), value.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual (new string [] { "A", "B" }, value, "#A4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object value = openedKey.GetValue ("DependsOnGroup");
+					Assert.IsNotNull (value, "#B1");
+					Assert.AreEqual (typeof (string []), value.GetType (), "#B2");
+					Assert.AreEqual (new string [] { "A", "B" }, value, "#B3");
+				}
 			} finally {
 				// clean-up
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
