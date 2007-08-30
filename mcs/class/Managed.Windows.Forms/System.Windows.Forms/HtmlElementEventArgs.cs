@@ -24,11 +24,93 @@
 //
 
 #if NET_2_0
+using System.Drawing;
+using System.ComponentModel;
 namespace System.Windows.Forms
 {
 	public sealed class HtmlElementEventArgs : EventArgs
 	{
+		#region Fields
+		private bool alt_key_pressed;
+		private bool bubble_event;
+		private Point client_mouse_position;
+		private bool ctrl_key_pressed;
+		private string event_type;
+		private HtmlElement from_element;
+		private int key_pressed_code;
+		private MouseButtons mouse_buttons_pressed;
+		private Point mouse_position;
+		private Point offset_mouse_position;
+		private bool return_value;
+		private bool shift_key_pressed;
+		private HtmlElement to_element;
+		#endregion
 
+		#region Constructor
+		internal HtmlElementEventArgs ()
+		{
+		}
+		#endregion
+
+		#region Public Properties
+		public bool AltKeyPressed {
+			get { return alt_key_pressed; }
+		}
+		
+		public bool BubbleEvent {
+			get { return bubble_event; }
+			set { bubble_event = value; }
+		}
+		
+		public Point ClientMousePosition {
+			get { return client_mouse_position; }
+		}
+		
+		public bool CtrlKeyPressed {
+			get { return ctrl_key_pressed; }
+		}
+		
+		public string EventType {
+			get { return event_type; }
+		}
+
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public HtmlElement FromElement {
+			get { return from_element; }
+		}
+		
+		public int KeyPressedCode {
+			get { return key_pressed_code; }
+		}
+		
+		public MouseButtons MouseButtonsPressed {
+			get { return mouse_buttons_pressed; }
+		}
+		
+		public Point MousePosition {
+			get { return mouse_position; }
+		}
+		
+		public Point OffsetMousePosition {
+			get { return offset_mouse_position; }
+		}
+		
+		public bool ReturnValue {
+			get { return return_value; }
+			set { return_value = value; }
+		}
+		
+		public bool ShiftKeyPressed {
+			get { return shift_key_pressed; }
+		}
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public HtmlElement ToElement {
+			get { return to_element; }
+		}
+		#endregion
 	}
 }
 #endif

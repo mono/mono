@@ -1,3 +1,7 @@
+2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* HtmlElementEventArgs.cs: Implement properties.
+
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* HtmlElementErrorEventArgs.cs, HtmlElementErrorEventHandler.cs: Added.
