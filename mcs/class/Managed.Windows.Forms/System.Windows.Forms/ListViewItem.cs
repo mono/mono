@@ -1148,7 +1148,7 @@ namespace System.Windows.Forms
 				if (owner == null || owner.owner == null)
 					return;
 
-				owner.owner.Invalidate ();
+				owner.Invalidate ();
 			}
 
 			internal int Height {
