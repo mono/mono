@@ -2243,7 +2243,7 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 
 	g_assert (val == 0);
 
-	if (size <= 4) {
+	if ((size <= 4) && (size <= align)) {
 		switch (size) {
 		case 1:
 			MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI1_MEMBASE_IMM, destreg, offset, val);
@@ -2268,6 +2268,16 @@ mini_emit_memset (MonoCompile *cfg, int destreg, int offset, int size, int val, 
 		MONO_EMIT_NEW_I8CONST (cfg, val_reg, val);
 	else
 		MONO_EMIT_NEW_ICONST (cfg, val_reg, val);
+
+	if (align < 4) {
+		/* This could be optimized further if neccesary */
+		while (size >= 1) {
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, destreg, offset, val_reg);
+			offset += 1;
+			size -= 1;
+		}
+		return;
+	}	
 
 #if !NO_UNALIGNED_ACCESS
 	if (sizeof (gpointer) == 8) {
@@ -2305,6 +2315,18 @@ void
 mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align)
 {
 	int cur_reg;
+
+	if (align < 4) {
+		/* This could be optimized further if neccesary */
+		while (size >= 1) {
+			cur_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI1_MEMBASE, cur_reg, srcreg, soffset);
+			MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, destreg, doffset, cur_reg);
+			doffset += 1;
+			soffset += 1;
+			size -= 1;
+		}
+	}
 
 #if !NO_UNALIGNED_ACCESS
 	if (sizeof (gpointer) == 8) {
@@ -2897,7 +2919,7 @@ emit_stobj (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, g
 
 	if ((cfg->opt & MONO_OPT_INTRINS) && n <= sizeof (gpointer) * 5) {
 		/* FIXME: Optimize the case when src/dest is OP_LDADDR */
-		mini_emit_memcpy2 (cfg, dest->dreg, 0, src->dreg, 0, n, 0);
+		mini_emit_memcpy2 (cfg, dest->dreg, 0, src->dreg, 0, n, align);
 	} else {
 		iargs [0] = dest;
 		iargs [1] = src;
@@ -2925,15 +2947,16 @@ handle_initobj (MonoCompile *cfg, MonoInst *dest, const guchar *ip, MonoClass *k
 {
 	MonoInst *iargs [3];
 	int n;
+	guint32 align;
 	MonoMethod *memset_method;
 
 	/* FIXME: Optimize this for the case when dest is an LDADDR */
 
 	mono_class_init (klass);
-	n = mono_class_value_size (klass, NULL);
+	n = mono_class_value_size (klass, &align);
 
 	if (n <= sizeof (gpointer) * 5) {
-		mini_emit_memset (cfg, dest->dreg, 0, n, 0, 0);			
+		mini_emit_memset (cfg, dest->dreg, 0, n, 0, align);
 	}
 	else {
 		memset_method = get_memset_method ();
@@ -10459,7 +10482,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - test the CAS/core clr/verifier stuff.
- * - merge the memcpy/memset changes.
  * - LAST MERGE: 85064.
  */
 

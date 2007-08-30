@@ -1,3 +1,7 @@
+2007-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge the memcpy/memset changes.
+
 2007-07-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Merge r81282.
