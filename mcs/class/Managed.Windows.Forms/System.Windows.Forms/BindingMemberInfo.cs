@@ -89,5 +89,20 @@ namespace System.Windows.Forms {
 			return this.data_member.GetHashCode();
 		}
 		#endregion	// Public Instance Methods
+
+		#region Public Static Methods
+#if NET_2_0
+		public static bool operator == (BindingMemberInfo m1, BindingMemberInfo m2)
+		{
+			return (m1.Equals (m2));
+		}
+
+		public static bool operator != (BindingMemberInfo m1, BindingMemberInfo m2)
+		{
+			return !(m1.Equals (m2));
+		}
+#endif
+		#endregion	// Public Static Methods
+
 	}
 }

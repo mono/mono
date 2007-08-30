@@ -1,5 +1,9 @@
 2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* BindingMemberInfo.cs: Implement == and != operators.
+
+2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* HtmlElementEventArgs.cs: Implement properties.
 
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
