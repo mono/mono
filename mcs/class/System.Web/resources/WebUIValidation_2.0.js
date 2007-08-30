@@ -41,26 +41,22 @@ webForm.ValidatorOnLoad = function  ()
 {
 	if (typeof (this.Page_ValidationSummaries) != 'undefined' && this.Page_ValidationSummaries != null) {
 		this.have_validation_summaries = true;
-		  for (var v = 0; v < this.Page_ValidationSummaries.length; v++) {
-		    var vs = this.Page_ValidationSummaries [v];
-		    if (vs.getAttribute ("validationgroup") == null)
-			    vs.setAttribute ("validationgroup", "");
-	    }
 	}
 
 	for (var v = 0; v < this.Page_Validators.length; v++) {
 		var vo = this.Page_Validators [v];
 
-		if (vo.getAttribute ("isvalid") == null)
-			vo.setAttribute ("isvalid", "true");
+		if (typeof(vo.isvalid) == "string" && vo.isvalid == "False")
+			vo.isvalid = false;
+		else
+			vo.isvalid = true;
 
-		if (vo.getAttribute ("enabled") == null)
-			vo.setAttribute ("enabled", "true");
-
-		if (vo.getAttribute ("validationgroup") == null)
-			vo.setAttribute ("validationgroup", "");
+		if (typeof(vo.enabled) == "string" && vo.enabled == "False")
+			vo.enabled = false;
+		else
+			vo.enabled = true;
 			
-		vo.evaluationfunction = this [vo.getAttribute ("evaluationfunction")];
+		vo.evaluationfunction = this [vo.evaluationfunction];
 	}
 
 	this.Page_ValidationActive = true;
@@ -78,24 +74,23 @@ webForm.ValidationSummaryOnSubmit = function (group)
 		    
 		    if(this.IsValidationGroupMatch(vs, group)) {
 
-			    var header = vs.getAttribute ("headertext");
-			    if (header == null)
-				    header = "";
+			    var header = "";
+			    if(typeof(vs.headertext)=="string")
+				    header = vs.headertext;
 
-			    attr = vs.getAttribute ("showsummary");
-			    if (attr == null || attr.toLowerCase() == "true") {
-				    var displaymode = vs.getAttribute ("displaymode");
-				    if (displaymode == null) displaymode = "Bulleted";
+			    if (vs.showsummary != "False") {
+					if (typeof(vs.displaymode) != "string")
+						vs.displaymode = "BulletList";
 
 				    var html = "";
 
-				    if (displaymode == "List") {
+				    if (vs.displaymode == "List") {
 					    list_pre = "";
 					    list_post = "";
 					    item_pre = "";
 					    item_post = "<br>";
 				    }
-				    else if (displaymode == "SingleParagraph") {
+				    else if (vs.displaymode == "SingleParagraph") {
 					    list_pre = "";
 					    list_post = "<br>";
 					    item_pre = "";
@@ -113,8 +108,8 @@ webForm.ValidationSummaryOnSubmit = function (group)
 						for (var v = 0; v < this.Page_Validators.length; v++) {
 				      var vo = this.Page_Validators [v];
 
-					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
-						    var text = this.ValidatorGetErrorMessage (vo);
+					    if (!vo.isvalid) {
+						    var text = vo.errormessage;
 						    if (text != null && text != "") {
 							    html += item_pre + text + item_post;
 						    }
@@ -126,15 +121,14 @@ webForm.ValidationSummaryOnSubmit = function (group)
 				    vs.style.display = "block";
 			    }
 
-			    attr = vs.getAttribute ("showmessagebox");
-			    if (attr != null && attr.toLowerCase() == "true") {
+			    if (vs.showmessagebox == "True") {
 				    var v_contents = "";
 
 						for (var v = 0; v < this.Page_Validators.length; v++) {
 				      var vo = this.Page_Validators [v];
 
-					    if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
-						    var text = this.ValidatorGetErrorMessage (vo);
+					    if (!vo.isvalid) {
+						    var text = vo.errormessage;
 						    if (text != null && text != "") {
 							    v_contents += "-" + text + "\n";
 						    }
@@ -216,7 +210,7 @@ webForm.Page_ClientValidate = function (group)
 		var evalfunc = vo.evaluationfunction;
 		var result = false;
 
-		if (vo.getAttribute ("enabled").toLowerCase() == "false" || !this.IsValidationGroupMatch(vo, group)) {
+		if (!vo.enabled || !this.IsValidationGroupMatch(vo, group)) {
 			result = true;
 			this.ValidatorSucceeded (vo);
 		}
@@ -231,14 +225,16 @@ webForm.Page_ClientValidate = function (group)
 			}
 		}
 		
-		vo.setAttribute("isvalid", result ? "true" : "false");
+		vo.isvalid = result;
 	}
     this.ValidationSummaryOnSubmit(group);
 	return this.validation_result;
 }
 
 webForm.IsValidationGroupMatch = function (vo, group) {
-    var valGroup = vo.getAttribute ("validationgroup");
+    var valGroup = "";
+    if (typeof(vo.validationGroup) == "string")
+		valGroup = vo.validationGroup;
     if ((typeof(group) == "undefined") || (group == null)) {
         return (valGroup == "");
     }
@@ -246,7 +242,7 @@ webForm.IsValidationGroupMatch = function (vo, group) {
 }
 
 webForm.ValidatorSetFocus = function (val) {
-    var ctrl = this.GetElement(val.getAttribute ("controltovalidate"));
+    var ctrl = this.GetElement(val.controltovalidate);
 	if ((typeof(ctrl) != "undefined") && (ctrl != null) &&
 		((ctrl.tagName.toLowerCase() != "input") || (ctrl.type.toLowerCase() != "hidden")) &&
 		(typeof(ctrl.disabled) == "undefined" || ctrl.disabled == null || ctrl.disabled == false) &&
@@ -375,18 +371,20 @@ webForm.GetFullYear = function (year, maxYear)
 
 webForm.CompareValidatorEvaluateIsValid = function (validator)
 {
-	var ControlToCompare = validator.getAttribute ("controltocompare");
-	var ValueToCompare = validator.getAttribute ("valuetocompare");
-	var Operator = validator.getAttribute ("operator").toLowerCase();
-	var ControlToValidate = validator.getAttribute ("controltovalidate");
-	var DataType = validator.getAttribute ("datatype");
+	var Operator = validator.operator.toLowerCase();
+	var ControlToValidate = validator.controltovalidate;
+	var DataType = validator.type;
 
 	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 	if (ctrl_value == "") {
 		this.ValidatorSucceeded (validator);
 		return true;
 	}
-	var compare = (ControlToCompare != null && ControlToCompare != "") ? this.ValidatorTrim (this.ValidatorGetValue (ControlToCompare)) : ValueToCompare;
+	var compare = "";
+	if (typeof(validator.controltocompare) == "string" && document.getElementById(validator.controltocompare))
+		compare = this.ValidatorTrim(this.ValidatorGetValue(val.controltocompare));
+	else if (typeof(validator.valuetocompare) == "string")
+		compare = validator.valuetocompare;
 
 	var left = this.Convert (ctrl_value, DataType, validator);
  	if (left == null) {
@@ -433,8 +431,8 @@ webForm.CompareValidatorEvaluateIsValid = function (validator)
 
 webForm.RangeValidatorEvaluateIsValid = function (validator)
 {
-	var ControlToValidate = validator.getAttribute ("controltovalidate");
-	var DataType = validator.getAttribute ("datatype");
+	var ControlToValidate = validator.controltovalidate;
+	var DataType = validator.type;
 
 	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
@@ -443,8 +441,8 @@ webForm.RangeValidatorEvaluateIsValid = function (validator)
 		return true;
 	}
 
-	var MinimumValue = this.Convert (validator.getAttribute ("minimumvalue"), DataType, validator);
-	var MaximumValue = this.Convert (validator.getAttribute ("maximumvalue"), DataType, validator);
+	var MinimumValue = this.Convert (validator.minimumvalue, DataType, validator);
+	var MaximumValue = this.Convert (validator.maximumvalue, DataType, validator);
 	var val = this.Convert (ctrl_value, DataType, validator);
 	if (val == null || val < MinimumValue || val > MaximumValue) {
 		this.ValidatorFailed (validator);
@@ -458,8 +456,8 @@ webForm.RangeValidatorEvaluateIsValid = function (validator)
 
 webForm.RegularExpressionValidatorEvaluateIsValid = function (validator)
 {
-	var ValidationExpression = validator.getAttribute ("validationexpression");
-	var ControlToValidate = validator.getAttribute ("controltovalidate");
+	var ValidationExpression = validator.validationexpression;
+	var ControlToValidate = validator.controltovalidate;
 
 	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
@@ -485,8 +483,8 @@ webForm.RegularExpressionValidatorEvaluateIsValid = function (validator)
 
 webForm.RequiredFieldValidatorEvaluateIsValid = function (validator)
 {
-	var InitialValue = validator.getAttribute ("initialvalue");
-	var ControlToValidate = validator.getAttribute ("controltovalidate");
+	var InitialValue = validator.initialvalue;
+	var ControlToValidate = validator.controltovalidate;
 
 	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 
@@ -502,15 +500,14 @@ webForm.RequiredFieldValidatorEvaluateIsValid = function (validator)
 
 webForm.CustomValidatorEvaluateIsValid = function (validator)
 {
-	var InitialValue = validator.getAttribute ("initialvalue");
-	var ControlToValidate = validator.getAttribute ("controltovalidate");
+	var ControlToValidate = validator.controltovalidate;
 
 	if (!ControlToValidate) {
 		this.ValidatorSucceeded (validator);
 		return true;
 	}
 
-	var evaluationfunc = validator.getAttribute ("clientvalidationfunction");
+	var evaluationfunc = validator.clientvalidationfunction;
 
 	var ctrl_value = this.ValidatorTrim (this.ValidatorGetValue (ControlToValidate));
 	
@@ -551,7 +548,7 @@ webForm.Convert = function (s, ty, validator)
 
 webForm.ValidatorUpdateDisplay = function (v, valid)
 {
-	var display = v.getAttribute ("display");
+	var display = v.display;
 
 	/* for validators that aren't displayed, do nothing */
 	if (display == "None") {
@@ -562,26 +559,6 @@ webForm.ValidatorUpdateDisplay = function (v, valid)
 	if (display == "Dynamic") {
 		v.style.display = (valid ? "none" : "inline");
 	}
-}
-
-webForm.ValidatorGetErrorMessage = function  (v)
-{
-	var text = v.getAttribute ("errormessage");
-	if (text == null || text == "")
-		text = v.getAttribute ("text");	
-	if (text == null)
-		text = "";
-	return text;
-}
-
-webForm.ValidatorGetText = function  (v)
-{
-	var text = v.getAttribute ("text");	
-	if (text == null || text == "")
-		text = v.getAttribute ("errormessage");
-	if (text == null)
-		text = "";
-	return text;
 }
 
 webForm.ValidatorFailed = function  (v)

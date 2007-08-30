@@ -72,17 +72,19 @@ namespace System.Web.UI.WebControls {
 
 			if (base.RenderUplevel) {
 				string s;
-
+#if NET_2_0
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "CustomValidatorEvaluateIsValid");
+				if (ValidateEmptyText)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validateemptytext", "true");
+				if (ClientValidationFunction.Length > 0)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "clientvalidationfunction", ClientValidationFunction);
+#else
 				writer.AddAttribute ("evaluationfunction", "CustomValidatorEvaluateIsValid", false);
 
 				s = ClientValidationFunction;
 				if (s != string.Empty) {
 					writer.AddAttribute("clientvalidationfunction", s);
 				}
-
-#if NET_2_0
-				if (ValidateEmptyText)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validateemptytext", "true");
 #endif
 			}
 		}

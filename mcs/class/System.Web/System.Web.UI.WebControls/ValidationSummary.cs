@@ -179,8 +179,20 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 #if NET_2_0
 				if (ValidationGroup != String.Empty)
-					writer.AddAttribute ("validationgroup", ValidationGroup);
-#endif
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
+
+				if (HeaderText.Length > 0)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "headertext", HeaderText);
+
+				if (ShowMessageBox)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "showmessagebox", "True");
+
+				if (!ShowSummary)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "showsummary", "False");
+
+				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "displaymode", DisplayMode.ToString ());
+#else
 				if (HeaderText != "")
 					writer.AddAttribute ("headertext", HeaderText);
 
@@ -192,6 +204,7 @@ namespace System.Web.UI.WebControls {
 
 				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
 					writer.AddAttribute ("displaymode", DisplayMode.ToString());
+#endif
 
 				if (!has_errors)
 					writer.AddStyleAttribute ("display", "none");

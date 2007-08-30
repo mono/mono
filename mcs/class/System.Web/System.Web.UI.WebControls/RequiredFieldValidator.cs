@@ -43,8 +43,13 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
+#if NET_2_0
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "RequiredFieldValidatorEvaluateIsValid");
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "initialvalue", InitialValue);
+#else
 				w.AddAttribute ("evaluationfunction", "RequiredFieldValidatorEvaluateIsValid", false);
 				w.AddAttribute ("initialvalue", InitialValue);
+#endif
 			}
 
 			base.AddAttributesToRender (w);

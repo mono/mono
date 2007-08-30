@@ -1,3 +1,15 @@
+2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseCompareValidator.cs:
+	* BaseValidator.cs:
+	* CompareValidator.cs:
+	* CustomValidator.cs:
+	* RangeValidator.cs:
+	* RegularExpressionValidator.cs:
+	* RequiredFieldValidator.cs:
+	all Validators use RegisterExpandoAttribute for 
+	not XHTML compliant attributes.
+
 2007-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* ListControl.cs: do not perform data binding twice if

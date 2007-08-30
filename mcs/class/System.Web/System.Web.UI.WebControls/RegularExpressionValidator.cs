@@ -53,9 +53,15 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
+#if NET_2_0
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "RegularExpressionValidatorEvaluateIsValid");
+				if (ValidationExpression.Length > 0)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validationexpression", ValidationExpression);
+#else
 				w.AddAttribute ("evaluationfunction", "RegularExpressionValidatorEvaluateIsValid", false);
 				if (ValidationExpression != "")
 					w.AddAttribute ("validationexpression", ValidationExpression);
+#endif
 			}
 
 			base.AddAttributesToRender (w);

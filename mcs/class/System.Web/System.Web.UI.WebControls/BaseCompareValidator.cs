@@ -51,10 +51,10 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-				w.AddAttribute ("datatype", Type.ToString());
-
 #if NET_2_0
 				if (Page!=null){
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "type", Type.ToString ());
+
 					switch (Type) {
 					case ValidationDataType.Date:
 						DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
@@ -72,6 +72,8 @@ namespace System.Web.UI.WebControls {
 						break;
 					}
 				}
+#else
+				w.AddAttribute ("datatype", Type.ToString());
 #endif
 			}
 

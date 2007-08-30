@@ -49,12 +49,21 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
+#if NET_2_0
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "CompareValidatorEvaluateIsValid");
+				if (ControlToCompare.Length > 0)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "controltocompare", GetControlRenderID (ControlToCompare));
+				if (ValueToCompare.Length > 0)
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "valuetocompare", ValueToCompare);
+				Page.ClientScript.RegisterExpandoAttribute (ClientID, "operator", Operator.ToString ());
+#else
 				if (ControlToCompare != "")
 					w.AddAttribute ("controltocompare", GetControlRenderID(ControlToCompare));
 				if (ValueToCompare != "")
 					w.AddAttribute ("valuetocompare", ValueToCompare);
 				w.AddAttribute ("operator", Operator.ToString());
 				w.AddAttribute ("evaluationfunction", "CompareValidatorEvaluateIsValid", false);
+#endif
 			}
 
 			base.AddAttributesToRender (w);

@@ -133,8 +133,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		public override bool Enabled {
-			get { return ViewState.GetBool ("Enabled", true); }
-			set { ViewState ["Enabled"] = value; }
+			get { return ViewState.GetBool ("BaseValidatorEnabled", true); }
+			set { ViewState ["BaseValidatorEnabled"] = value; }
 		}
 
 #if NET_2_0
@@ -202,9 +202,6 @@ namespace System.Web.UI.WebControls {
 			return render_uplevel;
 		}
 
-		[MonoTODO()]
-		// for 2.0: not XHTML attributes must be registered with RegisterExpandoAttribute 
-		// when it will be implemented, in this case WebUIValidation_2.0.js muist be refactored
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			/* if we're rendering uplevel, add our attributes */
@@ -214,28 +211,43 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 
 				if (ControlToValidate != String.Empty)
+#if NET_2_0
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "controltovalidate", GetControlRenderID (ControlToValidate));
+#else
 					writer.AddAttribute ("controltovalidate", GetControlRenderID (ControlToValidate));
+#endif
 
 				if (ErrorMessage != String.Empty)
+#if NET_2_0
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "errormessage", ErrorMessage);
+#else
 					writer.AddAttribute ("errormessage", ErrorMessage);
+
 				if (Text != String.Empty)
 					writer.AddAttribute ("text", Text);
+#endif
+
 #if NET_2_0
 				if (ValidationGroup != String.Empty)
-					writer.AddAttribute ("validationgroup", ValidationGroup);
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
 
 				if (SetFocusOnError)
 					Page.ClientScript.RegisterExpandoAttribute (ClientID, "focusOnError", "t");
 #endif
 				if (!Enabled)
+#if NET_2_0
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "enabled", "False");
+#else
 					writer.AddAttribute ("enabled", "false", false);
+#endif
 
 #if NET_2_0
 				if (Enabled && !IsValid) {
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "isvalid", "False");
 #else
 				if (!IsValid) {
-#endif
 					writer.AddAttribute ("isvalid", "false", false);
+#endif
 				}
 				else {
 					if (Display == ValidatorDisplay.Static)
@@ -245,7 +257,11 @@ namespace System.Web.UI.WebControls {
 				}
 
 				if (Display != ValidatorDisplay.Static)
+#if NET_2_0
+					Page.ClientScript.RegisterExpandoAttribute (ClientID, "display", Display.ToString ());
+#else
 					writer.AddAttribute ("display", Display.ToString());
+#endif
 			}
 
 			base.AddAttributesToRender (writer);
