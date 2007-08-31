@@ -1466,8 +1466,6 @@ namespace System.Web.UI.WebControls
 			
 			for (int n=0; n<fields.Length; n++) {
 				DataControlField field = fields [n];
-				if (!field.Visible)
-					continue;
 				
 				DataControlFieldCell cell;
 				if (((field is BoundField) && ((BoundField)field).DataField == RowHeaderColumn) || accessibleHeader)
@@ -1507,10 +1505,17 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void ExtractRowValues (IOrderedDictionary fieldValues, GridViewRow row, bool includeReadOnlyFields, bool includePrimaryKey)
 		{
+			DataControlField field;
 			foreach (TableCell cell in row.Cells) {
 				DataControlFieldCell c = cell as DataControlFieldCell;
-				if (c != null)
-					c.ContainingField.ExtractValuesFromCell (fieldValues, c, row.RowState, includeReadOnlyFields);
+				if (c == null)
+					continue;
+				
+				field = c.ContainingField;
+				if (field != null && !field.Visible)
+					continue;
+				
+				c.ContainingField.ExtractValuesFromCell (fieldValues, c, row.RowState, includeReadOnlyFields);
 			}
 			if (!includePrimaryKey && DataKeyNames != null)
 				foreach (string key in DataKeyNames)
@@ -1586,6 +1591,13 @@ namespace System.Web.UI.WebControls
 					DataControlFieldCell fcell = cell as DataControlFieldCell;
 					if (fcell != null) {
 						DataControlField field = fcell.ContainingField;
+						if (field == null)
+							continue;
+						if (!field.Visible) {
+							cell.Visible = false;
+							continue;
+						}
+						
 						switch (row.RowType) {
 						case DataControlRowType.Header:
 							if (field.HeaderStyleCreated && !field.HeaderStyle.IsEmpty)
