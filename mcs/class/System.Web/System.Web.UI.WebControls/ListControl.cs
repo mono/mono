@@ -566,6 +566,8 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (indices != null) {
+				for (int i = 0; i < Items.Count; i++)
+					Items [i].Selected = false;
 				foreach (int index in indices)
 					Items [index].Selected = true;
 			}

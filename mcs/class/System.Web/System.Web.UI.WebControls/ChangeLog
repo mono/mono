@@ -1,3 +1,7 @@
+2007-08-30 Igor Zelmanovich <igorz at mainsoft.com>
+
+	* ListControl.cs: fixed selected items state management.
+
 2007-07-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs: refactoring:
