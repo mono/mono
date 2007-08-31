@@ -1,3 +1,10 @@
+2007-09-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: rewrote the app_offline.htm support. It now uses
+	filesystem watchers instead of checking for existence of the
+	file(s) at the beginning of every request. No performance penalty
+	that way.
+
 2007-08-31  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: added methods to enable/disable

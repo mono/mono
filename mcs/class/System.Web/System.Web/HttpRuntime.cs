@@ -287,69 +287,19 @@ namespace System.Web {
 
 #if NET_2_0
 		static readonly string[] app_offline_files = {"app_offline.htm", "App_Offline.htm", "APP_OFFLINE.HTM"};
-		static FileSystemWatcher app_offline_watcher;
-
-		static void AppOfflineFileRenamed (object sender, RenamedEventArgs args)
-		{
-			AppOfflineFileChanged (sender, args);
-		}
-		
-		static void AppOfflineFileChanged (object sender, FileSystemEventArgs args)
-	        {
-	        	lock (appOfflineLock) {
-				HttpApplicationFactory.DisableWatchers ();
-				app_offline_watcher.EnableRaisingEvents = false;
-				
-				// Restart application
-				HttpRuntime.UnloadAppDomain();
-			}
-	        }
+		static FileSystemWatcher[] app_offline_watchers;
+		static string app_offline_file;
 		
 		static bool AppIsOffline (HttpContext context)
 		{
-			string app_path = context.Request.PhysicalApplicationPath;
-			string aof_path = null;
-			bool haveOfflineFile = false;
-
-			foreach (string aof in app_offline_files) {
-				aof_path = Path.Combine (app_path, aof);
-				if (File.Exists (aof_path)) {
-					haveOfflineFile = true;
-					break;
-				}
-			}
-
-			lock (appOfflineLock) {
-				if (!haveOfflineFile) {
-					if (HttpApplicationFactory.ApplicationDisabled) {
-						HttpApplicationFactory.ApplicationDisabled = false;
-						HttpApplicationFactory.EnableWatchers ();
-					}
-					
-					return false;
-				}
-
-				HttpApplicationFactory.ApplicationDisabled = true;
-				HttpApplicationFactory.DisableWatchers ();
-
-				FileSystemEventHandler seh = new FileSystemEventHandler (AppOfflineFileChanged);
-				RenamedEventHandler reh = new RenamedEventHandler (AppOfflineFileRenamed);
-				
-				app_offline_watcher = new FileSystemWatcher ();
-				app_offline_watcher.Path = Path.GetDirectoryName (aof_path);
-				app_offline_watcher.Filter = Path.GetFileName (aof_path);
-				app_offline_watcher.NotifyFilter |= NotifyFilters.Size;
-				app_offline_watcher.Deleted += seh;
-				app_offline_watcher.Changed += seh;
-				app_offline_watcher.Renamed += reh;
-				app_offline_watcher.EnableRaisingEvents = true;
-			}
+			if (!HttpApplicationFactory.ApplicationDisabled || app_offline_file == null)
+				return false;
 
 			HttpResponse response = context.Response;
 			response.Clear ();
 			response.ContentType = "text/html";
 			response.ExpiresAbsolute = DateTime.UtcNow;
-			response.TransmitFile (aof_path, true);
+			response.TransmitFile (app_offline_file, true);
 			
 			context.Request.ReleaseResources ();
 			context.Response.ReleaseResources ();
@@ -357,16 +307,102 @@ namespace System.Web {
 			
 			return true;
 		}
+
+		static void AppOfflineFileRenamed (object sender, RenamedEventArgs args)
+		{
+			AppOfflineFileChanged (sender, args);
+		}
+
+		static void AppOfflineFileChanged (object sender, FileSystemEventArgs args)
+	        {
+	        	lock (appOfflineLock) {
+				bool offline;
+				
+				switch (args.ChangeType) {
+					case WatcherChangeTypes.Created:
+					case WatcherChangeTypes.Changed:
+						offline = true;
+						break;
+
+					case WatcherChangeTypes.Deleted:
+						offline = false;
+						break;
+
+					case WatcherChangeTypes.Renamed:
+						RenamedEventArgs rargs = args as RenamedEventArgs;
+
+						if (rargs != null &&
+						    String.Compare (rargs.Name, "app_offline.htm", StringComparison.OrdinalIgnoreCase) == 0)
+							offline = true;
+						else
+							offline = false;
+						break;
+
+					default:
+						offline = false;
+						break;
+				}
+				SetOfflineMode (offline, args.FullPath);
+			}
+	        }
+
+		static void SetOfflineMode (bool offline, string filePath)
+		{
+			if (!offline) {
+				app_offline_file = null;
+				if (HttpApplicationFactory.ApplicationDisabled)
+					HttpRuntime.UnloadAppDomain ();
+			} else {
+				app_offline_file = filePath;
+				HttpApplicationFactory.DisableWatchers ();
+				HttpApplicationFactory.ApplicationDisabled = true;
+			}
+		}
+		
+ 		static void SetupOfflineWatch ()
+		{
+			lock (appOfflineLock) {
+				FileSystemEventHandler seh = new FileSystemEventHandler (AppOfflineFileChanged);
+				RenamedEventHandler reh = new RenamedEventHandler (AppOfflineFileRenamed);
+
+				string app_dir = AppDomainAppPath;
+				ArrayList watchers = new ArrayList ();
+				FileSystemWatcher watcher;
+				string offlineFile = null, tmp;
+				
+				foreach (string f in app_offline_files) {
+					watcher = new FileSystemWatcher ();
+					watcher.Path = Path.GetDirectoryName (app_dir);
+					watcher.Filter = Path.GetFileName (f);
+					watcher.NotifyFilter |= NotifyFilters.Size;
+					watcher.Deleted += seh;
+					watcher.Changed += seh;
+					watcher.Renamed += reh;
+					watcher.EnableRaisingEvents = true;
+					
+					watchers.Add (watcher);
+
+					tmp = Path.Combine (app_dir, f);
+					if (File.Exists (tmp))
+						offlineFile = tmp;
+				}
+
+				if (offlineFile != null)
+					SetOfflineMode (true, offlineFile);
+			}
+		}
 #endif
 		
 		static void RealProcessRequest (object o)
 		{
 			HttpContext context = new HttpContext ((HttpWorkerRequest) o);
 			HttpContext.Current = context;
-
 			bool error = false;
 #if !TARGET_J2EE
 			if (firstRun) {
+#if NET_2_0
+				SetupOfflineWatch ();
+#endif
 				firstRun = false;
 				if (initialException != null) {
 					FinishWithException ((HttpWorkerRequest) o, new HttpException ("Initial exception", initialException));

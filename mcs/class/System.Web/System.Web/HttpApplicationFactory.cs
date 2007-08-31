@@ -69,8 +69,6 @@ namespace System.Web {
 #else
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
 #endif
-        
-
 		MethodInfo session_end;
 		bool needs_init = true;
 		bool app_start_needed = true;
