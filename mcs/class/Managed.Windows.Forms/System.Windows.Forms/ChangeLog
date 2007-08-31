@@ -1,3 +1,7 @@
+2007-08-30  Everaldo Canuto  <everaldo@simios.org>
+
+	* ToolBar.cs: Fix button size for non flat toolbars. Fixes #82368.
+
 2007-08-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Put item padding info in a single place
@@ -48,7 +52,7 @@
 	* FolderBrowserDialog.cs: Set Tag of newly created node, and keep it
 	up-to-date. Fixes bug #82618.
 
-2007-05-29  Everaldo Canuto  <everaldo@simios.org>
+2007-08-29  Everaldo Canuto  <everaldo@simios.org>
 
 	* TextBoxBase.cs: Call CalculateDocument after changes Lines property to
 	reflect document changes. Fixes #82367.

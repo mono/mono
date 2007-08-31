@@ -970,7 +970,12 @@ namespace System.Windows.Forms
 		// button size to be at least large enough to show the image.
 		private Size AdjustedButtonSize {
 			get {
-				Size size = default_size.IsEmpty ? ButtonSize : default_size;
+				Size size;
+
+				if (default_size.IsEmpty || Appearance == ToolBarAppearance.Normal) 
+					size = ButtonSize;
+				else
+					size = default_size;
 				
 				if (size_specified) {
 					if (Appearance == ToolBarAppearance.Flat)
