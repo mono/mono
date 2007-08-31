@@ -1856,7 +1856,7 @@ namespace Mono.CSharp {
 	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
 		static int types_counter;
-		public const string ClassNamePrefix = "<>__AnonymousType";
+		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
 		
 		static readonly IntConstant FNV_prime = new IntConstant (16777619, Location.Null);

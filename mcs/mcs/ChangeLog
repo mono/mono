@@ -1,3 +1,18 @@
+2007-08-31  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: Use shorter type prefix.
+	
+	* ecore.cs (SimpleName.DoSimpleNameResolve): Use transparent identifiers
+	when exist.
+	
+	* expression.cs (LocalVariableReference.DoResolveBase): Don't capture
+	variables when probing is on.
+	
+	* statement.cs (LocaLInfo.Clone): Clone correctly resolved and 
+	unresolved variables.
+	(TopLevelBlock.GetTransparentIdentifier): Default implementation doesn't
+	handle transparent identifiers.
+	
 2007-08-26  Marek Safar  <marek.safar@gmail.com>
 
 	* attribute.cs (IsClsCompliant): Add nullable types test.

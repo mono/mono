@@ -1431,8 +1431,18 @@ namespace Mono.CSharp {
 
 		public LocalInfo Clone (CloneContext clonectx)
 		{
-			// Only this kind is created by the parser.
-			return new LocalInfo (Type.Clone (clonectx), Name, clonectx.LookupBlock (Block), Location);
+			//
+			// Variables in anonymous block are not resolved yet
+			//
+			if (VariableType == null)
+				return new LocalInfo (Type.Clone (clonectx), Name, clonectx.LookupBlock (Block), Location);
+
+			//
+			// Variables in method block are resolved
+			//
+			LocalInfo li = new LocalInfo (null, Name, clonectx.LookupBlock (Block), Location);
+			li.VariableType = VariableType;
+			return li;			
 		}
 	}
 
@@ -2495,6 +2505,11 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public virtual Expression GetTransparentIdentifier (string name)
+		{
+			return null;
 		}
 
 		void ProcessParameters ()

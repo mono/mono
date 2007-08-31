@@ -2298,6 +2298,13 @@ namespace Mono.CSharp {
 					else
 						return pref.Resolve (ec);
 				}
+
+				Expression expr = current_block.Toplevel.GetTransparentIdentifier (Name);
+				if (expr != null) {
+					if (right_side != null)
+						return expr.ResolveLValue (ec, right_side, loc);
+					return expr.Resolve (ec);
+				}
 			}
 			
 			//

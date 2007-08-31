@@ -3642,9 +3642,12 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				ScopeInfo scope = local_info.Block.CreateScopeInfo ();
-				variable = scope.AddLocal (local_info);
-				type = variable.Type;
+				if (!ec.IsInProbingMode)
+				{
+					ScopeInfo scope = local_info.Block.CreateScopeInfo ();
+					variable = scope.AddLocal (local_info);
+					type = variable.Type;
+				}
 			}
 
 			return this;
@@ -8916,6 +8919,13 @@ namespace Mono.CSharp {
 			this.loc = loc;
 			this.initializer = initializer;
 		}
+		
+		public AnonymousTypeParameter (Parameter parameter)
+		{
+			this.Name = parameter.Name;
+			this.loc = parameter.Location;
+			this.initializer = new SimpleName (Name, loc);
+		}		
 
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
