@@ -137,7 +137,8 @@ namespace System.Web.UI
 		const int AUTOID_SET = 1 << 17;
 		/*************/
 
-		static Control () {
+		static Control ()
+		{
 			defaultNameArray = new string [100];
 			for (int i = 0; i < 100; i++)
 #if NET_2_0
@@ -147,7 +148,8 @@ namespace System.Web.UI
 #endif
 		}
 
-		public Control () {
+		public Control ()
+		{
 			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
 			if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
@@ -228,7 +230,8 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		internal string UniqueID2ClientID (string uniqueId) {
+		internal string UniqueID2ClientID (string uniqueId)
+		{
 			return uniqueId.Replace (IdSeparator, ClientIDSeparator);
 		}
 
@@ -236,18 +239,15 @@ namespace System.Web.UI
 #else
 		char ClientIDSeparator
 #endif
- {
-			get {
-				return '_';
-			}
+		{
+			get { return '_'; }
 		}
 
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The child controls of this control.")]
-		public virtual ControlCollection Controls //DIT
-		{
+		public virtual ControlCollection Controls { //DIT
 			get {
 				if (_controls == null)
 					_controls = CreateControlCollection ();
@@ -279,9 +279,7 @@ namespace System.Web.UI
 #endif
 
 		public virtual string ID {
-			get {
-				return (((stateMask & ID_SET) != 0) ? _userId : null);
-			}
+			get { return (((stateMask & ID_SET) != 0) ? _userId : null); }
 
 			set {
 				if (value == "")
@@ -295,9 +293,7 @@ namespace System.Web.UI
 
 #if NET_2_0
 		protected char IdSeparator {
-			get {
-				return '$';
-			}
+			get { return '$'; }
 		}
 
 		protected internal bool IsChildControlStateCleared {
@@ -306,7 +302,6 @@ namespace System.Web.UI
 
 		protected internal bool IsViewStateEnabled {
 			get {
-
 				for (Control control = this; control != null; control = control.Parent)
 					if (!control.EnableViewState)
 						return false;
@@ -316,9 +311,7 @@ namespace System.Web.UI
 		}
 
 		protected bool LoadViewStateByID {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 #endif
 
@@ -344,8 +337,7 @@ namespace System.Web.UI
 #if NET_2_0
 		[Bindable (false)]
 #endif
-		public virtual Page Page //DIT
-				{
+		public virtual Page Page { //DIT
 			get {
 				if (_page == null){
 					if (NamingContainer != null)
@@ -355,41 +347,30 @@ namespace System.Web.UI
 				}
 				return _page;
 			}
-			set {
-				_page = value;
-			}
+			
+			set { _page = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[WebSysDescription ("The parent control of this control.")]
-		public virtual Control Parent //DIT
-		{
-			get {
-				return _parent;
-			}
+		public virtual Control Parent { //DIT
+			get { return _parent; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced), Browsable (false)]
 		[WebSysDescription ("The site this control is part of.")]
-		public ISite Site //DIT
-		{
-			get {
-				return _site;
-			}
-			set {
-				_site = value;
-			}
+		public ISite Site { //DIT
+			get { return _site; }
+			set { _site = value; }
 		}
 
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TemplateControl TemplateControl {
-			get {
-				return TemplateControlInternal;
-			}
+			get { return TemplateControlInternal; }
 
 			[EditorBrowsable (EditorBrowsableState.Never)]
 			set { _templateControl = value; }
@@ -420,8 +401,7 @@ namespace System.Web.UI
 						HttpContext ctx = Context;
 						if (ctx != null)
 							_templateSourceDirectory = VirtualPathUtility.GetDirectory (ctx.Request.CurrentExecutionFilePath);
-					}
-					else if (tc != this)
+					} else if (tc != this)
 						_templateSourceDirectory = tc.TemplateSourceDirectory;
 
 					if (_templateSourceDirectory == null && this is TemplateControl) {
@@ -437,8 +417,7 @@ namespace System.Web.UI
 								return ret;
 							if (ret [--len] == '/')
 								_templateSourceDirectory = ret.Substring (0, len);
-						}
-						else
+						} else
 							_templateSourceDirectory = String.Empty;
 					}
 					if (_templateSourceDirectory == null)
@@ -542,8 +521,7 @@ namespace System.Web.UI
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		protected virtual HttpContext Context //DIT
-		{
+		protected virtual HttpContext Context { //DIT
 			get {
 				HttpContext context;
 				if (_context != null)
@@ -566,9 +544,7 @@ namespace System.Web.UI
 		}
 
 		protected bool HasChildViewState {
-			get {
-				return (pendingVS != null && pendingVS.Count > 0);
-			}
+			get { return (pendingVS != null && pendingVS.Count > 0); }
 		}
 
 		protected bool IsTrackingViewState {
@@ -593,9 +569,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		protected virtual bool ViewStateIgnoresCase {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		internal bool AutoEventWireup {
@@ -603,15 +577,18 @@ namespace System.Web.UI
 			set { SetMask (AUTO_EVENT_WIREUP, value); }
 		}
 
-		internal void SetBindingContainer (bool isBC) {
+		internal void SetBindingContainer (bool isBC)
+		{
 			SetMask (BINDING_CONTAINER, isBC);
 		}
 
-		internal void ResetChildNames () {
+		internal void ResetChildNames ()
+		{
 			defaultNumberID = 0;
 		}
 
-		string GetDefaultName () {
+		string GetDefaultName ()
+		{
 			string defaultName;
 			if (defaultNumberID > 99) {
 #if NET_2_0
@@ -619,14 +596,14 @@ namespace System.Web.UI
 #else
 				defaultName = "_ctl" + defaultNumberID++;
 #endif
-			}
-			else {
+			} else {
 				defaultName = defaultNameArray [defaultNumberID++];
 			}
 			return defaultName;
 		}
 
-		void NullifyUniqueID () {
+		void NullifyUniqueID ()
+		{
 			uniqueID = null;
 			if (!HasControls ())
 				return;
@@ -635,7 +612,8 @@ namespace System.Web.UI
 				_controls [i].NullifyUniqueID ();
 		}
 
-		protected internal virtual void AddedControl (Control control, int index) {
+		protected internal virtual void AddedControl (Control control, int index)
+		{
 			ResetControlsCache ();
 
 			/* Ensure the control don't have more than 1 parent */
@@ -672,7 +650,8 @@ namespace System.Web.UI
 				control.PreRenderRecursiveInternal ();
 		}
 		
-		void SetNamingContainer (Control nc) {
+		void SetNamingContainer (Control nc)
+		{
 			if (nc != null) {
 				_namingContainer = nc;
 				if (AutoID)
@@ -689,7 +668,8 @@ namespace System.Web.UI
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual void ApplyStyleSheetSkin (Page page) {
+		public virtual void ApplyStyleSheetSkin (Page page)
+		{
 			if (!EnableTheming) /* this enough? */
 				return;
 
@@ -702,22 +682,26 @@ namespace System.Web.UI
 		}
 #endif
 
-		protected void BuildProfileTree (string parentId, bool calcViewState) {
+		protected void BuildProfileTree (string parentId, bool calcViewState)
+		{
 			//TODO
 		}
 
 #if NET_2_0
-		protected void ClearChildControlState () {
+		protected void ClearChildControlState ()
+		{
 			_isChildControlStateCleared = true;
 		}
 
-		protected void ClearChildState () {
+		protected void ClearChildState ()
+		{
 			ClearChildViewState ();
 			ClearChildControlState ();
 		}
 #endif
 
-		protected void ClearChildViewState () {
+		protected void ClearChildViewState ()
+		{
 			pendingVS = null;
 		}
 
@@ -726,14 +710,17 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void CreateChildControls () { } //DIT
+		virtual void CreateChildControls () //DIT
+		{
+		}
 
 		protected virtual ControlCollection CreateControlCollection () //DIT
 		{
 			return new ControlCollection (this);
 		}
 
-		protected virtual void EnsureChildControls () {
+		protected virtual void EnsureChildControls ()
+		{
 			if (ChildControlsCreated == false && (stateMask & CREATING_CONTROLS) == 0) {
 				stateMask |= CREATING_CONTROLS;
 #if NET_2_0
@@ -747,7 +734,8 @@ namespace System.Web.UI
 			}
 		}
 
-		void EnsureIDInternal () {
+		void EnsureIDInternal ()
+		{
 			if (_userId != null)
 				return;
 
@@ -756,17 +744,18 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		protected void EnsureID () {
+		protected void EnsureID ()
+		{
 			if (NamingContainer == null)
 				return;
 			EnsureIDInternal ();
 			SetMask (ID_SET, true);
 		}
 
-		protected bool HasEvents () {
+		protected bool HasEvents ()
+		{
 			return _events != null;
 		}
-
 #endif
 
 		void ResetControlsCache ()
@@ -814,8 +803,7 @@ namespace System.Web.UI
 				try {
 					if (c._userId != null)
 						_controlsCache.Add (c._userId, c);
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					throw new HttpException ("Found more than one control with ID '" + c._userId + "'", ex);
 				}
 
@@ -824,7 +812,8 @@ namespace System.Web.UI
 			}
 		}
 
-		protected bool IsLiteralContent () {
+		protected bool IsLiteralContent ()
+		{
 			if (HasControls () && _controls.Count == 1 && (_controls [0] is LiteralControl))
 				return true;
 
@@ -832,11 +821,13 @@ namespace System.Web.UI
 		}
 
 		[WebSysDescription ("")]
-		public virtual Control FindControl (string id) {
+		public virtual Control FindControl (string id)
+		{
 			return FindControl (id, 0);
 		}
 
-		Control LookForControlByName (string id) {
+		Control LookForControlByName (string id)
+		{
 #if TARGET_J2EE
 			if (this == Page && id != null && id == Page.PortletNamespace)
 				return this;
@@ -845,7 +836,8 @@ namespace System.Web.UI
 			return (Control) _controlsCache [id];
 		}
 
-		protected virtual Control FindControl (string id, int pathOffset) {
+		protected virtual Control FindControl (string id, int pathOffset)
+		{
 			EnsureChildControls ();
 			Control namingContainer = null;
 			if ((stateMask & IS_NAMING_CONTAINER) == 0) {
@@ -874,7 +866,8 @@ namespace System.Web.UI
 			return namingContainer.FindControl (id, separatorIdx + 1);
 		}
 
-		protected virtual void LoadViewState (object savedState) {
+		protected virtual void LoadViewState (object savedState)
+		{
 			if (savedState != null) {
 				ViewState.LoadViewState (savedState);
 				object o = ViewState ["Visible"];
@@ -886,7 +879,8 @@ namespace System.Web.UI
 		}
 
 		// [MonoTODO("Secure?")]
-		protected string MapPathSecure (string virtualPath) {
+		protected string MapPathSecure (string virtualPath)
+		{
 			string combined = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
 			return Context.Request.MapPath (combined);
 		}
@@ -904,7 +898,8 @@ namespace System.Web.UI
 			return false;
 		}
 
-		protected virtual void OnDataBinding (EventArgs e) {
+		protected virtual void OnDataBinding (EventArgs e)
+		{
 			if ((event_mask & databinding_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [DataBindingEvent]);
 				if (eh != null) {
@@ -926,7 +921,8 @@ namespace System.Web.UI
 #else		
                 protected
 #endif
- virtual void OnInit (EventArgs e) {
+		virtual void OnInit (EventArgs e)
+		{
 			if ((event_mask & init_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [InitEvent]);
 				if (eh != null) {
@@ -948,7 +944,8 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void OnLoad (EventArgs e) {
+		virtual void OnLoad (EventArgs e)
+		{
 			if ((event_mask & load_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [LoadEvent]);
 				if (eh != null) {
@@ -970,7 +967,8 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void OnPreRender (EventArgs e) {
+		virtual void OnPreRender (EventArgs e)
+		{
 			if ((event_mask & prerender_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [PreRenderEvent]);
 				if (eh != null) {
@@ -992,7 +990,8 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void OnUnload (EventArgs e) {
+		virtual void OnUnload (EventArgs e)
+		{
 			if ((event_mask & unload_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [UnloadEvent]);
 				if (eh != null) {
@@ -1010,7 +1009,8 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		protected internal Stream OpenFile (string path) {
+		protected internal Stream OpenFile (string path)
+		{
 			try {
 				string filePath = Context.Server.MapPath (path);
 				return File.OpenRead (filePath);
@@ -1020,7 +1020,8 @@ namespace System.Web.UI
 			}
 		}
 
-		internal string GetPhysicalFilePath (string virtualPath) {
+		internal string GetPhysicalFilePath (string virtualPath)
+		{
 			Page page = Page;
 
 			if (VirtualPathUtility.IsAbsolute (virtualPath))
@@ -1060,7 +1061,8 @@ namespace System.Web.UI
 		}
 #endif
 
-		protected void RaiseBubbleEvent (object source, EventArgs args) {
+		protected void RaiseBubbleEvent (object source, EventArgs args)
+		{
 			Control c = Parent;
 			while (c != null) {
 #if MONO_TRACE
@@ -1091,8 +1093,8 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void Render (HtmlTextWriter writer) //DIT
-				{
+		virtual void Render (HtmlTextWriter writer) //DIT
+		{
 			RenderChildren (writer);
 		}
 
@@ -1101,12 +1103,11 @@ namespace System.Web.UI
 #else
 		protected
 #endif
- virtual void RenderChildren (HtmlTextWriter writer) //DIT
-				{
+		virtual void RenderChildren (HtmlTextWriter writer) //DIT
+		{
 			if (_renderMethodDelegate != null) {
 				_renderMethodDelegate (writer, this);
-			}
-			else if (_controls != null) {
+			} else if (_controls != null) {
 				int len = _controls.Count;
 				Control c;
 				for (int i = 0; i < len; i++) {
@@ -1124,30 +1125,33 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		protected virtual ControlAdapter ResolveAdapter () {
+		protected virtual ControlAdapter ResolveAdapter ()
+		{
 			throw new NotImplementedException ();
 		}
 #endif
 
-		protected virtual object SaveViewState () {
+		protected virtual object SaveViewState ()
+		{
 			if ((stateMask & VISIBLE_CHANGED) != 0) {
 				ViewState ["Visible"] = (stateMask & VISIBLE) != 0;
-			}
-			else if (_viewState == null) {
+			} else if (_viewState == null) {
 				return null;
 			}
 
 			return _viewState.SaveViewState ();
 		}
 
-		protected virtual void TrackViewState () {
+		protected virtual void TrackViewState ()
+		{
 			if (_viewState != null)
 				_viewState.TrackViewState ();
 
 			stateMask |= TRACK_VIEWSTATE;
 		}
 
-		public virtual void Dispose () {
+		public virtual void Dispose ()
+		{
 			if ((event_mask & disposed_mask) != 0) {
 				EventHandler eh = (EventHandler) (_events [DisposedEvent]);
 				if (eh != null)
@@ -1224,7 +1228,8 @@ namespace System.Web.UI
 		protected virtual
 #endif
 
- void DataBindChildren () {
+		void DataBindChildren ()
+		{
 			if (!HasControls ())
 				return;
 
@@ -1235,8 +1240,8 @@ namespace System.Web.UI
 			}
 		}
 
-
-		public virtual bool HasControls () {
+		public virtual bool HasControls ()
+		{
 			return (_controls != null && _controls.Count > 0);
 		}
 
@@ -1245,7 +1250,8 @@ namespace System.Web.UI
 #else
 		public
 #endif
- void RenderControl (HtmlTextWriter writer) {
+		void RenderControl (HtmlTextWriter writer)
+		{
 			if ((stateMask & VISIBLE) != 0) {
 				HttpContext ctx = Context;
 				TraceContext trace = (ctx != null) ? ctx.Trace : null;
@@ -1262,8 +1268,8 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		protected void RenderControl (HtmlTextWriter writer,
-						  ControlAdapter adapter) {
+		protected void RenderControl (HtmlTextWriter writer, ControlAdapter adapter)
+		{
 			if ((stateMask & VISIBLE) != 0) {
 				adapter.BeginRender (writer);
 				adapter.Render (writer);
@@ -1272,7 +1278,8 @@ namespace System.Web.UI
 		}
 #endif
 
-		public string ResolveUrl (string relativeUrl) {
+		public string ResolveUrl (string relativeUrl)
+		{
 			if (relativeUrl == null)
 				throw new ArgumentNullException ("relativeUrl");
 
@@ -1298,7 +1305,8 @@ namespace System.Web.UI
 #else
 		internal
 #endif
- string ResolveClientUrl (string relativeUrl) {
+		string ResolveClientUrl (string relativeUrl)
+		{
 #if TARGET_J2EE
 			// There are no relative paths when rendering a J2EE portlet
 			if (Page != null && Page.PortletNamespace != null)
@@ -1338,7 +1346,8 @@ namespace System.Web.UI
 			return relativeUrl;
 		}
 
-		internal bool HasRenderMethodDelegate () {
+		internal bool HasRenderMethodDelegate ()
+		{
 			return _renderMethodDelegate != null;
 		}
 
@@ -1348,7 +1357,8 @@ namespace System.Web.UI
 			_renderMethodDelegate = renderMethod;
 		}
 
-		internal void LoadRecursive () {
+		internal void LoadRecursive ()
+		{
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 			string type_name = null;
@@ -1378,7 +1388,8 @@ namespace System.Web.UI
 			stateMask |= LOADED;
 		}
 
-		internal void UnloadRecursive (Boolean dispose) {
+		internal void UnloadRecursive (Boolean dispose)
+		{
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 			string type_name = null;
@@ -1409,7 +1420,8 @@ namespace System.Web.UI
 				Dispose ();
 		}
 
-		internal void PreRenderRecursiveInternal () {
+		internal void PreRenderRecursiveInternal ()
+		{
 			if ((stateMask & VISIBLE) != 0) {
 				EnsureChildControls ();
 #if MONO_TRACE
@@ -1442,7 +1454,8 @@ namespace System.Web.UI
 			stateMask |= PRERENDERED;
 		}
 
-		internal void InitRecursive (Control namingContainer) {
+		internal void InitRecursive (Control namingContainer)
+		{
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 			string type_name = null;
@@ -1482,7 +1495,8 @@ namespace System.Web.UI
 			stateMask &= ~INITING;
 		}
 
-		internal object SaveViewStateRecursive () {
+		internal object SaveViewStateRecursive ()
+		{
 			if (!EnableViewState)
 				return null;
 
@@ -1538,7 +1552,8 @@ namespace System.Web.UI
 			return new Triplet (thisState, controlList, controlStates);
 		}
 
-		internal void LoadViewStateRecursive (object savedState) {
+		internal void LoadViewStateRecursive (object savedState)
+		{
 			if (!EnableViewState || savedState == null)
 				return;
 
@@ -1582,7 +1597,8 @@ namespace System.Web.UI
 #if NET_2_0
 		internal ControlSkin controlSkin;
 
-		internal void ApplyTheme () {
+		internal void ApplyTheme ()
+		{
 #if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
 			string type_name = null;
@@ -1614,7 +1630,8 @@ namespace System.Web.UI
 			}
 		}
 
-		protected internal virtual void RemovedControl (Control control) {
+		protected internal virtual void RemovedControl (Control control)
+		{
 			control.UnloadRecursive (false);
 			control._parent = null;
 			control._page = null;
@@ -1625,10 +1642,8 @@ namespace System.Web.UI
 			}
 			control.NullifyUniqueID ();
 		}
-
-
+		
 #if NET_2_0
-
 		string skinId = string.Empty;
 		bool _enableTheming = true;
 
@@ -1663,15 +1678,18 @@ namespace System.Web.UI
 			get { throw new NotImplementedException (); }
 		}
 
-		IDictionary IControlDesignerAccessor.GetDesignModeState () {
+		IDictionary IControlDesignerAccessor.GetDesignModeState ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		void IControlDesignerAccessor.SetDesignModeState (IDictionary designData) {
+		void IControlDesignerAccessor.SetDesignModeState (IDictionary designData)
+		{
 			SetDesignModeState (designData);
 		}
 
-		void IControlDesignerAccessor.SetOwnerControl (Control control) {
+		void IControlDesignerAccessor.SetOwnerControl (Control control)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -1690,23 +1708,25 @@ namespace System.Web.UI
 		}
 
 		bool IExpressionsAccessor.HasExpressions {
-			get {
-				return (expressionBindings != null && expressionBindings.Count > 0);
-			}
+			get { return (expressionBindings != null && expressionBindings.Count > 0); }
 		}
 
-		public virtual void Focus () {
+		public virtual void Focus ()
+		{
 			Page.SetFocus (this);
 		}
 
-		protected internal virtual void LoadControlState (object state) {
+		protected internal virtual void LoadControlState (object state)
+		{
 		}
 
-		protected internal virtual object SaveControlState () {
+		protected internal virtual object SaveControlState ()
+		{
 			return null;
 		}
 
-		protected virtual void DataBind (bool raiseOnDataBinding) {
+		protected virtual void DataBind (bool raiseOnDataBinding)
+		{
 			bool foundDataItem = false;
 
 			if ((stateMask & IS_NAMING_CONTAINER) != 0 && Page != null) {
@@ -1716,27 +1736,27 @@ namespace System.Web.UI
 			}
 
 			try {
-
 				if (raiseOnDataBinding)
 					OnDataBinding (EventArgs.Empty);
 				DataBindChildren ();
-
-			}
-			finally {
+			} finally {
 				if (foundDataItem)
 					Page.PopDataItemContext ();
 			}
 		}
 
-		protected virtual IDictionary GetDesignModeState () {
+		protected virtual IDictionary GetDesignModeState ()
+		{
 			throw new NotImplementedException ();
 		}
 
-		protected virtual void SetDesignModeState (IDictionary data) {
+		protected virtual void SetDesignModeState (IDictionary data)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
-		void IParserAccessor.AddParsedSubObject (object obj) {
+		void IParserAccessor.AddParsedSubObject (object obj)
+		{
 			this.AddParsedSubObject (obj);
 		}
 
