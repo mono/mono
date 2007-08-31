@@ -594,7 +594,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   A type parameter from a generic type definition.
 	/// </summary>
-	public class TypeParameter : MemberCore, IMemberContainer {
+	public class TypeParameter : MemberCore, IMemberContainer
+	{
 		string name;
 		DeclSpace decl;
 		GenericConstraints gc;
@@ -831,10 +832,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void EmitAttributes ()
+		public override void Emit ()
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
+
+			base.Emit ();
 		}
 
 		public override string DocCommentHeader {
@@ -976,6 +979,11 @@ namespace Mono.CSharp {
 		{
 			if (constraints != null)
 				gc = new InflatedConstraints (constraints, declaring);
+		}
+		
+		public override bool IsClsComplianceRequired ()
+		{
+			return false;
 		}
 
 		protected class InflatedConstraints : GenericConstraints
@@ -1937,7 +1945,7 @@ namespace Mono.CSharp {
 		public void EmitAttributes ()
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				TypeParameters [i].EmitAttributes ();
+				TypeParameters [i].Emit ();
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
