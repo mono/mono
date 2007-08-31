@@ -1,3 +1,9 @@
+
+Fri Aug 31 17:30:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: consider the generic arguments when comparing
+	signatures (bug #82614).
+
 2007-08-30  Dick Porter  <dick@ximian.com>
 
 	* monitor.c (mono_monitor_try_enter_internal): Set thread state to
