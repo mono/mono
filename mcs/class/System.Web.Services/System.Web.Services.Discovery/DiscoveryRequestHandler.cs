@@ -47,7 +47,7 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public bool IsReusable {
-			get { return true; }			
+			get { return true; }
 		}
 		
 		#endregion // Properties
@@ -57,7 +57,7 @@ namespace System.Web.Services.Discovery {
 		public void ProcessRequest (HttpContext context)
 		{
 			string path = context.Request.PhysicalPath;
-			FileStream fs = new FileStream (path, FileMode.Open);
+			FileStream fs = new FileStream (path, FileMode.Open, FileAccess.Read);
 			DynamicDiscoveryDocument ddoc = DynamicDiscoveryDocument.Load (fs);
 			fs.Close ();
 			

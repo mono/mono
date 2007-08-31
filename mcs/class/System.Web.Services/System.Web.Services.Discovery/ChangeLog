@@ -1,3 +1,7 @@
+2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DiscoveryRequestHandler.cs: Do not require write access to file.
+
 2006-11-15  Atsushi Enomotot  <atsushi@ximian.com>
 
 	* DiscoveryReference.cs: FilenameFromUrl() is public.

@@ -263,7 +263,7 @@ namespace System.Web.Services.Description
 
 		public static ServiceDescription Read (string fileName)
 		{
-			return Read (new FileStream (fileName, FileMode.Open));
+			return Read (new FileStream (fileName, FileMode.Open, FileAccess.Read));
 		}
 
 		public static ServiceDescription Read (TextReader textReader)
