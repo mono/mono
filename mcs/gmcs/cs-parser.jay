@@ -5379,7 +5379,7 @@ query_expression
 	: from_clause query_body
 	  {
 		lexer.QueryParsing = false;
-		$$ = new Linq.QueryExpression (current_container, current_block, (Expression)$1, (Linq.AQueryClause)$2); 
+		$$ = new Linq.QueryExpression (current_block, (Expression)$1, (Linq.AQueryClause)$2); 
 		end_block (lexer.Location);
 	  }
 	;
@@ -5390,12 +5390,12 @@ from_clause
 		start_block (lexer.Location);
 		LocatedToken lt = (LocatedToken) $2;
 		
-		current_block.AddVariable (Linq.ImplicitArgument.Instance, lt.Value, lt.Location);
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);
 		$$ = $4;
 	  }
 	| FROM type IDENTIFIER IN expression opt_join_clauses
 	  {
-		start_block (lexer.Location);
+		start_block (GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $3;
 
 		Expression type = (Expression)$2;
@@ -5472,10 +5472,18 @@ opt_from_let_where_clauses
 from_let_where_clauses
 	: from_let_where_clause
 	| from_let_where_clauses from_let_where_clause
+	  {
+		((Linq.AQueryClause)$1).Tail.Next = (Linq.AQueryClause)$2;
+		$$ = $1;
+	  }
 	;
 	
 from_let_where_clause
 	: from_clause
+	  {
+		$$ = new Linq.SelectMany (current_block, (Expression)$1);
+		end_block (lexer.Location);		
+	  }
 	| let_clause
 	| where_clause
 	;
@@ -5501,15 +5509,24 @@ opt_orderby_clause
 	
 orderings
 	: order_by
-	  {
-		$$ = $1;
-	  }
-	| order_by COMMA then_by
+	| order_by COMMA orderings_then_by
 	  {
 		((Linq.AQueryClause)$1).Next = (Linq.AQueryClause)$3;
 		$$ = $1;
 	  }
 	;
+	
+orderings_then_by
+	: then_by
+	  {
+		$$ = $1;
+	  }
+	| orderings_then_by COMMA then_by
+	  {
+		((Linq.AQueryClause)$1).Tail.Next = (Linq.AQueryClause)$3;
+		$$ = $1;
+	  }
+	;	
 	
 order_by
 	: expression

@@ -2351,6 +2351,9 @@ namespace Mono.CSharp {
 			if (i_args == null)
 				return false;
 
+			if (i_args.Length == 0)
+				return true;
+
 			method = ((MethodInfo) method).MakeGenericMethod (i_args);
 			return true;
 		}
@@ -2597,6 +2600,9 @@ namespace Mono.CSharp {
 
 			Type[] method_generic_args = method.GetGenericArguments ();
 			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);
+			if (!context.UnfixedVariableExists)
+				return Type.EmptyTypes;
+
 			if (!InferInPhases (ec, context, pd))
 				return null;
 
@@ -2708,10 +2714,18 @@ namespace Mono.CSharp {
 			if (typeArguments.Length == 0)
 				throw new ArgumentException ("Empty generic arguments");
 
-			unfixed_types = new Type[typeArguments.Length];
-			Array.Copy (typeArguments, unfixed_types, unfixed_types.Length);
-			bounds = new ArrayList[typeArguments.Length];
-			fixed_types = new Type[typeArguments.Length];
+			fixed_types = new Type [typeArguments.Length];
+			for (int i = 0; i < typeArguments.Length; ++i) {
+				if (typeArguments [i].IsGenericParameter) {
+					if (bounds == null) {
+						bounds = new ArrayList [typeArguments.Length];
+						unfixed_types = new Type [typeArguments.Length];
+					}
+					unfixed_types [i] = typeArguments [i];
+				} else {
+					fixed_types [i] = typeArguments [i];
+				}
+			}
 		}
 
 		public Type[] InferredTypeArguments {
@@ -2841,7 +2855,8 @@ namespace Mono.CSharp {
 				if (t == null)
 					continue;
 
-				if (!FixType (IsUnfixed (t))) {
+				int idx = IsUnfixed (t);
+				if (idx >= 0 && !FixType (idx)) {
 					return false;
 				}
 			}
@@ -3054,6 +3069,9 @@ namespace Mono.CSharp {
 
 		public bool UnfixedVariableExists {
 			get {
+				if (unfixed_types == null)
+					return false;
+
 				foreach (Type ut in unfixed_types)
 					if (ut != null)
 						return true;

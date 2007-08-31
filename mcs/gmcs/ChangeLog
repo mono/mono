@@ -1,3 +1,13 @@
+2007-08-31  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Terminates query block correctly. Fixed orderby 
+	chaining.
+	
+	* generic.cs (TypeInferenceContext): Better error resistance.
+	
+	* linq.cs: Implemented range variables, transparent identifiers and
+	SelectMany clause.
+	
 2007-08-28  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Anonymous type arguments can be simple name, syntax error
