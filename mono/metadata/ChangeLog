@@ -4,22 +4,6 @@ Fri Aug 31 17:30:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 	* metadata.c: consider the generic arguments when comparing
 	signatures (bug #82614).
 
-2007-08-30  Dick Porter  <dick@ximian.com>
-
-	* monitor.c (mono_monitor_try_enter_internal): Set thread state to
-	WaitSleepJoin while it is waiting to acquire a lock.  Fixes bug
-	81646.
-
-	* threads.c: Turn the thread synch_lock into a CRITICAL_SECTION,
-	instead of a monitor lock.  This means that monitor_try_enter and
-	co can set the thread state safely.
-	(ves_icall_System_Threading_Thread_Interrupt_internal): Always set
-	thread_interrupt_requested, so interrupt actually works.
-
-	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal,
-	ves_icall_System_Net_Sockets_Socket_Select_internal): Use thread
-	state accessor function
-
 Thu Aug 30 18:34:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cil-coff.h, image.c: updated assembly loader to cope with the
