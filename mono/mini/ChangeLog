@@ -1,3 +1,6 @@
+2007-08-30  Jonathan Chambers <joncham@gmail.com>
+
+	* driver.c: include the cil-coff.h header on Windows.
 
 Thu Aug 30 16:17:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
