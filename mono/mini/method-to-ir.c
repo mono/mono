@@ -632,6 +632,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_DOMAINCONST(cfg,dest) do { NEW_DOMAINCONST ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
+#define EMIT_NEW_DECLSECCONST(cfg,dest,image,entry) do { NEW_DECLSECCONST ((cfg), (dest), (image), (entry)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
 #define EMIT_NEW_ARGLOAD(cfg,dest,num) do { NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)]); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_TEMPLOAD(cfg,dest,num) do { NEW_TEMPLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
@@ -5960,23 +5962,23 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 		if (actions.demand.blob) {
 			/* Add code for SecurityAction.Demand */
-			NEW_DECLSECCONST (cfg, args[0], image, actions.demand);
-			NEW_ICONST (cfg, args [1], actions.demand.size);
+			EMIT_NEW_DECLSECCONST (cfg, args[0], image, actions.demand);
+			EMIT_NEW_ICONST (cfg, args [1], actions.demand.size);
 			/* Calls static void SecurityManager.InternalDemand (byte* permissions, int size); */
 			mono_emit_method_call (cfg, secman->demand, mono_method_signature (secman->demand), args, NULL);
 		}
 		if (actions.noncasdemand.blob) {
 			/* CLR 1.x uses a .noncasdemand (but 2.x doesn't) */
 			/* For Mono we re-route non-CAS Demand to Demand (as the managed code must deal with it anyway) */
-			NEW_DECLSECCONST (cfg, args[0], image, actions.noncasdemand);
-			NEW_ICONST (cfg, args [1], actions.noncasdemand.size);
+			EMIT_NEW_DECLSECCONST (cfg, args[0], image, actions.noncasdemand);
+			EMIT_NEW_ICONST (cfg, args [1], actions.noncasdemand.size);
 			/* Calls static void SecurityManager.InternalDemand (byte* permissions, int size); */
 			mono_emit_method_call (cfg, secman->demand, mono_method_signature (secman->demand), args, NULL);
 		}
 		if (actions.demandchoice.blob) {
 			/* New in 2.0, Demand must succeed for one of the permissions (i.e. not all) */
-			NEW_DECLSECCONST (cfg, args[0], image, actions.demandchoice);
-			NEW_ICONST (cfg, args [1], actions.demandchoice.size);
+			EMIT_NEW_DECLSECCONST (cfg, args[0], image, actions.demandchoice);
+			EMIT_NEW_ICONST (cfg, args [1], actions.demandchoice.size);
 			/* Calls static void SecurityManager.InternalDemandChoice (byte* permissions, int size); */
 			mono_emit_method_call (cfg, secman->demandchoice, mono_method_signature (secman->demandchoice), args, NULL);
 		}
@@ -10379,7 +10381,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
- * - test the CAS/core clr/verifier stuff.
  * - LAST MERGE: 85064.
  */
 

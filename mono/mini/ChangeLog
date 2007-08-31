@@ -1,3 +1,7 @@
+2007-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Fix the CAS functionality.
+
 2007-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Remove the can_access_ functions and use the 
