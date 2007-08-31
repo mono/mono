@@ -1,3 +1,9 @@
+2007-08-31  Gert Driesen  <drieseng@users.souceforge.net>
+
+	* ProviderBase.cs: Remove "description" key from NameValueCollection.
+	Use provider name as description if description is null or a zero
+	length string. Modifies exception messages to match MS.	
+
 2006-12-02  Marek Habersack  <grendello@gmail.com>
 
 	* ProviderBase.cs: Throw exceptions as per documentation.

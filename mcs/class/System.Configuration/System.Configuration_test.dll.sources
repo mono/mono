@@ -28,3 +28,4 @@ System.Configuration/TimeSpanSecondsOrInfiniteConverterTest.cs
 System.Configuration/TimeSpanValidatorTest.cs
 System.Configuration/TypeNameConverterTest.cs
 System.Configuration/WhiteSpaceTrimStringConverterTest.cs
+System.Configuration.Provider/ProviderBaseTest.cs

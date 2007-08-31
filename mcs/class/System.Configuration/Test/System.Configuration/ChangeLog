@@ -1,3 +1,12 @@
+2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* GenericEnumConverterTest.cs: Remove unused variable.
+	* ConfigurationManagerTest.cs: Fixed line endings.
+	* ConnectionStringSettingsTest.cs: Fixed line endings and avoid
+	ToString override warning.
+	* KeyValueConfigurationElementTest.cs: Fixed line endings.
+	* KeyValueConfigurationCollectionTest.cs: Fixed line endings.
+
 2007-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationManagerTest.cs : Enabled some tests with related to

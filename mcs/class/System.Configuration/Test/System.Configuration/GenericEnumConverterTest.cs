@@ -119,7 +119,6 @@ namespace MonoTests.System.Configuration {
 		public void ConvertTo ()
 		{
 			GenericEnumConverter cv = new GenericEnumConverter (typeof (FooEnum));
-			TimeSpan ts;
 
 			Assert.AreEqual ("Foo", cv.ConvertTo (null, null, FooEnum.Foo, typeof (string)), "A1");
 			Assert.AreEqual ("Bar", cv.ConvertTo (null, null, FooEnum.Bar, typeof (string)), "A2");

@@ -33,7 +33,8 @@ using System;
 using System.Configuration;
 using NUnit.Framework;
 
-namespace MonoTests.System.Configuration {
+namespace MonoTests.System.Configuration
+{
 	[TestFixture]
 	public class ConnectionStringSettingsTest
 	{
@@ -115,12 +116,10 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
-		public void ToString ()
+		public void ToStringTest ()
 		{
-			ConnectionStringSettings s;
-
-			s = new ConnectionStringSettings ("name", "connectionString", "provider");
-
+			ConnectionStringSettings s = new ConnectionStringSettings (
+				"name", "connectionString", "provider");
 			Assert.AreEqual ("connectionString", s.ToString(), "A1");
 		}
 	}

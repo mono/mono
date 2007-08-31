@@ -47,16 +47,18 @@ namespace System.Configuration.Provider
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (name.Length == 0)
-				throw new ArgumentException ("name must not be empty");
+				throw new ArgumentException ("Provider name cannot be null or empty.", "name");
 			if (alreadyInitialized)
-				throw new InvalidOperationException ("Provider has already been initialized");
+				throw new InvalidOperationException ("This provider instance has already been initialized.");
 			alreadyInitialized = true;
 			
 			_name = name;
 
-			if (config != null)
-				_description = config["description"];
-			if (_description == null)
+			if (config != null) {
+				_description = config ["description"];
+				config.Remove ("description");
+			}
+			if (_description == null || _description.Length == 0)
 				_description = _name;
 		}
 		
