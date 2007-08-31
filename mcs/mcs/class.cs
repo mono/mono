@@ -2278,7 +2278,7 @@ namespace Mono.CSharp {
 			if (IsGeneric) {
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
 				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].EmitAttributes ();
+					CurrentTypeParameters [i - offset].Emit ();
 			}
 #endif
 

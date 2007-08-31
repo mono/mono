@@ -533,6 +533,10 @@ namespace Mono.CSharp {
 					return value;
 				}
 			}
+			
+			// It's null for TypeParameter
+			if (Parent == null)
+				return false;			
 
 			if (Parent.GetClsCompliantAttributeValue ()) {
 				caching_flags |= Flags.ClsCompliantAttributeTrue;
@@ -546,6 +550,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool HasClsCompliantAttribute {
 			get {
+				if ((caching_flags & Flags.HasCompliantAttribute_Undetected) != 0)
+					GetClsCompliantAttributeValue ();
+				
 				return (caching_flags & Flags.HasClsCompliantAttribute) != 0;
 			}
 		}

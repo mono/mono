@@ -1,5 +1,14 @@
 2007-08-31  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs: EmitAttributes to Emit rename.
+	
+	* decl.cs (MemberCore.GetClsCompliantAttributeValue): Parent can be
+	null.
+	(MemberCore.HasClsCompliantAttribute): Don't depend on 
+	GetClsCompliantAttributeValue execution.
+	
+2007-08-31  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Use shorter type prefix.
 	
 	* ecore.cs (SimpleName.DoSimpleNameResolve): Use transparent identifiers
