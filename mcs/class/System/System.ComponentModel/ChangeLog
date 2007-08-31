@@ -1,3 +1,13 @@
+2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeConverter.cs: Fixed GetConvertFromException and
+	GetConvertToException to match MS, and use these in ConvertFrom and
+	ConvertTo.
+	* EnumConverter.cs: Use IsFlags instead of duplicating code that
+	checks for FlagsAttribute. When converting to InstanceDescriptor and
+	no corresponding enum field is found, then let base class throw a
+	NotSupportedException.
+
 2007-08-30  Ivan N. Zlatev  <contact@i-nz.net>
 	
 	* EnumConverter.cs: Implemented conversion to InstanceDescriptor

@@ -614,7 +614,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void ConvertTo_InstanceDescriptor_Flags ()
 		{
 			InstanceDescriptor idesc;
@@ -725,8 +724,9 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#F2");
 				Assert.IsNull (ex.InnerException, "#F3");
 				Assert.IsNotNull (ex.Message, "#F4");
-				Assert.IsTrue (ex.Message.IndexOf ("'(null)'") != -1, "#F5");
-				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (InstanceDescriptor).FullName + "'") != -1, "#F6");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (EnumConverter).Name + "'") != -1, "#F5");
+				Assert.IsTrue (ex.Message.IndexOf ("'(null)'") != -1, "#F6");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (InstanceDescriptor).FullName + "'") != -1, "#F7");
 			}
 
 			try {
@@ -761,8 +761,9 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#I2");
 				Assert.IsNull (ex.InnerException, "#I3");
 				Assert.IsNotNull (ex.Message, "#I4");
-				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (E2).FullName + "'") != -1, "#I5");
-				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (InstanceDescriptor).FullName + "'") != -1, "#I6");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (EnumConverter).Name + "'") != -1, "#I5");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (E2).FullName + "'") != -1, "#I6");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (InstanceDescriptor).FullName + "'") != -1, "#I7");
 			}
 
 			converter = new EnumConverter (typeof (F2));
@@ -811,7 +812,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("Dd", converter.ConvertTo (null,
 				CultureInfo.InvariantCulture, E.Bb | E.Dd,
 				typeof (string)), "#A6");
-
 
 			try {
 				converter.ConvertTo (null, CultureInfo.InvariantCulture,

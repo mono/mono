@@ -1,3 +1,10 @@
+2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeConverterTest.cs: Added tests for GetConvertFromException and
+	GetConvertToException.
+	* EnumConverterTest.cs: Enabled test for converting flag enums to
+	InstanceDescriptor.
+
 2007-08-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* NestedContainerTest.cs: add.

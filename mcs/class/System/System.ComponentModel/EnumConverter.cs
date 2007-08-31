@@ -84,7 +84,7 @@ namespace System.ComponentModel
 				return Enum.Format (type, value, "G");
 			} else if (destinationType == typeof (InstanceDescriptor) && value != null) {
 				string enumString = ConvertToString (context, culture, value);
-				if (type.IsDefined (typeof (FlagsAttribute), false) && enumString.IndexOf (",") != -1) {
+				if (IsFlags && enumString.IndexOf (",") != -1) {
 					if (value is IConvertible) {
 						Type underlyingType = Enum.GetUnderlyingType (type);
 						object enumValue = ((IConvertible)value).ToType (underlyingType, culture);
@@ -94,13 +94,12 @@ namespace System.ComponentModel
 					}
 				} else {
 					FieldInfo f = type.GetField (enumString);
-					if (f == null)
-						throw CreateValueNotValidException (value);
-					return new InstanceDescriptor (f, null);
+					if (f != null)
+						return new InstanceDescriptor (f, null);
 				}
 #if NET_2_0
 			} else if (destinationType == typeof (Enum[]) && value != null) {
-				if (!type.IsDefined (typeof (FlagsAttribute), false)) {
+				if (!IsFlags) {
 					return new Enum[] { (Enum) Enum.ToObject (type, value) };
 				} else {
 					long valueLong = Convert.ToInt64 (
@@ -246,5 +245,4 @@ namespace System.ComponentModel
 			}
 		}
 	}
-
 }

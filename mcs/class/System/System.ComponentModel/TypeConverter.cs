@@ -75,11 +75,8 @@ namespace System.ComponentModel
 			if (value is InstanceDescriptor) {
 				return ((InstanceDescriptor) value).Invoke ();
 			}
-			if (value == null)
-				throw new NotSupportedException (this.GetType ().Name
-					+ " cannot convert from (null).");
-			throw new NotSupportedException (this.GetType ().Name + 
-				" cannot be created from '" + value.GetType().ToString() + "'");
+
+			return GetConvertFromException (value);
 		}
 
 		public object ConvertFromInvariantString (string text)
@@ -125,13 +122,7 @@ namespace System.ComponentModel
 				return String.Empty;
 			}
 
-			if (value == null)
-				value = "(null)";
-
-			throw new NotSupportedException (string.Format (
-				CultureInfo.InvariantCulture, "'{0}' is unable "
-				+ "to convert '{1}' to '{2}'", this.GetType ().Name,
-				value, destinationType.FullName));
+			return GetConvertToException (value, destinationType);
 		}
 
 		public string ConvertToInvariantString (object value)
@@ -161,14 +152,28 @@ namespace System.ComponentModel
 
 		protected Exception GetConvertFromException (object value)
 		{
-			throw new NotSupportedException (this.ToString() + " cannot convert from '" + 
-							value.GetType().ToString() + "'");
+			string destinationType;
+			if (value == null)
+				destinationType = "(null)";
+			else
+				destinationType = value.GetType ().FullName;
+
+			throw new NotSupportedException (string.Format (CultureInfo.InvariantCulture,
+				"{0} cannot convert from {1}.", this.GetType ().Name,
+				destinationType));
 		}
 
 		protected Exception GetConvertToException (object value, Type destinationType)
 		{
-			throw new NotSupportedException (this.ToString() + " cannot convert from '" + 
-							value.GetType().ToString() + "' to '" + destinationType.ToString() + "'");
+			string sourceType;
+			if (value == null)
+				sourceType = "(null)";
+			else
+				sourceType = value.GetType ().FullName;
+
+			throw new NotSupportedException (string.Format (CultureInfo.InvariantCulture,
+				"'{0}' is unable to convert '{1}' to '{2}'.", this.GetType ().Name,
+				sourceType, destinationType.FullName));
 		}
 
 		public object CreateInstance (IDictionary propertyValues)

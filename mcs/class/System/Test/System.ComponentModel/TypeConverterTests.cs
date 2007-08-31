@@ -99,6 +99,76 @@ namespace MonoTests.System.ComponentModel
 			properties = converter.GetProperties (null, null, null);
 			Assert.IsNull (properties, "#12");
 		}
+
+		[Test]
+		public void GetConvertFromException ()
+		{
+			MockTypeConverter converter = new MockTypeConverter ();
+
+			try {
+				converter.GetConvertFromException (null);
+				Assert.Fail ("#A1");
+			} catch (NotSupportedException ex) {
+				// MockTypeConverter cannot convert from (null)
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MockTypeConverter).Name) != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("(null)") != -1, "#A6");
+			}
+
+			try {
+				converter.GetConvertFromException ("B");
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				// MockTypeConverter cannot convert from System.String
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MockTypeConverter).Name) != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#B6");
+			}
+		}
+
+		[Test]
+		public void GetConvertToException ()
+		{
+			MockTypeConverter converter = new MockTypeConverter ();
+
+			try {
+				converter.GetConvertToException (null, typeof (DateTime));
+				Assert.Fail ("#A1");
+			} catch (NotSupportedException ex) {
+				// 'MockTypeConverter' is unable to convert '(null)'
+				// to 'System.DateTime'
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (MockTypeConverter).Name + "'") != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'(null)'") != -1, "#A6");
+				Assert.IsTrue (ex.Message.IndexOf ("'" + typeof (DateTime).FullName + "'") != -1, "#A7");
+			}
+
+			try {
+				converter.GetConvertToException ("B", typeof (DateTime));
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				// 'MockTypeConverter' is unable to convert 'System.String'
+				// to 'System.DateTime'
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (MockTypeConverter).Name) != -1, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#B6");
+			}
+		}
+
+		[ExpectedException (typeof (NullReferenceException))]
+		public void GetConvertToException_DestinationType_Null ()
+		{
+			MockTypeConverter converter = new MockTypeConverter ();
+			converter.GetConvertToException ("B", (Type) null);
+		}
 	}
 
 	[TypeConverter (typeof (AConverter))]
@@ -112,6 +182,19 @@ namespace MonoTests.System.ComponentModel
 		[Browsable (false)]
 		public int B {
 			get { return 0; }
+		}
+	}
+
+	public class MockTypeConverter : TypeConverter
+	{
+		public new Exception GetConvertFromException (object value)
+		{
+			return base.GetConvertFromException (value);
+		}
+
+		public new Exception GetConvertToException (object value, Type destinationType)
+		{
+			return base.GetConvertToException (value, destinationType);
 		}
 	}
 
