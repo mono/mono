@@ -1,3 +1,8 @@
+2007-08-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItem.cs: Take Parent/Owner's Enabled state in to account
+	when returning Enabled.  [Fixes bug #82651]
+
 2007-08-30  Everaldo Canuto  <everaldo@simios.org>
 
 	* ToolBar.cs: Fix button size for non flat toolbars. Fixes #82368.

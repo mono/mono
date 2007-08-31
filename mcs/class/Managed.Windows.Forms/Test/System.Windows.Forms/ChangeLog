@@ -1,3 +1,8 @@
+2007-08-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItemTest.cs: Added test to show that Enabled can
+	depend on Parent/Owner's Enabled.
+
 2007-08-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControlTest.cs: Added test for ValidateChildren.

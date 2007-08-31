@@ -1106,6 +1106,33 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void BehaviorEnabled ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ToolStripItem tsi = new NullToolStripItem ();
+
+			ts.Items.Add (tsi);
+			
+			Assert.AreEqual (true, ts.Enabled, "A1");
+			Assert.AreEqual (true, tsi.Enabled, "A2");
+			
+			tsi.Enabled = false;
+
+			Assert.AreEqual (true, ts.Enabled, "A3");
+			Assert.AreEqual (false, tsi.Enabled, "A4");
+
+			ts.Enabled = false;
+
+			Assert.AreEqual (false, ts.Enabled, "A5");
+			Assert.AreEqual (false, tsi.Enabled, "A6");
+			
+			tsi.Enabled = true;
+
+			Assert.AreEqual (false, ts.Enabled, "A7");
+			Assert.AreEqual (false, tsi.Enabled, "A8");
+		}
+		
+		[Test]
 		public void BehaviorImageList ()
 		{
 			// Basically, this shows that whichever of [Image|ImageIndex|ImageKey]

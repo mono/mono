@@ -373,7 +373,17 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[DefaultValue (true)]
 		public virtual bool Enabled {
-			get { return enabled; }
+			get { 
+				if (Parent != null)
+					if (!Parent.Enabled)
+						return false;
+
+				if (Owner != null)
+					if (!Owner.Enabled)
+						return false;
+						
+				return enabled;
+			}
 			set { 
 				if (this.enabled != value) {
 					this.enabled = value; 
