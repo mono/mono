@@ -80,6 +80,9 @@ namespace System.Web {
 		static ArrayList watchers = new ArrayList();
 		static object watchers_lock = new object();
 		static bool app_shutdown = false;
+#if NET_2_0
+		static bool app_disabled = false;
+#endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
 		
@@ -544,6 +547,29 @@ namespace System.Web {
 				return false;
 			}
 	        }
+
+#if NET_2_0
+		internal static bool ApplicationDisabled {
+			get { return app_disabled; }
+			set { app_disabled = value; }
+		}
+#endif
+		
+		internal static void DisableWatchers ()
+		{
+			lock (watchers_lock) {
+				foreach (FileSystemWatcher watcher in watchers)
+					watcher.EnableRaisingEvents = false;
+			}
+		}
+
+		internal static void EnableWatchers ()
+		{
+			lock (watchers_lock) {
+				foreach (FileSystemWatcher watcher in watchers)
+					watcher.EnableRaisingEvents = true;
+			}
+		}
 		
 	        static void OnFileRenamed(object sender, RenamedEventArgs args)
 		{
@@ -558,9 +584,8 @@ namespace System.Web {
 				app_shutdown = true;
 
 				// Disable event raising to avoid concurrent restarts
-				foreach (FileSystemWatcher watcher in watchers) {
-					watcher.EnableRaisingEvents = false;
-				}
+				DisableWatchers ();
+				
 				// Restart application
 				HttpRuntime.UnloadAppDomain();
 			}

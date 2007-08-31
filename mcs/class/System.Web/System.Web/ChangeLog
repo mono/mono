@@ -1,3 +1,14 @@
+2007-08-31  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: added methods to enable/disable
+	watchers.
+
+	* HttpRuntime.cs: implemented handling of app_offline.htm file in
+	the application root directory. Fixes bug #81127.
+
+	* HttpResponse.cs: make sure neither context or
+	context.ApplicationInstance are null in End ().
+
 2007-08-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCookie.cs: make sure a key is output even if it has no

@@ -558,12 +558,17 @@ namespace System.Web {
 
 		public void End ()
 		{
+			if (context == null)
+				return;
+			
 			if (context.TimeoutPossible) {
 				Thread.CurrentThread.Abort (FlagEnd);
 			} else {
 				// If this is called from an async event, signal the completion
 				// but don't throw.
-				context.ApplicationInstance.CompleteRequest ();
+				HttpApplication app_instance = context.ApplicationInstance;
+				if (app_instance != null)
+					app_instance.CompleteRequest ();
 			}
 		}
 

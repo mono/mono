@@ -116,6 +116,7 @@ namespace System.Web {
 #if NET_2_0
 		static bool assemblyMappingEnabled;
 		static object assemblyMappingLock = new object ();
+		static object appOfflineLock = new object ();
 #endif
 		
 		static HttpRuntime ()
@@ -283,6 +284,80 @@ namespace System.Web {
 				return;
 			ThreadPool.QueueUserWorkItem (do_RealProcessRequest, request);
 		}
+
+#if NET_2_0
+		static readonly string[] app_offline_files = {"app_offline.htm", "App_Offline.htm", "APP_OFFLINE.HTM"};
+		static FileSystemWatcher app_offline_watcher;
+
+		static void AppOfflineFileRenamed (object sender, RenamedEventArgs args)
+		{
+			AppOfflineFileChanged (sender, args);
+		}
+		
+		static void AppOfflineFileChanged (object sender, FileSystemEventArgs args)
+	        {
+	        	lock (appOfflineLock) {
+				HttpApplicationFactory.DisableWatchers ();
+				app_offline_watcher.EnableRaisingEvents = false;
+				
+				// Restart application
+				HttpRuntime.UnloadAppDomain();
+			}
+	        }
+		
+		static bool AppIsOffline (HttpContext context)
+		{
+			string app_path = context.Request.PhysicalApplicationPath;
+			string aof_path = null;
+			bool haveOfflineFile = false;
+
+			foreach (string aof in app_offline_files) {
+				aof_path = Path.Combine (app_path, aof);
+				if (File.Exists (aof_path)) {
+					haveOfflineFile = true;
+					break;
+				}
+			}
+
+			lock (appOfflineLock) {
+				if (!haveOfflineFile) {
+					if (HttpApplicationFactory.ApplicationDisabled) {
+						HttpApplicationFactory.ApplicationDisabled = false;
+						HttpApplicationFactory.EnableWatchers ();
+					}
+					
+					return false;
+				}
+
+				HttpApplicationFactory.ApplicationDisabled = true;
+				HttpApplicationFactory.DisableWatchers ();
+
+				FileSystemEventHandler seh = new FileSystemEventHandler (AppOfflineFileChanged);
+				RenamedEventHandler reh = new RenamedEventHandler (AppOfflineFileRenamed);
+				
+				app_offline_watcher = new FileSystemWatcher ();
+				app_offline_watcher.Path = Path.GetDirectoryName (aof_path);
+				app_offline_watcher.Filter = Path.GetFileName (aof_path);
+				app_offline_watcher.NotifyFilter |= NotifyFilters.Size;
+				app_offline_watcher.Deleted += seh;
+				app_offline_watcher.Changed += seh;
+				app_offline_watcher.Renamed += reh;
+				app_offline_watcher.EnableRaisingEvents = true;
+			}
+
+			HttpResponse response = context.Response;
+			response.Clear ();
+			response.ContentType = "text/html";
+			response.ExpiresAbsolute = DateTime.UtcNow;
+			response.TransmitFile (aof_path, true);
+			
+			context.Request.ReleaseResources ();
+			context.Response.ReleaseResources ();
+			HttpContext.Current = null;
+			
+			return true;
+		}
+#endif
 		
 		static void RealProcessRequest (object o)
 		{
@@ -300,6 +375,11 @@ namespace System.Web {
 			}
 #endif
 
+#if NET_2_0
+			if (AppIsOffline (context))
+				return;
+#endif
+			
 			//
 			// Get application instance (create or reuse an instance of the correct class)
 			//
