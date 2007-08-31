@@ -188,7 +188,7 @@ namespace System.Configuration {
 		}
 
 		/* invoked from System.Web */
-		static IInternalConfigSystem ChangeConfigurationSystem (IInternalConfigSystem newSystem)
+		internal static IInternalConfigSystem ChangeConfigurationSystem (IInternalConfigSystem newSystem)
 		{
 			if (newSystem == null)
 				throw new ArgumentNullException ("newSystem");

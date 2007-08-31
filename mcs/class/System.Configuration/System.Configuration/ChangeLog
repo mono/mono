@@ -1,3 +1,10 @@
+2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConfigurationManager.cs: Fixed line endings. Avoid warning by
+	changing accessibility of ChangeConfigurationSystem to internal.
+	* Configuration.cs: Fixed compiler warnings.
+	* DpapiProtectedConfigurationProvider.cs: Fixed line endings.
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationManager.cs : To open exe configuration, use 

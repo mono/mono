@@ -366,7 +366,7 @@ namespace System.Configuration {
 			try {
 				Save (stream, mode, forceUpdateAll);
 				system.Host.WriteCompleted (streamName, true, ctx);
-			} catch (Exception ex) {
+			} catch (Exception) {
 				system.Host.WriteCompleted (streamName, false, ctx);
 				throw;
 			} finally {
@@ -445,7 +445,7 @@ namespace System.Configuration {
 			
 			try {
 				stream = system.Host.OpenStreamForRead (streamName);
-			} catch (Exception e) {
+			} catch (Exception) {
 				return false;
 			}
 
