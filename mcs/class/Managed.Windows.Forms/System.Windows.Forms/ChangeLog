@@ -1,3 +1,8 @@
+2007-08-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: In ListViewItemCollection operations calculate
+	Layout for owner as well as invalidate it. Fixes part of #82642.
+
 2007-08-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Take Parent/Owner's Enabled state in to account

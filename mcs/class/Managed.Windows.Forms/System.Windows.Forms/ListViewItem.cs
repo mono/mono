@@ -1190,8 +1190,10 @@ namespace System.Windows.Forms
 			public ListViewSubItem this [int index] {
 				get { return (ListViewSubItem) list [index]; }
 				set { 
-					value.owner = this.owner;
+					value.owner = owner;
 					list [index] = value;
+					owner.Layout ();
+					owner.Invalidate ();
 				}
 			}
 
@@ -1232,25 +1234,24 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public ListViewSubItem Add (ListViewSubItem item)
 			{
-				item.owner = this.owner;
-				list.Add (item);
+				AddSubItem (item);
+				owner.Layout ();
+				owner.Invalidate ();
 				return item;
 			}
 
 			public ListViewSubItem Add (string text)
 			{
-				ListViewSubItem item = new ListViewSubItem (this.owner, text);
-				list.Add (item);
-				return item;
+				ListViewSubItem item = new ListViewSubItem (owner, text);
+				return Add (item);
 			}
 
 			public ListViewSubItem Add (string text, Color foreColor,
 						    Color backColor, Font font)
 			{
-				ListViewSubItem item = new ListViewSubItem (this.owner, text,
+				ListViewSubItem item = new ListViewSubItem (owner, text,
 									    foreColor, backColor, font);
-				list.Add (item);
-				return item;
+				return Add (item);
 			}
 
 			public void AddRange (ListViewSubItem [] items)
@@ -1261,8 +1262,10 @@ namespace System.Windows.Forms
 				foreach (ListViewSubItem item in items) {
 					if (item == null)
 						continue;
-					this.Add (item);
+					AddSubItem (item);
 				}
+				owner.Layout ();
+				owner.Invalidate ();
 			}
 
 			public void AddRange (string [] items)
@@ -1273,8 +1276,10 @@ namespace System.Windows.Forms
 				foreach (string item in items) {
 					if (item == null)
 						continue;
-					this.Add (item);
+					AddSubItem (new ListViewSubItem (owner, item));
 				}
+				owner.Layout ();
+				owner.Invalidate ();
 			}
 
 			public void AddRange (string [] items, Color foreColor,
@@ -1286,8 +1291,17 @@ namespace System.Windows.Forms
 				foreach (string item in items) {
 					if (item == null)
 						continue;
-					this.Add (item, foreColor, backColor, font);
+
+					AddSubItem (new ListViewSubItem (owner, item, foreColor, backColor, font));
 				}
+				owner.Layout ();
+				owner.Invalidate ();
+			}
+
+			void AddSubItem (ListViewSubItem subItem)
+			{
+				subItem.owner = owner;
+				list.Add (subItem);
 			}
 
 			public void Clear ()
@@ -1389,11 +1403,15 @@ namespace System.Windows.Forms
 			{
 				item.owner = this.owner;
 				list.Insert (index, item);
+				owner.Layout ();
+				owner.Invalidate ();
 			}
 
 			public void Remove (ListViewSubItem item)
 			{
 				list.Remove (item);
+				owner.Layout ();
+				owner.Invalidate ();
 			}
 
 #if NET_2_0
