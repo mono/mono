@@ -584,7 +584,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 
 	lvreg_stack = g_new0 (guint32, cfg->next_vreg);
 	lvreg_defined = g_new0 (gboolean, cfg->next_vreg);
-	stack_history_size = 1024;
+	stack_history_size = 10240;
 	stack_history = g_new (RenameInfo, stack_history_size);
 	originals = g_new0 (gboolean, cfg->num_varinfo);
 	mono_ssa_rename_vars2 (cfg, cfg->num_varinfo, cfg->bb_entry, originals, stack, lvreg_stack, lvreg_defined, stack_history, stack_history_size);

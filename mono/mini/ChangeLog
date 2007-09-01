@@ -1,3 +1,7 @@
+2007-09-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa2.c (mono_ssa_compute2): Increase the stack history size.
+
 2007-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Fix the CAS functionality.
