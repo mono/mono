@@ -311,6 +311,8 @@ System.Windows.Forms/ErrorIconAlignment.cs
 System.Windows.Forms/ErrorProvider.cs
 System.Windows.Forms/FeatureSupport.cs
 System.Windows.Forms/FileDialog.cs
+System.Windows.Forms/FileDialogCustomPlace.cs
+System.Windows.Forms/FileDialogCustomPlacesCollection.cs
 System.Windows.Forms/FixedPanel.cs
 System.Windows.Forms/FixedSizeTextBox.cs
 System.Windows.Forms/FlatButtonAppearance.cs
