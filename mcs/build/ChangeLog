@@ -1,3 +1,7 @@
+2007-09-01  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: consider the net_2_1 profile.
+
 2007-08-11  Jb Evain  <jbevain@novell.com>
 
 	* profiles/net_2_1: allow 2.1 assemblies in the GAC.
