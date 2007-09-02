@@ -453,6 +453,9 @@ namespace System.Web.UI
 					sb.AppendLine ();
 					for (int i = 0; i < _disposeScripts.Count; i++) {
 						DisposeScriptEntry entry = _disposeScripts [i];
+						if (IsMultiForm)
+							sb.Append ("Sys.WebForms.PageRequestManager.getInstance($get(\"" + Page.Form.ClientID + "\"))._registerDisposeScript(\"");
+						else
 						sb.Append ("Sys.WebForms.PageRequestManager.getInstance()._registerDisposeScript(\"");
 						sb.Append (entry.UpdatePanel.ClientID);
 						sb.Append ("\", ");
@@ -481,6 +484,16 @@ namespace System.Web.UI
 			ajaxWebFormsScript.NotifyScriptLoaded = false;
 			OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsScript));
 
+			ScriptReference ajaxExtensionScript = null;
+			ScriptReference ajaxWebFormsExtensionScript = null;
+			if (IsMultiForm) {
+				ajaxExtensionScript = new ScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
+				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxExtensionScript));
+				
+				ajaxWebFormsExtensionScript = new ScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
+				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsExtensionScript));
+			}
+
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
 				OnResolveScriptReference (new ScriptReferenceEventArgs (script.ScriptReference));
 				if (!IsInAsyncPostBack || (script.Control != this && HasBeenRendered (script.Control))) {
@@ -490,10 +503,14 @@ namespace System.Web.UI
 				}
 			}
 
-			// Register Ajax framework script.
-			RegisterScriptReference (ajaxScript, true);
-
 			if (!IsInAsyncPostBack) {
+				// Register Ajax framework script.
+				RegisterScriptReference (ajaxScript, true);
+				if (IsMultiForm) {
+					RegisterScriptReference (ajaxExtensionScript, true);
+					RegisterClientScriptBlock (this, typeof (ScriptManager), "Sys.Application", "\nSys.Application._initialize(document.getElementById('" + Page.Form.ClientID + "'));\n", true);
+				}
+
 				StringBuilder sb = new StringBuilder ();
 				sb.AppendLine ("if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');");
 
@@ -510,9 +527,12 @@ namespace System.Web.UI
 					sb.AppendLine ("Sys.Services.AuthenticationService.set_path('" + ResolveUrl (_authenticationService.Path) + "');");
 
 				RegisterClientScriptBlock (this, typeof (ScriptManager), "Framework", sb.ToString (), true);
-			}
 
-			RegisterScriptReference (ajaxWebFormsScript, true);
+				RegisterScriptReference (ajaxWebFormsScript, true);
+
+				if (IsMultiForm)
+					RegisterScriptReference (ajaxWebFormsExtensionScript, true);
+			}
 
 			// Register Scripts
 			if (_scriptToRegister != null)
@@ -533,9 +553,27 @@ namespace System.Web.UI
 				}
 
 				// Register startup script
+				if (IsMultiForm)
+					RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.getInstance($get(\"" + Page.Form.ClientID + "\")).initialize();\n", true);
+				else
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.initialize();\n", true);
 			}
 		}
+
+#if TARGET_J2EE
+		bool IsMultiForm {
+			get {
+				Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) WebConfigurationManager.GetSection ("mainsoft.web/pages");
+				if (pageSection != null)
+					return pageSection.MultiForm;
+				return false;
+			}
+		}
+#else
+		bool IsMultiForm {
+			get { return false; }
+		}
+#endif
 
 		static bool HasBeenRendered (Control control) {
 			if (control == null)
@@ -858,6 +896,11 @@ namespace System.Web.UI
 
 			StringBuilder sb = new StringBuilder ();
 			foreach (ScriptDescriptor scriptDescriptor in scriptDescriptors) {
+				if (IsMultiForm) {
+					scriptDescriptor.FormID = Page.Form.ClientID;
+					sb.AppendLine ("Sys.Application.getInstance($get(\"" + Page.Form.ClientID + "\")).add_init(function() {");
+				}
+				else
 				sb.AppendLine ("Sys.Application.add_init(function() {");
 				sb.AppendLine (scriptDescriptor.GetScript ());
 				sb.AppendLine ("});");
@@ -930,6 +973,9 @@ namespace System.Web.UI
 				writer.WriteLine ("<script type=\"text/javascript\">");
 				writer.WriteLine ("//<![CDATA[");
 				writer.WriteLine ("Sys.WebForms.PageRequestManager._initialize('{0}', document.getElementById('{1}'));", UniqueID, Page.Form.ClientID);
+				if (IsMultiForm)
+					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance($get(\"{0}\"))._updateControls([{1}], [{2}], [{3}], {4});", Page.Form.ClientID, FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
+				else
 				writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
 				writer.WriteLine ("//]]");
 				writer.WriteLine ("</script>");
@@ -1074,7 +1120,8 @@ namespace System.Web.UI
 			WriteCallbackOutput (output, childUpdatePanelIDs, null, FormatListIDs (_childUpdatePanels, false));
 			WriteCallbackOutput (output, panelsToRefreshIDs, null, FormatListIDs (_panelsToRefresh, false));
 			WriteCallbackOutput (output, asyncPostBackTimeout, null, AsyncPostBackTimeout.ToString ());
-			WriteCallbackOutput (output, pageTitle, null, Page.Title);
+			if (!IsMultiForm)
+				WriteCallbackOutput (output, pageTitle, null, Page.Title);
 
 			if (_dataItems != null)
 				foreach (Control control in _dataItems.Keys) {

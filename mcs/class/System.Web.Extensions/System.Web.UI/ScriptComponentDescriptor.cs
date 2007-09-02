@@ -142,10 +142,18 @@ namespace System.Web.UI
 		}
 
 		protected internal override string GetScript () {
-			if (String.IsNullOrEmpty (ElementIDInternal))
-				return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
-			else
-				return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
+			if (String.IsNullOrEmpty (FormID)) {
+				if (String.IsNullOrEmpty (ElementIDInternal))
+					return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
+				else
+					return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
+			}
+			else {
+				if (String.IsNullOrEmpty (ElementIDInternal))
+					return String.Format ("$create($get(\"{0}\"), {1}, {2}, {3}, {4});", FormID, Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
+				else
+					return String.Format ("$create($get(\"{0}\"), {1}, {2}, {3}, {4}, $get(\"{5}\"));", FormID, Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
+			}
 		}
 
 		internal static string SerializeDictionary (Dictionary<string, string> dictionary) {
