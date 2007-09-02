@@ -964,10 +964,12 @@ namespace System.Reflection.Emit
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
 		{
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 			// FIXME: In the generic case, this leads to a crash
 			// http://bugzilla.ximian.com/show_bug.cgi?id=82625
 			if (!ContainsGenericParameters && (created != null))
 				return created.GetFields (bindingAttr);
+#endif
 
 			if (fields == null)
 				return new FieldInfo [0];
