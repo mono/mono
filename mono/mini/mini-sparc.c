@@ -2850,20 +2850,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_sdiv (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (code, sparc_boverflow, "ArithmeticException", TRUE, sparc_icc_short);
 			break;
-		case OP_IDIV_IMM:
-			sparc_set (code, ins->inst_imm, GP_SCRATCH_REG);
-			/* Sign extend sreg1 into %y */
-			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
-			sparc_wry (code, sparc_o7, sparc_g0);
-			sparc_sdiv (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
-			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (code, sparc_boverflow, "ArithmeticException", TRUE, sparc_icc_short);
-			break;
 		case CEE_DIV_UN:
 		case OP_IDIV_UN:
 			sparc_wry (code, sparc_g0, sparc_g0);
 			sparc_udiv (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
-		case OP_DIV_IMM: {
+		case OP_DIV_IMM:
+		case OP_IDIV_IMM: {
 			int i, imm;
 
 			/* Transform division into a shift */

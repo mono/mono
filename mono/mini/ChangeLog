@@ -1,3 +1,7 @@
+2007-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Fix OP_IDIV_IMM.
+
 2007-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa2.c (mono_ssa_compute2): Increase the stack history size.
