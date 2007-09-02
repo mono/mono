@@ -65,6 +65,7 @@
 		<Private>False</Private>
 		<HintPath>..\lib\J2SE.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
@@ -181,6 +182,12 @@
     <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
       <Link>Resources\MicrosoftAjaxWebForms.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MicrosoftAjaxExtension.js">
+      <LogicalName>MicrosoftAjaxExtension.js</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MicrosoftAjaxWebFormsExtension.js">
+      <LogicalName>MicrosoftAjaxWebFormsExtension.js</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
