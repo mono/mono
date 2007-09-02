@@ -1,3 +1,7 @@
+2007-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs: Add a workaround for #82625 to make nemerle work again.
+
 2007-08-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: In DefineIconResource, open icon in read-only
