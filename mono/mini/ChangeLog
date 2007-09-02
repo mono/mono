@@ -1,3 +1,7 @@
+2007-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-sparc.md (endfilter): Add missing src1:i argument.
+
 2007-08-30  Jonathan Chambers <joncham@gmail.com>
 
 	* driver.c: include the cil-coff.h header on Windows.
