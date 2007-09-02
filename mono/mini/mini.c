@@ -1787,6 +1787,8 @@ set_vreg_to_inst (MonoCompile *cfg, int vreg, MonoInst *inst)
 	cfg->vreg_to_inst [vreg] = inst;
 }
 
+#define mono_type_is_long(type) (!(type)->byref && ((mono_type_get_underlying_type (type)->type == MONO_TYPE_I8) || (mono_type_get_underlying_type (type)->type == MONO_TYPE_U8)))
+
 MonoInst*
 mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int vreg)
 {
@@ -1821,7 +1823,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		set_vreg_to_inst (cfg, vreg, inst);
 
 #if SIZEOF_VOID_P == 4
-	if (((type->type == MONO_TYPE_I8) || (type->type == MONO_TYPE_U8)) && !type->byref) {
+	if (mono_type_is_long (type)) {
 		MonoInst *tree;
 
 		/* 
@@ -1872,7 +1874,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	int dreg;
 
-	if (((type->type == MONO_TYPE_I8) || (type->type == MONO_TYPE_U8)) && !type->byref)
+	if (mono_type_is_long (type))
 		dreg = mono_alloc_dreg (cfg, STACK_I8);
 	else
 		/* All the others are unified */
