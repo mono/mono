@@ -969,6 +969,9 @@ namespace System.Reflection.Emit
 			// http://bugzilla.ximian.com/show_bug.cgi?id=82625
 			if (!ContainsGenericParameters && (created != null))
 				return created.GetFields (bindingAttr);
+#else
+			if (created != null)
+				return created.GetFields (bindingAttr);
 #endif
 
 			if (fields == null)
