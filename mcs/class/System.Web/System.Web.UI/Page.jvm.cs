@@ -80,7 +80,12 @@ namespace System.Web.UI
 		}
 		
 		internal bool IsMultiForm {
-			get { return IsPortletRender; }
+			get {
+				Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) System.Web.Configuration.WebConfigurationManager.GetSection ("mainsoft.web/pages");
+				if (pageSection != null)
+					return pageSection.MultiForm;
+				return false;
+			}
 		}
 
 		internal bool IsPortletRender
