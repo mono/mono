@@ -285,6 +285,7 @@ namespace System.Web {
 			ThreadPool.QueueUserWorkItem (do_RealProcessRequest, request);
 		}
 
+#if !TARGET_J2EE
 #if NET_2_0
 		static readonly string[] app_offline_files = {"app_offline.htm", "App_Offline.htm", "APP_OFFLINE.HTM"};
 		static FileSystemWatcher[] app_offline_watchers;
@@ -392,6 +393,7 @@ namespace System.Web {
 			}
 		}
 #endif
+#endif
 		
 		static void RealProcessRequest (object o)
 		{
@@ -409,11 +411,11 @@ namespace System.Web {
 					error = true;
 				}
 			}
-#endif
 
 #if NET_2_0
 			if (AppIsOffline (context))
 				return;
+#endif
 #endif
 			
 			//
