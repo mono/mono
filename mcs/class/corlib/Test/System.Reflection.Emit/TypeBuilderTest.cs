@@ -1758,12 +1758,52 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetFieldsIncomplete ()
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetFieldsIncomplete_MS ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetFields ();
+			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+			try {
+				tb.GetFields ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetFieldsIncomplete_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineField ("name", typeof (string), FieldAttributes.Private);
+			tb.DefineField ("Sex", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("MALE", typeof (int), FieldAttributes.Public | FieldAttributes.Static);
+			tb.DefineField ("FEMALE", typeof (int), FieldAttributes.Private | FieldAttributes.Static);
+
+			FieldInfo [] fields = tb.GetFields ();
+			Assert.AreEqual (2, fields.Length, "#A1");
+			Assert.AreEqual ("Sex", fields [0].Name, "#A2");
+			Assert.AreEqual ("MALE", fields [1].Name, "#A3");
+
+#if NET_2_0
+			tb = module.DefineType (genTypeName ());
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("K", "V");
+			tb.DefineField ("First", typeParams [0], FieldAttributes.Public);
+			tb.DefineField ("Second", typeParams [1], FieldAttributes.Public);
+			tb.DefineField ("Sex", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("MALE", typeof (int), FieldAttributes.Public | FieldAttributes.Static);
+			tb.DefineField ("FEMALE", typeof (int), FieldAttributes.Private | FieldAttributes.Static);
+
+			fields = tb.GetFields ();
+			Assert.AreEqual (4, fields.Length, "#B1");
+			Assert.AreEqual ("First", fields [0].Name, "#B2");
+			Assert.AreEqual ("Second", fields [1].Name, "#B3");
+			Assert.AreEqual ("Sex", fields [2].Name, "#B4");
+			Assert.AreEqual ("MALE", fields [3].Name, "#B5");
+#endif
 		}
 
 		[Test]
@@ -1791,13 +1831,102 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (4, dynamicFields [0].GetValue (value), "#B4");
 		}
 
+#if NET_2_0
+		[Test] // bug #82625
+		[Category ("NotWorking")]
+		public void TestGetFieldsComplete_Generic ()
+		{
+			// FIXME: merge this with TestGetFieldsComplete when
+			// bug #82625 is fixed
+
+			TypeBuilder tb;
+			FieldInfo [] fields;
+			Type emittedType;
+			FieldInfo [] dynamicFields;
+			FieldInfo [] emittedFields;
+
+			tb = module.DefineType (genTypeName ());
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("K", "V");
+			tb.DefineField ("First", typeParams [0], FieldAttributes.Public);
+			tb.DefineField ("Second", typeParams [1], FieldAttributes.Public);
+			tb.DefineField ("Sex", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("MALE", typeof (int), FieldAttributes.Public | FieldAttributes.Static);
+			tb.DefineField ("FEMALE", typeof (int), FieldAttributes.Private | FieldAttributes.Static);
+
+			emittedType = tb.CreateType ();
+			dynamicFields = tb.GetFields ();
+			emittedFields = emittedType.GetFields ();
+
+			Assert.AreEqual (4, dynamicFields.Length, "#C1");
+			Assert.IsFalse ((dynamicFields [0]) is FieldBuilder, "#C2");
+			Assert.IsFalse ((dynamicFields [1]) is FieldBuilder, "#C3");
+			Assert.IsFalse ((dynamicFields [2]) is FieldBuilder, "#C4");
+			Assert.IsFalse ((dynamicFields [3]) is FieldBuilder, "#C5");
+			Assert.AreEqual ("First", dynamicFields [0].Name, "#C6");
+			Assert.AreEqual ("Second", dynamicFields [1].Name, "#C7");
+			Assert.AreEqual ("Sex", dynamicFields [2].Name, "#C8");
+			Assert.AreEqual ("MALE", dynamicFields [3].Name, "#C9");
+
+			Assert.AreEqual (4, emittedFields.Length, "#D1");
+			Assert.IsFalse ((emittedFields [0]) is FieldBuilder, "#D2");
+			Assert.IsFalse ((emittedFields [1]) is FieldBuilder, "#D3");
+			Assert.IsFalse ((emittedFields [2]) is FieldBuilder, "#D4");
+			Assert.IsFalse ((emittedFields [3]) is FieldBuilder, "#D5");
+			Assert.AreEqual ("First", emittedFields [0].Name, "#D6");
+			Assert.AreEqual ("Second", emittedFields [1].Name, "#D7");
+			Assert.AreEqual ("Sex", emittedFields [2].Name, "#D8");
+			Assert.AreEqual ("MALE", emittedFields [3].Name, "#D9");
+		}
+#endif
+
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetFieldsFlagsIncomplete ()
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetFieldsFlagsIncomplete_MS ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetFields (BindingFlags.Instance | BindingFlags.Public);
+			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+			try {
+				tb.GetFields (BindingFlags.Instance | BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetFieldsFlagsIncomplete_Mono ()
+		{
+			FieldInfo [] fields;
+
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineField ("name", typeof (string), FieldAttributes.Private);
+			tb.DefineField ("Sex", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("MALE", typeof (int), FieldAttributes.Public | FieldAttributes.Static);
+			tb.DefineField ("FEMALE", typeof (int), FieldAttributes.Private | FieldAttributes.Static);
+
+			fields = tb.GetFields (BindingFlags.Public |
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.AreEqual (2, fields.Length, "#A1");
+			Assert.AreEqual ("name", fields [0].Name, "#A2");
+			Assert.AreEqual ("Sex", fields [1].Name, "#A3");
+
+			fields = tb.GetFields (BindingFlags.Public |
+				BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual (2, fields.Length, "#B1");
+			Assert.AreEqual ("Sex", fields [0].Name, "#B2");
+			Assert.AreEqual ("MALE", fields [1].Name, "#B3");
+
+			fields = tb.GetFields (BindingFlags.Public |
+				BindingFlags.NonPublic | BindingFlags.Instance |
+				BindingFlags.Static);
+			Assert.AreEqual (4, fields.Length, "#C1");
+			Assert.AreEqual ("name", fields [0].Name, "#C2");
+			Assert.AreEqual ("Sex", fields [1].Name, "#C3");
+			Assert.AreEqual ("MALE", fields [2].Name, "#C4");
+			Assert.AreEqual ("FEMALE", fields [3].Name, "#C5");
 		}
 
 		[Test]
@@ -1817,12 +1946,36 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetFieldIncomplete ()
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetFieldIncomplete_MS ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetField ("test");
+			tb.DefineField ("test", typeof (int), FieldAttributes.Public);
+			try {
+				tb.GetField ("test");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetFieldIncomplete_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("OtherField", typeof (int), FieldAttributes.Private);
+
+			FieldInfo field = tb.GetField ("TestField");
+			Assert.IsNotNull (field, "#A1");
+			Assert.AreEqual ("TestField", field.Name, "#A2");
+			Assert.IsTrue (field is FieldBuilder, "#A3");
+
+			Assert.IsNull (tb.GetField ("OtherField"), "#B1");
+			Assert.IsNull (tb.GetField ("TestOtherField"), "#B2");
 		}
 
 		[Test]
@@ -1865,12 +2018,54 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetFieldFlagsIncomplete ()
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetFieldFlagsIncomplete_MS ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetField ("test", BindingFlags.Public);
+			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("OtherField", typeof (int), FieldAttributes.Private);
+			try {
+				tb.GetField ("test", BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetFieldFlagsIncomplete_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+			tb.DefineField ("OtherField", typeof (int), FieldAttributes.Private);
+
+			FieldInfo field = tb.GetField ("TestField", BindingFlags.Public
+				| BindingFlags.Instance);
+			Assert.IsNotNull (field, "#A1");
+			Assert.AreEqual ("TestField", field.Name, "#A2");
+			Assert.IsTrue (field is FieldBuilder, "#A3");
+
+			field = tb.GetField ("OtherField", BindingFlags.NonPublic |
+				BindingFlags.Instance);
+			Assert.IsNotNull (field, "#B1");
+			Assert.AreEqual ("OtherField", field.Name, "#B2");
+			Assert.IsTrue (field is FieldBuilder, "#B3");
+
+			Assert.IsNull (tb.GetField ("TestField", BindingFlags.NonPublic |
+				BindingFlags.Instance), "#C1");
+			Assert.IsNull (tb.GetField ("TestField", BindingFlags.Public |
+				BindingFlags.Static), "#C2");
+			Assert.IsNull (tb.GetField ("OtherField", BindingFlags.Public |
+				BindingFlags.Instance), "#C3");
+			Assert.IsNull (tb.GetField ("OtherField", BindingFlags.Public |
+				BindingFlags.Static), "#C4");
+			Assert.IsNull (tb.GetField ("NotExist", BindingFlags.NonPublic |
+				BindingFlags.Instance), "#C5");
+			Assert.IsNull (tb.GetField ("NotExist", BindingFlags.Public |
+				BindingFlags.Instance), "#C6");
 		}
 
 		[Test]

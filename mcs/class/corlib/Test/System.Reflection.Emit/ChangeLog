@@ -1,3 +1,8 @@
+2007-09-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Split up and improved ignored GetField(s) tests
+	into MS and Mono tests. Added (NotWorking) test for bug #82625.
+
 2007-08-17  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* ILGeneratorTest.cs: Added FilterAndCatchBlock (bug #81431), InvalidFilterBlock1, ValidFilterBlock1, ValidFilterBlock2.
