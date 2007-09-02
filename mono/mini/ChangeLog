@@ -1,3 +1,7 @@
+2007-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c cpu-x86.md: Fix x86 build.
+
 2007-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-sparc.md (endfilter): Add missing src1:i argument.

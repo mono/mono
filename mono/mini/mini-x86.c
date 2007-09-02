@@ -2124,19 +2124,6 @@ cc_signed_table [] = {
 	FALSE, FALSE, FALSE, FALSE
 };
 
-/* Maps CMP_... constants to X86_CC_... constants */
-static const int
-cc_table [] = {
-	X86_CC_EQ, X86_CC_NE, X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT,
-	X86_CC_LE, X86_CC_GE, X86_CC_LT, X86_CC_GT
-};
-
-static const int
-cc_signed_table [] = {
-	TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
-	FALSE, FALSE, FALSE, FALSE
-};
-
 void
 mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {	
