@@ -1,5 +1,9 @@
 2007-09-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-sparc.md (endfilter): Add missing src1:i argument.
+
+2007-09-02  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-sparc.c (mono_arch_output_basic_block): Fix OP_IDIV_IMM.
 
 2007-09-01  Zoltan Varga  <vargaz@gmail.com>
