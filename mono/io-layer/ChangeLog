@@ -1,5 +1,9 @@
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* processes.h : removed extra parameters from CreateProcessWithLogonW.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* processes.c, processes.h: added CreateProcessWithLogonW(). For now
 	  it just calls CreateProcess().
 	* io-layer.h : CreateProcessWithLogonW() requires WINVER 0x0500
