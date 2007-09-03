@@ -1,3 +1,8 @@
+2007-09-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: `MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE'
+	now takes the `main_method' as argument.
+
 2007-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-sparc.md (endfilter): Add missing src1:i argument.
