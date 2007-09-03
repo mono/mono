@@ -82,7 +82,7 @@ Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *ent
 
 	r = readdir_r (dirp, &_entry, (struct dirent**) result);
 
-	if (r == 0 && result != NULL) {
+	if (r == 0 && *result != NULL) {
 		copy_dirent (entry, &_entry);
 	}
 
