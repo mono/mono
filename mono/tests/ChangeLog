@@ -1,3 +1,7 @@
+2007-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Increase a timeout.
+
 2007-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c handleref.cs: Fix handleref.exe test on sparc.
