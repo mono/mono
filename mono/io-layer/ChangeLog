@@ -1,5 +1,9 @@
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* processes.h : sigh, I really hate fixing them on windows :(
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* processes.c : fix build again.
 
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
