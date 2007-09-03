@@ -1,5 +1,7 @@
 2007-09-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_allocate_vars): Fix sparc build.
+
 	* mini.c (mono_compile_create_var_for_vreg): Handle enums whose basetype is i8.
 
 2007-09-03  Zoltan Varga  <vargaz@gmail.com>
