@@ -81,9 +81,6 @@ namespace System.Net.NetworkInformation {
 	class Win32NetworkInterface2 : NetworkInterface
 	{
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
-		static extern int GetNetworkParams (byte [] bytes, ref int size);
-
-		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetAdaptersInfo (byte [] info, ref int size);
 
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
@@ -91,32 +88,6 @@ namespace System.Net.NetworkInformation {
 
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetIfEntry (ref Win32_MIB_IFROW row);
-
-		static Win32_FIXED_INFO fixed_info;
-
-		public static Win32_FIXED_INFO FixedInfo {
-			get {
-				if (fixed_info == null)
-					fixed_info = GetFixedInfo ();
-				return fixed_info;
-			}
-		}
-
-		static Win32_FIXED_INFO GetFixedInfo ()
-		{
-			int len = 0;
-			byte [] bytes = null;
-			GetNetworkParams (null, ref len);
-			bytes = new byte [len];
-			GetNetworkParams (bytes, ref len);
-			Win32_FIXED_INFO info = new Win32_FIXED_INFO ();
-			unsafe {
-				fixed (byte* ptr = bytes) {
-					Marshal.PtrToStructure ((IntPtr) ptr, info);
-				}
-			}
-			return info;
-		}
 
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{

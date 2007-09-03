@@ -40,6 +40,35 @@ namespace System.Net.NetworkInformation
 	[StructLayout (LayoutKind.Sequential)]
 	class Win32_FIXED_INFO
 	{
+		[DllImport ("iphlpapi.dll", SetLastError = true)]
+		static extern int GetNetworkParams (byte [] bytes, ref int size);
+
+		static Win32_FIXED_INFO fixed_info;
+
+		public static Win32_FIXED_INFO Instance {
+			get {
+				if (fixed_info == null)
+					fixed_info = GetInstance ();
+				return fixed_info;
+			}
+		}
+
+		static Win32_FIXED_INFO GetInstance ()
+		{
+			int len = 0;
+			byte [] bytes = null;
+			GetNetworkParams (null, ref len);
+			bytes = new byte [len];
+			GetNetworkParams (bytes, ref len);
+			Win32_FIXED_INFO info = new Win32_FIXED_INFO ();
+			unsafe {
+				fixed (byte* ptr = bytes) {
+					Marshal.PtrToStructure ((IntPtr) ptr, info);
+				}
+			}
+			return info;
+		}
+
 		const int MAX_HOSTNAME_LEN = 128;
 		const int MAX_DOMAIN_NAME_LEN = 128;
 		const int MAX_SCOPE_ID_LEN = 256;
@@ -50,7 +79,7 @@ namespace System.Net.NetworkInformation
 		public string DomainName;
 		public IntPtr CurrentDnsServer; // to Win32IP_ADDR_STRING
 		public Win32_IP_ADDR_STRING DnsServerList;
-		public uint NodeType;
+		public NetBiosNodeType NodeType;
 		[MarshalAs (UnmanagedType.ByValTStr, SizeConst = MAX_SCOPE_ID_LEN + 4)]
 		public string ScopeId;
 		public uint EnableRouting;

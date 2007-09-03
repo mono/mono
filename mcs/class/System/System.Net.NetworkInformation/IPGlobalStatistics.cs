@@ -60,7 +60,7 @@ namespace System.Net.NetworkInformation {
 		public abstract long ReceivedPacketsWithUnknownProtocol { get; }
 	}
 
-	public class MibIPGlobalStatistics : IPGlobalStatistics
+	class MibIPGlobalStatistics : IPGlobalStatistics
 	{
 		StringDictionary dic;
 

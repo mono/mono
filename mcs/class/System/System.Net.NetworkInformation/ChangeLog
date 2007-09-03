@@ -1,3 +1,12 @@
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPGlobalStatistics.cs : Mib-* class is nonpublic.
+	* Win32NetworkInterfaceMarshal.cs IPv4InterfaceProperties.cs
+	  IPGlobalProperties.cs IPInterfaceProperties.cs
+	  NetworkInterface.cs : move Win32NetworkInterfaceMarshal.FixedInfo to
+	  Win32_FIXED_INFO.Instance and share it with Win32IPGlobalProperties.
+	  Fixed GetUdp[6]Table() / GetTcp[6]Table() marshalling issue.
+
 2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetworkInterface.cs,

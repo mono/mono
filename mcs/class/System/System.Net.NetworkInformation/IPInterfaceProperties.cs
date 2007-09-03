@@ -101,7 +101,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override bool IsDnsEnabled {
-			get { return Win32NetworkInterface2.FixedInfo.EnableDns != 0; }
+			get { return Win32_FIXED_INFO.Instance.EnableDns != 0; }
 		}
 
 		public override bool IsDynamicDnsEnabled {

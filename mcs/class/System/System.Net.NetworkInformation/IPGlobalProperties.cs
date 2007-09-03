@@ -41,7 +41,7 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO ("Properties are not implemented in every platform. A marshalling issue on Windows")]
+		[MonoTODO ("Properties are not implemented on non-Windows platform. A marshalling issue on Windows")]
 		public static IPGlobalProperties GetIPGlobalProperties ()
 		{
 			switch (Environment.OSVersion.Platform) {
@@ -279,23 +279,23 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.ScopeId; }
 		}
 
 		public override string DomainName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.DomainName; }
 		}
 
 		public override string HostName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.HostName; }
 		}
 
 		public override bool IsWinsProxy {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.EnableProxy != 0; }
 		}
 
 		public override NetBiosNodeType NodeType {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.NodeType; }
 		}
 	}
 
@@ -304,72 +304,132 @@ namespace System.Net.NetworkInformation {
 		public const int AF_INET = 2;
 		public const int AF_INET6 = 23;
 
-		// FIXME: fails at some marshaling stage
-		void FillTcpTable (out Win32_MIB_TCPTABLE tab4, out Win32_MIB_TCP6TABLE tab6)
+		// FIXME: it might be getting wrong table. I'm getting
+		// different results from .NET 2.0.
+		unsafe void FillTcpTable (out List<Win32_MIB_TCPROW> tab4, out List<Win32_MIB_TCP6ROW> tab6)
 		{
-			tab4 = null;
+			tab4 = new List<Win32_MIB_TCPROW> ();
 			int size4 = 0;
-			GetTcpTable (ref tab4, ref size4, false); // get size
-			tab4 = new Win32_MIB_TCPTABLE (size4);
-			GetTcpTable (ref tab4, ref size4, false); // get list
-			tab6 = null;
-			int size6 = 0;
-			GetTcp6Table (ref tab6, ref size6, false); // get size
-			tab6 = new Win32_MIB_TCP6TABLE (size6);
-			GetTcp6Table (ref tab6, ref size6, false); // get list
+			GetTcpTable (null, ref size4, true); // get size
+			byte [] bytes4 = new byte [size4];
+			GetTcpTable (bytes4, ref size4, true); // get list
 
+			int structSize4 = Marshal.SizeOf (typeof (Win32_MIB_TCPROW));
+
+			fixed (byte* ptr = bytes4) {
+				int count = Marshal.ReadInt32 ((IntPtr) ptr);
+				for (int i = 0; i < count; i++) {
+					Win32_MIB_TCPROW row = new Win32_MIB_TCPROW ();
+					Marshal.PtrToStructure ((IntPtr) (ptr + i * structSize4 + 4), row);
+					tab4.Add (row);
+				}
+			}
+
+			tab6 = new List<Win32_MIB_TCP6ROW> ();
+			if (Environment.OSVersion.Version.Major >= 6) { // Vista
+				int size6 = 0;
+				GetTcp6Table (null, ref size6, true); // get size
+				byte [] bytes6 = new byte [size6];
+				GetTcp6Table (bytes6, ref size6, true); // get list
+
+				int structSize6 = Marshal.SizeOf (typeof (Win32_MIB_TCP6ROW));
+
+				fixed (byte* ptr = bytes6) {
+					int count = Marshal.ReadInt32 ((IntPtr) ptr);
+					for (int i = 0; i < count; i++) {
+						Win32_MIB_TCP6ROW row = new Win32_MIB_TCP6ROW ();
+						Marshal.PtrToStructure ((IntPtr) (ptr + i * structSize6 + 4), row);
+						tab6.Add (row);
+					}
+				}
+			}
+		}
+
+		bool IsListenerState (TcpState state)
+		{
+			switch (state) {
+			case TcpState.SynSent:
+			case TcpState.Listen:
+			case TcpState.FinWait1:
+			case TcpState.FinWait2:
+			case TcpState.CloseWait:
+				return true;
+			}
+			return false;
 		}
 
 		public override TcpConnectionInformation [] GetActiveTcpConnections ()
 		{
-			Win32_MIB_TCPTABLE tab4 = null;
-			Win32_MIB_TCP6TABLE tab6 = null;
+			List<Win32_MIB_TCPROW> tab4 = null;
+			List<Win32_MIB_TCP6ROW> tab6 = null;
 			FillTcpTable (out tab4, out tab6);
-			int size4 = tab4.Table.Length;
+			int size4 = tab4.Count;
 
-			TcpConnectionInformation [] ret = new TcpConnectionInformation [size4 + tab6.Table.Length];
+			TcpConnectionInformation [] ret = new TcpConnectionInformation [size4 + tab6.Count];
 			for (int i = 0; i < size4; i++)
-				ret [i] = tab4.Table [i].TcpInfo;
-			for (int i = 0; i < tab6.Table.Length; i++)
-				ret [size4 + i] = tab6.Table [i].TcpInfo;
+				ret [i] = tab4 [i].TcpInfo;
+			for (int i = 0; i < tab6.Count; i++)
+				ret [size4 + i] = tab6 [i].TcpInfo;
 			return ret;
 		}
 
 		public override IPEndPoint [] GetActiveTcpListeners ()
 		{
-			Win32_MIB_TCPTABLE tab4 = null;
-			Win32_MIB_TCP6TABLE tab6 = null;
+			List<Win32_MIB_TCPROW> tab4 = null;
+			List<Win32_MIB_TCP6ROW> tab6 = null;
 			FillTcpTable (out tab4, out tab6);
-			int size4 = tab4.Table.Length;
 
-			IPEndPoint [] ret = new IPEndPoint [size4 + tab6.Table.Length];
-			for (int i = 0; i < size4; i++)
-				ret [i] = tab4.Table [i].LocalEndPoint;
-			for (int i = 0; i < tab6.Table.Length; i++)
-				ret [size4 + i] = tab6.Table [i].LocalEndPoint;
-			return ret;
+			List<IPEndPoint> ret = new List<IPEndPoint> ();
+			for (int i = 0, count = tab4.Count; i < count; i++)
+				if (IsListenerState (tab4 [i].State))
+					ret.Add (tab4 [i].LocalEndPoint);
+			for (int i = 0, count = tab6.Count; i < count; i++)
+				if (IsListenerState (tab6 [i].State))
+					ret.Add (tab6 [i].LocalEndPoint);
+			return ret.ToArray ();
 		}
 
-		// FIXME: fails at some marshaling stage
-		public override IPEndPoint [] GetActiveUdpListeners ()
+		public unsafe override IPEndPoint [] GetActiveUdpListeners ()
 		{
-			Win32_MIB_UDPTABLE tab4 = null;
-			int size4 = 0;
-			GetUdpTable (ref tab4, ref size4, false); // get size
-			tab4 = new Win32_MIB_UDPTABLE (size4);
-			GetUdpTable (ref tab4, ref size4, false); // get list
-			Win32_MIB_UDP6TABLE tab6 = null;
-			int size6 = 0;
-			GetUdp6Table (ref tab6, ref size6, false); // get size
-			tab6 = new Win32_MIB_UDP6TABLE (size6);
-			GetUdp6Table (ref tab6, ref size6, false); // get list
+			List<IPEndPoint> list = new List<IPEndPoint> ();
 
-			IPEndPoint [] ret = new IPEndPoint [size4 + size6];
-			for (int i = 0; i < size4; i++)
-				ret [i] = tab4.Table [i].LocalEndPoint;
-			for (int i = 0; i < size6; i++)
-				ret [size4 + i] = tab6.Table [i].LocalEndPoint;
-			return ret;
+			byte [] bytes4 = null;
+			int size4 = 0;
+			GetUdpTable (null, ref size4, true); // get size
+			bytes4 = new byte [size4];
+			GetUdpTable (bytes4, ref size4, true); // get list
+
+			int structSize4 = Marshal.SizeOf (typeof (Win32_MIB_UDPROW));
+
+			fixed (byte* ptr = bytes4) {
+				int count = Marshal.ReadInt32 ((IntPtr) ptr);
+				for (int i = 0; i < count; i++) {
+					Win32_MIB_UDPROW row = new Win32_MIB_UDPROW ();
+					Marshal.PtrToStructure ((IntPtr) (ptr + i * structSize4 + 4), row);
+					list.Add (row.LocalEndPoint);
+				}
+			}
+
+			if (Environment.OSVersion.Version.Major >= 6) { // Vista
+				byte [] bytes6 = null;
+				int size6 = 0;
+				GetUdp6Table (null, ref size6, true); // get size
+				bytes6 = new byte [size6];
+				GetUdp6Table (bytes6, ref size6, true); // get list
+
+				int structSize6 = Marshal.SizeOf (typeof (Win32_MIB_UDP6ROW));
+
+				fixed (byte* ptr = bytes6) {
+					int count = Marshal.ReadInt32 ((IntPtr) ptr);
+					for (int i = 0; i < count; i++) {
+						Win32_MIB_UDP6ROW row = new Win32_MIB_UDP6ROW ();
+						Marshal.PtrToStructure ((IntPtr) (ptr + i * structSize6 + 4), row);
+						list.Add (row.LocalEndPoint);
+					}
+				}
+			}
+
+			return list.ToArray ();
 		}
 
 		public override IcmpV4Statistics GetIcmpV4Statistics ()
@@ -467,16 +527,16 @@ namespace System.Net.NetworkInformation {
 		// PInvokes
 
 		[DllImport ("Iphlpapi.dll")]
-		static extern int GetTcpTable (ref Win32_MIB_TCPTABLE pTcpTable, ref int pdwSize, bool bOrder);
+		static extern int GetTcpTable (byte [] pTcpTable, ref int pdwSize, bool bOrder);
 
 		[DllImport ("Iphlpapi.dll")]
-		static extern int GetTcp6Table (ref Win32_MIB_TCP6TABLE TcpTable, ref int SizePointer, bool Order);
+		static extern int GetTcp6Table (byte [] TcpTable, ref int SizePointer, bool Order);
 
 		[DllImport ("Iphlpapi.dll")]
-		static extern int GetUdpTable (ref Win32_MIB_UDPTABLE pUdpTable, ref int pdwSize, bool bOrder);
+		static extern int GetUdpTable (byte [] pUdpTable, ref int pdwSize, bool bOrder);
 
 		[DllImport ("Iphlpapi.dll")]
-		static extern int GetUdp6Table (ref Win32_MIB_UDP6TABLE Udp6Table, ref int SizePointer, bool Order);
+		static extern int GetUdp6Table (byte [] Udp6Table, ref int SizePointer, bool Order);
 
 		[DllImport ("Iphlpapi.dll")]
 		static extern int GetTcpStatisticsEx (out Win32_MIB_TCPSTATS pStats, int dwFamily);
@@ -510,22 +570,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		class Win32_MIB_TCPTABLE
-		{
-			public int NumEntries;
-			// FIXME: looks like it is wrong
-			[MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_USERDEFINED, SafeArrayUserDefinedSubType = typeof (Win32_MIB_TCPROW))]
-			public Win32_MIB_TCPROW [] Table;
-
-			public Win32_MIB_TCPTABLE (int size)
-			{
-				NumEntries = size;
-				Table = new Win32_MIB_TCPROW [size];
-			}
-		}
-
-		[StructLayout (LayoutKind.Sequential)]
-		struct Win32_MIB_TCPROW
+		class Win32_MIB_TCPROW
 		{
 			public TcpState State;
 			public uint LocalAddr;
@@ -547,22 +592,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		class Win32_MIB_TCP6TABLE
-		{
-			public int NumEntries;
-			// FIXME: looks like it is wrong
-			[MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_USERDEFINED, SafeArrayUserDefinedSubType = typeof (Win32_MIB_TCP6ROW))]
-			public Win32_MIB_TCP6ROW [] Table;
-
-			public Win32_MIB_TCP6TABLE (int size)
-			{
-				NumEntries = size;
-				Table = new Win32_MIB_TCP6ROW [size];
-			}
-		}
-
-		[StructLayout (LayoutKind.Sequential)]
-		struct Win32_MIB_TCP6ROW
+		class Win32_MIB_TCP6ROW
 		{
 			public TcpState State;
 			public Win32_IN6_ADDR LocalAddr;
@@ -586,22 +616,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		class Win32_MIB_UDPTABLE
-		{
-			public int NumEntries;
-			// FIXME: looks like it is wrong
-			[MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_USERDEFINED, SafeArrayUserDefinedSubType = typeof (Win32_MIB_UDPROW))]
-			public Win32_MIB_UDPROW [] Table;
-
-			public Win32_MIB_UDPTABLE (int size)
-			{
-				NumEntries = size;
-				Table = new Win32_MIB_UDPROW [size];
-			}
-		}
-
-		[StructLayout (LayoutKind.Sequential)]
-		struct Win32_MIB_UDPROW
+		class Win32_MIB_UDPROW
 		{
 			public uint LocalAddr;
 			public int LocalPort;
@@ -612,22 +627,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
-		class Win32_MIB_UDP6TABLE
-		{
-			public int NumEntries;
-			// FIXME: looks like it is wrong
-			[MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_USERDEFINED, SafeArrayUserDefinedSubType = typeof (Win32_MIB_UDP6ROW))]
-			public Win32_MIB_UDP6ROW [] Table;
-
-			public Win32_MIB_UDP6TABLE (int size)
-			{
-				NumEntries = size;
-				Table = new Win32_MIB_UDP6ROW [size];
-			}
-		}
-
-		[StructLayout (LayoutKind.Sequential)]
-		struct Win32_MIB_UDP6ROW
+		class Win32_MIB_UDP6ROW
 		{
 			public Win32_IN6_ADDR LocalAddr;
 			public uint LocalScopeId;
