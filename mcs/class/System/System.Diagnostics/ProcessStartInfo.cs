@@ -29,9 +29,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Microsoft.Win32;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -110,7 +112,6 @@ namespace System.Diagnostics
 			}
 		}
 
-		[MonoTODO("Need to read the env block somehow")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content), DefaultValue (null)]
 		[Editor ("System.Diagnostics.Design.StringDictionaryEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MonitoringDescription ("Environment variables used for this process.")]
@@ -256,11 +257,35 @@ namespace System.Diagnostics
 			}
 		}
 
-		[MonoTODO]
+		static readonly string [] empty = new string [0];
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		public string[] Verbs {
 			get {
-				return(null);
+				string ext = String.IsNullOrEmpty (filename) ? null : Path.GetExtension (filename);
+				if (ext == null)
+					return empty;
+
+				switch (Environment.OSVersion.Platform) {
+				case PlatformID.Unix:
+					return empty; // no verb on non-Windows
+				default:
+					RegistryKey rk = null, rk2 = null, rk3 = null;
+					try {
+						rk = Registry.ClassesRoot.OpenSubKey (ext);
+						string k = rk != null ? rk.GetValue (null) as string : null;
+						rk2 = k != null ? Registry.ClassesRoot.OpenSubKey (k) : null;
+						rk3 = rk2 != null ? rk2.OpenSubKey ("shell") : null;
+						return rk3 != null ? rk3.GetSubKeyNames () : null;
+					} finally {
+						if (rk3 != null)
+							rk3.Close ();
+						if (rk2 != null)
+							rk2.Close ();
+						if (rk != null)
+							rk.Close ();
+					}
+				}
 			}
 		}
 		

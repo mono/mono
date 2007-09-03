@@ -1,5 +1,9 @@
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ProcessStartInfo.cs : Implemented Verbs. It is done.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Process.cs, ProcessStartInfo.cs : user info support (on windows).
 
 2007-08-23  Robert Jordan  <robertj@gmx.net>
