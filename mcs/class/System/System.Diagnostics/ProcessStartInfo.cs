@@ -56,9 +56,14 @@ namespace System.Diagnostics
 		private bool redirect_standard_output = false;
 		private bool use_shell_execute = true;
 		private ProcessWindowStyle window_style = ProcessWindowStyle.Normal;
-#if NET_2_0
 		private Encoding encoding_stderr, encoding_stdout;
+		private string username, domain;
+#if NET_2_0
+		private SecureString password;
+#else
+		private object password; // dummy
 #endif
+		private bool load_user_profile;
 
 		public ProcessStartInfo() 
 		{
@@ -288,5 +293,30 @@ namespace System.Diagnostics
 				working_directory = value == null ? String.Empty : value;
 			}
 		}
+
+#if NET_2_0
+		[NotifyParentPropertyAttribute (true)]
+		public bool LoadUserProfile {
+			get { return load_user_profile; }
+			set { load_user_profile = value; }
+		}
+
+		[NotifyParentPropertyAttribute (true)]
+		public string UserName {
+			get { return username; }
+			set { username = value; }
+		}
+
+		[NotifyParentPropertyAttribute (true)]
+		public string Domain {
+			get { return domain; }
+			set { domain = value; }
+		}
+
+		public SecureString Password {
+			get { return password; }
+			set { password = value; }
+		}
+#endif
 	}
 }

@@ -1,3 +1,9 @@
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Process.cs, ProcessStartInfo.cs : user info support (on windows).
+	 Removed encoding_stderr, encoding_stdout which are not needed and
+	 do not match icall.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* Process.cs: implement PriorityClass. Fixes #81756.
