@@ -1,3 +1,9 @@
+2007-09-04  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: make sure that base class doesn't
+	contain a field of the same name which is accessible from the
+	current control if we're within a singleton template.
+
 2007-08-29  Marek Habersack  <mhabersack@novell.com>
 
 	* CachingCompiler.cs: consider contents of the

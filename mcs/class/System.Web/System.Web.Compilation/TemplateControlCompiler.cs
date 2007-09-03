@@ -1254,13 +1254,18 @@ namespace System.Web.Compilation
 			if (!isTemplate && !inTemplate) {
 				CreateField (builder, true);
 			} else if (!isTemplate) {
+				bool doCheck = false;
+				
 #if NET_2_0
 				TemplateBuilder pb = builder.parentBuilder as TemplateBuilder;
 				if (pb == null || pb.TemplateInstance != TemplateInstance.Single)
 #endif
 					builder.ID = builder.GetNextID (null);
-				
-				CreateField (builder, false);
+#if NET_2_0
+				else
+					doCheck = true;
+#endif
+				CreateField (builder, doCheck);
 			}
 
 			InitMethod (builder, isTemplate, childrenAsProperties);
