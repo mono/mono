@@ -1367,7 +1367,9 @@
       <Private>False</Private>
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\lib\Mainsoft.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="rt">
       <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
