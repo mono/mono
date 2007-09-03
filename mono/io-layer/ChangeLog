@@ -1,5 +1,9 @@
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* processes.c : fix build again.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* processes.h : removed extra parameters from CreateProcessWithLogonW.
 
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
