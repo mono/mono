@@ -1,3 +1,7 @@
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* process.h, process.c:  added support for user profile/info in
+	  ProcessStartInfo. For now only Windows works.
 
 Fri Aug 31 17:30:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

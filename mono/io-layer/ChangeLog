@@ -1,3 +1,10 @@
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.c, processes.h: added CreateProcessWithLogonW(). For now
+	  it just calls CreateProcess().
+	* io-layer.h : CreateProcessWithLogonW() requires WINVER 0x0500
+	  on Windows.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* processes.[c|h]: Implement Get|SetPriorityClass ().
