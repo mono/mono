@@ -616,6 +616,7 @@ namespace System.Web.Compilation
 			string prop_field = id.Replace ("-", ".");
 			string [] parts = prop_field.Split (new char [] {'.'});
 			int length = parts.Length;
+			
 			if (length < 2 || !InvariantCompareNoCase (member.Name, parts [0]))
 				return false;
 
@@ -624,7 +625,7 @@ namespace System.Web.Compilation
 				if (sub_member == null)
 					return false;
 
-				string new_prefix = prefix + parts [0] + ".";
+				string new_prefix = prefix + member.Name + ".";
 				string new_id = id.Substring (hyphen + 1);
 				return ProcessPropertiesAndFields (builder, sub_member, new_id, attValue, new_prefix);
 			}

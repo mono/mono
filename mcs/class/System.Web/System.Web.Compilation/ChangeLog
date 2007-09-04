@@ -3,6 +3,10 @@
 	* TemplateControlCompiler.cs: make sure that base class doesn't
 	contain a field of the same name which is accessible from the
 	current control if we're within a singleton template.
+	When generating code for a property or field, use the name
+	retrieved from the metadata by reflection instead of the one
+	parsed from html. Fixes bug #82687. Patch from SunHo Kim
+	<zsunno@gmail.com>, thanks!
 
 2007-08-29  Marek Habersack  <mhabersack@novell.com>
 
