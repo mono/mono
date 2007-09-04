@@ -9,3 +9,5 @@ test-67.cs IGNORE	# Windows-only test
 
 test-xml-027.cs
 test-562.cs
+test-583.cs
+test-584.cs
