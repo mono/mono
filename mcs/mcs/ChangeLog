@@ -1,3 +1,14 @@
+2007-09-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #82563
+	* assign.cs: Revert wrong fix.
+	
+	* expression.cs (VariableReference.EmitAssign): Handle ref reference
+	correctly.
+	(ArrayAccess): Changed the way we emit compound (prepared) assignments.
+	Instead of ldelema/stdind we have to use temporary variables to handle
+	cases like String.Concat (params string[]).
+	
 2007-08-31  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: EmitAttributes to Emit rename.

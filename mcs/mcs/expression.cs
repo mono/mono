@@ -3498,9 +3498,6 @@ namespace Mono.CSharp {
 			EmitLoad (ec);
 
 			if (IsRef) {
-				if (prepared)
-					ec.ig.Emit (OpCodes.Dup);
-	
 				//
 				// If we are a reference, we loaded on the stack a pointer
 				// Now lets load the real value
@@ -3531,11 +3528,11 @@ namespace Mono.CSharp {
 			if (prepare_for_load) {
 				if (Variable.HasInstance)
 					ig.Emit (OpCodes.Dup);
-			} else {
-				if (IsRef)
-					Variable.Emit (ec);
 			}
-			
+
+			if (IsRef)
+				Variable.Emit (ec);
+
 			source.Emit (ec);
 
 			if (leave_copy) {
@@ -7282,6 +7279,8 @@ namespace Mono.CSharp {
 		ElementAccess ea;
 
 		LocalTemporary temp;
+		LocalTemporary prepared_value;
+
 		bool prepared;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
@@ -7356,8 +7355,14 @@ namespace Mono.CSharp {
 		///    Emits the right opcode to load an object of Type `t'
 		///    from an array of T
 		/// </summary>
-		static public void EmitLoadOpcode (ILGenerator ig, Type type)
+		void EmitLoadOpcode (ILGenerator ig, Type type, int rank)
 		{
+			if (rank > 1) {
+				MethodInfo get = FetchGetMethod ();
+				ig.Emit (OpCodes.Call, get);
+				return;
+			}
+
 			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
 				ig.Emit (OpCodes.Ldelem_U1);
 			else if (type == TypeManager.sbyte_type)
@@ -7381,7 +7386,7 @@ namespace Mono.CSharp {
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldelem_I);
 			else if (TypeManager.IsEnumType (type)){
-				EmitLoadOpcode (ig, TypeManager.EnumToUnderlying (type));
+				EmitLoadOpcode (ig, TypeManager.EnumToUnderlying (type), rank);
 			} else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
@@ -7492,12 +7497,32 @@ namespace Mono.CSharp {
 		// initialized), then load the arguments the first time and store them
 		// in locals.  otherwise load from local variables.
 		//
-		void LoadArrayAndArguments (EmitContext ec)
+		// prepareForLoad is used in compound assignments to cache origal index
+		// values ( label[idx++] += s )
+		//
+		LocalTemporary [] LoadArrayAndArguments (EmitContext ec, bool prepareForLoad)
 		{
 			ea.Expr.Emit (ec);
-			foreach (Argument a in ea.Arguments){
-				a.EmitArrayArgument (ec);
+
+			LocalTemporary[] indexes = null;
+			if (prepareForLoad) {
+				ec.ig.Emit (OpCodes.Dup);
+				indexes = new LocalTemporary [ea.Arguments.Count];
 			}
+
+			for (int i = 0; i < ea.Arguments.Count; ++i) {
+				((Argument)ea.Arguments [i]).EmitArrayArgument (ec);
+				if (!prepareForLoad)
+					continue;
+
+				// Keep original array index value on the stack
+				ec.ig.Emit (OpCodes.Dup);
+
+				indexes [i] = new LocalTemporary (TypeManager.intptr_type);
+				indexes [i].Store (ec);
+			}
+
+			return indexes;
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -7505,20 +7530,13 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			if (!prepared) {
-				LoadArrayAndArguments (ec);
-				
-				if (rank == 1)
-					EmitLoadOpcode (ig, type);
-				else {
-					MethodInfo method;
-					
-					method = FetchGetMethod ();
-					ig.Emit (OpCodes.Call, method);
-				}
-			} else
-				LoadFromPtr (ec.ig, this.type);
-			
+			if (prepared) {
+				prepared_value.Emit (ec);
+			} else {
+				LoadArrayAndArguments (ec, false);
+				EmitLoadOpcode (ig, type, rank);
+			}	
+
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				temp = new LocalTemporary (this.type);
@@ -7538,37 +7556,32 @@ namespace Mono.CSharp {
 			Type t = source.Type;
 			prepared = prepare_for_load;
 
-			if (prepare_for_load) {
-				AddressOf (ec, AddressOp.LoadStore);
-				ec.ig.Emit (OpCodes.Dup);
-				source.Emit (ec);
-				if (leave_copy) {
-					ec.ig.Emit (OpCodes.Dup);
-					temp = new LocalTemporary (this.type);
-					temp.Store (ec);
+			LocalTemporary[] original_indexes_values = LoadArrayAndArguments (ec, prepare_for_load);
+
+			if (prepared) {
+				// Store prepared value, it will be used later when index value is read
+				prepared_value = new LocalTemporary (type);
+				EmitLoadOpcode (ig, type, rank);
+				prepared_value.Store (ec);
+				foreach (LocalTemporary lt in original_indexes_values) {
+					lt.Emit (ec);
+					lt.Release (ec);
 				}
-				StoreFromPtr (ec.ig, t);
-				
-				if (temp != null) {
-					temp.Emit (ec);
-					temp.Release (ec);
-				}
-				
-				return;
 			}
-			
-			LoadArrayAndArguments (ec);
 
 			if (rank == 1) {
 				bool is_stobj, has_type_arg;
 				OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
-				//
-				// The stobj opcode used by value types will need
-				// an address on the stack, not really an array/array
-				// pair
-				//
-				if (is_stobj)
-					ig.Emit (OpCodes.Ldelema, t);
+
+				if (!prepared) {
+					//
+					// The stobj opcode used by value types will need
+					// an address on the stack, not really an array/array
+					// pair
+					//
+					if (is_stobj)
+						ig.Emit (OpCodes.Ldelema, t);
+				}
 				
 				source.Emit (ec);
 				if (leave_copy) {
@@ -7623,7 +7636,7 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			LoadArrayAndArguments (ec);
+			LoadArrayAndArguments (ec, false);
 
 			if (rank == 1){
 				ig.Emit (OpCodes.Ldelema, type);
