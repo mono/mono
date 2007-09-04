@@ -6277,7 +6277,7 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen, rect.X + 1, rect.Y + 1, rect.X + 1, rect.Bottom - 2);
 				dc.DrawLine (pen, rect.X + 2, rect.Y + 1, rect.Right - 2, rect.Y + 1);
 				
-				pen = SystemPens.ControlLight;
+				pen = SystemPens.ControlLightLight;
 				dc.DrawLine (pen, rect.Right, rect.Y, rect.Right, rect.Bottom);
 				dc.DrawLine (pen, rect.X, rect.Bottom, rect.Right, rect.Bottom);
 				
