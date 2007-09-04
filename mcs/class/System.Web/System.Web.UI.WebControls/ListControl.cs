@@ -61,8 +61,6 @@ namespace System.Web.UI.WebControls {
 
 		private ListItemCollection items;
 #if NET_2_0
-		bool dataAlreadyBound;
-		
 		int _selectedIndex = -2;
 		string _selectedValue;
 #else		
@@ -86,6 +84,8 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["AppendDataBoundItems"] = value;
+				if (Initialized)
+					RequiresDataBinding = true;
 			}
 		}
 #endif		
@@ -137,7 +137,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextField {
 			get { return ViewState.GetString ("DataTextField", String.Empty); }
-			set { ViewState ["DataTextField"] = value; }
+			set { 
+				ViewState ["DataTextField"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0
@@ -148,7 +154,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextFormatString {
 			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
-			set { ViewState ["DataTextFormatString"] = value; }
+			set { 
+				ViewState ["DataTextFormatString"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0
@@ -159,7 +171,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataValueField {
 			get { return ViewState.GetString ("DataValueField", String.Empty); }
-			set { ViewState ["DataValueField"] = value; }
+			set { 
+				ViewState ["DataValueField"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0
@@ -413,10 +431,7 @@ namespace System.Web.UI.WebControls {
 			if (dataSource == null)
 				return;
 #if NET_2_0
-			if (AppendDataBoundItems) {
-				if (dataAlreadyBound)
-					return;
-			} else
+			if (!AppendDataBoundItems)
 #endif
 				Items.Clear ();
 
@@ -455,7 +470,6 @@ namespace System.Web.UI.WebControls {
 			}			
 
 #if NET_2_0
-			dataAlreadyBound = true;
 			if (!String.IsNullOrEmpty (_selectedValue)) {
 				if (!SetSelectedValue (_selectedValue))
 					throw new ArgumentOutOfRangeException ("value", String.Format ("'{0}' has a SelectedValue which is invalid because it does not exist in the list of items.", ID));
