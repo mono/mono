@@ -228,7 +228,7 @@ run-test-ondotnet-lib: test-local
 	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
 endif
 
-DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES)
 
 TEST_FILES =
 
@@ -241,9 +241,10 @@ TEST_FILES += `sed -e '/^$$/d' -e 's,^,Test/,' $(btest_sourcefile)`
 DISTFILES += $(btest_sourcefile)
 endif
 
+# make dist will collect files in .sources files from all profiles
 dist-local: dist-default
 	subs=' ' ; \
-	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
+	for f in `$(topdir)/tools/removecomments.sh $(wildcard *$(LIBRARY).sources)` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
 	  *) dest=`dirname $$f` ; \

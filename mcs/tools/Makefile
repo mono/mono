@@ -22,7 +22,8 @@ DISTFILES = \
 	mono-win32-setup.nsi		\
 	scan-tests.pl			\
 	tinderbox/smtp.c		\
-	tinderbox/tinderbox.sh
+	tinderbox/tinderbox.sh		\
+	gensources.sh
 
 test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
 	@:

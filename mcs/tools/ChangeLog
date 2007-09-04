@@ -1,3 +1,13 @@
+2007-09-04  Wade Berrier  <wberrier@novell.com>
+
+	* removecomments.sh: New script to aid 'make dist'
+	Removes '#' comments (specifically for .sources files)
+	Had to put in a separate script because alterint IFS to
+	contain a newline doesn't work inside make
+
+	* Makefile: include gensources.sh, the 2_1 profile needs it.
+	(Should also make it possible to build the jvm profile from a tarball)
+
 2007-07-27  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: integrate the tuner in the build.

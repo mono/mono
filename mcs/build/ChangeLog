@@ -1,3 +1,9 @@
+2007-09-04  Wade Berrier  <wberrier@novell.com>
+
+	* library.make: Glob for .sources for all profiles.
+	Use tools/removecomments.sh to account for '#include' and
+	comments, which are only used in the jvm profile at this point
+
 2007-09-01  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: consider the net_2_1 profile.
