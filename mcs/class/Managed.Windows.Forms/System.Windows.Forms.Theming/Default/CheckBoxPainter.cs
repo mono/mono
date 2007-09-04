@@ -114,7 +114,7 @@ namespace System.Windows.Forms.Theming.Default
 			g.DrawLine (pen, rect.X + 1, rect.Y + 1, rect.X + 1, rect.Bottom - 3);
 			g.DrawLine (pen, rect.X + 2, rect.Y + 1, rect.Right - 3, rect.Y + 1);
 
-			pen = SystemPens.ControlLight;
+			pen = SystemPens.ControlLightLight;
 			g.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 1);
 			g.DrawLine (pen, rect.X, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
 
@@ -158,7 +158,7 @@ namespace System.Windows.Forms.Theming.Default
 			g.DrawLine (pen, rect.X + 1, rect.Y + 1, rect.X + 1, rect.Bottom - 3);
 			g.DrawLine (pen, rect.X + 2, rect.Y + 1, rect.Right - 3, rect.Y + 1);
 
-			pen = SystemPens.ControlLight;
+			pen = SystemPens.ControlLightLight;
 			g.DrawLine (pen, rect.Right - 1, rect.Y, rect.Right - 1, rect.Bottom - 1);
 			g.DrawLine (pen, rect.X, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1);
 

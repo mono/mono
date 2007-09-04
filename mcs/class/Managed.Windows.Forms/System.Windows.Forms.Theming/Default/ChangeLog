@@ -1,3 +1,8 @@
+2007-09-04  Everaldo Canuto  <everaldo@simios.org>
+
+	* CheckBoxPainter.cs: Adjust checkbox light color to ControlLightLight to
+	mimic win32 look. Fixes #82656 (2.0).
+
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* RadioButtonPainter.cs: Added.
