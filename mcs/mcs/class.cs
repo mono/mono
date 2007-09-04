@@ -3083,7 +3083,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsStatic) {
-				if (base_class != TypeManager.system_object_expr) {
+				if (base_class.Type != TypeManager.object_type) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
 					return ifaces;
