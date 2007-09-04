@@ -262,12 +262,18 @@ namespace System.Diagnostics
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
 		public string[] Verbs {
 			get {
-				string ext = String.IsNullOrEmpty (filename) ? null : Path.GetExtension (filename);
+				string ext = filename == null | filename.Length == 0 ? 
+					null : Path.GetExtension (filename);
 				if (ext == null)
 					return empty;
 
+#if NET_2_0				
+				const PlatformID unix_platform = PlatformID.Unix;
+#else
+				const PlatformID unix_platform = (PlatformID)4;
+#endif
 				switch (Environment.OSVersion.Platform) {
-				case PlatformID.Unix:
+				case unix_platform:
 					return empty; // no verb on non-Windows
 				default:
 					RegistryKey rk = null, rk2 = null, rk3 = null;
