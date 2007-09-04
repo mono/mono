@@ -487,11 +487,9 @@ namespace System.Web.UI {
 
 			Assembly assembly = null;
 			Exception error = null;
-			if (name.IndexOf (',') != -1) {
-				try {
-					assembly = Assembly.Load (name);
-				} catch (Exception e) { error = e; }
-			}
+			try {
+				assembly = Assembly.Load (name);
+			} catch (Exception e) { error = e; }
 
 			if (assembly == null) {
 				try {
