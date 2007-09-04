@@ -1,5 +1,12 @@
 2007-09-04  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82620
+	* expression.cs (Invocation.EmitArguments): Duplicate params arguments
+	actually never worked before.
+	(IndexerAccess): Emit prepared arguments before they are modified.
+	
+2007-09-04  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82563
 	* assign.cs: Revert wrong fix.
 	

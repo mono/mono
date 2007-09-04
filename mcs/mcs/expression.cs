@@ -4587,7 +4587,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < top; i++){
 				if (pd != null){
 					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
-						//Type element_type = TypeManager.GetElementType (pd.ParameterType (i));
+						Type p_type = pd.ParameterType (i);
 						int params_args_count = arguments == null ?
 							0 : arguments.Count - top + 1;
 
@@ -4595,23 +4595,27 @@ namespace Mono.CSharp {
 						if (params_args_count <= 0) {
 							ILGenerator ig = ec.ig;
 							IntConstant.EmitInt (ig, 0);
-							ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (i)));
-							continue;
+							ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (p_type));
+						} else {
+							//
+							// Special case if we are passing the same data as the
+							// params argument, we do not need to recreate an array.
+							//
+							a = (Argument) arguments [argument_index];
+							if (params_args_count == 1 && p_type == a.Type) {
+								++argument_index;
+								a.Emit (ec);
+							} else {
+								EmitParams (ec, arguments, i, params_args_count);
+								argument_index += params_args_count;
+							}
 						}
 
-						//
-						// Special case if we are passing the same data as the
-						// params argument, we do not need to recreate an array.
-						//
-						a = (Argument) arguments [argument_index];
-						if (params_args_count == 1 && pd.ParameterType (i) == a.Type) {
-							++argument_index;
-							a.Emit (ec);
-							continue;
+						if (dup_args) {
+							ec.ig.Emit (OpCodes.Dup);
+							temps [i] = new LocalTemporary (p_type);
+							temps [i].Store (ec);
 						}
-
-						EmitParams (ec, arguments, i, params_args_count);
-						argument_index += params_args_count;
 						continue;
 					}
 				}
@@ -7770,6 +7774,9 @@ namespace Mono.CSharp {
 		MethodInfo get, set;
 		ArrayList set_arguments;
 		bool is_base_indexer;
+		bool prepared;
+		LocalTemporary temp;
+		LocalTemporary prepared_value;
 
 		protected Type indexer_type;
 		protected Type current_type;
@@ -7944,12 +7951,15 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
-		bool prepared = false;
-		LocalTemporary temp;
-		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			Invocation.EmitCall (ec, is_base_indexer, instance_expr, get, arguments, loc, prepared, false);
+			if (prepared) {
+				prepared_value.Emit (ec);
+			} else {
+				Invocation.EmitCall (ec, is_base_indexer, instance_expr, get,
+					arguments, loc, false, false);
+			}
+
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				temp = new LocalTemporary (Type);
@@ -7968,7 +7978,14 @@ namespace Mono.CSharp {
 			Argument a = (Argument) set_arguments [set_arguments.Count - 1];
 			
 			if (prepared) {
+				Invocation.EmitCall (ec, is_base_indexer, instance_expr, get,
+					arguments, loc, true, false);
+
+				prepared_value = new LocalTemporary (type);
+				prepared_value.Store (ec);
 				source.Emit (ec);
+				prepared_value.Release (ec);
+
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					temp = new LocalTemporary (Type);
