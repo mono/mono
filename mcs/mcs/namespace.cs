@@ -102,8 +102,12 @@ namespace Mono.CSharp {
 
   		protected void ComputeNamespaces (Assembly assembly)
   		{
- 			// How to test whether attribute exists without loading the assembly :-(
-			const string SystemCore = "System.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
+			// How to test whether attribute exists without loading the assembly :-(
+#if SMCS_SOURCE
+			const string SystemCore = "System.Core, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
+#else
+			const string SystemCore = "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
+#endif
  			if (TypeManager.extension_attribute_type == null &&
  				assembly.FullName == SystemCore) {
  				TypeManager.extension_attribute_type = assembly.GetType("System.Runtime.CompilerServices.ExtensionAttribute");
