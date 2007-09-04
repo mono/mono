@@ -56,7 +56,7 @@ namespace Mono.Cecil {
 		ArrayList m_methodStack;
 		ArrayList m_fieldStack;
 		ArrayList m_genericParamStack;
-		IDictionary m_typeSpecCache;
+		IDictionary m_typeSpecTokenCache;
 
 		uint m_methodIndex;
 		uint m_fieldIndex;
@@ -133,7 +133,7 @@ namespace Mono.Cecil {
 			m_methodStack = new ArrayList ();
 			m_fieldStack = new ArrayList ();
 			m_genericParamStack = new ArrayList ();
-			m_typeSpecCache = new Hashtable ();
+			m_typeSpecTokenCache = new Hashtable ();
 
 			m_methodIndex = 1;
 			m_fieldIndex = 1;
@@ -178,15 +178,19 @@ namespace Mono.Cecil {
 		{
 			if (IsTypeSpec (type)) {
 				uint sig = m_sigWriter.AddTypeSpec (GetTypeSpecSig (type));
-				if (m_typeSpecCache.Contains (sig))
-					return ((TypeReference) m_typeSpecCache [sig]).MetadataToken;
+				if (m_typeSpecTokenCache.Contains (sig))
+					return (MetadataToken) m_typeSpecTokenCache [sig];
 
 				TypeSpecTable tsTable = m_tableWriter.GetTypeSpecTable ();
 				TypeSpecRow tsRow = m_rowWriter.CreateTypeSpecRow (sig);
 				tsTable.Rows.Add (tsRow);
-				type.MetadataToken = new MetadataToken (TokenType.TypeSpec, (uint) tsTable.Rows.Count);
-				m_typeSpecCache [sig] = type;
-				return type.MetadataToken;
+
+				MetadataToken token = new MetadataToken (TokenType.TypeSpec, (uint) tsTable.Rows.Count);
+				if (! (type is GenericParameter))
+					type.MetadataToken = token;
+
+				m_typeSpecTokenCache [sig] = token;
+				return token;
 			} else if (type != null)
 				return type.MetadataToken;
 			else // <Module> and interfaces
