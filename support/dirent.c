@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 
 #include "map.h"
@@ -77,14 +78,17 @@ Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry
 gint32
 Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
-	struct dirent _entry;
+	struct dirent *_entry = malloc(sizeof(struct dirent) + 
+			MAX(PATH_MAX, NAME_MAX) + 1);
 	int r;
 
-	r = readdir_r (dirp, &_entry, (struct dirent**) result);
+	r = readdir_r (dirp, _entry, (struct dirent**) result);
 
 	if (r == 0 && *result != NULL) {
-		copy_dirent (entry, &_entry);
+		copy_dirent (entry, _entry);
 	}
+
+	free (_entry);
 
 	return r;
 }
