@@ -1,3 +1,9 @@
+2007-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a warning.
+
+	* inssel.brg: Fix a warning.
+
 2007-09-03  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c: `MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE'
