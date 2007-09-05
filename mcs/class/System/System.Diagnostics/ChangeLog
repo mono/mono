@@ -1,5 +1,9 @@
 2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EventLog.cs : added cosmetic 2.0 attributes on newly added members.
+
+2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EventLog.cs, EventLogImpl.cs, LocalFileEventLog.cs, NullEventLog.cs,
 	  Win32EventLog.cs : added missing members, will be left unsupported
 	  in non-Win32 impl and left unimplemented in Win32.

@@ -197,24 +197,29 @@ namespace System.Diagnostics
 #if NET_2_0
 		[MonoTODO]
 		[ComVisibleAttribute (false)]
+		[Browsable (false)]
 		public OverflowAction OverflowAction {
 			get { return Impl.OverflowAction; }
 		}
 
 		[MonoTODO]
 		[ComVisibleAttribute (false)]
+		[Browsable (false)]
 		public int MinimumRetentionDays {
 			get { return Impl.MinimumRetentionDays; }
 		}
 
 		[MonoTODO]
 		[ComVisibleAttribute (false)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public long MaximumKilobytes {
 			get { return Impl.MaximumKilobytes; }
 			set { Impl.MaximumKilobytes = value; }
 		}
 
 		[MonoTODO]
+		[ComVisible (false)]
 		public void ModifyOverflowPolicy (OverflowAction action, int retentionDays)
 		{
 			Impl.ModifyOverflowPolicy (action, retentionDays);
