@@ -1,5 +1,3 @@
-// Compiler options: -t:library
-
 public class Style
 {
 	public static Style CurrentStyle
@@ -17,4 +15,9 @@ public class Style
 	{
 		return null;
 	}
+	
+	public static int Main ()
+	{
+		return LoadCurrentStyle () ? 1 : 0;
+	}	
 }
