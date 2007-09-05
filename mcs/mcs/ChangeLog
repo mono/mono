@@ -1,5 +1,11 @@
 2007-09-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82571
+	* anonymous.cs (AnonymousMethod.DoCreateMethodHost): Use internal 
+	modifier for container based methods.
+	
+2007-09-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82676
 	* convert.cs (ImplicitReferenceConversionCore): From any class-type S to
 	any interface-type T means to any of interface type T.

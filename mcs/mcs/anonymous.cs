@@ -1743,7 +1743,7 @@ namespace Mono.CSharp {
 
 			return new AnonymousMethodMethod (
 				this, scope, generic_method, new TypeExpression (ReturnType, Location),
-				Modifiers.PRIVATE, member_name, Parameters);
+				scope == null ? Modifiers.PRIVATE : Modifiers.INTERNAL, member_name, Parameters);
 		}
 
 		public override Expression Resolve (EmitContext ec)
