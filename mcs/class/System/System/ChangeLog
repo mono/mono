@@ -4,6 +4,8 @@
 	for both relative and absolute URIs.
 	Conversion to a string or an InstanceDescriptor must not assume
 	that the uri is absolute.
+	ConvertTo must pass the uri kind to the constructor used in
+	InstanceDescriptor.
 
 2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 

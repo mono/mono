@@ -102,8 +102,8 @@ namespace System {
 				if (destinationType == typeof (Uri))
 					return uri;
 				if (destinationType == typeof (InstanceDescriptor)) {
-					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [1] { typeof (string) });
-					return new InstanceDescriptor (ci , new object [] { uri.ToString ()});
+					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [2] { typeof (string), typeof (UriKind) });
+					return new InstanceDescriptor (ci , new object [] { uri.ToString (), uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative });
 				}
 			}
 
