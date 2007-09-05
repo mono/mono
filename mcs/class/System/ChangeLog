@@ -1,3 +1,7 @@
+2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added EnumConverterTest.cs.
+
 2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* System.dll.sources: add DefaultSerializationProviderAttribute.cs,

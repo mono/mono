@@ -1,3 +1,8 @@
+2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumConverter.cs: Added support for converting flag enum from
+	string.
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeConverter.cs: Fixed GetConvertFromException and

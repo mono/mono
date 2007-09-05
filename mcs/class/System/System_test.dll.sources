@@ -120,6 +120,7 @@ System.ComponentModel/DefaultBindingPropertyAttributeTest.cs
 System.ComponentModel/DecimalConverterTests.cs
 System.ComponentModel/DisplayNameAttributeTests.cs
 System.ComponentModel/DoubleConverterTests.cs
+System.ComponentModel/EnumConverterTests.cs
 System.ComponentModel/EventHandlerListTests.cs
 System.ComponentModel/Int16ConverterTests.cs
 System.ComponentModel/Int32ConverterTests.cs

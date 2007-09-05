@@ -156,17 +156,26 @@ namespace System.ComponentModel
 						    object value)
 		{
 			if (value is string) {
-				string val = value as string;
+				string name = value as string;
 #if NET_2_0
 				try {
-					return Enum.Parse (type, val, true);
+#endif
+					if (name.IndexOf (',') == -1)
+						return Enum.Parse (type, name, true);
+
+					long val = 0;
+					string [] names = name.Split (',');
+					foreach (string n in names) {
+						Enum e = (Enum) Enum.Parse (type, n, true);
+						val |= Convert.ToInt64 (e, culture);
+					}
+					return Enum.ToObject (type, val);
+#if NET_2_0
 				} catch (Exception ex) {
-					throw new FormatException (val + " is " +
+					throw new FormatException (name + " is " +
 						"not a valid value for " +
 						type.Name, ex);
 				}
-#else
-				return Enum.Parse (type, val, true);
 #endif
 #if NET_2_0
 			} else if (value is Enum[]) {

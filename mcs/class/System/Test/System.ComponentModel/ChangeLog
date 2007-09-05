@@ -1,3 +1,8 @@
+2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumConverterTest.cs: Enabled test for converting flag enum from
+	string. Made tests less strict.
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeConverterTest.cs: Added tests for GetConvertFromException and

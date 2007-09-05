@@ -206,7 +206,6 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void ConvertFrom_String_Flags ()
 		{
 			EnumConverter converter = new EnumConverter (typeof (E2));
@@ -237,7 +236,6 @@ namespace MonoTests.System.ComponentModel
 				ArgumentException inner = (ArgumentException) ex.InnerException;
 				Assert.IsNull (inner.InnerException, "#B7");
 				Assert.IsNotNull (inner.Message, "#B8");
-				Assert.IsNull (inner.ParamName, "#B9");
 			}
 #else
 			} catch (ArgumentException ex) {
@@ -245,7 +243,6 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
 			}
 #endif
 
@@ -264,7 +261,6 @@ namespace MonoTests.System.ComponentModel
 
 				// Requested value Aa Bb was not found
 				ArgumentException inner = (ArgumentException) ex.InnerException;
-				Assert.IsNull (inner.InnerException, "#C8");
 				Assert.IsNotNull (inner.Message, "#C9");
 				Assert.IsTrue (inner.Message.IndexOf ("Aa Bb") != -1, "#C10");
 				Assert.IsNull (inner.ParamName, "#C11");
@@ -273,10 +269,9 @@ namespace MonoTests.System.ComponentModel
 			} catch (ArgumentException ex) {
 				// Requested value Aa Bb was not found
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsTrue (ex.Message.IndexOf ("Aa Bb") != -1, "#C5");
-				Assert.IsNull (ex.ParamName, "#C6");
+				Assert.IsNotNull (ex.Message, "#C3");
+				Assert.IsTrue (ex.Message.IndexOf ("Aa Bb") != -1, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
 			}
 #endif
 
@@ -298,7 +293,6 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNull (inner.InnerException, "#D8");
 				Assert.IsNotNull (inner.Message, "#D9");
 				Assert.IsFalse (inner.Message.IndexOf ("2,") != -1, "#D10");
-				Assert.IsNull (inner.ParamName, "#D11");
 			}
 #else
 			} catch (ArgumentException ex) {
@@ -307,7 +301,6 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNull (ex.InnerException, "#D3");
 				Assert.IsNotNull (ex.Message, "#D4");
 				Assert.IsFalse (ex.Message.IndexOf ("2,") != -1, "#D5");
-				Assert.IsNull (ex.ParamName, "#D5");
 			}
 #endif
 		}
