@@ -1,3 +1,13 @@
+2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EventLog.cs, EventLogImpl.cs, LocalFileEventLog.cs, NullEventLog.cs,
+	  Win32EventLog.cs : added missing members, will be left unsupported
+	  in non-Win32 impl and left unimplemented in Win32.
+	* CounterCreationDataCollection.cs : in 2.0 OnValidate() is overriden
+	  instad of OnInsert().
+	* Process.cs : removed StandardErrorEncoding and
+	  StandardOutputEncoding. They do not exist anymore.
+
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProcessStartInfo.cs : Implemented Verbs. It is done.

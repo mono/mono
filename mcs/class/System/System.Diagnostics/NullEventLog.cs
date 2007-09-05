@@ -126,5 +126,30 @@ namespace System.Diagnostics
 		public override void WriteEntry (string [] replacementStrings, EventLogEntryType type, uint instanceID, short category, byte [] rawData)
 		{
 		}
+
+#if NET_2_0
+		public override OverflowAction OverflowAction {
+			get { return OverflowAction.DoNotOverwrite; }
+		}
+
+		public override int MinimumRetentionDays {
+			get { return int.MaxValue; }
+		}
+
+		public override long MaximumKilobytes {
+			get { return long.MaxValue; }
+			set { throw new NotSupportedException ("This EventLog implementation does not support setting max kilobytes policy"); }
+		}
+
+		public override void ModifyOverflowPolicy (OverflowAction action, int retentionDays)
+		{
+			throw new NotSupportedException ("This EventLog implementation does not support modifying overflow policy");
+		}
+
+		public override void RegisterDisplayName (string resourceFile, long resourceId)
+		{
+			throw new NotSupportedException ("This EventLog implementation does not support registering display name");
+		}
+#endif
 	}
 }

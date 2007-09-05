@@ -82,10 +82,6 @@ namespace System.Diagnostics {
 		EventHandler exited_event;
 		IntPtr stdout_rd;
 		IntPtr stderr_rd;
-#if NET_2_0
-		Encoding stdout_encoding;
-		Encoding stderr_encoding;
-#endif
 		
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
@@ -1081,10 +1077,8 @@ namespace System.Diagnostics {
 			}
 
 #if NET_2_0
-			// TODO: which ones has precedence? The one from startInfo or the one set using
-			// the Process instance properties?
-			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? process.StandardOutputEncoding;
-			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? process.StandardErrorEncoding;
+			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? ConsoleEncoding.OutputEncoding;
+			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? ConsoleEncoding.OutputEncoding;
 #else
 			Encoding stdoutEncoding = ConsoleEncoding.OutputEncoding;
 			Encoding stderrEncoding = ConsoleEncoding.OutputEncoding;
@@ -1578,32 +1572,6 @@ namespace System.Diagnostics {
 			object [] args = new object [] {this, EventArgs.Empty};
 			synchronizingObject.BeginInvoke (exited_event, args);
 		}
-
-#if NET_2_0
-		public Encoding StandardOutputEncoding {
-			get {
-				if (stdout_encoding != null) {
-					return stdout_encoding;
-				}
-				return ConsoleEncoding.OutputEncoding;
-			}
-			set {
-				stdout_encoding = value; // if null, we'll use the default
-			}
-		}
-
-		public Encoding StandardErrorEncoding {
-			get {
-				if (stderr_encoding != null) {
-					return stderr_encoding;
-				}
-				return ConsoleEncoding.OutputEncoding;
-			}
-			set {
-				stderr_encoding = value; // if null, we'll use the default
-			}
-		}
-#endif
 
 		class ProcessWaitHandle : WaitHandle
 		{

@@ -194,6 +194,40 @@ namespace System.Diagnostics
 			set {synchronizingObject = value;}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		[ComVisibleAttribute (false)]
+		public OverflowAction OverflowAction {
+			get { return Impl.OverflowAction; }
+		}
+
+		[MonoTODO]
+		[ComVisibleAttribute (false)]
+		public int MinimumRetentionDays {
+			get { return Impl.MinimumRetentionDays; }
+		}
+
+		[MonoTODO]
+		[ComVisibleAttribute (false)]
+		public long MaximumKilobytes {
+			get { return Impl.MaximumKilobytes; }
+			set { Impl.MaximumKilobytes = value; }
+		}
+
+		[MonoTODO]
+		public void ModifyOverflowPolicy (OverflowAction action, int retentionDays)
+		{
+			Impl.ModifyOverflowPolicy (action, retentionDays);
+		}
+
+		[MonoTODO]
+		[ComVisibleAttribute (false)]
+		public void RegisterDisplayName (string resourceFile, long resourceId)
+		{
+			Impl.RegisterDisplayName (resourceFile, resourceId);
+		}
+#endif
+
 		public void BeginInit ()
 		{
 			Impl.BeginInit();

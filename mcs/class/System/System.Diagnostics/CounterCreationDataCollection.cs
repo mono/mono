@@ -100,7 +100,11 @@ namespace System.Diagnostics {
 			InnerList.Insert (index, value);
 		}
 
+#if NET_2_0
+		protected override void OnValidate (object value)
+#else
 		protected override void OnInsert (int index, object value)
+#endif
 		{
 			if (!(value is CounterCreationData))
 				throw new NotSupportedException (Locale.GetText(

@@ -760,6 +760,31 @@ namespace System.Diagnostics
 			}
 		}
 
+#if NET_2_0
+		public override OverflowAction OverflowAction {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override int MinimumRetentionDays {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override long MaximumKilobytes {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public override void ModifyOverflowPolicy (OverflowAction action, int retentionDays)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void RegisterDisplayName (string resourceFile, long resourceId)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		private class PInvoke
 		{
 			[DllImport ("advapi32.dll", SetLastError=true)]

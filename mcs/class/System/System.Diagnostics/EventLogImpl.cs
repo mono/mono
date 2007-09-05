@@ -229,5 +229,17 @@ namespace System.Diagnostics
 						logName, machineName));
 			}
 		}
+
+#if NET_2_0
+		public abstract OverflowAction OverflowAction { get; }
+
+		public abstract int MinimumRetentionDays { get; }
+
+		public abstract long MaximumKilobytes { get; set; }
+
+		public abstract void ModifyOverflowPolicy (OverflowAction action, int retentionDays);
+
+		public abstract void RegisterDisplayName (string resourceFile, long resourceId);
+#endif
 	}
 }
