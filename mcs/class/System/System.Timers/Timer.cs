@@ -46,7 +46,7 @@ namespace System.Timers
 		ISynchronizeInvoke so;
 		ManualResetEvent wait;
 		Thread thread;
-		object locker = new object ();
+		readonly object locker = new object ();
 
 		[Category("Behavior")]
 		[TimersDescription("Occurs when the Interval has elapsed.")]
@@ -58,13 +58,15 @@ namespace System.Timers
 
 		public Timer (double interval)
 		{
-			autoReset = true;
-			enabled = false;
-			Interval = interval;
-			so = null;
-			wait = null;
-		}
+#if NET_2_0
+			// MSBUG: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=296761
+			if (interval > 0x7FFFFFFF)
+				throw new ArgumentException ("Invalid value: " + interval, "interval");
+#endif
 
+			autoReset = true;
+			Interval = interval;
+		}
 
 		[Category("Behavior")]
 		[DefaultValue(true)]
@@ -212,4 +214,3 @@ namespace System.Timers
 		}
 	}
 }
-
