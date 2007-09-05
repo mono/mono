@@ -173,6 +173,10 @@ namespace System.Web.UI {
 
 		internal AspComponentFoundry Foundry {
 			get { return foundry; }
+			set {
+				if (value is AspComponentFoundry)
+					foundry = value;
+			}
 		}
 #if NET_2_0
 		// FIXME: it's empty (but not null) when using the new default ctor

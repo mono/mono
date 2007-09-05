@@ -1,3 +1,10 @@
+2007-09-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ThemeDirectoryCompiler.cs: all the skin files compiled in one
+	batch must share the same component foundry. Under MS.NET if any
+	earlier .skin file registers a control prefix any later .skin
+	files may use it without registering.
+
 2007-09-04  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: make sure that base class doesn't

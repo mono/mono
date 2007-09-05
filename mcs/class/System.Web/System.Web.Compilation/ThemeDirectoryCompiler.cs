@@ -59,6 +59,7 @@ namespace System.Web.UI
 			}
 			ptp.LinkedStyleSheets = css_urls;
 			
+			AspComponentFoundry shared_foundry = new AspComponentFoundry ();
 			ptp.RootBuilder = new RootBuilder ();
 
 			string skin_file_url;
@@ -70,6 +71,7 @@ namespace System.Web.UI
 
 				ptp.AddDependency (skin_files [i]);
 				AspGenerator gen = new AspGenerator (ptfp);
+				ptfp.RootBuilder.Foundry = shared_foundry;
 				gen.Parse ();
 
 				if (ptfp.RootBuilder.Children != null)
