@@ -49,8 +49,7 @@ namespace System.Web.UI.WebControls {
 	{
 		DataSourceSelectArguments selectArguments;
 		DataSourceView currentView;
-		bool preLoadDone;
-		
+
 		protected DataBoundControl ()
 		{
 		}
@@ -122,24 +121,20 @@ namespace System.Web.UI.WebControls {
 			base.OnPagePreLoad (sender, e);
 
 			Initialize ();
-			preLoadDone = true;
 		}
 
 		private void Initialize ()
 		{
-			Page page = Page;
-			
-			if (((page != null) && !preLoadDone) && !IsDataBound)
-				if (!page.IsPostBack)
-					RequiresDataBinding = true;
+			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
+				RequiresDataBinding = true;
+
 			UpdateViewData ();
 		}
 		
 		void UpdateViewData ()
 		{
 			DataSourceView view = InternalGetData ();
-			if (view == currentView)
-				return;
+			if (view == currentView) return;
 
 			if (currentView != null)
 				currentView.DataSourceViewChanged -= new EventHandler (OnDataSourceViewChanged);
@@ -152,8 +147,14 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal override void OnLoad (EventArgs e)
 		{
-			ConfirmInitState ();
-			Initialize ();
+			if (!Initialized) {
+				
+				Initialize ();
+
+				// MSDN: The ConfirmInitState method sets the initialized state of the data-bound 
+				// control. The method is called by the DataBoundControl class in its OnLoad method.
+				ConfirmInitState ();
+			}
 			base.OnLoad(e);
 		}
 		
@@ -196,16 +197,13 @@ namespace System.Web.UI.WebControls {
 			if (!IsBoundUsingDataSourceID)
 				OnDataBinding (EventArgs.Empty);
 
-			DataSourceView data = GetData ();
-			
 			// prevent recursive calls
-			
-			SelectArguments = CreateDataSourceSelectArguments ();
 			RequiresDataBinding = false;
+			SelectArguments = CreateDataSourceSelectArguments ();
+			GetData ().Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
 
 			// The PerformDataBinding method has completed.
 			MarkAsDataBound ();
-			data.Select (SelectArguments, new DataSourceViewSelectCallback (OnSelect));
 			
 			// Raise the DataBound event.
 			OnDataBound (EventArgs.Empty);

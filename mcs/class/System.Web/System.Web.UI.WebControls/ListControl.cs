@@ -67,7 +67,7 @@ namespace System.Web.UI.WebControls {
 		int saved_selected_index = -2;
 		string saved_selected_value;
 #endif
-		
+
 		public ListControl () : base (HtmlTextWriterTag.Select)
 		{
 		}
@@ -84,8 +84,6 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["AppendDataBoundItems"] = value;
-				if (Initialized)
-					RequiresDataBinding = true;
 			}
 		}
 #endif		
@@ -137,13 +135,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextField {
 			get { return ViewState.GetString ("DataTextField", String.Empty); }
-			set { 
-				ViewState ["DataTextField"] = value;
-#if NET_2_0
-				if (Initialized)
-					RequiresDataBinding = true;
-#endif
-			}
+			set { ViewState ["DataTextField"] = value; }
 		}
 
 #if NET_2_0
@@ -154,13 +146,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextFormatString {
 			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
-			set { 
-				ViewState ["DataTextFormatString"] = value;
-#if NET_2_0
-				if (Initialized)
-					RequiresDataBinding = true;
-#endif
-			}
+			set { ViewState ["DataTextFormatString"] = value; }
 		}
 
 #if NET_2_0
@@ -171,13 +157,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataValueField {
 			get { return ViewState.GetString ("DataValueField", String.Empty); }
-			set { 
-				ViewState ["DataValueField"] = value;
-#if NET_2_0
-				if (Initialized)
-					RequiresDataBinding = true;
-#endif
-			}
+			set { ViewState ["DataValueField"] = value; }
 		}
 
 #if NET_2_0
@@ -467,7 +447,7 @@ namespace System.Web.UI.WebControls {
 					text = val;
 
 				coll.Add (new ListItem (text, val));
-			}			
+			}
 
 #if NET_2_0
 			if (!String.IsNullOrEmpty (_selectedValue)) {
@@ -496,7 +476,7 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("why override?")]
 		protected override void PerformSelect ()
 		{
-			OnDataBinding (EventArgs.Empty);			
+			OnDataBinding (EventArgs.Empty);
 			RequiresDataBinding = false;
 			MarkAsDataBound ();
 			OnDataBound (EventArgs.Empty);

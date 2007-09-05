@@ -1,11 +1,3 @@
-2007-09-04  Marek Habersack  <mhabersack@novell.com>
-
-	* DataBoundControl.cs: make sure no data binding is done after
-	OnPagePreload has executed.
-
-	* ListControl.cs: whenever a property that can affect data binding
-	is set, make sure to set RequiresDataBinding.
-
 2007-08-31  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: instead of not adding hidden fields to the rows,
@@ -32,11 +24,6 @@
 	* RequiredFieldValidator.cs:
 	all Validators use RegisterExpandoAttribute for 
 	not XHTML compliant attributes.
-
-2007-08-29  Marek Habersack  <mhabersack@novell.com>
-
-	* ListControl.cs: do not perform data binding twice if
-	AppendDataBoundItems is true. Fixes bug #81146.
 
 2007-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
