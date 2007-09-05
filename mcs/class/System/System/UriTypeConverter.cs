@@ -80,7 +80,7 @@ namespace System {
 
 			string s = (value as string);
 			if (s != null)
-				return new Uri (s);
+				return new Uri (s, UriKind.RelativeOrAbsolute);
 
 			InstanceDescriptor id = (value as InstanceDescriptor);
 			if (id != null) {

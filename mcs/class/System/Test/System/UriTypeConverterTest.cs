@@ -193,6 +193,19 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")] // bug 82712
+		public void ConvertFromString ()
+		{
+			object o = converter.ConvertFrom ("~/SomeUri.txt");
+			Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_01");
+			Assert.AreEqual ("~/SomeUri.txt", (o as Uri).ToString (), "CFS_02");
+			
+			o = converter.ConvertFrom ("/SomeUri.txt");
+			Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_03");
+			Assert.AreEqual ("/SomeUri.txt", (o as Uri).ToString (), "CFS_04");
+		}
+		
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Bad ()
 		{
