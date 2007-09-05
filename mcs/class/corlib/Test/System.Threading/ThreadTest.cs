@@ -86,7 +86,6 @@ namespace MonoTests.System.Threading
 	}
 
 	[TestFixture]
-	[Category ("NotWorking")]
 	public class ThreadTest
 	{
 		//Some Classes to test as threads
@@ -206,88 +205,91 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Test]
 		public void TestCtor1()
-		{			
+		{
 			C1Test test1 = new C1Test();
-			try
-			{
-				Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			}
-			catch (Exception e)
-			{
-				Assert.Fail ("#01 Unexpected Exception Thrown: " + e.ToString ());
-			}
+			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 		}
 
-		[Category("NotDotNet")]
+#if NET_2_0
+		[Test] // bug #82700
+		[Category ("NotWorking")]
+		public void ManagedThreadId ()
+		{
+			C1Test test1 = new C1Test ();
+			Thread t1 = new Thread (new ThreadStart (test1.TestMethod));
+			int mtA1 = t1.ManagedThreadId;
+			t1.Start ();
+			int mtA2 = t1.ManagedThreadId;
+			t1.Join ();
+			int mtA3 = t1.ManagedThreadId;
+			Assert.AreEqual (mtA1, mtA2, "#A1");
+			Assert.AreEqual (mtA2, mtA3, "#A2");
+
+			test1 = new C1Test ();
+			Thread t2 = new Thread (new ThreadStart (test1.TestMethod));
+			int mtB1 = t2.ManagedThreadId;
+			t2.Start ();
+			int mtB2 = t2.ManagedThreadId;
+			t2.Join ();
+			int mtB3 = t2.ManagedThreadId;
+			Assert.AreEqual (mtB1, mtB2, "#B1");
+			Assert.AreEqual (mtB2, mtB3, "#B2");
+			Assert.IsFalse (mtB1 == mtA1, "#B3");
+		}
+#endif
+
+		[Test]
 		public void TestStart()
 		{
 		{
 			C1Test test1 = new C1Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			try
-			{
-				TestThread.Start();
-			}
-			catch (Exception e)
-			{
-				Assert.Fail ("#12 Unexpected Exception Thrown: " + e.ToString ());
-			}
+			TestThread.Start();
 			TestThread.Join();
-			Assert.AreEqual (10, test1.cnt, "#13 Thread Not started");
+			Assert.AreEqual (10, test1.cnt, "#1");
 		}
 		{
-			bool errorThrown = false;
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			TestThread.Start();
 			TestThread.Abort();
-			try
-			{
+			try {
 				TestThread.Start();
+				Assert.Fail ("#2");
+			} catch (ThreadStateException) {
 			}
-			catch(ThreadStateException)
-			{
-				errorThrown = true;
-			}
-			Assert.IsTrue (errorThrown, "#14 no ThreadStateException trown");
 		}
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			TestThread.Start();
-			while(!test1.run);
+			while (!test1.run) {
+			}
 			bool started = (TestThread.ThreadState == ThreadState.Running);
 			Assert.AreEqual (started, test1.run, "#15 Thread Is not in the correct state: ");
 			TestThread.Abort();
 		}
 		}
 
-		public void TestApartment()
+		[Test]
+		public void TestApartmentState ()
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			ApartmentState before = TestThread.ApartmentState;
+			Assert.AreEqual (ApartmentState.Unknown, TestThread.ApartmentState, "#1");
 			TestThread.Start();
 			TestUtil.WaitForAlive (TestThread, "wait5");
-			ApartmentState after = TestThread.ApartmentState;
+#if NET_2_0
+			Assert.AreEqual (ApartmentState.MTA, TestThread.ApartmentState, "#2");
+#else
+			Assert.AreEqual (ApartmentState.Unknown, TestThread.ApartmentState, "#3");
+#endif
 			TestThread.Abort();
-			Assert.AreEqual (before, after, "#21 Apartment State Changed when not needed");
 		}
 
-		[Category("NotDotNet")]
-		public void TestApartmentState()
-		{
-			C2Test test1 = new C2Test();
-			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
-			ApartmentState before = TestThread.ApartmentState;
-			TestThread.Start();
-			TestUtil.WaitForAlive (TestThread, "wait6");
-			ApartmentState after = TestThread.ApartmentState;
-			TestThread.Abort();
-			Assert.AreEqual (before, after, "#31 Apartment State Changed when not needed: ");
-		}
-
+		[Test]
 		public void TestPriority1()
 		{
 			C2Test test1 = new C2Test();
@@ -299,13 +301,13 @@ namespace MonoTests.System.Threading
 				TestUtil.WaitForAlive (TestThread, "wait7");
 				ThreadPriority before = TestThread.Priority;
 				Assert.AreEqual (before, after, "#41 Unexpected Priority Change: ");
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // on MS, Thread is still in AbortRequested state when Start is invoked
 		public void AbortUnstarted ()
 		{
 			C2Test test1 = new C2Test();
@@ -314,7 +316,9 @@ namespace MonoTests.System.Threading
 			th.Start ();
 		}
 
-		[Category("NotWorking")] // this is a MonoTODO -> no support for Priority
+		[Test]
+		[Category ("NotDotNet")] // on MS, ThreadState is immediately Stopped after Abort
+		[Category ("NotWorking")] // this is a MonoTODO -> no support for Priority
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
@@ -324,14 +328,14 @@ namespace MonoTests.System.Threading
 				TestThread.Start();
 				TestUtil.WaitForAliveOrStop (TestThread, "wait8");
 				Assert.AreEqual (ThreadPriority.Normal, TestThread.Priority, "#43 Incorrect Priority in Started thread: ");
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 			Assert.AreEqual (ThreadPriority.Normal, TestThread.Priority, "#44 Incorrect Priority in Aborted thread: ");
 		}
 
-		[Category("NotWorking")] // this is a MonoTODO -> no support for Priority
+		[Test]
+		[Category ("NotWorking")] // this is a MonoTODO -> no support for Priority
 		public void TestPriority3()
 		{
 			C2Test test1 = new C2Test();
@@ -354,7 +358,8 @@ namespace MonoTests.System.Threading
 			}
 		}
 
-		public void TestIsBackground1()
+		[Test]
+		public void TestIsBackground1 ()
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
@@ -363,27 +368,27 @@ namespace MonoTests.System.Threading
 				TestUtil.WaitForAlive (TestThread, "wait9");
 				bool state = TestThread.IsBackground;
 				Assert.IsFalse (state, "#51 IsBackground not set at the default state: ");
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 		}
 
-		public void TestIsBackground2()
+		[Test]
+		[Category ("NotDotNet")] // on MS, ThreadState is immediately Stopped after Abort
+		public void TestIsBackground2 ()
 		{
 			C2Test test1 = new C2Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 			TestThread.IsBackground = true;
 			try {
 				TestThread.Start();
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
-			Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed ot Start ");
+			Assert.IsTrue (TestThread.IsBackground, "#52 Is Background Changed to Start ");
 		}
 
-
+		[Test]
 		public void TestName()
 		{
 			C2Test test1 = new C2Test();
@@ -396,68 +401,55 @@ namespace MonoTests.System.Threading
 				string newname = "Testing....";
 				TestThread.Name = newname;
 				Assert.AreEqual (newname, TestThread.Name, "#62 Name not set when must be set: ");
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 		}
 
-		[Category("NotDotNet")]
+		[Test]
+		//[Category("NotDotNet")]
 		public void TestNestedThreads1()
 		{
-			C3Test  test1 = new C3Test();
+			C3Test test1 = new C3Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod1));
 			try {
 				TestThread.Start();
 				TestUtil.WaitForAlive (TestThread, "wait11");
-			}
-			catch(Exception e) {
-				Assert.Fail ("#71 Unexpected Exception" + e.Message);
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 		}
 
+		[Test]
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod1));
 			try {
 				TestThread.Start();
-			}
-			catch(Exception e) {
-				Assert.Fail ("#81 Unexpected Exception" + e.ToString());
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 		}
 
-		
+		[Test]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
 			C1Test test2 = new C1Test();
 			Thread thread1 = new Thread(new ThreadStart(test1.TestMethod));
 			Thread thread2 = new Thread(new ThreadStart(test1.TestMethod2));
-			try
-			{
+			try {
 				thread1.Start();
 				thread2.Start();
 				thread2.Join();
-			}
-			catch(Exception e)
-			{
-				Assert.Fail ("#91 Unexpected Exception " + e.ToString());
-			}
-			finally
-			{
+			} finally {
 				thread1.Abort();
 				thread2.Abort();
 			}
 		}
-		
+
+		[Test]
 		public void TestThreadState()
 		{
 			//TODO: Test The rest of the possible transitions
@@ -470,8 +462,7 @@ namespace MonoTests.System.Threading
 											  //but in the MS SDK it is
 				Assert.IsTrue (TestThread.ThreadState == ThreadState.Running || (TestThread.ThreadState & ThreadState.Unstarted) != 0,
 					"#102 Wrong Thread State: " + TestThread.ThreadState.ToString ());
-			}
-			finally {
+			} finally {
 				TestThread.Abort();
 			}
 			
@@ -479,7 +470,7 @@ namespace MonoTests.System.Threading
 			// Docs say state will be Stopped, but Aborted happens sometimes (?)
 			Assert.IsTrue ((ThreadState.Stopped & TestThread.ThreadState) != 0 || (ThreadState.Aborted & TestThread.ThreadState) != 0,
 				"#103 Wrong Thread State: " + TestThread.ThreadState.ToString ());
-		} 
+		}
 
 		[Test]
 		[Ignore ("see comment below.")]
@@ -491,8 +482,7 @@ namespace MonoTests.System.Threading
 			try {
 				t.Start ();
 				t.Join ();
-			}
-			catch {
+			} catch {
 				t.Abort ();
 			}
 		}
@@ -508,8 +498,7 @@ namespace MonoTests.System.Threading
 			try {
 				t.Start ();
 				t.Join ();
-			}
-			catch {
+			} catch {
 				t.Abort ();
 			}
 		}
@@ -523,8 +512,7 @@ namespace MonoTests.System.Threading
 			try {
 				t.Start ();
 				t.Join ();
-			}
-			catch {
+			} catch {
 				t.Abort ();
 			}
 		}
@@ -539,15 +527,14 @@ namespace MonoTests.System.Threading
 				Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("good"), null);
 				t.Start ();
 				t.Join ();
-			}
-			catch {
+			} catch {
 				t.Abort ();
 			}
 		}
 
 		int counter = 0;
-		
-		[Category("NotDotNet")]
+
+		[Test]
 		public void TestSuspend ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
@@ -570,9 +557,9 @@ namespace MonoTests.System.Threading
 			TestUtil.WaitForNotAlive (t, "wait13");
 			CheckIsNotRunning ("t6", t);
 		}
-		
-		[Category("NotDotNet")]
-		[Category("NotWorking")]
+
+		[Test]
+		[Category("NotDotNet")] // On MS, ThreadStateException is thrown on Abort: "Thread is suspended; attempting to abort"
 		public void TestSuspendAbort ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
