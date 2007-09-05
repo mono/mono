@@ -1,3 +1,9 @@
+2007-09-05  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #82676
+	* convert.cs (ImplicitReferenceConversionCore): From any class-type S to
+	any interface-type T means to any of interface type T.
+
 2007-09-04  Marek Safar  <marek.safar@gmail.com>
 
 	* namespace.cs: We have 2 versions of System.Core assembly.
