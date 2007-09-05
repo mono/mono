@@ -1,3 +1,9 @@
+2007-09-05  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Plug into let clause.
+	
+	* linq.cs: Implemented let clause, parameters refactoring.
+	
 2007-08-31  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (TypeParameter): Uses common Emit.

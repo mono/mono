@@ -5490,6 +5490,14 @@ from_let_where_clause
 	
 let_clause
 	: LET IDENTIFIER ASSIGN expression
+	  {
+		start_block (lexer.Location);
+		LocatedToken lt = (LocatedToken) $2;
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
+			lt.Value, lt.Location);	  
+	  	$$ = new Linq.Let (current_block, (Expression)$4);
+	  	end_block (lexer.Location);
+	  }
 	;
 
 where_clause
