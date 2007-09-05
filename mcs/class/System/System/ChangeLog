@@ -2,6 +2,8 @@
 
 	* UriTypeConverter.cs: conversion from string should be possible
 	for both relative and absolute URIs.
+	Conversion to a string or an InstanceDescriptor must not assume
+	that the uri is absolute.
 
 2007-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 

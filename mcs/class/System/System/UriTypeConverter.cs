@@ -98,12 +98,12 @@ namespace System {
 			Uri uri = (value as Uri);
 			if (uri != null) {
 				if (destinationType == typeof (string))
-					return uri.AbsoluteUri;
+					return uri.ToString ();
 				if (destinationType == typeof (Uri))
 					return uri;
 				if (destinationType == typeof (InstanceDescriptor)) {
 					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [1] { typeof (string) });
-					return new InstanceDescriptor (ci , new object [] { uri.AbsoluteUri });
+					return new InstanceDescriptor (ci , new object [] { uri.ToString ()});
 				}
 			}
 
