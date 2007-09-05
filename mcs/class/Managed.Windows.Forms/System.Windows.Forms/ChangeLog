@@ -1,5 +1,10 @@
 2007-09-05  Everaldo Canuto  <everaldo@simios.org>
 
+	* ComboBox.cs: Adjust combobox button state to reflect current state when
+	back to enabled = true. Fixes first issue of #82654.
+
+2007-09-05  Everaldo Canuto  <everaldo@simios.org>
+
 	* Control.cs: Fix last patch regression, prevent forms to update zorder	when
 	setting visible property.
 

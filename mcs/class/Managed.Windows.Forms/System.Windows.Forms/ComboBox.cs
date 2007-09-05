@@ -1465,13 +1465,16 @@ namespace System.Windows.Forms
 			if (show_dropdown_button) {
 				dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), button_area);
 
-				if (!is_enabled)
-					button_state = ButtonState.Inactive;
-				
+				ButtonState current_state;
+				if (is_enabled)
+					current_state = button_state;
+				else
+					current_state = ButtonState.Inactive;
+
 				if (is_flat) {
-					theme.DrawFlatStyleComboButton (dc, button_area, button_state);
+					theme.DrawFlatStyleComboButton (dc, button_area, current_state);
 				} else {
-					theme.CPDrawComboButton (dc, button_area, button_state);
+					theme.CPDrawComboButton (dc, button_area, current_state);
 				}
 			}
 		}
