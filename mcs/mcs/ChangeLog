@@ -1,5 +1,10 @@
 2007-09-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82690
+	* ecore.cs (PropertyExpr.EmitAssign): Leave a copy does just that.
+	
+2007-09-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82571
 	* anonymous.cs (AnonymousMethod.DoCreateMethodHost): Use internal 
 	modifier for container based methods.

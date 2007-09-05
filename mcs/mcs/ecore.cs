@@ -4857,10 +4857,8 @@ namespace Mono.CSharp {
 				}
 			} else if (leave_copy) {
 				source.Emit (ec);
-				if (!is_static) {
-					temp = new LocalTemporary (this.Type);
-					temp.Store (ec);
-				}
+				temp = new LocalTemporary (this.Type);
+				temp.Store (ec);
 				my_source = temp;
 			}
 			
