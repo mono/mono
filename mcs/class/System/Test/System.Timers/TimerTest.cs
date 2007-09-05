@@ -37,14 +37,16 @@ using ST = System.Threading;
 namespace MonoTests.System.Timers
 {
 	[TestFixture]
-	public class TimerTest : Assertion
+	public class TimerTest
 	{
 		Timer timer;
+		int _elapsedCount;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			timer = new Timer();
+			timer = new Timer ();
+			_elapsedCount = 0;
 		}
 
 		[TearDown]
@@ -54,28 +56,189 @@ namespace MonoTests.System.Timers
 		}
 
 		[Test]
-		public void StartStopEnabled ()
+		public void Constructor0 ()
 		{
-			timer.Start();
-			Assert ("#A01 !Enabled after Start()", timer.Enabled);
-			timer.Stop();
-			Assert ("#A02 Enabled after Stop()", !timer.Enabled);
+			Assert.IsTrue (timer.AutoReset, "#1");
+			Assert.IsFalse (timer.Enabled, "#2");
+			Assert.AreEqual (100, timer.Interval, "#3");
+			Assert.IsNull (timer.SynchronizingObject, "#4");
 		}
 
 		[Test]
-		public void CloseEnabled () {
-			Assert ("#A01 Enabled after created", !timer.Enabled);
+		public void Constructor1 ()
+		{
+			timer = new Timer (1);
+			Assert.IsTrue (timer.AutoReset, "#A1");
+			Assert.IsFalse (timer.Enabled, "#A2");
+			Assert.AreEqual (1, timer.Interval, "#A3");
+			Assert.IsNull (timer.SynchronizingObject, "#A4");
+
+			timer = new Timer (int.MaxValue);
+			Assert.IsTrue (timer.AutoReset, "#B1");
+			Assert.IsFalse (timer.Enabled, "#B2");
+			Assert.AreEqual (int.MaxValue, timer.Interval, "#B3");
+			Assert.IsNull (timer.SynchronizingObject, "#B4");
+		}
+
+		[Test]
+		public void Constructor1_Interval_Negative ()
+		{
+			try {
+				new Timer (-1);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid value -1 for parameter interval
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Constructor1_Interval_Zero ()
+		{
+			try {
+				new Timer (0);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid value 0 for parameter interval
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Constructor1_Interval_Max ()
+		{
+#if NET_2_0
+			try {
+				new Timer (0x80000000);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid value 2147483648 for parameter interval
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				new Timer (double.MaxValue);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid value 1.79769313486232E+308 for parameter interval
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+#else
+			timer = new Timer (0x80000000);
+			Assert.AreEqual (0x80000000, timer.Interval, "#1");
+			timer = new Timer (double.MaxValue);
+			Assert.AreEqual (double.MaxValue, timer.Interval, "#2");
+#endif
+		}
+
+		[Test]
+		public void AutoReset ()
+		{
+			Assert.IsTrue (timer.AutoReset, "#1");
+			timer.AutoReset = false;
+			Assert.IsFalse (timer.AutoReset, "#2");
+		}
+
+		[Test]
+		public void Interval ()
+		{
+			timer.Interval = 1;
+			Assert.AreEqual (1, timer.Interval, "#1");
+			timer.Interval = 500;
+			Assert.AreEqual (500, timer.Interval, "#2");
+			timer.Interval = double.MaxValue;
+			Assert.AreEqual (double.MaxValue, timer.Interval, "#3");
+		}
+
+		[Test]
+		public void Interval_Negative ()
+		{
+			try {
+				timer.Interval = -1;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// '0' is not a valid value for 'Interval'. 'Interval' must be greater than 0
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Interval_Zero ()
+		{
+			try {
+				timer.Interval = 0;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// '0' is not a valid value for 'Interval'. 'Interval' must be greater than 0
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void StartStopEnabled ()
+		{
+			timer.Start ();
+			Assert.IsTrue (timer.Enabled, "#1");
+			timer.Stop ();
+			Assert.IsFalse (timer.Enabled, "#2");
+		}
+
+		[Test]
+		public void CloseEnabled ()
+		{
+			Assert.IsFalse (timer.Enabled, "#1");
 			timer.Enabled = true;
-			Assert ("#A02 !Enabled after Enabled = true", timer.Enabled);
-			timer.Close();
-			Assert ("#A02 Enabled after Close()", !timer.Enabled);
+			Assert.IsTrue (timer.Enabled, "#2");
+			timer.Close ();
+			Assert.IsFalse (timer.Enabled, "#3");
+		}
+
+		[Test] // bug #82701
+		[Category ("NotWorking")]
+		public void EnabledInElapsed ()
+		{
+			timer.AutoReset = false;
+			timer.Elapsed += new ElapsedEventHandler (EnabledInElapsed_Elapsed);
+			timer.Start ();
+
+			ST.Thread.Sleep (400);
+			timer.Stop ();
+			Assert.IsTrue (_elapsedCount > 2);
 		}
 
 		[Test]
 		public void TestRaceCondition ()
 		{
-			Assert ("#B01", new RaceTest (true).Success);
-			Assert ("#B02", new RaceTest (false).Success);
+			Assert.IsTrue (new RaceTest (true).Success, "#1");
+			Assert.IsTrue (new RaceTest (false).Success, "#2");
+		}
+
+		void EnabledInElapsed_Elapsed (object sender, ElapsedEventArgs e)
+		{
+			if (_elapsedCount == -1)
+				return;
+
+			_elapsedCount++;
+			Timer t = sender as Timer;
+			if (t.Enabled) {
+				_elapsedCount = -1;
+				return;
+			}
+			t.Enabled = true;
+			if (!t.Enabled)
+				_elapsedCount = -1;
 		}
 	}
 
@@ -96,10 +259,9 @@ namespace MonoTests.System.Timers
 		{
 			timer = new Timer ();
 			timer.AutoReset = autoReset;
-              	        timer.Interval = 100;
-                       	timer.Elapsed += new ElapsedEventHandler (Tick);
+			timer.Interval = 100;
+			timer.Elapsed += new ElapsedEventHandler (Tick);
 			timer.Start ();
-
 
 			ST.Thread[] tl = new ST.Thread [Threads];
 
