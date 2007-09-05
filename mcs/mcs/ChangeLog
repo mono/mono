@@ -1,5 +1,11 @@
 2007-09-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #82676
+	* convert.cs (ImplicitReferenceConversionCore): Check both sides for
+	non-generic interface types.
+	
+2007-09-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82690
 	* ecore.cs (PropertyExpr.EmitAssign): Leave a copy does just that.
 	

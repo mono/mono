@@ -350,7 +350,7 @@ namespace Mono.CSharp {
 						!TypeManager.IsValueType (expr_type);
 				}
 				
-				if (!TypeManager.IsGenericType (target_type)) {
+				if (!TypeManager.IsGenericType (target_type) && !TypeManager.IsGenericType (expr_type)) {
 					foreach (Type iface in TypeManager.GetInterfaces (target_type)) {
 						if (TypeManager.ImplementsInterface (expr_type, iface))
 							return true;
