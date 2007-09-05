@@ -1,5 +1,10 @@
 2007-09-05  Everaldo Canuto  <everaldo@simios.org>
 
+	* Control.cs: Fix last patch regression, prevent forms to update zorder	when
+	setting visible property.
+
+2007-09-05  Everaldo Canuto  <everaldo@simios.org>
+
 	* Control.cs: Update zorder after control creation in SetVisibleCore, it 
 	fix zorder for controls initially created as non visible. Fixes #82667.
 

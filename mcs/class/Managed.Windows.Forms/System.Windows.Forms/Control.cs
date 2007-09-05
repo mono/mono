@@ -4750,7 +4750,8 @@ namespace System.Windows.Forms
 				
 				if (is_visible && ((window.Handle == IntPtr.Zero) || !is_created)) {
 					CreateControl();
-					UpdateZOrder ();
+					if (!(this is Form))
+						UpdateZOrder ();
 				}
 
 				if (IsHandleCreated) {
