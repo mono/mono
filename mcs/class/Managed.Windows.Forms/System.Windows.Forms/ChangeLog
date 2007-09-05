@@ -1,3 +1,8 @@
+2007-09-05  Everaldo Canuto  <everaldo@simios.org>
+
+	* Control.cs: Update zorder after control creation in SetVisibleCore, it 
+	fix zorder for controls initially created as non visible. Fixes #82667.
+
 2007-09-04  Everaldo Canuto  <everaldo@simios.org>
 
 	* ThemeWin32Classic.cs: Adjust checkbox light color to ControlLightLight to
