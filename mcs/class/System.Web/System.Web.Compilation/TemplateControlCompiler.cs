@@ -295,6 +295,14 @@ namespace System.Web.Compilation
 				}
 #endif
 
+				// process ID here. It should be set before any other attributes are
+				// assigned, since the control code may rely on ID being set. We
+				// skip ID in CreateAssignStatementsFromAttributes
+				if (builder.attribs != null) {
+					string ctl_id = builder.attribs ["id"] as string;
+					if (ctl_id != null && ctl_id != String.Empty)
+						CreateAssignStatementFromAttribute (builder, "id");
+				}
 #if NET_2_0
 				if (typeof (ContentPlaceHolder).IsAssignableFrom (type)) {
 					CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
@@ -890,7 +898,10 @@ namespace System.Web.Compilation
 			foreach (string id in atts.Keys) {
 				if (InvariantCompareNoCase (id, "runat"))
 					continue;
-
+				// ID is assigned in BuildControltree
+				if (InvariantCompareNoCase (id, "id"))
+					continue;
+				
 #if NET_2_0
 				/* we skip SkinID here as it's assigned in BuildControlTree */
 				if (InvariantCompareNoCase (id, "skinid"))

@@ -1,3 +1,9 @@
+2007-09-06  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: ID must be assigned as soon as
+	possible, before any other attributes of the control are
+	accessed. The control code may rely on ID being set.
+
 2007-09-05  Marek Habersack  <mhabersack@novell.com>
 
 	* ThemeDirectoryCompiler.cs: all the skin files compiled in one
