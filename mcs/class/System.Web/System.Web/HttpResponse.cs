@@ -51,6 +51,8 @@ namespace System.Web {
 		internal HttpWorkerRequest WorkerRequest;
 		internal HttpResponseStream output_stream;
 		internal bool buffer = true;
+
+		ArrayList fileDependencies;
 		
 		HttpContext context;
 		TextWriter writer;
@@ -130,6 +132,14 @@ namespace System.Web {
 			TextWriter prev = this.writer;
 			this.writer = writer;
 			return prev;
+		}
+
+		internal string[] FileDependencies {
+			get {
+				if (fileDependencies == null || fileDependencies.Count == 0)
+					return new string[0] {};
+				return (string[]) fileDependencies.ToArray (typeof (string));
+			}
 		}
 		
 		public bool Buffer {
@@ -411,22 +421,26 @@ namespace System.Web {
 			// TODO: talk to jackson about the cache
 		}
 
-		[MonoTODO("Currently does nothing")]
 		public void AddFileDependencies (ArrayList filenames)
 		{
-			// TODO: talk to jackson about the cache
+			if (filenames == null || filenames.Count == 0)
+				return;
+			fileDependencies.AddRange (filenames);
 		}
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public void AddFileDependencies (string[] filenames)
 		{
-			throw new NotImplementedException ();
+			if (filenames == null || filenames.Length == 0)
+				return;
+			fileDependencies.AddRange (filenames);
 		}
-#endif
-		[MonoTODO ("Currently does nothing")]
+#endif		
+
 		public void AddFileDependency (string filename)
 		{
-			// TODO: talk to jackson about the cache
+			if (filename == null || filename == String.Empty)
+				return;
+			fileDependencies.Add (filename);
 		}
 
 		public void AddHeader (string name, string value)

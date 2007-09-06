@@ -29,6 +29,7 @@
 
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using System.Security.Permissions;
 using System.Text;
 using System.Web.UI;
@@ -65,7 +66,8 @@ namespace System.Web {
 		internal HttpCacheability Cacheability;
 		string etag;
 		bool etag_from_file_dependencies;
-
+		bool last_modified_from_file_dependencies;
+		
 		//
 		// Used externally
 		//
@@ -245,10 +247,9 @@ namespace System.Web {
 			last_modified = date;
 		}
 
-		[MonoTODO ("Not implemented")]
 		public void SetLastModifiedFromFileDependencies ()
 		{
-			throw new NotImplementedException (); 
+			last_modified_from_file_dependencies = true;
 		}
 
 		public void SetMaxAge (TimeSpan date)
@@ -374,7 +375,10 @@ namespace System.Web {
 				cc = String.Format ("{0}, no-transform", cc);
 			
 			headers.Add (new UnknownResponseHeader ("Cache-Control", cc));
-						
+
+			if (last_modified_from_file_dependencies || etag_from_file_dependencies)
+				HeadersFromFileDependencies (response);
+			
 			if (etag != null)
 				headers.Add (new UnknownResponseHeader ("ETag", etag));
 
@@ -389,6 +393,46 @@ namespace System.Web {
 			}
 
 		}
+
+		void HeadersFromFileDependencies (HttpResponse response)
+		{
+			string [] fileDeps = response.FileDependencies;
+			
+			if (fileDeps == null || fileDeps.Length == 0)
+				return;
+
+			bool doEtag = etag != null && etag_from_file_dependencies;
+			if (!doEtag && !last_modified_from_file_dependencies)
+				return;
+
+			DateTime latest_mod = DateTime.MinValue, mod;
+			StringBuilder etagsb = new StringBuilder ();
+			
+			foreach (string f in fileDeps) {
+				if (!File.Exists (f))
+					continue;
+				try {
+					mod = File.GetLastWriteTime (f);
+				} catch {
+					// ignore
+					continue;
+				}
+
+				if (last_modified_from_file_dependencies && mod > latest_mod)
+					latest_mod = mod;
+				if (doEtag)
+					etagsb.AppendFormat ("{0}", mod.Ticks.ToString ("x"));
+			}
+
+			if (last_modified_from_file_dependencies && latest_mod > DateTime.MinValue) {
+				last_modified = latest_mod;
+				have_last_modified = true;
+			}
+
+			if (doEtag && etagsb.Length > 0)
+				etag = etagsb.ToString ();
+		}
+		
 #if NET_2_0
 		public void SetOmitVaryStar (bool omit)
 		{
