@@ -1,3 +1,9 @@
+
+Thu Sep 6 19:48:00 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, icall.c, icall-def.h: the methodinfos name field is
+	used only as a cache: added an icall to fill it.
+
 2007-09-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.h: exposed mono_reflection_free_type_info
