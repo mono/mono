@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Fix a NRE caused by r85427 because RadioButton
+	and CheckBox share some code.
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TrackBar.cs: Only call OnScroll if we actually changed the Value of
 	the TrackBar, not every mouse move.  [Fixed bug #82718]
 

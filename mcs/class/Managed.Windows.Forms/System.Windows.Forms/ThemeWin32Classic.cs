@@ -932,7 +932,11 @@ namespace System.Windows.Forms
 
 		public override void CalculateCheckBoxTextAndImageLayout (ButtonBase button, Point p, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
-			int check_size = (button as CheckBox).Appearance == Appearance.Normal ? 13 : 0;
+			int check_size = 13;
+			
+			if (button is CheckBox)
+				check_size = (button as CheckBox).Appearance == Appearance.Normal ? 13 : 0;
+				
 			glyphArea = new Rectangle (0, (button.Height - check_size) / 2, check_size, check_size);
 			
 			Image image = button.Image;
