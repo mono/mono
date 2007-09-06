@@ -1974,6 +1974,15 @@ namespace Mono.CSharp {
 					//
 					// Also, a standard conversion must exist from either one
 					//
+					// NOTE: An interface is converted to the object before the
+					// standard conversion is applied. It's not clear from the
+					// standard but it looks like it works like that.
+					//
+					if (l.IsInterface)
+						l = TypeManager.object_type;
+					if (r.IsInterface)
+						r = TypeManager.object_type;					
+					
 					bool left_to_right =
 						Convert.ImplicitStandardConversionExists (left, r);
 					bool right_to_left = !left_to_right &&
