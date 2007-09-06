@@ -176,6 +176,8 @@ namespace System.Globalization
 			abbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
 			monthNames = INVARIANT_MONTH_NAMES;
 #if NET_2_0
+			m_genitiveAbbreviatedMonthNames = INVARIANT_ABBREVIATED_MONTH_NAMES;
+			genitiveMonthNames = INVARIANT_MONTH_NAMES;
 			shortDayNames = INVARIANT_SHORT_DAY_NAMES;
 #endif
 		}
@@ -776,24 +778,24 @@ namespace System.Globalization
 		}
 
 #if NET_2_0
-		[MonoTODO ("NotImplemented")]
+		[MonoTODO ("Returns only the English month abbreviated names")]
 		[ComVisible (false)]
 		public string [] AbbreviatedMonthGenitiveNames {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return m_genitiveAbbreviatedMonthNames; }
+			set { m_genitiveAbbreviatedMonthNames = value; }
 		}
 
-		[MonoTODO ("NotImplemented")]
+		[MonoTODO ("Returns only the English moth names")]
 		[ComVisible (false)]
 		public string [] MonthGenitiveNames {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return genitiveMonthNames; }
+			set { genitiveMonthNames = value; }
 		}
 
-		[MonoTODO ("NotImplemented")]
+		[MonoTODO ("Returns an empty string as if the calendar name wasn't available")]
 		[ComVisible (false)]
 		public string NativeCalendarName {
-			get { throw new NotImplementedException (); }
+			get { return String.Empty; }
 		}
 
 		[ComVisible (false)]
