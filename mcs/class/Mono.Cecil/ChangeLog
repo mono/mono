@@ -1,3 +1,7 @@
+2007-09-06  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/MethodDefinition: add Is** methods for MethodImplAttributes.
+
 2007-09-04  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionWriter.cs:

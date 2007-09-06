@@ -328,6 +328,114 @@ namespace Mono.Cecil {
 
 		#endregion
 
+		#region MethodImplAttributes
+		public bool IsIL {
+			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.IL; }
+			set {
+				MethodImplAttributes masked = (MethodImplAttributes.CodeTypeMask & MethodImplAttributes.IL);
+				if (value)
+					m_implAttrs |= masked;
+				else
+					m_implAttrs &= masked;
+			}
+		}
+
+		public bool IsNative {
+			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.Native; }
+			set {
+				MethodImplAttributes masked = (MethodImplAttributes.CodeTypeMask & MethodImplAttributes.Native);
+				if (value)
+					m_implAttrs |= masked;
+				else
+					m_implAttrs &= masked;
+			}
+		}
+
+		public bool IsRuntime {
+			get { return (m_implAttrs & MethodImplAttributes.CodeTypeMask) == MethodImplAttributes.Runtime; }
+			set {
+				MethodImplAttributes masked = (MethodImplAttributes.CodeTypeMask & MethodImplAttributes.Runtime);
+				if (value)
+					m_implAttrs |= masked;
+				else
+					m_implAttrs &= masked;
+			}
+		}
+
+		public bool IsUnmanaged {
+			get { return (m_implAttrs & MethodImplAttributes.ManagedMask) == MethodImplAttributes.Unmanaged; }
+			set {
+				MethodImplAttributes masked = (MethodImplAttributes.ManagedMask & MethodImplAttributes.Unmanaged);
+				if (value)
+					m_implAttrs |= masked;
+				else
+					m_implAttrs &= masked;
+			}
+		}
+
+		public bool IsManaged {
+			get { return (m_implAttrs & MethodImplAttributes.ManagedMask) == MethodImplAttributes.Managed; }
+			set {
+				MethodImplAttributes masked = (MethodImplAttributes.ManagedMask & MethodImplAttributes.Managed);
+				if (value)
+					m_implAttrs |= masked;
+				else
+					m_implAttrs &= masked;
+			}
+		}
+
+		public bool IsForwardRef {
+			get { return (m_implAttrs & MethodImplAttributes.ForwardRef) != 0; }
+			set {
+				if (value)
+					m_implAttrs |= MethodImplAttributes.ForwardRef;
+				else
+					m_implAttrs &= ~MethodImplAttributes.ForwardRef;
+			}
+		}
+
+		public bool IsPreserveSig {
+			get { return (m_implAttrs & MethodImplAttributes.PreserveSig) != 0; }
+			set {
+				if (value)
+					m_implAttrs |= MethodImplAttributes.PreserveSig;
+				else
+					m_implAttrs &= ~MethodImplAttributes.PreserveSig;
+			}
+		}
+
+		public bool IsInternalCall {
+			get { return (m_implAttrs & MethodImplAttributes.InternalCall) != 0; }
+			set {
+				if (value)
+					m_implAttrs |= MethodImplAttributes.InternalCall;
+				else
+					m_implAttrs &= ~MethodImplAttributes.InternalCall;
+			}
+		}
+
+		public bool IsSynchronized {
+			get { return (m_implAttrs & MethodImplAttributes.Synchronized) != 0; }
+			set {
+				if (value)
+					m_implAttrs |= MethodImplAttributes.Synchronized;
+				else
+					m_implAttrs &= ~MethodImplAttributes.Synchronized;
+			}
+		}
+
+		public bool NoInlining {
+			get { return (m_implAttrs & MethodImplAttributes.NoInlining) != 0; }
+			set {
+				if (value)
+					m_implAttrs |= MethodImplAttributes.NoInlining;
+				else
+					m_implAttrs &= ~MethodImplAttributes.NoInlining;
+			}
+		}
+
+		#endregion
+
 		public bool IsConstructor {
 			get {
 				return this.IsRuntimeSpecialName && this.IsSpecialName &&

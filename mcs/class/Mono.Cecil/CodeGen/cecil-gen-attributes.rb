@@ -14,9 +14,14 @@ $mapping = {
 	"ReferenceTypeConstraint" => "HasReferenceTypeConstraint",
 	"DefaultConstructorConstraint" => "HasDefaultConstructorConstraint",
 	"SupportsLastError" => "SupportsLastError",
+	"NoInlining" => "NoInlining",
 }
 
-$black_list = ["None", "Unused", "RequireSecObject", "HasFieldMarshal", "HasFieldRVA"]
+$black_list = [
+	"None", "Unused", "RequireSecObject",
+	"HasFieldMarshal", "HasFieldRVA",
+	"OPTIL", "MaxMethodImplVal"
+]
 
 class Attribute
 
