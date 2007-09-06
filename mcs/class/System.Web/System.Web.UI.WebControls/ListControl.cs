@@ -84,6 +84,8 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["AppendDataBoundItems"] = value;
+				if (Initialized)
+					RequiresDataBinding = true;
 			}
 		}
 #endif		
@@ -135,7 +137,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextField {
 			get { return ViewState.GetString ("DataTextField", String.Empty); }
-			set { ViewState ["DataTextField"] = value; }
+			set { 
+				ViewState ["DataTextField"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0
@@ -146,7 +154,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataTextFormatString {
 			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
-			set { ViewState ["DataTextFormatString"] = value; }
+			set { 
+				ViewState ["DataTextFormatString"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0
@@ -157,7 +171,13 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Data")]
 		public virtual string DataValueField {
 			get { return ViewState.GetString ("DataValueField", String.Empty); }
-			set { ViewState ["DataValueField"] = value; }
+			set { 
+				ViewState ["DataValueField"] = value;
+#if NET_2_0
+				if (Initialized)
+					RequiresDataBinding = true;
+#endif
+			}
 		}
 
 #if NET_2_0

@@ -1,5 +1,11 @@
 2007-09-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ListControl.cs: partially restored r85314
+	whenever a property that can affect data binding
+	is set, make sure to set RequiresDataBinding.
+
+2007-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataBoundControl.cs: fixed DataBind flow:
 	prevent double binding when not necessary.
 	fixed bug #81146	
