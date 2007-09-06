@@ -2257,7 +2257,8 @@ namespace System.Windows.Forms {
 				return true;
 			}
 			
-			return true;
+			// The node we found did not have its own menu, let the parent try to display its menu
+			return false;
 		}
 #endif
 

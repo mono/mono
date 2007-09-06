@@ -1,5 +1,11 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: If we found a TreeNode to display a context menu, but
+	it doesn't have one to show, let the TreeView display its menu
+	instead.  [Fixes bug #82680]
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripTextBox.cs: TextBox no longer call OnPaint, we need to use
 	OnPaintInternal instead.  Give the internal TextBox a Border property
 	so it can draw itself more correctly.  [Fixes bug #82653]
