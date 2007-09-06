@@ -215,7 +215,14 @@ namespace MonoTests.System.Timers
 
 			ST.Thread.Sleep (400);
 			timer.Stop ();
-			Assert.IsTrue (_elapsedCount > 2);
+
+			if (_elapsedCount == -2)
+				Assert.Fail ("#1 get_Enabled != false");
+
+			if (_elapsedCount == -1)
+				Assert.Fail ("#2 get_Enabled != true");
+
+			Assert.IsTrue (_elapsedCount > 2,  "#3 loss of events");
 		}
 
 		[Test]
@@ -227,13 +234,13 @@ namespace MonoTests.System.Timers
 
 		void EnabledInElapsed_Elapsed (object sender, ElapsedEventArgs e)
 		{
-			if (_elapsedCount == -1)
+			if (_elapsedCount < 0)
 				return;
 
 			_elapsedCount++;
 			Timer t = sender as Timer;
 			if (t.Enabled) {
-				_elapsedCount = -1;
+				_elapsedCount = -2;
 				return;
 			}
 			t.Enabled = true;

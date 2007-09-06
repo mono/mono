@@ -1,3 +1,7 @@
+2007-09-06  Robert Jordan  <robertj@gmx.net>
+
+	* TimerTest.cs: Factored our more test cases from bug #82701.
+
 2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TimerTest.cs: Added NotWorking test for bug #82701. Added ctor
