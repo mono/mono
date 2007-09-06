@@ -1,3 +1,7 @@
+2007-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* HtmlHistory.cs HtmlWindow.cs HtmlWindowCollection.cs ListBindingHelper.cs WindowsFormsSection.cs WindowsFormsSynchronizationContext.cs: Stubs for missing 2.0 classes.
+
 2007-09-05  Everaldo Canuto  <everaldo@simios.org>
 
 	* ComboBox.cs: Adjust combobox button state to reflect current state when
