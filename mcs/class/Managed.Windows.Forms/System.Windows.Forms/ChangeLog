@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Allow a CheckBox to be rendered like a Button
+	under 2.0 rendering.  [Fixes bug #82657]
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: If we found a TreeNode to display a context menu, but
 	it doesn't have one to show, let the TreeView display its menu
 	instead.  [Fixes bug #82680]

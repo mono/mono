@@ -878,7 +878,10 @@ namespace System.Windows.Forms
 		public override void DrawCheckBox (Graphics g, CheckBox cb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
 		{
 			// Draw Button Background
-			DrawCheckBoxGlyph (g, cb, glyphArea);
+			if (cb.Appearance == Appearance.Button)
+				ButtonBase_DrawButton (cb, g);
+			else
+				DrawCheckBoxGlyph (g, cb, glyphArea);
 
 			// If we have an image, draw it
 			if (imageBounds.Size != Size.Empty)
@@ -929,7 +932,7 @@ namespace System.Windows.Forms
 
 		public override void CalculateCheckBoxTextAndImageLayout (ButtonBase button, Point p, out Rectangle glyphArea, out Rectangle textRectangle, out Rectangle imageRectangle)
 		{
-			int check_size = 13;
+			int check_size = (button as CheckBox).Appearance == Appearance.Normal ? 13 : 0;
 			glyphArea = new Rectangle (0, (button.Height - check_size) / 2, check_size, check_size);
 			
 			Image image = button.Image;
