@@ -77,6 +77,9 @@ namespace System.Reflection {
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern string get_name (MethodBase method);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern MonoMethod get_base_definition (MonoMethod method);
 
 		public override MethodInfo GetBaseDefinition ()
@@ -190,7 +193,9 @@ namespace System.Reflection {
 		}
 		public override string Name {
 			get {
-				return name;
+				if (name != null)
+					return name;
+				return get_name (this);
 			}
 		}
 		
@@ -435,7 +440,9 @@ namespace System.Reflection {
 		}
 		public override string Name {
 			get {
-				return name;
+				if (name != null)
+					return name;
+				return MonoMethod.get_name (this);
 			}
 		}
 

@@ -1,3 +1,9 @@
+
+Thu Sep 6 19:49:34 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs: name is used as a cache: provide an icall to get the
+	name from the runtime.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* MemberInfoSerializationHolder.cs: created from
