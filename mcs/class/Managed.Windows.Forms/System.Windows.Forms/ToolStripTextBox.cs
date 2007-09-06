@@ -42,6 +42,7 @@ namespace System.Windows.Forms
 		public ToolStripTextBox () : base (new ToolStripTextBoxControl ())
 		{
 			base.Control.border_style = BorderStyle.None;
+			(base.Control as ToolStripTextBoxControl).Border = BorderStyle.Fixed3D;
 			this.border_style = BorderStyle.Fixed3D;
 		}
 
@@ -122,6 +123,7 @@ namespace System.Windows.Forms
 			set { 
 				if (this.border_style != value) {
 					this.border_style = value;
+					(base.Control as ToolStripTextBoxControl).Border = value;
 					this.OnBorderStyleChanged (EventArgs.Empty);
 				}
 			}
@@ -473,6 +475,8 @@ namespace System.Windows.Forms
 
 		private class ToolStripTextBoxControl : TextBox
 		{
+			private BorderStyle border;
+			
 			public ToolStripTextBoxControl () : base ()
 			{
 			}
@@ -489,15 +493,23 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}
 
-			protected override void OnPaint (PaintEventArgs e)
+			internal override void OnPaintInternal (PaintEventArgs e)
 			{
 				base.OnPaint (e);
-				if (this.Focused || this.Entered || this.border_style == BorderStyle.FixedSingle) {
+
+				if ((this.Focused || this.Entered || border == BorderStyle.FixedSingle) && border != BorderStyle.None) {
 					ToolStripRenderer tsr = (this.Parent as ToolStrip).Renderer;
 
 					if (tsr is ToolStripProfessionalRenderer)
 						using (Pen p = new Pen ((tsr as ToolStripProfessionalRenderer).ColorTable.ButtonSelectedBorder))
 							e.Graphics.DrawRectangle (p, new Rectangle (0, 0, this.Width - 1, this.Height - 1));
+				}
+			}
+			
+			internal BorderStyle Border {
+				set {
+					border = value;
+					Invalidate ();
 				}
 			}
 		}
