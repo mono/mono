@@ -362,6 +362,9 @@ System.Windows.Forms/HtmlElementErrorEventHandler.cs
 System.Windows.Forms/HtmlElementEventArgs.cs
 System.Windows.Forms/HtmlElementEventHandler.cs
 System.Windows.Forms/HtmlElementInsertionOrientation.cs
+System.Windows.Forms/HtmlHistory.cs
+System.Windows.Forms/HtmlWindow.cs
+System.Windows.Forms/HtmlWindowCollection.cs
 System.Windows.Forms/Hwnd.cs
 System.Windows.Forms/IButtonControl.cs
 System.Windows.Forms/IBindableComponent.cs
@@ -436,6 +439,7 @@ System.Windows.Forms/LinkLabelLinkClickedEventArgs.cs
 System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
 System.Windows.Forms/ListBindingConverter.cs
+System.Windows.Forms/ListBindingHelper.cs
 System.Windows.Forms/ListBox.cs
 System.Windows.Forms/ListControl.cs
 System.Windows.Forms/ListControlConvertEventArgs.cs
@@ -785,6 +789,8 @@ System.Windows.Forms/WebBrowserReadyState.cs
 System.Windows.Forms/WebBrowserRefreshOption.cs
 System.Windows.Forms/WebBrowserSiteBase.cs
 System.Windows.Forms/Win32DnD.cs
+System.Windows.Forms/WindowsFormsSection.cs
+System.Windows.Forms/WindowsFormsSynchronizationContext.cs
 System.Windows.Forms/X11DesktopColors.cs
 System.Windows.Forms/X11Dnd.cs
 System.Windows.Forms/X11Keyboard.cs

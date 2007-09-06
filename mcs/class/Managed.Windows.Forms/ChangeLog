@@ -1,3 +1,9 @@
+2007-09-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* System.Windows.Forms.dll.sources: Add HtmlHistory.cs HtmlWindow.cs 
+	HtmlWindowCollection.cs ListBindingHelper.cs WindowsFormsSection.cs 
+	WindowsFormsSynchronizationContext.cs.
+
 2007-09-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.Windows.Forms.dll.sources: Add FileDialogCustomPlace.cs and
