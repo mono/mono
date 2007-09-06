@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: If AutoSize changes the size of our item, invalidate
+	so we repaint using the new size.  [Fixes bug #82723]
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: If ShowLines is true, we should ignore the FullRowSelect
 	option.  [Fixes bug #81779]
 

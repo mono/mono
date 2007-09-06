@@ -1450,6 +1450,7 @@ namespace System.Windows.Forms
 
 			if (final_size != this.Size) {
 				this.bounds.Width = final_size.Width;
+				this.Invalidate ();
 				if (this.parent != null)
 					this.parent.PerformLayout ();
 			}
