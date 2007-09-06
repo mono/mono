@@ -122,7 +122,7 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return ((IMethodReturnMessage)WrappedMessage).TypeName; }
 		}
 
-		public virtual string Uri 
+		public string Uri 
 		{
 			get { return ((IMethodReturnMessage)WrappedMessage).Uri; }
 			set { Properties["__Uri"] = value; }

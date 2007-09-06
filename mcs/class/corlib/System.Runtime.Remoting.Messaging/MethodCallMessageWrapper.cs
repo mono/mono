@@ -65,12 +65,20 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return ((IMethodCallMessage)WrappedMessage).HasVarArgs; }
 		}
 
-		public int InArgCount {
+		public virtual int InArgCount {
 			get  { return _inArgInfo.GetInOutArgCount(); }
 		}
 
-		public object[] InArgs {
+		int IMethodCallMessage.InArgCount {
+			get { return InArgCount; }
+		}
+
+		public virtual object[] InArgs {
 			get { return _inArgInfo.GetInOutArgs (_args); }
+		}
+
+		object[] IMethodCallMessage.InArgs {
+			get { return InArgs; }
 		}
 		
 		public virtual LogicalCallContext LogicalCallContext {
@@ -121,14 +129,24 @@ namespace System.Runtime.Remoting.Messaging {
 			return ((IMethodCallMessage)WrappedMessage).GetArgName (index);
 		}
 
-		public object GetInArg (int argNum)
+		public virtual object GetInArg (int argNum)
 		{
 			return _args[_inArgInfo.GetInOutArgIndex (argNum)];
 		}
 
-		public string GetInArgName (int index)
+		object IMethodCallMessage.GetInArg (int argNum)
+		{
+			return GetInArg (argNum);
+		}
+
+		public virtual string GetInArgName (int index)
 		{
 			return _inArgInfo.GetInOutArgName(index);
+		}
+
+		string IMethodCallMessage.GetInArgName (int index)
+		{
+			return GetInArgName (index);
 		}
 
 		class DictionaryWrapper : MethodCallDictionary

@@ -166,6 +166,11 @@ namespace System.Runtime.Remoting.Messaging
 			}
 		}
 
+		string IInternalMessage.Uri {
+			get { return Uri; }
+			set { Uri = value; }
+		}
+
 		public object GetArg (int arg_num)
 		{
 			return _args [arg_num];
@@ -224,6 +229,7 @@ namespace System.Runtime.Remoting.Messaging
 			set { _targetIdentity = value; }
 		}
 
+#if !NET_2_0
 		public override string ToString ()
 		{
 			string s = TypeName.Split(',')[0] + "." + MethodName + " (";
@@ -245,5 +251,6 @@ namespace System.Runtime.Remoting.Messaging
 			}
 			return s;
 		}
+#endif
 	}
 }

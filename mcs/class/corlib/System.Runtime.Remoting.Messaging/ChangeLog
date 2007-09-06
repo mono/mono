@@ -1,3 +1,9 @@
+2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LogicalCallContext.cs, MethodCall.cs, MethodCallMessageWrapper.cs,
+	  IMethodMessage.cs, ReturnMessage.cs, MethodResponse.cs
+	  MethodReturnMessageWrapper.cs : couple more of (2.0/1.1) API fixes.
+
 2007-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LogicalCallContext.cs IMethodMessage.cs CallContext.cs :
