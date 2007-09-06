@@ -1737,7 +1737,7 @@ namespace System.Windows.Forms {
 		 
 		private void DrawStaticNode (TreeNode node, Graphics dc)
 		{
-			if (!full_row_select)
+			if (!full_row_select || show_lines)
 				DrawSelectionAndFocus(node, dc, node.Bounds);
 
 			
@@ -1759,7 +1759,7 @@ namespace System.Windows.Forms {
 			int y = node.GetY ();
 			int middle = y + (ActualItemHeight / 2);
 
-			if (full_row_select) {
+			if (full_row_select && !show_lines) {
 				Rectangle r = new Rectangle (1, y, ViewportRectangle.Width - 2, ActualItemHeight);
 				DrawSelectionAndFocus (node, dc, r);
 			}
