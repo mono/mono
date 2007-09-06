@@ -1,3 +1,8 @@
+2007-09-06  Marek Habersack  <mhabersack@novell.com>
+
+	* UriTypeConverterTest.cs: Mono on Windows treats /Uri.txt URIs as
+	relative while on Unix they are absolute.
+
 2007-09-05  Marek Habersack  <mhabersack@novell.com>
 
 	* UriTypeConverterTest.cs: added a new test for conversion from

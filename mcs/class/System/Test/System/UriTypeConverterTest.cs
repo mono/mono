@@ -31,6 +31,7 @@
 using NUnit.Framework;
 
 using System;
+using System.IO;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
@@ -76,11 +77,14 @@ namespace MonoTests.System {
 		private UriTypeConverter converter;
 		private UriTypeDescriptorContext context;
 
+		protected bool isWin32 = false;
+		
 		[SetUp]
 		public void SetUp ()
 		{
 			converter = new UriTypeConverter ();
 			context = new UriTypeDescriptorContext ();
+			isWin32 = (Path.DirectorySeparatorChar == '\\');
 		}
 
 		[Test]
@@ -193,7 +197,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")] // bug 82712
 		public void ConvertFromString ()
 		{
 			object o = converter.ConvertFrom ("~/SomeUri.txt");
@@ -201,8 +204,13 @@ namespace MonoTests.System {
 			Assert.AreEqual ("~/SomeUri.txt", (o as Uri).ToString (), "CFS_02");
 			
 			o = converter.ConvertFrom ("/SomeUri.txt");
-			Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_03");
-			Assert.AreEqual ("/SomeUri.txt", (o as Uri).ToString (), "CFS_04");
+			if (isWin32) {
+				Assert.IsFalse ((o as Uri).IsAbsoluteUri, "CFS_03_WIN");
+				Assert.AreEqual ("/SomeUri.txt", (o as Uri).ToString (), "CFS_04_WIN");
+			} else {
+				Assert.IsTrue ((o as Uri).IsAbsoluteUri, "CFS_03_UNIX");
+				Assert.AreEqual ("file:///SomeUri.txt", (o as Uri).ToString (), "CFS_04_UNIX");
+			}
 		}
 		
 		[Test]
