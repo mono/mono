@@ -1,5 +1,11 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Override HandleClick because the StandardClick style is
+	set to false.  According to MSDN (and testing), the click events should
+	only be raised when the click occurs on a TreeNode.  [Fixes bug #81739]
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripTextBox.cs: Invalidate our textbox when it loses focus, so
 	the border will disappear.  Fixes reopened #82653.
 

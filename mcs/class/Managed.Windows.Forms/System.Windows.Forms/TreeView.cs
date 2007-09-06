@@ -1176,6 +1176,27 @@ namespace System.Windows.Forms {
 			return (IntPtr) handle_count++;
 		}
 
+		// According to MSDN docs, for these to be raised, 
+		// the click must occur over a TreeNode
+		internal override void HandleClick (int clicks, MouseEventArgs me)
+		{
+			if (GetNodeAt (me.Location) != null) {
+				if ((clicks > 1) && GetStyle (ControlStyles.StandardDoubleClick)) {
+#if !NET_2_0
+					OnDoubleClick(EventArgs.Empty);
+				} else {
+					OnClick(EventArgs.Empty);
+#else
+					OnDoubleClick (me);
+					OnMouseDoubleClick (me);
+				} else {
+					OnClick (me);
+					OnMouseClick (me);
+#endif
+				}
+			}
+		}
+		
 		internal override bool IsInputCharInternal (char charCode)
 		{
 			return true;
