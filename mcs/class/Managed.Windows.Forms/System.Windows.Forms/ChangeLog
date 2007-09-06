@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripTextBox.cs: Invalidate our textbox when it loses focus, so
+	the border will disappear.  Fixes reopened #82653.
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: If the control is autosize, and its preferred size changes
 	when it lays out its children, tell its parent so it can be re-layed out.
 	Fixing some of the fallout from r85433.

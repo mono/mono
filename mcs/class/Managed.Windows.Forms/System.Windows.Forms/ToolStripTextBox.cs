@@ -481,6 +481,12 @@ namespace System.Windows.Forms
 			{
 			}
 
+			protected override void OnLostFocus (EventArgs e)
+			{
+				base.OnLostFocus (e);
+				Invalidate ();
+			}
+			
 			protected override void OnMouseEnter (EventArgs e)
 			{
 				base.OnMouseEnter (e);
