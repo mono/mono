@@ -139,11 +139,11 @@ namespace System.IO
 			// nothing
 		}
 
-#endif
 		void IDisposable.Dispose ()
 		{
 			Close ();
 		}
+#endif
 
 #if NET_2_0
 		[Obsolete ("CreateWaitHandle is due for removal.  Use \"new ManualResetEvent(false)\" instead.")]

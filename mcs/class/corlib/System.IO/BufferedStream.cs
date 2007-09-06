@@ -111,8 +111,15 @@ namespace System.IO {
 			}
 		}
 
+#if NET_2_0
+		protected override void Dispose (bool disposing)
+		{
+			if (disposed)
+				return;
+#else
 		public override void Close ()
 		{
+#endif
 			if (m_buffer != null)
 				Flush();
 

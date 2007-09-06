@@ -215,7 +215,11 @@ namespace System.IO
 			}
 		}
 
+#if NET_2_0
+		protected override void Dispose (bool disposing)
+#else
 		public override void Close ()
+#endif
 		{
 			streamClosed = true;
 			expandable = false;

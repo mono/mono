@@ -1,3 +1,9 @@
+2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Stream.cs, BufferedStream.cs, MemoryStream.cs: in 2.0 override
+	  Dispose(bool) rather than Close().
+	  Stream.Dispose() is virtual in 2.0.
+
 2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* BinaryReader.cs: Fixed line endings.
