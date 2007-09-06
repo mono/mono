@@ -1269,8 +1269,24 @@ namespace System.Web.Compilation
 				bool doCheck = false;
 				
 #if NET_2_0
-				TemplateBuilder pb = builder.parentBuilder as TemplateBuilder;
-				if (pb == null || pb.TemplateInstance != TemplateInstance.Single)
+				bool singleInstance = false;
+				ControlBuilder pb = builder.parentBuilder;
+				TemplateBuilder tpb;
+				while (pb != null) {
+					tpb = pb as TemplateBuilder;
+					if (tpb == null) {
+						pb = pb.parentBuilder;
+						continue;
+					}
+					
+					if (tpb.TemplateInstance == TemplateInstance.Single) {
+						singleInstance = true;
+						break;
+					}
+					pb = pb.parentBuilder;
+				}
+				
+				if (!singleInstance)
 #endif
 					builder.ID = builder.GetNextID (null);
 #if NET_2_0
