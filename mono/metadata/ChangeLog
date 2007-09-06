@@ -1,3 +1,16 @@
+2007-09-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.h: exposed mono_reflection_free_type_info
+	* reflection.c (mono_reflection_get_type_internal): type_args is always freed
+	since mono_reflection_bind_generic_parameters makes a copy of it.
+	* reflection.c (free_type_info): subinfos should be freed.
+ 	* reflection.c (free_type_info): renamed to mono_reflection_free_type_info and 
+	made non static.
+	* icall.c (type_from_name and ves_icall_System_Reflection_Assembly_InternalGetType):
+	replaced explicit cleanup of MonoTypeNameParse struct with a call to mono_reflection_free_type_info,
+	this fixes #82695 and #81726.
+   
+
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* process.h, process.c:  added support for user profile/info in
