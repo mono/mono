@@ -1,5 +1,10 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TrackBar.cs: Only call OnScroll if we actually changed the Value of
+	the TrackBar, not every mouse move.  [Fixed bug #82718]
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Allow a CheckBox to be rendered like a Button
 	under 2.0 rendering.  [Fixes bug #82657]
 

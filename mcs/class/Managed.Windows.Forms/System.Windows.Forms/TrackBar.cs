@@ -768,8 +768,11 @@ namespace System.Windows.Forms
 
     			/* Moving the thumb */
     			if (thumb_pressed) {
+    				int old_value = Value;
 				Value = ThemeEngine.Current.TrackBarValueFromMousePosition (e.X, e.Y, this);			
-    				OnScroll (new EventArgs ());
+    				
+    				if (Value != old_value)
+    					OnScroll (EventArgs.Empty);
 			}
     		}
 
