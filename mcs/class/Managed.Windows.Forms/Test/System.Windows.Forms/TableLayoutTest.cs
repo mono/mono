@@ -1120,8 +1120,8 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add (table);
 			f.Show ();
 			
-			
-			Assert.AreEqual (new Size (244, 17), l.Size, "A1");
+			// Height is font dependent, but this bug is about the width anyways
+			Assert.AreEqual (244, l.Width, "A1");
 		}
 		
 		[Test] // bug #82040

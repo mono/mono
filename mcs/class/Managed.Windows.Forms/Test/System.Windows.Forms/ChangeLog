@@ -1,5 +1,9 @@
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutTest.cs: Make test for bug #82605 not depend on font measurements.
+
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutTest.cs: Add test for bug #82605.
 
 2007-08-31  Jonathan Pobst  <monkey@jpobst.com>
