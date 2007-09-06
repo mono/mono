@@ -119,6 +119,7 @@ namespace System.Windows.Forms
 		internal DockStyle dock_style; // docking requirements for our control
 		LayoutType layout_type;
 		private bool recalculate_distances = true;  // Delay anchor calculations
+		private bool nested_layout = false;
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
@@ -5866,7 +5867,21 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, levent);
 
+#if NET_2_0
+			Size s = Size;
 			LayoutEngine.Layout (this, levent);
+			
+			// If our layout changed our PreferredSize, our parent
+			// needs to re-lay us out.  However, it's not always possible to
+			// be our preferred size, so only try once so we don't loop forever.
+			if (Parent != null && AutoSize && !nested_layout && PreferredSize != s) {
+				nested_layout = true;
+				Parent.PerformLayout ();
+				nested_layout = false;
+			}
+#else
+			LayoutEngine.Layout (this, levent);
+#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
