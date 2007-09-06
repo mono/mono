@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls {
 
 		private void Initialize ()
 		{
-			if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
+			if (!IsDataBound)
 				RequiresDataBinding = true;
 
 			UpdateViewData ();

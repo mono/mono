@@ -1,3 +1,9 @@
+2007-09-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DataBoundControl.cs: fixed DataBind flow:
+	prevent double binding when not necessary.
+	fixed bug #81146	
+
 2007-08-31  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: instead of not adding hidden fields to the rows,
