@@ -1,3 +1,8 @@
+2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Ping.cs, PingReply.cs, PingCompletedEventArgs.cs : implemented
+	  in managed code.
+
 2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPGlobalStatistics.cs : Mib-* class is nonpublic.
