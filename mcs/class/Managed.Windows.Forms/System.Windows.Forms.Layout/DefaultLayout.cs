@@ -260,7 +260,7 @@ namespace System.Windows.Forms.Layout
 			LayoutAnchoredChildren (parent, controls);
 #if NET_2_0
 			LayoutAutoSizedChildren (parent, controls);
-			LayoutAutoSizeContainer (parent);
+			if (parent is Form) LayoutAutoSizeContainer (parent);
 #endif
 
 			return false;

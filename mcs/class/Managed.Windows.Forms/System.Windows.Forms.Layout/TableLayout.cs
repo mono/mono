@@ -407,9 +407,14 @@ namespace System.Windows.Forms.Layout
 				{
 					Control c = panel.actual_positions[x,y];
 					
-					if(c != null && c != dummy_control)
-					
-					{		
+					if(c != null && c != dummy_control) {
+						Size preferred;
+						
+						if (c.AutoSize)
+							preferred = c.PreferredSize;
+						else
+							preferred = c.Size;
+						
 						int new_x = 0;
 						int new_y = 0;
 						int new_width = 0;
@@ -424,7 +429,7 @@ namespace System.Windows.Forms.Layout
 						if (c.Dock == DockStyle.Fill || c.Dock == DockStyle.Top || c.Dock == DockStyle.Bottom || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right))
 							new_width = column_width - c.Margin.Left - c.Margin.Right;
 						else
-							new_width = Math.Min (c.Width, column_width - c.Margin.Left - c.Margin.Right);
+							new_width = Math.Min (preferred.Width, column_width - c.Margin.Left - c.Margin.Right);
 							
 						// Figure out the height of the control
 						int column_height = panel.row_heights[y];
@@ -435,7 +440,7 @@ namespace System.Windows.Forms.Layout
 						if (c.Dock == DockStyle.Fill || c.Dock == DockStyle.Left || c.Dock == DockStyle.Right || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom))
 							new_height = column_height - c.Margin.Top - c.Margin.Bottom;
 						else
-							new_height = Math.Min (c.Height, column_height - c.Margin.Top - c.Margin.Bottom);
+							new_height = Math.Min (preferred.Height, column_height - c.Margin.Top - c.Margin.Bottom);
 
 						// Figure out the left location of the control
 						if (c.Dock == DockStyle.Left || c.Dock == DockStyle.Fill || (c.Anchor & AnchorStyles.Left) == AnchorStyles.Left)

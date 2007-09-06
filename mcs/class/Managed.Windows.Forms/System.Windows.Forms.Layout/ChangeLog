@@ -1,3 +1,10 @@
+2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Only LayoutAutoSizeContainer if the container is
+	a Form, others should be taken care of by their parent.
+	* TableLayout.cs: If a control is AutoSize, default to its preferred
+	size if possible.  [Fixes bug #82605]
+
 2007-07-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ArrangedElementCollection.cs: Rename internal method RemoveAt

@@ -1090,6 +1090,40 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void Bug82605 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Label l = new Label ();
+
+			TableLayoutPanel table = new TableLayoutPanel ();
+			table.ColumnCount = 1;
+			table.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 100F));
+
+			table.RowCount = 2;
+			table.RowStyles.Add (new RowStyle (SizeType.Percent, 100F));
+			table.RowStyles.Add (new RowStyle (SizeType.Absolute, 20F));
+
+			table.Controls.Add (l, 0, 1);
+			table.Location = new Point (0, 0);
+			table.Width = 250;
+
+			l.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			l.AutoSize = true;
+			l.Location = new Point (3, 352);
+			l.Size = new Size (578, 13);
+			l.Text = "label1";
+			l.TextAlign = ContentAlignment.MiddleCenter;
+
+			f.Controls.Add (table);
+			f.Show ();
+			
+			
+			Assert.AreEqual (new Size (244, 17), l.Size, "A1");
+		}
+		
 		[Test] // bug #82040
 		public void ShowNoChildren ()
 		{
