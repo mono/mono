@@ -54,17 +54,38 @@ namespace Newtonsoft.Json
 	/// </summary>
 	sealed class JsonSerializer
 	{
-		sealed class DeserializerLazyDictionary : JavaScriptSerializer.LazyDictionary
+		sealed internal class DeserializerLazyDictionary : JavaScriptSerializer.LazyDictionary
 		{
 			readonly JsonReader _reader;
 			readonly JsonSerializer _serializer;
+			IEnumerator<KeyValuePair<string, object>> _innerEnum;
+			object _firstValue;
 			public DeserializerLazyDictionary (JsonReader reader, JsonSerializer serializer) {
 				_reader = reader;
 				_serializer = serializer;
 			}
 
+			public object PeekFirst () {
+				if (_innerEnum != null)
+					throw new InvalidOperationException ("first already taken");
+
+				_innerEnum = _serializer.PopulateObject (_reader);
+
+				if (_innerEnum.MoveNext ())
+					_firstValue = _innerEnum.Current;
+
+				return _firstValue;
+			}
+
 			protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator () {
-				return _serializer.PopulateObject (_reader);
+				if (_innerEnum == null)
+					_innerEnum = _serializer.PopulateObject (_reader);
+
+				if (_firstValue != null)
+					yield return (KeyValuePair<string, object>) _firstValue;
+
+				while (_innerEnum.MoveNext ())
+					yield return _innerEnum.Current;
 			}
 		}
 
@@ -121,6 +142,7 @@ namespace Newtonsoft.Json
 		private int _currentRecursionCounter;
 		private ReferenceLoopHandling _referenceLoopHandling;
 		readonly JavaScriptSerializer _context;
+		readonly JavaScriptTypeResolver _typeResolver;
 
 		public int MaxJsonLength 
 		{
@@ -152,9 +174,10 @@ namespace Newtonsoft.Json
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JsonSerializer"/> class.
 		/// </summary>
-		public JsonSerializer(JavaScriptSerializer context)
+		public JsonSerializer(JavaScriptSerializer context, JavaScriptTypeResolver resolver)
 		{
 			_context = context;
+			_typeResolver = resolver;
 			_referenceLoopHandling = ReferenceLoopHandling.Error;
 		}
 
@@ -366,27 +389,14 @@ namespace Newtonsoft.Json
 						if (value is IDictionary)
 							SerializeDictionary (writer, (IDictionary) value);
 						else if (value is IDictionary<string, object>)
-							SerializeDictionary (writer, (IDictionary<string, object>) value);
+							SerializeDictionary (writer, (IDictionary<string, object>) value, null);
 						else if ((genDictType = ReflectionUtils.GetGenericDictionary (valueType)) != null)
-							SerializeDictionary (writer, new GenericDictionaryLazyDictionary (value, genDictType));
+							SerializeDictionary (writer, new GenericDictionaryLazyDictionary (value, genDictType), null);
 						else if (value is IEnumerable) {
 							SerializeEnumerable (writer, (IEnumerable) value);
 						}
 						else {
-							TypeConverter converter = TypeDescriptor.GetConverter (valueType);
-
-							// use the objectType's TypeConverter if it has one and can convert to a string
-							if (converter != null) {
-								if (!(converter is ComponentConverter) && converter.GetType () != typeof (TypeConverter)) {
-									if (converter.CanConvertTo (typeof (string))) {
-										writer.WriteValue (converter.ConvertToInvariantString (value));
-										_currentRecursionCounter--;
-										return;
-									}
-								}
-							}
-
-							SerializeDictionary (writer, new SerializerLazyDictionary (value));
+							SerializeCustomObject (writer, value, valueType);
 						}
 					}
 					finally {
@@ -440,13 +450,37 @@ namespace Newtonsoft.Json
 			writer.WriteEndObject();
 		}
 
-		private void SerializeDictionary (JsonWriter writer, IDictionary<string, object> values) {
+		private void SerializeDictionary (JsonWriter writer, IDictionary<string, object> values, string typeID) {
 			writer.WriteStartObject ();
+
+			if (typeID != null) {
+				SerializePair (writer, JavaScriptSerializer.SerializedTypeNameKey, typeID);
+			}
 
 			foreach (KeyValuePair<string, object> entry in values)
 				SerializePair (writer, entry.Key, entry.Value);
 
 			writer.WriteEndObject ();
+		}
+
+		private void SerializeCustomObject (JsonWriter writer, object value, Type valueType) 
+		{
+			if (value is Uri) {
+				Uri uri = value as Uri;
+				writer.WriteValue (uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.UriEscaped));
+				return;
+			}
+			if (valueType == typeof (Guid)) {
+				writer.WriteValue (((Guid) value).ToString ());
+				return;
+			}
+
+			string typeID = null;
+			if (_typeResolver != null) {
+				typeID = _typeResolver.ResolveTypeId (valueType);
+			}
+
+			SerializeDictionary (writer, new SerializerLazyDictionary (value), typeID);
 		}
 
 		private void SerializePair (JsonWriter writer, string key, object value) {

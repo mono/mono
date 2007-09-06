@@ -43,6 +43,8 @@ namespace System.Web.Script.Serialization
 {
 	public class JavaScriptSerializer
 	{
+		internal const string SerializedTypeNameKey = "__type";
+
 		internal abstract class LazyDictionary : IDictionary<string, object>
 		{
 			#region IDictionary<string,object> Members
@@ -136,9 +138,18 @@ namespace System.Web.Script.Serialization
 		List<IEnumerable<JavaScriptConverter>> _converterList;
 		int _maxJsonLength;
 		int _recursionLimit;
+		JavaScriptTypeResolver _typeResolver;
 		internal static readonly JavaScriptSerializer DefaultSerializer = new JavaScriptSerializer ();
 
-		public JavaScriptSerializer () {
+		public JavaScriptSerializer () 
+			: this(null)
+		{
+		}
+
+		public JavaScriptSerializer (JavaScriptTypeResolver resolver) 
+		{
+			_typeResolver = resolver;
+
 			ScriptingJsonSerializationSection section = (ScriptingJsonSerializationSection) ConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/jsonSerialization");
 			if (section == null) {
 				_maxJsonLength = 102400;
@@ -148,10 +159,6 @@ namespace System.Web.Script.Serialization
 				_maxJsonLength = section.MaxJsonLength;
 				_recursionLimit = section.RecursionLimit;
 			}
-		}
-
-		public JavaScriptSerializer (JavaScriptTypeResolver resolver) {
-			throw new NotImplementedException ();
 		}
 
 		public int MaxJsonLength {
@@ -185,19 +192,19 @@ namespace System.Web.Script.Serialization
 
 			if (obj is IDictionary<string, object>) {
 				if (type == null)
-					obj = Evaluate ((IDictionary<string, object>) obj);
+					obj = EvaluateDictionary ((IDictionary<string, object>) obj);
 				else {
 					JavaScriptConverter converter = GetConverter (type);
 					if (converter != null)
 						return converter.Deserialize (
-							Evaluate ((IDictionary<string, object>) obj),
+							EvaluateDictionary ((IDictionary<string, object>) obj),
 							type, this);
 				}
 
-				return Deserialize ((IDictionary<string, object>) obj, type);
+				return ConvertToObject ((IDictionary<string, object>) obj, type);
 			}
 			if (obj is IEnumerable<object>)
-				return Deserialize ((IEnumerable<object>) obj, type);
+				return ConvertToList ((IEnumerable<object>) obj, type);
 
 			if (type == null)
 				return obj;
@@ -226,14 +233,14 @@ namespace System.Web.Script.Serialization
 
 		static object Evaluate (object value) {
 			if (value is IDictionary<string, object>)
-				value = Evaluate ((IDictionary<string, object>) value);
+				value = EvaluateDictionary ((IDictionary<string, object>) value);
 			else
 			if (value is IEnumerable<object>)
-				value = Evaluate ((IEnumerable<object>) value);
+				value = EvaluateList ((IEnumerable<object>) value);
 			return value;
 		}
 
-		static object Evaluate (IEnumerable<object> e) {
+		static object EvaluateList (IEnumerable<object> e) {
 			ArrayList list = new ArrayList ();
 			foreach (object value in e)
 				list.Add (Evaluate(value));
@@ -241,12 +248,13 @@ namespace System.Web.Script.Serialization
 			return list.ToArray ();
 		}
 
-		static IDictionary<string, object> Evaluate (IDictionary<string, object> dict) {
+		static IDictionary<string, object> EvaluateDictionary (IDictionary<string, object> dict) {
 			if (dict is Dictionary<string, object>)
 				return dict;
 			Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
-			foreach (KeyValuePair<string, object> entry in dict)
-				d.Add (entry.Key, Evaluate(entry.Value));
+			foreach (KeyValuePair<string, object> entry in dict) {
+				d.Add (entry.Key, Evaluate (entry.Value));
+			}
 
 			return d;
 		}
@@ -254,7 +262,7 @@ namespace System.Web.Script.Serialization
 		static readonly Type typeofObject = typeof(object);
 		static readonly Type typeofGenList = typeof (List<>);
 
-		object Deserialize (IEnumerable<object> col, Type type) {
+		object ConvertToList (IEnumerable<object> col, Type type) {
 			Type elementType = null;
 			if (type != null && type.HasElementType)
 				elementType = type.GetElementType ();
@@ -279,7 +287,7 @@ namespace System.Web.Script.Serialization
 				throw new JsonSerializationException (string.Format ("Deserializing list type '{0}' not supported.", type.GetType ().Name));
 
 			if (list.IsReadOnly) {
-				Evaluate (col);
+				EvaluateList (col);
 				return list;
 			}
 
@@ -292,9 +300,28 @@ namespace System.Web.Script.Serialization
 			return list;
 		}
 
-		object Deserialize (IDictionary<string, object> dict, Type type) {
-			if (type == null)
-				type = Type.GetType ((string) dict ["__type"]);
+		object ConvertToObject (IDictionary<string, object> dict, Type type) 
+		{
+			if (_typeResolver != null) {
+				if (dict is JsonSerializer.DeserializerLazyDictionary) {
+					JsonSerializer.DeserializerLazyDictionary lazyDict = (JsonSerializer.DeserializerLazyDictionary) dict;
+					object first = lazyDict.PeekFirst ();
+					if (first != null) {
+						KeyValuePair<string, object> firstPair = (KeyValuePair<string, object>) first;
+						if (firstPair.Key == SerializedTypeNameKey) {
+							type = _typeResolver.ResolveType ((string) firstPair.Value);
+						}
+						else {
+							dict = EvaluateDictionary (dict);
+						}
+					}
+				}
+
+				if (!(dict is JsonSerializer.DeserializerLazyDictionary) && dict.Keys.Contains(SerializedTypeNameKey)) {
+					// already Evaluated
+					type = _typeResolver.ResolveType ((string) dict [SerializedTypeNameKey]);
+				}
+			}
 
 			object target = Activator.CreateInstance (type, true);
 
@@ -326,7 +353,16 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object DeserializeObject (string input) {
-			return Evaluate (DeserializeObjectInternal (new StringReader (input)));
+			object obj = Evaluate (DeserializeObjectInternal (new StringReader (input)));
+			IDictionary dictObj = obj as IDictionary;
+			if (dictObj != null && dictObj.Contains(SerializedTypeNameKey)){
+				if (_typeResolver == null) {
+					throw new ArgumentNullException ("resolver", "Must have a type resolver to deserialize an object that has an '__type' member");
+				}
+
+				obj = ConvertToType(null, obj);
+			}
+			return obj; 
 		}
 
 		internal object DeserializeObjectInternal (string input) {
@@ -334,7 +370,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		internal object DeserializeObjectInternal (TextReader input) {
-			JsonSerializer ser = new JsonSerializer (this);
+			JsonSerializer ser = new JsonSerializer (this, _typeResolver);
 			ser.MaxJsonLength = MaxJsonLength;
 			ser.RecursionLimit = RecursionLimit;
 			return ser.Deserialize (input);
@@ -372,7 +408,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		internal void Serialize (object obj, TextWriter output) {
-			JsonSerializer ser = new JsonSerializer (this);
+			JsonSerializer ser = new JsonSerializer (this, _typeResolver);
 			ser.MaxJsonLength = MaxJsonLength;
 			ser.RecursionLimit = RecursionLimit;
 			ser.Serialize (output, obj);

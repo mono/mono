@@ -39,6 +39,8 @@ using ComponentModel = System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.ComponentModel;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 
 namespace Tests.System.Web.Script.Serialization
@@ -125,6 +127,7 @@ namespace Tests.System.Web.Script.Serialization
 			IEnumerable enum_int1;
 			public Uri uri;
 			public Dictionary<string, Y> hash;
+			public Point point;
 
 			public void Init () {
 				//y = 6;
@@ -175,6 +178,7 @@ namespace Tests.System.Web.Script.Serialization
 				hash = new Dictionary<string, Y> ();
 				Y y = new Y ();
 				hash ["mykey"] = y;
+				point = new Point (150, 150);
 			}
 
 			public IEnumerable<int> MyEnum {
@@ -257,9 +261,88 @@ namespace Tests.System.Web.Script.Serialization
 			public Y Y2;
 		}
 
+		[TypeConverter (typeof (MyUriConverter))]
+		class MyUri : Uri
+		{
+			public MyUri (string uriString, UriKind uriKind)
+				: base (uriString, uriKind) {
+			}
+
+			public MyUri (Uri value)
+				: base (value.AbsoluteUri) {
+			}
+		}
+
+		class MyUriConverter : UriTypeConverter
+		{
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) 
+			{
+				return base.ConvertTo (context, culture, value, destinationType);
+			}
+
+			public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value) 
+			{
+				Uri convertedUri = (Uri)base.ConvertFrom (context, culture, value);
+				return new MyUri (convertedUri);
+			}
+		}
+
+		[TypeConverter(typeof(MyPointConverter))]
+		class MyPointContainer
+		{
+			public MyPointContainer () 
+			{
+			}
+
+			public MyPointContainer (Point v) 
+			{
+				p = v;
+			}
+
+			internal Point p;
+		}
+
+		class MyPointConverter : TypeConverter
+		{
+			public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType) 
+			{
+				if (destinationType == typeof (string)) {
+					return true;
+				}
+				return base.CanConvertTo (context, destinationType);
+			}
+
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) 
+			{
+				if (destinationType == typeof (string)) {
+					MyPointContainer pc = (MyPointContainer) value;
+					return pc.p.X + "," + pc.p.Y;
+				}
+				return base.ConvertTo (context, culture, value, destinationType);
+			}
+
+			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType) 
+			{
+				if (sourceType == typeof (string)) {
+					return true;
+				}
+				return base.CanConvertFrom (context, sourceType);
+			}
+
+			public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value) 
+			{
+				if (value is string) {
+					string [] v = ((string) value).Split (new char [] { ',' });
+					return new MyPointContainer(new Point (int.Parse (v [0]), int.Parse (v [1])));
+				}
+				return base.ConvertFrom (context, culture, value);
+			}
+		}
+
 #pragma warning restore 659
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestDefaults () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			Assert.AreEqual (102400, ser.MaxJsonLength);
@@ -293,6 +376,18 @@ namespace Tests.System.Web.Script.Serialization
 			//Assert.AreEqual ("\uFF56", result);
 
 			//object oo = ser.DeserializeObject ("{value:'Purple\\r \\n monkey\\'s:\\tdishwasher'}");
+		}
+
+		[Test]
+		public void TestDeserializeTypeResolver () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			X x = new X ();
+			x.Init ();
+
+			string s = ser.Serialize (x);
+			X x2 = ser.Deserialize<X> (s);
+			Assert.AreEqual (x, x2);
 		}
 
 		[Test]
@@ -407,6 +502,7 @@ namespace Tests.System.Web.Script.Serialization
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("NotDotNet")]
 		public void TestSerialize2 () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			ser.Serialize ("aaa", null);
@@ -492,6 +588,141 @@ namespace Tests.System.Web.Script.Serialization
 			Assert.AreEqual (true, (bool) array [0], "array [0]");
 			Assert.AreEqual (false, (bool) array [1], "array [1]");
 			Assert.AreEqual (0, (int) array [2], "array [2]");
+		}
+
+		[Test]
+		public void DeserializeObject2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+			object y2 = ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (Dictionary<string, object>), y2.GetType (), "DeserializeObject to Dictionary");
+		}
+
+		[Test]
+		public void DeserializeObject3 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver());
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+			object y2 = ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (Y), y2.GetType (), "DeserializeObject to Dictionary");
+		}
+
+		[Test]
+		public void DeserializeObject4 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new CustomResolver());
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+			object y2 = ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (Y), y2.GetType (), "DeserializeObject to Dictionary");
+			Assert.AreEqual (1, CustomResolver.ResolvedIds.Count, "ResolvedIds Count");
+			Assert.AreEqual ("Y", CustomResolver.ResolvedIds [0], "ResolvedIds.Y");
+			Assert.AreEqual (1, CustomResolver.ResolvedTypes.Count, "ResolvedTypes Count");
+			Assert.AreEqual ("Y", CustomResolver.ResolvedTypes [0], "ResolvedTypes.Y");
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
+		public void SerializeWithResolverDeserializeWithout () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+			ser = new JavaScriptSerializer ();
+			object y2 = ser.DeserializeObject (s);
+		}
+
+		[Test]
+		public void SerializeWithoutResolverDeserializeWith ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			Y y = new Y ();
+			string s = ser.Serialize (y);
+			ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			object y2 = ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (Dictionary<string, object>), y2.GetType (), "DeserializeObject to Dictionary");
+		}
+
+		class B
+		{
+			public int v1 = 15;
+			public string s1 = "s1";
+		}
+
+		class D : B
+		{
+			public int v2 = 16;
+			public string s2 = "s2";
+		}
+
+		class C
+		{
+			public B b1 = new B ();
+			public B b2 = new D ();
+		}
+
+		[Test]
+		public void SerializeDerivedType () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			B b = new D ();
+			string s = ser.Serialize (b);
+			B b2 = ser.Deserialize<B> (s);
+			Assert.AreEqual (typeof (D), b2.GetType (), "Deserialize Derived Type");
+		}
+
+		[Test]
+		public void SerializeDerivedType2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			B b = new D ();
+			string s = ser.Serialize (b);
+			B b2 = (B)ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (D), b2.GetType (), "Deserialize Derived Type");
+		}
+
+		[Test]
+		public void SerializeContainedDerivedType () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			C c = new C ();
+			string s = ser.Serialize (c);
+			C c2 = ser.Deserialize<C> (s);
+			Assert.AreEqual (typeof (C), c2.GetType (), "Deserialize Derived Type");
+			Assert.AreEqual (typeof (D), c2.b2.GetType (), "Deserialize Derived Type");
+		}
+
+		[Test]
+		public void SerializeContainedDerivedType2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			C c = new C ();
+			string s = ser.Serialize (c);
+			C c2 = (C)ser.DeserializeObject (s);
+			Assert.AreEqual (typeof (C), c2.GetType (), "Deserialize Derived Type");
+			Assert.AreEqual (typeof (D), c2.b2.GetType (), "Deserialize Derived Type");
+		}
+
+		[Test]
+		public void SerializeWithTypeConverter () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			MyUri uri = new MyUri ("http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d", UriKind.RelativeOrAbsolute);
+			string s = ser.Serialize (uri);
+			MyUri uri2 = ser.Deserialize<MyUri> (s);
+			Assert.AreEqual (uri, uri2);
+		}
+
+		[Test]
+		public void SerializeWithTypeConverter2 () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			MyPointContainer pc = new MyPointContainer(new Point(15, 16));
+			string s = ser.Serialize(pc);
+			MyPointContainer pc2 = ser.Deserialize<MyPointContainer>(s);
 		}
 
 		[Test]
@@ -598,6 +829,134 @@ namespace Tests.System.Web.Script.Serialization
 			}
 			Assert.IsTrue (caughtException, "RecursionLimitSerialize2 Expected an exception!");
 			Assert.AreEqual ("{\"Y1\":{\"BB\":", b.ToString (), "RecursionLimitSerialize2");
+		}
+
+		[Test]
+		public void SimpleTypeResolver () 
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new SimpleTypeResolver ());
+			YY yy = new YY ();
+			string s = ser.Serialize (yy);
+			string expected = String.Format("\"__type\":\"{0}\"", yy.GetType().AssemblyQualifiedName);
+
+			Assert.IsTrue (s.Contains (expected), "YY: expected {0} to contain {1}", s, expected);
+			
+			expected = String.Format ("\"__type\":\"{0}\"", yy.Y1.GetType ().AssemblyQualifiedName);
+			Assert.IsTrue (s.Contains (expected), "Y: expected {0} to contain {1}", s, expected);
+		}
+
+		public class CustomResolver : JavaScriptTypeResolver
+		{
+			public CustomResolver () 
+			{
+				Reset ();
+			}
+
+			public override Type ResolveType (string id) 
+			{
+				ResolvedIds.Add (id);
+
+				switch (id) {
+				case "YY":
+					return typeof(YY);
+
+				case "Y":
+					return typeof (Y);
+
+				case "X":
+					return typeof (X);
+
+				case "int":
+					return typeof (int);
+
+				case "long":
+					return typeof (long);
+
+				case "string":
+					return typeof (string);
+
+				case "point":
+					return typeof(Point);
+				}
+				return null;
+			}
+
+			public override string ResolveTypeId (Type type) 
+			{
+				if (type == null) {
+					throw new ArgumentNullException ("type");
+				}
+
+				ResolvedTypes.Add (type.Name);
+
+				if (type == typeof (YY))
+					return "YY";
+
+				if (type == typeof (Y))
+					return "Y";
+
+				if (type == typeof (X))
+					return "X";
+
+				if (type == typeof (int))
+					return "int";
+
+				if (type == typeof (long))
+					return "long";
+
+				if (type == typeof (string))
+					return "string";
+
+				if (type == typeof(Point))
+					return "point";
+
+				return null;
+			}
+
+			public static List<string> ResolvedTypes {
+				get {
+					if (resolvedTypes == null) {
+						resolvedTypes = new List<string> ();
+					}
+					return resolvedTypes;
+				}
+			}
+
+			public static List<string> ResolvedIds {
+				get {
+					if (resolvedIds == null) {
+						resolvedIds = new List<string> ();
+					}
+					return resolvedIds;
+				}
+			}
+
+			public static void Reset () 
+			{
+				resolvedIds = null;
+				resolvedTypes = null;
+			}
+
+			private static List<string> resolvedTypes;
+			private static List<string> resolvedIds;
+		}
+
+		[Test]
+		public void CustomTypeResolver ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer (new CustomResolver ());
+			X x = new X ();
+			x.Init ();
+
+			string s = ser.Serialize (x);
+
+			CustomResolver.Reset ();
+			X x1 = (X) ser.DeserializeObject (s);
+			Assert.IsTrue (x.Equals (x1), "x != x1");
+
+			CustomResolver.Reset ();
+			X x2 = ser.Deserialize<X> (s);
+			Assert.IsTrue (x.Equals (x2), "x != x2");
 		}
 	}
 }
