@@ -154,7 +154,7 @@ namespace System.Threading
 
 		Runner runner;
 		AutoResetEvent start_event;
-		Thread t;
+		WeakReference weak_t;
 
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -201,7 +201,10 @@ namespace System.Threading
 			start_event = new AutoResetEvent (false);
 			runner = new Runner (callback, state, start_event);
 			Change (dueTime, period);
-			t = new Thread (new ThreadStart (runner.Start));
+			Thread t = new Thread (new ThreadStart (runner.Start));
+
+			weak_t = new WeakReference (t);
+			
 			t.IsBackground = true;
 			t.Start ();
 		}
@@ -255,11 +258,13 @@ namespace System.Threading
 
 		public void Dispose ()
 		{
+			Thread t = (Thread)weak_t.Target;
+				
 			if (t != null && t.IsAlive) {
 				if (t != Thread.CurrentThread)
 					t.Abort ();
-				t = null;
 			}
+
 			if (runner != null) {
 				runner.Dispose ();
 				runner = null;
@@ -276,6 +281,8 @@ namespace System.Threading
 
 		~Timer ()
 		{
+			Thread t = (Thread)weak_t.Target;
+			
 			if (t != null && t.IsAlive)
 				t.Abort ();
 

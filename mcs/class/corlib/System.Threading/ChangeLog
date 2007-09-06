@@ -1,3 +1,11 @@
+2007-09-06  Dick Porter  <dick@ximian.com>
+
+	* Timer.cs: Only hold a WeakReference to the runner thread, to
+	work around an issue when finalizing at shutdown or (I think)
+	appdomain unload.  (Basically, the Thread was being finalized
+	first, but the Timer's finalizer was still trying to reference it
+	subsequently.)
+
 2007-08-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Thread.cs: Throw ThreadStateException when retrieving ApartmentState
