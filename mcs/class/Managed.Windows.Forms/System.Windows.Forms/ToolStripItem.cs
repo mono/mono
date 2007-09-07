@@ -90,6 +90,7 @@ namespace System.Windows.Forms
 		private string tool_tip_text;
 		private bool visible;
 
+		private EventHandler frame_handler;	// For animating images
 		private ToolStrip parent;
 		private Size text_size;
 		#endregion
@@ -454,11 +455,15 @@ namespace System.Windows.Forms
 			}
 			set {
 				if (this.image != value) {
+					StopAnimation ();
+					
 					this.image = value; 
 					this.image_index = -1;
 					this.image_key = string.Empty;
 					this.CalculateAutoSize (); 
 					this.Invalidate ();
+					
+					BeginAnimation ();
 				}
 			}
 		}
@@ -904,7 +909,12 @@ namespace System.Windows.Forms
 		{
 			if (!is_disposed && disposing)
 				is_disposed = true;
-				
+
+			if (image != null) {
+				StopAnimation ();
+				image = null;
+			}
+			
 			base.Dispose (disposing);
 		}
 		
@@ -1228,6 +1238,11 @@ namespace System.Windows.Forms
 			this.visible = visible;
 			this.OnVisibleChanged (EventArgs.Empty);
 			this.Invalidate ();
+			
+			if (this.visible)
+				BeginAnimation ();
+			else
+				StopAnimation ();
 		}
 		#endregion
 
@@ -1450,7 +1465,6 @@ namespace System.Windows.Forms
 
 			if (final_size != this.Size) {
 				this.bounds.Width = final_size.Width;
-				this.Invalidate ();
 				if (this.parent != null)
 					this.parent.PerformLayout ();
 			}
@@ -1726,6 +1740,47 @@ namespace System.Windows.Forms
 		internal virtual void SetPlacement (ToolStripItemPlacement placement)
 		{
 			this.placement = placement;
+		}
+
+		private void BeginAnimation ()
+		{
+			if (image != null && ImageAnimator.CanAnimate (image)) {
+				frame_handler = new EventHandler (OnAnimateImage);
+				ImageAnimator.Animate (image, frame_handler);
+			}
+		}
+
+		private void OnAnimateImage (object sender, EventArgs e)
+		{
+			// This is called from a worker thread,BeginInvoke is used
+			// so the control is updated from the correct thread
+
+			// Check if we have a handle again, since it may have gotten
+			// destroyed since the last time we checked.
+			if (Parent == null || !Parent.IsHandleCreated)
+				return;
+
+			Parent.BeginInvoke (new EventHandler (UpdateAnimatedImage), new object[] { this, e });
+		}
+
+		private void StopAnimation ()
+		{
+			if (frame_handler == null)
+				return;
+				
+			ImageAnimator.StopAnimate (image, frame_handler);
+			frame_handler = null;
+		}
+
+		private void UpdateAnimatedImage (object sender, EventArgs e)
+		{
+			// Check if we have a handle again, since it may have gotten
+			// destroyed since the last time we checked.
+			if (Parent == null || !Parent.IsHandleCreated)
+				return;
+
+			ImageAnimator.UpdateFrames (image);
+			Invalidate ();
 		}
 
 		internal bool ShowMargin {

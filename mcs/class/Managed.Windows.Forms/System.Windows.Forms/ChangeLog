@@ -1,5 +1,10 @@
 2007-09-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Add support for animated images.
+	[Fixes bug #82726]
+
+2007-09-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Make sure we aren't drawing anything that isn't 
 	visible.  [Fixes bug #82727]
 
