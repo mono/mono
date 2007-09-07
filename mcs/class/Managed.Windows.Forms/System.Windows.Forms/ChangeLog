@@ -1,3 +1,9 @@
+2007-09-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: When updating ZOrder for a child control,
+	take into account the implicit ones (we need it in our controls
+	using them). Fixes #82642.
+
 2007-09-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Add support for animated images.
