@@ -1,3 +1,10 @@
+2007-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c mini.h mini.c: Add a new devel command line option for injecting
+	async exceptions into a method.
+
+	* mini-amd64.h mini-amd64.c: Implement injecting of async exceptions for the
+	purpose of testing whenever the unwinder works at every instruction.
 
 Thu Sep 6 12:42:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
