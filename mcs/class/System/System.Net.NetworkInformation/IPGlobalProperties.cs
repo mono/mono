@@ -41,7 +41,6 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO ("Properties are not implemented on non-Windows platform. A marshalling issue on Windows")]
 		public static IPGlobalProperties GetIPGlobalProperties ()
 		{
 			switch (Environment.OSVersion.Platform) {
@@ -88,6 +87,12 @@ namespace System.Net.NetworkInformation {
 	// http://www.linuxdevcenter.com/linux/2000/11/16/example2.html
 	class MibIPGlobalProperties : IPGlobalProperties
 	{
+		[DllImport ("libc")]
+		static extern int gethostname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
+
+		[DllImport ("libc")]
+		static extern int getdomainname ([MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 1)] byte [] name, int len);
+
 		public const string ProcDir = "/proc";
 		public const string CompatProcDir = "/usr/compat/linux/proc";
 
@@ -279,23 +284,35 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { return Win32_FIXED_INFO.Instance.ScopeId; }
+			get { String.Empty; }
 		}
 
 		public override string DomainName {
-			get { return Win32_FIXED_INFO.Instance.DomainName; }
+			get {
+				byte [] bytes = new byte [256];
+				if (getdomainname (bytes, 256) != 0)
+					throw new NetworkInformationException ();
+				int len = Array.IndexOf<byte> (bytes, 0);
+				return Encoding.ASCII.GetString (bytes, 0, len < 0 ? 256 : len);
+			}
 		}
 
 		public override string HostName {
-			get { return Win32_FIXED_INFO.Instance.HostName; }
+			get {
+				byte [] bytes = new byte [256];
+				if (gethostname (bytes, 256) != 0)
+					throw new NetworkInformationException ();
+				int len = Array.IndexOf<byte> (bytes, 0);
+				return Encoding.ASCII.GetString (bytes, 0, len < 0 ? 256 : len);
+			}
 		}
 
 		public override bool IsWinsProxy {
-			get { return Win32_FIXED_INFO.Instance.EnableProxy != 0; }
+			get { return false; } // no WINS
 		}
 
 		public override NetBiosNodeType NodeType {
-			get { return Win32_FIXED_INFO.Instance.NodeType; }
+			get { return NetBiosNodeType.Unknown; } // no NetBios
 		}
 	}
 
@@ -505,23 +522,23 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.ScopeId; }
 		}
 
 		public override string DomainName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.DomainName; }
 		}
 
 		public override string HostName {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.HostName; }
 		}
 
 		public override bool IsWinsProxy {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.EnableProxy != 0; }
 		}
 
 		public override NetBiosNodeType NodeType {
-			get { throw new NotImplementedException (); }
+			get { return Win32_FIXED_INFO.Instance.NodeType; }
 		}
 
 		// PInvokes

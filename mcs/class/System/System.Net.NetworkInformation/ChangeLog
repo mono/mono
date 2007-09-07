@@ -1,3 +1,7 @@
+2007-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPGlobalProperties.cs : implemented properties on linux.
+
 2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Ping.cs, PingReply.cs, PingCompletedEventArgs.cs : implemented
