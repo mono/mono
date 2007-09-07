@@ -1,3 +1,8 @@
+2007-09-07  Dick Porter  <dick@ximian.com>
+
+	* Timer.cs: This calls Thread methods in the finalizer too, so use
+	the same workaround as in r85425.
+
 2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Timer.cs: On 2.0 profile, only allow 32-bit interval in ctor.

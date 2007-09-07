@@ -45,7 +45,7 @@ namespace System.Timers
 		double interval;
 		ISynchronizeInvoke so;
 		ManualResetEvent wait;
-		Thread thread;
+		WeakReference weak_thread;
 		readonly object locker = new object ();
 
 		[Category("Behavior")]
@@ -93,7 +93,9 @@ namespace System.Timers
 				if (value) {
 					exiting = false;
 					wait = new ManualResetEvent (false);
-					thread = new Thread (new ThreadStart (StartTimer));
+					Thread thread = new Thread (new ThreadStart (StartTimer));
+					weak_thread = new WeakReference (thread);
+					
 					thread.IsBackground = true;
 					thread.Start ();
 				} else {
@@ -210,7 +212,11 @@ namespace System.Timers
 
 			// the sleep speeds up the join under linux
 			Thread.Sleep (0);
-			thread.Join ();
+
+			Thread thread = (Thread)weak_thread.Target;
+			
+			if (thread != null)
+				thread.Join ();
 		}
 	}
 }
