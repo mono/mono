@@ -1,3 +1,8 @@
+2007-09-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Make sure we aren't drawing anything that isn't 
+	visible.  [Fixes bug #82727]
+
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: If AutoSize changes the size of our item, invalidate

@@ -964,9 +964,11 @@ namespace System.Windows.Forms
 
 			// Make each item draw itself
 			foreach (ToolStripItem tsi in this.displayed_items) {
-				e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);
-				tsi.FireEvent (e, ToolStripItemEventType.Paint);
-				e.Graphics.ResetTransform ();
+				if (tsi.Visible) {
+					e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);
+					tsi.FireEvent (e, ToolStripItemEventType.Paint);
+					e.Graphics.ResetTransform ();
+				}
 			}
 
 			// Paint the Overflow button if it's visible
