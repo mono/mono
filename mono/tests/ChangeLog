@@ -1,5 +1,7 @@
 2007-09-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* async-exceptions.cs Makefile.am: New test case, not working yet.
+
 	* Makefile.am: Allways distribute coreclr-security.cs.
 
 2007-09-03  Zoltan Varga  <vargaz@gmail.com>
