@@ -1,3 +1,7 @@
+2007-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Allways distribute coreclr-security.cs.
+
 2007-09-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Increase a timeout.
