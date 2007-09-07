@@ -1,3 +1,11 @@
+2007-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: another modification to the way
+	TemplateInstance.Single templates are treated. The search for
+	parent with this attribute set stops as soon as the first
+	TemplateBuilder is encountered, no matter what the value of its
+	TemplateInstance attribute is.
+
 2007-09-06  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: ID must be assigned as soon as

@@ -1279,11 +1279,9 @@ namespace System.Web.Compilation
 						continue;
 					}
 					
-					if (tpb.TemplateInstance == TemplateInstance.Single) {
+					if (tpb.TemplateInstance == TemplateInstance.Single)
 						singleInstance = true;
-						break;
-					}
-					pb = pb.parentBuilder;
+					break;
 				}
 				
 				if (!singleInstance)
