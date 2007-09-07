@@ -2,7 +2,7 @@
 // System.Web.SessionState.SessionInProcHandler
 //
 // Authors:
-//	Marek Habersack <grendello@gmail.com
+//	Marek Habersack <grendello@gmail.com>
 //
 // (C) 2006 Marek Habersack
 //
@@ -50,12 +50,14 @@ namespace System.Web.SessionState
 		public Int32 lockId;
 		public int timeout;
 		public bool resettingTimeout;
+		public HttpStaticObjectsCollection staticItems;
 		
 		internal InProcSessionItem ()
 		{
 			this.locked = false;
 			this.cookieless = false;
 			this.items = null;
+			this.staticItems = null;
 			this.lockedTime = DateTime.MinValue;
 			this.expiresAt = DateTime.MinValue;
 			this.rwlock = new ReaderWriterLock ();
@@ -73,12 +75,12 @@ namespace System.Web.SessionState
 		CacheItemRemovedCallback removedCB;
 		//NameValueCollection privateConfig;
 		SessionStateItemExpireCallback expireCallback;
-
+		HttpStaticObjectsCollection staticObjects;
+		
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout)
 		{
 			return new SessionStateStoreData (new SessionStateItemCollection (),
-							  HttpApplicationFactory.ApplicationState.SessionObjects,
-							  timeout);
+							  staticObjects, timeout);
 		}
 
 		void InsertSessionItem (InProcSessionItem item, int timeout, string id)
@@ -155,8 +157,11 @@ namespace System.Web.SessionState
 					actions = SessionStateActions.InitializeItem;
 					item.items = new SessionStateItemCollection ();
 				}
+				if (item.staticItems == null)
+					item.staticItems = staticObjects;
+				
 				return new SessionStateStoreData (item.items,
-								  HttpApplicationFactory.ApplicationState.SessionObjects,
+								  item.staticItems,
 								  item.timeout);
 			} catch {
 				// we want such errors to be passed to the application.
@@ -202,7 +207,7 @@ namespace System.Web.SessionState
 		
 		public override void InitializeRequest (HttpContext context)
 		{
-			// nothing to do here
+			staticObjects = HttpApplicationFactory.ApplicationState.SessionObjects.Clone ();
 		}
 		
 		public override void ReleaseItemExclusive (HttpContext context,
@@ -302,6 +307,7 @@ namespace System.Web.SessionState
 				inProcItem.rwlock.AcquireWriterLock (lockAcquireTimeout);
 				inProcItem.locked = false;
 				inProcItem.items = item.Items;
+				inProcItem.staticItems = item.StaticObjects;
 				InsertSessionItem (inProcItem, item.Timeout, CacheId);
 			} catch {
 				throw;
@@ -344,7 +350,7 @@ namespace System.Web.SessionState
 					expireCallback (key,
 							new SessionStateStoreData (
 								item.items,
-								HttpApplicationFactory.ApplicationState.SessionObjects,
+								item.staticItems,
 								item.timeout));
 				} else
 					expireCallback (key, null);

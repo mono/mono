@@ -1,3 +1,11 @@
+2007-09-07  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs: properly clone the
+	ApplicationState.SessionObjects at the start of the request and
+	use the copy when creating new storage items. That way session
+	scope static objects are valid within a single session only. Fixes
+	bug #82709
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateServerHandler.cs: remove unused field.
