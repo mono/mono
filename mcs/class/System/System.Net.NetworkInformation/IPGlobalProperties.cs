@@ -284,7 +284,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string DhcpScopeName {
-			get { String.Empty; }
+			get { return String.Empty; }
 		}
 
 		public override string DomainName {
