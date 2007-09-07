@@ -1,3 +1,11 @@
+2007-09-07  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (Expression.MemberLookupFinal): Removed unused loc parameter.
+	(MethodGroupExpr.ResolveGeneric): Use existing method group instance.
+	
+	* expression.cs (MemberAccess.DoResolve): Uses generic resolver for
+	generic extension methods.
+
 2007-09-06  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #82676 (Do I get it right now?)

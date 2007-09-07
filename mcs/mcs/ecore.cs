@@ -758,12 +758,12 @@ namespace Mono.CSharp {
 
 			// No errors were reported by MemberLookup, but there was an error.
 			return Error_MemberLookupFailed (ec.ContainerType, qualifier_type, queried_type,
-					name, null, mt, bf, loc);
+					name, null, mt, bf);
 		}
 
 		protected Expression Error_MemberLookupFailed (Type container_type, Type qualifier_type,
 						       Type queried_type, string name, string class_name,
-							   MemberTypes mt, BindingFlags bf, Location loc)
+							   MemberTypes mt, BindingFlags bf)
 		{
 			if (almostMatchedMembers.Count != 0) {
 				for (int i = 0; i < almostMatchedMembers.Count; ++i) {
@@ -2360,7 +2360,7 @@ namespace Mono.CSharp {
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
 				Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
-					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags, loc);
+					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags);
 				return null;
 			}
 
@@ -3074,7 +3074,7 @@ namespace Mono.CSharp {
 	///   can be resolved to the best method overload
 	/// </summary>
 	public class MethodGroupExpr : MemberExpr {
-		public readonly MethodBase [] Methods;
+		public MethodBase [] Methods;
 		MethodBase best_candidate;
 		bool has_type_arguments;
  		bool identical_type_name;
@@ -3121,10 +3121,6 @@ namespace Mono.CSharp {
 		public bool HasTypeArguments {
 			get {
 				return has_type_arguments;
-			}
-
-			set {
-				has_type_arguments = value;
 			}
 		}
 
@@ -3782,7 +3778,7 @@ namespace Mono.CSharp {
 					if (Name == ConstructorInfo.ConstructorName) {
 						if (almostMatchedMembers.Count != 0) {
 							Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
-								null, MemberTypes.Constructor, AllBindingFlags, loc);
+								null, MemberTypes.Constructor, AllBindingFlags);
 						} else {
 							Report.SymbolRelatedToPreviousError (type);
 							Report.Error (1729, loc,
@@ -3987,11 +3983,9 @@ namespace Mono.CSharp {
 			}
 
 			if (list.Count > 0) {
-				MethodGroupExpr new_mg = new MethodGroupExpr (list, type, Location);
-				new_mg.InstanceExpression = InstanceExpression;
-				new_mg.HasTypeArguments = true;
-				new_mg.IsBase = IsBase;
-				return new_mg;
+				this.Methods = (MethodBase []) list.ToArray (typeof (MethodBase));
+				has_type_arguments = true;
+				return this;
 			}
 
 			if (first != null) {

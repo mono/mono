@@ -6869,13 +6869,17 @@ namespace Mono.CSharp {
 				ExtensionMethodGroupExpr ex_method_lookup = ec.DeclContainer.LookupExtensionMethod (expr_type, Identifier);
 				if (ex_method_lookup != null) {
 					ex_method_lookup.ExtensionExpression = expr_resolved;
+
+					if (args != null)
+						return ex_method_lookup.ResolveGeneric (ec, args);
+
 					return ex_method_lookup.DoResolve (ec);
 				}
 
 				if (!ec.IsInProbingMode)
 					Error_MemberLookupFailed (
 						ec.ContainerType, expr_type, expr_type, Identifier, null,
-						AllMemberTypes, AllBindingFlags, loc);
+						AllMemberTypes, AllBindingFlags);
 				return null;
 			}
 
@@ -8111,7 +8115,7 @@ namespace Mono.CSharp {
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
 				Error_MemberLookupFailed (ec.ContainerType, base_type, base_type, Identifier,
-					null, AllMemberTypes, AllBindingFlags, loc);
+					null, AllMemberTypes, AllBindingFlags);
 				return null;
 			}
 
