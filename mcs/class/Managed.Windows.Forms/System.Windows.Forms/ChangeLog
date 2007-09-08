@@ -1,5 +1,12 @@
 2007-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ColumnHeaderSample.cs: Use 5 pixels as extra height instead of 8
+	to match .Net.
+	* ThemeWin32Classic.cs: For the columns text, use 5 pixels as left padding
+	instead of 8, just like above. Partially fixes #82734.
+
+2007-09-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	Patch by Ernesto Carrea <equistango at gmail.com>. Partially 
 	fixes #82734.
 

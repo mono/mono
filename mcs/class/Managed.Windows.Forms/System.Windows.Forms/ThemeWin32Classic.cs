@@ -2553,8 +2553,8 @@ namespace System.Windows.Forms
 						else
 							state = ButtonState.Flat;
 						CPDrawButton (dc, rect, state);
-						rect.X += 8;
-						rect.Width -= 13;
+						rect.X += 5;
+						rect.Width -= 10;
 						if (rect.Width <= 0)
 							continue;
 

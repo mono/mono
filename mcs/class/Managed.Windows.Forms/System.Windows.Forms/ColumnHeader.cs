@@ -152,9 +152,9 @@ namespace System.Windows.Forms
 			format.FormatFlags = StringFormatFlags.NoWrap;
 
 			if (owner != null)
-				column_rect.Height = owner.Font.Height + 8;
+				column_rect.Height = owner.Font.Height + 5;
 			else
-				column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 8;
+				column_rect.Height = ThemeEngine.Current.DefaultFont.Height + 5;
 
 			if (width >= 0)
 				column_rect.Width = width;
