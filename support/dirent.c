@@ -17,6 +17,16 @@
 #include "map.h"
 #include "mph.h"
 
+#if defined (PATH_MAX) && defined (NAME_MAX)
+	#define MPH_PATH_MAX MAX(PATH_MAX, NAME_MAX)
+#elif defined (PATH_MAX)
+	#define MPH_PATH_MAX PATH_MAX
+#elif defined (NAME_MAX)
+	#define MPH_PATH_MAX NAME_MAX
+#else /* !defined PATH_MAX && !defined NAME_MAX */
+	#define MPH_PATH_MAX 2048
+#endif
+
 G_BEGIN_DECLS
 
 gint32
@@ -78,8 +88,7 @@ Mono_Posix_Syscall_readdir (void *dirp, struct Mono_Posix_Syscall__Dirent *entry
 gint32
 Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
-	struct dirent *_entry = malloc(sizeof(struct dirent) + 
-			MAX(PATH_MAX, NAME_MAX) + 1);
+	struct dirent *_entry = malloc (sizeof (struct dirent) + MPH_PATH_MAX + 1);
 	int r;
 
 	r = readdir_r (dirp, _entry, (struct dirent**) result);

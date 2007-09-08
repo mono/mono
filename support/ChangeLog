@@ -1,3 +1,7 @@
+2007-09-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c: NAME_MAX isn't defined on Solaris; fix the build.
+
 2007-09-04  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* dirent.c: Fix `struct dirent' overflow on Solaris.  See #82678.
