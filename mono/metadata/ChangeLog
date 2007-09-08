@@ -1,4 +1,14 @@
 
+2007-09-09  Robert Jordan  <robertj@gmx.net>
+
+	* object.c (mono_class_proxy_vtable): Don't create remoting trampolines
+	for generic methods.
+
+	* object.c (mono_object_get_virtual_method): Handle generic methods.
+	Fixes bug #78882.
+
+	Code is contributed under MIT/X11 license.
+
 Sat Sep 8 18:16:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* image.c: fix locking in mono_image_load_file_for_image ().
