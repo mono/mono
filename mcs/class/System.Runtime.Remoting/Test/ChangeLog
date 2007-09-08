@@ -1,3 +1,7 @@
+2007-09-09  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs: Add tests for bug #78882, #81554.
+
 2007-06-05  Robert Jordan  <robertj@gmx.net>
 
 	* RemotingServicesTest.cs: Add test for bug #81811.

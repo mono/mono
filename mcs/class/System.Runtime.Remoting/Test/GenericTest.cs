@@ -18,80 +18,182 @@ using NUnit.Framework;
 
 namespace MonoTests.Remoting
 {
-	class Server <T> : MarshalByRefObject
+	public interface INested
 	{
-		public T Field;
+		int Test (int i);
+		int Test (int a, int b);
+		V Test <V> (V v);
+		V Test <V, T> (V v, T t);
+	}
 
-		public void Test ()
+	public interface ITest
+	{
+		V TestIface<V> (V v);
+		int TestDirectIfaceImpl (int i);
+		INested GetNested ();
+		INested GetNestedMbr ();
+	}
+
+	public class ServerBase<T> : MarshalByRefObject, ITest
+	{
+		public virtual V TestVirt<V> (V v)
 		{
+			return default (V);
 		}
 
-		public V Test2 <V> (V v)
+		public V TestIface<V> (V v)
 		{
 			return v;
 		}
 
-		public T Test3 (T t)
+		int ITest.TestDirectIfaceImpl (int i)
 		{
-			return t;
+			return i;
+		}
+
+		public INested GetNested ()
+		{
+			return new Nested ();
+		}
+
+		public INested GetNested (string s)
+		{
+			return new Nested ();
+		}
+
+		public INested GetNestedMbr ()
+		{
+			return new NestedMbr ();
 		}
 	}
+
+	public class Server<T> : ServerBase<T>
+	{
+		public override V TestVirt<V> (V v)
+		{
+			return v;
+		}
+	}
+
+	[Serializable]
+	public class Nested : INested
+	{
+		public int Test (int i)
+		{
+			return i;
+		}
+
+		int INested.Test (int a, int b)
+		{
+			return a + b;
+		}
+
+		public V Test <V> (V v)
+		{
+			return v;
+		}
+
+		V INested.Test <V, T> (V v, T t)
+		{
+			return default (V);
+		}
+	}
+
+	public class NestedMbr : MarshalByRefObject, INested
+	{
+		public int Test (int i)
+		{
+			return i;
+		}
+
+		int INested.Test (int a, int b)
+		{
+			return a + b;
+		}
+
+		public V Test <V> (V v)
+		{
+			return v;
+		}
+
+		V INested.Test <V, T> (V v, T t)
+		{
+			return default (V);
+		}
+	}
+
 
 	[TestFixture]
 	public class GenericTest
 	{
-		class Helper
+		[Test]
+		public void TestCrossAppDomainChannel ()
 		{
-			public static void Test (string url)
-			{
-				// create server
-				Server <int> server = new Server <int> ();
-				RemotingServices.Marshal (server, "test");
-				try {
-					// create client
-					Server <int> client = (Server <int>) RemotingServices.Connect (
-						typeof (Server <int>), url);
-			
-					// invoke
-					client.Test ();
-					Assert.AreEqual ("hello", client.Test2 <string> ("hello"), "#01");
-					Assert.AreEqual (42, client.Test3 (42), "#02");
-
-				} finally {
-					RemotingServices.Disconnect (server);
-				}
-			}
+			RunTests (GetRemObject <Server<object>> ());
 		}
 
 		[Test]
-		public void TestTcp ()
+		public void TestTcpChannel ()
 		{
-			TcpChannel c = new TcpChannel (18181);
-			Helper.Test ("tcp://127.0.0.1:18181/test");
-			c.StopListening (null);
+			RunTests (GetRemObjectTcp <Server<object>> ());
 		}
 
-		[Test]
-		public void TestIpc ()
+		static T GetRemObject <T> () where T: MarshalByRefObject
 		{
-			string portName = "ipc" + Guid.NewGuid ().ToString ("N");
-			IpcChannel c = new IpcChannel (portName);
-			// FIXME: the named pipe of the Win32 IpcServerChannel
-			// seems to require a sleep because the pipe is not
-			// ready immediately after creation.
-			Thread.Sleep (1000);
-			Helper.Test ("ipc://" + portName + "/test");
-			c.StopListening (null);
+			AppDomain d = AppDomain.CreateDomain ("Foo");
+			return (T) d.CreateInstanceAndUnwrap (
+				typeof (T).Assembly.FullName,
+				typeof (T).FullName);
 		}
 
-		[Test]
-		[Ignore ("The SOAP formatter doesn't support generics.")]
-		// FIXME: change the SOAP formatter to throw on generic types
-		public void TestHttp ()
+		static T GetRemObjectTcp <T> () where T: MarshalByRefObject
 		{
-			HttpChannel c = new HttpChannel (19191);
-			Helper.Test ("http://127.0.0.1:19191/test");
-			c.StopListening (null);
+			new TcpChannel (18191);
+			object obj = Activator.CreateInstance (typeof(T));
+			RemotingServices.Marshal ((MarshalByRefObject)obj, "test.rem");
+			return (T) RemotingServices.Connect (typeof (T), "tcp://localhost:18191/test.rem");
+		}
+
+		static void RunTests (ServerBase<object> rem)
+		{
+			Assert.AreEqual (42, rem.TestIface<int>(42),
+					 "#1 calling TestIface on object instance");
+
+			Assert.AreEqual (42, rem.TestVirt<int>(42),
+					 "#2 calling TestVirt");
+
+			ITest i = rem;
+			Assert.AreEqual (42, i.TestIface<int>(42),
+					 "#3 calling TestIface on interface");
+
+			Assert.AreEqual (42, i.TestDirectIfaceImpl (42),
+					 "#4 calling TestDirectIfaceImp");
+
+			INested cao = rem.GetNested ();
+			Assert.AreEqual (42, cao.Test (42),
+					 "#5 calling INested.Test (int)");
+
+			Assert.AreEqual (42, cao.Test (21, 21),
+					 "#6 calling INested.Test (int, int)");
+
+			Assert.AreEqual (42, cao.Test<int> (42),
+					 "#7 calling INested.Test<V>");
+
+			Assert.AreEqual (0, cao.Test<int, string> (42, "bar"),
+					 "#8 calling INested.Test<V, T>");
+
+			cao = rem.GetNestedMbr ();
+			Assert.AreEqual (42, cao.Test (42),
+					 "#9 calling INested.Test (int)");
+
+			Assert.AreEqual (42, cao.Test (21, 21),
+					 "#10 calling INested.Test (int, int)");
+
+			Assert.AreEqual (42, cao.Test<int> (42),
+					 "#11 calling INested.Test<V>");
+
+			Assert.AreEqual (0, cao.Test<int, string> (42, "bar"),
+					 "#12 calling INested.Test<V, T>");
 		}
 	}
 }
