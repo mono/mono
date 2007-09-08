@@ -1,3 +1,14 @@
+2007-08-30  Robert Jordan  <robertj@gmx.net>
+
+	* RemotingServices.cs (InternalExecuteMessage): Resolve interface
+	methods correctly. Fixes #81554. Ditto for generic methods.
+
+	* RemotingServices.cs (GetMethodBaseFromName): Reuse already computed
+	FieldSetter|GetterMethods.
+
+	* RemotingServices.cs (GetMethodBaseFromName): New overload that
+	takes generic arguments into account.
+
 2007-08-15  Mark Probst  <mark.probst@gmail.com>
 
 	* RemotingServices.cs: Make sure InternalExecute doesn't get

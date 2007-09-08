@@ -327,12 +327,23 @@ namespace System.Runtime.Remoting.Messaging {
 					_methodBase = RemotingServices.GetMethodBaseFromName (requestType, _methodName, _methodSignature);
 					if (_methodBase == null)
 						throw new RemotingException ("Method " + _methodName + " not found in " + type);
+
 					
 					// If the method is implemented in an interface, look for the method implementation.
 					// It can't be done in the previous GetMethodBaseFromName call because at that point we
 					// may not yet have the method signature.
-					if (requestType != type && requestType.IsInterface)
-						_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, (Type[]) MethodSignature);
+					if (requestType != type && requestType.IsInterface) {
+#if NET_2_0
+						if (_methodBase.IsGenericMethod)
+							_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, (Type[]) MethodSignature, _methodBase.GetGenericArguments ());
+						else // fall through
+#endif
+							_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, (Type[]) MethodSignature);
+					}
+
+					if (_methodBase == null)
+						throw new RemotingException ("Method " + _methodName + " not found in " + type);
+
 				}
 				else
 					throw new RemotingException ("Cannot cast from client type '" + _typeName + "' to server type '" + type.FullName + "'");

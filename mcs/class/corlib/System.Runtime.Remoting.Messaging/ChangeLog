@@ -1,3 +1,9 @@
+2007-09-07   Robert Jordan  <robertj@gmx.net>
+
+	* MethodCall (ResolveMethod): Handle generic methods in the
+	code that was introduced as a fix for #82240.
+	Fixes #81554.
+
 2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LogicalCallContext.cs, MethodCall.cs, MethodCallMessageWrapper.cs,
