@@ -768,12 +768,11 @@ namespace System.Windows.Forms {
 			remove { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException ();
 		}
 	}
-
 }
 
 #endif

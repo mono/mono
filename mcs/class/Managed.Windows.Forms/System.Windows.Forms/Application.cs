@@ -44,24 +44,33 @@ using System.Text;
 using System.Windows.Forms.VisualStyles;
 #endif
 
-namespace System.Windows.Forms {
-	public sealed class Application {
-		internal class MWFThread {
+namespace System.Windows.Forms
+{
+	public sealed class Application
+	{
+		internal class MWFThread
+		{
 			#region Fields
-			private ApplicationContext	context;
-			private bool			messageloop_started;
-			private bool                    handling_exception;
-			private int			thread_id;
 
-			private static Hashtable	threads = new Hashtable();
+			private ApplicationContext context;
+			private bool messageloop_started;
+			private bool handling_exception;
+			private int thread_id;
+
+			private static readonly Hashtable threads = new Hashtable();
+
 			#endregion	// Fields
 
 			#region Constructors
-			private MWFThread() {
+
+			private MWFThread()
+			{
 			}
+
 			#endregion	// Constructors
 
 			#region Properties
+
 			public ApplicationContext Context {
 				get { return context; }
 				set { context = value; }
@@ -75,7 +84,6 @@ namespace System.Windows.Forms {
 			public bool HandlingException {
 				get { return handling_exception; }
 				set { handling_exception = value; }
-
 			}
 
 			public static int LoopCount {
@@ -95,62 +103,65 @@ namespace System.Windows.Forms {
 
 			public static MWFThread Current {
 				get {
-					MWFThread	thread;
+					MWFThread thread = null;
 
-					thread = null;
 					lock (threads) {
-						thread = (MWFThread)threads[Thread.CurrentThread.GetHashCode()];
+						thread = (MWFThread) threads [Thread.CurrentThread.GetHashCode ()];
 						if (thread == null) {
 							thread = new MWFThread();
-							thread.thread_id = Thread.CurrentThread.GetHashCode();
-							threads[thread.thread_id] = thread;
+							thread.thread_id = Thread.CurrentThread.GetHashCode ();
+							threads [thread.thread_id] = thread;
 						}
 					}
 
 					return thread;
 				}
 			}
+
 			#endregion	// Properties
 
 			#region Methods
-			public void Exit() {
-				if (context != null) {
+
+			public void Exit ()
+			{
+				if (context != null)
 					context.ExitThread();
-				}
 				context = null;
 
-				if (Application.ThreadExit != null) {
+				if (Application.ThreadExit != null)
 					Application.ThreadExit(null, EventArgs.Empty);
-				}
 
 				if (LoopCount == 0) {
-					if (Application.ApplicationExit != null) {
-						Application.ApplicationExit(null, EventArgs.Empty);
-					}
+					if (Application.ApplicationExit != null)
+						Application.ApplicationExit (null, EventArgs.Empty);
 				}
 
-				((MWFThread)threads[thread_id]).MessageLoop = false;
+				((MWFThread) threads [thread_id]).MessageLoop = false;
 			}
+
 			#endregion	// Methods
 		}
 
-		private static bool			browser_embedded	= false;
-		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
-		private static string			safe_caption_format	= "{1} - {0} - {2}";
-		private static ArrayList		message_filters		= new ArrayList();
-		private static FormCollection		forms			= new FormCollection ();
+		private static bool browser_embedded;
+		private static InputLanguage input_language = InputLanguage.CurrentInputLanguage;
+		private static string safe_caption_format = "{1} - {0} - {2}";
+		private static readonly ArrayList message_filters = new ArrayList();
+		private static readonly FormCollection forms = new FormCollection ();
 
 #if NET_2_0
-		private static bool use_wait_cursor = false;
+		private static bool use_wait_cursor;
 		private static ToolStrip keyboard_capture;
 		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 #endif
 
-		private Application () {
+		private Application ()
+		{
 		}
 
 		#region Private Methods
-		internal static void CloseForms(Thread thread) {
+
+		internal static void CloseForms (Thread thread)
+		{
 			#if DebugRunLoop
 				Console.WriteLine("   CloseForms({0}) called", thread);
 			#endif
@@ -171,9 +182,11 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
 		#endregion	// Private methods
 
 		#region Public Static Properties
+
 		public static bool AllowQuit {
 			get {
 				return !browser_embedded;
@@ -182,17 +195,15 @@ namespace System.Windows.Forms {
 
 		public static string CommonAppDataPath {
 			get {
-				return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+				return Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
 			}
 		}
 
 		public static RegistryKey CommonAppDataRegistry {
 			get {
-				RegistryKey	key;
-
-				key = Registry.LocalMachine.OpenSubKey("Software\\" + Application.CompanyName + "\\" + Application.ProductName + "\\" + Application.ProductVersion, true);
-
-				return key;
+				return Registry.LocalMachine.OpenSubKey ("Software\\" +
+					Application.CompanyName + "\\" + Application.ProductName +
+					"\\" + Application.ProductVersion, true);
 			}
 		}
 
@@ -201,14 +212,11 @@ namespace System.Windows.Forms {
 				Assembly assembly = Assembly.GetEntryAssembly ();
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
-				if (assembly == null)
-					return string.Empty;
-					
-				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[]) assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
-				
-				if ((attrs != null) && attrs.Length>0) {
-					return attrs[0].Company;
-				}
+
+				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[])
+					assembly.GetCustomAttributes (typeof(AssemblyCompanyAttribute), true);
+				if (attrs != null && attrs.Length > 0)
+					return attrs [0].Company;
 
 				return assembly.GetName().Name;
 			}
@@ -218,10 +226,8 @@ namespace System.Windows.Forms {
 			get {
 				return Thread.CurrentThread.CurrentUICulture;
 			}
-
 			set {
-				
-				Thread.CurrentThread.CurrentUICulture=value;
+				Thread.CurrentThread.CurrentUICulture = value;
 			}
 		}
 
@@ -229,7 +235,6 @@ namespace System.Windows.Forms {
 			get {
 				return input_language;
 			}
-
 			set {
 				input_language=value;
 			}
@@ -243,7 +248,9 @@ namespace System.Windows.Forms {
 
 		public static string LocalUserAppDataPath {
 			get {
-				return Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CompanyName), ProductName), ProductVersion);
+				return Path.Combine (Path.Combine (Path.Combine (
+					Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
+					CompanyName), ProductName), ProductVersion);
 			}
 		}
 
@@ -258,14 +265,12 @@ namespace System.Windows.Forms {
 				Assembly assembly = Assembly.GetEntryAssembly ();
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
-				if (assembly == null)
-					return string.Empty;
-					
-				AssemblyProductAttribute[] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
-				
-				if ((attrs != null) && attrs.Length>0) {
-					return attrs[0].Product;
-				}
+
+				AssemblyProductAttribute[] attrs = (AssemblyProductAttribute[])
+					assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
+
+				if (attrs != null && attrs.Length > 0)
+					return attrs [0].Product;
 
 				return assembly.GetName ().Name;
 			}
@@ -278,11 +283,15 @@ namespace System.Windows.Forms {
 				Assembly assembly = Assembly.GetEntryAssembly ();
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
-				if (assembly == null)
-					return string.Empty;
 
-				version = assembly.GetName ().Version.ToString ();
-
+				AssemblyInformationalVersionAttribute infoVersion =
+					Attribute.GetCustomAttribute (assembly,
+					typeof (AssemblyInformationalVersionAttribute))
+					as AssemblyInformationalVersionAttribute;
+				if (infoVersion != null)
+					version = infoVersion.InformationalVersion;
+				else
+					version = assembly.GetName ().Version.ToString ();
 				return version;
 			}
 		}
@@ -291,36 +300,34 @@ namespace System.Windows.Forms {
 			get {
 				return safe_caption_format;
 			}
-
 			set {
-				safe_caption_format=value;
+				safe_caption_format = value;
 			}
 		}
 
 		public static string StartupPath {
 			get {
-				return Path.GetDirectoryName(Application.ExecutablePath);
+				return Path.GetDirectoryName (Application.ExecutablePath);
 			}
 		}
 
 		public static string UserAppDataPath {
 			get {
-				return Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CompanyName), ProductName), ProductVersion);
+				return Path.Combine (Path.Combine (Path.Combine (
+					Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+					CompanyName), ProductName), ProductVersion);
 			}
 		}
 
 		public static RegistryKey UserAppDataRegistry {
 			get {
-				RegistryKey	key;
-
-				key = Registry.CurrentUser.OpenSubKey("Software\\" + Application.CompanyName + "\\" + Application.ProductName + "\\" + Application.ProductVersion, true);
-
-				return key;
+				return Registry.CurrentUser.OpenSubKey ("Software\\" +
+					Application.CompanyName + "\\" + Application.ProductName +
+					"\\" + Application.ProductVersion, true);
 			}
 		}
 
 #if NET_2_0
-
 		public static bool UseWaitCursor {
 			get {
 				return use_wait_cursor;
@@ -336,24 +343,19 @@ namespace System.Windows.Forms {
 		}
 		
 		public static bool RenderWithVisualStyles {
-		      get {
-				if (VisualStyleInformation.IsSupportedByOS)
-				{
+			get {
+				if (VisualStyleInformation.IsSupportedByOS) {
 					if (!VisualStyleInformation.IsEnabledByUser)
 						return false;
-				  
 					if (!XplatUI.ThemesEnabled)
 						return false;
-				  
 					if (Application.VisualStyleState == VisualStyleState.ClientAndNonClientAreasEnabled)
 						return true;
-				  
 					if (Application.VisualStyleState == VisualStyleState.ClientAreaEnabled)
-				  		return true;
+						return true;
 				}
-				
 				return false;
-		      }
+			}
 		}
 
 		public static VisualStyleState VisualStyleState {
@@ -365,18 +367,22 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Public Static Methods
-		public static void AddMessageFilter(IMessageFilter value) {
+
+		public static void AddMessageFilter (IMessageFilter value)
+		{
 			lock (message_filters) {
-				message_filters.Add(value);
+				message_filters.Add (value);
 			}
 		}
 
-		public static void DoEvents() {
-			XplatUI.DoEvents();
+		public static void DoEvents ()
+		{
+			XplatUI.DoEvents ();
 		}
 
-		public static void EnableVisualStyles() {
-			XplatUI.EnableThemes();
+		public static void EnableVisualStyles ()
+		{
+			XplatUI.EnableThemes ();
 		}
 
 #if NET_2_0
@@ -510,9 +516,10 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		public static void Exit() {
-			XplatUI.PostQuitMessage(0);
-			CloseForms(null);
+		public static void Exit ()
+		{
+			XplatUI.PostQuitMessage (0);
+			CloseForms (null);
 		}
 
 #if NET_2_0
@@ -540,18 +547,21 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		public static void ExitThread() {
+		public static void ExitThread()
+		{
 			CloseForms(Thread.CurrentThread);
 			// this might not be right - need to investigate (somehow) if a WM_QUIT message is generated here
 			XplatUI.PostQuitMessage(0);
 		}
 
-		public static ApartmentState OleRequired() {
+		public static ApartmentState OleRequired ()
+		{
 			//throw new NotImplementedException("OLE Not supported by this System.Windows.Forms implementation");
 			return ApartmentState.Unknown;
 		}
 
-		public static void OnThreadException(Exception t) {
+		public static void OnThreadException (Exception t)
+		{
 			if (MWFThread.Current.HandlingException) {
 				/* we're already handling an exception and we got
 				   another one?  print it out and exit, this means
@@ -583,22 +593,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static void RemoveMessageFilter(IMessageFilter filter) {
+		public static void RemoveMessageFilter (IMessageFilter filter)
+		{
 			lock (message_filters) {
-				message_filters.Remove(filter);
+				message_filters.Remove (filter);
 			}
 		}
 
-		public static void Run() {
-			RunLoop(false, new ApplicationContext());
+		public static void Run ()
+		{
+			RunLoop (false, new ApplicationContext ());
 		}
 
-		public static void Run(Form mainForm) {
-			RunLoop(false, new ApplicationContext(mainForm));
+		public static void Run (Form mainForm)
+		{
+			RunLoop (false, new ApplicationContext (mainForm));
 		}
 
-		public static void Run(ApplicationContext context) {
-			RunLoop(false, context);
+		public static void Run (ApplicationContext context)
+		{
+			RunLoop (false, context);
 		}
 
 		private static void DisableFormsForModalLoop (Queue toplevels, ApplicationContext context)
@@ -635,7 +649,7 @@ namespace System.Windows.Forms {
 					// Disable the rest
 					if (f.IsHandleCreated && XplatUI.IsEnabled (f.Handle)) {
 #if DebugRunLoop
-								Console.WriteLine("      Disabling form {0}", f);
+						Console.WriteLine("      Disabling form {0}", f);
 #endif
 						XplatUI.EnableWindow (f.Handle, false);
 						toplevels.Enqueue (f);
@@ -650,20 +664,21 @@ namespace System.Windows.Forms {
 		{
 			while (toplevels.Count > 0) {
 #if DebugRunLoop
-						Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
+				Console.WriteLine("      Re-Enabling form form {0}", toplevels.Peek());
 #endif
-				Form c = (Form)toplevels.Dequeue ();
+				Form c = (Form) toplevels.Dequeue ();
 				if (c.IsHandleCreated) {
 					XplatUI.EnableWindow (c.window.Handle, true);
 					context.MainForm = c;
 				}
 			}
 #if DebugRunLoop
-					Console.WriteLine("   Done with the re-enable");
+			Console.WriteLine("   Done with the re-enable");
 #endif
 		}
 
-		internal static void RunLoop(bool Modal, ApplicationContext context) {
+		internal static void RunLoop (bool Modal, ApplicationContext context)
+		{
 			Queue		toplevels;
 			MSG		msg;
 			Object		queue_id;
@@ -682,9 +697,8 @@ namespace System.Windows.Forms {
 
 			msg = new MSG();
 
-			if (context == null) {
+			if (context == null)
 				context = new ApplicationContext();
-			}
 		
 			previous_thread_context = thread.Context;
 			thread.Context = context;
@@ -788,26 +802,26 @@ namespace System.Windows.Forms {
 					quit = true; // make sure we exit
 					break;
 				default:
-					XplatUI.TranslateMessage(ref msg);
-					XplatUI.DispatchMessage(ref msg);
+					XplatUI.TranslateMessage (ref msg);
+					XplatUI.DispatchMessage (ref msg);
 					break;
 				}
 
 				// Handle exit, Form might have received WM_CLOSE and set 'closing' in response
 				if ((context.MainForm != null) && (context.MainForm.closing || (Modal && !context.MainForm.Visible))) {
 					if (!Modal) {
-						XplatUI.PostQuitMessage(0);
+						XplatUI.PostQuitMessage (0);
 					} else {
 						break;
 					}
 				}
 			}
 			#if DebugRunLoop
-				Console.WriteLine("   RunLoop loop left");
+				Console.WriteLine ("   RunLoop loop left");
 			#endif
 
 			thread.MessageLoop = false;
-			XplatUI.EndLoop(Thread.CurrentThread);
+			XplatUI.EndLoop (Thread.CurrentThread);
 
 			if (Modal) {
 				Form old = context.MainForm;
@@ -817,18 +831,19 @@ namespace System.Windows.Forms {
 				EnableFormsForModalLoop (toplevels, context);
 				
 				if (context.MainForm != null && context.MainForm.IsHandleCreated) {
-					XplatUI.SetModal(context.MainForm.Handle, false);
+					XplatUI.SetModal (context.MainForm.Handle, false);
 				}
 				#if DebugRunLoop
-					Console.WriteLine("   Done with the SetModal");
+					Console.WriteLine ("   Done with the SetModal");
 				#endif
 				old.RaiseCloseEvents (true);
 				old.is_modal = false;
 			}
 
 			#if DebugRunLoop
-				Console.WriteLine("Leaving RunLoop(Modal={0}, Form={1})", Modal, context.MainForm != null ? context.MainForm.ToString() : "NULL");
+				Console.WriteLine ("Leaving RunLoop(Modal={0}, Form={1})", Modal, context.MainForm != null ? context.MainForm.ToString() : "NULL");
 			#endif
+
 			if (context.MainForm != null) {
 				context.MainForm.context = null;
 				context.MainForm = null;
@@ -836,17 +851,17 @@ namespace System.Windows.Forms {
 
 			thread.Context = previous_thread_context;
 
-			if (!Modal) {
+			if (!Modal)
 				thread.Exit();
-			}
 		}
 
 		#endregion	// Public Static Methods
 
 		#region Events
-		public static event EventHandler	ApplicationExit;
 
-		public static event EventHandler	Idle {
+		public static event EventHandler ApplicationExit;
+
+		public static event EventHandler Idle {
 			add {
 				XplatUI.Idle += value;
 			}
@@ -855,8 +870,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static event EventHandler	ThreadExit;
-		public static event ThreadExceptionEventHandler	ThreadException;
+		public static event EventHandler ThreadExit;
+		public static event ThreadExceptionEventHandler ThreadException;
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -865,13 +880,16 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static event EventHandler LeaveThreadModal;
 #endif
+
 		#endregion	// Events
 
 		#region Public Delegates
+
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public delegate bool MessageLoopCallback ();
 #endif
+
 		#endregion
 		
 		#region Internal Properties
@@ -884,6 +902,7 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Internal Methods
+
 		internal static void AddForm (Form f)
 		{
 			lock (forms)
@@ -895,6 +914,7 @@ namespace System.Windows.Forms {
 			lock (forms)
 				forms.Remove (f);
 		}
+
 		#endregion
 	}
 }

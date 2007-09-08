@@ -1,3 +1,11 @@
+2007-09-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Application.cs: Modified ProductVersion to return value of
+	AssemblyInformationVersion if available, and fallback to assembly
+	version. Fixes bug #82746. Code formatting.
+	* BindingSource.cs: Remove NIE from Dispose, and mark it MonoTODO
+	instead.
+
 2007-09-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: When updating ZOrder for a child control,
