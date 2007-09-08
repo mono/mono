@@ -1,3 +1,7 @@
+2007-09-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Added test for bug #82440.
+
 2007-08-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileTest.cs: Added test for File.GetAttributes (and indirectly also

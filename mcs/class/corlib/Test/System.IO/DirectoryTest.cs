@@ -1553,6 +1553,25 @@ public class DirectoryTest
 		files = Directory.GetFiles (TempFolder, "*.t*");
 		Assert.IsNotNull (files, "#J1");
 		Assert.AreEqual (2, files.Length, "#J2");
+
+		files = Directory.GetFiles (TempFolder, "temp*.*");
+		Assert.IsNotNull (files, "#K1");
+		Assert.AreEqual (2, files.Length, "#K2");
+
+		// FIXME: uncomment when bug #82440 is fixed
+
+		/**
+		File.Delete (tempFile1);
+
+		files = Directory.GetFiles (TempFolder, "temp*.*");
+		Assert.IsNotNull (files, "#L1");
+		Assert.AreEqual (1, files.Length, "#L2");
+		Assert.AreEqual (tempFile3, files [0], "#L3");
+
+		files = Directory.GetFiles (TempFolder, ".*");
+		Assert.IsNotNull (files, "#M1");
+		Assert.AreEqual (0, files.Length, "#M2");
+		**/
 	}
 
 	[Test]
