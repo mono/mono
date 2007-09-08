@@ -2558,7 +2558,7 @@ namespace System.Windows.Forms
 						if (rect.Width <= 0)
 							continue;
 
-						dc.DrawString (col.Text, DefaultFont,
+						dc.DrawString (col.Text, control.Font,
 							       SystemBrushes.ControlText,
 							       rect, col.Format);
 					}
@@ -2589,7 +2589,7 @@ namespace System.Windows.Forms
 			if (rect.Width <= 0)
 				return;
 			color = Color.FromArgb (0x7f, ColorControlText.R, ColorControlText.G, ColorControlText.B);
-			dc.DrawString (col.Text, DefaultFont, ResPool.GetSolidBrush (color), rect, col.Format);
+			dc.DrawString (col.Text, view.Font, ResPool.GetSolidBrush (color), rect, col.Format);
 			dc.DrawLine (ResPool.GetSizedPen (ColorHighlight, 2), target_x, 0, target_x, col.Rect.Height);
 		}
 

@@ -1741,7 +1741,7 @@ namespace System.Windows.Forms
 #endif
 				{
 					SetItemLocation (i, 0, y, 0, 0);
-					y += item_height + 4;
+					y += item_height;
 				}
 			}
 
