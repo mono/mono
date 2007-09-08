@@ -1,4 +1,8 @@
 
+Sat Sep 8 18:16:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: fix locking in mono_image_load_file_for_image ().
+
 Thu Sep 6 19:48:00 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, icall.c, icall-def.h: the methodinfos name field is
