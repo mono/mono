@@ -1,3 +1,8 @@
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h: Applied patch from Jurek Bartuszek (jurek@gentoo.org).
+	Fixes build with -fPIE.
+
 2007-08-31  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-compiler.h: Define MONO_INTERNAL to nothing on Windows.
