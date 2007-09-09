@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Resources;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 
 using NUnit.Framework;
@@ -1467,6 +1468,161 @@ namespace MonoTests.System.Resources
 #else
 					Assert.AreEqual (16, entries, "#Q");
 #endif
+				}
+			}
+		}
+
+		[Test]
+		public void TypeConversion ()
+		{
+			string resXContent = string.Format (CultureInfo.CurrentCulture,
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"<root>" +
+				"	<resheader name=\"resmimetype\">" +
+				"		<value>{0}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"reader\">" +
+				"		<value>System.Resources.ResXResourceReader, {1}</value>" +
+				"	</resheader>" +
+				"	<resheader name=\"writer\">" +
+				"		<value>System.Resources.ResXResourceWriter, {1}</value>" +
+				"	</resheader>" +
+				"	<data name=\"AnchorStyle\" type=\"System.Windows.Forms.AnchorStyles, {1}\">" +
+				"		<value>Bottom, Left</value>" +
+				"	</data>" +
+				"	<data name=\"BackgroundImage\" type=\"{2}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
+				"		<value>" +
+				"			Qk12BQAAAAAAADYEAAAoAAAAEgAAABAAAAABAAgAAAAAAAAAAAAgHAAAIBwAAAABAAAAAQAAAAAA/wAA" +
+				"			M/8AAGb/AACZ/wAAzP8AAP//ADMA/wAzM/8AM2b/ADOZ/wAzzP8AM///AGYA/wBmM/8AZmb/AGaZ/wBm" +
+				"			zP8AZv//AJkA/wCZM/8AmWb/AJmZ/wCZzP8Amf//AMwA/wDMM/8AzGb/AMyZ/wDMzP8AzP//AP8A/wD/" +
+				"			M/8A/2b/AP+Z/wD/zP8A////MwAA/zMAM/8zAGb/MwCZ/zMAzP8zAP//MzMA/zMzM/8zM2b/MzOZ/zMz" +
+				"			zP8zM///M2YA/zNmM/8zZmb/M2aZ/zNmzP8zZv//M5kA/zOZM/8zmWb/M5mZ/zOZzP8zmf//M8wA/zPM" +
+				"			M/8zzGb/M8yZ/zPMzP8zzP//M/8A/zP/M/8z/2b/M/+Z/zP/zP8z////ZgAA/2YAM/9mAGb/ZgCZ/2YA" +
+				"			zP9mAP//ZjMA/2YzM/9mM2b/ZjOZ/2YzzP9mM///ZmYA/2ZmM/9mZmb/ZmaZ/2ZmzP9mZv//ZpkA/2aZ" +
+				"			M/9mmWb/ZpmZ/2aZzP9mmf//ZswA/2bMM/9mzGb/ZsyZ/2bMzP9mzP//Zv8A/2b/M/9m/2b/Zv+Z/2b/" +
+				"			zP9m////mQAA/5kAM/+ZAGb/mQCZ/5kAzP+ZAP//mTMA/5kzM/+ZM2b/mTOZ/5kzzP+ZM///mWYA/5lm" +
+				"			M/+ZZmb/mWaZ/5lmzP+ZZv//mZkA/5mZM/+ZmWb/mZmZ/5mZzP+Zmf//mcwA/5nMM/+ZzGb/mcyZ/5nM" +
+				"			zP+ZzP//mf8A/5n/M/+Z/2b/mf+Z/5n/zP+Z////zAAA/8wAM//MAGb/zACZ/8wAzP/MAP//zDMA/8wz" +
+				"			M//MM2b/zDOZ/8wzzP/MM///zGYA/8xmM//MZmb/zGaZ/8xmzP/MZv//zJkA/8yZM//MmWb/zJmZ/8yZ" +
+				"			zP/Mmf//zMwA/8zMM//MzGb/zMyZ/8zMzP/MzP//zP8A/8z/M//M/2b/zP+Z/8z/zP/M/////wAA//8A" +
+				"			M///AGb//wCZ//8AzP//AP///zMA//8zM///M2b//zOZ//8zzP//M////2YA//9mM///Zmb//2aZ//9m" +
+				"			zP//Zv///5kA//+ZM///mWb//5mZ//+ZzP//mf///8wA///MM///zGb//8yZ///MzP//zP////8A////" +
+				"			M////2b///+Z////zP//////AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA" +
+				"			AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA" +
+				"			AP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAAAP8AAAD/AAAA/wAA" +
+				"			AAAAAAAAAAwMDAwAAAAAAAAAAAAAAAAAAAAAAAwMDAwAAAAAAAAAAAAAAAAAAAAAAAwMDAAAAAAAAAAA" +
+				"			AAAAAAAAAAAAAAwMDAAAAAAAAAAAAAAAAAAAAAAADAwMAAAAAAAAAAAADAAAAAAAAAAMDA0AAAAAAAAA" +
+				"			AAwMDQAAABMTExMTExMTNwAAAAAMDAwMDQAAABMTExMTExMAAAAANzc3Nzc3NwAAAD4+Pj4+AAAAAD4+" +
+				"			Pj4+Pj4+PgAAAGJiYgAAAAAAAAAAYmJiAAAAAAAAAGIAAAAAAAAAAABiYmIAAAAAAAAAAAAAAAAAAAAA" +
+				"			AGJiYgAAAAAAAAAAAAAAAAAAAAAAAGJiYgAAAAAAAAAAAAAAAAAAAAAAAGJiYgAAAAAAAAAAAAAAAAAA" +
+				"			AAAAAGJiYgAAAAAAAAAAAAAA" +
+				"		</value>" +
+				"	</data>" +
+				"	<data name=\"Buffer\" type=\"{3}\">" +
+				"		<value>BQIH</value>" +
+				"	</data>" +
+				"	<data name=\"Data\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
+				"		<value>Random Thoughts</value>" +
+				"	</data>" +
+				"	<data name=\"Foo\" type=\"System.Windows.Forms.Application, {1}\">" +
+				"		<value>A B C</value>" +
+				"	</data>" +
+				"	<data name=\"Image\" type=\"{2}\">" +
+				"		<value>Summer.jpg</value>" +
+				"	</data>" +
+				"	<data name=\"Text\">" +
+				"		<value>OK</value>" +
+				"	</data>" +
+				"	<data name=\"Unknown\" mimetype=\"application/xxx\">" +
+				"		<value>MIA</value>" +
+				"	</data>" +
+				"	<data name=\"Wrong\" typeof=\"{2}\" mimetype=\"application/xxx\">" +
+				"		<value>SuperUnknown</value>" +
+				"	</data>" +
+				"	<data name=\"Xtra\" type=\"System.Windows.Forms.AnchorStyles, {1}\" mimetype=\"application/x-microsoft.net.object.bytearray.base64\">" +
+				"		<value>LeftRight</value>" +
+				"	</data>" +
+				"</root>",
+				ResXResourceWriter.ResMimeType, Consts.AssemblySystem_Windows_Forms,
+				typeof (Bitmap).AssemblyQualifiedName, typeof (byte []).AssemblyQualifiedName);
+
+			using (StringReader sr = new StringReader (resXContent)) {
+				using (ResXResourceReader r = new ResXResourceReader (sr)) {
+					IDictionaryEnumerator enumerator = r.GetEnumerator ();
+					int entries = 0;
+					while (enumerator.MoveNext ()) {
+						entries++;
+						switch ((string) enumerator.Key) {
+						case "AnchorStyle":
+							Assert.IsNotNull (enumerator.Value, "#A1");
+							Assert.AreEqual (AnchorStyles.Bottom | AnchorStyles.Left, enumerator.Value, "#A2");
+							break;
+						case "BackgroundImage":
+							Assert.IsNotNull (enumerator.Value, "#B1");
+							Assert.AreEqual (typeof (Bitmap), enumerator.Value.GetType (), "#B2");
+							break;
+						case "Buffer":
+							Assert.IsNotNull (enumerator.Value, "#C1");
+							Assert.AreEqual (new byte [] { 5, 2, 7 }, enumerator.Value, "#C2");
+							break;
+						case "Data":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#D1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#D1");
+							Assert.AreEqual ("Random Thoughts", enumerator.Value, "#D2");
+#endif
+							break;
+						case "Foo":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#E1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#E1");
+							Assert.AreEqual ("A B C", enumerator.Value, "#E2");
+#endif
+							break;
+						case "Image":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#F1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#F1");
+							Assert.AreEqual ("Summer.jpg", enumerator.Value, "#F2");
+#endif
+							break;
+						case "Text":
+							Assert.IsNotNull (enumerator.Value, "#G1");
+							Assert.AreEqual ("OK", enumerator.Value, "#G2");
+							break;
+						case "Unknown":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#H1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#H1");
+							Assert.AreEqual ("MIA", enumerator.Value, "#H2");
+#endif
+							break;
+						case "Wrong":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#I1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#I1");
+							Assert.AreEqual ("SuperUnknown", enumerator.Value, "#I2");
+#endif
+							break;
+						case "Xtra":
+#if NET_2_0
+							Assert.IsNull (enumerator.Value, "#J1");
+#else
+							Assert.IsNotNull (enumerator.Value, "#J1");
+							Assert.AreEqual ("LeftRight", enumerator.Value, "#J2");
+#endif
+							break;
+						default:
+							Assert.Fail ("#J:" + enumerator.Key);
+							break;
+						}
+					}
+					Assert.AreEqual (10, entries, "#G");
 				}
 			}
 		}

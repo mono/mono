@@ -269,47 +269,47 @@ namespace System.Resources
 			string value = GetDataValue ();
 			object obj = null;
 
-			if (type != null) {
-				TypeConverter c = TypeDescriptor.GetConverter (type);
-
-				if (c == null) {
-					obj = null;
-				} else if (c.CanConvertFrom (typeof (string))) {
-#if NET_2_0
-					if (BasePath != null && type == typeof (ResXFileRef)) {
-						string [] parts = ResXFileRef.Parse (value);
-						parts [0] = Path.Combine (BasePath, parts [0]);
-						obj = c.ConvertFromInvariantString (string.Join (";", parts));
-					} else {
-						obj = c.ConvertFromInvariantString (value);
-					}
-#else
-					obj = c.ConvertFromInvariantString (value);
-#endif
-				} else if (c.CanConvertFrom (typeof (byte []))) {
-					obj = c.ConvertFrom (Convert.FromBase64String (value));
-				} else {
-					// the type must be a byte[]
-					obj = Convert.FromBase64String (value);
-				}
-			} else if (mime_type != null && mime_type != String.Empty) {
+			if (mime_type != null && mime_type.Length > 0) {
 				if (mime_type == ResXResourceWriter.BinSerializedObjectMimeType) {
 					byte [] data = Convert.FromBase64String (value);
 					BinaryFormatter f = new BinaryFormatter ();
 					using (MemoryStream s = new MemoryStream (data)) {
 						obj = f.Deserialize (s);
 					}
+				} else if (mime_type == ResXResourceWriter.ByteArraySerializedObjectMimeType) {
+					if (type != null) {
+						TypeConverter c = TypeDescriptor.GetConverter (type);
+						if (c.CanConvertFrom (typeof (byte [])))
+							obj = c.ConvertFrom (Convert.FromBase64String (value));
+					}
+				}
+			} else if (type != null) {
+				if (type == typeof (byte [])) {
+					obj = Convert.FromBase64String (value);
 				} else {
-					// invalid mime type
+					TypeConverter c = TypeDescriptor.GetConverter (type);
+					if (c.CanConvertFrom (typeof (string))) {
 #if NET_2_0
-					obj = null;
+						if (BasePath != null && type == typeof (ResXFileRef)) {
+							string [] parts = ResXFileRef.Parse (value);
+							parts [0] = Path.Combine (BasePath, parts [0]);
+							obj = c.ConvertFromInvariantString (string.Join (";", parts));
+						} else {
+							obj = c.ConvertFromInvariantString (value);
+						}
 #else
-					obj = value;
+						obj = c.ConvertFromInvariantString (value);
 #endif
+					}
 				}
 			} else {
 				obj = value;
 			}
+
+#if ONLY_1_1
+			if (obj == null)
+				obj = value;
+#endif
 
 			if (name == null)
 				throw new ArgumentException (string.Format (CultureInfo.CurrentCulture,

@@ -1,3 +1,13 @@
+2007-09-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXResourceReader.cs: First consider MIME type, if set, regardless
+	of the presence of a type attribute. Only convert from base64 string
+	if "mimetype" is "...bytearray.base64" and type is set. When no MIME
+	type is set, ignore value of resource with a type, if the type is not
+	byte [] or has no TypeConverter that can convert from string. On 1.0
+	profile, use string value if "mimetype" or "type" are set and no
+	conversion was done.
+
 2007-05-23  Andreia Gaita <avidigal@novell.com>
 
 	* ResXResourceReader.cs: Ignore comment nodes, for now. Fix 
