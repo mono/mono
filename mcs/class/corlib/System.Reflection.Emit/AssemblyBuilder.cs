@@ -448,7 +448,7 @@ namespace System.Reflection.Emit {
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
 				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
 
-			using (FileStream fs = new FileStream (resourceFileName, FileMode.Open)) {
+			using (FileStream fs = new FileStream (resourceFileName, FileMode.Open, FileAccess.Read)) {
 				Win32ResFileReader reader = new Win32ResFileReader (fs);
 
 				foreach (Win32EncodedResource res in reader.ReadResources ()) {

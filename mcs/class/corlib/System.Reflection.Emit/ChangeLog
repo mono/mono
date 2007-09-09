@@ -1,3 +1,8 @@
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs (DefineUnmanagedResource): Open file read-only. Fixes
+	#72764.
+
 2007-09-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs: Add a workaround for #82625 to make nemerle work again.
