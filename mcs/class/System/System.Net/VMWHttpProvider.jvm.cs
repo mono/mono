@@ -169,6 +169,18 @@ namespace System.Net
 						new NTCredentials(nc.UserName, nc.Password, host, domain));
 				}
 			}
+			else if (String.Compare (type, "negotiate", StringComparison.InvariantCultureIgnoreCase) == 0) {
+				if (!proxyCredentials) {
+					_state.setCredentials (new AuthScope (AuthScope.ANY_HOST,
+						AuthScope.ANY_PORT, AuthScope.ANY_REALM, "negotiate"),
+						new NTCredentials (nc.UserName, nc.Password, host, domain));
+				}
+				else {
+					_state.setProxyCredentials (new AuthScope (AuthScope.ANY_HOST,
+						AuthScope.ANY_PORT, AuthScope.ANY_REALM, "negotiate"),
+						new NTCredentials (nc.UserName, nc.Password, host, domain));
+				}
+			}
 			else
 			{
 				if(!proxyCredentials)
@@ -184,7 +196,16 @@ namespace System.Net
 						new UsernamePasswordCredentials(nc.UserName, nc.Password));
 				}
 			}
+			SetAuthenticationScheme (Char.ToUpper (type [0]) + type.Substring (1));
 
+		}
+
+		private void SetAuthenticationScheme (string type) {
+			try {
+				_method.getHostAuthState ().setAuthScheme (AuthPolicy.getAuthScheme (type));
+			}
+			catch (Exception) {//ignore no such scheme, will be selected by the chalenges order
+			}
 		}
 		private void InitProxyCredentials()
 		{
@@ -212,6 +233,10 @@ namespace System.Net
 					{
 						type = "ntlm";
 						nc = ((CredentialCache)creds).GetCredential(proxy.Address, "ntlm");
+						if (nc == null) {
+							nc = ((CredentialCache) _credentials).GetCredential (GetOriginalAddress (), "negotiate");
+							type = "negotiate";
+						}
 					}
 				}
 				if(nc != null)
@@ -243,6 +268,10 @@ namespace System.Net
 					{
 						nc = ((CredentialCache)_credentials).GetCredential(GetOriginalAddress(), "ntlm");
 						type = "ntlm";
+						if (nc == null) {
+							nc = ((CredentialCache) _credentials).GetCredential (GetOriginalAddress (), "negotiate");
+							type = "negotiate";
+						}
 					}
 				}
 				if(nc != null)
@@ -392,6 +421,12 @@ namespace System.Net
 					_client.getParams().setParameter(HttpClientParams.CONNECTION_MANAGER_TIMEOUT, new java.lang.Long(30000));
 					_client.getParams().setParameter(HttpClientParams.USER_AGENT, 
 							"VMW4J HttpClient (based on Jakarta Commons HttpClient)");
+					java.util.ArrayList schemas = new java.util.ArrayList ();
+					schemas.add ("Ntlm");
+					schemas.add ("Digest");
+					schemas.add ("Basic");					
+					schemas.add ("Negotiate");
+					_client.getParams ().setParameter (AuthPolicy.AUTH_SCHEME_PRIORITY, schemas);
 					if(!_disableHttpConnectionPooling) 
 					{
 						_sclient = _client;
