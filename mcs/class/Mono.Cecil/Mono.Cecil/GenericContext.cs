@@ -32,7 +32,6 @@ namespace Mono.Cecil {
 
 		TypeReference m_type;
 		MethodReference m_method;
-		bool m_allowCreation;
 
 		public TypeReference Type {
 			get { return m_type; }
@@ -45,8 +44,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool AllowCreation {
-			get { return m_allowCreation; }
-			set { m_allowCreation = value; }
+			get { return m_type != null && m_type.GetType () == typeof (TypeReference); }
 		}
 
 		public bool Null {
@@ -72,6 +70,15 @@ namespace Mono.Cecil {
 				m_method = meth;
 				m_type = meth.DeclaringType;
 			}
+		}
+
+		internal void CheckProvider (IGenericParameterProvider provider, int count)
+		{
+			if (!AllowCreation)
+				return;
+
+			for (int i = provider.GenericParameters.Count; i < count; i++)
+				provider.GenericParameters.Add (new GenericParameter (i, provider));
 		}
 
 		public GenericContext Clone ()

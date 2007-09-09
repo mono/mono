@@ -193,7 +193,6 @@ namespace Mono.Cecil {
 						ct = (ct as GenericInstanceType).ElementType;
 
 					nc.Type = ct;
-					nc.AllowCreation = ct.GetType () == typeof (TypeReference);
 				}
 
 				if (sig is FieldSig) {
@@ -316,6 +315,7 @@ namespace Mono.Cecil {
 				throw new ReflectionException ("Unknown method type for method spec");
 
 			gim = new GenericInstanceMethod (meth);
+			context.CheckProvider (meth, sig.Signature.Arity);
 			foreach (GenericArg arg in sig.Signature.Types)
 				gim.GenericArguments.Add (GetGenericArg (arg, context));
 
@@ -1045,8 +1045,7 @@ namespace Mono.Cecil {
 				return fnptr;
 			case ElementType.Var:
 				VAR var = t as VAR;
-				if (context.AllowCreation)
-					CheckGenericParameters (context, var);
+				context.CheckProvider (context.Type, var.Index + 1);
 
 				if (context.Type is GenericInstanceType)
 					return (context.Type as GenericInstanceType).GenericArguments [var.Index];
@@ -1054,6 +1053,8 @@ namespace Mono.Cecil {
 					return context.Type.GenericParameters [var.Index];
 			case ElementType.MVar:
 				MVAR mvar = t as MVAR;
+				context.CheckProvider (context.Method, mvar.Index + 1);
+
 				if (context.Method is GenericInstanceMethod)
 					return (context.Method as GenericInstanceMethod).GenericArguments [mvar.Index];
 				else
@@ -1062,6 +1063,7 @@ namespace Mono.Cecil {
 				GENERICINST ginst = t as GENERICINST;
 				GenericInstanceType instance = new GenericInstanceType (GetTypeDefOrRef (ginst.Type, context));
 				instance.IsValueType = ginst.ValueType;
+				context.CheckProvider (instance.GetOriginalType (), ginst.Signature.Arity);
 
 				for (int i = 0; i < ginst.Signature.Arity; i++)
 					instance.GenericArguments.Add (GetGenericArg (
@@ -1080,12 +1082,6 @@ namespace Mono.Cecil {
 			if (arg.CustomMods != null && arg.CustomMods.Length > 0)
 				type = GetModifierType (arg.CustomMods, type);
 			return type;
-		}
-
-		static void CheckGenericParameters (GenericContext context, VAR v)
-		{
-			for (int i = context.Type.GenericParameters.Count; i <= v.Index; i++)
-				context.Type.GenericParameters.Add (new GenericParameter (i, context.Type));
 		}
 
 		protected object GetConstant (uint pos, ElementType elemType)

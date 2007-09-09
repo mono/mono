@@ -87,6 +87,8 @@ namespace Mono.Cecil {
 				else if (t is GenericInstanceType) {
 					GenericInstanceType git = t as GenericInstanceType;
 					GenericInstanceType genElemType = new GenericInstanceType (elementType);
+
+					context.GenericContext.CheckProvider (genElemType.GetOriginalType (), git.GenericArguments.Count);
 					foreach (TypeReference arg in git.GenericArguments)
 						genElemType.GenericArguments.Add (ImportTypeReference (arg, context));
 
@@ -172,6 +174,7 @@ namespace Mono.Cecil {
 			GenericInstanceMethod ngim = new GenericInstanceMethod (
 				ImportMethodReference (gim.ElementMethod, context));
 
+			context.GenericContext.CheckProvider (ngim.GetOriginalMethod (), gim.GenericArguments.Count);
 			foreach (TypeReference arg in gim.GenericArguments)
 				ngim.GenericArguments.Add (ImportTypeReference (arg, context));
 

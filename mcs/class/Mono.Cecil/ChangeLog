@@ -1,3 +1,11 @@
+2007-09-09  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/GenericContext.cs
+	  Mono.Cecil/ReflectionReader.cs
+	  Mono.Cecil/DefaultImporter.cs:
+		Better handling of generic instances of references, where
+		the number of generic parameters is not known.
+
 2007-09-06  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/MethodDefinition: add Is** methods for MethodImplAttributes.
