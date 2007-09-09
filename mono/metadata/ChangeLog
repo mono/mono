@@ -1,4 +1,12 @@
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c loader.c metadata.c object.c class-internals.h object-internals.h
+	icall.c reflection.c: Pass a MonoGenericContext argument to 
+	mono_lookup_dynamic_token ().
+
+	* reflection.c (resolve_object): Handle GenericTypeParameterBuilder. Fixes
+	#82744.
+	
 2007-09-09  Robert Jordan  <robertj@gmx.net>
 
 	* object.c (mono_class_proxy_vtable): Don't create remoting trampolines
