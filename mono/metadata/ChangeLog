@@ -1,5 +1,8 @@
 2007-09-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_lookup_dynamic_token_class): Pass along the context here as
+	well.
+	
 	* class.c loader.c metadata.c object.c class-internals.h object-internals.h
 	icall.c reflection.c: Pass a MonoGenericContext argument to 
 	mono_lookup_dynamic_token ().
