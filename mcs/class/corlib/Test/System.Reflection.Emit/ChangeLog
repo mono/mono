@@ -1,3 +1,7 @@
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBuilderTest.cs: Add a new test.
+
 2007-09-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Split up and improved ignored GetField(s) tests

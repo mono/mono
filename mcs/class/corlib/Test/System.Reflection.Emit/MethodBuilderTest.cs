@@ -857,6 +857,26 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (attr.BestFitMapping, "#2");
 			Assert.IsTrue (attr.ThrowOnUnmappableChar, "#3");
 		}
+
+		[Test]
+		public void GenericTypeParameterBuilder_Dynamic ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod ("box_int", 
+												MethodAttributes.Public|MethodAttributes.Static, typeof (object), new Type [] { typeof (int) });
+
+			GenericTypeParameterBuilder[] pars = mb.DefineGenericParameters (new string [] { "foo" });
+
+			ILGenerator ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldarg_0);
+			ilgen.Emit (OpCodes.Box, pars [0]);
+			ilgen.Emit (OpCodes.Ret);
+
+			Type t = tb.CreateType ();
+			MethodInfo mi = t.GetMethod ("box_int");
+			MethodInfo mi2 = mi.MakeGenericMethod (new Type [] { typeof (int) });
+			Assert.AreEqual (1, mi2.Invoke (null, new object [] { 1 }));
+		}
 #endif
 	}
 }
