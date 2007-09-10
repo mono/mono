@@ -781,7 +781,9 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnItemAdded (ToolStripItemEventArgs e)
 		{
-			e.Item.Available = true;
+			if (e.Item.InternalVisible)
+				e.Item.Available = true;
+				
 			e.Item.SetPlacement (ToolStripItemPlacement.Main);
 			this.DoAutoSize ();
 			

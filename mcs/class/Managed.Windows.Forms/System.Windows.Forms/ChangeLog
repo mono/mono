@@ -1,5 +1,13 @@
 2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* StatusStrip.cs: Synchronize SetDisplayedItems with the ToolStrip version.
+	* ToolStrip.cs: If a ToolStripItem set to not visible is added to a ToolStrip,
+	don't set it to available.
+	* ToolStripItem.cs: When Visible is changed, tell the owner to perform a layout.
+	[Fixes bug #82727, part II]
+
+2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* StatusStrip.cs: Change item placement to None if not visible.
 	* ToolStripItem.cs: Invalidate when InternalVisible changes.
 	These should have been committed to fix 82723, but I missed them.

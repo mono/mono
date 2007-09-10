@@ -247,15 +247,11 @@ namespace System.Windows.Forms
 		{
 			this.displayed_items.Clear ();
 
-			foreach (ToolStripItem tsi in this.Items) {
-				tsi.Parent = this;
-				
-				if (tsi.Placement == ToolStripItemPlacement.Main) {
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.Placement == ToolStripItemPlacement.Main && tsi.Available) {
 					this.displayed_items.AddNoOwnerOrLayout (tsi);
-					tsi.InternalVisible = true;	
-				} else
-					tsi.InternalVisible = false;
-			}
+					tsi.Parent = this;
+				}
 		}
 		
 		protected override void WndProc (ref Message m)

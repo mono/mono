@@ -777,6 +777,8 @@ namespace System.Windows.Forms
 				if (this.visible != value) {
 					this.available = value;
 					this.SetVisibleCore (value);
+					if (this.Owner != null)
+						this.Owner.PerformLayout ();
 				}
 			}
 		}
@@ -1237,12 +1239,12 @@ namespace System.Windows.Forms
 		{
 			this.visible = visible;
 			this.OnVisibleChanged (EventArgs.Empty);
-			this.Invalidate ();
 			
 			if (this.visible)
 				BeginAnimation ();
 			else
 				StopAnimation ();
+			this.Invalidate ();
 		}
 		#endregion
 
