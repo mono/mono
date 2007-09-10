@@ -4077,9 +4077,9 @@ namespace Mono.CSharp {
 	///   Invocation of methods or delegates.
 	/// </summary>
 	public class Invocation : ExpressionStatement {
-		ArrayList Arguments;
+		protected ArrayList Arguments;
 		Expression expr;
-		MethodGroupExpr mg;
+		protected MethodGroupExpr mg;
 		
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
@@ -4451,7 +4451,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			mg = mg.OverloadResolve (ec, Arguments, false, loc);
+			mg = DoResolveOverload (ec);
 			if (mg == null)
 				return null;
 
@@ -4522,6 +4522,11 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		protected virtual MethodGroupExpr DoResolveOverload (EmitContext ec)
+		{
+			return mg.OverloadResolve (ec, Arguments, false, loc);
 		}
 
 		bool IsSpecialMethodInvocation (MethodBase method)

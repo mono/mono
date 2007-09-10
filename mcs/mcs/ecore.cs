@@ -761,7 +761,7 @@ namespace Mono.CSharp {
 					name, null, mt, bf);
 		}
 
-		protected Expression Error_MemberLookupFailed (Type container_type, Type qualifier_type,
+		protected virtual Expression Error_MemberLookupFailed (Type container_type, Type qualifier_type,
 						       Type queried_type, string name, string class_name,
 							   MemberTypes mt, BindingFlags bf)
 		{

@@ -1,3 +1,13 @@
+2007-09-10  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs (AnonymousMethodExpression.CompatibleChecks): Report
+	correct expression block type. 
+	
+	* ecore.cs (Expression.Error_MemberLookupFailed): Made virtual.
+	
+	* expression.cs (Invocation): Extracted method group resolve to
+	DoResolveOverload.
+	
 2007-09-07  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (Expression.MemberLookupFinal): Removed unused loc parameter.

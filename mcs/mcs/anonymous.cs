@@ -1175,9 +1175,9 @@ namespace Mono.CSharp {
 			
 			if (!TypeManager.IsDelegateType (delegate_type)){
 				Report.Error (1660, loc,
-					      "Cannot convert anonymous method block to type " +
-					      "`{0}' because it is not a delegate type",
-					      TypeManager.CSharpName (delegate_type));
+					      "Cannot convert `{0}' to type " +
+					      "`{1}' because it is not a delegate type",
+					      GetSignatureForError (), TypeManager.CSharpName (delegate_type));
 				return null;
 			}
 			return this;
