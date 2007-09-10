@@ -483,7 +483,7 @@ namespace System.Web.Compilation
 		}
 
 		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound, bool isExpression)
-		{
+		{			
 			CodeMemberMethod method = builder.method;
 			bool isWritable = IsWritablePropertyOrField (member);
 			if (isDataBound && isWritable) {
@@ -1559,9 +1559,9 @@ namespace System.Web.Compilation
 			return str;
 		}
 #endif
-    
+		
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
-		{			
+		{
 #if NET_2_0
 			bool wasNullable = false;
 			
@@ -1680,11 +1680,12 @@ namespace System.Web.Compilation
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
-					return GenerateInstance (idesc, true);
+					return new CodeCastExpression (type, GenerateInstance (idesc, true));
 				}
 
 				CodeExpression exp = GenerateObjectInstance (value, false);
-				if (exp != null) return exp;
+				if (exp != null)
+					return exp;
 				
 				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
 				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
@@ -1738,11 +1739,17 @@ namespace System.Web.Compilation
 		{
 			if (value == null)
 				return new CodePrimitiveExpression (null);
+
+			if (value is System.Type) {
+				CodeTypeReference tref = new CodeTypeReference (value.ToString ());
+				return new CodeTypeOfExpression (tref);
+			}
 			
-			Type t = value.GetType();
+			Type t = value.GetType ();
+
 			if (t.IsPrimitive || value is string)
 				return new CodePrimitiveExpression (value);
-				
+			
 			if (t.IsArray) {
 				Array ar = (Array) value;
 				CodeExpression[] items = new CodeExpression [ar.Length];

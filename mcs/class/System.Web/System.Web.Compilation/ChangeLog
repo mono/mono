@@ -1,3 +1,10 @@
+2007-09-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: cast the expression to the field
+	type whenever appropriate in GetExpressionFromString.
+	When generating an object instance and one of the parameters is
+	System.Type, return a typeof expression.
+
 2007-09-07  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: another modification to the way
