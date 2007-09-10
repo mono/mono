@@ -1,3 +1,9 @@
+
+Mon Sep 10 15:03:06 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: added --size option to collect size statistics
+	per-type (best used with a pipe to sort -n -k3).
+
 2007-03-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* monograph.vcproj: Move to msvc directory.
