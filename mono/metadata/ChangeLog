@@ -1,12 +1,19 @@
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
-	Backprot for r84130
+	Backport for r84147
+	* marshal.c (emit_marshal_com_interface): Patch from
+	  Bill Holmes to handle COM Interfaces as return values
+	  for native->managed calls.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
+	Backport for r84130
 	* marshal.c (cominterop_get_idispatch_for_object): Implement
 	  for runtime callable wrappers.
 
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
-	Backprot for r83601
+	Backport for r83601
 	* marshal.c: Use correct image when emitting
 	  native wrapper for COM calls.
 
