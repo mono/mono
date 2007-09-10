@@ -1,5 +1,11 @@
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
+	Backprot for r83601
+	* marshal.c: Use correct image when emitting
+	  native wrapper for COM calls.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
 	Backport for r84161
 	* marshal.c (emit_marshal_custom): Omit the call to
 	  marshal_native_to_managed when calling native to managed
