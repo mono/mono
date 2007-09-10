@@ -647,6 +647,7 @@
     <Compile Include="System.Diagnostics\StackFrame.jvm.cs" />
     <Compile Include="System.Diagnostics\StackTrace.jvm.cs" />
     <Compile Include="System.Diagnostics\Switch.cs" />
+    <Compile Include="System.Diagnostics\TextWriterTraceListener.cs" />
     <Compile Include="System.Diagnostics\Trace.cs">
       <SubType>Code</SubType>
     </Compile>
