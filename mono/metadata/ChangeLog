@@ -1,3 +1,7 @@
+2007-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Inflate generic methods. Fixes #82782.
+
 2007-09-10  Massimiliano Mantione  <massi@ximian.com>
 
 	* loader.c (find_method): Fixed the regression introduced while
