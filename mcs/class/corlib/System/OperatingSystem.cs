@@ -28,6 +28,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System {
 
@@ -36,9 +37,15 @@ namespace System {
 #endif
 	[Serializable]
 	public sealed class OperatingSystem : ICloneable
+#if NET_2_0
+		, ISerializable
+#endif
 	{
 		private System.PlatformID _platform;
 		private Version _version;
+#if NET_2_0
+		private string _servicePack = String.Empty;
+#endif
 
 		public OperatingSystem (PlatformID platform, Version version)
 		{
@@ -64,7 +71,7 @@ namespace System {
 
 #if NET_2_0
 		public string ServicePack {
-			get { return String.Empty; }
+			get { return _servicePack; }
 		}
 
 		public string VersionString {
@@ -76,6 +83,15 @@ namespace System {
 		{
 			return new OperatingSystem (_platform, _version);
 		}
+
+#if NET_2_0
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("_platform", _platform);
+			info.AddValue ("_version", _version);
+			info.AddValue ("_servicePack", _servicePack);
+		}
+#endif
 
 		public override string ToString ()
 		{

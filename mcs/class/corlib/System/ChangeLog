@@ -1,3 +1,7 @@
+2007-09-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperatingSystem.cs : implemented ISerializable.
+
 2007-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* DateTime.cs: Fix a warning.
