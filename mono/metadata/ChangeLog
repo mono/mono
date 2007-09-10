@@ -1,3 +1,10 @@
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
+	Backport for r84161
+	* marshal.c (emit_marshal_custom): Omit the call to
+	  marshal_native_to_managed when calling native to managed
+	  and the argument is specified as an out argument.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* marshal.c (Marshal_ReAllocHGlobal) : Fix GlobalReAlloc's flags.

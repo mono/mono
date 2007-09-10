@@ -1,3 +1,11 @@
+2007-09-10  Willaim Holmes  <billholmes54@gmail.com>
+
+	Backport for r85589
+	* marshal9.cs, libtest.c Adding test case for marshal.c r84161
+	  Calling native to managed should not call
+	  ICustomMarshaler.MarshalNativeToManaged for out params.
+
+
 2007-07-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (bug-81691.exe): Create it in the builddir.
