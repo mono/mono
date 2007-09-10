@@ -1811,9 +1811,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal bool InternalVisible {
+		internal virtual bool InternalVisible {
 			get { return this.visible; }
-			set { this.visible = value; }
+			set { this.visible = value; Invalidate (); }
 		}
 		
 		internal Point Location {

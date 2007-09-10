@@ -1,5 +1,11 @@
 2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* StatusStrip.cs: Change item placement to None if not visible.
+	* ToolStripItem.cs: Invalidate when InternalVisible changes.
+	These should have been committed to fix 82723, but I missed them.
+
+2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Make sure ItemClicked is raised before the ToolStripItem's
 	Click, and that it is only called once.
 	* ToolStripMenuItem.cs: Call OnClick even when there are dropdown items.

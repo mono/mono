@@ -176,7 +176,7 @@ namespace System.Windows.Forms
 				overflow[i] = tsi.Overflow;
 				widths[i] = tsi.GetPreferredSize (proposedSize).Width + tsi.Margin.Horizontal;
 				placement[i] = tsi.Overflow == ToolStripItemOverflow.Always ? ToolStripItemPlacement.None : ToolStripItemPlacement.Main;
-				placement[i] = tsi.Available ? placement[i] : ToolStripItemPlacement.None;
+				placement[i] = tsi.Available && tsi.InternalVisible ? placement[i] : ToolStripItemPlacement.None;
 				total_width += placement[i] == ToolStripItemPlacement.Main ? widths[i] : 0;
 				if (tsi is ToolStripStatusLabel && (tsi as ToolStripStatusLabel).Spring)
 					spring_count++;
