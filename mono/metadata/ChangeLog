@@ -1,5 +1,12 @@
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
+	Backport for r84149
+	* marshal.c (cominterop_get_ccw): Patch from
+	  Bill Holmes to no walk up interface hierarchy.
+	  All parent methods should be present in the interface for COM.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
 	Backport for r84147
 	* marshal.c (emit_marshal_com_interface): Patch from
 	  Bill Holmes to handle COM Interfaces as return values
