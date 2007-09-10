@@ -1,3 +1,9 @@
+2007-09-11  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Add `mono_method_flags_offset' and
+	`mono_method_inflated_offset'.
+
 2007-09-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c mini.h mini.c: Add a new devel command line option for injecting
