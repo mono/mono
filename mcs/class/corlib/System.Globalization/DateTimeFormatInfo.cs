@@ -829,11 +829,43 @@ namespace System.Globalization
 			return shortDayNames [index];
 		}
 
-		[MonoTODO ("NotImplemented")]
 		[ComVisible (false)]
 		public void SetAllDateTimePatterns (string [] patterns, char format)
 		{
-			throw new NotImplementedException ();
+			if (patterns == null)
+				throw new ArgumentNullException ("patterns");
+			if (patterns.Length == 0)
+				throw new ArgumentException ("patterns", "The argument patterns must not be of zero-length");
+
+			switch (format) {
+			// YearMonth
+			case 'Y':
+			case 'y':
+				yearMonthPatterns = patterns;
+				break;
+			// MonthDay
+			case 'm':
+			case 'M':
+				monthDayPatterns = patterns;
+				break;
+			// Date
+			case 'D':
+				allLongDatePatterns = patterns;
+				break;
+			case 'd':
+				allShortDatePatterns = patterns;
+				break;
+			// Time
+			case 'T':
+				allLongTimePatterns = patterns;
+				break;
+			case 't':
+				allShortTimePatterns = patterns;
+				break;
+			default:
+				// note that any other formats are invalid (such as 'r', 'g', 'U')
+				throw new ArgumentException ("format", "Format specifier is invalid");
+			}
 		}
 #endif
 	}

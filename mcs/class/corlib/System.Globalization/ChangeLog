@@ -1,5 +1,9 @@
 2007-09-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeFormatInfo.cs : implemented SetAllDateTimePatterns().
+
+2007-09-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NumberFormatInfo.cs : added NativeDigits and DigitSubstitution.
 
 2007-09-06  Marek Habersack  <mhabersack@novell.com>
