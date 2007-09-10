@@ -1,5 +1,11 @@
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
+	Backprot for r84130
+	* marshal.c (cominterop_get_idispatch_for_object): Implement
+	  for runtime callable wrappers.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
 	Backprot for r83601
 	* marshal.c: Use correct image when emitting
 	  native wrapper for COM calls.
