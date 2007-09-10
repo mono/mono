@@ -1,5 +1,11 @@
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
+	Backport for r85021
+	* marshal.c (cominterop_get_ccw): Walk up interface hierarchy
+	  if interface is marked with CoClassAttribute.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
 	Backport for r84149
 	* marshal.c (cominterop_get_ccw): Patch from
 	  Bill Holmes to no walk up interface hierarchy.
