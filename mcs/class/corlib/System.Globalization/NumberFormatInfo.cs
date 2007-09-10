@@ -99,8 +99,10 @@ namespace System.Globalization {
 		bool validForParseAsNumber; // Unused, but MS.NET serializes this.
 		bool validForParseAsCurrency; // Unused, but MS.NET serializes this.
 #if NET_2_0
-		string[] nativeDigits; // Unused, but MS.NET serializes this.
-		int digitSubstitution; // Unused, but MS.NET serializes this.
+		string[] nativeDigits = invariantNativeDigits;
+		int digitSubstitution = 1; // DigitShapes.None.
+
+		static string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 #endif
 
 		internal NumberFormatInfo (int lcid)
@@ -519,6 +521,29 @@ namespace System.Globalization {
 				nanSymbol = value;
 			}
 		}
+		
+#if NET_2_0
+		[MonoNotSupported ("We don't have native digit info")]
+		public string [] NativeDigits {
+			get { return nativeDigits; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				if (value.Length != 10)
+					throw new ArgumentException ("Argument array length must be 10");
+				foreach (string s in value)
+					if (String.IsNullOrEmpty (s))
+						throw new ArgumentException ("Argument array contains one or more null strings");
+				nativeDigits = value;
+			}
+		}
+
+		[MonoNotSupported ("We don't have native digit info")]
+		public DigitShapes DigitSubstitution {
+			get { return (DigitShapes) digitSubstitution; }
+			set { digitSubstitution = (int) value; }
+		}
+#endif
 		
 		public string NegativeInfinitySymbol {
 			get {
