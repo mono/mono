@@ -8,6 +8,13 @@
 
 	* Makefile: consider the net_2_1 profile.
 
+2007-08-12  Marek Safar  <marek.safar@gmail.com>
+
+	* library.make: Includes new `corcompare' target.
+	
+	* corcompare.make: I got tired of hacking corcompare stuff again and
+	again.
+	
 2007-08-11  Jb Evain  <jbevain@novell.com>
 
 	* profiles/net_2_1: allow 2.1 assemblies in the GAC.
