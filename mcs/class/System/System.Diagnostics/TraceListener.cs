@@ -82,7 +82,12 @@ namespace System.Diagnostics {
 		}
 
 		private TraceOptions options {
-			get { return (TraceOptions) System.Threading.Thread.GetData (_optionsStore); }
+			get {
+				object o = System.Threading.Thread.GetData (_optionsStore);
+				if (o == null)
+					return TraceOptions.None;
+				return (TraceOptions) o;
+			}
 			set { System.Threading.Thread.SetData (_optionsStore, value); }
 		}
 #endif
