@@ -2998,7 +2998,7 @@ namespace Mono.CSharp {
 					return;
 				}
 			// If V is a constructed type C<V1..Vk>
-			} else if (v.IsGenericType && !v.IsGenericTypeDefinition) {
+			} else if (v.IsGenericType && !v.IsGenericTypeDefinition && u.IsGenericType) {
 				Type[] ga_u = u.GetGenericArguments ();
 				Type[] ga_v = v.GetGenericArguments ();
 				if (ga_u.Length != ga_v.Length)

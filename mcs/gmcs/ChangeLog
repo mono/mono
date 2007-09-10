@@ -1,3 +1,12 @@
+2007-09-10  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay: Create QueryStartClause for the first implicit from.
+	
+	* generic.cs (TypeInterferenceContext.LowerBoundInference): Fixed crash
+	both U and V are not generic.
+	
+	* linq.cs: Use standard method overload resolution for all methods.
+	
 2007-09-05  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Plug into let clause.

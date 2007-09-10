@@ -22,15 +22,15 @@ namespace Mono.CSharp.Linq
 
 	public class QueryExpression : ARangeVariableQueryClause
 	{
-		public QueryExpression (Block block, Expression from, AQueryClause query)
-			: base (block, from, from.Location)
+		public QueryExpression (Block block, AQueryClause query)
+			: base (block, null, query.Location)
 		{
 			this.next = query;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expression e = BuildQueryClause (ec, expr, null, null);
+			Expression e = BuildQueryClause (ec, null, null, null);
 			e = e.Resolve (ec);
 			return e;
 		}
@@ -40,37 +40,51 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public abstract class ALinqExpression : Expression
+	public abstract class AQueryClause : Expression
 	{
-		// Dictionary of method name -> MethodGroupExpr
-		static Hashtable methods = new Hashtable ();
-		static Type enumerable_class;
+		class QueryExpressionAccess : MemberAccess
+		{
+			public QueryExpressionAccess (Expression expr, string methodName, Location loc)
+				: base (expr, methodName, loc)
+			{
+			}
 
-		protected abstract string MethodName { get; }
+			public QueryExpressionAccess (Expression expr, string methodName, TypeArguments typeArguments, Location loc)
+				: base (expr, methodName, typeArguments, loc)
+			{
+			}
 
-		protected MethodGroupExpr MethodGroup {
-			get {
-				//
-				// Even if C# spec indicates that LINQ methods are context specific
-				// in reality they are hardcoded
-				//				
-				MemberList ml = (MemberList)methods [MethodName];
-				if (ml == null) {
-					if (enumerable_class == null)
-						enumerable_class = TypeManager.CoreLookupType ("System.Linq", "Enumerable");
-
-					ml = TypeManager.FindMembers (enumerable_class,
-						MemberTypes.Method, BindingFlags.Static | BindingFlags.Public,
-						Type.FilterName, MethodName);
-				}
-				
-				return new MethodGroupExpr (ArrayList.Adapter (ml), enumerable_class, loc);
+			protected override Expression Error_MemberLookupFailed (Type container_type, Type qualifier_type,
+				Type queried_type, string name, string class_name, MemberTypes mt, BindingFlags bf)
+			{
+				Report.Error (1935, loc, "An implementation of `{0}' query expression pattern could not be found. " +
+					"Are you missing `System.Linq' using directive or `System.Core.dll' assembly reference?",
+					name);
+				return null;
 			}
 		}
-	}
 
-	public abstract class AQueryClause : ALinqExpression
-	{
+		class QueryExpressionInvocation : Invocation
+		{
+			public QueryExpressionInvocation (QueryExpressionAccess expr, ArrayList arguments)
+				: base (expr, arguments)
+			{
+			}
+
+			protected override MethodGroupExpr DoResolveOverload (EmitContext ec)
+			{
+				int errors = Report.Errors;
+				MethodGroupExpr rmg = mg.OverloadResolve (ec, Arguments, true, loc);
+				if (rmg == null && errors == Report.Errors) {
+					// TODO: investigate whether would be better to re-use extension methods error handling
+					Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
+						mg.Name, TypeManager.CSharpName (mg.Type));
+				}
+
+				return rmg;
+			}
+		}
+
 		public AQueryClause next;
 		/*protected*/ public Expression expr;
 
@@ -85,21 +99,30 @@ namespace Mono.CSharp.Linq
 			return expr.DoResolve (ec);
 		}
 
-		public override void Emit (EmitContext ec)
+		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			throw new NotSupportedException ();
+			ArrayList args = new ArrayList (1);
+			args.Add (new Argument (CreateSelector (ec, expr, parameter, ti)));
+			lSide = CreateQueryExpression (lSide, args);
+			if (next != null) {
+				Select s = next as Select;
+				if (s == null || s.IsRequired (parameter))
+					return next.BuildQueryClause (ec, lSide, parameter, ti);
+			}
+
+			return lSide;
 		}
 
-		public virtual Expression BuildQueryClause (EmitContext ec, Expression from, Parameter parameter, TransparentIdentifiersScope ti)
+		protected Invocation CreateQueryExpression (Expression lSide, ArrayList arguments)
 		{
-			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (from));
-			args.Add (new Argument (CreateSelector (ec, expr, parameter, ti)));
-			expr = new Invocation (MethodGroup, args);
-			if (next != null)
-				return next.BuildQueryClause (ec, this, parameter, ti);
+			return new QueryExpressionInvocation (
+				new QueryExpressionAccess (lSide, MethodName, loc), arguments);
+		}
 
-			return expr;
+		protected Invocation CreateQueryExpression (Expression lSide, TypeArguments typeArguments, ArrayList arguments)
+		{
+			return new QueryExpressionInvocation (
+				new QueryExpressionAccess (lSide, MethodName, typeArguments, loc), arguments);
 		}
 
 		protected LambdaExpression CreateSelector (EmitContext ec, Expression expr, Parameter parameter, TransparentIdentifiersScope ti)
@@ -121,6 +144,13 @@ namespace Mono.CSharp.Linq
 
 			return selector;
 		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		protected abstract string MethodName { get; }
 
 		public virtual AQueryClause Next {
 			set {
@@ -161,7 +191,7 @@ namespace Mono.CSharp.Linq
 		// Customization for range variables which not only creates a lambda expression but
 		// also builds a chain of range varible pairs
 		//
-		public override Expression BuildQueryClause (EmitContext ec, Expression from, Parameter parentParameter, TransparentIdentifiersScope ti)
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
 		{
 			ICollection values = block.Variables.Values;
 			if (values.Count != 1)
@@ -193,11 +223,10 @@ namespace Mono.CSharp.Linq
 				element_selector = new AnonymousTypeDeclaration (transp_args, (TypeContainer) ec.DeclContainer, loc);
 			}
 
-			ArrayList args = new ArrayList (3);
-			args.Add (new Argument (from));
+			ArrayList args = new ArrayList (2);
 			AddSelectorArguments (ec, args, parentParameter, parameter, ti);
 
-			expr = new Invocation (MethodGroup, args);
+			lSide = CreateQueryExpression (lSide, args);
 			if (next != null) {
 				//
 				// Parameter indentifiers goes to the scope
@@ -210,11 +239,11 @@ namespace Mono.CSharp.Linq
 				}
 
 				TransparentParameter tp = new TransparentParameter (loc);
-				return next.BuildQueryClause (ec, this, tp,
+				return next.BuildQueryClause (ec, lSide, tp,
 					new TransparentIdentifiersScope (ti, tp, identifiers));
 			}
 
-			return expr;
+			return lSide;
 		}
 
 		//
@@ -226,42 +255,57 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class Cast : ALinqExpression
+	public class QueryStartClause : AQueryClause
 	{
-		Expression expr;
-		readonly Expression cast_type;
-
-		public Cast (Expression type, Expression expr, Location loc)
+		public QueryStartClause (Expression expr)
+			: base (expr, expr.Location)
 		{
-			this.cast_type = type;
-			this.expr = expr;
-			this.loc = loc;
 		}
 
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		{
+			return next.BuildQueryClause (ec, expr, parameter, ti);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression e = BuildQueryClause (ec, null, null, null);
+			return e.Resolve (ec);
+		}
+
+		protected override string MethodName {
+			get { throw new NotSupportedException (); }
+		}
+	}
+
+	public class Cast : QueryStartClause
+	{
+		readonly Expression type_expr;
+
+		public Cast (Expression type, Expression expr)
+			: base (expr)
+		{
+			this.type_expr = type;
+		}
+		
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// We don't have to clone cast type
 			Cast t = (Cast) target;
 			t.expr = expr.Clone (clonectx);
+		}		
+
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		{
+			lSide = CreateQueryExpression (expr, new TypeArguments (loc, type_expr), null);
+			if (next != null)
+				return next.BuildQueryClause (ec, lSide, parameter, ti);
+
+			return lSide;
 		}
 
 		protected override string MethodName {
 			get { return "Cast"; }
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			TypeArguments type_arguments = new TypeArguments (loc, cast_type);
-			Expression cast = MethodGroup.ResolveGeneric (ec, type_arguments);
-
-			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (expr));
-			return new Invocation (cast, args).DoResolve (ec);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotSupportedException ();
 		}
 	}
 
@@ -275,21 +319,20 @@ namespace Mono.CSharp.Linq
 			this.element_selector = elementSelector;
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression from, Parameter parameter, TransparentIdentifiersScope ti)
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			ArrayList args = new ArrayList (3);
-			args.Add (new Argument (from));
+			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (CreateSelector (ec, expr, parameter, ti)));
 
 			// A query can be optimized when selector is not group by specific
-			if (!element_selector.Equals (from))
+			if (!element_selector.Equals (lSide))
 				args.Add (new Argument (CreateSelector (ec, element_selector, parameter, ti)));
 
-			expr = new Invocation (MethodGroup, args);
+			lSide = CreateQueryExpression (lSide, args);
 			if (next != null)
-				return next.BuildQueryClause (ec, this, parameter, ti);
+				return next.BuildQueryClause (ec, lSide, parameter, ti);
 
-			return expr;
+			return lSide;
 		}
 
 		protected override string MethodName {
@@ -350,6 +393,19 @@ namespace Mono.CSharp.Linq
 		public Select (Expression expr, Location loc)
 			: base (expr, loc)
 		{
+		}
+		
+		//
+		// For queries like `from a orderby a select a'
+		// the projection is transparent and select clause can be safely removed 
+		//
+		public bool IsRequired (Parameter parameter)
+		{
+			SimpleName sn = expr as SimpleName;
+			if (sn == null)
+				return true;
+
+			return sn.Name != parameter.Name;
 		}
 
 		protected override string MethodName {

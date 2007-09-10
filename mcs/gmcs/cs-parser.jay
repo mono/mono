@@ -5379,7 +5379,13 @@ query_expression
 	: from_clause query_body
 	  {
 		lexer.QueryParsing = false;
-		$$ = new Linq.QueryExpression (current_block, (Expression)$1, (Linq.AQueryClause)$2); 
+
+		Linq.AQueryClause from = $1 as Linq.AQueryClause;
+		if (from == null)
+			from = new Linq.QueryStartClause ((Expression)$1);
+			
+		from.Tail.Next = (Linq.AQueryClause)$2;
+		$$ = new Linq.QueryExpression (current_block, from); 
 		end_block (lexer.Location);
 	  }
 	;
@@ -5400,7 +5406,7 @@ from_clause
 
 		Expression type = (Expression)$2;
 		current_block.AddVariable (type, lt.Value, lt.Location);
-		$$ = new Linq.Cast (type, (Expression)$5, lt.Location);
+		$$ = new Linq.Cast (type, (Expression)$5);
 	  }
 	;
 
