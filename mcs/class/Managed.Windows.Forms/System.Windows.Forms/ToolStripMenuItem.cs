@@ -236,8 +236,10 @@ namespace System.Windows.Forms
 			if (!this.Enabled)
 				return;
 				
-			if (this.HasDropDownItems)
+			if (this.HasDropDownItems) {
+				base.OnClick (e);
 				return;
+			}
 				
 			if (this.IsOnDropDown)
 				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);

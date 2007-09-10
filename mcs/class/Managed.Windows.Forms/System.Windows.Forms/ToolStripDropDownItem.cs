@@ -300,6 +300,10 @@ namespace System.Windows.Forms
 				
 			base.Dismiss (reason);
 		}
+
+		internal override void HandleClick (EventArgs e)
+		{
+		}
 		
 		internal void HideDropDown (ToolStripDropDownCloseReason reason)
 		{

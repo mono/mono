@@ -941,15 +941,15 @@ namespace System.Windows.Forms
 		{
 			// If we're currently over an item (set in MouseMove)
 			if (mouse_currently_over != null) {
+				// Fire our ItemClicked event
+				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
+					
 				// Fire the item's MouseUp event
 				mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
 
 				// The event handler may have blocked until the mouse moved off of the ToolStripItem
 				if (mouse_currently_over == null)
 					return;
-					
-				// Fire our ItemClicked event
-				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
 			}
 
 			base.OnMouseUp (mea);
@@ -1430,7 +1430,6 @@ namespace System.Windows.Forms
 		internal virtual void HandleItemClick (ToolStripItem dismissingItem)
 		{
 			this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
-			this.OnItemClicked (new ToolStripItemClickedEventArgs (dismissingItem));
 		}
 		
 		internal void HideMenus (bool release, ToolStripDropDownCloseReason reason)
