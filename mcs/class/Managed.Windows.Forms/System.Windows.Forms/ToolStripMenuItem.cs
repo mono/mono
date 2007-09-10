@@ -302,7 +302,7 @@ namespace System.Windows.Forms
 				this.Invalidate ();
 				this.close_on_mouse_release = false;
 				
-				if (!this.IsOnDropDown)
+				if (!this.IsOnDropDown && this.Parent is MenuStrip)
 					(this.Parent as MenuStrip).MenuDroppedDown = false;
 			}
 				

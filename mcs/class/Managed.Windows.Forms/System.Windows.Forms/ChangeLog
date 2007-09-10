@@ -1,5 +1,11 @@
 2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripMenuItem.cs: Add a parent type check so we don't crash on people
+	who want to add a menu item directly onto a toolstrip.
+	[Fixes bug #82775, part II]
+
+2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* StatusStrip.cs: Synchronize SetDisplayedItems with the ToolStrip version.
 	* ToolStrip.cs: If a ToolStripItem set to not visible is added to a ToolStrip,
 	don't set it to available.
