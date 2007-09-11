@@ -1,3 +1,9 @@
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripManager.cs: When we have added MDI buttons onto a MenuStrip, we
+	can't let them count as real items when calculating where to merge in the
+	user's items.  [Fixed bug #82786]
+
 2007-09-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripMenuItem.cs: Add a parent type check so we don't crash on people

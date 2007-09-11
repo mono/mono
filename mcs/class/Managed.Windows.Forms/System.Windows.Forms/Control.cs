@@ -511,6 +511,8 @@ namespace System.Windows.Forms
 					throw new ArgumentException ("Form cannot be added to the Controls collection that has a valid MDI parent.", "value");
 				}
 				
+				value.recalculate_distances = true;
+				
 				if (Contains (value)) {
 					owner.PerformLayout();
 					return;

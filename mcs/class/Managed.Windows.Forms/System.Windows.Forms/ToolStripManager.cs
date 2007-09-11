@@ -275,10 +275,10 @@ namespace System.Windows.Forms
 
 						if (tsi.MergeIndex == -1)
 							continue;
-						else if (tsi.MergeIndex >= targetToolStrip.Items.Count)
+						else if (tsi.MergeIndex >= CountRealToolStripItems (targetToolStrip))
 							targetToolStrip.Items.AddNoOwnerOrLayout (tsi);						
 						else
-							targetToolStrip.Items.InsertNoOwnerOrLayout (tsi.MergeIndex, tsi);
+							targetToolStrip.Items.InsertNoOwnerOrLayout (AdjustItemMergeIndex (targetToolStrip, tsi), tsi);
 
 						tsi.Parent = targetToolStrip;
 						
@@ -433,6 +433,28 @@ namespace System.Windows.Forms
 				toolstrips.Add (ts);
 		}
 
+		// When we have merged in MDI items like the min/max/close buttons, we
+		// can't count them for the sake of menu merging or it will mess up
+		// where people are trying to put them
+		private static int AdjustItemMergeIndex (ToolStrip ts, ToolStripItem tsi)
+		{			
+			if (ts.Items[0] is MdiControlStrip.SystemMenuItem)
+				return tsi.MergeIndex + 1;
+				
+			return tsi.MergeIndex;
+		}
+		
+		private static int CountRealToolStripItems (ToolStrip ts)
+		{
+			int count = 0;
+			
+			foreach (ToolStripItem tsi in ts.Items)
+				if (!(tsi is MdiControlStrip.ControlBoxMenuItem) && !(tsi is MdiControlStrip.SystemMenuItem))
+					count++;
+					
+			return count; 
+		}
+		
 		internal static ToolStrip GetNextToolStrip (ToolStrip ts, bool forward)
 		{
 			lock (toolstrips) {
