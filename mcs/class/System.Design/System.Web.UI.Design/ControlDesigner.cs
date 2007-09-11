@@ -38,6 +38,16 @@ namespace System.Web.UI.Design
 		protected string CreatePlaceHolderDesignTimeHtml (string instruction) { throw new NotImplementedException (); }
 		[MonoTODO]
 		public virtual string GetDesignTimeHtml () { throw new NotImplementedException (); }
+#if NET_2_0
+		[MonoNotSupported ("")]
+		public virtual string GetDesignTimeHtml (DesignerRegionCollection regions) { throw new NotImplementedException (); }
+		
+		[MonoNotSupported ("")]
+		public virtual string GetEditableDesignerRegionContent (EditableDesignerRegion region) { throw new NotImplementedException (); }
+		
+		[MonoNotSupported ("")]
+		public virtual void SetEditableDesignerRegionContent (EditableDesignerRegion region, string content) { throw new NotImplementedException (); }
+#endif
 		[MonoTODO]
 		protected virtual string GetEmptyDesignTimeHtml () { throw new NotImplementedException (); }
 		[MonoTODO]
@@ -74,5 +84,14 @@ namespace System.Web.UI.Design
 		public bool IsDirty { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		[MonoTODO]
 		public bool ReadOnly { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
+
+#if NET_2_0
+		[MonoNotSupported ("")]
+		protected virtual bool UsePreviewControl {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 	}
 }

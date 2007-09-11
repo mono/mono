@@ -1,3 +1,8 @@
+2007-09-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (net_2_0_dirs): added the System.Web.Extensions.Design
+	directory.
+
 2007-08-27  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: integrate Mono.Cecil.Mdb in the build.

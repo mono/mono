@@ -84,6 +84,10 @@ System.Web.UI.Design/DataFieldConverter.cs
 System.Web.UI.Design/DataMemberConverter.cs
 System.Web.UI.Design/DataSourceConverter.cs
 System.Web.UI.Design/DesignTimeData.cs
+System.Web.UI.Design/DesignerObject.cs
+System.Web.UI.Design/DesignerRegion.cs
+System.Web.UI.Design/DesignerRegionCollection.cs
+System.Web.UI.Design/EditableDesignerRegion.cs
 System.Web.UI.Design/ExpressionEditor.cs
 System.Web.UI.Design/ExpressionEditorSheet.cs
 System.Web.UI.Design/HtmlControlDesigner.cs
@@ -112,6 +116,7 @@ System.Web.UI.Design/UrlBuilder.cs
 System.Web.UI.Design/UrlBuilderOptions.cs
 System.Web.UI.Design/UrlEditor.cs
 System.Web.UI.Design/UserControlDesigner.cs
+System.Web.UI.Design/ViewRendering.cs
 System.Web.UI.Design/WebControlToolboxItem.cs
 System.Web.UI.Design/XmlFileEditor.cs
 System.Web.UI.Design/XmlUrlEditor.cs
