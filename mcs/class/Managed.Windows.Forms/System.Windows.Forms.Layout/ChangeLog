@@ -1,3 +1,9 @@
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: When working with Anchor = none, and we move a
+	control, we need to update its dist_right/dist_bottom.
+	[Fixes bug #82762]
+
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Only LayoutAutoSizeContainer if the container is

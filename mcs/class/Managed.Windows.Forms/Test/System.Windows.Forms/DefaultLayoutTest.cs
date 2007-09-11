@@ -524,6 +524,29 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		[Test]
+		public void Bug82762 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+			b.Anchor = AnchorStyles.None;
+			f.Controls.Add (b);
+			
+			f.Show ();
+			
+			Assert.AreEqual (new Rectangle (0, 0, 100, 100), b.Bounds, "A1");
+			
+			f.ClientSize = new Size (600, 600);
+
+			Assert.AreEqual (new Rectangle (158, 168, 100, 100), b.Bounds, "A2");
+
+			f.Close ();
+			f.Dispose ();
+		}
+		
 		[Test]  // bug #81199
 		public void NestedControls ()
 		{
