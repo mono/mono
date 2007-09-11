@@ -133,7 +133,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		[DisplayNameAttribute ("Driver")]
+		[DisplayName ("Driver")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string Driver { 
 			get {
@@ -157,7 +157,7 @@ namespace System.Data.Odbc
 			 }
 		}
 		
-		[DisplayNameAttribute ("Driver")]
+		[DisplayName ("Dsn")]
 		[RefreshProperties (RefreshProperties.All)]
 		public string Dsn { 
 			get { 

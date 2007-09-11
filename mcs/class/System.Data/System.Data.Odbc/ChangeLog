@@ -1,3 +1,12 @@
+2007-09-11  AMC  <amc1999@gmail.com>
+
+	* OdbcDataReader.cs (GetPrimaryKeys): ODBC data reader can now
+	properly handle "no-primary-keys" situation. Fixes bug # 82560.
+
+2007-09-11  Nagappan A  <anagappan@novell.com>
+
+	* OdbcConnectionStringBuilder.cs: Fixed Dsn DisplayName attribute.
+
 2007-08-13  Nagappan A  <anagappan@novell.com>
 
 	* OdbcMetaDataColumnNames.cs: Added new class.

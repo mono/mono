@@ -957,6 +957,8 @@ namespace System.Data.Odbc
 				} catch (OdbcException) {
 				}
                         }
+			if (keys == null)
+				return null;
 			keys.Sort ();
 			return (string []) keys.ToArray (typeof (string));
                 }
