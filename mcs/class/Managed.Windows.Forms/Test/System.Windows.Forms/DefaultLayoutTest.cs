@@ -527,6 +527,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Bug82762 ()
 		{
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("WM Size dependent");
+				
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 			
