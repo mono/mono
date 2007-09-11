@@ -191,6 +191,13 @@ static
 GC_key_t GC_thread_key;
 
 #ifdef USE_COMPILER_TLS
+/*
+ * gcc errors out with /tmp/ccdPMFuq.s:2994: Error: symbol `.LTLS4' is already defined
+ * if the static is removed on ppc.
+ */
+#if defined(__ppc__) || defined(__powerpc__)
+static
+#endif
 __thread MONO_TLS_FAST void* GC_thread_tls;
 #endif
 
