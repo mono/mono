@@ -1,3 +1,8 @@
+2007-09-11  Marek Habersack  <mhabersack@novell.com>
+
+	* WebServiceParser.cs: inputFile is a virtual path to the service,
+	not a physical one in GetCompiledType.
+
 2007-09-05  Marek Habersack  <mhabersack@novell.com>
 
 	* RootBuilder.cs: make Foundry settable, but protect the backing

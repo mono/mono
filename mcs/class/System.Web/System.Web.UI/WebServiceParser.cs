@@ -52,7 +52,15 @@ namespace System.Web.UI {
 
 		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{
-			WebServiceParser parser = new WebServiceParser (context, null, inputFile);
+			string physPath;
+			HttpRequest req = context != null ? context.Request : null;
+			
+			if (req != null)
+				physPath = req.MapPath (inputFile);
+			else // likely to fail
+				physPath = inputFile;
+			
+			WebServiceParser parser = new WebServiceParser (context, inputFile, physPath);
 			Type type = parser.GetCompiledTypeFromCache ();
 			if (type != null)
 				return type;
