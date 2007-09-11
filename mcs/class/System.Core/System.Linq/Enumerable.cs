@@ -739,30 +739,30 @@ namespace System.Linq
 
         #region FirstOrDefault
 
-        public static T FirstOrDefault<T>(this IEnumerable<T> source)
+        public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source)
         {
             if (source == null)
                 throw new ArgumentNullException();
 
-            foreach (T element in source)
+            foreach (TSource element in source)
                 return element;
 
-            return default(T);
+            return default(TSource);
         }
 
 
-        public static T FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
             if (source == null || predicate == null)
                 throw new ArgumentNullException();
 
-            foreach (T element in source)
+            foreach (TSource element in source)
             {
                 if (predicate(element))
                     return element;
             }
 
-            return default(T);
+            return default(TSource);
         }
 
         #endregion
@@ -1009,7 +1009,7 @@ namespace System.Linq
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector,
             Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector)
         {
-            return Join<TOuter, TInner, TKey, TResult>(outer, inner, outerKeySelector, innerKeySelector, resultSelector);
+            return Join<TOuter, TInner, TKey, TResult>(outer, inner, outerKeySelector, innerKeySelector, resultSelector, null);
         }
         # endregion
 
@@ -2830,7 +2830,7 @@ namespace System.Linq
 
         #region IndexOf
 
-        public static int IndexOf<T>(this IEnumerable<T> source, T item, IEqualityComparer<T> comparer)
+        static int IndexOf<T>(this IEnumerable<T> source, T item, IEqualityComparer<T> comparer)
         {
             if (comparer == null)
                 comparer = EqualityComparer<T>.Default;
@@ -2846,7 +2846,7 @@ namespace System.Linq
             return -1;
         }
 
-        public static int IndexOf<T>(this IEnumerable<T> source, T item)
+        static int IndexOf<T>(this IEnumerable<T> source, T item)
         {
             return IndexOf<T>(source, item, null);
         }
