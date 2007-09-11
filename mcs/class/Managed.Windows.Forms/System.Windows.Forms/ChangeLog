@@ -1,5 +1,11 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Math is hard!  Fix some math so that the TrackBar
+	handle moves to the closest tick when it is being dragged.
+	[Fixes bug #82751]
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripManager.cs: When we have added MDI buttons onto a MenuStrip, we
 	can't let them count as real items when calculating where to merge in the
 	user's items.  [Fixed bug #82786]

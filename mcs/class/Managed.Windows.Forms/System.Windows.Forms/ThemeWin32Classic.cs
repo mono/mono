@@ -5274,7 +5274,7 @@ namespace System.Windows.Forms
 			
 			/* Convert thumb position from mouse position to value*/
 			if (tb.Orientation == Orientation.Vertical) {
-				value_pos = (int)((thumb_area.Bottom - y -(float)pixels_betweenticks / 2) / (float)pixels_betweenticks);
+				value_pos = (int)Math.Round (((thumb_area.Bottom - y - (float)thumb_pos.Height / 2) / (float)pixels_betweenticks), 0);
 
 				if (value_pos + tb.Minimum > tb.Maximum)
 					value_pos = tb.Maximum - tb.Minimum;
@@ -5283,7 +5283,7 @@ namespace System.Windows.Forms
 
 				result = value_pos + tb.Minimum;
 			} else {
-				value_pos = (int) ((x - channel_startpoint.X - (float) pixels_betweenticks / 2) / (float) pixels_betweenticks);
+				value_pos = (int)Math.Round (((x - channel_startpoint.X - (float)thumb_pos.Width / 2) / (float) pixels_betweenticks), 0);
 
 				if (value_pos + tb.Minimum > tb.Maximum)
 					value_pos = tb.Maximum - tb.Minimum;
