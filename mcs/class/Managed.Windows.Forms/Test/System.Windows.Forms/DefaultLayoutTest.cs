@@ -550,6 +550,23 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 		
+		[Test]
+		public void Bug82805 ()
+		{
+			Control c1 = new Control ();
+			c1.Size = new Size (100, 100);
+			Control c2 = new Control ();
+			c2.Size = new Size (100, 100);
+
+			c2.SuspendLayout ();
+			c1.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+			c2.Controls.Add (c1);
+			c2.Size = new Size (200, 200);
+			c2.ResumeLayout ();
+
+			Assert.AreEqual (200, c1.Width, "A1");
+		}
+		
 		[Test]  // bug #81199
 		public void NestedControls ()
 		{

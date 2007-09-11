@@ -3824,14 +3824,14 @@ namespace System.Windows.Forms
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
+			foreach (Control c in Controls.GetAllControls ())
+				if (c.recalculate_distances)
+					c.UpdateDistances ();
+
 			if (layout_suspended > 0) {
 				layout_pending = true;
 				return;
 			}
-
-			foreach (Control c in Controls.GetAllControls ())
-				if (c.recalculate_distances)
-					c.UpdateDistances ();
 					
 			layout_pending = false;
 

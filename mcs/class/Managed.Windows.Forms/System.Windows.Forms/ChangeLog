@@ -1,5 +1,10 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Update the anchoring distances even when layout is supspended.
+	Patch provided by George fixes bug #82805.
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Provide a setter for ExplicitHeight.
 	* TextBoxBase.cs: Now that we have the implementation for explicit heights,
 	remove the hacks in here for requested_height.

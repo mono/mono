@@ -1,5 +1,9 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefaultLayoutTest.cs: Add test for bug #82805.
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayoutTest.cs: Mark Bug82762 as WM dependent.
 
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
