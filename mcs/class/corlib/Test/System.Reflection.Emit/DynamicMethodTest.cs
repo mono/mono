@@ -292,6 +292,25 @@ namespace MonoTests.System.Reflection.Emit
 
 			m1.Invoke(null, new object[] { 5 });
 		}
+
+		class Host {
+			static string Field = "foo";
+		}
+
+		[Test]
+		public void TestOwnerMemberAccess ()
+		{
+			DynamicMethod method = new DynamicMethod ("GetField",
+				typeof (string), new Type [0], typeof (Host));
+
+			ILGenerator il = method.GetILGenerator ();
+			il.Emit (OpCodes.Ldsfld, typeof (Host).GetField (
+				"Field", BindingFlags.Static | BindingFlags.NonPublic));
+			il.Emit (OpCodes.Ret);
+
+			string ret = (string) method.Invoke (null, new object [] {});
+			Assert.AreEqual ("foo", ret, "#1");
+		}
 	}
 }
 

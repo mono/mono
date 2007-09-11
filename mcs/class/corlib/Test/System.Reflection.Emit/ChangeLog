@@ -1,3 +1,7 @@
+2007-09-11  Jb Evain  <jbevain@novell.com>
+
+	* DynamicMethodTest.cs: add test for owner member access.
+
 2007-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodBuilderTest.cs: Add new tests for using generic types in the IL
