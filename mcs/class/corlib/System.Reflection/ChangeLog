@@ -1,3 +1,7 @@
+2007-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* MonoMethod.cs: Catch and re-throw MethodAccessException from
+	InternalInvoke for CoreCLR security.
 
 Thu Sep 6 19:49:34 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

@@ -155,6 +155,10 @@ namespace System.Reflection {
 			} catch (ThreadAbortException) {
 				throw;
 #endif
+#if NET_2_1
+			} catch (MethodAccessException) {
+				throw;
+#endif
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
@@ -398,6 +402,10 @@ namespace System.Reflection {
 				throw;
 			} catch (TargetException) {
 				throw;
+#if NET_2_1
+			} catch (MethodAccessException) {
+				throw;
+#endif
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
