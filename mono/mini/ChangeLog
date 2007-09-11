@@ -1,3 +1,8 @@
+
+Tue Sep 11 16:14:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: implementation for the new runtime tls opcode.
+
 2007-09-11  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
