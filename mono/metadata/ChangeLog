@@ -1,3 +1,8 @@
+2007-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c (ves_icall_InternalInvoke): Enforce CoreCLR security
+	rules for calling methods via reflection.
+
 2007-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (resolve_object): Add support for MonoGenericClass. 

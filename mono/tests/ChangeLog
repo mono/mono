@@ -1,3 +1,8 @@
+2007-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* coreclr-security.cs: Added positive and negative tests for
+	calling methods via reflection.
+
 2007-09-10  William Holmes  <billholmes54@gmail.com>
 
 	* marshal9.cs, libtest.c Adding test case for marshal.c r84161
