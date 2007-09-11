@@ -1,5 +1,10 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollBarTest.cs: Add test demonstrating behavior when Maximum
+	is set lower than Value.
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefaultLayoutTest.cs: Add test for bug #82762.
 
 2007-09-06  Jonathan Pobst  <monkey@jpobst.com>

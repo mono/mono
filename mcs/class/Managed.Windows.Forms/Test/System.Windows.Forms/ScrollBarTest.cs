@@ -452,6 +452,21 @@ public class MyScrollBar : HScrollBar
 				return base.GetScaledBounds (bounds, factor, specified);
 			}
 		}
+		
+		[Test]
+		public void MaximumValueTest ()
+		{
+			ScrollBar s = new VScrollBar ();
+
+			s.LargeChange = 0;
+			s.Maximum = 100;
+			s.Value = 20;
+			s.Maximum = 0;
+
+			Assert.AreEqual (0, s.LargeChange, "A1");
+			Assert.AreEqual (0, s.Maximum, "A2");
+			Assert.AreEqual (0, s.Value, "A3");
+		}
 #endif
     }
 

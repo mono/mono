@@ -1,5 +1,11 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollBar.cs: Fix an issue reported on the lists where setting a scrollbar's
+	Maximum to lower that its current Value caused an ArgumentException by setting
+	the Value to the new Maximum.
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Math is hard!  Fix some math so that the TrackBar
 	handle moves to the closest tick when it is being dragged.
 	[Fixes bug #82751]

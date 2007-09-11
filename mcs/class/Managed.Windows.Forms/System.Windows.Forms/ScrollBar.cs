@@ -426,7 +426,9 @@ namespace System.Windows.Forms
 
 				if (maximum < minimum)
 					minimum = maximum;
-
+				if (Value > maximum)
+					Value = maximum;
+					
 				// thumb area depends on maximum value,
 				// so we need to recalculate it.
 				CalcThumbArea ();
