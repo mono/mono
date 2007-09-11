@@ -1,3 +1,9 @@
+
+Tue Sep 11 16:00:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, marshal.h: exported a couple of useful functions and
+	added mono_mb_get_label () to easily handle backward branches.
+
 2007-09-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (resolve_object): Inflate generic methods. Fixes #82782.
