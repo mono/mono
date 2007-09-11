@@ -1,3 +1,13 @@
+2007-09-11  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay: Single join clause connected.
+	
+	* linq.cs: Moved argument creation into CreateSelector and renamed to
+	CreateSelectorArguments.
+	(ARangeVariableQueryClause.BuildQueryClause): Consider all lambda
+	arguments to be implicit.
+	(Join): Implemented single join clause.
+	
 2007-09-10  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay: Create QueryStartClause for the first implicit from.

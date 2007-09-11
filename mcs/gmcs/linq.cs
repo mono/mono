@@ -102,7 +102,7 @@ namespace Mono.CSharp.Linq
 		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
 			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (CreateSelector (ec, expr, parameter, ti)));
+			args.Add (CreateSelectorArgument (ec, expr, parameter, ti));
 			lSide = CreateQueryExpression (lSide, args);
 			if (next != null) {
 				Select s = next as Select;
@@ -125,12 +125,12 @@ namespace Mono.CSharp.Linq
 				new QueryExpressionAccess (lSide, MethodName, typeArguments, loc), arguments);
 		}
 
-		protected LambdaExpression CreateSelector (EmitContext ec, Expression expr, Parameter parameter, TransparentIdentifiersScope ti)
+		protected Argument CreateSelectorArgument (EmitContext ec, Expression expr, Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			return CreateSelector (ec, expr, new Parameter [] { parameter }, ti);
+			return CreateSelectorArgument (ec, expr, new Parameter [] { parameter }, ti);
 		}
 
-		protected LambdaExpression CreateSelector (EmitContext ec, Expression expr, Parameter[] parameters, TransparentIdentifiersScope ti)
+		protected Argument CreateSelectorArgument (EmitContext ec, Expression expr, Parameter[] parameters, TransparentIdentifiersScope ti)
 		{
 			Parameters p = new Parameters (parameters);
 
@@ -142,7 +142,7 @@ namespace Mono.CSharp.Linq
 			selector.CreateAnonymousHelpers ();
 			selector.RootScope.DefineType ();
 
-			return selector;
+			return new Argument (selector);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -182,9 +182,9 @@ namespace Mono.CSharp.Linq
 		protected virtual void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
 			Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			args.Add (new Argument (CreateSelector (ec, expr, parentParameter, null)));
-			args.Add (new Argument (CreateSelector (ec, element_selector,
-				new Parameter [] { parentParameter, parameter }, ti)));
+			args.Add (CreateSelectorArgument (ec, expr, parentParameter, null));
+			args.Add (CreateSelectorArgument (ec, element_selector,
+				new Parameter [] { parentParameter, parameter }, ti));
 		}
 
 		//
@@ -201,13 +201,7 @@ namespace Mono.CSharp.Linq
 			enumerator.MoveNext ();
 			LocalInfo li = (LocalInfo) enumerator.Current;
 
-			Parameter parameter;
-			if (li.Type == ImplicitQueryParameter.ImplicitType.Instance) {
-				parameter = new ImplicitQueryParameter (li);
-			} else {
-				parameter = new Parameter (li.Type, li.Name, Parameter.Modifier.NONE, null, li.Location);
-			}
-
+			Parameter parameter = new ImplicitQueryParameter (li);
 			if (parentParameter == null)
 				return next.BuildQueryClause (ec, expr, parameter, ti);
 
@@ -223,7 +217,7 @@ namespace Mono.CSharp.Linq
 				element_selector = new AnonymousTypeDeclaration (transp_args, (TypeContainer) ec.DeclContainer, loc);
 			}
 
-			ArrayList args = new ArrayList (2);
+			ArrayList args = new ArrayList ();
 			AddSelectorArguments (ec, args, parentParameter, parameter, ti);
 
 			lSide = CreateQueryExpression (lSide, args);
@@ -322,11 +316,11 @@ namespace Mono.CSharp.Linq
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
 			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (CreateSelector (ec, expr, parameter, ti)));
+			args.Add (CreateSelectorArgument (ec, expr, parameter, ti));
 
 			// A query can be optimized when selector is not group by specific
 			if (!element_selector.Equals (lSide))
-				args.Add (new Argument (CreateSelector (ec, element_selector, parameter, ti)));
+				args.Add (CreateSelectorArgument (ec, element_selector, parameter, ti));
 
 			lSide = CreateQueryExpression (lSide, args);
 			if (next != null)
@@ -337,6 +331,53 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "GroupBy"; }
+		}
+	}
+
+	public class Join : ARangeVariableQueryClause
+	{
+		Expression projection;
+		Expression inner_selector, outer_selector;
+
+		public Join (Block block, Expression inner, Expression outerSelector, Expression innerSelector, Location loc)
+			: base (block, inner, loc)
+		{
+			this.outer_selector = outerSelector;
+			this.inner_selector = innerSelector;
+		}
+
+		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
+			Parameter parameter, TransparentIdentifiersScope ti)
+		{
+			args.Add (new Argument (expr));
+			args.Add (CreateSelectorArgument (ec, outer_selector, parentParameter, ti));
+			args.Add (CreateSelectorArgument (ec, inner_selector, parameter, ti));
+
+			if (projection == null) {
+				ArrayList join_args = new ArrayList (2);
+				join_args.Add (new AnonymousTypeParameter (parentParameter));
+				join_args.Add (new AnonymousTypeParameter (parameter));
+				projection = new AnonymousTypeDeclaration (join_args, (TypeContainer) ec.DeclContainer, loc);
+			}
+
+			args.Add (CreateSelectorArgument (ec, projection, new Parameter [] { parentParameter, parameter }, ti));
+		}
+
+		public override AQueryClause Next {
+			set {
+				// Use select as join projection
+				if (value is Select) {
+					projection = value.expr;
+					next = value.next;
+					return;
+				}
+
+				base.Next = value;
+			}
+		}
+
+		protected override string MethodName {
+			get { return "Join"; }
 		}
 	}
 
@@ -367,15 +408,15 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		public Let (Block block, Expression expr)
-			: base (block, expr, expr.Location)
+		public Let (Block block, Expression expr, Location loc)
+			: base (block, expr, loc)
 		{
 		}
 
 		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter, Parameter parameter,
 			TransparentIdentifiersScope ti)
 		{
-			args.Add (new Argument (CreateSelector (ec, element_selector, parentParameter, ti)));
+			args.Add (CreateSelectorArgument (ec, element_selector, parentParameter, ti));
 		}
 
 		protected override AnonymousTypeParameter CreateAnonymousTypeVariable (Parameter parameter)

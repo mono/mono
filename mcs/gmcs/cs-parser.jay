@@ -5391,7 +5391,7 @@ query_expression
 	;
 	
 from_clause
-	: FROM IDENTIFIER IN expression opt_join_clauses
+	: FROM IDENTIFIER IN expression
 	  {
 		start_block (lexer.Location);
 		LocatedToken lt = (LocatedToken) $2;
@@ -5399,7 +5399,7 @@ from_clause
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);
 		$$ = $4;
 	  }
-	| FROM type IDENTIFIER IN expression opt_join_clauses
+	| FROM type IDENTIFIER IN expression
 	  {
 		start_block (GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $3;
@@ -5410,55 +5410,10 @@ from_clause
 	  }
 	;
 
-opt_join_clauses
-	: /* empty */
-	| join_clauses
-	;
-
-join_clauses
-	: join_clause
-	| join_clauses join_clause
-	;
-	
-join_clause
-	: JOIN join_clause_body
-	| JOIN join_clause_body INTO IDENTIFIER
-	| JOIN type join_clause_body
-	| JOIN type join_clause_body INTO IDENTIFIER
-	;
-	
-join_clause_body
-	: IDENTIFIER IN expression ON expression EQUALS expression
-	;
-
 query_body
-	: opt_from_let_where_clauses opt_orderby_clause SELECT expression opt_query_continuation
+	: opt_query_body_clauses select_or_group_clause opt_query_continuation
 	  {
-		Linq.AQueryClause head = new Linq.Select ((Expression)$4, GetLocation ($3));
-		
-		if ($2 != null) {
-			Linq.AQueryClause clause = (Linq.AQueryClause)$2;
-			clause.Tail.Next = head;
-			head = clause;
-		}
-		
-		if ($1 != null) {
-			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
-			clause.Tail.Next = head;
-			head = clause;
-		}
-					
-		$$ = head;
-	  }
-	| opt_from_let_where_clauses opt_orderby_clause group_clause opt_query_continuation
-	  {
-	  	Linq.AQueryClause head = (Linq.AQueryClause)$3;
-
-		if ($2 != null) {
-			Linq.AQueryClause clause = (Linq.AQueryClause)$2;
-			clause.Tail.Next = head;
-			head = clause;
-		}
+	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
 		if ($1 != null) {
 			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
@@ -5470,21 +5425,32 @@ query_body
 	  }
 	;
 	
-opt_from_let_where_clauses
-	: /* empty */
-	| from_let_where_clauses
+select_or_group_clause
+	: SELECT expression
+	  {
+		$$ = new Linq.Select ((Expression)$2, GetLocation ($1));
+	  }
+	| GROUP expression BY expression
+	  {
+	    $$ = new Linq.GroupBy ((Expression)$2, (Expression)$4, GetLocation ($1));
+	  }
 	;
 	
-from_let_where_clauses
-	: from_let_where_clause
-	| from_let_where_clauses from_let_where_clause
+opt_query_body_clauses
+	: /* empty */
+	| query_body_clauses
+	;
+	
+query_body_clauses
+	: query_body_clause
+	| query_body_clauses query_body_clause
 	  {
 		((Linq.AQueryClause)$1).Tail.Next = (Linq.AQueryClause)$2;
 		$$ = $1;
 	  }
 	;
 	
-from_let_where_clause
+query_body_clause
 	: from_clause
 	  {
 		$$ = new Linq.SelectMany (current_block, (Expression)$1);
@@ -5492,16 +5458,18 @@ from_let_where_clause
 	  }
 	| let_clause
 	| where_clause
+	| join_clause
+	| orderby_clause
 	;
 	
 let_clause
 	: LET IDENTIFIER ASSIGN expression
 	  {
-		start_block (lexer.Location);
+		start_block (GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $2;
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
 			lt.Value, lt.Location);	  
-	  	$$ = new Linq.Let (current_block, (Expression)$4);
+	  	$$ = new Linq.Let (current_block, (Expression)$4, GetLocation ($1));
 	  	end_block (lexer.Location);
 	  }
 	;
@@ -5513,9 +5481,39 @@ where_clause
 	  }
 	;
 	
-opt_orderby_clause
-	: /* empty */
-	| ORDERBY orderings
+join_clause
+	: JOIN IDENTIFIER IN expression ON expression EQUALS expression
+	  {
+		start_block (GetLocation ($1));
+		LocatedToken lt = (LocatedToken) $2;
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
+			lt.Value, lt.Location);
+		
+	  	$$ = new Linq.Join (current_block, (Expression)$4, (Expression)$6, (Expression)$8, GetLocation ($1));
+		end_block (lexer.Location);
+	  }
+	| JOIN type IDENTIFIER IN expression ON expression EQUALS expression
+	  {
+		start_block (GetLocation ($1));
+		LocatedToken lt = (LocatedToken) $3;
+		current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
+		
+	  	$$ = new Linq.Join (current_block, new Linq.Cast ((Expression)$2, (Expression)$5),
+			(Expression)$7, (Expression)$9, GetLocation ($1));
+		end_block (lexer.Location);	  	
+	  }
+	| JOIN join_clause_body INTO IDENTIFIER
+	| JOIN type join_clause_body INTO IDENTIFIER
+	;
+	
+join_clause_body
+	: IDENTIFIER IN expression ON expression EQUALS expression
+	  {
+	  }
+	;	
+	
+orderby_clause
+	: ORDERBY orderings
 	  {
 		$$ = $2;
 	  }
@@ -5572,13 +5570,6 @@ then_by
 	  }	
 	;
 
-	
-group_clause
-	: GROUP expression BY expression
-	  {
-	    $$ = new Linq.GroupBy ((Expression)$2, (Expression)$4, GetLocation ($1));
-	  }
-	;
 
 opt_query_continuation
 	: /* empty */
@@ -5586,7 +5577,7 @@ opt_query_continuation
 	;
 	
 query_continuation
-	: INTO IDENTIFIER opt_join_clauses query_body
+	: INTO IDENTIFIER query_body
 	;
 
 %%
