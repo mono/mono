@@ -23,7 +23,8 @@ DISTFILES = \
 	scan-tests.pl			\
 	tinderbox/smtp.c		\
 	tinderbox/tinderbox.sh		\
-	gensources.sh
+	gensources.sh			\
+	removecomments.sh
 
 test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local:
 	@:

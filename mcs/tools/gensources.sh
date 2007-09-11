@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 includefile=$1
 excludefile=$2

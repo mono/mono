@@ -10,7 +10,7 @@ OIFS=$IFS
 for f in $source_files ; do
 	IFS='
 '
-	for f in $(cat $f) ; do
+	for f in `cat $f` ; do
 		case $f in
 			\#*) ;;
 			*) echo $f ;;

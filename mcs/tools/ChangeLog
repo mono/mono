@@ -1,3 +1,11 @@
+2007-09-10  Wade Berrier  <wberrier@novell.com>
+
+	* removecomments.sh: use `` instead of $() since it works on
+	solaris' shell
+	* gensources.sh: use /usr/bin/env for bash specific code
+
+	* Makefile: include removecomments.sh in dist file
+
 2007-09-04  Wade Berrier  <wberrier@novell.com>
 
 	* removecomments.sh: New script to aid 'make dist'
