@@ -1,4 +1,11 @@
 
+Tue Sep 11 16:08:08 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, boehm-gc.c, null-gc.c, sgen-gc.c: allow the GC to
+	provide a managed method that does fast allocations without needing
+	a managed->unmanaged transition. Boehm GC implementation currently
+	enabled for ptrfree objects on sane architectures.
+
 Tue Sep 11 16:00:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c, marshal.h: exported a couple of useful functions and
