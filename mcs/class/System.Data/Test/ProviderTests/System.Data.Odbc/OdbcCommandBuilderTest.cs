@@ -150,9 +150,9 @@ namespace MonoTests.System.Data
 			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
 #if NET_1_0
 			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
-#endif
 			Assert.AreEqual ("", cb.QuotePrefix, "#5");
 			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
+#endif
 #if NET_2_0				
 			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
 			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");

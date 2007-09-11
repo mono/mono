@@ -100,7 +100,7 @@ namespace MonoTests.System.Data
 			IDbConnection conn = new OdbcConnection (
 						ConnectionManager.Singleton.ConnectionString);
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
+				conn.Open ();
 				OdbcCommand cmd = new OdbcCommand ("create table odbcnodatatest (ID int not null, Val1 text)",
 								   (OdbcConnection) conn);
 				cmd.ExecuteNonQuery ();
@@ -113,6 +113,35 @@ namespace MonoTests.System.Data
 			}
 		}
 		
+		private static void DoExecuteNonQuery (OdbcConnection conn, string sql) {
+			OdbcCommand cmd = new OdbcCommand (sql, conn);
+			cmd.ExecuteNonQuery();
+		}
+  
+		private static void DoExecuteScalar(OdbcConnection conn, string sql) {
+			OdbcCommand cmd = new OdbcCommand (sql, conn);
+			cmd.ExecuteScalar();
+		}
+
+		[Test]
+		public void Bug82560Test ()
+		{
+			IDbConnection conn = new OdbcConnection (
+						ConnectionManager.Singleton.ConnectionString);
+			try {
+				conn.Open ();
+				DoExecuteNonQuery ((OdbcConnection) conn, "CREATE TABLE odbc_alias_test" + 
+						   "(ifld INT NOT NULL PRIMARY KEY, sfld VARCHAR(20))");
+				DoExecuteNonQuery ((OdbcConnection) conn, "INSERT INTO odbc_alias_test" +
+						   "(ifld, sfld) VALUES (1, '1111')");
+				DoExecuteScalar ((OdbcConnection) conn, "SELECT A.ifld FROM odbc_alias_test " +
+						 "A WHERE A.ifld = 1");
+				DoExecuteNonQuery ((OdbcConnection) conn, "DROP TABLE odbc_alias_test");
+			}finally {
+				conn.Close ();
+			}
+		}
+
 		[Test]
 		public void FindZeroInToStringTest ()
 		{
