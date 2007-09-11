@@ -1,3 +1,13 @@
+2007-09-11  Jb Evain  <jbevain@novell.com>
+
+	* object-internals.h (MonoReflectionDynamicMethod): add
+	a `MonoReflectionType *owner` field. The owner is used
+	* reflection.c:
+	(mono_reflection_create_dynamic_method): use the owner of the dynamic
+	method as the class declaring the dynamic method.
+	(reflection_methodbuilder_from_dynamic_method): copy the owner of the
+	dynamic method to the declaring type of the methodbuilder.
+
 2007-09-11  Mark Probst  <mark.probst@gmail.com>
 
 	* icall.c (ves_icall_InternalInvoke): Enforce CoreCLR security
