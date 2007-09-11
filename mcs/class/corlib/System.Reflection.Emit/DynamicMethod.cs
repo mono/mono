@@ -60,6 +60,7 @@ namespace System.Reflection.Emit {
 		private int nrefs;
 		private object[] refs;
 		private IntPtr referenced_by;
+		private Type owner;
 		#endregion
 		private Delegate deleg;
 		private MonoMethod method;
@@ -78,10 +79,14 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, owner, skipVisibility) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner.Module, skipVisibility) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner, owner.Module, skipVisibility) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, null, m, skipVisibility) {
+		}
+
+		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (returnType == null)
@@ -101,6 +106,7 @@ namespace System.Reflection.Emit {
 			this.callingConvention = callingConvention;
 			this.returnType = returnType;
 			this.parameters = parameterTypes;
+			this.owner = owner;
 			this.module = m;
 			this.skipVisibility = skipVisibility;
 		}
