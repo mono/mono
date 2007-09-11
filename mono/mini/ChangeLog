@@ -1,4 +1,8 @@
 
+Tue Sep 11 16:15:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.: hook the new managed GC allocation feature into the JIT.
+
 Tue Sep 11 16:14:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: implementation for the new runtime tls opcode.
