@@ -157,6 +157,31 @@ namespace MonoTests.System.Windows.Forms
 #endif
 		
 		[Test]
+		public void Bug82748 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Control c = new Control ();
+			c.Size = new Size (100, 100);
+			
+			Control c2 = new Control ();
+			c2.Size = c.Size;
+			c2.Controls.Add (c);
+			
+			c.Anchor = AnchorStyles.Right;
+			
+			f.Controls.Add (c);
+			
+			f.Show ();
+			
+			Assert.AreEqual (0, c.Left, "A1");
+			
+			f.Close ();
+			f.Dispose ();
+		}
+		
+		[Test]
 		public void InvokeTestParentHandle ()
 		{
 			Control child, parent;

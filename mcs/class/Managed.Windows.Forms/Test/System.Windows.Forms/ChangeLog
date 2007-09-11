@@ -1,5 +1,9 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ControlTest.cs: Add test for bug #82748.
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollBarTest.cs: Add test demonstrating behavior when Maximum
 	is set lower than Value.
 
