@@ -858,8 +858,12 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsTrue (attr.ThrowOnUnmappableChar, "#3");
 		}
 
+		public class GenericFoo <T> {
+			public static T field;
+		}
+
 		[Test]
-		public void GenericTypeParameterBuilder_Dynamic ()
+		public void ILGen_GenericTypeParameterBuilder ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 			MethodBuilder mb = tb.DefineMethod ("box_int", 
@@ -877,6 +881,53 @@ namespace MonoTests.System.Reflection.Emit
 			MethodInfo mi2 = mi.MakeGenericMethod (new Type [] { typeof (int) });
 			Assert.AreEqual (1, mi2.Invoke (null, new object [] { 1 }));
 		}
+
+		public void ILGen_InstantiatedGenericType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod ("return_type", 
+												MethodAttributes.Public|MethodAttributes.Static, typeof (object), new Type [] { });
+
+			GenericTypeParameterBuilder[] pars = mb.DefineGenericParameters (new string [] { "foo" });
+
+			ILGenerator ilgen = mb.GetILGenerator ();
+
+			Type genericFoo = typeof (GenericFoo<int>).GetGenericTypeDefinition ().MakeGenericType (new Type [] { pars [0] });
+
+			ilgen.Emit (OpCodes.Ldtoken, genericFoo);
+			ilgen.Emit (OpCodes.Call, typeof (Type).GetMethod ("GetTypeFromHandle"));
+			ilgen.Emit (OpCodes.Ret);
+
+			Type t = tb.CreateType ();
+			MethodInfo mi = t.GetMethod ("box_int");
+			MethodInfo mi2 = mi.MakeGenericMethod (new Type [] { typeof (int) });
+			Assert.AreEqual (typeof (GenericFoo<int>), mi2.Invoke (null, new object [] { 1 }));
+		}
+
+		public void ILGen_InstantiatedTypeBuilder ()
+		{
+			TypeBuilder genericTb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			genericTb.DefineGenericParameters (new string [] { "foo" });
+			Type generatedGenericType = genericTb.CreateType ();
+
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			MethodBuilder mb = tb.DefineMethod ("return_type", 
+												MethodAttributes.Public|MethodAttributes.Static, typeof (object), new Type [] { });
+
+			GenericTypeParameterBuilder[] pars = mb.DefineGenericParameters (new string [] { "foo" });
+
+			ILGenerator ilgen = mb.GetILGenerator ();
+
+			ilgen.Emit (OpCodes.Ldtoken, genericTb.MakeGenericType (new Type [] { pars [0] }));
+			ilgen.Emit (OpCodes.Call, typeof (Type).GetMethod ("GetTypeFromHandle"));
+			ilgen.Emit (OpCodes.Ret);
+
+			Type t = tb.CreateType ();
+			MethodInfo mi = t.GetMethod ("return_type");
+			MethodInfo mi2 = mi.MakeGenericMethod (new Type [] { typeof (int) });
+			Assert.AreEqual (generatedGenericType.MakeGenericType (new Type [] { typeof (int) }), mi2.Invoke (null, new object [] { 1 }));
+		}
+
 #endif
 	}
 }

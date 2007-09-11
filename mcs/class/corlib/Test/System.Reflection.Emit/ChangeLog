@@ -1,3 +1,8 @@
+2007-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBuilderTest.cs: Add new tests for using generic types in the IL
+	code stream.
+
 2007-09-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodBuilderTest.cs: Add a new test.
