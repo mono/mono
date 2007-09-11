@@ -1177,7 +1177,7 @@ namespace System.Windows.Forms
 		
 		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
-		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } }
+		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } set { this.explicit_bounds = value; } }
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods

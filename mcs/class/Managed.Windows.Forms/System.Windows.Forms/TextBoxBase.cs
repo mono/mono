@@ -72,7 +72,6 @@ namespace System.Windows.Forms {
 
 		internal int			selection_length = -1;	// set to the user-specified selection length, or -1 if none
 		internal bool show_caret_w_selection;  // TextBox shows the caret when the selection is visible
-		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
 		static internal int		track_width = 2;	//
@@ -114,7 +113,6 @@ namespace System.Windows.Forms {
 			document.HeightChanged += new EventHandler(document_HeightChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = false;
-			requested_height = -1;
 			click_last = DateTime.Now;
 			click_mode = CaretSelection.Position;
 			bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
@@ -453,12 +451,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value != document.multiline) {
 					document.multiline = value;
-					// Make sure we update our size; the user may have already set the size before going to multiline
-					if (document.multiline && requested_height != -1) {
-						Height = requested_height;
-						requested_height = -1;
-					}
 
+					// SetBoundsCore overrides the Height for multiline if it needs to,
+					// so we don't need to worry about it here.
+					SetBoundsCore (Left, Top, Width, ExplicitBounds.Height, BoundsSpecified.None);
+					
 					if (Parent != null)
 						Parent.PerformLayout ();
 
@@ -1413,7 +1410,15 @@ namespace System.Windows.Forms {
 			if (!richtext) {
 				if (!document.multiline) {
 					if (height != PreferredHeight) {
-						requested_height = height;
+						// If the specified has Height, we need to store that in the
+						// ExplicitBounds because we are going to override it
+						if ((specified & BoundsSpecified.Height) != 0) {
+							Rectangle r = ExplicitBounds;
+							r.Height = height;
+							ExplicitBounds = r;
+							specified &= ~BoundsSpecified.Height;
+						}
+						
 						height = PreferredHeight;
 					}
 				}

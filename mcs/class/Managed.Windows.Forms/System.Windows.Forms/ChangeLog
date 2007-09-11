@@ -1,5 +1,12 @@
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Provide a setter for ExplicitHeight.
+	* TextBoxBase.cs: Now that we have the implementation for explicit heights,
+	remove the hacks in here for requested_height.
+	[Fixes bug #82749]
+
+2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollBar.cs: Fix an issue reported on the lists where setting a scrollbar's
 	Maximum to lower that its current Value caused an ArgumentException by setting
 	the Value to the new Maximum.

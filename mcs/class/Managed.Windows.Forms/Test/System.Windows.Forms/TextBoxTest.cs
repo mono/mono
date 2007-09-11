@@ -699,6 +699,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		public void Bug82749 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			TextBox _textBox = new TextBox ();
+			_textBox.Dock = DockStyle.Top;
+			_textBox.Height = 100;
+			_textBox.Multiline = true;
+			f.Controls.Add (_textBox);
+			
+			f.Show ();
+			Assert.AreEqual (100, _textBox.Height, "A1");
+			
+			// Depends on font height, but it should be less than 25
+			_textBox.Multiline = false;
+			Assert.IsTrue (_textBox.Height < 25, "A2");
+
+			_textBox.Multiline = true;
+			Assert.AreEqual (100, _textBox.Height, "A3");
+			
+			f.Close ();
+			f.Dispose ();
+		}
+		[Test]
 		public void ModifiedTest ()
 		{
 			Assert.AreEqual (true, textBox.Modified, "modified-1");
