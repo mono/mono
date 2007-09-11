@@ -1,3 +1,8 @@
+
+Tue Sep 11 16:22:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_support.c: export GC_thread_tls.
+
 2007-08-22  Martin Baulig  <martin@ximian.com>
 
 	* pthread_stop_world.c

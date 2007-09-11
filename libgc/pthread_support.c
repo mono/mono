@@ -191,7 +191,7 @@ static
 GC_key_t GC_thread_key;
 
 #ifdef USE_COMPILER_TLS
-static __thread MONO_TLS_FAST void* GC_thread_tls;
+__thread MONO_TLS_FAST void* GC_thread_tls;
 #endif
 
 static GC_bool keys_initialized;
