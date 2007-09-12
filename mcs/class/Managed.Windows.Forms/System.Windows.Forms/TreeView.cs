@@ -1643,8 +1643,6 @@ namespace System.Windows.Forms {
 			node.EnsureVisible ();
 
 			edit_text_box.Bounds = node.Bounds;
-			edit_text_box.Width += 4;
-
 			edit_text_box.Text = node.Text;
 			edit_text_box.Visible = true;
 			edit_text_box.Focus ();
@@ -1669,6 +1667,9 @@ namespace System.Windows.Forms {
 
 		private void LabelTextChanged (object sender, EventArgs e)
 		{
+			int width = TextRenderer.MeasureText (edit_text_box.Text, edit_text_box.Font).Width + 4;
+			edit_text_box.Width = width;
+
 			if (edit_args != null)
 				edit_args.SetLabel (edit_text_box.Text);
 		}

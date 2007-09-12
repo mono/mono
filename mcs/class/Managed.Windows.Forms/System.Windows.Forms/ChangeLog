@@ -1,3 +1,8 @@
+2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When editing a node, modify the edit text box
+	depending on the text length (as you are typing), like MS does.
+
 2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Fixup preferred size calculations for vertical toolbars. 
