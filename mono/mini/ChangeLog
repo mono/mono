@@ -1,3 +1,5 @@
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c: (mono_thread_abort) Fixed bug #82416.
 
 Tue Sep 11 16:15:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

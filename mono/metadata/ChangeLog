@@ -1,3 +1,7 @@
+2007-09-10  Massimiliano Mantione  <massi@ximian.com>
+
+	* domain.c, object.c, mono-config.c, object-internals.h: Fixed  #82416.
+
 2007-09-12  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c (mono_runtime_init): do not install postload hooks -
