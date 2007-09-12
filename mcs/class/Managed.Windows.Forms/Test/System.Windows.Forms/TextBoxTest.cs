@@ -323,6 +323,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void PasteTest ()
 		{
 			textBox.Text = "ABCDE";
@@ -713,9 +714,8 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			Assert.AreEqual (100, _textBox.Height, "A1");
 			
-			// Depends on font height, but it should be less than 25
 			_textBox.Multiline = false;
-			Assert.IsTrue (_textBox.Height < 25, "A2");
+			Assert.AreEqual (20, _textBox.Height, "A2");
 
 			_textBox.Multiline = true;
 			Assert.AreEqual (100, _textBox.Height, "A3");
@@ -723,6 +723,31 @@ namespace MonoTests.System.Windows.Forms
 			f.Close ();
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void ModifiedEventTest ()
+		{
+			TextBox tb = new TextBox ();
+			string events = string.Empty;
+
+			tb.ModifiedChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("ModifiedChanged"); });
+
+			tb.Modified = true;
+			Assert.AreEqual ("ModifiedChanged", events, "me-1");
+		}
+
+		[Test]
+		public void BorderStyleEventTest ()
+		{
+			TextBox tb = new TextBox ();
+			string events = string.Empty;
+
+			tb.BorderStyleChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("BorderStyleChanged"); });
+
+			tb.BorderStyle = BorderStyle.None;
+			Assert.AreEqual ("BorderStyleChanged", events, "bse-1");
+		}
+		
 		[Test]
 		public void ModifiedTest ()
 		{
