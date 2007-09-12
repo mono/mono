@@ -1,3 +1,11 @@
+2007-09-12  Massimiliano Mantione  <massi@ximian.com>
+
+	* unhandled-exception-test-runner.2.cs,
+	unhandled-exception-test-case.2.cs,
+	unhandled-exception-base-configuration.config,
+	unhandled-exception-legacy-configuration.config,
+	Makefile.am: added test for bug #82416.
+
 2007-09-12  Marek Habersack  <mhabersack@novell.com>
 
 	* assemblyresolve_event2.2.cs: added tests for assembly resolution
