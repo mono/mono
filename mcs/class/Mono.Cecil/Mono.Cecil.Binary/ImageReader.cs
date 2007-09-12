@@ -262,6 +262,9 @@ namespace Mono.Cecil.Binary {
 
 		public override void VisitImportAddressTable (ImportAddressTable iat)
 		{
+			if (m_image.PEOptionalHeader.DataDirectories.IAT.VirtualAddress == RVA.Zero)
+				return;
+
 			SetPositionToAddress (m_image.PEOptionalHeader.DataDirectories.IAT.VirtualAddress);
 
 			iat.HintNameTableRVA = ReadRVA ();
@@ -339,6 +342,9 @@ namespace Mono.Cecil.Binary {
 
 		public override void VisitImportTable (ImportTable it)
 		{
+			if (m_image.PEOptionalHeader.DataDirectories.ImportTable.VirtualAddress == RVA.Zero)
+				return;
+
 			SetPositionToAddress (m_image.PEOptionalHeader.DataDirectories.ImportTable.VirtualAddress);
 
 			it.ImportLookupTable = ReadRVA ();
@@ -350,13 +356,19 @@ namespace Mono.Cecil.Binary {
 
 		public override void VisitImportLookupTable (ImportLookupTable ilt)
 		{
-			SetPositionToAddress (m_image.ImportTable.ImportLookupTable.Value);
+			if (m_image.ImportTable.ImportLookupTable == RVA.Zero)
+				return;
+
+			SetPositionToAddress (m_image.ImportTable.ImportLookupTable);
 
 			ilt.HintNameRVA = ReadRVA ();
 		}
 
 		public override void VisitHintNameTable (HintNameTable hnt)
 		{
+			if (m_image.ImportAddressTable.HintNameTableRVA == RVA.Zero)
+				return;
+
 			SetPositionToAddress (m_image.ImportAddressTable.HintNameTableRVA);
 
 			hnt.Hint = m_binaryReader.ReadUInt16 ();
