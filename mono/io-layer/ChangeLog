@@ -2,6 +2,8 @@
 
 	* io-portability.c: options_init moved to
 	utils/mono-io-portability.c
+	Do not initialize portability helpers here, it's done in
+	mono_runtime_init.
 
 2007-09-09  Robert Jordan  <robertj@gmx.net>
 

@@ -5,6 +5,7 @@
 	trigger the AppDomain.AssemblyResolve event.
 	(mono_try_assembly_resolve): renamed from try_assembly_resolve and
 	made non-static.
+	(mono_runtime_init): init portability helpers here.
 
 	* assembly.c (mono_assembly_load_with_partial_name): if other	
 	attempts fail, trigger the AppDomain.AssemblyResolve event handler
