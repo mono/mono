@@ -1,3 +1,11 @@
+2007-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_alloc): Enable managed allocators in AOT code.
+
+	* aot-compiler.c (encode_patch): Add support for MONO_WRAPPER_ALLOC.
+
+	* aot-runtime.c (decode_patch_info): Ditto.
+
 2007-09-12  Jonathan Chambers <joncham@gmail.com>
 
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Implement
