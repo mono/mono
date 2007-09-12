@@ -775,9 +775,10 @@ namespace System.Windows.Forms
 					}
 #endif
 
-					if ((c != null) && c.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed) {
+					if (((c != null) && c.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed) ||
+						(c == null)) {
 						goto default;
-					}
+					} 
 					break;
 #if NET_2_0
 				case Msg.WM_LBUTTONDOWN:

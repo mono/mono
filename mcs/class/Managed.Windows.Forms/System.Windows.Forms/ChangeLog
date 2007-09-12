@@ -1,3 +1,9 @@
+2007-09-12  Andreia Gaita  <avidigal@novell.com>
+
+	* Application.cs: Let keyboard events that are targetted 
+		to non-mwf windows hosted inside mwf (as in, webbrowser),
+		propagate properly. Fixes keyboard handling on the webbrowser.
+
 2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When handling MouseUp event and we are 
