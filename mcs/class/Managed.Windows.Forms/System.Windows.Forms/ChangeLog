@@ -1,3 +1,8 @@
+2007-09-13  Ivan N. Zlatev <contact@i-nz.net>
+
+	* Cursor.cs: Fix Cursor.Current to apply Cursor.Default.
+	* SplitContainer.cs: Implement FixedPanel layouting.
+
 2007-09-12  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowserBase.cs: setup shutdown routine
