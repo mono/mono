@@ -1,3 +1,10 @@
+2007-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* wrapper-types.h: Add an ALLOC wrapper type.
+
+	* gc-internals.h boehm-gc.c null-gc.c sgen-gc.c: Add functions needed by AOT to
+	reference managed allocator methods.
+
 2007-09-12  Marek Safar  <marek.safar@gmail.com>
 
 	* icall.c (ves_icall_MonoType_GetGenericArguments): Create an instance
