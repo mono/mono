@@ -5482,35 +5482,53 @@ where_clause
 	;
 	
 join_clause
-	: JOIN IDENTIFIER IN expression ON expression EQUALS expression
+	: JOIN IDENTIFIER IN expression ON expression EQUALS expression opt_join_into
 	  {
-		start_block (GetLocation ($1));
+		Location loc = GetLocation ($1);
+		start_block (loc);
 		LocatedToken lt = (LocatedToken) $2;
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
 			lt.Value, lt.Location);
 		
-	  	$$ = new Linq.Join (current_block, (Expression)$4, (Expression)$6, (Expression)$8, GetLocation ($1));
+		if ($9 == null) {
+	  		$$ = new Linq.Join (current_block, (Expression)$4, (Expression)$6,
+				(Expression)$8, loc);
+		} else {
+			lt = (LocatedToken) $9;
+			$$ = new Linq.GroupJoin (current_block, (Expression)$4, (Expression)$6,
+				(Expression)$8, lt.Value, loc);
+		}
+		
 		end_block (lexer.Location);
 	  }
-	| JOIN type IDENTIFIER IN expression ON expression EQUALS expression
+	| JOIN type IDENTIFIER IN expression ON expression EQUALS expression opt_join_into
 	  {
-		start_block (GetLocation ($1));
+		Location loc = GetLocation ($1);
+		start_block (loc);
 		LocatedToken lt = (LocatedToken) $3;
 		current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
 		
-	  	$$ = new Linq.Join (current_block, new Linq.Cast ((Expression)$2, (Expression)$5),
-			(Expression)$7, (Expression)$9, GetLocation ($1));
+		Linq.Cast cast = new Linq.Cast ((Expression)$2, (Expression)$5);
+		if ($10 == null) {
+		  	$$ = new Linq.Join (current_block, cast, (Expression)$7,
+				(Expression)$9, loc);
+		} else {
+			lt = (LocatedToken) $10;
+			$$ = new Linq.GroupJoin (current_block, cast, (Expression)$7,
+				(Expression)$9, lt.Value, loc);
+		}
+		
 		end_block (lexer.Location);	  	
 	  }
-	| JOIN join_clause_body INTO IDENTIFIER
-	| JOIN type join_clause_body INTO IDENTIFIER
 	;
 	
-join_clause_body
-	: IDENTIFIER IN expression ON expression EQUALS expression
+opt_join_into
+	: /* empty */
+	| INTO IDENTIFIER
 	  {
+	  	$$ = $2;
 	  }
-	;	
+	;
 	
 orderby_clause
 	: ORDERBY orderings

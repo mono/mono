@@ -180,9 +180,9 @@ namespace Mono.CSharp.Linq
 		}
 
 		protected virtual void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
-			Parameter parameter, TransparentIdentifiersScope ti)
+			ref Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			args.Add (CreateSelectorArgument (ec, expr, parentParameter, null));
+			args.Add (CreateSelectorArgument (ec, expr, parentParameter, ti));
 			args.Add (CreateSelectorArgument (ec, element_selector,
 				new Parameter [] { parentParameter, parameter }, ti));
 		}
@@ -218,12 +218,12 @@ namespace Mono.CSharp.Linq
 			}
 
 			ArrayList args = new ArrayList ();
-			AddSelectorArguments (ec, args, parentParameter, parameter, ti);
+			AddSelectorArguments (ec, args, parentParameter, ref parameter, ti);
 
 			lSide = CreateQueryExpression (lSide, args);
 			if (next != null) {
 				//
-				// Parameter indentifiers goes to the scope
+				// Parameter identifiers go to the scope
 				//
 				string[] identifiers;
 				if (ti == null) {
@@ -347,12 +347,13 @@ namespace Mono.CSharp.Linq
 		}
 
 		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
-			Parameter parameter, TransparentIdentifiersScope ti)
+			ref Parameter parameter, TransparentIdentifiersScope ti)
 		{
 			args.Add (new Argument (expr));
 			args.Add (CreateSelectorArgument (ec, outer_selector, parentParameter, ti));
 			args.Add (CreateSelectorArgument (ec, inner_selector, parameter, ti));
 
+			parameter = CreateResultSelectorParameter (parameter);
 			if (projection == null) {
 				ArrayList join_args = new ArrayList (2);
 				join_args.Add (new AnonymousTypeParameter (parentParameter));
@@ -360,7 +361,13 @@ namespace Mono.CSharp.Linq
 				projection = new AnonymousTypeDeclaration (join_args, (TypeContainer) ec.DeclContainer, loc);
 			}
 
-			args.Add (CreateSelectorArgument (ec, projection, new Parameter [] { parentParameter, parameter }, ti));
+			args.Add (CreateSelectorArgument (ec, projection,
+				new Parameter [] { parentParameter, parameter }, ti));
+		}
+
+		protected virtual Parameter CreateResultSelectorParameter (Parameter parameter)
+		{
+			return parameter;
 		}
 
 		public override AQueryClause Next {
@@ -378,6 +385,31 @@ namespace Mono.CSharp.Linq
 
 		protected override string MethodName {
 			get { return "Join"; }
+		}
+	}
+
+	public class GroupJoin : Join
+	{
+		string into_variable;
+
+		public GroupJoin (Block block, Expression inner, Expression outerSelector, Expression innerSelector,
+			string into, Location loc)
+			: base (block, inner, outerSelector, innerSelector, loc)
+		{
+			this.into_variable = into;
+		}
+
+		protected override Parameter CreateResultSelectorParameter (Parameter parameter)
+		{
+			//
+			// into variable is used as result selector and it's passed as
+			// transparent identifiers to the next clause
+			//
+			return new ImplicitLambdaParameter (into_variable, loc);
+		}
+
+		protected override string MethodName {
+			get { return "GroupJoin"; }
 		}
 	}
 
@@ -413,8 +445,8 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter, Parameter parameter,
-			TransparentIdentifiersScope ti)
+		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
+			ref Parameter parameter, TransparentIdentifiersScope ti)
 		{
 			args.Add (CreateSelectorArgument (ec, element_selector, parentParameter, ti));
 		}
@@ -621,7 +653,7 @@ namespace Mono.CSharp.Linq
 			if (ident == null)
 				return null;
 
-			return new MemberAccess (CreateIndentifierNestingExpression (ident), name);
+			return new MemberAccess (CreateIdentifierNestingExpression (ident), name);
 		}
 
 		TransparentIdentifiersScope FindIdentifier (string name)
@@ -637,7 +669,7 @@ namespace Mono.CSharp.Linq
 			return parent.FindIdentifier (name);
 		}
 
-		Expression CreateIndentifierNestingExpression (TransparentIdentifiersScope end)
+		Expression CreateIdentifierNestingExpression (TransparentIdentifiersScope end)
 		{
 			Expression expr = new SimpleName (parameter.Name, parameter.Location);
 			TransparentIdentifiersScope current = this;

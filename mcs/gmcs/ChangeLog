@@ -1,3 +1,13 @@
+2007-09-12  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay: GroupJoin clause connected.
+	
+	* generic.cs (TypeInferenceContext.InflateGenericArgument): Uses 
+	inferred types to inflate delegate type argument.
+	
+	* linq.cs: Fixed couple of typos.
+	(GroupJoin): Implemented group join clause.
+	
 2007-09-11  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay: Single join clause connected.

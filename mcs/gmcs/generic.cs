@@ -2922,6 +2922,25 @@ namespace Mono.CSharp {
 			fixed_types[i] = best_candidate;
 			return true;
 		}
+		
+		//
+		// Uses inferred types to inflate delegate type argument
+		//
+		public Type InflateGenericArgument (Type parameter)
+		{
+			if (parameter.IsGenericParameter)
+				return fixed_types [parameter.GenericParameterPosition];
+
+			if (parameter.IsGenericType) {
+				Type [] parameter_targs = parameter.GetGenericArguments ();
+				for (int ii = 0; ii < parameter_targs.Length; ++ii) {
+					parameter_targs [ii] = InflateGenericArgument (parameter_targs [ii]);
+				}
+				return parameter.GetGenericTypeDefinition ().MakeGenericType (parameter_targs);
+			}
+
+			return parameter;
+		}		
 
 		public bool IsTypeNonDependent (MethodInfo mi, Type type)
 		{
