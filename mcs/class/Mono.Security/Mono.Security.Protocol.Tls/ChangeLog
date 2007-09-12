@@ -1,3 +1,7 @@
+2007-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Context.cs: Clear key info memory (not just nullify). Fix bug #82819
+
 2007-08-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RecordProtocol.cs, SslStreamBase.cs: Ensure nothing (even the same

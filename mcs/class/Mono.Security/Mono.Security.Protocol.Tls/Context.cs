@@ -343,21 +343,48 @@ namespace Mono.Security.Protocol.Tls
 		public virtual void ClearKeyInfo()
 		{
 			// Clear Master Secret
-			this.masterSecret	= null;
+			if (masterSecret != null) {
+				Array.Clear (masterSecret, 0, masterSecret.Length);
+				masterSecret = null;
+			}
 
 			// Clear client and server random
-			this.clientRandom	= null;
-			this.serverRandom	= null;
-			this.randomCS		= null;
-			this.randomSC		= null;
+			if (clientRandom != null) {
+				Array.Clear (clientRandom, 0, clientRandom.Length);
+				clientRandom = null;
+			}
+			if (serverRandom != null) {
+				Array.Clear (serverRandom, 0, serverRandom.Length);
+				serverRandom = null;
+			}
+			if (randomCS != null) {
+				Array.Clear (randomCS, 0, randomCS.Length);
+				randomCS = null;
+			}
+			if (randomSC != null) {
+				Array.Clear (randomSC, 0, randomSC.Length);
+				randomSC = null;
+			}
 
 			// Clear client keys
-			this.clientWriteKey	= null;
-			this.clientWriteIV	= null;
+			if (clientWriteKey != null) {
+				Array.Clear (clientWriteKey, 0, clientWriteKey.Length);
+				clientWriteKey = null;
+			}
+			if (clientWriteIV != null) {
+				Array.Clear (clientWriteIV, 0, clientWriteIV.Length);
+				clientWriteIV = null;
+			}
 			
 			// Clear server keys
-			this.serverWriteKey	= null;
-			this.serverWriteIV	= null;
+			if (serverWriteKey != null) {
+				Array.Clear (serverWriteKey, 0, serverWriteKey.Length);
+				serverWriteKey = null;
+			}
+			if (serverWriteIV != null) {
+				Array.Clear (serverWriteIV, 0, serverWriteIV.Length);
+				serverWriteIV = null;
+			}
 
 			// Reset handshake messages
 			this.handshakeMessages.Reset();
