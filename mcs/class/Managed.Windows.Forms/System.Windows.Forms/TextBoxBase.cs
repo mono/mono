@@ -101,7 +101,6 @@ namespace System.Windows.Forms {
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;
 			max_length = 32767;
-			modified = true;
 			password_char = '\0';
 			read_only = false;
 			word_wrap = true;

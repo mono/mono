@@ -1,3 +1,7 @@
+2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: Modified should default to false.
+
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Update the anchoring distances even when layout is supspended.

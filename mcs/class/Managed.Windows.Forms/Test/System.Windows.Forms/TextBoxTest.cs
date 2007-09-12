@@ -323,7 +323,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PasteTest ()
 		{
 			textBox.Text = "ABCDE";
@@ -714,8 +713,9 @@ namespace MonoTests.System.Windows.Forms
 			f.Show ();
 			Assert.AreEqual (100, _textBox.Height, "A1");
 			
+			// Font dependent, but should be less than 30.
 			_textBox.Multiline = false;
-			Assert.AreEqual (20, _textBox.Height, "A2");
+			Assert.IsTrue (_textBox.Height < 30, "A2");
 
 			_textBox.Multiline = true;
 			Assert.AreEqual (100, _textBox.Height, "A3");
@@ -751,16 +751,17 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ModifiedTest ()
 		{
-			Assert.AreEqual (true, textBox.Modified, "modified-1");
+			TextBox t = new TextBox ();
+			Assert.AreEqual (false, t.Modified, "modified-1");
 
-			textBox.Modified = false;
-			Assert.AreEqual (false, textBox.Modified, "modified-2");
+			t.Modified = true;
+			Assert.AreEqual (true, t.Modified, "modified-2");
 
-			textBox.Modified = true;
-			Assert.AreEqual (true, textBox.Modified, "modified-2");
+			t.Modified = false;
+			Assert.AreEqual (false, t.Modified, "modified-3");
 
-			textBox.Text = "TEXT";
-			Assert.AreEqual (false, textBox.Modified, "modified-3");
+			t.Text = "TEXT";
+			Assert.AreEqual (false, t.Modified, "modified-4");
 		}
 
 		void TextBox_TextChanged (object sender, EventArgs e)

@@ -1,5 +1,11 @@
 2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxTest.cs: Change Modified test to use a fresh TextBox instead
+	of relying on test running order.  Fix font dependent-ness of Bug82749
+	to be less than 30.
+
+2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxTest.cs: Change an IsTrue to AreEqual in Bug82749 so that I
 	can see what the failing value is on monobuild since I cannot repro locally.
 
