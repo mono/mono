@@ -2142,12 +2142,14 @@ namespace System.Windows.Forms {
 			if (!select_mmove)
 				return;
 
+			select_mmove = false;
+
 			if (e.Button == MouseButtons.Right && selected_node != null) {
 				Invalidate (highlighted_node.Bounds);
 				highlighted_node = selected_node;
 				Invalidate (selected_node.Bounds);
+				return;
 			}
-			select_mmove = false;
 
 			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (highlighted_node, false, TreeViewAction.ByMouse);
 			OnBeforeSelect (ce);

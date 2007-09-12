@@ -1,5 +1,12 @@
 2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When handling MouseUp event and we are 
+	highligting a node with the mouse right button, don't trigger
+	Before/AfterSelecting event, since we are not actually selecting
+	the node.
+
+2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: When editing a node, modify the edit text box
 	depending on the text length (as you are typing), like MS does.
 
