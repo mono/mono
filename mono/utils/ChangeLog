@@ -6,9 +6,13 @@ Wed Sep 12 15:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
 2007-09-12  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-io-portability.c: added. Moved options_init from io-layer.
+	(find_in_dir): moved from io-layer/io-portability.c
+	(mono_portability_find_file): moved find_file from
+	io-layer/io-portability.c, renamed and made MONO_INTERNAL.
 
 	* mono-io-portability.h: added. Contains declarations utility
 	functions and acros for checking whether MONO_IOMAP is in effect.
+	Added a prototype for mono_portability_find_file.
 
 2007-09-09  Zoltan Varga  <vargaz@gmail.com>
 

@@ -4,6 +4,7 @@
 	utils/mono-io-portability.c
 	Do not initialize portability helpers here, it's done in
 	mono_runtime_init.
+	find_file and find_in_dir moved to utils/mono-io-portability.c
 
 2007-09-09  Robert Jordan  <robertj@gmx.net>
 

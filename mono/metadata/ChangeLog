@@ -4,6 +4,10 @@
 
 2007-09-12  Marek Habersack  <mhabersack@novell.com>
 
+	* image.c (do_mono_image_open): if assembly file fails to open and
+	MONO_IOMAP is in effect, try to find the path in a
+	case-insensitive way.
+
 	* appdomain.c (mono_runtime_init): do not install postload hooks -
 	tests show that MS.NET doesn't use anything of that sort to
 	trigger the AppDomain.AssemblyResolve event.
