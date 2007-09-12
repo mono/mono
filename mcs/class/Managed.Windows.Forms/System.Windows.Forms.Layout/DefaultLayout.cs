@@ -49,6 +49,12 @@ namespace System.Windows.Forms.Layout
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 			for (int i = controls.Length - 1; i >= 0; i--) {
 				Control child = controls[i];
+				Size child_size = child.Size;
+
+#if NET_2_0
+				if (child.AutoSize)
+					child_size = GetPreferredControlSize (child);
+#endif
 
 				if (!child.VisibleInternal
 				    || child.ControlLayoutType == Control.LayoutType.Anchor)
@@ -66,24 +72,24 @@ namespace System.Windows.Forms.Layout
 					break;
 
 				case DockStyle.Left:
-					child.SetBounds (space.Left, space.Y, child.Width, space.Height, BoundsSpecified.None);
+					child.SetBounds (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.X += child.Width;
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Top:
-					child.SetBounds (space.Left, space.Y, space.Width, child.Height, BoundsSpecified.None);
+					child.SetBounds (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Y += child.Height;
 					space.Height -= child.Height;
 					break;
 
 				case DockStyle.Right:
-					child.SetBounds (space.Right - child.Width, space.Y, child.Width, space.Height, BoundsSpecified.None);
+					child.SetBounds (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
 					space.Width -= child.Width;
 					break;
 
 				case DockStyle.Bottom:
-					child.SetBounds (space.Left, space.Bottom - child.Height, space.Width, child.Height, BoundsSpecified.None);
+					child.SetBounds (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
 					space.Height -= child.Height;
 					break;
 					
@@ -165,8 +171,6 @@ namespace System.Windows.Forms.Layout
 			for (int i = 0; i < controls.Length; i++) {
 				int left;
 				int top;
-				int width;
-				int height;
 
 				Control child = controls[i];
 				if (!child.VisibleInternal
@@ -177,34 +181,9 @@ namespace System.Windows.Forms.Layout
 				left = child.Left;
 				top = child.Top;
 				
-				Size preferredsize = child.PreferredSize;
+				Size preferredsize = GetPreferredControlSize (child);
 				
-				if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
-					width = preferredsize.Width;
-					height = preferredsize.Height;
-				} else {
-					width = child.ExplicitBounds.Width;
-					height = child.ExplicitBounds.Height;
-					if (preferredsize.Width > width)
-						width = preferredsize.Width;
-					if (preferredsize.Height > height)
-						height = preferredsize.Height;
-				}
-			
-				// Sanity
-				if (width < child.MinimumSize.Width)
-					width = child.MinimumSize.Width;
-
-				if (height < child.MinimumSize.Height)
-					height = child.MinimumSize.Height;
-				
-				if (child.MaximumSize.Width != 0 && width > child.MaximumSize.Width)
-					width = child.MaximumSize.Width;
-
-				if (child.MaximumSize.Height != 0 && height > child.MaximumSize.Height)
-					height = child.MaximumSize.Height;
-
-				child.SetBounds (left, top, width, height, BoundsSpecified.None);
+				child.SetBounds (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
 			}
 		}
 
@@ -267,5 +246,41 @@ namespace System.Windows.Forms.Layout
 
 			return false;
 		}
+
+#if NET_2_0
+		private Size GetPreferredControlSize (Control child)
+		{
+			int width;
+			int height;
+			Size preferredsize = child.PreferredSize;
+
+			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
+				width = preferredsize.Width;
+				height = preferredsize.Height;
+			} else {
+				width = child.ExplicitBounds.Width;
+				height = child.ExplicitBounds.Height;
+				if (preferredsize.Width > width)
+					width = preferredsize.Width;
+				if (preferredsize.Height > height)
+					height = preferredsize.Height;
+			}
+
+			// Sanity
+			if (width < child.MinimumSize.Width)
+				width = child.MinimumSize.Width;
+
+			if (height < child.MinimumSize.Height)
+				height = child.MinimumSize.Height;
+
+			if (child.MaximumSize.Width != 0 && width > child.MaximumSize.Width)
+				width = child.MaximumSize.Width;
+
+			if (child.MaximumSize.Height != 0 && height > child.MaximumSize.Height)
+				height = child.MaximumSize.Height;
+				
+			return new Size (width, height);
+		}
+#endif
 	}
 }

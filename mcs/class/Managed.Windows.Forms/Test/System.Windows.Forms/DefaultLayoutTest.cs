@@ -567,6 +567,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (200, c1.Width, "A1");
 		}
 		
+#if NET_2_0
+		[Test]
+		public void DockedAutoSizeControls ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			Button b = new Button ();
+			b.Text = "Yo";
+			b.AutoSize = true;
+			b.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			b.Width = 200;
+			b.Dock = DockStyle.Left;
+			f.Controls.Add (b);
+			
+			f.Show ();
+			
+			if (b.Width >= 200)
+				Assert.Fail ("button should be less than 200 width: actual {0}", b.Width);
+			
+			f.Close ();
+			f.Dispose ();
+		}
+#endif
+		
 		[Test]  // bug #81199
 		public void NestedControls ()
 		{

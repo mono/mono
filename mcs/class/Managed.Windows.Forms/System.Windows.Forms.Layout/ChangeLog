@@ -1,3 +1,8 @@
+2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Apply AutoSize logic to the variable dimension 
+	of Docked controls.
+
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: When working with Anchor = none, and we move a
