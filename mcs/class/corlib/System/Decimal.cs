@@ -188,7 +188,7 @@ namespace System
         {
 		if (val > (float)Decimal.MaxValue || val < (float)Decimal.MinValue) {
 			throw new OverflowException (Locale.GetText (
-				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
+				"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", val));
 		}
 		// we must respect the precision (double2decimal doesn't)
 		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
@@ -203,7 +203,7 @@ namespace System
 	{
 		if (val > (double)Decimal.MaxValue || val < (double)Decimal.MinValue) {
 			throw new OverflowException (Locale.GetText (
-				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
+				"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", val));
 		}
 		// we must respect the precision (double2decimal doesn't)
 		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),

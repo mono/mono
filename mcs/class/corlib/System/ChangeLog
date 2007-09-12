@@ -1,3 +1,8 @@
+2007-09-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: More explicit text in exception (old and almost 
+	forgetten patch on laptop ;-)
+
 2007-09-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperatingSystem.cs : implemented ISerializable.
