@@ -1,3 +1,10 @@
+2007-09-12  Jonathan Chambers <joncham@gmail.com>
+
+	* domain-internals.h, domain.c : Remove delegate_invoke_impl_with_target_hash
+	and delegate_invoke_impl_no_target_hash from _MonoDomain struct.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-09-10  Massimiliano Mantione  <massi@ximian.com>
 
 	* domain.c, object.c, mono-config.c, object-internals.h: Fixed  #82416.
