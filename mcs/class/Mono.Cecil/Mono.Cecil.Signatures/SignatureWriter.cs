@@ -294,6 +294,7 @@ namespace Mono.Cecil.Signatures {
 
 		void Write (TypeSpec ts)
 		{
+			Write (ts.CustomMods);
 			Write (ts.Type);
 		}
 

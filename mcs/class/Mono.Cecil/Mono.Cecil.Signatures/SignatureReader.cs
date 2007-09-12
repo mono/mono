@@ -334,8 +334,10 @@ namespace Mono.Cecil.Signatures {
 		{
 			int start = pos;
 			Utilities.ReadCompressedInteger (data, start, out start);
-			SigType t = ReadType (data, start, out start);
-			return new TypeSpec (t);
+			TypeSpec ts = new TypeSpec ();
+			ts.CustomMods = ReadCustomMods (data, start, out start);
+			ts.Type = ReadType (data, start, out start);
+			return ts;
 		}
 
 		MethodSpec ReadMethodSpec (byte [] data, int pos)

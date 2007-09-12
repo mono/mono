@@ -30,11 +30,7 @@ namespace Mono.Cecil.Signatures {
 
 	internal sealed class TypeSpec {
 
+		public CustomMod [] CustomMods;
 		public SigType Type;
-
-		public TypeSpec (SigType type)
-		{
-			this.Type = type;
-		}
 	}
 }

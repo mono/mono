@@ -1,5 +1,13 @@
 2007-09-12  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/ReflectionReader.cs
+	  Mono.Cecil.Signatures/SignatureReader.cs
+	  Mono.Cecil.Signatures/TypeSpec.cs
+	  Mono.Cecil.Signatures/SignatureWriter.cs:
+		Deal with custom mods on typespecs.
+
+2007-09-12  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil.Binary/ImageReader.cs: some 64bits assemblies
 	have a strange header without import tables.
 

@@ -1298,7 +1298,9 @@ namespace Mono.Cecil {
 
 		public TypeSpec GetTypeSpecSig (TypeReference type)
 		{
-			TypeSpec ts = new TypeSpec (GetSigType (type));
+			TypeSpec ts = new TypeSpec ();
+			ts.CustomMods = GetCustomMods (type);
+			ts.Type = GetSigType (type);
 			return ts;
 		}
 
