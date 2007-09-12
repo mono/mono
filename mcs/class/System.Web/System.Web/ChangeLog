@@ -1,3 +1,8 @@
+2007-09-12  Juraj Skripsky <js@hotfeet.ch>
+
+	* StaticSiteMapProvider.cs (AddNode): Add message text to
+	InvalidOperationException (duplicate url case).
+
 2007-09-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpCachePolicy.cs: implemented setting the ETag and

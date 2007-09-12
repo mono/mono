@@ -57,7 +57,11 @@ namespace System.Web
 					url = MapUrl (url);
 
 					if (FindSiteMapNode (url) != null)
-						throw new InvalidOperationException ();
+						throw new InvalidOperationException (String.Format (
+							"Multiple nodes with the same URL '{0}' were found. " + 
+							"StaticSiteMapProvider requires that sitemap nodes have unique URLs.",
+							node.Url
+						));
 				
 					UrlToNode [url] = node;
 				}
