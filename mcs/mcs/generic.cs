@@ -350,5 +350,10 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public Type InflateGenericArgument (Type t)
+		{
+			throw new NotImplementedException ();		
+		}
 	}
 }

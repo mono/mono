@@ -149,7 +149,8 @@ namespace Mono.CSharp {
 		public override bool Resolve (IResolveContext ec)
 		{
 			if (parameter_type == null)
-				throw new InternalErrorException ("Implicit lambda parameter type is not set");
+				throw new InternalErrorException ("A type of implicit lambda parameter `{0}' is not set",
+					Name);
 
 			return true;
 		}

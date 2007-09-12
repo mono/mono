@@ -1,3 +1,12 @@
+2007-09-12  Marek Safar  <marek.safar@gmail.com>
+	
+	* generic.cs (TypeInferenceContext.InflateGenericArgument): Stub.
+
+	* lambda.cs (ResolveParameters): Use more powerful
+	InflateGenericArgument.
+	
+	* parameters.cs: Better exception message.
+		
 2007-09-10  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs (AnonymousMethodExpression.CompatibleChecks): Report

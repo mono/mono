@@ -76,13 +76,10 @@ namespace Mono.CSharp {
 				if (d_param.IsGenericParameter)
 					d_param = delegateType.GetGenericArguments () [d_param.GenericParameterPosition];
 #endif
-
-#if GMCS_SOURCE
 				// When inferred context exists all generics parameters have type replacements
-				if (tic != null && d_param.IsGenericParameter) {
-					d_param = tic.InferredTypeArguments [d_param.GenericParameterPosition];
+				if (tic != null) {
+					d_param = tic.InflateGenericArgument (d_param);
 				}
-#endif
 
 				Parameters.Types [i] = Parameters.FixedParameters[i].ParameterType = d_param;
 			}
