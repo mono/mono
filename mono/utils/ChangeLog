@@ -1,3 +1,10 @@
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-io-portability.c: added. Moved options_init from io-layer.
+
+	* mono-io-portability.h: added. Contains declarations utility
+	functions and acros for checking whether MONO_IOMAP is in effect.
+
 2007-09-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h: Applied patch from Jurek Bartuszek (jurek@gentoo.org).

@@ -1,3 +1,8 @@
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* io-portability.c: options_init moved to
+	utils/mono-io-portability.c
+
 2007-09-09  Robert Jordan  <robertj@gmx.net>
 
 	* sockets.c (_wapi_setsockopt): Add support for FreeBSD multicast
