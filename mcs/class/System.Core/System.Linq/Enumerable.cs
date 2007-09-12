@@ -526,24 +526,14 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> DefaultIfEmpty<TSource> (this IEnumerable<TSource> source)
 		{
-			if (source == null)
-				throw new ArgumentNullException ();
-
-			bool noYield = true;
-			foreach (TSource item in source) {
-				noYield = false;
-				yield return item;
-			}
-
-			if (noYield)
-				yield return default (TSource);
+			return DefaultIfEmpty (source, default (TSource));
 		}
 
 
 		public static IEnumerable<TSource> DefaultIfEmpty<TSource> (this IEnumerable<TSource> source, TSource defaultValue)
 		{
 			if (source == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("source");
 
 			bool noYield = true;
 			foreach (TSource item in source) {
@@ -880,7 +870,9 @@ namespace System.Linq
 				TKey outerKey = outerKeySelector (element);
 				if (innerKeys.Contains (outerKey))
 					yield return resultSelector (element, innerKeys [outerKey]);
-			}
+				else
+					yield return resultSelector (element, Empty<TInner> ());
+			}	
 		}
 
 		#endregion
