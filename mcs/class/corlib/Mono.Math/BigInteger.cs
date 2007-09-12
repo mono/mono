@@ -13,7 +13,7 @@
 // Copyright (c) 2002 Chew Keong TAN
 // All rights reserved.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -804,7 +804,7 @@ namespace Mono.Math {
 			if (this == 0) return "0";
 			if (this == 1) return "1";
 
-			string result = String.Empty;
+			string result = "";
 
 			BigInteger a = new BigInteger (this);
 
@@ -900,19 +900,23 @@ namespace Mono.Math {
 
 		public bool IsProbablePrime ()
 		{
-			if (this < smallPrimes [smallPrimes.Length - 1]) {
+			// can we use our small-prime table ?
+			if (this <= smallPrimes[smallPrimes.Length - 1]) {
 				for (int p = 0; p < smallPrimes.Length; p++) {
-					if (this == smallPrimes [p])
+					if (this == smallPrimes[p])
 						return true;
 				}
+				// the list is complete, so it's not a prime
+				return false;
 			}
-			else {
-				for (int p = 0; p < smallPrimes.Length; p++) {
-					if (this % smallPrimes [p] == 0)
-						return false;
-				}
+
+			// otherwise check if we can divide by one of the small primes
+			for (int p = 0; p < smallPrimes.Length; p++) {
+				if (this % smallPrimes[p] == 0)
+					return false;
 			}
-			return PrimalityTests.RabinMillerTest (this, Prime.ConfidenceFactor.Medium);
+			// the last step is to confirm the "large" prime with the SPP or Miller-Rabin test
+			return PrimalityTests.Test (this, Prime.ConfidenceFactor.Medium);
 		}
 
 		#endregion
@@ -1044,17 +1048,11 @@ namespace Mono.Math {
 			{
 				if (a == 0 || b == 0) return 0;
 
-				if (a.length >= mod.length << 1)
+				if (a > mod)
 					a %= mod;
 
-				if (b.length >= mod.length << 1)
+				if (b > mod)
 					b %= mod;
-
-				if (a.length >= mod.length)
-					BarrettReduction (a);
-
-				if (b.length >= mod.length)
-					BarrettReduction (b);
 
 				BigInteger ret = new BigInteger (a * b);
 				BarrettReduction (ret);
@@ -1088,7 +1086,25 @@ namespace Mono.Math {
 					diff = mod - diff;
 				return diff;
 			}
+#if true
+			public BigInteger Pow (BigInteger a, BigInteger k)
+			{
+				BigInteger b = new BigInteger (1);
+				if (k == 0)
+					return b;
 
+				BigInteger A = a;
+				if (k.TestBit (0))
+					b = a;
+
+				for (int i = 1; i < k.BitCount (); i++) {
+					A = Multiply (A, A);
+					if (k.TestBit (i))
+						b = Multiply (A, b);
+				}
+				return b;
+			}
+#else
 			public BigInteger Pow (BigInteger b, BigInteger exp)
 			{
 				if ((mod.data [0] & 1) == 1) return OddPow (b, exp);
@@ -1152,14 +1168,17 @@ namespace Mono.Math {
 						Montgomery.Reduce (resultNum, mod, mPrime);
 					}
 
-					Kernel.SquarePositive (tempNum, ref wkspace);
-					Montgomery.Reduce (tempNum, mod, mPrime);
+					// the value of tempNum is required in the last loop
+					if (pos < totalBits - 1) {
+						Kernel.SquarePositive (tempNum, ref wkspace);
+						Montgomery.Reduce (tempNum, mod, mPrime);
+					}
 				}
 
 				Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-
+#endif
 			#region Pow Small Base
 
 			// TODO: Make tests for this, not really needed b/c prime stuff
@@ -1167,6 +1186,12 @@ namespace Mono.Math {
 #if !INSIDE_CORLIB
                         [CLSCompliant (false)]
 #endif 
+#if true
+			public BigInteger Pow (uint b, BigInteger exp)
+			{
+				return Pow (new BigInteger (b), exp);
+			}
+#else
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
 //				if (b != 2) {
@@ -1174,7 +1199,7 @@ namespace Mono.Math {
 						return OddPow (b, exp);
 					else
 						return EvenPow (b, exp);
-/* buggy in some cases (like the well tested primes)
+/* buggy in some cases (like the well tested primes) 
 				} else {
 					if ((mod.data [0] & 1) == 1)
 						return OddModTwoPow (exp);
@@ -1193,7 +1218,8 @@ namespace Mono.Math {
 
 				uint mPrime = Montgomery.Inverse (mod.data [0]);
 
-				uint pos = (uint)exp.BitCount () - 2;
+				int bc = exp.BitCount () - 2;
+				uint pos = (bc > 1 ? (uint) bc : 1);
 
 				//
 				// We know that the first itr will make the val b
@@ -1393,8 +1419,9 @@ namespace Mono.Math {
 
 				return resultNum;
 			}
-
-/* known to be buggy in some cases
+#endif
+/* known to be buggy in some cases */
+#if false
 			private unsafe BigInteger EvenModTwoPow (BigInteger exp)
 			{
 				exp.Normalize ();
@@ -1527,7 +1554,7 @@ namespace Mono.Math {
 				resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-*/			
+#endif
 			#endregion
 		}
 
