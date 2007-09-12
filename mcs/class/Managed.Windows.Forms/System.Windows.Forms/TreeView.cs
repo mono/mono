@@ -1667,7 +1667,7 @@ namespace System.Windows.Forms {
 
 		private void LabelTextChanged (object sender, EventArgs e)
 		{
-			int width = TextRenderer.MeasureText (edit_text_box.Text, edit_text_box.Font).Width + 4;
+			int width = TextRenderer.MeasureTextInternal (edit_text_box.Text, edit_text_box.Font, false).Width + 4;
 			edit_text_box.Width = width;
 
 			if (edit_args != null)

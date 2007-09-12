@@ -1,3 +1,8 @@
+2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: Use MeasureTextInternal instead of MeasureText in
+	TextRenderer, since the latter is only available in 2.0.
+
 2007-09-13  Ivan N. Zlatev <contact@i-nz.net>
 
 	* Cursor.cs: Fix Cursor.Current to apply Cursor.Default.
