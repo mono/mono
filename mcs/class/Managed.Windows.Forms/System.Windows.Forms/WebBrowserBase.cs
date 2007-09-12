@@ -196,6 +196,7 @@ namespace System.Windows.Forms
 		#region Protected Overriden Methods
 		protected override void Dispose (bool disposing)
 		{
+			WebHost.Shutdown ();
 			base.Dispose (disposing);
 		}
 

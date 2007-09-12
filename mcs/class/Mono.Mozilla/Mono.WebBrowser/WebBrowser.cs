@@ -51,6 +51,10 @@ namespace Mono.WebBrowser
 			Base.Bind (this, handle, width, height);
 		}
 
+		public void Shutdown ()
+		{
+			Base.Shutdown (this);			
+		}
 
 		#region Layout
 		public void FocusIn ()

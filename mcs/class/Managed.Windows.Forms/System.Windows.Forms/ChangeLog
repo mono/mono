@@ -1,5 +1,9 @@
 2007-09-12  Andreia Gaita  <avidigal@novell.com>
 
+	* WebBrowserBase.cs: setup shutdown routine
+
+2007-09-12  Andreia Gaita  <avidigal@novell.com>
+
 	* Application.cs: Let keyboard events that are targetted 
 		to non-mwf windows hosted inside mwf (as in, webbrowser),
 		propagate properly. Fixes keyboard handling on the webbrowser.

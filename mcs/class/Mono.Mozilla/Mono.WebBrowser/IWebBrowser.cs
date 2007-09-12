@@ -32,6 +32,7 @@ namespace Mono.WebBrowser
 	public interface IWebBrowser
 	{
 		void Load (IntPtr handle, int width, int height);
+		void Shutdown ();
 		void FocusIn ();
 		void FocusOut ();
 		void Activate ();

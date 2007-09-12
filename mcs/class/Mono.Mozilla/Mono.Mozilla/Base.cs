@@ -51,8 +51,8 @@ namespace Mono.Mozilla
 		public static void DebugStartup ()
 		{
 			xulbrowser_debug_startup ();
-			Trace.Listeners.Add (new TextWriterTraceListener ("log"));
-			
+			Trace.Listeners.Add (new TextWriterTraceListener (@"log"));
+			Trace.AutoFlush = true;
 		}
 
 		public static void Init (Mono.WebBrowser.WebBrowser control)
@@ -63,6 +63,16 @@ namespace Mono.Mozilla
 			Marshal.StructureToPtr (info.callback, ptrCallback, true);
 			info.xulbrowser = xulbrowser_init (ptrCallback, Environment.CurrentDirectory);
 			boundControls.Add (control as IWebBrowser, info);
+			DebugStartup ();
+		}
+
+		public static void Shutdown (Mono.WebBrowser.WebBrowser control)
+		{
+			if (!boundControls.ContainsKey (control))
+				throw new ArgumentException ();
+			BindingInfo info = boundControls[control] as BindingInfo;
+
+			xulbrowser_shutdown (info.xulbrowser);
 		}
 
 		public static void Bind (IWebBrowser control, IntPtr handle, int width, int height)
@@ -183,8 +193,11 @@ namespace Mono.Mozilla
 
 		[DllImport("xulbrowser")]
 		private static extern IntPtr xulbrowser_init (IntPtr events, string startDir);
-		
-		[DllImport("xulbrowser")]
+
+		[DllImport ("xulbrowser")]
+		private static extern IntPtr xulbrowser_shutdown (IntPtr instance);
+
+		[DllImport ("xulbrowser")]
 		private static extern int xulbrowser_createBrowserWindow (IntPtr instance, IntPtr hwnd, Int32 width, Int32 height);
 
 		// layout
