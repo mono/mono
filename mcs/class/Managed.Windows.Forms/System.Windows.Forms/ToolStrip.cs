@@ -98,6 +98,7 @@ namespace System.Windows.Forms
 			this.items = new ToolStripItemCollection (this, items, true);
 			this.allow_merge = true;
 			base.AutoSize = true;
+			base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
 			base.CausesValidation = false;
@@ -119,7 +120,6 @@ namespace System.Windows.Forms
 			base.TabStop = false;
 			this.text_direction = ToolStripTextDirection.Horizontal;
 			this.ResumeLayout ();
-			DoAutoSize ();
 			
 			// Register with the ToolStripManager
 			ToolStripManager.AddToolStrip (this);
@@ -785,7 +785,6 @@ namespace System.Windows.Forms
 				e.Item.Available = true;
 				
 			e.Item.SetPlacement (ToolStripItemPlacement.Main);
-			this.DoAutoSize ();
 			
 			if (this.Created)
 				this.PerformLayout ();
@@ -814,7 +813,6 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			DoAutoSize ();
 			base.OnLayout (e);
 
 			this.SetDisplayedItems ();
@@ -1368,17 +1366,6 @@ namespace System.Windows.Forms
 			// We probably need to redraw for mnemonic underlines
 			this.Invalidate ();
 		}
-		
-		private void DoAutoSize ()
-		{
-			if (this.AutoSize == true && this.Dock == DockStyle.None) {
-				Size new_size = GetToolStripPreferredSize (Size.Empty);
-				SetBounds (Left, Top, new_size.Width, new_size.Height, BoundsSpecified.None);
-			}
-				
-			if (this.AutoSize == true && this.Orientation == Orientation.Horizontal && (this.Dock == DockStyle.Top || this.Dock == DockStyle.Bottom))
-				SetBounds (Left, Top, Width, GetToolStripPreferredSize (Size.Empty).Height, BoundsSpecified.None);
-		}
 
 		internal ToolStripItem GetCurrentlySelectedItem ()
 		{
@@ -1397,6 +1384,11 @@ namespace System.Windows.Forms
 
 			return null;
 		}
+
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			return GetToolStripPreferredSize (proposedSize);
+		}
 		
 		internal virtual Size GetToolStripPreferredSize (Size proposedSize)
 		{
@@ -1404,11 +1396,16 @@ namespace System.Windows.Forms
 
 			if (this.orientation == Orientation.Vertical) {
 				foreach (ToolStripItem tsi in this.items)
-					if (tsi.GetPreferredSize (Size.Empty).Height + tsi.Margin.Top + tsi.Margin.Bottom > new_size.Height)
-						new_size.Height = tsi.GetPreferredSize (Size.Empty).Height + tsi.Margin.Top + tsi.Margin.Bottom;
+					if (tsi.Available)  {
+						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
+						new_size.Height += tsi_preferred.Height + tsi.Margin.Top + tsi.Margin.Bottom;
 
-				new_size.Height += this.Padding.Top + this.Padding.Bottom;
-				new_size.Width = this.Width;
+						if (new_size.Width < (this.Padding.Horizontal + tsi_preferred.Width))
+							new_size.Width = (this.Padding.Horizontal + tsi_preferred.Width);
+					}
+
+				new_size.Height += (this.GripRectangle.Height + this.GripMargin.Vertical + this.Padding.Vertical + 4);
+				return new_size;
 			} else {
 				foreach (ToolStripItem tsi in this.items) 
 					if (tsi.Available) {

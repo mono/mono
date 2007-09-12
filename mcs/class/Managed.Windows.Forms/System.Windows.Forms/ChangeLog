@@ -1,5 +1,11 @@
 2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Fixup preferred size calculations for vertical toolbars. 
+	Override GetPreferredSizeCore to perform calculations.  Remove custom
+	autosize logic.  [Fixes bug #82739]
+
+2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Modified should default to false.
 
 2007-09-11  Jonathan Pobst  <monkey@jpobst.com>
