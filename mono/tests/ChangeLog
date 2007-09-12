@@ -1,3 +1,11 @@
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* assemblyresolve_event2.2.cs: added tests for assembly resolution
+	event handler.
+
+	* assemblyresolve_event.cs: added tests for assembly resolution
+	event handler.
+
 2007-09-11  Mark Probst  <mark.probst@gmail.com>
 
 	* coreclr-security.cs: Added positive and negative tests for

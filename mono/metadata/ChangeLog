@@ -1,3 +1,18 @@
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c (mono_runtime_init): do not install postload hooks -
+	tests show that MS.NET doesn't use anything of that sort to
+	trigger the AppDomain.AssemblyResolve event.
+	(mono_try_assembly_resolve): renamed from try_assembly_resolve and
+	made non-static.
+
+	* assembly.c (mono_assembly_load_with_partial_name): if other	
+	attempts fail, trigger the AppDomain.AssemblyResolve event handler
+	to resolve the assembly.
+
+	* domain-internals.h: added mono_try_assembly_resolve and marked
+	it as internal.
+
 2007-09-11  Jb Evain  <jbevain@novell.com>
 
 	* object-internals.h (MonoReflectionDynamicMethod): add
