@@ -597,16 +597,22 @@ namespace Mono.CSharp {
 	// This class implements fields and events class initializers
 	public class FieldInitializer : Assign
 	{
-		public readonly DeclSpace TypeContainer;
-
-		public FieldInitializer (FieldBuilder field, Expression expression, DeclSpace container)
+		public FieldInitializer (FieldBuilder field, Expression expression)
 			: base (new FieldExpr (field, expression.Location, true), expression)
 		{
-			this.TypeContainer = container;
 			if (!field.IsStatic)
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
 		}
 
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// Field initializer can be resolved (fail) many times
+			if (Source == null)
+				return null;
+
+			return base.DoResolve (ec);
+		}
+		
 		public bool IsComplexInitializer {
 			get {
 				if (embedded != null)

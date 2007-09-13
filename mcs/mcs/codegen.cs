@@ -231,7 +231,7 @@ namespace Mono.CSharp {
 		public ILGenerator ig;
 
 		[Flags]
-		public enum Flags : byte {
+		public enum Flags : int {
 			/// <summary>
 			///   This flag tracks the `checked' state of the compilation,
 			///   it controls whether we should generate code that does overflow
@@ -275,7 +275,12 @@ namespace Mono.CSharp {
 			///
 			/// Indicates the current context is in probing mode, no errors are reported. 
 			///
-			ProbingMode = 1	<<	7
+			ProbingMode = 1	<<	7,
+
+			//
+			// Inside field intializer expression
+			//
+			InFieldInitializer = 1 << 8
 		}
 
 		Flags flags;
@@ -294,11 +299,6 @@ namespace Mono.CSharp {
 		///   IsStatic represents the semantic, high-level staticness.
 		/// </summary>
 		public bool MethodIsStatic;
-
-		/// <summary>
-		///   Whether we are emitting a field initializer
-		/// </summary>
-		public bool IsFieldInitializer;
 
 		/// <summary>
 		///   If this is true, then Return and ContextualReturn statements
@@ -571,6 +571,10 @@ namespace Mono.CSharp {
 		public bool IsAnonymousMethodAllowed {
 			get { return isAnonymousMethodAllowed; }
 			set { isAnonymousMethodAllowed = value; }
+		}
+
+		public bool IsInFieldInitializer {
+			get { return (flags & Flags.InFieldInitializer) != 0; }
 		}
 
 		public FlowBranching CurrentBranching {

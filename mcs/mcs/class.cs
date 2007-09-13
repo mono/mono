@@ -812,11 +812,74 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void ResolveFieldInitializers (EmitContext ec)
+		{
+			if (partial_parts != null) {
+				DeclSpace orig = ec.DeclContainer ;
+				foreach (TypeContainer part in partial_parts) {
+					ec.DeclContainer = part;
+					part.ResolveFieldInitializers (ec);
+				}
+				ec.DeclContainer = orig; 
+			}
+
+			if (ec.IsStatic) {
+				if (initialized_static_fields == null)
+					return;
+
+				bool has_complex_initializer = false;
+				using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
+					foreach (FieldInitializer fi in initialized_static_fields) {
+						fi.ResolveStatement (ec);
+						if (!fi.IsComplexInitializer)
+							continue;
+
+						has_complex_initializer = true;
+					}
+
+					// Need special check to not optimize code like this
+					// static int a = b = 5;
+					// static int b = 0;
+					if (!has_complex_initializer && RootContext.Optimize) {
+						for (int i = 0; i < initialized_static_fields.Count; ++i) {
+							FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+							if (fi.IsDefaultInitializer) {
+								initialized_static_fields.RemoveAt (i);
+								--i;
+							}
+						}
+					}
+				}
+
+				return;
+			}
+
+			if (initialized_fields == null)
+				return;
+
+			using (ec.Set (EmitContext.Flags.InFieldInitializer)) {
+				for (int i = 0; i < initialized_fields.Count; ++i) {
+					FieldInitializer fi = (FieldInitializer) initialized_fields [i];
+					fi.ResolveStatement (ec);
+					if (fi.IsDefaultInitializer && RootContext.Optimize) {
+						// Field is re-initialized to its default value => removed
+						initialized_fields.RemoveAt (i);
+						--i;
+					}
+				}
+			}
+		}
+
 		//
 		// Emits the instance field initializers
 		//
 		public bool EmitFieldInitializers (EmitContext ec)
 		{
+			if (partial_parts != null) {
+				foreach (TypeContainer part in partial_parts)
+					part.EmitFieldInitializers (ec);
+			}
+
 			ArrayList fields;
 			
 			if (ec.IsStatic){
@@ -2787,64 +2850,10 @@ namespace Mono.CSharp {
 			c.Block = new ToplevelBlock (null, Location);
 		}
 
-		void DefineFieldInitializers ()
-		{
-			if (initialized_fields != null) {
-				for (int i = 0; i < initialized_fields.Count; ++i) {
-					FieldInitializer fi = (FieldInitializer)initialized_fields[i];
-
-					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
-						Location, null, TypeManager.void_type, ModFlags);
-					ec.IsFieldInitializer = true;
-
-					fi.ResolveStatement (ec);
-					if (fi.IsDefaultInitializer && RootContext.Optimize) {
-						// Field is re-initialized to its default value => removed
-						initialized_fields.RemoveAt (i);
-						--i;
-					}
-				}
-			}
-
-			if (initialized_static_fields != null) {
-				bool has_complex_initializer = false;
-
-				foreach (FieldInitializer fi in initialized_static_fields) {
-					EmitContext ec = new EmitContext (fi.TypeContainer, fi.TypeContainer,
-						Location, null, TypeManager.void_type, ModFlags);
-					ec.IsStatic = true;
-					ec.IsFieldInitializer = true;
-
-					fi.ResolveStatement (ec);
-					if (!fi.IsComplexInitializer)
-						continue;
-
-					has_complex_initializer = true;
-				}
-
-				// Need special check to not optimize code like this
-				// static int a = b = 5;
-				// static int b = 0;
-				if (!has_complex_initializer && RootContext.Optimize) {
-					for (int i = 0; i < initialized_static_fields.Count; ++i) {
-						FieldInitializer fi = (FieldInitializer)initialized_static_fields[i];
-						if (fi.IsDefaultInitializer) {
-							initialized_static_fields.RemoveAt (i);
-							--i;
-						}
-					}
-				}
-
-				if (default_static_constructor == null && initialized_static_fields.Count > 0) {
-					DefineDefaultConstructor (true);
-				}
-			}
-
-		}
-
 		public override bool Define ()
 		{
-			DefineFieldInitializers ();
+			if (initialized_static_fields != null && default_static_constructor == null)
+				DefineDefaultConstructor (true);
 
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
@@ -4610,17 +4619,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (ConstructorBuilder caller_builder, Block block, EmitContext ec)
+		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
-			ec.CurrentBlock = block;
-
 			if (argument_list != null){
 				foreach (Argument a in argument_list){
 					if (!a.Resolve (ec, loc))
 						return false;
 				}
 			}
-			ec.CurrentBlock = null;
 
 			if (this is ConstructorBaseInitializer) {
 				if (ec.ContainerType.BaseType == null)
@@ -4713,6 +4719,7 @@ namespace Mono.CSharp {
 		public ConstructorInitializer Initializer;
 		ListDictionary declarative_security;
 		ArrayList anonymous_methods;
+		bool has_compliant_args;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -4726,13 +4733,8 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |		
 			Modifiers.PRIVATE;
 
-		static string[] attribute_targets = new string [] { "method" };
+		static readonly string[] attribute_targets = new string [] { "method" };
 
-		public Iterator Iterator {
-			get { return null; }
-		}
-
-		bool has_compliant_args = false;
 		//
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
@@ -4753,6 +4755,9 @@ namespace Mono.CSharp {
 			get { return AttributeTargets.Constructor; }
 		}
 
+		public Iterator Iterator {
+			get { return null; }
+		}
 
 		//
 		// Returns true if this is a default constructor
@@ -4925,6 +4930,16 @@ namespace Mono.CSharp {
 
 			EmitContext ec = CreateEmitContext (null, null);
 
+			//
+			// If we use a "this (...)" constructor initializer, then
+			// do not emit field initializers, they are initialized in the other constructor
+			//
+			bool emit_field_initializers = ((ModFlags & Modifiers.STATIC) != 0) ||
+				!(Initializer is ConstructorThisInitializer);
+
+			if (emit_field_initializers)
+				Parent.PartialContainer.ResolveFieldInitializers (ec);
+
 			if (block != null) {
 				// If this is a non-static `struct' constructor and doesn't have any
 				// initializer, it must initialize all of the struct's fields.
@@ -4940,14 +4955,13 @@ namespace Mono.CSharp {
 				if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
 					Initializer = new GeneratedBaseInitializer (Location);
 
-
 				//
 				// Spec mandates that Initializers will not have
 				// `this' access
 				//
 				ec.IsStatic = true;
 				if ((Initializer != null) &&
-				    !Initializer.Resolve (ConstructorBuilder, block, ec))
+				    !Initializer.Resolve (ConstructorBuilder, ec))
 					return;
 				ec.IsStatic = false;
 			}
@@ -4957,42 +4971,29 @@ namespace Mono.CSharp {
 			SourceMethod source = SourceMethod.Create (
 				Parent, ConstructorBuilder, block);
 
-			//
-			// Classes can have base initializers and instance field initializers.
-			//
-			if (Parent.PartialContainer.Kind == Kind.Class){
-				if ((ModFlags & Modifiers.STATIC) == 0){
-
-					//
-					// If we use a "this (...)" constructor initializer, then
-					// do not emit field initializers, they are initialized in the other constructor
-					//
-					if (!(Initializer != null && Initializer is ConstructorThisInitializer))
-						Parent.PartialContainer.EmitFieldInitializers (ec);
-				}
-			}
-
 			bool unreachable = false;
 			if (block != null) {
 				if (!ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable))
 					return;
+
 				ec.EmitMeta (block);
+
+				if (Report.Errors > 0)
+					return;
+
+				if (emit_field_initializers)
+					Parent.PartialContainer.EmitFieldInitializers (ec);
 
 				if (block.ScopeInfo != null) {
 					ExpressionStatement init = block.ScopeInfo.GetScopeInitializer (ec);
 					init.EmitStatement (ec);
 				}
-			}
 
-			if (Initializer != null) {
-				Initializer.Emit (ec);
-			}
+				if (Initializer != null)
+					Initializer.Emit (ec);
 			
-			if ((ModFlags & Modifiers.STATIC) != 0)
-				Parent.PartialContainer.EmitFieldInitializers (ec);
-
-			if (block != null)
 				ec.EmitResolvedTopBlock (block, unreachable);
+			}
 
 			if (source != null)
 				source.CloseMethod ();
@@ -5085,7 +5086,9 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			return new EmitContext (this, Parent, Location, ig_, TypeManager.void_type, ModFlags, true);
+			EmitContext ec = new EmitContext (this, Parent.PartialContainer, Location, ig_, TypeManager.void_type, ModFlags, true);
+			ec.CurrentBlock = block;
+			return ec;
 		}
 
 		public bool IsExcluded()
@@ -6064,9 +6067,8 @@ namespace Mono.CSharp {
 			}
 
 			if (initializer != null)
-				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, initializer, Parent));
-
+				((TypeContainer) Parent).RegisterFieldForInitialization (this,
+					new FieldInitializer (FieldBuilder, initializer));
 			return true;
 		}
 
@@ -7355,8 +7357,8 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, Initializer, Parent));
+				((TypeContainer) Parent).RegisterFieldForInitialization (this,
+					new FieldInitializer (FieldBuilder, Initializer));
 			}
 
 			return true;

@@ -6319,7 +6319,7 @@ namespace Mono.CSharp {
 				return null;
 
 
-			if (ec.IsFieldInitializer) {
+			if (ec.IsInFieldInitializer) {
 				Error (27, "Keyword `this' is not available in the current context");
 				return null;
 			}
@@ -6421,7 +6421,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
 
-			if (ec.IsFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) 
+			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) 
 			{
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method");
@@ -8111,7 +8111,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (ec.IsFieldInitializer){
+			if (ec.IsInFieldInitializer){
 				Error (1512, "Keyword `base' is not available in the current context");
 				return null;
 			}

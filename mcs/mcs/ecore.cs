@@ -2047,7 +2047,7 @@ namespace Mono.CSharp {
 
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
-			if (ec.IsFieldInitializer)
+			if (ec.IsInFieldInitializer)
 				Report.Error (236, l,
 					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 					name);
@@ -2378,7 +2378,7 @@ namespace Mono.CSharp {
 
 				Expression left;
 				if (me.IsInstance) {
-					if (ec.IsStatic || ec.IsFieldInitializer) {
+					if (ec.IsStatic || ec.IsInFieldInitializer) {
 						//
 						// Note that an MemberExpr can be both IsInstance and IsStatic.
 						// An unresolved MethodGroupExpr can contain both kinds of methods
@@ -4146,7 +4146,7 @@ namespace Mono.CSharp {
 				InstanceExpression.CheckMarshalByRefAccess ();
 			}
 
-			if (!in_initializer && !ec.IsFieldInitializer) {
+			if (!in_initializer && !ec.IsInFieldInitializer) {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
@@ -4259,7 +4259,7 @@ namespace Mono.CSharp {
 
 			if (FieldInfo.IsInitOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
-				if (!ec.IsFieldInitializer && !ec.IsConstructor)
+				if (!ec.IsInFieldInitializer && !ec.IsConstructor)
 					return Report_AssignToReadonly (right_side);
 
 				if (ec.IsConstructor) {

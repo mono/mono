@@ -1,5 +1,20 @@
 2007-09-13  Marek Safar  <marek.safar@gmail.com>
 
+	* assign.cs: Fixed a crash when field is resolved twice with an error.
+	
+	* codegen.cs: Changed InFieldInitializer to be flag.
+	
+	* anonymous.cs, ecore.cs, expression.cs: Update after
+	IsInFieldInitializer rename.
+	
+	* const.cs: Removed unused parameter.
+	
+	* class.cs: Changed the way how we resolve and emit field initializers.
+	The field initilizers have to have access to contructor block to emit
+	compiler generated code.
+
+2007-09-13  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs (MemberAccess.DoResolve): DeclSpace is broken by
 	generics use TypeContainer instead.
 	

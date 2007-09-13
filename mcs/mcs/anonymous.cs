@@ -1530,13 +1530,14 @@ namespace Mono.CSharp {
 				(ec.InUnsafe ? Modifiers.UNSAFE : 0), /* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
-			aec.IsFieldInitializer = ec.IsFieldInitializer;
 			aec.IsStatic = ec.IsStatic;
 			aec.InferReturnType = ec.InferReturnType;
 
 			IDisposable aec_dispose = null;
 			if (ec.IsInProbingMode)
 				aec_dispose = aec.Set (EmitContext.Flags.ProbingMode);
+			if (ec.IsInFieldInitializer)
+				aec_dispose = aec.Set (EmitContext.Flags.InFieldInitializer);
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);
