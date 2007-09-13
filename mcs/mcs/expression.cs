@@ -6871,8 +6871,8 @@ namespace Mono.CSharp {
 			}
 #endif
 			if (member_lookup == null) {
-				ExtensionMethodGroupExpr ex_method_lookup = ec.DeclContainer.LookupExtensionMethod (expr_type, Identifier);
-				if (ex_method_lookup != null) {
+				ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Identifier);
+				if (ex_method_lookuConsole.WriteLine (loc.ToString ());p != null) {
 					ex_method_lookup.ExtensionExpression = expr_resolved;
 
 					if (args != null)

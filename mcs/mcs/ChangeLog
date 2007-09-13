@@ -1,3 +1,8 @@
+2007-09-13  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (MemberAccess.DoResolve): DeclSpace is broken by
+	generics use TypeContainer instead.
+	
 2007-09-12  Marek Safar  <marek.safar@gmail.com>
 	
 	* generic.cs (TypeInferenceContext.InflateGenericArgument): Stub.
