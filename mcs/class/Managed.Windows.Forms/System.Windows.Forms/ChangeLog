@@ -1,5 +1,13 @@
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Take Margin into account when calculating preferred
+	size.  Also, allow preferred size to get smaller than the explicit
+	size.
+	* ToolStripTextBox.cs: Don't change the GetPreferredSize implementation.
+	First step towards fixing bug #82747.
+
+2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Applied patch from latency@gmx.de to not paint the
 	full row select background over the plus/minus glyph.  Also, turn
 	off the focus rectangle for full row select since MS doesn't seem

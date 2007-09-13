@@ -308,7 +308,7 @@ namespace System.Windows.Forms
 		
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return this.DefaultSize;
+			return base.GetPreferredSize (constrainingSize);
 		}
 
 		public void Paste ()

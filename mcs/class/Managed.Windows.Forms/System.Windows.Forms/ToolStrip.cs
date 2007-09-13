@@ -1392,7 +1392,7 @@ namespace System.Windows.Forms
 		
 		internal virtual Size GetToolStripPreferredSize (Size proposedSize)
 		{
-			Size new_size = new Size (0, this.Height);
+			Size new_size = Size.Empty;
 
 			if (this.orientation == Orientation.Vertical) {
 				foreach (ToolStripItem tsi in this.items)
@@ -1400,11 +1400,15 @@ namespace System.Windows.Forms
 						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
 						new_size.Height += tsi_preferred.Height + tsi.Margin.Top + tsi.Margin.Bottom;
 
-						if (new_size.Width < (this.Padding.Horizontal + tsi_preferred.Width))
-							new_size.Width = (this.Padding.Horizontal + tsi_preferred.Width);
+						if (new_size.Width < (this.Padding.Horizontal + tsi_preferred.Width + tsi.Margin.Horizontal))
+							new_size.Width = (this.Padding.Horizontal + tsi_preferred.Width + tsi.Margin.Horizontal);
 					}
 
 				new_size.Height += (this.GripRectangle.Height + this.GripMargin.Vertical + this.Padding.Vertical + 4);
+				
+				if (new_size.Width == 0)
+					new_size.Width = ExplicitBounds.Width;
+					
 				return new_size;
 			} else {
 				foreach (ToolStripItem tsi in this.items) 
@@ -1412,13 +1416,17 @@ namespace System.Windows.Forms
 						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
 						new_size.Width += tsi_preferred.Width + tsi.Margin.Left + tsi.Margin.Right;
 						
-						if (new_size.Height < (this.Padding.Vertical + tsi_preferred.Height))
-							new_size.Height = (this.Padding.Vertical + tsi_preferred.Height);
+						if (new_size.Height < (this.Padding.Vertical + tsi_preferred.Height + tsi.Margin.Vertical))
+							new_size.Height = (this.Padding.Vertical + tsi_preferred.Height + tsi.Margin.Vertical);
 					}
-			}
+					
+				new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);
 
-			new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);
-			return new_size;
+				if (new_size.Height == 0)
+					new_size.Height = ExplicitBounds.Height;
+
+				return new_size;
+			}
 		}
 		
 		internal virtual ToolStrip GetTopLevelToolStrip ()

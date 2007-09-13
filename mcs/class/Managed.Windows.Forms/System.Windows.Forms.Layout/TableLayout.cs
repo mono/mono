@@ -264,9 +264,11 @@ namespace System.Windows.Forms.Layout
 						if (c != null  && c != dummy_control)
 						{
 							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right)) {
-								if (c.ExplicitBounds.Width + c.Margin.Left + c.Margin.Right > max_width)
-									max_width = c.ExplicitBounds.Width + c.Margin.Left + c.Margin.Right;
-									
+								if (c.AutoSize)
+									max_width = Math.Max (max_width, c.PreferredSize.Width + c.Margin.Horizontal);
+								else
+									max_width = Math.Max (max_width, c.ExplicitBounds.Width + c.Margin.Horizontal);
+								
 								continue;
 							}
 							else if (settings.GetColumnSpan (c) > 1)
@@ -342,8 +344,10 @@ namespace System.Windows.Forms.Layout
 
 						if (c != null && c != dummy_control) {
 							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)) {
-								if (c.ExplicitBounds.Height + c.Margin.Top + c.Margin.Bottom > max_height)
-									max_height = c.ExplicitBounds.Height + c.Margin.Top + c.Margin.Bottom;
+								if (c.AutoSize)
+									max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
+								else
+									max_height = Math.Max (max_height, c.ExplicitBounds.Height + c.Margin.Vertical);
 
 								continue;
 							}
