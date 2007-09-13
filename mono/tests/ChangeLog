@@ -1,3 +1,8 @@
+2007-09-13  Massimiliano Mantione  <massi@ximian.com>
+
+	* Makefile.am: Fixed and re-enabled test for bug #82416 (the
+	config files were not in place).
+
 2007-09-12  Massimiliano Mantione  <massi@ximian.com>
 
 	* Makefile.am: disabled test for bug #82416 since it fails on the
