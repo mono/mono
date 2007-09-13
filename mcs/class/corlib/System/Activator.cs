@@ -150,6 +150,57 @@ namespace System
 		}
 
 #if NET_2_0
+		[MonoNotSupported ("no ClickOnce in mono")]
+		public static ObjectHandle CreateInstance (ActivationContext activationContext)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("no ClickOnce in mono")]
+		public static ObjectHandle CreateInstance (ActivationContext activationContext, string [] activationCustomData)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// Cross-domain instance creation
+
+		public static ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+			return domain.CreateInstanceFrom (assemblyFile, typeName);
+		}
+
+		public static ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName,
+							       bool ignoreCase, BindingFlags bindingAttr, Binder binder,
+							       object [] args, CultureInfo culture,
+							       object [] activationAttributes,
+							       Evidence securityAttributes)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+
+			return domain.CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+		}
+
+		public static ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+			return domain.CreateInstance (assemblyName, typeName);
+		}
+
+		public static ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName,
+							   bool ignoreCase, BindingFlags bindingAttr, Binder binder,
+							   object [] args, CultureInfo culture,
+							   object [] activationAttributes,
+							   Evidence securityAttributes)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+			return domain.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes, securityAttributes);
+		}
+
 		public static T CreateInstance <T> ()
 		{
 			return (T) CreateInstance (typeof (T));

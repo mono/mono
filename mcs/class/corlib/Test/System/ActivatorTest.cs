@@ -356,6 +356,47 @@ namespace MonoTests.System {
 			Assert.IsNotNull (Activator.CreateInstance (typeof (foo1<int>)), "foo1<int>");
 			Assert.IsNotNull (Activator.CreateInstance (typeof (foo2<long, int>)), "foo2<long, int>");
 		}
+
+		[Test]
+		public void CreateInstanceCrossDomain ()
+		{
+			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.Object");
+			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.Object", false,
+						  BindingFlags.Public | BindingFlags.Instance, null, null, CultureInfo.InvariantCulture,
+						  null, null);
+			// FIXME: below works as a standalone case, but does not as a unit test (causes JIT error).
+                	Activator.CreateInstance (AppDomain.CreateDomain ("foo"), "mscorlib.dll", "System.Object", false,
+						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
+						  null, null);
+		}
+
+		[Test]
+		public void CreateInstanceCrossDomainNonSerializableArgs ()
+		{
+			// I'm not sure why this is possible ...
+			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.WeakReference", false,
+						  BindingFlags.Public | BindingFlags.Instance, null, new object [] {ModuleHandle.EmptyHandle}, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstanceNonSerializableAtts ()
+		{
+			// even on invalid success it causes different exception though.
+			Activator.CreateInstance ("mscorlib.dll", "System.Object", false,
+						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
+						  new object [] {ModuleHandle.EmptyHandle}, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void CreateInstanceCrossDomainNonSerializableAtts ()
+		{
+			// even on invalid success it causes different exception though.
+			Activator.CreateInstance (AppDomain.CurrentDomain, "mscorlib.dll", "System.Object", false,
+						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
+						  new object [] {ModuleHandle.EmptyHandle}, null);
+		}
 #endif
 	}
 }

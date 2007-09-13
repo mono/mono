@@ -1,3 +1,8 @@
+2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Activator.cs : implemented 2.0 CreateInstance()
+	  and CreateInstanceFrom () overloads.
+
 2007-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: More explicit text in exception (old and almost 
