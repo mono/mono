@@ -1,3 +1,7 @@
+2007-09-13  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Design.dll.sources: added System.Design/DummyClass.cs
+
 2007-08-24  Ivan N. Zlatev <contact@i-nz.net>
 
 	* System.Design.dll.sources: add MultilineStringEditor.cs.

@@ -63,6 +63,7 @@ System.ComponentModel.Design.Serialization/RootContext.cs
 System.ComponentModel.Design.Serialization/SerializeAbsoluteContext.cs
 System.ComponentModel.Design.Serialization/StatementContext.cs
 System.ComponentModel.Design.Serialization/TypeCodeDomSerializer.cs
+System.Design/DummyClass.cs
 System.Diagnostics.Design/LogConverter.cs
 System.Diagnostics.Design/ProcessDesigner.cs
 System.Diagnostics.Design/ProcessModuleDesigner.cs
