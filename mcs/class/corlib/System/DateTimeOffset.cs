@@ -41,9 +41,39 @@ namespace System
 		public static readonly DateTimeOffset MaxValue = new DateTimeOffset (DateTime.MaxValue);
 		public static readonly DateTimeOffset MinValue = new DateTimeOffset (DateTime.MaxValue);
 		
+		DateTime dt;
+		
 		public DateTimeOffset (DateTime dateTime)
 		{
+			this.dt = dateTime;
 		}
+		
+		public DateTimeOffset AddSeconds (double seconds)
+		{
+			return new DateTimeOffset (this.dt.AddSeconds (seconds));
+		}
+		
+		public DateTime DateTime {
+			get {
+				return dt;
+			}
+		}
+		
+		public static DateTimeOffset Now {
+			get {
+				return new DateTimeOffset (DateTime.Now);
+			}
+		}
+		
+		public static bool operator < (DateTimeOffset dto1, DateTimeOffset dto2)
+		{
+			return dto1.dt < dto2.dt;
+		}
+		
+		public static bool operator > (DateTimeOffset dto1, DateTimeOffset dto2)
+		{
+			return dto1.dt > dto2.dt;
+		}			
 	}
 }
 

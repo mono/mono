@@ -1,3 +1,7 @@
+2007-09-13  Marek Safar  <marek.safar@gmail.com>
+
+	* DateTimeOffset.cs: Implemented few properties.
+
 2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Decimal.cs, Math.cs : implemented midpoint rounding.
