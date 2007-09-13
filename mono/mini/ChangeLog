@@ -1,5 +1,8 @@
 2007-09-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am generics-variant-types.2.il generics.cs: Add some generics
+	variance tests.
+
 	* inssel.brg: Reorganize the isinst/castclass code to reduce code duplication.
 
 	* mini.c (handle_alloc): Enable managed allocators in AOT code.
