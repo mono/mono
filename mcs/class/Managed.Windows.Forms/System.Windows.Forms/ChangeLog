@@ -1,5 +1,11 @@
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Don't FocusInternal if there is no selected item.
+	This was causing keyboard opened dropdowns to lose focus.
+	[Fixes bug #82803]
+
+2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: If Rectangle.Empty is passed to Invalidate, use
 	ClientRectangle instead.  [Fixes bug #82838]
 

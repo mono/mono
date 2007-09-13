@@ -1333,8 +1333,8 @@ namespace System.Windows.Forms
 					tsi.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 
 			ToolStripItem current = GetCurrentlySelectedItem ();
-			
-			if (!(current is ToolStripControlHost))
+
+			if (current != null && !(current is ToolStripControlHost))
 				this.FocusInternal (true);
 
 			if (nextItem is ToolStripControlHost)
