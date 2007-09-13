@@ -1,3 +1,7 @@
+2007-09-13 Andreia Gaita <avidigal@novell.com>
+
+	* WebBrowserBase.cs: add FocusOption enumeration for finer focus control
+
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Take Margin into account when calculating preferred

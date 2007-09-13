@@ -57,9 +57,9 @@ namespace Mono.WebBrowser
 		}
 
 		#region Layout
-		public void FocusIn ()
+		public void FocusIn (FocusOption focus)
 		{
-			Base.Focus (this);
+			Base.Focus (this, focus);
 		}
 		public void FocusOut ()
 		{

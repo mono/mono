@@ -1,3 +1,11 @@
+2007-09-13 Andreia Gaita <avidigal@novell.com>
+
+	* add check for xulbrowser library, if it's not 
+	present complain then leave (don't blow up)
+	* change blur method to call deactivate (mozilla seems
+	to need it to know when it loses focus)
+	* add FocusOption enumeration for finer focus control
+
 2007-09-12 Andreia Gaita <avidigal@novell.com>
 
 	* Base.cs, IWebBrowser.cs, WebBrowser.cs: setup shutdown routine

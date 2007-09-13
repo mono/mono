@@ -33,7 +33,7 @@ namespace Mono.WebBrowser
 	{
 		void Load (IntPtr handle, int width, int height);
 		void Shutdown ();
-		void FocusIn ();
+		void FocusIn (FocusOption focus);
 		void FocusOut ();
 		void Activate ();
 		void Deactivate ();
@@ -67,6 +67,13 @@ namespace Mono.WebBrowser
 		None = 0,
 		Proxy = 1,
 		Full = 2
+	}
+
+	public enum FocusOption
+	{
+		None = 0,
+		FocusFirstElement = 1,
+		FocusLastElement = 2
 	}
 
 	public delegate bool CreateNewWindowEventHandler (object sender, CreateNewWindowEventArgs e);

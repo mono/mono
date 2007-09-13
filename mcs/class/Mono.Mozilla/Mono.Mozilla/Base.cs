@@ -35,6 +35,8 @@ namespace Mono.Mozilla
 	internal class Base
 	{
 		private static Hashtable boundControls;
+		internal static bool xulbrowserInstalled;
+
 		private class BindingInfo
 		{
 			public CallbackBinder callback;
@@ -61,13 +63,25 @@ namespace Mono.Mozilla
 			info.callback = new CallbackBinder (control);
 			IntPtr ptrCallback = Marshal.AllocHGlobal (Marshal.SizeOf (info.callback));
 			Marshal.StructureToPtr (info.callback, ptrCallback, true);
-			info.xulbrowser = xulbrowser_init (ptrCallback, Environment.CurrentDirectory);
+
+			try {
+				info.xulbrowser = xulbrowser_init (ptrCallback, Environment.CurrentDirectory);
+			}
+			catch (DllNotFoundException) {
+				Console.WriteLine ("libxulbrowser not found. To have webbrowser support, you need libxulbrowser installed");
+				Marshal.FreeHGlobal (ptrCallback);
+				xulbrowserInstalled = false;
+				return;
+			}
 			boundControls.Add (control as IWebBrowser, info);
 			DebugStartup ();
 		}
 
 		public static void Shutdown (Mono.WebBrowser.WebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -77,6 +91,9 @@ namespace Mono.Mozilla
 
 		public static void Bind (IWebBrowser control, IntPtr handle, int width, int height)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -85,26 +102,36 @@ namespace Mono.Mozilla
 		}
 
 		// layout
-		public static void Focus (IWebBrowser control)
+		public static void Focus (IWebBrowser control, FocusOption focus)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
 
-			xulbrowser_focus (info.xulbrowser);
+			xulbrowser_focus (info.xulbrowser, focus);
 		}
+
 
 		public static void Blur (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
 
-			xulbrowser_blur (info.xulbrowser);
+			xulbrowser_deactivate (info.xulbrowser);
 		}
 
 		public static void Activate (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -114,6 +141,9 @@ namespace Mono.Mozilla
 
 		public static void Deactivate (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -123,6 +153,9 @@ namespace Mono.Mozilla
 
 		public static void Resize (IWebBrowser control, int width, int height)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -133,6 +166,9 @@ namespace Mono.Mozilla
 		// navigation
 		public static void Navigate (IWebBrowser control, string uri)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -143,6 +179,9 @@ namespace Mono.Mozilla
 
 		public static bool Forward (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return false;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -152,6 +191,9 @@ namespace Mono.Mozilla
 
 		public static bool Back (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return false;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -161,6 +203,9 @@ namespace Mono.Mozilla
 
 		public static void Home (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -170,6 +215,9 @@ namespace Mono.Mozilla
 
 		public static void Stop (IWebBrowser control)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -179,6 +227,9 @@ namespace Mono.Mozilla
 
 		public static void Reload (IWebBrowser control, ReloadOption option)
 		{
+			if (!xulbrowserInstalled)
+				return;
+
 			if (!boundControls.ContainsKey (control))
 				throw new ArgumentException ();
 			BindingInfo info = boundControls[control] as BindingInfo;
@@ -202,7 +253,7 @@ namespace Mono.Mozilla
 
 		// layout
 		[DllImport ("xulbrowser")]
-		private static extern int xulbrowser_focus (IntPtr instance);
+		private static extern int xulbrowser_focus (IntPtr instance, FocusOption focus);
 		[DllImport ("xulbrowser")]
 		private static extern int xulbrowser_blur (IntPtr instance);
 		[DllImport ("xulbrowser")]

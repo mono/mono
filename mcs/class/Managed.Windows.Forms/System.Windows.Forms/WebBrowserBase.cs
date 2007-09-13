@@ -223,7 +223,7 @@ namespace System.Windows.Forms
 		protected override void OnGotFocus (EventArgs e)
 		{
 			base.OnGotFocus (e);
-			WebHost.FocusIn ();
+			WebHost.FocusIn (Mono.WebBrowser.FocusOption.FocusFirstElement);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -300,10 +300,13 @@ namespace System.Windows.Forms
 
 			webHost.MouseClick += new EventHandler (OnWebHostMouseClick);
 			webHost.Focus += new EventHandler (OnWebHostFocus);
-			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (webHost_CreateNewWindow);
+			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
 		}
 
-		bool webHost_CreateNewWindow (object sender, Mono.WebBrowser.CreateNewWindowEventArgs e)
+
+
+		#region Events raised by the embedded web browser
+		bool OnWebHostCreateNewWindow (object sender, Mono.WebBrowser.CreateNewWindowEventArgs e)
 		{
 			return OnNewWindowInternal ();
 		}
@@ -323,10 +326,18 @@ namespace System.Windows.Forms
 		{
 			//MessageBox.Show ("clicked");
 		}
+
+		/// <summary>
+		/// Event raised from the embedded webbrowser control, saying that it has received focus
+		/// (via a mouse click, for instance).
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OnWebHostFocus (object sender, EventArgs e)
 		{
 			this.Focus ();
 		}
+		#endregion
 
 		internal abstract bool OnNewWindowInternal ();
 		#endregion
