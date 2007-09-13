@@ -3768,6 +3768,9 @@ namespace System.Windows.Forms
 			if (!IsHandleCreated)
 				return;
 
+			if (rc == Rectangle.Empty)
+				rc = ClientRectangle;
+				
 			if  (rc.Width > 0 && rc.Height > 0) {
 
 				NotifyInvalidate(rc);

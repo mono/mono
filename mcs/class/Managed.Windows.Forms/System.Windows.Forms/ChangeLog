@@ -1,5 +1,10 @@
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: If Rectangle.Empty is passed to Invalidate, use
+	ClientRectangle instead.  [Fixes bug #82838]
+
+2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SplitContainer.cs: We can't reset Visible on every layout because
 	someone may have set Visible = false explicitly on a SplitterPanel.
 	Make sure when we switch orientation the SplitterDistance does not
