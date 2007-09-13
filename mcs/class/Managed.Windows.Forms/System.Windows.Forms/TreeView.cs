@@ -1483,6 +1483,9 @@ namespace System.Windows.Forms {
 
 		private void DrawNodePlusMinus (TreeNode node, Graphics dc, int x, int middle)
 		{
+			int height = ActualItemHeight - 2;
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), (x + 4) - (height / 2), node.GetY() + 1, height, height);
+			
 			dc.DrawRectangle (SystemPens.ControlDarkDark, x, middle - 4, 8, 8);
 
 			if (node.IsExpanded) {
@@ -1720,7 +1723,7 @@ namespace System.Windows.Forms {
 
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
-			if (Focused && focused_node == node) {
+			if (Focused && focused_node == node && !full_row_select) {
 				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 			}
 			if (draw_mode != TreeViewDrawMode.Normal)

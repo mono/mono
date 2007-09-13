@@ -1,5 +1,12 @@
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Applied patch from latency@gmx.de to not paint the
+	full row select background over the plus/minus glyph.  Also, turn
+	off the focus rectangle for full row select since MS doesn't seem
+	to ever paint it.  [Fixes bug #81839]
+
+2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Don't FocusInternal if there is no selected item.
 	This was causing keyboard opened dropdowns to lose focus.
 	[Fixes bug #82803]
