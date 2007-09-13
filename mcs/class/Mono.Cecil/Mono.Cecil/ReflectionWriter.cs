@@ -1107,26 +1107,23 @@ namespace Mono.Cecil {
 
 		public CustomMod [] GetCustomMods (TypeReference type)
 		{
-			if (!(type is ModType))
+			ModType modifier = type as ModType;
+			if (modifier == null)
 				return new CustomMod [0];
 
 			ArrayList cmods = new ArrayList ();
-			TypeReference cur = type;
-			while (cur is ModType) {
-				if (cur is ModifierOptional) {
-					CustomMod cmod = new CustomMod ();
-					cmod.CMOD = CustomMod.CMODType.OPT;
-					cmod.TypeDefOrRef = GetTypeDefOrRefToken ((cur as ModifierOptional).ModifierType);
-					cmods.Add (cmod);
-				} else if (cur is ModifierRequired) {
-					CustomMod cmod = new CustomMod ();
-					cmod.CMOD = CustomMod.CMODType.REQD;
-					cmod.TypeDefOrRef = GetTypeDefOrRefToken ((cur as ModifierRequired).ModifierType);
-					cmods.Add (cmod);
-				}
+			do {
+				CustomMod cmod = new CustomMod ();
+				cmod.TypeDefOrRef = GetTypeDefOrRefToken (modifier.ModifierType);
 
-				cur = (cur as ModType).ElementType;
-			}
+				if (modifier is ModifierOptional)
+					cmod.CMOD = CustomMod.CMODType.OPT;
+				else if (modifier is ModifierRequired)
+					cmod.CMOD = CustomMod.CMODType.REQD;
+
+				cmods.Add (cmod);
+				modifier = modifier.ElementType as ModType;
+			} while (modifier != null);
 
 			return cmods.ToArray (typeof (CustomMod)) as CustomMod [];
 		}

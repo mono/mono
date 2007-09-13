@@ -37,6 +37,25 @@ namespace Mono.Cecil {
 			set { m_modifierType = value; }
 		}
 
+		public override string Name
+		{
+			get { return string.Concat (base.Name, Suffix ()); }
+		}
+
+		public override string FullName
+		{
+			get { return string.Concat (base.FullName, Suffix ()); }
+		}
+
+		string Suffix ()
+		{
+			return string.Concat (" ", ModifierName, "(", this.ModifierType.FullName, ")");
+		}
+
+		protected abstract string ModifierName {
+			get;
+		}
+
 		public ModType (TypeReference elemType, TypeReference modType) : base (elemType)
 		{
 			m_modifierType = modType;
@@ -45,45 +64,24 @@ namespace Mono.Cecil {
 
 	public sealed class ModifierOptional : ModType {
 
+		protected override string ModifierName {
+			get { return "modopt"; }
+		}
+
 		public ModifierOptional (TypeReference elemType, TypeReference modType) : base (elemType, modType)
 		{
 		}
 
-		public override string Name
-		{
-			get { return string.Concat (base.Name, Suffix ()); }
-		}
-
-		public override string FullName
-		{
-			get { return string.Concat (base.FullName, Suffix ()); }
-		}
-
-		string Suffix ()
-		{
-			return string.Concat (" modopt(", this.ModifierType.FullName, ")");
-		}
 	}
 
 	public sealed class ModifierRequired : ModType {
 
+		protected override string ModifierName {
+			get { return "modreq"; }
+		}
+
 		public ModifierRequired (TypeReference elemType, TypeReference modType) : base (elemType, modType)
 		{
-		}
-
-		public override string Name
-		{
-			get { return string.Concat (base.Name, Suffix ()); }
-		}
-
-		public override string FullName
-		{
-			get { return string.Concat (base.FullName, Suffix ()); }
-		}
-
-		string Suffix ()
-		{
-			return string.Concat (" modreq(", this.ModifierType.FullName, ")");
 		}
 	}
 }
