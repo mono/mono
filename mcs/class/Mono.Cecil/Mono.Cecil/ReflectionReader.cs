@@ -142,6 +142,7 @@ namespace Mono.Cecil {
 			TypeSpecRow tsRow = tsTable [index];
 			TypeSpec ts = m_sigReader.GetTypeSpec (tsRow.Signature);
 			tspec = GetTypeRefFromSig (ts.Type, context);
+			tspec = GetModifierType (ts.CustomMods, tspec);
 			tspec.MetadataToken = MetadataToken.FromMetadataRow (TokenType.TypeSpec, index);
 			m_typeSpecs [index] = tspec;
 
@@ -198,8 +199,7 @@ namespace Mono.Cecil {
 				if (sig is FieldSig) {
 					FieldSig fs = sig as FieldSig;
 					TypeReference fieldType = GetTypeRefFromSig (fs.Type, nc);
-					if (fs.CustomMods.Length > 0)
-						fieldType = GetModifierType (fs.CustomMods, fieldType);
+					fieldType = GetModifierType (fs.CustomMods, fieldType);
 
 					member = new FieldReference (
 						m_root.Streams.StringsHeap [mrefRow.Name],
@@ -663,7 +663,7 @@ namespace Mono.Cecil {
 					MethodRow methRow = methTable [j - 1];
 					MethodDefinition mdef = m_meths [j - 1];
 
-					if (!IsDeleted(mdef)) {
+					if (!IsDeleted (mdef)) {
 						if (mdef.IsConstructor)
 							dec.Constructors.Add (mdef);
 						else
@@ -858,8 +858,7 @@ namespace Mono.Cecil {
 			else
 				paramType = GetTypeRefFromSig (signature.Type, context);
 
-			if (signature.CustomMods.Length > 0)
-				paramType = GetModifierType (signature.CustomMods, paramType);
+			paramType = GetModifierType (signature.CustomMods, paramType);
 
 			parameter.ParameterType = paramType;
 		}
@@ -935,6 +934,9 @@ namespace Mono.Cecil {
 
 		public TypeReference GetModifierType (CustomMod [] cmods, TypeReference type)
 		{
+			if (cmods == null || cmods.Length == 0)
+				return type;
+
 			TypeReference ret = type;
 			for (int i = cmods.Length - 1; i >= 0; i--) {
 				CustomMod cmod = cmods [i];
@@ -965,8 +967,7 @@ namespace Mono.Cecil {
 			else
 				retType = GetTypeRefFromSig (msig.RetType.Type, context);
 
-			if (msig.RetType.CustomMods.Length > 0)
-				retType = GetModifierType (msig.RetType.CustomMods, retType);
+			retType = GetModifierType (msig.RetType.CustomMods, retType);
 
 			return new MethodReturnType (retType);
 		}
@@ -1079,8 +1080,7 @@ namespace Mono.Cecil {
 		TypeReference GetGenericArg (GenericArg arg, GenericContext context)
 		{
 			TypeReference type = GetTypeRefFromSig (arg.Type, context);
-			if (arg.CustomMods != null && arg.CustomMods.Length > 0)
-				type = GetModifierType (arg.CustomMods, type);
+			type = GetModifierType (arg.CustomMods, type);
 			return type;
 		}
 

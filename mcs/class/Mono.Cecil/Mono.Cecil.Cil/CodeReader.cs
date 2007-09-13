@@ -345,8 +345,7 @@ namespace Mono.Cecil.Cil {
 				if ((lv.Constraint & Constraint.Pinned) != 0)
 					varType = new PinnedType (varType);
 
-				if (lv.CustomMods.Length > 0)
-					varType = m_reflectReader.GetModifierType (lv.CustomMods, varType);
+				varType = m_reflectReader.GetModifierType (lv.CustomMods, varType);
 
 				body.Variables.Add (new VariableDefinition (
 						string.Concat ("V_", i), i, body.Method, varType));
