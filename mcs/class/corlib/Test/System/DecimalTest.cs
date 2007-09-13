@@ -1362,5 +1362,30 @@ namespace MonoTests.System
 			AssertEquals ("27", "0.000000000000000000000000001", (0.000000000000000000000000001m).ToString ());
 			AssertEquals ("28", "0.0000000000000000000000000001", (0.0000000000000000000000000001m).ToString ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void MidpointRoundingAwayFromZero ()
+		{
+			MidpointRounding m = MidpointRounding.AwayFromZero;
+			AssertEquals ("#1", 4, Math.Round (3.5M, m));
+			AssertEquals ("#2", 3, Math.Round (2.8M, m));
+			AssertEquals ("#3", 3, Math.Round (2.5M, m));
+			AssertEquals ("#4", 2, Math.Round (2.1M, m));
+			AssertEquals ("#5", -2, Math.Round (-2.1M, m));
+			AssertEquals ("#6", -3, Math.Round (-2.5M, m));
+			AssertEquals ("#7", -3, Math.Round (-2.8M, m));
+			AssertEquals ("#8", -4, Math.Round (-3.5M, m));
+
+			AssertEquals ("#9", 3.1M, Math.Round (3.05M, 1, m));
+			AssertEquals ("#10", 2.1M, Math.Round (2.08M, 1, m));
+			AssertEquals ("#11", 2.1M, Math.Round (2.05M, 1, m));
+			AssertEquals ("#12", 2.0M, Math.Round (2.01M, 1, m));
+			AssertEquals ("#13", -2.0M, Math.Round (-2.01M, 1, m));
+			AssertEquals ("#14", -2.1M, Math.Round (-2.05M, 1, m));
+			AssertEquals ("#15", -2.1M, Math.Round (-2.08M, 1, m));
+			AssertEquals ("#16", -3.1M, Math.Round (-3.05M, 1, m));
+		}
+#endif
 	}
 }

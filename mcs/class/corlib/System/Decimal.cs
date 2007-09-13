@@ -545,6 +545,16 @@ namespace System
 
         public static Decimal Round (Decimal d, int decimals) 
         {
+#if NET_2_0
+		return Round (d, decimals, MidpointRounding.ToEven);
+	}
+
+        public static Decimal Round (Decimal d, int decimals, MidpointRounding mode) 
+        {
+		if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
+			throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
+
+#endif
 		if (decimals < 0 || decimals > 28) {
 			throw new ArgumentOutOfRangeException ("decimals", "[0,28]");
 		}
@@ -561,7 +571,11 @@ namespace System
 		dec_part *= 10000000000000000000000000000M;
 		dec_part = Decimal.Floor(dec_part);
 		dec_part /= (10000000000000000000000000000M / p);
+#if NET_2_0
+		dec_part = Math.Round (dec_part, mode);
+#else
 		dec_part = Math.Round (dec_part);
+#endif
 		dec_part /= p;
 		decimal result = int_part + dec_part;
 
@@ -597,18 +611,9 @@ namespace System
           return Math.Round (d);
         }
 
-        //Remove MonoTODO when the corresponding Math method is implemented
-        [MonoTODO ("Not implemented")]
         public static Decimal Round (Decimal d, MidpointRounding mode)
         {
           return Math.Round (d, mode);
-        }
-
-        //Remove MonoTODO when the corresponding Math method is implemented
-        [MonoTODO ("Not implemented")]
-        public static Decimal Round (Decimal d, int decimals, MidpointRounding mode)
-        {
-          return Math.Round (d, decimals, mode);
         }
 #endif
 

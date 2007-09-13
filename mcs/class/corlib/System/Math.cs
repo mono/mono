@@ -375,7 +375,6 @@ namespace System
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented")]
 		public static decimal Round (decimal d, MidpointRounding mode)
 		{
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
@@ -383,18 +382,24 @@ namespace System
 
 			if (mode == MidpointRounding.ToEven)
 				return Round (d);
-			throw new NotImplementedException ();
+			else
+				return RoundAwayFromZero (d);
 		}
 
-		[MonoTODO ("Not implemented")]
+		static decimal RoundAwayFromZero (decimal d)
+		{
+			decimal int_part = Decimal.Floor(d);
+			decimal dec_part = d - int_part;
+			if (int_part >= 0 && dec_part >= 0.5M)
+				int_part++;
+			else if (int_part < 0 && dec_part > 0.5M)
+				int_part++;
+			return int_part;
+		}
+
 		public static decimal Round (decimal d, int decimals, MidpointRounding mode)
 		{
-			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
-				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
-
-			if (mode == MidpointRounding.ToEven)
-				return Round (d, decimals);
-			throw new NotImplementedException ();
+			return Decimal.Round (d, decimals, mode);
 		}
 #endif
 

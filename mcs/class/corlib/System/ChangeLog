@@ -1,5 +1,9 @@
 2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Decimal.cs, Math.cs : implemented midpoint rounding.
+
+2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Activator.cs : implemented 2.0 CreateInstance()
 	  and CreateInstanceFrom () overloads.
 

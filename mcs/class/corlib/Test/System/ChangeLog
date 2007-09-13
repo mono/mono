@@ -1,5 +1,9 @@
 2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DecimalTest.cs : added test for midpoint rounding.
+
+2007-09-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ActivatorTest.cs : new tests for cross-domain
 	  CreateInstance().
 
