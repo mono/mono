@@ -1,3 +1,7 @@
+2007-09-13  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixStream.cs: Don't read/write if the buffer has no data.  Fixes #82836.
+
 2006-10-24  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* MapAttribute.cs: Moved to ../Mono.Unix.Native/MapAttribute.cs.

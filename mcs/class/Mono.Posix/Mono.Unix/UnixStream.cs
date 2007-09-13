@@ -5,6 +5,8 @@
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2004-2006 Jonathan Pryor
+// (C) 2007 Novell, Inc.
+//
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -202,6 +204,9 @@ namespace Mono.Unix {
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 				 
+			if (buffer.Length == 0)
+				return 0;
+
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
@@ -235,6 +240,9 @@ namespace Mono.Unix {
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 				 
+			if (buffer.Length == 0)
+				return 0;
+
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
@@ -289,6 +297,9 @@ namespace Mono.Unix {
 			if (!CanWrite)
 				throw new NotSupportedException ("File Descriptor does not support writing");
 
+			if (buffer.Length == 0)
+				return;
+
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
 				do {
@@ -306,6 +317,9 @@ namespace Mono.Unix {
 			AssertValidBuffer (buffer, offset, count);
 			if (!CanWrite)
 				throw new NotSupportedException ("File Descriptor does not support writing");
+
+			if (buffer.Length == 0)
+				return;
 
 			long r = 0;
 			fixed (byte* buf = &buffer[offset]) {
