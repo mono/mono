@@ -277,9 +277,14 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for Orientation", value));
 
 				if (this.orientation != value) {
-					int tmp = splitter_rectangle.Height;
-					splitter_rectangle.Height = splitter_rectangle.Width;
-					splitter_rectangle.Width = tmp;
+					if (value == Orientation.Vertical) {
+						splitter_rectangle.Width = splitter_rectangle.Height;
+						splitter_rectangle.X = splitter_rectangle.Y;
+					} else {
+						splitter_rectangle.Height = splitter_rectangle.Width;
+						splitter_rectangle.Y = splitter_rectangle.X;
+					}
+
 					this.orientation = value;
 					this.UpdateSplitter ();
 				}
@@ -302,8 +307,11 @@ namespace System.Windows.Forms
 		public bool Panel1Collapsed {
 			get { return this.panel1_collapsed; }
 			set {
-				this.panel1_collapsed = value;
-				PerformLayout ();
+				if (panel1_collapsed != value) {
+					this.panel1_collapsed = value;
+					panel1.Visible = !value;
+					PerformLayout ();
+				}
 			}
 		}
 
@@ -325,8 +333,11 @@ namespace System.Windows.Forms
 		public bool Panel2Collapsed {
 			get { return this.panel2_collapsed; }
 			set {
-				this.panel2_collapsed = value; 
-				PerformLayout ();
+				if (panel2_collapsed != value) {
+					this.panel2_collapsed = value;
+					panel2.Visible = !value;
+					PerformLayout ();
+				}
 			}
 		}
 
@@ -638,16 +649,12 @@ namespace System.Windows.Forms
 			panel2.SuspendLayout ();
 
 			if (panel1_collapsed) {
-				panel1.Visible = false;
 				panel2.Size = this.Size;
 				panel2.Location = new Point (0, 0);
 			} else if (panel2_collapsed) {
-				panel2.Visible = false;
 				panel1.Size = this.Size;
 				panel1.Location = new Point (0, 0);
 			} else {
-				panel1.Visible = true;
-				panel2.Visible = true;
 				panel1.Location = new Point (0, 0);
 				if (orientation == Orientation.Vertical) {
 					splitter_rectangle.Y = 0;
@@ -676,16 +683,12 @@ namespace System.Windows.Forms
 			panel2.SuspendLayout ();
 
 			if (panel1_collapsed) {
-				panel1.Visible = false;
 				panel2.Size = this.Size;
 				panel2.Location = new Point (0, 0);
 			} else if (panel2_collapsed) {
-				panel2.Visible = false;
 				panel1.Size = this.Size;
 				panel1.Location = new Point (0, 0);
 			} else {
-				panel1.Visible = true;
-				panel2.Visible = true;
 				panel1.Location = new Point (0, 0);
 				if (orientation == Orientation.Vertical) {
 					panel1.Location = new Point (0, 0);

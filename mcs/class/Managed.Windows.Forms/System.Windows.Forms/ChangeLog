@@ -1,3 +1,10 @@
+2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SplitContainer.cs: We can't reset Visible on every layout because
+	someone may have set Visible = false explicitly on a SplitterPanel.
+	Make sure when we switch orientation the SplitterDistance does not
+	change.  Fixes two failing tests.
+
 2007-09-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: Use MeasureTextInternal instead of MeasureText in
