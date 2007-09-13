@@ -1,3 +1,8 @@
+2007-07-26  Vladimir Krasnov  <vladimirk at mainsoft.com>
+
+	* ListItemCollection.cs: fixed LoadViewState, items restored from
+	viewstate were not saved, fixes bug #82192
+
 2007-08-30 Igor Zelmanovich <igorz at mainsoft.com>
 
 	* ListControl.cs: fixed selected items state management.
