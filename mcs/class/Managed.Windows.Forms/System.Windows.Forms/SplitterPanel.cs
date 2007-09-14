@@ -72,8 +72,8 @@ namespace System.Windows.Forms
 		[Localizable(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override AutoSizeMode AutoSizeMode {
-		        get { return base.AutoSizeMode; }
-		        set { base.AutoSizeMode = value; }
+			get { return base.AutoSizeMode; }
+			set { } // Does not change, always GrowOnly
 		}
 
 		[Browsable (false)]

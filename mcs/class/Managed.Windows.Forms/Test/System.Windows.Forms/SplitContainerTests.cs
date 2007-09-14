@@ -86,9 +86,9 @@ namespace MonoTests.System.Windows.Forms
 			p.AutoSize = true;
 			Assert.AreEqual (true, p.AutoSize, "D2-2");
 
-			//Assert.AreEqual (AutoSizeMode.GrowOnly, p.AutoSizeMode, "D3");
-			//p.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-			//Assert.AreEqual (AutoSizeMode.GrowOnly, p.AutoSizeMode, "D3-2");
+			Assert.AreEqual (AutoSizeMode.GrowOnly, p.AutoSizeMode, "D3");
+			p.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			Assert.AreEqual (AutoSizeMode.GrowOnly, p.AutoSizeMode, "D3-2");
 
 			Assert.AreEqual (BorderStyle.None, p.BorderStyle, "D4");
 			p.BorderStyle = BorderStyle.FixedSingle;
@@ -118,9 +118,9 @@ namespace MonoTests.System.Windows.Forms
 			sc = new SplitContainer();
 			p = sc.Panel1;
 
-			//Assert.AreEqual (new Size (50, 100), p.Size, "D12");
-			//p.Size = new Size (10, 10);
-			//Assert.AreEqual (new Size (50, 100), p.Size, "D12-2");
+			Assert.AreEqual (new Size (50, 100), p.Size, "D12");
+			p.Size = new Size (10, 10);
+			Assert.AreEqual (new Size (50, 100), p.Size, "D12-2");
 
 			//Assert.AreEqual (0, p.TabIndex, "D13");
 			p.TabIndex = 4;
@@ -184,7 +184,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Ignore ("SplitContainer.FixedPanel not yet implemented")]
 		public void TestFixedPanelNone ()
 		{
 			SplitContainer sc = new SplitContainer ();
@@ -196,7 +195,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Ignore ("SplitContainer.FixedPanel not yet implemented")]
 		public void TestFixedPanel1 ()
 		{
 			SplitContainer sc = new SplitContainer ();
@@ -209,7 +207,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Ignore ("SplitContainer.FixedPanel not yet implemented")]
 		public void TestFixedPanel2 ()
 		{
 			SplitContainer sc = new SplitContainer ();

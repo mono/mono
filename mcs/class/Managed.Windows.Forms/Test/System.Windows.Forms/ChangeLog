@@ -1,3 +1,8 @@
+2007-09-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SplitContainerTests.cs: Enable some ignored tests mainly dealing 
+	with FixedPanel.
+
 2007-09-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayoutTest.cs: Test for Docked AutoSize controls.
