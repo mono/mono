@@ -2179,6 +2179,98 @@ namespace System
 			return enc.GetString (bytes);
 		}
 
+		unsafe string CreateString (char *value)
+		{
+			if (value == null)
+				return string.Empty;
+			char *p = value;
+			int i = 0;
+			while (*p != 0) {
+				++i;
+				++p;
+			}
+			string result = InternalAllocateStr (i);
+
+			if (i != 0) {
+				fixed (char *dest = result) {
+					memcpy ((byte*)dest, (byte*)value, i * 2);
+				}
+			}
+			return result;
+		}
+
+		unsafe string CreateString (char *value, int startIndex, int length)
+		{
+			if (length == 0)
+				return string.Empty;
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length");
+
+			string result = InternalAllocateStr (length);
+
+			fixed (char *dest = result) {
+				memcpy ((byte*)dest, (byte*)(value + startIndex), length * 2);
+			}
+			return result;
+		}
+
+		unsafe string CreateString (char [] val, int startIndex, int length)
+		{
+			if (val == null)
+				throw new ArgumentNullException ("val");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length");
+			if (startIndex > val.Length - length)
+				throw new ArgumentOutOfRangeException ("Out of range");
+			if (length == 0)
+				return string.Empty;
+
+			string result = InternalAllocateStr (length);
+
+			fixed (char *dest = result, src = val) {
+				memcpy ((byte*)dest, (byte*)(src + startIndex), length * 2);
+			}
+			return result;
+		}
+
+		unsafe string CreateString (char [] val)
+		{
+			if (val == null)
+				return string.Empty;
+			if (val.Length == 0)
+				return string.Empty;
+			string result = InternalAllocateStr (val.Length);
+
+			fixed (char *dest = result, src = val) {
+				memcpy ((byte*)dest, (byte*)src, val.Length * 2);
+			}
+			return result;
+		}
+
+		unsafe string CreateString (char c, int count)
+		{
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count == 0)
+				return string.Empty;
+			string result = InternalAllocateStr (count);
+			fixed (char *dest = result) {
+				char *p = dest;
+				char *end = p + count;
+				while (p < end) {
+					*p = c;
+					p++;
+				}
+			}
+			return result;
+		}
+
 		/* helpers used by the runtime as well as above or eslewhere in corlib */
 		internal static unsafe void memset (byte *dest, int val, int len)
 		{

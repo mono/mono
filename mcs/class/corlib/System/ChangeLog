@@ -1,3 +1,9 @@
+
+Fri Sep 14 19:06:02 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: implemented all the string ctors using CreateString
+	methods, so they can run completely in managed code.
+
 2007-09-13  Marek Safar  <marek.safar@gmail.com>
 
 	* DateTimeOffset.cs: Implemented few properties.
