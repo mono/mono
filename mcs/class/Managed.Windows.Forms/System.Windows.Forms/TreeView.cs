@@ -1637,6 +1637,7 @@ namespace System.Windows.Forms {
 			if (edit_text_box == null) {
 				edit_text_box = new LabelEditTextBox ();
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
+				edit_text_box.Visible = false;
 				edit_text_box.EditingCancelled += new EventHandler (LabelEditCancelled);
 				edit_text_box.EditingFinished += new EventHandler (LabelEditFinished);
 				edit_text_box.TextChanged += new EventHandler (LabelTextChanged);

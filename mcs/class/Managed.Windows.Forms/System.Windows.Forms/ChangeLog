@@ -1,3 +1,10 @@
+2007-09-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When creating the label edit text box,
+	set is initially to Visible = false. This is done to
+	prevent a confusion in the layout which makes it to lose
+	focus when shown the first time. Fixes part of #82592.
+
 2007-09-13 Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs: add FocusOption enumeration for finer focus control
