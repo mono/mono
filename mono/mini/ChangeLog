@@ -1,3 +1,8 @@
+
+Fri Sep 14 12:53:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: redirect string.InternalAllocStr() to the managed allocator.
+
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_find_imt_method): Add support for AOT code.
