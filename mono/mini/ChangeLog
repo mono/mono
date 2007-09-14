@@ -1,3 +1,9 @@
+2007-09-14  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-exceptions.c: Add HAVE_UNISTD_H check around include.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Fix a leak.
