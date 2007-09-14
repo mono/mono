@@ -1,3 +1,7 @@
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* GCHandleTest.cs: Add some tests.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* MarshalTest.cs: Added test for HGlobal allocations. See bug #82499.
