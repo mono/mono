@@ -113,7 +113,7 @@ namespace System.Windows.Forms
 				if (tsi is ToolStripSeparator)
 					height = 7;
 				else
-					height = 22;
+					height = tsi.GetPreferredSize (Size.Empty).Height;
 
 				tsi.SetBounds (new Rectangle (x, y, widest, height));
 				y += tsi.Height + tsi.Margin.Bottom;

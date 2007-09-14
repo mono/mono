@@ -504,7 +504,10 @@ namespace System.Windows.Forms
 		[DispId(-516)]
 		public new bool TabStop {
 			get { return base.TabStop; }
-			set { base.TabStop = value; }
+			set { 
+				base.TabStop = value;
+				SetStyle (ControlStyles.Selectable, value);
+			}
 		}
 
 		[DefaultValue (ToolStripTextDirection.Horizontal)]
@@ -1138,7 +1141,11 @@ namespace System.Windows.Forms
 		[MonoTODO ()]
 		protected override void Select (bool directed, bool forward)
 		{
-			base.Select (directed, forward);
+			foreach (ToolStripItem tsi in this.DisplayedItems)
+				if (tsi.CanSelect) {
+					tsi.Select ();
+					break;
+				}
 		}
 		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)

@@ -1,5 +1,17 @@
 2007-09-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Make ToolStrip selectable when TabStop = true.  Find an
+	item to select when the ToolStrip is selected.
+	* ToolStripControlHost: Realign the control when the bounds or visibility
+	change.
+	* ToolStripItem.cs: When selected, if it's a control host, focus the control.
+	* ToolStripOverflow.cs: When laying out the drop down, respect the item's
+	preferred height.
+	* ToolStripTextBox.cs: OnPaintInternal should call base.OnPaintInternal, not
+	base.OnPaint.  Was causing text not to be drawn.
+
+2007-09-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SplitterPanel.cs: Ignore attempts to set AutoSizeMode.
 
 2007-09-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>

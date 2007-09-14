@@ -1,5 +1,10 @@
 2007-09-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripTest.cs: Asserts showing Selectable control style depends
+	on TabStop.
+
+2007-09-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SplitContainerTests.cs: Enable some ignored tests mainly dealing 
 	with FixedPanel.
 

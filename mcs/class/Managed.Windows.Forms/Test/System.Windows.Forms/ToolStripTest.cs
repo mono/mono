@@ -90,8 +90,12 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ControlStyle ()
 		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
 			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
-		
+			f.Controls.Add (epp);
+			
 			ControlStyles cs = ControlStyles.ContainerControl;
 			cs |= ControlStyles.UserPaint;
 			cs |= ControlStyles.StandardClick;
@@ -102,6 +106,21 @@ namespace MonoTests.System.Windows.Forms
 			cs |= ControlStyles.UseTextForAccessibility;
 
 			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");
+			
+			epp.TabStop = true;
+			
+			cs |= ControlStyles.Selectable;
+
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles-2");
+			
+			epp.TabStop = false;
+			
+			cs &= ~ControlStyles.Selectable;
+
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles-3");
+			
+			f.Close ();
+			f.Dispose ();
 		}
 
 		[Test] // bug #80762

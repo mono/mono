@@ -501,7 +501,7 @@ namespace System.Windows.Forms
 
 			internal override void OnPaintInternal (PaintEventArgs e)
 			{
-				base.OnPaint (e);
+				base.OnPaintInternal (e);
 
 				if ((this.Focused || this.Entered || border == BorderStyle.FixedSingle) && border != BorderStyle.None) {
 					ToolStripRenderer tsr = (this.Parent as ToolStrip).Renderer;

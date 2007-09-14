@@ -201,9 +201,8 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public override Size Size
-		{
-			get { return control.Size; }
+		public override Size Size {
+			get { return base.Size; }
 			set { control.Size = value; base.Size = value;  if (this.Owner != null) this.Owner.PerformLayout (); }
 		}
 		
@@ -259,7 +258,7 @@ namespace System.Windows.Forms
 
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return control.Size;
+			return control.GetPreferredSize (constrainingSize);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -292,6 +291,9 @@ namespace System.Windows.Forms
 		
 		protected override void OnBoundsChanged ()
 		{
+			if (control != null)
+				control.Bounds = AlignInRectangle (this.Bounds, control.Size, this.control_align);
+
 			base.OnBoundsChanged ();
 		}
 		
@@ -417,6 +419,9 @@ namespace System.Windows.Forms
 		{
 			base.SetVisibleCore (visible);
 			this.control.Visible = visible;
+
+			if (control != null)
+				control.Bounds = AlignInRectangle (this.Bounds, control.Size, this.control_align);
 		}
 		#endregion
 
@@ -542,6 +547,14 @@ namespace System.Windows.Forms
 		private void HandleValidating (object sender, CancelEventArgs e)
 		{
 			this.OnValidating (e);
+		}
+
+		internal override bool InternalVisible {
+			get { return base.InternalVisible; }
+			set { 
+				Control.Visible = value;
+				base.InternalVisible = value;
+			}
 		}
 		#endregion
 	}
