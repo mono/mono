@@ -521,11 +521,11 @@ namespace System.Reflection.Emit {
 			 */
 
 			version_res = new Win32VersionResource (1, 0);
-			version_res.ProductName = product;
-			version_res.ProductVersion = productVersion;
-			version_res.CompanyName = company;
-			version_res.LegalCopyright = copyright;
-			version_res.LegalTrademarks = trademark;
+			version_res.ProductName = product != null ? product : " ";
+			version_res.ProductVersion = productVersion != null ? productVersion : " ";
+			version_res.CompanyName = company != null ? company : " ";
+			version_res.LegalCopyright = copyright != null ? copyright : " ";
+			version_res.LegalTrademarks = trademark != null ? trademark : " ";
 		}
 
 		/* 
