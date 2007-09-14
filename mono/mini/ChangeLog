@@ -1,5 +1,7 @@
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Fix a leak.
+
 	* debug-mini.c (mono_debug_free_method_jit_info): Fix a leak.
 
 Fri Sep 14 12:53:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
