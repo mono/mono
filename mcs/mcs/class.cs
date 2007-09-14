@@ -430,7 +430,6 @@ namespace Mono.CSharp {
 			if ((tc.ModFlags & Modifiers.PARTIAL) == 0) {
 				Report.SymbolRelatedToPreviousError (tc);
 				Error_MissingPartialModifier (next_part);
-				return tc;
 			}
 
 			if (tc.Kind != next_part.Kind) {
@@ -438,7 +437,6 @@ namespace Mono.CSharp {
 				Report.Error (261, next_part.Location,
 					"Partial declarations of `{0}' must be all classes, all structs or all interfaces",
 					next_part.GetSignatureForError ());
-				return tc;
 			}
 
 			if ((tc.ModFlags & Modifiers.Accessibility) != (next_part.ModFlags & Modifiers.Accessibility) &&
@@ -448,7 +446,6 @@ namespace Mono.CSharp {
 				Report.Error (262, next_part.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
 					next_part.GetSignatureForError ());
-				return tc;
 			}
 
 			if (tc.MemberName.IsGeneric) {
@@ -462,14 +459,21 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (part_names[i].Location, "");
 					Report.Error (264, tc.Location, "Partial declarations of `{0}' must have the same type parameter names in the same order",
 						tc.GetSignatureForError ());
-					return tc;
 				}
 			}
 
 			if (tc.partial_parts == null)
 				tc.partial_parts = new ArrayList (1);
 
-			tc.ModFlags |= next_part.ModFlags;
+			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
+				tc.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.Accessibility);
+			} else if ((tc.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
+				tc.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.Accessibility);
+				tc.ModFlags |= next_part.ModFlags;
+			} else {
+				tc.ModFlags |= next_part.ModFlags;
+			}
+
 			if (next_part.attributes != null) {
 				if (tc.attributes == null)
 					tc.attributes = next_part.attributes;

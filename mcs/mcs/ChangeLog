@@ -1,5 +1,11 @@
 2007-09-14  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs (TypeContainer.AddPartial): Fixed an issue reported on
+	mono-list when only one of two partial parts has defined accessibility
+	modifier.
+	
+2007-09-14  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #82845
 	
 	* class.cs (TypeContainer): Set correct resolve context for all field
