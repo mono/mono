@@ -147,7 +147,7 @@ namespace System.Windows.Forms
 			else
 				format.Alignment = StringAlignment.Near;
 			format.LineAlignment = StringAlignment.Center;
-			format.Trimming = StringTrimming.EllipsisWord;
+			format.Trimming = StringTrimming.EllipsisCharacter;
 			// text is wrappable only in LargeIcon and SmallIcon views
 			format.FormatFlags = StringFormatFlags.NoWrap;
 
