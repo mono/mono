@@ -1,3 +1,7 @@
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (ves_icall_System_GCHandle_GetAddrOfPinnedObject): Use a return value of
+	-2 to communicate to managed code that the handle is not pinned. Fixes #82848.
 
 Fri Sep 14 14:04:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
