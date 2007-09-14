@@ -12,3 +12,6 @@ profile-check:
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1
 FRAMEWORK_VERSION = 2.1
 NO_TEST = yes
+
+# the tuner takes care of the install
+NO_INSTALL = yes
