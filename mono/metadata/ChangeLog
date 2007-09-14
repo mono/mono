@@ -1,3 +1,7 @@
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_close_image): Fix call to 
+	g_hash_table_remove ().
 
 Fri Sep 14 19:36:37 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
