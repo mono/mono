@@ -1,3 +1,11 @@
+2007-09-14  Jonathan Chambers <joncham@gmail.com>
+
+	* threads-types.h: Implement mono_hazard_pointer_set and 
+	mono_hazard_pointer_clear macros using do/while(0) to fix
+	compilation with MSVC.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c (ves_icall_System_GCHandle_GetAddrOfPinnedObject): Use a return value of
