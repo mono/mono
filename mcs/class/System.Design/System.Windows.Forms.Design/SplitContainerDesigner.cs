@@ -42,7 +42,7 @@ using System.Collections;
 namespace System.Windows.Forms.Design
 {
 
-	public class SplitContainerDesigner : ParentControlDesigner
+	internal class SplitContainerDesigner : ParentControlDesigner
 	{
 
 		public SplitContainerDesigner ()

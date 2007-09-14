@@ -300,13 +300,6 @@ namespace System.Windows.Forms.Design
 			selection.SetSelectedComponents (new IComponent[] { this.Component });
 		}
 
-		 // MSDN says overriden
-		// 
-		public override void InitializeNonDefault ()
-		{
-			base.InitializeNonDefault ();
-		}
-
 		// MSDN says overriden
 		// 
 		public override void OnSetComponentDefaults ()
@@ -348,71 +341,6 @@ namespace System.Windows.Forms.Design
 		protected override void OnCreateHandle ()
 		{
 			base.OnCreateHandle ();
-		}
-		
-		protected override void OnDragDrop (DragEventArgs de)
-		{
-			base.OnDragDrop (de);
-		}
-		
-		protected override void OnDragEnter (DragEventArgs de)
-		{
-			base.OnDragEnter (de);
-		}
-		
-		protected override void OnDragLeave (EventArgs e)
-		{
-			base.OnDragLeave (e);
-		}
-		
-		protected override void OnDragOver (DragEventArgs de)
-		{
-			base.OnDragOver (de);
-		}
-		
-		protected override void OnGiveFeedback (GiveFeedbackEventArgs e)
-		{
-			base.OnGiveFeedback (e);
-		}
-		
-		protected override void OnMouseDragBegin (int x, int y)
-		{
-			base.OnMouseDragBegin (x, y);
-		}
-		
-		protected override void OnMouseDragMove (int x, int y)
-		{
-			base.OnMouseDragMove (x, y);
-		}
-		
-		protected override void OnMouseDragEnd (bool cancel)
-		{
-			base.OnMouseDragEnd (cancel);
-		}
-		
-		protected override void OnMouseEnter ()
-		{
-			base.OnMouseEnter ();
-		}
-		
-		protected override void OnMouseHover ()
-		{
-			base.OnMouseHover ();
-		}
-		
-		protected override void OnMouseLeave ()
-		{
-			base.OnMouseLeave ();
-		}
-		
-		protected override void OnPaintAdornments (PaintEventArgs pe)
-		{
-			base.OnPaintAdornments (pe);
-		}
-		
-		protected override void OnSetCursor ()
-		{
-			base.OnSetCursor ();
 		}
 		
 #endregion

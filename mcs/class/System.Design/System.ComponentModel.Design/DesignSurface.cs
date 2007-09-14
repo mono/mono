@@ -243,7 +243,7 @@ namespace System.ComponentModel.Design
 		}
 
 
-		protected void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (_designerHost != null) {
 				_designerHost.Dispose ();
@@ -330,10 +330,10 @@ namespace System.ComponentModel.Design
 
 		internal void OnDesignerHost_Activated (object sender, EventArgs args)
 		{
-			this.OnViewActivated (EventArgs.Empty);
+			this.OnViewActivate (EventArgs.Empty);
 		}
 		
-		protected virtual void OnViewActivated (EventArgs e)
+		protected virtual void OnViewActivate (EventArgs e)
 		{
 			if (ViewActivated != null)
 				ViewActivated (this, e);

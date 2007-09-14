@@ -42,6 +42,10 @@ namespace System.ComponentModel.Design.Serialization
 	public abstract class CodeDomSerializerBase
 	{
 
+		internal CodeDomSerializerBase ()
+		{
+		}
+
 		private class ExpressionTable : Hashtable // just so that we have a specific type to append to the context stack
 		{
 		}

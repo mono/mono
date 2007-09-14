@@ -5,7 +5,7 @@ namespace System.Windows.Forms.Design
 {
 	// A IDataObject that supports Control and Control[] format
 	//
-	public class ControlDataObject : IDataObject
+	internal class ControlDataObject : IDataObject
 	{
 		private object _data = null;
 		private string _format = null;

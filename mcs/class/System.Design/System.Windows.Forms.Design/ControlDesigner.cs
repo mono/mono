@@ -91,11 +91,6 @@ namespace System.Windows.Forms.Design
 
 		}
 
-		public override void InitializeNonDefault ()
-		{
-			base.InitializeNonDefault ();
-		}
-
 		// The default implementation of this method sets the component's Text property to
 		// its name (Component.Site.Name), if the property field is of type string.
 		//
@@ -558,7 +553,7 @@ namespace System.Windows.Forms.Design
 			}
 		}
 
-		protected void UnHookChildControls (Control firstControl)
+		protected void UnhookChildControls (Control firstControl)
 		{
 			if (firstControl != null) {
 				foreach (Control control in firstControl.Controls) {
@@ -788,7 +783,7 @@ namespace System.Windows.Forms.Design
 			return prop.GetValue (component);
 		}
 
-		public void SetValue (object component, string propertyName, object value)
+		internal void SetValue (object component, string propertyName, object value)
 		{
 			PropertyDescriptor prop = TypeDescriptor.GetProperties (component)[propertyName] as PropertyDescriptor;
 
@@ -807,7 +802,7 @@ namespace System.Windows.Forms.Design
 		{
 			if (disposing) {
 				if (this.Control != null) {
-					UnHookChildControls (Control);
+					UnhookChildControls (Control);
 					OnMouseDragEnd (true);
 					_messageRouter.Dispose ();
 					this.Control.DragDrop -= new DragEventHandler (OnDragDrop);

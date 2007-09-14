@@ -89,7 +89,7 @@ namespace System.ComponentModel.Design
 			get { return _designers.Count; }
 		}
 
-		public object this[int index] {
+		public DesignSurface this[int index] {
 			get {
 				IDesignerHost designer = _designers[index];
 				DesignSurface surface = designer.GetService (typeof (DesignSurface)) as DesignSurface;

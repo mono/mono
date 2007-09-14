@@ -1,3 +1,8 @@
+2007-09-15  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs: Binary compatibility fixes.
+	* CodeDomSerializer.cs: Binary compatibility fixes.
+
 2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ParentControlDesigner.cs: implemented.

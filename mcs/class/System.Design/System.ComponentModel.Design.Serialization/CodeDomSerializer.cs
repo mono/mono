@@ -46,7 +46,7 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 
-		public object SerializeAbsolute (IDesignerSerializationManager manager, object value)
+		public virtual object SerializeAbsolute (IDesignerSerializationManager manager, object value)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");

@@ -1,3 +1,11 @@
+2007-09-15  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ParentControlDesigner.cs: Binary compatibility fixes.
+	* SplitContainerDesigner.cs: Binary compatibility fixes.
+	* DocumentDesigner.cs: Binary compatibility fixes.
+	* ControlDataObject.cs: Binary compatibility fixes.
+	* ControlDesigner.cs: Binary compatibility fixes.
+
 2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomComponentSerializationService.cs: implemented.

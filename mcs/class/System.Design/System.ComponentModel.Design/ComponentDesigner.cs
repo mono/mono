@@ -128,7 +128,7 @@ namespace System.ComponentModel.Design
 			}
 		}
 
-		protected InheritanceAttribute InheritanceAttribute {
+		protected virtual InheritanceAttribute InheritanceAttribute {
 			get {
 				IInheritanceService service = (IInheritanceService) this.GetService (typeof (IInheritanceService));
 				if (service != null)

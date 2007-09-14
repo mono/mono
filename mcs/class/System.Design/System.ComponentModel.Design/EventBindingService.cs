@@ -41,7 +41,7 @@ namespace System.ComponentModel.Design
 
 		private IServiceProvider _provider;
 
-		public EventBindingService (IServiceProvider provider)
+		protected EventBindingService (IServiceProvider provider)
 		{
 			if (provider == null)
 				throw new ArgumentNullException ("provider");

@@ -51,7 +51,6 @@ namespace System.Windows.Forms.Design
 
 
 #region Initialization
-
 		// Settings paths taken from the example at:
 		// http://msdn2.microsoft.com/en-us/library/system.componentmodel.design.idesigneroptionservice.aspx
 		//
@@ -186,7 +185,7 @@ namespace System.Windows.Forms.Design
 
 		// If the control is not already parented return true
 		//
-		public bool CanParent (Control control)
+		public virtual bool CanParent (Control control)
 		{
 			if (control != null)
 				return !control.Contains (this.Control);
@@ -194,14 +193,9 @@ namespace System.Windows.Forms.Design
 			return false;
 		}
 
-		public bool CanParent (ControlDesigner designer)
+		public virtual bool CanParent (ControlDesigner designer)
 		{
 			return CanParent (designer.Control);
-		}
-
-		protected override void OnGiveFeedback (GiveFeedbackEventArgs e)
-		{
-			base.OnGiveFeedback (e);
 		}
 
 		protected override void OnDragDrop (DragEventArgs e)
@@ -387,7 +381,7 @@ namespace System.Windows.Forms.Design
 			}
 		}
 
-		protected virtual Size GridSize {
+		protected Size GridSize {
 			get { return _gridSize; }
 			set {
 				_gridSize = value;
@@ -528,12 +522,6 @@ namespace System.Windows.Forms.Design
 
 		#region WndProc and Misc Message Handlers
 
-		protected override void WndProc (ref Message m)
-		{
-			base.WndProc (ref m);   
-		}
-		// MSDN says overriden.
-		//
 		protected override void OnSetCursor ()
 		{
 			if (this.Control != null) {
