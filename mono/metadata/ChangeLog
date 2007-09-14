@@ -1,3 +1,7 @@
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c: Fix memory leaks.
+
 2007-09-14  Jonathan Chambers <joncham@gmail.com>
 
 	* threads-types.h: Implement mono_hazard_pointer_set and 
