@@ -1,4 +1,9 @@
 
+Fri Sep 14 14:04:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, string-icalls.c: get rid of old, no longer used, string
+	icalls.
+
 Fri Sep 14 11:41:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* boehm-gc.c, gc-internal.h, object.c: allow strings to be
