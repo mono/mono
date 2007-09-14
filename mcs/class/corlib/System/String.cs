@@ -2362,9 +2362,6 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
 
-		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		//private extern String InternalReplace (char oldChar, char newChar, int startIndex);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalReplace (String oldValue, string newValue, CompareInfo comp);
 
@@ -2376,9 +2373,6 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalTrim (char[] chars, int typ);
-
-		//[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		//private extern int InternalIndexOfAny (char [] arr, int sIndex, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int InternalLastIndexOfAny (char [] anyOf, int sIndex, int count);
