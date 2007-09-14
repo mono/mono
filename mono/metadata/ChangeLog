@@ -1,5 +1,8 @@
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_metadata_parse_array_full): Allocate memory from the image
+	mempool.
+
 	* mono-debug.c (mono_debug_close_image): Fix call to 
 	g_hash_table_remove ().
 
