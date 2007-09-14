@@ -414,12 +414,12 @@ namespace System.Web.Compilation
 			cls.IsClass = true;
 			cls.TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed;
 
-			CodeMemberField cmf = new CodeMemberField (typeof(CultureInfo), "culture");
+			CodeMemberField cmf = new CodeMemberField (typeof(CultureInfo), "_culture");
 			cmf.InitExpression = new CodePrimitiveExpression (null);
 			cmf.Attributes = MemberAttributes.Private | MemberAttributes.Final | MemberAttributes.Static;
 			cls.Members.Add (cmf);
 
-			cmf = new CodeMemberField (typeof(ResourceManager), "resourceManager");
+			cmf = new CodeMemberField (typeof(ResourceManager), "_resourceManager");
 			cmf.InitExpression = new CodePrimitiveExpression (null);
 			cmf.Attributes = MemberAttributes.Private | MemberAttributes.Final | MemberAttributes.Static;
 			cls.Members.Add (cmf);
@@ -441,8 +441,8 @@ namespace System.Web.Compilation
 			cmp.HasGet = true;
 			cmp.HasSet = true;
 			cmp.Type = new CodeTypeReference (typeof(CultureInfo));
-			CodePropertyGenericGet (cmp.GetStatements, "culture", classname);
-			CodePropertyGenericSet (cmp.SetStatements, "culture", classname);
+			CodePropertyGenericGet (cmp.GetStatements, "_culture", classname);
+			CodePropertyGenericSet (cmp.SetStatements, "_culture", classname);
 			cls.Members.Add (cmp);
 
 			// Add the resource properties
@@ -498,7 +498,7 @@ namespace System.Web.Compilation
 			CodeStatement st;
 			CodeExpression exp;
 
-			exp = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typename), "resourceManager");
+			exp = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typename), "_resourceManager");
 			st = new CodeConditionStatement (
 				new CodeBinaryOperatorExpression (
 					exp,
@@ -535,7 +535,7 @@ namespace System.Web.Compilation
 				gotstr ? "GetString" : "GetObject",
 				new CodeExpression [] { new CodePrimitiveExpression (resname),
 							new CodeFieldReferenceExpression (
-								new CodeTypeReferenceExpression (typename), "culture") });
+								new CodeTypeReferenceExpression (typename), "_culture") });
 			st = new CodeVariableDeclarationStatement (
 				restype,
 				"obj",
