@@ -814,15 +814,23 @@ namespace Mono.CSharp {
 
 		public void ResolveFieldInitializers (EmitContext ec)
 		{
+			// Field initializers are tricky for partial classes. They have to
+			// share same costructor (block) but they have they own resolve scope.
+			DeclSpace orig = ec.DeclContainer;
+
 			if (partial_parts != null) {
-				DeclSpace orig = ec.DeclContainer ;
 				foreach (TypeContainer part in partial_parts) {
 					ec.DeclContainer = part;
-					part.ResolveFieldInitializers (ec);
+					part.DoResolveFieldInitializers (ec);
 				}
-				ec.DeclContainer = orig; 
 			}
+			ec.DeclContainer = PartialContainer;
+			DoResolveFieldInitializers (ec);
+			ec.DeclContainer = orig; 
+		}
 
+		void DoResolveFieldInitializers (EmitContext ec)
+		{
 			if (ec.IsStatic) {
 				if (initialized_static_fields == null)
 					return;
@@ -4928,6 +4936,8 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
+			base.Emit ();
+
 			EmitContext ec = CreateEmitContext (null, null);
 
 			//
@@ -4997,8 +5007,6 @@ namespace Mono.CSharp {
 
 			if (source != null)
 				source.CloseMethod ();
-
-			base.Emit ();
 
 			if (declarative_security != null) {
 				foreach (DictionaryEntry de in declarative_security) {
@@ -5086,7 +5094,7 @@ namespace Mono.CSharp {
 		public EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig)
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (this, Parent.PartialContainer, Location, ig_, TypeManager.void_type, ModFlags, true);
+			EmitContext ec = new EmitContext (this, Parent, Location, ig_, TypeManager.void_type, ModFlags, true);
 			ec.CurrentBlock = block;
 			return ec;
 		}

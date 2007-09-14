@@ -1,3 +1,10 @@
+2007-09-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #82845
+	
+	* class.cs (TypeContainer): Set correct resolve context for all field
+	initializers.
+	
 2007-09-13  Marek Safar  <marek.safar@gmail.com>
 
 	* assign.cs: Fixed a crash when field is resolved twice with an error.
