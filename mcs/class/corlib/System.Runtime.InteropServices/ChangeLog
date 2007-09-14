@@ -1,3 +1,8 @@
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* GCHandle.cs (AddrOfPinnedObject): Use -2 to communicate that the handle is not
+	pinned. Correct exception message. Fixes #82848.
+
 2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SafeHandle.cs CriticalHandle.cs TypeLibImporterFlags.cs

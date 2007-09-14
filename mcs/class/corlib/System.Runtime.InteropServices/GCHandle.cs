@@ -86,10 +86,10 @@ namespace System.Runtime.InteropServices
 		public IntPtr AddrOfPinnedObject()
 		{
 			IntPtr res = GetAddrOfPinnedObject(handle);
-			if (res == IntPtr.Zero)
-				throw new InvalidOperationException("The handle is not of Pinned type");
 			if (res == (IntPtr)(-1))
 				throw new ArgumentException ("Object contains non-primitive or non-blittable data.");
+			if (res == (IntPtr)(-2))
+				throw new InvalidOperationException("Handle is not pinned.");
 			return res;
 		}
 
