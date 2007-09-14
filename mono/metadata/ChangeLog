@@ -1,5 +1,7 @@
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-debug.c (free_header_data): Fix a leak missed earlier.
+
 	* metadata.c (mono_metadata_parse_array_full): Allocate memory from the image
 	mempool.
 
