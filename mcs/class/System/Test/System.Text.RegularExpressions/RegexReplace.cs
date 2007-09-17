@@ -79,7 +79,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 					Assert.AreEqual (result, test.expected, "rr#{0}: {1} ~ s,{2},{3},", i,
 							 test.original, test.pattern, test.replacement);
 				} catch (Exception e) {
-					Assert.Fail ("rr#{0}: Exception thrown", i);
+					Assert.Fail ("rr#{0} Exception thrown: " + e.ToString (), i);
 				}
 				++i;
 			}
