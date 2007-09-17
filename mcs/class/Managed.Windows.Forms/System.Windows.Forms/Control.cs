@@ -5303,9 +5303,9 @@ namespace System.Windows.Forms
 				0);
 
 			HandleClick(mouse_clicks, me);
-			OnMouseUp (me);
 
 			XplatUI.SendMessage(m.HWnd, Msg.WM_CONTEXTMENU, m.HWnd, (IntPtr)(pt.X + (pt.Y << 16)));
+			OnMouseUp (me);
 
 			if (InternalCapture) {
 				InternalCapture = false;
