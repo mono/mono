@@ -1,3 +1,11 @@
+2007-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c: Free cached generic methods, instantinations and classes when
+	they are removed from the caches.
+	(mono_metadata_free_type): Free the type itself.
+
+	* class.c: Free the result of mono_class_inflate_generic_type () in a few
+	places.
 
 Mon Sep 17 16:14:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
