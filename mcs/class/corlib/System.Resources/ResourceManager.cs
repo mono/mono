@@ -261,19 +261,10 @@ namespace System.Resources
 		
 		Stream GetManifestResourceStreamNoCase (Assembly ass, string fn)
 		{
-			string fullResourceName = null;
-			if (resourceSource != null) {
-				if (resourceSource.Namespace != null && resourceSource.Namespace.Length > 0)
-					fullResourceName = string.Concat (resourceSource.Namespace,
-						".", fn);
-				else
-					fullResourceName = fn;
-			} else {
-				fullResourceName = fn;
-			}
+			string resourceName = GetManifestResourceName (fn);
 
 			foreach (string s in ass.GetManifestResourceNames ())
-				if (String.Compare (fullResourceName, s, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (resourceName, s, true, CultureInfo.InvariantCulture) == 0)
 					return ass.GetManifestResourceStream (s);
 			return null;
 		}
@@ -325,18 +316,10 @@ namespace System.Resources
 				if (culture.Equals (neutral_culture))
 					resourceCulture = CultureInfo.InvariantCulture;
 
-				string filename = GetResourceFileName (resourceCulture);
-				
-				// FIXME: shouldn't we only load non-invariant
-				// resources from satellite assemblies, and only
-				// load invariant resources from main assembly
+				Stream stream = null;
 
-				Stream stream = MainAssembly.GetManifestResourceStream (
-					resourceSource, filename);
-				if (stream == null)
-					stream = GetManifestResourceStreamNoCase (
-						MainAssembly, filename);
-				if (stream == null) {
+				string filename = GetResourceFileName (resourceCulture);
+				if (!resourceCulture.Equals (CultureInfo.InvariantCulture)) {
 					/* Try a satellite assembly */
 					Version sat_version = GetSatelliteContractVersion (MainAssembly);
 					try {
@@ -348,6 +331,12 @@ namespace System.Resources
 					} catch (Exception) {
 						// Ignored
 					}
+				} else {
+					stream = MainAssembly.GetManifestResourceStream (
+						resourceSource, filename);
+					if (stream == null)
+						stream = GetManifestResourceStreamNoCase (
+							MainAssembly, filename);
 				}
 
 				if (stream != null && Createifnotexists) {
@@ -359,13 +348,14 @@ namespace System.Resources
 					 * with it?
 					 */
 					set = (ResourceSet) Activator.CreateInstance (resourceSetType, args);
-				} else if (culture.Equals (CultureInfo.InvariantCulture)) {
+				} else if (resourceCulture.Equals (CultureInfo.InvariantCulture)) {
 					string msg = "Could not find any resource appropriate for the " +
-						"specified culture or its parents. " +
+						"specified culture or the neutral culture. " +
 						"Make sure \"{1}\" was correctly embedded or " +
 						"linked into assembly \"{0}\".";
 					msg = String.Format (msg, MainAssembly != null ?
-						MainAssembly.GetName ().Name : "", filename);
+						MainAssembly.GetName ().Name : "",
+						GetManifestResourceName (filename));
 					throw new MissingManifestResourceException (msg);
 				}
 			} else if (resourceDir != null || BaseNameField != null) {
@@ -470,6 +460,21 @@ namespace System.Resources
 					+ " into MyResources.<culture>.resources;"
 					+ " for example, MyResources.en-US.resources");
 #endif
+		}
+
+		string GetManifestResourceName (string fn)
+		{
+			string resourceName = null;
+			if (resourceSource != null) {
+				if (resourceSource.Namespace != null && resourceSource.Namespace.Length > 0)
+					resourceName = string.Concat (resourceSource.Namespace,
+						".", fn);
+				else
+					resourceName = fn;
+			} else {
+				resourceName = fn;
+			}
+			return resourceName;
 		}
 	}
 }

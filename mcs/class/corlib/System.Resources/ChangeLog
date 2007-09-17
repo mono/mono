@@ -1,5 +1,12 @@
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ResourceManager.cs: Move code for determining manifest resource
+	name into separate method. Only use satellite assemblies for
+	non-invariant cultures. For invariant culture, only load resources
+	from main assembly.
+
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* ResourceManager.cs: BaseName(Field) should return only the name.
 	Added resourceSource field to store the actual type, which we need for
 	the namespace. Added CheckBaseName method to avoid code duplication.
