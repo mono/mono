@@ -990,7 +990,7 @@ namespace System.Web.UI.WebControls {
 
 		private void WriteDay (DateTime date, HtmlTextWriter writer)
 		{			
-			Style style = new Style ();
+			TableItemStyle style = new TableItemStyle ();
 			TableCell cell = new TableCell ();
 
 			CalendarDay day = new CalendarDay (date,

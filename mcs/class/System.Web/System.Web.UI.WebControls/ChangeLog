@@ -1,3 +1,7 @@
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Calendar.cs: correctly apply day cell style. Fixes bug #315903
+
 2007-09-17  Marek Habersack  <mhabersack@novell.com>
 
 	* Calendar.cs: style attribute value must be enclosed in quotes.
