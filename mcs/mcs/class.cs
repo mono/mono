@@ -264,9 +264,11 @@ namespace Mono.CSharp {
 		}
 
 		[Flags]
-		enum CachedMethods {
-			Equals			= 1,
-			GetHashCode		= 1 << 1
+		enum CachedMethods
+		{
+			Equals				= 1,
+			GetHashCode			= 1 << 1,
+			HasStaticFieldInitializer	= 1 << 2
 		}
 
 
@@ -804,8 +806,10 @@ namespace Mono.CSharp {
 		public virtual void RegisterFieldForInitialization (MemberCore field, FieldInitializer expression)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
-				if (initialized_static_fields == null)
+				if (initialized_static_fields == null) {
+					PartialContainer.HasStaticFieldInitializer = true;
 					initialized_static_fields = new ArrayList (4);
+				}
 
 				initialized_static_fields.Add (expression);
 			} else {
@@ -2712,6 +2716,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasStaticFieldInitializer {
+			get {
+				return (cached_method & CachedMethods.HasStaticFieldInitializer) != 0;
+			}
+			set {
+				if (value)
+					cached_method |= CachedMethods.HasStaticFieldInitializer;
+				else
+					cached_method &= ~CachedMethods.HasStaticFieldInitializer;
+			}
+		}
+
 		//
 		// IMemberContainer
 		//
@@ -2864,7 +2880,7 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (initialized_static_fields != null && default_static_constructor == null)
+			if (default_static_constructor == null && PartialContainer.HasStaticFieldInitializer)
 				DefineDefaultConstructor (true);
 
 			if (default_static_constructor != null)

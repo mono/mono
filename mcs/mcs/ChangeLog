@@ -1,3 +1,9 @@
+2007-09-17  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: Use partial container to record whether any partial part
+	contains static field initializer and therefore default contructor has
+	to be defined.
+	
 2007-09-14  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs (TypeContainer.AddPartial): Fixed an issue reported on
