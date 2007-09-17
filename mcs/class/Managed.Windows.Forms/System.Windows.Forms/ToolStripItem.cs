@@ -1512,20 +1512,25 @@ namespace System.Windows.Forms
 					int height2 = text_size.Height + this.padding.Vertical;
 
 					if (this.Image != null) {
+						Size image_size = this.Image.Size;
+						
+						if (this.image_scaling == ToolStripItemImageScaling.SizeToFit && this.parent != null)
+							image_size = this.parent.ImageScalingSize;
+						
 						switch (this.text_image_relation) {
 							case TextImageRelation.Overlay:
-								width2 = Math.Max (width2, this.Image.Width);
-								height2 = Math.Max (height2, this.Image.Height);
+								width2 = Math.Max (width2, image_size.Width);
+								height2 = Math.Max (height2, image_size.Height);
 								break;
 							case TextImageRelation.ImageAboveText:
 							case TextImageRelation.TextAboveImage:
-								width2 = Math.Max (width2, this.Image.Width);
-								height2 += this.Image.Height;
+								width2 = Math.Max (width2, image_size.Width);
+								height2 += image_size.Height;
 								break;
 							case TextImageRelation.ImageBeforeText:
 							case TextImageRelation.TextBeforeImage:
-								height2 = Math.Max (height2, this.Image.Height);
-								width2 += this.Image.Width;
+								height2 = Math.Max (height2, image_size.Height);
+								width2 += image_size.Width;
 								break;
 						}
 					}

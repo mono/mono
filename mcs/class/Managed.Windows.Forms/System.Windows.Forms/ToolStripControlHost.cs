@@ -98,10 +98,15 @@ namespace System.Windows.Forms
 		public ContentAlignment ControlAlign {
 			get { return this.control_align; }
 			set {
-				if (!Enum.IsDefined (typeof (ContentAlignment), value))
-					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
+				if (control_align != value) {
+					if (!Enum.IsDefined (typeof (ContentAlignment), value))
+						throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
-				this.control_align = value;
+					this.control_align = value;
+					
+					if (control != null)
+						control.Bounds = AlignInRectangle (this.Bounds, control.Size, this.control_align);
+				}
 			}
 		}
 

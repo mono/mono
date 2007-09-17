@@ -1,5 +1,12 @@
 2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripControlHost.cs: Realign control when ControlAlign changes.
+	* ToolStripItem.cs: Use ImageScalingSize when calculating preferred
+	size if appropriate.
+	Fixes reopened bug #325414.
+
+2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Set AutoSizeMode back to GrowOnly.
 	* ToolStripItem.cs: Invalidate before and after our new autosize when
 	text changes.
