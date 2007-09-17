@@ -1,5 +1,14 @@
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (mono_metadata_parse_generic_param): Allocate memory from the image
+	mempool.
+	(mono_type_create_from_typespec): Ditto.
+
+	* domain.c (get_runtimes_from_exe): Add an out parameter to return the opened
+	MonoImage to the caller.
+	(mono_init_internal): Save the opened image in a global variable.
+	(mono_cleanup): Close the image opened in get_runtimes_from_exe.
+
 	* reflection.c (resolve_object): Fix a leak.
 
 	* metadata.c: Fix the freeing of data in the generics caches.
