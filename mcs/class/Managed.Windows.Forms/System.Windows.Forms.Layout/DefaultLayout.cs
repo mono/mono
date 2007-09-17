@@ -138,7 +138,7 @@ namespace System.Windows.Forms.Layout
 					// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
 					// This calculates from scratch every time:
 					left = left + (space.Width - (left + width + child.dist_right)) / 2;
-					child.dist_right = space.Width - (left + height);
+					child.dist_right = space.Width - (left + width);
 				}
 
 				if ((anchor & AnchorStyles.Bottom) != 0) {

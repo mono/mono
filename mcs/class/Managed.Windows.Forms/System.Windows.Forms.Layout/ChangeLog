@@ -1,3 +1,8 @@
+2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: Fix copy/paste error for dist_right.  Fixes
+	reopened bug #325429.
+
 2007-09-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: Use control's PreferredSize when figuring up the
