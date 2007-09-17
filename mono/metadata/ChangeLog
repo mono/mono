@@ -1,5 +1,8 @@
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_xappdomain_dispatch): Allocate a piece of data
+	from the image mempool.
+
 	* metadata.c (free_generic_class): Free more data from the inflated class.
 
 	* class.c (mono_class_from_generic_parameter): Allocate memory from the mempool.
