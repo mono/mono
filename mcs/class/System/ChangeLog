@@ -1,3 +1,7 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added ComponentResourceManagerTest.cs.
+
 2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added HandleCollector.cs.

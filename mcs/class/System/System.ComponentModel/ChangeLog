@@ -1,3 +1,13 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComponentResourceManager.cs: In ApplyResources, when culture is
+	null use CurrentUICulture. Use hashtable, which is case-insensitive
+	when IgnoreCase is true, to store the resources of the specified
+	culture and its parent(s). When IgnoreCase is set, perform a
+	case-insensitive lookup of property. Ignore resources that have no
+	value, or where the value is not an instance of the property type.
+	Fixes bug #82674.
+
 2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumConverter.cs: Added support for converting flag enum from

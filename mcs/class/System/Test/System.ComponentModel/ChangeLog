@@ -1,3 +1,8 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComponentResourceManagerTest.cs: Added tests for ctors,
+	ApplyResources and IgnoreCase.
+
 2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumConverterTest.cs: Enabled test for converting flag enum from
