@@ -1,3 +1,9 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Assembly.cs: In GetManifestResourceStream, throw ANE with type as
+	paramname when both name and type are null. Use String.Length to check
+	for zero-length string.
+
 2007-09-11  Mark Probst  <mark.probst@gmail.com>
 
 	* MonoMethod.cs: Catch and re-throw MethodAccessException from

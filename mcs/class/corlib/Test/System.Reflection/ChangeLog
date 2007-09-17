@@ -1,3 +1,8 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added test for GetManifestResourceStream argument
+	checks.
+
 2007-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FieldInfoTest.cs: Enabled test for bug #82465.

@@ -261,8 +261,9 @@ namespace System.Reflection {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (name == "")
-				throw new ArgumentException ("name cannot have zero length.");
+			if (name.Length == 0)
+				throw new ArgumentException ("String cannot have zero length.",
+					"name");
 
 			ManifestResourceInfo info = GetManifestResourceInfo (name);
 			if (info == null)
@@ -303,12 +304,15 @@ namespace System.Reflection {
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
 			string ns;
-			if (type != null)
+			if (type != null) {
 				ns = type.Namespace;
-			else 
+			} else {
+				if (name == null)
+					throw new ArgumentNullException ("type");
 				ns = null;
+			}
 
-			if ((ns == null) || (ns == ""))
+			if (ns == null || ns.Length == 0)
 				return GetManifestResourceStream (name);
 			else
 				return GetManifestResourceStream (ns + "." + name);
@@ -632,7 +636,7 @@ namespace System.Reflection {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (name == "")
+			if (name.Length == 0)
 				throw new ArgumentException ("Name can't be empty");
 
 			Module[] modules = GetModules (true);
@@ -683,7 +687,7 @@ namespace System.Reflection {
 		{
 			if (resourceName == null)
 				throw new ArgumentNullException ("resourceName");
-			if (resourceName == "")
+			if (resourceName.Length == 0)
 				throw new ArgumentException ("String cannot have zero length.");
 			ManifestResourceInfo result = new ManifestResourceInfo ();
 			bool found = GetManifestResourceInfoInternal (resourceName, result);

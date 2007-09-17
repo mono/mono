@@ -197,6 +197,62 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void GetManifestResourceStream_Name_Empty ()
+		{
+			Assembly corlib = typeof (int).Assembly;
+
+			try {
+				corlib.GetManifestResourceStream (string.Empty);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// String cannot have zero length
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			corlib.GetManifestResourceStream (typeof (int), string.Empty);
+
+			try {
+				corlib.GetManifestResourceStream ((Type) null, string.Empty);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// String cannot have zero length
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void GetManifestResourceStream_Name_Null ()
+		{
+			Assembly corlib = typeof (int).Assembly;
+
+			try {
+				corlib.GetManifestResourceStream ((string) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			corlib.GetManifestResourceStream (typeof (int), (string) null);
+
+			try {
+				corlib.GetManifestResourceStream ((Type) null, (string) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("type", ex.ParamName, "#B6");
+			}
+		}
+
+		[Test]
 		public void IsDefined_AttributeType_Null ()
 		{
 			Assembly corlib = typeof (int).Assembly;
