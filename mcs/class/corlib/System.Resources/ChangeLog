@@ -1,3 +1,16 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManager.cs: BaseName(Field) should return only the name.
+	Added resourceSource field to store the actual type, which we need for
+	the namespace. Added CheckBaseName method to avoid code duplication.
+	Only check whether basename does not end in '.resources' on 1.0
+	profile. Fixed paramname of ArgumentNullExceptions to match MS.
+	Modified GetManifestResourceStreamNoCase to use resourceSource field
+	to construct manifest resource name. Modified GetStream to use
+	CurrentUICulture when culture is null. Fixed InternalGetResourceSet
+	to use invariant resources when culture is the neutral culture.
+	Code formatting.
+>
 2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceReader.cs: Fixed exception message to match MS. Removed

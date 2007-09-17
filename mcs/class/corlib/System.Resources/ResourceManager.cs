@@ -55,6 +55,7 @@ namespace System.Resources
 		protected Hashtable ResourceSets;
 		
 		private bool ignoreCase;
+		private Type resourceSource;
 		private Type resourceSetType;
 		private String resourceDir;
 		
@@ -66,225 +67,213 @@ namespace System.Resources
 #endif
 		
 		// constructors
-		protected ResourceManager () {
-			ignoreCase=false;
-			resourceSetType=typeof(ResourceSet);
-			resourceDir=null;
-			neutral_culture=null;
+		protected ResourceManager ()
+		{
+			resourceSetType = typeof (ResourceSet);
 		}
 		
-		public ResourceManager (Type resourceSource) : this()
+		public ResourceManager (Type resourceSource) : this ()
 		{
 			if (resourceSource == null)
-				throw new ArgumentNullException ("resourceSource is null.");
-			
+				throw new ArgumentNullException ("resourceSource");
+
+			this.resourceSource = resourceSource;
 			ResourceSets = new Hashtable();
-			BaseNameField = resourceSource.FullName;
+			BaseNameField = resourceSource.Name;
 			MainAssembly = resourceSource.Assembly;
 
 			/* Temporary workaround for bug 43567 */
-			resourceSetType = typeof(ResourceSet);
-			neutral_culture = GetNeutralResourcesLanguage(MainAssembly);
+			resourceSetType = typeof (ResourceSet);
+			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
-		
+
 		public ResourceManager (string baseName, Assembly assembly) : this()
 		{
-			if (baseName == null)
-				throw new ArgumentNullException ("baseName is null.");
-			if(assembly == null)
-				throw new ArgumentNullException ("assembly is null.");
+			CheckBaseName (baseName);
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
 			
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
-			neutral_culture = GetNeutralResourcesLanguage(MainAssembly);
+			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
-			 
-		private Type CheckResourceSetType(Type usingResourceSet)
+
+		private Type CheckResourceSetType (Type usingResourceSet, bool verifyType)
 		{
-			if(usingResourceSet==null) {
-				return(typeof(ResourceSet));
+			if (usingResourceSet == null) {
+				return typeof (ResourceSet);
 			} else {
-				if (!usingResourceSet.IsSubclassOf (typeof (ResourceSet)))
-					throw new ArgumentException ("Type must be from ResourceSet.");
-				
-				return(usingResourceSet);
+				if (verifyType && !typeof (ResourceSet).IsAssignableFrom (usingResourceSet))
+					throw new ArgumentException ("Type parameter"
+						+ " must refer to a subclass of"
+						+ " ResourceSet.", "usingResourceSet");
+				return usingResourceSet;
 			}
 		}
-		
+
 		public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) : this()
 		{
-			if (baseName == null)
-				throw new ArgumentNullException ("baseName is null.");
-			if(assembly == null)
-				throw new ArgumentNullException ("assembly is null.");
+			CheckBaseName (baseName);
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
 			
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
-			resourceSetType = CheckResourceSetType(usingResourceSet);
-			neutral_culture = GetNeutralResourcesLanguage(MainAssembly);
+			resourceSetType = CheckResourceSetType (usingResourceSet, true);
+			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
-		
+
 		/* Private constructor for CreateFileBasedResourceManager */
 		private ResourceManager(String baseName, String resourceDir, Type usingResourceSet) : this()
 		{
-			if(baseName==null) {
-				throw new ArgumentNullException("The base name is null");
-			}
-			if(baseName.EndsWith(".resources")) {
-				throw new ArgumentException("The base name ends in '.resources'");
-			}
-			if(resourceDir==null) {
-				throw new ArgumentNullException("The resourceDir is null");
-			}
+			CheckBaseName (baseName);
+			if (resourceDir == null)
+				throw new ArgumentNullException("resourceDir");
 
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = null;
-			resourceSetType = CheckResourceSetType(usingResourceSet);
+			resourceSetType = CheckResourceSetType (usingResourceSet, false);
 			this.resourceDir = resourceDir;
 		}
 		
 		public static ResourceManager CreateFileBasedResourceManager (string baseName,
 						      string resourceDir, Type usingResourceSet)
 		{
-			return new ResourceManager(baseName, resourceDir, usingResourceSet);
+			return new ResourceManager (baseName, resourceDir, usingResourceSet);
 		}
 
-		public virtual string BaseName
-		{
+		public virtual string BaseName {
 			get { return BaseNameField; }
 		}
 
-		public virtual bool IgnoreCase
-		{
+		public virtual bool IgnoreCase {
 			get { return ignoreCase; }
 			set { ignoreCase = value; }
 		}
 
-		public virtual Type ResourceSetType
-		{
+		public virtual Type ResourceSetType {
 			get { return resourceSetType; }
 		}
 
-		public virtual object GetObject(string name)
+		public virtual object GetObject (string name)
 		{
-			return(GetObject(name, null));
+			return GetObject (name, null);
 		}
 
-		public virtual object GetObject(string name, CultureInfo culture)
+		public virtual object GetObject (string name, CultureInfo culture)
 		{
-			if(name==null) {
-				throw new ArgumentNullException("name is null");
-			}
+			if (name == null)
+				throw new ArgumentNullException("name");
 
-			if(culture==null) {
-				culture=CultureInfo.CurrentUICulture;
-			}
+			if (culture == null)
+				culture = CultureInfo.CurrentUICulture;
 
-			lock(this) {
-				ResourceSet set=InternalGetResourceSet(culture, true, true);
-				object obj=null;
+			lock (this) {
+				ResourceSet set = InternalGetResourceSet(culture, true, true);
+				object obj = null;
 				
-				if(set != null) {
-					obj=set.GetObject(name, ignoreCase);
-					if(obj != null) {
-						return(obj);
-					}
+				if (set != null) {
+					obj = set.GetObject(name, ignoreCase);
+					if (obj != null)
+						return obj;
 				}
 				
 				/* Try parent cultures */
 
 				do {
-					culture=culture.Parent;
+					culture = culture.Parent;
 
-					set=InternalGetResourceSet(culture, true, true);
-					if(set!=null) {
-						obj=set.GetObject(name, ignoreCase);
-						if(obj != null) {
-							return(obj);
-						}
+					set = InternalGetResourceSet (culture, true, true);
+					if (set != null) {
+						obj = set.GetObject (name, ignoreCase);
+						if (obj != null)
+							return obj;
 					}
-				} while(!culture.Equals(neutral_culture) &&
-					!culture.Equals(CultureInfo.InvariantCulture));
+				} while (!culture.Equals (neutral_culture) &&
+					!culture.Equals (CultureInfo.InvariantCulture));
 			}
-			
-			return(null);
+
+			return null;
 		}
-		
-		
+
 		public virtual ResourceSet GetResourceSet (CultureInfo culture,
 					   bool createIfNotExists, bool tryParents)
 			
 		{
-			if (culture == null) {
-				throw new ArgumentNullException ("CultureInfo is a null reference.");
-			}
+			if (culture == null)
+				throw new ArgumentNullException ("culture");
 
-			lock(this) {
-				return(InternalGetResourceSet(culture, createIfNotExists, tryParents));
+			lock (this) {
+				return InternalGetResourceSet (culture, createIfNotExists, tryParents);
 			}
 		}
 		
 		public virtual string GetString (string name)
 		{
-			return(GetString(name, null));
+			return GetString (name, null);
 		}
 
 		public virtual string GetString (string name, CultureInfo culture)
 		{
-			if (name == null) {
-				throw new ArgumentNullException ("Name is null.");
-			}
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
-			if(culture==null) {
-				culture=CultureInfo.CurrentUICulture;
-			}
+			if (culture == null)
+				culture = CultureInfo.CurrentUICulture;
 
-			lock(this) {
-				ResourceSet set=InternalGetResourceSet(culture, true, true);
-				string str=null;
+			lock (this) {
+				ResourceSet set = InternalGetResourceSet (culture, true, true);
+				string str = null;
 
-				if(set!=null) {
-					str=set.GetString(name, ignoreCase);
-					if(str!=null) {
-						return(str);
-					}
+				if (set != null) {
+					str = set.GetString (name, ignoreCase);
+					if (str != null)
+						return str;
 				}
 
 				/* Try parent cultures */
 
 				do {
-					culture=culture.Parent;
-
-					set=InternalGetResourceSet(culture, true, true);
-					if(set!=null) {
-						str=set.GetString(name, ignoreCase);
-						if(str!=null) {
-							return(str);
-						}
+					culture = culture.Parent;
+					set = InternalGetResourceSet (culture, true, true);
+					if (set != null) {
+						str = set.GetString(name, ignoreCase);
+						if (str != null)
+							return str;
 					}
-				} while(!culture.Equals(neutral_culture) &&
-					!culture.Equals(CultureInfo.InvariantCulture));
+				} while (!culture.Equals (neutral_culture) &&
+					!culture.Equals (CultureInfo.InvariantCulture));
 			}
 			
-			return(null);
+			return null;
 		}
 
 		protected virtual string GetResourceFileName (CultureInfo culture)
 		{
-			if(culture.Equals(CultureInfo.InvariantCulture)) {
-				return(BaseNameField + ".resources");
-			} else {
-				return(BaseNameField + "." +  culture.Name + ".resources");
-			}
+			if (culture.Equals (CultureInfo.InvariantCulture))
+				return BaseNameField + ".resources";
+			else
+				return BaseNameField + "." +  culture.Name + ".resources";
 		}
 		
-		static Stream GetManifestResourceStreamNoCase (Assembly ass, string fn)
+		Stream GetManifestResourceStreamNoCase (Assembly ass, string fn)
 		{
+			string fullResourceName = null;
+			if (resourceSource != null) {
+				if (resourceSource.Namespace != null && resourceSource.Namespace.Length > 0)
+					fullResourceName = string.Concat (resourceSource.Namespace,
+						".", fn);
+				else
+					fullResourceName = fn;
+			} else {
+				fullResourceName = fn;
+			}
+
 			foreach (string s in ass.GetManifestResourceNames ())
-				if (String.Compare (fn, s, true, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (fullResourceName, s, true, CultureInfo.InvariantCulture) == 0)
 					return ass.GetManifestResourceStream (s);
 			return null;
 		}
@@ -294,7 +283,7 @@ namespace System.Resources
 		[ComVisible (false)]
 		public UnmanagedMemoryStream GetStream (string name)
 		{
-			return GetStream (name, CultureInfo.InvariantCulture);
+			return GetStream (name, (CultureInfo) null);
 		}
 
 		[CLSCompliant (false)]
@@ -304,7 +293,7 @@ namespace System.Resources
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (culture == null)
-				throw new ArgumentNullException ("culture");
+				culture = CultureInfo.CurrentUICulture;
 			ResourceSet set = InternalGetResourceSet (culture, true, true);
 			if (set == null)
 				throw new MissingManifestResourceException (String.Format ("Could not find any resource appropriate for the specified culture or its parents (resource file : \"{0}\")", GetResourceFileName(culture)));
@@ -320,98 +309,103 @@ namespace System.Resources
 				string msg = String.Format ("Could not find any resource appropriate for the " +
 							    "specified culture or its parents (assembly:{0})",
 							    MainAssembly != null ? MainAssembly.GetName ().Name : "");
-							    
 				throw new MissingManifestResourceException (msg);
 			}
 			/* if we already have this resource set, return it */
-			set = (ResourceSet)ResourceSets [culture];
+			set = (ResourceSet) ResourceSets [culture];
 			if (set != null)
 				return set;
 
-			if(MainAssembly != null) {
+			if (MainAssembly != null) {
 				/* Assembly resources */
-				Stream stream;
-				string filename=GetResourceFileName(culture);
+				CultureInfo resourceCulture = culture;
+
+				// when the specified culture matches the neutral culture,
+				// then use the invariant resources
+				if (culture.Equals (neutral_culture))
+					resourceCulture = CultureInfo.InvariantCulture;
+
+				string filename = GetResourceFileName (resourceCulture);
 				
-				stream=MainAssembly.GetManifestResourceStream(filename);
+				// FIXME: shouldn't we only load non-invariant
+				// resources from satellite assemblies, and only
+				// load invariant resources from main assembly
+
+				Stream stream = MainAssembly.GetManifestResourceStream (
+					resourceSource, filename);
 				if (stream == null)
-					stream = GetManifestResourceStreamNoCase (MainAssembly, filename);
-				
-				if(stream==null) {
+					stream = GetManifestResourceStreamNoCase (
+						MainAssembly, filename);
+				if (stream == null) {
 					/* Try a satellite assembly */
-					Version sat_version=GetSatelliteContractVersion(MainAssembly);
-					Assembly a = null;
+					Version sat_version = GetSatelliteContractVersion (MainAssembly);
 					try {
-						a = MainAssembly.GetSatelliteAssembly (culture, sat_version);
-						stream=a.GetManifestResourceStream(filename);
+						Assembly a = MainAssembly.GetSatelliteAssembly (
+							resourceCulture, sat_version);
+						stream = a.GetManifestResourceStream (filename);
 						if (stream == null)
 							stream = GetManifestResourceStreamNoCase (a, filename);
-					
-					} catch (Exception) {} // Ignored
+					} catch (Exception) {
+						// Ignored
+					}
 				}
 
-				if(stream!=null && Createifnotexists==true) {
-					object[] args=new Object[1];
-
-					args[0]=stream;
+				if (stream != null && Createifnotexists) {
+					object [] args = new Object [1] { stream };
 					
 					/* should we catch
 					 * MissingMethodException, or
 					 * just let someone else deal
 					 * with it?
 					 */
-					set=(ResourceSet)Activator.CreateInstance(resourceSetType, args);
+					set = (ResourceSet) Activator.CreateInstance (resourceSetType, args);
 				} else if (culture.Equals (CultureInfo.InvariantCulture)) {
 					string msg = "Could not find any resource appropriate for the " +
-						     "specified culture or its parents. " +
-						     "Make sure \"{1}\" was correctly embedded or " +
-						     "linked into assembly \"{0}\".";
-						     
-					msg = String.Format (msg, MainAssembly != null ? MainAssembly.GetName ().Name : "", filename);
-							    
+						"specified culture or its parents. " +
+						"Make sure \"{1}\" was correctly embedded or " +
+						"linked into assembly \"{0}\".";
+					msg = String.Format (msg, MainAssembly != null ?
+						MainAssembly.GetName ().Name : "", filename);
 					throw new MissingManifestResourceException (msg);
 				}
 			} else if (resourceDir != null || BaseNameField != null) {
 				/* File resources */
 				string filename;
 				
-				if(resourceDir != null)
+				if (resourceDir != null)
 					filename = Path.Combine (resourceDir, GetResourceFileName (culture));
 				else
 					filename = GetResourceFileName(culture);
-				
-				if(File.Exists(filename) &&
-				   Createifnotexists==true) {
-					object[] args=new Object[1];
 
-					args[0]=filename;
-					
+				if (Createifnotexists && File.Exists (filename)) {
+					object [] args = new Object [1] { filename };
+
 					/* should we catch
 					 * MissingMethodException, or
 					 * just let someone else deal
 					 * with it?
 					 */
-					set=(ResourceSet)Activator.CreateInstance(resourceSetType, args);
+					set = (ResourceSet) Activator.CreateInstance(
+						resourceSetType, args);
 				}
 			}
 
-			if(set==null && tryParents==true) {
+			if (set == null && tryParents) {
 				// avoid endless recursion
-				if (!culture.Equals(CultureInfo.InvariantCulture))
-					set = InternalGetResourceSet (culture.Parent, Createifnotexists, tryParents);
+				if (!culture.Equals (CultureInfo.InvariantCulture))
+					set = InternalGetResourceSet (culture.Parent,
+						Createifnotexists, tryParents);
 			}
 
-			if(set!=null) {
-				ResourceSets.Add(culture, set);
-			}
-			
-			return(set);
+			if (set != null)
+				ResourceSets.Add (culture, set);
+
+			return set;
 		}
-		   
+
 		public virtual void ReleaseAllResources ()
 		{
-			lock(this) 
-			{
+			lock(this) {
 				foreach (ResourceSet r in ResourceSets.Values)
 					r.Close();
 				ResourceSets.Clear();
@@ -420,29 +414,28 @@ namespace System.Resources
 
 		protected static CultureInfo GetNeutralResourcesLanguage (Assembly a)
 		{
-			object[] attrs;
+			object [] attrs = a.GetCustomAttributes (
+				typeof (NeutralResourcesLanguageAttribute),
+				false);
 
-			attrs=a.GetCustomAttributes(typeof(NeutralResourcesLanguageAttribute), false);
-
-			if(attrs.Length==0) {
-				return(CultureInfo.InvariantCulture);
+			if (attrs.Length == 0) {
+				return CultureInfo.InvariantCulture;
 			} else {
-				NeutralResourcesLanguageAttribute res_attr=(NeutralResourcesLanguageAttribute)attrs[0];
-				
-				return(new CultureInfo(res_attr.CultureName));
+				NeutralResourcesLanguageAttribute res_attr = (NeutralResourcesLanguageAttribute) attrs [0];
+				return new CultureInfo (res_attr.CultureName);
 			}
 		}
 
 		protected static Version GetSatelliteContractVersion (Assembly a)
 		{
-			object[] attrs;
-			
-			attrs=a.GetCustomAttributes(typeof(SatelliteContractVersionAttribute), false);
-
-			if(attrs.Length==0) {
-				return(null);
+			object [] attrs = a.GetCustomAttributes (
+				typeof (SatelliteContractVersionAttribute),
+				false);
+			if (attrs.Length == 0) {
+				return null;
 			} else {
-				SatelliteContractVersionAttribute sat_attr=(SatelliteContractVersionAttribute)attrs[0];
+				SatelliteContractVersionAttribute sat_attr =
+					(SatelliteContractVersionAttribute) attrs[0];
 
 				/* Version(string) can throw
 				 * ArgumentException if the version is
@@ -452,7 +445,7 @@ namespace System.Resources
 				 * the same reason, so dont bother to
 				 * catch it.
 				 */
-				return(new Version(sat_attr.Version));
+				return new Version (sat_attr.Version);
 			}
 		}
 
@@ -463,5 +456,20 @@ namespace System.Resources
 			set { fallbackLocation = value; }
 		}
 #endif
+
+		void CheckBaseName (string baseName)
+		{
+			if (baseName == null)
+				throw new ArgumentNullException ("baseName");
+#if ONLY_1_1
+			if (baseName.EndsWith (".resources"))
+				throw new ArgumentException ("ResourceManager base"
+					+ " name should not end in .resources. It"
+					+ " should be similar to MyResources,"
+					+ " which the ResourceManager can convert"
+					+ " into MyResources.<culture>.resources;"
+					+ " for example, MyResources.en-US.resources");
+#endif
+		}
 	}
 }

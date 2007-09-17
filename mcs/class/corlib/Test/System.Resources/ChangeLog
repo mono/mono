@@ -1,3 +1,10 @@
+2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManagerTest.cs: Restore the original UI Culture on TearDown.
+	Added ctor tests. Added tests for CreateFileBasedResourceManager.
+	Added tests for GetObject, GetString and GetResourceFileName.
+	Improved tests for GetStream. Added test for IgnoreCase.
+
 2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManagerTest.cs: Improved existing tests. Ensure all resources
