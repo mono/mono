@@ -1112,8 +1112,8 @@ namespace System.Web.UI.WebControls {
 						clr = ForeColor;
 				}
 
-				str += " style=color:" + ColorTranslator.ToHtml (clr);
-				str += ">";
+				str += " style=\"color:" + ColorTranslator.ToHtml (clr);
+				str += "\">";
 				str += text;
 				str += "</a>";
 			}

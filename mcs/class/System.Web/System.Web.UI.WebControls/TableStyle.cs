@@ -211,16 +211,16 @@ namespace System.Web.UI.WebControls {
 			// note: avoid ToString on the enum
 			switch (HorizontalAlign) {
 			case HorizontalAlign.Left:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Left", false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);
 				break;
 			case HorizontalAlign.Center:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Center", false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "center", false);
 				break;
 			case HorizontalAlign.Right:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Right", false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right", false);
 				break;
 			case HorizontalAlign.Justify:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "Justify", false);
+				writer.AddAttribute (HtmlTextWriterAttribute.Align, "justify", false);
 				break;
 			}
 
