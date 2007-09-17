@@ -1,5 +1,8 @@
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (free_generic_inst): Comment this out to fix the build.
+	(free_generic_class): Ditto.
+
 	* metadata.c: Free cached generic methods, instantinations and classes when
 	they are removed from the caches.
 	(mono_metadata_free_type): Free the type itself.
