@@ -1,3 +1,9 @@
+
+Mon Sep 17 16:14:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c: restrict managed allocs to __thread supporting
+	architectures.
+
 2007-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_inflate_generic_type): Add a comment describing memory ownership.
