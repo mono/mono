@@ -296,13 +296,10 @@ namespace Mono.Cecil.Cil {
 				if (IsRangeFat (eh.TryStart, eh.TryEnd, seh.Container.Instructions))
 					return true;
 
+				if (IsRangeFat (eh.HandlerStart, eh.HandlerEnd, seh.Container.Instructions))
+					return true;
+
 				switch (eh.Type) {
-				case ExceptionHandlerType.Catch :
-				case ExceptionHandlerType.Fault :
-				case ExceptionHandlerType.Finally :
-					if (IsRangeFat (eh.HandlerStart, eh.HandlerEnd, seh.Container.Instructions))
-						return true;
-					break;
 				case ExceptionHandlerType.Filter :
 					if (IsRangeFat (eh.FilterStart, eh.FilterEnd, seh.Container.Instructions))
 						return true;
