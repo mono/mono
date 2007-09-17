@@ -1,5 +1,11 @@
 2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripMenuItem.cs: Make sure we invalidate when clicked so
+	mnemonics can be drawn or undrawn correctly.  Fixes reopened bug 
+	#325044.
+
+2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Do WM_CONTEXTMENU before OnMouseUp.  [Fixes bug #325535]
 
 2007-09-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>

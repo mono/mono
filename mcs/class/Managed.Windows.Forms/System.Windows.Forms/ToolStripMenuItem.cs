@@ -477,6 +477,9 @@ namespace System.Windows.Forms
 		internal override void HandleClick (EventArgs e)
 		{
 			this.OnClick (e);
+			
+			if (Parent != null)
+				Parent.Invalidate ();
 		}
 		#endregion
 
