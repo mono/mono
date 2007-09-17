@@ -1,3 +1,10 @@
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Make sure class->methods and class->properties
+	are never NULL in the generics case.
+
+	* metadata.c (free_generic_class): Enable this again, skip the dynamic case.
+
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (free_generic_class): Disable some code to fix the build.
