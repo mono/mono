@@ -20,12 +20,21 @@ namespace Mono.CSharp.Linq
 	//
 	//
 
-	public class QueryExpression : ARangeVariableQueryClause
+	public class QueryExpression : AQueryClause
 	{
+		readonly Block block;
+
 		public QueryExpression (Block block, AQueryClause query)
-			: base (block, null, query.Location)
+			: base (null, query.Location)
 		{
+			this.block = block;
 			this.next = query;
+		}
+
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
+		{
+			Parameter p = CreateBlockParameter (block);
+			return next.BuildQueryClause (ec, lSide, p, ti);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -108,9 +117,26 @@ namespace Mono.CSharp.Linq
 				Select s = next as Select;
 				if (s == null || s.IsRequired (parameter))
 					return next.BuildQueryClause (ec, lSide, parameter, ti);
+					
+				// Skip transparent select clause if any clause follows
+				if (next.next != null)
+					return next.next.BuildQueryClause (ec, lSide, parameter, ti);
 			}
 
 			return lSide;
+		}
+
+		protected static Parameter CreateBlockParameter (Block block)
+		{
+			ICollection values = block.Variables.Values;
+			if (values.Count != 1)
+				throw new NotImplementedException ("Count != 1");
+
+			IEnumerator enumerator = values.GetEnumerator ();
+			enumerator.MoveNext ();
+			LocalInfo li = (LocalInfo) enumerator.Current;
+
+			return new ImplicitQueryParameter (li);
 		}
 
 		protected Invocation CreateQueryExpression (Expression lSide, ArrayList arguments)
@@ -170,7 +196,7 @@ namespace Mono.CSharp.Linq
 	//
 	public abstract class ARangeVariableQueryClause : AQueryClause
 	{
-		public readonly Block block;
+		readonly Block block;
 		protected Expression element_selector;
 
 		protected ARangeVariableQueryClause (Block block, Expression expr, Location loc)
@@ -193,17 +219,7 @@ namespace Mono.CSharp.Linq
 		//
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
 		{
-			ICollection values = block.Variables.Values;
-			if (values.Count != 1)
-				throw new NotImplementedException ("Count != 1");
-
-			IEnumerator enumerator = values.GetEnumerator ();
-			enumerator.MoveNext ();
-			LocalInfo li = (LocalInfo) enumerator.Current;
-
-			Parameter parameter = new ImplicitQueryParameter (li);
-			if (parentParameter == null)
-				return next.BuildQueryClause (ec, expr, parameter, ti);
+			Parameter parameter = CreateBlockParameter (block);
 
 			if (next != null) {
 				//

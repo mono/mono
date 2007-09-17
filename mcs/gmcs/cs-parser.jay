@@ -5415,13 +5415,16 @@ query_body
 	  {
 	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
+		if ($3 != null)
+			head.Next = (Linq.AQueryClause)$3;
+				
 		if ($1 != null) {
 			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
 			clause.Tail.Next = head;
 			head = clause;
-		}		
+		}
 		
-	  	$$ = head;
+		$$ = head;
 	  }
 	;
 	
@@ -5591,13 +5594,19 @@ then_by
 
 opt_query_continuation
 	: /* empty */
-	| query_continuation
+	| INTO IDENTIFIER
+	  {
+		start_block (GetLocation ($1));
+		LocatedToken lt = (LocatedToken) $2;
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);	  
+	  }
+	  query_body
+	  {
+		$$ = new Linq.QueryExpression (current_block, (Linq.AQueryClause)$4);
+		end_block (lexer.Location);		
+	  }
 	;
 	
-query_continuation
-	: INTO IDENTIFIER query_body
-	;
-
 %%
 
 // <summary>

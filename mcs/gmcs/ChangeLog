@@ -1,3 +1,7 @@
+2007-09-17  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay, linq: Implemented query continuation.
+
 2007-09-12  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay: GroupJoin clause connected.
