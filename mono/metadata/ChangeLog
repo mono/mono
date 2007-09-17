@@ -1,5 +1,7 @@
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c: Fix the freeing of data in the generics caches.
+	
 	* metadata.c (free_generic_inst): Comment this out to fix the build.
 	(free_generic_class): Ditto.
 
