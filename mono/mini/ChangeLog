@@ -1,3 +1,7 @@
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Fix a warning.
+
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Optimize various parts when processing large assemblies.
