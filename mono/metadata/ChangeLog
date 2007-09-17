@@ -1,5 +1,9 @@
 2007-09-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata.c (free_generic_class): Disable some code to fix the build.
+
+	* domain.c (mono_cleanup): Fix a crash introduced by a previous patch.
+
 	* marshal.c (mono_marshal_get_xappdomain_dispatch): Allocate a piece of data
 	from the image mempool.
 
