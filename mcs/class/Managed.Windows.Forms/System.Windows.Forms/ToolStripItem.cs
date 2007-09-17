@@ -706,6 +706,7 @@ namespace System.Windows.Forms
 					this.text = value; 
 					this.Invalidate (); 
 					this.CalculateAutoSize (); 
+					this.Invalidate ();
 					this.OnTextChanged (EventArgs.Empty); 
 				} 
 			}

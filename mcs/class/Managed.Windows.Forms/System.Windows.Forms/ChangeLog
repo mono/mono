@@ -1,5 +1,12 @@
 2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Set AutoSizeMode back to GrowOnly.
+	* ToolStripItem.cs: Invalidate before and after our new autosize when
+	text changes.
+	Fixes reopened bug #325390.
+
+2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripMenuItem.cs: Make sure we invalidate when clicked so
 	mnemonics can be drawn or undrawn correctly.  Fixes reopened bug 
 	#325044.

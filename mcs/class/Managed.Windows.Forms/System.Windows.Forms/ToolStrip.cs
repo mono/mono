@@ -98,7 +98,6 @@ namespace System.Windows.Forms
 			this.items = new ToolStripItemCollection (this, items, true);
 			this.allow_merge = true;
 			base.AutoSize = true;
-			base.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
 			base.CausesValidation = false;
