@@ -35,6 +35,7 @@
    -->
   
  <runtime>
+    <legacyUnhandledExceptionPolicy enabled="1"/>
     
     <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1"
 			appliesTo="v1.0.3705">

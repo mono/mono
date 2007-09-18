@@ -1,3 +1,8 @@
+2007-09-18  Massimiliano Mantione  <massi@ximian.com>
+
+	* Added "<legacyUnhandledExceptionPolicy enabled="1"/>" to the
+	config files to allow nunit to deal with unhandled exceptions.
+
 2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added NET_2_0 projects files for VS2005
