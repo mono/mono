@@ -145,6 +145,7 @@ namespace System.Windows.Forms
 			this.OnDropDownOpening (this, EventArgs.Empty);
 			this.DropDown.Show (this.DropDownLocation);
 			this.OnDropDownShow (EventArgs.Empty);
+			this.OnDropDownOpened (EventArgs.Empty);
 		}
 		#endregion
 
@@ -303,6 +304,7 @@ namespace System.Windows.Forms
 
 		internal override void HandleClick (EventArgs e)
 		{
+			base.OnClick (e);
 		}
 		
 		internal void HideDropDown (ToolStripDropDownCloseReason reason)

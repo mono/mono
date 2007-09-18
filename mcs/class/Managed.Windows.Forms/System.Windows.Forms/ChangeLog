@@ -1,5 +1,12 @@
 2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDownItem.cs: Make sure Click and DropDownOpened events
+	get called.
+	* ToolStripSplitButton.cs: Make sure MouseDown and MouseUp events get
+	called.
+
+2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Don't show tooltips for ToolStripTextBoxes, they
 	will handle it themselves.
 	* ToolStripItem.cs: When deciding what the text of a tooltip should

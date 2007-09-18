@@ -235,6 +235,7 @@ namespace System.Windows.Forms
 					this.ShowDropDown ();
 			
 				this.Invalidate ();
+				base.OnMouseDown (e);
 			}
 		}
 
@@ -253,8 +254,7 @@ namespace System.Windows.Forms
 			this.button_pressed = false;
 			this.Invalidate ();
 			
-			if (this.ButtonBounds.Contains (e.Location))
-				base.OnMouseUp (e);
+			base.OnMouseUp (e);
 		}
 		
 		protected override void OnPaint (PaintEventArgs e)
