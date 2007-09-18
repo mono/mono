@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 		private readonly SelectedListViewItemCollection selected_items;
 		private SortOrder sort_order = SortOrder.None;
 		private ImageList state_image_list;
-		private bool updating;
+		internal bool updating;
 		private View view = View.LargeIcon;
 		private int layout_wd;    // We might draw more than our client area
 		private int layout_ht;    // therefore we need to have these two.

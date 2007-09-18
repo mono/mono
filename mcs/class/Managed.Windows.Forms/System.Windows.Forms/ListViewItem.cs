@@ -782,7 +782,7 @@ namespace System.Windows.Forms
 
 		internal void Invalidate ()
 		{
-			if (owner == null || owner.item_control == null)
+			if (owner == null || owner.item_control == null || owner.updating)
 				return;
 
 			owner.item_control.Invalidate (Bounds);
