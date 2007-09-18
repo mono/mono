@@ -1157,14 +1157,14 @@ namespace System.Windows.Forms
 			}
 #endif
 
-			// adjustment for space
-			if (!ret_size.IsEmpty)
+			// adjustment for space in Details view
+			if (!ret_size.IsEmpty && view == View.Details)
 				ret_size.Width += ThemeEngine.Current.ListViewItemPaddingWidth;
 
 			return ret_size;
 		}
 
-		const int max_wrap_padding = 38;
+		const int max_wrap_padding = 30;
 
 		// Sets the size of the biggest item text as per the view
 		private void CalcTextSize ()
@@ -1207,7 +1207,7 @@ namespace System.Windows.Forms
 				text_size.Width = this.Width;
 
 			// little adjustment
-			text_size.Width += 4;
+			text_size.Width += 2;
 			text_size.Height += 2;
 		}
 
@@ -1426,8 +1426,12 @@ namespace System.Windows.Forms
 			get {
 				int image_w = LargeImageList == null ? 12 : LargeImageList.ImageSize.Width;
 				int image_h = LargeImageList == null ? 2 : LargeImageList.ImageSize.Height;
-				int w = CheckBoxSize.Width + 2 + Math.Max (text_size.Width, image_w);
 				int h = text_size.Height + 2 + Math.Max (CheckBoxSize.Height, image_h);
+				int w = Math.Max (text_size.Width, image_w);
+
+				if (check_boxes)
+					w += 2 + CheckBoxSize.Width;
+
 				return new Size (w, h);
 			}
 		}
@@ -1436,8 +1440,12 @@ namespace System.Windows.Forms
 			get {
 				int image_w = SmallImageList == null ? 0 : SmallImageList.ImageSize.Width;
 				int image_h = SmallImageList == null ? 0 : SmallImageList.ImageSize.Height;
-				int w = text_size.Width + 2 + CheckBoxSize.Width + image_w;
 				int h = Math.Max (text_size.Height, Math.Max (CheckBoxSize.Height, image_h));
+				int w = text_size.Width + image_w;
+
+				if (check_boxes)
+					w += 2 + CheckBoxSize.Width;
+
 				return new Size (w, h);
 			}
 		}

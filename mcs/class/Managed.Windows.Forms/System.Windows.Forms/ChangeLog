@@ -1,5 +1,12 @@
 2007-09-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: max_label_wrapping is now 30 pixels instead of 38,
+	as this is apparently the actual value used by .Net. Also apply
+	ItemPadding in Details view only, and decrease the general width padding,
+	to have only the needed. This should fix #324340 in Windows too.
+
+2007-09-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: Don't Invalidate item if parent is inside
 	a BeginUpdate/EndUpdate block. This prevents to have differences
 	between the ListView and items state, as well as avoid some exceptions
