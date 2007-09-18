@@ -41,6 +41,7 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripTextBox () : base (new ToolStripTextBoxControl ())
 		{
+			(this.TextBox as ToolStripTextBoxControl).OwnerItem = this;
 			base.Control.border_style = BorderStyle.None;
 			(base.Control as ToolStripTextBoxControl).Border = BorderStyle.Fixed3D;
 			this.border_style = BorderStyle.Fixed3D;
@@ -476,6 +477,9 @@ namespace System.Windows.Forms
 		private class ToolStripTextBoxControl : TextBox
 		{
 			private BorderStyle border;
+			private Timer tooltip_timer;
+			private ToolTip tooltip_window;
+			private ToolStripItem owner_item;
 			
 			public ToolStripTextBoxControl () : base ()
 			{
@@ -491,12 +495,19 @@ namespace System.Windows.Forms
 			{
 				base.OnMouseEnter (e);
 				Invalidate ();
+
+				if (ShowToolTips)
+					ToolTipTimer.Start ();
+
 			}
 
 			protected override void OnMouseLeave (EventArgs e)
 			{
 				base.OnMouseLeave (e);
 				Invalidate ();
+
+				ToolTipTimer.Stop ();
+				ToolTipWindow.Hide (this);
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs e)
@@ -518,6 +529,53 @@ namespace System.Windows.Forms
 					Invalidate ();
 				}
 			}
+
+			internal ToolStripItem OwnerItem {
+				set { owner_item = value; }
+			}
+					
+			#region Stuff for ToolTips
+			private bool ShowToolTips {
+				get {
+					if (Parent == null)
+						return false;
+						
+					return (Parent as ToolStrip).ShowItemToolTips;
+				}
+			}
+
+			private Timer ToolTipTimer {
+				get {
+					if (tooltip_timer == null) {
+						tooltip_timer = new Timer ();
+						tooltip_timer.Enabled = false;
+						tooltip_timer.Interval = 500;
+						tooltip_timer.Tick += new EventHandler (ToolTipTimer_Tick);
+					}
+
+					return tooltip_timer;
+				}
+			}
+
+			private ToolTip ToolTipWindow {
+				get {
+					if (tooltip_window == null)
+						tooltip_window = new ToolTip ();
+
+					return tooltip_window;
+				}
+			}
+
+			private void ToolTipTimer_Tick (object o, EventArgs args)
+			{
+				string tooltip = owner_item.GetToolTip ();
+
+				if (!string.IsNullOrEmpty (tooltip))
+					ToolTipWindow.Present (this, tooltip);
+
+				ToolTipTimer.Stop ();
+			}
+			#endregion
 		}
 	}
 }

@@ -1,5 +1,14 @@
 2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Don't show tooltips for ToolStripTextBoxes, they
+	will handle it themselves.
+	* ToolStripItem.cs: When deciding what the text of a tooltip should
+	be, use the Text property instead of the text field.
+	* ToolStripTextBox.cs: Handle tooltips.
+	[Fixes bugs #325417 and #325973]
+
+2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripDropDownButton.cs: Only drop down overflow menu with a
 	left click.  Fixes the easy part of bug #325969.
 

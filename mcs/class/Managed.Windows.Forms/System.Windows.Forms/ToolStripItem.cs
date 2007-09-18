@@ -1703,7 +1703,7 @@ namespace System.Windows.Forms
 		internal string GetToolTip ()
 		{
 			if (this.auto_tool_tip && string.IsNullOrEmpty (this.tool_tip_text))
-				return this.text;
+				return this.Text;
 				
 			return this.tool_tip_text;
 		}

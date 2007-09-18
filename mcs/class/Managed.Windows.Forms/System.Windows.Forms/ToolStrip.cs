@@ -1555,7 +1555,7 @@ namespace System.Windows.Forms
 		#region Stuff for ToolTips
 		private void MouseEnteredItem (ToolStripItem item)
 		{
-			if (this.show_item_tool_tips) {
+			if (this.show_item_tool_tips && !(item is ToolStripTextBox)) {
 				tooltip_currently_showing = item;
 				ToolTipTimer.Start ();
 			}
