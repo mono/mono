@@ -1,3 +1,8 @@
+2007-09-19  Raja R Harinath  <harinath@gmail.com>
+
+	* assemblyresolve/Makefile.am: Fix srcdir != builddir issues.
+	(EXTRA_DIST): Add asm.cs, TestBase.cs, Test.cs.
+
 2007-09-18  Marek Habersack  <mhabersack@novell.com>
 
 	* assemblyresolve/asm.cs: added
