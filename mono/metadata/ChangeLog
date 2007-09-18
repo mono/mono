@@ -1,3 +1,19 @@
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* domain-internals.h: added a declaration of the
+	mono_assembly_load_full_nosearch internal function.
+
+	* assembly.c (mono_assembly_load_with_partial_name): use
+	mono_try_assembly_resolve return value properly.
+	(mono_assembly_load_full_nosearch): copied the function body from
+	mono_assembly_load_full, without the code to invoke assembly
+	search hooks.
+	(mono_assembly_load_full): calls the above new function and if the
+	assembly is not resolved, invokes the search hooks.
+
+	* appdomain.c (mono_runtime_init): restore the global postload
+	assembly search handlers.
+
 2007-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Make sure class->methods and class->properties

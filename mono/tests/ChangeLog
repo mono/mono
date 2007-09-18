@@ -1,3 +1,16 @@
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* assemblyresolve/asm.cs: added
+
+	* assemblyresolve/TestBase.cs: added
+
+	* assemblyresolve/Test.cs: added
+
+	* assemblyresolve/Makefile.am: added
+
+	* assemblyresolve_event3.cs: added new AssemblyResolve event
+	test.
+
 2007-09-13  Massimiliano Mantione  <massi@ximian.com>
 
 	* Makefile.am: Fixed and re-enabled test for bug #82416 (the
