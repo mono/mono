@@ -1,5 +1,8 @@
 2007-09-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Move the code that sets up class->methods to 
+	mono_class_setup_methods () for inflated generic classes too. Ditto for properties.
+
 	* metadata.c (mono_metadata_get_inflated_signature): New function to return a
 	canonical instance of an inflated generic signature.
 	(mono_type_create_from_typespec): Remove an invalid free.
