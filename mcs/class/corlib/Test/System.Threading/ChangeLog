@@ -1,3 +1,7 @@
+2007-09-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ThreadTest.cs: Added GetHashCode test for bug #325566.
+
 2007-09-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Added test for bug #82700. Re-enabled and fixed some

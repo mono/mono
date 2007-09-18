@@ -212,6 +212,39 @@ namespace MonoTests.System.Threading
 			Thread TestThread = new Thread(new ThreadStart(test1.TestMethod));
 		}
 
+		[Test] // bug #325566
+		[Category ("NotWorking")]
+		public void GetHashCodeTest ()
+		{
+			C1Test test1 = new C1Test ();
+			Thread tA = new Thread (new ThreadStart (test1.TestMethod));
+			int hA1 = tA.GetHashCode ();
+			Assert.IsTrue (hA1 > 0, "#A1");
+			tA.Start ();
+			int hA2 = tA.GetHashCode ();
+			Assert.AreEqual (hA1, hA2, "#A2");
+			tA.Join ();
+			int hA3 = tA.GetHashCode ();
+			Assert.AreEqual (hA1, hA3, "#A3");
+#if NET_2_0
+			Assert.AreEqual (hA1, tA.ManagedThreadId, "#A4");
+#endif
+
+			test1 = new C1Test ();
+			Thread tB = new Thread (new ThreadStart (test1.TestMethod));
+			int hB1 = tB.GetHashCode ();
+			Assert.IsTrue (hB1 > 0, "#B1");
+			tB.Start ();
+			int hB2 = tB.GetHashCode ();
+			Assert.AreEqual (hB1, hB2, "#B2");
+			tB.Join ();
+			int hB3 = tB.GetHashCode ();
+			Assert.AreEqual (hB1, hB3, "#B3");
+#if NET_2_0
+			Assert.AreEqual (hB1, tB.ManagedThreadId, "#B4");
+#endif
+		}
+
 #if NET_2_0
 		[Test] // bug #82700
 		[Category ("NotWorking")]
