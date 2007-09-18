@@ -1,3 +1,11 @@
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_get_inflated_signature): New function to return a
+	canonical instance of an inflated generic signature.
+	(mono_type_create_from_typespec): Remove an invalid free.
+
+	* loader.c (mono_method_get_signature_full): Use mono_metadata_get_inflated_signature.	
+
 2007-09-18  Marek Habersack  <mhabersack@novell.com>
 
 	* domain-internals.h: added a declaration of the
