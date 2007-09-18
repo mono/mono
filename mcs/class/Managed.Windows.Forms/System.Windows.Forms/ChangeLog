@@ -1,5 +1,10 @@
 2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDownButton.cs: Only drop down overflow menu with a
+	left click.  Fixes the easy part of bug #325969.
+
+2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Set AutoSizeMode back to GrowAndShrink to refix
 	bug #325406, but set a minimum for StatusStrip to 22 to keep
 	bug #325390 fixed.  I think this minimum would have been figured

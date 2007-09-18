@@ -104,10 +104,12 @@ namespace System.Windows.Forms
 
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
-			if (this.DropDown.Visible)
-				this.HideDropDown (ToolStripDropDownCloseReason.ItemClicked);
-			else
-				this.ShowDropDown ();
+			if (e.Button == MouseButtons.Left) {
+				if (this.DropDown.Visible)
+					this.HideDropDown (ToolStripDropDownCloseReason.ItemClicked);
+				else
+					this.ShowDropDown ();
+			}
 			
 			base.OnMouseDown (e);
 		}
