@@ -1,5 +1,11 @@
 2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripControlHostTest.cs: DefaultSize is based off hosted control,
+	but when the base constructor sets this, the control is null.  Set it
+	again in the constructor.  Fixes a failing monobuild test.
+
+2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripDropDownItem.cs: Make sure Click and DropDownOpened events
 	get called.
 	* ToolStripSplitButton.cs: Make sure MouseDown and MouseUp events get

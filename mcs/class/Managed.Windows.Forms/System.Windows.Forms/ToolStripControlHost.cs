@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 			this.control = c;
 			this.control_align = ContentAlignment.MiddleCenter;
 			this.control.TabStop = false;
+			this.Size = DefaultSize;
 			this.OnSubscribeControlEvents (this.control);
 		}
 
