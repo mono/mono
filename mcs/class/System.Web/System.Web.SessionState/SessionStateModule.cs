@@ -203,7 +203,9 @@ static private SessionConfig config {
 				string id = context.Session.SessionID;
 				if (isNew && config.CookieLess) {
 					request.SetHeader (HeaderName, id);
-					response.Redirect (UrlUtils.InsertSessionId (id, request.FilePath));
+					UriBuilder newUri = new UriBuilder (request.Url);
+					newUri.Path = UrlUtils.InsertSessionId (id, request.FilePath);
+					response.Redirect (newUri.Uri.PathAndQuery);
 				} else if (isNew) {
 					HttpCookie cookie = new HttpCookie (CookieName, id);
 					cookie.Path = request.ApplicationPath;

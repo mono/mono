@@ -1,3 +1,8 @@
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: preserve the query part of the url when
+	redirecting with cookieless sessions active. Fixes bug #318790
+
 2007-08-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionDictionary.cs: do not use lock (this), replace it

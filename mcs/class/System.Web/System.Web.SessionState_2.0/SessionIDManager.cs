@@ -112,19 +112,21 @@ namespace System.Web.SessionState
 		{
 			if (!Validate (id))
 				throw new HttpException ("Invalid session ID");
-			
+
+			HttpRequest request = context.Request;
 			if (!SessionStateModule.IsCookieLess (context, config)) {
 				HttpCookie cookie = new HttpCookie (config.CookieName, id);
-				cookie.Path = context.Request.ApplicationPath;
+				cookie.Path = request.ApplicationPath;
 				context.Response.AppendCookie (cookie);
 				cookieAdded = true;
 				redirected = false;
 			} else {
-				context.Request.SetHeader (SessionStateModule.HeaderName, id);
+				request.SetHeader (SessionStateModule.HeaderName, id);
 				cookieAdded = false;
 				redirected = true;
-				string newUri = UrlUtils.InsertSessionId (id, context.Request.FilePath);
-				context.Response.Redirect (newUri, false);
+				UriBuilder newUri = new UriBuilder (request.Url);
+				newUri.Path = UrlUtils.InsertSessionId (id, request.FilePath);
+				context.Response.Redirect (newUri.Uri.PathAndQuery, false);
 			}
 		}
 
