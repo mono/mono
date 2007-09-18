@@ -98,6 +98,7 @@ namespace System.Windows.Forms
 			this.items = new ToolStripItemCollection (this, items, true);
 			this.allow_merge = true;
 			base.AutoSize = true;
+			this.SetAutoSizeMode (AutoSizeMode.GrowAndShrink);
 			this.back_color = Control.DefaultBackColor;
 			this.can_overflow = true;
 			base.CausesValidation = false;
@@ -1431,6 +1432,9 @@ namespace System.Windows.Forms
 				if (new_size.Height == 0)
 					new_size.Height = ExplicitBounds.Height;
 
+				if (this is StatusStrip)
+					new_size.Height = Math.Max (new_size.Height, 22);
+					
 				return new_size;
 			}
 		}

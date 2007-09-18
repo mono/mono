@@ -1,3 +1,11 @@
+2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Set AutoSizeMode back to GrowAndShrink to refix
+	bug #325406, but set a minimum for StatusStrip to 22 to keep
+	bug #325390 fixed.  I think this minimum would have been figured
+	up automatically if the grip was actually a ToolStripItem, but it
+	currently is not.
+
 2007-09-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: max_label_wrapping is now 30 pixels instead of 38,
