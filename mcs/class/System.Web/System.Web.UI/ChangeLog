@@ -1,3 +1,8 @@
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: VaryByControl OutputCache attribute is
+	allowed for both controls and pages in 2.0.
+
 2007-09-11  Marek Habersack  <mhabersack@novell.com>
 
 	* WebServiceParser.cs: inputFile is a virtual path to the service,

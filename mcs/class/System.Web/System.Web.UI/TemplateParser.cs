@@ -292,9 +292,9 @@ namespace System.Web.UI {
 				
 				if (atts ["Duration"] == null)
 					ThrowParseException ("The directive is missing a 'duration' attribute.");
-				if (atts ["VaryByParam"] == null)
-					ThrowParseException ("This directive is missing a 'VaryByParam' " +
-							"attribute, which should be set to \"none\", \"*\", " +
+				if (atts ["VaryByParam"] == null && atts ["VaryByControl"] == null)
+					ThrowParseException ("This directive is missing 'VaryByParam' " +
+							"or 'VaryByControl' attribute, which should be set to \"none\", \"*\", " +
 							"or a list of name/value pairs.");
 
 				foreach (DictionaryEntry entry in atts) {
@@ -320,7 +320,7 @@ namespace System.Web.UI {
 					case "location":
 						if (!(this is PageParser))
 							goto default;
-
+						
 						try {
 							oc_location = (OutputCacheLocation) Enum.Parse (
 								typeof (OutputCacheLocation), (string) entry.Value, true);
@@ -331,9 +331,10 @@ namespace System.Web.UI {
 						}
 						break;
 					case "varybycontrol":
+#if ONLY_1_1
 						if (this is PageParser)
 							goto default;
-
+#endif
                                                 oc_controls = (string) entry.Value;
 						break;
 					case "shared":
