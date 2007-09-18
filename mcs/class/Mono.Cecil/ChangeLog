@@ -1,3 +1,9 @@
+2007-09-18  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/MethodBody.cs:
+		Adapt a patch from Ivan <ivanjh@gmail.com>.
+		Fix cloning of the This parameter.
+
 2007-09-12  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs

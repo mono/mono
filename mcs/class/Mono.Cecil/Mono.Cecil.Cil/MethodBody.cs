@@ -129,8 +129,12 @@ namespace Mono.Cecil.Cil {
 				switch (instr.OpCode.OperandType) {
 				case OperandType.InlineParam :
 				case OperandType.ShortInlineParam :
-					int param = body.Method.Parameters.IndexOf ((ParameterDefinition) instr.Operand);
-					ni.Operand = parent.Parameters [param];
+					if (instr.Operand == body.Method.This)
+						ni.Operand = nb.Method.This;
+					else {
+						int param = body.Method.Parameters.IndexOf ((ParameterDefinition) instr.Operand);
+						ni.Operand = parent.Parameters [param];	
+					}
 					break;
 				case OperandType.InlineVar :
 				case OperandType.ShortInlineVar :
