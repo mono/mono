@@ -1,3 +1,10 @@
+2007-09-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Theme.cs: FileDialogs should be using DesktopDirectory instead of
+	Desktop.  This lets it work for people who have moved their desktops
+	from the default location on windows.  For people who have not, both
+	values are the same, so it shouldn't hurt anything.  [Fixes bug #325270]
+
 2007-09-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripControlHostTest.cs: DefaultSize is based off hosted control,

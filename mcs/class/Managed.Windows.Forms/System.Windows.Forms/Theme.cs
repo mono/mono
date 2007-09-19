@@ -585,7 +585,7 @@ namespace System.Windows.Forms
 
 				case UIIcon.PlacesDesktop: {
 					// Default = "Desktop"
-					return Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+					return Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 				}
 
 				case UIIcon.PlacesPersonal: {
