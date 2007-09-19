@@ -1,8 +1,7 @@
 2007-09-19  Martin Baulig  <martin@ximian.com>
 
-	* mini.c (mini_cleanup): Move mono_debug_cleanup() down a little
-	bit further, until after mono_cleanup(); call mono_debugger_cleanup()
-	just before destroying the global code manager.
+	* mini.c (mini_cleanup): Only call mono_debugger_cleanup() here;
+	mono_debug_cleanup() is now part of mono_cleanup().
 
 2007-09-18  Zoltan Varga  <vargaz@gmail.com>
 

@@ -1,5 +1,9 @@
 2007-09-19  Martin Baulig  <martin@ximian.com>
 
+	* domain.c (mono_cleanup): Call mono_debug_cleanup() here.
+
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c (mono_debug_cleanup): Don't call
 	mono_debugger_cleanup(); this is now called earlier from mini_cleanup().
 
