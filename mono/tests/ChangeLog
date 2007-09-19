@@ -1,5 +1,10 @@
 2007-09-19  Marek Habersack  <mhabersack@novell.com>
 
+	* assemblyresolve/Makefile.am (prereq): build the assemblies in
+	the 'prereq' target instead of in the 'all' one.
+
+2007-09-19  Marek Habersack  <mhabersack@novell.com>
+
 	* Makefile.am: assemblyresolve/ assemblies are built only when the
 	make test is ran.
 
