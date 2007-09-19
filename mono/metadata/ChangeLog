@@ -1,3 +1,8 @@
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_cleanup): Don't call
+	mono_debugger_cleanup(); this is now called earlier from mini_cleanup().
+
 2007-09-19  Raja R Harinath  <harinath@gmail.com>
 
 	Fix crash on 'make run-test' in mcs/errors

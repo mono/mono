@@ -1,3 +1,9 @@
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_cleanup): Move mono_debug_cleanup() down a little
+	bit further, until after mono_cleanup(); call mono_debugger_cleanup()
+	just before destroying the global code manager.
+
 2007-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (mono_main): Fix a warning.
