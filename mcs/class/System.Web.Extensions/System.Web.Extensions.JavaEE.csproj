@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -161,8 +161,8 @@
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.js">
-      <Link>Resources\MicrosoftAjax.debug.js</Link>
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.jvm.js">
+      <Link>Resources\MicrosoftAjax.debug.jvm.js</Link>
       <LogicalName>MicrosoftAjax.debug.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.js">
@@ -177,8 +177,8 @@
       <Link>Resources\MicrosoftAjaxTimer.js</Link>
       <LogicalName>MicrosoftAjaxTimer.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.js">
-      <Link>Resources\MicrosoftAjaxWebForms.debug.js</Link>
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.jvm.js">
+      <Link>Resources\MicrosoftAjaxWebForms.debug.jvm.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.debug.js</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
