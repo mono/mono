@@ -161,7 +161,7 @@ namespace Mono.CSharp.Linq
 			Parameters p = new Parameters (parameters);
 
 			LambdaExpression selector = new LambdaExpression (
-				null, null, (TypeContainer) ec.DeclContainer, p, ec.CurrentBlock, loc);
+				null, null, (TypeContainer)ec.TypeContainer, p, ec.CurrentBlock, loc);
 			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
 			selector.Block.AddStatement (new Return (expr, loc));
 
@@ -230,7 +230,7 @@ namespace Mono.CSharp.Linq
 				ArrayList transp_args = new ArrayList (2);
 				transp_args.Add (new AnonymousTypeParameter (parentParameter));
 				transp_args.Add (CreateAnonymousTypeVariable (parameter));
-				element_selector = new AnonymousTypeDeclaration (transp_args, (TypeContainer) ec.DeclContainer, loc);
+				element_selector = new AnonymousTypeDeclaration (transp_args, (TypeContainer) ec.TypeContainer, loc);
 			}
 
 			ArrayList args = new ArrayList ();
@@ -374,7 +374,7 @@ namespace Mono.CSharp.Linq
 				ArrayList join_args = new ArrayList (2);
 				join_args.Add (new AnonymousTypeParameter (parentParameter));
 				join_args.Add (new AnonymousTypeParameter (parameter));
-				projection = new AnonymousTypeDeclaration (join_args, (TypeContainer) ec.DeclContainer, loc);
+				projection = new AnonymousTypeDeclaration (join_args, (TypeContainer) ec.TypeContainer, loc);
 			}
 
 			args.Add (CreateSelectorArgument (ec, projection,

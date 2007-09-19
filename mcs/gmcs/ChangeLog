@@ -1,3 +1,10 @@
+2007-09-19  Marek Safar  <marek.safar@gmail.com>
+	
+	* generic.cs: Fixed type inference for generic delegate arguments whose
+	return types are generic delegates.
+	
+	* linq.cs: Replaced ec.DeclContainer with ec.TypeContainer.
+	
 2007-09-17  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay, linq: Implemented query continuation.

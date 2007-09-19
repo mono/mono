@@ -2672,7 +2672,7 @@ namespace Mono.CSharp {
 
 			if (!fixed_any && fixDependent)
 				return false;
-
+			
 			// For all arguments where the corresponding argument output types
 			// contain unfixed type variables but the input types do not,
 			// an output type inference is made
@@ -2690,19 +2690,7 @@ namespace Mono.CSharp {
 				rtype = g_args[rtype.GenericParameterPosition];
 #endif
 
-				bool all_params_fixed = false;
-				if (rtype.IsGenericParameter) {
-					all_params_fixed = tic.IsTypeNonDependent (mi, rtype);
-				} else if (rtype.IsGenericType) {
-					all_params_fixed = true;
-					foreach (Type t in rtype.GetGenericArguments ())
-						if (!tic.IsTypeNonDependent (mi, t)) {
-							all_params_fixed = false;
-							break;
-						}
-				}
-
-				if (all_params_fixed)
+				if (tic.IsReturnTypeNonDependent (mi, rtype))
 					tic.OutputTypeInference (ec, ((Argument) arguments[i]).Expr, t_i);
 			}
 
@@ -2716,7 +2704,7 @@ namespace Mono.CSharp {
 		readonly Type[] unfixed_types;
 		readonly Type[] fixed_types;
 		readonly ArrayList[] bounds;
-
+		
 		public TypeInferenceContext (Type[] typeArguments)
 		{
 			if (typeArguments.Length == 0)
@@ -2757,6 +2745,22 @@ namespace Mono.CSharp {
 
 			a.Add (t);
 		}
+		
+		bool AllTypesAreFixed (Type[] types)
+		{
+			foreach (Type t in types) {
+				if (t.IsGenericParameter) {
+					if (!IsFixed (t))
+						return false;
+					continue;
+				}
+
+				if (t.IsGenericType)
+					return AllTypesAreFixed (t.GetGenericArguments ());
+			}
+			
+			return true;
+		}		
 
 		//
 		// 26.3.3.8 Exact Inference
@@ -2824,8 +2828,10 @@ namespace Mono.CSharp {
 
 				if (!FixType (i))
 					return false;
+				
 				fixed_any = true;
 			}
+
 			return true;
 		}
 
@@ -2849,11 +2855,10 @@ namespace Mono.CSharp {
 
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types
-				Type [] g_args = t.GetGenericArguments ();
-				if (!rtype.IsGenericParameter)
-					continue;
-
-				rtype = g_args [rtype.GenericParameterPosition];
+				if (rtype.IsGenericParameter) {
+					Type [] g_args = t.GetGenericArguments ();
+					rtype = g_args [rtype.GenericParameterPosition];
+				}
 #endif
 				// Remove dependent types, they cannot be fixed yet
 				RemoveDependentTypes (types_to_fix, rtype);
@@ -2940,26 +2945,43 @@ namespace Mono.CSharp {
 			}
 
 			return parameter;
-		}		
-
-		public bool IsTypeNonDependent (MethodInfo mi, Type type)
+		}
+		
+		//
+		// Tests whether all delegate input arguments are fixed and generic output type
+		// requires output type inference 
+		//
+		public bool IsReturnTypeNonDependent (MethodInfo invoke, Type returnType)
 		{
-			if (IsUnfixed (type) < 0)
-				return false;
-
-			ParameterData d_parameters = TypeManager.GetParameterData (mi);
-			foreach (Type t in d_parameters.Types) {
-				if (!t.IsGenericParameter)
-					continue;
-
-				if (IsUnfixed (t) >= 0)
+			if (returnType.IsGenericParameter) {
+				if (IsFixed (returnType))
+				    return false;
+			} else if (returnType.IsGenericType) {
+				if (TypeManager.IsDelegateType (returnType)) {
+					invoke = Delegate.GetInvokeMethod (returnType, returnType);
+					return IsReturnTypeNonDependent (invoke, invoke.ReturnType);
+				}
+					
+				Type[] g_args = returnType.GetGenericArguments ();
+				
+				// At least one unfixed return type has to exist 
+				if (AllTypesAreFixed (g_args))
 					return false;
+			} else {
+				return false;
 			}
 
-			return true;
+			// All generic input arguments have to be fixed
+			ParameterData d_parameters = TypeManager.GetParameterData (invoke);
+			return AllTypesAreFixed (d_parameters.Types);
 		}
+		
+		bool IsFixed (Type type)
+		{
+			return IsUnfixed (type) == -1;
+		}		
 
-		public int IsUnfixed (Type type)
+		int IsUnfixed (Type type)
 		{
 			if (!type.IsGenericParameter)
 				return -1;
@@ -3024,7 +3046,7 @@ namespace Mono.CSharp {
 					return;
 
 				v = v.GetGenericTypeDefinition ().MakeGenericType (ga_u);
-
+				
 				// And standard implicit conversion exists from U to C<U1..Uk>
 				if (!Convert.ImplicitStandardConversionExists (new TypeExpression (u, Location.Null), v))
 					return;
