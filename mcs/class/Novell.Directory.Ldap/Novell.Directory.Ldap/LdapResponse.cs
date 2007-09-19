@@ -168,6 +168,8 @@ namespace Novell.Directory.Ldap
 				{
 					return exception.ResultCode;
 				}
+				if (((RfcResponse) message.Response) is RfcIntermediateResponse)
+					return 0;
 				return ((RfcResponse) message.Response).getResultCode().intValue();
 			}
 			
@@ -198,7 +200,6 @@ namespace Novell.Directory.Ldap
 					
 					default: 
 						ex = new LdapException(LdapException.resultCodeToString(ResultCode), ResultCode, ErrorMessage, MatchedDN);
-//						ex = new LdapException("49", 49, "hello error", "hi error..");
 						break;
 					
 				}

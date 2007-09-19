@@ -66,7 +66,10 @@ namespace Novell.Directory.Ldap.Events
       }
       set
       {
-	sleep_interval = value;
+		  if(value <= 0)
+			  throw new ArgumentOutOfRangeException("SleepInterval","cannot take the negative or zero values ");
+		  else
+			  sleep_interval = value;
       }
     }
 

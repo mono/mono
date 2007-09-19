@@ -173,6 +173,10 @@ Novell.Directory.Ldap.Extensions/MergePartitionsRequest.cs
 Novell.Directory.Ldap.Extensions/SplitPartitionRequest.cs
 Novell.Directory.Ldap.Extensions/NamingContextConstants.cs
 Novell.Directory.Ldap.Extensions/TriggerBackgroundProcessRequest.cs
+Novell.Directory.Ldap.Extensions/BackupRestoreConstants.cs
+Novell.Directory.Ldap.Extensions/LdapBackupRequest.cs
+Novell.Directory.Ldap.Extensions/LdapBackupResponse.cs
+Novell.Directory.Ldap.Extensions/LdapRestoreRequest.cs
 Novell.Directory.Ldap.Controls/LdapEntryChangeControl.cs
 Novell.Directory.Ldap.Controls/LdapPersistSearchControl.cs
 Novell.Directory.Ldap.Controls/LdapSortControl.cs

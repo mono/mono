@@ -168,7 +168,7 @@ namespace Novell.Directory.Ldap.Rfc2251
 
     public RfcLdapOID getResponseName()
     {
-        return (m_responseNameIndex != 0) ? (RfcLdapOID)get_Renamed(m_responseNameIndex)
+        return (m_responseNameIndex >= 0) ? (RfcLdapOID)get_Renamed(m_responseNameIndex)
                                         : null;
     }
 

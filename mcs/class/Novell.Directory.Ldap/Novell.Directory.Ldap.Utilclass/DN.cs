@@ -694,8 +694,9 @@ namespace Novell.Directory.Ldap.Utilclass
 			int j = this.rdnList.Count - 1; //index to an RDN of the ContainedDN
 			//Search from the end of the DN for an RDN that matches the end RDN of
 			//containerDN.
-			while (!((RDN) this.rdnList[j--]).equals((RDN) containerDN.rdnList[i]))
+			while (!((RDN) this.rdnList[j]).equals((RDN) containerDN.rdnList[i]))
 			{
+				j--;
 				if (j <= 0)
 					return false;
 				//if the end RDN of containerDN does not have any equal

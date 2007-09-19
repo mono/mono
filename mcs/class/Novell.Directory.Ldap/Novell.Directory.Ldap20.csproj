@@ -183,7 +183,11 @@
     <Compile Include="Novell.Directory.Ldap.Extensions\SetReplicationFilterRequest.cs" />
     <Compile Include="Novell.Directory.Ldap.Extensions\SplitOrphanPartitionRequest.cs" />
     <Compile Include="Novell.Directory.Ldap.Extensions\SplitPartitionRequest.cs" />
-    <Compile Include="Novell.Directory.Ldap.Extensions\TriggerBackgroundProcessRequest.cs" />
+	 <Compile Include="Novell.Directory.Ldap.Extensions\TriggerBackgroundProcessRequest.cs" />
+    <Compile Include="Novell.Directory.Ldap.Extensions\BackupRestoreConstants.cs" />
+    <Compile Include="Novell.Directory.Ldap.Extensions\LdapBackupRequest.cs" />
+    <Compile Include="Novell.Directory.Ldap.Extensions\LdapBackupResponse.cs" />
+    <Compile Include="Novell.Directory.Ldap.Extensions\LdapRestoreRequest.cs" />
     <Compile Include="Novell.Directory.Ldap.Rfc2251\RfcAbandonRequest.cs" />
     <Compile Include="Novell.Directory.Ldap.Rfc2251\RfcAddRequest.cs" />
     <Compile Include="Novell.Directory.Ldap.Rfc2251\RfcAddResponse.cs" />

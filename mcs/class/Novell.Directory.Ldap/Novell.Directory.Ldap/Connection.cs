@@ -810,10 +810,20 @@ namespace Novell.Directory.Ldap
 	
 					}
 				}
+			catch (System.Net.Sockets.SocketException se)
+			{
+				// Unable to connect to server host:port
+				freeWriteSemaphore(semId); 
+				sock = null;
+				socket = null;
+				throw new LdapException(ExceptionMessages.CONNECTION_ERROR, new System.Object[] { host, port }, LdapException.CONNECT_ERROR, null, se);
+			}
 				catch (System.IO.IOException ioe)
 				{
 					// Unable to connect to server host:port
-	//				freeWriteSemaphore(semId);
+				freeWriteSemaphore(semId);
+				sock = null;
+				socket = null;
 					throw new LdapException(ExceptionMessages.CONNECTION_ERROR, new System.Object[]{host, port}, LdapException.CONNECT_ERROR, null, ioe);
 				}
 				// Set host and port
@@ -1117,10 +1127,11 @@ namespace Novell.Directory.Ldap
 			}
 			bindProperties = null;
 			
-			if (socket != null)
+			if (socket != null || sock != null)
 			{
 #if !TARGET_JVM
 				// Just before closing the sockets, abort the reader thread
+				if ((reader != null) && (reason != "reader: thread stopping")) 
 				reader.Abort();
 #endif
 				// Close the socket
@@ -1252,7 +1263,15 @@ namespace Novell.Directory.Ldap
 */
 //				NetworkStream nstream = new NetworkStream(this.socket,true);
 				// Load Mono.Security.dll
-				Assembly a = Assembly.LoadFrom("Mono.Security.dll");
+				Assembly a = null;
+				try
+				{
+					a = Assembly.LoadFrom("Mono.Security.dll");
+				}
+				catch(System.IO.FileNotFoundException)
+				{
+					throw new LdapException(ExceptionMessages.SSL_PROVIDER_MISSING, LdapException.SSL_PROVIDER_NOT_FOUND, null);							
+				}
 				Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
 				BindingFlags flags = (BindingFlags.NonPublic  | BindingFlags.Public |
 					BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
@@ -1679,7 +1698,7 @@ namespace Novell.Directory.Ldap
 		static Connection()
 		{
 			nameLock = new System.Object();
-			sdk = new System.Text.StringBuilder("2.1.4").ToString();
+			sdk = new System.Text.StringBuilder("2.1.8").ToString();
 			protocol = 3;
 		}
 	}

@@ -277,6 +277,7 @@ namespace Novell.Directory.Ldap
 			this.collective = collective;
 			this.userMod = isUserModifiable;
 			this.usage = usage;
+			this.superior = superior;
 			base.Value = formatString();
 			return ;
 		}
@@ -306,7 +307,7 @@ namespace Novell.Directory.Ldap
 				if ((System.Object) parser.Syntax != null)
 					syntaxString = parser.Syntax;
 				if ((System.Object) parser.Superior != null)
-					syntaxString = parser.Superior;
+					superior = parser.Superior;
 				single = parser.Single;
 				base.obsolete = parser.Obsolete;
 				System.Collections.IEnumerator qualifiers = parser.Qualifiers;
