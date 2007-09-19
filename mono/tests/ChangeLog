@@ -1,3 +1,8 @@
+2007-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile.am: assemblyresolve/ assemblies are built only when the
+	make test is ran.
+
 2007-09-19  Raja R Harinath  <harinath@gmail.com>
 
 	* assemblyresolve/Makefile.am: Fix srcdir != builddir issues.
