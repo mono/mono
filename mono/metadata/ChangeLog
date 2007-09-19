@@ -1,3 +1,11 @@
+2007-09-19  Raja R Harinath  <harinath@gmail.com>
+
+	Fix crash on 'make run-test' in mcs/errors
+	* metadata.c (type_in_image): New.  Carve out of ginst_in_image.
+	Avoid more potential allocations in mono_class_from_mono_type.
+	(ginst_in_image): Update to changes.
+	(gclass_in_image): Rearrange slightly.
+
 2007-09-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Move the code that sets up class->methods to 
