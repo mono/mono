@@ -1,3 +1,7 @@
+2007-09-19  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c (mono_thread_abort): Correctly handle ThreadAbortException,
+	fixes bug 325507.
+
 2007-09-19  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mini_cleanup): Only call mono_debugger_cleanup() here;
