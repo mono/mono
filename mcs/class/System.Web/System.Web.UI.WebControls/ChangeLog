@@ -1,3 +1,8 @@
+2007-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* GridView.cs: copy attributes from GridView to the child table,
+	as this is where the rendering takes place. Fixes bug #326309.
+
 2007-09-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Calendar.cs: correctly apply day cell style. Fixes bug #315903

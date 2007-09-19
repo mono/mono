@@ -1552,6 +1552,7 @@ namespace System.Web.UI.WebControls
 			
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
+			table.CopyBaseAttributes (this);
 			
 			foreach (GridViewRow row in table.Rows) {
 				switch (row.RowType) {
