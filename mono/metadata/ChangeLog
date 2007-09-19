@@ -1,3 +1,17 @@
+2007-09-19  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (signature_in_image): New.  Carve out of type_in_image.
+	(ginst_in_image, gclass_in_image): Simplify.  Change signature to
+	use the corresponding datatypes.
+	(type_in_image): Update to changes.
+	(CleanForImageUserData): Simplify.
+	(steal_gclass_in_image): Carved out of old 'gclass_in_image'.
+	Avoid quadratic behaviour in handling the "stolen" list by
+	separating the filter predicate out, and by prepending the stolen
+	items rather than appending them.
+	(steal_ginst_in_image): Likewise.
+	(mono_metadata_clean_for_image): Update to changes.
+
 2007-09-19  Martin Baulig  <martin@ximian.com>
 
 	* domain.c (mono_cleanup): Call mono_debug_cleanup() here.
