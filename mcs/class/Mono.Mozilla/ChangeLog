@@ -1,3 +1,7 @@
+2007-09-19 Andreia Gaita <avidigal@novell.com>
+
+	* Forgot to commit an update on the xulbrowser check :/
+
 2007-09-13 Andreia Gaita <avidigal@novell.com>
 
 	* add check for xulbrowser library, if it's not 

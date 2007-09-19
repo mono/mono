@@ -73,6 +73,7 @@ namespace Mono.Mozilla
 				xulbrowserInstalled = false;
 				return;
 			}
+			xulbrowserInstalled = true;
 			boundControls.Add (control as IWebBrowser, info);
 			DebugStartup ();
 		}
