@@ -1,3 +1,7 @@
+2007-07-31  Ben Motmans  <ben.motmans@gmail.com>
+
+	* SR.Designer.cs: use the correct resource name
+
 2007-06-03  Kamil Skalski  <nazgul@nemerle.org>
 
 	* SQLiteConvert.cs: Port function for converting native UTF8 string
