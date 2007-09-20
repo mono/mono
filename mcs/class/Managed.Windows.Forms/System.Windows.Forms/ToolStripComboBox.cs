@@ -39,6 +39,9 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripComboBox () : base (new ToolStripComboBoxControl ())
 		{
+			// The default size of a new ToolStripComboBox doesn't seem
+			// to be DefaultSize.
+			Size = new Size (121, 21);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]

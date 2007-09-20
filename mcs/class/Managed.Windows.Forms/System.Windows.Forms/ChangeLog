@@ -1,3 +1,9 @@
+2007-09-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripComboBox.cs: Manually set the size of this control in the
+	constructor, as it doesn't seem to be the same as DefaultSize.
+	Fixes a failing monobuild test.
+
 2007-09-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePicker.cs: If the user sets MinDate to DateTime.MinValue,
