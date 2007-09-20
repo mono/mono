@@ -1,3 +1,11 @@
+2007-09-10  Massimiliano Mantione  <massi@ximian.com>
+
+	* profiler.h, profiler-private.h, profiler.c: add a new profiler
+	event to handle unloading methods. After the event is called, the
+	corresponding MonoMethod* must be considered invalid.
+	* loader.c (mono_free_method): call the new mono_profiler_method_free
+	event.
+
 2007-09-20  Mark Probst  <mark.probst@gmail.com>
 
 	* domain-internals.h: New flag in MonoJitInfo which marks shared
