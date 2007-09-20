@@ -314,6 +314,19 @@ namespace System.Windows.Forms
 			return true;
 		}
 		#endregion
+
+		#region Internal Methods
+		internal override void HandleClick (EventArgs e)
+		{
+			base.HandleClick (e);
+
+			MouseEventArgs mea = e as MouseEventArgs;
+			
+			if (mea != null)
+				if (ButtonBounds.Contains (mea.Location))
+					OnButtonClick (EventArgs.Empty);
+		}
+		#endregion
 		
 		#region Public Events
 		static object ButtonClickEvent = new object ();
