@@ -1596,7 +1596,13 @@ namespace System.Windows.Forms
 				area = button_area;
 
 			if (area.Contains (e.X, e.Y)) {
-				DropDownListBox ();
+				if (Items.Count > 0)
+					DropDownListBox ();
+				else {
+					button_state = ButtonState.Pushed;
+					OnDropDown (EventArgs.Empty);
+				}
+				
 				Invalidate (button_area);
 				Update ();
 			}
@@ -1618,6 +1624,10 @@ namespace System.Windows.Forms
 		void OnMouseUpCB (object sender, MouseEventArgs e)
 		{
 			Capture = false;
+			
+			button_state = ButtonState.Normal;
+			Invalidate (button_area);
+
 			OnClick (EventArgs.Empty);
 
 			if (dropped_down)

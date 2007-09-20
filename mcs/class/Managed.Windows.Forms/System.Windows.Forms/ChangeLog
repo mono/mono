@@ -1,5 +1,10 @@
 2007-09-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: When there are no items, do not show the dropdown if
+	the down arrow is clicked.  Fixes part of bug #322668.
+
+2007-09-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripComboBox.cs: Manually set the size of this control in the
 	constructor, as it doesn't seem to be the same as DefaultSize.
 	Fixes a failing monobuild test.
