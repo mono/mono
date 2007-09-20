@@ -3262,6 +3262,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (new DateTime (2008, 2, 5), dt.Value, "#11");
 		}
 
+#if NET_2_0
 		[Test]
 		public void DateTimeMinDate ()
 		{
@@ -3272,7 +3273,8 @@ namespace MonoTests.System.Windows.Forms {
 			dt.MinDate = DateTime.MinValue;
 			Assert.AreEqual (DateTimePicker.MinimumDateTime, dt.MinDate, "A1");
 		}
-		
+#endif
+
 		[Test]
 		public void MinDate_Invalid ()
 		{
