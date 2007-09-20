@@ -1,3 +1,11 @@
+2007-09-21  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: if we're running on a platform with
+	the directory separator character that's different to the Unix
+	style '/' one, convert the input file path to the virtual path
+	style string, with path parts separated by '/'. Patch from Robert
+	Jordan <robertj@gmx.net>, thanks! Fixes bug #324229.
+	
 2007-09-20  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: if a member passed to

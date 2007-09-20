@@ -756,9 +756,13 @@ namespace System.Web.Compilation
 	
 			if (StrUtils.StartsWith (inputFile, physPath))
 				inputFile = parser.InputFile.Substring (physPath.Length - 1);
-			 else
+			else
 				return;
-			
+
+			char dsc = System.IO.Path.DirectorySeparatorChar;
+			if (dsc != '/')
+				inputFile = inputFile.Replace (dsc, '/');
+
 			object obj = HttpContext.GetLocalResourceObject (inputFile, resname);
 			if (obj == null)
 				return;
