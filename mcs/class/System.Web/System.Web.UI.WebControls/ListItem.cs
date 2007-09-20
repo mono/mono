@@ -37,8 +37,8 @@ namespace System.Web.UI.WebControls {
 	// attributes
 	[ControlBuilder(typeof(ListItemControlBuilder))]
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
-	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager {
-	
+	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager
+	{
 #if NET_2_0
 		public ListItem (string text, string value, bool enabled) : this (text, value)
 		{
@@ -118,10 +118,13 @@ namespace System.Web.UI.WebControls {
 				sb.LoadViewState (states[0]);
 			}
 			
-			if (states [1] != null) text = (string) states [1];
-			if (states [2] != null) value = (string) states [2];
+			if (states [1] != null)
+				text = (string) states [1];
+			if (states [2] != null)
+				value = (string) states [2];
 #if NET_2_0
-			if (states [3] != null) enabled = (bool) states [3];
+			if (states [3] != null)
+				enabled = (bool) states [3];
 #endif
 		}
 
@@ -158,13 +161,11 @@ namespace System.Web.UI.WebControls {
 		{
 			tracking = true;
 		}
-	
 
 		public override string ToString ()
 		{
 			return Text;
 		}
-	
 	
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -184,21 +185,13 @@ namespace System.Web.UI.WebControls {
 		}
 
 		bool IStateManager.IsTrackingViewState {
-			get {
-				return tracking;
-			}
-		
+			get { return tracking; }
 		}
 
 		[DefaultValue(false)]
 		public bool Selected {
-			get {
-				return selected;
-			}
-		
-			set {
-				selected = value;
-			}
+			get { return selected; }
+			set { selected = value; }
 		}
 
 		[DefaultValue("")]
@@ -247,8 +240,7 @@ namespace System.Web.UI.WebControls {
 		public bool Enabled
 		{
 			get { return enabled; }
-			set
-			{
+			set {
 				enabled = value;
 				if (tracking)
 					SetDirty ();

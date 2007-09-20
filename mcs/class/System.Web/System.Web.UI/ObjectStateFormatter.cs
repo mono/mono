@@ -92,7 +92,8 @@ namespace System.Web.UI {
 			}
 		}
 
-		internal HashAlgorithm GetAlgo () {
+		internal HashAlgorithm GetAlgo ()
+		{
 			if (algo != null)
 				return algo;
 			if (!EnableMac)
@@ -162,9 +163,8 @@ namespace System.Web.UI {
 #endif
 			Stream ms = new MemoryStream (buffer, 0, length, false, false);
 #if NET_2_0
-			if (isEncrypted) {
+			if (isEncrypted)
 				ms = new CryptoStream (ms, page.GetCryptoTransform (CryptoStreamMode.Read), CryptoStreamMode.Read);
-			}
 #endif
 			return Deserialize (ms);
 		}
@@ -187,9 +187,9 @@ namespace System.Web.UI {
 			ms.WriteByte((byte)(needEncryption? 1 : 0));
 #endif
 			
-			#if TRACE
-				ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
-			#endif
+#if TRACE
+			ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
+#endif
 			if (EnableMac && ms.Length > 0) {
 				HashAlgorithm algo = GetAlgo ();
 				if (algo != null) {
@@ -222,7 +222,7 @@ namespace System.Web.UI {
 			return ObjectFormatter.ReadObject (r, new ReaderContext ());
 		}
 		
-		#region IFormatter
+#region IFormatter
 		
 		object IFormatter.Deserialize (Stream serializationStream)
 		{
@@ -249,17 +249,17 @@ namespace System.Web.UI {
 			set { }
 		}
 		
-		#endregion
+#endregion
 
-		#region Object Readers/Writers
+#region Object Readers/Writers
 		
-		class WriterContext {
+		class WriterContext
+		{
 			Hashtable cache;
 			short nextKey = 0;
 			short key = 0;
 
-			public short Key
-			{
+			public short Key {
 				get { return key; }
 			}
 
@@ -282,7 +282,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class ReaderContext {
+		class ReaderContext
+		{
 			ArrayList cache;
 			
 			public void CacheItem (object o)
@@ -299,7 +300,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		abstract class ObjectFormatter {
+		abstract class ObjectFormatter
+		{
 			static readonly Hashtable writeMap = new Hashtable ();
 			static ObjectFormatter [] readMap = new ObjectFormatter [256];
 			static BinaryObjectFormatter binaryObjectFormatter;
@@ -384,7 +386,7 @@ namespace System.Web.UI {
 			
 			public static void WriteObject (BinaryWriter w, object o, WriterContext ctx)
 			{
-				#if TRACE
+#if TRACE
 				if (o != null) {
 					Trace.WriteLine (String.Format ("Writing {0} (type: {1})", o, o.GetType ()));
 					Trace.Indent ();
@@ -392,7 +394,7 @@ namespace System.Web.UI {
 					Trace.WriteLine ("Writing null");
 				}
 				long pos = w.BaseStream.Position;
-				#endif
+#endif
 				
 				if (o == null) {
 					w.Write ((byte) 0);
@@ -426,10 +428,10 @@ namespace System.Web.UI {
 				}
 
 				fmt.Write (w, o, ctx);
-				#if TRACE
+#if TRACE
 				Trace.Unindent ();
 				Trace.WriteLine (String.Format ("Wrote {0} (type: {1}) {2} bytes", o, o.GetType (), w.BaseStream.Position - pos));
-				#endif
+#endif
 			}
 			
 			public static object ReadObject (BinaryReader r, ReaderContext ctx)
@@ -448,9 +450,8 @@ namespace System.Web.UI {
 					int high = (value >> 7) & 0x01ffffff;
 					byte b = (byte)(value & 0x7f);
 	
-					if (high != 0) {
+					if (high != 0)
 						b = (byte)(b | 0x80);
-					}
 	
 					w.Write(b);
 					value = high;
@@ -474,8 +475,9 @@ namespace System.Web.UI {
 			}
 		}
 		
-		#region Primitive Formatters
-		class StringFormatter : ObjectFormatter {
+#region Primitive Formatters
+		class StringFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				if (ctx.RegisterCache (o)) {
@@ -506,7 +508,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class Int64Formatter : ObjectFormatter {
+		class Int64Formatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -522,7 +525,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class Int32Formatter : ObjectFormatter {
+		class Int32Formatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				int i = (int) o;
@@ -542,6 +546,7 @@ namespace System.Web.UI {
 				else
 					return (int) r.ReadByte ();
 			}
+			
 			protected override Type Type {
 				get { return typeof (int); }
 			}
@@ -551,7 +556,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class Int16Formatter : ObjectFormatter {
+		class Int16Formatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -562,12 +568,14 @@ namespace System.Web.UI {
 			{
 				return r.ReadInt16 ();
 			}
+
 			protected override Type Type {
 				get { return typeof (short); }
 			}
 		}
 		
-		class ByteFormatter : ObjectFormatter {
+		class ByteFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -578,12 +586,14 @@ namespace System.Web.UI {
 			{
 				return r.ReadByte ();
 			}
+
 			protected override Type Type {
 				get { return typeof (byte); }
 			}
 		}
 		
-		class BooleanFormatter : ObjectFormatter {
+		class BooleanFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				if ((bool)o == true)
@@ -606,7 +616,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class CharFormatter : ObjectFormatter {
+		class CharFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -623,7 +634,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class DateTimeFormatter : ObjectFormatter {
+		class DateTimeFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -640,7 +652,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class PairFormatter : ObjectFormatter {
+		class PairFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Pair p = (Pair) o;
@@ -662,7 +675,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class TripletFormatter : ObjectFormatter {
+		class TripletFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Triplet t = (Triplet) o;
@@ -686,7 +700,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class ArrayListFormatter : ObjectFormatter {
+		class ArrayListFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				ArrayList l = (ArrayList) o;
@@ -713,7 +728,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class HashtableFormatter : ObjectFormatter {
+		class HashtableFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Hashtable ht = (Hashtable) o;
@@ -746,7 +762,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class ObjectArrayFormatter : ObjectFormatter {
+		class ObjectArrayFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				object [] val = (object []) o;
@@ -773,10 +790,11 @@ namespace System.Web.UI {
 			}
 		}
 		
-		#endregion
+#endregion
 		
-		#region System.Web Optimizations
-		class ColorFormatter : ObjectFormatter {
+#region System.Web Optimizations
+		class ColorFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Color c = (Color) o;
@@ -787,8 +805,7 @@ namespace System.Web.UI {
 						w.Write (-1); //isempty marker
 					else
 						w.Write ((int) c.ToKnownColor ());
-				}
-				else {
+				} else {
 					w.Write (PrimaryId);
 					w.Write (c.ToArgb ());
 				}
@@ -815,10 +832,11 @@ namespace System.Web.UI {
 			}
 		}
 		
-		#endregion
+#endregion
 		
-		#region Special Formatters
-		class EnumFormatter : ObjectFormatter {
+#region Special Formatters
+		class EnumFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				object value = Convert.ChangeType (o, ((Enum) o).GetTypeCode ());
@@ -834,12 +852,14 @@ namespace System.Web.UI {
 				
 				return Enum.ToObject (t, value);
 			}
+
 			protected override Type Type {
 				get { return typeof (Enum); }
 			}
 		}
 		
-		class TypeFormatter : ObjectFormatter {
+		class TypeFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				if (ctx.RegisterCache (o)) {
@@ -876,8 +896,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class SingleRankArrayFormatter : ObjectFormatter {
-
+		class SingleRankArrayFormatter : ObjectFormatter
+		{
 			readonly BinaryFormatter _binaryFormatter = new BinaryFormatter ();
 
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
@@ -899,9 +919,8 @@ namespace System.Web.UI {
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
-				if (token == SecondaryId) {
+				if (token == SecondaryId)
 					return _binaryFormatter.Deserialize (r.BaseStream);
-				}
 				Type t = (Type) ReadObject (r, ctx);
 				int len = Read7BitEncodedInt (r);
 				Array val = Array.CreateInstance (t, len);
@@ -921,7 +940,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class FontUnitFormatter : StringFormatter {
+		class FontUnitFormatter : StringFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				base.Write (w, o.ToString (), ctx);
@@ -937,7 +957,8 @@ namespace System.Web.UI {
 			}
 		}
 
-		class UnitFormatter : StringFormatter {
+		class UnitFormatter : StringFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				base.Write (w, o.ToString (), ctx);
@@ -953,7 +974,8 @@ namespace System.Web.UI {
 			}
 		}
 
-		class TypeConverterFormatter : StringFormatter {
+		class TypeConverterFormatter : StringFormatter
+		{
 			TypeConverter converter;
 
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
@@ -983,7 +1005,8 @@ namespace System.Web.UI {
 			}
 		}
 
-		class BinaryObjectFormatter : ObjectFormatter {
+		class BinaryObjectFormatter : ObjectFormatter
+		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
@@ -1011,8 +1034,8 @@ namespace System.Web.UI {
 			}
 		}
 		
-		#endregion
+#endregion
 		
-		#endregion
+#endregion
 	}
 }
