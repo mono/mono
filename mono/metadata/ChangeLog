@@ -1,3 +1,16 @@
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* domain-internals.h: New flag in MonoJitInfo which marks shared
+	generic methods.  New hash table (shared_generics_hash) in
+	MonoDomain to keep track of shared generic methods.  Prototypes
+	for functions to register and lookup shared generic methods.
+
+	* domain.c: Support for registering and looking up shared generic
+	methods via a hash table (shared_generics_hash) in MonoDomain.
+
+	* class-internals.h: New exception to signal failure of shared
+	compilation of a generic method.  New counters for generics
+	sharing in MonoStats.
 
 Thu Sep 20 16:59:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

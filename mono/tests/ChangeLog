@@ -1,3 +1,9 @@
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: added
+
+	* Makefile.am: added generics-sharing.2.cs
+
 2007-09-19  Marek Habersack  <mhabersack@novell.com>
 
 	* assemblyresolve/Makefile.am (prereq): build the assemblies in

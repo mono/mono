@@ -1,3 +1,20 @@
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: First generics sharing implementation.  Can only share
+	in very simple cases.  If sharing doesn't work it falls back to
+	dedicated compilation.
+
+	* mini.h: Flag in MonoCompile to specify whether generic
+	compilation is shared.  Flags enum for marking which generic inst
+	of a context is used.  Prototypes for helper functions.
+
+	* generic-sharing.c: Helper functions for generic method sharing.
+
+	* optflags-def.h: Optimization flag (gshared) for enabling generic
+	method sharing added.
+
+	* Makefile.am: generic-sharing.c added.
+
 2007-09-19 Daniel Nauck <dna@mono-project.de>
 
 	* mini.c (mono_thread_abort): fixed typo in r86014. It should be '==' instead of '!='.
