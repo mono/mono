@@ -3263,6 +3263,17 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void DateTimeMinDate ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+
+			// MinDate can be set to DateTime.MinValue, which sets MinDate to
+			// DateTimePicker.MinDateTime
+			dt.MinDate = DateTime.MinValue;
+			Assert.AreEqual (DateTimePicker.MinimumDateTime, dt.MinDate, "A1");
+		}
+		
+		[Test]
 		public void MinDate_Invalid ()
 		{
 			DateTimePicker dt = new DateTimePicker ();

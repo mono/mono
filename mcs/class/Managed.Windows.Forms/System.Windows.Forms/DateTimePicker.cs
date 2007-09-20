@@ -440,6 +440,11 @@ namespace System.Windows.Forms {
 		
 		public DateTime MinDate {
 			set {
+				// If the user tries to set DateTime.MinValue, fix it to
+				// DateTimePicker's minimum.
+				if (value == DateTime.MinValue)
+					value = MinDateTime;
+					
 #if NET_2_0
 				if (value > MaxDate) {
 #else
