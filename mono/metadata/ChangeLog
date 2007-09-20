@@ -1,3 +1,9 @@
+
+Thu Sep 20 16:59:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, metadata-internals.h: don't keep a file descriptor open
+	for loaded assemblies (bug#325988).
+
 2007-09-19  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata.c (signature_in_image): New.  Carve out of type_in_image.
