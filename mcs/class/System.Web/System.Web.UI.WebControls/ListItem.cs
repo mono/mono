@@ -113,7 +113,11 @@ namespace System.Web.UI.WebControls {
 
 			object [] states = (object []) state;
 
-			if (states [0] != null) sb = (StateBag) states[0];
+			if (states [0] != null) {
+				sb = new StateBag (true);
+				sb.LoadViewState (states[0]);
+			}
+			
 			if (states [1] != null) text = (string) states [1];
 			if (states [2] != null) value = (string) states [2];
 #if NET_2_0
@@ -136,7 +140,7 @@ namespace System.Web.UI.WebControls {
 #else
 			object [] state = new object [3];
 #endif
-			state [0] = sb;
+			state [0] = sb != null ? sb.SaveViewState () : null;
 			state [1] = (object) text;
 			state [2] = (object) value;
 #if NET_2_0

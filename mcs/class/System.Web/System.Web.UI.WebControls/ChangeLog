@@ -1,3 +1,10 @@
+2007-09-21  Marek Habersack  <mhabersack@novell.com>
+
+	* ListItem.cs: don't save StateBag in the control state - the
+	class is not serializable and therefore ObjectStateFormatter
+	cannot convert it. Instead have the sb object save its own state
+	and store the returned value. Fixes bug #326288.
+
 2007-09-20  Marek Habersack  <mhabersack@novell.com>
 
 	* LoginView.cs: implemented RoleGroups support. Fixes bug
