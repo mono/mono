@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls
 
 		protected override bool FilterControl (Control control)
 		{
+			Console.WriteLine ("{0}.FilterControl ({1})", this, control);
 			if (control is WebControl)
 				return true;
 

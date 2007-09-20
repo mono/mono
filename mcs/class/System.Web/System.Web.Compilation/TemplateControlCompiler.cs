@@ -1559,9 +1559,63 @@ namespace System.Web.Compilation
 			return str;
 		}
 #endif
+
+		TypeConverter GetConverterForMember (MemberInfo member)
+		{
+			TypeConverterAttribute tca = null;
+			object[] attrs;
+			
+#if NET_2_0
+			attrs = member.GetCustomAttributes (typeof (TypeConverterAttribute), true);
+			if (attrs.Length > 0)
+				tca = attrs [0] as TypeConverterAttribute;
+#else
+			attrs = member.GetCustomAttributes (true);
+			
+			foreach (object attr in attrs) {
+				tca = attr as TypeConverterAttribute;
+				
+				if (tca != null)
+					break;
+			}
+#endif
+
+			if (tca == null)
+				return null;
+
+			string typeName = tca.ConverterTypeName;
+			if (typeName == null || typeName.Length == 0)
+				return null;
+
+			Type t = null;
+			try {
+				t = Type.GetType (typeName);
+			} catch (Exception) {
+				// ignore
+			}
+
+			if (t == null)
+				return null;
+
+			return (TypeConverter) Activator.CreateInstance (t);
+		}
 		
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{
+			TypeConverter cvt = GetConverterForMember (member);
+			if (cvt != null && !cvt.CanConvertFrom (typeof (string)))
+				cvt = null;
+
+			object convertedFromAttr = null;
+			bool preConverted = false;
+			if (cvt != null) {
+				convertedFromAttr = cvt.ConvertFromInvariantString (str);
+				if (convertedFromAttr != null) {
+					type = convertedFromAttr.GetType ();
+					preConverted = true;
+				}
+			}
+			
 #if NET_2_0
 			bool wasNullable = false;
 			
@@ -1571,8 +1625,11 @@ namespace System.Web.Compilation
 				wasNullable = true;
 			}
 #endif
-
+			
 			if (type == typeof (string)) {
+				if (preConverted)
+					return new CodePrimitiveExpression ((string) convertedFromAttr);
+				
 #if NET_2_0
 				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
 				if (urlAttr.Length != 0)
@@ -1582,6 +1639,9 @@ namespace System.Web.Compilation
 			}
 
 			if (type == typeof (bool)) {
+				if (preConverted)
+					return new CodePrimitiveExpression ((bool) convertedFromAttr);
+				
 				if (str == null || str == "" || InvariantCompareNoCase (str, "true"))
 					return new CodePrimitiveExpression (true);
 				else if (InvariantCompareNoCase (str, "false"))
@@ -1594,65 +1654,75 @@ namespace System.Web.Compilation
 					throw new ParseException (currentLocation,
 							"Value '" + str  + "' is not a valid boolean.");
 			}
-
+			
 			if (str == null)
 				return new CodePrimitiveExpression (null);
 
 			if (type.IsPrimitive)
-				return new CodePrimitiveExpression (Convert.ChangeType (str, type, CultureInfo.InvariantCulture));
+				return new CodePrimitiveExpression (
+					Convert.ChangeType (preConverted ? convertedFromAttr : str,
+							    type, CultureInfo.InvariantCulture));
 
 			if (type == typeof (string [])) {
-				string [] subs = str.Split (',');
+				string [] subs;
+
+				if (preConverted)
+					subs = (string[])convertedFromAttr;
+				else
+					subs = str.Split (',');
 				CodeArrayCreateExpression expr = new CodeArrayCreateExpression ();
 				expr.CreateType = new CodeTypeReference (typeof (string));
-				foreach (string v in subs) {
+				foreach (string v in subs)
 					expr.Initializers.Add (new CodePrimitiveExpression (v.Trim ()));
-				}
 
 				return expr;
 			}
-
-			if (type == typeof (Color)){
-				if (colorConverter == null)
-					colorConverter = TypeDescriptor.GetConverter (typeof (Color));
-
-				if (str.Trim().Length == 0) {
-					CodeTypeReferenceExpression ft = new CodeTypeReferenceExpression (typeof (Color));
-					return new CodeFieldReferenceExpression (ft, "Empty");
-				}
-				
+			
+			if (type == typeof (Color)) {
 				Color c;
-				try {
-					if (str.IndexOf (',') == -1) {
-						c = (Color) colorConverter.ConvertFromString (str);
-					} else {
-						int [] argb = new int [4];
-						argb [0] = 255;
+				
+				if (!preConverted) {
+					if (colorConverter == null)
+						colorConverter = TypeDescriptor.GetConverter (typeof (Color));
+				
+					if (str.Trim().Length == 0) {
+						CodeTypeReferenceExpression ft = new CodeTypeReferenceExpression (typeof (Color));
+						return new CodeFieldReferenceExpression (ft, "Empty");
+					}
 
-						string [] parts = str.Split (',');
-						int length = parts.Length;
-						if (length < 3)
-							throw new Exception ();
+					try {
+						if (str.IndexOf (',') == -1) {
+							c = (Color) colorConverter.ConvertFromString (str);
+						} else {
+							int [] argb = new int [4];
+							argb [0] = 255;
 
-						int basei = (length == 4) ? 0 : 1;
-						for (int i = length - 1; i >= 0; i--) {
-							argb [basei + i] = (int) Byte.Parse (parts [i]);
+							string [] parts = str.Split (',');
+							int length = parts.Length;
+							if (length < 3)
+								throw new Exception ();
+
+							int basei = (length == 4) ? 0 : 1;
+							for (int i = length - 1; i >= 0; i--) {
+								argb [basei + i] = (int) Byte.Parse (parts [i]);
+							}
+							c = Color.FromArgb (argb [0], argb [1], argb [2], argb [3]);
 						}
-						c = Color.FromArgb (argb [0], argb [1], argb [2], argb [3]);
+					} catch (Exception e) {
+						// Hack: "LightGrey" is accepted, but only for ASP.NET, as the
+						// TypeConverter for Color fails to ConvertFromString.
+						// Hence this hack...
+						if (InvariantCompareNoCase ("LightGrey", str)) {
+							c = Color.LightGray;
+						} else {
+							throw new ParseException (currentLocation,
+										  "Color " + str + " is not a valid color.", e);
+						}
 					}
-				} catch (Exception e){
-					// Hack: "LightGrey" is accepted, but only for ASP.NET, as the
-					// TypeConverter for Color fails to ConvertFromString.
-					// Hence this hack...
-					if (InvariantCompareNoCase ("LightGrey", str)) {
-						c = Color.LightGray;
-					} else {
-						throw new ParseException (currentLocation,
-							"Color " + str + " is not a valid color.", e);
-					}
-				}
-
-				if (c.IsKnownColor){
+				} else
+					c = (Color)convertedFromAttr;
+				
+				if (c.IsKnownColor) {
 					CodeFieldReferenceExpression expr = new CodeFieldReferenceExpression ();
 					if (c.IsSystemColor)
 						type = typeof (SystemColors);
@@ -1673,10 +1743,11 @@ namespace System.Web.Compilation
 				}
 			}
 
-			TypeConverter converter = TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
+			TypeConverter converter = preConverted ? cvt :
+				TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
 			
-			if (converter != null && converter.CanConvertFrom (typeof (string))) {
-				object value = converter.ConvertFromInvariantString (str);
+			if (preConverted || (converter != null && converter.CanConvertFrom (typeof (string)))) {
+				object value = preConverted ? convertedFromAttr : converter.ConvertFromInvariantString (str);
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
@@ -1701,7 +1772,7 @@ namespace System.Web.Compilation
 			}
 
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);
-
+			
 			return new CodePrimitiveExpression (str);
 		}
 		

@@ -32,6 +32,8 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Security.Principal;
+using System.Web.Security;
 
 namespace System.Web.UI.WebControls {
 
@@ -128,22 +130,49 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO ("Handle RoleGroups")]
+		private ITemplate GetTemplateFromRoleGroup (RoleGroup rg, IPrincipal user)
+		{
+			if (user == null)
+				return null;
+			
+			foreach (string role in rg.Roles) {
+				if (user.IsInRole (role))
+					return rg.ContentTemplate;
+			}
+			
+			return null;
+		}
+		
 		protected internal override void CreateChildControls ()
 		{
 			Controls.Clear ();
 			Control c = new Control ();
+			ITemplate template = null;
+			
 			if (Page != null && Page.Request.IsAuthenticated) {
 				isAuthenticated = true;
-				if (LoggedInTemplate != null)
-					LoggedInTemplate.InstantiateIn (c);
-			}
-			else {
+
+				RoleGroupCollection rgc;
+				HttpContext ctx = HttpContext.Current;
+				IPrincipal user = ctx != null ? ctx.User : null;
+
+				if (Roles.Enabled && (rgc = RoleGroups) != null && rgc.Count > 0) {
+					foreach (RoleGroup rg in rgc) {
+						template = GetTemplateFromRoleGroup (rg, user);
+						if (template != null)
+							break;
+					}
+				}
+
+				if (template == null)
+					template = LoggedInTemplate;
+			} else {
 				isAuthenticated = false;
-				if (AnonymousTemplate != null)
-					AnonymousTemplate.InstantiateIn (c);
+				template = AnonymousTemplate;
 			}
 
+			if (template != null)
+				template.InstantiateIn (c);
 			Controls.Add (c);
 		}
 

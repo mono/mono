@@ -1,3 +1,10 @@
+2007-09-20  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: if a member passed to
+	GetExpressionFromString has a TypeConverter attribute set, try to
+	use the named type converter to convert the string value into the
+	target type. Fixes bug #325489.
+
 2007-09-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: use _culture and _resourceManager

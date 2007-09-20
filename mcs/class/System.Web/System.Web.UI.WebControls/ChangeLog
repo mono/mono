@@ -1,3 +1,8 @@
+2007-09-20  Marek Habersack  <mhabersack@novell.com>
+
+	* LoginView.cs: implemented RoleGroups support. Fixes bug
+	#324633.
+
 2007-09-19  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: copy attributes from GridView to the child table,
