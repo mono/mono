@@ -1630,10 +1630,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
-
-			DisplayCaret ();
-
+			if (owner.Focused) {
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				DisplayCaret ();
+			}
+			
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 		}
 
