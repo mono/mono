@@ -1,3 +1,8 @@
+2007-09-21  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile (PROFILES): Remove 'atomic' profiles.
+	* profiles/atomic.make, profiles/bootstrap.make: Remove.
+
 2007-09-04  Wade Berrier  <wberrier@novell.com>
 
 	* library.make: Glob for .sources for all profiles.

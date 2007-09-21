@@ -16,8 +16,13 @@ common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
 
 PLATFORMS = linux win32
 PROFILES = \
-	basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0 net_2_1 \
-	atomic net_1_0
+	basic \
+	net_1_1_bootstrap \
+	default \
+	net_2_0_bootstrap \
+	net_2_0 \
+	net_2_1 \
+	net_1_0
 
 COMMON_SRCS = \
 	Consts.cs.in			\
