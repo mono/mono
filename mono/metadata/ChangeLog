@@ -1,3 +1,9 @@
+
+Fri Sep 21 14:39:45 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: removed the guid hash tables: we can get the same info
+	without the additional memory usage hit (partially fixes also bug #327052).
+
 2007-09-10  Massimiliano Mantione  <massi@ximian.com>
 
 	* profiler.h, profiler-private.h, profiler.c: add a new profiler
