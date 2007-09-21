@@ -35,11 +35,6 @@ namespace System.Security.AccessControl {
 	{
 		AccessControlType type;
 		
-		internal AccessRule ()
-		{
-			/* Give it a 0-param constructor */
-		}
-		
 		protected AccessRule (IdentityReference identity,
 				      int accessMask,
 				      bool isInherited,

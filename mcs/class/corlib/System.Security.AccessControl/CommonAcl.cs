@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CommonAcl implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,6 +29,7 @@
 
 #if NET_2_0
 
+using System.Collections.Generic;
 using System.Security.Principal;
 
 namespace System.Security.AccessControl {
@@ -36,10 +38,26 @@ namespace System.Security.AccessControl {
 	 */
 	public abstract class CommonAcl : GenericAcl
 	{
-		internal CommonAcl ()
+		const int default_capacity = 10; // FIXME: not verified
+
+		internal CommonAcl (bool isContainer, bool isDS, byte revision)
+			: this (isContainer, isDS, revision, default_capacity)
 		{
 		}
 
+		internal CommonAcl (bool isContainer, bool isDS, byte revision, int capacity)
+		{
+			this.is_container = isContainer;
+			this.is_ds = isDS;
+			this.revision = revision;
+			list = new List<GenericAce> (capacity);
+		}
+
+		bool is_container, is_ds;
+		byte revision;
+		List<GenericAce> list;
+
+		[MonoTODO]
 		public override sealed int BinaryLength
 		{
 			get {
@@ -47,13 +65,11 @@ namespace System.Security.AccessControl {
 			}
 		}
 
-		public override sealed int Count
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override sealed int Count {
+			get { return list.Count; }
 		}
-		
+
+		[MonoTODO]
 		public bool IsCanonical
 		{
 			get {
@@ -61,48 +77,38 @@ namespace System.Security.AccessControl {
 			}
 		}
 
-		public bool IsContainer
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public bool IsContainer {
+			get { return is_container; }
 		}
 		
-		public bool IsDS
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public bool IsDS {
+			get { return is_ds; }
 		}
-		
+
 		public override sealed GenericAce this[int index]
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return list [index]; }
+			set { list [index] = value; }
 		}
 		
-		public override sealed byte Revision
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override sealed byte Revision {
+			get { return revision; }
 		}
 		
+		[MonoTODO]
 		public override sealed void GetBinaryForm (byte[] binaryForm,
 							   int offset)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void Purge (SecurityIdentifier sid)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveInheritedAces ()
 		{
 			throw new NotImplementedException ();

@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CryptoKeyAuditRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,30 +31,29 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class CryptoKeyAuditRule : AuditRule
 	{
-		CryptoKeyRights cryptoKeyRights;
+		CryptoKeyRights rights;
 		
 		public CryptoKeyAuditRule (IdentityReference identity,
 					   CryptoKeyRights cryptoKeyRights,
 					   AuditFlags flags)
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
-			this.cryptoKeyRights = cryptoKeyRights;
+			this.rights = cryptoKeyRights;
 		}
 		
 		public CryptoKeyAuditRule (string identity,
 					   CryptoKeyRights cryptoKeyRights,
 					   AuditFlags flags)
+			: this (new SecurityIdentifier (identity), cryptoKeyRights, flags)
 		{
-			this.cryptoKeyRights = cryptoKeyRights;
 		}
 		
-		public CryptoKeyRights CryptoKeyRights
-		{
-			get {
-				return(cryptoKeyRights);
-			}
+		public CryptoKeyRights CryptoKeyRights {
+			get { return rights; }
 		}
 	}
 }

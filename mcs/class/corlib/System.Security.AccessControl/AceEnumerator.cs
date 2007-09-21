@@ -3,8 +3,9 @@
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,34 +34,34 @@ using System.Collections;
 namespace System.Security.AccessControl {
 	public sealed class AceEnumerator : IEnumerator
 	{
-		private AceEnumerator ()
+		GenericAcl owner;
+		int current = -1;
+
+		internal AceEnumerator (GenericAcl owner)
 		{
+			this.owner = owner;
 		}
 
-		public GenericAce Current
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public GenericAce Current {
+			get { return current < 0 ? null : owner [current]; }
 		}
 
-		object IEnumerator.Current
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		object IEnumerator.Current {
+			get { return Current; }
 		}
 		
 		public bool MoveNext ()
 		{
-				throw new NotImplementedException ();
+			if (current + 1 == owner.Count)
+				return false;
+			current++;
+			return true;
 		}
 		
 		public void Reset ()
 		{
-				throw new NotImplementedException ();
+			current = -1;
 		}
-		
 	}
 }
 

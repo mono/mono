@@ -1,3 +1,21 @@
+2007-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AccessRule.cs AceEnumerator.cs AuditRule.cs AuthorizationRule.cs
+	  AuthorizationRuleCollection.cs CommonAce.cs CommonAcl.cs
+	  CommonObjectSecurity.cs CompoundAce.cs CryptoKeyAccessRule.cs
+	  CryptoKeyAuditRule.cs CryptoKeySecurity.cs CustomAce.cs
+	  DirectoryObjectSecurity.cs DirectorySecurity.cs
+	  DiscretionaryAcl.cs EventWaitHandleAccessRule.cs
+	  EventWaitHandleAuditRule.cs EventWaitHandleSecurity.cs
+	  FileSecurity.cs FileSystemAccessRule.cs FileSystemAuditRule.cs
+	  FileSystemSecurity.cs GenericAce.cs GenericAcl.cs KnownAce.cs
+	  MutexAccessRule.cs MutexAuditRule.cs MutexSecurity.cs
+	  NativeObjectSecurity.cs ObjectAccessRule.cs ObjectAce.cs
+	  ObjectAuditRule.cs ObjectSecurity.cs QualifiedAce.cs
+	  RawAcl.cs RegistryAccessRule.cs RegistryAuditRule.cs
+	  RegistrySecurity.cs SystemAcl.cs :
+	  they are not still functional, but being implemented.
+
 2006-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AccessRule.cs, AceEnumerator.cs, AuditRule.cs, 

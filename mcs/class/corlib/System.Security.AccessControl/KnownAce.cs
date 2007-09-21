@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.KnownAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,31 +31,26 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public abstract class KnownAce : GenericAce
 	{
-		internal KnownAce ()
+		int access_mask;
+		SecurityIdentifier identifier;
+
+		internal KnownAce (InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags)
+			: base (inheritanceFlags, propagationFlags)
 		{
 		}
 
-		public int AccessMask
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public int AccessMask {
+			get { return access_mask; }
+			set { access_mask = value; }
 		}
 		
-		public SecurityIdentifier SecurityIdentifier
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public SecurityIdentifier SecurityIdentifier {
+			get { return identifier; }
+			set { identifier = value; }
 		}
 	}
 }

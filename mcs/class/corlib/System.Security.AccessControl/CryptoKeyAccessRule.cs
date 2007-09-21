@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CryptoKeyAccessRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,30 +31,30 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class CryptoKeyAccessRule : AccessRule
 	{
-		CryptoKeyRights cryptoKeyRights;
+		CryptoKeyRights rights;
 		
 		public CryptoKeyAccessRule (IdentityReference identity,
 					    CryptoKeyRights cryptoKeyRights,
 					    AccessControlType type)
+			// FIXME: accessMask=0 likely causes an error
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
 		{
-			this.cryptoKeyRights = cryptoKeyRights;
+			this.rights = cryptoKeyRights;
 		}
 
 		public CryptoKeyAccessRule (string identity,
 					    CryptoKeyRights cryptoKeyRights,
 					    AccessControlType type)
+			: this (new SecurityIdentifier (identity), cryptoKeyRights, type)
 		{
-			this.cryptoKeyRights = cryptoKeyRights;
 		}
 		
-		public CryptoKeyRights CryptoKeyRights
-		{
-			get {
-				return(cryptoKeyRights);
-			}
+		public CryptoKeyRights CryptoKeyRights {
+			get { return rights; }
 		}
 	}
 }

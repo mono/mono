@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.SystemAcl implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,23 +35,30 @@ namespace System.Security.AccessControl {
 	public sealed class SystemAcl : CommonAcl
 	{
 		public SystemAcl (bool isContainer, bool isDS, int capacity)
+			: this (isContainer, isDS, 0, capacity)
 		{
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, RawAcl rawAcl)
+			: this (isContainer, isDS, 0)
 		{
+			this.raw_acl = rawAcl;
 		}
 		
 		public SystemAcl (bool isContainer, bool isDS, byte revision,
 				  int capacity)
+			: base (isContainer, isDS, revision, capacity)
 		{
 		}
-		
+
+		RawAcl raw_acl;
+
 		public void AddAudit (AuditFlags auditFlags,
 				      SecurityIdentifier sid, int accessMask,
 				      InheritanceFlags inheritanceFlags,
 				      PropagationFlags propagationFlags)
 		{
+			// CommonAce?
 			throw new NotImplementedException ();
 		}
 		
@@ -62,6 +70,7 @@ namespace System.Security.AccessControl {
 				      Guid objectType,
 				      Guid inheritedObjectType)
 		{
+			// ObjectAce?
 			throw new NotImplementedException ();
 		}
 		

@@ -33,11 +33,15 @@ using System.Security.Principal;
 namespace System.Security.AccessControl {
 	public abstract class DirectoryObjectSecurity : ObjectSecurity {
 		protected DirectoryObjectSecurity ()
+			: base (false, true)
 		{
 		}
 
 		protected DirectoryObjectSecurity (CommonSecurityDescriptor securityDescriptor)
+			: base (securityDescriptor != null && securityDescriptor.IsContainer, true)
 		{
+			if (securityDescriptor == null)
+				throw new ArgumentNullException ("securityDescriptor");
 		}
 
 		public virtual AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type, Guid objectType, Guid inheritedObjectType)

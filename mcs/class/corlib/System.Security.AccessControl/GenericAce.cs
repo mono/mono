@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.GenericAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,98 +34,95 @@ using System.Collections;
 namespace System.Security.AccessControl {
 	public abstract class GenericAce
 	{
+		internal GenericAce (InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags)
+		{
+			inheritance = inheritanceFlags;
+			propagation = propagationFlags;
+		}
+
+		internal GenericAce (AceType type)
+		{
+			if (type <= AceType.MaxDefinedAceType) {
+				throw new ArgumentOutOfRangeException ("type");
+			}
+			this.ace_type = type;
+		}
+
+		InheritanceFlags inheritance;
+		PropagationFlags propagation;
 		AceFlags aceflags;
+		AceType ace_type;
 
-		internal GenericAce ()
-		{
+		public AceFlags AceFlags {
+			get { return aceflags; }
+			set { aceflags = value; }
 		}
+		
+		public AceType AceType {
+			get { return ace_type; }
+		}
+		
+		public AuditFlags AuditFlags {
+			get {
+				AuditFlags ret = AuditFlags.None;
+				if ((aceflags & AceFlags.SuccessfulAccess) != 0)
+					ret |= AuditFlags.Success;
+				if ((aceflags & AceFlags.FailedAccess) != 0)
+					ret |= AuditFlags.Failure;
+				return ret;
+			}
+		}
+		
+		public abstract int BinaryLength { get; }
 
-		public AceFlags AceFlags
-		{
-			get {
-				return(aceflags);
-			}
-			set {
-				aceflags = value;
-			}
-		}
-		
-		AceType type;
-		
-		public AceType AceType 
-		{
-			get {
-				return(type);
-			}
-		}
-		
-		AuditFlags auditflags;
-		
-		public AuditFlags AuditFlags
-		{
-			get {
-				return(auditflags);
-			}
-		}
-		
-		public abstract int BinaryLength
-		{
-			get;
+		public InheritanceFlags InheritanceFlags {
+			get { return inheritance; }
 		}
 
-		InheritanceFlags inheritanceflags;
-		
-		public InheritanceFlags InheritanceFlags
-		{
-			get {
-				return(inheritanceflags);
-			}
-		}
-		
-		public bool IsInherited
-		{
-			get {
-				return(false);
-			}
+		[MonoTODO]
+		public bool IsInherited {
+			get { return(false); }
 		}
 
-		PropagationFlags propagationflags;
-		
-		public PropagationFlags PropagationFlags
-		{
-			get {
-				return(propagationflags);
-			}
+		public PropagationFlags PropagationFlags {
+			get { return propagation; }
 		}
 		
+		[MonoTODO]
 		public GenericAce Copy ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static GenericAce CreateFromBinaryForm (byte[] binaryForm, int offset)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public override sealed bool Equals (object o)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public abstract void GetBinaryForm (byte[] binaryForm, int offset);
 
+		[MonoTODO]
 		public override sealed int GetHashCode ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static bool operator== (GenericAce left,
 					       GenericAce right)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static bool operator!= (GenericAce left,
 					       GenericAce right)
 		{

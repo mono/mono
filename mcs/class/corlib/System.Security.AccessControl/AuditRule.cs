@@ -35,11 +35,6 @@ namespace System.Security.AccessControl {
 	{
 		AuditFlags auditFlags;
 		
-		internal AuditRule ()
-		{
-			/* Give it a 0-param constructor */
-		}
-		
 		protected AuditRule (IdentityReference identity,
 				     int accessMask,
 				     bool isInherited,

@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.EventWaitHandleAuditRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,14 +31,16 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class EventWaitHandleAuditRule : AuditRule
 	{
-		EventWaitHandleRights eventRights;
+		EventWaitHandleRights rights;
 		
 		public EventWaitHandleAuditRule (IdentityReference identity,
 						 EventWaitHandleRights eventRights,
 						 AuditFlags flags)
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
 			if (eventRights < EventWaitHandleRights.Modify ||
 			    eventRights > EventWaitHandleRights.FullControl) {
@@ -60,14 +63,11 @@ namespace System.Security.AccessControl {
 				throw new ArgumentException ("identity");
 			}
 			
-			this.eventRights = eventRights;
+			this.rights = eventRights;
 		}
 		
-		public EventWaitHandleRights EventWaitHandleRights
-		{
-			get {
-				return(eventRights);
-			}
+		public EventWaitHandleRights EventWaitHandleRights {
+			get { return rights; }
 		}
 	}
 }

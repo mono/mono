@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CommonAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,9 +37,13 @@ namespace System.Security.AccessControl {
 		public CommonAce (AceFlags flags, AceQualifier qualifier,
 				  int accessMask, SecurityIdentifier sid,
 				  bool isCallback, byte[] opaque)
+				: base (InheritanceFlags.None, PropagationFlags.None, qualifier, isCallback, opaque)
 		{
+			AccessMask = accessMask;
+			SecurityIdentifier = sid;
 		}
 		
+		[MonoTODO]
 		public override int BinaryLength
 		{
 			get {
@@ -46,12 +51,14 @@ namespace System.Security.AccessControl {
 			}
 		}
 
+		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
 						    int offset)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static int MaxOpaqueLength (bool isCallback)
 		{
 			throw new NotImplementedException ();

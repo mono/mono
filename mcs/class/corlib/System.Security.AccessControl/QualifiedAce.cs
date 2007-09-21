@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.QualifiedAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,39 +32,40 @@
 namespace System.Security.AccessControl {
 	public abstract class QualifiedAce : KnownAce
 	{
-		internal QualifiedAce ()
+		internal QualifiedAce (InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AceQualifier aceQualifier, bool isCallback, byte [] opaque)
+			: base (inheritanceFlags, propagationFlags)
 		{
+			ace_qualifier = aceQualifier;
+			is_callback = isCallback;
+			SetOpaque (opaque);
 		}
 
-		public AceQualifier AceQualifier
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		AceQualifier ace_qualifier;
+		bool is_callback;
+		byte [] opaque;
+
+		public AceQualifier AceQualifier {
+			get { return ace_qualifier; }
 		}
 		
-		public bool IsCallback
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public bool IsCallback {
+			get { return is_callback; }
 		}
 		
-		public int OpaqueLength
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public int OpaqueLength {
+			get { return opaque.Length; }
 		}
 		
 		public byte[] GetOpaque ()
 		{
-			throw new NotImplementedException ();
+			return (byte []) opaque.Clone ();
 		}
 		
 		public void SetOpaque (byte[] opaque)
 		{
-			throw new NotImplementedException ();
+			if (opaque == null)
+				throw new ArgumentNullException ("opaque");
+			this.opaque = (byte []) opaque.Clone ();
 		}
 	}
 }

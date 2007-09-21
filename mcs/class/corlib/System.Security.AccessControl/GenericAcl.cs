@@ -3,8 +3,9 @@
 //
 // Author:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,69 +34,66 @@ using System.Collections;
 namespace System.Security.AccessControl {
 	public abstract class GenericAcl : ICollection, IEnumerable
 	{
-		protected GenericAcl ()
-		{
-		}
-		
 		public static readonly byte AclRevision;
 		public static readonly byte AclRevisionDS;
 		public static readonly int MaxBinaryLength;
 		
-		public abstract int BinaryLength
+		static GenericAcl ()
 		{
-			get;
+			// FIXME: they are likely platform dependent (on windows)
+			AclRevision = 2;
+			AclRevisionDS = 4;
+			MaxBinaryLength = 0x10000;
+		}
+
+		protected GenericAcl ()
+		{
 		}
 		
-		public abstract int Count
-		{
-			get;
+		public abstract int BinaryLength { get; }
+		
+		public abstract int Count { get; }
+		
+		public bool IsSynchronized {
+			get { return false; }
 		}
 		
-		public bool IsSynchronized
-		{
-			get {
-				return(false);
-			}
-		}
-		
-		public abstract GenericAce this[int index]
-		{
+		public abstract GenericAce this [int index] {
 			get;
 			set;
 		}
 		
-		public abstract byte Revision
-		{
-			get;
+		public abstract byte Revision { get; }
+		
+		public object SyncRoot {
+			get { return this; }
 		}
 		
-		public object SyncRoot
+		public void CopyTo (GenericAce [] array, int index)
 		{
-			get {
-				return(null);
-			}
-		}
-		
-		public void CopyTo (GenericAce[] array, int index)
-		{
-			throw new NotImplementedException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0 || array.Length - index < Count)
+				throw new ArgumentOutOfRangeException ("index", "Index must be non-negative integer and must not exceed array length - count");
+			for (int i = 0; i < Count; i++)
+				array [i + index] = this [i];
 		}
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			CopyTo ((GenericAce []) array, index);
 		}
 		
-		
 		public abstract void GetBinaryForm (byte[] binaryForm, int offset);
+		
 		public AceEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new AceEnumerator (this);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return GetEnumerator ();
 		}
 	}
 }

@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CustomAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,51 +31,52 @@
 
 using System.Collections;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class CustomAce : GenericAce
 	{
-		public CustomAce (AceType type, AceFlags flags, byte[] opaque)
+		public CustomAce (AceType type, AceFlags flags, byte [] opaque)
+			: base (type)
 		{
-			if (type <= AceType.MaxDefinedAceType) {
-				throw new ArgumentOutOfRangeException ("type");
-			}
+			AceFlags = flags;
+
 			/* FIXME: check length of opaque >
 			 * MaxOpaqueLength or !multiple of 4
 			 */
-			//AceType = type;
-			//AceFlags = flags;
+			 SetOpaque (opaque);
 		}
-		
+
+		byte [] opaque;
+
+		[MonoTODO]
 		public static readonly int MaxOpaqueLength;
 		
-		public override int BinaryLength
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		[MonoTODO]
+		public override int BinaryLength {
+			get { throw new NotImplementedException (); }
 		}
 		
-		public int OpaqueLength
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public int OpaqueLength {
+			get { return opaque.Length; }
 		}
-		
+
+		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
 						    int offset)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public byte[] GetOpaque ()
+		public byte [] GetOpaque ()
 		{
-			throw new NotImplementedException ();
+			return (byte []) opaque.Clone ();
 		}
 		
-		public void SetOpaque (byte[] opaque)
+		public void SetOpaque (byte [] opaque)
 		{
-			throw new NotImplementedException ();
+			if (opaque == null)
+				throw new ArgumentNullException ("opaque");
+			this.opaque = (byte []) opaque.Clone ();
 		}
 	}
 }

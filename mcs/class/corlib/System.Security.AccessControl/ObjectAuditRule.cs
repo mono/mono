@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.ObjectAuditRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +31,8 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public abstract class ObjectAuditRule : AuditRule
 	{
 		protected ObjectAuditRule (IdentityReference identity,
@@ -40,28 +42,31 @@ namespace System.Security.AccessControl {
 					   Guid objectType,
 					   Guid inheritedObjectType,
 					   AuditFlags auditFlags)
+			: base (identity, accessMask, isInherited, inheritanceFlags, propagationFlags, auditFlags)
 		{
+			object_type = objectType;
+			inherited_object_type = inheritedObjectType;
 		}
 
-		public Guid InheritedObjectType
-		{
+		Guid inherited_object_type, object_type;
+
+		public Guid InheritedObjectType {
+			get { return inherited_object_type; }
+		}
+		
+		public ObjectAceFlags ObjectFlags {
 			get {
-				throw new NotImplementedException ();
+				ObjectAceFlags ret = ObjectAceFlags.None;
+				if (object_type != Guid.Empty)
+					ret |= ObjectAceFlags.ObjectAceTypePresent;
+				if (inherited_object_type != Guid.Empty)
+					ret |= ObjectAceFlags.InheritedObjectAceTypePresent;
+				return ret;
 			}
 		}
 		
-		public ObjectAceFlags ObjectFlags
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		public Guid ObjectType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public Guid ObjectType {
+			get { return object_type; }
 		}
 	}
 }

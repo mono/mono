@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.FileSystemAuditRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,23 +31,24 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class FileSystemAuditRule : AuditRule
 	{
-		FileSystemRights fileSystemRights;
+		FileSystemRights rights;
 		
 		public FileSystemAuditRule (IdentityReference identity,
 					    FileSystemRights fileSystemRights,
 					    AuditFlags flags)
+			: this (identity, fileSystemRights, InheritanceFlags.None, PropagationFlags.None, flags)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 		
 		public FileSystemAuditRule (string identity,
 					    FileSystemRights fileSystemRights,
 					    AuditFlags flags)
+			: this (new SecurityIdentifier (identity), fileSystemRights, flags)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 
 		public FileSystemAuditRule (IdentityReference identity,
@@ -54,8 +56,9 @@ namespace System.Security.AccessControl {
 					    InheritanceFlags inheritanceFlags,
 					    PropagationFlags propagationFlags,
 					    AuditFlags flags)
+			: base (identity, 0, false, inheritanceFlags, propagationFlags, flags)
 		{
-			this.fileSystemRights = fileSystemRights;
+			this.rights = fileSystemRights;
 		}
 		
 		public FileSystemAuditRule (string identity,
@@ -63,15 +66,12 @@ namespace System.Security.AccessControl {
 					    InheritanceFlags inheritanceFlags,
 					    PropagationFlags propagationFlags,
 					    AuditFlags flags)
+			: this (new SecurityIdentifier (identity), fileSystemRights, inheritanceFlags, propagationFlags, flags)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 		
-		public FileSystemRights FileSystemRights
-		{
-			get {
-				return(fileSystemRights);
-			}
+		public FileSystemRights FileSystemRights {
+			get { return rights; }
 		}
 	}
 }

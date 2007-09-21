@@ -37,12 +37,14 @@ namespace System.Security.AccessControl {
 		protected internal delegate Exception ExceptionFromErrorCode (int errorCode, string name, SafeHandle handle, object context);
 		
 		internal NativeObjectSecurity ()
+			: base (false)
 		{
 			/* Give it a 0-param constructor */
 		}
 		
 		protected NativeObjectSecurity (bool isContainer,
 						ResourceType resourceType)
+			: base (isContainer)
 		{
 		}
 
@@ -50,6 +52,7 @@ namespace System.Security.AccessControl {
 						ResourceType resourceType,
 						ExceptionFromErrorCode exceptionFromErrorCode,
 						object exceptionContext)
+			: this (isContainer, resourceType)
 		{
 		}
 		
@@ -57,6 +60,7 @@ namespace System.Security.AccessControl {
 						ResourceType resourceType,
 						SafeHandle handle,
 						AccessControlSections includeSections)
+			: this (isContainer, resourceType)
 		{
 		}
 		
@@ -64,6 +68,7 @@ namespace System.Security.AccessControl {
 						ResourceType resourceType,
 						string name,
 						AccessControlSections includeSections)
+			: this (isContainer, resourceType)
 		{
 		}
 		
@@ -73,6 +78,7 @@ namespace System.Security.AccessControl {
 						AccessControlSections includeSections,
 						ExceptionFromErrorCode exceptionFromErrorCode,
 						object exceptionContext)
+			: this (isContainer, resourceType, handle, includeSections)
 		{
 		}
 		
@@ -82,6 +88,7 @@ namespace System.Security.AccessControl {
 						AccessControlSections includeSections,
 						ExceptionFromErrorCode exceptionFromErrorCode,
 						object exceptionContext)
+			: this (isContainer, resourceType, name, includeSections)
 		{
 		}
 		

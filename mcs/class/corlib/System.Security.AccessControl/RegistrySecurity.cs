@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.RegistrySecurity implementation
 //
-// Author:
-//	Dick Porter <dick@ximian.com>
+// Authors:
+//	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,30 +37,22 @@ namespace System.Security.AccessControl {
 		{
 		}
 		
-		public override Type AccessRightType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AccessRightType {
+			get { return typeof (RegistryRights); }
 		}
 		
-		public override Type AccessRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AccessRuleType {
+			get { return typeof (RegistryAccessRule); }
 		}
 
-		public override Type AuditRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AuditRuleType {
+			get { return typeof (RegistryAuditRule); }
 		}
 		
 		public override AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
 		{
-			throw new NotImplementedException ();
+			// FIXME: isInherited is unused
+			return new RegistryAccessRule (identityReference, (RegistryRights) accessMask, inheritanceFlags, propagationFlags, type);
 		}
 		
 		public void AddAccessRule (RegistryAccessRule rule)
@@ -74,7 +67,8 @@ namespace System.Security.AccessControl {
 		
 		public override AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
 		{
-			throw new NotImplementedException ();
+			// FIXME: isInherited is unused
+			return new RegistryAuditRule (identityReference, (RegistryRights) accessMask, inheritanceFlags, propagationFlags, flags);
 		}
 		
 		public bool RemoveAccessRule (RegistryAccessRule rule)

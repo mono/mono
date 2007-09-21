@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.EventWaitHandleAccessRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,30 +31,30 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class EventWaitHandleAccessRule : AccessRule
 	{
-		EventWaitHandleRights eventRights;
+		EventWaitHandleRights rights;
 		
 		public EventWaitHandleAccessRule (IdentityReference identity,
 						  EventWaitHandleRights eventRights,
 						  AccessControlType type)
+			// FIXME: accessMask=0 likely causes an error
+			: base (identity, 0, false, InheritanceFlags.None, PropagationFlags.None, AccessControlType.Allow)
 		{
-			this.eventRights = eventRights;
+			this.rights = eventRights;
 		}
 
 		public EventWaitHandleAccessRule (string identity,
 						  EventWaitHandleRights eventRights,
 						  AccessControlType type)
+			: this (new SecurityIdentifier (identity), eventRights, type)
 		{
-			this.eventRights = eventRights;
 		}
 		
-		public EventWaitHandleRights EventWaitHandleRights
-		{
-			get {
-				return(eventRights);
-			}
+		public EventWaitHandleRights EventWaitHandleRights {
+			get { return rights; }
 		}
 	}
 }

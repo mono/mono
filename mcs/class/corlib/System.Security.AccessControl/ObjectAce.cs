@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.ObjectAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +31,8 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class ObjectAce : QualifiedAce
 	{
 		public ObjectAce (AceFlags aceFlags, AceQualifier qualifier,
@@ -38,9 +40,19 @@ namespace System.Security.AccessControl {
 				  ObjectAceFlags flags, Guid type,
 				  Guid inheritedType, bool isCallback,
 				  byte[] opaque)
+			: base (InheritanceFlags.None, PropagationFlags.None, qualifier, isCallback, opaque)
 		{
+			AceFlags = aceFlags;
+			SecurityIdentifier = sid;
+			object_ace_flags = flags;
+			object_ace_type = type;
+			inherited_object_type = inheritedType;
 		}
-		
+
+		Guid object_ace_type, inherited_object_type;
+		ObjectAceFlags object_ace_flags;
+
+		[MonoTODO]
 		public override int BinaryLength
 		{
 			get {
@@ -48,43 +60,29 @@ namespace System.Security.AccessControl {
 			}
 		}
 
-		public Guid InheritedObjectAceType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public Guid InheritedObjectAceType {
+			get { return inherited_object_type; }
+			set { inherited_object_type = value; }
 		}
 		
-		public ObjectAceFlags ObjectAceFlags
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public ObjectAceFlags ObjectAceFlags {
+			get { return object_ace_flags; }
+			set { object_ace_flags = value; }
 		}
 		
-		public Guid ObjectAceType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public Guid ObjectAceType {
+			get { return object_ace_type; }
+			set { object_ace_type = value; }
 		}
-		
 
+		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
 						    int offset)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static int MaxOpaqueLength (bool isCallback)
 		{
 			throw new NotImplementedException ();

@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.FileSystemAccessRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,23 +31,24 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class FileSystemAccessRule : AccessRule
 	{
-		FileSystemRights fileSystemRights;
+		FileSystemRights rights;
 		
 		public FileSystemAccessRule (IdentityReference identity,
 					     FileSystemRights fileSystemRights,
 					     AccessControlType type)
+			: this (identity, fileSystemRights, InheritanceFlags.None, PropagationFlags.None, type)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 
 		public FileSystemAccessRule (string identity,
 					     FileSystemRights fileSystemRights,
 					     AccessControlType type)
+			: this (new SecurityIdentifier (identity), fileSystemRights, InheritanceFlags.None, PropagationFlags.None, type)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 
 		public FileSystemAccessRule (IdentityReference identity,
@@ -54,8 +56,9 @@ namespace System.Security.AccessControl {
 					     InheritanceFlags inheritanceFlags,
 					     PropagationFlags propagationFlags,
 					     AccessControlType type)
+			: base (identity, (int) fileSystemRights, false, inheritanceFlags, propagationFlags, type)
 		{
-			this.fileSystemRights = fileSystemRights;
+			this.rights = fileSystemRights;
 		}
 		
 		public FileSystemAccessRule (string identity,
@@ -63,15 +66,12 @@ namespace System.Security.AccessControl {
 					     InheritanceFlags inheritanceFlags,
 					     PropagationFlags propagationFlags,
 					     AccessControlType type)
+			: this (new SecurityIdentifier (identity), fileSystemRights, inheritanceFlags, propagationFlags, type)
 		{
-			this.fileSystemRights = fileSystemRights;
 		}
 		
-		public FileSystemRights FileSystemRights
-		{
-			get {
-				return(fileSystemRights);
-			}
+		public FileSystemRights FileSystemRights {
+			get { return rights; }
 		}
 	}
 }

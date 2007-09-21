@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.DiscretionaryAcl implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,28 +36,33 @@ namespace System.Security.AccessControl {
 	{
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 int capacity)
+			: this (isContainer, isDS, 0, capacity)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 RawAcl rawAcl)
+			: base (isContainer, isDS, 0)
 		{
-			throw new NotImplementedException ();
+			this.raw_acl = rawAcl;
 		}
 		
 		public DiscretionaryAcl (bool isContainer, bool isDS,
 					 byte revision, int capacity)
+			: base (isContainer, isDS, revision, capacity)
 		{
-			throw new NotImplementedException ();
 		}
-		
+
+		RawAcl raw_acl;
+
 		public void AddAccess (AccessControlType accessType,
 				       SecurityIdentifier sid, int accessMask,
 				       InheritanceFlags inheritanceFlags,
 				       PropagationFlags propagationFlags)
 		{
 			throw new NotImplementedException ();
+			// CommonAce?
 		}
 		
 		public void AddAccess (AccessControlType accessType,
@@ -67,6 +73,7 @@ namespace System.Security.AccessControl {
 				       Guid objectType,
 				       Guid inheritedObjectType)
 		{
+			// ObjectAce?
 			throw new NotImplementedException ();
 		}
 		

@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.CompoundAce implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,37 +31,36 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl
+{
 	public sealed class CompoundAce : KnownAce
 	{
-		CompoundAceType compoundAceType;
+		CompoundAceType compound_ace_type;
 		
 		public CompoundAce (AceFlags flags, int accessMask,
 				    CompoundAceType compoundAceType,
 				    SecurityIdentifier side)
+			: base (InheritanceFlags.None, PropagationFlags.None)
 		{
-			this.compoundAceType = compoundAceType;
-			
-			throw new NotImplementedException ();
+			this.compound_ace_type = compoundAceType;
+			this.AceFlags = flags;
+			this.AccessMask = accessMask;
+			this.SecurityIdentifier = side;
 		}
 		
-		public override int BinaryLength 
-		{
+		[MonoTODO]
+		public override int BinaryLength {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 		
-		public CompoundAceType CompoundAceType
-		{
-			get {
-				return(compoundAceType);
-			}
-			set {
-				compoundAceType = value;
-			}
+		public CompoundAceType CompoundAceType {
+			get { return compound_ace_type; }
+			set { compound_ace_type = value; }
 		}
 		
+		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
 						    int offset)
 		{

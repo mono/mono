@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.RawAcl implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,18 +28,26 @@
 //
 
 #if NET_2_0
+using System.Collections.Generic;
 
 namespace System.Security.AccessControl {
 	public sealed class RawAcl : GenericAcl
 	{
 		public RawAcl (byte revision, int capacity)
 		{
+			this.revision = revision;
+			list = new List<GenericAce> (capacity);
 		}
 		
-		public RawAcl (byte[] binaryForm, int offset)
+		public RawAcl (byte [] binaryForm, int offset)
+			: this (0, 10)
 		{
 		}
-		
+
+		byte revision;
+		List<GenericAce> list;
+
+		[MonoTODO]
 		public override int BinaryLength
 		{
 			get {
@@ -46,30 +55,21 @@ namespace System.Security.AccessControl {
 			}
 		}
 
-		public override int Count
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override int Count {
+			get { return list.Count; }
 		}
 
-		public override GenericAce this[int index]
+		public override GenericAce this [int index]
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return list [index]; }
+			set { list [index] = value; }
 		}
 		
-		public override byte Revision
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override byte Revision {
+			get { return revision; }
 		}
-		
+
+		[MonoTODO]
 		public override void GetBinaryForm (byte[] binaryForm,
 						    int offset)
 		{
@@ -78,12 +78,14 @@ namespace System.Security.AccessControl {
 
 		public void InsertAce (int index, GenericAce ace)
 		{
-			throw new NotImplementedException ();
+			if (ace == null)
+				throw new ArgumentNullException ("ace");
+			list.Insert (index, ace);
 		}
 		
 		public void RemoveAce (int index)
 		{
-			throw new NotImplementedException ();
+			list.RemoveAt (index);
 		}
 	}
 }

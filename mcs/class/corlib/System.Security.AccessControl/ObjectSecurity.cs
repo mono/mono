@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.ObjectSecurity implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,10 +32,10 @@
 using System.Security.Principal;
 using System.Runtime.InteropServices;
 
-namespace System.Security.AccessControl {
-
-	public abstract class ObjectSecurity {
-
+namespace System.Security.AccessControl
+{
+	public abstract class ObjectSecurity
+	{
 		internal ObjectSecurity ()
 		{
 			/* Give it a 0-param constructor */
@@ -42,18 +43,21 @@ namespace System.Security.AccessControl {
 		
 		protected ObjectSecurity (bool isContainer, bool isDS)
 		{
+			is_container = isContainer;
+			is_ds = isDS;
 		}
 
-		public abstract Type AccessRightType
-		{
-			get;
-		}
+		bool is_container, is_ds;
+		bool access_rules_modified, audit_rules_modified;
+		bool group_modified, owner_modified;
+
+		public abstract Type AccessRightType { get; }
 		
-		public abstract Type AccessRuleType
-		{
-			get;
-		}
+		public abstract Type AccessRuleType { get; }
 		
+		public abstract Type AuditRuleType { get; }
+		
+		[MonoTODO]
 		public bool AreAccessRulesCanonical
 		{
 			get {
@@ -61,6 +65,7 @@ namespace System.Security.AccessControl {
 			}
 		}
 		
+		[MonoTODO]
 		public bool AreAccessRulesProtected
 		{
 			get {
@@ -68,6 +73,7 @@ namespace System.Security.AccessControl {
 			}
 		}
 		
+		[MonoTODO]
 		public bool AreAuditRulesCanonical
 		{
 			get {
@@ -75,6 +81,7 @@ namespace System.Security.AccessControl {
 			}
 		}
 		
+		[MonoTODO]
 		public bool AreAuditRulesProtected
 		{
 			get {
@@ -82,151 +89,137 @@ namespace System.Security.AccessControl {
 			}
 		}
 		
-		public abstract Type AuditRuleType
-		{
-			get;
+		protected bool AccessRulesModified {
+			get { return access_rules_modified; }
+			set { access_rules_modified = value; }
 		}
 		
-		protected bool AccessRulesModified
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		protected bool AuditRulesModified {
+			get { return audit_rules_modified; }
+			set { audit_rules_modified = value; }
 		}
 		
-		protected bool AuditRulesModified
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		protected bool GroupModified {
+			get { return group_modified; }
+			set { group_modified = value; }
 		}
 		
-		protected bool GroupModified
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		protected bool IsContainer {
+			get { return is_container; }
 		}
 		
-		protected bool IsContainer
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		protected bool IsDS {
+			get { return is_ds; }
 		}
 		
-		protected bool IsDS
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		protected bool OwnerModified
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		protected bool OwnerModified {
+			get { return owner_modified; }
+			set { owner_modified = value; }
 		}
 	
 		public abstract AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type);
 		
 		public abstract AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags);
 		
+		[MonoTODO]
 		public IdentityReference GetGroup (Type targetType)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public IdentityReference GetOwner (Type targetType)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public byte[] GetSecurityDescriptorBinaryForm ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public string GetSecurityDescriptorSddlForm (AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public static bool IsSddlConversionSupported ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public virtual bool ModifyAccessRule (AccessControlModification modification, AccessRule rule, out bool modified)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public virtual bool ModifyAuditRule (AccessControlModification modification, AuditRule rule, out bool modified)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public virtual void PurgeAccessRules (IdentityReference identity)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public virtual void PurgeAuditRules (IdentityReference identity)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetAccessRuleProtection (bool isProtected,
 						     bool preserveInheritance)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetAuditRuleProtection (bool isProtected,
 						    bool preserveInheritance)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetGroup (IdentityReference identity)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetOwner (IdentityReference identity)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetSecurityDescriptorBinaryForm (byte[] binaryForm)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetSecurityDescriptorBinaryForm (byte[] binaryForm, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetSecurityDescriptorSddlForm (string sddlForm)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SetSecurityDescriptorSddlForm (string sddlForm, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
@@ -236,36 +229,43 @@ namespace System.Security.AccessControl {
 		
 		protected abstract bool ModifyAudit (AccessControlModification modification, AuditRule rule, out bool modified);
 		
+		[MonoTODO]
 		protected virtual void Persist (SafeHandle handle, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		protected virtual void Persist (string name, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected virtual void Persist (bool enableOwnershipPrivilege, string name, AccessControlSections includeSections)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		protected void ReadLock ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		protected void ReadUnlock ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		protected void WriteLock ()
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		protected void WriteUnlock ()
 		{
 			throw new NotImplementedException ();

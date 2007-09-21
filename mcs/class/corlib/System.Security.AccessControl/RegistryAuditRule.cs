@@ -1,10 +1,11 @@
 //
 // System.Security.AccessControl.RegistryAuditRule implementation
 //
-// Author:
+// Authors:
 //	Dick Porter  <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +31,20 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
+namespace System.Security.AccessControl 
+{
 	public sealed class RegistryAuditRule : AuditRule
 	{
-		RegistryRights registryRights;
+		RegistryRights rights;
 		
 		public RegistryAuditRule (IdentityReference identity,
 					  RegistryRights registryRights,
 					  InheritanceFlags inheritanceFlags,
 					  PropagationFlags propagationFlags,
 					  AuditFlags flags)
+			: base (identity, 0, false, inheritanceFlags, propagationFlags, flags)
 		{
-			this.registryRights = registryRights;
+			this.rights = registryRights;
 		}
 		
 		public RegistryAuditRule (string identity,
@@ -49,15 +52,12 @@ namespace System.Security.AccessControl {
 					  InheritanceFlags inheritanceFlags,
 					  PropagationFlags propagationFlags,
 					  AuditFlags flags)
+			: this (new SecurityIdentifier (identity), registryRights, inheritanceFlags, propagationFlags, flags)
 		{
-			this.registryRights = registryRights;
 		}
 		
-		public RegistryRights RegistryRights
-		{
-			get {
-				return(registryRights);
-			}
+		public RegistryRights RegistryRights {
+			get { return rights; }
 		}
 	}
 }

@@ -4,8 +4,9 @@
 // Authors:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //	Dick Porter <dick@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,100 +32,110 @@
 
 using System.Security.Principal;
 
-namespace System.Security.AccessControl {
-	public sealed class CryptoKeySecurity : NativeObjectSecurity {
+namespace System.Security.AccessControl
+{
+	public sealed class CryptoKeySecurity : NativeObjectSecurity
+	{
 		CommonSecurityDescriptor securityDescriptor;
 		
+		[MonoTODO]
 		public CryptoKeySecurity ()
 		{
 		}
 
+		[MonoTODO]
 		public CryptoKeySecurity (CommonSecurityDescriptor securityDescriptor)
 		{
 			this.securityDescriptor = securityDescriptor;
 		}
 		
-		public override Type AccessRightType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AccessRightType {
+			get { return typeof (CryptoKeyRights); }
 		}
 		
-		public override Type AccessRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AccessRuleType {
+			get { return typeof (CryptoKeyAccessRule); }
 		}
 
-		public override Type AuditRuleType
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public override Type AuditRuleType {
+			get { return typeof (CryptoKeyAuditRule); }
 		}
+		
+		// AccessRule
 		
 		public override sealed AccessRule AccessRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AccessControlType type)
 		{
-			throw new NotImplementedException ();
+			return new CryptoKeyAccessRule (identityReference, (CryptoKeyRights) accessMask, type);
 		}
 		
+		[MonoTODO]
 		public void AddAccessRule (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void AddAuditRule (CryptoKeyAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
-		{
-			throw new NotImplementedException ();
-		}
-		
+		[MonoTODO]
 		public bool RemoveAccessRule (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void RemoveAccessRuleAll (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void RemoveAccessRuleSpecific (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public bool RemoveAuditRule (CryptoKeyAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleAll (CryptoKeyAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public void RemoveAuditRuleSpecific (CryptoKeyAuditRule rule)
-		{
-			throw new NotImplementedException ();
-		}
-		
+		[MonoTODO]
 		public void ResetAccessRule (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
 		public void SetAccessRule (CryptoKeyAccessRule rule)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		// AuditRule
+		
+		public override sealed AuditRule AuditRuleFactory (IdentityReference identityReference, int accessMask, bool isInherited, InheritanceFlags inheritanceFlags, PropagationFlags propagationFlags, AuditFlags flags)
+		{
+			return new CryptoKeyAuditRule (identityReference, (CryptoKeyRights) accessMask, flags);
+		}
+		
+		[MonoTODO]
+		public void AddAuditRule (CryptoKeyAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public bool RemoveAuditRule (CryptoKeyAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void RemoveAuditRuleAll (CryptoKeyAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public void RemoveAuditRuleSpecific (CryptoKeyAuditRule rule)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public void SetAuditRule (CryptoKeyAuditRule rule)
 		{
 			throw new NotImplementedException ();
