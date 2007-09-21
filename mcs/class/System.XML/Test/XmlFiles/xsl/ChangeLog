@@ -1,3 +1,7 @@
+2007-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 325482.xml, 325482.xsl : new test files.
+
 2007-08-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* 82394.xml, 82493.xsl : new test files.

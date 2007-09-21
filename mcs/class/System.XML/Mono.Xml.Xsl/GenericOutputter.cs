@@ -198,6 +198,8 @@ namespace Mono.Xml.Xsl
 							// for non-local attributes.
 							prefix = "xp_" + _xpCount++;
 						if (existing != prefix) {
+							while (_nsManager.LookupNamespace (prefix) != null)
+								prefix = "xp_" + _xpCount++;
 							newNamespaces.Add (prefix);
 							_currentNamespaceDecls.Add (prefix, attr.Namespace);
 							_nsManager.AddNamespace (prefix, attr.Namespace);

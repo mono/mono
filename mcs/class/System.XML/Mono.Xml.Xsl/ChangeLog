@@ -1,3 +1,8 @@
+2007-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericOutputter.cs : fixed possible conflict for auto-filled
+	  attribute prefixes. Fixed bug #325482.
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslFunctions.cs : fix wrong unboxing in extension functions.

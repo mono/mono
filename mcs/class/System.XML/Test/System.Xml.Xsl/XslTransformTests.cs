@@ -1949,6 +1949,16 @@ Services
 
 		}
 
+		[Test]
+		public void BugNovell325482 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.Load ("Test/XmlFiles/xsl/325482.xml");
+			XslTransform xt = new XslTransform ();
+			xt.Load ("Test/XmlFiles/xsl/325482.xsl");
+			xt.Transform (doc, null, TextWriter.Null);
+		}
+
 		public class XslExtensionClass
 		{
 			private string paperType = String.Empty;
