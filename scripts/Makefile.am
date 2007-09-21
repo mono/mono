@@ -5,7 +5,8 @@ bin_SCRIPTS = \
 	$(scripts_2_1)		\
 	$(scripts_service)	\
 	$(scripts_nunit)	\
-	$(scripts_rpmhelpers)
+	$(scripts_rpmhelpers)	\
+	mono-test-install
 
 scripts_1_0 = \
 	al			\
