@@ -1,3 +1,7 @@
+2007-09-21  Justin Cherniak <justin.cherniak@gmail.com>
+
+	* SWF2k5.csproj: Fixed missing file.
+
 2007-09-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.Windows.Forms.dll.sources: Add HtmlHistory.cs HtmlWindow.cs 

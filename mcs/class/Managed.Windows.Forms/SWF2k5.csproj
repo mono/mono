@@ -191,6 +191,7 @@
     <Compile Include="System.Windows.Forms.RTF\StyleType.cs" />
     <Compile Include="System.Windows.Forms.RTF\TextMap.cs" />
     <Compile Include="System.Windows.Forms.RTF\TokenClass.cs" />
+    <Compile Include="System.Windows.Forms.Theming\Default\RadioButtonPainter.cs" />
     <Compile Include="System.Windows.Forms\AccessibleEvents.cs" />
     <Compile Include="System.Windows.Forms\AccessibleNavigation.cs" />
     <Compile Include="System.Windows.Forms\AccessibleObject.cs" />
