@@ -477,13 +477,7 @@ namespace System.Windows.Forms {
 				if (visible_order <= TreeView.skipped_nodes || visible_order - TreeView.skipped_nodes > TreeView.VisibleCount)
 					return false;
 
-				TreeNode parent = Parent;
-				while (parent != null) {
-					if (!parent.is_expanded)
-						return false;
-					parent = parent.Parent;
-				}
-				return true;
+				return ArePreviousNodesExpanded;
 			}
 		}
 
@@ -832,6 +826,19 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Internal & Private Methods and Properties
+
+		internal bool ArePreviousNodesExpanded {
+			get {
+				TreeNode parent = Parent;
+				while (parent != null) {
+					if (!parent.is_expanded)
+						return false;
+					parent = parent.Parent;
+				}
+
+				return true;
+			}
+		}
 
 		internal bool IsRoot {
 			get {

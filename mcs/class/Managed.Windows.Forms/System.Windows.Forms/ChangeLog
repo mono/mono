@@ -1,3 +1,13 @@
+2007-09-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNode.cs: Add an internal ArePreviousNodesExpanded, to know
+	whether all the parent nodes are expanded.
+	* TreeNodeCollection.cs: When adding a new node an calling SetupNode,
+	call RecalculateVisibleOrder if all previous nodes are expanded.
+	Before that we were doing a IsVisible check, but sometimes the node
+	is not in the visible area, but _should_already be ready, because of
+	all previous nodes are expanded. Fixes #325259.
+
 2007-09-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripSplitButton.cs: Call the ButtonClick event if the button

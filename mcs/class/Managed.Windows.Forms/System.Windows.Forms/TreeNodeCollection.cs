@@ -418,7 +418,7 @@ namespace System.Windows.Forms {
 			if (tree_view != null) {
 				TreeNode prev = GetPrevNode (node);
 
-				if (node.IsVisible)
+				if (tree_view.IsHandleCreated && node.ArePreviousNodesExpanded)
 					tree_view.RecalculateVisibleOrder (prev);
 				if (owner == tree_view.root_node || node.Parent.IsVisible && node.Parent.IsExpanded)
 					tree_view.UpdateScrollBars (false);
