@@ -1,3 +1,8 @@
+2007-09-21  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Mono assembly loading issue has been fixed, switch
+	to app-domain execution only.
+
 2007-08-01  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Report invalid tests separately.

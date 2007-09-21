@@ -335,17 +335,8 @@ namespace TestRunner {
 		readonly static object[] default_args = new object[1] { new string[] {} };
 		string doc_output;
 
-		// When we cannot load assembly to domain we are automaticaly switching to process calling
-		bool appdomain_limit_reached;
-
 		ProcessStartInfo pi;
 		readonly string mono;
-
-		// This is really pain
-		// This number is highly experimental on my box I am not able to load more than 1000 files to domain
-		// Every files is there twice and we need some space for tests which reference assemblies
-		const int MAX_TESTS_IN_DOMAIN = 420;
-		int test_counter;
 
 		protected enum TestResult {
 			CompileError,
@@ -420,31 +411,21 @@ namespace TestRunner {
 				return true;
 			}
 
-			if (!appdomain_limit_reached) {
-				try {
-					mi = Assembly.LoadFile (file).EntryPoint;
-					if (test_counter++ > MAX_TESTS_IN_DOMAIN)
-						appdomain_limit_reached = true;
+			try {
+				mi = Assembly.LoadFile (file).EntryPoint;
+			}
+			catch (FileNotFoundException) {
+				if (File.Exists (file)) {
+					Console.WriteLine ("APPDOMAIN LIMIT REACHED");
 				}
-				catch (FileNotFoundException) {
-					if (File.Exists (file)) {
-						Console.WriteLine ("APPDOMAIN LIMIT REACHED");
-						appdomain_limit_reached = true;
-					}
-				}
-				catch (Exception e) {
-					HandleFailure (filename, TestResult.LoadError, e.ToString ());
-					return false;
-				}
+			}
+			catch (Exception e) {
+				HandleFailure (filename, TestResult.LoadError, e.ToString ());
+				return false;
 			}
 
-			if (appdomain_limit_reached) {
-				if (!ExecuteFile (file, filename))
-					return false;
-			} else {
-				if (!ExecuteFile (mi, file, filename))
-					return false;
-			}
+			if (!ExecuteFile (mi, file, filename))
+				return false;
 
 			if (doc_output != null) {
 				string ref_file = filename.Replace (".cs", "-ref.xml");
@@ -471,16 +452,6 @@ namespace TestRunner {
 			Process p = Process.Start (pi);
 			p.WaitForExit ();
 			return p.ExitCode;
-		}
-
-		bool ExecuteFile (string exe_name, string filename)
-		{
-			int exit_code = ExecFile (exe_name, filename);
-			if (exit_code == 0)
-				return true;
-
-			HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + exit_code);
-			return false;
 		}
 
 		bool ExecuteFile (MethodInfo entry_point, string exe_name, string filename)
