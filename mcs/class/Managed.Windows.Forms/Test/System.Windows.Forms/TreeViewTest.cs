@@ -264,6 +264,28 @@ namespace MonoTests.System.Windows.Forms
 				return base.IsInputChar (charCode);
 			}
 		}
+		
+#if NET_2_0
+		[Test]
+		public void SelectedNodeNullTest ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			TreeView tv = new TreeView ();
+			tv.Nodes.Add ("Node 1");
+			
+			f.Controls.Add (tv);
+			f.Show ();
+			
+			tv.BeforeSelect += new TreeViewCancelEventHandler (delegate (object sender, TreeViewCancelEventArgs e) { if (e.Node == null) Assert.Fail ("BeforeSelect should not be called with a null node"); });
+			tv.AfterSelect += new TreeViewEventHandler (delegate (object sender, TreeViewEventArgs e) { if (e.Node == null) Assert.Fail ("AfterSelect should not be called with a null node"); });
+			
+			tv.SelectedNode = null;
+			
+			f.Dispose ();
+		}
+#endif
 	}
 
 	[TestFixture]

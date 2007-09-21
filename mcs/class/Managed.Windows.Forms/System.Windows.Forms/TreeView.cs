@@ -413,11 +413,13 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (value, false, selection_action);
-				OnBeforeSelect (e);
+				if (value != null) {
+					TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (value, false, selection_action);
+					OnBeforeSelect (e);
 
-				if (e.Cancel)
-					return;
+					if (e.Cancel)
+						return;
+				}
 
 				Rectangle invalid = Rectangle.Empty;
 
@@ -449,7 +451,9 @@ namespace System.Windows.Forms {
 				if (selected_node != null)
 					selected_node.EnsureVisible ();
 
-				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
+				if (value != null) {
+					OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
+				}
 				selection_action = TreeViewAction.Unknown;
 			}
 		}

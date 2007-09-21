@@ -1,3 +1,9 @@
+2007-09-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Do not raise BeforeSelect or AfterSelect when the
+	node being selected is null.
+	[Patch from Yves Bastide fixes bug #326858]
+
 2007-09-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNode.cs: Add an internal ArePreviousNodesExpanded, to know
