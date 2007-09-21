@@ -2073,12 +2073,9 @@ namespace System.Windows.Forms {
 					SelectedNode = pre_selected_node;
 					return;
 				}
-#if NET_2_0
+				
 				SelectedNode = TopNode;
-#else
-				if (Nodes.Count > 1)
-					SelectedNode = Nodes [0];
-#endif
+			
 			} else if (selected_node != null)
 				UpdateNode (selected_node);
 		}

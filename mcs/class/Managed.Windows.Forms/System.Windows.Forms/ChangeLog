@@ -1,5 +1,11 @@
 2007-09-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Always select the first node when the TreeView gets
+	focus if there is no currently selected node.
+	[Fixes bug #324279]
+
+2007-09-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Do not raise BeforeSelect or AfterSelect when the
 	node being selected is null.
 	[Patch from Yves Bastide fixes bug #326858]
