@@ -1,5 +1,11 @@
 2007-09-21  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h (MonoSymbolFilePriv, MonoDebugHandlePriv): Removed;
+	these structs were never defined.
+	(MonoDebugHandle): Removed the `_priv' field, it was never used.
+
+2007-09-21  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.h (MonoDebugVarInfo): Add `MonoClass *klass'.
 
 Fri Sep 21 14:39:45 CEST 2007 Paolo Molaro <lupus@ximian.com>
