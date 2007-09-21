@@ -369,7 +369,7 @@ namespace System
 			try {
 				return ToObject (enumType, Convert.ChangeType (value, typeCode));
 			} catch (Exception e) {
-				throw new ArgumentException (String.Format ("The requested value `{0}' was not found", value), e);
+				throw new ArgumentException (String.Format ("The requested value '{0}' was not found", value), e);
 			}
 		}
 
