@@ -227,7 +227,7 @@ namespace MonoTests.System.IO
 			ms.Seek (0, SeekOrigin.Begin); 
 			testStream.Read (readBytes, 0, 100);
 			VerifyTestData ("W1", readBytes, 0, 100);
-		}               
+		}
 
 		[Test]
 		public void WriteBlock ()
@@ -427,12 +427,15 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void Seek_Disposed () 
 		{
 			MemoryStream ms = new MemoryStream ();
 			ms.Close ();
-			ms.Seek (0, SeekOrigin.Begin);
+			try {
+				ms.Seek (0, SeekOrigin.Begin);
+				Assert.Fail ();
+			} catch (ObjectDisposedException) {
+			}
 		}
 
 		[Test]
@@ -455,6 +458,31 @@ namespace MonoTests.System.IO
 		{
 			MemoryStream ms = new MemoryStream (testStreamData, false);
 			ms.SetLength (10);
+		}
+
+		[Test] // bug #327053
+		public void ShrinkExpand ()
+		{
+			byte [] values = { 3, 2, 1 };
+			byte [] reference = { 3, 2, 1 };
+			byte [] cropped = { 3, 0, 0 };
+			MemoryStream ms = new MemoryStream (values);
+			Assert.AreEqual (values, reference, "#A1");
+			ms.Seek (3, SeekOrigin.Begin);
+			Assert.AreEqual (reference, values, "#A2");
+			ms.SetLength (1);
+			Assert.AreEqual (reference, values, "#B1");
+			byte [] read = new byte [5];
+			ms.Read (read, 0, 5);
+			Assert.AreEqual (new byte [] { 0, 0, 0, 0, 0 }, read, "#B2");
+			Assert.AreEqual (reference, values, "#B3");
+			ms.SetLength (3);
+			Assert.AreEqual (cropped, values, "#C1");
+			ms.Seek (0, SeekOrigin.Begin);
+			read = new byte [3];
+			ms.Read (read, 0, 3);
+			Assert.AreEqual (cropped, read, "#C2");
+			Assert.AreEqual (cropped, values, "#C3");
 		}
 
 		[Test]
