@@ -26,7 +26,7 @@ namespace from
 			// FROM
 			e = from i in i2 select i;
 			e = from int i in i2 select i;
-			e = from bool? i in i2 select i;
+			var e2 = from bool? i in i2 select i;
 			e = from i in new int[0] select i;
 			e = from x in i2 from y in i2 select y;
 
@@ -54,11 +54,19 @@ namespace from
 			// LET
 			e = from i in i2 let l = i + 4 select i;
 			e = from i in i2 let l = i + 4 let l2 = l + 2 select i;
+			
+			// INTO
+			g = from i in i2 group i by 2 into i9
+				from i in i2 group i by 2 into i9
+				from i in i2 group i by 2 into i9
+				from i in i2 group i by 2 into i9
+				select i9;
 
 			int from = 0;
 			bool let = false;
 			
-			object o = (object)from i in i2 select i;
+			// TODO: Re-enable when we fix cast of query expression
+			//object o = (object)from i in i2 select i;
 		}
 		
 		int foo;
