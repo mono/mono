@@ -34,14 +34,17 @@
 
 using System.Collections;
 using System.Collections.Specialized;
+#if NET_2_0 && CONFIGURATION_DEP
+using System.Configuration;
+#endif
 
 namespace System.Diagnostics
 {
 	public abstract class Switch
 	{
-		private string name = "";
-		private string description = "";
-		private int switchSetting = 0;
+		private string name;
+		private string description;
+		private int switchSetting;
 
 		// MS Behavior is that (quoting from MSDN for OnSwitchSettingChanged()):
 		// 		"...It is invoked the first time a switch reads its value from the
@@ -114,7 +117,20 @@ namespace System.Diagnostics
 			get { return value; }
 			set {
 				this.value = value;
+#if NET_2_0 && CONFIGURATION_DEP
+				try {
+					OnValueChanged ();
+				} catch (Exception ex) {
+					string msg = string.Format ("The config "
+						+ "value for Switch '{0}' was "
+						+ "invalid.", DisplayName);
+
+					throw new ConfigurationErrorsException (
+						msg, ex);
+				}
+#else
 				OnValueChanged ();
+#endif
 			}
 		}
 
@@ -130,14 +146,17 @@ namespace System.Diagnostics
 
 		private void GetConfigFileSetting ()
 		{
-			try {
-				IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
-				
-				// Load up the specified switch
-				if (d != null)
-					switchSetting = int.Parse (d [name].ToString());
-			} catch {
-				switchSetting = 0;
+			IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
+			
+			// Load up the specified switch
+			if (d != null) {
+				if (d.Contains (name)) {
+#if NET_2_0 && CONFIGURATION_DEP
+					Value = d [name] as string;
+#else
+					switchSetting = (int) d [name];
+#endif
+				}
 			}
 		}
 

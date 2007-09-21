@@ -86,12 +86,15 @@ namespace System.Diagnostics
 		{
 			if (SwitchSetting < 0)
 				SwitchSetting = (int) TraceLevel.Off;
+			else if (SwitchSetting > 4)
+				SwitchSetting = (int) TraceLevel.Verbose;
 		}
 
 #if NET_2_0
 		protected override void OnValueChanged ()
 		{
-			Level = (TraceLevel) Enum.Parse (typeof (TraceLevel), Value);
+			SwitchSetting = (int) Enum.Parse (typeof (TraceLevel),
+				Value, true);
 		}
 #endif
 	}

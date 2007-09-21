@@ -1,3 +1,19 @@
+2007-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DiagnosticsConfigurationHandler.cs: Rename ValidateIntegralValue
+	to GetSwitchValue. On 2.0 profile, leave the type conversion to
+	Switch implementations. Minor corrections to exception messages to
+	match MS.
+	* Switch.cs: Avoid unnecessary inits. On 2.0 profile, catch and
+	rethrow exceptions in setter for Value. Do not hide exceptions thrown
+	in GetConfigFileSetting. Only set value from config file if switch is
+	actually defined.
+	* SourceSwitch.cs: Use SwitchSetting for getting/storing value instead
+	of new field. In OnValueChanged, parse enum value.
+	* TraceSwitch.cs: If SwitchSetting is changed to value > 4, then set
+	it to Verbose. In OnValueChanged, parse value case-insensitively, and
+	assign it to SwitchSetting (to allow other integral values).
+
 2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EventLog.cs : added cosmetic 2.0 attributes on newly added members.

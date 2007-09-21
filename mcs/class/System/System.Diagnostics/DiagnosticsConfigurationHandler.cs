@@ -204,8 +204,7 @@ namespace System.Diagnostics
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
 							value = GetAttribute (attributes, "value", true, child);
-							value = AsString (value); ValidateIntegralValue (name, value);
-							newNodes [name] = value;
+							newNodes [name] = GetSwitchValue (name, value);
 							break;
 						case "remove":
 							name = GetAttribute (attributes, "name", true, child);
@@ -228,15 +227,20 @@ namespace System.Diagnostics
 #endif
 		}
 
-		private static int ValidateIntegralValue (string name, string value)
+		private static object GetSwitchValue (string name, string value)
 		{
+#if NET_2_0
+			return value;
+#else
 			try {
 				return int.Parse (value);
 			} catch {
 				throw new ConfigurationException (string.Format (
-							"Error in '{0}': " + 
-							"The value of a switch must be integral", name));
+					"Error in trace switch '{0}': " + 
+					"The value of a switch must be integral",
+					name));
 			}
+#endif
 		}
 
 		private void AddTraceNode (IDictionary d, XmlNode node)
@@ -492,16 +496,11 @@ namespace System.Diagnostics
 
 			return r;
 		}
-		
-		private string AsString (string s)
-		{
-			return s == null ? string.Empty : s;
-		}
 
 		private void ValidateAttribute (string attribute, string value, XmlNode node)
 		{
 			if (value == null || value.Length == 0)
-				throw new ConfigurationException (string.Format ("Required attribute `{0}' cannot be empty.", attribute), node);
+				throw new ConfigurationException (string.Format ("Required attribute '{0}' cannot be empty.", attribute), node);
 		}
 
 		private void ValidateInvalidAttributes (XmlAttributeCollection c, XmlNode node)
@@ -512,7 +511,7 @@ namespace System.Diagnostics
 
 		private void ThrowMissingAttribute (string attribute, XmlNode node)
 		{
-			throw new ConfigurationException (string.Format ("Missing required attribute `{0}'.", attribute), node);
+			throw new ConfigurationException (string.Format ("Required attribute '{0}' not found.", attribute), node);
 		}
 
 		private void ThrowUnrecognizedNode (XmlNode node)
@@ -525,14 +524,14 @@ namespace System.Diagnostics
 		private void ThrowUnrecognizedElement (XmlNode node)
 		{
 			throw new ConfigurationException (
-					string.Format ("Unrecognized element <{0}/>", node.Name),
+					string.Format ("Unrecognized element '{0}'.", node.Name),
 					node);
 		}
 
 		private void ThrowUnrecognizedAttribute (string attribute, XmlNode node)
 		{
 			throw new ConfigurationException (
-					string.Format ("Unrecognized attribute `{0}' on element <{1}/>.", attribute, node.Name),
+					string.Format ("Unrecognized attribute '{0}' on element <{1}/>.", attribute, node.Name),
 					node);
 		}
 	}

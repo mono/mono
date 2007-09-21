@@ -39,8 +39,6 @@ namespace System.Diagnostics
 		// FIXME: better explanation.
 		const string description = "Source switch.";
 
-		SourceLevels level;
-
 		public SourceSwitch (string displayName)
 			: this (displayName, String.Empty)
 		{
@@ -52,35 +50,39 @@ namespace System.Diagnostics
 		}
 		
 		public SourceLevels Level {
-			get { return level; }
-			set { level = value; }
+			get { return (SourceLevels) SwitchSetting; }
+			set {
+				SwitchSetting = (int) value;
+			}
 		}
 
 		public bool ShouldTrace (TraceEventType eventType)
 		{
 			switch (eventType) {
 			case TraceEventType.Critical:
-				return (level & SourceLevels.Critical) != 0;
+				return (Level & SourceLevels.Critical) != 0;
 			case TraceEventType.Error:
-				return (level & SourceLevels.Error) != 0;
+				return (Level & SourceLevels.Error) != 0;
 			case TraceEventType.Warning:
-				return (level & SourceLevels.Warning) != 0;
+				return (Level & SourceLevels.Warning) != 0;
 			case TraceEventType.Information:
-				return (level & SourceLevels.Information) != 0;
+				return (Level & SourceLevels.Information) != 0;
 			case TraceEventType.Verbose:
-				return (level & SourceLevels.Verbose) != 0;
+				return (Level & SourceLevels.Verbose) != 0;
 			case TraceEventType.Start:
 			case TraceEventType.Stop:
 			case TraceEventType.Suspend:
 			case TraceEventType.Resume:
 			case TraceEventType.Transfer:
 			default:
-				return (level & SourceLevels.ActivityTracing) != 0;
+				return (Level & SourceLevels.ActivityTracing) != 0;
 			}
 		}
 
 		protected override void OnValueChanged ()
 		{
+			SwitchSetting = (int) Enum.Parse (typeof (SourceLevels),
+				Value, true);
 		}
 	}
 }
