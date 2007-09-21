@@ -45,6 +45,8 @@ namespace Mono.CSharp
 		Block      current_block;
 
 		Delegate   current_delegate;
+		
+		Stack query_expression_blocks;
 
 		GenericMethod current_generic_method;
 		AnonymousMethodExpression current_anonymous_method;
@@ -5376,7 +5378,11 @@ resource_acquisition
 // LINQ
 
 query_expression
-	: from_clause query_body
+	: from_clause
+	  {
+	  	query_expression_blocks = null;
+	  }
+	  query_body
 	  {
 		lexer.QueryParsing = false;
 
@@ -5384,10 +5390,12 @@ query_expression
 		if (from == null)
 			from = new Linq.QueryStartClause ((Expression)$1);
 			
-		from.Tail.Next = (Linq.AQueryClause)$2;
-		$$ = new Linq.QueryExpression (current_block, from); 
+		from.Tail.Next = (Linq.AQueryClause)$3;
+		Block query_block = query_expression_blocks == null ?
+			current_block : (Block)query_expression_blocks.Pop ();
+		$$ = new Linq.QueryExpression (query_block, from);
 		end_block (lexer.Location);
-	  }
+	  }	
 	;
 	
 from_clause
@@ -5596,14 +5604,24 @@ opt_query_continuation
 	: /* empty */
 	| INTO IDENTIFIER
 	  {
+		// query continuation block is not linked with query block but with block
+		// before. This means each query can use same range variable names for
+		// different identifiers.
+		
+	  	if (query_expression_blocks == null) {
+	  		query_expression_blocks = new Stack ();
+	  		query_expression_blocks.Push (current_block);
+	  	}
+
+		end_block (GetLocation ($1));	  
 		start_block (GetLocation ($1));
+	  	query_expression_blocks.Push (current_block);		
 		LocatedToken lt = (LocatedToken) $2;
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);	  
 	  }
 	  query_body
 	  {
-		$$ = new Linq.QueryExpression (current_block, (Linq.AQueryClause)$4);
-		end_block (lexer.Location);		
+		$$ = new Linq.QueryExpression ((Block)query_expression_blocks.Pop (), (Linq.AQueryClause)$4);
 	  }
 	;
 	

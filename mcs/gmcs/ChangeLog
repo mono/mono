@@ -1,3 +1,7 @@
+2007-09-21  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay: Query expression block are not related to each other.
+
 2007-09-19  Marek Safar  <marek.safar@gmail.com>
 	
 	* generic.cs: Fixed type inference for generic delegate arguments whose
@@ -7,7 +11,7 @@
 	
 2007-09-17  Marek Safar  <marek.safar@gmail.com>
 	
-	* cs-parser.jay, linq: Implemented query continuation.
+	* cs-parser.jay, linq.cs: Implemented query continuation.
 
 2007-09-12  Marek Safar  <marek.safar@gmail.com>
 	
