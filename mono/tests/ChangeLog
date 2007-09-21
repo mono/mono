@@ -1,3 +1,8 @@
+2007-09-21  Robert Jordan  <robertj@gmx.net>
+
+	* assemblyresolve/Makefile.am: remove the superfluous --security
+	flag.
+
 2007-09-20  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.cs: added
