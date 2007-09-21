@@ -1,3 +1,9 @@
+2007-09-21  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (type_in_image) <MONO_TYPE_SZARRAY>: Handle arrays of
+	generic instantiations, etc.
+	<MONO_TYPE_ARRAY>: Likewise.
+
 2007-09-21  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MonoSymbolFilePriv, MonoDebugHandlePriv): Removed;
