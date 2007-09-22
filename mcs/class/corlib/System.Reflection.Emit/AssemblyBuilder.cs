@@ -638,6 +638,20 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0
+		ModuleBuilder manifest_module;
+
+		//
+		// MS.NET seems to return a ModuleBuilder when GetManifestModule () is called
+		// on an assemblybuilder.
+		//
+		internal override Module GetManifestModule () {
+			if (manifest_module == null)
+				manifest_module = DefineDynamicModule ("Default Dynamic Module");
+			return manifest_module;
+		}
+#endif
+
+#if NET_2_0
 		public 
 #else
 		internal
