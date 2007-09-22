@@ -1,3 +1,8 @@
+2007-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_type_create_from_typespec): Remove an invalid
+	free. Fixes #327438.
+
 2007-09-21  Raja R Harinath  <harinath@gmail.com>
 
 	* metadata.c (type_in_image) <MONO_TYPE_SZARRAY>: Handle arrays of
