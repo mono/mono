@@ -1,3 +1,10 @@
+2007-09-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-327438.2.il: added
+
+	* Makefile.am: added bug-327438.2.il
+
+
 2007-09-21  Robert Jordan  <robertj@gmx.net>
 
 	* assemblyresolve/Makefile.am: remove the superfluous --security
