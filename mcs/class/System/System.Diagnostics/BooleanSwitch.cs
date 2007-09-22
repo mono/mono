@@ -54,9 +54,8 @@ namespace System.Diagnostics
 		/// Initializes a new instance
 		/// </summary>
 		public BooleanSwitch(string displayName, string description, string defaultSwitchValue)
-			: base(displayName, description)
+			: base(displayName, description, defaultSwitchValue)
 		{
-			Value = defaultSwitchValue;
 		}
 #endif
 

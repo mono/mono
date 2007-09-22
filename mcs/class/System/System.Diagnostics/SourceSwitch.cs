@@ -40,7 +40,7 @@ namespace System.Diagnostics
 		const string description = "Source switch.";
 
 		public SourceSwitch (string displayName)
-			: this (displayName, String.Empty)
+			: this (displayName, null)
 		{
 		}
 

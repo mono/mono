@@ -45,7 +45,10 @@ namespace System.Diagnostics
 		private string name;
 		private string description;
 		private int switchSetting;
-
+		private string value;
+#if NET_2_0
+		private string defaultSwitchValue;
+#endif
 		// MS Behavior is that (quoting from MSDN for OnSwitchSettingChanged()):
 		// 		"...It is invoked the first time a switch reads its value from the
 		// 		configuration file..."
@@ -59,7 +62,7 @@ namespace System.Diagnostics
 		// Thus, we need to keep track of whether or not switchSetting has been
 		// initialized.  Using `switchSetting=-1' seems logical, but if someone
 		// actually wants to use -1 as a switch value that would cause problems.
-		private bool initialized = false;
+		private bool initialized;
 
 		protected Switch(string displayName, string description)
 		{
@@ -67,13 +70,11 @@ namespace System.Diagnostics
 			this.description = description;
 		}
 
-		private string value;
-
 #if NET_2_0
 		protected Switch(string displayName, string description, string defaultSwitchValue)
 			: this (displayName, description)
 		{
-			this.value = defaultSwitchValue;
+			this.defaultSwitchValue = defaultSwitchValue;
 		}
 #endif
 
@@ -156,8 +157,16 @@ namespace System.Diagnostics
 #else
 					switchSetting = (int) d [name];
 #endif
+					return;
 				}
 			}
+
+#if NET_2_0
+			if (defaultSwitchValue != null) {
+				value = defaultSwitchValue;
+				OnValueChanged ();
+			}
+#endif
 		}
 
 		protected virtual void OnSwitchSettingChanged()
@@ -167,4 +176,3 @@ namespace System.Diagnostics
 		}
 	}
 }
-
