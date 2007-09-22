@@ -1,3 +1,10 @@
+2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DeflateStreamTest.cs: Improved CanRead, CanSeek and CanWrite tests.
+	Added test for bug #327480. Code formatting.
+	* GzipStreamTest.cs: Improved CanRead, CanSeek and CanWrite tests.
+	Code formatting.
+
 2007-05-08  Jonathan Chambers  <joncham@gmail.com>
 
 	* DeflateStreamTest.cs, GzipStreamTest.cs : disabled tests that are

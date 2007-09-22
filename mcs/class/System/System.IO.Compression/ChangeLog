@@ -1,3 +1,7 @@
+2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DeflateStream.cs: Avoid double free. Fixes bug #327480.
+
 2006-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* DeflateStream.cs: Throw a more meaningfull exception when zlib initialization

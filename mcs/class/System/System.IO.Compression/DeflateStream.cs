@@ -101,6 +101,11 @@ namespace System.IO.Compression {
 
 		protected override void Dispose (bool disposing)
 		{
+			if (!open) {
+				base.Dispose (disposing);
+				return;
+			}
+
 			try {
 				FlushInternal (true);
 				base.Dispose (disposing);
