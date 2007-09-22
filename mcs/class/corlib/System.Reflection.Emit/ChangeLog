@@ -1,3 +1,8 @@
+2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs: Do not include static methods of base class in
+	GetMethod(s). Fixes bug #327482.
+
 2007-09-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilder.cs (DefineVersionInfoResource): Allow the arguments to be

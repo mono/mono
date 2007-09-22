@@ -1,3 +1,9 @@
+2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs: Added test for bug #327484. Split up and improved
+	TestGetProperties(Flags)Incomplete and TestGetMethods(Flags)Incomplete
+	tests. Improved TestGetMethodsComplete test.
+
 2007-09-11  Jb Evain  <jbevain@novell.com>
 
 	* DynamicMethodTest.cs: add test for owner member access.

@@ -1045,7 +1045,8 @@ namespace System.Reflection.Emit
 		{
 			MethodInfo[] candidates;
 			if (((bindingAttr & BindingFlags.DeclaredOnly) == 0) && (parent != null)) {
-				MethodInfo[] parent_methods = parent.GetMethods (bindingAttr);
+				BindingFlags parentBindingAttr = bindingAttr & (~BindingFlags.Static);
+				MethodInfo [] parent_methods = parent.GetMethods (parentBindingAttr);
 				if (methods == null)
 					candidates = parent_methods;
 				else {

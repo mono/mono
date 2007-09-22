@@ -1395,6 +1395,57 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+		[Test] // bug #327484
+		[Category ("NotWorking")]
+		public void TestDefineMethod_Abstract ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineMethod ("Run", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), Type.EmptyTypes);
+
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Type must be declared abstract if any of its
+				// methods are abstract
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Abstract);
+			tb.DefineMethod ("Run", MethodAttributes.Public |
+				MethodAttributes.Abstract, typeof (void),
+				Type.EmptyTypes);
+
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#B1");
+			} catch (TypeLoadException ex) {
+				// Non-virtual abstract method
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Abstract |
+				TypeAttributes.Public);
+			tb.DefineMethod ("Run", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), Type.EmptyTypes);
+			Type emittedType = tb.CreateType ();
+
+			MethodInfo mi1 = emittedType.GetMethod ("Run");
+			Assert.IsNotNull (mi1, "#C1");
+			Assert.IsTrue (mi1.IsAbstract, "#C2");
+
+			MethodInfo mi2 = tb.GetMethod ("Run");
+			Assert.IsNotNull (mi2, "#D1");
+			Assert.IsTrue (mi2.IsAbstract, "#D2");
+		}
+
 		// TODO: DefineMethodOverride
 
 		[Test]
@@ -2085,12 +2136,37 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetPropertiesIncomplete ()
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetPropertiesIncomplete_Mono ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetProperties ();
+			DefineStringProperty (tb, "Name", "name", MethodAttributes.Public);
+			DefineStringProperty (tb, "Income", "income", MethodAttributes.Private);
+			DefineStringProperty (tb, "FirstName", "firstName", MethodAttributes.Public);
+
+			PropertyInfo [] properties = tb.GetProperties ();
+			Assert.AreEqual (2, properties.Length, "#1");
+			Assert.AreEqual ("Name", properties [0].Name, "#2");
+			Assert.AreEqual ("FirstName", properties [1].Name, "#3");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetPropertiesIncomplete_MS ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			DefineStringProperty (tb, "Name", "name", MethodAttributes.Public);
+			DefineStringProperty (tb, "FirstName", "firstName", MethodAttributes.Public);
+			DefineStringProperty (tb, "Income", "income", MethodAttributes.Private);
+
+			try {
+				tb.GetProperties ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -2106,12 +2182,52 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetPropertiesFlagsIncomplete ()
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetPropertiesFlagsIncomplete_Mono ()
+		{
+			PropertyInfo [] properties;
+
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			DefineStringProperty (tb, "Name", "name", MethodAttributes.Public);
+			DefineStringProperty (tb, "Income", "income", MethodAttributes.Private);
+			DefineStringProperty (tb, "FirstName", "firstName", MethodAttributes.Public);
+
+			properties = tb.GetProperties (BindingFlags.Public | 
+				BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.AreEqual (3, properties.Length, "#A1");
+			Assert.AreEqual ("Name", properties [0].Name, "#A2");
+			Assert.AreEqual ("Income", properties [1].Name, "#A3");
+			Assert.AreEqual ("FirstName", properties [2].Name, "#A4");
+
+			properties = tb.GetProperties (BindingFlags.Public |
+				BindingFlags.Instance);
+			Assert.AreEqual (2, properties.Length, "#B1");
+			Assert.AreEqual ("Name", properties [0].Name, "#B2");
+			Assert.AreEqual ("FirstName", properties [1].Name, "#B3");
+
+			properties = tb.GetProperties (BindingFlags.NonPublic |
+				BindingFlags.Instance);
+			Assert.AreEqual (1, properties.Length, "#C1");
+			Assert.AreEqual ("Income", properties [0].Name, "#C2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetPropertiesFlagsIncomplete_MS ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetProperties (BindingFlags.Public);
+			DefineStringProperty (tb, "Name", "name", MethodAttributes.Public);
+			DefineStringProperty (tb, "Income", "income", MethodAttributes.Private);
+			DefineStringProperty (tb, "FirstName", "firstName", MethodAttributes.Public);
+
+			try {
+				tb.GetProperties (BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -2151,8 +2267,12 @@ namespace MonoTests.System.Reflection.Emit
 
 			try {
 				tb.GetProperty ("CustomerName");
-				Assert.Fail ();
-			} catch (NotSupportedException) { }
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -2178,48 +2298,289 @@ namespace MonoTests.System.Reflection.Emit
 
 			try {
 				tb.GetProperty ("CustomerName", BindingFlags.Instance | BindingFlags.Public);
-				Assert.Fail ();
-			} catch (NotSupportedException) { }
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetMethodsIncomplete ()
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetMethodsIncomplete_Mono ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetMethods ();
+			MethodBuilder mb;
+			ILGenerator ilgen;
+
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Abstract);
+			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
+				MethodAttributes.Static,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), new Type [0]);
+
+			MethodInfo [] methods = tb.GetMethods ();
+			Assert.AreEqual (7, methods.Length, "#A");
+
+			Assert.AreEqual ("Equals", methods [0].Name, "#B1");
+			Assert.IsFalse (methods [0].IsStatic, "#B2");
+			Assert.IsFalse (methods [0].IsAbstract, "#B3");
+
+			Assert.AreEqual ("GetHashCode", methods [1].Name, "#C1");
+			Assert.IsFalse (methods [1].IsStatic, "#C2");
+			Assert.IsFalse (methods [1].IsAbstract, "#C3");
+
+			Assert.AreEqual ("GetType", methods [2].Name, "#D1");
+			Assert.IsFalse (methods [2].IsStatic, "#D2");
+			Assert.IsFalse (methods [2].IsAbstract, "#D3");
+
+			Assert.AreEqual ("ToString", methods [3].Name, "#E1");
+			Assert.IsFalse (methods [3].IsStatic, "#E2");
+			Assert.IsFalse (methods [3].IsAbstract, "#E3");
+
+			Assert.AreEqual ("Hello", methods [4].Name, "#F1");
+			Assert.IsFalse (methods [4].IsStatic, "#F2");
+			Assert.IsFalse (methods [4].IsAbstract, "#F3");
+
+			Assert.AreEqual ("Execute", methods [5].Name, "#G1");
+			Assert.IsTrue (methods [5].IsStatic, "#G2");
+			Assert.IsFalse (methods [5].IsAbstract, "#G3");
+
+			Assert.AreEqual ("Init", methods [6].Name, "#H1");
+			Assert.IsFalse (methods [6].IsStatic, "#H2");
+			Assert.IsTrue (methods [6].IsAbstract, "#H3");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetMethodsIncomplete_MS ()
+		{
+			MethodBuilder mb;
+			ILGenerator ilgen;
+
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Abstract);
+			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
+				MethodAttributes.Static,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), new Type [0]);
+
+			try {
+				tb.GetMethods ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
 		public void TestGetMethodsComplete ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
-			MethodBuilder helloMethod = tb.DefineMethod ("HelloMethod",
-				MethodAttributes.Public, typeof (string), new Type [0]);
-			ILGenerator helloMethodIL = helloMethod.GetILGenerator ();
-			helloMethodIL.Emit (OpCodes.Ldstr, "Hi! ");
-			helloMethodIL.Emit (OpCodes.Ldarg_1);
+			MethodBuilder mb;
+			ILGenerator ilgen;
+			MethodInfo mi;
+
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Abstract);
+			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
+				typeof (string), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldstr, "Hi! ");
+			ilgen.Emit (OpCodes.Ldarg_1);
 			MethodInfo infoMethod = typeof (string).GetMethod ("Concat",
 				new Type [] { typeof (string), typeof (string) });
-			helloMethodIL.Emit (OpCodes.Call, infoMethod);
-			helloMethodIL.Emit (OpCodes.Ret);
+			ilgen.Emit (OpCodes.Call, infoMethod);
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
+				MethodAttributes.Static,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), new Type [0]);
 
 			Type emittedType = tb.CreateType ();
 
-			Assert.AreEqual (typeof (object).GetMethods (BindingFlags.Public | BindingFlags.Instance).Length + 1,
-				tb.GetMethods ().Length);
-			Assert.AreEqual (tb.GetMethods ().Length, emittedType.GetMethods ().Length);
+			MethodInfo [] methods = emittedType.GetMethods ();
+			Assert.AreEqual (7, methods.Length, "#A1");
+			Assert.AreEqual (7, tb.GetMethods ().Length, "#A2");
+
+			mi = GetMethodByName (methods, "Hello");
+			Assert.IsNotNull (mi, "#B1");
+			Assert.IsFalse (mi.IsStatic, "#B2");
+			Assert.IsFalse (mi.IsAbstract, "#B3");
+
+			mi = GetMethodByName (methods, "Execute");
+			Assert.IsNotNull (mi, "#C1");
+			Assert.IsTrue (mi.IsStatic, "#C2");
+			Assert.IsFalse (mi.IsAbstract, "#C3");
+
+			mi = GetMethodByName (methods, "Init");
+			Assert.IsNotNull (mi, "#D1");
+			Assert.IsFalse (mi.IsStatic, "#D2");
+			Assert.IsTrue (mi.IsAbstract, "#D3");
+
+			mi = GetMethodByName (methods, "GetType");
+			Assert.IsNotNull (mi, "#E1");
+			Assert.IsFalse (methods [3].IsStatic, "#E2");
+			Assert.IsFalse (methods [3].IsAbstract, "#E3");
+
+			mi = GetMethodByName (methods, "ToString");
+			Assert.IsNotNull (mi, "#F1");
+			Assert.IsFalse (mi.IsStatic, "#F2");
+			Assert.IsFalse (mi.IsAbstract, "#F3");
+
+			mi = GetMethodByName (methods, "Equals");
+			Assert.IsNotNull (mi, "#G1");
+			Assert.IsFalse (mi.IsStatic, "#G2");
+			Assert.IsFalse (mi.IsAbstract, "#G3");
+
+			mi = GetMethodByName (methods, "GetHashCode");
+			Assert.IsNotNull (mi, "#H1");
+			Assert.IsFalse (mi.IsStatic, "#H2");
+			Assert.IsFalse (mi.IsAbstract, "#H3");
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		[Ignore ("mcs depends on this")]
-		public void TestGetMethodsFlagsIncomplete ()
+		[Category ("NotDotNet")] // mcs depends on this
+		public void TestGetMethodsFlagsIncomplete_Mono ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetMethods (BindingFlags.Public);
+			MethodBuilder mb;
+			ILGenerator ilgen;
+			MethodInfo [] methods;
+			MethodInfo mi;
+
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Abstract);
+			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
+				MethodAttributes.Static,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), new Type [0]);
+
+			methods = tb.GetMethods (BindingFlags.Public |
+				BindingFlags.Instance);
+			Assert.AreEqual (6, methods.Length, "#A1");
+			Assert.IsNotNull (GetMethodByName (methods, "Hello"), "#A2");
+			Assert.IsNotNull (GetMethodByName (methods, "Init"), "#A3");
+			Assert.IsNotNull (GetMethodByName (methods, "ToString"), "#A4");
+			Assert.IsNotNull (GetMethodByName (methods, "Equals"), "#A5");
+			Assert.IsNotNull (GetMethodByName (methods, "GetHashCode"), "#A6");
+
+			methods = tb.GetMethods (BindingFlags.Public |
+				BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			Assert.AreEqual (2, methods.Length, "#B1");
+			Assert.IsNotNull (GetMethodByName (methods, "Hello"), "#B2");
+			Assert.IsNotNull (GetMethodByName (methods, "Init"), "#B3");
+
+			methods = tb.GetMethods (BindingFlags.Public |
+				BindingFlags.Instance | BindingFlags.Static);
+			Assert.AreEqual (7, methods.Length, "#C1");
+			Assert.IsNotNull (GetMethodByName (methods, "Hello"), "#C2");
+			Assert.IsNotNull (GetMethodByName (methods, "Init"), "#C3");
+			Assert.IsNotNull (GetMethodByName (methods, "Execute"), "#C4");
+			Assert.IsNotNull (GetMethodByName (methods, "ToString"), "#C5");
+			Assert.IsNotNull (GetMethodByName (methods, "Equals"), "#C6");
+			Assert.IsNotNull (GetMethodByName (methods, "GetHashCode"), "#C7");
+
+			methods = tb.GetMethods (BindingFlags.NonPublic |
+				BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			Assert.AreEqual (1, methods.Length, "#D1");
+			Assert.IsNotNull (GetMethodByName (methods, "Run"), "#D2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // mcs depends on this
+		public void TestGetMethodsFlagsIncomplete_MS ()
+		{
+			MethodBuilder mb;
+			ILGenerator ilgen;
+
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Abstract);
+			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
+				MethodAttributes.Static,
+				typeof (void), new Type [0]);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
+				MethodAttributes.Abstract | MethodAttributes.Virtual,
+				typeof (void), new Type [0]);
+
+			try {
+				tb.GetMethods (BindingFlags.Public | BindingFlags.Instance);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -2728,5 +3089,13 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb.IsCreated (), "#C4");
 		}
 #endif
+
+		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
+		{
+			foreach (MethodInfo mi in methods)
+				if (mi.Name == name)
+					return mi;
+			return null;
+		}
 	}
 }
