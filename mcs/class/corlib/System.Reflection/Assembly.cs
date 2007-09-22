@@ -726,10 +726,18 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
-		public extern Module ManifestModule {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public Module ManifestModule {
+			get {
+				return GetManifestModule ();
+			}
 		}
+
+		internal virtual Module GetManifestModule () {
+			return GetManifestModuleInternal ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern Module GetManifestModuleInternal ();
 
 		[ComVisible (false)]
 		public virtual extern bool ReflectionOnly {
