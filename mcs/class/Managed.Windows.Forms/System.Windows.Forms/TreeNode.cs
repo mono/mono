@@ -896,7 +896,8 @@ namespace System.Windows.Forms {
 					tree_view.RecalculateVisibleOrder (this);
 					tree_view.UpdateScrollBars (false);
 
-					if (IsVisible)
+					// ExpandBelow if we affect the visible area
+					if (visible_order < tree_view.skipped_nodes + tree_view.VisibleCount && ArePreviousNodesExpanded)
 						tree_view.ExpandBelow (this, count_to_next);
 				}
 			}
@@ -931,7 +932,8 @@ namespace System.Windows.Forms {
 					tree_view.RecalculateVisibleOrder (this);
 					tree_view.UpdateScrollBars (false);
 
-					if (IsVisible)
+					// CollapseBelow if we affect the visible area
+					if (visible_order < tree_view.skipped_nodes + tree_view.VisibleCount && ArePreviousNodesExpanded)
 						tree_view.CollapseBelow (this, count_to_next);
 					if(!byInternal && HasFocusInChildren ())
 						tree_view.SelectedNode = this;

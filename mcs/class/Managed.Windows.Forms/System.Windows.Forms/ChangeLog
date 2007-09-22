@@ -1,3 +1,10 @@
+2007-09-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNode.cs: When collapsing or expanding a node, check whether its
+	change will affect the visible area (we were previously doing a
+	IsVisible check, but that check is not enough since children nodes
+	could be still visible). Fixes part of #325266.
+
 2007-09-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Always select the first node when the TreeView gets
