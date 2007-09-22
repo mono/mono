@@ -1058,11 +1058,6 @@ namespace System.Net.Sockets
 			}
 		}
 
-		Exception GetNotImplemented (string msg)
-		{
-			return new NotImplementedException (msg);
-		}
-
 #if !TARGET_JVM
 		// Returns the local endpoint details in addr and port
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

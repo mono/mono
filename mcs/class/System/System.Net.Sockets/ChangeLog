@@ -1,3 +1,7 @@
+2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Socket.cs: Removed unused method.
+
 2007-08-02  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Patch from Brian Nickel (brian.nickel@gmail.com) to
