@@ -43,6 +43,7 @@ System.Windows.Forms/DataGridTextBoxColumnTest.cs
 System.Windows.Forms/DataGridTextBoxTest.cs
 System.Windows.Forms/DataGridViewAdvancedBorderStyleTest.cs
 System.Windows.Forms/DataGridViewBandTest.cs
+System.Windows.Forms/DataGridViewCellCollectionTest.cs
 System.Windows.Forms/DataGridViewCellStyleTest.cs
 System.Windows.Forms/DataGridViewCellTest.cs
 System.Windows.Forms/DataGridViewClipboardHeaderTest.cs

@@ -23,27 +23,21 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
 #if NET_2_0
 
-using NUnit.Framework;
 using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections;
 
-namespace MonoTests.System.Windows.Forms {
+using NUnit.Framework;
 
+namespace MonoTests.System.Windows.Forms
+{
 	[TestFixture]
-	public class DataGridViewCellTest {
-		
-		[SetUp]
-		public void GetReady() {}
-
-		[TearDown]
-		public void Clean() {}
-
+	public class DataGridViewCellTest
+	{
 		[Test]
 		public void GetClipboardContentTest ()
 		{
@@ -160,9 +154,9 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual ("" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.UnicodeText), "#A2");
 				Assert.AreEqual ("<TABLE><TR><TD>&nbsp;</TD></TR>", cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.Html), "#A3");
 				Assert.AreEqual ("" + Environment.NewLine, cell.GetClipboardContentPublic (0, true, true, true, false, DataFormats.CommaSeparatedValue), "#A4");
-				
 			}
 		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void GetClipboardContentTestException ()
@@ -183,7 +177,6 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual ("abc\t", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.UnicodeText), "#A2");
 				Assert.AreEqual ("<TD>abc</TD>", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.Html), "#A3");
 				Assert.AreEqual ("abc,", cell.GetClipboardContentPublic (123, false, false, false, false, DataFormats.CommaSeparatedValue), "#A4");
-
 			}
 		}
 
@@ -269,6 +262,7 @@ namespace MonoTests.System.Windows.Forms {
 			DataGridViewCell cell =new DataGridViewCellMockObject ();
 			Assert.AreEqual ("DataGridViewTextBoxEditingControl", cell.EditType.Name, "#01");
 		}
+
 		[Test]
 		public void TestDefaultValues ()
 		{
@@ -328,7 +322,6 @@ namespace MonoTests.System.Windows.Forms {
 		[Test]
 		public void AddRow_Changes ()
 		{
-
 			using (DataGridView dgv = new DataGridView ()) {
 				DataGridViewColumn col = new DataGridViewComboBoxColumn ();
 				DataGridViewRow row = new DataGridViewRow ();
@@ -610,12 +603,6 @@ namespace MonoTests.System.Windows.Forms {
 			}
 		}
 
-		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestException () {
-			throw new InvalidEnumArgumentException();
-		}
-
 		/*
 		[Test]
 		[ExpectedException(typeof(Exception))]
@@ -628,6 +615,7 @@ namespace MonoTests.System.Windows.Forms {
 			Fail ("Message");
 		}
 		*/
+
 		class DataGridViewCellMockObject : DataGridViewCell
 		{
 			public DataGridViewCellMockObject ()

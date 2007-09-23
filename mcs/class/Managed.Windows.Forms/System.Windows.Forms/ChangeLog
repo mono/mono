@@ -1,3 +1,9 @@
+2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridViewCellCollection.cs: Added argument checks for indexers.
+	Use case-insensitive lookup of column name in indexer. Code
+	formatting.
+
 2007-09-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNode.cs: When collapsing or expanding a node, check whether its

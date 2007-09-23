@@ -1,3 +1,8 @@
+2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Windows.Forms_test.dll.sources: Added
+	DataGridViewCellCollectionTest.cs.
+
 2007-09-21  Justin Cherniak <justin.cherniak@gmail.com>
 
 	* SWF2k5.csproj: Fixed missing file.
