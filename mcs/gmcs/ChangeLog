@@ -1,3 +1,10 @@
+2007-09-23  Marek Safar  <marek.safar@gmail.com>
+	
+	* generics.cs: Fixed lower-bound type inference issue for constructed
+	types.
+	
+	* linq.cs: Implemented nested queries.
+
 2007-09-21  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay: Query expression block are not related to each other.

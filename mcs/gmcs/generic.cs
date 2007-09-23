@@ -3000,6 +3000,10 @@ namespace Mono.CSharp {
 		//
 		public void LowerBoundInference (Type u, Type v)
 		{
+			// Remove ref, out modifiers
+			if (v.IsByRef)
+				v = v.GetElementType ();
+
 			// If U is an array type
 			if (u.IsArray) {
 				int u_dim = u.GetArrayRank ();
@@ -3038,28 +3042,42 @@ namespace Mono.CSharp {
 					ExactInference (u_e, v_e);
 					return;
 				}
-			// If V is a constructed type C<V1..Vk>
-			} else if (v.IsGenericType && !v.IsGenericTypeDefinition && u.IsGenericType) {
-				Type[] ga_u = u.GetGenericArguments ();
-				Type[] ga_v = v.GetGenericArguments ();
-				if (ga_u.Length != ga_v.Length)
+			} else if (v.IsGenericType && !v.IsGenericTypeDefinition) {
+				//
+				// if V is a constructed type C<V1..Vk> and there is a unique set of types U1..Uk
+				// such that a standard implicit conversion exists from U to C<U1..Uk> then an exact
+				// inference is made from each Ui for the corresponding Vi
+				//
+				ArrayList u_candidates = new ArrayList ();
+				if (u.IsGenericType)
+					u_candidates.Add (u);
+
+				for (Type t = u.BaseType; t != null; t = t.BaseType) {
+					if (t.IsGenericType && !t.IsGenericTypeDefinition)
+						u_candidates.Add (t);
+				}
+
+				// TODO: Implement GetGenericInterfaces only and remove
+				// the if from foreach
+				u_candidates.AddRange (TypeManager.GetInterfaces (u));
+
+				Type open_v = v.GetGenericTypeDefinition ();
+				foreach (Type u_candidate in u_candidates) {
+					if (!u_candidate.IsGenericType || u_candidate.IsGenericTypeDefinition)
+						continue;
+
+					if (TypeManager.DropGenericTypeArguments (u_candidate) != open_v)
+						continue;
+
+					Type [] ga_u = u_candidate.GetGenericArguments ();
+					Type [] ga_v = v.GetGenericArguments ();
+					for (int i = 0; i < ga_u.Length; ++i)
+						ExactInference (ga_u [i], ga_v [i]);
+
 					return;
-
-				v = v.GetGenericTypeDefinition ().MakeGenericType (ga_u);
-				
-				// And standard implicit conversion exists from U to C<U1..Uk>
-				if (!Convert.ImplicitStandardConversionExists (new TypeExpression (u, Location.Null), v))
-					return;
-
-				for (int i = 0; i < ga_u.Length; ++i)
-					ExactInference (ga_u[i], ga_v[i]);
-
+				}
 				return;
 			}
-
-			// Remove ref, out modifiers
-			if (v.HasElementType)
-				v = v.GetElementType ();
 
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);

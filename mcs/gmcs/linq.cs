@@ -22,7 +22,7 @@ namespace Mono.CSharp.Linq
 
 	public class QueryExpression : AQueryClause
 	{
-		readonly Block block;
+		Block block;
 
 		public QueryExpression (Block block, AQueryClause query)
 			: base (null, query.Location)
@@ -35,6 +35,13 @@ namespace Mono.CSharp.Linq
 		{
 			Parameter p = CreateBlockParameter (block);
 			return next.BuildQueryClause (ec, lSide, p, ti);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			QueryExpression t = (QueryExpression) target;
+			t.block = (Block)block.Clone (clonectx);
+			base.CloneTo (clonectx, t);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -102,6 +109,16 @@ namespace Mono.CSharp.Linq
 			this.expr = expr;
 			this.loc = loc;
 		}
+		
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			AQueryClause t = (AQueryClause) target;
+			if (expr != null)
+				t.expr = expr.Clone (clonectx);
+			
+			if (next != null)
+				t.next = (AQueryClause)next.Clone (clonectx);
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -165,9 +182,17 @@ namespace Mono.CSharp.Linq
 			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
 			selector.Block.AddStatement (new Return (expr, loc));
 
-			selector.CreateAnonymousHelpers ();
-			selector.RootScope.DefineType ();
+			if (!ec.IsInProbingMode) {
+				selector.CreateAnonymousHelpers ();
 
+				// TODO: I am not sure where this should be done to work
+				// correctly with anonymous containerss and was called only once
+				// FIXME: selector.RootScope == null for nested anonymous
+				// methods only ?
+				if (selector.RootScope != null)
+					selector.RootScope.DefineType ();
+			}
+			
 			return new Argument (selector);
 		}
 
@@ -196,7 +221,7 @@ namespace Mono.CSharp.Linq
 	//
 	public abstract class ARangeVariableQueryClause : AQueryClause
 	{
-		readonly Block block;
+		Block block;
 		protected Expression element_selector;
 
 		protected ARangeVariableQueryClause (Block block, Expression expr, Location loc)
@@ -255,7 +280,15 @@ namespace Mono.CSharp.Linq
 
 			return lSide;
 		}
-
+		
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			ARangeVariableQueryClause t = (ARangeVariableQueryClause) target;
+			t.block = (Block) block.Clone (clonectx);
+			t.element_selector = element_selector.Clone (clonectx);
+			base.CloneTo (clonectx, t);
+		}
+		
 		//
 		// For transparent identifiers, creates an instance of variable expression
 		//
@@ -290,6 +323,7 @@ namespace Mono.CSharp.Linq
 
 	public class Cast : QueryStartClause
 	{
+		// We don't have to clone cast type
 		readonly Expression type_expr;
 
 		public Cast (Expression type, Expression expr)
@@ -298,13 +332,6 @@ namespace Mono.CSharp.Linq
 			this.type_expr = type;
 		}
 		
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// We don't have to clone cast type
-			Cast t = (Cast) target;
-			t.expr = expr.Clone (clonectx);
-		}		
-
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
 			lSide = CreateQueryExpression (expr, new TypeArguments (loc, type_expr), null);
@@ -321,7 +348,7 @@ namespace Mono.CSharp.Linq
 
 	public class GroupBy : AQueryClause
 	{
-		readonly Expression element_selector;
+		Expression element_selector;
 		
 		public GroupBy (Expression elementSelector, Expression keySelector, Location loc)
 			: base (keySelector, loc)
@@ -343,6 +370,13 @@ namespace Mono.CSharp.Linq
 				return next.BuildQueryClause (ec, lSide, parameter, ti);
 
 			return lSide;
+		}
+	
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			GroupBy t = (GroupBy) target;
+			t.element_selector = element_selector.Clone (clonectx);
+			base.CloneTo (clonectx, t);
 		}
 
 		protected override string MethodName {
@@ -380,6 +414,15 @@ namespace Mono.CSharp.Linq
 			args.Add (CreateSelectorArgument (ec, projection,
 				new Parameter [] { parentParameter, parameter }, ti));
 		}
+	
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			Join t = (Join) target;
+			t.projection = projection.Clone (clonectx);
+			t.inner_selector = inner_selector.Clone (clonectx);
+			t.outer_selector = outer_selector.Clone (clonectx);
+			base.CloneTo (clonectx, t);
+		}	
 
 		protected virtual Parameter CreateResultSelectorParameter (Parameter parameter)
 		{
