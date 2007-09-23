@@ -1,5 +1,8 @@
 2007-09-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (emit_marshal_array): Generate valid IL for byref array case.
+	Fixes ##320990.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_get_ManifestModuleInternal): 
 	Rename this to ves_icall_System_Reflection_Assembly_GetManifestModuleInternal.
 
