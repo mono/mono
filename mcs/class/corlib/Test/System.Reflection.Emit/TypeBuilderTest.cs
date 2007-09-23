@@ -1891,7 +1891,6 @@ namespace MonoTests.System.Reflection.Emit
 			// bug #82625 is fixed
 
 			TypeBuilder tb;
-			FieldInfo [] fields;
 			Type emittedType;
 			FieldInfo [] dynamicFields;
 			FieldInfo [] emittedFields;
@@ -2489,7 +2488,6 @@ namespace MonoTests.System.Reflection.Emit
 			MethodBuilder mb;
 			ILGenerator ilgen;
 			MethodInfo [] methods;
-			MethodInfo mi;
 
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);

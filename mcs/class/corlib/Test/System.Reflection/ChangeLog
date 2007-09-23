@@ -1,3 +1,7 @@
+2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added test for ManifestModule.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Added test for GetManifestResourceStream argument

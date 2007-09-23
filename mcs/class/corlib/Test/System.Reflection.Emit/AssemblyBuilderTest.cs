@@ -37,17 +37,14 @@ public class AssemblyBuilderTest
 	}
 
 	static int nameIndex = 0;
-
 	static AppDomain domain;
-
 	static AssemblyBuilder ab;
-
 	static ModuleBuilder mb;
-
-	string tempDir = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.Emit.AssemblyBuilderTest");
+	string tempDir = Path.Combine (Path.GetTempPath (), typeof (AssemblyBuilderTest).FullName);
 
 	[SetUp]
-	protected void SetUp () {
+	protected void SetUp ()
+	{
 		if (Directory.Exists (tempDir))
 			Directory.Delete (tempDir, true);
 
@@ -66,24 +63,28 @@ public class AssemblyBuilderTest
 	}
 
 	[TearDown]
-	protected void TearDown () {
+	protected void TearDown ()
+	{
 		if (Directory.Exists (tempDir))
 			Directory.Delete (tempDir, true);
-	}		
+	}
 
-	private AssemblyName genAssemblyName () {
+	private AssemblyName genAssemblyName ()
+	{
 		AssemblyName assemblyName = new AssemblyName();
-		assemblyName.Name = "MonoTests.System.Reflection.Emit.AssemblyBuilderTest" + (nameIndex ++);
+		assemblyName.Name = typeof (AssemblyBuilderTest).FullName + (nameIndex ++);
 		return assemblyName;
 	}
 
-	private AssemblyBuilder genAssembly () {
+	private AssemblyBuilder genAssembly ()
+	{
 		return domain.DefineDynamicAssembly (genAssemblyName (),
 											 AssemblyBuilderAccess.RunAndSave,
 											 tempDir);
 	}
 
-	private MethodInfo genEntryFunction (AssemblyBuilder assembly) {
+	private MethodInfo genEntryFunction (AssemblyBuilder assembly)
+	{
 		ModuleBuilder module = assembly.DefineDynamicModule("module1");
 		TypeBuilder tb = module.DefineType ("A");
 		MethodBuilder mb = tb.DefineMethod ("A",
@@ -92,17 +93,52 @@ public class AssemblyBuilderTest
 		return mb;
 	}
 
+#if NET_2_0
+	[Test]
+	[Category ("NotWorking")]
+	public void ManifestModule ()
+	{
+		AssemblyName aname = new AssemblyName ("ManifestModule1");
+		ab = domain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+		Assert.IsNotNull (ab.ManifestModule, "#A1");
+		Assert.AreEqual (1, ab.GetModules ().Length, "#A2");
+		Assert.AreEqual (typeof (ModuleBuilder), ab.ManifestModule.GetType (), "#A3");
+
+		ModuleBuilder mb1 = (ModuleBuilder) ab.ManifestModule;
+		Assert.AreSame (mb1, ab.GetModules () [0], "#B1");
+		Assert.IsFalse (mb1.IsResource (), "#B2");
+		Assert.AreSame (ab, mb1.Assembly, "#B3");
+		Assert.AreSame (mb1, ab.ManifestModule, "#B4");
+
+		ab.Save ("ManifestModule.dll");
+
+		ModuleBuilder mb2 = (ModuleBuilder) ab.ManifestModule;
+		Assert.AreSame (mb2, ab.GetModules () [0], "#C1");
+		Assert.IsFalse (mb2.IsResource (), "#C2");
+		Assert.AreSame (ab, mb2.Assembly, "#C3");
+		Assert.AreSame (mb2, ab.ManifestModule, "#C4");
+		Assert.AreSame (mb1, mb2, "#C5");
+	}
+#endif
+
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestCodeBase () {
+	public void TestCodeBase ()
+	{
 		string codebase = ab.CodeBase;
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestLocation () {
+	public void TestLocation ()
+	{
 		string location = ab.Location;
 	}
 
-	public void TestEntryPoint () {
+	[Test]
+	public void TestEntryPoint ()
+	{
 		Assert.AreEqual (null, ab.EntryPoint, "EntryPoint defaults to null");
 
 		MethodInfo mi = genEntryFunction (ab);
@@ -111,25 +147,32 @@ public class AssemblyBuilderTest
 		Assert.AreEqual (mi, ab.EntryPoint, "EntryPoint works");
 	}
 
-	public void TestSetEntryPoint () {
+	[Test]
+	public void TestSetEntryPoint ()
+	{
 		// Check invalid arguments
 		try {
 			ab.SetEntryPoint (null);
-			Assert.Fail ();
-		}
-		catch (ArgumentNullException) {
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNotNull (ex.ParamName, "#A5");
+			Assert.AreEqual ("entryMethod", ex.ParamName, "#A6");
 		}
 
 		// Check method from other assembly
 		try {
 			ab.SetEntryPoint (typeof (AssemblyBuilderTest).GetMethod ("TestSetEntryPoint"));
-			Assert.Fail ();
-		}
-		catch (InvalidOperationException) {
+			Assert.Fail ("#B");
+		} catch (InvalidOperationException) {
 		}
 	}
 
-	public void TestIsDefined () {
+	[Test]
+	public void TestIsDefined ()
+	{
 		CustomAttributeBuilder cab = new CustomAttributeBuilder (typeof (FooAttribute).GetConstructor (new Type [1] {typeof (string)}), new object [1] { "A" });
 		ab.SetCustomAttribute (cab);
 
@@ -139,204 +182,401 @@ public class AssemblyBuilderTest
 			"!IsDefined(AssemblyVersionAttribute) works");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetManifestResourceNames () {
+	public void TestGetManifestResourceNames ()
+	{
 		ab.GetManifestResourceNames ();
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetManifestResourceInfo () {
+	public void TestGetManifestResourceInfo ()
+	{
 		ab.GetManifestResourceInfo ("foo");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetManifestResourceStream1 () {
+	public void TestGetManifestResourceStream1 ()
+	{
 		ab.GetManifestResourceStream ("foo");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetManifestResourceStream2 () {
+	public void TestGetManifestResourceStream2 ()
+	{
 		ab.GetManifestResourceStream (typeof (int), "foo");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetFiles1 () {
+	public void TestGetFiles1 ()
+	{
 		ab.GetFiles ();
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetFiles2 () {
+	public void TestGetFiles2 ()
+	{
 		ab.GetFiles (true);
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetFile () {
+	public void TestGetFile ()
+	{
 		ab.GetFile ("foo");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestGetExportedTypes () {
+	public void TestGetExportedTypes ()
+	{
 		ab.GetExportedTypes ();
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestGetDynamicModule1 () {
-		ab.GetDynamicModule (null);
+	[Test]
+	public void TestGetDynamicModule_Name_Null ()
+	{
+		try {
+			ab.GetDynamicModule (null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("name", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestGetDynamicModule2 () {
-		ab.GetDynamicModule ("");
+	[Test]
+	public void TestGetDynamicModule_Name_Empty ()
+	{
+		try {
+			ab.GetDynamicModule (string.Empty);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Empty name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("name", ex.ParamName, "#6");
+		}
 	}
 
-	public void TestGetDynamicModule3 () {
+	[Test]
+	public void TestGetDynamicModule3 ()
+	{
 		Assert.IsNull (ab.GetDynamicModule ("FOO2"));
-
 		ModuleBuilder mb = ab.DefineDynamicModule ("FOO");
-
 		Assert.AreEqual (mb, ab.GetDynamicModule ("FOO"));
-
 		Assert.IsNull (ab.GetDynamicModule ("FOO4"));
 	}
 
 #if NET_1_1
-	public void TestImageRuntimeVersion () {
+	[Test]
+	public void TestImageRuntimeVersion ()
+	{
 		string version = ab.ImageRuntimeVersion;
 		Assert.IsTrue (version.Length > 0);
 	}
 #endif
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestAddResourceFileNullName () {
-		ab.AddResourceFile (null, "foo.txt");
+	[Test]
+	public void TestAddResourceFile_Name_Null ()
+	{
+		try {
+			ab.AddResourceFile (null, "foo.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("name", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestAddResourceFileNullFilename () {
-		ab.AddResourceFile ("foo", null);
+	[Test]
+	public void TestAddResourceFile_Filename_Null ()
+	{
+		try {
+			ab.AddResourceFile ("foo", null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("fileName", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestAddResourceFileEmptyName () {
-		ab.AddResourceFile ("", "foo.txt");
+	[Test]
+	public void TestAddResourceFile_Name_Empty ()
+	{
+		try {
+			ab.AddResourceFile (string.Empty, "foo.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Empty name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestAddResourceFileEmptyFilename () {
-		ab.AddResourceFile ("foo", "");
+	[Test]
+	public void TestAddResourceFile_Filename_Empty ()
+	{
+		try {
+			ab.AddResourceFile ("foo", string.Empty);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Empty file name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+		}
 	}
 
+	[Test]
 	[ExpectedException (typeof (FileNotFoundException))]
-	public void TestAddResourceFileNonexistentFile () {
+	public void TestAddResourceFile_FileName_DoesNotExist ()
+	{
 		ab.AddResourceFile ("foo", "not-existent.txt");
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestAddResourceFileDuplicateFileName () {
+	[Test]
+	public void TestAddResourceFile_FileName_Duplicate ()
+	{
 		ab.AddResourceFile ("foo", "res1.txt");
-		ab.AddResourceFile ("foo2", "res1.txt");
+		try {
+			ab.AddResourceFile ("foo2", "res1.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Duplicate file names
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestAddResourceFileDuplicateName () {
+	[Test]
+	public void TestAddResourceFile_Name_Duplicate ()
+	{
 		ab.AddResourceFile ("foo", "res1.txt");
-		ab.AddResourceFile ("foo", "res2.txt");
+		try {
+			ab.AddResourceFile ("foo", "res2.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Duplicate resource name within an assembly
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestAddResourceFileFilenameIncludesPath () {
-		ab.AddResourceFile ("foo", "/tmp/res1.txt");
+	[Test]
+	public void TestAddResourceFile_Filename_IncludesPath ()
+	{
+		try {
+			ab.AddResourceFile ("foo", "/tmp/res1.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The filename must not include a path specification
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("fileName", ex.ParamName, "#6");
+		}
 	}
 
-	public void TestAddResourceFile () {
+	[Test]
+	public void TestAddResourceFile ()
+	{
 		ab.AddResourceFile ("foo", "res2.txt", ResourceAttributes.Public);
-
 		ab.Save ("TestAddResourceFile.dll");
 
 		// TODO: Test reading back
 	}
 
-	public void TestDefineResource () {
+	[Test]
+	public void TestDefineResource ()
+	{
 		ab.DefineResource ("foo", "FOO", "foo.txt", ResourceAttributes.Public);
 		ab.DefineResource ("foo2", "FOO", "foo2.txt");
-
 		ab.Save ("TestDefineResource.dll");
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestDefineDynamicModuleNullName () {
-		ab.DefineDynamicModule (null, "foo.txt");
+	[Test]
+	public void TestDefineDynamicModule_Name_Null ()
+	{
+		try {
+			ab.DefineDynamicModule (null, "foo.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("name", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestDefineDynamicModuleNullFilename () {
-		ab.DefineDynamicModule ("foo", null);
+	[Test]
+	public void TestDefineDynamicModule_FileName_Null ()
+	{
+		try {
+			ab.DefineDynamicModule ("foo", null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("fileName", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModuleEmptyName () {
-		ab.DefineDynamicModule ("", "foo.txt");
+	[Test]
+	public void TestDefineDynamicModule_Name_Empty ()
+	{
+		try {
+			ab.DefineDynamicModule (string.Empty, "foo.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Empty name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("name", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModuleEmptyFilename () {
-		ab.DefineDynamicModule ("foo", "");
+	[Test]
+	public void TestDefineDynamicModule_Filename_Empty ()
+	{
+		try {
+			ab.DefineDynamicModule ("foo", string.Empty);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Empty file name is not legal
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("fileName", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModuleDuplicateFileName () {
+	[Test]
+	public void TestDefineDynamicModule_FileName_Duplicate ()
+	{
 		ab.DefineDynamicModule ("foo", "res1.txt");
-		ab.DefineDynamicModule ("foo2", "res1.txt");
+		try {
+			ab.DefineDynamicModule ("foo2", "res1.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Duplicate file names
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModuleDuplicateName () {
+	[Test]
+	public void TestDefineDynamicModule_Name_Duplicate ()
+	{
 		ab.DefineDynamicModule ("foo", "res1.txt");
-		ab.DefineDynamicModule ("foo", "res2.txt");
+		try {
+			ab.DefineDynamicModule ("foo", "res2.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Duplicate dynamic module name within an assembly
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModuleFilenameIncludesPath () {
-		ab.DefineDynamicModule ("foo", "/tmp/res1.txt");
+	[Test]
+	public void TestDefineDynamicModule_Filename_IncludesPath ()
+	{
+		try {
+			ab.DefineDynamicModule ("foo", "/tmp/res1.txt");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The filename must not include a path specification
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("fileName", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModule5 () {
-		// Filename without extension
-		ab.DefineDynamicModule ("foo", "foo");
+	[Test]
+	public void TestDefineDynamicModule5_FileName_NoExtension ()
+	{
+		try {
+			ab.DefineDynamicModule ("foo", "bar");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Module file name 'bar' must have file extension
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsTrue (ex.Message.IndexOf ("bar") != -1, "#5");
+			Assert.IsNull (ex.ParamName, "#6");
+		}
 	}
 
-	/*
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineDynamicModule6 () {
-		// Name too long
-		string name = "";
+	[Test]
+	[Category ("NotWorking")]
+	public void TestDefineDynamicModule_Name_MaxLength () {
+		string name = string.Empty;
 		for (int i = 0; i < 259; ++i)
 			name = name + "A";
-
-		try {
-			ab.DefineDynamicModule (name);
-		}
-		catch (Exception) {
-			Assert.Fail ();
-		}
+		ab.DefineDynamicModule (name);
 
 		name = name + "A";
-		// LAMESPEC: According to MSDN, this should throw an ArgumentException
-
-		ab.DefineDynamicModule (name);
+		try {
+			ab.DefineDynamicModule (name);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Value does not fall within expected range
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
-	*/
 
+	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]
-	public void TestDefineDynamicModule7 () {
+	public void TestDefineDynamicModule_Assembly_Saved ()
+	{
 		// Called when assembly was already saved
 		ab.Save ("TestDefineDynamicModule7.dll");
 		ab.DefineDynamicModule ("foo", "foo.dll");
 	}
 
+	[Test]
 	[ExpectedException (typeof (NotSupportedException))]
-	public void TestDefineDynamicModule8 () {
+	public void TestDefineDynamicModule_Access_Run ()
+	{
 		// Called on an assembly defined with the Run attribute
 		AssemblyBuilder ab = 
 			domain.DefineDynamicAssembly (genAssemblyName (),
@@ -345,70 +585,128 @@ public class AssemblyBuilderTest
 		ab.DefineDynamicModule ("foo", "foo.dll");
 	}
 
-	public void TestDefineDynamicModule () {
+	[Test]
+	public void TestDefineDynamicModule ()
+	{
 		ab.DefineDynamicModule ("foo", "foo.dll");
 		ab.DefineDynamicModule ("foo2", true);
 		ab.DefineDynamicModule ("foo3", "foo3.dll");
 		ab.DefineDynamicModule ("foo4", "foo4.dll", true);
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestDefineUnmanagedResource1 () {
-		// Null argument
-		ab.DefineUnmanagedResource ((byte[])null);
+	[Test]
+	public void TestDefineUnmanagedResource_Resource_Null ()
+	{
+		try {
+			ab.DefineUnmanagedResource ((byte []) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("resource", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestDefineUnmanagedResource2 () {
-		// Null argument
-		ab.DefineUnmanagedResource ((string)null);
+	[Test]
+	public void TestDefineUnmanagedResource_ResourceFileName_Null ()
+	{
+		try {
+			ab.DefineUnmanagedResource ((string) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("resourceFileName", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestDefineUnmanagedResource3 () {
-		// Empty filename
-		ab.DefineUnmanagedResource ("");
+	[Test]
+	public void TestDefineUnmanagedResource_ResourceFileName_Empty ()
+	{
+		try {
+			ab.DefineUnmanagedResource (string.Empty);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The path is not of a legal form
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
+	[Test]
 	[ExpectedException (typeof (FileNotFoundException))]
-	public void TestDefineUnmanagedResource4 () {
-		// Nonexistent file
+	public void TestDefineUnmanagedResource_ResourceFile_DoesNotExist ()
+	{
 		ab.DefineUnmanagedResource ("not-exists.txt");
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestSetCustomAttribute1 () {
-		// Null argument
-		ab.SetCustomAttribute (null);
+	[Test]
+	public void TestSetCustomAttribute1_CustomBuilder_Null ()
+	{
+		try {
+			ab.SetCustomAttribute (null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("customBuilder", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestSetCustomAttribute2 () {
-		// Null constructor
-		ab.SetCustomAttribute (null, new byte [0]);
+	[Test]
+	public void TestSetCustomAttribute2_ConstructorInfo_Null ()
+	{
+		try {
+			ab.SetCustomAttribute (null, new byte [0]);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("con", ex.ParamName, "#6");
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TestSetCustomAttribute3 () {
-		// Null blob
-		ab.SetCustomAttribute (typeof(AssemblyCompanyAttribute).GetConstructor (new Type [] { typeof (String) }), null);
+	[Test]
+	public void TestSetCustomAttribute2_BinaryAttribute_Null ()
+	{
+		try {
+			ab.SetCustomAttribute (typeof (AssemblyCompanyAttribute).GetConstructor (
+				new Type [] { typeof (String) }), null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("binaryAttribute", ex.ParamName, "#6");
+		}
 	}
 
-	public void TestSetCustomAttribute () {
-		// Test common custom attributes
-
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "1.2.3.4"}));
-
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "bar"}));
-
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }), new object [] { AssemblyHashAlgorithm.MD5 }));
-
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).GetConstructor (new Type [] { typeof (uint) }), new object [] { (uint)0x0100 }));
-
-		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyDelaySignAttribute).GetConstructor (new Type [] { typeof (bool) }), new object [] { true }));
-
+	[Test]
+	public void TestSetCustomAttribute ()
+	{
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).
+			GetConstructor (new Type [] { typeof (string) }), new object [] { "1.2.3.4"}));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).
+			GetConstructor (new Type [] { typeof (string) }), new object [] { "bar"}));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).
+			GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }),
+			new object [] { AssemblyHashAlgorithm.MD5 }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).
+			GetConstructor (new Type [] { typeof (uint) }), new object [] { (uint)0x0100 }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyDelaySignAttribute).
+			GetConstructor (new Type [] { typeof (bool) }), new object [] { true }));
 		ab.SetCustomAttribute (typeof (FooAttribute).GetConstructor (new Type [] {}), new byte [0]);
-
 		ab.Save ("TestSetCustomAttribute.dll");
 
 		/* We should read back the assembly and check the attributes ... */
@@ -468,7 +766,7 @@ public class AssemblyBuilderTest
 		0x0E, 0xED, 0x9B, 0xB8, 0xD3, 0x17, 0xDA, 0x78 };
 
 	[Test]
-	public void StrongName_MissingKeyFile_NoDelay () 
+	public void StrongName_MissingKeyFile_NoDelay ()
 	{
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyKeyFileAttribute).GetConstructor (new Type [] { typeof (string) }), new object [] { "missing.snk" }));
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyDelaySignAttribute).GetConstructor (new Type [] { typeof (bool) }), new object [] { false }));
@@ -482,7 +780,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	public void StrongName_KeyFile_Delay () 
+	public void StrongName_KeyFile_Delay ()
 	{
 		string strongfile = Path.Combine (tempDir, "strongname.snk");
 		using (FileStream fs = File.OpenWrite (strongfile)) {
@@ -501,7 +799,7 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	public void StrongName_WithoutAttributes () 
+	public void StrongName_WithoutAttributes ()
 	{
 		// this demonstrate that AssemblyKeyFileAttribute (or AssemblyKeyNameAttribute)
 		// aren't required to sign an assembly.
@@ -519,8 +817,10 @@ public class AssemblyBuilderTest
 	[ExpectedException (typeof (NotSupportedException))]
 	public void SaveUnfinishedTypes ()
 	{
-		TypeBuilder typeBuilder = mb.DefineType ("TestType", TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.AutoClass, typeof(object));
-
+		TypeBuilder typeBuilder = mb.DefineType ("TestType",
+			TypeAttributes.Class | TypeAttributes.Public |
+			TypeAttributes.Sealed | TypeAttributes.AnsiClass |
+			TypeAttributes.AutoClass, typeof(object));
 		ab.Save ("def_module");
 	}
 
@@ -735,4 +1035,3 @@ public class AssemblyBuilderTest
 	}
 }
 }
-

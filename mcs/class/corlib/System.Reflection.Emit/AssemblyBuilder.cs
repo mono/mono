@@ -133,7 +133,7 @@ namespace System.Reflection.Emit {
 			this.access = (uint)access;
 
 			// don't call GetCurrentDirectory for Run-only builders (CAS may not like that)
-			if (IsSave && (directory == null || directory == String.Empty)) {
+			if (IsSave && (directory == null || directory.Length == 0)) {
 				dir = Directory.GetCurrentDirectory ();
 			} else {
 				dir = directory;
@@ -443,7 +443,7 @@ namespace System.Reflection.Emit {
 		{
 			if (resourceFileName == null)
 				throw new ArgumentNullException ("resourceFileName");
-			if (resourceFileName == String.Empty)
+			if (resourceFileName.Length == 0)
 				throw new ArgumentException ("resourceFileName");
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
 				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
@@ -463,7 +463,7 @@ namespace System.Reflection.Emit {
 		public void DefineVersionInfoResource ()
 		{
 			if (version_res != null)
-				throw new ArgumentException ("Native resource has already been defined.");			
+				throw new ArgumentException ("Native resource has already been defined.");
 
 			version_res = new Win32VersionResource (1, 0);
 
@@ -535,7 +535,7 @@ namespace System.Reflection.Emit {
 		{
 			if (iconFileName == null)
 				throw new ArgumentNullException ("iconFileName");
-			if (iconFileName == String.Empty)
+			if (iconFileName.Length == 0)
 				throw new ArgumentException ("iconFileName");
 			if (!File.Exists (iconFileName) || Directory.Exists (iconFileName))
 				throw new FileNotFoundException ("File '" + iconFileName + "' does not exists or is a directory.");
@@ -560,7 +560,7 @@ namespace System.Reflection.Emit {
 			// Add missing info
 			if (version_res.Version == "0.0.0.0")
 				version_res.Version = version;
-			if (version_res.FileVersion.Trim () == String.Empty && version != null)
+			if (version_res.FileVersion.Trim ().Length == 0 && version != null)
 				version_res.FileVersion = version;
 			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
 			version_res.OriginalFilename = fileName;
@@ -572,8 +572,8 @@ namespace System.Reflection.Emit {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			if (name == String.Empty)
-				throw new ArgumentException ("Name can't be null");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not legal.", "name");
 
 			if (modules != null)
 				for (int i = 0; i < modules.Length; ++i)
@@ -824,12 +824,12 @@ namespace System.Reflection.Emit {
 				throw new ArgumentNullException ("name");
 			if (fileName == null)
 				throw new ArgumentNullException ("fileName");
-			if (name == String.Empty)
-				throw new ArgumentException ("name cannot be empty", "name");
-			if (fileName == String.Empty)
-				throw new ArgumentException ("fileName cannot be empty", "fileName");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not legal.", "name");
+			if (fileName.Length == 0)
+				throw new ArgumentException ("Empty file name is not legal.", "fileName");
 			if (Path.GetFileName (fileName) != fileName)
-				throw new ArgumentException ("fileName '" + fileName + "' must not include a path.");
+				throw new ArgumentException ("fileName '" + fileName + "' must not include a path.", "fileName");
 
 			// Resource files are created/searched under the assembly storage
 			// directory

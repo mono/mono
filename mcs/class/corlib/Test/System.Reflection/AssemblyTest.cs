@@ -983,6 +983,22 @@ namespace MonoTests.System.Reflection
 		}
 #endif // TARGET_JVM
 
+#if NET_2_0
+		[Test]
+		public void ManifestModule ()
+		{
+			Assembly assembly = typeof (int).Assembly;
+			Module module = assembly.ManifestModule;
+			Assert.IsNotNull (module, "#1");
+			Assert.AreEqual (typeof (Module), module.GetType (), "#2");
+			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");
+			Assert.IsFalse (module.IsResource (), "#4");
+			Assert.IsTrue (assembly.GetModules ().Length > 0, "#5");
+			Assert.AreSame (module, assembly.GetModules () [0], "#6");
+			Assert.AreSame (module, assembly.ManifestModule, "#7");
+		}
+#endif
+
 		[Serializable ()]
 		private class AssemblyResolveHandler
 		{

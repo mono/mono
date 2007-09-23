@@ -1,6 +1,15 @@
+2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilderTest.cs: Added test for ManifestModule. Added missing
+	Test attributes. Avoid using ExpectedException, thereby improving lots
+	of existing tests. Uncomment test that checks max length of dynamic
+	module name and removed LAMESPEC, since MS implements the described
+	behavior (but we don't, so mark it NotWorking). Code formatting.
+	* TypeBuilderTest.cs: Removed unused variables.
+
 2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* TypeBuilder.cs: Added test for bug #327484. Split up and improved
+	* TypeBuilderTest.cs: Added test for bug #327484. Split up and improved
 	TestGetProperties(Flags)Incomplete and TestGetMethods(Flags)Incomplete
 	tests. Improved TestGetMethodsComplete test.
 
