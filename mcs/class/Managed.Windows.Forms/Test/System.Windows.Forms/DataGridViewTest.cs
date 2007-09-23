@@ -26,26 +26,28 @@
 
 #if NET_2_0
 
-using NUnit.Framework;
 using System;
+using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections;
-using System.Text;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 
-namespace MonoTests.System.Windows.Forms {
+using NUnit.Framework;
 
+namespace MonoTests.System.Windows.Forms
+{
 	[TestFixture]
-	public class DataGridViewTest {
-		
+	public class DataGridViewTest
+	{
 		private DataGridView grid = null;
 
 		[SetUp]
-		public void GetReady() 
+		public void GetReady()
 		{
 			grid = new DataGridView();
 		}
@@ -412,10 +414,8 @@ namespace MonoTests.System.Windows.Forms {
 			tab--;
 			append (result, tab, "}");
 		}
-		
-		
-#endregion
-		
+#endregion GenerateClipboardTest
+
 		[Test]
 		public void GetClipboardContents ()
 		{
@@ -719,7 +719,7 @@ namespace MonoTests.System.Windows.Forms {
 				DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell) dgv [0, 0];
 			}
 		}
-		
+
 		[Test]
 		public void SelectedRowsTest ()
 		{
@@ -773,7 +773,55 @@ namespace MonoTests.System.Windows.Forms {
 				Assert.AreEqual (0, dgv.SelectedRows.Count, "5-6");
 			}
 		}
-		
+
+		[Test] // bug #325979
+		[NUnit.Framework.Category ("NotWorking")]
+		public void SelectedRows_FindColumnByName ()
+		{
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("Date", typeof (DateTime));
+			dt.Columns.Add ("Registered", typeof (bool));
+			dt.Columns.Add ("Event", typeof (string));
+
+			DataRow row = dt.NewRow ();
+			row ["Date"] = new DateTime (2007, 2, 3);
+			row ["Event"] = "one";
+			row ["Registered"] = false;
+			dt.Rows.Add (row);
+
+			row = dt.NewRow ();
+			row ["Date"] = new DateTime (2008, 3, 4);
+			row ["Event"] = "two";
+			row ["Registered"] = true;
+			dt.Rows.Add (row);
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = dt;
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (dgv);
+			form.Show ();
+
+			dgv.Rows [1].Selected = true;
+
+			DataGridViewCell cell = dgv.SelectedRows [0].Cells ["DaTE"];
+			Assert.IsNotNull (cell, "#A1");
+			Assert.IsNotNull (cell.OwningColumn, "#A2");
+			Assert.AreEqual ("Date", cell.OwningColumn.Name, "#A3");
+			Assert.IsNotNull (cell.Value, "#A4");
+			Assert.AreEqual (new DateTime (2008, 3, 4), cell.Value, "#A5");
+
+			cell = dgv.SelectedRows [0].Cells ["Event"];
+			Assert.IsNotNull (cell, "#B1");
+			Assert.IsNotNull (cell.OwningColumn, "#B2");
+			Assert.AreEqual ("Event", cell.OwningColumn.Name, "#B3");
+			Assert.IsNotNull (cell.Value, "#B3");
+			Assert.AreEqual ("two", cell.Value, "#B4");
+
+			form.Dispose ();
+		}
+
 		[Test]
 		public void SelectedColumnsTest ()
 		{
@@ -908,7 +956,8 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		public void TestDefaultValues () {
+		public void TestDefaultValues ()
+		{
 			DataGridView grid = new DataGridView ();
 			Assert.AreEqual (true, grid.AllowUserToAddRows, "#A1");
 			Assert.AreEqual (true, grid.AllowUserToDeleteRows, "#A2");
@@ -942,65 +991,71 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (false, grid.VirtualMode, "#A45");
 		}
 
-		#region AutoSizeColumnsModeExceptions
+#region AutoSizeColumnsModeExceptions
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestAutoSizeColumnsModeInvalidEnumArgumentException () {
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestAutoSizeColumnsModeInvalidEnumArgumentException ()
+		{
 			DataGridView grid = new DataGridView();
 			grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill | DataGridViewAutoSizeColumnsMode.None;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoSizeColumnsModeInvalidOperationException1 () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoSizeColumnsModeInvalidOperationException1 ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.ColumnHeadersVisible = false;
-			DataGridViewColumn col = new DataGridViewColumn();
+			DataGridViewColumn col = new DataGridViewColumn ();
 			col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
-			grid.Columns.Add(col);
+			grid.Columns.Add (col);
 			grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoSizeColumnsModeInvalidOperationException2 () {
-			DataGridView grid = new DataGridView();
-			DataGridViewColumn col = new DataGridViewColumn();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoSizeColumnsModeInvalidOperationException2 ()
+		{
+			DataGridView grid = new DataGridView ();
+			DataGridViewColumn col = new DataGridViewColumn ();
 			col.AutoSizeMode = DataGridViewAutoSizeColumnMode.NotSet;
 			col.Frozen = true;
-			grid.Columns.Add(col);
+			grid.Columns.Add (col);
 			grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 		}
 
-		#endregion
+#endregion
 
-		#region AutoSizeRowsModeExceptions
+#region AutoSizeRowsModeExceptions
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestAutoSizeRowsModeInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestAutoSizeRowsModeInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.AutoSizeRowsMode = (DataGridViewAutoSizeRowsMode) 4;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoSizeRowsModeInvalidOperationException1 () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoSizeRowsModeInvalidOperationException1 ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.RowHeadersVisible = false;
 			grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllHeaders;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoSizeRowsModeInvalidOperationException2 () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoSizeRowsModeInvalidOperationException2 ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.RowHeadersVisible = false;
 			grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedHeaders;
 		}
 
-		#endregion
+#endregion
 
 		[Test]
 		public void AutoResizeColumTest ()
@@ -1059,22 +1114,25 @@ namespace MonoTests.System.Windows.Forms {
 		}
 	
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestBackgroundColorArgumentException () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestBackgroundColorArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.BackgroundColor = Color.Empty;
 		}
 
 		[Test]
 		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestBorderStyleInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+		public void TestBorderStyleInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.BorderStyle = BorderStyle.FixedSingle | BorderStyle.Fixed3D;
 		}
 
 		[Test]
-		public void ColumnCount () {
-			DataGridView grid = new DataGridView();
+		public void ColumnCount ()
+		{
+			DataGridView grid = new DataGridView ();
 			Assert.AreEqual (0, grid.ColumnCount, "#A1");
 
 			try {
@@ -1090,16 +1148,18 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestColumnCountInvalidOperationException () {
-			DataGridView grid = new DataGridView();
-			grid.DataSource = new ArrayList();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestColumnCountInvalidOperationException ()
+		{
+			DataGridView grid = new DataGridView ();
+			grid.DataSource = new ArrayList ();
 			grid.ColumnCount = 0;
 		}
 
 		[Test]
-		public void ColumnHeadersHeight () {
-			DataGridView grid = new DataGridView();
+		public void ColumnHeadersHeight ()
+		{
+			DataGridView grid = new DataGridView ();
 			Assert.AreEqual (23, grid.ColumnHeadersHeight, "#A1");
 			grid.ColumnHeadersHeight = 4;
 			Assert.AreEqual (4, grid.ColumnHeadersHeight, "#A2");
@@ -1130,14 +1190,16 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestColumnHeadersHeightSizeModeInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestColumnHeadersHeightSizeModeInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.ColumnHeadersHeightSizeMode = (DataGridViewColumnHeadersHeightSizeMode) 3;
 		}
 
 		[Test]
-		public void RowHeadersWidth () {
+		public void RowHeadersWidth ()
+		{
 			DataGridView grid = new DataGridView();
 			Assert.AreEqual (41, grid.RowHeadersWidth, "#A1");
 			grid.RowHeadersWidth = 4;
@@ -1169,54 +1231,60 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
 		public void TestDataGridViewRowHeadersWidthSizeModeInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+			DataGridView grid = new DataGridView ();
 			grid.RowHeadersWidthSizeMode = (DataGridViewRowHeadersWidthSizeMode) 5;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestScrollBarsInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestScrollBarsInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.ScrollBars = (ScrollBars) 4;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestSelectionModeInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestSelectionModeInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.SelectionMode = (DataGridViewSelectionMode) 5;
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidEnumArgumentException))]
-		public void TestAutoResizeRowsInvalidEnumArgumentException () {
-			DataGridView grid = new DataGridView();
-			grid.AutoResizeRows((DataGridViewAutoSizeRowsMode) 4);
+		[ExpectedException (typeof (InvalidEnumArgumentException))]
+		public void TestAutoResizeRowsInvalidEnumArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
+			grid.AutoResizeRows ((DataGridViewAutoSizeRowsMode) 4);
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoResizeRowsInvalidOperationException1 () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoResizeRowsInvalidOperationException1 ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.RowHeadersVisible = false;
-			grid.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllHeaders);
+			grid.AutoResizeRows (DataGridViewAutoSizeRowsMode.AllHeaders);
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
-		public void TestAutoResizeRowsInvalidOperationException2 () {
-			DataGridView grid = new DataGridView();
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestAutoResizeRowsInvalidOperationException2 ()
+		{
+			DataGridView grid = new DataGridView ();
 			grid.RowHeadersVisible = false;
-			grid.AutoResizeRows(DataGridViewAutoSizeRowsMode.DisplayedHeaders);
+			grid.AutoResizeRows (DataGridViewAutoSizeRowsMode.DisplayedHeaders);
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestAutoResizeRowsArgumentException () {
-			DataGridView grid = new DataGridView();
-			grid.AutoResizeRows(DataGridViewAutoSizeRowsMode.None);
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestAutoResizeRowsArgumentException ()
+		{
+			DataGridView grid = new DataGridView ();
+			grid.AutoResizeRows (DataGridViewAutoSizeRowsMode.None);
 		}
 
 		[Test]
@@ -1285,11 +1353,11 @@ namespace MonoTests.System.Windows.Forms {
 				get { return base.DefaultSize; }
 			}
 		}
+
 		[Test]
 		public void bug_82326 ()
 		{
 			using (Form f = new Form ()) {
-
 				DataGridView _dataGrid;
 				DataGridViewTextBoxColumn _column;
 
@@ -1388,7 +1456,6 @@ namespace MonoTests.System.Windows.Forms {
 					else
 						Assert.IsNotNull (copy [i], "#B" + i.ToString ());
 				}
-			
 			}
 		}
 

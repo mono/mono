@@ -1,5 +1,9 @@
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataGridViewTest.cs: Added test for bug #325979. Code formatting.
+
+2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	*  DataGridViewCellTest.cs: Code formatting. Removed useless SetUp and
 	TearDown methods. Removed useless test.
 	* DataGridViewCellCollectionTest.cs: Added indexer tests.
