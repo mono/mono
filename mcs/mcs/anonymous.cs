@@ -1280,11 +1280,10 @@ namespace Mono.CSharp {
 		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegateType)
 		{
 			AnonymousMethod am;
-			ec.InferReturnType = true;
-			using (ec.Set (EmitContext.Flags.ProbingMode)) {
+			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
 				am = CompatibleMethod (ec, tic, GetType (), delegateType);
 			}
-			ec.InferReturnType = false;
+			
 			if (am == null)
 				return null;
 
@@ -1531,9 +1530,10 @@ namespace Mono.CSharp {
 
 			aec.CurrentAnonymousMethod = this;
 			aec.IsStatic = ec.IsStatic;
-			aec.InferReturnType = ec.InferReturnType;
 
 			IDisposable aec_dispose = null;
+			if (ec.InferReturnType)
+				aec_dispose = aec.Set (EmitContext.Flags.InferReturnType);
 			if (ec.IsInProbingMode)
 				aec_dispose = aec.Set (EmitContext.Flags.ProbingMode);
 			if (ec.IsInFieldInitializer)

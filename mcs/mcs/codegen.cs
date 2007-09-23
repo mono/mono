@@ -280,7 +280,9 @@ namespace Mono.CSharp {
 			//
 			// Inside field intializer expression
 			//
-			InFieldInitializer = 1 << 8
+			InFieldInitializer = 1 << 8,
+			
+			InferReturnType = 1 << 9
 		}
 
 		Flags flags;
@@ -299,14 +301,6 @@ namespace Mono.CSharp {
 		///   IsStatic represents the semantic, high-level staticness.
 		/// </summary>
 		public bool MethodIsStatic;
-
-		/// <summary>
-		///   If this is true, then Return and ContextualReturn statements
-		///   will set the ReturnType value based on the expression types
-		///   of each return statement instead of the method return type
-		///   (which is initially null).
-		/// </summary>
-		public bool InferReturnType;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
@@ -551,6 +545,16 @@ namespace Mono.CSharp {
 				(do_flow_analysis ? Flags.DoFlowAnalysis : 0) |
 				(omit_struct_analysis ? Flags.OmitStructFlowAnalysis : 0);
 			return new FlagsHandle (this, Flags.DoFlowAnalysis | Flags.OmitStructFlowAnalysis, newflags);
+		}
+		
+		/// <summary>
+		///   If this is true, then Return and ContextualReturn statements
+		///   will set the ReturnType value based on the expression types
+		///   of each return statement instead of the method return type
+		///   (which is initially null).
+		/// </summary>
+		public bool InferReturnType {
+			get { return (flags & Flags.InferReturnType) != 0; }
 		}
 
 		public bool IsInObsoleteScope {

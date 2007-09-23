@@ -1,3 +1,8 @@
+2007-09-23  Marek Safar  <marek.safar@gmail.com>
+	
+	* anonymous.cs, codegen.cs: Changed InferReturnType to be EmitContext
+	flag.
+	
 2007-09-17  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Use partial container to record whether any partial part
