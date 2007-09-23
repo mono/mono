@@ -24,57 +24,123 @@
 //
 
 using System;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace Mono.Mozilla
 {
 	internal interface ICallback
 	{
-		void OnWidgetLoaded ();
+		void OnWidgetLoaded				();
 
-		void GetControlSize (ref SizeInfo sz);
-		void OnJSStatus ();
-		void OnLinkStatus ();
-		void OnDestroyBrowser ();
-		void OnClientSizeTo (Int32 width, Int32 height);
-		void OnFocusNext ();
-		void OnFocusPrev ();
-		void OnTitleChanged ();
-		void OnShowTooltipWindow (Int32 x, Int32 y, string tiptext);
-		void OnHideTooltipWindow ();
-		void OnStateNetStart ();
-		void OnStateNetStop ();
-		void OnStateSpecial (UInt32 stateFlags, Int32 status);
-		void OnStateChange (string URI, UInt32 stateFlags, Int32 status);
-		void OnProgress (Int32 currentTotalProgress, Int32 maxTotalProgress);
-		void OnProgressAll (string URI, Int32 currentTotalProgress, Int32 maxTotalProgress);
-		void OnLocationChanged ();
-		void OnStatusChange (Int32 status, string message);
-		void OnSecurityChange (UInt32 state);
-		void OnVisibility (bool val);
+		void GetControlSize				(ref SizeInfo sz);
+		void OnJSStatus					();
+		void OnLinkStatus				();
+		void OnDestroyBrowser			();
+		void OnClientSizeTo				(Int32 width, Int32 height);
+		void OnFocusNext				();
+		void OnFocusPrev				();
+		void OnTitleChanged				();
+		void OnShowTooltipWindow		(string tiptext, Int32 x, Int32 y);
+		void OnHideTooltipWindow		();
+		void OnStateNetStart			();
+		void OnStateNetStop				();
+		void OnStateSpecial				(UInt32 stateFlags, Int32 status);
+		void OnStateChange				(string URI, Int32 status, UInt32 stateFlags);
+		void OnProgress					(Int32 currentTotalProgress, Int32 maxTotalProgress);
+		void OnProgressAll				(string URI, Int32 currentTotalProgress, Int32 maxTotalProgress);
+		void OnLocationChanged			();
+		void OnStatusChange				(string message, Int32 status);
+		void OnSecurityChange			(UInt32 state);
+		void OnVisibility				(bool val);
 
-		//Don't have to worry about marshelling bool, PRBool seems very constant and uses 4 bit int underneath
-		bool OnClientDomKeyDown (KeyInfo keyInfo, ModifierKeys modKey);
-		bool OnClientDomKeyUp (KeyInfo keyInfo, ModifierKeys modKey);
-		bool OnClientDomKeyPress (KeyInfo keyInfo, ModifierKeys modKey);
+		//Don't have to worry about marshelling bool, bool seems very constant and uses 4 bit int underneath
+		bool OnClientDomKeyDown			(KeyInfo keyInfo, ModifierKeys modKey);
+		bool OnClientDomKeyUp			(KeyInfo keyInfo, ModifierKeys modKey);
+		bool OnClientDomKeyPress		(KeyInfo keyInfo, ModifierKeys modKey);
 
-		bool OnClientMouseDown (MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseUp (MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseClick (MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseDoubleClick (MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseOver (MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseOut (MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseDown			(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseUp			(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseClick			(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseDoubleClick	(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseOver			(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseOut			(MouseInfo mouseInfo, ModifierKeys modifiers);
 
-		bool OnClientActivate (Int32 detail);
-		bool OnClientFocusIn (Int32 detail);
-		bool OnClientFocusOut (Int32 detail);
+		bool OnClientActivate			();
+		bool OnClientFocusIn			();
+		bool OnClientFocusOut			();
 
-		bool OnBeforeURIOpen (string URL);
+		bool OnBeforeURIOpen			(string URL);
+		void OnFocus					();
+		bool OnCreateNewWindow			();
+		
+		/*
+		 * Popup dialogs
+		 */
 
-		void OnFocus ();
+		void OnAlert					(IntPtr title, IntPtr text);
+		bool OnAlertCheck				(IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState);
+		bool OnConfirm					(IntPtr title, IntPtr text);
+		bool OnConfirmCheck				(IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState);
 
-		bool OnCreateNewWindow ();
+		bool OnConfirmEx				(IntPtr title, IntPtr text, Mono.WebBrowser.DialogButtonFlags flags, 
+										 IntPtr title0, IntPtr title1, IntPtr title2,
+										 IntPtr chkMsg, ref bool chkState, out Int32 retVal);
 
-		void OnGeneric (IntPtr type);
+		bool OnPrompt					(IntPtr title, IntPtr text,
+										 IntPtr chkMsg, ref bool chkState, StringBuilder retVal);
+
+		bool OnPromptUsernameAndPassword (IntPtr title, IntPtr text,
+										 IntPtr chkMsg, ref bool chkState, 
+										 out IntPtr username, out IntPtr password);
+
+		bool OnPromptPassword			(IntPtr title, IntPtr text,
+										 IntPtr chkMsg, ref bool chkState, 
+										 out IntPtr password);
+
+		bool OnSelect					(IntPtr title, IntPtr text, 
+										 UInt32 count, IntPtr list, 
+										 out Int32 retVal);
+
+
+		/*
+		 * Generic logging event
+		 */
+		void OnGeneric					(IntPtr type);
 
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct SizeInfo
+	{
+		public UInt32 width;
+		public UInt32 height;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct ModifierKeys
+	{
+		public Int32 altKey;
+		public Int32 ctrlKey;
+		public Int32 metaKey;
+		public Int32 shiftKey;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct MouseInfo
+	{
+		public UInt16 button;
+		public Int32 clientX;
+		public Int32 clientY;
+		public Int32 screenX;
+		public Int32 screenY;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	public struct KeyInfo
+	{
+		public UInt32 charCode;
+		public UInt32 keyCode;
+	}
+
 }

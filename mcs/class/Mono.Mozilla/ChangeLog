@@ -1,3 +1,10 @@
+2007-09-23 Andreia Gaita <avidigal@novell.com>
+
+	* Added implementation of dialog popups - alert,
+	alertcheck, confirm, confirmcheck, confirmex, prompt, 
+	promptusernameandpassword, promptpassword, select.
+	Cleaned up some.
+
 2007-09-19 Andreia Gaita <avidigal@novell.com>
 
 	* Forgot to commit an update on the xulbrowser check :/

@@ -211,6 +211,13 @@ namespace Mono.WebBrowser
 			add { Events.AddHandler (CreateNewWindowEvent, value); }
 			remove { Events.RemoveHandler (CreateNewWindowEvent, value); }
 		}
+
+		static object AlertEvent = new object ();
+		public event AlertEventHandler Alert
+		{
+			add { Events.AddHandler (AlertEvent, value); }
+			remove { Events.RemoveHandler (AlertEvent, value); }
+		}
 		#endregion
 
 
@@ -262,7 +269,7 @@ namespace Mono.WebBrowser
 			// TODO:  Add WebBrowser.OnTitleChanged implementation
 		}
 
-		public void OnShowTooltipWindow (Int32 x, Int32 y, string tiptext)
+		public void OnShowTooltipWindow (string tiptext, Int32 x, Int32 y)
 		{
 			// TODO:  Add WebBrowser.OnShowTooltipWindow implementation
 		}
@@ -287,7 +294,7 @@ namespace Mono.WebBrowser
 			// TODO:  Add WebBrowser.OnStateSpecial implementation
 		}
 
-		public void OnStateChange (string URI, UInt32 stateFlags, Int32 status)
+		public void OnStateChange (string URI, Int32 status, UInt32 stateFlags)
 		{
 			// TODO:  Add WebBrowser.OnStateChange implementation
 		}
@@ -307,7 +314,7 @@ namespace Mono.WebBrowser
 			// TODO:  Add WebBrowser.OnLocationChanged implementation
 		}
 
-		public void OnStatusChange (Int32 status, string message)
+		public void OnStatusChange (string message, Int32 status)
 		{
 			// TODO:  Add WebBrowser.OnStatusChange implementation
 		}
@@ -421,19 +428,19 @@ namespace Mono.WebBrowser
 			return false;
 		}
 
-		public bool OnClientActivate (Int32 detail)
+		public bool OnClientActivate ()
 		{
 			// TODO:  Add WebBrowser.OnClientActivate implementation
 			return false;
 		}
 
-		public bool OnClientFocusIn (Int32 detail)
+		public bool OnClientFocusIn ()
 		{
 			// TODO:  Add WebBrowser.OnClientFocusIn implementation
 			return false;
 		}
 
-		public bool OnClientFocusOut (Int32 detail)
+		public bool OnClientFocusOut ()
 		{
 			// TODO:  Add WebBrowser.OnClientFocusOut implementation
 			return false;
@@ -464,6 +471,168 @@ namespace Mono.WebBrowser
 			}
 			return ret;
 		}
+
+		public void OnAlert (IntPtr title, IntPtr text)
+		{
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				eh (this, e);
+			}
+		}
+
+		public bool OnAlertCheck (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState)
+		{
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnConfirm (IntPtr title, IntPtr text)
+		{
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnConfirmCheck (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState)
+		{
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnConfirmEx (IntPtr title, IntPtr text, DialogButtonFlags flags, 
+								IntPtr title0, IntPtr title1, IntPtr title2, 
+								IntPtr chkMsg, ref bool chkState, out Int32 retVal)
+		{
+			retVal = -1;
+
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnPrompt (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState, StringBuilder retVal)
+		{
+			retVal = new StringBuilder();
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnPromptUsernameAndPassword (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState, out IntPtr username, out IntPtr password)
+		{
+			username = IntPtr.Zero;
+			password = IntPtr.Zero;
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnPromptPassword (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState, out IntPtr password)
+		{
+			password = IntPtr.Zero;
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				if (chkMsg != IntPtr.Zero)
+					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
+				e.CheckState = chkState;
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+		public bool OnSelect (IntPtr title, IntPtr text, uint count, IntPtr list, out int retVal)
+		{
+			retVal = 0;
+			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
+			if (eh != null) {
+				AlertEventArgs e = new AlertEventArgs ();
+				if (title != IntPtr.Zero)
+					e.Title = Marshal.PtrToStringUni (title);
+				if (text != IntPtr.Zero)
+					e.Text = Marshal.PtrToStringUni (text);
+				eh (this, e);
+				return e.BoolReturn;
+			}
+			return false;
+		}
+
+
 
 		public void OnGeneric (IntPtr type)
 		{

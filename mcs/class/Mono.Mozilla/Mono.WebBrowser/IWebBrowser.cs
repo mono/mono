@@ -26,6 +26,8 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace Mono.WebBrowser
 {
@@ -59,7 +61,7 @@ namespace Mono.WebBrowser
 		event EventHandler MouseUp;
 		event EventHandler Focus;
 		event CreateNewWindowEventHandler CreateNewWindow;
-
+		event AlertEventHandler Alert;
 	}
 
 	public enum ReloadOption
@@ -74,6 +76,40 @@ namespace Mono.WebBrowser
 		None = 0,
 		FocusFirstElement = 1,
 		FocusLastElement = 2
+	}
+
+	[Flags]
+	public enum DialogButtonFlags
+	{
+		BUTTON_POS_0 = 1,
+		BUTTON_POS_1 = 256,
+		BUTTON_POS_2 = 65536,
+		BUTTON_TITLE_OK = 1,
+		BUTTON_TITLE_CANCEL = 2,
+		BUTTON_TITLE_YES = 3,
+		BUTTON_TITLE_NO = 4,
+		BUTTON_TITLE_SAVE = 5,
+		BUTTON_TITLE_DONT_SAVE = 6,
+		BUTTON_TITLE_REVERT = 7,
+		BUTTON_TITLE_IS_STRING = 127,
+		BUTTON_POS_0_DEFAULT = 0,
+		BUTTON_POS_1_DEFAULT = 16777216,
+		BUTTON_POS_2_DEFAULT = 33554432,
+		BUTTON_DELAY_ENABLE = 67108864,
+		STD_OK_CANCEL_BUTTONS = 513
+	}
+
+	public enum DialogType
+	{
+		Alert = 1,
+		AlertCheck = 2,
+		Confirm = 3,
+		ConfirmEx = 4,
+		ConfirmCheck = 5,
+		Prompt = 6,
+		PromptUsernamePassword = 7,
+		PromptPassword = 8,
+		Select = 9
 	}
 
 	public delegate bool CreateNewWindowEventHandler (object sender, CreateNewWindowEventArgs e);
@@ -97,5 +133,109 @@ namespace Mono.WebBrowser
 		#endregion	// Public Instance Properties
 	}
 
+
+	public delegate void AlertEventHandler (object sender, AlertEventArgs e);
+	public class AlertEventArgs : EventArgs
+	{
+		private DialogType type;
+		private string title;
+		private string text;
+		
+		private string username;
+		private string password;
+		private string checkMsg; 
+		private bool checkState;
+		private DialogButtonFlags dialogButtons;
+		
+		private StringCollection buttons;
+		private StringCollection options;
+
+		private object returnValue;
+
+		#region Public Constructors
+		/// <summary>
+		/// void (STDCALL *OnAlert) (const PRUnichar * title, const PRUnichar * text);
+		/// </summary>
+		/// <param name="title"></param>
+		/// <param name="text"></param>
+		public AlertEventArgs ()
+			: base ()
+		{
+		}
+
+
+#endregion	// Public Constructors
+
+		#region Public Instance Properties
+		public string Title {
+			get { return this.title; }
+			set { this.title = value; }
+		}
+		public string Text {
+			get { return this.text; }
+			set { this.text = value; }
+		}
+		public string CheckMessage {
+			get { return this.checkMsg; }
+			set { this.checkMsg = value; }
+		}
+		public bool CheckState {
+			get { return this.checkState; }
+			set { this.checkState = value; }
+		}
+		public DialogButtonFlags DialogButtons {
+			get { return this.dialogButtons; }
+			set { this.dialogButtons = value; }
+		}
+		public StringCollection Buttons {
+			get { return buttons; }
+			set { buttons = value; }
+		}
+		public StringCollection Options {
+			get { return options; }
+			set { options = value; }
+		}
+
+		public string Username {
+			get { return username; }
+			set { username = value; }
+		}
+
+		public string Password {
+			get { return password; }
+			set { password = value; }
+		}
+
+		public bool BoolReturn {
+			get { 
+				if (returnValue is bool)
+					return (bool) returnValue;
+				return false;
+			}
+			set { returnValue = value; }
+		}
+
+		public int IntReturn
+		{
+			get { 
+				if (returnValue is int)
+					return (int) returnValue;
+				return -1;
+			}
+			set { returnValue = value; }
+		}
+
+		public string StringReturn
+		{
+			get { 
+				if (returnValue is string)
+					return (string) returnValue;
+				return String.Empty;
+			}
+			set { returnValue = value; }
+		}
+
+		#endregion	// Public Instance Properties
+	}
 
 }

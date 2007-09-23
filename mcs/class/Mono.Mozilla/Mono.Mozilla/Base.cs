@@ -43,6 +43,21 @@ namespace Mono.Mozilla
 			public IntPtr xulbrowser;
 		}
 
+		private static bool isInitialized ()
+		{
+			if (!xulbrowserInstalled)
+				return false;
+			return true;
+		}
+
+		private static BindingInfo getBinding (IWebBrowser control)
+		{
+			if (!boundControls.ContainsKey (control))
+				return null;
+			BindingInfo info = boundControls[control] as BindingInfo;
+			return info;
+		}
+
 		static Base ()
 		{
 			boundControls = new Hashtable ();
@@ -78,26 +93,20 @@ namespace Mono.Mozilla
 			DebugStartup ();
 		}
 
-		public static void Shutdown (Mono.WebBrowser.WebBrowser control)
+		public static void Shutdown (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_shutdown (info.xulbrowser);
 		}
 
 		public static void Bind (IWebBrowser control, IntPtr handle, int width, int height)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_createBrowserWindow (info.xulbrowser, handle, width, height);
 		}
@@ -105,12 +114,9 @@ namespace Mono.Mozilla
 		// layout
 		public static void Focus (IWebBrowser control, FocusOption focus)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_focus (info.xulbrowser, focus);
 		}
@@ -118,48 +124,36 @@ namespace Mono.Mozilla
 
 		public static void Blur (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_deactivate (info.xulbrowser);
 		}
 
 		public static void Activate (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_activate (info.xulbrowser);
 		}
 
 		public static void Deactivate (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_deactivate (info.xulbrowser);
 		}
 
 		public static void Resize (IWebBrowser control, int width, int height)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_resize (info.xulbrowser, width, height);
 		}
@@ -167,12 +161,9 @@ namespace Mono.Mozilla
 		// navigation
 		public static void Navigate (IWebBrowser control, string uri)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_navigate (info.xulbrowser, uri);
 		}
@@ -180,60 +171,45 @@ namespace Mono.Mozilla
 
 		public static bool Forward (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return false;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			return xulbrowser_forward (info.xulbrowser);
 		}
 
 		public static bool Back (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return false;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			return xulbrowser_back (info.xulbrowser);
 		}
 
 		public static void Home (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_home (info.xulbrowser);
 		}
 
 		public static void Stop (IWebBrowser control)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_stop (info.xulbrowser);
 		}
 
 		public static void Reload (IWebBrowser control, ReloadOption option)
 		{
-			if (!xulbrowserInstalled)
+			if (!isInitialized ())
 				return;
-
-			if (!boundControls.ContainsKey (control))
-				throw new ArgumentException ();
-			BindingInfo info = boundControls[control] as BindingInfo;
+			BindingInfo info = getBinding (control);
 
 			xulbrowser_reload (info.xulbrowser, option);
 		}

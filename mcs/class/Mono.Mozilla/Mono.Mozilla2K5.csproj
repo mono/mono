@@ -79,7 +79,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Mono.Mozilla\Callback.cs" />
     <Compile Include="Mono.Mozilla\ICallback.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
@@ -88,6 +87,9 @@
     <Compile Include="Mono.WebBrowser\WebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ChangeLog" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
