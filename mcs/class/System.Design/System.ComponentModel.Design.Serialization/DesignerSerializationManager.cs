@@ -307,8 +307,6 @@ namespace System.ComponentModel.Design.Serialization
 			_contextStack = new ContextStack ();
 			
 			this.OnSessionCreated (EventArgs.Empty);
-			if (_serializationCompleteHandler != null)
-				_serializationCompleteHandler (this, EventArgs.Empty);
 
 			return _session;
 		}
@@ -331,6 +329,9 @@ namespace System.ComponentModel.Design.Serialization
 			if (SessionDisposed != null) {
 				SessionDisposed (this, e);
 			}
+
+			if (_serializationCompleteHandler != null)
+				_serializationCompleteHandler (this, EventArgs.Empty);
 		}
 				
 		protected virtual Type GetType (string name)
@@ -379,8 +380,6 @@ namespace System.ComponentModel.Design.Serialization
 			return this.CreateInstance (type, arguments, name, addToContainer);
 		}
 		
-		//Retrieves an instance of a created object of the specified name.
-		//
 		object IDesignerSerializationManager.GetInstance (string name)
 		{
 			if (name == null)
@@ -435,11 +434,6 @@ namespace System.ComponentModel.Design.Serialization
 			return name;
 		}
 		
-		// Used to set the name for objects not created via CreateInstance
-		// == it's not named, nor cached.
-		//
-		// XXX: "Used by another object" ?
-		//
 		void IDesignerSerializationManager.SetName (object instance, string name)
 		{
 			if (instance == null)

@@ -1,3 +1,8 @@
+2007-09-24  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* DesignerSerializationManager.cs: fix when SerializationComplete 
+	is fired.
+
 2007-09-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs: Binary compatibility fixes.
