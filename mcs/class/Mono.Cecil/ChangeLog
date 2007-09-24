@@ -1,3 +1,8 @@
+2007-09-24  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ModuleDefinition.cs: after a FullLoad, the symbol
+	reader is not needed anymore.
+
 2007-09-18  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/MethodBody.cs:

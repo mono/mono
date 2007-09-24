@@ -421,6 +421,12 @@ namespace Mono.Cecil {
 				foreach (MethodDefinition ctor in type.Constructors)
 					ctor.LoadBody ();
 			}
+
+			if (m_controller.Reader.SymbolReader == null)
+				return;
+
+			m_controller.Reader.SymbolReader.Dispose ();
+			m_controller.Reader.SymbolReader = null;
 		}
 
 		public void LoadSymbols ()
