@@ -1,3 +1,9 @@
+
+Mon Sep 24 17:14:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* strtod.h, strtod.c: made the code threadsafe, fixed gcc warnings,
+	renamed exported call and made it properly internal.
+
 2007-09-14  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-io-portability.c: Add HAVE_UNISTD_H check around include.
