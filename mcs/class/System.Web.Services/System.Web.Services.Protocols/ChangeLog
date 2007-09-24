@@ -1,3 +1,9 @@
+2007-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* WebServiceHandlerFactory.cs: WebServiceParser.GetCompiledType
+	must be passed a virtual path, not physical one. Fixes bug
+	#327809.
+
 2007-08-21  Robert Jordan  <robertj@gmx.net>
 
 	* ValueCollectionParameterReader.cs (Read):
