@@ -1,3 +1,12 @@
+
+Mon Sep 24 17:25:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mempool.c, mempool.h: added mono_mempool_new_size () API
+	to be able to specify a smaller initial size for the pool.
+	Adjusted the code to slowly increase pool size before using
+	the previous default size.
+	* image.c: use a small initial size for image mempools.
+
 2007-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_array): Generate valid IL for byref array case.
