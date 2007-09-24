@@ -1,3 +1,8 @@
+2007-09-24  Konstantin Triger <kostat@mainsoft.com>
+
+	* DbEnumerator.cs, DbDataRecord.cs: refactoring.
+	* DbDataRecord.cs: GetValue() should return null instead of DBNull.
+
 2007-08-10  Nagappan A  <anagappan@novell.com>
 
 	* DbDataAdapter.cs (Fill): Fixed method signature.

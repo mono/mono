@@ -39,19 +39,17 @@ namespace System.Data.Common {
 	{
 		#region Fields
 
-		SchemaInfo[] schema;
-		object[] values;
-		int fieldCount;
-		FieldNameLookup lookup;
+		readonly SchemaInfo [] schema;
+		readonly object [] values;
+		readonly int fieldCount;
 
 		#endregion
 		
 		#region Constructors
 
-		internal DbDataRecord (SchemaInfo[] schema, object[] values, FieldNameLookup lookup)
+		internal DbDataRecord (SchemaInfo[] schema, object[] values)
 		{
 			this.schema = schema;
-			this.lookup = lookup;
 			this.values = values;
 			this.fieldCount = values.Length;
 		}
@@ -190,12 +188,15 @@ namespace System.Data.Common {
 
 		public string GetName (int i)
 		{
-			return (string) lookup [i];
+			return schema [i].ColumnName;
 		}
 
 		public int GetOrdinal (string name)
 		{
-			return lookup.IndexOf (name);
+			for (int i = 0; i < FieldCount; i++)
+				if (schema [i].ColumnName == name)
+					return i;
+			return -1;
 		}
 
 		public string GetString (int i)
@@ -208,10 +209,7 @@ namespace System.Data.Common {
                        if ((i < 0) || (i > fieldCount))
                                 throw new IndexOutOfRangeException();
 
-			object value = values [i];
-			if (value == null)
-				value = DBNull.Value;
-			return value;
+			return values [i];
 		}
 
 		public int GetValues (object[] values)

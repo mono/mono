@@ -40,11 +40,10 @@ namespace System.Data.Common {
 	{
 		#region Fields
 
-		IDataReader reader;
-		bool closeReader;
-		SchemaInfo[] schema;
-		FieldNameLookup lookup;
-		int fieldCount;
+		readonly IDataReader reader;
+		readonly bool closeReader;
+		readonly SchemaInfo [] schema;
+		readonly object [] values;
 	
 		#endregion // Fields
 
@@ -59,9 +58,8 @@ namespace System.Data.Common {
 		{
 			this.reader = reader;
 			this.closeReader = closeReader;
-			this.lookup = new FieldNameLookup ();
-			this.fieldCount = reader.FieldCount;
-			LoadSchema ();
+			this.values = new object [reader.FieldCount];
+			this.schema = LoadSchema (reader);
 		}
 
 		#endregion // Constructors
@@ -70,9 +68,8 @@ namespace System.Data.Common {
 
 		public object Current {
 			get { 
-				object[] values = new object[fieldCount];
 				reader.GetValues (values);
-				return new DbDataRecord (schema, values, lookup); 
+				return new DbDataRecord (schema, values); 
 			}
 		}
 
@@ -80,14 +77,13 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		private void LoadSchema ()
+		private static SchemaInfo[] LoadSchema (IDataReader reader)
 		{
-			schema = new SchemaInfo [fieldCount];
+			int fieldCount = reader.FieldCount;
+			SchemaInfo[] schema = new SchemaInfo [fieldCount];
 
 			for(int i=0; i < fieldCount; i++) {
 				SchemaInfo columnSchema = new SchemaInfo ();
-				
-				lookup.Add (reader.GetName(i));
 
 				columnSchema.ColumnName = reader.GetName(i);
 				columnSchema.ColumnOrdinal = i; 
@@ -96,6 +92,8 @@ namespace System.Data.Common {
 
 				schema [i] = columnSchema;
 			}
+
+			return schema;
 		}
 
 		public bool MoveNext ()
