@@ -1,4 +1,9 @@
 
+Mon Sep 24 16:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* include/private/gc_priv.h: increase the default MAX_HEAP_SECTS
+	value (bug#314759, bug#324318).
+
 Tue Sep 11 16:22:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* pthread_support.c: export GC_thread_tls.

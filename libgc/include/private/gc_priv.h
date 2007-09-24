@@ -982,7 +982,7 @@ struct _GC_arrays {
 #   ifdef SMALL_CONFIG
 #     define MAX_HEAP_SECTS 128		/* Roughly 256MB (128*2048*1K)	*/
 #   else
-#     define MAX_HEAP_SECTS 384		/* Roughly 3GB			*/
+#     define MAX_HEAP_SECTS (384+128)		/* Roughly 4GB			*/
 #   endif
 # endif
   struct HeapSect {
