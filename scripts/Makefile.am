@@ -80,7 +80,8 @@ EXTRA_DIST =                   \
 	mono-service.in        \
 	mono-nunit.pc.in       \
 	mono-find-provides.in  \
-	mono-find-requires.in
+	mono-find-requires.in	\
+	mono-test-install
 
 if USE_JIT
 mono_interp = mono
