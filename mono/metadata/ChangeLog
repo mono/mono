@@ -1,3 +1,10 @@
+2007-09-24  Martin Baulig  <martin@ximian.com>
+
+	Create one type table per symbol file, since a `MonoClass *' gets
+	invalid when its image is unloaded.
+
+	* mono-debug.h (MonoSymbolTable): Removed `type_table'.
+	(MonoDebugHandle): Added `type_table'.
 
 Mon Sep 24 17:25:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
