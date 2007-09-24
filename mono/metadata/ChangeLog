@@ -1,5 +1,16 @@
 2007-09-24  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.h
+	(MonoDebugClassEntry): Moved the definition of this struct into
+	mono-debug.c to make it private.
+
+	* mono-debug.c
+	(MonoDebugClassEntry): Removed `symfile_id'; since we now use one
+	type table per symbol file, we don't need to store the symfile id
+	any longer.
+
+2007-09-24  Martin Baulig  <martin@ximian.com>
+
 	Create one type table per symbol file, since a `MonoClass *' gets
 	invalid when its image is unloaded.
 
