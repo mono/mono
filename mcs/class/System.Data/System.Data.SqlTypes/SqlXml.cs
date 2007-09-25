@@ -39,6 +39,7 @@ using System.Xml.Serialization;
 namespace System.Data.SqlTypes
 {
 	[SerializableAttribute]
+	[XmlSchemaProvider ("GetXsdType")]
 	public sealed class SqlXml : INullable, IXmlSerializable
 	{
 		bool notNull;

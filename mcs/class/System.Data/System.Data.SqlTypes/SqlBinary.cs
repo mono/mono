@@ -46,7 +46,7 @@ namespace System.Data.SqlTypes
 	/// </summary>
 #if NET_2_0
 	[SerializableAttribute]
-	[XmlSchemaProvider ("GetSchema")]
+	[XmlSchemaProvider ("GetXsdType")]
 #endif
 	public struct SqlBinary : INullable, IComparable
 #if NET_2_0

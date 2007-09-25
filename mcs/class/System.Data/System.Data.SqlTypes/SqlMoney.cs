@@ -424,6 +424,18 @@ namespace System.Data.SqlTypes
 			}
 		}
 
+#if NET_2_0
+		public static explicit operator SqlMoney (double x)
+		{
+			return new SqlMoney (x);
+		}
+
+		public static implicit operator SqlMoney (long x)
+		{
+			return new SqlMoney (x);
+		}
+#endif
+
 		public static implicit operator SqlMoney (decimal x)
 		{
 			return new SqlMoney (x);

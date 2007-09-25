@@ -48,6 +48,10 @@ namespace System.Data.SqlTypes
 	/// Represents an integer value that is either 1 or 0 
 	/// to be stored in or retrieved from a database.
 	/// </summary>
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetXsdType")]
+#endif
 	public struct SqlBoolean : INullable, IComparable
 #if NET_2_0
 				   , IXmlSerializable

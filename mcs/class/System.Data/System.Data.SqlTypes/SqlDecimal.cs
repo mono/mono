@@ -1418,6 +1418,18 @@ namespace System.Data.SqlTypes
 			}
 		}
 
+#if NET_2_0
+		public static explicit operator SqlDecimal (double x)
+		{
+			return new SqlDecimal (x);
+		}
+
+		public static implicit operator SqlDecimal (long x)
+		{
+			return new SqlDecimal (x);
+		}
+#endif
+
 		public static implicit operator SqlDecimal (decimal x)
 		{
 			return new SqlDecimal (x);

@@ -35,6 +35,7 @@
 using System;
 using System.Globalization;
 using System.Xml;
+using System.Text;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
@@ -42,7 +43,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes
 {
 	[SerializableAttribute]
-	[XmlSchemaProvider ("GetSchema")]
+	[XmlSchemaProvider ("GetXsdType")]
 	public sealed class SqlChars : INullable, IXmlSerializable, ISerializable
 	{
 		#region Fields
@@ -168,6 +169,23 @@ namespace System.Data.SqlTypes
 		{
 			buffer = null;
 			notNull = false;
+		}
+
+		public static explicit operator SqlString (SqlChars x)
+		{
+			if (x.IsNull)
+				return SqlString.Null;
+			else {
+				return new SqlString (new String (x.Value));
+			}
+		}
+
+		public static explicit operator SqlChars (SqlString x)
+		{
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlChars (x.Value);
 		}
 
 		public SqlString ToSqlString ()

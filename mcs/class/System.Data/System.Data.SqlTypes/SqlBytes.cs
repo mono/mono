@@ -43,7 +43,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes
 {
 	[SerializableAttribute]
-	[XmlSchemaProvider ("GetSchema")]
+	[XmlSchemaProvider ("GetXsdType")]
 	public sealed class SqlBytes : INullable, IXmlSerializable, ISerializable
 	{
 		#region Fields
@@ -198,6 +198,22 @@ namespace System.Data.SqlTypes
 			notNull = false;
 		}
                                                                                 
+		public static explicit operator SqlBytes (SqlBinary x)
+		{
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlBytes (x.Value);
+		}
+
+		public static explicit operator SqlBinary (SqlBytes x)
+		{
+			if (x.IsNull)
+				return SqlBinary.Null;
+			else
+				return new SqlBinary (x.Value);
+		}
+
 		public SqlBinary ToSqlBinary ()
 		{
 			return new SqlBinary (buffer);

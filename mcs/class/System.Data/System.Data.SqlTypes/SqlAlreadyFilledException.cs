@@ -34,8 +34,8 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes {
-
-	public sealed class SqlAlreadyFilledException : SqlTypeException, ISerializable
+	[Serializable]
+	public sealed class SqlAlreadyFilledException : SqlTypeException
 	{
 		public SqlAlreadyFilledException()
 			: base (Locale.GetText ("A SqlAlreadyFilled exception has occured."))
@@ -52,7 +52,7 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
+		new void GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			si.AddValue ("SqlAlreadyFilledExceptionMessage", Message, typeof(string));
 		}

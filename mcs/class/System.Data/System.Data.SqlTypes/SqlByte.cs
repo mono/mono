@@ -43,6 +43,10 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes
 {
+#if NET_2_0
+	[SerializableAttribute]
+	[XmlSchemaProvider ("GetXsdType")]
+#endif
 	public struct SqlByte : INullable, IComparable
 #if NET_2_0
 				   , IXmlSerializable

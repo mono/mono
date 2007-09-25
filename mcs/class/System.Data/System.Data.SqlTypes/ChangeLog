@@ -1,3 +1,23 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* SqlMoney.cs (implicit, explicit): Implemented missing APIs.
+
+	* SqlBytes.cs (implicit, explicit): Implemented missing APIs.
+
+	* SqlBinary.cs: 2.0 attribute fixes.
+
+	* SqlAlreadyFilledException.cs: 2.0 attribute fixes.
+
+	* SqlBoolean.cs: 2.0 attribute fixes.
+
+	* SqlByte.cs: 2.0 attribute fixes.
+
+	* SqlXml.cs: 2.0 attribute fixes.
+
+	* SqlChars.cs (implicit, explicit): Implemented missing APIs.
+
+	* SqlDecimal.cs (implicit, explicit): Implemented missing APIs.
+
 2007-07-26  Nagappan A  <anagappan@novell.com>
 
 	* SqlString.cs: notNull private member is now updated properly in
