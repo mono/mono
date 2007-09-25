@@ -195,6 +195,14 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void AccessorsReflectedType ()
+		{
+			PropertyInfo pi = typeof (Derived).GetProperty ("T");
+			Assert.AreEqual (typeof (Derived), pi.GetGetMethod ().ReflectedType);
+			Assert.AreEqual (typeof (Derived), pi.GetSetMethod ().ReflectedType);
+		}
+
 		public class ThisAttribute : Attribute
 		{
 		}
