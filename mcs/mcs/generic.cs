@@ -262,6 +262,10 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		internal static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
+		{
+		}
 
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)

@@ -1,3 +1,12 @@
+2007-09-25  Marek Safar  <marek.safar@gmail.com>
+	
+	* expression.cs (ArrayCreation): Fixed cloning of an implicit types.
+	
+	* statement.cs (Block): Refactored AddVariable to allow error handling
+	customization.
+	
+	* generic.cs: New stub.
+	
 2007-09-23  Marek Safar  <marek.safar@gmail.com>
 	
 	* anonymous.cs, codegen.cs: Changed InferReturnType to be EmitContext

@@ -1767,8 +1767,7 @@ namespace Mono.CSharp {
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
 				if (Explicit == vi.Block.Explicit)
-					Report.Error (128, l,
-						"A local variable named `{0}' is already defined in this scope", name);
+					Error_AlreadyDeclared (l, name, null);
 				else
 					Error_AlreadyDeclared (l, name, "parent");
 				return null;
@@ -1779,7 +1778,18 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (pi.Location, name);
 				Error_AlreadyDeclared (loc, name,
 					pi.Block == Toplevel ? "method argument" : "parent or current");
+				return null;
 			}
+			
+			if (Toplevel.GenericMethod != null) {
+				foreach (TypeParameter tp in Toplevel.GenericMethod.CurrentTypeParameters) {
+					if (tp.Name == name) {
+						Report.SymbolRelatedToPreviousError (tp);
+						Error_AlreadyDeclaredTypeParameter (loc, name);
+						return null;
+					}
+				}
+			}			
 
 			IKnownVariable kvi = Explicit.GetKnownVariable (name);
 			if (kvi != null) {
@@ -1789,22 +1799,43 @@ namespace Mono.CSharp {
 			}
 
 			vi = new LocalInfo (type, name, this, l);
-			Variables.Add (name, vi);
-			Explicit.AddKnownVariable (name, vi);
+			AddVariable (vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new InternalErrorException ("block has already been resolved");
 
 			return vi;
 		}
-
-		protected static void Error_AlreadyDeclared (Location loc, string var, string reason)
+		
+		protected virtual void AddVariable (LocalInfo li)
 		{
+			Variables.Add (li.Name, li);
+			Explicit.AddKnownVariable (li.Name, li);
+		}
+
+		protected virtual void Error_AlreadyDeclared (Location loc, string var, string reason)
+		{
+			if (reason == null) {
+				Error_AlreadyDeclared (loc, var);
+				return;
+			}
+			
 			Report.Error (136, loc, "A local variable named `{0}' cannot be declared " +
 				      "in this scope because it would give a different meaning " +
 				      "to `{0}', which is already used in a `{1}' scope " +
 				      "to denote something else", var, reason);
 		}
+
+		protected virtual void Error_AlreadyDeclared (Location loc, string name)
+		{
+			Report.Error (128, loc,
+				"A local variable named `{0}' is already defined in this scope", name);
+		}
+					
+		protected virtual void Error_AlreadyDeclaredTypeParameter (Location loc, string name)
+		{
+			GenericMethod.Error_ParameterNameCollision (loc, name, "local variable");
+		}					
 
 		public bool AddConstant (Expression type, string name, Expression value, Location l)
 		{

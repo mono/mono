@@ -6099,7 +6099,8 @@ namespace Mono.CSharp {
 		{
 			ArrayCreation target = (ArrayCreation) t;
 
-			target.requested_base_type = requested_base_type.Clone (clonectx);
+			if (requested_base_type != null)
+				target.requested_base_type = requested_base_type.Clone (clonectx);
 
 			if (arguments != null){
 				target.arguments = new ArrayList (arguments.Count);
