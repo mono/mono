@@ -1,3 +1,8 @@
+2007-09-25  Marek Habersack  <grendello@gmail.com>
+
+	* System.Design.dll.sources: added
+	System.Web.UI.Design.Util/DummyClass.cs
+
 2007-09-13  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Design.dll.sources: added System.Design/DummyClass.cs

@@ -144,6 +144,7 @@ System.Web.UI.Design.WebControls/BaseDataListComponentEditor.cs
 System.Web.UI.Design.WebControls/ListControlDataBindingHandler.cs
 System.Web.UI.Design.WebControls/LabelDesigner.cs
 System.Web.UI.Design.WebControls/DataListComponentEditor.cs
+System.Web.UI.Design.Util/DummyClass.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AxImporter.cs
 System.Windows.Forms.Design/AxParameterData.cs
