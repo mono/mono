@@ -1,3 +1,7 @@
+2007-09-25  Dick Porter  <dick@ximian.com>
+
+	* ThreadTest.cs: Enable GetHashCodeTest
+
 2007-09-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ThreadTest.cs: Added GetHashCode test for bug #325566.

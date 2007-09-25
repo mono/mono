@@ -213,7 +213,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #325566
-		[Category ("NotWorking")]
 		public void GetHashCodeTest ()
 		{
 			C1Test test1 = new C1Test ();
