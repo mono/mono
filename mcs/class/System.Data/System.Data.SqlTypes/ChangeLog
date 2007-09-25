@@ -1,3 +1,19 @@
+2007-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlChars.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlInt16.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlInt32.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlInt64.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlDecimal.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlDouble.cs (ReadXml, WriteXml): Implemented APIs.
+
+	* SqlString.cs (ReadXml, WriteXml): Implemented APIs.
+
 2007-09-25  Nagappan A  <anagappan@novell.com>
 
 	* SqlMoney.cs (implicit, explicit): Implemented missing APIs.
