@@ -2671,6 +2671,16 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset ("<foo />"), WriterText);
 			xs.Deserialize (new StringReader ("<foo/>"));
 		}
+
+		[Test]
+		public void XmlSchemaProviderQNameBecomesRootName2 ()
+		{
+			string xml = "<XmlSchemaProviderQNameBecomesRootNameType2 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><Foo><foo /></Foo></XmlSchemaProviderQNameBecomesRootNameType2>";
+			xs = new XmlSerializer (typeof (XmlSchemaProviderQNameBecomesRootNameType2));
+			Serialize (new XmlSchemaProviderQNameBecomesRootNameType2 ());
+			Assert.AreEqual (Infoset (xml), WriterText);
+			xs.Deserialize (new StringReader (xml));
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -2780,6 +2790,7 @@ namespace MonoTests.System.XmlSerialization
 
 			public void ReadXml (XmlReader reader)
 			{
+				reader.Skip ();
 			}
 
 			public void WriteXml (XmlWriter writer)
@@ -2788,13 +2799,21 @@ namespace MonoTests.System.XmlSerialization
 
 			public static XmlQualifiedName GetXsdType (XmlSchemaSet xss)
 			{
-				XmlSchema xs = new XmlSchema ();
-				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
-				ct.Name = "foo";
-				xs.Items.Add (ct);
-				xss.Add (xs);
+				if (xss.Count == 0) {
+					XmlSchema xs = new XmlSchema ();
+					XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+					ct.Name = "foo";
+					xs.Items.Add (ct);
+					xss.Add (xs);
+				}
 				return new XmlQualifiedName ("foo");
 			}
+		}
+
+		public class XmlSchemaProviderQNameBecomesRootNameType2
+		{
+		        [XmlArrayItem (typeof (XmlSchemaProviderQNameBecomesRootNameType))]
+		        public object [] Foo = new object [] {new XmlSchemaProviderQNameBecomesRootNameType ()};
 		}
 #endif
 

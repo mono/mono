@@ -1,5 +1,10 @@
 2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializerTests.cs : another XmlSchemaProvider test; use it
+	  as a member of an array.
+
+2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializerTests.cs : added deserialization test for
 	  XmlSchemaProviderAttribute use.
 	* XmlReflectionImporterTests.cs : added test for conclict resolution
