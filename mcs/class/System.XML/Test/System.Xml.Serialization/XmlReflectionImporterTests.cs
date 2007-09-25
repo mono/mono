@@ -1590,6 +1590,27 @@ namespace MonoTests.System.XmlSerialization
 		{
 			new XmlSerializer (typeof (List<int>).GetGenericTypeDefinition ());
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlSchemaProviderMissingMethod ()
+		{
+			new XmlSerializer (typeof (XmlSchemaProviderMissingMethodType));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlSchemaProviderMethodNonStatic ()
+		{
+			new XmlSerializer (typeof (XmlSchemaProviderNonStaticType));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlSchemaProviderMethodIncorrectReturn ()
+		{
+			new XmlSerializer (typeof (XmlSchemaProviderIncorrectReturnType));
+		}
 #endif
 
 		public class Employee : IXmlSerializable
@@ -2079,6 +2100,67 @@ namespace MonoTests.System.XmlSerialization
 			public int? NullableInt {
 				get { return value; }
 				set { this.value = value; }
+			}
+		}
+
+		[XmlSchemaProvider ("GetXsdType")]
+		public class XmlSchemaProviderMissingMethodType : IXmlSerializable
+		{
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public void WriteXml (XmlWriter writer)
+			{
+			}
+
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+		}
+
+		[XmlSchemaProvider ("GetXsdType")]
+		public class XmlSchemaProviderNonStaticType : IXmlSerializable
+		{
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public void WriteXml (XmlWriter writer)
+			{
+			}
+
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+
+			public object GetXsdType ()
+			{
+				return null;
+			}
+		}
+
+		[XmlSchemaProvider ("GetXsdType")]
+		public class XmlSchemaProviderIncorrectReturnType : IXmlSerializable
+		{
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public void WriteXml (XmlWriter writer)
+			{
+			}
+
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+
+			public static object GetXsdType ()
+			{
+				return null;
 			}
 		}
 #endif

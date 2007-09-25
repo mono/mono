@@ -1,3 +1,10 @@
+2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTypeMapping.cs, XmlSerializationWriterInterpreter.cs,
+	  SerializationCodeGenerator.cs :
+	  More XmlSchemaProviderAttribute method check. Use QName returned
+	  by the method for the output root name.
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReflectionImporter.cs : do not reject XmlArrayAttribute on

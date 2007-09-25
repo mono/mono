@@ -1,3 +1,8 @@
+2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs, XmlReflectionImporterTests.cs :
+	  added tests for XmlSchemaProviderAttribute and how its qname works.
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReflectionImporterTest.cs : test for bug #81880.

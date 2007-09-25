@@ -2662,6 +2662,14 @@ namespace MonoTests.System.XmlSerialization
 			xs.Serialize (sw, PrivateCtorOnly.Instance);
 			xs.Deserialize (new StringReader (sw.ToString ()));
 		}
+
+		[Test]
+		public void XmlSchemaProviderQNameBecomesRootName ()
+		{
+			xs = new XmlSerializer (typeof (XmlSchemaProviderQNameBecomesRootNameType));
+			Serialize (new XmlSchemaProviderQNameBecomesRootNameType ());
+			Assert.AreEqual (Infoset ("<foo />"), WriterText);
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -2758,6 +2766,33 @@ namespace MonoTests.System.XmlSerialization
 			[XmlIgnore]
 			public bool NullableIntSpecified {
 				get { return NullableInt.HasValue; }
+			}
+		}
+
+		[XmlSchemaProvider ("GetXsdType")]
+		public class XmlSchemaProviderQNameBecomesRootNameType : IXmlSerializable
+		{
+			public XmlSchema GetSchema ()
+			{
+				return null;
+			}
+
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public void WriteXml (XmlWriter writer)
+			{
+			}
+
+			public static XmlQualifiedName GetXsdType (XmlSchemaSet xss)
+			{
+				XmlSchema xs = new XmlSchema ();
+				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+				ct.Name = "foo";
+				xs.Items.Add (ct);
+				xss.Add (xs);
+				return new XmlQualifiedName ("foo");
 			}
 		}
 #endif

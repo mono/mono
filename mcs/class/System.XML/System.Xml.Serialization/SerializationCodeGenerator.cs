@@ -666,7 +666,9 @@ namespace System.Xml.Serialization
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteLine ("WriteSerializable (ob, element, namesp, isNullable);");
+				WriteLine (String.Format ("WriteSerializable (ob, {0}, {1}, isNullable);",
+					   		  typeMap.XmlType != null ? GetLiteral (typeMap.XmlType) : "element",
+							  typeMap.XmlTypeNamespace != null ? GetLiteral (typeMap.XmlTypeNamespace) : "namesp"));
 				
 				GenerateEndHook ();
 				WriteLineUni ("}");
@@ -2135,7 +2137,7 @@ namespace System.Xml.Serialization
 					return GetReadObjectCall (elem.MappedType, GetLiteral(elem.IsNullable), "true");
 
 				case SchemaTypes.XmlSerializable:
-					return GetCast (elem.TypeData, String.Format ("ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true))", elem.TypeData.CSharpFullName));
+					return GetCast (elem.TypeData, String.Format ("({0}) ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true))", elem.TypeData.CSharpFullName));
 
 				default:
 					throw new NotSupportedException ("Invalid value type");
@@ -2431,7 +2433,7 @@ namespace System.Xml.Serialization
 			WriteLine ("if (Reader.NodeType == XmlNodeType.Element)");
 			WriteLineInd ("{");
 			WriteLine ("if (Reader.LocalName == " + GetLiteral (typeMap.ElementName) + " && Reader.NamespaceURI == " + GetLiteral (typeMap.Namespace) + ")");
-			WriteLine (String.Format ("\treturn ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true));", typeMap.TypeData.CSharpFullName));
+			WriteLine (String.Format ("\treturn ({0}) ReadSerializable (({0}) Activator.CreateInstance(typeof({0}), true));", typeMap.TypeData.CSharpFullName));
 			WriteLine ("else");
 			WriteLine ("\tthrow CreateUnknownNodeException ();");
 			WriteLineUni ("}");

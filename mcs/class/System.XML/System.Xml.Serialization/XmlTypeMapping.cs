@@ -205,6 +205,13 @@ namespace System.Xml.Serialization
 			if (schemaProvider != null) {
 				string method = schemaProvider.MethodName;
 				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public);
+				if (mi == null)
+					throw new InvalidOperationException (String.Format ("Type '{0}' must implement public static method '{1}'", typeData.Type, method));
+				if (!typeof (XmlQualifiedName).IsAssignableFrom (mi.ReturnType) &&
+				    // LAMESPEC: it is undocumented. (We don't have to tell users about it in the error message.)
+				    // Also do not add such a silly compatibility test to assert that it does not raise an error.
+				    !typeof (XmlSchemaComplexType).IsAssignableFrom (mi.ReturnType))
+					throw new InvalidOperationException (String.Format ("Method '{0}' indicated by XmlSchemaProviderAttribute must have its return type as XmlQualifiedName", method));
 				XmlSchemaSet xs = new XmlSchemaSet ();
 				object retVal = mi.Invoke (null, new object [] { xs });
 				_schemaTypeName = XmlQualifiedName.Empty;
