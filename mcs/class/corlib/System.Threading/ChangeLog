@@ -1,3 +1,7 @@
+2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SynchronizationContext.cs: Implement SetSynchronizationContext.
+
 2007-09-06  Dick Porter  <dick@ximian.com>
 
 	* Timer.cs: Only hold a WeakReference to the runner thread, to

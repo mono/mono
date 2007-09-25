@@ -1,3 +1,8 @@
+2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* AsyncOperationManager.cs: Tie the SynchronizationContext here to
+	SynchronizationContext.Current.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComponentResourceManager.cs: In ApplyResources, when culture is

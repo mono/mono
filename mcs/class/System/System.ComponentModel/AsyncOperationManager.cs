@@ -35,26 +35,26 @@ namespace System.ComponentModel
 {
 	public static class AsyncOperationManager
 	{
-		static readonly SynchronizationContext default_context;
-		static SynchronizationContext current_context;
-
 		static AsyncOperationManager ()
 		{
-			default_context = new SynchronizationContext ();
-			current_context = default_context;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static SynchronizationContext SynchronizationContext {
-			get { return current_context; }
+			get { 
+				if (SynchronizationContext.Current == null)
+					SynchronizationContext.SetSynchronizationContext (new SynchronizationContext ());
+				
+				return SynchronizationContext.Current;
+			}
 			[SecurityPermission (SecurityAction.LinkDemand)]
-			set { current_context = value != null ? value : default_context; }
+			set { SynchronizationContext.SetSynchronizationContext (value); }
 		}
 
 		public static AsyncOperation CreateOperation (object userSuppliedState)
 		{
 			return new AsyncOperation (
-				current_context, userSuppliedState);
+				SynchronizationContext, userSuppliedState);
 		}
 	}
 }

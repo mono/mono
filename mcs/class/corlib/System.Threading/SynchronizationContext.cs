@@ -88,10 +88,9 @@ namespace System.Threading
 			Send (d, state);
 		}
 		
-		[MonoTODO]
 		public static void SetSynchronizationContext (SynchronizationContext syncContext)
 		{
-			throw new NotImplementedException ();
+			currentContext = syncContext;
 		}
 
 		[MonoTODO]

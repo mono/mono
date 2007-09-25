@@ -1,3 +1,7 @@
+2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System_test.dll.sources: Added AsyncOperationManagerTest.cs.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ComponentResourceManagerTest.cs.
