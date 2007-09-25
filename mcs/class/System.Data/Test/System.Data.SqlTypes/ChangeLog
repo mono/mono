@@ -1,3 +1,26 @@
+2007-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlInt16Test.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlInt32Test.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlInt64Test.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlChars.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlDecimal.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlDouble.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
+	* SqlString.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):
+	New tests.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* SqlBooleanTest.cs (EqualityOperator): Fixed compiler warnings.

@@ -39,6 +39,10 @@ using System.Data.SqlTypes;
 #if TARGET_JVM
 using DivideByZeroException = System.ArithmeticException;
 #endif
+#if NET_2_0
+using System.Xml.Serialization;
+using System.IO;
+#endif 
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -703,6 +707,57 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			XmlQualifiedName qualifiedName = SqlInt16.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("short", qualifiedName.Name, "#A01");
+		}
+
+		internal void ReadWriteXmlTestInternal (string xml, 
+						       short testval, 
+						       string unit_test_id)
+		{
+			SqlInt16 test;
+			SqlInt16 test1;
+			XmlSerializer ser;
+			StringWriter sw;
+			XmlTextWriter xw;
+			StringReader sr;
+			XmlTextReader xr;
+
+			test = new SqlInt16 (testval);
+			ser = new XmlSerializer(typeof(SqlInt16));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			
+			ser.Serialize (xw, test);
+
+			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
+
+			sr = new StringReader (xml);
+			xr = new XmlTextReader (sr);
+			test1 = (SqlInt16)ser.Deserialize (xr);
+
+			Assert.AreEqual (testval, test1.Value, unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
+		}
+
+		[Test]
+		public void ReadWriteXmlTest ()
+		{
+			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><short>4556</short>";
+			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><short>-6445</short>";
+			string xml3 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><short>0x455687AB3E4D56F</short>";
+			short test1 = 4556;
+			short test2 = -6445;
+			short test3 = 0x4F56;
+
+			ReadWriteXmlTestInternal (xml1, test1, "BA01");
+			ReadWriteXmlTestInternal (xml2, test2, "BA02");
+		
+			try {
+				ReadWriteXmlTestInternal (xml3, test3, "BA03");
+					Assert.Fail ("BA03");
+                        } catch(Exception e) {
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			}
 		}
 #endif
         }

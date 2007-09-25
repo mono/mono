@@ -36,6 +36,10 @@ using System;
 using System.Xml;
 using System.Data;
 using System.Data.SqlTypes;
+#if NET_2_0
+using System.Xml.Serialization;
+using System.IO;
+#endif 
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -461,6 +465,57 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			XmlQualifiedName qualifiedName = SqlInt32.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("int", qualifiedName.Name, "#A01");
+		}
+
+		internal void ReadWriteXmlTestInternal (string xml, 
+						       int testval, 
+						       string unit_test_id)
+		{
+			SqlInt32 test;
+			SqlInt32 test1;
+			XmlSerializer ser;
+			StringWriter sw;
+			XmlTextWriter xw;
+			StringReader sr;
+			XmlTextReader xr;
+
+			test = new SqlInt32 (testval);
+			ser = new XmlSerializer(typeof(SqlInt32));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			
+			ser.Serialize (xw, test);
+
+			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
+
+			sr = new StringReader (xml);
+			xr = new XmlTextReader (sr);
+			test1 = (SqlInt32)ser.Deserialize (xr);
+
+			Assert.AreEqual (testval, test1.Value, unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
+		}
+
+		[Test]
+		public void ReadWriteXmlTest ()
+		{
+			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><int>4556</int>";
+			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><int>-6445</int>";
+			string xml3 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><int>0x455687AB3E4D56F</int>";
+			int test1 = 4556;
+			int test2 = -6445;
+			int test3 = 0x4F56;
+
+			ReadWriteXmlTestInternal (xml1, test1, "BA01");
+			ReadWriteXmlTestInternal (xml2, test2, "BA02");
+		
+			try {
+				ReadWriteXmlTestInternal (xml3, test3, "BA03");
+					Assert.Fail ("BA03");
+                        } catch(Exception e) {
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			}
 		}
 #endif
 	}

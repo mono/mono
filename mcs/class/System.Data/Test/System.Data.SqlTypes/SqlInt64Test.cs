@@ -39,6 +39,11 @@ using System.Data.SqlTypes;
 using DivideByZeroException = System.ArithmeticException;
 #endif
 
+#if NET_2_0
+using System.Xml.Serialization;
+using System.IO;
+#endif 
+
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
@@ -666,6 +671,57 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			XmlQualifiedName qualifiedName = SqlInt64.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("long", qualifiedName.Name, "#A01");
+		}
+
+		internal void ReadWriteXmlTestInternal (string xml, 
+						       long testval, 
+						       string unit_test_id)
+		{
+			SqlInt64 test;
+			SqlInt64 test1;
+			XmlSerializer ser;
+			StringWriter sw;
+			XmlTextWriter xw;
+			StringReader sr;
+			XmlTextReader xr;
+
+			test = new SqlInt64 (testval);
+			ser = new XmlSerializer(typeof(SqlInt64));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			
+			ser.Serialize (xw, test);
+
+			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
+
+			sr = new StringReader (xml);
+			xr = new XmlTextReader (sr);
+			test1 = (SqlInt64)ser.Deserialize (xr);
+
+			Assert.AreEqual (testval, test1.Value, unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
+		}
+
+		[Test]
+		public void ReadWriteXmlTest ()
+		{
+			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><long>4556</long>";
+			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><long>-6445</long>";
+			string xml3 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><long>0x455687AB3E4D56F</long>";
+			long lngtest1 = 4556;
+			long lngtest2 = -6445;
+			long lngtest3 = 0x455687AB3E4D56F;
+
+			ReadWriteXmlTestInternal (xml1, lngtest1, "BA01");
+			ReadWriteXmlTestInternal (xml2, lngtest2, "BA02");
+		
+			try {
+				ReadWriteXmlTestInternal (xml3, lngtest3, "BA03");
+					Assert.Fail ("BA03");
+                        } catch(Exception e) {
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			}
 		}
 #endif
         }

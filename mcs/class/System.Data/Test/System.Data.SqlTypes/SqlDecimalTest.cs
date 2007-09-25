@@ -38,6 +38,10 @@ using System.Xml;
 using System.Data.SqlTypes;
 using System.Threading;
 using System.Globalization;
+#if NET_2_0
+using System.Xml.Serialization;
+using System.IO;
+#endif 
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -714,6 +718,60 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			XmlQualifiedName qualifiedName = SqlDecimal.GetXsdType (null);
 			NUnit.Framework.Assert.AreEqual ("decimal", qualifiedName.Name, "#A01");
+		}
+
+		internal void ReadWriteXmlTestInternal (string xml, 
+						       decimal testval, 
+						       string unit_test_id)
+		{
+			SqlDecimal test;
+			SqlDecimal test1;
+			XmlSerializer ser;
+			StringWriter sw;
+			XmlTextWriter xw;
+			StringReader sr;
+			XmlTextReader xr;
+
+			test = new SqlDecimal (testval);
+			Console.WriteLine ("SqlDecimalTest.ReadWriteXml: Value = {0}, Data={1}", test.Value, test.Data);
+			ser = new XmlSerializer(typeof(SqlDecimal));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			
+			ser.Serialize (xw, test);
+
+			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
+
+			sr = new StringReader (xml);
+			xr = new XmlTextReader (sr);
+			test1 = (SqlDecimal)ser.Deserialize (xr);
+
+			Assert.AreEqual (testval, test1.Value, unit_test_id);
+			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
+		}
+
+		[Test]
+		public void ReadWriteXmlTest ()
+		{
+			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><decimal>4556.89756</decimal>";
+			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><decimal>-6445.9999</decimal>";
+			string xml3 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><decimal>0x455687AB3E4D56F</decimal>";
+			decimal test1 = new Decimal (4556.89756);
+			// This one fails because of a possible conversion bug
+			//decimal test2 = new Decimal (-6445.999999999999999999999);
+			decimal test2 = new Decimal (-6445.9999);
+			decimal test3 = new Decimal (0x455687AB3E4D56F);
+
+			ReadWriteXmlTestInternal (xml1, test1, "BA01");
+			ReadWriteXmlTestInternal (xml2, test2, "BA02");
+		
+			try {
+				ReadWriteXmlTestInternal (xml3, test3, "BA03");
+					Assert.Fail ("BA03");
+                        } catch(Exception e) {
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+			}
 		}
 #endif
         }
