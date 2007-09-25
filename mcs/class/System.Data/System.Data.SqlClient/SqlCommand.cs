@@ -290,7 +290,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-		UpdateRowSource UpdatedRowSource	{
+		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set { 
 				if (!Enum.IsDefined (typeof (UpdateRowSource), value))

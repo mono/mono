@@ -227,16 +227,56 @@ namespace System.Data.SqlClient {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		// All the batch methods, should be implemented, if supported,
+		// by individual providers 
+
+		[MonoTODO]
+		protected override int AddToBatch (IDbCommand cmd)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void ClearBatch ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override int ExecuteBatch ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIdentifer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void InitializeBatching ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void TerminateBatching ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion // Methods
 
 		#region Events and Delegates
 
-#if !NET_2_0
+#if ONLY_1_1
 		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 #endif
 		public event SqlRowUpdatedEventHandler RowUpdated;
 
-#if !NET_2_0
+#if ONLY_1_1
 		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 #endif
 		public event SqlRowUpdatingEventHandler RowUpdating;

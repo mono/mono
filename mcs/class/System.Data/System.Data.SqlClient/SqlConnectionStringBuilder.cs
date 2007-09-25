@@ -40,6 +40,9 @@ using System.ComponentModel;
 namespace System.Data.SqlClient
 {
 	[DefaultPropertyAttribute ("DataSource")]
+#if NET_2_0
+	[TypeConverterAttribute ("System.Data.SqlClient.SqlConnectionStringBuilder+SqlConnectionStringBuilderConverter, " + Consts.AssemblySystem_Data)]
+#endif
 	public sealed class SqlConnectionStringBuilder : DbConnectionStringBuilder
 	{
 
@@ -187,8 +190,13 @@ namespace System.Data.SqlClient
 			}
 		}
 
+#if NET_2_0
+		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design,
+			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#else
 		[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner,
 			 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+#endif
 		[DisplayNameAttribute ("AttachDbFilename")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string AttachDBFilename { 
@@ -231,6 +239,9 @@ namespace System.Data.SqlClient
 
 		[DisplayNameAttribute ("Data Source")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
+#if NET_2_0
+		[TypeConverterAttribute ("System.Data.SqlClient.SqlConnectionStringBuilder+SqlDataSourceConverter, " + Consts.AssemblySystem_Data)]
+#endif
 		public string DataSource { 
 			get { return _dataSource; }
 			set { 
@@ -261,6 +272,9 @@ namespace System.Data.SqlClient
 
 		[DisplayNameAttribute ("Failover Partner")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
+#if NET_2_0
+		[TypeConverterAttribute ("System.Data.SqlClient.SqlConnectionStringBuilder+SqlDataSourceConverter, " + Consts.AssemblySystem_Data)]
+#endif
 		public string FailoverPartner { 
 			get { return _failoverPartner; }
 			set { 
@@ -271,6 +285,9 @@ namespace System.Data.SqlClient
 
 		[DisplayNameAttribute ("Initial Catalog")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
+#if NET_2_0
+		[TypeConverterAttribute ("System.Data.SqlClient.SqlConnectionStringBuilder+SqlInitialCatalogConverter, " + Consts.AssemblySystem_Data)]
+#endif
 		public string InitialCatalog { 
 			get { return _initialCatalog; }
 			set { 
@@ -347,6 +364,9 @@ namespace System.Data.SqlClient
 
 		[DisplayNameAttribute ("Network Library")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
+#if NET_2_0
+		[TypeConverterAttribute ("System.Data.SqlClient.SqlConnectionStringBuilder+NetworkLibraryConverter, " + Consts.AssemblySystem_Data)]
+#endif
 		public string NetworkLibrary { 
 			get { return _networkLibrary; }
 			set { 

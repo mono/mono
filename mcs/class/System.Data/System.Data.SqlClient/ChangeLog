@@ -1,3 +1,25 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* SqlInitialCatalogConverter.cs, SqlDataSourceConverter.cs:
+	NetworkLibraryConverter.cs: Added new files.
+
+	* SqlParameter.cs: 2.0 attribute changes.
+
+	* SqlDataAdapter.cs: 2.0 attribute changes.
+
+	* SqlConnectionStringBuilder.cs: 2.0 attribute changes.
+
+	* SqlConnection.cs (ClearAllPools, ClearPool): Implemented 2.0
+	APIs, other 2.0 attribute changes.
+
+	* SqlCommandBuilder.cs (GetSchemaTable, InitializeCommand):
+	Implemented 2.0 APIs, other 2.0 attribute changes.
+
+	* SqlBulkCopyColumnMappingCollection.cs: Added constructor, 2.0
+	API compatibility changes.
+
+	* SqlException.cs: 2.0 attribute changes.
+
 2007-08-13  Nagappan A  <anagappan@novell.com>
 
 	* SqlConnection.cs (ConnectionString): 2.0 compatibility changes.

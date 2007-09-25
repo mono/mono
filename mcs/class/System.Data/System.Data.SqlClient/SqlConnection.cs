@@ -398,8 +398,12 @@ namespace System.Data.SqlClient {
 			}
 
 			if (tds != null && tds.IsConnected) {
-				if (pooling) {
+				if (pooling && tds.Pooling) {
+#if NET_2_0
+					if(pool != null) pool.ReleaseConnection (ref tds);
+#else
 					if(pool != null) pool.ReleaseConnection (tds);
+#endif
 				}else
 					if(tds != null) tds.Disconnect ();
 			}
@@ -1565,6 +1569,28 @@ namespace System.Data.SqlClient {
 								 conn.parms.Password, newPassword, conn.parms.User));
 			}
 		}
+
+		public static void ClearAllPools ()
+		{
+			Hashtable pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
+			foreach (TdsConnectionPool pool in pools.Values) {
+				if (pool != null) {
+					pool.ResetConnectionPool ();
+					ITds tds = pool.GetConnection ();
+					tds.Pooling = false;
+				}
+			}
+		}
+
+		public static void ClearPool (SqlConnection connection)
+		{
+			if (connection.pooling) {
+				connection.pooling = false;
+				if (connection.pool != null)
+					connection.pool.ResetConnectionPool (connection.Tds);
+			}
+		}
+
 #endif // NET_2_0
 
 		#endregion // Methods
@@ -1578,7 +1604,7 @@ namespace System.Data.SqlClient {
 
 		#region Properties Net 2
 
-#if !NET_2_0
+#if NET_1_0
 		[DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

@@ -491,10 +491,12 @@ namespace System.Data.SqlClient {
 			command.DeriveParameters ();
 		}
 
-#if NET_1_0
-		protected
+#if NET_2_0
+		new
+#else
+		protected override
 #endif
-		new void Dispose (bool disposing)
+		void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -637,10 +639,10 @@ namespace System.Data.SqlClient {
 			return true;
 		}
 
-#if NET_1_0
-		public
-#else
+#if NET_2_0
 		new
+#else
+		public
 #endif
 		void RefreshSchema () 
 		{
@@ -720,9 +722,27 @@ namespace System.Data.SqlClient {
 			rowUpdatingHandler = new SqlRowUpdatingEventHandler (RowUpdatingHandler);
 			((SqlDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
                 }
+
+		protected override DataTable GetSchemaTable (DbCommand cmd)
+		{
+			using (SqlDataReader rdr = (SqlDataReader) cmd.ExecuteReader ())
+				return rdr.GetSchemaTable ();
+		}
+
+		protected override DbCommand InitializeCommand (DbCommand cmd)
+		{
+			if (cmd == null) {
+				cmd = new SqlCommand ();
+			} else {
+				cmd.CommandTimeout = 30;
+				cmd.Transaction = null;
+				cmd.CommandType = CommandType.Text;
+				cmd.UpdatedRowSource = UpdateRowSource.None;
+			}
+			return cmd;
+		}
 #endif // NET_2_0
 
 		#endregion // Event Handlers
 	}
 }
-

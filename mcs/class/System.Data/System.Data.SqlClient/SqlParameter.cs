@@ -47,10 +47,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.SqlClient {
-	[TypeConverterAttribute (typeof (SqlParameterConverter))]
 #if NET_2_0
+	[TypeConverterAttribute ("System.Data.SqlClient.SqlParameter+SqlParameterConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class SqlParameter : DbParameter, IDbDataParameter, IDataParameter, ICloneable
 #else
+	[TypeConverterAttribute (typeof (SqlParameterConverter))]
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 #endif // NET_2_0
 	{
