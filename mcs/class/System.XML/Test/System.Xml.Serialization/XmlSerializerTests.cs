@@ -2669,6 +2669,7 @@ namespace MonoTests.System.XmlSerialization
 			xs = new XmlSerializer (typeof (XmlSchemaProviderQNameBecomesRootNameType));
 			Serialize (new XmlSchemaProviderQNameBecomesRootNameType ());
 			Assert.AreEqual (Infoset ("<foo />"), WriterText);
+			xs.Deserialize (new StringReader ("<foo/>"));
 		}
 #endif
 

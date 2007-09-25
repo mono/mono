@@ -27,6 +27,11 @@ namespace MonoTests.System.XmlSerialization
 		const string ANamespace = "some:urn";
 		const string AnotherNamespace = "another:urn";
 
+		string Infoset (string source)
+		{
+			return XmlSerializerTests.Infoset (source);
+		}
+
 		private XmlSchemas Export (Type type)
 		{
 			return Export (type, string.Empty);
@@ -1705,7 +1710,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSEmployeeSchemaProvider\" elementFormDefault=\"qualified\" targetNamespace=\"NSEmployeeSchemaProvider\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 #if NET_2_0
@@ -1722,7 +1727,7 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
 #endif
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (EmployeeSchemaProvider));
 			//Assert.AreEqual (1, schemas.Count, "#3");
@@ -1730,7 +1735,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 #if NET_2_0
@@ -1747,7 +1752,7 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
 #endif
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 
 			schemas = Export (typeof (PrimitiveSchemaProvider), "NSPrimitiveSchemaProvider");
 			//Assert.AreEqual (1, schemas.Count, "#5");
@@ -1755,7 +1760,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSPrimitiveSchemaProvider\" elementFormDefault=\"qualified\" targetNamespace=\"NSPrimitiveSchemaProvider\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 #if NET_2_0
@@ -1772,7 +1777,7 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:complexType>{0}" +
 				"  </xs:element>{0}" +
 #endif
-				"</xs:schema>", Environment.NewLine), sw.ToString ().Replace("<xs:import />" + Environment.NewLine, ""), "#6");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ().Replace("<xs:import />" + Environment.NewLine, "")), "#6");
 		}
 
 		[Test]

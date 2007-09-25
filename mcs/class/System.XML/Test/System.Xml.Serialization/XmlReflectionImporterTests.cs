@@ -1611,6 +1611,16 @@ namespace MonoTests.System.XmlSerialization
 		{
 			new XmlSerializer (typeof (XmlSchemaProviderIncorrectReturnType));
 		}
+
+		[Test]
+		public void XmlSchemaProviderAndDefaultNamespace ()
+		{
+			XmlTypeMapping tm = new XmlReflectionImporter ("urn:bar").ImportTypeMapping (typeof (XmlSchemaProviderAndDefaultNamespaceType));
+			Assert.AreEqual ("foo", tm.ElementName, "#1");
+			Assert.AreEqual ("foo", tm.XsdTypeName, "#2");
+			Assert.AreEqual ("urn:bar", tm.Namespace, "#3");
+			Assert.AreEqual ("urn:foo", tm.XsdTypeNamespace);
+		}
 #endif
 
 		public class Employee : IXmlSerializable
@@ -2159,6 +2169,34 @@ namespace MonoTests.System.XmlSerialization
 			}
 
 			public static object GetXsdType ()
+			{
+				return null;
+			}
+		}
+
+		[XmlSchemaProvider ("GetXsd")]
+		public class XmlSchemaProviderAndDefaultNamespaceType : IXmlSerializable
+		{
+			public static XmlQualifiedName GetXsd (XmlSchemaSet xss)
+			{
+				XmlSchema xs = new XmlSchema ();
+				xs.TargetNamespace = "urn:foo";
+				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+				ct.Name = "foo";
+				xs.Items.Add (ct);
+				xss.Add (xs);
+				return new XmlQualifiedName ("foo", "urn:foo");
+			}
+
+			public void WriteXml (XmlWriter write)
+			{
+			}
+
+			public void ReadXml (XmlReader reader)
+			{
+			}
+
+			public XmlSchema GetSchema ()
 			{
 				return null;
 			}

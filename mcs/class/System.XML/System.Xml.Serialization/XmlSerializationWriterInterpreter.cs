@@ -116,7 +116,7 @@ namespace System.Xml.Serialization
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteSerializable ((IXmlSerializable)ob, typeMap.XmlType ?? element, typeMap.XmlTypeNamespace ?? namesp, isNullable);
+				WriteSerializable ((IXmlSerializable)ob, element, namesp, isNullable);
 				return;
 			}
 

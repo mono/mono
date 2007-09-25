@@ -1,5 +1,13 @@
 2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializerTests.cs : added deserialization test for
+	  XmlSchemaProviderAttribute use.
+	* XmlReflectionImporterTests.cs : added test for conclict resolution
+	  between defaultNamespace and XmlSchemaProvider() namespace.
+	* XmlSchemaExporterTests.cs : use Infoset() comparison.
+
+2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSerializerTests.cs, XmlReflectionImporterTests.cs :
 	  added tests for XmlSchemaProviderAttribute and how its qname works.
 

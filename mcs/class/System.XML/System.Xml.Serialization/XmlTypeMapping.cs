@@ -232,6 +232,8 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException (
 						String.Format ("Method {0}.{1}() specified by XmlSchemaProviderAttribute has invalid signature: return type must be compatible with System.Xml.XmlQualifiedName.", typeData.Type.Name, method));
 
+				// defaultNamespace at XmlReflectionImporter takes precedence for Namespace, but not for XsdTypeNamespace.
+				UpdateRoot (new XmlQualifiedName (_schemaTypeName.Name, Namespace ?? _schemaTypeName.Namespace));
 				XmlTypeNamespace = _schemaTypeName.Namespace;
 				XmlType = _schemaTypeName.Name;
 

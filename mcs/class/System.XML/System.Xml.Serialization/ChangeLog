@@ -1,5 +1,15 @@
 2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTypeMapping.cs : Namespace and XmlTypeNamespace could be
+	  different when an explicit namespace is specified (e.g. at
+	  XmlReflectionImporter.ctor).
+	* SerializationCodeGenerator.cs,
+	  XmlSerializationWriterInterpreter.cs :
+	  revert XmlTypeMapping.XmlTypeNamsepace usage. Now with the fix
+	  above, original code should work fine.
+
+2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTypeMapping.cs, XmlSerializationWriterInterpreter.cs,
 	  SerializationCodeGenerator.cs :
 	  More XmlSchemaProviderAttribute method check. Use QName returned

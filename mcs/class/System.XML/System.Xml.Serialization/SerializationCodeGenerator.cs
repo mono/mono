@@ -666,9 +666,7 @@ namespace System.Xml.Serialization
 
 			if (typeMap.TypeData.SchemaType == SchemaTypes.XmlSerializable)
 			{
-				WriteLine (String.Format ("WriteSerializable (ob, {0}, {1}, isNullable);",
-					   		  typeMap.XmlType != null ? GetLiteral (typeMap.XmlType) : "element",
-							  typeMap.XmlTypeNamespace != null ? GetLiteral (typeMap.XmlTypeNamespace) : "namesp"));
+				WriteLine ("WriteSerializable (ob, element, namesp, isNullable);");
 				
 				GenerateEndHook ();
 				WriteLineUni ("}");
