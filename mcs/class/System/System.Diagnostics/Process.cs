@@ -690,7 +690,7 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The number of threads of this process.")]
 		public ProcessThreadCollection Threads {
 			get {
-				return(null);
+				return ProcessThreadCollection.GetEmpty ();
 			}
 		}
 

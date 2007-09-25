@@ -59,6 +59,11 @@ namespace System.Diagnostics
 		{
 		}
 
+		internal static ProcessThreadCollection GetEmpty ()
+		{
+			return new ProcessThreadCollection ();
+		}
+		
 		public ProcessThreadCollection(ProcessThread[] processThreads) 
 		{
 			InnerList.AddRange (processThreads);
