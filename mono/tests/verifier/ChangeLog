@@ -1,5 +1,10 @@
 2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_load_addr.il: Tests for valid uses of ldarga and ldloca
+	* make_double_nesting_test.sh: Generate tests for calling nested classes from a diferent outer class
+
+2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_generic_params.cs (added): Tests for valid use of generic types.
 	* Makedfile: added valid_generic_params.cs
 
