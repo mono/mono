@@ -1,5 +1,11 @@
 2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (push_arg): Fixed support for ldarga
+	* verify.c (set_stack_value): Removed superfluous parameter, fixed the
+	MonoType used as first arg in case of instance calls.
+
+2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Support for verifying VAR and MVAR types, 
 
 2007-09-25  Zoltan Varga  <vargaz@gmail.com>
