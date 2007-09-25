@@ -21,13 +21,68 @@
 //
 
 using System;
+using System.Threading;
 
 #if NET_2_0
 
+// Some implementation details:
+// http://msdn.microsoft.com/msdnmag/issues/06/06/NETMatters/default.aspx
 namespace System.Windows.Forms
 {
-	public static class WindowsFormsSynchronizationContext {
+	public sealed class WindowsFormsSynchronizationContext : SynchronizationContext, IDisposable
+	{
+		private static bool auto_installed;
+		private Control invoke_control;
+		private static SynchronizationContext previous_context;
+		
+		#region Public Constructor
+		public WindowsFormsSynchronizationContext ()
+		{
+			invoke_control = Application.MWFThread.Current.Context.MainForm;
+		}
+		
+		static WindowsFormsSynchronizationContext ()
+		{
+			auto_installed = true;
+			previous_context = SynchronizationContext.Current;
+		}
+		#endregion
+
+		#region Public Properties
+		public static bool AutoInstall {
+			get { return auto_installed; }
+			set { auto_installed = value; }
+		}
+		#endregion
+
+		#region Public Methods
+		public override SynchronizationContext CreateCopy ()
+		{
+			return base.CreateCopy ();
+		}
+		
+		public void Dispose ()
+		{
+		}
+
+		public override void Post (SendOrPostCallback d, object state)
+		{
+			invoke_control.BeginInvoke (d, new object[] { state });
+		}
+
+		public override void Send (SendOrPostCallback d, object state)
+		{
+			invoke_control.Invoke (d, new object[] { state });
+		}
+		
+		public static void Uninstall ()
+		{
+			if (previous_context == null)
+				previous_context = new SynchronizationContext ();
+				
+			SynchronizationContext.SetSynchronizationContext (previous_context);
+		}
+		#endregion
 	}
 }
-
 #endif

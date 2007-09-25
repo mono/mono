@@ -1,3 +1,10 @@
+2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Install a WindowsFormsSynchronizationContext in the
+	run loop, and uninstall it when done.
+	* WindowsFormsSynchronizationContext.cs: Implement.
+	[Fixes the common case in bug #327608]
+
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewCellCollection.cs: Added argument checks for indexers.

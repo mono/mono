@@ -703,6 +703,11 @@ namespace System.Windows.Forms
 			previous_thread_context = thread.Context;
 			thread.Context = context;
 
+#if NET_2_0
+			if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
+				SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
+#endif
+			
 			if (context.MainForm != null) {
 				context.MainForm.is_modal = Modal;
 				context.MainForm.context = context;
@@ -851,6 +856,10 @@ namespace System.Windows.Forms
 			}
 
 			thread.Context = previous_thread_context;
+
+#if NET_2_0
+			WindowsFormsSynchronizationContext.Uninstall ();
+#endif
 
 			if (!Modal)
 				thread.Exit();
