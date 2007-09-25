@@ -46,6 +46,7 @@ namespace System.Data.SqlTypes
 #if NET_2_0
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
+	[XmlRootAttribute ("decimal")]
 #endif
 	public struct SqlDecimal : INullable, IComparable
 #if NET_2_0
@@ -1488,16 +1489,51 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			SqlDecimal retval;
+				
+			if (reader == null)
+				return;
+
+			switch (reader.ReadState) {
+			case ReadState.EndOfFile:
+			case ReadState.Error:
+			case ReadState.Closed:
+				return;
+			}
+			// Skip XML declaration and prolog
+			// or do I need to validate for the <SqlInt32> tag?
+			reader.MoveToContent ();
+			if (reader.EOF)
+				return;
+			
+			reader.Read ();
+			if (reader.NodeType == XmlNodeType.EndElement)
+				return;
+
+			if (reader.Value.Length > 0) {
+				if (String.Compare ("Null", reader.Value) == 0) {
+					// means a null reference/invalid value
+					notNull = false;
+					return; 
+				}
+				// FIXME: do we need to handle the FormatException?
+				retval = new SqlDecimal (Decimal.Parse (reader.Value));
+
+				// SqlDecimal.Data returns a clone'd array
+				this.value = retval.Data; 
+				this.notNull = true;
+				this.scale = retval.Scale;
+				this.precision = retval.Precision;
+				this.positive = retval.IsPositive;
+			}
 		}
-		
-		[MonoTODO]
+					                         
 		void IXmlSerializable.WriteXml (XmlWriter writer) 
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine ("SqlDecimal.WriteXml: Value = {0}, value={1}", this.Value, this.value);
+			writer.WriteString (this.Value.ToString ());
 		}
 #endif
 		#endregion

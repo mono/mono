@@ -612,16 +612,45 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				return;
+
+			switch (reader.ReadState) {
+			case ReadState.EndOfFile:
+			case ReadState.Error:
+			case ReadState.Closed:
+				return;
+			}
+			// Skip XML declaration and prolog
+			// or do I need to validate for the <string> tag?
+			reader.MoveToContent ();
+			if (reader.EOF)
+				return;
+			
+			reader.Read ();
+			if (reader.NodeType == XmlNodeType.EndElement)
+				return;
+
+			if (reader.Value.Length > 0) {
+				if (String.Compare ("Null", reader.Value) == 0) {
+					// means a null reference/invalid value
+					notNull = false;
+					return; 
+				}
+				// FIXME: Validate the value for expected format
+				this.value = reader.Value;
+				this.notNull = true;
+				this.compareOptions = SqlCompareOptions.IgnoreCase |
+					SqlCompareOptions.IgnoreKanaType |
+					SqlCompareOptions.IgnoreWidth;
+			}
 		}
 		
-		[MonoTODO]
 		void IXmlSerializable.WriteXml (XmlWriter writer) 
 		{
-			throw new NotImplementedException ();
+			writer.WriteString (this.ToString ());
 		}
 #endif
 	}
