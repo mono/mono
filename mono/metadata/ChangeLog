@@ -1,3 +1,9 @@
+
+Tue Sep 25 14:56:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: support OSX and other systems in
+	mono_thread_get_stack_bounds (bug #328026).
+
 2007-09-25  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h
