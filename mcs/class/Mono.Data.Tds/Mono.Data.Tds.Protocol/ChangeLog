@@ -1,3 +1,14 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* Tds.cs (Pooling): Added new property to get the internal
+	connection pooling list.
+
+	* ITds.cs (Pooling): Added new property to get the internal
+	connection pooling list.
+
+	* TdsConnectionPool.cs (ResetConnectionPool, GetConnectionPool)
+	(ReleaseConnection): Added new methods to clear connection pool.
+
 2007-08-06  Nagappan A  <anagappan@novell.com>
 
 	* TdsComm.cs (TdsComm): Now connects to the SqlServer in Async

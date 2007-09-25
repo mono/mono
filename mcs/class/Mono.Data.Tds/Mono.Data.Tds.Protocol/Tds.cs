@@ -72,6 +72,7 @@ namespace Mono.Data.Tds.Protocol {
 //		bool autoCommit;
 
 		bool doneProc;
+		bool pooling = true;
 		TdsDataRow currentRow = null;
 		TdsDataColumnCollection columns;
 
@@ -144,6 +145,11 @@ namespace Mono.Data.Tds.Protocol {
 		public bool IsConnected {
 			get { return connected; }
 			set { connected = value; }
+		}
+
+		public bool Pooling {
+			get { return pooling; }
+			set { pooling = value; }
 		}
 
 		public bool MoreResults {

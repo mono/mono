@@ -49,6 +49,11 @@ namespace Mono.Data.Tds.Protocol {
 			get;
 		}
 		
+		bool Pooling {
+			get;
+			set;
+		}
+		
 		string ServerVersion {
 			get;
 		}

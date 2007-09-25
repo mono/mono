@@ -58,6 +58,14 @@ namespace Mono.Data.Tds.Protocol
 			}
 		}
 		
+		public Hashtable GetConnectionPool ()
+		{
+			lock (pools)
+			{
+				return pools;
+			}
+		}
+		
 		public virtual ITds CreateConnection (TdsConnectionInfo info)
 		{
 			switch (version)
@@ -100,6 +108,7 @@ namespace Mono.Data.Tds.Protocol
 		ArrayList list = new ArrayList ();
 		TdsConnectionInfo info;
 		bool initialized;
+		static bool pooling = false;
 		int activeConnections = 0;
 		TdsConnectionPoolManager manager;
 
@@ -107,6 +116,11 @@ namespace Mono.Data.Tds.Protocol
 		{
 			this.info = info;
 			this.manager = manager;
+		}
+
+		public static bool Pooling {
+			get { return pooling; }
+			set { pooling = value; }
 		}
 
 		#region Methods
@@ -122,7 +136,6 @@ namespace Mono.Data.Tds.Protocol
 						list.Add (CreateConnection ());
 					initialized = true;
 				}
-				
 				do {
 					if (list.Count > 0)
 					{
@@ -166,6 +179,63 @@ namespace Mono.Data.Tds.Protocol
 				Monitor.Pulse (list);
 			}
 		}
+
+#if NET_2_0
+		public void ReleaseConnection (ref ITds tds)
+		{
+			lock (list)
+			{
+				if (pooling == false) {
+					try {
+						tds.Disconnect ();
+					} catch {}
+					tds = null;
+				} else {
+					list.Add (tds);
+					Monitor.Pulse (list);
+				}
+			}
+		}
+
+		public void ResetConnectionPool ()
+		{
+			lock (list)
+			{
+				ITds connection = null;
+				while (list.Count > 0) {
+					// There are available connections
+					connection = (ITds) list [list.Count - 1];
+					list.RemoveAt (list.Count - 1);
+					if (!connection.Reset ()) {
+						try {
+							connection.Disconnect ();
+						} catch {}
+						connection = null;
+					}
+				}
+			}
+		}
+
+		public void ResetConnectionPool (ITds connection)
+		{
+			lock (list)
+			{
+				if (list.Count > 0) {
+					// There are available connections
+					int index = list.IndexOf (connection);
+					if (index != -1) {
+						list.RemoveAt (index);
+						if (!connection.Reset ()) {
+							try {
+								connection.Disconnect ();
+							} catch {}
+							connection = null;
+						}
+					}
+				}
+			}
+		}
+#endif
 		
 		ITds CreateConnection ()
 		{
