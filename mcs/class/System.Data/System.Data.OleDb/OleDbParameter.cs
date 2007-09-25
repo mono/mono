@@ -39,10 +39,11 @@ using System.ComponentModel;
 
 namespace System.Data.OleDb
 {
-	[TypeConverterAttribute (typeof (OleDbParameterConverter))]
 #if NET_2_0
+	[TypeConverterAttribute ("System.Data.OleDb.OleDbParameter+OleDbParameterConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class OleDbParameter : DbParameter, IDbDataParameter, ICloneable
 #else
+	[TypeConverterAttribute (typeof (OleDbParameterConverter))]
 	public sealed class OleDbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 #endif
 	{

@@ -42,7 +42,11 @@ using System.Runtime.Serialization;
 namespace System.Data.OleDb
 {
 	[Serializable]
+#if NET_2_0
+	public sealed class OleDbException : DbException
+#else
 	public sealed class OleDbException : ExternalException
+#endif
 	{
 		private OleDbConnection connection;
 
@@ -98,7 +102,13 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public override string Message {
+#if NET_1_0 || ONLY_1_1
+		public
+		override
+#else
+		new
+#endif
+		string Message {
 			get {
 				GdaList glist;
 				IntPtr errors;
@@ -120,7 +130,13 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public override string Source {
+#if NET_1_0 || ONLY_1_1
+		public
+		override
+#else
+		new
+#endif
+		string Source {
 			get {
 				GdaList glist;
 				IntPtr errors;

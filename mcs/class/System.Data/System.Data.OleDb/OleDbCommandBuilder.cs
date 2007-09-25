@@ -134,7 +134,7 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_0
+#if ONLY_1_1
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
