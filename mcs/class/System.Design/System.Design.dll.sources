@@ -85,6 +85,7 @@ System.Web.UI.Design/DataFieldConverter.cs
 System.Web.UI.Design/DataMemberConverter.cs
 System.Web.UI.Design/DataSourceConverter.cs
 System.Web.UI.Design/DesignTimeData.cs
+System.Web.UI.Design/DesignerDataSourceView.cs
 System.Web.UI.Design/DesignerObject.cs
 System.Web.UI.Design/DesignerRegion.cs
 System.Web.UI.Design/DesignerRegionCollection.cs
@@ -95,6 +96,9 @@ System.Web.UI.Design/HtmlControlDesigner.cs
 System.Web.UI.Design/HtmlIntrinsicControlDesigner.cs
 System.Web.UI.Design/HyperLinkDataBindingHandler.cs
 System.Web.UI.Design/IControlDesignerBehaviour.cs
+System.Web.UI.Design/IDataBindingSchemaProvider.cs
+System.Web.UI.Design/IDataSourceDesigner.cs
+System.Web.UI.Design/IDataSourceViewSchema.cs
 System.Web.UI.Design/IDataSourceFieldSchema.cs
 System.Web.UI.Design/IDataSourceProvider.cs
 System.Web.UI.Design/IHtmlControlDesignerBehavior.cs
@@ -109,6 +113,8 @@ System.Web.UI.Design/IWebFormsDocumentService.cs
 System.Web.UI.Design/ReadWriteControlDesigner.cs
 System.Web.UI.Design/ResourceExpressionEditor.cs
 System.Web.UI.Design/TemplatedControlDesigner.cs
+System.Web.UI.Design/TemplateDefinition.cs
+System.Web.UI.Design/TemplatedEditableDesignerRegion.cs
 System.Web.UI.Design/TemplateEditingService.cs
 System.Web.UI.Design/TemplateEditingVerb.cs
 System.Web.UI.Design/TextControlDesigner.cs
@@ -143,6 +149,8 @@ System.Web.UI.Design.WebControls/ButtonDesigner.cs
 System.Web.UI.Design.WebControls/BaseDataListComponentEditor.cs
 System.Web.UI.Design.WebControls/ListControlDataBindingHandler.cs
 System.Web.UI.Design.WebControls/LabelDesigner.cs
+System.Web.UI.Design.WebControls/BaseDataBoundControlDesigner.cs
+System.Web.UI.Design.WebControls/DataBoundControlDesigner.cs
 System.Web.UI.Design.WebControls/DataListComponentEditor.cs
 System.Web.UI.Design.Util/DummyClass.cs
 System.Windows.Forms.Design/AnchorEditor.cs

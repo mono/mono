@@ -1,3 +1,14 @@
+2007-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Design.dll.sources: added
+	System.Web.UI.Design/TemplateDefinition.cs,
+	System.Web.UI.Design/TemplatedEditableDesignerRegion.cs,
+	System.Web.UI.Design.WebControls/DataBoundControlDesigner.cs,
+	System.Web.UI.Design.WebControls/BaseDataBoundControlDesigner.cs,
+	System.Web.UI.Design/IDataBindingSchemaProvider.cs,
+	System.Web.UI.Design/IDataSourceDesigner.cs,
+	System.Web.UI.Design/DesignerDataSourceView.
+
 2007-09-25  Marek Habersack  <grendello@gmail.com>
 
 	* System.Design.dll.sources: added
