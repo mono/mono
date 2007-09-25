@@ -208,8 +208,12 @@ namespace System.Drawing
 			
 			if (destinationType == typeof (InstanceDescriptor) && value is Color) {
 				Color c = (Color)value;
-				if (c.IsKnownColor){
+				if (c.IsEmpty) {
+					return new InstanceDescriptor (typeof (Color).GetField ("Empty"), null);
+				} else if (c.IsSystemColor) {
 					return new InstanceDescriptor (typeof (SystemColors).GetProperty (c.Name), null);
+				} else if (c.IsKnownColor){
+					return new InstanceDescriptor (typeof (Color).GetProperty (c.Name), null);
 				} else {
 					MethodInfo met = typeof(Color).GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
 					return new InstanceDescriptor (met, new object[] {c.A, c.R, c.G, c.B });

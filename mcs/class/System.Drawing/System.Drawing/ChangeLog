@@ -1,3 +1,9 @@
+2007-09-26  Ivan N.Zlatev <contact@i-nz.net>
+
+	* ColorConverter.cs: During conversion to InstanceDescriptor check
+	both IsSystemColor to get a PropertyInfo from type SystemColors 
+	and IsKnownColor to get PropertyInfo from type Color.
+
 2007-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ColorTranslator.cs: optimized Html color formatting in ToHtml method
