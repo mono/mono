@@ -1,3 +1,7 @@
+2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Support for verifying VAR and MVAR types, 
+
 2007-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_get_property_info): Set the reflected type of the
