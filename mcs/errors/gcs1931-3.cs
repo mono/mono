@@ -1,4 +1,4 @@
-// CS0136: A local variable named `ii' cannot be declared in this scope because it would give a different meaning to `ii', which is already used in a `parent' scope to denote something else
+// CS1931: A range variable `ii' conflicts with a previous declaration of `ii'
 // Line: 14
 // Compiler options: -langversion:linq
 
