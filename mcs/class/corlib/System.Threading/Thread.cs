@@ -116,6 +116,9 @@ namespace System.Threading {
 		private MulticastDelegate threadstart;
 		private string thread_name=null;
 		
+		private static int _managed_id_counter;
+		private int managed_id;
+		
 		private IPrincipal _principal;
 
 		public static Context CurrentContext {
@@ -293,11 +296,16 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal (MulticastDelegate start);
 
+		private static int GetNewManagedId() {
+			return Interlocked.Increment(ref _managed_id_counter);
+		}
+
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
 			threadstart=start;
+			managed_id=GetNewManagedId();
 		}
 
 #if NET_2_0
@@ -825,6 +833,7 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
+			managed_id = GetNewManagedId();
 		}
 
 		public Thread (ParameterizedThreadStart start)
@@ -833,6 +842,7 @@ namespace System.Threading {
 				throw new ArgumentNullException ("start");
 
 			threadstart = start;
+			managed_id = GetNewManagedId();
 		}
 
 		public Thread (ParameterizedThreadStart start, int maxStackSize)
@@ -844,6 +854,7 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
+			managed_id = GetNewManagedId();
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
@@ -859,7 +870,7 @@ namespace System.Threading {
 
 		public int ManagedThreadId {
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-			get { return (int)thread_id; }
+			get { return managed_id; }
 		}
 
 		[MonoTODO("Not implemented")]
@@ -917,8 +928,7 @@ namespace System.Threading {
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
-			// ??? overridden but not guaranteed to be unique ???
-			return (int)thread_id;
+			return managed_id;
 		}
 
 		public void Start (object parameter)

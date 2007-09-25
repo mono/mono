@@ -1,3 +1,9 @@
+2007-09-25  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Keep ManagedThreadId constant over the lifetime of a
+	Thread.  Patch from jlarimer@gmail.com fixing bugs 325367 and
+	325566.
+
 2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* SynchronizationContext.cs: Implement SetSynchronizationContext.
