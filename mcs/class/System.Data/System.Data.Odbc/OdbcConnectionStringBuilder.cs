@@ -40,6 +40,8 @@ using System.Data.Odbc;
 
 namespace System.Data.Odbc
 {
+	[DefaultProperty ("Driver")]
+	[TypeConverter ("System.Data.Odbc.OdbcConnectionStringBuilder+OdbcConnectionStringBuilderConverter, " + Consts.AssemblySystem_Data)]
 	public sealed class OdbcConnectionStringBuilder : DbConnectionStringBuilder
 	{
 		#region Fields

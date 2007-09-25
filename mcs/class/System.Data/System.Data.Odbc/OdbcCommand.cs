@@ -45,6 +45,7 @@ namespace System.Data.Odbc
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
         [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
+	[DefaultEvent ("RecordsAffected")]
 	public sealed class OdbcCommand : DbCommand, ICloneable
 #else
 	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
@@ -188,8 +189,6 @@ namespace System.Data.Odbc
                 [DefaultValue (true)]
 #if NET_2_0
                 [EditorBrowsable (EditorBrowsableState.Never)]
-#else
-                [Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #endif
 		public 
 #if NET_2_0

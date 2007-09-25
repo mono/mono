@@ -1,3 +1,31 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* OdbcParameter.cs (ResetOdbcType, ResetDbType): Implemented
+	missing methods. 2.0 attribute fixes.
+
+	* OdbcInfoMessageEventArgs.cs (Message, Errors, ToString):
+	Implemented missing properties and methods. 2.0 attribute fixes.
+
+	* OdbcConnection.cs (InfoMessage): Added public event and relevant
+	private APIs. 2.0 attribute fixes.
+
+	* OdbcConnectionStringBuilder.cs: 2.0 attribute fixes.
+
+	* OdbcParameterCollection.cs (GetParameter, SetParameter):
+	Implemented missing 2.0 APIs and 2.0 attribute fixes.
+
+	* OdbcDataReader.cs (finalize): 2.0 compatibility fixes.
+
+	* OdbcPermission.cs (Add): 2.0 compatibility fixes.
+
+	* OdbcCommandBuilder.cs: 2.0 attribute fixes.
+
+	* OdbcRowUpdatingEventArgs.cs (BaseCommand): Added 2.0 property.
+
+	* OdbcCommand.cs: 2.0 attribute fixes.
+
+	* OdbcException.cs: 2.0 attribute fixes.
+
 2007-09-11  AMC  <amc1999@gmail.com>
 
 	* OdbcDataReader.cs (GetPrimaryKeys): ODBC data reader can now

@@ -148,7 +148,7 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if NET_1_0
+#if ONLY_1_1
 		public
 #else
                 new
@@ -165,7 +165,7 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
                 [OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if NET_1_0
+#if ONLY_1_1
 		public
 #else
                 new
@@ -189,10 +189,12 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_0
-		protected
+#if ONLY_1_1
+		protected override
+#else
+		new
 #endif
-		new void Dispose (bool disposing) 
+		void Dispose (bool disposing) 
 		{
 			if (_disposed)
 				return;
@@ -476,7 +478,7 @@ namespace System.Data.Odbc
 		}
 #endif // NET_2_0
 
-#if NET_1_0
+#if ONLY_1_1
 		public
 #else
                 new

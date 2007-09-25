@@ -37,9 +37,13 @@ namespace System.Data.Odbc
 {
 	public sealed class OdbcInfoMessageEventArgs : EventArgs
 	{
+		OdbcErrorCollection errors = new OdbcErrorCollection ();
+
 		#region Constructors
 
-		internal OdbcInfoMessageEventArgs() {
+		internal OdbcInfoMessageEventArgs (OdbcErrorCollection errors) {
+			foreach (OdbcError e in errors) 
+				this.errors.Add (e);
 		}
 
 		#endregion Constructors
@@ -48,23 +52,20 @@ namespace System.Data.Odbc
 
 
 		public OdbcErrorCollection Errors {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}
 
 		public string Message {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-		}
+			get { return errors [0].Message; }
+		}	
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return Message;
 		}
 
 		#endregion // Methods

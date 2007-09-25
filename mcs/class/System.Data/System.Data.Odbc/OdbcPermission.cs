@@ -85,8 +85,7 @@ namespace System.Data.Odbc {
 			return new OdbcPermission (this);
 		}
 
-#if ONLY_1_1
-		// no more part of Fx 2.0 - useless ? or replaced with AddConnectionString ?
+#if NET_2_0
 		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			base.Add (connectionString, restrictions, behavior);

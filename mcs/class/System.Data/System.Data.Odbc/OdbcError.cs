@@ -47,7 +47,7 @@ namespace System.Data.Odbc
 
 		#region Constructors
 
-		internal OdbcError(string Source)
+		internal OdbcError (string Source)
 		{
 			_nativeerror = 1;
 			_source = Source;
@@ -55,26 +55,26 @@ namespace System.Data.Odbc
 			_state = "";
 		}
 
-		internal OdbcError(string Source, OdbcHandleType HandleType, IntPtr Handle)
+		internal OdbcError (string Source, OdbcHandleType HandleType, IntPtr Handle)
 		{
-			short buflen=256,txtlen=0;
-			OdbcReturn ret=OdbcReturn.Success;
-			byte[] buf_MsgText=new byte[buflen];
-			byte[] buf_SqlState=new byte[buflen];
-			bool NeedsDecode=true;
+			short buflen = 256, txtlen = 0;
+			OdbcReturn ret = OdbcReturn.Success;
+			byte [] buf_MsgText = new byte [buflen];
+			byte [] buf_SqlState = new byte [buflen];
+			bool NeedsDecode = true;
 			_source = Source;
 			switch (HandleType)
 			{
 				case OdbcHandleType.Dbc:
-					ret=libodbc.SQLError(IntPtr.Zero,Handle,IntPtr.Zero, buf_SqlState,
+					ret = libodbc.SQLError(IntPtr.Zero, Handle, IntPtr.Zero, buf_SqlState,
 						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				case OdbcHandleType.Stmt:
-					ret=libodbc.SQLError(IntPtr.Zero,IntPtr.Zero,Handle, buf_SqlState,
+					ret = libodbc.SQLError(IntPtr.Zero, IntPtr.Zero, Handle, buf_SqlState,
 						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				case OdbcHandleType.Env:
-					ret=libodbc.SQLError(Handle,IntPtr.Zero,IntPtr.Zero, buf_SqlState,
+					ret = libodbc.SQLError(Handle, IntPtr.Zero, IntPtr.Zero, buf_SqlState,
 						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
 					break;
 				default:
@@ -82,12 +82,12 @@ namespace System.Data.Odbc
 					_source = Source;
 					_message = "Error in " + _source;
 					_state = "";
-					NeedsDecode=false;
+					NeedsDecode = false;
 					break;
 			}
 			if (NeedsDecode)
 			{
-				if (ret!=OdbcReturn.Success)
+				if (ret != OdbcReturn.Success)
 				{
 					_nativeerror = 1;
 					_source = Source;

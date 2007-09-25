@@ -41,7 +41,11 @@ using System.ComponentModel;
 
 namespace System.Data.Odbc
 {
+#if NET_2_0
+	[TypeConverterAttribute ("System.Data.Odbc.OdbcParameter+OdbcParameterConverter, " + Consts.AssemblySystem_Data)]
+#else
 	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
+#endif
 	public sealed class OdbcParameter : 
 #if NET_2_0
 	DbParameter,
@@ -140,7 +144,7 @@ namespace System.Data.Odbc
                         set { container = value; }
                 }
 
-#if NET_1_0		
+#if ONLY_1_1
 		[BrowsableAttribute (false)]
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
                 [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -177,7 +181,7 @@ namespace System.Data.Odbc
 			set { direction = value; }
 		}
 
-#if NET_1_0		
+#if ONLY_1_1
 		[BrowsableAttribute (false)]
                 [DesignOnlyAttribute (true)]
                 [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
@@ -199,7 +203,7 @@ namespace System.Data.Odbc
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
 		[OdbcCategory ("Data")]
 #if NET_2_0
-		[DbProviderSpecificTypeProperty (false)]
+		[DbProviderSpecificTypeProperty (true)]
 #endif
 		public OdbcType OdbcType {
 			get { return _typeMap.OdbcType; }
@@ -212,7 +216,7 @@ namespace System.Data.Odbc
 		}
 		
  		[OdbcDescription ("DataParameter_ParameterName")]
-#if NET_1_0
+#if ONLY_1_1
                 [DefaultValue ("")]
 #endif
 		public 
@@ -242,7 +246,7 @@ namespace System.Data.Odbc
 		
 		[OdbcDescription ("DbDataParameter_Size")]
                 [OdbcCategory ("DataCategory_Data")]
-#if NET_1_0
+#if ONLY_1_1
                 [DefaultValue (0)]
 #endif
 		public 
@@ -256,7 +260,7 @@ namespace System.Data.Odbc
 
 		[OdbcDescription ("DataParameter_SourceColumn")]
                 [OdbcCategory ("DataCategory_Data")]
-#if NET_1_0
+#if ONLY_1_1
                 [DefaultValue ("")]
 #endif
 		public 
@@ -270,7 +274,7 @@ namespace System.Data.Odbc
 		
                 [OdbcDescription ("DataParameter_SourceVersion")]
                 [OdbcCategory ("DataCategory_Data")]
-#if NET_1_0
+#if ONLY_1_1
                 [DefaultValue ("Current")]
 #endif
 		public 
@@ -285,7 +289,7 @@ namespace System.Data.Odbc
 		[TypeConverter (typeof(StringConverter))]
                 [OdbcDescription ("DataParameter_Value")]
                 [OdbcCategory ("DataCategory_Data")]
-#if NET_1_0
+#if ONLY_1_1
                 [DefaultValue (null)]
 #else
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
@@ -525,9 +529,14 @@ namespace System.Data.Odbc
 			set {}
 		}
 
-		public override void ResetDbType () 
+		public override void ResetDbType ()
                 {
-                        throw new NotImplementedException ();
+			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
+                }
+
+		public void ResetOdbcType ()
+                {
+			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
                 }
 #endif
 

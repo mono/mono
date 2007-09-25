@@ -65,8 +65,10 @@ namespace System.Data.Odbc
 	
 		#region Properties
 
+#if ONLY_1_1
 		[Browsable (false)]
                 [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -154,6 +156,9 @@ namespace System.Data.Odbc
 
 		#region Methods
 
+#if NET_2_0
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+#endif
 		public 
 #if NET_2_0
 		override
@@ -181,6 +186,10 @@ namespace System.Data.Odbc
 			return parameter;
 		}
 
+#if NET_2_0
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[Obsolete ("Add(String parameterName, Object value) has been deprecated.  Use AddWithValue(String parameterName, Object value).")]
+#endif
 		public OdbcParameter Add (string name, object value)
 		{
 			return Add (new OdbcParameter (name, value));
@@ -347,25 +356,22 @@ namespace System.Data.Odbc
 #if NET_2_0
 		protected override DbParameter GetParameter (string name)
 		{
-			throw new NotImplementedException ();
+			return this [name];
 		}
 
-		[MonoTODO]
 		protected override DbParameter GetParameter (int index)
 		{
-			throw new NotImplementedException ();
+			return this [index];
 		}
 
-		[MonoTODO]
 		protected override void SetParameter (string name, DbParameter value)
 		{
-			throw new NotImplementedException ();
+			this [name] = value;
 		}
 
-		[MonoTODO]
 		protected override void SetParameter (int index, DbParameter value)
 		{
-			throw new NotImplementedException ();
+			this [index] = value;
 		}
 
 

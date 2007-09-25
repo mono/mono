@@ -238,10 +238,12 @@ namespace System.Data.Odbc
 			}
 		}
 
+#if ONLY_1_1
 		~OdbcDataReader ()
 		{
 			this.Dispose (false);
 		}
+#endif
 
 		public 
 #if NET_2_0

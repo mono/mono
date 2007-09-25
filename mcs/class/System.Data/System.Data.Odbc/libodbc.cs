@@ -53,7 +53,7 @@ namespace System.Data.Odbc
 		NeedData = 99,
 		Success = 0,
 		SuccessWithInfo = 1,
-		NoData=100
+		NoData = 100
 	}
 
 	internal enum OdbcEnv : ushort {

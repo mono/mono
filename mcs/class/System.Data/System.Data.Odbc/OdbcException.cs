@@ -71,7 +71,13 @@ namespace System.Data.Odbc
 		}
 
 
-		public override string Message {
+#if NET_1_0 || ONLY_1_1
+		public
+		override
+#else
+		new
+#endif
+		string Message {
 			get 
 			{
 
