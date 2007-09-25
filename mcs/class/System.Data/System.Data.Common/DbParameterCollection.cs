@@ -91,7 +91,7 @@ namespace System.Data.Common {
 
 		public DbParameter this [int index] { 
 			get { return GetParameter (index); }
-			set { SetParameter (index,value); }
+			set { SetParameter (index, value); }
 		}
 
 		[Browsable (false)]

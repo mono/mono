@@ -36,7 +36,11 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
+#if NET_2_0
+	[TypeConverterAttribute ("System.Data.Common.DataColumnMapping+DataColumnMappingConverter, " + Consts.AssemblySystem_Data)]
+#else
 	[TypeConverterAttribute (typeof (DataColumnMappingConverter))]
+#endif
 	public sealed class DataColumnMapping : MarshalByRefObject, IColumnMapping, ICloneable
 	{
 		#region Fields
@@ -64,7 +68,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-#if !NET_2_0
+#if ONLY_1_1
 		[DataSysDescription ("DataColumn.ColumnName")]
 #endif
 		[DefaultValue ("")]

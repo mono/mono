@@ -1,3 +1,17 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* DbConnection.cs: 2.0 attribute fixes.
+
+	* DataColumnMapping.cs: 2.0 attribute fixes.
+
+	* DbParameterCollection.cs: Code alignment.
+
+	* DataAdapter.cs: 2.0 attribute fixes.
+
+	* DataTableMapping.cs: 2.0 attribute fixes.
+
+	* RowUpdatingEventArgs.cs (BaseCommand): Code alignment.
+
 2007-09-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* DbEnumerator.cs, DbDataRecord.cs: refactoring.

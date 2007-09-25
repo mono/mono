@@ -36,7 +36,11 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
+#if NET_2_0
+	[TypeConverterAttribute ("System.Data.Common.DataTableMapping+DataTableMappingConverter, " + Consts.AssemblySystem_Data)]
+#else
 	[TypeConverterAttribute (typeof (DataTableMappingConverter))]
+#endif
 	public sealed class DataTableMapping : MarshalByRefObject, ITableMapping, ICloneable
 	{
 		#region Fields

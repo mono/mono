@@ -43,7 +43,7 @@ namespace System.Data.Common
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
 	public
-#if !NET_2_0
+#if ONLY_1_1
 	abstract
 #endif
 	class DataAdapter : Component, IDataAdapter
@@ -199,7 +199,7 @@ namespace System.Data.Common
 
 		#region Methods
 
-#if !NET_1_0
+#if !ONLY_1_0
                 [Obsolete ("Use the protected constructor instead", false)]
 #endif
                 [MonoTODO]

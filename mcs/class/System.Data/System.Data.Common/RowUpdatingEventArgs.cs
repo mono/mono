@@ -102,12 +102,8 @@ namespace System.Data.Common {
 		#if NET_2_0
 		
 		protected virtual IDbCommand BaseCommand {
-			get {
-			return this.command;
-			}	
-			set {
-			this.command = value;
-			}
+			get { return this.command; }	
+			set { this.command = value; }
 		}
 
 		#endif
