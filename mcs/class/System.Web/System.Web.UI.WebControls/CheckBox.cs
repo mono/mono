@@ -434,10 +434,12 @@ namespace System.Web.UI.WebControls {
 
 			if (AutoPostBack) {
 #if NET_2_0
-				w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
+				string onclick = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+				onclick = String.Format ("setTimeout('{0}', 0)", onclick.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				w.AddAttribute (HtmlTextWriterAttribute.Onclick, BuildScriptAttribute ("onclick", onclick));
 #else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
-							Page.ClientScript.GetPostBackEventReference (this, String.Empty));
+							BuildScriptAttribute ("onclick", Page.ClientScript.GetPostBackEventReference (this, String.Empty)));
 #endif
 				w.AddAttribute ("language", "javascript", false);
 			}

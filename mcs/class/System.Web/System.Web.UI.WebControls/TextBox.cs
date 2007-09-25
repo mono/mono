@@ -96,11 +96,6 @@ namespace System.Web.UI.WebControls {
 		{
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-
-			base.AddAttributesToRender (w);
-
-			if (ToolTip.Length > 0)
-				w.AddAttribute (HtmlTextWriterAttribute.Title, ToolTip);
 			
 			switch (TextMode) {
 			case TextBoxMode.MultiLine:
@@ -153,17 +148,24 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			if (AutoPostBack) {
 				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
-				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
+				
+				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+				onchange = String.Format ("setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				w.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 			}
 #else		
 			if (AutoPostBack)
-				w.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+				w.AddAttribute (HtmlTextWriterAttribute.Onchange,
+						BuildScriptAttribute ("onchange",
+							Page.ClientScript.GetPostBackClientHyperlink (this, "")));
 #endif
 
 			if (ReadOnly)
 				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly", false);
 
 			w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+			
+			base.AddAttributesToRender (w);
 		}
 
 		protected override void AddParsedSubObject (object obj)

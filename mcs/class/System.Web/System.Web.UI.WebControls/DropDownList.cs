@@ -136,10 +136,11 @@ namespace System.Web.UI.WebControls {
 			if (AutoPostBack) {
 #if NET_2_0
 				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
-				onchange = String.Format ("javascript:setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, onchange);
+				onchange = String.Format ("setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 #else
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
+						     BuildScriptAttribute ("onchange", Page.ClientScript.GetPostBackClientHyperlink (this, "")));
 #endif
 			}
 

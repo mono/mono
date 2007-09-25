@@ -137,7 +137,6 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-			base.AddAttributesToRender (writer);
 #if NET_2_0
 			if (ID != null)
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
@@ -145,19 +144,25 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #endif
 
-			if (AutoPostBack)
+			if (AutoPostBack) {
 #if NET_2_0
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true));
+				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+				onchange = String.Format ("setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 #else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
-						Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+						     BuildScriptAttribute ("onchange",
+									   Page.ClientScript.GetPostBackClientHyperlink (this, "")));
 #endif
-
+			}
+			
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,
 						"multiple", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Size,
                                         Rows.ToString (CultureInfo.InvariantCulture));
+			
+			base.AddAttributesToRender (writer);
 		}
 
 #if NET_2_0

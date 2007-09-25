@@ -478,6 +478,23 @@ namespace System.Web.UI.WebControls {
 			writer.RenderEndTag ();
 		}
 
+		static char[] _script_trim_chars = {';'};
+		internal string BuildScriptAttribute (string name, string tail)
+		{
+			AttributeCollection attrs = Attributes;
+			string attr = attrs [name];
+			
+			if (attr == null || attr.Length == 0)
+				return tail;
+			if (attr [attr.Length - 1] == ';')
+				attr = attr.TrimEnd (_script_trim_chars);
+			
+			attr = String.Format ("{0};{1}", attr, tail);
+			attrs.Remove (name);
+			
+			return attr;
+		}
+		
 #if NET_2_0
 		internal void AddDisplayStyleAttribute (HtmlTextWriter writer)
 		{

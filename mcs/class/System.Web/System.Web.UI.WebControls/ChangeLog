@@ -1,3 +1,16 @@
+2007-09-25  Marek Habersack  <mhabersack@novell.com>
+
+	* WebControl.cs: added an internal method, BuildScriptAttribute,
+	which merges the specified JavaScript code in an attribute, with
+	the value of that attribute specified by the user.
+
+	* CheckBox.cs, DropDownList.cs: AutoPostBack handling makes sure to
+	preserve user-specified attribute value, if present.
+
+	* ListBox.cs, TextBox.cs: AddAttributesToRender calls the base
+	after doing its job. AutoPostBack handling makes sure to preserve
+	user-specified attribute value, if present. Fixes bug #327816.
+
 2007-09-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ListItem.cs: don't save StateBag in the control state - the
