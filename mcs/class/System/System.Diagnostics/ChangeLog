@@ -1,3 +1,10 @@
+
+Tue Sep 25 18:03:37 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Process.cs: eliminate the console encoding logic which was
+	duplicated from System.Console and just use Console.Out.Encoding
+	(bug #328162).
+
 2007-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DiagnosticsConfigurationHandler.cs: Rename ValidateIntegralValue

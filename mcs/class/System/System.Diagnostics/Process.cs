@@ -1072,16 +1072,16 @@ namespace System.Diagnostics {
 			
 			if (startInfo.RedirectStandardInput == true) {
 				MonoIO.Close (stdin_rd, out error);
-				process.input_stream = new StreamWriter (new FileStream (stdin_wr, FileAccess.Write, true), ConsoleEncoding.InputEncoding);
+				process.input_stream = new StreamWriter (new FileStream (stdin_wr, FileAccess.Write, true), Console.Out.Encoding);
 				process.input_stream.AutoFlush = true;
 			}
 
 #if NET_2_0
-			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? ConsoleEncoding.OutputEncoding;
-			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? ConsoleEncoding.OutputEncoding;
+			Encoding stdoutEncoding = startInfo.StandardOutputEncoding ?? Console.Out.Encoding;
+			Encoding stderrEncoding = startInfo.StandardErrorEncoding ?? Console.Out.Encoding;
 #else
-			Encoding stdoutEncoding = ConsoleEncoding.OutputEncoding;
-			Encoding stderrEncoding = ConsoleEncoding.OutputEncoding;
+			Encoding stdoutEncoding = Console.Out.Encoding;
+			Encoding stderrEncoding = stdoutEncoding;
 #endif
 
 			if (startInfo.RedirectStandardOutput == true) {
@@ -1583,61 +1583,6 @@ namespace System.Diagnostics {
 			protected override void Dispose (bool explicitDisposing)
 			{
 				// Do nothing, we don't own the handle and we won't close it.
-			}
-		}
-
-		class ConsoleEncoding
-		{
-			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-			private static extern int GetConsoleCP ();
-			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-			private static extern int GetConsoleOutputCP ();
-
-			static bool RunningOnWindows {
-				get {
-					return ((int) Environment.OSVersion.Platform != 4 &&
-#if NET_2_0
-						Environment.OSVersion.Platform != PlatformID.Unix);
-#else
-						(int) Environment.OSVersion.Platform != 128);
-#endif
-				}
-			}
-
-			public static Encoding InputEncoding {
-				get {
-					if(!RunningOnWindows) {
-						return Encoding.Default;
-					}
-
-#if !NET_2_0
-					try {
-						return Encoding.GetEncoding (GetConsoleCP ());
-					} catch {
-						return Encoding.GetEncoding (28591);
-					}
-#else
-					return Console.InputEncoding;
-#endif
-				}
-			}
-
-			public static Encoding OutputEncoding {
-				get {
-					if(!RunningOnWindows) {
-						return Encoding.Default;
-					}
-
-#if !NET_2_0
-					try {
-						return Encoding.GetEncoding (GetConsoleOutputCP ());
-					} catch {
-						return Encoding.GetEncoding (28591);
-					}
-#else
-					return Console.OutputEncoding;
-#endif
-				}
 			}
 		}
 	}
