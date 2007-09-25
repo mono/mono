@@ -1,3 +1,7 @@
+2007-09-25  Nagappan A  <anagappan@novell.com>
+
+	* DataTable.cs: Code alignment.
+
 2007-08-14  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* DataColumnCollection.cs: refactoring, fixed columnNameCount comparer

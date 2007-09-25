@@ -518,6 +518,7 @@ namespace System.Data {
 			DataTableNewRowEventArgs e = new DataTableNewRowEventArgs (dr);
 			OnTableNewRow (e);
 		}
+
 		private void DataTableInitialized ()
 		{
 			EventArgs e = new EventArgs ();
