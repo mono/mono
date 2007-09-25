@@ -1,3 +1,8 @@
+2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_generic_params.cs (added): Tests for valid use of generic types.
+	* Makedfile: added valid_generic_params.cs
+
 2007-08-16 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_newarr_test.sh (added):  Generate newarr related tests.
