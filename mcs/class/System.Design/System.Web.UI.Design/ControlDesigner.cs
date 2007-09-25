@@ -62,6 +62,10 @@ namespace System.Web.UI.Design
 		protected override void OnBehaviorAttached () { throw new NotImplementedException (); }
 		[MonoTODO]
 		protected override void OnBindingsCollectionChanged (string propName) { throw new NotImplementedException (); }
+#if NET_2_0
+		[MonoTODO]
+		protected virtual void OnClick (DesignerRegionMouseEventArgs e) { throw new NotImplementedException (); }
+#endif
 		[MonoTODO]
 		public virtual void OnComponentChanged (object sender, ComponentChangedEventArgs ce) { throw new NotImplementedException (); }
 		[MonoTODO]

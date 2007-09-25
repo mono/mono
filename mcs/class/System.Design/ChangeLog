@@ -7,7 +7,9 @@
 	System.Web.UI.Design.WebControls/BaseDataBoundControlDesigner.cs,
 	System.Web.UI.Design/IDataBindingSchemaProvider.cs,
 	System.Web.UI.Design/IDataSourceDesigner.cs,
-	System.Web.UI.Design/DesignerDataSourceView.
+	System.Web.UI.Design/DesignerDataSourceView.cs,
+	System.Web.UI.Design/TemplateGroupCollection.cs,
+	System.Web.UI.Design/DesignerRegionMouseEventArgs.cs
 
 2007-09-25  Marek Habersack  <grendello@gmail.com>
 

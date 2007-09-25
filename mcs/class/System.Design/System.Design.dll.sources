@@ -89,6 +89,7 @@ System.Web.UI.Design/DesignerDataSourceView.cs
 System.Web.UI.Design/DesignerObject.cs
 System.Web.UI.Design/DesignerRegion.cs
 System.Web.UI.Design/DesignerRegionCollection.cs
+System.Web.UI.Design/DesignerRegionMouseEventArgs.cs
 System.Web.UI.Design/EditableDesignerRegion.cs
 System.Web.UI.Design/ExpressionEditor.cs
 System.Web.UI.Design/ExpressionEditorSheet.cs
@@ -117,6 +118,8 @@ System.Web.UI.Design/TemplateDefinition.cs
 System.Web.UI.Design/TemplatedEditableDesignerRegion.cs
 System.Web.UI.Design/TemplateEditingService.cs
 System.Web.UI.Design/TemplateEditingVerb.cs
+System.Web.UI.Design/TemplateGroup.cs
+System.Web.UI.Design/TemplateGroupCollection.cs
 System.Web.UI.Design/TextControlDesigner.cs
 System.Web.UI.Design/TextDataBindingHandler.cs
 System.Web.UI.Design/UrlBuilder.cs

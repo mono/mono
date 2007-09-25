@@ -1,5 +1,5 @@
 //
-// DataBoundControlDesigner.cs
+// TemplateGroupCollection.cs
 //
 // Author:
 //   Marek Habersack <mhabersack@novell.com>
@@ -26,25 +26,23 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
+#if NET_2_0
 using System;
 using System.Collections;
-using System.ComponentModel.Design;
-using System.Web.UI.WebControls;
 
-namespace System.Web.UI.Design.WebControls
+namespace System.Web.UI.Design
 {
-	public class DataBoundControlDesigner : BaseDataBoundControlDesigner, IDataBindingSchemaProvider, IDataSourceProvider
+	public sealed class TemplateGroupCollection : IList, ICollection, IEnumerable
 	{
 		[MonoNotSupported ("")]
-		public DataBoundControlDesigner ()
+		public TemplateGroupCollection ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoNotSupported ("")]
-		public override DesignerActionListCollection ActionLists {
+		public int Count {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -52,7 +50,7 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		public string DataMember {
+		public TemplateGroup this [int index] {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -65,7 +63,115 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		public IDataSourceDesigner DataSourceDesigner {
+		public int Add (TemplateGroup group)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void AddRange (TemplateGroupCollection groups)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void Clear ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public bool Contains (TemplateGroup group)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void CopyTo (TemplateGroup[] array, int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public int IndexOf (TemplateGroup group)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void Insert (int index, TemplateGroup group)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void Remove (TemplateGroup group)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		public void RemoveAt (int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		void ICollection.CopyTo (Array array, int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		int IList.Add (Object o)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		void IList.Clear ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		bool IList.Contains (Object o)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		int IList.IndexOf (Object o)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		void IList.Insert (int index, Object o)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		void IList.Remove (Object o)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		void IList.RemoveAt (int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported ("")]
+		int ICollection.Count {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -73,7 +179,7 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		public DesignerDataSourceView DesignerView {
+		bool ICollection.IsSynchronized {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -81,7 +187,7 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		protected virtual int SampleRowCount {
+		Object ICollection.SyncRoot {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -89,15 +195,7 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		public virtual TemplateGroupCollection TemplateGroups {
-			[MonoNotSupported ("")]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoNotSupported ("")]
-		protected virtual bool UseDataSourcePickerActionList {
+		bool IList.IsFixedSize {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -105,73 +203,7 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected override bool ConnectToDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected override void CreateDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected override void DataBind (BaseDataBoundControl dataBoundControl)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected override void DisconnectFromDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected virtual IEnumerable GetDesignTimeDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected virtual IEnumerable GetSampleDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		protected override void PreFilterProperties (IDictionary properties)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		void IDataBindingSchemaProvider.RefreshSchema (bool preferSilent)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		IEnumerable IDataSourceProvider.GetResolvedSelectedDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		Object IDataSourceProvider.GetSelectedDataSource ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
-		bool IDataBindingSchemaProvider.CanRefreshSchema {
+		bool IList.IsReadOnly {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
@@ -179,11 +211,18 @@ namespace System.Web.UI.Design.WebControls
 		}
 
 		[MonoNotSupported ("")]
-		IDataSourceViewSchema IDataBindingSchemaProvider.Schema {
+		Object IList.this [int index] {
+			[MonoNotSupported ("")]
 			get {
+				throw new NotImplementedException ();
+			}
+
+			[MonoNotSupported ("")]
+			set {
 				throw new NotImplementedException ();
 			}
 		}
 	}
 }
 #endif
+

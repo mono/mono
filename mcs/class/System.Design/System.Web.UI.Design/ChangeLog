@@ -1,7 +1,8 @@
 2007-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplatedEditableDesignerRegion.cs, TemplateDefinition.cs,
-	IDataBindingSchemaProvider.cs, IDataBindingSchemaProvider.cs: added
+	IDataBindingSchemaProvider.cs, IDataBindingSchemaProvider.cs,
+	TemplateGroupCollection.cs: added
 
 2007-09-11  Marek Habersack  <mhabersack@novell.com>
 
