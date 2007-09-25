@@ -1,3 +1,13 @@
+2007-09-25  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay: Use only one block per query expression.
+		
+	* generics.cs (GenericMethod.Define): Moved local variables collision
+	check to Block.
+	
+	* linq.cs: Introduced QueryBlock and removed all blocks from query 
+	clauses.
+	
 2007-09-23  Marek Safar  <marek.safar@gmail.com>
 	
 	* generics.cs: Fixed lower-bound type inference issue for constructed

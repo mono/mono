@@ -22,26 +22,19 @@ namespace Mono.CSharp.Linq
 
 	public class QueryExpression : AQueryClause
 	{
-		Block block;
+		LocatedToken variable;
 
-		public QueryExpression (Block block, AQueryClause query)
+		public QueryExpression (LocatedToken variable, AQueryClause query)
 			: base (null, query.Location)
 		{
-			this.block = block;
+			this.variable = variable;
 			this.next = query;
 		}
 
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
 		{
-			Parameter p = CreateBlockParameter (block);
+			Parameter p = CreateBlockParameter (variable);
 			return next.BuildQueryClause (ec, lSide, p, ti);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			QueryExpression t = (QueryExpression) target;
-			t.block = (Block)block.Clone (clonectx);
-			base.CloneTo (clonectx, t);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -143,16 +136,8 @@ namespace Mono.CSharp.Linq
 			return lSide;
 		}
 
-		protected static Parameter CreateBlockParameter (Block block)
+		protected static Parameter CreateBlockParameter (LocatedToken li)
 		{
-			ICollection values = block.Variables.Values;
-			if (values.Count != 1)
-				throw new NotImplementedException ("Count != 1");
-
-			IEnumerator enumerator = values.GetEnumerator ();
-			enumerator.MoveNext ();
-			LocalInfo li = (LocalInfo) enumerator.Current;
-
 			return new ImplicitQueryParameter (li);
 		}
 
@@ -221,13 +206,13 @@ namespace Mono.CSharp.Linq
 	//
 	public abstract class ARangeVariableQueryClause : AQueryClause
 	{
-		Block block;
+		LocatedToken variable;
 		protected Expression element_selector;
 
-		protected ARangeVariableQueryClause (Block block, Expression expr, Location loc)
+		protected ARangeVariableQueryClause (LocatedToken variable, Expression expr, Location loc)
 			: base (expr, loc)
 		{
-			this.block = block;
+			this.variable = variable;
 		}
 
 		protected virtual void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
@@ -244,7 +229,7 @@ namespace Mono.CSharp.Linq
 		//
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
 		{
-			Parameter parameter = CreateBlockParameter (block);
+			Parameter parameter = CreateBlockParameter (variable);
 
 			if (next != null) {
 				//
@@ -284,8 +269,8 @@ namespace Mono.CSharp.Linq
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			ARangeVariableQueryClause t = (ARangeVariableQueryClause) target;
-			t.block = (Block) block.Clone (clonectx);
-			t.element_selector = element_selector.Clone (clonectx);
+			if (element_selector != null)
+				t.element_selector = element_selector.Clone (clonectx);
 			base.CloneTo (clonectx, t);
 		}
 		
@@ -389,8 +374,8 @@ namespace Mono.CSharp.Linq
 		Expression projection;
 		Expression inner_selector, outer_selector;
 
-		public Join (Block block, Expression inner, Expression outerSelector, Expression innerSelector, Location loc)
-			: base (block, inner, loc)
+		public Join (LocatedToken variable, Expression inner, Expression outerSelector, Expression innerSelector, Location loc)
+			: base (variable, inner, loc)
 		{
 			this.outer_selector = outerSelector;
 			this.inner_selector = innerSelector;
@@ -449,11 +434,11 @@ namespace Mono.CSharp.Linq
 
 	public class GroupJoin : Join
 	{
-		string into_variable;
+		readonly LocatedToken into_variable;
 
-		public GroupJoin (Block block, Expression inner, Expression outerSelector, Expression innerSelector,
-			string into, Location loc)
-			: base (block, inner, outerSelector, innerSelector, loc)
+		public GroupJoin (LocatedToken variable, Expression inner, Expression outerSelector, Expression innerSelector,
+			LocatedToken into, Location loc)
+			: base (variable, inner, outerSelector, innerSelector, loc)
 		{
 			this.into_variable = into;
 		}
@@ -464,7 +449,7 @@ namespace Mono.CSharp.Linq
 			// into variable is used as result selector and it's passed as
 			// transparent identifiers to the next clause
 			//
-			return new ImplicitLambdaParameter (into_variable, loc);
+			return CreateBlockParameter (into_variable);
 		}
 
 		protected override string MethodName {
@@ -499,8 +484,8 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		public Let (Block block, Expression expr, Location loc)
-			: base (block, expr, loc)
+		public Let (LocatedToken variable, Expression expr, Location loc)
+			: base (variable, expr, loc)
 		{
 		}
 
@@ -547,8 +532,8 @@ namespace Mono.CSharp.Linq
 
 	public class SelectMany : ARangeVariableQueryClause
 	{
-		public SelectMany (Block block, Expression expr)
-			: base (block, expr, expr.Location)
+		public SelectMany (LocatedToken variable, Expression expr)
+			: base (variable, expr, expr.Location)
 		{
 		}
 
@@ -655,21 +640,9 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		readonly LocalInfo variable;
-
-		public ImplicitQueryParameter (LocalInfo variable)
-			: base (variable.Name, variable.Location)
+		public ImplicitQueryParameter (LocatedToken variable)
+			: base (variable.Value, variable.Location)
 		{
-			this.variable = variable;
-		}
-
-		public override bool Resolve (IResolveContext ec)
-		{
-			if (!base.Resolve (ec))
-				return false;
-
-			variable.VariableType = parameter_type;
-			return true;
 		}
 	}
 
@@ -758,10 +731,58 @@ namespace Mono.CSharp.Linq
 
 		public override Expression GetTransparentIdentifier (string name)
 		{
-			if (transparent_identifiers == null)
-				return null;
+			Expression expr = null;
+			if (transparent_identifiers != null)
+				expr = transparent_identifiers.GetIdentifier (name);
 
-			return transparent_identifiers.GetIdentifier (name);
+			if (expr != null || Container == null)
+				return expr;
+			
+			return Container.GetTransparentIdentifier (name);
+		}
+	}
+
+	//
+	// This block is actually never used, it is used by parser only
+	//
+	public class QueryBlock : Block
+	{
+		Hashtable range_variables = new Hashtable ();
+
+		public QueryBlock (Block parent, Location start)
+			: base (parent, start, Location.Null)
+		{
+		}
+
+		protected override void AddVariable (LocalInfo li)
+		{
+			string name = li.Name;
+			if (range_variables.Contains (name)) {
+				Location conflict = (Location)range_variables [name];
+				Report.SymbolRelatedToPreviousError (conflict, name);
+				Error_AlreadyDeclared (li.Location, name);
+				return;
+			}
+
+			range_variables.Add (name, li.Location);
+		}
+		
+		protected override void Error_AlreadyDeclared (Location loc, string var, string reason)
+		{
+			Report.Error (1931, loc, "A range variable `{0}' conflicts with a previous declaration of `{0}'",
+				var);
+		}
+		
+		protected override void Error_AlreadyDeclared (Location loc, string var)
+		{
+			Report.Error (1930, loc, "A range variable `{0}' has already been declared in this scope",
+				var);		
+		}
+		
+		protected override void Error_AlreadyDeclaredTypeParameter (Location loc, string name)
+		{
+			Report.Error (1948, loc, "A range variable `{0}' conflicts with a method type parameter",
+				name);
 		}
 	}
 }

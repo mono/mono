@@ -46,8 +46,6 @@ namespace Mono.CSharp
 
 		Delegate   current_delegate;
 		
-		Stack query_expression_blocks;
-
 		GenericMethod current_generic_method;
 		AnonymousMethodExpression current_anonymous_method;
 
@@ -5378,45 +5376,59 @@ resource_acquisition
 // LINQ
 
 query_expression
-	: from_clause
-	  {
-	  	query_expression_blocks = null;
-	  }
-	  query_body
+	: first_from_clause  query_body
 	  {
 		lexer.QueryParsing = false;
 
 		Linq.AQueryClause from = $1 as Linq.AQueryClause;
-		if (from == null)
-			from = new Linq.QueryStartClause ((Expression)$1);
 			
-		from.Tail.Next = (Linq.AQueryClause)$3;
-		Block query_block = query_expression_blocks == null ?
-			current_block : (Block)query_expression_blocks.Pop ();
-		$$ = new Linq.QueryExpression (query_block, from);
-		end_block (lexer.Location);
+		from.Tail.Next = (Linq.AQueryClause)$2;
+		$$ = from;
+		
+		current_block.SetEndLocation (lexer.Location);
+		current_block = current_block.Parent;
 	  }	
+	;
+	
+first_from_clause
+	: FROM IDENTIFIER IN expression
+	  {
+		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+		LocatedToken lt = (LocatedToken) $2;
+		
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);
+		$$ = new Linq.QueryExpression (lt, new Linq.QueryStartClause ((Expression)$4));
+	  }
+	| FROM type IDENTIFIER IN expression
+	  {
+		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+		LocatedToken lt = (LocatedToken) $3;
+
+		Expression type = (Expression)$2;
+		current_block.AddVariable (type, lt.Value, lt.Location);
+		$$ = new Linq.QueryExpression (lt, new Linq.Cast (type, (Expression)$5));
+	  }
 	;
 	
 from_clause
 	: FROM IDENTIFIER IN expression
 	  {
-		start_block (lexer.Location);
 		LocatedToken lt = (LocatedToken) $2;
 		
-		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);
-		$$ = $4;
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
+			lt.Value, lt.Location);
+			
+		$$ = new Linq.SelectMany (lt, (Expression)$4);			
 	  }
 	| FROM type IDENTIFIER IN expression
 	  {
-		start_block (GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $3;
 
 		Expression type = (Expression)$2;
 		current_block.AddVariable (type, lt.Value, lt.Location);
-		$$ = new Linq.Cast (type, (Expression)$5);
+		$$ = new Linq.SelectMany (lt, new Linq.Cast (type, (Expression)$5));
 	  }
-	;
+	;	
 
 query_body
 	: opt_query_body_clauses select_or_group_clause opt_query_continuation
@@ -5463,10 +5475,6 @@ query_body_clauses
 	
 query_body_clause
 	: from_clause
-	  {
-		$$ = new Linq.SelectMany (current_block, (Expression)$1);
-		end_block (lexer.Location);		
-	  }
 	| let_clause
 	| where_clause
 	| join_clause
@@ -5476,12 +5484,10 @@ query_body_clause
 let_clause
 	: LET IDENTIFIER ASSIGN expression
 	  {
-		start_block (GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $2;
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
 			lt.Value, lt.Location);	  
-	  	$$ = new Linq.Let (current_block, (Expression)$4, GetLocation ($1));
-	  	end_block (lexer.Location);
+	  	$$ = new Linq.Let (lt, (Expression)$4, GetLocation ($1));
 	  }
 	;
 
@@ -5496,40 +5502,34 @@ join_clause
 	: JOIN IDENTIFIER IN expression ON expression EQUALS expression opt_join_into
 	  {
 		Location loc = GetLocation ($1);
-		start_block (loc);
 		LocatedToken lt = (LocatedToken) $2;
 		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
 			lt.Value, lt.Location);
 		
 		if ($9 == null) {
-	  		$$ = new Linq.Join (current_block, (Expression)$4, (Expression)$6,
+	  		$$ = new Linq.Join (lt, (Expression)$4, (Expression)$6,
 				(Expression)$8, loc);
 		} else {
-			lt = (LocatedToken) $9;
-			$$ = new Linq.GroupJoin (current_block, (Expression)$4, (Expression)$6,
-				(Expression)$8, lt.Value, loc);
+			LocatedToken lt_into = (LocatedToken) $9;
+			$$ = new Linq.GroupJoin (lt, (Expression)$4, (Expression)$6,
+				(Expression)$8, lt_into, loc);
 		}
-		
-		end_block (lexer.Location);
 	  }
 	| JOIN type IDENTIFIER IN expression ON expression EQUALS expression opt_join_into
 	  {
 		Location loc = GetLocation ($1);
-		start_block (loc);
 		LocatedToken lt = (LocatedToken) $3;
 		current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
 		
 		Linq.Cast cast = new Linq.Cast ((Expression)$2, (Expression)$5);
 		if ($10 == null) {
-		  	$$ = new Linq.Join (current_block, cast, (Expression)$7,
+		  	$$ = new Linq.Join (lt, cast, (Expression)$7,
 				(Expression)$9, loc);
 		} else {
-			lt = (LocatedToken) $10;
-			$$ = new Linq.GroupJoin (current_block, cast, (Expression)$7,
-				(Expression)$9, lt.Value, loc);
+			LocatedToken lt_into = (LocatedToken) $10;
+			$$ = new Linq.GroupJoin (lt, cast, (Expression)$7,
+				(Expression)$9, lt_into, loc);
 		}
-		
-		end_block (lexer.Location);	  	
 	  }
 	;
 	
@@ -5607,21 +5607,19 @@ opt_query_continuation
 		// query continuation block is not linked with query block but with block
 		// before. This means each query can use same range variable names for
 		// different identifiers.
-		
-	  	if (query_expression_blocks == null) {
-	  		query_expression_blocks = new Stack ();
-	  		query_expression_blocks.Push (current_block);
-	  	}
 
-		end_block (GetLocation ($1));	  
-		start_block (GetLocation ($1));
-	  	query_expression_blocks.Push (current_block);		
+		current_block.SetEndLocation (GetLocation ($1));
+		current_block = current_block.Parent;
+		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
+		
 		LocatedToken lt = (LocatedToken) $2;
-		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance, lt.Value, lt.Location);	  
+		current_block.AddVariable (Linq.ImplicitQueryParameter.ImplicitType.Instance,
+			lt.Value, lt.Location);
 	  }
 	  query_body
 	  {
-		$$ = new Linq.QueryExpression ((Block)query_expression_blocks.Pop (), (Linq.AQueryClause)$4);
+  		$$ = new Linq.QueryExpression ((LocatedToken) $2,
+  			(Linq.AQueryClause)$4);
 	  }
 	;
 	

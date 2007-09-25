@@ -1887,15 +1887,7 @@ namespace Mono.CSharp {
 					Error_ParameterNameCollision (p.Location, type_argument_name, "method parameter");
 					return false;
 				}
-
-				// FIXME: This is wrong, since it only looks at the outermost set of variables
-				if (block != null) {
-					LocalInfo li = (LocalInfo)block.Variables [type_argument_name];
-					if (li != null) {
-						Error_ParameterNameCollision (li.Location, type_argument_name, "local variable");
-						return false;
-					}
-				}
+				
 				snames[i] = type_argument_name;
 			}
 
@@ -1914,7 +1906,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
+		internal static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
 		{
 			Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
 				name, collisionWith);
