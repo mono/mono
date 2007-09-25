@@ -1,3 +1,8 @@
+2007-09-25  Konstantin Triger <kostat@mainsoft.com>
+
+	* DataSet.cs: correct WriteAttributeString while writing xml with
+		XmlWriteMode.WriteSchema.
+
 2007-09-25  Nagappan A  <anagappan@novell.com>
 
 	* DataTable.cs: Code alignment.

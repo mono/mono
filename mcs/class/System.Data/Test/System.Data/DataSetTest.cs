@@ -2019,6 +2019,41 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void WriteXmlModeSchema1 () {
+			string SerializedDataTable =
+@"<rdData>
+  <MyDataTable CustomerID='VINET' CompanyName='Vins et alcools Chevalier' ContactName='Paul Henriot' />
+</rdData>";
+			string expected =
+@"<rdData>
+  <xs:schema id=""rdData"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
+    <xs:element name=""rdData"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"">
+      <xs:complexType>
+        <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
+          <xs:element name=""MyDataTable"">
+            <xs:complexType>
+              <xs:attribute name=""CustomerID"" type=""xs:string"" />
+              <xs:attribute name=""CompanyName"" type=""xs:string"" />
+              <xs:attribute name=""ContactName"" type=""xs:string"" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <MyDataTable CustomerID=""VINET"" CompanyName=""Vins et alcools Chevalier"" ContactName=""Paul Henriot"" />
+</rdData>";
+			DataSet set;
+			set = new DataSet ();
+			set.ReadXml (new StringReader (SerializedDataTable));
+
+			StringWriter w = new StringWriter ();
+			set.WriteXml (w, XmlWriteMode.WriteSchema);
+			string result = w.ToString ();
+			Assert.AreEqual (result.Replace ("\r", ""), expected.Replace ("\r", ""));
+		}
+
+		[Test]
 		public void DeserializeModifiedDataSet ()
                 {
                         // Serialization begins

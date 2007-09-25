@@ -1767,9 +1767,9 @@ namespace System.Data {
 		internal static void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)
 		{
 			switch ( mode) {
-				case XmlWriteMode.WriteSchema:
-					writer.WriteAttributeString (prefix, name, nspc);
-					break;
+			//	case XmlWriteMode.WriteSchema:
+			//		writer.WriteAttributeString (prefix, name, nspc);
+			//		break;
 				case XmlWriteMode.DiffGram:
 					writer.WriteAttributeString (prefix, name, nspc,stringValue);
 					break;
