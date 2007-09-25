@@ -1,3 +1,7 @@
+2007-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_get_property_info): Set the reflected type of the
+	accessors correctly.
 
 Tue Sep 25 14:56:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
