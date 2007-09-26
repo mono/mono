@@ -1,3 +1,8 @@
+2007-09-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: disabled all debug spew by default, define MONO_VERIFIER_DEBUG
+	to enjoy it.
+
 2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (push_arg): Fixed support for ldarga
