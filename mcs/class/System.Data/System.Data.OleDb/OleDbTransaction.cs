@@ -160,14 +160,14 @@ namespace System.Data.OleDb
 				throw new InvalidOperationException ();
 		}
 
-		[MonoTODO]
+#if ONLY_1_1
 		~OleDbTransaction ()
 		{
 			libgda.FreeObject (gdaTransaction);
 			gdaTransaction = IntPtr.Zero;
 		}
+#endif
 
-		[MonoTODO]
 #if NET_2_0
 		protected override void Dispose (bool disposing)
 		{
