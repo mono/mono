@@ -840,6 +840,11 @@ namespace System.Windows.Forms {
 
 		public virtual char GetCharFromPosition (Point p)
 		{
+			return GetCharFromPositionInternal (p);
+		}
+		
+		internal virtual char GetCharFromPositionInternal (Point p)
+		{
 			int index;
 			LineTag tag = document.FindCursor (p.X, p.Y, out index);
 			if (tag == null)

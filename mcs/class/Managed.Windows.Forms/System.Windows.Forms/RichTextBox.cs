@@ -41,6 +41,7 @@ namespace System.Windows.Forms {
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[Docking (DockingBehavior.Ask)]
 	[ComVisible (true)]
+	[Designer ("System.Windows.Forms.Design.RichTextBoxDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif
 	public class RichTextBox : TextBoxBase {
 		#region Local Variables
@@ -63,6 +64,13 @@ namespace System.Windows.Forms {
 		private int		rtf_cursor_y;
 		private int		rtf_chars;
 		private int rtf_par_line_left_indent;
+
+#if NET_2_0
+		private bool		enable_auto_drag_drop;
+		private RichTextBoxLanguageOptions language_option;
+		private bool		rich_text_shortcuts_enabled;
+		private Color		selection_back_color;
+#endif
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -85,6 +93,9 @@ namespace System.Windows.Forms {
 			BackColor = ThemeEngine.Current.ColorWindow;
 #if NET_2_0
 			backcolor_set = false;
+			language_option = RichTextBoxLanguageOptions.AutoFontSizeAdjust;
+			rich_text_shortcuts_enabled = true;
+			selection_back_color = DefaultBackColor;
 #endif
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 
@@ -173,6 +184,15 @@ namespace System.Windows.Forms {
 			set { base.BackgroundImage = value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override ImageLayout BackgroundImageLayout {
+			get { return base.BackgroundImageLayout; }
+			set { base.BackgroundImageLayout = value; }
+		}
+#endif
+
 		[DefaultValue(0)]
 		[Localizable(true)]
 		public int BulletIndent {
@@ -203,6 +223,15 @@ namespace System.Windows.Forms {
 				detect_urls = true;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("Stub")]
+		[DefaultValue (false)]
+		public bool EnableAutoDragDrop {
+			get { return enable_auto_drag_drop; }
+			set { enable_auto_drag_drop = value; }
+		}
+#endif
 
 		public override Font Font {
 			get {
@@ -240,6 +269,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO ("Stub")]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public RichTextBoxLanguageOptions LanguageOption {
+			get { return language_option; }
+			set { language_option = value; }
+		}
+#endif
+
 		[DefaultValue(Int32.MaxValue)]
 		public override int MaxLength {
 			get {
@@ -270,6 +309,17 @@ namespace System.Windows.Forms {
 				return document.undo.RedoActionName;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("Stub")]
+		[Browsable (false)]
+		[DefaultValue (true)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public bool RichTextShortcutsEnabled {
+			get { return rich_text_shortcuts_enabled; }
+			set { rich_text_shortcuts_enabled = value; }
+		}
+#endif
 
 		[DefaultValue(0)]
 		[Localizable(true)]
@@ -436,6 +486,16 @@ namespace System.Windows.Forms {
 				this.CalculateDocument();
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("Stub")]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public Color SelectionBackColor {
+			get { return selection_back_color; }
+			set { selection_back_color = value; }
+		}
+#endif
 
 		[Browsable(false)]
 		[DefaultValue(false)]
@@ -830,11 +890,9 @@ namespace System.Windows.Forms {
 			return Find(str, -1, -1, options);
 		}
 
-		public
-#if NET_2_0
-		override
-#endif
-		char GetCharFromPosition(Point pt) {
+		
+#if !NET_2_0
+		public char GetCharFromPosition(Point pt) {
 			LineTag	tag;
 			int	pos;
 
@@ -845,8 +903,21 @@ namespace System.Windows.Forms {
 			}
 
 			return tag.line.text[pos];
-			
 		}
+#else
+		internal override char GetCharFromPositionInternal (Point p)
+		{
+			LineTag tag;
+			int pos;
+
+			PointToTagPos (p, out tag, out pos);
+
+			if (pos >= tag.line.text.Length)
+				return '\n';
+
+			return tag.line.text[pos];
+		}
+#endif
 
 		public
 #if NET_2_0
@@ -1050,6 +1121,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void DrawToBitmap (Bitmap bitmap, Rectangle clip)
 		{
 			Graphics dc = Graphics.FromImage (bitmap);
@@ -1129,6 +1201,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+#if !NET_2_0
 		protected override void OnSystemColorsChanged(EventArgs e) {
 			base.OnSystemColorsChanged (e);
 		}
@@ -1136,6 +1209,7 @@ namespace System.Windows.Forms {
 		protected override void OnTextChanged(EventArgs e) {
 			base.OnTextChanged (e);
 		}
+#endif
 
 		protected virtual void OnVScroll(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [VScrollEvent]);
@@ -1171,17 +1245,28 @@ namespace System.Windows.Forms {
 			remove { base.BackgroundImageChanged -= value; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { base.BackgroundImageLayoutChanged += value; }
+			remove { base.BackgroundImageLayoutChanged -= value; }
+		}
+#endif
+
 		public event ContentsResizedEventHandler ContentsResized {
 			add { Events.AddHandler (ContentsResizedEvent, value); }
 			remove { Events.RemoveHandler (ContentsResizedEvent, value); }
 		}
 
+#if !NET_2_0
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public new event EventHandler DoubleClick {
 			add { base.DoubleClick += value; }
 			remove { base.DoubleClick -= value; }
 		}
+#endif
 
 		[Browsable(false)]
 #if !NET_2_0

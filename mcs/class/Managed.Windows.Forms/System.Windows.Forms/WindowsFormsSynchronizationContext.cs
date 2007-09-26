@@ -22,6 +22,7 @@
 
 using System;
 using System.Threading;
+using System.ComponentModel;
 
 #if NET_2_0
 
@@ -50,6 +51,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static bool AutoInstall {
 			get { return auto_installed; }
 			set { auto_installed = value; }
