@@ -32,17 +32,18 @@ namespace System.Windows.Forms
 	public sealed class WindowsFormsSynchronizationContext : SynchronizationContext, IDisposable
 	{
 		private static bool auto_installed;
-		private Control invoke_control;
+		private static Control invoke_control;
 		private static SynchronizationContext previous_context;
 		
 		#region Public Constructor
 		public WindowsFormsSynchronizationContext ()
 		{
-			invoke_control = Application.MWFThread.Current.Context.MainForm;
 		}
 		
 		static WindowsFormsSynchronizationContext ()
 		{
+			invoke_control = new Control ();
+			invoke_control.CreateControl ();
 			auto_installed = true;
 			previous_context = SynchronizationContext.Current;
 		}

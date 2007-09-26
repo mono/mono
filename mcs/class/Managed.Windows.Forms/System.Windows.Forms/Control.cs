@@ -979,6 +979,12 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public Control ()
 		{
+#if NET_2_0
+			if (WindowsFormsSynchronizationContext.AutoInstall)
+				if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
+					SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
+#endif
+
 			layout_type = LayoutType.Anchor;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 

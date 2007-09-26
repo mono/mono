@@ -602,17 +602,30 @@ namespace System.Windows.Forms
 
 		public static void Run ()
 		{
-			RunLoop (false, new ApplicationContext ());
+			Run (new ApplicationContext ());
 		}
 
 		public static void Run (Form mainForm)
 		{
-			RunLoop (false, new ApplicationContext (mainForm));
+			Run (new ApplicationContext (mainForm));
 		}
 
 		public static void Run (ApplicationContext context)
 		{
+#if NET_2_0
+			// If a sync context hasn't been created by now, create
+			// a default one
+			if (SynchronizationContext.Current == null)
+				SynchronizationContext.SetSynchronizationContext (new SynchronizationContext ());
+#endif
+				
 			RunLoop (false, context);
+			
+#if NET_2_0
+			// Reset the sync context back to the default
+			if (SynchronizationContext.Current is WindowsFormsSynchronizationContext)
+				WindowsFormsSynchronizationContext.Uninstall ();
+#endif
 		}
 
 		private static void DisableFormsForModalLoop (Queue toplevels, ApplicationContext context)
@@ -703,11 +716,6 @@ namespace System.Windows.Forms
 			previous_thread_context = thread.Context;
 			thread.Context = context;
 
-#if NET_2_0
-			if (!(SynchronizationContext.Current is WindowsFormsSynchronizationContext))
-				SynchronizationContext.SetSynchronizationContext (new WindowsFormsSynchronizationContext ());
-#endif
-			
 			if (context.MainForm != null) {
 				context.MainForm.is_modal = Modal;
 				context.MainForm.context = context;
@@ -856,10 +864,6 @@ namespace System.Windows.Forms
 			}
 
 			thread.Context = previous_thread_context;
-
-#if NET_2_0
-			WindowsFormsSynchronizationContext.Uninstall ();
-#endif
 
 			if (!Modal)
 				thread.Exit();

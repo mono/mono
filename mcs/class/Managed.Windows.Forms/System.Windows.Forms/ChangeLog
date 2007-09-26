@@ -1,3 +1,13 @@
+2007-09-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Move the sync context stuff to Run instead of RunLoop
+	so that it doesn't get uninstalled on modal forms.
+	* Control.cs: Install a sync context when a control is created.
+	* WindowsFormsSyncronizationContext.cs: Create a private static control
+	to invoke on.  This is easier than trying to find a created control we
+	can use.
+	[Fixes bug #327608]
+
 2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Install a WindowsFormsSynchronizationContext in the
