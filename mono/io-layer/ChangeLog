@@ -1,3 +1,9 @@
+2007-09-26  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_io_scandir): Only update the error
+	status of glob() when performing a secondary glob() if the first
+	returned an error.  Fixes bug 325107.
+
 2007-09-12  Marek Habersack  <mhabersack@novell.com>
 
 	* io-portability.c: options_init moved to
