@@ -52,7 +52,7 @@ namespace System.Data.SqlClient {
 		SqlDataAdapter adapter;
 		string quotePrefix;
 		string quoteSuffix;
-		string[] columnNames;
+		string [] columnNames;
 		string tableName;
 #if NET_2_0
 		string _catalogSeperator = ".";
@@ -655,11 +655,11 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                protected override void ApplyParameterInfo (DbParameter dbParameter,
-							    DataRow row,
-							    StatementType statementType,
-							    bool whereClause)
-                {
+		protected override void ApplyParameterInfo (DbParameter dbParameter,
+		                                            DataRow row,
+		                                            StatementType statementType,
+		                                            bool whereClause)
+		{
 			SqlParameter parameter = (SqlParameter) dbParameter;
 			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
 			if (row ["NumericPrecision"] != DBNull.Value) {
@@ -669,22 +669,22 @@ namespace System.Data.SqlClient {
 				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
 			}
 			parameter.SqlDbType = (SqlDbType) row ["ProviderType"];
-                }
+		}
 
-                protected override string GetParameterName (int position)
-                {
+		protected override string GetParameterName (int position)
+		{
 			return String.Format("@p{0}", position);
-                }
+		}
 
-                protected override string GetParameterName (string parameterName)
-                {
+		protected override string GetParameterName (string parameterName)
+		{
 			return String.Format("@{0}", parameterName);                       
-                }
+		}
                 
-                protected override string GetParameterPlaceholder (int position)
-                {
+		protected override string GetParameterPlaceholder (int position)
+		{
 			return GetParameterName (position);
-                }
+		}
                 
 #endif // NET_2_0
 		#endregion // Methods
@@ -714,14 +714,14 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-                protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
-                {
+		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
+		{
 			if (!(adapter is SqlDataAdapter)) {
 				throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
 			}
 			rowUpdatingHandler = new SqlRowUpdatingEventHandler (RowUpdatingHandler);
 			((SqlDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
-                }
+		}
 
 		protected override DataTable GetSchemaTable (DbCommand cmd)
 		{
