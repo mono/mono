@@ -1,5 +1,10 @@
 2007-09-26  Nagappan A <anagappan@novell.com> 
 
+	* SqlMetaData.cs (Adjust, InferFromValue): Implemented overloaded
+	  methods, constructors.
+
+2007-09-26  Nagappan A <anagappan@novell.com> 
+
 	* SqlMethodAttribute.cs: Added appropriate option to AttributeUsage.
 	
 	* SqlFacetAttribute.cs: Added appropriate option to AttributeUsage.

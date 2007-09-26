@@ -34,6 +34,7 @@
 
 using System;
 using System.Data;
+using System.Threading;
 using System.Data.SqlTypes;
 
 namespace Microsoft.SqlServer.Server {
@@ -41,85 +42,566 @@ namespace Microsoft.SqlServer.Server {
 	{
 		#region Fields
 
-		public const long x_lMax = -1;
-
 		SqlCompareOptions compareOptions = SqlCompareOptions.None;
 		string databaseName = null;
-		bool isPartialLength = false;
 		long localeId = 0L;
-		long maxLength = 4L;
+		long maxLength = 0L;
 		string name;
 		byte precision = 10;
 		byte scale = 0;
 		string schemaName = null;
-		SqlDbType sqlDbType = SqlDbType.Int;
+		SqlDbType sqlDbType = SqlDbType.NVarChar;
+		DbType dbType = DbType.String;
+		Type type = typeof (string);
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type)
+		public SqlMetaData (string name, SqlDbType sqlDbType)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Bit:
+				maxLength = 1;
+				precision = 1;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Boolean;
+				type = typeof (bool);
+				break;
+			case SqlDbType.BigInt:
+				maxLength = 8;
+				precision = 19;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int64;
+				type = typeof (long);
+				break;
+			case SqlDbType.DateTime:
+				maxLength = 8;
+				precision = 23;
+				scale = 3;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.DateTime;
+				type = typeof (DateTime);
+				break;
+			case SqlDbType.Decimal:
+				maxLength = 9;
+				precision = 18;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Decimal;
+				type = typeof (decimal);
+				break;
+			case SqlDbType.Float:
+				maxLength = 8;
+				precision = 53;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Double;
+				type = typeof (float);
+				break;
+			case SqlDbType.Int:
+				maxLength = 4;
+				precision = 10;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int32;
+				type = typeof (int);
+				break;
+			case SqlDbType.Money:
+				maxLength = 8;
+				precision = 19;
+				scale = 4;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Currency;
+				type = typeof (double);
+				break;
+			  /*
+			case SqlDbType.Numeric:
+				maxLength = ;
+				precision = ;
+				scale = ;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				break;
+			  */
+			case SqlDbType.SmallDateTime:
+				maxLength = 4;
+				precision = 16;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.DateTime;
+				type = typeof (DateTime);
+				break;
+			case SqlDbType.SmallInt:
+				maxLength = 2;
+				precision = 5;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int16;
+				type = typeof (short);
+				break;
+			case SqlDbType.SmallMoney:
+				maxLength = 4;
+				precision = 10;
+				scale = 4;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Currency;
+				type = typeof (double);
+				break;
+			case SqlDbType.Timestamp:
+				maxLength = 8;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.DateTime;
+				type = typeof (DateTime);
+				break;
+			case SqlDbType.TinyInt:
+				maxLength = 1;
+				precision = 3;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int16;
+				type = typeof (short);
+				break;
+			case SqlDbType.UniqueIdentifier:
+				maxLength = 16;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Guid;
+				type = typeof (Guid);
+				break;
+			case SqlDbType.Xml:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.Xml;
+				type = typeof (string);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
 			this.name = name;
-			this.sqlDbType = type;
+			this.sqlDbType = sqlDbType;
 		}
 
-		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type, long maxLength)
+		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Binary:
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.Binary;
+				type = typeof (byte []);
+				break;
+			case SqlDbType.Char:
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.AnsiStringFixedLength;
+				type = typeof (string);
+				break;
+			case SqlDbType.Image:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Binary;
+				type = typeof (byte []);
+				break;
+			case SqlDbType.NChar:
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			case SqlDbType.NText:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			case SqlDbType.NVarChar:
+				maxLength = -1;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			case SqlDbType.Text:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (char []);
+				break;
+			case SqlDbType.VarBinary:
+				maxLength = -1;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.Binary;
+				type = typeof (byte []);
+				break;
+			case SqlDbType.VarChar:
+				maxLength = -1;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (char []);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
 			this.maxLength = maxLength;
 			this.name = name;
-			this.sqlDbType = type;
+			this.sqlDbType = sqlDbType;
 		}
 
 		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type, SqlMetaData[] columnMetaData)
+		public SqlMetaData (string name, SqlDbType sqlDbType, Type userDefinedType)
 		{
-			this.sqlDbType = type;
-		}
-
-		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type, byte precision, byte scale)
-		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Udt:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Guid;
+				type = typeof (Guid);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
 			this.name = name;
-			this.precision = precision;
-			this.scale = scale;
-			this.sqlDbType = type;
+			// FIXME:
+			//this.sqlDbType = userDefinedType;
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public SqlMetaData (string strName, long maxLength, long localeId, SqlCompareOptions compareOptions, string udtTypeName)
+		public SqlMetaData (string name, SqlDbType sqlDbType, byte precision, byte scale)
 		{
-			this.compareOptions = compareOptions;
-			this.localeId = localeId;
-			this.maxLength = maxLength;
-			this.name = strName;
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Decimal:
+				maxLength = 9;
+				this.precision = precision;
+				this.scale = scale;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Decimal;
+				type = typeof (decimal);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
+			this.name = name;
+			this.sqlDbType = sqlDbType;
 		}
 
-		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type, long maxLength, long locale, SqlCompareOptions compareOptions)
+		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength, long locale, SqlCompareOptions compareOptions)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Char:
+				dbType = DbType.AnsiStringFixedLength;
+				type = typeof (char []);
+				break;
+			case SqlDbType.NChar:
+				dbType = DbType.StringFixedLength;
+				type = typeof (char []);
+				break;
+			case SqlDbType.NText:
+			case SqlDbType.NVarChar:
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			case SqlDbType.Text:
+			case SqlDbType.VarChar:
+				dbType = DbType.AnsiString;
+				type = typeof (char []);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
 			this.compareOptions = compareOptions;
 			this.localeId = locale;
 			this.maxLength = maxLength;
 			this.name = name;
-			this.sqlDbType = type;
+			this.sqlDbType = sqlDbType;
 		}
 
 		[MonoTODO]
-		public SqlMetaData (string name, SqlDbType type, long maxLength, byte precision, byte scale, long localeId, SqlCompareOptions compareOptions, string DatabaseName, string SchemaName, bool PartialLength, string udtTypeName)
+		public SqlMetaData (string name, SqlDbType sqlDbType, string database, string owningSchema, string objectName)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			switch (sqlDbType) {
+			case SqlDbType.Xml:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			default:
+				throw new ArgumentException ("SqlDbType not supported");
+			}
+			this.name = name;
+			this.sqlDbType = sqlDbType;
+			databaseName = database;
+			schemaName = owningSchema;
+			// FIXME: Implement objectName
+			throw new NotImplementedException ();
+		}
+
+		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength, byte precision,
+				    byte scale, long localeId, SqlCompareOptions compareOptions,
+				    Type userDefinedType)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
 			this.compareOptions = compareOptions;
-			this.databaseName = DatabaseName;
-			this.isPartialLength = PartialLength;
 			this.localeId = localeId;
 			this.maxLength = maxLength;
-			this.name = name;
 			this.precision = precision;
 			this.scale = scale;
-			this.schemaName = SchemaName;
-			this.sqlDbType = type;
+			switch (sqlDbType) {
+			case SqlDbType.Bit:
+				maxLength = 1;
+				precision = 1;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Boolean;
+				type = typeof (bool);
+				break;
+			case SqlDbType.BigInt:
+				maxLength = 8;
+				precision = 19;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int64;
+				type = typeof (long);
+				break;
+			case SqlDbType.DateTime:
+				maxLength = 8;
+				precision = 23;
+				scale = 3;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.DateTime;
+				type = typeof (DateTime);
+				break;
+			case SqlDbType.Decimal:
+				maxLength = 9;
+				precision = 18;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Decimal;
+				type = typeof (decimal);
+				break;
+			case SqlDbType.Float:
+				maxLength = 8;
+				precision = 53;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Decimal;
+				type = typeof (float);
+				break;
+			case SqlDbType.Image:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Binary;
+				type = typeof (byte []);
+				break;
+			case SqlDbType.Int:
+				maxLength = 4;
+				precision = 10;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int32;
+				type = typeof (int);
+				break;
+			case SqlDbType.Money:
+				maxLength = 8;
+				precision = 19;
+				scale = 4;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Currency;
+				type = typeof (decimal);
+				break;
+			case SqlDbType.NText:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.String;
+				type = typeof (string);
+				break;
+			  /*
+			case SqlDbType.Numeric:
+				maxLength = ;
+				precision = ;
+				scale = ;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				break;
+			  */
+			case SqlDbType.Real:
+				maxLength = 4;
+				precision = 24;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Single;
+				type = typeof (Single);
+				break;
+			case SqlDbType.SmallDateTime:
+				maxLength = 4;
+				precision = 16;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.DateTime;
+				type = typeof (DateTime);
+				break;
+			case SqlDbType.SmallInt:
+				maxLength = 2;
+				precision = 5;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int16;
+				type = typeof (short);
+				break;
+			case SqlDbType.SmallMoney:
+				maxLength = 4;
+				precision = 10;
+				scale = 4;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Currency;
+				type = typeof (decimal);
+				break;
+			case SqlDbType.Text:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = Thread.CurrentThread.CurrentCulture.LCID;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.AnsiString;
+				type = typeof (char []);
+				break;
+			case SqlDbType.Timestamp:
+				maxLength = 8;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Byte;
+				type = typeof (byte []);
+				break;
+			case SqlDbType.TinyInt:
+				maxLength = 1;
+				precision = 3;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Int16;
+				type = typeof (short);
+				break;
+			case SqlDbType.UniqueIdentifier:
+				maxLength = 16;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Guid;
+				type = typeof (Guid);
+				break;
+			case SqlDbType.Udt:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Object;
+				type = typeof (object);
+				break;
+			case SqlDbType.Variant:
+				maxLength = 8016;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.None;
+				dbType = DbType.Object;
+				type = typeof (object);
+				break;
+			case SqlDbType.Xml:
+				maxLength = -1;
+				precision = 0;
+				scale = 0;
+				localeId = 0;
+				compareOptions = SqlCompareOptions.IgnoreCase | SqlCompareOptions.IgnoreKanaType | SqlCompareOptions.IgnoreWidth;
+				dbType = DbType.Xml;
+				type = typeof (string);
+				break;
+			default:
+			  /*
+				if (typeof (DbType.Row) == typeof (userDefinedType)) {
+					// FIXME:
+					// maxLength = Number of columns;
+					precision = 0;
+					scale = 0;
+					localeId = 0;
+					compareOptions = SqlCompareOptions.None;
+				} else
+			  */
+					throw new ArgumentException ("SqlDbType not supported");
+			}
+			this.name = name;
+			this.sqlDbType = sqlDbType;
 		}
 
 		#endregion // Constructors
@@ -130,25 +612,19 @@ namespace Microsoft.SqlServer.Server {
 			get { return compareOptions; }
 		}
 
-		public string DatabaseName {
-			get { return databaseName; }
-		}
-
+	  /*
 		[MonoTODO]
 		public DbType DbType {
-			get { throw new NotImplementedException (); }
+			get { return ; }
 		}
-
-		public bool IsPartialLength {
-			get { return isPartialLength; }
-		}
+	  */
 
 		public long LocaleId {
 			get { return localeId; }
 		}
 
-		public static long MAX {
-			get { return x_lMax; }
+		public static long Max {
+			get { return -1; }
 		}
 
 		public long MaxLength {
@@ -167,10 +643,6 @@ namespace Microsoft.SqlServer.Server {
 			get { return scale; }
 		}
 
-		public string SchemaName {
-			get { return schemaName; }
-		}
-
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
 		}
@@ -184,196 +656,272 @@ namespace Microsoft.SqlServer.Server {
 
 		#region Methods
 
-		[MonoTODO]
 		public bool Adjust (bool value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (bool))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public byte Adjust (byte value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (byte))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public byte[] Adjust (byte[] value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (byte []))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public char Adjust (char value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (char))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public char[] Adjust (char[] value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (char []))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public DateTime Adjust (DateTime value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (DateTime))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public decimal Adjust (decimal value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (decimal))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public double Adjust (double value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (double))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public Guid Adjust (Guid value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (Guid))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public short Adjust (short value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (short))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public int Adjust (int value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (int))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public long Adjust (long value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (long))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public object Adjust (object value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (object))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public float Adjust (float value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (float))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlBinary Adjust (SqlBinary value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (byte []))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlBoolean Adjust (SqlBoolean value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (bool))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlByte Adjust (SqlByte value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (byte))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlBytes Adjust (SqlBytes value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (byte []))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlChars Adjust (SqlChars value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (char []))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlDateTime Adjust (SqlDateTime value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (DateTime))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlDecimal Adjust (SqlDecimal value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (decimal))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlDouble Adjust (SqlDouble value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (double))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlGuid Adjust (SqlGuid value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (Guid))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlInt16 Adjust (SqlInt16 value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (short))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlInt32 Adjust (SqlInt32 value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (int))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlInt64 Adjust (SqlInt64 value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (long))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlMoney Adjust (SqlMoney value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (decimal))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlSingle Adjust (SqlSingle value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (Single))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public SqlString Adjust (SqlString value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (string))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
 		public string Adjust (string value)
 		{
-			throw new NotImplementedException (); 
+			if (type != typeof (string))
+				throw new ArgumentException ("Value does not match the SqlMetaData type");
+			return value;
 		}
 
-		[MonoTODO]
-		public SqlMetaData GetMetaData (int i)
-		{
-			throw new NotImplementedException (); 
-		}
-
-		[MonoTODO]
 		public static SqlMetaData InferFromValue (object value, string name)
 		{
-			throw new NotImplementedException (); 
+			if (name == null)
+				throw new ArgumentNullException ("name can not be null");
+			if (value == null)
+				throw new ArgumentException ("value can not be null");
+			SqlMetaData sqlMetaData = null;
+			switch (value.GetType ().ToString ()) {
+			case "System.Boolean":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Bit);
+				break;
+			case "System.Byte":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Binary);
+				break;
+			case "System.Byte[]":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.VarBinary);
+				break;
+			case "System.Char":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Char);
+				break;
+			case "System.Char[]":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.VarChar);
+				break;
+			case "System.DateTime":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.DateTime);
+				break;
+			case "System.Decimal":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Decimal);
+				break;
+			case "System.Double":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Float);
+				break;
+			case "System.Guid":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.UniqueIdentifier);
+				break;
+			case "System.Int16":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.SmallInt);
+				break;
+			case "System.Int32":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Int);
+				break;
+			case "System.Int64":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.BigInt);
+				break;
+			case "System.Single":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Real);
+				break;
+			case "System.String":
+				sqlMetaData = new SqlMetaData (name, SqlDbType.NVarChar);
+				break;
+			case "System.Object":
+			default:
+				sqlMetaData = new SqlMetaData (name, SqlDbType.Variant);
+				break;
+			}
+			return sqlMetaData;
 		}
 
 		#endregion // Methods
