@@ -839,17 +839,17 @@ namespace System.Data
 		{
 			return this.ToTable (tableName, false, new string[] {});
 		}
-		
-		public DataTable ToTable (bool isDistinct, string[] columnNames)
+
+		public DataTable ToTable (bool isDistinct, params string[] columnNames)
 		{
 			return this.ToTable (Table.TableName, isDistinct, columnNames);
 		}
 		
-		public DataTable ToTable (string tablename, bool isDistinct, string[] columnNames)
+		public DataTable ToTable (string tablename, bool isDistinct, params string[] columnNames)
 		{
 			if (columnNames == null)
 				throw new ArgumentNullException ("columnNames", "'columnNames' argument cannot be null.");
-
+ 
 			DataTable newTable = new DataTable (tablename);
 
 			DataColumn[] columns;

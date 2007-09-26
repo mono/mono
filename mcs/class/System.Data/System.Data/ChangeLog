@@ -1,3 +1,9 @@
+2007-09-26  Nagappan A <anagappan@novell.com> 
+
+	* DataView.cs (ToTable): Added params keyword.
+	
+	* DataTable.cs: Added XmlSchemaProvider attribute.
+
 2007-09-25  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataSet.cs: correct WriteAttributeString while writing xml with

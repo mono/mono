@@ -64,6 +64,9 @@ namespace System.Data {
 	[DesignTimeVisible (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	[Serializable]
+#if NET_2_0
+	[XmlSchemaProviderAttribute ("GetDataTableSchema")]
+#endif
 	public class DataTable : MarshalByValueComponent, IListSource, ISupportInitialize,
 				 ISerializable
 #if NET_2_0
