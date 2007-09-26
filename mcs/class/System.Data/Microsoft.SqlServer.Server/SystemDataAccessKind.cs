@@ -32,8 +32,10 @@
 //
 
 #if NET_2_0
+using System;
 
 namespace Microsoft.SqlServer.Server {
+	[Serializable]
 	public enum SystemDataAccessKind
 	{
 		None,

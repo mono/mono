@@ -36,12 +36,12 @@
 using System;
 
 namespace Microsoft.SqlServer.Server {
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
 	public sealed class SqlUserDefinedTypeAttribute : Attribute
 	{
 		#region Fields
 
-		public const int MaxByteSizeValue = 8000;
+		const int MaxByteSizeValue = 8000;
 
 		Format format;
 		bool isByteOrdered;
@@ -54,7 +54,7 @@ namespace Microsoft.SqlServer.Server {
 
 		public SqlUserDefinedTypeAttribute (Format f)
 		{
-			Format = f;
+			format = f;
 			IsByteOrdered = false;
 			IsFixedLength = false;
 			MaxByteSize = MaxByteSizeValue;
@@ -66,7 +66,6 @@ namespace Microsoft.SqlServer.Server {
 
 		public Format Format { 
 			get { return format; }
-			set { format = value; }
 		}
 
 		public bool IsByteOrdered {

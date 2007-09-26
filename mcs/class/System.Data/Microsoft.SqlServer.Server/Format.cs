@@ -36,10 +36,8 @@ namespace Microsoft.SqlServer.Server {
 	public enum Format
 	{
 		Unknown,
-		UserDefined,
 		Native,
-		SerializedData,
-		SerializedDataWithMetadata
+		UserDefined
 	}
 }
 

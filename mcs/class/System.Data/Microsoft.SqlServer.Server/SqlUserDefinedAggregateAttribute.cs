@@ -56,7 +56,7 @@ namespace Microsoft.SqlServer.Server {
 
 		public SqlUserDefinedAggregateAttribute (Format f)
 		{
-			Format = f;
+			format = f;
 			IsInvariantToDuplicates = false;
 			IsInvariantToNulls = false;
 			IsInvariantToOrder = false;
@@ -70,7 +70,6 @@ namespace Microsoft.SqlServer.Server {
 
 		public Format Format { 
 			get { return format; }
-			set { format = value; }
 		}
 
 		public bool IsInvariantToDuplicates {

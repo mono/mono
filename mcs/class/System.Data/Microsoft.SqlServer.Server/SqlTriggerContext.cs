@@ -57,7 +57,7 @@ namespace Microsoft.SqlServer.Server {
 
 		#region Properties
 
-		public int CoulmnCount {
+		public int ColumnCount {
 			get {
 				 return this.columnsUpdated == null ? 0 : columnsUpdated.Length; 
 			}

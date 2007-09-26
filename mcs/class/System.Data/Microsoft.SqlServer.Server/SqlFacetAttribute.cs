@@ -32,8 +32,7 @@
 using System;
 
 namespace Microsoft.SqlServer.Server {
-	[AttributeUsage (AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-	[Serializable]
+	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = false)]
 	public class SqlFacetAttribute : Attribute
 	{
 		#region Fields

@@ -36,7 +36,7 @@
 using System;
 
 namespace Microsoft.SqlServer.Server {
-	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+	[AttributeUsage (AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 	[Serializable]
 	public sealed class SqlMethodAttribute : SqlFunctionAttribute
 	{
