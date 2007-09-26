@@ -1,3 +1,7 @@
+2007-09-26  Nagappan A <anagappan@novell.com> 
+
+	* DataAccessKind.cs: Added serializable attribute.
+
 2006-02-17  Chris Toshok  <toshok@ximian.com>
 
 	* InvalidUdtException.cs: fix namespace typo, and mark all ctors
