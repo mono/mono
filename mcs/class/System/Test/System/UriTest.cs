@@ -538,7 +538,7 @@ namespace MonoTests.System
 		public void InvalidFile3 ()
 		{
 			new Uri ("file:/foo");
-		}	
+		}
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
@@ -930,7 +930,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void FragmentEscape ()
+		public void Fragment_Escape ()
 		{
 			Uri u = new Uri("http://localhost/index.asp#main#start", false);
 			AssertEquals ("#1", u.Fragment, "#main%23start");
@@ -947,7 +947,27 @@ namespace MonoTests.System
 			n = new Uri (b, "blah#main#start", true);
 			AssertEquals ("#4", n.Fragment, "#main#start");
 		}
-			
+
+#if NET_2_0
+		[Test]
+		public void Fragment_RelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+
+			try {
+				string fragment = relativeUri.Fragment;
+				Fail ("#1: " + fragment);
+			} catch (InvalidOperationException ex) {
+				// This operation is not supported for a relative URI
+				AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
+				AssertNull ("#3", ex.InnerException);
+				AssertNotNull ("#4", ex.Message);
+			}
+		}
+#endif
+
 		[Test]
 		[ExpectedException(typeof(UriFormatException))]
 		public void IncompleteSchemeDelimiter ()
@@ -1243,7 +1263,7 @@ namespace MonoTests.System
 			AssertEquals ("#2", "../../index.htm", uri2.MakeRelative (uri1));
 			
 			AssertEquals ("#3", "../../bar/foo/index.htm", uri2.MakeRelative (uri3));
-			AssertEquals ("#4", "../../foo/bar/index.htm", uri3.MakeRelative (uri2));			
+			AssertEquals ("#4", "../../foo/bar/index.htm", uri3.MakeRelative (uri2));
 
 			AssertEquals ("#5", "../foo2/index.htm", uri3.MakeRelative (uri4));
 			AssertEquals ("#6", "../foo/index.htm", uri4.MakeRelative (uri3));
@@ -1308,7 +1328,7 @@ namespace MonoTests.System
 
 		[Test]
 		public void ToStringTest()
-		{			
+		{
 			Uri uri = new Uri ("dummy://xxx");
 			AssertEquals ("#1", "dummy://xxx/", uri.ToString ());
 		}
@@ -1587,8 +1607,7 @@ namespace MonoTests.System
 				sb.Append ((char) i);
 			
 			AssertEquals ("%00%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F%20!%22#$%25&'()*+,-./0123456789:;%3C=%3E?@ABCDEFGHIJKLMNOPQRSTUVWXYZ%5B%5C%5D%5E_%60abcdefghijklmnopqrstuvwxyz%7B%7C%7D~%7F",
-				      Uri.EscapeUriString (sb.ToString ()));
-				      
+				Uri.EscapeUriString (sb.ToString ()));
 			AssertEquals ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
 #endif
@@ -1642,7 +1661,7 @@ namespace MonoTests.System
 			Console.WriteLine ("IsLoopback: " + uri.IsLoopback);
 			Console.WriteLine ("IsUnc: " + uri.IsUnc);
 			Console.WriteLine ("LocalPath: " + uri.LocalPath);
-			Console.WriteLine ("PathAndQuery: " + uri.PathAndQuery);
+			Console.WriteLine ("PathAndQuery	: " + uri.PathAndQuery);
 			Console.WriteLine ("Port: " + uri.Port);
 			Console.WriteLine ("Query: " + uri.Query);
 			Console.WriteLine ("Scheme: " + uri.Scheme);
@@ -1655,9 +1674,8 @@ namespace MonoTests.System
 				Console.WriteLine ("\tNo Segments");
 			else 
 				for (int i = 0; i < segments.Length; i++) 
-					Console.WriteLine ("\t" + segments[i]);					
+					Console.WriteLine ("\t" + segments[i]);
 			Console.WriteLine ("");
 		}
 	}
 }
-

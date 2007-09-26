@@ -32,13 +32,31 @@ using NUnit.Framework;
 
 using System;
 
-namespace MonoTests.System {
-
+namespace MonoTests.System
+{
 	[TestFixture]
-	public class UriTest3 {
-
+	public class UriTest3
+	{
 		private const string absolute = "http://www.mono-project.com/CAS";
 		private const string relative = "server.com/directory/";
+
+		[Test]
+		public void AbsoluteUri_RelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+
+			try {
+				string result = relativeUri.AbsoluteUri;
+				Assert.Fail ("#1: " + result);
+			} catch (InvalidOperationException ex) {
+				// This operation is not supported for a relative URI
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
 
 		[Test]
 		public void Absolute_UriKind_Absolute ()
@@ -273,6 +291,84 @@ namespace MonoTests.System {
 			http.IsBaseOf (null);
 		}
 
+		[Test] // bug #328693
+		[Category ("NotWorking")]
+		public void MakeRelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri uri3 = new Uri ("http://www.contoso.com/bar/foo/index.htm?y=1");
+			Uri uri4 = new Uri ("http://www.contoso.com/bar/foo2/index.htm?x=0");
+			Uri uri5 = new Uri ("https://www.contoso.com/bar/foo/index.htm?y=1");
+			Uri uri6 = new Uri ("http://www.contoso2.com/bar/foo/index.htm?x=0");
+			Uri uri7 = new Uri ("http://www.contoso2.com/bar/foo/foobar.htm?z=0&y=5");
+			Uri uri8 = new Uri ("http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9);
+			Uri uri10 = new Uri ("mailto:xxx@xxx.com");
+			Uri uri11 = new Uri ("mailto:xxx@xxx.com?subject=hola");
+			Uri uri12 = new Uri ("mailto:xxx@mail.xxx.com?subject=hola");
+			Uri uri13 = new Uri ("mailto:xxx@xxx.com/foo/bar");
+
+			AssertRelativeUri ("foo/bar/index.htm#fragment", uri1, uri2, "#A");
+			AssertRelativeUri ("../../index.htm?x=2", uri2, uri1, "#B");
+			AssertRelativeUri ("../../bar/foo/index.htm?y=1", uri2, uri3, "#C");
+			AssertRelativeUri ("../../foo/bar/index.htm#fragment", uri3, uri2, "#D");
+			AssertRelativeUri ("../foo2/index.htm?x=0", uri3, uri4, "#E");
+			AssertRelativeUri ("../foo/index.htm?y=1", uri4, uri3, "#F");
+			AssertRelativeUri ("?x=0", uri6, uri6, "#G");
+			AssertRelativeUri ("foobar.htm?z=0&y=5", uri6, uri7, "#H");
+			AssertRelativeUri ("?subject=hola", uri10, uri11, "#I");
+			AssertRelativeUri ("/foo/bar", uri10, uri13, "#J");
+
+			Uri relativeUri = uri1.MakeRelativeUri (uri8);
+			Assert.IsTrue (relativeUri.IsAbsoluteUri, "#K1");
+			Assert.AreEqual (uri8.ToString (), relativeUri.ToString (), "#K2");
+			Assert.AreEqual (uri8.OriginalString, relativeUri.OriginalString, "#K3");
+
+			relativeUri = uri10.MakeRelativeUri (uri12);
+			Assert.IsTrue (relativeUri.IsAbsoluteUri, "#L1");
+			Assert.AreEqual (uri12.ToString (), relativeUri.ToString (), "#L2");
+			Assert.AreEqual (uri12.OriginalString, relativeUri.OriginalString, "#L3");
+
+			relativeUri = uri4.MakeRelativeUri (uri6);
+			Assert.IsTrue (relativeUri.IsAbsoluteUri, "#M1");
+			Assert.AreEqual (uri6.ToString (), relativeUri.ToString (), "#M2");
+			Assert.AreEqual (uri6.OriginalString, relativeUri.OriginalString, "#M3");
+
+			relativeUri = uri4.MakeRelativeUri (uri5);
+			Assert.IsTrue (relativeUri.IsAbsoluteUri, "#N1");
+			Assert.AreEqual (uri5.ToString (), relativeUri.ToString (), "#N2");
+			Assert.AreEqual (uri5.OriginalString, relativeUri.OriginalString, "#N3");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
+		public void MakeRelativeUri_Uri_Null_Mono ()
+		{
+			Uri uri = new Uri ("http://test.com");
+			try {
+				uri.MakeRelativeUri ((Uri) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("uri", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=299942
+		public void MakeRelativeUri_Uri_Null_MS ()
+		{
+			Uri uri = new Uri ("http://test.com");
+			try {
+				uri.MakeRelativeUri ((Uri) null);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
+		}
+
 		[Test]
 		// LAMESPEC: see bug #78374.
 		public void OriginalStringRelative ()
@@ -298,11 +394,73 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void PathAndQuery_RelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+
+			try {
+				string result = relativeUri.PathAndQuery;
+				Assert.Fail ("#1: " + result);
+			} catch (InvalidOperationException ex) {
+				// This operation is not supported for a relative URI
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Query_RelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+
+			try {
+				string result = relativeUri.Query;
+				Assert.Fail ("#1: " + result);
+			} catch (InvalidOperationException ex) {
+				// This operation is not supported for a relative URI
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void Scheme_RelativeUri ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+
+			try {
+				string result = relativeUri.Scheme;
+				Assert.Fail ("#1: " + result);
+			} catch (InvalidOperationException ex) {
+				// This operation is not supported for a relative URI
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
 		public void UnescapeDataString ()
 		{
 			Assert.AreEqual ("/new folder/", Uri.UnescapeDataString ("/new%20folder/"));
 			Assert.AreEqual ("/new folder/", Uri.UnescapeDataString ("/new%20%66older/"));
 			Assert.AreEqual ("/new+folder/", Uri.UnescapeDataString ("/new+folder/"));
+		}
+
+		void AssertRelativeUri (string expected, Uri uri1, Uri uri2, string msg)
+		{
+			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+			Assert.IsFalse (relativeUri.IsAbsoluteUri, msg + "1");
+			Assert.AreEqual (expected, relativeUri.ToString (), msg + "2");
+			Assert.AreEqual (expected, relativeUri.OriginalString, msg + "3");
 		}
 	}
 }
