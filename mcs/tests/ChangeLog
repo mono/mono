@@ -1,3 +1,10 @@
+2007-09-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* test-587.cs: test for bug #328136.
+	* test-588.cs: test for bug #328490.
+	* known-issues-gmcs: added test-587.cs and test-588.cs.
+	* known-issues-mcs: added test-587.cs and test-588.cs.
+
 2007-09-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* test-586.cs: test for bug #325841.
