@@ -1,3 +1,46 @@
+2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h (struct _MonoGenericClass): new field is_tb_open
+	which is used to distinguish the fully open instantiation of a TypeBuilder
+	with the rest. This temporary hack is required to restore the property that
+	the fully open instantiation is the same type of the generic type definition.
+
+	* class-internals.h (mono_generic_class_is_generic_type_definition):
+	new function as part of the internal API.
+
+	* class.c (inflate_generic_type): return NULL when the generic inst is
+	fully open. The fully open generic type is now the same as the generic type
+	definition for non TypeBuilder types.
+
+	* class.c (mono_generic_class_get_class): removed assert since it is
+	no longer valid, gklass->cached_class can point to the generic type definition.
+
+	* class.c (mono_generic_class_is_generic_type_definition): new.
+
+	* metadata.c (mono_generic_class_hash): added is_tb_open field
+	to the hash calculation.
+
+	* metadata.c (free_generic_class): if the generic class is associated
+	with the generic type definition, its field will come from the mempool and
+	must not be freed.
+
+	* metadata.c (mono_metadata_is_type_builder_generic_type_definition):
+	new, this function identifies the corner case of a TypeBuilder fully open
+	instantiation.
+
+	* metadata.c (mono_metadata_lookup_generic_class): use is_tb_open
+	for lookup. Set gclass->cached_class to be the container class in case of
+	the fully open instantiation of non TypeBuilder types.
+
+	* metadata.c (_mono_metadata_generic_class_equal): use is_tb_open
+	to compare generic classes.
+
+	* reflection.c (method_encode_methodspec): remove assert that
+	no longer is valid.
+
+	* reflection.c (mono_reflection_generic_class_initialize): add
+	an aditional assert to ensure the proper type is used.
+
 2007-09-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: disabled all debug spew by default, define MONO_VERIFIER_DEBUG
