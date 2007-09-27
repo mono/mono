@@ -132,13 +132,13 @@ namespace System.Data.SqlClient {
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
-		[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
 		string ConnectionString {
 			get { return connectionString; }
+			[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 			set {
 				if (state == ConnectionState.Open)
 					throw new InvalidOperationException ("Not Allowed to change ConnectionString property while Connection state is OPEN");
