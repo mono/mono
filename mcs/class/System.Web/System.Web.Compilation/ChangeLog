@@ -1,3 +1,8 @@
+2007-09-27  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: support nullable types in
+	GenerateExpressionFromString.
+
 2007-09-21  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: if we're running on a platform with

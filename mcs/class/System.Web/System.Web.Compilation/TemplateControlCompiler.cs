@@ -1604,6 +1604,21 @@ namespace System.Web.Compilation
 			return (TypeConverter) Activator.CreateInstance (t);
 		}
 		
+		CodeExpression CreateNullableExpression (Type type, CodeExpression inst, bool nullable)
+		{
+#if NET_2_0
+			if (!nullable)
+				return inst;
+			
+			return new CodeObjectCreateExpression (
+				type,
+				new CodeExpression[] {inst}
+			);
+#else
+			return inst;
+#endif
+		}
+		
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{
 			TypeConverter cvt = GetConverterForMember (member);
@@ -1619,12 +1634,13 @@ namespace System.Web.Compilation
 					preConverted = true;
 				}
 			}
-			
-#if NET_2_0
+
 			bool wasNullable = false;
-			
+			Type originalType = type;
+#if NET_2_0
 			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) {
 				Type[] types = type.GetGenericArguments();
+				originalType = type;
 				type = types[0]; // we're interested only in the first type here
 				wasNullable = true;
 			}
@@ -1632,24 +1648,28 @@ namespace System.Web.Compilation
 			
 			if (type == typeof (string)) {
 				if (preConverted)
-					return new CodePrimitiveExpression ((string) convertedFromAttr);
+					return CreateNullableExpression (originalType,
+									 new CodePrimitiveExpression ((string) convertedFromAttr),
+									 wasNullable);
 				
 #if NET_2_0
 				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
 				if (urlAttr.Length != 0)
 					str = HandleUrlProperty (str, member);
 #endif
-				return new CodePrimitiveExpression (str);
+				return CreateNullableExpression (originalType, new CodePrimitiveExpression (str), wasNullable);
 			}
 
 			if (type == typeof (bool)) {
 				if (preConverted)
-					return new CodePrimitiveExpression ((bool) convertedFromAttr);
+					return CreateNullableExpression (originalType,
+									 new CodePrimitiveExpression ((bool) convertedFromAttr),
+									 wasNullable);
 				
 				if (str == null || str == "" || InvariantCompareNoCase (str, "true"))
-					return new CodePrimitiveExpression (true);
+					return CreateNullableExpression (originalType, new CodePrimitiveExpression (true), wasNullable);
 				else if (InvariantCompareNoCase (str, "false"))
-					return new CodePrimitiveExpression (false);
+					return CreateNullableExpression (originalType, new CodePrimitiveExpression (false), wasNullable);
 #if NET_2_0
 				else if (wasNullable && InvariantCompareNoCase(str, "null"))
 					return new CodePrimitiveExpression (null);
@@ -1663,9 +1683,11 @@ namespace System.Web.Compilation
 				return new CodePrimitiveExpression (null);
 
 			if (type.IsPrimitive)
-				return new CodePrimitiveExpression (
-					Convert.ChangeType (preConverted ? convertedFromAttr : str,
-							    type, CultureInfo.InvariantCulture));
+				return CreateNullableExpression (originalType,
+								 new CodePrimitiveExpression (
+									 Convert.ChangeType (preConverted ? convertedFromAttr : str,
+											     type, CultureInfo.InvariantCulture)),
+								 wasNullable);
 
 			if (type == typeof (string [])) {
 				string [] subs;
@@ -1679,7 +1701,7 @@ namespace System.Web.Compilation
 				foreach (string v in subs)
 					expr.Initializers.Add (new CodePrimitiveExpression (v.Trim ()));
 
-				return expr;
+				return CreateNullableExpression (originalType, expr, wasNullable);
 			}
 			
 			if (type == typeof (Color)) {
@@ -1691,7 +1713,9 @@ namespace System.Web.Compilation
 				
 					if (str.Trim().Length == 0) {
 						CodeTypeReferenceExpression ft = new CodeTypeReferenceExpression (typeof (Color));
-						return new CodeFieldReferenceExpression (ft, "Empty");
+						return CreateNullableExpression (originalType,
+										 new CodeFieldReferenceExpression (ft, "Empty"),
+										 wasNullable);
 					}
 
 					try {
@@ -1733,7 +1757,7 @@ namespace System.Web.Compilation
 
 					expr.TargetObject = new CodeTypeReferenceExpression (type);
 					expr.FieldName = c.Name;
-					return expr;
+					return CreateNullableExpression (originalType, expr, wasNullable);
 				} else {
 					CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
 					m.TargetObject = new CodeTypeReferenceExpression (type);
@@ -1743,24 +1767,29 @@ namespace System.Web.Compilation
 					invoke.Parameters.Add (new CodePrimitiveExpression (c.R));
 					invoke.Parameters.Add (new CodePrimitiveExpression (c.G));
 					invoke.Parameters.Add (new CodePrimitiveExpression (c.B));
-					return invoke;
+					return CreateNullableExpression (originalType, invoke, wasNullable);
 				}
 			}
 
 			TypeConverter converter = preConverted ? cvt :
+				wasNullable ? TypeDescriptor.GetConverter (type) :
 				TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
-			
+
 			if (preConverted || (converter != null && converter.CanConvertFrom (typeof (string)))) {
 				object value = preConverted ? convertedFromAttr : converter.ConvertFromInvariantString (str);
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
+					if (wasNullable)
+						return CreateNullableExpression (originalType, GenerateInstance (idesc, true),
+										 wasNullable);
+					
 					return new CodeCastExpression (type, GenerateInstance (idesc, true));
 				}
 
 				CodeExpression exp = GenerateObjectInstance (value, false);
 				if (exp != null)
-					return exp;
+					return CreateNullableExpression (originalType, exp, wasNullable);
 				
 				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
 				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
@@ -1772,12 +1801,15 @@ namespace System.Web.Compilation
 				invoke = new CodeMethodInvokeExpression (invoke, "ConvertFrom");
 				invoke.Parameters.Add (new CodePrimitiveExpression (str));
 
-				return new CodeCastExpression (tref, invoke);
+				if (wasNullable)
+					return CreateNullableExpression (originalType, invoke, wasNullable);
+				
+				return new CodeCastExpression (type, invoke);
 			}
 
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);
 			
-			return new CodePrimitiveExpression (str);
+			return CreateNullableExpression (originalType, new CodePrimitiveExpression (str), wasNullable);
 		}
 		
 		CodeExpression GenerateInstance (InstanceDescriptor idesc, bool throwOnError)
