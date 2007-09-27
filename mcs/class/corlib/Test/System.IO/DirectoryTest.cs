@@ -251,13 +251,10 @@ public class DirectoryTest
 	}
 
 #if !TARGET_JVM // We don't support yet the Process class.
-	[Test]
-	[Category("NotDotNet")]
+	[Test] // bug #78239
 	public void ExistsAccessDenied ()
 	{
-		// bug #78239
-
-		if (Path.DirectorySeparatorChar == '\\')
+		if (!RunningOnUnix)
 			return; // this test does not work on Windows.
 
 		string path = TempFolder + DSC + "ExistsAccessDenied";
@@ -894,10 +891,7 @@ public class DirectoryTest
 	[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 	public void CreationTime ()
 	{
-		// check for Unix platforms - see FAQ for more details
-		// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
-		int platform = (int) Environment.OSVersion.Platform;
-		if ((platform == 4) || (platform == 128))
+		if (RunningOnUnix)
 			Assert.Ignore ("Unix doesn't support CreationTime");
 
 		string path = TempFolder + DSC + "DirectoryTest.CreationTime.1";
@@ -1497,7 +1491,7 @@ public class DirectoryTest
 		}
 	}
 
-	[Test] // bug #82212
+	[Test] // bug #82212 and bug #325107
 	public void GetFiles_Pattern ()
 	{
 		string [] files = Directory.GetFiles (TempFolder, "*.*");
@@ -1558,9 +1552,6 @@ public class DirectoryTest
 		Assert.IsNotNull (files, "#K1");
 		Assert.AreEqual (2, files.Length, "#K2");
 
-		// FIXME: uncomment when bug #82440 is fixed
-
-		/**
 		File.Delete (tempFile1);
 
 		files = Directory.GetFiles (TempFolder, "temp*.*");
@@ -1571,7 +1562,17 @@ public class DirectoryTest
 		files = Directory.GetFiles (TempFolder, ".*");
 		Assert.IsNotNull (files, "#M1");
 		Assert.AreEqual (0, files.Length, "#M2");
-		**/
+
+		string tempFile4 = Path.Combine (TempFolder, "tempFile4.");
+		File.Create (tempFile4).Close ();
+
+		files = Directory.GetFiles (TempFolder, "temp*.");
+		Assert.IsNotNull (files, "#N1");
+		Assert.AreEqual (1, files.Length, "#N2");
+		if (RunningOnUnix)
+			Assert.AreEqual (tempFile4, files [0], "#N3");
+		else // on Windows, the trailing dot is automatically trimmed
+			Assert.AreEqual (Path.Combine (TempFolder, "tempFile4"), files [0], "#N3");
 	}
 
 	[Test]
@@ -1607,6 +1608,15 @@ public class DirectoryTest
 	public void FilenameOnly () // bug 78209
 	{
 		Directory.GetParent ("somefile");
+	}
+
+	private static bool RunningOnUnix {
+		get {
+			// check for Unix platforms - see FAQ for more details
+			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
+			int platform = (int) Environment.OSVersion.Platform;
+			return ((platform == 4) || (platform == 128));
+		}
 	}
 
 	private void DeleteDirectory (string path)

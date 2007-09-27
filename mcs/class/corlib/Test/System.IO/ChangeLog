@@ -1,3 +1,9 @@
+2007-09-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Added RunningOnUnix property to use for enabling
+	or disabling tests on a specific platform. Enabled and improved test
+	for bug #325107.
+
 2007-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MemoryStreamTest.cs: Added test for bug #327053.
