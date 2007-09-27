@@ -1,5 +1,14 @@
 2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Comment out a double buffering optimization that doesn't
+	take into account invalidates created in OnPaint, causing the control
+	to never be redrawn.  It would take quite a bit of work to work around
+	this, but I left it commented with an explanation for later possible
+	optimization.
+	[Fixes bug #328681]
+
+2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Ask parent to perform a layout if control is AutoSize and
 	the text changes.
 	* RadioButton.cs: Implement GetPreferredSizeCore.
