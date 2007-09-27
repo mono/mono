@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		protected internal void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			// Why override?
 			base.OnPreRender (e);
