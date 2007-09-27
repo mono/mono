@@ -1,3 +1,10 @@
+2007-09-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic_type_definition.2.cs: added
+
+	* Makefile.am: added generic_type_definition.2.cs
+
+
 2007-09-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-327438.2.il: added
