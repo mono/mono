@@ -3180,6 +3180,11 @@ namespace System.Windows.Forms
 					text=value;
 					UpdateWindowText ();
 					OnTextChanged (EventArgs.Empty);
+
+#if NET_2_0
+					if (AutoSize && Parent != null)
+						Parent.PerformLayout (this, "Text");
+#endif
 				}
 			}
 		}

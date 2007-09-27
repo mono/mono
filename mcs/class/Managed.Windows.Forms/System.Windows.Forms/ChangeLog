@@ -1,3 +1,10 @@
+2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Ask parent to perform a layout if control is AutoSize and
+	the text changes.
+	* RadioButton.cs: Implement GetPreferredSizeCore.
+	[Fixes bug #328672]
+
 2007-09-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* RichTextBox.cs, TextBoxBase.cs, WindowsFormsSynchronizationContext.cs:

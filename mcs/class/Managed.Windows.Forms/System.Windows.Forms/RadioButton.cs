@@ -162,6 +162,16 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
 #endif
 		}
+
+#if NET_2_0
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			if (this.AutoSize)
+				return ThemeEngine.Current.CalculateRadioButtonAutoSize (this);
+
+			return base.GetPreferredSizeCore (proposedSize);
+		}
+#endif
 		#endregion	// Private Methods
 
 		#region Public Instance Properties
