@@ -1155,9 +1155,7 @@ namespace Mono.Xml
 
 			ShiftStateContent ("QName", true);
 
-			string prefix =
-				state == WriteState.Content || ns.Length > 0 ?
-				LookupPrefix (ns) : String.Empty;
+			string prefix = ns.Length > 0 ? LookupPrefix (ns) : String.Empty;
 			if (prefix == null) {
 				if (state == WriteState.Attribute)
 					prefix = MockupPrefix (ns, false);

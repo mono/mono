@@ -1,3 +1,11 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : implemented WriteValue(object) based on
+	  MSDN "Writing Typed Data" with some fix.
+	  http://msdn2.microsoft.com/en-us/library/bft97s8e(VS.80).aspx
+	* XmlTextWriter.cs : state check is extraneous. It caused unexpected
+	  rejection of empty namespace URI.
+
 2007-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : fix extraneous indentation which is put after

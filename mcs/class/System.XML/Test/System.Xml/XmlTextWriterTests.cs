@@ -1258,6 +1258,15 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void WriteQualifiedNameNonNamespacedName ()
+		{
+			xtw.WriteStartElement ("root");
+			xtw.WriteQualifiedName ("foo", "");
+			xtw.WriteEndElement ();
+			Assert.AreEqual ("<root>foo</root>", StringWriterText);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void WriteQualifiedNameNonDeclaredContent ()
 		{

@@ -1,3 +1,9 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterTests.cs : added test for WriteValue(object).
+	* XmlTextWriterTests.cs : added WriteQualifiedName() test with empty
+	  namespace.
+
 2007-08-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterSettingsTests.cs : added test for extraneous newline on

@@ -376,6 +376,81 @@ namespace MonoTests.System.Xml
 			Assert.IsFalse (ms.CanWrite, "#B3");
 		}
 
+		XmlWriter CreateWriter (TextWriter tw)
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			XmlWriter w = XmlWriter.Create (tw, s);
+			w.WriteStartElement ("root");
+			return w;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void WriteValueNull ()
+		{
+			XmlWriter w = CreateWriter (TextWriter.Null);
+			w.WriteValue ((object) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))] // it throws somewhat funny exception
+		public void WriteValueNonExistentQName ()
+		{
+			XmlWriter w = CreateWriter (TextWriter.Null);
+			w.WriteValue (new XmlQualifiedName ("foo", "urn:foo"));
+		}
+
+		[Test]
+		public void WriteValueEmptyQName ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = CreateWriter (sw);
+			w.WriteValue (XmlQualifiedName.Empty);
+			w.Close ();
+		}
+
+		[Test]
+		public void WriteValueQName ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = CreateWriter (sw);
+			w.WriteAttributeString ("xmlns", "x", "http://www.w3.org/2000/xmlns/", "urn:foo");
+			w.WriteValue (new XmlQualifiedName ("foo", "urn:foo"));
+			w.Close ();
+			Assert.AreEqual ("<root xmlns:x=\"urn:foo\">x:foo</root>", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteValueTimeSpan ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = CreateWriter (sw);
+			w.WriteValue (TimeSpan.FromSeconds (5));
+			w.Close ();
+			Assert.AreEqual ("<root>PT5S</root>", sw.ToString ());
+		}
+
+		[Test]
+		public void WriteValueArray ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = CreateWriter (sw);
+			w.WriteValue (new int [] {1, 2, 3});
+			w.WriteValue (new int [] {4, 5, 6});
+			w.Close ();
+			Assert.AreEqual ("<root>1 2 34 5 6</root>", sw.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))] // it throws somewhat funny exception
+		public void WriteValueTextReader ()
+		{
+			// it is documented as supported, but actually isn't.
+			XmlWriter w = CreateWriter (TextWriter.Null);
+			w.WriteValue (new StringReader ("foobar"));
+		}
+
 		XPathNavigator GetNavigator (string xml)
 		{
 			return new XPathDocument (XmlReader.Create (

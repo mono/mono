@@ -7,6 +7,7 @@
 //
 // (C) 2002 Kral Ferch
 // (C) 2002-2003 Atsushi Enomoto
+// (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -31,6 +32,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 #if NET_2_0 && !NET_2_1
@@ -597,74 +599,96 @@ namespace System.Xml
 		public abstract void WriteWhitespace (string ws);
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual void WriteValue (bool value)
 		{
 			WriteString (XQueryConvert.BooleanToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (DateTime value)
 		{
 			WriteString (XmlConvert.ToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (decimal value)
 		{
 			WriteString (XQueryConvert.DecimalToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (double value)
 		{
 			WriteString (XQueryConvert.DoubleToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (int value)
 		{
 			WriteString (XQueryConvert.IntToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (long value)
 		{
 			WriteString (XQueryConvert.IntegerToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (object value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			if (value is string)
 				WriteString ((string) value);
 			else if (value is bool)
 				WriteValue ((bool) value);
+			else if (value is byte)
+				WriteValue ((int) value);
+			else if (value is byte [])
+				WriteBase64 ((byte []) value, 0, ((byte []) value).Length);
+			else if (value is char [])
+				WriteChars ((char []) value, 0, ((char []) value).Length);
 			else if (value is DateTime)
 				WriteValue ((DateTime) value);
 			else if (value is decimal)
 				WriteValue ((decimal) value);
 			else if (value is double)
 				WriteValue ((double) value);
+			else if (value is short)
+				WriteValue ((int) value);
 			else if (value is int)
 				WriteValue ((int) value);
 			else if (value is long)
 				WriteValue ((long) value);
+			else if (value is float)
+				WriteValue ((float) value);
+			else if (value is TimeSpan) // undocumented
+				WriteString (XmlConvert.ToString ((TimeSpan) value));
 			else if (value is XmlQualifiedName) {
 				XmlQualifiedName qname = (XmlQualifiedName) value;
-				WriteQualifiedName (qname.Name, qname.Namespace);
+				if (!qname.Equals (XmlQualifiedName.Empty)) {
+					if (qname.Namespace.Length > 0 && LookupPrefix (qname.Namespace) == null)
+						throw new InvalidCastException (String.Format ("The QName '{0}' cannot be written. No corresponding prefix is declared", qname));
+					WriteQualifiedName (qname.Name, qname.Namespace);
+				}
+				else
+					WriteString (String.Empty);
+			}
+			else if (value is IEnumerable) {
+				bool follow = false;
+				foreach (object obj in (IEnumerable) value) {
+					if (follow)
+						WriteString (" ");
+					else
+						follow = true;
+					WriteValue (obj);
+				}
 			}
 			else
-				throw new NotImplementedException ("Argument value is " + value);
+				throw new InvalidCastException (String.Format ("Type '{0}' cannot be cast to string", value.GetType ()));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (float value)
 		{
 			WriteString (XQueryConvert.FloatToString (value));
 		}
 
-		[MonoTODO]
 		public virtual void WriteValue (string value)
 		{
 			WriteString (value);
