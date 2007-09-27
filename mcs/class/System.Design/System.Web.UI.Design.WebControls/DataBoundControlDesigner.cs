@@ -87,14 +87,6 @@ namespace System.Web.UI.Design.WebControls
 				throw new NotImplementedException ();
 			}
 		}
-
-		[MonoNotSupported ("")]
-		public virtual TemplateGroupCollection TemplateGroups {
-			[MonoNotSupported ("")]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 		
 		[MonoNotSupported ("")]
 		protected virtual bool UseDataSourcePickerActionList {

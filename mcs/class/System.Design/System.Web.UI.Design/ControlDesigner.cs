@@ -91,6 +91,54 @@ namespace System.Web.UI.Design
 
 #if NET_2_0
 		[MonoNotSupported ("")]
+		protected ControlDesignerState DesignerState {
+			[MonoNotSupported ("")]
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoNotSupported ("")]
+		protected void SetViewFlags (ViewFlags viewFlags, bool setFlag)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoNotSupported ("")]
+		public virtual TemplateGroupCollection TemplateGroups {
+			[MonoNotSupported ("")]
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoNotSupported ("")]
+		public Control ViewControl {
+			[MonoNotSupported ("")]
+			get {
+				throw new NotImplementedException ();
+			}
+			
+			[MonoNotSupported ("")]
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoNotSupported ("")]
+		public virtual bool ViewControlCreated {
+			[MonoNotSupported ("")]
+			get {
+				throw new NotImplementedException ();
+			}
+
+			[MonoNotSupported ("")]
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoNotSupported ("")]
 		protected virtual bool UsePreviewControl {
 			get {
 				throw new NotImplementedException ();

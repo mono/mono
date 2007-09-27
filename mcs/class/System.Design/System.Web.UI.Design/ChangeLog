@@ -1,3 +1,13 @@
+2007-09-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlPersister.cs: added the PersistTemplate property stubs.
+
+	* ControlDesignerState.cs: added
+
+	* ControlDesigner.cs: added the DesignerState, SetViewFlags,
+	TemplateGroups, ViewControl and ViewControlCreated property
+	stubs.
+
 2007-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplatedEditableDesignerRegion.cs, TemplateDefinition.cs,

@@ -1,3 +1,9 @@
+2007-09-27  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Design.dll.sources: added
+	System.Web.UI.Design/ControlDesignerState.cs,
+	System.Web.UI.Design/ViewFlags.cs
+
 2007-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Design.dll.sources: added
