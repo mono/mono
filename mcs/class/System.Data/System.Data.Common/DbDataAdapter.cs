@@ -130,10 +130,10 @@ namespace System.Data.Common {
 			set { ((IDbDataAdapter) this).UpdateCommand = value; }
 		}
 
-		[MonoTODO]
 		[DefaultValue (1)]
 		public virtual int UpdateBatchSize {
 			get { return 1; }
+			[MonoTODO]
 			set { throw new NotSupportedException (); }
 		}
 #else

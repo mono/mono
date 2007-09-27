@@ -52,7 +52,7 @@ namespace System.Data.Common {
 		private string _quotePrefix;
 		private string _quoteSuffix;
 		private string _schemaSeperator = ".";
-		private DbCommand _dbCommand;
+		private DbCommand _dbCommand = null;
 
 		// Used to construct WHERE clauses
 		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
@@ -241,6 +241,7 @@ namespace System.Data.Common {
 			// We're all done, so bring it on home
 			string sql = String.Format ("{0} WHERE ({1})", command, whereClause.ToString ());
 			_deleteCommand.CommandText = sql;
+			_dbCommand = _deleteCommand;
 			return _deleteCommand;
 		}
 
@@ -282,6 +283,7 @@ namespace System.Data.Common {
 
 			sql = String.Format ("{0} ({1}) VALUES ({2})", command, columns.ToString (), values.ToString ());
 			_insertCommand.CommandText = sql;
+			_dbCommand = _insertCommand;
 			return _insertCommand;
 		}
 
@@ -390,6 +392,7 @@ namespace System.Data.Common {
 			// We're all done, so bring it on home
 			string sql = String.Format ("{0}{1} WHERE ({2})", command, columns.ToString (), whereClause.ToString ());
 			_updateCommand.CommandText = sql;
+			_dbCommand = _updateCommand;
 			return _updateCommand;
 		}
 
@@ -542,10 +545,18 @@ namespace System.Data.Common {
 			return _updateCommand;
 		}
 
-		[MonoTODO]
 		protected virtual DbCommand InitializeCommand (DbCommand command)
 		{
-			throw new NotImplementedException ();
+			if (_dbCommand == null) {
+				_dbCommand = SourceCommand;
+			} else {
+				_dbCommand.CommandTimeout = 30;
+				_dbCommand.Transaction = null;
+				_dbCommand.CommandType = CommandType.Text;
+				_dbCommand.UpdatedRowSource = UpdateRowSource.None;
+			}
+			return _dbCommand;
+
 		}
 
 		public virtual string QuoteIdentifier (string unquotedIdentifier)
