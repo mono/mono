@@ -1,3 +1,7 @@
+2007-09-27  Nagappan A <anagappan@novell.com> 
+
+	* OleDbDataReader.cs: Removed bogus MonoTODO.
+
 2007-09-26  Nagappan A <anagappan@novell.com> 
 
 	* OleDbTransaction.cs: Removed bogus TODO.

@@ -401,7 +401,6 @@ namespace System.Data.OleDb
 			return libgda.gda_value_get_double (value);
 		}
 
-		[MonoTODO]
 		public
 #if NET_2_0
 		override
