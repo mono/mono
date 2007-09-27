@@ -1,4 +1,7 @@
 2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+	* verify.c: added support for type checking ldind_* opcodes.
+
+2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class-internals.h (struct _MonoGenericClass): new field is_tb_open
 	which is used to distinguish the fully open instantiation of a TypeBuilder
