@@ -3,7 +3,8 @@
 // Author:
 // 	Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) Novell
+// (C) Gert Driesen
+// (C) Novell Inc.
 //
 
 //
@@ -39,6 +40,45 @@ namespace System.Diagnostics
 		public EventLogInstaller ()
 		{
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[ComVisible (false)]
+		public int CategoryCount {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
+		[TypeConverter (typeof (StringConverter))]
+		[ComVisible (false)]
+		public string CategoryResourceFile {
+			get { return _categoryResourceFile; }
+			set { _categoryResourceFile = value; }
+		}
+
+		[MonoTODO]
+		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
+		[TypeConverter (typeof (StringConverter))]
+		[ComVisible (false)]
+		public string MessageResourceFile {
+			get { return _messageResourceFile; }
+			set { _messageResourceFile = value; }
+		}
+
+		[MonoTODO]
+		// in MSDN, documented as System.Diagnostics.Design.StringValueConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a
+		[Editor ("System.Windows.Forms.Design.FileNameEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing )]
+		[TypeConverter (typeof (StringConverter))]
+		[ComVisible (false)]
+		public string ParameterResourceFile {
+			get { return _parameterResourceFile; }
+			set { _parameterResourceFile = value; }
+		}
+#endif
 
 		[MonoTODO]
 		public override void CopyFromComponent (IComponent component)
@@ -113,5 +153,10 @@ namespace System.Diagnostics
 		private string _log;
 		private string _source;
 		private UninstallAction _uninstallAction = UninstallAction.Remove;
+#if NET_2_0
+		private string _categoryResourceFile;
+		private string _messageResourceFile;
+		private string _parameterResourceFile;
+#endif
 	}
 }

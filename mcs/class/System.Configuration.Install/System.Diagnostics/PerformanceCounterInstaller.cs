@@ -3,6 +3,7 @@
 // Author:
 // 	Gert Driesen (drieseng@users.sourceforge.net)
 //
+// (C) Gert Driesen
 // (C) Novell
 //
 
@@ -30,6 +31,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.Runtime.InteropServices;
 
 namespace System.Diagnostics
 {
@@ -64,7 +66,9 @@ namespace System.Diagnostics
 		}
 
 		[DefaultValue ("")]
+#if !NET_2_0
 		[MonitoringDescription ("PCI_CategoryHelp")]
+#endif
 		public string CategoryHelp {
 			get {
 				return _categoryHelp;
@@ -92,7 +96,9 @@ namespace System.Diagnostics
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+#if !NET_2_0
 		[MonitoringDescription("PCI_Counters")]
+#endif
 		public CounterCreationDataCollection Counters {
 			get {
 				return _counters;
@@ -100,7 +106,9 @@ namespace System.Diagnostics
 		}
 
 		[DefaultValue (UninstallAction.Remove)]
+#if !NET_2_0
 		[MonitoringDescription ("PCI_UninstallAction")]
+#endif
 		public UninstallAction UninstallAction {
 			get {
 				return _uninstallAction;
@@ -117,9 +125,32 @@ namespace System.Diagnostics
 			}
 		}
 
+#if NET_2_0
+		[ComVisible (false)]
+		[DefaultValue (PerformanceCounterCategoryType.Unknown)]
+		public PerformanceCounterCategoryType CategoryType {
+			get {
+				return _categoryType;
+			}
+			set {
+				if (!Enum.IsDefined(typeof(PerformanceCounterCategoryType), value))
+					// LAMESPEC, the docs do not mention this, but 
+					// this exception is indeed thrown for invalid
+					// values
+					throw new InvalidEnumArgumentException("value", 
+						(int) value, typeof(PerformanceCounterCategoryType));
+
+				_categoryType = value;
+			}
+		}
+#endif
+
 		private string _categoryHelp = string.Empty;
 		private string _categoryName = string.Empty;
 		private CounterCreationDataCollection _counters = new CounterCreationDataCollection ();
 		private UninstallAction _uninstallAction = UninstallAction.Remove;
+#if NET_2_0
+		private PerformanceCounterCategoryType _categoryType;
+#endif
 	}
 }

@@ -31,6 +31,8 @@ using System.Runtime.Serialization;
 
 namespace System.Configuration.Install
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public delegate void InstallEventHandler (object sender, InstallEventArgs e);
 }

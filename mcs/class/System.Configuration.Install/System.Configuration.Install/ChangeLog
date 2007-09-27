@@ -1,3 +1,8 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IManagedInstaller.cs, InstallEventHandler.cs, UninstallAction.cs:
+	  completeing 2.0 API (metadata-wise).
+
 2005-08-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Installer.cs: Browsable must be true on Parent.
