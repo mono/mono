@@ -1,3 +1,9 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeDescriptor.cs : added missing ObsoleteAttribute.
+	* MemberDescriptor.cs, PropertyDescriptor.cs :
+	  implemented GetInvocationTarget().
+
 2007-09-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* AsyncOperationManager.cs: Tie the SynchronizationContext here to

@@ -171,9 +171,18 @@ namespace System.ComponentModel
 			base.FillAttributes (attributeList);
 		}
 
-		[MonoNotSupported ("")]
-		protected override Object GetInvocationTarget (Type type, object instance)
+		protected override object GetInvocationTarget (Type type, object instance)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			if (instance is CustomTypeDescriptor) {
+				CustomTypeDescriptor ctd = (CustomTypeDescriptor) instance;
+				return ctd.GetPropertyOwner (this);
+			}
+
 			return base.GetInvocationTarget (type, instance);
 		}
 

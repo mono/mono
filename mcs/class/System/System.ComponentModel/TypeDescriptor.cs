@@ -775,6 +775,10 @@ public sealed class TypeDescriptor
 			infos.Add (ob);
 	}
 
+#if NET_2_0
+	// well, ComObjectType is not implemented, but we don't support COM anyways ...
+	[Obsolete ("Use ComObjectType")]
+#endif
 	public static IComNativeDescriptorHandler ComNativeDescriptorHandler {
 		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		get { return descriptorHandler; }

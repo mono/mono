@@ -220,9 +220,9 @@ namespace System.ComponentModel
                 return null;
         }
 
-//#if NET_2_0 // uncomment when it is implemented
-//	[Obsolete ("Use GetInvocationTarget")]
-//#endif
+#if NET_2_0 // uncomment when it is implemented
+	[Obsolete ("Use GetInvocationTarget")]
+#endif
         protected static object GetInvokee(Type componentClass, object component)
         {
 		if (component is IComponent) {
@@ -241,10 +241,14 @@ namespace System.ComponentModel
         }
 
 #if NET_2_0
-		[MonoNotSupported("")]
 		protected virtual object GetInvocationTarget (Type type, object instance)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			return GetInvokee (type, instance);
 		}
 #endif
 
