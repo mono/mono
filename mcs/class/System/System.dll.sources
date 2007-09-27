@@ -256,6 +256,7 @@ System.ComponentModel.Design/ISelectionService.cs
 System.ComponentModel.Design/IServiceContainer.cs
 System.ComponentModel.Design/ITreeDesigner.cs
 System.ComponentModel.Design/ITypeDescriptorFilterService.cs
+System.ComponentModel.Design/ITypeDiscoveryService.cs
 System.ComponentModel.Design/ITypeResolutionService.cs
 System.ComponentModel.Design/MenuCommand.cs
 System.ComponentModel/DesignOnlyAttribute.cs

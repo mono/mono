@@ -30,10 +30,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.ComponentModel.Design
 {
+#if NET_2_0
+	[Serializable]
+#endif
 	public class CheckoutException : ExternalException
 	{
 		public static readonly CheckoutException Canceled = new CheckoutException ();
@@ -52,5 +57,17 @@ namespace System.ComponentModel.Design
 			: base (message, errorCode)
 		{
 		}
+
+#if NET_2_0
+		public CheckoutException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+
+		protected CheckoutException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+#endif
 	}
 }

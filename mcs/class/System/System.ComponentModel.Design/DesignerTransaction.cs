@@ -37,12 +37,12 @@ namespace System.ComponentModel.Design
 		private bool committed;
 		private bool canceled;
 
-		public DesignerTransaction () 
+		protected DesignerTransaction () 
 			: this ("")
 		{
 		}
 
-		public DesignerTransaction (string description)
+		protected DesignerTransaction (string description)
 		{
 			this.description = description;
 			this.committed = false;

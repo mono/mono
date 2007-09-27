@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.Design.ComponentRenameEventHandler
+// ITypeDiscoveryService.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2007 Novell, Inc.
 //
 
 //
@@ -28,14 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
 {
-#if !NET_2_0
-	[Serializable]
-#endif
-	[ComVisible(true)]
-        public delegate void ComponentRenameEventHandler (object sender,
-							  ComponentRenameEventArgs e);
+        public interface ITypeDiscoveryService
+	{
+		ICollection GetTypes (Type baseType, bool excludeGlobalTypes);
+	}
 }
+
+#endif

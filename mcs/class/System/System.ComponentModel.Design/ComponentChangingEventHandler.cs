@@ -32,7 +32,9 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	[ComVisible(true)]
         public delegate void ComponentChangingEventHandler (object sender,
 							    ComponentChangingEventArgs e);

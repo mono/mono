@@ -37,9 +37,11 @@ using System.ComponentModel;
 namespace System.ComponentModel.Design
 {
 
-	public class DesignerOptionService : IDesignerOptionService
+	public abstract class DesignerOptionService : IDesignerOptionService
 	{
-		
+		[MonoTODO ("implement own TypeConverter")]
+		[TypeConverter (typeof (TypeConverter))]
+		[Editor ("", "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public sealed class DesignerOptionCollection : IList, ICollection, IEnumerable
 		{
 			// PropertyDescriptor objects are taken directly from the value passed to the CreateOptionCollection method

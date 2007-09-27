@@ -30,7 +30,9 @@
 
 namespace System.ComponentModel.Design
 {
+#if !NET_2_0
 	[Serializable]
+#endif
         public delegate void DesignerEventHandler (object sender,
 						   DesignerEventArgs e);
 }

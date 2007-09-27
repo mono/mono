@@ -47,9 +47,11 @@ namespace System.ComponentModel.Design {
 			this.keyword = keyword;
 		}
 
-		[MonoTODO("Not Implemented")]
 		public HelpKeywordAttribute (Type t)
 		{
+			if (t == null)
+				throw new ArgumentNullException ("t");
+			this.keyword = t.FullName;
 		}
 
 		public override bool Equals (object other)

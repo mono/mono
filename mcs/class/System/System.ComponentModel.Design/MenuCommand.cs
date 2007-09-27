@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
@@ -44,6 +45,9 @@ namespace System.ComponentModel.Design
 		private bool enabled = true;
 		private bool issupported = true;
 		private bool visible = true;
+#if NET_2_0
+		private Hashtable properties;
+#endif
 
 		public MenuCommand (EventHandler handler, CommandID command)
 		{
@@ -90,6 +94,16 @@ namespace System.ComponentModel.Design
 				return 3;
 			}		
 		}
+
+#if NET_2_0
+		public virtual IDictionary Properties {
+			get {
+				if (properties == null)
+					properties = new Hashtable ();
+				return properties;
+			}
+		}
+#endif
 
 		public virtual bool Supported {
 			get {

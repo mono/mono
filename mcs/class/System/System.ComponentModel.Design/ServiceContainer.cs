@@ -70,7 +70,12 @@ namespace System.ComponentModel.Design
 			AddService (serviceType, callback, false);
 		}
 
-		public void AddService (Type serviceType, 
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void AddService (Type serviceType, 
 					object serviceInstance,
 					bool promote)
 		{
@@ -85,7 +90,12 @@ namespace System.ComponentModel.Design
 			services.Add (serviceType, serviceInstance);
 		}
 
-		public void AddService (Type serviceType,
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void AddService (Type serviceType,
 					ServiceCreatorCallback callback,
 					bool promote)
 		{
@@ -120,7 +130,12 @@ namespace System.ComponentModel.Design
 				services.Remove (serviceType);
 		}
 
-		public object GetService (Type serviceType)
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		object GetService (Type serviceType)
 		{
 			object result = services[serviceType];
 			if (result == null && parentProvider != null){
@@ -137,7 +152,11 @@ namespace System.ComponentModel.Design
 			return result;
 		}
 
-#if NET_2_0		
+#if NET_2_0
+		protected virtual Type [] DefaultServices {
+			get { return new Type [] { typeof (IServiceContainer), typeof (ServiceContainer)}; }
+		}
+
 		public void Dispose ()
 		{
 			this.Dispose (true);
@@ -159,11 +178,6 @@ namespace System.ComponentModel.Design
 				}
 				_disposed = true;
 			}
-		}
-
-		~ServiceContainer ()
-		{
-			Dispose (false);
 		}
 #endif
 		

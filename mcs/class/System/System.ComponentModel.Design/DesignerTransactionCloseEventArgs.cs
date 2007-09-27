@@ -47,6 +47,9 @@ namespace System.ComponentModel.Design
 			last_transaction = lastTransaction;
 		}
 		
+#if NET_2_0
+		[Obsolete ("Use another constructor that indicates lastTransaction")]
+#endif
 		public DesignerTransactionCloseEventArgs (bool commit) : this (commit, false)
 		{
 		}

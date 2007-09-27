@@ -37,8 +37,10 @@ namespace System.ComponentModel.Design
 	[ComVisible(true)]
 	public class DesignerVerb : MenuCommand
 	{
-
+		private string text;
+#if NET_2_0
 		private string description;
+#endif
 
 		public DesignerVerb (string text, EventHandler handler) 
 			: this (text, handler, StandardCommands.VerbFirst)
@@ -47,18 +49,23 @@ namespace System.ComponentModel.Design
 
 		public DesignerVerb (string text, EventHandler handler, CommandID startCommandID) 
 			: base (handler, startCommandID) {
-			this.description = text;
+			this.text = text;
 		}
 
 		public string Text {
-			get {
-				return this.description;
-			}
+			get { return text; }
 		}
+
+#if NET_2_0
+		public string Description {
+			get { return description; }
+			set { description = value; }
+		}
+#endif
 
 		public override string ToString()
 		{
-			return string.Concat (description, base.ToString ());
+			return string.Concat (text, " : ", base.ToString ());
 		}
 	}	
 }

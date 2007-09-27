@@ -1,3 +1,22 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ITypeDiscoveryService.cs : new.
+	* DesignerTransactionCloseEventArgs.cs : added [Obsolete].
+	* DesignerVerb.cs : added Description. ToString() contains " : ".
+	* StandardCommands.cs : added DocumentOutline and ViewCode.
+	* HelpKeywordAttribute.cs : implemented .ctor(Type).
+	* ComponentChangedEventHandler.cs, ComponentRenameEventHandler.cs,
+	  ActiveDesignerEventHandler.cs, HelpKeywordType.cs,
+	  DesignerEventHandler.cs, ComponentEventHandler.cs,
+	  DesignerTransactionCloseEventHandler.cs, HelpContextType.cs
+	  ComponentChangingEventHandler.cs : [Serializable] is extra in 2.0.
+	* ServiceContainer.cs : some members became virtual in 2.0.
+	  Removed finalizer. Added DefaultServices.
+	* DesignerOptionService.cs : it is abstract. Added attributes.
+	* CheckoutException.cs : added more 2.0 constructors.
+	* MenuCommand.cs : added Properties property.
+	* DesignerTransaction.cs : Fixed .ctor() (public->protected)
+
 2007-08-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DefaultSerializationProviderAttribute.cs: implemented.
