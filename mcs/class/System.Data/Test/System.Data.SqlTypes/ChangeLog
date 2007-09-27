@@ -1,3 +1,10 @@
+2007-09-27  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlStringTest.cs (ReadWriteXmlTest): Change the root node of the
+	test xml from <SqlString> to <string>
+
+	* SqlCharsTest.cs (ReadWriteXmlTest): Ditto.
+	
 2007-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlInt16Test.cs (ReadWriteXmlTestInternal, ReadWriteXmlTest):

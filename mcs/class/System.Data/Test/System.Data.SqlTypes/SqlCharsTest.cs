@@ -246,8 +246,8 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ReadWriteXmlTest ()
 		{
-			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><SqlString>This is a test string</SqlString>";
-			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><SqlString>a</SqlString>";
+			string xml1 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><string>This is a test string</string>";
+			string xml2 = "<?xml version=\"1.0\" encoding=\"utf-16\"?><string>a</string>";
 			string strtest1 = "This is a test string";
 			char strtest2 = 'a';
 
