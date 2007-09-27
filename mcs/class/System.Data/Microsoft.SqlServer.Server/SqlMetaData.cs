@@ -49,7 +49,8 @@ namespace Microsoft.SqlServer.Server {
 		string name;
 		byte precision = 10;
 		byte scale = 0;
-		string schemaName = null;
+		string owningSchema = null;
+		string objectName = null;
 		SqlDbType sqlDbType = SqlDbType.NVarChar;
 		DbType dbType = DbType.String;
 		Type type = typeof (string);
@@ -360,10 +361,9 @@ namespace Microsoft.SqlServer.Server {
 			this.sqlDbType = sqlDbType;
 		}
 
-		[MonoTODO]
 		public SqlMetaData (string name, SqlDbType sqlDbType, string database, string owningSchema, string objectName)
 		{
-			if (name == null)
+			if ((name == null || objectName == null) && database != null && owningSchema != null)
 				throw new ArgumentNullException ("name can not be null");
 			switch (sqlDbType) {
 			case SqlDbType.Xml:
@@ -381,9 +381,8 @@ namespace Microsoft.SqlServer.Server {
 			this.name = name;
 			this.sqlDbType = sqlDbType;
 			databaseName = database;
-			schemaName = owningSchema;
-			// FIXME: Implement objectName
-			throw new NotImplementedException ();
+			this.owningSchema = owningSchema;
+			this.objectName = objectName;
 		}
 
 		public SqlMetaData (string name, SqlDbType sqlDbType, long maxLength, byte precision,
@@ -612,12 +611,9 @@ namespace Microsoft.SqlServer.Server {
 			get { return compareOptions; }
 		}
 
-	  /*
-		[MonoTODO]
 		public DbType DbType {
-			get { return ; }
+			get { return dbType; }
 		}
-	  */
 
 		public long LocaleId {
 			get { return localeId; }
@@ -645,6 +641,18 @@ namespace Microsoft.SqlServer.Server {
 
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
+		}
+
+		public string XmlSchemaCollectionDatabase {
+			get { return databaseName; }
+		}
+
+		public string XmlSchemaCollectionName {
+			get { return objectName; }
+		}
+
+		public string XmlSchemaCollectionOwningSchema {
+			get { return owningSchema; }
 		}
 
 		[MonoTODO]
