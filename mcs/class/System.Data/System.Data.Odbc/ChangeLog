@@ -1,3 +1,9 @@
+2007-09-27  Nagappan A <anagappan@novell.com> 
+
+	* OdbcTransaction.cs: AutoCommit and BeginTransaction fix. Thanks to
+	  Mads Bondo Dydensborg <mbd@dbc.dk> and Amc <amc1999@gmail.com> for
+	  providing this patch.
+
 2007-09-25  Nagappan A  <anagappan@novell.com>
 
 	* OdbcParameter.cs (ResetOdbcType, ResetDbType): Implemented

@@ -51,9 +51,7 @@ namespace System.Data.Odbc
 		internal OdbcTransaction(OdbcConnection conn, IsolationLevel isolationlevel)
 		{
 			// Set Auto-commit (102) to false
-			OdbcReturn ret=libodbc.SQLSetConnectAttr(conn.hDbc, OdbcConnectionAttribute.AutoCommit, IntPtr.Zero, 0); 
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLSetConnectAttr",OdbcHandleType.Dbc,conn.hDbc));
+			SetAutoCommit(conn, false);
 			// Handle isolation level
 			int lev=0;
 			switch (isolationlevel)
@@ -76,11 +74,23 @@ namespace System.Data.Odbc
 				default:
 					throw new NotSupportedException();
 			}
-			libodbc.SQLSetConnectAttr(conn.hDbc, OdbcConnectionAttribute.TransactionIsolation, (IntPtr) lev, 0);
+			// mbd: Getting the return code of the second call to SQLSetConnectAttr is missing from original code!
+			OdbcReturn ret = libodbc.SQLSetConnectAttr(conn.hDbc, OdbcConnectionAttribute.TransactionIsolation, (IntPtr) lev, 0);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLSetConnectAttr",OdbcHandleType.Dbc,conn.hDbc));
 			this.isolationlevel=isolationlevel;
 			connection=conn;
+		}
+        
+		// Set Auto-commit (102) connection attribute
+		// [MonoTODO]: nice to have before svn: define libodbc.SQL_IS_UINTEGER = -5
+		private static void SetAutoCommit(OdbcConnection conn, bool isAuto)
+		{
+			OdbcReturn ret=libodbc.SQLSetConnectAttr(
+				conn.hDbc, OdbcConnectionAttribute.AutoCommit, (IntPtr)(isAuto ? 1 : 0), -5
+                ); 
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLSetConnectAttr",OdbcHandleType.Dbc,conn.hDbc));
 		}
 
 		#region Implementation of IDisposable
@@ -117,8 +127,9 @@ namespace System.Data.Odbc
 			if (connection.transaction==this)
 			{
 				OdbcReturn ret=libodbc.SQLEndTran((short) OdbcHandleType.Dbc, connection.hDbc, 0);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLEndTran",OdbcHandleType.Dbc,connection.hDbc));
+				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
+					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
+				SetAutoCommit(connection, true);    // restore default auto-commit
 				connection.transaction=null;
 			}
 			else
@@ -136,6 +147,7 @@ namespace System.Data.Odbc
 				OdbcReturn ret=libodbc.SQLEndTran((short) OdbcHandleType.Dbc, connection.hDbc, 1);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLEndTran",OdbcHandleType.Dbc,connection.hDbc));
+					SetAutoCommit(connection, true);    // restore default auto-commit
 				connection.transaction=null;
 			}
 			else
