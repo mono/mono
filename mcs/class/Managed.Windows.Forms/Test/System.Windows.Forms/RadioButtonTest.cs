@@ -64,6 +64,25 @@ namespace MonoTests.System.Windows.Forms
 			RadioButton rButton1 = new RadioButton ();
 			Assert.AreEqual ("System.Windows.Forms.RadioButton, Checked: False" , rButton1.ToString (), "#9");
 		}
+
+#if NET_2_0
+		[Test]
+		public void AutoSizeText ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			RadioButton rb = new RadioButton ();
+			rb.AutoSize = true;
+			rb.Width = 14;
+			f.Controls.Add (rb);
+			
+			rb.Text = "Some text that is surely longer than 100 pixels.";
+			
+			if (rb.Width < 100)
+				Assert.Fail ("RadioButton did not autosize, actual: {0}", rb.Width);
+		}
+#endif
 	}
 	
 	[TestFixture]

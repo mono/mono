@@ -1,3 +1,7 @@
+2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* RadioButtonTest.cs: Added test for bug #328672.
+
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewTest.cs: Added test for bug #325979. Code formatting.
