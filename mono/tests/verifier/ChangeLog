@@ -1,3 +1,9 @@
+2007-09-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_load_indirect_test.sh: added, generate tests for ldind.X.
+	* make_tests.sh: added the new tests for ldind.X and new tests for stloc/starg using 
+	native int and int32.
+
 2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_load_addr.il: Tests for valid uses of ldarga and ldloca
