@@ -41,7 +41,8 @@ namespace System.Web.UI
 	public abstract class ExtenderControl : Control, IExtenderControl
 	{
 		ScriptManager _scriptManager;
-
+		string _targetControlID;
+		
 		protected ExtenderControl () { }
 
 		[DefaultValue ("")]
@@ -49,14 +50,11 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public string TargetControlID {
 			get {
-				object o = ViewState ["TargetControlID"];
-				if (o == null)
+				if (_targetControlID == null)
 					return String.Empty;
-				return (string) o;
+				return _targetControlID;
 			}
-			set {
-				ViewState ["TargetControlID"] = value;
-			}
+			set { _targetControlID = value; }
 		}
 
 		[Browsable (false)]
