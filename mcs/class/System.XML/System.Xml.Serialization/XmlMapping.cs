@@ -59,6 +59,12 @@ namespace System.Xml.Serialization
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public string XsdElementName
+		{
+			get { return _elementName; }
+		}
+
 		public string ElementName
 		{
 			get { return _elementName; }

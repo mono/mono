@@ -756,16 +756,26 @@ namespace System.Xml.Serialization
 
 		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable)
 		{
+			WriteSerializable (serializable, name, ns, isNullable, true);
+		}
+
+#if NET_2_0
+		protected
+#endif
+		void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable, bool wrapped)
+		{
 			if (serializable == null)
 			{
-				if (isNullable) WriteNullTagLiteral (name, ns);
+				if (isNullable && wrapped) WriteNullTagLiteral (name, ns);
 				return;
 			}
 			else
 			{
-				Writer.WriteStartElement (name, ns);
+				if (wrapped)
+					Writer.WriteStartElement (name, ns);
 				serializable.WriteXml (Writer);
-				Writer.WriteEndElement ();
+				if (wrapped)
+					Writer.WriteEndElement ();
 			}
 		}
 
@@ -796,6 +806,20 @@ namespace System.Xml.Serialization
 		}
 
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
+		{
+			WriteStartElement (name, ns, o, writePrefixed, namespaces);
+		}
+
+#if NET_2_0
+		protected void WriteStartElement (string name, string ns, Object o, bool writePrefixed, XmlSerializerNamespaces xmlns)
+		{
+			if (xmlns == null)
+				throw new ArgumentNullException ("xmlns");
+			WriteStartElement (name, ns, o, writePrefixed, xmlns.ToArray ());
+		}
+#endif
+
+		void WriteStartElement (string name, string ns, object o, bool writePrefixed, ICollection namespaces)
 		{
 			if (o != null)
 			{
@@ -843,14 +867,6 @@ namespace System.Xml.Serialization
 				topLevelElement = false;
 			}
 		}
-
-#if NET_2_0
-		[MonoNotSupported("")]
-		protected void WriteStartElement (string name, string ns, Object o, bool writePrefixed, XmlSerializerNamespaces xmlns)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
@@ -931,16 +947,17 @@ namespace System.Xml.Serialization
 		
 #if NET_2_0
 
-		[MonoTODO]
 		protected Exception CreateInvalidAnyTypeException (object o)
 		{
-			throw new NotImplementedException ();
+			if (o == null)
+				return new InvalidOperationException ("null is invalid as anyType in XmlSerializer");
+			else
+				return CreateInvalidAnyTypeException (o.GetType ());
 		}
 		
-		[MonoTODO]
 		protected Exception CreateInvalidAnyTypeException (Type t)
 		{
-			throw new NotImplementedException ();
+			return new InvalidOperationException (String.Format ("An object of type '{0}' is invalid as anyType in XmlSerializer", t));
 		}
 
 		protected Exception CreateInvalidEnumValueException (object value, string typeName)
@@ -962,12 +979,6 @@ namespace System.Xml.Serialization
 		
 		[MonoTODO]
 		protected static Assembly ResolveDynamicAssembly (string assemblyFullName)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected void WriteSerializable (IXmlSerializable serializable, string name, string ns, bool isNullable, bool any)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,3 +1,8 @@
+2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlMapping.cs : added XsdElementName.
+	* XmlSerializationWriter.cs : some more implementation.
+
 2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTypeMapping.cs : Namespace and XmlTypeNamespace could be
