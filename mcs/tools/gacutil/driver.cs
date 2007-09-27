@@ -356,7 +356,13 @@ namespace Mono.Tools {
 				if (package != null) {
 					string link_dir = Path.Combine (libdir, package);
 					string link = Path.Combine (link_dir, (string) asm_info ["assembly"] + ".dll");
-					File.Delete (link);
+					try { 
+						File.Delete (link);
+					} catch {
+						// The file might not exist, happens with
+						// the debugger on make uninstall
+					}
+					
 					if (Directory.GetFiles (link_dir).Length == 0) {
 						WriteLine ("Cleaning package directory, it is empty.");
 						try {
