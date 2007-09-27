@@ -1,3 +1,8 @@
+2007-09-27  Nagappan A <anagappan@novell.com> 
+
+	* DataRelationCollection.cs: Added LAME spec comment as there is no
+	  relevant event. Removed MonoTODO too.
+
 2007-09-26  Nagappan A <anagappan@novell.com> 
 
 	* DataView.cs (ToTable): Added params keyword.

@@ -601,10 +601,11 @@ namespace System.Data {
 				CollectionChanged (this, ccevent);
 		}
 
-		[MonoTODO]
 		protected virtual void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
-			//throw new NotImplementedException ();
+			// LAME Spec: No associated events and it doesn't update CollectionChanged
+			// event too as specified in MSDN
+			// throw new NotImplementedException ();
 		}
 
 		public void Remove (DataRelation relation)
