@@ -44,7 +44,6 @@ namespace System.Data.SqlTypes
 {
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
-	[XmlRootAttribute ("string")]
 	public sealed class SqlChars : INullable, IXmlSerializable, ISerializable
 	{
 		#region Fields
@@ -213,14 +212,19 @@ namespace System.Data.SqlTypes
 
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
-			XmlQualifiedName qualifiedName = new XmlQualifiedName ("string", "http://www.w3.org/2001/XMLSchema");
-			return qualifiedName;
+			if (schemaSet != null && schemaSet.Count == 0) {
+				XmlSchema xs = new XmlSchema ();
+				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+				ct.Name = "string";
+				xs.Items.Add (ct);
+				schemaSet.Add (xs);
+			}
+			return new XmlQualifiedName ("string", "http://www.w3.org/2001/XMLSchema");
 		}
 		
-		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		void IXmlSerializable.ReadXml (XmlReader reader)

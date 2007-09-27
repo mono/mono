@@ -1,3 +1,11 @@
+2007-09-27  Veerapuram Varadhan <vvaradhan@novell.com> 
+
+	* SqlDecimal.cs, SqlInt32.cs, SqlChars.cs, SqlInt16.cs, SqlInt64.cs,
+	  SqlString.cs, SqlDouble.cs (GetXsdType, GetSchema): Removed the
+	  extra XmlRootAttribute and GetXsdType will return appropriate
+	  modified root attribute for the XML Serializer.  Implemented
+	  missing 2.0 API.
+
 2007-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlChars.cs (ReadXml, WriteXml): Implemented APIs.

@@ -42,7 +42,6 @@ namespace System.Data.SqlTypes
 #if NET_2_0
 	[SerializableAttribute]
 	[XmlSchemaProvider ("GetXsdType")]
-	[XmlRootAttribute ("short")]
 #endif
 	public struct SqlInt16 : INullable, IComparable
 #if NET_2_0
@@ -483,14 +482,19 @@ namespace System.Data.SqlTypes
 #if NET_2_0
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
-			XmlQualifiedName qualifiedName = new XmlQualifiedName ("short", "http://www.w3.org/2001/XMLSchema");
-			return qualifiedName;
+			if (schemaSet != null && schemaSet.Count == 0) {
+				XmlSchema xs = new XmlSchema ();
+				XmlSchemaComplexType ct = new XmlSchemaComplexType ();
+				ct.Name = "short";
+				xs.Items.Add (ct);
+				schemaSet.Add (xs);
+			}
+			return new XmlQualifiedName ("short", "http://www.w3.org/2001/XMLSchema");
 		}
 
-		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 	
 		void IXmlSerializable.ReadXml (XmlReader reader)
