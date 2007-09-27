@@ -272,6 +272,14 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		protected internal void OnPreRender (EventArgs e)
+		{
+			// Why override?
+			base.OnPreRender (e);
+		}
+#endif
+		
+#if NET_2_0
 		protected internal
 #else		
 		protected
@@ -282,7 +290,7 @@ namespace System.Web.UI.WebControls {
 		
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-			public event EventHandler Click
+		public event EventHandler Click
 		{
 			add {
 				Events.AddHandler (ClickEvent, value);

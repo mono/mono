@@ -1,3 +1,7 @@
+2007-09-27  Marek Habersack  <mhabersack@novell.com>
+
+	* Button.cs: added missing OnPreRender method.
+
 2007-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* WebControl.cs: added an internal method, BuildScriptAttribute,
