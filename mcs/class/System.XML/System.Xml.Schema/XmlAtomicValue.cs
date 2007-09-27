@@ -305,6 +305,11 @@ namespace System.Xml.Schema
 			throw new NotImplementedException ();
 		}
 
+		public override string ToString ()
+		{
+			return Value;
+		}
+
 		#endregion
 
 		#region Properties
