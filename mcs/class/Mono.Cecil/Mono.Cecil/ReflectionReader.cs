@@ -1084,9 +1084,26 @@ namespace Mono.Cecil {
 			return type;
 		}
 
+		static bool IsOdd (int i)
+		{
+			return (i & 1) == 1;
+		}
+
 		protected object GetConstant (uint pos, ElementType elemType)
 		{
+			if (elemType == ElementType.Class)
+				return null;
+
 			byte [] constant = m_root.Streams.BlobHeap.Read (pos);
+
+			if (elemType == ElementType.String) {
+				int length = constant.Length;
+				if (IsOdd (length))
+					length--;
+
+				return Encoding.Unicode.GetString (constant, 0, length);
+			}
+
 			BinaryReader br = new BinaryReader (new MemoryStream (constant));
 
 			switch (elemType) {
@@ -1114,10 +1131,6 @@ namespace Mono.Cecil {
 				return br.ReadSingle ();
 			case ElementType.R8 :
 				return br.ReadDouble ();
-			case ElementType.String :
-				byte [] bytes = br.ReadBytes (constant.Length);
-				string str = Encoding.Unicode.GetString (bytes, 0, bytes.Length);
-				return str;
 			case ElementType.Class :
 				return null;
 			default :

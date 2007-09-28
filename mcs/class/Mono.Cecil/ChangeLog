@@ -2,6 +2,10 @@
 
 	* Mono.Cecil/SecurityDeclarationReader.cs:
 		Adapt patch from Carlo Kok  <ck@remobjects.com>.
+		Properly read unicode string constants.
+
+	* Mono.Cecil/SecurityDeclarationReader.cs:
+		Adapt patch from Carlo Kok  <ck@remobjects.com>.
 		For some MS assemblies, the security declaration contains
 		one zero byte.
 
