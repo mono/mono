@@ -1,5 +1,9 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ByteViewer.cs : last one mile to finish 2.0 API (metadata wise).
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ExceptionCollection.cs, IComponentDesignerDebugService.cs,
 	  IComponentDesignerStateService.cs,
 	  MenuCommandsChangedEventArgs.cs,
