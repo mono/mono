@@ -1,3 +1,9 @@
+
+Fri Sep 28 17:19:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: when possible, do not duplicate the name of the methods
+	in the method builder and in the generated MonoMethod.
+
 2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
 	* verify.c: added support for type checking ldind_* opcodes.
 
