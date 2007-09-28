@@ -1,3 +1,11 @@
+2007-09-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpListenerRequest.cs: make sure 'method' is always stored in
+	upper case.
+	The DELETE method must not error out on missing Content-Length
+	header (this is the behavior of the MS.NET version of the
+	class). Fixes bug #323215.
+
 2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPAddress.cs, IPv6Address.cs : (ToString) output ScopeId.

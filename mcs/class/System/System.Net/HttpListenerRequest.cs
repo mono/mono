@@ -80,12 +80,11 @@ namespace System.Net {
 				return;
 			}
 
-			method = parts [0];
+			method = parts [0].ToUpperInvariant ();
 			foreach (char c in method){
 				int ic = (int) c;
 
 				if ((ic >= 'A' && ic <= 'Z') ||
-				    (ic >= 'a' && ic <= 'z') ||
 				    (ic > 32 && c < 127 && c != '(' && c != ')' && c != '<' &&
 				     c != '<' && c != '>' && c != '@' && c != ',' && c != ';' &&
 				     c != ':' && c != '\\' && c != '"' && c != '/' && c != '[' &&
@@ -173,7 +172,7 @@ namespace System.Net {
 
 			CreateQueryString (url.Query);
 
-			if (method == "GET" || method == "HEAD")
+			if (method == "GET" || method == "HEAD" || method == "DELETE")
 				return;
 
 			string t_encoding = null;
