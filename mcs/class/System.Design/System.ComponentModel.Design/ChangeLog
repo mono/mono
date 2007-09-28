@@ -1,5 +1,17 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ExceptionCollection.cs, IComponentDesignerDebugService.cs,
+	  IComponentDesignerStateService.cs,
+	  MenuCommandsChangedEventArgs.cs,
+	  MenuCommandsChangedEventHandler.cs,
+	  MenuCommandsChangedType.cs : more 2.0 impl.
+	* MenuCommandService.cs, UndoEngine.cs : more 2.0 stubs.
+	* DisplayMode.cs, InheritanceService.cs,
+	  LocalizationExtenderProvider.cs, ObjectSelectorEditor.cs:
+	  cosmetic 2.0 API fixes.
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DesignerActionUIStateChangeEventArgs.cs,
 	  DesignerActionUIStateChangeEventHandler.cs,
 	  DesignerActionUIStateChangeType.cs : more 2.0 impl.

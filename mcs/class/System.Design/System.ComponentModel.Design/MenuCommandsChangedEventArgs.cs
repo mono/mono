@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.Design.InheritanceService
+// System.ComponentModel.Design.MenuCommandsChangedEventArgs.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//      Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2007 Novell, Inc
 //
 
 //
@@ -27,58 +27,29 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System.Reflection;
+#if NET_2_0
 
 namespace System.ComponentModel.Design
 {
-	public class InheritanceService : IInheritanceService, IDisposable
+	[System.Runtime.InteropServices.ComVisible (true)]
+	public class MenuCommandsChangedEventArgs : EventArgs
 	{
-		[MonoTODO]
-		public InheritanceService()
+		MenuCommandsChangedType change_type;
+		MenuCommand command;
+
+		public MenuCommandsChangedEventArgs (MenuCommandsChangedType changeType, MenuCommand command)
 		{
+			this.change_type = changeType;
+			this.command = command;
 		}
 
-		[MonoTODO]
-		public void AddInheritedComponents (IComponent component,
-						    IContainer container)
-		{
-			throw new NotImplementedException();
+		public MenuCommandsChangedType ChangeType {
+			get { return change_type; }
 		}
 
-		[MonoTODO]
-		protected virtual void AddInheritedComponents (Type type,
-							       IComponent component,
-							       IContainer container)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		protected virtual void Dispose (bool disposing)
-		{
-			throw new NotImplementedException();
-		}
-#endif
-
-		[MonoTODO]
-		public InheritanceAttribute GetInheritanceAttribute (IComponent component)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		protected virtual bool IgnoreInheritedMember (MemberInfo member,
-							      IComponent component)
-		{
-			throw new NotImplementedException();
+		public MenuCommand Command {
+			get { return command; }
 		}
 	}
 }
+#endif

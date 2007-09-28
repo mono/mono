@@ -1,6 +1,14 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Design.dll.sources : more new types:
+	  IComponentDesignerStateService.cs, MenuCommandsChangedEventArgs.cs,
+	  MenuCommandsChangedType.cs, ExceptionCollection.cs,
+	  IComponentDesignerDebugService.cs, MenuCommandService.cs,
+	  UndoEngine.cs, MenuCommandsChangedEventHandler.cs.
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Design.dll.sources : more new types:
 	  DesignerActionUIService.cs, DesignerCommandSet.cs,
 	  DesignerActionUIStateChangeEventArgs.cs,
 	  DesignerActionUIStateChangeEventHandler.cs,

@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.Design.DisplayMode
+// System.ComponentModel.Design.IComponentDesignerDebugService.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//      Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2007 Novell, Inc
 //
 
 //
@@ -27,17 +27,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_2_0
+using System.Diagnostics;
 
 namespace System.ComponentModel.Design
 {
-#if !NET_2_0
-	[Serializable]
-#endif
-        public enum DisplayMode
+	public interface IComponentDesignerDebugService
 	{
-		Ansi = 2,
-		Auto = 4,
-		Hexdump = 1,
-		Unicode = 3
+		void Assert (bool condition, string message);
+		void Fail (string message);
+		void Trace (string message, string category);
+		int IndentLevel { get; set; }
+		TraceListenerCollection Listeners { get; }
 	}
 }
+#endif

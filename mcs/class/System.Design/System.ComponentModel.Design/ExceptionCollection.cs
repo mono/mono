@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.Design.InheritanceService
+// System.ComponentModel.Design.ExceptionCollection.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//      Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2007 Novell, Inc
 //
 
 //
@@ -27,58 +27,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System.Reflection;
+#if NET_2_0
+using System;
+using System.Collections;
+using System.Runtime.Serialization;
 
 namespace System.ComponentModel.Design
 {
-	public class InheritanceService : IInheritanceService, IDisposable
+	[Serializable]
+	public sealed class ExceptionCollection : Exception
 	{
+		ArrayList exceptions;
+
 		[MonoTODO]
-		public InheritanceService()
+		public ExceptionCollection (ArrayList exceptions)
 		{
+			this.exceptions = exceptions;
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void AddInheritedComponents (IComponent component,
-						    IContainer container)
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected virtual void AddInheritedComponents (Type type,
-							       IComponent component,
-							       IContainer container)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		protected virtual void Dispose (bool disposing)
-		{
-			throw new NotImplementedException();
-		}
-#endif
-
-		[MonoTODO]
-		public InheritanceAttribute GetInheritanceAttribute (IComponent component)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		protected virtual bool IgnoreInheritedMember (MemberInfo member,
-							      IComponent component)
-		{
-			throw new NotImplementedException();
+		public ArrayList Exceptions {
+			get { return exceptions; }
 		}
 	}
 }
+#endif

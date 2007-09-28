@@ -1,10 +1,10 @@
 //
-// System.ComponentModel.Design.DisplayMode
+// System.ComponentModel.Design.MenuCommandsChangedEventHandler.cs
 //
-// Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+// Author:
+//      Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2003 Martin Willemoes Hansen
+// Copyright (C) 2007 Novell, Inc
 //
 
 //
@@ -27,17 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_2_0
 
 namespace System.ComponentModel.Design
 {
-#if !NET_2_0
-	[Serializable]
-#endif
-        public enum DisplayMode
-	{
-		Ansi = 2,
-		Auto = 4,
-		Hexdump = 1,
-		Unicode = 3
-	}
+	[System.Runtime.InteropServices.ComVisible (true)]
+	public delegate void MenuCommandsChangedEventHandler (object sender, MenuCommandsChangedEventArgs e);
 }
+#endif
