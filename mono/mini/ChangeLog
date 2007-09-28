@@ -1,3 +1,9 @@
+2007-09-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Add `klass_image_offset',
+	`mono_method_klass_offset' and `mono_method_token_offset'.
+
 2007-09-20  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: First generics sharing implementation.  Can only share
