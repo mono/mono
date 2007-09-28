@@ -163,6 +163,23 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+#if NET_2_0
+		public class FooConverter<T> : TypeConverter
+		{
+		}
+
+		[TypeConverter (typeof (FooConverter<string>))]
+		public string FooProperty {
+			get { return ""; }
+		}
+
+		[Test]
+		public void TestGenericTypeConverterInstantiation ()
+		{
+			Assert.IsNotNull (GetType ().GetProperty ("FooProperty").GetCustomAttributes (false));
+		}
+#endif
+
 		[ExpectedException (typeof (NullReferenceException))]
 		public void GetConvertToException_DestinationType_Null ()
 		{
