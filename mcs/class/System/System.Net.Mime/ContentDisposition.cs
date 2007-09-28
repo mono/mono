@@ -212,19 +212,36 @@ namespace System.Net.Mime {
 			// the content-disposition header as in RFC 2183
 			// ex. attachment; filename=genome.jpeg; modification-date="Wed, 12 Feb 1997 16:29:51 -0500";
 			// the dates must be quoted and in RFC 822 format
+			//
+			// According to RFC 2183, the filename field value follows the definition
+			// given in RFC 1521, which is
+			//
+			//  value := token / quoted-string
+			//
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (DispositionType.ToLower ());
 			if (Parameters != null && Parameters.Count > 0) {
+				bool quote = false;
+				string key, value;
+				
 				foreach (DictionaryEntry pair in Parameters)
 				{
 					if (pair.Value != null && pair.Value.ToString ().Length > 0) {
 						sb.Append ("; ");
 						sb.Append (pair.Key);
 						sb.Append ("=");
-						if (pair.Key.ToString ().EndsWith ("date"))
+
+						key = pair.Key.ToString ();
+						value = pair.Value.ToString ();
+						if ((key == "filename" && value.IndexOf (' ') != -1) || key.EndsWith ("date"))
+							quote = true;
+						else
+							quote = false;
+						
+						if (quote)
 							sb.Append ("\"");
-						sb.Append (pair.Value);
-						if (pair.Key.ToString ().EndsWith ("date"))
+						sb.Append (value);
+						if (quote)
 							sb.Append ("\"");
 					}
 				}

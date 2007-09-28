@@ -1,3 +1,8 @@
+2007-09-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ContentDisposition.cs: if the file name contains spaces, enclose
+	it in quotes. Fixes bug #324084.
+
 2006-01-13  John Luke  <john.luke@gmail.com>
 
 	* ContentDisposition.cs: use String.Compare instead
