@@ -1,3 +1,14 @@
+2007-09-29  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: replace all the ocurrences of 'this' with
+	'webForm'. The reason for such change is that under certain
+	circumstances the function may be called on an object which is not
+	the original webForm to which the function was assigned. This
+	happens, for instance, in the AJAX Control Toolkit which wraps the
+	ValidatorGetValue function with its own version and calls the
+	original function on a Function object, so 'this' in that instance
+	becomes a 'function()' and not the original 'Window' object.
+
 2007-08-30 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebUIValidation_2.0.js:
