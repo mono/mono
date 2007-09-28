@@ -1,3 +1,8 @@
+2007-09-28  William Holmes  <billholmes54@gmail.com>
+
+	* DateTime.cs: Check for AssumeUniversal when parsing string.
+	 Fixes bug #324845
+
 2007-09-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Enum.cs: Use regular single quotes in exception message.

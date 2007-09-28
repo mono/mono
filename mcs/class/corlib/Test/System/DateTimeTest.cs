@@ -1775,6 +1775,25 @@ namespace MonoTests.System
 			Assert.AreEqual (0, date.Millisecond, "#7");
 		}
 
+#if NET_2_0
+		[Test]
+		public void ParseExact_Bug324845 ()
+		{
+			DateTime ctime = new DateTime (2007, 7, 23, 19, 19, 45);
+			ctime = ctime.ToUniversalTime ();
+			string instr = ctime.ToString ("yyyyMMddHHmmss");
+
+			DateTime t = DateTime.ParseExact (instr, "yyyyMMddHHmmss", null, DateTimeStyles.AssumeUniversal);
+			Assert.AreEqual (2007, t.Year);
+			Assert.AreEqual (7, t.Month);
+			Assert.AreEqual (23, t.Day);
+			Assert.AreEqual (19, t.Hour);
+			Assert.AreEqual (19, t.Minute);
+			Assert.AreEqual (45, t.Second);
+
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (FormatException))]
 		public void ParseExactIsExact()

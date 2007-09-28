@@ -1184,6 +1184,10 @@ namespace System
 			}
 			else if (!exact && CultureInfo.InvariantCulture.CompareInfo.IndexOf (format, "GMT", CompareOptions.Ordinal) >= 0)
 				useutc = true;
+#if NET_2_0
+			if ((style & DateTimeStyles.AssumeUniversal) != 0)
+				useutc = true;
+#endif
 
 			result = new DateTime (0);
 			if (format == null)
