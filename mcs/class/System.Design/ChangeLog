@@ -1,6 +1,16 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Design.dll.sources : more new types:
+	  DataSourceDescriptor.cs, DataSourceDescriptorCollection.cs,
+	  DesignerDataConnection.cs in System.ComponentModel.Design.Data,
+	  and ClientScriptItem.cs, ClientScriptItemCollection.cs,
+	  ConnectionStringEditor.cs, ContainerControlDesigner.cs,
+	  DesignerAutoFormat.cs, DesignerAutoFormatCollection.cs,
+	  DesignerAutoFormatStyle.cs in System.Web.UI.Design.
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Design.dll.sources : more new types:
 	  IComponentDesignerStateService.cs, MenuCommandsChangedEventArgs.cs,
 	  MenuCommandsChangedType.cs, ExceptionCollection.cs,
 	  IComponentDesignerDebugService.cs, MenuCommandService.cs,

@@ -1,0 +1,5 @@
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSourceDescriptor.cs,
+	  DataSourceDescriptorCollection.cs,
+	  DesignerDataConnection.cs : new stubs.

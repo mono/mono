@@ -47,6 +47,12 @@ namespace System.Web.UI.Design
 		
 		[MonoNotSupported ("")]
 		public virtual void SetEditableDesignerRegionContent (EditableDesignerRegion region, string content) { throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		public virtual string GetPersistenceContent ()
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 		[MonoTODO]
 		protected virtual string GetEmptyDesignTimeHtml () { throw new NotImplementedException (); }
@@ -91,12 +97,48 @@ namespace System.Web.UI.Design
 
 #if NET_2_0
 		[MonoNotSupported ("")]
+		public override DesignerActionListCollection ActionLists {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoNotSupported ("")]
+		public virtual DesignerAutoFormatCollection AutoFormats {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoNotSupported ("")]
+		protected virtual bool DataBindingsEnabled {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoNotSupported ("")]
 		protected ControlDesignerState DesignerState {
 			[MonoNotSupported ("")]
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoNotSupported ("")]
+		protected internal virtual bool HidePropertiesInTemplateMode {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoNotSupported ("")]
+		public bool InTemplateMode {
+			get { throw new NotImplementedException (); }
+		}
+
+// too much more work is needed
+//		[MonoNotSupported ("")]
+//		protected WebFormsRootDesigner RootDesigner {
+//			get { throw new NotImplementedException (); }
+//		}
+
+//		[MonoNotSupported ("")]
+//		protected IControlDesignerTag Tag {
+//			get { throw new NotImplementedException (); }
+//		}
 
 		[MonoNotSupported ("")]
 		protected void SetViewFlags (ViewFlags viewFlags, bool setFlag)

@@ -57,11 +57,13 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_0
 		[MonoTODO]
 		public override string GetPersistInnerHtml ()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public virtual string GetTemplateContainerDataItemProperty (string templateName)
 		{
@@ -120,11 +122,13 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_0
 		[MonoTODO]
 		protected override void PreFilterProperties (IDictionary properties)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
 		protected void SaveActiveTemplateEditingFrame ()
@@ -150,11 +154,13 @@ namespace System.Web.UI.Design
 			}
 		}
 
-		protected virtual bool HidePropertiesInTemplateMode {
+#if !NET_2_0
+		protected internal virtual bool HidePropertiesInTemplateMode {
 			get {
 				return true;
 			}
 		}
+#endif
 
 		public bool InTemplateMode {
 			get {
