@@ -1131,8 +1131,6 @@ namespace Mono.Cecil {
 				return br.ReadSingle ();
 			case ElementType.R8 :
 				return br.ReadDouble ();
-			case ElementType.Class :
-				return null;
 			default :
 				throw new ReflectionException ("Non valid element in constant table");
 			}
