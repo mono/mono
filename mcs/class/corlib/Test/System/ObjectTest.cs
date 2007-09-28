@@ -117,7 +117,7 @@ public class ObjectTest : TestCase
 	{
 		Foo<Object> foo = new Foo<Object> ();
 		AssertEquals ("Bad ToString of generic instance",
-			"MonoTests.System.Foo[System.Object]", foo.ToString ());
+			"MonoTests.System.Foo`1[System.Object]", foo.ToString ());
 	}
 #endif
 }
