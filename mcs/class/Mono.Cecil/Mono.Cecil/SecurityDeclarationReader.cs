@@ -62,13 +62,19 @@ namespace Mono.Cecil {
 			return FromByteArray (action, declaration, false);
 		}
 
+		static bool IsEmptyDeclaration (byte [] declaration)
+		{
+			return declaration == null || declaration.Length == 0 ||
+				(declaration.Length == 1 && declaration [0] == 0);
+		}
+
 		public SecurityDeclaration FromByteArray (SecurityAction action, byte [] declaration, bool resolve)
 		{
 			SecurityDeclaration dec = new SecurityDeclaration (action);
 #if !CF_1_0 && !CF_2_0
 			dec.PermissionSet = new PermissionSet (SSP.PermissionState.None);
 
-			if (declaration == null || declaration.Length == 0)
+			if (IsEmptyDeclaration (declaration))
 				return dec;
 
 			if (declaration[0] == 0x2e) {

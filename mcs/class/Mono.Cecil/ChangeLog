@@ -1,3 +1,10 @@
+2007-09-28  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/SecurityDeclarationReader.cs:
+		Adapt patch from Carlo Kok  <ck@remobjects.com>.
+		For some MS assemblies, the security declaration contains
+		one zero byte.
+
 2007-09-24  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ModuleDefinition.cs: after a FullLoad, the symbol
