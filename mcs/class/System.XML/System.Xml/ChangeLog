@@ -1,3 +1,9 @@
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : it is now documented that WriteNode(XPathNavigator)
+	  ignores attributes and namespace decls, so do that.
+	* XQueryConvert.cs : removed extra stuff that are not in use.
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : implemented WriteValue(object) based on

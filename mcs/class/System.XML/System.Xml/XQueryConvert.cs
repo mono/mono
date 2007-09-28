@@ -249,19 +249,6 @@ namespace System.Xml
 			return Convert.ToInt64 (value);
 		}
 
-		[MonoTODO] // what if value was negative?
-		public static decimal DecimalToNonNegativeInteger (decimal value)
-		{
-			// MS has a bug that does not reject negative values.
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO] // what if value was positive?
-		public static decimal DecimalToNonPositiveInteger (decimal value)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public static string DecimalToString (decimal value)
 		{
 			return XmlConvert.ToString (value);
@@ -290,19 +277,6 @@ namespace System.Xml
 		public static long DoubleToInteger (double value)
 		{
 			return Convert.ToInt64 (value);
-		}
-
-		[MonoTODO] // what if value was negative?
-		public static decimal DoubleToNonNegativeInteger (double value)
-		{
-			// MS has a bug that does not reject negative values.
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO] // what if value was positive?
-		public static decimal DoubleToNonPositiveInteger (double value)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public static string DoubleToString (double value)
@@ -349,19 +323,6 @@ namespace System.Xml
 		public static long FloatToInteger (float value)
 		{
 			return Convert.ToInt64 (value);
-		}
-
-		[MonoTODO] // what if value was negative?
-		public static decimal FloatToNonNegativeInteger (float value)
-		{
-			// MS has a bug that does not reject negative values.
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO] // what if value was positive?
-		public static decimal FloatToNonPositiveInteger (float value)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public static string FloatToString (float value)

@@ -530,6 +530,25 @@ namespace MonoTests.System.Xml
 			w.Close ();
 			AssertType.AreEqual ("<A xmlns=\"urn:x\"><B xmlns=\"urn:y\" /></A>", sw.ToString ());
 		}
+
+		[Test]
+		public void WriteNodeXPathNavigatorAttribute ()
+		{
+			string xml = "<!DOCTYPE root [<!ELEMENT root EMPTY> <!ATTLIST root implicit NMTOKEN 'nam'>]><root attr='val' />";
+			XPathNavigator nav = new XPathDocument (new StringReader (xml)).CreateNavigator ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			StringWriter sw = new StringWriter ();
+			XmlWriter w = XmlWriter.Create (sw, s);
+			w.WriteStartElement ("hoge");
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstAttribute ();
+			w.WriteNode (nav, false);
+			nav.MoveToNextAttribute ();
+			w.WriteNode (nav, false);
+			w.Close ();
+			AssertType.AreEqual ("<hoge />", sw.ToString ());
+		}
 #endif
 
 	}

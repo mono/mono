@@ -393,27 +393,16 @@ namespace System.Xml
 		}
 
 #if NET_2_0 && !NET_2_1
-		[MonoTODO] // FIXME: test defattr handling
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)
 				throw new ArgumentNullException ("navigator");
 			switch (navigator.NodeType) {
 			case XPathNodeType.Attribute:
-				if (defattr || navigator.SchemaInfo == null ||
-				    !navigator.SchemaInfo.IsDefault)
-					WriteAttributeString (navigator.Prefix, 
-						navigator.LocalName,
-						navigator.NamespaceURI,
-						navigator.Value);
+				// no operation
 				break;
 			case XPathNodeType.Namespace:
-				if (defattr || navigator.SchemaInfo == null ||
-				    !navigator.SchemaInfo.IsDefault)
-					WriteAttributeString (navigator.Prefix, 
-						navigator.LocalName == String.Empty ? "xmlns" : navigator.LocalName,
-						"http://www.w3.org/2000/xmlns/",
-						navigator.Value);
+				// no operation
 				break;
 			case XPathNodeType.Text:
 				WriteString (navigator.Value);
@@ -442,13 +431,19 @@ namespace System.Xml
 				WriteStartElement (navigator.Prefix, navigator.LocalName, navigator.NamespaceURI);
 				if (navigator.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
 					do {
-						WriteNode (navigator, defattr);
+						if (defattr || navigator.SchemaInfo == null || navigator.SchemaInfo.IsDefault)
+							WriteAttributeString (navigator.Prefix,
+								navigator.LocalName == String.Empty ? "xmlns" : navigator.LocalName,
+								"http://www.w3.org/2000/xmlns/",
+								navigator.Value);
 					} while (navigator.MoveToNextNamespace (XPathNamespaceScope.Local));
 					navigator.MoveToParent ();
 				}
 				if (navigator.MoveToFirstAttribute ()) {
 					do {
-						WriteNode (navigator, defattr);
+						if (defattr || navigator.SchemaInfo == null || navigator.SchemaInfo.IsDefault)
+							WriteAttributeString (navigator.Prefix, navigator.LocalName, navigator.NamespaceURI, navigator.Value);
+
 					} while (navigator.MoveToNextAttribute ());
 					navigator.MoveToParent ();
 				}

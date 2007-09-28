@@ -1,3 +1,7 @@
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterTests.cs : added WriteNodeXPathNavigatorAttribute().
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriterTests.cs : added test for WriteValue(object).
