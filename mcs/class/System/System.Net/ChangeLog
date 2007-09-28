@@ -5,6 +5,9 @@
 	The DELETE method must not error out on missing Content-Length
 	header (this is the behavior of the MS.NET version of the
 	class). Fixes bug #323215.
+	HasEntityBody should return false when method is GET/HEAD,
+	content_length is less than or equal to zero or the request is
+	chunked. Fixes bug #325296
 
 2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
 

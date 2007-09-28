@@ -331,7 +331,7 @@ namespace System.Net {
 		}
 
 		public bool HasEntityBody {
-			get { return (method == "GET" || method == "HEAD" || content_length <= 0 || is_chunked); }
+			get { return !(method == "GET" || method == "HEAD" || content_length <= 0 || is_chunked); }
 		}
 
 		public NameValueCollection Headers {
