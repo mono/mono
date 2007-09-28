@@ -1,5 +1,9 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ComponentActionsType.cs : fixed order.
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DesignerActionService.cs : new stub.
 	* ComponentActionsType.cs,
 	  DesignerActionListsChangedType.cs,
