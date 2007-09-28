@@ -1,3 +1,7 @@
+2007-09-28  Jb Evain  <jbevain@novell.com>
+
+	* ObjectTest.cs: add test for bug #329419
+
 2007-09-28  William Holmes  <billholmes54@gmail.com>
 
 	* DateTimeTest.cs: Adding test for bug #324845

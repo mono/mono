@@ -110,5 +110,15 @@ public class ObjectTest : TestCase
 		AssertEquals("All Objects should have same string rep",
 			     x.ToString(), y.ToString());
 	}
+#if NET_2_0
+	class Foo<T> {}
+
+	public void TestToStringOnGenericInstances ()
+	{
+		Foo<Object> foo = new Foo<Object> ();
+		AssertEquals ("Bad ToString of generic instance",
+			"MonoTests.System.Foo[System.Object]", foo.ToString ());
+	}
+#endif
 }
 }
