@@ -1,5 +1,13 @@
 2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: When calling ExpandAll, set SelectedNode to the top
+	node in the bottom area (as .Net does). This is done to preserve the
+	scroll position when ExpandAll is called before handle is created for
+	the 1.1 profile (bottom area, as opposed to top area in 2.0).
+	Fixes #324103.
+
+2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: When calling ExpandAll, don't move the scroll to the 
 	bottom area if we are in fact not using the vertical scroll bar.
 	Fixes #324824.

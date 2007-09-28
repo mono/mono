@@ -770,6 +770,7 @@ namespace System.Windows.Forms {
 				RecalculateVisibleOrder (root_node);
 				UpdateScrollBars (true);
 				SetTop (Nodes [Nodes.Count - 1]);
+				SelectedNode = Nodes [Nodes.Count - 1];
 			}
 		}
 
