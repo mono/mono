@@ -1,5 +1,13 @@
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Design.dll.sources : more new types:
+	  DesignerActionUIService.cs, DesignerCommandSet.cs,
+	  DesignerActionUIStateChangeEventArgs.cs,
+	  DesignerActionUIStateChangeEventHandler.cs,
+	  DesignerActionUIStateChangeType.cs.
+
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : removed NO_TEST.
 	* System.Design.dll.sources : added DesignerActionService.cs,
 	  ComponentActionsType.cs, DesignerActionListsChangedType.cs,

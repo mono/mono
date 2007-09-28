@@ -23,6 +23,11 @@ System.ComponentModel.Design/DesignerActionMethodItem.cs
 System.ComponentModel.Design/DesignerActionPropertyItem.cs
 System.ComponentModel.Design/DesignerActionService.cs
 System.ComponentModel.Design/DesignerActionTextItem.cs
+System.ComponentModel.Design/DesignerActionUIService.cs
+System.ComponentModel.Design/DesignerActionUIStateChangeEventArgs.cs
+System.ComponentModel.Design/DesignerActionUIStateChangeEventHandler.cs
+System.ComponentModel.Design/DesignerActionUIStateChangeType.cs
+System.ComponentModel.Design/DesignerCommandSet.cs
 System.ComponentModel.Design/DesignerEventService.cs
 System.ComponentModel.Design/DesignerHost.cs
 System.ComponentModel.Design/DesignModeNestedContainer.cs
