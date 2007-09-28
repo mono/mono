@@ -3,8 +3,9 @@
 //
 // Authors:
 //      Miguel de Icaza (miguel@novell.com)
+//      Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright 2006 Novell, Inc
+// Copyright 2006-2007 Novell, Inc
 //
 
 //
@@ -35,9 +36,17 @@ namespace System.ComponentModel.Design
 {
 	public abstract class DesignerActionItem {
 		bool allow_associate;
-		internal string category;
-		internal string description;
-		internal string display_name;
+		string category;
+		string description;
+		string display_name;
+		IDictionary properties;
+
+		public DesignerActionItem (string displayName, string category, string description)
+		{
+			this.display_name = displayName;
+			this.description = description;
+			this.category = category;
+		}
 
 		public bool AllowAssociate {
 			get {
@@ -69,7 +78,9 @@ namespace System.ComponentModel.Design
 
 		public IDictionary Properties {
 			get {
-				throw new NotImplementedException ();
+				if (properties == null)
+					properties = new Hashtable ();
+				return properties;
 			}
 		}
 		

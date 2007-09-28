@@ -8,6 +8,7 @@ System.ComponentModel.Design/ArrayEditor.cs
 System.ComponentModel.Design/BinaryEditor.cs
 System.ComponentModel.Design/ByteViewer.cs
 System.ComponentModel.Design/CollectionEditor.cs
+System.ComponentModel.Design/ComponentActionsType.cs
 System.ComponentModel.Design/ComponentDesigner.cs
 System.ComponentModel.Design/DateTimeEditor.cs
 System.ComponentModel.Design/DesignerActionHeaderItem.cs
@@ -15,8 +16,12 @@ System.ComponentModel.Design/DesignerActionItem.cs
 System.ComponentModel.Design/DesignerActionItemCollection.cs
 System.ComponentModel.Design/DesignerActionList.cs
 System.ComponentModel.Design/DesignerActionListCollection.cs
+System.ComponentModel.Design/DesignerActionListsChangedEventArgs.cs
+System.ComponentModel.Design/DesignerActionListsChangedEventHandler.cs
+System.ComponentModel.Design/DesignerActionListsChangedType.cs
 System.ComponentModel.Design/DesignerActionMethodItem.cs
 System.ComponentModel.Design/DesignerActionPropertyItem.cs
+System.ComponentModel.Design/DesignerActionService.cs
 System.ComponentModel.Design/DesignerActionTextItem.cs
 System.ComponentModel.Design/DesignerEventService.cs
 System.ComponentModel.Design/DesignerHost.cs

@@ -41,59 +41,41 @@ namespace System.ComponentModel.Design
 		DesignerActionList action_list;
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName, string displayName)
+			: this (actionList, memberName, displayName, null, false)
 		{
-			this.action_list = action_list;
-			this.member_name = memberName;
-			this.display_name = displayName;
 		}
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName,
 						 string displayName, bool includeAsDesignerVerb)
+			: this (actionList, memberName, displayName, null, includeAsDesignerVerb)
 		{
-			this.action_list = action_list;
-			this.member_name = memberName;
-			this.display_name = displayName;
-			this.designer_verb = includeAsDesignerVerb;
 		}
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName,
 						 string displayName, string category)
+			: this (actionList, memberName, displayName, category, false)
 		{
-			this.action_list = action_list;
-			this.member_name = memberName;
-			this.display_name = displayName;
-			this.category = category;
 		}
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName,
 						 string displayName, string category, bool includeAsDesignerVerb)
+			: this (actionList, memberName, displayName, category, null, includeAsDesignerVerb)
 		{
-			this.action_list = action_list;
-			this.member_name = memberName;
-			this.display_name = displayName;
-			this.category = category;
-			this.designer_verb = includeAsDesignerVerb;
 		}
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName,
 						 string displayName, string category, string description)
+			: this (actionList, memberName, displayName, category, description, false)
 		{
-			this.action_list = action_list;
-			this.member_name = memberName;
-			this.display_name = displayName;
-			this.category = category;
-			this.description = description;
 		}
 		
 		public DesignerActionMethodItem (DesignerActionList actionList, string memberName,
 						 string displayName, string category, string description,
 						 bool includeAsDesignerVerb)
+			: base (displayName, category, description)
 		{
 			this.action_list = action_list;
 			this.member_name = memberName;
-			this.display_name = displayName;
-			this.category = category;
-			this.description = description;
 			this.designer_verb = includeAsDesignerVerb;
 		}
 		

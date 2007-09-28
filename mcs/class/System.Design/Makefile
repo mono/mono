@@ -11,6 +11,4 @@ ifeq (net_2_0, $(PROFILE))
 LIB_MCS_FLAGS += -r:System.Configuration.dll
 endif
 
-NO_TEST = yes
-
 include ../../build/library.make

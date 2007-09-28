@@ -1,11 +1,10 @@
 //
-// System.ComponentModel.Design.DesignerActionPropertyItem.cs
+// System.ComponentModel.Design.DesignerActionListsChangedEventHandler.cs
 //
-// Authors:
-//      Miguel de Icaza (miguel@novell.com)
+// Author:
+//	  Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright 2006 Novell, Inc
-//
+// Copyright (C) 2007 Novell, Inc.
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,48 +26,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
-using System.Windows.Forms;
+
+using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.ComponentModel.Design
 {
-	public sealed class DesignerActionPropertyItem : DesignerActionItem
-	{
-		string member_name;
-		IComponent related_component;
-		
-		public DesignerActionPropertyItem (string memberName, string displayName)
-			: this (memberName, displayName, null)
-		{
-		}
-		
-		public DesignerActionPropertyItem (string memberName, string displayName, string category)
-			: this (memberName, displayName, category, null)
-		{
-		}
-		
-		public DesignerActionPropertyItem (string memberName, string displayName, string category, string description)
-			: base (displayName, category, description)
-		{
-			this.member_name = memberName;
-		}
-		
-		public string MemberName {
-			get {
-				return member_name;
-			}
-		}
-
-		public IComponent RelatedComponent {
-			get {
-				return related_component;
-			}
-
-			set {
-				related_component = value;
-			}
-		}
-	}
+	[System.Runtime.InteropServices.ComVisible (true)]
+	public delegate void DesignerActionListsChangedEventHandler (object sender, DesignerActionListsChangedEventArgs e);
 }
 #endif

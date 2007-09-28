@@ -36,9 +36,8 @@ namespace System.ComponentModel.Design
 	public class DesignerActionTextItem : DesignerActionItem
 	{
 		public DesignerActionTextItem (string displayName, string category)
+			: base (displayName, category, String.Empty)
 		{
-			this.display_name = displayName;
-			this.category = category;
 		}
 	}
 }

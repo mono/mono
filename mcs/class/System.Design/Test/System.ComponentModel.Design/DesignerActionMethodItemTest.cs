@@ -1,11 +1,10 @@
 //
-// System.ComponentModel.Design.DesignerActionPropertyItem.cs
+// DesignerActionMethodItemTest.cs
 //
-// Authors:
-//      Miguel de Icaza (miguel@novell.com)
+// Author:
+//	  Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright 2006 Novell, Inc
-//
+// Copyright (C) 2007 Novell, Inc.
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,47 +26,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
-using System.Windows.Forms;
+
+using System;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using NUnit.Framework;
 
-namespace System.ComponentModel.Design
+namespace MonoTests.System.ComponentModel.Design
 {
-	public sealed class DesignerActionPropertyItem : DesignerActionItem
+	[TestFixture]
+	public class DesignerActionMethodItemTest
 	{
-		string member_name;
-		IComponent related_component;
-		
-		public DesignerActionPropertyItem (string memberName, string displayName)
-			: this (memberName, displayName, null)
+		[Test]
+		public void Constructor ()
 		{
-		}
-		
-		public DesignerActionPropertyItem (string memberName, string displayName, string category)
-			: this (memberName, displayName, category, null)
-		{
-		}
-		
-		public DesignerActionPropertyItem (string memberName, string displayName, string category, string description)
-			: base (displayName, category, description)
-		{
-			this.member_name = memberName;
-		}
-		
-		public string MemberName {
-			get {
-				return member_name;
-			}
-		}
-
-		public IComponent RelatedComponent {
-			get {
-				return related_component;
-			}
-
-			set {
-				related_component = value;
-			}
+			DesignerActionMethodItem item = new DesignerActionMethodItem (new DesignerActionList (new Component ()),
+				"myMember", "myDisplay");
+			Assert.AreEqual ("myMember", item.MemberName, "#1");
+			Assert.AreEqual ("myDisplay", item.DisplayName, "#2");
+			Assert.IsNull (item.Category, "#3");
+			Assert.IsNull (item.Description, "#4");
+			Assert.IsFalse (item.IncludeAsDesignerVerb, "#5");
 		}
 	}
 }

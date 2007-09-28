@@ -1,3 +1,17 @@
+2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DesignerActionService.cs : new stub.
+	* ComponentActionsType.cs,
+	  DesignerActionListsChangedType.cs,
+	  DesignerActionListsChangedEventArgs.cs,
+	  DesignerActionListsChangedEventHandler.cs : new implementations.
+	* DesignerActionListCollection.cs : [ComVisible].
+	* DesignerActionItem.cs,
+	  DesignerActionMethodItem.cs,
+	  DesignerActionPropertyItem.cs,
+	  DesignerActionTextItem.cs : fixed protected .ctor() and made
+	  base fields private. Properties is implemented.
+
 2007-09-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignSurface.cs: Binary compatibility fixes.

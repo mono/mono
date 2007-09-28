@@ -35,7 +35,7 @@ using System.ComponentModel;
 
 namespace System.ComponentModel.Design
 {
-
+	[System.Runtime.InteropServices.ComVisible (true)]
 	public class DesignerActionListCollection : CollectionBase
 	{
 		
