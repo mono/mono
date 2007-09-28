@@ -1,3 +1,11 @@
+2007-09-28  Jb Evain  <jbevain@novell.com>
+
+	* reflection.c: when encoding type names in custom attributes,
+	if the type is a closed generic type, its generic arguments
+	have to be serialized as AssemblyQualifiedName, so that when
+	they are deserialized, it's possible to re-create them properly.
+	Fixes #329450.
+
 
 Fri Sep 28 19:19:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
