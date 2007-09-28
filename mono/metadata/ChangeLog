@@ -1,4 +1,11 @@
 
+Fri Sep 28 18:07:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: cleanup of the code that synthetizes interfaces for
+	arrays in 2.0: saves quit a bit of corlib mempool memory.
+	Code to fix bug #325495 ifdeffed out for now until the issues
+	with memory usage and O(n^2) behaviour are fixed.
+
 Fri Sep 28 17:19:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: when possible, do not duplicate the name of the methods
