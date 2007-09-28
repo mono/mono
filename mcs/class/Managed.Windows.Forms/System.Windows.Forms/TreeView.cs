@@ -764,7 +764,7 @@ namespace System.Windows.Forms {
 			if (!found)
 				return;
 
-			if (IsHandleCreated) {
+			if (IsHandleCreated && vbar.VisibleInternal) {
 				vbar.Value = vbar.Maximum - VisibleCount + 1;
 			} else {
 				RecalculateVisibleOrder (root_node);

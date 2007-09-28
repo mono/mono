@@ -1,3 +1,9 @@
+2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When calling ExpandAll, don't move the scroll to the 
+	bottom area if we are in fact not using the vertical scroll bar.
+	Fixes #324824.
+
 2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Comment out a double buffering optimization that doesn't
