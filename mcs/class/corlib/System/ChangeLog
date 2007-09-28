@@ -1,3 +1,9 @@
+2007-09-28  Jb Evain  <jbevain@novell.com>
+
+	* Object.cs: Make ToString return Type.ToString ()
+	by default instead of Type.FullName to match .net
+	behavior. Fix #329419.
+
 2007-09-28  William Holmes  <billholmes54@gmail.com>
 
 	* DateTime.cs: Check for AssumeUniversal when parsing string.

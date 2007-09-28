@@ -120,7 +120,7 @@ namespace System {
 		// </summary>
 		public virtual string ToString ()
 		{
-			return GetType().FullName;
+			return GetType ().ToString ();
 		}
 
 		// <summary>
