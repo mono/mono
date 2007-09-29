@@ -26,16 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System {
 
-	public enum UriKind {
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	enum UriKind {
 
 		RelativeOrAbsolute,
 		Absolute,
 		Relative,
 	}
 }
-
-#endif

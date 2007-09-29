@@ -1,3 +1,32 @@
+2007-09-29  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs (ToString, MakeRelativeUri): refactor some code in
+	ToString to be reusable (to append the query string and the
+	fragment) by MakeRelativeUrl.
+
+	This fixes the MakeRelativeUrl stuff, but the tests can not be
+	used just yet because we fail with stuff like: 
+
+		new Uri ("", UriKind.Relative)
+
+	(Parse): when parsing absolute filenames, check if the
+	UriKind is Relative, and if so, make the isAbsoluteUri false, to
+	ensure that the upper layers do not abort with relative Uris that
+	happen to be "/foo" for example.
+
+	Take an UriKind property to allow for proper checking and parsing
+	depending on the context requested by the caller. 
+
+	Allows empty strings to be relative Uris as well.
+
+	Do checking when we have schema:// that the parsing is not for a
+	UriKind.Relative, otherwise throw an exception. 
+
+	(Authority, HostNameType, IsDefaultPort, IsFile, IsLoopback,
+	PathAndQuery, DnsSafeHost): They all require absolute uris.
+
+	* UriKind.cs: make internal for 1.0
+	
 2007-09-05  Marek Habersack  <mhabersack@novell.com>
 
 	* UriTypeConverter.cs: conversion from string should be possible

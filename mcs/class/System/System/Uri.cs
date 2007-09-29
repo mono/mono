@@ -90,7 +90,7 @@ namespace System {
 		private string cachedToString;
 		private string cachedLocalPath;
 		private int cachedHashCode;
-		
+
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
 	
 		// Fields
@@ -125,7 +125,7 @@ namespace System {
 		public Uri (string uriString, UriKind uriKind)
 		{
 			source = uriString;
-			ParseUri ();
+			ParseUri (uriKind);
 
 			switch (uriKind) {
 			case UriKind.Absolute:
@@ -158,10 +158,10 @@ namespace System {
 		{
 			userEscaped = dontEscape;
 			source = uriString;
-			ParseUri ();
+			ParseUri (UriKind.Absolute);
 			if (!isAbsoluteUri)
 				throw new UriFormatException("Invalid URI: The format of the URI could not be "
-					+ "determined.");
+					+ "determined: " + uriString);
 		}
 #else
 		public Uri (string uriString, bool dontEscape) 
@@ -203,7 +203,7 @@ namespace System {
 			if (relativeUri.Length >= 2 && relativeUri [0] == '\\' && relativeUri [1] == '\\') {
 				source = relativeUri;
 #if NET_2_0
-				ParseUri ();
+				ParseUri (UriKind.Absolute);
 #else
 				Parse ();
 #endif
@@ -232,7 +232,7 @@ namespace System {
 					    relativeUri [pos + 1] == '/') {
 						source = relativeUri;
 #if NET_2_0
-						ParseUri ();
+						ParseUri (UriKind.Absolute);
 #else
 						Parse ();
 #endif
@@ -282,7 +282,7 @@ namespace System {
 				if (relativeUri.Length > 1 && relativeUri [1] == '/') {
 					source = scheme + ':' + relativeUri;
 #if NET_2_0
-					ParseUri ();
+					ParseUri (UriKind.Absolute);
 #else
 					Parse ();
 #endif
@@ -367,6 +367,7 @@ namespace System {
 		public string AbsolutePath { 
 			get {
 #if NET_2_0
+				EnsureAbsoluteUri ();
 				switch (Scheme) {
 				case "mailto":
 				case "file":
@@ -404,6 +405,7 @@ namespace System {
 
 		public string Authority { 
 			get { 
+				EnsureAbsoluteUri ();
 				return (GetDefaultPort (Scheme) == port)
 				     ? host : host + ":" + port;
 			} 
@@ -425,6 +427,7 @@ namespace System {
 
 		public UriHostNameType HostNameType { 
 			get {
+				EnsureAbsoluteUri ();
 				UriHostNameType ret = CheckHostName (Host);
 				if (ret != UriHostNameType.Unknown)
 					return ret;
@@ -443,15 +446,23 @@ namespace System {
 		}
 
 		public bool IsDefaultPort { 
-			get { return GetDefaultPort (Scheme) == port; }
+			get {
+				EnsureAbsoluteUri ();
+				return GetDefaultPort (Scheme) == port;
+			}
 		}
 
 		public bool IsFile { 
-			get { return (Scheme == UriSchemeFile); }
+			get {
+				EnsureAbsoluteUri ();
+				return (Scheme == UriSchemeFile);
+			}
 		}
 
 		public bool IsLoopback { 
 			get {
+				EnsureAbsoluteUri ();
+				
 				if (Host.Length == 0) {
 #if NET_2_0
 					return IsFile;
@@ -538,7 +549,10 @@ namespace System {
 		}
 
 		public string PathAndQuery { 
-			get { return path + Query; } 
+			get {
+				EnsureAbsoluteUri ();
+				return path + Query;
+			} 
 		}
 
 		public int Port { 
@@ -616,7 +630,10 @@ namespace System {
 #if NET_2_0
 		[MonoTODO ("add support for IPv6 address")]
 		public string DnsSafeHost {
-			get { return Unescape (Host); }
+			get {
+				EnsureAbsoluteUri ();
+				return Unescape (Host);
+			}
 		}
 
 		public bool IsAbsoluteUri {
@@ -635,14 +652,6 @@ namespace System {
 
 		// Methods		
 
-		private void EnsureAbsoluteUri ()
-		{
-#if NET_2_0
-			if (!IsAbsoluteUri)
-				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
-#endif
-		}
-		
 		public static UriHostNameType CheckHostName (string name) 
 		{
 			if (name == null || name.Length == 0)
@@ -952,24 +961,25 @@ namespace System {
 			if (Host != uri.Host || Scheme != uri.Scheme)
 				return uri;
 
-			if (this.path == uri.path)
-				return new Uri (String.Empty, UriKind.Relative);
-			
-			string [] segments = this.Segments;
-			string [] segments2 = uri.Segments;
-			
-			int k = 0;
-			int max = Math.Min (segments.Length, segments2.Length);
-			for (; k < max; k++)
-				if (segments [k] != segments2 [k]) 
-					break;
-			
 			string result = String.Empty;
-			for (int i = k + 1; i < segments.Length; i++)
-				result += "../";
-			for (int i = k; i < segments2.Length; i++)
-				result += segments2 [i];
-			
+			if (this.path != uri.path){
+				string [] segments = this.Segments;
+				string [] segments2 = uri.Segments;
+				
+				int k = 0;
+				int max = Math.Min (segments.Length, segments2.Length);
+				for (; k < max; k++)
+					if (segments [k] != segments2 [k]) 
+						break;
+				
+				for (int i = k + 1; i < segments.Length; i++)
+					result += "../";
+				for (int i = k; i < segments2.Length; i++)
+					result += segments2 [i];
+				
+			}
+			uri.AppendQueryAndFragment (ref result);
+
 			return new Uri (result, UriKind.Relative);
 		}
 
@@ -980,28 +990,38 @@ namespace System {
 			if ((this.Scheme != toUri.Scheme) ||
 			    (this.Authority != toUri.Authority))
 				return toUri.ToString ();
-				
-			if (this.path == toUri.path)
-				return String.Empty;
-				
-			string [] segments = this.Segments;
-			string [] segments2 = toUri.Segments;
-			
-			int k = 0;
-			int max = Math.Min (segments.Length, segments2.Length);
-			for (; k < max; k++)
-				if (segments [k] != segments2 [k]) 
-					break;
-			
+
 			string result = String.Empty;
-			for (int i = k + 1; i < segments.Length; i++)
-				result += "../";
-			for (int i = k; i < segments2.Length; i++)
-				result += segments2 [i];
-			
+			if (this.path != toUri.path){
+				string [] segments = this.Segments;
+				string [] segments2 = toUri.Segments;
+				int k = 0;
+				int max = Math.Min (segments.Length, segments2.Length);
+				for (; k < max; k++)
+					if (segments [k] != segments2 [k]) 
+						break;
+				
+				for (int i = k + 1; i < segments.Length; i++)
+					result += "../";
+				for (int i = k; i < segments2.Length; i++)
+					result += segments2 [i];
+			}
+
+			// Important: MakeRelative does not append fragment or query.
+
 			return result;
 		}
 
+		void AppendQueryAndFragment (ref string result)
+		{
+			if (query.Length > 0) {
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
+				result += q;
+			}
+			if (fragment.Length > 0)
+				result += fragment;
+		}
+		
 		public override string ToString () 
 		{
 			if (cachedToString != null) 
@@ -1013,13 +1033,8 @@ namespace System {
 				// Everything is contained in path in this case. 
 				cachedToString = Unescape (path);
 			}
-			
-			if (query.Length > 0) {
-				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
-				cachedToString += q;
-			}
-			if (fragment.Length > 0)
-				cachedToString += fragment;
+
+			AppendQueryAndFragment (ref cachedToString);
 			return cachedToString;
 		}
 
@@ -1109,13 +1124,13 @@ namespace System {
 		protected virtual void Parse ()
 		{
 #if !NET_2_0
-			ParseUri ();
+			ParseUri (UriKind.Absolute);
 #endif
 		}
 
-		private void ParseUri ()
+		private void ParseUri (UriKind kind)
 		{
-			Parse (source);
+			Parse (kind, source);
 
 			if (userEscaped)
 				return;
@@ -1235,7 +1250,7 @@ namespace System {
 
 		// this parse method is as relaxed as possible about the format
 		// it will hardly ever throw a UriFormatException
-		private void Parse (string uriString)
+		private void Parse (UriKind kind, string uriString)
 		{			
 			//
 			// From RFC 2396 :
@@ -1249,6 +1264,14 @@ namespace System {
 
 			uriString = uriString.Trim();
 			int len = uriString.Length;
+
+			if (len == 0){
+				if (kind == UriKind.Relative || kind == UriKind.RelativeOrAbsolute){
+					isAbsoluteUri = false;
+					return;
+				}
+			}
+			
 			if (len <= 1) 
 				throw new UriFormatException ();
 
@@ -1258,14 +1281,15 @@ namespace System {
 			// Identify Windows path, unix path, or standard URI.
 			pos = uriString.IndexOf (':');
 			if (pos == 0) {
-				throw new UriFormatException("Invalid URI: "
-					+ "The format of the URI could not be "
-					+ "determined.");
+				throw new UriFormatException("Invalid URI: The format of the URI could not be determined.");
 			} else if (pos < 0) {
 				// It must be Unix file path or Windows UNC
-				if (uriString [0] == '/')
+				if (uriString [0] == '/'){
 					ParseAsUnixAbsoluteFilePath (uriString);
-				else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
+					if (kind == UriKind.Relative)
+						isAbsoluteUri = false;
+					
+				} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
 					ParseAsWindowsUNC (uriString);
 				else {
 					/* Relative path */
@@ -1273,17 +1297,17 @@ namespace System {
 					path = uriString;
 				}
 				return;
-			} 
-			else if (pos == 1) {
+			} else if (pos == 1) {
 				if (!IsAlpha (uriString [0]))
 					throw new UriFormatException ("URI scheme must start with a letter.");
 				// This means 'a:' == windows full path.
 				ParseAsWindowsAbsoluteFilePath (uriString);
 				return;
-			}
+			} 
 
 			// scheme
 			scheme = uriString.Substring (0, pos).ToLower (CultureInfo.InvariantCulture);
+
 			// Check scheme name characters as specified in RFC2396.
 			// Note: different checks in 1.x and 2.0
 			if (!CheckSchemeName (scheme)) {
@@ -1325,6 +1349,9 @@ namespace System {
 			bool startsWithSlashSlash = endpos-startpos >= 2 && uriString [startpos] == '/' && uriString [startpos+1] == '/';
 			bool unixAbsPath = scheme == UriSchemeFile && startsWithSlashSlash && (endpos-startpos == 2 || uriString [startpos+2] == '/');
 			if (startsWithSlashSlash) {
+				if (kind == UriKind.Relative)
+					throw new UriFormatException ("Absolute URI when we expected a relative one");
+				
 				if (scheme != UriSchemeMailto && scheme != UriSchemeNews)
 					startpos += 2;
 
@@ -2011,6 +2038,15 @@ namespace System {
 		}
 		
 
+		private void EnsureAbsoluteUri ()
+		{
+			if (!IsAbsoluteUri)
+				throw new InvalidOperationException ("This operation is not supported for a relative URI.");
+		}
+#else
+		private void EnsureAbsoluteUri ()
+		{
+		}
 #endif
 	}
 }

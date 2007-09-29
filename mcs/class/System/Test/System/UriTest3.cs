@@ -291,8 +291,7 @@ namespace MonoTests.System
 			http.IsBaseOf (null);
 		}
 
-		[Test] // bug #328693
-		[Category ("NotWorking")]
+		[Test] 
 		public void MakeRelativeUri ()
 		{
 			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
@@ -457,7 +456,9 @@ namespace MonoTests.System
 
 		void AssertRelativeUri (string expected, Uri uri1, Uri uri2, string msg)
 		{
-			Uri relativeUri = uri1.MakeRelativeUri (uri2);
+			Uri relativeUri;
+			relativeUri = uri1.MakeRelativeUri (uri2);
+			
 			Assert.IsFalse (relativeUri.IsAbsoluteUri, msg + "1");
 			Assert.AreEqual (expected, relativeUri.ToString (), msg + "2");
 			Assert.AreEqual (expected, relativeUri.OriginalString, msg + "3");
