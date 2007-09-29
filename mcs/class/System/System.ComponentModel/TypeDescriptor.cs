@@ -374,7 +374,7 @@ public sealed class TypeDescriptor
 
 			try {
 				return (TypeConverter) Activator.CreateInstance (t, new object [] {type});
-			} catch (MissingMethodException e) {
+			} catch (MissingMethodException) {
 				throw exc;
 			}
 		}
@@ -471,7 +471,7 @@ public sealed class TypeDescriptor
 
 		try {
 			return Activator.CreateInstance (t, new object [] {componentType});
-		} catch (MissingMethodException e) {
+		} catch (MissingMethodException) {
 			throw exc;
 		}
 	}
