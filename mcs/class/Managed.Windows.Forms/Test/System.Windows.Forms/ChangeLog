@@ -1,3 +1,7 @@
+2007-09-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* RadioButtonTest.cs: Fix test to not fail on monobuild.
+
 2007-09-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* RadioButtonTest.cs: Added test for bug #328672.

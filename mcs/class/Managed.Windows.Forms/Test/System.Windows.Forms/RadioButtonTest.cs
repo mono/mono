@@ -77,9 +77,11 @@ namespace MonoTests.System.Windows.Forms
 			rb.Width = 14;
 			f.Controls.Add (rb);
 			
-			rb.Text = "Some text that is surely longer than 100 pixels.";
+			int width = rb.Width;
 			
-			if (rb.Width < 100)
+			rb.Text = "Some text that is surely longer than 100 pixels.";
+
+			if (rb.Width == width)
 				Assert.Fail ("RadioButton did not autosize, actual: {0}", rb.Width);
 		}
 #endif
