@@ -1,3 +1,10 @@
+2007-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNode.cs: When calling Expand/Collapse and need to call 
+	ExpandBelow/CollapseBelow respectively, take into account
+	partially visible nodes (previously Expanding/Collapsing
+	a partially visible node in the bottom was not updating its +- sign).
+
 2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: When calling Expand on a TreeNode, and we need to
