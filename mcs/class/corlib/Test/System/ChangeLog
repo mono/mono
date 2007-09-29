@@ -1,3 +1,8 @@
+2007-09-29  Raja R Harinath  <harinath@gmail.com>
+
+	* ObjectTest.cs (TestToStringOnGenericInstances):
+	Fix expected string.
+
 2007-09-28  Jb Evain  <jbevain@novell.com>
 
 	* ObjectTest.cs: add test for bug #329419
