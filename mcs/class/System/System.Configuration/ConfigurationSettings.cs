@@ -742,7 +742,7 @@ namespace System.Configuration
 
 		private void ReadConfigFile (XmlTextReader reader)
 		{
-			int depth = reader.Depth;
+			//int depth = reader.Depth;
 			for (reader.MoveToContent ();
 			     !reader.EOF && reader.NodeType != XmlNodeType.EndElement;
 			     reader.MoveToContent ()) {
