@@ -711,7 +711,9 @@ namespace System.Net.Sockets
 		public Socket (SocketInformation socketInformation)
 		{
 			throw new NotImplementedException ("SocketInformation not figured out yet");
-			
+
+			// ifdef to avoid the warnings.
+#if false
 			//address_family = socketInformation.address_family;
 			//socket_type = socketInformation.socket_type;
 			//protocol_type = socketInformation.protocol_type;
@@ -725,6 +727,7 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 
 			SocketDefaults ();
+#endif
 		}
 #endif
 
