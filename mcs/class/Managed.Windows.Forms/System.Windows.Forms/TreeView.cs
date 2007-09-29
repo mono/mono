@@ -1996,8 +1996,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle below = new Rectangle (0, node.Bounds.Bottom, ViewportRectangle.Width,
-					ViewportRectangle.Height - node.Bounds.Bottom);
+			// If node Bottom is less than 0, the node is above and not visible,
+			// and we need to scroll the entire viewport
+			int node_bottom = node.Bounds.Bottom >= 0 ? node.Bounds.Bottom : 0;
+			Rectangle below = new Rectangle (0, node_bottom, ViewportRectangle.Width,
+					ViewportRectangle.Height - node_bottom);
 
 			int amount = count_to_next * ActualItemHeight;
 

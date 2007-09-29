@@ -1,5 +1,14 @@
 2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: When calling Expand on a TreeNode, and we need to
+	expand nodes below (ExpandBelow), scroll the entire Viewport
+	area if the node is above it and not visible (instead of scrolling
+	the area from node's Bottom, which applies only when the node is
+	visible).
+	Fixes #325266.
+
+2007-09-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: When calling ExpandAll, set SelectedNode to the top
 	node in the bottom area (as .Net does). This is done to preserve the
 	scroll position when ExpandAll is called before handle is created for
