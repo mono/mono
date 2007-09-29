@@ -29,36 +29,39 @@
 #if NET_2_0
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using System.IO;
+	
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
 		protected NetworkInterface ()
 		{
 		}
 
-		[MonoTODO ("unimplemented on Non-Windows")]
+		[MonoTODO("Does not work on Unix yet")]
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
-				throw new NotSupportedException ("This platform is not supported");
+				return new NetworkInterface [0];
+				
 			default:
 				if (Environment.OSVersion.Version >= new Version (5, 1))
-					return Win32NetworkInterface2.GetAllNetworkInterfaces ();
-				throw new NotImplementedException ();
+					return Win32NetworkInterface2.ImplGetAllNetworkInterfaces ();
+				return new NetworkInterface [0];
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Always returns true")]
 		public static bool GetIsNetworkAvailable ()
 		{
 			return true;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Currently always returns 0")]
 		public static int LoopbackInterfaceIndex {
 			get { return 0; }
 		}
@@ -78,6 +81,114 @@ namespace System.Net.NetworkInformation {
 		public abstract bool SupportsMulticast { get; }
 	}
 
+	//
+	// This class needs support from the libsupport.so library to fetch the
+	// data using arch-specific ioctls.
+	//
+	// For this to work, we have to create this on the factory above.
+	//
+	class LinuxNetworkInterface : NetworkInterface
+	{
+		string iface;
+		
+		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
+		{
+			string [] dirs = Directory.GetDirectories ("/proc/sys/net/ipv4/conf");
+			ArrayList a = null;
+			
+			foreach (string d in dirs){
+				int p = d.LastIndexOf ('/');
+				if (p == -1)
+					continue;
+				
+				string iface = d.Substring (p + 1);
+				if (String.CompareOrdinal (iface, "all") == 0)
+					continue;
+				if (String.CompareOrdinal (iface, "default") == 0)
+					continue;
+
+				if (a == null)
+					a = new ArrayList ();
+
+				a.Add (new LinuxNetworkInterface (iface));
+			}
+
+			return (NetworkInterface []) a.ToArray ();
+		}
+
+		LinuxNetworkInterface (string dir)
+		{
+			iface = dir;
+		}
+		
+		public override IPInterfaceProperties GetIPProperties ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IPv4InterfaceStatistics GetIPv4Statistics ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override PhysicalAddress GetPhysicalAddress ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool Supports (NetworkInterfaceComponent networkInterfaceComponent)
+		{
+			switch (networkInterfaceComponent) {
+			case NetworkInterfaceComponent.IPv4:
+				return (Directory.Exists ("/proc/sys/net/ipv4/conf/" + iface));
+				
+			case NetworkInterfaceComponent.IPv6:
+				return (Directory.Exists ("/proc/sys/net/ipv6/conf/" + iface));
+			}
+			return false;
+		}
+
+		public override string Description {
+			get { return iface; }
+		}
+
+		public override string Id {
+			get { return iface; }
+		}
+
+		public override bool IsReceiveOnly {
+			get { return false; }
+		}
+
+		public override string Name {
+			get { return iface; }
+		}
+		
+		public override NetworkInterfaceType NetworkInterfaceType {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override OperationalStatus OperationalStatus {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override long Speed {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public override bool SupportsMulticast {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+	}
+
 	class Win32NetworkInterface2 : NetworkInterface
 	{
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
@@ -89,7 +200,7 @@ namespace System.Net.NetworkInformation {
 		[DllImport ("iphlpapi.dll", SetLastError = true)]
 		static extern int GetIfEntry (ref Win32_MIB_IFROW row);
 
-		public static NetworkInterface [] GetAllNetworkInterfaces ()
+		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
 			Win32_IP_ADAPTER_INFO [] ai = GetAdaptersInfo ();
 			Win32_IP_ADAPTER_ADDRESSES [] aa = GetAdaptersAddresses ();

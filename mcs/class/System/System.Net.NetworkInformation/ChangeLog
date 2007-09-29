@@ -1,3 +1,9 @@
+2007-09-29  Miguel de Icaza  <miguel@novell.com>
+
+	* NetworkInterface.cs (GetAllNetworkInterfaces): return an empty
+	array instead of throwing an exception on operating systems where
+	we can not detect the network interfaces. 
+
 2007-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPGlobalProperties.cs : implemented properties on linux.
