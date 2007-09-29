@@ -90,7 +90,7 @@ namespace Mono.Audio {
 			avg_bytes |= buffer [29] << 8;
 			avg_bytes |= buffer [30] << 16;
 			avg_bytes |= buffer [31] << 24;
-			int block_align = buffer [32] | (buffer [33] << 8);
+			//int block_align = buffer [32] | (buffer [33] << 8);
 			int sign_bits = buffer [34] | (buffer [35] << 8);
 			/*Console.WriteLine (extra_size);
 			Console.WriteLine (compression);
