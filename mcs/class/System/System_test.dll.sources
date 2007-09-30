@@ -187,6 +187,7 @@ System.Net/HttpListenerTest.cs
 System.Net/HttpListenerBasicIdentityTest.cs
 System.Net/HttpListenerPrefixCollectionTest.cs
 System.Net/HttpListener2Test.cs
+System.Net/HttpListenerRequestTest.cs
 System.Net/IPAddressTest.cs
 System.Net/IPEndPointTest.cs
 System.Net/ServicePointManagerTest.cs

@@ -68,10 +68,6 @@ namespace System.Net {
 
 		static char [] separators = new char [] { ' ' };
 
-#if false
-		static readonly string [] methods = new string [] { "GET", "POST", "HEAD",
-								"PUT", "CONNECT", "MKCOL" };
-#endif
 		internal void SetRequestLine (string req)
 		{
 			string [] parts = req.Split (separators, 3);
@@ -94,17 +90,6 @@ namespace System.Net {
 				context.ErrorMessage = "(Invalid verb)";
 				return;
 			}
-			
-#if false
-			//
-			// According to bug #80504 we should allow any verbs to go
-			// through.
-			//
-			if (Array.IndexOf (methods, method) == -1) {
-				context.ErrorMessage = "Invalid request line (verb).";
-				return;
-			}
-#endif
 
 			raw_url = parts [1];
 			if (parts [2].Length != 8 || !parts [2].StartsWith ("HTTP/")) {
@@ -147,12 +132,12 @@ namespace System.Net {
 		internal void FinishInitialization ()
 		{
 			string host = UserHostName;
-			if (version > HttpVersion.Version10 && (host == null || host == "")) {
+			if (version > HttpVersion.Version10 && (host == null || host.Length == 0)) {
 				context.ErrorMessage = "Invalid host name";
 				return;
 			}
 
-			if (host == null || host == "")
+			if (host == null || host.Length == 0)
 				host = UserHostAddress;
 
 			int colon = host.IndexOf (':');
@@ -172,9 +157,6 @@ namespace System.Net {
 
 			CreateQueryString (url.Query);
 
-			if (method == "GET" || method == "HEAD" || method == "DELETE")
-				return;
-
 			string t_encoding = null;
 			if (version >= HttpVersion.Version11) {
 				t_encoding = Headers ["Transfer-Encoding"];
@@ -185,7 +167,11 @@ namespace System.Net {
 				}
 			}
 
-			bool is_chunked = (t_encoding == "chunked");
+			is_chunked = (t_encoding == "chunked");
+
+			if (method == "GET" || method == "HEAD" || method == "DELETE")
+				return;
+
 			if (!is_chunked && !cl_set) {
 				context.Connection.SendError (null, 411);
 				return;
@@ -331,7 +317,7 @@ namespace System.Net {
 		}
 
 		public bool HasEntityBody {
-			get { return !(method == "GET" || method == "HEAD" || content_length <= 0 || is_chunked); }
+			get { return (content_length > 0 || is_chunked); }
 		}
 
 		public NameValueCollection Headers {

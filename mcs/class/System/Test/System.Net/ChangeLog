@@ -1,3 +1,8 @@
+2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpListenerRequestTest.cs: Added test for HasEntityBody.
+	* HttpListener2Test.cs: Removed CWL.
+
 2007-08-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPAddressTest.cs : added an address with scope id to parse/format

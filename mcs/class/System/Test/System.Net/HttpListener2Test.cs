@@ -163,7 +163,6 @@ namespace MonoTests.System.Net {
 				string response = Receive (ns, 512);
 				ns.Close ();
 				listener.Close ();
-				Console.WriteLine ("Response is: {0}", response);
 				Assert.AreEqual (true, response.StartsWith ("HTTP/1.1 400"), String.Format ("Failed on {0}", (int) b));
 			}
 		}

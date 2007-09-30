@@ -1,3 +1,7 @@
+2007-09-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added HttpListenerRequestTest.cs.
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added ITypeDiscoveryService.cs.
