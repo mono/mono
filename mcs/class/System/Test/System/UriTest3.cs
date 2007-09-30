@@ -71,10 +71,14 @@ namespace MonoTests.System
 		public void Relative_UriKind_Relative ()
 		{
 			Uri uri = new Uri (relative, UriKind.Relative);
-			Assert.IsFalse (uri.IsAbsoluteUri, "IsAbsoluteUri");
-			Assert.AreEqual (relative, uri.OriginalString, "OriginalString");
-			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
-			// using any other property would throw an InvalidOperationException
+			Assert.IsFalse (uri.IsAbsoluteUri, "#A1");
+			Assert.AreEqual (relative, uri.OriginalString, "#A2");
+			Assert.IsFalse (uri.UserEscaped, "#A3");
+
+			uri = new Uri (string.Empty, UriKind.Relative);
+			Assert.IsFalse (uri.IsAbsoluteUri, "#B1");
+			Assert.AreEqual (string.Empty, uri.OriginalString, "#B2");
+			Assert.IsFalse (uri.UserEscaped, "#B3");
 		}
 
 		[Test]
@@ -92,7 +96,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TryCreate_String_UriKind_Uri ()
 		{
 			Uri uri = null;
@@ -389,7 +392,7 @@ namespace MonoTests.System
 			Uri e = new Uri ("http://www.mono-project.com:303/foo");
 			Uri f = new Uri (e, "?query");
 			// it doesn't work. MS.NET also returns incorrect URI: ..303/?query
-			// Assert.AreEqual ("http://www.mono-project.com:303/foo?query", e.OriginalString, "#4");
+			// Assert.AreEqual ("http://www.mono-project.com:303/foo?query", f.OriginalString, "#4");
 		}
 
 		[Test]
@@ -462,6 +465,7 @@ namespace MonoTests.System
 			Assert.IsFalse (relativeUri.IsAbsoluteUri, msg + "1");
 			Assert.AreEqual (expected, relativeUri.ToString (), msg + "2");
 			Assert.AreEqual (expected, relativeUri.OriginalString, msg + "3");
+			Assert.IsFalse (relativeUri.UserEscaped, msg + "4");
 		}
 	}
 }
