@@ -1,5 +1,12 @@
 2007-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FolderBrowserDialog.cs: Fix the recursive FindPathInNodes method.
+	Also remove the stack.Count > 0 check in FBTreeView.SetSelectedNode
+	method, since it causes the dialog to not select folders directly
+	under the root path (when setting SelectedPath property).
+
+2007-09-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNode.cs: When calling Expand/Collapse and need to call 
 	ExpandBelow/CollapseBelow respectively, take into account
 	partially visible nodes (previously Expanding/Collapsing

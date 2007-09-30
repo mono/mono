@@ -498,36 +498,34 @@ namespace System.Windows.Forms {
 						}
 					}
 					
-					if (stack.Count > 0) {
-						FillNode (node);
-						node.Expand ();
-						
-						// walk through the subdirs and fill the nodes
-						while (stack.Count > 0) {
-							string part_name = stack.Pop () as string;
-							
-							foreach (TreeNode treeNode in node.Nodes) {
-								FBTreeNode fbnode = treeNode as FBTreeNode;
-								
-								if (path_cut + part_name == fbnode.RealPath) {
-									node = fbnode;
-									path_cut += part_name;
-									
-									FillNode (node);
-									node.Expand ();
-									break;
-								}
-							}
-						}
-						
-						// finally find the node for the complete path
+					FillNode (node);
+					node.Expand ();
+
+					// walk through the subdirs and fill the nodes
+					while (stack.Count > 0) {
+						string part_name = stack.Pop () as string;
+
 						foreach (TreeNode treeNode in node.Nodes) {
 							FBTreeNode fbnode = treeNode as FBTreeNode;
-							
-							if (path == fbnode.RealPath) {
+
+							if (path_cut + part_name == fbnode.RealPath) {
 								node = fbnode;
+								path_cut += part_name;
+
+								FillNode (node);
+								node.Expand ();
 								break;
 							}
+						}
+					}
+
+					// finally find the node for the complete path
+					foreach (TreeNode treeNode in node.Nodes) {
+						FBTreeNode fbnode = treeNode as FBTreeNode;
+
+						if (path == fbnode.RealPath) {
+							node = fbnode;
+							break;
 						}
 					}
 				}
@@ -550,7 +548,9 @@ namespace System.Windows.Forms {
 							return fbnode;
 					}
 					
-					return FindPathInNodes (path, node.Nodes);
+					FBTreeNode n = FindPathInNodes (path, node.Nodes);
+					if (n != null)
+						return n;
 				}
 				
 				return null;
