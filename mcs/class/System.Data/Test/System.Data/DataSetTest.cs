@@ -2027,7 +2027,13 @@ namespace MonoTests.System.Data
 			string expected =
 @"<rdData>
   <xs:schema id=""rdData"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
-    <xs:element name=""rdData"" msdata:IsDataSet=""true"" msdata:UseCurrentLocale=""true"">
+    <xs:element name=""rdData"" msdata:IsDataSet=""true"" " +
+#if !NET_2_0
+			  @"msdata:Locale=""fi-FI"">" +
+#else
+			  @"msdata:UseCurrentLocale=""true"">" +
+#endif
+@"
       <xs:complexType>
         <xs:choice minOccurs=""0"" maxOccurs=""unbounded"">
           <xs:element name=""MyDataTable"">
