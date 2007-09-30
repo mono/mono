@@ -298,6 +298,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=297416
 		public void TestOwnerMemberAccess ()
 		{
 			DynamicMethod method = new DynamicMethod ("GetField",

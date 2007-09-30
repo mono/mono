@@ -1,3 +1,8 @@
+2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DynamicMethodTest.cs: Marked test for bug #325444 as NotDotNet, and
+	added link to MS bug report.
+
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Added test for ManifestModule. Added missing
