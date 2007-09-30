@@ -1,6 +1,6 @@
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* UriTest3.cs: Added test for bug #328768.
+	* UriTest3.cs: Added test for bug #328768 and #323542.
 
 2007-09-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
