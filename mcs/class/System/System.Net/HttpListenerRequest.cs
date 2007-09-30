@@ -58,6 +58,8 @@ namespace System.Net {
 		HttpListenerContext context;
 		bool is_chunked;
 		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
+		static readonly string [] no_body_methods = new string [] {
+			"GET", "HEAD", "DELETE" };
 
 		internal HttpListenerRequest (HttpListenerContext context)
 		{
@@ -76,7 +78,7 @@ namespace System.Net {
 				return;
 			}
 
-			method = parts [0].ToUpperInvariant ();
+			method = parts [0];
 			foreach (char c in method){
 				int ic = (int) c;
 
@@ -169,8 +171,9 @@ namespace System.Net {
 
 			is_chunked = (t_encoding == "chunked");
 
-			if (method == "GET" || method == "HEAD" || method == "DELETE")
-				return;
+			foreach (string m in no_body_methods)
+				if (string.Compare (method, m, StringComparison.InvariantCultureIgnoreCase) == 0)
+					return;
 
 			if (!is_chunked && !cl_set) {
 				context.Connection.SendError (null, 411);

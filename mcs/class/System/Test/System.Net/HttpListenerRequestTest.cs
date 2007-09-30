@@ -147,7 +147,21 @@ namespace MonoTests.System.Net
 
 			listener.Close ();
 		}
+
+		[Test]
+		public void HttpMethod ()
+		{
+			HttpListener listener = HttpListener2Test.CreateAndStartListener (
+				"http://127.0.0.1:9000/HttpMethod/");
+			NetworkStream ns = HttpListener2Test.CreateNS (9000);
+			HttpListener2Test.Send (ns, "pOsT /HttpMethod/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+			HttpListenerContext ctx = listener.GetContext ();
+			HttpListenerRequest request = ctx.Request;
+			Assert.AreEqual ("pOsT", request.HttpMethod);
+			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
+			listener.Close ();
+		}
 	}
-}	
+}
 
 #endif

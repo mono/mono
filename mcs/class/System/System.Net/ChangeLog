@@ -1,5 +1,10 @@
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* HttpListenerRequest.cs: Do not store 'method' in upper case, but
+	instead use case-insensitive comparison.
+
+2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* HttpListenerRequest.cs: Removed dead code. USe String.Length to
 	check for zero-length string. Use instance field for is_chunked, and
 	also set it for GET/HEAD/DELETE. Fixed HasEntityBody to return true

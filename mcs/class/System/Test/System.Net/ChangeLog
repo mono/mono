@@ -1,5 +1,9 @@
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* HttpListenerRequestTest.cs: Added test for HttpMethod.
+
+2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* HttpListenerRequestTest.cs: Added test for HasEntityBody.
 	* HttpListener2Test.cs: Removed CWL.
 
