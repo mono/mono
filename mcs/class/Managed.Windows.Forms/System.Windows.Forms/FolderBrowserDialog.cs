@@ -483,13 +483,13 @@ namespace System.Windows.Forms {
 				if (node == null) {
 					Stack stack = new Stack ();
 					
-					string path_cut = path.Substring (0, path.LastIndexOf (Path.AltDirectorySeparatorChar));
+					string path_cut = path.Substring (0, path.LastIndexOf (Path.DirectorySeparatorChar));
 					
 					while (node == null && path_cut.Length > 0) {
 						node = FindPathInNodes (path_cut, Nodes);
 						
 						if (node == null) {
-							string path_cut_new = path_cut.Substring (0, path_cut.LastIndexOf (Path.AltDirectorySeparatorChar));
+							string path_cut_new = path_cut.Substring (0, path_cut.LastIndexOf (Path.DirectorySeparatorChar));
 							string leftover = path_cut.Replace (path_cut_new, string.Empty);
 							
 							stack.Push (leftover);
@@ -560,7 +560,7 @@ namespace System.Windows.Forms {
 			{
 				string root_path = (string) root_node.RealPath;
 				
-				if (root_path != null) {
+				if (root_path != null || rootFolder == Environment.SpecialFolder.MyComputer) {
 					try {
 						if (!Directory.Exists (path))
 							return false;
