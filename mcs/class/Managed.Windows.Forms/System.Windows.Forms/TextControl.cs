@@ -1082,14 +1082,22 @@ namespace System.Windows.Forms {
 
 		internal void UpdateMargins ()
 		{
-			if (owner.actual_border_style == BorderStyle.FixedSingle) {
-				left_margin = 0;
-				top_margin = 0;
-				right_margin = 0;
-			} else {
-				left_margin = 2;
-				top_margin = 2;
-				right_margin = 2;
+			switch (owner.actual_border_style) {
+				case BorderStyle.None:
+					left_margin = 0;
+					top_margin = 0;
+					right_margin = 1;
+					break;
+				case BorderStyle.FixedSingle:
+					left_margin = 2;
+					top_margin = 2;
+					right_margin = 3;
+					break;
+				case BorderStyle.Fixed3D:
+					left_margin = 1;
+					top_margin = 1;
+					right_margin = 2;
+					break;
 			}
 		}
 
