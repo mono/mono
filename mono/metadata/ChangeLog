@@ -1,3 +1,10 @@
+2007-10-01  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-config.c: Use g_strcasecmp instead of
+	strcasecmp like everywhere else to fix
+	compilation with MSVC.
+	
+	Code is contributed under MIT/X11 license.
 
 Mon Oct 1 14:39:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

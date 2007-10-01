@@ -1,3 +1,9 @@
+2007-10-01  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-io-portability.c: Only support on non-Windows
+	platforms.
+	
+	Code is contributed under MIT/X11 license.
 
 Mon Sep 24 17:14:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
