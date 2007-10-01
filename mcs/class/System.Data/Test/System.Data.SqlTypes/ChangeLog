@@ -1,3 +1,10 @@
+2007-10-01  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlCharsTest.cs (Read_*, Write_*): Tests for Newly implemented
+	Read and Write APIs.
+
+	* SqlBytesTest.cs (Read_*, Write_*): Ditto.
+	
 2007-09-27  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlStringTest.cs (ReadWriteXmlTest): Change the root node of the

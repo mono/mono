@@ -39,7 +39,6 @@ using System.Globalization;
 
 #if NET_2_0
 using System.Xml.Serialization;
-using System.IO;
 #endif 
 
 namespace MonoTests.System.Data.SqlTypes
@@ -253,6 +252,277 @@ namespace MonoTests.System.Data.SqlTypes
 
 			ReadWriteXmlTestInternal (xml1, strtest1, "BA01");
 			ReadWriteXmlTestInternal (xml2, strtest2.ToString (), "BA02");
+		}
+
+		/* Read tests */
+		[Test]
+		public void Read_SuccessTest1 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);
+			char [] c2 = new char [10];
+
+			chars.Read (0, c2, 0, (int) chars.Length);
+			Assert.AreEqual (chars.Value [5], c2 [5], "#1 Should be equal");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Read_NullBufferTest ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = null;
+			
+			chars.Read (0, c2, 0, 10);
+			Assert.Fail ("#2 Should throw ArgumentNullException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_InvalidCountTest1 ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5]; 
+
+			chars.Read (0, c2, 0, 10);
+			Assert.Fail ("#3 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_NegativeOffsetTest ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5];
+			
+			chars.Read (-1, c2, 0, 4);
+			Assert.Fail ("#4 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_NegativeOffsetInBufferTest ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5];
+			
+			chars.Read (0, c2, -1, 4);
+			Assert.Fail ("#5 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_InvalidOffsetInBufferTest ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5];
+			
+			chars.Read (0, c2, 8, 4);
+			Assert.Fail ("#6 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (SqlNullValueException))]
+		public void Read_NullInstanceValueTest ()
+		{			
+			char [] c2 = new char [5];
+			SqlChars chars = new SqlChars ();
+			
+			chars.Read (0, c2, 8, 4);
+			Assert.Fail ("#7 Should throw SqlNullValueException");
+		}
+
+		[Test]
+		public void Read_SuccessTest2 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };			
+			SqlChars chars = new SqlChars (c1);
+			char [] c2 = new char [10];
+			
+			chars.Read (5, c2, 0, 10);
+			Assert.AreEqual (chars.Value [5], c2 [0], "#8 Should be same");
+			Assert.AreEqual (chars.Value [9], c2 [4], "#9 Should be same");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Read_NullBufferAndInstanceValueTest ()
+		{			
+			char [] c2 = null;
+			SqlChars chars = new SqlChars ();
+			
+			chars.Read (0, c2, 8, 4);
+			Assert.Fail ("#10 Should throw ArgumentNullException");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_NegativeCountTest ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5];
+			
+			chars.Read (0, c2, 0, -1);
+			Assert.Fail ("#11 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Read_InvalidCountTest2 ()
+		{			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars (c1);			
+			char [] c2 = new char [5]; 
+
+			chars.Read (0, c2, 3, 4);
+			Assert.Fail ("#12 Should throw ArgumentOutOfRangeException");
+		}
+		
+		[Test]
+		public void Write_SuccessTest1 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (0, c1, 0, (int) c1.Length);
+			Assert.AreEqual (chars.Value [0], c1 [0], "#1 Should be same");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_NegativeOffsetTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (-1, c1, 0, (int) c1.Length);
+			Assert.Fail ("#2 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (SqlTypeException))]
+		public void Write_InvalidOffsetTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+			
+			chars.Write (chars.Length+5, c1, 0, (int) c1.Length);
+			Assert.Fail ("#3 Should throw SqlTypeException");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_NegativeOffsetInBufferTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (0, c1, -1, (int) c1.Length);
+			Assert.Fail ("#4 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_InvalidOffsetInBufferTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (0, c1, c1.Length+5, (int) c1.Length);
+			Assert.Fail ("#5 Should throw ArgumentOutOfRangeException");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_InvalidCountTest1 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (0, c1, 0, (int) c1.Length+5);
+			Assert.Fail ("#6 Should throw ArgumentOutOfRangeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (SqlTypeException))]
+		public void Write_InvalidCountTest2 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (8, c1, 0, (int) c1.Length);
+			Assert.Fail ("#7 Should throw SqlTypeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Write_NullBufferTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = null;
+			SqlChars chars = new SqlChars (c1);
+
+			chars.Write (0, c2, 0, 10);
+			Assert.Fail ("#8 Should throw ArgumentNullException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (SqlTypeException))]
+		public void Write_NullInstanceValueTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			SqlChars chars = new SqlChars();
+
+			chars.Write (0, c1, 0, 10);
+			Assert.Fail ("#9 Should throw SqlTypeException");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Write_NullBufferAndInstanceValueTest ()
+		{
+			char [] c1 = null;
+			SqlChars chars = new SqlChars();
+			
+			chars.Write (0, c1, 0, 10);
+			Assert.Fail ("#9 Should throw ArgumentNullException");
+		}
+		
+		[Test]
+		public void Write_SuccessTest2 ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [20];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (8, c1, 0, 10);
+			Assert.AreEqual (chars.Value [8], c1 [0], "#10 Should be same");
+			Assert.AreEqual (chars.Value [17], c1 [9], "#10 Should be same");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Write_NegativeCountTest ()
+		{
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
+			char [] c2 = new char [10];
+			SqlChars chars = new SqlChars (c2);
+
+			chars.Write (0, c1, 0, -1);
+			Assert.Fail ("#11 Should throw ArgumentOutOfRangeException");
 		}
 	}
 }
