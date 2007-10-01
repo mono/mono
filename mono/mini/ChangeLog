@@ -1,4 +1,10 @@
 
+Mon Oct 1 15:00:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-trampolines.c, mini.h: enable the lazy filling of the
+	IMT slots (this saves hundreds of KB of memory in programs like
+	IronPython and Monodevelop).
+
 Mon Oct 1 14:44:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: print the delegate counter.
