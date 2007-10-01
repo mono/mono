@@ -1,3 +1,14 @@
+2007-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentDefinition.cs, ContentDesignerState.cs,
+	  ControlLocation.cs, DesignTimeResourceProviderFactory.cs,
+	  IControlDesignerTag.cs, IControlDesignerView.cs,
+	  IDesignTimeResourceWriter.cs, ViewEvent.cs, ViewEventArgs.cs,
+	  ViewEventHandler.cs, WebFormsReferenceManager.cs,
+	  WebFormsRootDesigner.cs : new stubs.
+	* ControlDesigner.cs : Added some more members. Uncomment
+	  RootDesigner and Tag.
+
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ControlDesigner.cs, TemplatedControlDesigner.cs :

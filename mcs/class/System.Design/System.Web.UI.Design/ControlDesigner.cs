@@ -20,10 +20,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.ComponentModel.Design;
-using System.ComponentModel;
-using System.Web.UI.WebControls;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI.Design
 {
@@ -40,7 +41,36 @@ namespace System.Web.UI.Design
 		public virtual string GetDesignTimeHtml () { throw new NotImplementedException (); }
 #if NET_2_0
 		[MonoNotSupported ("")]
-		public virtual string GetDesignTimeHtml (DesignerRegionCollection regions) { throw new NotImplementedException (); }
+		public static DesignTimeResourceProviderFactory GetDesignTimeResourceProviderFactory (IServiceProvider serviceProvider)
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		public static ViewRendering GetViewRendering (Control control)
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		public static ViewRendering GetViewRendering (ControlDesigner designer)
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		protected string CreateErrorDesignTimeHtml (string errorMessage)
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		protected string CreateErrorDesignTimeHtml (string errorMessage, Exception e)
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		protected virtual Control CreateViewControl ()
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		public Rectangle GetBounds ()
+		{ throw new NotImplementedException (); }
+
+		[MonoNotSupported ("")]
+		public virtual string GetDesignTimeHtml (DesignerRegionCollection regions)
+		{ throw new NotImplementedException (); }
 		
 		[MonoNotSupported ("")]
 		public virtual string GetEditableDesignerRegionContent (EditableDesignerRegion region) { throw new NotImplementedException (); }
@@ -53,6 +83,13 @@ namespace System.Web.UI.Design
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoNotSupported ("")]
+		public ViewRendering GetViewRendering ()
+		{
+			throw new NotImplementedException ();
+		}
+
 #endif
 		[MonoTODO]
 		protected virtual string GetEmptyDesignTimeHtml () { throw new NotImplementedException (); }
@@ -129,16 +166,15 @@ namespace System.Web.UI.Design
 			get { throw new NotImplementedException (); }
 		}
 
-// too much more work is needed
-//		[MonoNotSupported ("")]
-//		protected WebFormsRootDesigner RootDesigner {
-//			get { throw new NotImplementedException (); }
-//		}
+		[MonoNotSupported ("")]
+		protected WebFormsRootDesigner RootDesigner {
+			get { throw new NotImplementedException (); }
+		}
 
-//		[MonoNotSupported ("")]
-//		protected IControlDesignerTag Tag {
-//			get { throw new NotImplementedException (); }
-//		}
+		[MonoNotSupported ("")]
+		protected IControlDesignerTag Tag {
+			get { throw new NotImplementedException (); }
+		}
 
 		[MonoNotSupported ("")]
 		protected void SetViewFlags (ViewFlags viewFlags, bool setFlag)

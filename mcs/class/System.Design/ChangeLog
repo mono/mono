@@ -1,3 +1,15 @@
+2007-10-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Design.dll.sources : more new types:
+	  ContentDefinition.cs, ContentDesignerState.cs,
+	  ControlLocation.cs, DesignTimeResourceProviderFactory.cs,
+	  IControlDesignerTag.cs, IControlDesignerView.cs,
+	  IDesignTimeResourceWriter.cs, ViewEvent.cs, ViewEventArgs.cs,
+	  ViewEventHandler.cs and WebFormsReferenceManager.cs and
+	  WebFormsRootDesigner.cs in Sys.Web.UI.Design.
+	  DataSourceGroupCollection.cs, DataSourceProviderService.cs,
+	  DataSourceGroup.cs and DesignerDataColumn.cs in Sys.CM.Design.Data.
+
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Design.dll.sources : more new types:
