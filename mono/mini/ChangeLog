@@ -1,3 +1,7 @@
+2007-10-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (get_plt_index): Rework the handling of wrappers to be not so
+	hackish.
 
 Mon Oct 1 15:00:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
