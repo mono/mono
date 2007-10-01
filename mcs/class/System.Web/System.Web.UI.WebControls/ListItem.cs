@@ -246,11 +246,11 @@ namespace System.Web.UI.WebControls {
 					SetDirty ();
 			}
 		}
+#endif
 
 		internal bool HasAttributes {
 			get { return attrs != null && attrs.Count > 0; }
 		}
-#endif
 
 		string text;
 		string value;

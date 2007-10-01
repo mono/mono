@@ -191,7 +191,9 @@ namespace System.Web.UI.WebControls {
 					selected = true;
 				}
 				writer.WriteAttribute("value", item.Value, true);
-
+				if (item.HasAttributes)
+					item.Attributes.Render (writer);
+				
 				writer.Write(">");
 				string text = HttpUtility.HtmlEncode (item.Text);
 				writer.Write (text);

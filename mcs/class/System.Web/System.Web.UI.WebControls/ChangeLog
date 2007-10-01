@@ -1,3 +1,11 @@
+2007-10-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ListItem.cs: make HasAttributes available for the 1.1 profile as
+	well.
+
+	* DropDownList.cs: render custom ListItem attributes in the 1.1
+	profile. Fixes bug #326288
+
 2007-09-27  Marek Habersack  <mhabersack@novell.com>
 
 	* Button.cs: added missing OnPreRender method.
