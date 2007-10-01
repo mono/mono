@@ -1,3 +1,9 @@
+
+Mon Oct 1 14:36:50 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: make it easier to enable the debugging code for IMT
+	slots.
+
 2007-09-28  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
