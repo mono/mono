@@ -250,6 +250,7 @@ RelationName
 Function
 	: CalcFunction
 	| AggFunction
+	| StringFunction
 	;
 
 AggFunction
@@ -269,16 +270,27 @@ AggFunctionName
 	| VAR		{ $$ = AggregationFunction.Var; }
 	;
 
+StringExpr
+	: SingleColumnValue
+	| StringLiteral
+	| StringFunction
+	;
+
+StringFunction
+	: TRIM PAROPEN StringExpr PARCLOSE
+	{
+		$$ = new TrimFunction ((IExpression)$3);
+	}
+	| SUBSTRING PAROPEN StringExpr COMMA ArithExpr COMMA ArithExpr PARCLOSE
+	{
+		$$ = new SubstringFunction ((IExpression)$3, (IExpression)$5, (IExpression)$7);
+	}
+	;
+
 CalcFunction
-	: IIF PAROPEN BoolExpr COMMA Expr COMMA Expr PARCLOSE
+	: IIF PAROPEN Expr COMMA Expr COMMA Expr PARCLOSE
 	{
 		$$ = new IifFunction ((IExpression)$3, (IExpression)$5, (IExpression)$7);
-	}
-	| SUBSTRING PAROPEN Expr COMMA NumberLiteral COMMA NumberLiteral PARCLOSE
-	{
-		long arg1 = (long) $5;
-		long arg2 = (long) $7;
-		$$ = new SubstringFunction ((IExpression)$3, Convert.ToInt32(arg1), Convert.ToInt32(arg2));
 	}
 	| ISNULL PAROPEN Expr COMMA Expr PARCLOSE
 	{
@@ -287,10 +299,6 @@ CalcFunction
 	| LEN PAROPEN Expr PARCLOSE
 	{
 		$$ = new LenFunction ((IExpression)$3);
-	}
-	| TRIM PAROPEN Expr PARCLOSE
-	{
-		$$ = new TrimFunction ((IExpression)$3);
 	}
 	| CONVERT PAROPEN Expr COMMA TypeSpecifier PARCLOSE
 	{
@@ -321,7 +329,7 @@ LikePredicate
 	}
 	| ArithExpr NOT LIKE StringLiteral
 	{
-		$$ = new Negation (new Like ((IExpression)$1, (string)$3));
+		$$ = new Negation (new Like ((IExpression)$1, (string)$4));
 	}
 	;
 

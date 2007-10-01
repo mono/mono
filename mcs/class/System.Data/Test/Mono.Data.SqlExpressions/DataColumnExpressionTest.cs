@@ -8,6 +8,36 @@ namespace Monotests_Mono.Data.SqlExpressions
 	public class DataColumnExprTest
 	{
 		[Test]
+		public void TestDataColumnExpr0SingleColumnValue ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Col_0.Value", Type.GetType ("System.Int32"));
+			table.Columns.Add ("Col_1", Type.GetType ("System.Int32"));
+			table.Columns.Add ("Result", Type.GetType ("System.Int32"), "IIF(Col_0.Value, Col_1 + 5, 0)");
+
+			DataRow row = table.NewRow ();
+			row ["Col_0.Value"] = 0;
+			row ["Col_1"] = 10;
+
+			table.Rows.Add (row);
+			Assert.AreEqual (0, (int)table.Rows[0][2], "#1");
+		}
+		[Test]
+		public void TestDataColumnExpr0Literal ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Col_0.Value", Type.GetType ("System.Int32"));
+			table.Columns.Add ("Col_1", Type.GetType ("System.Int32"));
+			table.Columns.Add ("Result", Type.GetType ("System.Int32"), "IIF(false, Col_1 + 5, 0)");
+
+			DataRow row = table.NewRow ();
+			row ["Col_0.Value"] = 0;
+			row ["Col_1"] = 10;
+
+			table.Rows.Add (row);
+			Assert.AreEqual (0, (int)table.Rows[0][2], "#1");
+		}
+		[Test]
 		public void TestDataColumnExpr1 ()
 		{
 			DataTable table = new DataTable ();
@@ -36,6 +66,19 @@ namespace Monotests_Mono.Data.SqlExpressions
 
 			table.Rows.Add (row);
 			Assert.AreEqual (0, (int)table.Rows[0][2], "#1");
+		}
+		[Test]
+		public void TestDataColumnSubstring ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Col_0", Type.GetType ("System.String"));
+			table.Columns.Add ("Result", Type.GetType ("System.String"), "SUBSTRING(Col_0, 2+2, 2)");
+
+			DataRow row = table.NewRow ();
+			row ["Col_0"] = "Is OK?";
+
+			table.Rows.Add (row);
+			Assert.AreEqual ("OK", (string)table.Rows[0][1], "#1");
 		}
 	}
 	[TestFixture]

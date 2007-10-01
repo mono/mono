@@ -74,7 +74,7 @@ namespace Mono.Data.SqlExpressions {
 			object o = expr.Eval (row);
 			if (o == DBNull.Value)
 				return o;
-			bool val = (bool)o;
+			bool val = Convert.ToBoolean(o);
 			return (val ? trueExpr.Eval (row) : falseExpr.Eval (row));
 		}
 	}

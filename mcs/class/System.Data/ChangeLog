@@ -1,3 +1,15 @@
+2007-10-01  Joel Reed  <joelwreed@gmail.com>
+
+	* Mono.Data.SqlExpressions/Functions.cs: accept SingleColumnValues and 
+	BoolLiterals for IIF condition
+	* Mono.Data.SqlExpressions/Parser.jay: accept arithmetic expressions
+	for SUBSTRING start and length parameters, accept SingleColumnValue and 
+	BoolLiteral for IIF condition, fix copy and paste bug in IS NOT NULL
+	* Mono.Data.SqlExpressions/StringFunctions.cs: accept arithmetic expressions
+	for substring start and length parameters
+	* Test/Mono.Data.SqlExpressions/DataColumnExpressionTest.cs: add tests for 
+	IIF SingleColumnValue and BoolLiteral conditions, and SUBSTRING arithmetic expressions
+
 2007-09-27  Nagappan A <anagappan@novell.com> 
 
 	* System.Data.dll.sources: Added new files SqlDataSourceConverter.cs,

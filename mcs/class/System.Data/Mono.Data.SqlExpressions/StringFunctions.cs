@@ -56,8 +56,9 @@ namespace Mono.Data.SqlExpressions {
 	}
 	
 	internal class SubstringFunction : StringFunction {
-		int start, len;
-		public SubstringFunction (IExpression e, int start, int len) : base (e)
+		IExpression start;
+		IExpression len;
+		public SubstringFunction (IExpression e, IExpression start, IExpression len) : base (e)
 		{
 			this.start = start;
 			this.len = len;
@@ -92,13 +93,17 @@ namespace Mono.Data.SqlExpressions {
 		override public object Eval (DataRow row)
 		{
 			string str = (string)base.Eval (row);
+			object x = start.Eval (row);
+			int istart = Convert.ToInt32 (start.Eval (row));
+			int ilen = Convert.ToInt32 (len.Eval (row));
+			
 			if(str == null)
 				return null;
 				
-			if (start > str.Length)
+			if (istart > str.Length)
 				return String.Empty;
 			
-			return str.Substring (start - 1, System.Math.Min (len, str.Length - (start - 1)));
+			return str.Substring (istart - 1, System.Math.Min (ilen, str.Length - (istart - 1)));
 		}
 	}
 	
