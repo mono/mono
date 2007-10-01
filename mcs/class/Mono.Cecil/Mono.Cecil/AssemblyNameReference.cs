@@ -81,6 +81,36 @@ namespace Mono.Cecil {
 			set { m_flags = value; }
 		}
 
+		public bool HasPublicKey {
+			get { return (m_flags & AssemblyFlags.PublicKey) != 0; }
+			set {
+				if (value)
+					m_flags |= AssemblyFlags.PublicKey;
+				else
+					m_flags &= ~AssemblyFlags.PublicKey;
+			}
+		}
+
+		public bool IsSideBySideCompatible {
+			get { return (m_flags & AssemblyFlags.SideBySideCompatible) != 0; }
+			set {
+				if (value)
+					m_flags |= AssemblyFlags.SideBySideCompatible;
+				else
+					m_flags &= ~AssemblyFlags.SideBySideCompatible;
+			}
+		}
+
+		public bool IsRetargetable {
+			get { return (m_flags & AssemblyFlags.Retargetable) != 0; }
+			set {
+				if (value)
+					m_flags |= AssemblyFlags.Retargetable;
+				else
+					m_flags &= ~AssemblyFlags.Retargetable;
+			}
+		}
+
 		public byte [] PublicKey {
 			get { return m_publicKey; }
 			set {
