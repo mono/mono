@@ -1298,10 +1298,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
 				// LAMESPEC: on Callback IsPostBack is set to false, but true.
 				//isPostBack = !isCallback;
-				if (ctx.InTransit)
-					isPostBack = false;
-				else
-					isPostBack = true;
+				isPostBack = !ctx.InTransit;
 			}
 			string lastFocus = _requestValueCollection [LastFocusID];
 			if (!String.IsNullOrEmpty (lastFocus)) {
