@@ -20,6 +20,7 @@ System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AppCodeCompiler.cs
 System.Web.Compilation/AppResourceFileInfo.cs
 System.Web.Compilation/AppResourceFilesCollection.cs
+System.Web.Compilation/AppResourcesAssemblyBuilder.cs
 System.Web.Compilation/AppResourcesCompiler.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs

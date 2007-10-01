@@ -47,12 +47,14 @@ namespace System.Web.Compilation
 	internal class AppResourcesCompiler
 	{
 		const string cachePrefix = "@@LocalResourcesAssemblies";
+		public const string DefaultCultureKey = ".:!DefaultCulture!:.";
 		
 		bool isGlobal;
 		HttpContext context;
 		AppResourceFilesCollection files;
 		string tempDirectory;
 		string virtualPath;
+		Dictionary <string, List <string>> cultureFiles;
 		
 		string TempDirectory {
 			get {
@@ -61,12 +63,17 @@ namespace System.Web.Compilation
 				return (tempDirectory = AppDomain.CurrentDomain.SetupInformation.DynamicBase);
 			}
 		}
+
+		public Dictionary <string, List <string>> CultureFiles {
+			get { return cultureFiles; }
+		}
 		
 		public AppResourcesCompiler (HttpContext context)
 		{
 			this.context = context;
 			this.isGlobal = true;
 			this.files = new AppResourceFilesCollection (context);
+			this.cultureFiles = new Dictionary <string, List <string>> ();
 		}
 
 		public AppResourcesCompiler (string virtualPath)
@@ -75,6 +82,7 @@ namespace System.Web.Compilation
 			this.virtualPath = virtualPath;
 			this.isGlobal = false;
 			this.files = new AppResourceFilesCollection (HttpContext.Current.Request.MapPath (virtualPath));
+			this.cultureFiles = new Dictionary <string, List <string>> ();
 		}
 		
 		public Assembly Compile ()
@@ -98,23 +106,10 @@ namespace System.Web.Compilation
 			if (assemblyPath == null)
 				throw new ApplicationException ("Failed to create global resources assembly");
 			
-			CompilationSection config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
-			if (config == null || !CodeDomProvider.IsDefinedLanguage (config.DefaultLanguage))
-				throw new ApplicationException ("Could not get the default compiler.");
-			CompilerInfo ci = CodeDomProvider.GetCompilerInfo (config.DefaultLanguage);
-			if (ci == null || !ci.IsCodeDomProviderTypeValid)
-				throw new ApplicationException ("Failed to obtain the default compiler information.");
-
-			CompilerParameters cp = ci.CreateDefaultCompilerParameters ();
-			cp.OutputAssembly = assemblyPath;
-			cp.GenerateExecutable = false;
-			cp.TreatWarningsAsErrors = true;
-			cp.IncludeDebugInformation = config.Debug;
-			
-			List <string>[] fileGroups = GroupGlobalFiles (cp);
+			List <string>[] fileGroups = GroupGlobalFiles ();
 			if (fileGroups == null || fileGroups.Length == 0)
 				return null;
-
+			
 			CodeCompileUnit unit = new CodeCompileUnit ();
 			CodeNamespace ns = new CodeNamespace (null);
 			ns.Imports.Add (new CodeNamespaceImport ("System"));
@@ -123,36 +118,21 @@ namespace System.Web.Compilation
 			ns.Imports.Add (new CodeNamespaceImport ("System.Resources"));
 			unit.Namespaces.Add (ns);
 
-			CodeDomProvider provider;
-			provider = ci.CreateProvider ();
-			if (provider == null)
-				throw new ApplicationException ("Failed to instantiate the default compiler.");
+			AppResourcesAssemblyBuilder builder = new AppResourcesAssemblyBuilder ("App_GlobalResources", assemblyPath,
+											       this);
+			CodeDomProvider provider = builder.Provider;
 			
 			Dictionary <string,bool> assemblies = new Dictionary<string,bool> ();
 			foreach (List<string> ls in fileGroups)
 				DomFromResource (ls [0], unit, assemblies, provider);
+			
 			foreach (KeyValuePair<string,bool> de in assemblies)
 				unit.ReferencedAssemblies.Add (de.Key);
 			
-			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
-			abuilder.AddCodeCompileUnit (unit);
-
-			CompilerResults results = abuilder.BuildAssembly (cp);
-			Assembly ret = null;
+			builder.Build (unit);
+			HttpContext.AppGlobalResourcesAssembly = builder.MainAssembly;
 			
-			if (results.NativeCompilerReturnValue == 0) {
-				ret = results.CompiledAssembly;
-				BuildManager.TopLevelAssemblies.Add (ret);
-				HttpContext.AppGlobalResourcesAssembly = ret;
-			} else {
-				if (context.IsCustomErrorEnabled)
-					throw new ApplicationException ("An error occurred while compiling global resources.");
-				throw new CompilationException (null, results.Errors, null);
-			}
-			HttpRuntime.WritePreservationFile (ret, "App_GlobalResources");
-			HttpRuntime.EnableAssemblyMapping (true);
-
-			return ret;
+			return builder.MainAssembly;
 		}
 
 		Assembly CompileLocal ()
@@ -175,42 +155,19 @@ namespace System.Web.Compilation
 									     "dll",
 									     OnCreateRandomFile) as string;
 			if (assemblyPath == null)
-				throw new ApplicationException ("Failed to create global resources assembly");
-			
-			CompilationSection config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
-			if (config == null || !CodeDomProvider.IsDefinedLanguage (config.DefaultLanguage))
-				throw new ApplicationException ("Could not get the default compiler.");
-			CompilerInfo ci = CodeDomProvider.GetCompilerInfo (config.DefaultLanguage);
-			if (ci == null || !ci.IsCodeDomProviderTypeValid)
-				throw new ApplicationException ("Failed to obtain the default compiler information.");
-
-			CompilerParameters cp = ci.CreateDefaultCompilerParameters ();
-			cp.OutputAssembly = assemblyPath;
-			cp.GenerateExecutable = false;
-			cp.TreatWarningsAsErrors = true;
-			cp.IncludeDebugInformation = config.Debug;
+				throw new ApplicationException ("Failed to create local resources assembly");
 
 			List<AppResourceFileInfo> files = this.files.Files;
 			foreach (AppResourceFileInfo arfi in files)
-				GetResourceFile (arfi, cp, true);
+				GetResourceFile (arfi, true);
 
-			CodeDomProvider provider;
-			provider = ci.CreateProvider ();
-			if (provider == null)
-				throw new ApplicationException ("Failed to instantiate the default compiler.");
+			AppResourcesAssemblyBuilder builder = new AppResourcesAssemblyBuilder ("App_LocalResources", assemblyPath,
+											       this);
+			builder.Build ();
+			Assembly ret = builder.MainAssembly;
 			
-			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
-			CompilerResults results = abuilder.BuildAssembly (cp);
-			Assembly ret = null;
-			
-			if (results.NativeCompilerReturnValue == 0) {
-				ret = results.CompiledAssembly;
+			if (ret != null)
 				AddAssemblyToCache (virtualPath, ret);
-			} else {
-				if (context.IsCustomErrorEnabled)
-					throw new ApplicationException ("An error occurred while compiling global resources.");
-				throw new CompilationException (null, results.Errors, null);
-			}
 
 			return ret;
 		}
@@ -247,7 +204,7 @@ namespace System.Web.Compilation
 			return ret;
 		}
 
-		bool IsFileCultureValid (string fileName)
+		string IsFileCultureValid (string fileName)
                 {
                     string tmp = Path.GetFileNameWithoutExtension (fileName);
                     tmp = Path.GetExtension (tmp);
@@ -255,27 +212,40 @@ namespace System.Web.Compilation
                               tmp = tmp.Substring (1);
                             try {
                                 CultureInfo.GetCultureInfo (tmp);
-                                return true;
+                                return tmp;
                             } catch {
-                                return false;
+                                return null;
                             }
                     } 
-                    return false;
+                    return null;
                 }
-
-		string GetResourceFile (AppResourceFileInfo arfi, CompilerParameters cp, bool local)
+		
+		string GetResourceFile (AppResourceFileInfo arfi, bool local)
 		{
 			string resfile;
 			if (arfi.Kind == AppResourceFileKind.ResX)
 				resfile = CompileResource (arfi, local);
 			else
 				resfile = arfi.Info.FullName;
-			if (!String.IsNullOrEmpty (resfile))
-				cp.EmbeddedResources.Add (resfile);
+			if (!String.IsNullOrEmpty (resfile)) {
+				string culture = IsFileCultureValid (resfile);
+				if (culture == null)
+					culture = DefaultCultureKey;
+				
+				List <string> cfiles;
+				if (cultureFiles.ContainsKey (culture))
+					cfiles = cultureFiles [culture];
+				else {
+					cfiles = new List <string> (1);
+					cultureFiles [culture] = cfiles;
+				}
+				cfiles.Add (resfile);
+			}
+				
 			return resfile;
 		}
 		
-		List <string>[] GroupGlobalFiles (CompilerParameters cp)
+		List <string>[] GroupGlobalFiles ()
 		{
 			List<AppResourceFileInfo> files = this.files.Files;
 			List<List<string>> groups = new List<List<string>> ();
@@ -306,7 +276,7 @@ namespace System.Web.Compilation
 					filedots = CountChars ('.', tmp);
 
 					if (filedots == basedots + 1 && tmp.StartsWith (basename)) {
-						if (IsFileCultureValid (s2)) {
+						if (IsFileCultureValid (s2) != null) {
 							// A valid translated file for this name
 							defaultFile = arfi;
 							break;
@@ -321,7 +291,7 @@ namespace System.Web.Compilation
 				}
 				if (defaultFile != null) {
 					List<string> al = new List<string> ();
-					al.Add (GetResourceFile (arfi, cp, false));
+					al.Add (GetResourceFile (arfi, false));
 					arfi.Seen = true;
 					groups.Add (al);
 					
@@ -344,7 +314,7 @@ namespace System.Web.Compilation
 						continue;
 					tmp2 = arfi.Info.Name;
 					if (tmp2.StartsWith (tmp)) {
-						al.Add (GetResourceFile (arfi, cp, false));
+						al.Add (GetResourceFile (arfi, false));
 						arfi.Seen = true;
 					}
 				}
@@ -360,12 +330,12 @@ namespace System.Web.Compilation
 				if (arfi.Seen)
 					continue;
 
-				if (IsFileCultureValid (arfi.Info.FullName))
+				if (IsFileCultureValid (arfi.Info.FullName) != null)
 					continue; // Culture found, we reject the file
 
 				// A single default file, create a group
 				List<string> al = new List<string> ();
-				al.Add (GetResourceFile (arfi, cp, false));
+				al.Add (GetResourceFile (arfi, false));
 				groups.Add (al);
 			}
 			groups.Sort (lcList);
