@@ -90,66 +90,66 @@ namespace Mono.Cecil {
 		public bool IsNonVariant {
 			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.NonVariant; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.NonVariant);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.VarianceMask;
+					m_attributes |= GenericParameterAttributes.NonVariant;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.VarianceMask & GenericParameterAttributes.NonVariant);
 			}
 		}
 
 		public bool IsCovariant {
 			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.Covariant; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Covariant);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.VarianceMask;
+					m_attributes |= GenericParameterAttributes.Covariant;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Covariant);
 			}
 		}
 
 		public bool IsContravariant {
 			get { return (m_attributes & GenericParameterAttributes.VarianceMask) == GenericParameterAttributes.Contravariant; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Contravariant);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.VarianceMask;
+					m_attributes |= GenericParameterAttributes.Contravariant;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.VarianceMask & GenericParameterAttributes.Contravariant);
 			}
 		}
 
 		public bool HasReferenceTypeConstraint {
 			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.ReferenceTypeConstraint; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.ReferenceTypeConstraint);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
+					m_attributes |= GenericParameterAttributes.ReferenceTypeConstraint;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.ReferenceTypeConstraint);
 			}
 		}
 
 		public bool HasNotNullableValueTypeConstraint {
 			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.NotNullableValueTypeConstraint; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.NotNullableValueTypeConstraint);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
+					m_attributes |= GenericParameterAttributes.NotNullableValueTypeConstraint;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.NotNullableValueTypeConstraint);
 			}
 		}
 
 		public bool HasDefaultConstructorConstraint {
 			get { return (m_attributes & GenericParameterAttributes.SpecialConstraintMask) == GenericParameterAttributes.DefaultConstructorConstraint; }
 			set {
-				GenericParameterAttributes masked = (GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.DefaultConstructorConstraint);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~GenericParameterAttributes.SpecialConstraintMask;
+					m_attributes |= GenericParameterAttributes.DefaultConstructorConstraint;
+				} else
+					m_attributes &= ~(GenericParameterAttributes.SpecialConstraintMask & GenericParameterAttributes.DefaultConstructorConstraint);
 			}
 		}
 

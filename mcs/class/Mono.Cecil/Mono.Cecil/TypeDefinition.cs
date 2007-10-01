@@ -153,143 +153,143 @@ namespace Mono.Cecil {
 		public bool IsNotPublic {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NotPublic; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NotPublic);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NotPublic;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NotPublic);
 			}
 		}
 
 		public bool IsPublic {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.Public);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.Public;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.Public);
 			}
 		}
 
 		public bool IsNestedPublic {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPublic);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedPublic;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedPublic);
 			}
 		}
 
 		public bool IsNestedPrivate {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPrivate; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedPrivate);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedPrivate;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedPrivate);
 			}
 		}
 
 		public bool IsNestedFamily {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamily; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamily);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedFamily;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedFamily);
 			}
 		}
 
 		public bool IsNestedAssembly {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedAssembly; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedAssembly);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedAssembly;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedAssembly);
 			}
 		}
 
 		public bool IsNestedFamilyAndAssembly {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamANDAssem; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamANDAssem);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedFamANDAssem;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedFamANDAssem);
 			}
 		}
 
 		public bool IsNestedFamilyOrAssembly {
 			get { return (m_attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedFamORAssem; }
 			set {
-				TypeAttributes masked = (TypeAttributes.VisibilityMask & TypeAttributes.NestedFamORAssem);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.VisibilityMask;
+					m_attributes |= TypeAttributes.NestedFamORAssem;
+				} else
+					m_attributes &= ~(TypeAttributes.VisibilityMask & TypeAttributes.NestedFamORAssem);
 			}
 		}
 
 		public bool IsAutoLayout {
 			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.AutoLayout; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.LayoutMask;
+					m_attributes |= TypeAttributes.AutoLayout;
+				} else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.AutoLayout);
 			}
 		}
 
 		public bool IsSequentialLayout {
 			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.LayoutMask;
+					m_attributes |= TypeAttributes.SequentialLayout;
+				} else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.SequentialLayout);
 			}
 		}
 
 		public bool IsExplicitLayout {
 			get { return (m_attributes & TypeAttributes.LayoutMask) == TypeAttributes.ExplicitLayout; }
 			set {
-				TypeAttributes masked = (TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.LayoutMask;
+					m_attributes |= TypeAttributes.ExplicitLayout;
+				} else
+					m_attributes &= ~(TypeAttributes.LayoutMask & TypeAttributes.ExplicitLayout);
 			}
 		}
 
 		public bool IsClass {
 			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Class; }
 			set {
-				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.ClassSemanticMask;
+					m_attributes |= TypeAttributes.Class;
+				} else
+					m_attributes &= ~(TypeAttributes.ClassSemanticMask & TypeAttributes.Class);
 			}
 		}
 
 		public bool IsInterface {
 			get { return (m_attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface; }
 			set {
-				TypeAttributes masked = (TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.ClassSemanticMask;
+					m_attributes |= TypeAttributes.Interface;
+				} else
+					m_attributes &= ~(TypeAttributes.ClassSemanticMask & TypeAttributes.Interface);
 			}
 		}
 
@@ -346,33 +346,33 @@ namespace Mono.Cecil {
 		public bool IsAnsiClass {
 			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AnsiClass; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.StringFormatMask;
+					m_attributes |= TypeAttributes.AnsiClass;
+				} else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.AnsiClass);
 			}
 		}
 
 		public bool IsUnicodeClass {
 			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.UnicodeClass; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.StringFormatMask;
+					m_attributes |= TypeAttributes.UnicodeClass;
+				} else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.UnicodeClass);
 			}
 		}
 
 		public bool IsAutoClass {
 			get { return (m_attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AutoClass; }
 			set {
-				TypeAttributes masked = (TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~TypeAttributes.StringFormatMask;
+					m_attributes |= TypeAttributes.AutoClass;
+				} else
+					m_attributes &= ~(TypeAttributes.StringFormatMask & TypeAttributes.AutoClass);
 			}
 		}
 

@@ -59,22 +59,22 @@ namespace Mono.Cecil {
 		public bool IsPublic {
 			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Public; }
 			set {
-				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~ManifestResourceAttributes.VisibilityMask;
+					m_attributes |= ManifestResourceAttributes.Public;
+				} else
+					m_attributes &= ~(ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Public);
 			}
 		}
 
 		public bool IsPrivate {
 			get { return (m_attributes & ManifestResourceAttributes.VisibilityMask) == ManifestResourceAttributes.Private; }
 			set {
-				ManifestResourceAttributes masked = (ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~ManifestResourceAttributes.VisibilityMask;
+					m_attributes |= ManifestResourceAttributes.Private;
+				} else
+					m_attributes &= ~(ManifestResourceAttributes.VisibilityMask & ManifestResourceAttributes.Private);
 			}
 		}
 

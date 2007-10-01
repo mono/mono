@@ -97,11 +97,11 @@ class MaskedAttribute < Attribute
 
 	def setter
 """			set {
-				#{type} masked = (#{mask_full_name()} & #{full_name()});
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~#{mask_full_name()};
+					m_attributes |= #{full_name()};
+				} else
+					m_attributes &= ~(#{mask_full_name()} & #{full_name()});
 			}
 """
 	end

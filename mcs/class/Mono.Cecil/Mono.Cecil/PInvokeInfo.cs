@@ -70,110 +70,110 @@ namespace Mono.Cecil {
 		public bool IsCharSetNotSpec {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetNotSpec; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetNotSpec);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CharSetMask;
+					m_attributes |= PInvokeAttributes.CharSetNotSpec;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetNotSpec);
 			}
 		}
 
 		public bool IsCharSetAnsi {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetAnsi; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAnsi);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CharSetMask;
+					m_attributes |= PInvokeAttributes.CharSetAnsi;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAnsi);
 			}
 		}
 
 		public bool IsCharSetUnicode {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetUnicode; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetUnicode);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CharSetMask;
+					m_attributes |= PInvokeAttributes.CharSetUnicode;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetUnicode);
 			}
 		}
 
 		public bool IsCharSetAuto {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.CharSetAuto; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAuto);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CharSetMask;
+					m_attributes |= PInvokeAttributes.CharSetAuto;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.CharSetAuto);
 			}
 		}
 
 		public bool SupportsLastError {
 			get { return (m_attributes & PInvokeAttributes.CharSetMask) == PInvokeAttributes.SupportsLastError; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CharSetMask;
+					m_attributes |= PInvokeAttributes.SupportsLastError;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CharSetMask & PInvokeAttributes.SupportsLastError);
 			}
 		}
 
 		public bool IsCallConvWinapi {
 			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvWinapi; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvWinapi);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CallConvMask;
+					m_attributes |= PInvokeAttributes.CallConvWinapi;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvWinapi);
 			}
 		}
 
 		public bool IsCallConvCdecl {
 			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvCdecl; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvCdecl);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CallConvMask;
+					m_attributes |= PInvokeAttributes.CallConvCdecl;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvCdecl);
 			}
 		}
 
 		public bool IsCallConvStdCall {
 			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvStdCall; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvStdCall);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CallConvMask;
+					m_attributes |= PInvokeAttributes.CallConvStdCall;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvStdCall);
 			}
 		}
 
 		public bool IsCallConvThiscall {
 			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvThiscall; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvThiscall);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CallConvMask;
+					m_attributes |= PInvokeAttributes.CallConvThiscall;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvThiscall);
 			}
 		}
 
 		public bool IsCallConvFastcall {
 			get { return (m_attributes & PInvokeAttributes.CallConvMask) == PInvokeAttributes.CallConvFastcall; }
 			set {
-				PInvokeAttributes masked = (PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvFastcall);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~PInvokeAttributes.CallConvMask;
+					m_attributes |= PInvokeAttributes.CallConvFastcall;
+				} else
+					m_attributes &= ~(PInvokeAttributes.CallConvMask & PInvokeAttributes.CallConvFastcall);
 			}
 		}
 

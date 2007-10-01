@@ -107,77 +107,77 @@ namespace Mono.Cecil {
 		public bool IsCompilerControlled {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Compilercontrolled; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Compilercontrolled);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.Compilercontrolled;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.Compilercontrolled);
 			}
 		}
 
 		public bool IsPrivate {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Private);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.Private;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.Private);
 			}
 		}
 
 		public bool IsFamilyAndAssembly {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamANDAssem);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.FamANDAssem;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.FamANDAssem);
 			}
 		}
 
 		public bool IsAssembly {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Assembly);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.Assembly;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.Assembly);
 			}
 		}
 
 		public bool IsFamily {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Family);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.Family;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.Family);
 			}
 		}
 
 		public bool IsFamilyOrAssembly {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.FamORAssem);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.FamORAssem;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.FamORAssem);
 			}
 		}
 
 		public bool IsPublic {
 			get { return (m_attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public; }
 			set {
-				FieldAttributes masked = (FieldAttributes.FieldAccessMask & FieldAttributes.Public);
-				if (value)
-					m_attributes |= masked;
-				else
-					m_attributes &= masked;
+				if (value) {
+					m_attributes &= ~FieldAttributes.FieldAccessMask;
+					m_attributes |= FieldAttributes.Public;
+				} else
+					m_attributes &= ~(FieldAttributes.FieldAccessMask & FieldAttributes.Public);
 			}
 		}
 
