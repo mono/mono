@@ -7,7 +7,7 @@ by the interface id, which grows linearly as more interfaces are loaded.
 IMT instead uses a fixed-size table and hashes each method in the implemented
 interfaces to a slot in the IMT table. To be able to resolve collisions, at each
 callsite we store the interface MonoMethod in a well-known register and the
-IMT table will contain a snippet of code that uses it to jumpt to the
+IMT table will contain a snippet of code that uses it to jump to the
 proper vtable slot. The interface invocation sequence becomes (in pseud-ocode):
 
 	mov magic_reg, interface_monomethod
@@ -24,7 +24,7 @@ built in a way to allow easy generation of a bsearch, when the list of colliding
 methods becomes large.
 
 Each item in the array represents either a direct check for a method to be invoked
-of a bisection check in the bsearch algorithm.
+or a bisection check in the bsearch algorithm.
 
 struct _MonoIMTCheckItem {
 	MonoMethod       *method;
@@ -46,7 +46,7 @@ should be equivalent to:
 
 Note that if item->check_target_idx is 0, the jump should be omitted
 since this is the end of a linear sequence (you might want to insert a jump to
-a breakpoint, tough, for debugging).
+a breakpoint, though, for debugging).
 
 For a bisect check the code is even simpler:
 
@@ -91,4 +91,13 @@ D_found:
 	jump to D's slot
 
 This optimization is of course valid for architectures with flags registers.
+
+As a further optimization to reduce memory usage, the Mono runtime sets the
+IMT slots initially to a single-instance magic trampoline so there is actually no
+memory used up by the thunks in the case of collisions. When an interface method is
+called the magic trampoline will fill-in the IMT slot with the proper thunk or
+trampoline, so later calls will use the fast path.
+Given that only the IMT slots that are actually used will be initialized, this saves
+quite a bit of memory, as it's unlikely that all the interface methods are called on
+all the different types.
 
