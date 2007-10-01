@@ -1,3 +1,12 @@
+2007-10-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpServerUtility.cs: set a flag when transferring control to
+	another page.
+
+	* HttpContext.cs: added an internal InTransit property to carry
+	information that HttpServerUtility.Transfer has been used, over to
+	the target page.
+
 2007-09-12  Juraj Skripsky <js@hotfeet.ch>
 
 	* StaticSiteMapProvider.cs (AddNode): Add message text to

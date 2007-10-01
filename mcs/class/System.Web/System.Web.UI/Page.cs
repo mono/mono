@@ -386,7 +386,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 			return isPostBack;
 #else
-			return _requestValueCollection != null;
+			return _requestValueCollection != null && !HttpContext.Current.InTransit;
 #endif
 		}
 	}
@@ -1286,6 +1286,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		_requestValueCollection = this.DeterminePostBackMode();
 
 #if NET_2_0
+		HttpContext ctx = Context;
+				
 		_lifeCycle = PageLifeCycle.Start;
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
@@ -1296,15 +1298,16 @@ public partial class Page : TemplateControl, IHttpHandler
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
 				// LAMESPEC: on Callback IsPostBack is set to false, but true.
 				//isPostBack = !isCallback;
-				isPostBack = true;
+				if (ctx.InTransit)
+					isPostBack = false;
+				else
+					isPostBack = true;
 			}
 			string lastFocus = _requestValueCollection [LastFocusID];
 			if (!String.IsNullOrEmpty (lastFocus)) {
 				_focusedControlID = UniqueID2ClientID (lastFocus);
 			}
 		}
-
-		HttpContext ctx = Context;
 		
 		// if request was transfered from other page - track Prev. Page
 		previousPage = ctx.LastPage;

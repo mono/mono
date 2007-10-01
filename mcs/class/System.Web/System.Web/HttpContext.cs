@@ -72,6 +72,8 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
+		bool inTransit; // the page is being transferred to another
+
 #if NET_2_0
 #if TARGET_JVM
 		const string app_global_res_key = "HttpContext.app_global_res_key";
@@ -86,6 +88,11 @@ namespace System.Web {
 		LinkedList<IHttpHandler> handlers;
 #endif
 
+		internal bool InTransit {
+			get { return inTransit; }
+			set { inTransit = value; }
+		}
+		
 		public HttpContext (HttpWorkerRequest wr)
 		{
 			WorkerRequest = wr;

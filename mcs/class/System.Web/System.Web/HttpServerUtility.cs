@@ -155,6 +155,7 @@ namespace System.Web {
 				response.SetTextWriter (previous);
 				if (!preserveForm)
 					request.SetForm (oldForm);
+				context.InTransit = false;
 #if NET_2_0
 				context.PopHandler ();
 #endif
@@ -208,6 +209,7 @@ namespace System.Web {
 
 		public void Transfer (string path, bool preserveForm)
 		{
+			context.InTransit = true;
 			Execute (path, null, preserveForm);
 			context.Response.End ();
 		}
