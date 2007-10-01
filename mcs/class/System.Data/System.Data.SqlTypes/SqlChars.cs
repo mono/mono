@@ -198,16 +198,67 @@ namespace System.Data.SqlTypes
 			}
 		}
                                                               
-		[MonoTODO]
 		public long Read (long offset, char [] buffer, int offsetInBuffer, int count)
 		{
-			throw new NotImplementedException ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (IsNull)
+				throw new SqlNullValueException ("There is no buffer. Read or write operation failed");
+			
+			if (count > MaxLength || count > buffer.Length || 
+			    count < 0 || ((offsetInBuffer + count) > buffer.Length))
+				throw new ArgumentOutOfRangeException ("count");
+			
+			if (offset < 0 || offset > MaxLength)
+				throw new ArgumentOutOfRangeException ("offset");
+			
+			if (offsetInBuffer < 0 || offsetInBuffer > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offsetInBuffer");
+			
+			/*	LAMESPEC: If count specifies more characters than what is available from 
+				offset to the Length of the SqlChars instance, only the available 
+				characters are copied 
+			 */
+			
+			/* Final count of what will be copied */
+			long actualCount = count;
+			if (count + offset > Length)
+				actualCount = Length - offset;
+			
+			Array.Copy (this.buffer, offset, buffer, offsetInBuffer, actualCount);
+			
+			return actualCount;
 		}
 
-		[MonoNotSupported("")]
 		public void Write (long offset, char [] buffer, int offsetInBuffer, int count)
 		{
-			throw new NotImplementedException ();
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (IsNull)
+				throw new SqlTypeException ("There is no buffer. Read or write operation failed.");
+							
+			if (offset < 0) 
+				throw new ArgumentOutOfRangeException ("offset");
+			
+			if (offsetInBuffer < 0 || offsetInBuffer > buffer.Length 
+			    || offsetInBuffer > Length 
+			    || offsetInBuffer + count > Length
+			    || offsetInBuffer + count > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offsetInBuffer");
+			
+			if (count < 0 || count > MaxLength)
+				throw new ArgumentOutOfRangeException ("count");
+			
+			if (offset > MaxLength || offset+count > MaxLength)
+				throw new SqlTypeException ("The buffer is insufficient. Read or write operation failed.");
+			
+			if (count + offset > Length && 
+			    count + offset <= MaxLength)
+				SetLength (count);
+			
+			Array.Copy (buffer, offsetInBuffer, this.buffer, offset, count);
 		}
 
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)

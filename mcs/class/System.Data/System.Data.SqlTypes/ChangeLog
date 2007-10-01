@@ -1,3 +1,7 @@
+2007-10-02  Veerapuram Varadhan <vvaradhan@novell.com> 
+
+	* SqlChars.cs, SqlBytes.cs (Read, Write): Implemented missing 2.0 APIs.
+
 2007-09-27  Veerapuram Varadhan <vvaradhan@novell.com> 
 
 	* SqlDecimal.cs, SqlInt32.cs, SqlChars.cs, SqlInt16.cs, SqlInt64.cs,
