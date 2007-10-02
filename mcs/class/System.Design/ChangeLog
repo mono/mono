@@ -1,5 +1,9 @@
 2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Design.dll.sources : more .NET 2.0 types.
+
+2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : added -r:System.Xml.dll
 	* System.Design.dll.sources : added couple more of new .NET 2.0 types.
 

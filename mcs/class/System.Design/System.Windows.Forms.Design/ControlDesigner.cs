@@ -35,8 +35,9 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Collections;
-
-
+#if NET_2_0
+using System.Windows.Forms.Design.Behavior;
+#endif
 
 namespace System.Windows.Forms.Design
 {
@@ -109,6 +110,12 @@ namespace System.Windows.Forms.Design
 
 #region Properties and Fields - AccessabilityObject Left
 		protected static readonly Point InvalidPoint = new Point (int.MinValue, int.MinValue);
+
+#if NET_2_0
+		protected internal BehaviorService BehaviorService {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		public virtual Control Control {
 			get { return (Control) base.Component; }

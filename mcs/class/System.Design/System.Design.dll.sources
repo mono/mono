@@ -78,6 +78,8 @@ System.ComponentModel.Design/UndoEngine.cs
 System.ComponentModel.Design.Serialization/BasicDesignerLoader.cs
 System.ComponentModel.Design.Serialization/CodeDomComponentSerializationService.cs
 System.ComponentModel.Design.Serialization/CodeDomDesignerLoader.cs
+System.ComponentModel.Design.Serialization/CodeDomLocalizationModel.cs
+System.ComponentModel.Design.Serialization/CodeDomLocalizationProvider.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializationProvider.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializer.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializerBase.cs
@@ -257,3 +259,18 @@ System.Windows.Forms.Design/StringCollectionEditor.cs
 System.Windows.Forms.Design/TabPageCollectionEditor.cs
 System.Windows.Forms.Design/UISelectionService.cs
 System.Windows.Forms.Design/WndProcRouter.cs
+System.Windows.Forms.Design.Behavior/Adorner.cs
+System.Windows.Forms.Design.Behavior/Behavior.cs
+System.Windows.Forms.Design.Behavior/BehaviorDragDropEventArgs.cs
+System.Windows.Forms.Design.Behavior/BehaviorDragDropEventHandler.cs
+System.Windows.Forms.Design.Behavior/BehaviorService.cs
+System.Windows.Forms.Design.Behavior/BehaviorServiceAdornerCollection.cs
+System.Windows.Forms.Design.Behavior/BehaviorServiceAdornerCollectionEnumerator.cs
+System.Windows.Forms.Design.Behavior/ComponentGlyph.cs
+System.Windows.Forms.Design.Behavior/ControlBodyGlyph.cs
+System.Windows.Forms.Design.Behavior/Glyph.cs
+System.Windows.Forms.Design.Behavior/GlyphCollection.cs
+System.Windows.Forms.Design.Behavior/GlyphSelectionType.cs
+System.Windows.Forms.Design.Behavior/SnapLine.cs
+System.Windows.Forms.Design.Behavior/SnapLinePriority.cs
+System.Windows.Forms.Design.Behavior/SnapLineType.cs

@@ -39,6 +39,7 @@ using System.CodeDom;
 
 namespace System.ComponentModel.Design.Serialization
 {
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	public abstract class CodeDomSerializerBase
 	{
 

@@ -1,3 +1,10 @@
+2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeDomLocalizationProvider.cs, CodeDomLocalizationModel.cs :
+	  new files.
+	* CodeDomSerializerException.cs, CodeDomSerializerBase.cs,
+	  TypeCodeDomSerializer.cs : cosmetic 2.0 API fixes.
+
 2007-09-24  Ivan N. Zlatev  <contact@i-nz.net>
 	
 	* DesignerSerializationManager.cs: fix when SerializationComplete 

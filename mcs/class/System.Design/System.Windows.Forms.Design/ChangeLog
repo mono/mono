@@ -1,3 +1,7 @@
+2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ControlDesigner.cs : added BehaviorService.
+
 2007-09-15  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ParentControlDesigner.cs: Binary compatibility fixes.
