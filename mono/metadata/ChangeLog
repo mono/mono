@@ -1,3 +1,10 @@
+2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+	* verify.c (mono_type_from_stack_slot): added. returns the MonoType for
+	a given stack slock.
+	
+	* verify.c: killed verify_type_compat in favor of verify_type_compatibility and
+	verify_type_compatibility_full. This removed a near indentical function and fixed
+	handling of Int32 and IntPtr across all opcodes.
 
 Tue Oct 2 15:24:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
