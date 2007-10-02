@@ -1,4 +1,14 @@
 2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (merge_stacks): major clean up, all type compatibility
+	checks are done by verify_type_compatibility. This fix my earlier lack
+	of understanding of the CLR type system and merge_stacks no longer looks
+	scary.
+
+	* verify.c: fixed some bad spelling.
+
+2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_type_from_stack_slot): added. returns the MonoType for
 	a given stack slock.
 	
