@@ -3,6 +3,14 @@
 # Does various checks for people that we can use to diagnose
 # an end user installation
 #
+temp_cs=temp$$.cs
+temp_exe=temp$$.exe
+if test -f $temp_cs; then
+    echo Error: need a temporary file name, and $temp_cs already exists
+    echo Run this program from a different directory, or delete the file and try again.
+    exit 1
+fi
+
 set `echo $PATH | sed 's/:/ /g'`
 
 while test x$1 != x; do
@@ -39,3 +47,93 @@ else
         echo "Warning: pkg-config could not find mono installed on this system"
 fi
 
+##########################################################################################
+#
+# Tests below this point require the dotnet install
+#
+#
+
+#
+# Check that -pkg:dotnet is available
+#
+if pkg-config --modversion dotnet >& /dev/null; then
+       echo ""
+else
+       echo "No dotnet pkgconfig found, Windows.Forms, System.Drawing and others will not work"
+       exit 1
+fi
+
+case `uname` in
+    Darwin) 
+    	macos=true
+    	libgdiplus=libgdiplus.dylib
+	LD_PATH=DYLD_LIBRARY_PATH
+	;;
+    *) 
+    	macos=false;
+	libgdiplus=libgdiplus.so
+	LD_PATH=LD_LIBRARY_PATH
+	;;
+esac
+
+search_libgdiplus_on_path()
+{
+    libgdiplus_found=false
+	if $macos; then
+	    set `echo $DYLD_LIBRARY_PATH | sed 's/:/ /g'`
+	else
+	    set `echo $LD_LIBRARY_PATH | sed 's/:/ /g'`
+	fi
+	while test x$1 != x; do
+	    if test -e $1/$libgdiplus; then
+		   echo    Found a libgdiplus in directory $1
+		   libgdiplus_found=true
+	    fi
+	    shift
+	done
+}
+
+#
+# Check GDI+ installation
+#
+cat > $temp_cs <<EOF
+using System;
+using System.Drawing;
+
+class X { 
+    static void Main ()
+    {
+	    Bitmap b = new Bitmap (100, 100);
+    }
+}
+EOF
+if mcs -pkg:dotnet $temp_cs >& /dev/null; then
+    if mono $temp_exe >& /dev/null; then
+	echo Your have a working System.Drawing setup
+    else
+        echo Your system has a broken System.Drawing setup
+        if mono $temp_exe 2>&1 | grep 'System.DllNotFoundException: gdiplus.dll' > /dev/null; then
+	   echo "    your gdiplus.dll can not be loaded"
+
+	   libdir=`dirname $monocmd`/../lib
+	   if test -f $libdir/$libgdiplus; then
+	       echo "    The $libgdiplus is found on $libdir"
+	       if test -e $libdir/$libgdiplus; then
+		   echo "    but it seems to be a broken link"
+	       else
+		   search_libgdiplus_on_path
+	       fi
+	   else
+	       search_libgdiplus_on_path
+	   fi
+	   if $libgdiplus_found; then
+	       echo "    libgdiplus found"
+	   else
+	       echo "    No libgdiplus was found on your $LD_PATH"
+	   fi
+	fi
+    fi
+else
+    echo Failed to compile sample System.Drawing program, your installation is broken
+    exit 1
+fi
