@@ -3102,6 +3102,14 @@ namespace Mono.CSharp {
 			}
 
 			if (e is MethodGroupExpr) {
+				if (!TypeManager.IsDelegateType (t))
+					return;
+
+				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+				Type rtype = invoke.ReturnType;
+				if (!TypeManager.IsGenericType (rtype))
+					return;
+				
 				throw new NotImplementedException ();
 			}
 

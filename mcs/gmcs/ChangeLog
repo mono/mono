@@ -1,3 +1,9 @@
+2007-10-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #329685
+	* generics.cs (TypeInferenceContext.OutputTypeInference): Slowly
+	implementing method group output type inference.
+
 2007-09-25  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Use only one block per query expression.
