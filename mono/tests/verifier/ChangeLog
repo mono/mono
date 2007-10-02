@@ -1,3 +1,11 @@
+2007-10-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: added the new tests for ops mixing Int32 and IntPtr, disabled
+	the overlapped tests for now
+	* make_unary_test.sh: disabled the overlapped tests for now
+	* make_field_store_test.sh: same
+	* 
+
 2007-09-27 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_load_indirect_test.sh: added, generate tests for ldind.X.
