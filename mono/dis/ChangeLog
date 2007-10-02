@@ -1,3 +1,7 @@
+2007-10-02  Jb Evain  <jbevain@novell.com>
+
+	* declsec.c (declsec_20_write_type): support for bools.
+
 2007-09-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* main.c (dis_property_signature): Remove some calls to mono_metadata_free_type ().
