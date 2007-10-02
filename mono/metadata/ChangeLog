@@ -1,3 +1,8 @@
+
+Tue Oct 2 15:24:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: only vectors have the additional generic interfaces.
+
 2007-10-01  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-config.c: Use g_strcasecmp instead of
