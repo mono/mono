@@ -1,3 +1,8 @@
+2007-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call 
+	mono_class_setup_vtable () before accessing klass->vtable.
+
 2007-10-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (get_plt_index): Rework the handling of wrappers to be not so
