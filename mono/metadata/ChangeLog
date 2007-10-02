@@ -1,4 +1,4 @@
-2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
 	* verify.c (mono_type_from_stack_slot): added. returns the MonoType for
 	a given stack slock.
 	
