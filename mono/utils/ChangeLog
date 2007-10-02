@@ -1,3 +1,11 @@
+2007-10-02  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-io-portability.c: Init __mono_io_portability_helpers
+	to PORTABILITY_NONE on windows as mono_portability_helpers_init
+	is not always called before mono_portability_find_file.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-10-01  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-io-portability.c: Only support on non-Windows
