@@ -398,8 +398,8 @@ namespace System.Web.UI
 					if (type != null) {
 						if (result != null)
 							throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
+						result = type;
 					}
-					result = type;
 				}
 			}
 #endif
