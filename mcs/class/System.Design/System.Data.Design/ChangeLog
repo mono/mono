@@ -1,0 +1,7 @@
+2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypedDataSetGenerator.cs, MethodSignatureGenerator.cs,
+	  TypedDataSetGeneratorException.cs, ParameterGenerationOption.cs,
+	  TypedDataSetSchemaImporterExtension.cs :
+	  new stubs and implementations.
+
