@@ -1,3 +1,8 @@
+2007-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: For the 1.1 profile, the default SelectedText
+	is null, not String.Empty.  See bug #323038.
+
 2007-10-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextControl.cs: Change the margins to match MS a little better.

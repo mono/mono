@@ -519,7 +519,13 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual string SelectedText {
 			get {
-				return document.GetSelection();
+				string retval = document.GetSelection ();
+
+#if ONLY_1_1
+				if (!IsHandleCreated && retval == string.Empty)
+					return null;
+#endif
+				return retval;
 			}
 
 			set {
