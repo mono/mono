@@ -86,8 +86,10 @@ search_libgdiplus_on_path()
 	fi
 	while test x$1 != x; do
 	    if test -e $1/$libgdiplus; then
-		   echo    Found a libgdiplus in directory $1
+		   echo "    The $libgdiplus is found on $libdir/$libgdiplus"
 		   libgdiplus_found=true
+		   libgdiplus_path=$1/$libgdiplus
+		   break
 	    fi
 	    shift
 	done
@@ -117,17 +119,25 @@ if mcs -pkg:dotnet $temp_cs >& /dev/null; then
 
 	   libdir=`dirname $monocmd`/../lib
 	   if test -f $libdir/$libgdiplus; then
-	       echo "    The $libgdiplus is found on $libdir"
+	       echo "    The $libgdiplus is found on $libdir/$libgdiplus"
 	       if test -e $libdir/$libgdiplus; then
-		   echo "    but it seems to be a broken link"
+		   libgdiplus_path=$libdir/$libgdiplus
+		   libgdiplus_found=true
 	       else
-		   search_libgdiplus_on_path
+		   echo "    but it seems to be a broken link"
 	       fi
 	   else
 	       search_libgdiplus_on_path
 	   fi
 	   if $libgdiplus_found; then
-	       echo "    libgdiplus found"
+	       echo ssss 
+	       if which ldd >/dev/null; then
+		   LANG=C dirs=`ldd $libgdiplus_path | grep 'not found'`
+		   if echo $dirs | grep 'not found' >& /dev/null; then
+		       echo "    libgdiplus is missing the following dependencies to run:"
+		       echo $dirs | sed 's/^/        /'
+		   fi
+	       fi 
 	   else
 	       echo "    No libgdiplus was found on your $LD_PATH"
 	   fi
