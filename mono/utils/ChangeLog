@@ -1,3 +1,11 @@
+2007-10-03  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-compiler.h (trunc): Make the definition of trunk for MSC
+	use ceil or floor instead of always using floor which is
+	incorrect.
+
+	Issue pointed out by Aras Pranckevicius <aras@unity3d.com>
+
 2007-10-02  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-io-portability.c: Init __mono_io_portability_helpers
