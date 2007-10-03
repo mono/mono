@@ -1,5 +1,10 @@
 2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SoapHttpClientProtocolTest.cs: actually those tests fails on mono
+	  on Windows, so mark them as Ignore (not only in 2.0).
+
+2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SoapHttpClientProtocolTest.cs: disabled connection-oriented tests
 	  that do not work fine on .NET 2.0.
 

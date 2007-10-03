@@ -44,12 +44,7 @@ namespace MonoTests.System.Web.Services.Protocols
 	[TestFixture]
 	public class SoapHttpClientProtocolTest
 	{
-		// this kind of connection oriented tests got non-working
-		// after some Windows updates in .NET 2.0 (1.1 still works).
-		// It also applied to WCF tests.
-#if NET_2_0
-		[Category ("NotDotNet")]
-#endif
+		[Ignore ("this kind of connection oriented tests got non-working after some Windows updates in .NET 2.0 (1.1 still works).")]
 		[Test] // bug #79988
 		public void OutParametersTest ()
 		{
@@ -72,12 +67,7 @@ namespace MonoTests.System.Web.Services.Protocols
 			}
 		}
 
-		// this kind of connection oriented tests got non-working
-		// after some Windows updates in .NET 2.0 (1.1 still works).
-		// It also applied to WCF tests.
-#if NET_2_0
-		[Category ("NotDotNet")]
-#endif
+		[Ignore ("this kind of connection oriented tests got non-working after some Windows updates in .NET 2.0 (1.1 still works).")]
 		[Test] // bug #81886
 		public void FaultTest ()
 		{
