@@ -38,6 +38,7 @@ namespace MonoTests.System.Web.Services.Configuration {
 	public class TypeElementTest
 	{
 		[Test]
+		[Ignore ("causes NRE on .NET")]
 		public void Ctors1 ()
 		{
 			TypeElement el = new TypeElement ();

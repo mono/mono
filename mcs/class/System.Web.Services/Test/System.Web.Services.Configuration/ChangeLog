@@ -1,3 +1,7 @@
+2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeElement.cs : disable a test that causes NRE on .NET.
+
 2006-01-13  Raja R Harinath  <rharinath@novell.com>
 
 	* TypeElementTest.cs (Ctors1): Don't expect a null-reference
