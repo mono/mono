@@ -669,9 +669,16 @@ namespace System.Windows.Forms
 		public string SelectedText {
 			get {
 				if (dropdown_style == ComboBoxStyle.DropDownList)
-					return "";
+					return string.Empty;
 					
-				return textbox_ctrl.SelectedText;
+				string retval = textbox_ctrl.SelectedText;
+				
+#if ONLY_1_1
+				// On 1.1, the textbox will return null, combobox returns ""
+				if (retval == null && !textbox_ctrl.IsHandleCreated)
+					return string.Empty;
+#endif					
+				return retval;
 			}
 			set {
 				if (dropdown_style == ComboBoxStyle.DropDownList)

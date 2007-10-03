@@ -1,5 +1,10 @@
 2007-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: For the 1.1 profile, the default SelectedText is
+	string.Empty, test failed from previous change.
+
+2007-10-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: For the 1.1 profile, the default SelectedText
 	is null, not String.Empty.  See bug #323038.
 
