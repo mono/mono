@@ -1,3 +1,9 @@
+
+Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: fixed an assertion and moved it earlier in the
+	code, before interface_offset gets used.
+
 2007-10-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call 
