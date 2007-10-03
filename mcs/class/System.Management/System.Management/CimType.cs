@@ -31,6 +31,9 @@ namespace System.Management
 {
 	public enum CimType
 	{
+#if NET_2_0
+		None = 0,
+#endif
 		SInt16 = 2,
 		SInt32 = 3,
 		Real32 = 4,

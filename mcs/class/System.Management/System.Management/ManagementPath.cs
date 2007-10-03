@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.ComponentModel;
 
 namespace System.Management
 {
@@ -73,6 +74,7 @@ namespace System.Management
 			throw new NotImplementedException ();
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public string ClassName {
 			[MonoTODO]
 			get {
@@ -116,6 +118,7 @@ namespace System.Management
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public string NamespacePath {
 			[MonoTODO]
 			get {
@@ -127,6 +130,7 @@ namespace System.Management
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public string Path {
 			[MonoTODO]
 			get {
@@ -138,6 +142,7 @@ namespace System.Management
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public string RelativePath {
 			[MonoTODO]
 			get {
@@ -149,6 +154,7 @@ namespace System.Management
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public string Server {
 			[MonoTODO]
 			get {

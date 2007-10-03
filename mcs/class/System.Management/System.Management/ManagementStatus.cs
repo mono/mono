@@ -137,7 +137,8 @@ namespace System.Management
 		UnsupportedPutExtension = -2147217347,
 		UpdateOverrideNotAllowed = -2147217325,
 		UpdatePropagatedMethod = -2147217324,
-		UpdateTypeMismatch = -2147217326
+		UpdateTypeMismatch = -2147217326,
+		ValueOutOfRange = -2147217365,
 	}
 }
 

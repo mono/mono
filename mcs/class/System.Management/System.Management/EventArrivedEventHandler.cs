@@ -1,11 +1,12 @@
 //
-// System.Management.CodeLanguage
+// System.Management.EventArrivedEventHandler
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Author:
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2006 Gert Driesen
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,17 +27,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_2_0
 
 namespace System.Management
 {
-	public enum CodeLanguage
-	{
-		CSharp,
-		JScript,
-		VB,
-#if NET_2_0
-		VJSharp,
-		Mcpp,
-#endif
-	}
+	public delegate void EventArrivedEventHandler (object sender, EventArrivedEventArgs e);
 }
+
+#endif

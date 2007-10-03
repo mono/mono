@@ -1,10 +1,10 @@
 //
-// System.Management.ManagementScope
+// System.Management.ManagementDateTimeConverter
 //
-// Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// Author:
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,83 +27,37 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.ComponentModel;
+
 namespace System.Management
 {
-	//[TypeConverter ("")]
-	public class ManagementScope : ICloneable
+	public sealed class ManagementDateTimeConverter
 	{
-		[MonoTODO]
-		public ManagementScope ()
+		internal ManagementDateTimeConverter ()
 		{
 		}
 
 		[MonoTODO]
-		public ManagementScope (ManagementPath path)
-		{
-		}
-
-		[MonoTODO]
-		public ManagementScope (string path)
-		{
-		}
-
-		[MonoTODO]
-		public ManagementScope (string path, ConnectionOptions options)
-		{
-		}
-
-		[MonoTODO]
-		public ManagementScope (ManagementPath path, ConnectionOptions options)
-		{
-		}
-
-		[MonoTODO]
-		public ManagementScope Clone ()
+		public static DateTime ToDateTime (string dmtfDate)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Connect ()
+		public static string ToDmtfDateTime (DateTime date)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		object ICloneable.Clone ()
+		public static string ToDmtfTimeInterval (TimeSpan timespan)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public bool IsConnected {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public ConnectionOptions Options {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public ManagementPath Path {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
+		[MonoTODO]
+		public static TimeSpan ToTimeSpan (string dmtfTimespan)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

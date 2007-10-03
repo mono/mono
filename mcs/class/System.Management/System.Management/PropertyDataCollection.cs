@@ -63,7 +63,7 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-		public virtual void CopyTo (Array array, int index)
+		public void CopyTo (Array array, int index)
 		{
 			throw new NotImplementedException ();
 		}
@@ -88,14 +88,14 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-		public virtual int Count {
+		public int Count {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
 		[MonoTODO]
-		public virtual bool IsSynchronized {
+		public bool IsSynchronized {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -109,7 +109,7 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-		public virtual object SyncRoot {
+		public object SyncRoot {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -122,13 +122,13 @@ namespace System.Management
 			}
 
 			[MonoTODO]
-			public virtual bool MoveNext ()
+			public bool MoveNext ()
 			{
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			public virtual void Reset ()
+			public void Reset ()
 			{
 				throw new NotImplementedException ();
 			}

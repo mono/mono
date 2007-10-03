@@ -35,6 +35,10 @@ namespace System.Management
 	[MonoTODO ("System.Management is not implemented")]
 	public class MethodDataCollection : ICollection, IEnumerable
 	{
+		internal MethodDataCollection ()
+		{
+		}
+
 		public int Count {
 			get {
 				throw new NotImplementedException ();
@@ -96,6 +100,10 @@ namespace System.Management
 
 		public class MethodDataEnumerator : IEnumerator
 		{
+			internal MethodDataEnumerator ()
+			{
+			}
+
 			public bool MoveNext ()
 			{
 				throw new NotImplementedException ();

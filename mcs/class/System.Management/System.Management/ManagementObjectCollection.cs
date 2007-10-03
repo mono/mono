@@ -38,8 +38,12 @@ namespace System.Management
 		{
 		}
 
+		~ManagementObjectCollection ()
+		{
+		}
+
 		[MonoTODO]
-		public virtual void CopyTo (System.Array array, int index)
+		public void CopyTo (System.Array array, int index)
 		{
 			throw new NotImplementedException ();
 		}
@@ -51,7 +55,7 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-		public virtual void Dispose ()
+		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -62,21 +66,21 @@ namespace System.Management
 			throw new NotImplementedException ();
 		}
 
-		public virtual int Count {
+		public int Count {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public virtual bool IsSynchronized {
+		public bool IsSynchronized {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public virtual object SyncRoot {
+		public object SyncRoot {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -95,19 +99,24 @@ namespace System.Management
 			}
 
 			[MonoTODO]
-			public virtual void Dispose ()
+			~ManagementObjectEnumerator ()
+			{
+			}
+
+			[MonoTODO]
+			public void Dispose ()
 			{
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			public virtual bool MoveNext ()
+			public bool MoveNext ()
 			{
 				throw new NotImplementedException ();
 			}
 
 			[MonoTODO]
-			public virtual void Reset ()
+			public void Reset ()
 			{
 				throw new NotImplementedException ();
 			}

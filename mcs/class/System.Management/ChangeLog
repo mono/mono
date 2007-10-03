@@ -1,3 +1,7 @@
+2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Management.dll.sources : updated to have all 1.1/2.0 types.
+
 2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Management.dll.sources: Added ManagementObjectSearcher.cs,

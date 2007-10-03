@@ -33,6 +33,10 @@ namespace System.Management
 {
 	public class MethodData
 	{
+		internal MethodData ()
+		{
+		}
+
 		public ManagementBaseObject InParameters {
 			get {
 				throw new NotImplementedException ();

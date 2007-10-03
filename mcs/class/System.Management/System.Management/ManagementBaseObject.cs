@@ -33,10 +33,32 @@ using System.Runtime.Serialization;
 
 namespace System.Management
 {
+#if NET_2_0
+	[Serializable]
+#endif
+	[ToolboxItem (true)]
 	public class ManagementBaseObject : Component, ICloneable, ISerializable
 	{
 		internal ManagementBaseObject ()
 		{
+		}
+
+		[MonoTODO]
+		protected ManagementBaseObject (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static explicit operator IntPtr  (ManagementBaseObject managementObject)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]

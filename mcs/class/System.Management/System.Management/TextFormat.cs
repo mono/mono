@@ -32,7 +32,9 @@ namespace System.Management
 {
 	public enum TextFormat
 	{
-		Mof = 0
+		Mof = 0,
+		CimDtd20,
+		WmiDtd20
 	}
 }
 

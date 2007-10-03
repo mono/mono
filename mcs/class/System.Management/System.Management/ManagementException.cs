@@ -1,11 +1,12 @@
 //
-// System.Management.CodeLanguage
+// System.Management.ManagementException
 //
-// Authors:
-//	Gert Driesen (drieseng@users.sourceforge.net)
+// Author:
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2006 Gert Driesen
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,16 +28,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Serialization;
+
 namespace System.Management
 {
-	public enum CodeLanguage
+	[Serializable]
+	public class ManagementException : SystemException
 	{
-		CSharp,
-		JScript,
-		VB,
-#if NET_2_0
-		VJSharp,
-		Mcpp,
-#endif
+		public ManagementException ()
+			: this ("system management error has occured")
+		{
+		}
+
+		public ManagementException (string message)
+			: base (message)
+		{
+		}
+
+		public ManagementException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+
+		protected ManagementException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
+		[MonoTODO]
+		public ManagementStatus ErrorCode {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public ManagementBaseObject ErrorInformation {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+		}
 	}
 }
+

@@ -1,3 +1,21 @@
+2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EventArrivedEventArgs.cs, EventArrivedEventHandler.cs,
+	  EventQuery.cs, EventWatcherOptions.cs,
+	  ManagementDateTimeConverter.cs, ManagementEventWatcher.cs,
+	  ManagementException.cs, RelatedObjectQuery.cs,
+	  RelationshipQuery.cs, SelectQuery.cs, StoppedEventArgs.cs,
+	  StoppedEventHandler.cs, WqlEventQuery.cs, WqlObjectQuery.cs:
+	  added missing 1.x/2.0 types.
+	* CimType.cs, CodeLanguage.cs, ManagementBaseObject.cs,
+	  ManagementClass.cs, ManagementNamedValueCollection.cs,
+	  ManagementObject.cs, ManagementObjectCollection.cs,
+	  ManagementOptions.cs, ManagementPath.cs, ManagementQuery.cs,
+	  ManagementScope.cs, ManagementStatus.cs, MethodData.cs,
+	  MethodDataCollection.cs, PropertyDataCollection.cs,
+	  PutType.cs, QualifierDataCollection.cs, TextFormat.cs :
+	  1.x/2.0 API fixes.
+
 2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodDataCollection.cs: Throw NotImplementedException in methods

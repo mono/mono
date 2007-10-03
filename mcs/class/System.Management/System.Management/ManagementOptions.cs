@@ -28,9 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.ComponentModel;
 
 namespace System.Management
 {
+	[TypeConverter (typeof (ExpandableObjectConverter))]
 	public abstract class ManagementOptions : ICloneable
 	{
 		public static readonly TimeSpan InfiniteTimeout = TimeSpan.MaxValue;
@@ -49,10 +51,7 @@ namespace System.Management
 		}
 
 		[MonoTODO]
-		public virtual object Clone ()
-		{
-			throw new NotImplementedException ();
-		}
+		public abstract object Clone ();
 
 		public ManagementNamedValueCollection Context {
 			get { return context; }
