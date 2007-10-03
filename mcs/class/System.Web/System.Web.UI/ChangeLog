@@ -1,3 +1,8 @@
+2007-10-03  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: complete implementation of ValidationGroups. Fixes bug
+	#330423. Patch from Juraj Skripsky <juraj@hotfeet.ch>, thanks!
+
 2007-10-02  Marek Habersack  <mhabersack@novell.com>
 
 	* SimpleWebHandlerParser.cs: fix the way types are loaded from

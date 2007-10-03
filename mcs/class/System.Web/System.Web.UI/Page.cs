@@ -154,7 +154,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	bool isPostBack;
 	bool isCallback;
 	ArrayList requireStateControls;
-	Hashtable _validatorsByGroup;
 	HtmlForm _form;
 
 	string _title;
@@ -2426,28 +2425,33 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 	
 	public ValidatorCollection GetValidators (string validationGroup)
-	{
-		string valgr = validationGroup;
-		if (valgr == null)
-			valgr = String.Empty;
+	{			
+		if (validationGroup == String.Empty)
+			validationGroup = null;
 
-		if (_validatorsByGroup == null) _validatorsByGroup = new Hashtable ();
-		ValidatorCollection col = _validatorsByGroup [valgr] as ValidatorCollection;
-		if (col == null) {
-			col = new ValidatorCollection ();
-			_validatorsByGroup [valgr] = col;
-		}
+		ValidatorCollection col = new ValidatorCollection ();
+		if (_validators == null)
+			return col;
+		
+		foreach (IValidator v in _validators)
+			if (BelongsToGroup(v, validationGroup))
+				col.Add(v);
+
 		return col;
+	}
+	
+	bool BelongsToGroup(IValidator v, string validationGroup) {
+		BaseValidator validator = v as BaseValidator;
+		if (validationGroup == null)
+			return validator == null || String.IsNullOrEmpty (validator.ValidationGroup); 
+		else
+			return validator != null && validator.ValidationGroup == validationGroup; 			
 	}
 	
 	public virtual void Validate (string validationGroup)
 	{
 		is_validated = true;
-		if (validationGroup == null)
-			ValidateCollection (_validatorsByGroup [String.Empty] as ValidatorCollection);
-		else if (_validatorsByGroup != null) {
-			ValidateCollection (_validatorsByGroup [validationGroup] as ValidatorCollection);
-		}
+		ValidateCollection (GetValidators (validationGroup));
 	}
 
 	object SavePageControlState ()
