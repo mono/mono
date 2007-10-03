@@ -1,3 +1,23 @@
+
+Wed Oct 3 17:26:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: automatically add to vectors only a few essential explicit
+	generic interfaces. The rest of the interfaces that arrays should
+	provide are currently implicitly added (but still not lazily, see the
+	design in the discussion of bug#325495 for the details of what is
+	needed for that). Additionally, implicit interfaces are assigned the
+	same vtable slot as the explicit interfaces (as they are compatible):
+	this enables huge memory savings since we don't need to instantiate
+	as many memthods and as large vtables anymore. Also, Since
+	GetEnumerator<T> returns an instance of a type that is required to
+	support a similarly large set of interfaces as arrays, we add
+	implicit interfaces and interface offset sharing support to those
+	types, too. This change adds all the required interfaces so that
+	the anonarray.cs test case in the bug report works (we don't add
+	all the interfaces to arrays of arrays 3-level deep and more because
+	of the memory requirements explained in the bug and since they are much
+	less common: the lazy-loading support will enabled them to work, too).
+
 2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (merge_stacks): major clean up, all type compatibility
