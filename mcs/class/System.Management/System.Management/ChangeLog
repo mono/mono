@@ -1,6 +1,15 @@
 2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EventArrivedEventArgs.cs, EventArrivedEventHandler.cs,
+	  EventQuery.cs, EventWatcherOptions.cs, ManagementQuery.cs,
+	  RelatedObjectQuery.cs, RelationshipQuery.cs, SelectQuery.cs,
+	  StoppedEventArgs.cs, StoppedEventHandler.cs, WqlEventQuery.cs,
+	  WqlObjectQuery.cs :
+	  oops, actually they are also included in 1.1 profile.
+
+2007-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EventArrivedEventArgs.cs, EventArrivedEventHandler.cs,
 	  EventQuery.cs, EventWatcherOptions.cs,
 	  ManagementDateTimeConverter.cs, ManagementEventWatcher.cs,
 	  ManagementException.cs, RelatedObjectQuery.cs,

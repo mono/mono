@@ -64,12 +64,10 @@ namespace System.Management
 
 		public abstract object Clone ();
 
-#if NET_2_0
 		[MonoTODO]
 		protected internal virtual void ParseQuery (string query)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
