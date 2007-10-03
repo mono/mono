@@ -1,3 +1,7 @@
+2007-10-03  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0120-10.cs: New test based on #328490.
+
 2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1570-12.cs : new test (bug #82565).

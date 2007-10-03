@@ -2311,27 +2311,34 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup members 
 			//
 
-			DeclSpace lookup_ds = ec.DeclContainer;
 			Type almost_matched_type = null;
 			ArrayList almost_matched = null;
-			do {
+			for (DeclSpace lookup_ds = ec.DeclContainer; lookup_ds != null; lookup_ds = lookup_ds.Parent) {
+				// either RootDeclSpace or GenericMethod
 				if (lookup_ds.TypeBuilder == null)
-					break;
+					continue;
 
 				e = MemberLookup (ec.ContainerType, lookup_ds.TypeBuilder, Name, loc);
-				if (e != null)
-					break;
+				if (e != null) {
+					if (e is PropertyExpr) {
+						// since TypeManager.MemberLookup doesn't know if we're doing a lvalue access or not,
+						// it doesn't know which accessor to check permissions against
+						if (((PropertyExpr) e).IsAccessibleFrom (ec.ContainerType, right_side != null))
+							break;
+					} else if (e is EventExpr) {
+						if (((EventExpr) e).IsAccessibleFrom (ec.ContainerType))
+							break;
+					} else {
+						break;
+					}
+					e = null;
+				}
 
 				if (almost_matched == null && almostMatchedMembers.Count > 0) {
 					almost_matched_type = lookup_ds.TypeBuilder;
 					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
 				}
-
-				lookup_ds =lookup_ds.Parent;
-			} while (lookup_ds != null);
-
-			if (e == null && ec.ContainerType != null)
-				e = MemberLookup (ec.ContainerType, ec.ContainerType, Name, loc);
+			}
 
 			if (e == null) {
 				if (almost_matched == null && almostMatchedMembers.Count > 0) {
@@ -4664,7 +4671,16 @@ namespace Mono.CSharp {
 			Report.Error (1546, loc, "Property `{0}' is not supported by the C# language. Try to call the accessor method `{1}' directly",
 				Name, sig.ToString ());
 		}
-		
+
+		public bool IsAccessibleFrom (Type invocation_type, bool lvalue)
+		{
+			bool dummy;
+			MethodInfo accessor = lvalue ? setter : getter;
+			if (accessor == null && lvalue)
+				accessor = getter;
+			return accessor != null && IsAccessorAccessible (invocation_type, accessor, out dummy);
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (resolved)
@@ -4982,6 +4998,13 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public bool IsAccessibleFrom (Type invocation_type)
+		{
+			bool dummy;
+			return IsAccessorAccessible (invocation_type, add_accessor, out dummy) &&
+				IsAccessorAccessible (invocation_type, remove_accessor, out dummy);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)

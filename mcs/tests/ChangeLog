@@ -1,3 +1,7 @@
+2007-10-03  Raja R Harinath  <rharinath@novell.com>
+
+	* test-589.cs: Additional test for #328490.
+
 2007-09-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* test-587.cs: test for bug #328136.

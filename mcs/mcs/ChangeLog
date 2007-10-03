@@ -1,3 +1,11 @@
+2007-10-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #328490
+	* ecore.cs (SimpleName.DoSimpleNameResolve): Handle Property and
+	Event accessibility checks here.  Remove some bogus code that
+	accidently made GenericMethods work.
+	(PropertyExpr.IsAccessibleFrom, EventExpr.IsAccessibleFrom): New.
+
 2007-09-25  Marek Safar  <marek.safar@gmail.com>
 	
 	* expression.cs (ArrayCreation): Fixed cloning of an implicit types.
