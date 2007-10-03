@@ -4384,16 +4384,19 @@ namespace Mono.CSharp {
 			bool is_static = (fa & FieldAttributes.Static) != 0;
 			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
-			prepared = prepare_for_load;
 
 			if (is_readonly && !ec.IsConstructor){
 				Report_AssignToReadonly (source);
 				return;
 			}
 
-			EmitInstance (ec, prepare_for_load);
+			//
+			// String concatenation creates a new string instance 
+			//
+			prepared = prepare_for_load && !(source is StringConcat);
+			EmitInstance (ec, prepared);
 
-			source.Emit (ec);
+			source.Emit (ec);			
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
 				if (!FieldInfo.IsStatic) {
@@ -4854,10 +4857,15 @@ namespace Mono.CSharp {
 		{
 			Expression my_source = source;
 
-			prepared = prepare_for_load;
-			
-			if (prepared) {
+			if (prepare_for_load) {
+				if (source is StringConcat)
+					EmitInstance (ec, false);
+				else
+					prepared = true;					
+
 				source.Emit (ec);
+				
+				prepared = true;
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					if (!is_static) {
@@ -4871,7 +4879,7 @@ namespace Mono.CSharp {
 				temp.Store (ec);
 				my_source = temp;
 			}
-			
+
 			ArrayList args = new ArrayList (1);
 			args.Add (new Argument (my_source, Argument.AType.Expression));
 			

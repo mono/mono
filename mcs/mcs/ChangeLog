@@ -1,3 +1,11 @@
+2007-10-03  Marek Safar  <marek.safar@gmail.com>
+	
+	A fix for bug #328774
+	* ecore.cs (FieldExpr.EmitAssign): Fixed string concatenation compound
+	assignment.
+	(PropertyExpr.EmitAssign): Fixed string concatenation compound
+	assignment.
+
 2007-10-03  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #328490
