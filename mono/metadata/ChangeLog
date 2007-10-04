@@ -1,3 +1,32 @@
+2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Fix the encoding of generic type definition for
+	TypeBuilders.
+
+	* reflection.c (mono_image_typedef_or_ref_full: do the same thing as
+	mono_image_typedef_or_ref but allows to specify if typespec lookups should
+	be made. Typespec check is done prior to typeref cache lookup.
+
+	* reflection.c (mono_image_typedef_or_ref): now just delegate to
+	mono_image_typedef_or_ref_full.
+
+	* reflection.c (encode_generic_class): encode the generic class
+	directly instead of calling encode_type.
+
+	* reflection.c (encode_type): encode the generic type definition
+	MonoClass as a generic instantiation.
+
+	* reflection.c (create_typespec): cache typespec tokens in
+	the assembly->typespec cache. Don't create typespec for a generic
+	instance MonoClass. Create typespec for the generic type defintion.
+
+	* reflection.c (create_generic_typespec): encode the generic
+	class directly instead of calling encode_type.
+
+	* reflection.c (mono_image_create_token): encode the generic
+	type definition not using a typespec for MonoType instances.
+
+
 2007-10-04  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #328812
