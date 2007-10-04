@@ -549,6 +549,9 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value == Color.Empty)
+					value = DefaultForeColor;
+					
 				int sel_start;
 				int sel_end;
 

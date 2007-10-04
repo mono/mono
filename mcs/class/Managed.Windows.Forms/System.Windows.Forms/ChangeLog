@@ -1,5 +1,11 @@
 2007-10-04  Jonathan Pobst  <monkey@jpobst.com>
 
+	* RichTextBox.cs: When SelectionColor is set to Color.Empty, use
+	DefaultForeColor, as drawing empty colored lines isn't very useful.
+	[Fixes the not drawn lines part of bug #324358]
+
+2007-10-04  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Move Line and LineTag classes into separate files to
 	make things easier to find.
 	* Line.cs, LineTag.cs: Bring coding standards up to Mono's guidelines.
