@@ -1,5 +1,5 @@
-// cs0019.cs: Operator `|' cannot be applied to operands of type `int' and `E'
-// Line : 10
+// CS0019: Operator `|' cannot be applied to operands of type `E' and `int'
+// Line: 10
 
 enum E: byte {
 	Min

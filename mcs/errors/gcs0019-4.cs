@@ -1,4 +1,4 @@
-// CS0019: Operator `+' cannot be applied to operands of type `EventHandler' and `T'
+// CS0019: Operator `+=' cannot be applied to operands of type `EventHandler' and `T'
 // Line: 10
 
 using System;
