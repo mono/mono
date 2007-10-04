@@ -98,7 +98,7 @@ namespace System.Windows.Forms
 			items = new ObjectCollection (this);
 			DropDownStyle = ComboBoxStyle.DropDown;
 			item_height = FontHeight + 2;
-			BackColor = ThemeEngine.Current.ColorWindow;
+			background_color = ThemeEngine.Current.ColorWindow;
 			border_style = BorderStyle.None;
 
 #if NET_2_0

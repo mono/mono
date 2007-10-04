@@ -1,5 +1,10 @@
 2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ComboBox.cs: On contructor use backgound_color instead of BackColor to
+	prevent calling of OnBackColorChanged. Fixes #325321.
+
+2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* TextBox.cs: When check enabled uses Enabled property instead of is_enabled
 	because control can be disabled because owner is disabled.
 
