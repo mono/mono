@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, target, original_source);
+			source = new Binary (op, target, original_source, true);
 			return base.DoResolve (ec);
 		}
 

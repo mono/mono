@@ -1,5 +1,10 @@
 2007-10-04  Marek Safar  <marek.safar@gmail.com>
 	
+	* expression.cs, assign.cs, generics.cs: Print correct operator when
+	compound assignment is used.
+	
+2007-10-04  Marek Safar  <marek.safar@gmail.com>
+	
 	A fix for bug #325841
 	* expression.cs (ArrayAccess): Use full argument cloning only for
 	string compound concatenation.

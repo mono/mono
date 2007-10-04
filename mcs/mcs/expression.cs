@@ -1446,7 +1446,8 @@ namespace Mono.CSharp {
 		}
 
 		readonly Operator oper;
-		Expression left, right;
+		protected Expression left, right;
+		readonly bool is_compound;
 
 		// This must be kept in sync with Operator!!!
 		public static readonly string [] oper_names;
@@ -1475,6 +1476,12 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.LogicalAnd] = "op_LogicalAnd";
 		}
 
+		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
+			: this (oper, left, right)
+		{
+			this.is_compound = isCompound;
+		}
+
 		public Binary (Operator oper, Expression left, Expression right)
 		{
 			this.oper = oper;
@@ -1492,48 +1499,73 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a stringified representation of the Operator
 		/// </summary>
-		public static string OperName (Operator oper)
+		string OperName (Operator oper)
 		{
+			string s;
 			switch (oper){
 			case Operator.Multiply:
-				return "*";
+				s = "*";
+				break;
 			case Operator.Division:
-				return "/";
+				s = "/";
+				break;
 			case Operator.Modulus:
-				return "%";
+				s = "%";
+				break;
 			case Operator.Addition:
-				return "+";
+				s = "+";
+				break;
 			case Operator.Subtraction:
-				return "-";
+				s = "-";
+				break;
 			case Operator.LeftShift:
-				return "<<";
+				s = "<<";
+				break;
 			case Operator.RightShift:
-				return ">>";
+				s = ">>";
+				break;
 			case Operator.LessThan:
-				return "<";
+				s = "<";
+				break;
 			case Operator.GreaterThan:
-				return ">";
+				s = ">";
+				break;
 			case Operator.LessThanOrEqual:
-				return "<=";
+				s = "<=";
+				break;
 			case Operator.GreaterThanOrEqual:
-				return ">=";
+				s = ">=";
+				break;
 			case Operator.Equality:
-				return "==";
+				s = "==";
+				break;
 			case Operator.Inequality:
-				return "!=";
+				s = "!=";
+				break;
 			case Operator.BitwiseAnd:
-				return "&";
+				s = "&";
+				break;
 			case Operator.BitwiseOr:
-				return "|";
+				s = "|";
+				break;
 			case Operator.ExclusiveOr:
-				return "^";
+				s = "^";
+				break;
 			case Operator.LogicalOr:
-				return "||";
+				s = "||";
+				break;
 			case Operator.LogicalAnd:
-				return "&&";
+				s = "&&";
+				break;
+			default:
+				s = oper.ToString ();
+				break;
 			}
 
-			return oper.ToString ();
+			if (is_compound)
+				return s + "=";
+
+			return s;
 		}
 
 		public override string ToString ()
@@ -1550,7 +1582,7 @@ namespace Mono.CSharp {
 			return Convert.ImplicitConversion (ec, expr, target_type, loc);
 		}
 
-		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
+		void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
 		{
 			Report.Error (
 				34, loc, "Operator `" + OperName (oper) 
@@ -1627,7 +1659,7 @@ namespace Mono.CSharp {
 				name, left, right);
 		}
 		
-		void Error_OperatorCannotBeApplied ()
+		protected void Error_OperatorCannotBeApplied ()
 		{
 			Error_OperatorCannotBeApplied (Location, OperName (oper), TypeManager.CSharpName (left.Type),
 				TypeManager.CSharpName(right.Type));
@@ -2341,7 +2373,7 @@ namespace Mono.CSharp {
 						break;
 					return left;
 			}
-			Error_OperatorCannotBeApplied (loc, Binary.OperName (oper), left.Type, right.Type);
+			Error_OperatorCannotBeApplied ();
 			return null;
 		}
 

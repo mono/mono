@@ -3488,26 +3488,27 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class LiftedBinaryOperator : Expression
+		public class LiftedBinaryOperator : Binary
 		{
-			public readonly Binary.Operator Oper;
-
-			Expression left, right, original_left, original_right;
 			Expression underlying, null_value, bool_wrap;
 			Unwrap left_unwrap, right_unwrap;
 			bool is_equality, is_comparision, is_boolean;
 
 			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 						     Location loc)
+				: base (op, left, right)
 			{
-				this.Oper = op;
-				this.left = original_left = left;
-				this.right = original_right = right;
 				this.loc = loc;
 			}
 
 			public override Expression DoResolve (EmitContext ec)
 			{
+				if ((Oper == Binary.Operator.LogicalAnd) ||
+				    (Oper == Binary.Operator.LogicalOr)) {
+					Error_OperatorCannotBeApplied ();
+					return null;
+				}
+				
 				if (TypeManager.IsNullableType (left.Type)) {
 					left = left_unwrap = Unwrap.Create (left, ec);
 					if (left == null)
@@ -3518,15 +3519,6 @@ namespace Mono.CSharp {
 					right = right_unwrap = Unwrap.Create (right, ec);
 					if (right == null)
 						return null;
-				}
-
-				if ((Oper == Binary.Operator.LogicalAnd) ||
-				    (Oper == Binary.Operator.LogicalOr)) {
-					Binary.Error_OperatorCannotBeApplied (
-						loc, Binary.OperName (Oper),
-						original_left.GetSignatureForError (),
-						original_right.GetSignatureForError ());
-					return null;
 				}
 
 				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr)) &&
@@ -3734,6 +3726,12 @@ namespace Mono.CSharp {
 
 				ig.MarkLabel (end_label);
 			}
+			
+			public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+			{
+				Emit (ec);
+				ec.ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+			}			
 
 			public override void Emit (EmitContext ec)
 			{
