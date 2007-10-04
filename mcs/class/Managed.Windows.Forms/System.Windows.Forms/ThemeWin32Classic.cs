@@ -4198,7 +4198,8 @@ namespace System.Windows.Forms
 			
 			RadioButton_DrawText(radio_button, text_rectangle, dc, text_format);
 
-			RadioButton_DrawFocus(radio_button, dc, text_rectangle);
+			if (radio_button.Focused && radio_button.Enabled && radio_button.appearance != Appearance.Button && radio_button.Text != String.Empty)
+				RadioButton_DrawFocus (radio_button, dc, text_rectangle);
 			
 			text_format.Dispose ();
 		}
@@ -4230,8 +4231,7 @@ namespace System.Windows.Forms
 		
 		protected virtual void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
 		{
-			if ( radio_button.Focused && radio_button.appearance != Appearance.Button && radio_button.Enabled )
-				DrawInnerFocusRectangle( dc, text_rectangle, radio_button.BackColor );
+			DrawInnerFocusRectangle (dc, text_rectangle, radio_button.BackColor);
 		}
 		
 		
