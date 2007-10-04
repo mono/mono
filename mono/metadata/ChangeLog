@@ -1,3 +1,10 @@
+2007-10-04  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #328812
+	* class.c (mono_image_init_name_cache): Don't return nested
+	'protected internal' classes.
+	(mono_class_from_name_case): Likewise.
+
 2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* icall-def.h, icall.c : get_bundled_machine_config() is now the
