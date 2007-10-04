@@ -1,4 +1,9 @@
 
+Thu Oct 4 16:38:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-mips.h: endianess fix (simplified from a patch by
+	Thomas Kunze <thommy@tabao.de>, bug #323737).
+
 Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c, mini-ppc.h: refactor to use macros
