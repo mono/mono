@@ -1,4 +1,9 @@
 
+Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
+	use the preprocessor from the CPP env var if it is set.
+
 Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-trampolines.c: fixed an assertion and moved it earlier in the
