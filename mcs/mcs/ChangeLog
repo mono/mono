@@ -1,3 +1,9 @@
+2007-10-04  Marek Safar  <marek.safar@gmail.com>
+	
+	A fix for bug #325841
+	* expression.cs (ArrayAccess): Use full argument cloning only for
+	string compound concatenation.
+	
 2007-10-03  Marek Safar  <marek.safar@gmail.com>
 	
 	A fix for bug #328774

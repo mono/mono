@@ -7520,7 +7520,7 @@ namespace Mono.CSharp {
 		// initialized), then load the arguments the first time and store them
 		// in locals.  otherwise load from local variables.
 		//
-		// prepareForLoad is used in compound assignments to cache origal index
+		// prepareForLoad is used in compound assignments to cache original index
 		// values ( label[idx++] += s )
 		//
 		LocalTemporary [] LoadArrayAndArguments (EmitContext ec, bool prepareForLoad)
@@ -7553,15 +7553,17 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			if (prepared) {
+			if (prepared_value != null) {
 				prepared_value.Emit (ec);
+			} else if (prepared) {
+				LoadFromPtr (ig, this.type);
 			} else {
 				LoadArrayAndArguments (ec, false);
 				EmitLoadOpcode (ig, type, rank);
 			}	
 
 			if (leave_copy) {
-				ec.ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Dup);
 				temp = new LocalTemporary (this.type);
 				temp.Store (ec);
 			}
@@ -7577,18 +7579,23 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 			Type t = source.Type;
-			prepared = prepare_for_load;
-
-			LocalTemporary[] original_indexes_values = LoadArrayAndArguments (ec, prepare_for_load);
+			prepared = prepare_for_load && !(source is StringConcat);
 
 			if (prepared) {
-				// Store prepared value, it will be used later when index value is read
-				prepared_value = new LocalTemporary (type);
-				EmitLoadOpcode (ig, type, rank);
-				prepared_value.Store (ec);
-				foreach (LocalTemporary lt in original_indexes_values) {
-					lt.Emit (ec);
-					lt.Release (ec);
+				AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.Emit (OpCodes.Dup);
+			} else {
+				LocalTemporary[] original_indexes_values = LoadArrayAndArguments (ec,
+					prepare_for_load && (source is StringConcat));
+
+				if (original_indexes_values != null) {
+					prepared_value = new LocalTemporary (type);
+					EmitLoadOpcode (ig, type, rank);
+					prepared_value.Store (ec);
+					foreach (LocalTemporary lt in original_indexes_values) {
+						lt.Emit (ec);
+						lt.Release (ec);
+					}
 				}
 			}
 
@@ -7613,39 +7620,41 @@ namespace Mono.CSharp {
 					temp.Store (ec);
 				}
 				
-				if (is_stobj)
+				if (prepared)
+					StoreFromPtr (ig, t);
+				else if (is_stobj)
 					ig.Emit (OpCodes.Stobj, t);
 				else if (has_type_arg)
 					ig.Emit (op, t);
 				else
 					ig.Emit (op);
 			} else {
-				ModuleBuilder mb = CodeGen.Module.Builder;
-				int arg_count = ea.Arguments.Count;
-				Type [] args = new Type [arg_count + 1];
-				MethodInfo set;
-				
 				source.Emit (ec);
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					temp = new LocalTemporary (this.type);
 					temp.Store (ec);
 				}
-				
-				for (int i = 0; i < arg_count; i++){
-					//args [i++] = a.Type;
-					args [i] = TypeManager.int32_type;
-				}
 
-				args [arg_count] = type;
-				
-				set = mb.GetArrayMethod (
-					ea.Expr.Type, "Set",
-					CallingConventions.HasThis |
-					CallingConventions.Standard,
-					TypeManager.void_type, args);
-				
-				ig.Emit (OpCodes.Call, set);
+				if (prepared) {
+					StoreFromPtr (ig, t);
+				} else {
+					int arg_count = ea.Arguments.Count;
+					Type [] args = new Type [arg_count + 1];
+					for (int i = 0; i < arg_count; i++) {
+						//args [i++] = a.Type;
+						args [i] = TypeManager.int32_type;
+					}
+					args [arg_count] = type;
+
+					MethodInfo set = CodeGen.Module.Builder.GetArrayMethod (
+						ea.Expr.Type, "Set",
+						CallingConventions.HasThis |
+						CallingConventions.Standard,
+						TypeManager.void_type, args);
+
+					ig.Emit (OpCodes.Call, set);
+				}
 			}
 			
 			if (temp != null) {
