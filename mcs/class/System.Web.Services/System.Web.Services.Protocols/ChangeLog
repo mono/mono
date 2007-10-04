@@ -1,3 +1,10 @@
+2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeStubManager.cs: reverted r82932 again. This #if ONLY_1_1 causes
+	  NUnit test regressions. It should not be reverted again until
+	  appropriate NUnit test case is provided and proper fix is provided
+	  that does not cause regressions.
+
 2007-09-25  Marek Habersack  <mhabersack@novell.com>
 
 	* WebServiceHandlerFactory.cs: WebServiceParser.GetCompiledType
