@@ -1,5 +1,18 @@
 2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_type_compatibility_full): verification of
+	compatibility improved, validates correctly non-strict checks between
+	native int and I4 types different than (unsigned)int32.
+
+	* verify.c (do_store_indirect): added, do all verification of
+	ldind.X opcodes. 
+
+	* verify.c (get_load_indirect_mono_type): renamed to
+	get_indirect_op_mono_type, as it now returns the MonoType for 
+	ldind.X and stind.X opcodes.
+
+2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c: Fix the encoding of generic type definition for
 	TypeBuilders.
 
