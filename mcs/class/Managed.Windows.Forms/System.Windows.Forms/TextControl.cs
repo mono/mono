@@ -2085,7 +2085,7 @@ namespace System.Windows.Forms {
 					tag_brush = tag.color;
 					current_brush = tag_brush;
 
-					if (!owner.is_enabled) {
+					if (!owner.Enabled) {
 						Color a = ((SolidBrush) tag.color).Color;
 						Color b = ThemeEngine.Current.ColorWindowText;
 

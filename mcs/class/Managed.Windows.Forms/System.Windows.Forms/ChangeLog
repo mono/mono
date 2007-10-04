@@ -1,3 +1,8 @@
+2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
+
+	* TextBox.cs: When check enabled uses Enabled property instead of is_enabled
+	because control can be disabled because owner is disabled.
+
 2007-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: For the 1.1 profile, the default SelectedText is
