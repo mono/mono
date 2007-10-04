@@ -348,7 +348,6 @@ namespace Mono.Cecil {
 
 			TypeReference coreType =  m_module.TypeReferences [fullName];
 			if (coreType == null) {
-
 				string [] parts = fullName.Split ('.');
 				if (parts.Length != 2)
 					throw new ReflectionException ("Unvalid core type name");
@@ -571,7 +570,7 @@ namespace Mono.Cecil {
 		{
 			TypeDefTable tdefTable = m_tableReader.GetTypeDefTable ();
 
-			if (!m_tHeap.HasTable(FieldTable.RId)) {
+			if (!m_tHeap.HasTable (FieldTable.RId)) {
 				m_fields = new FieldDefinition [0];
 				return;
 			}
