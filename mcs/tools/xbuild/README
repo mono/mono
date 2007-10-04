@@ -1,8 +1,0 @@
-This is Microsoft.Build(XBuild) implementation. It will consist of:
-
-Microsoft.Build.Engine
-Microsoft.Build.Framework
-Microsoft.Build.Tasks
-Microsoft.Build.Utilities
-
-It is licensed on MIT X11 license.

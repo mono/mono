@@ -1,6 +1,0 @@
-2007-09-25  Marek Habersack  <mhabersack@novell.com>
-
-	* DummyClass.cs: added to have System.Web.UI.Design.Util present in the
-        assembly. AJAX Control Toolkit references the namespace and it's
-        apparently empty (at least no docs on MSDN).
-

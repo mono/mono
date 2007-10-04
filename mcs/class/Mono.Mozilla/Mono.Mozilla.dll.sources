@@ -1,8 +1,0 @@
-Assembly/AssemblyInfo.cs
-../../build/common/Consts.cs
-Mono.Mozilla/Base.cs
-Mono.Mozilla/Callback.cs
-Mono.Mozilla/ICallback.cs
-Mono.WebBrowser/IWebBrowser.cs
-Mono.WebBrowser/Manager.cs
-Mono.WebBrowser/WebBrowser.cs

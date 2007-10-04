@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="Causes validation = false">
-    <input type="button" name="_ctl0" />
-  </div>
-  <div id="GHTSubTest2" testname="Causes validation = true">
-    <input type="button" name="_ctl1" />
-  </div>
-</testresults>

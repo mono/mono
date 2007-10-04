@@ -1,9 +1,0 @@
-This is a _very_ quick hack to install those starter kits from http://asp.net/
-which come with *.vstemplate files in the package.
-
-Usage:
-
-  installvst <full path to vstemplate> <full path to target directory>
-  
-A subdirectory with the name specified in the vstemplate file will be created
-in the directory indicated above.

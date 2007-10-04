@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- This file can be used together with authentication modules -->
-<users>
-<user name="gonzalo" password="lalala">
-	<role name="user" />
-</user>
-</users>

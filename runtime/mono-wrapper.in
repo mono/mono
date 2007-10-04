@@ -1,7 +1,0 @@
-#! /bin/sh
-r='@mono_build_root@'
-MONO_CFG_DIR='@mono_cfg_dir@'
-PATH="$r/runtime/_tmpinst/bin:$PATH"
-MONO_SHARED_DIR=$r/runtime
-export MONO_CFG_DIR MONO_SHARED_DIR PATH
-exec "$r/libtool" --mode=execute "$r/@mono_runtime@" --config "@mono_cfg_dir@/mono/config" "$@"

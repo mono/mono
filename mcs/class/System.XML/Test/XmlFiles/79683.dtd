@@ -1,3 +1,0 @@
-﻿<!ENTITY % notations 'a'>
-<!ELEMENT root EMPTY>
-<!ATTLIST root ref NOTATION (%notations;) #IMPLIED>

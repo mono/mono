@@ -1,6 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<A>A</A>
-	</PropertyGroup>
-	<Import Project="RelativeImport2.csproj" />
-</Project>

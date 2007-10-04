@@ -1,7 +1,0 @@
-This RTF parser was originally based on a C-based RTF parser written 
-by Paul DuBois (dubois@primate.wisc.edu). It came with the following license:
-
- * This software may be redistributed without restriction and used for
- * any purpose whatsoever.
-
-and was part of the code found in the 'rewind' project.

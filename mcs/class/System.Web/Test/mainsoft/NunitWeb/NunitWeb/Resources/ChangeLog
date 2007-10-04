@@ -1,9 +1,0 @@
-2007-02-20  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* Web.mono.config: Fixed value of enableSessionState attribute since
-	it is now processed case-sensitively.
-
-2007-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
-
-	* Web.config: enableSessionState only accepts "true", false" and
-	"ReadOnly" on MS (case-sensitive).

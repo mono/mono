@@ -1,5 +1,0 @@
-2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* DesignerActionListsChangedEventArgsTest.cs,
-	  DesignerActionMethodItemTest.cs,
-	  DesignerActionPropertyItemTest.cs : new tests.

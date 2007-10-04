@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://www.w3.org/1999/xhtml"
-           xmlns="http://www.w3.org/1999/xhtml"
-		   blockDefault="#all">
-	<xs:include schemaLocation="81360inc1.xsd"/>
-	<xs:include schemaLocation="81360inc2.xsd"/>
-</xs:schema>

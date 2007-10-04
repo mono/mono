@@ -1,4 +1,0 @@
-2006-11-01  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* SchemaImporterExtensionCollection.cs,
-	  SchemaImporterExtension.cs : moved from S.X.Serialization.

@@ -1,5 +1,0 @@
-<%@ Register Src="~/MyChild.ascx" TagName="MyChild" TagPrefix="uc1" %>
-<%@ Register Src="~/MyParent.ascx" TagName="MyParent" TagPrefix="uc1" %>
-
-<uc1:MyChild runat="server" Imageurl="~/App_Themes/Black/Images/button-login.gif" skinid="login" />
-<uc1:MyParent runat="server" Imageurl="~/App_Themes/Black/Images/button-login.gif" skinid="login" />

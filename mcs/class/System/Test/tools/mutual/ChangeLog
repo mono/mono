@@ -1,7 +1,0 @@
-2007-08-24  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* Makefile, ca.pem, client.p12, client.pem, mutual.cs, server.sh,
-	  server_cert.pem, server_key.pem, serveropt.sh:
-	  ported from Mono.Security
-	* README : forwarding.
-

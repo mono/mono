@@ -1,3 +1,0 @@
-2005-12-08  Sebastien Pouliot  <sebastien@ximian.com> 
-
-	* SynchronizationAttributeTest.cs: New. Serialization interop test cases.

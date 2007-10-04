@@ -1,9 +1,0 @@
-2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* PerformanceCounterInstaller.cs, EventLogInstaller.cs :
-	  completeing 2.0 API (metadata-wise).
-
-2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* EventLogInstaller.cs: stubbed
-	* PerformanceCounterInstaller.cs: stubbed

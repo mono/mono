@@ -1,4 +1,0 @@
-2006-10-17 Leszek Ciesielski <skolima@gmail.com>
-
-	* ConnectedDataProvider.cs: Connected test are ignored when
-	no configuration is found.

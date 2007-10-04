@@ -1,6 +1,0 @@
-2005-10-05 Hisham Mardam Bey <hisham.mardambey@gmail.com>
-
-	* Added mailclient.cs which illustrates boxes, multiline text,
-	  scrollbars, labels, single line text and combo boxes.
-	* Added notepad.cs which serves as a visual test and sample for 
-	  scrollbars, menus, file save dialog, and text area.

@@ -1,8 +1,0 @@
-2005-08-15  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* RemotingClientProxy.cs: Marked abstract to match MS.NET.
-
-2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
-
-	* RemotingClientProxy.cs, RemotingService.cs: Added.
-

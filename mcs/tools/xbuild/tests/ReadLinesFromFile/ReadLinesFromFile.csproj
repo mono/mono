@@ -1,8 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
-	<Target Name="Main" >
-		<ReadLinesFromFile File="file" >
-			<Output TaskParameter="Lines" ItemName="Lines" />
-		</ReadLinesFromFile>
-		<Message Text="Read lines: @(Lines)" />
-	</Target>
-</Project>

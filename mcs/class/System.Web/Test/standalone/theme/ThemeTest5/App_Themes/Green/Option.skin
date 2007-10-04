@@ -1,6 +1,0 @@
-
-<asp:radiobuttonlist runat="server">
-<asp:ListItem Value="1" Text="One"/>
-<asp:ListItem Value="2" Text="Two"/>
-<asp:ListItem Value="3" Text="Three"/>
-</asp:radiobuttonlist>

@@ -1,5 +1,0 @@
-<%--
-Default skin template. The following skins are provided as examples only.
---%>
-
-<asp:label runat="server" SkinID="red" ForeColor="red" text="TextFromSkinFile" />

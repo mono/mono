@@ -1,7 +1,0 @@
-2006-10-19 Leszek Ciesielski <skolima@gmail.com>
-
-	* OracleType_Date.cs: Removed attribute NotWorking
-
-2006-10-17 Leszek Ciesielski <skolima@gmail.com>
-
-	* OracleType_Date.cs: Set attribute NotWorking

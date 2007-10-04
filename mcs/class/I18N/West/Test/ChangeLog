@@ -1,8 +1,0 @@
-2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* I18N.West.Test.cs : added test for bug #79951.
-
-2005-12-02  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* I18N.West.Test.cs : NUnit test for I18N.West encodings.
-

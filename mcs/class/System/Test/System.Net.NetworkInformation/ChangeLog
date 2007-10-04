@@ -1,8 +1,0 @@
-2007-08-14  Jonathan Chambers  <joncham@gmail.com>
-
-	* PhysicalAddress.cs : Test only in 2.0 profile.
-	Fix build.
-
-2007-08-13  Alan McGovern  <amcgovern@novell.com>
-
-	* PhysicalAddress.cs : Added tests for #82403

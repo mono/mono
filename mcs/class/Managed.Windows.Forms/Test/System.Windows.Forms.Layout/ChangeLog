@@ -1,9 +1,0 @@
-2007-07-23  Rolf Bjarne Kvinge <RKvinge@novell.com> 
-
-	* ArrangedElementCollectionTest.cs: Added.
-
-2006-12-23  Chris Toshok  <toshok@ximian.com>
-
-	* TableLayoutSettingsTypeConverterTest.cs: new tests, including
-	one meaty one which is NotWorking on mono.
-

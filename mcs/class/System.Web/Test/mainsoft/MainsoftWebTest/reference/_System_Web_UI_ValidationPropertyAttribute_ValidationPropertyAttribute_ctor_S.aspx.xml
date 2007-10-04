@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<testresults name="">
-  <div id="GHTSubTest1" testname="ValidationPropertyAttribute inherited into Custom Control">
-    <input id="MyTextBox2" type="text" name="MyTextBox2" />
-    <input type="text" name="_ctl1" />
-    <span>
-      <br />GHTSubTest1</span>
-  </div>
-</testresults>

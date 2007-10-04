@@ -1,2 +1,0 @@
-0. Add comparation tests, use xmldiff to compare the expected output to actual output.
-1. Instead of using fixtures to group working and not working tests, use categories  

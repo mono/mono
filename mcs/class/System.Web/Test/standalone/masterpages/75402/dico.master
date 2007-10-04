@@ -1,9 +1,0 @@
-<%@ master Language="C#" masterpagefile="~/suivicom.master" %>
-<script>
-
-</script>
-<html>
-<body>
-<ASP:ContentPlaceHolder id="DicoTitre">Titre du dictionnaire</ASP:ContentPlaceHolder>
-</body>
-</html>
