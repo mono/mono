@@ -1,3 +1,11 @@
+2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServicesSection.cs : reverted r83640 which likely caused
+	  couple of NUnit regressions on the buildbot. WebConfigurationManager
+	  is indeed needed since webServices section is on web.config.
+	  ChangeLog was also missing which resulted in some wasted hours :(
+	  http://lists.ximian.com/pipermail/mono-patches/2007-August/098511.html
+
 2007-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapExtensionTypeElement.cs : use null for default Type value.
