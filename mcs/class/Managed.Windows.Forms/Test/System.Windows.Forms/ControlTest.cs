@@ -8,7 +8,7 @@
 
 using System;
 using System.Collections;
-using InvalidEnumArgumentException = System.ComponentModel.InvalidEnumArgumentException;
+using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -19,6 +19,7 @@ using System.Windows.Forms.Layout;
 #endif
 
 using NUnit.Framework;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -1911,6 +1912,25 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test] // bug #330501
+		[Category ("NotWorking")]
+		public void OnValidating_Parent_Close ()
+		{
+			MockControl control = new MockControl ();
+
+			Form f = new Form ();
+			f.Controls.Add (control);
+			f.ShowInTaskbar = false;
+
+			f.Show ();
+			Assert.AreEqual (0, control.ValidatingCount, "#A1");
+			Assert.IsTrue (control.Focused, "#A2");
+			f.Close ();
+			Assert.AreEqual (1, control.ValidatingCount, "#B1");
+			Assert.IsFalse (control.Focused, "#B2");
+			f.Dispose ();
+		}
+
 		[Test] // bug #80280
 		public void Validated_Multiple_Containers ()
 		{
@@ -2014,6 +2034,13 @@ namespace MonoTests.System.Windows.Forms
 			public int font_height {
 				get { return base.FontHeight; }
 				set { base.FontHeight = value; }
+			}
+
+			public int ValidatingCount;
+
+			protected override void OnValidating (CancelEventArgs e)
+			{
+				ValidatingCount++;
 			}
 		}
 

@@ -1,3 +1,7 @@
+2007-10-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Added test for bug #330501.
+
 2007-10-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxTest.cs: Remove NotWorking from FocusSelectsAllTest.
