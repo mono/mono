@@ -104,617 +104,6 @@ namespace System.Windows.Forms {
 		None
 	}
 	
-	// Being cloneable should allow for nice line and document copies...
-	internal class Line : ICloneable, IComparable {
-		#region	Local Variables
-
-		internal Document document;
-
-		// Stuff that matters for our line
-		internal StringBuilder		text;			// Characters for the line
-		internal float[]		widths;			// Width of each character; always one larger than text.Length
-		internal int			space;			// Number of elements in text and widths
-		internal int			line_no;		// Line number
-		internal LineTag		tags;			// Tags describing the text
-		internal int			offset;			// Baseline can be on the X or Y axis depending if we are in multiline mode or not
-		internal int			height;			// Height of the line (height of tallest tag)
-		internal int			ascent;			// Ascent of the line (ascent of the tallest tag)
-		internal HorizontalAlignment	alignment;		// Alignment of the line
-		internal int			align_shift;		// Pixel shift caused by the alignment
-		internal int			indent;			// Left indent for the first line
-		internal int			hanging_indent;		// Hanging indent (left indent for all but the first line)
-		internal int			right_indent;		// Right indent for all lines
-		internal LineEnding ending;
-
-
-		// Stuff that's important for the tree
-		internal Line			parent;			// Our parent line
-		internal Line			left;			// Line with smaller line number
-		internal Line			right;			// Line with higher line number
-		internal LineColor		color;			// We're doing a black/red tree. this is the node color
-		internal int			DEFAULT_TEXT_LEN;	// 
-		internal bool			recalc;			// Line changed
-		#endregion	// Local Variables
-
-		#region Constructors
-		internal Line (Document document, LineEnding ending)
-		{
-			this.document = document; 
-			color = LineColor.Red;
-			left = null;
-			right = null;
-			parent = null;
-			text = null;
-			recalc = true;
-			alignment = document.alignment;
-
-			this.ending = ending;
-		}
-
-		internal Line(Document document, int LineNo, string Text, Font font, SolidBrush color, LineEnding ending) : this (document, ending)
-		{
-			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
-
-			text = new StringBuilder(Text, space);
-			line_no = LineNo;
-			this.ending = ending;
-
-			widths = new float[space + 1];
-
-			
-			tags = new LineTag(this, 1);
-			tags.font = font;
-			tags.color = color;				
-		}
-
-		internal Line(Document document, int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color, LineEnding ending) : this(document, ending)
-		{
-			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
-
-			text = new StringBuilder(Text, space);
-			line_no = LineNo;
-			this.ending = ending;
-			alignment = align;
-
-			widths = new float[space + 1];
-
-			
-			tags = new LineTag(this, 1);
-			tags.font = font;
-			tags.color = color;
-		}
-
-		internal Line(Document document, int LineNo, string Text, LineTag tag, LineEnding ending) : this(document, ending)
-		{
-			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
-
-			text = new StringBuilder(Text, space);
-			this.ending = ending;
-			line_no = LineNo;
-
-			widths = new float[space + 1];
-			tags = tag;
-		}
-
-		#endregion	// Constructors
-
-		#region Internal Properties
-
-		internal int Y {
-			get {
-				if (!document.multiline)
-					return document.top_margin;
-				return document.top_margin + offset;
-			}
-		}
-
-		internal int X {
-			get {
-				if (document.multiline)
-					return align_shift;
-				return offset + align_shift;
-			}
-		}
-
-		internal int Width {
-			get {
-				int res = (int) widths [text.Length];
-				if (!document.multiline) {
-
-				}
-				return res;
-			}
-		}
-
-		internal int Indent {
-			get {
-				return indent;
-			}
-
-			set {
-				indent = value;
-				recalc = true;
-			}
-		}
-
-		internal int HangingIndent {
-			get {
-				return hanging_indent;
-			}
-
-			set {
-				hanging_indent = value;
-				recalc = true;
-			}
-		}
-
-		internal int RightIndent {
-			get {
-				return right_indent;
-			}
-
-			set {
-				right_indent = value;
-				recalc = true;
-			}
-		}
-			
-
-		internal int Height {
-			get {
-				return height;
-			}
-
-			set {
-				height = value;
-			}
-		}
-
-		internal int LineNo {
-			get {
-				return line_no;
-			}
-
-			set {
-				line_no = value;
-			}
-		}
-
-		internal string Text {
-			get {
-				return text.ToString();
-			}
-
-			set {
-				text = new StringBuilder(value, value.Length > DEFAULT_TEXT_LEN ? value.Length : DEFAULT_TEXT_LEN);
-			}
-		}
-
-		internal HorizontalAlignment Alignment {
-			get {
-				return alignment;
-			}
-
-			set {
-				if (alignment != value) {
-					alignment = value;
-					recalc = true;
-				}
-			}
-		}
-#if no
-		internal StringBuilder Text {
-			get {
-				return text;
-			}
-
-			set {
-				text = value;
-			}
-		}
-#endif
-		#endregion	// Internal Properties
-
-		#region Internal Methods
-
-		// This doesn't do exactly what you would think, it just pulls of the \n part of the ending
-		internal string TextWithoutEnding ()
-		{
-			return text.ToString (0, text.Length - document.LineEndingLength (ending));
-		}
-
-		internal int TextLengthWithoutEnding ()
-		{
-			return text.Length - document.LineEndingLength (ending);
-		}
-
-		internal void DrawEnding (Graphics dc, float y)
-		{
-			if (document.multiline)
-				return;
-			LineTag last = tags;
-			while (last.next != null)
-				last = last.next;
-
-			string end_str = null;
-			switch (document.LineEndingLength (ending)) {
-			case 0:
-				return;
-			case 1:
-				end_str = "\u0013";
-				break;
-			case 2:
-				end_str = "\u0013\u0013";
-				break;
-			case 3:
-				end_str = "\u0013\u0013\u0013";
-				break;
-			}
-			dc.DrawString (end_str, last.font, last.color,  X + widths [TextLengthWithoutEnding ()] - document.viewport_x,
-					y, Document.string_format);
-		}
-
-		
-		// Make sure we always have enoughs space in text and widths
-		internal void Grow(int minimum) {
-			int	length;
-			float[]	new_widths;
-
-			length = text.Length;
-
-			if ((length + minimum) > space) {
-				// We need to grow; double the size
-
-				if ((length + minimum) > (space * 2)) {
-					new_widths = new float[length + minimum * 2 + 1];
-					space = length + minimum * 2;
-				} else {				
-					new_widths = new float[space * 2 + 1];
-					space *= 2;
-				}
-				widths.CopyTo(new_widths, 0);
-
-				widths = new_widths;
-			}
-		}
-
-		internal void Streamline(int lines) {
-			LineTag	current;
-			LineTag	next;
-
-			current = this.tags;
-			next = current.next;
-
-			//
-			// Catch what the loop below wont; eliminate 0 length 
-			// tags, but only if there are other tags after us
-			// We only eliminate text tags if there is another text tag
-			// after it.  Otherwise we wind up trying to type on picture tags
-			//
-			while ((current.length == 0) && (next != null) && (next.IsTextTag)) {
-				tags = next;
-				tags.previous = null;
-				current = next;
-				next = current.next;
-			}
-			
-
-			if (next == null) {
-				return;
-			}
-
-			while (next != null) {
-				// Take out 0 length tags unless it's the last tag in the document
-				if (current.IsTextTag && next.length == 0 && next.IsTextTag) {
-					if ((next.next != null) || (line_no != lines)) {
-						current.next = next.next;
-						if (current.next != null) {
-							current.next.previous = current;
-						}
-						next = current.next;
-						continue;
-					}
-				}
-				if (current.Combine(next)) {
-					next = current.next;
-					continue;
-				}
-
-				current = current.next;
-				next = current.next;
-			}
-		}
-
-		/// <summary> Find the tag on a line based on the character position, pos is 0-based</summary>
-		internal LineTag FindTag(int pos) {
-			LineTag tag;
-
-			if (pos == 0) {
-				return tags;
-			}
-
-			tag = this.tags;
-
-			if (pos >= text.Length) {
-				pos = text.Length - 1;
-			}
-
-			while (tag != null) {
-				if (((tag.start - 1) <= pos) && (pos < (tag.start + tag.length - 1))) {
-					return LineTag.GetFinalTag (tag);
-				}
-				tag = tag.next;
-			}
-			return null;
-		}
-
-		/// <summary>
-		/// Recalculate a single line using the same char for every character in the line
-		/// </summary>
-		
-		internal bool RecalculatePasswordLine(Graphics g, Document doc) {
-			LineTag	tag;
-			int	pos;
-			int	len;
-			float	w;
-			bool	ret;
-			int	descent;
-
-			pos = 0;
-			len = this.text.Length;
-			tag = this.tags;
-			ascent = 0;
-			tag.shift = 0;
-
-			this.recalc = false;
-			widths[0] = document.left_margin + indent;
-
-			w = g.MeasureString(doc.password_char, tags.font, 10000, Document.string_format).Width;
-
-			if (this.height != (int)tag.font.Height) {
-				ret = true;
-			} else {
-				ret = false;
-			}
-
-			this.height = (int)tag.font.Height;
-			tag.height = this.height;
-
-			XplatUI.GetFontMetrics(g, tag.font, out tag.ascent, out descent);
-			this.ascent = tag.ascent;
-
-			while (pos < len) {
-				pos++;
-				widths[pos] = widths[pos-1] + w;
-			}
-
-			return ret;
-		}
-
-		/// <summary>
-		/// Go through all tags on a line and recalculate all size-related values;
-		/// returns true if lineheight changed
-		/// </summary>
-		internal bool RecalculateLine(Graphics g, Document doc) {
-			LineTag	tag;
-			int	pos;
-			int	len;
-			SizeF	size;
-			float	w;
-			int	prev_offset;
-			bool	retval;
-			bool	wrapped;
-			Line	line;
-			int	wrap_pos;
-
-			pos = 0;
-			len = this.text.Length;
-			tag = this.tags;
-			prev_offset = this.offset;	// For drawing optimization calculations
-			this.height = 0;		// Reset line height
-			this.ascent = 0;		// Reset the ascent for the line
-			tag.shift = 0;
-
-			if (ending == LineEnding.Wrap) {
-				widths[0] = document.left_margin + hanging_indent;
-			} else {
-				widths[0] = document.left_margin + indent;
-			}
-
-			this.recalc = false;
-			retval = false;
-			wrapped = false;
-
-			wrap_pos = 0;
-
-			while (pos < len) {
-
-				while (tag.length == 0) {	// We should always have tags after a tag.length==0 unless len==0
-					tag.ascent = 0;
-					tag.shift = 0;
-					tag = tag.next;
-				}
-
-				size = tag.SizeOfPosition (g, pos);
-				w = size.Width;
-
-				if (Char.IsWhiteSpace(text[pos])) {
-					wrap_pos = pos + 1;
-				}
-
-				if (doc.wrap) {
-					if ((wrap_pos > 0) && (wrap_pos != len) && (widths[pos] + w) + 5 > (doc.viewport_width - this.right_indent)) {
-						// Make sure to set the last width of the line before wrapping
-						widths [pos + 1] = widths [pos] + w;
-
-						pos = wrap_pos;
-						len = text.Length;
-						doc.Split(this, tag, pos);
-						ending = LineEnding.Wrap;
-						len = this.text.Length;
-						
-						retval = true;
-						wrapped = true;
-					}  else if (pos > 1 && (widths[pos] + w) > (doc.viewport_width - this.right_indent)) {
-						// No suitable wrap position was found so break right in the middle of a word
-
-						// Make sure to set the last width of the line before wrapping
-						widths [pos + 1] = widths [pos] + w;
-
-						doc.Split(this, tag, pos);
-						ending = LineEnding.Wrap;
-						len = this.text.Length;
-						retval = true;
-						wrapped = true;
-					}
-				}
-
-				// Contract all wrapped lines that follow back into our line
-				if (!wrapped) {
-					pos++;
-
-					widths[pos] = widths[pos-1] + w;
-
-					if (pos == len) {
-						line = doc.GetLine(this.line_no + 1);
-						if ((line != null) && (ending == LineEnding.Wrap || ending == LineEnding.None)) {
-							// Pull the two lines together
-							doc.Combine(this.line_no, this.line_no + 1);
-							len = this.text.Length;
-							retval = true;
-						}
-					}
-				}
-
-				if (pos == (tag.start-1 + tag.length)) {
-					// We just found the end of our current tag
-					tag.height = tag.MaxHeight ();
-
-					// Check if we're the tallest on the line (so far)
-					if (tag.height > this.height) {
-						this.height = tag.height;		// Yep; make sure the line knows
-					}
-
-					if (tag.ascent == 0) {
-						int	descent;
-
-						XplatUI.GetFontMetrics(g, tag.font, out tag.ascent, out descent);
-					}
-
-					if (tag.ascent > this.ascent) {
-						LineTag		t;
-
-						// We have a tag that has a taller ascent than the line;
-						t = tags;
-						while (t != null && t != tag) {
-							t.shift = tag.ascent - t.ascent;
-							t = t.next;
-						}
-
-						// Save on our line
-						this.ascent = tag.ascent;
-					} else {
-						tag.shift = this.ascent - tag.ascent;
-					}
-
-					tag = tag.next;
-					if (tag != null) {
-						tag.shift = 0;
-						wrap_pos = pos;
-					}
-				}
-			}
-
-			if (this.height == 0) {
-				this.height = tags.font.Height;
-				tag.height = this.height;
-			}
-
-			if (prev_offset != offset) {
-				retval = true;
-			}
-			return retval;
-		}
-		#endregion	// Internal Methods
-
-		#region Administrative
-		public int CompareTo(object obj) {
-			if (obj == null) {
-				return 1;
-			}
-
-			if (! (obj is Line)) {
-				throw new ArgumentException("Object is not of type Line", "obj");
-			}
-
-			if (line_no < ((Line)obj).line_no) {
-				return -1;
-			} else if (line_no > ((Line)obj).line_no) {
-				return 1;
-			} else {
-				return 0;
-			}
-		}
-
-		public object Clone() {
-			Line	clone;
-
-			clone = new Line (document, ending);
-
-			clone.text = text;
-
-			if (left != null) {
-				clone.left = (Line)left.Clone();
-			}
-
-			if (left != null) {
-				clone.left = (Line)left.Clone();
-			}
-
-			return clone;
-		}
-
-		internal object CloneLine() {
-			Line	clone;
-
-			clone = new Line (document, ending);
-
-			clone.text = text;
-
-			return clone;
-		}
-
-		public override bool Equals(object obj) {
-			if (obj == null) {
-				return false;
-			}
-
-			if (!(obj is Line)) {
-				return false;
-			}
-
-			if (obj == this) {
-				return true;
-			}
-
-			if (line_no == ((Line)obj).line_no) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public override int GetHashCode() {
-			return base.GetHashCode ();
-		}
-
-		public override string ToString() {
-			return "Line " + line_no;
-		}
-
-		#endregion	// Administrative
-	}
-
 	internal class Document : ICloneable, IEnumerable {
 		#region Structures
 		// FIXME - go through code and check for places where
@@ -1167,9 +556,9 @@ namespace System.Windows.Forms {
 				length = 0;
 				Console.Write("   Tags: ");
 				while (tag != null) {
-					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.end
+					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.End
 							/*line.text.ToString (tag.start - 1, tag.length)*/);
-					length += tag.length;
+					length += tag.Length;
 
 					if (tag.line != line) {
 						Console.Write("BAD line link");
@@ -1707,7 +1096,7 @@ namespace System.Windows.Forms {
 							caret.pos--;
 						}
 					} else {
-						if ((caret.tag.start - 1 + caret.tag.length) < caret.pos) {
+						if ((caret.tag.start - 1 + caret.tag.Length) < caret.pos) {
 							caret.tag = caret.tag.next;
 						}
 					}
@@ -1946,7 +1335,7 @@ namespace System.Windows.Forms {
 				LineTag tag = line.tags;
 				while (tag != null) {
 					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}'>",
-							tag.GetType (), tag.start, tag.length, tag.font, tag.color.Color);
+							tag.GetType (), tag.start, tag.Length, tag.font, tag.color.Color);
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.next;
@@ -2067,19 +1456,19 @@ namespace System.Windows.Forms {
 				while (tag != null) {
 
 					// Skip empty tags
-					if (tag.length == 0) {
+					if (tag.Length == 0) {
 						tag = tag.next;
 						continue;
 					}
 
-					if (((tag.X + tag.width) < (clip.Left - viewport_x)) && (tag.X > (clip.Right - viewport_x))) {
+					if (((tag.X + tag.Width) < (clip.Left - viewport_x)) && (tag.X > (clip.Right - viewport_x))) {
 						tag = tag.next;
 						continue;
 					}
 
 					if (tag.back_color != null) {
 						g.FillRectangle (tag.back_color, tag.X + line.X - viewport_x,
-								line_y + tag.shift, tag.width, line.height);
+								line_y + tag.shift, tag.Width, line.height);
 					}
 
 					tag_brush = tag.color;
@@ -2098,24 +1487,24 @@ namespace System.Windows.Forms {
 
 					int tag_pos = tag.start;
 					current_brush = tag_brush;
-					while (tag_pos < tag.start + tag.length) {
+					while (tag_pos < tag.start + tag.Length) {
 						int old_tag_pos = tag_pos;
 
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
 							current_brush = hilight_text;
-							tag_pos = Math.Min (tag.end, line_selection_end);
+							tag_pos = Math.Min (tag.End, line_selection_end);
 						} else if (tag_pos < line_selection_start) {
 							current_brush = tag_brush;
-							tag_pos = Math.Min (tag.end, line_selection_start);
+							tag_pos = Math.Min (tag.End, line_selection_start);
 						} else {
 							current_brush = tag_brush;
-							tag_pos = tag.end;
+							tag_pos = tag.End;
 						}
 
 						tag.Draw (g, current_brush,
 								line.X - viewport_x,
 								line_y + tag.shift,
-								old_tag_pos - 1, Math.Max (tag.length, tag_pos - old_tag_pos),
+								old_tag_pos - 1, Math.Max (tag.Length, tag_pos - old_tag_pos),
 								text.ToString() );
 					}
 					tag = tag.next;
@@ -2446,7 +1835,7 @@ namespace System.Windows.Forms {
 			line.text.Remove(pos, count);
 
 			// Make sure the tag points to the right spot
-			while ((tag != null) && (tag.end) < pos) {
+			while ((tag != null) && (tag.End) < pos) {
 				tag = tag.next;
 			}
 
@@ -2455,23 +1844,23 @@ namespace System.Windows.Forms {
 			}
 
 			// Check if we're crossing tag boundaries
-			if ((pos + count) > (tag.start + tag.length - 1)) {
+			if ((pos + count) > (tag.start + tag.Length - 1)) {
 				int	left;
 
 				// We have to delete cross tag boundaries
 				streamline = true;
 				left = count;
 
-				left -= tag.start + tag.length - pos - 1;
+				left -= tag.start + tag.Length - pos - 1;
 
 				tag = tag.next;
 				while ((tag != null) && (left > 0)) {
 					tag.start -= count - left;
 
-					if (tag.length > left) {
+					if (tag.Length > left) {
 						left = 0;
 					} else {
-						left -= tag.length;
+						left -= tag.Length;
 						tag = tag.next;
 					}
 
@@ -2479,14 +1868,14 @@ namespace System.Windows.Forms {
 			} else {
 				// We got off easy, same tag
 
-				if (tag.length == 0) {
+				if (tag.Length == 0) {
 					streamline = true;
 				}
 			}
 
 			// Delete empty orphaned tags at the end
 			LineTag walk = tag;
-			while (walk != null && walk.next != null && walk.next.length == 0) {
+			while (walk != null && walk.next != null && walk.next.Length == 0) {
 				LineTag t = walk;
 				walk.next = walk.next.next;
 				if (walk.next != null)
@@ -2547,7 +1936,7 @@ namespace System.Windows.Forms {
 			if (forward) {
 				line.text.Remove(pos, 1);
 
-				while ((tag != null) && (tag.start + tag.length - 1) <= pos) {
+				while ((tag != null) && (tag.start + tag.Length - 1) <= pos) {
 					tag = tag.next;
 				}
 
@@ -2557,7 +1946,7 @@ namespace System.Windows.Forms {
 
 				//	tag.length--;
 
-				if (tag.length == 0) {
+				if (tag.Length == 0) {
 					streamline = true;
 				}
 			} else {
@@ -2565,12 +1954,12 @@ namespace System.Windows.Forms {
 				line.text.Remove(pos, 1);
 				if (pos >= (tag.start - 1)) {
 					//		tag.length--;
-					if (tag.length == 0) {
+					if (tag.Length == 0) {
 						streamline = true;
 					}
 				} else if (tag.previous != null) {
 					//		tag.previous.length--;
-					if (tag.previous.length == 0) {
+					if (tag.previous.Length == 0) {
 						streamline = true;
 					}
 				}
@@ -2578,7 +1967,7 @@ namespace System.Windows.Forms {
 
 			// Delete empty orphaned tags at the end
 			LineTag walk = tag;
-			while (walk != null && walk.next != null && walk.next.length == 0) {
+			while (walk != null && walk.next != null && walk.next.Length == 0) {
 				LineTag t = walk;
 				walk.next = walk.next.next;
 				if (walk.next != null)
@@ -2640,7 +2029,7 @@ namespace System.Windows.Forms {
 			}
 
 			// need to get the shift before setting the next tag since that effects length
-			shift = last.start + last.length - 1;
+			shift = last.start + last.Length - 1;
 			last.next = second.tags;
 			last.next.previous = last;
 
@@ -3625,7 +3014,7 @@ namespace System.Windows.Forms {
 					tag = line.tags;
 
 					while (tag != null) {
-						if (index < (start + tag.start + tag.length - 1)) {
+						if (index < (start + tag.start + tag.Length - 1)) {
 							line_out = line;
 							tag_out = LineTag.GetFinalTag (tag);
 							pos = index - start;
@@ -3848,10 +3237,10 @@ namespace System.Windows.Forms {
 			x += line.X;
 
 			while (true) {
-				if (x >= tag.X && x < (tag.X+tag.width)) {
+				if (x >= tag.X && x < (tag.X+tag.Width)) {
 					int	end;
 
-					end = tag.start + tag.length - 1;
+					end = tag.start + tag.Length - 1;
 
 					for (int pos = tag.start; pos < end; pos++) {
 						if (x < line.widths[pos]) {
@@ -3891,7 +3280,7 @@ namespace System.Windows.Forms {
 			}
 
 			while (true) {
-				if (x >= tag.X && x < (tag.X+tag.width)) {
+				if (x >= tag.X && x < (tag.X+tag.Width)) {
 					int	end;
 
 					end = tag.TextEnd;
@@ -4476,354 +3865,6 @@ namespace System.Windows.Forms {
 		}
 	}
 
-	internal class LineTag {
-		#region	Local Variables;
-		// Payload; formatting
-		internal Font		font;		// System.Drawing.Font object for this tag
-		internal SolidBrush	color;		// The font color for this tag
-
-		// In 2.0 tags can have background colours.  I'm not going to #ifdef
-		// at this level though since I want to reduce code paths
-		internal SolidBrush back_color;  
-
-		// Payload; text
-		internal int		start;		// start, in chars; index into Line.text
-		internal bool		r_to_l;		// Which way is the font
-
-		// Drawing support
-		internal int		height;		// Height in pixels of the text this tag describes
-
-		internal int		ascent;		// Ascent of the font for this tag
-		internal int		shift;		// Shift down for this tag, to stay on baseline
-
-		// Administrative
-		internal Line		line;		// The line we're on
-		internal LineTag	next;		// Next tag on the same line
-		internal LineTag	previous;	// Previous tag on the same line
-		#endregion;
-
-		#region Constructors
-		internal LineTag(Line line, int start) {
-			this.line = line;
-			this.start = start;
-		}
-		#endregion	// Constructors
-
-		#region Internal Methods
-
-		public float X {
-			get {
-				if (start == 0)
-					return line.X;
-				return line.X + line.widths [start - 1];
-			}
-		}
-
-		public int end {
-			get { return start + length; }
-		}
-
-		public int TextEnd {
-			get { return start + TextLength; }
-		}
-
-		public float width {
-			get {
-				if (length == 0)
-					return 0;
-				return line.widths [start + length - 1] - (start != 0 ? line.widths [start - 1] : 0);
-			}
-		}
-
-		public int length {
-			get {
-				int res = 0;
-				if (next != null)
-					res = next.start - start;
-				else
-					res = line.text.Length - (start - 1);
-
-				return res > 0 ? res : 0;
-			}
-		}
-
-		public int TextLength {
-			get {
-				int res = 0;
-				if (next != null)
-					res = next.start - start;
-				else
-					res = line.TextLengthWithoutEnding () - (start - 1);
-
-				return res > 0 ? res : 0;
-			}
-		}
-
-		public virtual bool IsTextTag {
-			get { return true; }
-		}
-
-		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
-		{
-			if (pos >= line.TextLengthWithoutEnding () && line.document.multiline)
-				return SizeF.Empty;
-
-			string text = line.text.ToString (pos, 1);
-			switch ((int) text [0]) {
-			case '\t':
-				if (!line.document.multiline)
-					goto case 10;
-				SizeF res = dc.MeasureString (" ", font, 10000, Document.string_format);
-				res.Width *= 8.0F;
-				return res;
-			case 10:
-			case 13:
-				return dc.MeasureString ("\u0013", font, 10000, Document.string_format);
-			}
-			
-			return dc.MeasureString (text, font, 10000, Document.string_format);
-		}
-
-		internal virtual int MaxHeight ()
-		{
-			return font.Height;
-		}
-
-		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
-		{
-			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
-		}
-
-		internal virtual void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
-		{
-			while (start < end) {
-				int tab_index = text.IndexOf ("\t", start);
-				if (tab_index == -1)
-					tab_index = end;
-				dc.DrawString (text.Substring (start, tab_index - start), font, brush, xoff + line.widths [start],
-						y, StringFormat.GenericTypographic);
-
-				// non multilines get the unknown char 
-				if (!line.document.multiline && tab_index != end)
-					dc.DrawString ("\u0013", font, brush,  xoff + line.widths [tab_index], y, Document.string_format);
-					
-				start = tab_index + 1;
-			}
-		}
-
-		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
-		internal LineTag Break(int pos) {
-
-			LineTag	new_tag;
-
-			// Sanity
-			if (pos == this.start) {
-				return this;
-			} else if (pos >= (start + length)) {
-				return null;
-			}
-
-			new_tag = new LineTag(line, pos);
-			new_tag.CopyFormattingFrom (this);
-
-			new_tag.next = this.next;
-			this.next = new_tag;
-			new_tag.previous = this;
-
-			if (new_tag.next != null) {
-				new_tag.next.previous = new_tag;
-			}
-
-			return new_tag;
-		}
-
-		public virtual string Text ()
-		{
-			return line.text.ToString (start - 1, length);
-		}
-
-		public void CopyFormattingFrom (LineTag other)
-		{
-			height = other.height;
-			font = other.font;
-			color = other.color;
-			back_color = other.back_color;
-		}
-
-		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
-		/// Removes any previous tags overlapping the same area; 
-		/// returns true if lineheight has changed</summary>
-		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText(Line line, int start, int length, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
-		{
-			LineTag	tag;
-			LineTag	start_tag;
-			LineTag end_tag;
-			int	end;
-			bool	retval = false;		// Assume line-height doesn't change
-
-			// Too simple?
-			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height) {
-				retval = true;
-			}
-			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
-
-			// A little sanity, not sure if it's needed, might be able to remove for speed
-			if (length > line.text.Length) {
-				length = line.text.Length;
-			}
-
-			tag = line.tags;
-			end = start + length;
-
-			// Common special case
-			if ((start == 1) && (length == tag.length)) {
-				tag.ascent = 0;
-				SetFormat (tag, font, color, back_color, specified);
-				return retval;
-			}
-
-			start_tag = FindTag (line, start);
-			tag = start_tag.Break (start);
-
-			while (tag != null && tag.end <= end) {
-				SetFormat (tag, font, color, back_color, specified);
-				tag = tag.next;
-			}
-
-			if (tag != null && tag.end == end)
-				return retval;
-
-			/// Now do the last tag
-			end_tag = FindTag (line, end);
-
-			if (end_tag != null) {
-				end_tag.Break (end);
-				SetFormat (end_tag, font, color, back_color, specified);
-			}
-
-			return retval;
-		}
-
-		private static void SetFormat (LineTag tag, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
-		{
-			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
-				tag.font = font;
-			if ((FormatSpecified.Color & specified) == FormatSpecified.Color)
-				tag.color = color;
-			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
-				tag.back_color = back_color;
-			}
-			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
-		}
-
-		/// <summary>Finds the tag that describes the character at position 'pos' on 'line'</summary>
-		internal static LineTag FindTag(Line line, int pos) {
-			LineTag tag = line.tags;
-
-			// Beginning of line is a bit special
-			if (pos == 0) {
-				// Not sure if we should get the final tag here
-				return tag;
-			}
-
-			while (tag != null) {
-				if ((tag.start <= pos) && (pos <= tag.end)) {
-					return GetFinalTag (tag);
-				}
-
-				tag = tag.next;
-			}
-
-			return null;
-		}
-
-		// There can be multiple tags at the same position, we want to make
-		// sure we are using the very last tag at the given position
-		internal static LineTag GetFinalTag (LineTag tag)
-		{
-			LineTag res = tag;
-
-			while (res.length == 0 && res.next != null && res.next.length == 0)
-				res = res.next;
-
-			return res;
-		}
-
-		/// <summary>Combines 'this' tag with 'other' tag</summary>
-		internal bool Combine(LineTag other) {
-			if (!this.Equals(other)) {
-				return false;
-			}
-
-			this.next = other.next;
-			if (this.next != null) {
-				this.next.previous = this;
-			}
-
-			return true;
-		}
-
-
-		/// <summary>Remove 'this' tag ; to be called when formatting is to be removed</summary>
-		internal bool Remove() {
-			if ((this.start == 1) && (this.next == null)) {
-				// We cannot remove the only tag
-				return false;
-			}
-			if (this.start != 1) {
-				this.previous.next = this.next;
-				this.next.previous = this.previous;
-			} else {
-				this.next.start = 1;
-				this.line.tags = this.next;
-				this.next.previous = null;
-			}
-			return true;
-		}
-
-
-		/// <summary>Checks if 'this' tag describes the same formatting options as 'obj'</summary>
-		public override bool Equals(object obj) {
-			LineTag	other;
-
-			if (obj == null) {
-				return false;
-			}
-
-			if (!(obj is LineTag)) {
-				return false;
-			}
-
-			if (obj == this) {
-				return true;
-			}
-
-			other = (LineTag)obj;
-
-			if (other.IsTextTag != IsTextTag)
-				return false;
-
-			if (this.font.Equals(other.font) && this.color.Equals(other.color)) {	// FIXME add checking for things like link or type later
-				return true;
-			}
-
-			return false;
-		}
-
-		public override int GetHashCode() {
-			return base.GetHashCode ();
-		}
-
-		public override string ToString() {
-			if (length > 0)
-				return GetType () + " Tag starts at index " + this.start + " length " + this.length + " text: " + Text () + "Font " + this.font.ToString();
-			return "Zero Lengthed tag at index " + this.start;
-		}
-
-		#endregion	// Internal Methods
-	}
-
 	internal class UndoManager {
 
 		internal enum ActionType {
@@ -5164,7 +4205,7 @@ namespace System.Windows.Forms {
 				// Copy tags from start to start+length onto new line
 				current_tag = current.FindTag (start);
 				while ((current_tag != null) && (current_tag.start <= end)) {
-					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.length))) {
+					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.Length))) {
 						// start tag is within this tag
 						tag_start = start;
 					} else {
@@ -5230,7 +4271,7 @@ namespace System.Windows.Forms {
 					tag = tag.next;
 				}
 
-				offset = tag.start + tag.length - 1;
+				offset = tag.start + tag.Length - 1;
 
 				tag.next = insert.tags;
 				line.text.Insert(offset, insert.text.ToString());
@@ -5267,11 +4308,11 @@ namespace System.Windows.Forms {
 					tag = line.tags;
 
 					
-					if (tag != null && tag.length != 0) {
+					if (tag != null && tag.Length != 0) {
 						while (tag.next != null) {
 							tag = tag.next;
 						}
-						offset = tag.start + tag.length - 1;
+						offset = tag.start + tag.Length - 1;
 						tag.next = current.tags;
 						tag.next.previous = tag;
 
@@ -5308,7 +4349,7 @@ namespace System.Windows.Forms {
 				line = document.GetLine(line.line_no + 1);
 
 				// FIXME? Test undo of line-boundaries
-				if ((current.right == null) && (current.tags.length != 0)) {
+				if ((current.right == null) && (current.tags.Length != 0)) {
 					document.Combine(line.line_no - 1, line.line_no);
 				}
 				current = current.right;

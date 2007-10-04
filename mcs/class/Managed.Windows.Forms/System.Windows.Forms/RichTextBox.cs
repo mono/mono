@@ -1868,7 +1868,7 @@ namespace System.Windows.Forms {
 						}
 					}
 
-					pos = tag.start + tag.length - 1;
+					pos = tag.start + tag.Length - 1;
 					tag = tag.next;
 				}
 				pos = 0;
@@ -1949,17 +1949,17 @@ namespace System.Windows.Forms {
 
 					// Emit the string itself
 					if (line_no != end_line.line_no) {
-						EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.length - pos - 1));
+						EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.Length - pos - 1));
 					} else {
-						if (end_pos < (tag.start + tag.length - 1)) {
+						if (end_pos < (tag.start + tag.Length - 1)) {
 							// Emit partial tag only, end_pos is inside this tag
 							EmitRTFText(sb, tag.line.text.ToString(pos, end_pos - pos));
 						} else {
-							EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.length - pos - 1));
+							EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.Length - pos - 1));
 						}
 					}
 
-					pos = tag.start + tag.length - 1;
+					pos = tag.start + tag.Length - 1;
 					tag = tag.next;
 				}
 				if (pos >= line.text.Length) {

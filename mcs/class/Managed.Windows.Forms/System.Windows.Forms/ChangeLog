@@ -1,3 +1,11 @@
+2007-10-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextControl.cs: Move Line and LineTag classes into separate files to
+	make things easier to find.
+	* Line.cs, LineTag.cs: Bring coding standards up to Mono's guidelines.
+	* RichTextBox.cs: Capitalize LineTag.Length property access.
+	- This is purely an organizational/formatting change, no logic changed. -
+
 2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ThemeWin32Classic.cs: Do not show focus rectangle in radio buttons when

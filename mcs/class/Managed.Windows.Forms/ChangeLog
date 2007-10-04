@@ -1,3 +1,7 @@
+2007-10-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms.dll.sources: Added Line.cs and LineTag.cs.
+
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Windows.Forms_test.dll.sources: Added
