@@ -1,3 +1,8 @@
+2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall-def.h, icall.c : get_bundled_machine_config() is now the
+	  common function used by both DefaultConfig in System.dll and
+	  InternalConfigurationHost in System.Configuration.dll.
 
 Wed Oct 3 17:26:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
