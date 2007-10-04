@@ -32,6 +32,7 @@ using System;
 using System.IO;
 using System.Security;
 using System.Configuration.Internal;
+using System.Runtime.CompilerServices;
 
 namespace System.Configuration
 {
@@ -163,12 +164,21 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern private static string get_bundled_machine_config ();
+		
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
+			if (String.CompareOrdinal (streamName, System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile) == 0) {
 #if TARGET_JVM
-			if (String.CompareOrdinal (streamName, System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile) == 0)
 				return (Stream) vmw.common.IOUtils.getStreamForGHConfigs (streamName);
+#else
+				string bundle = get_bundled_machine_config ();
+				if (bundle != null)
+					return new MemoryStream (System.Text.Encoding.UTF8.GetBytes (bundle));
 #endif
+			}
+
 			if (!File.Exists (streamName))
 				throw new ConfigurationException ("File '" + streamName + "' not found");
 				

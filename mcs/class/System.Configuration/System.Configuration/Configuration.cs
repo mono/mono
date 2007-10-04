@@ -443,6 +443,8 @@ namespace System.Configuration {
 			XmlTextReader reader = null;
 			Stream stream = null;
 			
+			// FIXME: we should remove this kind of hack that
+			// hides the actual error
 			try {
 				stream = system.Host.OpenStreamForRead (streamName);
 			} catch (Exception) {

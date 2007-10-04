@@ -1,3 +1,10 @@
+2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InternalConfigurationHost.cs : when the streamName is for
+	  machine.config, try get_bundled_machine_config() icall first.
+	  This hopefully implements the requested feature in bug #325022.
+	* Configuration.cs : added comment.
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConfigurationManager.cs: Fixed line endings. Avoid warning by
