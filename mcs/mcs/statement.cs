@@ -4095,6 +4095,17 @@ namespace Mono.CSharp {
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
 						return false;
+					
+					//
+					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
+					//
+					converted = new Conditional (new Binary (Binary.Operator.LogicalOr,
+						new Binary (Binary.Operator.Equality, e, new NullConstant (loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc))),
+							NullPointer.Null,
+							converted);
+
+					converted = converted.Resolve (ec);					
 
 					data [i] = new ExpressionEmitter (converted, vi);
 					i++;

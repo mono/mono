@@ -1,5 +1,11 @@
 2007-10-04  Marek Safar  <marek.safar@gmail.com>
 	
+	A fix for bug #330069
+	* statement.cs (Fixed.Resolve): Read the first array element only when
+	an array is instantiated. 
+	
+2007-10-04  Marek Safar  <marek.safar@gmail.com>
+	
 	* expression.cs, assign.cs, generics.cs: Print correct operator when
 	compound assignment is used.
 	
