@@ -1,4 +1,9 @@
 
+Thu Oct 4 22:04:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h, tramp-ppc.c, Makefile.am: port the PPC
+	code to the new style trampoline in preparation for IMT support.
+
 Thu Oct 4 19:01:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, tramp-ppc.c: don't use r13 as it's used by the PPC EABI
