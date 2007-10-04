@@ -1,4 +1,10 @@
 
+Thu Oct 4 19:01:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, tramp-ppc.c: don't use r13 as it's used by the PPC EABI
+	systems already. This also reduces the specific trampiline sizes and
+	prepares for the use of r12 as the IMT identifier register.
+
 Thu Oct 4 16:38:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-mips.h: endianess fix (simplified from a patch by
