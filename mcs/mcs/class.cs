@@ -5258,12 +5258,11 @@ namespace Mono.CSharp {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
 						if (prop_method == null) {
-							if (implementing.IsSpecialName) {
+							if (TypeManager.IsSpecialMethod (implementing)) {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (470, method.Location, "Method `{0}' cannot implement interface accessor `{1}.{2}'",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing),
 									implementing.Name.StartsWith ("get_") ? "get" : "set");
-								return false;
 							}
 						} else if (implementing.DeclaringType.IsInterface) {
 							if (!implementing.IsSpecialName) {
