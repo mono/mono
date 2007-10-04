@@ -1,3 +1,8 @@
+2007-10-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: call the Init method after loading the
+	modules and hooking up application events. Fixes bug #330416.
+
 2007-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpServerUtility.cs: set a flag when transferring control to

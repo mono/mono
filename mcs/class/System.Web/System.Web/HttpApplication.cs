@@ -183,8 +183,10 @@ namespace System.Web {
 
 				modcoll = modules.LoadModules (this);
 
-				if (full_init)
+				if (full_init) {
 					HttpApplicationFactory.AttachEvents (this);
+					Init ();
+				}
 
 #if NET_2_0
 				GlobalizationSection cfg;
