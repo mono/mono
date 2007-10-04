@@ -1022,5 +1022,16 @@ namespace MonoTests.System.Reflection
 			private readonly string _assemblyFile;
 			private readonly string _assemblyName;
 		}
+
+		protected internal class Bug328812_NestedFamORAssem { };
+
+		[Test]
+		public void bug328812 ()
+		{
+			Assembly corlib_test = Assembly.GetExecutingAssembly ();
+			Assert.IsNull (corlib_test.GetType ("Bug328812_NestedFamORAssem"));
+			// Just a sanity check, in case the above passed for some other reason
+			Assert.IsNotNull (corlib_test.GetType ("MonoTests.System.Reflection.AssemblyTest+Bug328812_NestedFamORAssem"));
+		}
 	}
 }
