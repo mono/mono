@@ -1,4 +1,10 @@
 
+Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h: refactor to use macros
+	to access ucontext fields and enable netbsd support
+	(partially from Magnus Henoch <mange@freemail.hu>).
+
 Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
