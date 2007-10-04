@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+svn = "svn+ssh://mono-cvs.ximian.com/source/"
+info = "Mono.Cecil/AssemblyInfo.cs"
+
+$rev = 0
+
+IO::popen("svn info #{svn}").each { |line|
+	$rev = $1.to_i if line =~ /^Revision: ([0-9]+)/
+}
+
+if $rev == 0
+	puts "Cannot get last revision"
+	exit(1)
+end
+
+def read_file(file)
+	content = ""
+	f = File.new(file, File::CREAT | File::RDONLY)
+	content << f.readlines.join
+	f.close
+
+	return content
+end
+
+def write_file(file, content)
+	File.open(file, File::CREAT | File::WRONLY) { |f|
+		f.write(content)
+	}
+end
+
+def patch_info(content)
+	patched = ""
+	content.each_line { |line|
+		if not line =~ /AssemblyVersion/
+			patched << line
+		else
+			patched << line.gsub(/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/) { "#{$1.to_s}.#{$2.to_s}.#{$3.to_s}.#{($rev + 1).to_s}" }
+		end
+	}
+	return patched
+end
+
+write_file(info, patch_info(read_file(info)))
