@@ -1,5 +1,10 @@
 2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ThemeWin32Classic.cs: Do not show focus rectangle in checkboxes when
+	text is empty.
+
+2007-10-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ComboBox.cs: On contructor use backgound_color instead of BackColor to
 	prevent calling of OnBackColorChanged. Fixes #325321.
 

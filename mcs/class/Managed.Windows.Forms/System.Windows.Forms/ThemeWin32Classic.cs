@@ -1252,7 +1252,8 @@ namespace System.Windows.Forms
 			
 			CheckBox_DrawText(checkbox, text_rectangle, dc, text_format);
 
-			CheckBox_DrawFocus(checkbox, dc, text_rectangle);
+			if (checkbox.Focused && checkbox.Enabled && checkbox.appearance != Appearance.Button && checkbox.Text != String.Empty)
+				CheckBox_DrawFocus (checkbox, dc, text_rectangle);
 
 			text_format.Dispose ();
 		}
@@ -1285,8 +1286,7 @@ namespace System.Windows.Forms
 		
 		protected virtual void CheckBox_DrawFocus( CheckBox checkbox, Graphics dc, Rectangle text_rectangle )
 		{
-			if ( checkbox.Focused && checkbox.appearance != Appearance.Button && checkbox.Enabled )
-				DrawInnerFocusRectangle( dc, text_rectangle, checkbox.BackColor );
+			DrawInnerFocusRectangle (dc, text_rectangle, checkbox.BackColor);
 		}
 
 		// renders a checkBox with the Flat and Popup FlatStyle
