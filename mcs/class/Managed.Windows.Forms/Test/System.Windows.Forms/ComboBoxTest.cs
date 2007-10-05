@@ -61,6 +61,26 @@ namespace MonoTests.System.Windows.Forms
 			Thread.CurrentThread.CurrentCulture = _originalCulture;
 		}
 
+		[Test] // bug #331144
+		[Category ("NotWorking")]
+		public void DropDownStyle ()
+		{
+			ComboBox comboBox = new ComboBox ();
+			comboBox.Items.Add ("abc");
+
+			Form form = new Form ();
+			form.Controls.Add (comboBox);
+			form.Show ();
+
+			Assert.AreEqual (ComboBoxStyle.DropDown, comboBox.DropDownStyle, "#1");
+			comboBox.DropDownStyle = ComboBoxStyle.Simple;
+			Assert.AreEqual (ComboBoxStyle.Simple, comboBox.DropDownStyle, "#2");
+			comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+			Assert.AreEqual (ComboBoxStyle.DropDown, comboBox.DropDownStyle, "#3");
+
+			form.Dispose ();
+		}
+
 		[Test] // bug 81610
 		[Category ("NotWorking")]
 		public void InitialBoundValue ()
