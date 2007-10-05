@@ -1,3 +1,7 @@
+2007-10-05  Alp Toker  <alp@atoker.com>
+
+	* TypeTest.cs: Re-enable the regression test for #315863.
+
 2007-09-29  Raja R Harinath  <harinath@gmail.com>
 
 	* ObjectTest.cs (TestToStringOnGenericInstances):

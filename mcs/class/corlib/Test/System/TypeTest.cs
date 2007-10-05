@@ -1010,7 +1010,6 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
-		[Category("NotWorking")]
 		public void GetElementType_Bug63841 ()
 		{
 			Assert.IsNull (typeof (TheEnum).GetElementType (), "#1");
