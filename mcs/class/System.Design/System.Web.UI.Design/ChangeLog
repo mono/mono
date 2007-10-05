@@ -1,5 +1,16 @@
 2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MailFileEditor.cs, MdbDataFileEditor.cs,
+	ResourceExpressionEditorSheet.cs, SkinIDTypeConverter.cs,
+	SupportsPreviewControlAttribute.cs,
+	TemplateModeChangedEventArgs.cs, TransactedChangeCallback.cs,
+	TypeSchema.cs, UserControlFileEditor.cs,
+	WebFormsDesignerActionService.cs, XmlDataFileEditor.cs,
+	XmlDocumentSchema.cs, XsdSchemaFileEditor.cs,
+	XslTransformFileEditor.cs : more 2.0 fiels.
+
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataColumnSelectionConverter.cs, DataSetFieldSchema.cs,
 	  DataSetSchema.cs, DataSetViewSchema.cs,
 	  DataSourceBooleanViewSchemaConverter.cs, DataSourceDesigner.cs,
