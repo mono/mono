@@ -1,3 +1,10 @@
+2007-10-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic_type_definition_encoding.2.cs: added, this tests
+	 the regression fixed in r86912.
+
+	* Makefile.am: added generic_type_definition.2.cs
+
 2007-09-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* generic_type_definition.2.cs: added
