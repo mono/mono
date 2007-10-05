@@ -2998,6 +2998,7 @@ namespace Mono.CSharp {
 	{
 		readonly NamespaceEntry namespaceEntry;
 		public Expression ExtensionExpression;
+		Argument extension_argument;
 
 		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, extensionType, l)
@@ -3021,7 +3022,7 @@ namespace Mono.CSharp {
 		{
 			if (arguments == null)
 				arguments = new ArrayList (1);			
-			arguments.Insert (0, new Argument (ExtensionExpression));
+			arguments.Insert (0, extension_argument);
 			base.EmitArguments (ec, arguments);
 		}
 
@@ -3029,7 +3030,7 @@ namespace Mono.CSharp {
 		{
 			if (arguments == null)
 				arguments = new ArrayList (1);
-			arguments.Insert (0, new Argument (ExtensionExpression));
+			arguments.Insert (0, extension_argument);
 			base.EmitCall (ec, arguments);
 		}
 
@@ -3044,7 +3045,9 @@ namespace Mono.CSharp {
 			arguments.Insert (0, new Argument (ExtensionExpression));
 			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespaceEntry, loc);
 
-			// Restore original arguments
+			// Store resolved argument and restore original arguments
+			if (mg != null)
+				((ExtensionMethodGroupExpr)mg).extension_argument = (Argument)arguments [0];
 			arguments.RemoveAt (0);
 
 			if (mg != null)
