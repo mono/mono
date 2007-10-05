@@ -1,4 +1,4 @@
-// cs0553-2.cs: User-defined conversion `plj.aClass.implicit operator plj.aClass(object)' cannot convert to or from base class
+// CS0553: User-defined conversion `plj.aClass.implicit operator plj.aClass(object)' cannot convert to or from a base class
 // Line: 10
 
 using System;

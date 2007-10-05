@@ -1,4 +1,4 @@
-// cs0554.cs: User-defined conversion `BaseClass.implicit operator BaseClass(DerivedClass)' cannot convert to or from derived class
+// CS0554: User-defined conversion `BaseClass.implicit operator BaseClass(DerivedClass)' cannot convert to or from a derived class
 // Line: 5
 
 class BaseClass {
