@@ -1,3 +1,8 @@
+2007-10-04  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MdiClient.cs: When cascade (layout) mdi window that is maximized, set the
+	state to normal. Also resize window when cascading. Fixes #325433. 
+
 2007-10-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* RichTextBox.cs: When SelectionColor is set to Color.Empty, use

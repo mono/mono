@@ -278,7 +278,13 @@ namespace System.Windows.Forms {
 
 					if (form.WindowState == FormWindowState.Minimized)
 						continue;
-		
+
+					if (form.WindowState == FormWindowState.Maximized)
+						form.WindowState = FormWindowState.Normal;
+
+					form.Width = System.Convert.ToInt32(ClientSize.Width * 0.8);
+					form.Height = System.Convert.ToInt32(ClientSize.Height * 0.8);
+
 					int l = 22 * i;
 					int t = 22 * i;
 
