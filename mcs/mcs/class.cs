@@ -4589,7 +4589,7 @@ namespace Mono.CSharp {
 				Block = null;
 				MethodData = null;
 			} catch {
-				Console.WriteLine ("Interna compiler error at {0}: exception caught while emitting {1}",
+				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);
 				throw;
 			}
