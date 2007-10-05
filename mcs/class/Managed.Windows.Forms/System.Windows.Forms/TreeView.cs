@@ -1691,6 +1691,8 @@ namespace System.Windows.Forms {
 			}
 
 			if (edit_node != null && edit_node == node) {
+				edit_node = null;
+
 				NodeLabelEditEventArgs e = new NodeLabelEditEventArgs (edit_args.Node, edit_args.Label);
 
 				OnAfterLabelEdit (e);
@@ -1699,9 +1701,10 @@ namespace System.Windows.Forms {
 					return;
 
 				if (e.Label != null)
-					edit_node.Text = e.Label;
+					e.Node.Text = e.Label;
 			}
 			
+			// EndEdit ends editing even if not called on the editing node
 			edit_node = null;
 			UpdateNode (node);
 		}
