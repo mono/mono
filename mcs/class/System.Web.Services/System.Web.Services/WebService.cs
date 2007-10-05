@@ -102,6 +102,7 @@ namespace System.Web.Services {
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[System.Runtime.InteropServices.ComVisible (false)]
 		public System.Web.Services.Protocols.SoapProtocolVersion SoapVersion {
 			get { return _soapVersion; }
 		}

@@ -148,12 +148,29 @@ namespace System.Web.Services.Description {
 		public void Insert (int index, ServiceDescription serviceDescription)
 		{
 			List.Insert (index, serviceDescription);
+			OnInsertComplete (index, serviceDescription);
 		}
 	
 		public void Remove (ServiceDescription serviceDescription)
 		{
 			List.Remove (serviceDescription);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected override
+#endif
+		void OnInsertComplete (int index, object item)
+		{
+			base.OnInsertComplete (index, item);
+		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected override void SetParent (object value, object parent)
+		{
+		}
+#endif
 
 		#endregion // Methods
 	}

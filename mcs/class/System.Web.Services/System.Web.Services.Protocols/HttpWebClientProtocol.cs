@@ -44,7 +44,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Fields
 
-		bool allowAutoRedirect;
+		bool allowAutoRedirect, enableDecompression;
 		X509CertificateCollection clientCertificates;
 		CookieContainer cookieContainer;
 		IWebProxy proxy;
@@ -94,6 +94,14 @@ namespace System.Web.Services.Protocols {
 			get { return cookieContainer; }
 			set { cookieContainer = value; }
 		}
+
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool EnableDecompression {
+			get { return enableDecompression; }
+			set { enableDecompression = value; }
+		}
+#endif
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -154,6 +162,10 @@ namespace System.Web.Services.Protocols {
 			HttpWebRequest request = req as HttpWebRequest;
 			if (request == null)
 				return req;
+#if NET_2_0
+			if (enableDecompression)
+				request.AutomaticDecompression = DecompressionMethods.GZip;
+#endif
 
 			request.AllowAutoRedirect = allowAutoRedirect;
 			if (clientCertificates != null)

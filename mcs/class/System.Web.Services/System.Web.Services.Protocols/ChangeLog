@@ -1,3 +1,7 @@
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpWebClientProtocol.cs : implemented EnableDecompression.
+
 2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeStubManager.cs: reverted r82932 again. This #if ONLY_1_1 causes

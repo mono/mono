@@ -1,3 +1,7 @@
+2006-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebService.cs : [ComVisible].
+
 2006-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebService.cs : implemented SoapVersion as documented in MSDN.

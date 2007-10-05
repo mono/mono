@@ -1,3 +1,7 @@
+2007-10-05  Atsushi Enomotot  <atsushi@ximian.com>
+
+	* DiscoveryClientProtocol.cs : [ComVisible]
+
 2007-08-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DiscoveryRequestHandler.cs: Do not require write access to file.
