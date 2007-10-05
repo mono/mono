@@ -8014,31 +8014,44 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if ((first_arg_type != declaring_type) && (return_type != declaring_type) &&
-				    !TypeManager.IsNullableTypeOf (first_arg_type, declaring_type) &&
-				    !TypeManager.IsNullableTypeOf (return_type, declaring_type)) {
-					Report.Error (
-						556, Location, 
-						"User-defined conversion must convert to or from the " +
-						"enclosing type");
+				Type conv_type;
+				if (TypeManager.IsEqual (declaring_type, return_type)) {
+					conv_type = first_arg_type;
+				} else if (TypeManager.IsEqual (declaring_type, first_arg_type)) {
+					conv_type = return_type;
+				} else if (TypeManager.IsNullableTypeOf (return_type, declaring_type)) {
+					conv_type = first_arg_type;
+				} else if (TypeManager.IsNullableTypeOf (first_arg_type, declaring_type)) {
+					conv_type = return_type;
+				} else {
+					Report.Error (556, Location, 
+						"User-defined conversion must convert to or from the enclosing type");
 					return false;
 				}
 
-				if (first_arg_type.IsInterface || return_type.IsInterface){
-					Report.Error (552, Location, "User-defined conversion `{0}' cannot convert to or from an interface type",
-						GetSignatureForError ());
-					return false;
-				}
-				
-				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type)) {
-					if (declaring_type.IsSubclassOf (return_type) || declaring_type.IsSubclassOf (first_arg_type)) {
-						Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from base class",
+				//
+				// Because IsInterface and IsClass are not supported
+				//
+				if (!TypeManager.IsGenericParameter (conv_type)) {
+					if (conv_type.IsInterface) {
+						Report.Error (552, Location, "User-defined conversion `{0}' cannot convert to or from an interface type",
 							GetSignatureForError ());
 						return false;
 					}
-					Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from derived class",
-						GetSignatureForError ());
-					return false;
+
+					if (conv_type.IsClass) {
+						if (TypeManager.IsSubclassOf (declaring_type, conv_type)) {
+							Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from a base class",
+								GetSignatureForError ());
+							return false;
+						}
+
+						if (TypeManager.IsSubclassOf (conv_type, declaring_type)) {
+							Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from a derived class",
+								GetSignatureForError ());
+							return false;
+						}
+					}
 				}
 			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
 				if (first_arg_type != declaring_type || ParameterTypes [1] != TypeManager.int32_type) {
