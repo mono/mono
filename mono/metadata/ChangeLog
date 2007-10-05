@@ -1,3 +1,9 @@
+
+Fri Oct 5 20:33:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: need more interfaces setup for the IEnumerator<T>
+	object created for arrays (tests/ienumerator-interfaces.2.cs).
+
 2007-10-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_ldtoken): Handle methodspec tokens as well. Fixes #331097.
