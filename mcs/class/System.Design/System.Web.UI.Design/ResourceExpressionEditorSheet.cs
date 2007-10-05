@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.ComponentModel;
 using System.Security.Permissions;
 
 namespace System.Web.UI.Design
@@ -45,6 +46,7 @@ namespace System.Web.UI.Design
 		}
 
 		[MonoTODO]
+		[DefaultValue ("")]
 		public string ClassKey {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -56,6 +58,8 @@ namespace System.Web.UI.Design
 		}
 
 		[MonoTODO]
+		[DefaultValue ("")]
+		[TypeConverter ("")]
 		public string ResourceKey {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

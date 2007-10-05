@@ -30,6 +30,9 @@
 
 namespace System.Web.UI.Design
 {
+#if NET_2_0
+	[Obsolete ("Use IControlDesignerTag interface instead")]
+#endif
 	public interface IControlDesignerBehavior
 	{
 		void OnTemplateModeChanged ();

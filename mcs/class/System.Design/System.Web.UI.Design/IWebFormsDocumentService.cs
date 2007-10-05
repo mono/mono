@@ -30,6 +30,9 @@
 
 namespace System.Web.UI.Design
 {
+#if NET_2_0
+	[Obsolete ("Use new WebFormsReferenceManager feature")]
+#endif
 	public interface IWebFormsDocumentService
 	{
 		event EventHandler LoadComplete;

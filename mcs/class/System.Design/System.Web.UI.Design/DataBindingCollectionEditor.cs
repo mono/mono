@@ -33,6 +33,9 @@ using System.Drawing.Design;
 
 namespace System.Web.UI.Design
 {
+#if NET_2_0
+	[Obsolete ("This class is not supposed to be in use anymore as DesignerActionList is supposed to be used for editing DataBinding")]
+#endif
 	public class DataBindingCollectionEditor : UITypeEditor
 	{
 		public DataBindingCollectionEditor ()

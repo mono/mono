@@ -89,6 +89,14 @@ namespace System.Web.UI.Design
 		}
 
 		[MonoNotSupported ("")]
+		public bool ServerControlsOnly {
+			[MonoNotSupported ("")]
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoNotSupported ("")]
 		public Style Style {
 			[MonoNotSupported ("")]
 			get {

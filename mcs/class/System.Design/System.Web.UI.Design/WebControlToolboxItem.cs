@@ -30,6 +30,9 @@ using System.Web.UI.WebControls;
 namespace System.Web.UI.Design
 {
 	[MonoTODO]
+#if NET_2_0
+	[Serializable]
+#endif
 	public class WebControlToolboxItem : ToolboxItem
 	{
 		#region Public Instance Constructors
@@ -46,6 +49,13 @@ namespace System.Web.UI.Design
 			toolData = null;
 			persistChildren = -1;
 		}
+
+#if NET_2_0
+		public WebControlToolboxItem (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion Public Instance Constructors
 

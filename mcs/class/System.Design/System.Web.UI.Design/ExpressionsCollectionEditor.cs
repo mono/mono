@@ -1,10 +1,10 @@
 //
-// System.Web.UI.Design.TextControlDesigner
+// System.Web.UI.Design.ExpressionsCollectionEditor
 //
-// Authors:
-//      Gert Driesen (drieseng@users.sourceforge.net)
+// Author:
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2004 Novell
+// (C) 2007 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,34 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
+using System;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Globalization;
+using System.Security.Permissions;
 
-namespace System.Web.UI.Design
-{
-	public class TextControlDesigner : ControlDesigner
+namespace System.Web.UI.Design {
+
+	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+	public class ExpressionsCollectionEditor : UITypeEditor
 	{
-		public TextControlDesigner ()
+		public ExpressionsCollectionEditor ()
 		{
 		}
 
 		[MonoTODO]
-		public override string GetDesignTimeHtml ()
-		{
-			throw new NotImplementedException ();
-		}
-
-#if !NET_2_0
-		[MonoTODO]
-		public override string GetPersistInnerHtml ()
+		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void Initialize (IComponent component)
+		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
+
 }
+
+#endif

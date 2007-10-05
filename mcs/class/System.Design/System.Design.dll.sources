@@ -156,6 +156,10 @@ System.Web.UI.Design/DesignerRegionMouseEventArgs.cs
 System.Web.UI.Design/EditableDesignerRegion.cs
 System.Web.UI.Design/ExpressionEditor.cs
 System.Web.UI.Design/ExpressionEditorSheet.cs
+System.Web.UI.Design/ExpressionsCollectionConverter.cs
+System.Web.UI.Design/ExpressionsCollectionEditor.cs
+System.Web.UI.Design/HierarchicalDataSourceConverter.cs
+System.Web.UI.Design/HierarchicalDataSourceDesigner.cs
 System.Web.UI.Design/HtmlControlDesigner.cs
 System.Web.UI.Design/HtmlIntrinsicControlDesigner.cs
 System.Web.UI.Design/HyperLinkDataBindingHandler.cs

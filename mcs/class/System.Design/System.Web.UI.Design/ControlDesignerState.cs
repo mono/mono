@@ -34,6 +34,10 @@ namespace System.Web.UI.Design
 {
 	public sealed class ControlDesignerState
 	{
+		internal ControlDesignerState ()
+		{
+		}
+
 		[MonoNotSupported ("")]
 		public object this [string key] {
 			[MonoNotSupported ("")]

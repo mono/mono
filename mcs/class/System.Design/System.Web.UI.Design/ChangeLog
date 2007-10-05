@@ -1,5 +1,26 @@
 2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ExpressionsCollectionConverter.cs,
+	  ExpressionsCollectionEditor.cs,
+	  HierarchicalDataSourceConverter.cs,
+	  HierarchicalDataSourceDesigner.cs : more 2.0 files.
+	* ControlDesigner.cs, ControlDesignerState.cs, ControlParser.cs,
+	  DataBindingCollectionConverter.cs, DataBindingCollectionEditor.cs,
+	  DataSourceConverter.cs, DesignTimeData.cs, ExpressionEditor.cs,
+	  ExpressionEditorSheet.cs, HtmlControlDesigner.cs,
+	  IControlDesignerBehaviour.cs, IDataSourceDesigner.cs,
+	  IDesignTimeResourceWriter.cs, IHtmlControlDesignerBehavior.cs,
+	  ITemplateEditingFrame.cs, ITemplateEditingService.cs,
+	  IWebFormReferenceManager.cs, IWebFormsDocumentService.cs,
+	  ReadWriteControlDesigner.cs, ResourceExpressionEditorSheet.cs,
+	  TemplateDefinition.cs, TemplateEditingService.cs,
+	  TemplateEditingVerb.cs, TemplatedControlDesigner.cs,
+	  TextControlDesigner.cs, UrlBuilder.cs, UserControlDesigner.cs,
+	  ViewFlags.cs, WebControlToolboxItem.cs, WebFormsRootDesigner.cs:
+	  a bunch of API fixes on existing files.
+
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MailFileEditor.cs, MdbDataFileEditor.cs,
 	ResourceExpressionEditorSheet.cs, SkinIDTypeConverter.cs,
 	SupportsPreviewControlAttribute.cs,

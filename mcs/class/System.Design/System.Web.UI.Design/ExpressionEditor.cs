@@ -44,11 +44,11 @@ namespace System.Web.UI.Design {
 		Type expressionBuilderType;
 		string prefixFromReflection;
 
-		public ExpressionEditor ()
+		protected ExpressionEditor ()
 		{
 		}
 
-		public virtual string ExpressionPrefix {
+		public string ExpressionPrefix {
 			get { return prefixFromReflection; }
 		}
 

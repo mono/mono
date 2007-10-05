@@ -39,13 +39,14 @@ namespace System.Web.UI.Design {
 	{
 		IServiceProvider serviceProvider;
 
-		public ExpressionEditorSheet (IServiceProvider serviceProvider)
+		protected ExpressionEditorSheet (IServiceProvider serviceProvider)
 		{
 			this.serviceProvider = serviceProvider;
 		}
 
 		public abstract string GetExpression ();
 
+		[Browsable (false)]
 		public virtual bool IsValid {
 			get {
 				throw new NotImplementedException ();

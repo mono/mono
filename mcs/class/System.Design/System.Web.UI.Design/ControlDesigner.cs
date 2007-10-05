@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Web.UI.WebControls;
+using System.Windows.Forms;
 
 namespace System.Web.UI.Design
 {
@@ -90,46 +91,154 @@ namespace System.Web.UI.Design
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public void Invalidate ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Invalidate (Rectangle rectangle)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void InvokeTransactedChange (IComponent component, TransactedChangeCallback callback, object context, string description)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void InvokeTransactedChange (IComponent component, TransactedChangeCallback callback, object context, string description, MemberDescriptor member)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void InvokeTransactedChange (IServiceProvider serviceProvider, IComponent component, TransactedChangeCallback callback, object context, string description, MemberDescriptor member)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Localize (IDesignTimeResourceWriter resourceWriter)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void OnAutoFormatApplied (DesignerAutoFormat appliedAutoFormat)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual void OnComponentChanging (object sender, ComponentChangingEventArgs ce)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void OnPaint (PaintEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void RegisterClone (object original, object clone)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void SetRegionContent (EditableDesignerRegion region, string content)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
+
 		[MonoTODO]
 		protected virtual string GetEmptyDesignTimeHtml () { throw new NotImplementedException (); }
+
 		[MonoTODO]
 		protected virtual string GetErrorDesignTimeHtml (Exception e) { throw new NotImplementedException (); }
+
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use GetPersistenceContent() instead")]
+#endif
 		public virtual string GetPersistInnerHtml () { throw new NotImplementedException (); }
+
 		[MonoTODO]
 		public override void Initialize (IComponent component) { throw new NotImplementedException (); }
+
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use DataBindings.Contains(string) instead")]
+#endif
 		public bool IsPropertyBound (string propName) { throw new NotImplementedException (); }
+
+#if !NET_2_0
 		[MonoTODO]
 		protected override void OnBehaviorAttached () { throw new NotImplementedException (); }
+#endif
+
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use DataBindings.Changed event instead")]
+#endif
 		protected override void OnBindingsCollectionChanged (string propName) { throw new NotImplementedException (); }
+
 #if NET_2_0
 		[MonoTODO]
 		protected virtual void OnClick (DesignerRegionMouseEventArgs e) { throw new NotImplementedException (); }
 #endif
+
 		[MonoTODO]
 		public virtual void OnComponentChanged (object sender, ComponentChangedEventArgs ce) { throw new NotImplementedException (); }
+
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use OnComponentChanged() instead")]
+#endif
 		protected virtual void OnControlResize () { throw new NotImplementedException (); }
+
 		[MonoTODO]
 		protected override void PreFilterProperties (IDictionary properties) { throw new NotImplementedException (); }
+
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use OnComponentChanged() instead")]
+#endif
 		public void RaiseResizeEvent () { throw new NotImplementedException (); }
+
 		[MonoTODO]
 		public virtual void UpdateDesignTimeHtml () { throw new NotImplementedException (); }
+
 		[MonoTODO]
 		public virtual bool AllowResize { get { throw new NotImplementedException (); } }
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("It is documented as not in use anymore", true)]
+#endif
 		protected object DesignTimeElementView { get { throw new NotImplementedException (); } }
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use SetViewFlags(ViewFlags.DesignTimeHtmlRequiresLoadComplete, true)")]
+#endif
 		public virtual bool DesignTimeHtmlRequiresLoadComplete { get { throw new NotImplementedException (); } }
 		[MonoTODO]
 		public virtual string ID { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use Tag.SetDirty() and Tag.IsDirty instead.")]
+#endif
 		public bool IsDirty { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("Use ContainerControlDesigner and EditableDesignerRegion")]
+#endif
 		public bool ReadOnly { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 
 #if NET_2_0

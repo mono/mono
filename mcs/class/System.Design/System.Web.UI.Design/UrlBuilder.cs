@@ -50,5 +50,13 @@ namespace System.Web.UI.Design
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static string BuildUrl (IServiceProvider serviceProvider, Control owner, string initialUrl, string caption, string filter, UrlBuilderOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

@@ -35,6 +35,10 @@ namespace System.Web.UI.Design
 {
 	public interface IDataSourceDesigner
 	{
+#if NET_2_0
+		event EventHandler DataSourceChanged;
+		event EventHandler SchemaRefreshed;
+#endif
 		bool CanConfigure { get; }
 		bool CanRefreshSchema { get; }
 		void Configure ();

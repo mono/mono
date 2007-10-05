@@ -44,10 +44,18 @@ namespace System.Web.UI.Design
 			return base.CreatePlaceHolderDesignTimeHtml ();
 		}
 
+#if !NET_2_0
 		public override string GetPersistInnerHtml ()
 		{
 			return null;
 		}
+#endif
+
+#if NET_2_0
+		public override DesignerActionListCollection ActionLists {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		public override bool AllowResize {
 			get {
@@ -55,6 +63,7 @@ namespace System.Web.UI.Design
 			}
 		}
 
+#if !NET_2_0
 		public override bool ShouldCodeSerialize {
 			get {
 				return false;
@@ -62,5 +71,6 @@ namespace System.Web.UI.Design
 			set {
 			}
 		}
+#endif
 	}
 }

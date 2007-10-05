@@ -67,6 +67,8 @@ namespace System.Web.UI.Design
 
 		protected internal abstract void GetControlViewAndTag (Control control, out IControlDesignerView view, out IControlDesignerTag tag);
 
+		public abstract void RemoveClientScriptFromDocument (string clientScriptId);
+
 		public abstract void RemoveControlFromDocument (Control control);
 
 		[MonoTODO]

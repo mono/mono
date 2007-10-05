@@ -35,9 +35,10 @@ namespace System.Web.UI.Design
 {
 	public interface IDesignTimeResourceWriter : IResourceWriter, IDisposable
 	{
-		void AddResource (string name, byte [] value);
-		void AddResource (string name, object value);
-		void AddResource (string name, string value);
+		//void AddResource (string name, byte [] value);
+		//void AddResource (string name, object value);
+		//void AddResource (string name, string value);
+		string CreateResourceKey (string resourceName, object obj);
 	}
 }
 

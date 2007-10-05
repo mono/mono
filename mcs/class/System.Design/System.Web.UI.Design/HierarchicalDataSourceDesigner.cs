@@ -1,10 +1,10 @@
 //
-// System.Web.UI.Design.DesignTimeData
+// System.Web.UI.Design.HierarchicalDataSourceDesigner
 //
-// Authors:
-//      Gert Driesen (drieseng@users.sourceforge.net)
+// Author:
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// (C) 2004 Novell
+// (C) 2007 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,90 +28,95 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
+#if NET_2_0
+
+using System;
 using System.ComponentModel;
-using System.Data;
+using System.ComponentModel.Design;
+using System.Globalization;
+using System.Security.Permissions;
 
-namespace System.Web.UI.Design
-{
-	public sealed class DesignTimeData
+namespace System.Web.UI.Design {
+
+	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+	public class HierarchicalDataSourceDesigner : ControlDesigner, IHierarchicalDataSourceDesigner
 	{
-		private DesignTimeData ()
+		public HierarchicalDataSourceDesigner ()
 		{
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		public static DataTable CreateDummyDataBoundDataTable ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
+		public event EventHandler DataSourceChanged;
+
+		public event EventHandler SchemaRefreshed;
 
 		[MonoTODO]
-		public static DataTable CreateDummyDataTable ()
-		{
-			throw new NotImplementedException ();
+		public override DesignerActionListCollection ActionLists {
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public static DataTable CreateSampleDataTable (IEnumerable referenceData)
-		{
-			throw new NotImplementedException ();
-		}
-
-#if NET_2_0
-		[MonoTODO]
-		public static DataTable CreateSampleDataTable (IEnumerable referenceData, bool useDataBoundData)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
-		[MonoTODO]
-		public static PropertyDescriptorCollection GetDataFields (IEnumerable dataSource)
-		{
-			throw new NotImplementedException ();
+		public virtual bool CanConfigure {
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public static IEnumerable GetDataMember (IListSource dataSource, string dataMember)
+		public virtual bool CanRefreshSchema {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		protected bool SuppressingDataSourceEvents {
+			get { throw new NotImplementedException (); }
+		}
+
+		public virtual void Configure ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		[MonoTODO]
+		public override string GetDesignTimeHtml ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string[] GetDataMembers (object dataSource)
+		public virtual DesignerHierarchicalDataSourceView GetView (string viewPath)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IEnumerable GetDesignTimeDataSource (DataTable dataTable, int minimumRows)
+		protected virtual void OnDataSourceChanged (EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static object GetSelectedDataSource (IComponent component, string dataSource)
+		protected virtual void OnSchemaRefreshed (EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static IEnumerable GetSelectedDataSource (IComponent component, string dataSource, string dataMember)
+		public virtual void RefreshSchema (bool preferSilent)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private static void OnDataBind (object sender, EventArgs e)
+		public virtual void ResumeDataSourceEvents ()
 		{
 			throw new NotImplementedException ();
 		}
 
-
-		public static readonly EventHandler DataBindingHandler =
-			new EventHandler (DesignTimeData.OnDataBind);
+		[MonoTODO]
+		public virtual void SuppressDataSourceEvents ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
+
 }
+
+#endif

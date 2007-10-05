@@ -38,9 +38,9 @@ namespace System.Web.UI.Design
 	[FlagsAttribute] 
 	public enum ViewFlags
 	{
-		CustomPaint,
-		DesignTimeHtmlRequiresLoadComplete,
-		TemplateEditing
+		CustomPaint = 1,
+		DesignTimeHtmlRequiresLoadComplete = 2,
+		TemplateEditing = 4
 	}
 }
 #endif
