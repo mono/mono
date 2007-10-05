@@ -1,3 +1,8 @@
+2007-10-05  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/OpCode.cs: Change OpCode from struct to class
+	to avoid copying everything everytime.
+
 2007-09-28  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/SecurityDeclarationReader.cs:
