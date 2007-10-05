@@ -1,3 +1,9 @@
+2007-10-05  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #327497
+	* generics.cs (Constraints.CheckInterfaceMethod): Compare geenric open
+	types when appropriate.
+	
 2007-10-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #329685

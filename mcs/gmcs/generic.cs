@@ -553,9 +553,17 @@ namespace Mono.CSharp {
 			if (gc_icount != icount)
 				return false;
 
-			foreach (Type iface in gc.InterfaceConstraints) {
+			for (int i = 0; i < gc.InterfaceConstraints.Length; ++i) {
+				Type iface = gc.InterfaceConstraints [i];
+				if (iface.IsGenericType)
+					iface = iface.GetGenericTypeDefinition ();
+				
 				bool ok = false;
-				foreach (Type check in InterfaceConstraints) {
+				for (int ii = 0; i < InterfaceConstraints.Length; ++ii) {
+					Type check = InterfaceConstraints [ii];
+					if (check.IsGenericType)
+						check = check.GetGenericTypeDefinition ();
+					
 					if (TypeManager.IsEqual (iface, check)) {
 						ok = true;
 						break;
