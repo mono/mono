@@ -1,5 +1,11 @@
 2007-10-05  Marek Safar  <marek.safar@gmail.com>
 	
+	A fix for bug #325534
+	* class.cs (Invocation.DoResolve): Check invocation of object finalizer
+	only.
+	
+2007-10-05  Marek Safar  <marek.safar@gmail.com>
+	
 	A fix for bug #327504
 	* class.cs (Operator.Define): Refactored implicit and explicit user
 	operator conversion rules.
