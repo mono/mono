@@ -19,6 +19,10 @@ System.ServiceProcess/ServiceControllerPermission.cs
 System.ServiceProcess/ServiceControllerPermissionAttribute.cs
 System.ServiceProcess/ServiceControllerPermissionEntry.cs
 System.ServiceProcess/ServiceControllerPermissionEntryCollection.cs
+System.ServiceProcess/SessionChangeDescription.cs
+System.ServiceProcess/SessionChangeReason.cs
 System.ServiceProcess/UnixServiceController.cs
 System.ServiceProcess/Win32ServiceController.cs
+System.ServiceProcess.Design/ServiceInstallerDialog.cs
+System.ServiceProcess.Design/ServiceInstallerDialogResult.cs
 System.ServiceProcess.Design/ServiceNameConverter.cs

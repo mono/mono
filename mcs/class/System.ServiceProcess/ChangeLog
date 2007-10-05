@@ -1,3 +1,8 @@
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added /r:System.Windows.Forms. removed /warnaserror.
+	* System.ServiceProcess.dll.sources : added couple of missing types.
+
 2007-04-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Makefile: Do not output deprecated warnings.

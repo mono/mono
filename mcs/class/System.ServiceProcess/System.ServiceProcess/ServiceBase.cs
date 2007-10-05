@@ -34,6 +34,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace System.ServiceProcess
 {
@@ -58,6 +59,9 @@ namespace System.ServiceProcess
 		bool can_stop = true;
 		EventLog event_log;
 		string service_name;
+#if NET_2_0
+		bool can_handle_session_change_event;
+#endif
 
 		public ServiceBase ()
 		{
@@ -82,6 +86,23 @@ namespace System.ServiceProcess
 				can_handle_power_event = value;
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (false)]
+		[MonoTODO]
+		[ComVisible (false)]
+		public bool CanHandleSessionChangeEvent {
+			get { return can_handle_session_change_event; }
+			set {
+				if (hasStarted)
+					throw new InvalidOperationException (
+							Locale.GetText ("Cannot modify this property " +
+											"after the service has started."));
+
+				can_handle_session_change_event = value;
+			}
+		}
+#endif
 
 		[DefaultValue (false)]
 		public bool CanPauseAndContinue {
@@ -132,6 +153,21 @@ namespace System.ServiceProcess
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		[ComVisible (false)]
+		public int ExitCode {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected IntPtr ServiceHandle {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		[ServiceProcessDescription ("The name by which the service is identified to the system.")]
 		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string ServiceName {
@@ -178,6 +214,32 @@ namespace System.ServiceProcess
 		protected virtual void OnShutdown ()
 		{
 		}
+
+#if NET_2_0
+		protected virtual void OnSessionChange (SessionChangeDescription changeDescription)
+		{
+		}
+
+		[ComVisible (false)]
+		[MonoTODO]
+		public void RequestAdditionalTime (int milliseconds)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[MonoTODO]
+		public void ServiceMainCallback (int argCount, IntPtr argPointer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Stop ()
+		{
+		}
+#endif
 
 		public static void Run (ServiceBase service)
 		{
