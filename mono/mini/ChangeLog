@@ -1,4 +1,8 @@
 
+Fri Oct 5 18:08:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: implemented fast delegate invocation.
+
 Fri Oct 5 00:01:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h, mini-ppc.c: IMT support for the PPC architecture.
