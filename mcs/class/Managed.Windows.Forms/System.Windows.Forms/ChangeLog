@@ -1,3 +1,13 @@
+2007_10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When calling EndEdit and we need to hide the textbox,
+	call Application.DoEvents. This is neccessary when we get a call to
+	BeginEdit from an AfterLabelEdit handler, because the focus always
+	goes to the TreeView, even if we try to give it to our
+	LabelEditTextBox. The call do Application.DoEvents seems to
+	synchronize the focus, basically.
+	Fixes #325244.
+
 2007-10-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: When AfterLabelEdit event is fired, TreeNode.IsEditing

@@ -1688,6 +1688,13 @@ namespace System.Windows.Forms {
 			if (edit_text_box != null && edit_text_box.Visible) {
 				edit_text_box.Visible = false;
 				Focus ();
+
+				//
+				// If we get a call to BeginEdit from any AfterLabelEdit handler,
+				// the focus seems to always remain in the TreeView. This call seems
+				// to synchronize the focus events - I don't like it but it works
+				//
+				Application.DoEvents ();
 			}
 
 			if (edit_node != null && edit_node == node) {
