@@ -300,7 +300,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public readonly DeclSpace Parent;
+		public /*readonly*/ DeclSpace Parent;
 
 		/// <summary>
 		///   Location where this declaration happens

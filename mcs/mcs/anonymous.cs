@@ -1530,6 +1530,13 @@ namespace Mono.CSharp {
 
 			aec.CurrentAnonymousMethod = this;
 			aec.IsStatic = ec.IsStatic;
+			
+			//
+			// HACK: Overwrite parent declaration container to currently resolved.
+			// It's required for an anonymous container inside partial class.
+			//
+			if (RootScope != null)
+				aec.DeclContainer.Parent = ec.TypeContainer;
 
 			IDisposable aec_dispose = null;
 			if (ec.InferReturnType)
