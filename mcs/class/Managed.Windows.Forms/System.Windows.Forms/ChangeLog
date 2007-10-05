@@ -1,3 +1,9 @@
+2006-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: Move the previous change to the general case (to
+	call Application.DoEvents in cases where the method was called by
+	different places).
+
 2007_10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: When calling EndEdit and we need to hide the textbox,
