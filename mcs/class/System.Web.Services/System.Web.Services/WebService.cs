@@ -53,7 +53,7 @@ namespace System.Web.Services {
 		{
 			_context = HttpContext.Current;
 #if NET_2_0
-			object o = _context.Items ["WebServiceSoapVersion"];
+			object o = _context != null ? _context.Items ["WebServiceSoapVersion"] : null;
 			if (o is SoapProtocolVersion)
 				_soapVersion = (SoapProtocolVersion) o;
 #endif

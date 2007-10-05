@@ -1,4 +1,9 @@
-2006-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebService.cs : Do not always expect HttpContext existence.
+	  Fixed bug #331183.
+
+2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebService.cs : [ComVisible].
 

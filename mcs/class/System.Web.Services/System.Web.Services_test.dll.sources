@@ -1,5 +1,6 @@
 System.Web.Services/WebMethodAttributeTest.cs
 System.Web.Services/WebServiceAttributeTest.cs
+System.Web.Services/WebServiceTest.cs
 System.Web.Services.Configuration/DiagnosticsElementTest.cs
 System.Web.Services.Configuration/ProtocolElementTest.cs
 System.Web.Services.Configuration/SoapEnvelopeProcessingElementTest.cs
