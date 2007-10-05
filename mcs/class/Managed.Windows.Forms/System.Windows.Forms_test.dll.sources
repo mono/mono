@@ -160,6 +160,7 @@ System.Windows.Forms/TreeViewHitTestInfoTest.cs
 System.Windows.Forms/TreeViewImageKeyConverterTest.cs
 System.Windows.Forms/TreeViewImageIndexConverterTest.cs
 System.Windows.Forms/TreeViewTest.cs
+System.Windows.Forms/TreeViewEventsTest.cs
 System.Windows.Forms/UpDownTest.cs
 System.Windows.Forms/UserControlTest.cs
 System.Windows.Forms/VScrollPropertiesTest.cs
