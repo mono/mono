@@ -1,4 +1,8 @@
 
+Fri Oct 5 18:28:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: optimized the size of the IMT thunks a bit.
+
 Fri Oct 5 18:08:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: implemented fast delegate invocation.
