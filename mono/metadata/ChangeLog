@@ -1,3 +1,9 @@
+2007-10-05  Alp Toker  <alp@atoker.com>
+
+	* icall.c (ves_icall_MonoType_GetElementType): For enums, return null
+	rather than the underlying type. Based on a patch by Ben Maurer. Fixes
+	#315863.
+
 2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_type_compatibility_full): verification of
