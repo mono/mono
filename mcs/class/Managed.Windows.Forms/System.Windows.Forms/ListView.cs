@@ -4823,27 +4823,10 @@ namespace System.Windows.Forms
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
-				if (!list.Contains (item))
-					return;
 
-				bool selection_changed = false;
-				if (is_main_collection && owner != null) {
-					selection_changed = owner.SelectedItems.Contains (item);
-					owner.item_control.CancelEdit (item);
-				}
-
-				list.Remove (item);
-
-				if (is_main_collection)
-					item.Owner = null;
-#if NET_2_0
-				else
-					item.SetGroup (null);
-#endif
-
-				CollectionChanged (false);
-				if (selection_changed && owner != null)
-					owner.OnSelectedIndexChanged (EventArgs.Empty);
+				int idx = list.IndexOf (item);
+				if (idx != -1)
+					RemoveAt (idx);
 			}
 
 			public virtual void RemoveAt (int index)
@@ -4857,7 +4840,25 @@ namespace System.Windows.Forms
 #endif
 
 				ListViewItem item = (ListViewItem) list [index];
-				Remove (item);
+
+				bool selection_changed = false;
+				if (is_main_collection && owner != null) {
+					selection_changed = owner.SelectedIndices.Contains (index);
+					owner.item_control.CancelEdit (item);
+				}
+
+				list.RemoveAt (index);
+
+				if (is_main_collection)
+					item.Owner = null;
+#if NET_2_0
+				else
+					item.SetGroup (null);
+#endif
+
+				CollectionChanged (false);
+				if (selection_changed && owner != null)
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
 			}
 
 #if NET_2_0
