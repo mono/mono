@@ -1,4 +1,9 @@
 
+Sat Oct 6 10:01:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: the valuetype enumerators don't have the additional
+	supertypes interfaces.
+
 Fri Oct 5 20:33:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: need more interfaces setup for the IEnumerator<T>
