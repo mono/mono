@@ -1,3 +1,9 @@
+2007-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-sparc.c (mono_arch_create_trampoline_code): Rework the trampoline code so
+	its smaller and doesn't clobber sparc_g1.
+
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Update after trampoline changes.
 
 Fri Oct 5 18:28:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
