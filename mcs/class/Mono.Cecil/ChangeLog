@@ -1,3 +1,7 @@
+2007-10-06  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/MethodCallingConvention.cs: Not a [Flag]
+
 2007-10-05  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/OpCode.cs: Change OpCode from struct to class

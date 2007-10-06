@@ -28,9 +28,6 @@
 
 namespace Mono.Cecil {
 
-	using System;
-
-	[Flags]
 	public enum MethodCallingConvention : byte {
 		Default		= 0x0,
 		C			= 0x1,
