@@ -29,9 +29,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
-using Mono.Mozilla;
+using Mono.WebBrowser;
+using Mono.WebBrowser.DOM;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla
 {
 	/// <summary>
 	/// Summary description for WebBrowser.
@@ -39,22 +40,36 @@ namespace Mono.WebBrowser
 	public class WebBrowser : Component, IWebBrowser, ICallback
 	{
 		private bool loaded;
+		private IDOMHTMLDocument document;
 
-		public WebBrowser()
+		public WebBrowser ()
 		{
 			loaded = false;
 			Base.Init (this);
 		}
 
 		public void Load (IntPtr handle, int width, int height)
-		{			
+		{
 			Base.Bind (this, handle, width, height);
 		}
 
 		public void Shutdown ()
 		{
-			Base.Shutdown (this);			
+			Base.Shutdown (this);
 		}
+
+		public IDOMHTMLDocument Document
+		{
+			get
+			{
+				if (document == null) {
+					nsIDOMHTMLDocument doc = Base.GetDOMDocument (this);
+					document = new DOM.DOMHTMLDocument (doc);
+				}
+				return document;
+			}
+		}
+
 
 		#region Layout
 		public void FocusIn (FocusOption focus)
@@ -218,6 +233,7 @@ namespace Mono.WebBrowser
 			add { Events.AddHandler (AlertEvent, value); }
 			remove { Events.RemoveHandler (AlertEvent, value); }
 		}
+
 		#endregion
 
 
@@ -225,7 +241,7 @@ namespace Mono.WebBrowser
 
 		public void OnWidgetLoaded ()
 		{
-//			loaded = true;
+			//			loaded = true;
 		}
 
 
@@ -477,6 +493,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.Alert;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -487,9 +504,11 @@ namespace Mono.WebBrowser
 
 		public bool OnAlertCheck (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState)
 		{
+			Console.WriteLine ("alert check");
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.AlertCheck;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -508,6 +527,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.Confirm;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -523,6 +543,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.ConfirmCheck;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -531,13 +552,14 @@ namespace Mono.WebBrowser
 					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
 				e.CheckState = chkState;
 				eh (this, e);
+				chkState = e.CheckState;
 				return e.BoolReturn;
 			}
 			return false;
 		}
 
-		public bool OnConfirmEx (IntPtr title, IntPtr text, DialogButtonFlags flags, 
-								IntPtr title0, IntPtr title1, IntPtr title2, 
+		public bool OnConfirmEx (IntPtr title, IntPtr text, DialogButtonFlags flags,
+								IntPtr title0, IntPtr title1, IntPtr title2,
 								IntPtr chkMsg, ref bool chkState, out Int32 retVal)
 		{
 			retVal = -1;
@@ -545,6 +567,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.ConfirmEx;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -553,25 +576,26 @@ namespace Mono.WebBrowser
 					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
 				e.CheckState = chkState;
 				eh (this, e);
+				chkState = e.CheckState;
 				return e.BoolReturn;
 			}
 			return false;
 		}
 
-		public bool OnPrompt (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState, StringBuilder retVal)
+		public bool OnPrompt (IntPtr title, IntPtr text, ref IntPtr retVal)
 		{
-			retVal = new StringBuilder();
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.Prompt;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
 					e.Text = Marshal.PtrToStringUni (text);
-				if (chkMsg != IntPtr.Zero)
-					e.CheckMessage = Marshal.PtrToStringUni (chkMsg);
-				e.CheckState = chkState;
+				if (retVal != IntPtr.Zero)
+					e.Text2 = Marshal.PtrToStringUni (retVal);
 				eh (this, e);
+				retVal = Marshal.StringToHGlobalUni (e.StringReturn);
 				return e.BoolReturn;
 			}
 			return false;
@@ -584,6 +608,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.PromptUsernamePassword;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -603,6 +628,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.PromptPassword;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)
@@ -622,6 +648,7 @@ namespace Mono.WebBrowser
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();
+				e.Type = DialogType.Select;
 				if (title != IntPtr.Zero)
 					e.Title = Marshal.PtrToStringUni (title);
 				if (text != IntPtr.Zero)

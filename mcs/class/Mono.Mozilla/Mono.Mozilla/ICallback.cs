@@ -88,7 +88,7 @@ namespace Mono.Mozilla
 										 IntPtr chkMsg, ref bool chkState, out Int32 retVal);
 
 		bool OnPrompt					(IntPtr title, IntPtr text,
-										 IntPtr chkMsg, ref bool chkState, StringBuilder retVal);
+										 ref IntPtr retVal);
 
 		bool OnPromptUsernameAndPassword (IntPtr title, IntPtr text,
 										 IntPtr chkMsg, ref bool chkState, 

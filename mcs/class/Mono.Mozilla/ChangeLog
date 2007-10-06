@@ -1,3 +1,15 @@
+2007-10-07 Andreia Gaita <avidigal@novell.com>
+
+	* More dialog event options.
+	* Mono.Mozilla/interfaces/nsIDOM*: Added mozilla dom interfaces.
+	* Mono.WebBrowser/DOM/IDOM*: Added generic interfaces for public 
+	  dom access.
+	* Mono.Mozilla/DOM/DOM*: corresponding implementations for 
+	  accessing mozilla.
+	* WebBrowser.cs: moved to Mono.Mozilla, since it is a 
+	  mozilla-specific implementation of the generic public
+	  interface.
+
 2007-09-23 Andreia Gaita <avidigal@novell.com>
 
 	* Added implementation of dialog popups - alert,

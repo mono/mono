@@ -24,21 +24,14 @@
 //
 
 using System;
+using Mono.WebBrowser;
 
-namespace Mono.WebBrowser
+namespace Mono.WebBrowser.DOM
 {
-	public sealed class Manager
+	public interface IDOMHTMLDocument
 	{
-		public static IWebBrowser GetNewInstance ()
-		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
-
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
-
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
-		}
-
-		
+		IDOMHTMLElement Body { get; }
+		string Title { get; set;}
+		IDOMHTMLElement getElementById (string id);
 	}
 }

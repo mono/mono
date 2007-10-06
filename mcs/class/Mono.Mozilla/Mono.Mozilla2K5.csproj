@@ -80,16 +80,43 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mono.Mozilla\Callback.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DOMHTMLElement.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DOMObject.cs" />
     <Compile Include="Mono.Mozilla\ICallback.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMAttr.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMCDATASection.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMCharacterData.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMComment.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocument.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentFragment.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentType.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDOMImplementation.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMElement.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMEntityReference.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLBodyElement.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLCollection.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLDocument.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLElement.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMNamedNodeMap.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMNode.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMNodeList.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMProcessingInstruction.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMText.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DOMHTMLDocument.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DOMNode.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLDocument.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLElement.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDOMNode.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.Mozilla\Base.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
-    <Compile Include="Mono.WebBrowser\WebBrowser.cs">
+    <Compile Include="Mono.Mozilla\WebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
+    <None Include="Mono.Mozilla.dll.sources" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

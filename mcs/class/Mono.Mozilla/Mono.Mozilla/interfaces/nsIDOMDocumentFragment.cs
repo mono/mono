@@ -24,21 +24,16 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla
 {
-	public sealed class Manager
+
+	[Guid ("a6cf9076-15b3-11d2-932e-00805f8add32")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIDOMDocumentFragment : nsIDOMNode
 	{
-		public static IWebBrowser GetNewInstance ()
-		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
-
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
-
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
-		}
-
-		
 	}
 }

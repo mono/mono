@@ -72,7 +72,7 @@ namespace Mono.Mozilla
 			Trace.AutoFlush = true;
 		}
 
-		public static void Init (Mono.WebBrowser.WebBrowser control)
+		public static void Init (WebBrowser control)
 		{
 			BindingInfo info = new BindingInfo ();
 			info.callback = new CallbackBinder (control);
@@ -214,6 +214,35 @@ namespace Mono.Mozilla
 			xulbrowser_reload (info.xulbrowser, option);
 		}
 
+		public static nsIDOMHTMLDocument GetDOMDocument (IWebBrowser control)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
+
+			return xulbrowser_getDomDocument (info.xulbrowser);
+		}
+
+		public static IntPtr StringInit ()
+		{
+			return xulbrowser_stringInit ();
+		}
+
+		public static void StringFinish (HandleRef str)
+		{
+			xulbrowser_stringFinish (str);
+		}
+
+		public static string StringGet (HandleRef str)
+		{
+			IntPtr p = xulbrowser_stringGet (str);
+			return Marshal.PtrToStringUni (p);
+		}
+
+		public static void StringSet (HandleRef str, string text)
+		{
+			xulbrowser_stringSet (str, text);
+		}
 
 		#region pinvokes
 		[DllImport("xulbrowser")]
@@ -253,6 +282,19 @@ namespace Mono.Mozilla
 		private static extern int xulbrowser_stop (IntPtr instance);
 		[DllImport ("xulbrowser")]
 		private static extern int xulbrowser_reload (IntPtr instance, ReloadOption option);
+
+		// dom
+		[DllImport ("xulbrowser")]
+		private static extern nsIDOMHTMLDocument xulbrowser_getDomDocument (IntPtr instance);
+
+		[DllImport ("xulbrowser")]
+		private static extern IntPtr xulbrowser_stringInit ();
+		[DllImport ("xulbrowser")]
+		private static extern int xulbrowser_stringFinish (HandleRef str);
+		[DllImport ("xulbrowser")]
+		private static extern IntPtr xulbrowser_stringGet (HandleRef str);
+		[DllImport ("xulbrowser")]
+		private static extern void xulbrowser_stringSet (HandleRef str, [MarshalAs (UnmanagedType.LPWStr)] string text);
 		#endregion
 	}
 }

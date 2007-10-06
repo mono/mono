@@ -28,6 +28,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Specialized;
+using Mono.WebBrowser.DOM;
 
 namespace Mono.WebBrowser
 {
@@ -47,6 +48,9 @@ namespace Mono.WebBrowser
 		void Stop ();
 		void Reload ();
 		void Reload (ReloadOption option);
+
+
+		IDOMHTMLDocument Document { get; }
 
 
 		event EventHandler KeyDown;
@@ -140,6 +144,7 @@ namespace Mono.WebBrowser
 		private DialogType type;
 		private string title;
 		private string text;
+		private string text2;
 		
 		private string username;
 		private string password;
@@ -167,6 +172,10 @@ namespace Mono.WebBrowser
 #endregion	// Public Constructors
 
 		#region Public Instance Properties
+		public DialogType Type {
+			get { return this.type; }
+			set { this.type = value; }
+		}
 		public string Title {
 			get { return this.title; }
 			set { this.title = value; }
@@ -175,7 +184,12 @@ namespace Mono.WebBrowser
 			get { return this.text; }
 			set { this.text = value; }
 		}
-		public string CheckMessage {
+		public string Text2 {
+			get { return this.text2; }
+			set { this.text2 = value; }
+		}
+		public string CheckMessage
+		{
 			get { return this.checkMsg; }
 			set { this.checkMsg = value; }
 		}

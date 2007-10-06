@@ -24,21 +24,33 @@
 //
 
 using System;
+using System.Text;
+using System.Runtime.InteropServices;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla.DOM
 {
-	public sealed class Manager
+	internal class DOMObject : IDisposable
 	{
-		public static IWebBrowser GetNewInstance ()
+		internal HandleRef storage;
+
+		internal DOMObject ()
 		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
-
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
-
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
+			IntPtr p = Base.StringInit ();
+			storage = new HandleRef (this, p);			
 		}
 
-		
+		~DOMObject ()
+		{
+			this.Dispose ();
+		}
+
+		#region IDisposable Members
+
+		public void Dispose ()
+		{
+			Base.StringFinish (storage);
+		}
+
+		#endregion
 	}
 }

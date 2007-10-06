@@ -24,21 +24,50 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using Mono.WebBrowser;
+using Mono.WebBrowser.DOM;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla.DOM
 {
-	public sealed class Manager
+	internal class DOMHTMLDocument: DOMObject, IDOMHTMLDocument
 	{
-		public static IWebBrowser GetNewInstance ()
+		private nsIDOMHTMLDocument document;
+		
+		public DOMHTMLDocument (nsIDOMHTMLDocument document)
 		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
-
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
-
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
+			this.document = document;
 		}
 
-		
+		#region IDOMDocument Members
+
+		public IDOMHTMLElement Body {
+			get	{
+				nsIDOMHTMLElement body;
+				this.document.getBody (out body);
+				return new DOMHTMLElement (body);
+			}
+		}
+
+		public string Title {
+			get {
+				this.document.getTitle (storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				this.document.setTitle (storage);
+			}
+		}
+		public IDOMHTMLElement getElementById (string id)
+		{
+			nsIDOMElement nsElement;
+			Base.StringSet (storage, id);
+			this.document.getElementById (storage, out nsElement);
+			return new DOMHTMLElement ((nsIDOMHTMLElement)nsElement);
+		}
+
+		#endregion
 	}
 }

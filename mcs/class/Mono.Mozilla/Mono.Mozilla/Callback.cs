@@ -66,7 +66,7 @@ namespace Mono.Mozilla {
 														 IntPtr title0, IntPtr title1, IntPtr title2,
 														 IntPtr chkMsg, ref bool chkState, out Int32 retVal);
 	public delegate bool CallbackDelegate2OnPrompt		(IntPtr title, IntPtr text,
-														 IntPtr chkMsg, ref bool chkState, StringBuilder retVal);
+														 ref IntPtr retVal);
 	public delegate bool CallbackDelegate2OnPromptUsernameAndPassword 
 														(IntPtr title, IntPtr text,
 														 IntPtr chkMsg, ref bool chkState, 
@@ -82,7 +82,7 @@ namespace Mono.Mozilla {
 	
 	[StructLayout (LayoutKind.Sequential)]
 	public struct CallbackBinder {
-
+		
 		public CallbackDelegate					OnWidgetLoaded;
 		public CallbackDelegate 				OnJSStatus;
 		public CallbackDelegate 				OnLinkStatus;

@@ -25,20 +25,10 @@
 
 using System;
 
-namespace Mono.WebBrowser
+namespace Mono.WebBrowser.DOM
 {
-	public sealed class Manager
+	public interface IDOMNode
 	{
-		public static IWebBrowser GetNewInstance ()
-		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
-
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
-
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
-		}
-
-		
+		string Value {get;} 
 	}
 }

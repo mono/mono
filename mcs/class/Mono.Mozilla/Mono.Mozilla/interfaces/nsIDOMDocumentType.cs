@@ -24,21 +24,41 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla
 {
-	public sealed class Manager
+
+	[Guid ("a6cf9077-15b3-11d2-932e-00805f8add32")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIDOMDocumentType : nsIDOMNode
 	{
-		public static IWebBrowser GetNewInstance ()
-		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
 
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		string name ();
 
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
-		}
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		nsIDOMNamedNodeMap entities ();
 
-		
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		nsIDOMNamedNodeMap notations ();
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		string publicId ();
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		string systemId ();
+
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSigAttribute]
+		string internalSubset ();
+
 	}
 }

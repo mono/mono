@@ -24,21 +24,30 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace Mono.WebBrowser
+namespace Mono.Mozilla
 {
-	public sealed class Manager
+
+	[Guid ("a6cf9083-15b3-11d2-932e-00805f8add32")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIDOMHTMLCollection
 	{
-		public static IWebBrowser GetNewInstance ()
-		{
-			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int getLength (out UInt32 aLength);
 
-			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int Item (UInt32 index, 
+				[MarshalAs (UnmanagedType.Interface)] out nsIDOMNode _retval);
 
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
-		}
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int NamedItem (HandleRef name,
+						[MarshalAs (UnmanagedType.Interface)] out nsIDOMNode _retval);
 
-		
 	}
 }
