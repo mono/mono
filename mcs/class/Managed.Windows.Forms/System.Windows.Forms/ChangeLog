@@ -1,5 +1,12 @@
 2006-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: When Keys.Left is pressed, before trying to Collapse
+	check that the node actually has nodes, and if not, move to the
+	parent node instead. 
+	Fixes #325265.
+
+2006-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: Move the previous change to the general case (to
 	call Application.DoEvents in cases where the method was called by
 	different places).

@@ -908,7 +908,7 @@ namespace System.Windows.Forms {
 				break;
 			case Keys.Left:
 				if (selected_node != null) {
-					if (selected_node.IsExpanded)
+					if (selected_node.IsExpanded && selected_node.Nodes.Count > 0)
 						selected_node.Collapse ();
 					else {
 						TreeNode parent = selected_node.Parent;
