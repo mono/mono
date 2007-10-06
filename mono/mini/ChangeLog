@@ -1,5 +1,9 @@
 2007-10-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Allow signed displacements.
+
+	* mini-sparc.h mini-sparc.c: Implement IMT support.
+
 	* tramp-sparc.c (mono_arch_create_trampoline_code): Rework the trampoline code so
 	its smaller and doesn't clobber sparc_g1.
 
