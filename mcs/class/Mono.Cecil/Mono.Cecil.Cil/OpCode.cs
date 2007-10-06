@@ -28,7 +28,7 @@
 
 namespace Mono.Cecil.Cil {
 
-	public class OpCode {
+	public struct OpCode {
 
 		string m_name;
 		byte m_op1;

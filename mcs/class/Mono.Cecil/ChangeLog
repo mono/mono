@@ -1,5 +1,10 @@
 2007-10-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/OpCode.cs: make that a struct again, it
+	make the 2.1 profile explode. Will investigate why.
+
+2007-10-06  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/MethodCallingConvention.cs: Not a [Flag]
 
 2007-10-05  Jb Evain  <jbevain@novell.com>
