@@ -4843,6 +4843,10 @@ namespace System.Windows.Forms
 
 				bool selection_changed = false;
 				if (is_main_collection && owner != null) {
+
+					if (item.Focused && index + 1 == Count) // Last item
+						owner.SetFocusedItem (index == 0 ? -1 : index - 1);
+
 					selection_changed = owner.SelectedIndices.Contains (index);
 					owner.item_control.CancelEdit (item);
 				}

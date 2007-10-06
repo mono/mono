@@ -1,5 +1,12 @@
 2007-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When the last item is focused and is removed,
+	move the focus to the previous item (in Items order). This is what MS
+	does.
+	Fixes #330415.
+
+2007-10-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: In ListViewItemCollection, make Remove call RemoveAt,
 	instead of the opposite (RemoveAt call Remove). This is a better
 	approach since we don't need to to a pair of traversals when using
