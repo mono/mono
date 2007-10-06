@@ -1,3 +1,9 @@
+2007-10-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNodeTest.cs: Added a test to be sure leaf nodes 
+	keep their expanded/collapsed state when we get calls to
+	Expand/Collapse. Also add a forgotten test for EndEdit method.
+
 2007-10-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBoxTest.cs: Added test for bug #331144.

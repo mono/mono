@@ -101,6 +101,17 @@ namespace MonoTests.System.Windows.Forms {
 		}
 
 		[Test]
+		public void ExpandCollapseLeafTest ()
+		{
+			// Leaf nodes should keep its expanded state
+			TreeNode tn_1 = new TreeNode ();
+			Assert.IsFalse (tn_1.IsExpanded, "#1");
+
+			tn_1.Expand ();
+			Assert.IsTrue (tn_1.IsExpanded, "#2");
+		}
+
+		[Test]
 		public void FullPathException ()
 		{
 			try {
@@ -173,6 +184,35 @@ namespace MonoTests.System.Windows.Forms {
 			TreeView tv = new TreeView ();
 			tv.Nodes.Add (tn_1);
 			Assert.AreEqual (0, tn_1.Index, "#2");
+		}
+
+		[Test]
+		public void EndEditTest ()
+		{
+			TreeNode node1 = new TreeNode ("A");
+			TreeNode node2 = new TreeNode ("B");
+
+			Form f = new Form ();
+			TreeView tv = new TreeView ();
+			tv.LabelEdit = true;
+			tv.Parent = f;
+			tv.Nodes.Add (node1);
+			tv.Nodes.Add (node2);
+
+			f.Show ();
+
+			// EndEdit called on a different node
+			node1.BeginEdit ();
+			Assert.AreEqual (true, node1.IsEditing, "#1");
+			node2.EndEdit (false);
+			Assert.AreEqual (false, node1.IsEditing, "#2");
+
+			node1.BeginEdit ();
+			Assert.AreEqual (true, node1.IsEditing, "#3");
+			node2.EndEdit (true);
+			Assert.AreEqual (false, node1.IsEditing, "#4");
+
+			f.Dispose ();
 		}
 		
 #if NET_2_0
