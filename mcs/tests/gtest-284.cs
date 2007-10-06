@@ -218,11 +218,11 @@ public static class InterfaceTester
 
 	public static int Test ()
 	{
-		int result = Test (typeof (X), typeof (X), typeof (Y), typeof (object));
+		int result = Test (typeof (X), typeof (X));
 		if (result != 0)
 			return result;
 
-		result = Test (typeof (Y), typeof (Y), typeof (object));
+		result = Test (typeof (Y), typeof (Y));
 		if (result != 0)
 			return 100 + result;
 
@@ -234,27 +234,27 @@ public static class InterfaceTester
 		if (result != 0)
 			return 300 + result;
 
-		result = Test (typeof (int), typeof (int), typeof (uint));
+		result = Test (typeof (int), typeof (int));
 		if (result != 0)
 			return 400 + result;
 
-		result = Test (typeof (uint), typeof (int), typeof (uint));
+		result = Test (typeof (uint), typeof (uint));
 		if (result != 0)
 			return 500 + result;
 
-		result = Test (typeof (long), typeof (long), typeof (ulong));
+		result = Test (typeof (long), typeof (long));
 		if (result != 0)
 			return 600 + result;
 
-		result = Test (typeof (ulong), typeof (long), typeof (ulong));
+		result = Test (typeof (ulong), typeof (ulong));
 		if (result != 0)
 			return 700 + result;
 
-		result = Test (typeof (short), typeof (short), typeof (ushort));
+		result = Test (typeof (short), typeof (short));
 		if (result != 0)
 			return 800 + result;
 
-		result = Test (typeof (ushort), typeof (short), typeof (ushort));
+		result = Test (typeof (ushort), typeof (ushort));
 		if (result != 0)
 			return 900 + result;
 
