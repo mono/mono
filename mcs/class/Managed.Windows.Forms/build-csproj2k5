@@ -149,6 +149,9 @@ SWFhead()
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
+    <Reference Include="Mono.Mozilla2K5">
+      <Name>Mono.Mozilla2K5</Name>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Mozilla\Mono.Mozilla2K5.csproj">

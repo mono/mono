@@ -25,42 +25,53 @@
 #if NET_2_0
 
 using System;
-using Mono.WebBrowser.DOM;
+using System.Collections.Generic;
+using System.Text;
 
-namespace System.Windows.Forms
+namespace System.Windows.Forms.WebBrowserDialogs
 {
-	[MonoTODO ("Needs Implementation")]
-	public sealed class HtmlElement
+	internal class ConfirmCheck : Generic
 	{
-		private IDOMHTMLElement element;
-		internal HtmlElement (IDOMHTMLElement element)
+		private bool check;
+		public bool Checked
 		{
-			this.element = element;
+			get { return check; }
 		}
 
-		#region Properties
-		[MonoTODO ("Needs Implementation")]
-		public HtmlElementCollection All
+		public ConfirmCheck (string title, string text, string checkMessage, bool checkState)
+			: base (title)
 		{
-			get { throw new NotImplementedException (); }
+			InitTable (3, 2);
+
+			AddLabel (0, 0, 2, text, -1, -1);
+			AddCheck (1, 0, 2, checkMessage, checkState, -1, -1, new EventHandler (CheckedChanged));
+			AddButton (2, 0, 0, Locale.GetText ("OK"), -1, -1, true, false, new EventHandler (OkClick));
+			AddButton (2, 1, 0, Locale.GetText ("Cancel"), -1, -1, false, true, new EventHandler (CancelClick));
 		}
 
-		[MonoTODO ("Needs Implementation")]
-		public string InnerHtml
+		private void OkClick (object sender, EventArgs e)
 		{
-			get { return String.Empty; }
-			set { throw new NotImplementedException (); }
+			this.DialogResult = DialogResult.OK;
+			this.Close ();
 		}
 
-		[MonoTODO ("Needs Implementation")]
-		public string InnerText
+		private void CancelClick (object sender, EventArgs e)
 		{
-			get { return this.element.InnerText; }
-			set { throw new NotImplementedException (); }
+			this.DialogResult = DialogResult.Cancel;
+			this.Close ();
 		}
-		#endregion
 
+		private void CheckedChanged (object sender, EventArgs e)
+		{
+			CheckBox c = sender as CheckBox;
+			check = c.Checked;
+		}
+
+		public DialogResult Show ()
+		{
+			return this.RunDialog ();
+
+		}
 	}
 }
-
 #endif

@@ -276,12 +276,8 @@ namespace System.Windows.Forms
 		private State state;
 
 		private Mono.WebBrowser.IWebBrowser webHost;
-		internal Mono.WebBrowser.IWebBrowser WebHost
-		{
-			get
-			{
-				return webHost;
-			}
+		internal Mono.WebBrowser.IWebBrowser WebHost {
+			get	{ return webHost; }
 		}
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
@@ -301,6 +297,51 @@ namespace System.Windows.Forms
 			webHost.MouseClick += new EventHandler (OnWebHostMouseClick);
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
+			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
+		}
+
+		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)
+		{
+			switch (e.Type) {
+				case Mono.WebBrowser.DialogType.Alert:
+					MessageBox.Show (e.Text, e.Title);
+					break;
+				case Mono.WebBrowser.DialogType.AlertCheck:
+					WebBrowserDialogs.AlertCheck form1 = new WebBrowserDialogs.AlertCheck (e.Title, e.Text, e.CheckMessage, e.CheckState);
+					form1.Show ();
+					e.CheckState = form1.Checked;
+					e.BoolReturn = true;
+					break;
+				case Mono.WebBrowser.DialogType.Confirm:
+					DialogResult r1 = MessageBox.Show (e.Text, e.Title, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+					e.BoolReturn = (r1 == DialogResult.OK);
+					break;
+				case Mono.WebBrowser.DialogType.ConfirmCheck:
+					WebBrowserDialogs.ConfirmCheck form2 = new WebBrowserDialogs.ConfirmCheck (e.Title, e.Text, e.CheckMessage, e.CheckState);
+					DialogResult r2 = form2.Show ();
+					e.CheckState = form2.Checked;
+					e.BoolReturn = (r2 == DialogResult.OK);
+					break;
+				case Mono.WebBrowser.DialogType.ConfirmEx:
+					MessageBox.Show (e.Text, e.Title);
+					break;
+				case Mono.WebBrowser.DialogType.Prompt:
+					WebBrowserDialogs.Prompt form4 = new WebBrowserDialogs.Prompt (e.Title, e.Text, e.Text2);
+					DialogResult r4 = form4.Show ();
+					e.StringReturn = form4.Text;
+					e.BoolReturn = (r4 == DialogResult.OK);
+					break;
+				case Mono.WebBrowser.DialogType.PromptPassword:
+					MessageBox.Show (e.Text, e.Title);
+					break;
+				case Mono.WebBrowser.DialogType.PromptUsernamePassword:
+					MessageBox.Show (e.Text, e.Title);
+					break;
+				case Mono.WebBrowser.DialogType.Select:
+					MessageBox.Show (e.Text, e.Title);
+					break;
+			}
+			
 		}
 
 

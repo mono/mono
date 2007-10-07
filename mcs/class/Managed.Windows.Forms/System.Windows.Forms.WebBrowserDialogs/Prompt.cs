@@ -25,42 +25,46 @@
 #if NET_2_0
 
 using System;
-using Mono.WebBrowser.DOM;
+using System.Collections.Generic;
+using System.Text;
 
-namespace System.Windows.Forms
+namespace System.Windows.Forms.WebBrowserDialogs
 {
-	[MonoTODO ("Needs Implementation")]
-	public sealed class HtmlElement
+	internal class Prompt : Generic
 	{
-		private IDOMHTMLElement element;
-		internal HtmlElement (IDOMHTMLElement element)
+		private string text;
+		public string Text
 		{
-			this.element = element;
+			get { return text; }
 		}
 
-		#region Properties
-		[MonoTODO ("Needs Implementation")]
-		public HtmlElementCollection All
+		public Prompt (string title, string message, string text)
+			: base (title)
 		{
-			get { throw new NotImplementedException (); }
+			InitTable (3, 1);
+
+			AddLabel (0, 0, 0, message, -1, -1);
+			AddText (1, 0, 0, text, -1, -1, new EventHandler (onText));
+			AddButton (2, 0, 0, Locale.GetText ("OK"), -1, -1, true, false, new EventHandler (OkClick));
 		}
 
-		[MonoTODO ("Needs Implementation")]
-		public string InnerHtml
+		private void OkClick (object sender, EventArgs e)
 		{
-			get { return String.Empty; }
-			set { throw new NotImplementedException (); }
+			this.DialogResult = DialogResult.OK;
+			this.Close ();
 		}
 
-		[MonoTODO ("Needs Implementation")]
-		public string InnerText
+		private void onText (object sender, EventArgs e)
 		{
-			get { return this.element.InnerText; }
-			set { throw new NotImplementedException (); }
+			TextBox c = sender as TextBox;
+			text = c.Text;
 		}
-		#endregion
 
+		public DialogResult Show ()
+		{
+			return this.RunDialog ();
+
+		}
 	}
 }
-
 #endif

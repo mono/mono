@@ -50,6 +50,8 @@ namespace System.Windows.Forms
 		private string statusText;
 		private bool webBrowserShortcutsEnabled;
 
+		private HtmlDocument document;
+
 		#region Public Properties
 
 		[MonoTODO ("Stub, not implemented")]
@@ -80,7 +82,11 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Stub, not implemented")]
 		public HtmlDocument Document {
-			get { throw new NotImplementedException (); }
+			get {
+				if (document == null)
+					document = new HtmlDocument (this.WebHost);
+				return document; 
+			}
 		}
 
 		[MonoTODO ("Stub, not implemented")]

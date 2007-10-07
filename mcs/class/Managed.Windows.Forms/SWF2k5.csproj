@@ -192,6 +192,10 @@
     <Compile Include="System.Windows.Forms.RTF\TextMap.cs" />
     <Compile Include="System.Windows.Forms.RTF\TokenClass.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\RadioButtonPainter.cs" />
+    <Compile Include="System.Windows.Forms.WebBrowserDialogs\AlertCheck.cs" />
+    <Compile Include="System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs" />
+    <Compile Include="System.Windows.Forms.WebBrowserDialogs\Prompt.cs" />
+    <Compile Include="System.Windows.Forms.WebBrowserDialogs\Generic.cs" />
     <Compile Include="System.Windows.Forms\AccessibleEvents.cs" />
     <Compile Include="System.Windows.Forms\AccessibleNavigation.cs" />
     <Compile Include="System.Windows.Forms\AccessibleObject.cs" />
@@ -508,9 +512,14 @@
     <Compile Include="System.Windows.Forms\HtmlDocument.cs" />
     <Compile Include="System.Windows.Forms\HtmlElement.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementCollection.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElementErrorEventArgs.cs" />
+    <Compile Include="System.Windows.Forms\HtmlElementErrorEventHandler.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementEventArgs.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementEventHandler.cs" />
     <Compile Include="System.Windows.Forms\HtmlElementInsertionOrientation.cs" />
+    <Compile Include="System.Windows.Forms\HtmlHistory.cs" />
+    <Compile Include="System.Windows.Forms\HtmlWindow.cs" />
+    <Compile Include="System.Windows.Forms\HtmlWindowCollection.cs" />
     <Compile Include="System.Windows.Forms\Hwnd.cs" />
     <Compile Include="System.Windows.Forms\IButtonControl.cs" />
     <Compile Include="System.Windows.Forms\IBindableComponent.cs" />
@@ -585,6 +594,7 @@
     <Compile Include="System.Windows.Forms\LinkLabelLinkClickedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\LinkState.cs" />
     <Compile Include="System.Windows.Forms\ListBindingConverter.cs" />
+    <Compile Include="System.Windows.Forms\ListBindingHelper.cs" />
     <Compile Include="System.Windows.Forms\ListBox.cs" />
     <Compile Include="System.Windows.Forms\ListControl.cs" />
     <Compile Include="System.Windows.Forms\ListControlConvertEventArgs.cs" />
@@ -603,6 +613,7 @@
     <Compile Include="System.Windows.Forms\ListViewItemSelectionChangedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ListViewItemSelectionChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ListViewItemStates.cs" />
+    <Compile Include="System.Windows.Forms\ListViewVirtualItems.cs" />
     <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\MWFCategoryAttribute.cs" />
@@ -934,6 +945,8 @@
     <Compile Include="System.Windows.Forms\WebBrowserRefreshOption.cs" />
     <Compile Include="System.Windows.Forms\WebBrowserSiteBase.cs" />
     <Compile Include="System.Windows.Forms\Win32DnD.cs" />
+    <Compile Include="System.Windows.Forms\WindowsFormsSection.cs" />
+    <Compile Include="System.Windows.Forms\WindowsFormsSynchronizationContext.cs" />
     <Compile Include="System.Windows.Forms\X11DesktopColors.cs" />
     <Compile Include="System.Windows.Forms\X11Dnd.cs" />
     <Compile Include="System.Windows.Forms\X11Keyboard.cs" />

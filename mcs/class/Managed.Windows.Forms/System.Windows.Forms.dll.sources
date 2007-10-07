@@ -870,6 +870,10 @@ System.Windows.Forms.VisualStyles/VisualStyleElement.cs
 System.Windows.Forms.VisualStyles/VisualStyleInformation.cs
 System.Windows.Forms.VisualStyles/VisualStyleRenderer.cs
 System.Windows.Forms.VisualStyles/VisualStyleState.cs
+System.Windows.Forms.WebBrowserDialogs/AlertCheck.cs
+System.Windows.Forms.WebBrowserDialogs/ConfirmCheck.cs
+System.Windows.Forms.WebBrowserDialogs/Generic.cs
+System.Windows.Forms.WebBrowserDialogs/Prompt.cs
 System.Windows.Forms.X11Internal/X11Atoms.cs
 System.Windows.Forms.X11Internal/X11Display.cs
 System.Windows.Forms.X11Internal/X11Exception.cs
