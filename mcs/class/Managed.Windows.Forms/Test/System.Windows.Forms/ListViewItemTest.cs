@@ -255,10 +255,10 @@ namespace MonoTests.System.Windows.Forms
 		{
 			ListViewItem item = new ListViewItem ();
 
-			Assert.AreEqual (false, item.Focused, "DefaultValues#3");
-			Assert.AreEqual (false, item.Checked, "DefaultValues#4");
+			Assert.IsFalse (item.Focused, "DefaultValues#3");
+			Assert.IsFalse (item.Checked, "DefaultValues#4");
 			Assert.AreEqual (string.Empty, item.Text, "DefaultValues#5");
-			Assert.AreEqual (true, item.UseItemStyleForSubItems, "DefaultValues#6");
+			Assert.IsTrue (item.UseItemStyleForSubItems, "DefaultValues#6");
 			Assert.AreEqual (-1, item.ImageIndex, "DefaultValues#7");
 #if NET_2_0
 			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#8");
@@ -321,28 +321,101 @@ namespace MonoTests.System.Windows.Forms
 			form.Show ();
 
 			item1.Focused = true;
-			Assert.AreEqual (true, item1.Focused, "#A1");
-			Assert.AreEqual (false, item2.Focused, "#A2");
-			Assert.AreEqual (false, item3.Focused, "#A3");
+			Assert.IsTrue (item1.Focused, "#A1");
+			Assert.IsFalse (item2.Focused, "#A2");
+			Assert.IsFalse (item3.Focused, "#A3");
 			Assert.AreEqual (item1, lv.FocusedItem, "#A4");
 
 			item2.Focused = true;
-			Assert.AreEqual (false, item1.Focused, "#B1");
-			Assert.AreEqual (true, item2.Focused, "#B2");
-			Assert.AreEqual (false, item3.Focused, "#B3");
+			Assert.IsFalse (item1.Focused, "#B1");
+			Assert.IsTrue (item2.Focused, "#B2");
+			Assert.IsFalse (item3.Focused, "#B3");
 			Assert.AreEqual (item2, lv.FocusedItem, "#B4");
 
 			item3.Focused = true;
-			Assert.AreEqual (false, item1.Focused, "#C1");
-			Assert.AreEqual (false, item2.Focused, "#C2");
-			Assert.AreEqual (true, item3.Focused, "#C3");
+			Assert.IsFalse (item1.Focused, "#C1");
+			Assert.IsFalse (item2.Focused, "#C2");
+			Assert.IsTrue (item3.Focused, "#C3");
 			Assert.AreEqual (item3, lv.FocusedItem, "#C4");
 
 			item3.Focused = false;
-			Assert.AreEqual (false, item1.Focused, "#D1");
-			Assert.AreEqual (false, item2.Focused, "#D2");
-			Assert.AreEqual (false, item3.Focused, "#D3");
-			Assert.AreEqual (null, lv.FocusedItem, "#D4");
+			Assert.IsFalse (item1.Focused, "#D1");
+			Assert.IsFalse (item2.Focused, "#D2");
+			Assert.IsFalse (item3.Focused, "#D3");
+			Assert.IsNull (lv.FocusedItem, "#D4");
+
+			form.Dispose ();
+		}
+
+		[Test] // bug #330415 and #331643
+		[Category ("NotWorking")]
+		public void RemoveFocusedItem ()
+		{
+			ListView lv = new ListView ();
+			ListViewItem itemA = lv.Items.Add ("ItemA");
+			ListViewItem itemB = lv.Items.Add ("ItemB");
+			ListViewItem itemC = lv.Items.Add ("ItemC");
+			ListViewItem itemD = lv.Items.Add ("ItemD");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (lv);
+			form.Show ();
+
+			Assert.IsTrue (itemA.Focused, "#A1");
+			Assert.IsFalse (itemB.Focused, "#A2");
+			Assert.IsFalse (itemC.Focused, "#A3");
+			Assert.IsFalse (itemD.Focused, "#A4");
+
+			itemB.Focused = true;
+
+			Assert.IsFalse (itemA.Focused, "#B1");
+			Assert.IsTrue (itemB.Focused, "#B2");
+			Assert.IsFalse (itemC.Focused, "#B3");
+			Assert.IsFalse (itemD.Focused, "#B4");
+
+			lv.Items.Remove (itemB);
+
+			Assert.IsFalse (itemA.Focused, "#C1");
+			Assert.IsFalse (itemB.Focused, "#C2");
+			Assert.IsTrue (itemC.Focused, "#C3");
+			Assert.IsFalse (itemD.Focused, "#C4");
+
+			itemD.Focused = true;
+
+			Assert.IsFalse (itemA.Focused, "#D1");
+			Assert.IsFalse (itemB.Focused, "#D2");
+			Assert.IsFalse (itemC.Focused, "#D3");
+			Assert.IsTrue (itemD.Focused, "#D4");
+
+			lv.Items.Remove (itemD);
+
+			Assert.IsFalse (itemA.Focused, "#E1");
+			Assert.IsFalse (itemB.Focused, "#E2");
+			Assert.IsTrue (itemC.Focused, "#E3");
+			Assert.IsFalse (itemD.Focused, "#E4");
+
+			lv.Items.Remove (itemC);
+
+			Assert.IsTrue (itemA.Focused, "#F1");
+			Assert.IsFalse (itemB.Focused, "#F2");
+			Assert.IsFalse (itemC.Focused, "#F3");
+			Assert.IsFalse (itemD.Focused, "#F4");
+
+			lv.Items.Remove (itemA);
+
+			Assert.IsFalse (itemA.Focused, "#G1");
+			Assert.IsFalse (itemB.Focused, "#G2");
+			Assert.IsFalse (itemC.Focused, "#G3");
+			Assert.IsFalse (itemD.Focused, "#G4");
+
+			ListViewItem itemE = lv.Items.Add ("ItemE");
+
+			Assert.IsFalse (itemA.Focused, "#H1");
+			Assert.IsFalse (itemB.Focused, "#H2");
+			Assert.IsFalse (itemC.Focused, "#H3");
+			Assert.IsFalse (itemD.Focused, "#H4");
+			Assert.IsFalse (itemE.Focused, "#H5");
 
 			form.Dispose ();
 		}
