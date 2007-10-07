@@ -484,6 +484,8 @@ namespace System.Windows.Forms {
 					Stack stack = new Stack ();
 					
 					string path_cut = path.Substring (0, path.LastIndexOf (Path.DirectorySeparatorChar));
+					if (!XplatUI.RunningOnUnix && path_cut.Length == 2)
+						path_cut += Path.DirectorySeparatorChar;
 					
 					while (node == null && path_cut.Length > 0) {
 						node = FindPathInNodes (path_cut, Nodes);
@@ -540,6 +542,13 @@ namespace System.Windows.Forms {
 			
 			private FBTreeNode FindPathInNodes (string path, TreeNodeCollection nodes)
 			{
+				// On Windows the devices can be passed as C: yet match
+				// the C:\ form
+				//
+				// Hackish, but works
+				if (!XplatUI.RunningOnUnix && path.Length == 2)
+					path += Path.DirectorySeparatorChar;
+
 				foreach (TreeNode node in nodes) {
 					FBTreeNode fbnode = node as FBTreeNode;
 					

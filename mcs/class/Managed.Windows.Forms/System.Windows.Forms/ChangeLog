@@ -1,5 +1,13 @@
 2007-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FolderBrowserDialog.cs: When running on Windows,
+	try to detect paths such "C:" and add Path.DirectorySeparatorChar,
+	since we must match both "C:" and "C:\" forms. A little hackish, but
+	works.
+	Fixes #325247.
+
+2007-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When calling EndEdit (after editing an item),
 	create a new instance of LabelEditEventArgs to keep clean the fields
 	in case we get a new call to BeginEdit; also do Application.DoEvents
