@@ -1,5 +1,9 @@
+2007-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
-Sat Oct 6 10:35:25 CEST 2007 Paolo Molaro <lupus@ximian.com>
+	* gtest-344.cs: test for bug #331191
+	* known-issues-gmcs: added gtest-344.cs.
+
+2007-10-06  Paolo Molaro <lupus@ximian.com>
 
 	* gtest-284.cs: this test wasn't working even on the MS runtime:
 	once fixed it runs fine on both mono and MS .net.
