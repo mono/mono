@@ -2652,10 +2652,6 @@ namespace System.Windows.Forms
 				if (edit_item == null || edit_item != item)
 					return;
 
-				owner.OnAfterLabelEdit (edit_args);
-				if (!edit_args.CancelEdit && edit_args.Label != null)
-					edit_item.Text = edit_text_box.Text;
-
 				if (edit_text_box != null) {
 					if (edit_text_box.Visible)
 						edit_text_box.Visible = false;
@@ -2663,7 +2659,19 @@ namespace System.Windows.Forms
 					owner.Focus ();
 				}
 
+				// Same as TreeView.EndEdit: need to have focus in synch
+				Application.DoEvents ();
+
+				// 
+				// Create a new instance, since we could get a call to BeginEdit
+				// from the handler and have fields out of synch
+				//
+				LabelEditEventArgs args = new LabelEditEventArgs (item.Index, edit_args.Label);
 				edit_item = null;
+
+				owner.OnAfterLabelEdit (args);
+				if (!args.CancelEdit && args.Label != null)
+					item.Text = args.Label;
 			}
 
 			internal override void OnPaintInternal (PaintEventArgs pe)
