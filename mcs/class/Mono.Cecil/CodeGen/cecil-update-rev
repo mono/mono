@@ -35,7 +35,14 @@ def patch_info(content)
 		if not line =~ /AssemblyVersion/
 			patched << line
 		else
-			patched << line.gsub(/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/) { "#{$1.to_s}.#{$2.to_s}.#{$3.to_s}.#{($rev + 1).to_s}" }
+			patched << line.gsub(/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)/) {
+				next_rev = $rev.next
+				cut = 10000
+				build_rev = (next_rev / cut).ceil
+				revision = next_rev - (build_rev * cut)
+				build = (($3.to_i / 100).ceil * 100) + build_rev
+				"#{$1.to_s}.#{$2.to_s}.#{build.to_s}.#{(revision).to_s}"
+			}
 		end
 	}
 	return patched
