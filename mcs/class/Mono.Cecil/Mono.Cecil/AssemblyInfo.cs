@@ -43,7 +43,7 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant (false)]
 [assembly: ComVisible (false)]
 
-[assembly: AssemblyVersion ("0.6.8.7041")]
+[assembly: AssemblyVersion ("0.6.8.7048")]
 
 #if KEYFILE
 [assembly: AssemblyKeyFile("../../mono.snk")]

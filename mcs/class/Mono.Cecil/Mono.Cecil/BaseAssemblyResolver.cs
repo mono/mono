@@ -70,15 +70,15 @@ namespace Mono.Cecil {
 			AssemblyDefinition assembly;
 			string frameworkdir = Path.GetDirectoryName (typeof (object).Module.FullyQualifiedName);
 
+			assembly = SearchDirectory (name, m_directories);
+			if (assembly != null)
+				return assembly;
+
 			if (IsZero (name.Version)) {
 				assembly = SearchDirectory (name, new string [] {frameworkdir});
 				if (assembly != null)
 					return assembly;
 			}
-
-			assembly = SearchDirectory (name, m_directories);
-			if (assembly != null)
-				return assembly;
 
 #if !CF_1_0 && !CF_2_0
 			if (name.Name == "mscorlib") {
