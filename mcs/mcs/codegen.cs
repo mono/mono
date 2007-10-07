@@ -1315,6 +1315,23 @@ namespace Mono.CSharp {
 		}
 #endif
 
+		static bool IsValidAssemblyVersion (string version)
+		{
+			Version v;
+			try {
+				v = new Version (version);
+			} catch {
+				return false;
+			}
+
+			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
+				if (candidate > ushort.MaxValue)
+					return false;
+			}
+
+			return true;
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
@@ -1332,6 +1349,17 @@ namespace Mono.CSharp {
 
 				if (RootContext.Target == Target.Exe) {
 					a.Error_AttributeEmitError ("The executables cannot be satelite assemblies, remove the attribute or keep it empty");
+					return;
+				}
+			}
+
+			if (a.Type == TypeManager.assembly_version_attribute_type) {
+				string value = a.GetString ();
+				if (value == null || value.Length == 0)
+					return;
+
+				if (!IsValidAssemblyVersion (value)) {
+					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
 				}
 			}

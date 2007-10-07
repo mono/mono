@@ -108,6 +108,7 @@ namespace Mono.CSharp {
 	static public Type required_attr_type;
 	static public Type guid_attr_type;
 	static public Type assembly_culture_attribute_type;
+	static public Type assembly_version_attribute_type;
 	static public Type coclass_attr_type;
 	static public Type comimport_attr_type;
 
@@ -1103,6 +1104,7 @@ namespace Mono.CSharp {
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute", true);
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
+		assembly_version_attribute_type = CoreLookupType ("System.Reflection", "AssemblyVersionAttribute");
 		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
 		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute");
 

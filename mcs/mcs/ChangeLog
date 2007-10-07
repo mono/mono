@@ -1,3 +1,9 @@
+2007-10-07  Jb Evain  <jbevain@novell.com>
+
+	* typemanager.cs: add `assembly_version_attribute_type`.
+	* codegen.cs: on attribute emission, check that the
+	AssemblyVersionAttribute doesn't overflow.
+
 2007-10-05  Marek Safar  <marek.safar@gmail.com>
 	
 	A fix for bug #324677
