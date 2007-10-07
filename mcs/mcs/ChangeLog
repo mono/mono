@@ -1,5 +1,10 @@
 2007-10-07  Jb Evain  <jbevain@novell.com>
 
+	* attribute.cs (Attribute.GetString): if the value
+	expression is a StringConstant, return its string value.
+
+2007-10-07  Jb Evain  <jbevain@novell.com>
+
 	* typemanager.cs: add `assembly_version_attribute_type`.
 	* codegen.cs: on attribute emission, check that the
 	AssemblyVersionAttribute doesn't overflow.

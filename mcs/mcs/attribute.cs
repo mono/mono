@@ -1270,6 +1270,8 @@ namespace Mono.CSharp {
 			Expression e = GetValue ();
 			if (e is StringLiteral)
 				return (e as StringLiteral).Value;
+			if (e is StringConstant)
+				return (e as StringConstant).Value;
 			return null;
 		}
 
