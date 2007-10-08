@@ -1,3 +1,9 @@
+
+Mon Oct 8 10:21:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-counters.h, mono-counters.c: better formatting of the output
+	and added a cleanup function.
+
 2007-10-03  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-compiler.h (trunc): Make the definition of trunk for MSC
