@@ -1,4 +1,9 @@
 
+
+Mon Oct 8 14:25:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-amd64.c: fixed memory corruption in the trampoline generation.
+
 Mon Oct 8 12:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-ppc.c, tramp-x86.c: reduce the alignment requirements for
