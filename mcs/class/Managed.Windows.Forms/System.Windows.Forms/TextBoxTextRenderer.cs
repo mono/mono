@@ -31,7 +31,7 @@ using System.Text;
 
 namespace System.Windows.Forms
 {
-	internal static class TextBoxTextRenderer
+	internal class TextBoxTextRenderer
 	{
 		private static Size max_size;
 		private static bool use_textrenderer;
