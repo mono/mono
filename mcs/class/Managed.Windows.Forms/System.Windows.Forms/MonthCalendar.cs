@@ -687,6 +687,8 @@ namespace System.Windows.Forms {
 			set {
 				if (show_week_numbers != value) {
 					show_week_numbers = value;
+					// The values here don't matter, SetBoundsCore will calculate its own
+					SetBoundsCore (Left, Top, Width, Height, BoundsSpecified.Width);
 					this.Invalidate ();
 				}
 			}

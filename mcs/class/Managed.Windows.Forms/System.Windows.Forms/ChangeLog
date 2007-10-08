@@ -1,5 +1,10 @@
 2007-10-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MonthCalendar.cs: When ShowWeekNumbers is changed, force the calendar
+	to recalculate its size.  Fixes a part of bug #331052.
+
+2007-10-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* NotifyIcon.cs: Set the correct mouse button when handling right mouse
 	button.  Fixes a part of bug #331052.
 
