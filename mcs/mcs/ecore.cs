@@ -380,6 +380,11 @@ namespace Mono.CSharp {
 				name);
 		}
 
+		protected virtual void Error_TypeDoesNotContainDefinition (Type type, string name)
+		{
+			Error_TypeDoesNotContainDefinition (loc, type, name);
+		}
+
 		public static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
 		{
 			Report.SymbolRelatedToPreviousError (type);
@@ -824,7 +829,7 @@ namespace Mono.CSharp {
 					Report.Error (103, loc, "The name `{0}' does not exist in the current context",
 						name);
 				} else {
-					Error_TypeDoesNotContainDefinition (loc, queried_type, name);
+					Error_TypeDoesNotContainDefinition (queried_type, name);
 				}
 				return null;
 			}
@@ -3051,9 +3056,10 @@ namespace Mono.CSharp {
 
 			if (mg != null)
 				return mg;
-			
+
 			if (!may_fail)
-				return base.OverloadResolve (ec, arguments, may_fail, loc);
+				// TODO: This should be some meaningful error message
+				Invocation.Error_WrongNumArguments (loc, Name, arguments.Count);
 
 			return null;
 		}

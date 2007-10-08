@@ -6779,6 +6779,20 @@ namespace Mono.CSharp {
 			throw new Exception ("Should not happen");
 		}
 
+		protected override void Error_TypeDoesNotContainDefinition (Type type, string name)
+		{
+			if (RootContext.Version > LanguageVersion.ISO_2 &&
+				((expr.eclass & (ExprClass.Value | ExprClass.Variable)) != 0)) {
+				Report.Error (1061, loc, "Type `{0}' does not contain a definition for `{1}' and no " +
+					"extension method `{1}' of type `{0}' could be found " +
+					"(are you missing a using directive or an assembly reference?)",
+					TypeManager.CSharpName (type), name);
+				return;
+			}
+
+			base.Error_TypeDoesNotContainDefinition (type, name);
+		}
+
 		public override string ToString ()
 		{
 			return expr + "." + MemberName.MakeName (Identifier, args);

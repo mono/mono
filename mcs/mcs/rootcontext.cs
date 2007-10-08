@@ -21,9 +21,11 @@ namespace Mono.CSharp {
 
 	public enum LanguageVersion
 	{
-		Default	= 0,
 		ISO_1	= 1,
-		LINQ
+		ISO_2	= 2,
+		LINQ	= 3,
+
+		Default	= ISO_2
 	}
 
 	public class RootContext {
