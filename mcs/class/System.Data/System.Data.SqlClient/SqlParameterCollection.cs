@@ -166,11 +166,11 @@ namespace System.Data.SqlClient {
 	
 		protected  override void SetParameter (int index, DbParameter value)
 		{
-			this [index] = value;
+			this [index] = (SqlParameter) value;
                 }
 		protected override void SetParameter (string parameterName, DbParameter value)
 		{
-			this [parameterName] = value;
+			this [parameterName] = (SqlParameter) value;
                 }
 #endif
 		object IList.this [int index] {
