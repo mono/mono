@@ -1,4 +1,9 @@
 
+Mon Oct 8 11:38:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: track statistics about the actual amount of native code
+	allocated.
+
 Sat Oct 6 10:01:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: the valuetype enumerators don't have the additional
