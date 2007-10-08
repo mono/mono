@@ -366,12 +366,12 @@ namespace System.Data.Odbc
 
 		protected override void SetParameter (string name, DbParameter value)
 		{
-			this [name] = value;
+			this [name] = (OdbcParameter) value;
 		}
 
 		protected override void SetParameter (int index, DbParameter value)
 		{
-			this [index] = value;
+			this [index] = (OdbcParameter) value;
 		}
 
 
