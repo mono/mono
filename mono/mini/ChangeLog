@@ -1,4 +1,9 @@
 
+Mon Oct 8 10:55:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: started removing the internal uses of register r11
+	to eventually allow the register allocator to manage it as an
+	additional available register.
 
 Mon Oct 8 14:25:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
@@ -11111,6 +11116,8 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
+
 
 
 
