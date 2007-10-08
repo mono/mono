@@ -1,3 +1,11 @@
+2007-10-08  Massimiliano Mantione  <massi@ximian.com>
+	* class.c (mono_class_create_from_typedef,
+	mono_class_from_generic_parameter, mono_ptr_class_get,
+	mono_fnptr_class_get, mono_bounded_array_class_get)
+	* domain.c (mono_domain_create, mono_domain_free)
+	* assembly.c (mono_assembly_load_from_full, mono_assembly_close)
+	* image.c (do_mono_image_load, mono_image_close):
+	Hooked up load-unload profiler events.
 
 Mon Oct 8 11:38:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
