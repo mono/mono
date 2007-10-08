@@ -1268,18 +1268,16 @@ namespace Mono.CSharp {
 		public string GetString () 
 		{
 			Expression e = GetValue ();
-			if (e is StringLiteral)
-				return (e as StringLiteral).Value;
 			if (e is StringConstant)
-				return (e as StringConstant).Value;
+				return ((StringConstant)e).Value;
 			return null;
 		}
 
 		public bool GetBoolean () 
 		{
 			Expression e = GetValue ();
-			if (e is BoolLiteral)
-				return (e as BoolLiteral).Value;
+			if (e is BoolConstant)
+				return ((BoolConstant)e).Value;
 			return false;
 		}
 

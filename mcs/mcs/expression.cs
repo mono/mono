@@ -4146,315 +4146,12 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		public static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
-							     ArrayList arguments, int arg_count,
-							     ref MethodBase candidate)
-		{
-			return IsParamsMethodApplicable (
-				ec, me, arguments, arg_count, false, ref candidate) ||
-				IsParamsMethodApplicable (
-					ec, me, arguments, arg_count, true, ref candidate);
-
-
-		}
-
-		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
-						      ArrayList arguments, int arg_count,
-						      bool do_varargs, ref MethodBase candidate)
-		{
-#if GMCS_SOURCE
-			if (!me.HasTypeArguments &&
-			    !TypeManager.InferParamsTypeArguments (ec, arguments, ref candidate))
-				return false;
-
-			if (TypeManager.IsGenericMethodDefinition (candidate))
-				throw new InternalErrorException ("a generic method definition took part in overload resolution");
-#endif
-
-			return IsParamsMethodApplicable (
-				ec, arguments, arg_count, candidate, do_varargs);
-		}
-
-		/// <summary>
-		///   Determines if the candidate method, if a params method, is applicable
-		///   in its expanded form to the given set of arguments
-		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
-						      int arg_count, MethodBase candidate,
-						      bool do_varargs)
-		{
-			ParameterData pd = TypeManager.GetParameterData (candidate);
-
-			int pd_count = pd.Count;
-			if (pd_count == 0)
-				return false;
-
-			int count = pd_count - 1;
-			if (do_varargs) {
-				if (pd.ParameterModifier (count) != Parameter.Modifier.ARGLIST)
-					return false;
-				if (pd_count != arg_count)
-					return false;
-
-				if (!(((Argument) arguments [count]).Expr is Arglist))
-					return false;
-				--pd_count;
-			} else {
-				if (!pd.HasParams)
-					return false;
-			}
-			
-			if (count > arg_count)
-				return false;
-			
-			if (pd_count == 1 && arg_count == 0)
-				return true;
-
-			//
-			// If we have come this far, the case which
-			// remains is when the number of parameters is
-			// less than or equal to the argument count.
-			//
-			int argument_index = 0;
-			Argument a;
-			for (int i = 0; i < pd_count; ++i) {
-
-				if ((pd.ParameterModifier (i) & Parameter.Modifier.PARAMS) != 0) {
-					Type element_type = TypeManager.GetElementType (pd.ParameterType (i));
-					int params_args_count = arg_count - pd_count;
-					if (params_args_count < 0)
-						continue;
-
-					do {
-						a = (Argument) arguments [argument_index++];
-
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
-							return false;
-					} while (params_args_count-- > 0);
-					continue;
-				}
-
-				a = (Argument) arguments [argument_index++];
-
-				Parameter.Modifier a_mod = a.Modifier & 
-					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
-
-				if (a_mod == p_mod) {
-
-					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec,
-							a.Expr,
-							pd.ParameterType (i)))
-							return false;
-
-					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
-						Type pt = pd.ParameterType (i);
-
-						if (!pt.IsByRef)
-							pt = TypeManager.GetReferenceType (pt);
-						
-						if (pt != a.Type)
-							return false;
-					}
-				} else
-					return false;
-				
-			}
-
-			return true;
-		}
-
-		public static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
-						 ArrayList arguments, int arg_count,
-						 ref MethodBase method)
-		{
-			MethodBase candidate = method;
-
-#if GMCS_SOURCE
-			if (!me.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
-				return false;
-
-			if (TypeManager.IsGenericMethodDefinition (candidate))
-				throw new InternalErrorException ("a generic method definition took part in overload resolution");
-#endif
-
-			if (IsApplicable (ec, arguments, arg_count, candidate)) {
-				method = candidate;
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		///   Determines if the candidate method is applicable (section 14.4.2.1)
-		///   to the given set of arguments
-		/// </summary>
-		public static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
-						 MethodBase candidate)
-		{
-			ParameterData pd = TypeManager.GetParameterData (candidate);
-
-			if (arg_count != pd.Count)
-				return false;
-
-			for (int i = arg_count; i > 0; ) {
-				i--;
-
-				Argument a = (Argument) arguments [i];
-				
-				Parameter.Modifier a_mod = a.Modifier &
-					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
-
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK | Parameter.Modifier.PARAMS);
-
-				if (a_mod != p_mod)
-					return false;
-
-				Type pt = pd.ParameterType (i);
-
-				if (TypeManager.IsEqual (pt, a.Type))
-					continue;
-
-				if (a_mod != Parameter.Modifier.NONE)
-					return false;
-
-				// FIXME: Kill this abomination (EmitContext.TempEc)
-				EmitContext prevec = EmitContext.TempEc;
-				EmitContext.TempEc = ec;
-				try {
-					if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
-						return false;
-				} finally {
-					EmitContext.TempEc = prevec;
-				}
-			}
-
-			return true;
-		}
-
 		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
 		{
 			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
 				name, arg_count.ToString ());
 		}
-                        
-		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
-                                                    Type delegate_type, Argument a, ParameterData expected_par)
-		{
-			if (a is CollectionElementInitializer.ElementInitializerArgument) {
-				Report.SymbolRelatedToPreviousError (method);
-				if ((expected_par.ParameterModifier (idx) & Parameter.Modifier.ISBYREF) != 0) {
-					Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
-						TypeManager.CSharpSignature (method));
-					return;
-				}
-				Report.Error (1950, loc, "The best overloaded collection initalizer method `{0}' has some invalid arguments",
-					  TypeManager.CSharpSignature (method));
-			} else if (delegate_type == null) {
-				Report.SymbolRelatedToPreviousError (method);
-				Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
-						  TypeManager.CSharpSignature (method));
-			} else
-				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
-					TypeManager.CSharpName (delegate_type));
-
-			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
-
-			string index = (idx + 1).ToString ();
-			if ((a.Modifier & Parameter.Modifier.ISBYREF) != 0 && mod != a.Modifier) {
-				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
-					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
-						index, Parameter.GetModifierSignature (a.Modifier));
-				else
-					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
-						index, Parameter.GetModifierSignature (mod));
-			} else {
-				string p1 = Argument.FullDesc (a);
-				string p2 = TypeManager.CSharpName (expected_par.ParameterType (idx));
-
-				if (p1 == p2) {
-					Report.ExtraInformation (loc, "(equally named types possibly from different assemblies in previous ");
-					Report.SymbolRelatedToPreviousError (a.Expr.Type);
-					Report.SymbolRelatedToPreviousError (expected_par.ParameterType (idx));
-				}
-				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
-			}
-		}
 		
-		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
-							  int arg_count, MethodBase method, 
-							  bool chose_params_expanded,
-							  Type delegate_type, bool may_fail,
-							  Location loc)
-		{
-			ParameterData pd = TypeManager.GetParameterData (method);
-			int j;
-			int a_idx = 0;
-			Argument a = null;
-			for (j = 0; j < pd.Count; j++) {
-				Type parameter_type = pd.ParameterType (j);
-				Parameter.Modifier pm = pd.ParameterModifier (j);
-
-				if (pm == Parameter.Modifier.ARGLIST) {
-					a = (Argument) Arguments [a_idx];
-					if (!(a.Expr is Arglist))
-						break;
-					++a_idx;
-					continue;
-				}
-
-				int params_arg_count = 1;
-				if (pm == Parameter.Modifier.PARAMS) {
-					pm = Parameter.Modifier.NONE;
-					params_arg_count = arg_count - pd.Count + 1;
-					if (chose_params_expanded)
-						parameter_type = TypeManager.GetElementType (parameter_type);
-				}
-
-				while (params_arg_count > 0) {
-					a = (Argument) Arguments [a_idx];
-					if (pm != a.Modifier)
-						break;
-
-					if (!TypeManager.IsEqual (a.Type, parameter_type)) {
-						if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
-							break;
-
-						Expression conv = Convert.ImplicitConversion (ec, a.Expr, parameter_type, loc);
-						if (conv == null)
-							break;
-
-						// Update the argument with the implicit conversion
-						if (a.Expr != conv)
-							a.Expr = conv;
-					}
-
-					--params_arg_count;
-					++a_idx;
-				}
-				if (params_arg_count > 0)
-					break;
-
-				if (parameter_type.IsPointer && !ec.InUnsafe) {
-					if (!may_fail)
-						UnsafeError (loc);
-					return false;
-				}
-			}
-
-			if (a_idx == arg_count)
-				return true;
-
-			if (!may_fail)
-				Error_InvalidArguments (loc, a_idx, method, delegate_type, a, pd);
-			return false;
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
@@ -7725,118 +7422,135 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-	
-	class Indexers {
-		// note that the ArrayList itself in mutable.  We just can't assign to 'Properties' again.
-		public readonly ArrayList Properties;
-		static Indexers empty;
-
-		public struct Indexer {
-			public readonly PropertyInfo PropertyInfo;
-			public readonly MethodInfo Getter, Setter;
-
-			public Indexer (PropertyInfo property_info, MethodInfo get, MethodInfo set)
-			{
-				this.PropertyInfo = property_info;
-				this.Getter = get;
-				this.Setter = set;
-			}
-		}
-
-		static Indexers ()
-		{
-			empty = new Indexers (null);
-		}
-
-		Indexers (ArrayList array)
-		{
-			Properties = array;
-		}
-
-		static void Append (ref Indexers ix, Type caller_type, MemberInfo [] mi)
-		{
-			bool dummy;
-			if (mi == null)
-				return;
-			foreach (PropertyInfo property in mi){
-				MethodInfo get, set;
-				
-				get = property.GetGetMethod (true);
-				set = property.GetSetMethod (true);
-				if (get != null && !Expression.IsAccessorAccessible (caller_type, get, out dummy))
-					get = null;
-				if (set != null && !Expression.IsAccessorAccessible (caller_type, set, out dummy))
-					set = null;
-				if (get != null || set != null) {
-					if (ix == empty)
-						ix = new Indexers (new ArrayList ());
-					ix.Properties.Add (new Indexer (property, get, set));
-				}
-			}
-		}
-
-		static private MemberInfo [] GetIndexersForTypeOrInterface (Type caller_type, Type lookup_type)
-		{
-			string p_name = TypeManager.IndexerPropertyName (lookup_type);
-
-			return TypeManager.MemberLookup (
-				caller_type, caller_type, lookup_type, MemberTypes.Property,
-				BindingFlags.Public | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly, p_name, null);
-		}
-		
-		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type) 
-		{
-			Indexers ix = empty;
-
-#if GMCS_SOURCE
-			if (lookup_type.IsGenericParameter) {
-				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (lookup_type);
-				if (gc == null)
-					return empty;
-
-				if (gc.HasClassConstraint)
-					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, gc.ClassConstraint));
-
-				Type[] ifaces = gc.InterfaceConstraints;
-				foreach (Type itype in ifaces)
-					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
-
-				return ix;
-			}
-#endif
-
-			Type copy = lookup_type;
-			while (copy != TypeManager.object_type && copy != null){
-				Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, copy));
-				copy = copy.BaseType;
-			}
-
-			if (lookup_type.IsInterface) {
-				Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
-				if (ifaces != null) {
-					foreach (Type itype in ifaces)
-						Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
-				}
-			}
-
-			return ix;
-		}
-	}
 
 	/// <summary>
 	///   Expressions that represent an indexer call.
 	/// </summary>
-	public class IndexerAccess : Expression, IAssignMethod {
+	public class IndexerAccess : Expression, IAssignMethod
+	{
+		class IndexerMethodGroupExpr : MethodGroupExpr
+		{
+			public IndexerMethodGroupExpr (Indexers indexers, Location loc)
+				: base (null, loc)
+			{
+				Methods = (MethodBase []) indexers.Methods.ToArray (typeof (MethodBase));
+			}
+
+			public override string Name {
+				get {
+					return "this";
+				}
+			}
+
+			protected override int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
+			{
+				//
+				// Here is the trick, decrease number of arguments by 1 when only
+				// available property method is setter. This makes overload resolution
+				// work correctly for indexers.
+				//
+				
+				if (method.Name [0] == 'g')
+					return parameters.Count;
+
+				return parameters.Count - 1;
+			}
+		}
+
+		class Indexers
+		{
+			// Contains either property getter or setter
+			public ArrayList Methods;
+			public ArrayList Properties;
+
+			Indexers ()
+			{
+			}
+
+			void Append (Type caller_type, MemberInfo [] mi)
+			{
+				if (mi == null)
+					return;
+
+				foreach (PropertyInfo property in mi) {
+					MethodInfo accessor = property.GetGetMethod (true);
+					if (accessor == null)
+						accessor = property.GetSetMethod (true);
+
+					if (Methods == null) {
+						Methods = new ArrayList ();
+						Properties = new ArrayList ();
+					}
+
+					Methods.Add (accessor);
+					Properties.Add (property);
+				}
+			}
+
+			static MemberInfo [] GetIndexersForTypeOrInterface (Type caller_type, Type lookup_type)
+			{
+				string p_name = TypeManager.IndexerPropertyName (lookup_type);
+
+				return TypeManager.MemberLookup (
+					caller_type, caller_type, lookup_type, MemberTypes.Property,
+					BindingFlags.Public | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly, p_name, null);
+			}
+			
+			public static Indexers GetIndexersForType (Type caller_type, Type lookup_type) 
+			{
+				Indexers ix = new Indexers ();
+
+	#if GMCS_SOURCE
+				if (lookup_type.IsGenericParameter) {
+					GenericConstraints gc = TypeManager.GetTypeParameterConstraints (lookup_type);
+					if (gc == null)
+						return ix;
+
+					if (gc.HasClassConstraint)
+						ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, gc.ClassConstraint));
+
+					Type[] ifaces = gc.InterfaceConstraints;
+					foreach (Type itype in ifaces)
+						ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
+
+					return ix;
+				}
+	#endif
+
+				Type copy = lookup_type;
+				while (copy != TypeManager.object_type && copy != null){
+					ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, copy));
+					copy = copy.BaseType;
+				}
+
+				if (lookup_type.IsInterface) {
+					Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+					if (ifaces != null) {
+						foreach (Type itype in ifaces)
+							ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
+					}
+				}
+
+				return ix;
+			}
+		}
+
+		enum AccessorType
+		{
+			Get,
+			Set
+		}
+
 		//
 		// Points to our "data" repository
 		//
 		MethodInfo get, set;
-		ArrayList set_arguments;
 		bool is_base_indexer;
 		bool prepared;
 		LocalTemporary temp;
 		LocalTemporary prepared_value;
+		Expression set_expr;
 
 		protected Type indexer_type;
 		protected Type current_type;
@@ -7858,6 +7572,17 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		static string GetAccessorName (AccessorType at)
+		{
+			if (at == AccessorType.Set)
+				return "set";
+
+			if (at == AccessorType.Get)
+				return "get";
+
+			throw new NotImplementedException (at.ToString ());
+		}
+
 		protected virtual bool CommonResolve (EmitContext ec)
 		{
 			indexer_type = instance_expr.Type;
@@ -7868,67 +7593,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!CommonResolve (ec))
-				return null;
-
-			//
-			// Step 1: Query for all `Item' *properties*.  Notice
-			// that the actual methods are pointed from here.
-			//
-			// This is a group of properties, piles of them.  
-
-			ArrayList AllGetters = null;
-
-			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
-			if (ilist.Properties != null) {
-				AllGetters = new ArrayList(ilist.Properties.Count);
-				foreach (Indexers.Indexer ix in ilist.Properties) {
-					if (ix.Getter != null)
-						AllGetters.Add (ix.Getter);
-				}
-			}
-
-			if (AllGetters == null) {
-				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-					TypeManager.CSharpName (indexer_type));
-				return null;
-			}
-
-			if (AllGetters.Count == 0) {
-				// FIXME: we cannot simply select first one as the error message is missleading when
-				// multiple indexers exist
-				Indexers.Indexer first_indexer = (Indexers.Indexer)ilist.Properties[ilist.Properties.Count - 1];
-				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-					TypeManager.GetFullNameSignature (first_indexer.PropertyInfo));
-				return null;
-			}
-
-			get = (MethodInfo)new MethodGroupExpr (AllGetters, type, loc).OverloadResolve (ec,
-					arguments, false, loc);
-
-			if (get == null) {
-				Invocation.Error_WrongNumArguments (loc, "this", arguments.Count);
-				return null;
-			}
-
-			//
-			// Only base will allow this invocation to happen.
-			//
-			if (get.IsAbstract && this is BaseIndexerAccess){
-				Error_CannotCallAbstractBase (TypeManager.CSharpSignature (get));
-				return null;
-			}
-
-			type = get.ReturnType;
-			if (type.IsPointer && !ec.InUnsafe){
-				UnsafeError (loc);
-				return null;
-			}
-
-			instance_expr.CheckMarshalByRefAccess ();
-			
-			eclass = ExprClass.IndexerAccess;
-			return this;
+			return ResolveAccessor (ec, AccessorType.Get);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -7946,67 +7611,90 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ArrayList AllSetters = new ArrayList();
+			Expression e = ResolveAccessor (ec, AccessorType.Set);
+			if (e == null)
+				return null;
+
+			set_expr = Convert.ImplicitConversion (ec, right_side, type, loc);
+			return e;
+		}
+
+		Expression ResolveAccessor (EmitContext ec, AccessorType accessorType)
+		{
 			if (!CommonResolve (ec))
 				return null;
 
-			bool found_any = false, found_any_setters = false;
-
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type);
-			if (ilist.Properties != null) {
-				found_any = true;
-				foreach (Indexers.Indexer ix in ilist.Properties) {
-					if (ix.Setter != null)
-						AllSetters.Add (ix.Setter);
+			if (ilist.Methods == null) {
+				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
+						  TypeManager.CSharpName (indexer_type));
+				return null;
+			}
+
+			MethodGroupExpr mg = new IndexerMethodGroupExpr (ilist, loc);
+			mg = mg.OverloadResolve (ec, arguments, false, loc);
+			if (mg == null)
+				return null;
+
+			MethodInfo mi = (MethodInfo) mg;
+			PropertyInfo pi = null;
+			for (int i = 0; i < ilist.Methods.Count; ++i) {
+				if (ilist.Methods [i] == mi) {
+					pi = (PropertyInfo) ilist.Properties [i];
+					break;
 				}
 			}
-			if (AllSetters.Count > 0) {
-				found_any_setters = true;
-				set_arguments = (ArrayList) arguments.Clone ();
-				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
-				set = (MethodInfo)(new MethodGroupExpr (AllSetters, type, loc)).OverloadResolve (
-					ec,
-					set_arguments, false, loc);
+
+			type = pi.PropertyType;
+			if (type.IsPointer && !ec.InUnsafe)
+				UnsafeError (loc);
+
+			MethodInfo accessor;
+			if (accessorType == AccessorType.Get) {
+				accessor = get = pi.GetGetMethod (true);
+			} else {
+				accessor = set = pi.GetSetMethod (true);
+				if (accessor == null && pi.GetGetMethod (true) != null) {
+					Report.SymbolRelatedToPreviousError (pi);
+					Report.Error (200, loc, "The read only property or indexer `{0}' cannot be assigned to",
+						TypeManager.GetFullNameSignature (pi));
+					return null;
+				}
 			}
 
-			if (!found_any) {
-				Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
-					      TypeManager.CSharpName (indexer_type));
-				return null;
-			}
-
-			if (!found_any_setters) {
-				Error (154, "indexer can not be used in this context, because " +
-				       "it lacks a `set' accessor");
-				return null;
-			}
-
-			if (set == null) {
-				Invocation.Error_WrongNumArguments (loc, "this", arguments.Count);
+			if (accessor == null) {
+				Report.SymbolRelatedToPreviousError (pi);
+				Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks a `{1}' accessor",
+					TypeManager.GetFullNameSignature (pi), GetAccessorName (accessorType));
 				return null;
 			}
 
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (set.IsAbstract && this is BaseIndexerAccess){
-				Error_CannotCallAbstractBase (TypeManager.CSharpSignature (set));
-				return null;
+			if (accessor.IsAbstract && this is BaseIndexerAccess) {
+				Error_CannotCallAbstractBase (TypeManager.GetFullNameSignature (pi));
 			}
 
-			//
-			// Now look for the actual match in the list of indexers to set our "return" type
-			//
-			type = TypeManager.void_type;	// default value
-			foreach (Indexers.Indexer ix in ilist.Properties){
-				if (ix.Setter == set){
-					type = ix.PropertyInfo.PropertyType;
-					break;
+			bool must_do_cs1540_check;
+			if (!IsAccessorAccessible (ec.ContainerType, accessor, out must_do_cs1540_check)) {
+				if (set == null)
+					set = pi.GetSetMethod (true);
+				else
+					get = pi.GetGetMethod (true);
+
+				if (set != null && get != null &&
+					(set.Attributes & MethodAttributes.MemberAccessMask) != (get.Attributes & MethodAttributes.MemberAccessMask)) {
+					Report.SymbolRelatedToPreviousError (accessor);
+					Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because a `{1}' accessor is inaccessible",
+						TypeManager.GetFullNameSignature (pi), GetAccessorName (accessorType));
+				} else {
+					Report.SymbolRelatedToPreviousError (pi);
+					ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (pi));
 				}
 			}
 
 			instance_expr.CheckMarshalByRefAccess ();
-
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
@@ -8035,7 +7723,6 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
-			Argument a = (Argument) set_arguments [set_arguments.Count - 1];
 			
 			if (prepared) {
 				Invocation.EmitCall (ec, is_base_indexer, instance_expr, get,
@@ -8055,17 +7742,19 @@ namespace Mono.CSharp {
 				temp = new LocalTemporary (Type);
 				source.Emit (ec);
 				temp.Store (ec);
+				
+				Argument a = (Argument) arguments [arguments.Count - 1];
 				a.Expr = temp;
 			}
 			
-			Invocation.EmitCall (ec, is_base_indexer, instance_expr, set, set_arguments, loc, false, prepared);
+			arguments.Add (new Argument (set_expr, Argument.AType.Expression));
+			Invocation.EmitCall (ec, is_base_indexer, instance_expr, set, arguments, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
 				temp.Release (ec);
 			}
 		}
-		
 		
 		public override void Emit (EmitContext ec)
 		{

@@ -1,4 +1,14 @@
-
+2007-10-08  Marek Safar  <marek.safar@gmail.com>
+	
+	* attribute.cs (GetString, GetBoolean): Work with both literal and
+	constant.
+	
+	* ecore.cs, expresison.cs, delegate.cs (Invocation, MethodGroupExpr):
+	Moved method overload specific methods to MethodGroupExpr.
+	
+	(IndexerAccess): Re-wrote resolving mechanism, fixed many issues and
+	it should be less memory consuming.
+	
 Mon Oct 8 09:29:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* codegen.cs: remove the assembly version check until the buildbot is
