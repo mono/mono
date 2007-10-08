@@ -1,4 +1,10 @@
 
+Mon Oct 8 10:51:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c, mono-codeman.h: fixed alignment code to not
+	be wasteful, Added documentation. Added mono_code_manager_size ()
+	to gather statistics info about a code manager.
+
 Mon Oct 8 10:21:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mono-counters.h, mono-counters.c: better formatting of the output
