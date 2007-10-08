@@ -1,3 +1,7 @@
+2007-10-08  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini-amd64.c, mini-x86.c: Allow open generic contexts
+	when sharing generics and treat type variables as references.
 
 Mon Oct 8 10:55:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
