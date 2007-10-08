@@ -5931,14 +5931,17 @@ namespace System.Windows.Forms
 				tb.Width = (form.Width - 62) - tb.X;
 			}
 
-			if (form.Text != null && form.Text != string.Empty) {
+			string window_caption = form.Text;
+			window_caption = window_caption.Replace (Environment.NewLine, string.Empty);
+
+			if (window_caption != null && window_caption != string.Empty) {
 				StringFormat format = new StringFormat ();
 				format.FormatFlags = StringFormatFlags.NoWrap;
 				format.Trimming = StringTrimming.EllipsisCharacter;
 				format.LineAlignment = StringAlignment.Center;
 
 				if (tb.IntersectsWith (clip))
-					dc.DrawString (form.Text, WindowBorderFont,
+					dc.DrawString (window_caption, WindowBorderFont,
 						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
 			}

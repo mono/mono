@@ -1,5 +1,13 @@
 2007-10-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Trim NewLine before setting XPlatUI.SetText, and when setting
+	the CreateParams.
+	* ThemeWin32Classic.cs: Trim NewLine before drawing MDI children window
+	decorations.
+	[Fixes bug #330986]
+
+2007-10-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxTextRenderer.cs: Don't make this a static class, as static
 	doesn't exist in 1.1.  (Thanks jb!)
 

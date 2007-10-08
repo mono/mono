@@ -231,7 +231,8 @@ namespace System.Windows.Forms {
 				   other window style things to appear/disappear */
 				XplatUI.SetWindowStyle (window.Handle, CreateParams);
 			}
-			base.UpdateWindowText ();
+			
+			XplatUI.Text (Handle, Text.Replace (Environment.NewLine, string.Empty));
 		}
 		
 		private void SelectActiveControl ()
@@ -1317,6 +1318,8 @@ namespace System.Windows.Forms {
 				CreateParams cp = new CreateParams ();
 
 				cp.Caption = Text;
+				cp.Caption = cp.Caption.Replace (Environment.NewLine, string.Empty);
+				
 				cp.ClassName = XplatUI.DefaultClassName;
 				cp.ClassStyle = 0;
 				cp.Style = 0;
