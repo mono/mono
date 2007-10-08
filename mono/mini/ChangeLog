@@ -1,3 +1,9 @@
+
+Mon Oct 8 10:04:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: reduce the size of the trampolines, saves 160KB on
+	monodevelop startup.
+
 2007-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Allow signed displacements.
