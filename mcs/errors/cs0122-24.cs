@@ -1,4 +1,4 @@
-// cs0021-2.cs: Cannot apply indexing with [] to an expression of type `Foo'
+// CS0122: `Foo.this[int]' is inaccessible due to its protection level
 // Line: 14
 
 using System;

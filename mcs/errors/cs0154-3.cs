@@ -1,4 +1,4 @@
-// cs0154-3.cs: The property or indexer `Test.this[bool]' cannot be used in this context because it lacks the `get' accessor
+// CS0154: The property or indexer `Test.this[bool]' cannot be used in this context because it lacks a `get' accessor
 // Line: 13
 
 class Test

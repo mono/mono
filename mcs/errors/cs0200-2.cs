@@ -1,4 +1,4 @@
-// CS0200: Property or indexer 'X.this[int]' cannot be assigned to -- it is read only
+// CS0200: The read only property or indexer `X.this[int]' cannot be assigned to
 // Line: 12
 
 class X {
