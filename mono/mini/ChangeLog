@@ -1,4 +1,11 @@
 
+Mon Oct 8 12:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, tramp-x86.c: reduce the alignment requirements for
+	specific trampolines as they are not performance critical as a jump
+	target (maybe align as before only for AOT code?). This saves about
+	200 KB of native code on x86 for monodevelop startup.
+
 Mon Oct 8 10:04:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-ppc.c: reduce the size of the trampolines, saves 160KB on
