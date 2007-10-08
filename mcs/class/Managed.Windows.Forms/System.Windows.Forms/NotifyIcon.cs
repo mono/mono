@@ -149,7 +149,7 @@ namespace System.Windows.Forms {
 								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 								owner.OnClick (EventArgs.Empty);
 #if NET_2_0
-								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
+								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
 #endif
 								return;
 							}
