@@ -891,11 +891,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 			} else {
-				if (expr.eclass == ExprClass.Value) {
-					Error_ValueAssignment (loc);
-				} else {
-					expr.Error_UnexpectedKind (ec.DeclContainer, "variable, indexer or property access", loc);
-				}
+				Report.Error (1059, loc, "The operand of an increment or decrement operator must be a variable, property or indexer");
 				return null;
 			}
 

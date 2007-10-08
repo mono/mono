@@ -1,5 +1,10 @@
 2007-10-08  Marek Safar  <marek.safar@gmail.com>
 	
+	* expresison.cs (UnaryMutator.ResolveOperator): Print more useful error
+	 message.
+	
+2007-10-08  Marek Safar  <marek.safar@gmail.com>
+	
 	* attribute.cs (GetString, GetBoolean): Work with both literal and
 	constant.
 	
