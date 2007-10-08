@@ -156,9 +156,14 @@ Instruct compiler to use the latest version. Equivalent is to omit the
 switch (this currently defaults to the C# 2.0 language specification).
 .TP
 .I "ISO-1"
-Restrict compiler to use only ISO standardized features.
+Restrict compiler to use only first ISO standardized features.
 The usage of features such as generics, static classes, anonymous
 methods will lead to error.
+.TP
+.I "ISO-2"
+Restrict compiler to use only the second ISO standardized features.
+This allows the use of generics, static classes, iterators and
+anonymous methods for example.
 .TP
 .I "linq"
 This enables the C# 3.0 support.   Only a few features of C# 3.0 have
