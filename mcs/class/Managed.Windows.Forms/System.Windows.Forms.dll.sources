@@ -647,6 +647,7 @@ System.Windows.Forms/TableLayoutStyleCollection.cs
 System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextBoxRenderer.cs
+System.Windows.Forms/TextBoxTextRenderer.cs
 System.Windows.Forms/TextControl.cs
 System.Windows.Forms/TextDataFormat.cs
 System.Windows.Forms/TextFormatFlags.cs

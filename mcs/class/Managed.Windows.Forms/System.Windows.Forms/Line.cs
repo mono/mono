@@ -224,8 +224,8 @@ namespace System.Windows.Forms
 				end_str = "\u0013\u0013\u0013";
 				break;
 			}
-			dc.DrawString (end_str, last.font, last.color,  X + widths [TextLengthWithoutEnding ()] - document.viewport_x,
-					y, Document.string_format);
+
+			TextBoxTextRenderer.DrawText (dc, end_str, last.font, last.color, X + widths [TextLengthWithoutEnding ()] - document.viewport_x, y, true);
 		}
 
 		/// <summary> Find the tag on a line based on the character position, pos is 0-based</summary>
@@ -437,7 +437,7 @@ namespace System.Windows.Forms
 			this.recalc = false;
 			widths[0] = document.left_margin + indent;
 
-			w = g.MeasureString (doc.password_char, tags.font, 10000, Document.string_format).Width;
+			w = TextBoxTextRenderer.MeasureText (g, doc.password_char, tags.font).Width;
 
 			if (this.height != (int)tag.font.Height)
 				ret = true;

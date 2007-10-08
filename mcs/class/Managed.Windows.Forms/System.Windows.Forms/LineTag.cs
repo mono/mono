@@ -174,7 +174,7 @@ namespace System.Windows.Forms
 
 		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
 		{
-			dc.DrawString (line.text.ToString (start, end), font, brush, x, y, StringFormat.GenericTypographic);
+			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end), font, brush, x, y, false);
 		}
 
 		internal virtual void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
@@ -183,12 +183,12 @@ namespace System.Windows.Forms
 				int tab_index = text.IndexOf ("\t", start);
 				if (tab_index == -1)
 					tab_index = end;
-				dc.DrawString (text.Substring (start, tab_index - start), font, brush, xoff + line.widths[start],
-						y, StringFormat.GenericTypographic);
+
+				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start), font, brush, xoff + line.widths[start], y, false);
 
 				// non multilines get the unknown char 
 				if (!line.document.multiline && tab_index != end)
-					dc.DrawString ("\u0013", font, brush, xoff + line.widths[tab_index], y, Document.string_format);
+					TextBoxTextRenderer.DrawText (dc, "\u0013", font, brush, xoff + line.widths[tab_index], y, true);
 
 				start = tab_index + 1;
 			}
@@ -351,15 +351,15 @@ namespace System.Windows.Forms
 			case '\t':
 				if (!line.document.multiline)
 					goto case 10;
-				SizeF res = dc.MeasureString (" ", font, 10000, Document.string_format);
+				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", font); 
 				res.Width *= 8.0F;
 				return res;
 			case 10:
 			case 13:
-				return dc.MeasureString ("\u0013", font, 10000, Document.string_format);
+				return TextBoxTextRenderer.MeasureText (dc, "\u0013", font);
 			}
 			
-			return dc.MeasureString (text, font, 10000, Document.string_format);
+			return TextBoxTextRenderer.MeasureText (dc, text, font);
 		}
 
 		public virtual string Text ()

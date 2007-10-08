@@ -1,3 +1,13 @@
+2007-10-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxTextRenderer.cs: Abstract text measuring and drawing to this
+	class to allow us to use different backends on different platforms.
+	Linux uses the current [Draw|Measure]String backend.  Windows uses
+	the TextRenderer.[Draw|Measure]Text backend, which uses GDI instead
+	of GDI+.  This leads to better looking text and more accurate measurements
+	on Windows, fixing many of the reported issues.
+	* Line.cs, LineTag.cs: Update to use TextBoxTextRenderer.
+
 2007-10-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FolderBrowserDialog.cs: When running on Windows,
