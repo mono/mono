@@ -1,4 +1,11 @@
 
+Mon Oct 8 11:47:44 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c, mono-codeman.h: added a function to be able
+	to specify alignment per-allocation. Changed the code to align
+	the starting position instead of the size, which wouldn't work
+	with variable-alignment.
+
 Mon Oct 8 10:51:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mono-codeman.c, mono-codeman.h: fixed alignment code to not
