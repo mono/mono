@@ -1,3 +1,11 @@
+2007-10-08  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h: Runtime generic context data structure
+	definition.
+
+	* object.c: Initialization of runtime generic context at runtime
+	vtable creation time.
+
 2007-10-08  Massimiliano Mantione  <massi@ximian.com>
 	* class.c (mono_class_create_from_typedef,
 	mono_class_from_generic_parameter, mono_ptr_class_get,
