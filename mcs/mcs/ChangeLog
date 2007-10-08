@@ -1,5 +1,12 @@
 2007-10-08  Marek Safar  <marek.safar@gmail.com>
 	
+	* expresison.cs, ecore.cs: Issue extension method error message when
+	appropriate.
+	
+	* rootcontext.cs: Added ISO_2 compiler mode option.
+
+2007-10-08  Marek Safar  <marek.safar@gmail.com>
+	
 	* expresison.cs (UnaryMutator.ResolveOperator): Print more useful error
 	 message.
 	
