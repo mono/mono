@@ -2,16 +2,19 @@ Cecil is a library to generate and inspect programs and libraries in the ECMA CI
 
 * Building
 
-	Simply type the usual commands:
+	The standard Makefile works inside /mcs (SVN or tarball). If you want to build
+	Cecil as a standalone library (e.g. in /cecil SVN) you'll need to:
+
 		./configure --prefix=/your/prefix
-		make && make install
+		make -f standalone.make
+		make -f standalone.make install
 
 * Bugs
 
 	Please report bugs at:
-		http://bugzilla.ximian.com,
-		Product: Mono Class Library,
-		Component: Mono.Cecil
+		http://bugzilla.novell.com,
+		Product: Mono: Class Library
+		Component: Cecil
 
 * Layout
 
@@ -45,10 +48,10 @@ Cecil is a library to generate and inspect programs and libraries in the ECMA CI
 * Acknowledgements
 
 	Thanks to:
-		- SŽbastien Pouliot,
+		- SÃ©bastien Pouliot,
 		- Todd Berman,
 		- Martin Baulig,
-		- SŽbastien Ros,
+		- SÃ©bastien Ros,
 		- Thomas Gil
 
 * License

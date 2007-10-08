@@ -1,7 +1,7 @@
-include ../../build/config.make
+include config.make
 
 MCS = mcs
-KEY_FILE = ../mono.snk
+KEY_FILE = ../../mcs/class/mono.snk
 MCS_FLAGS = -keyfile:$(KEY_FILE)
 
 all: Mono.Cecil.dll mono-cecil.pc
