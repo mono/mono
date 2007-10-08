@@ -1,3 +1,9 @@
+
+Mon Oct 8 09:29:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* codegen.cs: remove the assembly version check until the buildbot is
+	fixed.
+
 2007-10-07  Jb Evain  <jbevain@novell.com>
 
 	* attribute.cs (Attribute.GetString): if the value

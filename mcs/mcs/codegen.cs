@@ -1358,10 +1358,13 @@ namespace Mono.CSharp {
 				if (value == null || value.Length == 0)
 					return;
 
+				/* FIXME: the buildbot code needs to be fixed first to not use
+				 * numbers bigger than ushrot.MaxValue, which svn revisions can be
 				if (!IsValidAssemblyVersion (value)) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
 				}
+				*/
 			}
 
 #if GMCS_SOURCE
