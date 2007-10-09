@@ -1,3 +1,10 @@
+
+Tue Oct 9 09:47:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h, mini-ops.h, inssel-ppc.brg, cpu-g4.md:
+	removed more internal usage of the r11 register and made it available
+	to the register allocator.
+
 2007-10-08  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, mini-amd64.c, mini-x86.c: Allow open generic contexts
