@@ -1,3 +1,12 @@
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_unary_test.sh: fixed an invalid struct that has no fields,
+	this was not the subject of the tests.
+	* make_newobj_test.sh: added, generate tests for newobj.
+	* make_tests.sh: added the new tests for newobj and some corner
+	cases of local/arg load/store.
+
+
 2007-10-04 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_store_indirect_test.sh: added, generate tests for stind.X.
