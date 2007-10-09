@@ -1,3 +1,8 @@
+2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: In 2.0 System.Design.dll has cyclic dep on
+	  System.Drawing.Design.dll.
+
 2007-09-11  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (net_2_0_dirs): added the System.Web.Extensions.Design

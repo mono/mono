@@ -83,6 +83,7 @@ common_dirs := \
 	System.Messaging	        \
 	System.ServiceProcess           \
 	System.Drawing.Design		\
+	System.Design			\
 	Mono.Http			\
 	Microsoft.Vsa			\
 	Mono.Cairo                      \

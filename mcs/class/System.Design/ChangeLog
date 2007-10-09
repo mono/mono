@@ -1,5 +1,9 @@
 2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: in 2.0 there is cyclic dep with Sys.Drawing.Design.dll.
+
+2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Design.dll.sources : more .NET 2.0 types.
 	* System.Design_test.dll.sources :
 	  added Test/Sys.Win.Forms.Design/MenuCommandsTest.cs
