@@ -2,6 +2,10 @@
 
 	Integration of patches from Carlo Kok <ck@remobjects.com>:
 
+	* Mono.Cecil/FieldDefinition.cs:
+		Clean or set the HasFieldMarshal flag when setting
+		MarshalSpecs on fields.
+
 	* Mono.Cecil/GenericInstanceType.cs:
 		Properly initialize the IsValueType from the element type.
 
