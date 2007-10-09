@@ -1,5 +1,11 @@
 2007-10-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LineTag.cs, RichTextBox.cs, TextBoxBase.cs, TextControl.cs: Refactor to
+	store a Color structure and use the ResPool for back color instead of
+	holding onto brushes.
+
+2007-10-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Fix how we calculate the end of the tag we are drawing.
 	[Fixes bug #325592]
 

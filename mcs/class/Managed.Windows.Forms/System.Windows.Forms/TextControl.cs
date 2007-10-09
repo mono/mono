@@ -1466,8 +1466,8 @@ namespace System.Windows.Forms {
 						continue;
 					}
 
-					if (tag.back_color != null) {
-						g.FillRectangle (tag.back_color, tag.X + line.X - viewport_x,
+					if (tag.back_color != Color.Empty) {
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.back_color), tag.X + line.X - viewport_x,
 								line_y + tag.shift, tag.Width, line.height);
 					}
 
@@ -3309,7 +3309,7 @@ namespace System.Windows.Forms {
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-				SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+				SolidBrush color, Color back_color, FormatSpecified specified)
 		{
 			Line    l;
 

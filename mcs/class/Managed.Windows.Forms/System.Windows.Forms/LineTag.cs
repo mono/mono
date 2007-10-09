@@ -41,11 +41,10 @@ namespace System.Windows.Forms
 
 		// In 2.0 tags can have background colours.  I'm not going to #ifdef
 		// at this level though since I want to reduce code paths
-		internal SolidBrush	back_color;  
+		internal Color		back_color;  
 
 		// Payload; text
 		internal int		start;		// start, in chars; index into Line.text
-		internal bool		r_to_l;		// Which way is the font
 
 		// Drawing support
 		internal int		height;		// Height in pixels of the text this tag describes
@@ -244,7 +243,7 @@ namespace System.Windows.Forms
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText (Line line, int start, int length, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+		internal static bool FormatText (Line line, int start, int length, Font font, SolidBrush color, Color back_color, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -329,7 +328,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		private static void SetFormat (LineTag tag, Font font, SolidBrush color, SolidBrush back_color, FormatSpecified specified)
+		private static void SetFormat (LineTag tag, Font font, SolidBrush color, Color back_color, FormatSpecified specified)
 		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
 				tag.font = font;

@@ -2045,7 +2045,7 @@ namespace System.Windows.Forms {
 					line = document.GetLine(i);
 					LineTag.FormatText(line, 1, line.text.Length, Font,
 							ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor),
-							null, FormatSpecified.Font | FormatSpecified.Color);
+							Color.Empty, FormatSpecified.Font | FormatSpecified.Color);
 				}
 				document.ResumeRecalc (false);
 
