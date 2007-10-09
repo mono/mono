@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Text;
 using System.Collections;
 
 namespace Mono.ILASM {
@@ -32,8 +33,31 @@ namespace Mono.ILASM {
                         this.param_list = param_list;
 
                         // We just need these to not break the interface
-                        //full_name = String.Empty;
+                        full_name = BuildTypeName ();
                         //sig_mod = String.Empty;
+                }
+
+                private String BuildTypeName ()
+                {
+                        StringBuilder builder = new StringBuilder ();
+                        builder.Append ("method ");
+                        if (callconv != PEAPI.CallConv.Default) {
+                                builder.Append (callconv.ToString ());
+                                builder.Append (' ');
+                        }
+                        builder.Append (ret.FullName);
+                        builder.Append ("*(");
+                        if (param_list != null) {
+                                bool first = true;
+                                foreach (ParamDef paramdef in param_list) {
+                                        if (!first)
+                                                builder.Append (',');
+                                        builder.Append (paramdef.TypeName);
+                                        first = false;
+                                }
+                        }
+                        builder.Append (')');
+                        return builder.ToString ();
                 }
 
                 public override BaseTypeRef Clone ()

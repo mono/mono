@@ -1,3 +1,9 @@
+2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodPointerTypeRef.cs (.ctor): generate
+	full name of the method pointer. This is required
+	to alow overloading with method pointers.
+
 2007-07-18  Jb Evain  <jbevain@novell.com>
 
 	* InstrTable.cs: add brzero alias.
