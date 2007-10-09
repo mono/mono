@@ -1,3 +1,7 @@
+2007-10-09  Nestor Salceda  <nestor.salceda@gmail.com>
+
+	* mono-cecil.pc.in:  Updated the version number.
+
 2007-10-09  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/Instruction.cs
