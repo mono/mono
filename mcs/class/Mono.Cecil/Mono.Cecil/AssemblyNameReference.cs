@@ -162,7 +162,7 @@ namespace Mono.Cecil {
 				}
 				sb.Append (sep);
 				sb.Append ("Culture=");
-				sb.Append (m_culture == string.Empty ? "neutral" : m_culture);
+				sb.Append (m_culture == null || m_culture == string.Empty ? "neutral" : m_culture);
 				sb.Append (sep);
 				sb.Append ("PublicKeyToken=");
 				if (this.PublicKeyToken != null && m_publicKeyToken.Length > 0) {
