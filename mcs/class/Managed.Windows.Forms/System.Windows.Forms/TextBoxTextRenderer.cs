@@ -58,18 +58,18 @@ namespace System.Windows.Forms
 			sf_nonprinting.FormatFlags = StringFormatFlags.DisplayFormatControl;			
 		}
 		
-		public static void DrawText (Graphics g, string text, Font font, Brush brush, float x, float y, bool showNonPrint)
+		public static void DrawText (Graphics g, string text, Font font, Color color, float x, float y, bool showNonPrint)
 		{
 			if (!use_textrenderer) {
 				if (showNonPrint)
-					g.DrawString (text, font, brush, x, y, sf_nonprinting);
+					g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (color), x, y, sf_nonprinting);
 				else
-					g.DrawString (text, font, brush, x, y, StringFormat.GenericTypographic);
+					g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (color), x, y, StringFormat.GenericTypographic);
 			} else {
 				if (showNonPrint)
-					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), (brush as SolidBrush).Color, TextFormatFlags.NoPadding, false);
+					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding, false);
 				else
-					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), (brush as SolidBrush).Color, TextFormatFlags.NoPadding, false);
+					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding, false);
 			}
 		}
 		

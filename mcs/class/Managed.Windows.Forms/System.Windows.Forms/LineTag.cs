@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 		#region	Local Variables;
 		// Payload; formatting
 		internal Font		font;		// System.Drawing.Font object for this tag
-		internal SolidBrush	color;		// The font color for this tag
+		internal Color		color;		// The font color for this tag
 
 		// In 2.0 tags can have background colours.  I'm not going to #ifdef
 		// at this level though since I want to reduce code paths
@@ -171,23 +171,23 @@ namespace System.Windows.Forms
 			back_color = other.back_color;
 		}
 
-		internal virtual void Draw (Graphics dc, Brush brush, float x, float y, int start, int end)
+		internal virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
-			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end), font, brush, x, y, false);
+			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end), font, color, x, y, false);
 		}
 
-		internal virtual void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
+		internal virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
 			while (start < end) {
 				int tab_index = text.IndexOf ("\t", start);
 				if (tab_index == -1)
 					tab_index = end;
 
-				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start), font, brush, xoff + line.widths[start], y, false);
+				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start), font, color, xoff + line.widths[start], y, false);
 
 				// non multilines get the unknown char 
 				if (!line.document.multiline && tab_index != end)
-					TextBoxTextRenderer.DrawText (dc, "\u0013", font, brush, xoff + line.widths[tab_index], y, true);
+					TextBoxTextRenderer.DrawText (dc, "\u0013", font, color, xoff + line.widths[tab_index], y, true);
 
 				start = tab_index + 1;
 			}
@@ -243,7 +243,7 @@ namespace System.Windows.Forms
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText (Line line, int start, int length, Font font, SolidBrush color, Color back_color, FormatSpecified specified)
+		internal static bool FormatText (Line line, int start, int length, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -333,7 +333,7 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		private static void SetFormat (LineTag tag, Font font, SolidBrush color, Color back_color, FormatSpecified specified)
+		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
 				tag.font = font;

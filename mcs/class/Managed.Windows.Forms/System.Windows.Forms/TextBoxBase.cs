@@ -374,12 +374,10 @@ namespace System.Windows.Forms {
 			set {
 				int	i;
 				int	l;
-				SolidBrush brush;
 
 				document.Empty();
 
 				l = value.Length;
-				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.ForeColor);
 
 				document.SuspendRecalc ();
 				for (i = 0; i < l; i++) {
@@ -393,7 +391,7 @@ namespace System.Windows.Forms {
 					if (value [i].EndsWith ("\r"))
 						ending = LineEnding.Hard;
 
-					document.Add (i + 1, CaseAdjust (value [i]), alignment, Font, brush, ending);
+					document.Add (i + 1, CaseAdjust (value[i]), alignment, Font, this.ForeColor, ending);
 				}
 
 				document.ResumeRecalc (true);
@@ -2044,7 +2042,7 @@ namespace System.Windows.Forms {
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
 					LineTag.FormatText(line, 1, line.text.Length, Font,
-							ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor),
+							ForeColor,
 							Color.Empty, FormatSpecified.Font | FormatSpecified.Color);
 				}
 				document.ResumeRecalc (false);

@@ -55,7 +55,7 @@ namespace System.Windows.Forms {
 		private int		rtf_skip_width;
 		private int		rtf_skip_count;
 		private StringBuilder	rtf_line;
-		private SolidBrush	rtf_color;
+		private Color		rtf_color;
 		private RTF.Font	rtf_rtffont;
 		private int		rtf_rtffont_size;
 		private FontStyle	rtf_rtfstyle;
@@ -254,7 +254,7 @@ namespace System.Windows.Forms {
 					// Font changes always set the whole doc to that font
 					start = document.GetLine(1);
 					end = document.GetLine(document.Lines);
-					document.FormatText(start, 1, end, end.text.Length + 1, base.Font, null, Color.Empty, FormatSpecified.Font);
+					document.FormatText(start, 1, end, end.text.Length + 1, base.Font, Color.Empty, Color.Empty, FormatSpecified.Font);
 				}
 			}
 		}
@@ -534,12 +534,12 @@ namespace System.Windows.Forms {
 
 				start = document.selection_start.line.FindTag (document.selection_start.pos);
 				end = document.selection_start.line.FindTag (document.selection_end.pos);
-				color = start.color.Color;
+				color = start.color;
 
 				tag = start;
 				while (tag != null && tag != end) {
 
-					if (!color.Equals (tag.color.Color))
+					if (!color.Equals (tag.color))
 						return Color.Empty;
 
 					tag = document.NextTag (tag);
@@ -560,7 +560,7 @@ namespace System.Windows.Forms {
 
 				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
 						document.selection_end.line, document.selection_end.pos + 1, null,
-						new SolidBrush (value),	Color.Empty, FormatSpecified.Color);
+						value, Color.Empty, FormatSpecified.Color);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
@@ -606,7 +606,7 @@ namespace System.Windows.Forms {
 
 				document.FormatText (document.selection_start.line, document.selection_start.pos + 1,
 						document.selection_end.line, document.selection_end.pos + 1, value,
-						null, Color.Empty, FormatSpecified.Font);
+						Color.Empty, Color.Empty, FormatSpecified.Font);
 
 				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
@@ -1402,9 +1402,9 @@ namespace System.Windows.Forms {
 							if (color != null) {
 								FlushText(rtf, false);
 								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
-									this.rtf_color = new SolidBrush(ForeColor);
+									this.rtf_color = ForeColor;
 								} else {
-									this.rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
+									this.rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
 								}
 								FlushText (rtf, false);
 							}
@@ -1617,16 +1617,16 @@ namespace System.Windows.Forms {
 
 			font = new Font(rtf_rtffont.Name, rtf_rtffont_size, rtf_rtfstyle);
 
-			if (rtf_color == null) {
+			if (rtf_color == Color.Empty) {
 				System.Windows.Forms.RTF.Color color;
 
 				// First color in table is default
 				color = System.Windows.Forms.RTF.Color.GetColor(rtf, 0);
 
 				if ((color == null) || (color.Red == -1 && color.Green == -1 && color.Blue == -1)) {
-					rtf_color = new SolidBrush(ForeColor);
+					rtf_color = ForeColor;
 				} else {
-					rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
+					rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
 				}
 				
 			}
@@ -1689,7 +1689,7 @@ namespace System.Windows.Forms {
 			rtf_skip_width = 0;
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
-			rtf_color = null;
+			rtf_color = Color.Empty;
 			rtf_rtffont_size = (int)this.Font.Size;
 			rtf_rtfalign = HorizontalAlignment.Left;
 			rtf_rtfstyle = FontStyle.Regular;
@@ -1842,7 +1842,7 @@ namespace System.Windows.Forms {
 			// use this.Font and this.ForeColor but the font/color from the first tag
 			tag = LineTag.FindTag(start_line, pos);
 			font = tag.font;
-			color = ((SolidBrush)tag.color).Color;
+			color = tag.color;
 			fonts.Add(font.Name);
 			colors.Add(color);
 
@@ -1864,8 +1864,8 @@ namespace System.Windows.Forms {
 						}
 					}
 
-					if (((SolidBrush)tag.color).Color != color) {
-						color = ((SolidBrush)tag.color).Color;
+					if (tag.color != color) {
+						color = tag.color;
 						if (!colors.Contains(color)) {
 							colors.Add(color);
 						}
@@ -1942,8 +1942,8 @@ namespace System.Windows.Forms {
 						font = tag.font;
 					}
 
-					if (((SolidBrush)tag.color).Color != color) {
-						color = ((SolidBrush)tag.color).Color;
+					if (tag.color != color) {
+						color = tag.color;
 						sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
 					}
 					if (length != sb.Length) {

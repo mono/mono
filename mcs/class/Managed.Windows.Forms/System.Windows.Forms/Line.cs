@@ -77,7 +77,7 @@ namespace System.Windows.Forms
 			this.ending = ending;
 		}
 
-		internal Line (Document document, int LineNo, string Text, Font font, SolidBrush color, LineEnding ending) : this (document, ending)
+		internal Line (Document document, int LineNo, string Text, Font font, Color color, LineEnding ending) : this (document, ending)
 		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
@@ -93,7 +93,7 @@ namespace System.Windows.Forms
 			tags.color = color;				
 		}
 
-		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color, LineEnding ending) : this(document, ending)
+		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending) : this(document, ending)
 		{
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 

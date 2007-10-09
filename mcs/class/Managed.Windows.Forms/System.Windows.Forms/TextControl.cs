@@ -263,7 +263,7 @@ namespace System.Windows.Forms {
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
 			owner.VisibleChanged += new EventHandler(owner_VisibleChanged);
 
-			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.None);
+			Add (1, String.Empty, owner.Font, owner.ForeColor, LineEnding.None);
 
 			undo = new UndoManager (this);
 
@@ -904,7 +904,7 @@ namespace System.Windows.Forms {
 			lines = 0;
 
 			// We always have a blank line
-			Add (1, String.Empty, owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush (owner.ForeColor), LineEnding.None);
+			Add (1, String.Empty, owner.Font, owner.ForeColor, LineEnding.None);
 			
 			this.RecalculateDocument(owner.CreateGraphicsInternal());
 			PositionCaret(0, 0);
@@ -1335,7 +1335,7 @@ namespace System.Windows.Forms {
 				LineTag tag = line.tags;
 				while (tag != null) {
 					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}'>",
-							tag.GetType (), tag.start, tag.Length, tag.font, tag.color.Color);
+							tag.GetType (), tag.start, tag.Length, tag.font, tag.color);
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.next;
@@ -1353,12 +1353,8 @@ namespace System.Windows.Forms {
 			int end;		// Last line to draw
 			StringBuilder text;	// String representing the current line
 			int line_no;
-			Brush tag_brush;
-			Brush current_brush;
-			Brush disabled_brush;
-			Brush readonly_brush;
-			Brush hilight;
-			Brush hilight_text;
+			Color tag_color;
+			Color current_color;
 
 			// First, figure out from what line to what line we need to draw
 
@@ -1392,14 +1388,9 @@ namespace System.Windows.Forms {
 				Console.WriteLine ("E: {0}", GetLine (end).text);
 			#endif
 
-			disabled_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorGrayText);
-			readonly_brush = ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControlText);
-			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
-			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlightText);
-
 			// Non multiline selection can be handled outside of the loop
 			if (!multiline && selection_visible && owner.ShowSelection) {
-				g.FillRectangle (hilight,
+				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 						selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
 						selection_start.line.Y,
@@ -1445,14 +1436,14 @@ namespace System.Windows.Forms {
 						line_selection_end = line_selection_start;
 					} else if (multiline) {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
-						g.FillRectangle (hilight,
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 								line.widths [line_selection_start - 1] + line.X - viewport_x, 
 								line_y, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
 								line.height);
 					}
 				}
 
-				current_brush = line.tags.color;
+				current_color = line.tags.color;
 				while (tag != null) {
 
 					// Skip empty tags
@@ -1471,37 +1462,37 @@ namespace System.Windows.Forms {
 								line_y + tag.shift, tag.Width, line.height);
 					}
 
-					tag_brush = tag.color;
-					current_brush = tag_brush;
+					tag_color = tag.color;
+					current_color = tag_color;
 
 					if (!owner.Enabled) {
-						Color a = ((SolidBrush) tag.color).Color;
+						Color a = tag.color;
 						Color b = ThemeEngine.Current.ColorWindowText;
 
 						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
-							tag_brush = disabled_brush;
+							tag_color = ThemeEngine.Current.ColorGrayText;
 						}
 					} else if (owner.read_only && !owner.backcolor_set) {
-						tag_brush = readonly_brush;
+						tag_color = ThemeEngine.Current.ColorControlText;
 					}
 
 					int tag_pos = tag.start;
-					current_brush = tag_brush;
+					current_color = tag_color;
 					while (tag_pos < tag.start + tag.Length) {
 						int old_tag_pos = tag_pos;
 
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
-							current_brush = hilight_text;
+							current_color = ThemeEngine.Current.ColorHighlightText;
 							tag_pos = Math.Min (tag.End, line_selection_end);
 						} else if (tag_pos < line_selection_start) {
-							current_brush = tag_brush;
+							current_color = tag_color;
 							tag_pos = Math.Min (tag.End, line_selection_start);
 						} else {
-							current_brush = tag_brush;
+							current_color = tag_color;
 							tag_pos = tag.End;
 						}
 
-						tag.Draw (g, current_brush,
+						tag.Draw (g, current_color,
 								line.X - viewport_x,
 								line_y + tag.shift,
 								old_tag_pos - 1, Math.Min (tag.start + tag.Length, tag_pos) - 1,
@@ -2239,12 +2230,12 @@ namespace System.Windows.Forms {
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
-		internal void Add (int LineNo, string Text, Font font, SolidBrush color, LineEnding ending)
+		internal void Add (int LineNo, string Text, Font font, Color color, LineEnding ending)
 		{
 			Add (LineNo, Text, alignment, font, color, ending);
 		}
 
-		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, SolidBrush color, LineEnding ending)
+		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
 			Line	add;
 			Line	line;
@@ -3309,7 +3300,7 @@ namespace System.Windows.Forms {
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-				SolidBrush color, Color back_color, FormatSpecified specified)
+				Color color, Color back_color, FormatSpecified specified)
 		{
 			Line    l;
 
@@ -3849,12 +3840,12 @@ namespace System.Windows.Forms {
 			return (int) (picture.Height + 0.5F);
 		}
 
-		internal override void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end)
+		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
 		{
 			picture.DrawImage (dc, xoff + line.widths [start], y, false);
 		}
 
-		internal override void Draw (Graphics dc, Brush brush, float xoff, float y, int start, int end, string text)
+		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
 			picture.DrawImage (dc, xoff + + line.widths [start], y, false);
 		}
