@@ -1,3 +1,9 @@
+2007-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c: Rework the specific trampoline code to make it smaller.
+
+	* mini-amd64.h mini-amd64.c: Export amd64_patch as mono_amd64_patch.
+
 2007-10-09  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
