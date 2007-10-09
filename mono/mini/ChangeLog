@@ -1,3 +1,8 @@
+2007-10-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Added `field_info_type_offset' and
+	`field_info_offset_offset'.	
 
 Tue Oct 9 09:47:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
