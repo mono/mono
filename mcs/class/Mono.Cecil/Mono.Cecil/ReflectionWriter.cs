@@ -57,6 +57,7 @@ namespace Mono.Cecil {
 		ArrayList m_fieldStack;
 		ArrayList m_genericParamStack;
 		IDictionary m_typeSpecTokenCache;
+		IDictionary m_memberRefTokenCache;
 
 		uint m_methodIndex;
 		uint m_fieldIndex;
@@ -134,6 +135,7 @@ namespace Mono.Cecil {
 			m_fieldStack = new ArrayList ();
 			m_genericParamStack = new ArrayList ();
 			m_typeSpecTokenCache = new Hashtable ();
+			m_memberRefTokenCache = new Hashtable ();
 
 			m_methodIndex = 1;
 			m_fieldIndex = 1;
@@ -199,6 +201,39 @@ namespace Mono.Cecil {
 
 		public MetadataToken GetMemberRefToken (MemberReference member)
 		{
+			if (member is MethodSpecification)
+				return GetMemberRefToken (((MethodSpecification) member).ElementMethod);
+			if (member is IMemberDefinition)
+				return member.MetadataToken;
+			if (m_memberRefTokenCache.Contains (member))
+				return (MetadataToken) m_memberRefTokenCache [member];
+
+			MemberRefTable mrTable = m_tableWriter.GetMemberRefTable ();
+
+			uint sig = 0;
+			if (member is FieldReference)
+				sig = m_sigWriter.AddFieldSig (GetFieldSig ((FieldReference) member));
+			else if (member is MethodReference)
+				sig = m_sigWriter.AddMethodRefSig (GetMethodRefSig ((MethodReference) member));
+
+			MetadataToken declaringType = GetTypeDefOrRefToken (member.DeclaringType);
+			uint name = m_mdWriter.AddString (member.Name);
+
+			for (int i = 0; i < mrTable.Rows.Count; i++) {
+				MemberRefRow row = mrTable [i];
+				if (row.Class == declaringType && row.Name == name && row.Signature == sig)
+					return MetadataToken.FromMetadataRow (TokenType.MemberRef, i);
+			}
+
+			MemberRefRow mrRow = m_rowWriter.CreateMemberRefRow (
+				declaringType,
+				name,
+				sig);
+
+			mrTable.Rows.Add (mrRow);
+			member.MetadataToken = new MetadataToken (
+				TokenType.MemberRef, (uint) mrTable.Rows.Count);
+			m_memberRefTokenCache [member] = member.MetadataToken;
 			return member.MetadataToken;
 		}
 
@@ -345,30 +380,6 @@ namespace Mono.Cecil {
 
 				trTable.Rows.Add (trRow);
 				t.MetadataToken = new MetadataToken (TokenType.TypeRef, (uint) trTable.Rows.Count);
-			}
-		}
-
-		public override void VisitMemberReferenceCollection (MemberReferenceCollection members)
-		{
-			if (members.Count == 0)
-				return;
-
-			MemberRefTable mrTable = m_tableWriter.GetMemberRefTable ();
-			foreach (MemberReference member in members) {
-				uint sig = 0;
-				if (member is FieldReference)
-					sig = m_sigWriter.AddFieldSig (GetFieldSig (member as FieldReference));
-				else if (member is MethodReference)
-					sig = m_sigWriter.AddMethodRefSig (GetMethodRefSig ((MethodReference) member));
-
-				MemberRefRow mrRow = m_rowWriter.CreateMemberRefRow (
-					GetTypeDefOrRefToken (member.DeclaringType),
-					m_mdWriter.AddString (member.Name),
-					sig);
-
-				mrTable.Rows.Add (mrRow);
-				member.MetadataToken = new MetadataToken (
-					TokenType.MemberRef, (uint) mrTable.Rows.Count);
 			}
 		}
 

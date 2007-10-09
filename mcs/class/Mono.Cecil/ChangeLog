@@ -1,3 +1,8 @@
+2007-10-09  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionWriter.cs: check for duplicates
+	in the MemberRef row.
+
 2007-10-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* standalone.make: Revert changes so standalone Cecil (in SVN) can
