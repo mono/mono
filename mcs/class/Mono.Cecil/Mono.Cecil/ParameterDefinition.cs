@@ -74,7 +74,13 @@ namespace Mono.Cecil {
 
 		public MarshalSpec MarshalSpec {
 			get { return m_marshalDesc; }
-			set { m_marshalDesc = value; }
+			set {
+				m_marshalDesc = value;
+				if (value != null)
+					m_attributes |= ParameterAttributes.HasFieldMarshal;
+				else
+					m_attributes &= ~ParameterAttributes.HasFieldMarshal;
+			}
 		}
 
 		#region ParameterAttributes

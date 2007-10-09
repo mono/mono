@@ -2,6 +2,10 @@
 
 	Integration of patches from Carlo Kok <ck@remobjects.com>:
 
+	* Mono.Cecil/ParameterDefinition.cs:
+		Clean or set the HasFieldMarshal flag when setting
+		MarshalSpecs on parameters.
+
 	* Mono.Cecil/AssemblyNameReference.cs:
 		Protect against null culture.
 
