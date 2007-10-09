@@ -1,5 +1,12 @@
 2007-10-09  Jb Evain  <jbevain@novell.com>
 
+	Integration of patches from Carlo Kok <ck@remobjects.com>:
+
+	* Mono.Cecil/GenericInstanceType.cs:
+		Properly initialize the IsValueType from the element type.
+
+2007-10-09  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/ReflectionWriter.cs: check for duplicates
 	in the MemberRef row.
 

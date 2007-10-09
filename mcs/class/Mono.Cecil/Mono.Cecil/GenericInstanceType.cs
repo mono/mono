@@ -65,6 +65,7 @@ namespace Mono.Cecil {
 
 		public GenericInstanceType (TypeReference elementType) : base (elementType)
 		{
+			m_isValueType = elementType.IsValueType;
 		}
 	}
 }
