@@ -1449,7 +1449,12 @@ parameter_modifiers
 parameter_modifier
 	: REF			{ $$ = Parameter.Modifier.REF; }
 	| OUT			{ $$ = Parameter.Modifier.OUT; }
-	| THIS			{ $$ = Parameter.Modifier.This; }
+	| THIS
+	  {
+	  	if (RootContext.Version <= LanguageVersion.ISO_2)
+	  		Report.FeatureIsNotISO1 (GetLocation ($1), "extension methods");
+		$$ = Parameter.Modifier.This;
+	  }
 	;
 
 parameter_array
