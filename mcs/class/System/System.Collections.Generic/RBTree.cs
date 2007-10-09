@@ -231,7 +231,7 @@ namespace System.Collections.Generic
 					throw new IndexOutOfRangeException ("index");
 
 				Node current = root;
-				while (current.Size > 1) {
+				while (current != null) {
 					int left_size = current.left == null ? 0 : (int) current.left.Size;
 					if (index == left_size)
 						return current;
@@ -242,10 +242,7 @@ namespace System.Collections.Generic
 						current = current.right;
 					}
 				}
-
-				if (index != 0)
-					throw new SystemException ("Internal Error: index calculation");
-				return current;
+				throw new SystemException ("Internal Error: index calculation");
 			}
 		}
 
@@ -370,9 +367,6 @@ namespace System.Collections.Generic
 
 			if (curpos != 0 && current.IsBlack)
 				rebalance_delete (path);
-
-			// no need for a try .. finally, this is only used to mitigate allocations/gc
-			release_path (path);
 
 			if (root != null && !root.IsBlack)
 				throw new SystemException ("Internal Error: root is not black");
