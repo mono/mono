@@ -842,8 +842,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (RootContext.Version == LanguageVersion.Default &&
-			    name == "global")
+			if (RootContext.Version != LanguageVersion.ISO_1 && name == "global")
 				Report.Warning (440, 2, loc, "An alias named `global' will not be used when resolving 'global::';" +
 					" the global namespace will be used instead");
 

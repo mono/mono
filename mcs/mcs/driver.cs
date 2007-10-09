@@ -1396,13 +1396,17 @@ namespace Mono.CSharp
 						SetupV2 ();
 						return true;
 #if GMCS_SOURCE
+					case "iso-2":
+						RootContext.Version = LanguageVersion.ISO_2;
+						return true;
+					
 					case "linq":
 						RootContext.Version = LanguageVersion.LINQ;
 						Tokenizer.InitializeLinqKeywords ();
 						return true;
 #endif
 				}
-				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1' or `Default'", value);
+				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or `Default'", value);
 				return true;
 
 			case "/codepage":

@@ -1,3 +1,10 @@
+2007-10-09  Marek Safar  <marek.safar@gmail.com>
+	
+	* report.cs, anonymous.cs, driver.cs, expression.cs: Added few ISO-2
+	checks.
+	
+	* namespace.cs (UsingAlias): Do correct version check.
+	
 2007-10-08  Marek Safar  <marek.safar@gmail.com>
 	
 	* expresison.cs, ecore.cs: Issue extension method error message when

@@ -5849,6 +5849,9 @@ namespace Mono.CSharp {
 		public ImplicitlyTypedArrayCreation (string rank, ArrayList initializers, Location loc)
 			: base (null, rank, initializers, loc)
 		{
+			if (RootContext.Version <= LanguageVersion.ISO_2)
+				Report.FeatureIsNotISO1 (loc, "implicitly typed arrays");
+				
 			if (rank.Length > 2) {
 				while (rank [++dimensions] == ',');
 			} else {
