@@ -1,3 +1,9 @@
+2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: add verification of the newobj opcode. verification
+	of delegate instantation still missing due ldftn and virldftn not
+	pushing the function type on stack
+
 2007-10-08  Mark Probst  <mark.probst@gmail.com>
 
 	* class-internals.h: Runtime generic context data structure
