@@ -86,6 +86,10 @@ namespace System.Web.UI.Design
 		public virtual bool ShouldCodeSerialize { get { throw new NotImplementedException (); } set { throw new NotImplementedException (); } }
 
 #if NET_2_0
+		public ExpressionBindingCollection Expressions {
+			get { throw new NotImplementedException (); }
+		}
+
 		public override void Initialize (IComponent component)
 		{
 			throw new NotImplementedException ();

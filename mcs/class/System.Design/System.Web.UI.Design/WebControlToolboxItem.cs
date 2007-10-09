@@ -51,7 +51,7 @@ namespace System.Web.UI.Design
 		}
 
 #if NET_2_0
-		public WebControlToolboxItem (SerializationInfo info, StreamingContext context)
+		protected WebControlToolboxItem (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}

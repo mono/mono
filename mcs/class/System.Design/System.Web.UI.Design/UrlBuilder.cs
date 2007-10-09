@@ -53,7 +53,7 @@ namespace System.Web.UI.Design
 
 #if NET_2_0
 		[MonoTODO]
-		public static string BuildUrl (IServiceProvider serviceProvider, Control owner, string initialUrl, string caption, string filter, UrlBuilderOptions options)
+		public static string BuildUrl (IServiceProvider serviceProvider, System.Windows.Forms.Control owner, string initialUrl, string caption, string filter, UrlBuilderOptions options)
 		{
 			throw new NotImplementedException ();
 		}

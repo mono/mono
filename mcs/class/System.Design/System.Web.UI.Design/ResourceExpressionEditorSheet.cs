@@ -59,7 +59,6 @@ namespace System.Web.UI.Design
 
 		[MonoTODO]
 		[DefaultValue ("")]
-		[TypeConverter ("")]
 		public string ResourceKey {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
