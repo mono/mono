@@ -178,7 +178,7 @@ namespace Mono.Cecil {
 			if (prop.HasConstant)
 				np.Constant = prop.Constant;
 
-			if (context != null && context.GenericContext.Type is TypeDefinition) {
+			if (context.GenericContext.Type is TypeDefinition) {
 				TypeDefinition type = context.GenericContext.Type as TypeDefinition;
 				if (prop.SetMethod != null)
 					np.SetMethod = type.Methods.GetMethod (prop.SetMethod.Name, prop.SetMethod.Parameters);
