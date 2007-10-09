@@ -2,6 +2,13 @@
 
 	Integration of patches from Carlo Kok <ck@remobjects.com>:
 
+	* Mono.Cecil.Cil/Document.cs
+	  Mono.Cecil.Cil/DocumentType.cs
+	  Mono.Cecil.Cil/DocumentLanguage.cs
+	  Mono.Cecil.Cil/DocumentLanguageVendor.cs:
+		Use plain guids for Document properties so it's easy
+		for third party document providers to use their own.
+
 	* Mono.Cecil/ParameterDefinition.cs:
 		Clean or set the HasFieldMarshal flag when setting
 		MarshalSpecs on parameters.

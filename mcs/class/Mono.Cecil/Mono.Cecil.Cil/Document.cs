@@ -28,14 +28,16 @@
 
 namespace Mono.Cecil.Cil {
 
+	using System;
+
 	public class Document {
 
 		string m_url;
 
-		DocumentType m_type;
+		Guid m_type;
 		DocumentHashAlgorithm m_hashAlgorithm;
-		DocumentLanguage m_language;
-		DocumentLanguageVendor m_languageVendor;
+		Guid m_language;
+		Guid m_languageVendor;
 
 		byte [] m_hash;
 
@@ -44,7 +46,7 @@ namespace Mono.Cecil.Cil {
 			set { m_url = value; }
 		}
 
-		public DocumentType Type {
+		public Guid Type {
 			get { return m_type; }
 			set { m_type = value; }
 		}
@@ -54,12 +56,12 @@ namespace Mono.Cecil.Cil {
 			set { m_hashAlgorithm = value; }
 		}
 
-		public DocumentLanguage Language {
+		public Guid Language {
 			get { return m_language; }
 			set { m_language = value; }
 		}
 
-		public DocumentLanguageVendor LanguageVendor {
+		public Guid LanguageVendor {
 			get { return m_languageVendor; }
 			set { m_languageVendor = value; }
 		}
