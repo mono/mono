@@ -1,4 +1,8 @@
 2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+	* make_tests.sh: unbox_byref_like test was flawed, it was not testing
+	the proper unverifable condition.
+
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_unary_test.sh: fixed an invalid struct that has no fields,
 	this was not the subject of the tests.
