@@ -1,5 +1,11 @@
 2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: don't tread typedbyref as allways unverifable,
+	so uses, like (ld/st)loc.0 are valid. verify for the cases
+	that it matters, like boxing related operations.
+
+2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: add verification of the newobj opcode. verification
 	of delegate instantation still missing due ldftn and virldftn not
 	pushing the function type on stack
