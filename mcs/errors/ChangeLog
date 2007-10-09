@@ -1,3 +1,8 @@
+2007-10-09  Jb Evain  <jbevain@novell.com>
+
+	* known-issues-mcs: test asserting that assembly
+	version check should work now.
+
 2007-10-07  Jb Evain  <jbevain@novell.com>
 
 	* cs0647-17.cs: New test for assembly version verification.
