@@ -305,6 +305,11 @@ namespace System.Windows.Forms
 			return res;
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+		
 		internal virtual int MaxHeight ()
 		{
 			return font.Height;

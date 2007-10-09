@@ -1,5 +1,10 @@
 2007-10-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Line.cs, LineTag.cs: Override GetHashCode to make a compiler warning go
+	away.  I didn't realize I needed this when I refactored these earlier.
+
+2007-10-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* LineTag.cs, RichTextBox.cs, TextBoxBase.cs, TextControl.cs: Refactor to
 	store a Color structure and use the ResPool for back color instead of
 	holding onto brushes.

@@ -251,6 +251,11 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+		
 		// Make sure we always have enoughs space in text and widths
 		internal void Grow (int minimum) {
 			int	length;
