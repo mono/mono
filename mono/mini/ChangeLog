@@ -1,3 +1,9 @@
+
+Tue Oct 9 21:01:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mini-arm.c, mini-arm.h, tramp-arm.c: ported
+	ARM to the new style trampoline.
+
 2007-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c: Rework the specific trampoline code to make it smaller.
