@@ -30,6 +30,8 @@
 
 // It is a copy from System.Data.TypedDataSetGeneratorException
 
+#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -97,3 +99,5 @@ namespace System.Data.Design {
                 #endregion // Methods
 	}
 }
+
+#endif
