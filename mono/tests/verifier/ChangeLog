@@ -1,4 +1,13 @@
 2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: tests for the return type of the invoked method.
+	tests for passing typedbyref as param.
+
+	* make_obj_store_test.sh: add new optional script parameter to tell
+	if class fields should be generated. This fix some bogus tests using
+	typedbyref.
+
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
 	* make_tests.sh: unbox_byref_like test was flawed, it was not testing
 	the proper unverifable condition.
 
