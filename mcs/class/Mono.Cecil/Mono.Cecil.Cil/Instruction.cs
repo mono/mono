@@ -88,6 +88,43 @@ namespace Mono.Cecil.Cil {
 		{
 		}
 
+		public int GetSize ()
+		{
+			int size = m_opCode.Size;
+
+			switch (m_opCode.OperandType) {
+			case OperandType.InlineSwitch:
+				size += (1 + ((Instruction []) m_operand).Length) * 4;
+				break;
+			case OperandType.InlineI8:
+			case OperandType.InlineR:
+				size += 8;
+				break;
+			case OperandType.InlineBrTarget:
+			case OperandType.InlineField:
+			case OperandType.InlineI:
+			case OperandType.InlineMethod:
+			case OperandType.InlineString:
+			case OperandType.InlineTok:
+			case OperandType.InlineType:
+			case OperandType.ShortInlineR:
+				size += 4;
+				break;
+			case OperandType.InlineParam:
+			case OperandType.InlineVar:
+				size += 2;
+				break;
+			case OperandType.ShortInlineBrTarget:
+			case OperandType.ShortInlineI:
+			case OperandType.ShortInlineParam:
+			case OperandType.ShortInlineVar:
+				size += 1;
+				break;
+			}
+
+			return size;
+		}
+
 		public void Accept (ICodeVisitor visitor)
 		{
 			visitor.VisitInstruction (this);

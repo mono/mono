@@ -1,5 +1,9 @@
 2007-10-09  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/Instruction.cs
+	  Mono.Cecil.Cil/CodeWriter.cs:
+		Move CodeWriter.GetSize (Instruction) to Instruction.
+
 	Integration of patches from Carlo Kok <ck@remobjects.com>:
 
 	* Mono.Cecil.Cil/Document.cs
