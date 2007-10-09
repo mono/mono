@@ -1,4 +1,9 @@
-2007-06-05  Rodrigo Kumpera <kumpera@gmail.com
+2007-10-09  Rodrigo Kumpera <rkumpera@novell.com>	
+
+	* test-method-pointer-in-signature.il: New. Test for overloads
+	that use method pointers.
+
+2007-06-05  Rodrigo Kumpera <kumpera@gmail.com>
 
 	* generics-variance.il: New. Test for variance related generic modifiers <+T> and <-T> 
 
