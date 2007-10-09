@@ -1,3 +1,13 @@
+2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BorderSidesEditor.cs, DesignerOptions.cs,
+	  ImageListCodeDomSerializer.cs, ImageListImageEditor.cs,
+	  MaskDescriptor.cs, ShortcutKeysEditor.cs,
+	  WindowsFormsDesignerOptionService.cs : new stubs.
+	* AxImporter.cs, ComponentTray.cs, ControlDesigner.cs,
+	  DocumentDesigner.cs, MenuCommands.cs, ParentControlDesigner.cs:
+	  2.0 updates.
+
 2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ControlDesigner.cs : added BehaviorService.

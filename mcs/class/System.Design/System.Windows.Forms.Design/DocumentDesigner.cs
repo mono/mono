@@ -34,12 +34,15 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Collections;
-
-
+#if NET_2_0
+using System.Windows.Forms.Design.Behavior;
+#endif
 
 namespace System.Windows.Forms.Design
 {
-
+#if NET_2_0
+	[ToolboxItemFilter ("System.Windows.Forms")]
+#endif
 	public class DocumentDesigner : ScrollableControlDesigner, IRootDesigner, IToolboxUser
 	{
 
@@ -300,12 +303,14 @@ namespace System.Windows.Forms.Design
 			selection.SetSelectedComponents (new IComponent[] { this.Component });
 		}
 
+#if !NET_2_0
 		// MSDN says overriden
 		// 
 		public override void OnSetComponentDefaults ()
 		{
 			base.OnSetComponentDefaults ();
 		}
+#endif
 
 		protected override void Dispose (bool disposing)
 		{
@@ -327,6 +332,13 @@ namespace System.Windows.Forms.Design
 
 
 #region MSDN says overriden
+
+#if NET_2_0
+		public override GlyphCollection GetGlyphs (GlyphSelectionType selectionType)
+		{
+			return base.GetGlyphs (selectionType);
+		}
+#endif
 
 		protected override void WndProc (ref Message m)
 		{

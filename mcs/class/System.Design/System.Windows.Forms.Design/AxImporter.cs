@@ -128,20 +128,37 @@ namespace System.Windows.Forms.Design
 
 			#region Public Instance Fields
 
+			[MonoTODO]
 			public bool delaySign;
+			[MonoTODO]
 			public bool genSources;
+			[MonoTODO]
 			public string keyContainer;
+			[MonoTODO]
 			public string keyFile;
+			[MonoTODO]
 			public StrongNameKeyPair keyPair;
 
+			[MonoTODO]
 			public bool noLogo;
+			[MonoTODO]
 			public string outputDirectory;
+			[MonoTODO]
 			public string outputName;
+			[MonoTODO]
 			public bool overwriteRCW;
+			[MonoTODO]
 			public byte[] publicKey;
+			[MonoTODO]
 			public AxImporter.IReferenceResolver references;
+			[MonoTODO]
 			public bool silentMode;
+			[MonoTODO]
 			public bool verboseMode;
+#if NET_2_0
+			[MonoTODO]
+			public bool msBuildErrors;
+#endif
 
 			#endregion Public Instance Fields
 		}

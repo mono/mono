@@ -31,6 +31,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Design;
@@ -852,47 +853,132 @@ namespace System.Windows.Forms.Design
 
 #region NET_2_0 Stubs
 
-		/*
+		[ComVisible (true)]
+		public class ControlDesignerAccessibleObject : AccessibleObject
+		{
+			[MonoTODO]
+			public ControlDesignerAccessibleObject (ControlDesigner designer, Control control)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override AccessibleObject GetChild (int index)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override int GetChildCount ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override AccessibleObject GetFocused ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override AccessibleObject GetSelected ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override AccessibleObject HitTest (int x, int y)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override Rectangle Bounds {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override string DefaultAction {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override string Description {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override string Name {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override AccessibleObject Parent {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override AccessibleRole Role {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override AccessibleStates State {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			public override string Value {
+				get { throw new NotImplementedException (); }
+			}
+		}
+
+		[MonoTODO]
 		protected virtual ControlBodyGlyph GetControlGlyph (GlyphSelectionType selectionType)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public virtual GlyphCollection GetGlyphs (GlyphSelectionType selectionType)
 		{
 			throw new NotImplementedException ();
 		}
-		*/
 
+		[MonoTODO]
 		public override void InitializeExistingComponent (IDictionary defaultValues)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public override void InitializeNewComponent (IDictionary defaultValues)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected virtual void OnDragComplete (DragEventArgs de)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected override InheritanceAttribute InheritanceAttribute {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public virtual IList SnapLines {
 			get { throw new NotImplementedException (); }
 		}
 
-		/*
-		protected BehaviorService BehaviorService {
-			get { throw new NotImplementedException (); }
-		}
-		*/
-
+		[MonoTODO]
 		public virtual bool ParticipatesWithSnapLines {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public bool AutoResizeHandles {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }

@@ -70,6 +70,7 @@ namespace System.Windows.Forms.Design
 			set { _autoArrange = value; }
 		}
 
+		[MonoTODO]
 		public int ComponentCount {
 			get { return 0; }
 		}
@@ -80,6 +81,7 @@ namespace System.Windows.Forms.Design
 		}
 
 
+		[MonoTODO]
 		public virtual void AddComponent (IComponent component)
 		{
 		}
@@ -94,10 +96,12 @@ namespace System.Windows.Forms.Design
 			return false;
 		}
 
+		[MonoTODO]
 		public void CreateComponentFromTool (ToolboxItem tool)
 		{
 		}
 
+		[MonoTODO]
 		protected void DisplayError (Exception e)
 		{
 		}
@@ -106,71 +110,130 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[Category ("Layout")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignOnly (true)]
+		[Localizable (false)]
+#endif
+		[MonoTODO]
 		public Point GetLocation (IComponent receiver)
 		{
 			return new Point (0,0);
 		}
 
+		[MonoTODO]
 		public void SetLocation (IComponent receiver, Point location)
 		{
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public IComponent GetNextComponent (IComponent component, bool forward)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[Browsable (false)]
+		[Category ("Layout")]
+		[DesignOnly (true)]
+		[Localizable (false)]
+		[MonoTODO]
+		public Point GetTrayLocation (IComponent receiver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool IsTrayComponent (IComponent comp)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetTrayLocation (IComponent receiver, Point location)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void OnMouseDoubleClick (MouseEventArgs e)
+		{
+		}
+#else
+		[MonoTODO]
 		protected override void OnDoubleClick (EventArgs e)
 		{
 		}
+#endif
 
+		[MonoTODO]
 		protected override void OnDragDrop (DragEventArgs de)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnDragEnter (DragEventArgs de)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnDragLeave (EventArgs e)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnDragOver (DragEventArgs de)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnGiveFeedback (GiveFeedbackEventArgs gfevent)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnLayout (LayoutEventArgs levent)
 		{
 		}
 
+		[MonoTODO]
 		protected virtual void OnLostCapture ()
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnMouseDown (MouseEventArgs e)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
 		}
 
+		[MonoTODO]
 		protected override void OnPaint (PaintEventArgs pe)
 		{
 		}
 
+		[MonoTODO]
 		protected virtual void OnSetCursor ()
 		{
 		}
 
+		[MonoTODO]
 		public virtual void RemoveComponent (IComponent component)
 		{
 		}
 
+		[MonoTODO]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);

@@ -35,8 +35,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Design;
 using System.Collections;
-
-
+#if NET_2_0
+using System.Windows.Forms.Design.Behavior;
+#endif
 
 namespace System.Windows.Forms.Design
 
@@ -477,6 +478,13 @@ namespace System.Windows.Forms.Design
 			}
 		}
 
+#if NET_2_0
+		protected override void OnDragComplete (DragEventArgs de)
+		{
+			base.OnDragComplete (de);
+		}
+#endif
+
 		internal override void OnMouseUp ()
 		{
 			base.OnMouseUp ();
@@ -588,39 +596,66 @@ namespace System.Windows.Forms.Design
 
 #region NET_2_0 Stubs
 #if NET_2_0
-/*
+		[MonoTODO]
 		protected virtual bool AllowControlLasso {
 			get { return false; }
 		}
 
+		[MonoTODO]
 		protected virtual bool AllowGenericDragBox {
 			get { return false; }
 		}
 
+		[MonoTODO]
+		protected internal virtual bool AllowSetChildIndexOnDrop {
+			get { return false; }
+		}
+
+		[MonoTODO]
 		public override IList SnapLines {
 			get { return new object [0]; }
 		}
 
+		[MonoTODO]
 		protected ToolboxItem MouseDragTool {
 			get { return null; }
 		}
 
+		[MonoTODO]
 		public override void InitializeNewComponent (IDictionary defaultValues)
 		{
+			base.InitializeNewComponent (defaultValues);
 		}
 
+		[MonoTODO]
 		protected void AddPaddingSnapLines (ref ArrayList snapLines)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected virtual Control GetParentForComponent (IComponent component)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected override ControlBodyGlyph GetControlGlyph (GlyphSelectionType selectionType)
 		{
+			return base.GetControlGlyph (selectionType);
 		}
-		*/
+
+		[MonoTODO]
+		public override GlyphCollection GetGlyphs (GlyphSelectionType selectionType)
+		{
+			return base.GetGlyphs (selectionType);
+		}
+
+		[MonoTODO]
+		protected Rectangle GetUpdatedRect (Rectangle originalRect, Rectangle dragRect, bool updateSize)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 #endregion
 

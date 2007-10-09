@@ -50,6 +50,7 @@ namespace System.Windows.Forms.Design
 			MenuCommands.wfMenuGroup = new Guid ("{74D21312-2AEE-11d1-8BFB-00A0C90F26F7}");
 			MenuCommands.wfCommandSet = new Guid ("{74D21313-2AEE-11d1-8BFB-00A0C90F26F7}");
 			MenuCommands.guidVSStd2K = new Guid ("{1496A755-94DE-11D0-8C3F-00C04FC2AAE2}");
+			MenuCommands.guidVSStd97 = new Guid ("{5efc7975-14bc-11cf-9b2b-00aa00573819}");
 
 			MenuCommands.SelectionMenu = new CommandID (MenuCommands.wfMenuGroup, 1280);
 			MenuCommands.ContainerMenu = new CommandID (MenuCommands.wfMenuGroup, 1281);
@@ -78,6 +79,16 @@ namespace System.Windows.Forms.Design
 			MenuCommands.KeySelectNext = new CommandID (MenuCommands.guidVSStd2K, 4);
 			MenuCommands.KeySelectPrevious = new CommandID (MenuCommands.guidVSStd2K, 5);
 			MenuCommands.KeyTabOrderSelect = new CommandID (MenuCommands.wfCommandSet, 16405);
+#if NET_2_0
+			MenuCommands.KeyHome = new CommandID (MenuCommands.guidVSStd2K, 15);
+			MenuCommands.KeyShiftHome = new CommandID (MenuCommands.guidVSStd2K, 16);
+			MenuCommands.KeyEnd = new CommandID (MenuCommands.guidVSStd2K, 17);
+			MenuCommands.KeyShiftEnd = new CommandID (MenuCommands.guidVSStd2K, 18);
+			MenuCommands.KeyInvokeSmartTag = new CommandID (MenuCommands.guidVSStd2K, 147);
+			MenuCommands.EditLabel = new CommandID (MenuCommands.guidVSStd97, 338);
+			MenuCommands.SetStatusText = new CommandID (MenuCommands.wfCommandSet, 16387);
+			MenuCommands.SetStatusRectangle = new CommandID (MenuCommands.wfCommandSet, 16388);
+#endif
 		}
 
 		#endregion Static Constructor
@@ -111,11 +122,22 @@ namespace System.Windows.Forms.Design
 		public static readonly CommandID KeyTabOrderSelect;
 		public static readonly CommandID SelectionMenu;
 		public static readonly CommandID TraySelectionMenu;
+#if NET_2_0
+		public static readonly CommandID EditLabel;
+		public static readonly CommandID KeyEnd;
+		public static readonly CommandID KeyHome;
+		public static readonly CommandID KeyInvokeSmartTag;
+		public static readonly CommandID KeyShiftEnd;
+		public static readonly CommandID KeyShiftHome;
+		public static readonly CommandID SetStatusRectangle;
+		public static readonly CommandID SetStatusText;
+#endif
 
 		#endregion Public Static Fields
 
 		#region Private Static Fields
 
+		private static readonly Guid guidVSStd97;
 		private static readonly Guid guidVSStd2K;
 		private static readonly Guid wfCommandSet;
 		private static readonly Guid wfMenuGroup;
