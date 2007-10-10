@@ -1,3 +1,7 @@
+2007-10-10  Jb Evain  <jbevain@novell.com>
+
+	* test-594.cs: add test for asterisk in assembly version.
+
 2007-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* gtest-344.cs: test for bug #331191
