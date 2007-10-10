@@ -101,9 +101,9 @@ namespace System.Drawing {
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr cgc);
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-                internal static extern void CGContextTranslateCTM (IntPtr cgc, double tx, double ty);
+                internal static extern void CGContextTranslateCTM (IntPtr cgc, float tx, float ty);
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-                internal static extern void CGContextScaleCTM (IntPtr cgc, double x, double y);
+                internal static extern void CGContextScaleCTM (IntPtr cgc, float x, float y);
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 internal static extern void CGContextFlush (IntPtr cgc);
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
