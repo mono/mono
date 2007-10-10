@@ -1,3 +1,8 @@
+
+Wed Oct 10 13:05:46 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-arm.c: reduced the trampoline size.
+
 2007-10-10  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c, mini.h, mini-amd64.c, mini-x86.c: Moved type
