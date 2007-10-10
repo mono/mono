@@ -1,5 +1,9 @@
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextWriter2.cs : I could make previous change only in 2.0 mode.
+
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriter2.cs : When it is at Error state, do not try to close
 	  attributes and elements at Close(). They will result in further
 	  error and rather hide the actual issue when disposed.

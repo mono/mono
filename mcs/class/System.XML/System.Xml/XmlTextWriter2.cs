@@ -420,12 +420,16 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
+#if NET_2_0
 			if (state != WriteState.Error) {
+#endif
 				if (state == WriteState.Attribute)
 					WriteEndAttribute ();
 				while (open_count > 0)
 					WriteEndElement ();
+#if NET_2_0
 			}
+#endif
 
 			if (close_output_stream)
 				writer.Close ();
