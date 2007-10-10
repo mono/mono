@@ -1,3 +1,7 @@
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionReflectorTest.cs : added test for bug #332150.
+
 2007-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionImporterTest.cs : added ignored test for #81457.

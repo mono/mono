@@ -250,6 +250,19 @@ namespace MonoTests.System.Web.Services.Description
 			ServiceDescription.Read (new StringReader (sw.ToString ()));
 		}
 
+#if NET_2_0
+		[Test]
+		public void Bug332150 ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (Bug332150Service), "urn:foo");
+			StringWriter sw = new StringWriter ();
+			r.ServiceDescriptions [0].Write (sw);
+			ServiceDescription.Read (new StringReader (sw.ToString ()));
+		}
+#endif
+
 		public class IncludeTestServices : WebService
 		{
 			[WebMethod ()]
@@ -360,5 +373,37 @@ namespace MonoTests.System.Web.Services.Description
 				return arr;
 			}
 		}
+
+#if NET_2_0
+		[WebService (Namespace = "http://tempuri.org/")]
+		[WebServiceBinding (ConformsTo = WsiProfiles.BasicProfile1_1)]
+		public abstract class Bug332150SecureWebService : WebService
+		{
+			public Bug332150SecureWebService ()
+			{ 
+			}
+
+			[WebMethod]
+			public bool Login (string userName, string password)
+			{
+				return true;
+			}
+		}
+
+		[WebService (Namespace = "http://tempuri.org/")]
+		[WebServiceBinding (ConformsTo = WsiProfiles.BasicProfile1_1)]
+		public class Bug332150Service : Bug332150SecureWebService
+		{
+			public Bug332150Service ()
+			{
+			}
+
+			[WebMethod]
+			public string HelloWorld ()
+			{
+				return "Hello World";
+			}
+		}
+#endif
 	}
 }
