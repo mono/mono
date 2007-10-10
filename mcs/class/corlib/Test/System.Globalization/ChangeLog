@@ -1,3 +1,7 @@
+2007-10-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimeFormatInfoTest.cs: Added test for bug #332553.
+
 2007-07-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CalendarTest.cs : true test for bug #81783 (overflown month in

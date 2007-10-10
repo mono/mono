@@ -32,35 +32,63 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace MonoTests.System.Globalization {
-
-        [TestFixture]
-        public class DateTimeFormatInfoTest : Assertion
-        {
-              
-                [Test]
-                public void GetAllDateTimePatterns_ret_diff_obj ()
-                {
+namespace MonoTests.System.Globalization
+{
+	[TestFixture]
+	public class DateTimeFormatInfoTest
+	{
+		[Test]
+		public void GetAllDateTimePatterns_ret_diff_obj ()
+		{
 			// We need to return different objects for security reasons
 			DateTimeFormatInfo dtfi = CultureInfo.InvariantCulture.DateTimeFormat;
 
 			string [] one = dtfi.GetAllDateTimePatterns ();
 			string [] two = dtfi.GetAllDateTimePatterns ();
-			Assert (one != two);
-                }
+			Assert.IsTrue (one != two);
+		}
 
 		[Test]
 		public void EraName ()
 		{
 			CultureInfo en_US = new CultureInfo ("en-US");
 			DateTimeFormatInfo dtfi = en_US.DateTimeFormat;
-			AssertEquals ("#1", "AD", dtfi.GetAbbreviatedEraName (0));
-			AssertEquals ("#2", "A.D.", dtfi.GetEraName (1));
-			AssertEquals ("#3", 1, dtfi.GetEra ("A.D."));
-			AssertEquals ("#4", 1, dtfi.GetEra ("AD"));
-			AssertEquals ("#5", -1, dtfi.GetEra ("C.E"));
-			AssertEquals ("#6", -1, dtfi.GetEra ("Common Era"));
+			Assert.AreEqual ("AD", dtfi.GetAbbreviatedEraName (0), "#1");
+			Assert.AreEqual ("A.D.", dtfi.GetEraName (1), "#2");
+			Assert.AreEqual (1, dtfi.GetEra ("A.D."), "#3");
+			Assert.AreEqual (1, dtfi.GetEra ("AD"), "#4");
+			Assert.AreEqual (-1, dtfi.GetEra ("C.E"), "#5");
+			Assert.AreEqual (-1, dtfi.GetEra ("Common Era"), "#6");
 		}
+
+		[Test] // bug #332553
+		[Category ("NotWorking")]
+		public void MonthNames ()
+		{
+			CultureInfo c = CultureInfo.CreateSpecificCulture ("en");
+			string [] monthNamesA = c.DateTimeFormat.MonthNames;
+			Assert.AreEqual (13, monthNamesA.Length, "#A1");
+			Assert.AreEqual ("January", monthNamesA [0], "#A2");
+			Assert.AreEqual ("February", monthNamesA [1], "#A3");
+			Assert.AreEqual ("March", monthNamesA [2], "#A4");
+			Assert.AreEqual ("April", monthNamesA [3], "#A5");
+			Assert.AreEqual ("May", monthNamesA [4], "#A6");
+			Assert.AreEqual ("June", monthNamesA [5], "#A7");
+			Assert.AreEqual ("July", monthNamesA [6], "#A8");
+			Assert.AreEqual ("August", monthNamesA [7], "#A9");
+			Assert.AreEqual ("September", monthNamesA [8], "#A10");
+			Assert.AreEqual ("October", monthNamesA [9], "#A11");
+			Assert.AreEqual ("November", monthNamesA [10], "#A12");
+			Assert.AreEqual ("December", monthNamesA [11], "#A13");
+			Assert.AreEqual (string.Empty, monthNamesA [12], "#A14");
+
+			c.DateTimeFormat.MonthNames = c.DateTimeFormat.MonthNames;
+
+			string [] monthNamesB = c.DateTimeFormat.MonthNames;
+			Assert.AreEqual (monthNamesA, monthNamesB, "#B1");
+			Assert.IsFalse (object.ReferenceEquals (monthNamesA, monthNamesB), "#B2");
+		}
+
 #if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
@@ -69,10 +97,10 @@ namespace MonoTests.System.Globalization {
 			CultureInfo ci = new CultureInfo ("en-GB");
 			string s = dt.ToString (ci);
 			DateTime dt2 = DateTime.Parse (s, ci);
-			AssertEquals ("1", dt.Month, dt2.Month);
+			Assert.AreEqual (dt.Month, dt2.Month);
 		}
 #endif
-        }
+	}
 }
 
 
