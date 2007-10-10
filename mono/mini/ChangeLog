@@ -1,3 +1,8 @@
+
+Wed Oct 10 10:49:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: implemented fast delegate dispatch.
+
 2007-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_compute_omit_fp): Add more checks to ensure
