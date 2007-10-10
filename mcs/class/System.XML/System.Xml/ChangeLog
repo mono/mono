@@ -1,3 +1,9 @@
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : When it is at Error state, do not try to close
+	  attributes and elements at Close(). They will result in further
+	  error and rather hide the actual issue when disposed.
+
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : it is now documented that WriteNode(XPathNavigator)
