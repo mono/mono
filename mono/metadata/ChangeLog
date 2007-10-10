@@ -1,3 +1,10 @@
+2007-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): handle typedbyref params
+	correctly and check for unverifiable return values.
+
+	* verify.c (do_newobj): fix a warning.
+
 2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: don't tread typedbyref as allways unverifable,
