@@ -1,4 +1,8 @@
 
+Wed Oct 10 19:44:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: unify the call emission to emit_code_seq().
+
 Wed Oct 10 13:05:46 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-arm.c: reduced the trampoline size.
