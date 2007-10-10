@@ -1,3 +1,7 @@
+2007-10-10  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, mini.h, mini-amd64.c, mini-x86.c: Moved type
+	variable handling out of arch-specific code.
 
 Wed Oct 10 10:49:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
