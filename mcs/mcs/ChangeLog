@@ -1,3 +1,7 @@
+2007-10-10  Jb Evain  <jbevain@novell.com>
+
+	* codegen.cs: re-enable assembly version check.
+
 2007-10-09  Marek Safar  <marek.safar@gmail.com>
 	
 	* report.cs, anonymous.cs, driver.cs, expression.cs: Added few ISO-2
