@@ -1618,11 +1618,29 @@ namespace System.Web.Compilation
 			return inst;
 #endif
 		}
+
+		bool SafeCanConvertFrom (Type type, TypeConverter cvt)
+		{
+			try {
+				return cvt.CanConvertFrom (type);
+			} catch (NotImplementedException) {
+				return false;
+			}
+		}
+
+		bool SafeCanConvertTo (Type type, TypeConverter cvt)
+		{
+			try {
+				return cvt.CanConvertTo (type);
+			} catch (NotImplementedException) {
+				return false;
+			}
+		}
 		
 		CodeExpression GetExpressionFromString (Type type, string str, MemberInfo member)
 		{
 			TypeConverter cvt = GetConverterForMember (member);
-			if (cvt != null && !cvt.CanConvertFrom (typeof (string)))
+			if (cvt != null && !SafeCanConvertFrom (typeof (string), cvt))
 				cvt = null;
 
 			object convertedFromAttr = null;
@@ -1775,10 +1793,10 @@ namespace System.Web.Compilation
 				wasNullable ? TypeDescriptor.GetConverter (type) :
 				TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
 
-			if (preConverted || (converter != null && converter.CanConvertFrom (typeof (string)))) {
+			if (preConverted || (converter != null && SafeCanConvertFrom (typeof (string), converter))) {
 				object value = preConverted ? convertedFromAttr : converter.ConvertFromInvariantString (str);
 
-				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
+				if (SafeCanConvertTo (typeof (InstanceDescriptor), converter)) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
 					if (wasNullable)
 						return CreateNullableExpression (originalType, GenerateInstance (idesc, true),

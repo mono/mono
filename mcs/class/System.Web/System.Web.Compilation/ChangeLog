@@ -1,3 +1,10 @@
+2007-10-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: be careful when using type
+	converters taken from attributes attached to class members. They
+	may come from the System.Design namespace, which is mostly not
+	implemented on Mono.
+
 2007-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: resources are no longer compiled into a
