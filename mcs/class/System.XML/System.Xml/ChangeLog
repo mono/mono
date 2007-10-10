@@ -1,5 +1,11 @@
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlTextWriter2.cs : making <del>silly</del>funky MS compatibility
+	  change in WriteStartAttribute() to call WriteEndAttribute() if an
+	  attribute is open.
+
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriter2.cs : I could make previous change only in 2.0 mode.
 
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>

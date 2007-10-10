@@ -794,6 +794,14 @@ namespace Mono.Xml
 		public override void WriteStartAttribute (
 			string prefix, string localName, string namespaceUri)
 		{
+			// LAMESPEC: this violates the expected behavior of
+			// this method, as it incorrectly allows unbalanced
+			// output of attributes. Microfot changes description
+			// on its behavior at their will, regardless of
+			// ECMA description.
+			if (state == WriteState.Attribute)
+				WriteEndAttribute ();
+
 			if (state != WriteState.Element && state != WriteState.Start)
 				throw StateError ("Attribute");
 
