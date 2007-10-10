@@ -47,6 +47,7 @@ namespace System.Xml.Xsl
 	public sealed class XslCompiledTransform
 	{
 		bool enable_debug;
+		object debugger;
 		CompiledStylesheet s;
 #if !TARGET_JVM
 		TempFileCollection temporary_files;
@@ -61,6 +62,8 @@ namespace System.Xml.Xsl
 		public XslCompiledTransform (bool enableDebug)
 		{
 			enable_debug = enableDebug;
+			if (enable_debug)
+				debugger = new NoOperationDebugger ();
 		}
 
 		[MonoTODO]
@@ -157,7 +160,7 @@ namespace System.Xml.Xsl
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
-			new XslTransformProcessor (s, null).Process (input, outputter, args, resolver);
+			new XslTransformProcessor (s, debugger).Process (input, outputter, args, resolver);
 			output.Flush ();
 		}
 
@@ -173,7 +176,7 @@ namespace System.Xml.Xsl
 				throw new XsltException ("No stylesheet was loaded.", null);
 
 			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);
-			new XslTransformProcessor (s, null).Process (input, outputter, args, null);
+			new XslTransformProcessor (s, debugger).Process (input, outputter, args, null);
 			outputter.Done ();
 			output.Flush ();
 		}
@@ -230,10 +233,11 @@ namespace System.Xml.Xsl
 		private void Load (XPathNavigator stylesheet,
 			XsltSettings settings, XmlResolver resolver)
 		{
-			s = new Compiler (enable_debug ? new NoOperationDebugger () : null).Compile (stylesheet, resolver, null);
+			s = new Compiler (debugger).Compile (stylesheet, resolver, null);
 		}
 
 		#endregion
+	}
 
 		class NoOperationDebugger
 		{
@@ -243,8 +247,14 @@ namespace System.Xml.Xsl
 
 			protected void OnExecute (XPathNodeIterator currentNodeset, XPathNavigator style, XsltContext context)
 			{
+				//ShowLocationInTrace (style);
+			}
+
+			string ShowLocationInTrace (XPathNavigator style)
+			{
+				IXmlLineInfo li = style as IXmlLineInfo;
+				return li != null ? String.Format ("at {0} ({1},{2})", style.BaseURI, li.LineNumber, li.LinePosition) : "(no debug info available)";
 			}
 		}
-	}
 }
 #endif

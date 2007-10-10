@@ -1,5 +1,10 @@
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslCompiledTransform.cs : actually previous change was not enough.
+	  Added a commented-out example of debugger method usage.
+
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslCompiledTransform.cs : a bit more of debugging help. Now it
 	  stores stylesheet elements when "enableDebug" is true.
 
