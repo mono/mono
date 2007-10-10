@@ -1,3 +1,6 @@
+2007-10-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-mmap.c (mono_vfree): Fix call to VirtualFree (). Fixes #332165.
 
 Mon Oct 8 11:47:44 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
