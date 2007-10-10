@@ -1358,10 +1358,12 @@ namespace Mono.CSharp {
 				if (value == null || value.Length == 0)
 					return;
 
+				/*
 				if (!IsValidAssemblyVersion (value)) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
 				}
+				*/
 			}
 
 #if GMCS_SOURCE
