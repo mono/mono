@@ -1,3 +1,8 @@
+2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : a bit more of debugging help. Now it
+	  stores stylesheet elements when "enableDebug" is true.
+
 2007-06-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs XslTransform.cs : initial attempt to

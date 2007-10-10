@@ -230,10 +230,21 @@ namespace System.Xml.Xsl
 		private void Load (XPathNavigator stylesheet,
 			XsltSettings settings, XmlResolver resolver)
 		{
-			s = new Compiler (null).Compile (stylesheet, resolver, null);
+			s = new Compiler (enable_debug ? new NoOperationDebugger () : null).Compile (stylesheet, resolver, null);
 		}
 
 		#endregion
+
+		class NoOperationDebugger
+		{
+			protected void OnCompile (XPathNavigator input)
+			{
+			}
+
+			protected void OnExecute (XPathNodeIterator currentNodeset, XPathNavigator style, XsltContext context)
+			{
+			}
+		}
 	}
 }
 #endif
