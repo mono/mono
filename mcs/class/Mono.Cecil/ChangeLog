@@ -1,3 +1,12 @@
+2007-10-11  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/TypeReference.cs: add a IsNested helper property.
+
+	* Mono.Cecil/ReflectionWriter.cs
+	  Mono.Cecil.Signatures/SignatureWriter.cs:
+		Integrate patch for Carlo, start working on enum writing
+		in custom attribute.
+
 2007-10-09  Nestor Salceda  <nestor.salceda@gmail.com>
 
 	* mono-cecil.pc.in:  Updated the version number.

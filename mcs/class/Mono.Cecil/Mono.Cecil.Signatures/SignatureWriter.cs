@@ -414,6 +414,19 @@ namespace Mono.Cecil.Signatures {
 				Write (elem, writer);
 		}
 
+		static string GetEnumFullName (TypeReference type)
+		{
+			string fullname = type.FullName;
+
+			if (type.IsNested)
+				fullname = fullname.Replace ('/', '+');
+
+			if (type is TypeDefinition)
+				return fullname;
+
+			return string.Concat (fullname, ", ", type.Module.Assembly.Name.FullName);
+		}
+
 		void Write (CustomAttrib.NamedArg na, MemoryBinaryWriter writer)
 		{
 			if (na.Field)
@@ -422,6 +435,9 @@ namespace Mono.Cecil.Signatures {
 				writer.Write ((byte) 0x54);
 			else
 				throw new MetadataFormatException ("Unknown kind of namedarg");
+
+			if (na.FieldOrPropType == ElementType.Class)
+				na.FieldOrPropType = ElementType.Enum;
 
 			if (na.FixedArg.SzArray)
 				writer.Write ((byte) ElementType.SzArray);
@@ -432,20 +448,48 @@ namespace Mono.Cecil.Signatures {
 				writer.Write ((byte) na.FieldOrPropType);
 
 			if (na.FieldOrPropType == ElementType.Enum)
-				Write (na.FixedArg.Elems [0].ElemType.FullName);
+				Write (GetEnumFullName (na.FixedArg.Elems [0].ElemType));
 
 			Write (na.FieldOrPropName);
 
 			Write (na.FixedArg, writer);
 		}
 
-		void Write (CustomAttrib.Elem elem, MemoryBinaryWriter writer) // TODO
+		static ElementType GetElementTypeFromTypeCode (TypeCode tc)
+		{
+			switch (tc) {
+			case TypeCode.Byte:
+				return ElementType.U1;
+			case TypeCode.SByte:
+				return ElementType.I1;
+			case TypeCode.Int16:
+				return ElementType.I2;
+			case TypeCode.UInt16:
+				return ElementType.U2;
+			case TypeCode.Int32:
+				return ElementType.I4;
+			case TypeCode.UInt32:
+				return ElementType.U4;
+			case TypeCode.Int64:
+				return ElementType.I8;
+			case TypeCode.UInt64:
+				return ElementType.U8;
+			default:
+				throw new ArgumentException ("tc");
+			}
+		}
+
+		void Write (CustomAttrib.Elem elem, MemoryBinaryWriter writer)
 		{
 			if (elem.String)
 				elem.FieldOrPropType = ElementType.String;
 			else if (elem.Type)
 				elem.FieldOrPropType = ElementType.Type;
-			else if (elem.BoxedValueType)
+
+			if (elem.FieldOrPropType == ElementType.Class) // an enum in fact
+				elem.FieldOrPropType = GetElementTypeFromTypeCode (Type.GetTypeCode (elem.Value.GetType ()));
+
+			if (elem.BoxedValueType)
 				Write (elem.FieldOrPropType);
 
 			switch (elem.FieldOrPropType) {

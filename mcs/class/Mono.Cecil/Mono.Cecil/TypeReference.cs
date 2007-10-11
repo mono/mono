@@ -92,12 +92,16 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool IsNested {
+			get { return this.DeclaringType != null; }
+		}
+
 		public virtual string FullName {
 			get {
 				if (m_fullName != null && !m_fullNameDiscarded)
 					return m_fullName;
 
-				if (this.DeclaringType != null)
+				if (this.IsNested)
 					return string.Concat (this.DeclaringType.FullName, "/", this.Name);
 
 				if (m_namespace == null || m_namespace.Length == 0)

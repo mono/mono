@@ -1336,9 +1336,6 @@ namespace Mono.Cecil {
 			elem.ElemType = type;
 			elem.FieldOrPropType = GetCorrespondingType (type.FullName);
 
-			if (elem.FieldOrPropType == ElementType.Class)
-				throw new NotImplementedException ("Writing enums");
-
 			switch (elem.FieldOrPropType) {
 			case ElementType.Boolean :
 			case ElementType.Char :
