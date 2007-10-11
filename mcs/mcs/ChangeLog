@@ -1,5 +1,9 @@
 2007-10-11  Marek Safar  <marek.safar@gmail.com>
 	
+	* location.cs (Equals, GetHashCode): Removed.
+	
+2007-10-11  Marek Safar  <marek.safar@gmail.com>
+	
 	* report.cs: Implemented message recorder. It is used mainly for lambda
 	expressions to capture otherwise swallowed error messages.
 	

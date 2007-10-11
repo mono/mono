@@ -244,19 +244,6 @@ namespace Mono.CSharp {
 			checkpoints [checkpoint_index] = new Checkpoint (file, row);
 		}
 		
-		public override bool Equals (object o)
-		{
-			if (o is Location)
-				return ((Location)o).CheckpointIndex == CheckpointIndex;
-			
-			return false;
-		}
-		
-		public override int GetHashCode ()
-		{
-			return token.GetHashCode ();
-		}
-
 		public override string ToString ()
 		{
 			if (column_bits == 0 || InEmacs)
