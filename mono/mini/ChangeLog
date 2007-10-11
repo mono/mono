@@ -1,3 +1,9 @@
+
+Thu Oct 11 18:04:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c: provide more graceful handling of the case where
+	we followed a bogus function pointer from managed code (bug #332866).
+
 2007-10-11  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.h, mini.c: Introduced the MonoGenericSharingContext, which
