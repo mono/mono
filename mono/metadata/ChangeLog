@@ -1,4 +1,9 @@
 
+Thu Oct 11 20:16:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make sure we don't store the signature from a dynamic
+	method into the runtime invoke cache (bug #327189).
+
 Thu Oct 11 18:22:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: make sure the wrapper methods are properly initialized.
