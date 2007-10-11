@@ -482,6 +482,12 @@ namespace Mono.CSharp.Linq
 
 				return e;
 			}
+			
+			protected override void Error_InvalidInitializer (Expression initializer)
+			{
+				Report.Error (1932, loc, "A range variable `{0}' cannot be initialized with `{1}'",
+					Name, initializer.GetSignatureForError ());
+			}			
 		}
 
 		public Let (LocatedToken variable, Expression expr, Location loc)

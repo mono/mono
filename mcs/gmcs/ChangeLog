@@ -1,3 +1,9 @@
+2007-10-11  Marek Safar  <marek.safar@gmail.com>
+	
+	* cs-parser.jay: Added couple of ISO-2 checks.
+	
+	* linq.cs: Report range variable error message.
+	
 2007-10-09  Marek Safar  <marek.safar@gmail.com>
 	
 	* cs-parser.jay: Added extension methods ISO-2 check.

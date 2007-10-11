@@ -3450,24 +3450,20 @@ object_or_delegate_creation_expression
 	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
 		if ($6 != null) {
-			if (RootContext.Version < LanguageVersion.LINQ) {
-		  		Error_ExpectingTypeName ((Expression) $2);
-		  		$$ = null;
-		  	}
-		  	else
-				$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (CollectionOrObjectInitializers) $6, (Location) $1);
+			if (RootContext.Version <= LanguageVersion.ISO_2)
+				Report.FeatureIsNotISO1 (GetLocation ($1), "object initializers");
+				
+			$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (CollectionOrObjectInitializers) $6, (Location) $1);
 		}
 		else
 			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
 	  }
 	| NEW type object_or_collection_initializer
 	  {
-	  	if (RootContext.Version < LanguageVersion.LINQ) {
-	  		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
-	  		$$ = null;
-	  	}
-	  	else
-			$$ = new NewInitialize ((Expression) $2, null, (CollectionOrObjectInitializers) $3, (Location) $1);
+		if (RootContext.Version <= LanguageVersion.ISO_2)
+			Report.FeatureIsNotISO1 (GetLocation ($1), "collection initializers");
+	  
+		$$ = new NewInitialize ((Expression) $2, null, (CollectionOrObjectInitializers) $3, (Location) $1);
 	  }
 	;
 
@@ -3484,12 +3480,7 @@ array_creation_expression
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
-	  	if (RootContext.Version < LanguageVersion.LINQ) {
-	  		Report.Error (1031, (Location) $1, "Type expected");
-	  		$$ = null;
-	  	}
-	  	else
-	  		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, (Location) $1);
+		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, (Location) $1);
 	  }
 	| NEW error
 	  {
@@ -3506,12 +3497,10 @@ array_creation_expression
 anonymous_type_expression
 	: NEW OPEN_BRACE anonymous_type_parameters CLOSE_BRACE
 	  {
-	  	if (RootContext.Version < LanguageVersion.LINQ) {
-	  		Report.Error (1031, (Location) $1, "Type expected");
-	  		$$ = null;
-	  	}
-	  	else
-	  		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, lexer.Location);
+	  	if (RootContext.Version <= LanguageVersion.ISO_2)
+	  		Report.FeatureIsNotISO1 (GetLocation ($1), "anonymous types");
+
+		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, GetLocation ($1));
 	  }
 	;
 
