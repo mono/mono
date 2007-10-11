@@ -34,29 +34,26 @@ namespace System.Windows.Forms
 {
 	internal class LineTag
 	{
-		#region	Local Variables;
-		// Payload; formatting
-		internal Font		font;		// System.Drawing.Font object for this tag
-		internal Color		color;		// The font color for this tag
-
-		// In 2.0 tags can have background colours.  I'm not going to #ifdef
-		// at this level though since I want to reduce code paths
-		internal Color		back_color;  
+		#region	Local Variables
+		// Formatting
+		private Font		font;		// System.Drawing.Font object for this tag
+		private Color		color;		// The font color for this tag
+		private Color		back_color;	// In 2.0 tags can have background colours.
 
 		// Payload; text
-		internal int		start;		// start, in chars; index into Line.text
+		private int		start;		// start, in chars; index into Line.text
 
 		// Drawing support
-		internal int		height;		// Height in pixels of the text this tag describes
-
-		internal int		ascent;		// Ascent of the font for this tag
-		internal int		shift;		// Shift down for this tag, to stay on baseline
+		private int		height;		// Height in pixels of the text this tag describes
+		private int		ascent;		// Ascent of the font for this tag
+		private int		descent;	// Descent of the font for this tag
+		private int		shift;		// Shift down for this tag, to stay on baseline
 
 		// Administrative
-		internal Line		line;		// The line we're on
-		internal LineTag	next;		// Next tag on the same line
-		internal LineTag	previous;	// Previous tag on the same line
-		#endregion;
+		private Line		line;		// The line we're on
+		private LineTag		next;		// Next tag on the same line
+		private LineTag		previous;	// Previous tag on the same line
+		#endregion
 
 		#region Constructors
 		public LineTag (Line line, int start)
@@ -67,8 +64,43 @@ namespace System.Windows.Forms
 		#endregion	// Constructors
 
 		#region Public Properties
+		public int Ascent {
+			get { return ascent; }
+		}
+		
+		public Color BackColor {
+			get { return back_color; }
+			set { back_color = value; }
+		}
+		
+		public Color Color {
+			get { return color; }
+			set { color = value; }
+		}
+		
+		public int Descent {
+			get { return descent; }
+		}
+
 		public int End {
 			get { return start + Length; }
+		}
+
+		public Font Font {
+			get { return font; }
+			set { 
+				if (font != value) {
+					font = value;		
+					height = font.Height;
+					XplatUI.GetFontMetrics (Hwnd.bmp_g, font, out ascent, out descent);
+					line.recalc = true;
+				}
+			}
+		}
+
+		public int Height {
+			get { return height; }
+			set { height = value; }
 		}
 
 		public virtual bool IsTextTag {
@@ -85,6 +117,31 @@ namespace System.Windows.Forms
 
 				return res > 0 ? res : 0;
 			}
+		}
+
+		public Line Line {
+			get { return line; }
+			set { line = value; }
+		}
+
+		public LineTag Next {
+			get { return next; }
+			set { next = value; }
+		}
+
+		public LineTag Previous {
+			get { return previous; }
+			set { previous = value; }
+		}
+
+		public int Shift {
+			get { return shift; }
+			set { shift = value; }
+		}
+
+		public int Start {
+			get { return start; }
+			set { start = value; }
 		}
 
 		public int TextEnd {
@@ -118,21 +175,19 @@ namespace System.Windows.Forms
 				return line.X + line.widths [start - 1];
 			}
 		}
-
 		#endregion
 		
 		#region Internal Methods
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
-		internal LineTag Break(int pos) {
-
+		internal LineTag Break (int pos)
+		{
 			LineTag	new_tag;
 
 			// Sanity
-			if (pos == this.start) {
+			if (pos == this.start)
 				return this;
-			} else if (pos >= (start + Length)) {
+			else if (pos >= (start + Length))
 				return null;
-			}
 
 			new_tag = new LineTag(line, pos);
 			new_tag.CopyFormattingFrom (this);
@@ -141,9 +196,8 @@ namespace System.Windows.Forms
 			this.next = new_tag;
 			new_tag.previous = this;
 
-			if (new_tag.next != null) {
+			if (new_tag.next != null)
 				new_tag.next.previous = new_tag;
-			}
 
 			return new_tag;
 		}
@@ -151,22 +205,20 @@ namespace System.Windows.Forms
 		/// <summary>Combines 'this' tag with 'other' tag</summary>
 		internal bool Combine (LineTag other)
 		{
-			if (!this.Equals (other)) {
+			if (!this.Equals (other))
 				return false;
-			}
 
 			this.next = other.next;
-			if (this.next != null) {
+			
+			if (this.next != null)
 				this.next.previous = this;
-			}
 
 			return true;
 		}
 
 		public void CopyFormattingFrom (LineTag other)
 		{
-			height = other.height;
-			font = other.font;
+			Font = other.font;
 			color = other.color;
 			back_color = other.back_color;
 		}
@@ -224,10 +276,8 @@ namespace System.Windows.Forms
 			LineTag tag = line.tags;
 
 			// Beginning of line is a bit special
-			if (pos == 0) {
-				// Not sure if we should get the final tag here
-				return tag;
-			}
+			if (pos == 0)
+				return tag;	// Not sure if we should get the final tag here
 
 			while (tag != null) {
 				if ((tag.start <= pos) && (pos <= tag.End))
@@ -315,28 +365,10 @@ namespace System.Windows.Forms
 			return font.Height;
 		}
 
-		/// <summary>Remove 'this' tag ; to be called when formatting is to be removed</summary>
-		internal bool Remove ()
-		{
-			if ((this.start == 1) && (this.next == null)) {
-				// We cannot remove the only tag
-				return false;
-			}
-			if (this.start != 1) {
-				this.previous.next = this.next;
-				this.next.previous = this.previous;
-			} else {
-				this.next.start = 1;
-				this.line.tags = this.next;
-				this.next.previous = null;
-			}
-			return true;
-		}
-
 		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
-				tag.font = font;
+				tag.Font = font;
 			if ((FormatSpecified.Color & specified) == FormatSpecified.Color)
 				tag.color = color;
 			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {

@@ -534,12 +534,12 @@ namespace System.Windows.Forms {
 
 				start = document.selection_start.line.FindTag (document.selection_start.pos);
 				end = document.selection_start.line.FindTag (document.selection_end.pos);
-				color = start.color;
+				color = start.Color;
 
 				tag = start;
 				while (tag != null && tag != end) {
 
-					if (!color.Equals (tag.color))
+					if (!color.Equals (tag.Color))
 						return Color.Empty;
 
 					tag = document.NextTag (tag);
@@ -581,13 +581,13 @@ namespace System.Windows.Forms {
 
 				start = document.selection_start.line.FindTag (document.selection_start.pos);
 				end = document.selection_start.line.FindTag (document.selection_end.pos);
-				font = start.font;
+				font = start.Font;
 
 				if (selection_length > 1) {
 					tag = start;
 					while (tag != null && tag != end) {
 
-						if (!font.Equals(tag.font))
+						if (!font.Equals(tag.Font))
 							return null;
 
 						tag = document.NextTag (tag);
@@ -901,11 +901,11 @@ namespace System.Windows.Forms {
 
 			PointToTagPos(pt, out tag, out pos);
 
-			if (pos >= tag.line.text.Length) {
+			if (pos >= tag.Line.text.Length) {
 				return '\n';
 			}
 
-			return tag.line.text[pos];
+			return tag.Line.text[pos];
 		}
 #else
 		internal override char GetCharFromPositionInternal (Point p)
@@ -915,10 +915,10 @@ namespace System.Windows.Forms {
 
 			PointToTagPos (p, out tag, out pos);
 
-			if (pos >= tag.line.text.Length)
+			if (pos >= tag.Line.text.Length)
 				return '\n';
 
-			return tag.line.text[pos];
+			return tag.Line.text[pos];
 		}
 #endif
 
@@ -932,7 +932,7 @@ namespace System.Windows.Forms {
 
 			PointToTagPos(pt, out tag, out pos);
 
-			return document.LineTagToCharIndex(tag.line, pos);
+			return document.LineTagToCharIndex(tag.Line, pos);
 		}
 
 		public
@@ -1841,8 +1841,8 @@ namespace System.Windows.Forms {
 			// Add default font and color; to optimize document content we don't
 			// use this.Font and this.ForeColor but the font/color from the first tag
 			tag = LineTag.FindTag(start_line, pos);
-			font = tag.font;
-			color = tag.color;
+			font = tag.Font;
+			color = tag.Color;
 			fonts.Add(font.Name);
 			colors.Add(color);
 
@@ -1857,22 +1857,22 @@ namespace System.Windows.Forms {
 				}
 
 				while (pos < line_len) {
-					if (tag.font.Name != font.Name) {
-						font = tag.font;
+					if (tag.Font.Name != font.Name) {
+						font = tag.Font;
 						if (!fonts.Contains(font.Name)) {
 							fonts.Add(font.Name);
 						}
 					}
 
-					if (tag.color != color) {
-						color = tag.color;
+					if (tag.Color != color) {
+						color = tag.Color;
 						if (!colors.Contains(color)) {
 							colors.Add(color);
 						}
 					}
 
-					pos = tag.start + tag.Length - 1;
-					tag = tag.next;
+					pos = tag.Start + tag.Length - 1;
+					tag = tag.Next;
 				}
 				pos = 0;
 				line_no++;
@@ -1915,10 +1915,10 @@ namespace System.Windows.Forms {
 			// Emit initial paragraph settings
 			tag = LineTag.FindTag(start_line, start_pos);
 			sb.Append("\\pard");	// Reset to default paragraph properties
-			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.font.Name), null, tag.font);	// Font properties
+			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.Font.Name), null, tag.Font);	// Font properties
 			sb.Append(" ");		// Space separator
 
-			font = tag.font;
+			font = tag.Font;
 			color = (Color)colors[0];
 			line = start_line;
 			line_no = start_line.line_no;
@@ -1937,13 +1937,13 @@ namespace System.Windows.Forms {
 				while (pos < line_len) {
 					length = sb.Length;
 
-					if (tag.font != font) {
-						EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.font.Name), font, tag.font);
-						font = tag.font;
+					if (tag.Font != font) {
+						EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.Font.Name), font, tag.Font);
+						font = tag.Font;
 					}
 
-					if (tag.color != color) {
-						color = tag.color;
+					if (tag.Color != color) {
+						color = tag.Color;
 						sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
 					}
 					if (length != sb.Length) {
@@ -1952,18 +1952,18 @@ namespace System.Windows.Forms {
 
 					// Emit the string itself
 					if (line_no != end_line.line_no) {
-						EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.Length - pos - 1));
+						EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
 					} else {
-						if (end_pos < (tag.start + tag.Length - 1)) {
+						if (end_pos < (tag.Start + tag.Length - 1)) {
 							// Emit partial tag only, end_pos is inside this tag
-							EmitRTFText(sb, tag.line.text.ToString(pos, end_pos - pos));
+							EmitRTFText(sb, tag.Line.text.ToString(pos, end_pos - pos));
 						} else {
-							EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.Length - pos - 1));
+							EmitRTFText(sb, tag.Line.text.ToString(pos, tag.Start + tag.Length - pos - 1));
 						}
 					}
 
-					pos = tag.start + tag.Length - 1;
-					tag = tag.next;
+					pos = tag.Start + tag.Length - 1;
+					tag = tag.Next;
 				}
 				if (pos >= line.text.Length) {
 					if (line.ending != LineEnding.Wrap) {

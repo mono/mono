@@ -854,25 +854,25 @@ namespace System.Windows.Forms {
 			if (tag == null)
 				return (char) 0; // Shouldn't happen
 
-			if (index >= tag.line.text.Length) {
+			if (index >= tag.Line.text.Length) {
 				
-				if (tag.line.ending == LineEnding.Wrap) {
+				if (tag.Line.ending == LineEnding.Wrap) {
 					// If we have wrapped text, we return the first char of the next line
-					Line line = document.GetLine (tag.line.line_no + 1);
+					Line line = document.GetLine (tag.Line.line_no + 1);
 					if (line != null)
 						return line.text [0];
 
 				}
 
-				if (tag.line.line_no == document.Lines) {
+				if (tag.Line.line_no == document.Lines) {
 					// Last line returns the last char
-					return tag.line.text [tag.line.text.Length - 1];
+					return tag.Line.text [tag.Line.text.Length - 1];
 				}
 
 				// This really shouldn't happen
 				return (char) 0;
 			}
-			return tag.line.text [index];
+			return tag.Line.text [index];
 		}
 
 		public virtual int GetCharIndexFromPosition (Point p)
@@ -882,24 +882,24 @@ namespace System.Windows.Forms {
 			if (tag == null)
 				return 0;
 
-			if (line_index >= tag.line.text.Length) {
+			if (line_index >= tag.Line.text.Length) {
 
-				if (tag.line.ending == LineEnding.Wrap) {
+				if (tag.Line.ending == LineEnding.Wrap) {
 					// If we have wrapped text, we return the first char of the next line
-					Line line = document.GetLine (tag.line.line_no + 1);
+					Line line = document.GetLine (tag.Line.line_no + 1);
 					if (line != null)
 						return document.LineTagToCharIndex (line, 0);
 				}
 
-				if (tag.line.line_no == document.Lines) {
+				if (tag.Line.line_no == document.Lines) {
 					// Last line returns the last char
-					return document.LineTagToCharIndex (tag.line, tag.line.text.Length - 1);
+					return document.LineTagToCharIndex (tag.Line, tag.Line.text.Length - 1);
 				}
 
 				return 0;
 			}
 
-			return document.LineTagToCharIndex (tag.line, line_index);
+			return document.LineTagToCharIndex (tag.Line, line_index);
 		}
 
 		public virtual Point GetPositionFromCharIndex (int index)
@@ -912,7 +912,7 @@ namespace System.Windows.Forms {
 
 			return new Point ((int) (line.widths [pos] +
 							  line.X + document.viewport_x),
-					line.Y + document.viewport_y + tag.shift);
+					line.Y + document.viewport_y + tag.Shift);
 		}
 
 		public int GetFirstCharIndexFromLine (int line_number)
@@ -1748,8 +1748,8 @@ namespace System.Windows.Forms {
 				Document.Marker	marker;
 
 				marker.tag = document.FindCursor(e.X + document.ViewPortX, e.Y + document.ViewPortY, out marker.pos);
-				marker.line = marker.tag.line;
-				marker.height = marker.tag.height;
+				marker.line = marker.tag.Line;
+				marker.height = marker.tag.Height;
 
 				document.SetSelection(marker.line, marker.pos, marker.line, marker.pos);
 				Paste (Clipboard.GetDataObject (true), null, true);

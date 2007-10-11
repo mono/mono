@@ -328,7 +328,7 @@ namespace System.Windows.Forms {
 
 		internal Point Caret {
 			get {
-				return new Point((int)caret.tag.line.widths[caret.pos] + caret.line.X, caret.line.Y);
+				return new Point((int)caret.tag.Line.widths[caret.pos] + caret.line.X, caret.line.Y);
 			}
 		}
 
@@ -556,15 +556,15 @@ namespace System.Windows.Forms {
 				length = 0;
 				Console.Write("   Tags: ");
 				while (tag != null) {
-					Console.Write("{0} <{1}>-<{2}>", count++, tag.start, tag.End
+					Console.Write("{0} <{1}>-<{2}>", count++, tag.Start, tag.End
 							/*line.text.ToString (tag.start - 1, tag.length)*/);
 					length += tag.Length;
 
-					if (tag.line != line) {
+					if (tag.Line != line) {
 						Console.Write("BAD line link");
 						throw new Exception("Bad line link in tree");
 					}
-					tag = tag.next;
+					tag = tag.Next;
 					if (tag != null) {
 						Console.Write(", ");
 					}
@@ -939,9 +939,9 @@ namespace System.Windows.Forms {
 
 			if (owner.IsHandleCreated) {
 				if (owner.Focused) {
-					if (caret.height != caret.tag.height)
+					if (caret.height != caret.tag.Height)
 						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -949,7 +949,7 @@ namespace System.Windows.Forms {
 
 			// We set this at the end because we use the heights to determine whether or
 			// not we need to recreate the caret
-			caret.height = caret.tag.height;
+			caret.height = caret.tag.Height;
 
 		}
 
@@ -962,12 +962,12 @@ namespace System.Windows.Forms {
 
 			MoveCaretToTextTag ();
 			
-			caret.line = caret.tag.line;
-			caret.height = caret.tag.height;
+			caret.line = caret.tag.Line;
+			caret.height = caret.tag.Height;
 
 			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -976,7 +976,7 @@ namespace System.Windows.Forms {
 		internal void CaretHasFocus() {
 			if ((caret.tag != null) && owner.IsHandleCreated) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 
 				DisplayCaret ();
 			}
@@ -1002,11 +1002,11 @@ namespace System.Windows.Forms {
 
 			MoveCaretToTextTag ();
 
-			caret.height = caret.tag.height;
+			caret.height = caret.tag.Height;
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 
@@ -1020,15 +1020,15 @@ namespace System.Windows.Forms {
 
 			MoveCaretToTextTag ();
 
-			if (caret.tag.height != caret.height) {
-				caret.height = caret.tag.height;
+			if (caret.tag.Height != caret.height) {
+				caret.height = caret.tag.Height;
 				if (owner.Focused) {
 					XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				}
 			}
 
 			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 			
@@ -1063,10 +1063,10 @@ namespace System.Windows.Forms {
 
 			
 
-			if (caret.pos < caret.tag.start) {
-				caret.tag = caret.tag.previous;
+			if (caret.pos < caret.tag.Start) {
+				caret.tag = caret.tag.Previous;
 			} else {
-				caret.tag = caret.tag.next;
+				caret.tag = caret.tag.Next;
 			}
 		}
 
@@ -1096,8 +1096,8 @@ namespace System.Windows.Forms {
 							caret.pos--;
 						}
 					} else {
-						if ((caret.tag.start - 1 + caret.tag.Length) < caret.pos) {
-							caret.tag = caret.tag.next;
+						if ((caret.tag.Start - 1 + caret.tag.Length) < caret.pos) {
+							caret.tag = caret.tag.Next;
 						}
 					}
 					UpdateCaret();
@@ -1112,8 +1112,8 @@ namespace System.Windows.Forms {
 						// caret.pos--; // folded into the if below
 						
 						if (--caret.pos > 0) {
-							if (caret.tag.start > caret.pos) {
-								caret.tag = caret.tag.previous;
+							if (caret.tag.Start > caret.pos) {
+								caret.tag = caret.tag.Previous;
 							}
 						}
 					} else {
@@ -1240,7 +1240,7 @@ namespace System.Windows.Forms {
 					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
 							viewport_y - viewport_height, out index);
 
-					owner.vscroll.Value = Math.Min (top.line.Y, owner.vscroll.Maximum - viewport_height);
+					owner.vscroll.Value = Math.Min (top.Line.Y, owner.vscroll.Maximum - viewport_height);
 					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
 
 					return;
@@ -1259,7 +1259,7 @@ namespace System.Windows.Forms {
 					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
 							viewport_y + viewport_height, out index);
 
-					owner.vscroll.Value = Math.Min (top.line.Y, owner.vscroll.Maximum - viewport_height);
+					owner.vscroll.Value = Math.Min (top.Line.Y, owner.vscroll.Maximum - viewport_height);
 					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
 					
 					return;
@@ -1277,10 +1277,10 @@ namespace System.Windows.Forms {
 					int	index;
 
 					tag = FindTag(0, viewport_y + viewport_height, out index, false);
-					if (tag.line.line_no > 1) {
-						line = GetLine(tag.line.line_no - 1);
+					if (tag.Line.line_no > 1) {
+						line = GetLine(tag.Line.line_no - 1);
 					} else {
-						line = tag.line;
+						line = tag.Line;
 					}
 					PositionCaret(line, line.Text.Length);
 					DisplayCaret ();
@@ -1335,10 +1335,10 @@ namespace System.Windows.Forms {
 				LineTag tag = line.tags;
 				while (tag != null) {
 					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}'>",
-							tag.GetType (), tag.start, tag.Length, tag.font, tag.color);
+							tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color);
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
-					tag = tag.next;
+					tag = tag.Next;
 				}
 				Console.WriteLine ("</line>");
 			}
@@ -1443,30 +1443,30 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				current_color = line.tags.color;
+				current_color = line.tags.Color;
 				while (tag != null) {
 
 					// Skip empty tags
 					if (tag.Length == 0) {
-						tag = tag.next;
+						tag = tag.Next;
 						continue;
 					}
 
 					if (((tag.X + tag.Width) < (clip.Left - viewport_x)) && (tag.X > (clip.Right - viewport_x))) {
-						tag = tag.next;
+						tag = tag.Next;
 						continue;
 					}
 
-					if (tag.back_color != Color.Empty) {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.back_color), tag.X + line.X - viewport_x,
-								line_y + tag.shift, tag.Width, line.height);
+					if (tag.BackColor != Color.Empty) {
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), tag.X + line.X - viewport_x,
+								line_y + tag.Shift, tag.Width, line.height);
 					}
 
-					tag_color = tag.color;
+					tag_color = tag.Color;
 					current_color = tag_color;
 
 					if (!owner.Enabled) {
-						Color a = tag.color;
+						Color a = tag.Color;
 						Color b = ThemeEngine.Current.ColorWindowText;
 
 						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
@@ -1476,9 +1476,9 @@ namespace System.Windows.Forms {
 						tag_color = ThemeEngine.Current.ColorControlText;
 					}
 
-					int tag_pos = tag.start;
+					int tag_pos = tag.Start;
 					current_color = tag_color;
-					while (tag_pos < tag.start + tag.Length) {
+					while (tag_pos < tag.Start + tag.Length) {
 						int old_tag_pos = tag_pos;
 
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
@@ -1494,11 +1494,11 @@ namespace System.Windows.Forms {
 
 						tag.Draw (g, current_color,
 								line.X - viewport_x,
-								line_y + tag.shift,
-								old_tag_pos - 1, Math.Min (tag.start + tag.Length, tag_pos) - 1,
+								line_y + tag.Shift,
+								old_tag_pos - 1, Math.Min (tag.Start + tag.Length, tag_pos) - 1,
 								text.ToString() );
 					}
-					tag = tag.next;
+					tag = tag.Next;
 				}
 
 				line.DrawEnding (g, line_y);
@@ -1606,7 +1606,7 @@ namespace System.Windows.Forms {
 				string line_text = s.Substring (break_index, next_break - break_index +
 						LineEndingLength (ending));
 
-				Add (base_line + count, line_text, line.alignment, tag.font, tag.color, ending);
+				Add (base_line + count, line_text, line.alignment, tag.Font, tag.Color, ending);
 
 				Line last = GetLine (base_line + count);
 				last.ending = ending;
@@ -1641,13 +1641,13 @@ namespace System.Windows.Forms {
 
 			CharCount += len;
 
-			line = tag.line;
+			line = tag.Line;
 			line.text.Insert(pos, s);
 
-			tag = tag.next;
+			tag = tag.Next;
 			while (tag != null) {
-				tag.start += len;
-				tag = tag.next;
+				tag.Start += len;
+				tag = tag.Next;
 			}
 			line.Grow(len);
 			line.recalc = true;
@@ -1680,13 +1680,13 @@ namespace System.Windows.Forms {
 
 			CharCount++;
 
-			line = tag.line;
+			line = tag.Line;
 			line.text.Insert(pos, ch);
 
-			tag = tag.next;
+			tag = tag.Next;
 			while (tag != null) {
-				tag.start++;
-				tag = tag.next;
+				tag.Start++;
+				tag = tag.Next;
 			}
 			line.Grow(1);
 			line.recalc = true;
@@ -1742,23 +1742,23 @@ namespace System.Windows.Forms {
 			tag = LineTag.FindTag (line, pos);
 			picture_tag.CopyFormattingFrom (tag);
 			/*next_tag = */tag.Break (pos + 1);
-			picture_tag.previous = tag;
-			picture_tag.next = tag.next;
-			tag.next = picture_tag;
+			picture_tag.Previous = tag;
+			picture_tag.Next = tag.Next;
+			tag.Next = picture_tag;
 
 			//
 			// Picture tags need to be surrounded by text tags
 			//
-			if (picture_tag.next == null) {
-				picture_tag.next = new LineTag (line, pos + 1);
-				picture_tag.next.CopyFormattingFrom (tag);
-				picture_tag.next.previous = picture_tag;
+			if (picture_tag.Next == null) {
+				picture_tag.Next = new LineTag (line, pos + 1);
+				picture_tag.Next.CopyFormattingFrom (tag);
+				picture_tag.Next.Previous = picture_tag;
 			}
 
-			tag = picture_tag.next;
+			tag = picture_tag.Next;
 			while (tag != null) {
-				tag.start += len;
-				tag = tag.next;
+				tag.Start += len;
+				tag = tag.Next;
 			}
 
 			line.Grow (len);
@@ -1815,7 +1815,7 @@ namespace System.Windows.Forms {
 			bool	streamline;
 
 			streamline = false;
-			line = tag.line;
+			line = tag.Line;
 
 			CharCount -= count;
 
@@ -1827,7 +1827,7 @@ namespace System.Windows.Forms {
 
 			// Make sure the tag points to the right spot
 			while ((tag != null) && (tag.End) < pos) {
-				tag = tag.next;
+				tag = tag.Next;
 			}
 
 			if (tag == null) {
@@ -1835,24 +1835,24 @@ namespace System.Windows.Forms {
 			}
 
 			// Check if we're crossing tag boundaries
-			if ((pos + count) > (tag.start + tag.Length - 1)) {
+			if ((pos + count) > (tag.Start + tag.Length - 1)) {
 				int	left;
 
 				// We have to delete cross tag boundaries
 				streamline = true;
 				left = count;
 
-				left -= tag.start + tag.Length - pos - 1;
+				left -= tag.Start + tag.Length - pos - 1;
 
-				tag = tag.next;
+				tag = tag.Next;
 				while ((tag != null) && (left > 0)) {
-					tag.start -= count - left;
+					tag.Start -= count - left;
 
 					if (tag.Length > left) {
 						left = 0;
 					} else {
 						left -= tag.Length;
-						tag = tag.next;
+						tag = tag.Next;
 					}
 
 				}
@@ -1866,20 +1866,20 @@ namespace System.Windows.Forms {
 
 			// Delete empty orphaned tags at the end
 			LineTag walk = tag;
-			while (walk != null && walk.next != null && walk.next.Length == 0) {
+			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
 				LineTag t = walk;
-				walk.next = walk.next.next;
-				if (walk.next != null)
-					walk.next.previous = t;
-				walk = walk.next;
+				walk.Next = walk.Next.Next;
+				if (walk.Next != null)
+					walk.Next.Previous = t;
+				walk = walk.Next;
 			}
 
 			// Adjust the start point of any tags following
 			if (tag != null) {
-				tag = tag.next;
+				tag = tag.Next;
 				while (tag != null) {
-					tag.start -= count;
-					tag = tag.next;
+					tag.Start -= count;
+					tag = tag.Next;
 				}
 			}
 
@@ -1917,7 +1917,7 @@ namespace System.Windows.Forms {
 			CharCount--;
 
 			streamline = false;
-			line = tag.line;
+			line = tag.Line;
 
 			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true)) {
 				return;
@@ -1927,8 +1927,8 @@ namespace System.Windows.Forms {
 			if (forward) {
 				line.text.Remove(pos, 1);
 
-				while ((tag != null) && (tag.start + tag.Length - 1) <= pos) {
-					tag = tag.next;
+				while ((tag != null) && (tag.Start + tag.Length - 1) <= pos) {
+					tag = tag.Next;
 				}
 
 				if (tag == null) {
@@ -1943,14 +1943,14 @@ namespace System.Windows.Forms {
 			} else {
 				pos--;
 				line.text.Remove(pos, 1);
-				if (pos >= (tag.start - 1)) {
+				if (pos >= (tag.Start - 1)) {
 					//		tag.length--;
 					if (tag.Length == 0) {
 						streamline = true;
 					}
-				} else if (tag.previous != null) {
+				} else if (tag.Previous != null) {
 					//		tag.previous.length--;
-					if (tag.previous.Length == 0) {
+					if (tag.Previous.Length == 0) {
 						streamline = true;
 					}
 				}
@@ -1958,18 +1958,18 @@ namespace System.Windows.Forms {
 
 			// Delete empty orphaned tags at the end
 			LineTag walk = tag;
-			while (walk != null && walk.next != null && walk.next.Length == 0) {
+			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
 				LineTag t = walk;
-				walk.next = walk.next.next;
-				if (walk.next != null)
-					walk.next.previous = t;
-				walk = walk.next;
+				walk.Next = walk.Next.Next;
+				if (walk.Next != null)
+					walk.Next.Previous = t;
+				walk = walk.Next;
 			}
 
-			tag = tag.next;
+			tag = tag.Next;
 			while (tag != null) {
-				tag.start--;
-				tag = tag.next;
+				tag.Start--;
+				tag = tag.Next;
 			}
 			line.recalc = true;
 			if (streamline) {
@@ -2015,21 +2015,21 @@ namespace System.Windows.Forms {
 			// Maintain the line ending style
 			first.ending = second.ending;
 
-			while (last.next != null) {
-				last = last.next;
+			while (last.Next != null) {
+				last = last.Next;
 			}
 
 			// need to get the shift before setting the next tag since that effects length
-			shift = last.start + last.Length - 1;
-			last.next = second.tags;
-			last.next.previous = last;
+			shift = last.Start + last.Length - 1;
+			last.Next = second.tags;
+			last.Next.Previous = last;
 
 			// Fix up references within the chain
-			last = last.next;
+			last = last.Next;
 			while (last != null) {
-				last.line = first;
-				last.start += shift;
-				last = last.next;
+				last.Line = first;
+				last.Start += shift;
+				last = last.Next;
 			}
 
 			// Combine both lines' strings
@@ -2125,7 +2125,7 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add (line.line_no + 1, String.Empty, line.alignment, tag.font, tag.color, line.ending);
+				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, line.ending);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2150,7 +2150,7 @@ namespace System.Windows.Forms {
 			}
 
 			// We need to move the rest of the text into the new line
-			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.font, tag.color, line.ending);
+			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2158,7 +2158,7 @@ namespace System.Windows.Forms {
 			line.recalc = true;
 			new_line.recalc = true;
 
-			if ((tag.start - 1) == pos) {
+			if ((tag.Start - 1) == pos) {
 				int	shift;
 
 				// We can simply break the chain and move the tag into the next line
@@ -2168,40 +2168,40 @@ namespace System.Windows.Forms {
 					line.tags = new_tag;
 				}
 
-				if (tag.previous != null) {
-					tag.previous.next = null;
+				if (tag.Previous != null) {
+					tag.Previous.Next = null;
 				}
 				new_line.tags = tag;
-				tag.previous = null;
-				tag.line = new_line;
+				tag.Previous = null;
+				tag.Line = new_line;
 
 				// Walk the list and correct the start location of the tags we just bumped into the next line
-				shift = tag.start - 1;
+				shift = tag.Start - 1;
 
 				new_tag = tag;
 				while (new_tag != null) {
-					new_tag.start -= shift;
-					new_tag.line = new_line;
-					new_tag = new_tag.next;
+					new_tag.Start -= shift;
+					new_tag.Line = new_line;
+					new_tag = new_tag.Next;
 				}
 			} else {
 				int	shift;
 
 				new_tag = new LineTag (new_line, 1);			
-				new_tag.next = tag.next;
+				new_tag.Next = tag.Next;
 				new_tag.CopyFormattingFrom (tag);
 				new_line.tags = new_tag;
-				if (new_tag.next != null) {
-					new_tag.next.previous = new_tag;
+				if (new_tag.Next != null) {
+					new_tag.Next.Previous = new_tag;
 				}
-				tag.next = null;
+				tag.Next = null;
 
 				shift = pos;
-				new_tag = new_tag.next;
+				new_tag = new_tag.Next;
 				while (new_tag != null) {
-					new_tag.start -= shift;
-					new_tag.line = new_line;
-					new_tag = new_tag.next;
+					new_tag.Start -= shift;
+					new_tag.Line = new_line;
+					new_tag = new_tag.Next;
 
 				}
 			}
@@ -2387,8 +2387,8 @@ namespace System.Windows.Forms {
 
 				tag = line1.tags;
 				while (tag != null) {
-					tag.line = line1;
-					tag = tag.next;
+					tag.Line = line1;
+					tag = tag.Next;
 				}
 			}
 
@@ -3005,13 +3005,13 @@ namespace System.Windows.Forms {
 					tag = line.tags;
 
 					while (tag != null) {
-						if (index < (start + tag.start + tag.Length - 1)) {
+						if (index < (start + tag.Start + tag.Length - 1)) {
 							line_out = line;
 							tag_out = LineTag.GetFinalTag (tag);
 							pos = index - start;
 							return;
 						}
-						if (tag.next == null) {
+						if (tag.Next == null) {
 							Line	next_line;
 
 							next_line = GetLine(line.line_no + 1);
@@ -3028,15 +3028,15 @@ namespace System.Windows.Forms {
 								return;
 							}
 						}
-						tag = tag.next;
+						tag = tag.Next;
 					}
 				}
 			}
 
 			line_out = GetLine(lines);
 			tag = line_out.tags;
-			while (tag.next != null) {
-				tag = tag.next;
+			while (tag.Next != null) {
+				tag = tag.Next;
 			}
 			tag_out = tag;
 			pos = line_out.text.Length;
@@ -3115,22 +3115,22 @@ namespace System.Windows.Forms {
 		internal LineTag PreviousTag(LineTag tag) {
 			Line l; 
 
-			if (tag.previous != null) {
-				return tag.previous;
+			if (tag.Previous != null) {
+				return tag.Previous;
 			}
 
 			// Next line 
-			if (tag.line.line_no == 1) {
+			if (tag.Line.line_no == 1) {
 				return null;
 			}
 
-			l = GetLine(tag.line.line_no - 1);
+			l = GetLine(tag.Line.line_no - 1);
 			if (l != null) {
 				LineTag t;
 
 				t = l.tags;
-				while (t.next != null) {
-					t = t.next;
+				while (t.Next != null) {
+					t = t.Next;
 				}
 				return t;
 			}
@@ -3142,12 +3142,12 @@ namespace System.Windows.Forms {
 		internal LineTag NextTag(LineTag tag) {
 			Line l;
 
-			if (tag.next != null) {
-				return tag.next;
+			if (tag.Next != null) {
+				return tag.Next;
 			}
 
 			// Next line
-			l = GetLine(tag.line.line_no + 1);
+			l = GetLine(tag.Line.line_no + 1);
 			if (l != null) {
 				return l.tags;
 			}
@@ -3231,9 +3231,9 @@ namespace System.Windows.Forms {
 				if (x >= tag.X && x < (tag.X+tag.Width)) {
 					int	end;
 
-					end = tag.start + tag.Length - 1;
+					end = tag.Start + tag.Length - 1;
 
-					for (int pos = tag.start; pos < end; pos++) {
+					for (int pos = tag.Start; pos < end; pos++) {
 						if (x < line.widths[pos]) {
 							index = pos;
 							return LineTag.GetFinalTag (tag);
@@ -3242,8 +3242,8 @@ namespace System.Windows.Forms {
 					index=end;
 					return LineTag.GetFinalTag (tag);
 				}
-				if (tag.next != null) {
-					tag = tag.next;
+				if (tag.Next != null) {
+					tag = tag.Next;
 				} else {
 					if (exact) {
 						index = 0;
@@ -3276,7 +3276,7 @@ namespace System.Windows.Forms {
 
 					end = tag.TextEnd;
 
-					for (int pos = tag.start - 1; pos < end; pos++) {
+					for (int pos = tag.Start - 1; pos < end; pos++) {
 						// When clicking on a character, we position the cursor to whatever edge
 						// of the character the click was closer
 						if (x < (line.X + line.widths[pos] + ((line.widths[pos+1]-line.widths[pos])/2))) {
@@ -3287,8 +3287,8 @@ namespace System.Windows.Forms {
 					index=end;
 					return LineTag.GetFinalTag (tag);
 				}
-				if (tag.next != null) {
-					tag = tag.next;
+				if (tag.Next != null) {
+					tag = tag.Next;
 				} else {
 					index = line.TextLengthWithoutEnding ();
 					return LineTag.GetFinalTag (tag);
@@ -3766,8 +3766,8 @@ namespace System.Windows.Forms {
 			} else {
 				mark.line = GetLine(lines);
 				mark.tag = mark.line.tags;
-				while (mark.tag.next != null) {
-					mark.tag = mark.tag.next;
+				while (mark.tag.Next != null) {
+					mark.tag = mark.tag.Next;
 				}
 				mark.pos = mark.line.text.Length;
 			}
@@ -3842,12 +3842,12 @@ namespace System.Windows.Forms {
 
 		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
 		{
-			picture.DrawImage (dc, xoff + line.widths [start], y, false);
+			picture.DrawImage (dc, xoff + Line.widths [start], y, false);
 		}
 
 		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
-			picture.DrawImage (dc, xoff + + line.widths [start], y, false);
+			picture.DrawImage (dc, xoff + + Line.widths [start], y, false);
 		}
 
 		public override string Text ()
@@ -4195,18 +4195,18 @@ namespace System.Windows.Forms {
 
 				// Copy tags from start to start+length onto new line
 				current_tag = current.FindTag (start);
-				while ((current_tag != null) && (current_tag.start <= end)) {
-					if ((current_tag.start <= start) && (start < (current_tag.start + current_tag.Length))) {
+				while ((current_tag != null) && (current_tag.Start <= end)) {
+					if ((current_tag.Start <= start) && (start < (current_tag.Start + current_tag.Length))) {
 						// start tag is within this tag
 						tag_start = start;
 					} else {
-						tag_start = current_tag.start;
+						tag_start = current_tag.Start;
 					}
 
 					tag = new LineTag(line, tag_start - start + 1);
 					tag.CopyFormattingFrom (current_tag);
 
-					current_tag = current_tag.next;
+					current_tag = current_tag.Next;
 
 					// Add the new tag to the line
 					if (line.tags == null) {
@@ -4215,11 +4215,11 @@ namespace System.Windows.Forms {
 						LineTag tail;
 						tail = line.tags;
 
-						while (tail.next != null) {
-							tail = tail.next;
+						while (tail.Next != null) {
+							tail = tail.Next;
 						}
-						tail.next = tag;
-						tag.previous = tail;
+						tail.Next = tag;
+						tag.Previous = tail;
 					}
 				}
 
@@ -4258,21 +4258,21 @@ namespace System.Windows.Forms {
 				//Insert our tags at the end
 				tag = line.tags;
 
-				while (tag.next != null) {
-					tag = tag.next;
+				while (tag.Next != null) {
+					tag = tag.Next;
 				}
 
-				offset = tag.start + tag.Length - 1;
+				offset = tag.Start + tag.Length - 1;
 
-				tag.next = insert.tags;
+				tag.Next = insert.tags;
 				line.text.Insert(offset, insert.text.ToString());
 
 				// Adjust start locations
-				tag = tag.next;
+				tag = tag.Next;
 				while (tag != null) {
-					tag.start += offset;
-					tag.line = line;
-					tag = tag.next;
+					tag.Start += offset;
+					tag.Line = line;
+					tag = tag.Next;
 				}
 				// Put it back together
 				document.Combine(line.line_no, line.line_no + 1);
@@ -4300,19 +4300,19 @@ namespace System.Windows.Forms {
 
 					
 					if (tag != null && tag.Length != 0) {
-						while (tag.next != null) {
-							tag = tag.next;
+						while (tag.Next != null) {
+							tag = tag.Next;
 						}
-						offset = tag.start + tag.Length - 1;
-						tag.next = current.tags;
-						tag.next.previous = tag;
+						offset = tag.Start + tag.Length - 1;
+						tag.Next = current.tags;
+						tag.Next.Previous = tag;
 
-						tag = tag.next;
+						tag = tag.Next;
 
 					} else {
 						offset = 0;
 						line.tags = current.tags;
-						line.tags.previous = null;
+						line.tags.Previous = null;
 						tag = line.tags;
 					}
 
@@ -4321,16 +4321,16 @@ namespace System.Windows.Forms {
 					document.Split(line.line_no, 0);
 					offset = 0;
 					line.tags = current.tags;
-					line.tags.previous = null;
+					line.tags.Previous = null;
 					line.ending = current.ending;
 					tag = line.tags;
 				}
 
 				// Adjust start locations and line pointers
 				while (tag != null) {
-					tag.start += offset - 1;
-					tag.line = line;
-					tag = tag.next;
+					tag.Start += offset - 1;
+					tag.Line = line;
+					tag = tag.Next;
 				}
 
 				line.text.Insert(offset, current.text.ToString());

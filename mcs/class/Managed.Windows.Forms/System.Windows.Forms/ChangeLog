@@ -1,3 +1,11 @@
+2007-10-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LineTag.cs: Encapsulate all variables with properties.  Calculate ascent/
+	descent internally when font changes instead of outside code being responsible
+	for setting it.
+	* Line.cs, RichTextBox.cs, TextBoxBase.cs, TextControl.cs: Use Tag properties
+	instead of accessing internal variables.
+
 2007-10-09  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MdiClient.cs: Always call ArrangeIconicWindows before any arrangement and

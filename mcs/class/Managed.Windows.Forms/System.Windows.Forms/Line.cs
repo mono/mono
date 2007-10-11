@@ -89,8 +89,8 @@ namespace System.Windows.Forms
 
 			
 			tags = new LineTag(this, 1);
-			tags.font = font;
-			tags.color = color;				
+			tags.Font = font;
+			tags.Color = color;				
 		}
 
 		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending) : this(document, ending)
@@ -106,8 +106,8 @@ namespace System.Windows.Forms
 
 			
 			tags = new LineTag(this, 1);
-			tags.font = font;
-			tags.color = color;
+			tags.Font = font;
+			tags.Color = color;
 		}
 
 		internal Line (Document document, int LineNo, string Text, LineTag tag, LineEnding ending) : this(document, ending)
@@ -207,8 +207,8 @@ namespace System.Windows.Forms
 			if (document.multiline)
 				return;
 			LineTag last = tags;
-			while (last.next != null)
-				last = last.next;
+			while (last.Next != null)
+				last = last.Next;
 
 			string end_str = null;
 			switch (document.LineEndingLength (ending)) {
@@ -225,7 +225,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			TextBoxTextRenderer.DrawText (dc, end_str, last.font, last.color, X + widths [TextLengthWithoutEnding ()] - document.viewport_x, y, true);
+			TextBoxTextRenderer.DrawText (dc, end_str, last.Font, last.Color, X + widths [TextLengthWithoutEnding ()] - document.viewport_x, y, true);
 		}
 
 		/// <summary> Find the tag on a line based on the character position, pos is 0-based</summary>
@@ -242,10 +242,10 @@ namespace System.Windows.Forms
 				pos = text.Length - 1;
 
 			while (tag != null) {
-				if (((tag.start - 1) <= pos) && (pos < (tag.start + tag.Length - 1)))
+				if (((tag.Start - 1) <= pos) && (pos < (tag.Start + tag.Length - 1)))
 					return LineTag.GetFinalTag (tag);
 
-				tag = tag.next;
+				tag = tag.Next;
 			}
 			
 			return null;
@@ -302,7 +302,7 @@ namespace System.Windows.Forms
 			prev_offset = this.offset;	// For drawing optimization calculations
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
-			tag.shift = 0;
+			tag.Shift = 0;
 
 			if (ending == LineEnding.Wrap)
 				widths[0] = document.left_margin + hanging_indent;
@@ -317,9 +317,9 @@ namespace System.Windows.Forms
 
 			while (pos < len) {
 				while (tag.Length == 0) {	// We should always have tags after a tag.length==0 unless len==0
-					tag.ascent = 0;
-					tag.shift = 0;
-					tag = tag.next;
+					//tag.Ascent = 0;
+					tag.Shift = 0;
+					tag = tag.Next;
 				}
 
 				size = tag.SizeOfPosition (g, pos);
@@ -372,47 +372,41 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (pos == (tag.start - 1 + tag.Length)) {
+				if (pos == (tag.Start - 1 + tag.Length)) {
 					// We just found the end of our current tag
-					tag.height = tag.MaxHeight ();
+					tag.Height = tag.MaxHeight ();
 
 					// Check if we're the tallest on the line (so far)
-					if (tag.height > this.height)
-						this.height = tag.height;	// Yep; make sure the line knows
+					if (tag.Height > this.height)
+						this.height = tag.Height;	// Yep; make sure the line knows
 
-					if (tag.ascent == 0) {
-						int descent;
-
-						XplatUI.GetFontMetrics (g, tag.font, out tag.ascent, out descent);
-					}
-
-					if (tag.ascent > this.ascent) {
+					if (tag.Ascent > this.ascent) {
 						LineTag t;
 
 						// We have a tag that has a taller ascent than the line;
 						t = tags;
 						while (t != null && t != tag) {
-							t.shift = tag.ascent - t.ascent;
-							t = t.next;
+							t.Shift = tag.Ascent - t.Ascent;
+							t = t.Next;
 						}
 
 						// Save on our line
-						this.ascent = tag.ascent;
+						this.ascent = tag.Ascent;
 					} else {
-						tag.shift = this.ascent - tag.ascent;
+						tag.Shift = this.ascent - tag.Ascent;
 					}
 
-					tag = tag.next;
+					tag = tag.Next;
 					if (tag != null) {
-						tag.shift = 0;
+						tag.Shift = 0;
 						wrap_pos = pos;
 					}
 				}
 			}
 
 			if (this.height == 0) {
-				this.height = tags.font.Height;
-				tag.height = this.height;
+				this.height = tags.Font.Height;
+				tag.Height = this.height;
 			}
 
 			if (prev_offset != offset)
@@ -431,29 +425,27 @@ namespace System.Windows.Forms
 			int len;
 			float w;
 			bool ret;
-			int descent;
 
 			pos = 0;
 			len = this.text.Length;
 			tag = this.tags;
 			ascent = 0;
-			tag.shift = 0;
+			tag.Shift = 0;
 
 			this.recalc = false;
 			widths[0] = document.left_margin + indent;
 
-			w = TextBoxTextRenderer.MeasureText (g, doc.password_char, tags.font).Width;
+			w = TextBoxTextRenderer.MeasureText (g, doc.password_char, tags.Font).Width;
 
-			if (this.height != (int)tag.font.Height)
+			if (this.height != (int)tag.Font.Height)
 				ret = true;
 			else
 				ret = false;
 
-			this.height = (int)tag.font.Height;
-			tag.height = this.height;
+			this.height = (int)tag.Font.Height;
+			tag.Height = this.height;
 
-			XplatUI.GetFontMetrics (g, tag.font, out tag.ascent, out descent);
-			this.ascent = tag.ascent;
+			this.ascent = tag.Ascent;
 
 			while (pos < len) {
 				pos++;
@@ -469,7 +461,7 @@ namespace System.Windows.Forms
 			LineTag next;
 
 			current = this.tags;
-			next = current.next;
+			next = current.Next;
 
 			//
 			// Catch what the loop below wont; eliminate 0 length 
@@ -479,9 +471,9 @@ namespace System.Windows.Forms
 			//
 			while ((current.Length == 0) && (next != null) && (next.IsTextTag)) {
 				tags = next;
-				tags.previous = null;
+				tags.Previous = null;
 				current = next;
-				next = current.next;
+				next = current.Next;
 			}
 
 
@@ -491,23 +483,23 @@ namespace System.Windows.Forms
 			while (next != null) {
 				// Take out 0 length tags unless it's the last tag in the document
 				if (current.IsTextTag && next.Length == 0 && next.IsTextTag) {
-					if ((next.next != null) || (line_no != lines)) {
-						current.next = next.next;
-						if (current.next != null) {
-							current.next.previous = current;
+					if ((next.Next != null) || (line_no != lines)) {
+						current.Next = next.Next;
+						if (current.Next != null) {
+							current.Next.Previous = current;
 						}
-						next = current.next;
+						next = current.Next;
 						continue;
 					}
 				}
 				
 				if (current.Combine (next)) {
-					next = current.next;
+					next = current.Next;
 					continue;
 				}
 
-				current = current.next;
-				next = current.next;
+				current = current.Next;
+				next = current.Next;
 			}
 		}
 
