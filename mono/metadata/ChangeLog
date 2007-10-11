@@ -1,3 +1,8 @@
+
+Thu Oct 11 18:22:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make sure the wrapper methods are properly initialized.
+
 2007-10-11  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata.c, metadata-internals.h: Generalized
