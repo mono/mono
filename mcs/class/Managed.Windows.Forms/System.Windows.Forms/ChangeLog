@@ -1,3 +1,8 @@
+2007-10-09  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MdiClient.cs: Always call ArrangeIconicWindows before any arrangement and
+	remove special treatment for ArrangeIcons since it is already arranged.
+
 2007-10-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxTextRenderer.cs: Draw takes a Color now instead of a Brush, as

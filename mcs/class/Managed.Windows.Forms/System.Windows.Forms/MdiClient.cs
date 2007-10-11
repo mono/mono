@@ -270,6 +270,9 @@ namespace System.Windows.Forms {
 				max_height = Parent.Height;
 			}
 
+			// Don't forget to always call ArrangeIconicWindows 
+			ArrangeIconicWindows (true);
+
 			switch (value) {
 			case MdiLayout.Cascade: {
 				int i = 0;
@@ -301,9 +304,6 @@ namespace System.Windows.Forms {
 				}
 				break;
 				}
-			case MdiLayout.ArrangeIcons:
-				ArrangeIconicWindows (true);
-				break;
 			case MdiLayout.TileHorizontal:
 			case MdiLayout.TileVertical: {
 				// First count number of windows to tile
