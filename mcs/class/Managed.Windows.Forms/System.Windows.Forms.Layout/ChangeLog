@@ -1,3 +1,11 @@
+2007-10-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: When calculating the size of AutoSize row/columns,
+	don't take !Visible controls into account.  When laying out controls,
+	start from the DisplayRectangle instead of (0,0) to account for
+	a scrolled TableLayoutPanel where the start point is negative.
+	[Fixes bug #332892]
+
 2007-09-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Fix copy/paste error for dist_right.  Fixes

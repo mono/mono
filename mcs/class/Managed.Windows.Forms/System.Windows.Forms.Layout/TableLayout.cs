@@ -261,7 +261,7 @@ namespace System.Windows.Forms.Layout
 					{
 						Control c = panel.actual_positions[index, i];
 						
-						if (c != null  && c != dummy_control)
+						if (c != null && c != dummy_control && c.VisibleInternal)
 						{
 							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right)) {
 								if (c.AutoSize)
@@ -342,7 +342,7 @@ namespace System.Windows.Forms.Layout
 					for (int i = 0; i < columns; i++) {
 						Control c = panel.actual_positions[i, index];
 
-						if (c != null && c != dummy_control) {
+						if (c != null && c != dummy_control && c.VisibleInternal) {
 							if (c.Dock == DockStyle.Fill || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom)) {
 								if (c.AutoSize)
 									max_height = Math.Max (max_height, c.PreferredSize.Height + c.Margin.Vertical);
@@ -403,7 +403,7 @@ namespace System.Windows.Forms.Layout
 			int columns = panel.actual_positions.GetLength(0);
 			int rows = panel.actual_positions.GetLength(1);
 
-			Point current_pos = new Point (border_width, border_width);
+			Point current_pos = new Point (panel.DisplayRectangle.Left + border_width, panel.DisplayRectangle.Top + border_width);
 
 			for (int y = 0; y < rows; y++)
 			{
