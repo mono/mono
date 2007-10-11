@@ -1,3 +1,7 @@
+2007-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* System.Windows.Forms_test.dll.sources: Added DragEventArgsTest.cs.
+
 2007-10-08  Andreia Gaita <avidigal@novell.com>
 
 	* SWF.csproj, build-csproj: Add missing ONLY_1_1 flag, update project.

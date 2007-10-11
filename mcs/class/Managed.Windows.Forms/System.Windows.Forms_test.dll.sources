@@ -63,6 +63,7 @@ System.Windows.Forms/DataGridViewTextBoxColumnTest.cs
 System.Windows.Forms/DataObjectTest.cs
 System.Windows.Forms/DateTimePickerTest.cs
 System.Windows.Forms/DefaultLayoutTest.cs
+System.Windows.Forms/DragEventArgsTest.cs
 System.Windows.Forms/ErrorProviderTest.cs
 System.Windows.Forms/FlowPanelTests.cs
 System.Windows.Forms/FocusTest.cs
