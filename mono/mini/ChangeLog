@@ -1,3 +1,19 @@
+2007-10-11  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini.c: Introduced the MonoGenericSharingContext, which
+	replaces the generic_shared flag and will carry more information
+	in the future.
+
+	* generic-sharing.c: Added mini_type_stack_size() which allows
+	allows open types if given a generic sharing context.
+	mini_get_basic_type_from_generic() takes a
+	MonoGenericSharingContext* instead of a MonoCompile* now.
+
+	* mini-alpha.c, mini-amd64.c, mini-arm.c, mini-hppa.c,
+	mini-ia64.c, mini-mips.c, mini-ppc.c, mini-s390.c, mini-s390x.c,
+	mini-sparc.c, mini-x86.c: Trivial changes required by the two
+	changes above.  Just passing arguments through to the right
+	places.
 
 Wed Oct 10 19:44:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
