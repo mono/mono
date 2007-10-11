@@ -1,5 +1,10 @@
 2007-10-11  Marek Safar  <marek.safar@gmail.com>
 	
+	* ecore.cs, delegate.cs (MethodGroupExpr): Refactored best candidate
+	logic to identify best candidate method correctly.
+	
+2007-10-11  Marek Safar  <marek.safar@gmail.com>
+	
 	* location.cs (Equals, GetHashCode): Removed.
 	
 2007-10-11  Marek Safar  <marek.safar@gmail.com>

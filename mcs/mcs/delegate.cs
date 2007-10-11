@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 
 			bool params_method = pd.HasParams;
 			bool is_params_applicable = false;
-			bool is_applicable = me.IsApplicable (ec, args, arg_count, ref mb);
+			bool is_applicable = me.IsApplicable (ec, args, arg_count, ref mb) == 0;
 
 			if (!is_applicable && params_method &&
 			    me.IsParamsMethodApplicable (ec, args, arg_count, ref mb))

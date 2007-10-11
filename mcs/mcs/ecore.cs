@@ -3497,7 +3497,8 @@ namespace Mono.CSharp {
 			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
 
 			string index = (idx + 1).ToString ();
-			if ((a.Modifier & Parameter.Modifier.ISBYREF) != 0 && mod != a.Modifier) {
+			if ((mod & Parameter.Modifier.ISBYREF) != (a.Modifier & Parameter.Modifier.ISBYREF) ||
+				(mod & Parameter.Modifier.ISBYREF) != 0) {
 				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
 					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
 						index, Parameter.GetModifierSignature (a.Modifier));
@@ -3516,6 +3517,11 @@ namespace Mono.CSharp {
 				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
 			}
 		}
+		
+		protected virtual int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
+		{
+			return parameters.Count;
+		}		
 
 		public static bool IsAncestralType (Type first_type, Type second_type)
 		{
@@ -3524,46 +3530,41 @@ namespace Mono.CSharp {
 				TypeManager.ImplementsInterface (second_type, first_type));
 		}
 
-		public bool IsApplicable (EmitContext ec,
+		///
+		/// Determines if the candidate method is applicable (section 14.4.2.1)
+		/// to the given set of arguments
+		/// A return value rates candidate method compatibility,
+		/// 0 = the best, int.MaxValue = the worst
+		///
+		public int IsApplicable (EmitContext ec,
 						 ArrayList arguments, int arg_count, ref MethodBase method)
 		{
 			MethodBase candidate = method;
 
-#if GMCS_SOURCE
-			if (!HasTypeArguments &&
-				!TypeManager.InferTypeArguments (ec, arguments, ref candidate))
-				return false;
-
-			if (TypeManager.IsGenericMethodDefinition (candidate))
-				throw new InternalErrorException ("a generic method definition took part in overload resolution");
-#endif
-
-			if (IsApplicable (ec, arguments, arg_count, candidate)) {
-				method = candidate;
-				return true;
-			}
-
-			return false;
-		}
-
-		protected virtual int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
-		{
-			return parameters.Count;
-		}
-
-		/// <summary>
-		///   Determines if the candidate method is applicable (section 14.4.2.1)
-		///   to the given set of arguments
-		/// </summary>
-		bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
-						 MethodBase candidate)
-		{
 			ParameterData pd = TypeManager.GetParameterData (candidate);
 			int param_count = GetApplicableParametersCount (candidate, pd);
 
 			if (arg_count != param_count)
-				return false;
+				return int.MaxValue;
 
+			//
+			// 1. Infer type arguments for generic method
+			//
+#if GMCS_SOURCE			
+			if (!HasTypeArguments && TypeManager.IsGenericMethod (method)) {
+				if (!TypeManager.InferTypeArguments (ec, arguments, ref candidate))
+					return arg_count * 2 + 1;
+
+				if (TypeManager.IsGenericMethodDefinition (candidate))
+					throw new InternalErrorException ("a generic method definition took part in overload resolution");
+				
+				pd = TypeManager.GetParameterData (candidate);
+			}
+#endif			
+
+			//
+			// 2. Each argument has to be implicitly converible to method parameter
+			//
 			for (int i = arg_count; i > 0; ) {
 				i--;
 
@@ -3575,28 +3576,28 @@ namespace Mono.CSharp {
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
 					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK | Parameter.Modifier.PARAMS);
 
-				if (a_mod != p_mod)
-					return false;
-
 				Type pt = pd.ParameterType (i);
-				if (TypeManager.IsEqual (pt, a.Type))
-					continue;
-
-				if (a_mod != Parameter.Modifier.NONE)
-					return false;
 
 				// FIXME: Kill this abomination (EmitContext.TempEc)
 				EmitContext prevec = EmitContext.TempEc;
 				EmitContext.TempEc = ec;
 				try {
+					if (pt.IsByRef)
+						pt = pt.GetElementType ();
+					
 					if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
-						return false;
+						return ++i * 2;
+
+					if (a_mod != p_mod)
+						return ++i * 2 - 1;
+
 				} finally {
 					EmitContext.TempEc = prevec;
 				}
 			}
 
-			return true;
+			method = candidate;			
+			return 0;
 		}
 
 		public static bool IsOverride (MethodBase cand_method, MethodBase base_method)
@@ -3924,6 +3925,7 @@ namespace Mono.CSharp {
 			// First we construct the set of applicable methods
 			//
 			bool is_sorted = true;
+			int best_candidate_rate = int.MaxValue;
 			for (int i = 0; i < nmethods; i++) {
 				Type decl_type = Methods [i].DeclaringType;
 
@@ -3938,18 +3940,23 @@ namespace Mono.CSharp {
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
-				bool is_applicable = IsApplicable (ec, Arguments, arg_count, ref Methods [i]);
+				int candidate_rate = IsApplicable (ec, Arguments, arg_count, ref Methods [i]);
 
-				if (!is_applicable && IsParamsMethodApplicable (ec, Arguments, arg_count, ref Methods [i])) {
+				if (candidate_rate != 0 && IsParamsMethodApplicable (ec, Arguments, arg_count, ref Methods [i])) {
 					MethodBase candidate = Methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
 					candidate_to_form [candidate] = candidate;
 					// Candidate is applicable in expanded form
-					is_applicable = true;
+					candidate_rate = 0;
 				}
 
-				if (!is_applicable) {
+				if (candidate_rate < best_candidate_rate) {
+					best_candidate_rate = candidate_rate;
+					best_candidate = Methods [i];
+				}
+
+				if (candidate_rate != 0) {
 					if (msg_recorder != null)
 						msg_recorder.EndSession ();
 					continue;
@@ -3975,82 +3982,46 @@ namespace Mono.CSharp {
 			int candidate_top = candidates.Count;
 
 			if (applicable_type == null) {
-				if (ec.IsInProbingMode)
+				if (ec.IsInProbingMode || may_fail)
 					return null;
 
 				//
-				// Okay so we have failed to find anything so we
-				// return by providing info about the closest match
+				// Okay so we have failed to find exact match so we
+				// return error info about the closest match
 				//
-				int errors = Report.Errors;
-				for (int i = 0; i < nmethods; ++i) {
-					MethodBase c = Methods [i];
-					ParameterData pd = TypeManager.GetParameterData (c);
-
-					if (pd.Count != arg_count)
-						continue;
-
-#if GMCS_SOURCE
-					if (!TypeManager.InferTypeArguments (ec, Arguments, ref c))
-						continue;
-					if (TypeManager.IsGenericMethodDefinition (c))
-						continue;
-#endif
-
-					VerifyArgumentsCompat (ec, Arguments, arg_count,
-						c, false, null, may_fail, loc);
-
-					if (!may_fail && errors == Report.Errors){
-						
-						throw new InternalErrorException (
-							"VerifyArgumentsCompat and IsApplicable do not agree; " +
-							"likely reason: ImplicitConversion and ImplicitConversionExists have gone out of sync");
+				if (best_candidate != null) {
+					if (TypeManager.IsGenericMethod (best_candidate)) {
+						Report.Error (411, loc,
+							"The type arguments for method `{0}' cannot be inferred from " +
+							"the usage. Try specifying the type arguments explicitly",
+							TypeManager.CSharpSignature (best_candidate));
+					} else {
+						VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, null, may_fail, loc);
 					}
 
-					break;
+					return null;
 				}
 
-				if (!may_fail && errors == Report.Errors) {
+				if (almostMatchedMembers.Count != 0) {
+					Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
+					null, MemberTypes.Constructor, AllBindingFlags);
+					return null;
+				}
+				
+				//
+				// We failed to find any match
+				//
+				if (Name == ConstructorInfo.ConstructorName) {
+					Report.SymbolRelatedToPreviousError (type);
+					Report.Error (1729, loc,
+						"The type `{0}' does not contain a constructor that takes `{1}' arguments",
+						TypeManager.CSharpName (type), arg_count);
+				} else {
 					string report_name = Name;
-					if (report_name == ".ctor")
+					if (report_name == ConstructorInfo.ConstructorName)
 						report_name = TypeManager.CSharpName (DeclaringType);
-                                        
-#if GMCS_SOURCE
-					//
-					// Type inference
-					//
-					for (int i = 0; i < Methods.Length; ++i) {
-						MethodBase c = Methods [i];
-						ParameterData pd = TypeManager.GetParameterData (c);
 
-						if (pd.Count != arg_count)
-							continue;
-
-						if (TypeManager.InferTypeArguments (ec, Arguments, ref c))
-							continue;
-
-						Report.Error (
-							411, loc, "The type arguments for " +
-							"method `{0}' cannot be inferred from " +
-							"the usage. Try specifying the type " +
-							"arguments explicitly", TypeManager.CSharpSignature (c));
-						return null;
-					}
-#endif
-
-					if (Name == ConstructorInfo.ConstructorName) {
-						if (almostMatchedMembers.Count != 0) {
-							Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
-								null, MemberTypes.Constructor, AllBindingFlags);
-						} else {
-							Report.SymbolRelatedToPreviousError (type);
-							Report.Error (1729, loc,
-								"The type `{0}' does not contain a constructor that takes `{1}' arguments",
-								TypeManager.CSharpName (type), arg_count);
-						}
-					} else {
-						Invocation.Error_WrongNumArguments (loc, report_name, arg_count);
-					}
+					Invocation.Error_WrongNumArguments (loc, report_name, arg_count);
 				}
                                 
 				return null;
