@@ -194,8 +194,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				out typeNamespace, 
 				out assemblyName);
 
-			string typeName = typeNamespace + Type.Delimiter + localName;
-
+			string typeName = (typeNamespace == null || typeNamespace == String.Empty) ?
+								localName : typeNamespace + Type.Delimiter + localName;
+			
 			if(assemblyName != null && assemblyName != string.Empty && _binder != null) 
 			{
 				type = _binder.BindToType(assemblyName, typeName);
@@ -206,25 +207,19 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				if(assemblyQualifiedName != null)
 					type = Type.GetType(assemblyQualifiedName);
 				else
-				{
-					type = Type.GetType(xmlName);
+				{					
+					type = Type.GetType(typeName);
 					if(type == null) 
 					{ 
-
-						type = Type.GetType(typeName);
-						if(type == null) 
-						{
-
-							if(assemblyName == null || assemblyName == String.Empty)
-								throw new SerializationException(
-									String.Format("Parse Error, no assembly associated with XML key {0} {1}", 
-									localName, 
-									namespaceURI));
-							type = FormatterServices.GetTypeFromAssembly(
-								Assembly.Load(assemblyName), 
-								typeName);
-						}
-					}
+						if(assemblyName == null || assemblyName == String.Empty)
+							throw new SerializationException(
+								String.Format("Parse Error, no assembly associated with XML key {0} {1}", 
+								localName, 
+								namespaceURI));
+						type = FormatterServices.GetTypeFromAssembly(
+							Assembly.Load(assemblyName), 
+							typeName);
+					}					
 				}
 				if(type == null)
 					throw new SerializationException();

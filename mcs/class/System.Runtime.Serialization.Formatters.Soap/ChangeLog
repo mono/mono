@@ -1,3 +1,7 @@
+2007-10-11  Roei Erez  <roeie@mainsoft.com>
+
+	* remove redundant call to 'Type.GetType'.
+
 2006-10-29  Robert Jordan  <robertj@gmx.net>
 
 	* added SerializationCallbackTest.cs. See bug #78594.
