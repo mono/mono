@@ -2351,9 +2351,6 @@ namespace Mono.CSharp {
 						       ArrayList arguments,
 						       ref MethodBase method)
 		{
-			if (!TypeManager.IsGenericMethod (method))
-				return true;
-
 			ATypeInference ti = ATypeInference.CreateInstance (arguments);
 			Type[] i_args = ti.InferMethodArguments (ec, method);
 			if (i_args == null)
