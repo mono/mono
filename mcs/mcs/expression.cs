@@ -6610,10 +6610,10 @@ namespace Mono.CSharp {
 					return ex_method_lookup.DoResolve (ec);
 				}
 
-				if (!ec.IsInProbingMode)
-					Error_MemberLookupFailed (
-						ec.ContainerType, expr_type, expr_type, Identifier, null,
-						AllMemberTypes, AllBindingFlags);
+				expr = expr_resolved;
+				Error_MemberLookupFailed (
+					ec.ContainerType, expr_type, expr_type, Identifier, null,
+					AllMemberTypes, AllBindingFlags);
 				return null;
 			}
 
@@ -8745,12 +8745,17 @@ namespace Mono.CSharp {
 			type = e.Type;
 			if (type == TypeManager.void_type || type == TypeManager.null_type ||
 				type == TypeManager.anonymous_method_type || type.IsPointer) {
-				Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
-					Name, e.GetSignatureForError ());
+				Error_InvalidInitializer (e);
 				return null;
 			}
 
 			return e;
+		}
+
+		protected virtual void Error_InvalidInitializer (Expression initializer)
+		{
+			Report.Error (828, loc, "An anonymous type property `{0}' cannot be initialized with `{1}'",
+				Name, initializer.GetSignatureForError ());
 		}
 
 		public override void Emit (EmitContext ec)

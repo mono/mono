@@ -335,6 +335,10 @@ namespace Mono.CSharp {
 
 		public virtual void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
+			// The error was already reported as CS1660
+			if (type == TypeManager.anonymous_method_type)
+				return;
+
 			if (Type.FullName == target.FullName){
 				Report.ExtraInformation (loc,
 					String.Format (
@@ -3054,14 +3058,7 @@ namespace Mono.CSharp {
 				((ExtensionMethodGroupExpr)mg).extension_argument = (Argument)arguments [0];
 			arguments.RemoveAt (0);
 
-			if (mg != null)
-				return mg;
-
-			if (!may_fail)
-				// TODO: This should be some meaningful error message
-				Invocation.Error_WrongNumArguments (loc, Name, arguments.Count);
-
-			return null;
+			return mg;
 		}
 
 		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ArrayList arguments, NamespaceEntry ns, Location loc)
@@ -3077,7 +3074,7 @@ namespace Mono.CSharp {
 			// Search continues
 			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
 			if (e == null)
-				return null;
+				return base.OverloadResolve (ec, arguments, false, loc);
 
 			e.ExtensionExpression = ExtensionExpression;
 			return e.ResolveOverloadExtensions (ec, arguments, e.namespaceEntry, loc);
@@ -3917,8 +3914,12 @@ namespace Mono.CSharp {
 				nmethods = j;
 			}
 
-			int applicable_errors = Report.Errors;
-			
+			//
+			// Enable message recording, it's used mainly by lambda expressions
+			//
+			Report.IMessageRecorder msg_recorder = new Report.MessageRecorder ();
+			Report.IMessageRecorder prev_recorder = Report.SetMessageRecorder (msg_recorder);
+
 			//
 			// First we construct the set of applicable methods
 			//
@@ -3948,8 +3949,13 @@ namespace Mono.CSharp {
 					is_applicable = true;
 				}
 
-				if (!is_applicable)
+				if (!is_applicable) {
+					if (msg_recorder != null)
+						msg_recorder.EndSession ();
 					continue;
+				}
+
+				msg_recorder = null;
 
 				candidates.Add (Methods [i]);
 
@@ -3962,7 +3968,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (applicable_errors != Report.Errors)
+			Report.SetMessageRecorder (prev_recorder);
+			if (msg_recorder != null && msg_recorder.PrintMessages ())
 				return null;
 			
 			int candidate_top = candidates.Count;
@@ -4271,6 +4278,7 @@ namespace Mono.CSharp {
 			int j;
 			int a_idx = 0;
 			Argument a = null;
+			int errors = Report.Errors;
 			for (j = 0; j < param_count; j++) {
 				Type parameter_type = pd.ParameterType (j);
 				Parameter.Modifier pm = pd.ParameterModifier (j);
@@ -4325,7 +4333,7 @@ namespace Mono.CSharp {
 			if (a_idx == arg_count)
 				return true;
 
-			if (!may_fail)
+			if (!may_fail && Report.Errors == errors)
 				Error_InvalidArguments (ec, loc, a_idx, method, delegate_type, a, pd);
 			return false;
 		}

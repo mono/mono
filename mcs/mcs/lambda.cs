@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 			// If L has an implicitly typed parameter list we make implicit parameters explicit
 			// Set each parameter of L is given the type of the corresponding parameter in D
 			//
-			if (Parameters.Count != d_params.Count)
+			if (!VerifyParameterCompatibility (delegateType, d_params, ec.IsInProbingMode))
 				return null;
 
 			if (Parameters.Types == null)

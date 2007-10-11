@@ -1196,17 +1196,19 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignoreErrors)
+		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignoreErrors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
 				if (ignoreErrors)
 					return false;
 				
-				Report.SymbolRelatedToPreviousError (delegate_type);
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
 					      TypeManager.CSharpName (delegate_type), Parameters.Count.ToString ());
 				return false;
 			}
+			
+			if (!HasExplicitParameters)
+				return true;			
 
 			bool error = false;
 			for (int i = 0; i < Parameters.Count; ++i) {

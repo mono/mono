@@ -761,7 +761,7 @@ namespace Mono.CSharp {
 					if (Expr == null) {
 						if (am != null) {
 							Report.Error (1662, loc,
-								"Cannot convert `{0}' to delegate type `D' because some of the return types in the block are not implicitly convertible to the delegate return type",
+								"Cannot convert `{0}' to delegate type `{1}' because some of the return types in the block are not implicitly convertible to the delegate return type",
 								am.ContainerType, am.GetSignatureForError ());
 						}
 						return false;

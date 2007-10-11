@@ -73,6 +73,7 @@ namespace Mono.CSharp {
 		// A stack because of `Report.Errors == errors;'
 		//
 		static Stack error_stack;
+		static Stack warning_stack;
 		static bool reporting_disabled;
 		
 		static int warning_level;
@@ -80,7 +81,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
-		static StringCollection extra_information = new StringCollection ();
+		static ArrayList extra_information = new ArrayList ();
 
 		// 
 		// IF YOU ADD A NEW WARNING YOU HAVE TO ADD ITS ID HERE
@@ -124,18 +125,166 @@ namespace Mono.CSharp {
 			if (error_stack == null)
 				error_stack = new Stack ();
 			error_stack.Push (Errors);
+
+			if (Warnings > 0) {
+				if (warning_stack == null)
+					warning_stack = new Stack ();
+				warning_stack.Push (Warnings);
+			}
+
 			reporting_disabled = true;
 		}
 
 		public static void EnableReporting ()
 		{
+			if (warning_stack != null)
+				Warnings = (int) warning_stack.Pop ();
+
 			Errors = (int) error_stack.Pop ();
 			if (error_stack.Count == 0) {
 				reporting_disabled = false;
 			}
 		}
+
+		public static IMessageRecorder msg_recorder;
+
+		public static IMessageRecorder SetMessageRecorder (IMessageRecorder recorder)
+		{
+			IMessageRecorder previous = msg_recorder;
+			msg_recorder = recorder;
+			return previous;
+		}
+
+		public interface IMessageRecorder
+		{
+			void EndSession ();
+			void AddMessage (AbstractMessage msg);
+			bool PrintMessages ();
+		}
+
+		//
+		// Default message recorder, it uses two types of message groups.
+		// Common messages: messages reported in all sessions.
+		// Merged messages: union of all messages in all sessions. 
+		//		
+		public struct MessageRecorder : IMessageRecorder
+		{
+			ArrayList session_messages;
+			//
+			// A collection of exactly same messages reported in all sessions
+			//
+			ArrayList common_messages;
+
+			//
+			// A collection of unique messages reported in all sessions
+			//
+			ArrayList merged_messages;
+
+			public void EndSession ()
+			{
+				if (session_messages == null)
+					return;
+
+				//
+				// Handles the first session
+				//
+				if (common_messages == null) {
+					common_messages = new ArrayList (session_messages);
+					merged_messages = session_messages;
+					session_messages = null;
+					return;
+				}
+
+				//
+				// Store common messages if any
+				//
+				for (int i = 0; i < common_messages.Count; ++i) {
+					AbstractMessage cmsg = (AbstractMessage) common_messages [i];
+					bool common_msg_found = false;
+					foreach (AbstractMessage msg in session_messages) {
+						if (cmsg.Equals (msg)) {
+							common_msg_found = true;
+							break;
+						}
+					}
+
+					if (!common_msg_found)
+						common_messages.RemoveAt (i);
+				}
+
+				//
+				// Merge session and previous messages
+				//
+				for (int i = 0; i < session_messages.Count; ++i) {
+					AbstractMessage msg = (AbstractMessage) session_messages [i];
+					bool msg_found = false;
+					for (int ii = 0; ii < merged_messages.Count; ++ii) {
+						if (msg.Equals (merged_messages [ii])) {
+							msg_found = true;
+							break;
+						}
+					}
+
+					if (!msg_found)
+						merged_messages.Add (msg);
+				}
+			}
+
+			public void AddMessage (AbstractMessage msg)
+			{
+				if (session_messages == null)
+					session_messages = new ArrayList ();
+
+				session_messages.Add (msg);
+			}
+
+			//
+			// Prints collected messages, common messages have a priority
+			//
+			public bool PrintMessages ()
+			{
+				ArrayList messages_to_print = merged_messages;
+				if (common_messages != null && common_messages.Count > 0) {
+					messages_to_print = common_messages;
+				}
+
+				if (messages_to_print == null)
+					return false;
+
+				foreach (AbstractMessage msg in messages_to_print)
+					msg.Print ();
+
+				return true;
+			}
+		}
 		
-		abstract class AbstractMessage {
+		public abstract class AbstractMessage
+		{
+			readonly string[] extra_info;
+			protected readonly int code;
+			protected readonly Location location;
+			readonly string message;
+
+			protected AbstractMessage (int code, Location loc, string msg, ArrayList extraInfo)
+			{
+				this.code = code;
+				if (code < 0)
+					this.code = 8000 - code;
+
+				this.location = loc;
+				this.message = msg;
+				if (extraInfo.Count != 0) {
+					this.extra_info = (string[])extraInfo.ToArray (typeof (string));
+				}
+			}
+
+			protected AbstractMessage (AbstractMessage aMsg)
+			{
+				this.code = aMsg.code;
+				this.location = aMsg.location;
+				this.message = aMsg.message;
+				this.extra_info = aMsg.extra_info;
+			}
 
 			static void Check (int code)
 			{
@@ -144,53 +293,69 @@ namespace Mono.CSharp {
 				}
 			}
 
+			public override bool Equals (object obj)
+			{
+				AbstractMessage msg = obj as AbstractMessage;
+				if (msg == null)
+					return false;
+
+				return code == msg.code && location.Equals (msg.location) && message == msg.message;
+			}
+
+			public override int GetHashCode ()
+			{
+				return code.GetHashCode ();
+			}
+
 			public abstract bool IsWarning { get; }
 
 			public abstract string MessageType { get; }
 
-			public virtual void Print (int code, Location location, string text)
+			public virtual void Print ()
 			{
-				if (reporting_disabled) {
+				if (msg_recorder != null) {
 					//
-					// This line is useful when debugging the inner working of
-					// Lambdas when various compilation attempts are done.
+					// This line is useful when debugging messages recorder
 					//
-					//Console.WriteLine ("DISABLED: {0} {1} {2}", code, location, text);
+					// Console.WriteLine ("RECORDING: {0} {1} {2}", code, location, message);
+					msg_recorder.AddMessage (this);
 					return;
 				}
-				
-				if (code < 0)
-					code = 8000-code;
+
+				if (reporting_disabled)
+					return;
 
 				StringBuilder msg = new StringBuilder ();
 				if (!location.IsNull) {
 					msg.Append (location.ToString ());
-					msg.Append (' ');
+					msg.Append (" ");
 				}
-				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
+				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, message);
 				Stderr.WriteLine (msg.ToString ());
 
-				foreach (string s in extra_information) 
-					Stderr.WriteLine (s + MessageType + ")");
-
-				extra_information.Clear ();
+				if (extra_info != null) {
+					foreach (string s in extra_info)
+						Stderr.WriteLine (s + MessageType + ")");
+				}
 
 				if (Stacktrace)
 					Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 
 				if (Fatal) {
 					if (!IsWarning || WarningsAreErrors)
-						throw new Exception (text);
+						throw new Exception (message);
 				}
 
 				Check (code);
 			}
 		}
 
-		sealed class WarningMessage : AbstractMessage {
+		sealed class WarningMessage : AbstractMessage
+		{
 			readonly int Level;
 
-			public WarningMessage (int level)
+			public WarningMessage (int code, int level, Location loc, string message, ArrayList extra_info)
+				: base (code, loc, message, extra_info)
 			{
 				Level = level;
 			}
@@ -199,7 +364,7 @@ namespace Mono.CSharp {
 				get { return true; }
 			}
 
-			bool IsEnabled (int code, Location loc)
+			bool IsEnabled ()
 			{
 				if (WarningLevel < Level)
 					return false;
@@ -210,30 +375,28 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (warning_regions_table == null || loc.IsNull)
+				if (warning_regions_table == null || location.IsNull)
 					return true;
 
-				WarningRegions regions = (WarningRegions)warning_regions_table [loc.Name];
+				WarningRegions regions = (WarningRegions)warning_regions_table [location.Name];
 				if (regions == null)
 					return true;
 
-				return regions.IsWarningEnabled (code, loc.Row);
+				return regions.IsWarningEnabled (code, location.Row);
 			}
 
-			public override void Print (int code, Location location, string text)
+			public override void Print ()
 			{
-				if (!IsEnabled (code, location)) {
-					extra_information.Clear ();
+				if (!IsEnabled ())
 					return;
-				}
 
 				if (WarningsAreErrors) {
-					new ErrorMessage ().Print (code, location, text);
+					new ErrorMessage (this).Print ();
 					return;
 				}
 
 				Warnings++;
-				base.Print (code, location, text);
+				base.Print ();
 			}
 
 			public override string MessageType {
@@ -243,12 +406,22 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class ErrorMessage : AbstractMessage {
+		sealed class ErrorMessage : AbstractMessage
+		{
+			public ErrorMessage (int code, Location loc, string message, ArrayList extraInfo)
+				: base (code, loc, message, extraInfo)
+			{
+			}
 
-			public override void Print(int code, Location location, string text)
+			public ErrorMessage (AbstractMessage aMsg)
+				: base (aMsg)
+			{
+			}
+
+			public override void Print()
 			{
 				Errors++;
-				base.Print (code, location, text);
+				base.Print ();
 			}
 
 			public override bool IsWarning {
@@ -260,7 +433,6 @@ namespace Mono.CSharp {
 					return "error";
 				}
 			}
-
 		}
 
 		public static void FeatureIsNotISO1 (Location loc, string feature)
@@ -403,9 +575,6 @@ namespace Mono.CSharp {
 
 		public static void ExtraInformation (Location loc, string msg)
 		{
-			if (reporting_disabled)
-				return;
-
 			extra_information.Add (String.Format ("{0} {1}", loc, msg));
 		}
 
@@ -424,26 +593,30 @@ namespace Mono.CSharp {
 
 		static public void Warning (int code, int level, Location loc, string message)
 		{
-			WarningMessage w = new WarningMessage (level);
-			w.Print (code, loc, message);
+			WarningMessage w = new WarningMessage (code, level, loc, message, extra_information);
+			extra_information.Clear ();
+			w.Print ();
 		}
 
 		static public void Warning (int code, int level, Location loc, string format, string arg)
 		{
-			WarningMessage w = new WarningMessage (level);
-			w.Print (code, loc, String.Format (format, arg));
+			WarningMessage w = new WarningMessage (code, level, loc, String.Format (format, arg), extra_information);
+			extra_information.Clear ();
+			w.Print ();
 		}
 
 		static public void Warning (int code, int level, Location loc, string format, string arg1, string arg2)
 		{
-			WarningMessage w = new WarningMessage (level);
-			w.Print (code, loc, String.Format (format, arg1, arg2));
+			WarningMessage w = new WarningMessage (code, level, loc, String.Format (format, arg1, arg2), extra_information);
+			extra_information.Clear ();
+			w.Print ();
 		}
 
 		static public void Warning (int code, int level, Location loc, string format, params object[] args)
 		{
-			WarningMessage w = new WarningMessage (level);
-			w.Print (code, loc, String.Format (format, args));
+			WarningMessage w = new WarningMessage (code, level, loc, String.Format (format, args), extra_information);
+			extra_information.Clear ();
+			w.Print ();
 		}
 
 		static public void Warning (int code, int level, string message)
@@ -468,17 +641,20 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, Location loc, string error)
 		{
-			new ErrorMessage ().Print (code, loc, error);
+			new ErrorMessage (code, loc, error, extra_information).Print ();
+			extra_information.Clear ();
 		}
 
 		static public void Error (int code, Location loc, string format, string arg)
 		{
-			new ErrorMessage ().Print (code, loc, String.Format (format, arg));
+			new ErrorMessage (code, loc, String.Format (format, arg), extra_information).Print ();
+			extra_information.Clear ();
 		}
 
 		static public void Error (int code, Location loc, string format, string arg1, string arg2)
 		{
-			new ErrorMessage ().Print (code, loc, String.Format (format, arg1, arg2));
+			new ErrorMessage (code, loc, String.Format (format, arg1, arg2), extra_information).Print ();
+			extra_information.Clear ();
 		}
 
 		static public void Error (int code, Location loc, string format, params object[] args)
@@ -525,9 +701,6 @@ namespace Mono.CSharp {
 		
 		public static int WarningLevel {
 			get {
-				if (reporting_disabled)
-					return 0;
-				
 				return warning_level;
 			}
 			set {

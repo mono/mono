@@ -1,3 +1,20 @@
+2007-10-11  Marek Safar  <marek.safar@gmail.com>
+	
+	* report.cs: Implemented message recorder. It is used mainly for lambda
+	expressions to capture otherwise swallowed error messages.
+	
+	* anonymous.cs, lambda.cs.cs: Do full parameters check.
+
+	* ecore.cs (ExtensionMethodGroup): Report binding failure at the botton
+	and not at the top.
+	(MethodGroupExpr.DoResolve): Use message recorder for error handling.
+		
+	* expression.cs (MemberAccess): Always report lookup failure.
+	
+	* location.cs: Implemented Equals, GetHashCode.
+	
+	* statement.cs (Return.DoResolve): Fixed hardcoded error argument.
+	
 2007-10-10  Jb Evain  <jbevain@novell.com>
 
 	* codegen.cs: re-enable assembly version check.
