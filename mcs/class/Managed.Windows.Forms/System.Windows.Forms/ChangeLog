@@ -1,3 +1,9 @@
+2007-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DragEventArgs.cs: Allow Effect to have a non allowed value (a
+	value different than AllowedEffect). This should be possible to
+	indicate that dragging is not possible in some control/area.
+
 2007-10-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LineTag.cs: Encapsulate all variables with properties.  Calculate ascent/

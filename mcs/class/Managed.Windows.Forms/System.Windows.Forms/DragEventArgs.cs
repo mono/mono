@@ -69,9 +69,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if ((value & this.allowed_effect)!=0) {
-					this.current_effect=value;
-				}
+				current_effect = value;
 			}
 		}
 
