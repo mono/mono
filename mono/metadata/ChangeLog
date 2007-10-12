@@ -1,3 +1,8 @@
+2007-10-11  Joel Reed  <joelwreed@comcast.com>
+
+	* string-icalls.c, string-icalls.h: modify System_String_InternalSplit
+	to take an options parameter so that empty entries can be removed during
+	the split procedure. Patch from: Tyler Larson <mono-devel@tlarson.com>
 
 Thu Oct 11 20:16:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
