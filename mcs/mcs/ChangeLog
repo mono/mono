@@ -1,5 +1,10 @@
 2007-10-12  Marek Safar  <marek.safar@gmail.com>
 	
+	A fix for bug #332442 by Alexandre Gomes <alexmipego@gmail.com>
+	* statement.cs (Fixed): Fixed variables cloning.
+	
+2007-10-12  Marek Safar  <marek.safar@gmail.com>
+	
 	A fix for bug #333342
 	* class.cs (EventField): Don't mark value type event as synchronized. 
 	

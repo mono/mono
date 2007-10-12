@@ -4175,9 +4175,15 @@ namespace Mono.CSharp {
 			Fixed target = (Fixed) t;
 
 			target.type = type.Clone (clonectx);
-			target.declarators = new ArrayList ();
-			foreach (LocalInfo var in declarators)
-				target.declarators.Add (clonectx.LookupVariable (var));
+			target.declarators = new ArrayList (declarators.Count);
+			foreach (Pair p in declarators) {
+				LocalInfo vi = (LocalInfo) p.First;
+				Expression e = (Expression) p.Second;
+
+				target.declarators.Add (
+					new Pair (clonectx.LookupVariable (vi), e.Clone (clonectx)));				
+			}
+			
 			target.statement = statement.Clone (clonectx);
 		}
 	}
