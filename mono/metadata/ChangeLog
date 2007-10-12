@@ -1,4 +1,9 @@
 
+Fri Oct 12 17:50:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: deal with a possible race condition during multicast
+	delegate invocation.
+
 Fri Oct 12 13:31:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: ensure value type methods don't have the synchronized
