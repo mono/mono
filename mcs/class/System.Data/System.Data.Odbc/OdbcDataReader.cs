@@ -739,7 +739,7 @@ namespace System.Data.Odbc
 					break;
 				case OdbcType.VarBinary :
 				case OdbcType.Image :
-					bufsize =  (col.MaxLength < 255 ? col.MaxLength : 255);
+					bufsize = (col.MaxLength < 255 && col.MaxLength > 0 ? col.MaxLength : 255);
 					buffer= new byte [bufsize];
 					ArrayList al = new ArrayList ();
 					do { 
