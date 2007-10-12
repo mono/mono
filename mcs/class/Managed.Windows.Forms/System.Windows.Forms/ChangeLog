@@ -1,5 +1,10 @@
 2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Line.cs, LineTag.cs: Guard against an exception when Document.Clear
+	is called.
+
+2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Line.cs: Add a method that finds the tag that contains an x-coord.
 	* LineTag.cs: Add a method that finds the character at an x-coord using
 	a binary search, the old way was a linear search.

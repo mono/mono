@@ -959,7 +959,7 @@ namespace System.Windows.Forms {
 			}
 
 			caret.tag = FindCursor(x, y, out caret.pos);
-
+			
 			MoveCaretToTextTag ();
 			
 			caret.line = caret.tag.Line;
@@ -3264,7 +3264,11 @@ namespace System.Windows.Forms {
 			line = GetLineByPixel (multiline ? y : x, false);
 
 			LineTag tag = line.GetTag (x);
-			index = tag.GetCharIndex (x);
+
+			if (tag.Length == 0)
+				index = 0;
+			else
+				index = tag.GetCharIndex (x);
 			
 			return tag;
 		}
