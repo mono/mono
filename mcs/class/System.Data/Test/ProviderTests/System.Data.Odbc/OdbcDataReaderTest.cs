@@ -216,6 +216,35 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+		[Test]
+		public void Bug332400Test ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				System.Data.Odbc.OdbcCommand TempCmd;
+
+				TempCmd = new System.Data.Odbc.OdbcCommand("DROP TABLE IF EXISTS blob_test");
+				TempCmd.Connection = conn;
+				TempCmd.ExecuteNonQuery();
+
+				TempCmd = new System.Data.Odbc.OdbcCommand("CREATE TABLE blob_test (id_test INTEGER NOT NULL, payload LONGBLOB NOT NULL)");
+				TempCmd.Connection = conn;
+				TempCmd.ExecuteNonQuery();
+
+				TempCmd = new System.Data.Odbc.OdbcCommand("INSERT INTO blob_test (id_test, payload) VALUES (1, 'test')");
+				TempCmd.Connection = conn;
+				TempCmd.ExecuteNonQuery();
+
+				System.Data.Odbc.OdbcDataAdapter Adaptador = new System.Data.Odbc.OdbcDataAdapter();
+				System.Data.DataSet Lector = new System.Data.DataSet();
+
+				Adaptador.SelectCommand = new System.Data.Odbc.OdbcCommand("SELECT * FROM blob_test WHERE id_test=1", conn);
+				Adaptador.Fill(Lector);
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+        }
 #if NET_2_0 
 		[Test]
 		public void GetDataTypeNameTest ()
