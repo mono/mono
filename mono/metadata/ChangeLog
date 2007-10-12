@@ -1,4 +1,9 @@
 
+Fri Oct 12 13:31:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: ensure value type methods don't have the synchronized
+	flag set.
+
 Fri Oct 12 08:10:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* string-icalls.c, string-icalls.h: reverted unapproved patch that
