@@ -1,5 +1,6 @@
-// cs0206.cs: A property or indexer `X.P' may not be passed as an out or ref parameter
-// Line:
+// CS0206:  A property or indexer `X.P' may not be passed as `ref' or `out' parameter
+// Line: 15
+
 class X {
 	static int P { get { return 1; } set { } }
 
