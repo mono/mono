@@ -2347,20 +2347,20 @@ namespace Mono.CSharp {
 		///   when resolving an Invocation or a DelegateInvocation and the user
 		///   did not explicitly specify type arguments.
 		/// </summary>
-		public static bool InferTypeArguments (EmitContext ec,
+		public static int InferTypeArguments (EmitContext ec,
 						       ArrayList arguments,
 						       ref MethodBase method)
 		{
 			ATypeInference ti = ATypeInference.CreateInstance (arguments);
 			Type[] i_args = ti.InferMethodArguments (ec, method);
 			if (i_args == null)
-				return false;
+				return ti.InferenceScore;
 
 			if (i_args.Length == 0)
-				return true;
+				return 0;
 
 			method = ((MethodInfo) method).MakeGenericMethod (i_args);
-			return true;
+			return 0;
 		}
 
 		/// <summary>
@@ -2396,10 +2396,16 @@ namespace Mono.CSharp {
 
 		public static ATypeInference CreateInstance (ArrayList arguments)
 		{
-			if (RootContext.Version == LanguageVersion.LINQ)
-				return new TypeInferenceV3 (arguments);
+			if (RootContext.Version == LanguageVersion.ISO_2)
+				return new TypeInferenceV2 (arguments);
 
-			return new TypeInferenceV2 (arguments);
+			return new TypeInferenceV3 (arguments);
+		}
+
+		public virtual int InferenceScore {
+			get {
+				return int.MaxValue;
+			}
 		}
 
 		public abstract Type[] InferMethodArguments (EmitContext ec, MethodBase method);
@@ -2567,9 +2573,20 @@ namespace Mono.CSharp {
 	//
 	class TypeInferenceV3 : ATypeInference
 	{
+		//
+		// Tracks successful rate of type inference
+		//
+		int score = int.MaxValue;
+
 		public TypeInferenceV3 (ArrayList arguments)
 			: base (arguments)
 		{
+		}
+
+		public override int InferenceScore {
+			get {
+				return score;
+			}
 		}
 
 		public override Type[] InferDelegateArguments (MethodBase method)
@@ -2599,15 +2616,12 @@ namespace Mono.CSharp {
 
 		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
 		{
-			ParameterData pd = TypeManager.GetParameterData (method);
-			if (arg_count != pd.Count)
-				return null;
-
 			Type[] method_generic_args = method.GetGenericArguments ();
 			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);
 			if (!context.UnfixedVariableExists)
 				return Type.EmptyTypes;
 
+			ParameterData pd = TypeManager.GetParameterData (method);
 			if (!InferInPhases (ec, context, pd))
 				return null;
 
@@ -2633,7 +2647,8 @@ namespace Mono.CSharp {
 				//
 				AnonymousMethodExpression am = a.Expr as AnonymousMethodExpression;
 				if (am != null) {
-					am.ExplicitTypeInference (tic, method_parameter);
+					if (am.ExplicitTypeInference (tic, method_parameter))
+						--score; 
 					continue;
 				}
 
@@ -2643,7 +2658,7 @@ namespace Mono.CSharp {
 				//
 				// Otherwise an output type inference is made
 				//
-				tic.OutputTypeInference (ec, a.Expr, method_parameter);
+				score -= tic.OutputTypeInference (ec, a.Expr, method_parameter);
 			}
 
 			//
@@ -2688,7 +2703,7 @@ namespace Mono.CSharp {
 #endif
 
 				if (tic.IsReturnTypeNonDependent (mi, rtype))
-					tic.OutputTypeInference (ec, ((Argument) arguments[i]).Expr, t_i);
+					score -= tic.OutputTypeInference (ec, ((Argument) arguments [i]).Expr, t_i);
 			}
 
 
@@ -2762,42 +2777,43 @@ namespace Mono.CSharp {
 		//
 		// 26.3.3.8 Exact Inference
 		//
-		public void ExactInference (Type u, Type v)
+		public int ExactInference (Type u, Type v)
 		{
 			// If V is an array type
 			if (v.IsArray) {
 				if (!u.IsArray)
-					return;
+					return 0;
 
 				if (u.GetArrayRank () != v.GetArrayRank ())
-					return;
+					return 0;
 
-				ExactInference (TypeManager.GetElementType (u), TypeManager.GetElementType (v));
-				return;
+				return ExactInference (TypeManager.GetElementType (u), TypeManager.GetElementType (v));
 			}
 
 			// If V is constructed type and U is constructed type
 			if (v.IsGenericType && !v.IsGenericTypeDefinition) {
 				if (!u.IsGenericType)
-					return;
+					return 0;
 
 				Type [] ga_u = u.GetGenericArguments ();
 				Type [] ga_v = v.GetGenericArguments ();
 				if (ga_u.Length != ga_v.Length)
-					return;
+					return 0;
 
+				int score = 0;
 				for (int i = 0; i < ga_u.Length; ++i)
-					ExactInference (ga_u [i], ga_v [i]);
+					score += ExactInference (ga_u [i], ga_v [i]);
 
-				return;
+				return score > 0 ? 1 : 0;
 			}
 
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);
 			if (pos == -1)
-				return;
+				return 0;
 
 			AddToBounds (u, pos);
+			return 1;
 		}
 
 		public bool FixAllTypes ()
@@ -2995,7 +3011,7 @@ namespace Mono.CSharp {
 		//
 		// 26.3.3.9 Lower-bound Inference
 		//
-		public void LowerBoundInference (Type u, Type v)
+		public int LowerBoundInference (Type u, Type v)
 		{
 			// Remove ref, out modifiers
 			if (v.IsByRef)
@@ -3009,35 +3025,33 @@ namespace Mono.CSharp {
 
 				if (v.IsArray) {
 					if (u_dim != v.GetArrayRank ())
-						return;
+						return 0;
 
 					v_e = TypeManager.GetElementType (v);
 
 					if (u.IsByRef) {
-						LowerBoundInference (u_e, v_e);
-						return;
+						return LowerBoundInference (u_e, v_e);
 					}
-					ExactInference (u_e, v_e);
-					return;
+
+					return ExactInference (u_e, v_e);
 				}
 
 				if (u_dim != 1)
-					return;
+					return 0;
 
 				if (v.IsGenericType) {
 					Type g_v = v.GetGenericTypeDefinition ();
 					if ((g_v != TypeManager.generic_ilist_type) && (g_v != TypeManager.generic_icollection_type) &&
 						(g_v != TypeManager.generic_ienumerable_type))
-						return;
+						return 0;
 
 					v_e = TypeManager.GetTypeArguments (v)[0];
 
 					if (u.IsByRef) {
-						LowerBoundInference (u_e, v_e);
-						return;
+						return LowerBoundInference (u_e, v_e);
 					}
-					ExactInference (u_e, v_e);
-					return;
+
+					return ExactInference (u_e, v_e);
 				}
 			} else if (v.IsGenericType && !v.IsGenericTypeDefinition) {
 				//
@@ -3068,52 +3082,54 @@ namespace Mono.CSharp {
 
 					Type [] ga_u = u_candidate.GetGenericArguments ();
 					Type [] ga_v = v.GetGenericArguments ();
+					int score = 0;
 					for (int i = 0; i < ga_u.Length; ++i)
-						ExactInference (ga_u [i], ga_v [i]);
+						score += ExactInference (ga_u [i], ga_v [i]);
 
-					return;
+					return score > 0 ? 1 : 0;
 				}
-				return;
+				return 0;
 			}
 
 			// If V is one of the unfixed type arguments
 			int pos = IsUnfixed (v);
 			if (pos == -1)
-				return;
+				return 0;
 
 			AddToBounds (u, pos);
+			return 1;
 		}
 
 		//
 		// 26.3.3.6 Output Type Inference
 		//
-		public void OutputTypeInference (EmitContext ec, Expression e, Type t)
+		public int OutputTypeInference (EmitContext ec, Expression e, Type t)
 		{
 			// If e is a lambda or anonymous method with inferred return type
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
 			if (ame != null) {
 				Type rt = ame.InferReturnType (ec, this, t);
-				if (rt != null) {
-					MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
-					Type rtype = invoke.ReturnType;
-#if MS_COMPATIBLE
-					// Blablabla, because reflection does not work with dynamic types
-					Type [] g_args = t.GetGenericArguments ();
-					rtype = g_args [rtype.GenericParameterPosition];
-#endif
-					LowerBoundInference (rt, rtype);
+				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
+
+				if (rt == null) {
+					ParameterData pd = TypeManager.GetParameterData (invoke);
+					return ame.Parameters.Count == pd.Count ? 1 : 0;
 				}
-				return;
+
+				Type rtype = invoke.ReturnType;
+#if MS_COMPATIBLE
+				// Blablabla, because reflection does not work with dynamic types
+				Type [] g_args = t.GetGenericArguments ();
+				rtype = g_args [rtype.GenericParameterPosition];
+#endif
+				return LowerBoundInference (rt, rtype) + 1;
 			}
 
 			if (e is MethodGroupExpr) {
-				if (!TypeManager.IsDelegateType (t))
-					return;
-
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;
 				if (!TypeManager.IsGenericType (rtype))
-					return;
+					return 0;
 				
 				throw new NotImplementedException ();
 			}
@@ -3122,7 +3138,7 @@ namespace Mono.CSharp {
 			// if e is an expression with type U, then
 			// a lower-bound inference is made from U for T
 			//
-			LowerBoundInference (e.Type, t);
+			return LowerBoundInference (e.Type, t) * 2;
 		}
 
 		static void RemoveDependentTypes (ArrayList types, Type returnType)

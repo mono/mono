@@ -73,7 +73,7 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		class QueryExpressionInvocation : Invocation
+		class QueryExpressionInvocation : Invocation, MethodGroupExpr.IErrorHandler
 		{
 			public QueryExpressionInvocation (QueryExpressionAccess expr, ArrayList arguments)
 				: base (expr, arguments)
@@ -82,15 +82,41 @@ namespace Mono.CSharp.Linq
 
 			protected override MethodGroupExpr DoResolveOverload (EmitContext ec)
 			{
-				int errors = Report.Errors;
-				MethodGroupExpr rmg = mg.OverloadResolve (ec, Arguments, true, loc);
-				if (rmg == null && errors == Report.Errors) {
-					// TODO: investigate whether would be better to re-use extension methods error handling
-					Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
-						mg.Name, TypeManager.CSharpName (mg.Type));
+				MethodGroupExpr.CustomErrorHandler = this;
+				MethodGroupExpr rmg = mg.OverloadResolve (ec, Arguments, false, loc);
+				MethodGroupExpr.CustomErrorHandler = null;
+				return rmg;
+			}
+
+			public bool NoExactMatch (EmitContext ec, MethodBase method)
+			{
+				ParameterData pd = TypeManager.GetParameterData (method);
+				Type source_type = pd.ExtensionMethodType;
+				if (source_type != null) {
+					Argument a = (Argument) Arguments [0];
+
+					if (source_type.IsGenericType && source_type.ContainsGenericParameters) {
+						TypeInferenceContext tic = new TypeInferenceContext (source_type.GetGenericArguments ());
+						tic.OutputTypeInference (ec, a.Expr, source_type);
+						if (tic.FixAllTypes ()) {
+							source_type = source_type.GetGenericTypeDefinition ().MakeGenericType (tic.InferredTypeArguments);
+						}
+					}
+
+					if (!Convert.ImplicitConversionExists (ec, a.Expr, source_type)) {
+						Report.Error (1936, loc, "An implementation of `{0}' query expression pattern for source type `{1}' could not be found",
+							mg.Name, TypeManager.CSharpName (a.Type));
+						return true;
+					}
 				}
 
-				return rmg;
+				if (!method.IsGenericMethod)
+					return false;
+
+				Report.Error (1942, loc, "Type inference failed to infer type argument for `{0}' clause. " +
+					"Try specifying the type argument explicitly",
+					mg.Name.ToLower ());
+				return true;
 			}
 		}
 
@@ -482,7 +508,7 @@ namespace Mono.CSharp.Linq
 
 				return e;
 			}
-			
+
 			protected override void Error_InvalidInitializer (Expression initializer)
 			{
 				Report.Error (1932, loc, "A range variable `{0}' cannot be initialized with `{1}'",

@@ -1,3 +1,10 @@
+2007-10-12  Marek Safar  <marek.safar@gmail.com>
+	
+	* generics.cs: Implemented basic type inference scoring mechanism.
+	
+	* linq.cs (QueryExpressionInvocation): Try to identify and report which
+	query section is wrong.
+	
 2007-10-11  Marek Safar  <marek.safar@gmail.com>
 	
 	* generics.cs (InferTypeArguments): Removed redundant check.
