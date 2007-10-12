@@ -1,5 +1,10 @@
 2007-10-12  Marek Safar  <marek.safar@gmail.com>
 	
+	A fix for bug #333342
+	* class.cs (EventField): Don't mark value type event as synchronized. 
+	
+2007-10-12  Marek Safar  <marek.safar@gmail.com>
+	
 	* ecore.cs, anonymous.cs (MethodGroupExpr): Use score from type
 	inference to identify best candidate method correctly.
 	(ProperyExpr): A range variable is read only and cannot be modified.

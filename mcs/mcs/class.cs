@@ -7276,7 +7276,10 @@ namespace Mono.CSharp {
 				// TODO: because we cannot use generics yet
 				FieldInfo field_info = ((EventField)method).FieldBuilder;
 
-				mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
+				if (parent is Class) {
+					mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
+				}
+				
 				if ((method.ModFlags & Modifiers.STATIC) != 0) {
 					ig.Emit (OpCodes.Ldsfld, field_info);
 					ig.Emit (OpCodes.Ldarg_0);
