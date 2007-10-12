@@ -1898,6 +1898,68 @@ public class StringTest : Assertion
 		AssertEquals ("B", res [1]);
 		AssertEquals ("C", res [2]);
 	}
+	
+	[Test]
+	public void SplitStringChars()
+	{
+		String[] res;
+
+		// count == 0
+		res = "..A..B..".Split (new Char[] { '.' }, 0, StringSplitOptions.None);
+		AssertEquals ("#01-01", 0, res.Length);
+
+		// count == 1
+		res = "..A..B..".Split (new Char[] { '.' }, 1, StringSplitOptions.None);
+		AssertEquals ("#02-01", 1, res.Length);
+		AssertEquals ("#02-02", "..A..B..", res[0]);
+
+		// count == 1 + RemoveEmpty
+		res = "..A..B..".Split (new Char[] { '.' }, 1, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#03-01", 1, res.Length);
+		AssertEquals ("#03-02", "..A..B..", res[0]);
+		
+		// Keeping Empties and multipe split chars
+		res = "..A;.B.;".Split (new Char[] { '.', ';' }, StringSplitOptions.None);
+		AssertEquals ("#04-01", 7, res.Length);
+		AssertEquals ("#04-02", "",  res[0]);
+		AssertEquals ("#04-03", "",  res[1]);
+		AssertEquals ("#04-04", "A", res[2]);
+		AssertEquals ("#04-05", "",  res[3]);
+		AssertEquals ("#04-06", "B", res[4]);
+		AssertEquals ("#04-07", "",  res[5]);
+		AssertEquals ("#04-08", "",  res[6]);
+
+		// Trimming (3 tests)
+		res = "..A".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#05-01", 1, res.Length);
+		AssertEquals ("#05-02", "A", res[0]);
+		
+		res = "A..".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#06-01", 1, res.Length);
+		AssertEquals ("#06-02", "A", res[0]);
+		
+		res = "..A..".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#07-01", 1, res.Length);
+		AssertEquals ("#07-02", "A", res[0]);
+
+		// Lingering Tail
+		res = "..A..B..".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#08-01", 2, res.Length);
+		AssertEquals ("#08-02", "A", res[0]);
+		AssertEquals ("#08-03", "B..", res[1]);
+
+		// Whitespace and Long split chain (removing empty chars)
+		res = "  A\tBC\n\rDEF    GHI  ".Split ((Char[])null, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#09-01", 4, res.Length);
+		AssertEquals ("#09-02", "A", res[0]);
+		AssertEquals ("#09-03", "BC", res[1]);
+		AssertEquals ("#09-04", "DEF", res[2]);
+		AssertEquals ("#09-05", "GHI", res[3]);
+
+		// Nothing but separators
+		res = "..,.;.,".Split (new Char[]{'.',',',';'},2,StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#10-01", 0, res.Length);
+	}
 #endif
 }
 

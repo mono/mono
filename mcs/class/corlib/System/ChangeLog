@@ -1,3 +1,11 @@
+2007-10-11  Joel Reed  <joelwreed@comcast.com>
+
+	* String.cs: fix String.Split(char[],int,StringSplitOptions)
+	with StringSplitOptions.RemoveEmptyEntries option. The correct 
+	behavior is to remove empty entries while the string is being split, 
+	and always return the maximum number of elements possible.
+	Patch from: Tyler Larson <mono-devel@tlarson.com>
+	
 2007-09-28  Jb Evain  <jbevain@novell.com>
 
 	* Object.cs: Make ToString return Type.ToString ()
