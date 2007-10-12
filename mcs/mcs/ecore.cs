@@ -3064,7 +3064,7 @@ namespace Mono.CSharp {
 		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ArrayList arguments, NamespaceEntry ns, Location loc)
 		{
 			// Use normal resolve rules
-			MethodGroupExpr mg = base.OverloadResolve (ec, arguments, true, loc);
+			MethodGroupExpr mg = base.OverloadResolve (ec, arguments, ns != null, loc);
 			if (mg != null)
 				return mg;
 
@@ -3085,7 +3085,14 @@ namespace Mono.CSharp {
 	///   MethodGroupExpr represents a group of method candidates which
 	///   can be resolved to the best method overload
 	/// </summary>
-	public class MethodGroupExpr : MemberExpr {
+	public class MethodGroupExpr : MemberExpr
+	{
+		public interface IErrorHandler
+		{
+			bool NoExactMatch (EmitContext ec, MethodBase method);
+		}
+
+		public static IErrorHandler CustomErrorHandler;		
 		public MethodBase [] Methods;
 		MethodBase best_candidate;
 		bool has_type_arguments;
@@ -3552,9 +3559,10 @@ namespace Mono.CSharp {
 			//
 #if GMCS_SOURCE			
 			if (!HasTypeArguments && TypeManager.IsGenericMethod (method)) {
-				if (!TypeManager.InferTypeArguments (ec, arguments, ref candidate))
-					return arg_count * 2 + 1;
-
+				int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
+				if (score != 0)
+					return --score;
+				
 				if (TypeManager.IsGenericMethodDefinition (candidate))
 					throw new InternalErrorException ("a generic method definition took part in overload resolution");
 				
@@ -3990,6 +3998,11 @@ namespace Mono.CSharp {
 				// return error info about the closest match
 				//
 				if (best_candidate != null) {
+					if (CustomErrorHandler != null) {
+						if (CustomErrorHandler.NoExactMatch (ec, best_candidate))
+							return null;
+					}
+					
 					if (TypeManager.IsGenericMethod (best_candidate)) {
 						Report.Error (411, loc,
 							"The type arguments for method `{0}' cannot be inferred from " +
@@ -5051,8 +5064,13 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			if (right_side == EmptyExpression.OutAccess) {
-				Report.Error (206, loc, "A property or indexer `{0}' may not be passed as an out or ref parameter",
+				if (ec.CurrentBlock.Toplevel.GetTransparentIdentifier (PropertyInfo.Name) != null) {
+					Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
+					    PropertyInfo.Name);
+				} else {
+					Report.Error (206, loc, "A property or indexer `{0}' may not be passed as `ref' or `out' parameter",
 					      GetSignatureForError ());
+				}
 				return null;
 			}
 

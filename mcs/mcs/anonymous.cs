@@ -1254,17 +1254,17 @@ namespace Mono.CSharp {
 		//
 		// Infers type arguments based on explicit arguments
 		//
-		public void ExplicitTypeInference (TypeInferenceContext typeInference, Type delegateType)
+		public bool ExplicitTypeInference (TypeInferenceContext typeInference, Type delegateType)
 		{
 			if (!HasExplicitParameters)
-				return;
+				return false;
 
 			if (!TypeManager.IsDelegateType (delegateType))
-				return;
+				return false;
 
 			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
 			if (d_params.Count != Parameters.Count)
-				return;
+				return false;
 
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Type itype = d_params.Types [i];
@@ -1277,6 +1277,7 @@ namespace Mono.CSharp {
 				}
 				typeInference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
 			}
+			return true;
 		}
 
 		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegateType)

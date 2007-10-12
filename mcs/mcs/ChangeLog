@@ -1,3 +1,9 @@
+2007-10-12  Marek Safar  <marek.safar@gmail.com>
+	
+	* ecore.cs, anonymous.cs (MethodGroupExpr): Use score from type
+	inference to identify best candidate method correctly.
+	(ProperyExpr): A range variable is read only and cannot be modified.
+	
 2007-10-11  Marek Safar  <marek.safar@gmail.com>
 	
 	* ecore.cs, delegate.cs (MethodGroupExpr): Refactored best candidate
