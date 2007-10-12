@@ -140,11 +140,10 @@ namespace System.Windows.Forms
 		internal static void DrawTextInternal (Graphics dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
 #endif
 		{
-#if NET_2_0
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			if (string.IsNullOrEmpty (text))
+			if (text == null || text.Length == 0)
 				return;
 
 			// We use MS GDI API's unless told not to, or we aren't on Windows
@@ -168,7 +167,8 @@ namespace System.Windows.Forms
 						IntPtr hrgn = clip_region.GetHrgn (graphics);
 						hdc = dc.GetHdc ();
 						SelectClipRgn (hdc, hrgn);
-						clip_region.ReleaseHrgn (hrgn);
+						DeleteObject (hrgn);
+						
 						clear_clip_region = true;
 					}
 				}
@@ -206,22 +206,23 @@ namespace System.Windows.Forms
 				if (clear_clip_region)
 					SelectClipRgn (hdc, IntPtr.Zero);
 
+#if NET_2_0
 				dc.ReleaseHdc ();
+#else
+				dc.ReleaseHdc (hdc);
+#endif
 			}
 			// Use Graphics.DrawString as a fallback method
 			else {
-#endif
-			Graphics g;
-
-#if NET_2_0
+				Graphics g;
+				IntPtr hdc = IntPtr.Zero;
+				
 				if (dc is Graphics)
 					g = (Graphics)dc;
-				else
-					g = Graphics.FromHdc (dc.GetHdc ());
-#else
-					g = (Graphics)dc;
-
-#endif
+				else {
+					hdc = dc.GetHdc ();
+					g = Graphics.FromHdc (hdc);
+				}
 
 				StringFormat sf = FlagsToStringFormat (flags);
 
@@ -229,13 +230,15 @@ namespace System.Windows.Forms
 
 				g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (foreColor), new_bounds, sf);
 
-#if NET_2_0
 				if (!(dc is Graphics)) {
 					g.Dispose ();
+#if NET_2_0
 					dc.ReleaseHdc ();
+#else
+					if (hdc != IntPtr.Zero) dc.ReleaseHdc (hdc);
+#endif
 				}
 			}
-#endif
 		}
 
 #if NET_2_0
@@ -244,7 +247,6 @@ namespace System.Windows.Forms
 		internal static Size MeasureTextInternal (Graphics dc, string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 #endif
 		{
-#if NET_2_0
 			if (!useMeasureString && !XplatUI.RunningOnUnix) {
 				// Tell DrawText to calculate size instead of draw
 				flags |= (TextFormatFlags)1024;		// DT_CALCRECT
@@ -265,7 +267,11 @@ namespace System.Windows.Forms
 					Win32DrawText (hdc, text, text.Length, ref r, (int)flags);
 				}
 
+#if NET_2_0
 				dc.ReleaseHdc ();
+#else
+				dc.ReleaseHdc (hdc);
+#endif
 
 				// Really, I am just making something up here, which as far as I can tell, MS
 				// just makes something up as well.  This will require lots of tweaking to match MS.  :(
@@ -279,28 +285,21 @@ namespace System.Windows.Forms
 				return retval;
 			}
 			else {
-#endif
 			StringFormat sf = FlagsToStringFormat (flags);
 
 				Size retval;
 				
-#if NET_2_0
 				if (dc is Graphics)
 					retval = (dc as Graphics).MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
 				else
 					retval = TextRenderer.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
-#else
-				retval = dc.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
-#endif
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;
 
 				return retval;
 			}
-#if NET_2_0
 		}
-#endif
 		#endregion
 
 #region Internal Methods That Are Just Overloads
@@ -496,7 +495,7 @@ namespace System.Windows.Forms
 
 			return sf;
 		}
-#if NET_2_0
+
 		private static Rectangle PadRectangle (Rectangle r, TextFormatFlags flags)
 		{
 			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {
@@ -519,7 +518,7 @@ namespace System.Windows.Forms
 
 			return r;
 		}
-#endif
+
 		private static Rectangle PadDrawStringRectangle (Rectangle r, TextFormatFlags flags)
 		{
 			if ((flags & TextFormatFlags.NoPadding) == 0 && (flags & TextFormatFlags.Right) == 0 && (flags & TextFormatFlags.HorizontalCenter) == 0) {
@@ -551,7 +550,6 @@ namespace System.Windows.Forms
 #endregion
 
 #region DllImports (Windows)
-#if NET_2_0
 		[DllImport ("user32", CharSet = CharSet.Unicode, EntryPoint = "DrawText")]
 		static extern int Win32DrawText (IntPtr hdc, string lpStr, int nCount, ref XplatUIWin32.RECT lpRect, int wFormat);
 
@@ -572,7 +570,6 @@ namespace System.Windows.Forms
 
 		[DllImport("gdi32")]
 		static extern bool SelectClipRgn(IntPtr hdc, IntPtr hrgn);
-#endif
 #endregion
 	}
 }

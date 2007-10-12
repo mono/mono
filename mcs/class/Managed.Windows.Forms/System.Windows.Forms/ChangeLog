@@ -1,5 +1,9 @@
 2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextRenderer.cs: Use GDI on Windows in both the 1.1 and 2.0 profiles.
+
+2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Line.cs, LineTag.cs: Guard against an exception when Document.Clear
 	is called.
 
