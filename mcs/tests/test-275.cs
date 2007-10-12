@@ -1,29 +1,48 @@
-using System; 
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-public class Test 
-{ 
-	public delegate void DelType(); 
- 
-	public event DelType MyEvent; 
- 
-	public static int Main()
-        {
-                EventInfo ei = typeof(Test).GetEvent ("MyEvent");
-		MethodImplAttributes methodImplAttributes = ei.GetAddMethod ().GetMethodImplementationFlags();
-            
-                if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
-                    Console.WriteLine ("FAILED");
-                    return 1;
-                }
+public delegate void DelType ();
 
-                methodImplAttributes = ei.GetRemoveMethod ().GetMethodImplementationFlags();
-                if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
-                    Console.WriteLine ("FAILED");
-                    return 2;
-                }
+struct S
+{
+	public event DelType MyEvent;
+}
 
-                return 0;
-        } 
+public class Test
+{
+	public event DelType MyEvent;
+
+	public static int Main ()
+	{
+		EventInfo ei = typeof (Test).GetEvent ("MyEvent");
+		MethodImplAttributes methodImplAttributes = ei.GetAddMethod ().GetMethodImplementationFlags ();
+
+		if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
+			Console.WriteLine ("FAILED");
+			return 1;
+		}
+
+		methodImplAttributes = ei.GetRemoveMethod ().GetMethodImplementationFlags ();
+		if ((methodImplAttributes & MethodImplAttributes.Synchronized) == 0) {
+			Console.WriteLine ("FAILED");
+			return 2;
+		}
+
+		ei = typeof (S).GetEvent ("MyEvent");
+		methodImplAttributes = ei.GetAddMethod ().GetMethodImplementationFlags ();
+
+		if ((methodImplAttributes & MethodImplAttributes.Synchronized) != 0) {
+			Console.WriteLine ("FAILED");
+			return 3;
+		}
+
+		methodImplAttributes = ei.GetRemoveMethod ().GetMethodImplementationFlags ();
+		if ((methodImplAttributes & MethodImplAttributes.Synchronized) != 0) {
+			Console.WriteLine ("FAILED");
+			return 4;
+		}
+
+		return 0;
+	}
 }
