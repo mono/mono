@@ -3257,43 +3257,16 @@ namespace System.Windows.Forms {
 		}
 
 		// Give it x/y pixel coordinates and it returns the Tag at that position; optionally the char position is returned in index
-		internal LineTag FindCursor(int x, int y, out int index) {
-			Line	line;
-			LineTag	tag;
+		internal LineTag FindCursor (int x, int y, out int index)
+		{
+			Line line;
 
-			line = GetLineByPixel(multiline ? y : x, false);
-			tag = line.tags;
+			line = GetLineByPixel (multiline ? y : x, false);
 
-			/// Special case going leftwards of the first tag
-			if (x < tag.X) {
-				index = 0;
-				return LineTag.GetFinalTag (tag);
-			}
-
-			while (true) {
-				if (x >= tag.X && x < (tag.X+tag.Width)) {
-					int	end;
-
-					end = tag.TextEnd;
-
-					for (int pos = tag.Start - 1; pos < end; pos++) {
-						// When clicking on a character, we position the cursor to whatever edge
-						// of the character the click was closer
-						if (x < (line.X + line.widths[pos] + ((line.widths[pos+1]-line.widths[pos])/2))) {
-							index = pos;
-							return LineTag.GetFinalTag (tag);
-						}
-					}
-					index=end;
-					return LineTag.GetFinalTag (tag);
-				}
-				if (tag.Next != null) {
-					tag = tag.Next;
-				} else {
-					index = line.TextLengthWithoutEnding ();
-					return LineTag.GetFinalTag (tag);
-				}
-			}
+			LineTag tag = line.GetTag (x);
+			index = tag.GetCharIndex (x);
+			
+			return tag;
 		}
 
 		/// <summary>Format area of document in specified font and color</summary>

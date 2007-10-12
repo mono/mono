@@ -256,6 +256,29 @@ namespace System.Windows.Forms
 			return base.GetHashCode ();
 		}
 		
+		// Get the tag that contains this x coordinate
+		public LineTag GetTag (int x)
+		{
+			LineTag tag = tags;
+			
+			// Coord is to the left of the first character
+			if (x < tag.X)
+				return LineTag.GetFinalTag (tag);
+			
+			// All we have is a linked-list of tags, so we have
+			// to do a linear search.  But there shouldn't be
+			// too many tags per line in general.
+			while (true) {
+				if (x >= tag.X && x < (tag.X + tag.Width))
+					return tag;
+					
+				if (tag.Next != null)
+					tag = tag.Next;
+				else
+					return LineTag.GetFinalTag (tag);			
+			}
+		}
+					
 		// Make sure we always have enoughs space in text and widths
 		internal void Grow (int minimum) {
 			int	length;

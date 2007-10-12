@@ -343,6 +343,34 @@ namespace System.Windows.Forms
 			return retval;
 		}
 
+		// Gets the character at the x-coordinate.  Index is based from the
+		// line, not the start of the tag.
+		public int GetCharIndex (int x)
+		{
+			int low = start;
+			int high = low + Length;
+
+			if (x > line.widths[line.TextLengthWithoutEnding ()])
+				return line.TextWithoutEnding ().Length;
+				
+			while (low < high - 1) {
+				int mid = (high + low) / 2;
+				float width = line.widths[mid];
+
+				if (width < x)
+					low = mid;
+				else
+					high = mid;
+			}
+
+			float char_width = line.widths[high] - line.widths[low];
+
+			if ((x - line.widths[low]) >= (char_width / 2))
+				return high;
+			else
+				return low;	
+		}
+		
 		// There can be multiple tags at the same position, we want to make
 		// sure we are using the very last tag at the given position
 		internal static LineTag GetFinalTag (LineTag tag)

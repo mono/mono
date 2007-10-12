@@ -1,3 +1,10 @@
+2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Line.cs: Add a method that finds the tag that contains an x-coord.
+	* LineTag.cs: Add a method that finds the character at an x-coord using
+	a binary search, the old way was a linear search.
+	* TextControl.cs: Change FindCursor to use the above new methods.
+
 2007-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DragEventArgs.cs: Allow Effect to have a non allowed value (a
