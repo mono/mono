@@ -1,3 +1,9 @@
+
+Fri Oct 12 08:10:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c, string-icalls.h: reverted unapproved patch that
+	breaks the build.
+
 2007-10-11  Joel Reed  <joelwreed@comcast.com>
 
 	* string-icalls.c, string-icalls.h: modify System_String_InternalSplit
