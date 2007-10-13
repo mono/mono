@@ -1,5 +1,9 @@
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DelegateTest.cs: Enabled test for bug #333647.
+
+2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DelegateTest.cs: Added test for bug #333647. Added trivial tests
 	that verify null argument checks in CreateDelegate.
 

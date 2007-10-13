@@ -26,9 +26,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // CreateDelegate (Type, MethodInfo)
-#if NET_2_0
-		[Category ("NotWorking")] // bug #333647
-#endif
 		public void CreateDelegate1_Method_Instance ()
 		{
 			C c = new C ();
