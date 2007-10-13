@@ -36,7 +36,8 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Collections;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
 #if NET_2_0
 	[ComVisible (true)]
 	[DefaultBindingProperty ("Text")]
@@ -44,7 +45,8 @@ namespace System.Windows.Forms {
 #endif
 	[DefaultEvent("TextChanged")]
 	[Designer("System.Windows.Forms.Design.TextBoxBaseDesigner, " + Consts.AssemblySystem_Design)]
-	public abstract class TextBoxBase : Control {
+	public abstract class TextBoxBase : Control
+	{
 		#region Local Variables
 		internal HorizontalAlignment	alignment;
 		internal bool			accepts_tab;
@@ -91,7 +93,8 @@ namespace System.Windows.Forms {
 
 		#region Internal Constructor
 		// Constructor will go when complete, only for testing - pdb
-		internal TextBoxBase() {
+		internal TextBoxBase ()
+		{
 			alignment = HorizontalAlignment.Left;
 			accepts_return = false;
 			accepts_tab = false;
@@ -162,15 +165,13 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Constructor
 
 		#region Private and Internal Methods
-		internal string CaseAdjust(string s) {
-			if (character_casing == CharacterCasing.Normal) {
+		internal string CaseAdjust (string s)
+		{
+			if (character_casing == CharacterCasing.Normal)
 				return s;
-			}
-			if (character_casing == CharacterCasing.Lower) {
+			if (character_casing == CharacterCasing.Lower)
 				return s.ToLower();
-			} else {
-				return s.ToUpper();
-			}
+			return s.ToUpper();
 		}
 
 #if NET_2_0
@@ -180,7 +181,8 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		internal override void HandleClick(int clicks, MouseEventArgs me) {
+		internal override void HandleClick (int clicks, MouseEventArgs me)
+		{
 			// MS seems to fire the click event in spite of the styles they set
 			bool click_set = GetStyle (ControlStyles.StandardClick);
 			bool doubleclick_set = GetStyle (ControlStyles.StandardDoubleClick);
@@ -324,13 +326,8 @@ namespace System.Windows.Forms {
 					hide_selection = value;
 					OnHideSelectionChanged(EventArgs.Empty);
 				}
-				if (hide_selection) {
-					document.selection_visible = false;
-				} else {
-					document.selection_visible = true;
-				}
+				document.selection_visible = !hide_selection;
 				document.InvalidateSelectionArea();
-
 			}
 		}
 
@@ -549,10 +546,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value < 0) {
+				if (value < 0)
 					throw new ArgumentException(String.Format("{0} is not a valid value", value), "value");
-				}
 
+				document.InvalidateSelectionArea ();
 				if (value != 0) {
 					int	start;
 					Line	line;
@@ -579,14 +576,12 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart {
 			get {
-				int index;
-
-				index = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
-
-				return index;
+				return document.LineTagToCharIndex(document.selection_start.line,
+					document.selection_start.pos);
 			}
 
 			set {
+				document.InvalidateSelectionArea ();
 				document.SetSelectionStart(value, false);
 				if (selection_length > -1 ) {
 					document.SetSelectionEnd(value + selection_length, true);
@@ -611,9 +606,8 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public override string Text {
 			get {
-				if (document == null || document.Root == null || document.Root.text == null) {
+				if (document == null || document.Root == null || document.Root.text == null)
 					return string.Empty;
-				}
 
 				StringBuilder sb = new StringBuilder();
 
@@ -658,9 +652,8 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		public virtual int TextLength {
 			get {
-				if (document == null || document.Root == null || document.Root.text == null) {
+				if (document == null || document.Root == null || document.Root.text == null)
 					return 0;
-				}
 				return Text.Length;
 			}
 		}
@@ -683,6 +676,7 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
 #if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -726,11 +720,11 @@ namespace System.Windows.Forms {
 			set { }
 		}
 #endif
-		
+
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public void AppendText(string text)
+		public void AppendText (string text)
 		{
 			// Save some cycles and only check the Text if we are one line
 			bool is_empty = document.Lines == 1 && Text == String.Empty; 
@@ -751,31 +745,33 @@ namespace System.Windows.Forms {
 			OnTextChanged(EventArgs.Empty);
 		}
 
-		public void Clear() {
+		public void Clear ()
+		{
 			Text = null;
 		}
 
-		public void ClearUndo() {
+		public void ClearUndo ()
+		{
 			document.undo.Clear();
 		}
 
-		public void Copy() {
-			DataObject	o;
+		public void Copy ()
+		{
+			DataObject o;
 
 			o = new DataObject(DataFormats.Text, SelectedText);
-			if (this is RichTextBox) {
+			if (this is RichTextBox)
 				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
-			}
 			Clipboard.SetDataObject(o);
 		}
 
-		public void Cut() {
+		public void Cut ()
+		{
 			DataObject	o;
 
 			o = new DataObject(DataFormats.Text, SelectedText);
-			if (this is RichTextBox) {
+			if (this is RichTextBox)
 				o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
-			}
 			Clipboard.SetDataObject (o);
 
 			document.undo.BeginUserAction (Locale.GetText ("Cut"));
@@ -785,23 +781,25 @@ namespace System.Windows.Forms {
 			OnTextChanged (EventArgs.Empty);
 		}
 
-		public void Paste() {
-			Paste(Clipboard.GetDataObject(), null, false);
+		public void Paste ()
+		{
+			Paste (Clipboard.GetDataObject(), null, false);
 		}
 
-		public void ScrollToCaret() {
-			if (IsHandleCreated) {
-				CaretMoved(this, EventArgs.Empty);
-			}
+		public void ScrollToCaret ()
+		{
+			if (IsHandleCreated)
+				CaretMoved (this, EventArgs.Empty);
 		}
 
-		public void Select(int start, int length) {
+		public void Select(int start, int length)
+		{
 			SelectionStart = start;
 			SelectionLength = length;
 		}
 
-
-		public void SelectAll() {
+		public void SelectAll ()
+		{
 			Line	last;
 
 			last = document.GetLine(document.Lines);
@@ -828,11 +826,13 @@ namespace System.Windows.Forms {
 			document.DisplayCaret ();
 		}
 
-		public override string ToString() {
+		public override string ToString ()
+		{
 			return String.Concat (base.ToString (), ", Text: ", Text);
 		}
 
-		public void Undo() {
+		public void Undo ()
+		{
 			document.undo.Undo();
 		}
 
@@ -932,32 +932,28 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected override void CreateHandle() {
+		protected override void CreateHandle ()
+		{
 			CalculateDocument ();
 			base.CreateHandle ();
 			document.AlignCaret();
 			ScrollToCaret();
 		}
 
-		protected override bool IsInputKey(Keys keyData) {
-			if ((keyData & Keys.Alt) != 0) {
+		protected override bool IsInputKey (Keys keyData)
+		{
+			if ((keyData & Keys.Alt) != 0)
 				return base.IsInputKey(keyData);
-			}
 
 			switch (keyData & Keys.KeyCode) {
 				case Keys.Enter: {
-					if (accepts_return && document.multiline) {
-						return true;
-					}
-					return false;
+					return (accepts_return && document.multiline);
 				}
 
 				case Keys.Tab: {
-					if (accepts_tab && document.multiline) {
-						if ((keyData & Keys.Control) == 0) {
+					if (accepts_tab && document.multiline)
+						if ((keyData & Keys.Control) == 0)
 							return true;
-						}
-					}
 					return false;
 				}
 
@@ -975,27 +971,31 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-
-		protected virtual void OnAcceptsTabChanged(EventArgs e) {
+		protected virtual void OnAcceptsTabChanged(EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [AcceptsTabChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
+
 #if ONLY_1_1
-		protected virtual void OnAutoSizeChanged(EventArgs e) {
+		protected virtual void OnAutoSizeChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [AutoSizeChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 #endif
 
-		protected virtual void OnBorderStyleChanged(EventArgs e) {
+		protected virtual void OnBorderStyleChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [BorderStyleChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		protected override void OnFontChanged(EventArgs e) {
+		protected override void OnFontChanged (EventArgs e)
+		{
 			base.OnFontChanged (e);
 
 			if (auto_size && !document.multiline) {
@@ -1005,28 +1005,33 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated (EventArgs e)
+		{
 			base.OnHandleCreated (e);
 			FixupHeight ();
 		}
 
-		protected override void OnHandleDestroyed(EventArgs e) {
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
 			base.OnHandleDestroyed (e);
 		}
 
-		protected virtual void OnHideSelectionChanged(EventArgs e) {
+		protected virtual void OnHideSelectionChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [HideSelectionChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		protected virtual void OnModifiedChanged(EventArgs e) {
+		protected virtual void OnModifiedChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [ModifiedChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		protected virtual void OnMultilineChanged(EventArgs e) {
+		protected virtual void OnMultilineChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [MultilineChangedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -1039,7 +1044,8 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		protected virtual void OnReadOnlyChanged(EventArgs e) {
+		protected virtual void OnReadOnlyChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [ReadOnlyChangedEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -1051,11 +1057,13 @@ namespace System.Windows.Forms {
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
 #endif
-		protected override bool ProcessDialogKey(Keys keyData) {
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
 			return base.ProcessDialogKey(keyData);
 		}
 
-		private bool ProcessKey(Keys keyData) {
+		private bool ProcessKey (Keys keyData)
+		{
 			bool control;
 			bool shift;
 
@@ -1345,7 +1353,8 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		private void HandleBackspace(bool control) {
+		private void HandleBackspace (bool control)
+		{
 			bool	fire_changed;
 
 			fire_changed = false;
@@ -1406,13 +1415,13 @@ namespace System.Windows.Forms {
 				fire_changed = true;
 			}
 
-			if (fire_changed) {
+			if (fire_changed)
 				OnTextChanged(EventArgs.Empty);
-			}
 			CaretMoved(this, null);
 		}
 
-		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
 			// Make sure we don't get sized bigger than we want to be
 
 			if (!richtext) {
@@ -1435,7 +1444,8 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc (ref Message m)
+		{
 			switch ((Msg)m.Msg) {
 			case Msg.WM_KEYDOWN: {
 				if (ProcessKeyMessage(ref m) || ProcessKey((Keys)m.WParam.ToInt32() | XplatUI.State.ModifierKeys)) {
@@ -1652,15 +1662,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal Graphics CreateGraphicsInternal() {
-			if (IsHandleCreated) {
+		internal Graphics CreateGraphicsInternal ()
+		{
+			if (IsHandleCreated)
 				return base.CreateGraphics();
-			}
 
 			return Graphics.FromImage(bmp);
 		}
 
-		internal override void OnPaintInternal (PaintEventArgs pevent) {
+		internal override void OnPaintInternal (PaintEventArgs pevent)
+		{
 			// Fill background
 			if (backcolor_set || (Enabled && !read_only)) {
 				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
@@ -1753,11 +1764,11 @@ namespace System.Windows.Forms {
 
 				document.SetSelection(marker.line, marker.pos, marker.line, marker.pos);
 				Paste (Clipboard.GetDataObject (true), null, true);
-
 			}
 		}
 
-		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
+		private void TextBoxBase_MouseUp (object sender, MouseEventArgs e)
+		{
 			if (e.Button == MouseButtons.Left) {
 				if (click_mode == CaretSelection.Position) {
 					document.SetSelectionToCaret(false);
@@ -1806,16 +1817,16 @@ namespace System.Windows.Forms {
 			
 		}
 
-		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
+		private void TextBoxBase_SizeChanged (object sender, EventArgs e)
+		{
 			if (IsHandleCreated)
 				CalculateDocument ();
 		}
 
-		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
-
-			if (!vscroll.Enabled) {
+		private void TextBoxBase_MouseWheel (object sender, MouseEventArgs e)
+		{
+			if (!vscroll.Enabled)
 				return;
-			}
 
 			if (e.Delta < 0)
 				vscroll.Value = Math.Min (vscroll.Value + SystemInformation.MouseWheelScrollLines * 5,
@@ -1874,19 +1885,18 @@ namespace System.Windows.Forms {
 			document.RecalculateDocument (CreateGraphicsInternal ());
 
 
-			 if (document.caret.line != null && document.caret.line.Y < document.ViewPortHeight) {
+			if (document.caret.line != null && document.caret.line.Y < document.ViewPortHeight) {
 				// The window has probably been resized, making the entire thing visible, so
 				// we need to set the scroll position back to zero.
 				vscroll.Value = 0;
-			 }
+			}
 
-			 Invalidate();
+			Invalidate();
 		}
 
-		internal void CalculateScrollBars () {
+		internal void CalculateScrollBars ()
+		{
 			// FIXME - need separate calculations for center and right alignment
-
-			//	
 
 			if (document.Width >= document.ViewPortWidth) {
 				hscroll.SetValues (0, Math.Max (1, document.Width), -1,
@@ -1943,15 +1953,18 @@ namespace System.Windows.Forms {
 			PositionControls ();
 		}
 
-		private void document_WidthChanged(object sender, EventArgs e) {
+		private void document_WidthChanged (object sender, EventArgs e)
+		{
 			CalculateScrollBars();
 		}
 
-		private void document_HeightChanged(object sender, EventArgs e) {
+		private void document_HeightChanged (object sender, EventArgs e)
+		{
 			CalculateScrollBars();
 		}
 
-		private void hscroll_ValueChanged(object sender, EventArgs e) {
+		private void hscroll_ValueChanged (object sender, EventArgs e)
+		{
 			int old_viewport_x;
 
 			old_viewport_x = document.ViewPortX;
@@ -1979,7 +1992,8 @@ namespace System.Windows.Forms {
 				eh (this, EventArgs.Empty);
 		}
 
-		private void vscroll_ValueChanged(object sender, EventArgs e) {
+		private void vscroll_ValueChanged (object sender, EventArgs e)
+		{
 			int old_viewport_y;
 
 			old_viewport_y = document.ViewPortY;
@@ -2007,7 +2021,8 @@ namespace System.Windows.Forms {
 				eh (this, EventArgs.Empty);
 		}
 
-		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
+		private void TextBoxBase_MouseMove (object sender, MouseEventArgs e)
+		{
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
 			if (e.Button == MouseButtons.Left && Capture) {
 				if (!ClientRectangle.Contains (e.X, e.Y)) {
@@ -2032,8 +2047,9 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-									      
-		private void TextBoxBase_FontOrColorChanged(object sender, EventArgs e) {
+
+		private void TextBoxBase_FontOrColorChanged (object sender, EventArgs e)
+		{
 			if (!richtext) {
 				Line	line;
 
@@ -2082,7 +2098,8 @@ namespace System.Windows.Forms {
 		}
 
 		/// <summary>Ensure the caret is always visible</summary>
-		internal void CaretMoved(object sender, EventArgs e) {
+		internal void CaretMoved (object sender, EventArgs e)
+		{
 			Point	pos;
 			int	height;
 
@@ -2151,7 +2168,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal bool Paste(IDataObject clip, DataFormats.Format format, bool obey_length) {
+		internal bool Paste (IDataObject clip, DataFormats.Format format, bool obey_length)
+		{
 			string		s;
 
 			if (clip == null)
@@ -2251,7 +2269,6 @@ namespace System.Windows.Forms {
 		{
 			base.OnMouseUp (e);
 		}
-
 #endif
 	}
 }
