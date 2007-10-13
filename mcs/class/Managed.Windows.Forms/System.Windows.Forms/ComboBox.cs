@@ -1078,6 +1078,7 @@ namespace System.Windows.Forms
 				textbox_ctrl.SetSelectable (true);
 				textbox_ctrl.ActivateCaret (false);
 				textbox_ctrl.ShowSelection = false;
+				textbox_ctrl.SelectionLength = 0;
 			}
 
 			base.OnLostFocus (e);
@@ -1701,6 +1702,7 @@ namespace System.Windows.Forms
 		{
 			process_textchanged_event = false;
 			textbox_ctrl.Text = s;
+			textbox_ctrl.SelectAll ();
 			process_textchanged_event = true;
 		}
 		
@@ -1938,6 +1940,7 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				ShowSelection = false;
+				HideSelection = false;
 			}
 
 			internal void SetSelectable (bool selectable)
