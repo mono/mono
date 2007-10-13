@@ -1,5 +1,12 @@
 2007-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: drag_begin_x and drag_begin_y are now set to -1,
+	indicating that there was not a previous drag-and-drop operation going
+	on.
+	Fixes part of #325071.
+
+2007-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Dnd.cs: When DragEventArgs.Effect is set to a value not part of
 	AllowedEffect, don't let the drop operation happen. 
 	Fixes #32580.

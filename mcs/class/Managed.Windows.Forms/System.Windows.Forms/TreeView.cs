@@ -103,8 +103,8 @@ namespace System.Windows.Forms {
 		private Color line_color;
 		private StringFormat string_format;
 
-		private int drag_begin_x = 0;
-		private int drag_begin_y = 0;
+		private int drag_begin_x = -1;
+		private int drag_begin_y = -1;
 		private long handle_count = 1;
 
 		private TreeViewDrawMode draw_mode;
