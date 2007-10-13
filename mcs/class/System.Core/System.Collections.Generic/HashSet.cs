@@ -31,5 +31,21 @@ namespace System.Collections.Generic
 	[Serializable]
 	public class HashSet<T>
 	{
+		[MonoTODO]
+		public bool Add (T item)
+		{
+			return true;
+		}
+
+		[MonoTODO]		
+		public void Clear ()
+		{
+		}
+
+		[MonoTODO]		
+		public bool Contains (T item)
+		{
+			return false;
+		}
 	}
 }
