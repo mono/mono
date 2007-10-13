@@ -977,7 +977,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.message_type = XdndStatus;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = toplevel;
-			if (effect != DragDropEffects.None)
+			if (effect != DragDropEffects.None && (effect & drag_data.AllowedEffects) != 0)
 				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
 
 			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (effect);

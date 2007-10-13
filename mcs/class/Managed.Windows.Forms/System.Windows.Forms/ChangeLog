@@ -1,3 +1,9 @@
+2007-10-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When DragEventArgs.Effect is set to a value not part of
+	AllowedEffect, don't let the drop operation happen. 
+	Fixes #32580.
+
 2007-10-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextRenderer.cs: Use GDI on Windows in both the 1.1 and 2.0 profiles.
