@@ -1,3 +1,8 @@
+2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DelegateTest.cs: Added test for bug #333647. Added trivial tests
+	that verify null argument checks in CreateDelegate.
+
 2007-10-05  Alp Toker  <alp@atoker.com>
 
 	* TypeTest.cs: Re-enable the regression test for #315863.
