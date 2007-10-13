@@ -1542,12 +1542,19 @@ namespace Mono.CSharp {
 				aec.DeclContainer.Parent = ec.TypeContainer;
 
 			IDisposable aec_dispose = null;
+			EmitContext.Flags flags = 0;
 			if (ec.InferReturnType)
-				aec_dispose = aec.Set (EmitContext.Flags.InferReturnType);
+				flags |= EmitContext.Flags.InferReturnType;
+			
 			if (ec.IsInProbingMode)
-				aec_dispose = aec.Set (EmitContext.Flags.ProbingMode);
+				flags |= EmitContext.Flags.ProbingMode;
+			
 			if (ec.IsInFieldInitializer)
-				aec_dispose = aec.Set (EmitContext.Flags.InFieldInitializer);
+				flags |= EmitContext.Flags.InFieldInitializer;
+			
+			// HACK: Flag with 0 cannot be set 
+			if (flags != 0)
+				aec_dispose = aec.Set (flags);
 
 			Report.Debug (64, "RESOLVE ANONYMOUS METHOD #1", this, Location, ec, aec,
 				      RootScope, Parameters, Block);

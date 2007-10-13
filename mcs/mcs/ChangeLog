@@ -1,3 +1,9 @@
+2007-10-13  Marek Safar  <marek.safar@gmail.com>
+	
+	A fix for bug #325478
+	* anonymous.cs (AnonymousContainer.Compatible): Merge are flags together
+	and create only one disposable flags container.
+	
 2007-10-12  Marek Safar  <marek.safar@gmail.com>
 	
 	A fix for bug #332442 by Alexandre Gomes <alexmipego@gmail.com>
