@@ -1,5 +1,11 @@
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TextBoxBase.cs: On 2.0 profile, throw ArgumentOutOFRangeException
+	instead of ArgumentException when SelectionLength is set to negative
+	value. Added same check to SelectionStart. Code formatting.
+
+2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TextBoxBase.cs: Invalidate selection before changing SelectionLength
 	or SelectionStart. Code formatting.
 

@@ -1,3 +1,11 @@
+2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RichTextBoxTest.cs: Added tests for negative SelectionLength and
+	SelectionStart.
+	* TextBoxTest.cs: Added tests for negative SelectionLength and
+	SelectionStart. Avoid using anonymous methods to allow tests to build
+	using csc 1.x; use EventLogger to capture events. Removed CWL.
+
 2007-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DragEventArgsTest.cs: New file.

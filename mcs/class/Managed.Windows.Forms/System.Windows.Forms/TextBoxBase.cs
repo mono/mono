@@ -546,8 +546,14 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (value < 0)
-					throw new ArgumentException(String.Format("{0} is not a valid value", value), "value");
+				if (value < 0) {
+					string msg = String.Format ("'{0}' is not a valid value for 'SelectionLength'", value);
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("SelectionLength", msg);
+#else
+					throw new ArgumentException (msg);
+#endif
+				}
 
 				document.InvalidateSelectionArea ();
 				if (value != 0) {
@@ -557,17 +563,14 @@ namespace System.Windows.Forms
 					int	pos;
 
 					selection_length = value;
-
-					start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
-
-					document.CharIndexToLineTag(start + value, out line, out tag, out pos);
-					document.SetSelectionEnd(line, pos, true);
-					document.PositionCaret(line, pos);
+					start = document.LineTagToCharIndex (document.selection_start.line, document.selection_start.pos);
+					document.CharIndexToLineTag (start + value, out line, out tag, out pos);
+					document.SetSelectionEnd (line, pos, true);
+					document.PositionCaret (line, pos);
 				} else {
 					selection_length = -1;
-
-					document.SetSelectionEnd(document.selection_start.line, document.selection_start.pos, true);
-					document.PositionCaret(document.selection_start.line, document.selection_start.pos);
+					document.SetSelectionEnd (document.selection_start.line, document.selection_start.pos, true);
+					document.PositionCaret (document.selection_start.line, document.selection_start.pos);
 				}
 			}
 		}
@@ -581,15 +584,23 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				document.InvalidateSelectionArea ();
-				document.SetSelectionStart(value, false);
-				if (selection_length > -1 ) {
-					document.SetSelectionEnd(value + selection_length, true);
-				} else {
-					document.SetSelectionEnd(value, true);
+				if (value < 0) {
+					string msg = String.Format ("'{0}' is not a valid value for 'SelectionStart'", value);
+#if NET_2_0
+					throw new ArgumentOutOfRangeException ("SelectionStart", msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
-				document.PositionCaret(document.selection_start.line, document.selection_start.pos);
-				ScrollToCaret();
+
+				document.InvalidateSelectionArea ();
+				document.SetSelectionStart (value, false);
+				if (selection_length > -1)
+					document.SetSelectionEnd (value + selection_length, true);
+				else
+					document.SetSelectionEnd (value, true);
+				document.PositionCaret (document.selection_start.line, document.selection_start.pos);
+				ScrollToCaret ();
 			}
 		}
 
@@ -2152,20 +2163,16 @@ namespace System.Windows.Forms
 				// FIXME - implement center cursor alignment
 			}
 
-			if (!document.multiline) {
+			if (!document.multiline)
 				return;
-			}
 
 			// Handle vertical scrolling
 			height = document.CaretLine.Height + 1;
 
-			if (pos.Y < document.ViewPortY) {
+			if (pos.Y < document.ViewPortY)
 				vscroll.Value = pos.Y;
-			}
-
-			if ((pos.Y + height) > (document.ViewPortY + canvas_height)) {
+			if ((pos.Y + height) > (document.ViewPortY + canvas_height))
 				vscroll.Value = Math.Min (vscroll.Maximum, pos.Y - canvas_height + height);
-			}
 		}
 
 		internal bool Paste (IDataObject clip, DataFormats.Format format, bool obey_length)

@@ -386,5 +386,55 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (t.SelectionFont.Size, f.Size, "A1");
 		}
+
+		[Test]
+		public void SelectionLength_Negative ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			try {
+				rtb.SelectionLength = -1;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("SelectionLength", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+		[Test]
+		public void SelectionStart_Negative ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			try {
+				rtb.SelectionStart = -1;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("SelectionStart", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
 	}
 }

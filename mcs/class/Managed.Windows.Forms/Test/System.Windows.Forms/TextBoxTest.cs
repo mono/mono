@@ -624,7 +624,6 @@ namespace MonoTests.System.Windows.Forms
 			textBox.Copy ();
 			textBox.SelectionStart = textBox.SelectionStart + textBox.SelectionLength;
 			textBox.Paste ();
-			Console.WriteLine ("pre paste text:  {0}", textBox.Text);
 			textBox.Undo ();
 			Assert.AreEqual ("ABCDE", textBox.Text, "#36");
 		}
@@ -676,18 +675,18 @@ namespace MonoTests.System.Windows.Forms
 			form.Close ();
 		}
 
-		[Test]  // bug 82371
-		public void PropertySelectionLength ()
+		[Test]  // bug #82371
+		public void SelectionLength ()
 		{
 			TextBox tb = new TextBox ();
 			RichTextBox rtb = new RichTextBox ();
 			
 #if NET_2_0
-			Assert.AreEqual (0, tb.SelectionLength, "A1-NET20");
-			Assert.AreEqual (0, rtb.SelectionLength, "A2-NET20");
+			Assert.AreEqual (0, tb.SelectionLength, "#1");
+			Assert.AreEqual (0, rtb.SelectionLength, "#2");
 #else
-			Assert.AreEqual (-1, tb.SelectionLength, "A1-NET11");
-			Assert.AreEqual (-1, rtb.SelectionLength, "A2-NET11");
+			Assert.AreEqual (-1, tb.SelectionLength, "#1");
+			Assert.AreEqual (-1, rtb.SelectionLength, "#2");
 #endif
 
 			IntPtr i = tb.Handle;
@@ -696,7 +695,57 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, tb.SelectionLength, "A3");
 			Assert.AreEqual (0, rtb.SelectionLength, "A4");
 		}
-		
+
+		[Test]
+		public void SelectionLength_Negative ()
+		{
+			TextBox tb = new TextBox ();
+			try {
+				tb.SelectionLength = -1;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("SelectionLength", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+		[Test]
+		public void SelectionStart_Negative ()
+		{
+			TextBox tb = new TextBox ();
+			try {
+				tb.SelectionStart = -1;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("SelectionStart", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
 		[Test]
 		public void Bug82749 ()
 		{
@@ -727,24 +776,19 @@ namespace MonoTests.System.Windows.Forms
 		public void ModifiedEventTest ()
 		{
 			TextBox tb = new TextBox ();
-			string events = string.Empty;
-
-			tb.ModifiedChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("ModifiedChanged"); });
-
+			EventLogger eventLogger = new EventLogger (tb);
 			tb.Modified = true;
-			Assert.AreEqual ("ModifiedChanged", events, "me-1");
+			Assert.AreEqual (1, eventLogger.EventsRaised);
+			Assert.IsTrue (eventLogger.EventRaised ("ModifiedChanged"));
 		}
 
 		[Test]
 		public void BorderStyleEventTest ()
 		{
 			TextBox tb = new TextBox ();
-			string events = string.Empty;
-
-			tb.BorderStyleChanged += new EventHandler (delegate (Object obj, EventArgs e) { events += ("BorderStyleChanged"); });
-
+			EventLogger eventLogger = new EventLogger (tb);
 			tb.BorderStyle = BorderStyle.None;
-			Assert.AreEqual ("BorderStyleChanged", events, "bse-1");
+			Assert.IsTrue (eventLogger.EventRaised ("BorderStyleChanged"));
 		}
 		
 		[Test]
