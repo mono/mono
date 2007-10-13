@@ -1,3 +1,7 @@
+2007-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs (CreateDelegate): Allow binding instance methods to 
+	delegates with an extra argument, a NET 2.0 feature. Fixes #333647.
 
 Fri Oct 12 08:11:50 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

@@ -112,6 +112,19 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern void SetMulticastInvoke ();
 
+		private static bool arg_type_match (Type delArgType, Type argType) {
+			bool match = delArgType == argType;
+
+#if NET_2_0
+			// Delegate contravariance
+			if (!match) {
+				if (!delArgType.IsValueType && (delArgType != typeof (ValueType)) && (argType.IsAssignableFrom (delArgType)))
+					match = true;
+			}
+#endif
+			return match;
+		}
+
 #if NET_2_0
 		public
 #else
@@ -128,11 +141,13 @@ namespace System
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
+#if !NET_2_0
 			if (!method.IsStatic)
 				if (throwOnBindFailure)
 					throw new ArgumentException ("The method should be static.", "method");
 				else
 					return null;
+#endif
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
@@ -158,32 +173,38 @@ namespace System
 			ParameterInfo[] delargs = invoke.GetParameters ();
 			ParameterInfo[] args = method.GetParameters ();
 
-			if (args.Length != delargs.Length)
-				if (throwOnBindFailure)
-					throw new ArgumentException ("method argument length mismatch");
-				else
-					return null;
-			
-			int length = delargs.Length;
-			for (int i = 0; i < length; i++) {
-				bool match = delargs [i].ParameterType == args [i].ParameterType;
-
-#if NET_2_0
-				// Delegate contravariance
-				if (!match) {
-					Type argType = delargs [i].ParameterType;
-
-					if (!argType.IsValueType && (argType != typeof (ValueType)) && (args [i].ParameterType.IsAssignableFrom (argType)))
-						match = true;
-				}
-#endif
-
-				if (!match)
+			bool argLengthMatch;
+			if (!method.IsStatic)
+				//
+				// Net 2.0 feature. The first argument of the delegate is passed
+				// as the 'this' argument to the method.
+				//
+				argLengthMatch = (args.Length + 1 == delargs.Length);
+			else
+				argLengthMatch = (args.Length == delargs.Length);
+			if (!argLengthMatch)
 					if (throwOnBindFailure)
-						throw new ArgumentException ("method arguments are incompatible");
+						throw new ArgumentException ("method argument length mismatch");
 					else
 						return null;
+			
+			bool argsMatch;
+			if (!method.IsStatic) {
+				// The first argument should match this
+				argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
+				for (int i = 0; i < args.Length; i++)
+					argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
+			} else {
+				argsMatch = true;
+				for (int i = 0; i < args.Length; i++)
+					argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
 			}
+
+			if (!argsMatch)
+				if (throwOnBindFailure)
+					throw new ArgumentException ("method arguments are incompatible");
+				else
+					return null;
 
 			Delegate d = CreateDelegate_internal (type, null, method);
 			d.original_method_info = method;
