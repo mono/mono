@@ -28,15 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Security;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Security {
 
 	[TestFixture]
-	public class SecurityElementTest : Assertion {
+	public class SecurityElementTest {
 
 		SecurityElement elem;
 		
@@ -52,92 +54,186 @@ namespace MonoTests.System.Security {
 			elem.AddAttribute ("class", "System");
 			elem.AddAttribute ("version", "1");
 			
-			SecurityElement child = new SecurityElement ("ConnectAccess");		
+			SecurityElement child = new SecurityElement ("ConnectAccess");
 			elem.AddChild (child);
 			
-			SecurityElement grandchild = new SecurityElement ("ENDPOINT", "some text");		
+			SecurityElement grandchild = new SecurityElement ("ENDPOINT", "some text");
 			grandchild.AddAttribute ("transport", "All");
 			grandchild.AddAttribute ("host", "localhost");
 			grandchild.AddAttribute ("port", "8080");
 			child.AddChild (grandchild);
 
-			SecurityElement grandchild2 = new SecurityElement ("ENDPOINT");		
+			SecurityElement grandchild2 = new SecurityElement ("ENDPOINT");
 			grandchild2.AddAttribute ("transport", "Tcp");
 			grandchild2.AddAttribute ("host", "www.ximian.com");
 			grandchild2.AddAttribute ("port", "All");
-			child.AddChild (grandchild2);		
+			child.AddChild (grandchild2);
 			
-			return elem;		
+			return elem;
 		}
 
 		[Test]
-		public void ConstructorsTagTest () 
-		{
-			SecurityElement se = new SecurityElement ("tag", "text");
-			AssertNull ("EmptyAttributes", se.Attributes);
-			AssertNull ("EmptyChildren", se.Children);
-			AssertEquals ("Tag", "tag", se.Tag);
-			AssertEquals ("Text", "text", se.Text);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorsTagNullText ()
-		{
-			SecurityElement se = new SecurityElement (null, "text");
-		}
-
-		[Test]
-		public void ConstructorsTagTextNull () 
-		{
-			SecurityElement se = new SecurityElement ("tag", null);
-			AssertNull ("EmptyAttributes", se.Attributes);
-			AssertNull ("EmptyChildren", se.Children);
-			AssertEquals ("Tag", "tag", se.Tag);
-			AssertNull ("Text", se.Text);
-		}
-
-		[Test]
-		public void ConstructorsTag () 
+		public void Constructor1 ()
 		{
 			SecurityElement se = new SecurityElement ("tag");
-			AssertNull ("EmptyAttributes", se.Attributes);
-			AssertNull ("EmptyChildren", se.Children);
-			AssertEquals ("Tag", "tag", se.Tag);
-			AssertNull ("Text", se.Text);
+			Assert.IsNull (se.Attributes, "#A1");
+			Assert.IsNull (se.Children, "#A2");
+			Assert.AreEqual ("tag", se.Tag, "#A3");
+			Assert.IsNull (se.Text, "#A4");
+
+			se = new SecurityElement (string.Empty);
+			Assert.IsNull (se.Attributes, "#B1");
+			Assert.IsNull (se.Children, "#B2");
+			Assert.AreEqual (string.Empty, se.Tag, "#B3");
+			Assert.IsNull (se.Text, "#B4");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorsTagNull () 
+		public void Constructor1_Tag_Invalid ()
 		{
-			SecurityElement se = new SecurityElement (null);
-		}
-		
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddAttribute_NameNullValue () 
-		{
-			elem.AddAttribute (null, "valid");
+			try {
+				new SecurityElement ("Na<me");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam<e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Na<me") != -1, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				new SecurityElement ("Nam>e");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam>e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Nam>e") != -1, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void AddAttribute_NameValueNull () 
+		public void Constructor1_Tag_Null ()
 		{
-			elem.AddAttribute ("valid", null);
+			try {
+				new SecurityElement (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("tag", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void Constructor2 () 
+		{
+			SecurityElement se = new SecurityElement ("tag", "text");
+			Assert.IsNull (se.Attributes, "EmptyAttributes");
+			Assert.IsNull (se.Children, "EmptyChildren");
+			Assert.AreEqual ("tag", se.Tag, "Tag");
+			Assert.AreEqual ("text", se.Text, "Text");
+		}
+
+		[Test]
+		public void Constructor2_Tag_Invalid ()
+		{
+			try {
+				new SecurityElement ("Na<me", "text");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam<e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Na<me") != -1, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				new SecurityElement ("Nam>e", "text");
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam>e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Nam>e") != -1, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
+		}
+
+		[Test]
+		public void Constructor2_Tag_Null ()
+		{
+			try {
+				new SecurityElement (null, "text");
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("tag", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void Constructor2_Text_Null () 
+		{
+			SecurityElement se = new SecurityElement ("tag", null);
+			Assert.IsNull (se.Attributes, "EmptyAttributes");
+			Assert.IsNull (se.Children, "EmptyChildren");
+			Assert.AreEqual ("tag", se.Tag, "Tag");
+			Assert.IsNull (se.Text, "Text");
+		}
+
+		[Test]
+		public void AddAttribute_Name_Null () 
+		{
+			try {
+				elem.AddAttribute (null, "valid");
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void AddAttribute_Value_Null () 
+		{
+			try {
+				elem.AddAttribute ("valid", null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void AddAttribute_InvalidName () 
+		public void AddAttribute_Name_Invalid () 
 		{
 			elem.AddAttribute ("<invalid>", "valid");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void AddAttribute_InvalidValue () 
+		public void AddAttribute_Value_Invalid () 
 		{
 			elem.AddAttribute ("valid", "invalid\"");
 		}
@@ -172,10 +268,18 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddChild_Null () 
 		{
-			elem.AddChild (null);
+			try {
+				elem.AddChild (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("child", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -184,26 +288,57 @@ namespace MonoTests.System.Security {
 			int n = elem.Children.Count;
 			// add itself
 			elem.AddChild (elem);
-			AssertEquals ("Count", (n+1), elem.Children.Count);
+			Assert.AreEqual ((n + 1), elem.Children.Count, "Count");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")] // this will result in an InvalidCastException on MS.Net - I have no clue why
-		public void Attributes_StrangeCase () 
+		[Category ("NotDotNet")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304549
+		public void Attributes_Name_Invalid () 
 		{
 			Hashtable h = elem.Attributes;
 			h.Add ("<invalid>", "valid");
-			elem.Attributes = h;
+			try {
+				elem.Attributes = h;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid attribute name '<invalid>'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("<invalid>") != -1, "#5");
+				Assert.IsNull (ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Attributes_ArgumentException () 
+		[Category ("NotWorking")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304549
+		public void Attributes_Name_Invalid_MS ()
+		{
+			Hashtable h = elem.Attributes;
+			h.Add ("<invalid>", "valid");
+			try {
+				elem.Attributes = h;
+				Assert.Fail ();
+			} catch (InvalidCastException) {
+			}
+		}
+
+		[Test]
+		public void Attributes_Value_Invalid () 
 		{
 			Hashtable h = elem.Attributes;
 			h.Add ("valid", "\"invalid\"");
-			elem.Attributes = h;
+			try {
+				elem.Attributes = h;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid attribute value '"invalid"'
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"invalid\"") != -1, "#5");
+				Assert.IsNull (ex.ParamName, "#6");
+			}
 		}
 		
 		[Test]
@@ -213,10 +348,10 @@ namespace MonoTests.System.Security {
 
 			h = elem.Attributes;
 			h.Add ("foo", "bar");
-			Assert ("#1", elem.Attributes.Count != h.Count);
+			Assert.IsTrue (elem.Attributes.Count != h.Count, "#1");
 			
 			elem.Attributes = h;
-			AssertNotNull ("#2", elem.Attribute ("foo"));
+			Assert.IsNotNull (elem.Attribute ("foo"), "#2");
 		}
 		
 		[Test]
@@ -225,7 +360,7 @@ namespace MonoTests.System.Security {
 			int iTest = 0;
 			SecurityElement elem2 = CreateElement ();
 			iTest++;
-			Assert ("#1", elem.Equal (elem2));
+			Assert.IsTrue (elem.Equal (elem2), "#1");
 			iTest++;
 			SecurityElement child = (SecurityElement) elem2.Children [0];
 			iTest++;
@@ -233,107 +368,229 @@ namespace MonoTests.System.Security {
 			iTest++;
 			child.Text = "some text";
 			iTest++;
-			Assert ("#2", !elem.Equal (elem2));
+			Assert.IsFalse (elem.Equal (elem2), "#2");
 		}
 		
 		[Test]
 		public void Escape ()
 		{
-			AssertEquals ("#1", "foo&lt;&gt;&quot;&apos;&amp; bar", SecurityElement.Escape ("foo<>\"'& bar"));
+			Assert.AreEqual ("foo&lt;&gt;&quot;&apos;&amp; bar",
+				SecurityElement.Escape ("foo<>\"'& bar"), "#1");
+			Assert.IsNull (SecurityElement.Escape (null), "#2");
 		}
-		
+
 		[Test]
 		public void IsValidAttributeName ()
 		{
-			Assert ("#1", !SecurityElement.IsValidAttributeName ("x x")); 
-			Assert ("#2", !SecurityElement.IsValidAttributeName ("x<x")); 
-			Assert ("#3", !SecurityElement.IsValidAttributeName ("x>x"));
-			Assert ("#4", SecurityElement.IsValidAttributeName ("x\"x"));
-			Assert ("#5", SecurityElement.IsValidAttributeName ("x'x"));
-			Assert ("#6", SecurityElement.IsValidAttributeName ("x&x"));			
+			Assert.IsFalse (SecurityElement.IsValidAttributeName ("x x"), "#1");
+			Assert.IsFalse (SecurityElement.IsValidAttributeName ("x<x"), "#2");
+			Assert.IsFalse (SecurityElement.IsValidAttributeName ("x>x"), "#3");
+			Assert.IsTrue (SecurityElement.IsValidAttributeName ("x\"x"), "#4");
+			Assert.IsTrue (SecurityElement.IsValidAttributeName ("x'x"), "#5");
+			Assert.IsTrue (SecurityElement.IsValidAttributeName ("x&x"), "#6");
+			Assert.IsFalse (SecurityElement.IsValidAttributeName (null), "#7");
+			Assert.IsTrue (SecurityElement.IsValidAttributeName (string.Empty), "#8");
 		}
 
 		[Test]
 		public void IsValidAttributeValue ()
 		{
-			Assert ("#1", SecurityElement.IsValidAttributeValue ("x x")); 
-			Assert ("#2", !SecurityElement.IsValidAttributeValue ("x<x")); 
-			Assert ("#3", !SecurityElement.IsValidAttributeValue ("x>x"));
-			Assert ("#4", !SecurityElement.IsValidAttributeValue ("x\"x"));
-			Assert ("#5", SecurityElement.IsValidAttributeValue ("x'x"));
-			Assert ("#6", SecurityElement.IsValidAttributeValue ("x&x"));		
+			Assert.IsTrue (SecurityElement.IsValidAttributeValue ("x x"), "#1");
+			Assert.IsFalse (SecurityElement.IsValidAttributeValue ("x<x"), "#2");
+			Assert.IsFalse (SecurityElement.IsValidAttributeValue ("x>x"), "#3");
+			Assert.IsFalse (SecurityElement.IsValidAttributeValue ("x\"x"), "#4");
+			Assert.IsTrue (SecurityElement.IsValidAttributeValue ("x'x"), "#5");
+			Assert.IsTrue (SecurityElement.IsValidAttributeValue ("x&x"), "#6");
+			Assert.IsFalse (SecurityElement.IsValidAttributeValue (null), "#7");
+			Assert.IsTrue (SecurityElement.IsValidAttributeValue (string.Empty), "#8");
 		}
 
 		[Test]
 		public void IsValidTag ()
 		{
-			Assert ("#1", !SecurityElement.IsValidTag ("x x")); 
-			Assert ("#2", !SecurityElement.IsValidTag ("x<x")); 
-			Assert ("#3", !SecurityElement.IsValidTag ("x>x"));
-			Assert ("#4", SecurityElement.IsValidTag ("x\"x"));
-			Assert ("#5", SecurityElement.IsValidTag ("x'x"));
-			Assert ("#6", SecurityElement.IsValidTag ("x&x"));
+			Assert.IsFalse (SecurityElement.IsValidTag ("x x"), "#1");
+			Assert.IsFalse (SecurityElement.IsValidTag ("x<x"), "#2");
+			Assert.IsFalse (SecurityElement.IsValidTag ("x>x"), "#3");
+			Assert.IsTrue (SecurityElement.IsValidTag ("x\"x"), "#4");
+			Assert.IsTrue (SecurityElement.IsValidTag ("x'x"), "#5");
+			Assert.IsTrue (SecurityElement.IsValidTag ("x&x"), "#6");
+			Assert.IsFalse (SecurityElement.IsValidTag (null), "#7");
+			Assert.IsTrue (SecurityElement.IsValidTag (string.Empty), "#8");
 		}
 
 		[Test]
 		public void IsValidText ()
 		{
-			Assert ("#1", SecurityElement.IsValidText ("x x")); 
-			Assert ("#2", !SecurityElement.IsValidText ("x<x")); 
-			Assert ("#3", !SecurityElement.IsValidText ("x>x"));
-			Assert ("#4", SecurityElement.IsValidText ("x\"x"));
-			Assert ("#5", SecurityElement.IsValidText ("x'x"));
-			Assert ("#6", SecurityElement.IsValidText ("x&x"));
+			Assert.IsTrue (SecurityElement.IsValidText ("x x"), "#1");
+			Assert.IsFalse (SecurityElement.IsValidText ("x<x"), "#2");
+			Assert.IsFalse (SecurityElement.IsValidText ("x>x"), "#3");
+			Assert.IsTrue (SecurityElement.IsValidText ("x\"x"), "#4");
+			Assert.IsTrue (SecurityElement.IsValidText ("x'x"), "#5");
+			Assert.IsTrue (SecurityElement.IsValidText ("x&x"), "#6");
+			Assert.IsFalse (SecurityElement.IsValidText (null), "#7");
+			Assert.IsTrue (SecurityElement.IsValidText (string.Empty), "#8");
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SearchForChildByTag_Null ()
 		{
-			SecurityElement child = elem.SearchForChildByTag (null);
+			try {
+				elem.SearchForChildByTag (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("tag", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
 		public void SearchForChildByTag () 
 		{
-			SecurityElement	child = elem.SearchForChildByTag ("doesnotexist");
-			AssertNull ("#1", child);
+			SecurityElement child = elem.SearchForChildByTag ("doesnotexist");
+			Assert.IsNull (child, "#1");
 			
 			child = elem.SearchForChildByTag ("ENDPOINT");
-			AssertNull ("#2", child);
+			Assert.IsNull (child, "#2");
 			
 			child = (SecurityElement) elem.Children [0];
 			child = child.SearchForChildByTag ("ENDPOINT");
-			AssertEquals ("#3", "All", child.Attribute ("transport"));
+			Assert.AreEqual ("All", child.Attribute ("transport"), "#3");
 		}
 		
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void SearchForTextOfTag_Null ()
 		{
-			string s = elem.SearchForTextOfTag (null);
+			try {
+				elem.SearchForTextOfTag (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("tag", ex.ParamName, "#6");
+			}
 		}
 			
 		[Test]
 		public void SearchForTextOfTag () 
 		{
 			string s = elem.SearchForTextOfTag ("ENDPOINT");
-			AssertEquals ("SearchForTextOfTag", "some text", s);
+			Assert.AreEqual ("some text", s);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		public void Tag ()
+		{
+			SecurityElement se = new SecurityElement ("Values");
+			Assert.AreEqual ("Values", se.Tag, "#A1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<Values/>{0}", Environment.NewLine), 
+				se.ToString (), "#A2");
+			se.Tag = "abc:Name";
+			Assert.AreEqual ("abc:Name", se.Tag, "#B1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<abc:Name/>{0}", Environment.NewLine),
+				se.ToString (), "#B2");
+			se.Tag = "Name&Address";
+			Assert.AreEqual ("Name&Address", se.Tag, "#C1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<Name&Address/>{0}", Environment.NewLine),
+				se.ToString (), "#C2");
+			se.Tag = string.Empty;
+			Assert.AreEqual (string.Empty, se.Tag, "#D1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"</>{0}", Environment.NewLine),
+				se.ToString (), "#D2");
+		}
+
+		[Test]
+		public void Tag_Invalid ()
+		{
+			SecurityElement se = new SecurityElement ("Values");
+
+			try {
+				se.Tag = "Na<me";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam<e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Na<me") != -1, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				se.Tag = "Nam>e";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Nam>e
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Nam>e") != -1, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
+		}
+
+		[Test]
 		public void Tag_Null () 
 		{
-			elem.Tag = null;
-			AssertNull ("Tag", elem.Tag);
+			try {
+				elem.Tag = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("Tag", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
-		public void Text_Null () 
+		public void Text ()
 		{
+			elem.Text = "Miguel&Sébastien";
+			Assert.AreEqual ("Miguel&Sébastien", elem.Text, "#1");
 			elem.Text = null;
-			AssertNull ("Text", elem.Text);
+			Assert.IsNull (elem.Text, "#2");
+			elem.Text = "Sébastien\"Miguel";
+			Assert.AreEqual ("Sébastien\"Miguel", elem.Text, "#3");
+			elem.Text = string.Empty;
+			Assert.AreEqual (string.Empty, elem.Text, "#4");
+		}
+
+		[Test]
+		public void Text_Invalid ()
+		{
+			try {
+				elem.Text = "Mig<uelSébastien";
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Mig<uelSébastien
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf ("Mig<uelSébastien") != -1, "#A5");
+				Assert.IsNull (ex.ParamName, "#A6");
+			}
+
+			try {
+				elem.Text = "Mig>uelSébastien";
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Invalid element tag Mig>uelSébastien
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.IndexOf ("Mig>uelSébastien") != -1, "#B5");
+				Assert.IsNull (ex.ParamName, "#B6");
+			}
 		}
 
 		[Test]
@@ -347,7 +604,7 @@ namespace MonoTests.System.Security {
 #else
 			string expected = String.Format ("<Multiple Attribute1=\"One\"{0}          Attribute2=\"Two\"/>{0}", Environment.NewLine);
 #endif
-			AssertEquals ("ToString()", expected, se.ToString ());
+			Assert.AreEqual (expected, se.ToString (), "ToString()");
 		}
 
 #if NET_2_0
@@ -356,16 +613,24 @@ namespace MonoTests.System.Security {
 		{
 			SecurityElement se = SecurityElement.FromString ("<tag attribute=\"value\"><child attr=\"1\">mono</child><child/></tag>");
 			SecurityElement copy = se.Copy ();
-			Assert ("se!ReferenceEquals", !Object.ReferenceEquals (se, copy));
-			Assert ("c1=ReferenceEquals", Object.ReferenceEquals (se.Children [0], copy.Children [0]));
-			Assert ("c2=ReferenceEquals", Object.ReferenceEquals (se.Children [1], copy.Children [1]));
+			Assert.IsFalse (Object.ReferenceEquals (se, copy), "se!ReferenceEquals");
+			Assert.IsTrue (Object.ReferenceEquals (se.Children [0], copy.Children [0]), "c1=ReferenceEquals");
+			Assert.IsTrue (Object.ReferenceEquals (se.Children [1], copy.Children [1]), "c2=ReferenceEquals");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void FromString_Null () 
 		{
-			SecurityElement.FromString (null);
+			try {
+				SecurityElement.FromString (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("xml", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -385,23 +650,49 @@ namespace MonoTests.System.Security {
 		[Test]
 		public void FromString ()
 		{
-			SecurityElement se = SecurityElement.FromString ("<tag attribute=\"value\"><child attr=\"1\">mono</child><child/></tag>");
-			AssertEquals ("Tag", "tag", se.Tag);
-			AssertNull ("Text", se.Text);
-			AssertEquals ("Attribute.Count", 1, se.Attributes.Count);
-			AssertEquals ("Attribute", "value", se.Attribute ("attribute"));
-			AssertEquals ("Children.Count", 2, se.Children.Count);
+			SecurityElement se = SecurityElement.FromString ("<tag attribute=\"value\"><x:child attr=\"1\">mono</x:child><child/></tag>");
+			Assert.AreEqual ("tag", se.Tag, "#A1");
+			Assert.IsNull (se.Text, "#A2");
+			Assert.AreEqual (1, se.Attributes.Count, "#A3");
+			Assert.AreEqual ("value", se.Attribute ("attribute"), "#A4");
+			Assert.AreEqual (2, se.Children.Count, "#A5");
 
 			SecurityElement child = (SecurityElement) se.Children [0];
-			AssertEquals ("Child1.Tag", "child", child.Tag);
-			AssertEquals ("Child1.Text", "mono", child.Text);
-			AssertEquals ("Child1.Attribute.Count", 1, child.Attributes.Count);
-			AssertEquals ("Child1.Attribute", "1", child.Attribute ("attr"));
+			Assert.AreEqual ("x:child", child.Tag, "#B1");
+			Assert.AreEqual ("mono", child.Text, "#B2");
+			Assert.AreEqual (1, child.Attributes.Count, "#B3");
+			Assert.AreEqual ("1", child.Attribute ("attr"), "#B4");
 
 			child = (SecurityElement) se.Children [1];
-			AssertEquals ("Child2.Tag", "child", child.Tag);
-			AssertNull ("Child2.Text", child.Text);
-			AssertNull ("Child2.Attribute", child.Attributes);
+			Assert.AreEqual ("child", child.Tag, "#C1");
+			Assert.IsNull (child.Text, "#C2");
+			Assert.IsNull (child.Attributes, "#C3");
+		}
+
+		[Test] // bug #333699
+		[Category ("NotWorking")]
+		public void FromString_EntityReferences ()
+		{
+			const string xml = @"
+				<values>
+					<value name='&quot;name&quot;&amp;&lt;address&gt;'>&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>
+				</values>";
+
+			SecurityElement se = SecurityElement.FromString (xml);
+			Assert.IsNotNull (se, "#A1");
+			Assert.IsNull (se.Attributes, "#A2");
+			Assert.IsNotNull (se.Children, "#A3");
+			Assert.AreEqual (1, se.Children.Count, "#A4");
+			Assert.AreEqual ("values", se.Tag, "#A5");
+			Assert.IsNull (se.Text, "#A6");
+
+			SecurityElement child = se.Children [0] as SecurityElement;
+			Assert.IsNotNull (child, "#B1");
+			Assert.IsNotNull (child.Attributes, "#B2");
+			Assert.AreEqual ("'\"name\"&<address>'", child.Attribute ("name"), "#B3");
+			Assert.AreEqual ("value", child.Tag, "#B4");
+			Assert.AreEqual ("<'Suds' & \"Soda\">!", child.Text, "#B5");
+			Assert.IsNull (child.Children, "#B6");
 		}
 #endif
 	}

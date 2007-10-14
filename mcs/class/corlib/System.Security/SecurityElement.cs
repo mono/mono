@@ -95,8 +95,13 @@ namespace System.Security {
 		
 		public SecurityElement (string tag, string text)
 		{
-			this.Tag = tag;
-			this.Text = text;
+			if (tag == null)
+				throw new ArgumentNullException ("tag");
+			if (!IsValidTag (tag))
+				throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + tag);
+			this.tag = tag;
+
+			Text = text;
 		}
 
 		// not a deep copy (childs are references)
@@ -129,7 +134,7 @@ namespace System.Security {
 				return result;
 			}
 
-			set {				
+			set {
 				if (value == null || value.Count == 0) {
 					attributes.Clear ();
 					return;
@@ -170,11 +175,10 @@ namespace System.Security {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ();
+					throw new ArgumentNullException ("Tag");
 				if (!IsValidTag (value))
 					throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + value);
-				int colon = value.IndexOf (':');
-				tag = colon < 0 ? value : value.Substring (colon + 1);
+				tag = value;
 			}
 		}
 
@@ -184,8 +188,12 @@ namespace System.Security {
 			}
 
 			set {
-				if (!IsValidText (value))
-					throw new ArgumentException (Locale.GetText ("Invalid XML string") + ": " + text);				
+				if (value != null) {
+					if (!IsValidText (value))
+						throw new ArgumentException (
+							Locale.GetText ("Invalid XML string")
+							+ ": " + value);
+				}
 				text = value;
 			}
 		}
@@ -282,7 +290,10 @@ namespace System.Security {
 		public static string Escape (string str)
 		{
 			StringBuilder sb;
-			
+
+			if (str == null)
+				return null;
+
 			if (str.IndexOfAny (invalid_chars) == -1)
 				return str;
 
@@ -306,7 +317,7 @@ namespace System.Security {
 		}
 
 #if NET_2_0
-		public 
+		public
 #else
 		internal
 #endif
@@ -321,8 +332,7 @@ namespace System.Security {
 				SecurityParser sp = new SecurityParser ();
 				sp.LoadXml (xml);
 				return sp.ToXml ();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				string msg = Locale.GetText ("Invalid XML.");
 				throw new XmlSyntaxException (msg, e);
 			}
@@ -345,9 +355,7 @@ namespace System.Security {
 
 		public static bool IsValidText (string value)
 		{
-			if (value == null)
-				return true;
-			return value.IndexOfAny (invalid_text_chars) == -1;
+			return value != null && value.IndexOfAny (invalid_text_chars) == -1;
 		}
 
 		public SecurityElement SearchForChildByTag (string tag) 
@@ -364,7 +372,7 @@ namespace System.Security {
 					return elem;
 			}
 			return null;
-		}			
+		}
 
 		public string SearchForTextOfTag (string tag) 
 		{
@@ -383,7 +391,7 @@ namespace System.Security {
 					return result;
 			}
 
-			return null;			
+			return null;
 		}
 		
 		public override string ToString ()

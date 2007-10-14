@@ -1,3 +1,12 @@
+2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SecurityElement.cs: In ctors, do not assign to Tag property to
+	ensure exception message match that of MS. In Tag property, set name
+	of parameter in ArgumentNullException and do not filter out
+	namespace prefixes. Modified Text property to allow null values
+	after change to IsValidText that no longer considers null value as
+	valid. Avoid NRE in Escape.
+
 2007-08-28  Mark Probst  <mark.probst@gmail.com>
 
 	* SecurityManager.cs: Changed method argument of
