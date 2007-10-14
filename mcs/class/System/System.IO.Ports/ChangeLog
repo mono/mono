@@ -1,3 +1,7 @@
+2007-10-13  Miguel de Icaza  <miguel@novell.com>
+
+	* SerialPortStream.cs: Send a break on the Unix case.
+
 2007-08-12  Lukasz Byczynski <lukaszb@forcom.com.pl>
 
 	* SerialPortStream.cs: added timeout handling on write

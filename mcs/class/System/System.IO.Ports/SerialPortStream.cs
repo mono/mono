@@ -279,9 +279,13 @@ namespace System.IO.Ports
 				throw new IOException ();
 		}
 
+		[DllImport ("MonoPosixHelper")]
+		static extern int breakprop (int fd);
+
 		public void SetBreakState (bool value)
 		{
-			throw new NotImplementedException ();
+			if (value)
+				breakprop (fd);
 		}
 
 	}
