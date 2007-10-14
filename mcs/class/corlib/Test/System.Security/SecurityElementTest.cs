@@ -669,6 +669,30 @@ namespace MonoTests.System.Security {
 			Assert.IsNull (child.Attributes, "#C3");
 		}
 
+		[Test]
+		[Category ("NotDotNet")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304583
+		public void FromString_Quote_Delimiter ()
+		{
+			const string xml = "<value name='Company'>Novell</value>";
+			SecurityElement se = SecurityElement.FromString (xml);
+			Assert.AreEqual ("Company", se.Attribute ("name"), "#1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<value name=\"Company\">Novell</value>{0}",
+				Environment.NewLine), se.ToString (), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304583
+		public void FromString_Quote_Delimiter_MS ()
+		{
+			const string xml = "<value name='Company'>Novell</value>";
+			SecurityElement se = SecurityElement.FromString (xml);
+			Assert.AreEqual ("'Company'", se.Attribute ("name"), "#1");
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"<value name=\"'Company'\">Novell</value>{0}",
+				Environment.NewLine), se.ToString (), "#2");
+		}
+
 		[Test] // bug #333699
 		[Category ("NotWorking")]
 		public void FromString_EntityReferences ()

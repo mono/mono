@@ -1,5 +1,10 @@
 2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SecurityElementTest.cs: Added tests for using single quotes as
+	delimiter of which one passes on Mono and one on MS (due to bug). 
+
+2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SecurityElementTest.cs: Modified test for bug #333699 to use double
 	quote as delimiter to work around MS bug. Added test for bug #333725.
 
