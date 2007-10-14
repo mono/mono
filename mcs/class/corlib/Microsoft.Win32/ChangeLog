@@ -1,3 +1,8 @@
+2007-10-13  kevin.fitzgerald@soarce.us
+
+	* UnixRegistryApi.cs: Escape the strings before passing them to
+	SecurityElement.   This fixes bug #322839
+
 2007-08-30  Marek Habersack  <mhabersack@novell.com>
 
 	* UnixRegistryApi.cs: properly retrieve values of type

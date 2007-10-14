@@ -483,14 +483,16 @@ namespace Microsoft.Win32 {
 
 			SecurityElement se = new SecurityElement ("values");
 			
+			// With SecurityElement.Text = value, and SecurityElement.AddAttribute(key, value)
+			// the values must be escaped prior to being assigned. 
 			foreach (DictionaryEntry de in values){
 				object val = de.Value;
 				SecurityElement value = new SecurityElement ("value");
-				value.AddAttribute ("name", (string) de.Key);
+				value.AddAttribute ("name", SecurityElement.Escape ((string) de.Key));
 				
 				if (val is string){
 					value.AddAttribute ("type", "string");
-					value.Text = (string) val;
+					value.Text = SecurityElement.Escape ((string) val);
 				} else if (val is int){
 					value.AddAttribute ("type", "int");
 					value.Text = val.ToString ();
@@ -502,13 +504,13 @@ namespace Microsoft.Win32 {
 					value.Text = Convert.ToBase64String ((byte[]) val);
 				} else if (val is ExpandString){
 					value.AddAttribute ("type", "expand");
-					value.Text = val.ToString ();
+					value.Text = SecurityElement.Escape (val.ToString ());
 				} else if (val is string []){
 					value.AddAttribute ("type", "string-array");
 
 					foreach (string ss in (string[]) val){
 						SecurityElement str = new SecurityElement ("string");
-						str.Text = ss; 
+						str.Text = SecurityElement.Escape (ss); 
 						value.AddChild (str);
 					}
 				}
