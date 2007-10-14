@@ -1,3 +1,7 @@
+2007-10-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* WebRequest.cs: DefaultWebProxy allows a null value. Fixes bug #323668.
+
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpListenerRequest.cs: Do not store 'method' in upper case, but

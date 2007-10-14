@@ -186,9 +186,12 @@ namespace System.Net
 				}
 			}
 			set {
+				/* MS documentation states that a null value would cause an ArgumentNullException
+				 * but that's not the way it behaves
 				if (value == null)
 					throw new ArgumentNullException ("WebRequest.DefaultWebProxy",
 							"null IWebProxy not allowed.");
+				*/
 				proxy = value;
 			}
 		}
