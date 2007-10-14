@@ -1,3 +1,7 @@
+2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKeyTest.cs: Added test for bug #322839.
+
 2007-08-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Improve SetValue tests to ensure values are

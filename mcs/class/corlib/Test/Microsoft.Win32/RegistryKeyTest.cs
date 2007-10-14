@@ -1711,6 +1711,58 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
+		[Test] // bug #322839
+		[Category ("NotWorking")]
+		public void SetValue_EntityReferences ()
+		{
+			string subKeyName = Guid.NewGuid ().ToString ();
+
+			try {
+				using (RegistryKey createdKey = Registry.CurrentUser.CreateSubKey (subKeyName)) {
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("FirstName&\"<LastName>\""), "#A1");
+					// create value
+					createdKey.SetValue ("FirstName&\"<LastName>\"", "<'Miguel' & \"de Icaza\">!");
+					// get value
+					object name = createdKey.GetValue ("FirstName&\"<LastName>\"");
+					// value should exist
+					Assert.IsNotNull (name, "#A2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string), name.GetType (), "#A3");
+					// ensure value matches
+					Assert.AreEqual ("<'Miguel' & \"de Icaza\">!", name, "#A4");
+
+					// we created a new subkey, so value should not exist
+					Assert.IsNull (createdKey.GetValue ("Info"), "#B1");
+					// create value
+					createdKey.SetValue ("Info", new string [] { "Mono&<Novell>!", "<CLR&BCL>" });
+					// get value
+					object info = createdKey.GetValue ("Info");
+					// value should exist
+					Assert.IsNotNull (info, "#B2");
+					// type of value should be string
+					Assert.AreEqual (typeof (string []), info.GetType (), "#B3");
+					// ensure value matches
+					Assert.AreEqual (new string [] { "Mono&<Novell>!", "<CLR&BCL>" }, info, "#B4");
+				}
+
+				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
+					object name = openedKey.GetValue ("FirstName&\"<LastName>\"");
+					Assert.IsNotNull (name, "#C1");
+					Assert.AreEqual (typeof (string), name.GetType (), "#C2");
+					Assert.AreEqual ("<'Miguel' & \"de Icaza\">!", name, "#C3");
+
+					object info = openedKey.GetValue ("Info");
+					Assert.IsNotNull (info, "#D1");
+					Assert.AreEqual (typeof (string []), info.GetType (), "#D2");
+					Assert.AreEqual (new string [] { "Mono&<Novell>!", "<CLR&BCL>" }, info, "#D3");
+				}
+			} finally {
+				// clean-up
+				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
+			}
+		}
+
 		[Test]
 		public void SetValue_Name_Null ()
 		{
@@ -1781,7 +1833,7 @@ namespace MonoTests.Microsoft.Win32
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void SetValue_Null ()
+		public void SetValue_Value_Null ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();
 
@@ -2007,20 +2059,20 @@ namespace MonoTests.Microsoft.Win32
 					// create value
 					createdKey.SetValue ("Path", "/usr/lib/whatever");
 					// get value
-					object value = createdKey.GetValue ("Path");
+					object path = createdKey.GetValue ("Path");
 					// value should exist
-					Assert.IsNotNull (value, "#A2");
+					Assert.IsNotNull (path, "#A2");
 					// type of value should be string
-					Assert.AreEqual (typeof (string), value.GetType (), "#A3");
+					Assert.AreEqual (typeof (string), path.GetType (), "#A3");
 					// ensure value matches
-					Assert.AreEqual ("/usr/lib/whatever", value, "#A4");
+					Assert.AreEqual ("/usr/lib/whatever", path, "#A4");
 				}
 
 				using (RegistryKey openedKey = Registry.CurrentUser.OpenSubKey (subKeyName)) {
-					object value = openedKey.GetValue ("Path");
-					Assert.IsNotNull (value, "#B1");
-					Assert.AreEqual (typeof (string), value.GetType (), "#B2");
-					Assert.AreEqual ("/usr/lib/whatever", value, "#B3");
+					object path = openedKey.GetValue ("Path");
+					Assert.IsNotNull (path, "#B1");
+					Assert.AreEqual (typeof (string), path.GetType (), "#B2");
+					Assert.AreEqual ("/usr/lib/whatever", path, "#B3");
 				}
 			} finally {
 				// clean-up
