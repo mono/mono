@@ -1,3 +1,7 @@
+2007-10-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Use mini_get_class in CEE_LDELEM_ANY and
+	CEE_STELEM_ANY. Fixes #333696.
 
 Thu Oct 11 18:04:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
