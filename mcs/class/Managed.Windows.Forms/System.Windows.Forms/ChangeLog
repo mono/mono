@@ -1,3 +1,12 @@
+2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Make the focus state information be stored
+	in the ListView, not in the items. This is done to match the MS
+	behaviour for items that are not yet part of a ListView control;
+	besides that, since just one item can be focused at the same time,
+	we save a little space in our items.
+	Fixes part of #331643.
+
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBox.cs: When focus is lost, deselect the text. When setting

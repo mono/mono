@@ -41,7 +41,6 @@ namespace System.Windows.Forms
 		#region Instance Variables
 		private int image_index = -1;
 		private bool is_checked = false;
-		private bool is_focused = false;
 		private int state_image_index = -1;
 		private ListViewSubItemCollection sub_items;
 		private object tag;
@@ -268,26 +267,32 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Focused {
 			get { 
+				if (owner == null)
+					return false;
+
 #if NET_2_0
-				// As well as selection state in VirtualMode,
-				// focus state is stored in the ListView
-				if (owner != null && owner.VirtualMode)
-					return Index == owner.focused_item_index;
+				// In virtual mode the checks are always done using indexes
+				return Index == owner.focused_item_index;
 #endif
-				return is_focused; 
+
+				// Light check
+				return owner.FocusedItem == this;
+
 			}
 			set { 	
-				if (is_focused == value)
+				if (owner == null)
 					return;
 
-				if (owner != null) {
-					if (owner.FocusedItem != null)
-						owner.FocusedItem.UpdateFocusedState (false);
+				if (Focused == value)
+					return;
 
-					owner.focused_item_index = value ? Index : -1;
-				}
+				ListViewItem prev_focused_item = owner.FocusedItem;
+				if (prev_focused_item != null)
+					prev_focused_item.UpdateFocusedState ();
+					
+				owner.focused_item_index = value ? Index : -1;
 
-				UpdateFocusedState (value);
+				UpdateFocusedState ();
 			}
 		}
 
@@ -596,7 +601,6 @@ namespace System.Windows.Forms
 			ListViewItem clone = new ListViewItem ();
 			clone.image_index = this.image_index;
 			clone.is_checked = this.is_checked;
-			clone.is_focused = this.is_focused;
 			clone.selected = this.selected;
 			clone.font = this.font;
 			clone.state_image_index = this.state_image_index;
@@ -770,9 +774,10 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		void UpdateFocusedState (bool is_focused)
+		// When focus changed, we need to invalidate area
+		// with previous layout and with the new one
+		void UpdateFocusedState ()
 		{
-			this.is_focused = is_focused;
 			if (owner != null) {
 				Invalidate ();
 				Layout ();
