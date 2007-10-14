@@ -461,7 +461,7 @@ namespace MonoTests.System.Security {
 		}
 		
 		[Test]
-		public void SearchForTextOfTag_Null ()
+		public void SearchForTextOfTag_Tag_Null ()
 		{
 			try {
 				elem.SearchForTextOfTag (null);
@@ -675,7 +675,7 @@ namespace MonoTests.System.Security {
 		{
 			const string xml = @"
 				<values>
-					<value name='&quot;name&quot;&amp;&lt;address&gt;'>&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>
+					<value name=""&quot;name&quot;&amp;&lt;address&gt;"">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>
 				</values>";
 
 			SecurityElement se = SecurityElement.FromString (xml);
@@ -689,10 +689,26 @@ namespace MonoTests.System.Security {
 			SecurityElement child = se.Children [0] as SecurityElement;
 			Assert.IsNotNull (child, "#B1");
 			Assert.IsNotNull (child.Attributes, "#B2");
-			Assert.AreEqual ("'\"name\"&<address>'", child.Attribute ("name"), "#B3");
+			Assert.AreEqual ("\"name\"&<address>", child.Attribute ("name"), "#B3");
 			Assert.AreEqual ("value", child.Tag, "#B4");
 			Assert.AreEqual ("<'Suds' & \"Soda\">!", child.Text, "#B5");
 			Assert.IsNull (child.Children, "#B6");
+		}
+
+		[Test] // bug #333725
+		[Category ("NotWorking")]
+		public void FromString_CharacterReferences ()
+		{
+			const string xml = @"
+				<value name=""name&#38;address"">Suds&#x26;Soda&#38;</value>";
+
+			SecurityElement se = SecurityElement.FromString (xml);
+			Assert.IsNotNull (se, "#1");
+			Assert.IsNotNull (se.Attributes, "#2");
+			Assert.AreEqual ("name&#38;address", se.Attribute ("name"), "#3");
+			Assert.AreEqual ("value", se.Tag, "#4");
+			Assert.AreEqual ("Suds&#x26;Soda&#38;", se.Text, "#5");
+			Assert.IsNull (se.Children, "#6");
 		}
 #endif
 	}

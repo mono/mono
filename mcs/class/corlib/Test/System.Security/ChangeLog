@@ -1,5 +1,10 @@
 2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SecurityElementTest.cs: Modified test for bug #333699 to use double
+	quote as delimiter to work around MS bug. Added test for bug #333725.
+
+2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SecurityElementTest.cs: No longer derive from Assertion. Added and
 	improved ctor tests. Improved AddAttribute and AddChild tests.
 	Added comment to mono's Attributes test and added test that passes
