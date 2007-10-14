@@ -1,3 +1,9 @@
+2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItemTest.cs: New tests for focused state. Also,
+	comment a new ones, as they don't work by now, but should work
+	as soon as we fix an issue there.
+
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RichTextBoxTest.cs: Added tests for negative SelectionLength and

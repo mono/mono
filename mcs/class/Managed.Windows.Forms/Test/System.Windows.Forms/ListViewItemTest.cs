@@ -344,6 +344,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (item3.Focused, "#D3");
 			Assert.IsNull (lv.FocusedItem, "#D4");
 
+			// Test Focused for Items without owner
+			ListViewItem item4 = new ListViewItem ();
+			Assert.IsFalse (item4.Focused);
+			item4.Focused = true;
+
+			Assert.IsFalse (item4.Focused, "#E1");
+
 			form.Dispose ();
 		}
 
@@ -469,7 +476,11 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ListViewItemTestClone ()
 		{
-			ListViewItem item1 = new ListViewItem ("Hello");
+			Form f = new Form ();
+			ListView lv = new ListView ();
+			lv.Parent = f;
+
+			ListViewItem item1 = lv.Items.Add ("Hello");
 			item1.ForeColor = Color.Blue;
 			item1.BackColor = Color.Red;
 			item1.Font = new Font ("Arial", 14);
@@ -477,6 +488,8 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			item1.ToolTipText = item1.Text;
 #endif
+
+			f.Show ();
 
 			ListViewItem item2 =  (ListViewItem) item1.Clone ();
 			Assert.AreEqual (Color.Blue, item2.ForeColor, "#1");
@@ -489,6 +502,12 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			Assert.AreEqual (item1.ToolTipText, item2.ToolTipText, "#8");
 #endif
+			// Focused is not copied
+			// These tests shoule be re-enabled when #333693
+			/*Assert.IsTrue (item1.Focused, "#9");
+			Assert.IsFalse (item2.Focused, "#10");*/
+
+			f.Dispose ();
 		}
 
 #if NET_2_0
