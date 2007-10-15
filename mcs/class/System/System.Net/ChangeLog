@@ -1,5 +1,9 @@
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FtpWebRequest.cs: Added support for DELETE.
+
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* WebRequest.cs: Changed serialization ctor to throw NIE on 1.0
 	profile. Cache default proxy, but still allow it to be explicitly set
 	to null. Removed commented code.

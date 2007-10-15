@@ -563,6 +563,7 @@ namespace System.Net
 			case WebRequestMethods.Ftp.PrintWorkingDirectory:
 			case WebRequestMethods.Ftp.MakeDirectory:
 			case WebRequestMethods.Ftp.Rename:
+			case WebRequestMethods.Ftp.DeleteFile:
 				ProcessSimpleMethod ();
 				break;
 			default: // What to do here?
@@ -651,6 +652,10 @@ namespace System.Net
 				// Pass an empty string if RenameTo wasn't specified
 				status = SendCommand (RenameToCommand, renameTo != null ? renameTo : String.Empty);
 				if (status.StatusCode != FtpStatusCode.FileActionOK)
+					throw CreateExceptionFromResponse (status);
+				break;
+			case WebRequestMethods.Ftp.DeleteFile:
+				if (status.StatusCode != FtpStatusCode.FileActionOK) 
 					throw CreateExceptionFromResponse (status);
 				break;
 			}
