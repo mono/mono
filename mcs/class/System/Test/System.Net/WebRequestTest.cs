@@ -44,8 +44,16 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void SerializationConstructor ()
 		{
+#if NET_2_0
 			NonAbstractWebRequest w = new NonAbstractWebRequest (null, new StreamingContext ());
 			Assert.IsNotNull (w);
+#else
+			try {
+				new NonAbstractWebRequest (null, new StreamingContext ());
+				Assert.Fail ("#1");
+			} catch (NotImplementedException) {
+			}
+#endif
 		}
 
 		// properties (only test 'get'ter)
@@ -189,8 +197,8 @@ namespace MonoTests.System.Net {
 		}
 
 	[Test]
-        public void All ()
-        {
+	public void All ()
+	{
 		WebRequest req = WebRequest.Create ("http://www.contoso.com");
 		Assertion.Assert ("#1", req is HttpWebRequest);
 		req = WebRequest.Create ("https://www.contoso.com");
@@ -226,11 +234,97 @@ namespace MonoTests.System.Net {
 
 		try {
 			req = WebRequest.Create ("tcp://www.contoso.com");
-			Assertion.Fail ("#11 should have failed with NotSupportedException");			
-		} catch (NotSupportedException) {			
-		}		
+			Assertion.Fail ("#11 should have failed with NotSupportedException");
+		} catch (NotSupportedException) {
+		}
 	}
-	
+
+	[Test]
+	public void Create_RequestUriString_Null ()
+	{
+		try {
+			WebRequest.Create ((string) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("requestUriString", ex.ParamName, "#6");
+		}
+	}
+
+	[Test]
+	public void CreateDefault_RequestUri_Null ()
+	{
+		try {
+			WebRequest.CreateDefault ((Uri) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("requestUri", ex.ParamName, "#6");
+		}
+	}
+
+#if NET_2_0
+	[Test]
+	public void DefaultWebProxy ()
+	{
+		WebProxy proxy = new WebProxy ("proxy.intern.com", 83);
+
+		WebRequest.DefaultWebProxy = proxy;
+		Assert.IsNotNull (WebRequest.DefaultWebProxy, "#A1");
+		Assert.AreSame (proxy, WebRequest.DefaultWebProxy, "#A2");
+
+		HttpWebRequest req = (HttpWebRequest) WebRequest.CreateDefault (
+			new Uri ("http://www.mono-project.com"));
+		Assert.IsNotNull (req.Proxy, "#B1");
+		Assert.AreSame (proxy, req.Proxy, "#B2");
+
+		WebRequest.DefaultWebProxy = null;
+		Assert.IsNull (WebRequest.DefaultWebProxy, "#C1");
+		Assert.IsNotNull (req.Proxy, "#C2");
+		Assert.AreSame (proxy, req.Proxy, "#C3");
+
+		req = (HttpWebRequest) WebRequest.CreateDefault (
+			new Uri ("http://www.mono-project.com"));
+		Assert.IsNull (req.Proxy, "#D");
+	}
+#endif
+
+	[Test]
+	public void RegisterPrefix_Creator_Null ()
+	{
+		try {
+			WebRequest.RegisterPrefix ("http://www.mono-project.com", (IWebRequestCreate) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("creator", ex.ParamName, "#6");
+		}
+	}
+
+	[Test]
+	public void RegisterPrefix_Prefix_Null ()
+	{
+		try {
+			WebRequest.RegisterPrefix ((string) null, new TestWebRequestCreator ());
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("prefix", ex.ParamName, "#6");
+		}
+	}
+
 	internal class TestWebRequestCreator : IWebRequestCreate
 	{
 		internal TestWebRequestCreator () { }

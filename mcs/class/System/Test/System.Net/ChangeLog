@@ -1,3 +1,9 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebRequestTest.cs: Fixed test for serialization ctor to match
+	1.0 profile change. Added trivial tests to argument null checks.
+	Added test for DefaultWebProxy. Fixed line endings.
+
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpListenerRequestTest.cs: Added test for HttpMethod.

@@ -45,6 +45,8 @@ namespace System.Net
 	public abstract class WebRequest : MarshalByRefObject, ISerializable
 	{
 		static HybridDictionary prefixes = new HybridDictionary ();
+		static bool isDefaultWebProxySet;
+		static IWebProxy defaultWebProxy;
 		
 		// Constructors
 		
@@ -69,6 +71,9 @@ namespace System.Net
 		
 		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
+#if ONLY_1_1
+			throw GetMustImplement ();
+#endif
 		}
 
 		static Exception GetMustImplement ()
@@ -102,7 +107,7 @@ namespace System.Net
 		}
 #endif
 		
-		public virtual string ConnectionGroupName { 
+		public virtual string ConnectionGroupName {
 			get { throw GetMustImplement (); }
 			set { throw GetMustImplement (); }
 		}
@@ -179,20 +184,24 @@ namespace System.Net
 		
 		public static IWebProxy DefaultWebProxy {
 			get {
-				lock (lockobj) {
-					if (proxy == null)
-						proxy = GetDefaultWebProxy ();
-					return proxy;
+				if (!isDefaultWebProxySet) {
+					lock (lockobj) {
+						if (defaultWebProxy == null)
+							defaultWebProxy = GetDefaultWebProxy ();
+					}
 				}
+				return defaultWebProxy;
 			}
 			set {
 				/* MS documentation states that a null value would cause an ArgumentNullException
-				 * but that's not the way it behaves
+				 * but that's not the way it behaves:
+				 * https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304724
 				if (value == null)
 					throw new ArgumentNullException ("WebRequest.DefaultWebProxy",
 							"null IWebProxy not allowed.");
 				*/
-				proxy = value;
+				defaultWebProxy = value;
+				isDefaultWebProxySet = true;
 			}
 		}
 		
@@ -220,7 +229,7 @@ namespace System.Net
 				p.BypassProxyOnLocal = (pe.BypassOnLocal == ProxyElement.BypassOnLocalValues.True);
 #endif
 			return p;
-		}		
+		}
 #endif
 
 		// Methods
@@ -316,7 +325,7 @@ namespace System.Net
 			if (prefix == null)
 				throw new ArgumentNullException("prefix");
 			if (creator == null)
-				throw new ArgumentNullException("creator");			
+				throw new ArgumentNullException("creator");
 			
 			lock (prefixes.SyncRoot) {
 				string lowerCasePrefix = prefix.ToLower (CultureInfo.InvariantCulture);
@@ -342,7 +351,7 @@ namespace System.Net
 					continue;
 				
 				if (!prefix.StartsWith (key))
-					continue;					
+					continue;
 					
 				longestPrefix = key.Length;
 				creator = (IWebRequestCreate) e.Value;
