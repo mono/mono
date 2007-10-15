@@ -1,3 +1,9 @@
+2007-10-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: If a control has an explicitly set col/row greater
+	than the number of columns/rows in the panel, expand the table to
+	accommodate the control.  [Fixes bug #332892]
+
 2007-10-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: When calculating the size of AutoSize row/columns,
