@@ -88,8 +88,8 @@ namespace System.Threading {
 		private IntPtr suspend_event;
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
-		/* Don't lock on synch_lock in managed code, since it can result in deadlocks */
-		private object synch_lock = new Object();
+		/* Don't lock on synch_cs in managed code, since it can result in deadlocks */
+		private object synch_cs = null;
 		private IntPtr serialized_culture_info;
 		private int serialized_culture_info_len;
 		private IntPtr serialized_ui_culture_info;
@@ -296,6 +296,9 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal (MulticastDelegate start);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void Thread_init ();
+
 		private static int GetNewManagedId() {
 			return Interlocked.Increment(ref _managed_id_counter);
 		}
@@ -305,6 +308,8 @@ namespace System.Threading {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
 			threadstart=start;
+
+			Thread_init ();
 			managed_id=GetNewManagedId();
 		}
 

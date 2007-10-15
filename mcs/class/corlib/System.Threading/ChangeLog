@@ -1,3 +1,8 @@
+2007-10-15  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Initialise synch_cs to null now we aren't using it as
+	a monitor lock
+
 2007-09-25  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Keep ManagedThreadId constant over the lifetime of a
