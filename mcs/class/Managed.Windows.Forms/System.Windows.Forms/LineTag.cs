@@ -353,6 +353,9 @@ namespace System.Windows.Forms
 			if (Length == 0)
 				return start;
 				
+			if (x < line.widths[low])
+				return low - 1;
+				
 			if (x > line.widths[line.TextLengthWithoutEnding ()])
 				return line.TextWithoutEnding ().Length;
 				
