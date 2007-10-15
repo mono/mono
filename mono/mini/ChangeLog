@@ -1,3 +1,6 @@
+2007-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.h mini-sparc.c: Add support for the common vtable trampoline.
 
 Mon Oct 15 11:18:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
