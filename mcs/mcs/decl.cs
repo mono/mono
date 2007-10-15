@@ -558,11 +558,17 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// It helps to handle error 102 & 111 detection
+		/// Returns true when a member supports multiple overloads (methods, indexers, etc)
 		/// </summary>
-		public virtual bool MarkForDuplicationCheck ()
+		public virtual bool IsOverloadable {
+			get {
+				return false;
+			}
+		}
+
+		public void EnableOverloadChecks ()
 		{
-			return false;
+			caching_flags |= Flags.TestMethodDuplication;
 		}
 
 		/// <summary>
@@ -756,8 +762,16 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (symbol.MarkForDuplicationCheck () && mc.MarkForDuplicationCheck ())
+			if (symbol.IsOverloadable && mc.IsOverloadable) {
+				//
+				// Enable both symbols check for indexers, because we don't know which one came first
+				//
+				if (symbol is Indexer.SetIndexerMethod || symbol is Indexer.GetIndexerMethod)
+					mc.EnableOverloadChecks ();
+				
+				symbol.EnableOverloadChecks ();
 				return true;
+			}
 
 			Report.SymbolRelatedToPreviousError (mc);
 			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {

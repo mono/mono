@@ -1,3 +1,8 @@
+2007-10-15  Marek Safar  <marek.safar@gmail.com>
+	
+	* class.cs, decl.cs: Fixed overload members verification to do only one
+	check per possible collision.
+	
 2007-10-13  Marek Safar  <marek.safar@gmail.com>
 	
 	A fix for bug #325478

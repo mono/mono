@@ -3476,31 +3476,30 @@ namespace Mono.CSharp {
 					equal = false;
 			}
 
-			if (equal) {
-				//
-				// Try to report 663: method only differs on out/ref
-				//
-				Parameters info = ParameterInfo;
-				Parameters other_info = method.ParameterInfo;
-				for (int i = 0; i < info.Count; i++){
-					if (info.ParameterModifier (i) != other_info.ParameterModifier (i)){
-						Report.SymbolRelatedToPreviousError (method);
-						Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
-							      GetSignatureForError ());
-						return false;
-					}
+			if (!equal)
+				return false;
+
+			//
+			// Try to report 663: method only differs on out/ref
+			//
+			Parameters info = ParameterInfo;
+			Parameters other_info = method.ParameterInfo;
+			for (int i = 0; i < info.Count; i++) {
+				if (info.ParameterModifier (i) != other_info.ParameterModifier (i)) {
+					Report.SymbolRelatedToPreviousError (method);
+					Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
+							  GetSignatureForError ());
+					return false;
 				}
-
-				Report.SymbolRelatedToPreviousError (method);
-				if (this is Operator && method is Operator)
-					Report.Error (557, Location, "Duplicate user-defined conversion in type `{0}'", Parent.Name);
-				else
-					Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
-
-				return true;
 			}
 
-			return false;
+			Report.SymbolRelatedToPreviousError (method);
+			if (this is Operator && method is Operator)
+				Report.Error (557, Location, "Duplicate user-defined conversion in type `{0}'", Parent.Name);
+			else
+				Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
+
+			return true;
 		}
 
 		//
@@ -4151,10 +4150,10 @@ namespace Mono.CSharp {
 				GetSignatureForError ());
 		}
 
-		public override bool MarkForDuplicationCheck ()
-		{
-			caching_flags |= Flags.TestMethodDuplication;
-			return true;
+		public override bool IsOverloadable {
+			get {
+				return true;
+			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -6335,7 +6334,8 @@ namespace Mono.CSharp {
 					return false;
 
 			Report.SymbolRelatedToPreviousError (method);
-			Report.Error (111, Location, TypeContainer.Error111, method.GetSignatureForError ());
+			Report.Error (82, Location, "A member `{0}' is already reserved",
+				method.GetSignatureForError ());
 			return true;
 		}
 
@@ -6651,10 +6651,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool MarkForDuplicationCheck ()
-			{
-				caching_flags |= Flags.TestMethodDuplication;
-				return true;
+			public override bool IsOverloadable {
+				get {
+					return true;
+				}
 			}
 
 			protected bool CheckForDuplications () 
@@ -7631,9 +7631,9 @@ namespace Mono.CSharp {
 	}
 
  
-	public class Indexer : PropertyBase {
-
-		class GetIndexerMethod : GetMethod
+	public class Indexer : PropertyBase
+	{
+		public class GetIndexerMethod : GetMethod
 		{
 			public GetIndexerMethod (PropertyBase method):
 				base (method)
@@ -7652,7 +7652,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class SetIndexerMethod: SetMethod
+		public class SetIndexerMethod: SetMethod
 		{
 			public SetIndexerMethod (PropertyBase method):
 				base (method)
@@ -7864,10 +7864,10 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		public override bool MarkForDuplicationCheck ()
-		{
-			caching_flags |= Flags.TestMethodDuplication;
-			return true;
+		public override bool IsOverloadable {
+			get {
+				return true;
+			}
 		}
 
 		protected override PropertyInfo ResolveBaseProperty ()
@@ -7994,7 +7994,7 @@ namespace Mono.CSharp {
 
 			// imlicit and explicit operator of same types are not allowed
 			if (OperatorType == OpType.Explicit || OperatorType == OpType.Implicit)
-				MarkForDuplicationCheck ();
+				EnableOverloadChecks ();
 
 			if (!base.Define ())
 				return false;
