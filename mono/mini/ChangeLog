@@ -1,4 +1,9 @@
 
+Mon Oct 15 10:39:26 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-x86.h: x86 support for the common vtable
+	trampoline.
+
 Mon Oct 15 10:37:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-trampolines.c: changed the magic rampoline to understand
