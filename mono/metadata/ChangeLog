@@ -1,4 +1,9 @@
 
+Mon Oct 15 10:20:56 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, object-internals.h: added the ability to set a single
+	trampoline for all the slots in a vtable.
+
 Fri Oct 12 17:50:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: deal with a possible race condition during multicast
