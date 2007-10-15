@@ -1,3 +1,8 @@
+2007-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateServerHandler.cs: adjust order of field
+	initialization. 
+
 2007-09-18  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionIDManager.cs: preserve the query part of the url when

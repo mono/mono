@@ -158,6 +158,7 @@ namespace System.Web.SessionState
 #if TRACE
 			Console.WriteLine ("SessionStateServerHandler.Initialize");
 #endif
+			this.config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 			if (String.IsNullOrEmpty (name))
 				name = "Session Server handler";
 			RemotingConfiguration.Configure (null);
@@ -165,7 +166,7 @@ namespace System.Web.SessionState
                         GetConData (out proto, out server, out port);
                         cons = String.Format ("{0}://{1}:{2}/StateServer", proto, server, port);
                         stateServer = Activator.GetObject (typeof (RemoteStateServer), cons) as RemoteStateServer;
-			this.config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
+
 			base.Initialize (name, config);
 		}
 		
