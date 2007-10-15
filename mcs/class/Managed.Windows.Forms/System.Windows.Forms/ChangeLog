@@ -1,5 +1,13 @@
 2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FolderBrowserDialog.cs: When a node is right clicked and the "New
+	folder" contex menu appears, actually add the new folder to it, even
+	if the node is not currently selected. Still use SelectedNode in case 
+	there wasn't found a node under the pointer.
+	Fixes #325452.
+
+2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: When retrieving the focused state, the index check
 	should be done only when ListView is in virtualmode, as it is an
 	expensive check for normal mode.

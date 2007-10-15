@@ -318,6 +318,7 @@ namespace System.Windows.Forms {
 			private ImageList imageList = new ImageList ();
 			private Environment.SpecialFolder rootFolder;
 			private bool dont_enable = false;
+			private TreeNode node_under_mouse;
 			
 			public FolderBrowserTreeView (FolderBrowserDialog parent_dialog)
 			{
@@ -394,7 +395,7 @@ namespace System.Windows.Forms {
 			
 			public void CreateNewFolder ()
 			{
-				FBTreeNode fbnode = SelectedNode as FBTreeNode;
+				FBTreeNode fbnode = node_under_mouse == null ? SelectedNode as FBTreeNode : node_under_mouse as FBTreeNode;
 				
 				if (fbnode == null || fbnode.RealPath == null)
 					return;
@@ -465,8 +466,10 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				// select new folder
-				SelectedNode = e.Node;
+				// select new folder only if both the curren node under
+				// mouse pointer and SelectedNode are the same (match .Net)
+				if (node_under_mouse == SelectedNode)
+					SelectedNode = e.Node;
 
 				// disable LabelEdit when either edit has finished
 				// or has been cancelled, to prevent the user from
@@ -689,6 +692,12 @@ namespace System.Windows.Forms {
 				
 				base.OnBeforeExpand (e);
 			}
+
+			protected override void OnMouseDown (MouseEventArgs e)
+			{
+				node_under_mouse = GetNodeAt (e.X, e.Y);
+				base.OnMouseDown (e);
+			}
 			
 			protected override void OnMouseUp (MouseEventArgs e)
 			{
@@ -702,6 +711,8 @@ namespace System.Windows.Forms {
 					parentDialog.newFolderButton.Enabled = true;
 					parentDialog.newFolderMenuItem.Enabled = true;
 				}
+
+				node_under_mouse = null;
 				
 				base.OnMouseUp (e);
 			}
