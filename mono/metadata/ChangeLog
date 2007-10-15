@@ -1,3 +1,8 @@
+2007-10-15  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MONO_DEBUGGER_VERSION): Bump to 63 to make it impossible to use
+	the debugger with the current runtime.
 
 Mon Oct 15 10:20:56 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
