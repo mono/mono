@@ -1166,6 +1166,31 @@ namespace MonoTests.System
 			Assert.AreEqual (21, dt.Day, "#3");
 		}
 
+		[Test] // bug #322510
+		public void Parse_HourDesignator ()
+		{
+			DateTime dt;
+			DateTime now = DateTime.Now;
+
+			dt = DateTime.Parse ("12:00:00 AM", new CultureInfo ("en-US"));
+			Assert.AreEqual (now.Year, dt.Year, "#A1");
+			Assert.AreEqual (now.Month, dt.Month, "#A2");
+			Assert.AreEqual (now.Day, dt.Day, "#A3");
+			Assert.AreEqual (0, dt.Hour, "#A4");
+			Assert.AreEqual (0, dt.Minute, "#A5");
+			Assert.AreEqual (0, dt.Second, "#A6");
+			Assert.AreEqual (0, dt.Millisecond, "#A7");
+
+			dt = DateTime.Parse ("12:00:00 PM", new CultureInfo ("en-US"));
+			Assert.AreEqual (now.Year, dt.Year, "#B1");
+			Assert.AreEqual (now.Month, dt.Month, "#B2");
+			Assert.AreEqual (now.Day, dt.Day, "#B3");
+			Assert.AreEqual (12, dt.Hour, "#B4");
+			Assert.AreEqual (0, dt.Minute, "#B5");
+			Assert.AreEqual (0, dt.Second, "#B6");
+			Assert.AreEqual (0, dt.Millisecond, "#B7");
+		}
+
 		[Test]
 		// FIXME: This test doesn't work on cultures like es-DO which have patterns
 		// for both dd/MM/yyyy & MM/dd/yyyy

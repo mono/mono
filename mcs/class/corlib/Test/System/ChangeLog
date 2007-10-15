@@ -1,3 +1,7 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DateTimeTest.cs: Added test for bug #322510.
+
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DelegateTest.cs: Enabled test for bug #333647.
