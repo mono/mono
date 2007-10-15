@@ -1,4 +1,10 @@
 
+Mon Oct 15 10:37:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: changed the magic rampoline to understand
+	the common vtable trampoline method: the method to invoke is
+	determined by the vtable displacement of the call.
+
 Mon Oct 15 10:35:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h: register the common vtable trampoline if the
