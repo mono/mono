@@ -1,3 +1,9 @@
+2007-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: do not return a non-existing bin directory
+	from BinDirectories. Patch from Atsushi Enomoto
+	<atsushi@ximian.com>, thanks! Fixes bug #332434. 
+
 2007-10-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: call the Init method after loading the

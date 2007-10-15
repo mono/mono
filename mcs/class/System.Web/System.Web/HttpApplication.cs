@@ -1324,9 +1324,11 @@ namespace System.Web {
 				string baseDir = setup.ApplicationBase;
 				string bindir;
 
-				if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || IsRunningOnWindows)
-					yield return Path.Combine (baseDir, "bin");
-				else {
+				if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || IsRunningOnWindows) {
+					bindir = Path.Combine (baseDir, "bin");
+					if (Directory.Exists (bindir))
+						yield return bindir;
+				} else {
 					foreach (string dir in BinDirs) {
 						bindir = Path.Combine (baseDir, dir);
 						if (!Directory.Exists (bindir))
