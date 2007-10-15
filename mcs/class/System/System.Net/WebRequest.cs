@@ -45,8 +45,10 @@ namespace System.Net
 	public abstract class WebRequest : MarshalByRefObject, ISerializable
 	{
 		static HybridDictionary prefixes = new HybridDictionary ();
+#if NET_2_0
 		static bool isDefaultWebProxySet;
 		static IWebProxy defaultWebProxy;
+#endif
 		
 		// Constructors
 		
@@ -196,6 +198,7 @@ namespace System.Net
 				/* MS documentation states that a null value would cause an ArgumentNullException
 				 * but that's not the way it behaves:
 				 * https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304724
+				 */
 				defaultWebProxy = value;
 				isDefaultWebProxySet = true;
 			}
