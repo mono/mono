@@ -1,3 +1,8 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ILGeneratorTest.cs: Improve test for DeclareLocal null check.
+	Added tests for null checks in Emit overloads.
+
 2007-09-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DynamicMethodTest.cs: Marked test for bug #325444 as NotDotNet, and

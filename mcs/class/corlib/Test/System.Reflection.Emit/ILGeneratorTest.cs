@@ -12,26 +12,14 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Reflection.Emit {
-
+namespace MonoTests.System.Reflection.Emit
+{
 	[TestFixture]
-	public class ILGeneratorTest {
-
+	public class ILGeneratorTest
+	{
 		TypeBuilder tb;
 		ILGenerator il_gen;
 
-		static TypeBuilder DefineDynType ()
-		{
-			AssemblyName assemblyName = new AssemblyName ();
-			assemblyName.Name = "MonoTests.System.Reflection.Emit.ILGeneratorTest";
-
-			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
-				assemblyName, AssemblyBuilderAccess.Run);
-
-			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
-			return module.DefineType ("T", TypeAttributes.Public);			
-		}
-		
 		void DefineBasicMethod ()
 		{
 			MethodBuilder mb = tb.DefineMethod("F",
@@ -41,17 +29,45 @@ namespace MonoTests.System.Reflection.Emit {
 
 		[SetUp]
 		public void SetUp ()
-		{			
-			tb = DefineDynType ();
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "MonoTests.System.Reflection.Emit.ILGeneratorTest";
+
+			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
+				assemblyName, AssemblyBuilderAccess.Run);
+
+			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
+			tb = module.DefineType ("T", TypeAttributes.Public);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void DeclareLocal_NULL ()
+		public void DeclareLocal_LocalType_Null ()
 		{
 			DefineBasicMethod ();
 
-			il_gen.DeclareLocal (null);
+			try {
+				il_gen.DeclareLocal (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("localType", ex.ParamName, "#A");
+			}
+
+#if NET_2_0
+			try {
+				il_gen.DeclareLocal (null, false);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("localType", ex.ParamName, "#B6");
+			}
+#endif
 		}
 
 		[Test]
@@ -59,7 +75,6 @@ namespace MonoTests.System.Reflection.Emit {
 		public void DefineFilterBodyWithTypeNotNull ()
 		{
 			DefineBasicMethod ();
-
 			il_gen.BeginExceptionBlock ();
 			il_gen.EmitWriteLine ("in try");
 			il_gen.BeginExceptFilterBlock ();
@@ -68,9 +83,8 @@ namespace MonoTests.System.Reflection.Emit {
 			il_gen.EmitWriteLine ("in filter body");
 			il_gen.EndExceptionBlock ();
 		}
-		
-		// Bug 81431
-		[Test]
+
+		[Test] // bug #81431
 		public void FilterAndCatchBlock ()
 		{
 			DefineBasicMethod ();
@@ -168,6 +182,174 @@ namespace MonoTests.System.Reflection.Emit {
 			il_gen.MarkLabel (quit);
 			il_gen.Emit (OpCodes.Ldloc_0);
 			il_gen.Emit (OpCodes.Ret);
+		}
+
+		[Test] // Emit (OpCode, ConstructorInfo)
+#if NET_2_0
+		[Category ("NotDotNet")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
+#endif
+		public void Emit3_Constructor_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Newobj, (ConstructorInfo) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+			}
+		}
+
+#if NET_2_0
+		[Test] // Emit (OpCode, ConstructorInfo)
+		[Category ("NotWorking")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
+		public void Emit3_Constructor_Null_MS ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Newobj, (ConstructorInfo) null);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
+		}
+#endif
+
+		[Test] // Emit (OpCode, FieldInfo)
+		public void Emit5_Field_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Ldsfld, (FieldInfo) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // Emit (OpCode, Label [])
+		[Category ("NotDotNet")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
+		public void Emit10_Labels_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (Label []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("labels", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // MS bug: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304610
+		public void Emit10_Labels_Null_MS ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (Label []) null);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
+		}
+
+		[Test] // Emit (OpCode, LocalBuilder)
+		public void Emit11_Local_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (LocalBuilder) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("local", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // Emit (OpCode, MethodInfo)
+		public void Emit12_Method_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (MethodInfo) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("meth", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // Emit (OpCode, SignatureHelper)
+		public void Emit14_Signature_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (SignatureHelper) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // Emit (OpCode, String)
+		public void Emit16_String_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (String) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // Emit (OpCode, Type)
+		public void Emit16_Type_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.Emit (OpCodes.Switch, (Type) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void EmitCall_MethodInfo_Null ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.EmitCall (OpCodes.Call, (MethodInfo) null, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("methodInfo", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]

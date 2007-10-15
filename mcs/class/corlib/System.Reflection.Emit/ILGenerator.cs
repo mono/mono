@@ -546,7 +546,7 @@ namespace System.Reflection.Emit {
 				code [code_len++] = s [3];
 				code [code_len++] = s [2];
 				code [code_len++] = s [1];
-				code [code_len++] = s [0];				
+				code [code_len++] = s [0];
 			}
 		}
 		
@@ -614,6 +614,9 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, Label[] labels)
 		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
 			/* opcode needs to be switch. */
 			int count = labels.Length;
 			make_room (6 + count * 4);
@@ -657,6 +660,9 @@ namespace System.Reflection.Emit {
 
 		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder)
 		{
+			if (lbuilder == null)
+				throw new ArgumentNullException ("local");
+
 			uint pos = lbuilder.position;
 			bool load_addr = false;
 			bool is_store = false;
@@ -717,7 +723,7 @@ namespace System.Reflection.Emit {
 		public virtual void Emit (OpCode opcode, MethodInfo method)
 		{
 			if (method == null)
-				throw new ArgumentNullException ("method");
+				throw new ArgumentNullException ("meth");
 
 #if NET_2_0
 			// For compatibility with MS
@@ -788,7 +794,7 @@ namespace System.Reflection.Emit {
 				code [code_len++] = s [3];
 				code [code_len++] = s [2];
 				code [code_len++] = s [1];
-				code [code_len++] = s [0];				
+				code [code_len++] = s [0];
 			}
 		}
 
@@ -811,7 +817,7 @@ namespace System.Reflection.Emit {
 		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
 		{
 			if (methodinfo == null)
-				throw new ArgumentNullException ("methodinfo can not be null");
+				throw new ArgumentNullException ("methodInfo");
 			short value = opcode.Value;
 			if (!(value == OpCodes.Call.Value || value == OpCodes.Callvirt.Value))
 				throw new NotSupportedException ("Only Call and CallVirt are allowed");

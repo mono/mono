@@ -1,3 +1,7 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ILGenerator.cs: Added missing null checks. Removed extra tabs.
+
 2007-09-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: Added missing paramname to ArgumentExceptions.
