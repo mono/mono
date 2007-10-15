@@ -67,8 +67,11 @@ namespace System.Web.Configuration
 		internal HttpModuleCollection LoadModules (HttpApplication app)
 		{
 			HttpModuleCollection coll = new HttpModuleCollection ();
+			Type type;
+			
 			foreach (HttpModuleAction item in Modules){
-				Type type = Type.GetType (item.Type);
+				type = HttpApplication.LoadType (item.Type);
+				
 				if (type == null) {
 					/* XXX should we throw here? */
 					continue;

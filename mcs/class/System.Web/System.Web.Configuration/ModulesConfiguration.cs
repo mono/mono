@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 			Type item_type;
 			
 			try {
-				item_type = Type.GetType (type, true);
+				item_type = HttpApplication.LoadType (type, true);
 			} catch (Exception e){
 				throw new HttpException (
 					String.Format ("Failed to load module `{0}' from type `{1}'", name, type), e);
@@ -108,7 +108,7 @@ namespace System.Web.Configuration
 		public HttpModuleCollection LoadModules (HttpApplication app)
 		{
 			HttpModuleCollection coll = new HttpModuleCollection ();
-			foreach (ModuleItem item in Modules){
+			foreach (ModuleItem item in Modules) {
 				IHttpModule module = (IHttpModule) Activator.CreateInstance (item.Type, true);
 				module.Init (app);
 				coll.AddModule (item.Name, module);

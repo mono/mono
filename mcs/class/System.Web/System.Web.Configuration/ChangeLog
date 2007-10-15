@@ -1,3 +1,8 @@
+2007-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ModulesConfiguration.cs: load modules using
+	HttpApplication.LoadType to include the bin/ directory in search.
+
 2007-08-30  Marek Habersack  <mhabersack@novell.com>
 
 	* MachineKeyRegistryStorage.cs: added
