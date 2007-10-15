@@ -1,5 +1,10 @@
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* EnvironmentTest.cs: Added test for bug #333740. Made names of some
+	existing tests more clear. Code formatting.
+
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DateTimeTest.cs: Added test for bug #322510.
 
 2007-10-13  Gert Driesen  <drieseng@users.sourceforge.net>
