@@ -1,3 +1,7 @@
+2007-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* BulletedList.cs: html encode the item text. Fixes bug #333550.
+
 2007-10-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ListItem.cs: make HasAttributes available for the 1.1 profile as

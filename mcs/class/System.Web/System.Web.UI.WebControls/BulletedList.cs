@@ -113,6 +113,8 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void RenderBulletText (ListItem item, int index, HtmlTextWriter writer)
 		{
+			string text = HttpUtility.HtmlEncode (item.Text);
+			
 			switch (DisplayMode) {
 				case BulletedListDisplayMode.Text:
 					if (!item.Enabled) {
@@ -120,7 +122,7 @@ namespace System.Web.UI.WebControls {
 						writer.RenderBeginTag (HtmlTextWriterTag.Span);
 					}
 					
-					writer.Write (item.Text);
+					writer.Write (text);
 					
 					if (!item.Enabled)
 						writer.RenderEndTag ();
@@ -138,7 +140,7 @@ namespace System.Web.UI.WebControls {
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
-					writer.Write (item.Text);
+					writer.Write (text);
 					writer.RenderEndTag ();
 					break;
 
@@ -148,7 +150,7 @@ namespace System.Web.UI.WebControls {
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
-					writer.Write (item.Text);
+					writer.Write (text);
 					writer.RenderEndTag ();
 					break;
 			}
