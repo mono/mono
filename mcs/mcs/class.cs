@@ -5898,9 +5898,6 @@ namespace Mono.CSharp {
 			if (RootContext.Version == LanguageVersion.ISO_1)
 				Report.FeatureIsNotISO1 (loc, "fixed size buffers");
 
-			if ((mod & Modifiers.VOLATILE) != 0)
-				Modifiers.Error_InvalidModifier (loc, Modifiers.Name (Modifiers.VOLATILE));
-
 			this.size_expr = size_expr;
 		}
 
