@@ -1,4 +1,9 @@
 
+Mon Oct 15 10:35:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: register the common vtable trampoline if the
+	architecture supports it.
+
 Mon Oct 15 09:50:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-amd64.md: use the correct max length for tls_get.
