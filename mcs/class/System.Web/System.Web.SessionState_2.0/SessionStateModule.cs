@@ -137,18 +137,16 @@ namespace System.Web.SessionState
 
 			handler = (SessionStateStoreProviderBase) ProvidersHelper.InstantiateProvider (settings, typeof (SessionStateStoreProviderBase));
 
-			try {
-				Type idManagerType;
-				try {
-					idManagerType = Type.GetType (config.SessionIDManagerType, true);
-				}
-				catch {
-					idManagerType = typeof (SessionIDManager);
-				}
-				idManager = Activator.CreateInstance (idManagerType) as ISessionIDManager;
-				idManager.Initialize ();
+			if (String.IsNullOrEmpty(config.SessionIDManagerType)) {
+				idManager = new SessionIDManager ();
+			} else {
+				Type idManagerType = HttpApplication.LoadType (config.SessionIDManagerType, true);
+				idManager = (ISessionIDManager)Activator.CreateInstance (idManagerType);
 			}
-			catch (Exception ex) {
+
+			try {				
+				idManager.Initialize ();
+			} catch (Exception ex) {
 				throw new HttpException ("Failed to initialize session ID manager.", ex);
 			}
 

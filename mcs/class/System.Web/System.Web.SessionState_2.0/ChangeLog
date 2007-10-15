@@ -1,3 +1,8 @@
+2007-10-15  Juraj Skripsky  <js@hotfeet.ch>
+
+	* SessionStateModule.cs (Init): Use HttpApplication.LoadType,
+	don't swallow TypeLoadException.
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateServerHandler.cs: adjust order of field
