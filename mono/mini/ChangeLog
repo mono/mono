@@ -1,4 +1,9 @@
 
+Mon Oct 15 11:18:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h: ppc support for the common vtable
+	trampoline.
+
 Mon Oct 15 10:41:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini-amd64.c, mini-amd64.h: amd64 support for the common vtable
