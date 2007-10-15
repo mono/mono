@@ -1,3 +1,8 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlException.cs: Do not hide Message on 2.0 profile. Fixes bug
+	#333901.
+
 2007-10-08  Marek Safar <marek.safar@gmail.com> 
 
 	* SqlParameterCollection.cs (SetParameter): Fixed missing cast.

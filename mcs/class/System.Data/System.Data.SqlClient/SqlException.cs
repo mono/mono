@@ -109,13 +109,7 @@ namespace System.Data.SqlClient {
 			get { return Errors [0].LineNumber; }
 		}
 		
-#if NET_1_0 || ONLY_1_1
-		public
-		override
-#else
-		new
-#endif
-		string Message {
+		public override string Message {
 			get {
 				if (Errors.Count == 0)
 					return base.Message;
