@@ -196,10 +196,6 @@ namespace System.Net
 				/* MS documentation states that a null value would cause an ArgumentNullException
 				 * but that's not the way it behaves:
 				 * https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=304724
-				if (value == null)
-					throw new ArgumentNullException ("WebRequest.DefaultWebProxy",
-							"null IWebProxy not allowed.");
-				*/
 				defaultWebProxy = value;
 				isDefaultWebProxySet = true;
 			}
@@ -323,9 +319,9 @@ namespace System.Net
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{
 			if (prefix == null)
-				throw new ArgumentNullException("prefix");
+				throw new ArgumentNullException ("prefix");
 			if (creator == null)
-				throw new ArgumentNullException("creator");
+				throw new ArgumentNullException ("creator");
 			
 			lock (prefixes.SyncRoot) {
 				string lowerCasePrefix = prefix.ToLower (CultureInfo.InvariantCulture);

@@ -2,7 +2,7 @@
 
 	* WebRequest.cs: Changed serialization ctor to throw NIE on 1.0
 	profile. Cache default proxy, but still allow it to be explicitly set
-	to null.
+	to null. Removed commented code.
 
 2007-10-14 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
