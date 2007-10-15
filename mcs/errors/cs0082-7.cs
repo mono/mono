@@ -1,4 +1,4 @@
-// cs0111-4.cs: `ErrorClass.get_Blah(int)' is already defined. Rename this member or use different parameter types
+// CS0082: A member `ErrorClass.get_Blah(int)' is already reserved
 // Line: 8
 
 using System.Runtime.CompilerServices;

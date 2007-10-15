@@ -1,4 +1,4 @@
-// cs0111-10.cs: `Test.get_Value()' is already defined. Rename this member or use different parameter types
+// CS0082: A member `Test.get_Value()' is already reserved
 // Line: 7
 
 public class Test
