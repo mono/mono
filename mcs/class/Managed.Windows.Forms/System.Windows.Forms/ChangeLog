@@ -1,5 +1,12 @@
 2007-10-15  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: When SuspendRecalc is first called, reset the recalc_start
+	to MaxValue and recalc_end to MinValue.  Currently, recalc_start is always 1,
+	so we always recalculate the whole document instead of just the new part.
+	[Fixes bug #325082]
+
+2007-10-15  Jonathan Pobst  <monkey@jpobst.com>
+
 	* LineTag.cs: Fix a case where the GetCharIndex would not return 0
 	when the mouse was to the left of the first character in the line.
 

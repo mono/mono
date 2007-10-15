@@ -492,6 +492,11 @@ namespace System.Windows.Forms {
 
 		internal void SuspendRecalc ()
 		{
+			if (recalc_suspended == 0) {
+				recalc_start = int.MaxValue;
+				recalc_end = int.MinValue;
+			}
+			
 			recalc_suspended++;
 		}
 
