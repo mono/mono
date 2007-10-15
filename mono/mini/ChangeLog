@@ -1,3 +1,8 @@
+
+Mon Oct 15 09:50:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-amd64.md: use the correct max length for tls_get.
+
 2007-10-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Use mini_get_class in CEE_LDELEM_ANY and
