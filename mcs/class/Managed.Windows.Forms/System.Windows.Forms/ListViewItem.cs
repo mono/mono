@@ -272,7 +272,8 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 				// In virtual mode the checks are always done using indexes
-				return Index == owner.focused_item_index;
+				if (owner.VirtualMode)
+					return Index == owner.focused_item_index;
 #endif
 
 				// Light check

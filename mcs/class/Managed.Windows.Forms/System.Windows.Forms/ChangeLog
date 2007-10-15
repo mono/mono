@@ -1,5 +1,11 @@
 2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItem.cs: When retrieving the focused state, the index check
+	should be done only when ListView is in virtualmode, as it is an
+	expensive check for normal mode.
+
+2007-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: Make the focus state information be stored
 	in the ListView, not in the items. This is done to match the MS
 	behaviour for items that are not yet part of a ListView control;
