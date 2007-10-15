@@ -1,5 +1,8 @@
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
+	* ObjectDataSourceView.cs: use HttpApplication.LoadType instead of
+	Type.GetType.
+
 	* BulletedList.cs: html encode the item text. Fixes bug #333550.
 
 2007-10-01  Marek Habersack  <mhabersack@novell.com>

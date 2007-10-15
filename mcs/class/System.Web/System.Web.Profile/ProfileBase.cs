@@ -199,7 +199,7 @@ namespace System.Web.Profile
 
 		static Type GetPropertyType (ProfileGroupSettings pgs, ProfilePropertySettings pps)
 		{
-			Type type = Type.GetType (pps.Type);
+			Type type = HttpApplication.LoadType (pps.Type);
 			if (type != null)
 				return type;
 
@@ -257,7 +257,7 @@ namespace System.Web.Profile
 					sp.DefaultValue = ((DefaultSettingValueAttribute) attributes [i]).Value;
 
 				else if (attributes [i] is SettingsProviderAttribute) {
-					Type providerType = Type.GetType (((SettingsProviderAttribute) attributes [i]).ProviderTypeName);
+					Type providerType = HttpApplication.LoadType (((SettingsProviderAttribute) attributes [i]).ProviderTypeName);
 					sp.Provider = (SettingsProvider) Activator.CreateInstance (providerType);
 					sp.Provider.Initialize (null, null);
 				}

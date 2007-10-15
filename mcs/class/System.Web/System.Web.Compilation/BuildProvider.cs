@@ -114,7 +114,7 @@ namespace System.Web.Compilation {
 			Compiler compiler = config.Compilers.Get (language);
 			CompilerParameters p;
 			if (compiler != null) {
-				Type type = Type.GetType (compiler.Type, true);
+				Type type = HttpApplication.LoadType (compiler.Type, true);
 				p = new CompilerParameters ();
 				p.CompilerOptions = compiler.CompilerOptions;
 				p.WarningLevel = compiler.WarningLevel;

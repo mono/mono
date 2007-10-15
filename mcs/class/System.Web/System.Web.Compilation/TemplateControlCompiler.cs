@@ -692,7 +692,7 @@ namespace System.Web.Compilation
 
 			Type t;
 			try {
-				t = System.Type.GetType (builderType, true);
+				t = HttpApplication.LoadType (builderType, true);
 			} catch (Exception e) {
 				throw new HttpException (
 					String.Format ("Failed to load expression builder type `{0}'", builderType), e);
@@ -1593,7 +1593,7 @@ namespace System.Web.Compilation
 
 			Type t = null;
 			try {
-				t = Type.GetType (typeName);
+				t = HttpApplication.LoadType (typeName);
 			} catch (Exception) {
 				// ignore
 			}

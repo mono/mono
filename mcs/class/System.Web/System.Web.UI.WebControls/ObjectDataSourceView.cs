@@ -1088,7 +1088,7 @@ namespace System.Web.UI.WebControls
 				tca = a as TypeConverterAttribute;
 				if (tca == null)
 					continue;
-				converterType = Type.GetType (tca.ConverterTypeName, false);
+				converterType = HttpApplication.LoadType (tca.ConverterTypeName, false);
 				if (converterType == null)
 					continue;
 				converter = Activator.CreateInstance (converterType, new object[] {targetType}) as TypeConverter;

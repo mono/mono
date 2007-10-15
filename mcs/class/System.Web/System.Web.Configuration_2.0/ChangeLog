@@ -1,5 +1,8 @@
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
+	* ProvidersHelper.cs: use HttpApplication.LoadType instead of
+	Type.GetType.
+
 	* HttpModulesSection.cs: use HttpApplication.LoadType when loading
 	modules, to include both the bin/ directory and the top-level
 	assemblies in search. Fixes bug #333686.

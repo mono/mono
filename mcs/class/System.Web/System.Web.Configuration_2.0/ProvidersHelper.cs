@@ -46,7 +46,7 @@ namespace System.Web.Configuration {
 	{
 		public static ProviderBase InstantiateProvider (ProviderSettings providerSettings, Type providerType)
 		{
-			Type settingsType = Type.GetType (providerSettings.Type);
+			Type settingsType = HttpApplication.LoadType (providerSettings.Type);
 			
 			if (settingsType == null)
 				settingsType = HttpApplication.LoadTypeFromBin (providerSettings.Type);

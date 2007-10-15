@@ -1,3 +1,8 @@
+2007-10-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileBase.cs: use HttpApplication.LoadType instead of
+	Type.GetType.
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlProfileProvider.cs: remove unused variable.

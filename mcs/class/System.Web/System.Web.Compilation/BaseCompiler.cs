@@ -500,7 +500,7 @@ namespace System.Web.Compilation
 				// configuration section, though.
 			}
 			else {
-				Type t = Type.GetType (comp.Type, true);
+				Type t = HttpApplication.LoadType (comp.Type, true);
 				provider = Activator.CreateInstance (t) as CodeDomProvider;
 
 				compilerOptions = comp.CompilerOptions;
