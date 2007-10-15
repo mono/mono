@@ -198,7 +198,14 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				use_system_password_char = value;
+				if (use_system_password_char != value) {
+					use_system_password_char = value;
+					
+					if (!Multiline)
+						document.PasswordChar = PasswordChar.ToString ();
+					else
+						document.PasswordChar = "";
+				}
 			}
 		}
 #endif
@@ -251,7 +258,7 @@ namespace System.Windows.Forms {
 				if (value != password_char) {
 					password_char = value;
 					if (!Multiline) {
-						document.PasswordChar = value.ToString();
+						document.PasswordChar = PasswordChar.ToString ();
 					} else {
 						document.PasswordChar = "";
 					}

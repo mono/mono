@@ -463,7 +463,8 @@ namespace System.Windows.Forms
 				} else {
 					document.Wrap = false;
 					if (this.password_char != '\0') {
-						document.PasswordChar = password_char.ToString();
+						if (this is TextBox)
+							document.PasswordChar = (this as TextBox).PasswordChar.ToString ();
 					} else {
 						document.PasswordChar = "";
 					}
