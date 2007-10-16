@@ -1,3 +1,9 @@
+2007-10-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Guard against an NRE when the user sets the AcceptButton to
+	a custom control that implements IButtonControl instead of an actual
+	button.  [Fixes bug #334244]
+
 2007-10-15  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Form.cs: Change SelectActiveControl to internal, we need to call it in

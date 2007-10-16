@@ -2850,14 +2850,17 @@ namespace System.Windows.Forms {
 				if (ActiveControl == a_button)
 					return;
 				
-				if (ActiveControl is Button) {
-					a_button.paint_as_acceptbutton = false;
-					a_button.Invalidate();
+				// If the accept_button isn't a Button, we don't need to do
+				// the rest of this.
+				if (a_button == null)
 					return;
-				} else {
+					
+				if (ActiveControl is Button)
+					a_button.paint_as_acceptbutton = false;
+				else
 					a_button.paint_as_acceptbutton = true;
-					a_button.Invalidate();
-				}
+					
+				a_button.Invalidate ();
 			}
 		}
 
