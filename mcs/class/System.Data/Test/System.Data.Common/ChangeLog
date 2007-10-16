@@ -1,3 +1,7 @@
+2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbTransactionTest.cs: Added test for bug #325397.
+
 2007-03-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbProviderFactoriesConfigurationHandlerTest.cs: Changed test to also

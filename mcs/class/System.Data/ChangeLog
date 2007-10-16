@@ -1,3 +1,7 @@
+2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data_test.dll.sources: Added DbTransactionTest.cs.
+
 2007-10-01  Joel Reed  <joelwreed@gmail.com>
 
 	* Mono.Data.SqlExpressions/Functions.cs: accept SingleColumnValues and 

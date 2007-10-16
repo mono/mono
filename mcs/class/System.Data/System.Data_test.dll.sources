@@ -83,6 +83,7 @@ System.Data.Common/DataTableMappingCollectionTest.cs
 System.Data.Common/DBDataPermissionAttributeTest.cs
 System.Data.Common/DBDataPermissionTest.cs
 System.Data.Common/DbConnectionStringBuilderTest.cs
+System.Data.Common/DbTransactionTest.cs
 System.Data.Common/DataAdapterTest.cs
 System.Data.Odbc/OdbcPermissionAttributeTest.cs
 System.Data.Odbc/OdbcPermissionTest.cs
