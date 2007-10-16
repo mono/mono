@@ -34,6 +34,7 @@ using System.IO;
 using System.Security;
 using System.Configuration;
 using System.Configuration.Internal;
+using System.Web.Hosting;
 using System.Web.Util;
 using System.Reflection;
 
@@ -286,14 +287,30 @@ namespace System.Web.Configuration
 			if (file != null)
 				return file.FullName;
 #else
-			string[] filenames = new string[] {"Web.Config", "Web.config", "web.config" };
+			AppDomain domain = AppDomain.CurrentDomain;
+			bool hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 
-			foreach (string fn in filenames) {
-				string file = Path.Combine (dir, fn);
-				if (File.Exists (file))
-					return file;
-			}
+			if (hosted) {
+				foreach (string fn in ApplicationHost.WebConfigFileNames) {
+					string file = Path.Combine (dir, fn);
+					if (File.Exists (file))
+						return file;
+				}
 #endif
+			} else {
+				Assembly asm = Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly ();
+				string name = Path.GetFileName (asm.Location);
+				string[] fileNames = new string[] {name + ".config", name + ".Config"};
+				string appDir = domain.BaseDirectory;
+				string file;
+
+				foreach (string fn in fileNames) {
+					file = Path.Combine (appDir, fn);
+					if (File.Exists (file))
+						return file;
+				}
+			}
+			
 			return null;
 		}
 #if TARGET_J2EE

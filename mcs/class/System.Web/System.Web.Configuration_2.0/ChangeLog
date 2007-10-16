@@ -1,3 +1,9 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: if running outside hosted environment,
+	read only the assemblyname.config configuration file instead of
+	web.config. Fixes bug #332425
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ProvidersHelper.cs: use HttpApplication.LoadType instead of

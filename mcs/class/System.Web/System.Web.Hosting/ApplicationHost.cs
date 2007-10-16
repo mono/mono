@@ -35,8 +35,9 @@ namespace System.Web.Hosting {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class ApplicationHost {		
-		static string [] types = { "Web.config", "Web.Config", "web.config" };
+	public sealed class ApplicationHost {
+		internal static readonly string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
+		internal static string [] WebConfigFileNames = { "Web.config", "Web.Config", "web.config" };
 
 		private ApplicationHost ()
 		{
@@ -46,7 +47,7 @@ namespace System.Web.Hosting {
 		{
 			string r = null;
 				
-			foreach (string s in types){
+			foreach (string s in WebConfigFileNames){
 				r = Path.Combine (basedir, s);
 
 				if (File.Exists (r))
@@ -216,6 +217,8 @@ namespace System.Web.Hosting {
 #if NET_2_0
 			appdomain.SetData ("DataDirectory", Path.Combine (physicalDir, "App_Data"));
 #endif
+			appdomain.SetData (MonoHostedDataKey, "yes");
+			
 			return appdomain.CreateInstanceAndUnwrap (hostType.Module.Assembly.FullName, hostType.FullName);
 		}
 	}

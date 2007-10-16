@@ -1,3 +1,11 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: introduce an application domain data item to
+	allow checks for whether System.Web code runs inside a hosted
+	application or in a stand-alone one.
+	Made the array of web.config name variations an internal one, to
+	be used from within configuration code.
+
 2007-08-24  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: use ; as the separator with PrivateBinPath.
