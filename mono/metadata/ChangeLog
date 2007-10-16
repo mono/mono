@@ -1,5 +1,8 @@
 2007-10-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_get_type_with_rootimage): Search all the
+	modules inside dynamic assemblies. Fixes #334200.
+	
 	* reflection.c: Set image->public_key and image->public_key_length;
 
 	* metadata-internals.h (MonoDynamicImage): Add public_key and public_key_len
