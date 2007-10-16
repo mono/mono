@@ -1,3 +1,8 @@
+2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Added test for bug #334203. Use more meaningful name
+	for test for bug #49114.	
+
 2007-10-04  Raja R Harinath  <rharinath@novell.com>
 
 	* AssemblyTest.cs (bug328812): New test.

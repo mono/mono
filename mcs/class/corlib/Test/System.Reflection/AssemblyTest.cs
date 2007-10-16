@@ -63,17 +63,47 @@ namespace MonoTests.System.Reflection
 			Assert.IsNull (obj, "#03");
 		}
 
-		[Test]
+		[Test] // bug #49114
 #if NET_2_0
 		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 #else
 		[ExpectedException (typeof (TypeLoadException))]
 #endif
-		public void TestGetType () 
+		public void GetType_TypeName_Invalid () 
 		{
-			// Bug #49114
 			typeof (int).Assembly.GetType ("&blabla", true, true);
+		}
+
+		[Test] // bug #334203
+		[Category ("NotWorking")]
+		public void GetType_TypeName_AssemblyName ()
+		{
+			Assembly a = typeof (int).Assembly;
+			string typeName = typeof (string).AssemblyQualifiedName;
+			try {
+				a.GetType (typeName, true, false);
+				Assert.Fail ("#A1");
+#if NET_2_0
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
+			}
+#else
+			} catch (TypeLoadException ex) {
+				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf (typeName) != -1, "#A5");
+			}
+#endif
+
+			Type type = a.GetType (typeName, false);
+			Assert.IsNull (type, "#B1");
+			type = a.GetType (typeName, false, true);
+			Assert.IsNull (type, "#B2");
 		}
 
 		[Test]
