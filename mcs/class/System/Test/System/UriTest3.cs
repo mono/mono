@@ -62,9 +62,11 @@ namespace MonoTests.System
 		public void Absolute_UriKind_Absolute ()
 		{
 			Uri uri = new Uri (absolute, UriKind.Absolute);
-			Assert.AreEqual ("www.mono-project.com", uri.DnsSafeHost, "DnsSafeHost");
-			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
-			Assert.AreEqual (absolute, uri.OriginalString, "OriginalString");
+			Assert.AreEqual ("www.mono-project.com", uri.DnsSafeHost, "#1");
+			Assert.IsTrue (uri.IsAbsoluteUri, "#2");
+			Assert.AreEqual (absolute, uri.OriginalString, "#3");
+			Assert.AreEqual (absolute, uri.ToString (), "#4");
+			Assert.IsFalse (uri.UserEscaped, "#5");
 		}
 
 		[Test]
@@ -88,6 +90,11 @@ namespace MonoTests.System
 			Assert.AreEqual ("foo/bar", uri.ToString (), "#C3");
 			Assert.IsFalse (uri.UserEscaped, "#C4");
 
+			uri = new Uri ("/test.aspx", UriKind.Relative);
+			Assert.IsFalse (uri.IsAbsoluteUri, "#D1");
+			Assert.AreEqual ("/test.aspx", uri.OriginalString, "#D2");
+			Assert.AreEqual ("/test.aspx", uri.ToString (), "#D3");
+			Assert.IsFalse (uri.UserEscaped, "#D4");
 		}
 
 		[Test]

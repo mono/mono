@@ -1177,9 +1177,9 @@ namespace MonoTests.System
 			uri2 = new Uri ("http://www.contoso.com/index.htm?x=1");
 			Assert ("#2", uri1.GetHashCode () != uri2.GetHashCode ());
 			uri2 = new Uri ("http://www.contoso.com:80/index.htm");
-			AssertEquals ("#3", uri1.GetHashCode (), uri2.GetHashCode ());			
+			AssertEquals ("#3", uri1.GetHashCode (), uri2.GetHashCode ());
 			uri2 = new Uri ("http://www.contoso.com:8080/index.htm");
-			Assert ("#4", uri1.GetHashCode () != uri2.GetHashCode ());			
+			Assert ("#4", uri1.GetHashCode () != uri2.GetHashCode ());
 		}
 
 #if NET_2_0
@@ -1202,8 +1202,8 @@ namespace MonoTests.System
 			Assert ("#5b", !uri3.Equals(uri4));
 		}
 
-		[ExpectedException(typeof(InvalidOperationException))]
 		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void GetLeftPart_Partial1 ()
 		{
 			Uri u = new Uri ("foo", UriKind.Relative);
@@ -1611,8 +1611,6 @@ namespace MonoTests.System
 			AssertEquals ("%C3%A1", Uri.EscapeDataString ("á"));
 		}
 #endif
-
-
 
 		// This test doesn't work on Linux, and arguably shouldn't work.
 		// new Uri("file:///tmp/foo/bar").AbsolutePath returns "/tmp/foo/bar" 
