@@ -75,19 +75,32 @@ namespace System.Threading
 			while (true) {
 				long min_wait = long.MaxValue;
 				lock (jobs) {
+					ArrayList expired = null;
 					long ticks = Ticks ();
 					foreach (DictionaryEntry entry in jobs) {
 						Timer t1 = entry.Value as Timer;
 						if (t1.next_run <= ticks) {
 							ThreadPool.QueueUserWorkItem (new WaitCallback (t1.callback), t1.state);
-							if (t1.period_ms == -1)
+							if (t1.period_ms == -1) {
 								t1.next_run = long.MaxValue;
-							else
+								if (expired == null)
+									expired = new ArrayList ();
+								expired.Add (t1);
+							} else {
 								t1.next_run = ticks + TimeSpan.TicksPerMillisecond * t1.period_ms;
+							}
 						}
 						if (t1.next_run != long.MaxValue) {
 							min_wait = Math.Min (min_wait, t1.next_run - ticks);
 						}
+					}
+					if (expired != null) {
+						foreach (Timer t1 in expired) {
+							jobs.Remove (t1);
+						}
+						expired.Clear ();
+						if (expired.Count > 50)
+							expired = null;
 					}
 				}
 				if (min_wait != long.MaxValue) {

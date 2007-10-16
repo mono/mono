@@ -1,4 +1,8 @@
 
+Tue Oct 16 17:22:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: remove expired timers from the the jobs list.
+
 Tue Oct 16 12:14:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* Timer.cs: rewrote to use threadpool threads to invoke the callbacks,
