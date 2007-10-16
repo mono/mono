@@ -1,3 +1,12 @@
+2007-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Set image->public_key and image->public_key_length;
+
+	* metadata-internals.h (MonoDynamicImage): Add public_key and public_key_len
+	fields.
+
+	* image.c (mono_image_get_public_key): Handle dynamic assemblies. Fixes #334173.	
+	
 2007-10-16  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata.c: Implemented correct comparing of generic classes.
