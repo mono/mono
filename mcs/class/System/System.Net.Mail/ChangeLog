@@ -1,5 +1,9 @@
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SmtpClient.cs : do state check on other setters than set_Timeout().
+
+2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MailMessage.cs : Some entire refactory on BodyEncoding and
 	  IsBodyHtml. BodyEncoding and SubjectEncoding are guessed when
 	  Body and Subject are set for each.

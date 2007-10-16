@@ -141,28 +141,37 @@ namespace System.Net.Mail {
 
 		public ICredentialsByHost Credentials {
 			get { return credentials; }
-			set { credentials = value; }
+			set {
+				CheckState ();
+				credentials = value;
+			}
 		}
 
 		public SmtpDeliveryMethod DeliveryMethod {
 			get { return deliveryMethod; }
-			set { deliveryMethod = value; }
+			set {
+				CheckState ();
+				deliveryMethod = value;
+			}
 		}
 
 		public bool EnableSsl {
 			// FIXME: So... is this supposed to enable SSL port functionality? or STARTTLS? Or both?
 			get { return enableSsl; }
-			set { enableSsl = value; }
+			set {
+				CheckState ();
+				enableSsl = value;
+			}
 		}
 
 		public string Host {
 			get { return host; }
-			// FIXME: Check to make sure an email is not being sent.
 			set {
 				if (value == null)
 					throw new ArgumentNullException ();
 				if (value.Length == 0)
 					throw new ArgumentException ();
+				CheckState ();
 				host = value;
 			}
 		}
@@ -174,10 +183,10 @@ namespace System.Net.Mail {
 
 		public int Port {
 			get { return port; }
-			// FIXME: Check to make sure an email is not being sent.
 			set { 
 				if (value <= 0 || value > 65535)
 					throw new ArgumentOutOfRangeException ();
+				CheckState ();
 				port = value;
 			}
 		}
@@ -191,8 +200,7 @@ namespace System.Net.Mail {
 			set { 
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
-				if (messageInProcess != null)
-					throw new InvalidOperationException ("Cannot set Timeout while Sending a message");
+				CheckState ();
 				timeout = value; 
 			}
 		}
@@ -203,6 +211,7 @@ namespace System.Net.Mail {
 			set {
 				if (value)
 					throw new NotImplementedException ("Default credentials are not supported");
+				CheckState ();
 			}
 		}
 
@@ -215,6 +224,12 @@ namespace System.Net.Mail {
 		#endregion // Events 
 
 		#region Methods
+
+		private void CheckState ()
+		{
+			if (messageInProcess != null)
+				throw new InvalidOperationException ("Cannot set Timeout while Sending a message");
+		}
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
