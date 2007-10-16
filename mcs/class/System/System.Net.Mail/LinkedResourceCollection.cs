@@ -64,6 +64,26 @@ namespace System.Net.Mail {
 		{
 		}
 
+		protected override void ClearItems ()
+		{
+			base.ClearItems ();
+		}
+
+		protected override void InsertItem (int index, LinkedResource item)
+		{
+			base.InsertItem (index, item);
+		}
+
+		protected override void RemoveItem (int index)
+		{
+			base.RemoveItem (index);
+		}
+
+		protected override void SetItem (int index, LinkedResource item)
+		{
+			base.SetItem (index, item);
+		}
+
 		#endregion // Methods
 	}
 }
