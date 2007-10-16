@@ -1088,11 +1088,6 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			if (listbox_ctrl != null) {
-				Controls.AddImplicit (listbox_ctrl);
-				listbox_ctrl.Visible = true;
-			}
-
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
 
