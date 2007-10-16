@@ -29,6 +29,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace System.Threading
 {
@@ -37,124 +38,65 @@ namespace System.Threading
 #endif
 	public sealed class Timer : MarshalByRefObject, IDisposable
 	{
-		sealed class Runner : MarshalByRefObject
+#region Timer instance fields
+		TimerCallback callback;
+		object state;
+		long due_time_ms;
+		long period_ms;
+		long next_run; // in ticks
+		bool disposed;
+#endregion
+
+#region Timer static fields
+		static Thread scheduler;
+		static Hashtable jobs;
+		static AutoResetEvent change_event;
+#endregion
+
+		/* we use a static initializer to avoid race issues with the thread creation */
+		static Timer ()
 		{
-			ManualResetEvent wait;
-			AutoResetEvent start_event;
-			TimerCallback callback;
-			object state;
-			int dueTime;
-			int period;
-			bool disposed;
-			bool aborted;
+			change_event = new AutoResetEvent (false);
+			jobs = new Hashtable ();
+			scheduler = new Thread (SchedulerThread);
+			scheduler.IsBackground = true;
+			scheduler.Start ();
+		}
 
-			public Runner (TimerCallback callback, object state, AutoResetEvent start_event)
-			{
-				this.callback = callback;
-				this.state = state;
-				this.start_event = start_event;
-				this.wait = new ManualResetEvent (false);
-			}
+		static long Ticks ()
+		{
+			/* use a monotonic time value later */
+			return DateTime.UtcNow.Ticks;
+		}
 
-			public int DueTime {
-				get { return dueTime; }
-				set { dueTime = value; }
-			}
-
-			public int Period {
-				get { return period; }
-				set { period = value == 0 ? Timeout.Infinite : value; }
-			}
-
-			bool WaitForDueTime ()
-			{
-				if (dueTime > 0) {
-					bool signaled;
-					do {
-						wait.Reset ();
-						signaled = wait.WaitOne (dueTime, false);
-					} while (signaled == true && !disposed && !aborted);
-
-					if (!signaled)
-						callback (state);
-
-					if (disposed)
-						return false;
-				}
-				else
-					callback (state);
-
-				return true;
-			}
-
-			public void Abort ()
-			{
-				lock (this) {
-					aborted = true;
-					wait.Set ();
-				}
-			}
-			
-			public void Dispose ()
-			{
-				lock (this) {
-					disposed = true;
-					Abort ();
-				}
-			}
-
-			public void Start ()
-			{
-				while (!disposed && start_event.WaitOne ()) {
-					if (disposed)
-						return;
-
-					aborted = false;
-
-					if (dueTime == Timeout.Infinite)
-						continue;
-
-					if (!WaitForDueTime ())
-						return;
-
-					if (aborted || (period == Timeout.Infinite))
-						continue;
-
-					bool signaled = false;
-					while (true) {
-						if (disposed)
-							return;
-
-						if (aborted)
-							break;
-
-						try {
-							wait.Reset ();
-						} catch (ObjectDisposedException) {
-							// FIXME: There is some race condition
-							//        here when the thread is being
-							//        aborted on exit.
-							return;
+		static private void SchedulerThread ()
+		{
+			Thread.CurrentThread.Name = "Timer-Scheduler";
+			while (true) {
+				long min_wait = long.MaxValue;
+				lock (jobs) {
+					long ticks = Ticks ();
+					foreach (DictionaryEntry entry in jobs) {
+						Timer t1 = entry.Value as Timer;
+						if (t1.next_run <= ticks) {
+							ThreadPool.QueueUserWorkItem (new WaitCallback (t1.callback), t1.state);
+							if (t1.period_ms == -1)
+								t1.next_run = long.MaxValue;
+							else
+								t1.next_run = ticks + TimeSpan.TicksPerMillisecond * t1.period_ms;
 						}
-
-						signaled = wait.WaitOne (period, false);
-
-						if (aborted || disposed)
-							break;
-
-						if (!signaled) {
-							callback (state);
-						} else if (!WaitForDueTime ()) {
-							return;
+						if (t1.next_run != long.MaxValue) {
+							min_wait = Math.Min (min_wait, t1.next_run - ticks);
 						}
 					}
 				}
+				if (min_wait != long.MaxValue) {
+					change_event.WaitOne ((int)(min_wait / TimeSpan.TicksPerMillisecond), true);
+				} else {
+					change_event.WaitOne (Timeout.Infinite, true);
+				}
 			}
 		}
-
-		Runner runner;
-		AutoResetEvent start_event;
-		WeakReference weak_t;
 
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -175,11 +117,11 @@ namespace System.Threading
 			if (period < -1)
 				throw new ArgumentOutOfRangeException ("period");
 
-			Init (callback, state, (int) dueTime, (int) period);
+			Init (callback, state, dueTime, period);
 		}
 
 		public Timer (TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
-			: this (callback, state, Convert.ToInt32(dueTime.TotalMilliseconds), Convert.ToInt32(period.TotalMilliseconds))
+			: this (callback, state, (long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds)
 		{
 		}
 
@@ -196,36 +138,17 @@ namespace System.Threading
 		}
 #endif
 
-		void Init (TimerCallback callback, object state, int dueTime, int period)
+		void Init (TimerCallback callback, object state, long dueTime, long period)
 		{
-			start_event = new AutoResetEvent (false);
-			runner = new Runner (callback, state, start_event);
-			Change (dueTime, period);
-			Thread t = new Thread (new ThreadStart (runner.Start));
+			this.callback = callback;
+			this.state = state;
 
-			weak_t = new WeakReference (t);
-			
-			t.IsBackground = true;
-			t.Start ();
+			Change (dueTime, period);
 		}
 
 		public bool Change (int dueTime, int period)
 		{
-			if (dueTime < -1)
-				throw new ArgumentOutOfRangeException ("dueTime");
-
-			if (period < -1)
-				throw new ArgumentOutOfRangeException ("period");
-
-			if (runner == null)
-				return false;
-
-			start_event.Reset ();
-			runner.Abort ();
-			runner.DueTime = dueTime;
-			runner.Period = period;
-			start_event.Set ();
-			return true;
+			return Change ((long)dueTime, (long)period);
 		}
 
 		public bool Change (long dueTime, long period)
@@ -236,12 +159,40 @@ namespace System.Threading
 			if(period > 4294967294)
 				throw new NotSupportedException ("Period too large");
 
-			return Change ((int) dueTime, (int) period);
+			if (dueTime < -1)
+				throw new ArgumentOutOfRangeException ("dueTime");
+
+			if (period < -1)
+				throw new ArgumentOutOfRangeException ("period");
+
+			if (disposed)
+				return false;
+
+			due_time_ms = dueTime;
+			period_ms = period;
+			if (dueTime == 0) {
+				next_run = Ticks ();
+			} else if (dueTime == Timeout.Infinite) {
+				next_run = long.MaxValue;
+			} else {
+				next_run = dueTime * TimeSpan.TicksPerMillisecond + Ticks ();
+			}
+			lock (jobs) {
+				if (next_run != long.MaxValue) {
+					Timer t = jobs [this] as Timer;
+					if (t == null)
+						jobs [this] = this;
+					change_event.Set ();
+				} else {
+					jobs.Remove (this);
+				}
+			}
+			return true;
 		}
 
 		public bool Change (TimeSpan dueTime, TimeSpan period)
 		{
-			return Change (Convert.ToInt32(dueTime.TotalMilliseconds), Convert.ToInt32(period.TotalMilliseconds));
+			return Change ((long)dueTime.TotalMilliseconds, (long)period.TotalMilliseconds);
 		}
 
 		[CLSCompliant(false)]
@@ -253,23 +204,15 @@ namespace System.Threading
 			if (period > Int32.MaxValue)
 				throw new NotSupportedException ("Period too large");
 
-			return Change ((int) dueTime, (int) period);
+			return Change ((long) dueTime, (long) period);
 		}
 
 		public void Dispose ()
 		{
-			Thread t = (Thread)weak_t.Target;
-				
-			if (t != null && t.IsAlive) {
-				if (t != Thread.CurrentThread)
-					t.Abort ();
+			disposed = true;
+			lock (jobs) {
+				jobs.Remove (this);
 			}
-
-			if (runner != null) {
-				runner.Dispose ();
-				runner = null;
-			}
-			GC.SuppressFinalize (this);
 		}
 
 		public bool Dispose (WaitHandle notifyObject)
@@ -279,16 +222,6 @@ namespace System.Threading
 			return true;
 		}
 
-		~Timer ()
-		{
-			Thread t = (Thread)weak_t.Target;
-			
-			if (t != null && t.IsAlive)
-				t.Abort ();
-
-			if (runner != null)
-				runner.Abort ();
-		}
 	}
 }
 

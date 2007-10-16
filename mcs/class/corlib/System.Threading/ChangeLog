@@ -1,3 +1,11 @@
+
+Tue Oct 16 12:14:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: rewrote to use threadpool threads to invoke the callbacks,
+	avoid Thread.Abort and Thread.Interrupt and use a single scheduler
+	thread, partially from the patch of Rafael Ferreira in bug #315999.
+	Fixes bug #315999, #332206.
+
 2007-10-15  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Initialise synch_cs to null now we aren't using it as
