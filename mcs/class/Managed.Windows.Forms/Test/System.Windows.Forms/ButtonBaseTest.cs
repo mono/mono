@@ -18,32 +18,47 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Constructor ()
 		{
-			NullButton b = new NullButton ();
+			MockButton b = new MockButton ();
 			
 			Assert.AreEqual (SystemColors.Control, b.BackColor, "A4");
 			Assert.AreEqual (FlatStyle.Standard, b.FlatStyle, "A6");
-			Assert.AreEqual (null, b.Image, "A7");
+			Assert.IsNull (b.Image, "A7");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, b.ImageAlign, "A8");
 			Assert.AreEqual (-1, b.ImageIndex, "A9");
-			Assert.AreEqual (null, b.ImageList, "A11");
+			Assert.IsNull (b.ImageList, "A11");
 			Assert.AreEqual (ImeMode.Disable, b.ImeMode, "A12");
 			Assert.AreEqual (string.Empty, b.Text, "A13");
 			Assert.AreEqual (ContentAlignment.MiddleCenter, b.TextAlign, "A14");
 
 #if NET_2_0
-			Assert.AreEqual (false, b.AutoEllipsis, "A1");
-			Assert.AreEqual (false, b.AutoSize, "A2");
+			Assert.IsFalse (b.AutoEllipsis, "A1");
+			Assert.IsFalse (b.AutoSize, "A2");
 			Assert.AreEqual (string.Empty, b.ImageKey, "A10");
 			Assert.AreEqual (TextImageRelation.Overlay, b.TextImageRelation, "A15");
-			Assert.AreEqual (true, b.UseCompatibleTextRendering, "A16");
-			Assert.AreEqual (true, b.UseMnemonic, "A17");
-			Assert.AreEqual (true, b.UseVisualStyleBackColor, "A18");
+			Assert.IsTrue (b.UseCompatibleTextRendering, "A16");
+			Assert.IsTrue (b.UseMnemonic, "A17");
+			Assert.IsTrue (b.UseVisualStyleBackColor, "A18");
 			Assert.AreEqual (AccessibleStates.None, b.AccessibilityObject.State, "A19");
 #endif
 		}
-		
-		private class NullButton : ButtonBase
+
+		[Test]
+		public void IsDefault ()
 		{
+			MockButton b = new MockButton ();
+			Assert.IsFalse (b.IsDefault, "#1");
+			b.IsDefault = true;
+			Assert.IsTrue (b.IsDefault, "#2");
+			b.IsDefault = false;
+			Assert.IsFalse (b.IsDefault, "#3");
+		}
+		
+		private class MockButton : ButtonBase
+		{
+			public new bool IsDefault {
+				get { return base.IsDefault; }
+				set { base.IsDefault = value; }
+			}
 		}
 	}
 }

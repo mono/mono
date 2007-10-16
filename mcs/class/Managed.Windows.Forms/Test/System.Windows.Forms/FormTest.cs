@@ -24,9 +24,44 @@ namespace MonoTests.System.Windows.Forms
 	public class FormTest
 	{
 		[Test]
+		public void AcceptButton ()
+		{
+			Form form = new Form ();
+			Assert.IsNull (form.AcceptButton, "#A");
+
+			MockButton buttonA = new MockButton (true);
+			Assert.IsFalse (buttonA.IsDefaultButton, "#B1");
+			form.AcceptButton = buttonA;
+			Assert.IsNotNull (form.AcceptButton, "#B2");
+			Assert.AreSame (buttonA, form.AcceptButton, "#B3");
+			Assert.IsTrue (buttonA.IsDefaultButton, "#B4");
+
+			form.AcceptButton = null;
+			Assert.IsNull (form.AcceptButton, "#C1");
+			Assert.IsFalse (buttonA.IsDefaultButton, "#C2");
+
+			ButtonControl buttonB = new ButtonControl ();
+			Assert.IsFalse (buttonB.IsDefaultButton, "#D1");
+			form.AcceptButton = buttonB;
+			Assert.IsNotNull (form.AcceptButton, "#D2");
+			Assert.AreSame (buttonB, form.AcceptButton, "#D3");
+			Assert.IsFalse (buttonA.IsDefaultButton, "#D4");
+			Assert.IsTrue (buttonB.IsDefaultButton, "#D5");
+
+			MockButton buttonC = new MockButton (false);
+			Assert.IsFalse (buttonC.IsDefaultButton, "#E1");
+			form.AcceptButton = buttonC;
+			Assert.IsNotNull (form.AcceptButton, "#E2");
+			Assert.AreSame (buttonC, form.AcceptButton, "#E3");
+			Assert.IsFalse (buttonC.IsDefaultButton, "#E4");
+			Assert.IsFalse (buttonA.IsDefaultButton, "#E5");
+			Assert.IsFalse (buttonB.IsDefaultButton, "#E6");
+		}
+
+		[Test]
 		public void bug_82358 ()
 		{
-			Console.WriteLine ("Starting bug_82358");
+			//Console.WriteLine ("Starting bug_82358");
 			int sizeable_factor;
 			int title_bar;
 			int tool_bar;
@@ -81,20 +116,20 @@ namespace MonoTests.System.Windows.Forms
 			FormBorderStyle style;
 			
 			
-			Console.WriteLine ("Universal theme says: d2={0}, d3={1}, title_bar={2}, sizeable_factor={3}, tool_border={4}, tool_bar={5}", d2, d3, title_bar, sizeable_factor, tool_border, tool_bar);
+			//Console.WriteLine ("Universal theme says: d2={0}, d3={1}, title_bar={2}, sizeable_factor={3}, tool_border={4}, tool_bar={5}", d2, d3, title_bar, sizeable_factor, tool_border, tool_bar);
 			
 			// Changing client size, then FormBorderStyle.
 			using (Form f = new Form ()) {
 				style = FormBorderStyle.FixedToolWindow;
-				Console.WriteLine ("Created form, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				//Console.WriteLine ("Created form, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
 				f.ClientSize = size;
-				Console.WriteLine ("Changed ClientSize, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				//Console.WriteLine ("Changed ClientSize, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
 				f.FormBorderStyle = style;
-				Console.WriteLine ("Changed FormBorderStyle, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				//Console.WriteLine ("Changed FormBorderStyle, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
 				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A1");
 				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-A2");
 				f.Visible = true;
-				Console.WriteLine ("Made visible, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
+				//Console.WriteLine ("Made visible, size: {0}, clientsize: {1}", f.Size, f.ClientSize);
 				Assert.AreEqual (size.ToString (), f.ClientSize.ToString (), style.ToString () + "-A3");
 				Assert.AreEqual (new Size (size.Width + tool_border, size.Height + tool_border + tool_bar).ToString (), f.Size.ToString (), style.ToString () + "-A4");
 			}
@@ -572,9 +607,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			((Form) sender).Close ();
 		}
-		
-		
-		
+
 		[Test]
 		public void ShowDialogCloseTest ()
 		{
@@ -798,8 +831,6 @@ namespace MonoTests.System.Windows.Forms
 				cp = TestHelper.GetCreateParams (frm);
 				Assert.AreEqual (FormStartPosition.WindowsDefaultLocation, frm.StartPosition, "$A6");
 				Assert.AreEqual (new Point (int.MinValue, int.MinValue).ToString (), new Point (cp.X, cp.Y).ToString (), "#A6");
-				
-
 			}
 		}
 		
@@ -845,7 +876,6 @@ namespace MonoTests.System.Windows.Forms
 					frm.Show ();
 				}
 
-
 				using (Form frm = new Form ()) {
 					frm.MdiParent = Main;
 					frm.Location = new Point (23, 45);
@@ -881,8 +911,6 @@ namespace MonoTests.System.Windows.Forms
 
 					frm.Show ();
 				}
-
-
 
 				using (Form frm = new Form ()) {
 					frm.MdiParent = Main;
@@ -1001,7 +1029,6 @@ namespace MonoTests.System.Windows.Forms
 					frm.Show ();
 				}
 
-
 				using (Form frm = new Form ()) {
 					frm.TopLevel = false;
 					Main.Controls.Add (frm);
@@ -1039,8 +1066,6 @@ namespace MonoTests.System.Windows.Forms
 					frm.Show ();
 				}
 
-
-
 				using (Form frm = new Form ()) {
 					frm.TopLevel = false;
 					Main.Controls.Add (frm);
@@ -1077,7 +1102,6 @@ namespace MonoTests.System.Windows.Forms
 
 					frm.Show ();
 				}
-
 
 				Main.Size = new Size (600, 600);
 				using (Form frm = new Form ()) {
@@ -1390,7 +1414,6 @@ namespace MonoTests.System.Windows.Forms
 			myform.Visible = true;
 			myform.Text = "NewForm";
 			myform.Name = "FormTest";
-			Assert.IsNull (myform.AcceptButton, "#1");
 			Assert.IsNull (myform.ActiveMdiChild, "#2"); 
 			Assert.IsFalse (myform.AutoScale, "#3");
 			Assert.IsNull (myform.CancelButton, "#6");
@@ -2307,24 +2330,24 @@ namespace MonoTests.System.Windows.Forms
 				tv.GotFocus += new EventHandler (tv_GotFocus);
 				f.Activated += new EventHandler (f_Activated);
 				f.Controls.Add (tv);
-				Console.WriteLine ("****************** STARTING ************************");
+				//Console.WriteLine ("****************** STARTING ************************");
 				f.Show ();
-				Console.WriteLine ("****************** ENDED ************************");
+				//Console.WriteLine ("****************** ENDED ************************");
 				
-				Console.WriteLine (log.EventsJoined ());
+				//Console.WriteLine (log.EventsJoined ());
 				Assert.IsTrue (log.EventRaised ("GotFocus"), "#01");
 			}
 		}
 
 		void f_Activated (object sender, EventArgs e)
 		{
-			Console.WriteLine ("         ACTIVATED");
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine ("         ACTIVATED");
+			//Console.WriteLine (Environment.StackTrace);
 		}
 
 		void tv_GotFocus (object sender, EventArgs e)
 		{
-			Console.WriteLine (Environment.StackTrace);
+			//Console.WriteLine (Environment.StackTrace);
 		}
 
 		[Test]  // Bug #80773
@@ -2527,7 +2550,58 @@ namespace MonoTests.System.Windows.Forms
 
 			private bool _closeOnLoad;
 			private bool _visibleOnLoad;
-		}	
+		}
+
+		private class MockButton : Button
+		{
+			public MockButton (bool notify)
+			{
+				_notify = notify;
+			}
+
+			public bool Notify {
+				get { return _notify; }
+				set { _notify = value; }
+			}
+
+			public bool IsDefaultButton
+			{
+				get { return base.IsDefault; }
+				set { base.IsDefault = value; }
+			}
+
+			public override void NotifyDefault (bool value)
+			{
+				if (Notify)
+					base.NotifyDefault (value);
+			}
+
+			private bool _notify;
+		}
+
+		private class ButtonControl : IButtonControl
+		{
+			public DialogResult DialogResult {
+				get { return _dialogResult; }
+				set { _dialogResult = value; }
+			}
+
+			public bool IsDefaultButton {
+				get { return _isDefault; }
+			}
+
+			public void NotifyDefault (bool value)
+			{
+				_isDefault = value;
+			}
+
+			public void PerformClick ()
+			{
+			}
+
+			private bool _isDefault;
+			private DialogResult _dialogResult = DialogResult.None;
+		}
 	}
 
 	public class TimeBombedForm : Form

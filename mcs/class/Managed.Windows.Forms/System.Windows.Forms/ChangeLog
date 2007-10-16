@@ -1,3 +1,9 @@
+2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ButtonBase.cs: Fixed IsDefault to use assigned value instead of
+	always setting value to true.
+	* Form.cs: When changing AcceptButton, notify new and original button.
+
 2007-10-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Guard against an NRE when the user sets the AcceptButton to

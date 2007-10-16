@@ -445,8 +445,14 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (accept_button != null)
+					accept_button.NotifyDefault (false);
+
 				accept_button = value;
-				CheckAcceptButton();
+				if (accept_button != null)
+					accept_button.NotifyDefault (true);
+
+				CheckAcceptButton ();
 			}
 		}
 
@@ -2842,11 +2848,11 @@ namespace System.Windows.Forms {
 			window_manager = null;
 		}
 		
-		internal override void CheckAcceptButton()
+		internal override void CheckAcceptButton ()
 		{
 			if (accept_button != null) {
 				Button a_button = accept_button as Button;
-				
+
 				if (ActiveControl == a_button)
 					return;
 				

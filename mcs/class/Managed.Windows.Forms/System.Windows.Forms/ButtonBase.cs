@@ -482,7 +482,7 @@ namespace System.Windows.Forms {
 			get { return is_default; }
 			set {
 				if (is_default != value) {
-					is_default = true;
+					is_default = value;
 					Invalidate ();
 				}
 			}
