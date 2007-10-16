@@ -1,5 +1,10 @@
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SmtpClient.cs : Replace every \r and \n with \r\n per RFC 2821 
+	  section 2.3.7, or you will receive SMTP error 451.
+
+2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AlternateViewCollection.cs, LinkedResourceCollection.cs,
 	  AttachmentCollection.cs : added missing 2.0 members.
 
