@@ -1,5 +1,10 @@
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SmtpClient.cs : use 3 StringBuilder.Replace() calls rather than
+	  3 string.Replace() calls.
+
+2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SmtpClient.cs : do state check on other setters than set_Timeout().
 
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>

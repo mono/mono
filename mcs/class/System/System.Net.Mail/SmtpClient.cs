@@ -536,9 +536,11 @@ namespace System.Net.Mail {
 		private void SendData (string data)
 		{
 			// Certain SMTP servers will reject mail sent with unix line-endings; see http://cr.yp.to/docs/smtplf.html
-			writer.Write (data.Replace ("\r\n", "\n")
-					  .Replace ('\r', '\n')
-					  .Replace ("\n", "\r\n"));
+			StringBuilder sb = new StringBuilder (data);
+			sb.Replace ("\r\n", "\n");
+			sb.Replace ('\r', '\n');
+			sb.Replace ("\n", "\r\n");
+			writer.Write (sb.ToString ());
 			writer.Write ("\r\n");
 			writer.Flush ();
 		}
