@@ -1,3 +1,8 @@
+2007-10-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_prolog): Increase the size allocated for the
+	prolog. Fixes #331958.
+
 2007-10-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.h mini-sparc.c: Add support for the common vtable trampoline.
