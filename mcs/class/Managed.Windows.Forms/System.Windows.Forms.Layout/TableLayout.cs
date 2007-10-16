@@ -118,10 +118,7 @@ namespace System.Windows.Forms.Layout
 						for (int i = 1; i < row_span; i++)
 							grid[col, row + i] = dummy_control;
 					}
-				// We have a control that has an explicitly set col/row greater than
-				// the number or columns/rows in the table, so expand to accommodate it
-				} else if (col >= columns || row >= rows)
-					return CalculateControlPositions (panel, Math.Max (columns, col + 1), Math.Max (rows, row + 1));
+				}
 			}
 
 			int x_pointer = 0;
