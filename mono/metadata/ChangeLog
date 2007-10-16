@@ -1,5 +1,8 @@
 2007-10-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Throw an
+	exception if the type name contains an assembly component. Fixes #334203.
+
 	* reflection.c (mono_reflection_get_type_with_rootimage): Search all the
 	modules inside dynamic assemblies. Fixes #334200.
 	
