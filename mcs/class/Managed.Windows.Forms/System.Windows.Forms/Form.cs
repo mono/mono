@@ -235,7 +235,7 @@ namespace System.Windows.Forms {
 			XplatUI.Text (Handle, Text.Replace (Environment.NewLine, string.Empty));
 		}
 		
-		private void SelectActiveControl ()
+		internal void SelectActiveControl ()
 		{
 			if (this.IsMdiContainer) {
 				mdi_container.SendFocusToActiveChild ();

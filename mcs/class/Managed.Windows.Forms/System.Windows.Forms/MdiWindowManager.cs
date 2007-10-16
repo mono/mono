@@ -61,6 +61,7 @@ namespace System.Windows.Forms {
 			
 			last_activation_event = 1;
 			form.OnActivatedInternal ();
+			form.SelectActiveControl ();
 		}
 		
 		public void RaiseDeactivate ()

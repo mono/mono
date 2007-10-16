@@ -1,5 +1,15 @@
 2007-10-15  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Form.cs: Change SelectActiveControl to internal, we need to call it in
+	MdiWindowManager.
+	
+	* MdiWindowManager.cs: In RaiseActivated call SelectActiveControl to select
+	active control when activate a new mdi window.
+	
+	[Fixes bug #330495]
+
+2007-10-15  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ComboBox.cs: Dont implicit add listbox_ctrl on OnHandleCreated because it
 	is already added.
 	[Fixes bug #333617]
