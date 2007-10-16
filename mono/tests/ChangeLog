@@ -1,3 +1,9 @@
+2007-10-16  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-333798.2.cs: added
+
+	* Makefile.am: added bug-333798.2.cs
+
 2007-10-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* generic_type_definition_encoding.2.cs: added, this tests

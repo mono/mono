@@ -1,3 +1,10 @@
+2007-10-16  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata.c: Implemented correct comparing of generic classes.
+	An inflated generic class can be equal to a non-inflated one if it
+	is inflated with generic type variables as type arguments.  Fixes
+	bug #333798.
+
 2007-10-15  Dick Porter  <dick@ximian.com>
 
 	* monitor.c (mono_monitor_try_enter_internal): Set thread state to
