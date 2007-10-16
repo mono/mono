@@ -21,11 +21,11 @@ using DecoderException = System.ArgumentException;
 
 using AssertType = NUnit.Framework.Assert;
 
-namespace MonoTests.System.Text {
-
+namespace MonoTests.System.Text
+{
 	[TestFixture]
-	public class UTF8EncodingTest : Assertion {
-
+	public class UTF8EncodingTest : Assertion
+	{
 		private UTF8Encoding utf8;
 
 		[SetUp]
@@ -34,95 +34,119 @@ namespace MonoTests.System.Text {
 			utf8 = new UTF8Encoding (true, true);
 		}
 
-                [Test]
-                public void TestEncodingGetBytes1()
-                {
-                        UTF8Encoding utf8Enc = new UTF8Encoding ();
-                        string UniCode = "\u0041\u2262\u0391\u002E";
-                        
-                        // "A<NOT IDENTICAL TO><ALPHA>." may be encoded as 41 E2 89 A2 CE 91 2E 
-                        // see (RFC 2044)
-                        byte[] utf8Bytes = utf8Enc.GetBytes (UniCode);
-                        
-                        Assertion.AssertEquals ("UTF #1", 0x41, utf8Bytes [0]);
-                        Assertion.AssertEquals ("UTF #2", 0xE2, utf8Bytes [1]);
-                        Assertion.AssertEquals ("UTF #3", 0x89, utf8Bytes [2]);
-                        Assertion.AssertEquals ("UTF #4", 0xA2, utf8Bytes [3]);
-                        Assertion.AssertEquals ("UTF #5", 0xCE, utf8Bytes [4]);
-                        Assertion.AssertEquals ("UTF #6", 0x91, utf8Bytes [5]);
-                        Assertion.AssertEquals ("UTF #7", 0x2E, utf8Bytes [6]);
-                }
-        
-                [Test]
-                public void TestEncodingGetBytes2()
-                {
-                        UTF8Encoding utf8Enc = new UTF8Encoding ();
-                        string UniCode = "\u0048\u0069\u0020\u004D\u006F\u006D\u0020\u263A\u0021";
-                        
-                        // "Hi Mom <WHITE SMILING FACE>!" may be encoded as 48 69 20 4D 6F 6D 20 E2 98 BA 21 
-                        // see (RFC 2044)
-                        byte[] utf8Bytes = new byte [11];
-                        
-                        int ByteCnt = utf8Enc.GetBytes (UniCode.ToCharArray(), 0, UniCode.Length, utf8Bytes, 0);
-                        
-                        Assertion.AssertEquals ("UTF #1", 11, ByteCnt);
-                        Assertion.AssertEquals ("UTF #2", 0x48, utf8Bytes [0]);
-                        Assertion.AssertEquals ("UTF #3", 0x69, utf8Bytes [1]);
-                        Assertion.AssertEquals ("UTF #4", 0x20, utf8Bytes [2]);
-                        Assertion.AssertEquals ("UTF #5", 0x4D, utf8Bytes [3]);
-                        Assertion.AssertEquals ("UTF #6", 0x6F, utf8Bytes [4]);
-                        Assertion.AssertEquals ("UTF #7", 0x6D, utf8Bytes [5]);
-                        Assertion.AssertEquals ("UTF #8", 0x20, utf8Bytes [6]);
-                        Assertion.AssertEquals ("UTF #9", 0xE2, utf8Bytes [7]);
-                        Assertion.AssertEquals ("UTF #10", 0x98, utf8Bytes [8]);
-                        Assertion.AssertEquals ("UTF #11", 0xBA, utf8Bytes [9]);
-                        Assertion.AssertEquals ("UTF #12", 0x21, utf8Bytes [10]);
-                }
-        
-                [Test]
-                public void TestDecodingGetChars1()
-                {
-                        UTF8Encoding utf8Enc = new UTF8Encoding ();
-                        // 41 E2 89 A2 CE 91 2E may be decoded as "A<NOT IDENTICAL TO><ALPHA>." 
-                        // see (RFC 2044)
-                        byte[] utf8Bytes = new byte [] {0x41, 0xE2, 0x89, 0xA2, 0xCE, 0x91, 0x2E};
-                        char[] UniCodeChars = utf8Enc.GetChars(utf8Bytes);
-                             
-                        Assertion.AssertEquals ("UTF #1", 0x0041, UniCodeChars [0]);
-                        Assertion.AssertEquals ("UTF #2", 0x2262, UniCodeChars [1]);
-                        Assertion.AssertEquals ("UTF #3", 0x0391, UniCodeChars [2]);
-                        Assertion.AssertEquals ("UTF #4", 0x002E, UniCodeChars [3]);
-                }
-                
-                [Test]
+		[Test]
+		public void IsBrowserDisplay ()
+		{
+			Assert (utf8.IsBrowserDisplay);
+		}
+
+		[Test]
+		public void IsBrowserSave ()
+		{
+			Assert (utf8.IsBrowserSave);
+		}
+
+		[Test]
+		public void IsMailNewsDisplay ()
+		{
+			Assert (utf8.IsMailNewsDisplay);
+		}
+
+		[Test]
+		public void IsMailNewsSave ()
+		{
+			Assert (utf8.IsMailNewsSave);
+		}
+
+		[Test]
+		public void TestEncodingGetBytes1()
+		{
+			UTF8Encoding utf8Enc = new UTF8Encoding ();
+			string UniCode = "\u0041\u2262\u0391\u002E";
+
+			// "A<NOT IDENTICAL TO><ALPHA>." may be encoded as 41 E2 89 A2 CE 91 2E 
+			// see (RFC 2044)
+			byte[] utf8Bytes = utf8Enc.GetBytes (UniCode);
+
+			Assertion.AssertEquals ("UTF #1", 0x41, utf8Bytes [0]);
+			Assertion.AssertEquals ("UTF #2", 0xE2, utf8Bytes [1]);
+			Assertion.AssertEquals ("UTF #3", 0x89, utf8Bytes [2]);
+			Assertion.AssertEquals ("UTF #4", 0xA2, utf8Bytes [3]);
+			Assertion.AssertEquals ("UTF #5", 0xCE, utf8Bytes [4]);
+			Assertion.AssertEquals ("UTF #6", 0x91, utf8Bytes [5]);
+			Assertion.AssertEquals ("UTF #7", 0x2E, utf8Bytes [6]);
+		}
+
+		[Test]
+		public void TestEncodingGetBytes2()
+		{
+			UTF8Encoding utf8Enc = new UTF8Encoding ();
+			string UniCode = "\u0048\u0069\u0020\u004D\u006F\u006D\u0020\u263A\u0021";
+
+			// "Hi Mom <WHITE SMILING FACE>!" may be encoded as 48 69 20 4D 6F 6D 20 E2 98 BA 21 
+			// see (RFC 2044)
+			byte[] utf8Bytes = new byte [11];
+
+			int ByteCnt = utf8Enc.GetBytes (UniCode.ToCharArray(), 0, UniCode.Length, utf8Bytes, 0);
+			Assertion.AssertEquals ("UTF #1", 11, ByteCnt);
+			Assertion.AssertEquals ("UTF #2", 0x48, utf8Bytes [0]);
+			Assertion.AssertEquals ("UTF #3", 0x69, utf8Bytes [1]);
+			Assertion.AssertEquals ("UTF #4", 0x20, utf8Bytes [2]);
+			Assertion.AssertEquals ("UTF #5", 0x4D, utf8Bytes [3]);
+			Assertion.AssertEquals ("UTF #6", 0x6F, utf8Bytes [4]);
+			Assertion.AssertEquals ("UTF #7", 0x6D, utf8Bytes [5]);
+			Assertion.AssertEquals ("UTF #8", 0x20, utf8Bytes [6]);
+			Assertion.AssertEquals ("UTF #9", 0xE2, utf8Bytes [7]);
+			Assertion.AssertEquals ("UTF #10", 0x98, utf8Bytes [8]);
+			Assertion.AssertEquals ("UTF #11", 0xBA, utf8Bytes [9]);
+			Assertion.AssertEquals ("UTF #12", 0x21, utf8Bytes [10]);
+		}
+
+		[Test]
+		public void TestDecodingGetChars1()
+		{
+			UTF8Encoding utf8Enc = new UTF8Encoding ();
+			// 41 E2 89 A2 CE 91 2E may be decoded as "A<NOT IDENTICAL TO><ALPHA>." 
+			// see (RFC 2044)
+			byte[] utf8Bytes = new byte [] {0x41, 0xE2, 0x89, 0xA2, 0xCE, 0x91, 0x2E};
+			char[] UniCodeChars = utf8Enc.GetChars(utf8Bytes);
+
+			Assertion.AssertEquals ("UTF #1", 0x0041, UniCodeChars [0]);
+			Assertion.AssertEquals ("UTF #2", 0x2262, UniCodeChars [1]);
+			Assertion.AssertEquals ("UTF #3", 0x0391, UniCodeChars [2]);
+			Assertion.AssertEquals ("UTF #4", 0x002E, UniCodeChars [3]);
+		}
+
+		[Test]
 #if NET_2_0
-                [Category ("NotWorking")]
+		[Category ("NotWorking")]
 #endif
-                public void TestMaxCharCount()
-                {
-                        UTF8Encoding UTF8enc = new UTF8Encoding ();
+		public void TestMaxCharCount()
+		{
+			UTF8Encoding UTF8enc = new UTF8Encoding ();
 #if NET_2_0
-                        // hmm, where is this extra 1 coming from?
-                        Assertion.AssertEquals ("UTF #1", 51, UTF8enc.GetMaxCharCount(50));
+			// hmm, where is this extra 1 coming from?
+			Assertion.AssertEquals ("UTF #1", 51, UTF8enc.GetMaxCharCount(50));
 #else
-                        Assertion.AssertEquals ("UTF #1", 50, UTF8enc.GetMaxCharCount(50));
+			Assertion.AssertEquals ("UTF #1", 50, UTF8enc.GetMaxCharCount(50));
 #endif
-                }
-        
-                [Test]
+		}
+
+		[Test]
 #if NET_2_0
-                [Category ("NotWorking")]
+		[Category ("NotWorking")]
 #endif
-                public void TestMaxByteCount()
-                {
-                        UTF8Encoding UTF8enc = new UTF8Encoding ();
+		public void TestMaxByteCount()
+		{
+			UTF8Encoding UTF8enc = new UTF8Encoding ();
 #if NET_2_0
-                        // maybe under .NET 2.0 insufficient surrogate pair is just not handled, and 3 is Preamble size.
-                        Assertion.AssertEquals ("UTF #1", 153, UTF8enc.GetMaxByteCount(50));
+			// maybe under .NET 2.0 insufficient surrogate pair is
+			// just not handled, and 3 is Preamble size.
+			Assertion.AssertEquals ("UTF #1", 153, UTF8enc.GetMaxByteCount(50));
 #else
-                        Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
+			Assertion.AssertEquals ("UTF #1", 200, UTF8enc.GetMaxByteCount(50));
 #endif
-                }
+		}
 
 		// regression for bug #59648
 		[Test]
@@ -132,15 +156,15 @@ namespace MonoTests.System.Text {
 
 			byte[] data = new byte [] { 0xC0, 0xAF };
 			string s = u.GetString (data);
-			AssertEquals (0, s.Length);
+			AssertEquals ("#A1", 0, s.Length);
 
 			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
 			s = u.GetString (data);
-			AssertEquals (4, s.Length);
-			AssertEquals (0x30, (int) s [0]);
-			AssertEquals (0x31, (int) s [1]);
-			AssertEquals (0x30, (int) s [2]);
-			AssertEquals (0x32, (int) s [3]);
+			AssertEquals ("#B1", 4, s.Length);
+			AssertEquals ("#B2", 0x30, (int) s [0]);
+			AssertEquals ("#B3", 0x31, (int) s [1]);
+			AssertEquals ("#B4", 0x30, (int) s [2]);
+			AssertEquals ("#B5", 0x32, (int) s [3]);
 		}
 
 		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/
@@ -490,7 +514,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-// MS Fx 1.1 accept this
+		// MS Fx 1.1 accept this
 //		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_337 () 
 		{

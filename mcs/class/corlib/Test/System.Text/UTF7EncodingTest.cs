@@ -18,6 +18,34 @@ namespace MonoTests.System.Text
         [TestFixture]
         public class UTF7EncodingTest : Assertion
         {
+		[Test]
+		public void IsBrowserDisplay ()
+		{
+			UTF7Encoding utf7 = new UTF7Encoding ();
+			Assert (!utf7.IsBrowserDisplay);
+		}
+
+		[Test]
+		public void IsBrowserSave ()
+		{
+			UTF7Encoding utf7 = new UTF7Encoding ();
+			Assert (!utf7.IsBrowserSave);
+		}
+
+		[Test]
+		public void IsMailNewsDisplay ()
+		{
+			UTF7Encoding utf7 = new UTF7Encoding ();
+			Assert (utf7.IsMailNewsDisplay);
+		}
+
+		[Test]
+		public void IsMailNewsSave ()
+		{
+			UTF7Encoding utf7 = new UTF7Encoding ();
+			Assert (utf7.IsMailNewsSave);
+		}
+
                 [Test]
                 public void TestDirectlyEncoded1() 
                 {

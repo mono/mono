@@ -4,19 +4,20 @@
 //
 // <c> 2002 Mike Kestner
 
-using NUnit.Framework;
-using System.Text;
 using System;
+using System.Text;
 
+using NUnit.Framework;
 
-namespace MonoTests.System.Text {
-
-	public class ASCIIEncodingTest : TestCase {
-
+namespace MonoTests.System.Text
+{
+	public class ASCIIEncodingTest
+	{
 		private char[] testchars;
 		private byte[] testbytes;
 
-		protected override void SetUp ()
+		[SetUp]
+		public void SetUp ()
 		{
 			testchars = new char[4];
 			testchars[0] = 'T';
@@ -30,158 +31,183 @@ namespace MonoTests.System.Text {
 			testbytes[3] = (byte) 't';
 		}
 
-		// Test GetBytes(char[])
+		[Test]
+		public void IsBrowserDisplay ()
+		{
+			Assert.IsFalse (Encoding.ASCII.IsBrowserDisplay);
+		}
+
+		[Test]
+		public void IsBrowserSave ()
+		{
+			Assert.IsFalse (Encoding.ASCII.IsBrowserSave);
+		}
+
+		[Test]
+		public void IsMailNewsDisplay ()
+		{
+			Assert.IsFalse (Encoding.ASCII.IsMailNewsDisplay);
+		}
+
+		[Test]
+		public void IsMailNewsSave ()
+		{
+			Assert.IsFalse (Encoding.ASCII.IsMailNewsSave);
+		}
+
+		[Test] // Test GetBytes(char[])
 		public void TestGetBytes1 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = ascii_encoding.GetBytes(testchars);
 			for (int i = 0; i < testchars.Length; i++)
-                		AssertEquals (testchars[i], (char) bytes[i]);
-        	}
+				Assert.AreEqual (testchars[i], (char) bytes[i]);
+		}
 
-		// Test GetBytes(char[], int, int)
+		[Test] // Test GetBytes(char[], int, int)
 		public void TestGetBytes2 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = ascii_encoding.GetBytes(testchars, 1, 1);
-                	AssertEquals (1, bytes.Length);
-                	AssertEquals (testchars[1], (char) bytes[0]);
-        	}
+			Assert.AreEqual (1, bytes.Length, "#1");
+			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
+		}
 
-		// Test non-ASCII char in char[]
+		[Test] // Test non-ASCII char in char[]
 		public void TestGetBytes3 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			testchars[2] = (char) 0x80;
 			byte[] bytes = ascii_encoding.GetBytes(testchars);
-                	AssertEquals ('T', (char) bytes[0]);
-                	AssertEquals ('e', (char) bytes[1]);
-                	AssertEquals ('?', (char) bytes[2]);
-                	AssertEquals ('t', (char) bytes[3]);
-        	}
+			Assert.AreEqual ('T', (char) bytes [0], "#1");
+			Assert.AreEqual ('e', (char) bytes [1], "#2");
+			Assert.AreEqual ('?', (char) bytes [2], "#3");
+			Assert.AreEqual ('t', (char) bytes [3], "#4");
+		}
 
-		// Test GetBytes(char[], int, int, byte[], int)
+		[Test] // Test GetBytes(char[], int, int, byte[], int)
 		public void TestGetBytes4 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = new Byte[1];
 			int cnt = ascii_encoding.GetBytes(testchars, 1, 1, bytes, 0);
-                	AssertEquals (1, cnt);
-                	AssertEquals (testchars[1], (char) bytes[0]);
-        	}
+			Assert.AreEqual (1, cnt, "#1");
+			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
+		}
 
-		// Test GetBytes(string, int, int, byte[], int)
+		[Test] // Test GetBytes(string, int, int, byte[], int)
 		public void TestGetBytes5 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = new Byte[1];
 			int cnt = ascii_encoding.GetBytes("Test", 1, 1, bytes, 0);
-                	AssertEquals ('e', (char) bytes[0]);
-        	}
+			Assert.AreEqual ('e', (char) bytes [0], "#1");
+		}
 
-		// Test GetBytes(string)
+		[Test] // Test GetBytes(string)
 		public void TestGetBytes6 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = ascii_encoding.GetBytes("Test");
 			for (int i = 0; i < testchars.Length; i++)
-                		AssertEquals (testchars[i], (char) bytes[i]);
-        	}
+				Assert.AreEqual (testchars [i], (char) bytes [i]);
+		}
 
-		// Test GetChars(byte[])
+		[Test] // Test GetChars(byte[])
 		public void TestGetChars1 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			char[] chars = ascii_encoding.GetChars(testbytes);
 			for (int i = 0; i < testbytes.Length; i++)
-                		AssertEquals (testbytes[i], (byte) chars[i]);
-        	}
+				Assert.AreEqual (testbytes[i], (byte) chars[i]);
+		}
 
-		// Test GetChars(byte[], int, int)
+		[Test] // Test GetChars(byte[], int, int)
 		public void TestGetChars2 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			char[] chars = ascii_encoding.GetChars(testbytes, 1, 1);
-                	AssertEquals (1, chars.Length);
-                	AssertEquals (testbytes[1], (byte) chars[0]);
-        	}
+			Assert.AreEqual (1, chars.Length, "#1");
+			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
+		}
 
-		// Test non-ASCII char in byte[]
+		[Test] // Test non-ASCII char in byte[]
 		public void TestGetChars3 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			testbytes[2] = 0x80;
 			char[] chars = ascii_encoding.GetChars(testbytes);
-                	AssertEquals ('T', chars[0]);
-                	AssertEquals ('e', chars[1]);
-                	AssertEquals ('?', chars[2]);
-                	AssertEquals ('t', chars[3]);
-        	}
+			Assert.AreEqual ('T', chars [0], "#1");
+			Assert.AreEqual ('e', chars [1], "#2");
+			Assert.AreEqual ('?', chars [2], "#3");
+			Assert.AreEqual ('t', chars [3], "#4");
+		}
 
-		// Test GetChars(byte[], int, int, char[], int)
+		[Test] // Test GetChars(byte[], int, int, char[], int)
 		public void TestGetChars4 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			char[] chars = new char[1];
 			int cnt = ascii_encoding.GetChars(testbytes, 1, 1, chars, 0);
-                	AssertEquals (1, cnt);
-                	AssertEquals (testbytes[1], (byte) chars[0]);
-        	}
+			Assert.AreEqual (1, cnt, "#1");
+			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
+		}
 
-		// Test GetString(char[])
+		[Test] // Test GetString(char[])
 		public void TestGetString1 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			string str = ascii_encoding.GetString(testbytes);
-                	AssertEquals ("Test", str);
-        	}
+			Assert.AreEqual ("Test", str);
+		}
 
-		// Test GetString(char[], int, int)
+		[Test] // Test GetString(char[], int, int)
 		public void TestGetString2 () 
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			string str = ascii_encoding.GetString(testbytes, 1, 2);
-                	AssertEquals ("es", str);
-        	}
+			Assert.AreEqual ("es", str);
+		}
 
-		// Test invalid byte handling
+		[Test] // Test invalid byte handling
 		public void TestGetString3 () 
 		{
 			Encoding encoding = Encoding.ASCII;
 			byte [] bytes = new byte [] {0x61, 0xE1, 0xE2};
 			string s = encoding.GetString (bytes, 0, 3);
 #if NET_2_0
-			AssertEquals ("a??", s);
+			Assert.AreEqual ("a??", s);
 #else
-			AssertEquals ("aab", s);
+			Assert.AreEqual ("aab", s);
 #endif
 		}
 
-		// Test Decoder
+		[Test] // Test Decoder
 		public void TestDecoder ()
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			char[] chars = new char[1];
 			int cnt = ascii_encoding.GetDecoder().GetChars(testbytes, 1, 1, chars, 0);
-                	AssertEquals (1, cnt);
-                	AssertEquals (testbytes[1], (byte) chars[0]);
+			Assert.AreEqual (1, cnt, "#1");
+			Assert.AreEqual (testbytes [1], (byte) chars [0], "#2");
 		}
 
-		// Test Decoder
+		[Test] // Test Decoder
 		public void TestEncoder ()
 		{
-                	Encoding ascii_encoding = Encoding.ASCII;
+			Encoding ascii_encoding = Encoding.ASCII;
 			byte[] bytes = new Byte[1];
 			int cnt = ascii_encoding.GetEncoder().GetBytes(testchars, 1, 1, bytes, 0, false);
-                	AssertEquals (1, cnt);
-                	AssertEquals (testchars[1], (char) bytes[0]);
+			Assert.AreEqual (1, cnt, "#1");
+			Assert.AreEqual (testchars [1], (char) bytes [0], "#2");
 		}
 
+		[Test]
 		public void TestZero ()
 		{
 			Encoding encoding = Encoding.ASCII;
-			AssertEquals ("#01", encoding.GetString (new byte [0]), "");
-			AssertEquals ("#02", encoding.GetString (new byte [0], 0, 0), "");
+			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0]), "#1");
+			Assert.AreEqual (string.Empty, encoding.GetString (new byte [0], 0, 0), "#2");
 		}
 
 #if NET_2_0
@@ -195,5 +221,4 @@ namespace MonoTests.System.Text {
 		}
 #endif
 	}
-
 }

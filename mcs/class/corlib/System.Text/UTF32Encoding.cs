@@ -76,13 +76,11 @@ public sealed class UTF32Encoding : Encoding
 			body_name = "utf-32BE";
 			encoding_name = "UTF-32 (Big-Endian)";
 			header_name = "utf-32BE";
-			is_browser_save = false;
 			web_name = "utf-32BE";
 		} else {
 			body_name = "utf-32";
 			encoding_name = "UTF-32";
 			header_name = "utf-32";
-			is_browser_save = true;
 			web_name = "utf-32";
 		}
 		

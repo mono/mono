@@ -37,6 +37,42 @@ namespace MonoTests.System.Text
 	public class EncodingTest
 	{
 		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void IsBrowserDisplay ()
+		{
+			MyEncoding enc = new MyEncoding ();
+			Assert.IsFalse (enc.IsBrowserDisplay);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void IsBrowserSave ()
+		{
+			MyEncoding enc = new MyEncoding ();
+			Assert.IsFalse (enc.IsBrowserSave);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void IsMailNewsDisplay ()
+		{
+			MyEncoding enc = new MyEncoding ();
+			Assert.IsFalse (enc.IsMailNewsDisplay);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void IsMailNewsSave ()
+		{
+			MyEncoding enc = new MyEncoding ();
+			Assert.IsFalse (enc.IsMailNewsSave);
+		}
+
+		[Test]
 		public void GetEncoding_CodePage_Default ()
 		{
 			Assert.AreEqual (Encoding.Default, Encoding.GetEncoding (0));

@@ -9,11 +9,10 @@
 // Used for testing custom encoding.
 //
 
-#if NET_2_0
-
 using System;
 using System.IO;
 using System.Text;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Text
@@ -60,6 +59,3 @@ namespace MonoTests.System.Text
 		}
 	}
 }
-
-#endif
-

@@ -1,3 +1,17 @@
+2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestEncoding.cs: Also make class available on 1.0 profile.
+	* EncodingTest.cs: Added tests for Is* properties.
+	* UTF7EncodingTest.cs: Added tests for Is* properties.
+	* UnicodeEncodingTest.cs: Added tests for Is* properties. Fixed
+	line endings.
+	* UTF8EncodingTest.cs: Added tests for Is* properties. Spaces to
+	tabs. Numbered tests.
+	* ASCIIEncodingTest.cs: Added tests for Is* properties. No longer
+	derive from TestCase class. Spaces to tabs.
+	* UTF32EncodingTest.cs: Added tests for Is* properties. No longer
+	derive from deprecated Assertion class.
+
 2007-07-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DecoderReplacementFallbackTest.cs: Fixed DontChangeReadOnlyCodePage-

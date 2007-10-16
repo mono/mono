@@ -69,6 +69,7 @@ public class UTF8Encoding : Encoding
 		is_browser_save = true;
 		is_browser_display = true;
 		is_mail_news_display = true;
+		is_mail_news_save = true;
 		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 

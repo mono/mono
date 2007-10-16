@@ -12,9 +12,37 @@ using System.Text;
 
 namespace MonoTests.System.Text
 {
-    [TestFixture]
-    public class UnicodeEncodingTest 
-    {
+	[TestFixture]
+	public class UnicodeEncodingTest 
+	{
+		[Test]
+		public void IsBrowserDisplay ()
+		{
+			UnicodeEncoding enc = new UnicodeEncoding ();
+			Assert.IsFalse (enc.IsBrowserDisplay);
+		}
+
+		[Test]
+		public void IsBrowserSave ()
+		{
+			UnicodeEncoding enc = new UnicodeEncoding ();
+			Assert.IsTrue (enc.IsBrowserSave);
+		}
+
+		[Test]
+		public void IsMailNewsDisplay ()
+		{
+			UnicodeEncoding enc = new UnicodeEncoding ();
+			Assert.IsFalse (enc.IsMailNewsDisplay);
+		}
+
+		[Test]
+		public void IsMailNewsSave ()
+		{
+			UnicodeEncoding enc = new UnicodeEncoding ();
+			Assert.IsFalse (enc.IsMailNewsSave);
+		}
+
                 [Test]
                 public void TestEncodingGetBytes1()
                 {
