@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Mime;
@@ -65,6 +66,8 @@ namespace System.Net.Mail {
 		StreamReader reader;
 		int boundaryIndex;
 		MailAddress defaultFrom;
+
+		MailMessage messageInProcess;
 
 		// ESMTP state
 		enum AuthMechs {
@@ -185,17 +188,22 @@ namespace System.Net.Mail {
 
 		public int Timeout {
 			get { return timeout; }
-			// FIXME: Check to make sure an email is not being sent.
 			set { 
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
+				if (messageInProcess != null)
+					throw new InvalidOperationException ("Cannot set Timeout while Sending a message");
 				timeout = value; 
 			}
 		}
 
 		public bool UseDefaultCredentials {
 			get { return useDefaultCredentials; }
-			set { throw new NotImplementedException ("Default credentials are not supported"); }
+			[MonoNotSupported ("no DefaultCredential support in Mono")]
+			set {
+				if (value)
+					throw new NotImplementedException ("Default credentials are not supported");
+			}
 		}
 
 		#endregion // Properties
@@ -207,6 +215,28 @@ namespace System.Net.Mail {
 		#endregion // Events 
 
 		#region Methods
+
+		private string EncodeSubjectRFC2047 (MailMessage message)
+		{
+			if (message.SubjectEncoding == null || Encoding.ASCII.Equals (message.SubjectEncoding))
+				return message.Subject;
+			string b64 = Convert.ToBase64String (message.SubjectEncoding.GetBytes (message.Subject));
+			return String.Concat ("=?", message.SubjectEncoding.HeaderName, "?B?", b64, "?=");
+		}
+
+		private string EncodeBody (MailMessage message)
+		{
+			string body = message.Body;
+			// RFC 2045 encoding
+			switch (message.ContentTransferEncoding) {
+			case TransferEncoding.SevenBit:
+				return body;
+			case TransferEncoding.Base64:
+				return Convert.ToBase64String (message.BodyEncoding.GetBytes (body));
+			default:
+				return ToQuotedPrintable (body, message.BodyEncoding);
+			}
+		}
 
 		private void EndSection (string section)
 		{
@@ -333,6 +363,9 @@ namespace System.Net.Mail {
 
 		public void Send (MailMessage message)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
 			if (String.IsNullOrEmpty (Host))
 				throw new InvalidOperationException ("The SMTP host was not specified");
 			
@@ -341,6 +374,7 @@ namespace System.Net.Mail {
 			
 			// Block while sending
 			mutex.WaitOne ();
+			messageInProcess = message;
 
 			SmtpResponse status;
 
@@ -436,11 +470,12 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode, status.Description);
 
 			// Send message headers
+			SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
 			SendHeader (HeaderName.From, from.ToString ());
 			SendHeader (HeaderName.To, message.To.ToString ());
 			if (message.CC.Count > 0)
 				SendHeader (HeaderName.Cc, message.CC.ToString ());
-			SendHeader (HeaderName.Subject, message.Subject);
+			SendHeader (HeaderName.Subject, EncodeSubjectRFC2047 (message));
 
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, message.Headers [s]);
@@ -475,6 +510,7 @@ namespace System.Net.Mail {
 
 			// Release the mutex to allow other threads access
 			mutex.ReleaseMutex ();
+			messageInProcess = null;
 		}
 
 		public void Send (string from, string to, string subject, string body)
@@ -524,10 +560,12 @@ namespace System.Net.Mail {
 		}
 
 		private void SendSimpleBody (MailMessage message) {
-			SendHeader ("Content-Type", message.BodyContentType.ToString ());
+			SendHeader (HeaderName.ContentType, message.BodyContentType.ToString ());
+			if (message.ContentTransferEncoding != TransferEncoding.SevenBit)
+				SendHeader (HeaderName.ContentTransferEncoding, GetTransferEncodingName (message.ContentTransferEncoding));
 			SendData (string.Empty);
 
-			SendData (message.Body);
+			SendData (EncodeBody (message));
 		}
 
 		private void SendMultipartBody (MailMessage message) {
@@ -539,10 +577,12 @@ namespace System.Net.Mail {
 			messageContentType.Boundary = boundary;
 			messageContentType.MediaType = "multipart/mixed";
 
-			SendHeader ("Content-Type", messageContentType.ToString ());
+			SendHeader (HeaderName.ContentType, messageContentType.ToString ());
+			if (message.ContentTransferEncoding != TransferEncoding.SevenBit)
+				SendHeader (HeaderName.ContentTransferEncoding, GetTransferEncodingName (message.ContentTransferEncoding));
 			SendData (string.Empty);
 
-			SendData (message.Body);
+			SendData (EncodeBody (message));
 			SendData (string.Empty);
 
 			message.AlternateViews.Add (AlternateView.CreateAlternateViewFromString (message.Body, new ContentType ("text/plain")));
@@ -585,12 +625,12 @@ namespace System.Net.Mail {
 					break;
 				case TransferEncoding.QuotedPrintable:
 					StreamReader sr = new StreamReader (alternateViews [i].ContentStream);
-					SendData (ToQuotedPrintable (sr.ReadToEnd ()));
+					SendData (ToQuotedPrintable (sr.ReadToEnd (), Encoding.GetEncoding (contentType.CharSet)));
 					break;
-				//case TransferEncoding.SevenBit:
-				//case TransferEncoding.Unknown:
-				default:
-					SendData ("TO BE IMPLEMENTED");
+				case TransferEncoding.SevenBit:
+				case TransferEncoding.Unknown:
+					content = new byte [alternateViews [i].ContentStream.Length];
+					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
 
@@ -620,12 +660,12 @@ namespace System.Net.Mail {
 					break;
 				case TransferEncoding.QuotedPrintable:
 					StreamReader sr = new StreamReader (attachments [i].ContentStream);
-					SendData (ToQuotedPrintable (sr.ReadToEnd ()));
+					SendData (ToQuotedPrintable (sr.ReadToEnd (), Encoding.GetEncoding (contentType.CharSet)));
 					break;
-				//case TransferEncoding.SevenBit:
-				//case TransferEncoding.Unknown:
-				default:
-					SendData ("TO BE IMPLEMENTED");
+				case TransferEncoding.SevenBit:
+				case TransferEncoding.Unknown:
+					content = new byte [attachments [i].ContentStream.Length];
+					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
 
@@ -671,12 +711,11 @@ namespace System.Net.Mail {
 			SendData (string.Empty);
 		}
 
-		private string ToQuotedPrintable (string input) {
-			StringReader reader = new StringReader (input);
+		// use proper encoding to escape input
+		private string ToQuotedPrintable (string input, Encoding enc) {
+			byte [] bytes = enc.GetBytes (input);
 			StringWriter writer = new StringWriter ();
-			int i;
-
-			while ((i = reader.Read ()) > 0) {
+			foreach (byte i in bytes) {
 				if (i > 127) {
 					writer.Write ("=");
 					writer.Write (Convert.ToString (i, 16).ToUpper ());
@@ -756,12 +795,6 @@ namespace System.Net.Mail {
 			}
 		}
 		
-		/*[MonoTODO]
-		private sealed ContextAwareResult IGetContextAwareResult.GetContextAwareResult ()
-		{
-			throw new NotImplementedException ();
-		}*/
-		
 		#endregion // Methods
 		
 		// The HeaderName struct is used to store constant string values representing mail headers.
@@ -778,6 +811,7 @@ namespace System.Net.Mail {
 			public const string Priority = "Priority";
 			public const string Importance = "Importance";
 			public const string XPriority = "X-Priority";
+			public const string Date = "Date";
 		}
 
 		// This object encapsulates the status code and description of an SMTP response.

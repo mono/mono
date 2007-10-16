@@ -1,3 +1,7 @@
+2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MailMessageTest.cs : added test for encoding guess.
+
 2007-06-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MailAddressTest.cs: Added tests for ctors and specifying display

@@ -1,5 +1,19 @@
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MailMessage.cs : Some entire refactory on BodyEncoding and
+	  IsBodyHtml. BodyEncoding and SubjectEncoding are guessed when
+	  Body and Subject are set for each.
+	* SmtpClient.cs :
+	  Subject header is encoded according to RFC 2047.
+	  Body is encoded according to RFC 2821.
+	  Output Date header.
+	  ToQuotedPrintable() should take encoding into consideration.
+	  For SevenBit/Unknown TransferEncoding, just decode with ASCII.
+	  In set_UseDefaultCredentials(), raise NIE only when value is true.
+	  In set_Timeout(), raise an error when Send() is in progress.
+
+2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SmtpClient.cs : Replace every \r and \n with \r\n per RFC 2821 
 	  section 2.3.7, or you will receive SMTP error 451.
 

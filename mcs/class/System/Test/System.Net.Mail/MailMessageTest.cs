@@ -135,6 +135,34 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual (msg.To[0].Address, "to@example.com", "#B2");
 			Assert.AreEqual (msg.To[1].Address, "you@nowhere.com", "#B3");
 		}
+
+		[Test]
+		public void BodyAndEncoding ()
+		{
+			MailMessage msg = new MailMessage ("from@example.com", "to@example.com");
+			Assert.AreEqual (null, msg.BodyEncoding, "#1");
+			msg.Body = "test";
+			Assert.AreEqual (Encoding.ASCII, msg.BodyEncoding, "#2");
+			msg.Body = "test\u3067\u3059";
+			Assert.AreEqual (Encoding.ASCII, msg.BodyEncoding, "#3");
+			msg.BodyEncoding = null;
+			msg.Body = "test\u3067\u3059";
+			Assert.AreEqual (Encoding.UTF8, msg.BodyEncoding, "#4");
+		}
+
+		[Test]
+		public void SubjectAndEncoding ()
+		{
+			MailMessage msg = new MailMessage ("from@example.com", "to@example.com");
+			Assert.AreEqual (null, msg.SubjectEncoding, "#1");
+			msg.Subject = "test";
+			Assert.AreEqual (Encoding.ASCII, msg.SubjectEncoding, "#2");
+			msg.Subject = "test\u3067\u3059";
+			Assert.AreEqual (Encoding.ASCII, msg.SubjectEncoding, "#3");
+			msg.SubjectEncoding = null;
+			msg.Subject = "test\u3067\u3059";
+			Assert.AreEqual (Encoding.UTF8, msg.SubjectEncoding, "#4");
+		}
 	}
 }
 #endif

@@ -53,8 +53,8 @@ namespace System.Net.Mail {
 		NameValueCollection headers;
 		MailAddressCollection to;
 		string subject;
-		Encoding subjectEncoding;
-		ContentType bodyContentType;
+		Encoding subjectEncoding, bodyEncoding;
+		bool isHtml;
 
 		#endregion // Fields
 
@@ -128,20 +128,39 @@ namespace System.Net.Mail {
 
 		public string Body {
 			get { return body; }
-			set { body = value; }
+			set {
+				// autodetect suitable body encoding (ASCII or UTF-8), if it is not initialized yet.
+				if (value != null && bodyEncoding == null)
+					bodyEncoding = GuessEncoding (value);
+				body = value;
+			}
 		}
 
 		internal ContentType BodyContentType {
 			get {
-				if (bodyContentType == null)
-					bodyContentType = new ContentType ("text/plain; charset=us-ascii");
-				return bodyContentType;
+				ContentType ct = new ContentType (isHtml ? "text/html" : "text/plain");
+				ct.CharSet = (BodyEncoding ?? Encoding.ASCII).HeaderName;
+				return ct;
+			}
+		}
+
+		internal TransferEncoding ContentTransferEncoding {
+			get {
+				Encoding enc = BodyEncoding;
+				if (Encoding.ASCII.Equals (enc))
+					return TransferEncoding.SevenBit;
+				else if (Encoding.UTF8.CodePage == enc.CodePage ||
+				    Encoding.Unicode.CodePage == enc.CodePage ||
+				    Encoding.UTF32.CodePage == enc.CodePage)
+					return TransferEncoding.Base64;
+				else
+					return TransferEncoding.QuotedPrintable;
 			}
 		}
 
 		public Encoding BodyEncoding {
-			get { return Encoding.GetEncoding (BodyContentType.CharSet); }
-			set { BodyContentType.CharSet = value.WebName; }
+			get { return bodyEncoding; }
+			set { bodyEncoding = value; }
 		}
 
 		public MailAddressCollection CC {
@@ -163,13 +182,8 @@ namespace System.Net.Mail {
 		}
 
 		public bool IsBodyHtml {
-			get { return String.Compare (BodyContentType.MediaType, "text/html", true, CultureInfo.InvariantCulture) == 0; }
-			set {
-				if (value)
-					BodyContentType.MediaType = "text/html";
-				else
-					BodyContentType.MediaType = "text/plain";
-			}
+			get { return isHtml; }
+			set { isHtml = value; }
 		}
 
 		public MailPriority Priority {
@@ -189,7 +203,11 @@ namespace System.Net.Mail {
 
 		public string Subject {
 			get { return subject; }
-			set { subject = value; }
+			set {
+				if (value != null && subjectEncoding == null)
+					subjectEncoding = GuessEncoding (value);
+				subject = value;
+			}
 		}
 
 		public Encoding SubjectEncoding {
@@ -213,6 +231,14 @@ namespace System.Net.Mail {
 
 		protected virtual void Dispose (bool disposing)
 		{
+		}
+
+		private Encoding GuessEncoding (string s)
+		{
+			for (int i = 0; i < s.Length; i++)
+				if (s [i] >= '\u0080')
+					return Encoding.UTF8;
+			return Encoding.ASCII;
 		}
 
 		#endregion // Methods
