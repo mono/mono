@@ -183,7 +183,6 @@
     <Compile Include="System.Configuration\IgnoreSection.cs" />
     <Compile Include="System.Configuration\InfiniteIntConverter.cs" />
     <Compile Include="System.Configuration\InfiniteTimeSpanConverter.cs" />
-    <Compile Include="System.Configuration\IntegerConfigurationProperty.cs" />
     <Compile Include="System.Configuration\IntegerValidator.cs" />
     <Compile Include="System.Configuration\IntegerValidatorAttribute.cs" />
     <Compile Include="System.Configuration\InternalConfigurationFactory.cs" />
