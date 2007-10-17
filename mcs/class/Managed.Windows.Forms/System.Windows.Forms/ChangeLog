@@ -1,3 +1,7 @@
+2007-10-17  Geoff Norton  <gnorton@novell.com>
+
+	* ComboBox.cs: Destroy the popup after hiding it.  Fixes #322582
+
 2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ButtonBase.cs: Fixed IsDefault to use assigned value instead of

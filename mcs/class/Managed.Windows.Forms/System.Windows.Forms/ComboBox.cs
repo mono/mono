@@ -1511,6 +1511,12 @@ namespace System.Windows.Forms
 #if NET_2_0
 			OnDropDownClosed (EventArgs.Empty);
 #endif
+			/*
+			 * Apples X11 looses override-redirect when doing a Unmap/Map on a previously mapped window
+			 * this causes the popup to appear under the main form.  This is horrible but necessary
+			 */
+			listbox_ctrl.Dispose ();
+			listbox_ctrl = null;
 		}
 		
 		private int FindStringCaseInsensitive (string search)
