@@ -171,9 +171,17 @@ namespace MonoTests.System.Threading {
 		[Test]
 		public void TestDelayZeroPeriodZero() {
 			Bucket b = new Bucket();
-			new Timer(new TimerCallback(Callback),b,0,0);
-			Thread.Sleep(50);
-			Assert.IsTrue(b.count > 45);
+			Timer t = new Timer(new TimerCallback(Callback),b,0,0);
+			/* we need to guess how many times the callback is invoked 
+			 * repeatedly in any given amount of time: this depends on cpu
+			 * speed, schedule decisions, system load etc. so the numbers 
+			 * are quite relaxed and we assume success if it executed 
+			 * 50 times in less than 100 ms.
+			 */
+			Thread.Sleep(100);
+			//stop the timer
+			t.Change (int.MaxValue, Timeout.Infinite);
+			Assert.IsTrue(b.count > 50);
 			
 		}
 
