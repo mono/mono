@@ -1,5 +1,7 @@
 2007-10-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.h mini-amd64.c: Add support for the common vtable trampoline.
+
 	* inssel.brg (mini_emit_virtual_call): Fix the computation of ins->inst_offset on
 	64 bit platforms.
 
