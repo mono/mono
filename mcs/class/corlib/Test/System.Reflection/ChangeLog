@@ -1,3 +1,7 @@
+2007-10-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Enabled test for bug #334204.
+
 2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Added test for bug #334203. Use more meaningful name

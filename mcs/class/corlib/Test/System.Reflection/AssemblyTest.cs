@@ -76,7 +76,6 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test] // bug #334203
-		[Category ("NotWorking")]
 		public void GetType_TypeName_AssemblyName ()
 		{
 			Assembly a = typeof (int).Assembly;
