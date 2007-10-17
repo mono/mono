@@ -17,18 +17,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2006 Novell, Inc.
+// Copyright (c) 2004-2007 Novell, Inc.
 //
 // Authors:
-//	Geoff Norton  <gnorton@customerdna.com>
+//	Geoff Norton  <gnorton@novell.com>
 //
 //
 
 // This really doesn't work at all; please dont file bugs on it yet.
 
 // MAJOR TODO:
-//  Fix clipping of children
 //  Wire up keyboard
+
+#define EnableNCArea
 
 using System;
 using System.Threading;
@@ -53,6 +54,7 @@ namespace System.Windows.Forms {
 		private static int RefCount;
 		private static bool themes_enabled;
 		private static IntPtr FocusWindow;
+		private static IntPtr ActiveWindow;
 
 		// Mouse 
 		private static MouseButtons MouseState;
@@ -70,16 +72,18 @@ namespace System.Windows.Forms {
 		private static IntPtr FosterParent;
 		private static int TitleBarHeight;
 		private static int MenuBarHeight;
-		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
+		private static EventTypeSpec [] view_events = new EventTypeSpec [] {
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSetFocusPart), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlClick), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlContextualMenuClick), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrack), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSimulateHit), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlBoundsChanged), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrackingAreaEntered), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrackingAreaExited), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlDraw) 
 									};
-		private static EventTypeSpec [] windowEvents = new EventTypeSpec[] {
+		private static EventTypeSpec [] window_events = new EventTypeSpec[] {
 									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseEntered),
 									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseExited),
 									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseMoved),
@@ -171,8 +175,13 @@ namespace System.Windows.Forms {
 			WindowBackgrounds = new Hashtable ();
 			
 			// Initialize the FosterParent
-			IntPtr rect = IntPtr.Zero;
+			Rect rect = new Rect ();
 			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
+			ProcessSerialNumber psn = new ProcessSerialNumber();
+
+			CheckError (GetCurrentProcess( ref psn ), "GetCurrentProcess ()");
+			CheckError (TransformProcessType (ref psn, 1), "TransformProcessType ()");
+			CheckError (SetFrontProcess (ref psn), "SetFrontProcess ()");
 			CheckError (CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent), "CreateFosterParent ()");
 			
 			// Get some values about bar heights
@@ -191,9 +200,6 @@ namespace System.Windows.Forms {
 			GetMessageResult = true;
 		}
 		
-		#endregion
-		
-		#region Private methods
 		#endregion
 		
 		#region Callbacks
@@ -248,7 +254,6 @@ namespace System.Windows.Forms {
 						break;
 					}
 					default: {
-						Console.WriteLine ("WARNING: Unhandled eventClass {0}", eventClass);
 						break;
 					}
 				}
@@ -260,6 +265,42 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Private Methods
+
+		internal Point ConvertScreenPointToClient (IntPtr handle, Point point) {
+			Point converted_point = new Point ();
+			Rect window_bounds = new Rect ();
+			CGPoint native_point = new CGPoint ();
+
+			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
+			
+			native_point.x = (point.X - window_bounds.left);
+			native_point.y = (point.Y - window_bounds.top);
+
+			HIViewConvertPoint (ref native_point, IntPtr.Zero, handle);
+
+			converted_point.X = (int)native_point.x;
+			converted_point.Y = (int)native_point.y;
+
+			return converted_point;
+		}
+		
+		internal Point ConvertClientPointToScreen (IntPtr handle, Point point) {
+			Point converted_point = new Point ();
+			Rect window_bounds = new Rect ();
+			CGPoint native_point = new CGPoint ();
+
+			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
+			
+			native_point.x = point.X;
+			native_point.y = point.Y;
+
+			HIViewConvertPoint (ref native_point, handle, IntPtr.Zero);
+
+			converted_point.X = (int)(native_point.x + window_bounds.left);
+			converted_point.Y = (int)(native_point.y + window_bounds.top);
+
+			return converted_point;
+		}
 		
 		// This sucks write a real driver
 		private int ProcessKeyboardEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
@@ -335,26 +376,19 @@ namespace System.Windows.Forms {
 							HIRect r = new HIRect ();
 							
 							// Get our frame for the Handle
-							CheckError (HIViewGetFrame (hwnd.Handle, ref r), "HIViewGetFrame ()");
+							CheckError (HIViewGetFrame (hwnd.WholeWindow, ref r), "HIViewGetFrame ()");
 							r.size.width = bounds.right-bounds.left;
 							r.size.height = bounds.bottom-bounds.top;
 							// Set the view to the new size
-         					CheckError (HIViewSetFrame (hwnd.WholeWindow, ref r), "HIViewSetFrame ()");
-         					
-         					// Update the hwnd internal size representation
-							hwnd.x = (int)r.origin.x;
-							hwnd.y = (int)r.origin.y;
-							hwnd.width = (int)r.size.width;
-							hwnd.height = (int)r.size.height;
-							Rectangle client_rect = hwnd.ClientRect;
-							
-							r.size.width = client_rect.Width;
-							r.size.height = client_rect.Height;
-							r.origin.x = client_rect.X;
-							r.origin.y = client_rect.Y;
-							
-							// Update the client area too
-							CheckError (HIViewSetFrame (hwnd.ClientWindow, ref r));
+							CheckError (HIViewSetFrame (hwnd.WholeWindow, ref r), "HIViewSetFrame ()");
+							 
+							 // Update the hwnd internal size representation
+							Size newsize = TranslateQuartzWindowSizeToWindowSize (Control.FromHandle (hwnd.Handle).GetCreateParams (), (int)r.size.width, (int)r.size.height);
+							hwnd.x = (int)bounds.left;
+							hwnd.y = (int)bounds.top;
+							hwnd.width = (int)newsize.Width;
+							hwnd.height = (int)newsize.Height;
+							PerformNCCalc (hwnd);
 							
 							// Add the message to the queue
 							msg.message = Msg.WM_WINDOWPOSCHANGED;
@@ -402,8 +436,9 @@ namespace System.Windows.Forms {
 						return -9874;
 						
 					// Generate the message
+					bool client = (hwnd.ClientWindow == view_handle ? true : false);
 					msg.hwnd = hwnd.Handle;
-					msg.message = Msg.WM_MOUSEMOVE;
+					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
 					msg.lParam = (IntPtr) ((ushort)window_pt.y << 16 | (ushort)window_pt.x);
 					msg.wParam = GetMousewParam (0);
 					mouse_position.X = (int)window_pt.x;
@@ -424,31 +459,34 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG ();
 					
 			switch (eventKind) {
+				case OSXConstants.kEventControlTrackingAreaEntered: {
+					if (hwnd.Handle == handle)
+						SetThemeCursor ((uint)hwnd.ClientCursor);
+					else
+						SetThemeCursor ((uint)hwnd.WholeCursor);
+					break;
+				}
+				case OSXConstants.kEventControlTrackingAreaExited: {
+					SetThemeCursor ((uint)ThemeCursor.kThemeArrowCursor);
+					break;
+				}
 				case OSXConstants.kEventControlDraw: {
 					
 					if(!hwnd.visible || !HIViewIsVisible (handle))
 						return 0;
 
-					/*
-					IntPtr rgnhandle = IntPtr.Zero;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamRgnHandle, OSXConstants.EventParamType.typeQDRgnHandle, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref rgnhandle);
-					IntPtr duprgn = NewRgn ();
-					CopyRgn (rgnhandle, duprgn);
-					ClipRegions [hwnd.Handle] = duprgn;		
-					*/
-					
 					// Get the dirty area
 					HIRect bounds = new HIRect ();
 					HIViewGetBounds (handle, ref bounds); 
 					
 					bool client = (hwnd.ClientWindow == handle ? true : false);
-					
+
 					if (!client && bounds.origin.x >= hwnd.ClientRect.X && bounds.origin.y >= hwnd.ClientRect.Y) {
 						// This is a paint on WholeWindow inside the clientRect; we can safely discard this
 						return 0;
 					}
 					
-					hwnd.AddInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+					AddExpose (hwnd, client, (int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 					if (WindowBackgrounds [hwnd] != null) {
 						Color c = (Color)WindowBackgrounds [hwnd];
 						IntPtr contextref = IntPtr.Zero;
@@ -457,12 +495,34 @@ namespace System.Windows.Forms {
 						CGContextFillRect (contextref, bounds);
 					}
 					
-					// Add a paint to the queue
-					msg.hwnd = hwnd.Handle;
-					msg.message = Msg.WM_PAINT;
-					msg.wParam = IntPtr.Zero;
-					msg.lParam = IntPtr.Zero;
-					MessageQueue.Enqueue (msg);
+#if OptimizeDrawing
+					if (!client && hwnd.nc_expose_pending) {
+#else
+					if (!client) {
+#endif
+						switch (hwnd.border_style) {
+							case FormBorderStyle.Fixed3D: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.whole_window);
+								if (hwnd.border_static)
+									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.SunkenOuter);
+								else
+									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
+								g.Dispose();
+								break;
+							}
+
+							case FormBorderStyle.FixedSingle: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.whole_window);
+								ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Color.Black, ButtonBorderStyle.Solid);
+								g.Dispose();
+								break;
+							}
+						}
+					}
 			
 					return 0;
 				}
@@ -473,10 +533,13 @@ namespace System.Windows.Forms {
 						HIRect bounds = new HIRect ();
 						HIViewGetFrame (handle, ref bounds); 
 						// Update the hwnd size
-						hwnd.x = (int)bounds.origin.x;
-						hwnd.y = (int)bounds.origin.y;
-						hwnd.width = (int)bounds.size.width;
-						hwnd.height = (int)bounds.size.height;
+						bool client = (hwnd.ClientWindow == handle ? true : false);
+						if (!client) {
+							hwnd.x = (int)bounds.origin.x;
+							hwnd.y = (int)bounds.origin.y;
+							hwnd.width = (int)bounds.size.width;
+							hwnd.height = (int)bounds.size.height;
+						}
 						
 						// TODO: Do we need to send a paint here or does BoundsChanged make a ControlDraw for the exposed area?
 					}							
@@ -488,9 +551,11 @@ namespace System.Windows.Forms {
 					CheckError (GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
 					MouseTrackingResult mousestatus = MouseTrackingResult.kMouseTrackingMouseDown;
 					IntPtr modifiers = IntPtr.Zero;
+					if (GrabWindowHwnd != null)
+						hwnd = GrabWindowHwnd;
 					
 					while (mousestatus != MouseTrackingResult.kMouseTrackingMouseUp) {
-						CheckTimers (DateTime.Now);
+						CheckTimers (DateTime.UtcNow);
 						if (mousestatus == MouseTrackingResult.kMouseTrackingMouseDragged) {
 							QDPoint realpoint = point;
 							int x = point.x;
@@ -511,6 +576,9 @@ namespace System.Windows.Forms {
 					msg.hwnd = hwnd.Handle;
 					
 					bool client = (hwnd.ClientWindow == handle ? true : false);
+					if (GrabWindowHwnd != null)
+						client = true;
+					
 					
 					int wparam = (int)GetMousewParam (0);
 					switch (MouseState) {
@@ -532,7 +600,8 @@ namespace System.Windows.Forms {
 					}
 					int x2 = point.x;
 					int y2 = point.y;
-					ScreenToClient (hwnd.Handle, ref x2, ref y2);
+					if (client)
+						ScreenToClient (hwnd.Handle, ref x2, ref y2);
 					point.x = (short)x2;
 					point.y = (short)y2;
 
@@ -544,9 +613,9 @@ namespace System.Windows.Forms {
 					//NativeWindow.WndProc (msg.hwnd, msg.message, msg.lParam, msg.wParam);
 					MessageQueue.Enqueue (msg);
 					
-					IntPtr window = GetControlOwner (hwnd.Handle);
+					IntPtr window = HIViewGetWindow (hwnd.Handle);
 					SetKeyboardFocus (window, hwnd.Handle, 1);
-					
+
 					return 0;
 				}
 				case OSXConstants.kEventControlContextualMenuClick:
@@ -557,10 +626,15 @@ namespace System.Windows.Forms {
 					QDPoint trackpoint = point;
 					int x = point.x;
 					int y = point.y;
-					ScreenToClient (hwnd.Handle, ref x, ref y);
+
+					
+					bool client = (hwnd.ClientWindow == handle ? true : false);
+					if (client)
+						ScreenToClient (hwnd.Handle, ref x, ref y);
+
 					point.x = (short)x;
 					point.y = (short)y;
-					
+
 					// which button was pressed?
 					ushort button = 0;
 					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseButton, OSXConstants.EventParamType.typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
@@ -571,7 +645,6 @@ namespace System.Windows.Forms {
 					
 					msg.hwnd = hwnd.Handle;
 					
-					bool client = (hwnd.ClientWindow == handle ? true : false);
 					
 					int wparam = (int)GetMousewParam (0);
 					switch (button) {
@@ -619,7 +692,7 @@ namespace System.Windows.Forms {
 			return -9874;
 		}
 		private IntPtr GetMousewParam(int Delta) {
-			int     result = 0;
+			int	 result = 0;
 
 			if ((MouseState & MouseButtons.Left) != 0) {
 				result |= (int)MsgButtons.MK_LBUTTON;
@@ -638,7 +711,7 @@ namespace System.Windows.Forms {
 
 		private double NextTimeout ()
 		{
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 			int timeout = 0x7FFFFFF;
 			lock (TimerList) {
 				foreach (Timer timer in TimerList) {
@@ -672,7 +745,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void InvertCaret () {
-			IntPtr window = GetControlOwner (Caret.Hwnd);
+			IntPtr window = HIViewGetWindow (Caret.Hwnd);
 			SetPortWindowPort (window);
 			Rect r = new Rect ();
 			GetWindowPortBounds (window, ref r);
@@ -683,8 +756,225 @@ namespace System.Windows.Forms {
 			InvertRect (ref r);
 		}
 		
+		void SendParentNotify(IntPtr child, Msg cause, int x, int y)
+		{	
+			Hwnd hwnd;
+			
+			if (child == IntPtr.Zero) {
+				return;
+			}
+			
+			hwnd = Hwnd.GetObjectFromWindow (child);
+			
+			if (hwnd == null) {
+				return;
+			}
+			
+			if (hwnd.Handle == IntPtr.Zero) {
+				return;
+			}
+			
+			if (ExStyleSet ((int) hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY)) {
+				return;
+			}
+			
+			if (hwnd.Parent == null) {
+				return;
+			}
+			
+			if (hwnd.Parent.Handle == IntPtr.Zero) {
+				return;
+			}
+
+			if (cause == Msg.WM_CREATE || cause == Msg.WM_DESTROY) {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), child);
+			} else {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
+			}
+			
+			SendParentNotify (hwnd.Parent.Handle, cause, x, y);
+		}
+
+		bool StyleSet (int s, WindowStyles ws)
+		{
+			return (s & (int)ws) == (int)ws;
+		}
+
+		bool ExStyleSet (int ex, WindowExStyles exws)
+		{
+			return (ex & (int)exws) == (int)exws;
+		}
+
+		internal static Rectangle TranslateClientRectangleToQuartzClientRectangle (Hwnd hwnd) {
+			return TranslateClientRectangleToQuartzClientRectangle (hwnd, Control.FromHandle (hwnd.Handle));
+		}
+
+		internal static Rectangle TranslateClientRectangleToQuartzClientRectangle (Hwnd hwnd, Control ctrl) {
+			/* From XplatUIX11
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Rectangle rect = hwnd.ClientRect;
+			Form form = ctrl as Form;
+			CreateParams cp = null;
+
+			if (form != null)
+				cp = form.GetCreateParams ();
+
+			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Rectangle qrect = rect;
+				
+				qrect.Y -= borders.top;
+				qrect.X -= borders.left;
+				qrect.Width += borders.left + borders.right;
+				qrect.Height += borders.top + borders.bottom;
+				
+				rect = qrect;
+			}
+			
+			if (rect.Width < 1 || rect.Height < 1) {
+				rect.Width = 1;
+				rect.Height = 1;
+				rect.X = -5;
+				rect.Y = -5;
+			}
+			
+			return rect;
+		}
+
+		internal static Size TranslateWindowSizeToQuartzWindowSize (CreateParams cp) {
+			return TranslateWindowSizeToQuartzWindowSize (cp, new Size (cp.Width, cp.Height));
+		}
+
+		internal static Size TranslateWindowSizeToQuartzWindowSize (CreateParams cp, Size size) {
+			/* From XplatUIX11
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Form form = cp.control as Form;
+			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Size qsize = size;
+
+				qsize.Width -= borders.left + borders.right;
+				qsize.Height -= borders.top + borders.bottom;
+				
+				size = qsize;
+			}
+
+			if (size.Height == 0)
+				size.Height = 1;
+			if (size.Width == 0)
+				size.Width = 1;
+			return size;
+		}
+			
+		internal static Size TranslateQuartzWindowSizeToWindowSize (CreateParams cp, int width, int height) {
+			/* From XplatUIX11
+			 * If this is a form with no window manager, X is handling all the border and caption painting
+			 * so remove that from the area (since the area we set of the window here is the part of the window 
+			 * we're painting in only)
+			 */
+			Size size = new Size (width, height);
+			Form form = cp.control as Form;
+			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
+				Size qsize = size;
+
+				qsize.Width += borders.left + borders.right;
+				qsize.Height += borders.top + borders.bottom;
+				
+				size = qsize;
+			}
+
+			return size;
+		}
+
+		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
+
+			caption_height = 0;
+			tool_caption_height = 0;
+			border_static = false;
+
+			if (StyleSet (Style, WindowStyles.WS_CHILD)) {
+				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
+					border_style = FormBorderStyle.Fixed3D;
+				} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+					border_style = FormBorderStyle.Fixed3D;
+					border_static = true;
+				} else if (!StyleSet (Style, WindowStyles.WS_BORDER)) {
+					border_style = FormBorderStyle.None;
+				} else {
+					border_style = FormBorderStyle.FixedSingle;
+				}
+				title_style = TitleStyle.None;
+				
+				if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+					caption_height = 0;
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						title_style = TitleStyle.Tool;
+					} else {
+						title_style = TitleStyle.Normal;
+					}
+				}
+
+				if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_MDICHILD)) {
+					caption_height = 0;
+
+					if (StyleSet (Style, WindowStyles.WS_OVERLAPPEDWINDOW) ||
+						ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						border_style = (FormBorderStyle) 0xFFFF;
+					} else {
+						border_style = FormBorderStyle.None;
+					}
+				}
+
+			} else {
+				title_style = TitleStyle.None;
+				if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						title_style = TitleStyle.Tool;
+					} else {
+						title_style = TitleStyle.Normal;
+					}
+				}
+
+				border_style = FormBorderStyle.None;
+
+				if (StyleSet (Style, WindowStyles.WS_THICKFRAME)) {
+					if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+						border_style = FormBorderStyle.SizableToolWindow;
+					} else {
+						border_style = FormBorderStyle.Sizable;
+					}
+				} else {
+					if (StyleSet (Style, WindowStyles.WS_CAPTION)) {
+						if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_CLIENTEDGE)) {
+							border_style = FormBorderStyle.Fixed3D;
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_STATICEDGE)) {
+							border_style = FormBorderStyle.Fixed3D;
+							border_static = true;
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_DLGMODALFRAME)) {
+							border_style = FormBorderStyle.FixedDialog;
+						} else if (ExStyleSet (ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+							border_style = FormBorderStyle.FixedToolWindow;
+						} else if (StyleSet (Style, WindowStyles.WS_BORDER)) {
+							border_style = FormBorderStyle.FixedSingle;
+						}
+					} else {
+						if (StyleSet (Style, WindowStyles.WS_BORDER)) {
+							border_style = FormBorderStyle.FixedSingle;
+						}
+					}
+				}
+			}
+		}
+		
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			throw new NotImplementedException();
+			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.border_static, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 		
 		internal void ShowCaret () {
@@ -721,7 +1011,7 @@ namespace System.Windows.Forms {
 			
 				IntPtr rgn = NewRgn ();
 				SetRectRgn (rgn, (short)client_bounds.origin.x, (short)client_bounds.origin.y, (short)(client_bounds.origin.x+hwnd.ClientRect.Width), (short)(client_bounds.origin.y+hwnd.ClientRect.Height));
-				CreateMouseTrackingRegion (GetControlOwner (hwnd.client_window), rgn, IntPtr.Zero, 0, hwnd.client_region_id, hwnd.client_window, IntPtr.Zero, ref hwnd.client_region_ptr);
+				CreateMouseTrackingRegion (HIViewGetWindow (hwnd.client_window), rgn, IntPtr.Zero, 0, hwnd.client_region_id, hwnd.client_window, IntPtr.Zero, ref hwnd.client_region_ptr);
 				Console.WriteLine (hwnd.ClientRect);
 				Console.WriteLine ("Created a mouse trcaking region on the client window @ {0}x{1} {2}x{3}", (short)client_bounds.origin.x, (short)client_bounds.origin.y, (short)(client_bounds.origin.x+hwnd.ClientRect.Width), (short)(client_bounds.origin.y+hwnd.ClientRect.Height));
 				if (hwnd.ClientRect.X > 0 && hwnd.ClientRect.Y > 0) {
@@ -730,7 +1020,7 @@ namespace System.Windows.Forms {
 					HIViewConvertRect (ref window_bounds, hwnd.whole_window, IntPtr.Zero);
 					rgn = NewRgn ();
 					SetRectRgn (rgn, (short)window_bounds.origin.x, (short)window_bounds.origin.y, (short)(window_bounds.origin.x+hwnd.ClientRect.X), (short)(window_bounds.origin.y+hwnd.ClientRect.Y));
-					CreateMouseTrackingRegion (GetControlOwner (hwnd.whole_window), rgn, IntPtr.Zero, 0, hwnd.whole_region_id, hwnd.whole_window, IntPtr.Zero, ref hwnd.whole_region_ptr);
+					CreateMouseTrackingRegion (HIViewGetWindow (hwnd.whole_window), rgn, IntPtr.Zero, 0, hwnd.whole_region_id, hwnd.whole_window, IntPtr.Zero, ref hwnd.whole_region_ptr);
 					Console.WriteLine ("Created a mouse trcaking region on the whole window @ {0}x{1} {2}x{3}", (short)window_bounds.origin.x, (short)window_bounds.origin.y, (short)(window_bounds.origin.x+hwnd.ClientRect.X), (short)(window_bounds.origin.y+hwnd.ClientRect.Y));
 				}
 			}
@@ -747,6 +1037,135 @@ namespace System.Windows.Forms {
 				throw new Exception ("XplatUIOSX.cs::Carbon subsystem threw an error: " + result);
 		}
 
+		private void AccumulateDestroyedHandles (Control c, ArrayList list)
+		{
+			if (c != null) {
+				Control[] controls = c.Controls.GetAllControls ();
+
+				if (c.IsHandleCreated && !c.IsDisposed) {
+					Hwnd hwnd = Hwnd.ObjectFromHandle(c.Handle);
+
+					list.Add (hwnd);
+					CleanupCachedWindows (hwnd);
+				}
+
+				for (int  i = 0; i < controls.Length; i ++) {
+					AccumulateDestroyedHandles (controls[i], list);
+				}
+			}
+			
+		}
+
+		void CleanupCachedWindows (Hwnd hwnd)
+		{
+			if (ActiveWindow == hwnd.Handle) {
+				SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+				ActiveWindow = IntPtr.Zero;
+			}
+
+			if (FocusWindow == hwnd.Handle) {
+				SendMessage(hwnd.client_window, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+				FocusWindow = IntPtr.Zero;
+			}
+
+			if (Grab.Hwnd == hwnd.Handle) {
+				Grab.Hwnd = IntPtr.Zero;
+				Grab.Confined = false;
+			}
+
+			DestroyCaret (hwnd.Handle);
+		}
+
+		private void PerformNCCalc(Hwnd hwnd) {
+#if EnableNCArea
+			XplatUIWin32.NCCALCSIZE_PARAMS  ncp;
+			IntPtr ptr;
+			Rectangle rect;
+
+			rect = new Rectangle (0, 0, hwnd.Width, hwnd.Height);
+
+			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
+			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
+
+			ncp.rgrc1.left = rect.Left;
+			ncp.rgrc1.top = rect.Top;
+			ncp.rgrc1.right = rect.Right;
+			ncp.rgrc1.bottom = rect.Bottom;
+
+			Marshal.StructureToPtr(ncp, ptr, true);
+			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
+			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+			Marshal.FreeHGlobal(ptr);
+
+
+			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+			hwnd.ClientRect = rect;
+
+			rect = TranslateClientRectangleToQuartzClientRectangle (hwnd);
+
+			if (hwnd.visible) {
+				HIRect r = new HIRect (rect.X, rect.Y, rect.Width, rect.Height);
+				HIViewSetFrame (hwnd.client_window, ref r);
+			}
+	
+			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
+#endif
+		}
+
+		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
+			// Don't waste time
+			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
+				return;
+			}
+
+			// Keep the invalid area as small as needed
+			if ((x + width) > hwnd.width) {
+				width = hwnd.width - x;
+			}
+
+			if ((y + height) > hwnd.height) {
+				height = hwnd.height - y;
+			}
+
+			if (client) {
+				hwnd.AddInvalidArea(x, y, width, height);
+#if OptimizeDrawing
+				if (!hwnd.expose_pending) {
+					if (!hwnd.nc_expose_pending) {
+#endif
+						MSG msg = new MSG ();
+						msg.message = Msg.WM_PAINT;
+						msg.hwnd = hwnd.Handle;
+						msg.lParam = IntPtr.Zero;
+						msg.wParam = IntPtr.Zero;
+						MessageQueue.Enqueue (msg);
+#if OptimizeDrawing
+					}
+					hwnd.expose_pending = true;
+				}
+#endif
+			} else {
+				hwnd.AddNcInvalidArea (x, y, width, height);
+#if OptimizeDrawing
+				if (!hwnd.nc_expose_pending) {
+					if (!hwnd.expose_pending) {
+#endif
+						MSG msg = new MSG ();
+						Rectangle rect = new Rectangle (x, y, width, height);
+						Region region = new Region (rect);
+						IntPtr hrgn = region.GetHrgn (null); 
+						msg.message = Msg.WM_NCPAINT;
+						msg.hwnd = hwnd.Handle;
+						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+						msg.refobject = region;
+						MessageQueue.Enqueue (msg);
+#if OptimizeDrawing
+					}
+					hwnd.nc_expose_pending = true;
+				}
+#endif
+			}
+		}
 		#endregion 
 		
 		#region Public Methods
@@ -768,7 +1187,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Activate(IntPtr handle) {
-			ActivateWindow (GetControlOwner (handle), true);
+			ActivateWindow (HIViewGetWindow (handle), true);
 		}
 
 		internal override void AudibleAlert() {
@@ -800,22 +1219,23 @@ namespace System.Windows.Forms {
 			WindowRect = Hwnd.GetWindowRectangle (cp, menu, ClientRect);
 			return true;
 		}
-		
+
 		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
-			CGPoint pt = new CGPoint ();
-			Rect wBounds = new Rect ();
-			Hwnd	hwnd;
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			Point point = ConvertClientPointToScreen (hwnd.ClientWindow, new Point (x, y));
 
-			pt.x = x;
-			pt.y = y;
+			x = point.X;
+			y = point.Y;
+		}
+		
+		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 
-			GetWindowBounds (GetControlOwner (hwnd.client_window), 32, ref wBounds);
-			HIViewConvertPoint (ref pt, handle, IntPtr.Zero);
+			Point point = ConvertClientPointToScreen (hwnd.ClientWindow, new Point (x, y));
 
-			x = (int)(pt.x+wBounds.left);
-			y = (int)(pt.y+wBounds.top);
+			x = point.X;
+			y = point.Y;
 		}
 
 		internal override int[] ClipboardAvailableFormats(IntPtr handle) {
@@ -823,7 +1243,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ClipboardClose(IntPtr handle) {
-			throw new NotImplementedException();
 		}
 
 		internal override int ClipboardGetID(IntPtr handle, string format) {
@@ -831,7 +1250,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr ClipboardOpen(bool primary_selection) {
-			throw new NotImplementedException();
+			return IntPtr.Zero;
 		}
 
 		internal override object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter) {
@@ -854,115 +1273,146 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override IntPtr CreateWindow(CreateParams cp) {
-			IntPtr windowHnd = IntPtr.Zero;
-			IntPtr parentHnd = cp.Parent;
-			bool realWindow = false;
-			Rectangle clientRect;
-			Hwnd hwnd = new Hwnd ();
-			
-			SetHwndStyles (hwnd, cp);
-			
-			if (parentHnd == IntPtr.Zero) {
-				if ((cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
-					// This is a child view that is going to be parentless;
-					realWindow = false;
-					CheckError (HIViewFindByID (HIViewGetRoot (FosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref parentHnd), "HIViewFindByID ()");
-				} else if ((cp.Style & (int)(WindowStyles.WS_POPUP))!=0) {
-					// This is a popup window that will be real.
-					if (cp.X < 1) cp.X = 0;
-					if (cp.Y < 1) cp.Y = 0;
-					realWindow = true;
-				} else {
-					// This is a real root window too
-					if (cp.X < 1) cp.X = 0;
-					if (cp.Y < 1) cp.Y = 0;
-					realWindow = true;
-				}
+			Hwnd hwnd;
+			Hwnd parent_hwnd = null;
+			int X;
+			int Y;
+			int Width;
+			int Height;
+			IntPtr ParentHandle;
+			IntPtr WindowHandle;
+			IntPtr WholeWindow;
+			IntPtr ClientWindow;
+			IntPtr WholeWindowTracking;
+			IntPtr ClientWindowTracking;
+			WindowAttributes Attributes;
+
+			hwnd = new Hwnd ();
+
+			Attributes = new WindowAttributes ();
+			X = cp.X;
+			Y = cp.Y;
+			Width = cp.Width;
+			Height = cp.Height;
+			ParentHandle = IntPtr.Zero;
+			WindowHandle = IntPtr.Zero;
+			WholeWindow = IntPtr.Zero;
+			ClientWindow = IntPtr.Zero;
+			WholeWindowTracking = IntPtr.Zero;
+			ClientWindowTracking = IntPtr.Zero;
+
+			if (Width < 1) Width = 1;	
+			if (Height < 1) Height = 1;	
+
+			if (cp.Parent != IntPtr.Zero) {
+				parent_hwnd = Hwnd.ObjectFromHandle (cp.Parent);
+				ParentHandle = parent_hwnd.client_window;
 			} else {
-				realWindow = false;
+				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
+					HIViewFindByID (HIViewGetRoot (FosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref ParentHandle);
+				}
 			}
 
-			if (realWindow) {
+			Point next;
+			if (cp.control is Form) {
+				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+				X = next.X;
+				Y = next.Y;
+			}
+
+			hwnd.x = X;
+			hwnd.y = Y;
+			hwnd.width = Width;
+			hwnd.height = Height;
+			hwnd.parent = Hwnd.ObjectFromHandle (cp.Parent);
+			hwnd.initial_style = cp.WindowStyle;
+			hwnd.initial_ex_style = cp.WindowExStyle;
+
+			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
+				hwnd.enabled = false;
+			}
+
+			ClientWindow = IntPtr.Zero;
+
+			Size QWindowSize = TranslateWindowSizeToQuartzWindowSize (cp);
+			Rectangle QClientRect = TranslateClientRectangleToQuartzClientRectangle (hwnd, cp.control);
+
+/* FIXME */
+			if (ParentHandle == IntPtr.Zero) {
+				IntPtr window_view = IntPtr.Zero;
 				WindowClass windowklass = WindowClass.kOverlayWindowClass;
 				WindowAttributes attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
-				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) { 
+				if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
 					attributes |= WindowAttributes.kWindowCollapseBoxAttribute;
 				}
-				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX)) {
 					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
 				}
-				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU)) {
 					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
 				}
-				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
 					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
 				}
-				if ((cp.Style & ((int)WindowStyles.WS_CAPTION)) != 0) {
+				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					windowklass = WindowClass.kDocumentWindowClass;
 				}
 					
-				IntPtr rect = IntPtr.Zero;
-				IntPtr viewHnd = IntPtr.Zero;
-				SetRect (ref rect, (short)cp.X, (short)(cp.Y + MenuBarHeight + TitleBarHeight), (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y+MenuBarHeight+TitleBarHeight));
-				CheckError (CreateNewWindow (windowklass, attributes, ref rect, ref windowHnd), "CreateNewWindow ()");
-
-				CheckError (InstallEventHandler (GetWindowEventTarget (windowHnd), CarbonEventHandler, (uint)windowEvents.Length, windowEvents, windowHnd, IntPtr.Zero), "InstallEventHandler ()");
-				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (OSXConstants.kEventClassWindow, 1), ref viewHnd), "HIViewFindByID ()");
-				parentHnd = viewHnd;
-			}
-			hwnd.X = cp.X;
-			hwnd.Y = cp.Y;
-			hwnd.Width = cp.Width;
-			hwnd.Height = cp.Height;
-			hwnd.Parent = Hwnd.ObjectFromHandle (cp.Parent);
-			hwnd.visible = false;
-			clientRect = hwnd.ClientRect;
-			
-			HIRect r = new HIRect (0, 0, cp.Width, cp.Height);
-			CheckError (HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref hwnd.whole_window), "HIObjectCreate ()");
-			CheckError (InstallEventHandler (GetControlEventTarget (hwnd.whole_window), CarbonEventHandler, (uint)viewEvents.Length, viewEvents, hwnd.whole_window, IntPtr.Zero), "InstallEventHandler ()");
-			CheckError (HIViewChangeFeatures (hwnd.whole_window, 1 << 1, 0), "HIViewChangeFeatures ()");
-			CheckError (HIViewSetFrame (hwnd.whole_window, ref r), "HIViewSetFrame ()");
-			hwnd.WholeWindow = hwnd.whole_window;
-			
-			r = new HIRect (0, 0, clientRect.Width, clientRect.Height);
-			CheckError (HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref hwnd.client_window), "HIObjectCreate ()");
-			CheckError (InstallEventHandler (GetControlEventTarget (hwnd.client_window), CarbonEventHandler, (uint)viewEvents.Length, viewEvents, hwnd.client_window, IntPtr.Zero), "InstallEventHandler ()");
-			CheckError (HIViewChangeFeatures (hwnd.client_window, 1 << 1, 0), "HIViewChangeFeatures ()");
-			CheckError (HIViewSetFrame (hwnd.client_window, ref r), "HIViewSetFrame ()");
-			hwnd.ClientWindow = hwnd.client_window;
-			
-			CheckError (HIViewAddSubview (hwnd.whole_window, hwnd.client_window));
-			CheckError (HIViewPlaceInSuperviewAt (hwnd.client_window, clientRect.X, clientRect.Y));
-			
-			if (parentHnd != IntPtr.Zero && parentHnd != hwnd.WholeWindow) {
-				CheckError (HIViewAddSubview (parentHnd, hwnd.whole_window), "HIViewAddSubview ()");
-				CheckError (HIViewPlaceInSuperviewAt (hwnd.whole_window, cp.X, cp.Y), "HIPlaceInSuperviewAt ()");
-				if ((cp.Style & (int)(WindowStyles.WS_VISIBLE))!=0) {
-					CheckError (HIViewSetVisible (hwnd.whole_window, true), "HIViewSetVisible ()");
-					CheckError (HIViewSetVisible (hwnd.client_window, true), "HIViewSetVisible ()");
-					hwnd.visible = true;
+				Rect rect = new Rect ();
+				if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
+					SetRect (ref rect, (short)X, (short)(Y), (short)(X + QWindowSize.Width), (short)(Y + QWindowSize.Height));
 				} else {
-					CheckError (HIViewSetVisible (hwnd.whole_window, false), "HIViewSetVisible ()");
-					CheckError (HIViewSetVisible (hwnd.client_window, false), "HIViewSetVisible ()");
-					hwnd.visible = false;
+					SetRect (ref rect, (short)X, (short)(Y + MenuBarHeight), (short)(X + QWindowSize.Width), (short)(Y + MenuBarHeight + QWindowSize.Height));
 				}
+
+				CreateNewWindow (windowklass, attributes, ref rect, ref WindowHandle);
+				InstallEventHandler (GetWindowEventTarget (WindowHandle), CarbonEventHandler, (uint)window_events.Length, window_events, WindowHandle, IntPtr.Zero);
+				HIViewFindByID (HIViewGetRoot (WindowHandle), new HIViewID (OSXConstants.kEventClassWindow, 1), ref window_view);
+				ParentHandle = window_view;
 			}
-			if (realWindow) {
-				WindowMapping [hwnd.Handle] = windowHnd;
-				if ((cp.Style & (int)(WindowStyles.WS_VISIBLE))!=0) {
-					CheckError (ShowWindow (windowHnd));
-					CheckError (HIViewSetVisible (hwnd.whole_window, true), "HIViewSetVisible ()");
-					CheckError (HIViewSetVisible (hwnd.client_window, true), "HIViewSetVisible ()");
-					hwnd.visible = true;
+
+			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref WholeWindow);
+			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref ClientWindow);
+			InstallEventHandler (GetControlEventTarget (WholeWindow), CarbonEventHandler, (uint)view_events.Length, view_events, WholeWindow, IntPtr.Zero);
+			InstallEventHandler (GetControlEventTarget (ClientWindow), CarbonEventHandler, (uint)view_events.Length, view_events, ClientWindow, IntPtr.Zero);
+			HIViewChangeFeatures (WholeWindow, 1<<1, 0);
+			HIViewChangeFeatures (ClientWindow, 1<<1, 0);
+			HIViewNewTrackingArea (WholeWindow, IntPtr.Zero, (UInt64)WholeWindow, ref WholeWindowTracking);
+			HIViewNewTrackingArea (ClientWindow, IntPtr.Zero, (UInt64)ClientWindow, ref ClientWindowTracking);
+			HIRect WholeRect;
+			if (WindowHandle != IntPtr.Zero) {
+				WholeRect = new HIRect (0, 0, QWindowSize.Width, QWindowSize.Height);
+			} else {
+				WholeRect = new HIRect (X, Y, QWindowSize.Width, QWindowSize.Height);
+			}
+			HIRect ClientRect = new HIRect (QClientRect.X, QClientRect.Y, QClientRect.Width, QClientRect.Height);
+			HIViewSetFrame (WholeWindow, ref WholeRect);
+			HIViewSetFrame (ClientWindow, ref ClientRect);
+
+			HIViewAddSubview (ParentHandle, WholeWindow);
+			HIViewAddSubview (WholeWindow, ClientWindow);
+
+//			hwnd.Queue = ThreadQueue (Thread.CurrentThread);
+			hwnd.WholeWindow = WholeWindow;
+			hwnd.ClientWindow = ClientWindow;
+
+			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
+				if (WindowHandle != IntPtr.Zero) {
+					WindowMapping [hwnd.Handle] = WindowHandle;
+					CheckError (ShowWindow (WindowHandle));
 				}
-				if ((cp.Style & (int)(WindowStyles.WS_POPUP))!=0) {
-					CheckError (HIViewSetVisible (hwnd.whole_window, true), "HIViewSetVisible ()");
-					CheckError (HIViewSetVisible (hwnd.client_window, true), "HIViewSetVisible ()");
-					hwnd.visible = true;
-				}
-			}	
+				HIViewSetVisible (WholeWindow, true);
+				HIViewSetVisible (ClientWindow, true);
+				hwnd.visible = true;
+			} else {
+				HIViewSetVisible (WholeWindow, false);
+				HIViewSetVisible (ClientWindow, false);
+				hwnd.visible = false;
+			}
 			
+			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
+			SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+
 			return hwnd.Handle;
 		}
 
@@ -991,10 +1441,9 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
-			throw new NotImplementedException ();
+			return IntPtr.Zero;
 		}
 		
-		[MonoTODO]
 		internal override IntPtr DefineStdCursor(StdCursor id) {
 			switch (id) {
 				case StdCursor.AppStarting:
@@ -1047,13 +1496,13 @@ namespace System.Windows.Forms {
 					return (IntPtr)ThemeCursor.kThemeArrowCursor;
 				case StdCursor.SizeWE:
 					return (IntPtr)ThemeCursor.kThemeArrowCursor;
-                                case StdCursor.UpArrow:
+				case StdCursor.UpArrow:
 					return (IntPtr)ThemeCursor.kThemeArrowCursor;
 				case StdCursor.VSplit:
 					return (IntPtr)ThemeCursor.kThemeArrowCursor;
 				case StdCursor.WaitCursor:
 					return (IntPtr)ThemeCursor.kThemeSpinningCursor;
-                                default:
+				default:
 					return (IntPtr)ThemeCursor.kThemeArrowCursor;
 			}
 		}
@@ -1065,6 +1514,38 @@ namespace System.Windows.Forms {
 					if (WindowMapping [hwnd.Handle] != null)
 
 						Exit ();
+					break;
+				}
+				case Msg.WM_PAINT: {
+#if OptimizeDrawing
+					hwnd.expose_pending = false;
+#endif
+					break;
+				}
+				case Msg.WM_NCPAINT: {
+#if OptimizeDrawing
+					hwnd.nc_expose_pending = false;
+#endif
+					break;
+				}  
+				case Msg.WM_NCCALCSIZE: {
+					if (msg.WParam == (IntPtr)1) {
+						XplatUIWin32.NCCALCSIZE_PARAMS ncp;
+						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure (msg.LParam, typeof (XplatUIWin32.NCCALCSIZE_PARAMS));
+
+						// Add all the stuff X is supposed to draw.
+						Control ctrl = Control.FromHandle (hwnd.Handle);
+						if (ctrl != null) {
+							Hwnd.Borders rect = Hwnd.GetBorders (ctrl.GetCreateParams (), null);
+
+							ncp.rgrc1.top += rect.top;
+							ncp.rgrc1.bottom -= rect.bottom;
+							ncp.rgrc1.left += rect.left;
+							ncp.rgrc1.right -= rect.right;
+
+							Marshal.StructureToPtr (ncp, msg.LParam, true);
+						}
+					}
 					break;
 				}
 			}
@@ -1092,15 +1573,33 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			
-			if ((hwnd.whole_window != IntPtr.Zero) && HIViewGetSuperview (hwnd.whole_window) != IntPtr.Zero)
-				CheckError (HIViewRemoveFromSuperview (handle), "HIViewRemoveFromSuperview ()");
 
-			if (WindowMapping [hwnd.Handle] != null) {
-				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
+			if (hwnd == null) {
+				return;
 			}
-			CFRelease (hwnd.ClientWindow);
-			CFRelease (hwnd.WholeWindow);
+
+			SendParentNotify (hwnd.Handle, Msg.WM_DESTROY, int.MaxValue, int.MaxValue);
+				
+			CleanupCachedWindows (hwnd);
+
+			ArrayList windows = new ArrayList ();
+
+			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
+
+
+			foreach (Hwnd h in windows) {
+				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+				h.zombie = true;
+			}
+
+/*
+			if (hwnd.whole_window != IntPtr.Zero)
+				CFRelease (hwnd.whole_window);
+			if (hwnd.client_window != IntPtr.Zero)
+				CFRelease (hwnd.client_window);
+*/
+			if (WindowMapping [hwnd.Handle] != null) 
+				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -1115,12 +1614,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void EndLoop(Thread thread) {
-			throw new NotImplementedException();
 		}
 
 		internal void Exit() {
 			GetMessageResult = false;
-			ExitToShell ();
+			//ExitToShell ();
 		}
 		
 		internal override IntPtr GetActive() {
@@ -1137,7 +1635,10 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
-			throw new NotImplementedException ();
+			width = 12;
+			height = 12;
+			hotspot_x = 0;
+			hotspot_y = 0;
 		}
 		
 		internal override void GetDisplaySize(out Size size) {
@@ -1149,8 +1650,8 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null && hwnd.Parent != null) {
+				return hwnd.Parent.Handle;
 			}
 			return IntPtr.Zero;
 		}
@@ -1174,15 +1675,21 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
-		[MonoTODO]
-		internal override Point GetMenuOrigin(IntPtr hwnd) {
-			throw new NotImplementedException();
+		internal override Point GetMenuOrigin(IntPtr handle) {
+			Hwnd hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null) {
+				return hwnd.MenuOrigin;
+			}
+			return Point.Empty;
 		}
 
 		internal override bool GetMessage(object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
-			CheckTimers (DateTime.Now);
+			CheckTimers (DateTime.UtcNow);
 			ReceiveNextEvent (0, IntPtr.Zero, 0, true, ref evtRef);
 			if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 				SendEventToEventTarget (evtRef, target);
@@ -1234,7 +1741,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override FormWindowState GetWindowState(IntPtr hwnd) {
-			IntPtr window = GetControlOwner (hwnd);
+			IntPtr window = HIViewGetWindow (hwnd);
 
 			if (IsWindowCollapsed (window))
 				return FormWindowState.Minimized;
@@ -1267,25 +1774,24 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			
-			if (hwnd.visible && HIViewIsVisible (handle)) {
-				MSG msg = new MSG ();
-				msg.hwnd = hwnd.Handle;
-				msg.wParam = IntPtr.Zero;
-				msg.lParam = IntPtr.Zero;
-				msg.message = Msg.WM_PAINT;
-				MessageQueue.Enqueue (msg);
-				// This is currently causing some graphics corruption
-				//hwnd.AddInvalidArea (rc.X, rc.Y, rc.Width, rc.Height);
-				hwnd.AddInvalidArea (0, 0, hwnd.ClientRect.Width, hwnd.ClientRect.Height);
-				hwnd.expose_pending = true;
-			}
+			Hwnd hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (clear) {
+				AddExpose (hwnd, true, hwnd.X, hwnd.Y, hwnd.Width, hwnd.Height);
+			} else {
+				AddExpose (hwnd, true, rc.X, rc.Y, rc.Width, rc.Height);
+			} 
 		}
 
 		internal override void InvalidateNC (IntPtr handle)
 		{
-			// XXX FIXME
+			Hwnd hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height); 
 		}
 		
 		internal override bool IsEnabled(IntPtr handle) {
@@ -1301,23 +1807,7 @@ namespace System.Windows.Forms {
 				TimerList.Remove(timer);
 			}
 		}
-		
-		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {
-			CGPoint pt = new CGPoint ();
-			Rect wBounds = new Rect ();
-			Hwnd	hwnd;
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			pt.x = x;
-			pt.y = y;
-
-			GetWindowBounds (GetControlOwner (hwnd.whole_window), 32, ref wBounds);
-			HIViewConvertPoint (ref pt, handle, IntPtr.Zero);
-
-			x = (int)(pt.x+wBounds.left);
-			y = (int)(pt.y+wBounds.top);
-		}
 
 		[MonoTODO]
 		internal override void OverrideCursor(IntPtr cursor) {
@@ -1341,13 +1831,48 @@ namespace System.Windows.Forms {
 				HideCaret();
 			}
 
-			Graphics dc = Graphics.FromHwnd (paint_hwnd.client_window);
-			paint_event = new PaintEventArgs(dc, hwnd.Invalid);
+			Graphics dc;
 
-			hwnd.expose_pending = false;
-			hwnd.ClearInvalidArea();
+			if (client) {
+				dc = Graphics.FromHwnd (paint_hwnd.client_window);
 
-			hwnd.drawing_stack.Push (dc);
+				Region clip_region = new Region ();
+				clip_region.MakeEmpty();
+
+				foreach (Rectangle r in hwnd.ClipRectangles) {
+					clip_region.Union (r);
+				}
+
+				if (hwnd.UserClip != null) {
+					clip_region.Intersect(hwnd.UserClip);
+				}
+
+//				dc.Clip = clip_region;
+				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
+#if OptimizeDrawing
+				hwnd.expose_pending = false;
+#endif
+				hwnd.ClearInvalidArea();
+
+				hwnd.drawing_stack.Push (paint_event);
+				hwnd.drawing_stack.Push (dc);
+			} else {
+				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
+
+				if (!hwnd.nc_invalid.IsEmpty) {
+					dc.SetClip (hwnd.nc_invalid);
+					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
+				} else {
+					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+				}
+#if OptimizeDrawing
+				hwnd.nc_expose_pending = false;
+#endif
+				hwnd.ClearNcInvalidArea ();
+
+				hwnd.drawing_stack.Push (paint_event);
+				hwnd.drawing_stack.Push (dc);
+			}
 
 			return paint_event;
 		}
@@ -1361,6 +1886,10 @@ namespace System.Windows.Forms {
 			dc.Flush ();
 			dc.Dispose ();
 			
+			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
+			pe.SetGraphics (null);
+			pe.Dispose ();  
+
 			if (Caret.Visible == 1) {
 				ShowCaret();
 				Caret.Paused = false;
@@ -1368,7 +1897,6 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
-			Console.WriteLine("XplatUIOSX.PeekMessage");
 			return true;
 		}
 
@@ -1382,19 +1910,25 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		[MonoTODO]
 		internal override void PostQuitMessage(int exitCode) {
-			throw new NotImplementedException();
+			PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
 		}
 
-		[MonoTODO]
 		internal override void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave) {
-			throw new NotImplementedException();
 		}
 
-		[MonoTODO]		
 		internal override void RequestNCRecalc(IntPtr handle) {
-			throw new NotImplementedException();
+			Hwnd hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd == null) {
+				return;
+			}
+
+			PerformNCCalc(hwnd);
+			SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			InvalidateNC(handle);
 		}
 
 		[MonoTODO]		
@@ -1403,38 +1937,29 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
-			CGPoint pt = new CGPoint ();
-			Rect wBounds = new Rect ();
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 
-			GetWindowBounds (GetControlOwner (handle), 32, ref wBounds);
-			pt.x = (x-wBounds.left);
-			pt.y = (y-wBounds.top);
-			HIViewConvertPoint (ref pt, IntPtr.Zero, handle);
+			Point point = ConvertScreenPointToClient (hwnd.ClientWindow, new Point (x, y));
 
-			x = (int)pt.x;
-			y = (int)pt.y;
+			x = point.X;
+			y = point.Y;
 		}
 
-		[MonoTODO]
 		internal override void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
-			CGPoint pt = new CGPoint ();
-			Rect wBounds = new Rect ();
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 
-			GetWindowBounds (GetControlOwner (handle), 32, ref wBounds);
-			pt.x = (x-wBounds.left);
-			pt.y = (y-wBounds.top);
-			HIViewConvertPoint (ref pt, IntPtr.Zero, handle);
+			Point point = ConvertScreenPointToClient (hwnd.WholeWindow, new Point (x, y));
 
-			x = (int)pt.x;
-			y = (int)pt.y;
+			x = point.X;
+			y = point.Y;
 		}
 
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool clear) {
 			//IntPtr rect = IntPtr.Zero;
 			//HIRect vBounds = new HIRect ();
-         	   
-            Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
-          
+				
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+		  
 			/*
 			if (hwnd.invalid != Rectangle.Empty) {
 				// BIG FAT WARNING. This only works with how we use this function right now
@@ -1462,7 +1987,7 @@ namespace System.Windows.Forms {
 			scrollrect.size.height = area.Height;
 			HIViewScrollRect (hwnd.Handle, ref scrollrect, (float)XAmount, (float)-YAmount);
 			/*
-            HIViewGetBounds (hwnd.client_window, ref vBounds);
+			HIViewGetBounds (hwnd.client_window, ref vBounds);
 			HIViewConvertRect (ref vBounds, hwnd.client_window, IntPtr.Zero);
 			SetRect (ref rect, (short)(vBounds.origin.x+area.X), (short)(vBounds.origin.y-TitleBarHeight+area.Y), (short)(vBounds.origin.x+area.Width), (short)(vBounds.origin.y+area.Height-TitleBarHeight));
 			ScrollRect (ref rect, (short)XAmount, (short)-YAmount, IntPtr.Zero);
@@ -1498,7 +2023,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override IntPtr SendMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
-			throw new NotImplementedException ();
+			return NativeWindow.WndProc(hwnd, message, wParam, lParam);
 		}
 		
 		internal override int SendInput(IntPtr hwnd, Queue keys) {
@@ -1528,7 +2053,12 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetCursor(IntPtr window, IntPtr cursor) {
-			SetThemeCursor ((uint) cursor);
+			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
+
+			if (hwnd.Handle == window)
+				hwnd.ClientCursor = cursor;
+			else
+				hwnd.WholeCursor = cursor;
 		}
 		
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
@@ -1545,12 +2075,11 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		internal override void SetIcon(IntPtr handle, Icon icon) {
-			throw new NotImplementedException();
 		}
 
 		
 		internal override void SetModal(IntPtr handle, bool Modal) {
-			IntPtr hWnd = GetControlOwner (Hwnd.ObjectFromHandle (handle).WholeWindow);
+			IntPtr hWnd = HIViewGetWindow (Hwnd.ObjectFromHandle (handle).WholeWindow);
 			if (Modal)
 				BeginAppModalStateForWindow (hWnd);
 			else
@@ -1561,11 +2090,12 @@ namespace System.Windows.Forms {
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
-			hwnd.parent = Hwnd.ObjectFromHandle (parent);
+			hwnd.Parent = Hwnd.ObjectFromHandle (parent);
 			if (HIViewGetSuperview (hwnd.whole_window) != IntPtr.Zero) {
 				CheckError (HIViewRemoveFromSuperview (hwnd.whole_window), "HIViewRemoveFromSuperview ()");
 			}
-			CheckError (HIViewAddSubview (hwnd.parent.client_window, hwnd.whole_window));
+			CheckError (HIViewAddSubview (hwnd.Parent.client_window, hwnd.whole_window));
+			HIViewPlaceInSuperviewAt (hwnd.whole_window, hwnd.X, hwnd.Y);
 			CheckError (HIViewAddSubview (hwnd.whole_window, hwnd.client_window));
 			HIViewPlaceInSuperviewAt (hwnd.client_window, hwnd.ClientRect.X, hwnd.ClientRect.Y);
 			
@@ -1604,12 +2134,13 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
-			Hwnd	hwnd;
+			Form form = Control.FromHandle (handle) as Form;
+			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
+				border_style == FormBorderStyle.SizableToolWindow)) {
+				form.window_manager = new ToolWindowManager (form);
+			}
 
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.border_style = border_style;
-
-			// FIXME - do we need to trigger some resize?
+			RequestNCRecalc(handle);
 		}
 
 		internal override void SetMenu(IntPtr handle, Menu menu) {
@@ -1618,44 +2149,56 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 			hwnd.menu = menu;
 
-			// FIXME - do we need to trigger some resize?
+			RequestNCRecalc(handle);
 		}
 		
 		internal override void SetWindowMinMax(IntPtr handle, Rectangle maximized, Size min, Size max) {
-			throw new NotImplementedException();
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle client_rect = hwnd.GetClientRectangle (width, height);
+
+			if (hwnd == null) {
+				return;
+			}
+
+			if (width < 0) width = 0;
+			if (height < 0) height = 0;
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {
 				return;
 			}
 
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+
+			Control ctrl = Control.FromHandle (handle);
+			Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (ctrl.GetCreateParams (), new Size (width, height));
+			Rect rect = new Rect ();
 
 			if (WindowMapping [hwnd.Handle] != null) {
-				if (y <= MenuBarHeight+TitleBarHeight) {
-					y+=MenuBarHeight+TitleBarHeight;
-				}
-				IntPtr rect = IntPtr.Zero;
-				SetRect (ref rect, (short)x, (short)y, (short)(x+width), (short)(y+height));
-				CheckError (SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect), "SetWindowBounds ()");
-				HIRect r = new HIRect (0, 0, width, height);
-				CheckError (HIViewSetFrame (hwnd.whole_window, ref r), "HIViewSetFrame ()");
-				r = new HIRect (client_rect.X, client_rect.Y, client_rect.X+client_rect.Width, client_rect.Y+client_rect.Height);
-				CheckError (HIViewSetFrame (hwnd.client_window, ref r), "HIViewSetFrame ()");
+				SetRect (ref rect, (short)x, (short)(y+MenuBarHeight), (short)(x+TranslatedSize.Width), (short)(y+MenuBarHeight+TranslatedSize.Height));
+				SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
+				HIRect frame_rect = new HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
+				HIViewSetFrame (hwnd.whole_window, ref frame_rect);
 			} else {
-				HIRect r = new HIRect (x, y, width, height);
-				CheckError (HIViewSetFrame (hwnd.whole_window, ref r), "HIViewSetFrame ()");
-				r = new HIRect (client_rect.X, client_rect.Y, client_rect.X+client_rect.Width, client_rect.Y+client_rect.Height);
-				CheckError (HIViewSetFrame (hwnd.client_window, ref r), "HIViewSetFrame ()");
-			}			
+				HIRect frame_rect = new HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
+				HIViewSetFrame (hwnd.whole_window, ref frame_rect);
+			}
+			PerformNCCalc(hwnd);
+
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
 		}
 		
 		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
-			IntPtr window = GetControlOwner (hwnd);
+			IntPtr window = HIViewGetWindow (hwnd);
 
 			switch (state) {
 				case FormWindowState.Minimized: {
@@ -1734,7 +2277,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override object StartLoop(Thread thread) {
-			throw new NotImplementedException();
+			return new object ();
 		}
 		
 		[MonoTODO]
@@ -1773,7 +2316,11 @@ namespace System.Windows.Forms {
 		internal override void UpdateWindow(IntPtr handle) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
-			if (hwnd.visible && HIViewIsVisible (handle) && !hwnd.expose_pending) {
+#if OptimizeDrawing
+			if (hwnd.visible && HIViewIsVisible (handle) && !hwnd.expose_pending) { 
+#else
+			if (hwnd.visible && HIViewIsVisible (handle)) {
+#endif
 				MSG msg = new MSG ();
 				msg.message = Msg.WM_PAINT;
 				msg.hwnd = hwnd.Handle;
@@ -1840,8 +2387,19 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		//FIXME: This isn't actually correct; its jsut something visual we can use now for debugging
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
-			throw new NotImplementedException();
+			Rect draw_rect = new Rect ();
+			IntPtr WindowHandle = HIViewGetWindow (handle);
+
+			SetPortWindowPort (WindowHandle);
+			GetWindowPortBounds (WindowHandle, ref draw_rect);
+
+			draw_rect.top += (short)(rect.Y + TitleBarHeight);			
+			draw_rect.left += (short)rect.X;			
+			draw_rect.bottom = (short)(draw_rect.top + rect.Height);			
+			draw_rect.right = (short)(draw_rect.left + rect.Width);			
+			InvertRect (ref draw_rect);
 		}
 
 		[MonoTODO]
@@ -1860,11 +2418,22 @@ namespace System.Windows.Forms {
 		internal override int KeyboardSpeed { get{ throw new NotImplementedException(); } } 
 		internal override int KeyboardDelay { get{ throw new NotImplementedException(); } } 
 
-		internal override  int CaptionHeight { get{ throw new NotImplementedException(); } }
+		internal override int CaptionHeight {
+			get {
+				return 19;
+			}
+		}
+
 		internal override  Size CursorSize { get{ throw new NotImplementedException(); } }
 		internal override  bool DragFullWindows { get{ throw new NotImplementedException(); } }
 		internal override  Size DragSize { get{ throw new NotImplementedException(); } }
-		internal override  Size FrameBorderSize { get{ throw new NotImplementedException(); } }
+
+		internal override  Size FrameBorderSize {
+			get {
+				return new Size (2, 2);
+			}
+		}
+
 		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
 		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
 		internal override bool MenuAccessKeysUnderlined {
@@ -1872,16 +2441,22 @@ namespace System.Windows.Forms {
 				return false;
 			}
 		}
-		internal override  Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinimumWindowSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
-		internal override  Size SmallIconSize { get{ throw new NotImplementedException(); } }
-		internal override  int MouseButtonCount { get{ throw new NotImplementedException(); } }
-		internal override  bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
-		internal override  bool MouseWheelPresent { get{ throw new NotImplementedException(); } }
-		internal override  Rectangle VirtualScreen { get{ throw new NotImplementedException(); } }
-		internal override  Rectangle WorkingArea { 
+		internal override Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
+		internal override Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
+		internal override Size MinimumWindowSize { get{ throw new NotImplementedException(); } }
+		internal override Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
+		internal override Size SmallIconSize { get{ throw new NotImplementedException(); } }
+		internal override int MouseButtonCount { get{ throw new NotImplementedException(); } }
+		internal override bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
+		internal override bool MouseWheelPresent { get{ throw new NotImplementedException(); } }
+
+		internal override Rectangle VirtualScreen {
+			get {
+				return WorkingArea;
+			}
+		}
+
+		internal override Rectangle WorkingArea { 
 			get { 
 				HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
 				return new Rectangle ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
@@ -1941,25 +2516,25 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewScrollRect (IntPtr vHnd, ref HIRect rect, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewScrollRect (IntPtr vHnd, IntPtr rect, float x, float y);
+		internal static extern int HIViewScrollRect (IntPtr vHnd, Rect rect, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetZOrder (IntPtr hWnd, int cmd, IntPtr oHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetBoundsOrigin (IntPtr vHnd, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewNewTrackingArea (IntPtr inView, IntPtr inShape, UInt64 inID, ref IntPtr outRef);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void ScrollRect (ref IntPtr r, short dh, short dv, IntPtr rgnHandle);
+		internal static extern void ScrollRect (ref Rect r, short dh, short dv, IntPtr rgnHandle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void SetRect (ref IntPtr r, short left, short top, short right, short bottom);
+		internal static extern void SetRect (ref Rect r, short left, short top, short right, short bottom);
 
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int CreateEvent (IntPtr allocator, uint classid, uint kind, double when, uint attributes, ref IntPtr outEvent);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-                static extern int InstallEventHandler (IntPtr window, CarbonEventDelegate handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
+		static extern int InstallEventHandler (IntPtr window, CarbonEventDelegate handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr GetControlOwner (IntPtr aView);
+		internal static extern IntPtr HIViewGetWindow (IntPtr aView);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int ActivateWindow (IntPtr windowHnd, bool inActivate);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -2052,7 +2627,7 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int EndAppModalStateForWindow (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CreateNewWindow (WindowClass klass, WindowAttributes attributes, ref IntPtr r, ref IntPtr window);
+		internal static extern int CreateNewWindow (WindowClass klass, WindowAttributes attributes, ref Rect r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int DisposeWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -2060,7 +2635,7 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HideWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int SetWindowBounds (IntPtr wHnd, uint reg, ref IntPtr rect);
+		internal static extern int SetWindowBounds (IntPtr wHnd, uint reg, ref Rect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int GetWindowPortBounds (IntPtr wHnd, ref Rect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -2123,6 +2698,14 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static void SetThemeCursor (uint inCursor);
 		#endregion
-	}
 
+		#region Windowing imports
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		private extern static int GetCurrentProcess (ref ProcessSerialNumber psn);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static int TransformProcessType (ref ProcessSerialNumber psn, uint type);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static int SetFrontProcess (ref ProcessSerialNumber psn);
+		#endregion
+	}
 }

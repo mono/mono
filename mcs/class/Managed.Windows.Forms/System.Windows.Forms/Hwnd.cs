@@ -44,6 +44,8 @@ namespace System.Windows.Forms {
 		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
+		internal IntPtr		client_cursor;
+		internal IntPtr		whole_cursor;
 		internal Menu		menu;
 		internal TitleStyle	title_style;
 		internal FormBorderStyle	border_style;
@@ -83,6 +85,7 @@ namespace System.Windows.Forms {
 		internal FormWindowState cached_window_state = (FormWindowState)(-1);  /* X11 only field */
 		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
 		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
+		internal ArrayList children;
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)
@@ -112,11 +115,13 @@ namespace System.Windows.Forms {
 			opacity = 0xffffffff;
 			fixed_size = false;
 			drawing_stack = new Stack ();
+			children = new ArrayList ();
 		}
 
 		public void Dispose() {
 			expose_pending = false;
 			nc_expose_pending = false;
+			Parent = null;
 			lock (windows) {
 				windows.Remove(client_window);
 				windows.Remove(whole_window);
@@ -347,6 +352,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public IntPtr ClientCursor {
+			get {
+				return client_cursor;
+			}
+
+			set {
+				client_cursor = value;
+			}
+		}
+
 		public IntPtr ClientWindow {
 			get {
 				return client_window;
@@ -553,7 +568,11 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (parent != null)
+					parent.children.Remove (this);
 				parent = value;
+				if (parent != null)
+					parent.children.Add (this);
 			}
 		}
 
@@ -602,6 +621,16 @@ namespace System.Windows.Forms {
 
 			set {
 				user_data = value;
+			}
+		}
+
+		public IntPtr WholeCursor {
+			get {
+				return whole_cursor;
+			}
+
+			set {
+				whole_cursor = value;
 			}
 		}
 

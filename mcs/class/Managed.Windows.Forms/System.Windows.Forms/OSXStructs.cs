@@ -511,4 +511,9 @@ namespace System.Windows.Forms {
 		}
 	}
 	
+	internal struct ProcessSerialNumber
+	{
+		public ulong highLongOfPSN;
+		public ulong lowLongOfPSN;
+	}
 }	

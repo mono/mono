@@ -1,3 +1,15 @@
+2007-10-17  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUIOSX.cs: Re-enable the native driver on the Mac.  This is still
+	highly experimental.  Fixed coordinate translation.  Fixed window locations.
+	Initial support for clipping. Implemented NC areas and menus.  Support for
+	launching from command line from Will Johansson (wjohansson@atacomm.com).
+	* OSXStructs.cs: Add ProcessSerialNumer (Patch from Will Johansson
+	wjohansson@atacomm.com)
+	* Hwnd.cs: Add some internal structures for tracking Mac cursors.
+	Hwnds now track the existence of all of their children for Mac clipping.
+    * XplatUI.cs: Re-enabled the native driver on the Mac.
+
 2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Line.cs: Move the InsertString function to here.
