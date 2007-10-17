@@ -1422,7 +1422,8 @@ namespace System.Web.UI
 
 		internal void PreRenderRecursiveInternal ()
 		{
-			if ((stateMask & VISIBLE) != 0) {
+			if (Visible) {
+				SetMask (VISIBLE, true);
 				EnsureChildControls ();
 #if MONO_TRACE
 				TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
@@ -1450,7 +1451,9 @@ namespace System.Web.UI
 				if (trace != null)
 					trace.Write ("control", String.Format ("End PreRenderRecursive {0} {1}", _userId, type_name));
 #endif
-			}
+			} else
+				SetMask (VISIBLE, false);
+			
 			stateMask |= PRERENDERED;
 		}
 

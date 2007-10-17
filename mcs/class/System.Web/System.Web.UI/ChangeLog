@@ -1,3 +1,9 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: properly configure control visibility in
+	PreRenderRecursiveInternal. The check must be made by looking at
+	the Visible value, not at the flags directly. Fixes bug #325303
+
 2007-10-03  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: complete implementation of ValidationGroups. Fixes bug
