@@ -1,3 +1,8 @@
+2007-10-17  Geoff Norton  <gnorton@novell.com>
+
+	* carbonFunctions.cs: Initial support for clipping children out of the
+	CGContext before drawing on it.
+
 2007-10-09  Geoff Norton  <gnorton@novell.com>
 
 	* carbonFunctions.cs: Correct the P/Invoke definition for CGContext*CTM.
