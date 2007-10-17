@@ -1,3 +1,9 @@
+2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Line.cs: Move the InsertString function to here.
+	* TextControl.cs: Cleanup some duplicate code, move some InsertString
+	functionality to Line.
+
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
 	* ComboBox.cs: Destroy the popup after hiding it.  Fixes #322582

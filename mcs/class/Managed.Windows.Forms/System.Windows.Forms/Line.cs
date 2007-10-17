@@ -302,6 +302,30 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// Inserts a string at the given position
+		public void InsertString (int pos, string s)
+		{
+			LineTag tag = FindTag (pos);
+			int len = s.Length;
+
+			// Insert the text into the StringBuilder
+			text.Insert (pos, s);
+
+			// Update the start position of every tag after this one
+			tag = tag.Next;
+
+			while (tag != null) {
+				tag.Start += len;
+				tag = tag.Next;
+			}
+
+			// Make sure we have room in the widths array
+			Grow (len);
+
+			// This line needs to be recalculated
+			recalc = true;
+		}
+
 		/// <summary>
 		/// Go through all tags on a line and recalculate all size-related values;
 		/// returns true if lineheight changed

@@ -1281,7 +1281,7 @@ namespace System.Windows.Forms {
 					LineTag	tag;
 					int	index;
 
-					tag = FindTag(0, viewport_y + viewport_height, out index, false);
+					tag = FindCursor (0, viewport_y + viewport_height, out index);
 					if (tag.Line.line_no > 1) {
 						line = GetLine(tag.Line.line_no - 1);
 					} else {
@@ -1632,51 +1632,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		// Inserts a character at the given position
-		internal void InsertString(Line line, int pos, string s) {
-			InsertString(line.FindTag(pos), pos, s);
-		}
-
 		// Inserts a string at the given position
-		internal void InsertString(LineTag tag, int pos, string s) {
-			Line	line;
-			int	len;
+		internal void InsertString (Line line, int pos, string s)
+		{
+			// Update our character count
+			CharCount += s.Length;
 
-			len = s.Length;
-
-			CharCount += len;
-
-			line = tag.Line;
-			line.text.Insert(pos, s);
-
-			tag = tag.Next;
-			while (tag != null) {
-				tag.Start += len;
-				tag = tag.Next;
-			}
-			line.Grow(len);
-			line.recalc = true;
-
-			UpdateView(line, pos);
-		}
-
-		// Inserts a string at the caret position
-		internal void InsertStringAtCaret(string s, bool move_caret) {
-
-			InsertString (caret.tag, caret.pos, s);
-
-			UpdateView(caret.line, caret.pos);
-			if (move_caret) {
-				caret.pos += s.Length;
-				UpdateCaret();
-			}
-		}
-
-
-
-		// Inserts a character at the given position
-		internal void InsertChar(Line line, int pos, char ch) {
-			InsertChar(line.FindTag(pos), pos, ch);
+			// Insert the text into the Line
+			line.InsertString (pos, s);
 		}
 
 		// Inserts a character at the given position
@@ -3217,51 +3180,7 @@ namespace System.Windows.Forms {
 			return last;
 		}
 
-		// Give it x/y pixel coordinates and it returns the Tag at that position; optionally the char position is returned in index
-		internal LineTag FindTag(int x, int y, out int index, bool exact) {
-			Line	line;
-			LineTag	tag;
-
-			line = GetLineByPixel(y, exact);
-			if (line == null) {
-				index = 0;
-				return null;
-			}
-			tag = line.tags;
-
-			// Alignment adjustment
-			x += line.X;
-
-			while (true) {
-				if (x >= tag.X && x < (tag.X+tag.Width)) {
-					int	end;
-
-					end = tag.Start + tag.Length - 1;
-
-					for (int pos = tag.Start; pos < end; pos++) {
-						if (x < line.widths[pos]) {
-							index = pos;
-							return LineTag.GetFinalTag (tag);
-						}
-					}
-					index=end;
-					return LineTag.GetFinalTag (tag);
-				}
-				if (tag.Next != null) {
-					tag = tag.Next;
-				} else {
-					if (exact) {
-						index = 0;
-						return null;
-					}
-
-					index = line.text.Length;
-					return LineTag.GetFinalTag (tag);
-				}
-			}
-		}
-
-		// Give it x/y pixel coordinates and it returns the Tag at that position; optionally the char position is returned in index
+		// Give it x/y pixel coordinates and it returns the Tag at that position
 		internal LineTag FindCursor (int x, int y, out int index)
 		{
 			Line line;
@@ -3269,7 +3188,7 @@ namespace System.Windows.Forms {
 			line = GetLineByPixel (multiline ? y : x, false);
 
 			LineTag tag = line.GetTag (x);
-
+				
 			if (tag.Length == 0)
 				index = 0;
 			else
