@@ -1,3 +1,10 @@
+2007-10-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGridView.cs: Look for RefreshPropertiesAttribute
+	when modifying a property, and if found then invalidate as
+	requested.
+	Fixes part of #324865.
+
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Re-enable the native driver on the Mac.  This is still

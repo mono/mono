@@ -813,9 +813,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				desc.SetValue(target, newVal);
 			}
 
+			// TODO - What else should RefreshProperties.All do?
+			RefreshPropertiesAttribute refresh_attr = (RefreshPropertiesAttribute) desc.Attributes [typeof (RefreshPropertiesAttribute)];
+			if (refresh_attr != null && refresh_attr.RefreshProperties != RefreshProperties.None)
+				Invalidate ();
+
 			property_grid.PropertyValueChangedInternal ();
 		}
-
+	
 		private void DropDownButtonClicked (object sender, EventArgs e) {
 			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 			if (editor == null) {
