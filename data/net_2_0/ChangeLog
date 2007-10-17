@@ -1,3 +1,8 @@
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* web.config, machine.config: moved webSerices section from former
+	  to latter.
+
 2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* machine.config : added WCF sectionGroups.
