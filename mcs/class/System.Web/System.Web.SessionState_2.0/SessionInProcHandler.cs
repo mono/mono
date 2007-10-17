@@ -279,7 +279,6 @@ namespace System.Web.SessionState
 			}
 		}
 
-		[MonoTODO ("Investigate why in certain situations 'item' is null. See bug #333898")]
 		/* In certain situations the 'item' parameter passed to SetAndReleaseItemExclusive
 		   may be null. The issue was reported in bug #333898, but the reporter cannot
 		   provide a test case that triggers the issue. Added work around the problem
