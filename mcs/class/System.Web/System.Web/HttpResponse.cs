@@ -694,9 +694,6 @@ namespace System.Web {
 			if (headers_sent)
 				return;
 
-			if (WorkerRequest != null)
-				WorkerRequest.SendStatus (status_code, StatusDescription);
-
 			if (cached_response != null)
 				cached_response.SetHeaders (headers);
 
@@ -716,6 +713,10 @@ namespace System.Web {
 				if (app_instance != null)
 					app_instance.TriggerPreSendRequestHeaders ();
 			}
+
+			if (WorkerRequest != null)
+				WorkerRequest.SendStatus (status_code, StatusDescription);
+
 			if (WorkerRequest != null) {
 				foreach (BaseResponseHeader header in write_headers){
 					header.SendContent (WorkerRequest);
@@ -807,7 +808,7 @@ namespace System.Web {
 			
 			StatusCode = 302;
 			url = ApplyAppPathModifier (url);
-			headers.Add (new UnknownResponseHeader ("Location", url));
+			redirect_location = url;
 
 			// Text for browsers that can't handle location header
 			Write ("<html><head><title>Object moved</title></head><body>\r\n");

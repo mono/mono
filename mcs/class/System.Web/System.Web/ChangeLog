@@ -1,3 +1,10 @@
+2007-10-17  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpResponse.cs:
+	response status is sent after PreSendRequestHeaders invoked.
+	Redirect method set RedirectLocation property
+	fixes bug #334521
+		
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: do not return a non-existing bin directory
