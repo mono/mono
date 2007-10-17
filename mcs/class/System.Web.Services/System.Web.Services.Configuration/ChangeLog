@@ -1,3 +1,9 @@
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebServicesSection.cs : r87621 has changed WebConfigurationManager
+	  to not read web.config, which caused couple of configuration
+	  regressions. So enable ConfigurationManager again.
+
 2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebServicesSection.cs : reverted r83640 which likely caused
