@@ -869,6 +869,7 @@ namespace System.Data.SqlClient {
 			case SqlDbType.BigInt :
 				return Convert.ChangeType (value, typeof (Int64));
 			case SqlDbType.Binary:
+			case SqlDbType.Image:
 			case SqlDbType.VarBinary:
 				if (value is byte[])
 					return value;

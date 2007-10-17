@@ -1,5 +1,9 @@
 2007-10-17  Nagappan <anagappan@novell.com> 
 
+	* SqlParameter.cs (ConvertToFrameworkType): Added SqlDbType.Image.
+
+2007-10-17  Nagappan <anagappan@novell.com> 
+
 	* SqlConnection.cs: BeginTransaction does not handle
 	  IsolationLevel.Unspecified, so the default is set as ReadCommited.
 	  Thanks to Jerome Haltom <wasabi@larvalstage.net> for this patch. Fixes
