@@ -163,9 +163,10 @@ namespace System.Configuration
 		{
 			throw new NotImplementedException ();
 		}
-		
+#if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_bundled_machine_config ();
+#endif
 		
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
