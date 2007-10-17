@@ -31,18 +31,38 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Web.Util;
 
 namespace System.Web
 {
 	class StaticFileHandler : IHttpHandler
 	{
+		static bool runningWindows = RunningOnWindows ();
+
+		static bool RunningOnWindows ()
+		{
+			int pid = (int)Environment.OSVersion.Platform;
+			return (pid != 4 && pid != 128);
+		}
+
+		static bool ValidFileName (string fileName)
+		{
+			if (!runningWindows)
+				return true;
+
+			if (fileName == null || fileName.Length == 0)
+				return false;
+
+			return (!StrUtils.EndsWith (fileName, " ") && !StrUtils.EndsWith (fileName, "."));
+		}
+		
 		public void ProcessRequest (HttpContext context)
 		{
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);
-			if (!fi.Exists)
+			if (!fi.Exists || !ValidFileName (fileName))
 				throw new HttpException (404, "File '" + request.FilePath + "' not found.");
 
 			if ((fi.Attributes & FileAttributes.Directory) != 0) {
