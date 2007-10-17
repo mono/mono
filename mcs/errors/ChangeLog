@@ -1,3 +1,7 @@
+2007-10-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* cs0177-8.cs: New test based on #325478.
+
 2007-10-09  Jb Evain  <jbevain@novell.com>
 
 	* known-issues-mcs: test asserting that assembly
