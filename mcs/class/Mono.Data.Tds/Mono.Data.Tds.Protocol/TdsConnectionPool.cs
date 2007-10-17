@@ -108,7 +108,7 @@ namespace Mono.Data.Tds.Protocol
 		ArrayList list = new ArrayList ();
 		TdsConnectionInfo info;
 		bool initialized;
-		static bool pooling = false;
+		bool pooling = true;
 		int activeConnections = 0;
 		TdsConnectionPoolManager manager;
 
@@ -118,7 +118,7 @@ namespace Mono.Data.Tds.Protocol
 			this.manager = manager;
 		}
 
-		public static bool Pooling {
+		public bool Pooling {
 			get { return pooling; }
 			set { pooling = value; }
 		}

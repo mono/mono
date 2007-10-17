@@ -1,3 +1,8 @@
+2007-10-17  Nagappan <anagappan@novell.com> 
+
+	* TdsConnectionPool.cs: Default the pooling is enabled. It has to be
+	  disabled only when we clear all the pools.
+
 2007-09-25  Nagappan A  <anagappan@novell.com>
 
 	* Tds.cs (Pooling): Added new property to get the internal
