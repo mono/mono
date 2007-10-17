@@ -1,3 +1,9 @@
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MailMessage.cs : removed MonoTODO. some comment.
+	* SmtpException.cs, SmtpFailedRecipientsException.cs,
+	  SmtpFailedRecipientException.cs : implemented serialization.
+
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpClient.cs : use 3 StringBuilder.Replace() calls rather than

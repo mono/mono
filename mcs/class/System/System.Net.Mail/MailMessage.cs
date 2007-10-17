@@ -36,7 +36,6 @@ using System.Net.Mime;
 using System.Text;
 
 namespace System.Net.Mail {
-	[MonoTODO]
 	public class MailMessage : IDisposable
 	{
 		#region Fields
@@ -72,7 +71,8 @@ namespace System.Net.Mail {
 			headers.Add ("MIME-Version", "1.0");
 		}
 
-		// FIXME: should throw a FormatException if the addresses are wrong.
+		// FIXME: should it throw a FormatException if the addresses are wrong? 
+		// (How is it possible to instantiate such a malformed MailAddress?)
 		public MailMessage (MailAddress from, MailAddress to) : this ()
 		{
 			if (from == null || to == null)

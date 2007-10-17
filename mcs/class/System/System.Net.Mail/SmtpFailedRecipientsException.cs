@@ -62,9 +62,13 @@ namespace System.Net.Mail {
 			this.innerExceptions = innerExceptions;
 		}
 
-		[MonoTODO]
 		protected SmtpFailedRecipientsException (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			innerExceptions = (SmtpFailedRecipientException []) info.GetValue ("innerExceptions", typeof (SmtpFailedRecipientException []));
 		}
 		
 		#endregion
@@ -79,15 +83,19 @@ namespace System.Net.Mail {
 
 		#region Methods
 
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			info.AddValue ("innerExceptions", innerExceptions);
 		}
 
 #if !TARGET_JVM //remove private implementation
-		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			GetObjectData (info, context);
 		}
 #endif
 

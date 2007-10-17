@@ -45,10 +45,12 @@ namespace System.Net.Mail {
 		#region Constructors
 
 		public SmtpException ()
+			: this ("SMTP error occured")
 		{
 		}
 
 		public SmtpException (SmtpStatusCode statusCode)
+			: this ()
 		{
 			StatusCode = statusCode;
 		}
@@ -61,6 +63,11 @@ namespace System.Net.Mail {
 		protected SmtpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			StatusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
 		}
 
 		public SmtpException (SmtpStatusCode statusCode, string message)
@@ -85,14 +92,18 @@ namespace System.Net.Mail {
 
 		#endregion // Properties
 
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			info.AddValue ("statusCode", statusCode, typeof (SmtpStatusCode));
 		}
 #if !TARGET_JVM //remove private implementation
-		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			GetObjectData (info, context);
 		}
 #endif
 	}

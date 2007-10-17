@@ -54,9 +54,13 @@ namespace System.Net.Mail {
 		{
 		}
 
-		[MonoTODO]
 		protected SmtpFailedRecipientException (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			if (serializationInfo == null)
+				throw new ArgumentNullException ("serializationInfo");
+			if (streamingContext == null)
+				throw new ArgumentNullException ("streamingContext");
+			failedRecipient = serializationInfo.GetString ("failedRecipient");
 		}
 
 		public SmtpFailedRecipientException (SmtpStatusCode statusCode, string failedRecipient) : base (statusCode)
@@ -90,14 +94,18 @@ namespace System.Net.Mail {
 
 		#region Methods
 
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			if (serializationInfo == null)
+				throw new ArgumentNullException ("serializationInfo");
+			if (streamingContext == null)
+				throw new ArgumentNullException ("streamingContext");
+			serializationInfo.AddValue ("failedRecipient", failedRecipient);
 		}
 #if !TARGET_JVM //remove private implementation
-		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			GetObjectData (serializationInfo, streamingContext);
 		}
 #endif
 
