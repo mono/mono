@@ -45,42 +45,36 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		[MonoTODO]
 		public AlternateView (string fileName) : base (fileName)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 
-		[MonoTODO]
 		public AlternateView (string fileName, ContentType contentType) : base (fileName, contentType)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 
-		[MonoTODO]
 		public AlternateView (string fileName, string mediaType) : base (fileName, mediaType)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 
-		[MonoTODO]
 		public AlternateView (Stream contentStream) : base (contentStream)
 		{
 			if (contentStream == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public AlternateView (Stream contentStream, string mediaType) : base (contentStream, mediaType)
 		{
 			if (contentStream == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public AlternateView (Stream contentStream, ContentType contentType) : base (contentStream, contentType)
 		{
 			if (contentStream == null)
@@ -104,7 +98,6 @@ namespace System.Net.Mail {
 		
 		#region Methods
 
-		[MonoTODO]
 		public static AlternateView CreateAlternateViewFromString (string content)
 		{
 			if (content == null)
@@ -113,7 +106,6 @@ namespace System.Net.Mail {
 			return new AlternateView (ms);
 		}
 
-		[MonoTODO]
 		public static AlternateView CreateAlternateViewFromString (string content, ContentType contentType)
 		{
 			if (content == null)
@@ -122,7 +114,6 @@ namespace System.Net.Mail {
 			return new AlternateView (ms, contentType);
 		}
 
-		[MonoTODO]
 		public static AlternateView CreateAlternateViewFromString (string content, Encoding encoding, string mediaType)
 		{
 			if (content == null)
@@ -131,9 +122,11 @@ namespace System.Net.Mail {
 			return new AlternateView (ms, mediaType);
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
+			if (disposing)
+				foreach (LinkedResource lr in linkedResources)
+					lr.Dispose ();
 			base.Dispose (disposing);
 		}
 		

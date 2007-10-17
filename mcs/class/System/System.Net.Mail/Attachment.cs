@@ -61,19 +61,15 @@ namespace System.Net.Mail {
 			InitName (fileName);
 		}
 
-		[MonoTODO]
 		public Attachment (Stream contentStream, ContentType contentType)
 			: base (contentStream, contentType) {
-			//FIXME: What should we do with the name???
 		}
 
-		[MonoTODO]
-		public Attachment (Stream contentStream, string mediaType)
-			: base (contentStream, mediaType) {
-			//FIXME: What should we do with the name???
+		public Attachment (Stream contentStream, string name)
+			: base (contentStream) {
+			Name = name;
 		}
 
-		[MonoTODO]
 		public Attachment (Stream contentStream, string name, string mediaType)
 			: base (contentStream, mediaType) {
 			if (name == null) {
@@ -114,9 +110,10 @@ namespace System.Net.Mail {
 
 		#region Methods
 		
-		[MonoTODO]
 		public static Attachment CreateAttachmentFromString (string content, ContentType contentType)
 		{
+			if (content == null)
+				throw new ArgumentNullException ("content");
 			MemoryStream ms = new MemoryStream ();
 			StreamWriter sw = new StreamWriter (ms);
 			sw.Write (content);
@@ -125,22 +122,26 @@ namespace System.Net.Mail {
 			return new Attachment (ms, contentType);
 		}
 		
-		[MonoTODO]
 		public static Attachment CreateAttachmentFromString (string content, string name)
 		{
+			if (content == null)
+				throw new ArgumentNullException ("content");
 			MemoryStream ms = new MemoryStream ();
 			StreamWriter sw = new StreamWriter (ms);
 			sw.Write (content);
 			sw.Flush ();
 			ms.Position = 0;
-			return new Attachment (ms, name);
+			Attachment a = new Attachment (ms, new ContentType ("text/plain"));
+			a.Name = name;
+			return a;
 		}
 		
-		[MonoTODO]
-		public static Attachment CreateAttachmentFromString (string content, string name, Encoding encoding, string mediaType)
+		public static Attachment CreateAttachmentFromString (string content, string name, Encoding contentEncoding, string mediaType)
 		{
+			if (content == null)
+				throw new ArgumentNullException ("content");
 			MemoryStream ms = new MemoryStream ();
-			StreamWriter sw = new StreamWriter (ms);
+			StreamWriter sw = new StreamWriter (ms, contentEncoding);
 			sw.Write (content);
 			sw.Flush ();
 			ms.Position = 0;

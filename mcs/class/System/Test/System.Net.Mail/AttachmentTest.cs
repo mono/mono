@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Net.Mail;
+using System.Net.Mime;
 
 namespace MonoTests.System.Net.Mail
 {
@@ -23,7 +24,7 @@ namespace MonoTests.System.Net.Mail
 		[SetUp]
 		public void GetReady ()
 		{
-			attach = Attachment.CreateAttachmentFromString ("test", "text/plain");
+			attach = Attachment.CreateAttachmentFromString ("test", "attachment-name");
 		}
 
 		[Test]
@@ -37,15 +38,18 @@ namespace MonoTests.System.Net.Mail
 		[Test]
 		public void ContentDisposition ()
 		{
-			Assert.IsNotNull (attach.ContentDisposition);
-			Assert.IsTrue (attach.ContentDisposition.DispositionType == "attachment");
+			Assert.IsNotNull (attach.ContentDisposition, "#1");
+			Assert.AreEqual ("attachment", attach.ContentDisposition.DispositionType, "#2");
 		}
 
 		[Test]
 		public void ContentType ()
 		{
-			Assert.IsNotNull (attach.ContentType);
-			Assert.IsTrue (attach.ContentType.MediaType == "text/plain");
+			Assert.IsNotNull (attach.ContentType, "#1");
+			Assert.AreEqual ("text/plain", attach.ContentType.MediaType, "#2");
+			Attachment a2 = new Attachment (new MemoryStream (), "myname");
+			Assert.IsNotNull (a2.ContentType, "#1");
+			Assert.AreEqual ("application/octet-stream", a2.ContentType.MediaType, "#2");
 		}
 
 		[Test]
@@ -62,17 +66,19 @@ namespace MonoTests.System.Net.Mail
 		}
 
 
-		/*[Test]
+		[Test]
 		public void Name ()
 		{
-			Assert.IsNotNull (attach.Name);
+			Assert.AreEqual ("attachment-name", attach.Name, "#1");
+			Attachment a2 = new Attachment (new MemoryStream (), new ContentType ("image/jpeg"));
+			Assert.AreEqual (null, a2.Name, "#2");
 		}
 
 		[Test]
-		public void TransferEncoding ()
+		public void TransferEncodingTest ()
 		{
-			Assert.IsTrue (attach.TransferEncoding == MimeTransferEncoding.Base64);
-		}*/
+			Assert.AreEqual (TransferEncoding.QuotedPrintable, attach.TransferEncoding);
+		}
 	}
 }
 #endif

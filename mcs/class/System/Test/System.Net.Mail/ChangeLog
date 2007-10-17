@@ -1,3 +1,8 @@
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinkedResourceTest.cs, AttachmentTest.cs, AlternateViewTest.cs:
+	  added/enabled couple of attachment tests.
+
 2007-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MailMessageTest.cs : added test for encoding guess.

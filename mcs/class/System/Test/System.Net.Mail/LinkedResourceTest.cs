@@ -18,12 +18,12 @@ namespace MonoTests.System.Net.Mail
 	[TestFixture]
 	public class LinkedResourceTest
 	{
-		//LinkedResource lr;
+		LinkedResource lr;
 		
 		[SetUp]
 		public void GetReady ()
 		{
-			//lr = LinkedResource.CreateLinkedResourceFromString ("test", new ContentType ("text/plain"));
+			lr = LinkedResource.CreateLinkedResourceFromString ("test", new ContentType ("text/plain"));
 		}
 
 		[Test]
@@ -43,9 +43,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-		public void TransferEncoding ()
+		public void TransferEncodingTest ()
 		{
-			//Assert.IsTrue (lr.TransferEncoding = TransferEncoding.QuotedPrintable);
+			Assert.AreEqual (TransferEncoding.QuotedPrintable, lr.TransferEncoding);
 		}
 	}
 }

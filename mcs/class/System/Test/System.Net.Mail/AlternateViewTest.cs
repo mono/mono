@@ -50,6 +50,14 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		public void ContentType2 ()
+		{
+			AlternateView av = new AlternateView (new MemoryStream ());
+			Assert.IsNotNull (av.ContentType, "#1");
+			Assert.AreEqual ("application/octet-stream", av.ContentType.MediaType, "#2");
+		}
+
+		[Test]
 		public void ContentStream ()
 		{
 			Assert.IsNotNull (av.ContentStream);
@@ -57,9 +65,9 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-		public void TransferEncoding ()
+		public void TransferEncodingTest ()
 		{
-			//Assert.IsTrue (av.TransferEncoding = TransferEncoding.QuotedPrintable);
+			Assert.AreEqual (TransferEncoding.QuotedPrintable, av.TransferEncoding);
 		}
 	}
 }

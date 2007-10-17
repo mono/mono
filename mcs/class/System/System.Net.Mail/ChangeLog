@@ -1,5 +1,13 @@
 2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AlternateView.cs : dispose linked resources. Remove MonoTODOs.
+	* Attachment.cs : check null content string.
+	  The string argument in .ctor(Stream,string) is name, not mediaType.
+	  Use contentEncoding argument in CreateAttachmentFromString().
+	* AttachmentBase.cs : TransferEncoding default is QuotedPrintable.
+
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MailMessage.cs : removed MonoTODO. some comment.
 	* SmtpException.cs, SmtpFailedRecipientsException.cs,
 	  SmtpFailedRecipientException.cs : implemented serialization.

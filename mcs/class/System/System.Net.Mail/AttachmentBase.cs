@@ -43,7 +43,7 @@ namespace System.Net.Mail {
 		string id;
 		ContentType contentType = new ContentType ();
 		Stream contentStream;
-		TransferEncoding transferEncoding;
+		TransferEncoding transferEncoding = TransferEncoding.QuotedPrintable;
 
 		#endregion // Fields
 
@@ -56,7 +56,6 @@ namespace System.Net.Mail {
 			this.contentStream = contentStream;
 			contentType.MediaType = MediaTypeNames.Application.Octet;
 			contentType.CharSet = null;
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		protected AttachmentBase (Stream contentStream, ContentType contentType)
@@ -65,7 +64,6 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 			this.contentStream = contentStream;
 			this.contentType = contentType;
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		protected AttachmentBase (Stream contentStream, string mediaType)
@@ -74,7 +72,6 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 			this.contentStream = contentStream;
 			contentType.MediaType = mediaType;
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		protected AttachmentBase (string fileName)
@@ -83,7 +80,6 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 			contentStream = File.OpenRead (fileName);
 			contentType = new ContentType (MimeTypes.GetMimeType (fileName));
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		protected AttachmentBase (string fileName, ContentType contentType) {
@@ -91,7 +87,6 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 			contentStream = File.OpenRead (fileName);
 			this.contentType = contentType;
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		protected AttachmentBase (string fileName, string mediaType)
@@ -100,7 +95,6 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ();
 			contentStream = File.OpenRead (fileName);
 			contentType.MediaType = mediaType;
-			transferEncoding = TransferEncoding.Base64;
 		}
 
 		#endregion // Constructors
