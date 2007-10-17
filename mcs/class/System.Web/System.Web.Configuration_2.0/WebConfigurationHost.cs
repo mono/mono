@@ -296,7 +296,6 @@ namespace System.Web.Configuration
 					if (File.Exists (file))
 						return file;
 				}
-#endif
 			} else {
 				Assembly asm = Assembly.GetEntryAssembly () ?? Assembly.GetCallingAssembly ();
 				string name = Path.GetFileName (asm.Location);
@@ -310,7 +309,7 @@ namespace System.Web.Configuration
 						return file;
 				}
 			}
-			
+#endif			
 			return null;
 		}
 #if TARGET_J2EE
