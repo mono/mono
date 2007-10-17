@@ -1,3 +1,8 @@
+2007-10-17 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* bug-331958.cs: added.
+	* Makefile.am: added bug-331958.cs.
+
 2007-10-16  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-333798.2.cs: added
