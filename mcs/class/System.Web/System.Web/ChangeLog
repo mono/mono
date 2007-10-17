@@ -1,3 +1,17 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* StaticFileHandler.cs: fixed an bug with Mono running under
+	Windows operating systems which caused XSP to return source of the
+	requested page if the file name used in the request ended in any
+	number of spaces or dots. The problem lies in the way the Win32
+	subsystem treats such file names - it ignores the trailing
+	characters and allows the calling application to open a file on
+	disk even when its name does not contain the trailing characters
+	used in the open request. Such file names may be supported by the
+	underlying filesystem (e.g. NTFS) but they are not supported by
+	the I/O Win32 subsystem. The security issue is reported in
+	CVE security report CVE-2007-5473. Fixes bug #332401
+	
 2007-10-17  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpResponse.cs:
