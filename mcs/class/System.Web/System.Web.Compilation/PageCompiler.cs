@@ -139,6 +139,13 @@ namespace System.Web.Compilation
 
 			if (pageParser.StyleSheetTheme != null)
 				method.Statements.Add (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme));
+
+			if (pageParser.Async != false)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "AsyncMode", pageParser.Async));
+
+			if (pageParser.AsyncTimeout != -1)
+				method.Statements.Add (CreatePropertyAssign (ctrlVar, "AsyncTimeout",
+									     TimeSpan.FromSeconds (pageParser.AsyncTimeout)));
 #endif
 		}
 

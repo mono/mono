@@ -62,6 +62,8 @@ namespace System.Web.UI
 		Type baseType = typeof (Page);
 
 #if NET_2_0
+		bool async;
+		int asyncTimeout = -1;
 		string masterPage;
 		Type masterType;
 		string title;
@@ -334,6 +336,16 @@ namespace System.Web.UI
 			notBuffer = !GetBool (atts, "Buffer", true);
 			
 #if NET_2_0
+			async = GetBool (atts, "Async", false);
+			string asyncTimeoutVal = GetString (atts, "AsyncTimeout", null);
+			if (asyncTimeoutVal != null) {
+				try {
+					asyncTimeout = Int32.Parse (asyncTimeoutVal);
+				} catch (Exception) {
+					ThrowParseException ("AsyncTimeout must be an integer value");
+				}
+			}
+			
 			masterPage = GetString (atts, "MasterPageFile", masterPage);
 			
 			// Make sure the page exists
@@ -503,6 +515,14 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
+		internal bool Async {
+			get { return async; }
+		}
+
+		internal int AsyncTimeout {
+			get { return asyncTimeout; }
+		}
+		
 		internal string Theme {
 			get { return theme; }
 		}

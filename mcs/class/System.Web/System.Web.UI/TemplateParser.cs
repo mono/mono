@@ -512,11 +512,6 @@ namespace System.Web.UI {
 			atts.Remove ("CodeBehind");  // ignored
 #endif
 			atts.Remove ("AspCompat"); // ignored
-#if NET_2_0
-			// these two are ignored for the moment
-			atts.Remove ("Async");
-			atts.Remove ("AsyncTimeOut");
-#endif
 			
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");

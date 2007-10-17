@@ -1,5 +1,11 @@
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateParser.cs: removed code that ignored the Async and
+	AsyncTimeout attributes.
+
+	* PageParser.cs: handle the Async and AsyncTimeout attributes
+	here. Fixes bug #325450
+
 	* Control.cs: properly configure control visibility in
 	PreRenderRecursiveInternal. The check must be made by looking at
 	the Visible value, not at the flags directly. Fixes bug #325303

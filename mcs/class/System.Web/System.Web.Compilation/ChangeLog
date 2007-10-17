@@ -1,3 +1,8 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: added code to set the AsyncMode and
+	AsyncTimeout Page properties.
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs, WebServiceCompiler.cs,
