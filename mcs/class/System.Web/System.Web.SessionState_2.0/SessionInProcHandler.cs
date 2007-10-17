@@ -278,7 +278,17 @@ namespace System.Web.SessionState
 					item.rwlock.ReleaseWriterLock ();
 			}
 		}
-		
+
+		[MonoTODO ("Investigate why in certain situations 'item' is null. See bug #333898")]
+		/* In certain situations the 'item' parameter passed to SetAndReleaseItemExclusive
+		   may be null. The issue was reported in bug #333898, but the reporter cannot
+		   provide a test case that triggers the issue. Added work around the problem
+		   in the way that should have the least impact on the rest of the code. If 'item'
+		   is null, then the new session item is created without the items and staticItems
+		   collections - they will be initialized to defaults when retrieving the session
+		   item. This is not a correct fix, but since there is no test case this is the best
+		   what can be done right now.
+		*/
 		public override void SetAndReleaseItemExclusive (HttpContext context,
 								 string id,
 								 SessionStateStoreData item,
@@ -292,8 +302,8 @@ namespace System.Web.SessionState
 			
 			if (newItem || inProcItem == null) {
 				inProcItem = new InProcSessionItem ();
-				inProcItem.timeout = item.Timeout;
-				inProcItem.expiresAt = DateTime.UtcNow.AddMinutes (item.Timeout);
+				inProcItem.timeout = item != null ? item.Timeout : 20;
+				inProcItem.expiresAt = DateTime.UtcNow.AddMinutes (item != null ? item.Timeout : 20);
 				if (lockId.GetType() == typeof(Int32))
 					inProcItem.lockId = (Int32)lockId;
 			} else {
@@ -306,9 +316,9 @@ namespace System.Web.SessionState
 			try {
 				inProcItem.rwlock.AcquireWriterLock (lockAcquireTimeout);
 				inProcItem.locked = false;
-				inProcItem.items = item.Items;
-				inProcItem.staticItems = item.StaticObjects;
-				InsertSessionItem (inProcItem, item.Timeout, CacheId);
+				inProcItem.items = item != null ? item.Items : null;
+				inProcItem.staticItems = item != null ? item.StaticObjects : null;
+				InsertSessionItem (inProcItem, item != null ? item.Timeout : 20, CacheId);
 			} catch {
 				throw;
 			} finally {

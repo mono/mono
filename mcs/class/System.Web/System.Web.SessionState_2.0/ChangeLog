@@ -1,3 +1,16 @@
+2007-10-17  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs: in certain situations the 'item'
+	parameter passed to SetAndReleaseItemExclusive may be null. The
+	issue was reported in bug #333898, but the reporter cannot provide
+	a test case that triggers the issue. Added work around the problem
+	in the way that should have the least impact on the rest of the
+	code. If 'item' is null, then the new session item is created
+	without the items and staticItems collections - they will be
+	initialized to defaults when retrieving the session item. This is
+	not a correct fix, but since there is no test case this is the
+	best what can be done right now.
+
 2007-10-15  Juraj Skripsky  <js@hotfeet.ch>
 
 	* SessionStateModule.cs (Init): Use HttpApplication.LoadType,
