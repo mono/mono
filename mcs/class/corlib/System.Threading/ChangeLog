@@ -1,4 +1,8 @@
 
+Wed Oct 17 13:24:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: better cleanup test for the expired array.
+
 Tue Oct 16 17:22:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* Timer.cs: remove expired timers from the the jobs list.

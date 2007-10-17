@@ -95,11 +95,12 @@ namespace System.Threading
 						}
 					}
 					if (expired != null) {
-						foreach (Timer t1 in expired) {
-							jobs.Remove (t1);
+						int count = expired.Count;
+						for (int i = 0; i < count; ++i) {
+							jobs.Remove (expired [i]);
 						}
 						expired.Clear ();
-						if (expired.Count > 50)
+						if (count > 50)
 							expired = null;
 					}
 				}
