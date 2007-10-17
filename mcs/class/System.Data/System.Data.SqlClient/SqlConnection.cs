@@ -342,9 +342,6 @@ namespace System.Data.SqlClient {
 
 			string isolevel = String.Empty;
 			switch (iso) {
-			case IsolationLevel.ReadCommitted:
-				isolevel = "READ COMMITTED";
-				break;
 			case IsolationLevel.ReadUncommitted:
 				isolevel = "READ UNCOMMITTED";
 				break;
@@ -353,6 +350,10 @@ namespace System.Data.SqlClient {
 				break;
 			case IsolationLevel.Serializable:
 				isolevel = "SERIALIZABLE";
+				break;
+			case IsolationLevel.ReadCommitted:
+			default:
+				isolevel = "READ COMMITTED";
 				break;
 			}
 

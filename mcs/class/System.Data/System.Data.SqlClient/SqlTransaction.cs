@@ -143,7 +143,8 @@ namespace System.Data.SqlClient
 			if (!isRolledBack) {
 				if (!isOpen)
 					throw new InvalidOperationException ("The Transaction was not open.");
-				connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
+				connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
+				                                       transactionName));
 				isRolledBack = true;
 				isOpen = false;
 				connection.Transaction = null;
