@@ -299,11 +299,20 @@ namespace System.Web.SessionState
 			string CacheId = CachePrefix + id;
 			Cache cache = HttpRuntime.InternalCache;
 			InProcSessionItem inProcItem = cache [CacheId] as InProcSessionItem;
+			ISessionStateItemCollection itemItems = null;
+			int itemTimeout = 20;
+			HttpStaticObjectsCollection itemStaticItems = null;
+
+			if (item != null) {
+				itemItems = item.Items;
+				itemTimeout = item.Timeout;
+				itemStaticItems = item.StaticObjects;
+			}
 			
 			if (newItem || inProcItem == null) {
 				inProcItem = new InProcSessionItem ();
-				inProcItem.timeout = item != null ? item.Timeout : 20;
-				inProcItem.expiresAt = DateTime.UtcNow.AddMinutes (item != null ? item.Timeout : 20);
+				inProcItem.timeout = itemTimeout;
+				inProcItem.expiresAt = DateTime.UtcNow.AddMinutes (itemTimeout);
 				if (lockId.GetType() == typeof(Int32))
 					inProcItem.lockId = (Int32)lockId;
 			} else {
@@ -316,9 +325,9 @@ namespace System.Web.SessionState
 			try {
 				inProcItem.rwlock.AcquireWriterLock (lockAcquireTimeout);
 				inProcItem.locked = false;
-				inProcItem.items = item != null ? item.Items : null;
-				inProcItem.staticItems = item != null ? item.StaticObjects : null;
-				InsertSessionItem (inProcItem, item != null ? item.Timeout : 20, CacheId);
+				inProcItem.items = itemItems;
+				inProcItem.staticItems = itemStaticItems;
+				InsertSessionItem (inProcItem, itemTimeout, CacheId);
 			} catch {
 				throw;
 			} finally {
