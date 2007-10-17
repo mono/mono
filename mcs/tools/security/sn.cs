@@ -290,9 +290,9 @@ namespace Mono.Tools {
 					Console.WriteLine (" -k keypair.snk{0}\tCreate a new keypair in the specified file", Environment.NewLine);
 					Console.WriteLine (" -R assembly keypair.snk{0}\tResign the assembly with the specified StrongName key file", Environment.NewLine);
 					Console.WriteLine (" -Rc assembly container{0}\tResign the assembly with the specified CSP container", Environment.NewLine);
-					Console.WriteLine (" -t file{0}\tShow the public key from the specified file", Environment.NewLine);
+					Console.WriteLine (" -t file{0}\tShow the public key token from the specified file", Environment.NewLine);
 					Console.WriteLine (" -tp file{0}\tShow the public key and pk token from the specified file", Environment.NewLine);
-					Console.WriteLine (" -T assembly{0}\tShow the public key from the specified assembly", Environment.NewLine);
+					Console.WriteLine (" -T assembly{0}\tShow the public key token from the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -Tp assembly{0}\tShow the public key and pk token from the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -v assembly{0}\tVerify the specified assembly signature", Environment.NewLine);
 					Console.WriteLine (" -vf assembly{0}\tVerify the specified assembly signature (even if disabled).", Environment.NewLine);
