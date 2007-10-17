@@ -1239,8 +1239,19 @@ namespace System.Web.UI
 
 		sealed class HtmlTextParser : AlternativeHtmlTextWriter
 		{
+			bool _done;
+
 			public HtmlTextParser (HtmlTextWriter responseOutput)
 				: base (new TextParser (responseOutput), responseOutput) {
+			}
+
+			public override void WriteAttribute (string name, string value) {
+				if (!_done && String.Compare ("action", name, StringComparison.OrdinalIgnoreCase) == 0) {
+					_done = true;
+					ScriptManager.WriteCallbackOutput (ResponseOutput, formAction, null, value);
+					return;
+				}
+				base.WriteAttribute (name, value);
 			}
 		}
 
