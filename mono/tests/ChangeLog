@@ -1,3 +1,7 @@
+2007-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked.cs: Add a test for CompareExchange and negative values.
+
 2007-10-17  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-331798-tb.2.cs: added for Rodrigo
