@@ -33,6 +33,7 @@ using NUnit.Framework;
 
 namespace MonoTests {
 
+	// now misnamed - we check for the DISTRO env variable
 	public class HostIgnoreList {
 
 		private const string IgnoreListName = "nunit-host-ignore-list";
@@ -41,8 +42,11 @@ namespace MonoTests {
 
 		static HostIgnoreList ()
 		{
+			string hostname = Environment.GetEnvironmentVariable ("DISTRO");
+			if (hostname == null)
+				return;
+
 			if (File.Exists (IgnoreListName)) {
-				string hostname = Environment.MachineName;
 				using (StreamReader sr = new StreamReader (IgnoreListName)) {
 					string line = sr.ReadLine ();
 					while (line != null) {
@@ -69,7 +73,7 @@ namespace MonoTests {
 				return;
 
 			if (IgnoreList.Contains (testname)) {
-				string msg = String.Format ("Test '{0}' was ignore because it's defined in the '{1}' ignore list.", 
+				string msg = String.Format ("Test '{0}' was ignored because it's defined in the '{1}' ignore list.", 
 					testname, IgnoreListName);
 				Assert.Ignore (msg);
 			}

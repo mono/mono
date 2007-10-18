@@ -1,3 +1,8 @@
+2007-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostIgnoreList.cs: Now use the DISTRO variable to track tests to
+	ignore.
+
 2007-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostIgnoreList.cs: New class to ignore some tests on specific hosts.
