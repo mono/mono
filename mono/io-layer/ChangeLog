@@ -1,3 +1,8 @@
+2007-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h (InterlockedCompareExchange): Fix the ia64 version so it works for
+	negative values too. Hopefully fixes #332700.
+
 2007-09-26  Dick Porter  <dick@ximian.com>
 
 	* io-portability.c (_wapi_io_scandir): Only update the error
