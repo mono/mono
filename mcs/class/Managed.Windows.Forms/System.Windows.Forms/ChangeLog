@@ -1,3 +1,8 @@
+2007-10-17  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUIOSX.cs: Implement support for window icons in the dock.  Set
+	the title caption of real window.
+
 2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ErrorProvider.cs: Add the error provider's internal window to a 

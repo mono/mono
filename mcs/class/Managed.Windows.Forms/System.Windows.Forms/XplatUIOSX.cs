@@ -1412,9 +1412,11 @@ namespace System.Windows.Forms {
 				HIViewSetVisible (ClientWindow, false);
 				hwnd.visible = false;
 			}
+
+			Text (hwnd.Handle, cp.Caption);
 			
 			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
-			SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+			SendMessage (hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 
 			return hwnd.Handle;
 		}
@@ -2031,8 +2033,45 @@ namespace System.Windows.Forms {
 			FocusWindow = handle;
 		}
 
-		[MonoTODO]
 		internal override void SetIcon(IntPtr handle, Icon icon) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			// FIXME: we need to map the icon for active window switches
+			if (WindowMapping [hwnd.Handle] != null) {
+				if (icon == null) { 
+					RestoreApplicationDockTileImage ();
+				} else {
+					Bitmap		bitmap;
+					int		size;
+					IntPtr[]	data;
+					int		index;
+	
+					bitmap = new Bitmap (128, 128);
+					using (Graphics g = Graphics.FromImage (bitmap)) {
+						g.DrawImage (icon.ToBitmap (), 0, 0, 128, 128);
+					}
+					index = 0;
+					size = bitmap.Width * bitmap.Height;
+					data = new IntPtr[size];
+	
+					for (int y = 0; y < bitmap.Height; y++) {
+						for (int x = 0; x < bitmap.Width; x++) {
+							int pixel = bitmap.GetPixel (x, y).ToArgb ();
+							byte a = (byte) ((pixel >> 24) & 0xFF);
+							byte r = (byte) ((pixel >> 16) & 0xFF);
+							byte g = (byte) ((pixel >> 8) & 0xFF);
+							byte b = (byte) (pixel & 0xFF);
+							data[index++] = (IntPtr)(a + (r << 8) + (g << 16) + (b << 24));
+						}
+					}
+
+					IntPtr provider = CGDataProviderCreateWithData (IntPtr.Zero, data, size*4, IntPtr.Zero);
+Console.WriteLine (provider);
+					IntPtr image = CGImageCreate (128, 128, 8, 32, 4*128, CGColorSpaceCreateDeviceRGB (), 4, provider, IntPtr.Zero, 0, 0);
+Console.WriteLine (image);
+					SetApplicationDockTileImage (image);
+				}
+			}
 		}
 
 		
@@ -2664,6 +2703,19 @@ namespace System.Windows.Forms {
 		internal extern static int TransformProcessType (ref ProcessSerialNumber psn, uint type);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static int SetFrontProcess (ref ProcessSerialNumber psn);
+		#endregion
+
+		#region Dock tile imports
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static IntPtr CGColorSpaceCreateDeviceRGB();
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static IntPtr CGDataProviderCreateWithData (IntPtr info, IntPtr [] data, int size, IntPtr releasefunc);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static IntPtr CGImageCreate (int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, IntPtr colorspace, uint bitmapInfo, IntPtr provider, IntPtr decode, int shouldInterpolate, int intent);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void SetApplicationDockTileImage(IntPtr imageRef);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void RestoreApplicationDockTileImage();
 		#endregion
 	}
 }
