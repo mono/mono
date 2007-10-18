@@ -1,7 +1,0 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <JREPath>C:\views\trunk\studio\GH\Redist\j2sdk1.4.full</JREPath>
-    <VMArguments>
-    </VMArguments>
-  </PropertyGroup>
-</Project>
