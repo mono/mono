@@ -65,8 +65,6 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			if (context == null)
-				throw new ArgumentNullException ("context");
 			StatusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
 		}
 
@@ -96,8 +94,6 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			if (context == null)
-				throw new ArgumentNullException ("context");
 			info.AddValue ("statusCode", statusCode, typeof (SmtpStatusCode));
 		}
 #if !TARGET_JVM //remove private implementation

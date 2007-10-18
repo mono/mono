@@ -66,8 +66,6 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			if (context == null)
-				throw new ArgumentNullException ("context");
 			innerExceptions = (SmtpFailedRecipientException []) info.GetValue ("innerExceptions", typeof (SmtpFailedRecipientException []));
 		}
 		
@@ -87,8 +85,6 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			if (context == null)
-				throw new ArgumentNullException ("context");
 			info.AddValue ("innerExceptions", innerExceptions);
 		}
 

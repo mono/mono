@@ -58,8 +58,6 @@ namespace System.Net.Mail {
 		{
 			if (serializationInfo == null)
 				throw new ArgumentNullException ("serializationInfo");
-			if (streamingContext == null)
-				throw new ArgumentNullException ("streamingContext");
 			failedRecipient = serializationInfo.GetString ("failedRecipient");
 		}
 
@@ -98,8 +96,6 @@ namespace System.Net.Mail {
 		{
 			if (serializationInfo == null)
 				throw new ArgumentNullException ("serializationInfo");
-			if (streamingContext == null)
-				throw new ArgumentNullException ("streamingContext");
 			serializationInfo.AddValue ("failedRecipient", failedRecipient);
 		}
 #if !TARGET_JVM //remove private implementation
