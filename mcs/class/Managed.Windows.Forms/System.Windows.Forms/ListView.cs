@@ -109,6 +109,7 @@ namespace System.Windows.Forms
 		private Size tile_size;
 		private bool virtual_mode;
 		private int virtual_list_size;
+		private bool right_to_left_layout;
 #endif
 
 		// internal variables
@@ -133,6 +134,7 @@ namespace System.Windows.Forms
 		static object ItemSelectionChangedEvent = new object ();
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
+		static object RightToLeftLayoutChangedEvent = new object ();
 		static object VirtualItemsSelectionRangeChangedEvent = new object ();
 #endif
 
@@ -257,6 +259,11 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (RetrieveVirtualItemEvent, value); }
 		}
 
+		public event EventHandler RightToLeftLayoutChanged {
+			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
+			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
+		}
+		
 		public event ListViewVirtualItemsSelectionRangeChangedEventHandler VirtualItemsSelectionRangeChanged {
 			add { Events.AddHandler (VirtualItemsSelectionRangeChangedEvent, value); }
 			remove { Events.RemoveHandler (VirtualItemsSelectionRangeChangedEvent, value); }
@@ -720,6 +727,19 @@ namespace System.Windows.Forms
 			}
 			set {
 				base.Padding = value;
+			}
+		}
+		
+		[MonoTODO ("RTL not supported")]
+		[Localizable (true)]
+		[DefaultValue (false)]
+		public virtual bool RightToLeftLayout {
+			get { return right_to_left_layout; }
+			set { 
+				if (right_to_left_layout != value) {
+					right_to_left_layout = value;
+					OnRightToLeftLayoutChanged (EventArgs.Empty);
+				}
 			}
 		}
 #endif
@@ -3098,12 +3118,13 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh(this, e);
 		}
-#endif
 
+#else
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
 		}
+#endif
 
 		protected override void OnFontChanged (EventArgs e)
 		{
@@ -3210,6 +3231,14 @@ namespace System.Windows.Forms
 				eh (this, args);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		protected virtual void OnRightToLeftLayoutChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)Events[RightToLeftLayoutChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
 		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs args)
 		{
 			ListViewVirtualItemsSelectionRangeChangedEventHandler eh = 

@@ -1,3 +1,7 @@
+2007-10-17  Jonathan Pobst  <monkey@jpobst>
+
+	* ListView: Couple of corcompare fixes.
+
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Implement support for window icons in the dock.  Set
