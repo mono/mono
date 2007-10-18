@@ -255,10 +255,13 @@ namespace System.Windows.Forms {
 
 			private void control_ParentChanged (object sender, EventArgs e)
 			{
-				if (ep.container != null)
-					return;
-				control.Parent.Controls.Add (window);
-				control.Parent.Controls.SetChildIndex (window, 0);
+				if (ep.container != null) {
+					ep.container.Controls.Add (window);
+					ep.container.Controls.SetChildIndex (window, 0);
+				} else {
+					control.Parent.Controls.Add (window);
+					control.Parent.Controls.SetChildIndex (window, 0);
+				}
 			}
 
 			private void window_Tick(object sender, EventArgs e) {

@@ -1,3 +1,8 @@
+2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ErrorProvider.cs: Add the error provider's internal window to a 
+	containercontrol when the parent changes.  [Fixes bug #329714]
+
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Implement ScrollWindow.  Properly create TOOLWINDOWs.
