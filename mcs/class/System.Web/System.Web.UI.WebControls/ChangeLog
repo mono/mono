@@ -1,3 +1,12 @@
+2007-10-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Menu.js: a workaround for an IE bug. IE recalculates element's
+	 offsetWidth when the element's _height_ is set - which in case of
+	 elements with overflowing content results in a value that's just
+	 slightly smaller than the client window width. In effect, a long
+	 submenu will also be very wide, which isn't desirable. Fixes bug
+	 #322809
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: use HttpApplication.LoadType instead of

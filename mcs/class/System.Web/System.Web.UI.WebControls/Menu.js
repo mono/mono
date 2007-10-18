@@ -7,7 +7,7 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	if (subm.parentMenu == null && parentId != null)
 		subm.parentMenu = getSubMenu (menuId, parentId);
 	
-	if (subm.firstShown != true) {
+	if (subm.firstShown != true) {		
 		var item = getMenuItem (menuId, itemId);
 		var offx = 0;
 		var offy = 0;
@@ -27,6 +27,7 @@ function Menu_OverItem (menuId, itemId, parentId) {
 		var submMargin = subm.offsetHeight - subm.clientHeight;
 		subm.initialOffsetHeight = subm.offsetHeight - subm.scrollButtonsHeight + submMargin;
 		subm.firstShown = true;
+		
 	}
 	
 	Menu_SetActive (menu, subm);
@@ -167,6 +168,14 @@ function Menu_Resize (subm, menuId, itemId)
 	box.scrollTop = 0;
 	var bottom = subm.offsetTop + subm.initialOffsetHeight - parent.scrollTop;
 	var displayScroll;
+
+	/*
+	 * This is a workaround for an IE bug. IE recalculates the box offsetWidth when
+	 * the box _height_ is set below - which in case of boxes with overflowing content
+	 * results in a value that's just slightly smaller than the client window width.
+	 * In effect, a long submenu will also be very wide, which isn't desirable.
+	 */
+	var newWidth = box.offsetWidth;
 	
 	if (bottom > parent.clientHeight /* && parent.scrollHeight > parent.clientHeight*/) {
 		var overflow = bottom - parent.clientHeight;
@@ -181,12 +190,14 @@ function Menu_Resize (subm, menuId, itemId)
 			box.style.overflow = "hidden";
 			box.style.height = bh + "px";
 			displayScroll = "block";
+			
 		}
 	} else {
 		displayScroll = "none";
 		box.style.height = subm.initialContentHeight + "px";
 	}
-	subm.style.width = box.offsetWidth + "px";
+	subm.style.width = newWidth + "px";
+
 	var btn = getMenuScrollBox (menuId, itemId, "u");
 	btn.style.display = displayScroll;
 	btn = getMenuScrollBox (menuId, itemId, "d");
