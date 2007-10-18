@@ -1,5 +1,17 @@
 2007-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlConnection.cs: Avoid unnecessary initialization. Use string.Empty
+	for assigning zero-length string, and use String.Length to check for
+	zero-length string. Added support for IsolationLevel.Snapshot.
+	Added StructuredTypeMembers schema collection and restrictions. Fixed
+	table name for MetaDataCollections collection. Implemented
+	DataSourceInformation collection. Added missing data types (probably
+	introduced in 2.0 SP1). In GetSchema, throw InvalidOperationException
+	if connection is closed and throw NotImplementedException for
+	StructuredTypeMembers collection.
+
+2007-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlConnection.cs: On 1.0 profile, IsolationLevel.Unspecified is
 	not valid. On 2.0 profile, when IsolationLevel.Unspecified is passed
 	make sure to also set SqlTransaction.IsolationLevel to

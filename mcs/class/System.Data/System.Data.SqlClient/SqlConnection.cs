@@ -61,7 +61,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 	{
 		#region Fields
-		bool disposed = false;
+		bool disposed;
 
 		// The set of SQL connection pools
 		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds70);
@@ -70,15 +70,15 @@ namespace System.Data.SqlClient {
 		TdsConnectionPool pool;
 
 		// The connection string that identifies this connection
-		string connectionString = null;
+		string connectionString;
 
 		// The transaction object for the current transaction
-		SqlTransaction transaction = null;
+		SqlTransaction transaction;
 
 		// Connection parameters
 		
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
-		NameValueCollection connStringParameters = null;
+		NameValueCollection connStringParameters;
 		bool connectionReset;
 		bool pooling;
 		string dataSource;
@@ -116,7 +116,7 @@ namespace System.Data.SqlClient {
 		private void Init (string connectionString)
 		{
 			connectionTimeout       = 15; // default timeout
-			dataSource              = ""; // default datasource
+			dataSource              = string.Empty; // default datasource
 			packetSize              = 8192; // default packetsize
 			ConnectionString        = connectionString;
 		}
@@ -217,7 +217,7 @@ namespace System.Data.SqlClient {
 		string ServerVersion {
 			get {
 				if (state == ConnectionState.Closed)
-					throw new InvalidOperationException ("Invalid Operation.The Connection is Closed");
+					throw CreateConnectionClosedException ();
 				else
 					return tds.ServerVersion; 
 			}
@@ -305,14 +305,14 @@ namespace System.Data.SqlClient {
 		internal string GetConnStringKeyValue (params string [] keys)
 		{
 			if (connStringParameters == null || connStringParameters.Count == 0)
-				return "";
+				return string.Empty;
 			foreach (string key in keys) {
 				string value = connStringParameters [key];
 				if (value != null)
 					return value;
 			}
 
-			return "";
+			return string.Empty;
 		}
 
 		public new SqlTransaction BeginTransaction ()
@@ -333,7 +333,7 @@ namespace System.Data.SqlClient {
 		public SqlTransaction BeginTransaction (IsolationLevel iso, string transactionName)
 		{
 			if (state == ConnectionState.Closed)
-				throw new InvalidOperationException ("The connection is not open.");
+				throw CreateConnectionClosedException ();
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
@@ -352,6 +352,9 @@ namespace System.Data.SqlClient {
 				isolevel = "READ COMMITTED";
 				break;
 #if NET_2_0
+			case IsolationLevel.Snapshot:
+				isolevel = "SNAPSHOT";
+				break;
 			case IsolationLevel.Unspecified:
 				iso =  IsolationLevel.ReadCommitted;
 				isolevel = "READ COMMITTED";
@@ -360,7 +363,7 @@ namespace System.Data.SqlClient {
 				throw new ArgumentOutOfRangeException ("IsolationLevel",
 					string.Format (CultureInfo.CurrentCulture,
 						"The IsolationLevel enumeration " +
-						"value, {0}, is not supported by." +
+						"value, {0}, is not supported by " +
 						"the .Net Framework SqlClient " +
 						"Data Provider.", (int) iso));
 #endif
@@ -385,7 +388,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 void ChangeDatabase (string database) 
+		void ChangeDatabase (string database) 
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid.", database));
@@ -461,7 +464,7 @@ namespace System.Data.SqlClient {
 				if (disposing) {
 					if (State == ConnectionState.Open) 
 						Close ();
-					ConnectionString = "";
+					ConnectionString = string.Empty;
 					SetDefaultConnectionParameters (this.connStringParameters); 
 				}
 			} finally {
@@ -514,7 +517,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		void Open () 
 		{
-			string serverName = "";
+			string serverName = string.Empty;
 			if (state == ConnectionState.Open)
 				throw new InvalidOperationException ("The Connection is already Open (State=Open)");
 
@@ -562,8 +565,8 @@ namespace System.Data.SqlClient {
 
 		private bool ParseDataSource (string theDataSource, out int thePort, out string theServerName) 
 		{
-			theServerName = "";
-			string theInstanceName = "";
+			theServerName = string.Empty;
+			string theInstanceName = string.Empty;
 	
 			if (theDataSource == null)
 				throw new ArgumentException("Format of initialization string does not conform to specifications");
@@ -585,7 +588,7 @@ namespace System.Data.SqlClient {
 				if (port == -1)
 					success = false;
 			}
-			else if (theDataSource == "" || theDataSource == "(local)")
+			else if (theDataSource.Length == 0 || theDataSource == "(local)")
 				theServerName = "localhost";
 			else
 				theServerName = theDataSource;
@@ -611,12 +614,9 @@ namespace System.Data.SqlClient {
 		{
 			string upperValue = value.ToUpper();
 
-			if (upperValue == "TRUE" ||upperValue == "YES")
-			{
+			if (upperValue == "TRUE" ||upperValue == "YES") {
 				return true;
-			} 
-			else if (upperValue == "FALSE" || upperValue == "NO")
-			{
+			} else if (upperValue == "FALSE" || upperValue == "NO") {
 				return false;
 			}
 
@@ -745,7 +745,7 @@ namespace System.Data.SqlClient {
 		void SetDefaultConnectionParameters (NameValueCollection parameters)
 		{
 			parms.Reset ();
-			dataSource = "";
+			dataSource = string.Empty;
 			connectionTimeout= 15;
 			connectionReset = true;
 			pooling = true;
@@ -759,7 +759,7 @@ namespace System.Data.SqlClient {
 			parameters["CONNECTION RESET"] = "true";
 			parameters["ENLIST"] = "true";
 			parameters["INTEGRATED SECURITY"] = "false";
-			parameters["INITIAL CATALOG"] = "";
+			parameters["INITIAL CATALOG"] = string.Empty;
 			parameters["MAX POOL SIZE"] = "100";
 			parameters["MIN POOL SIZE"] = "0";
 			parameters["NETWORK LIBRARY"] = "dbmssocn";
@@ -899,7 +899,7 @@ namespace System.Data.SqlClient {
 
 		static bool IsValidDatabaseName (string database)
 		{
-			if ( database == null || database.Trim() == String.Empty || database.Length > 128)
+			if ( database == null || database.Trim().Length == 0 || database.Length > 128)
 				return false ;
 			
 			if (database[0] == '"' && database[database.Length] == '"')
@@ -929,6 +929,11 @@ namespace System.Data.SqlClient {
 				StateChange (this, value);
 		}
 #endif
+
+		private static InvalidOperationException CreateConnectionClosedException ()
+		{
+			return new InvalidOperationException ("Invalid operation. The Connection is closed.");
+		}
 
 		private sealed class SqlMonitorSocket : UdpClient 
 		{
@@ -1121,6 +1126,7 @@ namespace System.Data.SqlClient {
 				new object [] {"Databases", 1, 1},
 				new object [] {"Tables", 4, 3},
 				new object [] {"Columns", 4, 4},
+				new object [] {"StructuredTypeMembers", 4, 4},
 				new object [] {"Views", 3, 3},
 				new object [] {"ViewColumns", 4, 4},
 				new object [] {"ProcedureParameters", 4, 1},
@@ -1135,7 +1141,7 @@ namespace System.Data.SqlClient {
 			static public DataTable Instance {
 				get {
 					if (instance == null) {
-						instance = new DataTable ("GetSchema");
+						instance = new DataTable ("MetaDataCollections");
 						foreach (ColumnInfo c in columns)
 							instance.Columns.Add (c.name, c.type);
 						foreach (object [] row in rows)
@@ -1143,6 +1149,57 @@ namespace System.Data.SqlClient {
 					}
 					return instance;
 				}
+			}
+		}
+
+		static class DataSourceInformation
+		{
+			static readonly ColumnInfo [] columns = {
+				new ColumnInfo ("CompositeIdentifierSeparatorPattern", typeof (string)),
+				new ColumnInfo ("DataSourceProductName", typeof(string)),
+				new ColumnInfo ("DataSourceProductVersion", typeof(string)),
+				new ColumnInfo ("DataSourceProductVersionNormalized", typeof(string)),
+				new ColumnInfo ("GroupByBehavior", typeof(GroupByBehavior)),
+				new ColumnInfo ("IdentifierPattern", typeof(string)),
+				new ColumnInfo ("IdentifierCase", typeof(IdentifierCase)),
+				new ColumnInfo ("OrderByColumnsInSelect", typeof(bool)),
+				new ColumnInfo ("ParameterMarkerFormat", typeof(string)),
+				new ColumnInfo ("ParameterMarkerPattern", typeof(string)),
+				new ColumnInfo ("ParameterNameMaxLength", typeof(int)),
+				new ColumnInfo ("ParameterNamePattern", typeof(string)),
+				new ColumnInfo ("QuotedIdentifierPattern", typeof(string)),
+				new ColumnInfo ("QuotedIdentifierCase", typeof(IdentifierCase)),
+				new ColumnInfo ("StatementSeparatorPattern", typeof(string)),
+				new ColumnInfo ("StringLiteralPattern", typeof(string)),
+				new ColumnInfo ("SupportedJoinOperators", typeof(SupportedJoinOperators))
+			};
+
+			static public DataTable GetInstance (SqlConnection conn)
+			{
+				DataTable table = new DataTable ("DataSourceInformation");
+				foreach (ColumnInfo c in columns)
+					table.Columns.Add (c.name, c.type);
+				DataRow row = table.NewRow ();
+				row [0] = "\\.";
+				row [1] = "Microsoft SQL Server";
+				row [2] = conn.ServerVersion;;
+				row [3] = conn.ServerVersion;;
+				row [4] = GroupByBehavior.Unrelated;
+				row [5] = @"(^\[\p{Lo}\p{Lu}\p{Ll}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Nd}@$#_]*$)|(^\[[^\]\0]|\]\]+\]$)|(^\""[^\""\0]|\""\""+\""$)";
+				row [6] = IdentifierCase.Insensitive; // FIXME: obtain this from SQL Server
+				row [7] = false;
+				row [8] = "{0}";
+				row [9] = @"@[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
+				row [10] = 128;
+				row [11] = @"^[\p{Lo}\p{Lu}\p{Ll}\p{Lm}_@#][\p{Lo}\p{Lu}\p{Ll}\p{Lm}\p{Nd}\uff3f_@#\$]*(?=\s+|$)";
+				row [12] = @"(([^\[]|\]\])*)";
+				row [13] = IdentifierCase.Insensitive;  // FIXME: obtain this from SQL Server
+				row [14] =";";
+				row [15] = "'(([^']|'')*)'";
+				row [16] = (SupportedJoinOperators.FullOuter | SupportedJoinOperators.Inner |
+					SupportedJoinOperators.LeftOuter | SupportedJoinOperators.RightOuter);
+				table.Rows.Add (row);
+				return table;
 			}
 		}
 
@@ -1258,7 +1315,23 @@ namespace System.Data.SqlClient {
 					       null, "0x", null},
 				new object [] {"uniqueidentifier", 14, 16, "uniqueidentifier", null,
 					       "System.Guid", false, true, false, true, false, false, true,
-					       true, false, null, null, null, false, null, "'", "'"}
+					       true, false, null, null, null, false, null, "'", "'"},
+				new object [] {"date", 31, 3L, "date", DBNull.Value,
+					       "System.DateTime", false, false, false, true, true, false,
+					       true, true, true, DBNull.Value, DBNull.Value, DBNull.Value,
+					       false, DBNull.Value, "{ts '", "'}"},
+				new object [] {"time", 32, 5L, "time({0})", "scale",
+					       "System.TimeSpan", false, false, false, false, false, false,
+					       true, true, true, DBNull.Value, (short) 7, (short) 0,
+					       false, DBNull.Value, "{ts '", "'}"},
+				new object [] {"datetime2", 33, 8L, "datetime2({0})", "scale",
+					       "System.DateTime", false, true, false, false, false, false,
+					       true, true, true, DBNull.Value, (short) 7, (short) 0,
+					       false, DBNull.Value, "{ts '", "'}"},
+				new object [] {"datetimeoffset", 34, 10L, "datetimeoffset({0})",
+					       "scale", "System.DateTimeOffset", false, true, false, false,
+					       false, false, true, true, true, DBNull.Value, (short) 7, (short) 0,
+					       false, DBNull.Value, "{ts '", "'}"}
 			};
 
 			static DataTable instance;
@@ -1300,6 +1373,11 @@ namespace System.Data.SqlClient {
 				new object [] {"Columns", "Table", "@Table", "TABLE_NAME", 3},
 				new object [] {"Columns", "Column", "@Column", "COLUMN_NAME", 4},
 
+				new object [] {"StructuredTypeMembers", "Catalog", "@Catalog", "TYPE_CATALOG", 1},
+				new object [] {"StructuredTypeMembers", "Owner", "@Owner", "TYPE_SCHEMA", 2},
+				new object [] {"StructuredTypeMembers", "Type", "@Type", "TYPE_NAME", 3},
+				new object [] {"StructuredTypeMembers", "Member", "@Member", "MEMBER_NAME", 4},
+
 				new object [] {"Views", "Catalog", "@Catalog", "TABLE_CATALOG", 1},
 				new object [] {"Views", "Owner", "@Owner", "TABLE_SCHEMA", 2},
 				new object [] {"Views", "Table", "@Table", "TABLE_NAME", 3},
@@ -1319,14 +1397,14 @@ namespace System.Data.SqlClient {
 				new object [] {"Procedures", "Name", "@Name", "SPECIFIC_NAME", 3},
 				new object [] {"Procedures", "Type", "@Type", "ROUTINE_TYPE", 4},
 
-				new object [] {"IndexColumns", "Catalog", "@Catalog", "db_name(}", 1},
-				new object [] {"IndexColumns", "Owner", "@Owner", "user_name(}", 2},
+				new object [] {"IndexColumns", "Catalog", "@Catalog", "db_name()", 1},
+				new object [] {"IndexColumns", "Owner", "@Owner", "user_name()", 2},
 				new object [] {"IndexColumns", "Table", "@Table", "o.name", 3},
 				new object [] {"IndexColumns", "ConstraintName", "@ConstraintName", "x.name", 4},
 				new object [] {"IndexColumns", "Column", "@Column", "c.name", 5},
 
-				new object [] {"Indexes", "Catalog", "@Catalog", "db_name(}", 1},
-				new object [] {"Indexes", "Owner", "@Owner", "user_name(}", 2},
+				new object [] {"Indexes", "Catalog", "@Catalog", "db_name()", 1},
+				new object [] {"Indexes", "Owner", "@Owner", "user_name()", 2},
 				new object [] {"Indexes", "Table", "@Table", "o.name", 3},
 				new object [] {"Indexes", "Name", "@Name", "x.name", 4},
 
@@ -1356,6 +1434,9 @@ namespace System.Data.SqlClient {
 
 		public override DataTable GetSchema ()
 		{
+			if (state == ConnectionState.Closed)
+				throw CreateConnectionClosedException ();
+
 			return MetaDataCollections.Instance;
 		}
 
@@ -1366,11 +1447,12 @@ namespace System.Data.SqlClient {
 
 		public override DataTable GetSchema (String collectionName, string [] restrictionValues)
 		{
-			if (collectionName == null)
-				//LAMESPEC: In MS.NET, if collectionName is null, it throws ArgumentException.
-				throw new ArgumentException ();
+			// LAMESPEC: In MS.NET, if collectionName is null, it throws ArgumentException.
 
-			String cName          = null;
+			if (state == ConnectionState.Closed)
+				throw CreateConnectionClosedException ();
+
+			String cName = null;
 			DataTable schemaTable = MetaDataCollections.Instance;
 			int length = restrictionValues == null ? 0 : restrictionValues.Length;
 
@@ -1384,8 +1466,11 @@ namespace System.Data.SqlClient {
 					cName = row["CollectionName"].ToString();
 				}
 			}
+
 			if (cName == null)
-				throw new ArgumentException ("The requested collection ('" + collectionName + "') is not defined.");
+				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+					"The requested collection ({0}) is not defined.",
+					collectionName));
 
 			SqlCommand command     = null;
 			DataTable dataTable    = new DataTable ();
@@ -1517,6 +1602,17 @@ namespace System.Data.SqlClient {
 							  " where (name = @Name or (@Name is null))", this);
 				command.Parameters.Add ("@Name", SqlDbType.NVarChar, 4000);
 				break;
+			case "StructuredTypeMembers":
+				// Only available on SQL Server 2008
+				// Running it again SQL 2005 results in the following exception:
+				// Unable to build the 'StructuredTypeMembers' collection because
+				// execution of the SQL query failed. See the inner exception for details.
+				// ---> System.Data.SqlClient.SqlException: Invalid object name 'sys.table_types'.
+				// 
+				// I don't have access to SQL Server 2008 right now,
+				// and can't find any online documentation on the 'sys.table_types'
+				// view
+				throw new NotImplementedException ();
 			case "Views":
 				command = new SqlCommand ("select TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, CHECK_OPTION, " +
 							  "IS_UPDATABLE from INFORMATION_SCHEMA.VIEWS where (TABLE_CATALOG" +
@@ -1560,7 +1656,7 @@ namespace System.Data.SqlClient {
 			case "MetaDataCollections":
 				return MetaDataCollections.Instance;
 			case "DataSourceInformation":
-				throw new NotImplementedException ();
+				return DataSourceInformation.GetInstance (this);
 			case "DataTypes":
 				return DataTypes.Instance;
 			case "ReservedWords":
