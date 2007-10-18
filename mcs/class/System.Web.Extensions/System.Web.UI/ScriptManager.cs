@@ -229,11 +229,11 @@ namespace System.Web.UI
 			get {
 				if (IsDeploymentRetail)
 					return false;
-#if !TARGET_J2EE
+
 				CompilationSection compilation = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 				if (!compilation.Debug && (ScriptMode == ScriptMode.Auto || ScriptMode == ScriptMode.Inherit))
 					return false;
-#endif
+
 				if (ScriptMode == ScriptMode.Release)
 					return false;
 
