@@ -1,3 +1,15 @@
+2007-10-18  Juraj Skripsky  <js@hotfeet.ch>
+
+	* StaticSiteMapProvider.cs: Replace Hashtables by Dictionaries,
+	don't allocate them on-demand, there will never be many
+	Provider instances around.
+	AddNode(): Check for duplicate keys before adding any item to
+	hashtables.
+	RemoveNode(): Use fact that Hashtable.Remove() never throws,
+	remove item from keyToNode as well, make symmetric to AddNode().
+	MapUrl(): Use VirtualPathUtility, allow for full urls
+	(e.g. http://www.google.com).
+	
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* StaticFileHandler.cs: fixed an bug with Mono running under

@@ -4,9 +4,11 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Juraj Skripsky (js@hotfeet.ch)
 //
 // (C) 2003 Ben Maurer
 // (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2007 HotFeet GmbH (http://www.hotfeet.ch)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,32 +32,37 @@
 
 
 #if NET_2_0
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Configuration.Provider;
-using System.Web.Util;
-using System.Globalization;
+using System.Collections.Generic;
 
 namespace System.Web
 {
 	public abstract class StaticSiteMapProvider : SiteMapProvider
 	{
-		Hashtable nodeToParent;
-		Hashtable nodeToChildren;
-		Hashtable urlToNode;
-		Hashtable keyToNode;
-		
+		Dictionary<string, SiteMapNode> keyToNode;
+		Dictionary<SiteMapNode, SiteMapNode> nodeToParent;
+		Dictionary<SiteMapNode, SiteMapNodeCollection> nodeToChildren;
+		Dictionary<string, SiteMapNode> urlToNode;
+			
+		public StaticSiteMapProvider ()
+		{
+			keyToNode = new Dictionary<string, SiteMapNode> ();
+			nodeToParent = new Dictionary<SiteMapNode, SiteMapNode> ();
+			nodeToChildren = new Dictionary<SiteMapNode, SiteMapNodeCollection> ();
+			urlToNode = new Dictionary<string, SiteMapNode> (StringComparer.InvariantCultureIgnoreCase);
+		}
+
 		internal protected override void AddNode (SiteMapNode node, SiteMapNode parentNode)
 		{
 			if (node == null)
 				throw new ArgumentNullException ("node");
-			
-			lock (this_lock) {
-				string url = node.Url;
-				if (url != null && url.Length > 0) {
-					url = MapUrl (url);
 
+			lock (this_lock) {
+				if (FindSiteMapNodeFromKey (node.Key) != null)
+					throw new InvalidOperationException (string.Format ("A node with key '{0}' already exists.",node.Key));
+
+				if (!String.IsNullOrEmpty (node.Url)) {
+					string url = MapUrl (node.Url);
+					
 					if (FindSiteMapNode (url) != null)
 						throw new InvalidOperationException (String.Format (
 							"Multiple nodes with the same URL '{0}' were found. " + 
@@ -63,12 +70,9 @@ namespace System.Web
 							node.Url
 						));
 				
-					UrlToNode [url] = node;
+					urlToNode.Add (url, node);
 				}
-				
-				if (FindSiteMapNodeFromKey (node.Key) != null)
-					throw new InvalidOperationException (string.Format ("A node with key {0} already exists.",node.Key));
-				KeyToNode [node.Key] = node;
+				keyToNode.Add (node.Key, node);
 
 				if (node == RootNode)
 					return;
@@ -76,66 +80,23 @@ namespace System.Web
 				if (parentNode == null)
 					parentNode = RootNode;
 
-				NodeToParent [node] = parentNode;
-				if (NodeToChildren [parentNode] == null)
-					NodeToChildren [parentNode] = new SiteMapNodeCollection ();
-					
-				((SiteMapNodeCollection) NodeToChildren [parentNode]).Add (node);
-			}
-		}
-		
-		Hashtable NodeToParent {
-			get {
-				lock (this_lock) {
-					if (nodeToParent == null)
-						nodeToParent = new Hashtable ();
-				}
-				return nodeToParent;
-			}
-		}
-		
-		Hashtable NodeToChildren {
-			get {
-				lock (this_lock) {
-					if (nodeToChildren == null)
-						nodeToChildren = new Hashtable ();
-				}
-				return nodeToChildren;
-			}
-		}
-		
-		Hashtable UrlToNode {
-			get {
-				lock (this_lock) {
-					if (urlToNode == null) {
-						urlToNode = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-					}
-				}
-				return urlToNode;
-			}
-		}
-		
-		Hashtable KeyToNode {
-			get {
-				lock (this_lock) {
-					if (keyToNode == null)
-						keyToNode = new Hashtable ();
-				}
-				return keyToNode;
+				nodeToParent.Add (node, parentNode);
+
+				SiteMapNodeCollection children;
+				if (!nodeToChildren.TryGetValue (parentNode, out children)) 
+					nodeToChildren.Add (parentNode, children = new SiteMapNodeCollection ());
+
+				children.Add (node);
 			}
 		}
 		
 		protected virtual void Clear ()
 		{
 			lock (this_lock) {
-				if (urlToNode != null)
-					urlToNode.Clear ();
-				if (nodeToChildren != null)
-					nodeToChildren.Clear ();
-				if (nodeToParent != null)
-					nodeToParent.Clear ();
-				if (keyToNode != null)
-					keyToNode.Clear ();
+				urlToNode.Clear ();
+				nodeToChildren.Clear ();
+				nodeToParent.Clear ();
+				keyToNode.Clear ();
 			}
 		}
 
@@ -144,14 +105,13 @@ namespace System.Web
 			if (rawUrl == null)
 				throw new ArgumentNullException ("rawUrl");
 			
-			if (rawUrl.Length > 0) {
-				this.BuildSiteMap();
-				rawUrl = MapUrl (rawUrl);
-				SiteMapNode node = (SiteMapNode) UrlToNode [rawUrl];
-				if (node != null && IsAccessibleToUser (HttpContext.Current, node))
-					return node;
-			}
-			return null;
+			if (rawUrl == String.Empty)
+				return null;			
+			
+			BuildSiteMap();
+			SiteMapNode node;
+			urlToNode.TryGetValue (MapUrl (rawUrl), out node);
+			return CheckAccessibility (node);
 		}
 
 		public override SiteMapNodeCollection GetChildNodes (SiteMapNode node)
@@ -159,9 +119,10 @@ namespace System.Web
 			if (node == null)
 				throw new ArgumentNullException ("node");
 			
-			this.BuildSiteMap();
-			SiteMapNodeCollection col = (SiteMapNodeCollection) NodeToChildren [node];
-			if (col == null) return SiteMapNodeCollection.EmptyCollection;
+			BuildSiteMap();
+			SiteMapNodeCollection col;
+			if (!nodeToChildren.TryGetValue (node, out col))
+				return SiteMapNodeCollection.EmptyCollection;
 			
 			SiteMapNodeCollection ret = null;
 			for (int n=0; n<col.Count; n++) {
@@ -181,16 +142,17 @@ namespace System.Web
 				return SiteMapNodeCollection.ReadOnly (ret);
 			else
 				return SiteMapNodeCollection.EmptyCollection;
-			
 		}
 		
 		public override SiteMapNode GetParentNode (SiteMapNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException ("node");
-			this.BuildSiteMap();
-			SiteMapNode parent = (SiteMapNode) NodeToParent [node];
-			return parent != null && IsAccessibleToUser (HttpContext.Current, parent) ? parent : null;
+
+			BuildSiteMap();
+			SiteMapNode parent;
+			nodeToParent.TryGetValue (node, out parent);
+			return CheckAccessibility (parent);
 		}
 		
 		protected override void RemoveNode (SiteMapNode node)
@@ -199,18 +161,16 @@ namespace System.Web
 				throw new ArgumentNullException("node");
 			
 			lock (this_lock) {
-				SiteMapNode parent = (SiteMapNode) NodeToParent [node];
-				if (NodeToParent.Contains (node))
-					NodeToParent.Remove (node);
-				
-				if (node.Url != null && node.Url.Length > 0 && UrlToNode.Contains (node.Url))
-					UrlToNode.Remove (node.Url);
-				
-				if (parent != null) {
-					SiteMapNodeCollection siblings = (SiteMapNodeCollection) NodeToChildren [parent];
-					if (siblings != null && siblings.Contains (node))
-						siblings.Remove (node);
-				}
+				keyToNode.Remove (node.Key);
+				if (!String.IsNullOrEmpty (node.Url))
+					urlToNode.Remove (MapUrl (node.Url));
+
+				if (node == RootNode)
+					return;
+
+				SiteMapNode parent = nodeToParent [node];
+				nodeToParent.Remove (node);
+				nodeToChildren [parent].Remove (node);
 			}
 		}
 		
@@ -219,23 +179,24 @@ namespace System.Web
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			
-			SiteMapNode ret = (SiteMapNode) KeyToNode [key];
-			return ret != null && IsAccessibleToUser (HttpContext.Current, ret) ? ret : null;
+			SiteMapNode ret;
+			keyToNode.TryGetValue (key, out ret);
+			return CheckAccessibility (ret);
 		}
 
 		public abstract SiteMapNode BuildSiteMap ();
+		
+		SiteMapNode CheckAccessibility (SiteMapNode node) {
+			return (node != null && IsAccessibleToUser (HttpContext.Current, node)) ? node : null;
+		}
 
 		string MapUrl (string url)
 		{
-			if (HttpContext.Current == null)
-				return url;
-
-			if (UrlUtils.IsRelativeUrl (url))
-				return UrlUtils.Combine (HttpRuntime.AppDomainAppVirtualPath, url);
+			if (VirtualPathUtility.IsAppRelative (url))
+				return VirtualPathUtility.ToAbsolute (url);
 			else
-				return UrlUtils.ResolveVirtualPathFromAppAbsolute (url);
+				return url;
 		}
-
 	}
 }
 #endif
