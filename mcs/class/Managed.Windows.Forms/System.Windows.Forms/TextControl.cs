@@ -2923,6 +2923,9 @@ namespace System.Windows.Forms {
 			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
 			ResumeRecalc (false);
 
+			Line begin_update_line = selection_start.line;
+			int begin_update_pos = selection_start.pos;
+			
 			if (!select_new) {
 				CharIndexToLineTag(selection_start_pos + s.Length, out selection_start.line,
 						out selection_start.tag, out selection_start.pos);
@@ -2950,7 +2953,7 @@ namespace System.Windows.Forms {
 			}
 
 			PositionCaret (selection_start.line, selection_start.pos);
-			UpdateView (selection_start.line, selection_pos_on_line);
+			UpdateView (begin_update_line, selection_end.line.line_no - begin_update_line.line_no, begin_update_pos);
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {

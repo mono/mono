@@ -1,4 +1,10 @@
-2007-10-17  Jonathan Pobst  <monkey@jpobst>
+2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextControl.cs: Make sure we know our start point for updating the view
+	in ReplaceSelection.  Fixes an issue where pasting multiline text wouldn't
+	update the view.
+
+2007-10-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListView: Couple of corcompare fixes.
 
