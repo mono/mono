@@ -1,3 +1,8 @@
+2007-10-18  Raja R Harinath  <harinath@gmail.com>
+
+	* ecore.cs (Expression.Error_ValueCannotBeConverted): Add special
+	handling for generic parameters.
+
 2007-10-15  Marek Safar  <marek.safar@gmail.com>
 	
 	* class.cs (FixedField): Removed redundant volatile check.

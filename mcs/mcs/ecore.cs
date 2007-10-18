@@ -339,12 +339,24 @@ namespace Mono.CSharp {
 			if (type == TypeManager.anonymous_method_type)
 				return;
 
-			if (Type.FullName == target.FullName){
+			if (TypeManager.IsGenericParameter (Type) && TypeManager.IsGenericParameter (target) && type.Name == target.Name) {
+#if GMCS_SOURCE
+				string sig1 = Type.DeclaringMethod == null ?
+					TypeManager.CSharpName (Type.DeclaringType) :
+					TypeManager.CSharpSignature (Type.DeclaringMethod);
+				string sig2 = target.DeclaringMethod == null ?
+					TypeManager.CSharpName (target.DeclaringType) :
+					TypeManager.CSharpSignature (target.DeclaringMethod);
 				Report.ExtraInformation (loc,
 					String.Format (
-					"The type {0} has two conflicting definitions, one comes from {1} and the other from {2}",
+						"The generic parameter `{0}' of `{1}' cannot be converted to the generic parameter `{0}' of `{2}' (in the previous ",
+						Type.Name, sig1, sig2));
+#endif
+			} else if (Type.FullName == target.FullName){
+				Report.ExtraInformation (loc,
+					String.Format (
+					"The type `{0}' has two conflicting definitions, one comes from `{1}' and the other from `{2}' (in the previous ",
 					Type.FullName, Type.Assembly.FullName, target.Assembly.FullName));
-							 
 			}
 
 			if (expl) {
