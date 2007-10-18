@@ -337,9 +337,6 @@ namespace System.Data.SqlClient {
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
-			if (iso == IsolationLevel.Chaos)
-				throw new ArgumentException ("Invalid IsolationLevel parameter: must be ReadCommitted, ReadUncommitted, RepeatableRead, or Serializable.");
-
 			string isolevel = String.Empty;
 			switch (iso) {
 			case IsolationLevel.ReadUncommitted:
@@ -352,9 +349,30 @@ namespace System.Data.SqlClient {
 				isolevel = "SERIALIZABLE";
 				break;
 			case IsolationLevel.ReadCommitted:
-			default:
 				isolevel = "READ COMMITTED";
 				break;
+#if NET_2_0
+			case IsolationLevel.Unspecified:
+				iso =  IsolationLevel.ReadCommitted;
+				isolevel = "READ COMMITTED";
+				break;
+			case IsolationLevel.Chaos:
+				throw new ArgumentOutOfRangeException ("IsolationLevel",
+					string.Format (CultureInfo.CurrentCulture,
+						"The IsolationLevel enumeration " +
+						"value, {0}, is not supported by." +
+						"the .Net Framework SqlClient " +
+						"Data Provider.", (int) iso));
+#endif
+			default:
+#if NET_2_0
+				throw new ArgumentOutOfRangeException ("IsolationLevel",
+					string.Format (CultureInfo.CurrentCulture,
+						"The IsolationLevel enumeration value, {0}, is invalid.",
+						(int) iso));
+#else
+				throw new ArgumentException ("Invalid IsolationLevel parameter: must be ReadCommitted, ReadUncommitted, RepeatableRead, or Serializable.");
+#endif
 			}
 
 			tds.Execute (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
