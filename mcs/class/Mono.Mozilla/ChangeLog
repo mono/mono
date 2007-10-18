@@ -1,3 +1,7 @@
+2007-10-18 Andreia Gaita <avidigal@novell.com>
+
+	* use the newly-renamed gluezilla library
+
 2007-10-07 Andreia Gaita <avidigal@novell.com>
 
 	* More dialog event options.
