@@ -1658,7 +1658,7 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if (GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable)
+			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && GDIPlus.Display != IntPtr.Zero)
 				Carbon.CGContextSynchronize (GDIPlus.Display);
 		}
 

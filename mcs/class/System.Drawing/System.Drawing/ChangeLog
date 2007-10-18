@@ -1,5 +1,10 @@
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
+	* Graphics.cs: Only synchronize the display on Flush when we actually have
+	a CGContext
+
+2007-10-17  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunctions.cs: Initial support for clipping children out of the
 	CGContext before drawing on it.
 
