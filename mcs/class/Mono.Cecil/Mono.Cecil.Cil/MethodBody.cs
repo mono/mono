@@ -201,7 +201,7 @@ namespace Mono.Cecil.Cil {
 			return nb;
 		}
 
-		public void Simplify ()
+		public void Modify ()
 		{
 			foreach (Instruction i in this.Instructions) {
 				if (i.OpCode.OpCodeType != OpCodeType.Macro)
@@ -209,51 +209,51 @@ namespace Mono.Cecil.Cil {
 
 				switch (i.OpCode.Code) {
 				case Code.Ldarg_0 :
-					Simplify (i, OpCodes.Ldarg,
+					Modify (i, OpCodes.Ldarg,
 						CodeReader.GetParameter (this, 0));
 					break;
 				case Code.Ldarg_1 :
-					Simplify (i, OpCodes.Ldarg,
+					Modify (i, OpCodes.Ldarg,
 						CodeReader.GetParameter (this, 1));
 					break;
 				case Code.Ldarg_2 :
-					Simplify (i, OpCodes.Ldarg,
+					Modify (i, OpCodes.Ldarg,
 						CodeReader.GetParameter (this, 2));
 					break;
 				case Code.Ldarg_3 :
-					Simplify (i, OpCodes.Ldarg,
+					Modify (i, OpCodes.Ldarg,
 						CodeReader.GetParameter (this, 3));
 					break;
 				case Code.Ldloc_0 :
-					Simplify (i, OpCodes.Ldloc,
+					Modify (i, OpCodes.Ldloc,
 						CodeReader.GetVariable (this, 0));
 					break;
 				case Code.Ldloc_1 :
-					Simplify (i, OpCodes.Ldloc,
+					Modify (i, OpCodes.Ldloc,
 						CodeReader.GetVariable (this, 1));
 					break;
 				case Code.Ldloc_2 :
-					Simplify (i, OpCodes.Ldloc,
+					Modify (i, OpCodes.Ldloc,
 						CodeReader.GetVariable (this, 2));
 					break;
 				case Code.Ldloc_3 :
-					Simplify (i, OpCodes.Ldloc,
+					Modify (i, OpCodes.Ldloc,
 						CodeReader.GetVariable (this, 3));
 					break;
 				case Code.Stloc_0 :
-					Simplify (i, OpCodes.Stloc,
+					Modify (i, OpCodes.Stloc,
 						CodeReader.GetVariable (this, 0));
 					break;
 				case Code.Stloc_1 :
-					Simplify (i, OpCodes.Stloc,
+					Modify (i, OpCodes.Stloc,
 						CodeReader.GetVariable (this, 1));
 					break;
 				case Code.Stloc_2 :
-					Simplify (i, OpCodes.Stloc,
+					Modify (i, OpCodes.Stloc,
 						CodeReader.GetVariable (this, 2));
 					break;
 				case Code.Stloc_3 :
-					Simplify (i, OpCodes.Stloc,
+					Modify (i, OpCodes.Stloc,
 						CodeReader.GetVariable (this, 3));
 					break;
 				case Code.Ldarg_S :
@@ -275,34 +275,34 @@ namespace Mono.Cecil.Cil {
 					i.OpCode = OpCodes.Stloc;
 					break;
 				case Code.Ldc_I4_M1 :
-					Simplify (i, OpCodes.Ldc_I4, -1);
+					Modify (i, OpCodes.Ldc_I4, -1);
 					break;
 				case Code.Ldc_I4_0 :
-					Simplify (i, OpCodes.Ldc_I4, 0);
+					Modify (i, OpCodes.Ldc_I4, 0);
 					break;
 				case Code.Ldc_I4_1 :
-					Simplify (i, OpCodes.Ldc_I4, 1);
+					Modify (i, OpCodes.Ldc_I4, 1);
 					break;
 				case Code.Ldc_I4_2 :
-					Simplify (i, OpCodes.Ldc_I4, 2);
+					Modify (i, OpCodes.Ldc_I4, 2);
 					break;
 				case Code.Ldc_I4_3 :
-					Simplify (i, OpCodes.Ldc_I4, 3);
+					Modify (i, OpCodes.Ldc_I4, 3);
 					break;
 				case Code.Ldc_I4_4 :
-					Simplify (i, OpCodes.Ldc_I4, 4);
+					Modify (i, OpCodes.Ldc_I4, 4);
 					break;
 				case Code.Ldc_I4_5 :
-					Simplify (i, OpCodes.Ldc_I4, 5);
+					Modify (i, OpCodes.Ldc_I4, 5);
 					break;
 				case Code.Ldc_I4_6 :
-					Simplify (i, OpCodes.Ldc_I4, 6);
+					Modify (i, OpCodes.Ldc_I4, 6);
 					break;
 				case Code.Ldc_I4_7 :
-					Simplify (i, OpCodes.Ldc_I4, 7);
+					Modify (i, OpCodes.Ldc_I4, 7);
 					break;
 				case Code.Ldc_I4_8 :
-					Simplify (i, OpCodes.Ldc_I4, 8);
+					Modify (i, OpCodes.Ldc_I4, 8);
 					break;
 				case Code.Ldc_I4_S :
 					i.OpCode = OpCodes.Ldc_I4;
@@ -354,7 +354,215 @@ namespace Mono.Cecil.Cil {
 			}
 		}
 
-		static void Simplify (Instruction i, OpCode op, object operand)
+		public void Optimize ()
+		{
+			foreach (Instruction instr in m_instructions) {
+				int index;
+				switch (instr.OpCode.Code) {
+				case Code.Ldarg:
+					index = m_method.Parameters.IndexOf ((ParameterDefinition) instr.Operand);
+					if (index == -1 && instr.Operand == m_method.This)
+						index = 0;
+					else if (m_method.HasThis)
+						index++;
+
+					switch (index) {
+					case 0:
+						Modify (instr, OpCodes.Ldarg_0, null);
+						break;
+					case 1:
+						Modify (instr, OpCodes.Ldarg_1, null);
+						break;
+					case 2:
+						Modify (instr, OpCodes.Ldarg_2, null);
+						break;
+					case 3:
+						Modify (instr, OpCodes.Ldarg_3, null);
+						break;
+					default:
+						if (index < 256)
+							Modify (instr, OpCodes.Ldarg_S, instr.Operand);
+						break;
+					}
+					break;
+				case Code.Ldloc:
+					index = m_variables.IndexOf ((VariableDefinition) instr.Operand);
+					switch (index) {
+					case 0:
+						Modify (instr, OpCodes.Ldloc_0, null);
+						break;
+					case 1:
+						Modify (instr, OpCodes.Ldloc_1, null);
+						break;
+					case 2:
+						Modify (instr, OpCodes.Ldloc_2, null);
+						break;
+					case 3:
+						Modify (instr, OpCodes.Ldloc_3, null);
+						break;
+					default:
+						if (index < 256)
+							Modify (instr, OpCodes.Ldloc_S, instr.Operand);
+						break;
+					}
+					break;
+				case Code.Stloc:
+					index = m_variables.IndexOf ((VariableDefinition) instr.Operand);
+					switch (index) {
+					case 0:
+						Modify (instr, OpCodes.Stloc_0, null);
+						break;
+					case 1:
+						Modify (instr, OpCodes.Stloc_1, null);
+						break;
+					case 2:
+						Modify (instr, OpCodes.Stloc_2, null);
+						break;
+					case 3:
+						Modify (instr, OpCodes.Stloc_3, null);
+						break;
+					default:
+						if (index < 256)
+							Modify (instr, OpCodes.Stloc_S, instr.Operand);
+						break;
+					}
+					break;
+				case Code.Ldarga:
+					index = m_method.Parameters.IndexOf ((ParameterDefinition) instr.Operand);
+					if (index == -1 && instr.Operand == m_method.This)
+						index = 0;
+					else if (m_method.HasThis)
+						index++;
+					if (index < 256)
+						Modify (instr, OpCodes.Ldarga_S, instr.Operand);
+					break;
+				case Code.Ldloca:
+					if (m_variables.IndexOf ((VariableDefinition) instr.Operand) < 256)
+						Modify (instr, OpCodes.Ldloca_S, instr.Operand);
+					break;
+				case Code.Ldc_I4:
+					int i = (int) instr.Operand;
+					switch (i) {
+					case -1:
+						Modify (instr, OpCodes.Ldc_I4_M1, null);
+						break;
+					case 0:
+						Modify (instr, OpCodes.Ldc_I4_0, null);
+						break;
+					case 1:
+						Modify (instr, OpCodes.Ldc_I4_1, null);
+						break;
+					case 2:
+						Modify (instr, OpCodes.Ldc_I4_2, null);
+						break;
+					case 3:
+						Modify (instr, OpCodes.Ldc_I4_3, null);
+						break;
+					case 4:
+						Modify (instr, OpCodes.Ldc_I4_4, null);
+						break;
+					case 5:
+						Modify (instr, OpCodes.Ldc_I4_5, null);
+						break;
+					case 6:
+						Modify (instr, OpCodes.Ldc_I4_6, null);
+						break;
+					case 7:
+						Modify (instr, OpCodes.Ldc_I4_7, null);
+						break;
+					case 8:
+						Modify (instr, OpCodes.Ldc_I4_8, null);
+						break;
+					default:
+						if (i >= -128 || i < 128)
+							Modify (instr, OpCodes.Ldc_I4_S, (sbyte) i);
+						break;
+					}
+					break;
+				}
+			}
+
+			OptimizeBranches ();
+		}
+
+		void OptimizeBranches ()
+		{
+			ComputeOffsets ();
+
+			foreach (Instruction instr in m_instructions) {
+				if (instr.OpCode.OperandType != OperandType.InlineBrTarget)
+					continue;
+
+				if (OptimizeBranch (instr))
+					ComputeOffsets ();
+			}
+		}
+
+		static bool OptimizeBranch (Instruction instr)
+		{
+			int offset = ((Instruction) instr.Operand).Offset - (instr.Offset + instr.OpCode.Size + 4);
+			if (! (offset >= -128 && offset <= 127))
+				return false;
+
+			switch (instr.OpCode.Code) {
+			case Code.Br:
+				instr.OpCode = OpCodes.Br_S;
+				break;
+			case Code.Brfalse:
+				instr.OpCode = OpCodes.Brfalse_S;
+				break;
+			case Code.Brtrue:
+				instr.OpCode = OpCodes.Brtrue_S;
+				break;
+			case Code.Beq:
+				instr.OpCode = OpCodes.Beq_S;
+				break;
+			case Code.Bge:
+				instr.OpCode = OpCodes.Bge_S;
+				break;
+			case Code.Bgt:
+				instr.OpCode = OpCodes.Bgt_S;
+				break;
+			case Code.Ble:
+				instr.OpCode = OpCodes.Ble_S;
+				break;
+			case Code.Blt:
+				instr.OpCode = OpCodes.Blt_S;
+				break;
+			case Code.Bne_Un:
+				instr.OpCode = OpCodes.Bne_Un_S;
+				break;
+			case Code.Bge_Un:
+				instr.OpCode = OpCodes.Bge_Un_S;
+				break;
+			case Code.Bgt_Un:
+				instr.OpCode = OpCodes.Bgt_Un_S;
+				break;
+			case Code.Ble_Un:
+				instr.OpCode = OpCodes.Ble_Un_S;
+				break;
+			case Code.Blt_Un:
+				instr.OpCode = OpCodes.Blt_Un_S;
+				break;
+			case Code.Leave:
+				instr.OpCode = OpCodes.Leave_S;
+				break;
+			}
+
+			return true;
+		}
+
+		void ComputeOffsets ()
+		{
+			int offset = 0;
+
+			foreach (Instruction instr in m_instructions) {
+				instr.Offset = offset;
+				offset += instr.GetSize ();
+			}
+		}
+
+		static void Modify (Instruction i, OpCode op, object operand)
 		{
 			i.OpCode = op;
 			i.Operand = operand;

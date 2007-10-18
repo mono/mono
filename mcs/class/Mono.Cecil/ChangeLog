@@ -1,5 +1,8 @@
 2007-10-18  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/MethodBody.cs: Add an Optimize method which
+	is the opposite of Simplify. Based on a patch by Carlo.
+
 	* Mono.Cecil.Cil/CodeWriter.cs: don't care about reducing MaxStack.
 
 2007-10-11  Jb Evain  <jbevain@novell.com>
