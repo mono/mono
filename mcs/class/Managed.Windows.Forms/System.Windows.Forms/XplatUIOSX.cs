@@ -1351,11 +1351,12 @@ namespace System.Windows.Forms {
 				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU)) {
 					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
 				}
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
-				}
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					windowklass = WindowClass.kDocumentWindowClass;
+				}
+				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
+					windowklass = WindowClass.kOverlayWindowClass;
+					attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
 				}
 					
 				Rect rect = new Rect ();
@@ -1392,14 +1393,16 @@ namespace System.Windows.Forms {
 			HIViewAddSubview (ParentHandle, WholeWindow);
 			HIViewAddSubview (WholeWindow, ClientWindow);
 
-//			hwnd.Queue = ThreadQueue (Thread.CurrentThread);
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
 			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 				if (WindowHandle != IntPtr.Zero) {
 					WindowMapping [hwnd.Handle] = WindowHandle;
+					IntPtr active = GetActive ();
 					CheckError (ShowWindow (WindowHandle));
+					if (active != IntPtr.Zero)
+						Activate (active);
 				}
 				HIViewSetVisible (WholeWindow, true);
 				HIViewSetVisible (ClientWindow, true);
@@ -1955,65 +1958,20 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool clear) {
-			//IntPtr rect = IntPtr.Zero;
-			//HIRect vBounds = new HIRect ();
-				
-			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
-		  
-			/*
-			if (hwnd.invalid != Rectangle.Empty) {
-				// BIG FAT WARNING. This only works with how we use this function right now
-				// where we basically still scroll the whole window, but work around areas
-				// that are covered by our children
-
-				hwnd.invalid.X += XAmount;
-				hwnd.invalid.Y += YAmount;
-
-				if (hwnd.invalid.X < 0) {
-					hwnd.invalid.Width += hwnd.invalid.X;
-					hwnd.invalid.X =0;
-				}
-
-				if (hwnd.invalid.Y < 0) {
-					hwnd.invalid.Height += hwnd.invalid.Y;
-					hwnd.invalid.Y =0;
-				}
-			}*/
-			
-			HIRect scrollrect = new HIRect ();
-			scrollrect.origin.x = area.X;
-			scrollrect.origin.y = area.Y;
-			scrollrect.size.width = area.Width;
-			scrollrect.size.height = area.Height;
-			HIViewScrollRect (hwnd.Handle, ref scrollrect, (float)XAmount, (float)-YAmount);
-			/*
-			HIViewGetBounds (hwnd.client_window, ref vBounds);
-			HIViewConvertRect (ref vBounds, hwnd.client_window, IntPtr.Zero);
-			SetRect (ref rect, (short)(vBounds.origin.x+area.X), (short)(vBounds.origin.y-TitleBarHeight+area.Y), (short)(vBounds.origin.x+area.Width), (short)(vBounds.origin.y+area.Height-TitleBarHeight));
-			ScrollRect (ref rect, (short)XAmount, (short)-YAmount, IntPtr.Zero);
-			*/
-			// Generate an expose for the area exposed by the horizontal scroll
-			/*
-			if (XAmount > 0) {
-				hwnd.AddInvalidArea (area.X, area.Y, XAmount, area.Height);
-			} else if (XAmount < 0) {
-				hwnd.AddInvalidArea (XAmount + area.X + area.Width, area.Y, -XAmount, area.Height);
-			}
-
-			// Generate an expose for the area exposed by the vertical scroll
-			if (YAmount > 0) {
-				hwnd.AddInvalidArea (area.X, area.Y, area.Width, YAmount);
-			} else if (YAmount < 0) {
-				hwnd.AddInvalidArea (area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
-			}
-			
-			UpdateWindow (handle);
-			*/
+			HIRect scroll_rect = new HIRect ();
+			scroll_rect.origin.x = area.X;
+			scroll_rect.origin.y = area.Y;
+			scroll_rect.size.width = area.Width;
+			scroll_rect.size.height = area.Height;
+			HIViewScrollRect (handle, ref scroll_rect, (float)XAmount, (float)-YAmount);
 		}
 		
 		
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
-			throw new NotImplementedException("");
+			HIRect scroll_rect = new HIRect ();
+			
+			HIViewGetBounds (hwnd, ref scroll_rect);
+			HIViewScrollRect (hwnd, ref scroll_rect, (float)XAmount, (float)-YAmount);
 		}
 		
 		[MonoTODO]
