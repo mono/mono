@@ -1,3 +1,7 @@
+2007-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* nunit-host-ignore-list: Change host name for DISTRO names.
+
 2007-08-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* nunit-host-ignore-list: Update bots name changes.
