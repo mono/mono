@@ -45,14 +45,80 @@ namespace MonoTests.System.Data.SqlClient
 
 			Assert.AreEqual (15, cn.ConnectionTimeout, 
 				"Default connection timeout should be 15 seconds");
-			Assert.AreEqual ("", cn.Database, 
+			Assert.AreEqual (string.Empty, cn.Database, 
 				"Default database name should be empty string");
-			Assert.AreEqual ("", cn.DataSource,
+			Assert.AreEqual (string.Empty, cn.DataSource,
 				"Default data source should be empty string");
 			Assert.AreEqual (8192, cn.PacketSize,
 				"Default packet size should be 8192 bytes");
 			Assert.AreEqual (ConnectionState.Closed, cn.State,
 				"Default connection state should be closed");
+		}
+
+		[Test]
+		public void BeginTransaction_Connection_Closed ()
+		{
+			SqlConnection cn = new SqlConnection ();
+
+			try {
+				cn.BeginTransaction ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				cn.BeginTransaction ((IsolationLevel) 666);
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			try {
+				cn.BeginTransaction (IsolationLevel.Serializable);
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+			}
+
+			try {
+				cn.BeginTransaction ("trans");
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
+
+			try {
+				cn.BeginTransaction ((IsolationLevel) 666, "trans");
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
+
+			try {
+				cn.BeginTransaction (IsolationLevel.Serializable, "trans");
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+			}
 		}
 
 		[Test]
@@ -72,6 +138,84 @@ namespace MonoTests.System.Data.SqlClient
 			cn.ConnectionString = "Timeout=25";
 			Assert.AreEqual (25, cn.ConnectionTimeout);
 		}
+
+#if NET_2_0
+		[Test]
+		public void GetSchema_Connection_Closed ()
+		{
+			SqlConnection cn = new SqlConnection ();
+
+			try {
+				cn.GetSchema ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			try {
+				cn.GetSchema ("Tables");
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+
+			try {
+				cn.GetSchema ((string) null);
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+			}
+
+			try {
+				cn.GetSchema ("Tables", new string [] { "master" });
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+			}
+
+			try {
+				cn.GetSchema ((string) null, new string [] { "master" });
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
+
+			try {
+				cn.GetSchema ("Tables", (string []) null);
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+			}
+
+			try {
+				cn.GetSchema ((string) null, (string []) null);
+				Assert.Fail ("#G1");
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#G2");
+				Assert.IsNull (ex.InnerException, "#G3");
+				Assert.IsNotNull (ex.Message, "#G4");
+			}
+		}
+#endif
 
 		[Test]
 		public void NetworkLibrarySynonyms()
