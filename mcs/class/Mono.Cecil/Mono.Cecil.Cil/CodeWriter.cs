@@ -429,11 +429,10 @@ namespace Mono.Cecil.Cil {
 				}
 			}
 
-			int max = 0, current = 0;
+			int max = 0;
 			foreach (Instruction instr in instructions) {
-
 				if (ehs.Contains (instr))
-					current++;
+					max++;
 
 				switch (instr.OpCode.StackBehaviourPush) {
 				case StackBehaviour.Push1:
@@ -443,46 +442,18 @@ namespace Mono.Cecil.Cil {
 				case StackBehaviour.Pushr8:
 				case StackBehaviour.Pushref:
 				case StackBehaviour.Varpush:
-					current++;
+					max++;
 					break;
 				case StackBehaviour.Push1_push1:
-					current += 2;
+					max += 2;
 					break;
 				}
 
-				if (max < current)
-					max = current;
-
-				switch (instr.OpCode.StackBehaviourPop) {
-				case StackBehaviour.Varpop:
-					break;
-				case StackBehaviour.Pop1:
-				case StackBehaviour.Popi:
-				case StackBehaviour.Popref:
-					current--;
-					break;
-				case StackBehaviour.Pop1_pop1:
-				case StackBehaviour.Popi_pop1:
-				case StackBehaviour.Popi_popi:
-				case StackBehaviour.Popi_popi8:
-				case StackBehaviour.Popi_popr4:
-				case StackBehaviour.Popi_popr8:
-				case StackBehaviour.Popref_pop1:
-				case StackBehaviour.Popref_popi:
-					current -= 2;
-					break;
-				case StackBehaviour.Popi_popi_popi:
-				case StackBehaviour.Popref_popi_popi:
-				case StackBehaviour.Popref_popi_popi8:
-				case StackBehaviour.Popref_popi_popr4:
-				case StackBehaviour.Popref_popi_popr8:
-				case StackBehaviour.Popref_popi_popref:
-					current -= 3;
-					break;
+				if (instr.OpCode.OperandType == OperandType.InlineMethod) {
+					IMethodSignature signature = instr.Operand as IMethodSignature;
+					if (signature != null && signature.ReturnType.ReturnType.FullName != Constants.Void)
+						max++;
 				}
-
-				if (current < 0)
-					current = 0;
 			}
 
 			instructions.Container.MaxStack = max;

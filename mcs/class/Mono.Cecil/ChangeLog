@@ -1,3 +1,7 @@
+2007-10-18  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/CodeWriter.cs: don't care about reducing MaxStack.
+
 2007-10-11  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/TypeReference.cs: add a IsNested helper property.
