@@ -248,7 +248,6 @@ namespace MonoTests.System.Threading
 
 #if NET_2_0
 		[Test] // bug #82700
-		[Category ("NotWorking")]
 		public void ManagedThreadId ()
 		{
 			C1Test test1 = new C1Test ();
