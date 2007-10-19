@@ -1579,16 +1579,20 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		
-		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
-		internal void Insert(Line line, int pos, bool update_caret, string s) {
+		// Insert text at the given position; use formatting at insertion point for inserted text
+		internal void Insert (Line line, int pos, bool update_caret, string s)
+		{
 			int break_index;
 			int base_line;
 			int old_line_count;
 			int count = 1;
 			LineEnding ending;
-			LineTag tag = LineTag.FindTag (line, pos);
+			Line split_line;
 			
+			// Find the LineTag to add to
+			LineTag tag = line.FindTag (pos);
+			
+			// Don't recalculate while we mess around
 			SuspendRecalc ();
 			
 			base_line = line.line_no;
@@ -1596,38 +1600,52 @@ namespace System.Windows.Forms {
 
 			break_index = GetLineEnding (s, 0, out ending);
 
-			// Bump the text at insertion point a line down if we're inserting more than one line
-			if (break_index != s.Length) {
-				Split (line, pos);
+			// There are no line feeds in our text to be pasted
+			if (break_index == s.Length) {
+				line.InsertString (pos, s);
+			} else {
+				// Add up to the first line feed to our current position
+				line.InsertString (pos, s.Substring (0, break_index + LineEndingLength (ending)));
+				
+				// Split the rest of the original line to a new line
+				Split (line, pos + (break_index + LineEndingLength (ending)));
 				line.ending = ending;
-				// Remainder of start line is now in base_line + 1
-			}
+				break_index += LineEndingLength (ending);
+				split_line = GetLine (line.line_no + 1);
+				
+				// Insert brand new lines for any more line feeds in the inserted string
+				while (true) {
+					int next_break = GetLineEnding (s, break_index, out ending);
+					
+					if (next_break == s.Length)
+						break;
+						
+					string line_text = s.Substring (break_index, next_break - break_index +
+							LineEndingLength (ending));
 
-			InsertString (line, pos, s.Substring (0, break_index + LineEndingLength (ending)));
+					Add (base_line + count, line_text, line.alignment, tag.Font, tag.Color, ending);
+
+					Line last = GetLine (base_line + count);
+					last.ending = ending;
+
+					count++;
+					break_index = next_break + LineEndingLength (ending);
+				}
+
+				// Add the remainder of the insert text to the split
+				// part of the original line
+				split_line.InsertString (0, s.Substring (break_index));
+			}
 			
-			break_index += LineEndingLength (ending);
-			while (break_index < s.Length) {
-				int next_break = GetLineEnding (s, break_index, out ending);
-				string line_text = s.Substring (break_index, next_break - break_index +
-						LineEndingLength (ending));
+			// Allow the document to recalculate things
+			ResumeRecalc (false);
 
-				Add (base_line + count, line_text, line.alignment, tag.Font, tag.Color, ending);
+			UpdateView (line, lines - old_line_count + 1, pos);
 
-				Line last = GetLine (base_line + count);
-				last.ending = ending;
-
-				count++;
-				break_index = next_break + LineEndingLength (ending);
-			}
-
-			ResumeRecalc (true);
-
-			UpdateView(line, lines - old_line_count + 1, pos);
-
+			// Move the caret to the end of the inserted text if requested
 			if (update_caret) {
-				// Move caret to the end of the inserted text
 				Line l = GetLine (line.line_no + lines - old_line_count);
-				PositionCaret(l, l.text.Length);
+				PositionCaret (l, l.text.Length);
 				DisplayCaret ();
 			}
 		}
