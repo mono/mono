@@ -218,6 +218,7 @@ namespace System.Data.Odbc
 					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
 				SetAutoCommit (connection, true); // restore default auto-commit
 				connection.transaction = null;
+				connection = null;
 				isOpen = false;
 			} else
 				throw new InvalidOperationException ();
@@ -238,6 +239,7 @@ namespace System.Data.Odbc
 					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
 				SetAutoCommit (connection, true);    // restore default auto-commit
 				connection.transaction = null;
+				connection = null;
 				isOpen = false;
 			} else
 				throw new InvalidOperationException ();
@@ -264,6 +266,9 @@ namespace System.Data.Odbc
 #endif
 		IsolationLevel IsolationLevel {
 			get {
+				if (!isOpen)
+					throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 				if (isolationlevel == IsolationLevel.Unspecified)
 					isolationlevel = GetIsolationLevel (Connection);
 				return isolationlevel;

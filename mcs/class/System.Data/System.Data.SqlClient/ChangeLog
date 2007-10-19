@@ -1,5 +1,10 @@
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlTransaction.cs: Clear connection in commit. In IsolationLevel,
+	throw IOE if transaction is no longer open.
+
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlTransaction.cs: Avoid unnecessary initialization. Remove 
 	isRolledBack since its essentially the same as isOpen. Use
 	ExceptionHelper.TransactionNotUsable instead of duplicating code.

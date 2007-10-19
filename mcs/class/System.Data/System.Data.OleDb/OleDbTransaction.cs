@@ -124,6 +124,9 @@ namespace System.Data.OleDb
 #endif
 		IsolationLevel IsolationLevel {
 			get {
+				if (!isOpen)
+					throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 				switch (libgda.gda_transaction_get_isolation_level (gdaTransaction)) {
 				case GdaTransactionIsolation.ReadCommitted :
 					return IsolationLevel.ReadCommitted;
@@ -144,11 +147,15 @@ namespace System.Data.OleDb
 
 		public OleDbTransaction Begin ()
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
 			return new OleDbTransaction (connection, depth + 1);
 		}
 
 		public OleDbTransaction Begin (IsolationLevel isolevel) 
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
 			return new OleDbTransaction (connection, depth + 1, isolevel);
 		}
 
@@ -164,6 +171,7 @@ namespace System.Data.OleDb
 			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection,
 				gdaTransaction))
 				throw new InvalidOperationException ();
+			connection = null;
 			isOpen = false;
 		}
 
@@ -208,6 +216,7 @@ namespace System.Data.OleDb
 			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection,
 				gdaTransaction))
 				throw new InvalidOperationException ();
+			connection = null;
 			isOpen = false;
 		}
 

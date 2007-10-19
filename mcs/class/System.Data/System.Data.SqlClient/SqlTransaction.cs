@@ -81,7 +81,11 @@ namespace System.Data.SqlClient
 		override
 #endif // NET_2_0
 		IsolationLevel IsolationLevel {
-			get { return isolationLevel; }
+			get {
+				if (!isOpen)
+					throw ExceptionHelper.TransactionNotUsable (GetType ());
+				return isolationLevel;
+			}
 		}
 		
 		IDbConnection IDbTransaction.Connection {
@@ -103,6 +107,7 @@ namespace System.Data.SqlClient
 
 			connection.Tds.Execute ("COMMIT TRANSACTION");
 			connection.Transaction = null;
+			connection = null;
 			isOpen = false;
 		}
 

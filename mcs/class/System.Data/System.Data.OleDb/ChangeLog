@@ -1,5 +1,11 @@
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OleDbTransaction.cs: Clear connection in Commit and Rollback. In
+	IsolationLevel and Begin overloads, throw IOE if transaction is no
+	longer open.
+
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OleDbTransaction.cs: Keep track of whether transaction is open and
 	whether it's disposed. In Commit an Rollback, throw an IOE if the
 	transaction is no longer open. In Dispose (bool), perform a rollback

@@ -1,5 +1,10 @@
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcTransaction.cs: Clear connection in Commit and Rollback.
+	In IsolationLevel, throw IOE if transaction is no longer open.
+
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OdbcTransaction.cs: Keep state of the transaction, and update it
 	when performing commit or rollback. In Dispose (bool), only perform
 	a rollback if transaction was not committed or rollback before.
