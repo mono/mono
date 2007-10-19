@@ -1,3 +1,8 @@
+2007-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AlternateViewTest.cs : default TransferEncoding value is more
+	  complicated.
+
 2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinkedResourceTest.cs, AttachmentTest.cs, AlternateViewTest.cs:

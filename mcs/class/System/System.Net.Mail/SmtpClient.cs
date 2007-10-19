@@ -599,8 +599,8 @@ namespace System.Net.Mail {
 				SendHeader (HeaderName.ContentTransferEncoding, GetTransferEncodingName (message.ContentTransferEncoding));
 			SendData (string.Empty);
 
-			SendData (EncodeBody (message));
-			SendData (string.Empty);
+			//SendData (EncodeBody (message));
+			//SendData (string.Empty);
 
 			message.AlternateViews.Add (AlternateView.CreateAlternateViewFromString (message.Body, new ContentType ("text/plain")));
 
@@ -642,7 +642,8 @@ namespace System.Net.Mail {
 					break;
 				case TransferEncoding.QuotedPrintable:
 					StreamReader sr = new StreamReader (alternateViews [i].ContentStream);
-					SendData (ToQuotedPrintable (sr.ReadToEnd (), Encoding.GetEncoding (contentType.CharSet)));
+					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
+					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
@@ -677,7 +678,8 @@ namespace System.Net.Mail {
 					break;
 				case TransferEncoding.QuotedPrintable:
 					StreamReader sr = new StreamReader (attachments [i].ContentStream);
-					SendData (ToQuotedPrintable (sr.ReadToEnd (), Encoding.GetEncoding (contentType.CharSet)));
+					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
+					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:

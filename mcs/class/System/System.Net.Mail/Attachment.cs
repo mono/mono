@@ -119,7 +119,9 @@ namespace System.Net.Mail {
 			sw.Write (content);
 			sw.Flush ();
 			ms.Position = 0;
-			return new Attachment (ms, contentType);
+			Attachment a = new Attachment (ms, contentType);
+			a.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return a;
 		}
 		
 		public static Attachment CreateAttachmentFromString (string content, string name)
@@ -132,6 +134,7 @@ namespace System.Net.Mail {
 			sw.Flush ();
 			ms.Position = 0;
 			Attachment a = new Attachment (ms, new ContentType ("text/plain"));
+			a.TransferEncoding = TransferEncoding.QuotedPrintable;
 			a.Name = name;
 			return a;
 		}
@@ -145,7 +148,9 @@ namespace System.Net.Mail {
 			sw.Write (content);
 			sw.Flush ();
 			ms.Position = 0;
-			return new Attachment (ms, name, mediaType);
+			Attachment a = new Attachment (ms, name, mediaType);
+			a.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return a;
 		}
 
 		#endregion // Methods

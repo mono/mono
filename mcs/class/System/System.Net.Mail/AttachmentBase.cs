@@ -43,7 +43,7 @@ namespace System.Net.Mail {
 		string id;
 		ContentType contentType = new ContentType ();
 		Stream contentStream;
-		TransferEncoding transferEncoding = TransferEncoding.QuotedPrintable;
+		TransferEncoding transferEncoding = TransferEncoding.Base64;
 
 		#endregion // Fields
 

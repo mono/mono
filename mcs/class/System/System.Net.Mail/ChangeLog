@@ -1,3 +1,13 @@
+2007-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AlternateView.cs, AttachmentView.cs, AttachmentBase.cs :
+	  reverted default back to TransferEncoding.Base64 again, and use
+	  QuotedPrintable only when created from string.
+	  No need to check null Stream at AlternateView.ctor(). See base.
+	* SmtpClient.cs : For multipart message, do not send body twice (it
+	  still emits extraneous part, which should be fixed too).
+	  Do not premise charset existence in every AttachmentBase.
+
 2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AlternateView.cs : dispose linked resources. Remove MonoTODOs.

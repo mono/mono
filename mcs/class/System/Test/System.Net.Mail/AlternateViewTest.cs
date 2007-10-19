@@ -67,7 +67,11 @@ namespace MonoTests.System.Net.Mail
 		[Test]
 		public void TransferEncodingTest ()
 		{
-			Assert.AreEqual (TransferEncoding.QuotedPrintable, av.TransferEncoding);
+			Assert.AreEqual (TransferEncoding.QuotedPrintable, av.TransferEncoding, "#1");
+
+			MemoryStream ms = new MemoryStream (new byte [] {1, 2, 3});
+			Assert.AreEqual (TransferEncoding.Base64, new AlternateView (ms).TransferEncoding, "#2");
+			Assert.AreEqual (TransferEncoding.Base64, new AlternateView (ms, "text/plain").TransferEncoding, "#3");
 		}
 	}
 }

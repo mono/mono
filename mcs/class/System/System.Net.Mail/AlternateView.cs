@@ -65,20 +65,14 @@ namespace System.Net.Mail {
 
 		public AlternateView (Stream contentStream) : base (contentStream)
 		{
-			if (contentStream == null)
-				throw new ArgumentNullException ();
 		}
 		
 		public AlternateView (Stream contentStream, string mediaType) : base (contentStream, mediaType)
 		{
-			if (contentStream == null)
-				throw new ArgumentNullException ();
 		}
 		
 		public AlternateView (Stream contentStream, ContentType contentType) : base (contentStream, contentType)
 		{
-			if (contentStream == null)
-				throw new ArgumentNullException ();
 		}
 
 		#endregion // Constructors
@@ -103,7 +97,9 @@ namespace System.Net.Mail {
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (Encoding.UTF8.GetBytes (content));
-			return new AlternateView (ms);
+			AlternateView av = new AlternateView (ms);
+			av.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return av;
 		}
 
 		public static AlternateView CreateAlternateViewFromString (string content, ContentType contentType)
@@ -111,7 +107,9 @@ namespace System.Net.Mail {
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (Encoding.UTF8.GetBytes (content));
-			return new AlternateView (ms, contentType);
+			AlternateView av = new AlternateView (ms, contentType);
+			av.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return av;
 		}
 
 		public static AlternateView CreateAlternateViewFromString (string content, Encoding encoding, string mediaType)
@@ -119,7 +117,9 @@ namespace System.Net.Mail {
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (encoding.GetBytes (content));
-			return new AlternateView (ms, mediaType);
+			AlternateView av = new AlternateView (ms, mediaType);
+			av.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return av;
 		}
 
 		protected override void Dispose (bool disposing)
