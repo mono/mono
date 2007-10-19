@@ -29,6 +29,7 @@
 //
 using System;
 using System.Data;
+using System.Globalization;
 
 #if NET_2_0
 using System.Data.Common;
@@ -51,34 +52,76 @@ namespace System.Data.Odbc
 			// Set Auto-commit (102) to false
 			SetAutoCommit (conn, false);
 			// Handle isolation level
-			int lev = 0;
+			OdbcIsolationLevel lev = OdbcIsolationLevel.ReadCommitted;
+			OdbcConnectionAttribute attr = OdbcConnectionAttribute.TransactionIsolation;
 			switch (isolationlevel) {
 			case IsolationLevel.ReadUncommitted:
-				lev = 1;
+				lev = OdbcIsolationLevel.ReadUncommitted;
 				break;
 			case IsolationLevel.ReadCommitted:
-				lev = 2;
+				lev = OdbcIsolationLevel.ReadCommitted;
 				break;
 			case IsolationLevel.RepeatableRead:
-				lev = 3;
+				lev = OdbcIsolationLevel.RepeatableRead;
 				break;
 			case IsolationLevel.Serializable:
-				lev = 4;
+				lev = OdbcIsolationLevel.Serializable;
 				break;
+#if NET_2_0
+			case IsolationLevel.Snapshot:
+				// badly broken on MS:
+				// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=305736
+				lev = OdbcIsolationLevel.Snapshot;
+
+				// SQL_ATTR_TXN_ISOLATION can be used to set all other isolation
+				// levels except for SQL_TXN_SS_SNAPSHOT. If you want to use snapshot
+				// isolation, you must set SQL_TXN_SS_SNAPSHOT through
+				// SQL_COPT_SS_TXN_ISOLATION. However, you can retrieve the
+				// isolation level by using either SQL_ATTR_TXN_ISOLATION or
+				// SQL_COPT_SS_TXN_ISOLATION.
+				// Source:
+				// http://msdn2.microsoft.com/en-us/library/ms131709.aspx
+				attr = OdbcConnectionAttribute.CoptTransactionIsolation;
+				break;
+#endif
 			case IsolationLevel.Unspecified:
-				lev = 0;
+				// when isolationlevel is not specified, then use
+				// default isolation level of the driver and
+				// lazy initialize it in the IsolationLevel property
 				break;
+#if NET_2_0
+			case IsolationLevel.Chaos:
+				throw new ArgumentOutOfRangeException ("IsolationLevel",
+					string.Format (CultureInfo.CurrentCulture,
+						"The IsolationLevel enumeration " +
+						"value, {0}, is not supported by " +
+						"the .Net Framework Odbc Data " +
+						"Provider.", (int) isolationlevel));
+#endif
 			default:
-				throw new NotSupportedException();
+#if NET_2_0
+				throw new ArgumentOutOfRangeException ("IsolationLevel",
+					string.Format (CultureInfo.CurrentCulture,
+						"The IsolationLevel enumeration value, {0}, is invalid.",
+						(int) isolationlevel));
+#else
+				throw new ArgumentException (string.Format (
+					CultureInfo.InvariantCulture,
+					"Not supported isolationlevel - {0}",
+					isolationlevel));
+#endif
 			}
-			// mbd: Getting the return code of the second call to SQLSetConnectAttr is missing from original code!
-			OdbcReturn ret = libodbc.SQLSetConnectAttr (conn.hDbc,
-				OdbcConnectionAttribute.TransactionIsolation,
-				(IntPtr) lev, 0);
-			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, conn.hDbc));
+
+			// only change isolation level if it was explictly set
+			if (isolationlevel != IsolationLevel.Unspecified) {
+				// mbd: Getting the return code of the second call to SQLSetConnectAttr is missing from original code!
+				OdbcReturn ret = libodbc.SQLSetConnectAttr (conn.hDbc,
+					attr, (IntPtr) lev, 0);
+				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+					throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, conn.hDbc));
+			}
 			this.isolationlevel = isolationlevel;
-			connection=conn;
+			connection = conn;
 		}
 
 		// Set Auto-commit (102) connection attribute
@@ -90,6 +133,51 @@ namespace System.Data.Odbc
 				(IntPtr) (isAuto ? 1 : 0), -5);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 				throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, conn.hDbc));
+		}
+
+		private static IsolationLevel GetIsolationLevel (OdbcConnection conn)
+		{
+			int lev;
+			int length;
+			OdbcReturn ret = libodbc.SQLGetConnectAttr (conn.hDbc,
+				OdbcConnectionAttribute.TransactionIsolation,
+				out lev, 0, out length);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw new OdbcException (new OdbcError ("SQLGetConnectAttr",
+					OdbcHandleType.Dbc, conn.hDbc));
+			return MapOdbcIsolationLevel ((OdbcIsolationLevel) lev);
+		}
+
+		private static IsolationLevel MapOdbcIsolationLevel (OdbcIsolationLevel odbcLevel)
+		{
+			IsolationLevel isoLevel = IsolationLevel.Unspecified;
+
+			switch (odbcLevel) {
+			case OdbcIsolationLevel.ReadUncommitted:
+				isoLevel = IsolationLevel.ReadUncommitted;
+				break;
+			case OdbcIsolationLevel.ReadCommitted:
+				isoLevel = IsolationLevel.ReadCommitted;
+				break;
+			case OdbcIsolationLevel.RepeatableRead:
+				isoLevel = IsolationLevel.RepeatableRead;
+				break;
+			case OdbcIsolationLevel.Serializable:
+				isoLevel = IsolationLevel.Serializable;
+				break;
+#if NET_2_0
+			case OdbcIsolationLevel.Snapshot:
+				isoLevel = IsolationLevel.Snapshot;
+				break;
+#else
+			default:
+				throw new NotSupportedException (string.Format (
+					CultureInfo.InvariantCulture,
+					"Isolation level {0} is not supported.",
+					odbcLevel));
+#endif
+			}
+			return isoLevel;
 		}
 
 		#region Implementation of IDisposable
@@ -169,6 +257,8 @@ namespace System.Data.Odbc
 #endif
 		IsolationLevel IsolationLevel {
 			get {
+				if (isolationlevel == IsolationLevel.Unspecified)
+					isolationlevel = GetIsolationLevel (Connection);
 				return isolationlevel;
 			}
 		}

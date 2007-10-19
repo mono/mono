@@ -65,7 +65,10 @@ namespace System.Data.Odbc
 	{
 		AutoCommit = 102,
 		TransactionIsolation = 108,
-		CurrentCatalog = 109
+		CurrentCatalog = 109,
+#if NET_2_0
+		CoptTransactionIsolation = 1227		/* SQL_COPT_SS_TXN_ISOLATION */
+#endif
 	}
 
 	internal enum OdbcInfo : ushort
@@ -84,6 +87,15 @@ namespace System.Data.Odbc
 		ResultCol = 3,
 		Output = 4,
 		ReturnValue = 5
+	}
+
+	internal enum OdbcIsolationLevel
+	{
+		ReadUncommitted = 1,
+		ReadCommitted = 2,
+		RepeatableRead = 4,
+		Serializable = 8,
+		Snapshot = 32		/* SQL_TXN_SS_SNAPSHOT */
 	}
 
 	internal enum OdbcLengthIndicator : short
@@ -338,6 +350,14 @@ namespace System.Data.Odbc
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLExecute (
 			IntPtr StatementHandle);
+
+		[DllImport ("odbc32.dll")]
+		internal static extern OdbcReturn SQLGetConnectAttr (
+			IntPtr ConnectionHandle,
+			OdbcConnectionAttribute Attribute,
+			out int value,
+			int BufferLength,
+			out int StringLength);
 
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLSetConnectAttr (

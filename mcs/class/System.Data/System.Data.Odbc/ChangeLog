@@ -1,5 +1,17 @@
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcTransaction.cs: Use OdbcIsolationLevel enum value instead of
+	magic numbers. For Snapshot isolation level, the attribute
+	SQL_COPT_SS_TXN_ISOLATION must be used instead. When isolation level
+	is Unspecified, then do not modify the isolation level at all and
+	lazy initlization the IsolationLevel property. Modified exceptions
+	for invalid / not supported isolation levels to match MS.
+	* libodbc.cs: Added attribute for changing SQL Server specific
+	connection option. Added enum for ODBC isolation level options.
+	Added SQLGetConnectAttr method.
+
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* libodbc.cs: Spaces to tabs. Code formatting.
 	* OdbcConnection.cs: Spaces to tabs. Code formatting.
 	* OdbcTransaction.cs: Code formatting.
