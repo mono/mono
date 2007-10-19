@@ -1,3 +1,7 @@
+2007-10-19  Nagappan <anagappan@novell.com> 
+
+	* DataRelation.cs: Removed bogus TODO.
+
 2007-09-27  Nagappan A <anagappan@novell.com> 
 
 	* DataRelationCollection.cs: Added LAME spec comment as there is no

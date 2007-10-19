@@ -50,7 +50,6 @@ namespace System.Data
 #if !NET_2_0
 	[Serializable]
 #endif
-	[MonoTODO]
 	[TypeConverterAttribute (typeof (RelationshipConverter))]	
 	public class DataRelation {
 		private DataSet dataSet;
