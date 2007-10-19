@@ -1,3 +1,7 @@
+2007-10-20  Raja R Harinath  <harinath@gmail.com>
+
+	* TimerTest.cs (TestHeavyCreationLoad): Don't shadow a variable name.
+
 2007-10-19  Dick Porter  <dick@ximian.com>
 
 	* ThreadTest.cs: Re-enable ManagedThreadId test too

@@ -106,12 +106,9 @@ namespace MonoTests.System.Threading {
 		
 		[Test]
 		public void TestHeavyCreationLoad() {
-			int i = 0;
 			Bucket b = new Bucket();
-			while (i < 500) {
+			for (int i = 0; i < 500; ++i)
 				new Timer(new TimerCallback(Callback),b,10,Timeout.Infinite);
-				i++;
-			}
 			// 1000 * 10 msec = 10,000 msec or 10 sec - if everything goes well
 			// we add some slack to cope with timing issues caused by system load etc.
 			for (int i = 0; i < 20; ++i) {
