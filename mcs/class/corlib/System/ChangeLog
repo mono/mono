@@ -1,3 +1,7 @@
+2007-10-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs: Add NET 3.5 DefineDynamicAssembly () overloads.
+
 2007-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs (CreateDelegate): Allow binding instance methods to 

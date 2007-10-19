@@ -51,6 +51,7 @@ using System.Security.Principal;
 using System.Configuration.Assemblies;
 
 #if NET_2_0
+using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 #endif
 
@@ -432,6 +433,28 @@ namespace System {
 			return ab;
 		}
 
+#if NET_2_0
+		// NET 3.5 method
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+		                                              Evidence evidence,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPermissions, bool isSynchronized, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
+		{
+			AssemblyBuilder ab = DefineDynamicAssembly (name, access, dir, evidence, requiredPermissions, optionalPermissions, refusedPermissions, isSynchronized);
+			if (assemblyAttributes != null)
+				foreach (CustomAttributeBuilder cb in assemblyAttributes) {
+					ab.SetCustomAttribute (cb);
+				}
+			return ab;
+		}
+
+		// NET 3.5 method
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes) {
+			return DefineDynamicAssembly (name, access, null, null, null, null, null, false, assemblyAttributes);
+		}
+#endif
+
 		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			return new AssemblyBuilder (name, null, access, true);
@@ -553,7 +576,7 @@ namespace System {
 		{
 			if (rawAssembly == null)
 				throw new ArgumentNullException ("rawAssembly");
-				
+
 			Assembly assembly = LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence, refonly);
 			assembly.FromByteArray = true;
 			return assembly;
