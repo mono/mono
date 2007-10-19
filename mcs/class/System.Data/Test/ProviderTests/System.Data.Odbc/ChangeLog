@@ -1,3 +1,10 @@
+2007-10-19  Nagappan A  <anagappan@novell.com>
+
+	* OdbcDataReaderTest.cs (Bug332404Test): Bug 332404 - ODBC and
+	  numeric columns. Thanks to Ernesto Carrea <equistango@gmail.com>
+	  for the patch and the test case.
+	  Fixed compilation issues in Bug332400Test method.
+
 2007-10-12  Nagappan A  <anagappan@novell.com>
 
 	* OdbcDataReaderTest.cs (Bug332400Test): Bug 332400 - ODBC and

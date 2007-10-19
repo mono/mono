@@ -154,7 +154,11 @@ namespace MonoTests.System.Data
 				OdbcCmd.CommandText = "Drop table foo";
 				try {
 					OdbcCmd.ExecuteNonQuery ();
+#if NET_2_0
+				} catch (Exception e) {
+#else
 				} catch (OdbcException e) {
+#endif
 					Assert.Fail ("Exception thrown: " + e.Message);
 				}
 				// Create table
@@ -216,35 +220,70 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
+		[Test]
+		public void Bug332404Test ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+
+				OdbcCommand TempCmd;
+
+				TempCmd = new OdbcCommand ("DROP TABLE IF EXISTS odbc_test");
+				TempCmd.Connection = (OdbcConnection) conn;
+				TempCmd.ExecuteNonQuery ();
+
+				TempCmd = new OdbcCommand ("CREATE TABLE odbc_test (id_test INTEGER NOT NULL, payload DECIMAL (14,4) NOT NULL)");
+				TempCmd.Connection = (OdbcConnection) conn;
+
+				TempCmd.ExecuteNonQuery ();
+
+				TempCmd = new OdbcCommand ("INSERT INTO odbc_test (id_test, payload) VALUES (1, 1.23456789)");
+				TempCmd.Connection = (OdbcConnection) conn;
+				TempCmd.ExecuteNonQuery ();
+
+				OdbcDataAdapter Adaptador = new OdbcDataAdapter ();
+
+				DataSet Lector = new DataSet ();
+
+				Adaptador.SelectCommand = new OdbcCommand ("SELECT * FROM odbc_test WHERE id_test=1", (OdbcConnection) conn);
+				Adaptador.Fill (Lector);
+				Assert.AreEqual (Lector.Tables[0].Rows[0]["payload"], 1.2346);
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+        }
 		[Test]
 		public void Bug332400Test ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
-				System.Data.Odbc.OdbcCommand TempCmd;
+				OdbcCommand TempCmd;
 
-				TempCmd = new System.Data.Odbc.OdbcCommand("DROP TABLE IF EXISTS blob_test");
-				TempCmd.Connection = conn;
+				TempCmd = new OdbcCommand("DROP TABLE IF EXISTS blob_test");
+				TempCmd.Connection = (OdbcConnection) conn;
 				TempCmd.ExecuteNonQuery();
 
-				TempCmd = new System.Data.Odbc.OdbcCommand("CREATE TABLE blob_test (id_test INTEGER NOT NULL, payload LONGBLOB NOT NULL)");
-				TempCmd.Connection = conn;
+				TempCmd = new OdbcCommand("CREATE TABLE blob_test (id_test INTEGER NOT NULL, payload LONGBLOB NOT NULL)");
+				TempCmd.Connection = (OdbcConnection) conn;
 				TempCmd.ExecuteNonQuery();
 
-				TempCmd = new System.Data.Odbc.OdbcCommand("INSERT INTO blob_test (id_test, payload) VALUES (1, 'test')");
-				TempCmd.Connection = conn;
+				TempCmd = new OdbcCommand("INSERT INTO blob_test (id_test, payload) VALUES (1, 'test')");
+				TempCmd.Connection = (OdbcConnection) conn;
 				TempCmd.ExecuteNonQuery();
 
-				System.Data.Odbc.OdbcDataAdapter Adaptador = new System.Data.Odbc.OdbcDataAdapter();
-				System.Data.DataSet Lector = new System.Data.DataSet();
+				OdbcDataAdapter Adaptador = new OdbcDataAdapter();
+				DataSet Lector = new DataSet();
 
-				Adaptador.SelectCommand = new System.Data.Odbc.OdbcCommand("SELECT * FROM blob_test WHERE id_test=1", conn);
+				Adaptador.SelectCommand = new OdbcCommand("SELECT * FROM blob_test WHERE id_test=1", (OdbcConnection) conn);
 				Adaptador.Fill(Lector);
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
         }
+
 #if NET_2_0 
 		[Test]
 		public void GetDataTypeNameTest ()
