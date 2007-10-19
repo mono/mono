@@ -1,3 +1,9 @@
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* libodbc.cs: Spaces to tabs. Code formatting.
+	* OdbcConnection.cs: Spaces to tabs. Code formatting.
+	* OdbcTransaction.cs: Code formatting.
+
 2007-10-19  Nagappan <anagappan@novell.com> 
 
 	* OdbcCommandBuilder.cs, OdbcParameterCollection.cs: Code alignment.
