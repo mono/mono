@@ -66,7 +66,7 @@ namespace System.Data.OleDb
 	
 		#region Properties
 
-#if !NET_2_0
+#if ONLY_1_1
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
@@ -81,8 +81,8 @@ namespace System.Data.OleDb
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new OleDbParameter this[int index] {
-			get { return (OleDbParameter) list[index]; }
-			set { list[index] = value; }
+			get { return (OleDbParameter) list [index]; }
+			set { list[index] = (OleDbParameter) value; }
 		}
 
 		[Browsable (false)]
@@ -97,7 +97,7 @@ namespace System.Data.OleDb
 			set {
 				if (!Contains (parameterName))
 					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
-				this [IndexOf (parameterName)] = value;
+				this [IndexOf (parameterName)] = (OleDbParameter) value;
 			}
 		}
 

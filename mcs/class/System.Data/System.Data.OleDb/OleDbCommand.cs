@@ -69,6 +69,8 @@ namespace System.Data.OleDb
 		CommandBehavior behavior;
 		IntPtr gdaCommand;
 
+		bool disposed = false;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -196,18 +198,17 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Data")]
-#if !NET_2_0
+#if ONLY_1_1
 		[DataSysDescriptionAttribute ("The parameters collection.")]
 #endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public new OleDbParameterCollection Parameters {
-			get {
-				return parameters;
-			}
+			get { return parameters; }
+			internal set { parameters = value; }
 		}
 
 		[BrowsableAttribute (false)]
-#if !NET_2_0
+#if ONLY_1_1
 		[DataSysDescriptionAttribute ("The transaction used by the command.")]
 #endif
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -225,16 +226,15 @@ namespace System.Data.OleDb
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 #endif
+		[MonoTODO]
 		public
 #if NET_2_0
 		override
 #endif
 		UpdateRowSource UpdatedRowSource {
-			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
-			[MonoTODO]
 			set {
 				throw new NotImplementedException ();
 			}
@@ -290,10 +290,14 @@ namespace System.Data.OleDb
 		}
 #endif
 		
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (disposed)
+				return;
+			
+			Connection = null;
+			Transaction = null;
+			disposed = true;
 		}
 
 		private void SetupGdaCommand ()
@@ -418,17 +422,26 @@ namespace System.Data.OleDb
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public OleDbCommand Clone ()
-		{
-			throw new NotImplementedException ();
-		}
+		public
+#else
+		internal
 #endif
+		OleDbCommand Clone ()
+		{
+			OleDbCommand command = new OleDbCommand ();
+			command.CommandText = this.CommandText;
+			command.CommandTimeout = this.CommandTimeout;
+			command.CommandType = this.CommandType;
+			command.Connection = this.Connection;
+			command.DesignTimeVisible = this.DesignTimeVisible;
+			command.Parameters = this.Parameters;
+			command.Transaction = this.Transaction;
+			return command;
+		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return Clone ();
 		}
 
 		[MonoTODO]
@@ -447,33 +460,28 @@ namespace System.Data.OleDb
 		}
 		
 #if NET_2_0
-		[MonoTODO]
 		protected override DbParameter CreateDbParameter ()
 		{
-			throw new NotImplementedException ();
+			return (DbParameter) CreateParameter ();
 		}
 		
-		[MonoTODO]
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			return (DbDataReader) ExecuteReader (behavior);
 		}
 		
-		[MonoTODO]
 		protected override DbConnection DbConnection {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return Connection; }
+			set { Connection = (OleDbConnection) value; }
 		}
 		
-		[MonoTODO]
 		protected override DbParameterCollection DbParameterCollection {
-			get { throw new NotImplementedException (); }
+			get { return Parameters; }
 		}
 		
-		[MonoTODO]
 		protected override DbTransaction DbTransaction {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return Transaction; }
+			set { Transaction = (OleDbTransaction) value; }
 		}
 #endif
 

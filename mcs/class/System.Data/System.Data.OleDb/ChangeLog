@@ -1,3 +1,11 @@
+2007-10-19  Nagappan <anagappan@novell.com> 
+
+	* OleDbCommand.cs: Implemented Clone, Dispose methods.
+	  Implemented CreateDbParameter, DbConnection, DbParameterCollection,
+	  DbTransaction, ExecuteDbDataReader properties.
+
+	* OleDbParameterCollection.cs: Fixed 1.0 API compatibility.
+
 2007-09-27  Nagappan A <anagappan@novell.com> 
 
 	* OleDbDataReader.cs: Removed bogus MonoTODO.
