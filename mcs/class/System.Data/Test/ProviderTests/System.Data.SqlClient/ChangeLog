@@ -1,3 +1,7 @@
+2007-10-19  Nagappan A  <anagappan@novell.com>
+
+	* SqlCommandBuilderTest.cs: Fixed compilation warnings.
+
 2007-07-31  Nagappan A  <anagappan@novell.com>
 
 	* SqlConnectionTest.cs (InterfaceTransactionTest): Fixes bug

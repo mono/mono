@@ -250,9 +250,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetUpdateDeleteCommandBoolTest_CheckParameters ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
+				IDbConnection conn = ConnectionManager.Singleton.Connection;
 				SqlDataAdapter adapter = new SqlDataAdapter ("select id, type_varchar from string_family",
 								(SqlConnection)conn);
 				SqlCommandBuilder cb = new SqlCommandBuilder (adapter);
@@ -276,9 +276,9 @@ namespace MonoTests.System.Data
 		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
+				IDbConnection conn = ConnectionManager.Singleton.Connection;
 				string selectQuery = "select id, fname from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
@@ -300,9 +300,9 @@ namespace MonoTests.System.Data
 		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetDeleteCommandDBConcurrencyExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
+				IDbConnection conn = ConnectionManager.Singleton.Connection;
 				string selectQuery = "select id, fname from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
@@ -323,9 +323,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetDeleteCommandTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
 				ConnectionManager.Singleton.OpenConnection ();
+				IDbConnection conn = ConnectionManager.Singleton.Connection;
 				string selectQuery = "select id, fname, lname, id+1 as next_id from employee where id = 1";
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
@@ -349,36 +349,30 @@ namespace MonoTests.System.Data
 		[Test]
 		public void DefaultPropertiesTest ()
 		{
-			SqlCommandBuilder cb = new SqlCommandBuilder ();
-#if NET_1_0
-			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
-			Assert.AreEqual ("", cb.QuotePrefix, "#5");
-			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
-#endif
-#if NET_2_0				
-			Assert.AreEqual ("[", cb.QuotePrefix, "#5");
-			Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
-			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
-			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
-			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
-				conn.Open ();
-				cb = new SqlCommandBuilder ();
+				ConnectionManager.Singleton.OpenConnection ();
+				//IDbConnection conn = ConnectionManager.Singleton.Connection;
+				SqlCommandBuilder cb = new SqlCommandBuilder ();
 #if NET_2_0
+				Assert.AreEqual ("[", cb.QuotePrefix, "#5");
+				Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
+				Assert.AreEqual (".", cb.CatalogSeparator, "#2");
+				//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
+				Assert.AreEqual (".", cb.SchemaSeparator, "#4");
+				Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
 				Assert.AreEqual ("[monotest]", cb.QuoteIdentifier ("monotest"), "#7");
 				Assert.AreEqual ("\"monotest\"", cb.UnquoteIdentifier ("\"monotest\""), "#8");
+				//Assert.AreEqual (cb.ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
 #else
-				Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
-				Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
+				Assert.AreEqual ("", cb.QuotePrefix, "#5");
+				Assert.AreEqual ("", cb.QuoteSuffix, "#6");
+				//Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
+				//Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
 #endif
-				conn.Close ();
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 			// FIXME: test SetAllValues
-#endif // NET_2_0
 		}
 
 		// FIXME:  Add tests for examining RowError
@@ -387,7 +381,9 @@ namespace MonoTests.System.Data
 		[Test]
 		public void CheckParameters_BuiltCommand ()
 		{
-			using (IDbConnection conn = ConnectionManager.Singleton.Connection) {
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				IDbConnection conn = ConnectionManager.Singleton.Connection;
 				SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", (SqlConnection)conn);
 				SqlCommandBuilder cb = new SqlCommandBuilder(adapter);
 				DataSet ds = new DataSet ();
@@ -408,6 +404,9 @@ namespace MonoTests.System.Data
 				ds.Tables[0].Rows.Add(row_rsInput);
 
 				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#3");
+			}
+			finally {
+				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 	}
