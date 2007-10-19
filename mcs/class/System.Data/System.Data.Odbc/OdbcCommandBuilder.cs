@@ -43,14 +43,14 @@ namespace System.Data.Odbc
 	/// </summary>
 
 #if NET_2_0
-        public sealed class OdbcCommandBuilder : DbCommandBuilder
+	public sealed class OdbcCommandBuilder : DbCommandBuilder
 #else // 1_1
 	public sealed class OdbcCommandBuilder : Component
 #endif // NET_2_0
 	{
 		#region Fields
 
-		private OdbcDataAdapter 	_adapter;
+		private OdbcDataAdapter _adapter;
 		private string 			_quotePrefix;
 		private string 			_quoteSuffix;
 
@@ -87,9 +87,9 @@ namespace System.Data.Odbc
 		[DefaultValue (null)]
 		public
 #if NET_2_0
-                new
+        new
 #endif // NET_2_0
-                OdbcDataAdapter DataAdapter {
+		OdbcDataAdapter DataAdapter {
 			get {
 				return _adapter;
 			}
@@ -102,7 +102,6 @@ namespace System.Data.Odbc
 				_adapter = value;
 				if (_adapter != null)
 					_adapter.RowUpdating += new OdbcRowUpdatingEventHandler (OnRowUpdating);
-
 			}
 		}
 
@@ -147,13 +146,13 @@ namespace System.Data.Odbc
 
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #if ONLY_1_1
 		public
 #else
-                new
+		new
 #endif
-                string QuotePrefix {
+		string QuotePrefix {
 			get {
 				return _quotePrefix;
 			}
@@ -163,8 +162,8 @@ namespace System.Data.Odbc
 		}
 
 		[BrowsableAttribute (false)]
-                [OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #if ONLY_1_1
 		public
 #else
@@ -287,9 +286,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                new
+        new
 #endif // NET_2_0
-                OdbcCommand GetInsertCommand ()
+        OdbcCommand GetInsertCommand ()
 		{
 			// FIXME: check validity of adapter
 			if (_insertCommand != null)
@@ -415,7 +414,7 @@ namespace System.Data.Odbc
 
 #if NET_2_0
 		[MonoTODO]
-                public new OdbcCommand GetUpdateCommand (bool option)
+		public new OdbcCommand GetUpdateCommand (bool option)
 		{
 			// FIXME: check validity of adapter
 			if (_updateCommand != null)
@@ -461,7 +460,7 @@ namespace System.Data.Odbc
 
 #if NET_2_0
 		[MonoTODO]
-                public new OdbcCommand GetDeleteCommand (bool option)
+		public new OdbcCommand GetDeleteCommand (bool option)
 		{
 			// FIXME: check validity of adapter
 			if (_deleteCommand != null)
@@ -509,11 +508,11 @@ namespace System.Data.Odbc
 		}
                 
 #if NET_2_0
-                protected override void ApplyParameterInfo (DbParameter dbParameter,
-							    DataRow row,
-							    StatementType statementType,
-							    bool whereClause)
-                {
+		protected override void ApplyParameterInfo (DbParameter dbParameter,
+		                                            DataRow row,
+		                                            StatementType statementType,
+		                                            bool whereClause)
+		{
 			OdbcParameter parameter = (OdbcParameter) dbParameter;
 			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
 			if (row ["NumericPrecision"] != DBNull.Value) {
@@ -523,28 +522,28 @@ namespace System.Data.Odbc
 				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
 			}
 			parameter.DbType = (DbType) row ["ProviderType"];
-                }
+		}
 
-                protected override string GetParameterName (int position)
-                {
+		protected override string GetParameterName (int position)
+		{
 			return String.Format("@p{0}", position);
-                }
+		}
 
-                protected override string GetParameterName (string parameterName)
-                {
+		protected override string GetParameterName (string parameterName)
+		{
 			return String.Format("@{0}", parameterName);                       
-                }
+		}
                 
-                protected override string GetParameterPlaceholder (int position)
-                {
+		protected override string GetParameterPlaceholder (int position)
+		{
 			return GetParameterName (position);
-                }
+		}
                 
-                [MonoTODO]
-                protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
-                {
-                        throw new NotImplementedException ();
-                }
+		[MonoTODO]
+		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
+		{
+			throw new NotImplementedException ();
+		}
 
 #endif // NET_2_0
 		
@@ -558,7 +557,7 @@ namespace System.Data.Odbc
 			if (unquotedIdentifier == null || unquotedIdentifier == String.Empty)
 				return unquotedIdentifier;
 			return String.Format ("{0}{1}{2}", QuotePrefix, 
-					      unquotedIdentifier, QuoteSuffix);
+					                      unquotedIdentifier, QuoteSuffix);
 		}
 
 #if NET_2_0

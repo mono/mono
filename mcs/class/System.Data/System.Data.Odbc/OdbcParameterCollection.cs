@@ -43,7 +43,7 @@ namespace System.Data.Odbc
 	[ListBindable (false)]
         [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #if NET_2_0
-        public sealed class OdbcParameterCollection : DbParameterCollection
+	public sealed class OdbcParameterCollection : DbParameterCollection
 #else
 	public sealed class OdbcParameterCollection : MarshalByRefObject,
 		IDataParameterCollection, IList, ICollection, IEnumerable
@@ -67,7 +67,7 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 		[Browsable (false)]
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
 		public 
 #if NET_2_0
@@ -77,28 +77,27 @@ namespace System.Data.Odbc
 			get { return list.Count; }
 		}
 
-                [Browsable (false)]
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new OdbcParameter this [int index] {
 			get { return (OdbcParameter) list[index]; }
 			set { list[index] = value; }
 		}
 
-                [Browsable (false)]
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new OdbcParameter this [string parameterName] {
 			get {
-                                foreach (OdbcParameter p in list)
-                                        if (p.ParameterName.Equals (parameterName))
-                                                return p;
-                                throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
-                        }
-                        set {
-                                if (!Contains (parameterName))
-                                        throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
-                                this [IndexOf (parameterName)] = value;
-                        }
-
+				foreach (OdbcParameter p in list)
+					if (p.ParameterName.Equals (parameterName))
+						return p;
+				throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
+			}
+			set {
+				if (!Contains (parameterName))
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+				this [IndexOf (parameterName)] = value;
+			}
 		}
 
 #if ONLY_1_1
@@ -135,19 +134,19 @@ namespace System.Data.Odbc
 		}
 		
 #if ONLY_1_1
-		object IList.this[int index] {
-			get { return list[index]; }
-			set { list[index] = value; }
+		object IList.this [int index] {
+			get { return list [index]; }
+			set { list [index] = value; }
 		}
 
-		object IDataParameterCollection.this[string name]
+		object IDataParameterCollection.this [string name]
 		{
-			get { return this[name]; }
-                        set {
-                                if (!(value is OdbcParameter))
-                                        throw new InvalidCastException ("Only OdbcParameter objects can be used.");
-                                this [name] = (OdbcParameter) value;
-                        }
+			get { return this [name]; }
+            set {
+				if (!(value is OdbcParameter))
+					throw new InvalidCastException ("Only OdbcParameter objects can be used.");
+				this [name] = (OdbcParameter) value;
+			}
 
 		}
 #endif // ONLY_1_1

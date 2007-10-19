@@ -653,7 +653,8 @@ namespace System.Data.Odbc
 						byte [] temp = new byte [outsize];
 						for (int i = 0;i<outsize;i++)
 							temp[i] = buffer[i];
-						DataValue = Decimal.Parse(System.Text.Encoding.Default.GetString(temp));
+						DataValue = Decimal.Parse (System.Text.Encoding.Default.GetString (temp),
+								                   System.Globalization.CultureInfo.InvariantCulture);
 					}
 					break;
 				case OdbcType.TinyInt:

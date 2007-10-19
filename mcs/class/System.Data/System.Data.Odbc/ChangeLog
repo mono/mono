@@ -1,5 +1,10 @@
 2007-10-19  Nagappan <anagappan@novell.com> 
 
+	* OdbcCommandBuilder.cs, OdbcParameterCollection.cs: Code alignment.
+	* OdbcDataReader.cs: Fixes numeric columns, bug # 332404.
+
+2007-10-19  Nagappan <anagappan@novell.com> 
+
 	* OdbcCommand.cs: (Clone): Implemented new method. Code alignment.
 
 2007-10-12  Nagappan <anagappan@novell.com> 
