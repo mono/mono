@@ -54,6 +54,7 @@ scripts_2_0 = \
 	gmcs			\
 	httpcfg			\
 	ilasm2			\
+	mconfig			\
 	mkbundle2		\
 	mono-api-info2 		\
 	monop2 			\
