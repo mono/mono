@@ -16,4 +16,6 @@ install-local-data:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/etc/mono/mconfig/
 	$(INSTALL_DATA) data/config.xml $(DESTDIR)$(prefix)/etc/mono/mconfig
 
+DISTFILES = TODO data/config.xml Mono.MonoConfig/consts.cs
+
 include ../../build/executable.make

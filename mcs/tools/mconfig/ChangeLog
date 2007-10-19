@@ -1,4 +1,8 @@
 2007-10-19  Marek Habersack  <mhabersack@novell.com>
 
+	* Makefile (DISTFILES): added
+
+2007-10-19  Marek Habersack  <mhabersack@novell.com>
+
 	* Initial import 
 
