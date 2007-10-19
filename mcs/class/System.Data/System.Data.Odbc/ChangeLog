@@ -1,3 +1,7 @@
+2007-10-19  Nagappan <anagappan@novell.com> 
+
+	* OdbcCommand.cs: (Clone): Implemented new method. Code alignment.
+
 2007-10-12  Nagappan <anagappan@novell.com> 
 
 	* OdbcDataReader.cs: Bug 332400 - ODBC and LONGBLOB columns. Thanks to

@@ -114,11 +114,11 @@ namespace System.Data.Odbc
 		}
 		
 
-                [OdbcCategory ("Data")]
-                [DefaultValue ("")]
-                [OdbcDescriptionAttribute ("Command text to execute")]
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[OdbcCategory ("Data")]
+		[DefaultValue ("")]
+		[OdbcDescriptionAttribute ("Command text to execute")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public 
 #if NET_2_0
 		override
@@ -146,9 +146,9 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcCategory ("Data")]
-                [DefaultValue ("Text")]
-                [OdbcDescriptionAttribute ("How to interpret the CommandText")]
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[DefaultValue ("Text")]
+		[OdbcDescriptionAttribute ("How to interpret the CommandText")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public
 #if NET_2_0
 		override
@@ -160,9 +160,9 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 		[OdbcCategory ("Behavior")]
-                [OdbcDescriptionAttribute ("Connection used by the command")]
-                [DefaultValue (null)]
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[OdbcDescriptionAttribute ("Connection used by the command")]
+		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcConnection Connection { 
 			get {
 				return connection;
@@ -174,21 +174,21 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 #if NET_2_0
-                [DefaultValue (null)]
-                [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-                public new OdbcConnection Connection
-                {
-                        get { return DbConnection as OdbcConnection; }
-                        set { DbConnection = value; }
-                }
+		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		public new OdbcConnection Connection
+		{
+			get { return DbConnection as OdbcConnection; }
+			set { DbConnection = value; }
+		}
                 
 #endif // NET_2_0
 
 		[BrowsableAttribute (false)]
-                [DesignOnlyAttribute (true)]
-                [DefaultValue (true)]
+		[DesignOnlyAttribute (true)]
+		[DefaultValue (true)]
 #if NET_2_0
-                [EditorBrowsable (EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
 		public 
 #if NET_2_0
@@ -205,8 +205,8 @@ namespace System.Data.Odbc
 
 
 		[OdbcCategory ("Data")]
-                [OdbcDescriptionAttribute ("The parameters collection")]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[OdbcDescriptionAttribute ("The parameters collection")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public
 #if NET_2_0
                 new
@@ -215,16 +215,15 @@ namespace System.Data.Odbc
 			get {
 #if ONLY_1_1
 				return _parameters;
-				#else
-                                return base.Parameters as OdbcParameterCollection;
+#else
+				return base.Parameters as OdbcParameterCollection;
 #endif // ONLY_1_1
-
 			}
 		}
 		
 		[BrowsableAttribute (false)]
-                [OdbcDescriptionAttribute ("The transaction used by the command")]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[OdbcDescriptionAttribute ("The transaction used by the command")]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public
 #if NET_2_0
                 new
@@ -239,8 +238,8 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcCategory ("Behavior")]
-                [DefaultValue (UpdateRowSource.Both)]
-                [OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
+		[DefaultValue (UpdateRowSource.Both)]
+		[OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
 		public 
 #if NET_2_0
 		override
@@ -255,13 +254,11 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-                protected override DbConnection DbConnection 
-                {
-                        get { return connection; }
-                        set { 
-                                connection = (OdbcConnection) value; 
-                        }                        
-                }
+		protected override DbConnection DbConnection 
+		{
+			get { return connection; }
+			set { connection = (OdbcConnection) value;}                        
+		}
 
 #endif // NET_2_0
 
@@ -281,11 +278,11 @@ namespace System.Data.Odbc
 				return Parameters;
 			}
 		}
-		#else
-                protected override DbParameterCollection DbParameterCollection
-                {
-                        get { return _parameters as DbParameterCollection;}
-                }
+#else
+		protected override DbParameterCollection DbParameterCollection
+		{
+			get { return _parameters as DbParameterCollection;}
+		}
                 
 #endif // NET_2_0
 
@@ -295,27 +292,20 @@ namespace System.Data.Odbc
 				return (IDbTransaction) Transaction;
 			}
 			set {
-				if (value is OdbcTransaction)
-                                {
-                                        Transaction = (OdbcTransaction)value;
-                                }
-                                else
-                                {
-                                        throw new ArgumentException ();
-                                }
+				if (value is OdbcTransaction) {
+					Transaction = (OdbcTransaction) value;
+				} else {
+					throw new ArgumentException ();
+				}
 			}
 		}
 		#else
 		protected override DbTransaction DbTransaction 
                 {
 			get { return transaction; }
-			set {
-                                transaction = (OdbcTransaction)value;
-			}
+			set { transaction = (OdbcTransaction) value; }
 		}
 #endif // ONLY_1_1
-
-
 
 		#endregion // Properties
 
@@ -323,9 +313,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+			override
 #endif // NET_2_0
-                void Cancel () 
+				void Cancel () 
 		{
 			if (hstmt!=IntPtr.Zero)
 			{
@@ -344,10 +334,10 @@ namespace System.Data.Odbc
 		}
 
 #else
-                protected override DbParameter CreateDbParameter ()
-                {
-                        return CreateParameter ();
-                }
+		protected override DbParameter CreateDbParameter ()
+		{
+			return CreateParameter ();
+		}
                 
 #endif // ONLY_1_1
 
@@ -495,9 +485,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                new
+			new
 #endif // NET_2_0
-                OdbcDataReader ExecuteReader ()
+				OdbcDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
@@ -508,11 +498,11 @@ namespace System.Data.Odbc
 			return ExecuteReader ();
 		}
 		#else
-                protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
-                {
-                        return ExecuteReader (behavior);
-                }
-                
+		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
+		}
+
 #endif // ONLY_1_1
 
 		public
@@ -553,10 +543,18 @@ namespace System.Data.Odbc
 			return val;
 		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();	
+			OdbcCommand command = new OdbcCommand ();
+			command.CommandText = this.CommandText;
+			command.CommandTimeout = this.CommandTimeout;
+			command.CommandType = this.CommandType;
+			command.Connection = this.Connection;
+			command.DesignTimeVisible = this.DesignTimeVisible;
+			foreach (OdbcParameter parameter in this.Parameters)
+				command.Parameters.Add (parameter);
+			command.Transaction = this.Transaction;
+			return command;
 		}
 
 		public void ResetCommandTimeout ()
