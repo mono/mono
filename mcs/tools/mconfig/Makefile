@@ -1,0 +1,19 @@
+thisdir = tools/mconfig
+SUBDIRS = 
+include ../../build/rules.make
+
+LOCAL_MCS_FLAGS = -r:System.Xml.dll -r:Mono.GetOptions.dll
+PROGRAM = mconfig.exe
+
+BUILT_SOURCES=Mono.MonoConfig/consts.cs
+
+Mono.MonoConfig/consts.cs: Mono.MonoConfig/consts.cs.in
+	sed -e "s;@MONO_PREFIX@;$(prefix);g" < $< > $@
+
+install-local: install-local-data
+
+install-local-data:
+	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/etc/mono/mconfig/
+	$(INSTALL_DATA) data/config.xml $(DESTDIR)$(prefix)/etc/mono/mconfig
+
+include ../../build/executable.make

@@ -1,0 +1,2 @@
+- Comments should not be inserted if they exist
+- Add support for feature removal (only if the feature hasn't been edited yet)
