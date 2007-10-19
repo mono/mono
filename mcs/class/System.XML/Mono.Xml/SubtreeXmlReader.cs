@@ -142,7 +142,8 @@ namespace Mono.Xml
 
 		public override void Close ()
 		{
-			// do nothing
+			while (Reader.Depth > startDepth && Read ())
+				;
 		}
 
 		public override string GetAttribute (int i)

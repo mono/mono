@@ -2001,6 +2001,24 @@ namespace MonoTests.System.Xml
 			AssertEquals (String.Empty, reader.ReadElementContentAsString ("sample", ""));
 			AssertEquals (XmlNodeType.EndElement, reader.NodeType);
 		}
+
+		[Test]
+		public void ReadSubtreeClose ()
+		{
+			// bug #334752
+			string xml = @"<root><item-list><item id='a'/><item id='b'/></item-list></root>";
+			RunTest (xml, new TestMethod (ReadSubtreeClose));
+		}
+
+		void ReadSubtreeClose (XmlReader reader)
+		{
+			reader.ReadToFollowing ("item-list");
+			XmlReader sub = reader.ReadSubtree ();
+			sub.ReadToDescendant ("item");
+			sub.Close ();
+			AssertEquals ("#1", XmlNodeType.EndElement, reader.NodeType);
+			AssertEquals ("#2", "item-list", reader.Name);
+		}
 #endif
 	}
 }
