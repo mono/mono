@@ -1,3 +1,12 @@
+2007-10-19  Robert Jordan  <robertj@gmx.net>
+
+	* mkbundle.cs (Execute): [Windows] since recently (?) cygwin's bash
+	doesn't	strip CRLFs from ``-style command interpolation anymore.
+	The superfluous CRLF was breaking the gcc command line.
+
+	* mkbundle.cs (Execute): [Windows] set UseShellExecute = false to
+	prevent	the creation of a new console windows.
+
 2007-01-03  Tor Lillqvist  <tml@novell.com>
 
 	Add the possibility to bundle also the machine.config file, from
