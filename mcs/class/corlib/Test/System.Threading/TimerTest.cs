@@ -113,7 +113,12 @@ namespace MonoTests.System.Threading {
 				i++;
 			}
 			// 1000 * 10 msec = 10,000 msec or 10 sec - if everything goes well
-			Thread.Sleep(12*500);
+			// we add some slack to cope with timing issues caused by system load etc.
+			for (int i = 0; i < 20; ++i) {
+				if (b.count == 500)
+					break;
+				Thread.Sleep(1000);
+			}
 			Assert.AreEqual(500,b.count);
 			
 		}
