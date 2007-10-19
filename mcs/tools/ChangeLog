@@ -1,5 +1,10 @@
 2007-10-19  Marek Habersack  <mhabersack@novell.com>
 
+	* Makefile: fix the buildbot build - mconfig should be
+	listed also in DIST_ONLY_SUBDIRS
+
+2007-10-19  Marek Habersack  <mhabersack@novell.com>
+
 	* Makefile (net_2_0_SUBDIRS): added mconfig to the build
 
 2007-09-10  Wade Berrier  <wberrier@novell.com>

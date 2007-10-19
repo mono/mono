@@ -1,5 +1,10 @@
 2007-10-19  Marek Habersack  <mhabersack@novell.com>
 
+	* Makefile: include consts.cs.in in the dist tarball.
+	Extra distribution files should be named in EXTRA_DISTFILES.
+
+2007-10-19  Marek Habersack  <mhabersack@novell.com>
+
 	* Makefile (DISTFILES): added
 
 2007-10-19  Marek Habersack  <mhabersack@novell.com>
