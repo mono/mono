@@ -39,7 +39,6 @@ namespace MonoTests.System.Data.Common
 	public class DbTransactionTest
 	{
 		[Test] // bug #325397
-		[Category ("NotWorking")]
 		public void DisposeTest ()
 		{
 			MockTransaction trans = new MockTransaction ();
