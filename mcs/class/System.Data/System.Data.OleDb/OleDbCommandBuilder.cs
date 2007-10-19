@@ -51,11 +51,18 @@ namespace System.Data.OleDb
 		#region Fields
 
 		OleDbDataAdapter adapter;
-#if !NET_2_0
+#if ONLY_1_1
 		string quotePrefix;
 		string quoteSuffix;
 #endif
 
+		private DataTable		_schema;
+		private string			_tableName;
+		private OleDbCommand	_insertCommand;
+		private OleDbCommand	_updateCommand;
+		private OleDbCommand	_deleteCommand;
+
+		bool _disposed;
 		#endregion // Fields
 
 		#region Constructors
@@ -122,23 +129,53 @@ namespace System.Data.OleDb
 		#region Methods
 
 #if NET_2_0
-		[MonoTODO]
-		protected override void ApplyParameterInfo (DbParameter parameter, DataRow datarow, StatementType statementType, bool whereClause)
+		protected override void ApplyParameterInfo (DbParameter dbParameter,
+				                                    DataRow row,
+				                                    StatementType statementType,
+				                                    bool whereClause)
 		{
-			throw new NotImplementedException ();
+			OleDbParameter parameter = (OleDbParameter) dbParameter;
+			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
+			if (row ["NumericPrecision"] != DBNull.Value) {
+				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			}
+			if (row ["NumericScale"] != DBNull.Value) {
+				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			}
+			parameter.DbType = (DbType) row ["ProviderType"];
 		}
 #endif
 
+		[MonoTODO]
 		public static void DeriveParameters (OleDbCommand command)
 		{
+			if (command.CommandType != CommandType.StoredProcedure) {
+				throw new InvalidOperationException ("You can perform this " +
+						                             "operation only on CommandTye" + 
+						                             " StoredProcedure");
+			}
+			// FIXME: Retrive info from server
 			throw new NotImplementedException ();
 		}
 
 #if ONLY_1_1
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (_disposed)
+				return;
+			
+			if (disposing) {
+				// dispose managed resource
+				if (_insertCommand != null) _insertCommand.Dispose ();
+				if (_updateCommand != null) _updateCommand.Dispose ();
+				if (_deleteCommand != null) _deleteCommand.Dispose ();
+
+				_insertCommand = null;
+				_updateCommand = null;
+				_deleteCommand = null;
+				_schema = null;
+			}
+			_disposed = true;
 		}
 #endif
 
@@ -169,28 +206,36 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected override string GetParameterName (int parameterOrdinal)
+		protected override string GetParameterName (int position)
 		{
-			throw new NotImplementedException ();
+			return String.Format("@p{0}", position);
 		}
 
 		protected override string GetParameterName (string parameterName)
 		{
-			return parameterName;
+			return String.Format("@{0}", parameterName);                       
 		}
-
-		[MonoTODO]
-		protected override string GetParameterPlaceholder(int parameterOrdinal)
+                
+		protected override string GetParameterPlaceholder (int position)
 		{
-			throw new NotImplementedException ();
+			return GetParameterName (position);
 		}
+                
 #endif
 
 		[MonoTODO]
 		public new OleDbCommand GetUpdateCommand ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		private OleDbCommand SelectCommand
+		{
+			get {
+				if (DataAdapter == null)
+					return null;
+				return DataAdapter.SelectCommand;
+			}
 		}
 
 #if NET_2_0
@@ -230,10 +275,29 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 #else
-		[MonoTODO]
 		public void RefreshSchema ()
 		{
-			throw new NotImplementedException ();
+			// creates metadata
+			if (SelectCommand == null)
+				throw new InvalidOperationException ("SelectCommand should be valid");
+			if (SelectCommand.Connection == null)
+				throw new InvalidOperationException ("SelectCommand's Connection should be valid");
+			
+			CommandBehavior behavior = CommandBehavior.SchemaOnly | CommandBehavior.KeyInfo;
+			if (SelectCommand.Connection.State != ConnectionState.Open) {
+				SelectCommand.Connection.Open ();
+				behavior |= CommandBehavior.CloseConnection;
+			}
+			
+			OleDbDataReader reader = SelectCommand.ExecuteReader (behavior);
+			_schema = reader.GetSchemaTable ();
+			reader.Close ();
+			
+			// force creation of commands
+			_insertCommand 	= null;
+			_updateCommand 	= null;
+			_deleteCommand 	= null;
+			_tableName	= String.Empty;
 		}
 #endif
 

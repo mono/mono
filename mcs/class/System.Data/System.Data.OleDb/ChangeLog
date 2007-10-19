@@ -1,5 +1,10 @@
 2007-10-19  Nagappan <anagappan@novell.com> 
 
+	* OleDbCommandBuilder.cs: Implemented ApplyParameterInfo, Dispose,
+	  GetParameterName, GetParameterPlaceholder, RefreshSchema methods.
+
+2007-10-19  Nagappan <anagappan@novell.com> 
+
 	* OleDbCommand.cs: Implemented Clone, Dispose methods.
 	  Implemented CreateDbParameter, DbConnection, DbParameterCollection,
 	  DbTransaction, ExecuteDbDataReader properties.
