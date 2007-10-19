@@ -213,14 +213,13 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #325566
-		[Category ("NotWorking")] // Until I figure out why GetHashCode
-					  // can sometimes return 0
 		public void GetHashCodeTest ()
 		{
 			C1Test test1 = new C1Test ();
 			Thread tA = new Thread (new ThreadStart (test1.TestMethod));
 			int hA1 = tA.GetHashCode ();
-			Assert.IsTrue (hA1 > 0, "#A1");
+			// GetHashCode can legitimately return 0
+			//Assert.IsTrue (hA1 > 0, "#A1");
 			tA.Start ();
 			int hA2 = tA.GetHashCode ();
 			Assert.AreEqual (hA1, hA2, "#A2");
@@ -234,7 +233,8 @@ namespace MonoTests.System.Threading
 			test1 = new C1Test ();
 			Thread tB = new Thread (new ThreadStart (test1.TestMethod));
 			int hB1 = tB.GetHashCode ();
-			Assert.IsTrue (hB1 > 0, "#B1");
+			// GetHashCode can legitimately return 0
+			//Assert.IsTrue (hB1 > 0, "#B1");
 			tB.Start ();
 			int hB2 = tB.GetHashCode ();
 			Assert.AreEqual (hB1, hB2, "#B2");
