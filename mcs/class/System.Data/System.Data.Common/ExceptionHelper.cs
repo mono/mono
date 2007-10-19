@@ -6,11 +6,12 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace System.Data.Common
 {
 	internal sealed class ExceptionHelper
-	{	
+	{
 		internal static ArgumentException InvalidSizeValue (int value)
 		{
 			string [] args = new string [] {value.ToString ()};
@@ -23,7 +24,7 @@ namespace System.Data.Common
 		}
 
 		internal static ArgumentOutOfRangeException InvalidDataRowVersion (DataRowVersion value)
-		{			
+		{
 			object [] args = new object [] { "DataRowVersion", value.ToString () } ;
 			return new ArgumentOutOfRangeException  (GetExceptionMessage ("{0}: Invalid DataRow Version enumeration value: {1}",args));
 		}
@@ -88,6 +89,14 @@ namespace System.Data.Common
 		internal static InvalidOperationException TransactionNotInitialized ()
 		{
 			return new InvalidOperationException  (GetExceptionMessage ("Execute requires the command to have a transaction object when the connection assigned to the command is in a pending local transaction.  The Transaction property of the command has not been initialized."));
+		}
+
+		internal static InvalidOperationException TransactionNotUsable (Type type)
+		{
+			return new InvalidOperationException (string.Format (
+				CultureInfo.InvariantCulture,
+				"This {0} has completed; it is no longer usable.",
+				type.Name));
 		}
 
 		internal static InvalidOperationException ParametersNotInitialized (int parameterPosition,string parameterName,string parameterType)
@@ -198,15 +207,14 @@ namespace System.Data.Common
 		{
 			if ((args == null) || (args.Length == 0)) {
 				return exceptionMessage;
-			}
-			else {
+			} else {
 				return String.Format (exceptionMessage,args);
 			}
 		}
 
 		internal static string GetExceptionMessage (string exceptionMessage)
 		{
-			return GetExceptionMessage (exceptionMessage,null);
+			return GetExceptionMessage (exceptionMessage, null);
 		}
 	}
 }

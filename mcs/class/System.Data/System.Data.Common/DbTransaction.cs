@@ -6,8 +6,6 @@
 //
 // Copyright (C) Tim Coleman, 2003
 //
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +30,8 @@
 
 #if NET_2_0 || TARGET_JVM
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	public abstract class DbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
 		#region Constructors
@@ -49,19 +48,24 @@ namespace System.Data.Common {
 			get { return DbConnection; }
 		}
 
-		protected abstract DbConnection DbConnection { get; }
+		protected abstract DbConnection DbConnection {
+			get;
+		}
 
 		IDbConnection IDbTransaction.Connection {
 			get { return (IDbConnection) Connection; }
 		}
 
-		public abstract IsolationLevel IsolationLevel { get; }
+		public abstract IsolationLevel IsolationLevel {
+			get;
+		}
 
 		#endregion // Properties
 
 		#region Methods
 
 		public abstract void Commit ();
+
 		public abstract void Rollback ();
 
 		public void Dispose ()
@@ -71,8 +75,6 @@ namespace System.Data.Common {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				Rollback();
 		}
 
 		#endregion // Methods

@@ -41,9 +41,11 @@ namespace System.Data.OleDb
 	{
 		#region Fields
 
+		bool disposed;
 		OleDbConnection connection;
 		IntPtr gdaTransaction;
 		int depth;
+		bool isOpen;
 
 		#endregion // Fields
 
@@ -85,6 +87,7 @@ namespace System.Data.OleDb
 			}
 			
 			libgda.gda_connection_begin_transaction (connection.GdaConnection, gdaTransaction);
+			isOpen = true;
 		}
 
 		internal OleDbTransaction (OleDbConnection connection, IsolationLevel isolevel) 
@@ -155,9 +158,13 @@ namespace System.Data.OleDb
 #endif
 		void Commit ()
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection,
-															gdaTransaction))
+				gdaTransaction))
 				throw new InvalidOperationException ();
+			isOpen = false;
 		}
 
 #if ONLY_1_1
@@ -169,16 +176,25 @@ namespace System.Data.OleDb
 #endif
 
 #if NET_2_0
-		protected override void Dispose (bool disposing)
+		protected override
+#endif
+		void Dispose (bool disposing)
 		{
+			if (!disposed) {
+				if (disposing && isOpen)
+					Rollback ();
+				disposed = true;
+			}
+
+#if NET_2_0
 			base.Dispose (disposing);
+#endif
 		}
-#else
+
 		void IDisposable.Dispose ()
 		{
-			GC.SuppressFinalize (this);
+			Dispose (true);
 		}
-#endif
 
 		public
 #if NET_2_0
@@ -186,9 +202,13 @@ namespace System.Data.OleDb
 #endif
 		void Rollback ()
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection,
-																gdaTransaction))
+				gdaTransaction))
 				throw new InvalidOperationException ();
+			isOpen = false;
 		}
 
 		#endregion // Methods

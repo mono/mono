@@ -44,11 +44,10 @@ namespace System.Data.SqlClient
 	{
 		#region Fields
 
-		bool disposed = false;
+		bool disposed;
 		SqlConnection connection;
 		IsolationLevel isolationLevel;
 		bool isOpen;
-		bool isRolledBack = false;
 
 		#endregion
 
@@ -59,7 +58,6 @@ namespace System.Data.SqlClient
 			this.connection = connection;
 			this.isolationLevel = isolevel;
 			isOpen = true;
-			isRolledBack = false;
 		}
 
 		#endregion // Constructors
@@ -101,7 +99,8 @@ namespace System.Data.SqlClient
 		void Commit ()
 		{
 			if (!isOpen)
-				throw new InvalidOperationException ("The Transaction was not open.");
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 			connection.Tds.Execute ("COMMIT TRANSACTION");
 			connection.Transaction = null;
 			isOpen = false;
@@ -112,7 +111,7 @@ namespace System.Data.SqlClient
 #endif
 		void Dispose (bool disposing)
 		{
-			if (!disposed)  {
+			if (!disposed) {
 				if (disposing) {
 					if (isOpen) // in case it is called in the dispose of the class, then the isOpen is already false 
 						Rollback ();
@@ -133,29 +132,32 @@ namespace System.Data.SqlClient
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 void Rollback ()
+		void Rollback ()
 		{
 			Rollback (String.Empty);
 		}
 
 		public void Rollback (string transactionName)
 		{
-			if (!isRolledBack) {
-				if (!isOpen)
-					throw new InvalidOperationException ("The Transaction was not open.");
-				connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
-				                                       transactionName));
-				isRolledBack = true;
-				isOpen = false;
-				connection.Transaction = null;
-				connection = null;
-			}
+#if NET_2_0
+			if (disposed)
+				return;
+#endif
+
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
+			connection.Tds.Execute (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION {0}",
+								transactionName));
+			isOpen = false;
+			connection.Transaction = null;
+			connection = null;
 		}
 
 		public void Save (string savePointName)
 		{
 			if (!isOpen)
-				throw new InvalidOperationException ("The Transaction was not open.");
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
 			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
 

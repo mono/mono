@@ -1,5 +1,13 @@
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcTransaction.cs: Keep state of the transaction, and update it
+	when performing commit or rollback. In Dispose (bool), only perform
+	a rollback if transaction was not committed or rollback before.
+	In Commit and Rollback, throw an InvalidOperationException if
+	transaction is no longer open.
+
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OdbcTransaction.cs: Use OdbcIsolationLevel enum value instead of
 	magic numbers. For Snapshot isolation level, the attribute
 	SQL_COPT_SS_TXN_ISOLATION must be used instead. When isolation level

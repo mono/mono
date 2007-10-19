@@ -1,3 +1,12 @@
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbTransaction.cs: Do not perform a rollback in Dispose (bool).
+	Leaves it up to deriving classes to override Dispose (bool) and
+	perform a rollback if necessary. Fixes bug #325397. Code formatting.
+	* ExceptionHelper.cs: Added TransactionNotUsable method that constructs
+	an InvalidOperationException to be thrown by IDbTransaction
+	implementations when the transaction is no longer open.
+
 2007-09-27  Nagappan A <anagappan@novell.com> 
 
 	* DbDataAdapter.cs: Added MonoTODO in appropriate place.

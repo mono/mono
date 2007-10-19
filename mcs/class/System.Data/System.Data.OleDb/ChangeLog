@@ -1,3 +1,10 @@
+2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbTransaction.cs: Keep track of whether transaction is open and
+	whether it's disposed. In Commit an Rollback, throw an IOE if the
+	transaction is no longer open. In Dispose (bool), perform a rollback
+	if the transaction is still open.
+
 2007-10-19  Nagappan <anagappan@novell.com> 
 
 	* OleDbCommandBuilder.cs: Implemented ApplyParameterInfo, Dispose,

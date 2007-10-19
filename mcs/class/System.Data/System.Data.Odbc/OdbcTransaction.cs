@@ -29,11 +29,8 @@
 //
 using System;
 using System.Data;
-using System.Globalization;
-
-#if NET_2_0
 using System.Data.Common;
-#endif
+using System.Globalization;
 
 namespace System.Data.Odbc
 {
@@ -46,6 +43,7 @@ namespace System.Data.Odbc
 		private bool disposed;
 		private OdbcConnection connection;
 		private IsolationLevel isolationlevel;
+		private bool isOpen;
 
 		internal OdbcTransaction (OdbcConnection conn, IsolationLevel isolationlevel)
 		{
@@ -122,6 +120,7 @@ namespace System.Data.Odbc
 			}
 			this.isolationlevel = isolationlevel;
 			connection = conn;
+			isOpen = true;
 		}
 
 		// Set Auto-commit (102) connection attribute
@@ -188,7 +187,7 @@ namespace System.Data.Odbc
 		void Dispose (bool disposing)
 		{
 			if (!disposed) {
-				if (disposing)
+				if (disposing && isOpen)
 					Rollback ();
 				disposed = true;
 			}
@@ -210,12 +209,16 @@ namespace System.Data.Odbc
 #endif //NET_2_0
 		void Commit ()
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 			if (connection.transaction == this) {
 				OdbcReturn ret = libodbc.SQLEndTran ((short) OdbcHandleType.Dbc, connection.hDbc, 0);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
 				SetAutoCommit (connection, true); // restore default auto-commit
 				connection.transaction = null;
+				isOpen = false;
 			} else
 				throw new InvalidOperationException ();
 		}
@@ -226,12 +229,16 @@ namespace System.Data.Odbc
 #endif //NET_2_0
 		void Rollback()
 		{
+			if (!isOpen)
+				throw ExceptionHelper.TransactionNotUsable (GetType ());
+
 			if (connection.transaction == this) {
 				OdbcReturn ret = libodbc.SQLEndTran ((short) OdbcHandleType.Dbc, connection.hDbc, 1);
 				if (ret!=OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
 				SetAutoCommit (connection, true);    // restore default auto-commit
 				connection.transaction = null;
+				isOpen = false;
 			} else
 				throw new InvalidOperationException ();
 		}
