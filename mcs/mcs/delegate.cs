@@ -23,7 +23,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Holds Delegates
 	/// </summary>
-	public class Delegate : DeclSpace {
+	public class Delegate : DeclSpace, IMemberContainer
+	{
  		public Expression ReturnType;
 		public Parameters      Parameters;
 
@@ -39,6 +40,8 @@ namespace Mono.CSharp {
 		Expression instance_expr;
 		MethodBase delegate_method;
 		ReturnParameter return_attributes;
+
+		MemberCache member_cache;
 	
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -160,6 +163,7 @@ namespace Mono.CSharp {
 				}
 			}
 #endif
+			member_cache = new MemberCache (TypeManager.multicast_delegate_type, this);
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
@@ -188,7 +192,7 @@ namespace Mono.CSharp {
 			const_parameters.Resolve (null);
 			
 			TypeManager.RegisterMethod (ConstructorBuilder, const_parameters);
-				
+			member_cache.AddMember (ConstructorBuilder, this);
 			
 			ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -253,6 +257,7 @@ namespace Mono.CSharp {
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			TypeManager.RegisterMethod (InvokeBuilder, Parameters);
+			member_cache.AddMember (InvokeBuilder, this);
 
 			//
 			// BeginInvoke
@@ -267,6 +272,7 @@ namespace Mono.CSharp {
 
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			TypeManager.RegisterMethod (BeginInvokeBuilder, async_parameters);
+			member_cache.AddMember (BeginInvokeBuilder, this);
 
 			//
 			// EndInvoke is a bit more interesting, all the parameters labeled as
@@ -315,6 +321,7 @@ namespace Mono.CSharp {
 
 			end_parameters.ApplyAttributes (EndInvokeBuilder);
 			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
+			member_cache.AddMember (EndInvokeBuilder, this);
 
 			return true;
 		}
@@ -602,37 +609,9 @@ namespace Mono.CSharp {
 			return sb.ToString ();			
 		}
 		
-		// Hack around System.Reflection as found everywhere else
-		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							MemberFilter filter, object criteria)
-		{
-			ArrayList members = new ArrayList (2);
-
-			if ((mt & MemberTypes.Constructor) != 0) {
-				if (ConstructorBuilder != null && filter (ConstructorBuilder, criteria))
-					members.Add (ConstructorBuilder);
-			}
-
-			if ((mt & MemberTypes.Method) != 0) {
-				if (InvokeBuilder != null)
-				if (filter (InvokeBuilder, criteria))
-					members.Add (InvokeBuilder);
-
-				if (BeginInvokeBuilder != null)
-				if (filter (BeginInvokeBuilder, criteria))
-					members.Add (BeginInvokeBuilder);
-
-				if (EndInvokeBuilder != null)
-				if (filter (EndInvokeBuilder, criteria))
-					members.Add (EndInvokeBuilder);
-			}
-
-			return new MemberList (members);
-		}
-
 		public override MemberCache MemberCache {
 			get {
-				return null;
+				return member_cache;
 			}
 		}
 
@@ -672,6 +651,36 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader {
 			get { return "T:"; }
 		}
+
+		#region IMemberContainer Members
+
+		string IMemberContainer.Name
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		Type IMemberContainer.Type
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		MemberCache IMemberContainer.BaseCache
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		bool IMemberContainer.IsInterface {
+			get {
+				return false;
+			}
+		}
+
+		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
 	}
 
 	//

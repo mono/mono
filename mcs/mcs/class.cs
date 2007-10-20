@@ -30,7 +30,6 @@
 //	basenames in the defined_names array.
 //
 //
-#define CACHE
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -300,7 +299,7 @@ namespace Mono.CSharp {
 		protected ArrayList initialized_static_fields;
 
 		// Holds the list of constants
-		MemberCoreArrayList constants;
+		protected MemberCoreArrayList constants;
 
 		// Holds the methods.
 		MemberCoreArrayList methods;
@@ -351,7 +350,7 @@ namespace Mono.CSharp {
 
 		// The base member cache and our member cache
 		MemberCache base_cache;
-		MemberCache member_cache;
+		protected MemberCache member_cache;
 
 		public const string DefaultIndexerName = "Item";
 
@@ -1589,6 +1588,28 @@ namespace Mono.CSharp {
 				ConstructedType ct = base_type as ConstructedType;
 				if ((ct != null) && !ct.CheckConstraints (this))
 					return false;
+				
+				member_cache = new MemberCache (base_type.Type, this);
+			} else if (Kind == Kind.Interface) {
+				member_cache = new MemberCache (null, this);
+				Type [] ifaces = TypeManager.GetInterfaces (TypeBuilder);
+				for (int i = 0; i < ifaces.Length; ++i)
+					member_cache.AddInterface (TypeManager.LookupMemberCache (ifaces [i]));
+			} else {
+				member_cache = new MemberCache (null, this);
+			}
+
+			if (types != null)
+				foreach (TypeContainer tc in types)
+					member_cache.AddNestedType (tc);
+
+			if (delegates != null)
+				foreach (Delegate d in delegates)
+					member_cache.AddNestedType (d);
+
+			if (partial_parts != null) {
+				foreach (TypeContainer part in partial_parts)
+					part.member_cache = member_cache;
 			}
 
 			if (!IsTopLevel) {
@@ -1631,13 +1652,15 @@ namespace Mono.CSharp {
 				GenericType = CurrentType;
 			}
 
-#if CACHE
-			member_cache = new MemberCache (this);
-			if (partial_parts != null) {
-				foreach (TypeContainer part in partial_parts)
-					part.member_cache = member_cache;
-			}
-#endif
+#if GMCS_SOURCE
+			//
+			// FIXME: This hack is needed because member cache does not work
+			// with generic types, we rely on runtime to inflate dynamic types.
+			// TODO: This hack requires member cache refactoring to be removed
+			//
+			if (TypeBuilder.IsGenericType)
+				member_cache = new MemberCache (this);
+#endif			
 
 			return true;
 		}
@@ -1891,6 +1914,10 @@ namespace Mono.CSharp {
 		// will trigger a FindMembers, but this happens before things are defined
 		//
 		// Since the whole process is a no-op, it is fine to check for null here.
+		//
+		// TODO: This approach will be one day completely removed, it's already
+		// used at few places only
+		//
 		//
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
@@ -2744,12 +2771,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		MemberCache IMemberContainer.MemberCache {
-			get {
-				return member_cache;
-			}
-		}
-
 		bool IMemberContainer.IsInterface {
 			get {
 				return Kind == Kind.Interface;
@@ -2780,7 +2801,7 @@ namespace Mono.CSharp {
 			get { return "T:"; }
 		}
 
-		public virtual MemberCache BaseCache {
+		public MemberCache BaseCache {
 			get {
 				if (base_cache != null)
 					return base_cache;
@@ -4112,8 +4133,15 @@ namespace Mono.CSharp {
 
 			if (!MethodData.Define (Parent.PartialContainer))
 				return false;
-
+					
 			MethodBuilder = MethodData.MethodBuilder;
+
+#if GMCS_SOURCE						
+			if (MethodBuilder.IsGenericMethod)
+				Parent.MemberCache.AddGenericMember (MethodBuilder, this);
+#endif			
+			
+			Parent.MemberCache.AddMember (MethodBuilder, this);
 
 			if (!TypeManager.IsGenericParameter (MemberType)) {
 				if (MemberType.IsAbstract && MemberType.IsSealed) {
@@ -4685,13 +4713,13 @@ namespace Mono.CSharp {
 			
 			if (base_constructor_group == null)
 				return false;
-
+			
 			base_constructor_group = base_constructor_group.OverloadResolve (
 				ec, argument_list, false, loc);
 			
 			if (base_constructor_group == null)
 				return false;
-
+			
 			ConstructorInfo base_ctor = (ConstructorInfo)base_constructor_group;
 			
 			if (base_ctor == caller_builder){
@@ -4942,6 +4970,7 @@ namespace Mono.CSharp {
 				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall);
 			}
 			
+			Parent.MemberCache.AddMember (ConstructorBuilder, this);
 			TypeManager.AddMethod (ConstructorBuilder, this);
 
 			return true;
@@ -5061,7 +5090,7 @@ namespace Mono.CSharp {
 			
  			if (ParameterInfo.Count > 0) {
  				ArrayList al = (ArrayList)Parent.MemberCache.Members [".ctor"];
- 				if (al.Count > 3)
+ 				if (al.Count > 2)
  					MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
  
 				if (Parent.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
@@ -5960,6 +5989,8 @@ namespace Mono.CSharp {
 			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, Modifiers.FieldAttr (ModFlags));
+
+			Parent.MemberCache.AddMember (FieldBuilder, this);
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 
 			return true;
@@ -6082,6 +6113,7 @@ namespace Mono.CSharp {
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, Modifiers.FieldAttr (ModFlags));
 
+				Parent.MemberCache.AddMember (FieldBuilder, this);
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			catch (ArgumentException) {
@@ -6990,13 +7022,18 @@ namespace Mono.CSharp {
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
 				MemberName.ToString (), PropertyAttributes.None, MemberType, null);
 
-			if (!Get.IsDummy)
+			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);
-				
-			if (!Set.IsDummy)
+				Parent.MemberCache.AddMember (GetBuilder, Get);
+			}
+
+			if (!Set.IsDummy) {
 				PropertyBuilder.SetSetMethod (SetBuilder);
+				Parent.MemberCache.AddMember (SetBuilder, Set);
+			}
 			
 			TypeManager.RegisterProperty (PropertyBuilder, this);
+			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
 		}
 
@@ -7591,6 +7628,9 @@ namespace Mono.CSharp {
 			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, EventAttributes.None, MemberType);						
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+
+			Parent.MemberCache.AddMember (EventBuilder, this);
+
 			return true;
 		}
 
@@ -7630,7 +7670,7 @@ namespace Mono.CSharp {
  
 	public class Indexer : PropertyBase
 	{
-		public class GetIndexerMethod : GetMethod
+		class GetIndexerMethod : GetMethod
 		{
 			public GetIndexerMethod (PropertyBase method):
 				base (method)
@@ -7642,6 +7682,15 @@ namespace Mono.CSharp {
 			{
 			}
 
+			public override void EnableOverloadChecks (MemberCore overload)
+			{
+				//
+				// Enable checks on both overloads, because we don't know which one came first
+				//
+				caching_flags |= Flags.TestMethodDuplication;
+				overload.caching_flags |= Flags.TestMethodDuplication;
+			}
+
 			public override Parameters ParameterInfo {
 				get {
 					return ((Indexer)method).parameters;
@@ -7649,7 +7698,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class SetIndexerMethod: SetMethod
+		class SetIndexerMethod: SetMethod
 		{
 			public SetIndexerMethod (PropertyBase method):
 				base (method)
@@ -7665,6 +7714,15 @@ namespace Mono.CSharp {
 			{
 				parameters = Parameters.MergeGenerated (((Indexer)method).parameters,
 					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location));
+			}
+
+			public override void EnableOverloadChecks (MemberCore overload)
+			{
+				//
+				// Enable checks on both overloads, because we don't know which one came first
+				//
+				caching_flags |= Flags.TestMethodDuplication;
+				overload.caching_flags |= Flags.TestMethodDuplication;
 			}
 		}
 
@@ -7831,15 +7889,19 @@ namespace Mono.CSharp {
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
 				Name, PropertyAttributes.None, MemberType, parameters.Types);
-			
-			if (!Get.IsDummy)
-				PropertyBuilder.SetGetMethod (GetBuilder);
 
-			if (!Set.IsDummy)
+			if (!Get.IsDummy) {
+				PropertyBuilder.SetGetMethod (GetBuilder);
+				Parent.MemberCache.AddMember (GetBuilder, Get);
+			}
+
+			if (!Set.IsDummy) {
 				PropertyBuilder.SetSetMethod (SetBuilder);
+				Parent.MemberCache.AddMember (SetBuilder, Set);
+			}
 				
 			TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder, parameters.Types);
-
+			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
 		}
 
@@ -7991,7 +8053,7 @@ namespace Mono.CSharp {
 
 			// imlicit and explicit operator of same types are not allowed
 			if (OperatorType == OpType.Explicit || OperatorType == OpType.Implicit)
-				EnableOverloadChecks ();
+				EnableOverloadChecks (null);
 
 			if (!base.Define ())
 				return false;

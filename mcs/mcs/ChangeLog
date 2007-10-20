@@ -1,3 +1,14 @@
+2007-10-20  Marek Safar  <marek.safar@gmail.com>
+	
+	* class.cs, const.cs, decl.cs, delegate.cs, enum.cs, generic.cs,
+	roottypes.cs, typemanager.cs:
+		
+	A member cache creation logic changed to add members immediately and
+	not rely on fallback. The member cache is now only prefered way
+	how to access and find type declaration members. It saves 5 MB of memory
+	during MWF compilation and makes code ready for more optimizations and
+	clean-ups, it's also a pre-requirement for partial methods.
+	
 2007-10-18  Raja R Harinath  <harinath@gmail.com>
 
 	* ecore.cs (Expression.Error_ValueCannotBeConverted): Add special

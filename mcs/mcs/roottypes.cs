@@ -117,11 +117,6 @@ namespace Mono.CSharp
 			throw new InternalErrorException ("should not be called");
 		}
 
-		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
-		{
-			throw new InternalErrorException ("should not be called");
-		}
-
 		public override MemberCache MemberCache {
 			get { return PartialContainer.MemberCache; }
 		}

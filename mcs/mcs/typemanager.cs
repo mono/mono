@@ -440,15 +440,15 @@ namespace Mono.CSharp {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
-		if (t.Assembly == CodeGen.Assembly.Builder) {
-			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
+		if (t.Module == CodeGen.Module.Builder) {
+			DeclSpace container = (DeclSpace)builder_to_declspace [t];
 			if (container != null)
 				return container.MemberCache;
 		}
 
 #if GMCS_SOURCE
 		if (t is GenericTypeParameterBuilder) {
-			IMemberContainer container = builder_to_type_param [t] as IMemberContainer;
+			TypeParameter container = builder_to_type_param [t] as TypeParameter;
 
 			if (container != null)
 				return container.MemberCache;
@@ -3585,7 +3585,7 @@ public sealed class TypeHandle : IMemberContainer {
 	/// <summary>
 	///   Returns the TypeHandle for TypeManager.array_type.
 	/// </summary>
-	public static IMemberContainer ArrayType {
+	public static TypeHandle ArrayType {
 		get {
 			if (array_type != null)
 				return array_type;
@@ -3610,10 +3610,6 @@ public sealed class TypeHandle : IMemberContainer {
 	private TypeHandle (Type type)
 	{
 		this.type = type;
-#if MS_COMPATIBLE && GMCS_SOURCE
-		if (type.IsGenericType && !type.IsGenericTypeDefinition)
-			this.type = this.type.GetGenericTypeDefinition ();
-#endif
 		full_name = type.FullName != null ? type.FullName : type.Name;
 		if (type.BaseType != null) {
 			base_cache = TypeManager.LookupMemberCache (type.BaseType);
@@ -3652,7 +3648,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
-                MemberInfo [] members;
+		MemberInfo [] members;
 
 #if GMCS_SOURCE
 		if (type is GenericTypeParameterBuilder)
@@ -3660,13 +3656,16 @@ public sealed class TypeHandle : IMemberContainer {
 #endif
 
 		if (mt == MemberTypes.Event)
-                        members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
-                else
-                        members = type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-                                                    null, null);
-                Array.Reverse (members);
+			members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
+		else
+			members = type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+										null, null);
 
-                return new MemberList (members);
+		if (members.Length == 0)
+			return MemberList.Empty;
+
+		Array.Reverse (members);
+		return new MemberList (members);
 	}
 
 	// IMemberFinder methods

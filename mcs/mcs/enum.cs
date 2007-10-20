@@ -79,6 +79,7 @@ namespace Mono.CSharp {
 		{
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
+			Parent.MemberCache.AddMember (FieldBuilder, this);
 			TypeManager.RegisterConstant (FieldBuilder, this);
 			return true;
 		}
@@ -201,6 +202,13 @@ namespace Mono.CSharp {
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
+			return true;
+		}
+
+		protected override bool DoDefineMembers ()
+		{
+			member_cache = new MemberCache (TypeManager.enum_type, this);
+			DefineContainerMembers (constants);
 			return true;
 		}
 

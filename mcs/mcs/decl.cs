@@ -566,7 +566,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void EnableOverloadChecks ()
+		public virtual void EnableOverloadChecks (MemberCore overload)
 		{
 			caching_flags |= Flags.TestMethodDuplication;
 		}
@@ -763,13 +763,7 @@ namespace Mono.CSharp {
 			}
 
 			if (symbol.IsOverloadable && mc.IsOverloadable) {
-				//
-				// Enable both symbols check for indexers, because we don't know which one came first
-				//
-				if (symbol is Indexer.SetIndexerMethod || symbol is Indexer.GetIndexerMethod)
-					mc.EnableOverloadChecks ();
-				
-				symbol.EnableOverloadChecks ();
+				symbol.EnableOverloadChecks (mc);
 				return true;
 			}
 
@@ -1081,13 +1075,25 @@ namespace Mono.CSharp {
 
 		private Type LookupNestedTypeInHierarchy (string name)
 		{
+			Type t = null;
 			// if the member cache has been created, lets use it.
 			// the member cache is MUCH faster.
-			if (MemberCache != null)
-				return MemberCache.FindNestedType (name);
+			if (MemberCache != null) {
+				t = MemberCache.FindNestedType (name);
+				if (t == null)
+					return null;
+				
+			//
+			// FIXME: This hack is needed because member cache does not work
+			// with nested base generic types, it does only type name copy and
+			// not type construction
+			//
+#if !GMCS_SOURCE
+				return t;
+#endif				
+			}
 
 			// no member cache. Do it the hard way -- reflection
-			Type t = null;
 			for (Type current_type = TypeBuilder;
 			     current_type != null && current_type != TypeManager.object_type;
 			     current_type = current_type.BaseType) {
@@ -1158,8 +1164,13 @@ namespace Mono.CSharp {
 		///   be used while the type is still being created since it doesn't use the cache
 		///   and relies on the filter doing the member name check.
 		/// </remarks>
-		public abstract MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							MemberFilter filter, object criteria);
+		///
+		// [Obsolete ("Only MemberCache approach should be used")]
+		public virtual MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
+		{
+			throw new NotSupportedException ();
+		}
 
 		/// <remarks>
 		///   If we have a MemberCache, return it.  This property may return null if the
@@ -1447,7 +1458,7 @@ namespace Mono.CSharp {
 			List = list;
 		}
 
-		public static readonly MemberList Empty = new MemberList (new ArrayList ());
+		public static readonly MemberList Empty = new MemberList (new ArrayList (0));
 
 		/// <summary>
 		///   Cast the MemberList into a MemberInfo[] array.
@@ -1615,13 +1626,6 @@ namespace Mono.CSharp {
 		///   this method is called multiple times with different BindingFlags.
 		/// </remarks>
 		MemberList GetMembers (MemberTypes mt, BindingFlags bf);
-
-		/// <summary>
-		///   Return the container's member cache.
-		/// </summary>
-		MemberCache MemberCache {
-			get;
-		}
 	}
 
 	/// <summary>
@@ -1677,6 +1681,15 @@ namespace Mono.CSharp {
 			Timer.StopTimer (TimerType.CacheInit);
 		}
 
+		public MemberCache (Type baseType, IMemberContainer container)
+		{
+			this.Container = container;
+			if (baseType == null)
+				this.member_hash = new Hashtable ();
+			else
+				this.member_hash = SetupCache (TypeManager.LookupMemberCache (baseType));
+		}
+
 		public MemberCache (Type[] ifaces)
 		{
 			//
@@ -1720,18 +1733,36 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Hashtable SetupCache (MemberCache base_class)
 		{
-			Hashtable hash = new Hashtable ();
-
 			if (base_class == null)
-				return hash;
+				return new Hashtable ();
 
+			Hashtable hash = new Hashtable (base_class.member_hash.Count);
 			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				hash [it.Key] = ((ArrayList) it.Value).Clone ();
+				hash.Add (it.Key, ((ArrayList) it.Value).Clone ());
 			 }
                                 
 			return hash;
 		}
+		
+		//
+		// Converts ModFlags to BindingFlags
+		//
+		static BindingFlags GetBindingFlags (int modifiers)
+		{
+			BindingFlags bf;
+			if ((modifiers & Modifiers.STATIC) != 0)
+				bf = BindingFlags.Static;
+			else
+				bf = BindingFlags.Instance;
+
+			if ((modifiers & Modifiers.PRIVATE) != 0)
+				bf |= BindingFlags.NonPublic;
+			else
+				bf |= BindingFlags.Public;
+
+			return bf;
+		}		
 
 		/// <summary>
 		///   Add the contents of `cache' to the member_hash.
@@ -1782,6 +1813,28 @@ namespace Mono.CSharp {
 			AddMembers (mt, BindingFlags.Static | BindingFlags.NonPublic, container);
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.Public, container);
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
+		}
+
+		public void AddMember (MemberInfo mi, MemberCore mc)
+		{
+			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container, mi.Name, mi);
+		}
+
+		public void AddGenericMember (MemberInfo mi, MemberCore mc)
+		{
+			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container, mc.MemberName.Basename, mi);
+		}
+
+		public void AddNestedType (DeclSpace type)
+		{
+			AddMember (MemberTypes.NestedType, GetBindingFlags (type.ModFlags), (IMemberContainer) type.Parent,
+				type.TypeBuilder.Name, type.TypeBuilder);
+		}
+
+		public void AddInterface (MemberCache baseCache)
+		{
+			if (baseCache.member_hash.Count > 0)
+				AddCacheContents (baseCache);
 		}
 
 		void AddMember (MemberTypes mt, BindingFlags bf, IMemberContainer container,
@@ -2043,7 +2096,7 @@ namespace Mono.CSharp {
 		{
 			if (using_global)
 				throw new Exception ();
-			
+
 			bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
 			bool method_search = mt == MemberTypes.Method;
 			// If we have a method cache and we aren't already doing a method-only search,

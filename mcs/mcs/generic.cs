@@ -138,10 +138,6 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		MemberCache IMemberContainer.MemberCache {
-			get { throw new NotImplementedException (); }
-		}
-
 		public bool IsSubclassOf (Type t)
 		{
 			throw new NotImplementedException ();
@@ -266,12 +262,6 @@ namespace Mono.CSharp
 		internal static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
 		{
 		}
-
-		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							MemberFilter filter, object criteria)
-		{
-			throw new NotImplementedException ();
-		}		
 
 		public override MemberCache MemberCache {
 			get { throw new NotImplementedException (); }

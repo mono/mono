@@ -95,6 +95,7 @@ namespace Mono.CSharp {
 
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, field_attr);
 			TypeManager.RegisterConstant (FieldBuilder, this);
+			Parent.MemberCache.AddMember (FieldBuilder, this);
 
 			if (ttype == TypeManager.decimal_type)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
