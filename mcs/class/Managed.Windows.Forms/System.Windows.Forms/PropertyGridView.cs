@@ -140,8 +140,20 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate (new Rectangle (0, item.Top, SplitterLocation, row_height));
 		}
 
+		internal void InvalidateBelowItem (GridItem item)
+		{
+			Rectangle rect = new Rectangle (0, item.Top, Width, row_height);
+			Invalidate (rect);
+
+			if (item.Expanded) {
+				rect = new Rectangle (0, item.Top + row_height, Width,
+						Height - (item.Top + row_height));
+				Invalidate (rect);
+			}
+		}
+
 #if !DOUBLEBUFFER
-		void InvalidateGridItem (GridItem item)
+		internal void InvalidateGridItem (GridItem item)
 		{
 			Invalidate (new Rectangle (0, item.Top, Width, row_height));
 		}

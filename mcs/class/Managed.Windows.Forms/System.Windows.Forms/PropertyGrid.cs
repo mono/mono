@@ -1335,6 +1335,12 @@ namespace System.Windows.Forms {
 			if (parent_grid_item == null)
 				return;
 
+			/* Clear any previous grid items */
+			if (parent_grid_item.GridItems.Count > 0) {
+				parent_grid_item.GridItems.Clear ();
+				property_grid_view.InvalidateBelowItem (parent_grid_item);
+			}
+
 			for (int i = 0; i < objs.Length; i ++) {
 				if (objs [i] == null)
 					continue;

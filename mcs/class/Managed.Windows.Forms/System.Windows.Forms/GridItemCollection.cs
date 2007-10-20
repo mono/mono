@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Windows.Forms.PropertyGridInternal;
 
 namespace System.Windows.Forms
 {
@@ -142,5 +143,18 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
+
+		internal void Clear ()
+		{
+			for (int i = 0; i < list.Count; i++) {
+				GridEntry grid_entry = list.GetByIndex (i) as GridEntry;
+				if (grid_entry == null || grid_entry.Parent == null)
+					continue;
+
+				grid_entry.SetParent (null);
+			}
+
+			list.Clear ();
+		}
 	}
 }
