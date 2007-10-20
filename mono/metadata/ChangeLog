@@ -1,3 +1,11 @@
+2007-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_methods): Handle dynamic inflated classes correctly.
+
+	* reflection.c (create_generic_typespec): Initialize klass->generic_container
+	if needed.
+	(reflection_methodbuilder_to_mono_method): Set container->is_method to TRUE.
+
 2007-10-18  Jonathan Chambers <joncham@gmail.com>
 
 	* marshal.c: Use correct key when removing item
