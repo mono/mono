@@ -65,6 +65,15 @@ namespace System.Data.SqlClient {
 
 		// The set of SQL connection pools
 		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds70);
+#if NET_2_0
+		const int DEFAULT_PACKETSIZE = 8000;
+#else
+		const int DEFAULT_PACKETSIZE = 8192;
+#endif
+		const int DEFAULT_CONNECTIONTIMEOUT = 15;
+		const int DEFAULT_MAXPOOLSIZE = 100;
+		const int DEFAULT_MINPOOLSIZE = 0;
+		const int DEFAULT_PORT = 1433;
 
 		// The current connection pool
 		TdsConnectionPool pool;
@@ -86,15 +95,15 @@ namespace System.Data.SqlClient {
 		int minPoolSize;
 		int maxPoolSize;
 		int packetSize;
-		int port = 1433;
+		int port;
 		bool fireInfoMessageEventOnUserErrors;
 		bool statisticsEnabled;
 
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
 
-		SqlDataReader dataReader = null;
-		XmlReader xmlReader = null;
+		SqlDataReader dataReader;
+		XmlReader xmlReader;
 
 		// The TDS object
 		ITds tds;
@@ -115,10 +124,11 @@ namespace System.Data.SqlClient {
 
 		private void Init (string connectionString)
 		{
-			connectionTimeout       = 15; // default timeout
-			dataSource              = string.Empty; // default datasource
-			packetSize              = 8192; // default packetsize
-			ConnectionString        = connectionString;
+			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
+			dataSource = string.Empty;
+			packetSize = DEFAULT_PACKETSIZE;
+			port = DEFAULT_PORT;
+			ConnectionString = connectionString;
 		}
 
 		#endregion // Constructors
@@ -137,7 +147,11 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
 		string ConnectionString {
-			get { return connectionString; }
+			get {
+				if (connectionString == null)
+					return string.Empty;
+				return connectionString;
+			}
 			[MonoTODO("persist security info, encrypt, enlist keyword not implemented")]
 			set {
 				if (state == ConnectionState.Open)
@@ -199,9 +213,9 @@ namespace System.Data.SqlClient {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
 			get {
-				if (State == ConnectionState.Open) 
-					return ((Tds)tds).PacketSize ;
-				return packetSize; 
+				if (State == ConnectionState.Open)
+					return ((Tds) tds).PacketSize;
+				return packetSize;
 			}
 		}
 
@@ -217,7 +231,7 @@ namespace System.Data.SqlClient {
 		string ServerVersion {
 			get {
 				if (state == ConnectionState.Closed)
-					throw CreateConnectionClosedException ();
+					throw ExceptionHelper.ConnectionClosed ();
 				else
 					return tds.ServerVersion; 
 			}
@@ -306,6 +320,7 @@ namespace System.Data.SqlClient {
 		{
 			if (connStringParameters == null || connStringParameters.Count == 0)
 				return string.Empty;
+
 			foreach (string key in keys) {
 				string value = connStringParameters [key];
 				if (value != null)
@@ -333,7 +348,7 @@ namespace System.Data.SqlClient {
 		public SqlTransaction BeginTransaction (IsolationLevel iso, string transactionName)
 		{
 			if (state == ConnectionState.Closed)
-				throw CreateConnectionClosedException ();
+				throw ExceptionHelper.ConnectionClosed ();
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
@@ -356,7 +371,7 @@ namespace System.Data.SqlClient {
 				isolevel = "SNAPSHOT";
 				break;
 			case IsolationLevel.Unspecified:
-				iso =  IsolationLevel.ReadCommitted;
+				iso = IsolationLevel.ReadCommitted;
 				isolevel = "READ COMMITTED";
 				break;
 			case IsolationLevel.Chaos:
@@ -571,7 +586,7 @@ namespace System.Data.SqlClient {
 			if (theDataSource == null)
 				throw new ArgumentException("Format of initialization string does not conform to specifications");
 
-			thePort = 1433; // default TCP port for SQL Server
+			thePort = DEFAULT_PORT; // default TCP port for SQL Server
 			bool success = true;
 
 			int idx = 0;
@@ -579,63 +594,56 @@ namespace System.Data.SqlClient {
 				theServerName = theDataSource.Substring (0, idx);
 				string p = theDataSource.Substring (idx + 1);
 				thePort = Int32.Parse (p);
-			}
-			else if ((idx = theDataSource.IndexOf ("\\")) > -1) {
+			} else if ((idx = theDataSource.IndexOf ("\\")) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
 				theInstanceName = theDataSource.Substring (idx + 1);
 				// do port discovery via UDP port 1434
 				port = DiscoverTcpPortViaSqlMonitor (theServerName, theInstanceName);
 				if (port == -1)
 					success = false;
-			}
-			else if (theDataSource.Length == 0 || theDataSource == "(local)")
+			} else if (theDataSource.Length == 0 || theDataSource == "(local)")
 				theServerName = "localhost";
 			else
 				theServerName = theDataSource;
 
-			if ((idx = theServerName.IndexOf ("tcp:")) > -1) {
+			if ((idx = theServerName.IndexOf ("tcp:")) > -1)
 				theServerName = theServerName.Substring (idx + 4);
-			}
 
 			return success;
 		}
 
 		private bool ConvertIntegratedSecurity (string value)
 		{
-			if (value.ToUpper() == "SSPI") 
-			{
+			if (value.ToUpper() == "SSPI")
 				return true;
-			}
 
 			return ConvertToBoolean("integrated security", value);
 		}
 
-		private bool ConvertToBoolean(string key, string value)
+		private bool ConvertToBoolean (string key, string value)
 		{
-			string upperValue = value.ToUpper();
+			string upperValue = value.ToUpper ();
 
-			if (upperValue == "TRUE" ||upperValue == "YES") {
+			if (upperValue == "TRUE" || upperValue == "YES")
 				return true;
-			} else if (upperValue == "FALSE" || upperValue == "NO") {
+			else if (upperValue == "FALSE" || upperValue == "NO")
 				return false;
-			}
 
-			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
+			throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 				"Invalid value \"{0}\" for key '{1}'.", value, key));
 		}
 
-		private int ConvertToInt32(string key, string value)
+		private int ConvertToInt32 (string key, string value)
 		{
-			try
-			{
-				return int.Parse(value);
+			try {
+				return int.Parse (value);
 			} catch (Exception ex) {
-				throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
+				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 					"Invalid value \"{0}\" for key '{1}'.", value, key));
 			}
 		}
 
-		private int DiscoverTcpPortViaSqlMonitor(string ServerName, string InstanceName) 
+		private int DiscoverTcpPortViaSqlMonitor (string ServerName, string InstanceName) 
 		{
 			SqlMonitorSocket msock;
 			msock = new SqlMonitorSocket (ServerName, InstanceName);
@@ -746,27 +754,27 @@ namespace System.Data.SqlClient {
 		{
 			parms.Reset ();
 			dataSource = string.Empty;
-			connectionTimeout= 15;
+			connectionTimeout = DEFAULT_CONNECTIONTIMEOUT;
 			connectionReset = true;
 			pooling = true;
-			maxPoolSize = 100; 
-			minPoolSize = 0;
-			packetSize = 8192; 
+			maxPoolSize = DEFAULT_MAXPOOLSIZE;
+			minPoolSize = DEFAULT_MINPOOLSIZE;
+			packetSize = DEFAULT_PACKETSIZE;
 			
 			parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
-			parameters["CONNECT TIMEOUT"] = "15";
+			parameters["CONNECT TIMEOUT"] = connectionTimeout.ToString (CultureInfo.InvariantCulture);
 			parameters["CONNECTION LIFETIME"] = "0";
 			parameters["CONNECTION RESET"] = "true";
 			parameters["ENLIST"] = "true";
 			parameters["INTEGRATED SECURITY"] = "false";
 			parameters["INITIAL CATALOG"] = string.Empty;
-			parameters["MAX POOL SIZE"] = "100";
-			parameters["MIN POOL SIZE"] = "0";
+			parameters["MAX POOL SIZE"] = maxPoolSize.ToString (CultureInfo.InvariantCulture);
+			parameters["MIN POOL SIZE"] = minPoolSize.ToString (CultureInfo.InvariantCulture);
 			parameters["NETWORK LIBRARY"] = "dbmssocn";
-			parameters["PACKET SIZE"] = "8192";
+			parameters["PACKET SIZE"] = packetSize.ToString (CultureInfo.InvariantCulture);
 			parameters["PERSIST SECURITY INFO"] = "false";
 			parameters["POOLING"] = "true";
-			parameters["WORKSTATION ID"] = Dns.GetHostName();
+			parameters["WORKSTATION ID"] = Environment.MachineName;
  #if NET_2_0
 			async = false;
 			parameters ["ASYNCHRONOUS PROCESSING"] = "false";
@@ -775,9 +783,7 @@ namespace System.Data.SqlClient {
 		
 		private void SetProperties (string name , string value)
 		{
-
-			switch (name) 
-			{
+			switch (name) {
 			case "APP" :
 			case "APPLICATION NAME" :
 				parms.ApplicationName = value;
@@ -814,19 +820,15 @@ namespace System.Data.SqlClient {
 				break;
 			case "ENCRYPT":
 				if (ConvertToBoolean("encrypt", value))
-				{
 					throw new NotImplementedException("SSL encryption for"
 						+ " data sent between client and server is not"
 						+ " implemented.");
-				}
 				break;
 			case "ENLIST" :
 				if (!ConvertToBoolean("enlist", value))
-				{
 					throw new NotImplementedException("Disabling the automatic"
 						+ " enlistment of connections in the thread's current"
 						+ " transaction context is not implemented.");
-				}
 				break;
 			case "INITIAL CATALOG" :
 			case "DATABASE" :
@@ -841,7 +843,7 @@ namespace System.Data.SqlClient {
 				if (tmpMaxPoolSize < 0)
 					throw new ArgumentException ("Invalid MAX POOL SIZE. Must be a intger >= 0");
 				else
-					maxPoolSize = tmpMaxPoolSize; 
+					maxPoolSize = tmpMaxPoolSize;
 				break;
 			case "MIN POOL SIZE" :
 				int tmpMinPoolSize = ConvertToInt32 ("min pool size" , value);
@@ -929,11 +931,6 @@ namespace System.Data.SqlClient {
 				StateChange (this, value);
 		}
 #endif
-
-		private static InvalidOperationException CreateConnectionClosedException ()
-		{
-			return new InvalidOperationException ("Invalid operation. The Connection is closed.");
-		}
 
 		private sealed class SqlMonitorSocket : UdpClient 
 		{
@@ -1435,7 +1432,7 @@ namespace System.Data.SqlClient {
 		public override DataTable GetSchema ()
 		{
 			if (state == ConnectionState.Closed)
-				throw CreateConnectionClosedException ();
+				throw ExceptionHelper.ConnectionClosed ();
 
 			return MetaDataCollections.Instance;
 		}
@@ -1450,7 +1447,7 @@ namespace System.Data.SqlClient {
 			// LAMESPEC: In MS.NET, if collectionName is null, it throws ArgumentException.
 
 			if (state == ConnectionState.Closed)
-				throw CreateConnectionClosedException ();
+				throw ExceptionHelper.ConnectionClosed ();
 
 			String cName = null;
 			DataTable schemaTable = MetaDataCollections.Instance;

@@ -91,7 +91,7 @@ namespace System.Data.Odbc
 				{
 					_nativeerror = 1;
 					_source = Source;
-					_message = "Unable to retreive error information from ODBC driver manager";
+					_message = "Unable to retrieve error information from ODBC driver manager";
 					_state = "";
 				}
 				else

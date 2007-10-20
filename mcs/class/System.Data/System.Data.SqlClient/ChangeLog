@@ -1,3 +1,24 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommand.cs: Added constant for default CommandTimeout, instead
+	of using a magic number. Avoid unnecessary initialization. Fixed
+	default value for DesignTimeVisible. Return zero-length string if
+	CommandText is null. Use ExceptionHelper.InvalidEnumValueException
+	to avoid code duplication. Spaces to tabs and code formatting.
+	* SqlConnection.cs: Use different default package size on 2.0 profile.
+	Added constants for default values, instead of using magic numbers.
+	Avoid unnecessary initialization. In PacketSize, return default or
+	configured packet size when connection is not open. Use
+	ExceptionHelper.ConnectionClosed instead of local method. Removed
+	use of some hardcoded values in SetDefaultConnectionParameters, and
+	use Environment.MachineName as default WorkstationId instead of
+	DNS host name. Code formatting.
+	* SqlDataAdapter.cs: In default ctor, set SelectCommand to null.
+	Avoid unnecessary initializations. Use direct assignment in
+	IDbDataAdapter implementation. Fixed exception message for negative
+	UpdateBatchSize. In Dispose override, make sure to invoke base
+	method.
+
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlTransaction.cs: Clear connection in commit. In IsolationLevel,

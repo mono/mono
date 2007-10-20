@@ -1,3 +1,19 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbDataAdapter.cs: In default ctor, set SelectCommand to null.
+	Only initialize SelectCommand in ctors. Use direct assignment in
+	IDbDataAdapter implementation.
+	* OleDbCommand.cs: Added constant for default CommandTimeout, instead
+	of using a magic number. Avoid unnecessary initialization. Fixed
+	default value for DesignTimeVisible. Return zero-length string if
+	CommandText is null. Added implementation for UpdatedRowSource.
+	* OleDbConnection.cs: Moved initialization of gda to Open ().
+	Avoid unnecessary initialization. Return zero-length string if
+	ConnectionString is null. If getters to Database, DataSource and
+	Provider return zero-length string if the connection is closed.
+	In ServerVersion, BeginTransaction and GetSchema, throw an
+	InvalidOperationException if connection is closed.
+
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OleDbTransaction.cs: Clear connection in Commit and Rollback. In

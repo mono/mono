@@ -1,3 +1,10 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data_test.dll.sources: Added DbDataAdapterTest.cs,
+	OdbcCommandTest.cs, OdbcConnectionTest.cs, OdbcDataAdapterTest.cs,
+	OleDbCommandTest.cs, OleDbConnectionTest.cs, OleDbDataAdapterTest.cs,
+	SqlDataAdapterTest.cs.
+
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added DbTransactionTest.cs.

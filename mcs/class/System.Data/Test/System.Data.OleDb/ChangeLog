@@ -1,3 +1,12 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbDataAdapterTest.cs: Added tests for ctors, DeleteCommand,
+	InsertCommand, SelectCommand, UpdateCommand and Dispose.
+	* OleDbCommandTest.cs: Added tests for ctors and CommandText.
+	* OleDbConnectionTest.cs: Added tests for ctors and ConnectionString.
+	Added tests for BeginTransaction, GetSchema and ServerVersion with
+	connection that is closed.
+
 2007-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* OleDbParameterCollectionTest.cs: Fix compile error in 1.1 profile.

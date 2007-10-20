@@ -133,8 +133,10 @@ namespace System.Data.Common {
 		[DefaultValue (1)]
 		public virtual int UpdateBatchSize {
 			get { return 1; }
-			[MonoTODO]
-			set { throw new NotSupportedException (); }
+			set {
+				if (value != 1)
+					throw new NotSupportedException ();
+			}
 		}
 #else
 		IDbCommand SelectCommand {

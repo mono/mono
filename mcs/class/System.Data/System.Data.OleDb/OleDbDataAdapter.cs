@@ -57,17 +57,13 @@ namespace System.Data.OleDb
 
 		#region Constructors
 
-		public OleDbDataAdapter ()
-			: this (new OleDbCommand ())
+		public OleDbDataAdapter () : this ((OleDbCommand) null)
 		{
 		}
 
 		public OleDbDataAdapter (OleDbCommand selectCommand)
 		{
-			DeleteCommand = new OleDbCommand ();
-			InsertCommand = new OleDbCommand ();
 			SelectCommand = selectCommand;
-			UpdateCommand = new OleDbCommand ();
 		}
 
 		public OleDbDataAdapter (string selectCommandText, OleDbConnection selectConnection)
@@ -136,34 +132,18 @@ namespace System.Data.OleDb
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing)]
 		public new OleDbCommand UpdateCommand {
-			get {
-				return updateCommand;
-			}
-			set {
-				updateCommand = value;
-			}
+			get { return updateCommand; }
+			set { updateCommand = value; }
 		}
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
-			get {
-				return DeleteCommand;
-			}
-			set { 
-				if (!(value is OleDbCommand))
-					throw new ArgumentException ();
-				DeleteCommand = (OleDbCommand)value;
-			}
+			get { return DeleteCommand; }
+			set { DeleteCommand = (OleDbCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
-			get {
-				return InsertCommand;
-			}
-			set {
-				if (!(value is OleDbCommand))
-					throw new ArgumentException ();
-				InsertCommand = (OleDbCommand)value;
-			}
+			get { return InsertCommand; }
+			set { InsertCommand = (OleDbCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
@@ -171,45 +151,27 @@ namespace System.Data.OleDb
 				return SelectCommand;
 			}
 			set {
-				if (!(value is OleDbCommand))
-					throw new ArgumentException ();
-				SelectCommand = (OleDbCommand)value;
+				SelectCommand = (OleDbCommand) value;
 			}
 		}
 
 		MissingMappingAction IDataAdapter.MissingMappingAction {
-			get {
-				return missingMappingAction;
-			}
-			set {
-				missingMappingAction = value;
-			}
+			get { return missingMappingAction; }
+			set { missingMappingAction = value; }
 		}
 
 		MissingSchemaAction IDataAdapter.MissingSchemaAction {
-			get {
-				return missingSchemaAction;
-			}
-			set {
-				missingSchemaAction = value;
-			}
+			get { return missingSchemaAction; }
+			set { missingSchemaAction = value; }
 		}
 		
 		IDbCommand IDbDataAdapter.UpdateCommand {
-			get {
-				return UpdateCommand;
-			}
-			set {
-				if (!(value is OleDbCommand))
-					throw new ArgumentException ();
-				UpdateCommand = (OleDbCommand)value;
-			}
+			get { return UpdateCommand; }
+			set { UpdateCommand = (OleDbCommand) value; }
 		}
 
 		ITableMappingCollection IDataAdapter.TableMappings {
-			get {
-				return TableMappings;
-			}
+			get { return TableMappings; }
 		}
 
 		#endregion // Properties

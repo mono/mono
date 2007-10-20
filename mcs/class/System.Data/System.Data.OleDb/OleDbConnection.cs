@@ -61,10 +61,8 @@ namespace System.Data.OleDb
 		
 		public OleDbConnection ()
 		{
-			libgda.gda_init ("System.Data.OleDb", "1.0", 0, new string [0]);
 			gdaConnection = IntPtr.Zero;
 			connectionTimeout = 15;
-			connectionString = null;
 		}
 
 		public OleDbConnection (string connectionString) : this ()
@@ -90,6 +88,8 @@ namespace System.Data.OleDb
 #endif
 		string ConnectionString {
 			get {
+				if (connectionString == null)
+					return string.Empty;
 				return connectionString;
 			}
 			set {
@@ -126,7 +126,7 @@ namespace System.Data.OleDb
 					return libgda.gda_connection_get_database (gdaConnection);
 				}
 
-				return null;
+				return string.Empty;
 			}
 		}
 
@@ -147,7 +147,7 @@ namespace System.Data.OleDb
 					return libgda.gda_connection_get_dsn (gdaConnection);
 				}
 
-				return null;
+				return string.Empty;
 			}
 		}
 
@@ -164,7 +164,7 @@ namespace System.Data.OleDb
 					return libgda.gda_connection_get_provider (gdaConnection);
 				}
 
-				return null;
+				return string.Empty;
 			}
 		}
 
@@ -179,12 +179,9 @@ namespace System.Data.OleDb
 #endif
 		string ServerVersion {
 			get {
-				if (gdaConnection != IntPtr.Zero
-					&& libgda.gda_connection_is_open (gdaConnection)) {
-					return libgda.gda_connection_get_server_version (gdaConnection);
-				}
-
-				return null;
+				if (State == ConnectionState.Closed)
+					throw ExceptionHelper.ConnectionClosed ();
+				return libgda.gda_connection_get_server_version (gdaConnection);
 			}
 		}
 
@@ -220,18 +217,16 @@ namespace System.Data.OleDb
 	
 		public new OleDbTransaction BeginTransaction ()
 		{
-			if (gdaConnection != IntPtr.Zero)
-				return new OleDbTransaction (this);
-
-			return null;
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
+			return new OleDbTransaction (this);
 		}
 
 		public new OleDbTransaction BeginTransaction (IsolationLevel level)
 		{
-			if (gdaConnection != IntPtr.Zero)
-				return new OleDbTransaction (this, level);
-
-			return null;
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
+			return new OleDbTransaction (this, level);
 		}
 
 #if NET_2_0
@@ -267,8 +262,6 @@ namespace System.Data.OleDb
 #endif
 		void ChangeDatabase (string name)
 		{
-			if (gdaConnection == IntPtr.Zero)
-				throw new ArgumentException ();
 			if (State != ConnectionState.Open)
 				throw new InvalidOperationException ();
 
@@ -321,7 +314,7 @@ namespace System.Data.OleDb
 		void Open ()
 		{
 			string provider = "Default";
-			string gdaCncStr = "";
+			string gdaCncStr = string.Empty;
 			string[] args;
 			int len;
 			char [] separator = { ';' };
@@ -329,11 +322,13 @@ namespace System.Data.OleDb
 			if (State == ConnectionState.Open)
 				throw new InvalidOperationException ();
 
-			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
-				connectionString, "", "", 0);
+			libgda.gda_init ("System.Data.OleDb", "1.0", 0, new string [0]);
 
-			if (gdaConnection==IntPtr.Zero)
-				throw new OleDbException (this);	
+			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
+				ConnectionString, string.Empty, string.Empty, 0);
+
+			if (gdaConnection == IntPtr.Zero)
+				throw new OleDbException (this);
 			/* convert the connection string to its GDA equivalent */
 			//args = connectionString.Split (';');
 			//len = args.Length;
@@ -393,6 +388,8 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		public override DataTable GetSchema ()
 		{
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
 			throw new NotImplementedException ();
 		}
 
@@ -405,6 +402,8 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		public override DataTable GetSchema (String collectionName, string [] restrictionValues)
 		{
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
 			throw new NotImplementedException ();
 		}
 

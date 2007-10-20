@@ -18,9 +18,22 @@ namespace System.Data.Common
 			return new ArgumentException  (GetExceptionMessage ("Invalid parameter Size value '{0}'. The value must be greater than or equal to 0.",args));
 		}
 
+		internal static void CheckEnumValue (Type enumType, object value)
+		{
+			if (!Enum.IsDefined (enumType, value))
+				throw InvalidEnumValueException (enumType.Name, value);
+		}
+
 		internal static ArgumentException InvalidEnumValueException (String enumeration, object value)
 		{
+#if NET_2_0
+			return new ArgumentOutOfRangeException (enumeration,
+				string.Format (CultureInfo.InvariantCulture,
+					"The {0} enumeration value, {1}, is " +
+					"invalid", enumeration, value));
+#else
 			return new ArgumentException (String.Format ("The {0} enumeration value, {1}, is invalid", enumeration, value));
+#endif
 		}
 
 		internal static ArgumentOutOfRangeException InvalidDataRowVersion (DataRowVersion value)
@@ -138,6 +151,11 @@ namespace System.Data.Common
 		{
 			object [] args = new object [] { connectionState };
 			return new InvalidOperationException (GetExceptionMessage ("The connection is already Open (state={0}).",args));
+		}
+
+		internal static InvalidOperationException ConnectionClosed ()
+		{
+			return new InvalidOperationException ("Invalid operation. The Connection is closed.");
 		}
 
 		internal static InvalidOperationException ConnectionStringNotInitialized ()

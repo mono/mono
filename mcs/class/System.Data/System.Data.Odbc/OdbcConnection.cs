@@ -74,8 +74,7 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		internal IntPtr hDbc
-		{
+		internal IntPtr hDbc {
 			get { return hdbc; }
 		}
 
@@ -91,11 +90,11 @@ namespace System.Data.Odbc
 #endif
 		string ConnectionString {
 			get {
+				if (connectionString == null)
+					return string.Empty;
 				return connectionString;
 			}
-			set {
-				connectionString = value;
-			}
+			set { connectionString = value; }
 		}
 		
 		[OdbcDescriptionAttribute ("Current connection timeout value, not settable  in the ConnectionString")]
@@ -126,6 +125,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string Database {
 			get {
+				if (State == ConnectionState.Closed)
+					return string.Empty;
 				return GetInfo (OdbcInfo.DatabaseName);
 			}
 		}
@@ -139,9 +140,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		ConnectionState State {
 			get {
-				if (hdbc!=IntPtr.Zero) {
+				if (hdbc!=IntPtr.Zero)
 					return ConnectionState.Open;
-				}
 				else
 					return ConnectionState.Closed;
 			}
@@ -158,6 +158,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string DataSource {
 			get {
+				if (State == ConnectionState.Closed)
+					return string.Empty;
 				return GetInfo (OdbcInfo.DataSourceName);
 			}
 		}
@@ -169,6 +171,8 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Current ODBC Driver")]
 		public string Driver {
 			get {
+				if (State == ConnectionState.Closed)
+					return string.Empty;
 				return GetInfo (OdbcInfo.DriverName);
 			}
 		}
@@ -218,6 +222,9 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		OdbcTransaction BeginTransaction (IsolationLevel level)
 		{
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
+
 			if (transaction == null) {
 				transaction = new OdbcTransaction (this,level);
 				return transaction;
@@ -228,7 +235,7 @@ namespace System.Data.Odbc
 #if ONLY_1_1
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
 		{
-			return (IDbTransaction) BeginTransaction(level);
+			return (IDbTransaction) BeginTransaction (level);
 		}
 #endif // ONLY_1_1
 
@@ -257,7 +264,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		OdbcCommand CreateCommand ()
 		{
-			return new OdbcCommand ("", this, transaction);
+			return new OdbcCommand (string.Empty, this, transaction);
 		}
 
 		public
@@ -348,7 +355,7 @@ namespace System.Data.Odbc
 				// DSN connection
 				if (ConnectionString.ToLower ().IndexOf ("dsn=") >= 0)
 				{
-					string _uid = "", _pwd = "", _dsn = "";
+					string _uid = string.Empty, _pwd = string.Empty, _dsn = string.Empty;
 					string [] items = ConnectionString.Split (new char[1]{';'});
 					foreach (string item in items)
 					{
@@ -415,17 +422,22 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		public new DataTable GetSchema ()
+		public override DataTable GetSchema ()
 		{
-			if (State == ConnectionState.Open)
-				throw new InvalidOperationException ();
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
 			return MetaDataCollections.Instance;
 		}
 
-		public new DataTable GetSchema (string collectionName)
+		public override DataTable GetSchema (string collectionName)
 		{
-			if (State == ConnectionState.Open)
-				throw new InvalidOperationException ();
+			return GetSchema (collectionName, null);
+		}
+
+		public override DataTable GetSchema (string collectionName, string [] restrictionValues)
+		{
+			if (State == ConnectionState.Closed)
+				throw ExceptionHelper.ConnectionClosed ();
 			return GetSchema (collectionName, null);
 		}
 

@@ -9,8 +9,6 @@
 // (C) Ximian, Inc 2002
 // Copyright (C) 2002 Tim Coleman
 //
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -60,17 +58,13 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 		
-		public SqlDataAdapter () 
-			: this (new SqlCommand ())
+		public SqlDataAdapter () : this ((SqlCommand) null)
 		{
 		}
 
 		public SqlDataAdapter (SqlCommand selectCommand) 
 		{
-			DeleteCommand = null;
-			InsertCommand = null;
 			SelectCommand = selectCommand;
-			UpdateCommand = null;
 #if NET_2_0
 			UpdateBatchSize = 1;
 #endif
@@ -78,7 +72,7 @@ namespace System.Data.SqlClient {
 
 		public SqlDataAdapter (string selectCommandText, SqlConnection selectConnection) 
 			: this (new SqlCommand (selectCommandText, selectConnection))
-		{ 
+		{
 		}
 
 		public SqlDataAdapter (string selectCommandText, string selectConnectionString)
@@ -132,38 +126,22 @@ namespace System.Data.SqlClient {
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
-			set { 
-				if (!(value is SqlCommand)) 
-					throw new ArgumentException ();
-				DeleteCommand = (SqlCommand)value;
-			}
+			set { DeleteCommand = (SqlCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
-			set { 
-				if (!(value is SqlCommand)) 
-					throw new ArgumentException ();
-				InsertCommand = (SqlCommand)value;
-			}
+			set { InsertCommand = (SqlCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set {
-				if (!(value is SqlCommand)) 
-					throw new ArgumentException ();
-				SelectCommand = (SqlCommand)value;
-			}
+			set { SelectCommand = (SqlCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set { 
-				if (!(value is SqlCommand)) 
-					throw new ArgumentException ();
-				UpdateCommand = (SqlCommand)value;
-			}
+			set {  UpdateCommand = (SqlCommand) value; }
 		}
 
 		ITableMappingCollection IDataAdapter.TableMappings {
@@ -171,11 +149,11 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		public override int UpdateBatchSize { 
+		public override int UpdateBatchSize {
 			get { return updateBatchSize; }
 			set { 
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ();
+					throw new ArgumentOutOfRangeException ("UpdateBatchSize");
 				updateBatchSize = value; 
 			}
 		}
@@ -206,6 +184,7 @@ namespace System.Data.SqlClient {
 				// Release unmanaged resources
 				disposed = true;
 			}
+			base.Dispose (disposing);
 		}
 #endif
 
@@ -282,6 +261,5 @@ namespace System.Data.SqlClient {
 		public event SqlRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
-
 	}
 }

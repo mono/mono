@@ -1,3 +1,14 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbDataAdapter.cs: Implemented UpdateBatchSize setter.
+	* DataAdapter.cs: In FillLoadOption setter, ensure value is valid.
+	Modified MissingMappingAction and MissingSchemaAction setters to use
+	ExceptionHelper.CheckEnumValue to validate value. Spaces to tabs and
+	code formatting.
+	* ExceptionHelper.cs: Added CheckEnumValue method and modified
+	InvalidEnumValueException method to return AORE on 2.0 profile. Added
+	ConnectionClosed method that returns an InvalidOperationException.
+
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbTransaction.cs: Do not perform a rollback in Dispose (bool).

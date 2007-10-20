@@ -63,7 +63,9 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		bool disposed = false;
+		const int DEFAULT_COMMAND_TIMEOUT = 30;
+
+		bool disposed;
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -73,11 +75,11 @@ namespace System.Data.SqlClient {
 		UpdateRowSource updatedRowSource;
 		CommandBehavior behavior = CommandBehavior.Default;
 		SqlParameterCollection parameters;
-		string preparedStatement = null;
+		string preparedStatement;
 #if NET_2_0
 		SqlNotificationRequest notification;
-#endif
 		bool notificationAutoEnlist;
+#endif
 
 		#endregion // Fields
 
@@ -106,9 +108,11 @@ namespace System.Data.SqlClient {
 			this.commandType = CommandType.Text;
 			this.updatedRowSource = UpdateRowSource.Both;
 
-			this.designTimeVisible = false;
-			this.commandTimeout = 30;
+			this.commandTimeout = DEFAULT_COMMAND_TIMEOUT;
+#if NET_2_0
 			notificationAutoEnlist = true;
+#endif
+			designTimeVisible = true;
 			parameters = new SqlParameterCollection (this);
 		}
 
@@ -144,8 +148,12 @@ namespace System.Data.SqlClient {
 		override 
 #endif //NET_2_0
 		string CommandText {
-			get { return commandText; }
-			set { 
+			get {
+				if (commandText == null)
+					return string.Empty;
+				return commandText;
+			}
+			set {
 				if (value != commandText && preparedStatement != null)
 					Unprepare ();
 				commandText = value; 
@@ -154,7 +162,7 @@ namespace System.Data.SqlClient {
 
 #if !NET_2_0
 		[DataSysDescription ("Time to wait for command to execute.")]
-		[DefaultValue (30)]
+		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
 #endif
 		public 
 #if NET_2_0
@@ -190,12 +198,7 @@ namespace System.Data.SqlClient {
 #endif
 
 				if (!Enum.IsDefined (typeof (CommandType), value))
-#if NET_2_0
-					throw new ArgumentOutOfRangeException (String.Format ("The CommandType enumeration value, {0}, is invalid",
-						value));
-#else
 					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
-#endif
 				commandType = value; 
 			}
 		}
@@ -292,14 +295,9 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
-			set { 
+			set {
 				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
-#if NET_2_0
-					throw new ArgumentOutOfRangeException (String.Format ("The UpdateRowSource enumeration value, {0}, is invalid",
-						value));
-#else
 					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
-#endif
 				updatedRowSource = value;
 			}
 		}
@@ -307,14 +305,14 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public SqlNotificationRequest Notification { 
-			get { return notification; } 
+		public SqlNotificationRequest Notification {
+			get { return notification; }
 			set { notification = value; }
 		}
 
 		[DefaultValue (true)]
-		public bool NotificationAutoEnlist { 
-			get { return notificationAutoEnlist; } 
+		public bool NotificationAutoEnlist {
+			get { return notificationAutoEnlist; }
 			set { notificationAutoEnlist = value; }
 		}
 #endif
@@ -365,7 +363,7 @@ namespace System.Data.SqlClient {
 			ValidateCommand ("DeriveParameters");
 
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, commandText.Length).Value = commandText;
+			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, CommandText.Length).Value = CommandText;
 
 			string sql = "sp_procedure_params_rowset";
 
@@ -636,7 +634,7 @@ namespace System.Data.SqlClient {
 
 		public void ResetCommandTimeout ()
 		{
-			commandTimeout = 30;
+			commandTimeout = DEFAULT_COMMAND_TIMEOUT;
 		}
 
 		private void Unprepare ()
@@ -661,7 +659,7 @@ namespace System.Data.SqlClient {
 #else
 				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
 #endif
-			if (commandText == String.Empty || commandText == null)
+			if (CommandText.Length == 0)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			if (Connection.DataReader != null)
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");

@@ -47,7 +47,7 @@ namespace System.Data.Odbc {
 		#region Fields
 
 #if ONLY_1_1
-		bool disposed = false;
+		bool disposed;
 #endif
 		OdbcCommand deleteCommand;
 		OdbcCommand insertCommand;
@@ -58,16 +58,13 @@ namespace System.Data.Odbc {
 
 		#region Constructors
 		
-		public OdbcDataAdapter () : this (new OdbcCommand ())
+		public OdbcDataAdapter () : this ((OdbcCommand) null)
 		{
 		}
 
 		public OdbcDataAdapter (OdbcCommand selectCommand) 
 		{
-			DeleteCommand = null;
-			InsertCommand = null;
 			SelectCommand = selectCommand;
-			UpdateCommand = null;
 		}
 
 		public OdbcDataAdapter (string selectCommandText, OdbcConnection selectConnection) 
@@ -122,38 +119,22 @@ namespace System.Data.Odbc {
 
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
-			set { 
-				if (!(value is OdbcCommand)) 
-					throw new ArgumentException ();
-				DeleteCommand = (OdbcCommand)value;
-			}
+			set { DeleteCommand = (OdbcCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
-			set { 
-				if (!(value is OdbcCommand)) 
-					throw new ArgumentException ();
-				InsertCommand = (OdbcCommand)value;
-			}
+			set { InsertCommand = (OdbcCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set { 
-				if (!(value is OdbcCommand)) 
-					throw new ArgumentException ();
-				SelectCommand = (OdbcCommand)value;
-			}
+			set { SelectCommand = (OdbcCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set { 
-				if (!(value is OdbcCommand)) 
-					throw new ArgumentException ();
-				UpdateCommand = (OdbcCommand)value;
-			}
+			set { UpdateCommand = (OdbcCommand) value; }
 		}
 
 
@@ -186,6 +167,7 @@ namespace System.Data.Odbc {
 				// Release unmanaged resources
 				disposed = true;
 			}
+			base.Dispose (true);
 		}
 #endif
 

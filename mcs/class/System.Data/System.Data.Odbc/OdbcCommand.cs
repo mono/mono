@@ -39,11 +39,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.Odbc
 {
-        /// <summary>
+	/// <summary>
 	/// Represents an SQL statement or stored procedure to execute against a data source.
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-        [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
+	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
 	[DefaultEvent ("RecordsAffected")]
 	public sealed class OdbcCommand : DbCommand, ICloneable
@@ -53,20 +53,22 @@ namespace System.Data.Odbc
 	{
 		#region Fields
 
+		const int DEFAULT_COMMAND_TIMEOUT = 30;
+
 		string commandText;
 		int timeout;
 		CommandType commandType;
-		UpdateRowSource updateRowSource = UpdateRowSource.Both;
+		UpdateRowSource updateRowSource;
 
 		OdbcConnection connection;
 		OdbcTransaction transaction;
 		OdbcParameterCollection _parameters;
 
 		bool designTimeVisible;
-		bool prepared=false;
+		bool prepared;
 		IntPtr hstmt = IntPtr.Zero;
 
-		bool disposed = false;
+		bool disposed;
 		
 		#endregion // Fields
 
@@ -74,21 +76,16 @@ namespace System.Data.Odbc
 
 		public OdbcCommand ()
 		{
-			this.CommandText = String.Empty;
-			this.CommandTimeout = 30; // default timeout 
-			this.CommandType = CommandType.Text;
-			Connection = null;
+			timeout = DEFAULT_COMMAND_TIMEOUT;
+			commandType = CommandType.Text;
 			_parameters = new OdbcParameterCollection ();
-			Transaction = null;
-			designTimeVisible = false;
-#if ONLY_1_1
+			designTimeVisible = true;
 			updateRowSource = UpdateRowSource.Both;
-#endif // ONLY_1_1
 		}
 
 		public OdbcCommand (string cmdText) : this ()
 		{
-			CommandText = cmdText;
+			commandText = cmdText;
 		}
 
 		public OdbcCommand (string cmdText, OdbcConnection connection)
@@ -97,8 +94,7 @@ namespace System.Data.Odbc
 			Connection = connection;
 		}
 
-		public OdbcCommand (string cmdText,
-				    OdbcConnection connection,
+		public OdbcCommand (string cmdText, OdbcConnection connection,
 				    OdbcTransaction transaction) : this (cmdText, connection)
 		{
 			this.Transaction = transaction;
@@ -108,8 +104,7 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		internal IntPtr hStmt
-		{
+		internal IntPtr hStmt {
 			get { return hstmt; }
 		}
 		
@@ -119,24 +114,27 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Command text to execute")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif
-		string CommandText 
-		{
-			get { return commandText; }
-			set { 
-				prepared=false;
+		string CommandText {
+			get {
+				if (commandText == null)
+					return string.Empty;
+				return commandText;
+			}
+			set {
+				prepared = false;
 				commandText = value;
 			}
 		}
 
 		[OdbcDescriptionAttribute ("Time to wait for command to execute")]
 #if NET_1_0 || ONLY_1_1
-                [DefaultValue (30)]
+		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif
@@ -153,7 +151,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif
-		CommandType CommandType { 
+		CommandType CommandType {
 			get { return commandType; }
 			set { commandType = value; }
 		}
@@ -163,7 +161,7 @@ namespace System.Data.Odbc
 		[OdbcDescriptionAttribute ("Connection used by the command")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcConnection Connection { 
+		public OdbcConnection Connection {
 			get {
 				return connection;
 			}
@@ -176,12 +174,10 @@ namespace System.Data.Odbc
 #if NET_2_0
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public new OdbcConnection Connection
-		{
+		public new OdbcConnection Connection {
 			get { return DbConnection as OdbcConnection; }
 			set { DbConnection = value; }
 		}
-                
 #endif // NET_2_0
 
 		[BrowsableAttribute (false)]
@@ -190,11 +186,11 @@ namespace System.Data.Odbc
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif
-		bool DesignTimeVisible { 
+		bool DesignTimeVisible {
 			get {
 				return designTimeVisible;
 			}
@@ -209,9 +205,9 @@ namespace System.Data.Odbc
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public
 #if NET_2_0
-                new
+		new
 #endif // NET_2_0
-                OdbcParameterCollection Parameters {
+		OdbcParameterCollection Parameters {
 			get {
 #if ONLY_1_1
 				return _parameters;
@@ -226,9 +222,9 @@ namespace System.Data.Odbc
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public
 #if NET_2_0
-                new
+		new
 #endif // NET_2_0
-                OdbcTransaction Transaction {
+		OdbcTransaction Transaction {
 			get {
 				return transaction;
 			}
@@ -240,11 +236,11 @@ namespace System.Data.Odbc
 		[OdbcCategory ("Behavior")]
 		[DefaultValue (UpdateRowSource.Both)]
 		[OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
-		public 
+		public
 #if NET_2_0
 		override
 #endif
-		UpdateRowSource UpdatedRowSource { 
+		UpdateRowSource UpdatedRowSource {
 				get {
 					return updateRowSource;
 				}
@@ -254,16 +250,14 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		protected override DbConnection DbConnection 
-		{
+		protected override DbConnection DbConnection {
 			get { return connection; }
-			set { connection = (OdbcConnection) value;}                        
+			set { connection = (OdbcConnection) value;}
 		}
 
 #endif // NET_2_0
 
 #if ONLY_1_1
-
 		IDbConnection IDbCommand.Connection {
 			get {
 				return Connection;
@@ -273,21 +267,19 @@ namespace System.Data.Odbc
 			}
 		}
 
-		IDataParameterCollection IDbCommand.Parameters  {
+		IDataParameterCollection IDbCommand.Parameters {
 			get {
 				return Parameters;
 			}
 		}
 #else
-		protected override DbParameterCollection DbParameterCollection
-		{
+		protected override DbParameterCollection DbParameterCollection {
 			get { return _parameters as DbParameterCollection;}
 		}
-                
 #endif // NET_2_0
 
 #if ONLY_1_1
-		IDbTransaction IDbCommand.Transaction  {
+		IDbTransaction IDbCommand.Transaction {
 			get {
 				return (IDbTransaction) Transaction;
 			}
@@ -300,8 +292,7 @@ namespace System.Data.Odbc
 			}
 		}
 		#else
-		protected override DbTransaction DbTransaction 
-                {
+		protected override DbTransaction DbTransaction {
 			get { return transaction; }
 			set { transaction = (OdbcTransaction) value; }
 		}
@@ -338,7 +329,6 @@ namespace System.Data.Odbc
 		{
 			return CreateParameter ();
 		}
-                
 #endif // ONLY_1_1
 
 		public new OdbcParameter CreateParameter ()
@@ -387,7 +377,7 @@ namespace System.Data.Odbc
 			hstmt = IntPtr.Zero;
 		}
 		
-		private void ExecSQL(string sql)
+		private void ExecSQL (string sql)
 		{
 			OdbcReturn ret;
 			if (! prepared && Parameters.Count <= 0) {
@@ -418,9 +408,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int ExecuteNonQuery ()
+		int ExecuteNonQuery ()
 		{
 			return ExecuteNonQuery (true);
 		}
@@ -437,17 +427,15 @@ namespace System.Data.Odbc
 			ExecSQL(CommandText);
 
 			// .NET documentation says that except for INSERT, UPDATE and
-                        // DELETE  where the return value is the number of rows affected
-                        // for the rest of the commands the return value is -1.
-                        if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
+			// DELETE  where the return value is the number of rows affected
+			// for the rest of the commands the return value is -1.
+			if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
 			    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
 			    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
-                                                                                                    
 				int numrows = 0;
 				OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
 				records = numrows;
-                        }
-                        else
+			} else
 				records = -1;
 
 			if (freeHandle && !prepared)
@@ -458,9 +446,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Prepare()
+		void Prepare()
 		{
 			ReAllocStatment ();
 			
@@ -482,12 +470,11 @@ namespace System.Data.Odbc
 			}
 		}
 
-
 		public
 #if NET_2_0
-			new
+		new
 #endif // NET_2_0
-				OdbcDataReader ExecuteReader ()
+		OdbcDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
@@ -497,19 +484,18 @@ namespace System.Data.Odbc
 		{
 			return ExecuteReader ();
 		}
-		#else
+#else
 		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
 		}
-
 #endif // ONLY_1_1
 
 		public
 #if NET_2_0
-                new
+		new
 #endif // NET_2_0
-                OdbcDataReader ExecuteReader (CommandBehavior behavior)
+		OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			int recordsAffected = ExecuteNonQuery(false);
 			OdbcDataReader dataReader=new OdbcDataReader(this, behavior, recordsAffected);
@@ -517,13 +503,13 @@ namespace System.Data.Odbc
 		}
 
 #if ONLY_1_1
-                IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
 			return ExecuteReader (behavior);
 		}
 #endif // ONLY_1_1
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif
@@ -531,13 +517,10 @@ namespace System.Data.Odbc
 		{
 			object val = null;
 			OdbcDataReader reader=ExecuteReader();
-			try
-			{
+			try {
 				if (reader.Read ())
 					val=reader[0];
-			}
-			finally
-			{
+			} finally {
 				reader.Close();
 			}
 			return val;
@@ -559,7 +542,7 @@ namespace System.Data.Odbc
 
 		public void ResetCommandTimeout ()
 		{
-			CommandTimeout = 30;
+			CommandTimeout = DEFAULT_COMMAND_TIMEOUT;
 		}
 
 		#endregion

@@ -1,6 +1,6 @@
 //
-// OdbcConnectionTest.cs - NUnit Test Cases for testing the
-//                          OdbcConnectionTest class
+// OleDbConnectionTest.cs - NUnit Test Cases for testing the
+//                          OleDbConnectionTest class
 // Author:
 //      Gert Driesen (drieseng@users.sourceforge.net)
 //
@@ -28,52 +28,52 @@
 
 using System;
 using System.Data;
-using System.Data.Odbc;
+using System.Data.OleDb;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Data.Odbc
+namespace MonoTests.System.Data.OleDb
 {
 	[TestFixture]
-	public class OdbcConnectionTest
+	public class OleDbConnectionTest
 	{
-		const string CONNECTION_STRING = "Driver={SQL Server};Server=SQLSRV;Database=Mono;";
+		const string CONNECTION_STRING = "Provider=sqloledb;Data Source=SQLSRV;Initial Catalog=Mono;";
 
-		[Test] // OdbcConnection ()
+		[Test] // OleDbConnection ()
 		public void Constructor1 ()
 		{
-			OdbcConnection cn = new OdbcConnection ();
+			OleDbConnection cn = new OleDbConnection ();
 
 			Assert.AreEqual (string.Empty, cn.ConnectionString, "#1");
 			Assert.AreEqual (15, cn.ConnectionTimeout, "#2");
 			Assert.IsNull (cn.Container, "#3");
 			Assert.AreEqual (string.Empty, cn.Database, "#4");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#5");
-			Assert.AreEqual (string.Empty, cn.Driver, "#6");
+			Assert.AreEqual (string.Empty, cn.Provider, "#6");
 			Assert.IsNull (cn.Site, "#7");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#8");
 		}
 
-		[Test] // OdbcConnection (string)
+		[Test] // OleDbConnection (string)
 		public void Constructor2 ()
 		{
-			OdbcConnection cn = new OdbcConnection (CONNECTION_STRING);
+			OleDbConnection cn = new OleDbConnection (CONNECTION_STRING);
 			Assert.AreEqual (CONNECTION_STRING, cn.ConnectionString, "#A1");
 			Assert.AreEqual (15, cn.ConnectionTimeout, "#A2");
 			Assert.IsNull (cn.Container, "#A3");
-			Assert.AreEqual (string.Empty, cn.Database, "#A4");
-			Assert.AreEqual (string.Empty, cn.DataSource, "#A5");
-			Assert.AreEqual (string.Empty, cn.Driver, "#A6");
+			//Assert.AreEqual ("Mono", cn.Database, "#A4");
+			//Assert.AreEqual ("SQLSRV", cn.DataSource, "#A5");
+			//Assert.AreEqual ("sqloledb", cn.Provider, "#A6");
 			Assert.IsNull (cn.Site, "#A7");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#A8");
 
-			cn = new OdbcConnection ((string) null);
+			cn = new OleDbConnection ((string) null);
 			Assert.AreEqual (string.Empty, cn.ConnectionString, "#B1");
 			Assert.AreEqual (15, cn.ConnectionTimeout, "#B2");
 			Assert.IsNull (cn.Container, "#B3");
 			Assert.AreEqual (string.Empty, cn.Database, "#B4");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#B5");
-			Assert.AreEqual (string.Empty, cn.Driver, "#B6");
+			Assert.AreEqual (string.Empty, cn.Provider, "#B6");
 			Assert.IsNull (cn.Site, "#B7");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#B8");
 		}
@@ -81,7 +81,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void BeginTransaction_Connection_Closed ()
 		{
-			OdbcConnection cn = new OdbcConnection ();
+			OleDbConnection cn = new OleDbConnection ();
 
 			try {
 				cn.BeginTransaction ();
@@ -117,7 +117,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ConnectionString ()
 		{
-			OdbcConnection cn = new OdbcConnection ();
+			OleDbConnection cn = new OleDbConnection ();
 			cn.ConnectionString = CONNECTION_STRING;
 			Assert.AreEqual (CONNECTION_STRING, cn.ConnectionString, "#1");
 			cn.ConnectionString = null;
@@ -132,7 +132,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void GetSchema_Connection_Closed ()
 		{
-			OdbcConnection cn = new OdbcConnection ();
+			OleDbConnection cn = new OleDbConnection ();
 
 			try {
 				cn.GetSchema ();
@@ -209,7 +209,7 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ServerVersion_Connection_Closed ()
 		{
-			OdbcConnection cn = new OdbcConnection ();
+			OleDbConnection cn = new OleDbConnection ();
 			try {
 				Assert.Fail ("#A1:" + cn.ServerVersion);
 			} catch (InvalidOperationException ex) {
@@ -219,7 +219,7 @@ namespace MonoTests.System.Data.Odbc
 				Assert.IsNotNull (ex.Message, "#A4");
 			}
 
-			cn = new OdbcConnection (CONNECTION_STRING);
+			cn = new OleDbConnection (CONNECTION_STRING);
 			try {
 				Assert.Fail ("#B1:" + cn.ServerVersion);
 			} catch (InvalidOperationException ex) {

@@ -1,3 +1,13 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcDataAdapterTest.cs: Added tests for ctors, DeleteCommand,
+	InsertCommand, SelectCommand, UpdateCommand and Dispose.
+	* OdbcDataReaderTest.cs: fixed line endings.
+	* OdbcCommandTest.cs: Added tests for ctors and CommantText.
+	* OdbcConnectionTest.cs: Removed original test that relied on MySQL.
+	Added ctor tests. Added tests for BeginTransaction, GetSchema and
+	ServerVersion with connection that is closed.
+
 2007-06-08  Nagappan A  <anagappan@novell.com>
 
 	* OdbcParameterTest.cs (OdbcTypeTest): The default data type of

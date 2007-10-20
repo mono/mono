@@ -134,7 +134,10 @@ namespace System.Data.Common
 		[RefreshProperties (RefreshProperties.All)]
 		public LoadOption FillLoadOption {
 			get { return fillLoadOption; }
-			set { fillLoadOption = value; }
+			set {
+				ExceptionHelper.CheckEnumValue (typeof (LoadOption), value);
+				fillLoadOption = value;
+		}
 		}
 #endif
 
@@ -150,8 +153,7 @@ namespace System.Data.Common
 		public MissingMappingAction MissingMappingAction {
 			get { return missingMappingAction; }
 			set {
-				if (!Enum.IsDefined (typeof (MissingMappingAction), value))
-					throw ExceptionHelper.InvalidEnumValueException ("MissingMappingAction", value);
+				ExceptionHelper.CheckEnumValue (typeof (MissingMappingAction), value);
 				missingMappingAction = value;
 			}
 		}
@@ -163,9 +165,8 @@ namespace System.Data.Common
 		[DefaultValue (MissingSchemaAction.Add)]
 		public MissingSchemaAction MissingSchemaAction {
 			get { return missingSchemaAction; }
-			set { 
-				if (!Enum.IsDefined (typeof (MissingSchemaAction), value))
-					throw ExceptionHelper.InvalidEnumValueException ("MissingSchemaAction", value);
+			set {
+				ExceptionHelper.CheckEnumValue (typeof (MissingSchemaAction), value);
 				missingSchemaAction = value; 
 			}
 		}
@@ -200,9 +201,9 @@ namespace System.Data.Common
 		#region Methods
 
 #if !ONLY_1_0
-                [Obsolete ("Use the protected constructor instead", false)]
+		[Obsolete ("Use the protected constructor instead", false)]
 #endif
-                [MonoTODO]
+		[MonoTODO]
 		protected virtual DataAdapter CloneInternals ()
 		{
 			throw new NotImplementedException ();
@@ -255,14 +256,13 @@ namespace System.Data.Common
 		{
 			return BuildSchema (reader, table, schemaType, MissingSchemaAction,
 					    MissingMappingAction, TableMappings);
-                }
+		}
 
-                /// <summary>
-                ///     Creates or Modifies the schema of the given DataTable based on the schema of
-                ///     the reader and the arguments passed.
-                /// </summary>
-                internal static int[] BuildSchema (IDataReader reader,
-                                                   DataTable table,
+		/// <summary>
+		///     Creates or Modifies the schema of the given DataTable based on the schema of
+		///     the reader and the arguments passed.
+		/// </summary>
+		internal static int[] BuildSchema (IDataReader reader, DataTable table,
                                                    SchemaType schemaType,
                                                    MissingSchemaAction missingSchAction,
                                                    MissingMappingAction missingMapAction,
@@ -300,13 +300,12 @@ namespace System.Data.Common
 				    (string)schemaRow [ColumnNameCol] == String.Empty) {
 					sourceColumnName = DefaultSourceColumnName;
 					realSourceColumnName = DefaultSourceColumnName + "1";
-				}
-				else {
+				} else {
 					sourceColumnName = (string) schemaRow [ColumnNameCol];
 					realSourceColumnName = sourceColumnName;
 				}
 
-				for (int i = 1; sourceColumns.Contains (realSourceColumnName); i += 1) 
+				for (int i = 1; sourceColumns.Contains (realSourceColumnName); i += 1)
 					realSourceColumnName = String.Format ("{0}{1}", sourceColumnName, i);
 				sourceColumns.Add(realSourceColumnName);
 
@@ -318,13 +317,11 @@ namespace System.Data.Common
 				int index = dtMapping.IndexOfDataSetTable (table.TableName);
 				string srcTable = (index != -1 ? dtMapping[index].SourceTable : table.TableName);
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, srcTable, table.TableName, missingMapAction); 
-				if (tableMapping != null)
-				{
+				if (tableMapping != null) {
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists
 					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, missingMapAction);
-					if (columnMapping != null)
-					{
+					if (columnMapping != null) {
 						Type columnType = (Type)schemaRow[DataTypeCol];
 						DataColumn col =
 							columnMapping.GetDataColumnBySchemaAction(
@@ -332,11 +329,9 @@ namespace System.Data.Common
 												  columnType,
 												  missingSchAction);
 
-						if (col != null)
-						{
+						if (col != null) {
 							// if the column is not in the table - add it.
-							if (table.Columns.IndexOf(col) == -1)
-							{
+							if (table.Columns.IndexOf(col) == -1) {
 								if (missingSchAction == MissingSchemaAction.Add 
 								    || missingSchAction == MissingSchemaAction.AddWithKey)
 									table.Columns.Add(col);
@@ -345,11 +340,9 @@ namespace System.Data.Common
 								Array.Copy(mapping,0,tmp,0,col.Ordinal);
 								Array.Copy(mapping,col.Ordinal,tmp,col.Ordinal + 1,mapping.Length - col.Ordinal);
 								mapping = tmp;
-							}				
-
+							}
 
 							if (missingSchAction == MissingSchemaAction.AddWithKey) {
-	                            
 								object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
 								bool allowDBNull = value is bool ? (bool)value : true;
 
@@ -366,7 +359,7 @@ namespace System.Data.Common
 								bool isUnique = value is bool ? (bool)value : false;
 								
 								col.AllowDBNull = allowDBNull;
-								// fill woth key info								
+								// fill woth key info
 								if (isAutoIncrement && DataColumn.CanAutoIncrement(columnType)) {
 									col.AutoIncrement = true;
 									if (!allowDBNull)
@@ -425,7 +418,7 @@ namespace System.Data.Common
 				}
 			}
 			return mapping;
-                }
+		}
 
 		internal bool FillTable (DataTable dataTable, IDataReader dataReader, int startRecord, int maxRecords, ref int counter)
 		{
@@ -497,14 +490,12 @@ namespace System.Data.Common
 		{
 			DataTableMapping tableMapping = null;
 
-			if (schemaType == SchemaType.Mapped) 
-			{
+			if (schemaType == SchemaType.Mapped) {
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, sourceTableName, MissingMappingAction);
 				if (tableMapping != null)
 					return tableMapping.DataSetTable;
 				return null;
-			}
-			else
+			} else
 				return sourceTableName;
 		}
 
@@ -531,7 +522,7 @@ namespace System.Data.Common
 						if (tableName != null) {
 							
 							// check if the table exists in the dataset
-							if (dataSet.Tables.Contains (tableName)) 
+							if (dataSet.Tables.Contains (tableName))
 								// get the table from the dataset
 								dataTable = dataSet.Tables [tableName];
 							else {
@@ -541,9 +532,8 @@ namespace System.Data.Common
 								dataTable = dataSet.Tables.Add (tableName);
 							}
 	
-							if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count)) {
+							if (!FillTable (dataTable, dataReader, startRecord, maxRecords, ref count))
 								continue;
-							}
 	
 							tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 	
@@ -552,12 +542,11 @@ namespace System.Data.Common
 						}
 					}
 				} while (dataReader.NextResult ());
-			} 
-			finally {
+			} finally {
 				dataReader.Close ();
 			}
 
-                        return count;
+			return count;
 		}
 
 #if NET_2_0

@@ -1,3 +1,20 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommand.cs: Added constant for default CommandTimeout, instead
+	of using a magic number. Avoid unnecessary initialization. Fixed
+	default value for DesignTimeVisible. Return zero-length string if
+	CommandText is null. Spaces to tabs and code formatting.
+	* OdbcError.cs: Fixed typo in exception message.
+	* OdbcConnection.cs: Return zero-length string if ConnectionString is
+	null. In getters for Database, DataSource and Driver return a
+	zero-length string if connection is closed. In BeginTransaction and
+	GetSchema throw InvalidOperationException if connection is closed.
+	Added override for GetSchema (string, string []). Use string.Empty
+	instead of "".
+	* OdbcDataAdapter.cs: Avoid unnecessary initializations. Use direct
+	assignment in IDbDataAdapter implementation. In default ctor, set
+	SelectCommand to null.
+
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcTransaction.cs: Clear connection in Commit and Rollback.

@@ -58,6 +58,8 @@ namespace System.Data.OleDb
 	{
 		#region Fields
 
+		const int DEFAULT_COMMAND_TIMEOUT = 30;
+
 		string commandText;
 		int timeout;
 		CommandType commandType;
@@ -68,8 +70,9 @@ namespace System.Data.OleDb
 		OleDbDataReader dataReader;
 		CommandBehavior behavior;
 		IntPtr gdaCommand;
+		UpdateRowSource updatedRowSource;
 
-		bool disposed = false;
+		bool disposed;
 		
 		#endregion // Fields
 
@@ -77,12 +80,13 @@ namespace System.Data.OleDb
 
 		public OleDbCommand ()
 		{
-			commandText = String.Empty;
-			timeout = 30; // default timeout per .NET
+			timeout = DEFAULT_COMMAND_TIMEOUT;
 			commandType = CommandType.Text;
 			parameters = new OleDbParameterCollection ();
 			behavior = CommandBehavior.Default;
 			gdaCommand = IntPtr.Zero;
+			designTimeVisible = true;
+			this.updatedRowSource = UpdateRowSource.Both;
 		}
 
 		public OleDbCommand (string cmdText) : this ()
@@ -117,9 +121,10 @@ namespace System.Data.OleDb
 #if NET_2_0
 		override
 #endif
-		string CommandText
-		{
+		string CommandText {
 			get {
+				if (commandText == null)
+					return string.Empty;
 				return commandText;
 			}
 			set {
@@ -129,7 +134,7 @@ namespace System.Data.OleDb
 
 #if !NET_2_0
 		[DataSysDescriptionAttribute ("Time to wait for command to execute.")]
-		[DefaultValue (30)]
+		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
 #endif
 		public
 #if NET_2_0
@@ -232,11 +237,12 @@ namespace System.Data.OleDb
 		override
 #endif
 		UpdateRowSource UpdatedRowSource {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+			get { return updatedRowSource; }
+			set
+			{
+				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
+					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+				updatedRowSource = value;
 			}
 		}
 
@@ -318,10 +324,10 @@ namespace System.Data.OleDb
 			}
 			
 			if (gdaCommand != IntPtr.Zero) {
-				libgda.gda_command_set_text (gdaCommand, commandText);
+				libgda.gda_command_set_text (gdaCommand, CommandText);
 				libgda.gda_command_set_command_type (gdaCommand, type);
 			} else {
-				gdaCommand = libgda.gda_command_new (commandText, type, 0);
+				gdaCommand = libgda.gda_command_new (CommandText, type, 0);
 			}
 
 			//libgda.gda_command_set_transaction 
@@ -456,7 +462,7 @@ namespace System.Data.OleDb
 
 		public void ResetCommandTimeout ()
 		{
-			timeout = 30;
+			timeout = DEFAULT_COMMAND_TIMEOUT;
 		}
 		
 #if NET_2_0

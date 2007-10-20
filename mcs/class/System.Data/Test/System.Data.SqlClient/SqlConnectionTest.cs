@@ -38,21 +38,72 @@ namespace MonoTests.System.Data.SqlClient
 	[TestFixture]
 	public class SqlConnectionTest
 	{
-		[Test]
-		public void DefaultConnectionValues()
+		[Test] // SqlConnection ()
+		public void Constructor1 ()
 		{
 			SqlConnection cn = new SqlConnection ();
 
-			Assert.AreEqual (15, cn.ConnectionTimeout, 
-				"Default connection timeout should be 15 seconds");
-			Assert.AreEqual (string.Empty, cn.Database, 
-				"Default database name should be empty string");
-			Assert.AreEqual (string.Empty, cn.DataSource,
-				"Default data source should be empty string");
-			Assert.AreEqual (8192, cn.PacketSize,
-				"Default packet size should be 8192 bytes");
-			Assert.AreEqual (ConnectionState.Closed, cn.State,
-				"Default connection state should be closed");
+			Assert.AreEqual (string.Empty, cn.ConnectionString, "#1");
+			Assert.AreEqual (15, cn.ConnectionTimeout, "#2");
+			Assert.IsNull (cn.Container, "#3");
+			Assert.AreEqual (string.Empty, cn.Database, "#4");
+			Assert.AreEqual (string.Empty, cn.DataSource, "#5");
+#if NET_2_0
+			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#6");
+			Assert.AreEqual (8000, cn.PacketSize, "#7");
+#else
+			Assert.AreEqual (8192, cn.PacketSize, "#7");
+#endif
+			Assert.IsNull (cn.Site, "#8");
+			Assert.AreEqual (ConnectionState.Closed, cn.State, "#9");
+#if NET_2_0
+			Assert.IsFalse (cn.StatisticsEnabled, "#10");
+#endif
+			Assert.AreEqual (Environment.MachineName, cn.WorkstationId, "#11");
+		}
+
+		[Test] // SqlConnection (string)
+		public void Constructor2 ()
+		{
+			string connectionString = "server=SQLSRV; database=Mono;";
+
+			SqlConnection cn = new SqlConnection (connectionString);
+			Assert.AreEqual (connectionString, cn.ConnectionString, "#A1");
+			Assert.AreEqual (15, cn.ConnectionTimeout, "#A2");
+			Assert.IsNull (cn.Container, "#A3");
+			Assert.AreEqual ("Mono", cn.Database, "#A4");
+			Assert.AreEqual ("SQLSRV", cn.DataSource, "#A5");
+#if NET_2_0
+			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#A6");
+			Assert.AreEqual (8000, cn.PacketSize, "#A7");
+#else
+			Assert.AreEqual (8192, cn.PacketSize, "#A7");
+#endif
+			Assert.IsNull (cn.Site, "#A8");
+			Assert.AreEqual (ConnectionState.Closed, cn.State, "#A9");
+#if NET_2_0
+			Assert.IsFalse (cn.StatisticsEnabled, "#A10");
+#endif
+			Assert.AreEqual (Environment.MachineName, cn.WorkstationId, "#A11");
+
+			cn = new SqlConnection ((string) null);
+			Assert.AreEqual (string.Empty, cn.ConnectionString, "#B1");
+			Assert.AreEqual (15, cn.ConnectionTimeout, "#B2");
+			Assert.IsNull (cn.Container, "#B3");
+			Assert.AreEqual (string.Empty, cn.Database, "#B4");
+			Assert.AreEqual (string.Empty, cn.DataSource, "#B5");
+#if NET_2_0
+			Assert.IsFalse (cn.FireInfoMessageEventOnUserErrors, "#B6");
+			Assert.AreEqual (8000, cn.PacketSize, "#B7");
+#else
+			Assert.AreEqual (8192, cn.PacketSize, "#B7");
+#endif
+			Assert.IsNull (cn.Site, "#B8");
+			Assert.AreEqual (ConnectionState.Closed, cn.State, "#B9");
+#if NET_2_0
+			Assert.IsFalse (cn.StatisticsEnabled, "#B10");
+#endif
+			Assert.AreEqual (Environment.MachineName, cn.WorkstationId, "#B11");
 		}
 
 		[Test]
@@ -119,6 +170,20 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNull (ex.InnerException, "#F3");
 				Assert.IsNotNull (ex.Message, "#F4");
 			}
+		}
+
+		[Test]
+		public void ConnectionString ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			cn.ConnectionString = "server=SQLSRV";
+			Assert.AreEqual ("server=SQLSRV", cn.ConnectionString, "#1");
+			cn.ConnectionString = null;
+			Assert.AreEqual (string.Empty, cn.ConnectionString, "#2");
+			cn.ConnectionString = "server=SQLSRV";
+			Assert.AreEqual ("server=SQLSRV", cn.ConnectionString, "#3");
+			cn.ConnectionString = string.Empty;
+			Assert.AreEqual (string.Empty, cn.ConnectionString, "#4");
 		}
 
 		[Test]
@@ -300,6 +365,30 @@ namespace MonoTests.System.Data.SqlClient
 			cn.ConnectionString = "extended properties=dunno";
 			cn.ConnectionString = "initial file name=dunno";
 			*/
+		}
+
+		[Test]
+		public void ServerVersion_Connection_Closed ()
+		{
+			SqlConnection cn = new SqlConnection ();
+			try {
+				Assert.Fail ("#A1:" + cn.ServerVersion);
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			cn = new SqlConnection ("server=SQLSRV; database=Mono;");
+			try {
+				Assert.Fail ("#B1:" + cn.ServerVersion);
+			} catch (InvalidOperationException ex) {
+				// Invalid operation. The connection is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
 		}
 	}
 }

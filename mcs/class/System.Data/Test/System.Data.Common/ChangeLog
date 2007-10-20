@@ -1,3 +1,11 @@
+2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbDataAdapterTest.cs: Added test for UpdateBatchSize.
+	* DataAdapterTest.cs: Added tests for AcceptChangesDuringFile,
+	AcceptChangesDuringUpdate, ContinueUpdateOnError, FillLoadOption,
+	MissingMappingAction, MissingSchemaAction and
+	ReturnProviderSpecificTypes.
+
 2007-10-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbTransactionTest.cs: Enabled test for bug #325397.
