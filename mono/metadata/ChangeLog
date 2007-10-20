@@ -1,7 +1,9 @@
 2007-10-20  Zoltan Varga  <vargaz@gmail.com>
 
-	* class.c (mono_class_layout_fields): Use 1 instead of TRUE for consistency.
+	* class.c (mono_generic_class_get_class): Set klass->field.count as well.
 	
+	* class.c (mono_class_layout_fields): Use 1 instead of TRUE for consistency.
+
 	* class.c (mono_class_layout_fields): Set size_inited for generic classes as well.
 	(mono_class_setup_vtable): Obtain overrides for dynamic generic classes correctly.
 
