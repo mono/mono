@@ -1,5 +1,8 @@
 2007-10-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_layout_fields): Set size_inited for generic classes as well.
+	(mono_class_setup_vtable): Obtain overrides for dynamic generic classes correctly.
+
 	* class.c (mono_class_setup_methods): Handle dynamic inflated classes correctly.
 
 	* reflection.c (create_generic_typespec): Initialize klass->generic_container
