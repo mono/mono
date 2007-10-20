@@ -206,6 +206,18 @@ namespace System.Web.Script.Serialization
 			if (obj is IEnumerable<object>)
 				return ConvertToList ((IEnumerable<object>) obj, type);
 
+			/*
+			 * Take care of the special case whereas in JSON an empty string ("") really means 
+			 * an empty value 
+			 * (see: https://bugzilla.novell.com/show_bug.cgi?id=328836)
+			 */
+			if ( (type.IsGenericType) && (type.GetGenericTypeDefinition() == typeof(Nullable<>)) )
+			{
+				string s = obj as String;
+				if (String.IsNullOrEmpty(s))
+						return null;
+			}
+
 			if (type == null)
 				return obj;
 
