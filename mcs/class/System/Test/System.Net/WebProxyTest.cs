@@ -25,18 +25,6 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class WebProxyTest
 	{
-		private Uri googleUri;
-		private Uri yahooUri;
-		private Uri apacheUri;
-
-		[SetUp]
-		public void GetReady ()
-		{
-			googleUri = new Uri ("http://www.google.com");
-			yahooUri = new Uri ("http://www.yahoo.com");
-			apacheUri = new Uri ("http://www.apache.org");
-		}
-
 		[Test]
 		public void Constructors ()
 		{
