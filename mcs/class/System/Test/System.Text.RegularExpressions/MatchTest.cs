@@ -31,11 +31,11 @@ using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
 
-namespace MonoTests.System.Text.RegularExpressions {
-
+namespace MonoTests.System.Text.RegularExpressions
+{
 	[TestFixture]
-	public class MatchTest {
-
+	public class MatchTest
+	{
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Synchronized_Null ()

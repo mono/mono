@@ -1,3 +1,11 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegexBugs.cs: No longer derive from deprecated Assertion class.
+	Added test for bug #313642.
+	* MatchTest.cs: Code formatting.
+	* RegexTest.cs: Fixed compiler warnings. Code formatting. Spaces to
+	tabs.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegexReplace.cs: Fixed compiler warning.

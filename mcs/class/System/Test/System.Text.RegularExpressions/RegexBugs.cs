@@ -7,162 +7,155 @@
 // (c) Copyright 2003,2004 Novell, Inc. (http://www.novell.com)
 //
 
-using NUnit.Framework;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using NUnit.Framework;
+
 namespace MonoTests.System.Text.RegularExpressions
 {
 	[TestFixture]
-	public class RegexBugs : Assertion
+	public class RegexBugsn
 	{
-		[Test]
-		public void SplitGroup () // bug51146
+		[Test] // bug #51146
+		public void SplitGroup ()
 		{
-		        string [] splitResult = new Regex ("-").Split ("a-bcd-e-fg");
+			string [] splitResult = new Regex ("-").Split ("a-bcd-e-fg");
 			string [] expected = new string [] {"a", "bcd", "e", "fg"};
 			int length = expected.Length;
-			int i;
-			AssertEquals ("#01", length, splitResult.Length);
-			for (i = 0; i < length; i++)
-				AssertEquals ("#02 " + i, expected [i], splitResult [i]);
+			Assert.AreEqual (length, splitResult.Length, "#1");
+			for (int i = 0; i < length; i++)
+				Assert.AreEqual (expected [i], splitResult [i], "#2:" + i);
 			
 			splitResult = new Regex ("(-)").Split ("a-bcd-e-fg");
 			expected = new string [] {"a", "-", "bcd", "-", "e", "-", "fg"};
 			length = expected.Length;
-			AssertEquals ("#03", length, splitResult.Length);
-			for (i = 0; i < length; i++)
-				AssertEquals ("#04 " + i, expected [i], splitResult [i]);
+			Assert.AreEqual (length, splitResult.Length, "#3");
+			for (int i = 0; i < length; i++)
+				Assert.AreEqual (expected [i], splitResult [i], "#4:" + i);
 
 			splitResult = new Regex ("(-)b(c)").Split ("a-bcd-e-fg");
 			expected = new string [] {"a", "-", "c", "d-e-fg" };
 			length = expected.Length;
-			AssertEquals ("#04", length, splitResult.Length);
-			for (i = 0; i < length; i++)
-				AssertEquals ("#05 " + i, expected [i], splitResult [i]);
+			Assert.AreEqual (length, splitResult.Length, "#5");
+			for (int i = 0; i < length; i++)
+				Assert.AreEqual (expected [i], splitResult [i], "#6:" + i);
 				
 			splitResult = new Regex ("-").Split ("a-bcd-e-fg-");
 			expected = new string [] {"a", "bcd", "e", "fg", ""};
 			length = expected.Length;
-			AssertEquals ("#06", length, splitResult.Length);
-			for (i = 0; i < length; i++)
-				AssertEquals ("#07 " + i, expected [i], splitResult [i]);
+			Assert.AreEqual (length, splitResult.Length, "#7");
+			for (int i = 0; i < length; i++)
+				Assert.AreEqual (expected [i], splitResult [i], "#8:" + i);
 		}
 
-		[Test]
-		public void MathEmptyGroup () // bug 42529
+		[Test] // bug #42529
+		public void MathEmptyGroup ()
 		{
 			string str = "Match something from here.";
 
-			AssertEquals ("MEG #01", false, Regex.IsMatch(str, @"(something|dog)$"));
-			AssertEquals ("MEG #02", true, Regex.IsMatch(str, @"(|something|dog)$"));
-			AssertEquals ("MEG #03", true, Regex.IsMatch(str, @"(something||dog)$"));
-			AssertEquals ("MEG #04", true, Regex.IsMatch(str, @"(something|dog|)$"));
+			Assert.IsFalse (Regex.IsMatch(str, @"(something|dog)$"), "#1");
+			Assert.IsTrue (Regex.IsMatch (str, @"(|something|dog)$"), "#2");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something||dog)$"), "#3");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something|dog|)$"), "#4");
 
-			AssertEquals ("MEG #05", true, Regex.IsMatch(str, @"(something|dog)*"));
-			AssertEquals ("MEG #06", true, Regex.IsMatch(str, @"(|something|dog)*"));
-			AssertEquals ("MEG #07", true, Regex.IsMatch(str, @"(something||dog)*"));
-			AssertEquals ("MEG #08", true, Regex.IsMatch(str, @"(something|dog|)*"));
+			Assert.IsTrue (Regex.IsMatch (str, @"(something|dog)*"), "#5");
+			Assert.IsTrue (Regex.IsMatch (str, @"(|something|dog)*"), "#6");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something||dog)*"), "#7");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something|dog|)*"), "#8");
 
-			AssertEquals ("MEG #09", true, Regex.IsMatch(str, @"(something|dog)*$"));
-			AssertEquals ("MEG #10", true, Regex.IsMatch(str, @"(|something|dog)*$"));
-			AssertEquals ("MEG #11", true, Regex.IsMatch(str, @"(something||dog)*$"));
-			AssertEquals ("MEG #12", true, Regex.IsMatch(str, @"(something|dog|)*$"));
-
+			Assert.IsTrue (Regex.IsMatch (str, @"(something|dog)*$"), "#9");
+			Assert.IsTrue (Regex.IsMatch (str, @"(|something|dog)*$"), "#10");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something||dog)*$"), "#11");
+			Assert.IsTrue (Regex.IsMatch (str, @"(something|dog|)*$"), "#12");
 		}
 
-		[Test]
-		public void Braces () // bug 52924
+		[Test] // bug #52924
+		public void Braces ()
 		{
-			// Before the fix, the next line throws an exception
 			Regex regVar = new Regex(@"{\w+}");
 			Match m = regVar.Match ("{   }");
-			AssertEquals ("BR #01", false, m.Success);
+			Assert.IsFalse  (m.Success);
 		}
 
-		[Test]
-		public void WhiteSpaceGroupped () // bug 71077
+		[Test] // bug #71077
+		public void WhiteSpaceGroupped ()
 		{
 			string s = "\n";
 			string p = @"[\s\S]";	// =Category.Any
-
-			AssertEquals ("WSG#1", true, Regex.IsMatch (s, p));
+			Assert.IsTrue (Regex.IsMatch (s, p));
 		}
 
-                [Test]
-                public void RangeIgnoreCase() // bug 45976
-                {
-                        string str = "AAABBBBAAA" ;
-                        AssertEquals("RIC #01", true, Regex.IsMatch(str, @"[A-F]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #02", true, Regex.IsMatch(str, @"[a-f]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #03", true, Regex.IsMatch(str, @"[A-Fa-f]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #04", true, Regex.IsMatch(str, @"[AB]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #05", true, Regex.IsMatch(str, @"[A-B]+", RegexOptions.IgnoreCase));
+		[Test] // bug #45976
+		public void RangeIgnoreCase()
+		{
+			string str = "AAABBBBAAA" ;
+			Assert.IsTrue (Regex.IsMatch(str, @"[A-F]+", RegexOptions.IgnoreCase), "#A1");
+			Assert.IsTrue (Regex.IsMatch (str, @"[a-f]+", RegexOptions.IgnoreCase), "#A2");
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-Fa-f]+", RegexOptions.IgnoreCase), "#A3");
+			Assert.IsTrue (Regex.IsMatch (str, @"[AB]+", RegexOptions.IgnoreCase), "#A4");
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-B]+", RegexOptions.IgnoreCase), "#A5");
 
-                        str = "AaaBBBaAa" ;
-                        AssertEquals("RIC #06", true, Regex.IsMatch(str, @"[A-F]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #07", true, Regex.IsMatch(str, @"[a-f]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #08", true, Regex.IsMatch(str, @"[A-Fa-f]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #09", true, Regex.IsMatch(str, @"[AB]+", RegexOptions.IgnoreCase));
-                        AssertEquals("RIC #10", true, Regex.IsMatch(str, @"[A-B]+", RegexOptions.IgnoreCase));
+			str = "AaaBBBaAa" ;
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-F]+", RegexOptions.IgnoreCase), "#B1");
+			Assert.IsTrue (Regex.IsMatch (str, @"[a-f]+", RegexOptions.IgnoreCase), "#B2");
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-Fa-f]+", RegexOptions.IgnoreCase), "#B3");
+			Assert.IsTrue (Regex.IsMatch (str, @"[AB]+", RegexOptions.IgnoreCase), "#B4");
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-B]+", RegexOptions.IgnoreCase), "#B5");
 
 			str = "Aaa[";
-			AssertEquals("RIC #11", true, Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
-			
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-a]+", RegexOptions.IgnoreCase), "#C");
+
 			str = "Ae";
-			Assert("RIC #12", Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
-
-                }
-
-		[Test]
-		public void Escape0 () // bug54797
-		{
-            		Regex r = new Regex(@"^[\s\0]*$");
-			AssertEquals ("E0-1", true, r.Match(" \0").Success);
+			Assert.IsTrue (Regex.IsMatch (str, @"[A-a]+", RegexOptions.IgnoreCase), "#D");
 		}
 
-        	[Test()]
-        	public void MultipleMatches()
-        	{
-            		Regex regex = new Regex (@"^(?'path'.*(\\|/)|(/|\\))(?'file'.*)$");
-            		Match match = regex.Match (@"d:\Temp\SomeDir\SomeDir\bla.xml");
-                                                                                           
-            		AssertEquals ("MM #01", 5, match.Groups.Count);
-                                                                                           
-            		AssertEquals ("MM #02", "1", regex.GroupNameFromNumber(1));
-            		AssertEquals ("MM #03", "2", regex.GroupNameFromNumber(2));
-            		AssertEquals ("MM #04", "path", regex.GroupNameFromNumber(3));
-            		AssertEquals ("MM #05", "file", regex.GroupNameFromNumber(4));
-                                                                                           
-            		AssertEquals ("MM #06", "\\", match.Groups[1].Value);
-            		AssertEquals ("MM #07", "", match.Groups[2].Value);
-            		AssertEquals ("MM #08", @"d:\Temp\SomeDir\SomeDir\", // fool emacs: "
-				      match.Groups[3].Value);
-            		AssertEquals ("MM #09", "bla.xml", match.Groups[4].Value);
-        	}
+		[Test] // bug #54797
+		public void Escape0 ()
+		{
+			Regex r = new Regex(@"^[\s\0]*$");
+			Assert.IsTrue (r.Match(" \0").Success);
+		}
 
-		[Test] 
-		public void SameNameGroups () // First problem in fixing bug #56000
+		[Test]
+		public void MultipleMatches()
+		{
+			Regex regex = new Regex (@"^(?'path'.*(\\|/)|(/|\\))(?'file'.*)$");
+			Match match = regex.Match (@"d:\Temp\SomeDir\SomeDir\bla.xml");
+
+			Assert.AreEqual (5, match.Groups.Count, "#1");
+			Assert.AreEqual ("1", regex.GroupNameFromNumber (1), "#2");
+			Assert.AreEqual ("2", regex.GroupNameFromNumber (2), "#3");
+			Assert.AreEqual ("path", regex.GroupNameFromNumber (3), "#4");
+			Assert.AreEqual ("file", regex.GroupNameFromNumber (4), "#5");
+			Assert.AreEqual ("\\", match.Groups [1].Value, "#6");
+			Assert.AreEqual (string.Empty, match.Groups [2].Value, "#7");
+			Assert.AreEqual (@"d:\Temp\SomeDir\SomeDir\", match.Groups [3].Value, "#8");
+			Assert.AreEqual ("bla.xml", match.Groups [4].Value, "#9");
+		}
+
+		[Test] // bug #56000
+		public void SameNameGroups ()
 		{
 			string rex = "link\\s*rel\\s*=\\s*[\"']?alternate[\"']?\\s*";
 			rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
-			Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
+			new Regex (rex, RegexOptions.IgnoreCase);
 		}
 
-		[Test]
-		public void UndefinedGroup () // bug 52890
+		[Test] // bug #52890
+		public void UndefinedGroup ()
 		{
 			Regex regex = new Regex( "[A-Za-z_0-9]" );
 			Match m = regex.Match( "123456789abc" );
 			Group g = m.Groups["not_defined"];
-			AssertNotNull ("#0", g);
-			AssertEquals ("#1", 0, g.Index);
-			AssertEquals ("#2", 0, g.Length);
-			AssertEquals ("#3", "", g.Value);
-			Assert ("#4", !g.Success);
-			AssertNotNull ("#5", g.Captures);
-			AssertEquals ("#6", 0, g.Captures.Count);
+			Assert.IsNotNull (g, "#1");
+			Assert.AreEqual (0, g.Index, "#2");
+			Assert.AreEqual (0, g.Length, "#3");
+			Assert.AreEqual (string.Empty, g.Value, "#4");
+			Assert.IsFalse (g.Success, "#5");
+			Assert.IsNotNull (g.Captures, "#6");
+			Assert.AreEqual (0, g.Captures.Count, "#7");
 		}
 
 		[Test]
@@ -170,7 +163,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Regex re = new Regex ("[\\w\\W]{8,32}");
 			Match m = re.Match (new string ('1', 7));
-			AssertEquals ("#01", false, m.Success);
+			Assert.IsFalse (m.Success);
 		}
 
 		[Test]
@@ -178,7 +171,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Regex re = new Regex ("[\\w\\W]{8,32}");
 			Match m = re.Match (new string ('1', 8));
-			AssertEquals ("#01", true, m.Success);
+			Assert.IsTrue (m.Success);
 		}
 
 		[Test]
@@ -186,7 +179,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Regex re = new Regex ("[\\w\\W]{8,32}");
 			Match m = re.Match (new string ('1', 16));
-			AssertEquals ("#01", true, m.Success);
+			Assert.IsTrue (m.Success);
 		}
 
 		[Test]
@@ -194,7 +187,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Regex re = new Regex ("[\\w\\W]{8,32}");
 			Match m = re.Match (new string ('1', 32));
-			AssertEquals ("#01", true, m.Success);
+			Assert.IsTrue (m.Success);
 		}
 
 		[Test]
@@ -202,7 +195,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Regex re = new Regex ("[\\w\\W]{8,32}");
 			Match m = re.Match (new string ('1', 33));
-			AssertEquals ("#01", true, m.Success);
+			Assert.IsTrue (m.Success);
 		}
 
 		[Test]
@@ -211,7 +204,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			string text = "<?xml version=\"1.0\"?>";
 			Regex re = new Regex ("<\\s*(\\/?)\\s*([\\s\\S]*?)\\s*(\\/?)\\s*>");
 			text = re.Replace (text, "{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
-			AssertEquals ("#01", "{blue:&lt;}{maroon:?xml version=\"1.0\"?}{blue:&gt;}", text);
+			Assert.AreEqual ("{blue:&lt;}{maroon:?xml version=\"1.0\"?}{blue:&gt;}", text);
 		}
 	
 		[Test]
@@ -220,7 +213,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			string text = "Go, \bNo\bGo" ;
 			Regex re = new Regex(@"\b[\b]");
 			text = re.Replace(text, " ");
-			AssertEquals("#01", "Go, \bNo Go", text);
+			Assert.AreEqual ("Go, \bNo Go", text);
 		}
 
 		[Test]
@@ -229,32 +222,30 @@ namespace MonoTests.System.Text.RegularExpressions
 			string text = "abcdeeee";
 			Regex re = new Regex("e+");
 			text = re.Replace(text, "e", -1, 4);
-			AssertEquals("#01", "abcde", text);
+			Assert.AreEqual ("abcde", text);
 		}
 
-		[Test]
-		//[Ignore] You may want to ignore this if the bugs gets back
-		public void SplitInfiniteLoop () // bug 57274
+		[Test] // bug #57274
+		public void SplitInfiniteLoop ()
 		{
 			string ss = "a b c d e";
 			string [] words = Regex.Split (ss, "[ \t\n\r]*");
-			AssertEquals ("#01Length", 11, words.Length);
-			AssertEquals ("#00", "", words [0]);
-			AssertEquals ("#01", "a", words [1]);
-			AssertEquals ("#02", "", words [2]);
-			AssertEquals ("#03", "b", words [3]);
-			AssertEquals ("#04", "", words [4]);
-			AssertEquals ("#05", "c", words [5]);
-			AssertEquals ("#06", "", words [6]);
-			AssertEquals ("#07", "d", words [7]);
-			AssertEquals ("#08", "", words [8]);
-			AssertEquals ("#09", "e", words [9]);
-			AssertEquals ("#10", "", words [10]);
-
+			Assert.AreEqual (11, words.Length, "#1");
+			Assert.AreEqual (string.Empty, words [0], "#2");
+			Assert.AreEqual ("a", words [1], "#3");
+			Assert.AreEqual (string.Empty, words [2], "#4");
+			Assert.AreEqual ("b", words [3], "#5");
+			Assert.AreEqual (string.Empty, words [4], "#6");
+			Assert.AreEqual ("c", words [5], "#7");
+			Assert.AreEqual (string.Empty, words [6], "#8");
+			Assert.AreEqual ("d", words [7], "#9");
+			Assert.AreEqual (string.Empty, words [8], "#10");
+			Assert.AreEqual ("e", words [9], "#11");
+			Assert.AreEqual (string.Empty, words [10], "#12");
 		}
 
-		[Test]
-		public void CaseAndSearch () // bug 69065
+		[Test] // bug #69065
+		public void CaseAndSearch ()
 		{
 			string test1 =  @"!E   ZWEITBAD :REGLER-PARAMETER 20.10.2004  SEITE   1";
 			string test2 =  @" REGLER-PARAMETER ";
@@ -262,84 +253,96 @@ namespace MonoTests.System.Text.RegularExpressions
 			Regex x = new Regex ("REGLER-PARAMETER",RegexOptions.IgnoreCase|RegexOptions.Compiled);
 
 			Match m = x.Match (test1);
-			AssertEquals ("#01", true, m.Success);
+			Assert.IsTrue (m.Success, "#1");
 
 			m = x.Match (test2);
-			AssertEquals ("#02", true, m.Success);
+			Assert.IsTrue (m.Success, "#2");
 
 			m = x.Match (test3);
-			AssertEquals ("#03", true, m.Success);
+			Assert.IsTrue (m.Success, "#3");
 		}
 
-		[Test]
-		public void QuantifiersParseError () // bug 69193
+		[Test] // bug #69193
+		public void QuantifiersParseError ()
 		{
-			Regex x = new Regex ("{1,a}");
-			x = new Regex ("{a,1}");
-			x = new Regex ("{a}");
-			x = new Regex ("{,a}");
+			new Regex ("{1,a}");
+			new Regex ("{a,1}");
+			new Regex ("{a}");
+			new Regex ("{,a}");
 		}
 
-		[Test]
-		public void NameLookupInEmptyMatch () // bug 74753
+		[Test] // bug #74753
+		public void NameLookupInEmptyMatch ()
 		{
 			Regex regTime = new Regex (
 					@"(?<hour>[0-9]{1,2})([\:](?<minute>[0-9]{1,2})){0,1}([\:](?<second>[0-9]{1,2})){0,1}\s*(?<ampm>(?i:(am|pm)){0,1})");
 
 			Match mTime = regTime.Match("");
-			AssertEquals ("#01", "", mTime.Groups["hour"].Value);
-			AssertEquals ("#02", "", mTime.Groups["minute"].Value);
-			AssertEquals ("#03", "", mTime.Groups["second"].Value);
-			AssertEquals ("#04", "", mTime.Groups["ampm"].Value);
+			Assert.AreEqual ("", mTime.Groups["hour"].Value, "#A1");
+			Assert.AreEqual ("", mTime.Groups ["minute"].Value, "#A2");
+			Assert.AreEqual ("", mTime.Groups ["second"].Value, "#A3");
+			Assert.AreEqual ("", mTime.Groups ["ampm"].Value, "#A4");
 
 			mTime = regTime.Match("12:00 pm");
-			AssertEquals ("#05", "12", mTime.Groups["hour"].Value);
-			AssertEquals ("#06", "00", mTime.Groups["minute"].Value);
-			AssertEquals ("#07", "", mTime.Groups["second"].Value);
-			AssertEquals ("#08", "pm", mTime.Groups["ampm"].Value);
+			Assert.AreEqual ("12", mTime.Groups ["hour"].Value, "#B1");
+			Assert.AreEqual ("00", mTime.Groups ["minute"].Value, "#B2");
+			Assert.AreEqual ("", mTime.Groups ["second"].Value, "#B3");
+			Assert.AreEqual ("pm", mTime.Groups ["ampm"].Value, "#B4");
 		}
 
-		[Test]
+		[Test] // bug #77626
 		public void HangingHyphens ()
 		{
-			// bug 77626
-			Assert ("#01", Regex.IsMatch ("mT1[", @"m[0-9A-Za-z_-]+\["));
-			Assert ("#02", Regex.IsMatch ("mT1[", @"m[-0-9A-Za-z_]+\["));
+			Assert.IsTrue (Regex.IsMatch ("mT1[", @"m[0-9A-Za-z_-]+\["), "#A1");
+			Assert.IsTrue (Regex.IsMatch ("mT1[", @"m[-0-9A-Za-z_]+\["), "#A2");
 
-			Assert ("#03", Regex.IsMatch ("-a;", @"[--a]{3}"));
-			Assert ("#04", Regex.IsMatch ("-&,", @"[&--]{3}"));
+			Assert.IsTrue (Regex.IsMatch ("-a;", @"[--a]{3}"), "#B1");
+			Assert.IsTrue (Regex.IsMatch ("-&,", @"[&--]{3}"), "#B2");
 
-			Assert ("#05", Regex.IsMatch ("abcz-", @"[a-c-z]{5}"));
-			Assert ("#05b", !Regex.IsMatch ("defghijklmnopqrstuvwxy", @"[a-c-z]"));
+			Assert.IsTrue (Regex.IsMatch ("abcz-", @"[a-c-z]{5}"), "#C1");
+			Assert.IsFalse (Regex.IsMatch ("defghijklmnopqrstuvwxy", @"[a-c-z]"), "#C2");
 
-			Assert ("#06", Regex.IsMatch ("abcxyz-", @"[a-c-x-z]{7}"));
-			Assert ("#06b", !Regex.IsMatch ("defghijklmnopqrstuvw", @"[a-c-x-z]"));
+			Assert.IsTrue (Regex.IsMatch ("abcxyz-", @"[a-c-x-z]{7}"), "#D1");
+			Assert.IsFalse (Regex.IsMatch ("defghijklmnopqrstuvw", @"[a-c-x-z]"), "#D2");
 
-			Assert ("#07", Regex.IsMatch (" \tz-", @"[\s-z]{4}"));
-			Assert ("#07b", !Regex.IsMatch ("abcdefghijklmnopqrstuvwxy", @"[\s-z]"));
+			Assert.IsTrue (Regex.IsMatch (" \tz-", @"[\s-z]{4}"), "#E1");
+			Assert.IsFalse (Regex.IsMatch ("abcdefghijklmnopqrstuvwxy", @"[\s-z]"), "#E2");
 		}
 
 		[Test, ExpectedException (typeof (ArgumentException))]
 		public void HangingHyphen1 ()
 		{
-			bool b = Regex.IsMatch ("foobar", @"[a-\s]");
+			Regex.IsMatch ("foobar", @"[a-\s]");
+		}
+
+		[Test]
+		public void Bug313642 ()
+		{
+			Regex r = new Regex ("(?<a>c)");
+			Match m = r.Match ("a");
+			Assert.AreEqual (1, m.Groups.Count, "#1");
+			Assert.AreEqual (0, m.Groups [0].Captures.Count, "#2");
+			Assert.AreEqual (0, m.Groups [0].Index, "#3");
+			Assert.AreEqual (0, m.Groups [0].Length, "#4");
+			Assert.IsFalse (m.Groups [0].Success, "#5");
+			Assert.AreEqual (string.Empty, m.Groups [0].Value, "#6");
 		}
 
 		[Test]
 		public void Bug77487 ()
 		{
-			Assert ("#01", Regex.IsMatch ("a a", "^(a[^a]*)*a$"));
-			Assert ("#02", Regex.IsMatch ("a a", "^(a *)*a$"));
-			Assert ("#03", Regex.IsMatch ("a a", "(a[^a]*)+a"));
-			Assert ("#04", Regex.IsMatch ("a a", "(a *)+a"));
+			Assert.IsTrue (Regex.IsMatch ("a a", "^(a[^a]*)*a$"), "#1");
+			Assert.IsTrue (Regex.IsMatch ("a a", "^(a *)*a$"), "#2");
+			Assert.IsTrue (Regex.IsMatch ("a a", "(a[^a]*)+a"), "#3");
+			Assert.IsTrue (Regex.IsMatch ("a a", "(a *)+a"), "#4");
 		}
 
 		[Test]
 		public void Bug69269 ()
 		{
 			string s = "CREATE aa\faa; CREATE bb\nbb; CREATE cc\rcc; CREATE dd\tdd; CREATE ee\vee;";
-			AssertEquals ("#01", 5, Regex.Matches(s, @"CREATE[\s\S]+?;").Count);
-			AssertEquals ("#02", 5, Regex.Matches(s, @"CREATE[ \f\n\r\t\v\S]+?;").Count);
+			Assert.AreEqual (5, Regex.Matches(s, @"CREATE[\s\S]+?;").Count, "#1");
+			Assert.AreEqual (5, Regex.Matches (s, @"CREATE[ \f\n\r\t\v\S]+?;").Count, "#2");
 		}
 
 		[Test]
@@ -349,10 +352,21 @@ namespace MonoTests.System.Text.RegularExpressions
 			string s1 = "'asdf'";
 			string s2 = "'as,'df'";
 
-			m = new Regex("'.*?'").Match(s1);     Assert ("#01", m.Success); AssertEquals ("#01v", s1, m.Value);
-			m = new Regex("'[^,].*?'").Match(s1); Assert ("#02", m.Success); AssertEquals ("#02v", s1, m.Value);
-			m = new Regex("'.*?[^,]'").Match(s1); Assert ("#03", m.Success); AssertEquals ("#03v", s1, m.Value);
-			m = new Regex("'.*?[^,]'").Match(s2); Assert ("#04", m.Success); AssertEquals ("#04v", s2, m.Value);
+			m = new Regex("'.*?'").Match(s1);
+			Assert.IsTrue (m.Success, "#A1");
+			Assert.AreEqual (s1, m.Value, "#A2");
+
+			m = new Regex("'[^,].*?'").Match(s1);
+			Assert.IsTrue (m.Success, "#B1");
+			Assert.AreEqual (s1, m.Value, "#B2");
+
+			m = new Regex("'.*?[^,]'").Match(s1);
+			Assert.IsTrue (m.Success, "#C1");
+			Assert.AreEqual (s1, m.Value, "#C2");
+
+			m = new Regex("'.*?[^,]'").Match(s2);
+			Assert.IsTrue (m.Success, "#D1");
+			Assert.AreEqual (s2, m.Value, "#D2");
 		}
 
 		[Test]
@@ -362,12 +376,12 @@ namespace MonoTests.System.Text.RegularExpressions
 			string pattern = @"\Ahead&gt;\<html\>";
 			Regex r = new Regex (pattern);
 			Match m = r.Match (test);
-			Assert ("#01", m.Success);
-			AssertEquals ("#01i", 0, m.Index);
-			AssertEquals ("#01l", 14, m.Length);
+			Assert.IsTrue (m.Success, "#A1");
+			Assert.AreEqual (0, m.Index, "#A2");
+			Assert.AreEqual (14, m.Length, "#A3");
 
 			m = m.NextMatch ();
-			Assert ("#02", !m.Success);
+			Assert.IsFalse (m.Success, "#B");
 		}
 
 		[Test]
@@ -376,37 +390,10 @@ namespace MonoTests.System.Text.RegularExpressions
 			string str = "Foobar qux";
 			Regex re = new Regex (@"[a-z\s]*", RegexOptions.IgnoreCase);
 			Match m = re.Match (str);
-			AssertEquals ("#01", str, m.Value);
-                }
-
-		void Kill65535_1 (int length)
-		{
-			StringBuilder sb = new StringBuilder ("x");
-			sb.Append ('a', length);
-			sb.Append ('y');
-			string teststring = sb.ToString ();
-			Regex regex = new Regex (@"xa*y");
-			Match m = regex.Match (teststring);
-			Assert ("#01 " + length, m.Success);
-			AssertEquals ("#02 " + length, m.Index, 0);
-			AssertEquals ("#03 " + length, m.Length, teststring.Length);
+			Assert.AreEqual (str, m.Value);
 		}
 
-		void Kill65535_2 (int length)
-		{
-			StringBuilder sb = new StringBuilder ("xaaaax");
-			sb.Append ('a', length);
-			sb.Append ('y');
-			string teststring = sb.ToString ();
-			Regex regex = new Regex (@"x.*y");
-			Match m = regex.Match(teststring);
-			Assert ("#01 " + length, m.Success);
-			AssertEquals ("#02 " + length, m.Index, 0);
-			AssertEquals ("#03 " + length, m.Length, teststring.Length);
-		}
-		
-
-		[Test] // Based on bug #78278
+		[Test] // bug #78278
 		public void No65535Limit ()
 		{
 			Kill65535_1 (65535);
@@ -420,23 +407,6 @@ namespace MonoTests.System.Text.RegularExpressions
 			Kill65535_2 (131067);
 		}
 
-		void GroupNumbers_1 (string s, int n)
-		{
-			Regex r = new Regex (s);
-			int [] grps = r.GetGroupNumbers ();
-			AssertEquals (r+" #01", n, grps.Length);
-
-			int sum = 0;
-			for (int i = 0; i < grps.Length; ++i) {
-				sum += grps [i];
-				// group numbers are unique
-				for (int j = 0; j < i; ++j)
-					Assert (r+" #02 ("+i+","+j+")", grps [i] != grps [j]);
-			}
-			// no gaps in group numbering
-			AssertEquals (r+" #03", (n*(n-1))/2, sum);
-		}
-
 		[Test]
 		public void GroupNumbers ()
 		{
@@ -447,6 +417,73 @@ namespace MonoTests.System.Text.RegularExpressions
 			GroupNumbers_1 ("((a)(b))(c)", 5);
 		}
 
+		[Test]
+		public void Bug80554_0 ()
+		{
+			bug80554_trials [0].Execute ();
+		}
+
+		[Test]
+		public void Bug80554_1 ()
+		{
+			bug80554_trials [1].Execute ();
+		}
+
+		[Test]
+		public void Bug80554_2 ()
+		{
+			bug80554_trials [2].Execute ();
+		}
+
+		[Test]
+		public void Bug80554_3 ()
+		{
+			bug80554_trials [3].Execute ();
+		}
+
+		void Kill65535_1 (int length)
+		{
+			StringBuilder sb = new StringBuilder ("x");
+			sb.Append ('a', length);
+			sb.Append ('y');
+			string teststring = sb.ToString ();
+			Regex regex = new Regex (@"xa*y");
+			Match m = regex.Match (teststring);
+			Assert.IsTrue (m.Success, "#1:" + length);
+			Assert.AreEqual (0, m.Index, "#2:" + length);
+			Assert.AreEqual (teststring.Length, m.Length, "#3:" + length);
+		}
+
+		void Kill65535_2 (int length)
+		{
+			StringBuilder sb = new StringBuilder ("xaaaax");
+			sb.Append ('a', length);
+			sb.Append ('y');
+			string teststring = sb.ToString ();
+			Regex regex = new Regex (@"x.*y");
+			Match m = regex.Match(teststring);
+			Assert.IsTrue (m.Success, "#1:" + length);
+			Assert.AreEqual (0, m.Index, "#2:" + length);
+			Assert.AreEqual (teststring.Length, m.Length, "#3:" + length);
+		}
+		
+		void GroupNumbers_1 (string s, int n)
+		{
+			Regex r = new Regex (s);
+			int [] grps = r.GetGroupNumbers ();
+			Assert.AreEqual (n, grps.Length, "#1:" + r);
+
+			int sum = 0;
+			for (int i = 0; i < grps.Length; ++i) {
+				sum += grps [i];
+				// group numbers are unique
+				for (int j = 0; j < i; ++j)
+					Assert.IsTrue (grps [i] != grps [j], "#2:" + r + " (" + i + "," + j + ")");
+			}
+			// no gaps in group numbering
+			Assert.AreEqual ((n * (n - 1)) / 2, sum, "#3:" + r);
+		}
+
 		static string bug80554_s = @"(?(static)|(.*))(static)";
 		static RegexTrial[] bug80554_trials = {
 			new RegexTrial (bug80554_s, RegexOptions.None, "static", "Pass. Group[0]=(0,6) Group[1]= Group[2]=(0,6)"),
@@ -454,11 +491,5 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (bug80554_s, RegexOptions.None, "statics", "Pass. Group[0]=(0,6) Group[1]= Group[2]=(0,6)"),
 			new RegexTrial (bug80554_s, RegexOptions.None, "dynamic", "Fail.")
 		};
-
-		[Test] public void Bug80554_0 () { bug80554_trials [0].Execute (); }
-		[Test] public void Bug80554_1 () { bug80554_trials [1].Execute (); }
-		[Test] public void Bug80554_2 () { bug80554_trials [2].Execute (); }
-		[Test] public void Bug80554_3 () { bug80554_trials [3].Execute (); }
-
 	}
 }

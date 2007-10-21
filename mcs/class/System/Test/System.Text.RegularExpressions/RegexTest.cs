@@ -17,11 +17,11 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Text.RegularExpressions {
-	
+namespace MonoTests.System.Text.RegularExpressions
+{
 	[TestFixture]
-	public class RegexTest {
-
+	public class RegexTest
+	{
 #if NET_2_0
 		private int cache_initial_value;
 
@@ -37,11 +37,12 @@ namespace MonoTests.System.Text.RegularExpressions {
 			Regex.CacheSize = cache_initial_value;
 		}
 #endif
+
 		[Test]
 		public void Simple ()
 		{
 			char[] c = { (char)32, (char)8212, (char)32 };
-			string s = new String(c);			
+			string s = new String(c);
 			Assert.IsTrue (Regex.IsMatch(s, s), "char");
 		}
 		
@@ -78,7 +79,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 			Assert.AreEqual ("go-mono.com", m.Groups ["domain"].Value, "#m06");
 		}
 
-		static string story =	
+		static string story =
 			"Two little dragons lived in the forest\n" +
 			"They spent their days collecting honey suckle,\n" +
 			"And eating curds and whey\n" +
@@ -171,9 +172,6 @@ namespace MonoTests.System.Text.RegularExpressions {
 		[Test]
 		public void Matches ()
 		{
-			int i;
-			MatchCollection mc;
-			Regex r;
 			foreach (MatchCollectionTrial t in trials)
 				runTrial (t);
 		}
