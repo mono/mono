@@ -27,17 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Data;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace MonoTests.System.Data.Common {
+using NUnit.Framework;
 
-	public class NonAbstractDBDataPermissionAttribute : DBDataPermissionAttribute {
-
+namespace MonoTests.System.Data.Common
+{
+	public class NonAbstractDBDataPermissionAttribute : DBDataPermissionAttribute
+	{
 		public NonAbstractDBDataPermissionAttribute (SecurityAction action)
 			: base (action)
 		{
@@ -50,13 +51,13 @@ namespace MonoTests.System.Data.Common {
 	}
 
 	[TestFixture]
-	public class DBDataPermissionAttributeTest {
-
+	public class DBDataPermissionAttributeTest
+	{
 		[Test]
 		public void Default ()
 		{
 			DBDataPermissionAttribute a = new NonAbstractDBDataPermissionAttribute (SecurityAction.Assert);
-#if !TARGET_JVM			
+#if !TARGET_JVM
 			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
 #endif			
 			Assert.IsFalse (a.Unrestricted, "Unrestricted");
@@ -96,7 +97,7 @@ namespace MonoTests.System.Data.Common {
 		[Test]
 		public void Action_Invalid ()
 		{
-			DBDataPermissionAttribute a = new NonAbstractDBDataPermissionAttribute ((SecurityAction)Int32.MinValue);
+			new NonAbstractDBDataPermissionAttribute ((SecurityAction)Int32.MinValue);
 			// no validation in attribute
 		}
 
@@ -134,15 +135,34 @@ namespace MonoTests.System.Data.Common {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
-#else
-		[ExpectedException (typeof (ArgumentException))]
-#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			DBDataPermissionAttribute a = new NonAbstractDBDataPermissionAttribute (SecurityAction.Assert);
-			a.KeyRestrictionBehavior = (KeyRestrictionBehavior)Int32.MinValue;
+			try {
+				a.KeyRestrictionBehavior = (KeyRestrictionBehavior) 666;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// The KeyRestrictionBehavior enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("KeyRestrictionBehavior") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#6");
+				Assert.IsNotNull (ex.ParamName, "#7");
+				Assert.AreEqual ("KeyRestrictionBehavior", ex.ParamName, "#8");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// The KeyRestrictionBehavior enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				//Assert.IsTrue (ex.Message.IndexOf ("KeyRestrictionBehavior") != -1, "#5");
+				//Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#6");
+				//Assert.IsNull (ex.ParamName, "#7");
+			}
+#endif
 		}
 
 		[Test]
@@ -165,7 +185,7 @@ namespace MonoTests.System.Data.Common {
 
 			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
 			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
-			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			AttributeUsageAttribute aua = (AttributeUsageAttribute) attrs [0];
 			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
 			Assert.IsFalse (aua.Inherited, "Inherited");
 			AttributeTargets at = AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method;

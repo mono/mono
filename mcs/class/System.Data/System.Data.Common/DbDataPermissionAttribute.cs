@@ -90,14 +90,7 @@ namespace System.Data.Common {
 		public KeyRestrictionBehavior KeyRestrictionBehavior {
 			get { return keyRestrictionBehavior; }
 			set {
-				if (!Enum.IsDefined (typeof (KeyRestrictionBehavior), value)) {
-					string msg = Locale.GetText ("Unknown value.");
-#if NET_2_0
-					throw new ArgumentOutOfRangeException ("KeyRestrictionBehavior", value, msg);
-#else
-					throw new ArgumentException ("KeyRestrictionBehavior", msg);
-#endif
-				}
+				ExceptionHelper.CheckEnumValue (typeof (KeyRestrictionBehavior), value);
 				keyRestrictionBehavior = value;
 			}
 		}

@@ -238,10 +238,8 @@ namespace System.Data.OleDb
 #endif
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
-			set
-			{
-				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
-					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+			set {
+				ExceptionHelper.CheckEnumValue (typeof (UpdateRowSource), value);
 				updatedRowSource = value;
 			}
 		}

@@ -1,3 +1,10 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbDataPermissionAttribute.cs: In KeyRestrictionBehavior, reuse
+	ExceptionHelper.CheckEnumValue.
+	* ExceptionHelper.cs: Use same exception message for both 1.0 and 2.0.
+	* Index.cs: Fixed compiler warnings. Code formatting.
+
 2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbDataAdapter.cs: Implemented UpdateBatchSize setter.

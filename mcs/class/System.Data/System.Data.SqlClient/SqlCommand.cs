@@ -197,8 +197,7 @@ namespace System.Data.SqlClient {
 					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SqlClient Data Provider.");
 #endif
 
-				if (!Enum.IsDefined (typeof (CommandType), value))
-					throw ExceptionHelper.InvalidEnumValueException ("CommandType", value);
+				ExceptionHelper.CheckEnumValue (typeof (CommandType), value);
 				commandType = value; 
 			}
 		}
@@ -296,8 +295,7 @@ namespace System.Data.SqlClient {
 		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set {
-				if (!Enum.IsDefined (typeof (UpdateRowSource), value))
-					throw ExceptionHelper.InvalidEnumValueException ("UpdateRowSource", value);
+				ExceptionHelper.CheckEnumValue (typeof (UpdateRowSource), value);
 				updatedRowSource = value;
 			}
 		}

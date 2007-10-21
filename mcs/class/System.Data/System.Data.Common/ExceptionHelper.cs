@@ -26,13 +26,13 @@ namespace System.Data.Common
 
 		internal static ArgumentException InvalidEnumValueException (String enumeration, object value)
 		{
+			string msg = string.Format (CultureInfo.InvariantCulture,
+				"The {0} enumeration value, {1}, is invalid.",
+				enumeration, value);
 #if NET_2_0
-			return new ArgumentOutOfRangeException (enumeration,
-				string.Format (CultureInfo.InvariantCulture,
-					"The {0} enumeration value, {1}, is " +
-					"invalid", enumeration, value));
+			return new ArgumentOutOfRangeException (enumeration, msg);
 #else
-			return new ArgumentException (String.Format ("The {0} enumeration value, {1}, is invalid", enumeration, value));
+			return new ArgumentException (msg);
 #endif
 		}
 

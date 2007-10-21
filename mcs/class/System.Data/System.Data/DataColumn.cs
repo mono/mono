@@ -122,9 +122,8 @@ namespace System.Data {
 		{
 			ColumnName = (columnName == null ? String.Empty : columnName);
 			
-			if(dataType == null) {
-				throw new ArgumentNullException("dataType can't be null.");
-			}
+			if (dataType == null)
+				throw new ArgumentNullException("dataType");
 			
 			DataType = dataType;
 			Expression = expr == null ? String.Empty : expr;
@@ -167,9 +166,11 @@ namespace System.Data {
 					throw new InvalidOperationException ("The DateTimeMode can be set only on DataColumns of type DateTime.");
 				
 				if (!Enum.IsDefined (typeof (DataSetDateTime), value))
-					throw new InvalidEnumArgumentException ("The DataSetDateTime enumeration value, " + 
-							(int)value + ", is invalid.");
-						
+					throw new InvalidEnumArgumentException (
+						string.Format (CultureInfo.InvariantCulture,
+						"The {0} enumeration value, {1}, is invalid",
+						typeof (DataSetDateTime).Name, value));
+
 				if (_datetimeMode == value)
 					return;
 				if (_table == null || _table.Rows.Count == 0) {
@@ -235,7 +236,7 @@ namespace System.Data {
 				_allowDBNull = value;
 			}
 		}
-        
+
 		/// <summary>
 		/// Gets or sets a value indicating whether the column automatically increments the value of the column for new rows added to the table.
 		/// </summary>
@@ -733,7 +734,7 @@ namespace System.Data {
 #endif
 		[DefaultValue (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-                public bool Unique 
+		public bool Unique 
 		{
 			get {
 				return _unique;
@@ -805,7 +806,7 @@ namespace System.Data {
 			copy._columnName = _columnName;
 			//Copy.Container
 			copy.DataType = DataType;
-			copy._defaultValue = _defaultValue;			
+			copy._defaultValue = _defaultValue;
 			copy._expression = _expression;
 			//Copy.ExtendedProperties
 			copy._maxLength = _maxLength;
@@ -904,29 +905,24 @@ namespace System.Data {
 		// Returns true if all the same collumns are in columnSet and compareSet
 		internal static bool AreColumnSetsTheSame(DataColumn[] columnSet, DataColumn[] compareSet)
 		{
-			if (null == columnSet && null == compareSet) {
+			if (null == columnSet && null == compareSet)
 				return true;
-			}
 
-			if (null == columnSet || null == compareSet) {
+			if (null == columnSet || null == compareSet)
 				return false;
-			}
 
-			if (columnSet.Length != compareSet.Length) { 
+			if (columnSet.Length != compareSet.Length)
 				return false;
-			}
 			
 			foreach (DataColumn col in columnSet) {
 				bool matchFound = false;
 				foreach (DataColumn compare in compareSet) {
-					if (col == compare) {
-						matchFound = true;					
-					}
+					if (col == compare)
+						matchFound = true;
 				}
-				if (! matchFound) {
+				if (!matchFound)
 					return false;
-				}
-			}			
+			}
 			return true;
 		}
 

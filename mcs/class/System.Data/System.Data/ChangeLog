@@ -1,3 +1,9 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataColumn.cs: Fixed ParamName of ArgumentNullException. Modified
+	exception message for invalid DateTimeMode value to match MS. Code
+	formatting.
+
 2007-10-19  Nagappan <anagappan@novell.com> 
 
 	* DataRelation.cs: Removed bogus TODO.
