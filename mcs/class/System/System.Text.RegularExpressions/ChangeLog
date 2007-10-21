@@ -1,8 +1,13 @@
+2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegexTest.cs: Removed. Test was already moved to the appropriate
+	location. 
+
 2007-06-21  Juraj Skripsky <js@hotfeet.ch>
 
-   * quicksearch.ch: Optimization. Add byte array as skip table for
-   chars <= 255, falling back to the hashtable for chars > 255 and
-   skip distances > 255.
+	* quicksearch.ch: Optimization. Add byte array as skip table for
+	chars <= 255, falling back to the hashtable for chars > 255 and
+	skip distances > 255.
 
 2007-04-18  Raja R Harinath  <rharinath@novell.com>
 
