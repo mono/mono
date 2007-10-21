@@ -218,8 +218,9 @@ namespace MonoTests.System.Threading
 			C1Test test1 = new C1Test ();
 			Thread tA = new Thread (new ThreadStart (test1.TestMethod));
 			int hA1 = tA.GetHashCode ();
-			// GetHashCode can legitimately return 0
-			//Assert.IsTrue (hA1 > 0, "#A1");
+#if NET_2_0
+			Assert.IsTrue (hA1 > 0, "#A1");
+#endif
 			tA.Start ();
 			int hA2 = tA.GetHashCode ();
 			Assert.AreEqual (hA1, hA2, "#A2");
@@ -233,8 +234,9 @@ namespace MonoTests.System.Threading
 			test1 = new C1Test ();
 			Thread tB = new Thread (new ThreadStart (test1.TestMethod));
 			int hB1 = tB.GetHashCode ();
-			// GetHashCode can legitimately return 0
-			//Assert.IsTrue (hB1 > 0, "#B1");
+#if NET_2_0
+			Assert.IsTrue (hB1 > 0, "#B1");
+#endif
 			tB.Start ();
 			int hB2 = tB.GetHashCode ();
 			Assert.AreEqual (hB1, hB2, "#B2");
@@ -244,6 +246,7 @@ namespace MonoTests.System.Threading
 #if NET_2_0
 			Assert.AreEqual (hB1, tB.ManagedThreadId, "#B4");
 #endif
+			Assert.IsFalse (hA2 == hB2, "#B5");
 		}
 
 #if NET_2_0
