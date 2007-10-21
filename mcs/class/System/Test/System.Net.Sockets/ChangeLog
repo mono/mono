@@ -1,3 +1,7 @@
+2007-10-21  Robert Jordan  <robertj@gmx.net>
+
+	* SocketTest.cs: Enable GetHashCodeTest.
+
 2007-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SocketTest.cs: Improved EndConnect test. Added test for bug #82446,

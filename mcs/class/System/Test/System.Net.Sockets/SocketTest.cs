@@ -502,9 +502,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")] // bug #82446
-#endif
 		public void GetHashCodeTest ()
 		{
 			Socket server = new Socket (AddressFamily.InterNetwork,

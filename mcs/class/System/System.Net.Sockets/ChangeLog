@@ -1,3 +1,8 @@
+2007-10-21  Robert Jordan  <robertj@gmx.net>
+
+	* Socket.cs: Remove GetHashCode override from the NET_2_0
+	profile. Add LAMESPEC comment. Fixes bug #325113.
+
 2007-09-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Socket.cs: Removed unused method.

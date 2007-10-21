@@ -3238,10 +3238,16 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 		}
 
+#if ONLY_1_1
 		public override int GetHashCode ()
 		{
+			// LAMESPEC:
+			// The socket is not suitable to serve as a hash code,
+			// because it will change during its lifetime, but
+			// this is how MS.NET 1.1 implemented this method.
 			return (int) socket; 
 		}
+#endif
 
 		protected virtual void Dispose (bool explicitDisposing)
 		{
