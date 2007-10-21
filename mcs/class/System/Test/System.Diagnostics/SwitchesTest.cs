@@ -41,7 +41,7 @@ namespace MonoTests.System.Diagnostics {
 				// ensure that the .config file is read in
 				int n = base.SwitchSetting;
 				// remove warning about unused variable
-				n = n;
+				n = 5;
 				return v;
 			}
 		}
