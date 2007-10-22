@@ -801,6 +801,7 @@
     <Compile Include="System.Net\CookieException.cs" />
     <Compile Include="System.Net\CredentialCache.cs" />
     <Compile Include="System.Net\DefaultCertificatePolicy.cs" />
+    <Compile Include="System.Net\DecompressionMethods.cs" />
     <Compile Include="System.Net\DigestClient.cs" />
     <Compile Include="System.Net\Dns.cs">
       <SubType>Code</SubType>

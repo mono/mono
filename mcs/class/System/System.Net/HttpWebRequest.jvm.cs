@@ -600,6 +600,17 @@ namespace System.Net
 
 
 		#endregion
+#if NET_2_0
+                public DecompressionMethods AutomaticDecompression
+                {
+                        get {
+                                throw new NotSupportedException ();
+                        }
+                        set {
+                                throw new NotSupportedException ();
+                        }
+                }
+#endif
 
 	}
 }
