@@ -134,9 +134,10 @@ namespace System.Net.Mail {
 			//GC.SuppressFinalize (this);
 		}
 
-		[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
+			if (disposing)
+				contentStream.Close ();
 		}
 
 		#endregion // Methods

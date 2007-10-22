@@ -1,5 +1,9 @@
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AttachmentBase.cs : implemented Dispose(bool).
+
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AttachmentCollection.cs : remove TODO.
 	* Attachment.cs : guess NameEncoding when set_Name().
 	* MailMessage.cs : moved encoding guess impl to ContentType.
