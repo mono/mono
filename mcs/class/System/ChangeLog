@@ -1,3 +1,7 @@
+2007-10-22  Jb Evain  <jbevain@novell.com>
+
+	* net_2_1_System.dll.sources: remove System.Net.Mail.*
+
 2007-09-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added HttpListenerRequestTest.cs.
