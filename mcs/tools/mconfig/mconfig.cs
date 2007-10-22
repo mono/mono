@@ -30,13 +30,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-using Mono.GetOptions;
-
-[assembly: Mono.About ("Utility to modify .NET config files")]
-[assembly: Mono.Author ("Marek Habersack")]
-[assembly: Mono.UsageComplement ("command [COMMAND_ARGUMENTS]")]
-[assembly: Mono.ReportBugsTo ("mhabersack@novell.com")]
-
 namespace Mono.MonoConfig 
 {
 	delegate int HandleCommand (MConfigOptions options, Configuration config);
@@ -44,70 +37,234 @@ namespace Mono.MonoConfig
 	struct CommandHandler {
 		public readonly HandleCommand Handler;
 		public readonly string[] Names;
-		public readonly string Syntax;
-		public readonly string Documentation;
 			
-		public CommandHandler (string[] names, HandleCommand handler, string syntax, string documentation)
+		public CommandHandler (string[] names, HandleCommand handler)
 		{
 			this.Names = names;
 			this.Handler = handler;
-			this.Syntax = syntax;
-			this.Documentation = documentation;
 		}
 	};
 	
-	class MConfigOptions : Options
+	class MConfigOptions
 	{
+		string[] usage = {
+			"Usage: mconfig [options] command [command_parameters]",
+			"Options:",
+			"",
+			"  -?,-h,--help                      Display this usage information",
+			"  -v,--version                      Display version information",
+			"  -c,--config=<filepath>            Read the specified config file in addition to",
+			"                                    the standard ones. Settings in this file override ones",
+			"                                    in the other files.",
+			"  -t,--target={any,web,application} Use this target when executing 'command'",
+			"  -C,--list-configs                 List all the default config file names defined in the",
+			"                                    configuration files.",
+			"  -F,--list-features                List all the features defined in the configuration files.",
+			"",
+			"Commands:",
+			"  {addfeature,af} <feature_name> [config_file_path]",
+			"  {defconfig,dc} [config_name] [target_directory]"
+		};
+		
 		public delegate void ListDefaultConfigsHandler ();
 		public delegate void ListFeaturesHandler ();
 
 		public event ListDefaultConfigsHandler OnListDefaultConfigs;
 		public event ListFeaturesHandler OnListFeatures;
+
+		List <string> plain_arguments;
+		Dictionary <string, string> unknown_arguments;
+
+		public string ConfigFile;
+		public FeatureTarget Target = FeatureTarget.Any;
+		public bool ListDefaultConfigs;
+		public bool ListFeatures;
 		
-		[Option ("output version information and exit", 'v', "version")]
-		public override WhatToDoNext DoAbout ()
+		public Dictionary <string, string> UnknownArguments {
+			get {
+				if (unknown_arguments == null || unknown_arguments.Count == 0)
+					return null;
+
+				return unknown_arguments;
+			}
+		}
+		
+		public string[] PlainArguments {
+			get {
+				if (plain_arguments == null || plain_arguments.Count == 0)
+					return null;
+				
+				return plain_arguments.ToArray ();
+			}
+		}
+		
+		public MConfigOptions ()
 		{
-			return base.DoAbout ();
+			unknown_arguments = new Dictionary <string, string> ();
+			plain_arguments = new List <string> ();
 		}
 
-		[Option ("display this help and exit", 'h', "help")]
-		public override WhatToDoNext DoHelp ()
+		public void Parse (string[] args)
 		{
-			WhatToDoNext ret = base.DoHelp ();
-			
-			Console.WriteLine ("\nCommands:\n");
-			foreach (CommandHandler ch in commands)
-				Console.WriteLine ("{{{0}}} {1}\n\t{2}\n",
-						   String.Join (" | ", ch.Names),
-						   ch.Syntax,
-						   ch.Documentation);
+			if (args == null || args.Length == 0)
+				Usage ();
 
+			int len = args.Length;
+			string arg;
+			
+			for (int i = 0; i < len; i++) {
+				arg = args [i];
+
+				switch (arg [0]) {
+					case '-':
+					case '/':
+						i += ProcessArgument (i, arg, args, len);
+						break;
+
+					default:
+						plain_arguments.Add (arg);
+						break;
+				}
+			}
+		}
+
+		static char[] paramStartChars = {':', '='};
+		
+		int ProcessArgument (int idx, string argument, string[] args, int argsLen)
+		{
+			int argnameIdx = 1;
+			bool haveMoreDashes = false, badArg = false;
+			int argumentLen = argument.Length;
+
+			if (argumentLen < 2)
+				badArg = true;
+			
+			haveMoreDashes = !badArg && (argument [1] == '-');
+			
+			if (argumentLen == 2 && haveMoreDashes)
+				badArg = true;
+			
+			if (badArg) {
+				Console.Error.WriteLine ("Invalid argument: {0}", argument);
+				Environment.Exit (1);
+			}
+
+			if (haveMoreDashes)
+				argnameIdx++;
+
+			int paramPos = argument.IndexOfAny (paramStartChars, argnameIdx);
+			bool haveParam = true;
+			
+			if (paramPos == -1) {
+				haveParam = false;
+				paramPos = argumentLen;
+			}
+			
+			string argName = argument.Substring (argnameIdx, paramPos - argnameIdx);
+			string argParam = haveParam ? argument.Substring (paramPos + 1) : null;
+
+			int ret = 0;
+			
+			if (!haveParam && haveMoreDashes) {
+				idx++;
+				if (idx < argsLen) {
+					argParam = args [idx];
+					ret++;
+					haveParam = true;
+				}
+			}
+			
+			switch (argName) {
+				case "?":
+				case "h":
+				case "help":
+					Usage ();
+					break;
+
+				case "v":
+				case "version":
+					ShowVersion ();
+					break;
+
+				case "t":
+				case "target":
+					if (!haveParam)
+						RequiredParameterMissing (argName);
+					
+					try {
+						Target = Helpers.ConvertTarget (argParam);
+					} catch (Exception ex) {
+						OptionParameterError (argName, ex.Message);
+					}
+					break;
+
+				case "C":
+				case "list-configs":
+					ListDefaultConfigs = true;
+					break;
+
+				case "F":
+				case "list-features":
+					ListFeatures = true;
+					break;
+
+				default:
+					unknown_arguments.Add (argName, argParam);
+					break;
+			}
+			
 			return ret;
 		}
 
-		[Option ("read the specified config file in addition to the standard ones.", 'c', "config")]
-		public string ConfigFile;
-
-		[Option ("consider only features for the given target (Any, Web, Application). Default: Any", 't', "target")]
-		public string Target;
-
-		[Option ("list all default config file names defined in the configuration files", 'C', "list-configs")]
-		public bool ListDefaultConfigs;
-		
-		[Option ("list all features defined in the config files", 'F', "list-features")]
-		public bool ListFeatures;
-		
-		CommandHandler[] commands;
-		
-		public MConfigOptions (CommandHandler[] commands) : base (null)
+		void RequiredParameterMissing (string argName)
 		{
-			this.commands = commands;
+			Console.Error.WriteLine ("Argument '{0}' requires a parameter", argName);
+			Environment.Exit (1);
 		}
 
-		protected override void InitializeOtherDefaults ()
+		void OptionParameterError (string argName, string message)
 		{
-			ParsingMode = OptionsParsingMode.Both | OptionsParsingMode.GNU_DoubleDash;
-			BreakSingleDashManyLettersIntoManyOptions = true;
+			Console.Error.WriteLine ("Parameter value is invalid for argument '{0}'.",
+						 argName);
+			Console.Error.WriteLine (message);
+			Environment.Exit (1);
+		}
+
+		public void Usage ()
+		{
+			foreach (string line in usage)
+				Console.WriteLine (line);
+			Environment.Exit (1);
+		}
+		
+		void ShowVersion ()
+		{
+			Assembly asm = Assembly.GetExecutingAssembly () ?? Assembly.GetCallingAssembly ();
+			object[] attrs = asm != null ? asm.GetCustomAttributes (false) : null;
+			string product = "mconfig", version = "0.0.0.0", copyright = "", description = "";
+
+			if (asm != null) {
+				Version v = asm.GetName ().Version;
+				if (v != null)
+					version = v.ToString ();
+			}
+			
+			if (attrs != null) {				
+				foreach (object o in attrs) {
+					if (o is AssemblyProductAttribute)
+						product = ((AssemblyProductAttribute)o).Product;
+					else if (o is AssemblyCopyrightAttribute)
+						copyright = ((AssemblyCopyrightAttribute)o).Copyright;
+					else if (o is AssemblyDescriptionAttribute)
+						description = ((AssemblyDescriptionAttribute)o).Description;
+				}
+			} else
+				Console.WriteLine ("Missing version information");
+
+			Console.WriteLine ("{0} - {1} {2}", product, description, version);
+			Console.WriteLine (copyright);
+			
+			Environment.Exit (1);
 		}
 	}
 	
@@ -121,18 +278,8 @@ namespace Mono.MonoConfig
 		};
 
 		static CommandHandler[] commands = {
-			new CommandHandler (new string[] {"addfeature", "af"},
-					    HandleAddFeature,
-					    "FEATURE_NAME [CONFIG_FILE_PATH]",
-					    "Adds the named feature to the indicated config file. If CONFIG_FILE_PATH is omitted " +
-					    "the name will be chosen based on the selected target (-t). " +
-					    "If the file does not exist, it " +
-					    "will be created"),
-			new CommandHandler (new string[] {"defconfig", "dc"},
-					    HandleDefaultConfig,
-					    "[[CONFIG_NAME] [TARGET_DIRECTORY]]",
-					    "Writes a default config file from definition named by CONFIG_NAME to a target " +
-					    "directory given in TARGET_DIRECTORY.")
+			new CommandHandler (new string[] {"addfeature", "af"}, HandleAddFeature),
+			new CommandHandler (new string[] {"defconfig", "dc"}, HandleDefaultConfig)
 		};
 		
 		static string ConfigPath {
@@ -169,9 +316,9 @@ namespace Mono.MonoConfig
 		
 		static int Main (string[] args)
 		{
-			MConfigOptions options = new MConfigOptions (commands);			
-			options.ProcessArgs (args);			
-
+			MConfigOptions options = new MConfigOptions ();
+			options.Parse (args);
+			
 			if (!String.IsNullOrEmpty (options.ConfigFile))
 				configPaths [3] = options.ConfigFile;
 			
@@ -192,15 +339,15 @@ namespace Mono.MonoConfig
 			if (doQuit)
 				return 0;
 			
-			string[] remainingArguments = options.RemainingArguments;
-			if (remainingArguments == null || remainingArguments.Length == 0) {
-				options.DoHelp ();
+			string[] commandArguments = options.PlainArguments;
+			if (commandArguments == null || commandArguments.Length == 0) {
+				options.Usage ();
 				return 1;
 			}
 			
-			HandleCommand commandHandler = FindCommandHandler (remainingArguments [0]);
+			HandleCommand commandHandler = FindCommandHandler (commandArguments [0]);
 			if (commandHandler == null) {
-				Console.Error.WriteLine ("Unknown command '{0}'", remainingArguments [0]);
+				Console.Error.WriteLine ("Unknown command '{0}'", commandArguments [0]);
 				return 1;
 			}
 
@@ -231,20 +378,16 @@ namespace Mono.MonoConfig
 
 		static int HandleAddFeature (MConfigOptions options, Configuration config)
 		{
-			string[] remainingArguments = options.RemainingArguments;
-			if (remainingArguments.Length < 2) {
+			string[] commandArguments = options.PlainArguments;
+			if (commandArguments.Length < 2) {
 				Console.Error.WriteLine ("Command requires at least one argument.");
 				return 1;
 			}
 			
-			FeatureTarget target = FeatureTarget.Any;
-
-			if (!String.IsNullOrEmpty (options.Target))
-				target = Helpers.ConvertTarget (options.Target);
-
-			string featureName = remainingArguments [1], configPath;
-			if (remainingArguments.Length > 2)
-				configPath = remainingArguments [2];
+			FeatureTarget target = options.Target;
+			string featureName = commandArguments [1], configPath;
+			if (commandArguments.Length > 2)
+				configPath = commandArguments [2];
 			else {
 				switch (target) {
 					case FeatureTarget.Any:
@@ -278,15 +421,11 @@ namespace Mono.MonoConfig
 
 		static int HandleDefaultConfig (MConfigOptions options, Configuration config)
 		{
-			FeatureTarget target = FeatureTarget.Any;
-
-			if (!String.IsNullOrEmpty (options.Target))
-				target = Helpers.ConvertTarget (options.Target);
-
-			string[] remainingArguments = options.RemainingArguments;
+			FeatureTarget target = options.Target;
+			string[] commandArguments = options.PlainArguments;
 			string configName, targetPath;
 
-			if (remainingArguments.Length < 2) {
+			if (commandArguments.Length < 2) {
 				switch (target) {
 					case FeatureTarget.Any:
 						Console.Error.WriteLine ("No default config file for target 'Any'");
@@ -305,12 +444,12 @@ namespace Mono.MonoConfig
 						return 1;
 				}
 			} else
-				configName = remainingArguments [1];
+				configName = commandArguments [1];
 
-			if (remainingArguments.Length < 3)
+			if (commandArguments.Length < 3)
 				targetPath = ".";
 			else
-				targetPath = remainingArguments [2];
+				targetPath = commandArguments [2];
 
 			try {
 				config.WriteDefaultConfigFile (configName, targetPath, target);

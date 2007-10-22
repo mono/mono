@@ -1,3 +1,8 @@
+2007-10-22  Marek Habersack  <mhabersack@novell.com>
+
+	* mconfig.cs: do not use Mono.GetOptions. Added own option parsing
+	code instead.
+
 2007-10-19  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: include consts.cs.in in the dist tarball.
