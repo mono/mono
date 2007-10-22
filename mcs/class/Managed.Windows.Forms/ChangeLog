@@ -1,3 +1,7 @@
+2007-10-22  Geoff Norton  <gnorton@novell.com>
+
+	* Makefile: Add a reference to System.Configuration.dll in NET 2.0
+
 2007-10-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.Windows.Forms_test.dll.sources: Added DragEventArgsTest.cs.

@@ -11,6 +11,10 @@ LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	-debug -nowarn:618,612,809
 
+ifeq (net_2_0, $(PROFILE))
+LIB_MCS_FLAGS += /r:System.Configuration.dll
+endif
+
 RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
 	resources/System.Windows.Forms.en.resources \
