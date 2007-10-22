@@ -1,5 +1,10 @@
 2007-10-22  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MdiClient.cs: Maximize new active mdi child when a maximized child is 
+	closed see #325434 patch.
+
+2007-10-22  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MdiClient.cs: Fix remaining issues from layout vertical and horizontal,
 	see #325434 patch.
 

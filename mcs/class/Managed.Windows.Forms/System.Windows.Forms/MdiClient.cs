@@ -631,18 +631,17 @@ namespace System.Windows.Forms {
 
 		internal void ChildFormClosed (Form form)
 		{
-			if (Controls.Count > 1) {
-				Form next = (Form) Controls [1];
-				if (form.WindowState == FormWindowState.Maximized)
-					next.WindowState = FormWindowState.Maximized;
-				ActivateChild (next);
-			}
+			FormWindowState closed_form_windowstate = form.WindowState;
 	
 			form.Visible = false;
 			Controls.Remove (form);
 			
 			if (Controls.Count == 0) {
 				((MdiWindowManager) form.window_manager).RaiseDeactivate ();
+			} else if (closed_form_windowstate == FormWindowState.Maximized) {
+				Form current = (Form) Controls [0];
+				current.WindowState = FormWindowState.Maximized;
+				ActivateChild(current);
 			}
 
 			if (Controls.Count == 0) {
