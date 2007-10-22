@@ -1,5 +1,10 @@
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* LinkedResource.cs : Now they are implemented and soon to be
+	  supported. Fixed TransferEncoding (same as other AttachmentBase).
+
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Attachment.cs : null name is allowed.
 
 2007-10-19  Atsushi Enomoto  <atsushi@ximian.com>

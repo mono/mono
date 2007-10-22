@@ -45,42 +45,36 @@ namespace System.Net.Mail {
 
 		#region Constructors
 
-		[MonoTODO]
 		public LinkedResource (string fileName) : base (fileName)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public LinkedResource (string fileName, ContentType contentType) : base (fileName, contentType)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public LinkedResource (string fileName, string mediaType) : base (fileName, mediaType)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException ();
 		}
 
-		[MonoTODO]
 		public LinkedResource (Stream contentStream) : base (contentStream)
 		{
 			if (contentStream == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public LinkedResource (Stream contentStream, ContentType contentType) : base (contentStream, contentType)
 		{
 			if (contentStream == null)
 				throw new ArgumentNullException ();
 		}
 		
-		[MonoTODO]
 		public LinkedResource (Stream contentStream, string mediaType) : base (contentStream, mediaType)
 		{
 			if (contentStream == null)
@@ -100,31 +94,34 @@ namespace System.Net.Mail {
 
 		#region Methods
 
-		[MonoTODO]
 		public static LinkedResource CreateLinkedResourceFromString (string content)
 		{
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (Encoding.Default.GetBytes (content));
-			return new LinkedResource (ms);
+			LinkedResource lr = new LinkedResource (ms);
+			lr.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return lr;
 		}
 		
-		[MonoTODO]
 		public static LinkedResource CreateLinkedResourceFromString (string content, ContentType contentType)
 		{
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (Encoding.Default.GetBytes (content));
-			return new LinkedResource (ms, contentType);
+			LinkedResource lr = new LinkedResource (ms, contentType);
+			lr.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return lr;
 		}
 		
-		[MonoTODO]
 		public static LinkedResource CreateLinkedResourceFromString (string content, Encoding contentEncoding, string mediaType)
 		{
 			if (content == null)
 				throw new ArgumentNullException ();
 			MemoryStream ms = new MemoryStream (contentEncoding.GetBytes (content));
-			return new LinkedResource (ms, mediaType);
+			LinkedResource lr = new LinkedResource (ms, mediaType);
+			lr.TransferEncoding = TransferEncoding.QuotedPrintable;
+			return lr;
 		}
 
 		#endregion // Methods
