@@ -155,6 +155,7 @@ namespace System.Net.Mail {
 			}
 		}
 
+		[MonoTODO]
 		public bool EnableSsl {
 			// FIXME: So... is this supposed to enable SSL port functionality? or STARTTLS? Or both?
 			get { return enableSsl; }
@@ -497,14 +498,11 @@ namespace System.Net.Mail {
 
 			AddPriorityHeader (message);
 
-			bool hasAlternateViews = (message.AlternateViews.Count > 0);
-			bool hasAttachments = (message.Attachments.Count > 0);
-
-			if (hasAttachments || hasAlternateViews) {
-				SendMultipartBody (message);
-			} else {
-				SendSimpleBody (message);
-			}
+			boundaryIndex = 0;
+			if (message.Attachments.Count > 0)
+				SendWithAttachments (message);
+			else
+				SendWithoutAttachments (message, null);
 
 			SendData (".");
 
@@ -585,55 +583,81 @@ namespace System.Net.Mail {
 			SendData (EncodeBody (message));
 		}
 
-		private void SendMultipartBody (MailMessage message) {
-			boundaryIndex = 0;
+		private void SendWithoutAttachments (MailMessage message, string boundary) {
+			if (message.AlternateViews.Count > 0)
+				SendBodyWithAlternateViews (message, boundary);
+			else
+				SendSimpleBody (message);
+		}
+
+
+		private void SendWithAttachments (MailMessage message) {
 			string boundary = GenerateBoundary ();
 
-			// Figure out the message content type
-			ContentType messageContentType = message.BodyContentType;
+			// first "multipart/mixed"
+			ContentType messageContentType = new ContentType ();
 			messageContentType.Boundary = boundary;
 			messageContentType.MediaType = "multipart/mixed";
+			messageContentType.CharSet = null;
 
 			SendHeader (HeaderName.ContentType, messageContentType.ToString ());
-			if (message.ContentTransferEncoding != TransferEncoding.SevenBit)
-				SendHeader (HeaderName.ContentTransferEncoding, GetTransferEncodingName (message.ContentTransferEncoding));
-			SendData (string.Empty);
+			SendData (String.Empty);
 
-			//SendData (EncodeBody (message));
-			//SendData (string.Empty);
+			// body section
+			Attachment body = null;
 
-			message.AlternateViews.Add (AlternateView.CreateAlternateViewFromString (message.Body, new ContentType ("text/plain")));
-
-			if (message.AlternateViews.Count > 0) {
-				SendAlternateViews (message, boundary);
+			if (message.AlternateViews.Count > 0)
+				SendWithoutAttachments (message, boundary);
+			else {
+				body = Attachment.CreateAttachmentFromString (message.Body, null, message.BodyEncoding, message.IsBodyHtml ? "text/html" : "text/plain");
+				message.Attachments.Insert (0, body);
 			}
 
-			if (message.Attachments.Count > 0) {
-				SendAttachments (message, boundary);
+			try {
+				SendAttachments (message, body, boundary);
+			} finally {
+				if (body != null)
+					message.Attachments.Remove (body);
 			}
 
 			EndSection (boundary);
 		}
 
-		private void SendAlternateViews (MailMessage message, string boundary) {
+		private void SendBodyWithAlternateViews (MailMessage message, string boundary) {
 			AlternateViewCollection alternateViews = message.AlternateViews;
 
 			string inner_boundary = GenerateBoundary ();
 
-			ContentType messageContentType = message.BodyContentType;
+			ContentType messageContentType = new ContentType ();
 			messageContentType.Boundary = inner_boundary;
 			messageContentType.MediaType = "multipart/alternative";
 
 			StartSection (boundary, messageContentType);
 
-			for (int i = 0; i < alternateViews.Count; i += 1) {
-				ContentType contentType = new ContentType (alternateViews [i].ContentType.ToString ());
-				StartSection (inner_boundary, contentType, alternateViews [i].TransferEncoding);
+			// body section
+			AlternateView body = AlternateView.CreateAlternateViewFromString (message.Body, message.BodyEncoding, message.IsBodyHtml ? "text/html" : "text/plain");
+			alternateViews.Insert (0, body);
+try {
+			// alternate view sections
+			foreach (AlternateView av in alternateViews) {
 
-				switch (alternateViews [i].TransferEncoding) {
+				string alt_boundary = null;
+				ContentType contentType;
+				if (av.LinkedResources.Count > 0) {
+					alt_boundary = GenerateBoundary ();
+					contentType = new ContentType ("multipart/related");
+					contentType.Boundary = alt_boundary;
+					contentType.Parameters ["type"] = "application/octet-stream";
+					StartSection (inner_boundary, contentType);
+				} else {
+					contentType = new ContentType (av.ContentType.ToString ());
+					StartSection (inner_boundary, contentType, av.TransferEncoding);
+				}
+
+				switch (av.TransferEncoding) {
 				case TransferEncoding.Base64:
-					byte [] content = new byte [alternateViews [i].ContentStream.Length];
-					alternateViews [i].ContentStream.Read (content, 0, content.Length);
+					byte [] content = new byte [av.ContentStream.Length];
+					av.ContentStream.Read (content, 0, content.Length);
 #if TARGET_JVM
 					SendData (Convert.ToBase64String (content));
 #else
@@ -641,35 +665,71 @@ namespace System.Net.Mail {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					StreamReader sr = new StreamReader (alternateViews [i].ContentStream);
+					StreamReader sr = new StreamReader (av.ContentStream);
 					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
 					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
-					content = new byte [alternateViews [i].ContentStream.Length];
+					content = new byte [av.ContentStream.Length];
 					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
 
-				SendData (string.Empty);
+				if (av.LinkedResources.Count > 0) {
+					SendLinkedResources (message, av.LinkedResources, alt_boundary);
+					EndSection (alt_boundary);
+				}
+
+//				SendData (string.Empty);
 			}
 
+} finally {
+			alternateViews.Remove (body);
+}
 			EndSection (inner_boundary);
 		}
 
-		private void SendAttachments (MailMessage message, string boundary) {
-			AttachmentCollection attachments = message.Attachments;
+		private void SendLinkedResources (MailMessage message, LinkedResourceCollection resources, string boundary)
+		{
+			foreach (LinkedResource lr in resources) {
+				ContentType contentType = new ContentType (lr.ContentType.ToString ());
+				StartSection (boundary, contentType, lr.TransferEncoding);
 
-			for (int i = 0; i < attachments.Count; i += 1) {
-				ContentType contentType = new ContentType (attachments [i].ContentType.ToString ());
-				attachments [i].ContentDisposition.FileName = attachments [i].Name;
-				StartSection (boundary, contentType, attachments [i].TransferEncoding, attachments [i].ContentDisposition);
-
-				switch (attachments [i].TransferEncoding) {
+				switch (lr.TransferEncoding) {
 				case TransferEncoding.Base64:
-					byte[] content = new byte [attachments [i].ContentStream.Length];
-					attachments [i].ContentStream.Read (content, 0, content.Length);
+					byte [] content = new byte [lr.ContentStream.Length];
+					lr.ContentStream.Read (content, 0, content.Length);
+#if TARGET_JVM
+					SendData (Convert.ToBase64String (content));
+#else
+					    SendData (Convert.ToBase64String (content, Base64FormattingOptions.InsertLineBreaks));
+#endif
+					break;
+				case TransferEncoding.QuotedPrintable:
+					StreamReader sr = new StreamReader (lr.ContentStream);
+					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
+					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
+					break;
+				case TransferEncoding.SevenBit:
+				case TransferEncoding.Unknown:
+					content = new byte [lr.ContentStream.Length];
+					SendData (Encoding.ASCII.GetString (content));
+					break;
+				}
+			}
+		}
+
+		private void SendAttachments (MailMessage message, Attachment body, string boundary) {
+			foreach (Attachment att in message.Attachments) {
+				ContentType contentType = new ContentType (att.ContentType.ToString ());
+				att.ContentDisposition.FileName = att.Name;
+				StartSection (boundary, contentType, att.TransferEncoding, att == body ? null : att.ContentDisposition);
+
+				switch (att.TransferEncoding) {
+				case TransferEncoding.Base64:
+					byte [] content = new byte [att.ContentStream.Length];
+					att.ContentStream.Read (content, 0, content.Length);
 #if TARGET_JVM
 					SendData (Convert.ToBase64String (content));
 #else
@@ -677,13 +737,13 @@ namespace System.Net.Mail {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					StreamReader sr = new StreamReader (attachments [i].ContentStream);
+					StreamReader sr = new StreamReader (att.ContentStream);
 					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
 					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
-					content = new byte [attachments [i].ContentStream.Length];
+					content = new byte [att.ContentStream.Length];
 					SendData (Encoding.ASCII.GetString (content));
 					break;
 				}
@@ -726,7 +786,8 @@ namespace System.Net.Mail {
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
-			SendHeader ("content-disposition", contentDisposition.ToString ());
+			if (contentDisposition != null)
+				SendHeader ("content-disposition", contentDisposition.ToString ());
 			SendData (string.Empty);
 		}
 
