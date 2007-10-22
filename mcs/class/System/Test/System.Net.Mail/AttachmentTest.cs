@@ -36,6 +36,18 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		public void ConstructorNullName ()
+		{
+			new Attachment (new MemoryStream (), null, "application/octet-stream");
+		}
+
+		[Test]
+		public void CreateAttachmentFromStringNullName ()
+		{
+			Attachment.CreateAttachmentFromString ("", null, Encoding.ASCII, "application/octet-stream");
+		}
+
+		[Test]
 		public void ContentDisposition ()
 		{
 			Assert.IsNotNull (attach.ContentDisposition, "#1");
@@ -72,6 +84,7 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual ("attachment-name", attach.Name, "#1");
 			Attachment a2 = new Attachment (new MemoryStream (), new ContentType ("image/jpeg"));
 			Assert.AreEqual (null, a2.Name, "#2");
+			a2.Name = null; // nullable
 		}
 
 		[Test]

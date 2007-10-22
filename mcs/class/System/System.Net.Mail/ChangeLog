@@ -1,3 +1,7 @@
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Attachment.cs : null name is allowed.
+
 2007-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AlternateView.cs, AttachmentView.cs, AttachmentBase.cs :

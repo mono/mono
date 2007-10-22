@@ -72,10 +72,6 @@ namespace System.Net.Mail {
 
 		public Attachment (Stream contentStream, string name, string mediaType)
 			: base (contentStream, mediaType) {
-			if (name == null) {
-				throw new ArgumentNullException ("name");
-			}
-
 			Name = name;
 		}
 
@@ -91,13 +87,7 @@ namespace System.Net.Mail {
 
 		public string Name {
 			get { return ContentType.Name; }
-			set { 
-				if (value == null)
-					throw new ArgumentNullException ();
-				if (value.Equals (""))
-					throw new ArgumentException ();
-				ContentType.Name = value;
-			}
+			set { ContentType.Name = value; }
 		}
 
 		[MonoTODO]
