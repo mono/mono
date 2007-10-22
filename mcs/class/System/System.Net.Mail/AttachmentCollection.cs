@@ -41,7 +41,6 @@ namespace System.Net.Mail {
 		{
 		}
 		
-		[MonoTODO]
 		public void Dispose ()
 		{
 			for (int i = 0; i < Count; i += 1)

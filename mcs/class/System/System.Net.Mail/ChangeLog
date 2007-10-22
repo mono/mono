@@ -1,5 +1,14 @@
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AttachmentCollection.cs : remove TODO.
+	* Attachment.cs : guess NameEncoding when set_Name().
+	* MailMessage.cs : moved encoding guess impl to ContentType.
+	* SmtpClient.cs : moved RFC 2047 encoding impl to ContentType.
+	  Support attachment Name encoding. Added some SSL changes (it's not
+	  working yet).
+
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SmtpClient.cs : attachment refactory. First, determine whether we
 	  send multipart/mixed for attachments. Second, determine whether we
 	  send multipart/alternative for AlternateViews.

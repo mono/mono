@@ -235,10 +235,7 @@ namespace System.Net.Mail {
 
 		private Encoding GuessEncoding (string s)
 		{
-			for (int i = 0; i < s.Length; i++)
-				if (s [i] >= '\u0080')
-					return Encoding.UTF8;
-			return Encoding.ASCII;
+			return ContentType.GuessEncoding (s);
 		}
 
 		#endregion // Methods

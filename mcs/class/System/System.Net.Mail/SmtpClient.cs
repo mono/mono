@@ -30,6 +30,10 @@
 
 #if NET_2_0
 
+#if SECURITY_DEP
+extern alias PrebuiltSystem;
+#endif
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,6 +48,13 @@ using System.Threading;
 using System.Reflection;
 using System.Net.Configuration;
 using System.Configuration;
+using System.Net.Security;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
+
+#if SECURITY_DEP
+using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
+#endif
 
 namespace System.Net.Mail {
 	public class SmtpClient
@@ -58,10 +69,10 @@ namespace System.Net.Mail {
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
 		bool enableSsl;
-		//X509CertificateCollection clientCertificates;
+		X509CertificateCollection clientCertificates;
 
 		TcpClient client;
-		NetworkStream stream;
+		Stream stream;
 		StreamWriter writer;
 		StreamReader reader;
 		int boundaryIndex;
@@ -131,13 +142,16 @@ namespace System.Net.Mail {
 
 		#region Properties
 
-		[MonoTODO("Client certificates are not supported")]
+#if SECURITY_DEP
+		[MonoTODO("STARTTLS is not supported yet")]
 		public X509CertificateCollection ClientCertificates {
 			get {
-				throw new NotImplementedException ("Client certificates are not supported");
-				//return clientCertificates;
+				if (clientCertificates == null)
+					clientCertificates = new X509CertificateCollection ();
+				return clientCertificates;
 			}
 		}
+#endif
 
 		public ICredentialsByHost Credentials {
 			get { return credentials; }
@@ -155,7 +169,7 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("STARTTLS is not supported yet")]
 		public bool EnableSsl {
 			// FIXME: So... is this supposed to enable SSL port functionality? or STARTTLS? Or both?
 			get { return enableSsl; }
@@ -234,10 +248,7 @@ namespace System.Net.Mail {
 
 		private string EncodeSubjectRFC2047 (MailMessage message)
 		{
-			if (message.SubjectEncoding == null || Encoding.ASCII.Equals (message.SubjectEncoding))
-				return message.Subject;
-			string b64 = Convert.ToBase64String (message.SubjectEncoding.GetBytes (message.Subject));
-			return String.Concat ("=?", message.SubjectEncoding.HeaderName, "?B?", b64, "?=");
+			return ContentType.EncodeSubjectRFC2047 (message.Subject, message.SubjectEncoding);
 		}
 
 		private string EncodeBody (MailMessage message)
@@ -396,6 +407,9 @@ namespace System.Net.Mail {
 
 			client = new TcpClient (host, port);
 			stream = client.GetStream ();
+			// FIXME: this StreamWriter creation is bogus.
+			// It expects as if a Stream were able to switch to SSL
+			// mode (such behavior is only in Mainsoft Socket API).
 			writer = new StreamWriter (stream);
 			reader = new StreamReader (stream);
 
@@ -423,6 +437,7 @@ namespace System.Net.Mail {
 			}
 			
 			if (enableSsl) {
+#if old_comment
 				// FIXME: I get the feeling from the docs that EnableSsl is meant
 				// for using the SSL-port and not STARTTLS (or, if it includes
 				// STARTTLS... only use STARTTLS if the SSL-type in the certificate
@@ -431,6 +446,9 @@ namespace System.Net.Mail {
 				// FIXME: even tho we have a canStartTLS flag... ignore it for now
 				// so that the STARTTLS command can throw the appropriate
 				// SmtpException if STARTTLS is unavailable
+#else
+				// SmtpClient implements STARTTLS support.
+#endif
 				InitiateSecureConnection ();
 				
 				// FIXME: re-EHLO?
@@ -723,7 +741,12 @@ try {
 		private void SendAttachments (MailMessage message, Attachment body, string boundary) {
 			foreach (Attachment att in message.Attachments) {
 				ContentType contentType = new ContentType (att.ContentType.ToString ());
-				att.ContentDisposition.FileName = att.Name;
+				if (att.Name != null) {
+					contentType.Name = att.Name;
+					if (att.NameEncoding != null)
+						contentType.CharSet = att.NameEncoding.HeaderName;
+					att.ContentDisposition.FileName = att.Name;
+				}
 				StartSection (boundary, contentType, att.TransferEncoding, att == body ? null : att.ContentDisposition);
 
 				switch (att.TransferEncoding) {
@@ -819,6 +842,15 @@ try {
 			return "unknown";
 		}
 
+		RemoteCertificateValidationCallback callback = delegate (object sender,
+									 X509Certificate certificate,
+									 X509Chain chain,
+									 SslPolicyErrors sslPolicyErrors) {
+			if (sslPolicyErrors != SslPolicyErrors.None)
+				throw new InvalidOperationException ("SSL authentication error: " + sslPolicyErrors);
+			return true;
+			};
+
 		private void InitiateSecureConnection () {
 			SmtpResponse response = SendCommand ("STARTTLS");
 
@@ -826,16 +858,16 @@ try {
 				throw new SmtpException (SmtpStatusCode.GeneralFailure, "Server does not support secure connections.");
 			}
 
-			ChangeToSSLSocket ();
-		}
-
-		private bool ChangeToSSLSocket () {
 #if TARGET_JVM
-			stream.ChangeToSSLSocket ();
+			((NetworkStream) stream).ChangeToSSLSocket ();
+#elif SECURITY_DEP
+			SslStream sslStream = new SslStream (stream, false, callback, null);
+			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
+			stream = sslStream;
 
-			return true;
-#else
 			throw new NotImplementedException ();
+#else
+			throw new SystemException ("You are using an incomplete System.dll build");
 #endif
 		}
 		
