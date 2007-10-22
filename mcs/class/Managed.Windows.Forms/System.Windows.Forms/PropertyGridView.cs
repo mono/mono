@@ -952,7 +952,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			else
 				grid_textbox.Font = this.Font;
 
-			grid_textbox.ReadOnly = false;
+			bool is_read_only; 
+			bool is_non_editable = false; // Can be modifiable, but not directly editable
+
 			grid_textbox.DropDownButtonVisible = false;
 			grid_textbox.DialogButtonVisible = false;
 
@@ -980,7 +982,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						if (forItem.PropertyDescriptor.Converter.GetStandardValuesSupported()) {
 							
 							grid_textbox.DropDownButtonVisible = true;
-							grid_textbox.ReadOnly = true;
+							is_non_editable = true;
 						}
 					}
 					else {
@@ -992,8 +994,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 			}
 				
-			grid_textbox.ReadOnly = grid_textbox.ReadOnly || forItem.PropertyDescriptor.IsReadOnly;
-			grid_textbox.ForeColor = grid_textbox.ReadOnly ? SystemColors.InactiveCaption : SystemColors.WindowText;
+			is_read_only = forItem.PropertyDescriptor.IsReadOnly;
+			is_non_editable = is_non_editable || forItem.PropertyDescriptor.IsReadOnly;
+			grid_textbox.ReadOnly = is_non_editable;
+			grid_textbox.ForeColor = is_read_only ? SystemColors.InactiveCaption : SystemColors.WindowText;
 
 			int xloc = SplitterLocation + 1 + (paintsValue ? 27 : 0);
 			grid_textbox.SetBounds (xloc,
