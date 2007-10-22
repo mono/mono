@@ -308,6 +308,10 @@ namespace System.Windows.Forms {
 			case MdiLayout.TileVertical: {
 				// First count number of windows to tile
 				int total = 0;
+				
+				// And space used by iconic windows
+				int clientHeight = ClientSize.Height;
+				
 				for (int i = 0; i < Controls.Count; i++) {
 					Form form = Controls [i] as Form;
 					
@@ -316,9 +320,14 @@ namespace System.Windows.Forms {
 					
 					if (!form.Visible)
 						continue;
-					
-					if (form.WindowState == FormWindowState.Minimized)
+
+					if (form.WindowState == FormWindowState.Maximized)
+						form.WindowState = FormWindowState.Normal;
+					else if (form.WindowState == FormWindowState.Minimized) {
+						if (form.Bounds.Top < clientHeight)
+							clientHeight = form.Bounds.Top;
 						continue;
+					}
 						
 					total++;
 				}
@@ -328,11 +337,12 @@ namespace System.Windows.Forms {
 				// Calculate desired height and width
 				Size newSize;
 				Size offset;
+
 				if (value == MdiLayout.TileHorizontal) {
-					newSize = new Size (ClientSize.Width, ClientSize.Height / total);
+					newSize = new Size(ClientSize.Width, clientHeight / total);
 					offset = new Size (0, newSize.Height);
 				} else {
-					newSize = new Size (ClientSize.Width / total, ClientSize.Height);
+					newSize = new Size(ClientSize.Width / total, clientHeight);
 					offset = new Size (newSize.Width, 0);
 				}
 				

@@ -1,3 +1,8 @@
+2007-10-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MdiClient.cs: Fix remaining issues from layout vertical and horizontal,
+	see #325434 patch.
+
 2007-10-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PropertyGridView.cs: When showing the textbox for a grid item,
