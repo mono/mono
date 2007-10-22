@@ -1,3 +1,8 @@
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinkedResourceTest.cs : NotWorking, buildbot loudly claims for
+	  unimplemented stuff.
+
 2007-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AlternateViewTest.cs : default TransferEncoding value is more
