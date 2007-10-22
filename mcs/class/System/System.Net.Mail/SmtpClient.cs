@@ -842,6 +842,7 @@ try {
 			return "unknown";
 		}
 
+#if SECURITY_DEP
 		RemoteCertificateValidationCallback callback = delegate (object sender,
 									 X509Certificate certificate,
 									 X509Chain chain,
@@ -850,6 +851,7 @@ try {
 				throw new InvalidOperationException ("SSL authentication error: " + sslPolicyErrors);
 			return true;
 			};
+#endif
 
 		private void InitiateSecureConnection () {
 			SmtpResponse response = SendCommand ("STARTTLS");
