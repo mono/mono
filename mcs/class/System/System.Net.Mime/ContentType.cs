@@ -158,6 +158,7 @@ namespace System.Net.Mime {
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
+			Encoding enc = CharSet != null ? Encoding.GetEncoding (CharSet) : Encoding.UTF8;
 			sb.Append (MediaType);
 			if (Parameters != null && Parameters.Count > 0) {
 				foreach (DictionaryEntry pair in parameters)
@@ -166,11 +167,31 @@ namespace System.Net.Mime {
 						sb.Append ("; ");
 						sb.Append (pair.Key);
 						sb.Append ("=");
-						sb.Append (pair.Value);
+						sb.Append (EncodeSubjectRFC2047 (pair.Value as string, enc));
 					}
 				}
 			}
 			return sb.ToString ();
+		}
+
+		internal static Encoding GuessEncoding (string s)
+		{
+			for (int i = 0; i < s.Length; i++)
+				if (s [i] >= '\u0080')
+					return Encoding.UTF8;
+			return Encoding.ASCII;
+		}
+
+		internal static string EncodeSubjectRFC2047 (string s, Encoding enc)
+		{
+			if (s == null || Encoding.ASCII.Equals (enc))
+				return s;
+			for (int i = 0; i < s.Length; i++)
+				if (s [i] >= '\u0080') {
+				string b64 = Convert.ToBase64String (enc.GetBytes (s));
+				return String.Concat ("=?", enc.HeaderName, "?B?", b64, "?=");
+				}
+			return s;
 		}
 
 		#endregion // Methods

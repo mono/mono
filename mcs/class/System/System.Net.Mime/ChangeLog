@@ -1,3 +1,8 @@
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentType.cs : moved couple of encoding stuff to here.
+	  Encode non-ASCII value in RFC 2047.
+
 2007-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* ContentDisposition.cs: if the file name contains spaces, enclose
