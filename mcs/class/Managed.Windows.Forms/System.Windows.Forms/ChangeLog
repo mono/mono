@@ -1,3 +1,9 @@
+2007-10-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGridView.cs: When showing a drop-down list, try to get the
+	values using TypeConverter.ConvertTo (to convert to a string). Fixes
+	part of #325023.
+
 2007-10-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PropertyGrid.cs: When updating a property and populating sub grid

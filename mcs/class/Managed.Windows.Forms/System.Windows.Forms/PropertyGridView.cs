@@ -802,11 +802,19 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
-		void AcceptListBoxSelection (object sender) {
+		// FIXME: Instead of let an exception being thrown, as we have always done,
+		// show a dialog message mentioning the issue, as MS does
+		void AcceptListBoxSelection (object sender) 
+		{
 			if (this.property_grid.SelectedGridItem != null) {
 				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
 				if (desc != null) {
-					SetPropertyValue(((ListBox)sender).SelectedItem);
+					string obj_string = (string) ((ListBox) sender).SelectedItem;
+					TypeConverter converter = property_grid.SelectedGridItem.PropertyDescriptor.Converter;
+
+					// This is what MS does: call ConvertTo () for a string
+					object new_value = converter.ConvertFrom (obj_string);
+					SetPropertyValue (new_value);
 				}
 			}
 			CloseDropDown ();
@@ -856,7 +864,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					int i = 0;
 					object selected_value = property_grid.SelectedGridItem.Value;
 					foreach (object obj in std_values) {
-						listBox.Items.Add(obj);
+
+						string obj_str;
+						if (converter.CanConvertTo (typeof (string)))
+							obj_str = (string) converter.ConvertTo (obj, typeof (string));
+						else
+							obj_str = obj.ToString ();
+
+						listBox.Items.Add (obj_str);
 						if (selected_value != null && selected_value.Equals(obj))
 							selected_index = i;
 						i++;
