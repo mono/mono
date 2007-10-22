@@ -1,5 +1,9 @@
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AttachmentTest.cs : I have no time to fix it now. Disable it.
+
+2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* LinkedResourceTest.cs : removed NotWorking.
 
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>

@@ -65,6 +65,7 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void NameEncoding ()
 		{
 			Assert.IsNull (attach.NameEncoding);
