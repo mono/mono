@@ -1,3 +1,13 @@
+2007-10-23  Andreia Gaita <avidigal@novell.com>
+
+	* TextBoxTextRenderer.cs: Lower bounds max size to Int16.MaxValue, the 
+	Windows 2000 gdi DrawText call doesn't draw if it's higher than that
+	for some reason
+
+2007-10-22  Andreia Gaita <avidigal@novell.com>
+
+	* build-csproj2k5, SWF2k5.csproj: add System.configuration reference
+
 2007-10-22  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile: Add a reference to System.Configuration.dll in NET 2.0

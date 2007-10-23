@@ -50,8 +50,9 @@ namespace System.Windows.Forms
 				use_textrenderer = false;
 			else
 				use_textrenderer = true;
-				
-			max_size = new Size (int.MaxValue, int.MaxValue);
+
+			// windows 2000 doesn't draw with gdi if bounds are In32.MaxValue
+			max_size = new Size (Int16.MaxValue, Int16.MaxValue);
 			
 			sf_nonprinting = new StringFormat (StringFormat.GenericTypographic);
 			sf_nonprinting.Trimming = StringTrimming.None;
