@@ -1,3 +1,9 @@
+2007-10-23  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesAssemblyBuilder.cs: do not output preservation files
+	for satellite assemblies, just for the main assembly. Also, don't
+	add the satellite assemblies to the list of top-level assemblies.
+
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: added code to set the AsyncMode and

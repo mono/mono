@@ -118,16 +118,20 @@ namespace System.Web.Compilation
 			
 			if (results.NativeCompilerReturnValue == 0) {
 				ret = results.CompiledAssembly;
-				BuildManager.TopLevelAssemblies.Add (ret);
-				if (defaultAssembly)
+				if (defaultAssembly) {
+					BuildManager.TopLevelAssemblies.Add (ret);
 					mainAssembly = ret;
+				}
 			} else {
 				if (HttpContext.Current.IsCustomErrorEnabled)
 					throw new ApplicationException ("An error occurred while compiling global resources.");
 				throw new CompilationException (null, results.Errors, null);
 			}
-			HttpRuntime.WritePreservationFile (ret, canonicAssemblyName);
-			HttpRuntime.EnableAssemblyMapping (true);
+			
+			if (defaultAssembly) {
+				HttpRuntime.WritePreservationFile (ret, canonicAssemblyName);
+				HttpRuntime.EnableAssemblyMapping (true);
+			}
 		}
 
 		string BuildAssemblyPath (string cultureName, AssemblyBuilder abuilder)
