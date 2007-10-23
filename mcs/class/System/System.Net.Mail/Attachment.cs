@@ -87,11 +87,7 @@ namespace System.Net.Mail {
 
 		public string Name {
 			get { return ContentType.Name; }
-			set {
-				if (value != null && nameEncoding == null)
-					nameEncoding = ContentType.GuessEncoding (value);
-				ContentType.Name = value;
-			}
+			set { ContentType.Name = value; }
 		}
 
 		public Encoding NameEncoding {

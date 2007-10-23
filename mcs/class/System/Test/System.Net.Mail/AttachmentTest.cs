@@ -65,10 +65,13 @@ namespace MonoTests.System.Net.Mail
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NameEncoding ()
 		{
-			Assert.IsNull (attach.NameEncoding);
+			Assert.IsNull (attach.NameEncoding, "#1");
+			Attachment a = new Attachment (new MemoryStream (), "myname");
+			Assert.IsNull (a.NameEncoding, "#2");
+			a = new Attachment (new MemoryStream (), "myname\u3067");
+			Assert.IsNull (a.NameEncoding, "#3");
 		}
 
 		[Test]
