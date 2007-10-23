@@ -1059,7 +1059,7 @@ namespace System.Web {
 				for (int q = namePos; q < query.Length; q++) {
 					if (valuePos == -1 && query[q] == '=') {
 						valuePos = q + 1;
-					} else if (query[q] == ';' || query[q] == '&') {
+					} else if (query[q] == '&') {
 						valueEnd = q;
 						break;
 					}

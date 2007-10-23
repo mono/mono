@@ -1,3 +1,8 @@
+2007-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: MS.NET does not support the ';' query parameter
+	separator. Fixes bug #335615
+
 2007-10-18  Juraj Skripsky  <js@hotfeet.ch>
 
 	* StaticSiteMapProvider.cs: Replace Hashtables by Dictionaries,
