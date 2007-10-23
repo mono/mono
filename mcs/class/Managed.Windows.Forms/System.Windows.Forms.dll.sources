@@ -506,6 +506,7 @@ System.Windows.Forms/NumericUpDown.cs
 System.Windows.Forms/NumericUpDownAcceleration.cs
 System.Windows.Forms/NumericUpDownAccelerationCollection.cs
 System.Windows.Forms/OSFeature.cs
+System.Windows.Forms/OSXKeyboard.cs
 System.Windows.Forms/OSXStructs.cs
 System.Windows.Forms/OpacityConverter.cs
 System.Windows.Forms/OpenFileDialog.cs
