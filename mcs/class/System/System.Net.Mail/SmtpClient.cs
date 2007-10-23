@@ -80,6 +80,9 @@ namespace System.Net.Mail {
 
 		MailMessage messageInProcess;
 
+		BackgroundWorker worker;
+		object user_async_state;
+
 		// ESMTP state
 		enum AuthMechs {
 			None        = 0,
@@ -90,7 +93,11 @@ namespace System.Net.Mail {
 			Login       = 0x10,
 			Plain       = 0x20,
 		}
-		
+
+		class CancellationException : Exception
+		{
+		}
+
 		AuthMechs authMechs = AuthMechs.None;
 		bool canStartTLS = false;
 
@@ -206,6 +213,7 @@ namespace System.Net.Mail {
 			}
 		}
 
+		[MonoTODO]
 		public ServicePoint ServicePoint {
 			get { throw new NotImplementedException (); }
 		}
@@ -290,8 +298,19 @@ namespace System.Net.Mail {
 
 		protected void OnSendCompleted (AsyncCompletedEventArgs e)
 		{
-			if (SendCompleted != null)
-				SendCompleted (this, e);
+			try {
+				if (SendCompleted != null)
+					SendCompleted (this, e);
+			} finally {
+				worker = null;
+				user_async_state = null;
+			}
+		}
+
+		private void CheckCancellation ()
+		{
+			if (worker != null && worker.CancellationPending)
+				throw new CancellationException ();
 		}
 
 		private SmtpResponse Read () {
@@ -300,6 +319,8 @@ namespace System.Net.Mail {
 			bool lastLine = false;
 
 			do {
+				CheckCancellation ();
+
 				int readLength = stream.Read (buffer, position, buffer.Length - position);
 				if (readLength > 0) {
 					int available = position + readLength - 1;
@@ -401,9 +422,24 @@ namespace System.Net.Mail {
 			
 			// Block while sending
 			mutex.WaitOne ();
-			messageInProcess = message;
+			try {
+				messageInProcess = message;
+				SendCore (message);
+			} catch (CancellationException) {
+				// This exception is introduced for convenient cancellation process.
+			} finally {
+				// Release the mutex to allow other threads access
+				mutex.ReleaseMutex ();
+				messageInProcess = null;
+			}
+Console.WriteLine ("Send() completed");
+		}
 
+		private void SendCore (MailMessage message)
+		{
 			SmtpResponse status;
+
+			CheckCancellation ();
 
 			client = new TcpClient (host, port);
 			stream = client.GetStream ();
@@ -538,10 +574,6 @@ namespace System.Net.Mail {
 			reader.Close ();
 			stream.Close ();
 			client.Close ();
-
-			// Release the mutex to allow other threads access
-			mutex.ReleaseMutex ();
-			messageInProcess = null;
 		}
 
 		public void Send (string from, string to, string subject, string body)
@@ -551,6 +583,8 @@ namespace System.Net.Mail {
 
 		private void SendData (string data)
 		{
+			CheckCancellation ();
+
 			// Certain SMTP servers will reject mail sent with unix line-endings; see http://cr.yp.to/docs/smtplf.html
 			StringBuilder sb = new StringBuilder (data);
 			sb.Replace ("\r\n", "\n");
@@ -563,8 +597,26 @@ namespace System.Net.Mail {
 
 		public void SendAsync (MailMessage message, object userToken)
 		{
-			Send (message);
-			OnSendCompleted (new AsyncCompletedEventArgs (null, false, userToken));
+			if (worker != null)
+				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+
+			worker = new BackgroundWorker ();
+			worker.DoWork += delegate (object o, DoWorkEventArgs ea) {
+				try {
+					user_async_state = ea.Argument;
+					Send (message);
+				} catch (Exception ex) {
+					ea.Result = ex;
+				}
+			};
+			worker.WorkerSupportsCancellation = true;
+			worker.RunWorkerCompleted += delegate (object o, RunWorkerCompletedEventArgs ea) {
+				if (worker.CancellationPending)
+					OnSendCompleted (new AsyncCompletedEventArgs (null, true, user_async_state));
+				else
+					OnSendCompleted (new AsyncCompletedEventArgs (ea.Result as Exception, false, user_async_state));
+			};
+			worker.RunWorkerAsync (userToken);
 		}
 
 		public void SendAsync (string from, string to, string subject, string body, object userToken)
@@ -574,7 +626,9 @@ namespace System.Net.Mail {
 
 		public void SendAsyncCancel ()
 		{
-			throw new NotImplementedException ();
+			if (worker == null)
+				throw new InvalidOperationException ("SendAsync operation is not in progress");
+			worker.CancelAsync ();
 		}
 
 		private void AddPriorityHeader (MailMessage message) {
@@ -864,6 +918,7 @@ try {
 			((NetworkStream) stream).ChangeToSSLSocket ();
 #elif SECURITY_DEP
 			SslStream sslStream = new SslStream (stream, false, callback, null);
+			CheckCancellation ();
 			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
 			stream = sslStream;
 

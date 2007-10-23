@@ -1,5 +1,9 @@
 2007-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SmtpClient.cs : Implemented async operations.
+
+2007-10-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Attachment.cs : reverted previous change. NameEncoding is not
 	  guessed at set_Name().
 
