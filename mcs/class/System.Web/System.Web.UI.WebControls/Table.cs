@@ -229,20 +229,13 @@ namespace System.Web.UI.WebControls {
 
 			string s = Caption;
 			if (s.Length > 0) {
-				writer.WriteBeginTag ("caption");
-
 				TableCaptionAlign tca = CaptionAlign;
-				if (tca != TableCaptionAlign.NotSet) {
-					writer.WriteAttribute ("align", tca.ToString ());
-				}
-
-				writer.Write (HtmlTextWriter.TagRightChar);
-				writer.Indent++;
-				writer.WriteLine ();
+				if (tca != TableCaptionAlign.NotSet)
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, tca.ToString ());
+				
+				writer.RenderBeginTag (HtmlTextWriterTag.Caption);
 				writer.Write (s);
-				writer.Indent--;
-				writer.WriteLine ();
-				writer.WriteEndTag ("caption");
+				writer.RenderEndTag ();
 			} else if (HasControls ()) {
 				writer.Indent++;
 			}

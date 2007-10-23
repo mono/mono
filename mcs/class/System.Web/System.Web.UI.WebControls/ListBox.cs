@@ -185,16 +185,15 @@ namespace System.Web.UI.WebControls {
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
 			foreach (ListItem item in Items) {
-				writer.WriteBeginTag ("option");
 				if (item.Selected) {
-					writer.WriteAttribute ("selected", "selected", false);
+					writer.AddAttribute (HtmlTextWriterAttribute.Selected, "selected", false);
 				}
-				writer.WriteAttribute ("value", item.Value, true);
-
-				writer.Write (">");
+				writer.AddAttribute (HtmlTextWriterAttribute.Value, item.Value, true);
+				writer.RenderBeginTag (HtmlTextWriterTag.Option);
+				
 				string encoded = HttpUtility.HtmlEncode (item.Text);
 				writer.Write (encoded);
-				writer.WriteEndTag ("option");
+				writer.RenderEndTag ();
 				writer.WriteLine ();
 			}
 		}
