@@ -1,3 +1,10 @@
+2007-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGridView.cs: Don't make the grid item textbox 
+	editable when a drop-down control is available, but 
+	CanConvertFrom (typeof (string)) is false or GetStandardValuesExclusive () is
+	true. The same bur the color of the grid item value's label.
+
 2007-10-22  Geoff Norton  <gnorton@novell.com>
 
 	* OSXStructs.cs: Add the needed constants for keyboard modifiers.

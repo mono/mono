@@ -659,16 +659,17 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 
 				try {
-					if (grid_item.PropertyDescriptor.Converter != null) {
+					TypeConverter type_converter = grid_item.PropertyDescriptor.Converter;
+					if (type_converter != null) {
 						Font font = this.Font;
 						Brush brush;
 
-						string value = grid_item.PropertyDescriptor.Converter.ConvertToString(grid_item.Value);
+						string value = type_converter.ConvertToString (grid_item.Value);
 						if (((GridEntry)grid_item).CanResetValue ())
 							font = bold_font;
 
 						brush = SystemBrushes.WindowText;
-						if (grid_item.PropertyDescriptor.IsReadOnly
+						if ((grid_item.PropertyDescriptor.IsReadOnly || !type_converter.CanConvertFrom (typeof (string)))
 						    && !grid_item.Expandable)
 							brush = SystemBrushes.InactiveCaption;
 
@@ -978,12 +979,15 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 			else {
 				try {
-					if (forItem.PropertyDescriptor.Converter != null) {
-						if (forItem.PropertyDescriptor.Converter.GetStandardValuesSupported()) {
+					TypeConverter type_converter = forItem.PropertyDescriptor.Converter;
+					if (type_converter != null) {
+						if (type_converter.GetStandardValuesSupported ()) {
 							
 							grid_textbox.DropDownButtonVisible = true;
-							is_non_editable = true;
-						}
+							is_non_editable = !type_converter.CanConvertFrom (typeof (string)) ||
+								type_converter.GetStandardValuesExclusive ();
+						} else
+							is_non_editable = !type_converter.CanConvertFrom (typeof (string));
 					}
 					else {
 						Console.WriteLine("Converter not available for type {0}",forItem.PropertyDescriptor.PropertyType);
