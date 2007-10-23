@@ -1,3 +1,8 @@
+2007-10-23  Robert Jordan  <robertj@gmx.net>
+
+	* SortedList.cs: Mark List|{Values|Keys} as serializable.
+	Fixes #335703.
+
 2007-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayList.cs: Fix overflows in BinarySearch and qsort.

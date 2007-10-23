@@ -734,7 +734,7 @@ namespace System.Collections {
 			}
 		}
 
-
+		[Serializable]
 		private class ListKeys : IList, IEnumerable {
 
 			private SortedList host;
@@ -854,7 +854,7 @@ namespace System.Collections {
 
 		}
 
-
+		[Serializable]
 		private class ListValues : IList, IEnumerable {
 
 			private SortedList host;
