@@ -264,6 +264,7 @@ namespace System.Windows.Forms {
 
 			/* Keyboard event parameter and types*/
 			kEventParamKeyMacCharCodes = 1801676914,	//	'kchr'
+			kEventParamKeyModifiers = 1802334052,					//	'kmod'
 	
 			/* Mouse event parameters and types*/
 			kEventParamMouseLocation = 1835822947,		//	'mloc', /* typeHIPoint*/
@@ -282,20 +283,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal enum EventParamType : uint {
-
 			typeControlPartCode = 1668313716,			//	'cprt'	/* ControlPartCode*/
-
 			typeQDPoint = 1363439732,					//	'QDpt'
-
 			typeControlRef = 1668575852,				//	'ctrl'
-
 			typeCGContextRef = 1668183160,				//	'cntx'	/* CGContextRef*/
-
 			typeMouseButton = 1835168878,				//	'mbtn'	/* EventMouseButton*/
-
 			typeQDRgnHandle = 1919381096,				//	'rgnh'
-
 			typeChar = 1413830740,						//	'TEXT'
+			typeUInt32 = 1835100014,						//	'TEXT'
 		}
 
 		#endregion

@@ -1,3 +1,11 @@
+2007-10-22  Geoff Norton  <gnorton@novell.com>
+
+	* OSXStructs.cs: Add the needed constants for keyboard modifiers.
+	* OSXKeyboard.cs: Initial support for keyboard and limited modifiers.
+	* XplatUIOSX.cs: New reversible frame support.  Wire in the new keyboard
+	driver.  Padd the bottom of all real windows so the resize thumb doesn't
+	obscure scroll/status bars.
+
 2007-10-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* WindowsFormsSection.cs: Implement.

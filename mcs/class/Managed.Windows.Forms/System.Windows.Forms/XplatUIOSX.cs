@@ -51,10 +51,12 @@ namespace System.Windows.Forms {
 		
 		// General driver variables
 		private static XplatUIOSX Instance;
+		private static OSXKeyboard Keyboard;
 		private static int RefCount;
 		private static bool themes_enabled;
 		private static IntPtr FocusWindow;
 		private static IntPtr ActiveWindow;
+		private static IntPtr ReverseWindow;
 
 		// Mouse 
 		private static MouseButtons MouseState;
@@ -91,6 +93,7 @@ namespace System.Windows.Forms {
 									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseWheelMoved),
 									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowBoundsChanged),
 									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowClose),
+									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyModifiersChanged),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyDown),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyRepeat),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyUp)
@@ -100,6 +103,8 @@ namespace System.Windows.Forms {
 		// Message loop
 		private static Queue MessageQueue;
 		private static bool GetMessageResult;
+
+		private static bool ReverseWindowMapped;
 
 		// Timers
 		private ArrayList TimerList;
@@ -184,6 +189,9 @@ namespace System.Windows.Forms {
 			CheckError (SetFrontProcess (ref psn), "SetFrontProcess ()");
 			CheckError (CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent), "CreateFosterParent ()");
 			
+			CreateNewWindow (WindowClass.kOverlayWindowClass, WindowAttributes.kWindowNoUpdatesAttribute | WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref ReverseWindow);
+			InstallEventHandler (GetWindowEventTarget (ReverseWindow), CarbonEventHandler, (uint)window_events.Length, window_events, ReverseWindow, IntPtr.Zero);
+			
 			// Get some values about bar heights
 			Rect structRect = new Rect ();
 			Rect contentRect = new Rect ();
@@ -196,8 +204,12 @@ namespace System.Windows.Forms {
 			// Focus
 			FocusWindow = IntPtr.Zero;
 			
+			Keyboard = new OSXKeyboard ();
+
 			// Message loop
 			GetMessageResult = true;
+			
+			ReverseWindowMapped = false;
 		}
 		
 		#endregion
@@ -235,8 +247,10 @@ namespace System.Windows.Forms {
 				switch (eventClass) {
 					// keyboard
 					case OSXConstants.kEventClassKeyboard: {
-						retVal = ProcessKeyboardEvent (inEvent, eventKind, handle);
-						break;
+						MSG msg = new MSG ();
+						Keyboard.KeyEvent (inEvent, handle, eventKind, ref msg);
+						MessageQueue.Enqueue (msg);
+						return -9874;
 					}
 					//window
 					case OSXConstants.kEventClassWindow: {
@@ -302,51 +316,6 @@ namespace System.Windows.Forms {
 			return converted_point;
 		}
 		
-		// This sucks write a real driver
-		private int ProcessKeyboardEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			MSG msg = new MSG ();
-			byte charCode = 0x00;
-			GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyMacCharCodes, OSXConstants.EventParamType.typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
-			IntPtr cntrl = IntPtr.Zero;
-			CheckError (GetKeyboardFocus (handle, ref cntrl), "GetKeyboardFocus()");
-			msg.hwnd = cntrl;
-			msg.lParam = IntPtr.Zero;
-			switch (charCode) {
-				case 28:
-					charCode = 0x25;
-					break;
-				case 29:
-					charCode = 0x27;
-					break;
-				case 30:
-					charCode = 0x26;
-					break;
-				case 31:
-					charCode = 0x28;
-					break;
-			}
-			msg.wParam = (IntPtr)charCode;
-			switch (eventKind) {
-				// keydown
-				case OSXConstants.kEventRawKeyDown: {
-					msg.message = Msg.WM_KEYDOWN;
-					break;
-				}
-				// repeat
-				case OSXConstants.kEventRawKeyRepeat: {
-					msg.message = Msg.WM_KEYDOWN;
-					break;
-				}
-				// keyup
-				case OSXConstants.kEventRawKeyUp: {
-					msg.message = Msg.WM_KEYUP;
-					break;
-				}
-			}
-			MessageQueue.Enqueue (msg);
-			return -9874;
-		}
-
 		private int ProcessWindowEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
 			MSG msg = new MSG ();
 			switch (eventKind) {
@@ -431,6 +400,9 @@ namespace System.Windows.Forms {
 					HIViewConvertPoint (ref window_pt, window_handle, view_handle);
 					
 					Hwnd hwnd = Hwnd.ObjectFromHandle (view_handle);
+					
+					if (GrabWindowHwnd != null)
+						hwnd = GrabWindowHwnd;
 					
 					if (hwnd == null)
 						return -9874;
@@ -554,6 +526,7 @@ namespace System.Windows.Forms {
 					if (GrabWindowHwnd != null)
 						hwnd = GrabWindowHwnd;
 					
+					// FIXME: This isn't translating properly for DrawReversibleFrame and looses precision
 					while (mousestatus != MouseTrackingResult.kMouseTrackingMouseUp) {
 						CheckTimers (DateTime.UtcNow);
 						if (mousestatus == MouseTrackingResult.kMouseTrackingMouseDragged) {
@@ -860,7 +833,7 @@ namespace System.Windows.Forms {
 				Size qsize = size;
 
 				qsize.Width -= borders.left + borders.right;
-				qsize.Height -= borders.top + borders.bottom;
+				qsize.Height -= borders.top + borders.bottom - 15;
 				
 				size = qsize;
 			}
@@ -885,7 +858,7 @@ namespace System.Windows.Forms {
 				Size qsize = size;
 
 				qsize.Width += borders.left + borders.right;
-				qsize.Height += borders.top + borders.bottom;
+				qsize.Height += borders.top + borders.bottom - 15;
 				
 				size = qsize;
 			}
@@ -991,42 +964,6 @@ namespace System.Windows.Forms {
 			InvertCaret ();
 		}
 		
-		internal void InstallTracking (Hwnd hwnd) {
-			// This is currently not used
-			
-			/*
-			if (hwnd.client_region_ptr != IntPtr.Zero) {
-				ReleaseMouseTrackingRegion (hwnd.client_region_ptr);
-				hwnd.client_region_ptr = IntPtr.Zero;
-			}
-			if (hwnd.whole_region_ptr != IntPtr.Zero) {
-				ReleaseMouseTrackingRegion (hwnd.whole_region_ptr);
-				hwnd.whole_region_ptr = IntPtr.Zero;
-			}
-			// Setup the new track region
-			if (hwnd.visible) {
-				HIRect client_bounds = new HIRect ();	
-				HIViewGetBounds (hwnd.client_window, ref client_bounds);
-				HIViewConvertRect (ref client_bounds, hwnd.client_window, IntPtr.Zero);
-			
-				IntPtr rgn = NewRgn ();
-				SetRectRgn (rgn, (short)client_bounds.origin.x, (short)client_bounds.origin.y, (short)(client_bounds.origin.x+hwnd.ClientRect.Width), (short)(client_bounds.origin.y+hwnd.ClientRect.Height));
-				CreateMouseTrackingRegion (HIViewGetWindow (hwnd.client_window), rgn, IntPtr.Zero, 0, hwnd.client_region_id, hwnd.client_window, IntPtr.Zero, ref hwnd.client_region_ptr);
-				Console.WriteLine (hwnd.ClientRect);
-				Console.WriteLine ("Created a mouse trcaking region on the client window @ {0}x{1} {2}x{3}", (short)client_bounds.origin.x, (short)client_bounds.origin.y, (short)(client_bounds.origin.x+hwnd.ClientRect.Width), (short)(client_bounds.origin.y+hwnd.ClientRect.Height));
-				if (hwnd.ClientRect.X > 0 && hwnd.ClientRect.Y > 0) {
-					HIRect window_bounds = new HIRect ();
-					HIViewGetBounds (hwnd.whole_window, ref window_bounds);
-					HIViewConvertRect (ref window_bounds, hwnd.whole_window, IntPtr.Zero);
-					rgn = NewRgn ();
-					SetRectRgn (rgn, (short)window_bounds.origin.x, (short)window_bounds.origin.y, (short)(window_bounds.origin.x+hwnd.ClientRect.X), (short)(window_bounds.origin.y+hwnd.ClientRect.Y));
-					CreateMouseTrackingRegion (HIViewGetWindow (hwnd.whole_window), rgn, IntPtr.Zero, 0, hwnd.whole_region_id, hwnd.whole_window, IntPtr.Zero, ref hwnd.whole_region_ptr);
-					Console.WriteLine ("Created a mouse trcaking region on the whole window @ {0}x{1} {2}x{3}", (short)window_bounds.origin.x, (short)window_bounds.origin.y, (short)(window_bounds.origin.x+hwnd.ClientRect.X), (short)(window_bounds.origin.y+hwnd.ClientRect.Y));
-				}
-			}
-			*/
-		}
-
 		internal void CheckError (int result, string error) {
 			if (result != 0)
 				throw new Exception ("XplatUIOSX.cs::" + error + "() Carbon subsystem threw an error: " + result);
@@ -1285,11 +1222,9 @@ namespace System.Windows.Forms {
 			IntPtr ClientWindow;
 			IntPtr WholeWindowTracking;
 			IntPtr ClientWindowTracking;
-			WindowAttributes Attributes;
 
 			hwnd = new Hwnd ();
 
-			Attributes = new WindowAttributes ();
 			X = cp.X;
 			Y = cp.Y;
 			Width = cp.Width;
@@ -2066,9 +2001,7 @@ namespace System.Windows.Forms {
 					}
 
 					IntPtr provider = CGDataProviderCreateWithData (IntPtr.Zero, data, size*4, IntPtr.Zero);
-Console.WriteLine (provider);
 					IntPtr image = CGImageCreate (128, 128, 8, 32, 4*128, CGColorSpaceCreateDeviceRGB (), 4, provider, IntPtr.Zero, 0, 0);
-Console.WriteLine (image);
 					SetApplicationDockTileImage (image);
 				}
 			}
@@ -2328,7 +2261,6 @@ Console.WriteLine (image);
 		}
 		
 		internal override bool TranslateMessage(ref MSG msg) {
-			bool res = false;
 			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.hwnd);
 					
 			switch (msg.message) {
@@ -2357,21 +2289,27 @@ Console.WriteLine (image);
 				
 			}
 			
-			// This is a hideous temporary keyboard hack to bind some keys	
-			if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST)
-				res = true;
-
-			if (msg.message != Msg.WM_KEYDOWN && msg.message != Msg.WM_SYSKEYDOWN)
-				return res;
-
-			if ((int)msg.wParam >= (int)'0' && (int)msg.wParam <= (int)'z') {
-				Msg message;
-				message = Msg.WM_CHAR;
-				PostMessage (msg.hwnd, message, msg.wParam, msg.lParam);
-			}
-			return true;
+			return Keyboard.TranslateMessage (ref msg);
 		}
 		
+		#region Reversible regions
+		/* 
+		 * Quartz has no concept of XOR drawing due to its compositing nature
+		 * We fake this by mapping a overlay window on the first draw and mapping it on the second.
+		 * This has some issues with it because its POSSIBLE for ControlPaint.DrawReversible* to actually
+		 * reverse two regions at once.  We dont do this in MWF, but this behaviour woudn't work.
+		 * We could in theory cache the Rectangle/Color combination to handle this behaviour.
+		 *
+		 * PROBLEMS: This has some flicker / banding
+		 */
+		internal void SizeReversibleWindow (Rectangle rect) {
+			Rect qrect = new Rect ();
+
+			SetRect (ref qrect, (short)rect.X, (short)rect.Y, (short)(rect.X+rect.Width), (short)(rect.Y+rect.Height));
+
+			SetWindowBounds (ReverseWindow, 33, ref qrect);
+		}
+
 		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
 			throw new NotImplementedException();
 		}
@@ -2384,20 +2322,45 @@ Console.WriteLine (image);
 			throw new NotImplementedException();
 		}
 
-		//FIXME: This isn't actually correct; its jsut something visual we can use now for debugging
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
-			Rect draw_rect = new Rect ();
-			IntPtr WindowHandle = HIViewGetWindow (handle);
+			Rectangle size_rect = rect;
+			int new_x = 0;
+			int new_y = 0;
 
-			SetPortWindowPort (WindowHandle);
-			GetWindowPortBounds (WindowHandle, ref draw_rect);
+			if (ReverseWindowMapped) {
+				HideWindow (ReverseWindow);
+				ReverseWindowMapped = false;
+			} else {
+				ClientToScreen(handle, ref new_x, ref new_y);
 
-			draw_rect.top += (short)(rect.Y + TitleBarHeight);			
-			draw_rect.left += (short)rect.X;			
-			draw_rect.bottom = (short)(draw_rect.top + rect.Height);			
-			draw_rect.right = (short)(draw_rect.left + rect.Width);			
-			InvertRect (ref draw_rect);
+				size_rect.X += new_x;
+				size_rect.Y += new_y;
+
+				SizeReversibleWindow (size_rect);
+				ShowWindow (ReverseWindow);
+
+				rect.X = 0;
+				rect.Y = 0;
+				rect.Width -= 1;
+				rect.Height -= 1;
+
+				Graphics g = Graphics.FromHwnd (HIViewGetRoot (ReverseWindow));
+
+				for (int i = 0; i < line_width; i++) {
+					g.DrawRectangle (ThemeEngine.Current.ResPool.GetPen (Color.Black), rect);
+					rect.X += 1;
+					rect.Y += 1;
+					rect.Width -= 1;
+					rect.Height -= 1;
+				}
+	
+				g.Flush ();
+				g.Dispose ();
+				
+				ReverseWindowMapped = true;
+			}
 		}
+		#endregion
 
 		[MonoTODO]
 		internal override SizeF GetAutoScaleSize(Font font) {
@@ -2538,8 +2501,6 @@ Console.WriteLine (image);
 		static extern bool IsWindowActive (IntPtr windowHnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetKeyboardFocus (IntPtr windowHdn, IntPtr cntrlHnd, short partcode);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetKeyboardFocus (IntPtr handle, ref IntPtr cntrl);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
@@ -2557,8 +2518,6 @@ Console.WriteLine (image);
 		static extern uint GetEventClass (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern uint GetEventKind (IntPtr eventRef);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -2627,6 +2586,8 @@ Console.WriteLine (image);
 		internal static extern int CreateNewWindow (WindowClass klass, WindowAttributes attributes, ref Rect r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int DisposeWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void BringToFront (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int ShowWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
