@@ -1,3 +1,10 @@
+2007-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Create a jump
+	trampoline instead of compiling the method right away.
+
+	* class-internals.h object.c: Add a JIT callback to create a jump trampoline.
+
 2007-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_generic_class_get_class): Avoid setting klass->size_inited and
