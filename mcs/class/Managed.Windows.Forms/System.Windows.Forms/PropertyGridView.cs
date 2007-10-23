@@ -970,10 +970,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					
 				switch (style) {
 				case UITypeEditorEditStyle.DropDown:
-					grid_textbox.DropDownButtonVisible = true;
+					if (!forItem.PropertyDescriptor.IsReadOnly)
+						grid_textbox.DropDownButtonVisible = true;
 					break;
 				case UITypeEditorEditStyle.Modal:
-					grid_textbox.DialogButtonVisible = true;
+					if (!forItem.PropertyDescriptor.IsReadOnly)
+						grid_textbox.DialogButtonVisible = true;
 					break;
 				}
 			}

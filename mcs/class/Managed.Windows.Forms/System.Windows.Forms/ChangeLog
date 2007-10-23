@@ -1,5 +1,11 @@
 2007-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* PropertyGridView.cs: If a property has an UIEditor available,
+	make the drop-down/editor button available only if the property
+	is _not_ read only.
+
+2007-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* PropertyGridView.cs: Don't make the grid item textbox 
 	editable when a drop-down control is available, but 
 	CanConvertFrom (typeof (string)) is false or GetStandardValuesExclusive () is
