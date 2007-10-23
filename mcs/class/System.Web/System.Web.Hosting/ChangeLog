@@ -1,3 +1,12 @@
+2007-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: ignore exceptions resulting from the attempt
+	to delete a stamp directory in CreateApplicationHost. It is safe
+	to do so, since the code inside the loop serves the only purpose
+	to create the asp.net temporary directory if the filesystem
+	permissions allow it. If the directory has been deleted by some
+	other thread, that's ok.
+
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: introduce an application domain data item to

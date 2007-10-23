@@ -176,7 +176,12 @@ namespace System.Web.Hosting {
 					string stamp = Path.Combine (d, "stamp");
 					CreateDirectory (stamp);
 					dynamic_dir = d;
-					Directory.Delete (stamp);
+					try {
+						Directory.Delete (stamp);
+					} catch (Exception) {
+						// ignore
+					}
+					
 					tempDirTag = i.GetHashCode ();
 					break;
 				} catch (UnauthorizedAccessException){
