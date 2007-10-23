@@ -1,3 +1,9 @@
+
+Tue Oct 23 17:07:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: handle synchronized methods with the common
+	vtable trampoline (bug #335601).
+
 2007-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.h mini-amd64.c: Add support for the common vtable trampoline.
