@@ -221,10 +221,8 @@ namespace System.Net.NetworkInformation {
 			};
 			worker.WorkerSupportsCancellation = true;
 			worker.RunWorkerCompleted += delegate (object o, RunWorkerCompletedEventArgs ea) {
-				if (ea.Result is PingReply)
-					OnPingCompleted (new PingCompletedEventArgs (null, false, user_async_state, (PingReply) ea.Result));
-				else
-					OnPingCompleted (new PingCompletedEventArgs ((Exception) ea.Result, false, user_async_state, null));
+				// Note that RunWorkerCompletedEventArgs.UserState cannot be used (LAMESPEC)
+				OnPingCompleted (new PingCompletedEventArgs (ea.Error, ea.Cancelled, user_async_state, ea.Result as PingReply));
 			};
 			worker.RunWorkerAsync (userToken);
 		}
@@ -234,9 +232,8 @@ namespace System.Net.NetworkInformation {
 		public void SendAsyncCancel ()
 		{
 			if (worker == null)
-				throw new InvalidOperationException ("Another SendAsync operation is in progress");
+				throw new InvalidOperationException ("SendAsync operation is not in progress");
 			worker.CancelAsync ();
-			OnPingCompleted (new PingCompletedEventArgs (null, true, user_async_state, null));
 		}
 
 		// ICMP message
