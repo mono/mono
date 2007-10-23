@@ -1,4 +1,4 @@
-// cs0111-3.cs: `Class.implicit operator Class(byte)' is already defined. Rename this member or use different parameter types
+// CS0082: A member `Class.op_Implicit(byte)' is already reserved
 // Line: 9
 
 public class Class {

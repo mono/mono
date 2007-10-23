@@ -1,14 +1,8 @@
-// cs0102.cs: The type `Test' already contains a definition for `add_XX'
-// Line: 12
+// CS0102: The type `C' already contains a definition for `Item'
+// Line: 7
 
-public class Test
+class C
 {
-	public delegate void MyEvent ();
-	public event MyEvent XX {
-		add { }
-		remove { }
-	}
-        
-	public void add_XX (MyEvent e) { return; }
+    bool this [int i] { get { return false; } }
+    bool Item (int i) { return false; }
 }
-
