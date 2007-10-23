@@ -611,10 +611,8 @@ Console.WriteLine ("Send() completed");
 			};
 			worker.WorkerSupportsCancellation = true;
 			worker.RunWorkerCompleted += delegate (object o, RunWorkerCompletedEventArgs ea) {
-				if (worker.CancellationPending)
-					OnSendCompleted (new AsyncCompletedEventArgs (null, true, user_async_state));
-				else
-					OnSendCompleted (new AsyncCompletedEventArgs (ea.Result as Exception, false, user_async_state));
+				// Note that RunWorkerCompletedEventArgs.UserState cannot be used (LAMESPEC)
+				OnSendCompleted (new AsyncCompletedEventArgs (ea.Error, ea.Cancelled, user_async_state));
 			};
 			worker.RunWorkerAsync (userToken);
 		}
