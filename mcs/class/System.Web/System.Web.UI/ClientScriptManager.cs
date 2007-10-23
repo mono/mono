@@ -618,6 +618,15 @@ namespace System.Web.UI
 		}
 
 #endif
+		
+#if NET_2_0
+		internal const string SCRIPT_BLOCK_START = "//<![CDATA[";
+		internal const string SCRIPT_BLOCK_END = "//]]>";
+#else
+		internal const string SCRIPT_BLOCK_START = "<!--";
+		internal const string SCRIPT_BLOCK_END ="// -->";
+#endif
+		
 		internal static void WriteBeginScriptBlock (HtmlTextWriter writer)
 		{
 			writer.WriteLine ("<script"+
@@ -625,12 +634,12 @@ namespace System.Web.UI
 				" language=\"javascript\""+
 #endif
 				" type=\"text/javascript\">");
-			writer.WriteLine ("<!--");
+			writer.WriteLine (SCRIPT_BLOCK_START);
 		}
 
 		internal static void WriteEndScriptBlock (HtmlTextWriter writer)
 		{
-			writer.WriteLine ("// -->");
+			writer.WriteLine (SCRIPT_BLOCK_END);
 			writer.WriteLine ("</script>");
 		}
 		
@@ -654,11 +663,11 @@ namespace System.Web.UI
 					else {
 						string scriptKey = "inc_" + path.GetHashCode ().ToString ("X");
 						writer.WriteLine ("<script type=\"text/javascript\">");
-						writer.WriteLine ("<!--");
+						writer.WriteLine (SCRIPT_BLOCK_START);
 						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
 						writer.WriteLine ("\tdocument.{0} = true", scriptKey);
 						writer.WriteLine ("\tdocument.write('<script src=\"{0}\" type=\"text/javascript\"><\\/script>'); }}", path);
-						writer.WriteLine ("// -->");
+						writer.WriteLine (SCRIPT_BLOCK_END);
 						writer.WriteLine ("</script>");
 					}
 		}

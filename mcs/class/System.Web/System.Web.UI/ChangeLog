@@ -1,3 +1,12 @@
+2007-10-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientScriptManager.cs: added two constants to define start/end
+	script block comments rendering. 1.1 uses HTML comments, while 2.0
+	uses a CDATA block.
+
+	* Page.cs: render script blocks with start/end comments taken from
+	the ClientScriptManager constants above.
+
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: removed code that ignored the Async and

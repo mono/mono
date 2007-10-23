@@ -958,7 +958,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			StringBuilder script = new StringBuilder ();
 			script.AppendLine ("<script type=\"text/javascript\">");
-			script.AppendLine ("<!--");
+			script.AppendLine (ClientScriptManager.SCRIPT_BLOCK_START);
 			script.AppendLine (theForm + ".oldSubmit = " + theForm + ".submit;");
 			script.AppendLine (theForm + ".submit = function () { " + webForm + "WebForm_SaveScrollPositionSubmit(); }");
 			script.AppendLine (theForm + ".oldOnSubmit = " + theForm + ".onsubmit;");
@@ -967,7 +967,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				script.AppendLine (theForm + ".oldOnLoad = window.onload;");
 				script.AppendLine ("window.onload = function () { " + webForm + "WebForm_RestoreScrollPosition (); };");
 			}
-			script.AppendLine ("// -->");
+			script.AppendLine (ClientScriptManager.SCRIPT_BLOCK_END);
 			script.AppendLine ("</script>");
 			
 			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
@@ -1910,11 +1910,14 @@ public partial class Page : TemplateControl, IHttpHandler
 
 			if (!String.IsNullOrEmpty (_focusedControlID)) {
 				ClientScript.RegisterWebFormClientScript ();
-				ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
-									 String.Format ("<script type=\"text/javascript\">\n" +
-											"<!--\n" +
-											"WebForm_AutoFocus('{0}');// -->\n" +
-											"</script>\n", _focusedControlID));
+				ClientScript.RegisterStartupScript (
+					"HtmlForm-DefaultButton-StartupScript",
+					String.Format (
+						"<script type=\"text/javascript\">\n{0}WebForm_AutoFocus('{1}');{2}\n</script>\n",
+						ClientScriptManager.SCRIPT_BLOCK_START,
+						_focusedControlID,
+						ClientScriptManager.SCRIPT_BLOCK_END)
+				);
 			}
 
 			if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
