@@ -1,3 +1,9 @@
+2007-10-23  Marek Safar  <marek.safar@gmail.com>
+	
+	* class.cs, decl.cs: Rewrote member overloads check to cope with 
+	generics and to use member cache for member checking. It also improves
+	performance and fixes remaining overloads issues.
+	
 2007-10-20  Marek Safar  <marek.safar@gmail.com>
 	
 	* class.cs, const.cs, decl.cs, delegate.cs, enum.cs, generic.cs,

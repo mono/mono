@@ -518,9 +518,10 @@ namespace Mono.CSharp {
 		
 		public void AddMethod (Method method)
 		{
-			if (!AddMember (method))
+			MemberName mn = method.MemberName;
+			if (!AddToContainer (method, mn.IsGeneric ? mn.Basename : mn.MethodName))
 				return;
-
+			
 			if (methods == null)
 				methods = new MemberCoreArrayList ();
 
@@ -553,35 +554,28 @@ namespace Mono.CSharp {
 			}
 
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
+			if (!AddToContainer (c, is_static ?
+				ConstructorBuilder.ConstructorName : ConstructorBuilder.TypeConstructorName))
+				return;
 			
 			if (is_static){
 				if (default_static_constructor != null) {
-					Report.SymbolRelatedToPreviousError (default_static_constructor);
-					Report.Error (111, c.Location, Error111, c.GetSignatureForError ());
-					return;
+				    Report.SymbolRelatedToPreviousError (default_static_constructor);
+					Report.Error (111, c.Location,
+						"A member `{0}' is already defined. Rename this member or use different parameter types",
+						c.GetSignatureForError ());
+				    return;
 				}
 
 				default_static_constructor = c;
 			} else {
-				if (c.Parameters.Empty){
-					if (default_constructor != null) {
-						Report.SymbolRelatedToPreviousError (default_constructor);
-						Report.Error (111, c.Location, Error111, c.GetSignatureForError ());
-						return;
-					}
+				if (c.Parameters.Empty)
 					default_constructor = c;
-				}
 				
 				if (instance_constructors == null)
 					instance_constructors = new MemberCoreArrayList ();
 				
 				instance_constructors.Add (c);
-			}
-		}
-
-		internal static string Error111 {
-			get {
-				return "`{0}' is already defined. Rename this member or use different parameter types";
 			}
 		}
 
@@ -3374,11 +3368,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override bool CheckForDuplications ()
-		{
-			throw new NotSupportedException ();
-		}
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -3439,86 +3428,20 @@ namespace Mono.CSharp {
 			if (!DefineParameters (Parameters))
 				return false;
 
-			if (!base.CheckBase ())
-				return false;
-
-			return true;
-		}
-
-		// TODO: create a special method for operators only to make code better
-		protected bool IsDuplicateImplementation (MethodCore method)
-		{
-			if (method == this)
-				return false;
-
-			Operator op2 = null;
-			Operator op1 = null;
-
-			if (!(method.MemberName.Equals (MemberName)))
-			{
-				op1 = this as Operator;
-				if (op1 == null || !(op1.OperatorType == Operator.OpType.Explicit || op1.OperatorType == Operator.OpType.Implicit))
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0) {
+				if (!Parent.MemberCache.CheckExistingMembersOverloads (this, Name, Parameters))
 					return false;
 
-				op2 = method as Operator;
-				if (op2 == null || !(op2.OperatorType == Operator.OpType.Explicit || op2.OperatorType == Operator.OpType.Implicit))
-					return false;
-			} else {
-				op1 = this as Operator;
-				op2 = method as Operator;
-			}
-
-			Type[] param_types = method.ParameterTypes;
-			// This never happen. Rewrite this as Equal
-			if (param_types == null && ParameterTypes == null)
-				return true;
-			if (param_types == null || ParameterTypes == null)
-				return false;
-
-			if (param_types.Length != ParameterTypes.Length)
-				return false;
-
-			if (method.Parameters.HasArglist != Parameters.HasArglist)
-				return false;
-			
-			bool equal = true;
-
-			for (int i = 0; i < param_types.Length; i++) {
-				if (param_types [i] != ParameterTypes [i])
-					equal = false;
-			}
-
-			if (IsExplicitImpl && (method.InterfaceType != InterfaceType))
-				equal = false;
-
-			// TODO: make operator compatible with MethodCore to avoid this
-			if (op1 != null && op2 != null) {
-				if (MemberType != method.MemberType)
-					equal = false;
-			}
-
-			if (!equal)
-				return false;
-
-			//
-			// Try to report 663: method only differs on out/ref
-			//
-			Parameters info = ParameterInfo;
-			Parameters other_info = method.ParameterInfo;
-			for (int i = 0; i < info.Count; i++) {
-				if (info.ParameterModifier (i) != other_info.ParameterModifier (i)) {
-					Report.SymbolRelatedToPreviousError (method);
-					Report.Error (663, Location, "`{0}': Methods cannot differ only on their use of ref and out on a parameters",
-							  GetSignatureForError ());
-					return false;
+				// TODO: Find a better way how to check reserved accessors collision
+				Method m = this as Method;
+				if (m != null) {
+					if (!m.CheckForDuplications ())
+						return false;
 				}
 			}
 
-			Report.SymbolRelatedToPreviousError (method);
-			if (this is Operator && method is Operator)
-				Report.Error (557, Location, "Duplicate user-defined conversion in type `{0}'", Parent.Name);
-			else
-				Report.Error (111, Location, TypeContainer.Error111, GetSignatureForError ());
+			if (!base.CheckBase ())
+				return false;
 
 			return true;
 		}
@@ -3550,6 +3473,16 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader 
 		{
 			get { return "M:"; }
+		}
+
+		public override bool EnableOverloadChecks (MemberCore overload)
+		{
+			if (overload is MethodCore || overload is AbstractPropertyEventMethod) {
+				caching_flags |= Flags.MethodOverloadsExist;
+				return true;
+			}
+
+			return false;
 		}
 
 		public virtual void SetYields ()
@@ -3619,9 +3552,6 @@ namespace Mono.CSharp {
 			if (!base.CheckBase ())
 				return false;
 			
-			if ((caching_flags & Flags.TestMethodDuplication) != 0 && !CheckForDuplications ())
-				return false;
-
 			if (IsExplicitImpl)
 				return true;
 
@@ -3952,11 +3882,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// For custom member duplication search in a container
-		/// </summary>
-		protected abstract bool CheckForDuplications ();
-
-		/// <summary>
 		/// Gets base method and its return type
 		/// </summary>
 		protected abstract MethodInfo FindOutBaseMethod (ref Type base_ret_type);
@@ -4176,12 +4101,6 @@ namespace Mono.CSharp {
 			Report.Error (577, Location,
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
-		}
-
-		public override bool IsOverloadable {
-			get {
-				return true;
-			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -4476,20 +4395,9 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
-  		protected override bool CheckForDuplications ()
+  		public bool CheckForDuplications ()
    		{
-  			ArrayList ar = Parent.PartialContainer.Methods;
-  			if (ar != null) {
-  				int arLen = ar.Count;
-   					
-  				for (int i = 0; i < arLen; i++) {
-  					Method m = (Method) ar [i];
-  					if (IsDuplicateImplementation (m))
-  						return false;
-   				}
-  			}
-
-			ar = Parent.PartialContainer.Properties;
+			ArrayList ar = Parent.PartialContainer.Properties;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
@@ -4503,15 +4411,6 @@ namespace Mono.CSharp {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];
 					if (pb.AreAccessorsDuplicateImplementation (this))
-						return false;
-				}
-			}
-
-			ar = Parent.PartialContainer.Events;
-			if (ar != null) {
-				for (int i = 0; i < ar.Count; ++i) {
-					Event ev = (Event) ar [i];
-					if (ev.AreAccessorsDuplicateImplementation (this))
 						return false;
 				}
 			}
@@ -4620,6 +4519,18 @@ namespace Mono.CSharp {
 						   Location, MethodBuilder);
 				throw;
 			}
+		}
+
+		public override bool EnableOverloadChecks (MemberCore overload)
+		{
+			// TODO: It can be deleted when members will be defined in correct order
+			if (overload is Operator)
+				return overload.EnableOverloadChecks (this);
+
+			if (overload is Indexer)
+				return false;
+
+			return base.EnableOverloadChecks (overload);
 		}
 
 		public static void Error1599 (Location loc, Type t)
@@ -4863,21 +4774,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
- 		protected override bool CheckForDuplications ()
-		{
-			ArrayList ar = Parent.PartialContainer.InstanceConstructors;
-			if (ar != null) {
-				int arLen = ar.Count;
-					
-				for (int i = 0; i < arLen; i++) {
-					Constructor m = (Constructor) ar [i];
-					if (IsDuplicateImplementation (m))
-						return false;
-				}
-			}
-			return true;
-		}
-
 		protected override bool CheckBase ()
 		{
 			if ((ModFlags & Modifiers.STATIC) != 0) {
@@ -4895,8 +4791,9 @@ namespace Mono.CSharp {
 			if (!DefineParameters (Parameters))
 				return false;
 
-			if (!CheckForDuplications ())
-				return false;
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0)
+				Parent.MemberCache.CheckExistingMembersOverloads (this, ConstructorBuilder.ConstructorName,
+					Parameters);
 
 			if (Parent.PartialContainer.Kind == Kind.Struct) {
 				if (ParameterTypes.Length == 0) {
@@ -6343,6 +6240,20 @@ namespace Mono.CSharp {
 			method_data.Emit (parent);
 		}
 
+		public override bool EnableOverloadChecks (MemberCore overload)
+		{
+			// This can only happen with indexers and it will
+			// be catched as indexer difference
+			if (overload is AbstractPropertyEventMethod)
+				return true;
+
+			if (overload is MethodCore) {
+				caching_flags |= Flags.MethodOverloadsExist;
+				return true;
+			}
+			return false;
+		}
+
 		public override bool IsClsComplianceRequired()
 		{
 			return false;
@@ -6680,29 +6591,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override bool IsOverloadable {
-				get {
-					return true;
-				}
-			}
-
 			protected bool CheckForDuplications () 
 			{
-				if ((caching_flags & Flags.TestMethodDuplication) == 0)
+				if ((caching_flags & Flags.MethodOverloadsExist) == 0)
 					return true;
-				
-				ArrayList ar = Parent.PartialContainer.Methods;
-				if (ar != null) {
-					int arLen = ar.Count;
-   					
-					for (int i = 0; i < arLen; i++) {
-						Method m = (Method) ar [i];
-						if (IsDuplicateImplementation (m))
-							return false;
-					}
-				}
 
-				return true;
+				return Parent.MemberCache.CheckExistingMembersOverloads (this, Name, ParameterInfo);
 			}
 		}
 
@@ -7630,7 +7524,9 @@ namespace Mono.CSharp {
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
 			Parent.MemberCache.AddMember (EventBuilder, this);
-
+			Parent.MemberCache.AddMember (AddBuilder, Add);
+			Parent.MemberCache.AddMember (RemoveBuilder, Remove);
+			
 			return true;
 		}
 
@@ -7681,15 +7577,16 @@ namespace Mono.CSharp {
 				base (method, accessor)
 			{
 			}
-
-			public override void EnableOverloadChecks (MemberCore overload)
+			
+			public override bool EnableOverloadChecks (MemberCore overload)
 			{
-				//
-				// Enable checks on both overloads, because we don't know which one came first
-				//
-				caching_flags |= Flags.TestMethodDuplication;
-				overload.caching_flags |= Flags.TestMethodDuplication;
-			}
+				if (base.EnableOverloadChecks (overload)) {
+					overload.caching_flags |= Flags.MethodOverloadsExist;
+					return true;
+				}
+
+				return false;
+			}			
 
 			public override Parameters ParameterInfo {
 				get {
@@ -7715,15 +7612,16 @@ namespace Mono.CSharp {
 				parameters = Parameters.MergeGenerated (((Indexer)method).parameters,
 					new Parameter (method.MemberType, "value", Parameter.Modifier.NONE, null, method.Location));
 			}
-
-			public override void EnableOverloadChecks (MemberCore overload)
+			
+			public override bool EnableOverloadChecks (MemberCore overload)
 			{
-				//
-				// Enable checks on both overloads, because we don't know which one came first
-				//
-				caching_flags |= Flags.TestMethodDuplication;
-				overload.caching_flags |= Flags.TestMethodDuplication;
-			}
+				if (base.EnableOverloadChecks (overload)) {
+					overload.caching_flags |= Flags.MethodOverloadsExist;
+					return true;
+				}
+
+				return false;
+			}			
 		}
 
 		const int AllowedModifiers =
@@ -7767,49 +7665,6 @@ namespace Mono.CSharp {
 				Set = new SetIndexerMethod (this, set_block);
 		}
 		
-		protected override bool CheckForDuplications ()
-		{
-			ArrayList ar = Parent.PartialContainer.Indexers;
-			if (ar != null) {
-				int arLen = ar.Count;
-					
-				for (int i = 0; i < arLen; i++) {
-					Indexer m = (Indexer) ar [i];
-					if (IsDuplicateImplementation (m))
-						return false;
-				}
-			}
-
-			return true;
-		}
-
-		bool IsDuplicateImplementation (Indexer indexer)
-		{
-			if (this == indexer)
-				return false;
-
-			if (!MemberName.Equals (indexer.MemberName))
-				return false;
-
-			Type[] param_types = indexer.parameters.Types;
-
-			// When it is not yet defined
-			if (param_types == null)
-				return false;
-
-			if (param_types.Length != parameters.Count)
-				return false;
-
-			for (int i = 0; i < param_types.Length; i++)
-				if (param_types [i] != parameters.Types [i])
-					return false;
-
-			Report.SymbolRelatedToPreviousError (indexer);
-			Report.Error (111, Location, TypeContainer.Error111, indexer.GetSignatureForError ());
-			return true;
-		}
-
-
 		public override bool Define ()
 		{
 			if (!DoDefineBase ())
@@ -7861,6 +7716,12 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
+
+			if ((caching_flags & Flags.MethodOverloadsExist) != 0) {
+				if (!Parent.MemberCache.CheckExistingMembersOverloads (this, Name, parameters))
+					return false;
+			}
+
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 			
 			if (!DefineAccessors ())
@@ -7905,6 +7766,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override bool EnableOverloadChecks (MemberCore overload)
+		{
+			if (overload is Indexer) {
+				caching_flags |= Flags.MethodOverloadsExist;
+				return true;
+			}
+
+			return false;
+		}
+
 		public override string GetDocCommentName (DeclSpace ds)
 		{
 			return DocUtil.GetMethodDocCommentName (this, parameters, ds);
@@ -7921,12 +7792,6 @@ namespace Mono.CSharp {
 			sb.Append (".this");
 			sb.Append (parameters.GetSignatureForError ().Replace ('(', '[').Replace (')', ']'));
 			return sb.ToString ();
-		}
-
-		public override bool IsOverloadable {
-			get {
-				return true;
-			}
 		}
 
 		protected override PropertyInfo ResolveBaseProperty ()
@@ -8016,33 +7881,6 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 		
-		protected override bool CheckForDuplications ()
-		{
-			ArrayList ar = Parent.PartialContainer.Operators;
-			if (ar != null) {
-				int arLen = ar.Count;
-   					
-				for (int i = 0; i < arLen; i++) {
-					Operator o = (Operator) ar [i];
-					if (IsDuplicateImplementation (o))
-						return false;
-				}
-			}
-
-			ar = Parent.PartialContainer.Methods;
-			if (ar != null) {
-				int arLen = ar.Count;
-   					
-				for (int i = 0; i < arLen; i++) {
-					Method m = (Method) ar [i];
-					if (IsDuplicateImplementation (m))
-						return false;
-				}
-			}
-
-			return true;
-		}
-
 		public override bool Define ()
 		{
 			const int RequiredModifiers = Modifiers.PUBLIC | Modifiers.STATIC;
@@ -8051,12 +7889,14 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			// imlicit and explicit operator of same types are not allowed
-			if (OperatorType == OpType.Explicit || OperatorType == OpType.Implicit)
-				EnableOverloadChecks (null);
-
 			if (!base.Define ())
 				return false;
+
+			// imlicit and explicit operator of same types are not allowed
+			if (OperatorType == OpType.Explicit)
+				Parent.MemberCache.CheckExistingMembersOverloads (this, "op_Implicit", Parameters);
+			else if (OperatorType == OpType.Implicit)
+				Parent.MemberCache.CheckExistingMembersOverloads (this, "op_Explicit", Parameters);
 
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (590, Location, "User-defined operators cannot return void");

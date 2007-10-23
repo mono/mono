@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
 			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
 			Excluded = 1 << 9,					// Method is conditional
-			TestMethodDuplication = 1 << 10,		// Test for duplication must be performed
+			MethodOverloadsExist = 1 << 10,		// Test for duplication must be performed
 			IsUsed = 1 << 11,
 			IsAssigned = 1 << 12,				// Field is assigned
 			HasExplicitLayout	= 1 << 13
@@ -560,15 +560,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns true when a member supports multiple overloads (methods, indexers, etc)
 		/// </summary>
-		public virtual bool IsOverloadable {
-			get {
-				return false;
-			}
-		}
-
-		public virtual void EnableOverloadChecks (MemberCore overload)
+		public virtual bool EnableOverloadChecks (MemberCore overload)
 		{
-			caching_flags |= Flags.TestMethodDuplication;
+			return false;
 		}
 
 		/// <summary>
@@ -762,10 +756,8 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (symbol.IsOverloadable && mc.IsOverloadable) {
-				symbol.EnableOverloadChecks (mc);
+			if (symbol.EnableOverloadChecks (mc))
 				return true;
-			}
 
 			Report.SymbolRelatedToPreviousError (mc);
 			if ((mc.ModFlags & Modifiers.PARTIAL) != 0 && (symbol is ClassOrStruct || symbol is Interface)) {
@@ -2604,5 +2596,105 @@ namespace Mono.CSharp {
 				throw new NotImplementedException (result.ToString ());
  			}
   		}
+
+		public bool CheckExistingMembersOverloads (MemberCore member, string name, Parameters parameters)
+		{
+			ArrayList entries = (ArrayList)member_hash [name];
+			if (entries == null)
+				return true;
+
+			int method_param_count = parameters.Count;
+			for (int i = entries.Count - 1; i >= 0; --i) {
+				CacheEntry ce = (CacheEntry) entries [i];
+
+				if (ce.Container != member.Parent.PartialContainer)
+					return true;
+
+				Type [] p_types;
+				ParameterData pd = null;
+				if ((ce.EntryType & EntryType.Property) != 0) {
+					p_types = TypeManager.GetArgumentTypes ((PropertyInfo) ce.Member);
+				} else {
+					pd = TypeManager.GetParameterData ((MethodBase)ce.Member);
+					p_types = pd.Types;
+				}
+
+				if (p_types.Length != method_param_count)
+					continue;
+
+				if (method_param_count > 0) {
+					int ii = method_param_count - 1;
+					Type type_a, type_b;
+					do {
+						type_a = parameters.ParameterType (ii);
+						type_b = p_types [ii];
+#if GMCS_SOURCE
+						if (type_a.IsGenericParameter && type_a.DeclaringMethod != null)
+							type_a = null;
+
+						if (type_b.IsGenericParameter && type_b.DeclaringMethod != null)
+							type_b = null;
+#endif
+					} while (type_a == type_b && ii-- != 0);
+
+					if (ii >= 0)
+						continue;
+
+					//
+					// Operators can differ in return type only
+					//
+					if ((ce.EntryType & EntryType.Method) != 0 && member is Operator) {
+						Operator op = TypeManager.GetMethod ((MethodBase) ce.Member) as Operator;
+						if (op != null && op.ReturnType != ((Operator) member).ReturnType)
+							continue;
+					}
+
+					//
+					// Report difference in parameter modifiers only
+					//
+					if (pd != null && !(member is AbstractPropertyEventMethod)) {
+						ii = method_param_count;
+						while (ii-- != 0 && parameters.ParameterModifier (ii) == pd.ParameterModifier (ii));
+
+						if (ii >= 0) {
+							Report.SymbolRelatedToPreviousError (ce.Member);
+							Report.Error (663, member.Location,
+								"An overloaded method `{0}' cannot differ on use of parameter modifiers only",
+								member.GetSignatureForError ());
+							return false;
+						}
+					}
+				}
+
+				Report.SymbolRelatedToPreviousError (ce.Member);
+				if ((ce.EntryType & EntryType.Method) != 0) {
+					IMethodData duplicate_member = TypeManager.GetMethod ((MethodBase) ce.Member);
+
+					if (member is Operator && duplicate_member is Operator) {
+						Report.Error (557, member.Location, "Duplicate user-defined conversion in type `{0}'",
+							member.Parent.GetSignatureForError ());
+						return false;
+					}
+
+					bool is_reserved_a = member is AbstractPropertyEventMethod || member is Operator;
+					bool is_reserved_b = duplicate_member is AbstractPropertyEventMethod || duplicate_member is Operator;
+
+					if (is_reserved_a || is_reserved_b) {
+						Report.Error (82, member.Location, "A member `{0}' is already reserved",
+							is_reserved_a ?
+							TypeManager.GetFullNameSignature (ce.Member) :
+							member.GetSignatureForError ());
+						return false;
+					}
+				}
+
+				Report.Error (111, member.Location,
+					"A member `{0}' is already defined. Rename this member or use different parameter types",
+					member.GetSignatureForError ());
+				return false;
+			}
+
+			return true;
+		}
 	}
 }
