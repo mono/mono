@@ -1,3 +1,8 @@
+2007-10-24  Juraj Skripsky <js@hotfeet.ch>
+
+	* Regex.cs: Store and re-use IMachine, no need to re-instantiate
+	it every time we're matching.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegexTest.cs: Removed. Test was already moved to the appropriate
