@@ -1541,42 +1541,33 @@ namespace System.Windows.Forms {
 
 		internal int LineEndingLength (LineEnding ending)
 		{
-			int res = 0;
-
 			switch (ending) {
-			case LineEnding.Limp:
-			case LineEnding.Rich:
-				res = 1;
-				break;
-			case LineEnding.Hard:
-				res = 2;
-				break;
-			case LineEnding.Soft:
-				res = 3;
-				break;
+				case LineEnding.Limp:
+				case LineEnding.Rich:
+					return 1;
+				case LineEnding.Hard:
+					return 2;
+				case LineEnding.Soft:
+					return 3;
 			}
 
-			return res;
+			return 0;
 		}
 
 		internal string LineEndingToString (LineEnding ending)
 		{
-			string res = String.Empty;
 			switch (ending) {
-			case LineEnding.Limp:
-				res = "\r";
-				break;
-			case LineEnding.Hard:
-				res = "\r\n";
-				break;
-			case LineEnding.Soft:
-				res = "\r\r\n";
-				break;
-			case LineEnding.Rich:
-				res = "\n";
-				break;
+				case LineEnding.Limp:
+					return "\r";
+				case LineEnding.Hard:
+					return "\r\n";
+				case LineEnding.Soft:
+					return "\r\r\n";
+				case LineEnding.Rich:
+					return "\n";
 			}
-			return res;
+			
+			return string.Empty;
 		}
 
 		// Insert text at the given position; use formatting at insertion point for inserted text
@@ -1660,56 +1651,20 @@ namespace System.Windows.Forms {
 			line.InsertString (pos, s);
 		}
 
-		// Inserts a character at the given position
-		internal void InsertChar(LineTag tag, int pos, char ch) {
-			Line	line;
-
-			CharCount++;
-
-			line = tag.Line;
-			line.text.Insert(pos, ch);
-
-			tag = tag.Next;
-			while (tag != null) {
-				tag.Start++;
-				tag = tag.Next;
-			}
-			line.Grow(1);
-			line.recalc = true;
-
-			undo.RecordTyping (line, pos, ch);
-			UpdateView(line, pos);
-		}
-
 		// Inserts a character at the current caret position
-		internal void InsertCharAtCaret(char ch, bool move_caret) {
-			/*
-			LineTag	tag;
+		internal void InsertCharAtCaret (char ch, bool move_caret)
+		{
+			caret.line.InsertString (caret.pos, ch.ToString ());
 
-			CharCount++;
+			undo.RecordTyping (caret.line, caret.pos, ch);
 
-			caret.line.text.Insert(caret.pos, ch);
-			caret.tag.length++;
+			UpdateView (caret.line, caret.pos);
 			
-			if (caret.tag.next != null) {
-				tag = caret.tag.next;
-				while (tag != null) {
-					tag.start++;
-					tag = tag.next;
-				}
-			}
-			caret.line.Grow(1);
-			caret.line.recalc = true;
-			*/
-			InsertChar (caret.tag, caret.pos, ch);
-
-			UpdateView(caret.line, caret.pos);
 			if (move_caret) {
 				caret.pos++;
-				UpdateCaret();
-				SetSelectionToCaret(true);
+				UpdateCaret ();
+				SetSelectionToCaret (true);
 			}
-
 		}
 		
 		internal void InsertPicture (Line line, int pos, RTF.Picture picture)

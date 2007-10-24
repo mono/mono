@@ -1,3 +1,7 @@
+2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextControl.cs: Code cleaning, simplifying.
+
 2007-10-24  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Route mouse events to the grab hwnd on mouse down as well.
