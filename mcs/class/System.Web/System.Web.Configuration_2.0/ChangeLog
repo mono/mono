@@ -1,3 +1,9 @@
+2007-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlerAction.cs: exact path matching must be done on the
+	original string in PathMatches, not on the sliced one. Fixes bug
+	#335669.
+
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: if running outside hosted environment,

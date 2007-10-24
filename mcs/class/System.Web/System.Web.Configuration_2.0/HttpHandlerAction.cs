@@ -196,20 +196,19 @@ namespace System.Web.Configuration
 			string orig = p;
 			if (slash != -1)
 				p = p.Substring (slash);
-
+			
 			for (int j = Paths.Length; j > 0; ){
 				j--;
 				FileMatchingInfo fm = Paths [j];
-
+				
 				bool ignoreCase =
 #if TARGET_J2EE
 					true;
 #else
 					false;
-#endif
-
+#endif				
 				if (fm.MatchExact != null)
-					return fm.MatchExact.Length == p.Length && StrUtils.EndsWith (p, fm.MatchExact, ignoreCase);
+					return fm.MatchExact.Length == orig.Length && StrUtils.EndsWith (orig, fm.MatchExact, ignoreCase);
 					
 				if (fm.EndsWith != null)
 					return StrUtils.EndsWith (p, fm.EndsWith, ignoreCase);
@@ -236,35 +235,6 @@ namespace System.Web.Configuration
 			} 
 			
 			return instance;
-		}
-
-		class FileMatchingInfo {
-			public string MatchExact;
-			public string MatchExpr;
-
-			// If set, we can fast-path the patch with string.EndsWith (FMI.EndsWith)
-			public string EndsWith;
-			public Regex RegExp;
-		
-			public FileMatchingInfo (string s)
-			{
-				MatchExpr = s;
-
-				if (s[0] == '*' && (s.IndexOf ('*', 1) == -1))
-					EndsWith = s.Substring (1);
-
-				if (s.IndexOf ('*') == -1)
-					MatchExact = "/" + s;
-
-				if (MatchExpr != "*") {
-					string expr = MatchExpr.Replace(".", "\\.").Replace("?", "\\?").Replace("*", ".*");
-					if (expr.Length > 0 && expr [0] =='/')
-						expr = expr.Substring (1);
-
-					expr += "\\z";
-					RegExp = new Regex (expr);
-				}
-			}
 		}
 #endregion
 

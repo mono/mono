@@ -1,3 +1,13 @@
+2007-10-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HandlerFactoryConfiguration.cs: exact path matching must be done
+	on the original string in PathMatches, not on the sliced one.
+
+	* FileMatchingInfo.cs: refactoring - this code used to live in
+	both 1.1 and 2.0 profiles. At the same time, fixe the way
+	MatchExact is created - the slash is prepended only if the path
+	doesn't begin with it.
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ModulesConfiguration.cs: load modules using
