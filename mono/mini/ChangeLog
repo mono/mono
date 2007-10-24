@@ -1,3 +1,7 @@
+2007-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Move mono_create_ftnptr () to object.c.
+
 2007-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* helpers.c (mono_disassemble_code): MonoCompile parameter is now
