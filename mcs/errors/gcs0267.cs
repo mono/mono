@@ -1,4 +1,9 @@
 // CS0267: The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword
-// Line: 4
+// Line: 6
 
-partial enum e {}
+public partial class C
+{
+	partial virtual void Foo ()
+	{
+	}
+}
