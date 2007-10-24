@@ -362,7 +362,7 @@ extern_alias_directive
 		if (s != "alias"){
 			Report.Error (1003, lt.Location, "'alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotISO1 (lt.Location, "external alias");
+			Report.FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
@@ -1510,7 +1510,7 @@ parameter_modifier
 	| THIS
 	  {
 	  	if (RootContext.Version <= LanguageVersion.ISO_2)
-	  		Report.FeatureIsNotISO1 (GetLocation ($1), "extension methods");
+	  		Report.FeatureIsNotAvailable (GetLocation ($1), "extension methods");
 		$$ = Parameter.Modifier.This;
 	  }
 	;
@@ -2941,7 +2941,7 @@ opt_type_argument_list
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotISO1 (lexer.Location, "generics");	  
+			Report.FeatureIsNotAvailable (lexer.Location, "generics");	  
 	  
 		$$ = $2;
 	  }
@@ -2956,7 +2956,7 @@ opt_type_parameter_list
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotISO1 (lexer.Location, "generics");
+			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 	  
 		$$ = $2;
 	  }
@@ -3509,7 +3509,7 @@ object_or_delegate_creation_expression
 	  {
 		if ($6 != null) {
 			if (RootContext.Version <= LanguageVersion.ISO_2)
-				Report.FeatureIsNotISO1 (GetLocation ($1), "object initializers");
+				Report.FeatureIsNotAvailable (GetLocation ($1), "object initializers");
 				
 			$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (CollectionOrObjectInitializers) $6, (Location) $1);
 		}
@@ -3519,7 +3519,7 @@ object_or_delegate_creation_expression
 	| NEW type object_or_collection_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
-			Report.FeatureIsNotISO1 (GetLocation ($1), "collection initializers");
+			Report.FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
 	  
 		$$ = new NewInitialize ((Expression) $2, null, (CollectionOrObjectInitializers) $3, (Location) $1);
 	  }
@@ -3556,7 +3556,7 @@ anonymous_type_expression
 	: NEW OPEN_BRACE anonymous_type_parameters CLOSE_BRACE
 	  {
 	  	if (RootContext.Version <= LanguageVersion.ISO_2)
-	  		Report.FeatureIsNotISO1 (GetLocation ($1), "anonymous types");
+	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
 		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, GetLocation ($1));
 	  }
@@ -3745,7 +3745,7 @@ unbound_type_name
 	: IDENTIFIER GENERIC_DIMENSION
 	  {
 		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotISO1 (lexer.Location, "generics");
+			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 	  
 		LocatedToken lt = (LocatedToken) $1;
 		TypeArguments ta = new TypeArguments ((int)$2, lt.Location);
@@ -5090,7 +5090,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -5115,7 +5115,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -6125,7 +6125,7 @@ end_anonymous (ToplevelBlock anon_block, Location loc)
 	AnonymousMethodExpression retval;
 
 	if (RootContext.Version == LanguageVersion.ISO_1){
-		Report.FeatureIsNotISO1 (loc, "anonymous methods");
+		Report.FeatureIsNotAvailable (loc, "anonymous methods");
 		retval = null;
 	} else  {
 		current_anonymous_method.Block = anon_block;
