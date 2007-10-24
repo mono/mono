@@ -1,3 +1,37 @@
+2007-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* helpers.c (mono_disassemble_code): MonoCompile parameter is now
+	optional. This function can now be used to disassemble code generated
+	outside the JIT such as trampolines and IMT thunks.
+
+	* mini-arm.h: defined MONO_ARCH_HAVE_IMT.
+
+	* mini-arm.c (decode_vcall_slot_from_ldr): added, extract the
+	vtable pointer from a ldr instruction.
+
+	* mini-arm.c (mono_arch_get_vcall_slot_addr): support the
+	new IMT call sequence.
+
+	* mini-arm.c (mono_arch_output_basic_block): emit the IMT
+	call sequence for interface invocations.
+
+	* mini-arm.c (mono_arch_emit_imt_argument): added, required
+	for imt support. This function is empty since IMT on ARM requires no
+	special handling on the IR side.
+
+	* mini-arm.c (mono_arch_find_imt_method): added, required for
+	imt support.
+
+	* mini-arm.c (mono_arch_find_this_argument): added, required
+	for imt support.
+
+	* mini-arm.c (arm_emit_value_and_patch_ldr): added, patches
+	a ldr instruction to load a value stored in the code stream.
+
+	* mini-arm.c (mono_arch_build_imt_thunk):added, required
+	for imt support.
+
+
 2007-10-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Install the jump trampoline callback.
