@@ -512,7 +512,7 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);

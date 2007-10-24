@@ -1,3 +1,8 @@
+2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Assembly.cs : include ReflectionOnlyLoad() as part of 2.0
+	  bootstrap build.
+
 2007-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* Assembly.cs (GetManifestModule): New virtual method overridden by 
