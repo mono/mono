@@ -306,9 +306,13 @@ namespace System.Windows.Forms {
 
 		private static void SendInput() {
 			IntPtr hwnd = IntPtr.Zero;
-			if (XplatUI.GetActive() != IntPtr.Zero)
-				hwnd = ((Form)Control.FromHandle(XplatUI.GetActive())).ActiveControl.Handle;
-
+			if (XplatUI.GetActive () != IntPtr.Zero) {
+				Form active = ((Form) Control.FromHandle (XplatUI.GetActive ()));
+				if (active != null && active.ActiveControl != null)
+					hwnd = active.ActiveControl.Handle;
+				else if (active != null)
+					hwnd = active.Handle;
+			}
 			XplatUI.SendInput(hwnd, keys);
 			keys.Clear();
 		}
