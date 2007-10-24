@@ -1,3 +1,9 @@
+2007-10-24  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Assign the ManagedThreadId when it is asked for,
+	rather than in the constructor, so ThreadPool threads also work.
+	Fixes bug 335579 (and doesn't break 325367 or 325566)
+
 2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SynchronizationContext.cs : removed SendOrPost().

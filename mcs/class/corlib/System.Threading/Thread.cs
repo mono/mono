@@ -310,7 +310,6 @@ namespace System.Threading {
 			threadstart=start;
 
 			Thread_init ();
-			managed_id=GetNewManagedId();
 		}
 
 #if NET_2_0
@@ -838,7 +837,6 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
-			managed_id = GetNewManagedId();
 		}
 
 		public Thread (ParameterizedThreadStart start)
@@ -847,7 +845,6 @@ namespace System.Threading {
 				throw new ArgumentNullException ("start");
 
 			threadstart = start;
-			managed_id = GetNewManagedId();
 		}
 
 		public Thread (ParameterizedThreadStart start, int maxStackSize)
@@ -859,7 +856,6 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
-			managed_id = GetNewManagedId();
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
@@ -874,8 +870,16 @@ namespace System.Threading {
 		}
 
 		public int ManagedThreadId {
-		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-			get { return managed_id; }
+			[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
+			get {
+				if (managed_id == 0) {
+					int new_managed_id = GetNewManagedId ();
+					
+					Interlocked.CompareExchange (ref managed_id, new_managed_id, 0);
+				}
+				
+				return managed_id;
+			}
 		}
 
 		[MonoTODO("Not implemented")]
@@ -933,7 +937,7 @@ namespace System.Threading {
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
-			return managed_id;
+			return ManagedThreadId;
 		}
 
 		public void Start (object parameter)
