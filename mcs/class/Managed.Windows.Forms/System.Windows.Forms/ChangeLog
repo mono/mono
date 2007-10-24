@@ -1,3 +1,10 @@
+2007-10-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGridView.cs: Set the plus/minus bounds of a grid item
+	depending on its depth (as .Net does). Update the needed values in
+	MouseDown handler. Also draw the plus/minus rect after the label,
+	so we don't draw on top of it.
+
 2007-10-24  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Return true as default in ProcessKeys to prevent keys to be

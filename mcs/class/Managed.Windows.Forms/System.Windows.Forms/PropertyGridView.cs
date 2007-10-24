@@ -269,11 +269,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				GridItem foundItem = GetSelectedGridItem(property_grid.root_grid_item.GridItems, e.Y, ref offset);
 				
 				if (foundItem != null) {
-					if (foundItem.Expandable) {
-						if (e.X >=3 && e.X <= 11 && (e.Y % row_height >= row_height/2-2 && e.Y % row_height <= row_height/2+4)) {
+					if (foundItem.Expandable && foundItem.PlusMinusBounds.Contains (e.X, e.Y))
 							foundItem.Expanded = !foundItem.Expanded;
-						}
-					}
+
 					this.property_grid.SelectedGridItem = foundItem;
 					
 					grid_textbox.SendMouseDown (grid_textbox.PointToClient (PointToScreen (e.Location)));
@@ -695,10 +693,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor),
 							       0, yLoc, V_INDENT, row_height);
 			
-				if (grid_item.Expandable) {
-					grid_item.PlusMinusBounds = DrawPlusMinus(pevent.Graphics, 3, yLoc+row_height/2-3, grid_item.Expanded, grid_item.GridItemType == GridItemType.Category);
-				}
-			
 				if (grid_item.GridItemType == GridItemType.Category) {
 					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.CategoryForeColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), row_height);
 				}
@@ -717,7 +711,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			
 					// draw the horizontal line
 					pevent.Graphics.DrawLine(pen, 0, yLoc + row_height, ClientRectangle.Width, yLoc + row_height);
+				}				
+				
+				if (grid_item.Expandable) {
+					int y = yLoc + row_height / 2 - 3;
+					grid_item.PlusMinusBounds = DrawPlusMinus(pevent.Graphics, (depth - 1) * V_INDENT + 3, y, grid_item.Expanded, grid_item.GridItemType == GridItemType.Category);
 				}
+
 			}
 			grid_item.Top = yLoc;
 			yLoc += row_height;
