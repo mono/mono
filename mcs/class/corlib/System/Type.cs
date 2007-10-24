@@ -1247,12 +1247,25 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern virtual Type MakePointerType ();
 
-		[MonoTODO("Not implemented")]
 		public static Type ReflectionOnlyGetType (string typeName, 
 							  bool throwIfNotFound, 
 							  bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+			int idx = typeName.IndexOf (',');
+			if (idx < 0 || idx == 0 || idx == typeName.Length - 1)
+				throw new ArgumentException ("Assembly qualifed type name is required", "typeName");
+			string an = typeName.Substring (idx + 1);
+			Assembly a;
+			try {
+				a = Assembly.ReflectionOnlyLoad (an);
+			} catch (Exception ex) {
+				if (throwIfNotFound)
+					throw;
+				return null;
+			}
+			return a.GetType (typeName.Substring (0, idx), throwIfNotFound, ignoreCase);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -1183,6 +1183,33 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNotNull (members, "#1");
 			Assert.AreEqual (4, members.Length, "#2");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ReflectionOnlyGetTypeNullTypeName ()
+		{
+			Type.ReflectionOnlyGetType (null, false, false);
+		}
+
+		[Test]
+		public void ReflectionOnlyGetTypeDoNotThrow ()
+		{
+			Assert.IsNull (Type.ReflectionOnlyGetType ("a, nonexistent.dll", false, false));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void ReflectionOnlyGetTypeThrow ()
+		{
+			Type.ReflectionOnlyGetType ("a, nonexistent.dll", true, false);
+		}
+
+		[Test]
+		public void ReflectionOnlyGetType ()
+		{
+			Type t = Type.ReflectionOnlyGetType (typeof (int).AssemblyQualifiedName.ToString (), true, true);
+			Assert.AreEqual ("System.Int32", t.FullName);
+		}
 #endif
 
 		public class NemerleAttribute : Attribute

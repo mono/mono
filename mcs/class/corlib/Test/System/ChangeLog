@@ -1,3 +1,7 @@
+2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeTest.cs : tests for ReflectionOnlyGetType().
+
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnvironmentTest.cs: Added test for bug #333740. Made names of some

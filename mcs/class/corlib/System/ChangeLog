@@ -1,3 +1,7 @@
+2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Type.cs : implemented ReflectionOnlyGetType().
+
 2007-10-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomain.cs: Add NET 3.5 DefineDynamicAssembly () overloads.
