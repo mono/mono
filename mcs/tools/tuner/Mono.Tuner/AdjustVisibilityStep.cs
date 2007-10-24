@@ -27,11 +27,15 @@
 //
 
 using System.Collections;
+
+using Mono.Linker;
+using Mono.Linker.Steps;
+
 using Mono.Cecil;
 
-namespace Mono.Linker.Steps {
+namespace Mono.Tuner {
 
-	public class AdjustVisibilityStep : BaseStep {
+	public class AdjustVisibility : BaseStep {
 
 		protected override void ProcessAssembly (AssemblyDefinition assembly)
 		{
