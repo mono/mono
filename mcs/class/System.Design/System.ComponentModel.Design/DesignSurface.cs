@@ -245,6 +245,10 @@ namespace System.ComponentModel.Design
 
 		protected virtual void Dispose (bool disposing)
 		{
+			if (_designerLoader != null) {
+				_designerLoader.Dispose ();
+				_designerLoader = null;
+			}
 			if (_designerHost != null) {
 				_designerHost.Dispose ();
 				_designerHost.DesignerLoaderHostLoaded -= new LoadedEventHandler (OnDesignerHost_Loaded);
@@ -276,10 +280,7 @@ namespace System.ComponentModel.Design
 
 		private void OnDesignerHost_Loaded (object sender, LoadedEventArgs e)
 		{		   
-			if (_loadErrors == null)
-				_loadErrors = new object[0];
-			
-			this.OnLoaded (new LoadedEventArgs (e.HasSucceeded, _loadErrors));
+			this.OnLoaded (e);
 		}
 
 		private void OnDesignerHost_Loading (object sender, EventArgs e)

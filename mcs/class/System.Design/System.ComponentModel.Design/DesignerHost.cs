@@ -559,7 +559,9 @@ namespace System.ComponentModel.Design
 
 	public new object GetService (Type serviceType)
 	{
-		return _serviceProvider.GetService (serviceType);
+		if (_serviceProvider != null)
+			return _serviceProvider.GetService (serviceType);
+		return null;
 	}
 		
 #endregion

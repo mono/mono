@@ -1,3 +1,10 @@
+2007-10-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignSurface.cs: 
+	 - Fix a redundancy.
+	 - Dispose the loader if available.
+	* DesignerHost.cs: serviceContainer can be null after disposing.
+
 2007-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ByteViewer.cs : last one mile to finish 2.0 API (metadata wise).
