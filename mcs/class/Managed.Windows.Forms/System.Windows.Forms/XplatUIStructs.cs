@@ -387,7 +387,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString ()
 		{
-			return "Point {" + x.ToString () + ", " + y.ToString () + ")";
+			return "Point {" + x.ToString () + ", " + y.ToString () + "}";
 		}
 	}
 	
@@ -403,7 +403,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString ()
 		{
-			return String.Format ("msg=0x{0:x} ({1}) hwnd=0x{2:x} wparam=0x{3:x} lparam=0x{4:x} pt=0x{5:x}", (int) message, message.ToString (), hwnd.ToInt32 (), wParam.ToInt32 (), lParam.ToInt32 (), pt);
+			return String.Format ("msg=0x{0:x} ({1}) hwnd=0x{2:x} wparam=0x{3:x} lparam=0x{4:x} pt={5}", (int) message, message.ToString (), hwnd.ToInt32 (), wParam.ToInt32 (), lParam.ToInt32 (), pt);
 		}
 	}
 

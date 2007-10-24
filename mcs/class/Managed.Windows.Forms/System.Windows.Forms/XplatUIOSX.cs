@@ -600,7 +600,9 @@ namespace System.Windows.Forms {
 					int x = point.x;
 					int y = point.y;
 
-					
+					if (GrabWindowHwnd != null)
+						hwnd = GrabWindowHwnd;
+
 					bool client = (hwnd.ClientWindow == handle ? true : false);
 					if (client)
 						ScreenToClient (hwnd.Handle, ref x, ref y);
@@ -1699,6 +1701,7 @@ namespace System.Windows.Forms {
 		
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle) {
 			GrabWindowHwnd = Hwnd.ObjectFromHandle (handle);
+			Console.WriteLine ("GrabWindowHwnd: {0}", GrabWindowHwnd);
 		}
 		
 		internal override void UngrabWindow(IntPtr hwnd) {

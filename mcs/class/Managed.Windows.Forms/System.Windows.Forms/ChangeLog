@@ -1,3 +1,8 @@
+2007-10-24  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUIOSX.cs: Route mouse events to the grab hwnd on mouse down as well.
+	* XplatUIStructs.cs: Fix the ToString method of POINT and MSG.
+
 2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: If the user sets maxlength to 0, it should mean
