@@ -1,3 +1,8 @@
+2007-10-24  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Return true as default in ProcessKeys to prevent keys to be
+	processed by forms or controls when menu is active. [Fixes #333548]
+
 2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItem.cs: Don't focus a ToolStripControlHost on Select of the

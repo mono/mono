@@ -744,7 +744,7 @@ namespace System.Windows.Forms {
 				break;
 			}
 
-			return false;
+			return true;
 		}
 	}
 
