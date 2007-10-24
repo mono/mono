@@ -3574,7 +3574,7 @@ namespace Mono.CSharp {
 			SwitchType = new_expr.Type;
 
 			if (RootContext.Version == LanguageVersion.ISO_1 && SwitchType == TypeManager.bool_type) {
-				Report.FeatureIsNotISO1 (loc, "switch expression of boolean type");
+				Report.FeatureIsNotAvailable (loc, "switch expression of boolean type");
 				return false;
 			}
 

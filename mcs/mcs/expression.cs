@@ -5850,7 +5850,7 @@ namespace Mono.CSharp {
 			: base (null, rank, initializers, loc)
 		{
 			if (RootContext.Version <= LanguageVersion.ISO_2)
-				Report.FeatureIsNotISO1 (loc, "implicitly typed arrays");
+				Report.FeatureIsNotAvailable (loc, "implicitly typed arrays");
 				
 			if (rank.Length > 2) {
 				while (rank [++dimensions] == ',');
@@ -6428,7 +6428,7 @@ namespace Mono.CSharp {
 		public QualifiedAliasMember (string alias, string identifier, Location l)
 		{
 			if (RootContext.Version == LanguageVersion.ISO_1)
-				Report.FeatureIsNotISO1 (l, "namespace alias qualifier");
+				Report.FeatureIsNotAvailable (l, "namespace alias qualifier");
 
 			this.alias = alias;
 			this.identifier = identifier;

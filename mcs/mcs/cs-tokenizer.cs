@@ -2172,7 +2172,7 @@ namespace Mono.CSharp
 
 			case "pragma":
 				if (RootContext.Version == LanguageVersion.ISO_1) {
-					Report.FeatureIsNotISO1 (Location, "#pragma");
+					Report.FeatureIsNotAvailable (Location, "#pragma");
 					return true;
 				}
 
@@ -2258,9 +2258,9 @@ namespace Mono.CSharp
 
 				if (ok) {
 					if (RootContext.Version == LanguageVersion.ISO_2 && next_token == Token.VOID) {
-						Report.FeatureIsNotISO1 (Location, "partial methods");
+						Report.FeatureIsNotAvailable (Location, "partial methods");
 					} else if (RootContext.Version == LanguageVersion.ISO_1)
-						Report.FeatureIsNotISO1 (Location, "partial types");
+						Report.FeatureIsNotAvailable (Location, "partial types");
 
 					return res;
 				}

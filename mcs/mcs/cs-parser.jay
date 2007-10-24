@@ -342,7 +342,7 @@ extern_alias_directive
 		if (s != "alias"){
 			Report.Error (1003, lt.Location, "'alias' expected");
 		} else if (RootContext.Version == LanguageVersion.ISO_1) {
-			Report.FeatureIsNotISO1 (lt.Location, "external alias");
+			Report.FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
 			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
@@ -4431,7 +4431,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -4456,7 +4456,7 @@ yield_statement
 			$$ = null;
 		}
 		if (RootContext.Version == LanguageVersion.ISO_1){
-			Report.FeatureIsNotISO1 (lt.Location, "yield statement");
+			Report.FeatureIsNotAvailable (lt.Location, "yield statement");
 			$$ = null;
 		}
 		if (anonymous_host == null){
@@ -5212,7 +5212,7 @@ end_anonymous (ToplevelBlock anon_block, Location loc)
 	AnonymousMethodExpression retval;
 
 	if (RootContext.Version == LanguageVersion.ISO_1){
-		Report.FeatureIsNotISO1 (loc, "anonymous methods");
+		Report.FeatureIsNotAvailable (loc, "anonymous methods");
 		retval = null;
 	} else  {
 		current_anonymous_method.Block = anon_block;

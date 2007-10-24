@@ -435,7 +435,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void FeatureIsNotISO1 (Location loc, string feature)
+		public static void FeatureIsNotAvailable (Location loc, string feature)
 		{
 			string version;
 			if (RootContext.Version == LanguageVersion.ISO_1)
