@@ -1,16 +1,6 @@
-2007-10-24  Andreia Gaita <avidigal@novell.com>
-
-	* SendKeys.cs: apply jpobst's patch to bug #332409
-
 2007-10-23  Geoff Norton  <gnorton@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added OSXKeyboard.cs
-
-2007-10-23  Andreia Gaita <avidigal@novell.com>
-
-	* TextBoxTextRenderer.cs: Lower bounds max size to Int16.MaxValue, the 
-	Windows 2000 gdi DrawText call doesn't draw if it's higher than that
-	for some reason
 
 2007-10-22  Andreia Gaita <avidigal@novell.com>
 
