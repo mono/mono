@@ -1,5 +1,11 @@
 2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Don't focus a ToolStripControlHost on Select of the
+	parent doesn't have focus.  This was causing ToolStripTextBoxes to take
+	focus on mouse over.
+
+2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Code cleaning, simplifying.
 
 2007-10-24  Geoff Norton  <gnorton@novell.com>
