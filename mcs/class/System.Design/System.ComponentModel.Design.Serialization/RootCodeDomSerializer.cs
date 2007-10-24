@@ -250,6 +250,9 @@ namespace System.ComponentModel.Design.Serialization
 			Type rootType = manager.GetType (declaration.BaseTypes[0].BaseType);
 			object root = manager.CreateInstance (rootType, null, declaration.Name, true);
 
+			RootContext rootContext = new RootContext (new CodeThisReferenceExpression (), root);
+			manager.Context.Push (rootContext);
+
 			CodeMemberMethod initComponentMethod = GetInitializeMethod (declaration);
 			if (initComponentMethod == null)
 				throw new InvalidOperationException ("InitializeComponent method is missing in: " + declaration.Name);
@@ -257,6 +260,7 @@ namespace System.ComponentModel.Design.Serialization
 			foreach (CodeStatement statement in initComponentMethod.Statements)
 				base.DeserializeStatement (manager, statement);
 
+			manager.Context.Pop ();
 			return root;
 		}
 

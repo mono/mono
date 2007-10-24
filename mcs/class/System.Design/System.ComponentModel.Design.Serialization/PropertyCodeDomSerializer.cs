@@ -98,12 +98,10 @@ namespace System.ComponentModel.Design.Serialization
 				rightSide = TryGetCachedExpression (manager, rightSideValue, null, component);
 			}
 
-			if (rightSide == null) {
-				Console.WriteLine ("SerializeNormalProperty: <" + component.GetType().Name + "." +
-								   descriptor.Name + "> - unable to serialize the right side of the assignment to expression");
-			} else if (leftSide == null) {
-				Console.WriteLine ("SerializeNormalProperty: <" + component.GetType().Name + "." +
-								   descriptor.Name + "> - unable to serialize the left side of the assignment to expression");
+			if (rightSide == null || leftSide == null) {
+				base.ReportError (manager, "Cannot serialize " + ((IComponent)component).Site.Name + "." + descriptor.Name,
+								  "Property Name: " + descriptor.Name + System.Environment.NewLine +
+								  "Property Type: " + descriptor.PropertyType.Name + System.Environment.NewLine);
 			} else  {
 				assignment.Left = leftSide;
 				assignment.Right = rightSide;

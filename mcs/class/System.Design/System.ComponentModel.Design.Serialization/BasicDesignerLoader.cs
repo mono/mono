@@ -81,8 +81,6 @@ namespace System.ComponentModel.Design.Serialization
 			}
 		}
 		
-		// TODO: toggle comments of exception handlers
-		//
 		public override void BeginLoad (IDesignerLoaderHost host)
 		{
 			if (host == null)
@@ -109,17 +107,12 @@ namespace System.ComponentModel.Design.Serialization
 
 			bool successful = true;
 
-//          try {
+			try {
 				PerformLoad (_serializationMananger);
-//          } catch (Exception e) {
-//              successful = false;
-//              _serializationMananger.Errors.Add (e);
-//              while (e.InnerException != null) {
-//                  _serializationMananger.Errors.Add (e);
-//                  Console.WriteLine (e.InnerException);
-//                  e = e.InnerException;
-//              }
-//          }
+			} catch (Exception e) {
+				successful = false;
+				_serializationMananger.Errors.Add (e);
+			}
 
 			if (loader != null)
 				loader.DependentLoadComplete (successful, _serializationMananger.Errors);
@@ -257,7 +250,6 @@ namespace System.ComponentModel.Design.Serialization
 			}
 		}
 
-		// TODO: Toggle comments of exception handlers
 		public override void Flush ()
 		{
 			if (!_loaded)
@@ -266,18 +258,12 @@ namespace System.ComponentModel.Design.Serialization
 			if (!_flushing && this.Modified) {
 				_flushing = true;
 				using ((IDisposable)_serializationMananger.CreateSession ()) {
-//                  try {
+					try {
 						PerformFlush (_serializationMananger);
-//                  }
-//                  catch (Exception e) {
-//                      _serializationMananger.Errors.Add (e);
-//                      while (e.InnerException != null) {
-//                          _serializationMananger.Errors.Add (e);
-//                          Console.WriteLine (e.InnerException);
-//                          e = e.InnerException;
-//                      }
-//                      ReportFlushErrors (_serializationMananger.Errors);
-//                  }
+					} catch (Exception e) {
+						_serializationMananger.Errors.Add (e);
+						ReportFlushErrors (_serializationMananger.Errors);
+					}
 				}
 				_flushing = false;
 			}
@@ -334,10 +320,12 @@ namespace System.ComponentModel.Design.Serialization
 
 		private void Unload ()
 		{
-			OnBeginUnload ();
-			EnableComponentNotification (false);
-			_loaded = false;
-			_baseComponentClassName = null;
+			if (_loaded) {
+				OnBeginUnload ();
+				EnableComponentNotification (false);
+				_loaded = false;
+				_baseComponentClassName = null;
+			}
 		}
 
 

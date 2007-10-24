@@ -1,3 +1,15 @@
+2007-10-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs: 
+	 - Implement deserialization of CodeCastExpression.
+	 - Add error reporting.
+	* PropertyCodeDomSerializer.cs: Error reporting.
+	* BasicDesignerLoader.cs: 
+	 - Unload only if loaded.
+	 - Error reporting.
+	* RootCodeDomSerializer.cs: Push the Root context during 
+	deserialization.
+
 2007-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeDomLocalizationProvider.cs, CodeDomLocalizationModel.cs :

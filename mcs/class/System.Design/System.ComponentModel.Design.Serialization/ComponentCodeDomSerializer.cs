@@ -55,9 +55,6 @@ namespace System.ComponentModel.Design.Serialization
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
-			// Check if we are serializing the root component. Happens, because GetSerializer does not 
-			// check for a RootCodeDomSerializer so reference-to type of an expression is delivered
-			// by the CodeDomSerializer
 			RootContext rootContext = manager.Context[typeof (RootContext)] as RootContext;
 			if (rootContext != null && rootContext.Value == value)
 				return rootContext.Expression;
