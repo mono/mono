@@ -956,28 +956,50 @@
     </Compile>
     <Compile Include="System.Security.Permissions\StorePermissionAttribute.cs" />
     <Compile Include="System.Security.Permissions\StorePermissionFlags.cs" />
+    <Compile Include="System.Text.RegularExpressions\AlternationBackReferenceConstruct.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\AlternationExpressionConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\arch.cs" />
+    <Compile Include="System.Text.RegularExpressions\BackReferenceConstruct.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\BalancingGroupConstruct.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\BaseMachine.cs" />
     <Compile Include="System.Text.RegularExpressions\cache.cs" />
     <Compile Include="System.Text.RegularExpressions\Capture.cs" />
     <Compile Include="System.Text.RegularExpressions\CaptureCollection.cs" />
     <Compile Include="System.Text.RegularExpressions\category.cs" />
+    <Compile Include="System.Text.RegularExpressions\CategoryConstruct.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\CommentsConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\compiler.cs" />
     <Compile Include="System.Text.RegularExpressions\debug.cs" />
     <Compile Include="System.Text.RegularExpressions\Group.cs" />
+    <Compile Include="System.Text.RegularExpressions\Group.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\GroupCollection.cs" />
+    <Compile Include="System.Text.RegularExpressions\JavaUtils.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\PatternGrouping.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\IConstructType.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\InlineExplicitCaptureConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\interpreter.cs" />
     <Compile Include="System.Text.RegularExpressions\interval.cs" />
+    <Compile Include="System.Text.RegularExpressions\JvmReMachine.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\JvmReMachineFactory.cs" />
     <Compile Include="System.Text.RegularExpressions\Match.cs" />
+    <Compile Include="System.Text.RegularExpressions\Match.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\MatchCollection.cs" />
     <Compile Include="System.Text.RegularExpressions\MatchEvaluator.cs" />
+    <Compile Include="System.Text.RegularExpressions\NamingGroupsConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\parser.cs" />
+    <Compile Include="System.Text.RegularExpressions\PatternData.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\PatternDataBuilder.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\quicksearch.cs" />
     <Compile Include="System.Text.RegularExpressions\Regex.cs" />
+    <Compile Include="System.Text.RegularExpressions\Regex.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexCompilationInfo.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexOptions.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexRunner.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexRunnerFactory.cs" />
     <Compile Include="System.Text.RegularExpressions\replace.cs" />
+    <Compile Include="System.Text.RegularExpressions\ReplacedRegularCharacterConstruct.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\ReplacementData.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\RightToLeftOptionConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\syntax.cs" />
     <Compile Include="System.Threading\SemaphoreFullException.cs" />
     <Compile Include="System.Threading\ThreadExceptionEventArgs.cs" />
@@ -1012,6 +1034,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="System.Text.RegularExpressions\notes.txt" />
+    <Content Include="System.Text.RegularExpressions\TODOList.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\..\mono\data\net_2_0\machine.jvm.config">
