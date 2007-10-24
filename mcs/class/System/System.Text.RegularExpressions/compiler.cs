@@ -102,8 +102,14 @@ namespace System.Text.RegularExpressions {
 			set { mapping = value; }
 		}
 
+		public string [] NamesMapping {
+			get { return namesMapping; }
+			set { namesMapping = value; }
+		}
+
 		private IDictionary mapping;
 		private ushort[] pattern;
+		private string [] namesMapping;
 	}
 
 	class PatternCompiler : ICompiler {

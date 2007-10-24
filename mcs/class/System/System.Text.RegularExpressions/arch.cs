@@ -101,12 +101,16 @@ namespace System.Text.RegularExpressions {
 
 	interface IMachine {
 		Match Scan (Regex regex, string text, int start, int end);
+		string [] Split (Regex regex, string input, int count, int startat);
+		string Replace (Regex regex, string input, string replacement, int count, int startat);
+		string Result (string replacement, Match match);
 	}
 
 	interface IMachineFactory {
 		IMachine NewInstance ();
 		IDictionary Mapping { get; set; }
 		int GroupCount { get; }
+		string [] NamesMapping { get; set; }
 	}
 
 	// Anchor SKIP OFFSET

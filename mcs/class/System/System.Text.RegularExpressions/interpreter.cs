@@ -34,7 +34,7 @@ using System.Globalization;
 
 namespace System.Text.RegularExpressions {
 
-	class Interpreter : IMachine {
+	partial class Interpreter : BaseMachine {
 		private int ReadProgramCount (int ptr)
 		{
 			int ret = program [ptr + 1];
@@ -61,7 +61,7 @@ namespace System.Text.RegularExpressions {
 
 		// IMachine implementation
 
-		public Match Scan (Regex regex, string text, int start, int end) {
+		public override Match Scan (Regex regex, string text, int start, int end) {
 			this.text = text;
 			this.text_end = end;
 			this.scan_ptr = start;

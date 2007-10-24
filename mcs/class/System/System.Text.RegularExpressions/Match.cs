@@ -30,7 +30,7 @@
 namespace System.Text.RegularExpressions {
 
 	[Serializable]
-	public class Match : Group {
+	public partial class Match : Group {
 		public static Match Empty {
 			get { return empty; }
 		}
@@ -69,7 +69,7 @@ namespace System.Text.RegularExpressions {
 			if (replacement.Length == 0)
 				throw new NotSupportedException ();
 
-			return ReplacementEvaluator.Evaluate (replacement, this);
+			return machine.Result (replacement, this);
 		}
 
 		// internal
@@ -83,7 +83,7 @@ namespace System.Text.RegularExpressions {
 			this.groups = new GroupCollection (1);
 			groups.SetValue (this, 0);
 		}
-		
+#if !TARGET_JVM 
 		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
 				int index, int length, int n_caps) :
 			base (text, index, length, n_caps)
@@ -95,7 +95,7 @@ namespace System.Text.RegularExpressions {
 			this.groups = new GroupCollection (n_groups);
 			groups.SetValue (this, 0);
 		}
-
+#endif
 		internal Regex Regex {
 			get { return regex; }
 		}

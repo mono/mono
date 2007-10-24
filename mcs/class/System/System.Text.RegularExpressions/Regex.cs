@@ -43,7 +43,7 @@ using System.Diagnostics;
 namespace System.Text.RegularExpressions {
 	
 	[Serializable]
-	public class Regex : ISerializable {
+	public partial class Regex : ISerializable {
 
 #if NET_2_0
 		private static int cache_size = 15;
@@ -210,39 +210,48 @@ namespace System.Text.RegularExpressions {
 			this.roptions = options;
 			Init ();
 		}
-
+#if !TARGET_JVM
 		private void Init ()
 		{
 			this.machineFactory = cache.Lookup (this.pattern, this.roptions);
 
 			if (this.machineFactory == null) {
-				// parse and install group mapping
-
-				Parser psr = new Parser ();
-				RegularExpression re = psr.ParseRegularExpression (this.pattern, this.roptions);
-				this.group_count = re.GroupCount;
-				this.mapping = psr.GetMapping ();
-
-				// compile
-				
-				ICompiler cmp;
-				//if ((this.roptions & RegexOptions.Compiled) != 0)
-				//	//throw new Exception ("Not implemented.");
-				//	cmp = new CILCompiler ();
-				//else
-				cmp = new PatternCompiler ();
-
-				re.Compile (cmp, RightToLeft);
-
-				// install machine factory and add to pattern cache
-
-				this.machineFactory = cmp.GetMachineFactory ();
-				this.machineFactory.Mapping = mapping;
-				cache.Add (this.pattern, this.roptions, this.machineFactory);
+				InitNewRegex();
 			} else {
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
+				this._groupNumberToNameMap = this.machineFactory.NamesMapping;
 			}
+		}
+#endif
+
+		private void InitNewRegex () 
+		{
+			this.machineFactory = CreateMachineFactory (this.pattern, this.roptions);
+			this.group_count = machineFactory.GroupCount;
+			this.mapping = machineFactory.Mapping;
+			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
+		}
+
+		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
+		{
+			Parser psr = new Parser ();
+			RegularExpression re = psr.ParseRegularExpression (pattern, options);
+
+			ICompiler cmp;
+			//if ((options & RegexOptions.Compiled) != 0)
+			//	//throw new Exception ("Not implemented.");
+			//	cmp = new CILCompiler ();
+			//else
+			cmp = new PatternCompiler ();
+
+			re.Compile (cmp, (options & RegexOptions.RightToLeft) != 0);
+
+			IMachineFactory machineFactory = cmp.GetMachineFactory ();
+			machineFactory.Mapping = psr.GetMapping ();
+			machineFactory.NamesMapping = GetGroupNamesArray (machineFactory.GroupCount, machineFactory.Mapping);
+
+			return machineFactory;
 		}
 
 #if NET_2_0
@@ -292,15 +301,10 @@ namespace System.Text.RegularExpressions {
 
 		public string GroupNameFromNumber (int i)
 		{
-			if (i > group_count)
+			if (i < 0 || i > group_count)
 				return "";
-		
-			foreach (string name in mapping.Keys) {
-				if ((int) mapping [name] == i)
-					return name;
-			}
 
-			return "";
+			return _groupNumberToNameMap [i];
 		}
 
 		public int GroupNumberFromName (string name)
@@ -417,8 +421,7 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, string replacement, int count, int startat)
 		{
-			ReplacementEvaluator ev = new ReplacementEvaluator (this, replacement);
-			return Replace (input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat);
+			return CreateMachine ().Replace (this, input, replacement, count, startat);
 		}
 
 		// split methods
@@ -435,45 +438,7 @@ namespace System.Text.RegularExpressions {
 
 		public string [] Split (string input, int count, int startat)
 		{
-			ArrayList splits = new ArrayList ();
-			if (count == 0)
-				count = Int32.MaxValue;
-
-			int ptr = startat;
-			Match m = null;
-			while (--count > 0) {
-				if (m != null)
-					m = m.NextMatch ();
-				else
-					m = Match (input, ptr);
-
-				if (!m.Success)
-					break;
-			
-				if (RightToLeft)
-					splits.Add (input.Substring (m.Index + m.Length, ptr - m.Index - m.Length));
-				else
-					splits.Add (input.Substring (ptr, m.Index - ptr));
-					
-				int gcount = m.Groups.Count;
-				for (int gindex = 1; gindex < gcount; gindex++) {
-					Group grp = m.Groups [gindex];
-					splits.Add (input.Substring (grp.Index, grp.Length));
-				}
-
-				if (RightToLeft)
-					ptr = m.Index; 
-				else
-					ptr = m.Index + m.Length;
-					
-			}
-
-			if (RightToLeft && ptr >= 0)
-				splits.Add (input.Substring (0, ptr));
-			if (!RightToLeft && ptr <= input.Length)
-				splits.Add (input.Substring (ptr));
-
-			return (string []) splits.ToArray (typeof (string));
+			return CreateMachine ().Split (this, input, count, startat);
 		}
 
 		// This method is called at the end of the constructor of compiled
@@ -528,10 +493,20 @@ namespace System.Text.RegularExpressions {
 			return machineFactory.NewInstance ();
 		}
 
+		private static string [] GetGroupNamesArray (int groupCount, IDictionary mapping) 
+		{
+			string [] groupNumberToNameMap = new string [groupCount + 1];
+			foreach (string name in mapping.Keys) {
+				groupNumberToNameMap [(int) mapping [name]] = name;
+			}
+			return groupNumberToNameMap;
+		}
+
 		private IMachineFactory machineFactory;
 		private IDictionary mapping;
 		private int group_count;
 		private bool refsInitialized;
+		private string [] _groupNumberToNameMap;
 
 		
 		// protected members
