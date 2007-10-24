@@ -581,4 +581,89 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+
+	class PartialMethodDefinitionInfo : MethodInfo
+	{
+		MethodOrOperator mc;
+		MethodAttributes attrs;
+
+		public PartialMethodDefinitionInfo (MethodOrOperator mc)
+		{
+			this.mc = mc;
+			if ((mc.ModFlags & Modifiers.STATIC) != 0)
+				attrs = MethodAttributes.Static;
+		}
+
+		public override MethodInfo GetBaseDefinition ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ICustomAttributeProvider ReturnTypeCustomAttributes
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override MethodAttributes Attributes
+		{
+			get { return attrs; }
+		}
+
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ParameterInfo [] GetParameters ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object [] parameters, CultureInfo culture)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override RuntimeMethodHandle MethodHandle
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public override Type DeclaringType
+		{
+			get { return mc.Parent.TypeBuilder; }
+		}
+
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override object [] GetCustomAttributes (bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Type ReturnType {
+			get {
+				return mc.MemberType;
+			}
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override string Name
+		{
+			get { return mc.Name; }
+		}
+
+		public override Type ReflectedType
+		{
+			get { throw new NotImplementedException (); }
+		}
+	}
+
 }

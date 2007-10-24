@@ -1,3 +1,11 @@
+2007-10-24  Marek Safar  <marek.safar@gmail.com>
+
+	** C# 3.0 Partial methods
+	
+	* cs-tokenizer.cs, support.cs, class.cs, decl.cs: Implemented partial
+	methods support. Because of member cache issue with generics only
+	non-generics partial methods are fully supported.
+	
 2007-10-23  Marek Safar  <marek.safar@gmail.com>
 	
 	* class.cs, decl.cs: Rewrote member overloads check to cope with 

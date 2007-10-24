@@ -455,7 +455,7 @@ namespace Mono.CSharp
 			if (!handle_assembly && res == Token.ASSEMBLY)
 				return -1;
 #if GMCS_SOURCE
-			if (IsLinqEnabled) {
+			if (IsLinqEnabled && !lambda_arguments_parsing) {
 				//
 				// A query expression is any expression that starts with `from identifier'
 				// followed by any token except ; , =
@@ -2251,19 +2251,22 @@ namespace Mono.CSharp
 				int next_token = token ();
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
-					(next_token == Token.INTERFACE);
+					(next_token == Token.INTERFACE) ||
+					(next_token == Token.VOID);
 
 				PopPosition ();
 
 				if (ok) {
-					if (RootContext.Version == LanguageVersion.ISO_1)
+					if (RootContext.Version == LanguageVersion.ISO_2 && next_token == Token.VOID) {
+						Report.FeatureIsNotISO1 (Location, "partial methods");
+					} else if (RootContext.Version == LanguageVersion.ISO_1)
 						Report.FeatureIsNotISO1 (Location, "partial types");
 
 					return res;
 				}
 
 				if (next_token < Token.LAST_KEYWORD)
-					Report.Error (267, Location, "The `partial' modifier can be used only immediately before keyword `class', `struct', or `interface'");
+					Report.Error (267, Location, "The `partial' modifier can be used only immediately before `class', `struct', `interface', or `void' keyword");
 
 				val = new LocatedToken (Location, "partial");
 				return Token.IDENTIFIER;

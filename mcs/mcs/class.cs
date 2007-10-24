@@ -2276,7 +2276,7 @@ namespace Mono.CSharp {
 				if ((mc.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
 					continue;
 
-				if (!mc.IsUsed) {
+				if (!mc.IsUsed && (mc.caching_flags & Flags.Excluded) == 0) {
 					Report.Warning (169, 3, mc.Location, "The private {0} `{1}' is never used", member_type, mc.GetSignatureForError ());
 				}
 			}
@@ -3832,6 +3832,12 @@ namespace Mono.CSharp {
 				if (iface_texpr == null)
 					return false;
 
+				if ((ModFlags & Modifiers.PARTIAL) != 0) {
+					Report.Error (754, Location, "A partial method `{0}' cannot explicitly implement an interface",
+						GetSignatureForError ());
+					return false;
+				}
+
 				InterfaceType = iface_texpr.Type;
 
 				if (!InterfaceType.IsInterface) {
@@ -3971,7 +3977,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			MethodBuilder.SetCustomAttribute (cb);
+			if (MethodBuilder != null)
+				MethodBuilder.SetCustomAttribute (cb);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -4050,8 +4057,31 @@ namespace Mono.CSharp {
 			if (!CheckAbstractAndExtern (block != null))
 				return false;
 
+			if ((ModFlags & Modifiers.PARTIAL) != 0) {
+				for (int i = 0; i < Parameters.Count; ++i ) {
+					if (Parameters.ParameterModifier (i) == Parameter.Modifier.OUT) {
+						Report.Error (752, Location, "`{0}': A partial method parameters cannot use `out' modifier",
+							GetSignatureForError ());
+						return false;
+					}
+				}
+			}
+
 			if (!CheckBase ())
 				return false;
+			
+			if (IsPartialDefinition) {
+				caching_flags &= ~Flags.Excluded_Undetected;
+				caching_flags |= Flags.Excluded;
+				// Add to member cache only when a partial method implementation is not there
+				if ((caching_flags & Flags.MethodOverloadsExist) == 0) {
+					MethodBase mb = new PartialMethodDefinitionInfo (this);
+					Parent.MemberCache.AddMember (mb, this);
+					TypeManager.AddMethod (mb, this);
+				}
+
+				return true;
+			}
 
 			MethodData = new MethodData (
 				this, ModFlags, flags, this, MethodBuilder, GenericMethod, base_method);
@@ -4101,6 +4131,18 @@ namespace Mono.CSharp {
 			Report.Error (577, Location,
 				"Conditional not valid on `{0}' because it is a constructor, destructor, operator or explicit interface implementation",
 				GetSignatureForError ());
+		}
+
+		public bool IsPartialDefinition {
+			get {
+				return (ModFlags & Modifiers.PARTIAL) != 0 && Block == null;
+			}
+		}
+
+		public bool IsPartialImplementation {
+			get {
+				return (ModFlags & Modifiers.PARTIAL) != 0 && Block != null;
+			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -4506,6 +4548,20 @@ namespace Mono.CSharp {
 		{
 			try {
 				Report.Debug (64, "METHOD EMIT", this, MethodBuilder, Location, Block, MethodData);
+				if (IsPartialDefinition) {
+					//
+					// Do attribute checks only when partial implementation does not exist
+					//
+					if (MethodBuilder == null)
+						base.Emit ();
+
+					return;
+				}
+
+				if ((ModFlags & Modifiers.PARTIAL) != 0 && (caching_flags & Flags.PartialDefinitionExists) == 0)
+					Report.Error (759, Location, "A partial method `{0}' implementation is missing a partial method declaration",
+						GetSignatureForError ());
+
 				MethodData.Emit (Parent);
 				base.Emit ();
 				
@@ -4551,6 +4607,20 @@ namespace Mono.CSharp {
 
 			base_ret_type = mi.ReturnType;
 			return mi;
+		}
+
+		public void SetPartialDefinition (Method methodDefinition)
+		{
+			caching_flags |= Flags.PartialDefinitionExists;
+			methodDefinition.MethodBuilder = MethodBuilder;
+			if (methodDefinition.attributes == null)
+				return;
+
+			if (attributes == null) {
+				attributes = methodDefinition.attributes;
+			} else {
+				attributes.Attrs.AddRange (methodDefinition.attributes.Attrs);
+			}
 		}
 
 		protected override bool VerifyClsCompliance ()

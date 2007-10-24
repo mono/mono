@@ -335,7 +335,8 @@ namespace Mono.CSharp {
 			MethodOverloadsExist = 1 << 10,		// Test for duplication must be performed
 			IsUsed = 1 << 11,
 			IsAssigned = 1 << 12,				// Field is assigned
-			HasExplicitLayout	= 1 << 13
+			HasExplicitLayout	= 1 << 13,
+			PartialDefinitionExists	= 1 << 14	// Set when corresponding partial method definition exists
 		}
 
 		/// <summary>
@@ -375,12 +376,12 @@ namespace Mono.CSharp {
 					return false;
 				}
 			} else {
-				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
+				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0) {
 					if (RootContext.Version >= LanguageVersion.LINQ && this is Property.PropertyMethod) {
 						Report.Error (840, Location, "`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
 						              GetSignatureForError ());
 					} else {
-						Report.Error (501, Location, "`{0}' must have a body because it is not marked abstract or extern",
+						Report.Error (501, Location, "`{0}' must have a body because it is not marked abstract, extern, or partial",
 						              GetSignatureForError ());
 					}
 					return false;
@@ -2643,7 +2644,7 @@ namespace Mono.CSharp {
 					//
 					// Operators can differ in return type only
 					//
-					if ((ce.EntryType & EntryType.Method) != 0 && member is Operator) {
+					if (member is Operator) {
 						Operator op = TypeManager.GetMethod ((MethodBase) ce.Member) as Operator;
 						if (op != null && op.ReturnType != ((Operator) member).ReturnType)
 							continue;
@@ -2654,22 +2655,72 @@ namespace Mono.CSharp {
 					//
 					if (pd != null && !(member is AbstractPropertyEventMethod)) {
 						ii = method_param_count;
-						while (ii-- != 0 && parameters.ParameterModifier (ii) == pd.ParameterModifier (ii));
+						while (ii-- != 0 && parameters.ParameterModifier (ii) == pd.ParameterModifier (ii) &&
+							parameters.ExtensionMethodType == pd.ExtensionMethodType);
 
 						if (ii >= 0) {
+							MethodCore mc = TypeManager.GetMethod ((MethodBase) ce.Member) as MethodCore;
 							Report.SymbolRelatedToPreviousError (ce.Member);
-							Report.Error (663, member.Location,
-								"An overloaded method `{0}' cannot differ on use of parameter modifiers only",
-								member.GetSignatureForError ());
+							if ((member.ModFlags & Modifiers.PARTIAL) != 0 && (mc.ModFlags & Modifiers.PARTIAL) != 0) {
+								if (parameters.HasParams || pd.HasParams) {
+									Report.Error (758, member.Location,
+										"A partial method declaration and partial method implementation cannot differ on use of `params' modifier");
+								} else {
+									Report.Error (755, member.Location,
+										"A partial method declaration and partial method implementation must be both an extension method or neither");
+								}
+							} else {
+								Report.Error (663, member.Location,
+									"An overloaded method `{0}' cannot differ on use of parameter modifiers only",
+									member.GetSignatureForError ());
+							}
 							return false;
 						}
 					}
 				}
 
-				Report.SymbolRelatedToPreviousError (ce.Member);
 				if ((ce.EntryType & EntryType.Method) != 0) {
-					IMethodData duplicate_member = TypeManager.GetMethod ((MethodBase) ce.Member);
+					Method method_a = member as Method;
+					Method method_b = TypeManager.GetMethod ((MethodBase) ce.Member) as Method;
+					if (method_a != null && method_b != null && (method_a.ModFlags & method_b.ModFlags & Modifiers.PARTIAL) != 0) {
+						const int partial_modifiers = Modifiers.STATIC | Modifiers.UNSAFE;
+						if (method_a.IsPartialDefinition == method_b.IsPartialImplementation) {
+							if ((method_a.ModFlags & partial_modifiers) == (method_b.ModFlags & partial_modifiers) ||
+								method_a.Parent.IsInUnsafeScope && method_b.Parent.IsInUnsafeScope) {
+								if (method_a.IsPartialImplementation) {
+									method_a.SetPartialDefinition (method_b);
+									entries.RemoveAt (i);
+								} else {
+									method_b.SetPartialDefinition (method_a);
+								}
+								continue;
+							}
 
+							if ((method_a.ModFlags & Modifiers.STATIC) != (method_b.ModFlags & Modifiers.STATIC)) {
+								Report.SymbolRelatedToPreviousError (ce.Member);
+								Report.Error (763, member.Location,
+									"A partial method declaration and partial method implementation must be both `static' or neither");
+							}
+
+							Report.SymbolRelatedToPreviousError (ce.Member);
+							Report.Error (764, member.Location,
+								"A partial method declaration and partial method implementation must be both `unsafe' or neither");
+							return false;
+						}
+
+						Report.SymbolRelatedToPreviousError (ce.Member);
+						if (method_a.IsPartialDefinition) {
+							Report.Error (756, member.Location, "A partial method `{0}' declaration is already defined",
+								member.GetSignatureForError ());
+						}
+
+						Report.Error (757, member.Location, "A partial method `{0}' implementation is already defined",
+							member.GetSignatureForError ());
+						return false;
+					}
+
+					Report.SymbolRelatedToPreviousError (ce.Member);
+					IMethodData duplicate_member = TypeManager.GetMethod ((MethodBase) ce.Member);
 					if (member is Operator && duplicate_member is Operator) {
 						Report.Error (557, member.Location, "Duplicate user-defined conversion in type `{0}'",
 							member.Parent.GetSignatureForError ());
@@ -2686,8 +2737,10 @@ namespace Mono.CSharp {
 							member.GetSignatureForError ());
 						return false;
 					}
+				} else {
+					Report.SymbolRelatedToPreviousError (ce.Member);
 				}
-
+				
 				Report.Error (111, member.Location,
 					"A member `{0}' is already defined. Rename this member or use different parameter types",
 					member.GetSignatureForError ());
