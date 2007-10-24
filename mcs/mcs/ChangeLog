@@ -1,5 +1,11 @@
 2007-10-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #325110
+	* class.cs, expression.cs, attribute.cs: Use open generic method when
+	checking conditional attribute.
+	
+2007-10-24  Marek Safar  <marek.safar@gmail.com>
+
 	* report.cs, cs-tokenizer.cs, class.cs, cs-parser.jay, anonymous.cs, 
 	expression.cs, statement.cs: Renamed method FeatureIsNotISO to
 	FeatureIsNotAvailable.

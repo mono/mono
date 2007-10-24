@@ -1798,11 +1798,6 @@ namespace Mono.CSharp {
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)
 		{
-			mb = TypeManager.DropGenericMethodArguments (mb);
-			// TODO: Has to be fixed for partial methods
-			if ((mb is MethodBuilder) || (mb is ConstructorBuilder))
-				return false;
-
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
 				return excluded == TRUE ? true : false;

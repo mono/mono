@@ -4237,7 +4237,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			IMethodData md = TypeManager.GetMethod (base_method);
+			IMethodData md = TypeManager.GetMethod (TypeManager.DropGenericMethodArguments (base_method));
 			if (md == null) {
 				if (AttributeTester.IsConditionalMethodExcluded (base_method)) {
 					caching_flags |= Flags.Excluded;
