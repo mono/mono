@@ -803,6 +803,7 @@ System.Security.Permissions/StorePermission.cs
 System.Security.Permissions/StorePermissionFlags.cs
 System/SRDescriptionAttribute.cs
 System.Text.RegularExpressions/arch.cs
+System.Text.RegularExpressions/BaseMachine.cs
 System.Text.RegularExpressions/cache.cs
 System.Text.RegularExpressions/CaptureCollection.cs
 System.Text.RegularExpressions/Capture.cs
