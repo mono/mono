@@ -1,11 +1,12 @@
 //
-// assembly:	System
-// namespace:	System.Text.RegularExpressions
-// file:	Group.cs
+// BalancingGroupConstruct.jvm.cs
 //
-// author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Author:
+//	Arina Itkes  <arinai@mainsoft.com>
+//
+// Copyright (C) 2007 Mainsoft, Inc.
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,44 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Text.RegularExpressions {
+using System;
+using System.Collections.Generic;
+using java.util.regex;
+using java.lang;
 
-	[Serializable]
-	public partial class Group : Capture {
 
-		[MonoTODO ("not thread-safe")]
-		public static Group Synchronized (Group inner)
-		{
-			if (inner == null)
-				throw new ArgumentNullException ("inner");
-			return inner;
+namespace System.Text.RegularExpressions
+{
+	sealed class BalancingGroupConstruct : IConstructType
+	{
+		private const string DEFINITION1 = @"\(\?<[A-Za-z]\w*-[A-Za-z]\w*>.*\)";
+		private const string DEFINITION2 = @"\(\?'[A-Za-z]\w*-[A-Za-z]\w*'.*\)";
+
+		public bool HasConstruct (string pattern, RegexOptions options) {
+			if (JavaUtils.IsMatch (pattern, DEFINITION1)) {
+				return true;
+			}
+			if (JavaUtils.IsMatch (pattern, DEFINITION2)) {
+				return true;
+			}
+
+			return false;
 		}
 
-		internal static Group Fail = new Group ();
-#if !TARGET_JVM
-		public CaptureCollection Captures {
-			get { return captures; }
+		public string Reformat (RegexOptions options,
+			string reformattedPattern,
+			PatternGrouping patternGrouping) {
+			throw new NotImplementedException ("Reformat for balancing group is not implemented.");
 		}
-#endif
-		public bool Success {
-			get { return success; }
-		}
-
-		// internal
-		internal Group (string text, int index, int length, int n_caps) : base (text, index, length)
-		{
-			success = true;
-			captures = new CaptureCollection (n_caps);
-			captures.SetValue (this, n_caps - 1);
-		}
-		
-		internal Group () : base ("")
-		{
-			success = false;
-			captures = new CaptureCollection (0);
-		}
-
-		private bool success;
-		private CaptureCollection captures;
 	}
 }

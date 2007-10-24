@@ -1,11 +1,12 @@
 //
-// assembly:	System
-// namespace:	System.Text.RegularExpressions
-// file:	Group.cs
+// JvmReMachineFactory.jvm.cs
 //
-// author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Author:
+//	Arina Itkes  <arinai@mainsoft.com>
+//
+// Copyright (C) 2007 Mainsoft, Inc.
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,44 +28,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Text.RegularExpressions {
 
-	[Serializable]
-	public partial class Group : Capture {
+using System;
+using System.Collections;
+using System.Text;
 
-		[MonoTODO ("not thread-safe")]
-		public static Group Synchronized (Group inner)
-		{
-			if (inner == null)
-				throw new ArgumentNullException ("inner");
-			return inner;
+namespace System.Text.RegularExpressions
+{
+	sealed class JvmReMachineFactory : IMachineFactory
+	{
+		readonly JvmReMachine _machine;
+
+		public JvmReMachineFactory (PatternData patternData) {
+			_machine = new JvmReMachine (patternData);
 		}
 
-		internal static Group Fail = new Group ();
-#if !TARGET_JVM
-		public CaptureCollection Captures {
-			get { return captures; }
-		}
-#endif
-		public bool Success {
-			get { return success; }
+		public IMachine NewInstance () {
+			return _machine;
 		}
 
-		// internal
-		internal Group (string text, int index, int length, int n_caps) : base (text, index, length)
-		{
-			success = true;
-			captures = new CaptureCollection (n_caps);
-			captures.SetValue (this, n_caps - 1);
-		}
-		
-		internal Group () : base ("")
-		{
-			success = false;
-			captures = new CaptureCollection (0);
+		public JvmReMachine GetMachine () {
+			return _machine;
 		}
 
-		private bool success;
-		private CaptureCollection captures;
+		public IDictionary Mapping {
+			get { return _machine.Mapping; }
+			set { throw new NotImplementedException ("Mapping setter of JvmReMachineFactory should not be called."); }//We must implement the setter of interface but it is not in use
+		}
+
+		public string [] NamesMapping {
+			get { return _machine.NamesMapping; }
+			set { throw new NotImplementedException ("NamesMapping setter of JvmReMachineFactory should not be called."); }//We must implement the setter of interface but it is not in use
+		}
+
+		public int GroupCount {
+			get { return _machine.GroupCount; }
+		}
 	}
 }

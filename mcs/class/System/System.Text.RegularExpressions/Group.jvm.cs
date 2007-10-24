@@ -1,11 +1,12 @@
 //
-// assembly:	System
-// namespace:	System.Text.RegularExpressions
-// file:	Group.cs
+// Group.jvm.cs
 //
-// author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Author:
+//	Arina Itkes  <arinai@mainsoft.com>
+//
+// Copyright (C) 2007 Mainsoft, Inc.
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,44 +28,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Text.RegularExpressions {
 
-	[Serializable]
-	public partial class Group : Capture {
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-		[MonoTODO ("not thread-safe")]
-		public static Group Synchronized (Group inner)
-		{
-			if (inner == null)
-				throw new ArgumentNullException ("inner");
-			return inner;
+namespace System.Text.RegularExpressions
+{
+	public partial class Group : Capture
+	{
+		readonly Match _match;
+		readonly object _capturesLock = new object ();
+		readonly int _groupNumber;
+
+		internal int GroupNumber {
+			get { return _groupNumber; }
 		}
 
-		internal static Group Fail = new Group ();
-#if !TARGET_JVM
 		public CaptureCollection Captures {
-			get { return captures; }
-		}
-#endif
-		public bool Success {
-			get { return success; }
+			get {
+				lock (_capturesLock) {
+					if (captures != null)
+						return captures;
+					_match.FillMonoCaptures (this);
+				}
+
+				return captures;
+			}
+
+			internal set { captures = value; }
 		}
 
 		// internal
-		internal Group (string text, int index, int length, int n_caps) : base (text, index, length)
-		{
+		internal Group (string text, int index, int length, Match match, int groupNumber)
+			: base (text, index, length) {
 			success = true;
-			captures = new CaptureCollection (n_caps);
-			captures.SetValue (this, n_caps - 1);
-		}
-		
-		internal Group () : base ("")
-		{
-			success = false;
-			captures = new CaptureCollection (0);
+			_match = match;
+			_groupNumber = groupNumber;
 		}
 
-		private bool success;
-		private CaptureCollection captures;
 	}
 }
