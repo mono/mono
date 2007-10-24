@@ -413,6 +413,9 @@ namespace System.Windows.Forms
 
 			set {
 				if (value != max_length) {
+					if (value == 0)
+						value = 2147483646;
+
 					max_length = value;
 				}
 			}

@@ -1,3 +1,8 @@
+2007-10-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: If the user sets maxlength to 0, it should mean
+	the cap is maxvalue, not actually 0.  [Fixes bug #336218]
+
 2007-10-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PropertyGridView.cs: If a property has an UIEditor available,
