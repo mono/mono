@@ -1242,11 +1242,69 @@ method_header
 			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
+		current_local_parameters = (Parameters) $6;
+
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
-				     (int) $2, false, name, (Parameters) $6, (Attributes) $1);
+				     (int) $2, false, name, current_local_parameters, (Attributes) $1);
 
 		anonymous_host = method;
-		current_local_parameters = (Parameters) $6;
+		current_generic_method = generic;
+
+		if (RootContext.Documentation != null)
+			method.DocComment = Lexer.consume_doc_comment ();
+
+		$$ = method;
+	}
+	| opt_attributes
+	  opt_modifiers
+	  PARTIAL
+	  VOID member_name
+	  open_parens opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		lexer.ConstraintsParsing = true;
+	  }
+	  opt_type_parameter_constraints_clauses
+	  {
+		lexer.ConstraintsParsing = false;
+
+		MemberName name = (MemberName) $5;
+
+		if ($9 != null && name.TypeArguments == null)
+			Report.Error (80, lexer.Location,
+				      "Constraints are not allowed on non-generic declarations");
+
+		Method method;
+		GenericMethod generic = null;
+		if (name.TypeArguments != null) {
+			generic = new GenericMethod (current_namespace, current_class, name,
+						     TypeManager.system_void_expr, (Parameters) $7);
+
+			generic.SetParameterInfo ((ArrayList) $10);
+		}
+
+		int modifiers = (int) $2;
+		current_local_parameters = (Parameters) $7;
+
+		const int invalid_partial_mod = Modifiers.Accessibility | Modifiers.ABSTRACT | Modifiers.EXTERN |
+			Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
+
+		if ((modifiers & invalid_partial_mod) != 0) {
+			Report.Error (750, name.Location, "A partial method cannot define access modifier or " +
+       			"any of abstract, extern, new, override, sealed, or virtual modifiers");
+       		modifiers &= ~invalid_partial_mod;
+       	}
+
+		if ((current_class.ModFlags & Modifiers.PARTIAL) == 0) {
+			Report.Error (751, name.Location, "A partial method must be declared within a " +
+       			"partial class or partial struct");
+		}
+
+		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
+		
+		method = new Method (current_class, generic, TypeManager.system_void_expr,
+				     modifiers, false, name, current_local_parameters, (Attributes) $1);
+
+		anonymous_host = method;
 		current_generic_method = generic;
 
 		if (RootContext.Documentation != null)

@@ -1,3 +1,9 @@
+2007-10-24  Marek Safar  <marek.safar@gmail.com>
+
+	** C# 3.0 Partial methods
+	
+	* cs-parser.jay: Implemented partial methods support.
+	
 2007-10-12  Marek Safar  <marek.safar@gmail.com>
 	
 	* generics.cs: Implemented basic type inference scoring mechanism.
