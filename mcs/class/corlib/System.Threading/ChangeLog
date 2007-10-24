@@ -1,5 +1,9 @@
 2007-10-24  Dick Porter  <dick@ximian.com>
 
+	* Thread.cs: Call Thread_init on the new 2.0 constructors too.
+
+2007-10-24  Dick Porter  <dick@ximian.com>
+
 	* Thread.cs: Assign the ManagedThreadId when it is asked for,
 	rather than in the constructor, so ThreadPool threads also work.
 	Fixes bug 335579 (and doesn't break 325367 or 325566)

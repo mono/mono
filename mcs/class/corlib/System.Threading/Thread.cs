@@ -837,6 +837,7 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
+			Thread_init ();
 		}
 
 		public Thread (ParameterizedThreadStart start)
@@ -845,6 +846,7 @@ namespace System.Threading {
 				throw new ArgumentNullException ("start");
 
 			threadstart = start;
+			Thread_init ();
 		}
 
 		public Thread (ParameterizedThreadStart start, int maxStackSize)
@@ -856,6 +858,7 @@ namespace System.Threading {
 
 			threadstart = start;
 			stack_size = maxStackSize;
+			Thread_init ();
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
