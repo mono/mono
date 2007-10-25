@@ -7738,7 +7738,8 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
-			
+			Expression value = set_expr;
+
 			if (prepared) {
 				Invocation.EmitCall (ec, is_base_indexer, instance_expr, get,
 					arguments, loc, true, false);
@@ -7757,12 +7758,10 @@ namespace Mono.CSharp {
 				temp = new LocalTemporary (Type);
 				source.Emit (ec);
 				temp.Store (ec);
-				
-				Argument a = (Argument) arguments [arguments.Count - 1];
-				a.Expr = temp;
+				value = temp;
 			}
 			
-			arguments.Add (new Argument (set_expr, Argument.AType.Expression));
+			arguments.Add (new Argument (value, Argument.AType.Expression));
 			Invocation.EmitCall (ec, is_base_indexer, instance_expr, set, arguments, loc, false, prepared);
 			
 			if (temp != null) {
