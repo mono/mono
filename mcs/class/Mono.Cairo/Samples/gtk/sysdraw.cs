@@ -36,7 +36,17 @@ namespace Gdk
 {		
         public class Context
 	{		
-		//Use [DllImport("libgdk-win32-2.0-0.dll")] for  Win32 
+		// Note: we don't need or want a .dll.config since we p/invoke
+		// the proper lib based on the os check below
+
+		// win32 only imports
+		[DllImport("libgdk-win32-2.0-0.dll")]
+		internal static extern IntPtr gdk_win32_hdc_get(IntPtr drawable, IntPtr gc, int usage);
+		
+		[DllImport("libgdk-win32-2.0-0.dll")]
+		internal static extern void gdk_win32_hdc_release(IntPtr drawable,IntPtr gc,int usage);
+
+		// x11 only imports
 		[DllImport("libgdk-x11-2.0.so")]
 		  internal static extern IntPtr gdk_x11_drawable_get_xdisplay (IntPtr raw);
 		
@@ -64,20 +74,33 @@ namespace Gdk
 			if (is_gdk_window)
 				((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, 
 									     out x_off, out y_off);
+
+			Cairo.Surface surface;
 			
-			x_drawable = drawable.Handle;			
-			IntPtr visual = gdk_drawable_get_visual(x_drawable);
-			
-			IntPtr Xdisplay = gdk_x11_drawable_get_xdisplay(x_drawable);
-			IntPtr Xvisual = gdk_x11_visual_get_xvisual(visual);
-			IntPtr Xdrawable = gdk_x11_drawable_get_xid (x_drawable);
-			
-			Cairo.XlibSurface s = new Cairo.XlibSurface (Xdisplay,
+			PlatformID os = Environment.OSVersion.Platform;
+			if (os == PlatformID.Win32Windows || os == PlatformID.Win32NT ||
+			    os == PlatformID.Win32S || os == PlatformID.WinCE) {
+
+				Gdk.GC gcc = new Gdk.GC (drawable);
+				IntPtr windc = gdk_win32_hdc_get (drawable.Handle, gcc.Handle, 0);
+				surface = new Win32Surface (windc);
+				
+				gdk_win32_hdc_release (drawable.Handle, gcc.Handle, 0);
+			} else {
+				x_drawable = drawable.Handle;			
+				IntPtr visual = gdk_drawable_get_visual(x_drawable);
+				
+				IntPtr Xdisplay = gdk_x11_drawable_get_xdisplay(x_drawable);
+				IntPtr Xvisual = gdk_x11_visual_get_xvisual(visual);
+				IntPtr Xdrawable = gdk_x11_drawable_get_xid (x_drawable);
+				
+				surface = new Cairo.XlibSurface (Xdisplay,
 								   Xdrawable,
 								   Xvisual,
 								   w, h);
+			}
 			
-			Cairo.Context g = new Cairo.Context (s);
+			Cairo.Context g = new Cairo.Context (surface);
 			
 			// this can be safely removed now, just keep it for a bit more
 			//Cairo.Context g = new Cairo.Context (
