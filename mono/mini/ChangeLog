@@ -1,3 +1,8 @@
+
+Thu Oct 25 23:06:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* helpers.c: unlink debugging output files.
+
 2007-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Move mono_create_ftnptr () to object.c.
