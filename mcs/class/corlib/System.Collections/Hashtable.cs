@@ -52,9 +52,6 @@ namespace System.Collections {
 			internal Object key;
 
 			internal Object value;
-
-			// Hashcode. Chains are also marked through this.
-			internal int hashMix;
 		}
 
 		[Serializable]
@@ -76,6 +73,10 @@ namespace System.Collections {
 		private int modificationCount;
 		private float loadFactor;
 		private Slot [] table;
+		// Hashcodes of the corresponding entries in the slot table. Kept separate to
+		// help the GC
+		private int [] hashes;
+
 		private int threshold;
 	
 		private HashKeys hashKeys;
@@ -151,7 +152,7 @@ namespace System.Collections {
 
                         int size = (int) tableSize;
 			size = ToPrime (size);
-			this.SetTable (new Slot [size]);
+			this.SetTable (new Slot [size], new int [size]);
 
 			this.hcp = hcp;
 			this.comparer = comparer;
@@ -350,6 +351,7 @@ namespace System.Collections {
 					throw new ArgumentNullException ("key", "null key");
 	
 				Slot [] table = this.table;
+				int [] hashes = this.hashes;
 				uint size = (uint) table.Length;
 				int h = this.GetHash (key) & Int32.MaxValue;
 				uint indx = (uint)h;
@@ -359,16 +361,17 @@ namespace System.Collections {
 				for (uint i = size; i > 0; i--) {
 					indx %= size;
 					Slot entry = table [indx];
+					int hashMix = hashes [indx];
 					Object k = entry.key;
 					if (k == null)
 						break;
 					
-					if (k == key || ((entry.hashMix & Int32.MaxValue) == h
+					if (k == key || ((hashMix & Int32.MaxValue) == h
 					    && this.KeyEquals (key, k))) {
 						return entry.value;
 					}
 	
-					if ((entry.hashMix & CHAIN_MARKER) == 0)
+					if ((hashMix & CHAIN_MARKER) == 0)
 						break;
 	
 					indx += step;
@@ -440,7 +443,7 @@ namespace System.Collections {
 			for (int i = 0;i<table.Length;i++) {
 				table [i].key = null;
 				table [i].value = null;
-				table [i].hashMix = 0;
+				hashes [i] = 0;
 			}
 
 			inUse = 0;
@@ -465,9 +468,9 @@ namespace System.Collections {
 			int i = Find (key);
 			if (i >= 0) {
 				Slot [] table = this.table;
-				int h = table [i].hashMix;
+				int h = hashes [i];
 				h &= CHAIN_MARKER;
-				table [i].hashMix = h;
+				hashes [i] = h;
 				table [i].key = (h != 0)
 				              ? KeyMarker.Removed
 				              : null;
@@ -597,7 +600,7 @@ namespace System.Collections {
 			  throw new SerializationException("Keys and values of uneven size");
 			 
 			size = ToPrime (size);
-			this.SetTable (new Slot [size]);
+			this.SetTable (new Slot [size], new int [size]);
 			
 			for(int i=0;i<keys.Length;i++)
 				Add(keys[i], values[i]);
@@ -668,12 +671,13 @@ namespace System.Collections {
 				threshold = size-1;
 		}
 
-		private void SetTable (Slot [] table)
+		private void SetTable (Slot [] table, int[] hashes)
 		{
 			if (table == null)
 				throw new ArgumentNullException ("table");
 
 			this.table = table;
+			this.hashes = hashes;
 			AdjustThreshold ();
 		}
 
@@ -683,6 +687,7 @@ namespace System.Collections {
 				throw new ArgumentNullException ("key", "null key");
 
 			Slot [] table = this.table;
+			int [] hashes = this.hashes;
 			uint size = (uint) table.Length;
 			int h = this.GetHash (key) & Int32.MaxValue;
 			uint indx = (uint)h;
@@ -692,16 +697,17 @@ namespace System.Collections {
 			for (uint i = size; i > 0; i--) {
 				indx %= size;
 				Slot entry = table [indx];
+				int hashMix = hashes [indx];
 				Object k = entry.key;
 				if (k == null)
 					break;
 				
-				if (k == key || ((entry.hashMix & Int32.MaxValue) == h
+				if (k == key || ((hashMix & Int32.MaxValue) == h
 				    && this.KeyEquals (key, k))) {
 					return (int) indx;
 				}
 
-				if ((entry.hashMix & CHAIN_MARKER) == 0)
+				if ((hashMix & CHAIN_MARKER) == 0)
 					break;
 
 				indx += step;
@@ -723,11 +729,13 @@ namespace System.Collections {
 
 			Slot [] newTable = new Slot [newSize];
 			Slot [] table = this.table;
+			int [] newHashes = new int [newSize];
+			int [] hashes = this.hashes;
 
 			for (int i = 0;i<oldSize;i++) {
 				Slot s = table [i];
 				if (s.key!= null) {
-					int h = s.hashMix & Int32.MaxValue;
+					int h = hashes [i] & Int32.MaxValue;
 					uint spot = (uint)h;
 					uint step = ((uint) (h>>5)+1)% (newSize-1)+1;
 					for (uint j = spot%newSize;;spot+= step, j = spot%newSize) {
@@ -736,10 +744,10 @@ namespace System.Collections {
 						if (newTable [j].key == null) {
 							newTable [j].key = s.key;
 							newTable [j].value = s.value;
-							newTable [j].hashMix |= h;
+							newHashes [j] |= h;
 							break;
 						} else {
-							newTable [j].hashMix |= CHAIN_MARKER;
+							newHashes [j] |= CHAIN_MARKER;
 						}
 					}
 				}
@@ -747,7 +755,7 @@ namespace System.Collections {
 
 			++this.modificationCount;
 
-			this.SetTable (newTable);
+			this.SetTable (newTable, newHashes);
 		}
 
 
@@ -765,28 +773,30 @@ namespace System.Collections {
 			uint spot = (uint)h;
 			uint step = (uint) ((spot>>5)+1)% (size-1)+1;
 			Slot [] table = this.table;
+			int [] hashes = this.hashes;
 			Slot entry;
 
 			int freeIndx = -1;
 			for (int i = 0; i < size; i++) {
 				int indx = (int) (spot % size);
 				entry = table [indx];
+				int hashMix = hashes [indx];
 
 				if (freeIndx == -1
 				    && entry.key == KeyMarker.Removed
-				    && (entry.hashMix & CHAIN_MARKER) != 0)
+				    && (hashMix & CHAIN_MARKER) != 0)
 					freeIndx = indx;
 
 				if (entry.key == null ||
 				    (entry.key == KeyMarker.Removed
-				     && (entry.hashMix & CHAIN_MARKER) == 0)) {
+				     && (hashMix & CHAIN_MARKER) == 0)) {
 
 					if (freeIndx == -1)
 						freeIndx = indx;
 					break;
 				}
 
-				if ((entry.hashMix & Int32.MaxValue) == h && KeyEquals (key, entry.key)) {
+				if ((hashMix & Int32.MaxValue) == h && KeyEquals (key, entry.key)) {
 					if (overwrite) {
 						table [indx].value = value;
 						++this.modificationCount;
@@ -800,7 +810,7 @@ namespace System.Collections {
 				}
 
 				if (freeIndx == -1) {
-					table [indx].hashMix |= CHAIN_MARKER;
+					hashes [indx] |= CHAIN_MARKER;
 				}
 
 				spot+= step;
@@ -810,7 +820,7 @@ namespace System.Collections {
 			if (freeIndx!= -1) {
 				table [freeIndx].key = key;
 				table [freeIndx].value = value;
-				table [freeIndx].hashMix |= h;
+				hashes [freeIndx] |= h;
 
 				++this.inUse;
 				++this.modificationCount;

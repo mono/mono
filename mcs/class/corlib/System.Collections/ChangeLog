@@ -1,3 +1,8 @@
+2007-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Hashtable.cs: Put the hash values into a separate array to help the GC. Fixes
+	#336069.
+
 2007-10-23  Robert Jordan  <robertj@gmx.net>
 
 	* SortedList.cs: Mark List|{Values|Keys} as serializable.
