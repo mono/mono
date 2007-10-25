@@ -204,8 +204,9 @@ Mono_Posix_Stdlib_clearerr (void* stream)
 }
 
 int
-Mono_Posix_Stdlib_perror (const char* s)
+Mono_Posix_Stdlib_perror (const char* s, int err)
 {
+	errno = err;
 	perror (s);
 	return 0;
 }
