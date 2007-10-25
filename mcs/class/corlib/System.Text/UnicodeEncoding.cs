@@ -73,8 +73,6 @@ public class UnicodeEncoding : Encoding
 			SetFallbackInternal (null, new DecoderExceptionFallback ());
 		else
 			SetFallbackInternal (null, new DecoderReplacementFallback ("\uFFFD"));
-#else
-		throwOnInvalid = throwOnInvalidBytes;
 #endif
 
 		this.bigEndian = bigEndian;

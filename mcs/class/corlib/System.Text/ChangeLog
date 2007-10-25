@@ -1,5 +1,9 @@
 2007-10-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UnicodeEncoding.cs : fix build.
+
+2007-10-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DecoderReplacementFallbackBuffer.cs : Reset() should also reset the
 	  input buffer. When fallback is not assigned, just return '\0'.
 	* UnicodeEncoding.cs : handle throwOnInvalid .ctor argument.
