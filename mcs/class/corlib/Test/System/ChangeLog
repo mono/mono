@@ -1,3 +1,7 @@
+2007-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added test for bug #336841. Code formatting.
+
 2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeTest.cs : tests for ReflectionOnlyGetType().

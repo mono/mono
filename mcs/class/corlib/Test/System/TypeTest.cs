@@ -17,100 +17,159 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Text;
 
 class NoNamespaceClass {
 }
 
 namespace MonoTests.System
 {
-	class Super : ICloneable {
-		public virtual object Clone () {
+	class Super : ICloneable
+	{
+		public virtual object Clone ()
+		{
 			return null;
 		}
 	}
-	class Duper: Super {
+
+	class Duper: Super
+	{
 	}
 
-	interface IFace1 {
+	interface IFace1
+	{
 		void foo ();
 	}
 
-	interface IFace2 : IFace1 {
+	interface IFace2 : IFace1
+	{
 		void bar ();
 	}
 
-	interface IFace3 : IFace2 {
+	interface IFace3 : IFace2
+	{
 	}
 
-	enum TheEnum { A, B, C };
+	enum TheEnum
+	{
+		A,
+		B,
+		C
+	};
 
-	abstract class Base {
+	abstract class Base
+	{
 		public int level;
 
-		public abstract int this [byte i] { get; }
-		public abstract int this [int i] { get; }
-		public abstract void TestVoid();
-		public abstract void TestInt(int i);
+		public abstract int this [byte i] {
+			get;
+		}
+
+		public abstract int this [int i] {
+			get;
+		}
+
+		public abstract void TestVoid ();
+		public abstract void TestInt (int i);
 	}
 
-	class DeriveVTable : Base {
-		public override int this [byte i] { get { return 1; } }
-		public override int this [int i] { get { return 1; } }
-		public override void TestVoid() { level = 1; }
-		public override void TestInt(int i) { level = 1; }
+	class DeriveVTable : Base
+	{
+		public override int this [byte i] {
+			get { return 1; }
+		}
+
+		public override int this [int i] {
+			get { return 1; }
+		}
+
+		public override void TestVoid ()
+		{
+			level = 1;
+		}
+
+		public override void TestInt (int i)
+		{
+			level = 1;
+		}
 	}
 
-	class NewVTable : DeriveVTable {
-		public new int this [byte i] { get { return 2; } }
-		public new int this [int i] { get { return 2; } }
-		public new void TestVoid() { level = 2; }
-		public new void TestInt(int i) { level = 2; }
+	class NewVTable : DeriveVTable
+	{
+		public new int this [byte i] {
+			get { return 2; }
+		}
 
-		public void Overload () { }
-		public void Overload (int i) { }
+		public new int this [int i] {
+			get { return 2; }
+		}
 
-		public NewVTable (out int i) {
+		public new void TestVoid ()
+		{
+			level = 2;
+		}
+
+		public new void TestInt (int i)
+		{
+			level = 2;
+		}
+
+		public void Overload ()
+		{
+		}
+
+		public void Overload (int i)
+		{
+		}
+
+		public NewVTable (out int i)
+		{
 			i = 0;
 		}
 
-		public void byref_method (out int i) {
+		public void byref_method (out int i)
+		{
 			i = 0;
 		}
-
 	}
 
-	class Base1 {
+	class Base1
+	{
 		public virtual int Foo {
-			get {
-				return 1;
-			}
-			set {
-			}
+			get { return 1; }
+			set { }
 		}
 	}
 
-	class Derived1 : Base1 {
+	class Derived1 : Base1
+	{
 		public override int Foo {
-			set {
-			}
+			set { }
 		}
 	}
 
 #if NET_2_0
-	public class Foo<T> {
+	public class Foo<T>
+	{
 		public T Whatever;
 	
 		public T Test {
 			get { throw new NotImplementedException (); }
 		}
 
-		public T Execute(T a) {
+		public T Execute (T a)
+		{
 			return a;
 		}
 	}
 
-	public interface IBar<T> { }
-	public class Baz<T> : IBar<T> { }
+	public interface IBar<T>
+	{
+	}
+
+	public class Baz<T> : IBar<T>
+	{
+	}
 #endif
 
 	[TestFixture]
@@ -136,14 +195,17 @@ namespace MonoTests.System
 			return "t" + (typeIndexer++);
 		}
 
-		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k) {
+		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k)
+		{
 		}
 #if NET_2_0
-		private void GenericMethod<Q> (Q q) {
+		private void GenericMethod<Q> (Q q)
+		{
 		}
 #endif
 		[Test]
-		public void TestIsAssignableFrom () {
+		public void TestIsAssignableFrom ()
+		{
 			// Simple tests for inheritance
 			Assert.AreEqual (typeof (Super).IsAssignableFrom (typeof (Duper)) , true, "#01");
 			Assert.AreEqual (typeof (Duper).IsAssignableFrom (typeof (Duper)), true, "#02");
@@ -215,7 +277,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void TestIsSubclassOf () {
+		public void TestIsSubclassOf ()
+		{
 			Assert.IsTrue (typeof (ICloneable).IsSubclassOf (typeof (object)), "#01");
 
 			// Tests for byref types
@@ -226,7 +289,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void TestGetMethodImpl() {
+		public void TestGetMethodImpl ()
+		{
 			// Test binding of new slot methods (using no types)
 			Assert.AreEqual (typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType, "#01");
 			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetMethod ("TestVoid").DeclaringType, "#02");
@@ -246,7 +310,8 @@ namespace MonoTests.System
 
 		[Test]
 		[Category ("TargetJvmNotWorking")]
-		public void TestGetPropertyImpl() {
+		public void TestGetPropertyImpl ()
+		{
 			// Test getting property that is exact
 			Assert.AreEqual (typeof (NewVTable), typeof (NewVTable).GetProperty ("Item", new Type[1] { typeof (Int32) }).DeclaringType, "#01");
 
@@ -259,16 +324,19 @@ namespace MonoTests.System
 
 #if !TARGET_JVM // StructLayout not supported for TARGET_JVM
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
-		public class Class1 {
+		public class Class1
+		{
 		}
 
 		[StructLayout(LayoutKind.Explicit, CharSet=CharSet.Unicode)]
-		public class Class2 {
+		public class Class2
+		{
 		}
 
 #if NET_2_0
 		[Test]
-		public void StructLayoutAttribute () {
+		public void StructLayoutAttribute ()
+		{
 			StructLayoutAttribute attr1 = typeof (TypeTest).StructLayoutAttribute;
 			Assert.AreEqual (LayoutKind.Auto, attr1.Value);
 
@@ -285,11 +353,13 @@ namespace MonoTests.System
 #endif // TARGET_JVM
 
 		[Test]
-		public void Namespace () {
+		public void Namespace ()
+		{
 			Assert.AreEqual (null, typeof (NoNamespaceClass).Namespace);
 		}
 
-		public static void Reflected (ref int a) {
+		public static void Reflected (ref int a)
+		{
 		}
 
 		[Test]
@@ -299,7 +369,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void GetInterfaces () {
+		public void GetInterfaces ()
+		{
 			Type[] t = typeof (Duper).GetInterfaces ();
 			Assert.AreEqual (1, t.Length);
 			Assert.AreEqual (typeof (ICloneable), t[0]);
@@ -311,7 +382,8 @@ namespace MonoTests.System
 		public int AField;
 
 		[Test]
-		public void GetFieldIgnoreCase () {
+		public void GetFieldIgnoreCase ()
+		{
 			Assert.IsNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
 		}
 
@@ -326,7 +398,8 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void GetPropertyAccessorModifiers () {
+		public void GetPropertyAccessorModifiers ()
+		{
 			Assert.IsNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
 			Assert.IsNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
@@ -406,7 +479,8 @@ namespace MonoTests.System
 		[Category("NotDotNet")]
 		// Depends on the GAC working, which it doesn't durring make distcheck.
 		[Category ("NotWorking")]
-		public void GetTypeWithWhitespace () {
+		public void GetTypeWithWhitespace ()
+		{
 			Assert.IsNotNull (Type.GetType
 						   (@"System.Configuration.NameValueSectionHandler,
 			System,
@@ -417,62 +491,65 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 		
 		[Test]
-		public void ExerciseFilterName() {
+		public void ExerciseFilterName ()
+		{
 			MemberInfo[] mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterName, "*");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterName, "*");
 			Assert.AreEqual (4, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterName, "Test*");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterName, "Test*");
 			Assert.AreEqual (2, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterName, "TestVoid");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterName, "TestVoid");
 			Assert.AreEqual (1, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterName, "NonExistingMethod");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterName, "NonExistingMethod");
 			Assert.AreEqual (0, mi.Length);
 		}
 		
 		[Test]
-		public void ExerciseFilterNameIgnoreCase() {
+		public void ExerciseFilterNameIgnoreCase ()
+		{
 			MemberInfo[] mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterNameIgnoreCase, "*");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterNameIgnoreCase, "*");
 			Assert.AreEqual (4, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterNameIgnoreCase, "test*");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterNameIgnoreCase, "test*");
 			Assert.AreEqual (2, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterNameIgnoreCase, "TESTVOID");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterNameIgnoreCase, "TESTVOID");
 			Assert.AreEqual (1, mi.Length);
 			mi = typeof(Base).FindMembers(
 				MemberTypes.Method, 
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
-			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
-			    Type.FilterNameIgnoreCase, "NonExistingMethod");
+				BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				Type.FilterNameIgnoreCase, "NonExistingMethod");
 			Assert.AreEqual (0, mi.Length);
 		}
 
-		public class ByRef0 {
+		public class ByRef0
+		{
 			public int field;
 			public int property {
 				get { return 0; }
@@ -516,14 +593,69 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
-		public void CreateValueTypeNoCtor () {
+		public void CreateValueTypeNoCtor ()
+		{
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, null);
 		}
 
 		[Test]
 		[ExpectedException (typeof (MissingMethodException))]
-		public void CreateValueTypeNoCtorArgs () {
+		public void CreateValueTypeNoCtorArgs ()
+		{
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
+		}
+
+		static string bug336841 (string param1, params string [] param2)
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("#A:");
+			sb.Append (param1);
+			sb.Append ("|");
+			for (int i = 0; i < param2.Length; i++) {
+				if (i > 0)
+					sb.Append (";");
+				sb.Append (param2 [i]);
+			}
+			return sb.ToString ();
+		}
+
+		static string bug336841 (string param1)
+		{
+			return "#B:" + param1;
+		}
+
+		static string bug336841 (params string [] param1)
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("#C:");
+			for (int i = 0; i < param1.Length; i++) {
+				if (i > 0)
+					sb.Append (";");
+				sb.Append (param1 [i]);
+			}
+			return sb.ToString ();
+		}
+
+		[Test] // bug #336841
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=306797
+		public void InvokeMember_VarArgs ()
+		{
+			BindingFlags flags = BindingFlags.InvokeMethod | BindingFlags.Public |
+				BindingFlags.NonPublic | BindingFlags.OptionalParamBinding |
+				BindingFlags.Static | BindingFlags.FlattenHierarchy |
+				BindingFlags.Instance;
+
+			Type type = typeof (TypeTest);
+			string result = (string) type.InvokeMember ("bug336841",
+				flags, null, null, new object [] { "1" });
+			Assert.IsNotNull (result, "#A1");
+			Assert.AreEqual ("#B:1", result, "#A2");
+
+			result = (string) type.InvokeMember ("bug336841", flags,
+				null, null, new object [] { "1", "2", "3", "4" });
+			Assert.IsNotNull (result, "#B1");
+			Assert.AreEqual ("#A:1|2,3,4", result, "#B2");
 		}
 
 		class X
@@ -531,26 +663,31 @@ PublicKeyToken=b77a5c561934e089"));
 			public static int Value;
 		}
 
-		class Y  : X
+		class Y : X
 		{
 		}
 
 		[Test]
-		public void InvokeMemberGetSetField () {
+		public void InvokeMemberGetSetField ()
+		{
 			typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.SetField, null, null, new object [] { 5 });
 
 			Assert.AreEqual (5, X.Value);
 			Assert.AreEqual (5, typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
 			Assert.AreEqual (5, Y.Value);
 			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
-		}			
+		}
 
-		class Z {
-			public Z (IComparable value) {}
+		class Z
+		{
+			public Z (IComparable value)
+			{
+			}
 		}
 	
 		[Test]
-		public void InvokeMemberMatchPrimitiveTypeWithInterface () {
+		public void InvokeMemberMatchPrimitiveTypeWithInterface ()
+		{
 			object[] invokeargs = {1};
 			typeof (Z).InvokeMember( "", 
 											BindingFlags.DeclaredOnly |
@@ -562,7 +699,8 @@ PublicKeyToken=b77a5c561934e089"));
 											);
 		}
 
-		class TakesInt {
+		class TakesInt
+		{
 			private int i;
 
 			public TakesInt (int x)
@@ -575,12 +713,12 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 
-		class TakesObject {
+		class TakesObject
+		{
 			public TakesObject (object x) {}
 		}
 
-		// Filed as bug #75241
-		[Test]
+		[Test] // bug #75241
 		public void GetConstructorNullInTypes ()
 		{
 			// This ends up calling type.GetConstructor ()
@@ -1213,14 +1351,18 @@ PublicKeyToken=b77a5c561934e089"));
 #endif
 
 		public class NemerleAttribute : Attribute
-		{ }
+		{
+		}
 
 		public class VolatileModifier : NemerleAttribute
-		{ }
+		{
+		}
 
 		[VolatileModifier]
 		[FooAttribute]
-		class A { }
+		class A
+		{
+		}
 
 		[AttributeUsage (AttributeTargets.Class, Inherited=false)]
 		public class FooAttribute : Attribute
@@ -1287,7 +1429,8 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 		}
 
-		struct FooStruct {
+		struct FooStruct
+		{
 		}
 
 		public class Bug77367
@@ -1296,6 +1439,5 @@ PublicKeyToken=b77a5c561934e089"));
 			{
 			}
 		}
-
 	}
 }
