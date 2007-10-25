@@ -81,6 +81,8 @@ namespace System {
 
 		[ThreadStatic]
 		private static IPrincipal _principal;
+		
+		static AppDomain default_domain;
 
 		private AppDomain ()
 		{
@@ -208,7 +210,14 @@ namespace System {
 
 		internal static AppDomain DefaultDomain {
 			get {
-				return getRootDomain ();
+				if (default_domain == null) {
+					AppDomain rd = getRootDomain ();
+					if (rd == CurrentDomain)
+						default_domain = rd;
+					else
+						default_domain = (AppDomain) RemotingServices.GetDomainProxy (rd);
+				}
+				return default_domain;
 			}
 		}
 

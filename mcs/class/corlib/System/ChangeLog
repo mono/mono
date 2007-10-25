@@ -1,3 +1,8 @@
+2007-10-25  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* AppDomain.cs: In DefaultDomain, wrap the returned domain with
+	a proxy if the current domain is not the root domain.
+
 2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Type.cs : implemented ReflectionOnlyGetType().
