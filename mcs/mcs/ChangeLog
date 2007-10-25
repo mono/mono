@@ -1,5 +1,11 @@
 2007-10-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #336766
+	* expression.cs (Class.CheckBase): Use generic name when method is
+	generic.
+	
+2007-10-25  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #334737
 	* expression.cs (IndexerAccess.EmitAssign): Emit local temporary
 	variable and not variable argument for prepared copies.

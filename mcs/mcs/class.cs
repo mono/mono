@@ -3429,7 +3429,8 @@ namespace Mono.CSharp {
 				return false;
 
 			if ((caching_flags & Flags.MethodOverloadsExist) != 0) {
-				if (!Parent.MemberCache.CheckExistingMembersOverloads (this, Name, Parameters))
+				if (!Parent.MemberCache.CheckExistingMembersOverloads (this,
+					MemberName.IsGeneric ? MemberName.Basename : MemberName.MethodName, Parameters))
 					return false;
 
 				// TODO: Find a better way how to check reserved accessors collision
