@@ -926,7 +926,12 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl, 
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_perror")]
-		public static extern int perror (string s);
+		private static extern int perror (string s, int err);
+
+		public static int perror (string s)
+		{
+			return perror (s, Marshal.GetLastWin32Error ());
+		}
 
 		//
 		// <stdlib.h>
