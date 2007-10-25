@@ -1,3 +1,7 @@
+2007-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_value_box): Use typed allocation here.
+
 2007-10-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Create a jump
