@@ -38,13 +38,18 @@ namespace Gdk
 
 		public static Cairo.Context CreateDrawable (Gdk.Drawable drawable, bool double_buffered)
 		{
-			int x = 0, y = 0;
+			int x, y, w, h, d;
 			Cairo.Surface surface;
+			bool needs_xlate;
+			
+			((Gdk.Window)drawable).GetGeometry(out x, out y, out w, out h, out d);
 			
 			PlatformID os = Environment.OSVersion.Platform;
 
-			if (drawable is Gdk.Window && double_buffered)
-			    ((Gdk.Window)drawable).GetInternalPaintInfo (out drawable, out x, out y);
+			needs_xlate = drawable is Gdk.Window && double_buffered;
+			
+			if (needs_xlate)
+				((Gdk.Window)drawable).GetInternalPaintInfo (out drawable, out x, out y);
 
 			if (os == PlatformID.Win32Windows || os == PlatformID.Win32NT ||
 			    os == PlatformID.Win32S || os == PlatformID.WinCE) {
@@ -60,10 +65,14 @@ namespace Gdk
 				IntPtr visual = gdk_drawable_get_visual (drawable.Handle);
 				IntPtr xvisual = gdk_x11_visual_get_xvisual (visual);
 				IntPtr xdrawable = gdk_x11_drawable_get_xid (drawable.Handle);
-				surface = new XlibSurface (display, xdrawable, xvisual, x, y);
+				surface = new XlibSurface (display, xdrawable, xvisual, w, h);
 			}
-			
-			return new Cairo.Context (surface);
+
+			Cairo.Context ctx = new Cairo.Context (surface);
+
+			if (needs_xlate)
+				ctx.Translate (-(double) x, -(double) y);
+			return ctx;
 		}
 	}
 }
