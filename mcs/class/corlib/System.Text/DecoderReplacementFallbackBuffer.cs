@@ -53,7 +53,7 @@ namespace System.Text
 		}
 
 		public override int Remaining {
-			get { return replacement.Length - current; }
+			get { return fallback_assigned ? replacement.Length - current : 0; }
 		}
 
 		public override bool Fallback (byte [] bytesUnknown, int index)
@@ -72,6 +72,8 @@ namespace System.Text
 
 		public override char GetNextChar ()
 		{
+			if (!fallback_assigned)
+				return '\0';
 			if (current >= replacement.Length)
 				return char.MinValue;
 			return replacement [current++];
@@ -87,6 +89,7 @@ namespace System.Text
 
 		public override void Reset ()
 		{
+			fallback_assigned = false;
 			current = 0;
 		}
 	}

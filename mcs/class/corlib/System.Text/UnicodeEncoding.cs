@@ -58,8 +58,25 @@ public class UnicodeEncoding : Encoding
 		byteOrderMark = true;
 	}
 	public UnicodeEncoding (bool bigEndian, bool byteOrderMark)
+		: this (bigEndian, byteOrderMark, false)
+	{
+	}
+
+#if NET_2_0
+	public
+#endif
+	UnicodeEncoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidBytes)
 		: base ((bigEndian ? BIG_UNICODE_CODE_PAGE : UNICODE_CODE_PAGE))
 	{
+#if NET_2_0
+		if (throwOnInvalidBytes)
+			SetFallbackInternal (null, new DecoderExceptionFallback ());
+		else
+			SetFallbackInternal (null, new DecoderReplacementFallback ("\uFFFD"));
+#else
+		throwOnInvalid = throwOnInvalidBytes;
+#endif
+
 		this.bigEndian = bigEndian;
 		this.byteOrderMark = byteOrderMark;
 
@@ -81,14 +98,6 @@ public class UnicodeEncoding : Encoding
 		// both the little-endian and big-endian forms.
 		windows_code_page = UNICODE_CODE_PAGE;
 	}
-
-#if NET_2_0
-	[MonoTODO ("Implement throwOnInvalidBytes")]
-	public UnicodeEncoding (bool bigEndian, bool byteOrderMark, bool throwOnInvalidBytes)
-		: this (bigEndian, byteOrderMark)
-	{
-	}
-#endif
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)

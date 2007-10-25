@@ -1,3 +1,14 @@
+2007-10-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DecoderReplacementFallbackBuffer.cs : Reset() should also reset the
+	  input buffer. When fallback is not assigned, just return '\0'.
+	* UnicodeEncoding.cs : handle throwOnInvalid .ctor argument.
+	  Default replacement fallback buffer is now "\uFFFD".
+	* UTF8Encoding.cs : couple of replacement buffer size fixes.
+	  Default replacement fallback buffer is now "\uFFFD".
+	* UTF32Encoding.cs : Default replacement is "\uFFFD" too here.
+	  See http://support.microsoft.com/kb/940521/ for this change.
+
 2007-08-15  Jb Evain  <jbveain@novell.com>
 
 	* StringBuilder: hide non 2.1 AppendFormat on 2.1 so that

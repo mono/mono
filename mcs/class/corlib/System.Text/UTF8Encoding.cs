@@ -59,7 +59,7 @@ public class UTF8Encoding : Encoding
 		if (throwOnInvalidBytes)
 			SetFallbackInternal (null, new DecoderExceptionFallback ());
 		else
-			SetFallbackInternal (null, new DecoderReplacementFallback (String.Empty));
+			SetFallbackInternal (null, new DecoderReplacementFallback ("\uFFFD"));
 #else
 		throwOnInvalid = throwOnInvalidBytes;
 #endif
@@ -585,7 +585,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 start character.
 #if NET_2_0
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1, 1);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -619,7 +619,7 @@ Char.IsLetterOrDigit (pair);
 							}
 							if (overlong) {
 #if NET_2_0
-								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
+								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
@@ -631,7 +631,7 @@ Char.IsLetterOrDigit (pair);
 							length += 2;
 						} else {
 #if NET_2_0
-							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
+							length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
 #else
 							if (throwOnInvalid)
 								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -642,7 +642,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
 #if NET_2_0
-					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - 1);
+					length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -657,7 +657,7 @@ Char.IsLetterOrDigit (pair);
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
 #if NET_2_0
-			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index);
+			length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
 #else
 			if (throwOnInvalid)
 				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -670,7 +670,7 @@ Char.IsLetterOrDigit (pair);
 
 #if NET_2_0
 	// for GetCharCount()
-	static unsafe int Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, int index)
+	static unsafe int Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, long index, uint size)
 	{
 		if (buffer == null) {
 			DecoderFallback fb = provider as DecoderFallback;
@@ -681,13 +681,18 @@ Char.IsLetterOrDigit (pair);
 		}
 		if (bufferArg == null)
 			bufferArg = new byte [1];
-		bufferArg [0] = bytes [index];
-		buffer.Fallback (bufferArg, 0);
-		return buffer.Remaining;
+		int ret = 0;
+		for (int i = 0; i < size; i++) {
+			bufferArg [0] = bytes [(int) index + i];
+			buffer.Fallback (bufferArg, 0);
+			ret += buffer.Remaining;
+			buffer.Reset ();
+		}
+		return ret;
 	}
 
 	// for GetChars()
-	static unsafe void Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, int byteIndex,
+	static unsafe void Fallback (object provider, ref DecoderFallbackBuffer buffer, ref byte [] bufferArg, byte* bytes, long byteIndex, uint size,
 		char* chars, ref int charIndex)
 	{
 		if (buffer == null) {
@@ -699,10 +704,13 @@ Char.IsLetterOrDigit (pair);
 		}
 		if (bufferArg == null)
 			bufferArg = new byte [1];
-		bufferArg [0] = bytes [byteIndex];
-		buffer.Fallback (bufferArg, 0);
-		while (buffer.Remaining > 0)
-			chars [charIndex++] = buffer.GetNextChar ();
+		for (int i = 0; i < size; i++) {
+			bufferArg [0] = bytes [byteIndex + i];
+			buffer.Fallback (bufferArg, 0);
+			while (buffer.Remaining > 0)
+				chars [charIndex++] = buffer.GetNextChar ();
+			buffer.Reset ();
+		}
 	}
 #endif
 
@@ -853,7 +861,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 start character.
 #if NET_2_0
-					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, 1, chars, ref posn);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -887,7 +895,7 @@ Char.IsLetterOrDigit (pair);
 							}
 							if (overlong) {
 #if NET_2_0
-								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
@@ -896,7 +904,7 @@ Char.IsLetterOrDigit (pair);
 							else if ((leftBits & 0xF800) == 0xD800) {
 								// UTF-8 doesn't use surrogate characters
 #if NET_2_0
-								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+								Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 #else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -921,7 +929,7 @@ Char.IsLetterOrDigit (pair);
 								(char)((leftBits & (uint)0x3FF) + (uint)0xDC00);
 						} else {
 #if NET_2_0
-							Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+							Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 #else
 							if (throwOnInvalid)
 								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -932,7 +940,7 @@ Char.IsLetterOrDigit (pair);
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
 #if NET_2_0
-					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+					Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 #else
 					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
@@ -946,7 +954,7 @@ Char.IsLetterOrDigit (pair);
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
 #if NET_2_0
-			Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex, chars, ref posn);
+			Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, byteIndex - leftSoFar, leftSoFar, chars, ref posn);
 #else
 			if (throwOnInvalid)
 				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");

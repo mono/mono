@@ -33,8 +33,10 @@ namespace MonoTests.System.Text
 
 			f = Encoding.UTF8.DecoderFallback as DecoderReplacementFallback;
 			Assert.IsNotNull (f, "#5");
-			Assert.AreEqual (String.Empty, f.DefaultString, "#6");
-			Assert.AreEqual (0, f.MaxCharCount, "#7");
+			// This behavior was introduced as
+			// http://support.microsoft.com/kb/940521/
+			Assert.AreEqual ("\uFFFD", f.DefaultString, "#6");
+			Assert.AreEqual (1, f.MaxCharCount, "#7");
 
 			// after beta2 this test became invalid.
 			//f = new MyEncoding ().DecoderFallback as DecoderReplacementFallback;

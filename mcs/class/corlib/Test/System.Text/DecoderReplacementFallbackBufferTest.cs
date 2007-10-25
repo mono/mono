@@ -40,9 +40,19 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		public void FallbackEmptyForEncodingUTF8 ()
+		public void FallbackDefaultEncodingUTF8 ()
 		{
 			Buffer b = Encoding.UTF8.DecoderFallback.CreateFallbackBuffer () as Buffer;
+			Assert.IsTrue (b.Fallback (new byte [] {}, 0), "#1");
+			Assert.IsFalse (b.MovePrevious (), "#2");
+			Assert.AreEqual (1, b.Remaining, "#3");
+			Assert.AreEqual ('\uFFFD', b.GetNextChar (), "#4");
+		}
+
+		[Test]
+		public void FallbackEmptyForEncodingUTF8 ()
+		{
+			Buffer b = new DecoderReplacementFallbackBuffer (new DecoderReplacementFallback (String.Empty));
 			Assert.IsFalse (b.Fallback (new byte [] {}, 0), "#1");
 			Assert.IsFalse (b.MovePrevious (), "#2");
 			Assert.AreEqual (0, b.Remaining, "#3");
@@ -84,6 +94,20 @@ namespace MonoTests.System.Text
 //			Assert.AreEqual (1, b.Remaining, "#7");
 			Assert.IsFalse (b.MovePrevious (), "#8");
 //			Assert.AreEqual ('?', b.GetNextChar (), "#9");
+		}
+
+		[Test]
+		public void Reset ()
+		{
+			DecoderReplacementFallback f = new DecoderReplacementFallback ("X");
+			DecoderReplacementFallbackBuffer b = new DecoderReplacementFallbackBuffer (f);
+			b.Fallback (new byte [0], 0);
+			Assert.AreEqual (1, b.Remaining, "#1");
+			b.Reset ();
+			Assert.AreEqual (0, b.Remaining, "#2");
+			b.Fallback (new byte [0], 0); // do not raise an error
+			b.Reset ();
+			Assert.AreEqual (0, (int) b.GetNextChar (), "#3");
 		}
 	}
 }

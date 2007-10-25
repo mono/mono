@@ -1,3 +1,11 @@
+2007-10-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UnicodeEncodingTest.cs,
+	  UTF8EncodingTest.cs,
+	  DecoderReplacementFallbackBufferTest.cs,
+	  DecoderReplacementFallbackTest.cs : default replacement buffer fix.
+	  Added test for Reset() for replacement buffer.
+
 2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TestEncoding.cs: Also make class available on 1.0 profile.

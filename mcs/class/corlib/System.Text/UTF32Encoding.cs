@@ -69,8 +69,8 @@ public sealed class UTF32Encoding : Encoding
 			SetFallbackInternal (EncoderFallback.ExceptionFallback,
 				DecoderFallback.ExceptionFallback);
 		else
-			SetFallbackInternal (EncoderFallback.ReplacementFallback,
-				DecoderFallback.ReplacementFallback);
+			SetFallbackInternal (new EncoderReplacementFallback ("\uFFFD"),
+				new DecoderReplacementFallback ("\uFFFD"));
 
 		if (bigEndian){
 			body_name = "utf-32BE";

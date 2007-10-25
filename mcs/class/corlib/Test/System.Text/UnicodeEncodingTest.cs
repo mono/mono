@@ -172,7 +172,8 @@ namespace MonoTests.System.Text
                         UnicodeEncoding UnicodeEnc = new UnicodeEncoding ();
 #if NET_2_0
                         // where is this extra 1 coming from?
-                        Assertion.AssertEquals ("UTF #1", 25, UnicodeEnc.GetMaxCharCount(51));
+                        Assertion.AssertEquals ("UTF #1", 26, UnicodeEnc.GetMaxCharCount(50));
+                        Assertion.AssertEquals ("UTF #2", 27, UnicodeEnc.GetMaxCharCount(51));
 #else
                         Assertion.AssertEquals ("UTF #1", 25, UnicodeEnc.GetMaxCharCount(50));
 #endif
