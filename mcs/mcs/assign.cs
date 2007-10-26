@@ -423,15 +423,18 @@ namespace Mono.CSharp {
 
 			}
 
-			if (target_type == source_type){
-				if (source is New && target_type.IsValueType &&
-				    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
-					New n = (New) source;
+			if (target_type == source_type) {
+				if (target.eclass == ExprClass.Variable) {
+					New n = source as New;
+					if (n == null)
+						return this;
 
-					if (n.SetValueTypeVariable (target))
+					if (n.HasInitializer) {
+						n.SetTargetVariable (target);
+					} else if (target_type.IsValueType) {
+						n.SetTargetVariable (target);
 						return n;
-					else
-						return null;
+					}
 				}
 
 				return this;

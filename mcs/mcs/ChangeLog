@@ -1,3 +1,12 @@
+2007-10-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #335847
+	* assign.cs, expression.cs: Couple of changes to avoid creating a
+	temporary variable for each object initializer assignment statement. It
+	simplifies struct initialization too, otherwise two temporary variables
+	would be required.
+	Implemented optimization of redundant default element initializers.
+	
 2007-10-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #336766

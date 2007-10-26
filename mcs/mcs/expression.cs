@@ -3572,6 +3572,10 @@ namespace Mono.CSharp {
 
 			source.Emit (ec);
 
+			// HACK: variable is already emitted when source is an initializer 
+			if (source is NewInitialize)
+				return;
+
 			if (leave_copy) {
 				ig.Emit (OpCodes.Dup);
 				if (IsRef || Variable.NeedsTemporary) {
@@ -4756,8 +4760,8 @@ namespace Mono.CSharp {
 		// If set, the new expression is for a value_target, and
 		// we will not leave anything on the stack.
 		//
-		Expression value_target;
-		bool value_target_set = false;
+		protected Expression value_target;
+		protected bool value_target_set;
 		bool is_type_parameter = false;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
@@ -4767,7 +4771,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public bool SetValueTypeVariable (Expression value)
+		public bool SetTargetVariable (Expression value)
 		{
 			value_target = value;
 			value_target_set = true;
@@ -5121,6 +5125,12 @@ namespace Mono.CSharp {
 			if (value_on_stack)
 				ec.ig.Emit (OpCodes.Pop);
 
+		}
+
+		public virtual bool HasInitializer {
+			get {
+				return false;
+			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp Mode)
@@ -8389,7 +8399,18 @@ namespace Mono.CSharp {
 				return initializer;
 			}
 
-			return new Assign (element_member, initializer, loc).Resolve (ec);
+			Assign a = new Assign (element_member, initializer, loc);
+			if (a.Resolve (ec) == null)
+				return null;
+
+			//
+			// Ignore field initializers with default value
+			//
+			Constant c = a.Source as Constant;
+			if (c != null && c.IsDefaultInitializer (a.Type) && a.Target.eclass == ExprClass.Variable)
+				return EmptyExpressionStatement.Instance;
+
+			return a;
 		}
 
 		protected override Expression Error_MemberLookupFailed (MemberInfo[] members)
@@ -8543,7 +8564,11 @@ namespace Mono.CSharp {
 					}
 				}
 
-				initializers [i] = initializer.Resolve (ec);
+				Expression e = initializer.Resolve (ec);
+				if (e == EmptyExpressionStatement.Instance)
+					initializers.RemoveAt (i--);
+				else
+					initializers [i] = e;				
 			}
 
 			type = typeof (CollectionOrObjectInitializers);
@@ -8568,8 +8593,49 @@ namespace Mono.CSharp {
 	//
 	public class NewInitialize : New
 	{
+		//
+		// This class serves as a proxy for variable initializer target instances.
+		// A real variable is assigned later when we resolve left side of an
+		// assignment
+		//
+		sealed class InitializerTargetExpression : Expression, IMemoryLocation
+		{
+			NewInitialize new_instance;
+
+			public InitializerTargetExpression (NewInitialize newInstance)
+			{
+				this.type = newInstance.type;
+				this.loc = newInstance.loc;
+				this.eclass = newInstance.eclass;
+				this.new_instance = newInstance;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				return this;
+			}
+
+			public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+			{
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				new_instance.value_target.Emit (ec);
+			}
+
+			#region IMemoryLocation Members
+
+			public void AddressOf (EmitContext ec, AddressOp mode)
+			{
+				((IMemoryLocation)new_instance.value_target).AddressOf (ec, mode);
+			}
+
+			#endregion
+		}
+
 		CollectionOrObjectInitializers initializers;
-		TemporaryVariable type_instance;
 
 		public NewInitialize (Expression requested_type, ArrayList arguments, CollectionOrObjectInitializers initializers, Location l)
 			: base (requested_type, arguments, l)
@@ -8582,7 +8648,7 @@ namespace Mono.CSharp {
 			base.CloneTo (clonectx, t);
 
 			NewInitialize target = (NewInitialize) t;
-			target.initializers = (CollectionOrObjectInitializers)initializers.Clone (clonectx);
+			target.initializers = (CollectionOrObjectInitializers) initializers.Clone (clonectx);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8595,11 +8661,8 @@ namespace Mono.CSharp {
 			if (initializers.IsEmpty)
 				return e;
 
-			type_instance = new TemporaryVariable (type, loc);
-			type_instance = (TemporaryVariable)type_instance.Resolve (ec);
-
 			Expression previous = ec.CurrentInitializerVariable;
-			ec.CurrentInitializerVariable = type_instance;
+			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
 			ec.CurrentInitializerVariable = previous;
 			return this;
@@ -8609,9 +8672,50 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 
-			type_instance.EmitStore (ec);
+			//
+			// If target is a value, let's use it
+			//
+			VariableReference variable = value_target as VariableReference;
+			if (variable != null) {
+				if (variable.IsRef)
+					StoreFromPtr (ec.ig, type);
+				else
+					variable.Variable.EmitAssign (ec);
+			} else {
+				if (value_target == null || value_target_set)
+					value_target = new LocalTemporary (type);
+
+				((LocalTemporary) value_target).Store (ec);
+			}
+
 			initializers.Emit (ec);
-			type_instance.Emit (ec);
+
+			if (variable == null)
+				value_target.Emit (ec);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			if (initializers.IsEmpty) {
+				base.EmitStatement (ec);
+				return;
+			}
+
+			base.Emit (ec);
+
+			if (value_target == null) {
+				LocalTemporary variable = new LocalTemporary (type);
+				variable.Store (ec);
+				value_target = variable;
+			}
+
+			initializers.EmitStatement (ec);
+		}
+
+		public override bool HasInitializer {
+			get {
+				return !initializers.IsEmpty;
+			}
 		}
 	}
 
