@@ -216,12 +216,12 @@ namespace System
 			if (count == 1) 
 				return new String[1] { ToString() };
 
-			return InternalSplit (separator, count);
+			return InternalSplit (separator, count, 0);
 		}
 
 #if NET_2_0
 		[ComVisible (false)]
-		[MonoDocumentationNote ("optimization")]
+		[MonoDocumentationNote ("code should be moved to managed")]
 		public String[] Split (char[] separator, int count, StringSplitOptions options)
 		{
 			if (separator == null || separator.Length == 0)
@@ -232,28 +232,10 @@ namespace System
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
 
-			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
+			if (count == 0)
+				return new string [0];
 
-			if (!removeEmpty)
-				return Split (separator, count);
-			else {
-				/* FIXME: Optimize this */
-				String[] res = Split (separator, count);
-				int n = 0;
-				for (int i = 0; i < res.Length; ++i)
-					if (res [i] == String.Empty)
-						n ++;
-				if (n > 0) {
-					String[] arr = new String [res.Length - n];
-					int pos = 0;
-					for (int i = 0; i < res.Length; ++i)
-						if (res [i] != String.Empty)
-							arr [pos ++] = res [i];
-					return arr;
-				}
-				else
-					return res;
-			}
+			return InternalSplit (separator, count, (int)options);
 		}
 
 		[ComVisible (false)]
@@ -2461,7 +2443,7 @@ namespace System
 		private extern void InternalCopyTo (int sIndex, char[] dest, int destIndex, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String[] InternalSplit (char[] separator, int count);
+		private extern String[] InternalSplit (char[] separator, int count, int options);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalTrim (char[] chars, int typ);

@@ -1,3 +1,10 @@
+
+Fri Oct 26 19:43:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Environment.cs, String.cs: patch from Tyler Larson
+	<mono-devel@tlarson.com> to fix the handling of the RemoveEmptyEntries
+	option in string.Split (bug #322375).
+
 2007-10-26  Dick Porter  <dick@ximian.com>
 
 	* Environment.cs: Bump version because of Thread initialisation
