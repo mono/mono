@@ -155,12 +155,19 @@ namespace MonoTests.System.Text
 			UTF8Encoding u = new UTF8Encoding (true, false);
 
 			byte[] data = new byte [] { 0xC0, 0xAF };
+#if NET_2_0
 			AssertEquals ("#A0", 2, u.GetCharCount (data));
 			string s = u.GetString (data);
 			AssertEquals ("#A1", "\uFFFD\uFFFD", s);
+#else
+			AssertEquals ("#A0", 0, u.GetCharCount (data));
+			string s = u.GetString (data);
+			AssertEquals ("#A1", String.Empty, s);
+#endif
 
 			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
 			s = u.GetString (data);
+#if NET_2_0
 			AssertEquals ("#B1", 6, s.Length);
 			AssertEquals ("#B2", 0x30, (int) s [0]);
 			AssertEquals ("#B3", 0x31, (int) s [1]);
@@ -168,6 +175,13 @@ namespace MonoTests.System.Text
 			AssertEquals ("#B5", 0xFFFD, (int) s [3]);
 			AssertEquals ("#B6", 0x30, (int) s [4]);
 			AssertEquals ("#B7", 0x32, (int) s [5]);
+#else
+			AssertEquals ("#B1", 4, s.Length);
+			AssertEquals ("#B2", 0x30, (int) s [0]);
+			AssertEquals ("#B3", 0x31, (int) s [1]);
+			AssertEquals ("#B4", 0x30, (int) s [2]);
+			AssertEquals ("#B5", 0x32, (int) s [3]);
+#endif
 		}
 
 		// UTF8 decoding tests from http://www.cl.cam.ac.uk/~mgk25/

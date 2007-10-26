@@ -1,3 +1,8 @@
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8EncodingTest.cs : looks like the issue is not fixed in .NET 1.x
+	  and hence it looked like a regression. (It wasn't.)
+
 2007-10-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UnicodeEncodingTest.cs,
