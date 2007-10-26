@@ -12,6 +12,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Globalization;
+using System.IO;
 
 using Microsoft.CSharp;
 
@@ -921,6 +922,24 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
+
+		[Test]
+		public void EscapePropertyName ()
+		{
+			CodeNamespace cns = new CodeNamespace ();
+			CodeTypeDeclaration ctd = new CodeTypeDeclaration ("TestType");
+			CodeMemberProperty f = new CodeMemberProperty ();
+			f.Type = new CodeTypeReference (typeof (string));
+			f.Name = "default";
+			f.GetStatements.Add (new CodeMethodReturnStatement (
+				new CodePrimitiveExpression (null)));
+			ctd.Members.Add (f);
+			cns.Types.Add (ctd);
+			CSharpCodeProvider p = new CSharpCodeProvider ();
+			StringWriter sw = new StringWriter ();
+			p.CreateGenerator ().GenerateCodeFromNamespace (cns, sw, null);
+			Assert.IsTrue (sw.ToString ().IndexOf ("@default") > 0);
+		}
 
 #if NET_2_0
 		[Test]

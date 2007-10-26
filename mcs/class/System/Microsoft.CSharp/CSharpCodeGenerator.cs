@@ -723,7 +723,7 @@ namespace Mono.CSharp
 				OutputParameters(property.Parameters);
 				output.Write(']');
 			} else {
-				output.Write (property.Name);
+				output.Write (GetSafeName (property.Name));
 			}
 			OutputStartBrace ();
 			++Indent;
