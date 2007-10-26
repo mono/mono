@@ -439,6 +439,38 @@ namespace System.Reflection
 			return result;
 		}
 
+		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr,
+								 Binder binder, Type returnType,
+								 Type[] types,
+								 ParameterModifier[] modifiers)
+		{
+			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
+			PropertyInfo [] props = GetProperties (bindingAttr);
+
+			ArrayList al = null;
+			for (int i = 0; i < props.Length; ++i) {
+				if (String.Compare (props [i].Name, name, ignoreCase) == 0) {
+					if (al == null)
+						al = new ArrayList ();
+					al.Add (props [i]);
+				}
+			}
+			if (al == null)
+				return null;
+
+			props = (PropertyInfo[])al.ToArray (typeof (PropertyInfo));
+			
+			int count = props.Length;
+			
+			if (count == 1 && (types == null || types.Length == 0)) 
+				return props [0];
+
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			
+			return binder.SelectProperty (bindingAttr, props, returnType, types, modifiers);
+		}
+
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
 			ArrayList l = new ArrayList ();

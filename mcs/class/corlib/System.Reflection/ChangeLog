@@ -1,3 +1,7 @@
+2007-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoGenericClass.cs: Override GetPropertyImpl too.
+
 2007-10-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Assembly.cs : include ReflectionOnlyLoad() as part of 2.0
