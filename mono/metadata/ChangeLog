@@ -1,3 +1,8 @@
+2007-10-26  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump version because of
+	Thread initialisation changes
+
 2007-10-26 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* verify.c: fix compatibility check between arrays and System.Array
