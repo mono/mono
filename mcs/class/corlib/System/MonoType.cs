@@ -330,6 +330,8 @@ namespace System
 				throw new ArgumentException ("invokeAttr");
 			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
 				throw new ArgumentException ("namedParameters cannot be more than named arguments in number");
+			if ((invokeAttr & (BindingFlags.InvokeMethod|BindingFlags.CreateInstance|BindingFlags.GetField|BindingFlags.SetField|BindingFlags.GetProperty|BindingFlags.SetProperty)) == 0)
+				throw new ArgumentException ("Must specify binding flags describing the invoke operation required (BindingFlags.InvokeMethod CreateInstance GetField SetField GetProperty SetProperty).", "invokeAttr");
 
 			/* set some defaults if none are provided :-( */
 			if ((invokeAttr & (BindingFlags.Public|BindingFlags.NonPublic)) == 0)

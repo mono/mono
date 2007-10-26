@@ -1,3 +1,7 @@
+2007-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoType.cs (InvokeMember): Make sure one operation is passed in the binding
+	flags. Fixes #336936.
 
 Fri Oct 26 19:43:09 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
