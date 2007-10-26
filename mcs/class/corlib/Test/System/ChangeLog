@@ -1,3 +1,7 @@
+2007-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add test for #336936.
+
 2007-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added test for bug #336841. Code formatting.

@@ -699,6 +699,17 @@ PublicKeyToken=b77a5c561934e089"));
 											);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void InvokeMember_NoOperation ()
+		{
+			typeof (TypeTest).InvokeMember ("Run", BindingFlags.Public|BindingFlags.Static, null, null, new object [0]);
+		}
+
+        public static void Run ()
+        {
+        }
+
 		class TakesInt
 		{
 			private int i;
