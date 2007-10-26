@@ -1,3 +1,21 @@
+2007-10-26  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c: Begin Win64 port. Use AMD64_ARG_REG#
+	defines to access param registers. Replace long usage with
+	gsize as sizeof(long) != sizeof(void*) on Win64.
+
+	* mini-amd64.h: Add %rdi and %rsi to MonoLMF structure
+	on Win64. Fix intrinsic, use _AddressOfReturnAddress
+	instead of non-existant _GetAddressOfReturnAddress.
+
+	* tramp-amd64.c: Use AMD64_ARG_REG#	defines to access 
+	param registers. Save/restore %rdi and %rsi in MonoLMF.
+
+	* exceptions-amd64.c: Use AMD64_ARG_REG# defines to access 
+	param registers. Modify (throw_exception) signature to take 
+	%rdi and %rsi on Win64. 
+
+	Code is contributed under MIT/X11 license.
 
 Thu Oct 25 23:06:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

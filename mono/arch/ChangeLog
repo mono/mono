@@ -1,3 +1,11 @@
+2007-10-26  Jonathan Chambers <joncham@gmail.com>
+
+	* amd64/amd64-codegen.h: Begin Win64 port. Use AMD64_ARG_REG#
+	defines to access param registers. Replace long usage with
+	gsize as sizeof(long) != sizeof(void*) on Win64.
+
+	Code is contributed under MIT/X11 license.
+
 2007-10-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_jump_membase_size): Remove an unneccesary
