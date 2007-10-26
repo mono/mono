@@ -1,3 +1,9 @@
+2007-10-26  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_file_open): Set the umask when opening
+	shared files, so restrictive defaults don't prevent subsequent
+	processes re-opening them.
+
 2007-10-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* atomic.h (InterlockedCompareExchange): Fix the ia64 version so it works for
