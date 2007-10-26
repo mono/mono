@@ -3086,6 +3086,26 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (tb.HasElementType, "#C3");
 			Assert.IsFalse (tb.IsCreated (), "#C4");
 		}
+
+		[Test]
+		public void GetCustomAttributes_InflatedType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineGenericParameters (new string[] { "FOO" });
+
+			ConstructorInfo guidCtor = typeof (GuidAttribute).GetConstructor (
+				new Type [] { typeof (string) });
+
+			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (guidCtor,
+				new object [] { Guid.NewGuid ().ToString ("D") }, new FieldInfo [0], new object [0]);
+
+			tb.SetCustomAttribute (caBuilder);
+			Type t = tb.CreateType ();
+
+			Type inflated = t.MakeGenericType (new Type [] { typeof (int) });
+
+			Assert.AreEqual (1, inflated.GetCustomAttributes (false).Length);
+		}
 #endif
 
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
