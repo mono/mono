@@ -1,3 +1,8 @@
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryReader.cs, BinaryWriter.cs : use unsafe encoding that has ""
+	  for replacement fallback. Binary serialization regression is fixed.
+
 2007-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Stream.cs, BufferedStream.cs, MemoryStream.cs: in 2.0 override

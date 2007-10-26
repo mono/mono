@@ -59,7 +59,7 @@ namespace System.IO {
 		
 		private bool m_disposed = false;
 
-		public BinaryReader(Stream input) : this(input, Encoding.UTF8Unmarked) {
+		public BinaryReader(Stream input) : this(input, Encoding.UTF8UnmarkedUnsafe) {
 		}
 
 		public BinaryReader(Stream input, Encoding encoding) {

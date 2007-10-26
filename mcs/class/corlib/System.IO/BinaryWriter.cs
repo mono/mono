@@ -51,10 +51,10 @@ namespace System.IO {
 		private byte [] buffer;
 		private bool disposed = false;
 
-		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8Unmarked) {
+		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8UnmarkedUnsafe) {
 		}
 
-		public BinaryWriter(Stream output) : this(output, Encoding.UTF8Unmarked) {
+		public BinaryWriter(Stream output) : this(output, Encoding.UTF8UnmarkedUnsafe) {
 		}
 
 		public BinaryWriter(Stream output, Encoding encoding) {

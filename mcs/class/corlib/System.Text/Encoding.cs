@@ -850,6 +850,7 @@ public abstract class Encoding
 	static volatile Encoding isoLatin1Encoding;
 	static volatile Encoding unixConsoleEncoding;
 #if NET_2_0
+	static volatile Encoding utf8EncodingUnsafe;
 	static volatile Encoding utf32Encoding;
 	static volatile Encoding bigEndianUTF32Encoding;
 #endif
@@ -1009,6 +1010,30 @@ public abstract class Encoding
 			}
 
 			return utf8EncodingWithoutMarkers;
+		}
+	}
+	
+	//
+	// Only internal, to be used by the class libraries: Unmarked and non-input-validating
+	//
+	internal static Encoding UTF8UnmarkedUnsafe {
+		get {
+#if NET_2_0
+			if (utf8EncodingUnsafe == null) {
+				lock (lockobj){
+					if (utf8EncodingUnsafe == null){
+						utf8EncodingUnsafe = new UTF8Encoding (false, false);
+						utf8EncodingUnsafe.is_readonly = false;
+						utf8EncodingUnsafe.DecoderFallback = new DecoderReplacementFallback (String.Empty);
+						utf8EncodingUnsafe.is_readonly = true;
+					}
+				}
+			}
+
+			return utf8EncodingUnsafe;
+#else
+			return utf8EncodingWithoutMarkers;
+#endif
 		}
 	}
 	
