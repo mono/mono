@@ -1,3 +1,9 @@
+2007-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (ctorbuilder_to_mono_method): Handle the case when this is
+	called multiple times.
+	(methodbuilder_to_mono_method): Ditto.
+	(resolve_object): Inflate FieldBuilder's.
 
 Fri Oct 26 19:38:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
