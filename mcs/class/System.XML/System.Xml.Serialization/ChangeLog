@@ -1,3 +1,8 @@
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeTranslator.cs, XmlCustomFormatter.cs : looks like duration is
+	  serialized to System.String, not TimeSpan. Fixed bug #336625.
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlMapping.cs : added XsdElementName.

@@ -252,7 +252,7 @@ namespace System.Xml.Serialization {
 				case "base64":
 				case "base64Binary": return value == null ? String.Empty : Convert.ToBase64String ((byte[])value);
 				case "hexBinary": return value == null ? String.Empty : XmlConvert.ToBinHexString ((byte[]) value);
-				case "duration": return XmlConvert.ToString ((TimeSpan) value);
+				case "duration": return (string) value;
 			default: return value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString ();
 			}
 		}
@@ -287,7 +287,7 @@ namespace System.Xml.Serialization {
 				case "base64":
 				case "base64Binary": return Convert.FromBase64String (value);
 				case "hexBinary": return XmlConvert.FromBinHexString (value);
-				case "duration": return XmlConvert.ToTimeSpan (value);
+				case "duration": return value;
 				default: 
 					if (type.Type != null)
 						return Convert.ChangeType (value, type.Type);
@@ -336,7 +336,7 @@ namespace System.Xml.Serialization {
 				case "base64":
 				case "base64Binary": return value + " == null ? String.Empty : Convert.ToBase64String (" + value + ")";
 				case "hexBinary": return value + " == null ? String.Empty : ToBinHexString (" + value + ")";
-				case "duration": return "XmlConvert.ToString (" + value + ")";
+				case "duration": return value;
 				case "NMTOKEN":
 				case "Name":
 				case "NCName":
@@ -390,7 +390,7 @@ namespace System.Xml.Serialization {
 				case "base64:":
 				case "base64Binary": return "Convert.FromBase64String (" + value + ")";
 				case "hexBinary": return "FromBinHexString (" + value + ")";
-				case "duration": return "XmlConvert.ToTimeSpan (" + value + ")";
+				case "duration": return value;
 				default: return value;
 			}
 		}

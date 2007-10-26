@@ -2291,6 +2291,29 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (expected), WriterText);
 		}
 
+		[Test]
+		public void SerializeDurationToString ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (TimeSpanContainer1));
+			ser.Serialize (TextWriter.Null, new TimeSpanContainer1 ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SerializeDurationToTimeSpan ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (TimeSpanContainer2));
+			ser.Serialize (TextWriter.Null, new TimeSpanContainer2 ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SerializeInvalidDataType ()
+		{
+			XmlSerializer ser = new XmlSerializer (typeof (InvalidTypeContainer));
+			ser.Serialize (TextWriter.Null, new InvalidTypeContainer ());
+		}
+
 		#region GenericsSeralizationTests
 
 #if NET_2_0
@@ -2760,6 +2783,24 @@ namespace MonoTests.System.XmlSerialization
 		{
 			[XmlText]
 			public string Value;
+		}
+
+		public class InvalidTypeContainer
+		{
+			[XmlElement (DataType = "invalid")]
+			public string InvalidTypeItem = "aaa";
+		}
+
+		public class TimeSpanContainer1
+		{
+			[XmlElement (DataType = "duration")]
+			public string StringDuration = "aaa";
+		}
+
+		public class TimeSpanContainer2
+		{
+			[XmlElement (DataType = "duration")]
+			public TimeSpan StringDuration = TimeSpan.FromSeconds (1);
 		}
 
 #if NET_2_0

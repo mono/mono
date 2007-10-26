@@ -1,3 +1,7 @@
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added test for DataType in [XmlElement].
+
 2007-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : another XmlSchemaProvider test; use it

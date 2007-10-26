@@ -108,7 +108,8 @@ namespace System.Xml.Serialization
 			nameCache.Add (typeof (byte[]), new TypeData (typeof (byte[]), "base64Binary", true));
 			nameCache.Add (typeof (XmlNode), new TypeData (typeof (XmlNode), "XmlNode", false));
 			nameCache.Add (typeof (XmlElement), new TypeData (typeof (XmlElement), "XmlElement", false));
-			nameCache.Add (typeof (TimeSpan), new TypeData (typeof (TimeSpan), "duration", true));
+			// The key type is wrong (must be string), but otherwise it cannot be added to Hashtable!
+			nameCache.Add (typeof (TimeSpan), new TypeData (typeof (string), "duration", true));
 
 			primitiveTypes = new Hashtable();
 			ICollection types = nameCache.Values;
