@@ -6,8 +6,8 @@ DIST_ONLY_SUBDIRS := gmcs smcs
 basic_SUBDIRS := build jay mcs class
 net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := build jay mcs class ilasm tools
-net_2_0_SUBDIRS := build jay gmcs class nunit20 ilasm tools tests errors
-net_2_1_SUBDIRS := build smcs class tools
+net_2_0_SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors
+net_2_1_SUBDIRS := build mcs class tools
 
 # List of test subdirs that should pass 100%
 centum_tests := \
