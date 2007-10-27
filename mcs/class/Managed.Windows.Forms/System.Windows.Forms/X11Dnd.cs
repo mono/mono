@@ -424,6 +424,7 @@ namespace System.Windows.Forms {
 
 			drag_data.State = DragState.Dragging;
 			drag_data.CurMousePos = new Point ();
+			dropped = false;
 			tracking = true;
 
 			while (tracking && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {

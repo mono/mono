@@ -1,5 +1,12 @@
 2007-10-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Dnd.cs: When starting a new drag operation, reset the static
+	'dropped' field to false (previously the implementation didn't reset
+	it and got confused after the first drag).
+	Fixes #325071.
+
+2007-10-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* PropertyGrid.cs: When PropertySort changes, re-organize the grid
 	items instead of re-creating them all. For this purpose we now cache
 	both CategoryGridEntry items and the GridEntries for the main object's
