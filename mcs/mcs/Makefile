@@ -7,6 +7,7 @@ EXTRA_DISTFILES = \
 	compiler.doc		\
 	*mcs.sln		\
 	*cs-parser.jay		\
+	*.sources		\
 	NOTES			\
 	TODO
 
