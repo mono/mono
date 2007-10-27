@@ -1,3 +1,7 @@
+2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SortedListTest.cs: Fixed deserialization test to pass on MS.
+
 2007-10-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SortedListTest.cs: No longer derive from deprecated Assertion class.

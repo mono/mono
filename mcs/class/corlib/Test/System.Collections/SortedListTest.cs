@@ -969,8 +969,8 @@ namespace MonoTests.System.Collections
 
 			IList values = (IList) bf.Deserialize (ms);
 			Assert.AreEqual (3, values.Count, "#1");
-			Assert.AreEqual ("A", values [0], "#2");
-			Assert.AreEqual ("B", values [1], "#3");
+			Assert.AreEqual ("B", values [0], "#2");
+			Assert.AreEqual ("A", values [1], "#3");
 			Assert.AreEqual ("C", values [2], "#4");
 		}
 
