@@ -145,7 +145,6 @@ namespace System.Net {
 			CheckDisposed ();
 			EndPointManager.RemoveListener (this);
 			Cleanup (force);
-			disposed = true;
 		}
 
 		void Cleanup (bool close_existing)

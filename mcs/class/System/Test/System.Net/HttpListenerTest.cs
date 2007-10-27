@@ -167,6 +167,17 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		public void StartStopStart ()
+		{
+			HttpListener listener = new HttpListener ();
+			listener.Prefixes.Add ("http://localhost:7777/hola/");
+			listener.Start ();
+			listener.Stop ();
+			listener.Start ();
+			listener.Close ();
+		}
+		
+		[Test]
 		public void AbortBeforeStart ()
 		{
 			HttpListener listener = new HttpListener ();

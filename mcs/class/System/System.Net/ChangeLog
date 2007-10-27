@@ -1,3 +1,11 @@
+2007-10-27  Miguel de Icaza  <miguel@novell.com>
+
+	*  HttpListener.cs (Close): Closing does not mean dispose the
+	object.   This allows Start/Stop/Start to be called as many times
+	as desired.
+
+	Fixes #337368
+
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FtpWebRequest.cs: Added support for DELETE.
