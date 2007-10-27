@@ -32,7 +32,8 @@ namespace Mono.GetOptions
 {
 
 	public delegate void ErrorReporter (int num, string msg);
-	
+
+	[Obsolete ("This class is being obsoleted, there is no replacement, we suggest you use your own option parsing")]
 	public class Options
 	{
 		public OptionsParsingMode ParsingMode;
