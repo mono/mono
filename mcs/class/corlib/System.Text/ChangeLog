@@ -1,3 +1,7 @@
+2007-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Encoding.cs : fixed UTF8UnmarkedUnsafe for 1.1; should not be null.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Encoding.cs : added UTF8UnmarkedUnsafe, for old empty replacement

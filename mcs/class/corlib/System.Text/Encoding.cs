@@ -1032,7 +1032,7 @@ public abstract class Encoding
 
 			return utf8EncodingUnsafe;
 #else
-			return utf8EncodingWithoutMarkers;
+			return UTF8Unmarked;
 #endif
 		}
 	}
