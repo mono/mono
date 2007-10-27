@@ -132,10 +132,12 @@ namespace System.Net {
 				return;
 
 			if (!listening) {
+				disposed = true;
 				return;
 			}
 
 			Close (false);
+			disposed = true;
 		}
 
 		void Close (bool force)
