@@ -1,5 +1,9 @@
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
+	* AssemblyInfo.cs: Keep up-to-date.
+
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
 	* Makefile: Fixed generics compiler name.
 	
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
