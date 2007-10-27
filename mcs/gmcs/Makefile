@@ -119,4 +119,4 @@ l:
 #
 qh:
 	make cs-parser.cs
-	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ../class/lib/net_2_0_bootstrap/mcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe cs-parser.cs  @gmcs.exe.sources
+	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) ../class/lib/net_2_0_bootstrap/mcs.exe  /codepage:65001 -d:GMCS_SOURCE -d:MCS_DEBUG -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe cs-parser.cs  @gmcs.exe.sources

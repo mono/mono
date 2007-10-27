@@ -164,7 +164,7 @@
     <Compile Include="flowanalysis.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="generic.cs">
+    <Compile Include="generic-mcs.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="iterators.cs">

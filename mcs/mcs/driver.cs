@@ -644,7 +644,7 @@ namespace Mono.CSharp
 			//
 			string [] default_config = {
 				"System",
-#if SMCS_SOURCE
+#if NET_2_1
 				"agclr",
 				"System.Core",
 				"System.Silverlight",

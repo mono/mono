@@ -12,14 +12,15 @@ constant.cs
 convert.cs
 decl.cs
 delegate.cs
-doc.cs
 doc-bootstrap.cs
 enum.cs
 ecore.cs
 expression.cs
 flowanalysis.cs
-generic-mcs.cs
+generic.cs
 iterators.cs
+lambda.cs
+linq.cs
 literal.cs
 location.cs
 modifiers.cs
@@ -33,7 +34,6 @@ statement.cs
 support.cs
 typemanager.cs
 symbolwriter.cs
-lambda.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs

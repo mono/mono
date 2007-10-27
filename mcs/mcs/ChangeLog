@@ -1,3 +1,9 @@
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile, *.sources : All C# compilers are in mcs folder.
+	
+	* *.cs: Use existing 2_1 define for smcs.
+
 2007-10-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #335847

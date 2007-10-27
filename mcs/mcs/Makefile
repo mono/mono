@@ -2,23 +2,40 @@ thisdir := mcs
 SUBDIRS := 
 include ../build/rules.make
 
-BUILT_SOURCES = cs-parser.cs
-
 EXTRA_DISTFILES = \
 	*mcs.csproj		\
 	compiler.doc		\
 	*mcs.sln		\
-	cs-parser.jay		\
+	*cs-parser.jay		\
 	NOTES			\
 	TODO
 
-PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+GMCS_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
+
+ifdef GMCS_PROFILE
+	BUILT_SOURCES = gcs-parser.cs
+	LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
+	
+	ifeq (net_2_1, $(PROFILE))
+		INTERNAL_SMCS = $(INTERNAL_GMCS)
+		LOCAL_MCS_FLAGS += -nowarn:618 -noconfig -r:mscorlib -r:System.dll
+		PROGRAM = $(topdir)/class/lib/$(PROFILE)/smcs.exe
+	else
+		BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe $(DEBUG_FLAGS)
+		PROGRAM = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
+	endif	
+else
+	BUILT_SOURCES = cs-parser.cs
+	PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+endif
+
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
-CLEAN_FILES = y.output *.exe *.mdb
+CLEAN_FILES += y.output
 
-cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
+%-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+
 
 ifeq (net_2_0_bootstrap, $(PROFILE))
 
@@ -43,15 +60,28 @@ $(PROGRAM).config: $(topdir)/gmcs/gmcs.exe.config $(progdir)/.stamp
 	cp $< $@
 
 else
-include ../build/executable.make
+
+ifeq (net_2_0, $(PROFILE))
+
+clean-local: clean-net_2_0_bootstrap
+clean-net_2_0_bootstrap:
+	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap clean
+
+bootstrap_libs = mscorlib.dll System.dll System.Xml.dll Mono.CompilerServices.SymbolWriter.dll
+bootstrap_libfiles = $(bootstrap_libs:%=$(topdir)/class/lib/net_2_0_bootstrap/%)
+
+$(bootstrap_libfiles): bootstrap-libs
+	@:
+.PHONY: bootstrap-libs
+bootstrap-libs:
+	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap all
+
+$(PROGRAM): $(bootstrap_libfiles)
 endif
 
-ifeq (default, $(PROFILE))
-# Utility rule to make debugging somewhat easier.
-all-local: mcs.exe
-mcs.exe: $(PROGRAM)
-	cp -p $< $@
-	test ! -f $<.mdb || cp -p $<.mdb $@.mdb
+KEEP_OUTPUT_FILE_COPY = yes
+
+include ../build/executable.make
 endif
 
 # Testing targets
