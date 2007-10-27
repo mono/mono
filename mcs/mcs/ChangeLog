@@ -1,3 +1,9 @@
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
+	* lambda.test: removed, lambda parsing is done differently.
+	
+	* gen-il.cs, gen-treedump.cs, old-code.cs : Obsolete.
+
 2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Makefile: Removed dependency on gmcs.exe.config. Fixes build.
