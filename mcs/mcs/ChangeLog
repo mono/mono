@@ -1,3 +1,7 @@
+2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Makefile: Removed dependency on gmcs.exe.config. Fixes build.
+
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile, *.sources : All C# compilers are in mcs folder.

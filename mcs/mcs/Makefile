@@ -56,7 +56,7 @@ $(progdir)/.stamp:
 $(PROGRAM): $(topdir)/class/lib/default/mcs.exe $(progdir)/.stamp
 	cp $< $@
 
-$(PROGRAM).config: $(topdir)/gmcs/gmcs.exe.config $(progdir)/.stamp
+$(PROGRAM).config: $(progdir)/.stamp
 	cp $< $@
 
 else
