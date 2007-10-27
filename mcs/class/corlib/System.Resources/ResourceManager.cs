@@ -47,7 +47,7 @@ namespace System.Resources
 	public class ResourceManager
 	{
 		public static readonly int HeaderVersionNumber = 1;
-		public static readonly int MagicNumber = unchecked((int)0xBEEFCACE);
+		public static readonly int MagicNumber = unchecked ((int) 0xBEEFCACE);
 
 		protected string BaseNameField;
 		protected Assembly MainAssembly;
@@ -81,62 +81,69 @@ namespace System.Resources
 			ResourceSets = new Hashtable();
 			BaseNameField = resourceSource.Name;
 			MainAssembly = resourceSource.Assembly;
-
-			/* Temporary workaround for bug 43567 */
-			resourceSetType = typeof (ResourceSet);
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
-		public ResourceManager (string baseName, Assembly assembly) : this()
+		public ResourceManager (string baseName, Assembly assembly) : this ()
 		{
-			CheckBaseName (baseName);
+			if (baseName == null)
+				throw new ArgumentNullException ("baseName");
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
 			
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
+#if ONLY_1_1
+			CheckBaseName ();
+#endif
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
 		private Type CheckResourceSetType (Type usingResourceSet, bool verifyType)
 		{
-			if (usingResourceSet == null) {
+			if (usingResourceSet == null)
 				return typeof (ResourceSet);
-			} else {
-				if (verifyType && !typeof (ResourceSet).IsAssignableFrom (usingResourceSet))
-					throw new ArgumentException ("Type parameter"
-						+ " must refer to a subclass of"
-						+ " ResourceSet.", "usingResourceSet");
-				return usingResourceSet;
-			}
+
+			if (verifyType && !typeof (ResourceSet).IsAssignableFrom (usingResourceSet))
+				throw new ArgumentException ("Type parameter"
+					+ " must refer to a subclass of"
+					+ " ResourceSet.", "usingResourceSet");
+			return usingResourceSet;
 		}
 
-		public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) : this()
+		public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) : this ()
 		{
-			CheckBaseName (baseName);
+			if (baseName == null)
+				throw new ArgumentNullException ("baseName");
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
-			
+
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
+#if ONLY_1_1
+			CheckBaseName ();
+#endif
 			resourceSetType = CheckResourceSetType (usingResourceSet, true);
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
 		/* Private constructor for CreateFileBasedResourceManager */
-		private ResourceManager(String baseName, String resourceDir, Type usingResourceSet) : this()
+		private ResourceManager(String baseName, String resourceDir, Type usingResourceSet) : this ()
 		{
-			CheckBaseName (baseName);
+			if (baseName == null)
+				throw new ArgumentNullException ("baseName");
 			if (resourceDir == null)
 				throw new ArgumentNullException("resourceDir");
 
 			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
-			MainAssembly = null;
-			resourceSetType = CheckResourceSetType (usingResourceSet, false);
 			this.resourceDir = resourceDir;
+#if ONLY_1_1
+			CheckBaseName ();
+#endif
+			resourceSetType = CheckResourceSetType (usingResourceSet, false);
 		}
 		
 		public static ResourceManager CreateFileBasedResourceManager (string baseName,
@@ -258,6 +265,14 @@ namespace System.Resources
 			else
 				return BaseNameField + "." +  culture.Name + ".resources";
 		}
+
+		private string GetResourceFilePath (CultureInfo culture)
+		{
+			if (resourceDir != null)
+				return Path.Combine (resourceDir, GetResourceFileName (culture));
+			else
+				return GetResourceFileName (culture);
+		}
 		
 		Stream GetManifestResourceStreamNoCase (Assembly ass, string fn)
 		{
@@ -286,9 +301,6 @@ namespace System.Resources
 			if (culture == null)
 				culture = CultureInfo.CurrentUICulture;
 			ResourceSet set = InternalGetResourceSet (culture, true, true);
-			if (set == null)
-				throw new MissingManifestResourceException (String.Format ("Could not find any resource appropriate for the specified culture or its parents (resource file : \"{0}\")", GetResourceFileName(culture)));
-
 			return set.GetStream (name);
 		}
 #endif
@@ -296,12 +308,6 @@ namespace System.Resources
 		{
 			ResourceSet set;
 			
-			if (culture == null) {
-				string msg = String.Format ("Could not find any resource appropriate for the " +
-							    "specified culture or its parents (assembly:{0})",
-							    MainAssembly != null ? MainAssembly.GetName ().Name : "");
-				throw new MissingManifestResourceException (msg);
-			}
 			/* if we already have this resource set, return it */
 			set = (ResourceSet) ResourceSets [culture];
 			if (set != null)
@@ -349,24 +355,11 @@ namespace System.Resources
 					 */
 					set = (ResourceSet) Activator.CreateInstance (resourceSetType, args);
 				} else if (resourceCulture.Equals (CultureInfo.InvariantCulture)) {
-					string msg = "Could not find any resource appropriate for the " +
-						"specified culture or the neutral culture. " +
-						"Make sure \"{1}\" was correctly embedded or " +
-						"linked into assembly \"{0}\".";
-					msg = String.Format (msg, MainAssembly != null ?
-						MainAssembly.GetName ().Name : "",
-						GetManifestResourceName (filename));
-					throw new MissingManifestResourceException (msg);
+					throw AssemblyResourceMissing (filename);
 				}
 			} else if (resourceDir != null || BaseNameField != null) {
 				/* File resources */
-				string filename;
-				
-				if (resourceDir != null)
-					filename = Path.Combine (resourceDir, GetResourceFileName (culture));
-				else
-					filename = GetResourceFileName(culture);
-
+				string filename = GetResourceFilePath (culture);
 				if (Createifnotexists && File.Exists (filename)) {
 					object [] args = new Object [1] { filename };
 
@@ -377,6 +370,14 @@ namespace System.Resources
 					 */
 					set = (ResourceSet) Activator.CreateInstance(
 						resourceSetType, args);
+				} else if (culture.Equals (CultureInfo.InvariantCulture)) {
+					string msg = string.Format ("Could not find any " +
+						"resources appropriate for the specified culture " +
+						"(or the neutral culture) on disk.{0}" +
+						"baseName: {1}  locationInfo: {2}  fileName: {3}",
+						Environment.NewLine, BaseNameField, "<null>",
+						GetResourceFileName (culture));
+					throw new MissingManifestResourceException (msg);
 				}
 			}
 
@@ -447,19 +448,68 @@ namespace System.Resources
 		}
 #endif
 
-		void CheckBaseName (string baseName)
-		{
-			if (baseName == null)
-				throw new ArgumentNullException ("baseName");
 #if ONLY_1_1
-			if (baseName.EndsWith (".resources"))
-				throw new ArgumentException ("ResourceManager base"
-					+ " name should not end in .resources. It"
-					+ " should be similar to MyResources,"
-					+ " which the ResourceManager can convert"
-					+ " into MyResources.<culture>.resources;"
-					+ " for example, MyResources.en-US.resources");
+		void CheckBaseName ()
+		{
+			if (BaseNameField.Length <= 10)
+				return;
+
+			CompareInfo c = CultureInfo.InvariantCulture.CompareInfo;
+			if (!c.IsSuffix (BaseNameField, ".resources", CompareOptions.IgnoreCase))
+				return;
+
+			if (MainAssembly != null) {
+				string resourceFileName = GetResourceFileName (
+					CultureInfo.InvariantCulture);
+				Stream s = GetManifestResourceStreamNoCase (
+					MainAssembly, resourceFileName);
+				if (s != null)
+					return;
+			} else {
+				string resourceFile = GetResourceFilePath (
+					CultureInfo.InvariantCulture);
+				if (File.Exists (resourceFile))
+					return;
+			}
+
+			throw new ArgumentException ("ResourceManager base"
+				+ " name should not end in .resources. It"
+				+ " should be similar to MyResources,"
+				+ " which the ResourceManager can convert"
+				+ " into MyResources.<culture>.resources;"
+				+ " for example, MyResources.en-US.resources.");
+		}
 #endif
+
+		MissingManifestResourceException AssemblyResourceMissing (string fileName)
+		{
+			AssemblyName aname = MainAssembly != null ? MainAssembly.GetName ()
+				: null;
+
+#if NET_2_0
+			string manifestName = GetManifestResourceName (fileName);
+			string msg = string.Format ("Could not find any resources " +
+				"appropriate for the specified culture or the " +
+				"neutral culture.  Make sure \"{0}\" was correctly " +
+				"embedded or linked into assembly \"{1}\" at " +
+				"compile time, or that all the satellite assemblies " +
+				"required are loadable and fully signed.",
+				manifestName, aname != null ? aname.Name : string.Empty);
+#else
+			string location = resourceSource != null ? resourceSource.FullName
+				: "<null>";
+			string msg = String.Format ("Could not find any resources " +
+				"appropriate for the specified culture (or " +
+				"the neutral culture) in the given assembly.  " +
+				"Make sure \"{0}\" was correctly embedded or " +
+				"linked into assembly \"{1}\".{2}" +
+				"baseName: {3}  locationInfo: {4}  resource " +
+				"file name: {0}  assembly: {5}", fileName,
+				aname != null ? aname.Name : "", Environment.NewLine,
+				BaseNameField, location, aname != null ? aname.FullName :
+				"");
+#endif
+			throw new MissingManifestResourceException (msg);
 		}
 
 		string GetManifestResourceName (string fn)

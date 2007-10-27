@@ -1,3 +1,8 @@
+2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManager.cs: Added tests for null argument checks. Added test
+	for GetStream with resource file that does not exist.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManagerTest.cs: Restore the original UI Culture on TearDown.

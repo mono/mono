@@ -1,3 +1,15 @@
+2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManager.cs: Removed temporary workaround for bug #43567.
+	Reworked basename to only throw ArgumentException if resource with
+	name ending on ".resources" does not actually exist. Fixes bug
+	#336283. Do not throw exception in GetStream since this is already
+	done in InternalGetResourceSet. In InternalGetResourceSet, do not
+	throw MissingManifestResourceException when culture is null. Fixed
+	MissingManifestResourceException message to match MS. When using
+	file-based ResourceManager, then also throw an exception when file
+	does not exist for neutral culture.
+
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManager.cs: Move code for determining manifest resource

@@ -77,7 +77,7 @@ namespace MonoTests.System.Resources
 			Thread.CurrentThread.CurrentUICulture = _orgUICulture;
 		}
 
-		[Test]
+		[Test] // ResourceManager ()
 		public void Constructor0 ()
 		{
 			MockResourceManager rm = new MockResourceManager ();
@@ -91,7 +91,7 @@ namespace MonoTests.System.Resources
 			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#8");
 		}
 
-		[Test]
+		[Test] // ResourceManager (Type)
 		public void Constructor1 ()
 		{
 			MockResourceManager rm = new MockResourceManager (typeof (string));
@@ -109,7 +109,22 @@ namespace MonoTests.System.Resources
 			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
 		}
 
-		[Test]
+		[Test] // ResourceManager (Type)
+		public void Constructor1_ResourceSource_Null ()
+		{
+			try {
+				new ResourceManager ((Type) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("resourceSource", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // ResourceManager (String, Assembly)
 		public void Constructor2 ()
 		{
 			MockResourceManager rm = null;
@@ -146,7 +161,7 @@ namespace MonoTests.System.Resources
 			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#B12");
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly)
 		public void Constructor2_BaseName_Null ()
 		{
 			try {
@@ -162,7 +177,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly)
 		public void Constructor2_BaseName_Resources ()
 		{
 #if NET_2_0
@@ -201,7 +216,7 @@ namespace MonoTests.System.Resources
 #endif
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly)
 		public void Constructor2_Assembly_Null ()
 		{
 			try {
@@ -216,7 +231,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3 ()
 		{
 			MockResourceManager rm = null;
@@ -253,7 +268,7 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (typeof (MockResourceSet), rm.ResourceSetType, "#B11");
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_BaseName_Null ()
 		{
 			try {
@@ -270,7 +285,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_BaseName_Resources ()
 		{
 #if NET_2_0
@@ -310,7 +325,7 @@ namespace MonoTests.System.Resources
 #endif
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_Assembly_Null ()
 		{
 			try {
@@ -326,7 +341,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_UsingResourceSet_Invalid ()
 		{
 			try {
@@ -345,7 +360,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ResourceManager (String, Assembly, Type)
 		public void Constructor3_UsingResourceSet_Null ()
 		{
 			MockResourceManager rm = new MockResourceManager (
@@ -736,6 +751,24 @@ namespace MonoTests.System.Resources
 				rm.ReleaseAllResources ();
 			}
 		}
+
+		[Test]
+		public void GetStream_ResourceFile_DoesNotExist ()
+		{
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("DoesNotExist", "Test/resources", null);
+			try {
+				rm.GetStream ("HelloWorld");
+				Assert.Fail ("#1");
+			} catch (MissingManifestResourceException ex) {
+				// Could not find any resources appropriate for
+				// the specified culture (or the neutral culture)
+				//on disk
+				Assert.AreEqual (typeof (MissingManifestResourceException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
 #endif
 
 		[Test]
@@ -751,6 +784,23 @@ namespace MonoTests.System.Resources
 			Assert.IsTrue (rm.IgnoreCase, "#B1");
 			Assert.AreEqual ("Hello World", rm.GetString ("HelloWorld"), "#B2");
 			rm.ReleaseAllResources ();
+		}
+
+		[Test]
+		public void InternalGetResourceSet_Culture_Null ()
+		{
+			MockResourceManager rm = new MockResourceManager (typeof (string));
+			try {
+				rm.InternalGetResourceSet ((CultureInfo) null, false, true);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				// Key cannot be null
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("key", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -862,6 +912,12 @@ namespace MonoTests.System.Resources
 
 			public new Hashtable ResourceSets {
 				get { return base.ResourceSets; }
+			}
+
+			public new ResourceSet InternalGetResourceSet (CultureInfo culture, bool Createifnotexists, bool tryParents)
+			{
+				return base.InternalGetResourceSet (culture,
+					Createifnotexists, tryParents);
 			}
 
 			public new string GetResourceFileName (CultureInfo culture)
