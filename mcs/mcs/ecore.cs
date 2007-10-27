@@ -4002,18 +4002,6 @@ namespace Mono.CSharp {
 			int candidate_top = candidates.Count;
 
 			if (applicable_type == null) {
-				//
-				// When we found a top level method which does not match and it's 
-				// not an extension method. We start extension methods lookup from here
-				//
-				if (InstanceExpression != null) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name);
-					if (ex_method_lookup != null) {
-						ex_method_lookup.ExtensionExpression = InstanceExpression;
-						return ex_method_lookup.OverloadResolve (ec, Arguments, may_fail, loc);
-					}
-				}
-				
 				if (ec.IsInProbingMode || may_fail)
 					return null;
 
