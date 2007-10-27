@@ -120,7 +120,6 @@ namespace System.Net {
 				return;
 
 			if (!listening) {
-				disposed = true;
 				return;
 			}
 
@@ -133,7 +132,6 @@ namespace System.Net {
 				return;
 
 			if (!listening) {
-				disposed = true;
 				return;
 			}
 
@@ -255,8 +253,8 @@ namespace System.Net {
 			if (disposed)
 				return;
 
-			disposed = true;
 			Close (true); //TODO: Should we force here or not?
+			disposed = true;
 		}
 
 		internal void CheckDisposed ()

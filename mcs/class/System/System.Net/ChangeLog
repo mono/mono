@@ -1,5 +1,11 @@
 2007-10-27  Miguel de Icaza  <miguel@novell.com>
 
+	* HttpListener.cs: Remove more trigger-happy disposed=true from
+	the code;   We should only dispose when the Dispose method is
+	actually called.   Not before.  
+
+	Fixes #337371
+
 	*  HttpListener.cs (Close): Closing does not mean dispose the
 	object.   This allows Start/Stop/Start to be called as many times
 	as desired.
