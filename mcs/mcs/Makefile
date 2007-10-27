@@ -21,7 +21,7 @@ ifdef GMCS_PROFILE
 		LOCAL_MCS_FLAGS += -nowarn:618 -noconfig -r:mscorlib -r:System.dll
 		PROGRAM = $(topdir)/class/lib/$(PROFILE)/smcs.exe
 	else
-		BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe $(DEBUG_FLAGS)
+		BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/gmcs.exe $(DEBUG_FLAGS)
 		PROGRAM = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 	endif	
 else
