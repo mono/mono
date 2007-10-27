@@ -1,5 +1,9 @@
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
+	* rules.make: Changed gmcs location.
+	
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
 	* executable.make: Added KEEP_OUTPUT_FILE_COPY to avoid move and copy
 	back compiler executables.
 
