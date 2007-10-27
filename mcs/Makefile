@@ -1,7 +1,6 @@
 thisdir := .
 
 SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors docs
-DIST_ONLY_SUBDIRS := gmcs smcs
 
 basic_SUBDIRS := build jay mcs class
 net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
