@@ -1,5 +1,9 @@
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
+	* profiles/net_2_0_bootstrap.make: Fixed generics compiler name.
+	
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
 	* rules.make: Changed gmcs location.
 	
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
