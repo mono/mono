@@ -1,6 +1,6 @@
 2007-07-27  Marek Safar  <marek.safar@gmail.com>
 
-	* Makefile: Removed gmcs and smcs
+	* Makefile: Removed gmcs and smcs, removed DIST_ONLY_SUBDIRS.
 
 2007-07-27  Jb Evain  <jbevain@novell.com>
 
