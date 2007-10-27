@@ -613,7 +613,7 @@ PublicKeyToken=b77a5c561934e089"));
 			sb.Append ("|");
 			for (int i = 0; i < param2.Length; i++) {
 				if (i > 0)
-					sb.Append (";");
+					sb.Append (",");
 				sb.Append (param2 [i]);
 			}
 			return sb.ToString ();
@@ -637,7 +637,6 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] // bug #336841
-		[Category ("NotWorking")]
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=306797
 		public void InvokeMember_VarArgs ()
 		{

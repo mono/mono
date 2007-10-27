@@ -1,3 +1,7 @@
+2007-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs (InvokeMember_VarArgs): Enable this test.
+
 2007-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add test for #336936.
