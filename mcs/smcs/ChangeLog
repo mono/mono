@@ -1,8 +1,0 @@
-2007-07-27  Jb Evain  <jbevain@novell.com>
-
-	* smcs.exe.config: add.
-
-2007-07-26  Jb Evain  <jbevain@novell.com>
-
-	* mcs/smcs: first checkin
-		of the Mono Silverlight CSharp Compiler
