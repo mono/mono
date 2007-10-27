@@ -22,6 +22,12 @@ response = $(depsdir)/$(base_prog).response
 executable_CLEAN_FILES += $(response)
 endif
 
+ifdef KEEP_OUTPUT_FILE_COPY
+	COPY_CMD = cp
+else
+	COPY_CMD = mv
+endif
+
 makefrag = $(depsdir)/$(PROFILE)_$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 mdb = $(patsubst %.exe,%.mdb,$(PROGRAM))
@@ -90,8 +96,8 @@ endif
 $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(prog_dir:=/.stamp)
 	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
-	mv $(base_prog) $(PROGRAM)
-	test ! -f $(base_prog).mdb || mv $(base_prog).mdb $(PROGRAM).mdb
+	$(COPY_CMD) $(base_prog) $(PROGRAM)
+	test ! -f $(base_prog).mdb || $(COPY_CMD) $(base_prog).mdb $(PROGRAM).mdb
 endif
 
 ifdef PROGRAM_config

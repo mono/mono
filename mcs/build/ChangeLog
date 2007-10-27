@@ -1,3 +1,8 @@
+2007-10-27  Marek Safar  <marek.safar@gmail.com>
+
+	* executable.make: Added KEEP_OUTPUT_FILE_COPY to avoid move and copy
+	back compiler executables.
+
 2007-09-21  Raja R Harinath  <harinath@gmail.com>
 
 	* Makefile (PROFILES): Remove 'atomic' profiles.
