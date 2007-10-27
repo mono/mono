@@ -8,6 +8,8 @@ EXTRA_DISTFILES = \
 	*mcs.sln		\
 	*cs-parser.jay		\
 	*.sources		\
+	generic.cs		\
+	linq.cs			\
 	NOTES			\
 	TODO
 
