@@ -5,9 +5,9 @@ include ../build/rules.make
 BUILT_SOURCES = cs-parser.cs
 
 EXTRA_DISTFILES = \
-	compiler.csproj		\
+	*mcs.csproj		\
 	compiler.doc		\
-	compiler.sln		\
+	*mcs.sln		\
 	cs-parser.jay		\
 	NOTES			\
 	TODO
