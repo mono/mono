@@ -131,5 +131,6 @@ namespace System.Windows.Forms
 			set;
 		}
 
+		internal abstract void SetParent (GridItem item);
 	}
 }

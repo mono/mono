@@ -250,7 +250,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		internal void SetParent (GridItem parent)
+		internal override void SetParent (GridItem parent)
 		{
 			this.parent = parent;
 		}

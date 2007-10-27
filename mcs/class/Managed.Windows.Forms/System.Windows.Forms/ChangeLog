@@ -1,3 +1,14 @@
+2007-10-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* PropertyGrid.cs: When PropertySort changes, re-organize the grid
+	items instead of re-creating them all. For this purpose we now cache
+	both CategoryGridEntry items and the GridEntries for the main object's
+	properties.
+	* GridItem.cs: Make SetParent method abstract.
+	* GridEntry.cs: Override the SetParent method (already there, but now
+	we override it).
+	Fixes #324866.
+
 2007-10-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PropertyGridView.cs: Set the plus/minus bounds of a grid item

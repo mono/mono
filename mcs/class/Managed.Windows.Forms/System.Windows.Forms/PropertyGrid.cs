@@ -93,6 +93,10 @@ namespace System.Windows.Forms {
 		private Color commands_disabled_link_color;
 		private Color commands_link_color;
 #endif
+		// Category and main items cache
+		GridItemCollection category_grid_items;
+		GridItemCollection main_grid_items;
+
 		#endregion	// Private Members
 		
 		#region Contructors
@@ -532,7 +536,7 @@ namespace System.Windows.Forms {
 				property_sort = value;
 
 				UpdateToolBarButtons();
-				ReflectObjects();
+				UpdateSortLayout ();
 				property_grid_view.Refresh();
 
 				EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
@@ -1393,6 +1397,24 @@ namespace System.Windows.Forms {
 			
 			GridItemCollection grid_item_coll = parent_grid_item.GridItems;
 
+			// Clean our grid items cache
+			if (parent_grid_item == root_grid_item) {
+				main_grid_items = new GridItemCollection ();
+				category_grid_items = null;
+			}
+
+			bool categorized = false, show = true;
+					
+			if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse)
+				categorized = false;
+			else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+				categorized = parent_grid_item == root_grid_item;
+				if (categorized)
+					category_grid_items = new GridItemCollection ();
+			} else {
+				show = false;
+			}
+
 			foreach (PropertyDescriptor property in properties) {
 				GridEntry grid_entry;
 				grid_entry = grid_item_coll [property.Name] as GridEntry;
@@ -1404,17 +1426,6 @@ namespace System.Windows.Forms {
 					
 				grid_entry.SetParent (parent_grid_item);
 				
-				bool categorized = false, show = true;
-					
-				if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse) {
-					categorized = false;
-				} else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
-					categorized = parent_grid_item == root_grid_item;
-				} else {
-					show = false;
-				}
-				
-				
 				if (show) {
 					if (categorized) {
 						string category = property.Category;
@@ -1423,6 +1434,9 @@ namespace System.Windows.Forms {
 							cat_item = new CategoryGridEntry (property_grid_view, category);
 							cat_item.SetParent (parent_grid_item);
 							grid_item_coll.Add (category, cat_item);
+
+							// Add to our cache
+							category_grid_items.Add (category, cat_item);
 						}
 						if (cat_item.GridItems [property.Name] == null) {
 							cat_item.GridItems.Add (property.Name, grid_entry);
@@ -1435,6 +1449,10 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
+
+				// Add main properties to our cache
+				if (parent_grid_item == root_grid_item)
+					main_grid_items.Add (grid_entry.Label, grid_entry);
 
 				if (recurse) {
 					PopulateSubGridItemsFromProperties (grid_entry);
@@ -1463,6 +1481,47 @@ namespace System.Windows.Forms {
 				subobjs [i] = property.GetValue (objs [i]);
 			
 			PopulateMergedGridItems (subobjs, true, grid_entry);
+		}
+
+		void UpdateSortLayout ()
+		{
+			root_grid_item.GridItems.Clear ();
+
+			if (category_grid_items == null)
+				category_grid_items = new GridItemCollection ();
+
+			if (property_sort == PropertySort.Alphabetical || property_sort == PropertySort.NoSort) {
+				foreach (GridItem item in main_grid_items) {
+					root_grid_item.GridItems.Add (item.Label, item);
+					item.SetParent (root_grid_item);
+				}
+
+				foreach (GridItem category_item in category_grid_items) {
+					category_item.GridItems.Clear ();
+					category_item.SetParent (null);
+				}
+
+			} else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+				foreach (GridItem item in main_grid_items) {
+					string category = item.PropertyDescriptor.Category;
+
+					GridItem category_item = category_grid_items [category];
+					if (category_item == null) {
+						// Create category grid items if they already don't
+						category_item = new CategoryGridEntry (property_grid_view, category);
+						category_grid_items.Add (category, category_item);
+					}
+
+					category_item.GridItems.Add (item.Label, item);
+					item.SetParent (category_item);
+				}
+
+				foreach (GridItem category_item in category_grid_items) {
+					root_grid_item.GridItems.Add (category_item.Label, category_item);
+					category_item.SetParent (root_grid_item);
+				}
+
+			}
 		}
 
 		private void help_panel_Paint(object sender, PaintEventArgs e) {
