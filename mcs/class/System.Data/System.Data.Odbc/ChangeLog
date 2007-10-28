@@ -1,3 +1,7 @@
+2007-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcDataReader.cs: Code formatting, spaces to tabs.
+
 2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcCommand.cs: Added constant for default CommandTimeout, instead

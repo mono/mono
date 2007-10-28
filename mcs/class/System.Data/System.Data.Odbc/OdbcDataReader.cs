@@ -42,7 +42,7 @@ using System.Text;
 namespace System.Data.Odbc
 {
 #if NET_2_0
-        public sealed class OdbcDataReader : DbDataReader
+	public sealed class OdbcDataReader : DbDataReader
 #else
 	public sealed class OdbcDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
 #endif
@@ -55,7 +55,7 @@ namespace System.Data.Odbc
 		private OdbcColumn[] cols;
 		private IntPtr hstmt;
 		private int _recordsAffected = -1;
-		bool disposed = false;
+		bool disposed;
 		private DataTable _dataTableSchema;
 		private CommandBehavior behavior;
 
@@ -88,17 +88,16 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-                private CommandBehavior CommandBehavior 
-                {
-                        get { return behavior; }
-                        set { value = behavior; }
-                }
-                
+		private CommandBehavior CommandBehavior {
+			get { return behavior; }
+			set { value = behavior; }
+		}
+
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int Depth {
+		int Depth {
 			get {
 				return 0; // no nested selects supported
 			}
@@ -106,9 +105,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int FieldCount {
+		int FieldCount {
 			get {
 				return cols.Length;
 			}
@@ -116,9 +115,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool IsClosed {
+		bool IsClosed {
 			get {
 				return !open;
 			}
@@ -126,9 +125,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                object this[string name] {
+		object this [string name] {
 			get {
 				int pos;
 
@@ -146,9 +145,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                object this [int index] {
+		object this [int index] {
 			get {
 				return (object) GetValue (index);
 			}
@@ -156,9 +155,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int RecordsAffected {
+		int RecordsAffected {
 			get {
 				return _recordsAffected;
 			}
@@ -167,9 +166,9 @@ namespace System.Data.Odbc
 		[MonoTODO]
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool HasRows {
+		bool HasRows {
 			get { throw new NotImplementedException(); }
 		}
 
@@ -183,12 +182,11 @@ namespace System.Data.Odbc
 			foreach (OdbcColumn col in cols)
 			{
 				if (col != null) {
-                                        if (col.ColumnName == colname)
-                                                return i;
-                                        if (String.Compare (col.ColumnName, colname, true) == 0)
-                                                return i;
-                                }
-                                                
+					if (col.ColumnName == colname)
+						return i;
+					if (String.Compare (col.ColumnName, colname, true) == 0)
+						return i;
+				}
 				i++;
 			}
 			return -1;
@@ -223,9 +221,9 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Close ()
+		void Close ()
 		{
 			// FIXME : have to implement output parameter binding
 			open = false;
@@ -251,7 +249,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		bool GetBoolean (int ordinal)
 		{
-			return (bool) GetValue(ordinal);
+			return (bool) GetValue (ordinal);
 		}
 
 		public 
@@ -260,7 +258,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		byte GetByte (int ordinal)
 		{
-			return (byte) Convert.ToByte(GetValue(ordinal));
+			return (byte) Convert.ToByte (GetValue (ordinal));
 		}
 
 		public 
@@ -269,55 +267,55 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-                        OdbcReturn ret = OdbcReturn.Error;
-                        bool copyBuffer = false;
-                        int returnVal = 0, outsize = 0;
-                        byte [] tbuff = new byte [length+1];
+			OdbcReturn ret = OdbcReturn.Error;
+			bool copyBuffer = false;
+			int returnVal = 0, outsize = 0;
+			byte [] tbuff = new byte [length+1];
 
-                        length = buffer == null ? 0 : length;
-                        ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), SQL_C_TYPE.BINARY, tbuff, length, 
+			length = buffer == null ? 0 : length;
+			ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), SQL_C_TYPE.BINARY, tbuff, length, 
 						ref outsize);
 
-                        if (ret == OdbcReturn.NoData)
-                                return 0;
+			if (ret == OdbcReturn.NoData)
+				return 0;
 
-                        if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-                                throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
+			if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
 
 			OdbcError odbcErr = null;
 			if ( (ret == OdbcReturn.SuccessWithInfo))
 				odbcErr = new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt);
 
-                        if (buffer == null)
-                                return outsize; //if buffer is null,return length of the field
-                        
-                        if (ret == OdbcReturn.SuccessWithInfo) {
-                                if (outsize == (int) OdbcLengthIndicator.NoTotal)
-                                        copyBuffer = true;
-                                else if (outsize == (int) OdbcLengthIndicator.NullData) {
-                                        copyBuffer = false;
-                                        returnVal = -1;
-                                } else {
-                                        string sqlstate = odbcErr.SQLState;
-                                        //SQLState: String Data, Right truncated
-                                        if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
-                                                throw new OdbcException ( odbcErr);
-                                        copyBuffer = true;
-                                }
-                        } else {
-                                copyBuffer = outsize == -1 ? false : true;
-                                returnVal = outsize;
-                        }
+			if (buffer == null)
+				return outsize; //if buffer is null,return length of the field
 
-                        if (copyBuffer) {
-                                int i = 0;
-                                while (tbuff [i] != libodbc.C_NULL) {
-                                        buffer [bufferIndex + i] = tbuff [i];
-                                        i++;
-                                }
-                                returnVal = i;
-                        }
-                        return returnVal;
+			if (ret == OdbcReturn.SuccessWithInfo) {
+				if (outsize == (int) OdbcLengthIndicator.NoTotal)
+					copyBuffer = true;
+				else if (outsize == (int) OdbcLengthIndicator.NullData) {
+					copyBuffer = false;
+					returnVal = -1;
+				} else {
+					string sqlstate = odbcErr.SQLState;
+					//SQLState: String Data, Right truncated
+					if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
+						throw new OdbcException ( odbcErr);
+					copyBuffer = true;
+				}
+			} else {
+				copyBuffer = outsize == -1 ? false : true;
+				returnVal = outsize;
+			}
+
+			if (copyBuffer) {
+				int i = 0;
+				while (tbuff [i] != libodbc.C_NULL) {
+					buffer [bufferIndex + i] = tbuff [i];
+					i++;
+				}
+				returnVal = i;
+			}
+			return returnVal;
 		}
 		
 		[MonoTODO]
@@ -474,14 +472,14 @@ namespace System.Data.Odbc
 		[MonoTODO]
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                DataTable GetSchemaTable() 
+		DataTable GetSchemaTable()
 		{
-                        // FIXME : 
-                        // * Map OdbcType to System.Type and assign to DataType.
-                        //   This will eliminate the need for IsStringType in
-                        //   OdbcColumn.
+			// FIXME : 
+			// * Map OdbcType to System.Type and assign to DataType.
+			//   This will eliminate the need for IsStringType in
+			//   OdbcColumn
 
 			if (_dataTableSchema != null)
 				return _dataTableSchema;
@@ -490,8 +488,7 @@ namespace System.Data.Odbc
 			// Only Results from SQL SELECT Queries 
 			// get a DataTable for schema of the result
 			// otherwise, DataTable is null reference
-			if(cols.Length > 0) 
-			{
+			if (cols.Length > 0) {
 				dataTableSchema = new DataTable ();
 				
 				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
@@ -521,15 +518,14 @@ namespace System.Data.Odbc
 
 				DataRow schemaRow;
 
-				for (int i = 0; i < cols.Length; i += 1 ) 
-				{
+				for (int i = 0; i < cols.Length; i += 1 ) {
 					string baseTableName = String.Empty;
 					bool isKey = false;
 					OdbcColumn col=GetColumn(i);
 
 					schemaRow = dataTableSchema.NewRow ();
 					dataTableSchema.Rows.Add (schemaRow);
-										
+
 					schemaRow ["ColumnName"] 	= col.ColumnName;
 					schemaRow ["ColumnOrdinal"] 	= i;
 					schemaRow ["ColumnSize"] 	= col.MaxLength;
@@ -556,13 +552,11 @@ namespace System.Data.Odbc
 					schemaRow ["IsHidden"] 		= false;
 					schemaRow ["IsLong"] 		= false;
 
-					
 					// FIXME: according to Brian, 
 					// this does not work on MS .NET
 					// however, we need it for Mono 
 					// for now
 					// schemaRow.AcceptChanges();
-					
 				}
 
 				// set primary keys
@@ -595,10 +589,10 @@ namespace System.Data.Odbc
 				}
 				dataTableSchema.AcceptChanges();
 			}
-                        return (_dataTableSchema = dataTableSchema);
+			return (_dataTableSchema = dataTableSchema);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -613,7 +607,7 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -630,11 +624,11 @@ namespace System.Data.Odbc
 			byte[] buffer;
 			OdbcColumn col = GetColumn (ordinal);
 			object DataValue = null;
-			ushort ColIndex = Convert.ToUInt16 (ordinal+1);
+			ushort ColIndex = Convert.ToUInt16 (ordinal + 1);
 
 			// Check cached values
 			if (col.Value == null) {
-                                // odbc help file
+				// odbc help file
 				// mk:@MSITStore:C:\program%20files\Microsoft%20Data%20Access%20SDK\Docs\odbc.chm::/htm/odbcc_data_types.htm
 				switch (col.OdbcType) {
 				case OdbcType.Bit:
@@ -654,7 +648,7 @@ namespace System.Data.Odbc
 						for (int i = 0;i<outsize;i++)
 							temp[i] = buffer[i];
 						DataValue = Decimal.Parse (System.Text.Encoding.Default.GetString (temp),
-								                   System.Globalization.CultureInfo.InvariantCulture);
+							System.Globalization.CultureInfo.InvariantCulture);
 					}
 					break;
 				case OdbcType.TinyInt:
@@ -731,9 +725,10 @@ namespace System.Data.Odbc
 				case OdbcType.Time:
 					OdbcTimestamp ts_data = new OdbcTimestamp();
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
-					if (outsize!=-1) {// This means SQL_NULL_DATA
-						DataValue = new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
-								       ts_data.minute,ts_data.second);
+					if (outsize != -1) {// This means SQL_NULL_DATA
+						DataValue = new DateTime(ts_data.year, ts_data.month,
+							ts_data.day, ts_data.hour, ts_data.minute,
+							ts_data.second);
 						if (ts_data.fraction != 0)
 							DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
 					}
@@ -743,7 +738,7 @@ namespace System.Data.Odbc
 					bufsize = (col.MaxLength < 255 && col.MaxLength > 0 ? col.MaxLength : 255);
 					buffer= new byte [bufsize];
 					ArrayList al = new ArrayList ();
-					do { 
+					do {
 						ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
@@ -779,7 +774,7 @@ namespace System.Data.Odbc
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo) && (ret!=OdbcReturn.NoData)) 
 					throw new OdbcException(new OdbcError("SQLGetData",OdbcHandleType.Stmt,hstmt));
 
-				if (outsize==-1) // This means SQL_NULL_DATA 
+				if (outsize == -1) // This means SQL_NULL_DATA 
 					col.Value = DBNull.Value;
 				else
 					col.Value = DataValue;
@@ -791,7 +786,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		int GetValues (object[] values)
+		int GetValues (object [] values)
 		{
 			int numValues = 0;
 
@@ -799,8 +794,7 @@ namespace System.Data.Odbc
 			for (int i = 0; i < values.Length; i++) {
 				if (i < FieldCount) {
 					values[i] = GetValue (i);
-				}
-				else {
+				} else {
 					values[i] = null;
 				}
 			}
@@ -817,7 +811,6 @@ namespace System.Data.Odbc
 		}
 
 #if ONLY_1_1
-
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
@@ -830,9 +823,8 @@ namespace System.Data.Odbc
 		}
 #endif // ONLY_1_1
 
-		
 #if NET_2_0
-                public override IEnumerator GetEnumerator ()
+		public override IEnumerator GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
@@ -859,21 +851,21 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool IsDBNull (int ordinal)
+		bool IsDBNull (int ordinal)
 		{
 			return (GetValue (ordinal) is DBNull);
 		}
 
 		/// <remarks>
-		/// 	Move to the next result set.
+		/// Move to the next result set.
 		/// </remarks>
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool NextResult ()
+		bool NextResult ()
 		{
 			OdbcReturn ret = OdbcReturn.Success;
 			ret = libodbc.SQLMoreResults (hstmt);
@@ -883,24 +875,23 @@ namespace System.Data.Odbc
 				cols = new OdbcColumn [colcount];
 				_dataTableSchema = null; // force fresh creation
 				GetSchemaTable ();
-			}	
-			return (ret==OdbcReturn.Success);
+			}
+			return (ret == OdbcReturn.Success);
 		}
 
 		/// <remarks>
-		///	Load the next row in the current result set.
+		/// Load the next row in the current result set.
 		/// </remarks>
 		private bool NextRow ()
 		{
-			OdbcReturn ret=libodbc.SQLFetch (hstmt);
+			OdbcReturn ret = libodbc.SQLFetch (hstmt);
 			if (ret != OdbcReturn.Success)
 				currentRow = -1;
 			else
 				currentRow++;
 
 			// Clear cached values from last record
-			foreach (OdbcColumn col in cols)
-			{
+			foreach (OdbcColumn col in cols) {
 				if (col != null)
 					col.Value = null;
 			}
@@ -908,63 +899,60 @@ namespace System.Data.Odbc
 		}
 
 
-                private int GetColumnAttribute (int column, FieldIdentifier fieldId)
-                {
-                        OdbcReturn ret = OdbcReturn.Error;
-                        byte [] buffer = new byte [255];
-                        short outsize = 0;
-                        int val = 0;
-                        ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId, 
-                                                       buffer, (short)buffer.Length, 
-                                                       ref outsize, ref val);
-                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-                                throw new OdbcException (new OdbcError ("SQLColAttribute",
-                                                                        OdbcHandleType.Stmt,
-                                                                        hstmt)
-                                                         );
-                        return val;
-                        
-                }
+		private int GetColumnAttribute (int column, FieldIdentifier fieldId)
+		{
+			OdbcReturn ret = OdbcReturn.Error;
+			byte [] buffer = new byte [255];
+			short outsize = 0;
+			int val = 0;
+			ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId, 
+							buffer, (short)buffer.Length, 
+							ref outsize, ref val);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw new OdbcException (new OdbcError ("SQLColAttribute",
+							OdbcHandleType.Stmt,
+							hstmt));
+			return val;
+		}
 
-                private string GetColumnAttributeStr (int column, FieldIdentifier fieldId)
-                {
-                        OdbcReturn ret = OdbcReturn.Error;
-                        byte [] buffer = new byte [255];
-                        short outsize = 0;
-                        int val = 0;
-                        ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId, 
-                                                       buffer, (short)buffer.Length, 
-                                                       ref outsize, ref val);
-                        if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-                                throw new OdbcException (new OdbcError ("SQLColAttribute",
-                                                                        OdbcHandleType.Stmt,
-                                                                        hstmt)
-                                                         );
-                        string value = "";
-                        if (outsize > 0)
-                                value = Encoding.Default.GetString (buffer, 0, outsize);
-                        return value;
-                }
+		private string GetColumnAttributeStr (int column, FieldIdentifier fieldId)
+		{
+			OdbcReturn ret = OdbcReturn.Error;
+			byte [] buffer = new byte [255];
+			short outsize = 0;
+			int val = 0;
+			ret = libodbc.SQLColAttribute (hstmt, (short)column, fieldId,
+							buffer, (short)buffer.Length,
+							ref outsize, ref val);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw new OdbcException (new OdbcError ("SQLColAttribute",
+									OdbcHandleType.Stmt,
+									hstmt));
+			string value = string.Empty;
+			if (outsize > 0)
+				value = Encoding.Default.GetString (buffer, 0, outsize);
+			return value;
+		}
 
-                private string [] GetPrimaryKeys (string catalog, string schema, string table)
-                {
-                        if (cols.Length <= 0)
-                                return new string [0];
+		private string [] GetPrimaryKeys (string catalog, string schema, string table)
+		{
+			if (cols.Length <= 0)
+				return new string [0];
 
 			ArrayList keys = null;
-                        try {
+			try {
 				keys = GetPrimaryKeysBySQLPrimaryKey (catalog, schema, table);
-                        } catch (OdbcException){
+			} catch (OdbcException) {
 				try {
 					keys = GetPrimaryKeysBySQLStatistics (catalog, schema, table);
 				} catch (OdbcException) {
 				}
-                        }
+			}
 			if (keys == null)
 				return null;
 			keys.Sort ();
 			return (string []) keys.ToArray (typeof (string));
-                }
+		}
 
 		private ArrayList GetPrimaryKeysBySQLPrimaryKey (string catalog, string schema, string table)
 		{
@@ -976,23 +964,22 @@ namespace System.Data.Odbc
 							   command.Connection.hDbc, ref handle);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLAllocHandle",
-									      OdbcHandleType.Dbc,
-									      command.Connection.hDbc));
+								OdbcHandleType.Dbc,
+								command.Connection.hDbc));
 
-				ret = libodbc.SQLPrimaryKeys (handle, catalog, -3,  
-							      schema, -3, 
-							      table, -3);
+				ret = libodbc.SQLPrimaryKeys (handle, catalog, -3,
+					schema, -3, table, -3);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLPrimaryKeys", OdbcHandleType.Stmt, handle));
-                        
+
 				int length = 0;
 				byte [] primaryKey = new byte [255];
-                        
+
 				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.CHAR, primaryKey, primaryKey.Length, ref length);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
 
-				int i = 0;                              
+				int i = 0;
 				while (true) {
 					ret = libodbc.SQLFetch (handle);
 					if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
@@ -1001,15 +988,15 @@ namespace System.Data.Odbc
 					keys.Add (pkey);
 				}
 			} finally {
-                                if (handle != IntPtr.Zero) {
-                                        ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
-                                        if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-                                                throw new OdbcException(new OdbcError("SQLFreeStmt",OdbcHandleType.Stmt,handle));
-                                        
-                                        ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, handle);
+				if (handle != IntPtr.Zero) {
+					ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+						throw new OdbcException(new OdbcError("SQLFreeStmt",OdbcHandleType.Stmt,handle));
+
+					ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, handle);
 					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 						throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,handle));
-                                }
+				}
 			}
 			return keys;
 		}
@@ -1034,14 +1021,14 @@ namespace System.Data.Odbc
 							     libodbc.SQL_QUICK);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLStatistics", OdbcHandleType.Stmt, handle));
-                        
+
 				// NON_UNIQUE
 				int  nonUniqueLength = 0;
 				short nonUnique = libodbc.SQL_FALSE;
 				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.SHORT, ref (short) nonUnique, sizeof (short), ref nonUniqueLength);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
-                        
+
 				// COLUMN_NAME
 				int length = 0;
 				byte [] colName = new byte [255];
@@ -1049,7 +1036,7 @@ namespace System.Data.Odbc
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
 			
-				int i = 0;    
+				int i = 0;
 				while (true) {
 					ret = libodbc.SQLFetch (handle);
 					if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
@@ -1060,25 +1047,25 @@ namespace System.Data.Odbc
 						break;
 					}
 				}
-                        } finally {
-                                if (handle != IntPtr.Zero) {
-                                        ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
-                                        if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-                                                throw new OdbcException(new OdbcError("SQLFreeStmt",OdbcHandleType.Stmt,handle));
-                                        
-                                        ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, handle);
+			} finally {
+				if (handle != IntPtr.Zero) {
+					ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
 					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,handle));
-                                }                             
+						throw new OdbcException (new OdbcError ("SQLFreeStmt", OdbcHandleType.Stmt, handle));
+
+					ret = libodbc.SQLFreeHandle ((ushort) OdbcHandleType.Stmt, handle);
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Stmt, handle));
+				}
 			}
 			return keys;
 		}
 		
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool Read ()
+		bool Read ()
 		{
 			return NextRow ();
 		}
