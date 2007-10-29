@@ -961,7 +961,6 @@ namespace MonoTests.System.XmlSerialization
 #endif
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExportSimpleContentExtensionEnum ()
 		{
 			string xsd = @"

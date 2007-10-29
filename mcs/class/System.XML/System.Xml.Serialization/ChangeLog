@@ -1,5 +1,10 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MapCodeGenerator.cs : found the true culprit for the previous
+	  attempt to the fix.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MapCodeGenerator.cs, XmlSchemaImporter.cs: revert the previous
 	  change; the type is included in the output, but it should not be
 	  the base type.

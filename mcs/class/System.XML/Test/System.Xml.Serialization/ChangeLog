@@ -1,5 +1,9 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCodeExporterTests.cs : enable the previous test again.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlCodeExporterTests.cs : disable the previous test; it's reverted.
 
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>

@@ -381,14 +381,15 @@ namespace System.Xml.Serialization {
 			
 			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
 			{
-				if (ExportExtraElementAttributes (attributes, einfo, defaultNamespace, defaultType))
-					continue;
-
-				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
 				if (einfo.MappedType != null) {
 					ExportMapCode (einfo.MappedType, false);
 					RemoveInclude (einfo.MappedType);
 				}
+
+				if (ExportExtraElementAttributes (attributes, einfo, defaultNamespace, defaultType))
+					continue;
+
+				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
 			}
 
 			GenerateElementMember (attributes, member);
