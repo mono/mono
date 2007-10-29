@@ -1,3 +1,9 @@
+2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MessageBox.cs: If the owner is TopMost, then the MessageBox form
+	needs to be TopMost as well, or else the MessageBox is under the form.
+	Patch by George fixes bug #325300.
+
 2007-10-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: When starting a new drag operation, reset the static

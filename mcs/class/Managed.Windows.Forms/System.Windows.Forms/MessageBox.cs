@@ -183,6 +183,9 @@ namespace System.Windows.Forms
 					InitFormsSize ();
 				}
 
+				if (Owner != null)
+					TopMost = Owner.TopMost;
+					
 				this.ShowDialog ();
 
 				return this.DialogResult;
