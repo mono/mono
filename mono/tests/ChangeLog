@@ -1,5 +1,15 @@
 2007-10-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* bug-335131.2.cs: Regression test for bug #335131.
+	It tests the enconding of methods and constructor from
+	a generic types that are called from the same type
+	that defines then.
+
+	* Makefile.am: Added the new test to the suite.
+	
+
+2007-10-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* make_imt_test.sh: added, this script generates
 	an interface with 2000 methods, an implementation and
 	test code that calls all methods. This is enough to
