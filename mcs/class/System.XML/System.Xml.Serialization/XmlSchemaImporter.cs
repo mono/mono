@@ -1173,9 +1173,6 @@ namespace System.Xml.Serialization
 				
 				if (baseMap.IsSimpleType) {
 					simpleType = baseMap.TypeData;
-					// might not be limited to EnumMap depending on XML serializer design, but for now it is.
-					if (baseMap.ObjectMap is EnumMap)
-						map.BaseMap = baseMap;
 				} else {
 					ClassMap baseClassMap = (ClassMap)baseMap.ObjectMap;
 		

@@ -1,5 +1,9 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCodeExporterTests.cs : disable the previous test; it's reverted.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlCodeExporterTests.cs : added test for (part of?) bug #336739,
 	  base simple content enum type output.
 

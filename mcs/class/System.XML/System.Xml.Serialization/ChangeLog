@@ -1,5 +1,11 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MapCodeGenerator.cs, XmlSchemaImporter.cs: revert the previous
+	  change; the type is included in the output, but it should not be
+	  the base type.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MapCodeGenerator.cs, XmlSchemaImporter.cs: when a complexType has
 	  simple content extension/restriction and the simple base type is
 	  schema-defined, it must be written in exported code. Fixed (part
