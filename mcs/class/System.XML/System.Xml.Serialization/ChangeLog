@@ -1,3 +1,10 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MapCodeGenerator.cs, XmlSchemaImporter.cs: when a complexType has
+	  simple content extension/restriction and the simple base type is
+	  schema-defined, it must be written in exported code. Fixed (part
+	  of?) bug #336739.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeTranslator.cs, XmlCustomFormatter.cs : looks like duration is

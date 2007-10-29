@@ -407,6 +407,8 @@ namespace System.Xml.Serialization {
 
 		bool DefinedInBaseMap (XmlTypeMapping map, XmlTypeMapMember member)
 		{
+			if (map.ObjectMap is EnumMap) // FIXME: it is almost just a hack. It may have better check items.
+				return false;
 			if (((ClassMap)map.ObjectMap).FindMember (member.Name) != null)
 				return true;
 			else if (map.BaseMap != null)

@@ -1,3 +1,8 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlCodeExporterTests.cs : added test for (part of?) bug #336739,
+	  base simple content enum type output.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : added test for DataType in [XmlElement].

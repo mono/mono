@@ -960,6 +960,44 @@ namespace MonoTests.System.XmlSerialization
 		}
 #endif
 
+		[Test]
+		public void ExportSimpleContentExtensionEnum ()
+		{
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:b='urn:bar' targetNamespace='urn:bar'>
+  <xs:element name='Foo' type='b:DayOfWeek' />
+  <xs:complexType name='DayOfWeek'>
+    <xs:simpleContent>
+      <xs:extension base='b:WeekDay' />
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name='WeekDay'>
+    <xs:restriction base='xs:string'>
+      <xs:enumeration value='Sunday'/>
+      <xs:enumeration value='Monday'/>
+      <xs:enumeration value='Tuesday'/>
+      <xs:enumeration value='Wednesday'/>
+      <xs:enumeration value='Thursday'/>
+      <xs:enumeration value='Friday'/>
+      <xs:enumeration value='Saturday'/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>";
+			XmlSchema xs = XmlSchema.Read (new StringReader (xsd), null);
+			XmlSchemas xss = new XmlSchemas ();
+			xss.Add (xs);
+			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
+			XmlTypeMapping m = imp.ImportTypeMapping (new XmlQualifiedName ("Foo", "urn:bar"));
+			CodeNamespace cns = new CodeNamespace ();
+			XmlCodeExporter exp = new XmlCodeExporter (cns);
+			exp.ExportTypeMapping (m);
+			CodeTypeDeclaration enumType = null;
+			foreach (CodeTypeDeclaration ctd in cns.Types)
+				if (ctd.Name == "WeekDay")
+					enumType = ctd;
+			Assert.IsNotNull (enumType);
+		}
+
 		CodeNamespace ExportCode (Type type)
 		{
 			XmlReflectionImporter imp = new XmlReflectionImporter ();
