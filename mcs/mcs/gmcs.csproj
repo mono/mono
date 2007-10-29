@@ -27,6 +27,10 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <NoStdLib>false</NoStdLib>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>gmcs</AssemblyName>
+    <RootNamespace>gmcs</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +39,12 @@
     <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>gmcs</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>gmcs</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\build\common\Consts.cs">
-      <Link>Consts.cs</Link>
     </Compile>
     <Compile Include="..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs">
       <Link>CryptoConvert.cs</Link>
@@ -57,109 +66,75 @@
     <Compile Include="..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
       <Link>MonoSymbolWriter.cs</Link>
     </Compile>
-    <Compile Include="..\mcs\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
+    <Compile Include="AssemblyInfo.cs">
     </Compile>
-    <Compile Include="..\mcs\anonymous.cs">
-      <Link>anonymous.cs</Link>
+    <Compile Include="anonymous.cs">
     </Compile>
-    <Compile Include="..\mcs\assign.cs">
-      <Link>assign.cs</Link>
+    <Compile Include="assign.cs">
     </Compile>
-    <Compile Include="..\mcs\attribute.cs">
-      <Link>attribute.cs</Link>
+    <Compile Include="attribute.cs">
     </Compile>
-    <Compile Include="..\mcs\cfold.cs">
-      <Link>cfold.cs</Link>
+    <Compile Include="cfold.cs">
     </Compile>
-    <Compile Include="..\mcs\class.cs">
-      <Link>class.cs</Link>
+    <Compile Include="class.cs">
     </Compile>
-    <Compile Include="..\mcs\codegen.cs">
-      <Link>codegen.cs</Link>
+    <Compile Include="codegen.cs">
     </Compile>
-    <Compile Include="..\mcs\const.cs">
-      <Link>const.cs</Link>
+    <Compile Include="const.cs">
     </Compile>
-    <Compile Include="..\mcs\constant.cs">
-      <Link>constant.cs</Link>
+    <Compile Include="constant.cs">
     </Compile>
-    <Compile Include="..\mcs\convert.cs">
-      <Link>convert.cs</Link>
+    <Compile Include="convert.cs">
     </Compile>
-    <Compile Include="..\mcs\lambda.cs">
-      <Link>lambda.cs</Link>
+    <Compile Include="lambda.cs">
     </Compile>
-    <Compile Include="cs-parser.cs" />
-    <Compile Include="..\mcs\cs-tokenizer.cs">
-      <Link>cs-tokenizer.cs</Link>
+    <Compile Include="gcs-parser.cs" />
+    <Compile Include="cs-tokenizer.cs">
     </Compile>
-    <Compile Include="..\mcs\decl.cs">
-      <Link>decl.cs</Link>
+    <Compile Include="decl.cs">
     </Compile>
-    <Compile Include="..\mcs\delegate.cs">
-      <Link>delegate.cs</Link>
+    <Compile Include="delegate.cs">
     </Compile>
-    <Compile Include="..\mcs\doc.cs">
-      <Link>doc.cs</Link>
+    <Compile Include="doc.cs">
     </Compile>
-    <Compile Include="..\mcs\driver.cs">
-      <Link>driver.cs</Link>
+    <Compile Include="driver.cs">
     </Compile>
-    <Compile Include="..\mcs\ecore.cs">
-      <Link>ecore.cs</Link>
+    <Compile Include="ecore.cs">
     </Compile>
-    <Compile Include="..\mcs\enum.cs">
-      <Link>enum.cs</Link>
+    <Compile Include="enum.cs">
     </Compile>
-    <Compile Include="..\mcs\expression.cs">
-      <Link>expression.cs</Link>
+    <Compile Include="expression.cs">
     </Compile>
-    <Compile Include="..\mcs\flowanalysis.cs">
-      <Link>flowanalysis.cs</Link>
+    <Compile Include="flowanalysis.cs">
     </Compile>
     <Compile Include="generic.cs" />
-    <Compile Include="..\mcs\iterators.cs">
-      <Link>iterators.cs</Link>
+    <Compile Include="iterators.cs">
     </Compile>
-    <Compile Include="..\mcs\literal.cs">
-      <Link>literal.cs</Link>
+    <Compile Include="literal.cs">
     </Compile>
-    <Compile Include="..\mcs\location.cs">
-      <Link>location.cs</Link>
+    <Compile Include="location.cs">
     </Compile>
-    <Compile Include="..\mcs\modifiers.cs">
-      <Link>modifiers.cs</Link>
+    <Compile Include="modifiers.cs">
     </Compile>
-    <Compile Include="..\mcs\namespace.cs">
-      <Link>namespace.cs</Link>
+    <Compile Include="namespace.cs">
     </Compile>
-    <Compile Include="..\mcs\parameter.cs">
-      <Link>parameter.cs</Link>
+    <Compile Include="parameter.cs">
     </Compile>
-    <Compile Include="..\mcs\pending.cs">
-      <Link>pending.cs</Link>
+    <Compile Include="pending.cs">
     </Compile>
-    <Compile Include="..\mcs\report.cs">
-      <Link>report.cs</Link>
+    <Compile Include="report.cs">
     </Compile>
-    <Compile Include="..\mcs\rootcontext.cs">
-      <Link>rootcontext.cs</Link>
+    <Compile Include="rootcontext.cs">
     </Compile>
-    <Compile Include="..\mcs\roottypes.cs">
-      <Link>roottypes.cs</Link>
+    <Compile Include="roottypes.cs">
     </Compile>
-    <Compile Include="..\mcs\statement.cs">
-      <Link>statement.cs</Link>
+    <Compile Include="statement.cs">
     </Compile>
-    <Compile Include="..\mcs\support.cs">
-      <Link>support.cs</Link>
+    <Compile Include="support.cs">
     </Compile>
-    <Compile Include="..\mcs\symbolwriter.cs">
-      <Link>symbolwriter.cs</Link>
+    <Compile Include="symbolwriter.cs">
     </Compile>
-    <Compile Include="..\mcs\typemanager.cs">
-      <Link>typemanager.cs</Link>
+    <Compile Include="typemanager.cs">
     </Compile>
     <Compile Include="linq.cs" />
   </ItemGroup>
