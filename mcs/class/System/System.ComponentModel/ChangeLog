@@ -1,3 +1,10 @@
+2007-10-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AttributeCollection.cs : implemented FromExisting().
+	* Container.cs : implemented ValidateName() support.
+	* ContainerFilterService.cs : FilterComponents() does nothing.
+	* InstanceCreationEditor.cs : implemented get_Text().
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeDescriptor.cs : added missing ObsoleteAttribute.

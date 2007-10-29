@@ -36,9 +36,8 @@ namespace System.ComponentModel
 {
 	public abstract class InstanceCreationEditor
 	{
-		[MonoTODO]
 		public virtual string Text {
-			get { throw new NotImplementedException (); }
+			get { return Locale.GetText ("(New ...)"); }
 		}
 
 		public abstract object CreateInstance (ITypeDescriptorContext context, Type type);

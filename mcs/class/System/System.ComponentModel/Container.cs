@@ -135,7 +135,9 @@ namespace System.ComponentModel {
 					if (component.Site != null) {
 						component.Site.Container.Remove (component);
 					}
-					
+#if NET_2_0
+					ValidateName (component, name);
+#endif
 					component.Site = this.CreateSite (component, name);
 					c.Add (component);
 				}
@@ -143,10 +145,15 @@ namespace System.ComponentModel {
 		}
 
 #if NET_2_0
-		[MonoNotSupported("")]
 		protected virtual void ValidateName (IComponent component, string name)
 		{
-			throw new NotImplementedException ();
+			if (component == null)
+				throw new ArgumentNullException ("component");
+			if (name == null)
+				return;
+			foreach (IComponent ic in c)
+				if (ic.Site != null && ic.Site.Name == name)
+					throw new ArgumentException (String.Format ("There already is a named component '{0}' in this container", name));
 		}
 #endif
 

@@ -1,3 +1,7 @@
+2007-10-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContainerTest.cs : added test for ValidateName().
+
 2007-09-28  Jb Evain  <jbevain@novell.com>
 
 	* TypeConverterTests.cs: test case for bug #329450.

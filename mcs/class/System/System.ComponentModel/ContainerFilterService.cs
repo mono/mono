@@ -36,10 +36,10 @@ namespace System.ComponentModel
 {
 	public abstract class ContainerFilterService
 	{
-		[MonoTODO]
 		public virtual ComponentCollection FilterComponents (ComponentCollection components)
 		{
-			throw new NotImplementedException ();
+			// The default implementation returns the input as is.
+			return components;
 		}
 	}
 }

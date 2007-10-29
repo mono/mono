@@ -59,10 +59,15 @@ namespace System.ComponentModel
 		}
 
 #if NET_2_0
-		[MonoNotSupported("")]
 		public static AttributeCollection FromExisting (AttributeCollection existing, params Attribute [] newAttributes)
 		{
-			throw new NotImplementedException ();
+			if (existing == null)
+				throw new ArgumentNullException ("existing");
+			AttributeCollection ret = new AttributeCollection ();
+			ret.attrList.AddRange (existing.attrList);
+			if (newAttributes != null)
+				ret.attrList.AddRange (newAttributes);
+			return ret;
 		}
 #endif
 

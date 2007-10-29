@@ -105,5 +105,18 @@ namespace MonoTests.System.ComponentModel
 		{
 			_container.Add (new TestComponent ());
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ValidateName ()
+		{
+			TestContainer container = new TestContainer ();
+			TestComponent c1 = new TestComponent ();
+			container.Add (c1, "dup");
+			TestComponent c2 = new TestComponent ();
+			container.Add (c2, "dup");
+		}
+#endif
 	}
 }
