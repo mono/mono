@@ -154,18 +154,30 @@ namespace System.Text.RegularExpressions
 				partMatcher = groupNumPattern1.matcher ((CharSequence) (object) parts [i]);
 				if (partMatcher.find ()) {
 					int netGroupNumber = int.Parse (partMatcher.group (1));
-					javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = netGroupNumber;
-					if (javaGroupNumberToNetGroupNumber [capturedGroupsCount] != netGroupNumber) {
-						++sameGroupsCounter;
+					if ((options & RegexOptions.ExplicitCapture) == RegexOptions.ExplicitCapture) {
+						namedGroups [namedGroupsCount++] = partMatcher.group (1);
+						javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = -1;						
+					}
+					else {
+						javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = netGroupNumber;
+						if (javaGroupNumberToNetGroupNumber [capturedGroupsCount] != netGroupNumber) {
+							++sameGroupsCounter;
+						}
 					}
 					continue;
 				}
 				partMatcher = groupNumPattern2.matcher ((CharSequence) (object) parts [i]);
 				if (partMatcher.find ()) {
 					int netGroupNumber = int.Parse (partMatcher.group (1));
-					javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = netGroupNumber;
-					if (javaGroupNumberToNetGroupNumber [capturedGroupsCount] != netGroupNumber) {
-						++sameGroupsCounter;
+					if ((options & RegexOptions.ExplicitCapture) == RegexOptions.ExplicitCapture) {
+						namedGroups [namedGroupsCount++] = partMatcher.group (1);
+						javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = -1;
+					}
+					else {
+						javaGroupNumberToNetGroupNumber [++capturedGroupsCount] = netGroupNumber;
+						if (javaGroupNumberToNetGroupNumber [capturedGroupsCount] != netGroupNumber) {
+							++sameGroupsCounter;
+						}
 					}
 					continue;
 				}

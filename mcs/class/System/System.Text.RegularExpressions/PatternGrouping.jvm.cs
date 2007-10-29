@@ -74,11 +74,11 @@ namespace System.Text.RegularExpressions
 			this._groupCount = -1;
 		}
 
-		internal void SetGroups (int groupCount) {
-			this._groupCount = groupCount;
+		internal void SetGroups (int netGroupCount, int javaGroupCount) {
+			this._groupCount = netGroupCount;
 
 			_groupNameToNumberMap = new Hashtable (_groupCount + 1);
-			_javaToNetGroupNumbersMap = new int [_groupCount + 1];
+			_javaToNetGroupNumbersMap = new int [javaGroupCount + 1];
 			_groupNumberToNameMap = new string [_groupCount + 1];
 			_netToJavaNumbersMap = new int [_groupCount + 1];
 
@@ -87,6 +87,9 @@ namespace System.Text.RegularExpressions
 				_javaToNetGroupNumbersMap [i] = i;
 				_groupNumberToNameMap [i] = i.ToString ();
 				_netToJavaNumbersMap [i] = i;
+			}
+			for (int i = _groupCount + 1; i <= javaGroupCount; ++i) {
+				_javaToNetGroupNumbersMap [i] = -1;
 			}
 		}
 
@@ -104,26 +107,25 @@ namespace System.Text.RegularExpressions
 
 			if ((options & RegexOptions.ExplicitCapture) == RegexOptions.ExplicitCapture) {
 				FillExplicitGroupMaps (namedGroups,
-				ref capturedGroupsCount,
-				ref sameGroupsCounter,
+				capturedGroupsCount,
+				sameGroupsCounter,
 				options);
 				return;
 			}
 			else {
 				FillImplicitGroupMaps (namedGroups,
 					noNamedGroupNumber + 1,
-					ref capturedGroupsCount,
-					ref sameGroupsCounter,
+					capturedGroupsCount,
+					sameGroupsCounter,
 					options);
 			}
 
-			_sameGroupsFlag = (sameGroupsCounter != 0);
 		}
 
 		private void FillImplicitGroupMaps (string [] namedGroups,
 			int namedGroupNumber,
-			ref int capturedGroupsCount,
-			ref int sameGroupsCounter,
+			int capturedGroupsCount,
+			int sameGroupsCounter,
 			RegexOptions options) {
 			int addedNamedGroupsCount = 0;
 
@@ -151,12 +153,13 @@ namespace System.Text.RegularExpressions
 				_netToJavaNumbersMap [_javaToNetGroupNumbersMap [i]] = i;
 			}
 			_groupCount = capturedGroupsCount - sameGroupsCounter;
+			_sameGroupsFlag = (sameGroupsCounter != 0);
 
 		}
 
 		private void FillExplicitGroupMaps (string [] namedGroups,
-			ref int capturedGroupsCount,
-			ref int sameGroupsCounter,
+			int capturedGroupsCount,
+			int sameGroupsCounter,
 			RegexOptions options) {
 			int addedNamedGroupsCount = 0;
 			int namedGroupNumber = 1;
@@ -187,6 +190,7 @@ namespace System.Text.RegularExpressions
 				_netToJavaNumbersMap [_javaToNetGroupNumbersMap [i]] = i;
 			}
 			_groupCount = capturedGroupsCount - sameGroupsCounter - nonCapturedGroupsNumber;
+			_sameGroupsFlag = (sameGroupsCounter != 0);
 		}
 	}
 }

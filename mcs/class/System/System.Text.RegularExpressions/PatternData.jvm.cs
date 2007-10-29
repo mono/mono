@@ -101,12 +101,13 @@ namespace System.Text.RegularExpressions
 				return;
 			}
 
+			Matcher m = JavaPattern.matcher ((CharSequence) (object) String.Empty);
+
 			if ((options & RegexOptions.ExplicitCapture) == RegexOptions.ExplicitCapture) {
-				_patternGrouping.SetGroups (0);
+				_patternGrouping.SetGroups (0, m.groupCount());
 			}
 			else {
-				Matcher m = JavaPattern.matcher ((CharSequence) (object) String.Empty);
-				_patternGrouping.SetGroups (m.groupCount ());
+				_patternGrouping.SetGroups (m.groupCount(), m.groupCount ());
 			}
 		}
 

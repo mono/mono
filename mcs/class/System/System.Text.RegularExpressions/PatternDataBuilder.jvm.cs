@@ -68,7 +68,7 @@ namespace System.Text.RegularExpressions
 		}
 
 		private static void FillMonoConstructTypesList () {
-
+			_monoConstructTypesList.Add (new CategoryConstruct ());
 			_monoConstructTypesList.Add (new BalancingGroupConstruct ());
 			_monoConstructTypesList.Add (new AlternationBackReferenceConstruct ());
 			_monoConstructTypesList.Add (new AlternationExpressionConstruct ());
@@ -81,7 +81,6 @@ namespace System.Text.RegularExpressions
 			//The order is meaningful
 			_jvmOrderedConstructTypesList.Add (new CommentsConstruct ());
 			_jvmOrderedConstructTypesList.Add (new NamingGroupsConstruct ());
-			_jvmOrderedConstructTypesList.Add (new CategoryConstruct ());
 			_jvmOrderedConstructTypesList.Add (new ReplacedRegularCharacterConstruct ());
 			_jvmOrderedConstructTypesList.Add (new BackReferenceConstruct ());
 		}

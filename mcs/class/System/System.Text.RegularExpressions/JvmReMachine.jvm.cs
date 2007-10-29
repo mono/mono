@@ -155,8 +155,12 @@ namespace System.Text.RegularExpressions
 		}
 
 		public override string Result (string replacement, Match match) {
+			if (match.Length == 0)
+				return String.Empty;
 
-			return Replace (match.Regex, match.Value, replacement, 1, 0);
+			string result = Replace (match.Regex, match.Text, replacement, 1, 0);
+			return result.Substring (match.Index, result.Length - (match.Text.Length - match.Length));
+
 		}
 
 		#endregion Implementations of IMachine Interface
