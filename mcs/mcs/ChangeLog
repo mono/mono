@@ -1,3 +1,10 @@
+2007-10-29  Marek Safar  <marek.safar@gmail.com>
+ 
+ 	A fix for bug #334652
+ 	* ecore.cs (MethodGroupExpr.OverloadResolve): Do also lookup for
+ 	extension methods when we have not found the best candidate in normal
+ 	container.
+
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
 	* AssemblyInfo.cs: Keep up-to-date.
