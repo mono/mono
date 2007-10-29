@@ -68,6 +68,8 @@ namespace System.Text.RegularExpressions {
 				throw new ArgumentNullException ("replacement");
 			if (replacement.Length == 0)
 				throw new NotSupportedException ();
+			if (machine == null)
+				throw new NotSupportedException ("Result cannot be called on failed Match.");
 
 			return machine.Result (replacement, this);
 		}
