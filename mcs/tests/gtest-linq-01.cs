@@ -61,12 +61,26 @@ namespace from
 				from i in i2 group i by 2 into i9
 				from i in i2 group i by 2 into i9
 				select i9;
+				
+			// NESTED
+			var e3 = from a in
+					from b in i2
+					select b
+				orderby a
+				select a;
 
 			int from = 0;
 			bool let = false;
 			
 			// TODO: Re-enable when we fix cast of query expression
 			//object o = (object)from i in i2 select i;
+		}
+		
+		void Foo (int from, bool where)
+		{
+			int Foo = 0;
+			if (from < Foo) // This tests generics micro-parser awareness
+				return;
 		}
 		
 		int foo;
