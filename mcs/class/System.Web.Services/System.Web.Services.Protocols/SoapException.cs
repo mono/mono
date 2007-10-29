@@ -136,6 +136,7 @@ namespace System.Web.Services.Protocols
 
 #if NET_2_0
 		protected SoapException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 			actor = info.GetString ("actor");
 			code = (XmlQualifiedName) info.GetValue ("code", typeof (XmlQualifiedName));
