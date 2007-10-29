@@ -1,5 +1,10 @@
 2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Don't try to resize the listbox when we are DropDownStyle
+	simple.  Fixes the last part of bug #322668.
+
+2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MessageBox.cs: If the owner is TopMost, then the MessageBox form
 	needs to be TopMost as well, or else the MessageBox is under the form.
 	Patch by George fixes bug #325300.

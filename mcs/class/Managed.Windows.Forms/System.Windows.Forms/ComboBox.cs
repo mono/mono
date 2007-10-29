@@ -2136,7 +2136,8 @@ namespace System.Windows.Forms
 				if (owner.Items.Count <= owner.MaxDropDownItems) {
 					if (vscrollbar_ctrl != null)
 						vscrollbar_ctrl.Visible = false;
-					height = owner.ItemHeight * owner.items.Count;
+					if (owner.DropDownStyle != ComboBoxStyle.Simple)
+						height = owner.ItemHeight * owner.items.Count;
 				} else {
 					/* Need vertical scrollbar */
 					if (vscrollbar_ctrl == null) {
