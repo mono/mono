@@ -1,3 +1,14 @@
+2007-10-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_generic_class_get_class): Set klass->property.count as well.
+	Call setup_supertypes () after klass->parent is set.
+	(mono_class_setup_properties): Enable this to work on dynamic generic classes.
+
+	* reflection.c (mono_type_get_object): Only return a MonoGenericClass object
+	for inflated instances of not yet created dynamic generic classes.
+	(ctorbuilder_to_mono_method): Handle the case when this is called multiple
+	times from inflated_method.
+	(methodbuilder_to_mono_method): Ditto.
 
 Mon Oct 29 21:02:53 CET 2007 Paolo Molaro <lupus@ximian.com>
 
