@@ -270,7 +270,9 @@ System.Text.RegularExpressions/RegexCompilationInfoTest.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs
+System.Text.RegularExpressions/RegexMatchTests.cs
 System.Text.RegularExpressions/RegexReplace.cs
+System.Text.RegularExpressions/RegexResultTests.cs
 System.Timers/TimersDescriptionAttributeTest.cs
 System.Timers/TimerTest.cs
 System.Web/AspNetHostingPermissionAttributeTest.cs

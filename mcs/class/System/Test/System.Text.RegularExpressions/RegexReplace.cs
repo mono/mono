@@ -66,6 +66,13 @@ namespace MonoTests.System.Text.RegularExpressions {
 			new testcase ("314 1592 65358",		@"\d\d\d\d|\d\d\d", "a",	"a a a8"	),
 			new testcase ("2 314 1592 65358", 	@"\d\d\d\d|\d\d\d", "a",	"2 a a a8"	),
 			new testcase ("<i>am not</i>", 		"<(.+?)>", 	"[$0:$1]",	"[<i>:i]am not[</i>:/i]"),
+			new testcase ("texts",	"(?<foo>e)(x)", 	"${foo}$1$2$_",		"texetextsts" 	),
+			new testcase ("texts",	"(?<foo>e)(x)", 	"${foo}$1$2$`",		"texetts" 	),
+			new testcase ("texts",	"(?<foo>e)(x)", 	"${foo}$1$2$'",		"texetsts" 	),
+			new testcase ("texts",	"(?<foo>e)(x)", 	"${foo}$1$2$&",		"texeexts" 	),
+			//new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", 	"${S}$11$1", "77F1" 	),
+			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", 	"${S}$11$1", "F2345678910L71" 	),
+			new testcase ("F2345678910LL1",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", 	"${S}$11$1", "${S}LF1" 	),
 		};
 
 		[Test]
