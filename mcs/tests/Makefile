@@ -54,13 +54,13 @@ test-local: casts-boot.exe
 
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
-COMPILER = $(topdir)/gmcs/gmcs.exe
 TEST_PATTERN = '*test-*.cs'
 else
 COMPILER_NAME = mcs
-COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TEST_PATTERN = 'test-*.cs'
 endif
+
+COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 
 TEST_ILS := $(wildcard *-lib.il)
 

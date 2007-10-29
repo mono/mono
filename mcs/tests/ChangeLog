@@ -1,3 +1,7 @@
+2007-10-29  Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: Fixed gmcs location.
+
 2007-10-10  Jb Evain  <jbevain@novell.com>
 
 	* test-594.cs: add test for asterisk in assembly version.
