@@ -1,3 +1,8 @@
+2007-10-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Avoid
+	creating a jump trampoline for dynamic methods.
+
 2007-10-29 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* reflection.c (mono_image_create_token): Correctly encode methods and constructors of
