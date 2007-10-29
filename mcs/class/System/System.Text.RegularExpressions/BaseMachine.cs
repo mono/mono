@@ -2,9 +2,9 @@
 // BaseMachine.jvm.cs
 //
 // Author:
-//	Arina Itkes  <arinai@mainsoft.com>
-//
-// Copyright (C) 2007 Mainsoft, Inc.
+// author:	Dan Lewis (dlewis@gmx.co.uk)
+// 		(c) 2002
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //

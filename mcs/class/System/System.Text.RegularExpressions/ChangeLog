@@ -1,7 +1,27 @@
+2007-10-29 Arina Itkes <arinai@mainsoft.com>
+
+	* Regex.cs: Moving creation of Regex machine to ctor.
+	It increases an initialization time of Regex but reduce a 
+	process time while APIs calling. Also it solves the problem 
+	of missed multi thread synchronization.
+
+2007-10-29 Arina Itkes <arinai@mainsoft.com>
+	
+	* Match.cs: Fix for Result method of Match. Throwing an exception 
+	if Result method was called on a failed Match. 
+
 2007-10-24  Juraj Skripsky <js@hotfeet.ch>
 
 	* Regex.cs: Store and re-use IMachine, no need to re-instantiate
 	it every time we're matching.
+	
+2007-10-24 Arina Itkes <arinai@mainsoft.com>
+
+	* Regex.cs Match.cs arch.cs compiler.cs interpreter.cs
+	 Refactoring of Interpreter with extracting of base abstract class 
+	 that executes some methods that were moved from Regex and Match classes.
+	 Added a field that maps group numbers to group names in Regex for 
+	 improvement of performance of GroupNameFromNumber method.
 
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
