@@ -1,3 +1,14 @@
+2007-10-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* make_imt_test.sh: added, this script generates
+	an interface with 2000 methods, an implementation and
+	test code that calls all methods. This is enough to
+	stress the IMT machinery, as thunks should have more
+	than 100 methods with the current IMT table size.
+ 
+	* Makefile.am: added the generated imt test and
+	associated rules to use the script to create it.
+
 2007-10-20  William Holmes  <billholmes54@gmail.com>
 
 	* pinvoke2.cs, libtest.c Adding test cases for marshaling
