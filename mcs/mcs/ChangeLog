@@ -1,3 +1,7 @@
+2007-10-29  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_2_0_bootstrap/mcs.exe.config): Copy gmcs.exe.config.
+
 2007-10-29  Marek Safar  <marek.safar@gmail.com>
  
  	A fix for bug #334652
