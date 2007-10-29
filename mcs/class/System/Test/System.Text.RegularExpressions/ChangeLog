@@ -1,3 +1,11 @@
+2007-10-29 Arina Itkes <arinai@mainsoft.com>
+
+	* RegexReplace.cs RegxMatchTests.cs RegexResultTests.cs
+	New tests for Regex: 
+		- for Result method,
+		- for patterns with number of groups more than 10
+		- for patterns with ExpicitCapture options
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegexBugs.cs: No longer derive from deprecated Assertion class.
