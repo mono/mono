@@ -1,3 +1,9 @@
+2007-10-29 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* reflection.c (mono_image_create_token): Correctly encode methods and constructors of
+	generic TypeBuilders when called from another method of the same type (bug #335131).
+
+
 2007-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (methodbuilder_to_mono_method): Revert the last change as it
