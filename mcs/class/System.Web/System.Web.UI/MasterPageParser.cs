@@ -86,9 +86,12 @@ namespace System.Web.UI
 						ThrowParseException ("Could not load type '" + type + "'.");
 				} else {
 					string path = GetString (atts, "VirtualPath", null);
-					if (path != null)
-						masterType = MasterPageParser.GetCompiledMasterType (path, MapPath (path), HttpContext.Current);
-					else
+					if (path != null) {
+						string mappedPath = MapPath (path);
+						masterType = MasterPageParser.GetCompiledMasterType (path, mappedPath,
+												     HttpContext.Current);
+						AddDependency (mappedPath);
+					} else
 						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");				}
 				AddAssembly (masterType.Assembly, true);
 			}

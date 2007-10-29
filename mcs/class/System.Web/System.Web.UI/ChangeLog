@@ -1,3 +1,14 @@
+2007-10-29  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: add the file pointed to by the Src or
+	CodeFile attributes to the list of page cache dependencies.
+
+	* PageParser.cs, UserControlParser.cs: Add the MasterPage file to
+	the list of page cache dependencies.
+
+	* MasterPageParser.cs: add the source pointed to by VirtualPath to
+	the list of cache dependencies.
+
 2007-10-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientScriptManager.cs: added two constants to define start/end

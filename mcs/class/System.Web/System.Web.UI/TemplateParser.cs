@@ -578,6 +578,9 @@ namespace System.Web.UI {
 			if (inherits != null)
 				SetBaseType (inherits);
 #endif
+			if (src != null)
+				AddDependency (MapPath (src, false));
+			
 			className = GetString (atts, "ClassName", null);
 			if (className != null) {
 #if NET_2_0

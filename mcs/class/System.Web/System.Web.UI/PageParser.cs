@@ -349,9 +349,12 @@ namespace System.Web.UI
 			masterPage = GetString (atts, "MasterPageFile", masterPage);
 			
 			// Make sure the page exists
-			if (!String.IsNullOrEmpty (masterPage))
-				MasterPageParser.GetCompiledMasterType (masterPage, MapPath (masterPage), HttpContext.Current);
-
+			if (!String.IsNullOrEmpty (masterPage)) {
+				string path = MapPath (masterPage);
+				MasterPageParser.GetCompiledMasterType (masterPage, path, HttpContext.Current);
+				AddDependency (path);
+			}
+			
 			title = GetString(atts, "Title", null);
 
 			theme = GetString (atts, "Theme", theme);
