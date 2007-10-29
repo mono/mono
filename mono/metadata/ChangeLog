@@ -1,8 +1,11 @@
 2007-10-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_vtable): Find the inflated methods in the
+	inflated class instead of inflating them again.
+	
 	* class.c (mono_class_setup_vtable): Inflate the override methods in the 
 	dynamic case.
-	
+
 	* class.c (mono_generic_class_get_class): Set klass->property.count as well.
 	Call setup_supertypes () after klass->parent is set.
 	(mono_class_setup_properties): Enable this to work on dynamic generic classes.
