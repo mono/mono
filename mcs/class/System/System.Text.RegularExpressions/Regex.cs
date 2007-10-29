@@ -221,6 +221,7 @@ namespace System.Text.RegularExpressions {
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
 				this._groupNumberToNameMap = this.machineFactory.NamesMapping;
+				this.machine = this.machineFactory.NewInstance ();
 			}
 		}
 #endif
@@ -231,6 +232,7 @@ namespace System.Text.RegularExpressions {
 			this.group_count = machineFactory.GroupCount;
 			this.mapping = machineFactory.Mapping;
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
+			this.machine = this.machineFactory.NewInstance ();
 		}
 
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
@@ -499,8 +501,6 @@ namespace System.Text.RegularExpressions {
 		
 		private IMachine Machine {
 			get {
-				if (machine == null)
-					machine = machineFactory.NewInstance ();
 				return machine;
 			}
 		}
