@@ -1670,8 +1670,12 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
 			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
 
-			if ((cp.ExStyle & (int) WindowExStyles.WS_EX_TOOLWINDOW) > 0 || 
-				((cp.WindowStyle & (WindowStyles.WS_CAPTION)) != WindowStyles.WS_CAPTION && cp.control is Form))
+			// From MSDN:
+			// Certain window data is cached, so changes you make using SetWindowLong
+			// will not take effect until you call the SetWindowPos function. Specifically, 
+			// if you change any of the frame styles, you must call SetWindowPos with
+			// the SWP_FRAMECHANGED flag for the cache to be updated properly.
+			if (cp.control is Form)
 				XplatUI.RequestNCRecalc (handle);
 		}
 

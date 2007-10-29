@@ -1,5 +1,11 @@
 2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUIWin32.cs: Always call SetWindowPos with SWP_FRAMECHANGED flag
+	after calling SetWindowLong for a form, to force an immediate NC refresh.
+	Fixes first part of bug #325150.
+
+2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Don't try to resize the listbox when we are DropDownStyle
 	simple.  Fixes the last part of bug #322668.
 
