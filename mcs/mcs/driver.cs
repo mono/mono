@@ -1402,7 +1402,6 @@ namespace Mono.CSharp
 					
 					case "linq":
 						RootContext.Version = LanguageVersion.LINQ;
-						Tokenizer.InitializeLinqKeywords ();
 						return true;
 #endif
 				}

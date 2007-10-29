@@ -47,7 +47,7 @@ namespace Mono.CSharp
 		public int parsing_block;
 
 #if GMCS_SOURCE
-		bool query_parsing;
+		internal int query_parsing;
 #endif
 		
 		static bool IsLinqEnabled {
@@ -394,12 +394,8 @@ namespace Mono.CSharp
 			AddKeyword ("partial", Token.PARTIAL);
 #if GMCS_SOURCE
 			AddKeyword ("where", Token.WHERE);
-#endif
-		}
 
-#if GMCS_SOURCE
-		public static void InitializeLinqKeywords ()
-		{
+			// LINQ keywords
 			AddKeyword ("from", Token.FROM);
 			AddKeyword ("join", Token.JOIN);
 			AddKeyword ("on", Token.ON);
@@ -412,8 +408,8 @@ namespace Mono.CSharp
 			AddKeyword ("ascending", Token.ASCENDING);
 			AddKeyword ("descending", Token.DESCENDING);
 			AddKeyword ("into", Token.INTO);
-		}
 #endif
+		}
 
 		//
 		// Class initializer
@@ -455,13 +451,16 @@ namespace Mono.CSharp
 			if (!handle_assembly && res == Token.ASSEMBLY)
 				return -1;
 #if GMCS_SOURCE
-			if (IsLinqEnabled && !lambda_arguments_parsing) {
-				//
-				// A query expression is any expression that starts with `from identifier'
-				// followed by any token except ; , =
-				// 
-				if (!query_parsing && res == Token.FROM) {
+			//
+			// A query expression is any expression that starts with `from identifier'
+			// followed by any token except ; , =
+			// 
+			if (query_parsing == 0) {
+				if (res == Token.FROM) {
 					PushPosition ();
+					// HACK: to disable generics micro-parser, because PushPosition does not
+					// store identifiers array
+					parsing_generic_less_than = 1;
 					switch (token ()) {
 						case Token.IDENTIFIER:
 						case Token.INT:
@@ -476,23 +475,29 @@ namespace Mono.CSharp
 						case Token.UINT:
 						case Token.ULONG:
 							int next_token = token ();
-							query_parsing = next_token != Token.SEMICOLON && next_token != Token.COMMA &&
-								next_token != Token.EQUALS;
+							if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
+								goto default;
+
+							++query_parsing;
+							if (RootContext.Version <= LanguageVersion.ISO_2)
+								Report.FeatureIsNotAvailable (Location, "query expressions");
 							break;
 						case Token.VOID:
 							Expression.Error_VoidInvalidInTheContext (Location);
-							break;						
+							break;
+						default:
+							PopPosition ();
+							return -1;
 					}
 					PopPosition ();
+					return res;
 				}
 
-				if (!query_parsing && res > Token.QUERY_FIRST_TOKEN && res < Token.QUERY_LAST_TOKEN)
+				if (res > Token.QUERY_FIRST_TOKEN && res < Token.QUERY_LAST_TOKEN)
 					return -1;
-
-				return res;
 			}
 
-			if (!handle_where && res == Token.WHERE)
+			if (res == Token.WHERE && !handle_where && query_parsing == 0)
 				return -1;
 #endif
 			return res;
@@ -676,12 +681,6 @@ namespace Mono.CSharp
 			else
 				nullable_pos = -1;
 		}
-		
-		public bool QueryParsing {
-			set {
-				query_parsing = value;
-			}
-		}		
 		
 		bool parse_generic_dimension (out int dimension)
 		{

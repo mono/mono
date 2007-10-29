@@ -5428,13 +5428,18 @@ resource_acquisition
 // LINQ
 
 query_expression
-	: first_from_clause  query_body
+	: first_from_clause
 	  {
-		lexer.QueryParsing = false;
-
+		++lexer.query_parsing;
+	  }
+	  query_body
+	  {
+		if (--lexer.query_parsing == 1)
+			lexer.query_parsing = 0;
+			
 		Linq.AQueryClause from = $1 as Linq.AQueryClause;
 			
-		from.Tail.Next = (Linq.AQueryClause)$2;
+		from.Tail.Next = (Linq.AQueryClause)$3;
 		$$ = from;
 		
 		current_block.SetEndLocation (lexer.Location);
