@@ -128,7 +128,7 @@ namespace Mono.Mozilla
 				return;
 			BindingInfo info = getBinding (control);
 
-			gluezilla_deactivate (info.gluezilla);
+			gluezilla_blur (info.gluezilla);
 		}
 
 		public static void Activate (IWebBrowser control)
