@@ -1,3 +1,7 @@
+2007-10-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPath.cs: Remove some TODO specific to libgdiplus.
+
 2007-05-21  Adar Wesley <adarw@mainsoft.com>
 
 	* Matrix.jvm.cs: changed MemberwiseClone to clone.

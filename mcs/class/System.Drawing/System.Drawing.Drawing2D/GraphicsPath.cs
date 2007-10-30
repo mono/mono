@@ -9,7 +9,7 @@
 //   Ravindra (rkumar@novell.com)
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -728,19 +728,16 @@ namespace System.Drawing.Drawing2D
                 	return IsOutlineVisible (x, y, pen, null);
                 }  		
 		
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 		
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
 		{
                 	return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
                 }  		
 				
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
 			if (pen == null)
@@ -755,7 +752,6 @@ namespace System.Drawing.Drawing2D
                         return result;
                 }  		
 
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
 			if (pen == null)
@@ -790,19 +786,16 @@ namespace System.Drawing.Drawing2D
                 	return IsVisible (x, y, null);
                 }  		                
                 
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (Point pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                 
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (PointF pt, Graphics graphics)
                 {
                 	return IsVisible (pt.X, pt.Y, graphics);
                 }  		
                                 
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (int x, int y, Graphics graphics)
                 {
                         bool retval;
@@ -816,7 +809,6 @@ namespace System.Drawing.Drawing2D
                         return retval;
                 }  		
                 
-                [MonoTODO ("The Graphics parameter is ignored when using libgdiplus.")]
                 public bool IsVisible (float x, float y, Graphics graphics)
                 {
                         bool retval;
