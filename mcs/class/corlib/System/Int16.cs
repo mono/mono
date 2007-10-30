@@ -144,9 +144,9 @@ namespace System {
 						if ((d > (MaxValue % 10)) && (sign == 1 || (d > ((MaxValue % 10) + 1))))
 							goto overflow;
 						if (sign == -1)
-							val = (val * sign * 10) - d;
+							val = (short) ((val * sign * 10) - d);
 						else
-							val = (val * 10) + d;
+							val = (short) ((val * 10) + d);
 
 						if (Int32.ProcessTrailingWhitespace (tryParse, s, i + 1, ref exc)){
 							result = val;
@@ -154,7 +154,7 @@ namespace System {
 						}
 						goto overflow;
 					} else 
-						val = val * 10 + d;
+						val = (short) (val * 10 + d);
 					
 					
 					digits_seen = true;
@@ -169,7 +169,7 @@ namespace System {
 			}
 			
 			if (sign == -1)
-				result = val * sign;
+				result = (short) (val * sign);
 			else
 				result = val;
 
