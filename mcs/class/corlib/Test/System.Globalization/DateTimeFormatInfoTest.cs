@@ -89,6 +89,18 @@ namespace MonoTests.System.Globalization
 			Assert.IsFalse (object.ReferenceEquals (monthNamesA, monthNamesB), "#B2");
 		}
 
+		[Test]
+		public void TestSpecificCultureFormats_es_ES ()
+		{
+			CultureInfo ci = new CultureInfo ("es-ES");
+			DateTimeFormatInfo di = ci.DateTimeFormat;
+			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy", di.LongDatePattern, "#1");
+			Assert.AreEqual ("H:mm:ss", di.LongTimePattern, "#2");
+			Assert.AreEqual ("dddd, dd' de 'MMMM' de 'yyyy H:mm:ss", di.FullDateTimePattern, "#3");
+			Assert.AreEqual ("MMMM' de 'yyyy", di.YearMonthPattern, "#4");
+			Assert.AreEqual ("dd MMMM", di.MonthDayPattern, "#5");
+		}
+
 #if !TARGET_JVM
 		[Test]
 		public void Bug78569 ()
