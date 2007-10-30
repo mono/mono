@@ -1,3 +1,7 @@
+2007-10-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpUtility.cs: fixed UrlPathEncode.
+
 2007-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StaticFileHandler.cs: Modified 404 message to match MS.
