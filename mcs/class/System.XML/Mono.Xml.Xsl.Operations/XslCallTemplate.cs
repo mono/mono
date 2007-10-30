@@ -47,6 +47,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("call-template", "name");
+
 			c.AssertAttribute ("name");
 			name = c.ParseQNameAttribute ("name");
 			

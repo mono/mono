@@ -53,14 +53,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (nsDecls.Count == 0)
 				nsDecls = null;
 
-			if (c.Input.MoveToFirstAttribute ())
-			{
-				do {
-					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "use-attribute-sets")
-						throw new XsltCompileException ("Unrecognized attribute \"" + c.Input.Name + "\" in XSLT copy element", null, c.Input);
-				} while (c.Input.MoveToNextAttribute ());
-				c.Input.MoveToParent ();
-			}
+			c.CheckExtraAttributes ("copy", "use-attribute-sets");
 
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			

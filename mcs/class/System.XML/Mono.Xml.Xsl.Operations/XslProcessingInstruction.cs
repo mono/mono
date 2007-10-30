@@ -50,15 +50,9 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (this.DebugInput);
 
-			name = c.ParseAvtAttribute ("name");
+			c.CheckExtraAttributes ("processing-instruction", "name");
 
-			if (c.Input.MoveToFirstAttribute ()) {
-				do {
-					if (c.Input.NamespaceURI == String.Empty && c.Input.LocalName != "name")
-						throw new XsltCompileException ("Invalid attribute \"" + c.Input.Name + "\"", null, c.Input);
-				} while (c.Input.MoveToNextAttribute ());
-				c.Input.MoveToParent ();
-			}
+			name = c.ParseAvtAttribute ("name");
 
 			if (!c.Input.MoveToFirstChild ()) return;
 			

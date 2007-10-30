@@ -1,3 +1,8 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: it somehow does not work fine unless nunit-console.exe is
+	  here. So just copy it here when building the test.
+
 2006-08-15  Andrew Skiba <andrews@mainsoft.com>
 
 	* knownFailures.jvm.cs: add false alarm to the knownFailures

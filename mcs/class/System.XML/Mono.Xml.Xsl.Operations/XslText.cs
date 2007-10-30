@@ -52,6 +52,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (this.DebugInput);
 
+			c.CheckExtraAttributes ("text", "disable-output-escaping");
+
 			this.text = c.Input.Value;
 			
 			if (c.Input.NodeType == XPathNodeType.Element)

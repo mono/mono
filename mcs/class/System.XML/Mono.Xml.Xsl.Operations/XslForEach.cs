@@ -49,6 +49,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("for-each", "select");
+
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			ArrayList sorterList = null;

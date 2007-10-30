@@ -54,6 +54,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("element", "name", "namespace", "use-attribute-sets");
+
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
 			nsDecls = c.GetNamespacesToCopy ();

@@ -56,6 +56,9 @@ namespace Mono.Xml.Xsl.Operations {
 
 			XPathNavigator nav = c.Input.Clone ();
 			nsDecls = c.GetNamespacesToCopy ();
+
+			c.CheckExtraAttributes ("attribute", "name", "namespace");
+
 			name = c.ParseAvtAttribute ("name");
 			if (name == null)
 				throw new XsltCompileException ("Attribute \"name\" is required on XSLT attribute element", null, c.Input);

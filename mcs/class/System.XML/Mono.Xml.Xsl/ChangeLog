@@ -1,3 +1,9 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : added CheckExtraAttributes() to check invalid
+	  attributes on stylesheet component elements.
+	  Use it in xsl:sort too.
+
 2007-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericOutputter.cs : fixed possible conflict for auto-filled

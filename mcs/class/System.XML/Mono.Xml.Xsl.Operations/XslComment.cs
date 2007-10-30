@@ -48,13 +48,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
-			if (c.Input.MoveToFirstAttribute ()) {
-				do {
-					if (c.Input.NamespaceURI == String.Empty)
-						throw new XsltCompileException ("Invalid attribute \"" + c.Input.Name + "\"", null, c.Input);
-				} while (c.Input.MoveToNextAttribute ());
-				c.Input.MoveToParent ();
-			}
+			c.CheckExtraAttributes ("comment");
 
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent (XPathNodeType.Comment);

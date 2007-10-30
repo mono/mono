@@ -48,6 +48,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("fallback");
+
 			if (!c.Input.MoveToFirstChild ()) return;
 			children = c.CompileTemplateContent ();
 			c.Input.MoveToParent ();

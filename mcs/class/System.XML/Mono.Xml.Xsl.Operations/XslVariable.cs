@@ -49,20 +49,10 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public XslVariableInformation (Compiler c)
 		{
+
+			c.CheckExtraAttributes (c.Input.LocalName, "name", "select");
+
 			c.AssertAttribute ("name");
-			c.Input.MoveToFirstAttribute ();
-			do {
-				if (c.Input.NamespaceURI != String.Empty)
-					continue;
-				switch (c.Input.LocalName) {
-				case "name":
-				case "select":
-					break;
-				default:
-					throw new XsltCompileException ("Invalid attribute " + c.Input.Name, null, c.Input);
-				}
-			} while (c.Input.MoveToNextAttribute ());
-			c.Input.MoveToParent ();
 
 			name = c.ParseQNameAttribute ("name");
 			try {

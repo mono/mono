@@ -68,6 +68,8 @@ namespace Mono.Xml.Xsl.Operations
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (this.DebugInput);
 
+			c.CheckExtraAttributes ("message", "terminate");
+
 			terminate = c.ParseYesNoAttribute ("terminate", false);
 			
 			if (!c.Input.MoveToFirstChild ()) return;

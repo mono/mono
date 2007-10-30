@@ -41,6 +41,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public XslApplyImports (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
+			c.CheckExtraAttributes ("apply-imports");
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 		}

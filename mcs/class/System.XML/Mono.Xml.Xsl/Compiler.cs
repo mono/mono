@@ -136,6 +136,25 @@ namespace Mono.Xml.Xsl
 			get { return debugger; }
 		}
 
+		public void CheckExtraAttributes (string element, params string [] validNames)
+		{
+			if (Input.MoveToFirstAttribute ()) {
+				do {
+					if (Input.NamespaceURI.Length > 0)
+						continue;
+					bool valid = false;
+					foreach (string s in validNames)
+						if (Input.LocalName == s) {
+							valid = true;
+							continue;
+						}
+					if (!valid)
+						throw new XsltCompileException (String.Format ("Invalid attribute '{0}' on element '{1}'", Input.LocalName, element), null, Input);
+				} while (Input.MoveToNextAttribute ());
+				Input.MoveToParent ();
+			}
+		}
+
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
 			this.xpathParser = new XPathParser (this);
@@ -682,6 +701,8 @@ namespace Mono.Xml.Xsl
 			
 		public Sort (Compiler c)
 		{
+			c.CheckExtraAttributes ("sort", "select", "lang", "data-type", "order", "case-order");
+			
 			expr = c.CompileExpression (c.GetAttribute ("select"));
 			if (expr == null)
 				expr = c.CompileExpression ("string(.)");

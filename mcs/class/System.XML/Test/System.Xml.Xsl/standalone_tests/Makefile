@@ -25,7 +25,7 @@ CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
 mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
-NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug $(nunit_MONO_PATH)/nunit-console.exe
+NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug nunit-console.exe
 
 FIXTURE=MonoTests.oasis_xslt.SuiteBuilder
 CLEAN_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=TestResult.xml /include=Clean
@@ -89,6 +89,8 @@ endif
 
 $(GENERATE_EXE) : generate.cs XsltTestUtils.cs
 	$(CSCOMPILE) generate.cs XsltTestUtils.cs -out:$@
+	# It somehow does not work fine unless nunit-console.exe is here ...
+	cp $(nunit_MONO_PATH)/nunit-console.exe .
 $(TEST_PROG) : xslttest.cs XsltTestUtils.cs
 	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:nunit.core -r:nunit.framework -out:$@ -t:library
 

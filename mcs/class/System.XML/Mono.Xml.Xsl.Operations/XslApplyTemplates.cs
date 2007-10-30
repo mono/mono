@@ -51,6 +51,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("apply-templates", "select", "mode");
+
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			mode = c.ParseQNameAttribute ("mode");
 			ArrayList sorterList = null;

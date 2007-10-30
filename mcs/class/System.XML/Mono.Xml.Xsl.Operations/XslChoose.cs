@@ -48,6 +48,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("choose");
+
 			if (!c.Input.MoveToFirstChild ())
 				throw new XsltCompileException ("Expecting non-empty element", null, c.Input);
 			
@@ -64,6 +66,7 @@ namespace Mono.Xml.Xsl.Operations {
 					break;
 					
 				case "otherwise":
+					c.CheckExtraAttributes ("otherwise");
 					if (c.Input.MoveToFirstChild ()) {
 						defaultChoice = c.CompileTemplateContent ();
 						c.Input.MoveToParent ();

@@ -1,3 +1,12 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslMessage.cs, XslText.cs, XslVariable.cs, XslNumber.cs,
+	  XslElement.cs, XslIf.cs, XslFallback.cs, XslCopyOf.cs,
+	  XslValueOf.cs, XslComment.cs, XslAttribute.cs, XslApplyImports.cs,
+	  XslApplyTemplates.cs, XslForEach.cs, XslCallTemplate.cs,
+	  XslCopy.cs, XslProcessingInstruction.cs, XslChoose.cs:
+	  refactory on checking invalid attributes. Fixed bug #333806.
+
 2007-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCallTemplate.cs : significant whitespace should be allowed

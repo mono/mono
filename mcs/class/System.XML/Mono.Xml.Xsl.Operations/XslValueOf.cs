@@ -48,6 +48,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (this.DebugInput);
 
+			c.CheckExtraAttributes ("value-of", "select", "disable-output-escaping");
+
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			disableOutputEscaping = c.ParseYesNoAttribute ("disable-output-escaping", false);

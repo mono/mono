@@ -49,20 +49,10 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (c.Input);
 
+			c.CheckExtraAttributes ("if", "test");
+
 			c.AssertAttribute ("test");
-			c.Input.MoveToFirstAttribute ();
-			do {
-				if (c.Input.NamespaceURI != String.Empty)
-					continue;
-				switch (c.Input.LocalName) {
-				case "test":
-					test = c.CompileExpression (c.Input.Value);
-					break;
-				default:
-					throw new XsltCompileException ("Invalid attribute was found: " + c.Input.Name, null, c.Input);
-				}
-			} while (c.Input.MoveToNextAttribute ());
-			c.Input.MoveToParent ();
+			test = c.CompileExpression (c.GetAttribute ("test"));
 
 			if (!c.Input.MoveToFirstChild ()) return;
 			children = c.CompileTemplateContent ();

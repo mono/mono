@@ -77,6 +77,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (c.Debugger != null)
 				c.Debugger.DebugCompile (this.DebugInput);
 
+			c.CheckExtraAttributes ("number", "level", "count", "from", "value", "format", "lang", "letter-value", "grouping-separator", "grouping-size");
+
 			switch (c.GetAttribute ("level"))
 			{
 			case "single":
