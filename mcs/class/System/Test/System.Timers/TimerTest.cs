@@ -205,8 +205,7 @@ namespace MonoTests.System.Timers
 			Assert.IsFalse (timer.Enabled, "#3");
 		}
 
-		[Test] // bug #82701
-		[Category ("NotWorking")]
+		[Test] // bug #325368
 		public void EnabledInElapsed ()
 		{
 			timer.AutoReset = false;

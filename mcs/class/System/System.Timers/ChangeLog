@@ -1,3 +1,8 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* Timer.cs (set_Enabled): Allow setting Enabled from within
+	the Elapsed event handler. Fixes #325368.
+
 2007-09-07  Dick Porter  <dick@ximian.com>
 
 	* Timer.cs: This calls Thread methods in the finalizer too, so use

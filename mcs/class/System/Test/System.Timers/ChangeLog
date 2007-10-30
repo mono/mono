@@ -1,3 +1,7 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* TimerTest.cs: Enable test for bug #82701/#325368.
+
 2007-09-06  Robert Jordan  <robertj@gmx.net>
 
 	* TimerTest.cs: Factored our more test cases from bug #82701.

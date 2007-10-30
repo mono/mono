@@ -86,11 +86,13 @@ namespace System.Timers
 				return enabled && !exiting;
 			}
 			set {
-				if (enabled == value)
+				if (Enabled == value)
 					return;
 
 				enabled = value;
 				if (value) {
+					if (exiting)
+						StopTimer ();
 					exiting = false;
 					wait = new ManualResetEvent (false);
 					Thread thread = new Thread (new ThreadStart (StartTimer));
