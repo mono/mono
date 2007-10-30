@@ -8,9 +8,34 @@
 						<dateFormat >
 							<pattern>dd/MM/yyyy</pattern>
 						</dateFormat>
-					</dateFormatLength >
+					</dateFormatLength>
+					<dateFormatLength type="long">
+						<dateFormat>
+							<pattern>dddd, dd' de 'MMMM' de 'yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="full">
+						<dateFormat>
+							<pattern>dddd, dd' de 'MMMM' de 'yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="year_month">
+						<dateFormat>
+							<pattern>MMMM' de 'yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength>
+					<dateFormatLength type="month_day">
+						<dateFormat>
+							<pattern>dd MMMM</pattern>
+						</dateFormat>
+					</dateFormatLength>
 				</dateFormats>
 				<timeFormats>
+					<timeFormatLength type="full">
+						<timeFormat >
+							<pattern>H:mm:ss</pattern>
+						</timeFormat>
+					</timeFormatLength >
 					<timeFormatLength type="long">
 						<timeFormat >
 							<pattern>H:mm:ss</pattern>

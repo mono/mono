@@ -24,7 +24,7 @@ namespace Mono.Tools.LocaleBuilder {
                 public string DateSeparator;
                 public ArrayList DayNames = new ArrayList ();
                 public int FirstDayOfWeek;
-                public string FullDateTimePattern;
+                public string RawFullDateTimePattern;
                 public string LongDatePattern;
                 public string LongTimePattern;
                 public string MonthDayPattern;
@@ -39,6 +39,10 @@ namespace Mono.Tools.LocaleBuilder {
                 public ArrayList LongDatePatterns = new ArrayList (8);
                 public ArrayList ShortTimePatterns = new ArrayList (5);
                 public ArrayList LongTimePatterns = new ArrayList (6);
+
+                public string FullDateTimePattern {
+                        get { return String.Format (RawFullDateTimePattern, LongTimePattern, LongDatePattern); }
+                }
 
                 public int Row;
 

@@ -1,3 +1,7 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* es_ES.xml : couple of format string fixes for bug #335298.
+
 2007-05-31  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* en-US.xml: Add a few date/time patterns.

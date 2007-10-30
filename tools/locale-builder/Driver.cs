@@ -639,8 +639,8 @@ namespace Mono.Tools.LocaleBuilder {
 
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("dateTimeFormats/dateTimeFormatLength/dateTimeFormat/pattern");
 				if (ni2.MoveNext ())
-					df.FullDateTimePattern = String.Format (ni2.Current.ToString (),
-							df.LongTimePattern, df.LongDatePattern);
+					df.RawFullDateTimePattern = ni2.Current.ToString ();/*String.Format (ni2.Current.ToString (),
+							df.LongTimePattern, df.LongDatePattern);*/
 
 				XPathNodeIterator am = ni.Current.SelectChildren ("am", "");
 				if (am.MoveNext ())
