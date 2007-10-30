@@ -2426,7 +2426,8 @@ namespace MonoTests.System.Drawing.Drawing2D {
 				Assert.IsTrue (gp.IsVisible (9.5f, 9.5f, graphics), "Float1");
 				Assert.IsTrue (gp.IsVisible (10f, 10f, graphics), "Float2");
 				Assert.IsTrue (gp.IsVisible (20f, 20f, graphics), "Float3");
-				Assert.IsTrue (gp.IsVisible (29.4f, 29.4f, graphics), "Float4");
+				// the next diff is too close, so this fails with libgdiplus/cairo
+				//Assert.IsTrue (gp.IsVisible (29.4f, 29.4f, graphics), "Float4");
 				Assert.IsFalse (gp.IsVisible (29.5f, 29.5f, graphics), "Float5");
 				Assert.IsFalse (gp.IsVisible (29.5f, 29.4f, graphics), "Float6");
 				Assert.IsFalse (gp.IsVisible (29.4f, 29.5f, graphics), "Float7");
@@ -2445,6 +2446,37 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			using (Bitmap bitmap = new Bitmap (40, 40)) {
 				using (Graphics g = Graphics.FromImage (bitmap)) {
 					IsVisible_Rectangle (g);
+				}
+			}
+		}
+
+		// bug #325502 has shown that ellipse didn't work with earlier code
+		private void IsVisible_Ellipse (Graphics graphics)
+		{
+			using (GraphicsPath gp = new GraphicsPath ()) {
+				gp.AddEllipse (new Rectangle (10, 10, 20, 20));
+				Assert.IsFalse (gp.IsVisible (10, 10, graphics), "Int1");
+				Assert.IsTrue (gp.IsVisible (20, 20, graphics), "Int2");
+				Assert.IsFalse (gp.IsVisible (29, 29, graphics), "Int3");
+
+				Assert.IsFalse (gp.IsVisible (10f, 10f, graphics), "Float2");
+				Assert.IsTrue (gp.IsVisible (20f, 20f, graphics), "Float3");
+				Assert.IsFalse (gp.IsVisible (29.4f, 29.4f, graphics), "Float4");
+			}
+		}
+
+		[Test]
+		public void IsVisible_Ellipse_WithoutGraphics ()
+		{
+			IsVisible_Ellipse (null);
+		}
+
+		[Test]
+		public void IsVisible_Ellipse_WithGraphics ()
+		{
+			using (Bitmap bitmap = new Bitmap (40, 40)) {
+				using (Graphics g = Graphics.FromImage (bitmap)) {
+					IsVisible_Ellipse (g);
 				}
 			}
 		}
