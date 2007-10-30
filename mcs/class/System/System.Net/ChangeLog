@@ -1,3 +1,8 @@
+2007-10-30  Jerome Haltom  (wasabi@larvalstage.net)
+
+	* FtpWebRequest.cs: adds support for ftp multiline results, fixes
+	#333978
+
 2007-10-27  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpListener.cs: Remove more trigger-happy disposed=true from

@@ -1014,6 +1014,17 @@ namespace System.Net
 
 				if (responseString.Length < 4 || responseString [3] != '-')
 					return new FtpStatus ((FtpStatusCode) code, responseString);
+
+				if (responseString [3] == '-') {
+					string line = null;
+					do {
+						line = controlReader.ReadLine();
+						responseString += Environment.NewLine + line;
+					} while (line.Length < 3 || (line [3] != ' ' && line.Substring (0, 3) != codeString));
+					return new FtpStatus ((FtpStatusCode) code, responseString);
+				}
+
+				return new FtpStatus (FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
 			}
 		}
 
