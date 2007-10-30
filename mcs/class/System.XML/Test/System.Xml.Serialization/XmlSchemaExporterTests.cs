@@ -72,12 +72,12 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSTimeSpan\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeSpan\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"TimeSpan\" type=\"tns:TimeSpan\" />{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (TimeSpan));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -85,12 +85,12 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"TimeSpan\" type=\"TimeSpan\" />{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -103,7 +103,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSTimeSpanArray\" elementFormDefault=\"qualified\" targetNamespace=\"NSTimeSpanArray\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfTimeSpan\" nillable=\"true\" type=\"tns:ArrayOfTimeSpan\" />{0}" +
@@ -113,7 +113,7 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (TimeSpan[]));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -121,7 +121,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfTimeSpan\" nillable=\"true\" type=\"ArrayOfTimeSpan\" />{0}" +
@@ -131,7 +131,7 @@ namespace MonoTests.System.XmlSerialization
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
 				"  <xs:complexType name=\"TimeSpan\" />{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -151,7 +151,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSSimpleClass\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClass\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"SimpleClass\" nillable=\"true\" type=\"tns:SimpleClass\" />{0}" +
@@ -160,7 +160,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"saying\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (SimpleClass), overrides);
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -168,7 +168,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"SimpleClass\" nillable=\"true\" type=\"SimpleClass\" />{0}" +
@@ -177,7 +177,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"1\" maxOccurs=\"1\" name=\"saying\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -189,7 +189,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSStringCollection\" elementFormDefault=\"qualified\" targetNamespace=\"NSStringCollection\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfString\" nillable=\"true\" type=\"tns:ArrayOfString\" />{0}" +
@@ -198,7 +198,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (StringCollection));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -206,7 +206,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfString\" nillable=\"true\" type=\"ArrayOfString\" />{0}" +
@@ -215,7 +215,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -227,7 +227,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSStringCollectionContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSStringCollectionContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"StringCollectionContainer\" nillable=\"true\" type=\"tns:StringCollectionContainer\" />{0}" +
@@ -241,7 +241,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (StringCollectionContainer));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -249,7 +249,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"StringCollectionContainer\" nillable=\"true\" type=\"StringCollectionContainer\" />{0}" +
@@ -263,7 +263,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"string\" nillable=\"true\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -275,7 +275,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSArrayContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSArrayContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayContainer\" nillable=\"true\" type=\"tns:ArrayContainer\" />{0}" +
@@ -289,7 +289,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (ArrayContainer));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -297,7 +297,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayContainer\" nillable=\"true\" type=\"ArrayContainer\" />{0}" +
@@ -311,7 +311,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -323,7 +323,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSClassArrayContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSClassArrayContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ClassArrayContainer\" nillable=\"true\" type=\"tns:ClassArrayContainer\" />{0}" +
@@ -342,7 +342,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"something\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (ClassArrayContainer));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -350,7 +350,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ClassArrayContainer\" nillable=\"true\" type=\"ClassArrayContainer\" />{0}" +
@@ -369,7 +369,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"1\" name=\"something\" type=\"xs:string\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -381,14 +381,14 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSSimpleClassWithXmlAttributes\" elementFormDefault=\"qualified\" targetNamespace=\"NSSimpleClassWithXmlAttributes\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"simple\" nillable=\"true\" type=\"tns:SimpleClassWithXmlAttributes\" />{0}" +
 				"  <xs:complexType name=\"SimpleClassWithXmlAttributes\">{0}" +
 				"    <xs:attribute name=\"member\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (SimpleClassWithXmlAttributes));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -396,14 +396,14 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"simple\" nillable=\"true\" type=\"SimpleClassWithXmlAttributes\" />{0}" +
 				"  <xs:complexType name=\"SimpleClassWithXmlAttributes\">{0}" +
 				"    <xs:attribute name=\"member\" type=\"xs:string\" />{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -415,7 +415,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSField\" elementFormDefault=\"qualified\" targetNamespace=\"NSField\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"field\" nillable=\"true\" type=\"tns:Field\" />{0}" +
@@ -457,7 +457,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:simpleType>{0}" +
 				"    </xs:list>{0}" +
 				"  </xs:simpleType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (Field));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -465,7 +465,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"field\" nillable=\"true\" type=\"Field\" />{0}" +
@@ -507,7 +507,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:simpleType>{0}" +
 				"    </xs:list>{0}" +
 				"  </xs:simpleType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -519,7 +519,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSMyList\" elementFormDefault=\"qualified\" targetNamespace=\"NSMyList\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"tns:ArrayOfAnyType\" />{0}" +
@@ -528,7 +528,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (MyList));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -536,7 +536,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"ArrayOfAnyType\" nillable=\"true\" type=\"ArrayOfAnyType\" />{0}" +
@@ -545,7 +545,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 		}
 
 		[Test]
@@ -557,7 +557,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"Container\" nillable=\"true\" type=\"tns:Container\" />{0}" +
@@ -571,7 +571,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (Container));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -579,7 +579,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"Container\" nillable=\"true\" type=\"Container\" />{0}" +
@@ -593,7 +593,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -605,7 +605,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSContainer2\" elementFormDefault=\"qualified\" targetNamespace=\"NSContainer2\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"Container2\" nillable=\"true\" type=\"tns:Container2\" />{0}" +
@@ -619,7 +619,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (Container2));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -627,7 +627,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"Container2\" nillable=\"true\" type=\"Container2\" />{0}" +
@@ -641,7 +641,7 @@ namespace MonoTests.System.XmlSerialization
 				"      <xs:element minOccurs=\"0\" maxOccurs=\"unbounded\" name=\"anyType\" nillable=\"true\" />{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
@@ -661,7 +661,7 @@ namespace MonoTests.System.XmlSerialization
 			StringWriter sw = new StringWriter ();
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema xmlns:tns=\"NSCDataContainer\" elementFormDefault=\"qualified\" targetNamespace=\"NSCDataContainer\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"CDataContainer\" nillable=\"true\" type=\"tns:CDataContainer\" />{0}" +
@@ -676,7 +676,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:element>{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#2");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#2");
 
 			schemas = Export (typeof (CDataContainer));
 			Assert.AreEqual (1, schemas.Count, "#3");
@@ -684,7 +684,7 @@ namespace MonoTests.System.XmlSerialization
 			sw.GetStringBuilder ().Length = 0;
 			schemas[0].Write (sw);
 
-			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (Infoset (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version=\"1.0\" encoding=\"utf-16\"?>{0}" +
 				"<xs:schema elementFormDefault=\"qualified\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">{0}" +
 				"  <xs:element name=\"CDataContainer\" nillable=\"true\" type=\"CDataContainer\" />{0}" +
@@ -699,7 +699,7 @@ namespace MonoTests.System.XmlSerialization
 				"      </xs:element>{0}" +
 				"    </xs:sequence>{0}" +
 				"  </xs:complexType>{0}" +
-				"</xs:schema>", Environment.NewLine), sw.ToString (), "#4");
+				"</xs:schema>", Environment.NewLine)), Infoset (sw.ToString ()), "#4");
 		}
 
 		[Test]
