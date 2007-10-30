@@ -1,5 +1,9 @@
 2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Test from George for bug #325242.
+
+2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FormTest.cs: Add test for bug #325436.
 
 2007-10-30  Andreia Gaita <avidigal@novell.com>

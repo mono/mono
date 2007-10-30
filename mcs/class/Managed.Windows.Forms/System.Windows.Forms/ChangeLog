@@ -1,3 +1,8 @@
+2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Patch from George that moves the conversion of ClientSize->Size
+	for PreferredSize from OnLayout to PreferredSize.  Fixes bug #325242.
+
 2007-10-30  Andreia Gaita <avidigal@novell.com>
 
 	* ContainerControl.cs: Check if the active control is a

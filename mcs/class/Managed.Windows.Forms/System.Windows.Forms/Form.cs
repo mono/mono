@@ -171,7 +171,7 @@ namespace System.Windows.Forms {
 					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
 			}
 
-			return retsize;
+			return SizeFromClientSize (retsize);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -3155,26 +3155,15 @@ namespace System.Windows.Forms {
 		{
 			base.OnLayout (levent);
 			
-			if (this.AutoSize) {
-				Size new_size;
-				
-				if (this.AutoSizeMode == AutoSizeMode.GrowAndShrink)
-					new_size = GetPreferredSizeCore (this.ClientSize);
-				else {
-					new_size = GetPreferredSizeCore (this.ClientSize);
-
-					if (this.ClientSize.Height > new_size.Height)
-						new_size.Height = this.ClientSize.Height;
-					if (this.ClientSize.Width > new_size.Width)
-						new_size.Width = this.ClientSize.Width;
+			if (AutoSize) {
+				Size new_size = GetPreferredSizeCore (Size.Empty);
+				if (AutoSizeMode == AutoSizeMode.GrowOnly) {
+					new_size.Width = Math.Max (new_size.Width, Width);
+					new_size.Height = Math.Max (new_size.Height, Height);
 				}
-
-				if (!new_size.Equals (this.ClientSize)) {
-					Size NewSize = InternalSizeFromClientSize (new_size);
-		
-					if (NewSize != Size.Empty)
-						SetBounds (bounds.X, bounds.Y, NewSize.Width, NewSize.Height, BoundsSpecified.None);
-				}
+				if (new_size == Size)
+					return;
+				SetBounds (bounds.X, bounds.Y, new_size.Width, new_size.Height, BoundsSpecified.None);
 			}
 		}
 

@@ -2556,7 +2556,37 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (320, 40), f.ClientSize, "A2");
 			f.Dispose ();
 		}
-		
+
+#if NET_2_0
+		#region PreferredSize
+		[Test]
+		public void PreferredSize ()
+		{
+			PreferredSizeForm form = new PreferredSizeForm ();
+			form.AutoSize = true;
+			Control control = new Control ();
+			form.Controls.Add (control);
+			control.Size = new Size (500, 500);
+			form.Test ();
+			form.Controls.Clear ();
+			form.Test2 ();
+
+		}
+
+		private class PreferredSizeForm : Form
+		{
+			public void Test ()
+			{
+				Assert.AreEqual (SizeFromClientSize (new Size (503, 503)), PreferredSize, "1");
+			}
+
+			public void Test2 ()
+			{
+				Assert.AreEqual (SizeFromClientSize (new Size (0, 0)), PreferredSize, "1");
+			}
+		}
+		#endregion
+#endif
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {
