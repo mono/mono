@@ -49,11 +49,8 @@ namespace System.Web.Handlers {
 	class AssemblyResourceLoader : IHttpHandler {		
 		const string HandlerFileName = "WebResource.axd";
 #endif
-#if NET_2_0
-		const char QueryParamSeparator = ';';
-#else
 		const char QueryParamSeparator = '&';
-#endif
+
 		static readonly Hashtable _embeddedResources;
 #if SYSTEM_WEB_EXTENSIONS
 	static ScriptResourceHandler()

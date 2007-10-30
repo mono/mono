@@ -1,3 +1,8 @@
+2007-10-30 Juraj Skripsky  <js@hotfete.ch>
+
+	* AssemblyResourceLoader.cs: Always use '&' as query parameter
+	separator, as HttpUtility does not support ';' anymore.
+
 2007-08-23 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs: for SYSTEM_WEB_EXTENSIONS only:
