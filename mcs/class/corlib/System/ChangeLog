@@ -1,3 +1,10 @@
+2007-10-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Int16.cs, Int32.cs, Int64.cs: Use the Jeff Stedfast parsing code
+	which is smaller.  We no longer use "checked" to check for
+	overflows, I refactored some stuff and cleaned up the rest and
+	fixes #331525.
+
 2007-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoType.cs: Applied patch from Mario A Chavez 

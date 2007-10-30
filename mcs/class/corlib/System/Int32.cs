@@ -95,6 +95,22 @@ namespace System {
 		}
 #endif
 
+		internal static bool ProcessTrailingWhitespace (bool tryParse, string s, int position, ref Exception exc)
+		{
+			int len = s.Length;
+			
+			for (int i = position; i < len; i++){
+				char c = s [i];
+				
+				if (!Char.IsWhiteSpace (c)){
+					if (!tryParse)
+						exc = GetFormatException ();
+					return false;
+				}
+			}
+			return true;
+		}
+
 		internal static bool Parse (string s, bool tryParse, out int result, out Exception exc)
 		{
 			int val = 0;
@@ -145,34 +161,28 @@ namespace System {
 				if (c >= '0' && c <= '9'){
 					byte d = (byte) (c - '0');
 						
-					if (tryParse){
-						val = val * 10 + d * sign;
-						if (sign == 1){
-							if (val < 0)
-								return false;
-						} else if (val > 0)
-							return false;
-					} else {
-						val = checked (val * 10 + (c - '0') * sign);
-					}
-					digits_seen = true;
-				} else {
-					if (Char.IsWhiteSpace (c)){
-						for (i++; i < len; i++){
-							if (!Char.IsWhiteSpace (s [i])) {
-								if (!tryParse)
-									exc = GetFormatException ();
-								return false;
-			
-							}
+					if (val > (MaxValue/10))
+						goto overflow;
+					
+					if (val == (MaxValue/10)){
+						if ((d > (MaxValue % 10)) && (sign == 1 || (d > ((MaxValue % 10) + 1))))
+							goto overflow;
+						if (sign == -1)
+							val = (val * sign * 10) - d;
+						else
+							val = (val * 10) + d;
+
+						if (ProcessTrailingWhitespace (tryParse, s, i + 1, ref exc)){
+							result = val;
+							return true;
 						}
-						break;
-					} else {
-						if (!tryParse)
-							exc = GetFormatException ();
-						return false;
-					}
-				}
+						goto overflow;
+					} else 
+						val = val * 10 + d;
+					
+					digits_seen = true;
+				} else if (!ProcessTrailingWhitespace (tryParse, s, i, ref exc))
+					return false;
 			}
 			if (!digits_seen) {
 				if (!tryParse)
@@ -180,9 +190,17 @@ namespace System {
 				return false;
 			}
 
-			result = val;
+			if (sign == -1)
+				result = val * sign;
+			else
+				result = val;
 
 			return true;
+
+		overflow:
+			if (tryParse)
+				return false;
+			throw new OverflowException ("Value is too large");
 		}
 
 		public static int Parse (string s, IFormatProvider fp)
