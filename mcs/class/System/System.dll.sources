@@ -572,6 +572,7 @@ System.IO/IODescriptionAttribute.cs
 System.IO/KeventWatcher.cs
 System.IO/MonoIO.cs
 System.IO/MonoIOError.cs
+System.IO/MonoSyncFileStream.cs
 System.IO/NotifyFilters.cs
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs

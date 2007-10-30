@@ -1,3 +1,7 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* ProcessTest.cs: Add tests for bug #319829.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SwitchesTest.cs: Fixed compiler warning.

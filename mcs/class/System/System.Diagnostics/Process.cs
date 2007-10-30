@@ -1072,7 +1072,7 @@ namespace System.Diagnostics {
 			
 			if (startInfo.RedirectStandardInput == true) {
 				MonoIO.Close (stdin_rd, out error);
-				process.input_stream = new StreamWriter (new FileStream (stdin_wr, FileAccess.Write, true), Console.Out.Encoding);
+				process.input_stream = new StreamWriter (new MonoSyncFileStream (stdin_wr, FileAccess.Write, true, 8192), Console.Out.Encoding);
 				process.input_stream.AutoFlush = true;
 			}
 
@@ -1086,12 +1086,12 @@ namespace System.Diagnostics {
 
 			if (startInfo.RedirectStandardOutput == true) {
 				MonoIO.Close (stdout_wr, out error);
-				process.output_stream = new StreamReader (new FileStream (process.stdout_rd, FileAccess.Read, true), stdoutEncoding);
+				process.output_stream = new StreamReader (new MonoSyncFileStream (process.stdout_rd, FileAccess.Read, true, 8192), stdoutEncoding);
 			}
 
 			if (startInfo.RedirectStandardError == true) {
 				MonoIO.Close (stderr_wr, out error);
-				process.error_stream = new StreamReader (new FileStream (process.stderr_rd, FileAccess.Read, true), stderrEncoding);
+				process.error_stream = new StreamReader (new MonoSyncFileStream (process.stderr_rd, FileAccess.Read, true, 8192), stderrEncoding);
 			}
 
 			process.StartExitCallbackIfNeeded ();

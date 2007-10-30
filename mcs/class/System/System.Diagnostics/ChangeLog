@@ -1,3 +1,9 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* Process.cs: Wrap the redirected streams with a stream
+	that provides real async Begin/Read|Write operations.
+	Fixes bug #319829.
+
 2007-09-25  Miguel de Icaza  <miguel@novell.com>
 
 	* Process.cs: Return an empty collection to prevent crashes;

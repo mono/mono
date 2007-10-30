@@ -1,3 +1,7 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* MonoSyncFileStream.cs: Add.
+
 2007-07-19  Juraj Skripsky  <js@hotfeet.ch>
 
 	* FileSystemWatcher.ch (RaiseEvent): Invoke delegate directly, we don't
