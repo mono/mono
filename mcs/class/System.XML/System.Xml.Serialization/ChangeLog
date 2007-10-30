@@ -1,5 +1,10 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlCustomFormatter.cs : use RoundtripKind when converting to and
+	  from DateTime.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MapCodeGenerator.cs : found the true culprit for the previous
 	  attempt to the fix.
 

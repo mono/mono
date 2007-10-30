@@ -604,6 +604,20 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#5", "9999-12-31T23:59:59.9999999Z", XmlConvert.ToString (DateTime.MaxValue, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ"));
 			AssertEquals ("#6", "9999-12-31T23:59:59.9999999", XmlConvert.ToString (DateTime.MaxValue, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz").Substring (0, 27));
 		}
+
+		[Test]
+		public void XmlDateTimeSerializationModeRountripKind ()
+		{
+			string format = "yyyy-MM-ddTHH:mm:ss.FFFFFFFK";
+			string s = XmlConvert.ToString (DateTime.UtcNow, format);
+			AssertType.AreEqual ('Z', s [s.Length -1], "#1-1");
+			// LAMESPEC: .NET has a bug here that 'K' in format string does not reflect 'Z' as Utc Kind.
+			//AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, format).Kind, "#1-2");
+
+			s = XmlConvert.ToString (DateTime.UtcNow, XmlDateTimeSerializationMode.RoundtripKind);
+			AssertType.AreEqual ('Z', s [s.Length -1], "#2-1");
+			AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, XmlDateTimeSerializationMode.RoundtripKind).Kind, "#2-2");
+		}
 #endif
 	}
 }

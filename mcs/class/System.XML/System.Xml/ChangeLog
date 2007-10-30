@@ -1,3 +1,8 @@
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDateTime(string,string) should use ParseExact(),
+	  not Parse(). Use 'K' for roundtrip format.
+
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : making <del>silly</del>funky MS compatibility

@@ -301,7 +301,7 @@ namespace System.Xml {
 				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToLocalTime ();
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFK");
 			case XmlDateTimeSerializationMode.Utc:
 				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ");
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
@@ -313,9 +313,12 @@ namespace System.Xml {
 #endif
 		public static DateTime ToDateTime(string s, string format)
 		{
-			DateTimeFormatInfo d = new DateTimeFormatInfo();
-			d.FullDateTimePattern = format;
-			return DateTime.Parse(s, d);
+			//DateTimeFormatInfo d = new DateTimeFormatInfo();
+			//d.FullDateTimePattern = format;
+			//return DateTime.Parse(s, d);
+			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
+					       DateTimeStyles.AllowTrailingWhite;
+			return DateTime.ParseExact (s, format, DateTimeFormatInfo.InvariantInfo, style);
 		}
 
 		public static DateTime ToDateTime(string s, string[] formats)
@@ -518,7 +521,7 @@ namespace System.Xml {
 				break;
 			case XmlDateTimeSerializationMode.RoundtripKind:
 				return value.ToString (
-					"yyyy-MM-ddTHH:mm:ss.FFFFFFF",
+					"yyyy-MM-ddTHH:mm:ss.FFFFFFFK",
 					CultureInfo.InvariantCulture);
 				break;
 			default:

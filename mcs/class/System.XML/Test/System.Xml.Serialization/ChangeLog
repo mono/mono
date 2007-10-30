@@ -1,5 +1,9 @@
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSerializerTests.cs : added test for bug #337729.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlCodeExporterTests.cs : enable the previous test again.
 
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>

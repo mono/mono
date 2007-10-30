@@ -2314,6 +2314,18 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (TextWriter.Null, new InvalidTypeContainer ());
 		}
 
+#if NET_2_0
+		public void DateTimeRoundtrip ()
+		{
+			// bug #337729
+			XmlSerializer ser = new XmlSerializer (typeof (DateTime));
+			StringWriter sw = new StringWriter ();
+			ser.Serialize (sw, DateTime.UtcNow);
+			DateTime d = (DateTime) ser.Deserialize (new StringReader (sw.ToString ()));
+			Assert.AreEqual (DateTimeKind.Utc, d.Kind);
+		}
+#endif
+
 		#region GenericsSeralizationTests
 
 #if NET_2_0
