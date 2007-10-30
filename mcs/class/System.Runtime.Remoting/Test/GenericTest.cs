@@ -20,6 +20,7 @@ namespace MonoTests.Remoting
 {
 	public interface INested
 	{
+		int Test ();
 		int Test (int i);
 		int Test (int a, int b);
 		V Test <V> (V v);
@@ -51,6 +52,11 @@ namespace MonoTests.Remoting
 			return i;
 		}
 
+		public int TestDirectIfaceImpl (int i)
+		{
+			return -1;
+		}
+
 		public INested GetNested ()
 		{
 			return new Nested ();
@@ -78,6 +84,16 @@ namespace MonoTests.Remoting
 	[Serializable]
 	public class Nested : INested
 	{
+		public int Test ()
+		{
+			return 47;
+		}
+
+		int INested.Test ()
+		{
+			return 42;
+		}
+		
 		public int Test (int i)
 		{
 			return i;
@@ -101,6 +117,16 @@ namespace MonoTests.Remoting
 
 	public class NestedMbr : MarshalByRefObject, INested
 	{
+		public int Test ()
+		{
+			return 47;
+		}
+		
+		int INested.Test ()
+		{
+			return 42;
+		}
+
 		public int Test (int i)
 		{
 			return i;
@@ -170,6 +196,9 @@ namespace MonoTests.Remoting
 					 "#4 calling TestDirectIfaceImp");
 
 			INested cao = rem.GetNested ();
+			Assert.AreEqual (42, cao.Test (),
+					 "#5a calling INested.Test ()");
+
 			Assert.AreEqual (42, cao.Test (42),
 					 "#5 calling INested.Test (int)");
 
@@ -183,6 +212,9 @@ namespace MonoTests.Remoting
 					 "#8 calling INested.Test<V, T>");
 
 			cao = rem.GetNestedMbr ();
+			Assert.AreEqual (42, cao.Test (),
+					 "#9a calling INested.Test ()");
+
 			Assert.AreEqual (42, cao.Test (42),
 					 "#9 calling INested.Test (int)");
 

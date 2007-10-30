@@ -1,3 +1,7 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs: Add tests for bug #324232.
+
 2007-09-09  Robert Jordan  <robertj@gmx.net>
 
 	* GenericTest.cs: Add tests for bug #78882, #81554.
