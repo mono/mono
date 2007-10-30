@@ -606,6 +606,13 @@ namespace System.Windows.Forms {
 		public DateTime Value {
 			set {
 				if (date_value != value) {
+					if (value < MinDate || value > MaxDate)
+#if NET_2_0
+						throw new ArgumentOutOfRangeException ("value", "value must be between MinDate and MaxDate");
+#else
+						throw new ArgumentException ("value", "value must be between MinDate and MaxDate");
+#endif
+
 					date_value = value;
 					this.OnValueChanged (EventArgs.Empty);
 					this.Invalidate (date_area_rect);

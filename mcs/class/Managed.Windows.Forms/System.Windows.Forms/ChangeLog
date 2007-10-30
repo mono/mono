@@ -1,5 +1,10 @@
 2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DateTimePicker.cs: Throw ArgEx if the Value is set outside the MinDate
+	or the MaxDate.  Fixed bug #337693.
+
+2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUIWin32.cs: Always call SetWindowPos with SWP_FRAMECHANGED flag
 	after calling SetWindowLong for a form, to force an immediate NC refresh.
 	Fixes first part of bug #325150.
