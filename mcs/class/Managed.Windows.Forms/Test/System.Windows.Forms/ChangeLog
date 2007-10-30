@@ -1,3 +1,7 @@
+2007-10-30  Andreia Gaita <avidigal@novell.com>
+
+	* ContainerControlTest.cs: Add test for #329718
+
 2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePickerTest.cs: Tests for setting the Value outside the

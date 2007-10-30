@@ -566,9 +566,9 @@ namespace System.Windows.Forms {
 		#region Internal Methods
 		internal void ChildControlRemoved (Control control)
 		{
-			if (control == active_control) {
+			if (control == active_control || control.Contains (active_control)) {
 				SelectNextControl (this, true, true, true, true);
-				if (control == active_control) {
+				if (control == active_control || control.Contains (active_control)) {
 					active_control = null;
 				}
 			}

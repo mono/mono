@@ -1,3 +1,9 @@
+2007-10-30  Andreia Gaita <avidigal@novell.com>
+
+	* ContainerControl.cs: Check if the active control is a
+	child of a removed control and update active_control accordingly.
+	Fixes #329718
+
 2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePicker.cs: Throw ArgEx if the Value is set outside the MinDate

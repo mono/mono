@@ -164,6 +164,29 @@ namespace MonoTests.System.Windows.Forms {
 			cc.Controls.Remove (txt);
 			Assert.IsNull (cc.ActiveControl, "#03");
 		}
+
+		/// <summary>
+		/// Test Bug 329718 - Forms: ArgEx: "Cannot activate invisible...", when open color picker twice
+		/// </summary>
+		[Test]
+		public void RemoveActiveControlTest2 ()
+		{
+			ContainerControl cc = new ContainerControl ();
+			TabControl tab = new TabControl ();
+			TabPage page = new TabPage ();
+			TextBox txt = new TextBox ();
+			page.Controls.Add (txt);
+			tab.TabPages.Add (page);
+			cc.Controls.Add (tab);
+
+			Assert.IsFalse (cc.ActiveControl == txt, "#01");
+			cc.ActiveControl = txt;
+			Console.WriteLine (cc.ActiveControl);
+			Assert.AreSame (cc.ActiveControl, txt, "#02");
+			cc.Controls.Remove (tab);
+			Console.WriteLine (cc.ActiveControl);
+			Assert.IsNull (cc.ActiveControl, "#03");
+		}
 		[Test]
 		public void GetContainerControl ()
 		{
@@ -195,7 +218,7 @@ namespace MonoTests.System.Windows.Forms {
 			c.ActiveControl = new Control ();
 		}
 
-		[Test]
+//		[Test]
 		public void Validation() {
 			Queue events = new Queue();
 
