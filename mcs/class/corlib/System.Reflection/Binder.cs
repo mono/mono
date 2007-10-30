@@ -325,15 +325,33 @@ namespace System.Reflection
 				if (match == null)
 					throw new ArgumentNullException ("match");
 
+				bool isdefParamArray = false;
+				Type elementType = null;
+
 				/* first look for an exact match... */
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
 					ParameterInfo[] args = m.GetParameters ();
-					if (args.Length != types.Length)
+					if (args.Length > types.Length)
+						continue;
+					else if(args.Length <= types.Length & args.Length > 0)
+					{
+						isdefParamArray = Attribute.IsDefined (args [args.Length - 1], typeof (ParamArrayAttribute));
+						if (isdefParamArray)
+							elementType = args [args.Length - 1].ParameterType.GetElementType ();
+						if (args.Length != types.Length & !isdefParamArray)
+							continue;
+					}else if(args.Length == 0 & types.Length > 0)
 						continue;
 					for (j = 0; j < types.Length; ++j) {
-						if (types [j] != args [j].ParameterType)
+						if (!isdefParamArray && types [j] != args [j].ParameterType)
 							break;
+						else if (isdefParamArray) {
+							if (j < (args.Length - 1) && types [j] != args [j].ParameterType)
+								break;
+							else if (j >= (args.Length - 1) && types [j] != elementType) 
+								break;
+						}
 					}
 					if (j == types.Length)
 						return m;

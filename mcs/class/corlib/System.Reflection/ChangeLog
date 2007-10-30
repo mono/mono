@@ -1,3 +1,8 @@
+2007-10-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Applied patch from Mario A Chavez <mario.chavez@gmail.com>. Add
+	support for binding to methods with ParamArray attribute. Fixes #336841.
+
 2007-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs: Override GetPropertyImpl too.
