@@ -103,6 +103,10 @@ namespace System.Runtime.Remoting
 		internal extern static object InternalExecute (MethodBase method, Object obj,
 							       Object[] parameters, out object [] out_args);
 
+		// Returns the actual implementation of @method in @type.
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
+
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 #endif
@@ -120,41 +124,20 @@ namespace System.Runtime.Remoting
 			    reqMsg.MethodBase == FieldSetterMethod || 
 			    reqMsg.MethodBase == FieldGetterMethod) {
 				method = reqMsg.MethodBase;
-			} else  {
-				method = tt.GetMethod (reqMsg.MethodName, methodBindings, null,
-					(Type[]) reqMsg.MethodSignature, null);
+			} else {
+				method = GetVirtualMethod (tt, reqMsg.MethodBase);
 
-				// maybe an explicit interface implementation
-				if (method == null && reqMsg.MethodBase.DeclaringType.IsInterface)
-					method = tt.GetMethod (
-						reqMsg.MethodBase.DeclaringType.FullName + "." + reqMsg.MethodName,
-						methodBindings, null, (Type[]) reqMsg.MethodSignature, null);
+				if (method == null)
+					throw new RemotingException (
+						String.Format ("Cannot resolve method {0}:{1}", tt, reqMsg.MethodName));
 			}
 
 #if NET_2_0
 			if (reqMsg.MethodBase.IsGenericMethod) {
 				Type[] genericArguments = reqMsg.MethodBase.GetGenericArguments ();
-
-				if (method == null) {
-					// method is probably overloaded
-					method = GetGenericMethod (tt, reqMsg.MethodName, methodBindings,
-						(Type[]) reqMsg.MethodSignature, genericArguments);
-
-					// maybe an explicit interface implementation
-					if (method == null && reqMsg.MethodBase.DeclaringType.IsInterface)
-						method = GetGenericMethod (tt,
-							reqMsg.MethodBase.DeclaringType.FullName + "." + reqMsg.MethodName,
-							methodBindings, (Type[]) reqMsg.MethodSignature, genericArguments);
-				}
-
-				if (method != null)
-					method = ((MethodInfo)method).MakeGenericMethod (genericArguments);
+				method = ((MethodInfo)method).MakeGenericMethod (genericArguments);
 			}
 #endif
-
-			if (method == null)
-				throw new RemotingException (
-					String.Format ("Cannot resolve method {0}:{1}", tt, reqMsg.MethodName));
 
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
@@ -395,131 +378,6 @@ namespace System.Runtime.Remoting
 
 			return GetMethodBaseFromName (type, msg.MethodName, (Type[]) msg.MethodSignature);
 		}
-
-#if NET_2_0
-
-		internal static MethodBase GetMethodBaseFromName (Type type, string methodName, Type[] signature, Type[] genericArguments)
-		{
-			if (type.IsInterface) {
-				return FindInterfaceMethod (type, methodName, signature, genericArguments);
-			}
-			else {
-				MethodBase method = null;
-				if (signature == null)
-					method = GetGenericMethod (type, methodName, methodBindings, genericArguments);
-				else
-					method = GetGenericMethod (type, methodName, methodBindings, signature, genericArguments);
-				
-				if (method != null)
-					return method;
-					
-				if (methodName == "FieldSetter")
-					return FieldSetterMethod;
-
-				if (methodName == "FieldGetter")
-					return FieldGetterMethod;
-				
-				if (signature == null)
-					return type.GetConstructor (methodBindings, null, Type.EmptyTypes, null);
-				else
-					return type.GetConstructor (methodBindings, null, signature, null);
-			}
-		}
-		
-		static MethodBase FindInterfaceMethod (Type type, string methodName, Type[] signature, Type[] genericArguments)
-		{
-			MethodBase method = null;
-			
-			if (signature == null)
-				method = GetGenericMethod (type, methodName, methodBindings, genericArguments);
-			else
-				method = GetGenericMethod (type, methodName, methodBindings, signature, genericArguments);
-				
-			if (method != null) return method;
-			
-			foreach (Type t in type.GetInterfaces ()) {
-				method = FindInterfaceMethod (t, methodName, signature);
-				if (method != null) return method;
-			}
-			
-			return null;
-		}
-
-		// returns the generic method with the specifed generic arguments
-		internal static MethodInfo GetGenericMethod (Type type, string name, BindingFlags flags, Type[] genericArguments)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			if (genericArguments == null)
-				throw new ArgumentNullException ("genericArguments");
-
-			foreach (MethodInfo mi in type.GetMethods (flags)) {
-				if (!mi.IsGenericMethod)
-					continue;
-
-				if (mi.Name != name)
-					continue;
-
-				if (mi.GetGenericArguments ().Length != genericArguments.Length)
-					continue;
-
-				return mi;
-			}
-			return null;
-		}
-
-		// returns the generic method with the specifed generic arguments
-		internal static MethodInfo GetGenericMethod (Type type, string name, BindingFlags flags, Type[] signature, Type[] genericArguments)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			if (signature == null)
-				throw new ArgumentNullException ("signature");
-
-			if (genericArguments == null)
-				throw new ArgumentNullException ("genericArguments");
-
-			foreach (MethodInfo mi in type.GetMethods (flags)) {
-				if (!mi.IsGenericMethod)
-					continue;
-
-				if (mi.Name != name)
-					continue;
-
-				if (mi.GetGenericArguments ().Length != genericArguments.Length)
-					continue;
-
-				ParameterInfo[] parms = mi.GetParameters ();
-				if (parms.Length != signature.Length)
-					continue;
-
-				if (!mi.ContainsGenericParameters) {
-					bool mismatch = false;
-					for (int i = 0; i < parms.Length; i++) {
-						if (parms [i].ParameterType != signature [i]) {
-							mismatch = true;
-							break;
-						}
-					}
-					if (mismatch)
-						continue;
-				}
-
-				return mi;
-			}
-
-			return null;
-		}
-
-#endif
 
 		internal static MethodBase GetMethodBaseFromName (Type type, string methodName, Type[] signature)
 		{

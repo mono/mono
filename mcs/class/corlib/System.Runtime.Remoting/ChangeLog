@@ -1,3 +1,10 @@
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* RemotingServices.cs: (InternalExecuteMessage):
+	Resolve interface methods using the new icall GetVirtualMethod ().
+	Remove the now obsolete GetMethodBaseFromName + generic params
+	overloads.
+
 2007-08-30  Robert Jordan  <robertj@gmx.net>
 
 	* RemotingServices.cs (InternalExecuteMessage): Resolve interface

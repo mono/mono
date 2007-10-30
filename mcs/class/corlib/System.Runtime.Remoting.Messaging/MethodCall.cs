@@ -320,33 +320,25 @@ namespace System.Runtime.Remoting.Messaging {
 				}
 
 				Type requestType = CastTo (_typeName, type);
-
-				if (requestType != null) {
-					// Look for the method in the requested type. The method signature is provided
-					// only if the method is overloaded in the requested type.
-					_methodBase = RemotingServices.GetMethodBaseFromName (requestType, _methodName, _methodSignature);
-					if (_methodBase == null)
-						throw new RemotingException ("Method " + _methodName + " not found in " + type);
-
-					
-					// If the method is implemented in an interface, look for the method implementation.
-					// It can't be done in the previous GetMethodBaseFromName call because at that point we
-					// may not yet have the method signature.
-					if (requestType != type && requestType.IsInterface) {
-#if NET_2_0
-						if (_methodBase.IsGenericMethod)
-							_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, (Type[]) MethodSignature, _methodBase.GetGenericArguments ());
-						else // fall through
-#endif
-							_methodBase = RemotingServices.GetMethodBaseFromName (type, _methodName, (Type[]) MethodSignature);
-					}
-
-					if (_methodBase == null)
-						throw new RemotingException ("Method " + _methodName + " not found in " + type);
-
-				}
-				else
+				if (requestType == null)
 					throw new RemotingException ("Cannot cast from client type '" + _typeName + "' to server type '" + type.FullName + "'");
+
+				// Look for the method in the requested type. The method signature is provided
+				// only if the method is overloaded in the requested type.
+				_methodBase = RemotingServices.GetMethodBaseFromName (requestType, _methodName, _methodSignature);
+
+				if (_methodBase == null)
+					throw new RemotingException ("Method " + _methodName + " not found in " + requestType);
+
+				// If the method is implemented in an interface, look for the method implementation.
+				// It can't be done in the previous GetMethodBaseFromName call because at that point we
+				// may not yet have the method signature.
+				if (requestType != type && requestType.IsInterface) {
+					_methodBase = RemotingServices.GetVirtualMethod (type, _methodBase);
+					if (_methodBase == null)
+						throw new RemotingException ("Method " + _methodName + " not found in " + type);
+				}
+
 			} else {
 				_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 				if (_methodBase == null) throw new RemotingException ("Method " + _methodName + " not found in " + TypeName);
@@ -360,7 +352,6 @@ namespace System.Runtime.Remoting.Messaging {
 				_methodBase = ((MethodInfo) _methodBase).MakeGenericMethod (GenericArguments);
 			}
 #endif
-
 		}
 
 		Type CastTo (string clientType, Type serverType)
