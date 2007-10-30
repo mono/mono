@@ -1,3 +1,8 @@
+2007-10-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DateTimePickerTest.cs: Tests for setting the Value outside the
+	range of MinDate and MaxDate.
+
 2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ButtonBaseTest.cs: Added test for IsDefault.

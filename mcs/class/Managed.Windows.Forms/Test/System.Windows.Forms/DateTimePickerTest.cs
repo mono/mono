@@ -3418,5 +3418,33 @@ namespace MonoTests.System.Windows.Forms {
 			DateTimePicker dt = new DateTimePicker ();
 			dt.Text = "abcdef";
 		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif	
+		public void ValueTooBig ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+			dt.MaxDate = DateTime.Now;
+
+			dt.Value = DateTime.Now.AddDays (3);
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
+		public void ValueTooSmall ()
+		{
+			DateTimePicker dt = new DateTimePicker ();
+			dt.MinDate = DateTime.Now;
+
+			dt.Value = DateTime.Now.AddDays (-3);
+		}
 	}
 }
