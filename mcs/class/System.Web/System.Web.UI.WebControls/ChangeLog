@@ -1,3 +1,8 @@
+2007-10-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Image.cs: fixed management state of Enabled property.
+	* WebControl.cs: refactoring in management state of Enabled property.
+
 2007-10-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ListBox.cs, Table.cs: use Render{Begin,End}Tag

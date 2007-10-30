@@ -55,6 +55,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 	}
 
+	public class PokerImage : Image
+	{
+		public PokerImage () {
+			TrackViewState ();
+		}
+
+		public object SaveState () {
+			return SaveViewState ();
+		}
+
+		public void LoadState (object state) {
+			LoadViewState (state);
+		}
+	}
+
 	[TestFixture]
 	public class ImageTest {
 
@@ -78,6 +93,18 @@ namespace MonoTests.System.Web.UI.WebControls {
 #endif
 			Assert.AreEqual ("img", i.Tag, "TagName");
 			Assert.AreEqual (0, i.Attributes.Count, "Attributes.Count-2");
+		}
+
+		[Test]
+		public void ViewStateTest () {
+
+			PokerImage src = new PokerImage ();
+			src.Enabled = false;
+
+			PokerImage dest = new PokerImage ();
+			dest.LoadState (src.SaveState ());
+
+			Assert.AreEqual (false, dest.Enabled, "Enabled");
 		}
 
 		[Test]
@@ -146,6 +173,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			Image i = new Image ();
 			i.ImageAlign = (ImageAlign)Int32.MinValue;
+		}
+
+		[Test]
+		public void RenderEnabled () {
+			TestImage img = new TestImage ();
+			img.Enabled = false;
+
+			string html = img.Render ();
+			Assert.IsTrue (html.IndexOf (" disabled=\"") > 0, "#");
 		}
 
 		[Test]

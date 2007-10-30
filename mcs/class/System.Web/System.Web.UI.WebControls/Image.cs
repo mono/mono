@@ -43,12 +43,9 @@ namespace System.Web.UI.WebControls {
 #endif
 	public class Image : WebControl {
 
-		private bool enabled;	// not applicable to image
-
 		public Image ()
 			: base (HtmlTextWriterTag.Img)
 		{
-			enabled = true;
 		}
 
 
@@ -76,8 +73,8 @@ namespace System.Web.UI.WebControls {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool Enabled {
-			get { return enabled; }
-			set { enabled = value; }
+			get { return base.Enabled; }
+			set {base.Enabled = value; }
 		}
 
 		// not applicable to Image
@@ -192,9 +189,6 @@ namespace System.Web.UI.WebControls {
 			if (s.Length > 0)
 				writer.AddAttribute ("longdesc", s);
 #endif
-			if (!enabled)
-				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
-			// avoid reflection
 			switch (ImageAlign) {
 			case ImageAlign.Left:
 				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);

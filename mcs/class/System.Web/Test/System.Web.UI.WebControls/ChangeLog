@@ -1,3 +1,9 @@
+2007-10-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ImageTest.cs:
+	* WebControlTest.cs:	
+	Added new tests.
+
 2007-08-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* GridViewTest.cs: Code formatting.

@@ -439,6 +439,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			l.Enabled = false;
 			ll.CopyBaseAttributes (l);
 			Assert.IsFalse (ll.Enabled, "enabled should be copied");
+
+			WebControlTestClass c = new WebControlTestClass ();
+			c.SetTrackingVS ();
+			c.CopyBaseAttributes (l);
+			object o = c.Save ();
+			c = new WebControlTestClass ();
+			c.Load (o);
+			Assert.IsFalse (c.Enabled, "enabled should be copied#2");
 		}
 		
 
