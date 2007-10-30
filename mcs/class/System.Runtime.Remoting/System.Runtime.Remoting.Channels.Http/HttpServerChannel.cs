@@ -156,10 +156,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 			_sinkProvider = sinkProvider;
 			
-			String[] urls = { this.GetChannelUri() };
-
 			// needed for CAOs
-			_channelData = new ChannelDataStore(urls);
+			_channelData = new ChannelDataStore(null);
 			
 			if(_sinkProvider == null)
 			{
@@ -283,7 +281,12 @@ namespace System.Runtime.Remoting.Channels.Http
 	
 		public String GetChannelUri()
 		{
-			return "http://" + _machineName + ":" + _port;
+			if (_channelData != null && _channelData.ChannelUris != null &&
+			    _channelData.ChannelUris.Length > 0) {
+				return _channelData.ChannelUris [0];
+			} else {
+				return "http://" + _machineName + ":" + _port;
+			}
 		} 
 	
 		public virtual String[] GetUrlsForUri(String objectUri)

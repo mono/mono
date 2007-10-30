@@ -35,6 +35,7 @@
 
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -45,15 +46,14 @@ namespace System.Runtime.Remoting.Channels.Http
 	{
 		public static string Parse(string URL , out string ObjectURI)
 		{
-
 			int Pos;
 			ObjectURI = null;
 			string ChannelURI = null;
 			
-
-			if(StartsWithHttp(URL))
+			Pos = IndexOfChannelUri (URL);
+			if(Pos > 0)
 			{
-				Pos = URL.IndexOf("/",7);
+				Pos = URL.IndexOf("/", Pos);
 				if(Pos >= 0) 
 				{
 					ObjectURI = URL.Substring(Pos);
@@ -65,12 +65,22 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 		}
 
-		public static bool StartsWithHttp(string URL)
+		static int IndexOfChannelUri(string URL)
 		{
-			if(URL.StartsWith("http://"))
-				return true;
-			else
-				return false;
+			CompareInfo ci = CultureInfo.InvariantCulture.CompareInfo;
+
+			if (ci.IsPrefix (URL, "http://", CompareOptions.IgnoreCase))
+				return "http://".Length;
+
+			if (ci.IsPrefix (URL, "https://", CompareOptions.IgnoreCase))
+				return "https://".Length;
+
+			return -1;
+		}
+
+		public static bool StartsWithHttp (string url)
+		{
+			return IndexOfChannelUri (url) > 0;
 		}
 
 		public static void CopyStream (Stream inStream, Stream outStream)
