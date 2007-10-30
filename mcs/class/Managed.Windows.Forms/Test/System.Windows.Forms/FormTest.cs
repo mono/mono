@@ -2529,7 +2529,34 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 #endif
+		[Test]
+		public void Bug325436 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (320, 40);
+			f.ControlBox = false;
+			f.FormBorderStyle = FormBorderStyle.None;
+			f.MaximizeBox = false;
+			f.MinimizeBox = false;
+			
+			f.Show ();
+			Assert.AreEqual (new Size (320, 40), f.ClientSize, "A1");
+			f.Dispose ();
 
+			f = new Form ();
+			f.ShowInTaskbar = false;
+			f.ControlBox = false;
+			f.FormBorderStyle = FormBorderStyle.None;
+			f.MaximizeBox = false;
+			f.MinimizeBox = false;
+			f.ClientSize = new Size(320, 40);
+			
+			f.Show ();
+			Assert.AreEqual (new Size (320, 40), f.ClientSize, "A2");
+			f.Dispose ();
+		}
+		
 		private class MockForm : Form
 		{
 			public bool CloseOnLoad {

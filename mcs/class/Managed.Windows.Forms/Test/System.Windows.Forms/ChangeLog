@@ -1,3 +1,7 @@
+2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #325436.
+
 2007-10-30  Andreia Gaita <avidigal@novell.com>
 
 	* ContainerControlTest.cs: Add test for #329718
