@@ -1,3 +1,7 @@
+2007-10-30  Marek Safar  <marek.safar@gmail.com>
+ 
+	* Makefile (net_2_0_bootstrap/mcs.exe.config): Reverted copy gmcs.exe.config.
+
 2007-10-29  Marek Safar  <marek.safar@gmail.com>
  
  	* cs-tokenizer.cs, gcs-parser.jay, driver.cs: Fixed parsing of nested
