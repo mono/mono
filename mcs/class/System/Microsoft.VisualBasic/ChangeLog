@@ -1,3 +1,8 @@
+2007-10-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VBCodeGenerator.cs: Fix array indexer expressions by don't adding a
+	  ".Item" to the array.
+
 2007-06-22  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VBCodeCompiler.cs: Throw a descriptive exception if we're trying to

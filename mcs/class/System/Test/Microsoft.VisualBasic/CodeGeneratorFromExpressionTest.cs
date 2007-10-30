@@ -141,6 +141,16 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public void ArrayIndexerExpressionTest ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("x(5)", Generate (new CodeArrayIndexerExpression(new CodeVariableReferenceExpression("x"), new CodePrimitiveExpression(5)), sw), "#1");
+				sb.Length = 0;
+			}
+		}
+	
+		[Test]
 		public void PrimitiveExpressionTest_Char ()
 		{
 #if NET_2_0

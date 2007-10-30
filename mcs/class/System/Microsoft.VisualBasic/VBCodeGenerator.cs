@@ -292,7 +292,7 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			GenerateExpression (expression.TargetObject);
-			output.Write (".Item(");
+			output.Write ("(");
 			OutputExpressionList (expression.Indices);
 			output.Write (')');
 		}

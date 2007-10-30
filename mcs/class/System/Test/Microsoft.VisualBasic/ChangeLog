@@ -1,3 +1,7 @@
+2007-10-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CodeGeneratorFromExpressionTest.cs: Added ArrayIndexerExpressionTest.
+
 2007-05-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* CodeGeneratorFromExpressionTest.cs: Added EventReferenceTest and DelegateInvokeTest.
