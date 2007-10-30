@@ -295,8 +295,6 @@ namespace System.Net.Sockets
 		{
 			CheckDisposed ();
 
-			JoinMulticastGroup (multicastAddr);
-			
 			if (family == AddressFamily.InterNetwork) {
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption (multicastAddr, localAddress));
 			} else if (family == AddressFamily.InterNetworkV6) {

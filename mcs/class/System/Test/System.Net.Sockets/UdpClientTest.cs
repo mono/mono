@@ -62,6 +62,28 @@ namespace MonoTests.System.Net.Sockets {
 					"UdpClient JoinMulticastGroup #1");
 		}
 		
+		// Test for bug 324033
+		[Test]
+		public void JoinMulticastGroupWithLocal ()
+		{
+			UdpClient client = new UdpClient (9001);
+			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.24");
+			IPAddress local_addr = IPAddress.Any;
+			
+			bool exThrown = false;
+			
+			try {
+				client.JoinMulticastGroup (mcast_addr,
+							   local_addr);
+			} catch (Exception) {
+				exThrown = true;
+			} finally {
+				client.Close ();
+			}
+			
+			Assert.IsFalse (exThrown, "UdpClient JoinMulticastGroupWithLocal #1");
+		}
+		
 		[Test]
 		[ExpectedException (typeof(ArgumentNullException))]
 		public void BeginSendNull ()

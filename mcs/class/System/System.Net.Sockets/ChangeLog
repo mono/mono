@@ -1,3 +1,8 @@
+2007-10-30  Dick Porter  <dick@ximian.com>
+
+	* UdpClient.cs: Don't set the multicast option twice.  Fixes bug
+	324033.
+
 2007-10-21  Robert Jordan  <robertj@gmx.net>
 
 	* Socket.cs: Remove GetHashCode override from the NET_2_0
