@@ -966,7 +966,11 @@ namespace System.Web {
 					// MS starts encoding with &# from 160 and stops at 255.
 					// We don't do that. One reason is the 65308/65310 unicode
 					// characters that look like '<' and '>'.
+#if TARGET_JVM
+					if (s [i] > 159 && s [i] < 256) {
+#else
 					if (s [i] > 159) {
+#endif
 						output.Append ("&#");
 						output.Append (((int) s [i]).ToString (CultureInfo.InvariantCulture));
 						output.Append (";");

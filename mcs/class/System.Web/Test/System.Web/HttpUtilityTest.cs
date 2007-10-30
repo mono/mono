@@ -84,6 +84,68 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+#if !TARGET_JVM
+		[Category ("NotWorking")]
+#endif
+		public void HtmlEncode () {
+			for (char c = char.MinValue; c < char.MaxValue; c++) {
+				String exp = HtmlEncode (c.ToString ());
+				String act = HttpUtility.HtmlEncode (c.ToString ());
+				Assert.AreEqual (exp, act, "HtmlEncode " + c.ToString () + " [" + (int) c + "]");
+			}
+		}
+		
+		string HtmlEncode (string s) {
+			if (s == null)
+				return null;
+
+			bool needEncode = false;
+			for (int i = 0; i < s.Length; i++) {
+				char c = s [i];
+				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159) {
+					needEncode = true;
+					break;
+				}
+			}
+
+			if (!needEncode)
+				return s;
+
+			StringBuilder output = new StringBuilder ();
+
+			int len = s.Length;
+			for (int i = 0; i < len; i++)
+				switch (s [i]) {
+				case '&':
+					output.Append ("&amp;");
+					break;
+				case '>':
+					output.Append ("&gt;");
+					break;
+				case '<':
+					output.Append ("&lt;");
+					break;
+				case '"':
+					output.Append ("&quot;");
+					break;
+				default:
+					// MS starts encoding with &# from 160 and stops at 255.
+					// We don't do that. One reason is the 65308/65310 unicode
+					// characters that look like '<' and '>'.
+					if (s [i] > 159 && s [i] < 256) {
+						output.Append ("&#");
+						output.Append (((int) s [i]).ToString ());
+						output.Append (";");
+					}
+					else {
+						output.Append (s [i]);
+					}
+					break;
+				}
+			return output.ToString ();
+		}
+
+		[Test]
 		public void UrlDecodeToBytes ()
 		{
 			byte[] bytes = HttpUtility.UrlDecodeToBytes ("%5c");
