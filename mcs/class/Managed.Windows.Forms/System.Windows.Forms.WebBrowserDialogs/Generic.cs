@@ -54,6 +54,11 @@ namespace System.Windows.Forms.WebBrowserDialogs
 			this.Text = title;
 		}
 
+		public new DialogResult Show ()
+		{
+			return this.RunDialog ();
+		}
+
 		private void InitSize ()
 		{
 		}

@@ -66,12 +66,6 @@ namespace System.Windows.Forms.WebBrowserDialogs
 			CheckBox c = sender as CheckBox;
 			check = c.Checked;
 		}
-
-		public DialogResult Show ()
-		{
-			return this.RunDialog ();
-
-		}
 	}
 }
 #endif

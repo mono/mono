@@ -33,7 +33,7 @@ namespace System.Windows.Forms.WebBrowserDialogs
 	internal class Prompt : Generic
 	{
 		private string text;
-		public string Text
+		public new string Text
 		{
 			get { return text; }
 		}
@@ -58,12 +58,6 @@ namespace System.Windows.Forms.WebBrowserDialogs
 		{
 			TextBox c = sender as TextBox;
 			text = c.Text;
-		}
-
-		public DialogResult Show ()
-		{
-			return this.RunDialog ();
-
 		}
 	}
 }
