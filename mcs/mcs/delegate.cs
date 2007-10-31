@@ -445,6 +445,15 @@ namespace Mono.CSharp {
 
 			return (MethodInfo) mg.Methods[0];
 		}
+
+		public static bool IsTypeCovariant (Type a, Type b)
+		{
+			if (a.IsValueType)
+				return false;
+
+			return Convert.ImplicitReferenceConversionCore (
+				new EmptyExpression (a), b);
+		}
 		
 		/// <summary>
 		///  Verifies whether the method in question is compatible with the delegate
@@ -485,7 +494,7 @@ namespace Mono.CSharp {
 				if (invoke_pd_type == pd_type)
 					continue;
 
-				if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (invoke_pd_type), pd_type))
+				if (!IsTypeCovariant (invoke_pd_type, pd_type))
 					return null;
 
 				if (RootContext.Version == LanguageVersion.ISO_1)
@@ -497,7 +506,7 @@ namespace Mono.CSharp {
 			if (invoke_mb_retval == mb_retval)
 				return mb;
 
-			if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (mb_retval), invoke_mb_retval))
+			if (!IsTypeCovariant (mb_retval, invoke_mb_retval))
 				return null;
 
 			if (RootContext.Version == LanguageVersion.ISO_1) 
@@ -730,9 +739,9 @@ namespace Mono.CSharp {
 
 			Type delegateType = method.ReturnType;
 			Type methodType = ((MethodInfo) found_method).ReturnType;
-			if (delegateType != methodType &&
-				!Convert.ImplicitReferenceConversionExists (new EmptyExpression (methodType), delegateType)) {
-				Report.Error (407, loc, "`{0}' has the wrong return type to match the delegate `{1}'", method_desc, delegate_desc);
+			if (delegateType != methodType && !Delegate.IsTypeCovariant (methodType, delegateType)) {
+				Report.Error (407, loc, "The method `{0}' return type does not match delegate `{1}' return type",
+					method_desc, delegate_desc);
 			} else {
 				Report.Error (123, loc, "The method `{0}' parameters do not match delegate `{1}' parameters",
 					TypeManager.CSharpSignature (found_method), delegate_desc);

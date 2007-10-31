@@ -1,5 +1,11 @@
 2007-10-31  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bugs #337712, #324490
+ 	* delegate.cs: Delegate covariance and contravariance is not allowed for
+ 	value types.
+ 	
+2007-10-31  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #337719 
  	* cs-tokenizer.cs: Restore identifier buffer when parsing contextual
  	`from' keyword.
