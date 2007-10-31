@@ -1488,8 +1488,7 @@ namespace Mono.Xml.Schema
 
 		private void ExamineAdditionalSchema ()
 		{
-//			if (resolver == null || ValidationType == ValidationType.None)
-			if (resolver == null)
+			if (resolver == null || ValidationType == ValidationType.None)
 				return;
 			XmlSchema schema = null;
 			string schemaLocation = reader.GetAttribute ("schemaLocation", XmlSchema.InstanceNamespace);

@@ -1,3 +1,7 @@
+2007-10-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : added test for #336625.
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertTest.cs : added test for DateTime roundtrip.

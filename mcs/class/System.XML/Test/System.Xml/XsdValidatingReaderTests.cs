@@ -363,6 +363,17 @@ namespace MonoTests.System.Xml
 				vr.Read ();
 		}
 
+		[Test] // bug #336625
+		public void ValidationTypeNoneIgnoreLocatedSchemaErrors ()
+		{
+			string xml = "<test xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='Test/XmlFiles/xsd/336625.xsd'/>";
+			XmlValidatingReader vr = new XmlValidatingReader (
+				new XmlTextReader (new StringReader (xml)));
+			vr.ValidationType = ValidationType.None;
+			while (!vr.EOF)
+				vr.Read ();
+		}
+
 		[Test]
 		public void Bug81360 ()
 		{

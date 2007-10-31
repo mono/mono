@@ -1,0 +1,9 @@
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+<xs:element name='test' type='testType' />
+<xs:complexType name="testType">
+  <xs:complexContent>
+    <xs:restriction base="nonexistent">
+    </xs:restriction>
+  </xs:complexContent>
+</xs:complexType>
+</xs:schema>
