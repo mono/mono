@@ -1,3 +1,7 @@
+2007-10-31  Andreia Gaita <avidigal@novell.com>
+
+	* WebBrowserBase.cs: Only call resize on gluezilla when it is active
+
 2007-10-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Use int.MaxValue for MaxLength instead of magic number.
