@@ -257,6 +257,15 @@ public class Int32Test : Assertion
 		AssertEquals (false, Int32.TryParse (" - 1 ", out result));
 		AssertEquals (false, Int32.TryParse (" - ", out result));
 		AssertEquals (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
+		AssertEquals (false, Int32.TryParse ("10000000000", out result));
+		AssertEquals (false, Int32.TryParse ("-10000000000", out result));
+		AssertEquals (true, Int32.TryParse ("7fffffff", NumberStyles.HexNumber, Nfi, out result));
+		AssertEquals (Int32.MaxValue, result);
+		AssertEquals (true, Int32.TryParse ("80000000", NumberStyles.HexNumber, Nfi, out result));
+		AssertEquals (Int32.MinValue, result);
+		AssertEquals (true, Int32.TryParse ("ffffffff", NumberStyles.HexNumber, Nfi, out result));
+		AssertEquals (-1, result);
+		AssertEquals (false, Int32.TryParse ("100000000", NumberStyles.HexNumber, Nfi, out result));
 	}
 #endif
 	

@@ -1,5 +1,12 @@
 2007-10-30  Miguel de Icaza  <miguel@novell.com>
 
+	* UInt32.cs (Parse): Use Jeff Stedfast's parsing code which is
+	smaller and does not need checked() constructs. 
+
+	* Int64.cs, Int32.cs, Int16.cs: small tuneup: do not throw
+	exception, instead return the exception like every other place in
+	this code. 
+
 	* Int16.cs, Int32.cs, Int64.cs: Use the Jeff Stedfast parsing code
 	which is smaller.  We no longer use "checked" to check for
 	overflows, I refactored some stuff and cleaned up the rest and

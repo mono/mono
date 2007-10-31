@@ -140,31 +140,15 @@ namespace System
 				if (c >= '0' && c <= '9') {
 					uint d = (uint) (c - '0');
 
-					if (tryParse){
-						ulong v = ((ulong)val) * 10 + d;
-
-						if (v > MaxValue)
-							return false;
-						val = (uint) v;
-					} else
-						val = checked (val * 10 + d);
-					digits_seen = true;
-				}
-				else {
-					if (Char.IsWhiteSpace (c)) {
-						for (i++; i < len; i++) {
-							if (!Char.IsWhiteSpace (s [i])) {
-								if (!tryParse)
-									exc = Int32.GetFormatException ();
-								return false;
-							}
-						}
-						break;
-					} else {
+					if ((val > MaxValue/10) || (val == (MaxValue / 10) && d > (MaxValue % 10))){
 						if (!tryParse)
-							exc = Int32.GetFormatException ();
+							exc = new OverflowException (Locale.GetText ("Value is too large"));
 						return false;
 					}
+					val = (val * 10) + d;
+					digits_seen = true;
+				} else if (!Int32.ProcessTrailingWhitespace (tryParse, s, i, ref exc)){
+					return false;
 				}
 			}
 			if (!digits_seen) {

@@ -198,9 +198,9 @@ namespace System {
 			return true;
 
 		overflow:
-			if (tryParse)
-				return false;
-			throw new OverflowException ("Value is too large");
+			if (!tryParse)
+				exc = new OverflowException ("Value is too large");
+			return false;
 		}
 
 		public static int Parse (string s, IFormatProvider fp)
