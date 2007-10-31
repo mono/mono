@@ -1,5 +1,11 @@
 2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Login.cs: 
+	does not perform authentication if Page.IsValid returns false;
+	the fix makes control works with disabled client side validation.
+
+2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataList.cs: 
 	state of DataList.Items are restored correct on PostBack
 	such Items.Count and ItemType.

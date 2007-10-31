@@ -1249,6 +1249,9 @@ namespace System.Web.UI.WebControls {
 		
 		private bool AuthenticateUser ()
 		{
+			if (!Page.IsValid)
+				return true;
+
 			LoginCancelEventArgs lcea = new LoginCancelEventArgs ();
 			OnLoggingIn (lcea);
 			if (lcea.Cancel)
