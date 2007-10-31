@@ -691,6 +691,20 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsNull(d[2]);
 			Assert.IsNull(d["foo"]);
 		}
+
+		// Bug: #332534
+		[Test]
+		public void Dictionary_MoveNext ()
+		{
+			Dictionary<int,int> a = new Dictionary<int,int>();
+			a.Add(3,1);
+			a.Add(4,1);
+
+			IEnumerator en = a.GetEnumerator();
+			for (int i = 1; i < 10; i++)
+				en.MoveNext();
+		}
+		
 	}
 }
 

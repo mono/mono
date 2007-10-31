@@ -1,3 +1,8 @@
+2007-10-10  Juraj Skripsky <js@hotfeet.ch>
+
+	* Dictionary.cs (Enumerator.MoveNext): Handle the case where we
+	had already reached the end. Fixes bug #332534.
+
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
 	* List.cs (AddCollection): return early if the collection
