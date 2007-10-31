@@ -1,3 +1,8 @@
+2007-10-31  Miguel de Icaza  <miguel@novell.com>
+
+	* Dictionary.cs: Do not increment curTableItem when we return
+	false.   Was not necessary, just a defensive move.
+
 2007-10-10  Juraj Skripsky <js@hotfeet.ch>
 
 	* Dictionary.cs (Enumerator.MoveNext): Handle the case where we

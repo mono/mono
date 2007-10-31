@@ -761,9 +761,10 @@ namespace System.Collections.Generic {
 				do {
 					if (cur == NO_SLOT) {
 						//move to next item in table, check if we reached the end
-						if (++curTableItem >= dictionary.table.Length)
+						if (curTableItem+1 >= dictionary.table.Length)
 							return false;
 
+						curTableItem++;
 						cur = dictionary.table [curTableItem] - 1;
 					} else
 						cur = dictionary.linkSlots [cur].Next;	
