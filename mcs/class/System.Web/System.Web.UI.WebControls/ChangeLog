@@ -1,5 +1,11 @@
 2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DataList.cs: 
+	state of DataList.Items are restored correct on PostBack
+	such Items.Count and ItemType.
+
+2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseValidator.cs: 
 	validator is rendered correct if EnabledClientClient is false.
 

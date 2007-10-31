@@ -532,6 +532,7 @@ namespace System.Web.UI.WebControls {
 		protected override void CreateControlHierarchy (bool useDataSource)
 		{
 			Controls.Clear();
+			ItemList.Clear ();
 
 			IEnumerable ds = null;
 			ArrayList keys = null;
@@ -570,7 +571,7 @@ namespace System.Web.UI.WebControls {
 						type = ListItemType.EditItem;
 					else if (idx == selected_index) 
 						type = ListItemType.SelectedItem;
-					else if (idx % 2 != 0) 
+					else if ((idx & 1) != 0) 
 						type = ListItemType.AlternatingItem;
 
 					DoItemInLoop (idx, o, useDataSource, type);
@@ -579,11 +580,11 @@ namespace System.Web.UI.WebControls {
 			} else {
 				for (int i = 0; i < idx; i++) {
 					type = ListItemType.Item;
-					if (idx == edit_item_index) 
+					if (i == edit_item_index) 
 						type = ListItemType.EditItem;
-					else if (idx == selected_index) 
+					else if (i == selected_index) 
 						type = ListItemType.SelectedItem;
-					else if (idx % 2 != 0) 
+					else if ((i & 1) != 0) 
 						type = ListItemType.AlternatingItem;
 
 					DoItemInLoop (i, null, useDataSource, type);
@@ -632,14 +633,14 @@ namespace System.Web.UI.WebControls {
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
 				int index = item.ItemIndex;
-				if ((EditItemIndex == index) && (EditItemTemplate != null))
+				if ((item.ItemType == ListItemType.EditItem) && (EditItemTemplate != null))
 					t = EditItemTemplate;
-				else if ((SelectedIndex == index) && (SelectedItemTemplate != null))
+				else if ((item.ItemType == ListItemType.SelectedItem) && (SelectedItemTemplate != null))
 					t = SelectedItemTemplate;
-				else if (((index & 1) == 0) || (alternatingItemTemplate == null))
-					t = ItemTemplate;
+				else if ((item.ItemType == ListItemType.AlternatingItem) && (AlternatingItemTemplate != null))
+					t = AlternatingItemTemplate;
 				else
-					t = alternatingItemTemplate;
+					t = ItemTemplate;
 				break;
 			}
 

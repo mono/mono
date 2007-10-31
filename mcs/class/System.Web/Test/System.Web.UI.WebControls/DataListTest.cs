@@ -1197,6 +1197,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 				Assert.AreEqual (style, item.ControlStyle, String.Format ("#01-{0}", i));
 			}
 		}
+
+		[Test]
+		public void DataBindTwice () {
+			DataList dl = new DataList ();
+
+			dl.DataSource = new object [] { "1", "2", "3" };
+			dl.DataBind ();
+
+			Assert.AreEqual (3, dl.Items.Count, "first binding");
+
+			dl.DataSource = new object [] { "a", "b", "c" };
+			dl.DataBind ();
+
+			Assert.AreEqual (3, dl.Items.Count, "second binding");
+		}
 	}
 }
 
