@@ -103,7 +103,7 @@ namespace System.Windows.Forms
 			actual_border_style = BorderStyle.Fixed3D;
 			character_casing = CharacterCasing.Normal;
 			hide_selection = true;
-			max_length = 32767;
+			max_length = short.MaxValue;
 			password_char = '\0';
 			read_only = false;
 			word_wrap = true;
@@ -405,7 +405,7 @@ namespace System.Windows.Forms
 		[MWFCategory("Behavior")]
 		public virtual int MaxLength {
 			get {
-				if (max_length == 2147483646) {	// We don't distinguish between single and multi-line limits
+				if (max_length == (int.MaxValue - 1)) {	// We don't distinguish between single and multi-line limits
 					return 0;
 				}
 				return max_length;
@@ -414,7 +414,7 @@ namespace System.Windows.Forms
 			set {
 				if (value != max_length) {
 					if (value == 0)
-						value = 2147483646;
+						value = int.MaxValue - 1;
 
 					max_length = value;
 				}

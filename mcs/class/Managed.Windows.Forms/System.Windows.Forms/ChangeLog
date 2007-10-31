@@ -1,3 +1,8 @@
+2007-10-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: Use int.MaxValue for MaxLength instead of magic number.
+	Addresses an issue raised in bug #336218.
+
 2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Patch from George that moves the conversion of ClientSize->Size
