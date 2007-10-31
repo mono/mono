@@ -5,21 +5,6 @@
 
 2007-10-30  Martin Baulig  <martin@ximian.com>
 
-	* mini-trampolines.c
-	(mono_magic_trampoline): Call mono_debugger_trampoline_compiled().
-
-	* mini-amd64.c
-	(_mono_debugger_breakpoint_info_area): New public variable.
-	(mono_debugger_breakpoint_table): New public variable.
-	(mono_debugger_remove_breakpoints_from_code): New method.
-	(mono_arch_get_vcall_slot): Call it here to remove breakpoints.
-
-	* mini-x86.c
-	(_mono_debugger_breakpoint_info_area): New public variable.
-	(mono_debugger_breakpoint_table): New public variable.
-	(mono_debugger_remove_breakpoints_from_code): New method.
-	(mono_arch_get_vcall_slot): Call it here to remove breakpoints.
-
 	* debug-mini.h
 	(mono_debugger_thread_created): Added `MonoThread *' argument.
 	(mono_debugger_extended_notification): New public method.
