@@ -1,3 +1,8 @@
+2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BaseValidator.cs: 
+	validator is rendered correct if EnabledClientClient is false.
+
 2007-10-30 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Image.cs: fixed management state of Enabled property.
