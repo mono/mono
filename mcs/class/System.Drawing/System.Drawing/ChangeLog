@@ -1,3 +1,9 @@
+2007-10-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAnimator.cs: Fix delay == 0 to match most browser (imaginative)
+	definitions of "0". Don't throw on null images. Synchronize hashtable.
+	Remove unrequired loops.
+
 2007-10-17  Geoff Norton  <gnorton@novell.com>
 
 	* Graphics.cs: Only synchronize the display on Flush when we actually have

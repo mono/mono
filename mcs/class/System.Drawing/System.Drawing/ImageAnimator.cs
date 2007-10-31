@@ -1,12 +1,13 @@
 //
 // System.Drawing.ImageAnimator.cs
 //
-// Author:
-//   Dennis Hayes (dennish@Raytek.com)
-//   Sanjay Gupta (gsanjay@novell.com)
+// Authors:
+//	Dennis Hayes (dennish@Raytek.com)
+//	Sanjay Gupta (gsanjay@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,191 +29,146 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Drawing.Imaging;
 using System.Threading;
-using System.Collections;
 
-namespace System.Drawing
-{
-	//AnimateEventArgs class
-	class AnimateEventArgs : EventArgs 
-	{  
+namespace System.Drawing {
+
+	class AnimateEventArgs : EventArgs {
+
 		private int frameCount;
-		private int activeFrameCount = 0;
+		private int activeFrame;
 		private Thread thread;
-      
-		//Constructor.
-		//
-		public AnimateEventArgs(Image img)
+
+		public AnimateEventArgs (Image image)
 		{
-			Guid[] dimensionList = img.FrameDimensionsList;
-			int length = dimensionList.Length;
-			for (int i=0; i<length; i++) {
-				if (dimensionList [i].Equals(FrameDimension.Time.Guid))
-					this.frameCount = img.GetFrameCount (FrameDimension.Time);
-			}			
+			frameCount = image.GetFrameCount (FrameDimension.Time);
 		}
       
-		public int FrameCount {     
-			get { 
-				return frameCount;
-			}      
-		}
-      
-		public int ActiveFrameCount {
-			get {
-				return activeFrameCount;
-			}
-
-			set {
-				activeFrameCount = value;
-			}
+		public Thread RunThread {
+			get { return thread; }
+			set { thread = value; }
 		}
 
-		public Thread RunThread{
-			get {
-				return thread;
-			}
+		public int GetNextFrame ()
+		{
+			if (activeFrame < frameCount - 1)
+				activeFrame++;
+			else
+				activeFrame = 0;
 
-			set {
-				thread = value;
-			}
+			return activeFrame;
 		}
 	}
 
-	/// <summary>
-	/// Summary description for ImageAnimator.
-	/// </summary>
-	/// 
-	[MonoTODO]
-	public sealed class ImageAnimator
-	{
-		static Hashtable ht = new Hashtable (); 
-		
+	public sealed class ImageAnimator {
+
+		static Hashtable ht = Hashtable.Synchronized (new Hashtable ());
+
 		private ImageAnimator ()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
 
-		public static void Animate (Image img, EventHandler onFrameChangeHandler)
+		public static void Animate (Image image, EventHandler onFrameChangeHandler)
 		{
-			if (img == null)
-				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
-			
-			if (!ht.ContainsKey (img)) {
-				AnimateEventArgs evtArgs = new AnimateEventArgs (img);
-				int delay;
-				try {
-					PropertyItem item = img.GetPropertyItem (0x5100); // FrameDelay in libgdiplus
-					// Time is in 1/100th of a second
-					delay = (item.Value [0] + item.Value [1] * 256) * 10;
-				} catch {
-					delay = 200;
-				}
+			// must be non-null and contain animation time frames
+			if (!CanAnimate (image))
+				return;
 
-				WorkerThread WT = new WorkerThread (onFrameChangeHandler, evtArgs, delay);
-				ThreadStart TS = new ThreadStart(WT.LoopHandler);	
-				Thread thread = new Thread(TS);
-				thread.IsBackground = true;
-				evtArgs.RunThread = thread;
-				ht.Add (img, evtArgs);
-				
-				thread.Start();				
+			// is animation already in progress ?
+			if (ht.ContainsKey (image))
+				return;
+
+			PropertyItem item = image.GetPropertyItem (0x5100); // FrameDelay in libgdiplus
+			byte[] value = item.Value;
+			int[] delay = new int [(value.Length >> 2)];
+			for (int i=0, n=0; i < value.Length; i += 4, n++) {
+				int d = BitConverter.ToInt32 (value, i) * 10;
+				// follow worse case (Opera) see http://news.deviantart.com/article/27613/
+				delay [n] = d < 100 ? 100 : d;
 			}
+
+			AnimateEventArgs aea = new AnimateEventArgs (image);
+			WorkerThread wt = new WorkerThread (onFrameChangeHandler, aea, delay);
+			Thread thread = new Thread (new ThreadStart (wt.LoopHandler));
+			thread.IsBackground = true;
+			aea.RunThread = thread;
+			ht.Add (image, aea);
+			thread.Start ();
 		}
 
-		public static bool CanAnimate (Image img)
+		public static bool CanAnimate (Image image)
 		{
-			//An image can animate if it has multiple frame in
-			//time based FrameDimension else return false
-			//Doubt what if the image has multiple frame in page
-			//based FrameDimension
-			if (img == null)
+			if (image == null)
 				return false;
 
-			//Need to check whether i can do this without iterating
-			//within the FrameDimensionsList, ie just call GetFrameCount
-			//with parameter FrameDimension.Time
-			Guid[] dimensionList = img.FrameDimensionsList;
-			int length = dimensionList.Length;
-			int frameCount;
-			for (int i=0; i<length; i++) 
-			{
-				if (dimensionList [i].Equals(FrameDimension.Time.Guid)) 
-				{
-					frameCount = img.GetFrameCount (FrameDimension.Time);
-					if (frameCount > 1)
-						return true;
-				}
-			}			
-
-			return false; 		
+			return (image.GetFrameCount (FrameDimension.Time) > 1);
 		}
 
-		public static void StopAnimate (Image img, EventHandler onFrameChangeHandler)
+		public static void StopAnimate (Image image, EventHandler onFrameChangeHandler)
 		{
-			if (img == null)
-				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");			
+			if (image == null)
+				return;
 
-			if (ht.ContainsKey (img)) {
-				AnimateEventArgs evtArgs = (AnimateEventArgs) ht [img];
+			if (ht.ContainsKey (image)) {
+				AnimateEventArgs evtArgs = (AnimateEventArgs) ht [image];
 				evtArgs.RunThread.Abort ();
-				ht.Remove (img);
-			}				
+				ht.Remove (image);
+			}
 		}
 
 		public static void UpdateFrames ()
 		{
-			foreach (Image img in ht.Keys) {
-				UpdateFrames (img);
-			}
+			foreach (Image image in ht.Keys)
+				UpdateImageFrame (image);
 		}
-		
-		public static void UpdateFrames (Image img)
-		{
-			if (img == null)
-				throw new System.NullReferenceException ("Object reference not set to an instance of an object.");
 
-			if (ht.ContainsKey (img)){
-				//Need a way to get the delay during animation
-				AnimateEventArgs evtArgs = (AnimateEventArgs) ht [img];
-				if (evtArgs.ActiveFrameCount < evtArgs.FrameCount-1){
-					evtArgs.ActiveFrameCount ++;
-					img.SelectActiveFrame (FrameDimension.Time, evtArgs.ActiveFrameCount);
-				} 
-				else
-					evtArgs.ActiveFrameCount = 0;
-				ht [img] = evtArgs;
-			}			
+
+		public static void UpdateFrames (Image image)
+		{
+			if (image == null)
+				return;
+
+			if (ht.ContainsKey (image))
+				UpdateImageFrame (image);
+		}
+
+		// this method avoid checks that aren't requied for UpdateFrames()
+		private static void UpdateImageFrame (Image image)
+		{
+			AnimateEventArgs aea = (AnimateEventArgs) ht [image];
+			image.SelectActiveFrame (FrameDimension.Time, aea.GetNextFrame ());
 		}
 	}
 
-	class WorkerThread
-	{
-		EventHandler frameChangeHandler;
-		AnimateEventArgs animateEventArgs;
-		int delay;
-				
-		public WorkerThread (EventHandler frmChgHandler, AnimateEventArgs aniEvtArgs, int delay)
+	class WorkerThread {
+
+		private EventHandler frameChangeHandler;
+		private AnimateEventArgs animateEventArgs;
+		private int[] delay;
+
+		public WorkerThread (EventHandler frmChgHandler, AnimateEventArgs aniEvtArgs, int[] delay)
 		{
 			frameChangeHandler = frmChgHandler;
 			animateEventArgs = aniEvtArgs;
 			this.delay = delay;
 		}
-    
-		public void LoopHandler()
+
+		public void LoopHandler ()
 		{
 			try {
+				int n = 0;
 				while (true) {
-					Thread.Sleep (delay);
+					Thread.Sleep (delay [n++]);
 					frameChangeHandler (null, animateEventArgs);
-				}				
-			} catch (ThreadAbortException) { 
+					if (n == delay.Length)
+						n = 0;
+				}
+			}
+			catch (ThreadAbortException) {
 				Thread.ResetAbort (); // we're going to finish anyway
 			}
 		}
 	}
 }
-
