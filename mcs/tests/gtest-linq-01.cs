@@ -90,4 +90,13 @@ namespace from
 			Console.WriteLine (args [from]);
 		}		
 	}
+	
+	class D
+	{
+		public bool check (object from, object to)
+		{
+			if (from is int && to is int) return true;
+				return false;
+		}
+	}
 }
