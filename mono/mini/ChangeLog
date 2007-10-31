@@ -1,3 +1,37 @@
+2007-10-30  Martin Baulig  <martin@ximian.com>
+
+	* mini-trampolines.c
+	(mono_magic_trampoline): Call mono_debugger_trampoline_compiled().
+
+	* mini-amd64.c
+	(_mono_debugger_breakpoint_info_area): New public variable.
+	(mono_debugger_breakpoint_table): New public variable.
+	(mono_debugger_remove_breakpoints_from_code): New method.
+	(mono_arch_get_vcall_slot): Call it here to remove breakpoints.
+
+	* mini-x86.c
+	(_mono_debugger_breakpoint_info_area): New public variable.
+	(mono_debugger_breakpoint_table): New public variable.
+	(mono_debugger_remove_breakpoints_from_code): New method.
+	(mono_arch_get_vcall_slot): Call it here to remove breakpoints.
+
+	* debug-mini.h
+	(mono_debugger_thread_created): Added `MonoThread *' argument.
+	(mono_debugger_extended_notification): New public method.
+	(mono_debugger_trampoline_compiled): New public method.
+
+	* debug-mini.c
+	(MonoDebuggerThreadInfo): Added `thread' and
+	`extended_notifications' fields.
+
+	* debug-debugger.c
+	(debugger_executable_code_buffer): New static variable.
+
+	* debug-debugger.h
+	(MonoDebuggerInfo): Added `executable_code_buffer',
+	`executable_code_buffer_size', `breakpoint_info_area',
+	`breakpoint_table' and `breakpoint_table_size'.
+
 2007-10-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-arm.c (mono_arch_build_imt_thunk): Take the advantage
