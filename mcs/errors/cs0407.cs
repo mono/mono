@@ -1,4 +1,4 @@
-// cs0407.cs: `int MainClass.Delegate()' has the wrong return type to match the delegate `void TestDelegate()'
+// CS0407: The method `int MainClass.Delegate()' return type does not match delegate `void TestDelegate()' return type
 // Line: 12
 
 delegate void TestDelegate();
