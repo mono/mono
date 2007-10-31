@@ -370,7 +370,7 @@ namespace System.Net.Mail {
 				if (ln != 0)
 					ln++;
 				
-				if (ln > extens.Length)
+				if (ln + 4 >= extens.Length)
 					break;
 				
 				if (extens.Substring (ln, 4) == "AUTH" &&
@@ -403,10 +403,10 @@ namespace System.Net.Mail {
 							break;
 						}
 					}
-				} else if (extens.Substring (ln, 8) == "STARTTLS") {
+				} else if (ln + 8 < extens.Length && extens.Substring (ln, 8) == "STARTTLS") {
 					canStartTLS = true;
 				}
-			} while ((ln = extens.IndexOf ('\n', ln)) != -1);
+			} while (ln < extens.Length && ((ln = extens.IndexOf ('\n', ln)) != -1));
 		}
 
 		public void Send (MailMessage message)
