@@ -456,12 +456,12 @@ namespace Mono.CSharp
 			// followed by any token except ; , =
 			// 
 			if (query_parsing == 0) {
-				if (res == Token.FROM) {
+				if (res == Token.FROM && !lambda_arguments_parsing) {
 					PushPosition ();
 					// HACK: to disable generics micro-parser, because PushPosition does not
 					// store identifiers array
 					parsing_generic_less_than = 1;
-					switch (token ()) {
+					switch (xtoken ()) {
 						case Token.IDENTIFIER:
 						case Token.INT:
 						case Token.BOOL:
@@ -474,7 +474,7 @@ namespace Mono.CSharp
 						case Token.STRING:
 						case Token.UINT:
 						case Token.ULONG:
-							int next_token = token ();
+							int next_token = xtoken ();
 							if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
 								goto default;
 
@@ -487,6 +487,9 @@ namespace Mono.CSharp
 							break;
 						default:
 							PopPosition ();
+							// HACK: A token is not a keyword so we need to restore identifiers buffer
+							// which has been overwritten before we grabbed the identifier
+							id_builder [0] = 'f'; id_builder [1] = 'r'; id_builder [2] = 'o'; id_builder [3] = 'm';
 							return -1;
 					}
 					PopPosition ();

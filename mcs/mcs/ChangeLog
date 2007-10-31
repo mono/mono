@@ -1,3 +1,9 @@
+2007-10-31  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for bug #337719 
+ 	* cs-tokenizer.cs: Restore identifier buffer when parsing contextual
+ 	`from' keyword.
+ 	
 2007-10-30  Marek Safar  <marek.safar@gmail.com>
  
 	* Makefile (net_2_0_bootstrap/mcs.exe.config): Reverted copy gmcs.exe.config.
