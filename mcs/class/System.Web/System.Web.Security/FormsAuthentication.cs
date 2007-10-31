@@ -460,7 +460,7 @@ namespace System.Web.Security
 			return returnUrl;
 		}
 
-		static string GetHexString (byte [] bytes)
+		internal static string GetHexString (byte [] bytes)
 		{
 			const int letterPart = 55;
 			const int numberPart = 48;

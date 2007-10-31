@@ -1,3 +1,8 @@
+2007-10-31  Marek Habersack  <mhabersack@novell.com>
+
+	* FormsAuthentication.cs: made GetHexString an internal method -
+	it is used in the AssemblyResourceLoader.cs
+
 2007-08-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Roles.cs: remove unused field.

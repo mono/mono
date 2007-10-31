@@ -29,11 +29,15 @@
 //
 
 using System.Web.UI;
+using System.Globalization;
 using System.Reflection;
 using System.IO;
 using System.Resources;
 using System.Collections;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Web.Configuration;
 
 namespace System.Web.Handlers {
 #if SYSTEM_WEB_EXTENSIONS
@@ -84,6 +88,62 @@ namespace System.Web.Handlers {
 			return (url != null) ? url : GetResourceUrl (assembly, resourceName, false);
 		}
 
+		static byte[] GetEncryptionKey ()
+		{
+#if NET_2_0
+			MachineKeySection config = WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection;
+#else
+			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+#endif
+			return config.DecryptionKey192Bits;
+		}
+
+		static byte [] init_vector = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };
+		
+		static string EncryptAssemblyResource (string asmName, string resName)
+		{
+			byte[] key = GetEncryptionKey ();
+			byte[] bytes = Encoding.UTF8.GetBytes (String.Format ("{0};{1}", asmName, resName));
+			string result;
+			
+			ICryptoTransform encryptor = TripleDES.Create ().CreateEncryptor (key, init_vector);
+			result = System.Web.Security.FormsAuthentication.GetHexString (
+				encryptor.TransformFinalBlock (bytes, 0, bytes.Length)
+			);
+			bytes = null;
+
+			return result.ToLower (CultureInfo.InvariantCulture);
+		}
+
+		static void DecryptAssemblyResource (string val, out string asmName, out string resName)
+		{
+			byte[] key = GetEncryptionKey ();
+			byte[] bytes;
+			byte[] result;
+
+			asmName = null;
+			resName = null;
+			
+#if NET_2_0
+			bytes = MachineKeySection.GetBytes (val, val.Length);
+#else
+			bytes = MachineKeyConfig.GetBytes (val, val.Length);
+#endif
+			ICryptoTransform decryptor = TripleDES.Create ().CreateDecryptor (key, init_vector);
+			result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
+			bytes = null;
+
+			string data = Encoding.UTF8.GetString (result);
+			result = null;
+
+			string[] parts = data.Split (';');
+			if (parts.Length != 2)
+				return;
+			
+			asmName = parts [0];
+			resName = parts [1];
+		}
+		
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
 			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (assembly.GetName ().FullName);
@@ -100,9 +160,8 @@ namespace System.Web.Handlers {
 			if (apath != String.Empty)
 				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = String.Format ("{0}?a={2}{1}r={3}{4}{5}", HandlerFileName,
-						     QueryParamSeparator, aname,
-							 HttpUtility.UrlEncode (resourceName), atime, extra);
+			string href = String.Format ("{0}?d={1}{2}{3}", HandlerFileName,
+						     EncryptAssemblyResource (aname, resourceName), atime, extra);
 
 			HttpContext ctx = HttpContext.Current;
 			if (ctx != null && ctx.Request != null) {
@@ -121,15 +180,19 @@ namespace System.Web.Handlers {
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 #endif
 		{
-			string resourceName = context.Request.QueryString ["r"];
-			string asmName = context.Request.QueryString ["a"];
+			string resourceName;
+			string asmName;
 			Assembly assembly;
 
+			DecryptAssemblyResource (context.Request.QueryString ["d"], out asmName, out resourceName);
+			if (resourceName == null)
+				throw new HttpException (404, "No resource name given");
+			
 			if (asmName == null || asmName == "s")
 				assembly = typeof (AssemblyResourceLoader).Assembly;
 			else
 				assembly = Assembly.Load (asmName);
-
+			
 			WebResourceAttribute wra = null;
 			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
 			for (int i = 0; i < attrs.Length; i++) {
@@ -157,8 +220,6 @@ namespace System.Web.Handlers {
 			/* tell the client they can cache resources for 1 year */
 			context.Response.ExpiresAbsolute = DateTime.Now.AddYears (1);
 			context.Response.CacheControl = "private";
-			context.Response.Cache.VaryByParams ["r"] = true;
-			context.Response.Cache.VaryByParams ["t"] = true;
 
 			Stream s = assembly.GetManifestResourceStream (resourceName);
 			if (s == null)

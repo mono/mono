@@ -1,3 +1,10 @@
+2007-10-31  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyResourceLoader.cs: implemented assembly+resource name
+	encryption in the URLs. This follows MS.NET behavior. Also the
+	code is not varying the cache on the 't' parameter. Fixes bug
+	#338051.
+
 2007-10-30 Juraj Skripsky  <js@hotfete.ch>
 
 	* AssemblyResourceLoader.cs: Always use '&' as query parameter
