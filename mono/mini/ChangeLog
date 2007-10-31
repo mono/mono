@@ -1,3 +1,11 @@
+
+Wed Oct 31 19:29:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-x86, tramp-x86.c, mini-x86.h: added API to
+	let the debugger or other external agents to tell the JIT when
+	a sw breakpoint has been inserted in the code that the JIT needs
+	to be able to inspect.
+
 2007-10-31  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
