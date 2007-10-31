@@ -1,3 +1,7 @@
+2007-10-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlConvertTests.cs: Added link to MS bug report.
+
 2007-10-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : added test for #336625.

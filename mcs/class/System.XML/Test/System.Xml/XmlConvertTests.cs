@@ -612,6 +612,7 @@ namespace MonoTests.System.Xml
 			string s = XmlConvert.ToString (DateTime.UtcNow, format);
 			AssertType.AreEqual ('Z', s [s.Length -1], "#1-1");
 			// LAMESPEC: .NET has a bug here that 'K' in format string does not reflect 'Z' as Utc Kind.
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=307694
 			//AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, format).Kind, "#1-2");
 
 			s = XmlConvert.ToString (DateTime.UtcNow, XmlDateTimeSerializationMode.RoundtripKind);
