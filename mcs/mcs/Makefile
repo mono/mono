@@ -131,3 +131,6 @@ PROFILER=default
 
 profile : $(PROGRAM)
 	$(RUNTIME) $(RUNTIME_FLAGS) --profile=$(PROFILER) $(PROGRAM) $(USE_MCS_FLAGS) -target:exe -out:mcs2.exe $(BUILT_SOURCES) @$(response)
+
+qh:
+	MONO_PATH="../class/lib/net_2_0_bootstrap:$MONO_PATH" /cvs/mono/runtime/mono-wrapper  ../class/lib/net_2_0_bootstrap/gmcs.exe  /codepage:65001 -d:GMCS_SOURCE  -d:NET_1_1 -d:NET_2_0 -debug -target:exe -out:gmcs.exe gcs-parser.cs  @gmcs.exe.sources
