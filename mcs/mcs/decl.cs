@@ -2617,12 +2617,12 @@ namespace Mono.CSharp {
 					p_types = TypeManager.GetArgumentTypes ((PropertyInfo) ce.Member);
 				} else {
 					MethodBase mb = (MethodBase) ce.Member;
-					
+#if GMCS_SOURCE					
 					// TODO: This is more like a hack, because we are adding generic methods
 					// twice with and without arity name
 					if (mb.IsGenericMethod && !member.MemberName.IsGeneric)
 						continue;
-					
+#endif					
 					pd = TypeManager.GetParameterData (mb);
 					p_types = pd.Types;
 				}
