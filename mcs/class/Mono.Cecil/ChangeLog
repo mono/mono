@@ -1,3 +1,8 @@
+2007-10-31  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Binary/ImageReader.cs: fix for the case where
+	the export table export zero functions.
+
 2007-10-18  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/MethodBody.cs: Add an Optimize method which

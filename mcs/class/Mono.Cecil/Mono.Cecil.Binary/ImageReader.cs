@@ -433,6 +433,9 @@ namespace Mono.Cecil.Binary {
 
 		ushort [] ReadArrayOfUInt16 (RVA position, uint length)
 		{
+			if (position == RVA.Zero)
+				return new ushort [0];
+
 			SetPositionToAddress (position);
 			ushort [] array = new ushort [length];
 			for (int i = 0; i < length; i++)
@@ -443,6 +446,9 @@ namespace Mono.Cecil.Binary {
 
 		RVA [] ReadArrayOfRVA (RVA position, uint length)
 		{
+			if (position == RVA.Zero)
+				return new RVA [0];
+
 			SetPositionToAddress (position);
 			RVA [] addresses = new RVA [length];
 			for (int i = 0; i < length; i++)
