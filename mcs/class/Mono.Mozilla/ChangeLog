@@ -1,6 +1,10 @@
+2007-10-31  Andreia Gaita  <avidigal@novell.com>
+
+	* Base.cs: Send (and create if needed) user dir to store local mozilla data
+
 2007-10-30  Andreia Gaita  <avidigal@novell.com>
 
-	Base.cs: use the blur method to signal when the webbrowser loses
+	* Base.cs: use the blur method to signal when the webbrowser loses
 	focus
 	
 2007-10-18 Andreia Gaita <avidigal@novell.com>

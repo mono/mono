@@ -79,8 +79,16 @@ namespace Mono.Mozilla
 			IntPtr ptrCallback = Marshal.AllocHGlobal (Marshal.SizeOf (info.callback));
 			Marshal.StructureToPtr (info.callback, ptrCallback, true);
 
+			string monoMozDir = System.IO.Path.Combine (
+				System.IO.Path.Combine (
+				Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
+				".mono"), "mozilla");
+
+			if (!System.IO.Directory.Exists (monoMozDir))
+				System.IO.Directory.CreateDirectory (monoMozDir);
+
 			try {
-				info.gluezilla = gluezilla_init (ptrCallback, Environment.CurrentDirectory);
+				info.gluezilla = gluezilla_init (ptrCallback, Environment.CurrentDirectory, monoMozDir);
 			}
 			catch (DllNotFoundException) {
 				Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
@@ -249,7 +257,7 @@ namespace Mono.Mozilla
 		private static extern void gluezilla_debug_startup();
 
 		[DllImport("gluezilla")]
-		private static extern IntPtr gluezilla_init (IntPtr events, string startDir);
+		private static extern IntPtr gluezilla_init (IntPtr events, string startDir, string dataDir);
 
 		[DllImport ("gluezilla")]
 		private static extern IntPtr gluezilla_shutdown (IntPtr instance);
