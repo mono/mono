@@ -27,7 +27,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			+ " Group[10]=(9,2)"
 			+ " Group[11]=(11,1)"
 			),
-			new RegexTrial (@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", RegexOptions.ExplicitCapture, "F2345678910LL", "Fail"),//5
+			new RegexTrial (@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", RegexOptions.ExplicitCapture, "F2345678910LL", "Fail."),//5
 			new RegexTrial (@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\1", RegexOptions.None, "F2345678910L71", "Fail."),//6
 			new RegexTrial (@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", RegexOptions.None, "F2345678910LF1", "Fail."),//7
 			new RegexTrial (@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", RegexOptions.None, "F2345678910L71", "Pass."//8
@@ -150,64 +150,139 @@ namespace MonoTests.System.Text.RegularExpressions
 			new RegexTrial (@"(?>a*).", RegexOptions.ExplicitCapture, "aaaa", "Fail."),//52
 		};
 
-		[Test]	public void RegexJvmTrial0000 () { trials [0].Execute (); }
-		[Test]	public void RegexJvmTrial0001 () { trials [1].Execute (); }
+		[Test]
+		public void RegexJvmTrial0000 ()
+		{
+			trials [0].Execute ();
+		}
+
+		[Test]
+		public void RegexJvmTrial0001 ()
+		{
+			trials [1].Execute ();
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		public void RegexJvmTrial0002 ()
+		{
+			trials [2].Execute ();
+		}
+
+		[Test]
+		public void RegexJvmTrial0003 ()
+		{
+			trials [3].Execute ();
+		}
+
+		[Test]
+		public void RegexJvmTrial0004 ()
+		{
+			trials [4].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0002 () { trials [2].Execute (); }
+		public void RegexJvmTrial0005 ()
+		{
+			trials [5].Execute ();
+		}
 
-		[Test]	public void RegexJvmTrial0003 () { trials [3].Execute (); }
-		[Test]	public void RegexJvmTrial0004 () { trials [4].Execute (); }
+		[Test]
+		public void RegexJvmTrial0006 ()
+		{
+			trials [6].Execute ();
+		}
+
+		[Test]
+		public void RegexJvmTrial0007 ()
+		{
+			trials [7].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0005 () { trials [5].Execute (); }
-
-		[Test]	public void RegexJvmTrial0006 () { trials [6].Execute (); }
-		[Test]	public void RegexJvmTrial0007 () { trials [7].Execute (); }
-
-		[Test]
-		[Category ("NotWorking")]
-		public void RegexJvmTrial0008 () { trials [8].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0008 ()
+		{
+			trials [8].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0009 () { trials [9].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0009 ()
+		{
+			trials [9].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0010 () { trials [10].Execute (); }
+		public void RegexJvmTrial0010 ()
+		{
+			trials [10].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0011 () { trials [11].Execute (); }
+		public void RegexJvmTrial0011 ()
+		{
+			trials [11].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0012 () { trials [12].Execute (); }
+		public void RegexJvmTrial0012 ()
+		{
+			trials [12].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0013 () { trials [13].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0013 ()
+		{
+			trials [13].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0014 () { trials [14].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0014 ()
+		{
+			trials [14].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0015 () { trials [15].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0015 ()
+		{
+			trials [15].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0016 () { trials [16].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0016 ()
+		{
+			trials [16].Execute ();
+		}
 
-		[Test]	public void RegexJvmTrial0017 () { trials [17].Execute (); }
+		[Test]
+		public void RegexJvmTrial0017 ()
+		{
+			trials [17].Execute ();
+		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void RegexJvmTrial0018 () { trials [18].Execute (); }
+		[Category ("NotDotNet")]
+		public void RegexJvmTrial0018 ()
+		{
+			trials [18].Execute ();
+		}
 		
 		[Test]	public void RegexJvmTrial0019 () { trials [19].Execute (); }
 		[Test]	public void RegexJvmTrial0020 () { trials [20].Execute (); }

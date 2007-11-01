@@ -1,3 +1,8 @@
+2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Match.cs: Do not throw NotSupportedException on zero-length
+	replacement argument.
+
 2007-10-29 Arina Itkes <arinai@mainsoft.com>
 
 	* Regex.cs: Moving creation of Regex machine to ctor.

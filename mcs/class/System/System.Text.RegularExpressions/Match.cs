@@ -66,8 +66,6 @@ namespace System.Text.RegularExpressions {
 		{
 			if (replacement == null)
 				throw new ArgumentNullException ("replacement");
-			if (replacement.Length == 0)
-				throw new NotSupportedException ();
 			if (machine == null)
 				throw new NotSupportedException ("Result cannot be called on failed Match.");
 

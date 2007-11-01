@@ -31,16 +31,24 @@ using NUnit.Framework;
 using System;
 using System.Text.RegularExpressions;
 
-namespace MonoTests.System.Text.RegularExpressions {
-
+namespace MonoTests.System.Text.RegularExpressions
+{
 	[TestFixture]
-	public class GroupTest {
-
+	public class GroupTest
+	{
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Synchronized_Null ()
+		public void Synchronized_Inner_Null ()
 		{
-			Group.Synchronized (null);
+			try {
+				Group.Synchronized (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("inner", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -48,7 +56,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 		{
 			Group eg = Match.Empty.Groups[0];
 			Group sg = Match.Synchronized (eg);
-			Assert.IsTrue (Object.ReferenceEquals (eg, sg), "Synchronized");
+			Assert.AreSame (eg, sg, "Synchronized");
 		}
 	}
 }

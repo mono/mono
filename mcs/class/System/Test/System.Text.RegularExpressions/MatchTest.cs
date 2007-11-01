@@ -37,10 +37,18 @@ namespace MonoTests.System.Text.RegularExpressions
 	public class MatchTest
 	{
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Synchronized_Null ()
+		public void Synchronized_Inner_Null ()
 		{
-			Match.Synchronized (null);
+			try {
+				Match.Synchronized (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("inner", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -48,21 +56,45 @@ namespace MonoTests.System.Text.RegularExpressions
 		{
 			Match em = Match.Empty;
 			Match sm = Match.Synchronized (em);
-			Assert.IsTrue (Object.ReferenceEquals (em, sm), "Synchronized");
+			Assert.AreSame (em, sm, "Synchronized");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Result_Null ()
+		public void Result_Replacement_Null ()
 		{
-			Match.Empty.Result (null);
+			try {
+				Match.Empty.Result (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("replacement", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		public void Result_Empty ()
+		public void Result_Replacement_Empty ()
 		{
-			Match.Empty.Result (String.Empty);
+			Regex email = new Regex ("(?<user>[^@]+)@(?<domain>.+)");
+			Match m = email.Match ("mono@go-mono.com");
+			string exp = m.Result (string.Empty);
+			Assert.AreEqual (string.Empty, exp);
+		}
+
+		[Test]
+		public void Result_Match_Empty ()
+		{
+			try {
+				Match.Empty.Result ("whatever");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Result cannot be called on failed Match
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 	}
 }

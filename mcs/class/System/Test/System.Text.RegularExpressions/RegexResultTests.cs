@@ -27,8 +27,8 @@ namespace MonoTests.System.Text.RegularExpressions
 				catch (Exception e) {
 					result = "Error.";
 				}
-				Assert.AreEqual (result, expected, "rr#: {1} ~ s,{2},{3},",
-				original, pattern, replacement);
+				Assert.AreEqual (expected, result, "rr#: {0} ~ s,{1},{2},",
+					original, pattern, replacement);
 
 			}
 		}

@@ -1,3 +1,12 @@
+2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* GroupTest.cs: Improved test for null argument check.
+	* MatchTest.cs: Improved tests for null argument checks. Added and
+	fixed replacement tests.
+	* RegexMatchTest.cs: Marked tests that do not pass on MS as NotDotNet.
+	Fixed expected result for trial 5.
+	* RegexResultTests.cs: Fixed Assert.
+
 2007-10-29 Arina Itkes <arinai@mainsoft.com>
 
 	* RegexReplace.cs RegxMatchTests.cs RegexResultTests.cs
