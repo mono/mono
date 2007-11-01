@@ -1,3 +1,8 @@
+2007-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Allow signature of very big files (e.g. a
+	1.5Gb EXE). Original patch from Ondrej Kelle;
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Don't reset an existing reason inside

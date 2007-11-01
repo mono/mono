@@ -231,42 +231,30 @@ namespace Mono.Security.Authenticode {
 
 		private bool Save (string fileName, byte[] asn)
 		{
-#if !DEBUG
+#if DEBUG
 			using (FileStream fs = File.Open (fileName + ".sig", FileMode.Create, FileAccess.Write)) {
 				fs.Write (asn, 0, asn.Length);
 				fs.Close ();
 			}
 #endif
-			byte[] file;
-			using (FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
-				file = new byte[fs.Length];
-				fs.Read (file, 0, file.Length);
-				fs.Close ();
-			}
-
 			// someday I may be sure enough to move this into DEBUG ;-)
 			File.Copy (fileName, fileName + ".bak", true);
 
-			using (FileStream fs = File.Open (fileName, FileMode.Create, FileAccess.Write)) {
+			using (FileStream fs = File.Open (fileName, FileMode.Open, FileAccess.ReadWrite)) {
 				int filesize;
 				if (SecurityOffset > 0) {
 					// file was already signed, we'll reuse the position for the updated signature
 					filesize = SecurityOffset;
 				} else if (CoffSymbolTableOffset > 0) {
 					// strip (deprecated) COFF symbol table
-					file[PEOffset + 12] = 0;
-					file[PEOffset + 13] = 0;
-					file[PEOffset + 14] = 0;
-					file[PEOffset + 15] = 0;
-					file[PEOffset + 16] = 0;
-					file[PEOffset + 17] = 0;
-					file[PEOffset + 18] = 0;
-					file[PEOffset + 19] = 0;
+					fs.Seek (PEOffset + 12, SeekOrigin.Begin);
+					for (int i = 0; i < 8; i++)
+						fs.WriteByte (0);
 					// we'll put the Authenticode signature at this same place (just after the last section)
 					filesize = CoffSymbolTableOffset;
 				} else {
 					// file was never signed, nor does it contains (deprecated) COFF symbols
-					filesize = file.Length;
+					filesize = (int)fs.Length;
 				}
 				// must be a multiple of 8 bytes
 				int addsize = (filesize & 7);
@@ -275,27 +263,23 @@ namespace Mono.Security.Authenticode {
 
 				// IMAGE_DIRECTORY_ENTRY_SECURITY (offset, size)
 				byte[] data = BitConverterLE.GetBytes (filesize + addsize);
-				file[PEOffset + 152] = data[0];
-				file[PEOffset + 153] = data[1];
-				file[PEOffset + 154] = data[2];
-				file[PEOffset + 155] = data[3];
+				fs.Seek (PEOffset + 152, SeekOrigin.Begin);
+				fs.Write (data, 0, 4);
 				int size = asn.Length + 8;
 				int addsize_signature = (size & 7);
 				if (addsize_signature > 0)
 					addsize_signature = 8 - addsize_signature;
 				data = BitConverterLE.GetBytes (size + addsize_signature);
-				file[PEOffset + 156] = data[0];
-				file[PEOffset + 157] = data[1];
-				file[PEOffset + 158] = data[2];
-				file[PEOffset + 159] = data[3];
-				fs.Write (file, 0, filesize);
+				fs.Seek (PEOffset + 156, SeekOrigin.Begin);
+				fs.Write (data, 0, 4);
+				fs.Seek (filesize, SeekOrigin.Begin);
 				// align certificate entry to a multiple of 8 bytes
 				if (addsize > 0) {
 					byte[] fillup = new byte[addsize];
 					fs.Write (fillup, 0, fillup.Length);
 				}
 				fs.Write (data, 0, data.Length);		// length (again)
-				data = BitConverterLE.GetBytes (0x00020200);	// magic
+				data = BitConverterLE.GetBytes (0x00020200);    // magic
 				fs.Write (data, 0, data.Length);
 				fs.Write (asn, 0, asn.Length);
 				if (addsize_signature > 0) {
