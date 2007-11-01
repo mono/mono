@@ -10,15 +10,6 @@
 	* reflection.c (mono_custom_attrs_from_class): Add support for dynamic inflated 
 	classes.
 
-2007-10-15  Jonathan Chambers <joncham@gmail.com>
-
-	* icall.c: Use GetEnvironmentStrings on windows
-	so we are using the same environment block as 
-	GetEnvironmentVariable/SetEnvironmentVariable. Fixes
-	#333740.
-	
-	Code is contributed under MIT/X11 license.
-
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
