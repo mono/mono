@@ -11,14 +11,15 @@ EXTRA_DISTFILES = \
 	generic.cs		\
 	linq.cs			\
 	NOTES			\
-	TODO
+	TODO			\
+	gmcs.exe.config
 
 GMCS_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
 
 ifdef GMCS_PROFILE
 	BUILT_SOURCES = gcs-parser.cs
 	LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
-	
+
 	ifeq (net_2_1, $(PROFILE))
 		INTERNAL_SMCS = $(INTERNAL_GMCS)
 		LOCAL_MCS_FLAGS += -nowarn:618 -noconfig -r:mscorlib -r:System.dll
@@ -56,10 +57,12 @@ $(progdir)/.stamp:
 	$(MKINSTALLDIRS) $(@D)
 	touch $@
 
-$(PROGRAM): $(topdir)/class/lib/default/mcs.exe $(progdir)/.stamp
+$(PROGRAM) $(PROGRAM).config: $(progdir)/.stamp
+
+$(PROGRAM): $(topdir)/class/lib/default/mcs.exe
 	cp $< $@
 
-$(PROGRAM).config: $(progdir)/.stamp
+$(PROGRAM).config: gmcs.exe.config
 	cp $< $@
 
 else

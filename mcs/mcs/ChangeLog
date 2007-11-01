@@ -1,3 +1,9 @@
+2007-10-31  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile:  reenable copy of gmcs.exe.config, but include it in EXTRA
+	DIST (it doesn't get included because PROGRAM isn't defined to be gmcs
+	during 'make dist')
+
 2007-10-31  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #338102
