@@ -2,6 +2,8 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 ../System.Web/System.Web.Handlers/AssemblyResourceLoader.cs
+../System.Web/System.Web.Configuration/MachineKeyRegistryStorage.cs
+../System.Web/System.Web.Configuration_2.0/MachineKeySectionUtils.cs
 ./Assembly/AssemblyInfo.cs
 ./System.Web.Handlers/ScriptModule.cs
 ./System.Web.Handlers/ScriptResourceHandler.cs
