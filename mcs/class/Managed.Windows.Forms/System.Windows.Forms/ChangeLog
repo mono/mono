@@ -1,3 +1,9 @@
+2007-11-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Don't process MouseUp for a ToolStripControlHost, clicking
+	on the non-hosted-control part of it shouldn't do anything.
+	Fixes part of bug #327498.
+
 2007-11-01  Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs: revert previous change, resize can be called anytime
