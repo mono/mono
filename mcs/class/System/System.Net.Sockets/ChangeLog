@@ -1,3 +1,11 @@
+2007-11-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Socket.cs: Do not set the Send and Receive buffer sizes for the
+	socket to the defaults set on Windows, they kill our performance.
+
+	Thanks to Zoltan Varga for tracking the performance issue down.
+	The bug was #325032
+
 2007-10-30  Dick Porter  <dick@ximian.com>
 
 	* UdpClient.cs: Don't set the multicast option twice.  Fixes bug

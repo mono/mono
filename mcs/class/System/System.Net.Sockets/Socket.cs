@@ -683,9 +683,13 @@ namespace System.Net.Sockets
 					this.DontFragment = false;
 				}
 
-				/* Set the same defaults as the MS runtime */
-				this.ReceiveBufferSize = 8192;
-				this.SendBufferSize = 8192;
+				//
+				// Microsoft sets these to 8192, but we are going to keep them
+				// both to the OS defaults as these have a big performance impact.
+				// on WebClient performance.
+				//
+				//this.ReceiveBufferSize = 8192;
+				//this.SendBufferSize = 8192;
 			} catch (SocketException) {
 			}
 #endif
