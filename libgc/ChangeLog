@@ -1,8 +1,3 @@
-2007-11-01  Geoff Norton  <gnorton@novell.com>
-
-	* darwin_stop_world.c:  Apple has changed ppc_thread_state_t on leopard
-	so we need to conditionally check for that.  __DARWIN_UNIX03 is the 
-	suggested define.
 
 Mon Sep 24 16:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
