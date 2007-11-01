@@ -528,32 +528,31 @@ namespace Mono.WebServices
 					return 0;
 				}
 				
-				if (className == null)
-				{
-				foreach (string urlEntry in urls) {
-					string url = urlEntry;
+				if (className == null) {
 					DiscoveryClientProtocol dcc = CreateClient ();
-					dcc.AllowAutoRedirect = true;
-					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
-						url = new Uri (Path.GetFullPath (url)).ToString ();
-						
-					dcc.DiscoverAny (url);
-					dcc.ResolveAll ();
-					
-					foreach (object doc in dcc.Documents.Values)
-					{
-						if (doc is ServiceDescription)
-							descriptions.Add ((ServiceDescription)doc);
-						else if (doc is XmlSchema)
-							schemas.Add ((XmlSchema)doc);
+
+					foreach (string urlEntry in urls) {
+						string url = urlEntry;
+						dcc.AllowAutoRedirect = true;
+						if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
+							url = new Uri (Path.GetFullPath (url)).ToString ();
+							
+						dcc.DiscoverAny (url);
+						dcc.ResolveAll ();
 					}
-					
-					if (descriptions.Count == 0)
-						throw new Exception ("No WSDL document was found at the url " + url);
-				}
-				}
-				else
-				{
+
+					foreach (object doc in dcc.Documents.Values) {
+						if (doc is ServiceDescription)
+							descriptions.Add ((ServiceDescription) doc);
+						else if (doc is XmlSchema)
+							schemas.Add ((XmlSchema) doc);
+					}
+
+					if (descriptions.Count == 0) {
+						Console.WriteLine ("Warning: no classes were generated.");
+						return 0;
+					}
+				} else {
 					string[] names = className.Split (',');
 					if (names.Length != 2) throw new Exception ("Invalid parameter value for 'type'");
 					string cls = names[0].Trim ();

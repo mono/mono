@@ -1,3 +1,8 @@
+2007-11-01  Get Driesen  <drieseng@users.sourceforge.net>
+
+	* MonoWSDL.cs: Backport part of fix for bug #336739 to WSDL for
+	1.0 profile. Output warning if no WSDLs were specified.
+
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoWSDL2.cs : it should be able to handle xml schemas that are
