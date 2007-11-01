@@ -1,5 +1,12 @@
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : fixed test for bug #338064 - milliseconds are not
+	  fully stored and caused mismatch. Format string was wrong.
+	  Added test for local time parsing. 'K' should not cause missing
+	  data (it could be empty).
+
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : fixed bug #338064.
 
 2007-10-27  Zoltan Varga  <vargaz@gmail.com>

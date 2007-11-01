@@ -2120,13 +2120,21 @@ namespace MonoTests.System
 		public void RundtripKindPattern ()
 		{
 			// only 2.0 supports 'K'
-			string format = "yyyy-MM-ddTHH:mm:ss.FFFK";
+			string format = "yyyy-MM-dd'T'HH:mm:ss.fffK";
 			CultureInfo ci = CultureInfo.CurrentCulture;
-			DateTime dt = DateTime.UtcNow;
-			string s = dt.ToString (format);//"2007-11-01T10:03:48.39Z";
+			DateTime dt = DateTime.SpecifyKind (new DateTime (2007, 11, 1, 2, 30, 45), DateTimeKind.Utc);
+			string s = dt.ToString (format);
 			DateTime d1 = DateTime.ParseExact (s, format, ci);
 			Assert.AreEqual (dt.Ticks, d1.Ticks, "#1");
 			Assert.AreEqual (DateTimeKind.Utc, d1.Kind, "#2");
+
+			format = "yyyy-MM-dd'T'HH:mm:ssK";
+			ci = CultureInfo.CurrentCulture;
+			dt = new DateTime (2007, 11, 1, 2, 30, 45);
+			s = dt.ToString (format);
+			d1 = DateTime.ParseExact (s, format, ci);
+			Assert.AreEqual (dt.Ticks, d1.Ticks, "#3");
+			Assert.AreEqual (DateTimeKind.Local, d1.Kind, "#4");
 		}
 #endif
 	}

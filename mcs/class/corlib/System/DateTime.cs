@@ -1640,6 +1640,10 @@ namespace System
 				num = 0;
 			}
 
+#if NET_2_0
+			while (pos < len && chars [pos] == 'K') // 'K' can be mapped to nothing
+				pos++;
+#endif
 			if (pos < len)
 				return false;
 

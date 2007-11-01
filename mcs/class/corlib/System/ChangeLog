@@ -1,5 +1,10 @@
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : ParseExact() should ignore 'K' when there is no
+	  character is left.
+
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : in roundtrip mode, 'Z' should turn the tick value to
 	  utc time and should not result in different ticks.
 	  Fixed bug #338064.
