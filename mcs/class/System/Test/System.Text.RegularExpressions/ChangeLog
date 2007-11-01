@@ -6,6 +6,7 @@
 	* RegexMatchTest.cs: Marked tests that do not pass on MS as NotDotNet.
 	Fixed expected result for trial 5.
 	* RegexResultTests.cs: Fixed Assert.
+	* RegexReplace.cs: Fixed line endings.
 
 2007-10-29 Arina Itkes <arinai@mainsoft.com>
 
