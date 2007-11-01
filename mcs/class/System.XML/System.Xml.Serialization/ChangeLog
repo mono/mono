@@ -1,3 +1,8 @@
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporter.cs : simpleType is allowed to be imported.
+	  (Part of #336739 fix.)
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlCustomFormatter.cs : use RoundtripKind when converting to and

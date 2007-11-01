@@ -1,3 +1,8 @@
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaImporterTests.cs : test for importing simple-typed
+	  top-level element.
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaExporterTests.cs : without Infoset(), those tests randomly

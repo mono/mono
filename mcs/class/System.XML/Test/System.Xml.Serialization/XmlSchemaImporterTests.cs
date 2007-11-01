@@ -6,7 +6,7 @@
 //   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2005 Gert Driesen
-// Copyright (C) 2006 Novell, Inc.
+// Copyright (C) 2006-2007 Novell, Inc.
 // 
 
 //
@@ -1178,12 +1178,38 @@ namespace MonoTests.System.XmlSerialization
     <xs:attribute name='Foo' type='xs:string' />
   </xs:complexType>
 </xs:schema>";
-			XmlSchemas xss = new XmlSchemas ();
-			xss.Add (XmlSchema.Read (new XmlTextReader (new StringReader (xsd)), null));
-			XmlSchemaImporter imp = new XmlSchemaImporter (xss);
+			XmlSchemaImporter imp = CreateImporter (xsd);
 			CodeNamespace cns = new CodeNamespace ();
 			XmlCodeExporter exp = new XmlCodeExporter (cns);
 			exp.ExportTypeMapping (imp.ImportTypeMapping (new XmlQualifiedName ("Root")));
+		}
+
+		[Test]
+		public void ImportSimpleSchemaType ()
+		{
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+  <xs:element name='a' type='b' />
+  <xs:simpleType name='b'>
+    <xs:restriction base='xs:string'>
+      <xs:enumeration value='v1'/>
+      <xs:enumeration value='v2'/>
+      <xs:enumeration value='v3'/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>";
+			XmlSchemaImporter imp = CreateImporter (xsd);
+			XmlTypeMapping tm = imp.ImportTypeMapping (new XmlQualifiedName ("a"));
+			Assert.AreEqual ("a", tm.ElementName, "#1");
+			Assert.AreEqual ("b", tm.TypeName, "#2");
+		}
+
+		XmlSchemaImporter CreateImporter (params string [] schemaXmlStrings)
+		{
+			XmlSchemas xss = new XmlSchemas ();
+			foreach (string xsd in schemaXmlStrings)
+				xss.Add (XmlSchema.Read (new XmlTextReader (new StringReader (xsd)), null));
+			return new XmlSchemaImporter (xss);
 		}
 	}
 }

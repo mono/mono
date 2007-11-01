@@ -467,6 +467,9 @@ namespace System.Xml.Serialization
 			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
 			if (map != null) return map;
 			
+			if (stype is XmlSchemaSimpleType)
+				return ImportClassSimpleType (stype.QualifiedName, (XmlSchemaSimpleType) stype, name);
+			
 			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
 			map.Documentation = GetDocumentation (stype);
 			map.IsNullable = elem.IsNillable;
@@ -522,7 +525,7 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException ("Cannot import schema for type '" + elem.SchemaTypeName.Name + "' from namespace '" + elem.SchemaTypeName.Namespace + "'. Redefine not supported");
 			}
 
-			if (stype is XmlSchemaSimpleType) return false;
+			//if (stype is XmlSchemaSimpleType) return false;
 			return true;
 		}
 
@@ -1319,7 +1322,7 @@ namespace System.Xml.Serialization
 				// Create an enum map
 
 				CodeIdentifiers codeIdents = new CodeIdentifiers ();
-				XmlTypeMapping enumMap = CreateTypeMapping (typeQName, SchemaTypes.Enum, null);
+				XmlTypeMapping enumMap = CreateTypeMapping (typeQName, SchemaTypes.Enum, root);
 				enumMap.Documentation = GetDocumentation (stype);
 				
 				bool isFlags = false;
