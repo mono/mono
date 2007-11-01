@@ -28,8 +28,6 @@
 
 namespace Mono.Cecil {
 
-	using System.Reflection;
-
 	using Mono.Cecil.Metadata;
 
 	public sealed class MethodReturnType : ICustomAttributeProvider, IHasMarshalSpec, IHasConstant {
@@ -50,56 +48,38 @@ namespace Mono.Cecil {
 		}
 
 		internal ParameterDefinition Parameter {
-			get { return m_param; }
+			get {
+				if (m_param == null) {
+					m_param = new ParameterDefinition (m_returnType);
+					m_param.Method = m_method;
+				}
+
+				return m_param;
+			}
 			set { m_param = value; }
 		}
 
 		public MetadataToken MetadataToken {
-			get { return m_param.MetadataToken; }
-			set { m_param.MetadataToken = value; }
+			get { return Parameter.MetadataToken; }
+			set { Parameter.MetadataToken = value; }
 		}
 
 		public CustomAttributeCollection CustomAttributes {
-			get {
-				if (m_param == null) {
-					m_param = new ParameterDefinition (
-						string.Empty, 0, (ParameterAttributes) 0, m_returnType);
-					m_param.Method = m_method;
-				}
-
-				return m_param.CustomAttributes;
-			}
+			get { return Parameter.CustomAttributes; }
 		}
 
 		public bool HasConstant {
-			get {
-				if (m_param == null)
-					return false;
-
-				return m_param.HasConstant;
-			}
+			get { return Parameter.HasConstant; }
 		}
 
 		public object Constant {
-			get {
-				if (m_param == null)
-					return null;
-
-				return m_param.Constant;
-			}
-			set {
-				m_param.Constant = value;
-			}
+			get { return Parameter.Constant; }
+			set { Parameter.Constant = value; }
 		}
 
 		public MarshalSpec MarshalSpec {
-			get {
-				if (m_param == null)
-					return null;
-
-				return m_param.MarshalSpec;
-			}
-			set { m_param.MarshalSpec = value; }
+			get { return Parameter.MarshalSpec; }
+			set { Parameter.MarshalSpec = value; }
 		}
 
 		public MethodReturnType (TypeReference retType)

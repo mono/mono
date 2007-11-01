@@ -1,3 +1,9 @@
+2007-11-01  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/MethodReturnType.cs: based on a patch by
+	Ivan <ivanjh@gmail.com>. Fix for cloning methods with
+	marshalers on return type.
+
 2007-10-31  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Binary/ImageReader.cs: fix for the case where
