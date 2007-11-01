@@ -1,3 +1,10 @@
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoWSDL2.cs : it should be able to handle xml schemas that are
+	  passed as arguments, and those schemas could be used by *.wsdl.
+	  So, just use one WebReference to resolve everything at a time.
+	  (Part of #336739 fix.)
+
 2006-12-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoWSDL2.cs : check BasicProfile conformance only for SOAP 1.1.

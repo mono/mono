@@ -127,9 +127,11 @@ namespace Mono.WebServices
 				codeUnit.Namespaces.Add (proxyCode);
 				
 				WebReferenceCollection references = new WebReferenceCollection ();
+
+				DiscoveryClientProtocol dcc = CreateClient ();
+
 				foreach (string murl in urls) 
 				{
-					DiscoveryClientProtocol dcc = CreateClient ();
 
 					string url = murl;
 					if (!url.StartsWith ("http://") && !url.StartsWith ("https://") && !url.StartsWith ("file://"))
@@ -138,12 +140,13 @@ namespace Mono.WebServices
 					dcc.DiscoverAny (url);
 					dcc.ResolveAll ();
 					
-					WebReference reference = new WebReference (dcc.Documents, proxyCode, protocol, appSettingURLKey, appSettingBaseURL);
-					references.Add (reference);
-					
-					if (sampleSoap != null)
-						ConsoleSampleGenerator.Generate (descriptions, schemas, sampleSoap, protocol);
 				}
+				
+				WebReference reference = new WebReference (dcc.Documents, proxyCode, protocol, appSettingURLKey, appSettingBaseURL);
+				references.Add (reference);
+				
+				if (sampleSoap != null)
+					ConsoleSampleGenerator.Generate (descriptions, schemas, sampleSoap, protocol);
 				
 				if (sampleSoap != null)
 					return 0;
