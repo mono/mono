@@ -58,15 +58,8 @@ namespace MonoTests.System.Diagnostics
 			if (Path.DirectorySeparatorChar == '\\')
 				return;
 			
-			// Create a SH script that emits "hello" after it slept for 2 secs.
-			string script = Path.GetTempFileName ();
-			TextWriter w = File.CreateText (script);
-			w.WriteLine ("sleep 2");
-			w.WriteLine ("echo hello");
-			w.Close ();
-
 			Process p = new Process ();
-			p.StartInfo = new ProcessStartInfo ("/bin/sh", script);
+			p.StartInfo = new ProcessStartInfo ("/bin/sh", "-c \"sleep 2; echo hello\"");
 			p.StartInfo.RedirectStandardOutput = true;
 			p.StartInfo.UseShellExecute = false;
 			p.Start ();
@@ -82,9 +75,9 @@ namespace MonoTests.System.Diagnostics
 
 			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
-			File.Delete (script);
+			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
 
-			Assert.AreEqual ("hello", Encoding.Default.GetString (buffer, 0, 5), "#02");
+			Assert.AreEqual ("hello", Encoding.Default.GetString (buffer, 0, 5), "#03");
 		}
 
 		void Read (IAsyncResult ar)

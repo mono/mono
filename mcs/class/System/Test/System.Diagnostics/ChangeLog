@@ -1,3 +1,9 @@
+2007-11-01  Robert Jordan  <robertj@gmx.net>
+
+	* ProcessTest.cs (TestRedirectedOutputIsAsync):
+	Replace the generated script with a simple one (command line based).
+	Add additional assert for Process.ExitCode == 0.
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* ProcessTest.cs: Add tests for bug #319829.
