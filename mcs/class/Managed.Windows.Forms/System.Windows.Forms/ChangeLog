@@ -1,3 +1,12 @@
+2007-11-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: When a toolstrip has the keyboard input loop, let messages
+	it does not use flow through to controls that are hosted in menus.
+	Same with mouse clicks.
+	* Form.cs: Don't close all menus on click if the click is on a
+	control hosted in a menu.
+	Fixes part of bug #327498, and part of bug #325969.
+
 2007-10-31  Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs: Only call resize on gluezilla when it is active

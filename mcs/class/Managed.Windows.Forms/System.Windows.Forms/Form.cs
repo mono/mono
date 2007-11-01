@@ -2592,7 +2592,7 @@ namespace System.Windows.Forms {
 				IsActive = true;
 			} else {
 #if NET_2_0
-				if (XplatUI.IsEnabled (Handle))
+				if (XplatUI.IsEnabled (Handle) && XplatUI.GetParent (m.LParam) != Handle)
 					ToolStripManager.FireAppFocusChanged (this);
 #endif
 				IsActive = false;

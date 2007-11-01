@@ -777,14 +777,20 @@ namespace System.Windows.Forms
 							}
 
 						m.HWnd = keyboard_capture.Handle;
-						
-						if (keyboard_capture.PreProcessControlMessageInternal (ref m) != PreProcessControlState.MessageProcessed && (m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
-							if (c == null || c.Parent == null || !(c.Parent is ToolStrip))
+
+						switch (keyboard_capture.PreProcessControlMessageInternal (ref m)) {
+							case PreProcessControlState.MessageProcessed:
 								continue;
-							else
-								m.HWnd = msg.hwnd;
-						} else
-							continue;
+							case PreProcessControlState.MessageNeeded:
+							case PreProcessControlState.MessageNotNeeded:
+								if ((m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
+									if (c == null || !ControlOnToolStrip (c))
+										continue;
+									else
+										m.HWnd = msg.hwnd;
+								}
+								break;
+						}
 					}
 #endif
 
@@ -806,8 +812,16 @@ namespace System.Windows.Forms
 						if (c2 is ToolStrip) {
 							if ((c2 as ToolStrip).GetTopLevelToolStrip () != keyboard_capture.GetTopLevelToolStrip ())
 								ToolStripManager.FireAppClicked ();
-						} else
+						} else {
+							if (c2.Parent != null)
+								if (c2.Parent is ToolStripDropDownMenu)
+									if ((c2.Parent as ToolStripDropDownMenu).GetTopLevelToolStrip () == keyboard_capture.GetTopLevelToolStrip ())
+										goto default;
+							if (c2.TopLevelControl == null)
+								goto default;
+								
 							ToolStripManager.FireAppClicked ();
+						}
 					}
 					
 					goto default;
@@ -929,6 +943,21 @@ namespace System.Windows.Forms
 				forms.Remove (f);
 		}
 
+#if NET_2_0
+		private static bool ControlOnToolStrip (Control c)
+		{
+			Control p = c.Parent;
+			
+			while (p != null) {
+				if (p is ToolStrip)
+					return true;
+					
+				p = p.Parent;
+			}
+			
+			return false;
+		}
+#endif
 		#endregion
 	}
 }
