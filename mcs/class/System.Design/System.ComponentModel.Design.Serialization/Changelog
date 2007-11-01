@@ -1,3 +1,11 @@
+2007-11-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs:
+	 - Fix deserialization of enums and fields.
+	 - Fix deserialization of static properties.
+	 - Instrument the deserialization code to perform a lot more error
+	 checking and aggregate backtrace information.
+
 2007-10-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs: 
