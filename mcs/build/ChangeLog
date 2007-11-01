@@ -1,3 +1,7 @@
+2007-11-01  Marek Safar  <marek.safar@gmail.com>
+
+	* corcompare.make: Build corcompare into same directory.
+	
 2007-10-27  Marek Safar  <marek.safar@gmail.com>
 
 	* profiles/net_2_0_bootstrap.make: Fixed generics compiler name.

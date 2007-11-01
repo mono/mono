@@ -2,14 +2,14 @@ API_INFO = $(MONO_PATH) $(RUNTIME) $(topdir)/class/lib/$(PROFILE)/mono-api-info.
 API_DIFF = $(MONO_PATH) $(RUNTIME) $(topdir)/tools/corcompare/mono-api-diff.exe
 TRANSFORM = $(MONO_PATH) $(RUNTIME) $(topdir)/tools/corcompare/transform.exe
 
-OBJECTS = deploy/$(LIBRARY_NAME:.dll=.html)
+OBJECTS = $(topdir)/build/corcompare/$(LIBRARY_NAME:.dll=.html)
 
 corcompare: $(OBJECTS)
 
-$(OBJECTS): $(patsubst deploy/%.html,%.src, $(OBJECTS))
+$(OBJECTS): $(patsubst $(topdir)/build/corcompare/%.html,%.src, $(OBJECTS))
 
-.PRECIOUS: deploy/%.html
-deploy/%.html: %.src
+.PRECIOUS: $(topdir)/build/corcompare/%.html
+$(topdir)/build/corcompare/%.html: %.src
 	$(TRANSFORM) $< $(topdir)/build/corcompare-api.xsl source-name=$(notdir $<) > $@
 
 .PRECIOUS: %.src
@@ -20,6 +20,6 @@ deploy/%.html: %.src
 %.xml: $(topdir)/class/lib/$(PROFILE)/%.dll
 	$(API_INFO) $< > $@ || (rm -f $@ && exit 1)
 
-CLEAN_FILES += deploy/*.html $(LIBRARY_NAME:.dll=.src) $(LIBRARY_NAME:.dll=.xmlsrc)
+CLEAN_FILES += $(topdir)/build/corcompare/$(LIBRARY_NAME:.dll=.html) $(LIBRARY_NAME:.dll=.src) $(LIBRARY_NAME:.dll=.xmlsrc)
 
 
