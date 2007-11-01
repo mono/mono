@@ -130,7 +130,6 @@ namespace MonoTests.System
 
 #if NET_2_0 && !TARGET_JVM
 		[Test] // bug #333740
-		[Category ("NotWorking")]
 		public void GetEnvironmentVariables_NewlySet ()
 		{
 			Environment.SetEnvironmentVariable ("MonoTestVariable", "TestValue");
