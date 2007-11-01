@@ -1,6 +1,11 @@
+2007-11-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Check the domain as well for
+	native-to-managed wrappers.
+	
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
-    * mini-ppc.h, mini-x86.h:  Handle Leopards renaming of some structure 
+	* mini-ppc.h, mini-x86.h:  Handle Leopards renaming of some structure 
 	members.
 
 Wed Oct 31 19:53:33 CET 2007 Paolo Molaro <lupus@ximian.com>
