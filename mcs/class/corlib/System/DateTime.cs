@@ -1547,6 +1547,7 @@ namespace System
 				case 'K':
 					if (s [valuePos] == 'Z') {
 						valuePos++;
+						useutc = true;
 						explicit_kind = DateTimeKind.Utc;
 					}
 					else if (s [valuePos] == '+' || s [valuePos] == '-') {

@@ -1,3 +1,9 @@
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : in roundtrip mode, 'Z' should turn the tick value to
+	  utc time and should not result in different ticks.
+	  Fixed bug #338064.
+
 2007-10-30  Miguel de Icaza  <miguel@novell.com>
 
 	* UInt32.cs (Parse): Use Jeff Stedfast's parsing code which is

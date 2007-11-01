@@ -1,3 +1,7 @@
+2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : fixed bug #338064.
+
 2007-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs (InvokeMember_VarArgs): Enable this test.

@@ -2114,6 +2114,20 @@ namespace MonoTests.System
 			Assert.AreEqual ("2000-01-01T00:00:00.0000000+09:00".Length, DateTime.SpecifyKind (
 				new DateTime (2000, 1, 1), DateTimeKind.Local).ToString ("o").Length, "#3");
 		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void RundtripKindPattern ()
+		{
+			// only 2.0 supports 'K'
+			string format = "yyyy-MM-ddTHH:mm:ss.FFFK";
+			CultureInfo ci = CultureInfo.CurrentCulture;
+			DateTime dt = DateTime.UtcNow;
+			string s = dt.ToString (format);//"2007-11-01T10:03:48.39Z";
+			DateTime d1 = DateTime.ParseExact (s, format, ci);
+			Assert.AreEqual (dt.Ticks, d1.Ticks, "#1");
+			Assert.AreEqual (DateTimeKind.Utc, d1.Kind, "#2");
+		}
 #endif
 	}
 }
