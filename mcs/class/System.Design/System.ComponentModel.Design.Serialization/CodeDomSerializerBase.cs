@@ -43,9 +43,6 @@ namespace System.ComponentModel.Design.Serialization
 	public abstract class CodeDomSerializerBase
 	{
 
-		private string _deserializationErrorTrace = null;
-		private string _deserializationError = null;
-
 		internal CodeDomSerializerBase ()
 		{
 		}
@@ -417,21 +414,16 @@ namespace System.ComponentModel.Design.Serialization
 			
 			// CodeVariableReferenceExpression
 			//
+
 			CodeVariableReferenceExpression varRef = expression as CodeVariableReferenceExpression;
-			if (deserialized == null && varRef != null) {
-				deserialized = manager.GetInstance (varRef.VariableName);
-				if (deserialized == null)
-					_deserializationError = "Cannot find the value of the variable " + varRef.VariableName + "";
-			}
+			if (deserialized == null && varRef != null)
+					deserialized = manager.GetInstance (varRef.VariableName);
 
 			// CodeFieldReferenceExpression
 			//
 			CodeFieldReferenceExpression fieldRef = expression as CodeFieldReferenceExpression;
-			if (deserialized == null && fieldRef != null) {
+			if (deserialized == null && fieldRef != null)
 				deserialized = manager.GetInstance (fieldRef.FieldName);
-				if (deserialized == null)
-					_deserializationError = "Cannot find the value of the field " + fieldRef.FieldName + "";
-			}
 				
 
 			// CodePrimitiveExpression
@@ -442,60 +434,23 @@ namespace System.ComponentModel.Design.Serialization
 
 			// CodePropertyReferenceExpression
 			//
+			// Enum references are represented by a PropertyReferenceExpression, where 
+			// PropertyName is the enum field name and the target object is a TypeReference
+			// to the enum's type
+			//
 			CodePropertyReferenceExpression propRef = expression as CodePropertyReferenceExpression;
 			if (deserialized == null && propRef != null) {
 				object target = DeserializeExpression (manager, null, propRef.TargetObject);
 				if (target != null) {
-					bool found = false;
-					if (target is Type) {
-						PropertyInfo property = ((Type)target).GetProperty (propRef.PropertyName,
-																			BindingFlags.GetProperty | 
-																			BindingFlags.Public | BindingFlags.Static);
-						if (property != null) {
-							deserialized = property.GetValue (null, null);
-							found = true;
-						}
-
-						// NRefactory seems to produce PropertyReferences to reference some fields and enums
-						//
+					if (target is Type) { // Enum reference
 						FieldInfo field = ((Type)target).GetField (propRef.PropertyName,
-																   BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
-						if (field != null) {
+																	BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
+						if (field != null)
 							deserialized = field.GetValue (null);
-							found = true;
-						}
 					} else {
 						PropertyDescriptor property = TypeDescriptor.GetProperties (target)[propRef.PropertyName];
-						if (property != null) {
+						if (property != null)
 							deserialized = property.GetValue (target);
-<<<<<<< .working
-						else {
-							_deserializationError = "No property [" + propRef.PropertyName + "] found in type " + target.GetType ().Name;
-							_deserializationErrorTrace = "Property Name: " + propRef.PropertyName + System.Environment.NewLine +
-								"Property Value: " + value.ToString() + System.Environment.NewLine +
-								"Property Holder Type: " + target.GetType ().Name + System.Environment.NewLine +
-								"Property Holder Expression Type: " + propRef.TargetObject.GetType ().Name + System.Environment.NewLine;
-						}
-=======
-							found = true;
-						}
-
-						FieldInfo field = target.GetType().GetField (propRef.PropertyName,
-																   BindingFlags.GetField | BindingFlags.Public | BindingFlags.Instance);
-						if (field != null) {
-							deserialized = field.GetValue (null);
-							found = true;
-						}
->>>>>>> .merge-right.r140
-					}
-					
-					if (!found) {
-						_deserializationError = "No property " + propRef.PropertyName + " found in type " + 
-							(target is Type ? ((Type)target).Name : target.GetType ().Name);
-						_deserializationErrorTrace = "Property Name: " + propRef.PropertyName + System.Environment.NewLine +
-							"Property is: " + (target is Type ? "static" : "instance") + System.Environment.NewLine +
-							"Property Holder Type: " + (target is Type ? ((Type)target).Name : target.GetType ().Name) + System.Environment.NewLine +
-							"Property Holder Expression Type: " + propRef.TargetObject.GetType ().Name + System.Environment.NewLine;
 					}
 				}
 			}
@@ -505,42 +460,13 @@ namespace System.ComponentModel.Design.Serialization
 			CodeObjectCreateExpression createExpr = expression as CodeObjectCreateExpression;
 			if (deserialized == null && createExpr != null) {
 				Type type = manager.GetType (createExpr.CreateType.BaseType);
-				if (type == null) {
-					_deserializationError = "Unable to find the type " + createExpr.CreateType.BaseType;
-				} else {
-					object[] arguments = new object[createExpr.Parameters.Count];
-					for (int i=0; i < createExpr.Parameters.Count; i++) {
-						arguments[i] = this.DeserializeExpression (manager, null, createExpr.Parameters[i]);
-						if (_deserializationError != null) {
-							_deserializationErrorTrace = "Type to create: " + createExpr.CreateType.BaseType + System.Environment.NewLine +
-								"Parameter Number: " + i.ToString () + System.Environment.NewLine +
-								"Parameter Expression Type: " + createExpr.Parameters[i].GetType ().Name + System.Environment.NewLine +
-								"Parameters Count: " + createExpr.Parameters.Count + System.Environment.NewLine + 
-								_deserializationErrorTrace;
-							break;
-						}
-					}
-					if (_deserializationError == null) {
-						bool addToContainer = false;
-						if (typeof(IComponent).IsAssignableFrom (type))
-							addToContainer = true;
-						deserialized = this.DeserializeInstance (manager, type, arguments, name, addToContainer);
-						if (deserialized == null) {
-							_deserializationError = "Unable to create an instance of type " + createExpr.CreateType.BaseType;
-							_deserializationErrorTrace = "Type to create: " + createExpr.CreateType.BaseType + System.Environment.NewLine +
-								"Name: " + name + System.Environment.NewLine +
-								"addToContainer: " + addToContainer.ToString () + System.Environment.NewLine +
-								"Parameters Count: " + createExpr.Parameters.Count + System.Environment.NewLine;
-	
-							for (int i=0; i < arguments.Length; i++) {
-								_deserializationErrorTrace += "Parameter Number: " + i.ToString () + System.Environment.NewLine +
-									"Parameter Type: " + (arguments[i] == null ? "null" : arguments[i].GetType ().Name) +
-									System.Environment.NewLine +
-									"Parameter " + i.ToString () + " Value: " + arguments[i].ToString () + System.Environment.NewLine;
-							}
-						}
-					}
-				}
+				object[] arguments = new object[createExpr.Parameters.Count];
+				for (int i=0; i < createExpr.Parameters.Count; i++)
+					arguments[i] = this.DeserializeExpression (manager, null, createExpr.Parameters[i]);
+				bool addToContainer = false;
+				if (typeof(IComponent).IsAssignableFrom (type))
+					addToContainer = true;
+				deserialized = this.DeserializeInstance (manager, type, arguments, name, addToContainer);
 			}
 
 			// CodeArrayCreateExpression
@@ -548,36 +474,13 @@ namespace System.ComponentModel.Design.Serialization
 			CodeArrayCreateExpression arrayCreateExpr = expression as CodeArrayCreateExpression;
 			if (deserialized == null && arrayCreateExpr != null) {
 				Type arrayType = manager.GetType (arrayCreateExpr.CreateType.BaseType);
-				if (arrayType == null) {
-					_deserializationError = "Unable to find the type " + arrayCreateExpr.CreateType.BaseType;
-				} else {
+				if (arrayType != null) {
 					ArrayList initializers = new ArrayList ();
-					Type elementType = arrayType.GetElementType ();
-					deserialized = Array.CreateInstance (arrayType, arrayCreateExpr.Initializers.Count);
-					for (int i = 0; i < arrayCreateExpr.Initializers.Count; i++) {
-						object element = this.DeserializeExpression (manager, null, arrayCreateExpr.Initializers[i]);
-						if (_deserializationError != null) {
-							_deserializationErrorTrace = "Array Type: " + arrayType.Name + System.Environment.NewLine +
-								"Array Element Type: " + elementType + System.Environment.NewLine +
-								"Initializer Number: " + i.ToString () + System.Environment.NewLine +
-								"Initializer Type: " + (element == null ? "null" : element.GetType ().Name) + System.Environment.NewLine +
-								"Initialzer Value" + (element == null ? "null" : element.ToString ()) + System.Environment.NewLine +
-								_deserializationErrorTrace;
-						} else {
-							if (arrayType.IsInstanceOfType (element)) {
-								initializers.Add (element);
-							} else {
-								_deserializationError = "Array initializer of incompatible type detected.";
-								_deserializationErrorTrace = "Array Type: " + arrayType.Name + System.Environment.NewLine +
-									"Array Element Type: " + elementType + System.Environment.NewLine +
-									"Initializer Type: " + (element == null ? "null" : element.GetType ().Name) + System.Environment.NewLine;
-							}
-						}
+					foreach (CodeExpression initExpression in arrayCreateExpr.Initializers) {
+						initializers.Add (this.DeserializeExpression (manager, null, initExpression));
 					}
-					if (_deserializationError == null)
-						initializers.CopyTo ((Array)deserialized, 0);
-					else
-						deserialized = null;
+					deserialized = Array.CreateInstance (arrayType, initializers.Count);
+					initializers.CopyTo ((Array)deserialized, 0);
 				}
 			}
 
@@ -587,93 +490,48 @@ namespace System.ComponentModel.Design.Serialization
 			if (deserialized == null && methodExpr != null) {
 				object target = this.DeserializeExpression (manager, null, methodExpr.Method.TargetObject);
 				object[] parameters = new object[methodExpr.Parameters.Count];
-				for (int i=0; i < methodExpr.Parameters.Count; i++) {
+				for (int i=0; i < methodExpr.Parameters.Count; i++)
 					parameters[i] = this.DeserializeExpression (manager, null, methodExpr.Parameters[i]);
-					if (_deserializationError != null) {
-						_deserializationErrorTrace =
-							"Parameter Number: " + i.ToString () + System.Environment.NewLine +
-							"Parameter Expression Type: " + methodExpr.Parameters[i].GetType ().Name + System.Environment.NewLine +
-							_deserializationErrorTrace;
-						break;
-					}
+
+				MethodInfo method = null;
+				if (target is Type) {
+					method = GetExactMethod ((Type)target, methodExpr.Method.MethodName, 
+											 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static,
+											 parameters);
+				} else {
+					method = GetExactMethod (target.GetType(), methodExpr.Method.MethodName, 
+											 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance,
+											 parameters);
 				}
 
-				if (_deserializationError == null) {
-					MethodInfo method = null;
-					if (target is Type) {
-						method = GetExactMethod ((Type)target, methodExpr.Method.MethodName, 
-												 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Static,
-												 parameters);
-					} else {
-						method = GetExactMethod (target.GetType(), methodExpr.Method.MethodName, 
-												 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance,
-												 parameters);
-					}
-	
-					if (method != null) {
-						deserialized = method.Invoke (target, parameters);
-					} else {
-						_deserializationError = "Unable to find a matching method " + methodExpr.Method.MethodName + " in type " +
-							(target is Type ? ((Type)target).Name : target.GetType ().Name);
-						for (int i = 0; i < parameters.Length; i++) {
-							_deserializationErrorTrace += "Parameter Number: " + i.ToString () + System.Environment.NewLine +
-								"Parameter Type: " + (parameters[i] == null ? "null" : parameters[i].GetType ().Name) +
-								System.Environment.NewLine +
-								"Parameter " + i.ToString () + " Value: " + parameters[i].ToString () + System.Environment.NewLine;
-						}
-					}
-	
-					if (_deserializationError != null) {
-						_deserializationErrorTrace = 
-							"Method Name: " + methodExpr.Method.MethodName + System.Environment.NewLine +
-							"Method is: " + (target is Type ? "static" : "instance") + System.Environment.NewLine +
-							"Method Holder Type: " + (target is Type ? ((Type)target).Name : target.GetType ().Name) + System.Environment.NewLine +
-							"Parameters Count: " + methodExpr.Parameters.Count + System.Environment.NewLine +
-							_deserializationErrorTrace;
-					}
-				}
+				if (method == null)
+					ReportError (manager, "Cannot find method " + methodExpr.Method.MethodName,
+								 "Method Name: " + methodExpr.Method.MethodName + System.Environment.NewLine +
+								 "Type: " + (target is Type ? ((Type)target).Name : target.GetType().Name));
+				else
+					deserialized = method.Invoke (target, parameters);
 			}
 
 			// CodeTypeReferenceExpression
 			//
 			CodeTypeReferenceExpression typeRef = expression as CodeTypeReferenceExpression;
-			if (deserialized == null && typeRef != null) {
+			if (deserialized == null && typeRef != null)
 				deserialized = manager.GetType (typeRef.Type.BaseType);
-				if (deserialized == null)
-					_deserializationError = "Unable to find the type " + typeRef.Type.BaseType;
-			}
 
 			// CodeCastExpression
 			// 
 			CodeCastExpression castExpr = expression as CodeCastExpression;
 			if (deserialized == null && castExpr != null) {
 				Type targetType = manager.GetType (castExpr.TargetType.BaseType);
-				if (targetType == null)
-					_deserializationError = "Unable to find the type " + castExpr.TargetType.BaseType;
-
 				object instance = DeserializeExpression (manager, null, castExpr.Expression);
 				if (instance != null && targetType != null) {
 					IConvertible convertible = instance as IConvertible;
 					if (convertible != null) {
 						try {
 							instance = convertible.ToType (targetType, null);
-						} catch {
-							_deserializationError = "Unable to convert type " + instance.GetType ().Name + 
-								" to type " + castExpr.TargetType.BaseType;
-						}
-					} else {
-						_deserializationError = "Unable to convert type " + instance.GetType ().Name + 
-							" to type " + castExpr.TargetType.BaseType;
+						} catch {}
 					}
-
 					deserialized = instance;
-				}
-				if (_deserializationError != null) {
-					_deserializationErrorTrace = "Target Type: " + castExpr.TargetType.BaseType + System.Environment.NewLine +
-						"Instance Type: " + (instance == null ? "null" : instance.GetType ().Name) + System.Environment.NewLine +
-						"Instance Value: " + (instance == null ? "null" : instance.ToString()) + System.Environment.NewLine +
-						"Instance is IConvertible: " + (instance is IConvertible).ToString() + System.Environment.NewLine +
-						_deserializationErrorTrace;
 				}
 			}
 
@@ -682,42 +540,20 @@ namespace System.ComponentModel.Design.Serialization
 			//
 			CodeBinaryOperatorExpression binOperator = expression as CodeBinaryOperatorExpression;
 			if (deserialized == null && binOperator != null) {
-				IConvertible left = null;
-				IConvertible right = null;
 				switch (binOperator.Operator) {
 					case CodeBinaryOperatorType.BitwiseOr:
-						left = DeserializeExpression (manager, null, binOperator.Left) as IConvertible;
-						right = DeserializeExpression (manager, null, binOperator.Right) as IConvertible;
-						if (left is Enum && right is Enum) 
+						IConvertible left = DeserializeExpression (manager, null, binOperator.Left) as IConvertible;
+						IConvertible right = DeserializeExpression (manager, null, binOperator.Right) as IConvertible;
+						if (left is Enum) 
 							deserialized = Enum.ToObject (left.GetType (), Convert.ToInt64 (left) | Convert.ToInt64 (right));
-						else
-							_deserializationError = "CodeBinaryOperatorType.BitwiseOr only supported for Enum types";
 						break;
-					default:
-						_deserializationError = "Unsupported CodeBinaryOperatorType: " + binOperator.Operator.ToString ();
-						break;
-				}
-
-				if (_deserializationError != null) {
-					_deserializationErrorTrace = "BinaryOperator Type: " + binOperator.Operator.ToString() + System.Environment.NewLine +
-						"Left Type: " + (left == null ? "null" : left.GetType().Name) + System.Environment.NewLine +
-						"Left Value: " + (left == null ? "null" : left.ToString ()) + System.Environment.NewLine +
-						"Left Expression Type: " + binOperator.Left.GetType ().Name + System.Environment.NewLine +
-						"Right Type: " + (right == null ? "null" : right.GetType().Name) + System.Environment.NewLine +
-						"Right Value: " + (right == null ? "null" : right.ToString ()) + System.Environment.NewLine +
-						"Right Expression Type: " + binOperator.Right.GetType ().Name + System.Environment.NewLine +
-						_deserializationErrorTrace;
 				}
 			}
 
-
-			if (_deserializationError != null) {
-				_deserializationErrorTrace = "* DeserializeExpression (" + expression.GetType().Name + ")" 
-					+ System.Environment.NewLine + _deserializationErrorTrace;
-			} else {
-				if (deserialized == null && !(expression is CodePrimitiveExpression) && !(expression is CodeMethodInvokeExpression))
-					_deserializationError = "Unsupported Expression Type: " + expression.GetType ().Name;
-			}
+			// Methods are allowed to return a null value as well as CodePrimitiveExpression can contain a null value.
+			//
+			if (deserialized == null && methodExpr == null && primitiveExp == null) 
+				ReportError (manager, "Deserialization failed for " + expression.GetType().Name);
 
 			return deserialized;
 		}
@@ -752,20 +588,24 @@ namespace System.ComponentModel.Design.Serialization
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
-			_deserializationErrorTrace = null;
-			_deserializationError = null;
+			bool deserialized = false;
 
 			// CodeAssignStatement
 			//
 			CodeAssignStatement assignment = statement as CodeAssignStatement;
-			if (assignment != null)
+			if (assignment != null) {
 				DeserializeAssignmentStatement (manager, assignment);
+				deserialized = true;
+			}
 
 			// CodeExpressionStatement
 			//
 			CodeExpressionStatement expression = statement as CodeExpressionStatement;
-			if (expression != null)
+			if (expression != null) {
 				this.DeserializeExpression (manager, null, expression.Expression);
+				deserialized = true;
+			}
+
 
 			// CodeAttachEventStatement
 			//
@@ -789,86 +629,66 @@ namespace System.ComponentModel.Design.Serialization
 					methodName = methodRef.MethodName;
 
 				object component = DeserializeExpression (manager, null, attachStatement.Event.TargetObject);
-				if (component != null && methodName != null) {
+				if (component != null) {
 					EventDescriptor eventDescriptor = TypeDescriptor.GetEvents (component)[attachStatement.Event.EventName];
 					if (eventDescriptor != null) {
 						IEventBindingService service = manager.GetService (typeof (IEventBindingService)) as IEventBindingService;
-						if (service != null)
+						if (service != null) {
 							service.GetEventProperty (eventDescriptor).SetValue (component, methodName);
-						else
-							_deserializationError = "IEventBindingService missing.";
-					} else {
-						_deserializationError = "No event " + attachStatement.Event.EventName + 
-							" found in type " + component.GetType ().Name;
+							deserialized = true;
+						}
 					}
 				}
-
-				if (_deserializationError != null) {
-					_deserializationErrorTrace = "Method Name: " + methodName + System.Environment.NewLine +
-						"Event Name: " + attachStatement.Event.EventName + System.Environment.NewLine +
-						"Listener Expression Type: " + methodRef.GetType ().Name + System.Environment.NewLine +
-						"Event Holder Type: " + component.GetType ().Name + System.Environment.NewLine +
-						"Event Holder Expression Type: " + attachStatement.Event.TargetObject.GetType ().Name + System.Environment.NewLine;
-				}
 			}
 
-			if (_deserializationErrorTrace != null) {
-				_deserializationErrorTrace = "* DeserializeStatement (" + statement.GetType().Name + ")" 
-					+ System.Environment.NewLine + _deserializationErrorTrace;
-				ReportError (manager, _deserializationError, _deserializationErrorTrace);
-				_deserializationErrorTrace = null;
-				_deserializationError = null;
-			}
+			if (!deserialized)
+				ReportError (manager, "Deserialization failed for " + statement.GetType().Name);
 		}
 
 		private void DeserializeAssignmentStatement (IDesignerSerializationManager manager, CodeAssignStatement statement)
 		{
+			bool deserialized = false;
 			CodeExpression leftExpr = statement.Left;
 			
 			// Assign to a Property
 			//
 			CodePropertyReferenceExpression propRef = leftExpr as CodePropertyReferenceExpression;
 			if (propRef != null) {
-				object propertyHolder = DeserializeExpression (manager, null, propRef.TargetObject);
-				object value = null;
-				if (_deserializationError == null)
-					value = DeserializeExpression (manager, null, statement.Right);
-
-				if (_deserializationError == null && propertyHolder != null) {
-					PropertyDescriptor property = TypeDescriptor.GetProperties (propertyHolder)[propRef.PropertyName];
+				object target = DeserializeExpression (manager, null, propRef.TargetObject);
+				object value = DeserializeExpression (manager, null, statement.Right);
+				if (target != null) {
+					PropertyDescriptor property = TypeDescriptor.GetProperties (target)[propRef.PropertyName];
 					if (property != null) {
-						property.SetValue (target, value);
-					} else {
-						_deserializationError = "No property " + propRef.PropertyName + " found in type " + propertyHolder.GetType ().Name;
-						_deserializationErrorTrace = "Property Name: " + propRef.PropertyName + System.Environment.NewLine +
-							"Property Value: " + (value == null ? "null" : value.ToString()) + System.Environment.NewLine +
-							"Property Type: " + propertyHolder.GetType ().Name + System.Environment.NewLine +
-							"Property Holder Expression Type: " + propRef.TargetObject.GetType ().Name + System.Environment.NewLine;
+						try {
+							property.SetValue (target, value);
+						} catch {
+							// FIXME: This is just for testing on MSNET
+						}
+						deserialized = true;
 					}
 				}
 			}
 			
 			// Assign to a Field
 			// 
+			// This will fail for fields defined during the serialization process.
+			// 
 			CodeFieldReferenceExpression fieldRef = leftExpr as CodeFieldReferenceExpression;
 			if (fieldRef != null && fieldRef.FieldName != null) {
 				// Note that if the Right expression is a CodeCreationExpression the component will be created in this call
 				//
+				object value = DeserializeExpression (manager, fieldRef.FieldName, statement.Right);
 				object fieldHolder = DeserializeExpression (manager, null, fieldRef.TargetObject);
-				object value = null;
-				if (_deserializationError == null)
-					value = DeserializeExpression (manager, fieldRef.FieldName, statement.Right);
 				FieldInfo field = null;
 
 				RootContext context = manager.Context[typeof (RootContext)] as RootContext;
-				if (_deserializationError == null && fieldHolder != null) {
+				if (fieldHolder != null) {
 					if (fieldRef.TargetObject is CodeThisReferenceExpression && context != null && context.Value == fieldHolder) {
-						// Do not deserialize the fields of the root component, because the root component type 
-						// is actually an instance of the its parent type, e.g: CustomControl : _UserControl_
-						// and thus it doesn't contain the fields. The trick is that once DeserializeExpression 
-						// is called on a CodeObjectCreateExpression the component is created and is added to the name-instance
-						// table.
-						// 
+						// Do not actually deserialize fields of the root component, because the root component type won't have
+						// the fields. The root component instance is of the base type of the  root component declaration, e.g: 
+						// CustomControl : _UserControl_
+						//
+						deserialized = true;
 					} else {
 						if (fieldHolder is Type) // static field
 							field = ((Type)fieldHolder).GetField (fieldRef.FieldName, 
@@ -876,26 +696,18 @@ namespace System.ComponentModel.Design.Serialization
 						else // instance field
 							field = fieldHolder.GetType().GetField (fieldRef.FieldName, 
 																	BindingFlags.GetField | BindingFlags.Public | BindingFlags.Instance);
-						if (field != null)
+						if (field != null) {
 							field.SetValue (fieldHolder, value);
-						else {
-							_deserializationError = "No field " + fieldRef.FieldName + " found in type " + fieldHolder.GetType ().Name;
-							_deserializationErrorTrace = "Field Name: " + fieldRef.FieldName + System.Environment.NewLine +
-								"Field is: " + (fieldHolder is Type ? "static" : "instance") + System.Environment.NewLine +
-								"Field Value: " + (value == null ? "null" : value.ToString()) + System.Environment.NewLine +
-								"Field Holder Type: " + fieldHolder.GetType ().Name + System.Environment.NewLine +
-								"Field Holder Expression Type: " + fieldRef.TargetObject.GetType ().Name + System.Environment.NewLine;
+							deserialized = true;
 						}
 					}
 				}
 			}
 
-			if (_deserializationError != null) {
-				_deserializationErrorTrace = "* DeserializeAssignStatement" + System.Environment.NewLine + 
-					"Left Expression Type: " + statement.Left.GetType().Name + System.Environment.NewLine +
-					"Right Expression Type: " + statement.Right.GetType().Name + System.Environment.NewLine +
-					_deserializationErrorTrace;
-			}
+			if (!deserialized)
+				ReportError (manager, "Failed to deserialize CodeAssignmentStatement", 
+							 "Left Side Expression: " + statement.Left.GetType().Name + System.Environment.NewLine +
+							 "Right Side Expression: " + statement.Right.GetType().Name + System.Environment.NewLine);
 		}
 
 		internal void ReportError (IDesignerSerializationManager manager, string message)
@@ -908,7 +720,7 @@ namespace System.ComponentModel.Design.Serialization
 			try {
 				throw new Exception (message);
 			} catch (Exception e) {
-				e.Data["Details"] = message + Environment.NewLine + Environment.NewLine + details;
+				e.Data["Details"] = details;
 				manager.ReportError (e);
 			}
 		}
