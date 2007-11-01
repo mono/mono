@@ -1,3 +1,7 @@
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* darwin_stop_world.c:  Handle Leopards renaming of some structure
+	members.
 
 Mon Sep 24 16:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
