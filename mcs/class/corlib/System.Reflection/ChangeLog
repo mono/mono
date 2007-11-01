@@ -1,3 +1,8 @@
+2007-11-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Avoid returning a method with a ParamArray attribute when a normal
+	method exists. Fixes #338266.
+
 2007-10-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs: Applied patch from Mario A Chavez <mario.chavez@gmail.com>. Add
