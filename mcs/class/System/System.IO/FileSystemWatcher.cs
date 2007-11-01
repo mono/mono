@@ -332,10 +332,9 @@ namespace System.IO {
 
 		#region Methods
 	
-		[MonoTODO]
 		public void BeginInit ()
 		{
-			throw new NotImplementedException (); 
+			// Not necessary in Mono
 		}
 
 		protected override void Dispose (bool disposing)
@@ -354,10 +353,9 @@ namespace System.IO {
 			Stop ();
 		}
 		
-		[MonoTODO]
 		public void EndInit ()
 		{
-			throw new NotImplementedException (); 
+			// Not necessary in Mono
 		}
 
 		enum EventType {
