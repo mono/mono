@@ -1,3 +1,7 @@
+2007-11-01  Andreia Gaita <avidigal@novell.com>
+
+	* WebBrowserBase.cs: revert previous change, resize can be called anytime
+
 2007-11-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: When a toolstrip has the keyboard input loop, let messages

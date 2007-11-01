@@ -252,7 +252,7 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 			if (Visible && !Disposing && !IsDisposed && state == State.Loaded) {
 				state = State.Active;
-				WebHost.Activate ();
+				webHost.Activate ();
 			} else if (!Visible && state == State.Active) {
 				state = State.Loaded;
 				webHost.Deactivate ();
@@ -283,8 +283,7 @@ namespace System.Windows.Forms
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			base.SetBoundsCore (x, y, width, height, specified);
-			if (state == State.Active) 
-				this.webHost.Resize (width, height);
+			this.webHost.Resize (width, height);
 		}
 		#endregion
 
