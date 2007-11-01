@@ -11,6 +11,7 @@
 //    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
 //    Hubert FONGARNAND <informatique.internet@fiducial.fr>
+//    Marek Safar <marek.safar@gmail.com>
 //
 // Copyright (C) Daniel Morgan, 2002, 2005, 2006
 // Copyright (C) Tim Coleman, 2003
@@ -47,7 +48,12 @@ namespace System.Data.OracleClient
 	}
 
 	[DefaultEvent ("InfoMessage")]
-	public sealed class OracleConnection : Component, ICloneable, IDbConnection
+	public sealed class OracleConnection :
+#if NET_2_0
+		Common.DbConnection, ICloneable, IDbConnection
+#else
+		Component, ICloneable, IDbConnection
+#endif
 	{
 		#region Fields
 
@@ -91,7 +97,13 @@ namespace System.Data.OracleClient
 			get { return -1; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public override string Database {
+#else
 		string IDbConnection.Database {
+#endif
 			[MonoTODO]
 			get { return String.Empty; }
 		}
@@ -117,9 +129,16 @@ namespace System.Data.OracleClient
 			get { return oci.SessionHandle; }
 		}
 
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string DataSource {
+		public
+#if NET_2_0
+		override
+#endif
+		string DataSource {
 			get {
 				return conInfo.Database;
 			}
@@ -127,7 +146,11 @@ namespace System.Data.OracleClient
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public ConnectionState State {
+		public
+#if NET_2_0
+		override
+#endif		
+		ConnectionState State {
 			get { return state; }
 		}
 
@@ -135,7 +158,11 @@ namespace System.Data.OracleClient
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleConnectionStringEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public string ConnectionString {
+		public
+#if NET_2_0		
+		override
+#endif
+		string ConnectionString {
 			get { 
 				return parsedConnectionString;
 			}
@@ -147,7 +174,11 @@ namespace System.Data.OracleClient
 		[MonoTODO]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string ServerVersion {
+		public
+#if NET_2_0
+		override
+#endif		
+		string ServerVersion {
 			get {
 				if (this.State != ConnectionState.Open)
 					throw new System.InvalidOperationException ("Invalid operation. The connection is closed.");
@@ -185,7 +216,7 @@ namespace System.Data.OracleClient
 			get { return transaction; }
 			set { transaction = value; }
 		}
-
+		
 		#endregion // Properties
 
 		#region Methods
@@ -214,7 +245,11 @@ namespace System.Data.OracleClient
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		public override void ChangeDatabase (string databaseName)
+#else
 		void IDbConnection.ChangeDatabase (string databaseName)
+#endif
 		{
 			throw new NotImplementedException ();
 		}
@@ -226,7 +261,7 @@ namespace System.Data.OracleClient
 			return command;
 		}
 
-		[MonoTODO]
+		[MonoTODO]	
 		object ICloneable.Clone ()
 		{
 			OracleConnection con = new OracleConnection ();
@@ -336,7 +371,11 @@ namespace System.Data.OracleClient
                         }
                 }
 
-		public void Open () 
+		public
+#if NET_2_0
+		override
+#endif		
+		void Open () 
 		{
 			if (State == ConnectionState.Open)
 				return;
@@ -380,7 +419,11 @@ namespace System.Data.OracleClient
 				StateChange (this, e);
 		}
 
-		public void Close () 
+		public
+#if NET_2_0
+		override
+#endif
+		void Close () 
 		{
 			if (transaction != null)
 				transaction.Rollback ();
@@ -393,6 +436,20 @@ namespace System.Data.OracleClient
 			state = ConnectionState.Closed;
 			CreateStateChange (ConnectionState.Open, ConnectionState.Closed);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected override Common.DbTransaction BeginDbTransaction (IsolationLevel level)
+		{
+			return null;
+		}
+		
+		[MonoTODO]
+		protected override Common.DbCommand CreateDbCommand ()
+		{
+			return null;
+		}		
+#endif
 
 		private void PersistSecurityInfo () 
 		{

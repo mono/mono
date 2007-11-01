@@ -10,6 +10,7 @@
 // Authors:
 //    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
+//    Marek Safar <marek.safar@gmail.com>
 //
 // Copyright (C) Daniel Morgan, 2002, 2004-2005
 // Copyright (C) Tim Coleman , 2003
@@ -24,10 +25,19 @@ using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.Text;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
+#if NET_2_0
+	[DefaultEvent ("RecordsAffected")]
+#endif
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleCommandDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[ToolboxItem (true)]
-	public sealed class OracleCommand : Component, ICloneable, IDbCommand
+	public sealed class OracleCommand : 
+#if NET_2_0
+	Common.DbCommand, ICloneable, IDbCommand
+#else
+	Component, ICloneable, IDbCommand
+#endif
 	{
 		#region Fields
 
@@ -39,6 +49,10 @@ namespace System.Data.OracleClient {
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
+		
+#if NET_2_0
+		int connection_timeout;
+#endif		
 
 		private OciStatementHandle preparedStatement;
 		//OciStatementType statementType;
@@ -82,14 +96,22 @@ namespace System.Data.OracleClient {
 		[DefaultValue ("")]
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleCommandTextEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public string CommandText {
+		public
+#if NET_2_0		
+		override
+#endif
+		string CommandText {
 			get { return commandText; }
 			set { commandText = value; }
 		}
 
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue (CommandType.Text)]
-		public CommandType CommandType {
+		public
+#if NET_2_0		
+		override
+#endif
+		CommandType CommandType {
 			get { return commandType; }
 			set {
 				if (value == CommandType.TableDirect)
@@ -104,11 +126,45 @@ namespace System.Data.OracleClient {
 			get { return connection; }
 			set { connection = value; }
 		}
+		
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public override int CommandTimeout {
+			get { return connection_timeout; }
+			set { connection_timeout = value; }
+		}
+
+		[MonoTODO]
+		protected override Common.DbConnection DbConnection {
+			get { return null; }
+			set {}
+		}
+
+		[MonoTODO]
+		protected override Common.DbParameterCollection DbParameterCollection {
+			get { return null; }
+		}
+
+		[MonoTODO]
+		protected override Common.DbTransaction DbTransaction {
+			get { return null; }
+			set {}					
+		}
+#endif
 
 		[DefaultValue (true)]
 		[Browsable (false)]
 		[DesignOnly (true)]
-		public bool DesignTimeVisible {
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif		
+		public
+#if NET_2_0		
+		override
+#endif
+		bool DesignTimeVisible {
 			get { return designTimeVisible; }
 			set { designTimeVisible = value; }
 		}
@@ -161,7 +217,11 @@ namespace System.Data.OracleClient {
 		}
 
 		[DefaultValue (UpdateRowSource.Both)]
-		public UpdateRowSource UpdatedRowSource {
+		public
+#if NET_2_0		
+		override
+#endif
+		UpdateRowSource UpdatedRowSource {
 			get { return updatedRowSource; }
 			set { updatedRowSource = value; }
 		}
@@ -201,10 +261,14 @@ namespace System.Data.OracleClient {
 		}
 
 		[MonoTODO]
-		public void Cancel ()
+		public
+#if NET_2_0		
+		override
+#endif
+		void Cancel ()
 		{
 			throw new NotImplementedException ();
-		}
+		}	
 
 		[MonoTODO]
 		public object Clone ()
@@ -248,6 +312,21 @@ namespace System.Data.OracleClient {
 
 			return cmd;
 		}
+		
+		
+#if NET_2_0
+		[MonoTODO]
+		protected override Common.DbParameter CreateDbParameter ()
+		{
+			return null;
+		}
+
+		[MonoTODO]
+		protected override Common.DbDataReader ExecuteDbDataReader (CommandBehavior behaviour)
+		{
+			return null;
+		}
+#endif			
 
 		internal void UpdateParameterValues ()
 		{
@@ -301,7 +380,11 @@ namespace System.Data.OracleClient {
 			return rowsAffected;
 		}
 
-		public int ExecuteNonQuery ()
+		public
+#if NET_2_0		
+		override
+#endif		
+		int ExecuteNonQuery ()
 		{
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
@@ -459,7 +542,11 @@ namespace System.Data.OracleClient {
 			return rd;
 		}
 
-		public object ExecuteScalar ()
+		public
+#if NET_2_0		
+		override
+#endif
+		object ExecuteScalar ()
 		{
 			object output = null;//if we find nothing we return this
 
@@ -566,7 +653,11 @@ namespace System.Data.OracleClient {
 				statement.Prepare (commandText);
 		}
 
-		public void Prepare ()
+		public
+#if NET_2_0		
+		override
+#endif
+		void Prepare ()
 		{
 			AssertConnectionIsOpen ();
 			OciStatementHandle statement = GetStatementHandle ();

@@ -20,7 +20,12 @@ using System.Data;
 using System.Data.OracleClient.Oci;
 
 namespace System.Data.OracleClient {
-	public sealed class OracleTransaction : MarshalByRefObject, IDbTransaction, IDisposable
+	public sealed class OracleTransaction :
+#if NET_2_0	
+	Common.DbTransaction, IDbTransaction, IDisposable
+#else
+	MarshalByRefObject, IDbTransaction, IDisposable
+#endif
 	{
 		#region Fields
 
@@ -53,8 +58,19 @@ namespace System.Data.OracleClient {
 		public OracleConnection Connection {
 			get { return connection; }
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		protected override Common.DbConnection DbConnection {
+			get { return null; }
+		}
+#endif
 
-		public IsolationLevel IsolationLevel {
+		public
+#if NET_2_0
+		override
+#endif
+		IsolationLevel IsolationLevel {
 			get { return isolationLevel; }
 		}
 
@@ -71,7 +87,11 @@ namespace System.Data.OracleClient {
 			transaction.AttachToServiceContext ();
 		}
 
-		public void Commit ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Commit ()
 		{
 			transaction.Commit ();
 			Connection.Transaction = null;
@@ -97,7 +117,11 @@ namespace System.Data.OracleClient {
 			GC.SuppressFinalize (this);
 		}
 
-		public void Rollback ()
+		public
+#if NET_2_0
+		override
+#endif
+		void Rollback ()
 		{
 			transaction.Rollback ();
 			Connection.Transaction = null;
