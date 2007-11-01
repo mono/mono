@@ -3,8 +3,10 @@
 //
 // Author:
 //   Alejandro Sánchez Acosta (raciel@gnome.org)
+//   Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2007 Ivan N. Zlatev
 //
 
 //
@@ -34,6 +36,7 @@ namespace System.ComponentModel.Design.Serialization
 	{
 
 		private string name;
+		private object value;
 	
 		public ResolveNameEventArgs (string name) {
 			this.name = name;
@@ -47,11 +50,11 @@ namespace System.ComponentModel.Design.Serialization
 
 		public object Value {
 			get {
-				return this.name;
+				return this.value;
 			}
 
 			set {
-				name = (string) value;
+				this.value = value;
 			}
 		}			
 	}

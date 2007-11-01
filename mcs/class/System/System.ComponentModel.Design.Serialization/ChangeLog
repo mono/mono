@@ -1,3 +1,7 @@
+2007-11-01  Ivan N. Zlatev <contact@i-nz.net>
+
+	* ResolveNameEventArgs.cs: Fix Value to not return and set Name.
+
 2007-08-18  Ivan N. Zlatev <contact@i-nz.net>
 
 	* ContextStack.cs: Update to 2.0.
