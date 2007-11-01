@@ -638,8 +638,6 @@ namespace System.Web.Services.Description {
 				soapExporter.ExportTypeMapping (map);
 			}
 
-			bool required = false;
-
 			string varName = headerVariables [map] as string;
 			if (varName == null) 
 			{
@@ -652,7 +650,9 @@ namespace System.Web.Services.Description {
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapHeaderAttribute");
 			att.Arguments.Add (GetArg (varName));
-			att.Arguments.Add (GetArg ("Required", required));
+#if ONLY_1_0
+			att.Arguments.Add (GetArg ("Required", false));
+#endif
 			if (direction != SoapHeaderDirection.In) att.Arguments.Add (GetEnumArg ("Direction", "System.Web.Services.Protocols.SoapHeaderDirection", direction.ToString ()));
 			AddCustomAttribute (method, att, true);
 		}

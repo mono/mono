@@ -1,3 +1,9 @@
+2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoapProtocolImporter.cs: Only output Required argument for
+	SoapHeaderAttribute on .NET 1.0, since it is not used in .NET 1.1 and
+	higher. Avoids numerous warnings when compiling generated code.
+
 2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionCollection.cs : added missing members.
