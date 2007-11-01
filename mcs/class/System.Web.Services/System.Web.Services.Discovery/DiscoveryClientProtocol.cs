@@ -164,6 +164,7 @@ namespace System.Web.Services.Discovery {
 					documents.Add (url, schema);
 					doc = new DiscoveryDocument ();
 					refe = new SchemaReference ();
+					refe.Url = url;
 					((SchemaReference)refe).ResolveInternal (this, schema);
 					doc.References.Add (refe);
 				}

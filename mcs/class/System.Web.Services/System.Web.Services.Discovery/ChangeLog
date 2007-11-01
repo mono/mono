@@ -1,3 +1,8 @@
+2007-11-01  Atsushi Enomotot  <atsushi@ximian.com>
+
+	* DiscoveryClientProtocol.cs : without setting Url before resolve,
+	  it causes NRE on get_BaseUrl().
+
 2007-10-05  Atsushi Enomotot  <atsushi@ximian.com>
 
 	* DiscoveryClientProtocol.cs : [ComVisible]
