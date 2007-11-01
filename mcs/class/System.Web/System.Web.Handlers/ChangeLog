@@ -1,3 +1,10 @@
+2007-11-01  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyResourceLoader.cs: added GetHexString, copied from
+	FormsAuthentication.cs. Encryption/decryption routines use methods
+	from the new MachineKeySectionUtils class. This is needed for the
+	same code to work from both System.Web and System.Web.Extensions.
+
 2007-10-31  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyResourceLoader.cs: implemented assembly+resource name

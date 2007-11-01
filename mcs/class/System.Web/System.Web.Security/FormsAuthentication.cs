@@ -235,6 +235,18 @@ namespace System.Web.Security
 			return (password == stored);
 		}
 
+#if NET_2_0
+		static byte [] GetDecryptionKey (MachineKeySection config)
+		{
+			return MachineKeySectionUtils.DecryptionKey192Bits (config);
+		}
+#else
+		static byte [] GetDecryptionKey (MachineKeyConfig config)
+		{
+			return config.DecryptionKey192Bits;
+		}
+#endif
+		
 		static FormsAuthenticationTicket Decrypt2 (byte [] bytes)
 		{
 			if (protection == FormsProtectionEnum.None)
@@ -250,7 +262,7 @@ namespace System.Web.Security
 			byte [] result = bytes;
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform decryptor;
-				decryptor = TripleDES.Create ().CreateDecryptor (config.DecryptionKey192Bits, init_vector);
+				decryptor = TripleDES.Create ().CreateDecryptor (GetDecryptionKey (config), init_vector);
 				result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
 				bytes = null;
 			}
@@ -270,7 +282,7 @@ namespace System.Web.Security
 					count = SHA1_hash_size; // 3DES and SHA1
 
 #if NET_2_0
-				byte [] vk = config.ValidationKeyBytes;
+				byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
 #else
 				byte [] vk = config.ValidationKey;
 #endif
@@ -312,7 +324,7 @@ namespace System.Web.Security
 
 			FormsAuthenticationTicket ticket;
 #if NET_2_0
-			byte [] bytes = MachineKeySection.GetBytes (encryptedTicket, encryptedTicket.Length);
+			byte [] bytes = MachineKeySectionUtils.GetBytes (encryptedTicket, encryptedTicket.Length);
 #else
 			byte [] bytes = MachineKeyConfig.GetBytes (encryptedTicket, encryptedTicket.Length);
 #endif
@@ -345,7 +357,7 @@ namespace System.Web.Security
 			if (all || protection == FormsProtectionEnum.Validation) {
 				byte [] valid_bytes = null;
 #if NET_2_0
-				byte [] vk = config.ValidationKeyBytes;
+				byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
 #else
 				byte [] vk = config.ValidationKey;
 #endif
@@ -379,7 +391,7 @@ namespace System.Web.Security
 
 			if (all || protection == FormsProtectionEnum.Encryption) {
 				ICryptoTransform encryptor;
-				encryptor = TripleDES.Create ().CreateEncryptor (config.DecryptionKey192Bits, init_vector);
+				encryptor = TripleDES.Create ().CreateEncryptor (GetDecryptionKey (config), init_vector);
 				result = encryptor.TransformFinalBlock (result, 0, result.Length);
 			}
 
@@ -460,7 +472,7 @@ namespace System.Web.Security
 			return returnUrl;
 		}
 
-		internal static string GetHexString (byte [] bytes)
+		static string GetHexString (byte [] bytes)
 		{
 			const int letterPart = 55;
 			const int numberPart = 48;

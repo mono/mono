@@ -96,7 +96,7 @@ namespace System.Web.Security
 			else
 				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
 
-			decryptionKey = section.DecryptionKey192Bits;
+			decryptionKey = MachineKeySectionUtils.DecryptionKey192Bits (section);
 			return alg;
 		}
 

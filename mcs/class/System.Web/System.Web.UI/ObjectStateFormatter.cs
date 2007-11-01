@@ -103,7 +103,7 @@ namespace System.Web.UI {
 			if (page != null) {
 #if NET_2_0
 				MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
-				algoKey = mconfig.ValidationKeyBytes;
+				algoKey = MachineKeySectionUtils.ValidationKeyBytes (mconfig);
 #else
 				MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
 				algoKey = mconfig.ValidationKey;

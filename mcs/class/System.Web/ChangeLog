@@ -1,3 +1,7 @@
+2007-11-01  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added MachineKeySectionUtils.cs
+
 2007-10-24  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added

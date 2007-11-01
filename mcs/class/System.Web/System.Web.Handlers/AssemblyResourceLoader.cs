@@ -88,16 +88,40 @@ namespace System.Web.Handlers {
 			return (url != null) ? url : GetResourceUrl (assembly, resourceName, false);
 		}
 
+		static string GetHexString (byte [] bytes)
+		{
+			const int letterPart = 55;
+			const int numberPart = 48;
+			char [] result = new char [bytes.Length * 2];
+			for (int i = 0; i < bytes.Length; i++) {
+				int tmp = (int) bytes [i];
+				int second = tmp & 15;
+				int first = (tmp >> 4) & 15;
+				result [(i * 2)] = (char) (first > 9 ? letterPart + first : numberPart + first);
+				result [(i * 2) + 1] = (char) (second > 9 ? letterPart + second : numberPart + second);
+			}
+			return new string (result);
+		}
+		
 		static byte[] GetEncryptionKey ()
 		{
 #if NET_2_0
-			MachineKeySection config = WebConfigurationManager.GetSection ("system.web/machineKey") as MachineKeySection;
+			return MachineKeySectionUtils.DecryptionKey192Bits ();
 #else
 			MachineKeyConfig config = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
-#endif
 			return config.DecryptionKey192Bits;
+#endif
 		}
 
+		static byte[] GetBytes (string val)
+		{
+#if NET_2_0
+			return MachineKeySectionUtils.GetBytes (val, val.Length);
+#else
+			return MachineKeyConfig.GetBytes (val, val.Length);
+#endif
+		}		
+		
 		static byte [] init_vector = { 0xD, 0xE, 0xA, 0xD, 0xB, 0xE, 0xE, 0xF };
 		
 		static string EncryptAssemblyResource (string asmName, string resName)
@@ -107,28 +131,21 @@ namespace System.Web.Handlers {
 			string result;
 			
 			ICryptoTransform encryptor = TripleDES.Create ().CreateEncryptor (key, init_vector);
-			result = System.Web.Security.FormsAuthentication.GetHexString (
-				encryptor.TransformFinalBlock (bytes, 0, bytes.Length)
-			);
+			result = GetHexString (encryptor.TransformFinalBlock (bytes, 0, bytes.Length));
 			bytes = null;
 
-			return result.ToLower (CultureInfo.InvariantCulture);
+			return String.Format ("d={0}", result.ToLower (CultureInfo.InvariantCulture));
 		}
 
 		static void DecryptAssemblyResource (string val, out string asmName, out string resName)
 		{
 			byte[] key = GetEncryptionKey ();
-			byte[] bytes;
+			byte[] bytes = GetBytes (val);
 			byte[] result;
 
 			asmName = null;
-			resName = null;
-			
-#if NET_2_0
-			bytes = MachineKeySection.GetBytes (val, val.Length);
-#else
-			bytes = MachineKeyConfig.GetBytes (val, val.Length);
-#endif
+			resName = null;			
+
 			ICryptoTransform decryptor = TripleDES.Create ().CreateDecryptor (key, init_vector);
 			result = decryptor.TransformFinalBlock (bytes, 0, bytes.Length);
 			bytes = null;
@@ -160,7 +177,7 @@ namespace System.Web.Handlers {
 			if (apath != String.Empty)
 				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = String.Format ("{0}?d={1}{2}{3}", HandlerFileName,
+			string href = String.Format ("{0}?{1}{2}{3}", HandlerFileName,
 						     EncryptAssemblyResource (aname, resourceName), atime, extra);
 
 			HttpContext ctx = HttpContext.Current;

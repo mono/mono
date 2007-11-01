@@ -146,7 +146,7 @@ namespace System.Web.Security {
 			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Validation) {
 
 				byte [] hashBytes = null;
-				byte [] validationBytes = MachineConfig.ValidationKeyBytes;
+				byte [] validationBytes = MachineKeySectionUtils.ValidationKeyBytes (MachineConfig);
 				writer.Write (validationBytes);
 
 				switch (MachineConfig.Validation) {
@@ -167,7 +167,8 @@ namespace System.Web.Security {
 			byte [] ticketBytes = null;
 			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Encryption) {
 				ICryptoTransform enc;
-				enc = TripleDES.Create ().CreateEncryptor (MachineConfig.DecryptionKey192Bits, InitVector);
+				enc = TripleDES.Create ().CreateEncryptor (MachineKeySectionUtils.DecryptionKey192Bits (MachineConfig),
+									   InitVector);
 				ticketBytes = enc.TransformFinalBlock (ticket.GetBuffer (), 0, (int) ticket.Position);
 			}
 
@@ -188,14 +189,16 @@ namespace System.Web.Security {
 			CookieProtection cookieProtection = RoleManagerConfig.CookieProtection;
 			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Encryption) {
 				ICryptoTransform decryptor;
-				decryptor = TripleDES.Create ().CreateDecryptor (MachineConfig.DecryptionKey192Bits, InitVector);
+				decryptor = TripleDES.Create ().CreateDecryptor (
+					MachineKeySectionUtils.DecryptionKey192Bits (MachineConfig),
+					InitVector);
 				decryptedTicketBytes = decryptor.TransformFinalBlock (ticketBytes, 0, ticketBytes.Length);
 			}
 			else
 				decryptedTicketBytes = ticketBytes;
 
 			if (cookieProtection == CookieProtection.All || cookieProtection == CookieProtection.Validation) {
-				byte [] validationBytes = MachineConfig.ValidationKeyBytes;
+				byte [] validationBytes = MachineKeySectionUtils.ValidationKeyBytes (MachineConfig);
 				byte [] rolesWithValidationBytes = null;
 				byte [] tmpValidation = null;
 

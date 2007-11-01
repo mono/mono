@@ -2289,7 +2289,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		ICryptoTransform transform = null;
 		MachineKeySection config = (MachineKeySection) WebConfigurationManager.GetSection (machineKeyConfigPath);
-		byte [] vk = config.ValidationKeyBytes;
+		byte [] vk = MachineKeySectionUtils.ValidationKeyBytes (config);
 
 		switch (config.Validation) {
 		case MachineKeyValidation.SHA1:
