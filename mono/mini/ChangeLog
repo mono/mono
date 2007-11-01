@@ -1,3 +1,7 @@
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+    * mini-ppc.h, mini-x86.h:  Handle Leopards renaming of some structure 
+	members.
 
 Wed Oct 31 19:53:33 CET 2007 Paolo Molaro <lupus@ximian.com>
 
