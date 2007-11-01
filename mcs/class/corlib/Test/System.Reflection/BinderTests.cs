@@ -298,6 +298,22 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void TestParamsAttribute ()
+		{
+			MethodInfo mi = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object) }, null);
+			Assert.AreEqual (typeof (object), mi.GetParameters ()[1].ParameterType);
+
+			MethodInfo mi2 = typeof (BinderTest).GetMethod ("params_method1", BindingFlags.Static|BindingFlags.Public, null, new Type [] { typeof (object), typeof (object), typeof (object) }, null);
+			Assert.AreEqual (typeof (object[]), mi2.GetParameters ()[1].ParameterType);
+		}
+
+		public static void params_method1 (object o, params object[] o2) {
+		}
+
+		public static void params_method1 (object o, object o2) {
+		}
+
+		[Test]
 		public void TestExactBinding ()
 		{
 			Type[] types = new Type[] { typeof(int) };

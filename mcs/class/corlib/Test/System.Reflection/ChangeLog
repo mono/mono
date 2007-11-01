@@ -1,3 +1,7 @@
+2007-11-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinderTests.cs: Add a test for the ParamArray attribute.
+
 2007-10-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Enabled test for bug #334204.
