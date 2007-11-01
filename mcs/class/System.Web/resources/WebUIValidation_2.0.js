@@ -280,10 +280,10 @@ webForm.IsInVisibleContainer = function (ctrl) {
 
 webForm.ToInteger = function  (s, validator)
 {
-	if ((v = parseInt(s, 10)) != s - 0)
+	if (s.match(/^\s*[-\+]?\d+\s*$/) == null)
 		return null;
-	else
-		return v;
+	var v = parseInt(s, 10);
+	return (isNaN(v) ? null : v);
 }
 
 webForm.ToString = function (s, validator)

@@ -1,3 +1,8 @@
+2007-11-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebUIValidation_2.0.js: fixed ToInteger function.	
+	value such '10.00' is not converted to integer.	
+
 2007-09-29  Marek Habersack  <mhabersack@novell.com>
 
 	* WebUIValidation_2.0.js: replace all the ocurrences of 'this' with
