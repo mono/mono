@@ -1,3 +1,7 @@
+2007-11-02  Robert Jordan  <robertj@gmx.net>
+
+	* PathTest.cs (TestGetDirectoryName): Fix syntax errors.
+
 2007-09-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Added RunningOnUnix property to use for enabling

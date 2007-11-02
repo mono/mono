@@ -874,16 +874,16 @@ namespace MonoTests.System.IO
 		public void TestGetDirectoryName ()
 		{
 			if (Unix){
-				Assert.Equals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "/foo/bar");
-				Assert.Equals ("GDN#3", Path.GetDirectoryName ("foo/bar/", "foo/bar"));
-				Assert.Equals ("GDN#6", Path.GetDirectoryName ("/tmp", "/"));
-				Assert.Equals ("GDN#6", Path.GetDirectoryName ("/", ""));
+				AssertEquals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "/foo/bar");
+				AssertEquals ("GDN#3", Path.GetDirectoryName ("foo/bar/"), "foo/bar");
+				AssertEquals ("GDN#6", Path.GetDirectoryName ("/tmp"), "/");
+				AssertEquals ("GDN#6", Path.GetDirectoryName ("/"), "");
 			} else {
-				Assert.Equals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "\\foo\\bar");
-				Assert.Equals ("GDN#4", Path.GetDirectoryName ("foo/bar/", "foo\\bar");
-				Assert.Equals ("GDN#5", Path.GetDirectoryName ("foo/bar\\xxx", "foo\\bar");
+				AssertEquals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "\\foo\\bar");
+				AssertEquals ("GDN#4", Path.GetDirectoryName ("foo/bar/"), "foo\\bar");
+				AssertEquals ("GDN#5", Path.GetDirectoryName ("foo/bar\\xxx"), "foo\\bar");
+				AssertEquals ("GDN#2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\\path"), "\\\\host\\dir\\dir2");
 			}
-			Assert.Equals ("GDN#2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\path"), "\\\\host\\dir\\dir2");
 		}
 #endif
 	}
