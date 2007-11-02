@@ -1,3 +1,8 @@
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* carbonFunctions.cs:  Initiali implementation of clipping Z-order masking
+	siblings from the context
+
 2007-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAnimator.cs: Fix delay == 0 to match most browser (imaginative)

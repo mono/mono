@@ -27,6 +27,7 @@
 //
 
 #define EnableClipping
+#define EnableSiblingClipping
 #undef EnableNCClipping
 #undef DebugClipping
 #undef DebugDrawing
@@ -51,6 +52,7 @@ namespace System.Drawing {
 		internal static FieldInfo hwnd_whole_window_field;
 		internal static FieldInfo hwnd_client_window_field;
 		internal static MethodInfo get_hwnd;
+		internal static MethodInfo get_clipping_rectangles;
 
 		static Carbon () {
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
@@ -58,6 +60,7 @@ namespace System.Drawing {
 					hwnd_type = asm.GetType ("System.Windows.Forms.Hwnd");
 					if (hwnd_type != null) {
 						get_hwnd = hwnd_type.GetMethod ("ObjectFromHandle");
+						get_clipping_rectangles = hwnd_type.GetMethod ("GetClippingRectangles");
 						hwnd_children_field = hwnd_type.GetField ("children", BindingFlags.NonPublic | BindingFlags.Instance);
 						hwnd_client_rectangle_field = hwnd_type.GetField ("client_rectangle", BindingFlags.NonPublic | BindingFlags.Instance);
 						hwnd_x_field = hwnd_type.GetField ("x", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -100,6 +103,7 @@ namespace System.Drawing {
 			
 			// Convert the view local bounds to window coordinates
 			Carbon.HIViewConvertRect (ref vBounds, hwnd, IntPtr.Zero);
+
 			Carbon.CGContextTranslateCTM (cgContext, vBounds.origin.x, (wBounds.bottom-wBounds.top)-(vBounds.origin.y+vBounds.size.height));
 
 #if EnableClipping
@@ -113,66 +117,85 @@ namespace System.Drawing {
 				CGPathAddRect (clip_path, IntPtr.Zero, rc_clip);
 				CGContextBeginPath (cgContext);
 				object hwnd_object = get_hwnd.Invoke (null, new object [] {hwnd});
-				IntPtr whole_window = (IntPtr) hwnd_whole_window_field.GetValue (hwnd_object);
+				if (hwnd_object != null) {
+					IntPtr whole_window = (IntPtr) hwnd_whole_window_field.GetValue (hwnd_object);
 
-				if (hwnd == whole_window) {
+					if (hwnd == whole_window) {
 #if EnableNCClipping
 #if DebugClipping
-					Console.WriteLine ("\tNCCLIP:");
+						Console.WriteLine ("\tNCCLIP:");
 #endif
-					HIRect clip_rect = new HIRect ();
-					Rectangle client_rect = (Rectangle) hwnd_client_rectangle_field.GetValue (hwnd_object);
-					clip_rect.origin.x = (int) client_rect.X;
-					clip_rect.origin.y = (int) client_rect.Y;
-					clip_rect.size.width = (int) client_rect.Width;
-					clip_rect.size.height = (int) client_rect.Height;
+						HIRect clip_rect = new HIRect ();
+						Rectangle client_rect = (Rectangle) hwnd_client_rectangle_field.GetValue (hwnd_object);
+						clip_rect.origin.x = (int) client_rect.X;
+						clip_rect.origin.y = (int) client_rect.Y;
+						clip_rect.size.width = (int) client_rect.Width;
+						clip_rect.size.height = (int) client_rect.Height;
 #if DebugClipping
-					Console.WriteLine ("\txor: {0}x{1} @ {2}x{3}", clip_rect.size.width, clip_rect.size.height, clip_rect.origin.x, clip_rect.origin.y);
+						Console.WriteLine ("\tnc xor: {0}x{1} @ {2}x{3}", clip_rect.size.width, clip_rect.size.height, clip_rect.origin.x, clip_rect.origin.y);
 #endif
-					CGPathAddRect (clip_path, IntPtr.Zero, clip_rect);
-					CGContextAddPath (cgContext, clip_path);
-					CGContextEOClip (cgContext);
-#if DebugClipping
-					Console.WriteLine ("\tEOClip client_window");
-#endif
-#endif
-				} else {
-					ArrayList hwnd_children = (ArrayList) hwnd_children_field.GetValue (hwnd_object);
-					int count = hwnd_children.Count;
-					if (count > 0) {
-#if DebugClipping
-						Console.WriteLine ("\tCLIP:");
-#endif
-						HIRect [] clip_rects = new HIRect [count];
-						for (int i = 0; i < count; i++) {
-							clip_rects [i] = new HIRect ();
-							clip_rects [i].origin.x = (int) hwnd_x_field.GetValue (hwnd_children [i]);
-							clip_rects [i].origin.y = vBounds.size.height - (int) hwnd_y_field.GetValue (hwnd_children [i]) - (int) hwnd_height_field.GetValue (hwnd_children [i]);
-							clip_rects [i].size.width = (int) hwnd_width_field.GetValue (hwnd_children [i]);
-							clip_rects [i].size.height = (int) hwnd_height_field.GetValue (hwnd_children [i]);
-#if DebugClipping
-							Console.WriteLine ("\txor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
-#endif
-						}
-						CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, count);
+						CGPathAddRect (clip_path, IntPtr.Zero, clip_rect);
 						CGContextAddPath (cgContext, clip_path);
 						CGContextEOClip (cgContext);
 #if DebugClipping
-						Console.WriteLine ("\tEOClip");
+						Console.WriteLine ("\tEOClip client_window");
+#endif
 #endif
 					} else {
-#if DebugClipping
-						Console.WriteLine ("\tClip");
+						ArrayList hwnd_children = (ArrayList) hwnd_children_field.GetValue (hwnd_object);
+						ArrayList hwnd_clips = (ArrayList) get_clipping_rectangles.Invoke (hwnd_object, new object [0]); 
+						int count = hwnd_children.Count;
+#if EnableSiblingClipping
+						count += hwnd_clips.Count;
 #endif
-						CGContextAddPath (cgContext, clip_path);
-						CGContextClip (cgContext);
-					}
-				}
+						if (count > 0) {
 #if DebugClipping
-				Console.WriteLine ("--ENDCLIP:");
+							Console.WriteLine ("\tCLIP:");
+#endif
+							HIRect [] clip_rects = new HIRect [count];
+							for (int i = 0; i < hwnd_children.Count; i++) {
+								clip_rects [i] = new HIRect ();
+								clip_rects [i].origin.x = (int) hwnd_x_field.GetValue (hwnd_children [i]);
+								clip_rects [i].origin.y = vBounds.size.height - (int) hwnd_y_field.GetValue (hwnd_children [i]) - (int) hwnd_height_field.GetValue (hwnd_children [i]);
+								clip_rects [i].size.width = (int) hwnd_width_field.GetValue (hwnd_children [i]);
+								clip_rects [i].size.height = (int) hwnd_height_field.GetValue (hwnd_children [i]);
+#if DebugClipping
+								Console.WriteLine ("\tc xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
+#endif
+							}
+
+#if EnableSiblingClipping
+							for (int i = 0; i < hwnd_clips.Count; i++) {
+								clip_rects [hwnd_children.Count+i] = new HIRect ();
+								clip_rects [hwnd_children.Count+i].origin.x = ((Rectangle) hwnd_clips [i]).X;
+								clip_rects [hwnd_children.Count+i].origin.y = ((Rectangle) hwnd_clips [i]).Y;
+								clip_rects [hwnd_children.Count+i].size.width = ((Rectangle) hwnd_clips [i]).Width;
+								clip_rects [hwnd_children.Count+i].size.height = ((Rectangle) hwnd_clips [i]).Height;
+#if DebugClipping
+								Console.WriteLine ("\ts xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
+#endif
+							}
+#endif
+							CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, count);
+							CGContextAddPath (cgContext, clip_path);
+							CGContextEOClip (cgContext);
+#if DebugClipping
+							Console.WriteLine ("\tEOClip");
+#endif
+						} else {
+#if DebugClipping
+							Console.WriteLine ("\tClip");
+#endif
+							CGContextAddPath (cgContext, clip_path);
+							CGContextClip (cgContext);
+						}
+					}
+#if DebugClipping
+					Console.WriteLine ("--ENDCLIP:");
+#endif
+				}
 #endif
 			}
-#endif
 
 #if DebugDrawing
 			Console.WriteLine ("--DRAW:");
