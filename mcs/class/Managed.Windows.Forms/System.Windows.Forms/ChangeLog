@@ -1,3 +1,11 @@
+2007-11-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When sending status in a dnd operation, compare current
+	effect with the 'allowed' field instead of 'drag_data.Allowed', since
+	the later is only created when a Winforms application is both the
+	source and the target, but not when we are the target only.
+	Fixes part of #324251.
+
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUI*.cs: Add GetPreviousWindow utility method to return windows in
