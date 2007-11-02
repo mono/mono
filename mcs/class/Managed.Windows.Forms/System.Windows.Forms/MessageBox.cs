@@ -273,21 +273,16 @@ namespace System.Windows.Forms
 
 				// Still needs to implement defaultButton and options
 				switch(msgbox_default) {
-					case MessageBoxDefaultButton.Button1: {
-						AcceptButton = this.buttons[0];
-						break;
-					}
-
 					case MessageBoxDefaultButton.Button2: {
 						if (this.buttons[1] != null) {
-							AcceptButton = this.buttons[1];
+							ActiveControl = this.buttons[1];
 						}
 						break;
 					}
 
 					case MessageBoxDefaultButton.Button3: {
 						if (this.buttons[2] != null) {
-							AcceptButton = this.buttons[2];
+							ActiveControl = this.buttons[2];
 						}
 						break;
 					}

@@ -1,3 +1,8 @@
+2007-11-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MessageBox.cs: Patch from George to implement MessageBoxDefaultButton.
+	[Fixes bug #338554]
+
 2007-11-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Implement 2.0 IndentCount property.
