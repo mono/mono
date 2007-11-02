@@ -2668,27 +2668,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		//
-		// Whether the parameter named `name' is local to this block, 
-		// or false, if the parameter belongs to an encompassing block.
-		//
-		public bool IsLocalParameter (string name)
-		{
-			return Parameters.GetParameterByName (name) != null;
-		}
-		
-		//
-		// Whether the `name' is a parameter reference
-		//
-		public bool IsParameterReference (string name)
-		{
-			for (ToplevelBlock t = this; t != null; t = t.Container) {
-				if (t.IsLocalParameter (name))
-					return true;
-			}
-			return false;
-		}
-
 		LocalInfo this_variable = null;
 
 		// <summary>

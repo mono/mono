@@ -1,3 +1,7 @@
+2007-11-02  Marek Safar  <marek.safar@gmail.com>
+
+ 	* statement.cs: Removed unused methods.
+ 	
 2007-10-31  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile:  reenable copy of gmcs.exe.config, but include it in EXTRA
