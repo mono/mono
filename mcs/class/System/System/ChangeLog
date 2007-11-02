@@ -1,3 +1,11 @@
+2007-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs (AppendQueryAndFragment): Unescape the query with
+	excludeSpecial = false.  See bug #320614.
+
+	Unlike the patch on that bug, this only unescapes the query and
+	not the Path.   This keeps our existing tests working. 
+
 2007-09-29  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs (ToString, MakeRelativeUri): refactor some code in

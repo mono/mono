@@ -702,6 +702,17 @@ namespace MonoTests.System
 				AssertEquals ("#9d", "file:///foo%25bar", uri.ToString ());
 			}
 		}
+
+		// Novell Bugzilla #320614
+		[Test]
+		public void QueryEscape ()
+		{
+			Uri u1 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
+			Uri u2 = new Uri("http://localhost:8080/test.aspx?ReturnUrl=%252fSearchDoc%252fSearcher.aspx");
+			
+			AssertEquals ("QE1", u1.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=/SearchDoc/Searcher.aspx");
+			AssertEquals ("QE2", u2.ToString (), "http://localhost:8080/test.aspx?ReturnUrl=%2fSearchDoc%2fSearcher.aspx");
+		}
 		
 		[Test]
 		public void UnixPath () {

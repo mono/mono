@@ -1015,7 +1015,7 @@ namespace System {
 		void AppendQueryAndFragment (ref string result)
 		{
 			if (query.Length > 0) {
-				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
+				string q = query [0] == '?' ? '?' + Unescape (query.Substring (1), false) : Unescape (query, false);
 				result += q;
 			}
 			if (fragment.Length > 0)
