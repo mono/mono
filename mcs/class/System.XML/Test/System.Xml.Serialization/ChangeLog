@@ -1,3 +1,7 @@
+2007-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : added test for bug #338705.
+
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporterTests.cs : test for importing simple-typed

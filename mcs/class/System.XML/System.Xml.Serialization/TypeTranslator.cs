@@ -108,8 +108,6 @@ namespace System.Xml.Serialization
 			nameCache.Add (typeof (byte[]), new TypeData (typeof (byte[]), "base64Binary", true));
 			nameCache.Add (typeof (XmlNode), new TypeData (typeof (XmlNode), "XmlNode", false));
 			nameCache.Add (typeof (XmlElement), new TypeData (typeof (XmlElement), "XmlElement", false));
-			// The key type is wrong (must be string), but otherwise it cannot be added to Hashtable!
-			nameCache.Add (typeof (TimeSpan), new TypeData (typeof (string), "duration", true));
 
 			primitiveTypes = new Hashtable();
 			ICollection types = nameCache.Values;
@@ -147,6 +145,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("normalizedString", new TypeData (typeof (string), "normalizedString", true));
 			primitiveTypes.Add ("anyURI", new TypeData (typeof (string), "anyURI", true));
 			primitiveTypes.Add ("base64", new TypeData (typeof (byte[]), "base64", true));
+			primitiveTypes.Add ("duration", new TypeData (typeof (string), "duration", true));
 
 #if NET_2_0
 			nullableTypes = Hashtable.Synchronized(new Hashtable ());

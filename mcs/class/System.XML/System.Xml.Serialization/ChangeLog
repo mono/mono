@@ -1,3 +1,9 @@
+2007-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeTranslator.cs : for duration, rather use primitiveTypes than
+	  nameCache, and hence TimeSpan could be serialized just as custom
+	  type. Fixed bug #338705.
+
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaImporter.cs : simpleType is allowed to be imported.

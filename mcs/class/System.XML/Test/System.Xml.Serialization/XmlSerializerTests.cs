@@ -2291,6 +2291,14 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (expected), WriterText);
 		}
 
+		[Test] // bug #338705
+		public void SerializeTimeSpan ()
+		{
+			// TimeSpan itself is not for duration. Hence it is just regarded as one of custom types.
+			XmlSerializer ser = new XmlSerializer (typeof (TimeSpan));
+			ser.Serialize (TextWriter.Null, TimeSpan.Zero);
+		}
+
 		[Test]
 		public void SerializeDurationToString ()
 		{
