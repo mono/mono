@@ -1,5 +1,10 @@
 2007-11-02  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpRuntime.cs: BinDirectory returns a full path to the actual
+	bin directory in the application root. If no bin directory is
+	found, it defaults to returning <applicationPath>/bin. Fixes bug
+	338116.
+
 	* HttpApplication.cs: introduced HTTP handler cache to save time
 	on repetitive handler collection traversals. On busy sites the
 	traversal of the default 26 handlers may account for thousands of

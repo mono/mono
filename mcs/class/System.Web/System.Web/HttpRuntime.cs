@@ -209,14 +209,31 @@ namespace System.Web {
 			}
 		}
 #endregion
-		
+
+		static string _actual_bin_directory;
 		public static string BinDirectory {
 			get {
-				string dirname = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
-				if (SecurityManager.SecurityEnabled) {
-					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				if (_actual_bin_directory == null) {
+					string[] parts = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath.Split (';');
+					string mypath = AppDomainAppPath;
+					string tmp;
+					
+					foreach (string p in parts) {
+						tmp = Path.Combine (mypath, p);
+						if (Directory.Exists (tmp)) {
+							_actual_bin_directory = tmp;
+							break;
+						}
+					}
+
+					if (_actual_bin_directory == null)
+						_actual_bin_directory = Path.Combine (mypath, "bin");
 				}
-				return dirname;
+				
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, _actual_bin_directory).Demand ();
+				}
+				return _actual_bin_directory;
 			}
 		}
 
