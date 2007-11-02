@@ -877,7 +877,7 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "/foo/bar");
 				AssertEquals ("GDN#3", Path.GetDirectoryName ("foo/bar/"), "foo/bar");
 				AssertEquals ("GDN#6", Path.GetDirectoryName ("/tmp"), "/");
-				AssertEquals ("GDN#6", Path.GetDirectoryName ("/"), "");
+				AssertEquals ("GDN#6", Path.GetDirectoryName ("/"), null);
 			} else {
 				AssertEquals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "\\foo\\bar");
 				AssertEquals ("GDN#4", Path.GetDirectoryName ("foo/bar/"), "foo\\bar");
