@@ -23,7 +23,13 @@ internal class ClassC  { }
 [MyAttr(3)]
 internal class ClassD  { }
 
-// Just to compile
-internal class Top  { 
-  public static void Main (string[] strgs){}
+internal class Top
+{ 
+  public static int Main ()
+  {
+  	if (typeof (ClassA).GetCustomAttributes (false).Length != 1)
+  		return 1;
+  		
+  	return 0;
+  }
 }
