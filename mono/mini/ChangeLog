@@ -1,3 +1,8 @@
+2007-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (EMIT_COND_SYSTEM_EXCEPTION_GENERAL): Applied patch from
+	David Miller <davem@davemloft.net>. Allow larger offsets in branches.
+
 2007-11-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Check the domain as well for
