@@ -1,5 +1,13 @@
 2007-11-02  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #332909
+ 	* attribute.cs: Resolve attributes in correct context using error
+ 	handling procedure.
+ 	
+ 	* rootcontext.cs: Define Obsolete attribute members as core members.
+ 	
+2007-11-02  Marek Safar  <marek.safar@gmail.com>
+
  	* statement.cs: Removed unused methods.
  	
 2007-10-31  Wade Berrier  <wberrier@novell.com>

@@ -75,7 +75,8 @@ namespace Mono.CSharp {
 		public abstract string[] ValidAttributeTargets { get; }
 	};
 
-	public class Attribute {
+	public class Attribute : Expression
+	{
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
 
@@ -86,10 +87,6 @@ namespace Mono.CSharp {
 
 		readonly ArrayList PosArguments;
 		ArrayList NamedArguments;
-
-		public readonly Location Location;
-
-		public Type Type;
 
 		bool resolve_error;
 		readonly bool nameEscaped;
@@ -121,7 +118,7 @@ namespace Mono.CSharp {
 				PosArguments = (ArrayList)args [0];
 				NamedArguments = (ArrayList)args [1];				
 			}
-			Location = loc;
+			this.loc = loc;
 			ExplicitTarget = target;
 			this.nameEscaped = nameEscaped;
 		}
@@ -288,7 +285,7 @@ namespace Mono.CSharp {
 			return Type;
 		}
 
-		public string GetSignatureForError ()
+		public override string GetSignatureForError ()
 		{
 			if (Type != null)
 				return TypeManager.CSharpName (Type);
@@ -363,7 +360,11 @@ namespace Mono.CSharp {
 			}
 
 			Attributable owner = Owner;
-			EmitContext ec = new EmitContext (owner.ResolveContext, owner.ResolveContext.DeclContainer, owner.ResolveContext.DeclContainer,
+			DeclSpace ds = owner.ResolveContext as DeclSpace;
+			if (ds == null)
+				ds = owner.ResolveContext.DeclContainer;
+			
+			EmitContext ec = new EmitContext (owner.ResolveContext, ds, owner.ResolveContext.DeclContainer,
 				Location, null, typeof (Attribute), owner.ResolveContext.DeclContainer.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
 
@@ -381,6 +382,10 @@ namespace Mono.CSharp {
 
 			CustomAttributeBuilder cb;
 			try {
+				// SRE does not allow private ctor but we want to report all source code errors
+				if (ctor.IsPrivate)
+					return null;
+
 				if (NamedArguments == null) {
 					cb = new CustomAttributeBuilder (ctor, pos_values);
 
@@ -418,8 +423,8 @@ namespace Mono.CSharp {
 						return null;
 				}
 			}
-
-			MethodGroupExpr mg = Expression.MemberLookup (ec.ContainerType,
+			
+			MethodGroupExpr mg = MemberLookupFinal (ec, null,
 				Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Location) as MethodGroupExpr;
@@ -1287,6 +1292,16 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 			return e.TypeArgument;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 	

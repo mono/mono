@@ -276,6 +276,11 @@ namespace Mono.CSharp {
 			BootstrapCorlib_ResolveInterface (root, "System.Runtime.InteropServices._Attribute");
 			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
 			TypeManager.obsolete_attribute_type = BootstrapCorlib_ResolveClass (root, "System.ObsoleteAttribute");
+			if (TypeManager.obsolete_attribute_type != null) {
+				Class c = TypeManager.LookupClass (TypeManager.obsolete_attribute_type);
+				c.DefineMembers ();
+			}
+			
 			TypeManager.indexer_name_type = BootstrapCorlib_ResolveClass (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
 			
 			string [] interfaces_first_stage = {
