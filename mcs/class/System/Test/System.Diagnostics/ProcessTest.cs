@@ -76,10 +76,13 @@ namespace MonoTests.System.Diagnostics
 			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
 			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
+
+			/*
 			ar.AsyncWaitHandle.WaitOne (2000, false);
 			if (bytesRead < "hello".Length)
 				Assert.Fail ("#03 got {0} bytes", bytesRead);
 			Assert.AreEqual ("hello", Encoding.Default.GetString (buffer, 0, 5), "#04");
+			*/
 		}
 
 		void Read (IAsyncResult ar)
