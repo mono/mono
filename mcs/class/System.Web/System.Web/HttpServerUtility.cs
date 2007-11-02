@@ -132,6 +132,13 @@ namespace System.Web {
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context);
 			request.SetCurrentExePath (oldFilePath);
 			
+#if NET_2_0
+			// If the target handler is not Page, the transfer must not occur.
+			// InTransit == true means we're being called from Transfer
+			if (context.InTransit && !(handler is Page))
+				throw new HttpException ("Transfer is possible only to .aspx files");
+#endif
+			
 			TextWriter previous = null;
 			try {
 #if NET_2_0
@@ -203,12 +210,21 @@ namespace System.Web {
 				Page page = (Page) context.Handler;
 				preserveForm = !page.IsPostBack;
 			}
+#if NET_2_0
+			else
+				throw new HttpException ("Transfer may only be called from within a Page instance");
+#endif
 
 			Transfer (path, preserveForm);
 		}
 
 		public void Transfer (string path, bool preserveForm)
 		{
+#if NET_2_0
+			if (!(context.Handler is Page))
+				throw new HttpException ("Transfer may only be called from within a Page instance");
+#endif
+
 			context.InTransit = true;
 			Execute (path, null, preserveForm);
 			context.Response.End ();
@@ -218,7 +234,9 @@ namespace System.Web {
 		{
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
-
+			if (!(handler is Page))
+				throw new HttpException ("Transfer may only be called from within a Page instance");
+			
 			// TODO: see the MS doc and search for "enableViewStateMac": this method is not
 			// allowed for pages when preserveForm is true and the page IsCallback property
 			// is true.
@@ -232,6 +250,11 @@ namespace System.Web {
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
 
+			// If the target handler is not Page, the transfer must not occur.
+			// InTransit == true means we're being called from Transfer
+			if (context.InTransit && !(handler is Page))
+				throw new HttpException ("Transfer is possible only to .aspx files");
+			
 			HttpRequest request = context.Request;
 			string oldQuery = request.QueryStringRaw;
 			if (!preserveForm) {
