@@ -678,6 +678,10 @@ namespace System.Windows.Forms {
 			return driver.GetParent(handle);
 		}
 
+		internal static IntPtr GetPreviousWindow(IntPtr handle) {
+			return driver.GetPreviousWindow(handle);
+		}
+
 		internal static bool GetText(IntPtr handle, out string text) {
 			#if DriverDebug
 				Console.WriteLine("GetText({0}): Called", Window(handle));

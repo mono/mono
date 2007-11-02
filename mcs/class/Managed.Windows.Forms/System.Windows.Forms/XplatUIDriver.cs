@@ -344,6 +344,7 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr GetFocus();
 		internal abstract void SetFocus(IntPtr hwnd);
 		internal abstract IntPtr GetActive();
+		internal abstract IntPtr GetPreviousWindow(IntPtr hwnd);
 
 		internal abstract void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool with_children);
 		internal abstract void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool with_children);

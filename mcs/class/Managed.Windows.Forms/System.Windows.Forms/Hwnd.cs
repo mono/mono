@@ -86,6 +86,7 @@ namespace System.Windows.Forms {
 		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
 		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
 		internal ArrayList children;
+		internal ArrayList masks;
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)
@@ -116,6 +117,7 @@ namespace System.Windows.Forms {
 			fixed_size = false;
 			drawing_stack = new Stack ();
 			children = new ArrayList ();
+			masks = new ArrayList ();
 		}
 
 		public void Dispose() {
@@ -274,6 +276,46 @@ namespace System.Windows.Forms {
 			cp.WindowStyle = initial_style;
 			cp.WindowExStyle = initial_ex_style;
 			return GetClientRectangle (cp, menu, width, height);
+		}
+
+		// This could be greatly optimized by caching the outputs and only updating when something is moved
+		// in the parent planar space.  To do that we need to track z-order in the parent space as well
+		public ArrayList GetClippingRectangles ()
+		{
+			if (parent == null)
+				return masks;
+
+			masks = new ArrayList ();
+			ArrayList siblings = parent.children;
+
+			foreach (Hwnd sibling in siblings) {
+				bool clip = false;
+				IntPtr sibling_handle = whole_window;
+
+				if (sibling == this)
+					continue;
+				
+				// This entire method should be cached to find all higher views at the time of query
+				do {
+					sibling_handle = XplatUI.GetPreviousWindow (sibling_handle);
+
+					if (sibling_handle == sibling.WholeWindow) {
+
+						Rectangle intersect = Rectangle.Intersect (new Rectangle (X, Y, Width, Height), new Rectangle (sibling.X, sibling.Y, sibling.Width, sibling.Height));
+				
+						if (intersect == Rectangle.Empty)
+							continue;
+					
+						intersect.X -= X;
+						intersect.Y -= Y;
+						intersect.Y = parent.Height - intersect.Y - intersect.Height;
+					
+						masks.Add (intersect);
+					}
+				} while (sibling_handle != IntPtr.Zero);
+			}
+
+			return masks;
 		}
 
 		public static Borders GetBorders (CreateParams cp, Menu menu)

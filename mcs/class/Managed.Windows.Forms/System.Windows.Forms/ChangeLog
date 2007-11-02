@@ -1,3 +1,12 @@
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUI*.cs: Add GetPreviousWindow utility method to return windows in
+	order of Z-Order.
+	* Hwnd.cs: Add initial implementation of GetClippingRectangles to clip sibling 
+	children out of the drawing view on mac.
+	* XplatUIOSX.cs: Code cleanup.  Handle more window grab cases.  Fix SetParent
+	to handle the orphan and invisible case (1/2 fixes TabStrip drawing in FormsTest)
+	
 2007-11-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Don't process MouseUp for a ToolStripControlHost, clicking

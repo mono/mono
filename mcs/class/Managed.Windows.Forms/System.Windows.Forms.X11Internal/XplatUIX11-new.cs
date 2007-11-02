@@ -525,6 +525,11 @@ namespace System.Windows.Forms.X11Internal {
 			return IntPtr.Zero;
 		}
 
+		// This is a nop on win32 and x11
+		internal override IntPtr GetPreviousWindow(IntPtr handle) {
+			return handle;
+		}
+
 		internal override void GetCursorPos (IntPtr handle, out int x, out int y)
 		{
 			display.GetCursorPos ((X11Hwnd)Hwnd.ObjectFromHandle(handle),

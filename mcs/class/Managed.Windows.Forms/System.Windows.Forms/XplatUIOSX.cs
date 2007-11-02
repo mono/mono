@@ -72,7 +72,6 @@ namespace System.Windows.Forms {
 		private static Hashtable WindowBackgrounds;
 		private static Hwnd GrabWindowHwnd;
 		private static IntPtr FosterParent;
-		private static int TitleBarHeight;
 		private static int MenuBarHeight;
 		private static EventTypeSpec [] view_events = new EventTypeSpec [] {
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSetFocusPart), 
@@ -198,7 +197,6 @@ namespace System.Windows.Forms {
 			CheckError (GetWindowBounds (FosterParent, 32, ref structRect), "GetWindowBounds ()");
 			CheckError (GetWindowBounds (FosterParent, 33, ref contentRect), "GetWindowBounds ()");
 			
-			TitleBarHeight = Math.Abs(structRect.top - contentRect.top);
 			MenuBarHeight = GetMBarHeight ();
 			
 			// Focus
@@ -401,14 +399,17 @@ namespace System.Windows.Forms {
 					
 					Hwnd hwnd = Hwnd.ObjectFromHandle (view_handle);
 					
-					if (GrabWindowHwnd != null)
-						hwnd = GrabWindowHwnd;
-					
 					if (hwnd == null)
 						return -9874;
-						
-					// Generate the message
+					
 					bool client = (hwnd.ClientWindow == view_handle ? true : false);
+
+					if (GrabWindowHwnd != null) {
+						hwnd = GrabWindowHwnd;
+						client = true;
+					}
+					
+					// Generate the message
 					msg.hwnd = hwnd.Handle;
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
 					msg.lParam = (IntPtr) ((ushort)window_pt.y << 16 | (ushort)window_pt.x);
@@ -600,10 +601,13 @@ namespace System.Windows.Forms {
 					int x = point.x;
 					int y = point.y;
 
-					if (GrabWindowHwnd != null)
-						hwnd = GrabWindowHwnd;
-
 					bool client = (hwnd.ClientWindow == handle ? true : false);
+
+					if (GrabWindowHwnd != null) {
+						hwnd = GrabWindowHwnd;
+						client = false;
+					}
+
 					if (client)
 						ScreenToClient (hwnd.Handle, ref x, ref y);
 
@@ -1261,7 +1265,7 @@ namespace System.Windows.Forms {
 			hwnd.y = Y;
 			hwnd.width = Width;
 			hwnd.height = Height;
-			hwnd.parent = Hwnd.ObjectFromHandle (cp.Parent);
+			hwnd.Parent = Hwnd.ObjectFromHandle (cp.Parent);
 			hwnd.initial_style = cp.WindowStyle;
 			hwnd.initial_ex_style = cp.WindowExStyle;
 
@@ -1597,6 +1601,10 @@ namespace System.Windows.Forms {
 			}
 			return IntPtr.Zero;
 		}
+
+		internal override IntPtr GetPreviousWindow(IntPtr handle) {
+			return HIViewGetPreviousView(handle);
+		}
 		
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			QDPoint pt = new QDPoint ();
@@ -1701,7 +1709,6 @@ namespace System.Windows.Forms {
 		
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle) {
 			GrabWindowHwnd = Hwnd.ObjectFromHandle (handle);
-			Console.WriteLine ("GrabWindowHwnd: {0}", GrabWindowHwnd);
 		}
 		
 		internal override void UngrabWindow(IntPtr hwnd) {
@@ -2021,13 +2028,16 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
+			IntPtr ParentHandle = IntPtr.Zero;
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
 			hwnd.Parent = Hwnd.ObjectFromHandle (parent);
 			if (HIViewGetSuperview (hwnd.whole_window) != IntPtr.Zero) {
 				CheckError (HIViewRemoveFromSuperview (hwnd.whole_window), "HIViewRemoveFromSuperview ()");
 			}
-			CheckError (HIViewAddSubview (hwnd.Parent.client_window, hwnd.whole_window));
+			if (hwnd.parent == null)
+				HIViewFindByID (HIViewGetRoot (FosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref ParentHandle);
+			CheckError (HIViewAddSubview (hwnd.parent == null ? ParentHandle : hwnd.Parent.client_window, hwnd.whole_window));
 			HIViewPlaceInSuperviewAt (hwnd.whole_window, hwnd.X, hwnd.Y);
 			CheckError (HIViewAddSubview (hwnd.whole_window, hwnd.client_window));
 			HIViewPlaceInSuperviewAt (hwnd.client_window, hwnd.ClientRect.X, hwnd.ClientRect.Y);
@@ -2095,34 +2105,52 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (width < 0) width = 0;
-			if (height < 0) height = 0;
+			// Win32 automatically changes negative width/height to 0.
+			if (width < 0)
+				width = 0;
+			if (height < 0)
+				height = 0;
+				
+			// X requires a sanity check for width & height; otherwise it dies
+			if (hwnd.zero_sized && width > 0 && height > 0) {
+				if (hwnd.visible) {
+					HIViewSetVisible(hwnd.WholeWindow, true);
+				}
+				hwnd.zero_sized = false;
+			}
+
+			if ((width < 1) || (height < 1)) {
+				hwnd.zero_sized = true;
+				HIViewSetVisible(hwnd.WholeWindow, false);
+			}
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {
 				return;
 			}
 
-			hwnd.x = x;
-			hwnd.y = y;
-			hwnd.width = width;
-			hwnd.height = height;
-			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			if (!hwnd.zero_sized) {
+				hwnd.x = x;
+				hwnd.y = y;
+				hwnd.width = width;
+				hwnd.height = height;
+				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
-			Control ctrl = Control.FromHandle (handle);
-			Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (ctrl.GetCreateParams (), new Size (width, height));
-			Rect rect = new Rect ();
+				Control ctrl = Control.FromHandle (handle);
+				Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (ctrl.GetCreateParams (), new Size (width, height));
+				Rect rect = new Rect ();
 
-			if (WindowMapping [hwnd.Handle] != null) {
-				SetRect (ref rect, (short)x, (short)(y+MenuBarHeight), (short)(x+TranslatedSize.Width), (short)(y+MenuBarHeight+TranslatedSize.Height));
-				SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
-				HIRect frame_rect = new HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
-				HIViewSetFrame (hwnd.whole_window, ref frame_rect);
-			} else {
-				HIRect frame_rect = new HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
-				HIViewSetFrame (hwnd.whole_window, ref frame_rect);
+				if (WindowMapping [hwnd.Handle] != null) {
+					SetRect (ref rect, (short)x, (short)(y+MenuBarHeight), (short)(x+TranslatedSize.Width), (short)(y+MenuBarHeight+TranslatedSize.Height));
+					SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
+					HIRect frame_rect = new HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
+					HIViewSetFrame (hwnd.whole_window, ref frame_rect);
+				} else {
+					HIRect frame_rect = new HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
+					HIViewSetFrame (hwnd.whole_window, ref frame_rect);
+				}
+				PerformNCCalc(hwnd);
 			}
-			PerformNCCalc(hwnd);
 
 			hwnd.x = x;
 			hwnd.y = y;

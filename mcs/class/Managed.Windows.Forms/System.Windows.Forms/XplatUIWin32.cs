@@ -2215,6 +2215,11 @@ namespace System.Windows.Forms {
 			return Win32GetParent(handle);
 		}
 
+		// This is a nop on win32 and x11
+		internal override IntPtr GetPreviousWindow(IntPtr handle) {
+			return handle;
+		}
+
 		internal override void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd) {
 			grab_hwnd = hWnd;
 			Win32SetCapture(hWnd);
