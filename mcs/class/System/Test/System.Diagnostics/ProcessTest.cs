@@ -70,12 +70,13 @@ namespace MonoTests.System.Diagnostics
 
 			// start async Read operation
 			DateTime start = DateTime.Now;
-			stdout.BeginRead (buffer, 0, buffer.Length,
-					  new AsyncCallback (Read), stdout);
+			IAsyncResult ar = stdout.BeginRead (buffer, 0, buffer.Length,
+							    new AsyncCallback (Read), stdout);
 
 			Assert.IsTrue ((DateTime.Now - start).TotalMilliseconds < 1000, "#01 BeginRead was not async");
 			p.WaitForExit ();
 			Assert.AreEqual (0, p.ExitCode, "#02 script failure");
+			ar.AsyncWaitHandle.WaitOne (2000, false);
 			if (bytesRead < "hello".Length)
 				Assert.Fail ("#03 got {0} bytes", bytesRead);
 			Assert.AreEqual ("hello", Encoding.Default.GetString (buffer, 0, 5), "#04");
@@ -87,6 +88,6 @@ namespace MonoTests.System.Diagnostics
 			bytesRead = stm.EndRead (ar);
 		}
 
-		int bytesRead = Int32.MinValue;
+		int bytesRead = -1;
 	}
 }
