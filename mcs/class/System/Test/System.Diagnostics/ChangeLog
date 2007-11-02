@@ -1,3 +1,8 @@
+2007-11-02  Robert Jordan  <robertj@gmx.net>
+
+	* ProcessTest.cs (TestRedirectedOutputIsAsync):
+	Instrument to see why the build bots are failing.
+
 2007-11-01  Robert Jordan  <robertj@gmx.net>
 
 	* ProcessTest.cs (TestRedirectedOutputIsAsync):
