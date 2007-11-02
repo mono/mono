@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Web;
 using System.Text.RegularExpressions;
 
 namespace System.Web.Configuration 
@@ -53,7 +54,7 @@ namespace System.Web.Configuration
 
 				if (s.IndexOf ('*') == -1)
 					if (s [0] != '/')
-						MatchExact = "/" + s;
+						MatchExact = String.Format ("{0}/{1}", HttpRuntime.AppDomainAppVirtualPath, s);
 			}
 				
 			if (MatchExpr != "*") {
