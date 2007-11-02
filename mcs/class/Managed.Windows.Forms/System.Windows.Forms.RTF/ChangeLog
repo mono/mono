@@ -1,3 +1,8 @@
+2007-11-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Picture.cs: Reset the data stream position back to 0 before trying
+	to convert it into an image.  Fixes bug #325055.
+
 2007-08-17  Jeffrey Stedfast  <fejj@novell.com>
 
 	* RTF.cs (GetChar): Fixed c to be int instead of char (since we

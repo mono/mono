@@ -141,6 +141,8 @@ namespace System.Windows.Forms.RTF {
 
 		public Image ToImage ()
 		{
+			// Reset the data stream position to the beginning
+			data.Position = 0;
 			return Image.FromStream (data);
 		}
 	}
