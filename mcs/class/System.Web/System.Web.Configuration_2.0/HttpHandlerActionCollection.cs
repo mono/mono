@@ -51,11 +51,13 @@ namespace System.Web.Configuration
 			
 		public void Add (HttpHandlerAction httpHandlerAction)
 		{
+			HttpApplication.ClearHandlerCache ();
 			BaseAdd (httpHandlerAction);
 		}
 
 		public void Clear ()
 		{
+			HttpApplication.ClearHandlerCache ();
 			BaseClear ();
 		}
 
@@ -76,16 +78,19 @@ namespace System.Web.Configuration
 
 		public void Remove (string verb, string path)
 		{
+			HttpApplication.ClearHandlerCache ();
 			BaseRemove (path + "-" + verb);
 		}
 
 		public void Remove (HttpHandlerAction action)
 		{
+			HttpApplication.ClearHandlerCache ();
 			BaseRemove (action.Path + "-" + action.Verb);
 		}
 
 		public void RemoveAt (int index)
 		{
+			HttpApplication.ClearHandlerCache ();
 			BaseRemoveAt (index);
 		}
 

@@ -1,3 +1,12 @@
+2007-11-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: introduced HTTP handler cache to save time
+	on repetitive handler collection traversals. On busy sites the
+	traversal of the default 26 handlers may account for thousands of
+	unnecessary calls to configsystem.LocateHandler method, which may
+	also involve executing a regex. The cache is cleared whenever the
+	HTTP handler collection is modified.
+
 2007-10-30 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpUtility.cs: fixed HtmlEncode for TARGET_JVM.

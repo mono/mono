@@ -71,6 +71,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
+using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -1134,7 +1135,49 @@ namespace System.Web {
 			pipeline = Pipeline ();
 			Tick ();
 		}
-	
+
+		const string HANDLER_CACHE = "@@HttpHandlerCache@@";
+
+		internal static Hashtable GetHandlerCache ()
+		{
+			Cache cache = HttpRuntime.InternalCache;
+			Hashtable ret = cache [HANDLER_CACHE] as Hashtable;
+
+			if (ret == null) {
+				ret = new Hashtable ();
+				cache.Insert (HANDLER_CACHE, ret);
+			}
+
+			return ret;
+		}
+		
+		internal static void ClearHandlerCache ()
+		{
+			Hashtable cache = GetHandlerCache ();
+			cache.Clear ();
+		}
+		
+		internal object LocateHandler (string verb, string url)
+		{
+			Hashtable cache = GetHandlerCache ();
+			string id = String.Format ("{0}{1}", verb, url);
+			object ret = cache [id];
+
+			if (ret != null)
+				return ret;
+			
+#if NET_2_0
+			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
+			ret = httpHandlersSection.LocateHandler (verb, url);
+#else
+			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
+			ret = factory_config.LocateHandler (verb, url);
+#endif
+
+			cache [id] = ret;
+			return ret;
+		}
+		
 		// Used by HttpServerUtility.Execute
 		internal IHttpHandler GetHandler (HttpContext context)
 		{
@@ -1143,14 +1186,8 @@ namespace System.Web {
 			string url = request.FilePath;
 			
 			IHttpHandler handler = null;
-#if NET_2_0
-			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
-			object o = httpHandlersSection.LocateHandler (verb, url);
-#else
-			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
-			object o = factory_config.LocateHandler (verb, url);
-#endif
-
+			object o = LocateHandler (verb, url);
+			
 			factory = o as IHttpHandlerFactory;
 			
 			if (factory == null) {

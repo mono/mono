@@ -1,3 +1,8 @@
+2007-11-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlerActionCollection.cs: clear http handler cache in
+	HttpApplication if the collection is modified.
+
 2007-11-01  Marek Habersack  <mhabersack@novell.com>
 
 	* MachineKeySection.cs: moved all the internal static methods and

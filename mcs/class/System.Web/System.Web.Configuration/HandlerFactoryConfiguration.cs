@@ -150,6 +150,7 @@ namespace System.Web.Configuration {
 
 		public void Clear ()
 		{
+			HttpApplication.ClearHandlerCache ();
 			handlers.Clear ();
 		}
 
@@ -163,7 +164,8 @@ namespace System.Web.Configuration {
 					throw new HttpException (String.Format ("Can not load {0}", type_name));
 			} else
 				type = null;
-			
+
+			HttpApplication.ClearHandlerCache ();
 			handlers.Add (new HttpHandler (verb, path, type_name, type));
 		}
 
@@ -173,6 +175,7 @@ namespace System.Web.Configuration {
 				HttpHandler handler = (HttpHandler) handlers [i];
 
 				if (verb == handler.OriginalVerb && path == handler.OriginalPath){
+					HttpApplication.ClearHandlerCache ();
 					handlers.RemoveAt (i);
 					return true;
 				}

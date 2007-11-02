@@ -1,5 +1,8 @@
 2007-11-02  Marek Habersack  <mhabersack@novell.com>
 
+	* HandlerFactoryConfiguration.cs: clear the HttpApplication HTTP
+	handler cache whenever the collection is modified.
+
 	* FileMatchingInfo.cs: MatchExact should be constructed using the
 	current application virtual path, not literal "/".
 
