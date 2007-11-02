@@ -192,7 +192,10 @@ namespace System.IO {
 			do_checks = detect_encoding_from_bytemarks ? 1 : 0;
 			do_checks += (preamble.Length == 0) ? 0 : 2;
 			
-			decoded_buffer = new char [encoding.GetMaxCharCount (buffer_size)];
+			// since GetChars() might add flushed character, it 
+			// should have additional char buffer for extra 1 
+			// (probably 1 is ok, but might be insufficient. I'm not sure)
+			decoded_buffer = new char [encoding.GetMaxCharCount (buffer_size) + 1];
 			decoded_count = 0;
 			pos = 0;
 		}

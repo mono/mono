@@ -1,3 +1,9 @@
+2007-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StreamReader.cs : Encoding.GetMaxCharCount() does not always return
+	  the maximum max char count for Decoder.GetChars() since it might
+	  contain pending buffer by flush. Fixed bug #338370.
+
 2007-11-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Path.cs (GetDirectoryName): The paths returned from this routine
