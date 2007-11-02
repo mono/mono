@@ -136,13 +136,83 @@ namespace System.IO {
 
 			return path1 + path2;
 		}
+	
+		//
+		// This routine:
+		//   * Removes duplicat path separators from a string
+		//   * If the string starts with \\, preserves the first two (hostname on Windows)
+		//   * Removes the trailing path separator.
+		//   * Returns the DirectorySeparatorChar for the single input DirectorySeparatorChar or AltDirectorySeparatorChar
+		//
+		// Unlike CanonicalizePath, this does not do any path resolution
+		// (which GetDirectoryName is not supposed to do).
+		//
+		internal static string CleanPath (string s)
+		{
+			int l = s.Length;
+			int sub = 0;
+			int start = 0;
+
+			// Host prefix?
+			char s0 = s [0];
+			if (l > 2 && s0 == '\\' && s [1] == '\\'){
+				start = 2;
+			}
+
+			// We are only left with root
+			if (l == 1 && (s0 == DirectorySeparatorChar || s0 == AltDirectorySeparatorChar))
+				return s;
+
+			// Cleanup
+			for (int i = start; i < l; i++){
+				char c = s [i];
+				
+				if (c != DirectorySeparatorChar && c != AltDirectorySeparatorChar)
+					continue;
+				if (i+1 == l)
+					sub++;
+				else {
+					c = s [i + 1];
+					if (c == DirectorySeparatorChar || c == AltDirectorySeparatorChar)
+						sub++;
+				}
+			}
+
+			if (sub == 0)
+				return s;
+
+			char [] copy = new char [l-sub];
+			if (start != 0){
+				copy [0] = '\\';
+				copy [1] = '\\';
+			}
+			for (int i = start, j = start; i < l && j < copy.Length; i++){
+				char c = s [i];
+
+				if (c != DirectorySeparatorChar && c != AltDirectorySeparatorChar){
+					copy [j++] = c;
+					continue;
+				}
+
+				// For non-trailing cases.
+				if (j+1 != copy.Length){
+					copy [j++] = DirectorySeparatorChar;
+					for (;i < l-1; i++){
+						c = s [i+1];
+						if (c != DirectorySeparatorChar && c != AltDirectorySeparatorChar)
+							break;
+					}
+				}
+			}
+			return new String (copy);
+		}
 
 		public static string GetDirectoryName (string path)
 		{
 			// LAMESPEC: For empty string MS docs say both
 			// return null AND throw exception.  Seems .NET throws.
 			if (path == String.Empty)
-				throw new ArgumentException();
+				throw new ArgumentException("Invalid path");
 
 			if (path == null || GetPathRoot (path) == path)
 				return null;
@@ -157,10 +227,17 @@ namespace System.IO {
 			if (nLast > 0) {
 				string ret = path.Substring (0, nLast);
 				int l = ret.Length;
+
 				if (l >= 2 && ret [l - 1] == VolumeSeparatorChar)
 					return ret + DirectorySeparatorChar;
-				else
-					return ret;
+				else {
+					//
+					// Important: do not use CanonicalizePath here, use
+					// the custom CleanPath here, as this should not
+					// return absolute paths
+					//
+					return CleanPath (ret);
+				}
 			}
 
 			return String.Empty;

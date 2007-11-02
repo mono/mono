@@ -1,3 +1,9 @@
+2007-11-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Path.cs (GetDirectoryName): The paths returned from this routine
+	should be canonical, not just a substring.   In addition to fixing
+	this, it also fixes #324742.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryReader.cs, BinaryWriter.cs : use unsafe encoding that has ""

@@ -869,6 +869,22 @@ namespace MonoTests.System.IO
 					Assert (i.ToString (), Array.IndexOf (invalid, s[i]) == -1);
 			}
 		}
+
+		[Test]
+		public void TestGetDirectoryName ()
+		{
+			if (Unix){
+				Assert.Equals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "/foo/bar");
+				Assert.Equals ("GDN#3", Path.GetDirectoryName ("foo/bar/", "foo/bar"));
+				Assert.Equals ("GDN#6", Path.GetDirectoryName ("/tmp", "/"));
+				Assert.Equals ("GDN#6", Path.GetDirectoryName ("/", ""));
+			} else {
+				Assert.Equals ("GetDirectoryName#1", Path.GetDirectoryName ("/foo//bar/dingus"), "\\foo\\bar");
+				Assert.Equals ("GDN#4", Path.GetDirectoryName ("foo/bar/", "foo\\bar");
+				Assert.Equals ("GDN#5", Path.GetDirectoryName ("foo/bar\\xxx", "foo\\bar");
+			}
+			Assert.Equals ("GDN#2", Path.GetDirectoryName ("\\\\host\\dir\\\\dir2\path"), "\\\\host\\dir\\dir2");
+		}
 #endif
 	}
 }
