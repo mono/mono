@@ -53,8 +53,13 @@ namespace System.Web.Configuration
 					EndsWith = s.Substring (1);
 
 				if (s.IndexOf ('*') == -1)
-					if (s [0] != '/')
-						MatchExact = String.Format ("{0}/{1}", HttpRuntime.AppDomainAppVirtualPath, s);
+					if (s [0] != '/') {
+						string vpath = HttpRuntime.AppDomainAppVirtualPath;
+						if (vpath == "/")
+							vpath = String.Empty;
+						
+						MatchExact = String.Format ("{0}/{1}", vpath, s);
+					}
 			}
 				
 			if (MatchExpr != "*") {
