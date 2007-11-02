@@ -1,5 +1,9 @@
 2007-11-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewItem.cs: Implement 2.0 IndentCount property.
+
+2007-11-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Dnd.cs: When sending status in a dnd operation, compare current
 	effect with the 'allowed' field instead of 'drag_data.Allowed', since
 	the later is only created when a Winforms application is both the

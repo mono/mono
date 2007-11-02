@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 		private string name = String.Empty;
 		private string image_key = String.Empty;
 		string tooltip_text = String.Empty;
+		int indent_count;
 		int index;			// cached index for VirtualMode
 #endif
 		Rectangle bounds;
@@ -399,6 +400,24 @@ namespace System.Windows.Forms
 					return owner.small_image_list;
 			}
 		}
+
+#if NET_2_0
+		public int IndentCount {
+			get {
+				return indent_count;
+			}
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value");
+
+				if (value == indent_count)
+					return;
+
+				indent_count = value;
+				Invalidate ();
+			}
+		}
+#endif
 
 		[Browsable (false)]
 		public int Index {
@@ -813,9 +832,15 @@ namespace System.Windows.Forms
 				// returns same bounding rectangles for Item and Entire
 				// values in the case of Details view.
 
+				int x_offset = 0;
+#if NET_2_0
+				if (owner.SmallImageList != null)
+					x_offset = indent_count * owner.SmallImageList.ImageSize.Width;
+#endif
+
 				// Handle reordered column
 				if (owner.Columns.Count > 0)
-					checkbox_rect.X = owner.Columns[0].Rect.X;
+					checkbox_rect.X = owner.Columns[0].Rect.X + x_offset;
 
 				icon_rect = label_rect = Rectangle.Empty;
 				icon_rect.X = checkbox_rect.Right + 2;
