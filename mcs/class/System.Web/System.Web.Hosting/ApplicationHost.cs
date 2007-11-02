@@ -30,6 +30,7 @@
 using System.IO;
 using System.Security.Permissions;
 using System.Security.Policy;
+using System.Text;
 
 namespace System.Web.Hosting {
 
@@ -117,6 +118,19 @@ namespace System.Web.Hosting {
 			}
 #endif
 		}
+
+		static string BuildPrivateBinPath (string physicalPath, string[] dirs)
+		{
+#if NET_2_0
+			int len = dirs.Length;
+			string[] ret = new string [len];
+			for (int i = 0; i < len; i++)
+				ret [i] = Path.Combine (physicalPath, dirs [i]);
+			return String.Join (";", ret);
+#else
+			return String.Join (";", dirs);
+#endif
+		}
 		
 		//
 		// For further details see `Hosting the ASP.NET runtime'
@@ -158,7 +172,7 @@ namespace System.Web.Hosting {
 			if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || HttpApplication.IsRunningOnWindows)
 				setup.PrivateBinPath = "bin";
 			else
-				setup.PrivateBinPath = String.Join (";", HttpApplication.BinDirs);
+				setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, HttpApplication.BinDirs);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
 			setup.ShadowCopyDirectories = setup.PrivateBinPath;

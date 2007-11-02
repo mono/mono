@@ -227,7 +227,7 @@ namespace System.Web {
 					}
 
 					if (_actual_bin_directory == null)
-						_actual_bin_directory = Path.Combine (mypath, "bin");
+						_actual_bin_directory = Path.Combine (mypath, "bin") + Path.DirectorySeparatorChar;
 				}
 				
 				if (SecurityManager.SecurityEnabled) {

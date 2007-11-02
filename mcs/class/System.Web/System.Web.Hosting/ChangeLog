@@ -1,3 +1,8 @@
+2007-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: AppDomainSetup.PrivateBinPath is a list of
+	full paths on 2.0.
+
 2007-10-24  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: ignore exceptions resulting from the attempt

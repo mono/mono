@@ -1332,21 +1332,6 @@ namespace System.Web {
 			}
 		}
 #endregion
-
-		internal static IEnumerable PrivateBinPath
-		{
-			get {
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				string baseDir = setup.ApplicationBase;
-				
-				string pbp = setup.PrivateBinPath;
-				if (pbp == null || pbp.Length == 0)
-					yield break;
-				foreach (string d in pbp.Split (Path.PathSeparator))
-					yield return Path.Combine (baseDir, d);
-			}
-		}
-
 		internal static bool IsRunningOnWindows {
                         get {
 				PlatformID pid = Environment.OSVersion.Platform;	

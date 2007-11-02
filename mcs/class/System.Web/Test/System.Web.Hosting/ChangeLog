@@ -1,3 +1,8 @@
+2007-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHostTest.cs: adjust ConstructorTest for
+	AppDomainSetup.PrivateBinPath changes.
+
 2007-08-24  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHostTest.cs: use ; as the separator in the

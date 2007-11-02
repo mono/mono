@@ -169,7 +169,14 @@ namespace MonoTests.System.Web.Hosting {
 			Assert.AreEqual (null, setup.LicenseFile, "D8");
 			//Assert.AreEqual (LoaderOptimization.NotSpecified, setup.LoaderOptimization);
 			p ("LoaderOptimization is: ", setup.LoaderOptimization);
-			Assert.AreEqual ("Bin;bin", setup.PrivateBinPath, "D9");
+			Assert.AreEqual (
+#if NET_2_0
+				String.Format ("{0}{1}Bin;{0}{1}bin", tb, Path.DirectorySeparatorChar),
+#else
+				"Bin;bin",
+#endif
+				setup.PrivateBinPath, "D9"
+			);
 			Assert.AreEqual (setup.PrivateBinPathProbe, "*", "D10");
 			p ("ShadowCopyDirs: ", setup.ShadowCopyDirectories);
 			Assert.AreEqual (true, setup.ShadowCopyDirectories.EndsWith ("bin"), "D11");

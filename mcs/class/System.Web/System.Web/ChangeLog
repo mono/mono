@@ -1,3 +1,11 @@
+2007-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: removed unused internal PrivateBinPath
+	property.
+
+	* HttpRuntime.cs: BinDirectory returns a path that ends with the
+	directory separator character.
+
 2007-11-02  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpServerUtility.cs: in 2.0, Transfer is allowed only from
