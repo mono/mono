@@ -163,7 +163,7 @@ namespace System.Web.Handlers {
 		
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
-			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (assembly.GetName ().FullName);
+			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : assembly.GetName ().FullName;
 			string apath = assembly.Location;
 			string atime = String.Empty;
 			string extra = String.Empty;
