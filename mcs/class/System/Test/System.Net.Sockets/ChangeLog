@@ -1,3 +1,7 @@
+2007-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* SocketTest.cs: Disable the send/receive buffer size tests.
+
 2007-10-30  Dick Porter  <dick@ximian.com>
 
 	* UdpClientTest.cs: Test for 324033.

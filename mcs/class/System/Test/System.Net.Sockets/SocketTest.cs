@@ -969,6 +969,7 @@ namespace MonoTests.System.Net.Sockets
 		/* OSSupportsIPv6 depends on the environment */
 		
 		[Test]
+		[Category("NotWorking")] // We have different defaults for perf reasons
 		public void ReceiveBufferSizeDefault ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -982,6 +983,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category("NotWorking")] // We have different defaults for perf reasons
 		public void ReceiveBufferSizeDefaultUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1023,6 +1025,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category("NotWorking")] // We have different defaults for perf reasons
 		public void SendBufferSizeDefault ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1036,6 +1039,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category("NotWorking")] // We have different defaults for perf reasons
 		public void SendBufferSizeDefaultUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
