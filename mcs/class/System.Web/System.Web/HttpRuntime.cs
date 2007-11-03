@@ -227,12 +227,15 @@ namespace System.Web {
 					}
 
 					if (_actual_bin_directory == null)
-						_actual_bin_directory = Path.Combine (mypath, "bin") + Path.DirectorySeparatorChar;
+						_actual_bin_directory = Path.Combine (mypath, "bin");
+
+					if (_actual_bin_directory [_actual_bin_directory.Length - 1] != Path.DirectorySeparatorChar)
+						_actual_bin_directory += Path.DirectorySeparatorChar;
 				}
 				
-				if (SecurityManager.SecurityEnabled) {
+				if (SecurityManager.SecurityEnabled)
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, _actual_bin_directory).Demand ();
-				}
+
 				return _actual_bin_directory;
 			}
 		}
@@ -332,8 +335,8 @@ namespace System.Web {
 		}
 
 		static void AppOfflineFileChanged (object sender, FileSystemEventArgs args)
-	        {
-	        	lock (appOfflineLock) {
+		{
+			lock (appOfflineLock) {
 				bool offline;
 				
 				switch (args.ChangeType) {
@@ -362,7 +365,7 @@ namespace System.Web {
 				}
 				SetOfflineMode (offline, args.FullPath);
 			}
-	        }
+		}
 
 		static void SetOfflineMode (bool offline, string filePath)
 		{
@@ -541,7 +544,7 @@ namespace System.Web {
 #endif
 		}
 
-                static string content503 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
+		static string content503 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
 			"<html><head>\n<title>503 Server Unavailable</title>\n</head><body>\n" +
 			"<h1>Server Unavailable</h1>\n" +
 			"</body></html>\n";
