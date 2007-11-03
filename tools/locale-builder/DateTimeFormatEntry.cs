@@ -69,7 +69,6 @@ namespace Mono.Tools.LocaleBuilder {
 
                         AppendNames (builder, MonthNames);
                         builder.Append (", ");
-                        AbbreviatedMonthNames.Add (String.Empty); /* ALLWAYS ?? */
                         AppendNames (builder, AbbreviatedMonthNames);
                         builder.Append (", ");
 
