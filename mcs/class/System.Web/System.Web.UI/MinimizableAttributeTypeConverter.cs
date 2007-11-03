@@ -60,17 +60,15 @@ namespace System.Web.UI {
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			// culture?
-			if (value == null) {
-				throw new NotSupportedException ("MinimizableAttributeTypeConverter cannot convert from (null)");
+			if (value != null) {					
+				Type t = value.GetType ();
+				if (t == typeof (string))
+					return ((string)value) != String.Empty;
+
+				if (t == typeof (bool))
+					return value;
 			}
-					
-			Type t = value.GetType ();
-			if (t == typeof (string))
-				return ((string)value) != String.Empty;
-
-			if (t == typeof (bool))
-				return value;
-
+			
 			return base.ConvertFrom (context, culture, value);
 		}
 

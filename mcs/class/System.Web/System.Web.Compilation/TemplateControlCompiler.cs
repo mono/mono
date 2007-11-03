@@ -1645,7 +1645,7 @@ namespace System.Web.Compilation
 
 			object convertedFromAttr = null;
 			bool preConverted = false;
-			if (cvt != null) {
+			if (cvt != null && str != null) {
 				convertedFromAttr = cvt.ConvertFromInvariantString (str);
 				if (convertedFromAttr != null) {
 					type = convertedFromAttr.GetType ();

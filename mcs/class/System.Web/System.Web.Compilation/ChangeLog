@@ -1,3 +1,9 @@
+2007-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: do not call converters specified in
+	the member custom attributes if 'str' is null in
+	GetExpressionFromString.
+
 2007-10-23  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesAssemblyBuilder.cs: do not output preservation files

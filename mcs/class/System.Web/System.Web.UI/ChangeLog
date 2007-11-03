@@ -1,5 +1,8 @@
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
+	* MinimizableAttributeTypeConverter.cs: don't throw on null value,
+	call the base class method in that case.
+
 	* SimpleWebHandlerParser.cs: don't NRE on a null assembly passed
 	to AddAssembly.
 	AddAssemblyByName must check the return value of
