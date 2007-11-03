@@ -264,6 +264,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (String.Empty, item.Name, "DefaultValues#8");
 			Assert.AreEqual(String.Empty, item.ImageKey, "DefaultValues#9");
 			Assert.AreEqual (String.Empty, item.ToolTipText, "DefaultValues#10");
+			Assert.AreEqual (0, item.IndentCount, "DefaultValues#11");
 #endif
 		}
 
@@ -353,6 +354,16 @@ namespace MonoTests.System.Windows.Forms
 
 			form.Dispose ();
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ListViewItemIndent ()
+		{
+			ListViewItem item = new ListViewItem ();
+			item.IndentCount = -1;
+		}
+#endif
 
 		[Test] // bug #330415 and #331643
 		public void RemoveFocusedItem ()
