@@ -1,5 +1,11 @@
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
+	* SimpleWebHandlerParser.cs: don't NRE on a null assembly passed
+	to AddAssembly.
+	AddAssemblyByName must check the return value of
+	Assembly.LoadWithPartialName, as the method doesn't throw on
+	missing assembly, it returns null instead.
+
 	* ClientScriptManager.cs: eventValidationArray is serialized in an
 	optimized fashion, so that its serialized form occupies only as
 	many slots as were actually used. It may result in that an array

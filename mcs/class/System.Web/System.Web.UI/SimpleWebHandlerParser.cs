@@ -289,6 +289,9 @@ namespace System.Web.UI
 
 		internal virtual void AddAssembly (Assembly assembly, bool fullPath)
 		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+			
 			if (anames == null)
 				anames = new Hashtable ();
 
@@ -329,12 +332,17 @@ namespace System.Web.UI
 				return assembly;
 			}
 
+			Exception ex = null;
 			try {
 				assembly = Assembly.LoadWithPartialName (name);
 			} catch (Exception e) {
-				throw new ParseException (location, "Assembly " + name + " not found", e);
+				ex = null;
+				assembly = null;
 			}
 
+			if (assembly == null)
+				throw new ParseException (location, String.Format ("Assembly '{0}' not found", name), ex);
+			
 			AddAssembly (assembly, true);
 			return assembly;
 		}
