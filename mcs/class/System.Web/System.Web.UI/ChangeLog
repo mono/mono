@@ -1,3 +1,12 @@
+2007-11-03  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientScriptManager.cs: eventValidationArray is serialized in an
+	optimized fashion, so that its serialized form occupies only as
+	many slots as were actually used. It may result in that an array
+	of 0 entries will be serialized and then
+	restored. EnsureEventValidationArray takes that into consideration
+	now.
+
 2007-11-01  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs, ObjectStateFormatter.cs: use the new

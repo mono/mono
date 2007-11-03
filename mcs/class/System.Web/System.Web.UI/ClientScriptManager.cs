@@ -435,7 +435,7 @@ namespace System.Web.UI
 
 		private void EnsureEventValidationArray ()
 		{
-			if (eventValidationValues == null)
+			if (eventValidationValues == null || eventValidationValues.Length == 0)
 				eventValidationValues = new int [64];
 
 			int len = eventValidationValues.Length;
