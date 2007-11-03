@@ -170,7 +170,7 @@ namespace System.Web.Hosting {
 			setup.DisallowCodeDownload = true;
 
 			if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || HttpApplication.IsRunningOnWindows)
-				setup.PrivateBinPath = "bin";
+				setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, new string [] { "bin" });
 			else
 				setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, HttpApplication.BinDirs);
 			setup.PrivateBinPathProbe = "*";

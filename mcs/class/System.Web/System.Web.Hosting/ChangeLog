@@ -1,3 +1,8 @@
+2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ApplicationHost.cs: On 2.0, also make PrivateBinPath an absolute
+	paths on Windows (and on systems using MONO_IOMAP).
+
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: AppDomainSetup.PrivateBinPath is a list of
