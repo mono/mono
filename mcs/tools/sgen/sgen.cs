@@ -95,26 +95,44 @@ public class Driver
 		
 		if (verbose)
 			Console.WriteLine ("Generating serializer for the following types:");
-		
-		foreach (Type t in asm.GetTypes())
-		{
-			try {
-				if (types != null && !types.Contains (t.ToString()))
-					continue;
 
-				maps.Add (imp.ImportTypeMapping (t));
-				userTypes.Add (t);
-				if (verbose) Console.WriteLine (" - " + t);
+		if (types == null) {
+			foreach (Type t in asm.GetTypes ()) {
+				try {
+					maps.Add (imp.ImportTypeMapping (t));
+					userTypes.Add (t);
+					if (verbose)
+						Console.WriteLine( " - " + t );
+				} catch (InvalidOperationException ex) {
+					if (verbose)
+						Console.WriteLine (" - Warning: " + ex.Message);
+				} catch (NotImplementedException ex) {
+					if (verbose) {
+						Console.WriteLine (" - Warning: ignoring '" + t + "'");
+						Console.WriteLine ("   " + ex.Message);
+					}
+				}
 			}
-			catch (NotImplementedException ex)
-			{
-				if (verbose) {
-					Console.WriteLine (" - Warning: ignoring '" + t + "'");
-					Console.WriteLine ("   " + ex.Message);
+		} else {
+			foreach (string type in types) {
+				try {
+					Type t = asm.GetType (type);
+					maps.Add (imp.ImportTypeMapping (t));
+					userTypes.Add (t);
+					if (verbose)
+						Console.WriteLine (" - " + t);
+				} catch (InvalidOperationException ex) {
+					if (verbose)
+						Console.WriteLine (" - Warning: " + ex.Message);
+				} catch (NotImplementedException ex) {
+					if (verbose) {
+						Console.WriteLine (" - Warning: ignoring '" + type + "'");
+						Console.WriteLine ("   " + ex.Message);
+					}
 				}
 			}
 		}
-		
+
 		if (verbose)
 			Console.WriteLine ();
 			
@@ -170,7 +188,7 @@ public class Driver
 			
 			int i = arg.IndexOf (':', index);
 			if (i == -1) i = arg.Length;
-			string op = arg.Substring (index, i - index);
+			string op = arg.Substring (index, i - index).ToLowerInvariant ();
 			string param = (i < arg.Length - index) ? arg.Substring (i + 1) : "";
 			if (op == "assembly" || op == "a") {
 				assembly = param;
@@ -224,3 +242,4 @@ public class Driver
 		}
 	}
 }
+
