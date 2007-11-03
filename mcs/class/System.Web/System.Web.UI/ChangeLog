@@ -1,5 +1,11 @@
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
+	* Control.cs: need to append a "/" to TemplateSourceDirectory
+	before calling VirtualPathUtility.Combine, in order to get the
+	correct physical path to the requested file. Combine looks for the
+	last occurrence of "/" to determine where the relative paths
+	should be joined.
+
 	* MinimizableAttributeTypeConverter.cs: don't throw on null value,
 	call the base class method in that case.
 

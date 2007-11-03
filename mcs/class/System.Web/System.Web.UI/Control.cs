@@ -1054,9 +1054,10 @@ namespace System.Web.UI
 
 			string path;
 			if (master != null)
-				path = VirtualPathUtility.Combine (master.TemplateSourceDirectory, virtualPath);
+				path = VirtualPathUtility.Combine (master.TemplateSourceDirectory + "/", virtualPath);
 			else
-				path = VirtualPathUtility.Combine (TemplateSourceDirectory, virtualPath);
+				path = VirtualPathUtility.Combine (TemplateSourceDirectory + "/", virtualPath);
+			
 			return page != null ? page.MapPath (path) : Context.Server.MapPath (path);
 		}
 #endif
