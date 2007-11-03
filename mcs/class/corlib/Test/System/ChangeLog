@@ -1,3 +1,7 @@
+2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArgumentExceptionTest.cs: Added trivial ctor tests.
+
 2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnvironmentTest.cs: Enabled test for bug ##333740.

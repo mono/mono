@@ -1,3 +1,8 @@
+2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArgumentException.cs: Change default message to match MS. Removed
+	unnecessary check from Message, since base.Message can never be null.
+
 2007-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : ParseExact() should ignore 'K' when there is no

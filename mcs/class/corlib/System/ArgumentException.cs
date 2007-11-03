@@ -48,7 +48,7 @@ namespace System
 
 		// Constructors
 		public ArgumentException ()
-			: base (Locale.GetText ("An invalid argument was specified."))
+			: base (Locale.GetText ("Value does not fall within the expected range."))
 		{
 			HResult = Result;
 		}
@@ -94,14 +94,11 @@ namespace System
 
 		public override string Message {
 			get {
-				string base_message = base.Message;
-				if (base_message == null)
-					base_message = Locale.GetText ("An invalid argument was specified.");
-
-				if (ParamName == null || ParamName.Length == 0)
-					return base_message;
-				else
-					return base_message + Environment.NewLine + Locale.GetText ("Parameter name: ") + ParamName;
+				if (ParamName != null && ParamName.Length != 0)
+					return base.Message + Environment.NewLine
+						+ Locale.GetText ("Parameter name: ")
+						+ ParamName;
+				return base.Message;
 			}
 		}
 
