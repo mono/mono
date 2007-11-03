@@ -304,7 +304,13 @@ namespace Mono.CSharp
 			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)(:)?\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
 				RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 			Match match=reg.Match(error_string);
-			if (!match.Success) return null;
+			if (!match.Success) {
+				// We had some sort of runtime crash
+				error.ErrorText = error_string;
+				error.IsWarning = false;
+				error.ErrorNumber = "";
+				return error;
+			}
 			if (String.Empty != match.Result("${file}"))
 				error.FileName=match.Result("${file}");
 			if (String.Empty != match.Result("${line}"))
