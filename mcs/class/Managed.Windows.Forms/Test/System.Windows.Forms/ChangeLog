@@ -1,3 +1,8 @@
+2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ListViewItemTest.cs: Enabled test for bug #331643 and #330415.
+	* PropertyGridTest.cs: Added tests for PropertySort.
+
 2007-10-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormTest.cs: Test from George for bug #325242.

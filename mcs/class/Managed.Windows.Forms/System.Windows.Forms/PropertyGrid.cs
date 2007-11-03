@@ -100,7 +100,8 @@ namespace System.Windows.Forms {
 		#endregion	// Private Members
 		
 		#region Contructors
-		public PropertyGrid() {
+		public PropertyGrid ()
+		{
 			selected_objects = new object[0];
 			property_tabs = new PropertyTabCollection();
 
@@ -108,7 +109,7 @@ namespace System.Windows.Forms {
 			category_fore_color = line_color;
 			browsable_attributes = new AttributeCollection(new Attribute[] {});
 			commands_visible_if_available = false;
-			property_sort = PropertySort.Categorized;
+			property_sort = PropertySort.CategorizedAlphabetical;
 
 			property_grid_view = new PropertyGridView(this);
 
@@ -525,9 +526,10 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (!Enum.IsDefined (typeof (PropertySort), value)) {
-					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for PropertySort", value));
-				}
+#if NET_2_0
+				if (!Enum.IsDefined (typeof (PropertySort), value))
+					throw new InvalidEnumArgumentException ("value", (int) value, typeof (PropertySort));
+#endif
 
 				if (property_sort == value) {
 					return;
@@ -539,9 +541,11 @@ namespace System.Windows.Forms {
 				UpdateSortLayout ();
 				property_grid_view.Refresh();
 
+#if NET_2_0
 				EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
 				if (eh != null)
 					eh (this, EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -1485,6 +1489,9 @@ namespace System.Windows.Forms {
 
 		void UpdateSortLayout ()
 		{
+			if (root_grid_item == null)
+				return;
+
 			root_grid_item.GridItems.Clear ();
 
 			if (category_grid_items == null)
@@ -1520,7 +1527,6 @@ namespace System.Windows.Forms {
 					root_grid_item.GridItems.Add (category_item.Label, category_item);
 					category_item.SetParent (root_grid_item);
 				}
-
 			}
 		}
 

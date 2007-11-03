@@ -8,7 +8,10 @@
 //
 
 using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Forms;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 using NUnit.Framework;
 
@@ -17,6 +20,157 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class PropertyGridTest
 	{
+		[Test]
+		public void PropertySort_Valid ()
+		{
+			PropertyGrid pg;
+			EventLogger eventLogger;
+
+			pg = new PropertyGrid ();
+			eventLogger = new EventLogger (pg);
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#A1");
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A2");
+			pg.PropertySort = PropertySort.Alphabetical;
+			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#A3");
+#if NET_2_0
+			Assert.AreEqual (1, eventLogger.EventsRaised, "#A4");
+			Assert.AreEqual (1, eventLogger.CountEvents ("PropertySortChanged"), "#A5");
+#else
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A4");
+#endif
+			pg.PropertySort = PropertySort.NoSort;
+			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#A6");
+#if NET_2_0
+			Assert.AreEqual (2, eventLogger.EventsRaised, "#A7");
+			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#A8");
+#else
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A7");
+#endif
+			pg.PropertySort = PropertySort.NoSort;
+			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#A9");
+#if NET_2_0
+			Assert.AreEqual (2, eventLogger.EventsRaised, "#A10");
+			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#A11");
+#else
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A10");
+#endif
+			pg.PropertySort = PropertySort.CategorizedAlphabetical;
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#A12");
+#if NET_2_0
+			Assert.AreEqual (3, eventLogger.EventsRaised, "#A13");
+			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#A14");
+#else
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A13");
+#endif
+
+			pg = new PropertyGrid ();
+			eventLogger = new EventLogger (pg);
+			pg.SelectedObject = new Button ();
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#B1");
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B2");
+			pg.PropertySort = PropertySort.Alphabetical;
+			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#B3");
+#if NET_2_0
+			Assert.AreEqual (1, eventLogger.CountEvents ("PropertySortChanged"), "#B4");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B4");
+#endif
+			pg.PropertySort = PropertySort.NoSort;
+			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#B5");
+#if NET_2_0
+			Assert.AreEqual (2, eventLogger.CountEvents ("PropertySortChanged"), "#B6");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B6");
+#endif
+			pg.PropertySort = PropertySort.CategorizedAlphabetical;
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#B7");
+#if NET_2_0
+			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#B8");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B8");
+#endif
+			pg.PropertySort = PropertySort.CategorizedAlphabetical;
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#B9");
+#if NET_2_0
+			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#B10");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#B10");
+#endif
+
+			pg.SelectedObject = null;
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#C1");
+#if NET_2_0
+			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#C2");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C2");
+#endif
+			pg.PropertySort = PropertySort.Alphabetical;
+			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#C3");
+#if NET_2_0
+			Assert.AreEqual (4, eventLogger.CountEvents ("PropertySortChanged"), "#C4");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C4");
+#endif
+			pg.PropertySort = PropertySort.NoSort;
+			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#C5");
+#if NET_2_0
+			Assert.AreEqual (5, eventLogger.CountEvents ("PropertySortChanged"), "#C6");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#C6");
+#endif
+
+			pg.SelectedObject = new Button ();
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (pg);
+			form.Show ();
+
+			Assert.AreEqual (PropertySort.NoSort, pg.PropertySort, "#D1");
+#if NET_2_0
+			Assert.AreEqual (5, eventLogger.CountEvents ("PropertySortChanged"), "#D2");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D2");
+#endif
+			pg.PropertySort = PropertySort.Alphabetical;
+			Assert.AreEqual (PropertySort.Alphabetical, pg.PropertySort, "#D3");
+#if NET_2_0
+			Assert.AreEqual (6, eventLogger.CountEvents ("PropertySortChanged"), "#D4");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D4");
+#endif
+			form.Dispose ();
+		}
+
+		[Test]
+		public void PropertySort_Invalid ()
+		{
+			PropertyGrid pg = new PropertyGrid ();
+			EventLogger eventLogger = new EventLogger (pg);
+#if NET_2_0
+			try {
+				pg.PropertySort = (PropertySort) 666;
+				Assert.Fail ("#1");
+			} catch (InvalidEnumArgumentException ex) {
+				// The value of argument 'value' (666) is invalid
+				// for Enum type 'PropertySort'
+				Assert.AreEqual (typeof (InvalidEnumArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("'value'") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("(" + 666.ToString (CultureInfo.CurrentCulture) + ")") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("'PropertySort'") != -1, "#7");
+				Assert.IsNotNull (ex.ParamName, "#8");
+				Assert.AreEqual ("value", ex.ParamName, "#9");
+
+				Assert.AreEqual (0, eventLogger.EventsRaised, "#10");
+			}
+#else
+			pg.PropertySort = (PropertySort) 666;
+			Assert.AreEqual ((PropertySort) 666, pg.PropertySort);
+#endif
+		}
+
 		[Test]
 		public void SelectedObject ()
 		{
