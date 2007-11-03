@@ -1,3 +1,7 @@
+2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2007-11-02  Jonathan Chambers <joncham@gmail.com>
 
 	* icall.c: Use GetEnvironmentStrings on windows
