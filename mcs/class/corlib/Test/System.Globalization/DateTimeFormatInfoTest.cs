@@ -62,7 +62,6 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test] // bug #332553
-		[Category ("NotWorking")]
 		public void MonthNames ()
 		{
 			CultureInfo c = CultureInfo.CreateSpecificCulture ("en");

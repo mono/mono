@@ -1,3 +1,7 @@
+2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfoTest.cs : enabled test for bug #332553.
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfoTest.cs : added test for bug #335298.
