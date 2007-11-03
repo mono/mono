@@ -684,7 +684,7 @@ namespace System
 			case DateTimeKind.Utc:
 				return Ticks | 0x4000000000000000;
 			case DateTimeKind.Local:
-				return (long) ((ulong)Ticks | 0x8000000000000000);
+				return (long) ((ulong) ToUniversalTime ().Ticks | 0x8000000000000000);
 			default:
 				return Ticks;
 			}
@@ -698,7 +698,7 @@ namespace System
 			case 0:
 				return new DateTime (dateData, DateTimeKind.Unspecified);
 			default:
-				return new DateTime (dateData & 0x3fffffffffffffff, DateTimeKind.Local);
+				return new DateTime (dateData & 0x3fffffffffffffff, DateTimeKind.Utc).ToLocalTime ();
 			}
 		}
 

@@ -2078,6 +2078,22 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void RoundtripBinary ()
+		{
+			DateTime dt = DateTime.Now;
+			DateTime dt2 = DateTime.SpecifyKind (dt, DateTimeKind.Utc);
+			DateTime dt3 = DateTime.SpecifyKind (dt, DateTimeKind.Unspecified);
+			Assert.AreEqual (dt, DateTime.FromBinary (dt.ToBinary ()), "#1");
+			Assert.AreEqual (dt2, DateTime.FromBinary (dt2.ToBinary ()), "#2");
+			Assert.AreEqual (dt3, DateTime.FromBinary (dt3.ToBinary ()), "#3");
+			Assert.AreEqual (DateTimeKind.Local, DateTime.FromBinary (dt.ToBinary ()).Kind, "#4");
+			Assert.AreEqual (DateTimeKind.Utc, DateTime.FromBinary (dt2.ToBinary ()).Kind, "#5");
+			Assert.AreEqual (DateTimeKind.Unspecified, DateTime.FromBinary (dt3.ToBinary ()).Kind, "#6");
+
+			Assert.AreEqual (TimeZone.CurrentTimeZone.GetUtcOffset (dt).Ticks, dt3.ToBinary () - (dt.ToBinary () & 0x7FFFFFFFFFFFFFFF), "#7");
+		}
+
+		[Test]
 		public void TestMin ()
 		{
 			// This should never throw.

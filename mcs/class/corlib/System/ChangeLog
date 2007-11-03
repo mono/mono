@@ -1,3 +1,8 @@
+2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : fix for #330085. for Local time, convert to Utc
+	  before getting ticks.
+
 2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ArgumentException.cs: Change default message to match MS. Removed
