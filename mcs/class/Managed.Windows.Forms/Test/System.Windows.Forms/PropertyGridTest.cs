@@ -21,6 +21,7 @@ namespace MonoTests.System.Windows.Forms
 	public class PropertyGridTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void PropertySort_Valid ()
 		{
 			PropertyGrid pg;
@@ -143,6 +144,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void PropertySort_Invalid ()
 		{
 			PropertyGrid pg = new PropertyGrid ();

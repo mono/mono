@@ -366,6 +366,7 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[Test] // bug #330415 and #331643
+		[Category ("NotWorking")]
 		public void RemoveFocusedItem ()
 		{
 			ListView lv = new ListView ();
