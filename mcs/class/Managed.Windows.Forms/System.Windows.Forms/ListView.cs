@@ -1154,7 +1154,7 @@ namespace System.Windows.Forms
 			Size temp = Size.Empty;
 			Size ret_size = Size.Empty;
 #if NET_2_0
-			bool use_indent_count = small_image_list != null;
+    			bool use_indent_count = small_image_list != null;
 
 			// VirtualMode uses the first item text size
 			if (virtual_mode && items.Count > 0) {
@@ -1175,9 +1175,12 @@ namespace System.Windows.Forms
 
 					temp = Size.Ceiling (TextRenderer.MeasureString
 								(item.SubItems [col].Text, Font));
+
+#if NET_2_0
 					if (use_indent_count)
 						temp.Width += item.IndentCount * small_image_list.ImageSize.Width;
-
+#endif
+    
 					if (temp.Width > ret_size.Width)
 						ret_size = temp;
 				}
