@@ -1,3 +1,9 @@
+2007-10-31 Arina Itkes <arinai@mainsoft.com>
+
+	* CustomizableFileSettingsProvider.cs,  LocalFileSettingsProvider.cs:
+	Return flow to the state before revision 80469 
+	for compilation with defined TARGET_JVM flag.
+
 2007-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SettingValueElement.cs : implement Reset().

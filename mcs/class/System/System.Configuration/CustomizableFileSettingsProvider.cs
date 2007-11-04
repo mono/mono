@@ -241,6 +241,7 @@ namespace System.Configuration
 				return attrs [0].Company;
 			}
 
+#if !TARGET_JVM
 			MethodInfo entryPoint = assembly.EntryPoint;
 			Type entryType = entryPoint != null ? entryPoint.DeclaringType : null;
 			if (entryType != null && entryType.Namespace.Length > 0) {
@@ -248,6 +249,9 @@ namespace System.Configuration
 				return end < 0 ? entryType.Namespace : entryType.Namespace.Substring (0, end);
 			}
 			return "Program";
+#else
+			return assembly.GetName ().Name;
+#endif
 		}
 
 		private static string GetProductName ()
@@ -256,7 +260,7 @@ namespace System.Configuration
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
 
-#if true
+#if !TARGET_JVM
 
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));

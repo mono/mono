@@ -59,7 +59,14 @@ namespace System.Configuration
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext context,
 										   SettingsPropertyCollection properties)
 		{
+#if TARGET_JVM
+			SettingsPropertyValueCollection pv = new SettingsPropertyValueCollection ();
+			foreach (SettingsProperty prop in properties)
+				pv.Add (new SettingsPropertyValue (prop));
+			return pv;
+#else
 			return impl.GetPropertyValues (context, properties);
+#endif
 		}
 
 #if CONFIGURATION_DEP
