@@ -1,3 +1,8 @@
+2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Add a DefaultValue attribute to 2.0 IndentCount
+	property.
+
 2007-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyGrid.cs: In PropertySort, update the toolbar buttons even if

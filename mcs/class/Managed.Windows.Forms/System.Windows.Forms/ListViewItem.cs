@@ -402,6 +402,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DefaultValue (0)]
 		public int IndentCount {
 			get {
 				return indent_count;
