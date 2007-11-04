@@ -1,3 +1,11 @@
+2007-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Label.cs: Make AutoEllipsis internal on 1.0 profile. Code
+	formatting.
+	* PropertyGrid.cs: Also put Categorized button in pushed state when
+	PropertySort is CategorizedAlphabetical. Set AutoEllipsis to true
+	for help description label.
+
 2007-11-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When calculating the biggest item for a given column,

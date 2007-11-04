@@ -47,9 +47,7 @@ namespace System.Windows.Forms
 	public class Label : Control
 	{
 		private bool autosize;
-#if NET_2_0
 		private bool auto_ellipsis;
-#endif
 		private Image image;
 		private bool render_transparent;
 		private FlatStyle flat_style;
@@ -166,12 +164,15 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[Browsable (true)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
-		public bool AutoEllipsis
-		{
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool AutoEllipsis {
 			get { return this.auto_ellipsis; }
 			set
 			{
@@ -187,7 +188,6 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-#endif
 
 		[DefaultValue(false)]
 		[Localizable(true)]
@@ -211,7 +211,7 @@ namespace System.Windows.Forms
 				CalcAutoSize ();
 				Invalidate ();
 
-				OnAutoSizeChanged (EventArgs.Empty);					
+				OnAutoSizeChanged (EventArgs.Empty);
 			}
 		}
 
@@ -489,22 +489,19 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (ContentAlignment), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for ContentAlignment", value));
 
-					if (text_align != value) {
-
-						text_align = value;
-
-						switch (value) {
-
-						case ContentAlignment.BottomLeft:
-							string_format.LineAlignment = StringAlignment.Far;
-							string_format.Alignment = StringAlignment.Near;
-							break;
-						case ContentAlignment.BottomCenter:
-							string_format.LineAlignment = StringAlignment.Far;
-							string_format.Alignment = StringAlignment.Center;
-							break;
-						case ContentAlignment.BottomRight:
-							string_format.LineAlignment = StringAlignment.Far;
+				if (text_align != value) {
+					text_align = value;
+					switch (value) {
+					case ContentAlignment.BottomLeft:
+						string_format.LineAlignment = StringAlignment.Far;
+						string_format.Alignment = StringAlignment.Near;
+						break;
+					case ContentAlignment.BottomCenter:
+						string_format.LineAlignment = StringAlignment.Far;
+						string_format.Alignment = StringAlignment.Center;
+						break;
+					case ContentAlignment.BottomRight:
+						string_format.LineAlignment = StringAlignment.Far;
 						string_format.Alignment = StringAlignment.Far;
 						break;
 					case ContentAlignment.TopLeft:
@@ -523,13 +520,13 @@ namespace System.Windows.Forms
 						string_format.LineAlignment = StringAlignment.Center;
 						string_format.Alignment = StringAlignment.Near;
 						break;
-						case ContentAlignment.MiddleRight:
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.Alignment = StringAlignment.Far;
-							break;
-						case ContentAlignment.MiddleCenter:
-							string_format.LineAlignment = StringAlignment.Center;
-							string_format.Alignment = StringAlignment.Center;
+					case ContentAlignment.MiddleRight:
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.Alignment = StringAlignment.Far;
+						break;
+					case ContentAlignment.MiddleCenter:
+						string_format.LineAlignment = StringAlignment.Center;
+						string_format.Alignment = StringAlignment.Center;
 						break;
 					default:
 						break;
@@ -559,7 +556,7 @@ namespace System.Windows.Forms
 
 		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
 		{
-				Rectangle rcImageClip = area;
+			Rectangle rcImageClip = area;
 			rcImageClip.Inflate (-2,-2);
 
 			int X = area.X;
@@ -569,8 +566,7 @@ namespace System.Windows.Forms
 				img_align == ContentAlignment.MiddleCenter ||
 				img_align == ContentAlignment.BottomCenter) {
 				X += (area.Width - image.Width) / 2;
-			}
-			else if (img_align == ContentAlignment.TopRight ||
+			} else if (img_align == ContentAlignment.TopRight ||
 				img_align == ContentAlignment.MiddleRight||
 				img_align == ContentAlignment.BottomRight) {
 				X += (area.Width - image.Width);
@@ -580,8 +576,7 @@ namespace System.Windows.Forms
 				img_align == ContentAlignment.BottomLeft ||
 				img_align == ContentAlignment.BottomRight) {
 				Y += area.Height - image.Height;
-			}
-			else if(img_align == ContentAlignment.MiddleCenter ||
+			} else if(img_align == ContentAlignment.MiddleCenter ||
 					img_align == ContentAlignment.MiddleLeft ||
 					img_align == ContentAlignment.MiddleRight) {
 				Y += (area.Height - image.Height) / 2;
@@ -659,7 +654,7 @@ namespace System.Windows.Forms
 
 		protected override void OnParentChanged (EventArgs e)
 		{
-				base.OnParentChanged (e);
+			base.OnParentChanged (e);
 		}
 
 #if NET_2_0
@@ -678,7 +673,7 @@ namespace System.Windows.Forms
 
 		protected override void OnTextChanged (EventArgs e)
 		{
-			base.OnTextChanged (e);			
+			base.OnTextChanged (e);
 			if (autosize)
 				CalcAutoSize ();
 			Invalidate ();
@@ -691,11 +686,10 @@ namespace System.Windows.Forms
 
 		protected override bool ProcessMnemonic (char charCode)
 		{
-			if (IsMnemonic(charCode, Text) == true) {
+			if (IsMnemonic (charCode, Text)) {
 				// Select item next in line in tab order
-				if (this.Parent != null) {
+				if (this.Parent != null)
 					Parent.SelectNextControl(this, true, false, false, false);
-				}
 				return true;
 			}
 			
@@ -715,13 +709,12 @@ namespace System.Windows.Forms
 		protected override void WndProc (ref Message m)
 		{
 			switch ((Msg) m.Msg) {
-				case Msg.WM_DRAWITEM: {
-					m.Result = (IntPtr)1;
-				}
-					break;
-				default:
-					base.WndProc (ref m);
-					break;
+			case Msg.WM_DRAWITEM:
+				m.Result = (IntPtr)1;
+				break;
+			default:
+				base.WndProc (ref m);
+				break;
 			}
 		}
 
@@ -784,6 +777,5 @@ namespace System.Windows.Forms
 			base.OnHandleDestroyed (e);
 		}
 #endif
-
 	}
 }

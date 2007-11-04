@@ -134,7 +134,8 @@ namespace System.Windows.Forms {
 			
 			help_description_label = new Label();
 			help_description_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-			help_description_label.Name = "help_description_label";
+			help_description_label.AutoEllipsis = true;
+			help_description_label.AutoSize = false;
 			help_description_label.Font = this.Font;
 			help_description_label.Location = new Point(2,help_title_label.Top+help_title_label.Height);
 			help_description_label.Width = help_panel.Width - 4;
@@ -1274,20 +1275,18 @@ namespace System.Windows.Forms {
 			if (button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
 			} else if (button == categorized_toolbarbutton) {
-				this.PropertySort = PropertySort.Categorized;
+				this.PropertySort = PropertySort.CategorizedAlphabetical;
 			}
 		}
 		
 		internal void UpdateToolBarButtons () {
-			if (PropertySort == PropertySort.Alphabetical) {
-				categorized_toolbarbutton.Pushed = false;
-				alphabetic_toolbarbutton.Pushed = true;
-			}
-			else if (PropertySort == PropertySort.Categorized) {
+			if ((PropertySort & PropertySort.Categorized) != 0) {
 				categorized_toolbarbutton.Pushed = true;
 				alphabetic_toolbarbutton.Pushed = false;
-			}
-			else {
+			} else if ((PropertySort & PropertySort.Alphabetical) != 0) {
+				categorized_toolbarbutton.Pushed = false;
+				alphabetic_toolbarbutton.Pushed = true;
+			} else {
 				categorized_toolbarbutton.Pushed = false;
 				alphabetic_toolbarbutton.Pushed = false;
 			}
@@ -1411,7 +1410,7 @@ namespace System.Windows.Forms {
 					
 			if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse)
 				categorized = false;
-			else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+			else if ((property_sort & PropertySort.Categorized) != 0) {
 				categorized = parent_grid_item == root_grid_item;
 				if (categorized)
 					category_grid_items = new GridItemCollection ();
@@ -1507,8 +1506,7 @@ namespace System.Windows.Forms {
 					category_item.GridItems.Clear ();
 					category_item.SetParent (null);
 				}
-
-			} else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical) {
+			} else if ((property_sort & PropertySort.Categorized) != 0) {
 				foreach (GridItem item in main_grid_items) {
 					string category = item.PropertyDescriptor.Category;
 
