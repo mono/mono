@@ -1,3 +1,8 @@
+2007-11-04  Miguel de Icaza  <miguel@novell.com>
+
+	* FtpWebRequest.cs (GetResponseStatus): Fix this routine
+	propertly, refactor, and make it follow Mono coding conventions.
+
 2007-10-30  Jerome Haltom  (wasabi@larvalstage.net)
 
 	* FtpWebRequest.cs: adds support for ftp multiline results, fixes

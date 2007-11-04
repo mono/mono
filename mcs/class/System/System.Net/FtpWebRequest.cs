@@ -917,7 +917,8 @@ namespace System.Net
 			ftpResponse.UpdateStatus (status);
 		}
 
-		void Authenticate () {
+		void Authenticate ()
+		{
 			string username = null;
 			string password = null;
 			string domain = null;
@@ -991,40 +992,50 @@ namespace System.Net
 			return GetResponseStatus ();
 		}
 
+		internal static FtpStatus ServiceNotAvailable ()
+		{
+			return new FtpStatus (FtpStatusCode.ServiceNotAvailable, Locale.GetText ("Invalid response from server"));
+		}
+		
 		internal FtpStatus GetResponseStatus ()
 		{
 			while (true) {
-				string responseString = null;
+				string response = null;
 
 				try {
-					responseString = controlReader.ReadLine ();
-				}
-				catch (IOException) {
-					// controlReader.Close ();
+					response = controlReader.ReadLine ();
+				} catch (IOException) {
 				}
 
-				if (responseString == null || responseString.Length < 3)
-					return new FtpStatus(FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
+				if (response == null || response.Length < 3)
+					return ServiceNotAvailable ();
 
-				string codeString = responseString.Substring (0, 3);
+				int code, fcode;
+				if (!Int32.TryParse (response.Substring (0, 3), out code))
+					return ServiceNotAvailable ();
 
-				int code;
-				if (!Int32.TryParse (codeString, out code))
-					return new FtpStatus (FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
-
-				if (responseString.Length < 4 || responseString [3] != '-')
-					return new FtpStatus ((FtpStatusCode) code, responseString);
-
-				if (responseString [3] == '-') {
+				if (response [3] == '-'){
 					string line = null;
-					do {
-						line = controlReader.ReadLine();
-						responseString += Environment.NewLine + line;
-					} while (line.Length < 3 || (line [3] != ' ' && line.Substring (0, 3) != codeString));
-					return new FtpStatus ((FtpStatusCode) code, responseString);
-				}
+					while (true){
+						try {
+							line = controlReader.ReadLine();
+						} catch (IOException) {
+						}
+						if (line == null || response.Length < 3)
+							return ServiceNotAvailable ();
+						
+						response += Environment.NewLine + line;
+						if (line.Length < 3)
+							break;
 
-				return new FtpStatus (FtpStatusCode.ServiceNotAvailable, "Invalid response from server");
+						if (!Int32.TryParse (line.Substring (0, 3), out fcode))
+							return ServiceNotAvailable ();
+
+						if (code == fcode && line[3] == ' ')
+							break;
+					} 
+				}
+				return new FtpStatus ((FtpStatusCode) code, response);
 			}
 		}
 
