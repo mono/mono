@@ -110,7 +110,6 @@ namespace System.Windows.Forms {
 			browsable_attributes = new AttributeCollection(new Attribute[] {});
 			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
-
 			property_grid_view = new PropertyGridView(this);
 
 			splitter = new Splitter();
@@ -533,20 +532,27 @@ namespace System.Windows.Forms {
 #endif
 
 				if (property_sort == value) {
+					UpdateToolBarButtons ();
 					return;
 				}
 
+				// we do not need to update the the grid items and fire
+				// a PropertySortChanged event when switching between
+				// Categorized and CateogizedAlphabetical
+				bool needUpdate = (property_sort & PropertySort.Categorized) == 0 ||
+					(value & PropertySort.Categorized) == 0;
 				property_sort = value;
-
-				UpdateToolBarButtons();
-				UpdateSortLayout ();
-				property_grid_view.Refresh();
+				UpdateToolBarButtons ();
+				if (needUpdate) {
+					UpdateSortLayout ();
+					property_grid_view.Refresh ();
 
 #if NET_2_0
-				EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
-				if (eh != null)
-					eh (this, EventArgs.Empty);
+					EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
+					if (eh != null)
+						eh (this, EventArgs.Empty);
 #endif
+				}
 			}
 		}
 
@@ -1262,7 +1268,8 @@ namespace System.Windows.Forms {
 			toolbar_Clicked (e.ClickedItem as PropertyToolBarButton);
 		}
 #else
-		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e) {
+		private void toolbar_ButtonClick (object sender, ToolBarButtonClickEventArgs e)
+		{
 			toolbar_Clicked (e.Button as PropertyToolBarButton);
 		}
 #endif
@@ -1271,15 +1278,19 @@ namespace System.Windows.Forms {
 		{
 			if (button == null) 
 				return;
-				
+
 			if (button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
 			} else if (button == categorized_toolbarbutton) {
-				this.PropertySort = PropertySort.CategorizedAlphabetical;
+				if ((this.PropertySort & PropertySort.Categorized) == 0)
+					this.PropertySort = PropertySort.CategorizedAlphabetical;
+				else
+					UpdateToolBarButtons ();
 			}
 		}
 		
-		internal void UpdateToolBarButtons () {
+		internal void UpdateToolBarButtons ()
+		{
 			if ((PropertySort & PropertySort.Categorized) != 0) {
 				categorized_toolbarbutton.Pushed = true;
 				alphabetic_toolbarbutton.Pushed = false;
@@ -1292,14 +1303,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void OnResetPropertyClick (object sender, EventArgs e) {
+		private void OnResetPropertyClick (object sender, EventArgs e)
+		{
 			ResetSelectedProperty();
 		}
 
-		private void OnDescriptionClick (object sender, EventArgs e) {
+		private void OnDescriptionClick (object sender, EventArgs e)
+		{
 			this.HelpVisible = !this.HelpVisible;
 			description_menuitem.Checked = this.HelpVisible;
-
 		}
 
 		private void ReflectObjects () {
@@ -1578,7 +1590,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal class PropertyToolBarButton : 
+		internal class PropertyToolBarButton :
 #if NET_2_0
 		ToolStripButton
 #else
