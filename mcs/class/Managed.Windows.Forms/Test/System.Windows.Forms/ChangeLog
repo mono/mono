@@ -1,3 +1,7 @@
+2007-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyGridTest.cs: Enabled and improved PropertySort tests.
+
 2007-11-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Mark RemoveFocusedItem as NotWorking.

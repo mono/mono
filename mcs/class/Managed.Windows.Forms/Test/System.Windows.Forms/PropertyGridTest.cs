@@ -21,7 +21,6 @@ namespace MonoTests.System.Windows.Forms
 	public class PropertyGridTest
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertySort_Valid ()
 		{
 			PropertyGrid pg;
@@ -62,6 +61,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#A14");
 #else
 			Assert.AreEqual (0, eventLogger.EventsRaised, "#A13");
+#endif
+			pg.PropertySort = PropertySort.Categorized;
+			Assert.AreEqual (PropertySort.Categorized, pg.PropertySort, "#A14");
+#if NET_2_0
+			Assert.AreEqual (3, eventLogger.EventsRaised, "#A15");
+			Assert.AreEqual (3, eventLogger.CountEvents ("PropertySortChanged"), "#A16");
+#else
+			Assert.AreEqual (0, eventLogger.EventsRaised, "#A17");
 #endif
 
 			pg = new PropertyGrid ();
@@ -140,16 +147,30 @@ namespace MonoTests.System.Windows.Forms
 #else
 			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D4");
 #endif
+			pg.PropertySort = PropertySort.Categorized;
+			Assert.AreEqual (PropertySort.Categorized, pg.PropertySort, "#D5");
+#if NET_2_0
+			Assert.AreEqual (7, eventLogger.CountEvents ("PropertySortChanged"), "#D6");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D6");
+#endif
+			pg.PropertySort = PropertySort.CategorizedAlphabetical;
+			Assert.AreEqual (PropertySort.CategorizedAlphabetical, pg.PropertySort, "#D7");
+#if NET_2_0
+			Assert.AreEqual (7, eventLogger.CountEvents ("PropertySortChanged"), "#D8");
+#else
+			Assert.AreEqual (0, eventLogger.CountEvents ("PropertySortChanged"), "#D8");
+#endif
+
 			form.Dispose ();
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PropertySort_Invalid ()
 		{
 			PropertyGrid pg = new PropertyGrid ();
-			EventLogger eventLogger = new EventLogger (pg);
 #if NET_2_0
+			EventLogger eventLogger = new EventLogger (pg);
 			try {
 				pg.PropertySort = (PropertySort) 666;
 				Assert.Fail ("#1");
