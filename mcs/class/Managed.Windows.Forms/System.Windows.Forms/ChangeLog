@@ -1,3 +1,9 @@
+2007-11-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When calculating the biggest item for a given column,
+	take into account 2.0 LIstViewItem.IndentCount, since it directly affects
+	the item's width.
+
 2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertyGrid.cs: Fixed default value for PropertySort. Allow invalid

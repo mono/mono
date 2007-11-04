@@ -1147,18 +1147,23 @@ namespace System.Windows.Forms
 			return ret_size;
 		}
 
-		// Returns the size of biggest item text in a column.
+		// Returns the size of biggest item text in a column
+		// or the sum of the text and indent count if we are on 2.0
 		private Size BiggestItem (int col)
 		{
 			Size temp = Size.Empty;
 			Size ret_size = Size.Empty;
-
 #if NET_2_0
+			bool use_indent_count = small_image_list != null;
+
 			// VirtualMode uses the first item text size
 			if (virtual_mode && items.Count > 0) {
 				ListViewItem item = items [0];
 				ret_size = Size.Ceiling (TextRenderer.MeasureString (item.SubItems[col].Text,
 							Font));
+
+				if (use_indent_count)
+					ret_size.Width += item.IndentCount * small_image_list.ImageSize.Width;
 			} else {
 #endif
 				// 0th column holds the item text, we check the size of
@@ -1170,6 +1175,9 @@ namespace System.Windows.Forms
 
 					temp = Size.Ceiling (TextRenderer.MeasureString
 								(item.SubItems [col].Text, Font));
+					if (use_indent_count)
+						temp.Width += item.IndentCount * small_image_list.ImageSize.Width;
+
 					if (temp.Width > ret_size.Width)
 						ret_size = temp;
 				}
