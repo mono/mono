@@ -78,7 +78,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			new testcase ("314 1592 65358",		@"\d\d\d\d|\d\d\d", "a",	"a"	),//41
 			new testcase ("2 314 1592 65358", 	@"\d\d\d\d|\d\d\d", "a",	"a"	),//42
 			new testcase ("<i>am not</i>", 		"<(.+?)>", 	"[$0:$1]",	"[<i>:i]"),//43
-			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", 	"${S}$11$1", "77F1" 	),//44
+			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", 	"${S}$11$1", "77F" 	),//44
 		};
 
 		[Test]
