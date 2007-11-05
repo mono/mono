@@ -276,10 +276,10 @@ namespace System.Windows.Forms
 		public ListView ()
 		{
 			background_color = ThemeEngine.Current.ColorWindow;
-			items = new ListViewItemCollection (this);
 #if NET_2_0
 			groups = new ListViewGroupCollection (this);
 #endif
+			items = new ListViewItemCollection (this);
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
@@ -324,6 +324,10 @@ namespace System.Windows.Forms
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
 			MouseEnter += new EventHandler (ListView_MouseEnter);
+
+#if NET_2_0
+			BackgroundImageTiled = false;
+#endif
 
 			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick
 #if NET_2_0
@@ -459,7 +463,10 @@ namespace System.Windows.Forms
 				else
 					return background_color;
 			}
-			set { background_color = value; }
+			set { 
+				background_color = value;
+				item_control.BackColor = value;
+			}
 		}
 
 #if !NET_2_0
@@ -480,6 +487,20 @@ namespace System.Windows.Forms
 			}
 			set {
 				base.BackgroundImageLayout = value;
+			}
+		}
+
+		[DefaultValue (false)]
+		public bool BackgroundImageTiled {
+			get {
+				return item_control.BackgroundImageLayout == ImageLayout.Tile;
+			}
+			set {
+				ImageLayout new_image_layout = value ? ImageLayout.Tile : ImageLayout.None;
+				if (new_image_layout == item_control.BackgroundImageLayout)
+					return;
+
+				item_control.BackgroundImageLayout = new_image_layout;
 			}
 		}
 #endif
@@ -3090,6 +3111,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		protected override void OnBackgroundImageChanged (EventArgs args)
 		{
+			item_control.BackgroundImage = BackgroundImage;
 			base.OnBackgroundImageChanged (args);
 		}
 #endif

@@ -1,5 +1,14 @@
 2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Add 2.0 BackgroundImageTiled property.
+	Also, to make it work properly, change item's BackColor and
+	BackgroundImageLayout as needed.
+	* ThemeWin32Classic.cs: Don't fill any background rectangle 
+	in ListView.ItemControl when drawing items; just let the Control
+	base implementation fill it.
+
+2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewGroup.cs: Adda TypeConverter attribute for this class,
 	as well as adding a custom 'dummy' Converter, as .net does.
 
