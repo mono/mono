@@ -77,6 +77,7 @@ namespace System.Drawing
 		//
 		// Properties
 		//
+		[MonoLimitation ("Libgdiplus doesn't use this property for rendering")]
 		public PenAlignment Alignment {
 			get {
 				PenAlignment retval;
