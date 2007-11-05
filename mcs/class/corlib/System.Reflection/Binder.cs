@@ -100,9 +100,33 @@ namespace System.Reflection
 
 			for (int current = 0; current < count; current++) 
 			{
-				int level = GetDerivedLevel (match[current].DeclaringType);
+				MethodBase m = match [current];
+				int level = GetDerivedLevel (m.DeclaringType);
 				if (level == highLevel)
 					throw new AmbiguousMatchException ();
+				// If the argument types differ we
+				// have an ambigous match, as well
+				if (matchId >= 0) {
+					ParameterInfo[] p1 = m.GetParameters ();
+					ParameterInfo[] p2 = match [matchId].GetParameters ();
+					bool equal = true;
+
+					if (p1.Length != p2.Length)
+						equal = false;
+					else {
+						int i;
+
+						for (i = 0; i < p1.Length; ++i) {
+							if (p1 [i].ParameterType != p2 [i].ParameterType) {
+								equal = false;
+								break;
+							}
+						}
+					}
+
+					if (!equal)
+						throw new AmbiguousMatchException ();
+				}
 
 				if (level > highLevel) 
 				{

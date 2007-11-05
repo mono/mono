@@ -1,3 +1,8 @@
+2007-11-05  Mark Probst  <mark.probst@gmail.com>
+
+	* Binder.cs: Treat matches with different argument types as
+	ambiguous, too.  Fixes #324998.
+
 2007-11-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs: Avoid returning a method with a ParamArray attribute when a normal

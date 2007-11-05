@@ -409,6 +409,34 @@ namespace MonoTests.System.Reflection
 		{
 			public new void Foo (Bug76083ArgBase a) {}
 		}
+
+		private const BindingFlags BUG324998_BINDING_FLAGS
+			= BindingFlags.Public | BindingFlags.NonPublic
+			| BindingFlags.Instance | BindingFlags.Static
+			| BindingFlags.IgnoreCase;
+
+		class Bug324998AGood { public virtual void f(int i1, int i2, bool b) {} }
+
+		class Bug324998BGood : Bug324998AGood { public override void f(int i1, int i2, bool b) {} }
+
+		class Bug324998ABad {
+			public virtual void f(int i1, int i2) {}
+			public virtual void f(int i1, int i2, bool b) {}
+		}
+
+		class Bug324998BBad : Bug324998ABad { public override void f(int i1, int i2, bool b) {} }
+
+		[Test]
+		public void Bug324998Good () {
+			if (typeof(Bug324998BGood).GetMethod("f", BUG324998_BINDING_FLAGS) == null)
+				throw new Exception("Bug324998Good");
+		}
+
+		[Test]
+		[ExpectedException (typeof (AmbiguousMatchException))]
+		public void Bug324998Bad () {
+			typeof(Bug324998BBad).GetMethod("f", BUG324998_BINDING_FLAGS);
+		}
 	}
 }
 
