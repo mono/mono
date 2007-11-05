@@ -1149,6 +1149,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web.Compilation\ThemeDirectoryCompiler.jvm.cs" />
+    <Compile Include="System.Web.Configuration\FileMatchingInfo.cs" />
+    <Compile Include="System.Web.Configuration_2.0\MachineKeySectionUtils.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlEmptyTagControlBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
