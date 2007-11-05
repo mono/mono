@@ -97,6 +97,20 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (ParamEnum.Foo, info [5].DefaultValue, "#2");
 		}
 
+		// See bug: 339013
+		[Test]
+		public void TestDefaultValues ()
+		{
+			ParameterInfo [] pi = typeof (X).GetMethod ("Sample").GetParameters ();
+
+			Assert.AreEqual (pi [0].DefaultValue.GetType (), typeof (DBNull), "#1");
+			Assert.AreEqual (pi [1].DefaultValue.GetType (), typeof (Missing), "#2");
+		}
+
+		public void Sample (int a, [Optional] int b)
+		{
+		}
+			
 		[Test]
 		public void PseudoCustomAttributes () {
 			ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();

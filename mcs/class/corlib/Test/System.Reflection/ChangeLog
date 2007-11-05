@@ -1,3 +1,9 @@
+2007-11-04  Miguel de Icaza  <miguel@novell.com>
+
+	* ParameterInfoTest.cs: Add new test for testing the [Optional]
+	attribute making ParameterInfo.DefaultValue become
+	System.Reflection.Missing.
+
 2007-11-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinderTests.cs: Add a test for the ParamArray attribute.
