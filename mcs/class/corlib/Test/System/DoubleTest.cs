@@ -31,7 +31,8 @@ namespace MonoTests.System
 		private string [] string_values;
 		private string [] string_values_fail = {
 			"",     // empty
-			"- 1.0" // Inner whitespace
+			"- 1.0", // Inner whitespace
+			"3 5" // Inner whitespace 2
 		};
 
 		private double [] double_values = {

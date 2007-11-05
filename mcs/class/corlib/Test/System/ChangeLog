@@ -1,3 +1,7 @@
+2007-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* DoubleTest.cs: Add another Parse test handling whitespace (#321704).
+
 2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Broke compilation for 1.0 builds.
