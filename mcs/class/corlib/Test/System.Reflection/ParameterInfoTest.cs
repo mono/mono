@@ -101,7 +101,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void TestDefaultValues ()
 		{
-			ParameterInfo [] pi = typeof (X).GetMethod ("Sample").GetParameters ();
+			ParameterInfo [] pi = typeof (ParameterInfoTest).GetMethod ("Sample").GetParameters ();
 
 			Assert.AreEqual (pi [0].DefaultValue.GetType (), typeof (DBNull), "#1");
 			Assert.AreEqual (pi [1].DefaultValue.GetType (), typeof (Missing), "#2");
