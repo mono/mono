@@ -1,6 +1,11 @@
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
-    * ppc/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
+	* x86/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
+	Fixes the build on Leopard.
+
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* ppc/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
 	Fixes the build on Leopard.
 
 2007-10-26  Jonathan Chambers <joncham@gmail.com>
