@@ -1,5 +1,11 @@
 2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* PropertyGridView.cs: When clicking drop-down button,
+	select an index in the listbox only if our standard values collection 
+	has one or more items.
+
+2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: Add a DefaultValue attribute to 2.0 IndentCount
 	property.
 
