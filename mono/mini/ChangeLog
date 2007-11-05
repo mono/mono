@@ -1,5 +1,11 @@
 2007-11-05  Martin Baulig  <martin@ximian.com>
 
+	* mini-trampolines.c
+	(mono_magic_trampoline): Call mono_debugger_trampoline_compiled()
+	after compiling the method to notify the debugger.
+
+2007-11-05  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.h (MonoDebuggerInfo): Use the new breakpoint tables.
 
 2007-11-02  Zoltan Varga  <vargaz@gmail.com>
