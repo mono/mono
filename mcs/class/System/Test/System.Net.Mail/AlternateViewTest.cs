@@ -73,6 +73,12 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual (TransferEncoding.Base64, new AlternateView (ms).TransferEncoding, "#2");
 			Assert.AreEqual (TransferEncoding.Base64, new AlternateView (ms, "text/plain").TransferEncoding, "#3");
 		}
+
+		[Test]
+		public void CreateAlternateViewFromStringEncodingNull ()
+		{
+			AlternateView.CreateAlternateViewFromString ("<p>test message</p>", null, "text/html");
+		}
 	}
 }
 #endif

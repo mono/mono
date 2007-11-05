@@ -105,8 +105,9 @@ namespace System.Net.Mail {
 		public static AlternateView CreateAlternateViewFromString (string content, ContentType contentType)
 		{
 			if (content == null)
-				throw new ArgumentNullException ();
-			MemoryStream ms = new MemoryStream (Encoding.UTF8.GetBytes (content));
+				throw new ArgumentNullException ("content");
+			Encoding enc = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.UTF8;
+			MemoryStream ms = new MemoryStream (enc.GetBytes (content));
 			AlternateView av = new AlternateView (ms, contentType);
 			av.TransferEncoding = TransferEncoding.QuotedPrintable;
 			return av;
@@ -115,7 +116,9 @@ namespace System.Net.Mail {
 		public static AlternateView CreateAlternateViewFromString (string content, Encoding encoding, string mediaType)
 		{
 			if (content == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("content");
+			if (encoding == null)
+				encoding = Encoding.UTF8;
 			MemoryStream ms = new MemoryStream (encoding.GetBytes (content));
 			AlternateView av = new AlternateView (ms, mediaType);
 			av.TransferEncoding = TransferEncoding.QuotedPrintable;

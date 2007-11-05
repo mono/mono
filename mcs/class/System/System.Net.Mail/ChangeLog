@@ -1,3 +1,19 @@
+2007-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	fixed bug #339037.
+	* AlternateView.cs : CreateAlternateViewFromString() allows null
+	  Encoding.
+	* SmtpClient.cs : looks like when Body is null and AlternativeViews
+	  contains only 1 item, then the alternate view becomes as if it
+	  were just a body. To make this possible, added couple of more
+	  transfer-encoding conversion methods.
+	  For more AlternateViews cases, Body is treated
+	  as empty. With attachments it is even complicated: those alternate
+	  views are just in one boundary, so do not send empty string.
+	  Removed debug output (Console.WriteLine).
+
+	  What a mess.
+
 2007-10-30 Arina Itkes <arinai@mainsoft.com>
 
 	* SmtpClient.cs: Fix of SmtpClient.Read() method:

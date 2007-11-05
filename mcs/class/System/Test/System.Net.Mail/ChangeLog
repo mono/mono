@@ -1,3 +1,8 @@
+2007-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AlternateViewTest.cs : added test for CreateAlternateViewFromString
+	  with null Encoding arg.
+
 2007-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AttachmentTest.cs : more NameEncoding tests.

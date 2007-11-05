@@ -262,16 +262,36 @@ namespace System.Net.Mail {
 		private string EncodeBody (MailMessage message)
 		{
 			string body = message.Body;
+			Encoding encoding = message.BodyEncoding;
 			// RFC 2045 encoding
 			switch (message.ContentTransferEncoding) {
 			case TransferEncoding.SevenBit:
 				return body;
 			case TransferEncoding.Base64:
-				return Convert.ToBase64String (message.BodyEncoding.GetBytes (body));
+				return Convert.ToBase64String (encoding.GetBytes (body));
 			default:
-				return ToQuotedPrintable (body, message.BodyEncoding);
+				return ToQuotedPrintable (body, encoding);
 			}
 		}
+
+		private string EncodeBody (AlternateView av)
+		{
+			Encoding encoding = av.ContentType.CharSet != null ? Encoding.GetEncoding (av.ContentType.CharSet) : Encoding.UTF8;
+
+			byte [] bytes = new byte [av.ContentStream.Length];
+			av.ContentStream.Read (bytes, 0, bytes.Length);
+
+			// RFC 2045 encoding
+			switch (av.TransferEncoding) {
+			case TransferEncoding.SevenBit:
+				return Encoding.ASCII.GetString (bytes);
+			case TransferEncoding.Base64:
+				return Convert.ToBase64String (bytes);
+			default:
+				return ToQuotedPrintable (bytes);
+			}
+		}
+
 
 		private void EndSection (string section)
 		{
@@ -432,7 +452,6 @@ namespace System.Net.Mail {
 				mutex.ReleaseMutex ();
 				messageInProcess = null;
 			}
-Console.WriteLine ("Send() completed");
 		}
 
 		private void SendCore (MailMessage message)
@@ -556,7 +575,7 @@ Console.WriteLine ("Send() completed");
 			if (message.Attachments.Count > 0)
 				SendWithAttachments (message);
 			else
-				SendWithoutAttachments (message, null);
+				SendWithoutAttachments (message, null, false);
 
 			SendData (".");
 
@@ -653,9 +672,21 @@ Console.WriteLine ("Send() completed");
 			SendData (EncodeBody (message));
 		}
 
-		private void SendWithoutAttachments (MailMessage message, string boundary) {
-			if (message.AlternateViews.Count > 0)
-				SendBodyWithAlternateViews (message, boundary);
+		private void SendBodylessSingleAlternate (AlternateView av) {
+			SendHeader (HeaderName.ContentType, av.ContentType.ToString ());
+			if (av.TransferEncoding != TransferEncoding.SevenBit)
+				SendHeader (HeaderName.ContentTransferEncoding, GetTransferEncodingName (av.TransferEncoding));
+			SendData (string.Empty);
+
+			SendData (EncodeBody (av));
+		}
+
+		private void SendWithoutAttachments (MailMessage message, string boundary, bool attachmentExists)
+		{
+			if (message.Body == null && message.AlternateViews.Count == 1)
+				SendBodylessSingleAlternate (message.AlternateViews [0]);
+			else if (message.AlternateViews.Count > 0)
+				SendBodyWithAlternateViews (message, boundary, attachmentExists);
 			else
 				SendSimpleBody (message);
 		}
@@ -677,7 +708,7 @@ Console.WriteLine ("Send() completed");
 			Attachment body = null;
 
 			if (message.AlternateViews.Count > 0)
-				SendWithoutAttachments (message, boundary);
+				SendWithoutAttachments (message, boundary, true);
 			else {
 				body = Attachment.CreateAttachmentFromString (message.Body, null, message.BodyEncoding, message.IsBodyHtml ? "text/html" : "text/plain");
 				message.Attachments.Insert (0, body);
@@ -693,7 +724,8 @@ Console.WriteLine ("Send() completed");
 			EndSection (boundary);
 		}
 
-		private void SendBodyWithAlternateViews (MailMessage message, string boundary) {
+		private void SendBodyWithAlternateViews (MailMessage message, string boundary, bool attachmentExists)
+		{
 			AlternateViewCollection alternateViews = message.AlternateViews;
 
 			string inner_boundary = GenerateBoundary ();
@@ -702,11 +734,19 @@ Console.WriteLine ("Send() completed");
 			messageContentType.Boundary = inner_boundary;
 			messageContentType.MediaType = "multipart/alternative";
 
-			StartSection (boundary, messageContentType);
+			if (!attachmentExists) {
+				SendHeader (HeaderName.ContentType, messageContentType.ToString ());
+				SendData (String.Empty);
+			}
 
 			// body section
-			AlternateView body = AlternateView.CreateAlternateViewFromString (message.Body, message.BodyEncoding, message.IsBodyHtml ? "text/html" : "text/plain");
-			alternateViews.Insert (0, body);
+			AlternateView body = null;
+			if (message.Body != null) {
+				body = AlternateView.CreateAlternateViewFromString (message.Body, message.BodyEncoding, message.IsBodyHtml ? "text/html" : "text/plain");
+				alternateViews.Insert (0, body);
+				StartSection (boundary, messageContentType);
+			}
+
 try {
 			// alternate view sections
 			foreach (AlternateView av in alternateViews) {
@@ -751,11 +791,13 @@ try {
 					EndSection (alt_boundary);
 				}
 
-//				SendData (string.Empty);
+				if (!attachmentExists)
+					SendData (string.Empty);
 			}
 
 } finally {
-			alternateViews.Remove (body);
+			if (body != null)
+				alternateViews.Remove (body);
 }
 			EndSection (inner_boundary);
 		}
@@ -843,7 +885,6 @@ try {
 
 		private void StartSection (string section, ContentType sectionContentType)
 		{
-			SendData (string.Empty);
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendData (string.Empty);
@@ -867,8 +908,14 @@ try {
 		}
 
 		// use proper encoding to escape input
-		private string ToQuotedPrintable (string input, Encoding enc) {
+		private string ToQuotedPrintable (string input, Encoding enc)
+		{
 			byte [] bytes = enc.GetBytes (input);
+			return ToQuotedPrintable (bytes);
+		}
+
+		private string ToQuotedPrintable (byte [] bytes)
+		{
 			StringWriter writer = new StringWriter ();
 			foreach (byte i in bytes) {
 				if (i > 127) {
