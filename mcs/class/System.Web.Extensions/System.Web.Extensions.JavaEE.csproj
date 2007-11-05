@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -85,6 +85,9 @@
     </Compile>
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>Assembly\MonoTODOAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Web\System.Web.Configuration_2.0\MachineKeySectionUtils.cs">
+      <Link>System.Web.Handlers\MachineKeySectionUtils.cs</Link>
     </Compile>
     <Compile Include="..\System.Web\System.Web.Handlers\AssemblyResourceLoader.cs">
       <Link>System.Web.Handlers\AssemblyResourceLoader.cs</Link>
