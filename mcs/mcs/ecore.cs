@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public virtual bool GetAttributableValue (Type valueType, out object value)
+		public virtual bool GetAttributableValue (Type value_type, out object value)
 		{
 			Attribute.Error_AttributeArgumentNotValid (loc);
 			value = null;
@@ -571,10 +571,10 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract void Emit (EmitContext ec);
 
-		public virtual void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public virtual void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			Emit (ec);
-			ec.ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+			ec.ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
 
 		/// <summary>
@@ -592,14 +592,14 @@ namespace Mono.CSharp {
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
 		/// 
-		public static Expression ExprClassFromMemberInfo (Type containerType, MemberInfo mi, Location loc)
+		public static Expression ExprClassFromMemberInfo (Type container_type, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
 			else if (mi is FieldInfo)
 				return new FieldExpr ((FieldInfo) mi, loc);
 			else if (mi is PropertyInfo)
-				return new PropertyExpr (containerType, (PropertyInfo) mi, loc);
+				return new PropertyExpr (container_type, (PropertyInfo) mi, loc);
 		        else if (mi is Type){
 				return new TypeExpression ((System.Type) mi, loc);
 			}
@@ -607,7 +607,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected static ArrayList almostMatchedMembers = new ArrayList (4);
+		protected static ArrayList almost_matched_members = new ArrayList (4);
 
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
@@ -653,10 +653,10 @@ namespace Mono.CSharp {
 						       string name, MemberTypes mt,
 						       BindingFlags bf, Location loc)
 		{
-			almostMatchedMembers.Clear ();
+			almost_matched_members.Clear ();
 
 			MemberInfo [] mi = TypeManager.MemberLookup (container_type, qualifier_type,
-								     queried_type, mt, bf, name, almostMatchedMembers);
+								     queried_type, mt, bf, name, almost_matched_members);
 
 			if (mi == null)
 				return null;
@@ -785,11 +785,11 @@ namespace Mono.CSharp {
 						       Type queried_type, string name, string class_name,
 							   MemberTypes mt, BindingFlags bf)
 		{
-			if (almostMatchedMembers.Count != 0) {
-				for (int i = 0; i < almostMatchedMembers.Count; ++i) {
-					MemberInfo m = (MemberInfo) almostMatchedMembers [i];
+			if (almost_matched_members.Count != 0) {
+				for (int i = 0; i < almost_matched_members.Count; ++i) {
+					MemberInfo m = (MemberInfo) almost_matched_members [i];
 					for (int j = 0; j < i; ++j) {
-						if (m == almostMatchedMembers [j]) {
+						if (m == almost_matched_members [j]) {
 							m = null;
 							break;
 						}
@@ -817,7 +817,7 @@ namespace Mono.CSharp {
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
 				}
-				almostMatchedMembers.Clear ();
+				almost_matched_members.Clear ();
 				return null;
 			}
 
@@ -1302,9 +1302,9 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
-		public override bool GetAttributableValue (Type valueType, out object value)
+		public override bool GetAttributableValue (Type value_type, out object value)
 		{
-			return child.GetAttributableValue (valueType, out value);
+			return child.GetAttributableValue (value_type, out value);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1491,10 +1491,10 @@ namespace Mono.CSharp {
 			return child.GetValue ();
 		}
 
-		public override Constant ConvertExplicitly (bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 		{
 			// FIXME: check that 'type' can be converted to 'target_type' first
-			return child.ConvertExplicitly (inCheckedContext, target_type);
+			return child.ConvertExplicitly (in_checked_context, target_type);
 		}
 
 		public override Constant Increment ()
@@ -1556,7 +1556,7 @@ namespace Mono.CSharp {
 			Child.Emit (ec);
 		}
 
-		public override bool GetAttributableValue (Type valueType, out object value)
+		public override bool GetAttributableValue (Type value_type, out object value)
 		{
 			value = GetTypedValue ();
 			return true;
@@ -1608,12 +1608,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly(bool inCheckedContext, Type target_type)
+		public override Constant ConvertExplicitly(bool in_checked_context, Type target_type)
 		{
 			if (Child.Type == target_type)
 				return Child;
 
-			return Child.ConvertExplicitly (inCheckedContext, target_type);
+			return Child.ConvertExplicitly (in_checked_context, target_type);
 		}
 
 		public override Constant ConvertImplicitly (Type type)
@@ -2354,16 +2354,16 @@ namespace Mono.CSharp {
 					e = null;
 				}
 
-				if (almost_matched == null && almostMatchedMembers.Count > 0) {
+				if (almost_matched == null && almost_matched_members.Count > 0) {
 					almost_matched_type = lookup_ds.TypeBuilder;
-					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
+					almost_matched = (ArrayList) almost_matched_members.Clone ();
 				}
 			}
 
 			if (e == null) {
-				if (almost_matched == null && almostMatchedMembers.Count > 0) {
+				if (almost_matched == null && almost_matched_members.Count > 0) {
 					almost_matched_type = ec.ContainerType;
-					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
+					almost_matched = (ArrayList) almost_matched_members.Clone ();
 				}
 				e = ResolveAsTypeStep (ec, true);
 			}
@@ -2383,7 +2383,7 @@ namespace Mono.CSharp {
 				}
 
 				if (almost_matched != null)
-					almostMatchedMembers = almost_matched;
+					almost_matched_members = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
 				Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
@@ -3016,14 +3016,14 @@ namespace Mono.CSharp {
 	/// 
 	public class ExtensionMethodGroupExpr : MethodGroupExpr
 	{
-		readonly NamespaceEntry namespaceEntry;
+		readonly NamespaceEntry namespace_entry;
 		public Expression ExtensionExpression;
 		Argument extension_argument;
 
 		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, extensionType, l)
 		{
-			this.namespaceEntry = n;
+			this.namespace_entry = n;
 		}
 
 		public override bool IsBase {
@@ -3035,7 +3035,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsTopLevel {
-			get { return namespaceEntry == null; }
+			get { return namespace_entry == null; }
 		}
 
 		public override void EmitArguments (EmitContext ec, ArrayList arguments)
@@ -3063,7 +3063,7 @@ namespace Mono.CSharp {
 				arguments = new ArrayList (1);
 
 			arguments.Insert (0, new Argument (ExtensionExpression));
-			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespaceEntry, loc);
+			MethodGroupExpr mg = ResolveOverloadExtensions (ec, arguments, namespace_entry, loc);
 
 			// Store resolved argument and restore original arguments
 			if (mg != null)
@@ -3089,7 +3089,7 @@ namespace Mono.CSharp {
 				return base.OverloadResolve (ec, arguments, false, loc);
 
 			e.ExtensionExpression = ExtensionExpression;
-			return e.ResolveOverloadExtensions (ec, arguments, e.namespaceEntry, loc);
+			return e.ResolveOverloadExtensions (ec, arguments, e.namespace_entry, loc);
 		}		
 	}
 
@@ -4039,7 +4039,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (almostMatchedMembers.Count != 0) {
+				if (almost_matched_members.Count != 0) {
 					Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
 					null, MemberTypes.Constructor, AllBindingFlags);
 					return null;
@@ -4854,7 +4854,7 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 		bool prepared;
 
-		public PropertyExpr (Type containerType, PropertyInfo pi, Location l)
+		public PropertyExpr (Type container_type, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
@@ -4863,7 +4863,7 @@ namespace Mono.CSharp {
 
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
 
-			ResolveAccessors (containerType);
+			ResolveAccessors (container_type);
 		}
 
 		public override string Name {
@@ -4934,9 +4934,9 @@ namespace Mono.CSharp {
 		// hold the information for the accessibility of its setter/getter
 		//
 		// TODO: Refactor to use some kind of cache together with GetPropertyFromAccessor
-		void ResolveAccessors (Type containerType)
+		void ResolveAccessors (Type container_type)
 		{
-			FindAccessors (containerType);
+			FindAccessors (container_type);
 
 			if (getter != null) {
 				MethodBase the_getter = TypeManager.DropGenericMethodArguments (getter);

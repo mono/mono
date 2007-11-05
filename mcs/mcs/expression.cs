@@ -652,12 +652,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			if (Oper == Operator.LogicalNot)
-				Expr.EmitBranchable (ec, target, !onTrue);
+				Expr.EmitBranchable (ec, target, !on_true);
 			else
-				base.EmitBranchable (ec, target, onTrue);
+				base.EmitBranchable (ec, target, on_true);
 		}
 
 		public override string ToString ()
@@ -1140,30 +1140,30 @@ namespace Mono.CSharp {
 			throw new Exception ("never reached");
 		}
 
-		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			ILGenerator ig = ec.ig;
 
 			switch (action){
 			case Action.AlwaysFalse:
-				if (! onTrue)
+				if (! on_true)
 					ig.Emit (OpCodes.Br, target);
 				
 				return;
 			case Action.AlwaysTrue:
-				if (onTrue)
+				if (on_true)
 					ig.Emit (OpCodes.Br, target);
 				
 				return;
 			case Action.LeaveOnStack:
 				// the `e != null' rule.
 				expr.Emit (ec);
-				ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+				ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 				return;
 			case Action.Probe:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
-				ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+				ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 				return;
 			}
 			throw new Exception ("never reached");
@@ -1336,9 +1336,9 @@ namespace Mono.CSharp {
 			return null;
 		}
 	
-		public override bool GetAttributableValue (Type valueType, out object value)
+		public override bool GetAttributableValue (Type value_type, out object value)
 		{
-			return expr.GetAttributableValue (valueType, out value);
+			return expr.GetAttributableValue (value_type, out value);
 		}
 	}
 	
@@ -1661,10 +1661,10 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName(right.Type));
 		}
 
-		static bool is_unsigned (Type t)
+		static bool IsUnsigned (Type t)
 		{
 			if (t.IsPointer)
-				return is_unsigned (t.GetElementType ());
+				return IsUnsigned (t.GetElementType ());
 			
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
 				t == TypeManager.short_type || t == TypeManager.byte_type);
@@ -2585,7 +2585,7 @@ namespace Mono.CSharp {
 		///   The expression's code is generated, and we will generate a branch to `target'
 		///   if the resulting expression value is equal to isTrue
 		/// </remarks>
-		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -2596,7 +2596,7 @@ namespace Mono.CSharp {
 			// if we are comparing against null
 			//
 			if ((oper == Operator.Equality || oper == Operator.Inequality) && (left is Constant || right is Constant)) {
-				bool my_on_true = oper == Operator.Inequality ? onTrue : !onTrue;
+				bool my_on_true = oper == Operator.Inequality ? on_true : !on_true;
 				
 				//
 				// put the constant on the rhs, for simplicity
@@ -2627,7 +2627,7 @@ namespace Mono.CSharp {
 
 			} else if (oper == Operator.LogicalAnd) {
 
-				if (onTrue) {
+				if (on_true) {
 					Label tests_end = ig.DefineLabel ();
 					
 					left.EmitBranchable (ec, tests_end, false);
@@ -2648,7 +2648,7 @@ namespace Mono.CSharp {
 				return;
 				
 			} else if (oper == Operator.LogicalOr){
-				if (onTrue) {
+				if (on_true) {
 					left.EmitBranchable (ec, target, true);
 					right.EmitBranchable (ec, target, true);
 					
@@ -2664,7 +2664,7 @@ namespace Mono.CSharp {
 			} else if (!(oper == Operator.LessThan        || oper == Operator.GreaterThan ||
 			             oper == Operator.LessThanOrEqual || oper == Operator.GreaterThanOrEqual ||
 			             oper == Operator.Equality        || oper == Operator.Inequality)) {
-				base.EmitBranchable (ec, target, onTrue);
+				base.EmitBranchable (ec, target, on_true);
 				return;
 			}
 			
@@ -2672,57 +2672,57 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			Type t = left.Type;
-			bool isUnsigned = is_unsigned (t) || t == TypeManager.double_type || t == TypeManager.float_type;
+			bool is_unsigned = IsUnsigned (t) || t == TypeManager.double_type || t == TypeManager.float_type;
 			
 			switch (oper){
 			case Operator.Equality:
-				if (onTrue)
+				if (on_true)
 					ig.Emit (OpCodes.Beq, target);
 				else
 					ig.Emit (OpCodes.Bne_Un, target);
 				break;
 
 			case Operator.Inequality:
-				if (onTrue)
+				if (on_true)
 					ig.Emit (OpCodes.Bne_Un, target);
 				else
 					ig.Emit (OpCodes.Beq, target);
 				break;
 
 			case Operator.LessThan:
-				if (onTrue)
-					if (isUnsigned)
+				if (on_true)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Blt_Un, target);
 					else
 						ig.Emit (OpCodes.Blt, target);
 				else
-					if (isUnsigned)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Bge_Un, target);
 					else
 						ig.Emit (OpCodes.Bge, target);
 				break;
 
 			case Operator.GreaterThan:
-				if (onTrue)
-					if (isUnsigned)
+				if (on_true)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Bgt_Un, target);
 					else
 						ig.Emit (OpCodes.Bgt, target);
 				else
-					if (isUnsigned)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Ble_Un, target);
 					else
 						ig.Emit (OpCodes.Ble, target);
 				break;
 
 			case Operator.LessThanOrEqual:
-				if (onTrue)
-					if (isUnsigned)
+				if (on_true)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Ble_Un, target);
 					else
 						ig.Emit (OpCodes.Ble, target);
 				else
-					if (isUnsigned)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Bgt_Un, target);
 					else
 						ig.Emit (OpCodes.Bgt, target);
@@ -2730,13 +2730,13 @@ namespace Mono.CSharp {
 
 
 			case Operator.GreaterThanOrEqual:
-				if (onTrue)
-					if (isUnsigned)
+				if (on_true)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Bge_Un, target);
 					else
 						ig.Emit (OpCodes.Bge, target);
 				else
-					if (isUnsigned)
+					if (is_unsigned)
 						ig.Emit (OpCodes.Blt_Un, target);
 					else
 						ig.Emit (OpCodes.Blt, target);
@@ -2786,14 +2786,14 @@ namespace Mono.CSharp {
 			left.Emit (ec);
 			right.Emit (ec);
 
-			bool isUnsigned = is_unsigned (left.Type);
+			bool is_unsigned = IsUnsigned (left.Type);
 			
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Mul_Ovf;
-					else if (isUnsigned)
+					else if (is_unsigned)
 						opcode = OpCodes.Mul_Ovf_Un;
 					else
 						opcode = OpCodes.Mul;
@@ -2803,14 +2803,14 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.Division:
-				if (isUnsigned)
+				if (is_unsigned)
 					opcode = OpCodes.Div_Un;
 				else
 					opcode = OpCodes.Div;
 				break;
 
 			case Operator.Modulus:
-				if (isUnsigned)
+				if (is_unsigned)
 					opcode = OpCodes.Rem_Un;
 				else
 					opcode = OpCodes.Rem;
@@ -2820,7 +2820,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Add_Ovf;
-					else if (isUnsigned)
+					else if (is_unsigned)
 						opcode = OpCodes.Add_Ovf_Un;
 					else
 						opcode = OpCodes.Add;
@@ -2832,7 +2832,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
-					else if (isUnsigned)
+					else if (is_unsigned)
 						opcode = OpCodes.Sub_Ovf_Un;
 					else
 						opcode = OpCodes.Sub;
@@ -2841,7 +2841,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.RightShift:
-				if (isUnsigned)
+				if (is_unsigned)
 					opcode = OpCodes.Shr_Un;
 				else
 					opcode = OpCodes.Shr;
@@ -2863,14 +2863,14 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThan:
-				if (isUnsigned)
+				if (is_unsigned)
 					opcode = OpCodes.Clt_Un;
 				else
 					opcode = OpCodes.Clt;
 				break;
 
 			case Operator.GreaterThan:
-				if (isUnsigned)
+				if (is_unsigned)
 					opcode = OpCodes.Cgt_Un;
 				else
 					opcode = OpCodes.Cgt;
@@ -2879,7 +2879,7 @@ namespace Mono.CSharp {
 			case Operator.LessThanOrEqual:
 				Type lt = left.Type;
 				
-				if (isUnsigned || (lt == TypeManager.double_type || lt == TypeManager.float_type))
+				if (is_unsigned || (lt == TypeManager.double_type || lt == TypeManager.float_type))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
@@ -2891,7 +2891,7 @@ namespace Mono.CSharp {
 			case Operator.GreaterThanOrEqual:
 				Type le = left.Type;
 				
-				if (isUnsigned || (le == TypeManager.double_type || le == TypeManager.float_type))
+				if (is_unsigned || (le == TypeManager.double_type || le == TypeManager.float_type))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
@@ -3355,13 +3355,13 @@ namespace Mono.CSharp {
 	///   Implements the ternary conditional operator (?:)
 	/// </summary>
 	public class Conditional : Expression {
-		Expression expr, trueExpr, falseExpr;
+		Expression expr, true_expr, false_expr;
 		
-		public Conditional (Expression expr, Expression trueExpr, Expression falseExpr)
+		public Conditional (Expression expr, Expression true_expr, Expression false_expr)
 		{
 			this.expr = expr;
-			this.trueExpr = trueExpr;
-			this.falseExpr = falseExpr;
+			this.true_expr = true_expr;
+			this.false_expr = false_expr;
 			this.loc = expr.Location;
 		}
 
@@ -3373,13 +3373,13 @@ namespace Mono.CSharp {
 
 		public Expression TrueExpr {
 			get {
-				return trueExpr;
+				return true_expr;
 			}
 		}
 
 		public Expression FalseExpr {
 			get {
-				return falseExpr;
+				return false_expr;
 			}
 		}
 
@@ -3392,7 +3392,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if (TypeManager.IsNullableValueType (expr.Type))
-				return new Nullable.LiftedConditional (expr, trueExpr, falseExpr, loc).Resolve (ec);
+				return new Nullable.LiftedConditional (expr, true_expr, false_expr, loc).Resolve (ec);
 #endif
 			
 			if (expr.Type != TypeManager.bool_type){
@@ -3408,51 +3408,51 @@ namespace Mono.CSharp {
 				Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
 			}
 
-			trueExpr = trueExpr.Resolve (ec);
-			falseExpr = falseExpr.Resolve (ec);
+			true_expr = true_expr.Resolve (ec);
+			false_expr = false_expr.Resolve (ec);
 
-			if (trueExpr == null || falseExpr == null)
+			if (true_expr == null || false_expr == null)
 				return null;
 
 			eclass = ExprClass.Value;
-			if (trueExpr.Type == falseExpr.Type) {
-				type = trueExpr.Type;
+			if (true_expr.Type == false_expr.Type) {
+				type = true_expr.Type;
 				if (type == TypeManager.null_type) {
 					// TODO: probably will have to implement ConditionalConstant
 					// to call method without return constant as well
 					Report.Warning (-101, 1, loc, "Conditional expression will always return same value");
-					return trueExpr;
+					return true_expr;
 				}
 			} else {
 				Expression conv;
-				Type true_type = trueExpr.Type;
-				Type false_type = falseExpr.Type;
+				Type true_type = true_expr.Type;
+				Type false_type = false_expr.Type;
 
 				//
-				// First, if an implicit conversion exists from trueExpr
-				// to falseExpr, then the result type is of type falseExpr.Type
+				// First, if an implicit conversion exists from true_expr
+				// to false_expr, then the result type is of type false_expr.Type
 				//
-				conv = Convert.ImplicitConversion (ec, trueExpr, false_type, loc);
+				conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
 				if (conv != null){
 					//
 					// Check if both can convert implicitl to each other's type
 					//
-					if (Convert.ImplicitConversion (ec, falseExpr, true_type, loc) != null){
+					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null){
 						Error (172,
 						       "Can not compute type of conditional expression " +
-						       "as `" + TypeManager.CSharpName (trueExpr.Type) +
-						       "' and `" + TypeManager.CSharpName (falseExpr.Type) +
+						       "as `" + TypeManager.CSharpName (true_expr.Type) +
+						       "' and `" + TypeManager.CSharpName (false_expr.Type) +
 						       "' convert implicitly to each other");
 						return null;
 					}
 					type = false_type;
-					trueExpr = conv;
-				} else if ((conv = Convert.ImplicitConversion(ec, falseExpr, true_type,loc))!= null){
+					true_expr = conv;
+				} else if ((conv = Convert.ImplicitConversion(ec, false_expr, true_type,loc))!= null){
 					type = true_type;
-					falseExpr = conv;
+					false_expr = conv;
 				} else {
 					Report.Error (173, loc, "Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
-						trueExpr.GetSignatureForError (), falseExpr.GetSignatureForError ());
+						true_expr.GetSignatureForError (), false_expr.GetSignatureForError ());
 					return null;
 				}
 			}
@@ -3461,8 +3461,8 @@ namespace Mono.CSharp {
 			if (expr is BoolConstant){
 				BoolConstant bc = (BoolConstant) expr;
 
-				Report.Warning (429, 4, bc.Value ? falseExpr.Location : trueExpr.Location, "Unreachable expression code detected");
-				return bc.Value ? trueExpr : falseExpr;
+				Report.Warning (429, 4, bc.Value ? false_expr.Location : true_expr.Location, "Unreachable expression code detected");
+				return bc.Value ? true_expr : false_expr;
 			}
 
 			return this;
@@ -3480,10 +3480,10 @@ namespace Mono.CSharp {
 			Label end_target = ig.DefineLabel ();
 
 			expr.EmitBranchable (ec, false_target, false);
-			trueExpr.Emit (ec);
+			true_expr.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
-			falseExpr.Emit (ec);
+			false_expr.Emit (ec);
 			ig.MarkLabel (end_target);
 		}
 
@@ -3492,8 +3492,8 @@ namespace Mono.CSharp {
 			Conditional target = (Conditional) t;
 
 			target.expr = expr.Clone (clonectx);
-			target.trueExpr = trueExpr.Clone (clonectx);
-			target.falseExpr = falseExpr.Clone (clonectx);
+			target.true_expr = true_expr.Clone (clonectx);
+			target.false_expr = false_expr.Clone (clonectx);
 		}
 	}
 
@@ -5795,7 +5795,7 @@ namespace Mono.CSharp {
 			}				
 		}
 
-		public override bool GetAttributableValue (Type valueType, out object value)
+		public override bool GetAttributableValue (Type value_type, out object value)
 		{
 			if (arguments.Count != 1) {
 				// Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
@@ -6306,7 +6306,7 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public override bool GetAttributableValue (Type valueType, out object value)
+		public override bool GetAttributableValue (Type value_type, out object value)
 		{
 			if (TypeManager.ContainsGenericParameters (typearg) &&
 				!TypeManager.IsGenericTypeDefinition (typearg)) {
@@ -6317,7 +6317,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (valueType == TypeManager.object_type) {
+			if (value_type == TypeManager.object_type) {
 				value = (object)typearg;
 				return true;
 			}
@@ -6861,10 +6861,10 @@ namespace Mono.CSharp {
 				Expr.Emit (ec);
 		}
 
-		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
-				Expr.EmitBranchable (ec, target, onTrue);
+				Expr.EmitBranchable (ec, target, on_true);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -6910,10 +6910,10 @@ namespace Mono.CSharp {
 				Expr.Emit (ec);
 		}
 		
-		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
-				Expr.EmitBranchable (ec, target, onTrue);
+				Expr.EmitBranchable (ec, target, on_true);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7274,22 +7274,22 @@ namespace Mono.CSharp {
 		// initialized), then load the arguments the first time and store them
 		// in locals.  otherwise load from local variables.
 		//
-		// prepareForLoad is used in compound assignments to cache original index
+		// prepare_for_load is used in compound assignments to cache original index
 		// values ( label[idx++] += s )
 		//
-		LocalTemporary [] LoadArrayAndArguments (EmitContext ec, bool prepareForLoad)
+		LocalTemporary [] LoadArrayAndArguments (EmitContext ec, bool prepare_for_load)
 		{
 			ea.Expr.Emit (ec);
 
 			LocalTemporary[] indexes = null;
-			if (prepareForLoad) {
+			if (prepare_for_load) {
 				ec.ig.Emit (OpCodes.Dup);
 				indexes = new LocalTemporary [ea.Arguments.Count];
 			}
 
 			for (int i = 0; i < ea.Arguments.Count; ++i) {
 				((Argument)ea.Arguments [i]).EmitArrayArgument (ec);
-				if (!prepareForLoad)
+				if (!prepare_for_load)
 					continue;
 
 				// Keep original array index value on the stack

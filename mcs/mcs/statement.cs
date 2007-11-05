@@ -209,21 +209,21 @@ namespace Mono.CSharp {
 
 		bool is_true_ret;
 		
-		public If (Expression expr, Statement trueStatement, Location l)
+		public If (Expression expr, Statement true_statement, Location l)
 		{
 			this.expr = expr;
-			TrueStatement = trueStatement;
+			TrueStatement = true_statement;
 			loc = l;
 		}
 
 		public If (Expression expr,
-			   Statement trueStatement,
-			   Statement falseStatement,
+			   Statement true_statement,
+			   Statement false_statement,
 			   Location l)
 		{
 			this.expr = expr;
-			TrueStatement = trueStatement;
-			FalseStatement = falseStatement;
+			TrueStatement = true_statement;
+			FalseStatement = false_statement;
 			loc = l;
 		}
 
@@ -349,9 +349,9 @@ namespace Mono.CSharp {
 		public Statement  EmbeddedStatement;
 		bool infinite;
 		
-		public Do (Statement statement, Expression boolExpr, Location l)
+		public Do (Statement statement, Expression bool_expr, Location l)
 		{
-			expr = boolExpr;
+			expr = bool_expr;
 			EmbeddedStatement = statement;
 			loc = l;
 		}
@@ -434,9 +434,9 @@ namespace Mono.CSharp {
 		public Statement Statement;
 		bool infinite, empty;
 		
-		public While (Expression boolExpr, Statement statement, Location l)
+		public While (Expression bool_expr, Statement statement, Location l)
 		{
-			this.expr = boolExpr;
+			this.expr = bool_expr;
 			Statement = statement;
 			loc = l;
 		}
@@ -541,13 +541,13 @@ namespace Mono.CSharp {
 		public Statement Statement;
 		bool infinite, empty;
 		
-		public For (Statement initStatement,
+		public For (Statement init_statement,
 			    Expression test,
 			    Statement increment,
 			    Statement statement,
 			    Location l)
 		{
-			InitStatement = initStatement;
+			InitStatement = init_statement;
 			Test = test;
 			Increment = increment;
 			Statement = statement;
@@ -2896,19 +2896,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Erorr_AlreadyOccurs (Type switchType, SwitchLabel collisionWith)
+		public void Erorr_AlreadyOccurs (Type switch_type, SwitchLabel collision_with)
 		{
 			string label;
 			if (converted == null)
 				label = "default";
 			else if (converted == NullStringCase)
 				label = "null";
-			else if (TypeManager.IsEnumType (switchType)) 
-				label = TypeManager.CSharpEnumValue (switchType, converted);
+			else if (TypeManager.IsEnumType (switch_type)) 
+				label = TypeManager.CSharpEnumValue (switch_type, converted);
 			else
 				label = converted.ToString ();
 			
-			Report.SymbolRelatedToPreviousError (collisionWith.loc, null);
+			Report.SymbolRelatedToPreviousError (collision_with.loc, null);
 			Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
 		}
 
@@ -3171,22 +3171,22 @@ namespace Mono.CSharp {
 		// structure used to hold blocks of keys while calculating table switch
 		class KeyBlock : IComparable
 		{
-			public KeyBlock (long _nFirst)
+			public KeyBlock (long _first)
 			{
-				nFirst = nLast = _nFirst;
+				first = last = _first;
 			}
-			public long nFirst;
-			public long nLast;
-			public ArrayList rgKeys = null;
+			public long first;
+			public long last;
+			public ArrayList element_keys = null;
 			// how many items are in the bucket
 			public int Size = 1;
 			public int Length
 			{
-				get { return (int) (nLast - nFirst + 1); }
+				get { return (int) (last - first + 1); }
 			}
-			public static long TotalLength (KeyBlock kbFirst, KeyBlock kbLast)
+			public static long TotalLength (KeyBlock kb_first, KeyBlock kb_last)
 			{
-				return kbLast.nLast - kbFirst.nFirst + 1;
+				return kb_last.last - kb_first.first + 1;
 			}
 			public int CompareTo (object obj)
 			{
@@ -3194,7 +3194,7 @@ namespace Mono.CSharp {
 				int nLength = Length;
 				int nLengthOther = kb.Length;
 				if (nLengthOther == nLength)
-					return (int) (kb.nFirst - nFirst);
+					return (int) (kb.first - first);
 				return nLength - nLengthOther;
 			}
 		}
@@ -3211,74 +3211,74 @@ namespace Mono.CSharp {
 		/// <returns></returns>
 		void TableSwitchEmit (EmitContext ec, LocalBuilder val)
 		{
-			int cElements = Elements.Count;
-			object [] rgKeys = new object [cElements];
-			Elements.Keys.CopyTo (rgKeys, 0);
-			Array.Sort (rgKeys);
+			int element_count = Elements.Count;
+			object [] element_keys = new object [element_count];
+			Elements.Keys.CopyTo (element_keys, 0);
+			Array.Sort (element_keys);
 
 			// initialize the block list with one element per key
-			ArrayList rgKeyBlocks = new ArrayList ();
-			foreach (object key in rgKeys)
-				rgKeyBlocks.Add (new KeyBlock (System.Convert.ToInt64 (key)));
+			ArrayList key_blocks = new ArrayList ();
+			foreach (object key in element_keys)
+				key_blocks.Add (new KeyBlock (System.Convert.ToInt64 (key)));
 
-			KeyBlock kbCurr;
+			KeyBlock current_kb;
 			// iteratively merge the blocks while they are at least half full
 			// there's probably a really cool way to do this with a tree...
-			while (rgKeyBlocks.Count > 1)
+			while (key_blocks.Count > 1)
 			{
-				ArrayList rgKeyBlocksNew = new ArrayList ();
-				kbCurr = (KeyBlock) rgKeyBlocks [0];
-				for (int ikb = 1; ikb < rgKeyBlocks.Count; ikb++)
+				ArrayList key_blocks_new = new ArrayList ();
+				current_kb = (KeyBlock) key_blocks [0];
+				for (int ikb = 1; ikb < key_blocks.Count; ikb++)
 				{
-					KeyBlock kb = (KeyBlock) rgKeyBlocks [ikb];
-					if ((kbCurr.Size + kb.Size) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
+					KeyBlock kb = (KeyBlock) key_blocks [ikb];
+					if ((current_kb.Size + kb.Size) * 2 >=  KeyBlock.TotalLength (current_kb, kb))
 					{
 						// merge blocks
-						kbCurr.nLast = kb.nLast;
-						kbCurr.Size += kb.Size;
+						current_kb.last = kb.last;
+						current_kb.Size += kb.Size;
 					}
 					else
 					{
 						// start a new block
-						rgKeyBlocksNew.Add (kbCurr);
-						kbCurr = kb;
+						key_blocks_new.Add (current_kb);
+						current_kb = kb;
 					}
 				}
-				rgKeyBlocksNew.Add (kbCurr);
-				if (rgKeyBlocks.Count == rgKeyBlocksNew.Count)
+				key_blocks_new.Add (current_kb);
+				if (key_blocks.Count == key_blocks_new.Count)
 					break;
-				rgKeyBlocks = rgKeyBlocksNew;
+				key_blocks = key_blocks_new;
 			}
 
 			// initialize the key lists
-			foreach (KeyBlock kb in rgKeyBlocks)
-				kb.rgKeys = new ArrayList ();
+			foreach (KeyBlock kb in key_blocks)
+				kb.element_keys = new ArrayList ();
 
 			// fill the key lists
 			int iBlockCurr = 0;
-			if (rgKeyBlocks.Count > 0) {
-				kbCurr = (KeyBlock) rgKeyBlocks [0];
-				foreach (object key in rgKeys)
+			if (key_blocks.Count > 0) {
+				current_kb = (KeyBlock) key_blocks [0];
+				foreach (object key in element_keys)
 				{
-					bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast :
-						System.Convert.ToInt64 (key) > kbCurr.nLast;
-					if (fNextBlock)
-						kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
-					kbCurr.rgKeys.Add (key);
+					bool next_block = (key is UInt64) ? (ulong) key > (ulong) current_kb.last :
+						System.Convert.ToInt64 (key) > current_kb.last;
+					if (next_block)
+						current_kb = (KeyBlock) key_blocks [++iBlockCurr];
+					current_kb.element_keys.Add (key);
 				}
 			}
 
 			// sort the blocks so we can tackle the largest ones first
-			rgKeyBlocks.Sort ();
+			key_blocks.Sort ();
 
 			// okay now we can start...
 			ILGenerator ig = ec.ig;
-			Label lblEnd = ig.DefineLabel ();	// at the end ;-)
-			Label lblDefault = ig.DefineLabel ();
+			Label lbl_end = ig.DefineLabel ();	// at the end ;-)
+			Label lbl_default = ig.DefineLabel ();
 
-			Type typeKeys = null;
-			if (rgKeys.Length > 0)
-				typeKeys = rgKeys [0].GetType ();	// used for conversions
+			Type type_keys = null;
+			if (element_keys.Length > 0)
+				type_keys = element_keys [0].GetType ();	// used for conversions
 
 			Type compare_type;
 			
@@ -3287,13 +3287,13 @@ namespace Mono.CSharp {
 			else
 				compare_type = SwitchType;
 			
-			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
+			for (int iBlock = key_blocks.Count - 1; iBlock >= 0; --iBlock)
 			{
-				KeyBlock kb = ((KeyBlock) rgKeyBlocks [iBlock]);
-				lblDefault = (iBlock == 0) ? DefaultTarget : ig.DefineLabel ();
+				KeyBlock kb = ((KeyBlock) key_blocks [iBlock]);
+				lbl_default = (iBlock == 0) ? DefaultTarget : ig.DefineLabel ();
 				if (kb.Length <= 2)
 				{
-					foreach (object key in kb.rgKeys)
+					foreach (object key in kb.element_keys)
 					{
 						ig.Emit (OpCodes.Ldloc, val);
 						EmitObjectInteger (ig, key);
@@ -3312,17 +3312,17 @@ namespace Mono.CSharp {
 
 						// check block range (could be > 2^31)
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
-						ig.Emit (OpCodes.Blt, lblDefault);
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.first, type_keys));
+						ig.Emit (OpCodes.Blt, lbl_default);
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nLast, typeKeys));
-						ig.Emit (OpCodes.Bgt, lblDefault);
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.last, type_keys));
+						ig.Emit (OpCodes.Bgt, lbl_default);
 
 						// normalize range
 						ig.Emit (OpCodes.Ldloc, val);
-						if (kb.nFirst != 0)
+						if (kb.first != 0)
 						{
-							EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
+							EmitObjectInteger (ig, System.Convert.ChangeType (kb.first, type_keys));
 							ig.Emit (OpCodes.Sub);
 						}
 						ig.Emit (OpCodes.Conv_I4);	// assumes < 2^31 labels!
@@ -3331,15 +3331,15 @@ namespace Mono.CSharp {
 					{
 						// normalize range
 						ig.Emit (OpCodes.Ldloc, val);
-						int nFirst = (int) kb.nFirst;
-						if (nFirst > 0)
+						int first = (int) kb.first;
+						if (first > 0)
 						{
-							IntConstant.EmitInt (ig, nFirst);
+							IntConstant.EmitInt (ig, first);
 							ig.Emit (OpCodes.Sub);
 						}
-						else if (nFirst < 0)
+						else if (first < 0)
 						{
-							IntConstant.EmitInt (ig, -nFirst);
+							IntConstant.EmitInt (ig, -first);
 							ig.Emit (OpCodes.Add);
 						}
 					}
@@ -3347,26 +3347,26 @@ namespace Mono.CSharp {
 					// first, build the list of labels for the switch
 					int iKey = 0;
 					int cJumps = kb.Length;
-					Label [] rgLabels = new Label [cJumps];
+					Label [] switch_labels = new Label [cJumps];
 					for (int iJump = 0; iJump < cJumps; iJump++)
 					{
-						object key = kb.rgKeys [iKey];
-						if (System.Convert.ToInt64 (key) == kb.nFirst + iJump)
+						object key = kb.element_keys [iKey];
+						if (System.Convert.ToInt64 (key) == kb.first + iJump)
 						{
 							SwitchLabel sl = (SwitchLabel) Elements [key];
-							rgLabels [iJump] = sl.GetILLabel (ec);
+							switch_labels [iJump] = sl.GetILLabel (ec);
 							iKey++;
 						}
 						else
-							rgLabels [iJump] = lblDefault;
+							switch_labels [iJump] = lbl_default;
 					}
 					// emit the switch opcode
-					ig.Emit (OpCodes.Switch, rgLabels);
+					ig.Emit (OpCodes.Switch, switch_labels);
 				}
 
 				// mark the default for this block
 				if (iBlock != 0)
-					ig.MarkLabel (lblDefault);
+					ig.MarkLabel (lbl_default);
 			}
 
 			// TODO: find the default case and emit it here,
@@ -3374,16 +3374,16 @@ namespace Mono.CSharp {
 			//       make sure to mark other labels in the default section
 
 			// the last default just goes to the end
-			ig.Emit (OpCodes.Br, lblDefault);
+			ig.Emit (OpCodes.Br, lbl_default);
 
 			// now emit the code for the sections
-			bool fFoundDefault = false;
-			bool fFoundNull = false;
+			bool found_default = false;
+			bool found_null = false;
 			foreach (SwitchSection ss in Sections)
 			{
 				foreach (SwitchLabel sl in ss.Labels)
 					if (sl.Converted == SwitchLabel.NullStringCase)
-						fFoundNull = true;
+						found_null = true;
 			}
 
 			foreach (SwitchSection ss in Sections)
@@ -3395,23 +3395,23 @@ namespace Mono.CSharp {
 					if (sl.Converted == SwitchLabel.NullStringCase)
 						ig.MarkLabel (null_target);
 					else if (sl.Label == null) {
-						ig.MarkLabel (lblDefault);
-						fFoundDefault = true;
-						if (!fFoundNull)
+						ig.MarkLabel (lbl_default);
+						found_default = true;
+						if (!found_null)
 							ig.MarkLabel (null_target);
 					}
 				}
 				ss.Block.Emit (ec);
 			}
 			
-			if (!fFoundDefault) {
-				ig.MarkLabel (lblDefault);
-				if (HaveUnwrap && !fFoundNull) {
+			if (!found_default) {
+				ig.MarkLabel (lbl_default);
+				if (HaveUnwrap && !found_null) {
 					ig.MarkLabel (null_target);
 				}
 			}
 			
-			ig.MarkLabel (lblEnd);
+			ig.MarkLabel (lbl_end);
 		}
 		//
 		// This simple emit switch works, but does not take advantage of the
@@ -4307,7 +4307,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
-			Type[] prevCatches = new Type [Specific.Count];
+			Type[] prev_catches = new Type [Specific.Count];
 			int last_index = 0;
 			foreach (Catch c in Specific){
 				ec.CurrentBranching.CreateSibling (
@@ -4326,15 +4326,15 @@ namespace Mono.CSharp {
 				if (!c.Resolve (ec))
 					return false;
 
-				Type resolvedType = c.CatchType;
+				Type resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolvedType == prevCatches [ii] || resolvedType.IsSubclassOf (prevCatches [ii])) {
-						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type `{0}'", prevCatches [ii].FullName);
+					if (resolved_type == prev_catches [ii] || resolved_type.IsSubclassOf (prev_catches [ii])) {
+						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type `{0}'", prev_catches [ii].FullName);
 						return false;
 					}
 				}
 
-				prevCatches [last_index++] = resolvedType;
+				prev_catches [last_index++] = resolved_type;
 				need_exc_block = true;
 			}
 
