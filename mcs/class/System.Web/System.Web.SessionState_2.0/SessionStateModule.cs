@@ -226,12 +226,12 @@ namespace System.Web.SessionState
 				idManager.SaveSessionID (context, sessionId, out redirected, out cookieAdded);
 				if (redirected) {
 					if (supportSessionIDReissue)
-						handler.CreateUninitializedItem (context, sessionId, config.Timeout.Minutes);
+						handler.CreateUninitializedItem (context, sessionId, (int)config.Timeout.TotalMinutes);
 					context.Response.End ();
 					return;
 				}
 				else
-					storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
+					storeData = handler.CreateNewStoreData (context, (int)config.Timeout.TotalMinutes);
 			}
 			else if (storeData == null && storeLocked) {
 				WaitForStoreUnlock (context, sessionId, isReadOnly);
@@ -240,7 +240,7 @@ namespace System.Web.SessionState
 				 !storeLocked &&
 				 storeSessionAction == SessionStateActions.InitializeItem &&
 				 IsCookieLess (context, config)) {
-				storeData = handler.CreateNewStoreData (context, config.Timeout.Minutes);
+				storeData = handler.CreateNewStoreData (context, (int)config.Timeout.TotalMinutes);
 			}
 
 			container = CreateContainer (sessionId, storeData, isNew, isReadOnly);

@@ -1,3 +1,10 @@
+2007-11-05  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: use TimeSpan.TotalMinutes wherever a
+	session timeout is required, so that sessions do not expire
+	prematurely. Fixes bug #339026. Patch from Adriaan van Kekem
+	<adriaanvk@gmail.com>, thanks!
+
 2007-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionInProcHandler.cs: in certain situations the 'item'
