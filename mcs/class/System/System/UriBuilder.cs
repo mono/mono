@@ -90,7 +90,9 @@ namespace System
 			Host = hostName;
 			port = -1;
 			Path = String.Empty;   // dependent on scheme it may set path to "/"
+#if !NET_2_0
 			query = String.Empty;
+#endif
 			fragment = String.Empty;
 			username = String.Empty;
 			password = String.Empty;
@@ -195,7 +197,9 @@ namespace System
 				else
 //					query = "?" + EncodeUtf8 (value);
 					query = "?" + value;
+#if !NET_2_0
 				fragment = String.Empty;
+#endif
 				modified = true;
 			}
 		}
@@ -267,6 +271,7 @@ namespace System
 				builder.Append ('/');
 			builder.Append (path);
 			builder.Append (query);
+			builder.Append (fragment);
 
 			return builder.ToString ();
 		}

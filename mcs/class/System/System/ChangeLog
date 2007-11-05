@@ -1,3 +1,11 @@
+2007-11-04  Jensen Somers <jensen.somers@gmail.com>
+
+        * UriBuilder.cs (ToString): Added Fragment property to the
+        return string.
+        
+        (Fragment, Query): Properties are no longer set to an empty
+        string from version 2.0 and up.
+
 2007-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs (AppendQueryAndFragment): Unescape the query with
