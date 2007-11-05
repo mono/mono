@@ -1,3 +1,7 @@
+2007-11-05  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: cope with UriBuilder.Query being null.
+
 2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpRuntime.cs: Always return a path with trailing directory

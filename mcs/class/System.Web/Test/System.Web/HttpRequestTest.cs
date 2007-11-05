@@ -662,6 +662,16 @@ namespace MonoTests.System.Web {
 			c = Cook (51);
 			Assert.AreEqual (c.Request.QueryString.ToString (), "Plain&Arg=1", "QTS#2");
 		}
+
+#if NET_2_0
+		[Test]
+		public void QueryString_NullTest ()
+		{
+			HttpRequest req = new HttpRequest ("file.aspx", "http://localhost/file.aspx", null);
+			
+			Assert.AreEqual (req.QueryString.ToString (), "", "QSNT#1");
+		}
+#endif
 		
 		[Test]
 		public void Leading_qm_in_QueryString ()

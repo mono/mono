@@ -112,8 +112,9 @@ namespace System.Web {
 			url_components = new UriBuilder (url);
 			url_components.Query = queryString;
 			
-			query_string_nvc = new WebROCollection ();					
-			HttpUtility.ParseQueryString (queryString, Encoding.Default, query_string_nvc);
+			query_string_nvc = new WebROCollection ();
+			if (queryString != null)
+				HttpUtility.ParseQueryString (queryString, Encoding.Default, query_string_nvc);
 			query_string_nvc.Protect ();
 		}
 
@@ -973,13 +974,16 @@ namespace System.Web {
 
 		public NameValueCollection QueryString {
 			get {
-				if (query_string_nvc == null){
+				if (query_string_nvc == null) {
+					query_string_nvc = new WebROCollection ();
 					string q = UrlComponents.Query;
-					if (q.Length != 0)
-						q = q.Remove(0, 1);
-
-					query_string_nvc = new WebROCollection ();					
-					HttpUtility.ParseQueryString (q, ContentEncoding, query_string_nvc);
+					if (q != null) {
+						if (q.Length != 0)
+							q = q.Remove(0, 1);
+					
+						HttpUtility.ParseQueryString (q, ContentEncoding, query_string_nvc);
+					}
+					
 					query_string_nvc.Protect();
 				}
 				
