@@ -477,6 +477,40 @@ namespace MonoTests.System.Collections {
 			BitArray x = new BitArray (10, true);
 			Queue s = new Queue (x);
 		}
+
+		// https://bugzilla.novell.com/show_bug.cgi?id=321657
+		[Test]
+		public void TrimToSize_Dequeue_Enqueue ()
+		{
+			Queue queue = new Queue (32, 1.0F);
+			for (int i = 0; i < 31; i++)
+				queue.Enqueue (i);
+
+			queue.TrimToSize ();
+			AssertEquals ("0", 0, queue.Dequeue ());
+			queue.Enqueue (411);
+
+			AssertEquals ("Count-1", 31, queue.Count);
+			for (int i = 1; i < 31; i++) {
+				AssertEquals ("Peek" + i.ToString (), i, queue.Peek ());
+				AssertEquals ("Dequeue" + i.ToString (), i, queue.Dequeue ());
+			}
+			AssertEquals ("Count-2", 1, queue.Count);
+			AssertEquals ("411", 411, queue.Dequeue ());
+		}
+
+		[Test]
+		public void TrimToSize_Enqueue_Dequeue ()
+		{
+			Queue queue = new Queue (32, 1.0F);
+			for (int i = 0; i < 31; i++)
+				queue.Enqueue (i);
+
+			queue.TrimToSize ();
+			queue.Enqueue (411);
+			AssertEquals ("Count-1", 32, queue.Count);
+			AssertEquals ("0", 0, queue.Dequeue ());
+		}
 	}
 }
 

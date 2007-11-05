@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* QueueTest.cs: Test cases for #321657. Based on the test case 
+	supplied by Benjamin Lutz.
+
 2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SortedListTest.cs: Fixed deserialization test to pass on MS.
