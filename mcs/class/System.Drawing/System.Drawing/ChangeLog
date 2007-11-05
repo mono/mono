@@ -1,8 +1,10 @@
-2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
+	* gdipFunctions.cs: Stream position shouldn't be changed when 
+	loading images (bug #338779).
 	* Pen.cs: Add a [MonoLimitation] to Pen's Alignment property so that
 	the next version of MoMA will report it as not-implemented in 
-	libgdiplus (but it works under Windows, i.e. MS GDI+)
+	libgdiplus (but it works under Windows, i.e. MS GDI+). #338985
 
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 

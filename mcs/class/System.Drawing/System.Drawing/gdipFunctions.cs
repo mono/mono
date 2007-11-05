@@ -1700,11 +1700,7 @@ namespace System.Drawing
 			public GdiPlusStreamHelper (Stream s) 
 			{ 
 				managedBuf = new byte [default_bufsize];
-				
 				stream = s;
-				if (stream != null && stream.CanSeek) {
-					stream.Seek (0, SeekOrigin.Begin);
-				}
 			}
 
 			public int StreamGetHeaderImpl (IntPtr buf, int bufsz)  {
