@@ -1,3 +1,7 @@
+2007-11-05  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: Remove select call on click. Fixes #325809
+
 2007-11-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Add 2.0 Position property getter.

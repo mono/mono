@@ -5256,9 +5256,6 @@ namespace System.Windows.Forms
 		}
 					
 		private void WmLButtonDown (ref Message m) {
-			if (CanSelect) {
-				Select (true, true);
-			}
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
