@@ -270,7 +270,6 @@ public class StringTest : Assertion
 		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0));
 	}
 
-	[Ignore ("Blocked by mcs bug 78899")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public unsafe void TestSbytePtrConstructorOverflow2 ()
 	{
@@ -284,7 +283,6 @@ public class StringTest : Assertion
 		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0, null));
 	}
 
-	[Ignore ("Blocked by mcs bug 78899")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public unsafe void TestSbytePtrConstructorOverflow4 ()
 	{

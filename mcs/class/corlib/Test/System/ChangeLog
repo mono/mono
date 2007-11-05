@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringTest.cs: Re-enabled TestSbytePtrConstructorOverflow[2,4] 
+	since they both works with SVN HEAD.
+
 2007-11-05  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneTest.cs: test for bug #323911
