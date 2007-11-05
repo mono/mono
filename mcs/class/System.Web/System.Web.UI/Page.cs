@@ -1087,20 +1087,16 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (data != null && data.Count > 0) {
 			Hashtable used = new Hashtable ();
 			foreach (string id in data.AllKeys){
-				if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID)
+				if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID ||
+				    id == ClientScriptManager.EventStateFieldName)
 					continue;
-
-				string real_id = id;
-				int dot = real_id.IndexOf ('.');
-				if (dot >= 1)
-					real_id = real_id.Substring (0, dot);
 			
-				if (real_id == null || used.ContainsKey (real_id))
+				if (used.ContainsKey (id))
 					continue;
 
-				used.Add (real_id, real_id);
+				used.Add (id, id);
 
-				Control ctrl = FindControl (real_id);
+				Control ctrl = FindControl (id);
 				if (ctrl != null){
 					IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
 					IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
@@ -1111,19 +1107,19 @@ public partial class Page : TemplateControl, IHttpHandler
 						continue;
 					}
 		
-					if (pbdh.LoadPostData (real_id, requestValues) == true) {
+					if (pbdh.LoadPostData (id, requestValues) == true) {
 						if (requiresPostDataChanged == null)
 							requiresPostDataChanged = new ArrayList ();
 						requiresPostDataChanged.Add (pbdh);
 					}
 				
 					if (_requiresPostBackCopy != null)
-						_requiresPostBackCopy.Remove (real_id);
+						_requiresPostBackCopy.Remove (id);
 
 				} else if (!second) {
 					if (secondPostData == null)
 						secondPostData = new NameValueCollection ();
-					secondPostData.Add (real_id, data [id]);
+					secondPostData.Add (id, data [id]);
 				}
 			}
 		}
@@ -1330,7 +1326,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (IsPostBack || IsCallback) {
 			_lifeCycle = PageLifeCycle.PreLoad;
 			if (_requestValueCollection != null)
-				scriptManager.RestoreEventValidationState (_requestValueCollection [scriptManager.EventStateFieldName]);
+				scriptManager.RestoreEventValidationState (
+					_requestValueCollection [ClientScriptManager.EventStateFieldName]);
 #else
 		if (IsPostBack) {
 #endif

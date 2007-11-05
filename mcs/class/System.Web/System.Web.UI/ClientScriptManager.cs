@@ -49,8 +49,10 @@ namespace System.Web.UI
 	#else
 	internal
 	#endif
-		class ClientScriptManager
+	class ClientScriptManager
 	{
+		internal const string EventStateFieldName = "__EVENTVALIDATION";
+		
 		Hashtable registeredArrayDeclares;
 		ScriptEntry clientScriptBlocks;
 		ScriptEntry startupScriptBlocks;
@@ -591,11 +593,6 @@ namespace System.Web.UI
 			int [] array = new int [eventValidationPos];
 			Array.Copy (eventValidationValues, array, eventValidationPos);
 			return fmt.Serialize (array);
-		}
-
-		internal string EventStateFieldName
-		{
-			get { return "__EVENTVALIDATION"; }
 		}
 
 		internal void WriteExpandoAttributes (HtmlTextWriter writer)

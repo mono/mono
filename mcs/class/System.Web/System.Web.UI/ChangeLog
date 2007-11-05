@@ -1,3 +1,10 @@
+2007-11-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientScriptManager.cs: EventStateFieldName is a constant now.
+
+	* Page.cs: use full control ids when processing post data. Fixes
+	bug #317615
+
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: need to append a "/" to TemplateSourceDirectory
