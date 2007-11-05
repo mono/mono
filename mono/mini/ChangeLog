@@ -1,6 +1,17 @@
+2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_spill_call): add support for soft-float.
+
+	* mini.c (mono_method_to_ir): add support for soft-float
+	to inlined functions that return float.
+
+	* mini.c (mono_method_to_ir): add support for soft-float
+	to cee_stsfld opcode on float fields.
+
 2007-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* mini-x86.h: Fix the structure access for X86 Leopard.
+
 
 2007-11-05  Martin Baulig  <martin@ximian.com>
 
