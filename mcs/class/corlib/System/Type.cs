@@ -1149,11 +1149,20 @@ namespace System {
 				throw new InvalidOperationException ("not a generic type definition");
 			if (types == null)
 				throw new ArgumentNullException ("types");
-			foreach (Type t in types) {
+
+			Type[] systemTypes = new Type[types.Length];
+			for (int i = 0; i < types.Length; ++i) {
+				Type t = types [i];
 				if (t == null)
 					throw new ArgumentNullException ("types");
+
+				t = t.UnderlyingSystemType;
+				if (t == null || !t.IsSystemType)
+					throw new ArgumentNullException ("types");
+				systemTypes [i] = types [i].UnderlyingSystemType;
 			}
-			Type res = MakeGenericType (this, types);
+			
+			Type res = MakeGenericType (this, systemTypes);
 			if (res == null)
 				throw new TypeLoadException ();
 			return res;

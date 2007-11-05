@@ -1,3 +1,9 @@
+2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs (MakeGenericType): fix for #331199. If an user-defined type
+	was used, the runtime would crash. Now we apply UnderlyingSystemType to
+	all types before handling to the runtime.
+
 2007-11-05  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZone.cs: fix for #323911. The our after DST.Start is already DST.
