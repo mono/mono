@@ -1,5 +1,9 @@
 2007-11-05  Geoff Norton  <gnorton@novell.com>
 
+	* darwin_stop_world.c: Correct the structure name on Darwin-x86 for Leopard.
+
+2007-11-05  Geoff Norton  <gnorton@novell.com>
+
 	* darwin_stop_world.c: Also push ebp when pushing all stacks on Leopard
 	and pre-Leopard.
 
