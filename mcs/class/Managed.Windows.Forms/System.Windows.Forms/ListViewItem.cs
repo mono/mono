@@ -52,6 +52,7 @@ namespace System.Windows.Forms
 		string tooltip_text = String.Empty;
 		int indent_count;
 		int index;			// cached index for VirtualMode
+		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour
 #endif
 		Rectangle bounds;
 		Rectangle checkbox_rect;	// calculated by CalcListViewItem method
@@ -449,6 +450,16 @@ namespace System.Windows.Forms
 			}
 			set {
 				name = value == null ? String.Empty : value;
+			}
+		}
+
+		[Browsable (false)]
+		public Point Position {
+			get {
+				if (owner != null && owner.VirtualMode)
+					return owner.GetItemLocation (Index);
+
+				return position;
 			}
 		}
 #endif
