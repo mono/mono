@@ -635,17 +635,7 @@ namespace System.IO.Ports
 
 		public string ReadLine ()
 		{
-			CheckOpen ();
-			List<byte> bytes_read = new List<byte>();
-			byte [] buff = new byte [1];
-			
-			while (true){
-				int n = stream.Read (buff, 0, 1);
-				if (n == -1 || buff [0] == '\n')
-					break;
-				bytes_read.Add (buff [0]);
-			} 
-			return new String (encoding.GetChars (bytes_read.ToArray ()));
+			return ReadTo (new_line);
 		}
 
 		public string ReadTo (string value)

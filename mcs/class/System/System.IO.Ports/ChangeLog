@@ -1,3 +1,7 @@
+2007-11-05  Miguel de Icaza  <miguel@novell.com>
+
+	* SerialPort.cs: Cope with multi-character newlines.  Fixes #321988.
+
 2007-10-13  Miguel de Icaza  <miguel@novell.com>
 
 	* SerialPortStream.cs: Send a break on the Unix case.
