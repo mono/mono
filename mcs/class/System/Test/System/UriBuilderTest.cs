@@ -196,6 +196,14 @@ namespace MonoTests.System
 			ub.Query = ub.Query.TrimStart (new char [] {'?'}) + "&ticket=bla";
 			Assert (ub.ToString ().IndexOf ("80//") < 0);
 		}
+
+		public void TestAppendFragment ()
+		{
+			UriBuilder uri = new UriBuilder ("http://www.mono-project.com/Main_Page");
+			uri.Fragment = "Features";
+			AssertEquals ("#01", "#Features", uri.Fragment);
+			AssertEquals ("#02", "http://www.mono-project.com/Main_Page#Features", uri.Uri.ToString ());
+		}
 	}
 }
 
