@@ -1,3 +1,15 @@
+2007-11-04  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c 	(mono_param_get_objects): If a parameter has the
+	attribute [System.Runtime.InteropServices.Optional] we should
+	set the DefaultValue of the ParameterInfo to be
+	System.Reflection.Missing instead of DBNull.
+
+	See bug #339013.
+
+	(mono_get_reflection_missing_object): New method,
+	returns the System.Reflection.Missing.Value singleton instance.
+
 2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
