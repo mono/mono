@@ -229,8 +229,10 @@ namespace System
 
 			public T Current {
 				get {
-					if (idx < 0)
-						throw new InvalidOperationException ();
+					if (idx == NOT_STARTED)
+						throw new InvalidOperationException ("Enumeration has not started. Call MoveNext");
+					if (idx == FINISHED)
+						throw new InvalidOperationException ("Enumeration already finished");
 
 					return array.InternalArray__get_Item<T> (array.Length - 1 - idx);
 				}

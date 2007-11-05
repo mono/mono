@@ -2900,28 +2900,77 @@ public class ArrayTest : Assertion
 	#endregion
 
 #if NET_2_0
-	// https://bugzilla.novell.com/show_bug.cgi?id=322248
-	[Test]
-	public void ResetMove ()
+	[Test] // bug #322248
+	public void IEnumerator_Reset ()
 	{
 		int[] array = new int[] { 1, 2, 3};
 		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
-		// no exception is thrown
+		Assert ("#A1", e.MoveNext ());
+		AssertEquals ("#A2", 1, e.Current);
+		Assert ("#A3", e.MoveNext ());
+		AssertEquals ("#A4", 2, e.Current);
+
 		e.Reset ();
-		e.MoveNext ();
-		AssertEquals ("1", 1, e.Current);
+
+		Assert ("#C1", e.MoveNext ());
+		AssertEquals ("#C2", 1, e.Current);
 	}
 
 	[Test]
-	[ExpectedException (typeof (InvalidOperationException))]
-	public void MoveReset ()
+	public void IEnumerator_Current_Finished ()
+	{
+		int[] array = new int[] { 1, 2, 3 };
+		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
+		Assert ("#A1", e.MoveNext ());
+		AssertEquals ("#A2", 1, e.Current);
+		Assert ("#A3", e.MoveNext ());
+		AssertEquals ("#A4", 2, e.Current);
+		Assert ("#A5", e.MoveNext ());
+		AssertEquals ("#A6", 3, e.Current);
+		Assert ("#A6", !e.MoveNext ());
+
+		try {
+			Fail ("#B1:" + e.Current);
+		} catch (InvalidOperationException ex) {
+			// Enumeration already finished
+			AssertEquals ("#B2", typeof (InvalidOperationException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+		}
+	}
+
+	[Test]
+	public void IEnumerator_Current_NotStarted ()
+	{
+		int[] array = new int[] { 1, 2, 3 };
+		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
+
+		try {
+			Fail ("#A1:" + e.Current);
+		} catch (InvalidOperationException ex) {
+			// Enumeration has not started. Call MoveNext
+			AssertEquals ("#A2", typeof (InvalidOperationException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+		}
+	}
+
+	[Test]
+	public void IEnumerator_Current_Reset ()
 	{
 		int[] array = new int[] { 1, 2, 3 };
 		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
 		e.MoveNext ();
 		e.Reset ();
-		// exception is thrown
-		AssertEquals ("1", 1, e.Current);
+
+		try {
+			Fail ("#B1:" + e.Current);
+		} catch (InvalidOperationException ex) {
+			// Enumeration has not started. Call MoveNext
+			AssertEquals ("#B2", typeof (InvalidOperationException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+		}
 	}
 #endif
 }

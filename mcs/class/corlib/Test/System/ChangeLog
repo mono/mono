@@ -1,3 +1,7 @@
+2007-11-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ArrayTest.cs: Improved tests for IEnumerable<T> implementation.
+
 2007-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* DoubleTest.cs: Add another Parse test handling whitespace (#321704).

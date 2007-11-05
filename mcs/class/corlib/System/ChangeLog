@@ -1,3 +1,8 @@
+2007-11-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Array.cs: Distinguish between notstarted and finished state when
+	throwing IOE in Current, and provide meaningful exception message.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Array.cs: Fix Enumerator<T>.Reset (#322248).
