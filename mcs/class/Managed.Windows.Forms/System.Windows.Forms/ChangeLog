@@ -1,5 +1,10 @@
 2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewGroup.cs: Adda TypeConverter attribute for this class,
+	as well as adding a custom 'dummy' Converter, as .net does.
+
+2007-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* PropertyGridView.cs: When clicking drop-down button,
 	select an index in the listbox only if our standard values collection 
 	has one or more items.

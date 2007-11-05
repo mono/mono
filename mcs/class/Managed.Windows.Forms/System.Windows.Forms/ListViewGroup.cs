@@ -39,6 +39,7 @@ namespace System.Windows.Forms
 	[ToolboxItem(false)]
 	[DesignTimeVisible(false)]
 	[DefaultProperty("Header")]
+	[TypeConverter (typeof (ListViewGroupConverter))]
 	public sealed class ListViewGroup : ISerializable
 	{
 		internal string header = string.Empty;
@@ -242,6 +243,20 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
+	}
+
+	internal class ListViewGroupConverter : TypeConverter
+	{
+		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
+		{
+			return true;
+		}
+
+		// Weird
+		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
+		{
+			return new StandardValuesCollection (new object [] {});
+		}
 	}
 }
 #endif
