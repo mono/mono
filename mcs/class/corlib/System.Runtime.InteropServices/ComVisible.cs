@@ -1,5 +1,5 @@
 //
-// System.Runtime.InteropServices.ComVisible.cs
+// System.Runtime.InteropServices.ComVisibleAttribute.cs
 //
 // Author:
 //   Nick Drochak (ndrochak@gol.com)
@@ -42,10 +42,17 @@ namespace System.Runtime.InteropServices {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	public sealed class ComVisibleAttribute : Attribute 
-	{
+	public sealed class ComVisibleAttribute : Attribute {
+
 		private bool Visible = false;
-		public ComVisibleAttribute(bool value) {Visible = value;}
-		public bool Value { get {return Visible;} }
+
+		public ComVisibleAttribute (bool visibility)
+		{
+			Visible = visibility;
+		}
+
+		public bool Value {
+			get { return Visible; }
+		}
 	}
 }
