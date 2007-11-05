@@ -471,7 +471,7 @@ webForm.RegularExpressionValidatorEvaluateIsValid = function (validator)
   
 	var r = new RegExp (ValidationExpression);
 	match = r.exec (ctrl_value);
-	if (match == null || match[0] == "") {
+	if (match == null || match[0] != ctrl_value) {
 		webForm.ValidatorFailed (validator);
 		return false;
 	}
