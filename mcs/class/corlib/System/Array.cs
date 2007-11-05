@@ -238,7 +238,7 @@ namespace System
 
 			void IEnumerator.Reset ()
 			{
-				throw new NotImplementedException ();
+				idx = NOT_STARTED;
 			}
 
 			object IEnumerator.Current {
