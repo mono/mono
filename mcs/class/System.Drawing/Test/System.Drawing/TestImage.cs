@@ -255,6 +255,18 @@ namespace MonoTests.System.Drawing{
 			}
 		}
 
+		[Test]
+		[Category ("NotWorking")] // https://bugzilla.novell.com/show_bug.cgi?id=338779
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromStream_Metafile_Wmf_NotOrigin ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			using (FileStream fs = File.OpenRead (filename)) {
+				fs.Position = fs.Length / 2;
+				Image.FromStream (fs);
+			}
+		}
+
 		private void Emf (Image img)
 		{
 			Assert.IsFalse (img is Bitmap, "Bitmap");
@@ -288,6 +300,18 @@ namespace MonoTests.System.Drawing{
 		}
 
 		[Test]
+		[Category ("NotWorking")] // https://bugzilla.novell.com/show_bug.cgi?id=338779
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromStream_Metafile_Emf_NotOrigin ()
+		{
+			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			using (FileStream fs = File.OpenRead (filename)) {
+				fs.Position = fs.Length / 2;
+				Image.FromStream (fs);
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (OutOfMemoryException))]
 		public void FromFile_Invalid ()
 		{
@@ -302,6 +326,59 @@ namespace MonoTests.System.Drawing{
 			string filename = Assembly.GetExecutingAssembly ().Location;
 			using (FileStream fs = File.OpenRead (filename)) {
 				Image.FromStream (fs);
+			}
+		}
+
+		private Bitmap GetBitmap ()
+		{
+			Bitmap bmp = new Bitmap (20, 10, PixelFormat.Format24bppRgb);
+			using (Graphics g = Graphics.FromImage (bmp))
+			{
+				Pen pen = new Pen (Color.Black, 3);
+				g.DrawRectangle (pen, 0, 0, 5, 10);
+			}
+			return bmp;
+		}
+
+		[Test]
+		public void StreamSaveLoad ()
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				using (Bitmap bmp = GetBitmap ()) {
+					Assert.AreEqual (0, ms.Position, "Position-1");
+					bmp.Save (ms, ImageFormat.Bmp);
+					Assert.IsTrue (ms.Position > 0, "Position-2");
+
+					ms.Position = ms.Length;
+					Assert.AreEqual (ms.Length, ms.Position, "Position-3");
+
+					Bitmap bmp2 = (Bitmap)Image.FromStream (ms);
+					Assert.IsTrue (ms.Position > 20, "Position-4");
+
+					Assert.IsTrue (bmp2.RawFormat.Equals (ImageFormat.Bmp), "Bmp");
+
+					Assert.AreEqual (bmp.GetPixel (0, 0), bmp2.GetPixel (0, 0), "0,0");
+					Assert.AreEqual (bmp.GetPixel (10, 0), bmp2.GetPixel (10, 0), "10,0");
+				}
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void StreamJunkSaveLoad ()
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				// junk
+				ms.WriteByte (0xff);
+				ms.WriteByte (0xef);
+				Assert.AreEqual (2, ms.Position, "Position-1");
+
+				using (Bitmap bmp = GetBitmap ()) {
+					bmp.Save (ms, ImageFormat.Bmp);
+					Assert.IsTrue (ms.Position > 2, "Position-2");
+					// exception here
+					Image.FromStream (ms);
+				}
 			}
 		}
 	}

@@ -1,3 +1,7 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Metafile.cs: Stream position is not moved for metafiles.
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAttributes.cs: Remove TODO for ColorMatrixFlags and Gray 

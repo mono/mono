@@ -1697,10 +1697,14 @@ namespace System.Drawing
 			private byte[]  managedBuf;
 			private const int default_bufsize = 4096;
 			
-			public GdiPlusStreamHelper (Stream s) 
+			public GdiPlusStreamHelper (Stream s, bool seekToOrigin) 
 			{ 
 				managedBuf = new byte [default_bufsize];
+				
 				stream = s;
+				if (stream != null && stream.CanSeek && seekToOrigin) {
+					stream.Seek (0, SeekOrigin.Begin);
+				}
 			}
 
 			public int StreamGetHeaderImpl (IntPtr buf, int bufsz)  {

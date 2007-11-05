@@ -287,7 +287,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			// We use a custom API for this, because there's no easy way
 			// to get the Stream down to libgdiplus.  So, we wrap the stream
 			// with a set of delegates.
-			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream, true);
 
 			st = GDIPlus.GdipLoadImageFromDelegate_linux (sh.GetHeaderDelegate, sh.GetBytesDelegate,
 				sh.PutBytesDelegate, sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, out imagePtr);
@@ -480,7 +480,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 		try {
 			if (GDIPlus.RunningOnUnix ()) {
-				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
+				GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream, false);
 				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
 					sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, ref guid, nativeEncoderParams);
 			} else {

@@ -1,3 +1,11 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Add a bool parameter to GdiPlusStreamHelper ctor
+	to move, or not, the stream position to load/save images.
+	* Image.cs: Stream position is moved to 0 when loading images from 
+	stream but isn't moved for saving an image to a stream. Fix part of
+	#338779 (except that Image.FromFile behave differently for metafiles)
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* gdipFunctions.cs: Stream position shouldn't be changed when 
