@@ -1183,23 +1183,23 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected bool VerifyExplicitParameters (Type delegateType, ParameterData parameters, bool ignoreError)
+		protected bool VerifyExplicitParameters (Type delegate_type, ParameterData parameters, bool ignore_error)
 		{
-			if (VerifyParameterCompatibility (delegateType, parameters, ignoreError))
+			if (VerifyParameterCompatibility (delegate_type, parameters, ignore_error))
 				return true;
 
-			if (!ignoreError)
+			if (!ignore_error)
 				Report.Error (1661, loc,
 					"Cannot convert `{0}' to delegate type `{1}' since there is a parameter mismatch",
-					GetSignatureForError (), TypeManager.CSharpName (delegateType));
+					GetSignatureForError (), TypeManager.CSharpName (delegate_type));
 
 			return false;
 		}
 
-		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignoreErrors)
+		protected bool VerifyParameterCompatibility (Type delegate_type, ParameterData invoke_pd, bool ignore_errors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
-				if (ignoreErrors)
+				if (ignore_errors)
 					return false;
 				
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
@@ -1214,7 +1214,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Parameter.Modifier p_mod = invoke_pd.ParameterModifier (i);
 				if (Parameters.ParameterModifier (i) != p_mod && p_mod != Parameter.Modifier.PARAMS) {
-					if (ignoreErrors)
+					if (ignore_errors)
 						return false;
 					
 					if (p_mod == Parameter.Modifier.NONE)
@@ -1237,7 +1237,7 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (invoke_pd.ParameterType (i) != Parameters.ParameterType (i)) {
-					if (ignoreErrors)
+					if (ignore_errors)
 						return false;
 					
 					Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
@@ -1254,15 +1254,15 @@ namespace Mono.CSharp {
 		//
 		// Infers type arguments based on explicit arguments
 		//
-		public bool ExplicitTypeInference (TypeInferenceContext typeInference, Type delegateType)
+		public bool ExplicitTypeInference (TypeInferenceContext type_inference, Type delegate_type)
 		{
 			if (!HasExplicitParameters)
 				return false;
 
-			if (!TypeManager.IsDelegateType (delegateType))
+			if (!TypeManager.IsDelegateType (delegate_type))
 				return false;
 
-			ParameterData d_params = TypeManager.GetDelegateParameters (delegateType);
+			ParameterData d_params = TypeManager.GetDelegateParameters (delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;
 
@@ -1275,16 +1275,16 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsGenericParameter (itype.GetElementType ()))
 					    continue;
 				}
-				typeInference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
+				type_inference.ExactInference (Parameters.FixedParameters[i].ParameterType, itype);
 			}
 			return true;
 		}
 
-		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegateType)
+		public Type InferReturnType (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AnonymousMethod am;
 			using (ec.Set (EmitContext.Flags.ProbingMode | EmitContext.Flags.InferReturnType)) {
-				am = CompatibleMethod (ec, tic, GetType (), delegateType);
+				am = CompatibleMethod (ec, tic, GetType (), delegate_type);
 			}
 			
 			if (am == null)
@@ -1300,9 +1300,9 @@ namespace Mono.CSharp {
 		// Returns AnonymousMethod container if this anonymous method
 		// expression can be implicitly converted to the delegate type `delegate_type'
 		//
-		public AnonymousMethod Compatible (EmitContext ec, Type delegateType)
+		public AnonymousMethod Compatible (EmitContext ec, Type delegate_type)
 		{
-			if (CompatibleChecks (ec, delegateType) == null)
+			if (CompatibleChecks (ec, delegate_type) == null)
 				return null;
 
 			//
@@ -1311,11 +1311,11 @@ namespace Mono.CSharp {
 			//
 
 			MethodInfo invoke_mb = Delegate.GetInvokeMethod (
-				ec.ContainerType, delegateType);
+				ec.ContainerType, delegate_type);
 			Type return_type = invoke_mb.ReturnType;
 
 #if MS_COMPATIBLE
-			Type[] g_args = delegateType.GetGenericArguments ();
+			Type[] g_args = delegate_type.GetGenericArguments ();
 			if (return_type.IsGenericParameter)
 				return_type = g_args [return_type.GenericParameterPosition];
 #endif
@@ -1328,45 +1328,45 @@ namespace Mono.CSharp {
 			//
 
 			Report.Debug (64, "COMPATIBLE", this, Parent, GenericMethod, Host,
-				      Container, Block, return_type, delegateType,
-				      TypeManager.IsGenericType (delegateType), loc);
+				      Container, Block, return_type, delegate_type,
+				      TypeManager.IsGenericType (delegate_type), loc);
 
 			try {
-				return CompatibleMethod (ec, null, return_type, delegateType);
+				return CompatibleMethod (ec, null, return_type, delegate_type);
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}
 		}
 
-		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
+		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
-			ParameterData delegateParameters = TypeManager.GetDelegateParameters (delegateType);
+			ParameterData delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
 
 			if (Parameters == null) {
 				//
 				// We provide a set of inaccessible parameters
 				//
-				Parameter[] fixedpars = new Parameter[delegateParameters.Count];
+				Parameter[] fixedpars = new Parameter[delegate_parameters.Count];
 
-				for (int i = 0; i < delegateParameters.Count; i++) {
-					Parameter.Modifier i_mod = delegateParameters.ParameterModifier (i);
+				for (int i = 0; i < delegate_parameters.Count; i++) {
+					Parameter.Modifier i_mod = delegate_parameters.ParameterModifier (i);
 					if ((i_mod & Parameter.Modifier.OUTMASK) != 0) {
 						Report.Error (1688, loc, "Cannot convert anonymous " +
 								  "method block without a parameter list " +
 								  "to delegate type `{0}' because it has " +
 								  "one or more `out' parameters.",
-								  TypeManager.CSharpName (delegateType));
+								  TypeManager.CSharpName (delegate_type));
 						return null;
 					}
 					fixedpars[i] = new Parameter (
-						delegateParameters.ParameterType (i), "+" + (++next_index),
-						delegateParameters.ParameterModifier (i), null, loc);
+						delegate_parameters.ParameterType (i), "+" + (++next_index),
+						delegate_parameters.ParameterModifier (i), null, loc);
 				}
 
-				return Parameters.CreateFullyResolved (fixedpars, delegateParameters.Types);
+				return Parameters.CreateFullyResolved (fixedpars, delegate_parameters.Types);
 			}
 
-			if (!VerifyExplicitParameters (delegateType, delegateParameters, ec.IsInProbingMode)) {
+			if (!VerifyExplicitParameters (delegate_type, delegate_parameters, ec.IsInProbingMode)) {
 				return null;
 			}
 
@@ -1408,26 +1408,26 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		protected AnonymousMethod CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type returnType, Type delegateType)
+		protected AnonymousMethod CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
 		{
-			Parameters p = ResolveParameters (ec, tic, delegateType);
+			Parameters p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
 				return null;
 
 			ToplevelBlock b = ec.IsInProbingMode ? (ToplevelBlock) Block.PerformClone () : Block;
 
-			AnonymousMethod anonymous = CompatibleMethodFactory (returnType, delegateType, p, b);
+			AnonymousMethod anonymous = CompatibleMethodFactory (return_type, delegate_type, p, b);
 			if (!anonymous.Compatible (ec))
 				return null;
 
 			return anonymous;
 		}
 
-		protected virtual AnonymousMethod CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
+		protected virtual AnonymousMethod CompatibleMethodFactory (Type return_type, Type delegate_type, Parameters p, ToplevelBlock b)
 		{
 			return new AnonymousMethod (RootScope, Host,
-				GenericMethod, p, Container, b, returnType,
-				delegateType, loc);
+				GenericMethod, p, Container, b, return_type,
+				delegate_type, loc);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
