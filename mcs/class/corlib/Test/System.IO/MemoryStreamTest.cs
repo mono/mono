@@ -712,6 +712,25 @@ namespace MonoTests.System.IO
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x0b };
+#if NET_2_0
+		class MyMemoryStream : MemoryStream {
+
+			public bool DisposedCalled = false;
+
+			protected override void Dispose(bool disposing)
+			{
+				DisposedCalled = true;
+			}
+		}
+
+		[Test] // https://bugzilla.novell.com/show_bug.cgi?id=322672
+		public void BaseDisposeCalled ()
+		{
+			MyMemoryStream ms = new MyMemoryStream ();
+			Assert.IsFalse (ms.DisposedCalled, "Before");
+			ms.Close ();
+			Assert.IsTrue (ms.DisposedCalled, "After");
+		}
+#endif
 	}
 }
-
