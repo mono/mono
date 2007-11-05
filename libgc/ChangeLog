@@ -1,3 +1,8 @@
+2007-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* darwin_stop_world.c: Also push ebp when pushing all stacks on Leopard
+	and pre-Leopard.
+
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
 	* darwin_stop_world.c:  Handle Leopards renaming of some structure

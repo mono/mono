@@ -337,7 +337,7 @@ void GC_push_all_stacks() {
 	GC_push_one(info.__edx); 
 	GC_push_one(info.__edi); 
 	GC_push_one(info.__esi); 
-	/* GC_push_one(info.__ebp);  */
+	GC_push_one(info.__ebp);
 	/* GC_push_one(info.__esp);  */
 	GC_push_one(info.__ss); 
 	GC_push_one(info.__eip); 
@@ -356,7 +356,7 @@ void GC_push_all_stacks() {
 	GC_push_one(info.edx); 
 	GC_push_one(info.edi); 
 	GC_push_one(info.esi); 
-	/* GC_push_one(info.ebp);  */
+	GC_push_one(info.ebp);
 	/* GC_push_one(info.esp);  */
 	GC_push_one(info.ss); 
 	GC_push_one(info.eip); 
