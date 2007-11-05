@@ -59,11 +59,8 @@ namespace System.Diagnostics {
 
 		private DebuggingModes debuggingModes = DebuggingModes.None;
 
-		public DebuggingModes DebuggingFlags 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public DebuggingModes DebuggingFlags {
+			get { return debuggingModes; }
 		}
 #endif
 

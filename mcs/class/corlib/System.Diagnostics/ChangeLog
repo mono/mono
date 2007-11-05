@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DebuggableAttribute.cs: Don't throw on DebuggingFlags property.
+	Fix part of #322850.
+
 2007-05-16  Dick Porter  <dick@ximian.com>
 
 	* ConditionalAttribute.cs: 
