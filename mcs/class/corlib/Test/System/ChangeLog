@@ -1,3 +1,7 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArrayTest.cs: Add test cases for Enumerator<T>.Reset (#322248).
+
 2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Added tests for bug #331199.

@@ -2898,5 +2898,31 @@ public class ArrayTest : Assertion
 	}
 
 	#endregion
+
+#if NET_2_0
+	// https://bugzilla.novell.com/show_bug.cgi?id=322248
+	[Test]
+	public void ResetMove ()
+	{
+		int[] array = new int[] { 1, 2, 3};
+		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
+		// no exception is thrown
+		e.Reset ();
+		e.MoveNext ();
+		AssertEquals ("1", 1, e.Current);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void MoveReset ()
+	{
+		int[] array = new int[] { 1, 2, 3 };
+		IEnumerator<int> e = ((IEnumerable<int>)array).GetEnumerator ();
+		e.MoveNext ();
+		e.Reset ();
+		// exception is thrown
+		AssertEquals ("1", 1, e.Current);
+	}
+#endif
 }
 }
