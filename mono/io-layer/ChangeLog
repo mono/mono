@@ -1,3 +1,8 @@
+2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* io-layer.h: Added includes for run-time GetProcessId API detection for
+	Windows.
+
 2007-10-26  Dick Porter  <dick@ximian.com>
 
 	* shared.c (_wapi_shm_file_open): Set the umask when opening

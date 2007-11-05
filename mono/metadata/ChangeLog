@@ -1,3 +1,7 @@
+2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* process.c: Added run-time GetProcessId API detection for Windows.
+
 2007-11-04  Miguel de Icaza  <miguel@novell.com>
 
 	* reflection.c 	(mono_param_get_objects): If a parameter has the
