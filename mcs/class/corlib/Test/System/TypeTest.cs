@@ -1480,6 +1480,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 	}
 
+#if NET_2_0
 	class UserType : Type
 	{
 		private Type type;
@@ -1657,4 +1658,5 @@ PublicKeyToken=b77a5c561934e089"));
 			throw new NotSupportedException();
 		}
 	}
+#endif
 }
