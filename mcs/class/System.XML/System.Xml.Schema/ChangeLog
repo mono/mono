@@ -1,3 +1,13 @@
+2007-11-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSimpleTypeRestriction.cs : implemented value-space
+	  comparison for enumerations. Actually it is hybrid (it also
+	  tries literal-space comparison first). Fixed bug #322457 and
+	  #322458.
+
+	  When there is a literal-space match, sometimes you cannot try to
+	  get TypedValue even if it is valid due to double.Parse() overflow.
+
 2007-09-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAtomicValue.cs :

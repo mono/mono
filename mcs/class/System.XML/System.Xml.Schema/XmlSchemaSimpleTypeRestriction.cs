@@ -627,6 +627,15 @@ namespace System.Xml.Schema
 
 		private bool ValidateListValueWithFacets (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
+			try {
+				return ValidateListValueWithFacetsCore (value, nt, nsmgr);
+			} catch (Exception) { // this is for datatype ParseValue()
+				return false;
+			}
+		}
+
+		private bool ValidateListValueWithFacetsCore (string value, XmlNameTable nt, NSResolver nsmgr)
+		{
 			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace)).ParseListValue (value, nt);
 
 			// pattern
@@ -637,26 +646,42 @@ namespace System.Xml.Schema
 							return false;
 				}
 			}
-			// enumeration
+
+			bool enumMatched = false;
+#if true
+			// enumeration - lexical space comparison
+			//
+			// I'm not sure if allowing literally-equivalent values
+			// without parsing (because it will cause trouble when
+			// you try to get TypedValue anyways), but at least it
+			// avoids extraneous validation errors ...
 			if (this.enumarationFacetValues != null) {
 				for (int l = 0; l < list.Length; l++) {
-					bool matched = false;
 					for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
-#if true
-						// FIXME: enum values must be checked by value space, not literal space
 						if (list [l] == this.enumarationFacetValues [i]) {
-#else
-						// FIXME: enum values should be parsed only once.
-						XsdAnySimpleType dt = getDatatype ();
-						if (dt == null)
-							dt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
-						if (XmlSchemaUtil.IsSchemaDatatypeEquals (dt, dt.ParseValue (list [l], nt, nsmgr), dt, dt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
-#endif
-							matched = true;
+							enumMatched = true;
 							break;
 						}
 					}
-					if (!matched)
+				}
+			}
+#endif
+			// enumeration - value space comparison
+			if (!enumMatched && this.enumarationFacetValues != null) {
+				for (int l = 0; l < list.Length; l++) {
+
+					XsdAnySimpleType dt = getDatatype ();
+					if (dt == null)
+						dt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
+					object v = dt.ParseValue (list [l], nt, nsmgr);
+
+					for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
+						if (XmlSchemaUtil.IsSchemaDatatypeEquals (dt, v, dt, dt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+							enumMatched = true;
+							break;
+						}
+					}
+					if (!enumMatched)
 						return false;
 				}
 			}
@@ -677,6 +702,15 @@ namespace System.Xml.Schema
 
 		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
+			try {
+				return ValidateNonListValueWithFacetsCore (value, nt, nsmgr);
+			} catch (Exception) { // this is for datatype ParseValue()
+				return false;
+			}
+		}
+
+		private bool ValidateNonListValueWithFacetsCore (string value, XmlNameTable nt, NSResolver nsmgr)
+		{
 			// pattern
 			// Patterns are the only facets that need to be checked on this
 			// type and its base types. We should probably separate them, then
@@ -694,25 +728,38 @@ namespace System.Xml.Schema
 
 			XsdAnySimpleType dt = getDatatype ();
 
-			// enumeration
+			bool enumMatched = false;
+
+#if true
+			// enumeration - lexical space comparison
+			//
+			// I'm not sure if allowing literally-equivalent values
+			// without parsing (because it will cause trouble when
+			// you try to get TypedValue anyways), but at least it
+			// avoids extraneous validation errors ...
 			if (this.enumarationFacetValues != null) {
+				for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
+					if (value == this.enumarationFacetValues [i]) {
+						enumMatched = true;
+						break;
+					}
+				}
+			}
+#endif
+			// enumeration - value space comparison
+			if (!enumMatched && this.enumarationFacetValues != null) {
 				bool matched = false;
 				XsdAnySimpleType edt = dt;
 				if (edt == null)
 					edt = (XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType", XmlSchema.Namespace);
+				object v = edt.ParseValue (value, nt, nsmgr);
 				for (int i = 0; i < this.enumarationFacetValues.Length; i++) {
-#if true
-					// FIXME: enum values must be checked by value space, not literal space
-					if (value == enumarationFacetValues [i]) {
-#else
-					// FIXME: the enum value should be parsed only once.
-					if (XmlSchemaUtil.IsSchemaDatatypeEquals (edt, edt.ParseValue (value, nt, nsmgr), edt, edt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
-#endif
-						matched = true;
+					if (XmlSchemaUtil.IsSchemaDatatypeEquals (edt, v, edt, edt.ParseValue (this.enumarationFacetValues [i], nt, nsmgr))) {
+						enumMatched = true;
 						break;
 					}
 				}
-				if (!matched)
+				if (!enumMatched)
 					return false;
 			}
 			
