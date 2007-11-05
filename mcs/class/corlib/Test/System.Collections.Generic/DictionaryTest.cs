@@ -1,5 +1,5 @@
 //
-// MonoTests.System.Collections.Generic.Test.DictionaryTest
+// MonoTests.System.Collections.Generic.DictionaryTest
 //
 // Authors:
 //	Sureshkumar T (tsureshkumar@novell.com)
@@ -704,7 +704,22 @@ namespace MonoTests.System.Collections.Generic {
 			for (int i = 1; i < 10; i++)
 				en.MoveNext();
 		}
-		
+
+		[Test]
+		public void CopyToArray ()
+		{
+			Dictionary<string, string> test = new Dictionary<string, string> ();
+			test.Add ("monkey", "singe");
+			test.Add ("singe", "mono");
+			test.Add ("mono", "monkey");
+			Assert.AreEqual (3, test.Keys.Count, "Dictionary.Count");
+			
+			ArrayList list = new ArrayList (test.Keys);
+			Assert.AreEqual (3, list.Count, "ArrayList.Count");
+			Assert.IsTrue (list.Contains ("monkey"), "monkey");
+			Assert.IsTrue (list.Contains ("singe"), "singe");
+			Assert.IsTrue (list.Contains ("mono"), "mono");
+		}
 	}
 }
 

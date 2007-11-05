@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DictionaryTest.cs: Test case for #322783 based on Francisco Moraes
+	sample code.
+
 2006-04-16  Jonathan Chambers  <joncham@gmail.com>
 
 	* ListTest.cs: Test Contains after Remove. 
