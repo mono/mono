@@ -151,12 +151,6 @@ namespace System
 #else
 				return local;
 #endif
-			if (local >= dlt.Start && dlt.Start.Add (dlt.Delta) > local)
-#if NET_2_0
-				return DateTime.SpecifyKind (local.Subtract (dlt.Delta), DateTimeKind.Local);
-#else
-				return local.Subtract (dlt.Delta);
-#endif
 
 			TimeSpan localOffset = GetUtcOffset (local);
 #if NET_2_0

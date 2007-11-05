@@ -1,3 +1,7 @@
+2007-11-05  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZoneTest.cs: test for bug #323911
+
 2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : test for bug #330085.

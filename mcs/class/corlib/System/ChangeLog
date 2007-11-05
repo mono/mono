@@ -1,3 +1,7 @@
+2007-11-05  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZone.cs: fix for #323911. The our after DST.Start is already DST.
+
 2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : fix for #330085. for Local time, convert to Utc
