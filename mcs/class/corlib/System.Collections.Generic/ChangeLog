@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Dictionary.cs: Ensure that the non-generic CopyTo works on Array.
+	Fix #322783
+
 2007-10-31  Miguel de Icaza  <miguel@novell.com>
 
 	* Dictionary.cs: Do not increment curTableItem when we return
