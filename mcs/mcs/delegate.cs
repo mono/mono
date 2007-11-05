@@ -370,18 +370,18 @@ namespace Mono.CSharp {
 		}
 
 
-		public static ConstructorInfo GetConstructor (Type containerType, Type delegateType)
+		public static ConstructorInfo GetConstructor (Type container_type, Type delegate_type)
 		{
-			Type dt = delegateType;
+			Type dt = delegate_type;
 #if GMCS_SOURCE
 			Type[] g_args = null;
-			if (delegateType.IsGenericType) {
-				g_args = delegateType.GetGenericArguments ();
-				delegateType = delegateType.GetGenericTypeDefinition ();
+			if (delegate_type.IsGenericType) {
+				g_args = delegate_type.GetGenericArguments ();
+				delegate_type = delegate_type.GetGenericTypeDefinition ();
 			}
 #endif
 
-			Delegate d = TypeManager.LookupDelegate (delegateType);
+			Delegate d = TypeManager.LookupDelegate (delegate_type);
 			if (d != null) {
 #if GMCS_SOURCE
 				if (g_args != null)
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 				return d.ConstructorBuilder;
 			}
 
-			Expression ml = Expression.MemberLookup (containerType,
+			Expression ml = Expression.MemberLookup (container_type,
 				null, dt, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly, Location.Null);
 
@@ -737,9 +737,9 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Type delegateType = method.ReturnType;
-			Type methodType = ((MethodInfo) found_method).ReturnType;
-			if (delegateType != methodType && !Delegate.IsTypeCovariant (methodType, delegateType)) {
+			Type delegate_type = method.ReturnType;
+			Type method_type = ((MethodInfo) found_method).ReturnType;
+			if (delegate_type != method_type && !Delegate.IsTypeCovariant (method_type, delegate_type)) {
 				Report.Error (407, loc, "The method `{0}' return type does not match delegate `{1}' return type",
 					method_desc, delegate_desc);
 			} else {
@@ -769,10 +769,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type targetType)
+		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type target_type)
 		{
 			foreach (MethodInfo mi in mg.Methods){
-				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, targetType, mg, mi, Location.Null);
+				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi, Location.Null);
 				if (mb != null)
 					return mb;
 			}
