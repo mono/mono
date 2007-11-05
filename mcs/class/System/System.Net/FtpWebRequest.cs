@@ -6,19 +6,17 @@
 //
 // (c) Copyright 2006 Novell, Inc. (http://www.novell.com)
 //
+#if NET_2_0
 
 using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-#if NET_2_0
 using System.Net.Cache;
 using System.Security.Cryptography.X509Certificates;
-#endif
 using System.Net;
 
-#if NET_2_0
 
 namespace System.Net
 {
@@ -99,7 +97,6 @@ namespace System.Net
 			this.proxy = GlobalProxySelection.Select;
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -126,7 +123,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 
 		public override string ContentType {
 			get {
@@ -174,7 +170,6 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public static RequestCachePolicy DefaultCachePolicy
 		{
@@ -185,7 +180,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 
 		public bool EnableSsl {
 			get {
@@ -197,7 +191,6 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override WebHeaderCollection Headers
 		{
@@ -208,7 +201,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 
 		public bool KeepAlive {
 			get {
@@ -307,7 +299,6 @@ namespace System.Net
 			}
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		public override bool UseDefaultCredentials
 		{
@@ -318,7 +309,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public bool UseBinary {
 			get {
