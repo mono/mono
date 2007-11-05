@@ -207,7 +207,7 @@ namespace System.Collections {
 			CopyTo (trimmed, 0);
 			_array = trimmed;
 			_head = 0;
-			_tail = _head + _size;
+			_tail = 0;
 		}
 
 		// private methods

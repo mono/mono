@@ -1,3 +1,8 @@
+2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Queue.cs: Avoid IndexOutOfRangeException after TrimToSize. Patch by
+	Benjamin Lutz. Fix #321657.
+
 2007-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Hashtable.cs: Put the hash values into a separate array to help the GC. Fixes
