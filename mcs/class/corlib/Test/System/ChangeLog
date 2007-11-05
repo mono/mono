@@ -1,3 +1,7 @@
+2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Added tests for bug #331199.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StringTest.cs: Re-enabled TestSbytePtrConstructorOverflow[2,4] 

@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Globalization;
 
 class NoNamespaceClass {
 }
@@ -1358,6 +1359,34 @@ PublicKeyToken=b77a5c561934e089"));
 			Type t = Type.ReflectionOnlyGetType (typeof (int).AssemblyQualifiedName.ToString (), true, true);
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
+
+		[Test] //bug #331199
+		public void TestMakeGenericTypeWithUserDefinedType () 
+		{
+			Type ut = new UserType(typeof(int));
+			Type t = typeof(Foo<>).MakeGenericType(ut);
+			Assert.IsTrue (t.IsGenericType, "#1");
+
+			Assert.AreEqual (typeof(int), t.GetGenericArguments()[0], "#2");
+		}
+
+		[Test]
+		public void TestMakeGenericTypeWithBadUserType () 
+		{
+			Type ut = new UserType(null);
+			try {
+				Type t = typeof(Foo<>).MakeGenericType(ut);
+				Assert.Fail ("#1");
+			} catch(Exception) {
+			}
+
+			ut = new UserType(new UserType(typeof(int)));
+			try {
+				Type t = typeof(Foo<>).MakeGenericType(ut);
+				Assert.Fail ("#2");
+			} catch(Exception) {
+			}
+		}
 #endif
 
 		public class NemerleAttribute : Attribute
@@ -1448,6 +1477,184 @@ PublicKeyToken=b77a5c561934e089"));
 			public void Run (bool b)
 			{
 			}
+		}
+	}
+
+	class UserType : Type
+	{
+		private Type type;
+	
+		public UserType(Type type) {
+			this.type = type;
+		}
+	
+		public override Type UnderlyingSystemType { get { return this.type; } }
+	
+		public override Assembly Assembly { get { return this.type.Assembly; } }
+	
+		public override string AssemblyQualifiedName { get { return null; } }
+	
+		public override Type BaseType { get { return null; } }
+	
+		public override Module Module { get { return this.type.Module; } }
+	
+		public override string Namespace { get { return null; } }
+	
+		public override bool IsGenericParameter { get { return true; } }
+	 
+		public override RuntimeTypeHandle TypeHandle { get { throw new NotSupportedException(); } }
+	
+		public override bool ContainsGenericParameters { get { return true; } }
+	
+		public override string FullName { get { return this.type.Name; } }
+	
+		public override Guid GUID { get { throw new NotSupportedException(); } }
+	
+	
+		protected override bool IsArrayImpl() {
+			return false;
+		}
+	
+		protected override bool IsByRefImpl()
+		{
+			return false;
+		}
+	
+		protected override bool IsCOMObjectImpl()
+		{
+			return false;
+		}
+	
+		protected override bool IsPointerImpl()
+		{
+			return false;
+		}
+	
+		protected override bool IsPrimitiveImpl()
+		{
+			return false;
+		}
+	
+	
+		protected override TypeAttributes GetAttributeFlagsImpl()
+		{
+			return 0;
+		}
+	
+		protected override ConstructorInfo GetConstructorImpl(BindingFlags bindingAttr, Binder binder,
+									   CallingConventions callConvention, Type[] types,
+									   ParameterModifier[] modifiers)
+		{
+			return null;
+		}
+	
+		public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		public override Type GetElementType()
+		{
+			return null;
+		}
+	
+		public override EventInfo GetEvent(string name, BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+	
+		public override FieldInfo GetField(string name, BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+	
+		public override Type GetInterface(string name, bool ignoreCase)
+		{
+			return null;
+		}
+	
+		public override Type[] GetInterfaces()
+		{
+			return null;
+		}
+	
+		public override MemberInfo[] GetMembers(BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		public override object[] GetCustomAttributes(Type attributeType, bool inherit)
+		{
+			return null;
+		}
+	
+		public override object[] GetCustomAttributes(bool inherit)
+		{
+			return null;
+		}
+	
+		public override bool IsDefined(Type attributeType, bool inherit)
+		{
+			return false;
+		}
+	
+		public override string Name { get { return this.type.Name; } }
+	
+		public override EventInfo[] GetEvents(BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException();
+		}
+	
+		public override FieldInfo[] GetFields(BindingFlags bindingAttr)
+		{
+			throw new NotImplementedException();
+		}
+	
+		protected override MethodInfo GetMethodImpl(string name, BindingFlags bindingAttr, Binder binder,
+								 CallingConventions callConvention, Type[] types,
+								 ParameterModifier[] modifiers)
+		{
+			return null;
+		}
+	
+		public override MethodInfo[] GetMethods(BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		public override Type GetNestedType(string name, BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		public override Type[] GetNestedTypes(BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		public override PropertyInfo[] GetProperties(BindingFlags bindingAttr)
+		{
+			return null;
+		}
+	
+		protected override PropertyInfo GetPropertyImpl(string name, BindingFlags bindingAttr, Binder binder,
+								 Type returnType, Type[] types, ParameterModifier[] modifiers)
+		{
+			return null;
+		}
+	
+		protected override bool HasElementTypeImpl()
+		{
+			return false;
+		}
+	
+		public override object InvokeMember(string name, BindingFlags invokeAttr, Binder binder, object target,
+							 object[] args, ParameterModifier[] modifiers, CultureInfo culture,
+							 string[] namedParameters)
+		{
+			throw new NotSupportedException();
 		}
 	}
 }
