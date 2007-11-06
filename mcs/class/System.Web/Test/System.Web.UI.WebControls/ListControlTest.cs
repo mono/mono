@@ -1035,6 +1035,35 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.VerifyMultiSelect ();
 		}
 
+		[Test]
+		public void DataBinding_SelectedValue () {
+			ListControlPoker p = new ListControlPoker ();
+			p.SelectedValue = "b";
+
+			p.Items.Add (new ListItem ("a", "a"));
+			p.Items.Add (new ListItem ("b", "b"));
+			p.Items.Add (new ListItem ("c", "c"));
+
+			Assert.IsFalse (p.Items [1].Selected, "SelectedIndex");
+			p.DataBind ();
+			Assert.IsTrue (p.Items [1].Selected, "SelectedIndex");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void DataBinding_SelectedValue_Exception () {
+			ListControlPoker p = new ListControlPoker ();
+			p.SelectedValue = "AAA";
+
+			p.Items.Add (new ListItem ("a", "a"));
+			p.Items.Add (new ListItem ("b", "b"));
+			p.Items.Add (new ListItem ("c", "c"));
+
+			Assert.IsFalse (p.Items [1].Selected, "SelectedIndex");
+			p.DataBind ();
+			Assert.IsTrue (p.Items [1].Selected, "SelectedIndex");
+		}
+
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{

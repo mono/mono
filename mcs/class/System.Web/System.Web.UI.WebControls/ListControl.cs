@@ -429,7 +429,11 @@ namespace System.Web.UI.WebControls {
 		void PerformDataBinding (IEnumerable dataSource)
 		{
 			if (dataSource == null)
+#if NET_2_0
+				goto setselected;
+#else
 				return;
+#endif
 #if NET_2_0
 			if (!AppendDataBoundItems)
 #endif
@@ -470,6 +474,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 #if NET_2_0
+		setselected:
 			if (!String.IsNullOrEmpty (_selectedValue)) {
 				if (!SetSelectedValue (_selectedValue))
 					throw new ArgumentOutOfRangeException ("value", String.Format ("'{0}' has a SelectedValue which is invalid because it does not exist in the list of items.", ID));
