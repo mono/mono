@@ -38,6 +38,11 @@ namespace System.IO
 		{
 			HResult = Result;
 		}
+
+		private InvalidDataException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
 	}
 }
 

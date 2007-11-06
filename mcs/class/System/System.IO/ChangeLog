@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InvalidDataException.cs: Added private ctor for serialization. Fix 
+	bug #324569.
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* MonoSyncFileStream.cs: Add.
