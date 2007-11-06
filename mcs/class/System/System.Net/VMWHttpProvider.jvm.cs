@@ -511,7 +511,7 @@ namespace System.Net
 				return _writeStream;
 			}
 		}
-		private bool isRedirectNeeded(HttpMethod method)
+		private static bool isRedirectNeeded(HttpMethod method)
 		{
 			switch (method.getStatusCode()) 
 			{
@@ -845,9 +845,14 @@ namespace System.Net
 					{
 						if(!_closed)
 						{
-							_closed = true;
-							_javaOutput.flush();
-							_javaOutput.close();
+							try {
+								_closed = true;
+								_javaOutput.close ();
+							}
+							catch (Exception e) {
+								throw new WebException ("The request was aborted: The request was canceled.",
+								e, WebExceptionStatus.RequestCanceled, null);
+							}
 						}
 					}
 				}
@@ -900,13 +905,7 @@ namespace System.Net
 
 			void IDisposable.Dispose()
 			{
-				try
-				{
-					Close();
-				}
-				catch(Exception)
-				{
-				}
+				Close ();
 			}
 		}
 		
@@ -1127,6 +1126,15 @@ namespace System.Net
 				_out.write(i);
 			}
 
+			public override void close () 
+			{
+				int size = _out.size ();
+				_out.close ();
+
+				if (size < _contentLength) {
+					throw new IOException ("Cannot close stream until all bytes are written.");
+				}
+			}
 		}
 
 		#endregion
