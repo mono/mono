@@ -148,7 +148,8 @@ namespace System.Web.SessionState {
 			if (!config.CookieLess &&
 					context.Request.Cookies [CookieName] != null)
 				return context.Request.Cookies [CookieName].Value;
-			return null;
+
+			return context.Request.Headers [SessionStateModule.HeaderName];
 		}
 
 		private void GetConData (string cons, out string proto, out string server, out string port)
