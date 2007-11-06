@@ -181,11 +181,48 @@ namespace System.Web.UI
 				if (ClientScript.hiddenFields != null)
 					foreach (string key in ClientScript.hiddenFields.Keys)
 						resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
+
+				if (is_validated && Validators.Count > 0) {
+					string validatorsState = GetValidatorsState ();
+#if DEBUG
+					Console.WriteLine ("__VALIDATORSSTATE: " + validatorsState);
+#endif
+					if (!String.IsNullOrEmpty (validatorsState))
+						resp.setRenderParameter ("__VALIDATORSSTATE", validatorsState);
+				}
 			}
 
 			// Stop processing only if we are handling processAction. If we
 			// are handling a postback from render then fall through.
 			return req.processActionOnly ();
+		}
+
+		string GetValidatorsState () {
+			bool [] validatorsState = new bool [Validators.Count];
+			bool isValid = true;
+			for (int i = 0; i < Validators.Count; i++) {
+				IValidator val = Validators [i];
+				if (!val.IsValid)
+					isValid = false;
+				else
+					validatorsState [i] = true;
+			}
+			if (isValid)
+				return null;
+
+			return GetFormatter ().Serialize (validatorsState);
+		}
+
+		void RestoreValidatorsState () {
+			string validatorsStateSerialized = Request.Form ["__VALIDATORSSTATE"];
+			if (String.IsNullOrEmpty (validatorsStateSerialized))
+				return;
+
+			bool [] validatorsState = (bool []) GetFormatter ().Deserialize (validatorsStateSerialized);
+			for (int i = 0; i < Math.Min (validatorsState.Length, Validators.Count); i++) {
+				IValidator val = Validators [i];
+				val.IsValid = validatorsState [i];
+			}
 		}
 	}
 }

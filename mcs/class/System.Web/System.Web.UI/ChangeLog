@@ -1,3 +1,10 @@
+2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	* Page.jvm.cs:
+	affects	TARGET_J2EE only:
+	validators state (isValid) is restored on GetBack.	
+
 2007-11-06  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: formatting

@@ -1350,7 +1350,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		LoadRecursive ();
 #if NET_2_0
 #if TARGET_J2EE
-		if (!IsGetBack)
+		if (IsGetBack)
+			RestoreValidatorsState ();
+		else
 #endif
 		if (IsPostBack || IsCallback) {
 			_lifeCycle = PageLifeCycle.ControlEvents;
