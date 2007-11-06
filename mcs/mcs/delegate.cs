@@ -771,6 +771,11 @@ namespace Mono.CSharp {
 
 		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type target_type)
 		{
+			//
+			// This is the old method, still used from Convert,
+			// but it would be nicer to use DelegateOverloadResolve, except it
+			// required an EmitContext which we do not have
+			//
 			foreach (MethodInfo mi in mg.Methods){
 				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi, Location.Null);
 				if (mb != null)
@@ -779,9 +784,55 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// This performs overload resolution on the method group;  It reuses the
+		// OverloadResolution method from MethodGroup.
+		//
+		// To do this, we need to create an ArrayList containing the Arguments()
+		// which are typically produced by the parser.   In this case we have to
+		// go from the target_type to Arguments.
+		//
+		public MethodBase DelegateOverloadResolve (EmitContext ec, MethodGroupExpr mg, Type target_type)
+		{
+			MethodInfo invoke_mb = Delegate.GetInvokeMethod (mg.DeclaringType, target_type);
+			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
+
+			int pcount = invoke_pd.Count;
+			ArrayList args = new ArrayList (pcount);
+			for (int i = 0; i < pcount; i++){
+				EmptyExpression temp = new EmptyExpression ();
+				Type param_type = invoke_pd.ParameterType (i);
+
+				Parameter.Modifier mod = invoke_pd.ParameterModifier (i);
+				Argument.AType atype = Argument.AType.Expression;
+				switch (mod){
+				case Parameter.Modifier.OUT:
+					atype = Argument.AType.Out;
+					param_type = param_type.GetElementType ();
+					break;
+
+				case Parameter.Modifier.REF:
+					atype = Argument.AType.Ref;
+					param_type = param_type.GetElementType ();
+					break;
+					
+				case Parameter.Modifier.PARAMS:
+					atype = Argument.AType.ArgList;
+					break;
+				}
+				temp.SetType (param_type);
+				args.Add (new Argument (temp, atype));
+			}
+			mg = mg.OverloadResolve (ec, args, true, loc);
+			if (mg == null)
+				return null;
+
+			return (MethodInfo) mg;
+		}
+
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
-			delegate_method = ImplicitStandardConversionExists (mg, type);
+			delegate_method = DelegateOverloadResolve (ec, mg, type);
 
 			if (delegate_method == null) {
 				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);

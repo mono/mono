@@ -1,3 +1,17 @@
+2007-11-05  Miguel de Icaza  <miguel@novell.com>
+
+	* delegate.cs (DelegateCreation.DelegateOverloadResolve):
+	Implement 14.5.10.3, so far we have been able to get away by just
+	picking the first compatible delegate from the MethodGroup.
+
+	This method uses the MethodGroupExpr to do overload resolution to
+	find the best match for the given type. 
+
+	(DelegateCreation.ResolveMethodGroupExpr): Change to use
+	DelegateOverloadResolve.
+
+	Fixes #337712.
+
 2007-11-02  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #332909
