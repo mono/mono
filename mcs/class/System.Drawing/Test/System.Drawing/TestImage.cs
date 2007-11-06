@@ -381,5 +381,14 @@ namespace MonoTests.System.Drawing{
 				}
 			}
 		}
+
+		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (InvalidOperationException))]
+#endif
+		public void XmlSerialization ()
+		{
+			new XmlSerializer (typeof (Image));
+		}
 	}
 }

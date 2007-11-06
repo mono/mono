@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBitmap.cs: XML serialization test case (#323246).
+	* TestImage.cs: XML serialization test case (#323246).
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Image.cs: Add test cases for the stream position when loading and
