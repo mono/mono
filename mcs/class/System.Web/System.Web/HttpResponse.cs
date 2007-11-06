@@ -540,6 +540,7 @@ namespace System.Web {
 		public void ClearContent ()
 		{
 			output_stream.Clear ();
+			content_length = -1;
 		}
 
 		public void ClearHeaders ()
@@ -614,11 +615,11 @@ namespace System.Web {
 			//
 			// If Content-Length is set.
 			//
-			if (content_length >= 0){
+			if (content_length >= 0) {
 				write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
 								      content_length.ToString (CultureInfo.InvariantCulture)));
-			} else if (BufferOutput){
-				if (final_flush){
+			} else if (BufferOutput) {
+				if (final_flush) {					
 					//
 					// If we are buffering and this is the last flush, not a middle-flush,
 					// we know the content-length.
@@ -697,14 +698,6 @@ namespace System.Web {
 			if (cached_response != null)
 				cached_response.SetHeaders (headers);
 
-			// If this page is cached use the cached headers
-			// instead of the standard headers	
-			ArrayList write_headers = headers;
-			if (cached_headers != null)
-				write_headers = cached_headers;
-			else
-				AddHeadersNoCache (write_headers, final_flush);
-
 			//
 			// Flush
 			//
@@ -713,6 +706,14 @@ namespace System.Web {
 				if (app_instance != null)
 					app_instance.TriggerPreSendRequestHeaders ();
 			}
+
+			// If this page is cached use the cached headers
+			// instead of the standard headers	
+			ArrayList write_headers = headers;
+			if (cached_headers != null)
+				write_headers = cached_headers;
+			else
+				AddHeadersNoCache (write_headers, final_flush);
 
 			if (WorkerRequest != null)
 				WorkerRequest.SendStatus (status_code, StatusDescription);

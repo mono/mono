@@ -1,5 +1,8 @@
 2007-11-06  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpResponse.cs: trigger the PreSendRequestHeaders event before
+	setting the output headers. Fixes bugs #334521, #339538
+
 	* TraceData.cs: do not use DataTable for trace data storage
 	anymore. Instead, a set of classes is used to hold data and a
 	Queue container (generic version in 2.0) is used to hold the data
