@@ -1,3 +1,7 @@
+2007-11-05  Jackson Harper  <jackson@ximian.com>
+
+	* LICENSE: Add long lost file.
+
 2006-11-09  Ankit Jain  <jankit@novell.com>
 
 	* Metadata.cs (AssemAttr.Retargetable): New.
