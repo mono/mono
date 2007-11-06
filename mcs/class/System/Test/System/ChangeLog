@@ -1,3 +1,9 @@
+2007-11-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UriBuilderTest.cs: Added tests for regression introduced as part of
+	bug #323247. Added extra ctor tests. No longer derive from deprecated
+	Assertion class.
+
 2007-10-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UriTest.cs: Removed extra tabs.

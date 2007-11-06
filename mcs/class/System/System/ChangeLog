@@ -1,3 +1,10 @@
+2007-11-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UriBuilder.cs: Fixed regression introduced by patch for bug
+	#323247: always initialize UriBuilder.Query to zero-length string.
+	On 2.0 profile, do not initialize query to zero-length string when
+	Fragment is set. Remove extra tabs.
+
 2007-11-04  Jensen Somers <jensen.somers@gmail.com>
 
         * UriBuilder.cs (ToString): Added Fragment property to the

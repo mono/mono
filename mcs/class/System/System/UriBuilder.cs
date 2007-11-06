@@ -50,7 +50,7 @@ namespace System
 		private bool modified;
 		
 		
-		// Constructors		
+		// Constructors
 		
 		public UriBuilder ()
 #if NET_2_0
@@ -58,7 +58,7 @@ namespace System
 #else
 			: this (Uri.UriSchemeHttp, "loopback")
 #endif
-		{		
+		{
 		}
 
 		public UriBuilder (string uri) : this (new Uri (uri))
@@ -90,9 +90,7 @@ namespace System
 			Host = hostName;
 			port = -1;
 			Path = String.Empty;   // dependent on scheme it may set path to "/"
-#if !NET_2_0
 			query = String.Empty;
-#endif
 			fragment = String.Empty;
 			username = String.Empty;
 			password = String.Empty;
@@ -137,7 +135,9 @@ namespace System
 				else if (fragment.Length > 0)
 //					fragment = "#" + EncodeUtf8 (value.Replace ("%23", "#"));
 					fragment = "#" + value.Replace ("%23", "#");
-				query = String.Empty;				
+#if !NET_2_0
+				query = String.Empty;
+#endif
 				modified = true;
 			}
 		}
@@ -192,7 +192,7 @@ namespace System
 				// LAMESPEC: it doesn't say to always prepend a 
 				// question mark to the value.. it does say this 
 				// for fragment.
-				if (value == null || value == "")
+				if (value == null || value.Length == 0)
 					query = String.Empty;
 				else
 //					query = "?" + EncodeUtf8 (value);
@@ -233,7 +233,7 @@ namespace System
 				username = (value == null) ? String.Empty : value;;
 				modified = true;
 			}
-		}		
+		}
 
 		// Methods
 		
@@ -275,6 +275,5 @@ namespace System
 
 			return builder.ToString ();
 		}
-	} 
-} 
-
+	}
+}

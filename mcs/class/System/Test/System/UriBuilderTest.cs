@@ -14,7 +14,7 @@ using System;
 namespace MonoTests.System
 {
 	[TestFixture]
-	public class UriBuilderTest : Assertion
+	public class UriBuilderTest
 	{
 		private UriBuilder b, b2, b3;
 		
@@ -24,17 +24,78 @@ namespace MonoTests.System
 			b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html");
 		}
 
-		[Test]
+		[Test] // ctor ()
 		public void Constructor_Empty ()
 		{
 			b = new UriBuilder ();
-			AssertEquals ("#1", "http", b.Scheme);
+			Assert.AreEqual ("http", b.Scheme, "#1");
 #if NET_2_0
-			AssertEquals ("#2", "localhost", b.Host);
+			Assert.AreEqual ("localhost", b.Host, "#2");
 #else
-			AssertEquals ("#2", "loopback", b.Host);
+			Assert.AreEqual ("loopback", b.Host, "#3");
 #endif
-			AssertEquals ("#3", -1, b.Port);
+			Assert.AreEqual (-1, b.Port, "#4");
+			Assert.AreEqual (string.Empty, b.Query, "#5");
+			Assert.AreEqual (string.Empty, b.Fragment, "#6");
+		}
+
+		[Test] // ctor (string)
+		public void Constructor1 ()
+		{
+			b = new UriBuilder ("http://www.ximian.com:8001#test?name=50");
+			Assert.AreEqual ("#test?name=50", b.Fragment, "#A1");
+			Assert.AreEqual ("www.ximian.com", b.Host, "#A2");
+			Assert.AreEqual (string.Empty, b.Password, "#A3");
+			Assert.AreEqual ("/", b.Path, "#A4");
+			Assert.AreEqual (8001, b.Port, "#A5");
+			Assert.AreEqual (string.Empty, b.Query, "#A5");
+			Assert.AreEqual ("http", b.Scheme, "#A6");
+			Assert.AreEqual ("http://www.ximian.com:8001/#test?name=50", b.Uri.ToString (), "#A7");
+			Assert.AreEqual (string.Empty, b.UserName, "#A8");
+
+			b = new UriBuilder ("http://www.ximian.com?name=50#test");
+			Assert.AreEqual ("#test", b.Fragment, "#B1");
+			Assert.AreEqual ("www.ximian.com", b.Host, "#B2");
+			Assert.AreEqual (string.Empty, b.Password, "#B3");
+			Assert.AreEqual ("/", b.Path, "#B4");
+			Assert.AreEqual (80, b.Port, "#B5");
+			Assert.AreEqual ("?name=50", b.Query, "#B5");
+			Assert.AreEqual ("http", b.Scheme, "#B6");
+#if NET_2_0
+			// our 1.0 behavior matches that of .NET 2.0
+			Assert.AreEqual ("http://www.ximian.com/?name=50#test", b.Uri.ToString (), "#B7");
+#endif
+			Assert.AreEqual (string.Empty, b.UserName, "#B8");
+		}
+
+		[Test] // ctor (string)
+#if ONLY_1_1
+		[Category ("NotWorking")] // we always throw an ArgumentNullException
+#endif
+		public void Constructor1_Uri_Null ()
+		{
+			try {
+				new UriBuilder ((string) null);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("uriString", ex.ParamName, "#6");
+			}
+#else
+			} catch (NullReferenceException) {
+			}
+#endif
+		}
+
+		[Test] // ctor (Uri)
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Constructor2_Uri_Null ()
+		{
+			new UriBuilder ((Uri) null);
 		}
 
 		[Test]
@@ -55,29 +116,29 @@ namespace MonoTests.System
 		// This test does not make sense, will fix soon
 		[Category ("NotWorking")] // bug #75144
 		public void UserInfo ()
-		{			
+		{
 			b = new UriBuilder ("mailto://myname:mypwd@contoso.com?subject=hello");
 #if NET_2_0
-			AssertEquals ("#1", String.Empty, b.UserName);
-			AssertEquals ("#2", String.Empty, b.Password);
+			Assert.AreEqual (string.Empty, b.UserName, "#1");
+			Assert.AreEqual (string.Empty, b.Password, "#2");
 #else
 			// NotWorking here for 1.x (bad behaviour in 1.x - may not be worth fixing)
-			AssertEquals ("#1", "myname", b.UserName);
-			AssertEquals ("#2", "mypwd", b.Password);
+			Assert.AreEqual ("myname", b.UserName, "#1");
+			Assert.AreEqual ("mypwd", b.Password, "#2");
 #endif			
 			b = new UriBuilder ("mailto", "contoso.com");
 			b.UserName = "myname";
 			b.Password = "mypwd";
 			// NotWorking here for 2.0 - worth fixing
-			AssertEquals ("#3", "myname:mypwd", b.Uri.UserInfo);
+			Assert.AreEqual ("myname:mypwd", b.Uri.UserInfo, "#3");
 		}
 
 		[Test]
 		public void Path ()
-		{			
+		{
 			b.Path = ((char) 0xa9) + " 2002";
-			AssertEquals ("#1", "%C2%A9%202002", b.Path);			
-		}	
+			Assert.AreEqual ("%C2%A9%202002", b.Path);
+		}
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -90,8 +151,8 @@ namespace MonoTests.System
 		public void DefaultPort ()
 		{
 			b.Port = -1;
-			AssertEquals ("Port", -1, b.Port);
-			AssertEquals ("ToString", "http://www.ximian.com/foo/bar/index.html", b.ToString ());
+			Assert.AreEqual (-1, b.Port, "#1");
+			Assert.AreEqual ("http://www.ximian.com/foo/bar/index.html", b.ToString (), "#2");
 		}
 #else
 		[Test]
@@ -105,43 +166,70 @@ namespace MonoTests.System
 		public void Query ()
 		{
 			b.Query = ((char) 0xa9) + " 2002";
-			AssertEquals ("#1", "?\xA9 2002", b.Query);			
-			AssertEquals ("#2", String.Empty, b.Fragment);
+			Assert.AreEqual ("?\xA9 2002", b.Query, "#1");
+			Assert.AreEqual (string.Empty, b.Fragment, "#2");
 			b.Query = "?test";
-			AssertEquals ("#3", "??test", b.Query);
+			Assert.AreEqual ("??test", b.Query, "#3");
 			b.Query = null;
-			AssertEquals ("#4", String.Empty, b.Query);
+			Assert.AreEqual (string.Empty, b.Query, "#4");
+			b.Fragment = "test";
+			Assert.AreEqual ("#test", b.Fragment, "#5");
+			b.Query = "name";
+#if NET_2_0
+			Assert.AreEqual ("#test", b.Fragment, "#6");
+#else
+			Assert.AreEqual (string.Empty, b.Fragment, "#6");
+#endif
+			Assert.AreEqual ("?name", b.Query, "#7");
+			b.Fragment = "run";
+			Assert.AreEqual ("#run", b.Fragment, "#8");
+			b.Query = null;
+#if NET_2_0
+			Assert.AreEqual ("#run", b.Fragment, "#9");
+#else
+			Assert.AreEqual (string.Empty, b.Fragment, "#9");
+#endif
+			Assert.AreEqual (string.Empty, b.Query, "#10");
 		}
 		
 		[Test]
 		public void Fragment ()
 		{
 			b.Fragment = ((char) 0xa9) + " 2002";
-			AssertEquals ("#1", "#\xA9 2002", b.Fragment);
-			AssertEquals ("#2", String.Empty, b.Query);
+			Assert.AreEqual ("#\xA9 2002", b.Fragment, "#1");
+			Assert.AreEqual (string.Empty, b.Query, "#2");
 			b.Fragment = "#test";
-			AssertEquals ("#3", "##test", b.Fragment);
+			Assert.AreEqual ("##test", b.Fragment, "#3");
 			b.Fragment = null;
-			AssertEquals ("#4", String.Empty, b.Fragment);
+			Assert.AreEqual (String.Empty, b.Fragment, "#4");
+			b.Query = "name";
+			Assert.AreEqual ("?name", b.Query, "#5");
+			b.Fragment = null;
+#if NET_2_0
+			Assert.AreEqual ("?name", b.Query, "#6");
+#else
+			Assert.AreEqual (string.Empty, b.Query, "#6");
+#endif
+			Assert.AreEqual (string.Empty, b.Fragment, "#7");
 		}
 		
 		[Test]
 		public void Scheme ()
 		{
 			b.Scheme = "http";
-			AssertEquals ("#1", b.Scheme, "http");
+			Assert.AreEqual ("http", b.Scheme, "#1");
 			b.Scheme = "http:";
-			AssertEquals ("#2", b.Scheme, "http");
+			Assert.AreEqual ("http", b.Scheme, "#2");
 			b.Scheme = "http://";
-			AssertEquals ("#3", b.Scheme, "http");
+			Assert.AreEqual ("http", b.Scheme, "#3");
 			b.Scheme = "http://foo/bar";
-			AssertEquals ("#4", b.Scheme, "http");
+			Assert.AreEqual ("http", b.Scheme, "#4");
 			b.Scheme = "mailto:";
-			AssertEquals ("#5", b.Scheme, "mailto");
+			Assert.AreEqual ("mailto", b.Scheme, "#5");
 			b.Scheme = "unknown";
-			AssertEquals ("#6", b.Scheme, "unknown");
+			Assert.AreEqual ("unknown", b.Scheme, "#6");
 			b.Scheme = "unknown://";
-			AssertEquals ("#7", b.Scheme, "unknown");
+			Assert.AreEqual ("unknown", b.Scheme, "#7");
 		}
 		
 		[Test]
@@ -154,24 +242,24 @@ namespace MonoTests.System
 			b2 = new UriBuilder ("http", "www.ximian.com", 80, "/foo/bar/index.html", "?item=1");
 			b3 = new UriBuilder (new Uri ("http://www.ximian.com/foo/bar/index.html?item=1"));
 #if NET_2_0
-			Assert ("#1", !b.Equals (b2));
-			Assert ("#2", !b.Uri.Equals (b2.Uri));
-			Assert ("#3", !b.Equals (b3));
-			Assert ("#5", !b3.Equals (b));
+			Assert.IsFalse (b.Equals (b2), "#1");
+			Assert.IsFalse (b.Uri.Equals (b2.Uri), "#2");
+			Assert.IsFalse (b.Equals (b3), "#3");
+			Assert.IsFalse (b3.Equals (b), "#4");
 #else
-			Assert ("#1", b.Equals (b2));
-			Assert ("#2", b.Uri.Equals (b2.Uri));
-			Assert ("#3", b.Equals (b3));
-			Assert ("#5", b3.Equals (b));
+			Assert.IsTrue (b.Equals (b2), "#1");
+			Assert.IsTrue (b.Uri.Equals (b2.Uri), "#2");
+			Assert.IsTrue (b.Equals (b3), "#3");
+			Assert.IsTrue (b3.Equals (b), "#4");
 #endif
-			Assert ("#4", b2.Equals (b3));
+			Assert.IsTrue (b2.Equals (b3), "#5");
 		}
 		
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("ToString ()", "http://www.ximian.com:80/foo/bar/index.html", b.ToString ());
-			AssertEquals ("Uri.ToString ()", "http://www.ximian.com/foo/bar/index.html", b.Uri.ToString ());
+			Assert.AreEqual ("http://www.ximian.com:80/foo/bar/index.html", b.ToString (), "#1");
+			Assert.AreEqual ("http://www.ximian.com/foo/bar/index.html", b.Uri.ToString (), "#2");
 		}
 
 		[Test]
@@ -179,13 +267,13 @@ namespace MonoTests.System
 		{
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", null);
 			string noquery = "http://www.ximian.com/lalala/lelele.aspx";
-			AssertEquals ("#01", b.Uri.ToString (), noquery);
+			Assert.AreEqual (noquery, b.Uri.ToString (), "#1");
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?");
-			AssertEquals ("#02", b.Uri.ToString (), noquery);
+			Assert.AreEqual (noquery, b.Uri.ToString (), "#2");
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "??");
-			AssertEquals ("#03", b.Uri.ToString (), noquery + "??");
+			Assert.AreEqual (noquery + "??", b.Uri.ToString (), "#3");
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?something");
-			AssertEquals ("#04", b.Uri.ToString (), noquery + "?something");
+			Assert.AreEqual (noquery + "?something", b.Uri.ToString (), "#4");
 		}
 
 		[Test] // bug #76501
@@ -194,15 +282,16 @@ namespace MonoTests.System
 			UriBuilder ub = new UriBuilder (
 				"http://mondomaine/trucmuche/login.aspx");
 			ub.Query = ub.Query.TrimStart (new char [] {'?'}) + "&ticket=bla";
-			Assert (ub.ToString ().IndexOf ("80//") < 0);
+			Assert.IsTrue (ub.ToString ().IndexOf ("80//") < 0);
 		}
 
+		[Test]
 		public void TestAppendFragment ()
 		{
 			UriBuilder uri = new UriBuilder ("http://www.mono-project.com/Main_Page");
 			uri.Fragment = "Features";
-			AssertEquals ("#01", "#Features", uri.Fragment);
-			AssertEquals ("#02", "http://www.mono-project.com/Main_Page#Features", uri.Uri.ToString ());
+			Assert.AreEqual ("#Features", uri.Fragment, "#1");
+			Assert.AreEqual ("http://www.mono-project.com/Main_Page#Features", uri.Uri.ToString (), "#2");
 		}
 	}
 }
