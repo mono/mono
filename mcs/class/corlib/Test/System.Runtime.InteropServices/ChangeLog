@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MarshalTest.cs: Add test for various StringTo... to check for 
+	bug #335488.
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MarshalTest.cs: Add a rountrip test case for BSTR (bug #339530).

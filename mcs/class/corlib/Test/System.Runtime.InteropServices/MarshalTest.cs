@@ -182,6 +182,146 @@ namespace MonoTests.System.Runtime.InteropServices
 			string s2 = Marshal.PtrToStringBSTR (ptr);
 			Assert.AreEqual (s, s2, "string");
 		}
+
+		[Test]
+		public void StringToBSTRWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToBSTR (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringBSTR (ptr);
+				Assert.AreEqual (128, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeBSTR (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToHGlobalAnsiWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToHGlobalAnsi (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringAnsi (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToHGlobalAutoWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToHGlobalAuto (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringAuto (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToHGlobalUniWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToHGlobalUni (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringUni (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeHGlobal (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToCoTaskMemAnsiWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToCoTaskMemAnsi (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringAnsi (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeCoTaskMem (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToCoTaskMemAutoWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToCoTaskMemAuto (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringAuto (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeCoTaskMem (ptr);
+			}
+		}
+
+		[Test]
+		public void StringToCoTaskMemUniWithNullValues ()
+		{
+			int size = 128;
+			string s = String.Empty.PadLeft (size, '\0');
+			Assert.AreEqual (size, s.Length, "Length-1");
+
+			IntPtr ptr = Marshal.StringToCoTaskMemUni (s);
+			try {
+				for (int i = 0; i < size; i += 4)
+					Marshal.WriteInt32 (ptr, i, 0);
+
+				string s2 = Marshal.PtrToStringUni (ptr);
+				Assert.AreEqual (0, s2.Length, "Length-2");
+			}
+			finally {
+				Marshal.FreeCoTaskMem (ptr);
+			}
+		}
 #if NET_2_0
 		private const string NotSupported = "Not supported before Windows 2000 Service Pack 3";
 		private static char[] PlainText = new char[] { 'a', 'b', 'c' };
