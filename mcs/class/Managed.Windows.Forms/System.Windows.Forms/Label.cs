@@ -603,7 +603,7 @@ namespace System.Windows.Forms
 				string_format.Dispose ();
 		}
 
-		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
+		protected internal void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
 		{
  			if (image == null || g == null)
 				return;
@@ -648,7 +648,6 @@ namespace System.Windows.Forms
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
 			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
-			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 			base.OnPaint(pevent);
 		}
 

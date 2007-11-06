@@ -483,7 +483,6 @@ namespace System.Windows.Forms
 			base.InvokePaintBackground (this, pevent);
 			
 			ThemeEngine.Current.DrawLinkLabel (pevent.Graphics, pevent.ClipRectangle, this);
-			DrawImage (pevent.Graphics, Image, ClientRectangle, image_align);
 			// Do not call base.OnPaint since it's the Label class 
 		}
 

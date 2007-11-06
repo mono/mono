@@ -1,3 +1,12 @@
+2007-11-06  Jonathan Pobst  <monkey@Jpobst.com>
+
+	* Label.cs: Make DrawImage internal so it can be called from Theme code.
+	Remove the DrawImage call from OnPaint.
+	* LinkLabel.cs: Remove the DrawImage call from OnPaint.
+	* ThemeWin32Classic.cs: Call DrawImage after we paint the background,
+	but before we draw the text for DrawLabel and DrawLinkLabel.
+	Fixes bug #339565.
+
 2007-11-05  Andreia Gaita <avidigal@novell.com>
 
 	* Control.cs: Remove select call on click. Fixes #325809

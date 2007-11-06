@@ -2324,6 +2324,8 @@ namespace System.Windows.Forms
 		{		
 			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
 
+			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
+
 			if (label.Enabled) {
 				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
 			} else {
@@ -2364,6 +2366,8 @@ namespace System.Windows.Forms
 		public override void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
 			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
+
+			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
 
 			if (label.pieces == null)
 				return;
