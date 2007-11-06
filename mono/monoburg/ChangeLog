@@ -1,5 +1,10 @@
 2007-11-06  Geoff Norton  <gnorton@novell.com>
 
+	* Makefile.am:  Revert previous change, it breaks the build on
+	win32
+
+2007-11-06  Geoff Norton  <gnorton@novell.com>
+
 	* Makefile.am:  If we're not CROSS_COMPILING let libtool find
 	the libraries to link against.  Fixes building against eglib.
 
