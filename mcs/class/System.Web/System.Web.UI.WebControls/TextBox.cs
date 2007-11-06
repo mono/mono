@@ -246,6 +246,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		protected override object SaveViewState ()
 		{
+			if (TextMode == TextBoxMode.Password)
+				ViewState.SetItemDirty ("Text", false);
 			return base.SaveViewState ();
 		}
 #endif		
@@ -439,8 +441,10 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["Text"] = value;
+#if ONLY_1_1
 				if (TextMode == TextBoxMode.Password)
 					ViewState.SetItemDirty ("Text", false);
+#endif
 			}
 		}
 	

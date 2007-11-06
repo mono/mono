@@ -1,5 +1,11 @@
 2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TextBox.cs:
+	refactoring for NET_2_0:
+	Text is removed from view state in case of need at SaveViewState phase. 	 
+
+2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ListControl.cs:
 	SelectedValue/SelectedIndex is set during DataBinding always. 	 
 
