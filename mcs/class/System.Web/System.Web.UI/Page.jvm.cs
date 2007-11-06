@@ -218,6 +218,7 @@ namespace System.Web.UI
 			if (String.IsNullOrEmpty (validatorsStateSerialized))
 				return;
 
+			is_validated = true;
 			bool [] validatorsState = (bool []) GetFormatter ().Deserialize (validatorsStateSerialized);
 			for (int i = 0; i < Math.Min (validatorsState.Length, Validators.Count); i++) {
 				IValidator val = Validators [i];
