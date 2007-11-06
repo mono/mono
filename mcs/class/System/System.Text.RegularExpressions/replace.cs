@@ -36,12 +36,14 @@ using Parser = System.Text.RegularExpressions.Syntax.Parser;
 namespace System.Text.RegularExpressions {
 
 	class ReplacementEvaluator {
-		public static string Evaluate (string replacement, Match match) {
+		public static string Evaluate (string replacement, Match match)
+		{
 			ReplacementEvaluator ev = new ReplacementEvaluator (match.Regex, replacement);
 			return ev.Evaluate (match);
 		}
 
-		public ReplacementEvaluator (Regex regex, string replacement) {
+		public ReplacementEvaluator (Regex regex, string replacement)
+		{
 			this.regex = regex;
 			this.replacement = replacement;
 			this.pieces = null;
@@ -118,9 +120,8 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// private
-		private void Compile () {
-			replacement = Parser.Unescape (replacement);
-
+		private void Compile ()
+		{
 			int anchor = 0, ptr = 0, saveptr;
 			char c;
 			while (ptr < replacement.Length) {
@@ -162,7 +163,8 @@ namespace System.Text.RegularExpressions {
 				AddFromReplacement (anchor, ptr);
 		}
 
-		private int CompileTerm (ref int ptr) {
+		private int CompileTerm (ref int ptr)
+		{
 			char c = replacement [ptr];
 
 			if (Char.IsDigit (c)) {		// numbered group

@@ -73,21 +73,22 @@ namespace MonoTests.System.Text.RegularExpressions {
 			//new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", 	"${S}$11$1", "77F1" 	),
 			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", 	"${S}$11$1", "F2345678910L71" 	),
 			new testcase ("F2345678910LL1",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", 	"${S}$11$1", "${S}LF1" 	),
+			new testcase ("a", "a", @"\\", @"\\"),
 		};
 
 		[Test]
 		public void ReplaceTests ()
 		{
-			string result;
+			string result = "";
 			int i = 0;
 			foreach (testcase test in tests) {
 				try {
 					result = Regex.Replace (test.original, test.pattern, test.replacement);
-					Assert.AreEqual (result, test.expected, "rr#{0}: {1} ~ s,{2},{3},", i,
-							 test.original, test.pattern, test.replacement);
 				} catch (Exception e) {
 					Assert.Fail ("rr#{0} Exception thrown: " + e.ToString (), i);
 				}
+				Assert.AreEqual (result, test.expected, "rr#{0}: {1} ~ s,{2},{3},", i,
+						 test.original, test.pattern, test.replacement);
 				++i;
 			}
 		}

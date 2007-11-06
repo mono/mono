@@ -1,3 +1,7 @@
+2007-11-07  Raja R Harinath  <harinath@gmail.com>
+
+	* replace.cs (Compile): Don't unescape string.
+
 2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Match.cs: Do not throw NotSupportedException on zero-length

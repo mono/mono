@@ -1,3 +1,8 @@
+2007-11-07  Raja R Harinath  <harinath@gmail.com>
+
+	* RegexReplace.cs (tests): New test from #317092.
+	(ReplaceTests): Don't catch an AssertException.
+
 2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* GroupTest.cs: Improved test for null argument check.
