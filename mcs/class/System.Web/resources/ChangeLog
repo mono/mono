@@ -1,3 +1,9 @@
+2007-11-06 Juraj Skripsky <js@hotfeet.ch>
+
+	* webform.js (WebForm_FireDefaultButton): Gecko-based browsers
+	don't support the click() method for <a/> elements. Use
+	eval(myLink.href) instead.
+
 2007-11-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebUIValidation_2.0.js: 

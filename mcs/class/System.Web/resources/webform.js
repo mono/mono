@@ -264,11 +264,22 @@ webForm.WebForm_FireDefaultButton = function (event, target)
 		return true;
 	}
 	var defaultButton = this.WebForm_GetElementById(target);
-	if (defaultButton && typeof(defaultButton.click) != "undefined") {
+	if (!defaultButton)
+		return true;
+	
+	if (typeof(defaultButton.click) != "undefined") {
 		defaultButton.click();
 		event.cancelBubble = true;
 		return false;
 	}
+	
+	if (defaultButton.href && defaultButton.href.match(/^javascript:/i)) {
+		var jsCode = defaultButton.href.match(/^javascript:(.*)/i)[1]; 
+		eval(jsCode);
+		event.cancelBubble = true;
+		return false;
+	}
+	
 	return true;
 }
 
