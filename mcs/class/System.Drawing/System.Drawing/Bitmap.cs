@@ -51,6 +51,14 @@ namespace System.Drawing
 	{
 		#region constructors
 		// constructors
+
+#if NET_2_0
+		// required for XmlSerializer (#323246)
+		private Bitmap ()
+		{
+		}
+#endif
+
 		internal Bitmap (IntPtr ptr)
 		{
 			nativeObject = ptr;

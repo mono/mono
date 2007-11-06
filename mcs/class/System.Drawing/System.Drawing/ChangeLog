@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Bitmap.cs: Add a private, parameter-less, ctor for Bitmap so XML
+	serialization is possible under 2.0 (fix for #323246).
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Add a bool parameter to GdiPlusStreamHelper ctor
