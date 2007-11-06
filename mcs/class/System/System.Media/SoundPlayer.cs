@@ -185,7 +185,8 @@ namespace System.Media {
 		{
 			Start ();
 			try {
-				adata = new WavData (mstream);
+				if (adata == null)
+					adata = new WavData (mstream);
 				if (adev == null)
 					adev = AudioDevice.CreateDevice (null);
 				if (adata != null) {

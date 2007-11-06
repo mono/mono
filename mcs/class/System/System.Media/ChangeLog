@@ -1,3 +1,10 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AudioData.cs: Reset stream to position 0 before playing (required
+	when playing the audio in a loop). Part of the fix for bug #338991.
+	* SoundPlayer.cs: Only create the AudioData once (and reuse it).
+	Part of the fix for bug #338991.
+
 2007-01-22  Alan McGovern  <amcgovern@novell.com>
 
 	* SoundPlayer.cs: Added support for loading from the filesystem

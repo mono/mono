@@ -124,6 +124,7 @@ namespace Mono.Audio {
 			int read;
 			int count = data_len;
 			byte[] buffer = new byte [buffer_size];
+			stream.Position = 0;
 			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
 				// FIXME: account for leftover bytes
 				dev.PlaySample (buffer, read/frame_divider);
@@ -209,6 +210,7 @@ namespace Mono.Audio {
 			int read;
 			int count = data_len;
 			byte[] buffer = new byte [buffer_size];
+			stream.Position = 0;
 			while (!IsStopped && count >= 0 && (read = stream.Read (buffer, 0, System.Math.Min (buffer.Length, count))) > 0) {
 				// FIXME: account for leftover bytes
 				dev.PlaySample (buffer, read/frame_divider);
