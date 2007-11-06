@@ -1,3 +1,7 @@
+2007-11-06  Jb Evain  <jbevain@novell.com>
+
+	* HashtableTest.cs: Add test case for #324761.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* QueueTest.cs: Test cases for #321657. Based on the test case 

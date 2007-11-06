@@ -1,3 +1,8 @@
+2007-11-06  Jb Evain  <jbevain@novell.com>
+
+	* Hashtable.cs: Don't compare user keys against the special removed
+	key. Fix #324761.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Queue.cs: Avoid IndexOutOfRangeException after TrimToSize. Patch by

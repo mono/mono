@@ -646,6 +646,8 @@ namespace System.Collections {
 		/// </summary>
 		protected virtual bool KeyEquals (Object item, Object key)
 		{
+			if (key == KeyMarker.Removed)
+				return false;
 #if NET_2_0
 			if (equalityComparer != null)
 				return equalityComparer.Equals (item, key);
