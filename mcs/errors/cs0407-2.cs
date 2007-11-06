@@ -1,4 +1,4 @@
-// CS0407: The method `int X.f(int)' return type does not match delegate `object X.Function(int)' return type
+// CS0407: A method or delegate `int X.f(int)' return type does not match delegate `object X.Function(int)' return type
 // Line: 17
 
 using System;

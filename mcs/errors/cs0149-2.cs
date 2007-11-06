@@ -1,5 +1,5 @@
-// CS1501: No overload for method `Blah.MyDelegate' takes `0' arguments
-// Line : 17
+// CS0149: Method name expected
+// Line: 17
 
 public class Blah {
 

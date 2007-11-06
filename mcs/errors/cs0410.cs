@@ -1,4 +1,4 @@
-// CS0410: The method `MainClass MainClass.Delegate()' parameters and return type must be same as delegate `IA TestDelegate()' parameters and return type
+// CS0410: A method or delegate `MainClass MainClass.Delegate()' parameters and return type must be same as delegate `IA TestDelegate()' parameters and return type
 // Line: 18
 // Compiler options: -langversion:ISO-1
 

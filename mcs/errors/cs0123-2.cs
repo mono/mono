@@ -1,4 +1,4 @@
-// CS0123: The method `MainClass.Delegate()' parameters do not match delegate `IA TestDelegate(bool)' parameters
+// CS0123: A method or delegate `MainClass.Delegate()' parameters do not match delegate `TestDelegate(bool)' parameters
 // Line: 17
 
 delegate IA TestDelegate(bool b);

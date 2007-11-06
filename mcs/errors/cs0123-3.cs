@@ -1,4 +1,4 @@
-// CS0123: The method `X.f1(int, object)' parameters do not match delegate `bool X.Function(int, int)' parameters
+// CS0123: A method or delegate `X.f1(int, object)' parameters do not match delegate `X.Function(int, int)' parameters
 // Line: 13
 
 using System;

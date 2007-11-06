@@ -1,4 +1,4 @@
-// gcs0411.cs: The type arguments for method `T X.G<T>()' cannot be inferred from the usage. Try specifying the type arguments explicitly
+// CS0411: The type arguments for method `X.G<T>()' cannot be inferred from the usage. Try specifying the type arguments explicitly
 // Line: 17
 
 using System;
