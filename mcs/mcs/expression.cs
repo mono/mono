@@ -4160,7 +4160,8 @@ namespace Mono.CSharp {
 					return (new DelegateInvocation (
 						expr_resolved, Arguments, loc)).Resolve (ec);
 				}
-				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
+				
+				expr_resolved.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
 				return null;
 			}
 
