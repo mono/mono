@@ -1,3 +1,8 @@
+2007-11-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomizableFileSettingsProvider.cs : Type.Namespace can be null.
+	  MSDN documentation is kind of wrong here.
+
 2007-10-31 Arina Itkes <arinai@mainsoft.com>
 
 	* CustomizableFileSettingsProvider.cs,  LocalFileSettingsProvider.cs:

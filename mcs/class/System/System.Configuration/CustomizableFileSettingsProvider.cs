@@ -244,7 +244,7 @@ namespace System.Configuration
 #if !TARGET_JVM
 			MethodInfo entryPoint = assembly.EntryPoint;
 			Type entryType = entryPoint != null ? entryPoint.DeclaringType : null;
-			if (entryType != null && entryType.Namespace.Length > 0) {
+			if (entryType != null && !String.IsNullOrEmpty (entryType.Namespace)) {
 				int end = entryType.Namespace.IndexOf ('.');
 				return end < 0 ? entryType.Namespace : entryType.Namespace.Substring (0, end);
 			}
