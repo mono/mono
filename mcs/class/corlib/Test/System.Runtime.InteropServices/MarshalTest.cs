@@ -5,7 +5,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
 //
 #if !TARGET_JVM
 using NUnit.Framework;
@@ -174,6 +174,14 @@ namespace MonoTests.System.Runtime.InteropServices
 			}
 		}
 
+		[Test]
+		public void BSTR_Roundtrip ()
+		{
+			string s = "mono";
+			IntPtr ptr = Marshal.StringToBSTR (s);
+			string s2 = Marshal.PtrToStringBSTR (ptr);
+			Assert.AreEqual (s, s2, "string");
+		}
 #if NET_2_0
 		private const string NotSupported = "Not supported before Windows 2000 Service Pack 3";
 		private static char[] PlainText = new char[] { 'a', 'b', 'c' };
