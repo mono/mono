@@ -645,16 +645,11 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			List<TSource> items = new List<TSource> (Distinct (first));
-			foreach (TSource element in second) {
-				int index = IndexOf (items, element, comparer);
-				if (index == -1)
-					items.Add (element);
-				else
-					items.RemoveAt (index);
+			List<TSource> items = new List<TSource> (Distinct (second));
+			foreach (TSource element in first) {
+				if (!Contains (items, element, comparer))
+					yield return element;
 			}
-			foreach (TSource item in items)
-				yield return item;
 		}
 
 		#endregion
