@@ -1,3 +1,7 @@
+2007-11-06  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Made the test output less verbose.
+	
 2007-09-21  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Mono assembly loading issue has been fixed, switch

@@ -130,6 +130,8 @@ namespace TestRunner {
 		protected ArrayList know_issues = new ArrayList ();
 		protected ArrayList ignore_list = new ArrayList ();
 		protected ArrayList no_error_list = new ArrayList ();
+		
+		protected bool verbose;
 			
 		int total_known_issues;
 
@@ -151,7 +153,7 @@ namespace TestRunner {
 				using (StreamReader sr = new StreamReader (file)) {
 					String line;
 					while (row++ < 3 && (line = sr.ReadLine()) != null) {
-						if (!AnalyzeTestFile (ref row, line, ref compiler_options,
+						if (!AnalyzeTestFile (file, ref row, line, ref compiler_options,
 								      ref dependencies))
 							return false;
 					}
@@ -162,7 +164,7 @@ namespace TestRunner {
 			return true;
 		}
 
-		protected virtual bool AnalyzeTestFile (ref int row, string line,
+		protected virtual bool AnalyzeTestFile (string file, ref int row, string line,
 							ref string[] compiler_options,
 							ref string[] dependencies)
 		{
@@ -197,13 +199,13 @@ namespace TestRunner {
 
 			if (ignore_list.Contains (filename)) {
 				++ignored;
-				LogLine (filename + "...\tNOT TESTED");
+				LogFileLine (filename, "NOT TESTED");
 				return false;
 			}
 
 			string[] compiler_options, dependencies;
 			if (!GetExtraOptions (filename, out compiler_options, out dependencies)) {
-				LogLine (filename + "...\tERROR");
+				LogFileLine (filename, "ERROR");
 				return false;
 			}
 
@@ -214,7 +216,7 @@ namespace TestRunner {
 			if (dependencies != null) {
 				foreach (string dependency in dependencies) {
 					if (!Do (dependency)) {
-						LogLine (filename + "...\tDEPENDENCY FAILED");
+						LogFileLine (filename, "DEPENDENCY FAILED");
 						return false;
 					}
 				}
@@ -222,8 +224,10 @@ namespace TestRunner {
 
 			tests.Add (test);
 
-			Log (filename);
-			Log ("...\t");
+			if (verbose) {
+				Log (filename);
+				Log ("...\t");
+			}
 
 			return Check (test);
 		}
@@ -319,6 +323,13 @@ namespace TestRunner {
 			Console.WriteLine (msg, rest);
 			log_file.WriteLine (msg, rest);
 		}
+		
+		protected void LogFileLine (string file, string msg, params object [] args)
+		{
+			string s = file + "...\t" + string.Format (msg, args); 
+			Console.WriteLine (s);
+			log_file.WriteLine (s);
+		}
 
 		#region IDisposable Members
 
@@ -330,7 +341,8 @@ namespace TestRunner {
 		#endregion
 	}
 
-	class PositiveChecker: Checker {
+	class PositiveChecker: Checker
+	{
 		readonly string files_folder;
 		readonly static object[] default_args = new object[1] { new string[] {} };
 		string doc_output;
@@ -391,13 +403,17 @@ namespace TestRunner {
 				}
 			}
 			catch (Exception e) {
+				if (e.InnerException != null)
+					e = e.InnerException;
+				
 				HandleFailure (filename, TestResult.CompileError, e.ToString ());
 				return false;
 			}
 
 			// Test setup
 			if (filename.EndsWith ("-lib.cs") || filename.EndsWith ("-mod.cs")) {
-				LogLine ("OK");
+				if (verbose)
+					LogLine ("OK");
 				--total;
 				return true;
 			}
@@ -496,41 +512,42 @@ namespace TestRunner {
 				case TestResult.Success:
 					success++;
 					if (know_issues.Contains (file)) {
-						LogLine ("FIXED ISSUE");
+						LogFileLine (file, "FIXED ISSUE");
 						return;
 					}
-					LogLine ("OK");
+					if (verbose)
+						LogLine ("OK");
 					return;
 
 				case TestResult.CompileError:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Compilation error)");
+						LogFileLine (file, "KNOWN ISSUE (Compilation error)");
 						know_issues.Remove (file);
 						return;
 					}
-					LogLine ("REGRESSION (SUCCESS -> COMPILATION ERROR)");
+					LogFileLine (file, "REGRESSION (SUCCESS -> COMPILATION ERROR)");
 					break;
 
 				case TestResult.ExecError:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Execution error)");
+						LogFileLine (file, "KNOWN ISSUE (Execution error)");
 						know_issues.Remove (file);
 						return;
 					}
-					LogLine ("REGRESSION (SUCCESS -> EXECUTION ERROR)");
+					LogFileLine (file, "REGRESSION (SUCCESS -> EXECUTION ERROR)");
 					break;
 
 				case TestResult.XmlError:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Xml comparision error)");
+						LogFileLine (file, "KNOWN ISSUE (Xml comparision error)");
 						know_issues.Remove (file);
 						return;
 					}
-					LogLine ("REGRESSION (SUCCESS -> DOCUMENTATION ERROR)");
+					LogFileLine (file, "REGRESSION (SUCCESS -> DOCUMENTATION ERROR)");
 					break;
 
 				case TestResult.LoadError:
-					LogLine ("REGRESSION (SUCCESS -> LOAD ERROR)");
+					LogFileLine (file, "REGRESSION (SUCCESS -> LOAD ERROR)");
 					break;
 			}
 
@@ -566,7 +583,7 @@ namespace TestRunner {
 			wrong_warning = new Hashtable ();
 		}
 
-		protected override bool AnalyzeTestFile (ref int row, string line,
+		protected override bool AnalyzeTestFile (string file, ref int row, string line,
 							ref string[] compiler_options,
 							ref string[] dependencies)
 		{
@@ -575,9 +592,9 @@ namespace TestRunner {
 
 				int index = line.IndexOf (':');
 				if (index == -1 || index > 15) {
-					LogLine ("IGNORING: Wrong test file syntax (missing error mesage text)");
+					LogFileLine (file, "IGNORING: Wrong test file syntax (missing error mesage text)");
 					++syntax_errors;
-					base.AnalyzeTestFile (ref row, line, ref compiler_options,
+					base.AnalyzeTestFile (file, ref row, line, ref compiler_options,
 							      ref dependencies);
 					return false;
 				}
@@ -594,20 +611,20 @@ namespace TestRunner {
 #if !NET_2_0
 					return true;
 #else
-					return AnalyzeTestFile(ref row, line, ref compiler_options, ref dependencies);
+					return AnalyzeTestFile(file, ref row, line, ref compiler_options, ref dependencies);
 #endif
 				}
 
 				check_error_line = !filtered.StartsWith ("//Line:0");
 
 				if (!filtered.StartsWith ("//Line:")) {
-					LogLine ("IGNORING: Wrong test syntax (following line after an error messsage must have `// Line: xx' syntax");
+					LogFileLine (file, "IGNORING: Wrong test syntax (following line after an error messsage must have `// Line: xx' syntax");
 					++syntax_errors;
 					return false;
 				}
 			}
 
-			if (!base.AnalyzeTestFile (ref row, line, ref compiler_options, ref dependencies))
+			if (!base.AnalyzeTestFile (file, ref row, line, ref compiler_options, ref dependencies))
 				return false;
 
 			is_warning = false;
@@ -640,6 +657,9 @@ namespace TestRunner {
 			}
 			catch (Exception e) {
 				HandleFailure (filename, CompilerError.Missing);
+				if (e.InnerException != null)
+					e = e.InnerException;
+				
 				Log (e.ToString ());
 				return false;
 			}
@@ -715,39 +735,41 @@ namespace TestRunner {
 			switch (status) {
 				case CompilerError.Expected:
 					if (know_issues.Contains (file) || no_error_list.Contains (file)) {
-						LogLine ("FIXED ISSUE");
+						LogFileLine (file, "FIXED ISSUE");
 						return true;
 					}
-					LogLine ("OK");
+				
+					if (verbose)
+						LogLine ("OK");
 					return true;
 
 				case CompilerError.Wrong:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Wrong error reported)");
+						LogFileLine (file, "KNOWN ISSUE (Wrong error reported)");
 						know_issues.Remove (file);
 						return false;
 					}
 					if (no_error_list.Contains (file)) {
-						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR CODE)");
+						LogFileLine (file, "REGRESSION (NO ERROR -> WRONG ERROR CODE)");
 						no_error_list.Remove (file);
 					}
 					else {
-						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR CODE)");
+						LogFileLine (file, "REGRESSION (CORRECT ERROR -> WRONG ERROR CODE)");
 					}
 					break;
 
 				case CompilerError.WrongMessage:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Wrong error message reported)");
+						LogFileLine (file, "KNOWN ISSUE (Wrong error message reported)");
 						know_issues.Remove (file);
 						return false;
 					}
 					if (no_error_list.Contains (file)) {
-						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR MESSAGE)");
+						LogFileLine (file, "REGRESSION (NO ERROR -> WRONG ERROR MESSAGE)");
 						no_error_list.Remove (file);
 					}
 					else {
-						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR MESSAGE)");
+						LogFileLine (file, "REGRESSION (CORRECT ERROR -> WRONG ERROR MESSAGE)");
 						LogLine ("Exp: {0}", expected_message);
 						LogLine ("Was: {0}", error_message);
 					}
@@ -755,39 +777,39 @@ namespace TestRunner {
 
 				case CompilerError.Missing:
 					if (no_error_list.Contains (file)) {
-						LogLine ("KNOWN ISSUE (No error reported)");
+						LogFileLine (file, "KNOWN ISSUE (No error reported)");
 						no_error_list.Remove (file);
 						return false;
 					}
 
 					if (know_issues.Contains (file)) {
-						LogLine ("REGRESSION (WRONG ERROR -> NO ERROR)");
+						LogFileLine (file, "REGRESSION (WRONG ERROR -> NO ERROR)");
 						know_issues.Remove (file);
 					}
 					else {
-						LogLine ("REGRESSION (CORRECT ERROR -> NO ERROR)");
+						LogFileLine (file, "REGRESSION (CORRECT ERROR -> NO ERROR)");
 					}
 
 					break;
 
 				case CompilerError.MissingLocation:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE (Missing error location)");
+						LogFileLine (file, "KNOWN ISSUE (Missing error location)");
 						know_issues.Remove (file);
 						return false;
 					}
 					if (no_error_list.Contains (file)) {
-						LogLine ("REGRESSION (NO ERROR -> MISSING ERROR LOCATION)");
+						LogFileLine (file, "REGRESSION (NO ERROR -> MISSING ERROR LOCATION)");
 						no_error_list.Remove (file);
 					}
 					else {
-						LogLine ("REGRESSION (CORRECT ERROR -> MISSING ERROR LOCATION)");
+						LogFileLine (file, "REGRESSION (CORRECT ERROR -> MISSING ERROR LOCATION)");
 					}
 					break;
 
 				case CompilerError.Duplicate:
 					// Will become an error soon
-					LogLine("WARNING: EXACTLY SAME ERROR HAS BEEN ISSUED MULTIPLE TIMES");
+					LogFileLine (file, "WARNING: EXACTLY SAME ERROR HAS BEEN ISSUED MULTIPLE TIMES");
 					return true;
 			}
 
@@ -832,7 +854,7 @@ namespace TestRunner {
 
 			ITester tester;
 			try {
-				Console.WriteLine ("Loading: " + mcs);
+				Console.WriteLine ("Testing: " + mcs);
 				tester = new ReflectionTester (Assembly.LoadFile (mcs));
 			}
 			catch (Exception) {
