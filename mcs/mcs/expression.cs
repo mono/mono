@@ -4146,12 +4146,6 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
-		{
-			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
-				name, arg_count.ToString ());
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
@@ -4398,7 +4392,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// This checks the ConditionalAttribute on the method 
 		/// </summary>
-		static bool IsMethodExcluded (MethodBase method)
+		public static bool IsMethodExcluded (MethodBase method)
 		{
 			if (method.IsConstructor)
 				return false;

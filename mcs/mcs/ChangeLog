@@ -1,3 +1,14 @@
+2007-11-06  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for bugs #337712, #324490
+ 	*  ecore.cs (MethodGroupExpr): Refactored to handle delegate method
+ 	overloading resolution too.
+ 	
+ 	* delegate.cs: Uses MethodGroupExpr for overloading resolution. It makes
+ 	the process consistent and more robust.
+ 	
+ 	* expression.cs, linq.cs, report.cs: Update.
+
 2007-11-02  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #332909

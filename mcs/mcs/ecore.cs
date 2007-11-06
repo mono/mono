@@ -3104,12 +3104,13 @@ namespace Mono.CSharp {
 			bool NoExactMatch (EmitContext ec, MethodBase method);
 		}
 
-		public static IErrorHandler CustomErrorHandler;		
+		public IErrorHandler CustomErrorHandler;		
 		public MethodBase [] Methods;
 		MethodBase best_candidate;
 		bool has_type_arguments;
  		bool identical_type_name;
 		bool is_base;
+		Type delegate_type;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
 			: this (type, l)
@@ -3145,11 +3146,17 @@ namespace Mono.CSharp {
 
 		public override Type DeclaringType {
 			get {
-                                //
-                                // We assume that the top-level type is in the end
-                                //
+				//
+				// We assume that the top-level type is in the end
+				//
 				return Methods [Methods.Length - 1].DeclaringType;
-                                //return Methods [0].DeclaringType;
+				//return Methods [0].DeclaringType;
+			}
+		}
+
+		public Type DelegateType {
+			set {
+				delegate_type = value;
 			}
 		}
 
@@ -3494,7 +3501,7 @@ namespace Mono.CSharp {
 		}
 
 		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
-													Type delegate_type, Argument a, ParameterData expected_par)
+													Argument a, ParameterData expected_par)
 		{
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				Report.SymbolRelatedToPreviousError (method);
@@ -3564,7 +3571,7 @@ namespace Mono.CSharp {
 			int param_count = GetApplicableParametersCount (candidate, pd);
 
 			if (arg_count != param_count)
-				return int.MaxValue;
+				return int.MaxValue - arg_count - param_count;
 
 			//
 			// 1. Infer type arguments for generic method
@@ -3573,7 +3580,7 @@ namespace Mono.CSharp {
 			if (!HasTypeArguments && TypeManager.IsGenericMethod (method)) {
 				int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
 				if (score != 0)
-					return --score;
+					return score - 1024;
 				
 				if (TypeManager.IsGenericMethodDefinition (candidate))
 					throw new InternalErrorException ("a generic method definition took part in overload resolution");
@@ -3583,7 +3590,7 @@ namespace Mono.CSharp {
 #endif			
 
 			//
-			// 2. Each argument has to be implicitly converible to method parameter
+			// 2. Each argument has to be implicitly convertible to method parameter
 			//
 			for (int i = arg_count; i > 0; ) {
 				i--;
@@ -3605,7 +3612,9 @@ namespace Mono.CSharp {
 					if (pt.IsByRef)
 						pt = pt.GetElementType ();
 					
-					if (!Convert.ImplicitConversionExists (ec, a.Expr, pt))
+					if (delegate_type != null ? 
+						!Delegate.IsTypeCovariant (a.Expr, pt) :
+						!Convert.ImplicitConversionExists (ec, a.Expr, pt))
 						return ++i * 2;
 
 					if (a_mod != p_mod)
@@ -4032,11 +4041,14 @@ namespace Mono.CSharp {
 							"The type arguments for method `{0}' cannot be inferred from " +
 							"the usage. Try specifying the type arguments explicitly",
 							TypeManager.CSharpSignature (best_candidate));
-					} else {
-						VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, null, may_fail, loc);
+						return null;
 					}
-
-					return null;
+					
+					ParameterData pd = TypeManager.GetParameterData (best_candidate);
+					if (arg_count == pd.Count) {
+						VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, may_fail, loc);
+						return null;
+					}
 				}
 
 				if (almost_matched_members.Count != 0) {
@@ -4046,7 +4058,7 @@ namespace Mono.CSharp {
 				}
 				
 				//
-				// We failed to find any match
+				// We failed to find any method with correct argument count
 				//
 				if (Name == ConstructorInfo.ConstructorName) {
 					Report.SymbolRelatedToPreviousError (type);
@@ -4054,11 +4066,8 @@ namespace Mono.CSharp {
 						"The type `{0}' does not contain a constructor that takes `{1}' arguments",
 						TypeManager.CSharpName (type), arg_count);
 				} else {
-					string report_name = Name;
-					if (report_name == ConstructorInfo.ConstructorName)
-						report_name = TypeManager.CSharpName (DeclaringType);
-
-					Invocation.Error_WrongNumArguments (loc, report_name, arg_count);
+					Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
+						Name, arg_count.ToString ());
 				}
                                 
 				return null;
@@ -4191,7 +4200,7 @@ namespace Mono.CSharp {
 			// all right
 			//
 			if (!VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate,
-				method_params, null, may_fail, loc))
+				method_params, may_fail, loc))
 				return null;
 
 			if (best_candidate == null)
@@ -4278,7 +4287,7 @@ namespace Mono.CSharp {
 		public bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
 							  int arg_count, MethodBase method,
 							  bool chose_params_expanded,
-							  Type delegate_type, bool may_fail, Location loc)
+							  bool may_fail, Location loc)
 		{
 			ParameterData pd = TypeManager.GetParameterData (method);
 			int param_count = GetApplicableParametersCount (method, pd);
@@ -4342,7 +4351,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (!may_fail && Report.Errors == errors)
-				Error_InvalidArguments (ec, loc, a_idx, method, delegate_type, a, pd);
+				Error_InvalidArguments (ec, loc, a_idx, method, a, pd);
 			return false;
 		}
 	}

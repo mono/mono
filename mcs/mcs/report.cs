@@ -521,6 +521,11 @@ namespace Mono.CSharp {
 				return;
 
 			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
+			if (TypeManager.IsDelegateType (dt)) {
+				SymbolRelatedToPreviousError (dt);
+				return;
+			}			
+			
 			DeclSpace temp_ds = TypeManager.LookupDeclSpace (dt);
 			if (temp_ds == null) {
 				SymbolRelatedToPreviousError (dt.Assembly.Location, TypeManager.GetFullNameSignature (mi));
