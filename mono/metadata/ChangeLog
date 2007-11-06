@@ -1,3 +1,8 @@
+2007-11-06  Geoff Norton  <gnorton@novell.com>
+
+	* socket-io.c: Apple requires sin(6)_len to be set for getnameinfo
+	to succeed
+
 2007-11-05  Kornél Pál  <kornelpal@gmail.com>
 
 	* process.c: Added run-time GetProcessId API detection for Windows.
