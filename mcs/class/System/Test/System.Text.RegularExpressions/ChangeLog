@@ -1,5 +1,11 @@
 2007-11-07  Raja R Harinath  <harinath@gmail.com>
 
+	* MatchTest.cs (Match_Backref): New.
+	* RegexReplace.cs (direction, testcase.direction): New.
+	(testcase..ctor): Allow specifying the direction of the replace.
+	(ReplaceTests): Test replace in both directions.
+	(EvaluatorTests): New test based on #321036.
+
 	* RegexReplace.cs (tests): New test from #317092.
 	(ReplaceTests): Don't catch an AssertException.
 

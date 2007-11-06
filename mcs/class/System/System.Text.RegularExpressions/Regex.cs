@@ -373,42 +373,17 @@ namespace System.Text.RegularExpressions {
 			public void Evaluate (Match m, StringBuilder sb) { sb.Append (ev (m)); }
 		}
 
-		delegate void MatchAppendEvaluator (Match match, StringBuilder sb);
-
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
 		{
+			if (RightToLeft)
+				return BaseMachine.RTLReplace (this, input, evaluator, count, startat);
+
+			// NOTE: If this is a cause of a lot of allocations, we can convert it to
+			//       use a ThreadStatic allocation mitigator
 			Adapter a = new Adapter (evaluator);
-			return Replace (input, new MatchAppendEvaluator (a.Evaluate), count, startat);
-		}
 
-		string Replace (string input, MatchAppendEvaluator evaluator, int count, int startat)
-		{
-			StringBuilder result = new StringBuilder ();
-			int ptr = startat;
-			int counter = count;
-
-			result.Append (input, 0, ptr);
-
-			Match m = Match (input, startat);
-			while (m.Success) {
-				if (count != -1)
-					if(counter -- <= 0)
-						break;
-				if (m.Index < ptr)
-					throw new SystemException ("how");
-				result.Append (input, ptr, m.Index - ptr);
-				evaluator (m, result);
-
-				ptr = m.Index + m.Length;
-				m = m.NextMatch ();
-			}
-			
-			if (ptr == 0)
-				return input;
-			
-			result.Append (input, ptr, input.Length - ptr);
-
-			return result.ToString ();
+			return BaseMachine.LTRReplace (this, input, new BaseMachine.MatchAppendEvaluator (a.Evaluate),
+						       count, startat);
 		}
 
 		public string Replace (string input, string replacement)

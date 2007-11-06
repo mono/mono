@@ -96,5 +96,13 @@ namespace MonoTests.System.Text.RegularExpressions
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
+
+		[Test]
+		public void Match_Backref ()
+		{
+			Assert.IsTrue (Regex.IsMatch ("F2345678910LL1", @"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11"), "ltr");
+			// FIXME
+			//Assert.IsTrue (Regex.IsMatch ("F2345678910LL1", @"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11", RegexOptions.RightToLeft), "rtl");
+		}
 	}
 }

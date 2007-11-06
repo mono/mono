@@ -3,7 +3,7 @@
 //
 // Author:
 // author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
+//		(c) 2002
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
@@ -15,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -28,23 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Text.RegularExpressions
 {
 	abstract class BaseMachine : IMachine
 	{
-		delegate void MatchAppendEvaluator (Match match, StringBuilder sb);
+		internal delegate void MatchAppendEvaluator (Match match, StringBuilder sb);
 
-		virtual public string Replace (Regex regex, string input, string replacement, int count, int startat) {
+		public virtual string Replace (Regex regex, string input, string replacement, int count, int startat)
+		{
 			ReplacementEvaluator ev = new ReplacementEvaluator (regex, replacement);
-			return Replace (regex, input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat);
+			if (regex.RightToLeft)
+				return RTLReplace (regex, input, new MatchEvaluator (ev.Evaluate), count, startat);
+			else
+				return LTRReplace (regex, input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat);
 		}
 
-		virtual public string [] Split (Regex regex, string input, int count, int startat) {
+		virtual public string [] Split (Regex regex, string input, int count, int startat)
+		{
 			ArrayList splits = new ArrayList ();
 			if (count == 0)
 				count = Int32.MaxValue;
@@ -86,7 +90,8 @@ namespace System.Text.RegularExpressions
 			return (string []) splits.ToArray (typeof (string));
 		}
 
-		virtual public Match Scan (Regex regex, string text, int start, int end) {
+		virtual public Match Scan (Regex regex, string text, int start, int end)
+		{
 			throw new NotImplementedException ("Scan method must be implemented in derived classes");
 		}
 
@@ -95,7 +100,8 @@ namespace System.Text.RegularExpressions
 			return ReplacementEvaluator.Evaluate (replacement, match);
 		}
 
-		private static string Replace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat) {
+		internal static string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat)
+		{
 			StringBuilder result = new StringBuilder ();
 			int ptr = startat;
 			int counter = count;
@@ -116,10 +122,46 @@ namespace System.Text.RegularExpressions
 				m = m.NextMatch ();
 			}
 
-			if (ptr == 0)
+			if (ptr == startat)
 				return input;
 
 			result.Append (input, ptr, input.Length - ptr);
+
+			return result.ToString ();
+		}
+
+		internal static string RTLReplace (Regex regex, string input, MatchEvaluator evaluator, int count, int startat)
+		{
+			int ptr = startat;
+			int counter = count;
+
+			StringCollection pieces = new StringCollection ();
+			pieces.Add (input.Substring (ptr));
+
+			Match m = regex.Match (input, startat);
+			while (m.Success) {
+				if (count != -1)
+					if (counter-- <= 0)
+						break;
+				if (m.Index + m.Length > ptr)
+					throw new SystemException ("how");
+				pieces.Add (input.Substring (m.Index + m.Length, ptr - m.Index - m.Length));
+				pieces.Add (evaluator (m));
+
+				ptr = m.Index;
+				m = m.NextMatch ();
+			}
+
+			if (ptr == startat)
+				return input;
+
+			StringBuilder result = new StringBuilder ();
+
+			result.Append (input, 0, ptr);
+			for (int i = pieces.Count; i > 0; )
+				result.Append (pieces [--i]);
+
+			pieces.Clear ();
 
 			return result.ToString ();
 		}

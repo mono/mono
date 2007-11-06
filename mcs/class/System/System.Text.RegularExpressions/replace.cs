@@ -53,6 +53,8 @@ namespace System.Text.RegularExpressions {
 
 		public string Evaluate (Match match) 
 		{
+			if (n_pieces == 0)
+				return replacement;
 			StringBuilder sb = new StringBuilder ();
 			EvaluateAppend (match, sb);
 			return sb.ToString ();
@@ -60,17 +62,16 @@ namespace System.Text.RegularExpressions {
 
 		public void EvaluateAppend (Match match, StringBuilder sb)
 		{
-			int i = 0, k, count;
-
 			if (n_pieces == 0) {
 				sb.Append (replacement);
 				return;
 			}
 
+			int i = 0;
 			while (i < n_pieces) {
-				k = pieces [i++];
+				int k = pieces [i++];
 				if (k >= 0) {
-					count = pieces [i++];
+					int count = pieces [i++];
 					sb.Append (replacement, k, count);
 				} else if (k < -3) {
 					Group group = match.Groups [-(k + 4)];
