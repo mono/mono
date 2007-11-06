@@ -50,7 +50,6 @@ using System.Net.Configuration;
 using System.Configuration;
 using System.Net.Security;
 using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 
 #if SECURITY_DEP
 using X509CertificateCollection = PrebuiltSystem::System.Security.Cryptography.X509Certificates.X509CertificateCollection;
