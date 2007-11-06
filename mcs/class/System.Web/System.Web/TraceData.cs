@@ -33,25 +33,84 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-using System.Data;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Web {
 
+	class InfoTraceData
+	{
+		public string Category;
+		public string Message;
+		public string Exception;
+		public double TimeSinceFirst;
+		public bool IsWarning;
+
+		public InfoTraceData (string category, string message, string exception, double timeSinceFirst, bool isWarning)
+		{
+			this.Category = category;
+			this.Message = message;
+			this.Exception = exception;
+			this.TimeSinceFirst = timeSinceFirst;
+			this.IsWarning = isWarning;
+		}
+	}
+
+	class ControlTraceData
+	{
+		public string ControlId;
+		public Type Type;
+		public int RenderSize;
+		public int ViewstateSize;
+		public int Depth;
+
+		public ControlTraceData (string controlId, Type type, int renderSize, int viewstateSize, int depth)
+		{
+			this.ControlId = controlId;
+			this.Type = type;
+			this.RenderSize = renderSize;
+			this.ViewstateSize = viewstateSize;
+			this.Depth = depth;
+		}
+	}
+
+	class NameValueTraceData
+	{
+		public string Name;
+		public string Value;
+
+		public NameValueTraceData (string name, string value)
+		{
+			this.Name = name;
+			this.Value = value;
+		}
+	}
+	
 	internal class TraceData {
 
 		private bool is_first_time;
 		private DateTime first_time;
 		private double prev_time;
-		
-		private DataTable info;
-		private DataTable control_data;
-		private DataTable cookie_data;
-		private DataTable header_data;
-		private DataTable servervar_data;
-		//private DataTable viewstate_data;
 
+#if NET_2_0
+		private Queue <InfoTraceData> info;
+		private Queue <ControlTraceData> control_data;
+		private Queue <NameValueTraceData> cookie_data;
+		private Queue <NameValueTraceData> header_data;
+		private Queue <NameValueTraceData> servervar_data;
+#else
+		private Queue info;
+		private Queue control_data;
+		private Queue cookie_data;
+		private Queue header_data;
+		private Queue servervar_data;
+		//private DataTable viewstate_data;
+#endif
+		
 		private string request_path;
 		private string session_id;
 		private DateTime request_time;
@@ -63,31 +122,19 @@ namespace System.Web {
 
 		public TraceData ()
 		{
-			info = new DataTable ();
-			info.Columns.Add (new DataColumn ("Category", typeof (string)));
-			info.Columns.Add (new DataColumn ("Message", typeof (string)));
-			info.Columns.Add (new DataColumn ("Exception", typeof (string)));
-			info.Columns.Add (new DataColumn ("TimeSinceFirst", typeof (double)));
-			info.Columns.Add (new DataColumn ("IsWarning", typeof (bool)));
-
-			control_data = new DataTable ();
-			control_data.Columns.Add (new DataColumn ("ControlId", typeof (string)));
-			control_data.Columns.Add (new DataColumn ("Type", typeof (System.Type)));
-			control_data.Columns.Add (new DataColumn ("RenderSize", typeof (int)));
-			control_data.Columns.Add (new DataColumn ("ViewstateSize", typeof (int)));
-			control_data.Columns.Add (new DataColumn ("Depth", typeof (int)));
-
-			cookie_data = new DataTable ();
-			cookie_data.Columns.Add (new DataColumn ("Name", typeof (string)));
-			cookie_data.Columns.Add (new DataColumn ("Value", typeof (string)));
-
-			header_data = new DataTable ();
-			header_data.Columns.Add (new DataColumn ("Name", typeof (string)));
-			header_data.Columns.Add (new DataColumn ("Value", typeof (string)));
-
-			servervar_data = new DataTable ();
-			servervar_data.Columns.Add (new DataColumn ("Name", typeof (string)));
-			servervar_data.Columns.Add (new DataColumn ("Value", typeof (string)));
+#if NET_2_0
+			info = new Queue <InfoTraceData> ();
+			control_data = new Queue <ControlTraceData> ();
+			cookie_data = new Queue <NameValueTraceData> ();
+			header_data = new Queue <NameValueTraceData> ();
+			servervar_data = new Queue <NameValueTraceData> ();
+#else
+			info = new Queue ();
+			control_data = new Queue ();
+			cookie_data = new Queue ();
+			header_data = new Queue ();
+			servervar_data = new Queue ();
+#endif
 
 			/* TODO
 			viewstate_data = new DataTable ();
@@ -143,14 +190,12 @@ namespace System.Web {
 			} else
 				time = (DateTime.Now - first_time).TotalSeconds;
 
-			DataRow r = info.NewRow ();
-			r ["Category"] = category;
-			r ["Message"] = HtmlEncode (msg);
-			r ["Exception"] = (error != null ? error.ToString () : null);
-			r ["TimeSinceFirst"] = time;
-			r ["IsWarning"] = Warning;
-
-			info.Rows.Add (r);
+			info.Enqueue (
+				new InfoTraceData (category,
+						   HtmlEncode (msg),
+						   (error != null ? error.ToString () : null),
+						   time,
+						   Warning));
 		}
 
 		static string HtmlEncode (string s)
@@ -175,15 +220,14 @@ namespace System.Web {
 		Hashtable ctrl_vs;
 		void AddControl (Control c, int control_pos)
 		{
-			DataRow r = control_data.NewRow ();
-			r ["ControlId"] = c.UniqueID;
-			r ["Type"] = c.GetType ();
-			r ["Depth"] = control_pos;
-			r ["RenderSize"] = GetRenderSize (c);
-			r ["ViewstateSize"] = GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null);
-
-			control_data.Rows.Add (r);
-
+			control_data.Enqueue (
+				new ControlTraceData (
+					c.UniqueID,
+					c.GetType (),
+					GetRenderSize (c),
+					GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null),
+					control_pos));
+			
 			if (c.HasControls ()) {
 				foreach (Control child in c.Controls)
 					AddControl (child, control_pos + 1);
@@ -212,32 +256,17 @@ namespace System.Web {
 
 		public void AddCookie (string name, string value)
 		{
-			DataRow r = cookie_data.NewRow ();
-
-			r ["Name"] = name;
-			r ["Value"] = value;
-
-			cookie_data.Rows.Add (r);
+			cookie_data.Enqueue (new NameValueTraceData (name, value));
 		}
 
 		public void AddHeader (string name, string value)
 		{
-			DataRow r = header_data.NewRow ();
-
-			r ["Name"] = name;
-			r ["Value"] = value;
-
-			header_data.Rows.Add (r);
+			header_data.Enqueue (new NameValueTraceData (name, value));
 		}
 
 		public void AddServerVar (string name, string value)
 		{
-			DataRow r = servervar_data.NewRow ();
-
-			r ["Name"] = name;
-			r ["Value"] = value;
-
-			servervar_data.Rows.Add (r);
+			servervar_data.Enqueue (new NameValueTraceData (name, value));
 		}
 		
 		public void Render (HtmlTextWriter output)
@@ -283,9 +312,13 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Category", "Message", "From First(s)", "From Lasts(s)"));
 			
 			int pos = 0;
-			foreach (DataRow r in info.Rows)
-				RenderTraceInfoRow (table, r, pos++);
-			
+#if NET_2_0
+			foreach (InfoTraceData i in info)
+				RenderTraceInfoRow (table, i, pos++);
+#else
+			foreach (object o in info)
+				RenderTraceInfoRow (table, o as InfoTraceData, pos++);
+#endif
 			table.RenderControl (output);
 		}
 		
@@ -301,19 +334,30 @@ namespace System.Web {
 								page_vs_size)));
 			
 			int pos = 0;
-			foreach (DataRow r in control_data.Rows) {
-				int depth = (int) r ["Depth"];
-				string prefix = String.Empty;
-				for (int i=0; i<depth; i++)
-					prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
-				RenderAltRow (table, pos++, prefix + r ["ControlId"],
-						r ["Type"].ToString (), r ["RenderSize"].ToString (),
-						r ["ViewstateSize"].ToString ());
-			}
-			
+#if NET_2_0
+			foreach (ControlTraceData r in control_data)
+				RenderControlTraceDataRow (table, r, pos++);
+#else
+			foreach (object o in control_data)
+				RenderControlTraceDataRow (table, o as ControlTraceData, pos++);
+#endif
 			table.RenderControl (output);
 		}
 
+		void RenderControlTraceDataRow (Table table, ControlTraceData r, int pos)
+		{
+			if (r == null)
+				return;
+			
+			int depth = r.Depth;
+			string prefix = String.Empty;
+			for (int i=0; i<depth; i++)
+				prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
+			RenderAltRow (table, pos, prefix + r.ControlId,
+				      r.Type.ToString (), r.RenderSize.ToString (),
+				      r.ViewstateSize.ToString ());
+		}
+		
 		private void RenderCookies (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();
@@ -322,14 +366,24 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value", "Size"));
 			
 			int pos = 0;
-			foreach (DataRow r in cookie_data.Rows) {
-				string name = r ["Name"].ToString ();
-				string value = r ["Value"].ToString ();
-				int length = name.Length + (value == null ? 0 : value.Length);
-				RenderAltRow (table, pos++, name, value, length.ToString ());
-			}
+#if NET_2_0
+			foreach (NameValueTraceData r in cookie_data)
+				RenderCookieDataRow (table, r, pos++);
+#else
+			foreach (object o in cookie_data)
+				RenderCookieDataRow (table, o as NameValueTraceData, pos++);
+#endif		
 			
 			table.RenderControl (output);
+		}
+
+		void RenderCookieDataRow (Table table, NameValueTraceData r, int pos)
+		{
+			if (r == null)
+				return;
+			
+			int length = r.Name.Length + (r.Value == null ? 0 : r.Value.Length);
+			RenderAltRow (table, pos++, r.Name, r.Value, length.ToString ());
 		}
 		
 		private void RenderHeaders (HtmlTextWriter output)
@@ -340,9 +394,19 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value"));
 			
 			int pos = 0;
-			foreach (DataRow r in header_data.Rows)
-				RenderAltRow (table, pos++, r ["Name"].ToString (), r ["Value"].ToString ());
-			
+#if NET_2_0
+			foreach (NameValueTraceData r in header_data)
+				RenderAltRow (table, pos++, r.Name, r.Value);
+#else
+			NameValueTraceData r;
+			foreach (object o in header_data) {
+				r = o as NameValueTraceData;
+				if (r == null)
+					continue;
+				
+				RenderAltRow (table, pos++, r.Name, r.Value);
+			}
+#endif
 			table.RenderControl (output);
 		}
 		
@@ -354,12 +418,22 @@ namespace System.Web {
 			table.Rows.Add (SubHeadRow ("Name", "Value"));
 			
 			int pos = 0;
-			foreach (DataRow r in servervar_data.Rows)
-				RenderAltRow (table, pos++, r ["Name"].ToString (), r ["Value"].ToString ());
-			
+#if NET_2_0
+			foreach (NameValueTraceData r in servervar_data)
+				RenderAltRow (table, pos++, r.Name, r.Value);
+#else
+			NameValueTraceData r;
+			foreach (object o in servervar_data) {
+				r = o as NameValueTraceData;
+				if (r == null)
+					continue;
+				
+				RenderAltRow (table, pos++, r.Name, r.Value);
+			}
+#endif			
 			table.RenderControl (output);
 		}
-		
+
 		internal static TableRow AltRow (string title)
 		{
 			TableRow row = new TableRow ();
@@ -373,16 +447,19 @@ namespace System.Web {
 			return row;
 		}
 		
-		private TableRow RenderTraceInfoRow (Table table, DataRow r, int pos)
+		private void RenderTraceInfoRow (Table table, InfoTraceData i, int pos)
 		{
+			if (i == null)
+				return;
+			
 			string open, close;
 			open = close = String.Empty;
-			if ((bool) r ["IsWarning"]) {
+			if ((bool) i.IsWarning) {
 				open = "<font color=\"Red\">";
 				close = "</font>";
 			}
 			
-			double t = (double) r ["TimeSinceFirst"];
+			double t = (double) i.TimeSinceFirst;
 			string t1, t2;
 			if (t == 0) {
 				t1 = t2 = String.Empty;
@@ -393,8 +470,8 @@ namespace System.Web {
 				prev_time = t;
 			}
 			
-			return RenderAltRow (table, pos, open + (string) r ["Category"] + close,
-					open + (string) r ["Message"] + close, t1, t2);
+			RenderAltRow (table, pos, open + (string) i.Category + close,
+				      open + (string) i.Message + close, t1, t2);
 		}
 	   
 		internal static TableRow SubHeadRow (params string[] cells)

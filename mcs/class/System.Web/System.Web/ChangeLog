@@ -1,3 +1,10 @@
+2007-11-06  Marek Habersack  <mhabersack@novell.com>
+
+	* TraceData.cs: do not use DataTable for trace data storage
+	anymore. Instead, a set of classes is used to hold data and a
+	Queue container (generic version in 2.0) is used to hold the data
+	rows. Fixes bug #325267.
+
 2007-11-05  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: cope with UriBuilder.Query being null.
