@@ -44,6 +44,7 @@ namespace System.Web.Handlers {
 	partial class ScriptResourceHandler
 	{
 		const string HandlerFileName = "ScriptResource.axd";
+		static Assembly currAsm = typeof (ScriptResourceHandler).Assembly;
 #else
 	#if NET_2_0
 	public sealed
@@ -52,23 +53,23 @@ namespace System.Web.Handlers {
 	#endif
 	class AssemblyResourceLoader : IHttpHandler {		
 		const string HandlerFileName = "WebResource.axd";
+		static Assembly currAsm = typeof (AssemblyResourceLoader).Assembly;
 #endif
 		const char QueryParamSeparator = '&';
 
 		static readonly Hashtable _embeddedResources;
 #if SYSTEM_WEB_EXTENSIONS
-	static ScriptResourceHandler()
+		static ScriptResourceHandler () {
+			MachineKeySectionUtils.AutoGenKeys ();
 #else
-		static AssemblyResourceLoader()
+		static AssemblyResourceLoader() {
 #endif
-		{
 			_embeddedResources = new Hashtable ();
 			InitEmbeddedResourcesUrls ();
 		}
 
 		static void InitEmbeddedResourcesUrls ()
 		{
-			Assembly currAsm = typeof (AssemblyResourceLoader).Assembly;
 			WebResourceAttribute [] attrs = (WebResourceAttribute []) currAsm.GetCustomAttributes (typeof (WebResourceAttribute), false);
 			for (int i = 0; i < attrs.Length; i++) {
 				string resourceName = attrs [i].WebResource;
@@ -81,8 +82,8 @@ namespace System.Web.Handlers {
 		{
 			string url = null;
 			Assembly assembly = type.Assembly;
-			
-			if (assembly == typeof (AssemblyResourceLoader).Assembly)
+
+			if (assembly == currAsm)
 				url = (string) _embeddedResources [resourceName];
 
 			return (url != null) ? url : GetResourceUrl (assembly, resourceName, false);
@@ -163,7 +164,7 @@ namespace System.Web.Handlers {
 		
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
-			string aname = assembly == typeof (AssemblyResourceLoader).Assembly ? "s" : assembly.GetName ().FullName;
+			string aname = assembly == currAsm ? "s" : assembly.GetName ().FullName;
 			string apath = assembly.Location;
 			string atime = String.Empty;
 			string extra = String.Empty;
@@ -206,7 +207,7 @@ namespace System.Web.Handlers {
 				throw new HttpException (404, "No resource name given");
 			
 			if (asmName == null || asmName == "s")
-				assembly = typeof (AssemblyResourceLoader).Assembly;
+				assembly = currAsm;
 			else
 				assembly = Assembly.Load (asmName);
 			
