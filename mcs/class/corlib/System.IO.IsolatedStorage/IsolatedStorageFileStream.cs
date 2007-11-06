@@ -72,6 +72,12 @@ namespace System.IO.IsolatedStorage {
 			if (!fi.Directory.Exists)
 				fi.Directory.Create ();
 
+			// remove the root path character(s) if they exist
+			if (Path.IsPathRooted (path)) {
+				string root = Path.GetPathRoot (path);
+				path = path.Remove (0, root.Length);
+			}
+
 			// other directories (provided by 'path') must already exists
 			string file = Path.Combine (isf.Root, path);
 			fi = new FileInfo (file);

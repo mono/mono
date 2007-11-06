@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileStream.cs: Handle rooted paths. Patch by Jay
+	Miller to fix bug #324983.
+
 2006-04-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Loading/saving the identities used to 
