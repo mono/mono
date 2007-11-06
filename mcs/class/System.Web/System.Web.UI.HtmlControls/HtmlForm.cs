@@ -196,6 +196,7 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
+		bool? isUplevel;
 		internal bool DetermineRenderUplevel ()
 		{
 #if TARGET_J2EE
@@ -216,8 +217,12 @@ namespace System.Web.UI.HtmlControls
 				 * use anything in level 2.. */
 				&& Page.Request.Browser.W3CDomVersion.Major >= 1);
 #else
-			return UplevelHelper.IsUplevel (
+			if (isUplevel != null)
+				return (bool) isUplevel;
+			
+			isUplevel = UplevelHelper.IsUplevel (
 				System.Web.Configuration.HttpCapabilitiesBase.GetUserAgentForDetection (HttpContext.Current.Request));
+			return (bool) isUplevel;
 #endif
 		}
 
@@ -312,6 +317,13 @@ namespace System.Web.UI.HtmlControls
 				if (c == null || !(c is IButtonControl))
 					throw new InvalidOperationException(String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.",
 											   ID));
+
+				if (DetermineRenderUplevel ()) {
+					w.WriteAttribute (
+						"onkeypress",
+						String.Format ("javascript:return {1}WebForm_FireDefaultButton(event, '{0}')",
+							       defaultbutton, Page.IsMultiForm ? Page.theForm + "." : null));
+				}
 			}
 #endif
 

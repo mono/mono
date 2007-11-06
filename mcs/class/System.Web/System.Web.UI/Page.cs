@@ -1898,30 +1898,31 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (!Form.DetermineRenderUplevel ())
 			return;
 
+		string defaultButtonId = Form.DefaultButton;
 		/* figure out if we have some control we're going to focus */
 		if (String.IsNullOrEmpty (_focusedControlID)) {
 			_focusedControlID = Form.DefaultFocus;
 			if (String.IsNullOrEmpty (_focusedControlID))
-				_focusedControlID = Form.DefaultButton;
+				_focusedControlID = defaultButtonId;
 		}
 
-			if (!String.IsNullOrEmpty (_focusedControlID)) {
-				ClientScript.RegisterWebFormClientScript ();
-				ClientScript.RegisterStartupScript (
-					"HtmlForm-DefaultButton-StartupScript",
-					String.Format (
-						"<script type=\"text/javascript\">\n{0}WebForm_AutoFocus('{1}');{2}\n</script>\n",
-						ClientScriptManager.SCRIPT_BLOCK_START,
-						_focusedControlID,
-						ClientScriptManager.SCRIPT_BLOCK_END)
-				);
-			}
-
-			if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
-				ClientScript.RegisterWebFormClientScript ();
-				ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-										 "WebForm_ReEnableControls(this);");
-			}
+		if (!String.IsNullOrEmpty (_focusedControlID)) {
+			ClientScript.RegisterWebFormClientScript ();
+			ClientScript.RegisterStartupScript (
+				"HtmlForm-DefaultButton-StartupScript",
+				String.Format (
+					"<script type=\"text/javascript\">\n{0}\nWebForm_AutoFocus('{1}');\n{2}\n</script>\n",
+					ClientScriptManager.SCRIPT_BLOCK_START,
+					_focusedControlID,
+					ClientScriptManager.SCRIPT_BLOCK_END)
+			);
+		}
+		
+		if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
+			ClientScript.RegisterWebFormClientScript ();
+			ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
+								"WebForm_ReEnableControls(this);");
+		}
 	}
 
 	internal void RegisterEnabledControl (Control control)
