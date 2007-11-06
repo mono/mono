@@ -84,14 +84,18 @@ namespace System.Web.Compilation {
 		internal static BuildProvider GetBuildProviderForPath (string virtualPath, bool throwOnMissing)
 		{
 			string extension = VirtualPathUtility.GetExtension (virtualPath);
-			object o = WebConfigurationManager.GetSection ("system.web/compilation/buildProviders", virtualPath);
-			BuildProviderCollection coll = o as BuildProviderCollection;
+			CompilationSection c = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
+			if (c == null)
+				ThrowNoProviderException (extension);
+			
+			BuildProviderCollection coll = c.BuildProviders;
 			if (coll == null || coll.Count == 0)
 				ThrowNoProviderException (extension);
 			
 			BuildProvider provider = coll.GetProviderForExtension (extension);
 			if (provider == null && throwOnMissing)
 				ThrowNoProviderException (extension);
+
 			return provider;
 		}
 		

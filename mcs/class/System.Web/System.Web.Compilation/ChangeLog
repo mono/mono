@@ -1,3 +1,8 @@
+2007-11-06  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: properly retrieve the BuildProviderCollection
+	from configuration files.
+
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: do not call converters specified in
