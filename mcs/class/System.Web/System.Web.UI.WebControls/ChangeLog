@@ -1,3 +1,12 @@
+2007-11-06  Marek Habersack  <mhabersack@novell.com>
+
+	* DataGrid.cs: add RenderTable before the DataGridItems, so that
+	numbering of children is the same what on MS.NET.
+	If there are any data items, require a postback script.
+	Fixes bug #319449
+	
+	* ChildTable.cs: removed DOS EOLs.
+
 2007-10-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Login.cs: 

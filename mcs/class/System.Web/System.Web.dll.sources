@@ -709,6 +709,7 @@ System.Web.UI.WebControls/ChangePassword.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxField.cs
 System.Web.UI.WebControls/CheckBoxList.cs
+System.Web.UI.WebControls/ChildTable.cs
 System.Web.UI.WebControls/CircleHotSpot.cs
 System.Web.UI.WebControls/CollectionDataSource.cs
 System.Web.UI.WebControls/CommandEventArgs.cs

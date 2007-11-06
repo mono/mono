@@ -1,3 +1,9 @@
+2007-11-06  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added
+	System.Web.UI.WebControls/ChildTable.cs to compilation, for MS.NET
+	compatibility.
+
 2007-11-01  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added MachineKeySectionUtils.cs

@@ -398,7 +398,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		class TableID : Table {
+		class TableID : Table
+		{
 			Control parent;
 
 			public TableID (Control parent)
@@ -413,14 +414,14 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute ("id", parent.ClientID);
 			}
 		}
-
+		
 		private Table RenderTable {
 			get {
 				if (render_table == null) {
 #if ONLY_1_1
 					render_table = new TableID (this);
 #else
-					render_table = new Table ();
+					render_table = new ChildTable ();
 #endif
 					render_table.AutoID = false;
 				}
@@ -937,7 +938,8 @@ namespace System.Web.UI.WebControls {
 		{
 			Controls.Clear ();
 			RenderTable.Controls.Clear ();
-
+			Controls.Add (RenderTable);
+			
 			IEnumerable data_source;
 			ArrayList keys = null;
 			if (useDataSource) {
@@ -947,8 +949,11 @@ namespace System.Web.UI.WebControls {
 				else
 #endif
 				data_source = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-				if (data_source == null)
+				if (data_source == null) {
+					Controls.Clear ();
 					return;
+				}
+				
 				keys = DataKeysArray;
 				keys.Clear ();
 			} else {
@@ -965,13 +970,21 @@ namespace System.Web.UI.WebControls {
 			pds.PageSize = PageSize;
 			pds.VirtualCount = VirtualItemCount;
 
-			if ((pds.IsPagingEnabled) && (pds.PageCount < pds.CurrentPageIndex))
+			if ((pds.IsPagingEnabled) && (pds.PageCount < pds.CurrentPageIndex)) {
+				Controls.Clear ();
 				throw new HttpException ("Invalid DataGrid PageIndex");
-				
+			}
+			
 			ArrayList cList = CreateColumnSet (paged_data_source, useDataSource);
-			if (cList.Count == 0)
+			if (cList.Count == 0) {
+				Controls.Clear ();
 				return;
-
+			}
+			
+			Page page = this.Page;
+			if (page != null)
+				page.RequiresPostBackScript ();
+			
 			render_columns = new DataGridColumn [cList.Count];
 			for (int c = 0; c < cList.Count; c++) {
 				DataGridColumn col = (DataGridColumn) cList [c];
@@ -979,8 +992,6 @@ namespace System.Web.UI.WebControls {
 				col.Initialize ();
 				render_columns [c] = col;
 			}
-
-			Controls.Add (RenderTable);
 
 			if (pds.IsPagingEnabled)
 				CreateItem (-1, -1, ListItemType.Pager, false, null, pds);
