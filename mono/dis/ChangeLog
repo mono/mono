@@ -1,3 +1,7 @@
+2007-11-05  Jackson Harper  <jackson@ximian.com>
+
+	* declsec.c (declsec_20_write_type): support for strings.
+
 2007-10-02  Jb Evain  <jbevain@novell.com>
 
 	* declsec.c (declsec_20_write_type): support for bools.
