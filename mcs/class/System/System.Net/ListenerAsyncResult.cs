@@ -82,7 +82,12 @@ namespace System.Net {
 				if (handle != null)
 					handle.Set ();
 
-				if (cb != null)
+				if (context.Listener.AuthenticationSchemes != AuthenticationSchemes.Anonymous && context.Request.Headers ["Authorization"] == null) {
+					context.Listener.EndGetContext (this);
+					context.Response.StatusCode = 401;
+					context.Response.OutputStream.Close ();
+					context.Listener.BeginGetContext (cb, this); 
+				} else if (cb != null)
 					ThreadPool.QueueUserWorkItem (InvokeCallback, this);
 			}
 		}
