@@ -124,7 +124,12 @@ namespace System
 		public virtual string Message {
 			get {
 				if (message == null)
-					message = string.Format (Locale.GetText ("Exception of type {0} was thrown."), GetType ().ToString());
+#if NET_2_0
+					message = string.Format (Locale.GetText ("Exception of type '{0}' was thrown."),
+#else
+					message = string.Format (Locale.GetText ("Exception of type {0} was thrown."),
+#endif
+						GetType ().ToString());
 
 				return message;
 			}
@@ -148,7 +153,7 @@ namespace System
 					}
 				}
 
-                                // source can be null
+				// source can be null
 				return source;
 			}
 
