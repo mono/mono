@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileStreamTest.cs: Test case for rooted paths by Jay
+	Miller (bug #324983).
+
 2005-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileCas.cs: Added MaximumSize unit tests.

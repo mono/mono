@@ -114,6 +114,12 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("handle", FileMode.Create);
 			IntPtr p = isfs.Handle;
 		}
+
+		[Test]
+		public void RootPath ()
+		{
+			new IsolatedStorageFileStream ("/rootpath", FileMode.Create);
+		}
 #if NET_2_0_NOTYET
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
