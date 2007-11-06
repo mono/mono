@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* object.c: Fix mono_string_to_utf8 to handle NULL values inside the
+	UTF16 MonoString. Fix the crash from bug #335488
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* marshal.c: Correct (for non-Win32 OS) length != size in 
