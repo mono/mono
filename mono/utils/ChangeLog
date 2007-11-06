@@ -1,3 +1,8 @@
+2007-11-06  Geoff Norton  <gnorton@novell.com>
+
+	* strtod.c: Use a G_MUTEX call pattern compatible with eglib.  Patch
+	from Jonathan Chambers
+
 2007-10-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-mmap.c (mono_vfree): Fix call to VirtualFree (). Fixes #332165.
