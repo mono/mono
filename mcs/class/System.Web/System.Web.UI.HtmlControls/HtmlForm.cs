@@ -322,7 +322,7 @@ namespace System.Web.UI.HtmlControls
 					w.WriteAttribute (
 						"onkeypress",
 						String.Format ("javascript:return {1}WebForm_FireDefaultButton(event, '{0}')",
-							       defaultbutton, Page.IsMultiForm ? Page.theForm + "." : null));
+							       c.ClientID, Page.IsMultiForm ? Page.theForm + "." : null));
 				}
 			}
 #endif

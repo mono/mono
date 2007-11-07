@@ -1,3 +1,8 @@
+2007-11-07  Juraj Skripsky  <js@hotfeet.ch>
+
+	* HtmlForm.cs (RenderAttributes): Render ClientID of DefaultButton.
+	Fixes bug #339426 for master pages.
+
 2007-11-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: a small DetermineRenderUplevel optimization - the
