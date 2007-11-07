@@ -61,7 +61,7 @@ namespace System.Net.Configuration {
 					set { base ["port"] = value; }
                 }
 
-                [ConfigurationProperty ("userName")]
+                [ConfigurationProperty ("userName", DefaultValue = null)]
                 public string UserName {
 					get { return (string) base ["userName"]; }
 					set { base ["userName"] = value; }
