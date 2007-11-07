@@ -1,4 +1,4 @@
-// cs1612-5.cs: Cannot modify the return value of `bar.this[...]' because it is not a variable
+// CS1612: Cannot modify a value type return value of `bar.this[int]'. Consider storing the value in a temporary variable
 // Line: 19
 
 struct foo {
