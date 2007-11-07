@@ -1759,9 +1759,7 @@ namespace System.Windows.Forms {
 		}
 
 
-		[MonoTODO]
 		internal override void OverrideCursor(IntPtr cursor) {
-			throw new NotImplementedException ();
 		}
 
 		internal override PaintEventArgs PaintEventStart(ref Message msg, IntPtr handle, bool client) {

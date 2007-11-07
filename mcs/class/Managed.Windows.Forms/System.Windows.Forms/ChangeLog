@@ -1,5 +1,10 @@
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
+	* XplatUIOSX.cs: Dont throw an exception on OverrideCursor as we
+	dont support cursors yet anyways.  This allows Reflector to run.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUIOSX.cs: Implement DragSize.
 
 2007-11-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
