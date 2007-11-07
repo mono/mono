@@ -1950,10 +1950,12 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 
 			if (TypeManager.IsEnumType (expr_type)) {
-				if (expr is EnumConstant)
-					return ExplicitConversionCore (ec, ((EnumConstant) expr).Child, target_type, loc);
+				Expression underlying = EmptyCast.Create (expr, TypeManager.EnumToUnderlying (expr_type));
+				expr = ExplicitConversionCore (ec, underlying, target_type, loc);
+				if (expr != null)
+					return expr;
 
-				return ExplicitConversionCore (ec, EmptyCast.Create (expr, TypeManager.EnumToUnderlying (expr_type)), target_type, loc);
+				return ExplicitUserConversion (ec, underlying, target_type, loc);				
 			}
 
 			if (TypeManager.IsEnumType (target_type)){
@@ -1985,11 +1987,7 @@ namespace Mono.CSharp {
 				if (ne != null)
 					return ne;
 			}
-
-			ne = ExplicitUserConversion (ec, expr, target_type, loc);
-			if (ne != null)
-				return ne;
-
+			
 			return null;
 		}
 
@@ -2093,15 +2091,17 @@ namespace Mono.CSharp {
 			} else if (TypeManager.IsNullableType (expr_type)) {
 				Expression source = Nullable.Unwrap.Create (expr, ec);
 				if (source != null) {
-					e = ExplicitConversionCore (ec, source, target_type, loc);
-					if (e != null)
-						return e;
+					return ExplicitConversion (ec, source, target_type, loc);
 				}
 			}
 #endif
 			e = ExplicitConversionCore (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
+			
+			e = ExplicitUserConversion (ec, expr, target_type, loc);
+			if (e != null)
+				return e;			
 
 			expr.Error_ValueCannotBeConverted (ec, loc, target_type, true);
 			return null;
