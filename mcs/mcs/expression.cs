@@ -7022,8 +7022,8 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
-			//if (t.IsValueType)
-			//	Error_CannotModiftyIntermediateExpressionValue ();
+			if (Expr.eclass != ExprClass.Variable && t.IsValueType)
+				Error_CannotModifyIntermediateExpressionValue ();
 
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
@@ -7634,7 +7634,7 @@ namespace Mono.CSharp {
 
 			// if the indexer returns a value type, and we try to set a field in it
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Error_CannotModiftyIntermediateExpressionValue ();
+				Error_CannotModifyIntermediateExpressionValue ();
 			}
 
 			Expression e = ResolveAccessor (ec, AccessorType.Set);
