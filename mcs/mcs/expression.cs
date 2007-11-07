@@ -3834,6 +3834,10 @@ namespace Mono.CSharp {
 
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
+			// HACK: Variables are not captured in probing mode
+			if (ec.IsInProbingMode)
+				return true;
+			
 			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
