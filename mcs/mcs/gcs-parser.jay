@@ -2902,10 +2902,10 @@ namespace_or_type_name
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new MemberName (lt.Value, (TypeArguments) $2, lt.Location);
 	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER {
+	| IDENTIFIER DOUBLE_COLON IDENTIFIER opt_type_argument_list {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
-		$$ = new MemberName (lt1.Value, lt2.Value, lt2.Location);
+		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $4, lt2.Location);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
 		LocatedToken lt = (LocatedToken) $3;

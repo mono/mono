@@ -1,5 +1,11 @@
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #325161
+ 	* cs-parser.jay, gcs-parser.jay, decl.cs: Implemented namespace alias
+ 	qualifier for generic types.
+ 	
+2007-11-07  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #322971
  	* expression.cs, ecore.cs: Added intermediate result value check for
  	indexers. 

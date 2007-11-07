@@ -2650,7 +2650,7 @@ namespace_or_type_name
 	| IDENTIFIER DOUBLE_COLON IDENTIFIER {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
-		$$ = new MemberName (lt1.Value, lt2.Value, lt2.Location);
+		$$ = new MemberName (lt1.Value, lt2.Value, null, lt2.Location);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER {
 		LocatedToken lt = (LocatedToken) $3;

@@ -79,8 +79,8 @@ namespace Mono.CSharp {
 			: this (left, name, false, args, loc)
 		{ }
 
-		public MemberName (string alias, string name, Location loc)
-			: this (new MemberName (alias, loc), name, true, loc)
+		public MemberName (string alias, string name, TypeArguments args, Location loc)
+			: this (new MemberName (alias, loc), name, true, args, loc)
 		{ }
 
 		public MemberName (MemberName left, MemberName right)
@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 			if (is_double_colon) {
 				if (Left.Left != null)
 					throw new InternalErrorException ("The left side of a :: should be an identifier");
-				return new QualifiedAliasMember (Left.Name, Name, Location);
+				return new QualifiedAliasMember (Left.Name, Basename, Location);
 			}
 
 			Expression lexpr = Left.GetTypeExpression ();
