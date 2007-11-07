@@ -1,3 +1,7 @@
+2007-11-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Removed bug-318677 since the corresponding patch was reverted.
+
 2007-11-07  Massimiliano Mantione  <massi@ximian.com>
 
 	* bug-318677.il: Added.
