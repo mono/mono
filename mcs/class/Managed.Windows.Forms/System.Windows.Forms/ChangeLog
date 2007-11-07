@@ -6,6 +6,13 @@
 
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
+	* OSXStructs.cs: Add the kEventClassApplication constants.
+	* XplatUIOSX.cs: Send a WM_LBUTTONDOWN to the Grab window when the 
+	application is deactivated otherwise Menu overlays linger on top of
+	other application windows.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUIOSX.cs: Dont throw an exception on OverrideCursor as we
 	dont support cursors yet anyways.  This allows Reflector to run.
 

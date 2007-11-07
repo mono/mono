@@ -97,6 +97,10 @@ namespace System.Windows.Forms {
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyRepeat),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyUp)
 									};
+		private static EventTypeSpec [] application_events = new EventTypeSpec[] {
+									new EventTypeSpec (OSXConstants.kEventClassApplication, OSXConstants.kEventAppActivated),
+									new EventTypeSpec (OSXConstants.kEventClassApplication, OSXConstants.kEventAppDeactivated)
+									};
 									
 		
 		// Message loop
@@ -183,13 +187,16 @@ namespace System.Windows.Forms {
 			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
 			ProcessSerialNumber psn = new ProcessSerialNumber();
 
-			CheckError (GetCurrentProcess( ref psn ), "GetCurrentProcess ()");
-			CheckError (TransformProcessType (ref psn, 1), "TransformProcessType ()");
-			CheckError (SetFrontProcess (ref psn), "SetFrontProcess ()");
-			CheckError (CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent), "CreateFosterParent ()");
+			InstallEventHandler (GetApplicationEventTarget (), CarbonEventHandler, (uint)application_events.Length, application_events, IntPtr.Zero, IntPtr.Zero);
+			GetCurrentProcess( ref psn );
+			TransformProcessType (ref psn, 1);
+			SetFrontProcess (ref psn);
+
+			CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent);
 			
 			CreateNewWindow (WindowClass.kOverlayWindowClass, WindowAttributes.kWindowNoUpdatesAttribute | WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref ReverseWindow);
 			InstallEventHandler (GetWindowEventTarget (ReverseWindow), CarbonEventHandler, (uint)window_events.Length, window_events, ReverseWindow, IntPtr.Zero);
+
 			
 			// Get some values about bar heights
 			Rect structRect = new Rect ();
@@ -263,6 +270,11 @@ namespace System.Windows.Forms {
 					// control
 					case OSXConstants.kEventClassControl: {
 						retVal = ProcessControlEvent (inEvent, eventKind, handle);
+						break;
+					}
+					// application
+					case OSXConstants.kEventClassApplication: {
+						retVal = ProcessApplicationEvent (inEvent, eventKind, handle);
 						break;
 					}
 					default: {
@@ -373,6 +385,23 @@ namespace System.Windows.Forms {
 			return -9874;
 		}
 				
+		private int ProcessApplicationEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
+			switch (eventKind) {
+				case OSXConstants.kEventAppDeactivated: {
+					if (FocusWindow != IntPtr.Zero) {
+						SendMessage(FocusWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
+					} 
+					/* If we deactivate we need to send a MOUSEDOWN/MOUSEUP to kill overlay windows */
+					if (GrabWindowHwnd != null) {
+						SendMessage(GrabWindowHwnd.Handle, Msg.WM_LBUTTONDOWN, (IntPtr)MsgButtons.MK_LBUTTON, (IntPtr) (mouse_position.X << 16 | mouse_position.Y));
+					}
+					break;
+				}
+			}
+
+			return -9874;
+		}
+
 		private int ProcessMouseEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
 			MSG msg = new MSG ();		
 			
@@ -2312,10 +2341,6 @@ namespace System.Windows.Forms {
 					}
 					break;
 				}
-				case Msg.WM_SETFOCUS: {
-					break;	 
-				}					
-				
 			}
 			
 			return Keyboard.TranslateMessage (ref msg);
@@ -2535,6 +2560,8 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetKeyboardFocus (IntPtr windowHdn, IntPtr cntrlHnd, short partcode);
 
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern IntPtr GetApplicationEventTarget ();
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

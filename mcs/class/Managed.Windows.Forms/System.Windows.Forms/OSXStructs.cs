@@ -80,7 +80,25 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region kEventClassApplication constants
-		// TODO: We dont use these yet; fill if needed
+		internal const uint kEventAppActivated = 1;
+		internal const uint kEventAppDeactivated = 2;
+		internal const uint kEventAppQuit = 3;
+		internal const uint kEventAppLaunchNotification = 4;
+		internal const uint kEventAppLaunched = 5;
+		internal const uint kEventAppTerminated = 6;
+		internal const uint kEventAppFrontSwitched = 7;
+		internal const uint kEventAppFocusMenuBar = 8;
+		internal const uint kEventAppFocusNextDocumentWindow = 9;
+		internal const uint kEventAppFocusNextFloatingWindow = 10;
+		internal const uint kEventAppFocusToolbar = 11;
+		internal const uint kEventAppFocusDrawer = 12;
+		internal const uint kEventAppGetDockTileMenu = 20;
+		internal const uint kEventAppIsEventInInstantMouser = 104;
+		internal const uint kEventAppHidden = 107;
+		internal const uint kEventAppShown = 108;
+		internal const uint kEventAppSystemUIModeChanged = 109;
+		internal const uint kEventAppAvailableWindowBoundsChanged = 110;
+		internal const uint kEventAppActiveWindowChanged = 111;
 		#endregion
 
 		#region kEventClassAppleEvent constants
