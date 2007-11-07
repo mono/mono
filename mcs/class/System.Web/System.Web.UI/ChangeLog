@@ -1,5 +1,10 @@
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Control.cs: removes '#define MONO_TRACE'.
+	It allows to run MONO in release mode without supplementary trace info.	
+
+2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Page.cs: added missing trace information for NET_2_0
 
 2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>

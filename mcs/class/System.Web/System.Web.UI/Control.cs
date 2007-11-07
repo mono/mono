@@ -33,9 +33,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// This will provide extra information when trace is enabled. Might be too verbose.
-#define MONO_TRACE
-
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
