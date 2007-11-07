@@ -1,5 +1,11 @@
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #324754
+ 	* cs-parser.jay, gcs-parser.jay, class.cs: Try to create an interator
+ 	when it was requested.
+
+2007-11-07  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #325101
  	* expression.cs: Do type not value comparison for `is' expression.
 

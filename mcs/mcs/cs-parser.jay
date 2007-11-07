@@ -2104,6 +2104,7 @@ constructor_declaration
 		Constructor c = (Constructor) $3;
 		c.Block = (ToplevelBlock) $4;
 		c.OptAttributes = (Attributes) $1;
+		int yield_method = c.ModFlags & Modifiers.METHOD_YIELDS;
 		c.ModFlags = (int) $2;
 	
 		if (RootContext.Documentation != null)
@@ -2132,6 +2133,7 @@ constructor_declaration
 			//Console.WriteLine ("{0} and {1}", c.Name, current_container.Basename);
 		}
 
+		c.ModFlags |= yield_method;
 		current_container.AddConstructor (c);
 
 		current_local_parameters = null;

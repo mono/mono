@@ -4940,6 +4940,12 @@ namespace Mono.CSharp {
 			
 			Parent.MemberCache.AddMember (ConstructorBuilder, this);
 			TypeManager.AddMethod (ConstructorBuilder, this);
+			
+			// It's here only to report an error
+			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0) {
+				member_type = TypeManager.void_type;
+				Iterator.CreateIterator (this, Parent, null, ModFlags);
+			}
 
 			return true;
 		}
