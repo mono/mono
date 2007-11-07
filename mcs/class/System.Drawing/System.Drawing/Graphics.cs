@@ -49,7 +49,7 @@ namespace System.Drawing
 #endif
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
-		internal IntPtr cgContext;
+		internal CarbonContext context;
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
@@ -277,8 +277,9 @@ namespace System.Drawing
 				status = GDIPlus.GdipDeleteGraphics (nativeObject);
 				nativeObject = IntPtr.Zero;
 				GDIPlus.CheckStatus (status);
-				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && cgContext != IntPtr.Zero)
-					Carbon.CFRelease (cgContext);
+				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero) {
+					Carbon.QDEndCGContext (context.port, ref context.ctx);
+				}
 				disposed = true;				
 			}
 
@@ -1662,8 +1663,8 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && cgContext != IntPtr.Zero)
-				Carbon.CGContextSynchronize (cgContext);
+			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero)
+				Carbon.CGContextSynchronize (context.ctx);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1700,7 +1701,7 @@ namespace System.Drawing
 				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
 				
 				Graphics g = new Graphics (graphics);
-				g.cgContext = context.ctx;
+				g.context = context;
 				
 				return g;
 			}
@@ -1709,7 +1710,7 @@ namespace System.Drawing
 				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
 				
 				Graphics g = new Graphics (graphics);
-				g.cgContext = context.ctx;
+				g.context = context;
 				
 				return g;
 			}

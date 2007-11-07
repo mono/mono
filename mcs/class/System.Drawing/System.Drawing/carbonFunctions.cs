@@ -4,7 +4,7 @@
 // Authors:
 //      Geoff Norton (gnorton@customerdna.com>
 //
-// Copyright (C) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2007 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,91 +42,89 @@ namespace System.Drawing {
 	[SuppressUnmanagedCodeSecurity]
 	internal class Carbon {
 #if EnableClipping
-		internal static Type hwnd_type;
-		internal static FieldInfo hwnd_children_field;
-		internal static FieldInfo hwnd_client_rectangle_field;
-		internal static FieldInfo hwnd_x_field;
-		internal static FieldInfo hwnd_y_field;
-		internal static FieldInfo hwnd_width_field;
-		internal static FieldInfo hwnd_height_field;
-		internal static FieldInfo hwnd_whole_window_field;
-		internal static FieldInfo hwnd_client_window_field;
-		internal static MethodInfo get_hwnd;
+		internal static Type handle_type;
+		internal static FieldInfo handle_children_field;
+		internal static FieldInfo handle_client_rectangle_field;
+		internal static FieldInfo handle_x_field;
+		internal static FieldInfo handle_y_field;
+		internal static FieldInfo handle_width_field;
+		internal static FieldInfo handle_height_field;
+		internal static FieldInfo handle_whole_window_field;
+		internal static FieldInfo handle_client_window_field;
+		internal static MethodInfo get_handle;
 		internal static MethodInfo get_clipping_rectangles;
 
 		static Carbon () {
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
-					hwnd_type = asm.GetType ("System.Windows.Forms.Hwnd");
-					if (hwnd_type != null) {
-						get_hwnd = hwnd_type.GetMethod ("ObjectFromHandle");
-						get_clipping_rectangles = hwnd_type.GetMethod ("GetClippingRectangles");
-						hwnd_children_field = hwnd_type.GetField ("children", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_client_rectangle_field = hwnd_type.GetField ("client_rectangle", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_x_field = hwnd_type.GetField ("x", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_y_field = hwnd_type.GetField ("y", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_width_field = hwnd_type.GetField ("width", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_height_field = hwnd_type.GetField ("height", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_whole_window_field = hwnd_type.GetField ("whole_window", BindingFlags.NonPublic | BindingFlags.Instance);
-						hwnd_client_window_field = hwnd_type.GetField ("client", BindingFlags.NonPublic | BindingFlags.Instance);
+					handle_type = asm.GetType ("System.Windows.Forms.Hwnd");
+					if (handle_type != null) {
+						get_handle = handle_type.GetMethod ("ObjectFromHandle");
+						get_clipping_rectangles = handle_type.GetMethod ("GetClippingRectangles");
+						handle_children_field = handle_type.GetField ("children", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_client_rectangle_field = handle_type.GetField ("client_rectangle", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_x_field = handle_type.GetField ("x", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_y_field = handle_type.GetField ("y", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_width_field = handle_type.GetField ("width", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_height_field = handle_type.GetField ("height", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_whole_window_field = handle_type.GetField ("whole_window", BindingFlags.NonPublic | BindingFlags.Instance);
+						handle_client_window_field = handle_type.GetField ("client", BindingFlags.NonPublic | BindingFlags.Instance);
 					}
 				}
 			}
 		}
 #endif
 
-		internal static CarbonContext GetCGContextForNSView (IntPtr hwnd) {
-			IntPtr cgContext = IntPtr.Zero;
+		internal static CarbonContext GetCGContextForNSView (IntPtr handle) {
+			IntPtr context = IntPtr.Zero;
+			Rect view_bounds = new Rect ();
 
-			cgContext = objc_msgSend (objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext")), sel_registerName ("graphicsPort"));
-			HIRect rect = new HIRect ();
-			objc_msgSend_stret (ref rect, hwnd, sel_registerName ("bounds"));
-			return new CarbonContext (cgContext, (int)rect.size.width, (int)rect.size.height);
+			context = objc_msgSend (objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext")), sel_registerName ("graphicsPort"));
+			objc_msgSend_stret (ref view_bounds, handle, sel_registerName ("bounds"));
+			return new CarbonContext (IntPtr.Zero, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
 		}
 
-		internal static CarbonContext GetCGContextForView (IntPtr hwnd) {
-			IntPtr cgContext = IntPtr.Zero;
-			// Grab the window we're in
-			IntPtr window = Carbon.GetControlOwner (hwnd);
-			// Get the port of the window
-			IntPtr port = Carbon.GetWindowPort (window);
-			// Create a CGContext ref
-			Carbon.CreateCGContextForPort (port, ref cgContext);
+		internal static CarbonContext GetCGContextForView (IntPtr handle) {
+			IntPtr context = IntPtr.Zero;
+			IntPtr port = IntPtr.Zero;
+			IntPtr window = IntPtr.Zero;
 
-			// Get the bounds of the window
-			QRect wBounds = new QRect ();
-			Carbon.GetWindowBounds (window, 32, ref wBounds);
-			
-			// Get the bounds of the view
-			HIRect vBounds = new HIRect ();
-			Carbon.HIViewGetBounds (hwnd, ref vBounds);
-			
-			// Convert the view local bounds to window coordinates
-			Carbon.HIViewConvertRect (ref vBounds, hwnd, IntPtr.Zero);
+			QDRect window_bounds = new QDRect ();
+			Rect view_bounds = new Rect ();
 
-			Carbon.CGContextTranslateCTM (cgContext, vBounds.origin.x, (wBounds.bottom-wBounds.top)-(vBounds.origin.y+vBounds.size.height));
+			window = GetControlOwner (handle);
+			port = GetWindowPort (window);
+			
+			QDBeginCGContext (port, ref context);
+
+			GetWindowBounds (window, 32, ref window_bounds);
+			HIViewGetBounds (handle, ref view_bounds);
+
+			HIViewConvertRect (ref view_bounds, handle, IntPtr.Zero);
+
+			CGContextTranslateCTM (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
 
 #if EnableClipping
-			if (get_hwnd != null) {
-			// Create the original rect path and clip to it
+			if (get_handle != null) {
+				// Create the original rect path and clip to it
 				IntPtr clip_path = CGPathCreateMutable ();
-				HIRect rc_clip = new HIRect (0, 0, vBounds.size.width, vBounds.size.height);
+				Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
 #if DebugClipping
-				Console.WriteLine ("--CLIP: {0}x{1}", vBounds.size.width, vBounds.size.height);
+				Console.WriteLine ("--CLIP: {0}x{1}", view_bounds.size.width, view_bounds.size.height);
 #endif
 				CGPathAddRect (clip_path, IntPtr.Zero, rc_clip);
-				CGContextBeginPath (cgContext);
-				object hwnd_object = get_hwnd.Invoke (null, new object [] {hwnd});
-				if (hwnd_object != null) {
-					IntPtr whole_window = (IntPtr) hwnd_whole_window_field.GetValue (hwnd_object);
+				CGContextBeginPath (context);
+				object handle_object = get_handle.Invoke (null, new object [] {handle});
+				if (handle_object != null) {
+					IntPtr whole_window = (IntPtr) handle_whole_window_field.GetValue (handle_object);
 
-					if (hwnd == whole_window) {
+					if (handle == whole_window) {
 #if EnableNCClipping
 #if DebugClipping
 						Console.WriteLine ("\tNCCLIP:");
 #endif
-						HIRect clip_rect = new HIRect ();
-						Rectangle client_rect = (Rectangle) hwnd_client_rectangle_field.GetValue (hwnd_object);
+						Rect clip_rect = new Rect ();
+						Rectangle client_rect = (Rectangle) handle_client_rectangle_field.GetValue (handle_object);
 						clip_rect.origin.x = (int) client_rect.X;
 						clip_rect.origin.y = (int) client_rect.Y;
 						clip_rect.size.width = (int) client_rect.Width;
@@ -135,50 +133,50 @@ namespace System.Drawing {
 						Console.WriteLine ("\tnc xor: {0}x{1} @ {2}x{3}", clip_rect.size.width, clip_rect.size.height, clip_rect.origin.x, clip_rect.origin.y);
 #endif
 						CGPathAddRect (clip_path, IntPtr.Zero, clip_rect);
-						CGContextAddPath (cgContext, clip_path);
-						CGContextEOClip (cgContext);
+						CGContextAddPath (context, clip_path);
+						CGContextEOClip (context);
 #if DebugClipping
 						Console.WriteLine ("\tEOClip client_window");
 #endif
 #endif
 					} else {
-						ArrayList hwnd_children = (ArrayList) hwnd_children_field.GetValue (hwnd_object);
-						ArrayList hwnd_clips = (ArrayList) get_clipping_rectangles.Invoke (hwnd_object, new object [0]); 
-						int count = hwnd_children.Count;
+						ArrayList handle_children = (ArrayList) handle_children_field.GetValue (handle_object);
+						ArrayList handle_clips = (ArrayList) get_clipping_rectangles.Invoke (handle_object, new object [0]); 
+						int count = handle_children.Count;
 #if EnableSiblingClipping
-						count += hwnd_clips.Count;
+						count += handle_clips.Count;
 #endif
 						if (count > 0) {
 #if DebugClipping
 							Console.WriteLine ("\tCLIP:");
 #endif
-							HIRect [] clip_rects = new HIRect [count];
-							for (int i = 0; i < hwnd_children.Count; i++) {
-								clip_rects [i] = new HIRect ();
-								clip_rects [i].origin.x = (int) hwnd_x_field.GetValue (hwnd_children [i]);
-								clip_rects [i].origin.y = vBounds.size.height - (int) hwnd_y_field.GetValue (hwnd_children [i]) - (int) hwnd_height_field.GetValue (hwnd_children [i]);
-								clip_rects [i].size.width = (int) hwnd_width_field.GetValue (hwnd_children [i]);
-								clip_rects [i].size.height = (int) hwnd_height_field.GetValue (hwnd_children [i]);
+							Rect [] clip_rects = new Rect [count];
+							for (int i = 0; i < handle_children.Count; i++) {
+								clip_rects [i] = new Rect ();
+								clip_rects [i].origin.x = (int) handle_x_field.GetValue (handle_children [i]);
+								clip_rects [i].origin.y = view_bounds.size.height - (int) handle_y_field.GetValue (handle_children [i]) - (int) handle_height_field.GetValue (handle_children [i]);
+								clip_rects [i].size.width = (int) handle_width_field.GetValue (handle_children [i]);
+								clip_rects [i].size.height = (int) handle_height_field.GetValue (handle_children [i]);
 #if DebugClipping
 								Console.WriteLine ("\tc xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
 #endif
 							}
 
 #if EnableSiblingClipping
-							for (int i = 0; i < hwnd_clips.Count; i++) {
-								clip_rects [hwnd_children.Count+i] = new HIRect ();
-								clip_rects [hwnd_children.Count+i].origin.x = ((Rectangle) hwnd_clips [i]).X;
-								clip_rects [hwnd_children.Count+i].origin.y = ((Rectangle) hwnd_clips [i]).Y;
-								clip_rects [hwnd_children.Count+i].size.width = ((Rectangle) hwnd_clips [i]).Width;
-								clip_rects [hwnd_children.Count+i].size.height = ((Rectangle) hwnd_clips [i]).Height;
+							for (int i = 0; i < handle_clips.Count; i++) {
+								clip_rects [handle_children.Count+i] = new Rect ();
+								clip_rects [handle_children.Count+i].origin.x = ((Rectangle) handle_clips [i]).X;
+								clip_rects [handle_children.Count+i].origin.y = ((Rectangle) handle_clips [i]).Y;
+								clip_rects [handle_children.Count+i].size.width = ((Rectangle) handle_clips [i]).Width;
+								clip_rects [handle_children.Count+i].size.height = ((Rectangle) handle_clips [i]).Height;
 #if DebugClipping
 								Console.WriteLine ("\ts xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
 #endif
 							}
 #endif
 							CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, count);
-							CGContextAddPath (cgContext, clip_path);
-							CGContextEOClip (cgContext);
+							CGContextAddPath (context, clip_path);
+							CGContextEOClip (context);
 #if DebugClipping
 							Console.WriteLine ("\tEOClip");
 #endif
@@ -186,8 +184,8 @@ namespace System.Drawing {
 #if DebugClipping
 							Console.WriteLine ("\tClip");
 #endif
-							CGContextAddPath (cgContext, clip_path);
-							CGContextClip (cgContext);
+							CGContextAddPath (context, clip_path);
+							CGContextClip (context);
 						}
 					}
 #if DebugClipping
@@ -199,9 +197,9 @@ namespace System.Drawing {
 
 #if DebugDrawing
 			Console.WriteLine ("--DRAW:");
-			Console.WriteLine ("\t{0:X}: {1}x{2}", hwnd, (int)vBounds.size.width, (int)vBounds.size.height);
+			Console.WriteLine ("\t{0:X}: {1}x{2}", handle, (int)view_bounds.size.width, (int)view_bounds.size.height);
 #endif
-			return new CarbonContext (cgContext, (int)vBounds.size.width, (int)vBounds.size.height);
+			return new CarbonContext (port, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
 		}
 		#region Cocoa Methods
 		[DllImport("libobjc.dylib")]
@@ -211,55 +209,55 @@ namespace System.Drawing {
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector);        
 		[DllImport("libobjc.dylib")]
-		public static extern void objc_msgSend_stret(ref HIRect arect, IntPtr basePtr, IntPtr selector);        
+		public static extern void objc_msgSend_stret(ref Rect arect, IntPtr basePtr, IntPtr selector);        
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr sel_registerName(string selectorName);         
 		#endregion
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
+		internal static extern int HIViewGetBounds (IntPtr vHnd, ref Rect r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
+		internal static extern int HIViewConvertRect (ref Rect r, IntPtr a, IntPtr b);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlOwner (IntPtr aView);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref QRect rect);
+		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref QDRect rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CFRelease (IntPtr cgContext);
+		internal static extern void QDBeginCGContext (IntPtr port, ref IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextClipToRect (IntPtr cgContext, HIRect clip);
+		internal static extern void QDEndCGContext (IntPtr port, ref IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextClipToRects (IntPtr cgContext, HIRect [] clip_rects, int count);
+		internal static extern int CGContextClipToRect (IntPtr context, Rect clip);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr cgc);
+		internal static extern int CGContextClipToRects (IntPtr context, Rect [] clip_rects, int count);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextTranslateCTM (IntPtr cgc, float tx, float ty);
+		internal static extern void CGContextTranslateCTM (IntPtr context, float tx, float ty);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextScaleCTM (IntPtr cgc, float x, float y);
+		internal static extern void CGContextScaleCTM (IntPtr context, float x, float y);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextFlush (IntPtr cgc);
+		internal static extern void CGContextFlush (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextSynchronize (IntPtr cgc);
+		internal static extern void CGContextSynchronize (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr CGPathCreateMutable ();
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGPathAddRects (IntPtr path, IntPtr _void, HIRect [] rects, int count);
+		internal static extern void CGPathAddRects (IntPtr path, IntPtr _void, Rect [] rects, int count);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGPathAddRect (IntPtr path, IntPtr _void, HIRect rect);
+		internal static extern void CGPathAddRect (IntPtr path, IntPtr _void, Rect rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextBeginPath (IntPtr cgc);
+		internal static extern void CGContextBeginPath (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextAddPath (IntPtr cgc, IntPtr path);
+		internal static extern void CGContextAddPath (IntPtr context, IntPtr path);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextClip (IntPtr cgc);
+		internal static extern void CGContextClip (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextEOClip (IntPtr cgc);
+		internal static extern void CGContextEOClip (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextEOFillPath (IntPtr cgc);
+		internal static extern void CGContextEOFillPath (IntPtr context);
 	}
 
 	internal struct CGSize {
@@ -272,8 +270,8 @@ namespace System.Drawing {
 		public float y;
 	}
 
-	internal struct HIRect {
-		public HIRect (float x, float y, float width, float height) {
+	internal struct Rect {
+		public Rect (float x, float y, float width, float height) {
 			this.origin.x = x;
 			this.origin.y = y;
 			this.size.width = width;
@@ -284,7 +282,7 @@ namespace System.Drawing {
 		public CGSize size;
 	}
 
-	internal struct QRect
+	internal struct QDRect
 	{
 		public short top;
 		public short left;
@@ -294,12 +292,14 @@ namespace System.Drawing {
 
 	internal struct CarbonContext
 	{
+		public IntPtr port;
 		public IntPtr ctx;
 		public int width;
 		public int height;
 
-		public CarbonContext (IntPtr ctx, int width, int height)
+		public CarbonContext (IntPtr port, IntPtr ctx, int width, int height)
 		{
+			this.port = port;
 			this.ctx = ctx;
 			this.width = width;
 			this.height = height;

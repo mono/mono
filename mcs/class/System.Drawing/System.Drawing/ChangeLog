@@ -1,5 +1,13 @@
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
+	* carbonFunctions.cs: Code cleanup and refactor to use 
+	QDBeginCGContext/QDEndCGContext
+	* Graphics.cs: Refactor to use QDBeginCGContext/QDEndCGContext
+	rather than the deprecated CreateCGContextForPort.  This has the added
+	benefit of the QD system caching CGContexts for us as well.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunctions.cs: Add CFRelease prototype.
 	* Graphics.cs: When we're disposing the graphics context clean up the
 	CGContext that we've created for it.
