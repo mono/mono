@@ -48,14 +48,16 @@ namespace System.Web {
 		public string Message;
 		public string Exception;
 		public double TimeSinceFirst;
+		public double TimeSinceLast;
 		public bool IsWarning;
 
-		public InfoTraceData (string category, string message, string exception, double timeSinceFirst, bool isWarning)
+		public InfoTraceData (string category, string message, string exception, double timeSinceFirst, double timeSinceLast, bool isWarning)
 		{
 			this.Category = category;
 			this.Message = message;
 			this.Exception = exception;
 			this.TimeSinceFirst = timeSinceFirst;
+			this.TimeSinceLast = timeSinceLast;
 			this.IsWarning = isWarning;
 		}
 	}
@@ -119,6 +121,7 @@ namespace System.Web {
 		private string request_type;
 		private int status_code;
 		private Page page;
+		TraceMode _traceMode = HttpRuntime.TraceManager.TraceMode;
 
 		public TraceData ()
 		{
@@ -143,6 +146,11 @@ namespace System.Web {
 			*/
 
 			is_first_time = true;
+		}
+
+		public TraceMode TraceMode {
+			get { return _traceMode; }
+			set { _traceMode = value; }
 		}
 
 		public string RequestPath {
@@ -183,18 +191,26 @@ namespace System.Web {
 		public void Write (string category, string msg, Exception error, bool Warning)
 		{
 			double time;
+			double time_from_last;
 			if (is_first_time) {
 				time = 0;
+				time_from_last = 0; 
+				prev_time = 0;
 				is_first_time = false;
 				first_time = DateTime.Now;
-			} else
+			}
+			else {
 				time = (DateTime.Now - first_time).TotalSeconds;
+				time_from_last = time - prev_time;
+				prev_time = time;
+			}
 
 			info.Enqueue (
 				new InfoTraceData (category,
 						   HtmlEncode (msg),
 						   (error != null ? error.ToString () : null),
 						   time,
+						   time_from_last,
 						   Warning));
 		}
 
@@ -313,7 +329,15 @@ namespace System.Web {
 			
 			int pos = 0;
 #if NET_2_0
-			foreach (InfoTraceData i in info)
+			IEnumerable<InfoTraceData> enumerable = info;
+
+			if (TraceMode == TraceMode.SortByCategory) {
+				List<InfoTraceData> list = new List<InfoTraceData> (info);
+				list.Sort (delegate (InfoTraceData x, InfoTraceData y) { return String.Compare (x.Category, y.Category); });
+				enumerable = list;
+			}
+
+			foreach (InfoTraceData i in enumerable)
 				RenderTraceInfoRow (table, i, pos++);
 #else
 			foreach (object o in info)
@@ -458,16 +482,13 @@ namespace System.Web {
 				open = "<font color=\"Red\">";
 				close = "</font>";
 			}
-			
-			double t = (double) i.TimeSinceFirst;
+
 			string t1, t2;
-			if (t == 0) {
+			if (i.TimeSinceFirst == 0) {
 				t1 = t2 = String.Empty;
-				prev_time = 0;
 			} else {
-				t1 = t.ToString ("0.000000");
-				t2 = (t - prev_time).ToString ("0.000000");
-				prev_time = t;
+				t1 = i.TimeSinceFirst.ToString ("0.000000");
+				t2 = i.TimeSinceLast.ToString ("0.000000");
 			}
 			
 			RenderAltRow (table, pos, open + (string) i.Category + close,

@@ -40,7 +40,7 @@ namespace System.Web {
 		HttpContext _Context;
 		TraceManager _traceManager;
 		bool _Enabled;
-		TraceMode _Mode;
+		TraceMode _Mode = TraceMode.Default;
 		TraceData data;
 		bool data_saved;
 		bool _haveTrace;
@@ -50,7 +50,6 @@ namespace System.Web {
 		public TraceContext (HttpContext Context)
 		{
 			_Context = Context;
-			_Mode = TraceMode.SortByTime;
 		}
 
 		internal bool HaveTrace {
@@ -87,7 +86,7 @@ namespace System.Web {
 
 		public TraceMode TraceMode {
 			get {
-				return _Mode;
+				return (_Mode == TraceMode.Default) ? TraceManager.TraceMode : _Mode;
 			}
 			set {
 				_Mode = value;
@@ -139,6 +138,9 @@ namespace System.Web {
 		{
 			if (data == null)
 				data = new TraceData ();
+
+			data.TraceMode = _Context.Trace.TraceMode;
+
 			SetRequestDetails ();
 			if (_Context.Handler is Page)
 				data.AddControlTree ((Page) _Context.Handler, view_states, sizes);

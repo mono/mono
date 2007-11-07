@@ -49,7 +49,7 @@ namespace System.Web.UI
 		bool haveTrace;
 		bool trace;
 		bool notBuffer;
-		TraceMode tracemode;
+		TraceMode tracemode = TraceMode.Default;
 		string responseEncoding;
 		string contentType;
 		int codepage = -1;

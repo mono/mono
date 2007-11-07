@@ -1,5 +1,9 @@
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* PageParser.cs: fixed initial value of tracemode.
+
+2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Control.cs: removes '#define MONO_TRACE'.
 	It allows to run MONO in release mode without supplementary trace info.	
 

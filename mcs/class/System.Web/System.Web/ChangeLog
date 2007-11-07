@@ -1,5 +1,10 @@
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* TraceContext.cs:
+	* TraceData.cs: implemented TraceMode feature.	
+
+2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BaseParamsCollection.cs:
 	ensure collection will not be changed during enumeration.
 
