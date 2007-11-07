@@ -2322,8 +2322,6 @@ namespace System.Windows.Forms
 		#region Label
 		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) 
 		{		
-			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
-
 			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
 
 			if (label.Enabled) {
@@ -2331,7 +2329,6 @@ namespace System.Windows.Forms
 			} else {
 				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.BackColor, clip_rectangle, label.string_format);
 			}
-		
 		}
 
 		public override Size LabelDefaultSize {
@@ -2365,8 +2362,6 @@ namespace System.Windows.Forms
 		
 		public override void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
-			dc.FillRectangle (GetControlBackBrush (label.BackColor), clip_rectangle);
-
 			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
 
 			if (label.pieces == null)

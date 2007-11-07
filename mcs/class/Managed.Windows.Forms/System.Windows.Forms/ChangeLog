@@ -1,3 +1,9 @@
+2007-11-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Don't draw the background in DrawLabel or
+	DrawLinkLabel, this is handled by OnPaintBackground.
+	Fixes bug #339565, part II.
+
 2007-11-07  Andreia Gaita <avidigal@novell.com>
 
 	* Control.cs: Revert r88915. Selecting text on a textbox depends on
