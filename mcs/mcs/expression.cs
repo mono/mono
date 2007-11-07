@@ -1194,7 +1194,7 @@ namespace Mono.CSharp {
 					action = Action.LeaveOnStack;
 
 				Constant c = e as Constant;
-				if (c != null && c.GetValue () == null) {
+				if (c != null && c.Type != etype) {
 					action = Action.AlwaysFalse;
 					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 						TypeManager.CSharpName (probe_type));

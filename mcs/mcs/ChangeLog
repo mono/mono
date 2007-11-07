@@ -1,5 +1,10 @@
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #325101
+ 	* expression.cs: Do type not value comparison for `is' expression.
+
+2007-11-07  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #320236
  	* convert.cs: Don't apply user conversion on underlying target type.
 
