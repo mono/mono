@@ -1,3 +1,7 @@
+2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityParser.cs : fix in sync with r89135 anr r89136.
+
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MiniParser.cs: In synch with corlib version. Removed all level 4 
