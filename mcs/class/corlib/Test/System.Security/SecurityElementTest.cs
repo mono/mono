@@ -563,6 +563,8 @@ namespace MonoTests.System.Security {
 			Assert.AreEqual ("Sébastien\"Miguel", elem.Text, "#3");
 			elem.Text = string.Empty;
 			Assert.AreEqual (string.Empty, elem.Text, "#4");
+			elem.Text = "&lt;sample&amp;practice&unresolved;&gt;";
+			Assert.AreEqual ("<sample&practice&unresolved;>", elem.Text, "#5");
 		}
 
 		[Test]
@@ -694,7 +696,6 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test] // bug #333699
-		[Category ("NotWorking")]
 		public void FromString_EntityReferences ()
 		{
 			const string xml = @"
@@ -735,5 +736,23 @@ namespace MonoTests.System.Security {
 			Assert.IsNull (se.Children, "#6");
 		}
 #endif
+
+		[Test] // bug #333699 (ugh, mostly a dup)
+		public void TestToString ()
+		{
+			SecurityElement values = new SecurityElement ("values");
+			SecurityElement infoValue = new SecurityElement ("value");
+			infoValue.AddAttribute ("name", "string");
+			infoValue.Text = SecurityElement.Escape ("<'Suds' & \"Soda\">!");
+			values.AddChild (infoValue);
+			Assert.AreEqual ("<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>" + Environment.NewLine, infoValue.ToString (), "#1");
+			Assert.AreEqual ("<'Suds' & \"Soda\">!", infoValue.Text, "#2");
+			Assert.IsNull (values.Text, "#3");
+			Assert.AreEqual (String.Format ("<values>{0}<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
+
+			SecurityElement sec = SecurityElement.FromString (values.ToString ());
+			Assert.AreEqual (1, sec.Children.Count, "#5");
+			Assert.AreEqual ("<'Suds' & \"Soda\">!", ((SecurityElement) sec.Children [0]).Text, "#6");
+		}
 	}
 }

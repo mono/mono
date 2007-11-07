@@ -58,7 +58,7 @@ namespace System.Security {
 					throw new ArgumentException (Locale.GetText ("Invalid XML attribute value") + ": " + value);
 
 				_name = name;
-				_value = value;
+				_value = SecurityElement.Unescape (value);
 			}
 
 			public string Name {
@@ -194,7 +194,7 @@ namespace System.Security {
 							Locale.GetText ("Invalid XML string")
 							+ ": " + value);
 				}
-				text = value;
+				text = Unescape (value);
 			}
 		}
 
@@ -316,6 +316,22 @@ namespace System.Security {
 			return sb.ToString ();
 		}
 
+		private static string Unescape (string str)
+		{
+			StringBuilder sb;
+
+			if (str == null)
+				return null;
+
+			sb = new StringBuilder (str);
+			sb.Replace ("&lt;", "<");
+			sb.Replace ("&gt;", ">");
+			sb.Replace ("&amp;", "&");
+			sb.Replace ("&quot;", "\"");
+			sb.Replace ("&apos;", "'");
+			return sb.ToString ();
+		}
+
 #if NET_2_0
 		public
 #else
@@ -423,7 +439,7 @@ namespace System.Security {
 #endif
 					s.Append (sa.Name)
 					 .Append ("=\"")
-					 .Append (sa.Value)
+					 .Append (Escape (sa.Value))
 					 .Append ("\"");
 					if (i != attributes.Count - 1)
 						s.Append (Environment.NewLine);
@@ -434,7 +450,7 @@ namespace System.Security {
 			    (children == null || children.Count == 0))
 				s.Append ("/>").Append (Environment.NewLine);
 			else {
-				s.Append (">").Append (text);
+				s.Append (">").Append (Escape (text));
 				if (children != null) {
 					s.Append (Environment.NewLine);
 					foreach (SecurityElement child in children) {

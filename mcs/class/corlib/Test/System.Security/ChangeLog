@@ -1,3 +1,8 @@
+2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityElementTest.cs : enabled test for #333699 and added
+	  couple more.
+
 2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SecurityElementTest.cs: Added tests for using single quotes as

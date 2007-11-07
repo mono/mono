@@ -1,3 +1,10 @@
+2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecurityElement.cs :
+	  set_Text() should unescape the input string. get_Text() should
+	  return unescaped string. It also applies to attribute value.
+	  ToString() should return valid (escaped) XML.
+
 2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SecurityElement.cs: In ctors, do not assign to Tag property to
