@@ -1,3 +1,12 @@
+2007-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SoundPlayer.cs: Addded support for playing WAV files on Windows.
+	Fixed ctor (Stream) to allow null argument. In LoadFromUri, first
+	reset mstream to support resetting Stream to null. Support playing
+	default sound. Allow Stream to be set to null. Reset AudioData and
+	WaveData when new stream is loaded.
+	* Win32SoundPlayer.cs: Wrapper for PlaySound Win32 API.
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AudioData.cs: Reset stream to position 0 before playing (required

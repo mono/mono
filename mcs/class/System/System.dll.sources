@@ -600,6 +600,7 @@ System.Media/AudioDevice.cs
 System.Media/SoundPlayer.cs
 System.Media/SystemSound.cs
 System.Media/SystemSounds.cs
+System.Media/Win32SoundPlayer.cs
 System.Net/AuthenticationManager.cs
 System.Net/AuthenticationSchemes.cs
 System.Net/AuthenticationSchemeSelector.cs

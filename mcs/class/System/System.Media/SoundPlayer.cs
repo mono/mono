@@ -43,11 +43,25 @@ namespace System.Media {
 		Stream audiostream;
 		object tag = String.Empty;
 		MemoryStream mstream;
+		bool load_completed;
+		int load_timeout = 10000;
+
+		#region Only used for Alsa implementation
 		AudioDevice adev;
 		AudioData adata;
-		bool load_completed;
 		bool stopped;
-		int load_timeout = 10000;
+		#endregion
+
+		#region Only used for Win32 implementation
+		Win32SoundPlayer win32_player;
+		#endregion
+
+		static readonly bool use_win32_player;
+
+		static SoundPlayer ()
+		{
+			use_win32_player = (Environment.OSVersion.Platform != PlatformID.Unix);
+		}
 
 		public SoundPlayer ()
 		{
@@ -56,8 +70,6 @@ namespace System.Media {
 
 		public SoundPlayer (Stream stream): this ()
 		{
-			if (stream == null)
-				throw new ArgumentNullException ("stream");
 			audiostream = stream;
 		}
 
@@ -84,29 +96,23 @@ namespace System.Media {
 			mstream.Position = 0;
 		}
 		
-		[MonoLimitation("Doesn't play a default sound if nothing is specified")]
-		bool LoadFromUri(string location)
+		void LoadFromUri (string location)
 		{
+			mstream = null;
 			Stream data = null;
-			if(string.IsNullOrEmpty(location)) {
-				// FIXME: Play a default sound
-				return false;
-			}
+			if (string.IsNullOrEmpty (location))
+				return;
 
 			if(File.Exists(location))
 				data = new FileStream(location, FileMode.Open, FileAccess.Read, FileShare.Read);
-			else
-			{
+			else {
 				System.Net.WebRequest request = System.Net.WebRequest.Create(location);
 				data = request.GetResponse().GetResponseStream();
 			}
 			
-			using(data)
-				LoadFromStream(data);
-			
-			return true;
+			using (data)
+				LoadFromStream (data);
 		}
-
 
 		public void Load ()
 		{
@@ -116,13 +122,25 @@ namespace System.Media {
 			if (audiostream != null) {
 				LoadFromStream (audiostream);
 			} else {
-				LoadFromUri(sound_location);
+				LoadFromUri (sound_location);
 			}
+
+			// force recreate for new stream
+			adata = null;
+			adev = null;
+
 			load_completed = true;
 			AsyncCompletedEventArgs e = new AsyncCompletedEventArgs (null, false, this);
 			OnLoadCompleted (e);
 			if (LoadCompleted != null)
 				LoadCompleted (this, e);
+
+			if (use_win32_player) {
+				if (win32_player == null)
+					win32_player = new Win32SoundPlayer (mstream);
+				else 
+					win32_player.Stream = mstream;
+			}
 		}
 
 		void AsyncFinished (IAsyncResult ar)
@@ -153,55 +171,97 @@ namespace System.Media {
 
 		void Start ()
 		{
-			stopped = false;
-			if (adata != null)
-				adata.IsStopped = false;
+			if (!use_win32_player) {
+				stopped = false;
+				if (adata != null)
+					adata.IsStopped = false;
+			}
 			if (!load_completed)
 				Load ();
 		}
 
 		public void Play ()
 		{
-			ThreadStart async = new ThreadStart (PlaySync);
-			async.BeginInvoke (AsyncFinished, async);
+			if (!use_win32_player) {
+				ThreadStart async = new ThreadStart (PlaySync);
+				async.BeginInvoke (AsyncFinished, async);
+			} else {
+				Start ();
+
+				if (mstream == null) {
+					SystemSounds.Beep.Play ();
+					return;
+				}
+
+				win32_player.Play ();
+			}
 		}
 
 		private void PlayLoop ()
 		{
 			Start ();
-			while (!stopped) {
-				PlaySync ();
+
+			if (mstream == null) {
+				SystemSounds.Beep.Play ();
+				return;
 			}
+
+			while (!stopped)
+				PlaySync ();
 		}
 
 		public void PlayLooping ()
 		{
-			ThreadStart async = new ThreadStart (PlayLoop);
-			async.BeginInvoke (AsyncFinished, async);
+			if (!use_win32_player) {
+				ThreadStart async = new ThreadStart (PlayLoop);
+				async.BeginInvoke (AsyncFinished, async);
+			} else {
+				Start ();
+
+				if (mstream == null) {
+					SystemSounds.Beep.Play ();
+					return;
+				}
+
+				win32_player.PlayLooping ();
+			}
 		}
 
-		[MonoLimitation("Doesn't play a default sound if nothing is specified")]
 		public void PlaySync ()
 		{
 			Start ();
-			try {
-				if (adata == null)
-					adata = new WavData (mstream);
-				if (adev == null)
-					adev = AudioDevice.CreateDevice (null);
-				if (adata != null) {
-					adata.Setup (adev);
-					adata.Play (adev);
+
+			if (mstream == null) {
+				SystemSounds.Beep.Play ();
+				return;
+			}
+
+			if (!use_win32_player) {
+				try {
+					if (adata == null)
+						adata = new WavData (mstream);
+					if (adev == null)
+						adev = AudioDevice.CreateDevice (null);
+					if (adata != null) {
+						adata.Setup (adev);
+						adata.Play (adev);
+					}
+				} catch {
 				}
-			} catch {
+			} else {
+				win32_player.PlaySync ();
 			}
 		}
 
 		public void Stop ()
 		{
-			stopped = true;
-			if (adata != null)
-				adata.IsStopped = true;
+			if (!use_win32_player) {
+				stopped = true;
+				if (adata != null)
+					adata.IsStopped = true;
+			} else {
+				win32_player.Stop ();
+			}
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
@@ -245,13 +305,13 @@ namespace System.Media {
 				return audiostream;
 			}
 			set {
-				if (value == null)
-					throw new ArgumentNullException ("value");
-				audiostream = value;
-				load_completed = false;
-				OnStreamChanged (EventArgs.Empty);
-				if (StreamChanged != null)
-					StreamChanged (this, EventArgs.Empty);
+				if (audiostream != value) {
+					audiostream = value;
+					load_completed = false;
+					OnStreamChanged (EventArgs.Empty);
+					if (StreamChanged != null)
+						StreamChanged (this, EventArgs.Empty);
+				}
 			}
 		}
 
@@ -265,13 +325,9 @@ namespace System.Media {
 		}
 
 		public event AsyncCompletedEventHandler LoadCompleted;
-
 		public event EventHandler SoundLocationChanged;
-
 		public event EventHandler StreamChanged;
-
 	}
 }
 
 #endif
-
