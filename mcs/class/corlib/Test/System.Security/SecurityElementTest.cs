@@ -750,9 +750,11 @@ namespace MonoTests.System.Security {
 			Assert.IsNull (values.Text, "#3");
 			Assert.AreEqual (String.Format ("<values>{0}<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
 
+#if NET_2_0
 			SecurityElement sec = SecurityElement.FromString (values.ToString ());
 			Assert.AreEqual (1, sec.Children.Count, "#5");
 			Assert.AreEqual ("<'Suds' & \"Soda\">!", ((SecurityElement) sec.Children [0]).Text, "#6");
+#endif
 		}
 	}
 }
