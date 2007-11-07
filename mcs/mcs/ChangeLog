@@ -1,5 +1,11 @@
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #324242
+ 	* covert.cs: Added a conversion from any nullable-type with an 
+ 	underlying enum-type to the type System.Enum.
+ 	
+2007-11-07  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #324222
  	* class.cs: Report all non-used event fields.
  	

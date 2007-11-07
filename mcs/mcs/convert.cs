@@ -404,12 +404,10 @@ namespace Mono.CSharp {
 								   out bool use_class_cast)
 		{
 			Type expr_type = expr.Type;
-
 			use_class_cast = false;
-
+			
 			//
-			// notice that it is possible to write "ValueType v = 1", the ValueType here
-			// is an abstract class, and not really a value type, so we apply the same rules.
+			// From any value-type to the type object.
 			//
 			if (target_type == TypeManager.object_type) {
 				//
@@ -419,15 +417,29 @@ namespace Mono.CSharp {
 					return false;
 
 				return TypeManager.IsValueType (expr_type);
-			} else if (target_type == TypeManager.value_type) {
+			}
+			
+			//
+			// From any value-type to the type System.ValueType.
+			//
+			if (target_type == TypeManager.value_type)
 				return TypeManager.IsValueType (expr_type);
-			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+
+			if (target_type == TypeManager.enum_type) {
 				//
-				// Special case: enumeration to System.Enum.
-				// System.Enum is not a value type, it is a class, so we need
-				// a boxing conversion
+				// From any enum-type to the type System.Enum.
 				//
-				if (expr_type.IsEnum || TypeManager.IsGenericParameter (expr_type))
+				if (expr_type.IsEnum)
+					return true;
+				//
+				// From any nullable-type with an underlying enum-type to the type System.Enum
+				//
+				if (TypeManager.IsNullableType (expr_type))
+					return TypeManager.GetTypeArguments (expr_type) [0].IsEnum;
+			}
+			
+			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
+				if (TypeManager.IsGenericParameter (expr_type))
 					return true;
 
 				return false;
