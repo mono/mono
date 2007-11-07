@@ -135,5 +135,17 @@ namespace System.Web
 				return base.Count;
 			}
 		}
+
+		public override NameObjectCollectionBase.KeysCollection Keys {
+			get {
+				LoadInfo ();
+				return base.Keys;
+			}
+		}
+
+		public override System.Collections.IEnumerator GetEnumerator () {
+			LoadInfo ();
+			return base.GetEnumerator ();
+		}
 	}
 }
