@@ -31,7 +31,6 @@
 #undef EnableNCClipping
 #undef DebugClipping
 #undef DebugDrawing
-#undef UseQDContext
 
 using System.Collections;
 using System.Reflection;
@@ -43,7 +42,7 @@ namespace System.Drawing {
 	[SuppressUnmanagedCodeSecurity]
 	internal class Carbon {
 		internal static Hashtable contextReference = new Hashtable ();
-		internal static Hashtable contextMap = new Hashtable ();
+		internal static object lockobj = new object ();
 
 #if EnableClipping
 		internal static Type handle_type;
@@ -209,47 +208,27 @@ namespace System.Drawing {
 		internal static IntPtr GetContext (IntPtr port) {
 			IntPtr context = IntPtr.Zero;
 
-#if UseQDContext
-			if (contextMap [port] != null)
-				context = (IntPtr) contextMap [port];
-
-			if (context == IntPtr.Zero) {
-				QDBeginCGContext (port, ref context);
-				contextMap [port] = context;
+			lock (lockobj) { 
+				if (contextReference [port] != null) {
+					CreateCGContextForPort (port, ref context);
+				} else {
+					QDBeginCGContext (port, ref context);
+					contextReference [port] = context;
+				}
 			}
-
-			if (contextReference [port] != null)
-				contextReference [port] = ((int) contextReference [port]) + 1;
-			else
-				contextReference [port] = 1;
-#else
-			CreateCGContextForPort (port, ref context);
-
-			contextMap [port] = context;
-#endif
 
 			return context;
 		}
 
-		internal static void ReleaseContext (IntPtr port) {
-			IntPtr context = IntPtr.Zero;
-			
-#if UseQDContext
-			if (contextReference [port] != null) {
-				contextReference [port] = ((int) contextReference [port]) - 1;
-
-				if (0 >= (int) contextReference [port]) {
-					context = (IntPtr) contextMap [port];
+		internal static void ReleaseContext (IntPtr port, IntPtr context) {
+			lock (lockobj) { 
+				if (contextReference [port] != null && context == (IntPtr) contextReference [port]) { 
 					QDEndCGContext (port, ref context);
-	
-					contextMap [port] = null;
 					contextReference [port] = null;
+				} else {
+					CFRelease (context);
 				}
 			}
-#else
-			context = (IntPtr) contextMap [port];
-			CFRelease (context);
-#endif
 		}
 
 		#region Cocoa Methods

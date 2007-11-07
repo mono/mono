@@ -1,6 +1,13 @@
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
 	* carbonFunctions.cs: 
+	* Graphics.cs: Use QDBeginCGContext / QDEndCGContext to leverage OS caching
+	of CGContexts when possible.  If we are still using the context returned by
+	QDBeginCGContext, then create a new CGContext for this graphics object.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
+	* carbonFunctions.cs: 
 	* Graphics.cs: QDBeginCGContext does not support nested calls.
 	We need to ref count our context but this will have clipping/CTM collisions
 	Support old-style context creation as well.
