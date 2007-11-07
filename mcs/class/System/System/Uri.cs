@@ -1470,7 +1470,7 @@ namespace System {
 					badhost = true;
 				}
 			}
-			if (badhost && (scheme != "monodoc")) {
+			if (badhost) {
 				string msg = Locale.GetText ("Invalid URI: The hostname could not be parsed.");
 				throw new UriFormatException (msg);
 			}

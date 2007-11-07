@@ -1,3 +1,8 @@
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Revert monodoc hack from r53093 since bug #319550 (old
+	#76725) has been fixed (around 2006-05-21).
+
 2007-11-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UriBuilder.cs: Fixed regression introduced by patch for bug
