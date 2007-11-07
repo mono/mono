@@ -2320,8 +2320,8 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Test] // bug #339641
 		[Category ("NotWorking")]
-		[Test]
 		public void ChildFocused ()
 		{
 			using (Form f = new TimeBombedForm ()) {
@@ -2330,11 +2330,7 @@ namespace MonoTests.System.Windows.Forms
 				tv.GotFocus += new EventHandler (tv_GotFocus);
 				f.Activated += new EventHandler (f_Activated);
 				f.Controls.Add (tv);
-				//Console.WriteLine ("****************** STARTING ************************");
 				f.Show ();
-				//Console.WriteLine ("****************** ENDED ************************");
-				
-				//Console.WriteLine (log.EventsJoined ());
 				Assert.IsTrue (log.EventRaised ("GotFocus"), "#01");
 			}
 		}
@@ -2350,7 +2346,7 @@ namespace MonoTests.System.Windows.Forms
 			//Console.WriteLine (Environment.StackTrace);
 		}
 
-		[Test]  // Bug #80773
+		[Test]  // bug #80773
 		public void DontSetOwnerOnShowDialogException ()
 		{
 			Form f = new Form ();
