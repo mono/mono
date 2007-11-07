@@ -2417,7 +2417,11 @@ namespace System.Windows.Forms {
 
 		internal override  Size CursorSize { get{ throw new NotImplementedException(); } }
 		internal override  bool DragFullWindows { get{ throw new NotImplementedException(); } }
-		internal override  Size DragSize { get{ throw new NotImplementedException(); } }
+		internal override  Size DragSize {
+			get {
+				return new Size(4, 4);
+			}
+		}
 
 		internal override  Size FrameBorderSize {
 			get {

@@ -1,3 +1,7 @@
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUIOSX.cs: Implement DragSize.
+
 2007-11-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When we receive a WM_LBUTTONDOWN message in
