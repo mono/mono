@@ -91,7 +91,7 @@ namespace Mono.Xml {
 			// attributes
 			int n = attrs.Length;
 			for (int i=0; i < n; i++)
-				current.AddAttribute (attrs.GetName (i), attrs.GetValue (i));
+				current.AddAttribute (attrs.GetName (i), SecurityElement.Escape (attrs.GetValue (i)));
 		}
 
 		public void OnEndElement (string name) 
@@ -101,7 +101,7 @@ namespace Mono.Xml {
 
 		public void OnChars (string ch) 
 		{
-			current.Text = ch;
+			current.Text = SecurityElement.Escape (ch);
 		}
 
 		public void OnEndParsing (SmallXmlParser parser) {}
