@@ -229,6 +229,8 @@ namespace System.Drawing {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int CFRelease (IntPtr cgContext);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CGContextClipToRect (IntPtr cgContext, HIRect clip);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CGContextClipToRects (IntPtr cgContext, HIRect [] clip_rects, int count);

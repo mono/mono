@@ -49,6 +49,7 @@ namespace System.Drawing
 #endif
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
+		internal IntPtr cgContext;
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
@@ -276,8 +277,11 @@ namespace System.Drawing
 				status = GDIPlus.GdipDeleteGraphics (nativeObject);
 				nativeObject = IntPtr.Zero;
 				GDIPlus.CheckStatus (status);
+				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && cgContext != IntPtr.Zero)
+					Carbon.CFRelease (cgContext);
 				disposed = true;				
 			}
+
 			GC.SuppressFinalize(this);
 		}
 
@@ -1658,8 +1662,8 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && GDIPlus.Display != IntPtr.Zero)
-				Carbon.CGContextSynchronize (GDIPlus.Display);
+			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && cgContext != IntPtr.Zero)
+				Carbon.CGContextSynchronize (cgContext);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1692,18 +1696,22 @@ namespace System.Drawing
 			IntPtr graphics;
 
 			if (GDIPlus.UseCocoaDrawable) {
-				CarbonContext cgContext = Carbon.GetCGContextForNSView (hwnd);
-				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);
+				CarbonContext context = Carbon.GetCGContextForNSView (hwnd);
+				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
 				
-				GDIPlus.Display = cgContext.ctx;
-				return new Graphics (graphics);
+				Graphics g = new Graphics (graphics);
+				g.cgContext = context.ctx;
+				
+				return g;
 			}
 			if (GDIPlus.UseQuartzDrawable) {
-				CarbonContext cgContext = Carbon.GetCGContextForView (hwnd);
-				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);
+				CarbonContext context = Carbon.GetCGContextForView (hwnd);
+				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
 				
-				GDIPlus.Display = cgContext.ctx;
-				return new Graphics (graphics);
+				Graphics g = new Graphics (graphics);
+				g.cgContext = context.ctx;
+				
+				return g;
 			}
 			if (GDIPlus.UseX11Drawable) {
 				if (GDIPlus.Display == IntPtr.Zero) {
