@@ -7022,12 +7022,20 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
+			if (t.IsValueType)
+				Error_CannotModiftyIntermediateExpressionValue ();
+
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should never be reached");
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return Expr.GetSignatureForError ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7626,9 +7634,7 @@ namespace Mono.CSharp {
 
 			// if the indexer returns a value type, and we try to set a field in it
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					      GetSignatureForError ());
-				return null;
+				Error_CannotModiftyIntermediateExpressionValue ();
 			}
 
 			Expression e = ResolveAccessor (ec, AccessorType.Set);
@@ -7782,8 +7788,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			// FIXME: print the argument list of the indexer
-			return instance_expr.GetSignatureForError () + ".this[...]";
+			return TypeManager.CSharpSignature (get != null ? get : set, false);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

@@ -1,5 +1,11 @@
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	A fix for bug #322971
+ 	* expression.cs, ecore.cs: Added intermediate result value check for
+ 	indexers. 
+ 	
+2007-11-07  Marek Safar  <marek.safar@gmail.com>
+
  	A fix for bug #324754
  	* cs-parser.jay, gcs-parser.jay, class.cs: Try to create an interator
  	when it was requested.

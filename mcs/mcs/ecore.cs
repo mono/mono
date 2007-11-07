@@ -1146,6 +1146,12 @@ namespace Mono.CSharp {
 			Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
 		}
 		
+		protected void Error_CannotModiftyIntermediateExpressionValue ()
+		{
+			Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
+				GetSignatureForError ());
+		}
+
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
@@ -5108,9 +5114,7 @@ namespace Mono.CSharp {
 			}
 
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					      GetSignatureForError ());
-				return null;
+				Error_CannotModiftyIntermediateExpressionValue ();
 			}
 
 			if (setter == null){
