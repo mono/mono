@@ -1,3 +1,8 @@
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
+	* socket-io.c:  Use the configure defines for HAVE_SOCKADDR_IN(6)_SIN_LEN
+	rather than depend on __APPLE__.
+
 2007-11-07  Mark Probst  <mark.probst@gmail.com>
 
 	* icall.c: Safety checks in InitializeArray.  Fixes bug #324535.
