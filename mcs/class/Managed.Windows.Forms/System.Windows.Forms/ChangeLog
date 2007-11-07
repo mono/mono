@@ -1,3 +1,9 @@
+2007-11-07  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: Revert r88915. Selecting text on a textbox depends on
+	getting a Select call on click, so this call needs to be here for now.
+	Unfixes #325809
+
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Dont throw an exception on OverrideCursor as we
