@@ -7022,8 +7022,8 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				return MakePointerAccess (ec, t);
 
-			if (t.IsValueType)
-				Error_CannotModiftyIntermediateExpressionValue ();
+			//if (t.IsValueType)
+			//	Error_CannotModiftyIntermediateExpressionValue ();
 
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
