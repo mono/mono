@@ -720,7 +720,7 @@ namespace MonoTests.System.Security {
 			Assert.IsNull (child.Children, "#B6");
 		}
 
-		[Test] // bug #333725
+		[Test] // bug #	
 		[Category ("NotWorking")]
 		public void FromString_CharacterReferences ()
 		{
@@ -748,7 +748,12 @@ namespace MonoTests.System.Security {
 			Assert.AreEqual ("<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>" + Environment.NewLine, infoValue.ToString (), "#1");
 			Assert.AreEqual ("<'Suds' & \"Soda\">!", infoValue.Text, "#2");
 			Assert.IsNull (values.Text, "#3");
+
+#if NET_2_0
 			Assert.AreEqual (String.Format ("<values>{0}<value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
+#else
+			Assert.AreEqual (String.Format ("<values>{0}   <value name=\"string\">&lt;&apos;Suds&apos; &amp; &quot;Soda&quot;&gt;!</value>{0}</values>{0}", Environment.NewLine), values.ToString (), "#4");
+#endif
 
 #if NET_2_0
 			SecurityElement sec = SecurityElement.FromString (values.ToString ());
