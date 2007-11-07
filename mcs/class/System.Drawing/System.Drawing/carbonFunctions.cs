@@ -31,6 +31,7 @@
 #undef EnableNCClipping
 #undef DebugClipping
 #undef DebugDrawing
+#undef UseQDContext
 
 using System.Collections;
 using System.Reflection;
@@ -41,6 +42,9 @@ namespace System.Drawing {
 
 	[SuppressUnmanagedCodeSecurity]
 	internal class Carbon {
+		internal static Hashtable contextReference = new Hashtable ();
+		internal static Hashtable contextMap = new Hashtable ();
+
 #if EnableClipping
 		internal static Type handle_type;
 		internal static FieldInfo handle_children_field;
@@ -95,7 +99,7 @@ namespace System.Drawing {
 			window = GetControlOwner (handle);
 			port = GetWindowPort (window);
 			
-			QDBeginCGContext (port, ref context);
+			context = GetContext (port);
 
 			GetWindowBounds (window, 32, ref window_bounds);
 			HIViewGetBounds (handle, ref view_bounds);
@@ -201,6 +205,53 @@ namespace System.Drawing {
 #endif
 			return new CarbonContext (port, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
 		}
+
+		internal static IntPtr GetContext (IntPtr port) {
+			IntPtr context = IntPtr.Zero;
+
+#if UseQDContext
+			if (contextMap [port] != null)
+				context = (IntPtr) contextMap [port];
+
+			if (context == IntPtr.Zero) {
+				QDBeginCGContext (port, ref context);
+				contextMap [port] = context;
+			}
+
+			if (contextReference [port] != null)
+				contextReference [port] = ((int) contextReference [port]) + 1;
+			else
+				contextReference [port] = 1;
+#else
+			CreateCGContextForPort (port, ref context);
+
+			contextMap [port] = context;
+#endif
+
+			return context;
+		}
+
+		internal static void ReleaseContext (IntPtr port) {
+			IntPtr context = IntPtr.Zero;
+			
+#if UseQDContext
+			if (contextReference [port] != null) {
+				contextReference [port] = ((int) contextReference [port]) - 1;
+
+				if (0 >= (int) contextReference [port]) {
+					context = (IntPtr) contextMap [port];
+					QDEndCGContext (port, ref context);
+	
+					contextMap [port] = null;
+					contextReference [port] = null;
+				}
+			}
+#else
+			context = (IntPtr) contextMap [port];
+			CFRelease (context);
+#endif
+		}
+
 		#region Cocoa Methods
 		[DllImport("libobjc.dylib")]
 		public static extern IntPtr objc_getClass(string className); 
@@ -226,6 +277,10 @@ namespace System.Drawing {
 		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref QDRect rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr context);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CFRelease (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void QDBeginCGContext (IntPtr port, ref IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

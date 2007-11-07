@@ -1,5 +1,12 @@
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
+	* carbonFunctions.cs: 
+	* Graphics.cs: QDBeginCGContext does not support nested calls.
+	We need to ref count our context but this will have clipping/CTM collisions
+	Support old-style context creation as well.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunctions.cs: Code cleanup and refactor to use 
 	QDBeginCGContext/QDEndCGContext
 	* Graphics.cs: Refactor to use QDBeginCGContext/QDEndCGContext

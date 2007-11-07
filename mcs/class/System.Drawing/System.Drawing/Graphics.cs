@@ -278,7 +278,7 @@ namespace System.Drawing
 				nativeObject = IntPtr.Zero;
 				GDIPlus.CheckStatus (status);
 				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero) {
-					Carbon.QDEndCGContext (context.port, ref context.ctx);
+					Carbon.ReleaseContext (context.port);
 				}
 				disposed = true;				
 			}
