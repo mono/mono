@@ -1,3 +1,10 @@
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
+	* ListenerAsyncResult.cs: Only send the 401 header if our authentication
+	type is Basic or Negotiate (which we default to basic) because that is
+	all we support.  Set the WWW-Authenticate header when we return a 401 
+	result.  Send the correct state object in the async result.
+
 2007-11-06  Geoff Norton  <gnorton@novell.com>
 
 	* ListenerAsyncResult.cs: If the HttpListener has an authentication
