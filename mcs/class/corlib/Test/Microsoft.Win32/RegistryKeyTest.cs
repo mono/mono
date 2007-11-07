@@ -1712,7 +1712,6 @@ namespace MonoTests.Microsoft.Win32
 		}
 
 		[Test] // bug #322839
-		[Category ("NotWorking")]
 		public void SetValue_EntityReferences ()
 		{
 			string subKeyName = Guid.NewGuid ().ToString ();

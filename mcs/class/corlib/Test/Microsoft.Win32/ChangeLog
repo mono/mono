@@ -1,3 +1,7 @@
+2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegistryKeyTest.cs : enabled bug #322839 test.
+
 2007-10-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegistryKeyTest.cs: Added test for bug #322839.
