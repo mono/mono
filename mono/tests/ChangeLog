@@ -1,3 +1,9 @@
+2007-11-07  Massimiliano Mantione  <massi@ximian.com>
+
+	* bug-318677.il: Added.
+
+	* Makefile.am: Added test for bug #318677.
+
 2007-11-07  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-324535.cs, bug-324535-il.il: Added.
