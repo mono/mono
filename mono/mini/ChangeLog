@@ -1,3 +1,9 @@
+2007-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Abort inlining call to InitializeArray if something
+	looks wrong.  Let the icall handle it, which now has proper safety
+	checks.
+
 2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mono_spill_call): add support for soft-float.

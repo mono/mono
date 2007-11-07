@@ -1,3 +1,9 @@
+2007-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-324535.cs, bug-324535-il.il: Added.
+
+	* Makefile.am: Added test for bug #324525.
+
 2007-11-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* soft-float-tests.cs: Tests for soft-float.
