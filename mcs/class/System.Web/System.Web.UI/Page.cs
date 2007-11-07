@@ -1306,7 +1306,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		ctx.LastPage = this;
 
 		_lifeCycle = PageLifeCycle.PreInit;
+		Trace.Write ("aspx.page", "Begin PreInit");
 		OnPreInit (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End PreInit");
 
 		InitializeTheme ();
 		ApplyMasterPage ();
@@ -1318,7 +1320,9 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.InitComplete;
+		Trace.Write ("aspx.page", "Begin InitComplete");
 		OnInitComplete (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End InitComplete");
 #endif
 			
 		renderingForm = false;	
@@ -1343,11 +1347,15 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 
 #if NET_2_0
+		Trace.Write ("aspx.page", "Begin PreLoad");
 		OnPreLoad (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End PreLoad");
 		_lifeCycle = PageLifeCycle.Load;
 #endif
 
+		Trace.Write ("aspx.page", "Begin Load");
 		LoadRecursive ();
+		Trace.Write ("aspx.page", "End Load");
 #if NET_2_0
 #if TARGET_J2EE
 		if (IsGetBack)
@@ -1372,7 +1380,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.LoadComplete;
+		Trace.Write ("aspx.page", "Begin LoadComplete");
 		OnLoadComplete (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End LoadComplete");
 
 		if (IsCrossPagePostBack)
 			return;
@@ -1396,7 +1406,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		ExecuteRegisteredAsyncTasks ();
 
 		_lifeCycle = PageLifeCycle.PreRenderComplete;
+		Trace.Write ("aspx.page", "Begin PreRenderComplete");
 		OnPreRenderComplete (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End PreRenderComplete");
 #endif
 
 		Trace.Write ("aspx.page", "Begin SaveViewState");
@@ -1405,7 +1417,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.SaveStateComplete;
+		Trace.Write ("aspx.page", "Begin SaveStateComplete");
 		OnSaveStateComplete (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End SaveStateComplete");
 #if TARGET_J2EE
 		if (OnSaveStateCompleteForPortlet ())
 			return;

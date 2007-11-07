@@ -1,3 +1,7 @@
+2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs: added missing trace information for NET_2_0
+
 2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs:
