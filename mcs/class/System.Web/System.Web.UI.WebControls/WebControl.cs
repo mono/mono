@@ -567,7 +567,7 @@ namespace System.Web.UI.WebControls {
 				attributes = new AttributeCollection(attribute_state);
 			}
 
-			enabled = ViewState.GetBool("Enabled", true);
+			enabled = ViewState.GetBool ("Enabled", enabled);
 		}
 
 #if NET_2_0

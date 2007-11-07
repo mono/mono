@@ -1,3 +1,7 @@
+2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebControl.cs: enabled state restored properly.
+
 2007-11-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TextBox.cs:

@@ -642,6 +642,19 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		public void EnabledViewState2 () {
+			WebControlTestClass c = new WebControlTestClass ();
+			c.Enabled = false;
+			c.SetTrackingVS ();
+			c.Width = 100; // to cause saveviewstate return not null
+			object o = c.Save ();
+			c = new WebControlTestClass ();
+			c.Enabled = false;
+			c.Load (o);
+			Assert.IsFalse (c.Enabled, "not enabled");
+		}
+
+		[Test]
 		public void AttributeIsCaseInsensitive ()
 		{
 			WebControlTestClass c = new WebControlTestClass ();
