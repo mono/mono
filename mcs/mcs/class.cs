@@ -2842,9 +2842,8 @@ namespace Mono.CSharp {
 
 			if ((events != null) && Report.WarningLevel >= 3) {
 				foreach (Event e in events){
-					if ((e.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
-						continue;
-
+					// Note: The event can be assigned from same class only, so we can report
+					// this warning for all accessibility modes
 					if ((e.caching_flags & Flags.IsUsed) == 0)
 						Report.Warning (67, 3, e.Location, "The event `{0}' is never used", e.GetSignatureForError ());
 				}
@@ -7246,9 +7245,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (IsExplicitImpl)
-				SetMemberIsUsed ();
-
+			SetMemberIsUsed ();
 			return true;
 		}
 
