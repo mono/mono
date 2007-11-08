@@ -2581,6 +2581,39 @@ namespace System.Linq
 
 		#endregion
 
+		#region SequenceEqual
+
+		public static bool SequenceEqual<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
+		{
+			return first.SequenceEqual (second, null);
+		}
+
+		public static bool SequenceEqual<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+		{
+			if (first == null)
+				throw new ArgumentNullException ("first");
+			if (second == null)
+				throw new ArgumentNullException ("second");
+
+			if (comparer == null)
+				comparer = EqualityComparer<TSource>.Default;
+
+			var first_enumerator = first.GetEnumerator ();
+			var second_enumerator = second.GetEnumerator ();
+
+			while (first_enumerator.MoveNext ()) {
+				if (!second_enumerator.MoveNext ())
+					return false;
+
+				if (!comparer.Equals (first_enumerator.Current, second_enumerator.Current))
+					return false;
+			}
+
+			return !second_enumerator.MoveNext ();
+		}
+
+		#endregion
+
 		#region Union
 
 		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
