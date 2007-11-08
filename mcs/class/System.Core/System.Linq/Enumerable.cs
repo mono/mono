@@ -20,7 +20,10 @@
 //        Marek Safar (marek.safar@gmail.com)
 //        Antonello Provenzano  <antonello@deveel.com>
 //        Alejandro Serrano "Serras" (trupill@yahoo.es)
+//        Jb Evain  (jbevain@novell.com)
 //
+
+// precious: http://www.hookedonlinq.com
 
 using System;
 using System.Collections;
@@ -41,7 +44,7 @@ namespace System.Linq
 
 			// custom foreach so that we can efficiently throw an exception 
 			// if zero elements and treat the first element differently
-			using (IEnumerator<TSource> enumerator = source.GetEnumerator ()) {
+			using (var enumerator = source.GetEnumerator ()) {
 				if (!enumerator.MoveNext ())
 					throw new InvalidOperationException ("No elements in source list");
 
@@ -464,13 +467,12 @@ namespace System.Linq
 
 		public static bool Contains<TSource> (this IEnumerable<TSource> source, TSource value)
 		{
-			ICollection<TSource> collection = source as ICollection<TSource>;
+			var collection = source as ICollection<TSource>;
 			if (collection != null)
 				return collection.Contains (value);
 
 			return Contains<TSource> (source, value, null);
 		}
-
 
 		public static bool Contains<TSource> (this IEnumerable<TSource> source, TSource value, IEqualityComparer<TSource> comparer)
 		{
@@ -495,13 +497,14 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ();
 
-			ICollection<TSource> collection = source as ICollection<TSource>;
+			var collection = source as ICollection<TSource>;
 			if (collection != null)
 				return collection.Count;
 
 			int counter = 0;
-			foreach (TSource element in source)
+			foreach (var element in source)
 				counter++;
+
 			return counter;
 		}
 
@@ -511,7 +514,7 @@ namespace System.Linq
 				throw new ArgumentNullException ();
 
 			int counter = 0;
-			foreach (TSource element in source)
+			foreach (var element in source)
 				if (selector (element))
 					counter++;
 
@@ -558,9 +561,9 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			List<TSource> items = new List<TSource> (); // TODO: use a HashSet here
-			foreach (TSource element in source) {
-				if (!Contains (items, element, comparer)) {
+			var items = new List<TSource> (); // TODO: use a HashSet here
+			foreach (var element in source) {
+				if (! items.Contains (element, comparer)) {
 					items.Add (element);
 					yield return element;
 				}
@@ -577,12 +580,12 @@ namespace System.Linq
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			IList<TSource> list = source as IList<TSource>;
+			var list = source as IList<TSource>;
 			if (list != null)
 				return list [index];
 
 			int counter = 0;
-			foreach (TSource element in source) {
+			foreach (var element in source) {
 				if (counter == index)
 					return element;
 				counter++;
@@ -602,7 +605,7 @@ namespace System.Linq
 			if (index < 0)
 				return default (TSource);
 
-			IList<TSource> list = source as IList<TSource>;
+			var list = source as IList<TSource>;
 			if (list != null)
 				return index < list.Count ? list [index] : default (TSource);
 
@@ -640,9 +643,9 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			List<TSource> items = new List<TSource> (Distinct (second));
+			var items = new List<TSource> (Distinct (second));
 			foreach (TSource element in first) {
-				if (!Contains (items, element, comparer))
+				if (! items.Contains (element, comparer))
 					yield return element;
 			}
 		}
@@ -980,6 +983,10 @@ namespace System.Linq
 		{
 			if (source == null)
 				throw new ArgumentNullException ();
+
+			var list = source as IList<TSource>;
+			if (list != null)
+				return list.Count > 0 ? list [list.Count - 1] : default (TSource);
 
 			TSource lastElement = default (TSource);
 			foreach (TSource element in source)
@@ -1879,10 +1886,12 @@ namespace System.Linq
 
 		public static IEnumerable<int> Range (int start, int count)
 		{
-			if (count < 0 || (start + count - 1) > int.MaxValue)
+			int upto = (start + count - 1);
+
+			if (count < 0 || upto > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = start; i < (start + count - 1); i++)
+			for (int i = start; i < upto; i++)
 				yield return i;
 		}
 
@@ -2121,7 +2130,6 @@ namespace System.Linq
 			}
 		}
 
-
 		public static IEnumerable<TSource> SkipWhile<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, int, bool> predicate)
 		{
@@ -2158,7 +2166,6 @@ namespace System.Linq
 
 			return sum;
 		}
-
 
 		public static int Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
@@ -2492,7 +2499,7 @@ namespace System.Linq
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 
-			Dictionary<TKey, TElement> dict = new Dictionary<TKey, TElement> (comparer);
+			var dict = new Dictionary<TKey, TElement> (comparer);
 			foreach (TSource e in source) {
 				dict.Add (keySelector (e), elementSelector (e));
 			}
@@ -2525,7 +2532,7 @@ namespace System.Linq
 			if (source == null || keySelector == null)
 				throw new ArgumentNullException ();
 
-			Dictionary<TKey, List<TSource>> dictionary = new Dictionary<TKey, List<TSource>> (comparer ?? EqualityComparer<TKey>.Default);
+			var dictionary = new Dictionary<TKey, List<TSource>> (comparer ?? EqualityComparer<TKey>.Default);
 			foreach (TSource element in source) {
 				TKey key = keySelector (element);
 				if (key == null)
@@ -2576,21 +2583,29 @@ namespace System.Linq
 
 		#region Union
 
-
 		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
+		{
+			return first.Union (second, null);
+		}
+
+		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
 			if (first == null || second == null)
 				throw new ArgumentNullException ();
 
-			List<TSource> items = new List<TSource> ();
-			foreach (TSource element in first) {
-				if (IndexOf (items, element) == -1) {
+			if (comparer == null)
+				comparer = EqualityComparer<TSource>.Default;
+
+			var items = new List<TSource> (); // TODO: use a HashSet here
+			foreach (var element in first) {
+				if (! items.Contains (element, comparer)) {
 					items.Add (element);
 					yield return element;
 				}
 			}
-			foreach (TSource element in second) {
-				if (IndexOf (items, element) == -1) {
+
+			foreach (var element in second) {
+				if (! items.Contains (element, comparer)) {
 					items.Add (element);
 					yield return element;
 				}
@@ -2635,7 +2650,7 @@ namespace System.Linq
 
 		#region Compare
 
-		private static bool Equals<T> (T first, T second)
+		static bool Equals<T> (T first, T second)
 		{
 			// Mostly, values in Enumerable<T> 
 			// sequences need to be compared using

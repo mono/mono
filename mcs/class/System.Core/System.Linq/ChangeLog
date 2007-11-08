@@ -1,5 +1,9 @@
 2007-11-08  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs: Complete Union.
+
+2007-11-08  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: correctly implement Intersect.
 
 2007-11-08  Jb Evain  <jbevain@novell.com>
