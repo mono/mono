@@ -1,3 +1,9 @@
+2007-11-08  Marek Habersack  <mhabersack@novell.com>
+
+	* Mono.MonoConfig/consts.cs.in: use @MONO_SYSCONFDIR@ instead of
+	@MONO_PREFIX@ when pre-setting the location of the default config
+	file.
+
 2007-11-08  Wade Berrier  <wberrier@novell.com>
 
 	* Makefile: install the config.xml to $sysconfdir instead

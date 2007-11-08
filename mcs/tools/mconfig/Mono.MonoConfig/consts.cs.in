@@ -36,7 +36,7 @@ namespace Mono.MonoConfig
 
 		static Constants ()
 		{
-			GlobalConfigPath = String.Format ("@MONO_PREFIX@{0}etc{0}mono{0}mconfig{0}config.xml",
+			GlobalConfigPath = String.Format ("@MONO_SYSCONFDIR@{0}mono{0}mconfig{0}config.xml",
 							  Path.DirectorySeparatorChar);
 		}
 	}

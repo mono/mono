@@ -8,7 +8,7 @@ PROGRAM = mconfig.exe
 BUILT_SOURCES=Mono.MonoConfig/consts.cs
 
 Mono.MonoConfig/consts.cs: Mono.MonoConfig/consts.cs.in
-	sed -e "s;@MONO_PREFIX@;$(prefix);g" < $< > $@
+	sed -e "s;@MONO_SYSCONFDIR@;$(sysconfdir);g" < $< > $@
 
 install-local: install-local-data
 
