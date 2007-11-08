@@ -18,6 +18,7 @@ CFLAGS = -g -O2
 prefix = /usr/local
 exec_prefix = $(prefix)
 mono_libdir = $(exec_prefix)/lib
+sysconfdir = $(prefix)/etc
 #RUNTIME = mono
 RUNTIME = false
 TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
