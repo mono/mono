@@ -1,3 +1,8 @@
+2007-11-08  Jb Evain  <jbevain@novell.com>
+
+	* WebHeaderCollection_2_1.cs: add a custom WebHeaderCollection
+	for the 2.1 profile.
+
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
 	* ListenerAsyncResult.cs: Only send the 401 header if our authentication
