@@ -41,8 +41,6 @@ namespace System.Windows.Forms
     {
 		private bool allowNavigation;
 		private bool allowWebBrowserDrop;
-		private bool canGoBack;
-		private bool canGoForward;
 		private bool isWebBrowserContextMenuEnabled;
 		private object objectForScripting;
 		private bool scriptErrorsSuppressed;
@@ -68,22 +66,19 @@ namespace System.Windows.Forms
 			set { allowWebBrowserDrop = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool CanGoBack {
-			get { return canGoBack; }
+			get { return this.WebHost.Navigation.CanGoBack; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool CanGoForward {
-			get { return canGoForward; }
+			get { return this.WebHost.Navigation.CanGoForward; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		public HtmlDocument Document {
 			get {
-				if (document == null)
+				if (document == null && documentReady)
 					document = new HtmlDocument (this.WebHost);
 				return document; 
 			}
@@ -101,10 +96,9 @@ namespace System.Windows.Forms
 			set { throw new NotSupportedException (); }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		public string DocumentTitle {
-			get { return String.Empty; }
-			set { throw new NotSupportedException (); }
+			get { return document.Title; }
+			set { document.Title = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -168,10 +162,9 @@ namespace System.Windows.Forms
 			set { statusText = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BindableAttribute(true)] 
 		public Uri Url {
-			get { return null; }
+			get { return new Uri(WebHost.Document.Url); }
 			set { this.Navigate (value); }
 		}
 
@@ -197,60 +190,111 @@ namespace System.Windows.Forms
 
 		public bool GoBack ()
 		{
-			return WebHost.Back ();
+			documentReady = false;
+			document = null;
+			return WebHost.Navigation.Back ();
 		}
 
 		public bool GoForward ()
 		{
-			return WebHost.Forward ();
+			documentReady = false;
+			document = null;
+			return WebHost.Navigation.Forward ();
 		}
 
 		public void GoHome ()
 		{
-			WebHost.Home ();
-		}
-
-		public void GoSearch ()
-		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigation.Home ();
 		}
 
 		public void Navigate (string urlString)
 		{
+			documentReady = false;
+			document = null;
 			WebHost.Navigate (urlString);
 		}
 
 		public void Navigate (Uri url)
 		{
+			documentReady = false;
+			document = null;
 			WebHost.Navigate (url.ToString ());
 		}
 
 		public void Navigate (string urlString, bool newWindow)
 		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (urlString);
 		}
 
 		public void Navigate (string urlString, string targetFrameName)
 		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (urlString);
 		}
 
 		public void Navigate (Uri url, bool newWindow)
 		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (url.ToString ());
 		}
 
 		public void Navigate (Uri url, string targetFrameName)
 		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (url.ToString ());
 		}
 
 		public void Navigate (string urlString, string targetFrameName, byte[] postData, string additionalHeaders)
 		{
-			throw new NotImplementedException ();
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (urlString);
 		}
 
 		public void Navigate (Uri url, string targetFrameName, byte[] postData, string additionalHeaders)
+		{
+			documentReady = false;
+			document = null;
+			WebHost.Navigate (url.ToString ());
+		}
+
+		public override void Refresh ()
+		{
+			documentReady = false;
+			document = null;
+			WebHost.Navigation.Reload (Mono.WebBrowser.ReloadOption.Full);
+		}
+
+		public void Refresh (WebBrowserRefreshOption opt)
+		{
+			documentReady = false;
+			document = null;
+			switch (opt) {
+				case WebBrowserRefreshOption.Normal:
+					WebHost.Navigation.Reload (Mono.WebBrowser.ReloadOption.Proxy);
+					break;
+				case WebBrowserRefreshOption.IfExpired:
+					WebHost.Navigation.Reload (Mono.WebBrowser.ReloadOption.None);
+					break;
+				case WebBrowserRefreshOption.Completely:
+					WebHost.Navigation.Reload (Mono.WebBrowser.ReloadOption.Full);
+					break;
+			}
+		}
+
+		public void Stop ()
+		{
+			WebHost.Navigation.Stop ();
+		}
+
+		public void GoSearch ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -260,27 +304,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-		public override void Refresh ()
-		{
-			WebHost.Reload (Mono.WebBrowser.ReloadOption.Full);
-		}
-
-		public void Refresh (WebBrowserRefreshOption opt)
-		{
-			switch (opt) {
-				case WebBrowserRefreshOption.Normal:
-					WebHost.Reload (Mono.WebBrowser.ReloadOption.Proxy);
-					break;
-				case WebBrowserRefreshOption.IfExpired:
-					WebHost.Reload (Mono.WebBrowser.ReloadOption.None);
-					break;
-				case WebBrowserRefreshOption.Completely:
-					WebHost.Reload (Mono.WebBrowser.ReloadOption.Full);
-					break;
-			}
-		}
-
-		public void ShowPageSetupDialog()
+		public void ShowPageSetupDialog ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -303,11 +327,6 @@ namespace System.Windows.Forms
 		public void ShowSaveAsDialog()
 		{
 			throw new NotImplementedException ();
-		}
-
-		public void Stop()
-		{
-			WebHost.Stop ();
 		}
 
 		#endregion
@@ -513,6 +532,14 @@ namespace System.Windows.Forms
 			OnNewWindow (c);
 			return c.Cancel;
 		}
+
+		internal override void OnWebHostNavigated (object sender, EventArgs e)
+		{
+			documentReady = true;
+			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (WebHost.Document.Url));
+			OnNavigated (n);
+		}
+
 		#endregion
 
 

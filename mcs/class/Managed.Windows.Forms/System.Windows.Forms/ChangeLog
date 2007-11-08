@@ -1,3 +1,15 @@
+2007-11-08  Andreia Gaita <avidigal@novell.com>
+
+	* HtmlElement.cs: Implement InnerText setter.
+	* WebBrowserBase.cs: Implement Navigated event support.
+	Add flag to track when the browser "document" is ready to be retrieved.
+	* WebBrowser.cs: Implement CanGoBack, CanGoForward, Title, Url.
+	Make sure browser document is ready before retrieving it.
+	Clean up cached objects (document) when moving to a new page through
+	any of the navigation methods.
+	Use the new Mono.WebBrowser.INavigation interface to control navigation.
+	Implement OnNavigated event.
+
 2007-11-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Don't draw the background in DrawLabel or

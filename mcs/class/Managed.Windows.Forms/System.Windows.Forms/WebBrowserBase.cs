@@ -38,6 +38,8 @@ namespace System.Windows.Forms
     [ComVisible(true)]
     public abstract class WebBrowserBase : Control
 	{
+		protected bool documentReady;
+
 		#region Public Properties
 		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)] 
@@ -298,6 +300,7 @@ namespace System.Windows.Forms
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
 			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
+			webHost.Navigated += new EventHandler (OnWebHostNavigated);
 		}
 
 		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)
@@ -378,9 +381,11 @@ namespace System.Windows.Forms
 		{
 			this.Focus ();
 		}
+		
 		#endregion
 
 		internal abstract bool OnNewWindowInternal ();
+		internal abstract void OnWebHostNavigated (object sender, EventArgs e);
 		#endregion
 	
 	}

@@ -56,7 +56,7 @@ namespace System.Windows.Forms
 		public string InnerText
 		{
 			get { return this.element.InnerText; }
-			set { throw new NotImplementedException (); }
+			set { this.element.InnerText = value; }
 		}
 		#endregion
 
