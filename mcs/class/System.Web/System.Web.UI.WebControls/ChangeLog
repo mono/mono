@@ -1,3 +1,9 @@
+2007-11-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BoundField.cs:
+	* ImageField.cs:
+	evaluate bound value using ThisExpession ("!") properly	
+
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebControl.cs: enabled state restored properly.

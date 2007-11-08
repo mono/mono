@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls {
 				if (dataItem == null)
 					throw new HttpException ("A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.");
 				if (fieldName == ThisExpression)
-					return dataItem.ToString ();
+					return dataItem;
 				else {
 					if (cachedDescriptor != null) return cachedDescriptor.GetValue (dataItem);
 					PropertyDescriptor prop = GetProperty (controlContainer, fieldName);

@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls {
 				throw new HttpException ("A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.");
 
 			if (DataField == ThisExpression)
-				return dataItem.ToString ();
+				return dataItem;
 			else if (DataField == string.Empty)
 				return null;
 
