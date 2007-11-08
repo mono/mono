@@ -1,3 +1,10 @@
+2007-11-08  Raja R Harinath  <harinath@gmail.com>
+
+	Fix 324390
+	* BaseMachine.cs (LTRReplace): Don't use non-advancement of 'ptr'
+	to deduce absence of matches -- a match can have length 0.
+	(RTLReplace): Likewise.
+
 2007-11-07  Raja R Harinath  <harinath@gmail.com>
 
 	Support RegexOptions.RightToLeft in Replace().

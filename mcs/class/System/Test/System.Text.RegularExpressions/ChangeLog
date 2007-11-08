@@ -1,3 +1,7 @@
+2007-11-08  Raja R Harinath  <harinath@gmail.com>
+
+	* RegexReplace.cs (tests): New test from #324390.
+
 2007-11-07  Raja R Harinath  <harinath@gmail.com>
 
 	* MatchTest.cs (Match_Backref): New.

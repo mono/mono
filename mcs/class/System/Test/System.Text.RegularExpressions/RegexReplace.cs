@@ -85,7 +85,8 @@ namespace MonoTests.System.Text.RegularExpressions {
 			//new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11",	"${S}$11$1", "77F1"	),
 			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11",	"${S}$11$1", "F2345678910L71"	),
 			new testcase ("F2345678910LL1",	@"(F)(2)(3)(4)(5)(6)(7)(8)(9)(10)(L)\11",	"${S}$11$1", "${S}LF1", /*FIXME: this should work in RTL direction too */ direction.LTR),
-			new testcase ("a", "a", @"\\", @"\\"),
+			new testcase ("a", "a", @"\\", @"\\"), // bug #317092
+			new testcase ("a", "^", "x", "xa"), // bug #324390
 		};
 
 		[Test]

@@ -102,14 +102,17 @@ namespace System.Text.RegularExpressions
 
 		internal static string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat)
 		{
+			Match m = regex.Match (input, startat);
+			if (!m.Success)
+				return input;
+
 			StringBuilder result = new StringBuilder ();
 			int ptr = startat;
 			int counter = count;
 
 			result.Append (input, 0, ptr);
 
-			Match m = regex.Match (input, startat);
-			while (m.Success) {
+			do {
 				if (count != -1)
 					if (counter-- <= 0)
 						break;
@@ -120,10 +123,7 @@ namespace System.Text.RegularExpressions
 
 				ptr = m.Index + m.Length;
 				m = m.NextMatch ();
-			}
-
-			if (ptr == startat)
-				return input;
+			} while (m.Success);
 
 			result.Append (input, ptr, input.Length - ptr);
 
@@ -132,14 +132,16 @@ namespace System.Text.RegularExpressions
 
 		internal static string RTLReplace (Regex regex, string input, MatchEvaluator evaluator, int count, int startat)
 		{
+			Match m = regex.Match (input, startat);
+			if (!m.Success)
+				return input;
+
 			int ptr = startat;
 			int counter = count;
-
 			StringCollection pieces = new StringCollection ();
 			pieces.Add (input.Substring (ptr));
 
-			Match m = regex.Match (input, startat);
-			while (m.Success) {
+			do {
 				if (count != -1)
 					if (counter-- <= 0)
 						break;
@@ -150,10 +152,7 @@ namespace System.Text.RegularExpressions
 
 				ptr = m.Index;
 				m = m.NextMatch ();
-			}
-
-			if (ptr == startat)
-				return input;
+			} while (m.Success);
 
 			StringBuilder result = new StringBuilder ();
 
