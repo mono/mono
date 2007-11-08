@@ -1,3 +1,7 @@
+2007-11-08  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: code cleanup.
+
 2007-11-06  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: Fix what we return on Except. Fix #324031.

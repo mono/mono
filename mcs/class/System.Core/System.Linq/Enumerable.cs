@@ -464,10 +464,9 @@ namespace System.Linq
 
 		public static bool Contains<TSource> (this IEnumerable<TSource> source, TSource value)
 		{
-			if (source is ICollection<TSource>) {
-				ICollection<TSource> collection = (ICollection<TSource>) source;
+			ICollection<TSource> collection = source as ICollection<TSource>;
+			if (collection != null)
 				return collection.Contains (value);
-			}
 
 			return Contains<TSource> (source, value, null);
 		}
@@ -480,7 +479,6 @@ namespace System.Linq
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
-
 
 			foreach (TSource e in source) {
 				if (comparer.Equals (e, value))
@@ -497,16 +495,15 @@ namespace System.Linq
 			if (source == null)
 				throw new ArgumentNullException ();
 
-			if (source is ICollection<TSource>)
-				return ((ICollection<TSource>) source).Count;
-			else {
-				int counter = 0;
-				foreach (TSource element in source)
-					counter++;
-				return counter;
-			}
-		}
+			ICollection<TSource> collection = source as ICollection<TSource>;
+			if (collection != null)
+				return collection.Count;
 
+			int counter = 0;
+			foreach (TSource element in source)
+				counter++;
+			return counter;
+		}
 
 		public static int Count<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
 		{
@@ -528,7 +525,6 @@ namespace System.Linq
 		{
 			return DefaultIfEmpty (source, default (TSource));
 		}
-
 
 		public static IEnumerable<TSource> DefaultIfEmpty<TSource> (this IEnumerable<TSource> source, TSource defaultValue)
 		{
@@ -562,7 +558,7 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			List<TSource> items = new List<TSource> ();
+			List<TSource> items = new List<TSource> (); // TODO: use a HashSet here
 			foreach (TSource element in source) {
 				if (!Contains (items, element, comparer)) {
 					items.Add (element);
@@ -581,17 +577,18 @@ namespace System.Linq
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (source is IList<TSource>)
-				return ((IList<TSource>) source) [index];
-			else {
-				int counter = 0;
-				foreach (TSource element in source) {
-					if (counter == index)
-						return element;
-					counter++;
-				}
-				throw new ArgumentOutOfRangeException ();
+			IList<TSource> list = source as IList<TSource>;
+			if (list != null)
+				return list [index];
+
+			int counter = 0;
+			foreach (TSource element in source) {
+				if (counter == index)
+					return element;
+				counter++;
 			}
+
+			throw new ArgumentOutOfRangeException ();
 		}
 
 		#endregion
@@ -605,20 +602,18 @@ namespace System.Linq
 			if (index < 0)
 				return default (TSource);
 
-			if (source is IList<TSource>) {
-				if (((IList<TSource>) source).Count >= index)
-					return default (TSource);
-				else
-					return ((IList<TSource>) source) [index];
-			} else {
-				int counter = 0;
-				foreach (TSource element in source) {
-					if (counter == index)
-						return element;
-					counter++;
-				}
-				return default (TSource);
+			IList<TSource> list = source as IList<TSource>;
+			if (list != null)
+				return index < list.Count ? list [index] : default (TSource);
+
+			int counter = 0;
+			foreach (TSource element in source) {
+				if (counter == index)
+					return element;
+				counter++;
 			}
+
+			return default (TSource);
 		}
 
 		#endregion
