@@ -34,6 +34,12 @@ class XX {
 		if ((1 + " " + "hello") != "1 hello")
 			return 7;
 	
+		const string s1 = null + (string)null;
+		const string s2 = (string)null + null;
+		
+		// csc does not compile this one
+		const string s3 = null + null;	
+	
 		System.Console.WriteLine ("test ok");
 		return 0;
 	}
