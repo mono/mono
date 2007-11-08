@@ -967,7 +967,7 @@ namespace System.Reflection.Emit
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			// FIXME: In the generic case, this leads to a crash
 			// http://bugzilla.ximian.com/show_bug.cgi?id=82625
-			if (!ContainsGenericParameters && (created != null))
+			if (created != null)
 				return created.GetFields (bindingAttr);
 #else
 			if (created != null)

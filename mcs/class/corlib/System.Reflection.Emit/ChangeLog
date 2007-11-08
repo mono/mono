@@ -1,3 +1,8 @@
+2007-11-08  Rodrigo Kumpera <rkumpera@novell.com>
+
+	* TypeBuilder.cs: Workaround for #82625 not needed anymore.
+	GetFields() returns the created type fields.
+
 2007-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ILGenerator.cs: Added missing null checks. Removed extra tabs.
