@@ -28,11 +28,15 @@ using Mono.WebBrowser;
 
 namespace Mono.WebBrowser.DOM
 {
-	public interface IDOMHTMLDocument
+	public interface INavigation
 	{
-		IDOMHTMLElement Body { get; }
-		string Title { get; set;}
-		string Url { get; }
-		IDOMHTMLElement getElementById (string id);
+		bool CanGoBack { get; }
+		bool CanGoForward { get; }
+		bool Back ();
+		bool Forward ();
+		void Home ();
+		void Reload ();
+		void Reload (ReloadOption option);
+		void Stop ();
 	}
 }

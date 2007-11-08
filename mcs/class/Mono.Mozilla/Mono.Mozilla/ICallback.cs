@@ -31,37 +31,36 @@ namespace Mono.Mozilla
 {
 	internal interface ICallback
 	{
-		void OnWidgetLoaded				();
+		void OnWidgetLoaded			();
 
-		void GetControlSize				(ref SizeInfo sz);
-		void OnJSStatus					();
+		void OnJSStatus				();
 		void OnLinkStatus				();
 		void OnDestroyBrowser			();
-		void OnClientSizeTo				(Int32 width, Int32 height);
+		void OnClientSizeTo			(Int32 width, Int32 height);
 		void OnFocusNext				();
 		void OnFocusPrev				();
-		void OnTitleChanged				();
+		void OnTitleChanged			();
 		void OnShowTooltipWindow		(string tiptext, Int32 x, Int32 y);
 		void OnHideTooltipWindow		();
 		void OnStateNetStart			();
-		void OnStateNetStop				();
-		void OnStateSpecial				(UInt32 stateFlags, Int32 status);
-		void OnStateChange				(string URI, Int32 status, UInt32 stateFlags);
-		void OnProgress					(Int32 currentTotalProgress, Int32 maxTotalProgress);
+		void OnStateNetStop			();
+		void OnStateSpecial			(UInt32 stateFlags, Int32 status);
+		void OnStateChange				(Int32 status, UInt32 state);
+		void OnProgress				(Int32 currentTotalProgress, Int32 maxTotalProgress);
 		void OnProgressAll				(string URI, Int32 currentTotalProgress, Int32 maxTotalProgress);
-		void OnLocationChanged			();
-		void OnStatusChange				(string message, Int32 status);
+		void OnLocationChanged		(string URI);
+		void OnStatusChange			(string message, Int32 status);
 		void OnSecurityChange			(UInt32 state);
 		void OnVisibility				(bool val);
 
 		//Don't have to worry about marshelling bool, bool seems very constant and uses 4 bit int underneath
-		bool OnClientDomKeyDown			(KeyInfo keyInfo, ModifierKeys modKey);
+		bool OnClientDomKeyDown		(KeyInfo keyInfo, ModifierKeys modKey);
 		bool OnClientDomKeyUp			(KeyInfo keyInfo, ModifierKeys modKey);
 		bool OnClientDomKeyPress		(KeyInfo keyInfo, ModifierKeys modKey);
 
 		bool OnClientMouseDown			(MouseInfo mouseInfo, ModifierKeys modifiers);
 		bool OnClientMouseUp			(MouseInfo mouseInfo, ModifierKeys modifiers);
-		bool OnClientMouseClick			(MouseInfo mouseInfo, ModifierKeys modifiers);
+		bool OnClientMouseClick		(MouseInfo mouseInfo, ModifierKeys modifiers);
 		bool OnClientMouseDoubleClick	(MouseInfo mouseInfo, ModifierKeys modifiers);
 		bool OnClientMouseOver			(MouseInfo mouseInfo, ModifierKeys modifiers);
 		bool OnClientMouseOut			(MouseInfo mouseInfo, ModifierKeys modifiers);
@@ -81,7 +80,7 @@ namespace Mono.Mozilla
 		void OnAlert					(IntPtr title, IntPtr text);
 		bool OnAlertCheck				(IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState);
 		bool OnConfirm					(IntPtr title, IntPtr text);
-		bool OnConfirmCheck				(IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState);
+		bool OnConfirmCheck			(IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState);
 
 		bool OnConfirmEx				(IntPtr title, IntPtr text, Mono.WebBrowser.DialogButtonFlags flags, 
 										 IntPtr title0, IntPtr title1, IntPtr title2,
@@ -141,6 +140,27 @@ namespace Mono.Mozilla
 	{
 		public UInt32 charCode;
 		public UInt32 keyCode;
+	}
+	
+	[Flags]
+	internal enum StateFlags
+	{
+		Start = 1,
+		Redirecting = 2,
+		Transferring = 4,
+		Negotiating = 8,
+		Stop = 16,
+		IsRequest = 65536,
+		IsDocument = 	131072,
+		IsNetwork = 262144,
+		IsWindow = 524288,
+		Restoring = 16777216,
+		IsInsecure = 4,
+		IsBroken = 1,
+		IsSecure = 2,
+		SecureHigh = 262144,
+		SecureMed = 65536,
+		SecureLow = 131072
 	}
 
 }

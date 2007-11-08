@@ -41,6 +41,7 @@ namespace Mono.Mozilla
 	{
 		private bool loaded;
 		private IDOMHTMLDocument document;
+		private INavigation navigation;
 
 		public WebBrowser ()
 		{
@@ -70,6 +71,17 @@ namespace Mono.Mozilla
 			}
 		}
 
+		public INavigation Navigation
+		{
+			get
+			{
+				if (navigation == null) {
+					nsIWebNavigation webNav = Base.GetWebNavigation (this);
+					navigation = new DOM.Navigation (this, webNav);
+				}
+				return navigation;
+			}
+		}
 
 		#region Layout
 		public void FocusIn (FocusOption focus)
@@ -95,60 +107,14 @@ namespace Mono.Mozilla
 			Base.Resize (this, width, height);
 		}
 
+		public void Navigate (string url)
+		{
+			this.document = null;
+			this.navigation = null;
+			Base.Navigate (this, url);
+		}
+
 		#endregion
-
-		#region Navigation
-		public void Navigate (string uri)
-		{
-			Base.Navigate (this, uri);
-		}
-
-		/// <summary>
-		/// Navigate to the next page in history
-		/// </summary>
-		/// <returns>False if it can't navigate forward</returns>
-		public bool Forward ()
-		{
-			return Base.Forward (this);
-		}
-
-		/// <summary>
-		/// Navigate to the previous page in history
-		/// </summary>
-		/// <returns>False if it can't navigate back</returns>
-		public bool Back ()
-		{
-			return Base.Back (this);
-		}
-
-		public void Home ()
-		{
-			Base.Home (this);
-		}
-
-		/// <summary>
-		/// Stop all activity
-		/// </summary>
-		public void Stop ()
-		{
-			Base.Stop (this);
-		}
-
-		/// <summary>
-		/// Reload the current page in the browser
-		/// </summary>
-		public void Reload ()
-		{
-			Base.Reload (this, ReloadOption.None);
-		}
-
-		public void Reload (ReloadOption option)
-		{
-			Base.Reload (this, option);
-		}
-		#endregion
-
-
 
 		#region Events
 		static object KeyDownEvent = new object ();
@@ -234,6 +200,14 @@ namespace Mono.Mozilla
 			remove { Events.RemoveHandler (AlertEvent, value); }
 		}
 
+
+		static object NavigatedEvent = new object ();
+		public event EventHandler Navigated
+		{
+			add { Events.AddHandler (NavigatedEvent, value); }
+			remove { Events.RemoveHandler (NavigatedEvent, value); }
+		}
+
 		#endregion
 
 
@@ -242,12 +216,6 @@ namespace Mono.Mozilla
 		public void OnWidgetLoaded ()
 		{
 			//			loaded = true;
-		}
-
-
-		public void GetControlSize (ref SizeInfo sz)
-		{
-			// TODO:  Add WebBrowser.GetControlSize implementation
 		}
 
 		public void OnJSStatus ()
@@ -310,9 +278,16 @@ namespace Mono.Mozilla
 			// TODO:  Add WebBrowser.OnStateSpecial implementation
 		}
 
-		public void OnStateChange (string URI, Int32 status, UInt32 stateFlags)
+		public void OnStateChange (Int32 status, UInt32 state)
 		{
-			// TODO:  Add WebBrowser.OnStateChange implementation
+			//if ((state & (uint) StateFlags.Start) != 0 && (state & (uint) StateFlags.IsDocument) != 0)
+			//{
+			//    EventHandler eh = (EventHandler) (Events[NavigatedEvent]);
+			//    if (eh != null) {
+			//        EventArgs e = new EventArgs ();
+			//        eh (this, e);
+			//    }
+			//}
 		}
 
 		public void OnProgress (Int32 currentTotalProgress, Int32 maxTotalProgress)
@@ -325,9 +300,13 @@ namespace Mono.Mozilla
 			// TODO:  Add WebBrowser.OnProgressAll implementation
 		}
 
-		public void OnLocationChanged ()
+		public void OnLocationChanged (string uri)
 		{
-			// TODO:  Add WebBrowser.OnLocationChanged implementation
+			EventHandler eh = (EventHandler) (Events[NavigatedEvent]);
+			if (eh != null) {
+				EventArgs e = new EventArgs ();
+				eh (this, e);
+			}
 		}
 
 		public void OnStatusChange (string message, Int32 status)
@@ -504,7 +483,6 @@ namespace Mono.Mozilla
 
 		public bool OnAlertCheck (IntPtr title, IntPtr text, IntPtr chkMsg, ref bool chkState)
 		{
-			Console.WriteLine ("alert check");
 			AlertEventHandler eh = (AlertEventHandler) (Events[AlertEvent]);
 			if (eh != null) {
 				AlertEventArgs e = new AlertEventArgs ();

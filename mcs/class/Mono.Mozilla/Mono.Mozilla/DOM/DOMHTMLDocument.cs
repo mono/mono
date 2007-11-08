@@ -60,6 +60,15 @@ namespace Mono.Mozilla.DOM
 				this.document.setTitle (storage);
 			}
 		}
+
+		public string Url {
+			get
+			{
+				this.document.getURL (storage);
+				return Base.StringGet (storage);
+			}
+		}
+
 		public IDOMHTMLElement getElementById (string id)
 		{
 			nsIDOMElement nsElement;

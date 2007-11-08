@@ -41,17 +41,10 @@ namespace Mono.WebBrowser
 		void Activate ();
 		void Deactivate ();
 		void Resize (int width, int height);
-		void Navigate (string uri);
-		bool Forward ();
-		bool Back ();
-		void Home ();
-		void Stop ();
-		void Reload ();
-		void Reload (ReloadOption option);
-
+		void Navigate (string url);
 
 		IDOMHTMLDocument Document { get; }
-
+		INavigation Navigation { get; }
 
 		event EventHandler KeyDown;
 		event EventHandler KeyPress;
@@ -66,6 +59,7 @@ namespace Mono.WebBrowser
 		event EventHandler Focus;
 		event CreateNewWindowEventHandler CreateNewWindow;
 		event AlertEventHandler Alert;
+		event EventHandler Navigated;
 	}
 
 	public enum ReloadOption

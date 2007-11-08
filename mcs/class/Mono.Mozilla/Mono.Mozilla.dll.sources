@@ -8,6 +8,7 @@ Mono.Mozilla/DOM/DOMHTMLDocument.cs
 Mono.Mozilla/DOM/DOMHTMLElement.cs
 Mono.Mozilla/DOM/DOMNode.cs
 Mono.Mozilla/DOM/DOMObject.cs
+Mono.Mozilla/DOM/Navigation.cs
 Mono.Mozilla/interfaces/nsIDOMAttr.cs
 Mono.Mozilla/interfaces/nsIDOMCDATASection.cs
 Mono.Mozilla/interfaces/nsIDOMCharacterData.cs
@@ -27,8 +28,16 @@ Mono.Mozilla/interfaces/nsIDOMNode.cs
 Mono.Mozilla/interfaces/nsIDOMNodeList.cs
 Mono.Mozilla/interfaces/nsIDOMProcessingInstruction.cs
 Mono.Mozilla/interfaces/nsIDOMText.cs
+Mono.Mozilla/interfaces/nsIHistoryEntry.cs
+Mono.Mozilla/interfaces/nsIInputStream.cs
+Mono.Mozilla/interfaces/nsISHistory.cs
+Mono.Mozilla/interfaces/nsISHistoryListener.cs
+Mono.Mozilla/interfaces/nsISimpleEnumerator.cs
+Mono.Mozilla/interfaces/nsIURI.cs
+Mono.Mozilla/interfaces/nsIWebNavigation.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
 Mono.WebBrowser/DOM/IDOMHTMLDocument.cs
 Mono.WebBrowser/DOM/IDOMHTMLElement.cs
 Mono.WebBrowser/DOM/IDOMNode.cs
+Mono.WebBrowser/DOM/INavigation.cs

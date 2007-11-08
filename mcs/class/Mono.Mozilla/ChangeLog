@@ -1,3 +1,45 @@
+2007-11-08  Andreia Gaita  <avidigal@novell.com>
+
+	* Mono.Mozilla.dll.sources,
+	  Mono.Mozilla/DOM/Navigation.cs,
+	  Mono.Mozilla/interfaces/nsIHistoryEntry.cs,
+	  Mono.Mozilla/interfaces/nsIInputStream.cs,
+	  Mono.Mozilla/interfaces/nsISHistory.cs,
+	  Mono.Mozilla/interfaces/nsISHistoryListener.cs,
+	  Mono.Mozilla/interfaces/nsISimpleEnumerator.cs,
+	  Mono.Mozilla/interfaces/nsIURI.cs,
+	  Mono.Mozilla/interfaces/nsIWebNavigation.cs,
+	  Mono.WebBrowser/DOM/INavigation.cs:
+
+	Add nsIWebNavigation interface and related 
+	dependencies to access navigation-related properties directly (CanGoBack, etc). 
+	Add INavigation interface and implementation to expose navigation properties. 
+	Navigation is now done through this interface (Reload(), Stop(), etc).
+	
+	Please note: Due to threading issues on linux (namely, mozilla being run 
+	on a different thread), only methods that do not affect drawing can be 
+	invoked through the interfaces, so although Reload is now called from 
+	the INavigation interface, it is still being routed through the Base 
+	class and the glue code (and not through the nsIWebNavigation.Reload 
+	call, as are other non-drawing-affecting methods like GetTitle).
+
+	* Mono.Mozilla/ICallback.cs, Callback.cs: Remove unneeded events, adjust parameters, 
+	add support enumeration for tracking loading state.
+
+	* Mono.Mozilla/DOM/DOMHTMLDocument.cs, Mono.WebBrowser/DOM/IDOMHTMLDocument.cs: 
+	Add URL getter.
+
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: 
+	Add Navigation interface getter.
+	Add Navigated event support through the StateChange and LocationChange
+	events.
+	Clean up cached objects when navigating.
+	Remove Reload, Forward, Stop, Home methods, these are now accessible 
+	through the INavigation interface.
+
+	* Mono.Mozilla/Base.cs: Add call to return the navigation interface. 
+	Add MarshalAs so that returning interfaces directly works on mono.
+
 2007-10-31  Andreia Gaita  <avidigal@novell.com>
 
 	* Base.cs: Send (and create if needed) user dir to store local mozilla data

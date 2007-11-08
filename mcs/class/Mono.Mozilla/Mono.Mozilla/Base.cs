@@ -231,6 +231,15 @@ namespace Mono.Mozilla
 			return gluezilla_getDomDocument (info.gluezilla);
 		}
 
+		public static nsIWebNavigation GetWebNavigation (IWebBrowser control)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
+
+			return gluezilla_getWebNavigation (info.gluezilla);
+		}
+
 		public static IntPtr StringInit ()
 		{
 			return gluezilla_stringInit ();
@@ -293,7 +302,11 @@ namespace Mono.Mozilla
 
 		// dom
 		[DllImport ("gluezilla")]
+		[return:MarshalAs(UnmanagedType.Interface)]
 		private static extern nsIDOMHTMLDocument gluezilla_getDomDocument (IntPtr instance);
+		[DllImport ("gluezilla")]
+		[return:MarshalAs(UnmanagedType.Interface)]
+		private static extern nsIWebNavigation gluezilla_getWebNavigation (IntPtr instance);
 
 		[DllImport ("gluezilla")]
 		private static extern IntPtr gluezilla_stringInit ();

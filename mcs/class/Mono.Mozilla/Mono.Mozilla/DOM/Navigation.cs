@@ -24,15 +24,72 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Text;
 using Mono.WebBrowser;
+using Mono.WebBrowser.DOM;
 
-namespace Mono.WebBrowser.DOM
+namespace Mono.Mozilla.DOM
 {
-	public interface IDOMHTMLDocument
+	internal class Navigation: INavigation
 	{
-		IDOMHTMLElement Body { get; }
-		string Title { get; set;}
-		string Url { get; }
-		IDOMHTMLElement getElementById (string id);
+
+		private nsIWebNavigation webNav;
+		private IWebBrowser control;
+		public Navigation (IWebBrowser control, nsIWebNavigation webNav)
+		{
+			this.webNav = webNav;
+			this.control = control;
+		}
+
+		#region INavigation Members
+
+		public bool CanGoBack {
+			get {
+				bool canGoBack;
+				webNav.CanGoBack (out canGoBack);
+				return canGoBack;
+			}
+		}
+
+		public bool CanGoForward {
+			get {
+				bool canGoForward;
+				webNav.CanGoForward (out canGoForward);
+				return canGoForward;
+			}
+		}
+
+		public bool Back ()
+		{
+			return Base.Back (control);
+		}
+
+		public bool Forward ()
+		{
+			return Base.Forward (control);
+		}
+
+		public void Home ()
+		{
+			Base.Home (control);
+		}
+
+		public void Reload ()
+		{
+			Base.Reload (control, ReloadOption.None);
+		}
+
+		public void Reload (ReloadOption option)
+		{
+			Base.Reload (control, option);
+		}
+
+		public void Stop ()
+		{
+			Base.Stop (control);
+		}
+
+		#endregion
 	}
 }

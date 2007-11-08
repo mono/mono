@@ -24,15 +24,30 @@
 //
 
 using System;
-using Mono.WebBrowser;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace Mono.WebBrowser.DOM
+namespace Mono.Mozilla
 {
-	public interface IDOMHTMLDocument
+
+	[Guid ("a41661d4-1417-11d5-9882-00c04fa02f40")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIHistoryEntry
 	{
-		IDOMHTMLElement Body { get; }
-		string Title { get; set;}
-		string Url { get; }
-		IDOMHTMLElement getElementById (string id);
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int GetURI ([MarshalAs (UnmanagedType.Interface)] out nsIURI aURI);
+
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int GetTitle (StringBuilder aTitle);
+
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int GetIsSubFrame (out bool aIsSubFrame);
 	}
 }

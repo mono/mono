@@ -24,15 +24,23 @@
 //
 
 using System;
-using Mono.WebBrowser;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
-namespace Mono.WebBrowser.DOM
+namespace Mono.Mozilla
 {
-	public interface IDOMHTMLDocument
+
+	[Guid ("d1899240-f9d2-11d2-bdd6-000064657374")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsISimpleEnumerator
 	{
-		IDOMHTMLElement Body { get; }
-		string Title { get; set;}
-		string Url { get; }
-		IDOMHTMLElement getElementById (string id);
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int HasMoreElements (out bool _retval);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int GetNext (out IntPtr _retval); 
 	}
 }
