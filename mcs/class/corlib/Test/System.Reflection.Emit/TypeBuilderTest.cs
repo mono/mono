@@ -1883,8 +1883,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 #if NET_2_0
-		[Test] // bug #82625
-		[Category ("NotWorking")]
+		[Test] // bug #82625 / 325292
 		public void TestGetFieldsComplete_Generic ()
 		{
 			// FIXME: merge this with TestGetFieldsComplete when

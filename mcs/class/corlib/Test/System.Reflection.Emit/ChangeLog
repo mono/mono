@@ -1,3 +1,9 @@
+
+2007-11-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Enabled TestGetFieldsComplete_Generic.
+	This tests bug #82625 / #325292.
+
 2007-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add a test for calling GetCustomAttributes on inflated
