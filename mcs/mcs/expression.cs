@@ -1619,6 +1619,14 @@ namespace Mono.CSharp {
 		{
 			if (!IsApplicable_String (ec, left, right, oper))
 				return false;
+			
+			Type l = left.Type;
+			Type r = right.Type;
+			if (OverloadResolve_PredefinedIntegral (ec) ||
+				OverloadResolve_PredefinedFloating (ec)) {
+				Error_OperatorAmbiguous (loc, oper, l, r);
+			}
+			
 			Type t = TypeManager.string_type;
 			if (Convert.ImplicitConversionExists (ec, left, t))
 				left = ForceConversion (ec, left, t);
@@ -1891,39 +1899,37 @@ namespace Mono.CSharp {
 			//
 			// Step 0: String concatenation (because overloading will get this wrong)
 			//
-			if (oper == Operator.Addition){
+			if (oper == Operator.Addition && !TypeManager.IsDelegateType (l)) {
+				// 
+				// Either left or right expression is implicitly convertible to string
 				//
-				// If any of the arguments is a string, cast to string
-				//
-				
-				// Simple constant folding
-				if (left is StringConstant && right is StringConstant)
-					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value, left.Location);
-				
-				if (l == TypeManager.string_type || r == TypeManager.string_type) {
-
+				if (OverloadResolve_PredefinedString (ec, oper)) {
 					if (r == TypeManager.void_type || l == TypeManager.void_type) {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
 
-					// try to fold it in on the left
-					if (left is StringConcat) {
-
-						//
-						// We have to test here for not-null, since we can be doubly-resolved
-						// take care of not appending twice
-						//
-						if (type == null){
-							type = TypeManager.string_type;
-							((StringConcat) left).Append (ec, right);
-							return left.Resolve (ec);
-						} else {
-							return left;
-						}
+					//
+					// Constants folding for strings and nulls
+					//
+					if (left.Type == TypeManager.string_type && right.Type == TypeManager.string_type &&
+						left is Constant && right is Constant) {
+						string lvalue = (string)((Constant) left).GetValue ();
+						string rvalue = (string)((Constant) right).GetValue ();
+						return new StringConstant (lvalue + rvalue, left.Location);
 					}
 
-					// Otherwise, start a new concat expression
+					// 
+					// Append to existing string concatenation
+					//
+					if (left is StringConcat) {
+						((StringConcat) left).Append (ec, right);
+						return left;
+					}
+
+					//
+					// Otherwise, start a new concat expression using converted expression
+					//
 					return new StringConcat (ec, loc, left, right).Resolve (ec);
 				}
 

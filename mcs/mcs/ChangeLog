@@ -1,3 +1,8 @@
+2007-11-08  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for bug #335594
+ 	* expression.cs: Use conversion rules when handling string addition.
+ 	
 2007-11-07  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #336651
