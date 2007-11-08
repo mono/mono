@@ -1,3 +1,7 @@
+2007-11-08  Wade Berrier  <wberrier@novell.com>
+
+	* Makefile: install the config.xml to $sysconfdir instead
+
 2007-10-22  Marek Habersack  <mhabersack@novell.com>
 
 	* mconfig.cs: do not use Mono.GetOptions. Added own option parsing

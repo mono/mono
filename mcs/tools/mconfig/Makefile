@@ -13,8 +13,8 @@ Mono.MonoConfig/consts.cs: Mono.MonoConfig/consts.cs.in
 install-local: install-local-data
 
 install-local-data:
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/etc/mono/mconfig/
-	$(INSTALL_DATA) data/config.xml $(DESTDIR)$(prefix)/etc/mono/mconfig
+	$(MKINSTALLDIRS) $(DESTDIR)$(sysconfdir)/mono/mconfig/
+	$(INSTALL_DATA) data/config.xml $(DESTDIR)$(sysconfdir)/mono/mconfig
 
 EXTRA_DISTFILES = TODO data/config.xml Mono.MonoConfig/consts.cs.in
 
