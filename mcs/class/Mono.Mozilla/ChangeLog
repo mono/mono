@@ -1,5 +1,9 @@
 2007-11-08  Andreia Gaita  <avidigal@novell.com>
 
+	* Mono.Mozilla.csproj, Mono.Mozilla2K5.csproj: Synch with .sources
+
+2007-11-08  Andreia Gaita  <avidigal@novell.com>
+
 	* Mono.Mozilla.dll.sources,
 	  Mono.Mozilla/DOM/Navigation.cs,
 	  Mono.Mozilla/interfaces/nsIHistoryEntry.cs,

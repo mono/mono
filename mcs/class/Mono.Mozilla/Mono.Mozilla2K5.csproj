@@ -82,6 +82,7 @@
     <Compile Include="Mono.Mozilla\Callback.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMHTMLElement.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMObject.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Navigation.cs" />
     <Compile Include="Mono.Mozilla\ICallback.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMAttr.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCDATASection.cs" />
@@ -104,9 +105,17 @@
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMText.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMHTMLDocument.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMNode.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIHistoryEntry.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIInputStream.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsISHistory.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsISHistoryListener.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsISimpleEnumerator.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIURI.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIWebNavigation.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLDocument.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLElement.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IDOMNode.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\INavigation.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.Mozilla\Base.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
@@ -117,6 +126,7 @@
   <ItemGroup>
     <None Include="ChangeLog" />
     <None Include="Mono.Mozilla.dll.sources" />
+    <None Include="README" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

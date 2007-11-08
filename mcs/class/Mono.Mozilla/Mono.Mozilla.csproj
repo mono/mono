@@ -69,20 +69,22 @@
                     AssemblyName = "System"
                     HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "ChangeLog"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Mono.Mozilla.dll.sources"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "README"
+                    BuildAction = "None"
+                />
                 <File
                     RelPath = "Assembly\AssemblyInfo.cs"
                     SubType = "Code"
@@ -104,6 +106,171 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Mono.Mozilla\WebBrowser.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\DOM\DOMHTMLDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\DOM\DOMHTMLElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\DOM\DOMNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\DOM\DOMObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\DOM\Navigation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMAttr.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMCDATASection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMCharacterData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMComment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMDocumentFragment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMDocumentType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMDOMImplementation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMEntityReference.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMHTMLBodyElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMHTMLCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMHTMLDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMHTMLElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMNamedNodeMap.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMNodeList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMProcessingInstruction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMText.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIDOMWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIHistoryEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIInputStream.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsISHistory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsISHistoryListener.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsISimpleEnumerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIURI.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Mozilla\interfaces\nsIWebNavigation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Mono.WebBrowser\IWebBrowser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -114,7 +281,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Mono.WebBrowser\WebBrowser.cs"
+                    RelPath = "Mono.WebBrowser\DOM\IDOMHTMLDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.WebBrowser\DOM\IDOMHTMLElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.WebBrowser\DOM\IDOMNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.WebBrowser\DOM\INavigation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
