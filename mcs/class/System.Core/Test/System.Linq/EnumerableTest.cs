@@ -49,6 +49,16 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (result, first.Except (second));
 		}
 
+		[Test]
+		public void TestSimpleIntersect ()
+		{
+			int [] first = {0, 1, 2, 3, 4, 5};
+			int [] second = {2, 4, 6};
+			int [] result = {2, 4};
+
+			AssertAreSame (result, first.Intersect (second));
+		}
+
 		static void AssertAreSame<T> (IEnumerable<T> expected, IEnumerable<T> actual)
 		{
 			if (expected == null) {

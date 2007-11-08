@@ -1,3 +1,7 @@
+2007-11-08  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableTest.cs: add simple test for intersect.
+
 2007-11-06  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: add simple test for Except.
