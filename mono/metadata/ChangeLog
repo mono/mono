@@ -1,3 +1,10 @@
+2007-11-07  Jonathan Chambers <joncham@gmail.com>
+
+	* class.c: Initialize COM types if COM interfaces
+	are present (not just COM classes).
+	
+	Code is contributed under MIT/X11 license.
+
 2007-11-07  Massimiliano Mantione  <massi@ximian.com>
 	* reflection.c:
 	create_dynamic_mono_image: hook module profiler events (dynamic case).
