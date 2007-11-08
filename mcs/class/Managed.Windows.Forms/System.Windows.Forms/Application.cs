@@ -290,8 +290,16 @@ namespace System.Windows.Forms
 					as AssemblyInformationalVersionAttribute;
 				if (infoVersion != null)
 					version = infoVersion.InformationalVersion;
-				else
-					version = assembly.GetName ().Version.ToString ();
+				else {
+					AssemblyFileVersionAttribute fileVersion =
+						Attribute.GetCustomAttribute (assembly,
+						typeof (AssemblyFileVersionAttribute))
+						as AssemblyFileVersionAttribute;
+					if (fileVersion != null)
+						version = fileVersion.Version;
+					else
+						version = assembly.GetName ().Version.ToString ();
+				}
 				return version;
 			}
 		}

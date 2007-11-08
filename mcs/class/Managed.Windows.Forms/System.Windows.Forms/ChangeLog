@@ -1,3 +1,8 @@
+2007-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Application.cs: In ProductVersion first try AssemblyFileVersion
+	before falling back to assembly version. Fixes bug #339787.
+
 2007-11-08  Andreia Gaita <avidigal@novell.com>
 
 	* HtmlElement.cs: Implement InnerText setter.
