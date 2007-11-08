@@ -69,6 +69,17 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (result, first.Union (second));
 		}
 
+		[Test]
+		public void TestSequenceEqual ()
+		{
+			int [] first = {0, 1, 2, 3, 4, 5};
+			int [] second = {0, 1, 2};
+			int [] third = {0, 1, 2, 3, 4, 5};
+
+			Assert.IsFalse (first.SequenceEqual (second));
+			Assert.IsTrue (first.SequenceEqual (third));
+		}
+
 		static void AssertAreSame<T> (IEnumerable<T> expected, IEnumerable<T> actual)
 		{
 			if (expected == null) {
