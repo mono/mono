@@ -541,8 +541,6 @@ System.Net.Cache/HttpRequestCacheLevel.cs
 System.Net.Cache/HttpRequestCachePolicy.cs
 System.Net.Cache/RequestCacheLevel.cs
 System.Net.Cache/RequestCachePolicy.cs
-System.Net/ChunkedInputStream.cs
-System.Net/ChunkStream.cs
 System.Net.Configuration/AuthenticationModuleElementCollection.cs
 System.Net.Configuration/AuthenticationModuleElement.cs
 System.Net.Configuration/AuthenticationModulesSection.cs
@@ -592,16 +590,6 @@ System.Net/EndPoint.cs
 System.Net/EndPointListener.cs
 System.Net/EndPointManager.cs
 System.Net/EndpointPermission.cs
-System.Net/FileWebRequestCreator.cs
-System.Net/FileWebRequest.cs
-System.Net/FileWebResponse.cs
-System.Net/FtpAsyncResult.cs
-System.Net/FtpDataStream.cs
-System.Net/FtpRequestCreator.cs
-System.Net/FtpStatusCode.cs
-System.Net/FtpWebRequest.cs
-System.Net/FtpStatus.cs
-System.Net/FtpWebResponse.cs
 System.Net/GlobalProxySelection.cs
 System.Net/HttpConnection.cs
 System.Net/HttpContinueDelegate.cs
@@ -739,7 +727,7 @@ System.Net/WebAsyncResult.cs
 System.Net/WebConnectionData.cs
 System.Net/WebException.cs
 System.Net/WebExceptionStatus.cs
-System.Net/WebHeaderCollection.cs
+System.Net/WebHeaderCollection_2_1.cs
 System.Net/WebPermissionAttribute.cs
 System.Net/WebPermission.cs
 System.Net/WebProxy.cs
