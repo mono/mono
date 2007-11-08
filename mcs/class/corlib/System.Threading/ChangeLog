@@ -1,3 +1,9 @@
+
+Thu Nov 8 18:36:25 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: if period is 0 with a non-infinite due time, we
+	run the callback just once (bug #340212).
+
 2007-10-24  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Call Thread_init on the new 2.0 constructors too.
