@@ -1269,7 +1269,7 @@ namespace System {
 			Assembly a;
 			try {
 				a = Assembly.ReflectionOnlyLoad (an);
-			} catch (Exception ex) {
+			} catch {
 				if (throwIfNotFound)
 					throw;
 				return null;
