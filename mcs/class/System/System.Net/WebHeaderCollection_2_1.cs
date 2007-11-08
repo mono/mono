@@ -59,7 +59,13 @@ namespace System.Net {
 		}
 
 		public string this [string header] {
-			get { return headers [header]; }
+			get {
+				string value;
+				if (headers.TryGetValue (header, out value))
+					return value;
+
+				return string.Empty;
+			}
 			set { headers [header] = value; }
 		}
 
