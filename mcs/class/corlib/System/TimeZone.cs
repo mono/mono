@@ -127,7 +127,11 @@ namespace System
 #endif
 			} else if (utcOffset.Ticks < 0) {
 				if (time.Ticks + utcOffset.Ticks < DateTime.MinValue.Ticks)
+#if NET_2_0
+					return DateTime.SpecifyKind (DateTime.MinValue, DateTimeKind.Local);
+#else
 					return DateTime.MinValue;
+#endif
 			}
 
 			DateTime local = time.Add (utcOffset);
