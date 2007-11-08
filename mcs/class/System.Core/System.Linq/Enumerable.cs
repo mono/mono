@@ -624,7 +624,7 @@ namespace System.Linq
 		#region Empty
 		public static IEnumerable<TResult> Empty<TResult> ()
 		{
-			return new List<TResult> ();
+			return new TResult [0];
 		}
 		#endregion
 
