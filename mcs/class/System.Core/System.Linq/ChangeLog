@@ -1,3 +1,7 @@
+2007-11-09  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: refactor the ArgumentNullException checks.
+
 2007-11-08  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: Implement SequenceEqual.
