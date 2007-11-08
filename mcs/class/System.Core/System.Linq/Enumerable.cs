@@ -869,25 +869,23 @@ namespace System.Linq
 
 		#region Intersect
 
-
 		public static IEnumerable<TSource> Intersect<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
+		{
+			return Intersect (first, second, null);
+		}
+
+		public static IEnumerable<TSource> Intersect<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
 			if (first == null || second == null)
 				throw new ArgumentNullException ();
 
-			List<TSource> items = new List<TSource> (Distinct (first));
-			bool [] marked = new bool [items.Count];
-			for (int i = 0; i < marked.Length; i++)
-				marked [i] = false;
+			if (comparer == null)
+				comparer = EqualityComparer<TSource>.Default;
 
+			List<TSource> items = new List<TSource> (Distinct (first));
 			foreach (TSource element in second) {
-				int index = IndexOf (items, element);
-				if (index != -1)
-					marked [index] = true;
-			}
-			for (int i = 0; i < marked.Length; i++) {
-				if (marked [i])
-					yield return items [i];
+				if (Contains (items, element, comparer))
+					yield return element;
 			}
 		}
 
