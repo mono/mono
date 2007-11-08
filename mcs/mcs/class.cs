@@ -6036,38 +6036,48 @@ namespace Mono.CSharp {
 		{
 		}
 
+		bool CanBeVolatile ()
+		{
+#if GMCS_SOURCE			
+			if (TypeManager.IsGenericParameter (MemberType)) {
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (MemberType);
+				if (constraints == null)
+					return false;
+
+				return constraints.IsReferenceType;
+			}
+#endif			
+
+			if (!MemberType.IsValueType)
+				return true;
+
+			if (MemberType.IsEnum)
+				return true;
+
+			if (MemberType == TypeManager.bool_type || MemberType == TypeManager.char_type ||
+				MemberType == TypeManager.sbyte_type || MemberType == TypeManager.byte_type ||
+				MemberType == TypeManager.short_type || MemberType == TypeManager.ushort_type ||
+				MemberType == TypeManager.int32_type || MemberType == TypeManager.uint32_type ||
+				MemberType == TypeManager.float_type)
+				return true;
+
+			return false;
+		}
+
 		public override bool Define ()
 		{
 			if (!base.Define ())
 				return false;
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
-				if (!MemberType.IsClass){
-					Type vt = MemberType;
-					
-					if (TypeManager.IsEnumType (vt))
-						vt = TypeManager.EnumToUnderlying (MemberType);
-
-					if (!((vt == TypeManager.bool_type) ||
-					      (vt == TypeManager.sbyte_type) ||
-					      (vt == TypeManager.byte_type) ||
-					      (vt == TypeManager.short_type) ||
-					      (vt == TypeManager.ushort_type) ||
-					      (vt == TypeManager.int32_type) ||
-					      (vt == TypeManager.uint32_type) ||    
-					      (vt == TypeManager.char_type) ||
-					      (vt == TypeManager.float_type) ||
-					      (!vt.IsValueType))){
-						Report.Error (677, Location, "`{0}': A volatile field cannot be of the type `{1}'",
-							GetSignatureForError (), TypeManager.CSharpName (vt));
-						return false;
-					}
+				if (!CanBeVolatile ()) {
+					Report.Error (677, Location, "`{0}': A volatile field cannot be of the type `{1}'",
+						GetSignatureForError (), TypeManager.CSharpName (MemberType));
 				}
 
 				if ((ModFlags & Modifiers.READONLY) != 0){
 					Report.Error (678, Location, "`{0}': A field cannot be both volatile and readonly",
 						GetSignatureForError ());
-					return false;
 				}
 			}
 
