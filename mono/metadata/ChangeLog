@@ -1,3 +1,9 @@
+
+Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: don't export random functions
+	and lazy load dbnull and missing objects.
+
 2007-11-07  Jonathan Chambers <joncham@gmail.com>
 
 	* class.c: Initialize COM types if COM interfaces
