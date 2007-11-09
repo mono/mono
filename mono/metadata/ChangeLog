@@ -1,3 +1,16 @@
+2007-11-09  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c, gc-internal.h: Don't finalize threadpool threads with
+	other objects, because the threadpool is still around.  Put them
+	in a list instead and after finalizing all other objects in the
+	root domain shut down the thread pool and then finalize the
+	threads.  Fixes bug #337383.
+
+	* threads.c, thread-types.h: New mono_thread_create_internal()
+	function for marking a thread with the threadpool flag before it
+	started.  Set synch_cs to NULL after freeing it.
+
+	* threadpool.c: Mark threadpool threads before they start.
 
 Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
 
