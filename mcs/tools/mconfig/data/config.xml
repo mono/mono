@@ -4,7 +4,7 @@
     <handlers>
       <handler section="feature" 
 	       type="Mono.MonoConfig.FeatureNodeHandler, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null"
-	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Collections.Generic.List`1[[Mono.MonoConfig.FeatureBlock, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Mono.MonoConfig.FeatureNode, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
       <handler section="configBlock"
 	       type="Mono.MonoConfig.ConfigBlockNodeHandler, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null"
 	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Mono.MonoConfig.ConfigBlockBlock, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
@@ -18,6 +18,9 @@
   </configuration>
 
   <feature name="AJAX" target="web">
+    <description><![CDATA[
+      Adds entries to your Web.config file which are required by any AJAX.NET application.
+    ]]></description>
     <blocks>
       <block name="AJAX config sections"/>
       <block name="AJAX controls registration"/>

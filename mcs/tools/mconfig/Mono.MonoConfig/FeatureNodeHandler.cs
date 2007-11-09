@@ -39,11 +39,13 @@ namespace Mono.MonoConfig
 		string name;
 		FeatureTarget target;
 		List <FeatureBlock> blocks;
-		Dictionary <string, List <FeatureBlock>> storage;
+		Dictionary <string, FeatureNode> storage;
+		StringBuilder description;
 		
 		public FeatureNodeHandler ()
 		{
 			blocks = new List <FeatureBlock> ();
+			description = new StringBuilder ();
 		}
 		
 		public void ReadConfiguration (XPathNavigator nav)
@@ -54,6 +56,15 @@ namespace Mono.MonoConfig
 			XPathNodeIterator iter = nav.Select ("blocks/block[string-length (@name) > 0]");
 			while (iter.MoveNext ())
 				blocks.Add (new FeatureBlock (iter.Current, target));
+
+			iter = nav.Select ("description/text()");
+			string val;
+			while (iter.MoveNext ()) {
+				val = iter.Current.Value;
+				if (String.IsNullOrEmpty (val))
+					continue;
+				description.Append (val);
+			}
 		}
 		
 		public void StoreConfiguration ()
@@ -62,18 +73,20 @@ namespace Mono.MonoConfig
 
 			List <FeatureBlock> blocksClone = new List <FeatureBlock> (blocks.Count);
 			blocksClone.AddRange (blocks);
-			
+			FeatureNode fn = new FeatureNode (blocksClone, description.ToString ());
+				
 			if (storage.ContainsKey (name))
-				storage [name] = blocksClone; // allow for silent override
+				storage [name] = fn; // allow for silent override
 			else
-				storage.Add (name, blocksClone);
+				storage.Add (name, fn);
 				
 			blocks.Clear ();
+			description.Length = 0;
 		}
 
 		public void SetStorage (object storage)
 		{
-			this.storage = storage as Dictionary <string, List <FeatureBlock>>;
+			this.storage = storage as Dictionary <string, FeatureNode>;
 			if (this.storage == null)
 				throw new ApplicationException ("Invalid storage type");
 		}
@@ -86,18 +99,82 @@ namespace Mono.MonoConfig
 					return null;
 
 				List <string> ret = new List <string> (storage.Count);
-				List <FeatureBlock> lfb;
+				string desc;
 				
-				foreach (KeyValuePair <string, List <FeatureBlock>> kvp in storage) {
-					lfb = kvp.Value;
-					if (lfb.Count == 0)
+				foreach (KeyValuePair <string, FeatureNode> kvp in storage) {
+					desc = FormatFeatureDescription (kvp.Key, kvp.Value);
+					if (String.IsNullOrEmpty (desc))
 						continue;
-					
-					ret.Add (String.Format ("{0} (Target: {1})", kvp.Key, lfb [0].Target));
+					ret.Add (desc);
 				}
 
 				return ret;
 			}
+		}
+
+		string FormatFeatureDescription (string name, FeatureNode fn)
+		{
+			if (fn == null)
+				return null;
+			
+			List <FeatureBlock> lfb = fn.Blocks;
+			if (lfb == null || lfb.Count == 0)
+				return null;
+
+			StringBuilder ret = new StringBuilder ();
+			ret.AppendFormat ("{0} (Target: {1})", name, lfb [0].Target);
+
+			string desc = fn.Description;
+			if (String.IsNullOrEmpty (desc))
+				return ret.ToString ();
+
+			string indent = "   ";
+			int maxLineWidth = Console.WindowWidth - indent.Length;
+			string[] dlines = desc.Split ('\n');
+			string line;
+			
+			foreach (string l in dlines) {
+				if (l.Length == 0) {
+					ret.Append ("\n");
+					continue;
+				}
+				
+				line = l.Trim ();
+				if (line.Length > maxLineWidth)
+					ret.AppendFormat ("{0}\n", BreakLongLine (line, indent, maxLineWidth));
+				else
+					ret.AppendFormat ("{0}{1}\n", indent, line);
+			}
+
+			return ret.ToString ();
+		}
+
+		string BreakLongLine (string line, string indent, int maxLineWidth)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			int lineLen = line.Length;
+			int segments = lineLen / maxLineWidth;
+			int segmentStart = 0;
+			int segmentLen = maxLineWidth - 1;
+			int idx;
+
+			while (segments-- >= 0) {
+				idx = line.LastIndexOf (' ', segmentStart + segmentLen);
+				if (idx > 0)
+					segmentLen = idx - segmentStart;
+				else
+					idx = segmentLen - 1;
+
+				sb.AppendFormat ("{0}{1}\n", indent, line.Substring (segmentStart, segmentLen));
+				segmentStart = idx + 1;
+				if (lineLen - segmentStart > maxLineWidth)
+					segmentLen = maxLineWidth;
+				else
+					segmentLen = lineLen - segmentStart - 1;
+			}
+
+			return sb.ToString ();
 		}
 		
 		public bool HasFeature (string featureName)
@@ -106,8 +183,12 @@ namespace Mono.MonoConfig
 
 			if (!storage.ContainsKey (featureName))
 				return false;
+
+			FeatureNode fn = storage [featureName];
+			if (fn == null)
+				return false;
 			
-			List <FeatureBlock> blocks = storage [featureName];
+			List <FeatureBlock> blocks = fn.Blocks;
 			if (blocks == null || blocks.Count == 0)
 				return false;
 
@@ -119,10 +200,12 @@ namespace Mono.MonoConfig
 		{
 			AssertStorage ();
 
-			if (!storage.ContainsKey (featureName))
-				throw new ApplicationException (String.Format ("Missing definition of feature '{0}'", featureName));
+			FeatureNode fn;
 			
-			List <FeatureBlock> blocks = storage [featureName];
+			if (!storage.ContainsKey (featureName) || (fn = storage [featureName]) == null)
+				throw new ApplicationException (String.Format ("Missing definition of feature '{0}'", featureName));
+				
+			List <FeatureBlock> blocks = fn.Blocks;
 			if (blocks == null || blocks.Count == 0)
 				throw new ApplicationException (String.Format ("Definition of feature '{0}' is empty", featureName));
 			

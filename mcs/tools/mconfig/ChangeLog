@@ -1,3 +1,15 @@
+2007-11-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: added support for feature
+	descriptions.
+	
+	* Mono.MonoConfig/FeatureNode.cs: a new container for the
+	'feature' block data.
+
+	* data/config.xml: feature storage type has changed.
+
+	* mconfig.exe.sources: added Mono.MonoConfig/FeatureNode.cs	
+
 2007-11-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Mono.MonoConfig/consts.cs.in: use @MONO_SYSCONFDIR@ instead of
