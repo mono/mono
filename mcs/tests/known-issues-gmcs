@@ -4,8 +4,6 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
-test-50.cs IGNORE	# Windows-only test
-test-67.cs IGNORE	# Windows-only test
 test-xml-027.cs
 test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by default with WrapNonExceptionThrows set to true and conditional compilation symbols are not provided yet.
 test-562.cs
