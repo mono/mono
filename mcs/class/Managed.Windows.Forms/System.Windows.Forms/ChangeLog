@@ -1,3 +1,11 @@
+2007-11-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ItemControl, reset mouse-handling related
+	fields even if we dont' have items (we still should reset them when
+	we had items but then called Items.Clear). Partially based in a patch
+	by George Giolfan.
+	Fixes #338399.
+
 2007-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Application.cs: In ProductVersion first try AssemblyFileVersion

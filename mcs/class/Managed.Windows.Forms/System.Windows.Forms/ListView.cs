@@ -2566,6 +2566,7 @@ namespace System.Windows.Forms
 
 				Capture = false;
 				if (owner.Items.Count == 0) {
+					ResetMouseState ();
 					owner.OnMouseUp (owner_me);
 					return;
 				}
@@ -2602,13 +2603,18 @@ namespace System.Windows.Forms
 					owner.SelectedItems.Clear ();
 				}
 
+				ResetMouseState ();
+				owner.OnMouseUp (owner_me);
+			}
+
+			private void ResetMouseState ()
+			{				
 				clicked_item = null;
 				box_select_start = Point.Empty;
 				BoxSelectRectangle = Rectangle.Empty;
 				prev_selection = null;
 				box_select_mode = BoxSelect.None;
 				checking = false;
-				owner.OnMouseUp (owner_me);
 			}
 			
 			private void LabelEditFinished (object sender, EventArgs e)
