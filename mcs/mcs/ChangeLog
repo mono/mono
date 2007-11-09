@@ -1,3 +1,10 @@
+2007-11-09  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for bug #324996
+ 	* expression.cs: Rewrote Is expression implementation to work with
+ 	generics, nullable types, anonymous method. A const result expression 
+ 	uses existing infrastructure instead of custom not fully-featured one.
+  	
 2007-11-08  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #340202

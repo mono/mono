@@ -1078,11 +1078,21 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (expr.Type.IsPointer) {
-				Report.Error (244, loc, "\"is\" or \"as\" are not valid on pointer types");
+				Report.Error (244, loc, "The `{0}' operator cannot be applied to an operand of pointer type",
+					OperatorName);
 				return null;
 			}
+
+			if (expr.Type == TypeManager.anonymous_method_type) {
+				Report.Error (837, loc, "The `{0}' operator cannot be applied to a lambda expression or anonymous method",
+					OperatorName);
+				return null;
+			}
+
 			return this;
 		}
+
+		protected abstract string OperatorName { get; }
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
@@ -1102,131 +1112,124 @@ namespace Mono.CSharp {
 			: base (expr, probe_type, l)
 		{
 		}
-
-		enum Action {
-			AlwaysTrue, AlwaysNull, AlwaysFalse, LeaveOnStack, Probe
-		}
-
-		Action action;
 		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			expr.Emit (ec);
-
-			switch (action){
-			case Action.AlwaysFalse:
-				ig.Emit (OpCodes.Pop);
-				IntConstant.EmitInt (ig, 0);
-				return;
-			case Action.AlwaysTrue:
-				ig.Emit (OpCodes.Pop);
-				IntConstant.EmitInt (ig, 1);
-				return;
-			case Action.LeaveOnStack:
-				// the `e != null' rule.
-				ig.Emit (OpCodes.Ldnull);
-				ig.Emit (OpCodes.Ceq);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Ceq);
-				return;
-			case Action.Probe:
-				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
-				ig.Emit (OpCodes.Ldnull);
-				ig.Emit (OpCodes.Cgt_Un);
-				return;
-			}
-			throw new Exception ("never reached");
+			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+			ig.Emit (OpCodes.Ldnull);
+			ig.Emit (OpCodes.Cgt_Un);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			ILGenerator ig = ec.ig;
 
-			switch (action){
-			case Action.AlwaysFalse:
-				if (! on_true)
-					ig.Emit (OpCodes.Br, target);
-				
-				return;
-			case Action.AlwaysTrue:
-				if (on_true)
-					ig.Emit (OpCodes.Br, target);
-				
-				return;
-			case Action.LeaveOnStack:
-				// the `e != null' rule.
-				expr.Emit (ec);
-				ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
-				return;
-			case Action.Probe:
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
-				ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
-				return;
-			}
-			throw new Exception ("never reached");
+			expr.Emit (ec);
+			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+			ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+		}
+
+		Expression CreateConstantResult (bool result)
+		{
+			if (result)
+				Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
+					TypeManager.CSharpName (probe_type_expr.Type));
+			else
+				Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
+					TypeManager.CSharpName (probe_type_expr.Type));
+
+			return new BoolConstant (result, loc);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expression e = base.DoResolve (ec);
-
-			if ((e == null) || (expr == null))
+			if (base.DoResolve (ec) == null)
 				return null;
 
-			Type etype = expr.Type;
+			Type d = expr.Type;
+
+			if (expr is Constant) {
+				//
+				// If E is a method group or the null literal, of if the type of E is a reference
+				// type or a nullable type and the value of E is null, the result is false
+				//
+				if (((Constant) expr).GetValue () == null)
+					return CreateConstantResult (false);
+			} else if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
+				d = TypeManager.GetTypeArguments (d) [0];
+			}
+
 			type = TypeManager.bool_type;
 			eclass = ExprClass.Value;
+			Type t = probe_type_expr.Type;
 
-			//
-			// First case, if at compile time, there is an implicit conversion
-			// then e != null (objects) or true (value types)
-			//
-			Type probe_type = probe_type_expr.Type;
-			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
-			if (e != null){
-				expr = e;
-				if (etype.IsValueType)
-					action = Action.AlwaysTrue;
-				else
-					action = Action.LeaveOnStack;
+			if (TypeManager.IsNullableType (t) && !TypeManager.ContainsGenericParameters (t))
+				t = TypeManager.GetTypeArguments (t) [0];
 
-				Constant c = e as Constant;
-				if (c != null && c.Type != etype) {
-					action = Action.AlwaysFalse;
-					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
-						TypeManager.CSharpName (probe_type));
-				} else if (etype.IsValueType) {
-					Report.Warning (183, 1, loc, "The given expression is always of the provided (`{0}') type",
-						TypeManager.CSharpName (probe_type));
-				}
-				return this;
-			}
-			
-			if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
-				if (TypeManager.IsGenericParameter (etype))
-					expr = new BoxedCast (expr, etype);
+			if (t.IsValueType) {
+				//
+				// The result is true if D and T are the same value types
+				//
+				if (d == t)
+					return CreateConstantResult (true);
+
+				if (TypeManager.IsGenericParameter (d))
+					return ResolveGenericParameter (t, d);
 
 				//
-				// Second case: explicit reference convresion
+				// An unboxing conversion exists
 				//
-				if (expr is NullLiteral)
-					action = Action.AlwaysFalse;
-				else
-					action = Action.Probe;
-			} else if (TypeManager.ContainsGenericParameters (etype) ||
-				   TypeManager.ContainsGenericParameters (probe_type)) {
-				expr = new BoxedCast (expr, etype);
-				action = Action.Probe;
+				if (Convert.ExplicitReferenceConversionExists (d, t))
+					return this;
 			} else {
-				action = Action.AlwaysFalse;
-				if (!(probe_type.IsInterface || expr.Type.IsInterface))
-					Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type", TypeManager.CSharpName (probe_type));
+				if (TypeManager.IsGenericParameter (t))
+					return ResolveGenericParameter (d, t);
+
+				if (d.IsValueType) {
+					bool temp;
+					if (Convert.ImplicitBoxingConversionExists (expr, t, out temp))
+						return CreateConstantResult (true);
+				} else {
+					if (TypeManager.IsGenericParameter (d))
+						return ResolveGenericParameter (t, d);
+
+					if (TypeManager.ContainsGenericParameters (d))
+						return this;
+
+					if (Convert.ImplicitReferenceConversionExists (expr, t) ||
+						Convert.ExplicitReferenceConversionExists (d, t)) {
+						return this;
+					}
+				}
 			}
 
+			return CreateConstantResult (false);
+		}
+
+		Expression ResolveGenericParameter (Type d, Type t)
+		{
+#if GMCS_SOURCE
+			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
+			if (constraints != null) {
+				if (constraints.IsReferenceType && d.IsValueType)
+					return CreateConstantResult (false);
+
+				if (constraints.IsValueType && !d.IsValueType)
+					return CreateConstantResult (false);
+			}
+
+			expr = new BoxedCast (expr, d);
 			return this;
+#else
+			return null;
+#endif
+		}
+		
+		protected override string OperatorName {
+			get { return "is"; }
 		}
 	}
 
@@ -1334,6 +1337,10 @@ namespace Mono.CSharp {
 
 			Error_CannotConvertType (etype, type, loc);
 			return null;
+		}
+
+		protected override string OperatorName {
+			get { return "as"; }
 		}
 	
 		public override bool GetAttributableValue (Type value_type, out object value)
@@ -1897,7 +1904,11 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Step 0: String concatenation (because overloading will get this wrong)
+			// String concatenation
+			// 
+			// string operator + (string x, string y);
+			// string operator + (string x, object y);
+			// string operator + (object x, string y);
 			//
 			if (oper == Operator.Addition && !TypeManager.IsDelegateType (l)) {
 				// 
