@@ -39,8 +39,8 @@ using System.Reflection;
 namespace System.Web.Mail {
 
 	/// represents a conntection to a smtp server
-	internal class SmtpClient {
-	
+	internal class SmtpClient
+	{
 		private string server;
 		private TcpClient tcpConnection;
 		private SmtpStream smtp;
@@ -51,190 +51,176 @@ namespace System.Web.Mail {
 		private short authenticate = 1;  	
         
 		//Initialise the variables and connect
-		public SmtpClient( string server ) {
-	    
+		public SmtpClient (string server)
+		{
 			this.server = server;
 		}
 	
 		// make the actual connection
 		// and HELO handshaking
-		private void Connect() {
-			tcpConnection = new TcpClient( server , port );
+		private void Connect ()
+		{
+			tcpConnection = new TcpClient (server, port);
 	    
-			NetworkStream stream = tcpConnection.GetStream();
-			smtp = new SmtpStream( stream );
+			NetworkStream stream = tcpConnection.GetStream ();
+			smtp = new SmtpStream (stream);
 		}
 	    	    
-		private void ChangeToSSLSocket( ) {
+		private void ChangeToSSLSocket ()
+		{
 #if TARGET_JVM
-			java.lang.Class c = vmw.common.TypeUtils.ToClass( smtp.Stream );
-			java.lang.reflect.Method m = c.getMethod("ChangeToSSLSocket", null);
-			m.invoke(smtp.Stream, new object[]{});
+			java.lang.Class c = vmw.common.TypeUtils.ToClass (smtp.Stream);
+			java.lang.reflect.Method m = c.getMethod ("ChangeToSSLSocket", null);
+			m.invoke (smtp.Stream, new object[]{});
 #else
 			// Load Mono.Security.dll
 			Assembly a;
 			try {
-				a = Assembly.Load(Consts.AssemblyMono_Security);
+				a = Assembly.Load (Consts.AssemblyMono_Security);
+			} catch (System.IO.FileNotFoundException) {
+				throw new SmtpException ("Cannot load Mono.Security.dll");
 			}
-			catch(System.IO.FileNotFoundException) {
-				throw new SmtpException( "Cannot load Mono.Security.dll" );
-			}
-			Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
+			Type tSslClientStream = a.GetType ("Mono.Security.Protocol.Tls.SslClientStream");
 			object[] consArgs = new object[4];
 			consArgs[0] = smtp.Stream;
 			consArgs[1] = server;
 			consArgs[2] = true;
-			Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
-			int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
-			int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
-			consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
+			Type tSecurityProtocolType = a.GetType ("Mono.Security.Protocol.Tls.SecurityProtocolType");
+			int nSsl3Val = (int) Enum.Parse (tSecurityProtocolType, "Ssl3");
+			int nTlsVal = (int) Enum.Parse (tSecurityProtocolType, "Tls");
+			consArgs[3] = Enum.ToObject (tSecurityProtocolType, nSsl3Val | nTlsVal);
 
-			object objSslClientStream = 
-				Activator.CreateInstance(tSslClientStream, consArgs); 
+			object objSslClientStream = Activator.CreateInstance (tSslClientStream, consArgs); 
 
 			if (objSslClientStream != null)
-				smtp = new SmtpStream( (Stream)objSslClientStream );
+				smtp = new SmtpStream ((Stream)objSslClientStream);
 #endif
 		}
 		
-		private void ReadFields(MailMessageWrapper msg)
+		private void ReadFields (MailMessageWrapper msg)
 		{
 			string tmp;
-			username = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/sendusername"];
-			password = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/sendpassword"]; 
-			tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"]; 
+			username = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendusername"];
+			password = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendpassword"]; 
+			tmp = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"]; 
 			if (tmp != null)
-				authenticate = short.Parse(tmp);
-			tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpusessl"]; 	
+				authenticate = short.Parse (tmp);
+			tmp = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpusessl"]; 	
 			if (tmp != null)
-				usessl = bool.Parse(tmp);
-			tmp = msg.Fields.Data["http://schemas.microsoft.com/cdo/configuration/smtpserverport"]; 
+				usessl = bool.Parse (tmp);
+			tmp = msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpserverport"]; 
 			if (tmp != null)
-				port = int.Parse(tmp);
+				port = int.Parse (tmp);
 		}
 
-		private void StartSend(MailMessageWrapper msg)
+		private void StartSend (MailMessageWrapper msg)
 		{
-			ReadFields(msg);
-			Connect();
+			ReadFields (msg);
+			Connect ();
 
 			// read the server greeting
-			smtp.ReadResponse();
-			smtp.CheckForStatusCode( 220 );
+			smtp.ReadResponse ();
+			smtp.CheckForStatusCode (220);
 
 			if (usessl || (username != null && password != null && authenticate != 1)) 
 			{
-				smtp.WriteEhlo( Dns.GetHostName() );
+				smtp.WriteEhlo (Dns.GetHostName ());
 
 				if (usessl) {
-					bool isSSL = smtp.WriteStartTLS();
+					bool isSSL = smtp.WriteStartTLS ();
 					if (isSSL)
-						ChangeToSSLSocket();
+						ChangeToSSLSocket ();
 				}
 
-				if (username != null && password != null && authenticate != 1) 
-				{
-					smtp.WriteAuthLogin();
-					if (smtp.LastResponse.StatusCode == 334) 
-					{
-						smtp.WriteLine(Convert.ToBase64String(Encoding.ASCII.GetBytes(username)));
-						smtp.ReadResponse();
-						smtp.CheckForStatusCode(334);
-						smtp.WriteLine(Convert.ToBase64String(Encoding.ASCII.GetBytes(password)));
-						smtp.ReadResponse();
-						smtp.CheckForStatusCode(235);
+				if (username != null && password != null && authenticate != 1) {
+					smtp.WriteAuthLogin ();
+					if (smtp.LastResponse.StatusCode == 334) {
+						smtp.WriteLine (Convert.ToBase64String (Encoding.ASCII.GetBytes (username)));
+						smtp.ReadResponse ();
+						smtp.CheckForStatusCode (334);
+						smtp.WriteLine (Convert.ToBase64String (Encoding.ASCII.GetBytes (password)));
+						smtp.ReadResponse ();
+						smtp.CheckForStatusCode (235);
 					}
 				}
-			}
-			else 
-			{
-				smtp.WriteHelo( Dns.GetHostName() );
+			} else  {
+				smtp.WriteHelo (Dns.GetHostName ());
 			}
 		}
 	
-		public void Send( MailMessageWrapper msg ) {
-	    
-			if( msg.From == null ) {
-				throw new SmtpException( "From property must be set." );
-			}
+		public void Send (MailMessageWrapper msg)
+		{
+			if (msg.From == null)
+				throw new SmtpException ("From property must be set.");
 
-			if( msg.To == null ) {
-				if( msg.To.Count < 1 ) throw new SmtpException( "Atleast one recipient must be set." );
-			}
+			if (msg.To == null)
+				if (msg.To.Count < 1)
+					throw new SmtpException ("Atleast one recipient must be set.");
 	    
 			StartSend (msg);
 			// start with a reset incase old data
 			// is present at the server in this session
-			smtp.WriteRset();
+			smtp.WriteRset ();
 	    
 			// write the mail from command
-			smtp.WriteMailFrom( msg.From.Address );
+			smtp.WriteMailFrom (msg.From.Address);
 	    
 			// write the rcpt to command for the To addresses
-			foreach( MailAddress addr in msg.To ) {
-				smtp.WriteRcptTo( addr.Address );
-			}
+			foreach (MailAddress addr in msg.To)
+				smtp.WriteRcptTo (addr.Address);
 
 			// write the rcpt to command for the Cc addresses
-			foreach( MailAddress addr in msg.Cc ) {
-				smtp.WriteRcptTo( addr.Address );
-			}
+			foreach (MailAddress addr in msg.Cc)
+				smtp.WriteRcptTo (addr.Address);
 
 			// write the rcpt to command for the Bcc addresses
-			foreach( MailAddress addr in msg.Bcc ) {
-				smtp.WriteRcptTo( addr.Address );
-			}
+			foreach (MailAddress addr in msg.Bcc)
+				smtp.WriteRcptTo (addr.Address);
 	    
 			// write the data command and then
 			// send the email
-			smtp.WriteData();
+			smtp.WriteData ();
 		
-			if( msg.Attachments.Count == 0 ) {
-				SendSinglepartMail( msg );	    
-			} else {
-		
-				SendMultipartMail( msg );
-	    
-			}
+			if (msg.Attachments.Count == 0)
+				SendSinglepartMail (msg);	    
+			else
+				SendMultipartMail (msg);
 
 			// write the data end tag "."
-			smtp.WriteDataEndTag();
-
+			smtp.WriteDataEndTag ();
 		}
 	
 		// sends a single part mail to the server
-		private void SendSinglepartMail( MailMessageWrapper msg ) {
-	    	    	    
+		private void SendSinglepartMail (MailMessageWrapper msg)
+		{	    	    	    
 			// write the header
-			smtp.WriteHeader( msg.Header );
+			smtp.WriteHeader (msg.Header);
 	    
 			// send the mail body
-			smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body ) );
-
+			smtp.WriteBytes (msg.BodyEncoding.GetBytes (msg.Body));
 		}
 
 		// SECURITY-FIXME: lower assertion with imperative asserts	
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		// sends a multipart mail to the server
-		private void SendMultipartMail( MailMessageWrapper msg ) {
-	    	    
+		private void SendMultipartMail (MailMessageWrapper msg)
+		{    
 			// generate the boundary between attachments
-			string boundary = MailUtil.GenerateBoundary();
+			string boundary = MailUtil.GenerateBoundary ();
 		
 			// set the Content-Type header to multipart/mixed
 			string bodyContentType = msg.Header.ContentType;
 
-			msg.Header.ContentType = 
-				String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
+			msg.Header.ContentType = String.Format ("multipart/mixed;\r\n   boundary={0}", boundary);
 		
 			// write the header
-			smtp.WriteHeader( msg.Header );
+			smtp.WriteHeader (msg.Header);
 		
 			// write the first part text part
 			// before the attachments
-			smtp.WriteBoundary( boundary );
+			smtp.WriteBoundary (boundary);
 		
-			MailHeader partHeader = new MailHeader();
+			MailHeader partHeader = new MailHeader ();
 			partHeader.ContentType = bodyContentType;		
 
 #if NET_1_1
@@ -256,32 +242,27 @@ namespace System.Web.Mail {
 			partHeader.Data.Add (msg.Fields.Data);
 #endif
 
-			smtp.WriteHeader( partHeader );
+			smtp.WriteHeader (partHeader);
 	  
 			// FIXME: probably need to use QP or Base64 on everything higher
 			// then 8-bit .. like utf-16
-			smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body )  );
+			smtp.WriteBytes (msg.BodyEncoding.GetBytes (msg.Body) );
 
-			smtp.WriteBoundary( boundary );
+			smtp.WriteBoundary (boundary);
 
 			// now start to write the attachments
 	    
-			for( int i=0; i< msg.Attachments.Count ; i++ ) {
+			for (int i=0; i< msg.Attachments.Count ; i++) {
 				MailAttachment a = (MailAttachment)msg.Attachments[ i ];
-			
-				FileInfo fileInfo = new FileInfo( a.Filename );
-
-				MailHeader aHeader = new MailHeader();
+				FileInfo fileInfo = new FileInfo (a.Filename);
+				MailHeader aHeader = new MailHeader ();
 		
 				aHeader.ContentType = 
 					String.Format (MimeTypes.GetMimeType (fileInfo.Name) + "; name=\"{0}\"",fileInfo.Name);
 		
-				aHeader.ContentDisposition = 
-					String.Format( "attachment; filename=\"{0}\"" , fileInfo.Name );
-		
+				aHeader.ContentDisposition = String.Format ("attachment; filename=\"{0}\"", fileInfo.Name);
 				aHeader.ContentTransferEncoding = a.Encoding.ToString();
-		    		
-				smtp.WriteHeader( aHeader );
+				smtp.WriteHeader (aHeader);
 		   
 				// perform the actual writing of the file.
 				// read from the file stream and write to the tcp stream
@@ -289,41 +270,32 @@ namespace System.Web.Mail {
 		
 				// create an apropriate encoder
 				IAttachmentEncoder encoder;
-				if( a.Encoding == MailEncoding.UUEncode ) {
-					encoder = new UUAttachmentEncoder( 644 , fileInfo.Name  );
-				} else {
-					encoder = new Base64AttachmentEncoder();
-				}
+				if (a.Encoding == MailEncoding.UUEncode)
+					encoder = new UUAttachmentEncoder (644, fileInfo.Name );
+				else
+					encoder = new Base64AttachmentEncoder ();
 		
-				encoder.EncodeStream( ins , smtp.Stream );
+				encoder.EncodeStream (ins, smtp.Stream);
 		
-				ins.Close();
-		
-		    
-				smtp.WriteLine( "" );
+				ins.Close ();
+				smtp.WriteLine ("");
 		
 				// if it is the last attachment write
 				// the final boundary otherwise write
 				// a normal one.
-				if( i < (msg.Attachments.Count - 1) ) { 
-					smtp.WriteBoundary( boundary );
-				} else {
-					smtp.WriteFinalBoundary( boundary );
-				}
-		    
+				if (i < (msg.Attachments.Count - 1))
+					smtp.WriteBoundary (boundary);
+				else
+					smtp.WriteFinalBoundary (boundary);
 			}
-	       
 		}
 	
 		// send quit command and
 		// closes the connection
-		public void Close() {
-	    
+		public void Close()
+		{
 			smtp.WriteQuit();
 			tcpConnection.Close();
-	
 		}
-	
-		
 	}
 }
