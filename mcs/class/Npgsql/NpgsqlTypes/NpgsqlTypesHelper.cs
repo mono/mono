@@ -714,7 +714,7 @@ namespace NpgsqlTypes
 
         private static String QuoteString(String S)
         {
-            return String.Format("'{0}'", S);
+            return String.Format("E'{0}'", S);
             
         }
     }
