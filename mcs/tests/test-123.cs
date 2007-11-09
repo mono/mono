@@ -40,6 +40,10 @@ class X {
 
 		if (d is int)
 			return 6;
+			
+		object oi = 1;
+		if (!(oi is int))
+			return 7;
 
 		System.Console.WriteLine ("Is tests pass");
 		return 0;
