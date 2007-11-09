@@ -1,4 +1,4 @@
-// cs0244.cs: "is" or "as" are not valid on pointer types
+// CS0244: The `is' operator cannot be applied to an operand of pointer type
 // Line: 7
 // Compiler options: -unsafe
 
