@@ -1,3 +1,8 @@
+2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapDocumentationHandler.cs : handle 'schema' HTTP parameter like
+	  "...blah.asmx?schema=MySchemaID". (Such URL does not work yet.)
+
 2007-10-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapException.cs : serialization constructor didn't call base.

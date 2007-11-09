@@ -189,9 +189,22 @@ namespace System.Web.Services.Protocols
 		
 		void GenerateSchema (HttpContext context, string schemaId)
 		{
-			int di = 0;
-			if (schemaId != null && schemaId != "") di = int.Parse (schemaId);
-			
+			int di = -1;
+			if (schemaId != null && schemaId != "") {
+				try {
+					di = int.Parse (schemaId);
+				} catch {
+					XmlSchemas xss = GetSchemas ();
+					for (int i = 0; i < xss.Count; i++) {
+						if (xss [i].Id == schemaId) {
+							di = i;
+							break;
+						}
+					}
+				}
+				if (di < 0)
+					throw new InvalidOperationException (String.Format ("HTTP parameter 'schema' needs to specify an Id of a schema in the schemas. {0} points to nowhere.", schemaId));
+			}
 			context.Response.ContentType = "text/xml; charset=utf-8";
 			XmlTextWriter xtw = new XmlTextWriter (context.Response.OutputStream, new UTF8Encoding (false));
 			xtw.Formatting = Formatting.Indented;
