@@ -107,7 +107,7 @@ namespace System.Windows.Forms
 			pieces = null;
 			focused_index = -1;
 
-			string_format.FormatFlags = StringFormatFlags.NoClip;
+			string_format.FormatFlags |= StringFormatFlags.NoClip;
 			
 			ActiveLinkColor = Color.Red;
 			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;

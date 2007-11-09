@@ -1,5 +1,13 @@
 2007-11-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Label.cs: Add StringFormatFlags.LineLimit.  This tells DrawString to
+	not draw partial lines.
+	* LinkLabel.cs: Change FormatFlags setter from = to |= so that the
+	LineLimit flag from the base is preserved.
+	Fixes the windows part of bug #338965.
+
+2007-11-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Move handling of the enter key from KEYDOWN to CHAR
 	so that it can be canceled in KeyPress.
 	Fixes bug #340078.

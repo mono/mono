@@ -139,6 +139,7 @@ namespace System.Windows.Forms
 			autosize = false;
 			TabStop = false;
 			string_format = new StringFormat();
+			string_format.FormatFlags = StringFormatFlags.LineLimit;
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
 			UseMnemonic = true;
