@@ -1,4 +1,11 @@
 
+2007-11-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	*NpgsqlTypes/NpgsqlTypesHelper.cs: This is a single line patch version for handling Standard conforming strings	parameter in postgresql.conf. You only need this version instead of 1.0 is you are using this setting or is planning to use it. Also, starting with 8.4 postgresql version, this parameter will be default to on in postgresql.conf. Today it is off.
+	More info can be obtained on this link:	http://pgfoundry.org/tracker/index.php?func=detail&aid=1009624&group_id=1000140&atid=592
+	Thanks Laurenz Albe & Erich Lerch for their patch!
+
+
 2006-11-01  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	
 	*Npgsql/NpgsqlCommand.cs: [#1000765] InvalidCastException for ByteA
