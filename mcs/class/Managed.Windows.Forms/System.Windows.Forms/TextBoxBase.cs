@@ -1309,29 +1309,29 @@ namespace System.Windows.Forms
 					return true;
 				}
 
-				case Keys.Enter: {
-					// ignoring accepts_return, fixes bug #76355
-					if (!read_only && document.multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
-						Line	line;
+				//case Keys.Enter: {
+				//        // ignoring accepts_return, fixes bug #76355
+				//        if (!read_only && document.multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
+				//                Line	line;
 
-						if (document.selection_visible) {
-							document.ReplaceSelection("\n", false);
-						}
+				//                if (document.selection_visible) {
+				//                        document.ReplaceSelection("\n", false);
+				//                }
 
-						line = document.CaretLine;
+				//                line = document.CaretLine;
 
-						document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
-						line.ending = LineEnding.Rich;
-						document.InsertString (line, line.text.Length,
-										document.LineEndingToString (line.ending));
-						OnTextChanged(EventArgs.Empty);
+				//                document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
+				//                line.ending = LineEnding.Rich;
+				//                document.InsertString (line, line.text.Length,
+				//                                                document.LineEndingToString (line.ending));
+				//                OnTextChanged(EventArgs.Empty);
 
-						document.UpdateView (line, document.Lines - line.line_no, 0);
-						CaretMoved(this, null);
-						return true;
-					}
-					break;
-				}
+				//                document.UpdateView (line, document.Lines - line.line_no, 0);
+				//                CaretMoved(this, null);
+				//                return true;
+				//        }
+				//        break;
+				//}
 
 				case Keys.Tab: {
 					if (!read_only && accepts_tab && document.multiline) {
@@ -1435,6 +1435,28 @@ namespace System.Windows.Forms
 			CaretMoved(this, null);
 		}
 
+		private void HandleEnter ()
+		{
+			// ignoring accepts_return, fixes bug #76355
+			if (!read_only && document.multiline && (accepts_return || (FindForm() != null && FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
+				Line	line;
+
+				if (document.selection_visible)
+					document.ReplaceSelection ("\n", false);
+
+				line = document.CaretLine;
+
+				document.Split (document.CaretLine, document.CaretTag, document.CaretPosition);
+				line.ending = LineEnding.Rich;
+				document.InsertString (line, line.text.Length, document.LineEndingToString (line.ending));
+				
+				OnTextChanged (EventArgs.Empty);
+
+				document.UpdateView (line, document.Lines - line.line_no, 0);
+				CaretMoved (this, null);
+			}
+		}
+		
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
 			// Make sure we don't get sized bigger than we want to be
@@ -1517,7 +1539,8 @@ namespace System.Windows.Forms
 					return;
 				} else if (ch == 8) {
 					HandleBackspace(false);
-				}
+				} else if (ch == 13)
+					HandleEnter ();
 
 				return;
 			}
