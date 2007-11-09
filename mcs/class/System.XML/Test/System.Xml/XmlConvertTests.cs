@@ -619,6 +619,55 @@ namespace MonoTests.System.Xml
 			AssertType.AreEqual ('Z', s [s.Length -1], "#2-1");
 			AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, XmlDateTimeSerializationMode.RoundtripKind).Kind, "#2-2");
 		}
+
+		[Test]
+		public void XmlDateTimeSerializationModeSeveralFormats ()
+		{
+			XmlDateTimeSerializationMode m = XmlDateTimeSerializationMode.RoundtripKind;
+			XmlConvert.ToDateTime ("0001", m);
+			XmlConvert.ToDateTime ("0001Z", m);
+			XmlConvert.ToDateTime ("0001+09:00", m);
+			XmlConvert.ToDateTime ("0001-02", m);
+			XmlConvert.ToDateTime ("0001-02Z", m);
+			XmlConvert.ToDateTime ("0001-02+09:00", m);
+			XmlConvert.ToDateTime ("0001-02-03", m);
+			XmlConvert.ToDateTime ("0001-02-03Z", m);
+			XmlConvert.ToDateTime ("0001-02-03+09:00", m);
+			XmlConvert.ToDateTime ("--02-03", m);
+			XmlConvert.ToDateTime ("--02-03Z", m);
+			XmlConvert.ToDateTime ("--02-03+09:00", m);
+			XmlConvert.ToDateTime ("---03", m);
+			XmlConvert.ToDateTime ("---03Z", m);
+			XmlConvert.ToDateTime ("---03+09:00", m);
+			XmlConvert.ToDateTime ("10:20:30", m);
+			XmlConvert.ToDateTime ("10:20:30Z", m);
+			XmlConvert.ToDateTime ("10:20:30+09:00", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30Z", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30+09:00", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.00", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.00Z", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.00+09:00", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000Z", m);
+			XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+09:00", m);
+
+			try {
+				XmlConvert.ToDateTime ("0001-02-03T", m);
+				AssertType.Fail ("#1");
+			} catch (FormatException) {
+			}
+			try {
+				XmlConvert.ToDateTime ("0001-02-03T10:20", m);
+				AssertType.Fail ("#2");
+			} catch (FormatException) {
+			}
+			try {
+				XmlConvert.ToDateTime ("0001-02-03T10:20:30.", m);
+				AssertType.Fail ("#3");
+			} catch (FormatException) {
+			}
+		}
 #endif
 	}
 }
