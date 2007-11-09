@@ -1,5 +1,9 @@
 2007-11-09  Mark Probst  <mark.probst@gmail.com>
 
+	* class.c: Do field layout for open generic classes as well.
+
+2007-11-09  Mark Probst  <mark.probst@gmail.com>
+
 	* gc.c, gc-internal.h: Don't finalize threadpool threads with
 	other objects, because the threadpool is still around.  Put them
 	in a list instead and after finalizing all other objects in the
