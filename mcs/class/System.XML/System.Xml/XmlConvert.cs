@@ -118,7 +118,38 @@ namespace System.Xml {
 		  "---ddzzz",
 		  "---ddZ",
 		};
-		
+
+#if NET_2_0
+		static readonly string [] defaultDateTimeFormats = new string [] {
+			"yyyy-MM-ddTHH:mm:ss", // dateTime(1)
+			"yyyy-MM-ddTHH:mm:ss.FFFFFFF", // dateTime(2)
+			"yyyy-MM-dd", // date
+			"HH:mm:ss", // time
+			"yyyy-MM", // gYearMonth
+			"yyyy", // gYear
+			"--MM-dd", // gMonthDay
+			"---dd", // gDay
+			};
+
+		static readonly string [] roundtripDateTimeFormats;
+		static readonly string [] localDateTimeFormats;
+		static readonly string [] utcDateTimeFormats;
+
+		static XmlConvert ()
+		{
+			int l = defaultDateTimeFormats.Length;
+			roundtripDateTimeFormats = new string [l];
+			localDateTimeFormats = new string [l];
+			utcDateTimeFormats = new string [l];
+			for (int i = 0; i < l; i++) {
+				string s = defaultDateTimeFormats [i];
+				localDateTimeFormats [i] = s + "zzz";
+				roundtripDateTimeFormats [i] = s + 'K';
+				utcDateTimeFormats [i] = s + 'Z';
+			}
+		}
+#endif
+
 		public XmlConvert()
 		{}
 
@@ -298,16 +329,16 @@ namespace System.Xml {
 			DateTime dt;
 			switch (mode) {
 			case XmlDateTimeSerializationMode.Local:
-				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
+				dt = ToDateTime (value, localDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToLocalTime ();
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFK");
+				return ToDateTime (value, roundtripDateTimeFormats);
 			case XmlDateTimeSerializationMode.Utc:
-				dt = ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ");
+				dt = ToDateTime (value, utcDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
 			case XmlDateTimeSerializationMode.Unspecified:
 			default:
-				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFF");
+				return ToDateTime (value, defaultDateTimeFormats);
 			}
 		}
 #endif

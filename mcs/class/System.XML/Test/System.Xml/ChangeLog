@@ -1,3 +1,7 @@
+2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvertTests.cs : added test for #339004 and more.
+
 2007-10-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlConvertTests.cs: Added link to MS bug report.

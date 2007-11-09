@@ -1,3 +1,8 @@
+2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDateTime(XmlDateTimeSerializationMode) should
+	  allow more strings than existing one. Fixed bug #339004.
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToDateTime(string,string) should use ParseExact(),
