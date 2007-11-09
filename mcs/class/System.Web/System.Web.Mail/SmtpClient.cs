@@ -54,7 +54,6 @@ namespace System.Web.Mail {
 		public SmtpClient( string server ) {
 	    
 			this.server = server;
-			Connect();
 		}
 	
 		// make the actual connection
@@ -117,7 +116,8 @@ namespace System.Web.Mail {
 		private void StartSend(MailMessageWrapper msg)
 		{
 			ReadFields(msg);
-		
+			Connect();
+
 			// read the server greeting
 			smtp.ReadResponse();
 			smtp.CheckForStatusCode( 220 );
