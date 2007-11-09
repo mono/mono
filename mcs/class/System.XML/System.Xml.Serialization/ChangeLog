@@ -1,3 +1,9 @@
+2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTypeMapping.cs : to get schema provider method, check base
+	  types as well (i.e. FlattenHierarchy). Otherwise typed DataSet
+	  cannot be reflected in 2.0.
+
 2007-11-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeTranslator.cs : for duration, rather use primitiveTypes than

@@ -204,7 +204,7 @@ namespace System.Xml.Serialization
 
 			if (schemaProvider != null) {
 				string method = schemaProvider.MethodName;
-				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public);
+				MethodInfo mi = typeData.Type.GetMethod (method, BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 				if (mi == null)
 					throw new InvalidOperationException (String.Format ("Type '{0}' must implement public static method '{1}'", typeData.Type, method));
 				if (!typeof (XmlQualifiedName).IsAssignableFrom (mi.ReturnType) &&
