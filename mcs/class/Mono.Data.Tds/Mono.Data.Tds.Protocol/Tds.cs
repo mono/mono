@@ -858,15 +858,15 @@ namespace Mono.Data.Tds.Protocol {
 			case 8 :
 				result = epoch.AddDays (comm.GetTdsInt ());
 				int seconds = comm.GetTdsInt ();
-				long millis = ((((long) seconds) % 300L) * 1000L) / 300L;
+				long millis = (long) System.Math.Round (((((long) seconds) % 300L) * 1000L) / 300f);
 				if (seconds != 0 || millis != 0) {
 					result = ((DateTime) result).AddSeconds (seconds / 300);
 					result = ((DateTime) result).AddMilliseconds (millis);
 				}
 				break;
 			case 4 :
-                                // MSDN says small datetime is stored in 2 bytes as no of days
-                                // *after* 1/1/1900. so, cast to unsigned short
+				// MSDN says small datetime is stored in 2 bytes as no of days
+				// *after* 1/1/1900. so, cast to unsigned short
 				result = epoch.AddDays ((ushort) comm.GetTdsShort ());
 				short minutes = comm.GetTdsShort ();
 				if (minutes != 0) 

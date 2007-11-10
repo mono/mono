@@ -1,3 +1,9 @@
+2007-11-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds.cs: Round milliseconds for datetime. Fixes part of bug #323646.
+	* Tds70.cs: Include milliseconds for datetime parameters. Fixes part
+	of bug #323646.
+
 2007-10-17  Nagappan <anagappan@novell.com> 
 
 	* TdsConnectionPool.cs: Default the pooling is enabled. It has to be

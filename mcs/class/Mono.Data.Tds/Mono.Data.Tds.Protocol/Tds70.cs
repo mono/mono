@@ -533,8 +533,8 @@ namespace Mono.Data.Tds.Protocol {
 			case "datetime":
 				DateTime d = Convert.ToDateTime (parameter.Value);
 				value = String.Format (base.Locale,
-						       "'{0:MMM dd yyyy hh:mm:ss tt}'", d);
-                                break;
+					"'{0:MMM dd yyyy hh:mm:ss.fff tt}'", d);
+				break;
 			case "bigint":
 			case "decimal":
 			case "float":
