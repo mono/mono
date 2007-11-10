@@ -1,3 +1,18 @@
+2007-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Mono.MonoConfig/Helpers.cs: added a method for breaking long
+	text lines to fit them within the console window.
+
+	* Mono.MonoConfig/FeatureNode.cs: added support for feature
+	actions.
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: added support for feature
+	actions.
+
+	* Mono.MonoConfig/FeatureAction.cs: added
+
+	* mconfig.exe.sources: added Mono.MonoConfig/FeatureAction.cs
+
 2007-11-09  Marek Habersack  <mhabersack@novell.com>
 
 	* Mono.MonoConfig/FeatureNodeHandler.cs: added support for feature

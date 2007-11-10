@@ -39,19 +39,23 @@ namespace Mono.MonoConfig
 		string name;
 		FeatureTarget target;
 		List <FeatureBlock> blocks;
+		List <FeatureAction> actionsBefore;
+		List <FeatureAction> actionsAfter;
 		Dictionary <string, FeatureNode> storage;
 		StringBuilder description;
 		
 		public FeatureNodeHandler ()
 		{
 			blocks = new List <FeatureBlock> ();
+			actionsBefore = new List <FeatureAction> ();
+			actionsAfter = new List <FeatureAction> ();
 			description = new StringBuilder ();
 		}
 		
 		public void ReadConfiguration (XPathNavigator nav)
 		{
 			name = Helpers.GetRequiredNonEmptyAttribute (nav, "name");
-			target = Helpers.ConvertTarget (Helpers.GetRequiredNonEmptyAttribute (nav, "target"));
+			target = Helpers.ConvertEnum <FeatureTarget> (Helpers.GetRequiredNonEmptyAttribute (nav, "target"), "target");
 
 			XPathNodeIterator iter = nav.Select ("blocks/block[string-length (@name) > 0]");
 			while (iter.MoveNext ())
@@ -65,6 +69,25 @@ namespace Mono.MonoConfig
 					continue;
 				description.Append (val);
 			}
+			
+			FeatureAction action;
+			iter = nav.Select ("actions/action[string-length (@type) > 0 and string-length (@when) > 0]");
+			while (iter.MoveNext ()) {
+				action = new FeatureAction (iter.Current);
+				switch (action.When) {
+					case ActionWhen.Before:
+						actionsBefore.Add (action);
+						break;
+
+					case ActionWhen.After:
+						actionsAfter.Add (action);
+						break;
+
+					default:
+						throw new ApplicationException (
+							String.Format ("Unknown 'when' attribute: {0}", action.When));
+				}
+			}
 		}
 		
 		public void StoreConfiguration ()
@@ -72,8 +95,13 @@ namespace Mono.MonoConfig
 			AssertStorage ();
 
 			List <FeatureBlock> blocksClone = new List <FeatureBlock> (blocks.Count);
+			List <FeatureAction> abc = new List <FeatureAction> (actionsBefore.Count);
+			List <FeatureAction> aac = new List <FeatureAction> (actionsAfter.Count);
+			
 			blocksClone.AddRange (blocks);
-			FeatureNode fn = new FeatureNode (blocksClone, description.ToString ());
+			abc.AddRange (actionsBefore);
+			aac.AddRange (actionsAfter);
+			FeatureNode fn = new FeatureNode (blocksClone, description.ToString (), abc, aac);
 				
 			if (storage.ContainsKey (name))
 				storage [name] = fn; // allow for silent override
@@ -81,6 +109,8 @@ namespace Mono.MonoConfig
 				storage.Add (name, fn);
 				
 			blocks.Clear ();
+			actionsBefore.Clear ();
+			actionsAfter.Clear ();
 			description.Length = 0;
 		}
 
@@ -124,6 +154,16 @@ namespace Mono.MonoConfig
 			StringBuilder ret = new StringBuilder ();
 			ret.AppendFormat ("{0} (Target: {1})", name, lfb [0].Target);
 
+			List <FeatureAction> al = fn.ActionsBefore;
+			if (al != null && al.Count > 0)
+				ret.AppendFormat ("; {0} actions before", al.Count);
+
+			al = fn.ActionsAfter;
+			if (al != null && al.Count > 0)
+				ret.AppendFormat ("; {0} actions after", al.Count);
+
+			ret.Append ("\n");
+			
 			string desc = fn.Description;
 			if (String.IsNullOrEmpty (desc))
 				return ret.ToString ();
@@ -141,40 +181,12 @@ namespace Mono.MonoConfig
 				
 				line = l.Trim ();
 				if (line.Length > maxLineWidth)
-					ret.AppendFormat ("{0}\n", BreakLongLine (line, indent, maxLineWidth));
+					ret.AppendFormat ("{0}\n", Helpers.BreakLongLine (line, indent, maxLineWidth));
 				else
 					ret.AppendFormat ("{0}{1}\n", indent, line);
 			}
 
 			return ret.ToString ();
-		}
-
-		string BreakLongLine (string line, string indent, int maxLineWidth)
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			int lineLen = line.Length;
-			int segments = lineLen / maxLineWidth;
-			int segmentStart = 0;
-			int segmentLen = maxLineWidth - 1;
-			int idx;
-
-			while (segments-- >= 0) {
-				idx = line.LastIndexOf (' ', segmentStart + segmentLen);
-				if (idx > 0)
-					segmentLen = idx - segmentStart;
-				else
-					idx = segmentLen - 1;
-
-				sb.AppendFormat ("{0}{1}\n", indent, line.Substring (segmentStart, segmentLen));
-				segmentStart = idx + 1;
-				if (lineLen - segmentStart > maxLineWidth)
-					segmentLen = maxLineWidth;
-				else
-					segmentLen = lineLen - segmentStart - 1;
-			}
-
-			return sb.ToString ();
 		}
 		
 		public bool HasFeature (string featureName)
@@ -208,7 +220,8 @@ namespace Mono.MonoConfig
 			List <FeatureBlock> blocks = fn.Blocks;
 			if (blocks == null || blocks.Count == 0)
 				throw new ApplicationException (String.Format ("Definition of feature '{0}' is empty", featureName));
-			
+
+			RunActions (fn.ActionsBefore);
 			XmlDocument doc = new XmlDocument ();
 
 			if (File.Exists (configFilePath))
@@ -218,8 +231,21 @@ namespace Mono.MonoConfig
 				AddFeatureBlock (doc, block, target, defaults, configBlocks);
 			
 			Helpers.SaveXml (doc, configFilePath);
+			RunActions (fn.ActionsAfter);
 		}
 
+		void RunActions (List <FeatureAction> actions)
+		{
+			if (actions == null || actions.Count == 0)
+				return;
+
+			foreach (FeatureAction action in actions) {
+				if (action == null)
+					continue;
+				action.Execute ();
+			}
+		}
+		
 		void AddFeatureBlock (XmlDocument doc, FeatureBlock block, FeatureTarget target, IDefaultContainer[] defaults,
 				      IConfigBlockContainer[] configBlocks)
 		{

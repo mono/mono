@@ -38,15 +38,43 @@ namespace Mono.MonoConfig
 	{
 		public const string FakeRootName = "F_a_K_e_R_o_O_t_M_o_N_o_C_o_N_f_I_g_N_o_D_e";
 		
-		public static FeatureTarget ConvertTarget (string value)
+		public static EnumType ConvertEnum <EnumType> (string value, string attrName)
 		{
 			try {
-				EnumConverter cvt = new EnumConverter (typeof (FeatureTarget));
-				return (FeatureTarget) cvt.ConvertFromInvariantString (value);
+				EnumConverter cvt = new EnumConverter (typeof (EnumType));
+				return (EnumType) cvt.ConvertFromInvariantString (value);
 			} catch (Exception) {
 				throw new ApplicationException (
-					String.Format ("Failed to parse the 'target' attribute '{0}'", value));
+					String.Format ("Failed to parse the '{0}' attribute '{1}'", attrName, value));
 			}
+		}
+
+		public static string BreakLongLine (string line, string indent, int maxLineWidth)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			int lineLen = line.Length;
+			int segments = lineLen / maxLineWidth;
+			int segmentStart = 0;
+			int segmentLen = maxLineWidth - 1;
+			int idx;
+
+			while (segments-- >= 0) {
+				idx = line.LastIndexOf (' ', segmentStart + segmentLen);
+				if (idx > 0)
+					segmentLen = idx - segmentStart;
+				else
+					idx = segmentLen - 1;
+
+				sb.AppendFormat ("{0}{1}\n", indent, line.Substring (segmentStart, segmentLen));
+				segmentStart = idx + 1;
+				if (lineLen - segmentStart > maxLineWidth)
+					segmentLen = maxLineWidth;
+				else
+					segmentLen = lineLen - segmentStart - 1;
+			}
+
+			return sb.ToString ();
 		}
 		
 		public static string GetRequiredNonEmptyAttribute (XPathNavigator node, string name)

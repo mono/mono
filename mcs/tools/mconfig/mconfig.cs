@@ -192,7 +192,7 @@ namespace Mono.MonoConfig
 						RequiredParameterMissing (argName);
 					
 					try {
-						Target = Helpers.ConvertTarget (argParam);
+						Target = Helpers.ConvertEnum <FeatureTarget> (argParam, "target");
 					} catch (Exception ex) {
 						OptionParameterError (argName, ex.Message);
 					}

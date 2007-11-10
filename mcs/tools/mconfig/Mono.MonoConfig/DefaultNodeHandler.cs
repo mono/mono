@@ -64,7 +64,7 @@ namespace Mono.MonoConfig
 		public void ReadConfiguration (XPathNavigator nav)
 		{
 			section = Helpers.GetRequiredNonEmptyAttribute (nav, "section");
-			target = Helpers.ConvertTarget (Helpers.GetRequiredNonEmptyAttribute (nav, "target"));
+			target = Helpers.ConvertEnum <FeatureTarget>  (Helpers.GetRequiredNonEmptyAttribute (nav, "target"), "target");
 			
 			XPathNodeIterator iter = nav.Select ("./text()");
 			StringBuilder sb = new StringBuilder ();

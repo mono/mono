@@ -27,15 +27,16 @@
 //
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Mono.MonoConfig
 {
 	public class FeatureNode
 	{
 		List <FeatureBlock> blocks;
+		List <FeatureAction> actionsBefore;
+		List <FeatureAction> actionsAfter;
 		string description;
-
+		
 		public List <FeatureBlock> Blocks {
 			get {
 				if (blocks != null)
@@ -53,11 +54,22 @@ namespace Mono.MonoConfig
 				return String.Empty;
 			}
 		}
+
+		public List <FeatureAction> ActionsBefore {
+			get { return actionsBefore; }
+		}
+
+		public List <FeatureAction> ActionsAfter {
+			get { return actionsAfter; }
+		}
 		
-		public FeatureNode (List <FeatureBlock> blocks, string description)
+		public FeatureNode (List <FeatureBlock> blocks, string description,
+				    List <FeatureAction> actionsBefore, List <FeatureAction> actionsAfter)
 		{
 			this.blocks = blocks;
 			this.description = description;
+			this.actionsBefore = actionsBefore;
+			this.actionsAfter = actionsAfter;
 		}
 	}
 }

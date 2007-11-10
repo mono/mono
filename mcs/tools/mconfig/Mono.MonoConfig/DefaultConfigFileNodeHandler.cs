@@ -114,7 +114,7 @@ namespace Mono.MonoConfig
 		public void ReadConfiguration (XPathNavigator nav)
 		{
 			name = Helpers.GetRequiredNonEmptyAttribute (nav, "name");
-			target = Helpers.ConvertTarget (Helpers.GetRequiredNonEmptyAttribute (nav, "target"));
+			target = Helpers.ConvertEnum <FeatureTarget> (Helpers.GetRequiredNonEmptyAttribute (nav, "target"), "target");
 			fileName = Helpers.GetOptionalAttribute (nav, "fileName");
 			
 			if (String.IsNullOrEmpty (fileName))
