@@ -1,3 +1,8 @@
+2007-11-03  David S. Miller  <davem@huronp11.davemloft.net>
+
+       * mini-sparc.c (mono_arch_flush_icache): Make more efficient
+       under Linux.  We only need to flush every 32-byte cache line.	
+
 2007-11-07  Massimiliano Mantione  <massi@ximian.com>
 
 	* mini.c:
