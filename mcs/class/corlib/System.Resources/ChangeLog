@@ -1,3 +1,13 @@
+2007-11-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceWriter.cs: On 2.0 profile, use case-insensitive SortedList.
+	Changed exception messages and params to match MS. Allow null values
+	in AddResource overloads. In Dispose (bool), also generate resources
+	(header) if no resources were added. Fixes bug #339074. When Generate
+	is done, reset resources to null to prevent further editing.  This
+	also avoids the need for a separate bool to indicate whether generate
+	was already invoked. Code formatting.
+
 2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManager.cs: Removed temporary workaround for bug #43567.

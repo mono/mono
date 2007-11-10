@@ -1,6 +1,12 @@
+2007-11-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceWriterTest.cs: Added ctor tests. Added tests for AddResource
+	overloads. Added test for argument null checks. Added test for bug
+	#339074. Added test for invoking Generate () multiple times.
+
 2007-10-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* ResourceManager.cs: Added tests for null argument checks. Added test
+	* ResourceManagerTest.cs: Added tests for null argument checks. Added test
 	for GetStream with resource file that does not exist.
 
 2007-09-17  Gert Driesen  <drieseng@users.sourceforge.net>
