@@ -1,3 +1,8 @@
+2007-11-03  David S. Miller  <davem@davemloft.net>
+
+       * sparc/sparc-codegen.h (sparc_set32, sparc_set): A plain sethi
+       can be used if the constant value only has the top 22 bits set.
+
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
 	* x86/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
