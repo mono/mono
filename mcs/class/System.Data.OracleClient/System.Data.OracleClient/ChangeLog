@@ -1,3 +1,6 @@
+2007-11-11 Leszek Ciesielski <skolima@gmail.com>
+	* OracleCommands.cs: fix for binging procedure parameters by name
+	rather than position (by Gary Thomas)
 2007-11-01  Marek Safar  <marek.safar@gmail.com>
 
 	* OracleCommand.cs,

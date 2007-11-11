@@ -643,10 +643,10 @@ namespace System.Data.OracleClient
 					foreach (OracleParameter parm in Parameters) {
 						if (sb.Length > 0)
 							sb.Append (",");
-						sb.Append (":" + parm.ParameterName);
+						sb.Append (parm.ParameterName + "=>:" + parm.ParameterName);
 					}
 
-				string sql = "call " + commandText + "(" + sb.ToString() + ")";
+				string sql = "begin " + commandText + "(" + sb.ToString() + "); end;";
 				statement.Prepare (sql);
 			}
 			else	// Text
