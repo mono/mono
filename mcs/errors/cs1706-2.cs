@@ -1,4 +1,4 @@
-// cs1706-2.cs: Anonymous methods are not allowed in the attribute declaration
+// CS1706: Anonymous methods and lambda expressions cannot be used in the current context
 // Line: 14
 
 public delegate void Proc();

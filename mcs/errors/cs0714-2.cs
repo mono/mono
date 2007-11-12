@@ -1,4 +1,4 @@
-// cs0714.cs: `StaticClass': static classes cannot implement interfaces
+// CS0714: Static class `StaticClass' cannot implement interfaces
 // Line: 8
 
 static partial class StaticClass

@@ -1,4 +1,4 @@
-// gcs0702.cs: Bound cannot be special class `System.Array'
+// CS0702: A constraint cannot be special class `System.Array'
 // Line: 8
 
 using System;
