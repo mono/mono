@@ -1,3 +1,9 @@
+2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : now we try both default and 2.0 profile tests (i.e.
+	  "make run-test" and "make PROFILE=net_2_0").
+	  For 2.0, use XmlReader.Create().
+
 2006-07-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xsdtest.cs :

@@ -1,12 +1,21 @@
-RUNTIME = MONO_PATH=../../../../lib/default mono --debug
-MCS = mcs
+PROFILE = default
+RUNTIME = MONO_PATH=../../../../lib/$(PROFILE) mono --debug
+ifeq ($(PROFILE), net_2_0)
+	MCS = gmcs
+else
+	MCS = mcs
+endif
 TESTS = xsd-test-suite/suntest/SunTestsAll/xsiType1.xsd
 MASTERS = xsd-test-suite/suntest/tests-all.xml
 TEST_ARCHIVE = XSTC-20020116.tar.gz
 MASTER_ARCHIVE = test-masters.tar.gz
+ifeq ($(PROFILE), net_2_0)
+	MCS_OPTS += -d:NET_2_0
+endif
+TEST_RUNNER = xsdtest_$(PROFILE).exe
 
-xsdtest.exe : xsdtest.cs $(TESTS)
-	$(MCS) xsdtest.cs
+$(TEST_RUNNER) : xsdtest.cs $(TESTS)
+	$(MCS) xsdtest.cs $(MCS_OPTS) -out:$(TEST_RUNNER)
 
 xs-psci-compare.exe : xs-psci-compare.cs
 	$(MCS) xs-psci-compare.cs
@@ -24,13 +33,17 @@ $(TESTS) : $(TEST_ARCHIVE) $(MASTERS)
 $(TEST_ARCHIVE) :
 	wget http://www.w3.org/2001/05/xmlschema-test-collection/XSTC-20020116.tar.gz
 
-run-test :
-	$(RUNTIME) xsdtest.exe --xml --reportsuccess --testall --details --report:TestResult.xml $(XSD_TEST_FLAGS)
+run-test : $(TEST_RUNNER)
+	$(RUNTIME) $(TEST_RUNNER) --v2 --xml --reportsuccess --testall --details --report:TestResult.xml $(XSD_TEST_FLAGS)
 	@echo "SUCCESS: `grep -c \"OK\" TestResult.xml` NORMAL FAILURE: `grep -c should TestResult.xml` UNEXPECTED `grep -c unexpected TestResult.xml`"
 
 test-psci : xs-psci-compare.exe
 	$(RUNTIME) xs-psci-compare.exe xsd-test-suite/msxsdtest/tests-all.xml > psci-mono-msxsd.txt
 
+clean:
+	rm $(TEST_RUNNER)
+	
 # be careful to use it. This removes ALL files in xsd-test-suite!
-# clean:
-#	rm -rf xsd-test-suite
+clean-complete:
+	rm $(TEST_RUNNER)
+	rm -rf xsd-test-suite

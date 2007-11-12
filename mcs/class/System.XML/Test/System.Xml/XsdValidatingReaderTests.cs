@@ -484,6 +484,35 @@ namespace MonoTests.System.Xml
     <!-- blah blah -->
     <element />
 </element_list>";
+			RunValidation (xml, xsd);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlSchemaValidationException))]
+		public void EnumerationFacet ()
+		{
+			// bug #339934
+			string xsd = @"<xs:schema id='schema' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+    <xs:simpleType name='ModeType'>
+        <xs:restriction base='xs:string'>
+            <xs:enumeration value='on' />
+            <xs:enumeration value='off' />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name='test'>
+        <xs:complexType>
+            <xs:sequence/>
+            <xs:attribute name='mode' type='ModeType' use='required' />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>";
+			string xml = @"<test mode='out of scope'></test>";
+
+			RunValidation (xml, xsd);
+		}
+
+		void RunValidation (string xml, string xsd)
+		{
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.ValidationType = ValidationType.Schema;
 			s.Schemas.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));

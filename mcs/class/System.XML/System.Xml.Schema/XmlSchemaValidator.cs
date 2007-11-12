@@ -790,6 +790,12 @@ namespace System.Xml.Schema
 				} catch (Exception ex) { // It is inevitable and bad manner.
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
+
+				// check part of 3.14.4 StringValid
+				SimpleType st = attr.AttributeType as SimpleType;
+				if (st != null)
+					ValidateRestrictedSimpleTypeValue (st, ref dt, new XmlAtomicValue (parsedValue, attr.AttributeSchemaType).Value);
+
 				XmlSchemaType type = info != null ? info.SchemaType : null;
 				if (attr.ValidatedFixedValue != null && 
 					!XmlSchemaUtil.IsSchemaDatatypeEquals (
@@ -1053,6 +1059,91 @@ namespace System.Xml.Schema
 				}
 			}
 			return ret;
+		}
+
+		private void ValidateRestrictedSimpleTypeValue (SimpleType st, ref XsDatatype dt, string normalized)
+		{
+			{
+				string [] values;
+				XsDatatype itemDatatype;
+				SimpleType itemSimpleType;
+				switch (st.DerivedBy) {
+				case XmlSchemaDerivationMethod.List:
+					SimpleTypeList listContent = st.Content as SimpleTypeList;
+					values = normalized.Split (XmlChar.WhitespaceChars);
+					itemDatatype = listContent.ValidatedListItemType as XsDatatype;
+					itemSimpleType = listContent.ValidatedListItemType as SimpleType;
+					for (int vi = 0; vi < values.Length; vi++) {
+						string each = values [vi];
+						if (each == String.Empty)
+							continue;
+						// validate against ValidatedItemType
+						if (itemDatatype != null) {
+							try {
+								itemDatatype.ParseValue (each, nameTable, nsResolver);
+							} catch (Exception ex) { // FIXME: (wishlist) better exception handling ;-(
+								HandleError ("List type value contains one or more invalid values.", ex);
+								break;
+							}
+						}
+						else
+							AssessStringValid (itemSimpleType, itemSimpleType.Datatype, each);
+					}
+					break;
+				case XmlSchemaDerivationMethod.Union:
+					SimpleTypeUnion union = st.Content as SimpleTypeUnion;
+					{
+						string each = normalized;
+						// validate against ValidatedItemType
+						bool passed = false;
+						foreach (object eachType in union.ValidatedTypes) {
+							itemDatatype = eachType as XsDatatype;
+							itemSimpleType = eachType as SimpleType;
+							if (itemDatatype != null) {
+								try {
+									itemDatatype.ParseValue (each, nameTable, nsResolver);
+								} catch (Exception) { // FIXME: (wishlist) better exception handling ;-(
+									continue;
+								}
+							}
+							else {
+								try {
+									AssessStringValid (itemSimpleType, itemSimpleType.Datatype, each);
+								} catch (ValException) {
+									continue;
+								}
+							}
+							passed = true;
+							break;
+						}
+						if (!passed) {
+							HandleError ("Union type value contains one or more invalid values.");
+							break;
+						}
+					}
+					break;
+				case XmlSchemaDerivationMethod.Restriction:
+					SimpleTypeRest str = st.Content as SimpleTypeRest;
+					// facet validation
+					if (str != null) {
+						/* Don't forget to validate against inherited type's facets 
+						 * Could we simplify this by assuming that the basetype will also
+						 * be restriction?
+						 * */
+						 // mmm, will check later.
+						SimpleType baseType = st.BaseXmlSchemaType as SimpleType;
+						if (baseType != null) {
+							 AssessStringValid(baseType, dt, normalized);
+						}
+						if (!str.ValidateValueWithFacets (normalized, nameTable, nsResolver)) {
+							HandleError ("Specified value was invalid against the facets.");
+							break;
+						}
+					}
+					dt = st.Datatype;
+					break;
+				}
+			}
 		}
 
 		#endregion
