@@ -58,6 +58,9 @@ namespace System.Drawing {
 				return SystemColors.ControlText;
 			case "infobackground":
 				return SystemColors.Info;
+			// special case for Color.LightGray versus html's LightGrey (#340917)
+			case "lightgrey":
+				return Color.LightGray;
 			}
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (Color));
 			return (Color) converter.ConvertFromString (htmlColor);

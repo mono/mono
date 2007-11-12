@@ -1,3 +1,8 @@
+2007-11-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorTranslator.cs: Special case handling for LightGray versus 
+	HTML's LightGrey. Fix bug #340917.
+
 2007-11-07  Geoff Norton  <gnorton@novell.com>
 
 	* carbonFunctions.cs: 
