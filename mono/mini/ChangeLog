@@ -1,3 +1,11 @@
+2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* tramp-arm.c (mono_arch_patch_callsite): Support patching
+	BX call sequence.
+
+	* mini-arm.c (arm_patch): Implement patching of BX call
+	sequence. Fixes one of the bugs in #322722.
+
 2007-11-03  David S. Miller  <davem@huronp11.davemloft.net>
 
        * mini-sparc.c (mono_arch_flush_icache): Make more efficient
