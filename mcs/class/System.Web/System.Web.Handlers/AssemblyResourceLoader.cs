@@ -57,37 +57,35 @@ namespace System.Web.Handlers {
 #endif
 		const char QueryParamSeparator = '&';
 
-		static readonly Hashtable _embeddedResources;
+		static readonly Hashtable _embeddedResources = Hashtable.Synchronized (new Hashtable ());
 #if SYSTEM_WEB_EXTENSIONS
 		static ScriptResourceHandler () {
 			MachineKeySectionUtils.AutoGenKeys ();
-#else
-		static AssemblyResourceLoader() {
-#endif
-			_embeddedResources = new Hashtable ();
-			InitEmbeddedResourcesUrls ();
 		}
+#endif
 
-		static void InitEmbeddedResourcesUrls ()
+		static void InitEmbeddedResourcesUrls (Assembly assembly, Hashtable hashtable)
 		{
-			WebResourceAttribute [] attrs = (WebResourceAttribute []) currAsm.GetCustomAttributes (typeof (WebResourceAttribute), false);
+			WebResourceAttribute [] attrs = (WebResourceAttribute []) assembly.GetCustomAttributes (typeof (WebResourceAttribute), false);
 			for (int i = 0; i < attrs.Length; i++) {
 				string resourceName = attrs [i].WebResource;
-				if (resourceName != null && resourceName.Length > 0)
-					_embeddedResources.Add (resourceName, GetResourceUrl (currAsm, resourceName, false));
+				if (resourceName != null && resourceName.Length > 0) {
+#if SYSTEM_WEB_EXTENSIONS
+					hashtable.Add (new ResourceKey (resourceName, false), CreateResourceUrl (assembly, resourceName, false));
+					hashtable.Add (new ResourceKey (resourceName, true), CreateResourceUrl (assembly, resourceName, true));
+#else
+					hashtable.Add (resourceName, CreateResourceUrl (assembly, resourceName, false));
+#endif
+				}
 			}
 		}
 
+#if !SYSTEM_WEB_EXTENSIONS
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
-			string url = null;
-			Assembly assembly = type.Assembly;
-
-			if (assembly == currAsm)
-				url = (string) _embeddedResources [resourceName];
-
-			return (url != null) ? url : GetResourceUrl (assembly, resourceName, false);
+			return GetResourceUrl (type.Assembly, resourceName, false);
 		}
+#endif
 
 		static string GetHexString (byte [] bytes)
 		{
@@ -161,9 +159,25 @@ namespace System.Web.Handlers {
 			asmName = parts [0];
 			resName = parts [1];
 		}
-		
+
 		internal static string GetResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
 		{
+			Hashtable hashtable = (Hashtable)_embeddedResources [assembly];
+			if (hashtable == null) {
+				hashtable = new Hashtable ();
+				InitEmbeddedResourcesUrls (assembly, hashtable);
+				_embeddedResources [assembly] = hashtable;
+			}
+#if SYSTEM_WEB_EXTENSIONS
+			return (string) hashtable [new ResourceKey (resourceName, notifyScriptLoaded)];
+#else
+			return (string) hashtable [resourceName];
+#endif
+		}
+		
+		static string CreateResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
+		{
+
 			string aname = assembly == currAsm ? "s" : assembly.GetName ().FullName;
 			string apath = assembly.Location;
 			string atime = String.Empty;

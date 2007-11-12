@@ -58,5 +58,28 @@ namespace System.Web.Handlers
 			s = s.Replace ("\"", "\\\"");
 			return "\"" + s + "\"";
 		}
+
+		class ResourceKey
+		{
+			readonly string _resourceName;
+			readonly bool _notifyScriptLoaded;
+
+			public ResourceKey (string resourceName, bool notifyScriptLoaded) {
+				_resourceName = resourceName;
+				_notifyScriptLoaded = notifyScriptLoaded;
+			}
+
+			public override bool Equals (object obj) {
+				if (!(obj is ResourceKey))
+					return base.Equals (obj);
+
+				ResourceKey resKey = (ResourceKey) obj;
+				return resKey._resourceName == this._resourceName && resKey._notifyScriptLoaded == _notifyScriptLoaded;
+			}
+
+			public override int GetHashCode () {
+				return _resourceName.GetHashCode () ^ _notifyScriptLoaded.GetHashCode ();
+			}
+		}
 	}
 }
