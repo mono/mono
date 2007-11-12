@@ -1167,9 +1167,7 @@ namespace Mono.CSharp {
 		protected Expression CompatibleChecks (EmitContext ec, Type delegate_type)
 		{
 			if (!ec.IsAnonymousMethodAllowed) {
-				Report.Error (1706, loc,
-					      "Anonymous methods are not allowed in the " +
-					      "attribute declaration");
+				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
 			

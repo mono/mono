@@ -3133,7 +3133,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (IsStatic) {
+			if (PartialContainer.IsStaticClass) {
 				if (base_class.Type != TypeManager.object_type) {
 					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
 						GetSignatureForError (), base_class.GetSignatureForError ());
@@ -3143,7 +3143,7 @@ namespace Mono.CSharp {
 				if (ifaces != null) {
 					foreach (TypeExpr t in ifaces)
 						Report.SymbolRelatedToPreviousError (t.Type);
-					Report.Error (714, Location, "`{0}': static classes cannot implement interfaces", GetSignatureForError ());
+					Report.Error (714, Location, "Static class `{0}' cannot implement interfaces", GetSignatureForError ());
 				}
 			}
 
@@ -7990,24 +7990,29 @@ namespace Mono.CSharp {
 			Type declaring_type = MethodData.DeclaringType;
 			Type return_type = MemberType;
 			Type first_arg_type = ParameterTypes [0];
-
-			// Rules for conversion operators
 			
+			Type first_arg_type_unwrap = first_arg_type;
+			if (TypeManager.IsNullableType (first_arg_type))
+				first_arg_type_unwrap = TypeManager.GetTypeArguments (first_arg_type) [0];
+			
+			Type return_type_unwrap = return_type;
+			if (TypeManager.IsNullableType (return_type))
+				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];			
+
+			//
+			// Rules for conversion operators
+			//
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
-				if (first_arg_type == return_type && first_arg_type == declaring_type){
+				if (first_arg_type_unwrap == return_type_unwrap && first_arg_type_unwrap == declaring_type){
 					Report.Error (555, Location,
 						"User-defined operator cannot take an object of the enclosing type and convert to an object of the enclosing type");
 					return false;
 				}
 				
 				Type conv_type;
-				if (TypeManager.IsEqual (declaring_type, return_type)) {
+				if (TypeManager.IsEqual (declaring_type, return_type) || declaring_type == return_type_unwrap) {
 					conv_type = first_arg_type;
-				} else if (TypeManager.IsEqual (declaring_type, first_arg_type)) {
-					conv_type = return_type;
-				} else if (TypeManager.IsNullableTypeOf (return_type, declaring_type)) {
-					conv_type = first_arg_type;
-				} else if (TypeManager.IsNullableTypeOf (first_arg_type, declaring_type)) {
+				} else if (TypeManager.IsEqual (declaring_type, first_arg_type) || declaring_type == first_arg_type_unwrap) {
 					conv_type = return_type;
 				} else {
 					Report.Error (556, Location, 

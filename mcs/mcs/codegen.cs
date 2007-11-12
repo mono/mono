@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 		///   Points to the Type (extracted from the TypeContainer) that
 		///   declares this body of code
 		/// </summary>
-		public Type ContainerType;
+		public readonly Type ContainerType;
 		
 		/// <summary>
 		///   Whether this is generating code for a constructor

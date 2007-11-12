@@ -185,6 +185,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public virtual bool IsNull {
+			get {
+				return false;
+			}
+		}
+
 		/// <summary>
 		///   Performs semantic analysis on the Expression
 		/// </summary>
@@ -1146,10 +1152,16 @@ namespace Mono.CSharp {
 			Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
 		}
 		
-		protected void Error_CannotModifyIntermediateExpressionValue ()
+		protected void Error_CannotModifyIntermediateExpressionValue (EmitContext ec)
 		{
-			Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
-				GetSignatureForError ());
+			Report.SymbolRelatedToPreviousError (type);
+			if (ec.CurrentInitializerVariable != null) {
+				Report.Error (1918, loc, "Members of a value type property `{0}' cannot be assigned with an object initializer",
+					GetSignatureForError ());
+			} else {
+				Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
+					GetSignatureForError ());
+			}
 		}
 
 		//
@@ -1514,6 +1526,10 @@ namespace Mono.CSharp {
 
 		public override bool IsNegative {
 			get { return child.IsNegative; }
+		}
+
+		public override bool IsNull {
+			get { return child.IsNull; }
 		}
 
 		public override bool IsZeroInteger {
@@ -5114,7 +5130,7 @@ namespace Mono.CSharp {
 			}
 
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Error_CannotModifyIntermediateExpressionValue ();
+				Error_CannotModifyIntermediateExpressionValue (ec);
 			}
 
 			if (setter == null){

@@ -2887,7 +2887,7 @@ namespace Mono.CSharp {
 				converted = NullStringCase;
 				return true;
 			}
-
+			
 			c = c.ImplicitConversionRequired (required_type, loc);
 			if (c == null)
 				return false;
@@ -4763,7 +4763,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr.Type == TypeManager.null_type) {
+			if (expr.IsNull) {
 				Report.Error (186, loc, "Use of null is not valid in this context");
 				return false;
 			}

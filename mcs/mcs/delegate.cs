@@ -701,6 +701,14 @@ namespace Mono.CSharp {
 				return null;
 
 			delegate_method = (MethodInfo) method_group;
+			if (method_group is ExtensionMethodGroupExpr) {
+				ParameterData p = TypeManager.GetParameterData (delegate_method);
+				if (p.ExtensionMethodType.IsValueType) {
+					Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
+						TypeManager.CSharpSignature (delegate_method), TypeManager.CSharpName (p.ExtensionMethodType));
+				}
+			}
+
 			Expression ret_expr = new TypeExpression (((MethodInfo) delegate_method).ReturnType, loc);
 			if (!Delegate.IsTypeCovariant (ret_expr, (invoke_method.ReturnType))) {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
@@ -833,8 +841,12 @@ namespace Mono.CSharp {
 				return null;
 			
 			Expression e = a.Expr;
-			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1)
-				return ((AnonymousMethodExpression) e).Compatible (ec, type).Resolve (ec);
+			if (e is AnonymousMethodExpression && RootContext.Version != LanguageVersion.ISO_1) {
+				AnonymousMethod am = ((AnonymousMethodExpression) e).Compatible (ec, type);
+				if (am == null)
+					return null;
+				return am.Resolve (ec);
+			}
 
 			method_group = e as MethodGroupExpr;
 			if (method_group == null) {

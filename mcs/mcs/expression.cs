@@ -1077,7 +1077,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 			
-			if (expr.Type.IsPointer) {
+			if (expr.Type.IsPointer || probe_type_expr.Type.IsPointer) {
 				Report.Error (244, loc, "The `{0}' operator cannot be applied to an operand of pointer type",
 					OperatorName);
 				return null;
@@ -6036,7 +6036,6 @@ namespace Mono.CSharp {
 						      "Consider copying `this' to a local variable " +
 						      "outside the anonymous method and using the " +
 						      "local instead.");
-					return false;
 				}
 
 				RootScopeInfo host = block.Toplevel.RootScope;
@@ -7036,15 +7035,15 @@ namespace Mono.CSharp {
 			if (!CommonResolve (ec))
 				return null;
 
-			Type t = Expr.Type;
-			if (t.IsArray)
+			type = Expr.Type;
+			if (type.IsArray)
 				return (new ArrayAccess (this, loc)).DoResolveLValue (ec, right_side);
 
-			if (t.IsPointer)
-				return MakePointerAccess (ec, t);
+			if (type.IsPointer)
+				return MakePointerAccess (ec, type);
 
-			if (Expr.eclass != ExprClass.Variable && t.IsValueType)
-				Error_CannotModifyIntermediateExpressionValue ();
+			if (Expr.eclass != ExprClass.Variable && type.IsValueType)
+				Error_CannotModifyIntermediateExpressionValue (ec);
 
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
 		}
@@ -7655,7 +7654,7 @@ namespace Mono.CSharp {
 
 			// if the indexer returns a value type, and we try to set a field in it
 			if (right_side == EmptyExpression.LValueMemberAccess || right_side == EmptyExpression.LValueMemberOutAccess) {
-				Error_CannotModifyIntermediateExpressionValue ();
+				Error_CannotModifyIntermediateExpressionValue (ec);
 			}
 
 			Expression e = ResolveAccessor (ec, AccessorType.Set);

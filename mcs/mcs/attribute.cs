@@ -424,7 +424,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			MethodGroupExpr mg = MemberLookupFinal (ec, null,
+			MethodGroupExpr mg = MemberLookupFinal (ec, ec.ContainerType,
 				Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Location) as MethodGroupExpr;

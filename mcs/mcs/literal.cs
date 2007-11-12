@@ -95,6 +95,10 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
+		public override bool IsNull {
+			get { return true; }
+		}
+
 		public override bool IsZeroInteger 
 		{
 			get { return true; }

@@ -1,3 +1,9 @@
+2007-11-12  Marek Safar  <marek.safar@gmail.com>
+
+ 	* generic.cs, literal.cs, ecore.cs, class.cs, delegate.cs, const.cs,
+ 	anonymous.cs, expression.cs, attribute.cs, codegen.cs, statement.cs:
+ 	Flush small error reporting changes.
+ 	
 2007-11-09  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #324996

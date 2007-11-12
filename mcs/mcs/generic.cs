@@ -330,9 +330,10 @@ namespace Mono.CSharp {
 				    (class_constraint_type == TypeManager.delegate_type) ||
 				    (class_constraint_type == TypeManager.enum_type) ||
 				    (class_constraint_type == TypeManager.value_type) ||
-				    (class_constraint_type == TypeManager.object_type)) {
+				    (class_constraint_type == TypeManager.object_type) ||
+					class_constraint_type == TypeManager.multicast_delegate_type) {
 					Report.Error (702, loc,
-						      "Bound cannot be special class `{0}'",
+							  "A constraint cannot be special class `{0}'",
 						      TypeManager.CSharpName (class_constraint_type));
 					return false;
 				}
