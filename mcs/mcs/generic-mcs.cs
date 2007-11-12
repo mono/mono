@@ -350,4 +350,15 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();		
 		}
 	}
+	
+	public class Nullable
+	{
+		public class HasValue
+		{
+			public static Expression Create (Expression expr, EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+	}
 }

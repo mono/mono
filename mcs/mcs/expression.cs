@@ -1150,6 +1150,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type d = expr.Type;
+			bool d_is_nullable = false;
 
 			if (expr is Constant) {
 				//
@@ -1160,21 +1161,31 @@ namespace Mono.CSharp {
 					return CreateConstantResult (false);
 			} else if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
 				d = TypeManager.GetTypeArguments (d) [0];
+				d_is_nullable = true;
 			}
 
 			type = TypeManager.bool_type;
 			eclass = ExprClass.Value;
 			Type t = probe_type_expr.Type;
-
-			if (TypeManager.IsNullableType (t) && !TypeManager.ContainsGenericParameters (t))
+			bool t_is_nullable = false;
+			if (TypeManager.IsNullableType (t) && !TypeManager.ContainsGenericParameters (t)) {
 				t = TypeManager.GetTypeArguments (t) [0];
+				t_is_nullable = true;
+			}
 
 			if (t.IsValueType) {
-				//
-				// The result is true if D and T are the same value types
-				//
-				if (d == t)
+				if (d == t) {
+					//
+					// D and T are the same value types but D can be null
+					//
+					if (d_is_nullable && !t_is_nullable)
+						return Nullable.HasValue.Create (expr, ec);
+					
+					//
+					// The result is true if D and T are the same value types
+					//
 					return CreateConstantResult (true);
+				}
 
 				if (TypeManager.IsGenericParameter (d))
 					return ResolveGenericParameter (t, d);

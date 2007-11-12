@@ -3192,6 +3192,37 @@ namespace Mono.CSharp {
 				Constructor = type.GetConstructor (new Type[] { UnderlyingType });
 			}
 		}
+		
+		public class HasValue : Expression
+		{
+			Expression expr;
+			NullableInfo info;
+
+			private HasValue (Expression expr)
+			{
+				this.expr = expr;
+			}
+			
+			public static Expression Create (Expression expr, EmitContext ec)
+			{
+				return new HasValue (expr).Resolve (ec);
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				this.info = new NullableInfo (expr.Type);
+
+				type = TypeManager.bool_type;
+				eclass = expr.eclass;
+				return this;
+			}
+		}		
 
 		public class Unwrap : Expression, IMemoryLocation, IAssignMethod
 		{
