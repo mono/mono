@@ -1,3 +1,8 @@
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c debug-debugger.c mini-trampolines.c: Update after 
+	mono_marshal_get_delegate_invoke signature change.
+
 2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-arm.md: Increase the max size of OP_THROW to 24 bytes.
