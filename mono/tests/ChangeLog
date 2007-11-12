@@ -1,3 +1,11 @@
+2007-11-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-322722_patch_bx.2.cs : Added test for bug #322722.
+
+	* bug-322722_dyn_method_throw.2.cs: Same.
+
+	* Makefile.am: Added the two tests for bug #322722.
+
 2007-11-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Removed bug-318677 since the corresponding patch was reverted.
