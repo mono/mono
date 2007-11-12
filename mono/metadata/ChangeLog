@@ -1,3 +1,15 @@
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Update after
+	mono_marshal_get_delegate_invoke signature change.
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Receive the target_method as
+	an additional argument. Add support for invoking abstract methods.
+
+	* metadata-internals.h (MonoImage): Add 'delegate_abstract_invoke_cache'.
+
+	* image.c (mono_image_close): Free delegate_abstract_invoke_cache.	
+
 2007-11-09  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c: Do field layout for open generic classes as well.
