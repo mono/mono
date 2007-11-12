@@ -971,3 +971,14 @@ System.Net/DownloadStringCompletedEventHandler.cs
 System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
 System.Runtime.InteropServices/HandleCollector.cs
 System.Runtime.InteropServices/StandardOleMarshalObject.cs
+System.Runtime.InteropServices.ComTypes/ADVF.cs
+System.Runtime.InteropServices.ComTypes/DATADIR.cs
+System.Runtime.InteropServices.ComTypes/DVASPECT.cs
+System.Runtime.InteropServices.ComTypes/FORMATETC.cs
+System.Runtime.InteropServices.ComTypes/IAdviseSink.cs
+System.Runtime.InteropServices.ComTypes/IDataObject.cs
+System.Runtime.InteropServices.ComTypes/IEnumFORMATETC.cs
+System.Runtime.InteropServices.ComTypes/IEnumSTATDATA.cs
+System.Runtime.InteropServices.ComTypes/STATDATA.cs
+System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
+System.Runtime.InteropServices.ComTypes/TYMED.cs

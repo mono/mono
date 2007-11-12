@@ -1,3 +1,7 @@
+2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources : added S.R.InteropSvcs.ComTypes types.
+
 2007-11-08  Jb Evain  <jbevain@novell.com>
 
 	* net_2_1_System.dll.sources: use the custom
