@@ -149,6 +149,8 @@ System/FieldAccessException.cs
 System/FlagsAttribute.cs
 System/FormatException.cs
 System/GC.cs
+System/GCCollectionMode.cs
+System/GCLatencyMode.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs

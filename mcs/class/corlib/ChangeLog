@@ -1,3 +1,7 @@
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Add System/GCCollectionMode.cs and System/GCLatencyMode.cs.
+
 2007-09-14  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: force the use of the 2.0 mscorlib to compile
