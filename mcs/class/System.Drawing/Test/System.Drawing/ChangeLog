@@ -1,3 +1,7 @@
+2007-11-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ColorTranslator.cs: Add test case for #340917 (LightGrey).
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBitmap.cs: XML serialization test case (#323246).

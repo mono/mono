@@ -158,6 +158,12 @@ SystemColors.MenuText, SystemColors.ScrollBar,
 				Assert.AreEqual (colors[i], ColorTranslator.FromHtml (htmlColors [i]));
 		}
 
+		[Test] // 340917
+		public void FromHtml_LightGrey ()
+		{
+			Assert.AreEqual (Color.LightGray, ColorTranslator.FromHtml(ColorTranslator.ToHtml(Color.LightGray)));
+		}
+
 		[Test]
 		public void FromOle ()
 		{
