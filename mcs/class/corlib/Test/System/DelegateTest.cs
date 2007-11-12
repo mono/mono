@@ -247,9 +247,40 @@ namespace MonoTests.System
 					BindingFlags.NonPublic|BindingFlags.Static));
 			d (null);
 		}
-#endif
-		public class C
+
+		[Test]
+		public void Abstract ()
 		{
+			// Delegate with abstract method, no target
+			FooDelegate del = (FooDelegate)Delegate.CreateDelegate (typeof (FooDelegate), typeof (Iface).GetMethod ("retarg"));
+			C c = new C ();
+			Assert.AreEqual ("Hello", del (c, "Hello"));
+
+			// Combination with normal delegates
+			FooDelegate del2 = (FooDelegate)Delegate.CreateDelegate (typeof (FooDelegate), typeof (Iface).GetMethod ("retarg"));
+			FooDelegate del3 = new FooDelegate (c.retarg2);
+			FooDelegate del4 = (FooDelegate)Delegate.Combine (del2, del3);
+
+			Assert.AreEqual ("Hello2", del4 (c, "Hello"));
+		}
+#endif
+		delegate string FooDelegate (Iface iface, string s);
+
+		public interface Iface
+		{
+			string retarg (string s);
+		}
+
+		public class C : Iface
+		{
+			public string retarg (string s) {
+				return s;
+			}
+
+			public string retarg2 (Iface iface, string s) {
+				return s + "2";
+			}
+
 			public void M ()
 			{
 			}

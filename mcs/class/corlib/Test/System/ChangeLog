@@ -1,3 +1,7 @@
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* DelegateTest.cs: Add tests for abstract target methods.
+
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DoubleTest.cs : reverted the corresponding fix, so mark the
