@@ -1,6 +1,11 @@
 2007-11-12 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* AssemblyResourceLoader.cs:
+	according to the tests, GetResourseUrl never returns null.	
+
+2007-11-12 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* AssemblyResourceLoader.cs:
 	optimize performance of WebResource/ScriptResource feature.
 	All resource urls are cached for each assembly instead to be 
 	calculated each time when GetWebResourceUrl is called

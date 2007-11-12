@@ -169,10 +169,13 @@ namespace System.Web.Handlers {
 				_embeddedResources [assembly] = hashtable;
 			}
 #if SYSTEM_WEB_EXTENSIONS
-			return (string) hashtable [new ResourceKey (resourceName, notifyScriptLoaded)];
+			string url = (string) hashtable [new ResourceKey (resourceName, notifyScriptLoaded)];
 #else
-			return (string) hashtable [resourceName];
+			string url = (string) hashtable [resourceName];
 #endif
+			if (url == null)
+				url = CreateResourceUrl (assembly, resourceName, notifyScriptLoaded);
+			return url;
 		}
 		
 		static string CreateResourceUrl (Assembly assembly, string resourceName, bool notifyScriptLoaded)
