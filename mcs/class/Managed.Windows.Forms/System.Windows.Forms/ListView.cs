@@ -98,6 +98,7 @@ namespace System.Windows.Forms
 		private string keysearch_text;
 		static private readonly int keysearch_keydelay = 1000;
 		private int[] reordered_column_indices;
+		private int[] reordered_items_indices;
 		private Point [] items_location;
 		private ItemMatrixLocation [] items_matrix_location;
 		private Size item_size; // used for caching item size
@@ -288,6 +289,7 @@ namespace System.Windows.Forms
 			selected_items = new SelectedListViewItemCollection (this);
 			items_location = new Point [16];
 			items_matrix_location = new ItemMatrixLocation [16];
+			reordered_items_indices = new int [16];
 #if NET_2_0
 			item_tooltip = new ToolTip ();
 			item_tooltip.Active = false;
@@ -1532,7 +1534,6 @@ namespace System.Windows.Forms
 			return item_height;
 		}
 
-
 		void SetItemLocation (int index, int x, int y, int row, int col)
 		{
 			Point old_location = items_location [index];
@@ -1544,6 +1545,11 @@ namespace System.Windows.Forms
 
 			items_location [index] = new Point (x, y);
 			items_matrix_location [index] = new ItemMatrixLocation (row, col);
+
+			//
+			// Initial position matches item's position in ListViewItemCollection
+			//
+			reordered_items_indices [index] = index;
 
 			// Invalidate both previous and new bounds
 			item_control.Invalidate (old_rect);
@@ -1648,9 +1654,12 @@ namespace System.Windows.Forms
 			for (int i = 0; i < items.Count; i++) {
 				ListViewItem item = items [i];
 #if NET_2_0
-				if (!virtual_mode)
+				if (!virtual_mode) 
 #endif
+				{
 					item.Layout ();
+					item.DisplayIndex = i;
+				}
 
 #if NET_2_0
 				if (using_groups) {
@@ -1785,7 +1794,10 @@ namespace System.Windows.Forms
 #if NET_2_0
 				if (!virtual_mode) // Virtual mode sets Layout until draw time
 #endif
+				{
 					item.Layout ();
+					item.DisplayIndex = i;
+				}
 
 #if NET_2_0
 				if (using_groups) {
@@ -1820,10 +1832,11 @@ namespace System.Windows.Forms
 			if (items_location.Length >= count)
 				return;
 
-			// items_location and items_matrix_location must keep the same length
+			// items_location, items_matrix_location and reordered_items_indices must keep the same length
 			count = Math.Max (count, items_location.Length * 2);
 			items_location = new Point [count];
 			items_matrix_location = new ItemMatrixLocation [count];
+			reordered_items_indices = new int [count];
 		}
 
 		private void CalculateListView (ListViewAlignment align)
@@ -1871,6 +1884,11 @@ namespace System.Windows.Forms
 			loc.Y -= v_marker;
 
 			return loc;
+		}
+
+		internal int GetItemIndex (int display_index)
+		{
+			return reordered_items_indices [display_index];
 		}
 
 		private bool KeySearchString (KeyEventArgs ke)
@@ -5017,7 +5035,7 @@ namespace System.Windows.Forms
 				owner.OnRetrieveVirtualItem (args);
 				ListViewItem retval = args.Item;
 				retval.Owner = owner;
-				retval.SetIndex (displayIndex);
+				retval.DisplayIndex = displayIndex;
 
 				return retval;
 			}

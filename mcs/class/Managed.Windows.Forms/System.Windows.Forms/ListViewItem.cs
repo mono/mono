@@ -45,13 +45,13 @@ namespace System.Windows.Forms
 		private ListViewSubItemCollection sub_items;
 		private object tag;
 		private bool use_item_style = true;
+		int display_index = -1;			// actual position in ListView
 #if NET_2_0
 		private ListViewGroup group = null;
 		private string name = String.Empty;
 		private string image_key = String.Empty;
 		string tooltip_text = String.Empty;
 		int indent_count;
-		int index;			// cached index for VirtualMode
 		Point position = new Point (-1, -1);		// cached to mimic .Net behaviour
 #endif
 		Rectangle bounds;
@@ -428,10 +428,13 @@ namespace System.Windows.Forms
 					return -1;
 #if NET_2_0
 				if (owner.VirtualMode)
-					return index;
+					return display_index;
 #endif
-				else
+
+				if (display_index == -1)
 					return owner.Items.IndexOf (this);
+
+				return owner.GetItemIndex (display_index);
 			}
 		}
 
@@ -457,7 +460,7 @@ namespace System.Windows.Forms
 		public Point Position {
 			get {
 				if (owner != null && owner.VirtualMode)
-					return owner.GetItemLocation (Index);
+					return owner.GetItemLocation (display_index);
 
 				return position;
 			}
@@ -693,7 +696,7 @@ namespace System.Windows.Forms
 				throw new ArgumentException ("Invalid value for portion.");
 			}
 
-			Point item_loc = owner.GetItemLocation (Index);
+			Point item_loc = owner.GetItemLocation (DisplayIndex);
 			rect.X += item_loc.X;
 			rect.Y += item_loc.Y;
 			return rect;
@@ -750,7 +753,7 @@ namespace System.Windows.Forms
 		internal Rectangle CheckRectReal {
 			get {
 				Rectangle rect = checkbox_rect;
-				Point item_loc = owner.GetItemLocation (Index);
+				Point item_loc = owner.GetItemLocation (DisplayIndex);
 				rect.X += item_loc.X;
 				rect.Y += item_loc.Y;
 				return rect;
@@ -761,10 +764,24 @@ namespace System.Windows.Forms
 		internal Rectangle TextBounds {
 			get {
 				Rectangle result = text_bounds;
-				Point loc = owner.GetItemLocation (Index);
+				Point loc = owner.GetItemLocation (DisplayIndex);
 				result.X += loc.X;
 				result.Y += loc.Y;
 				return result;
+			}
+		}
+
+		internal int DisplayIndex {
+			get {
+				// Special case for Details view
+				// and no columns (which means no Layout at all)
+				if (display_index == -1)
+					return owner.Items.IndexOf (this);
+
+				return display_index;
+			}
+			set {
+				display_index = value;
 			}
 		}
 
@@ -795,11 +812,6 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		internal void SetIndex (int index)
-		{
-			this.index = index;
-		}
-
 		internal void SetGroup (ListViewGroup group)
 		{
 			this.group = group;

@@ -1,3 +1,13 @@
+2007-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Add a reordered_items_indices array, to allow us
+	to have a different sorting than that of Items (the sorting in Items
+	could not match the actual sorting in screen). This is needed to
+	implement a pair of 2.0 features.
+	* ListViewItem.cs: Add a DisplayIndex property to keep track of the
+	actual position in the ListView grid, since it could have a position
+	different than its Index (position in ListViewItemCollection). 
+
 2007-11-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Label.cs: Add StringFormatFlags.LineLimit.  This tells DrawString to
