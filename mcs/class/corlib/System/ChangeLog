@@ -1,3 +1,7 @@
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* GCCollectionMode.cs GCLatencyMode.cs: New net 3.5 types.
+
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatter.cs : revert previous two changes. It does not
