@@ -250,19 +250,18 @@ public class TimeZoneTest : TestCase {
 		AssertEquals ("StandardName", "Eastern Standard Time", tz.StandardName);
 	}
 
-//	//this test fail on the build system...
-//	[Test]
-//	public void ToLocalTimeAtDSTBoundaries ()
-//	{
-//		TimeZone tz = TimeZone.CurrentTimeZone;
-//		DateTime dst_start_utc = tz.GetDaylightChanges(2007).Start.ToUniversalTime ();
-//
-//		Assert ("0:1:59 < 0:3:00", tz.ToLocalTime (dst_start_utc - new TimeSpan (0, 1, 0)) < tz.ToLocalTime (dst_start_utc));
-//		Assert ("0:3:00 < 0:3:01", tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc + new TimeSpan (0, 1, 0)));
-//		Assert ("0:3:01 < 0:3:59", tz.ToLocalTime (dst_start_utc + new TimeSpan (0, 1, 0)) < tz.ToLocalTime (dst_start_utc + new TimeSpan (0, 59, 0)));
-//		Assert ("0:3:59 < 0:4:00", tz.ToLocalTime (dst_start_utc + new TimeSpan (0, 59, 0)) < tz.ToLocalTime (dst_start_utc + new TimeSpan (1, 0, 0)));
-//		Assert ("0:4:00 < 0:4:01", tz.ToLocalTime (dst_start_utc + new TimeSpan (1, 0, 0)) < tz.ToLocalTime (dst_start_utc + new TimeSpan (1, 1, 0)));
-//	}
+	[Test]
+	public void ToLocalTimeAtDSTBoundaries ()
+	{
+		TimeZone tz = TimeZone.CurrentTimeZone;
+		DateTime dst_start_utc = tz.GetDaylightChanges(2007).Start.ToUniversalTime ();
+
+		Assert ("0:1:59 < 0:3:00", tz.ToLocalTime (dst_start_utc.Subtract (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc));
+		Assert ("0:3:00 < 0:3:01", tz.ToLocalTime (dst_start_utc) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))));
+		Assert ("0:3:01 < 0:3:59", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 1, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))));
+		Assert ("0:3:59 < 0:4:00", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (0, 59, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))));
+		Assert ("0:4:00 < 0:4:01", tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 0, 0))) < tz.ToLocalTime (dst_start_utc.Add (new TimeSpan (1, 1, 0))));
+	}
 }
 
 }
