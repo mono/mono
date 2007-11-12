@@ -1,5 +1,10 @@
 2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* cpu-arm.md: Increase the max size of OP_THROW to 24 bytes.
+	This can happens with dynamic methods. Fixes the other bug in #322722.
+
+2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* tramp-arm.c (mono_arch_patch_callsite): Support patching
 	BX call sequence.
 
