@@ -1,5 +1,10 @@
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NumberFormatter.cs : revert previous two changes. It does not
+	  really work for float and hence will rather bring confusion.
+
+2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NumberFormatter.cs : limit the situation that needs roundtrip
 	  verification in the previous change to Double.
 

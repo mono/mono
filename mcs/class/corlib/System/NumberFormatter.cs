@@ -167,19 +167,6 @@ namespace System
 				case 'r':
 				case 'R':
 					ns.RoundEffectiveDigits (ns.DefaultMaxPrecision);
-
-					// FIXME: it is a quick workaround for non-roundtrip issue (bug #320433).
-					if (ns.ToStringVerificationNeeded) {
-						string orgStr = FormatGeneral (ns, ns.DefaultPrecision, nfi, true, true);
-						double orgValue = double.Parse (orgStr);
-						NumberStore tmpNS = new NumberStore (orgValue);
-						tmpNS.RoundEffectiveDigits (tmpNS.DefaultMaxPrecision);
-						tmpNS.RoundEffectiveDigits (tmpNS.DefaultMaxPrecision - 1);
-						string tmpStr = FormatGeneral (tmpNS, ns.DefaultPrecision, nfi, true, true);
-						double tmpValue = double.Parse (tmpStr);
-						if (orgValue == tmpValue && orgStr.Length - tmpStr.Length > 1)
-							ns = tmpNS;
-					}
 					break;
 				default:
 					if (precision > ns.DefaultPrecision)
@@ -1316,8 +1303,6 @@ namespace System
 		#region Internal structures
 		internal struct NumberStore
 		{
-			public bool ToStringVerificationNeeded;
-
 			bool _NaN;
 			bool _infinity;
 			bool _positive;
@@ -1367,8 +1352,6 @@ namespace System
 			#region Constructors
 			public NumberStore (long value)
 			{
-				ToStringVerificationNeeded = false;
-
 				_infinity = _NaN = false;
 				_defByteSize = 8;
 				_defMaxPrecision = _defPrecision = 19;
@@ -1434,8 +1417,6 @@ namespace System
 			}
 			public NumberStore (int value)
 			{
-				ToStringVerificationNeeded = false;
-
 				_infinity = _NaN = false;
 				_defByteSize = 4;
 				_defMaxPrecision = _defPrecision = 10;
@@ -1494,8 +1475,6 @@ namespace System
 
 			public NumberStore (ulong value)
 			{
-				ToStringVerificationNeeded = false;
-
 				_infinity = _NaN = false;
 				_defByteSize = 8;
 				_defMaxPrecision = _defPrecision = 20;
@@ -1561,8 +1540,6 @@ namespace System
 			}
 			public NumberStore (uint value)
 			{
-				ToStringVerificationNeeded = false;
-
 				_infinity = _NaN = false;
 				_positive = true;
 				_defByteSize = 4;
@@ -1619,8 +1596,6 @@ namespace System
 
 			public NumberStore(double value)
 			{
-				ToStringVerificationNeeded = true;
-
 				_digits = null;
 				_defByteSize = 64;
 				_defPrecision = 15;
@@ -1710,8 +1685,6 @@ namespace System
 			}
 			public NumberStore(float value)
 			{
-				ToStringVerificationNeeded = false;
-
 				_digits = null;
 				_defByteSize = 32;
 				_defPrecision = 7;
@@ -1832,8 +1805,6 @@ namespace System
 
 			public NumberStore (decimal value)
 			{
-				ToStringVerificationNeeded = false;
-
 				int[] bits = decimal.GetBits (value);
 				_positive = (bits [3] & 0x80000000) == 0;
 				bits[3] = bits [3] & 0x7FFFFFFF;

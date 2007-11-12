@@ -101,6 +101,13 @@ namespace MonoTests.System
 			AssertEquals ("ToString(G)", "254.9", def);
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void ToString_Roundtrip ()
+		{
+			AssertEquals ("10.78", 10.78f.ToString ("R", NumberFormatInfo.InvariantInfo));
+		}
+
 #if NET_2_0
 		[Test] // bug #72221
 		[ExpectedException (typeof (ArgumentException))]
