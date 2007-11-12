@@ -46,6 +46,16 @@ class X
 		return o is int[];
 	}
 	
+	public static int TestC ()
+	{
+		int? i = null;
+		if (i is int) {
+				return (int) i;
+		}
+		
+		return 3;
+	}
+	
 	static int Main ()
 	{
 		if (Foo<int>.Test (3))
@@ -65,6 +75,9 @@ class X
 		int[] a = new int[0];
 		if (!TestB(a))
 			return 5;
+		
+		if (TestC () != 3)
+			return 6;
 		
 		Console.WriteLine ("OK");
 		return 0;
