@@ -32,6 +32,7 @@
 //
 
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -289,6 +290,7 @@ namespace System.Web.Services.Protocols
 			//
 			string ctype;
 			Encoding encoding = WebServiceHelper.GetContentEncoding (response.ContentType, out ctype);
+			ctype = ctype.ToLower (CultureInfo.InvariantCulture);
 #if NET_2_0
 			if ((!message.IsSoap12 || ctype != "application/soap+xml") && ctype != "text/xml")
 #else

@@ -1,3 +1,8 @@
+2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SoapHttpClientProtocol.cs : compare content-type in case-
+	  insensitive manner. Fixed bug #325277.
+
 2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SoapDocumentationHandler.cs : handle 'schema' HTTP parameter like
