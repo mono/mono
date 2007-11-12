@@ -520,6 +520,12 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void TestRoundtrip () // bug #320433
+		{
+			Assert.AreEqual ("10.78", 10.78.ToString ("R", NumberFormatInfo.InvariantInfo));
+		}
+
 		[Test] // bug #72955
 		public void LongLongValueRoundtrip ()
 		{

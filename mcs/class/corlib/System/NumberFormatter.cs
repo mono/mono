@@ -167,6 +167,18 @@ namespace System
 				case 'r':
 				case 'R':
 					ns.RoundEffectiveDigits (ns.DefaultMaxPrecision);
+
+					// FIXME: it is a quick workaround for non-roundtrip issue (bug #320433).
+					string orgStr = FormatGeneral (ns, ns.DefaultPrecision, nfi, true, true);
+					double orgValue = double.Parse (orgStr);
+					NumberStore tmpNS = new NumberStore (orgValue);
+					tmpNS.RoundEffectiveDigits (tmpNS.DefaultMaxPrecision);
+					tmpNS.RoundEffectiveDigits (tmpNS.DefaultMaxPrecision - 1);
+					string tmpStr = FormatGeneral (tmpNS, ns.DefaultPrecision, nfi, true, true);
+					double tmpValue = double.Parse (tmpStr);
+					if (orgValue == tmpValue && orgStr.Length - tmpStr.Length > 1)
+						ns = tmpNS;
+
 					break;
 				default:
 					if (precision > ns.DefaultPrecision)
