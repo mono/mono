@@ -186,10 +186,15 @@ namespace System.ComponentModel
 			return base.GetInvocationTarget (type, instance);
 		}
 
-		[MonoNotSupported("")]
 		protected internal EventHandler GetValueChangedHandler (object component)
 		{
-			throw new NotImplementedException ();
+			if (component == null)
+				throw new ArgumentNullException ("component");
+
+			if (notifiers == null)
+				return null;
+
+			return (EventHandler) notifiers [component];
 		}
 #endif
 

@@ -75,7 +75,7 @@ namespace System.ComponentModel
 
 		public override int GetHashCode()
 		{
-			return (Filter + ItemFilterType.ToString()).GetHashCode ();
+			return ToString ().GetHashCode ();
 		}
 
 		public override bool Match (object obj)
@@ -86,10 +86,9 @@ namespace System.ComponentModel
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return String.Format ("{0},{1}", Filter, ItemFilterType);
 		}
 #endif
 	}
