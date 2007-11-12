@@ -141,38 +141,18 @@ namespace Mono.MonoConfig
 
 			string script_temp = Path.GetTempFileName ();
 			StreamWriter s = null;
+			
 			try {
 				s = new StreamWriter (script_temp);
 				s.Write (script);
-				
-				Process p = new Process ();
-				ProcessStartInfo pinfo = p.StartInfo;
-
-				pinfo.UseShellExecute = false;
-				pinfo.RedirectStandardOutput = true;
-				pinfo.RedirectStandardError = true;
-				pinfo.FileName = "/bin/bash";
-				pinfo.Arguments = script_temp;
-				p.Start ();
-
-				string stdout = p.StandardOutput.ReadToEnd ();
-				string stderr = p.StandardError.ReadToEnd ();
-				p.WaitForExit ();
-
-				if (p.ExitCode != 0) {
-					Console.Error.Write (stderr);
-					throw new ApplicationException (
-						String.Format ("Script signalled failure code: {0}", p.ExitCode));
-				}
-				
-				Console.Write (stdout);
-				p.Close ();
+				s.Flush ();
+				s.Close ();
+				RunCommand ("/bin/sh", script_temp);
 			} catch (Exception ex) {
-				Console.WriteLine (ex);
-				throw new ApplicationException ("Error executing feature shell action.", ex);
+				throw new ApplicationException ("Error executing feature 'shell script' action.", ex);
 			} finally {
 				if (s != null)
-					s.Close ();
+					s.Close ();				
 				try {
 					File.Delete (script_temp);
 				} catch (Exception) {
@@ -183,6 +163,57 @@ namespace Mono.MonoConfig
 
 		void ExecuteExec ()
 		{
+			if (String.IsNullOrEmpty (command))
+				return;
+
+			try {
+				RunCommand (command, commandArguments);
+			} catch (Exception ex) {
+				throw new ApplicationException ("Error executing feature 'exec' action.", ex);
+			}
+		}
+		
+		void RunCommand (string commandPath, string format, params object[] arguments)
+		{
+			if (String.IsNullOrEmpty (commandPath))
+				return;
+			string args;
+
+			if (!String.IsNullOrEmpty (format))
+				args = String.Format (format, arguments);
+			else
+				args = String.Empty;
+			
+			Process p = null;
+
+			try {
+				p = new Process ();
+				ProcessStartInfo pinfo = p.StartInfo;
+
+				pinfo.UseShellExecute = false;
+				pinfo.RedirectStandardOutput = true;
+				pinfo.RedirectStandardError = true;
+				pinfo.FileName = commandPath;
+				pinfo.Arguments = args;
+				p.Start ();
+
+				string stdout = p.StandardOutput.ReadToEnd ();
+				string stderr = p.StandardError.ReadToEnd ();
+				p.WaitForExit ();
+
+				if (!String.IsNullOrEmpty (stdout))
+					Console.WriteLine (stdout);
+				if (!String.IsNullOrEmpty (stderr))
+					Console.Error.WriteLine (stderr);
+				
+				int exitCode = p.ExitCode;
+				if (exitCode != 0)
+					throw new ApplicationException (
+						String.Format ("Process signalled failure code: {0}", exitCode));
+			} finally {
+				if (p != null)
+					p.Close ();
+			}
 		}
 	}
 }

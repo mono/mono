@@ -2,7 +2,7 @@ thisdir = tools/mconfig
 SUBDIRS = 
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = -r:System.Xml.dll -r:Mono.GetOptions.dll
+LOCAL_MCS_FLAGS = -r:System.Xml.dll
 PROGRAM = mconfig.exe
 
 BUILT_SOURCES=Mono.MonoConfig/consts.cs

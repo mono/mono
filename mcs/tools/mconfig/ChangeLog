@@ -1,3 +1,12 @@
+2007-11-12  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LOCAL_MCS_FLAGS): Mono.GetOptions.dll is not needed.
+
+	* Mono.MonoConfig/FeatureAction.cs: extracted command execution
+	code to a separate method.
+	Script code must be flushed before passing it to the shell.
+	Implemented Exec action support.
+
 2007-11-10  Marek Habersack  <mhabersack@novell.com>
 
 	* Mono.MonoConfig/Helpers.cs: added a method for breaking long
