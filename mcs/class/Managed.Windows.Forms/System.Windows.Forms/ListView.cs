@@ -1557,6 +1557,57 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		void ShiftItemsPositions (int from, int to, bool forward)
+		{
+			if (forward) {
+				for (int i = to + 1; i > from; i--) {
+					reordered_items_indices [i] = reordered_items_indices [i - 1];
+					items [reordered_items_indices [i]].DisplayIndex = i;
+				}
+			} else {
+				for (int i = from - 1; i < to; i++) {
+					reordered_items_indices [i] = reordered_items_indices [i + 1];
+					items [reordered_items_indices [i]].DisplayIndex = i;
+				}
+			}
+		}
+
+		internal void ChangeItemLocation (int display_index, Point new_pos)
+		{
+			int new_display_index = GetDisplayIndexFromLocation (new_pos);
+			if (new_display_index == display_index)
+				return;
+
+			int item_index = reordered_items_indices [display_index];
+
+			bool forward = new_display_index < display_index;
+			int index_from, index_to;
+			if (forward) {
+				index_from = new_display_index;
+				index_to = display_index - 1;
+			} else {
+				index_from = display_index + 1;
+				index_to = new_display_index;
+			}
+
+			ShiftItemsPositions (index_from, index_to, forward);
+
+			reordered_items_indices [new_display_index] = item_index;
+			items [item_index].DisplayIndex = new_display_index;
+		}
+
+		int GetDisplayIndexFromLocation (Point loc)
+		{
+			// TODO: We could try to compute the corresponding
+			// position using rows, cols and other information, instead
+			// of iterating over all the positions
+			ListViewItem item = GetItemAt (loc.X, loc.Y);
+			if (item == null)
+				return -1;
+
+			return item.DisplayIndex;
+		}
+
 		// When using groups, the items with no group assigned
 		// belong to the DefaultGroup
 		int GetDefaultGroupItems ()

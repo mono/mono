@@ -1,5 +1,11 @@
 2007-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs:
+	* ListViewItem.cs: Add an initial implementation of
+	2.0 ListViewItem.Position getter.
+
+2007-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Add a reordered_items_indices array, to allow us
 	to have a different sorting than that of Items (the sorting in Items
 	could not match the actual sorting in screen). This is needed to

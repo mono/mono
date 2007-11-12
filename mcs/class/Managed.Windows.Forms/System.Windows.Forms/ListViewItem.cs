@@ -464,6 +464,15 @@ namespace System.Windows.Forms
 
 				return position;
 			}
+			set {
+				if (owner == null || owner.View == View.Details || owner.View == View.List)
+					return;
+
+				if (owner.VirtualMode)
+					throw new InvalidOperationException ();
+
+				owner.ChangeItemLocation (display_index, value);
+			}
 		}
 #endif
 
