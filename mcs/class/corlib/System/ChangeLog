@@ -1,5 +1,10 @@
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* NumberFormatter.cs : limit the situation that needs roundtrip
+	  verification in the previous change to Double.
+
+2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NumberFormatter.cs : applied a quick fix for bug #320433. It needs
 	  true fix to avoid extra perf. loss.
 
