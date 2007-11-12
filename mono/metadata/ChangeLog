@@ -1,5 +1,13 @@
 2007-11-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Create a non-shared wrapper for
+	the array Get/Set/Address methods, since the JIT inlines them.
+
+	* metadata-internals.h (MonoImage): Add 'runtime_invoke_direct_cache'.
+
+	* image.c (mono_image_close): Free runtime_invoke_direct_cache.
+	(mono_image_init): Initialize runtime_invoke_direct_cache.	
+
 	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Update after
 	mono_marshal_get_delegate_invoke signature change.
 
