@@ -28,7 +28,7 @@ namespace MonoTests.System.Net {
 public class DnsTest : Assertion {
         
         private String site1Name = "www.go-mono.com",
-                site1Dot = "64.14.94.188",
+                site1Dot = "130.57.21.12",
                 site2Name = "info.diku.dk",
                 site2Dot = "130.225.96.4",
                 noneExistingSite = "www.unlikely.novell.com";
