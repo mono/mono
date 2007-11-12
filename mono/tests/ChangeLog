@@ -1,3 +1,7 @@
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* invoke.cs: Add tests for invoking the Array Get/Set methods.
+
 2007-11-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-322722_patch_bx.2.cs : Added test for bug #322722.
