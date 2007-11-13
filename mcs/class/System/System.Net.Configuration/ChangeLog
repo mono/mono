@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SmtpNetworkElement.cs, SmtpSection.cs : added missing 2,0 stuff.
+
 2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpNetworkElement.cs : default UserName is null.

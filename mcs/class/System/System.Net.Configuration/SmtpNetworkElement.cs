@@ -67,6 +67,15 @@ namespace System.Net.Configuration {
 					set { base ["userName"] = value; }
                 }
 
+		protected override ConfigurationPropertyCollection Properties {
+			// what to do here?
+			get { return base.Properties; }
+		}
+
+		protected override void PostDeserialize ()
+		{
+			// what to do here?
+		}
         }
 
 }

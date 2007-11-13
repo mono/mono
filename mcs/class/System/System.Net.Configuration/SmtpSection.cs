@@ -59,6 +59,11 @@ namespace System.Net.Configuration {
                 public SmtpSpecifiedPickupDirectoryElement SpecifiedPickupDirectory {
 					get { return (SmtpSpecifiedPickupDirectoryElement) base ["specifiedPickupDirectory"]; }
                 }
+
+		protected override ConfigurationPropertyCollection Properties {
+			// what to do here?
+			get { return base.Properties; }
+		}
         }
 
 }
