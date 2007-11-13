@@ -1,3 +1,16 @@
+2007-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h: Made
+	mono_type_get_basic_type_from_generic () public.  Fixed member
+	access check for shared generics.
+
+	* loader.c: Don't insert field into field cache if it's part of a
+	non-inflated generic class.
+
+	* domain.c, domain-internals.h: The generic sharing context is now
+	part of the jit info data structure.  Added two accessor
+	functions.
+
 2007-11-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Create a non-shared wrapper for

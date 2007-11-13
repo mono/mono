@@ -1,3 +1,17 @@
+2007-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Removed the shared context in favor of the generic
+	sharing context.  Allocate the MonoJitInfo structure with room for
+	the generic sharing context if it's needed.
+
+	* mini.h: Remove MonoGenericSharingContext declaration.  It's in
+	domain-internals.h now.
+
+	* mini-x86.c: Pass the generic sharing context to get_call_info ().
+
+	* generic-sharing.c: Several changes for working without a shared
+	context and instead operating on open types instead.
+
 2007-11-12  David S. Miller  <davem@davemloft.net>
 
        * inssel-sparc.brg: Fix double instruction emit.
