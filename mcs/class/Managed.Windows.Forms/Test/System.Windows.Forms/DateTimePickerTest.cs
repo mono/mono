@@ -3380,7 +3380,7 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.IsTrue (log.ContainsEventsOrdered ("ValueChanged", "TextChanged"), "#4.1, expected ValueChanged+TextChanged, got: " + log.EventsJoined ());
 
 			log.Clear (); 
-			dt.CustomFormat = "yyyy-MM-dd HH-mm-ss";
+			dt.CustomFormat = "yyyy-MM-dd HH-mm";
 			dt.Format = DateTimePickerFormat.Custom;
 			Assert.AreEqual (DateTime.Now.ToString (dt.CustomFormat), dt.Text, "#5");
 			Assert.IsTrue (log.ContainsEventsOrdered ("HandleDestroyed", "HandleCreated", "FormatChanged"), "#5.1");

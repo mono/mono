@@ -1,3 +1,10 @@
+2007-11-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DateTimePickerTest.cs: Remove a compare on seconds in a format
+	string so that we get a Assert.AreEqual (DateTime.Now, DateTime.Now)
+	failure 60x less often on the buildbots.  (I've never actually seen
+	the minutes be different, but the possibility is still there.)
+
 2007-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormTest.cs: Added reference to bug #339641. Remove CWLs.
