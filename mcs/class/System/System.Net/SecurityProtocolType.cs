@@ -30,7 +30,9 @@
 namespace System.Net {
 
 	[Flags]
+#if !NET_2_0
 	[Serializable]
+#endif
 	public
 	enum SecurityProtocolType {
 		Ssl3 = 48,

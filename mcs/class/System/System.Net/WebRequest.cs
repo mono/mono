@@ -37,6 +37,7 @@ using System.Globalization;
 using System.Net.Configuration;
 using System.Net.Security;
 using System.Net.Cache;
+using System.Security.Principal;
 #endif
 
 namespace System.Net 
@@ -146,6 +147,12 @@ namespace System.Net
 			set { throw GetMustImplement (); }
 		}
 		
+#if NET_2_0
+		public TokenImpersonationLevel ImpersonationLevel {
+			get { throw GetMustImplement (); }
+			set { throw GetMustImplement (); }
+		}
+#endif
 		public virtual string Method { 
 			get { throw GetMustImplement (); }
 			set { throw GetMustImplement (); }

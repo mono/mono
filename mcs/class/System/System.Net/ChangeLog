@@ -1,3 +1,11 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebRequest.cs : added missing ImpersonationLevel (NIE).
+	* SecurityProtocolType.cs : not [Serializable] in 2.0.
+	* ServicePoint.cs : no GetHashCode() in 2.0.
+	* WebRequestMethods.cs : fixed wrong STOU.
+	* FileWebResponse.cs : no Dispose(true) in 2.0 API.
+
 2007-11-08  Jb Evain  <jbevain@novell.com>
 
 	* WebHeaderCollection_2_1.cs: add a custom WebHeaderCollection

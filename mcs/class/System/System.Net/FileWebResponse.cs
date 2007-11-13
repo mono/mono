@@ -144,7 +144,10 @@ namespace System.Net
 			GC.SuppressFinalize (this);  
 		}
 		
-		protected virtual void Dispose (bool disposing)
+#if !NET_2_0
+		protected virtual
+#endif
+		void Dispose (bool disposing)
 		{
 			if (this.disposed)
 				return;

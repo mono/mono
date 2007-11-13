@@ -193,10 +193,12 @@ namespace System.Net
 		}
 		// Methods
 		
+#if !NET_2_0
 		public override int GetHashCode() 
 		{
 			return base.GetHashCode ();
 		}
+#endif
 		
 		// Internal Methods
 

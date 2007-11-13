@@ -54,7 +54,7 @@ namespace System.Net
 			public const string RemoveDirectory = "RMD";
 			public const string Rename = "RENAME";
 			public const string UploadFile = "STOR";
-			public const string UploadFileWithUniqueName = "STUR";
+			public const string UploadFileWithUniqueName = "STOU";
 		}
 
 		public static class Http
