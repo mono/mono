@@ -258,7 +258,7 @@ namespace Mono.MonoConfig
 			XmlDocument tmp;
 			
 			foreach (Section s in children) {
-				tmp = Helpers.FindDefault (defaults, s.Name, target);
+				tmp = Helpers.FindDefault (defaults, s.DefaultBlockName, target);
 				if (tmp == null)
 					continue;
 				

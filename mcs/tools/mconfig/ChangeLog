@@ -1,5 +1,16 @@
 2007-11-13  Marek Habersack  <mhabersack@novell.com>
 
+	* data/config.xml: replaced the possibly conflicting default block
+	names with ones that are less likely to cause conflicts and
+	modified feature and default config entries to use the new names,
+	via the defaultBlockName attribute of the section element.
+
+	* Mono.MonoConfig/Section.cs: added DefaultBlockName property,
+	which defaults to Name if not parsed from the XML node.
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: Use the defaultBlockName
+	attribute when searching for the default sections.
+
 	* mconfig.cs: better error handling. Print inner exception
 	message, if any, in addition to the outer one.
 
@@ -9,6 +20,8 @@
 	* Mono.MonoConfig/DefaultConfigFileNodeHandler.cs: use
 	DefaultConfigFile.FileName when writing a file or invoking the
 	OnOverwriteFile event handler.
+	Use the defaultBlockName attribute when searching for the default
+	sections.
 
 2007-11-12  Marek Habersack  <mhabersack@novell.com>
 

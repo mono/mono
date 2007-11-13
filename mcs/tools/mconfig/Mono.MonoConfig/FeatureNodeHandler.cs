@@ -396,7 +396,7 @@ namespace Mono.MonoConfig
 			foreach (Section s in topChildren) {
 				curPath = String.Format ("{0}/{1}", topPath, s.Name);
 				
-				node = FindNodeOrAddDefault (doc, s.Name, curPath, defaults);
+				node = FindNodeOrAddDefault (doc, s.DefaultBlockName, curPath, defaults);
 				if (node != null && s.AttachPoint) {
 					if (attachPoint != null)
 						throw new ApplicationException (

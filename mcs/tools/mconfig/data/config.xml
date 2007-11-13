@@ -61,8 +61,8 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="pages">
-	    <section name="controls"/>
+	  <section name="pages" defaultBlockName="system.web.pages">
+	    <section name="controls" defaultBlockName="system.web.pages.controls"/>
 	  </section>
 	</section>
       </section>
@@ -79,8 +79,8 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="compilation">
-	    <section name="assemblies"/>
+	  <section name="compilation" defaultBlockName="system.web.compilation">
+	    <section name="assemblies" defaultBlockName="system.web.compilation.assemblies"/>
 	  </section>
 	</section>
       </section>
@@ -97,7 +97,7 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="httpHandlers"/>
+	  <section name="httpHandlers" defaultBlockName="system.web.httpHandlers"/>
 	</section>
       </section>
     </requires>
@@ -116,7 +116,7 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="httpModules"/>
+	  <section name="httpModules" defaultBlockName="system.web.httpModules"/>
 	</section>
       </section>
     </requires>
@@ -216,42 +216,42 @@
     ]]>
   </default>
 
-  <default section="pages" target="web">
+  <default section="system.web.pages" target="web">
     <![CDATA[
 <pages>
 </pages>
 ]]>
   </default>
 
-  <default section="controls" target="web">
+  <default section="system.web.pages.controls" target="web">
     <![CDATA[
 <controls>
 </controls>
 ]]>
   </default>
 
-  <default section="compilation" target="web">
+  <default section="system.web.compilation" target="web">
     <![CDATA[
 <compilation debug="true">
 </compilation>
 ]]>
   </default>
 
-  <default section="assemblies" target="web">
+  <default section="system.web.compilation.assemblies" target="web">
     <![CDATA[
 <assemblies>
 </assemblies>
 ]]>
   </default>
 
-  <default section="httpHandlers" target="web">
+  <default section="system.web.httpHandlers" target="web">
     <![CDATA[
 <httpHandlers>
 </httpHandlers>
 ]]>
   </default>
 
-  <default section="httpModules" target="web">
+  <default section="system.web.httpModules" target="web">
     <![CDATA[
 <httpModules>
 </httpModules>
@@ -272,7 +272,7 @@
 ]]>
   </default>
 
-  <default section="customErrors" target="web">
+  <default section="system.web.customErrors" target="web">
     <![CDATA[
 <customErrors mode="RemoteOnly"/>
 ]]>
@@ -282,8 +282,8 @@
   <defaultConfigFile name="web.config" fileName="Web.config" target="web">
     <section name="configuration">
       <section name="system.web">
-	<section name="compilation"/>
-	<section name="customErrors"/>
+	<section name="compilation" defaultBlockName="system.web.compilation"/>
+	<section name="customErrors" defaultBlockName="system.web.customErrors"/>
       </section>
     </section>
   </defaultConfigFile>

@@ -37,10 +37,19 @@ namespace Mono.MonoConfig
 	{
 		List <Section> children;
 		string name;
+		string defaultBlockName;
 		bool attachPoint;
 		
 		public string Name {
 			get { return name; }
+		}
+
+		public string DefaultBlockName {
+			get {
+				if (String.IsNullOrEmpty (defaultBlockName))
+					return Name;
+				return defaultBlockName;
+			}
 		}
 		
 		public List <Section> Children {
@@ -67,6 +76,10 @@ namespace Mono.MonoConfig
 				string val = Helpers.GetOptionalAttribute (nav, "attachPoint");
 				if (!String.IsNullOrEmpty (val))
 					attachPoint = true;
+
+				val = Helpers.GetOptionalAttribute (nav, "defaultBlockName");
+				if (!String.IsNullOrEmpty (val))
+					defaultBlockName = val;
 			}
 		}
 	}
