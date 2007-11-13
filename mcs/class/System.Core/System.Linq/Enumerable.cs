@@ -1995,10 +1995,11 @@ namespace System.Linq
 			CheckSource (source);
 
 			int i = 0;
-			foreach (TSource e in source) {
-				if (++i < count)
+			foreach (var element in source) {
+				if (i++ < count)
 					continue;
-				yield return e;
+
+				yield return element;
 			}
 		}
 		#endregion
@@ -2268,10 +2269,10 @@ namespace System.Linq
 
 			int counter = 0;
 			foreach (TSource element in source) {
-				yield return element;
-				count++;
-				if (counter == count)
+				if (counter++ == count)
 					yield break;
+
+				yield return element;
 			}
 		}
 
@@ -2284,10 +2285,10 @@ namespace System.Linq
 			CheckSourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source) {
-				if (predicate (element))
-					yield return element;
+				if (!predicate (element))
+					yield break;
 
-				yield break;
+				yield return element;
 			}
 		}
 
