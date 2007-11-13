@@ -1,3 +1,12 @@
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Take a delegate as argument
+	instead of just the target method. Generalize the abstract method handling to
+	handle any non-static method.
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Update after
+	mono_marshal_get_delegate_invoke () signature change.
+
 2007-11-13  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, class-internals.h: Made
