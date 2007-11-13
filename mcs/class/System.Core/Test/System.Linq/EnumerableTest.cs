@@ -69,6 +69,54 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (result, first.Union (second));
 		}
 
+		class Foo {}
+		class Bar : Foo {}
+
+		[Test]
+		public void TestCast ()
+		{
+			Bar a = new Bar ();
+			Bar b = new Bar ();
+			Bar c = new Bar ();
+
+			Foo [] foos = new Foo [] {a, b, c};
+			Bar [] result = new Bar [] {a, b, c};
+
+			AssertAreSame (result, foos.Cast<Bar> ());
+		}
+
+		[Test]
+		public void TestLast ()
+		{
+			int [] data = {1, 2, 3};
+
+			Assert.AreEqual (3, data.Last ());
+		}
+
+		[Test]
+		public void TestLastOrDefault ()
+		{
+			int [] data = {};
+
+			Assert.AreEqual (default (int), data.LastOrDefault ());
+		}
+
+		[Test]
+		public void TestFirst ()
+		{
+			int [] data = {1, 2, 3};
+
+			Assert.AreEqual (1, data.First ());
+		}
+
+		[Test]
+		public void TestFirstOrDefault ()
+		{
+			int [] data = {};
+
+			Assert.AreEqual (default (int), data.FirstOrDefault ());
+		}
+
 		[Test]
 		public void TestSequenceEqual ()
 		{
@@ -78,6 +126,113 @@ namespace MonoTests.System.Linq {
 
 			Assert.IsFalse (first.SequenceEqual (second));
 			Assert.IsTrue (first.SequenceEqual (third));
+		}
+
+		[Test]
+		public void TestSkip ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5};
+			int [] result = {3, 4, 5};
+
+			AssertAreSame (result, data.Skip (3));
+		}
+
+		[Test]
+		public void TestSkipWhile ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5};
+			int [] result = {3, 4, 5};
+
+			AssertAreSame (result, data.SkipWhile (i => i < 3));
+		}
+
+		[Test]
+		public void TestTake ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5};
+			int [] result = {0, 1, 2};
+
+			AssertAreSame (result, data.Take (3));
+		}
+
+		[Test]
+		public void TestTakeWhile ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5};
+			int [] result = {0, 1, 2};
+
+			AssertAreSame (result, data.TakeWhile (i => i < 3));
+		}
+
+		[Test]
+		public void TestSelect ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+			int [] result = {1, 3, 5, 7, 9};
+
+			AssertAreSame (result, data.Where (i => i % 2 != 0));
+		}
+
+		//[Test]
+		//public void TestReverse ()
+		//{
+		//	int [] data = {0, 1, 2, 3, 4};
+		//	int [] result = {4, 3, 2, 1, 0};
+		//
+		//	AssertAreSame (result, data.Reverse ());
+		//}
+
+		[Test]
+		public void TestSum ()
+		{
+			int [] data = {1, 2, 3, 4};
+
+			Assert.AreEqual (10, data.Sum ());
+		}
+
+		[Test]
+		public void TestMax ()
+		{
+			int [] data = {1, 3, 5, 2};
+
+			Assert.AreEqual (5, data.Max ());
+		}
+
+		[Test]
+		public void TestMin ()
+		{
+			int [] data = {3, 5, 2, 6, 1, 7};
+
+			Assert.AreEqual (1, data.Min ());
+		}
+
+		[Test]
+		public void TestToList ()
+		{
+			int [] data = {3, 5, 2};
+
+			var list = data.ToList ();
+
+			AssertAreSame (data, list);
+
+			Assert.AreEqual (typeof (List<int>), list.GetType ());
+		}
+
+		[Test]
+		public void TestToArray ()
+		{
+			ICollection<int> coll = new List<int> ();
+			coll.Add (0);
+			coll.Add (1);
+			coll.Add (2);
+
+			int [] result = {0, 1, 2};
+
+			var array = coll.ToArray ();
+
+			AssertAreSame (result, array);
+
+			Assert.AreEqual (typeof (int []), array.GetType ());
 		}
 
 		static void AssertAreSame<T> (IEnumerable<T> expected, IEnumerable<T> actual)
