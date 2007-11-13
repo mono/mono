@@ -6916,7 +6916,7 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
-		        Modifiers.UNSAFE |
+			Modifiers.UNSAFE |
 			Modifiers.EXTERN |
 			Modifiers.METHOD_YIELDS |
 			Modifiers.VIRTUAL;
@@ -6930,8 +6930,7 @@ namespace Mono.CSharp {
 			Field field = new Field (
 				Parent, Type,
 				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & Modifiers.STATIC),
-				CompilerGeneratedClass.MakeName (null, "CompilerGeneratedField"),
-				null, Location);
+			    "<" + Name + ">k__BackingField", null, Location);
 			((TypeContainer)Parent).AddField (field);
 
 			// Make get block
@@ -6963,12 +6962,14 @@ namespace Mono.CSharp {
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, attrs, define_set_first)
 		{
-			if (RootContext.Version >= LanguageVersion.LINQ &&
-				!is_iface &&
-				(mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
+			if (!is_iface && (mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
 				get_block != null && get_block.Block == null &&
-				set_block != null && set_block.Block == null)
+				set_block != null && set_block.Block == null) {
+				if (RootContext.Version <= LanguageVersion.ISO_2)
+					Report.FeatureIsNotAvailable (Location, "automatically implemented properties");
+				
 				CreateAutomaticProperty (current_block, get_block, set_block);
+			}
 
 			if (get_block == null)
 				Get = new GetMethod (this);
