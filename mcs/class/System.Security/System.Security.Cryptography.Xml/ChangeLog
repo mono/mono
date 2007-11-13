@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigExcC14NTransform.cs : removed extra [ComVisible].
+
 2007-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Transform.cs, XmlDsigC14NTransform.cs, XmlDsigExcC14NTransform.cs :

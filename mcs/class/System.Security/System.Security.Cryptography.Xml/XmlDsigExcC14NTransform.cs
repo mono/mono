@@ -110,7 +110,6 @@ namespace System.Security.Cryptography.Xml {
 		}
 
 #if NET_2_0
-		[ComVisible (false)]
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
 			return hash.ComputeHash ((Stream) GetOutput ());
