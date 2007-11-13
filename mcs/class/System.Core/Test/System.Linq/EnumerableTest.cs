@@ -173,14 +173,14 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (result, data.Where (i => i % 2 != 0));
 		}
 
-		//[Test]
-		//public void TestReverse ()
-		//{
-		//	int [] data = {0, 1, 2, 3, 4};
-		//	int [] result = {4, 3, 2, 1, 0};
-		//
-		//	AssertAreSame (result, data.Reverse ());
-		//}
+		[Test]
+		public void TestReverse ()
+		{
+			int [] data = {0, 1, 2, 3, 4};
+			int [] result = {4, 3, 2, 1, 0};
+
+			AssertAreSame (result, data.Reverse ());
+		}
 
 		[Test]
 		public void TestSum ()
