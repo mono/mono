@@ -18,6 +18,9 @@ public class Test
 			return 2;
 		if (field_atts[0].GetType() != typeof (CompilerGeneratedAttribute))
 			return 3;
+			
+		if (fields [0].Name != "<Foo>k__BackingField")
+			return 10;
 		
 		PropertyInfo property = typeof (Test).GetProperty ("Foo");
 		MethodInfo get = property.GetGetMethod (false);
