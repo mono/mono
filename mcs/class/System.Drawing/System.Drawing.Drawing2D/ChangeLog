@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GraphicsPath.cs : AddBeziers(Point[]) arg is "params" in 2.0.
+
 2007-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPath.cs: Remove some TODO specific to libgdiplus.
