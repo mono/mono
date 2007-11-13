@@ -21,8 +21,8 @@
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
-//
-//
+//	Srikanth Madikeri	(csri_1986@yahoo.com) - Win32 Drop files.
+// 
 
 // NOT COMPLETE
 
@@ -788,41 +788,27 @@ namespace System.Windows.Forms {
 				return S_OK;
 			}
 
-			internal static uint Drop(IntPtr @this, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect) {
-				throw new Exception("Yeah baby, gimme a ride to WM_DROPFILES land");
+			internal static uint Drop(IntPtr @this, IntPtr pDataObj, uint grfkeyState, IntPtr pt_x, IntPtr pt_y, IntPtr pdwEffect)
+			{
+		  		IntPtr window;
+				
+				window = Marshal.ReadIntPtr (@this, Marshal.SizeOf (typeof (IntPtr)));
 
-				#if InTheFuture
-				ComIDataObjectUnmanaged	data_object;
-				FORMATETC		format;
-				STGMEDIUM		medium;
-				uint			result;
-				IntPtr			mem;
+				DragDropEventArgs.x = pt_x.ToInt32 ();
+				DragDropEventArgs.y = pt_y.ToInt32 ();
+				DragDropEventArgs.allowed_effect = (DragDropEffects) Marshal.ReadIntPtr (pdwEffect).ToInt32();
+				DragDropEventArgs.current_effect = DragDropEventArgs.AllowedEffect;
+				DragDropEventArgs.keystate = (int) grfkeyState;
 
+				Control control = Control.FromHandle (window);
+				if (control == null) {
+					control.DndDrop (DragDropEventArgs);
+					return S_FALSE;
+				}
+ 
+				Marshal.WriteInt32 (pdwEffect, (int) DragDropEventArgs.Effect);
 
-				data_object = new ComIDataObjectUnmanaged(pDataObj);
-
-				format = new FORMATETC();
-				format.cfFormat = ClipboardFormats.CF_HDROP;
-				format.ptd = IntPtr.Zero;
-				format.dwAspect = DVASPECT.DVASPECT_CONTENT;
-				format.lindex = -1;
-				format.tymed = TYMED.TYMED_HGLOBAL;
-
-				medium = new STGMEDIUM();
-				medium.tymed = TYMED.TYMED_HGLOBAL;
-
-				//mem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-				//result = data_object.QueryInterface(IID_IDataObject, mem);
-				//Marshal.FreeHGlobal(mem);
-
-				//result = data_object.AddRef();
-
-				result = data_object.QueryGetData(format);
-
-				result = data_object.GetData(format, ref medium);
-
-				return E_NOTIMPL;
-				#endif
+				return S_OK;
 			}
 		}
 
