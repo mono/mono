@@ -1165,7 +1165,7 @@ namespace System.Windows.Forms
 							}
 						} else {
 							if (!control) {
-								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+								document.DeleteChar(document.CaretTag.Line, document.CaretPosition, true);
 							} else {
 								int end_pos;
 
@@ -1178,7 +1178,7 @@ namespace System.Windows.Forms
 								if (end_pos < document.CaretLine.Text.Length) {
 									end_pos++;
 								}
-								document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
+								document.DeleteChars(document.CaretTag.Line, document.CaretPosition, end_pos - document.CaretPosition);
 							}
 						}
 					}
@@ -1409,7 +1409,7 @@ namespace System.Windows.Forms
 					LineTag tag = document.CaretTag;
 					int pos = document.CaretPosition;
 					document.MoveCaret (CaretDirection.CharBack);
-					document.DeleteChar (tag, pos, false);
+					document.DeleteChar (tag.Line, pos, false);
 					document.SetSelectionToCaret (true);
 				} else {
 					int start_pos;
@@ -1421,7 +1421,7 @@ namespace System.Windows.Forms
 					}
 
 					document.undo.BeginUserAction (Locale.GetText ("Delete"));
-					document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
+					document.DeleteChars(document.CaretTag.Line, start_pos, document.CaretPosition - start_pos);
 					document.undo.EndUserAction ();
 					document.PositionCaret(document.CaretLine, start_pos);
 					document.SetSelectionToCaret (true);

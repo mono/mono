@@ -177,9 +177,9 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		
-		#region Internal Methods
+		#region Public Methods
 		///<summary>Break a tag into two with identical attributes; pos is 1-based; returns tag starting at &gt;pos&lt; or null if end-of-line</summary>
-		internal LineTag Break (int pos)
+		public LineTag Break (int pos)
 		{
 			LineTag	new_tag;
 
@@ -203,7 +203,7 @@ namespace System.Windows.Forms
 		}
 
 		/// <summary>Combines 'this' tag with 'other' tag</summary>
-		internal bool Combine (LineTag other)
+		public bool Combine (LineTag other)
 		{
 			if (!this.Equals (other))
 				return false;
@@ -223,12 +223,38 @@ namespace System.Windows.Forms
 			back_color = other.back_color;
 		}
 
-		internal virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
+		public void Delete ()
+		{
+			// If we are the only tag, we can't be deleted
+			if (previous == null && next == null)
+				return;
+				
+			// If we are the last tag, deletion is easy
+			if (next == null) {
+				previous.next = null;
+				return;
+			}
+			
+			// Easy cases gone, little tougher, delete ourself
+			// Update links, and start
+			next.previous = null;
+			
+			LineTag loop = next;
+			
+			while (loop != null) {
+				loop.Start -= Length;
+				loop = loop.next;			
+			}
+			
+			return;
+		}
+		
+		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
 			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end), font, color, x, y, false);
 		}
 
-		internal virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
+		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
 			while (start < end) {
 				int tab_index = text.IndexOf ("\t", start);
@@ -271,7 +297,7 @@ namespace System.Windows.Forms
 		}
 
 		/// <summary>Finds the tag that describes the character at position 'pos' on 'line'</summary>
-		internal static LineTag FindTag (Line line, int pos)
+		public static LineTag FindTag (Line line, int pos)
 		{
 			LineTag tag = line.tags;
 
@@ -293,7 +319,7 @@ namespace System.Windows.Forms
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="start">1-based character position on line</param>
-		internal static bool FormatText (Line line, int start, int length, Font font, Color color, Color back_color, FormatSpecified specified)
+		public static bool FormatText (Line line, int start, int length, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -379,7 +405,7 @@ namespace System.Windows.Forms
 		
 		// There can be multiple tags at the same position, we want to make
 		// sure we are using the very last tag at the given position
-		internal static LineTag GetFinalTag (LineTag tag)
+		public static LineTag GetFinalTag (LineTag tag)
 		{
 			LineTag res = tag;
 
@@ -411,7 +437,7 @@ namespace System.Windows.Forms
 			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
 		}
 
-		internal virtual SizeF SizeOfPosition (Graphics dc, int pos)
+		public virtual SizeF SizeOfPosition (Graphics dc, int pos)
 		{
 			if (pos >= line.TextLengthWithoutEnding () && line.document.multiline)
 				return SizeF.Empty;

@@ -1724,12 +1724,12 @@ namespace System.Windows.Forms {
 			SuspendUpdate ();
 
 			if (start.line == end.line) {
-				DeleteChars (start.tag, pos, end.pos - pos);
+				DeleteChars (start.line, pos, end.pos - pos);
 			} else {
 
 				// Delete first and last lines
-				DeleteChars (start.tag, start.pos, start.line.text.Length - start.pos);
-				DeleteChars (end.line.tags, 0, end.pos);
+				DeleteChars (start.line, start.pos, start.line.text.Length - start.pos);
+				DeleteChars (end.line, 0, end.pos);
 
 				int current = start.line.line_no + 1;
 				if (current < end.line.line_no) {
@@ -1751,88 +1751,17 @@ namespace System.Windows.Forms {
 		
 		// Deletes n characters at the given position; it will not delete past line limits
 		// pos is 0-based
-		internal void DeleteChars(LineTag tag, int pos, int count) {
-			Line	line;
-			bool	streamline;
-
-			streamline = false;
-			line = tag.Line;
-
+		public void DeleteChars (Line line, int pos, int count)
+		{
+			// Reduce our character count
 			CharCount -= count;
+			
+			line.DeleteCharacters (pos, count);
 
-			if (pos == line.text.Length) {
-				return;
-			}
-
-			line.text.Remove(pos, count);
-
-			// Make sure the tag points to the right spot
-			while ((tag != null) && (tag.End) < pos) {
-				tag = tag.Next;
-			}
-
-			if (tag == null) {
-				goto Cleanup;
-			}
-
-			// Check if we're crossing tag boundaries
-			if ((pos + count) > (tag.Start + tag.Length - 1)) {
-				int	left;
-
-				// We have to delete cross tag boundaries
-				streamline = true;
-				left = count;
-
-				left -= tag.Start + tag.Length - pos - 1;
-
-				tag = tag.Next;
-				while ((tag != null) && (left > 0)) {
-					tag.Start -= count - left;
-
-					if (tag.Length > left) {
-						left = 0;
-					} else {
-						left -= tag.Length;
-						tag = tag.Next;
-					}
-
-				}
-			} else {
-				// We got off easy, same tag
-
-				if (tag.Length == 0) {
-					streamline = true;
-				}
-			}
-
-			// Delete empty orphaned tags at the end
-			LineTag walk = tag;
-			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
-				LineTag t = walk;
-				walk.Next = walk.Next.Next;
-				if (walk.Next != null)
-					walk.Next.Previous = t;
-				walk = walk.Next;
-			}
-
-			// Adjust the start point of any tags following
-			if (tag != null) {
-				tag = tag.Next;
-				while (tag != null) {
-					tag.Start -= count;
-					tag = tag.Next;
-				}
-			}
-
-			line.recalc = true;
-			if (streamline) {
-				line.Streamline(lines);
-			}
-
-		Cleanup:
 			if (pos >= line.TextLengthWithoutEnding ()) {
 				LineEnding ending = line.ending;
 				GetLineEnding (line.text.ToString (), 0, out ending);
+				
 				if (ending != line.ending) {
 					line.ending = ending;
 
@@ -1847,95 +1776,19 @@ namespace System.Windows.Forms {
 				UpdateView (line, lines, pos);
 				owner.Invalidate ();
 			} else 
-				UpdateView(line, pos);
+				UpdateView (line, pos);
 		}
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
-		internal void DeleteChar(LineTag tag, int pos, bool forward) {
-			Line	line;
-			bool	streamline;
-
-			CharCount--;
-
-			streamline = false;
-			line = tag.Line;
-
-			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true)) {
+		public void DeleteChar (Line line, int pos, bool forward)
+		{
+			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true))
 				return;
-			}
-
-
-			if (forward) {
-				line.text.Remove(pos, 1);
-
-				while ((tag != null) && (tag.Start + tag.Length - 1) <= pos) {
-					tag = tag.Next;
-				}
-
-				if (tag == null) {
-					goto Cleanup;
-				}
-
-				//	tag.length--;
-
-				if (tag.Length == 0) {
-					streamline = true;
-				}
-			} else {
-				pos--;
-				line.text.Remove(pos, 1);
-				if (pos >= (tag.Start - 1)) {
-					//		tag.length--;
-					if (tag.Length == 0) {
-						streamline = true;
-					}
-				} else if (tag.Previous != null) {
-					//		tag.previous.length--;
-					if (tag.Previous.Length == 0) {
-						streamline = true;
-					}
-				}
-			}
-
-			// Delete empty orphaned tags at the end
-			LineTag walk = tag;
-			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
-				LineTag t = walk;
-				walk.Next = walk.Next.Next;
-				if (walk.Next != null)
-					walk.Next.Previous = t;
-				walk = walk.Next;
-			}
-
-			tag = tag.Next;
-			while (tag != null) {
-				tag.Start--;
-				tag = tag.Next;
-			}
-			line.recalc = true;
-			if (streamline) {
-				line.Streamline(lines);
-			}
-
-		Cleanup:
-			if (pos >= line.TextLengthWithoutEnding ()) {
-				LineEnding ending = line.ending;
-				GetLineEnding (line.text.ToString (), 0, out ending);
-				if (ending != line.ending) {
-					line.ending = ending;
-
-					if (!multiline) {
-						UpdateView (line, lines, pos);
-						owner.Invalidate ();
-						return;
-					}
-				}
-			}
-			if (!multiline) {
-				UpdateView (line, lines, pos);
-				owner.Invalidate ();
-			} else 
-				UpdateView(line, pos);
+			
+			if (forward)
+				DeleteChars (line, pos, 1);
+			else
+				DeleteChars (line, pos - 1, 1);
 		}
 
 		// Combine two lines
@@ -2246,22 +2099,22 @@ namespace System.Windows.Forms {
 			return clone;
 		}
 
-		internal void Delete(int LineNo) {
+		private void Delete (int LineNo)
+		{
 			Line	line;
 
-			if (LineNo>lines) {
+			if (LineNo > lines)
 				return;
-			}
 
-			line = GetLine(LineNo);
+			line = GetLine (LineNo);
 
 			CharCount -= line.text.Length;
 
-			DecrementLines(LineNo + 1);
-			Delete(line);
+			DecrementLines (LineNo + 1);
+			Delete (line);
 		}
 
-		internal void Delete(Line line1) {
+		private void Delete(Line line1) {
 			Line	line2;// = new Line();
 			Line	line3;
 
@@ -2854,7 +2707,7 @@ namespace System.Windows.Forms {
 				if (selection_start.line == selection_end.line) {
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 
-					DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
+					DeleteChars (selection_start.line, selection_start.pos, selection_end.pos - selection_start.pos);
 
 					// The tag might have been removed, we need to recalc it
 					selection_start.tag = selection_start.line.FindTag(selection_start.pos);
@@ -2870,11 +2723,11 @@ namespace System.Windows.Forms {
 					InvalidateSelectionArea ();
 
 					// Delete first line
-					DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
+					DeleteChars (selection_start.line, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
 					selection_start.line.recalc = true;
 
 					// Delete last line
-					DeleteChars(selection_end.line.tags, 0, selection_end.pos);
+					DeleteChars(selection_end.line, 0, selection_end.pos);
 
 					start++;
 					if (start < end) {
@@ -3707,7 +3560,7 @@ namespace System.Windows.Forms {
 			get { return false; }
 		}
 
-		internal override SizeF SizeOfPosition (Graphics dc, int pos)
+		public override SizeF SizeOfPosition (Graphics dc, int pos)
 		{
 			return picture.Size;
 		}
@@ -3717,12 +3570,12 @@ namespace System.Windows.Forms {
 			return (int) (picture.Height + 0.5F);
 		}
 
-		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
+		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
 		{
 			picture.DrawImage (dc, xoff + Line.widths [start], y, false);
 		}
 
-		internal override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
+		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
 			picture.DrawImage (dc, xoff + + Line.widths [start], y, false);
 		}

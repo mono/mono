@@ -1,3 +1,10 @@
+2007-11-13  Jonathan Pobst  <monkey@jpobst.com>
+	[Another round of refactoring]
+	* Line.cs: Add DeleteCharacters.
+	* LineTag.cs: Add Delete.
+	* TextBoxBase.cs: Update to use new methods.
+	* TextControl.cs: Refactor the Delete* methods.
+
 2007-11-13  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Win32DnD.cs: Implement Win32 Drop files, thank you Srikanth Madikeri for

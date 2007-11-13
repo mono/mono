@@ -201,6 +201,79 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Internal Methods
+		public void DeleteCharacters (int pos, int count)
+		{
+			LineTag tag;
+			bool streamline = false;
+			
+			// Can't delete more than the line has
+			if (pos >= text.Length)
+				return;
+
+			// Find the first tag that we are deleting from
+			tag = FindTag (pos);
+
+			// Remove the characters from the line
+			text.Remove (pos, count);
+
+			if (tag == null)
+				return;
+
+			// Check if we're crossing tag boundaries
+			if ((pos + count) > (tag.Start + tag.Length - 1)) {
+				int left;
+
+				// We have to delete cross tag boundaries
+				streamline = true;
+				left = count;
+
+				left -= tag.Start + tag.Length - pos - 1;
+				tag = tag.Next;
+				
+				// Update the start of each tag
+				while ((tag != null) && (left > 0)) {
+					tag.Start -= count - left;
+
+					if (tag.Length > left) {
+						left = 0;
+					} else {
+						left -= tag.Length;
+						tag = tag.Next;
+					}
+
+				}
+			} else {
+				// We got off easy, same tag
+
+				if (tag.Length == 0)
+					streamline = true;
+			}
+
+			// Delete empty orphaned tags at the end
+			LineTag walk = tag;
+			while (walk != null && walk.Next != null && walk.Next.Length == 0) {
+				LineTag t = walk;
+				walk.Next = walk.Next.Next;
+				if (walk.Next != null)
+					walk.Next.Previous = t;
+				walk = walk.Next;
+			}
+
+			// Adjust the start point of any tags following
+			if (tag != null) {
+				tag = tag.Next;
+				while (tag != null) {
+					tag.Start -= count;
+					tag = tag.Next;
+				}
+			}
+
+			recalc = true;
+
+			if (streamline)
+				Streamline (document.Lines);
+		}
+		
 		// This doesn't do exactly what you would think, it just pulls off the \n part of the ending
 		internal void DrawEnding (Graphics dc, float y)
 		{
@@ -280,7 +353,8 @@ namespace System.Windows.Forms
 		}
 					
 		// Make sure we always have enoughs space in text and widths
-		internal void Grow (int minimum) {
+		internal void Grow (int minimum)
+		{
 			int	length;
 			float[]	new_widths;
 
