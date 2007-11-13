@@ -41,12 +41,12 @@ common_dirs := \
 	System.XML			\
 	I18N				\
 	System.Drawing			\
+	System.Transactions		\
 	System.EnterpriseServices	\
 	Mono.C5				\
 	Mono.Data.Tds			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb		\
-	System.Transactions		\
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
