@@ -523,7 +523,7 @@ namespace System.Diagnostics {
 
 #if NET_2_0
 		[MonoNotSupported ("")]
-		public string SessionId {
+		public int SessionId {
 			get { throw new NotImplementedException (); }
 		}
 #endif
