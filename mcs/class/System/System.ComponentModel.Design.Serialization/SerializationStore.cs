@@ -30,20 +30,22 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.IO;
 
 namespace System.ComponentModel.Design.Serialization
 {
 	public abstract class SerializationStore : IDisposable
 	{
-		public SerializationStore ()
+		protected SerializationStore ()
 		{
 		}
 
+		public abstract ICollection Errors { get; }
 		public abstract void Close ();
 		public abstract void Save (Stream stream);
 
-		public void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing)
 				this.Close ();

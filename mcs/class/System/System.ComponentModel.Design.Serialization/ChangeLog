@@ -1,3 +1,8 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResolveNameEventHandler.cs, RootDesignerSerializerAttribute.cs,
+	  DesignerLoader.cs, SerializationStore.cs : couple of 2.0 API fixes.
+
 2007-11-01  Ivan N. Zlatev <contact@i-nz.net>
 
 	* ResolveNameEventArgs.cs: Fix Value to not return and set Name.
