@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -93,10 +94,15 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			string ret = String.Format ("Flags={0}, TryOffset={1}, TryLength={2}, HandlerOffset={3}, HandlerLength={4}",
+						    flags, try_offset, try_length, handler_offset, handler_length);
+			if (catch_type != null)
+				ret = String.Format ("{0}, CatchType={1}", ret, catch_type);
+			if (flags == ExceptionHandlingClauseOptions.Filter)
+				ret = String.Format (CultureInfo.InvariantCulture, "{0}, FilterOffset={1}", ret, filter_offset);
+			return ret;
 		}
 	}
 
