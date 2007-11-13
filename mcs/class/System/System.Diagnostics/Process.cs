@@ -523,6 +523,8 @@ namespace System.Diagnostics {
 
 #if NET_2_0
 		[MonoNotSupported ("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The session ID for this process.")]
 		public int SessionId {
 			get { throw new NotImplementedException (); }
 		}

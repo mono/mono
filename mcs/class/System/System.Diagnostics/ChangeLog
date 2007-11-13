@@ -1,5 +1,9 @@
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Process.cs : ... and it exposed some missing attributes.
+
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Process.cs : oops, SessionId was int.
 
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
