@@ -57,12 +57,17 @@ namespace System.Drawing.Design {
 
 
 		[MonoTODO]
+		public bool IsCreated {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public bool IsTransient {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		public IDataObject ToolboxData {
+		public virtual IDataObject ToolboxData {
 			get { throw new NotImplementedException (); }
 		}
 		

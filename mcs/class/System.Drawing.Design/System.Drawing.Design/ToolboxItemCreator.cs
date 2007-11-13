@@ -34,6 +34,10 @@ namespace System.Drawing.Design {
 
 	public sealed class ToolboxItemCreator {
 
+		internal ToolboxItemCreator ()
+		{
+		}
+
 		[MonoTODO]
 		public ToolboxItem Create (IDataObject data)
 		{

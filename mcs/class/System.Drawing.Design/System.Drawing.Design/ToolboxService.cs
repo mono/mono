@@ -65,7 +65,7 @@ namespace System.Drawing.Design {
 		}
 
 		[MonoTODO]
-		protected virtual ToolboxItemContainer CreateItemContainer (IDataObject dataObject, IDesignerHost link)
+		protected virtual ToolboxItemContainer CreateItemContainer (ToolboxItem item, IDesignerHost link)
 		{
 			throw new NotImplementedException ();
 		}
@@ -81,7 +81,7 @@ namespace System.Drawing.Design {
 		protected abstract IList GetItemContainers (string categoryName);
 
 		[MonoTODO]
-		protected virtual void IsItemContainer (IDataObject dataObject, IDesignerHost host)
+		protected virtual bool IsItemContainer (IDataObject dataObject, IDesignerHost host)
 		{
 			throw new NotImplementedException ();
 		}
@@ -101,7 +101,13 @@ namespace System.Drawing.Design {
 		}
 
 		[MonoTODO]
-		protected virtual void SetCursor ()
+		protected virtual bool SetCursor ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void UnloadToolboxItems ()
 		{
 			throw new NotImplementedException ();
 		}

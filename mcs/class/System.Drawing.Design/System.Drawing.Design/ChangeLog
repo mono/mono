@@ -1,3 +1,8 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ToolboxItemCreator.cs, ToolboxService.cs, ToolboxItemContainer.cs:
+	  couple of 2.0 API fixes.
+
 2007-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CursorEditor.cs: Add new (2.0) IsDropDownResizable property.
