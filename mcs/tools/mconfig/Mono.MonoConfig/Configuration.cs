@@ -220,6 +220,10 @@ namespace Mono.MonoConfig
 				try {
 					doc = new XPathDocument (config);
 					config_documents.Add (doc);
+				} catch (XmlException ex) {
+					throw new ApplicationException (
+						String.Format ("Failed to parse config file '{0}'.", config),
+						ex);
 				} catch (Exception) {
 					continue;
 				}

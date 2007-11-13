@@ -192,7 +192,7 @@ namespace Mono.MonoConfig
 						RequiredParameterMissing (argName);
 					
 					try {
-						Target = Helpers.ConvertTarget (argParam);
+						Target = Helpers.ConvertEnum <FeatureTarget> (argParam, "target");
 					} catch (Exception ex) {
 						OptionParameterError (argName, ex.Message);
 					}
@@ -313,6 +313,16 @@ namespace Mono.MonoConfig
 			foreach (string item in list)
 				Console.WriteLine (" {0}", item);
 		}
+
+		static void PrintException (Exception ex, string format, params object[] parms)
+		{
+			if (ex == null)
+				return;
+			Console.Error.WriteLine (format, parms);
+			Console.Error.WriteLine ("  {0}", ex.Message);
+			if (ex.InnerException != null)
+				Console.Error.WriteLine ("    {0}", ex.InnerException.Message);
+		}
 		
 		static int Main (string[] args)
 		{
@@ -323,8 +333,13 @@ namespace Mono.MonoConfig
 				configPaths [3] = options.ConfigFile;
 			
 			Configuration config = new Configuration ();
-			config.Load (configPaths);
-
+			try {
+				config.Load (configPaths);
+			} catch (Exception ex) {
+				PrintException (ex, "Failed to load configuration files:");
+				return 1;
+			}
+			
 			bool doQuit = false;
 			if (options.ListDefaultConfigs) {
 				DisplayList ("Default config files", config.DefaultConfigFiles);
@@ -411,8 +426,8 @@ namespace Mono.MonoConfig
 			try {
 				config.AddFeature (configPath, target, featureName);
 			} catch (Exception ex) {
-				Console.Error.WriteLine ("Failed to add feature '{0}' to config file '{1}'.\n{2}",
-							 featureName, configPath, ex.Message);
+				PrintException (ex, "Failed to add feature '{0}' to config file '{1}'.",
+						featureName, configPath);
 				return 1;
 			}
 			
@@ -454,8 +469,8 @@ namespace Mono.MonoConfig
 			try {
 				config.WriteDefaultConfigFile (configName, targetPath, target);
 			} catch (Exception ex) {
-				Console.Error.WriteLine ("Failed to write default config file '{0}':\n{1}",
-							 configName, ex.Message);
+				PrintException (ex, "Failed to write default config file '{0}':",
+						configName);
 				return 1;
 			}			
 

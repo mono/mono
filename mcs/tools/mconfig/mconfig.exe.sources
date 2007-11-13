@@ -5,7 +5,9 @@ Mono.MonoConfig/ConfigBlockNodeHandler.cs
 Mono.MonoConfig/Configuration.cs
 Mono.MonoConfig/DefaultConfigFileNodeHandler.cs
 Mono.MonoConfig/DefaultNodeHandler.cs
+Mono.MonoConfig/FeatureAction.cs
 Mono.MonoConfig/FeatureBlock.cs
+Mono.MonoConfig/FeatureNode.cs
 Mono.MonoConfig/FeatureNodeHandler.cs
 Mono.MonoConfig/FeatureTarget.cs
 Mono.MonoConfig/Helpers.cs

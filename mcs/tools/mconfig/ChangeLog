@@ -1,3 +1,64 @@
+2007-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* data/config.xml: replaced the possibly conflicting default block
+	names with ones that are less likely to cause conflicts and
+	modified feature and default config entries to use the new names,
+	via the defaultBlockName attribute of the section element.
+
+	* Mono.MonoConfig/Section.cs: added DefaultBlockName property,
+	which defaults to Name if not parsed from the XML node.
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: Use the defaultBlockName
+	attribute when searching for the default sections.
+
+	* mconfig.cs: better error handling. Print inner exception
+	message, if any, in addition to the outer one.
+
+	* Mono.MonoConfig/Configuration.cs: do not ignore XmlException
+	when loading configuration files.
+
+	* Mono.MonoConfig/DefaultConfigFileNodeHandler.cs: use
+	DefaultConfigFile.FileName when writing a file or invoking the
+	OnOverwriteFile event handler.
+	Use the defaultBlockName attribute when searching for the default
+	sections.
+
+2007-11-12  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LOCAL_MCS_FLAGS): Mono.GetOptions.dll is not needed.
+
+	* Mono.MonoConfig/FeatureAction.cs: extracted command execution
+	code to a separate method.
+	Script code must be flushed before passing it to the shell.
+	Implemented Exec action support.
+
+2007-11-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Mono.MonoConfig/Helpers.cs: added a method for breaking long
+	text lines to fit them within the console window.
+
+	* Mono.MonoConfig/FeatureNode.cs: added support for feature
+	actions.
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: added support for feature
+	actions.
+
+	* Mono.MonoConfig/FeatureAction.cs: added
+
+	* mconfig.exe.sources: added Mono.MonoConfig/FeatureAction.cs
+
+2007-11-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Mono.MonoConfig/FeatureNodeHandler.cs: added support for feature
+	descriptions.
+	
+	* Mono.MonoConfig/FeatureNode.cs: a new container for the
+	'feature' block data.
+
+	* data/config.xml: feature storage type has changed.
+
+	* mconfig.exe.sources: added Mono.MonoConfig/FeatureNode.cs	
+
 2007-11-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Mono.MonoConfig/consts.cs.in: use @MONO_SYSCONFDIR@ instead of

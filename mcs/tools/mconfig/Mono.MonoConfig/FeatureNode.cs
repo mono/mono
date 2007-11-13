@@ -27,60 +27,49 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.Xml.XPath;
 
 namespace Mono.MonoConfig
 {
-	public class Section
+	public class FeatureNode
 	{
-		List <Section> children;
-		string name;
-		string defaultBlockName;
-		bool attachPoint;
+		List <FeatureBlock> blocks;
+		List <FeatureAction> actionsBefore;
+		List <FeatureAction> actionsAfter;
+		string description;
 		
-		public string Name {
-			get { return name; }
-		}
-
-		public string DefaultBlockName {
+		public List <FeatureBlock> Blocks {
 			get {
-				if (String.IsNullOrEmpty (defaultBlockName))
-					return Name;
-				return defaultBlockName;
+				if (blocks != null)
+					return blocks;
+
+				return new List <FeatureBlock> ();
 			}
 		}
-		
-		public List <Section> Children {
+
+		public string Description {
 			get {
-				if (children == null)
-					children = new List <Section> ();
-				return children;
+				if (description != null)
+					return description;
+
+				return String.Empty;
 			}
 		}
 
-		public bool AttachPoint {
-			get { return attachPoint; }
+		public List <FeatureAction> ActionsBefore {
+			get { return actionsBefore; }
+		}
+
+		public List <FeatureAction> ActionsAfter {
+			get { return actionsAfter; }
 		}
 		
-		public Section () : this (null)
+		public FeatureNode (List <FeatureBlock> blocks, string description,
+				    List <FeatureAction> actionsBefore, List <FeatureAction> actionsAfter)
 		{
-		}
-		
-		public Section (XPathNavigator nav)
-		{
-			if (nav != null) {
-				name = Helpers.GetRequiredNonEmptyAttribute (nav, "name");
-
-				string val = Helpers.GetOptionalAttribute (nav, "attachPoint");
-				if (!String.IsNullOrEmpty (val))
-					attachPoint = true;
-
-				val = Helpers.GetOptionalAttribute (nav, "defaultBlockName");
-				if (!String.IsNullOrEmpty (val))
-					defaultBlockName = val;
-			}
+			this.blocks = blocks;
+			this.description = description;
+			this.actionsBefore = actionsBefore;
+			this.actionsAfter = actionsAfter;
 		}
 	}
 }

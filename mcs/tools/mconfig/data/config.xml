@@ -4,7 +4,7 @@
     <handlers>
       <handler section="feature" 
 	       type="Mono.MonoConfig.FeatureNodeHandler, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null"
-	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Collections.Generic.List`1[[Mono.MonoConfig.FeatureBlock, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
+	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Mono.MonoConfig.FeatureNode, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
       <handler section="configBlock"
 	       type="Mono.MonoConfig.ConfigBlockNodeHandler, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null"
 	       storageType="System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[Mono.MonoConfig.ConfigBlockBlock, mconfig, Version=0.1.0.0, Culture=neutral, PublicKeyToken=null]], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
@@ -18,6 +18,9 @@
   </configuration>
 
   <feature name="AJAX" target="web">
+    <description><![CDATA[
+      Adds entries to your Web.config file which are required by any AJAX.NET application.
+    ]]></description>
     <blocks>
       <block name="AJAX config sections"/>
       <block name="AJAX controls registration"/>
@@ -58,8 +61,8 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="pages">
-	    <section name="controls"/>
+	  <section name="pages" defaultBlockName="system.web.pages">
+	    <section name="controls" defaultBlockName="system.web.pages.controls"/>
 	  </section>
 	</section>
       </section>
@@ -76,8 +79,8 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="compilation">
-	    <section name="assemblies"/>
+	  <section name="compilation" defaultBlockName="system.web.compilation">
+	    <section name="assemblies" defaultBlockName="system.web.compilation.assemblies"/>
 	  </section>
 	</section>
       </section>
@@ -94,7 +97,7 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="httpHandlers"/>
+	  <section name="httpHandlers" defaultBlockName="system.web.httpHandlers"/>
 	</section>
       </section>
     </requires>
@@ -113,7 +116,7 @@
     <requires>
       <section name="configuration">
 	<section name="system.web">
-	  <section name="httpModules"/>
+	  <section name="httpModules" defaultBlockName="system.web.httpModules"/>
 	</section>
       </section>
     </requires>
@@ -213,42 +216,42 @@
     ]]>
   </default>
 
-  <default section="pages" target="web">
+  <default section="system.web.pages" target="web">
     <![CDATA[
 <pages>
 </pages>
 ]]>
   </default>
 
-  <default section="controls" target="web">
+  <default section="system.web.pages.controls" target="web">
     <![CDATA[
 <controls>
 </controls>
 ]]>
   </default>
 
-  <default section="compilation" target="web">
+  <default section="system.web.compilation" target="web">
     <![CDATA[
 <compilation debug="true">
 </compilation>
 ]]>
   </default>
 
-  <default section="assemblies" target="web">
+  <default section="system.web.compilation.assemblies" target="web">
     <![CDATA[
 <assemblies>
 </assemblies>
 ]]>
   </default>
 
-  <default section="httpHandlers" target="web">
+  <default section="system.web.httpHandlers" target="web">
     <![CDATA[
 <httpHandlers>
 </httpHandlers>
 ]]>
   </default>
 
-  <default section="httpModules" target="web">
+  <default section="system.web.httpModules" target="web">
     <![CDATA[
 <httpModules>
 </httpModules>
@@ -269,7 +272,7 @@
 ]]>
   </default>
 
-  <default section="customErrors" target="web">
+  <default section="system.web.customErrors" target="web">
     <![CDATA[
 <customErrors mode="RemoteOnly"/>
 ]]>
@@ -279,8 +282,8 @@
   <defaultConfigFile name="web.config" fileName="Web.config" target="web">
     <section name="configuration">
       <section name="system.web">
-	<section name="compilation"/>
-	<section name="customErrors"/>
+	<section name="compilation" defaultBlockName="system.web.compilation"/>
+	<section name="customErrors" defaultBlockName="system.web.customErrors"/>
       </section>
     </section>
   </defaultConfigFile>
