@@ -254,10 +254,12 @@ namespace System.Net.Sockets
 			Dispose (false);
 		}
 		
+#if !NET_2_0
 		public override void Close ()
 		{
 			((IDisposable) this).Dispose ();
 		}
+#endif
 
 #if NET_2_0
 		public void Close (int timeout)

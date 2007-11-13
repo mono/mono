@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetworkStream.cs : in 2.0 Close() is not needed and does not exist.
+
 2007-11-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Socket.cs: Do not set the Send and Receive buffer sizes for the
