@@ -32,7 +32,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
-	[Guid("9e31421c-2f15-4f35-ad20-66fb9d4cd428")]
+	[Guid("C89AC250-E18A-4FC7-ABD5-B8897B6A78A5")]
 	[TransactionAttribute (TransactionOption.RequiresNew)]
 	public sealed class RegistrationHelperTx : ServicedComponent {
 

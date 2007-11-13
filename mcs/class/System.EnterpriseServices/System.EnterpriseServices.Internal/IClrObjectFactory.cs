@@ -36,12 +36,24 @@ namespace System.EnterpriseServices.Internal
 	public interface IClrObjectFactory
 	{
 		[DispId(1)]
+#if NET_2_0
+		[return:MarshalAs (UnmanagedType.IDispatch)]
+#endif
 		object CreateFromAssembly (string assembly, string type, string mode);
 		[DispId(4)]
+#if NET_2_0
+		[return:MarshalAs (UnmanagedType.IDispatch)]
+#endif
 		object CreateFromMailbox (string Mailbox, string Mode);
 		[DispId(2)]
+#if NET_2_0
+		[return:MarshalAs (UnmanagedType.IDispatch)]
+#endif
 		object CreateFromVroot (string VrootUrl, string Mode);
 		[DispId(3)]
+#if NET_2_0
+		[return:MarshalAs (UnmanagedType.IDispatch)]
+#endif
 		object CreateFromWsdl (string WsdlUrl, string Mode);
 	}
 #endif

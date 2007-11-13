@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IClrObjectFactory.cs : 2.0 API fixes.
+
 2006-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClrObjectFactory.cs: Fix the build from untested changes.

@@ -1,3 +1,10 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegistrationException.cs IPlaybackControl.cs
+	  RegistrationHelperTx.cs IAsyncErrorNotify.cs ITransaction.cs
+	  IServiceCall.cs IProcessInitControl.cs IProcessInitializer.cs
+	  ContextUtil.cs ServiceConfig.cs : couple of 2.0 API fixes.
+
 2006-05-31  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SecurityRoleAttribute.cs: Set AllowMultiple to true.

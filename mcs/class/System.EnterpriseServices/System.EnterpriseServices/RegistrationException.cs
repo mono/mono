@@ -49,6 +49,18 @@ namespace System.EnterpriseServices {
 		{
 		}
 
+#if NET_2_0
+		public RegistrationException ()
+			: this ("Registration error")
+		{
+		}
+
+		public RegistrationException (string msg, Exception innerException)
+			: base (msg, innerException)
+		{
+		}
+#endif
+
 		#endregion // Constructors
 
 		#region Properties

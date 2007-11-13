@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : in 2.0 it depends on System.Transactions.dll.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Fix spelling of ChangeLog file.

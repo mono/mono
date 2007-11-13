@@ -6,6 +6,10 @@ LIBRARY = System.EnterpriseServices.dll
 LIB_MCS_FLAGS = /nowarn:0168 /nowarn:0162 /r:$(corlib)
 NO_TEST = yes
 
+ifneq (default, $(PROFILE))
+LIB_MCS_FLAGS += /r:System.Transactions.dll
+endif
+
 EXTRA_DISTFILES = System.EnterpriseServices.Internal/ChangeLog
 
 include ../../build/library.make

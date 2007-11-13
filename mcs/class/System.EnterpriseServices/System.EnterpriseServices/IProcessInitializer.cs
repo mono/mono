@@ -35,6 +35,9 @@ namespace System.EnterpriseServices {
 #if NET_1_1
 	[Guid("1113f52d-dc7f-4943-aed6-88d04027e32a")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+#if NET_2_0
+	[ComImport]
+#endif
 	public interface IProcessInitializer {
 
 		#region Methods
