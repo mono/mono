@@ -322,6 +322,7 @@ namespace System.IO.Ports
 		[MonoTODO("Not implemented")]
 		[Browsable (true)]
 		[MonitoringDescription ("")]
+		[DefaultValue (63)]
 		public byte ParityReplace {
 			get {
 				throw new NotImplementedException ();
@@ -334,6 +335,7 @@ namespace System.IO.Ports
 		
 		[Browsable (true)]
 		[MonitoringDescription ("")]
+		[DefaultValue ("COM1")] // silly Windows-ism. We should ignore it.
 		public string PortName {
 			get {
 				return port_name;
@@ -567,8 +569,7 @@ namespace System.IO.Ports
 			return stream.Read (buffer, offset, count);
 		}
 
-		[Obsolete("Read of char buffers is currently broken")]
-		[MonoTODO("This is broken")]
+		[MonoTODO("Read of char buffers is currently broken")]
 		public int Read (char[] buffer, int offset, int count)
 		{
 			CheckOpen ();

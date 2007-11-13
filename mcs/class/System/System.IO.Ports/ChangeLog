@@ -1,3 +1,9 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerialPort.cs :
+	  Added [DefaultValue]. For PortName it is useless though.
+	  Do not use ObsoleteAttribute for MonoTODO role.
+
 2007-11-05  Miguel de Icaza  <miguel@novell.com>
 
 	* SerialPort.cs: Cope with multi-character newlines.  Fixes #321988.
