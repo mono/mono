@@ -4214,11 +4214,13 @@ namespace Mono.CSharp {
 			MethodInfo method = (MethodInfo)mg;
 			if (method != null) {
 				type = TypeManager.TypeToCoreType (method.ReturnType);
+
+				// TODO: this is a copy of mg.ResolveMemberAccess method
 				Expression iexpr = mg.InstanceExpression;
 				if (method.IsStatic) {
-					if (iexpr == null || 
-					    iexpr is This || iexpr is EmptyExpression ||
-					    mg.IdenticalTypeName) {
+					if (iexpr == null ||
+						iexpr is This || iexpr is EmptyExpression ||
+						mg.IdenticalTypeName) {
 						mg.InstanceExpression = null;
 					} else {
 						MemberExpr.error176 (loc, mg.GetSignatureForError ());
