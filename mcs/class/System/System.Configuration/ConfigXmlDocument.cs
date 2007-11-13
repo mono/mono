@@ -127,6 +127,14 @@ namespace System.Configuration
 		}
 #endif
 
+		string IConfigXmlNode.Filename {
+			get { return Filename; }
+		}
+
+		int IConfigXmlNode.LineNumber {
+			get { return LineNumber; }
+		}
+
 		//
 		// Wrappers for Xml* that just provide file name and line number addition
 		//
