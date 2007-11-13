@@ -1,3 +1,8 @@
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline): Update after 
+	mono_marshal_get_delegate_invoke () signature change.
+
 2007-11-13  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Removed the shared context in favor of the generic
