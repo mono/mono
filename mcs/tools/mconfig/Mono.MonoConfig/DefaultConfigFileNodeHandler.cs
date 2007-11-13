@@ -46,7 +46,11 @@ namespace Mono.MonoConfig
 		}
 
 		public string FileName {
-			get { return fileName; }
+			get {
+				if (!String.IsNullOrEmpty (fileName))
+					return fileName;
+				return Name;
+			}
 		}
 		
 		public FeatureTarget Target {
@@ -198,10 +202,10 @@ namespace Mono.MonoConfig
 					String.Format ("Config file '{0}' can be generated only for the '{1}' target",
 						       name, target));
 
-			string targetFile = Path.Combine (path, dcf.Name);
+			string targetFile = Path.Combine (path, dcf.FileName);
 			if (File.Exists (targetFile)) {
 				OverwriteFileEventArgs args = new OverwriteFileEventArgs (
-					name,
+					dcf.FileName,
 					path,
 					target,
 					true
