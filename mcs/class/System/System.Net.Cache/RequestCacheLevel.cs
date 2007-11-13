@@ -35,12 +35,13 @@ namespace System.Net.Cache
 {
 	public enum RequestCacheLevel
 	{
-		BypassCache = 0x01,
-		CacheIfAvailable = 0x03,
-		CacheOnly = 0x02,
 		Default = 0x00,
-		NoCacheNoStore = 0x05,
-		Reload = 0x04
+		BypassCache = 0x01,
+		CacheOnly = 0x02,
+		CacheIfAvailable = 0x03,
+		Revalidate = 0x04,
+		Reload = 0x05,
+		NoCacheNoStore = 0x06,
 	}
 }
 

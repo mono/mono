@@ -35,7 +35,7 @@ using System;
 
 namespace System.Net.Cache 
 {
-	public sealed class HttpRequestCachePolicy : RequestCachePolicy
+	public class HttpRequestCachePolicy : RequestCachePolicy
 	{
 		#region Fields
 
