@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Process.cs : added missing SessionId (NIE).
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* Process.cs: Wrap the redirected streams with a stream

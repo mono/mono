@@ -521,6 +521,13 @@ namespace System.Diagnostics {
 			}
 		}
 
+#if NET_2_0
+		[MonoNotSupported]
+		public string SessionId {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		/* the meaning of type is as follows: 0: user, 1: system, 2: total */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static long Times (IntPtr handle, int type);
