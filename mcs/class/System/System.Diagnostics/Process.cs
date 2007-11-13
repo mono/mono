@@ -522,7 +522,7 @@ namespace System.Diagnostics {
 		}
 
 #if NET_2_0
-		[MonoNotSupported]
+		[MonoNotSupported ("")]
 		public string SessionId {
 			get { throw new NotImplementedException (); }
 		}
