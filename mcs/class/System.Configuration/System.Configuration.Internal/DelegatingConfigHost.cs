@@ -147,7 +147,7 @@ namespace System.Configuration.Internal
 			return host.IsFile (streamName);
 		}
 		
-		public bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
+		public virtual bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
 		{
 			return host.IsFullTrustSectionWithoutAptcaAllowed (configRecord);
 		}
@@ -157,16 +157,16 @@ namespace System.Configuration.Internal
 			return host.IsLocationApplicable (configPath);
 		}
 
-		public bool IsRemote {
+		public virtual bool IsRemote {
 			get { return host.IsRemote; }
 		}
 
-		public bool IsSecondaryRoot (string configPath)
+		public virtual bool IsSecondaryRoot (string configPath)
 		{
 			return host.IsSecondaryRoot (configPath);
 		}
 
-		public bool IsTrustedConfigPath (string configPath)
+		public virtual bool IsTrustedConfigPath (string configPath)
 		{
 			return host.IsTrustedConfigPath (configPath);
 		}
@@ -176,7 +176,7 @@ namespace System.Configuration.Internal
 			return host.OpenStreamForRead (streamName);
 		}
 
-		public Stream OpenStreamForRead (string streamName, bool assertPermissions)
+		public virtual Stream OpenStreamForRead (string streamName, bool assertPermissions)
 		{
 			return host.OpenStreamForRead (streamName, assertPermissions);
 		}
@@ -186,7 +186,7 @@ namespace System.Configuration.Internal
 			return host.OpenStreamForWrite (streamName, templateStreamName, ref writeContext);
 		}
 		
-		public Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
+		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
 		{
 			return host.OpenStreamForWrite (streamName, templateStreamName, ref writeContext, assertPermissions);
 		}
@@ -226,7 +226,7 @@ namespace System.Configuration.Internal
 			host.WriteCompleted (streamName, success, writeContext);
 		}
 		
-		public void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
+		public virtual void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
 		{
 			host.WriteCompleted (streamName, success, writeContext, assertPermissions);
 		}
