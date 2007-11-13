@@ -249,7 +249,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void Abstract ()
+		public void Virtual ()
 		{
 			// Delegate with abstract method, no target
 			FooDelegate del = (FooDelegate)Delegate.CreateDelegate (typeof (FooDelegate), typeof (Iface).GetMethod ("retarg"));
@@ -262,22 +262,39 @@ namespace MonoTests.System
 			FooDelegate del4 = (FooDelegate)Delegate.Combine (del2, del3);
 
 			Assert.AreEqual ("Hello2", del4 (c, "Hello"));
+
+			// Delegate with virtual method, no target
+			FooDelegate2 del5 = (FooDelegate2)Delegate.CreateDelegate (typeof (FooDelegate2), typeof (B).GetMethod ("retarg3"));
+			Assert.AreEqual ("Hello2", del5 (c, "Hello"));
 		}
 #endif
 		delegate string FooDelegate (Iface iface, string s);
+
+		delegate string FooDelegate2 (B b, string s);
 
 		public interface Iface
 		{
 			string retarg (string s);
 		}
 
-		public class C : Iface
+		public class B {
+
+			public virtual string retarg3 (string s) {
+				return s;
+			}
+		}
+
+		public class C : B, Iface
 		{
 			public string retarg (string s) {
 				return s;
 			}
 
 			public string retarg2 (Iface iface, string s) {
+				return s + "2";
+			}
+
+			public override string retarg3 (string s) {
 				return s + "2";
 			}
 
