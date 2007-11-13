@@ -1,3 +1,7 @@
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StrongNameKeyPair.cs : implemented 2.0 runtime serialization stuff.
+
 2007-11-05  Mark Probst  <mark.probst@gmail.com>
 
 	* Binder.cs: Treat matches with different argument types as
