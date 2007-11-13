@@ -1,5 +1,9 @@
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MethodBase.cs : (Invoke) removed extra interface implementation.
+
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* StrongNameKeyPair.cs : implemented 2.0 runtime serialization stuff.
 
 2007-11-05  Mark Probst  <mark.probst@gmail.com>
