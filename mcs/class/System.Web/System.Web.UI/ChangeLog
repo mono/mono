@@ -1,3 +1,8 @@
+2007-11-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ClientScriptManager.cs: 
+	Ensure a script resource is included once in multi form environment.
+
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* PageParser.cs: fixed initial value of tracemode.

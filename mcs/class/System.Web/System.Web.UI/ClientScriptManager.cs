@@ -194,7 +194,7 @@ namespace System.Web.UI
 		internal void WriteWebFormClientScript (HtmlTextWriter writer) {
 			if (!_webFormClientScriptRendered && _webFormClientScriptRequired) {
 				writer.WriteLine ();
-				WriteClientScriptInclude (writer, GetWebResourceUrl (typeof (Page), "webform.js"));
+				WriteClientScriptInclude (writer, GetWebResourceUrl (typeof (Page), "webform.js"), typeof (Page), "webform.js");
 				WriteBeginScriptBlock (writer);
 				writer.WriteLine ("WebForm_Initialize({0});", page.IsMultiForm ? page.theForm : "window");
 				WriteEndScriptBlock (writer);
@@ -531,7 +531,7 @@ namespace System.Web.UI
 					break;
 				case ScriptEntryFormat.Include:
 					EnsureEndScriptBlock (writer);
-					WriteClientScriptInclude (writer, scriptList.Script);
+					WriteClientScriptInclude (writer, scriptList.Script, scriptList.Type, scriptList.Key);
 					break;
 				default:
 					EnsureEndScriptBlock (writer);
@@ -654,11 +654,11 @@ namespace System.Web.UI
 			hiddenFields = null;
 		}
 		
-		internal void WriteClientScriptInclude (HtmlTextWriter writer, string path) {
+		internal void WriteClientScriptInclude (HtmlTextWriter writer, string path, Type type, string key) {
 					if (!page.IsMultiForm)
 						writer.WriteLine ("<script src=\"{0}\" type=\"text/javascript\"></script>", path);
 					else {
-						string scriptKey = "inc_" + path.GetHashCode ().ToString ("X");
+						string scriptKey = "inc_" + (type.FullName + key).GetHashCode ().ToString ("X");
 						writer.WriteLine ("<script type=\"text/javascript\">");
 						writer.WriteLine (SCRIPT_BLOCK_START);
 						writer.WriteLine ("if (document.{0} == null) {{", scriptKey);
