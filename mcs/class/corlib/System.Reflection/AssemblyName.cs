@@ -53,7 +53,6 @@ namespace System.Reflection {
 #endif
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[MonoTODO ("Serialization format not compatible with .NET")]
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 
 		#region Synch with object-internals.h

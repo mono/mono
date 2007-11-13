@@ -1,5 +1,9 @@
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AssemblyName.cs : remove extraneous MonoTODO.
+
+2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ExceptionHandlingClause.cs : implemented ToString().
 
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
