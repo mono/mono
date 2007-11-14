@@ -2,6 +2,7 @@
 // System.Nullable
 //
 // Martin Baulig (martin@ximian.com)
+// Marek Safar	 (marek.safar@gmail.com)
 //
 // (C) 2004 Novell, Inc.
 //
@@ -29,37 +30,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Reflection;
 #if NET_2_0
+
+using System.Reflection;
 using System.Collections.Generic;
-#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-#if NET_2_0
-namespace System {
-#if NET_2_0
+namespace System
+{
 	[ComVisible (true)]
-#endif
 	public static class Nullable {
-		public static int Compare<T> (Nullable<T> left, Nullable<T> right) where T: struct
+		public static int Compare<T> (T? value1, T? value2) where T: struct
 		{
-			IComparable icomparable = left.value as IComparable;
-			if (icomparable == null)
-				throw new ArgumentException ("At least one object must implement IComparable.");
-			if (left.has_value == false && right.has_value == false)
-				return 0;
-			if (!left.has_value)
-				return -1;
-			if (!right.has_value)
-				return 1;
+			if (value1.has_value) {
+				if (!value2.has_value)
+					return 1;
 
-			return icomparable.CompareTo (right.value);
+				return Comparer<T>.Default.Compare (value1.value, value2.value);
+			}
+			
+			return value2.has_value ? -1 : 0;
 		}
 
-		public static bool Equals<T> (Nullable <T> value1, Nullable<T> value2) where T: struct
+		public static bool Equals<T> (T? value1, T? value2) where T: struct
 		{
-			return value1.Equals (value2);
+			if (value1.has_value != value2.has_value)
+				return false;
+
+			if (!value1.has_value)
+				return true;
+
+			return EqualityComparer<T>.Default.Equals (value1.value, value2.value);
 		}
 
 		public static Type GetUnderlyingType (Type nullableType)
@@ -112,14 +114,13 @@ namespace System {
 
 		bool Equals (Nullable<T> other)
 		{
-			Nullable<T> no = (Nullable<T>) other;
-			if (no.has_value != has_value)
+			if (other.has_value != has_value)
 				return false;
 
 			if (has_value == false)
 				return true;
 
-			return no.value.Equals (value);
+			return other.value.Equals (value);
 		}
 
 		public override int GetHashCode ()

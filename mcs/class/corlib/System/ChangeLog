@@ -1,3 +1,7 @@
+2007-11-14  Marek Safar  <marek.safar@gmail.com>
+
+	* Nullable.cs: Optimized to use generic comparers.
+
 2007-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs (Copy): Throw InvalidCastException in more cases.
