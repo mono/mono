@@ -1,3 +1,8 @@
+2007-11-14  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for a regression cause by #324222
+ 	* class.cs: Don't report unused even when it implements an interface.
+ 	
 2007-11-13  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #341205
