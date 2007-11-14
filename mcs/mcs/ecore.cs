@@ -2981,12 +2981,16 @@ namespace Mono.CSharp {
 				if (original != null && original.IdenticalNameAndTypeName (ec, left, loc))
 					return this;
 
-				error176 (loc, GetSignatureForError ());
-				return null;
+				return ResolveExtensionMemberAccess (left);
 			}
 
 			InstanceExpression = left;
+			return this;
+		}
 
+		protected virtual Expression ResolveExtensionMemberAccess (Expression left)
+		{
+			error176 (loc, GetSignatureForError ());
 			return this;
 		}
 
@@ -3207,6 +3211,9 @@ namespace Mono.CSharp {
 
 		public override bool IsInstance {
 			get {
+				if (best_candidate != null)
+					return !best_candidate.IsStatic;
+
 				foreach (MethodBase mb in Methods)
 					if (!mb.IsStatic)
 						return true;
@@ -3217,6 +3224,9 @@ namespace Mono.CSharp {
 
 		public override bool IsStatic {
 			get {
+				if (best_candidate != null)
+					return best_candidate.IsStatic;
+
 				foreach (MethodBase mb in Methods)
 					if (mb.IsStatic)
 						return true;
@@ -3462,6 +3472,19 @@ namespace Mono.CSharp {
 			// ...
 
 			return false;
+		}
+
+		protected override Expression ResolveExtensionMemberAccess (Expression left)
+		{
+			if (!IsStatic)
+				return base.ResolveExtensionMemberAccess (left);
+
+			//
+			// When left side is an expression and at least one candidate method is 
+			// static, it can be extension method
+			//
+			InstanceExpression = left;
+			return this;
 		}
 
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
@@ -4445,9 +4468,8 @@ namespace Mono.CSharp {
 
 				bool left_is_type = left is TypeExpr;
 				if (!left_is_type && (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
-					Report.SymbolRelatedToPreviousError (FieldInfo);
-					error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
-					return null;
+//					Report.SymbolRelatedToPreviousError (FieldInfo);
+					return ResolveExtensionMemberAccess (left);
 				}
 
 				if (ic.ResolveValue ()) {

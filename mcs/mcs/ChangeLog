@@ -1,3 +1,10 @@
+2007-11-13  Marek Safar  <marek.safar@gmail.com>
+
+ 	A fix for bug #341205
+ 	* ecore.cs, expression.cs: Method group expression cannot do static
+ 	method access with an instance reference check before overloading takes
+ 	a place.
+ 	
 2007-11-08  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for bug #340202
