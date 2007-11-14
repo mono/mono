@@ -437,6 +437,17 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void Copy_InvalidCast () {
+		object[] arr1 = new object [10];
+		Type[] arr2 = new Type [10];
+
+		arr1 [0] = new object ();
+
+		Array.Copy (arr1, 0, arr2, 0, 10);
+	}
+
+	[Test]
 	public void TestCopyTo() {
 		{
 			bool errorThrown = false;
