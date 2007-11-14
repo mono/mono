@@ -1,3 +1,8 @@
+2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: As we loop through each line changing the font, tell
+	the document that the line needs to be recalculated.  Fixes bug #341534.
+
 2007-11-13  Jonathan Pobst  <monkey@jpobst.com>
 	[Another round of refactoring]
 	* Line.cs: Add DeleteCharacters.
