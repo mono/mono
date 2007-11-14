@@ -2072,9 +2072,9 @@ namespace System.Windows.Forms
 				// Font changes apply to the whole document
 				for (int i = 1; i <= document.Lines; i++) {
 					line = document.GetLine(i);
-					LineTag.FormatText(line, 1, line.text.Length, Font,
-							ForeColor,
-							Color.Empty, FormatSpecified.Font | FormatSpecified.Color);
+					if (LineTag.FormatText(line, 1, line.text.Length, Font, ForeColor,
+							Color.Empty, FormatSpecified.Font | FormatSpecified.Color))
+						document.RecalculateDocument (CreateGraphicsInternal (), line.LineNo, line.LineNo, false);
 				}
 				document.ResumeRecalc (false);
 

@@ -1,3 +1,8 @@
+2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.2.6]
+	* TextBoxBase.cs: As we loop through each line changing the font, tell
+	the document that the line needs to be recalculated.  Fixes bug #341534.
+
 2007-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Application.cs: In ProductVersion first try AssemblyFileVersion
