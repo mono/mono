@@ -394,15 +394,39 @@ namespace System.Web.UI
 			return result.CompiledAssembly;
 		}
 		
-		internal Type GetTypeFromBin (string typeName)
+		internal Type GetTypeFromBin (string tname)
 		{
+			if (tname == null || tname.Length == 0)
+				throw new ArgumentNullException ("tname");
+			
 			Type result = null;
+			string typeName;
+			string assemblyName;
+			int comma = tname.IndexOf (',');
+			
+			if (comma != -1) {
+				typeName = tname.Substring (0, comma).Trim ();
+				assemblyName = tname.Substring (comma + 1).Trim ();
+			} else {
+				typeName = tname;
+				assemblyName = null;
+			}
+
+			Type type = null;
+			Assembly assembly = null;
+			if (assemblyName != null) {
+				assembly = Assembly.Load (assemblyName);
+				if (assembly != null)
+					type = assembly.GetType (typeName, false);
+				if (type != null)
+					return type;
+			}
 			
 #if NET_2_0
 			IList toplevelAssemblies = BuildManager.TopLevelAssemblies;
 			if (toplevelAssemblies != null && toplevelAssemblies.Count > 0) {
 				foreach (Assembly asm in toplevelAssemblies) {
-					Type type = asm.GetType (typeName, false);
+					type = asm.GetType (typeName, false);
 					if (type != null) {
 						if (result != null)
 							throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
@@ -413,14 +437,14 @@ namespace System.Web.UI
 #endif
 
 			foreach (string dll in HttpApplication.BinDirectoryAssemblies) {
-				Assembly assembly = Assembly.LoadFrom (dll);
-				Type type = assembly.GetType (typeName, false);
+				assembly = Assembly.LoadFrom (dll);
+				type = assembly.GetType (typeName, false);
 				if (type != null) {
 					if (result != null) 
 						throw new HttpException (String.Format ("Type {0} is not unique.", typeName));
 						
 					result = type;
-				} 
+				}
 			}
 
 			
