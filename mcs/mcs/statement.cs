@@ -714,7 +714,7 @@ namespace Mono.CSharp {
 	///   Implements the return statement
 	/// </summary>
 	public class Return : Statement {
-		Expression Expr;
+		protected Expression Expr;
 		bool unwind_protect;
 		
 		public Return (Expression expr, Location l)

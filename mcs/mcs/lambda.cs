@@ -140,9 +140,29 @@ namespace Mono.CSharp {
 
 	public class ContextualReturn : Return
 	{
+		bool statement_return;
+
 		public ContextualReturn (Expression expr)
 			: base (expr, expr.Location)
 		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (statement_return)
+				((ExpressionStatement)Expr).EmitStatement (ec);
+			else
+				base.Emit (ec);
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			if (ec.ReturnType == TypeManager.void_type) {
+				statement_return = true;
+				return Expr.Resolve (ec) != null;
+			}
+
+			return base.Resolve (ec);
 		}
 	}
 }
