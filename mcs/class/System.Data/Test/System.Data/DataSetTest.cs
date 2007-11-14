@@ -2260,6 +2260,17 @@ namespace MonoTests.System.Data
 		}
 
 #if NET_2_0
+
+		// it is basically a test for XmlSerializer, but I need it
+		// here to not add dependency on sys.data.dll in sys.xml test.
+		[Test]
+		public void ReflectTypedDataSet ()
+		{
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			// it used to cause "missing GetDataSetSchema" error.
+			imp.ImportTypeMapping (typeof (MonkeyDataSet));
+		}
+
 		#region DataSet.CreateDataReader Tests and DataSet.Load Tests
 
 		private DataSet ds;

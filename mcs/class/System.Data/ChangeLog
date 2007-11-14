@@ -1,3 +1,7 @@
+2007-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources: added MonkeyDataSet.cs, test helper.
+
 2007-10-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added DbDataAdapterTest.cs,

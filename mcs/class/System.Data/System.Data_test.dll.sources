@@ -54,6 +54,7 @@ System.Data/DataViewTest_IBindingList.cs
 System.Data/DataViewTest_IBindingListView.cs
 System.Data/ForeignKeyConstraintTest.cs
 System.Data/ForeignKeyConstraintTest2.cs
+System.Data/MonkeyDataSet.cs
 System.Data/TypedDataSetGeneratorTest.cs
 System.Data/UniqueConstraintTest.cs
 System.Data/UniqueConstraintTest2.cs
