@@ -1,5 +1,14 @@
 2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LineTag.cs: Don't attempt to draw '\r', treat it like it doesn't exist.
+	When measureing CR or LF, use /u000D instead of /u0013. (Hex, not decimal.)
+	* TextControl.cs: Fix a case in GetLineEnding where a \n before a \r would
+	be ignored.  Create a new GetLineEnding that can specify which types of
+	line endings to look for.  On Insert, only create new lines for \n and \r\n.
+	[Fixes bug #324274]
+
+2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: As we loop through each line changing the font, tell
 	the document that the line needs to be recalculated.  Fixes bug #341534.
 

@@ -95,13 +95,13 @@ namespace System.Windows.Forms {
 	}
 
 	internal enum LineEnding {
-		Wrap,    // line wraps to the next line
-		Limp,    // \r
-		Hard,    // \r\n
-		Soft,    // \r\r\n
-		Rich,    // \n
+		Wrap = 1,    // line wraps to the next line
+		Limp = 2,    // \r
+		Hard = 4,    // \r\n
+		Soft = 8,    // \r\r\n
+		Rich = 16,    // \n
 
-		None
+		None = 0
 	}
 	
 	internal class Document : ICloneable, IEnumerable {
@@ -1511,11 +1511,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal int GetLineEnding (string line, int start, out LineEnding ending)
+		private int GetLineEnding (string line, int start, out LineEnding ending)
 		{
 			int res;
+			int rich_index;
 
+			if (start >= line.Length) {
+				ending = LineEnding.Wrap;
+				return -1;
+			}
+			
 			res = line.IndexOf ('\r', start);
+			rich_index = line.IndexOf ('\n', start);
+			
+			// Handle the case where we find both of them, and the \n is before the \r
+			if (res != -1 && rich_index != -1)
+				if (rich_index < res) {
+					ending = LineEnding.Rich;
+					return rich_index;				
+				}
+			
 			if (res != -1) {
 				if (res + 2 < line.Length && line [res + 1] == '\r' && line [res + 2] == '\n') {
 					ending = LineEnding.Soft;
@@ -1529,16 +1544,30 @@ namespace System.Windows.Forms {
 				return res;
 			}
 
-			res = line.IndexOf ('\n', start);
-			if (res != -1) {
+			if (rich_index != -1) {
 				ending = LineEnding.Rich;
-				return res;
+				return rich_index;
 			}
 
 			ending = LineEnding.Wrap;
 			return line.Length;
 		}
 
+		// Get the line ending, but only of the types specified
+		private int GetLineEnding (string line, int start, out LineEnding ending, LineEnding type)
+		{
+			int index = start;
+			int last_length = 0;
+
+			do {
+				index = GetLineEnding (line, index + last_length, out ending);
+				last_length = LineEndingLength (ending);
+			} while 
+				((ending & type) != ending && index != -1);
+			
+			return index == -1 ? line.Length : index;
+		}
+		
 		internal int LineEndingLength (LineEnding ending)
 		{
 			switch (ending) {
@@ -1589,7 +1618,7 @@ namespace System.Windows.Forms {
 			base_line = line.line_no;
 			old_line_count = lines;
 
-			break_index = GetLineEnding (s, 0, out ending);
+			break_index = GetLineEnding (s, 0, out ending, LineEnding.Hard | LineEnding.Rich);
 
 			// There are no line feeds in our text to be pasted
 			if (break_index == s.Length) {
@@ -1606,7 +1635,7 @@ namespace System.Windows.Forms {
 				
 				// Insert brand new lines for any more line feeds in the inserted string
 				while (true) {
-					int next_break = GetLineEnding (s, break_index, out ending);
+					int next_break = GetLineEnding (s, break_index, out ending, LineEnding.Hard | LineEnding.Rich);
 					
 					if (next_break == s.Length)
 						break;

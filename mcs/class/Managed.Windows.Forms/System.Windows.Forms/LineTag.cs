@@ -251,7 +251,7 @@ namespace System.Windows.Forms
 		
 		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
-			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end), font, color, x, y, false);
+			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), font, color, x, y, false);
 		}
 
 		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
@@ -261,7 +261,7 @@ namespace System.Windows.Forms
 				if (tab_index == -1)
 					tab_index = end;
 
-				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start), font, color, xoff + line.widths[start], y, false);
+				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start).Replace ("\r", string.Empty), font, color, xoff + line.widths[start], y, false);
 
 				// non multilines get the unknown char 
 				if (!line.document.multiline && tab_index != end)
@@ -452,7 +452,7 @@ namespace System.Windows.Forms
 				return res;
 			case 10:
 			case 13:
-				return TextBoxTextRenderer.MeasureText (dc, "\u0013", font);
+				return TextBoxTextRenderer.MeasureText (dc, "\u000D", font);
 			}
 			
 			return TextBoxTextRenderer.MeasureText (dc, text, font);
