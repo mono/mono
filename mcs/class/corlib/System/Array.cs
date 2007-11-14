@@ -969,8 +969,7 @@ namespace System
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch {
-						if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
-							(src_type.Equals (typeof (Object))))
+						if (src_type.Equals (typeof (Object)))
 							throw new InvalidCastException ();
 						else
 							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
@@ -985,8 +984,7 @@ namespace System
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch {
-						if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
-							(src_type.Equals (typeof (Object))))
+						if (src_type.Equals (typeof (Object)))
 							throw new InvalidCastException ();
 						else
 							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
