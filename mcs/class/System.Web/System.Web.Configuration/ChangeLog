@@ -1,3 +1,10 @@
+2007-11-14  Marek Habersack  <mhabersack@novell.com>
+
+	* FileMatchingInfo.cs: if Request is present, construct MatchExact
+	using Request.BaseVirtualDir instead of
+	HttpRuntime.AppDomainAppVirtualPath, falling back to the latter if
+	the former is not available. Fixes bug #341703
+
 2007-11-02  Marek Habersack  <mhabersack@novell.com>
 
 	* HandlerFactoryConfiguration.cs: clear the HttpApplication HTTP
