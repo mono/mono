@@ -268,6 +268,7 @@ namespace System.Configuration
 		public override void Init (IInternalConfigRoot root, params object[] hostInitParams)
 		{
 			map = (ExeConfigurationFileMap) hostInitParams [0];
+			level = (ConfigurationUserLevel) hostInitParams [1];
 		}
 		
 		public override string GetStreamName (string configPath)

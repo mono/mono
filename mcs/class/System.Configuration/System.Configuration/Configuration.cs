@@ -387,7 +387,7 @@ namespace System.Configuration {
 		[MonoInternalNote ("Detect if file has changed")]
 		public void SaveAs (string filename, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
-			string dir = Path.GetDirectoryName (filename);
+			string dir = Path.GetDirectoryName (Path.GetFullPath (filename));
 			if (!Directory.Exists (dir))
 				Directory.CreateDirectory (dir);
 			Save (new FileStream (filename, FileMode.OpenOrCreate, FileAccess.Write), mode, forceUpdateAll);
