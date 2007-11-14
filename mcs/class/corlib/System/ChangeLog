@@ -1,3 +1,12 @@
+2007-11-14  Miguel de Icaza  <miguel@novell.com>
+
+	* Console.cs, ConsoleDriver.cs, TermInfoDriver.cs,
+	TermInfoReader.cs, TermInfoNumber.cs, TermInfoStrings.cs,
+	CStreamReader.cs, CStreamWriter.cs, NullConsoleDriver.cs,
+	WindowsConsoleDriver.cs: In the 2.1 profile we do not need the
+	full-blown Console (the terminal-addressable console) so we shrink
+	it down to the basic 1.0 Console.
+
 2007-11-14  Marek Safar  <marek.safar@gmail.com>
 
 	* Nullable.cs: Optimized to use generic comparers.
