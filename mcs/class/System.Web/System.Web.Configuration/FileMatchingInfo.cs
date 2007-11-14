@@ -54,7 +54,10 @@ namespace System.Web.Configuration
 
 				if (s.IndexOf ('*') == -1)
 					if (s [0] != '/') {
-						string vpath = HttpRuntime.AppDomainAppVirtualPath;
+						HttpContext ctx = HttpContext.Current;
+						HttpRequest req = ctx != null ? ctx.Request : null;
+						string vpath =  req != null ? req.BaseVirtualDir : HttpRuntime.AppDomainAppVirtualPath;
+						
 						if (vpath == "/")
 							vpath = String.Empty;
 						
