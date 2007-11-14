@@ -7388,6 +7388,9 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericType (MemberType))
 				SetMemberIsUsed();
 
+			if (Add.IsInterfaceImplementation)
+				SetMemberIsUsed ();
+
 			FieldBuilder = Parent.TypeBuilder.DefineField (
 				Name, MemberType,
 				FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
@@ -7439,6 +7442,10 @@ namespace Mono.CSharp {
 
 			public override Iterator Iterator {
 				get { return null; }
+			}
+
+			public bool IsInterfaceImplementation {
+				get { return method_data.implementing != null; }
 			}
 
 			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
