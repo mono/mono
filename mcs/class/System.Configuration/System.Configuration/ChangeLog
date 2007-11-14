@@ -1,3 +1,8 @@
+2007-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Configuration.cs : (Save) when the given file path is relative
+	  it failed to create directory. Fixed standalone test t25/t26.
+
 2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InternalConfigurationHost.cs : when the streamName is for
