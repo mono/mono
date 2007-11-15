@@ -320,7 +320,7 @@ namespace System.Diagnostics {
 		 * element 0.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern ProcessModule[] GetModules_internal();
+		private extern ProcessModule[] GetModules_internal(IntPtr handle);
 
 		private ProcessModuleCollection module_collection;
 		
@@ -329,7 +329,7 @@ namespace System.Diagnostics {
 		public ProcessModuleCollection Modules {
 			get {
 				if(module_collection==null) {
-					module_collection=new ProcessModuleCollection(GetModules_internal());
+					module_collection=new ProcessModuleCollection(GetModules_internal(process_handle));
 				}
 
 				return(module_collection);

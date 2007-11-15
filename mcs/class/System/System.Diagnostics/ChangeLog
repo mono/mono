@@ -1,3 +1,7 @@
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Pass the process handle to GetModules_internal();
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Process.cs : ... and it exposed some missing attributes.
