@@ -384,6 +384,7 @@ namespace System.Collections.Generic
 			
 			internal Enumerator (LinkedList <T> parent)
 			{
+				si = null;
 				this.list = parent;
 				current = null;
 				index = -1;
