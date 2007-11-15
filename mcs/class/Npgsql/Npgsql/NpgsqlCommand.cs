@@ -53,7 +53,7 @@ namespace Npgsql
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlCommand";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlCommand));
-        private static readonly Regex parameterReplace = new Regex(@"([:@][\w\.]*)", RegexOptions.Singleline);
+        private readonly Regex parameterReplace = new Regex(@"([:@][\w\.]*)", RegexOptions.Singleline);
 
         private NpgsqlConnection            connection;
         private NpgsqlConnector             connector;
@@ -1373,7 +1373,7 @@ namespace Npgsql
         {
         
             String quote_pattern = @"['][^']*[']";
-            String pattern = "[- |\n\r\t,)(;=+/]" + parameterName + "([- |\n\r\t,)(;=+/]|$)";
+            String pattern = "[- |\n\r\t,)(;=+/<>]" + parameterName + "([- |\n\r\t,)(;=+/<>]|$)";
             Int32 start, end;
             String withoutquote = result;
             Boolean found = false;

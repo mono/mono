@@ -1,4 +1,9 @@
 
+2007-11-15  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	*Npgsql/NpgsqlCommand.cs:  [#1010187] Problem with parsing parameters and "<" or ">" operator with Prepare().
+        [#1010186] Thread safety problem when Parsing command text.
+        Thanks Hubert FONGARNAND for patches!
+
 2007-11-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	*NpgsqlTypes/NpgsqlTypesHelper.cs: This is a single line patch version for handling Standard conforming strings	parameter in postgresql.conf. You only need this version instead of 1.0 is you are using this setting or is planning to use it. Also, starting with 8.4 postgresql version, this parameter will be default to on in postgresql.conf. Today it is off.
