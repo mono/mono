@@ -242,7 +242,7 @@ namespace System.Windows.Forms
 
 		public static string ExecutablePath {
 			get {
-				return Assembly.GetEntryAssembly().Location;
+				return Path.GetFullPath (Process.GetCurrentProcess ().MainModule.FileName);
 			}
 		}
 

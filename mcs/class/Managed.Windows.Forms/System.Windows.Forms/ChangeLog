@@ -1,5 +1,11 @@
 2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Application.cs: Change ExecutablePath to use 
+	Process.GetCurrentProcess ().MainModule.FileName instead of Assembly.GetEntryAssembly.
+	[Fixes bug #323552]
+
+2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* LineTag.cs: Don't attempt to draw '\r', treat it like it doesn't exist.
 	When measureing CR or LF, use /u000D instead of /u0013. (Hex, not decimal.)
 	* TextControl.cs: Fix a case in GetLineEnding where a \n before a \r would
