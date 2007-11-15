@@ -506,8 +506,6 @@ System.Windows.Forms/NumericUpDown.cs
 System.Windows.Forms/NumericUpDownAcceleration.cs
 System.Windows.Forms/NumericUpDownAccelerationCollection.cs
 System.Windows.Forms/OSFeature.cs
-System.Windows.Forms/OSXKeyboard.cs
-System.Windows.Forms/OSXStructs.cs
 System.Windows.Forms/OpacityConverter.cs
 System.Windows.Forms/OpenFileDialog.cs
 System.Windows.Forms/OpenTreeNodeEnumerator.cs
@@ -801,8 +799,8 @@ System.Windows.Forms/X11Keyboard.cs
 System.Windows.Forms/X11Structs.cs
 System.Windows.Forms/XEventQueue.cs
 System.Windows.Forms/XplatUI.cs
+System.Windows.Forms/XplatUICarbon.cs
 System.Windows.Forms/XplatUIDriver.cs
-System.Windows.Forms/XplatUIOSX.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
@@ -811,6 +809,16 @@ System.Windows.Forms.Layout/DefaultLayout.cs
 System.Windows.Forms.Layout/FlowLayout.cs
 System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs
+System.Windows.Forms.CarbonInternal/ApplicationHandler.cs
+System.Windows.Forms.CarbonInternal/ControlHandler.cs
+System.Windows.Forms.CarbonInternal/EventHandler.cs
+System.Windows.Forms.CarbonInternal/EventHandlerBase.cs
+System.Windows.Forms.CarbonInternal/Enums.cs
+System.Windows.Forms.CarbonInternal/IEventHandler.cs
+System.Windows.Forms.CarbonInternal/KeyboardHandler.cs
+System.Windows.Forms.CarbonInternal/MouseHandler.cs
+System.Windows.Forms.CarbonInternal/Structs.cs
+System.Windows.Forms.CarbonInternal/WindowHandler.cs
 System.Windows.Forms.Theming/ThemeElements.cs
 System.Windows.Forms.Theming/ThemeElementsClearlooks.cs
 System.Windows.Forms.Theming/ThemeElementsDefault.cs

@@ -1,3 +1,9 @@
+2007-11-15  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUIOSX.cs: Rename to...
+	* XplatUICarbon.cs: and refactor all event handling out to the new event handling
+	system in System.Windows.Forms.CarbonInternal.  Lots of code cleanup as well.
+
 2007-11-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* KeysConverter.cs: The default values should be an array of Keys, not

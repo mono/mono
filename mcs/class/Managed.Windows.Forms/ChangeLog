@@ -1,3 +1,8 @@
+2007-11-15  Geoff Norton  <gnorton@novell.com>
+
+	* System.Windows.Forms.dll.sources: Reflect the changes for the new OSX->Carbon
+	refactoring.
+
 2007-10-23  Geoff Norton  <gnorton@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added OSXKeyboard.cs

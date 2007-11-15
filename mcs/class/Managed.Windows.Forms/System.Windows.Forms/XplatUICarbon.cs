@@ -24,13 +24,6 @@
 //
 //
 
-// This really doesn't work at all; please dont file bugs on it yet.
-
-// MAJOR TODO:
-//  Wire up keyboard
-
-#define EnableNCArea
-
 using System;
 using System.Threading;
 using System.Drawing;
@@ -39,70 +32,47 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-/// OSX Version
+using Carbon = System.Windows.Forms.CarbonInternal;
+
+/// Carbon Version
 namespace System.Windows.Forms {
-
-	// The Carbon Event callback delegate
-	delegate int CarbonEventDelegate (IntPtr inCallRef, IntPtr inEvent, IntPtr userData);
-
-	internal class XplatUIOSX : XplatUIDriver {
-		
+	internal class XplatUICarbon : XplatUIDriver {
 		#region Local Variables
-		
 		// General driver variables
-		private static XplatUIOSX Instance;
-		private static OSXKeyboard Keyboard;
+		private static XplatUICarbon Instance;
 		private static int RefCount;
 		private static bool themes_enabled;
-		private static IntPtr FocusWindow;
-		private static IntPtr ActiveWindow;
-		private static IntPtr ReverseWindow;
 
-		// Mouse 
-		private static MouseButtons MouseState;
-		Point mouse_position;
-		private static Hwnd MouseWindow;
+		// Internal members available to the event handler sub-system
+		internal static IntPtr FocusWindow;
+		internal static IntPtr ActiveWindow;
+		internal static IntPtr ReverseWindow;
+
+		internal static Hwnd GrabHwnd;
+		internal static Hwnd MouseHwnd;
+
+		internal static Hashtable WindowBackgrounds;
+		internal static MouseButtons MouseState;
+		internal static Carbon.Hover Hover;
+
+		// Instance members
+		internal Point mouse_position;
+
+		// Event handlers
+		internal Carbon.ApplicationHandler ApplicationHandler;
+		internal Carbon.ControlHandler ControlHandler;
+		internal Carbon.KeyboardHandler KeyboardHandler;
+		internal Carbon.MouseHandler MouseHandler;
+		internal Carbon.WindowHandler WindowHandler;
 		
-		// OSX Specific
+		// Carbon Specific
 		private static GrabStruct Grab;
-		private static OSXCaret Caret;
-		private static OSXHover Hover;
-		private CarbonEventDelegate CarbonEventHandler;
+		private static Carbon.Caret Caret;
 		private static Hashtable WindowMapping;
-		private static Hashtable WindowBackgrounds;
-		private static Hwnd GrabWindowHwnd;
+		private static Hashtable HandleMapping;
 		private static IntPtr FosterParent;
 		private static int MenuBarHeight;
-		private static EventTypeSpec [] view_events = new EventTypeSpec [] {
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSetFocusPart), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlClick), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlContextualMenuClick), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrack), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSimulateHit), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlBoundsChanged), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrackingAreaEntered), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrackingAreaExited), 
-									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlDraw) 
-									};
-		private static EventTypeSpec [] window_events = new EventTypeSpec[] {
-									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseEntered),
-									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseExited),
-									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseMoved),
-									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseDragged),
-									//new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseWheelMoved),
-									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowBoundsChanged),
-									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowClose),
-									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyModifiersChanged),
-									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyDown),
-									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyRepeat),
-									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyUp)
-									};
-		private static EventTypeSpec [] application_events = new EventTypeSpec[] {
-									new EventTypeSpec (OSXConstants.kEventClassApplication, OSXConstants.kEventAppActivated),
-									new EventTypeSpec (OSXConstants.kEventClassApplication, OSXConstants.kEventAppDeactivated)
-									};
-									
-		
+
 		// Message loop
 		private static Queue MessageQueue;
 		private static bool GetMessageResult;
@@ -113,14 +83,14 @@ namespace System.Windows.Forms {
 		private ArrayList TimerList;
 		
 		static readonly object lockobj = new object ();
+		static readonly object queueobj = new object ();
 		
 		// Event Handlers
 		internal override event EventHandler Idle;
-
 		#endregion
 		
 		#region Constructors
-		private XplatUIOSX() {
+		private XplatUICarbon() {
 
 			RefCount = 0;
 			TimerList = new ArrayList ();
@@ -129,18 +99,16 @@ namespace System.Windows.Forms {
 			Initialize ();
 		}
 
-		~XplatUIOSX() {
+		~XplatUICarbon() {
 			// FIXME: Clean up the FosterParent here.
 		}
-
 		#endregion
 
 		#region Singleton specific code
-		
-		public static XplatUIOSX GetInstance() {
+		public static XplatUICarbon GetInstance() {
 			lock (lockobj) {
 				if (Instance == null) {
-					Instance = new XplatUIOSX ();
+					Instance = new XplatUICarbon ();
 				}
 				RefCount++;
 			}
@@ -152,554 +120,22 @@ namespace System.Windows.Forms {
 				return RefCount;
 			}
 		}
-		
 		#endregion
 		
 		#region Internal methods
-		
-		internal void Initialize () {
-
-			// Initialize the Event Handler delegate
-			CarbonEventHandler = new CarbonEventDelegate (EventCallback);
-			
-			// Initilize the mouse controls
-			Hover.Interval = 500;
-			Hover.Timer = new Timer ();
-			Hover.Timer.Enabled = false;
-			Hover.Timer.Interval = Hover.Interval;
-			Hover.Timer.Tick += new EventHandler (HoverCallback);
-			Hover.X = -1;
-			Hover.Y = -1;
-			MouseState = MouseButtons.None;
-			mouse_position = Point.Empty;
-				
-			// Initialize the Caret
-			Caret.Timer = new Timer ();
-			Caret.Timer.Interval = 500;
-			Caret.Timer.Tick += new EventHandler (CaretCallback);
-			
-			// Initialize the OSX Specific stuff
-			WindowMapping = new Hashtable ();
-			WindowBackgrounds = new Hashtable ();
-			
-			// Initialize the FosterParent
-			Rect rect = new Rect ();
-			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
-			ProcessSerialNumber psn = new ProcessSerialNumber();
-
-			InstallEventHandler (GetApplicationEventTarget (), CarbonEventHandler, (uint)application_events.Length, application_events, IntPtr.Zero, IntPtr.Zero);
-			GetCurrentProcess( ref psn );
-			TransformProcessType (ref psn, 1);
-			SetFrontProcess (ref psn);
-
-			CreateNewWindow (WindowClass.kDocumentWindowClass, WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCloseBoxAttribute | WindowAttributes.kWindowFullZoomAttribute | WindowAttributes.kWindowCollapseBoxAttribute | WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent);
-			
-			CreateNewWindow (WindowClass.kOverlayWindowClass, WindowAttributes.kWindowNoUpdatesAttribute | WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref ReverseWindow);
-			InstallEventHandler (GetWindowEventTarget (ReverseWindow), CarbonEventHandler, (uint)window_events.Length, window_events, ReverseWindow, IntPtr.Zero);
-
-			
-			// Get some values about bar heights
-			Rect structRect = new Rect ();
-			Rect contentRect = new Rect ();
-			CheckError (GetWindowBounds (FosterParent, 32, ref structRect), "GetWindowBounds ()");
-			CheckError (GetWindowBounds (FosterParent, 33, ref contentRect), "GetWindowBounds ()");
-			
-			MenuBarHeight = GetMBarHeight ();
-			
-			// Focus
-			FocusWindow = IntPtr.Zero;
-			
-			Keyboard = new OSXKeyboard ();
-
-			// Message loop
-			GetMessageResult = true;
-			
-			ReverseWindowMapped = false;
+		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect) {
+			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height);
 		}
-		
-		#endregion
-		
-		#region Callbacks
-		
-		private void CaretCallback (object sender, EventArgs e) {
-			if (Caret.Paused) {
-				return;
-			}
 
-			if (!Caret.On) {
-				ShowCaret ();
-			} else {
-				HideCaret ();
+		internal void FlushQueue () {
+			CheckTimers (DateTime.UtcNow);
+			while (MessageQueue.Count > 0) {
+				MSG msg = (MSG)MessageQueue.Dequeue ();
+				NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
 			}
 		}
-		
-		private void HoverCallback (object sender, EventArgs e) {
-			if ((Hover.X == mouse_position.X) && (Hover.Y == mouse_position.Y)) {
-				MSG msg = new MSG ();
-				msg.hwnd = Hover.Hwnd;
-				msg.message = Msg.WM_MOUSEHOVER;
-				msg.wParam = GetMousewParam (0);
-				msg.lParam = (IntPtr)((ushort)Hover.X << 16 | (ushort)Hover.X);
-				MessageQueue.Enqueue (msg);
-			}
-		}
-		
-		internal int EventCallback (IntPtr inCallRef, IntPtr inEvent, IntPtr handle) {
-			uint eventClass = GetEventClass (inEvent);
-			uint eventKind = GetEventKind (inEvent);
-			int retVal = 0;
-			lock (MessageQueue) {
-				switch (eventClass) {
-					// keyboard
-					case OSXConstants.kEventClassKeyboard: {
-						MSG msg = new MSG ();
-						Keyboard.KeyEvent (inEvent, handle, eventKind, ref msg);
-						MessageQueue.Enqueue (msg);
-						return -9874;
-					}
-					//window
-					case OSXConstants.kEventClassWindow: {
-						retVal = ProcessWindowEvent (inEvent, eventKind, handle);
-						break;
-					}
-					// mouse
-					case OSXConstants.kEventClassMouse: {
-						retVal = ProcessMouseEvent (inEvent, eventKind, handle);
-						break;
-					}
-					// control
-					case OSXConstants.kEventClassControl: {
-						retVal = ProcessControlEvent (inEvent, eventKind, handle);
-						break;
-					}
-					// application
-					case OSXConstants.kEventClassApplication: {
-						retVal = ProcessApplicationEvent (inEvent, eventKind, handle);
-						break;
-					}
-					default: {
-						break;
-					}
-				}
-			}
-			
-			return retVal;
-		}
 
-		#endregion
-		
-		#region Private Methods
-
-		internal Point ConvertScreenPointToClient (IntPtr handle, Point point) {
-			Point converted_point = new Point ();
-			Rect window_bounds = new Rect ();
-			CGPoint native_point = new CGPoint ();
-
-			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
-			
-			native_point.x = (point.X - window_bounds.left);
-			native_point.y = (point.Y - window_bounds.top);
-
-			HIViewConvertPoint (ref native_point, IntPtr.Zero, handle);
-
-			converted_point.X = (int)native_point.x;
-			converted_point.Y = (int)native_point.y;
-
-			return converted_point;
-		}
-		
-		internal Point ConvertClientPointToScreen (IntPtr handle, Point point) {
-			Point converted_point = new Point ();
-			Rect window_bounds = new Rect ();
-			CGPoint native_point = new CGPoint ();
-
-			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
-			
-			native_point.x = point.X;
-			native_point.y = point.Y;
-
-			HIViewConvertPoint (ref native_point, handle, IntPtr.Zero);
-
-			converted_point.X = (int)(native_point.x + window_bounds.left);
-			converted_point.Y = (int)(native_point.y + window_bounds.top);
-
-			return converted_point;
-		}
-		
-		private int ProcessWindowEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			MSG msg = new MSG ();
-			switch (eventKind) {
-				// Someone closed a window
-				case OSXConstants.kEventWindowClose: {
-					// This is our real window; so we have to post to the corresponding view
-					// FIXME: Should we doublehash the table to get the real window handle without this loop?
-					IDictionaryEnumerator e = WindowMapping.GetEnumerator ();
-					while (e.MoveNext ()) {
-						if ((IntPtr)e.Value == handle) {
-							NativeWindow.WndProc((IntPtr)e.Key, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
-						}
-					}
-					return 0;
-				}
-				case OSXConstants.kEventWindowBoundsChanged: {
-					// This is our real window; so we have to resize the corresponding view as well
-					// FIXME: Should we doublehash the table to get the real window handle without this loop?
-					
-					IDictionaryEnumerator e = WindowMapping.GetEnumerator ();
-					while (e.MoveNext ()) {
-						if ((IntPtr)e.Value == handle) {
-							Hwnd hwnd = Hwnd.ObjectFromHandle ((IntPtr) e.Key);
-							// Get the bounds of the window
-							Rect bounds = new Rect ();
-							CheckError (GetWindowBounds (handle, 33, ref bounds), "GetWindowBounds ()");
-							HIRect r = new HIRect ();
-							
-							// Get our frame for the Handle
-							CheckError (HIViewGetFrame (hwnd.WholeWindow, ref r), "HIViewGetFrame ()");
-							r.size.width = bounds.right-bounds.left;
-							r.size.height = bounds.bottom-bounds.top;
-							// Set the view to the new size
-							CheckError (HIViewSetFrame (hwnd.WholeWindow, ref r), "HIViewSetFrame ()");
-							 
-							 // Update the hwnd internal size representation
-							Size newsize = TranslateQuartzWindowSizeToWindowSize (Control.FromHandle (hwnd.Handle).GetCreateParams (), (int)r.size.width, (int)r.size.height);
-							hwnd.x = (int)bounds.left;
-							hwnd.y = (int)bounds.top;
-							hwnd.width = (int)newsize.Width;
-							hwnd.height = (int)newsize.Height;
-							PerformNCCalc (hwnd);
-							
-							// Add the message to the queue
-							msg.message = Msg.WM_WINDOWPOSCHANGED;
-							msg.hwnd = hwnd.Handle;
-							msg.wParam = IntPtr.Zero;
-							msg.lParam = IntPtr.Zero;
-							MessageQueue.Enqueue (msg);
-							
-							return 0;
-						}
-					}
-					break;
-				}
-			}
-			return -9874;
-		}
-				
-		private int ProcessApplicationEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			switch (eventKind) {
-				case OSXConstants.kEventAppDeactivated: {
-					if (FocusWindow != IntPtr.Zero) {
-						SendMessage(FocusWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
-					} 
-					/* If we deactivate we need to send a MOUSEDOWN/MOUSEUP to kill overlay windows */
-					if (GrabWindowHwnd != null) {
-						SendMessage(GrabWindowHwnd.Handle, Msg.WM_LBUTTONDOWN, (IntPtr)MsgButtons.MK_LBUTTON, (IntPtr) (mouse_position.X << 16 | mouse_position.Y));
-					}
-					break;
-				}
-			}
-
-			return -9874;
-		}
-
-		private int ProcessMouseEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			MSG msg = new MSG ();		
-			
-			switch (eventKind) {
-				case OSXConstants.kEventMouseMoved: {
-					// Where is the mouse in global coordinates
-					QDPoint pt = new QDPoint ();
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref pt);
-					
-					// Where is the mouse in the window
-					Rect window_bounds = new Rect ();
-					GetWindowBounds (handle, 33, ref window_bounds);
-					CGPoint window_pt = new CGPoint ((short) (pt.x - window_bounds.left), (short) (pt.y - window_bounds.top));
-					
-					IntPtr window_handle = IntPtr.Zero;
-					HIViewFindByID (HIViewGetRoot (handle), new HIViewID (OSXConstants.kEventClassWindow, 1), ref window_handle);
-					
-					// Determine which control was hit
-					IntPtr view_handle = IntPtr.Zero;
-					HIViewGetSubviewHit (window_handle, ref window_pt, true, ref view_handle);
-					
-					// Convert the point to view local coordinates
-					HIViewConvertPoint (ref window_pt, window_handle, view_handle);
-					
-					Hwnd hwnd = Hwnd.ObjectFromHandle (view_handle);
-					
-					if (hwnd == null)
-						return -9874;
-					
-					bool client = (hwnd.ClientWindow == view_handle ? true : false);
-
-					if (GrabWindowHwnd != null) {
-						hwnd = GrabWindowHwnd;
-						client = true;
-					}
-					
-					// Generate the message
-					msg.hwnd = hwnd.Handle;
-					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
-					msg.lParam = (IntPtr) ((ushort)window_pt.y << 16 | (ushort)window_pt.x);
-					msg.wParam = GetMousewParam (0);
-					mouse_position.X = (int)window_pt.x;
-					mouse_position.Y = (int)window_pt.y;
-					
-					Hover.Hwnd = msg.hwnd;
-					Hover.Timer.Enabled = true;
-					MessageQueue.Enqueue (msg);
-					return -9874;
-				}
-			}
-			return -9874;
-		}
-					
-		private int ProcessControlEvent (IntPtr inEvent, uint eventKind, IntPtr handle) {
-			GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamDirectObject, OSXConstants.EventParamType.typeControlRef, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref handle);
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			MSG msg = new MSG ();
-					
-			switch (eventKind) {
-				case OSXConstants.kEventControlTrackingAreaEntered: {
-					if (hwnd.Handle == handle)
-						SetThemeCursor ((uint)hwnd.ClientCursor);
-					else
-						SetThemeCursor ((uint)hwnd.WholeCursor);
-					break;
-				}
-				case OSXConstants.kEventControlTrackingAreaExited: {
-					SetThemeCursor ((uint)ThemeCursor.kThemeArrowCursor);
-					break;
-				}
-				case OSXConstants.kEventControlDraw: {
-					
-					if(!hwnd.visible || !HIViewIsVisible (handle))
-						return 0;
-
-					// Get the dirty area
-					HIRect bounds = new HIRect ();
-					HIViewGetBounds (handle, ref bounds); 
-					
-					bool client = (hwnd.ClientWindow == handle ? true : false);
-
-					if (!client && bounds.origin.x >= hwnd.ClientRect.X && bounds.origin.y >= hwnd.ClientRect.Y) {
-						// This is a paint on WholeWindow inside the clientRect; we can safely discard this
-						return 0;
-					}
-					
-					AddExpose (hwnd, client, (int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
-					if (WindowBackgrounds [hwnd] != null) {
-						Color c = (Color)WindowBackgrounds [hwnd];
-						IntPtr contextref = IntPtr.Zero;
-						GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamCGContextRef, OSXConstants.EventParamType.typeCGContextRef, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref contextref);
-						CGContextSetRGBFillColor (contextref, (float)c.R/255, (float)c.G/255, (float)c.B/255, (float)c.A/255);
-						CGContextFillRect (contextref, bounds);
-					}
-					
-#if OptimizeDrawing
-					if (!client && hwnd.nc_expose_pending) {
-#else
-					if (!client) {
-#endif
-						switch (hwnd.border_style) {
-							case FormBorderStyle.Fixed3D: {
-								Graphics g;
-
-								g = Graphics.FromHwnd(hwnd.whole_window);
-								if (hwnd.border_static)
-									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.SunkenOuter);
-								else
-									ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Border3DStyle.Sunken);
-								g.Dispose();
-								break;
-							}
-
-							case FormBorderStyle.FixedSingle: {
-								Graphics g;
-
-								g = Graphics.FromHwnd(hwnd.whole_window);
-								ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Color.Black, ButtonBorderStyle.Solid);
-								g.Dispose();
-								break;
-							}
-						}
-					}
-			
-					return 0;
-				}
-				case OSXConstants.kEventControlBoundsChanged: {
-					// This can happen before our HWND is created so we need to check to make sure its not null
-					if (hwnd != null) {
-						// Get the bounds
-						HIRect bounds = new HIRect ();
-						HIViewGetFrame (handle, ref bounds); 
-						// Update the hwnd size
-						bool client = (hwnd.ClientWindow == handle ? true : false);
-						if (!client) {
-							hwnd.x = (int)bounds.origin.x;
-							hwnd.y = (int)bounds.origin.y;
-							hwnd.width = (int)bounds.size.width;
-							hwnd.height = (int)bounds.size.height;
-						}
-						
-						// TODO: Do we need to send a paint here or does BoundsChanged make a ControlDraw for the exposed area?
-					}							
-					return 0;
-				}
-				case OSXConstants.kEventControlTrack: {
-					// get the point that was hit
-					QDPoint point = new QDPoint ();
-					CheckError (GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
-					MouseTrackingResult mousestatus = MouseTrackingResult.kMouseTrackingMouseDown;
-					IntPtr modifiers = IntPtr.Zero;
-					if (GrabWindowHwnd != null)
-						hwnd = GrabWindowHwnd;
-					
-					// FIXME: This isn't translating properly for DrawReversibleFrame and looses precision
-					while (mousestatus != MouseTrackingResult.kMouseTrackingMouseUp) {
-						CheckTimers (DateTime.UtcNow);
-						if (mousestatus == MouseTrackingResult.kMouseTrackingMouseDragged) {
-							QDPoint realpoint = point;
-							int x = point.x;
-							int y = point.y;
-							ScreenToClient (hwnd.Handle, ref x, ref y);
-							realpoint.x = (short)x;
-							realpoint.y = (short)y;
-							NativeWindow.WndProc (hwnd.Handle, Msg.WM_MOUSEMOVE, GetMousewParam (0), (IntPtr) ((ushort)realpoint.y << 16 | (ushort)realpoint.x));
-						}
-						// Process the rest of the event queue
-						while (MessageQueue.Count > 0) {
-							msg = (MSG)MessageQueue.Dequeue ();
-							NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
-						}
-						TrackMouseLocationWithOptions ((IntPtr)(-1), 0, 0.01, ref point, ref modifiers, ref mousestatus);
-					}
-					
-					msg.hwnd = hwnd.Handle;
-					
-					bool client = (hwnd.ClientWindow == handle ? true : false);
-					if (GrabWindowHwnd != null)
-						client = true;
-					
-					
-					int wparam = (int)GetMousewParam (0);
-					switch (MouseState) {
-						case MouseButtons.Left:
-							MouseState &= ~MouseButtons.Left;
-							msg.message = (client ? Msg.WM_LBUTTONUP : Msg.WM_NCLBUTTONUP);
-							wparam &= (int)MsgButtons.MK_LBUTTON;
-							break;
-						case MouseButtons.Middle:
-							MouseState &= ~MouseButtons.Middle;
-							msg.message = (client ? Msg.WM_MBUTTONUP : Msg.WM_NCMBUTTONUP);
-							wparam &= (int)MsgButtons.MK_MBUTTON;
-							break;
-						case MouseButtons.Right:
-							MouseState &= ~MouseButtons.Right;
-							msg.message = (client ? Msg.WM_RBUTTONUP : Msg.WM_NCRBUTTONUP);
-							wparam &= (int)MsgButtons.MK_RBUTTON;
-							break;
-					}
-					int x2 = point.x;
-					int y2 = point.y;
-					if (client)
-						ScreenToClient (hwnd.Handle, ref x2, ref y2);
-					point.x = (short)x2;
-					point.y = (short)y2;
-
-					msg.wParam = (IntPtr)wparam;
-						
-					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
-					mouse_position.X = (int)point.x;
-					mouse_position.Y = (int)point.y;
-					//NativeWindow.WndProc (msg.hwnd, msg.message, msg.lParam, msg.wParam);
-					MessageQueue.Enqueue (msg);
-					
-					IntPtr window = HIViewGetWindow (hwnd.Handle);
-					SetKeyboardFocus (window, hwnd.Handle, 1);
-
-					return 0;
-				}
-				case OSXConstants.kEventControlContextualMenuClick:
-				case OSXConstants.kEventControlClick: {
-					// get the point that was hit
-					QDPoint point = new QDPoint ();
-					CheckError (GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseLocation, OSXConstants.EventParamType.typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
-					QDPoint trackpoint = point;
-					int x = point.x;
-					int y = point.y;
-
-					bool client = (hwnd.ClientWindow == handle ? true : false);
-
-					if (GrabWindowHwnd != null) {
-						hwnd = GrabWindowHwnd;
-						client = false;
-					}
-
-					if (client)
-						ScreenToClient (hwnd.Handle, ref x, ref y);
-
-					point.x = (short)x;
-					point.y = (short)y;
-
-					// which button was pressed?
-					ushort button = 0;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamMouseButton, OSXConstants.EventParamType.typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
-					if (button == 2) {
-						point.x = (short)mouse_position.X;
-						point.y = (short)mouse_position.Y;
-					}
-					
-					msg.hwnd = hwnd.Handle;
-					
-					
-					int wparam = (int)GetMousewParam (0);
-					switch (button) {
-						case 1:
-							MouseState |= MouseButtons.Left;
-							msg.message = (client ? Msg.WM_LBUTTONDOWN : Msg.WM_NCLBUTTONDOWN);
-							wparam |= (int)MsgButtons.MK_LBUTTON;
-							break;
-						case 2:
-							MouseState |= MouseButtons.Right;
-							msg.message = (client ? Msg.WM_RBUTTONDOWN : Msg.WM_NCRBUTTONDOWN);
-							wparam |= (int)MsgButtons.MK_RBUTTON;
-							break;
-						case 3:
-							MouseState |= MouseButtons.Middle;
-							msg.message = (client ? Msg.WM_MBUTTONDOWN : Msg.WM_NCMBUTTONDOWN);
-							wparam |= (int)MsgButtons.MK_MBUTTON;
-							break;
-					}
-					msg.wParam = (IntPtr)wparam;
-						
-					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
-					mouse_position.X = (int)point.x;
-					mouse_position.Y = (int)point.y;
-					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
-					
-					TrackControl (handle, trackpoint, IntPtr.Zero);
-					return 0;
-				}
-				case OSXConstants.kEventControlSetFocusPart: {
-					// This handles setting focus
-					short pcode = 1;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamControlPart, OSXConstants.EventParamType.typeControlPartCode, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
-					switch (pcode) {
-						case 0:
-						case -1:
-						case -2:
-							pcode = 0;
-							break;
-					}
-					SetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamControlPart, OSXConstants.EventParamType.typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
-					return 0;
-				}
-			}
-			return -9874;
-		}
-		private IntPtr GetMousewParam(int Delta) {
+		internal IntPtr GetMousewParam(int Delta) {
 			int	 result = 0;
 
 			if ((MouseState & MouseButtons.Left) != 0) {
@@ -717,102 +153,119 @@ namespace System.Windows.Forms {
 			return (IntPtr)result;
 		}
 
-		private double NextTimeout ()
-		{
-			DateTime now = DateTime.UtcNow;
-			int timeout = 0x7FFFFFF;
-			lock (TimerList) {
-				foreach (Timer timer in TimerList) {
-					int next = (int) (timer.Expires - now).TotalMilliseconds;
-					if (next < 0)
-						return 0;
-					if (next < timeout)
-						timeout = next;
-				}
-			}
-			if (timeout < Timer.Minimum)
-				timeout = Timer.Minimum;
+		internal IntPtr HandleToWindow (IntPtr handle) {
+			if (HandleMapping [handle] != null)
+				return (IntPtr) HandleMapping [handle];
+			return IntPtr.Zero;
+		}
 
-			return (double)((double)timeout/1000);
+		internal void Initialize () {
+			// Initialize the event handlers	
+			Carbon.EventHandler.Driver = this;
+			ApplicationHandler = new Carbon.ApplicationHandler (this);
+			ControlHandler = new Carbon.ControlHandler (this);
+			KeyboardHandler = new Carbon.KeyboardHandler (this);
+			MouseHandler = new Carbon.MouseHandler (this);
+			WindowHandler = new Carbon.WindowHandler (this);
+			
+			// Initilize the mouse controls
+			Hover.Interval = 500;
+			Hover.Timer = new Timer ();
+			Hover.Timer.Enabled = false;
+			Hover.Timer.Interval = Hover.Interval;
+			Hover.Timer.Tick += new EventHandler (HoverCallback);
+			Hover.X = -1;
+			Hover.Y = -1;
+			MouseState = MouseButtons.None;
+			mouse_position = Point.Empty;
+				
+			// Initialize the Caret
+			Caret.Timer = new Timer ();
+			Caret.Timer.Interval = 500;
+			Caret.Timer.Tick += new EventHandler (CaretCallback);
+			
+			// Initialize the Carbon Specific stuff
+			WindowMapping = new Hashtable ();
+			HandleMapping = new Hashtable ();
+			WindowBackgrounds = new Hashtable ();
+			
+			// Initialize the FosterParent
+			Carbon.Rect rect = new Carbon.Rect ();
+			SetRect (ref rect, (short)0, (short)0, (short)0, (short)0);
+			Carbon.ProcessSerialNumber psn = new Carbon.ProcessSerialNumber();
+
+			GetCurrentProcess( ref psn );
+			TransformProcessType (ref psn, 1);
+			SetFrontProcess (ref psn);
+
+			Carbon.EventHandler.InstallApplicationHandler ();
+
+			CreateNewWindow (Carbon.WindowClass.kDocumentWindowClass, Carbon.WindowAttributes.kWindowStandardHandlerAttribute | Carbon.WindowAttributes.kWindowCloseBoxAttribute | Carbon.WindowAttributes.kWindowFullZoomAttribute | Carbon.WindowAttributes.kWindowCollapseBoxAttribute | Carbon.WindowAttributes.kWindowResizableAttribute | Carbon.WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent);
+			
+			CreateNewWindow (Carbon.WindowClass.kOverlayWindowClass, Carbon.WindowAttributes.kWindowNoUpdatesAttribute | Carbon.WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref ReverseWindow);
+			Carbon.EventHandler.InstallWindowHandler (ReverseWindow);
+			
+			// Get some values about bar heights
+			Carbon.Rect structRect = new Carbon.Rect ();
+			Carbon.Rect contentRect = new Carbon.Rect ();
+			GetWindowBounds (FosterParent, 32, ref structRect);
+			GetWindowBounds (FosterParent, 33, ref contentRect);
+			
+			MenuBarHeight = GetMBarHeight ();
+			
+			// Focus
+			FocusWindow = IntPtr.Zero;
+			
+			// Message loop
+			GetMessageResult = true;
+			
+			ReverseWindowMapped = false;
 		}
 		
-		private void CheckTimers (DateTime now)
-		{
-			lock (TimerList) {
-				int count = TimerList.Count;
-				if (count == 0)
-					return;
-				for (int i = 0; i < TimerList.Count; i++) {
-					Timer timer = (Timer) TimerList [i];
-					if (timer.Enabled && timer.Expires <= now) {
-						timer.FireTick ();
-						timer.Update (now);
-					}
-				}
-			}
-		}
+		internal void PerformNCCalc(Hwnd hwnd) {
+			XplatUIWin32.NCCALCSIZE_PARAMS  ncp;
+			IntPtr ptr;
+			Rectangle rect;
 
-		internal void InvertCaret () {
-			IntPtr window = HIViewGetWindow (Caret.Hwnd);
-			SetPortWindowPort (window);
-			Rect r = new Rect ();
-			GetWindowPortBounds (window, ref r);
-			r.top += (short)Caret.Y;
-			r.left += (short)Caret.X;
-			r.bottom = (short)(r.top + Caret.Height);
-			r.right = (short)(r.left + Caret.Width);
-			InvertRect (ref r);
+			rect = new Rectangle (0, 0, hwnd.Width, hwnd.Height);
+
+			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
+			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
+
+			ncp.rgrc1.left = rect.Left;
+			ncp.rgrc1.top = rect.Top;
+			ncp.rgrc1.right = rect.Right;
+			ncp.rgrc1.bottom = rect.Bottom;
+
+			Marshal.StructureToPtr(ncp, ptr, true);
+			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
+			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+			Marshal.FreeHGlobal(ptr);
+
+
+			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+			hwnd.ClientRect = rect;
+
+			rect = TranslateClientRectangleToQuartzClientRectangle (hwnd);
+
+			if (hwnd.visible) {
+				Carbon.HIRect r = new Carbon.HIRect (rect.X, rect.Y, rect.Width, rect.Height);
+				HIViewSetFrame (hwnd.client_window, ref r);
+			}
+	
+			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
 		}
 		
-		void SendParentNotify(IntPtr child, Msg cause, int x, int y)
-		{	
-			Hwnd hwnd;
-			
-			if (child == IntPtr.Zero) {
-				return;
-			}
-			
-			hwnd = Hwnd.GetObjectFromWindow (child);
-			
-			if (hwnd == null) {
-				return;
-			}
-			
-			if (hwnd.Handle == IntPtr.Zero) {
-				return;
-			}
-			
-			if (ExStyleSet ((int) hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY)) {
-				return;
-			}
-			
-			if (hwnd.Parent == null) {
-				return;
-			}
-			
-			if (hwnd.Parent.Handle == IntPtr.Zero) {
-				return;
-			}
+		internal void ScreenToClient(IntPtr handle, ref Carbon.QDPoint point) {
+			int x = (int) point.x;
+			int y = (int) point.y;
 
-			if (cause == Msg.WM_CREATE || cause == Msg.WM_DESTROY) {
-				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), child);
-			} else {
-				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
-			}
-			
-			SendParentNotify (hwnd.Parent.Handle, cause, x, y);
+			ScreenToClient (handle, ref x, ref y);
+
+			point.x = (short) x;
+			point.y = (short) y;
 		}
-
-		bool StyleSet (int s, WindowStyles ws)
-		{
-			return (s & (int)ws) == (int)ws;
-		}
-
-		bool ExStyleSet (int ex, WindowExStyles exws)
-		{
-			return (ex & (int)exws) == (int)exws;
-		}
-
+		
 		internal static Rectangle TranslateClientRectangleToQuartzClientRectangle (Hwnd hwnd) {
 			return TranslateClientRectangleToQuartzClientRectangle (hwnd, Control.FromHandle (hwnd.Handle));
 		}
@@ -900,6 +353,152 @@ namespace System.Windows.Forms {
 
 			return size;
 		}
+		#endregion
+		
+		#region Callbacks
+		private void CaretCallback (object sender, EventArgs e) {
+			if (Caret.Paused) {
+				return;
+			}
+
+			if (!Caret.On) {
+				ShowCaret ();
+			} else {
+				HideCaret ();
+			}
+		}
+		
+		private void HoverCallback (object sender, EventArgs e) {
+			if ((Hover.X == mouse_position.X) && (Hover.Y == mouse_position.Y)) {
+				MSG msg = new MSG ();
+				msg.hwnd = Hover.Hwnd;
+				msg.message = Msg.WM_MOUSEHOVER;
+				msg.wParam = GetMousewParam (0);
+				msg.lParam = (IntPtr)((ushort)Hover.X << 16 | (ushort)Hover.X);
+				MessageQueue.Enqueue (msg);
+			}
+		}
+		#endregion
+		
+		#region Private Methods
+		private Point ConvertScreenPointToClient (IntPtr handle, Point point) {
+			Point converted_point = new Point ();
+			Carbon.Rect window_bounds = new Carbon.Rect ();
+			Carbon.CGPoint native_point = new Carbon.CGPoint ();
+
+			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
+			
+			native_point.x = (point.X - window_bounds.left);
+			native_point.y = (point.Y - window_bounds.top);
+
+			HIViewConvertPoint (ref native_point, IntPtr.Zero, handle);
+
+			converted_point.X = (int)native_point.x;
+			converted_point.Y = (int)native_point.y;
+
+			return converted_point;
+		}
+		
+		private Point ConvertClientPointToScreen (IntPtr handle, Point point) {
+			Point converted_point = new Point ();
+			Carbon.Rect window_bounds = new Carbon.Rect ();
+			Carbon.CGPoint native_point = new Carbon.CGPoint ();
+
+			GetWindowBounds (HIViewGetWindow (handle), 32, ref window_bounds);
+			
+			native_point.x = point.X;
+			native_point.y = point.Y;
+
+			HIViewConvertPoint (ref native_point, handle, IntPtr.Zero);
+
+			converted_point.X = (int)(native_point.x + window_bounds.left);
+			converted_point.Y = (int)(native_point.y + window_bounds.top);
+
+			return converted_point;
+		}
+
+		private double NextTimeout () {
+			DateTime now = DateTime.UtcNow;
+			int timeout = 0x7FFFFFF;
+			lock (TimerList) {
+				foreach (Timer timer in TimerList) {
+					int next = (int) (timer.Expires - now).TotalMilliseconds;
+					if (next < 0)
+						return 0;
+					if (next < timeout)
+						timeout = next;
+				}
+			}
+			if (timeout < Timer.Minimum)
+				timeout = Timer.Minimum;
+
+			return (double)((double)timeout/1000);
+		}
+		
+		private void CheckTimers (DateTime now) {
+			lock (TimerList) {
+				int count = TimerList.Count;
+				if (count == 0)
+					return;
+				for (int i = 0; i < TimerList.Count; i++) {
+					Timer timer = (Timer) TimerList [i];
+					if (timer.Enabled && timer.Expires <= now) {
+						timer.FireTick ();
+						timer.Update (now);
+					}
+				}
+			}
+		}
+
+		//TODO: The old implementation does QD drawing where we cannot do that anymore
+		private void InvertCaret () {
+		}
+		
+		private void SendParentNotify(IntPtr child, Msg cause, int x, int y) {
+			Hwnd hwnd;
+			
+			if (child == IntPtr.Zero) {
+				return;
+			}
+			
+			hwnd = Hwnd.GetObjectFromWindow (child);
+			
+			if (hwnd == null) {
+				return;
+			}
+			
+			if (hwnd.Handle == IntPtr.Zero) {
+				return;
+			}
+			
+			if (ExStyleSet ((int) hwnd.initial_ex_style, WindowExStyles.WS_EX_NOPARENTNOTIFY)) {
+				return;
+			}
+			
+			if (hwnd.Parent == null) {
+				return;
+			}
+			
+			if (hwnd.Parent.Handle == IntPtr.Zero) {
+				return;
+			}
+
+			if (cause == Msg.WM_CREATE || cause == Msg.WM_DESTROY) {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), child);
+			} else {
+				SendMessage(hwnd.Parent.Handle, Msg.WM_PARENTNOTIFY, Control.MakeParam((int)cause, 0), Control.MakeParam(x, y));
+			}
+			
+			SendParentNotify (hwnd.Parent.Handle, cause, x, y);
+		}
+
+		private bool StyleSet (int s, WindowStyles ws) {
+			return (s & (int)ws) == (int)ws;
+		}
+
+		private bool ExStyleSet (int ex, WindowExStyles exws) {
+			return (ex & (int)exws) == (int)exws;
+		}
 
 		private void DeriveStyles(int Style, int ExStyle, out FormBorderStyle border_style, out bool border_static, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 
@@ -985,32 +584,21 @@ namespace System.Windows.Forms {
 			DeriveStyles(cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.border_static, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 		
-		internal void ShowCaret () {
+		private void ShowCaret () {
 			if (Caret.On)
 				return;
 			Caret.On = true;
 			InvertCaret ();
 		}
 
-		internal void HideCaret () {
+		private void HideCaret () {
 			if (!Caret.On)
 				return;
 			Caret.On = false;
 			InvertCaret ();
 		}
 		
-		internal void CheckError (int result, string error) {
-			if (result != 0)
-				throw new Exception ("XplatUIOSX.cs::" + error + "() Carbon subsystem threw an error: " + result);
-		}
-
-		internal void CheckError (int result) {
-			if (result != 0)
-				throw new Exception ("XplatUIOSX.cs::Carbon subsystem threw an error: " + result);
-		}
-
-		private void AccumulateDestroyedHandles (Control c, ArrayList list)
-		{
+		private void AccumulateDestroyedHandles (Control c, ArrayList list) {
 			if (c != null) {
 				Control[] controls = c.Controls.GetAllControls ();
 
@@ -1028,8 +616,7 @@ namespace System.Windows.Forms {
 			
 		}
 
-		void CleanupCachedWindows (Hwnd hwnd)
-		{
+		private void CleanupCachedWindows (Hwnd hwnd) {
 			if (ActiveWindow == hwnd.Handle) {
 				SendMessage(hwnd.client_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
 				ActiveWindow = IntPtr.Zero;
@@ -1048,41 +635,7 @@ namespace System.Windows.Forms {
 			DestroyCaret (hwnd.Handle);
 		}
 
-		private void PerformNCCalc(Hwnd hwnd) {
-#if EnableNCArea
-			XplatUIWin32.NCCALCSIZE_PARAMS  ncp;
-			IntPtr ptr;
-			Rectangle rect;
 
-			rect = new Rectangle (0, 0, hwnd.Width, hwnd.Height);
-
-			ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
-			ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
-
-			ncp.rgrc1.left = rect.Left;
-			ncp.rgrc1.top = rect.Top;
-			ncp.rgrc1.right = rect.Right;
-			ncp.rgrc1.bottom = rect.Bottom;
-
-			Marshal.StructureToPtr(ncp, ptr, true);
-			NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCCALCSIZE, (IntPtr)1, ptr);
-			ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
-			Marshal.FreeHGlobal(ptr);
-
-
-			rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
-			hwnd.ClientRect = rect;
-
-			rect = TranslateClientRectangleToQuartzClientRectangle (hwnd);
-
-			if (hwnd.visible) {
-				HIRect r = new HIRect (rect.X, rect.Y, rect.Width, rect.Height);
-				HIViewSetFrame (hwnd.client_window, ref r);
-			}
-	
-			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
-#endif
-		}
 
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
@@ -1141,6 +694,12 @@ namespace System.Windows.Forms {
 		#endregion 
 		
 		#region Public Methods
+		internal void EnqueueMessage (MSG msg) {
+			lock (queueobj) {
+				MessageQueue.Enqueue (msg);
+			}
+		}
+
 		internal override void RaiseIdle (EventArgs e)
 		{
 			if (Idle != null)
@@ -1279,7 +838,7 @@ namespace System.Windows.Forms {
 				ParentHandle = parent_hwnd.client_window;
 			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CHILD)) {
-					HIViewFindByID (HIViewGetRoot (FosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref ParentHandle);
+					HIViewFindByID (HIViewGetRoot (FosterParent), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref ParentHandle);
 				}
 			}
 
@@ -1310,26 +869,26 @@ namespace System.Windows.Forms {
 /* FIXME */
 			if (ParentHandle == IntPtr.Zero) {
 				IntPtr window_view = IntPtr.Zero;
-				WindowClass windowklass = WindowClass.kOverlayWindowClass;
-				WindowAttributes attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
+				Carbon.WindowClass windowklass = Carbon.WindowClass.kOverlayWindowClass;
+				Carbon.WindowAttributes attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
 				if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
-					attributes |= WindowAttributes.kWindowCollapseBoxAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowCollapseBoxAttribute;
 				}
 				if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZEBOX)) {
-					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowResizableAttribute | Carbon.WindowAttributes.kWindowHorizontalZoomAttribute | Carbon.WindowAttributes.kWindowVerticalZoomAttribute;
 				}
 				if (StyleSet (cp.Style, WindowStyles.WS_SYSMENU)) {
-					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowCloseBoxAttribute;
 				}
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
-					windowklass = WindowClass.kDocumentWindowClass;
+					windowklass = Carbon.WindowClass.kDocumentWindowClass;
 				}
 				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-					windowklass = WindowClass.kOverlayWindowClass;
-					attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
+					windowklass = Carbon.WindowClass.kOverlayWindowClass;
+					attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
 				}
 					
-				Rect rect = new Rect ();
+				Carbon.Rect rect = new Carbon.Rect ();
 				if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 					SetRect (ref rect, (short)X, (short)(Y), (short)(X + QWindowSize.Width), (short)(Y + QWindowSize.Height));
 				} else {
@@ -1337,26 +896,28 @@ namespace System.Windows.Forms {
 				}
 
 				CreateNewWindow (windowklass, attributes, ref rect, ref WindowHandle);
-				InstallEventHandler (GetWindowEventTarget (WindowHandle), CarbonEventHandler, (uint)window_events.Length, window_events, WindowHandle, IntPtr.Zero);
-				HIViewFindByID (HIViewGetRoot (WindowHandle), new HIViewID (OSXConstants.kEventClassWindow, 1), ref window_view);
+				Carbon.EventHandler.InstallWindowHandler (WindowHandle);
+				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref window_view);
 				ParentHandle = window_view;
 			}
 
 			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref WholeWindow);
 			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref ClientWindow);
-			InstallEventHandler (GetControlEventTarget (WholeWindow), CarbonEventHandler, (uint)view_events.Length, view_events, WholeWindow, IntPtr.Zero);
-			InstallEventHandler (GetControlEventTarget (ClientWindow), CarbonEventHandler, (uint)view_events.Length, view_events, ClientWindow, IntPtr.Zero);
+
+			Carbon.EventHandler.InstallControlHandler (WholeWindow);
+			Carbon.EventHandler.InstallControlHandler (ClientWindow);
+
 			HIViewChangeFeatures (WholeWindow, 1<<1, 0);
 			HIViewChangeFeatures (ClientWindow, 1<<1, 0);
 			HIViewNewTrackingArea (WholeWindow, IntPtr.Zero, (UInt64)WholeWindow, ref WholeWindowTracking);
 			HIViewNewTrackingArea (ClientWindow, IntPtr.Zero, (UInt64)ClientWindow, ref ClientWindowTracking);
-			HIRect WholeRect;
+			Carbon.HIRect WholeRect;
 			if (WindowHandle != IntPtr.Zero) {
-				WholeRect = new HIRect (0, 0, QWindowSize.Width, QWindowSize.Height);
+				WholeRect = new Carbon.HIRect (0, 0, QWindowSize.Width, QWindowSize.Height);
 			} else {
-				WholeRect = new HIRect (X, Y, QWindowSize.Width, QWindowSize.Height);
+				WholeRect = new Carbon.HIRect (X, Y, QWindowSize.Width, QWindowSize.Height);
 			}
-			HIRect ClientRect = new HIRect (QClientRect.X, QClientRect.Y, QClientRect.Width, QClientRect.Height);
+			Carbon.HIRect ClientRect = new Carbon.HIRect (QClientRect.X, QClientRect.Y, QClientRect.Width, QClientRect.Height);
 			HIViewSetFrame (WholeWindow, ref WholeRect);
 			HIViewSetFrame (ClientWindow, ref ClientRect);
 
@@ -1369,8 +930,9 @@ namespace System.Windows.Forms {
 			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 				if (WindowHandle != IntPtr.Zero) {
 					WindowMapping [hwnd.Handle] = WindowHandle;
+					HandleMapping [WindowHandle] = hwnd.Handle;
 					IntPtr active = GetActive ();
-					CheckError (ShowWindow (WindowHandle));
+					ShowWindow (WindowHandle);
 					if (active != IntPtr.Zero)
 						Activate (active);
 				}
@@ -1422,63 +984,63 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefineStdCursor(StdCursor id) {
 			switch (id) {
 				case StdCursor.AppStarting:
-					return (IntPtr)ThemeCursor.kThemeSpinningCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeSpinningCursor;
 				case StdCursor.Arrow:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.Cross:
-					return (IntPtr)ThemeCursor.kThemeCrossCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeCrossCursor;
 				case StdCursor.Default:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.Hand:
-					return (IntPtr)ThemeCursor.kThemeOpenHandCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeOpenHandCursor;
 				case StdCursor.Help:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.HSplit:
-					return (IntPtr)ThemeCursor.kThemeResizeLeftRightCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftRightCursor;
 				case StdCursor.IBeam:
-					return (IntPtr)ThemeCursor.kThemeIBeamCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeIBeamCursor;
 				case StdCursor.No:
-					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
 				case StdCursor.NoMove2D:
-					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
 				case StdCursor.NoMoveHoriz:
-					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
 				case StdCursor.NoMoveVert:
-					return (IntPtr)ThemeCursor.kThemeNotAllowedCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
 				case StdCursor.PanEast:
-					return (IntPtr)ThemeCursor.kThemeResizeRightCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeResizeRightCursor;
 				case StdCursor.PanNE:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanNorth:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanNW:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanSE:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanSouth:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanSW:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.PanWest:
-					return (IntPtr)ThemeCursor.kThemeResizeLeftCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftCursor;
 				case StdCursor.SizeAll:
-					return (IntPtr)ThemeCursor.kThemeResizeLeftRightCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftRightCursor;
 				case StdCursor.SizeNESW:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.SizeNS:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.SizeNWSE:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.SizeWE:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.UpArrow:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.VSplit:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 				case StdCursor.WaitCursor:
-					return (IntPtr)ThemeCursor.kThemeSpinningCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeSpinningCursor;
 				default:
-					return (IntPtr)ThemeCursor.kThemeArrowCursor;
+					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
 			}
 		}
 		
@@ -1567,12 +1129,12 @@ namespace System.Windows.Forms {
 				h.zombie = true;
 			}
 
-/*
-			if (hwnd.whole_window != IntPtr.Zero)
+			// TODO: This is crashing swf-messageboxes
+			if (false && hwnd.whole_window != IntPtr.Zero)
 				CFRelease (hwnd.whole_window);
-			if (hwnd.client_window != IntPtr.Zero)
+			if (false && hwnd.client_window != IntPtr.Zero)
 				CFRelease (hwnd.client_window);
-*/
+
 			if (WindowMapping [hwnd.Handle] != null) 
 				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
 		}
@@ -1591,9 +1153,8 @@ namespace System.Windows.Forms {
 		internal override void EndLoop(Thread thread) {
 		}
 
-		internal void Exit() {
+		internal void Exit () {
 			GetMessageResult = false;
-			//ExitToShell ();
 		}
 		
 		internal override IntPtr GetActive() {
@@ -1617,7 +1178,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void GetDisplaySize(out Size size) {
-			HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
+			Carbon.HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
 			size = new Size ((int)bounds.size.width, (int)bounds.size.height);
 		}
 
@@ -1636,7 +1197,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
-			QDPoint pt = new QDPoint ();
+			Carbon.QDPoint pt = new Carbon.QDPoint ();
 			GetGlobalMouse (ref pt);
 			x = pt.x;
 			y = pt.y;
@@ -1675,7 +1236,7 @@ namespace System.Windows.Forms {
 				ReleaseEvent (evtRef);
 			}
 			
-			lock (MessageQueue) {
+			lock (queueobj) {
 				if (MessageQueue.Count <= 0) {
 					if (Idle != null) 
 						Idle (this, EventArgs.Empty);
@@ -1737,11 +1298,11 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle) {
-			GrabWindowHwnd = Hwnd.ObjectFromHandle (handle);
+			GrabHwnd = Hwnd.ObjectFromHandle (handle);
 		}
 		
 		internal override void UngrabWindow(IntPtr hwnd) {
-			GrabWindowHwnd = null;
+			GrabHwnd = null;
 			Grab.Hwnd = IntPtr.Zero;
 			Grab.Confined = false;
 		}
@@ -1932,7 +1493,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool clear) {
-			HIRect scroll_rect = new HIRect ();
+			Carbon.HIRect scroll_rect = new Carbon.HIRect ();
 			scroll_rect.origin.x = area.X;
 			scroll_rect.origin.y = area.Y;
 			scroll_rect.size.width = area.Width;
@@ -1942,7 +1503,7 @@ namespace System.Windows.Forms {
 		
 		
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
-			HIRect scroll_rect = new HIRect ();
+			Carbon.HIRect scroll_rect = new Carbon.HIRect ();
 			
 			HIViewGetBounds (hwnd, ref scroll_rect);
 			HIViewScrollRect (hwnd, ref scroll_rect, (float)XAmount, (float)-YAmount);
@@ -1965,7 +1526,7 @@ namespace System.Windows.Forms {
 
 		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
 			if (Caret.Hwnd == hwnd) {
-				CGPoint cpt = new CGPoint ();
+				Carbon.CGPoint cpt = new Carbon.CGPoint ();
 				cpt.x = x;
 				cpt.y = y;
 				HIViewConvertPoint (ref cpt, hwnd, IntPtr.Zero);
@@ -1994,7 +1555,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
-			CGDisplayMoveCursorToPoint (CGMainDisplayID (), new CGPoint (x, y));
+			CGDisplayMoveCursorToPoint (CGMainDisplayID (), new Carbon.CGPoint (x, y));
 		}
 		
 		internal override void SetFocus(IntPtr handle) {
@@ -2029,11 +1590,15 @@ namespace System.Windows.Forms {
 					for (int y = 0; y < bitmap.Height; y++) {
 						for (int x = 0; x < bitmap.Width; x++) {
 							int pixel = bitmap.GetPixel (x, y).ToArgb ();
-							byte a = (byte) ((pixel >> 24) & 0xFF);
-							byte r = (byte) ((pixel >> 16) & 0xFF);
-							byte g = (byte) ((pixel >> 8) & 0xFF);
-							byte b = (byte) (pixel & 0xFF);
-							data[index++] = (IntPtr)(a + (r << 8) + (g << 16) + (b << 24));
+							if (BitConverter.IsLittleEndian) {
+								byte a = (byte) ((pixel >> 24) & 0xFF);
+								byte r = (byte) ((pixel >> 16) & 0xFF);
+								byte g = (byte) ((pixel >> 8) & 0xFF);
+								byte b = (byte) (pixel & 0xFF);
+								data[index++] = (IntPtr)(a + (r << 8) + (g << 16) + (b << 24));
+							} else {
+								data[index++] = (IntPtr)pixel;
+							}
 						}
 					}
 
@@ -2060,13 +1625,13 @@ namespace System.Windows.Forms {
 			
 			hwnd.Parent = Hwnd.ObjectFromHandle (parent);
 			if (HIViewGetSuperview (hwnd.whole_window) != IntPtr.Zero) {
-				CheckError (HIViewRemoveFromSuperview (hwnd.whole_window), "HIViewRemoveFromSuperview ()");
+				HIViewRemoveFromSuperview (hwnd.whole_window);
 			}
 			if (hwnd.parent == null)
-				HIViewFindByID (HIViewGetRoot (FosterParent), new HIViewID (OSXConstants.kEventClassWindow, 1), ref ParentHandle);
-			CheckError (HIViewAddSubview (hwnd.parent == null ? ParentHandle : hwnd.Parent.client_window, hwnd.whole_window));
+				HIViewFindByID (HIViewGetRoot (FosterParent), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref ParentHandle);
+			HIViewAddSubview (hwnd.parent == null ? ParentHandle : hwnd.Parent.client_window, hwnd.whole_window);
 			HIViewPlaceInSuperviewAt (hwnd.whole_window, hwnd.X, hwnd.Y);
-			CheckError (HIViewAddSubview (hwnd.whole_window, hwnd.client_window));
+			HIViewAddSubview (hwnd.whole_window, hwnd.client_window);
 			HIViewPlaceInSuperviewAt (hwnd.client_window, hwnd.ClientRect.X, hwnd.ClientRect.Y);
 			
 			return IntPtr.Zero;
@@ -2165,15 +1730,15 @@ namespace System.Windows.Forms {
 
 				Control ctrl = Control.FromHandle (handle);
 				Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (ctrl.GetCreateParams (), new Size (width, height));
-				Rect rect = new Rect ();
+				Carbon.Rect rect = new Carbon.Rect ();
 
 				if (WindowMapping [hwnd.Handle] != null) {
 					SetRect (ref rect, (short)x, (short)(y+MenuBarHeight), (short)(x+TranslatedSize.Width), (short)(y+MenuBarHeight+TranslatedSize.Height));
 					SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
-					HIRect frame_rect = new HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
+					Carbon.HIRect frame_rect = new Carbon.HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
 					HIViewSetFrame (hwnd.whole_window, ref frame_rect);
 				} else {
-					HIRect frame_rect = new HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
+					Carbon.HIRect frame_rect = new Carbon.HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
 					HIViewSetFrame (hwnd.whole_window, ref frame_rect);
 				}
 				PerformNCCalc(hwnd);
@@ -2209,21 +1774,21 @@ namespace System.Windows.Forms {
 			SetHwndStyles(hwnd, cp);
 			
 			if (WindowMapping [hwnd.Handle] != null) {
-				WindowAttributes attributes = WindowAttributes.kWindowCompositingAttribute | WindowAttributes.kWindowStandardHandlerAttribute;
+				Carbon.WindowAttributes attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
 				if ((cp.Style & ((int)WindowStyles.WS_MINIMIZEBOX)) != 0) { 
-					attributes |= WindowAttributes.kWindowCollapseBoxAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowCollapseBoxAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_MAXIMIZEBOX)) != 0) {
-					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowResizableAttribute | Carbon.WindowAttributes.kWindowHorizontalZoomAttribute | Carbon.WindowAttributes.kWindowVerticalZoomAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
+					attributes |= Carbon.WindowAttributes.kWindowCloseBoxAttribute;
 				}
 				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
-					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;
+					attributes = Carbon.WindowAttributes.kWindowStandardHandlerAttribute | Carbon.WindowAttributes.kWindowCompositingAttribute;
 				}
 
-				WindowAttributes outAttributes = WindowAttributes.kWindowNoAttributes;
+				Carbon.WindowAttributes outAttributes = Carbon.WindowAttributes.kWindowNoAttributes;
 				GetWindowAttributes ((IntPtr)WindowMapping [hwnd.Handle], ref outAttributes);
 				ChangeWindowAttributes ((IntPtr)WindowMapping [hwnd.Handle], attributes, outAttributes);
 			}
@@ -2294,10 +1859,10 @@ namespace System.Windows.Forms {
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			if (WindowMapping [hwnd.Handle] != null) {
-				CheckError (SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), __CFStringMakeConstantString (text)));
+				SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), __CFStringMakeConstantString (text));
 			}
-			CheckError (SetControlTitleWithCFString (hwnd.whole_window, __CFStringMakeConstantString (text)));
-			CheckError (SetControlTitleWithCFString (hwnd.client_window, __CFStringMakeConstantString (text)));
+			SetControlTitleWithCFString (hwnd.whole_window, __CFStringMakeConstantString (text));
+			SetControlTitleWithCFString (hwnd.client_window, __CFStringMakeConstantString (text));
 			return true;
 		}
 		
@@ -2319,31 +1884,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override bool TranslateMessage(ref MSG msg) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.hwnd);
-					
-			switch (msg.message) {
-				case Msg.WM_MOUSEMOVE: {
-					// We're grabbed
-					if (GrabWindowHwnd != null) {
-						if (GrabWindowHwnd.Handle != hwnd.Handle) {
-							return false;
-						}
-					} else {
-						if (MouseWindow != null) {
-							if (MouseWindow.Handle != hwnd.Handle) {
-								PostMessage (MouseWindow.Handle, Msg.WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
-								PostMessage (hwnd.Handle, Msg.WM_MOUSE_ENTER, IntPtr.Zero, IntPtr.Zero);
-								MouseWindow = hwnd;
-							}
-						} else {
-							MouseWindow = hwnd;
-						}
-					}
-					break;
-				}
-			}
-			
-			return Keyboard.TranslateMessage (ref msg);
+			return Carbon.EventHandler.TranslateMessage (ref msg);
 		}
 		
 		#region Reversible regions
@@ -2357,7 +1898,7 @@ namespace System.Windows.Forms {
 		 * PROBLEMS: This has some flicker / banding
 		 */
 		internal void SizeReversibleWindow (Rectangle rect) {
-			Rect qrect = new Rect ();
+			Carbon.Rect qrect = new Carbon.Rect ();
 
 			SetRect (ref qrect, (short)rect.X, (short)rect.Y, (short)(rect.X+rect.Width), (short)(rect.Y+rect.Height));
 
@@ -2365,15 +1906,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
-			throw new NotImplementedException();
+//			throw new NotImplementedException();
 		}
 
 		internal override void FillReversibleRectangle (Rectangle rectangle, Color backColor) {
-			throw new NotImplementedException();
+//			throw new NotImplementedException();
 		}
 
 		internal override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style) {
-			throw new NotImplementedException();
+//			throw new NotImplementedException();
 		}
 
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
@@ -2476,13 +2017,13 @@ namespace System.Windows.Forms {
 
 		internal override Rectangle WorkingArea { 
 			get { 
-				HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
+				Carbon.HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
 				return new Rectangle ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 			}
 		}
 		internal override bool ThemesEnabled {
 			get {
-				return XplatUIOSX.themes_enabled;
+				return XplatUICarbon.themes_enabled;
 			}
 		}
  
@@ -2490,253 +2031,135 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetNeedsDisplayInRegion (IntPtr view, IntPtr rgn, bool needsDisplay);
+		extern static int HIViewConvertPoint (ref Carbon.CGPoint point, IntPtr pView, IntPtr cView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetSubviewHit (IntPtr contentView, ref CGPoint point, bool tval, ref IntPtr outPtr);
+		extern static int HIViewChangeFeatures (IntPtr aView, ulong bitsin, ulong bitsout);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetViewForMouseEvent (IntPtr inView, IntPtr inEvent, ref IntPtr outView);
+		extern static int HIViewFindByID (IntPtr rootWnd, Carbon.HIViewID id, ref IntPtr outPtr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewConvertPoint (ref CGPoint point, IntPtr pView, IntPtr cView);
+		extern static IntPtr HIViewGetRoot (IntPtr hWnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewChangeFeatures (IntPtr aView, ulong bitsin, ulong bitsout);
+		extern static int HIObjectCreate (IntPtr cfStr, uint what, ref IntPtr hwnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewFindByID (IntPtr rootWnd, HIViewID id, ref IntPtr outPtr);
+		extern static int HIViewPlaceInSuperviewAt (IntPtr view, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetRoot (IntPtr hWnd);
+		extern static int HIViewAddSubview (IntPtr parentHnd, IntPtr childHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIObjectCreate (IntPtr cfStr, uint what, ref IntPtr hwnd);
+		extern static IntPtr HIViewGetPreviousView (IntPtr aView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetNeedsDisplay (IntPtr viewHnd, bool update);
+		extern static IntPtr HIViewGetSuperview (IntPtr aView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetFrame (IntPtr viewHnd, ref HIRect rect);
+		extern static int HIViewRemoveFromSuperview (IntPtr aView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetFrame (IntPtr viewHnd, ref HIRect rect);
+		extern static int HIViewSetVisible (IntPtr vHnd, bool visible);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewPlaceInSuperviewAt (IntPtr view, float x, float y);
+		extern static bool HIViewIsVisible (IntPtr vHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewAddSubview (IntPtr parentHnd, IntPtr childHnd);
+		extern static int HIViewGetBounds (IntPtr vHnd, ref Carbon.HIRect r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetNextView (IntPtr aView);
+		extern static int HIViewScrollRect (IntPtr vHnd, ref Carbon.HIRect rect, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetPreviousView (IntPtr aView);
+		extern static int HIViewSetZOrder (IntPtr hWnd, int cmd, IntPtr oHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetFirstSubview (IntPtr aView);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetSuperview (IntPtr aView);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewRemoveFromSuperview (IntPtr aView);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetVisible (IntPtr vHnd, bool visible);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern bool HIViewIsVisible (IntPtr vHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewScrollRect (IntPtr vHnd, ref HIRect rect, float x, float y);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewScrollRect (IntPtr vHnd, Rect rect, float x, float y);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetZOrder (IntPtr hWnd, int cmd, IntPtr oHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewSetBoundsOrigin (IntPtr vHnd, float x, float y);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewConvertRect (ref HIRect r, IntPtr a, IntPtr b);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HIViewNewTrackingArea (IntPtr inView, IntPtr inShape, UInt64 inID, ref IntPtr outRef);
+		extern static int HIViewNewTrackingArea (IntPtr inView, IntPtr inShape, UInt64 inID, ref IntPtr outRef);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static IntPtr HIViewGetWindow (IntPtr aView);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HIViewSetFrame (IntPtr view_handle, ref Carbon.HIRect bounds);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void ScrollRect (ref Rect r, short dh, short dv, IntPtr rgnHandle);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void SetRect (ref Rect r, short left, short top, short right, short bottom);
-
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int InstallEventHandler (IntPtr window, CarbonEventDelegate handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr HIViewGetWindow (IntPtr aView);
+		extern static void SetRect (ref Carbon.Rect r, short left, short top, short right, short bottom);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int ActivateWindow (IntPtr windowHnd, bool inActivate);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern bool IsWindowActive (IntPtr windowHnd);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetKeyboardFocus (IntPtr windowHdn, IntPtr cntrlHnd, short partcode);
-
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern IntPtr GetApplicationEventTarget ();
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr GetControlEventTarget (IntPtr aControl);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr GetEventDispatcherTarget ();
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int SendEventToEventTarget (IntPtr evt, IntPtr target);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int ReleaseEvent (IntPtr evt);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int ReceiveNextEvent (uint evtCount, IntPtr evtTypes, double timeout, bool processEvt, ref IntPtr evt);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern uint GetEventClass (IntPtr eventRef);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern uint GetEventKind (IntPtr eventRef);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref ushort outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref short outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref short outData);
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int SetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, uint bufSize, ref IntPtr outData);
-
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextFlush (IntPtr cgc);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextFillRect (IntPtr cgc, HIRect r);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern CGAffineTransform CGContextGetTextMatrix (IntPtr cgContext);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextSetTextMatrix (IntPtr cgContext, CGAffineTransform ctm);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextSetRGBFillColor (IntPtr cgContext, float r, float g, float b, float alpha);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextSetRGBStrokeColor (IntPtr cgContext, float r, float g, float b, float alpha);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextSetTextDrawingMode (IntPtr cgContext, int drawingMode);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextSelectFont (IntPtr cgContext, string fontName, float size, int textEncoding);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextShowTextAtPoint (IntPtr cgContext, float x, float y, string text, int length);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CGContextClipToRect (IntPtr cgContext, HIRect clip);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr cgc);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern bool IsWindowCollapsed (IntPtr hWnd);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern bool IsWindowInStandardState (IntPtr hWnd, IntPtr a, IntPtr b);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CollapseWindow (IntPtr hWnd, bool collapse);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void ZoomWindow (IntPtr hWnd, short partCode, bool front);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int GetWindowAttributes (IntPtr hWnd, ref WindowAttributes outAttributes);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int ChangeWindowAttributes (IntPtr hWnd, WindowAttributes inAttributes, WindowAttributes outAttributes);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int SetPortWindowPort (IntPtr hWnd);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetGlobalMouse (ref QDPoint outData);
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int GlobalToLocal (ref QDPoint outData);
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int LocalToGlobal (ref QDPoint outData);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int TrackControl (IntPtr handle, QDPoint point, IntPtr data);
-		
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int BeginAppModalStateForWindow (IntPtr window);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int EndAppModalStateForWindow (IntPtr window);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CreateNewWindow (WindowClass klass, WindowAttributes attributes, ref Rect r, ref IntPtr window);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int DisposeWindow (IntPtr wHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void BringToFront (IntPtr wHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int ShowWindow (IntPtr wHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int HideWindow (IntPtr wHnd);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int SetWindowBounds (IntPtr wHnd, uint reg, ref Rect rect);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int GetWindowPortBounds (IntPtr wHnd, ref Rect rect);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref Rect rect);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int InvertRect (ref Rect r);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int SetControlTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
+		extern static IntPtr GetEventDispatcherTarget ();
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int SetWindowTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
+		extern static int SendEventToEventTarget (IntPtr evt, IntPtr target);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern IntPtr __CFStringMakeConstantString (string cString);
-		
+		extern static int ReleaseEvent (IntPtr evt);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextRestoreGState (IntPtr ctx);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextSaveGState (IntPtr ctx);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextTranslateCTM (IntPtr ctx, double tx, double ty);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern void CGContextScaleCTM (IntPtr ctx, double tx, double ty);
+		extern static int ReceiveNextEvent (uint evtCount, IntPtr evtTypes, double timeout, bool processEvt, ref IntPtr evt);
 
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int SetWindowContentColor (IntPtr hWnd, ref RGBColor backColor);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int TrackMouseLocationWithOptions (IntPtr port, int options, double eventtimeout, ref QDPoint point, ref IntPtr modifier, ref MouseTrackingResult status);
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int CreateMouseTrackingRegion (IntPtr windowref, IntPtr rgn, IntPtr clip, int options, MouseTrackingRegionID rid, IntPtr refcon, IntPtr evttargetref, ref IntPtr mousetrackref);
-		//[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		//static extern int ReleaseMouseTrackingRegion (IntPtr region_handle);
+		extern static bool IsWindowCollapsed (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static bool IsWindowInStandardState (IntPtr hWnd, IntPtr a, IntPtr b);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static void CollapseWindow (IntPtr hWnd, bool collapse);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static void ZoomWindow (IntPtr hWnd, short partCode, bool front);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int GetWindowAttributes (IntPtr hWnd, ref Carbon.WindowAttributes outAttributes);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int ChangeWindowAttributes (IntPtr hWnd, Carbon.WindowAttributes inAttributes, Carbon.WindowAttributes outAttributes);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetGlobalMouse (ref Carbon.QDPoint outData);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int CFRelease (IntPtr wHnd);
+		extern static int BeginAppModalStateForWindow (IntPtr window);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int EndAppModalStateForWindow (IntPtr window);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int CreateNewWindow (Carbon.WindowClass klass, Carbon.WindowAttributes attributes, ref Carbon.Rect r, ref IntPtr window);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int DisposeWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int ShowWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HideWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int SetWindowBounds (IntPtr wHnd, uint reg, ref Carbon.Rect rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int GetWindowBounds (IntPtr wHnd, uint reg, ref Carbon.Rect rect);
+
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int SetControlTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int SetWindowTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static IntPtr __CFStringMakeConstantString (string cString);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static IntPtr NewRgn ();
+		extern static int CFRelease (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void CopyRgn (IntPtr srcrgn, IntPtr destrgn);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void SetRectRgn (IntPtr rgn, short left, short top, short right, short bottom);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void DisposeRgn (IntPtr rgn);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void ExitToShell ();
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static short GetMBarHeight ();
+		extern static short GetMBarHeight ();
 		
 		#region Cursor imports
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static HIRect CGDisplayBounds (IntPtr displayID);
+		extern static Carbon.HIRect CGDisplayBounds (IntPtr displayID);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static IntPtr CGMainDisplayID ();
+		extern static IntPtr CGMainDisplayID ();
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void CGDisplayShowCursor (IntPtr display);
+		extern static void CGDisplayShowCursor (IntPtr display);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void CGDisplayHideCursor (IntPtr display);
+		extern static void CGDisplayHideCursor (IntPtr display);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void CGDisplayMoveCursorToPoint (IntPtr display, CGPoint point);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void SetThemeCursor (uint inCursor);
+		extern static void CGDisplayMoveCursorToPoint (IntPtr display, Carbon.CGPoint point);
 		#endregion
 
-		#region Windowing imports
+		#region Process imports
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		private extern static int GetCurrentProcess (ref ProcessSerialNumber psn);
+		extern static int GetCurrentProcess (ref Carbon.ProcessSerialNumber psn);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static int TransformProcessType (ref ProcessSerialNumber psn, uint type);
+		extern static int TransformProcessType (ref Carbon.ProcessSerialNumber psn, uint type);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static int SetFrontProcess (ref ProcessSerialNumber psn);
+		extern static int SetFrontProcess (ref Carbon.ProcessSerialNumber psn);
 		#endregion
 
 		#region Dock tile imports
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static IntPtr CGColorSpaceCreateDeviceRGB();
+		extern static IntPtr CGColorSpaceCreateDeviceRGB();
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static IntPtr CGDataProviderCreateWithData (IntPtr info, IntPtr [] data, int size, IntPtr releasefunc);
+		extern static IntPtr CGDataProviderCreateWithData (IntPtr info, IntPtr [] data, int size, IntPtr releasefunc);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static IntPtr CGImageCreate (int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, IntPtr colorspace, uint bitmapInfo, IntPtr provider, IntPtr decode, int shouldInterpolate, int intent);
+		extern static IntPtr CGImageCreate (int width, int height, int bitsPerComponent, int bitsPerPixel, int bytesPerRow, IntPtr colorspace, uint bitmapInfo, IntPtr provider, IntPtr decode, int shouldInterpolate, int intent);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void SetApplicationDockTileImage(IntPtr imageRef);
+		extern static void SetApplicationDockTileImage(IntPtr imageRef);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal extern static void RestoreApplicationDockTileImage();
+		extern static void RestoreApplicationDockTileImage();
 		#endregion
 	}
 }

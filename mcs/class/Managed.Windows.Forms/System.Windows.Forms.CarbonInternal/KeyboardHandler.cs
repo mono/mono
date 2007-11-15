@@ -29,31 +29,43 @@ using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
-	internal class OSXKeyboard {
+namespace System.Windows.Forms.CarbonInternal {
+	internal class KeyboardHandler : EventHandlerBase, IEventHandler {
+		internal const uint kEventRawKeyDown = 1;
+		internal const uint kEventRawKeyRepeat = 2;
+		internal const uint kEventRawKeyUp = 3;
+		internal const uint kEventRawKeyModifiersChanged = 4;
+		internal const uint kEventHotKeyPressed = 5;
+		internal const uint kEventHotKeyReleased = 6;
+
+		internal const uint kEventParamKeyMacCharCodes = 1801676914;
+		internal const uint kEventParamKeyModifiers = 1802334052;
+
+		internal const uint typeChar = 1413830740;
+		internal const uint typeUInt32 = 1835100014;
+
 		UInt32 modifiers = 0;
 
-		public OSXKeyboard () {
-		}
+		internal KeyboardHandler (XplatUICarbon driver) : base (driver) {}
 
 		private bool ModifiersToVirtualKeys (UInt32 new_modifiers, ref MSG msg, out int vkey) {
 			// TODO: X11 appears to only generate VK_SHIFT rather than VK_LSHIFT/VK_RSHIFT
-			if ((new_modifiers & (uint)OSXKeyboardModifiers.shiftKey) == (uint)OSXKeyboardModifiers.shiftKey && ((modifiers & (uint)OSXKeyboardModifiers.shiftKey) == 0)) {
+			if ((new_modifiers & (uint)KeyboardModifiers.shiftKey) == (uint)KeyboardModifiers.shiftKey && ((modifiers & (uint)KeyboardModifiers.shiftKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_SHIFT;
-			} else if ((new_modifiers & (uint)OSXKeyboardModifiers.shiftKey) == 0 && ((modifiers & (uint)OSXKeyboardModifiers.shiftKey) == (uint)OSXKeyboardModifiers.shiftKey)) {
+			} else if ((new_modifiers & (uint)KeyboardModifiers.shiftKey) == 0 && ((modifiers & (uint)KeyboardModifiers.shiftKey) == (uint)KeyboardModifiers.shiftKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_SHIFT;
-			} else if ((new_modifiers & (uint)OSXKeyboardModifiers.rightShiftKey) == (uint)OSXKeyboardModifiers.rightShiftKey && ((modifiers & (uint)OSXKeyboardModifiers.rightShiftKey) == 0)) {
+			} else if ((new_modifiers & (uint)KeyboardModifiers.rightShiftKey) == (uint)KeyboardModifiers.rightShiftKey && ((modifiers & (uint)KeyboardModifiers.rightShiftKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_SHIFT;
-			} else if ((new_modifiers & (uint)OSXKeyboardModifiers.rightShiftKey) == 0 && ((modifiers & (uint)OSXKeyboardModifiers.rightShiftKey) == (uint)OSXKeyboardModifiers.rightShiftKey)) {
+			} else if ((new_modifiers & (uint)KeyboardModifiers.rightShiftKey) == 0 && ((modifiers & (uint)KeyboardModifiers.rightShiftKey) == (uint)KeyboardModifiers.rightShiftKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_SHIFT;
-			} else if ((new_modifiers & (uint)OSXKeyboardModifiers.cmdKey) == (uint)OSXKeyboardModifiers.cmdKey && ((modifiers & (uint)OSXKeyboardModifiers.cmdKey) == 0)) {
+			} else if ((new_modifiers & (uint)KeyboardModifiers.cmdKey) == (uint)KeyboardModifiers.cmdKey && ((modifiers & (uint)KeyboardModifiers.cmdKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_LWIN;
-			} else if ((new_modifiers & (uint)OSXKeyboardModifiers.cmdKey) == 0 && ((modifiers & (uint)OSXKeyboardModifiers.cmdKey) == (uint)OSXKeyboardModifiers.cmdKey)) {
+			} else if ((new_modifiers & (uint)KeyboardModifiers.cmdKey) == 0 && ((modifiers & (uint)KeyboardModifiers.cmdKey) == (uint)KeyboardModifiers.cmdKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_LWIN;
 			} else {
@@ -70,42 +82,40 @@ namespace System.Windows.Forms {
 		}
 
 
-		public bool KeyEvent (IntPtr inEvent, IntPtr handle, uint eventKind, ref MSG msg) {
+		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			int vkey = -1;
 			bool result = true;
 			byte charCode = 0x0;
+			UInt32 new_modifiers = 0;
 
-			switch (eventKind) {
-				case OSXConstants.kEventRawKeyDown: {
+			if (hwnd == null)
+				return false;
+
+			msg.hwnd = hwnd.Handle;
+
+			GetEventParameter (eventref, kEventParamKeyMacCharCodes, typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
+			GetEventParameter (eventref, kEventParamKeyModifiers, typeUInt32, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (UInt32)), IntPtr.Zero, ref new_modifiers);
+
+			switch (kind) {
+				case kEventRawKeyDown:
+				case kEventRawKeyRepeat:
 					msg.message = Msg.WM_KEYDOWN;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyMacCharCodes, OSXConstants.EventParamType.typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
 					result = CharCodeToVirtualKeys (charCode, out vkey);
 					break;
-				}
-				case OSXConstants.kEventRawKeyUp: {
+				case kEventRawKeyUp: 
 					msg.message = Msg.WM_KEYUP;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyMacCharCodes, OSXConstants.EventParamType.typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
 					result = CharCodeToVirtualKeys (charCode, out vkey);
 					break;
-				}
-				case OSXConstants.kEventRawKeyRepeat: {
-					msg.message = Msg.WM_KEYDOWN;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyMacCharCodes, OSXConstants.EventParamType.typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
-					result = CharCodeToVirtualKeys (charCode, out vkey);
-					break;
-				}
-				case OSXConstants.kEventRawKeyModifiersChanged: {
-					UInt32 new_modifiers = 0;
-					GetEventParameter (inEvent, OSXConstants.EventParamName.kEventParamKeyModifiers, OSXConstants.EventParamType.typeUInt32, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (UInt32)), IntPtr.Zero, ref new_modifiers);
+				case kEventRawKeyModifiersChanged: 
 					result = ModifiersToVirtualKeys (new_modifiers, ref msg, out vkey);
 					modifiers = new_modifiers;
 					break;
-				}
 			}
+			msg.wParam = (IntPtr) vkey;
+
 			if (result) {
-				msg.lParam = IntPtr.Zero;
-				msg.wParam = (IntPtr) vkey;
-            	GetKeyboardFocus (handle, ref msg.hwnd);
+				GetKeyboardFocus (handle, ref msg.hwnd);
 			}
 			
 			return result;
@@ -128,14 +138,14 @@ namespace System.Windows.Forms {
 		}
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref byte outData);
+		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref byte data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr evt, OSXConstants.EventParamName inName, OSXConstants.EventParamType inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref UInt32 outData);
+		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref UInt32 data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetKeyboardFocus (IntPtr handle, ref IntPtr cntrl);
+		static extern int GetKeyboardFocus (IntPtr handle, ref IntPtr control);
 	}
 
-	internal enum OSXKeyboardModifiers : uint {
+	internal enum KeyboardModifiers : uint {
 		activeFlag = 1 << 0,
 		btnState = 1 << 7,
 		cmdKey = 1 << 8,

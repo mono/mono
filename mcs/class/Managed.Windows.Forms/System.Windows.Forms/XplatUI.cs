@@ -84,8 +84,8 @@ namespace System.Windows.Forms {
 			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID().ToString();
 
 			if (RunningOnUnix) {
-				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null)
-					driver=XplatUIOSX.GetInstance ();
+				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_CARBON_BACKEND") != null)
+					driver=XplatUICarbon.GetInstance ();
 				else if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null)
 					driver=XplatUIX11_new.GetInstance ();
 				else

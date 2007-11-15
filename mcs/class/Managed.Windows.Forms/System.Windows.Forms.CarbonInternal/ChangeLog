@@ -1,0 +1,21 @@
+2007-11-15  Geoff Norton  <gnorton@novell.com>
+
+	* EventHandler.cs: The new event handler dispatcher for the Carbon port.
+	Every event is dispatched thru this class and directed to the appropriate
+	event type handler.
+	* ApplicationHandler.cs: Handles the application level events AppActivated
+	and AppDeactivated.  We hook these to remove overlay windows when the application
+	looses focus.
+	* ControlHandler.cs: Handles the control level events Click, Track, Draw and BoundsChanged.
+	Translates these events to their WndProc equivalents and routes them to the appropriate
+	Control.
+	* KeyboardHandler.cs: Handles the keyboard level events KeyDown, KeyUp, KeyRepeat, KeyModifiersChanged
+	translated them to the WndProc message and routes it to the keyboard focus control.
+	* MouseHandler.cs: Handles the global mouse events and sends the appropriate WM_MOUSEMOVE to the 
+	control affected.
+	* WindowHandler.cs: Handles the window level events BoundsChanged and Close and resizes the Hwnds
+	or destroys them accordingly.
+	* EventHandlerBase.cs: Base class for all the EventHandlers.
+	* IEventHandler.cs: Interface declaring the methods needed for all EventHandlers.
+	* Enums.cs: Contains needed enums for the Carbon port.
+	* Structs.cs: Contains all the needed structs for the Carbon port.
