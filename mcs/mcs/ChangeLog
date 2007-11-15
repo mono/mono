@@ -1,3 +1,7 @@
+2007-11-15  Marek Safar  <marek.safar@gmail.com>
+
+ 	* attribute.cs: Use CS0612 for empty strings.
+
 2007-11-14  Marek Safar  <marek.safar@gmail.com>
 
  	* lambda.cs, statement.cs: Contextual return may act as a statement.

@@ -1804,7 +1804,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (oa.Message == null) {
+			if (oa.Message == null || oa.Message.Length == 0) {
 				Report.Warning (612, 1, loc, "`{0}' is obsolete", member);
 				return;
 			}
