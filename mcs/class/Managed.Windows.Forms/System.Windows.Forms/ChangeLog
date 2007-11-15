@@ -1,3 +1,8 @@
+2007-11-15  Jonathan Pobst <monkey@jpobst.com>
+
+	* ToolStripItem.cs: When determining if we have a check/image margin,
+	we need to look at ShowCheckMargin as well as ShowImageMargin.
+
 2007-11-15  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUIOSX.cs: Rename to...

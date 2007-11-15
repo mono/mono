@@ -1819,7 +1819,7 @@ namespace System.Windows.Forms
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
-				return tsddm.ShowImageMargin;
+				return tsddm.ShowImageMargin || tsddm.ShowCheckMargin;
 			}
 		}
 
