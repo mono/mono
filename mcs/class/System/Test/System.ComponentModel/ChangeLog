@@ -1,3 +1,8 @@
+2007-11-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertyDescriptorTests.cs: Added tests for AddValueChanged,
+	GetInvocationTarget, GetValueChangedHandler and RemoveValueChanged.
+
 2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* InvalidEnumArgumentExceptionTest.cs: Added ctor tests.

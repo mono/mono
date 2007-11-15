@@ -2,7 +2,8 @@
 // System.ComponentModel.PropertyDescriptor test cases
 //
 // Authors:
-// 	Chris Toshok (toshok@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (c) 2006 Novell, Inc. (http://www.novell.com/)
 //
@@ -350,6 +351,19 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		private ArrayList _invokedHandlers;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			_invokedHandlers = new ArrayList ();
+		}
+
+		void Reset ()
+		{
+			_invokedHandlers.Clear ();
+		}
+
 		[Test]
 		public void MissingTypeConverter ()
 		{
@@ -594,7 +608,269 @@ namespace MonoTests.System.ComponentModel
 
 			Assert.IsNotNull (ed, "#01");
 			Assert.AreEqual (ed.GetType ().Name, "UIEditor", "#02");
-		
+		}
+
+		[Test]
+		public void AddValueChanged ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			object compA = new object ();
+			object compB = new object ();
+			EventHandler handlerA = new EventHandler (ValueChanged1);
+			EventHandler handlerB = new EventHandler (ValueChanged1);
+			EventHandler handlerC = new EventHandler (ValueChanged2);
+
+			pd.AddValueChanged (compA, handlerA);
+			pd.AddValueChanged (compA, handlerC);
+			pd.AddValueChanged (compA, handlerC);
+			pd.AddValueChanged (compA, handlerB);
+
+			pd.FireValueChanged (compA, new EventArgs ());
+			Assert.AreEqual (4, _invokedHandlers.Count, "#A1");
+			Assert.AreEqual ("ValueChanged1", _invokedHandlers [0], "#A1");
+			Assert.AreEqual ("ValueChanged2", _invokedHandlers [1], "#A2");
+			Assert.AreEqual ("ValueChanged2", _invokedHandlers [2], "#A3");
+			Assert.AreEqual ("ValueChanged1", _invokedHandlers [3], "#A4");
+
+			Reset ();
+
+			pd.FireValueChanged (compB, new EventArgs ());
+			Assert.AreEqual (0, _invokedHandlers.Count, "#B");
+		}
+
+		[Test]
+		public void AddValueChanged_Component_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.AddValueChanged (null, new EventHandler (ValueChanged1));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("component", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void AddValueChanged_Handler_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.AddValueChanged (new object (), (EventHandler) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("handler", ex.ParamName, "#6");
+			}
+		}
+
+#if NET_2_0
+		[Test]
+		public void GetInvocationTarget_Instance_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.GetInvocationTarget (typeof (int), null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("instance", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void GetInvocationTarget_Type_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.GetInvocationTarget ((Type) null, new object ());
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("type", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void GetValueChangedHandler ()
+		{
+			object compA = new object ();
+			object compB = new object ();
+			EventHandler handlerA = new EventHandler (ValueChanged1);
+			EventHandler handlerB = new EventHandler (ValueChanged1);
+			EventHandler handlerC = new EventHandler (ValueChanged2);
+
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#A1");
+			Assert.IsNull (pd.GetValueChangedHandler (compA), "#A2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#A3");
+
+			pd.AddValueChanged (compA, handlerA);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#B1");
+			Assert.AreSame (handlerA, pd.GetValueChangedHandler (compA), "#B2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#B3");
+
+			pd.AddValueChanged (compA, handlerB);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#C1");
+			EventHandler handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#C2");
+			Assert.AreEqual (handlerA, handler.GetInvocationList () [0], "#C3");
+			Assert.AreEqual (handlerB, handler.GetInvocationList () [1], "#C4");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#C5");
+
+			pd.AddValueChanged (compB, handlerA);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#D1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#D2");
+			Assert.AreSame (handlerA, pd.GetValueChangedHandler (compB), "#D3");
+
+			pd.RemoveValueChanged (compB, handlerB);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#E1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#E2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#E3");
+
+			pd.RemoveValueChanged (compB, handlerB);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#F1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#F2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#F3");
+
+			pd.RemoveValueChanged (compA, handlerC);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#G1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#G2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#G3");
+
+			pd.AddValueChanged (compA, handlerC);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#H1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (3, handler.GetInvocationList ().Length, "#H2");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#H3");
+
+			pd.RemoveValueChanged (compA, handlerB);
+
+			Assert.IsNull (pd.GetValueChangedHandler (null), "#I1");
+			handler = pd.GetValueChangedHandler (compA);
+			Assert.AreEqual (2, handler.GetInvocationList ().Length, "#I2");
+			Assert.AreEqual (handlerA, handler.GetInvocationList () [0], "#I3");
+			Assert.AreEqual (handlerC, handler.GetInvocationList () [1], "#I4");
+			Assert.IsNull (pd.GetValueChangedHandler (compB), "#I5");
+		}
+#endif
+
+		[Test]
+		public void RemoveValueChanged ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			object compA = new object ();
+			object compB = new object ();
+			EventHandler handlerA = new EventHandler (ValueChanged1);
+			EventHandler handlerB = new EventHandler (ValueChanged1);
+			EventHandler handlerC = new EventHandler (ValueChanged2);
+
+			pd.AddValueChanged (compA, handlerA);
+			pd.AddValueChanged (compA, handlerC);
+			pd.AddValueChanged (compA, handlerC);
+			pd.AddValueChanged (compA, handlerB);
+			pd.AddValueChanged (compB, handlerC);
+
+			pd.FireValueChanged (compA, new EventArgs ());
+			Assert.AreEqual (4, _invokedHandlers.Count, "#A1");
+			pd.RemoveValueChanged (new object (), handlerC);
+			pd.FireValueChanged (compA, new EventArgs ());
+			Assert.AreEqual (8, _invokedHandlers.Count, "#A2");
+
+			Reset ();
+			pd.RemoveValueChanged (compA, handlerC);
+
+			pd.FireValueChanged (compA, new EventArgs ());
+			Assert.AreEqual (3, _invokedHandlers.Count, "#B1");
+			Assert.AreEqual ("ValueChanged1", _invokedHandlers [0], "#B2");
+			Assert.AreEqual ("ValueChanged2", _invokedHandlers [1], "#B3");
+			Assert.AreEqual ("ValueChanged1", _invokedHandlers [2], "#B4");
+
+			Reset ();
+
+			pd.FireValueChanged (compB, new EventArgs ());
+			Assert.AreEqual (1, _invokedHandlers.Count, "#C1");
+			Assert.AreEqual ("ValueChanged2", _invokedHandlers [0], "#C2");
+
+			Reset ();
+			pd.RemoveValueChanged (compB, handlerC);
+
+			pd.FireValueChanged (compB, new EventArgs ());
+			Assert.AreEqual (0, _invokedHandlers.Count, "#D");
+		}
+
+		[Test]
+		public void RemoveValueChanged_Component_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.RemoveValueChanged (null, new EventHandler (ValueChanged1));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("component", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void RemoveValueChanged_Handler_Null ()
+		{
+			MockPropertyDescriptor pd = new MockPropertyDescriptor (
+				"Name", new Attribute [0]);
+			try {
+				pd.RemoveValueChanged (new object (), (EventHandler) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("handler", ex.ParamName, "#6");
+			}
+		}
+
+		void ValueChanged1 (object sender, EventArgs e)
+		{
+			_invokedHandlers.Add ("ValueChanged1");
+		}
+
+		void ValueChanged2 (object sender, EventArgs e)
+		{
+			_invokedHandlers.Add ("ValueChanged2");
 		}
 
 		class GetEditor_test 
@@ -609,6 +885,76 @@ namespace MonoTests.System.ComponentModel
 		class UIEditor : UITypeEditor
 		{
 			
+		}
+
+		class MockPropertyDescriptor : PropertyDescriptor
+		{
+			public MockPropertyDescriptor (MemberDescriptor reference)
+				: base (reference)
+			{
+			}
+
+			public MockPropertyDescriptor (MemberDescriptor reference, Attribute [] attrs)
+				: base (reference, attrs)
+			{
+			}
+
+			public MockPropertyDescriptor (string name, Attribute [] attrs)
+				: base (name, attrs)
+			{
+			}
+
+			public override Type ComponentType {
+				get { return typeof (int); }
+			}
+
+			public override bool IsReadOnly {
+				get { return false; }
+			}
+
+			public override Type PropertyType{
+				get { return typeof (DateTime); }
+			}
+
+			public override object GetValue (object component)
+			{
+				return null;
+			}
+
+			public override void SetValue (object component, object value)
+			{
+			}
+
+			public override void ResetValue (object component)
+			{
+			}
+
+			public override bool CanResetValue (object component)
+			{
+				return true;
+			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+				return true;
+			}
+
+			public void FireValueChanged (object component, EventArgs e)
+			{
+				base.OnValueChanged (component, e);
+			}
+
+#if NET_2_0
+			public new object GetInvocationTarget (Type type, object instance)
+			{
+				return base.GetInvocationTarget (type, instance);
+			}
+
+			public new EventHandler GetValueChangedHandler (object component)
+			{
+				return base.GetValueChangedHandler (component);
+			}
+#endif
 		}
 	}
 }

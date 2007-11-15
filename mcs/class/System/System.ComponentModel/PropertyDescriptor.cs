@@ -137,10 +137,12 @@ namespace System.ComponentModel
 
 			component_notifiers = (EventHandler) notifiers [component];
 
-			if (component_notifiers != null)
+			if (component_notifiers != null) {
 				component_notifiers += handler;
-			else
+				notifiers [component] = component_notifiers;
+			} else {
 				notifiers [component] = handler;
+			}
 		}
 
 		public virtual void RemoveValueChanged (object component, System.EventHandler handler)
@@ -161,7 +163,7 @@ namespace System.ComponentModel
 			if (component_notifiers == null)
 				notifiers.Remove (component);
 			else
-				notifiers [component] = handler;
+				notifiers [component] = component_notifiers;
 		}
 
 #if NET_2_0
@@ -188,10 +190,7 @@ namespace System.ComponentModel
 
 		protected internal EventHandler GetValueChangedHandler (object component)
 		{
-			if (component == null)
-				throw new ArgumentNullException ("component");
-
-			if (notifiers == null)
+			if (component == null || notifiers == null)
 				return null;
 
 			return (EventHandler) notifiers [component];

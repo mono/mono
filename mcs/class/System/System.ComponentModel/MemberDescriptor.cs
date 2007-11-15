@@ -39,206 +39,174 @@ using System.ComponentModel.Design;
 
 namespace System.ComponentModel
 {
+	[ComVisible (true)]
+	public abstract class MemberDescriptor
+	{
+		private string name;
+		private Attribute [] attrs;
+		private AttributeCollection attrCollection;
 
-    [ComVisible (true)]
-    public abstract class MemberDescriptor
-    {
+		protected MemberDescriptor (string name, Attribute [] attrs)
+		{
+			this.name = name;
+			this.attrs = attrs;
+		}
 
-        private string name;
-        private Attribute [] attrs;
-        private AttributeCollection attrCollection;
+		protected MemberDescriptor (MemberDescriptor reference, Attribute [] attrs)
+		{
+			name = reference.name;
+			this.attrs = attrs;
+		}
 
-        protected MemberDescriptor (string name, Attribute [] attrs)
-        {
-            this.name = name;
-            this.attrs = attrs;
-        }
+		protected MemberDescriptor (string name)
+		{
+			this.name = name;
+		}
 
-        protected MemberDescriptor (MemberDescriptor reference, Attribute [] attrs)
-        {
-            name = reference.name;
-            this.attrs = attrs;
-        }
+		protected MemberDescriptor (MemberDescriptor reference)
+		{
+			name = reference.name;
+			attrs = reference.AttributeArray;
+		}
 
-        protected MemberDescriptor (string name)
-        {
-            this.name = name;
-        }
-
-        protected MemberDescriptor (MemberDescriptor reference)
-        {
-            name = reference.name;
-            attrs = reference.AttributeArray;
-        }
-
-        protected virtual Attribute [] AttributeArray
-        {
-            get
-            {
-				if (attrs == null)
-				{
+		protected virtual Attribute [] AttributeArray {
+			get {
+				if (attrs == null) {
 					ArrayList list = new ArrayList ();
 					FillAttributes (list);
 
 					ArrayList filtered = new ArrayList ();
 					foreach (Attribute at in list) {
 						bool found = false;
-						for (int n=0; n<filtered.Count && !found; n++)
-							found = (filtered[n].GetType() == at.GetType ());
+						for (int n = 0; n < filtered.Count && !found; n++)
+							found = (filtered [n].GetType () == at.GetType ());
 						if (!found)
 							filtered.Add (at);
 					}
 					attrs = (Attribute[]) filtered.ToArray (typeof(Attribute));
 				}
 
-                return attrs;
-            }
+				return attrs;
+			}
+			set {
+				attrs = value;
+			}
+		}
 
-            set
-            {
-                attrs = value;
-            }
-        }
-
-        protected virtual void FillAttributes(System.Collections.IList attributeList)
-        {
+		protected virtual void FillAttributes(System.Collections.IList attributeList)
+		{
 			// to be overriden
-        }
+		}
 
-        public virtual AttributeCollection Attributes
-        {
-            get
-            {
-                if (attrCollection == null)
-                    attrCollection = CreateAttributeCollection ();
-                return attrCollection;
-            }
-        }
+		public virtual AttributeCollection Attributes {
+			get {
+				if (attrCollection == null)
+					attrCollection = CreateAttributeCollection ();
+				return attrCollection;
+			}
+		}
 
-        protected virtual AttributeCollection CreateAttributeCollection()
-        {
-            return new AttributeCollection (AttributeArray);
-        }
+		protected virtual AttributeCollection CreateAttributeCollection ()
+		{
+			return new AttributeCollection (AttributeArray);
+		}
 
-        public virtual string Category
-        {
-            get
-            {
-                return ((CategoryAttribute) Attributes [typeof (CategoryAttribute)]).Category;
-            }
-        }
+		public virtual string Category {
+			get {
+				return ((CategoryAttribute) Attributes [typeof (CategoryAttribute)]).Category;
+			}
+		}
 
-        public virtual string Description
-        {
-            get
-            {
-                foreach (Attribute attr in AttributeArray)
-                {
-                    if (attr is DescriptionAttribute)
-                        return ((DescriptionAttribute) attr).Description;
-                }
-                return "";
-            }
-        }
+		public virtual string Description {
+			get {
+				foreach (Attribute attr in AttributeArray)
+					if (attr is DescriptionAttribute)
+						return ((DescriptionAttribute) attr).Description;
+				return string.Empty;
+			}
+		}
 
-        public virtual bool DesignTimeOnly
-        {
-            get
-            {
-                foreach (Attribute attr in AttributeArray)
-                {
-                    if (attr is DesignOnlyAttribute)
-                        return ((DesignOnlyAttribute) attr).IsDesignOnly;
-                }
+		public virtual bool DesignTimeOnly {
+			get {
+				foreach (Attribute attr in AttributeArray)
+					if (attr is DesignOnlyAttribute)
+						return ((DesignOnlyAttribute) attr).IsDesignOnly;
+				return false;
+			}
+		}
 
-                return false;
-            }
-        }
-
-        public virtual string DisplayName
-        {
-            get
-            {
+		public virtual string DisplayName {
+			get {
 #if NET_2_0
-				foreach (Attribute attr in AttributeArray) {
+				foreach (Attribute attr in AttributeArray)
 					if (attr is DisplayNameAttribute)
 						return ((DisplayNameAttribute) attr).DisplayName;
-				}
 #endif
 				return name;
-            }
-        }
+			}
+		}
 
-        public virtual string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+		public virtual string Name {
+			get {
+				return name;
+			}
+		}
 
-        public virtual bool IsBrowsable
-        {
-            get
-            {
-                foreach (Attribute attr in AttributeArray)
-                {
-                    if (attr is BrowsableAttribute)
-                        return ((BrowsableAttribute) attr).Browsable;
-                }
+		public virtual bool IsBrowsable {
+			get {
+				foreach (Attribute attr in AttributeArray)
+					if (attr is BrowsableAttribute)
+						return ((BrowsableAttribute) attr).Browsable;
+				return true;
+			}
+		}
 
-                return true;
-            }
-        }
+		protected virtual int NameHashCode {
+			get {
+				return name.GetHashCode ();
+			}
+		}
 
-        protected virtual int NameHashCode
-        {
-            get
-            {
-                return name.GetHashCode ();
-            }
-        }
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode ();
-        }
-
-        public override bool Equals(object obj)
-        {
+		public override bool Equals (object obj)
+		{
 			MemberDescriptor other = obj as MemberDescriptor;
-            if (other == null) return false;
+			if (other == null)
+				return false;
+			return other.name == name;
+		}
 
-            return other.name == name;
-        }
+		protected static ISite GetSite (object component)
+		{
+			if (component is Component)
+				return ((Component) component).Site;
+			else
+				return null;
+		}
 
-        protected static ISite GetSite(object component)
-        {
-            if (component is Component)
-                return ((Component) component).Site;
-            else
-                return null;
-        }
-
-#if NET_2_0 // uncomment when it is implemented
-	[Obsolete ("Use GetInvocationTarget")]
+#if NET_2_0
+		[Obsolete ("Use GetInvocationTarget")]
 #endif
-        protected static object GetInvokee(Type componentClass, object component)
-        {
-		if (component is IComponent) {
-			ISite site = ((IComponent) component).Site;
-			if (site != null && site.DesignMode) {
-				IDesignerHost host = site.GetService (typeof (IDesignerHost)) as IDesignerHost;
-				if (host != null) {
-					IDesigner designer = host.GetDesigner ((IComponent) component);
-					if (designer != null && componentClass.IsInstanceOfType (designer)) {
-						component = designer;
+		protected static object GetInvokee (Type componentClass, object component)
+		{
+			if (component is IComponent) {
+				ISite site = ((IComponent) component).Site;
+				if (site != null && site.DesignMode) {
+					IDesignerHost host = site.GetService (typeof (IDesignerHost)) as IDesignerHost;
+					if (host != null) {
+						IDesigner designer = host.GetDesigner ((IComponent) component);
+						if (designer != null && componentClass.IsInstanceOfType (designer)) {
+							component = designer;
+						}
 					}
 				}
 			}
+			return component;
 		}
-		return component;
-        }
 
 #if NET_2_0
 		protected virtual object GetInvocationTarget (Type type, object instance)
@@ -252,23 +220,21 @@ namespace System.ComponentModel
 		}
 #endif
 
-        protected static MethodInfo FindMethod(Type componentClass, string name, 
-            Type[ ] args, Type returnType)
-        {
-            return FindMethod (componentClass, name, args, returnType, true);
-        }
+		protected static MethodInfo FindMethod(Type componentClass, string name, Type[] args, Type returnType)
+		{
+			return FindMethod (componentClass, name, args, returnType, true);
+		}
 
-        protected static MethodInfo FindMethod(Type componentClass, string name, 
-            Type[ ] args, Type returnType, bool publicOnly)
-        {
-            BindingFlags bf;
-            if (publicOnly == true)
-                bf = BindingFlags.Public;
-            else
-                bf = BindingFlags.NonPublic | BindingFlags.Public;
-            // FIXME returnType is not taken into account. AFAIK methods are not allowed to only
-            // differ by return type anyway
-            return componentClass.GetMethod (name, bf, null, CallingConventions.Any, args, null);
-        }
-    }
+		protected static MethodInfo FindMethod(Type componentClass, string name, Type[] args, Type returnType, bool publicOnly)
+		{
+			BindingFlags bf;
+			if (publicOnly == true)
+				bf = BindingFlags.Public;
+			else
+				bf = BindingFlags.NonPublic | BindingFlags.Public;
+			// FIXME returnType is not taken into account. AFAIK methods are not allowed to only
+			// differ by return type anyway
+			return componentClass.GetMethod (name, bf, null, CallingConventions.Any, args, null);
+		}
+	}
 }

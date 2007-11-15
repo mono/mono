@@ -1,4 +1,11 @@
-2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+2007-11-15  Gert Driesen  <drieseng@susers.sourceforge.net>
+
+	* MemberDescriptor.cs: Spaces to tabs, code formatting.
+	* PropertyDescriptor.cs: When adding or removing a new handler for an
+	existing component, update the hashtable. In GetValueChangedHandler,
+	return null if component is null.
+
+<2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PropertyDescriptor.cs : implement GetValueChangedHandler().
 	* ToolboxItemFilterAttribute.cs : implement ToString().
