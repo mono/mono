@@ -1,3 +1,8 @@
+2007-11-15  Geoff Norton  <gnorton@novell.com>
+
+	* gdipFunctions.cs: Reflect the renamed environment variable in the new Carbon driver.
+	* Graphics.cs: Remove support for the deprecated Cocoa driver until its fixed.
+
 2007-11-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ColorTranslator.cs: Special case handling for LightGray versus 

@@ -1697,6 +1697,8 @@ namespace System.Drawing
 			IntPtr graphics;
 
 			if (GDIPlus.UseCocoaDrawable) {
+				throw new NotImplementedException ();
+/* TODO: Fix this code to handle the new libgdiplus
 				CarbonContext context = Carbon.GetCGContextForNSView (hwnd);
 				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
 				
@@ -1704,6 +1706,7 @@ namespace System.Drawing
 				g.context = context;
 				
 				return g;
+*/
 			}
 			if (GDIPlus.UseQuartzDrawable) {
 				CarbonContext context = Carbon.GetCGContextForView (hwnd);
