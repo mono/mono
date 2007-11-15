@@ -221,7 +221,6 @@ namespace System.Text.RegularExpressions {
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
 				this._groupNumberToNameMap = this.machineFactory.NamesMapping;
-				this.machine = this.machineFactory.NewInstance ();
 			}
 		}
 #endif
@@ -232,7 +231,6 @@ namespace System.Text.RegularExpressions {
 			this.group_count = machineFactory.GroupCount;
 			this.mapping = machineFactory.Mapping;
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
-			this.machine = this.machineFactory.NewInstance ();
 		}
 
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
@@ -336,14 +334,14 @@ namespace System.Text.RegularExpressions {
 
 		public Match Match (string input, int startat)
 		{
-			return Machine.Scan (this, input, startat, input.Length);
+			return CreateMachine ().Scan (this, input, startat, input.Length);
 		}
 
 		public Match Match (string input, int startat, int length)
 		{
-			return Machine.Scan (this, input, startat, startat + length);
+			return CreateMachine ().Scan (this, input, startat, startat + length);
 		}
-		
+
 		public MatchCollection Matches (string input)
 		{
 			return Matches (input, RightToLeft ? input.Length : 0);
@@ -398,7 +396,7 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, string replacement, int count, int startat)
 		{
-			return Machine.Replace (this, input, replacement, count, startat);
+			return CreateMachine ().Replace (this, input, replacement, count, startat);
 		}
 
 		// split methods
@@ -415,7 +413,7 @@ namespace System.Text.RegularExpressions {
 
 		public string [] Split (string input, int count, int startat)
 		{
-			return Machine.Split (this, input, count, startat);
+			return CreateMachine ().Split (this, input, count, startat);
 		}
 
 		// This method is called at the end of the constructor of compiled
@@ -465,6 +463,11 @@ namespace System.Text.RegularExpressions {
 
 		// private
 
+		private IMachine CreateMachine ()
+		{
+			return machineFactory.NewInstance ();
+		}
+
 		private static string [] GetGroupNamesArray (int groupCount, IDictionary mapping) 
 		{
 			string [] groupNumberToNameMap = new string [groupCount + 1];
@@ -474,14 +477,7 @@ namespace System.Text.RegularExpressions {
 			return groupNumberToNameMap;
 		}
 		
-		private IMachine Machine {
-			get {
-				return machine;
-			}
-		}
-
 		private IMachineFactory machineFactory;
-		private IMachine machine;
 		private IDictionary mapping;
 		private int group_count;
 		private bool refsInitialized;

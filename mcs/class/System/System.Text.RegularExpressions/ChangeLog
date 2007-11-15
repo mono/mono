@@ -1,3 +1,8 @@
+2007-11-15  Miguel de Icaza  <miguel@novell.com>
+
+	* Revert the patch from Juraj Skripsky as it made the class
+	non-thread safe (see #341986).
+
 2007-11-08  Raja R Harinath  <harinath@gmail.com>
 
 	Fix 324390
