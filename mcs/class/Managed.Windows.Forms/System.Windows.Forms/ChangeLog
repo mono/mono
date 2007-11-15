@@ -1,3 +1,9 @@
+2007-11-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* KeysConverter.cs: The default values should be an array of Keys, not
+	strings.  Also, the array has more values for 2.0.
+	[Fixes bug #341851]
+
 2007-11-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Change ExecutablePath to use 
