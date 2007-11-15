@@ -60,17 +60,17 @@ namespace System.Configuration
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Provide ConfigContext. Likely the culprit of bug #322493")]
 		protected internal virtual object GetRuntimeObject ()
 		{
-			// FIXME: this hack is nasty. We should make some
-			// refactory on the entire assembly.
 			if (SectionHandler != null) {
+				ConfigurationSection parentSection = sectionInformation != null ? sectionInformation.GetParentSection () : null;
+				object parent = parentSection != null ? parentSection.GetRuntimeObject () : null;
 				if (RawXml == null)
-					return null;
+					return parent;
 				XmlDocument doc = new XmlDocument ();
 				doc.LoadXml (RawXml);
-				return SectionHandler.Create (null, null, doc.DocumentElement);
+				return SectionHandler.Create (parent, null, doc.DocumentElement);
 			}
 			return this;
 		}

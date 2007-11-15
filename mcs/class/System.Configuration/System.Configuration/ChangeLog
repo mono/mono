@@ -1,5 +1,17 @@
 2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	Part of fix for bug #323708.
+	* ConfigurationSection.cs : in GetRuntimeObject(), take parent
+	  section instance into consideration.
+	* SectionInformation.cs : to make it possible, GetParentSection()
+	  should be implemented.
+	* Configuration.cs : to make it possible, GetSectionInstance()
+	  should set parent section on its SectionInformation. It used to
+	  just steal parent's xml when its own xml does not exist, but
+	  it now blocks correct configuration retrieval.
+
+2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SectionGroupInfo.cs : remove extra StringBuilder creation.
 
 2007-11-14  Atsushi Enomoto  <atsushi@ximian.com>

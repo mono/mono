@@ -146,10 +146,14 @@ namespace System.Configuration
 			set { type_name = value; }
 		}
 
-		[MonoTODO]
 		public ConfigurationSection GetParentSection ()
 		{
 			return parent;
+		}
+
+		internal void SetParentSection (ConfigurationSection parent)
+		{
+			this.parent = parent;
 		}
 
 		public string GetRawXml ()

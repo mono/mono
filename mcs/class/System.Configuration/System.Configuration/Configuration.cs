@@ -266,11 +266,13 @@ namespace System.Configuration {
 				sec = ds;
 			}
 
-			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
+			ConfigurationSection parentSection = null;
+			if (parent != null) {
+				parentSection = parent.GetSectionInstance (config, true);
+				sec.SectionInformation.SetParentSection (parentSection);
+			}
 
 			string xml = data as string;
-			if (xml == null && parentSection != null)
-				xml = parentSection.RawXml;
 			sec.RawXml = xml;
 			sec.Reset (parentSection);
 
@@ -462,7 +464,7 @@ namespace System.Configuration {
 		}
 
 
-		internal void ReadConfigFile (XmlTextReader reader, string fileName)
+		void ReadConfigFile (XmlTextReader reader, string fileName)
 		{
 			reader.MoveToContent ();
 
