@@ -1,5 +1,13 @@
 2007-11-15  Dick Porter  <dick@ximian.com>
 
+	* processes.c (load_modules): Don't bother if we don't have
+	g_strsplit_set() and g_strv_length().  Allows building against old
+	glib versions.
+	(EnumProcessModules): Don't miss the first module returned by
+	load_modules().
+
+2007-11-15  Dick Porter  <dick@ximian.com>
+
 	* processes.c: Implement process module support by reading from
 	/proc if it's available.
 
