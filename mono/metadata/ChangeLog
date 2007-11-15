@@ -1,5 +1,12 @@
 2007-11-15  Dick Porter  <dick@ximian.com>
 
+	* threads.c (ves_icall_System_Threading_Thread_Join_internal):
+	When joining a thread, it's the thread that's calling Join that
+	gets WaitSleepJoin state not the target.  Fixes the standalone
+	test case in bug 334740, and hopefully the whole bug too.
+
+2007-11-15  Dick Porter  <dick@ximian.com>
+
 	* process.c: Read file version info from the files pointed at by
 	process modules, not the current process.  Fixes bug 315969.
 
