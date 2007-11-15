@@ -1,3 +1,8 @@
+2007-11-15  Jb Evain  <jbevain@novell.com>
+
+	* LinkedList.cs: let's not have an access to the SerializationInfo
+	field outside of serializations methods (We need a gendarme rule). Fixes #341938.
+
 2007-10-09  Raja R Harinath  <rharinath@novell.com>
 
 	* RBTree.cs (get_Item, do_remove): Remove redundant code.
