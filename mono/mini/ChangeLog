@@ -1,3 +1,9 @@
+
+Thu Nov 15 14:20:21 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* abcremoval.c, mini.c, ssa.c, ssapre.c: updated to implement
+	--enable-minimal=ssa.
+
 2007-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Update after 
@@ -102,6 +108,12 @@
 
 	* mini-ppc.h, mini-x86.h:  Handle Leopards renaming of some structure 
 	members.
+
+Wed Oct 31 20:23:14 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-x86.c: when getting back from unmanaged code
+	to managed via a marshaled delegate we also need to set the
+	right domain.
 
 Wed Oct 31 19:53:33 CET 2007 Paolo Molaro <lupus@ximian.com>
 
