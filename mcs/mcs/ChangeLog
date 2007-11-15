@@ -1,5 +1,10 @@
 2007-11-15  Marek Safar  <marek.safar@gmail.com>
 
+ 	* gcs-parser.jay, statement.cs, decl.cs, ecore.cs: Try to resolve an
+ 	implicitly type local variable only when it is used in a declaration.
+
+2007-11-15  Marek Safar  <marek.safar@gmail.com>
+
  	* attribute.cs: Use CS0612 for empty strings.
 
 2007-11-14  Marek Safar  <marek.safar@gmail.com>

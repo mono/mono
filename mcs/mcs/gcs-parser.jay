@@ -3005,10 +3005,15 @@ type
 	: namespace_or_type_name opt_nullable
 	  {
 		MemberName name = (MemberName) $1;
-		$$ = name.GetTypeExpression ();
 
-		if ((bool) $2)
-			$$ = new ComposedCast ((Expression) $$, "?", lexer.Location);
+		if ((bool) $2) {
+			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
+		} else {
+			if (RootContext.Version > LanguageVersion.ISO_2 && name.Name == "var")
+				$$ = new VarExpr (name.Location);
+			else
+				$$ = name.GetTypeExpression ();
+		}
 	  }
 	| builtin_types opt_nullable
 	  {
@@ -4625,8 +4630,9 @@ local_variable_type
 		// SimpleName is when you have
 		// Blah i;
 		  
-		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
+		Expression expr = (Expression) $1;
+		SimpleName sn = expr as SimpleName;
+		if (!(sn != null || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
 			Error_ExpectingTypeName (expr);
 			$$ = null;
 		} else {
@@ -4635,9 +4641,12 @@ local_variable_type
 			// or MemberAccess
 			// 
 
-			if ((string) $2 == "")
-				$$ = $1;
-			else
+			if ((string) $2 == "") {
+				if (sn != null && RootContext.Version > LanguageVersion.ISO_2 && sn.Name == "var")
+					$$ = new VarExpr (sn.Location);
+				else
+					$$ = $1;
+			} else
 				$$ = new ComposedCast ((Expression) $1, (string) $2);
 		}
 	  }
@@ -5292,9 +5301,6 @@ fixed_statement
 		Expression type = (Expression) $3;
 		Location l = (Location) $1;
 		int top = list.Count;
-
-		if (type is VarExpr)
-			Report.Error (821, GetLocation ($3), "A fixed statement cannot use an implicitly typed local variable");
 
 		start_block (lexer.Location);
 

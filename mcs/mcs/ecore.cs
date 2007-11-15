@@ -5543,8 +5543,8 @@ namespace Mono.CSharp {
 		// Used for error reporting only
 		ArrayList initializer;
 
-		public VarExpr (string name, Location loc)
-			: base (name, loc)
+		public VarExpr (Location loc)
+			: base ("var", loc)
 		{
 		}
 
@@ -5572,12 +5572,7 @@ namespace Mono.CSharp {
 
 		protected override void Error_TypeOrNamespaceNotFound (IResolveContext ec)
 		{
-			if (ec is FieldBase) {
-				Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
-				return;
-			}
-
-			base.Error_TypeOrNamespaceNotFound (ec);
+			Report.Error (825, loc, "The contextual keyword `var' may only appear within a local variable declaration");
 		}
 
 		public override TypeExpr ResolveAsContextualType (IResolveContext rc, bool silent)
@@ -5589,10 +5584,10 @@ namespace Mono.CSharp {
 			if (initializer == null)
 				return null;
 			
-			// TODO: refactor, the error is reported too many times
 	  		if (initializer.Count > 1) {
 	  			Location loc = ((Mono.CSharp.CSharpParser.VariableDeclaration)initializer [1]).Location;
 	  			Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+				initializer = null;
 				return null;
 	  		}
 			  	

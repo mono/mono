@@ -1973,8 +1973,12 @@ namespace Mono.CSharp {
 				LocalInfo vi = (LocalInfo) de.Value;
 				Type variable_type = vi.VariableType;
 
-				if (variable_type == null)
+				if (variable_type == null) {
+					if (vi.Type is VarExpr)
+						Report.Error (822, vi.Type.Location, "An implicitly typed local variable cannot be a constant");
+
 					continue;
+				}
 
 				Expression cv = (Expression) constants [name];
 				if (cv == null)
@@ -3972,9 +3976,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
-			if (texpr == null)
+			TypeExpr texpr = type.ResolveAsContextualType (ec, false);
+			if (texpr == null) {
+				if (type is VarExpr)
+					Report.Error (821, type.Location, "A fixed statement cannot use an implicitly typed local variable");
+
 				return false;
+			}
 
 			expr_type = texpr.Type;
 
