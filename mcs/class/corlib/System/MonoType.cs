@@ -275,7 +275,7 @@ namespace System
 
 			if (binder == null)
 				binder = Binder.DefaultBinder;
-			
+
 			return binder.SelectProperty (bindingAttr, props, returnType, types, modifiers);
 		}
 
@@ -394,11 +394,10 @@ namespace System
 				}
 				/* try GetProperty */
 			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
-				if ((args == null) || args.Length != 1)
-					throw new ArgumentException ("invokeAttr");
-
 				FieldInfo f = GetField (name, invokeAttr);
 				if (f != null) {
+					if ((args == null) || args.Length != 1)
+						throw new ArgumentException ("invokeAttr");
 					f.SetValue (target, args [0]);
 					return null;
 				} else if ((invokeAttr & BindingFlags.SetProperty) == 0) {

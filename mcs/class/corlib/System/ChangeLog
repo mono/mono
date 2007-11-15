@@ -1,3 +1,7 @@
+2007-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoType.cs (Invoke): Allow BindingFlags.SetField and BindingFlags.SetProperty to be specified together. Fixes #321735.
+
 2007-11-14  Miguel de Icaza  <miguel@novell.com>
 
 	* Console.cs, ConsoleDriver.cs, TermInfoDriver.cs,
