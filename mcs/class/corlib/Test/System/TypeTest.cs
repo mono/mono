@@ -149,6 +149,14 @@ namespace MonoTests.System
 		}
 	}
 
+	class Derived2 : Base1
+	{
+		public new int Foo {
+			get { return 1; }
+			set { }
+		}
+	}
+
 #if NET_2_0
 	public class Foo<T>
 	{
@@ -321,6 +329,14 @@ namespace MonoTests.System
 
 			// Test overriding of properties when only the set accessor is overriden
 			Assert.AreEqual (1, typeof (Derived1).GetProperties ().Length, "#03");
+		}
+
+		[Test]
+		public void GetProperties ()
+		{
+			// Test hide-by-name-and-signature
+			Assert.AreEqual (1, typeof (Derived2).GetProperties ().Length);
+			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType);
 		}
 
 #if !TARGET_JVM // StructLayout not supported for TARGET_JVM

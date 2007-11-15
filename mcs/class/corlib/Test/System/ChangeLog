@@ -1,3 +1,7 @@
+2007-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add new test for GetProperties () and virtual new properties.
+
 2007-11-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Typetest.cs: Added and improve tests for InvokeMember. Enabled test
