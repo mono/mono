@@ -1,3 +1,7 @@
+2007-11-15  Mark Probst  <mark.probst@gmail.com>
+
+	* image.c, metadata-internals.h: Added a generic_class_cache hash
+	to MonoImage for looking up generic classes when sharing generics.
 
 Thu Nov 15 16:11:30 CET 2007 Paolo Molaro <lupus@ximian.com>
 

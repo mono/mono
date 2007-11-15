@@ -1,3 +1,8 @@
+2007-11-15  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini.h, generic-sharing.c: Functions for producing code
+	which extract fields out of the runtime generic context.  Full
+	sharing of the NEWARR opcode.
 
 Thu Nov 15 14:20:21 CET 2007 Paolo Molaro <lupus@ximian.com>
 
