@@ -474,7 +474,7 @@ namespace Mono.Cecil.Cil {
 						Modify (instr, OpCodes.Ldc_I4_8, null);
 						break;
 					default:
-						if (i >= -128 || i < 128)
+						if (i >= -128 && i < 128)
 							Modify (instr, OpCodes.Ldc_I4_S, (sbyte) i);
 						break;
 					}

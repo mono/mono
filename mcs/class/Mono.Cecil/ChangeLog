@@ -1,5 +1,10 @@
 2007-11-15	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
 
+	* Mono.Cecil.Cil/MethodBody.cs:
+		Fixed Optimize for ldc_i4
+
+2007-11-15	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
+
 	* Mono.Cecil.Cil/DocumentLanguage.cs
 	  Mono.Cecil.Cil/DocumentLanguageVendor.cs:
 	  	Compact Framework support by using Guid(string) if CF_2_0 is defined
