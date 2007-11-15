@@ -1,3 +1,9 @@
+2007-11-15	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
+
+	* Mono.Cecil.Cil/DocumentLanguage.cs
+	  Mono.Cecil.Cil/DocumentLanguageVendor.cs:
+	  	Compact Framework support by using Guid(string) if CF_2_0 is defined
+
 2007-11-01  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/MethodReturnType.cs: based on a patch by
