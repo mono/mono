@@ -1,3 +1,8 @@
+2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added -r:System.Data.
+	* t45.cs, t45.exe.expected : test for bug #323708.
+
 2007-03-15  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* t44.cs: added test for case sensitivity check
