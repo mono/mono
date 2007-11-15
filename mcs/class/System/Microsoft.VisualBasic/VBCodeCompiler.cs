@@ -48,7 +48,10 @@ namespace Microsoft.VisualBasic
 	internal class VBCodeCompiler : VBCodeGenerator, ICodeCompiler
 	{
 		static string windowsMonoPath;
+#if NET_2_0
 		static string windowsvbncPath;
+#endif
+
 		static VBCodeCompiler ()
 		{
 			if (Path.DirectorySeparatorChar == '\\') {
@@ -68,9 +71,6 @@ namespace Microsoft.VisualBasic
 #if NET_2_0
 				windowsvbncPath =
 					Path.Combine (p, "2.0\\vbnc.exe");
-#else
-				windowsvbncPath =
-					Path.Combine (p, "1.0\\vbnc.exe");
 #endif
 			}
 		}
@@ -129,6 +129,7 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
+#if NET_2_0
 		static string BuildArgs (CompilerParameters options, string[] fileNames)
 		{
 			StringBuilder args = new StringBuilder ();
@@ -219,6 +220,7 @@ namespace Microsoft.VisualBasic
 		{
 			return temp_files.AddExtension (extension, keepFile);
 		}
+#endif
 
 		private static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
 		{

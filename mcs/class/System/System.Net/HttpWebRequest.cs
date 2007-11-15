@@ -292,7 +292,7 @@ namespace System.Net
 
 #if NET_2_0
 		[MonoTODO]
-		public static RequestCachePolicy DefaultCachePolicy
+		public static new RequestCachePolicy DefaultCachePolicy
 		{
 			get {
 				throw GetMustImplement ();

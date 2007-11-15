@@ -54,7 +54,6 @@ namespace System.Net {
 		int chunked_uses;
 		bool context_bound;
 		bool secure;
-		X509Certificate2 cert;
 		AsymmetricAlgorithm key;
 
 		public HttpConnection (Socket sock, EndPointListener epl, bool secure, X509Certificate2 cert, AsymmetricAlgorithm key)
@@ -62,7 +61,6 @@ namespace System.Net {
 			this.sock = sock;
 			this.epl = epl;
 			this.secure = secure;
-			this.cert = cert;
 			this.key = key;
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);

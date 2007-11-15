@@ -67,14 +67,6 @@ namespace System.CodeDom.Compiler {
 		}
 
 		//
-		// This is used to prevent confusing Moma about methods not implemented.
-		//
-		Exception GetNotImplemented ()
-		{
-			return new NotImplementedException ();
-		}
-		
-		//
 		// Methods
 		//
 #if NET_2_0
@@ -311,6 +303,13 @@ namespace System.CodeDom.Compiler {
 		}
 #endif
 		
+		//
+		// This is used to prevent confusing Moma about methods not implemented.
+		//
+		Exception GetNotImplemented ()
+		{
+			return new NotImplementedException ();
+		}		
 #endif
 	}
 }

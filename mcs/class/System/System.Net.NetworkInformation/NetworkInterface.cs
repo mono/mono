@@ -202,7 +202,7 @@ namespace System.Net.NetworkInformation {
 
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
-			Win32_IP_ADAPTER_INFO [] ai = GetAdaptersInfo ();
+//			Win32_IP_ADAPTER_INFO [] ai = GetAdaptersInfo ();
 			Win32_IP_ADAPTER_ADDRESSES [] aa = GetAdaptersAddresses ();
 			NetworkInterface [] ret = new NetworkInterface [aa.Length];
 			for (int i = 0; i < ret.Length; i++)

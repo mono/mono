@@ -495,15 +495,15 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 
 			// TODO 6.1.3.d - check if certificate policies extension is present
-			if (false) {
+			//if (false) {
 				// TODO - for X509ChainStatusFlags.InvalidPolicyConstraints
 				//	using X509ChainPolicy.ApplicationPolicy and X509ChainPolicy.CertificatePolicy
 
 				// TODO - check for X509ChainStatusFlags.NoIssuanceChainPolicy
 
-			} else {
+			//} else {
 				// TODO 6.1.3.e - set valid_policy_tree to NULL
-			}
+			//}
 
 			// TODO 6.1.3.f - verify explict_policy > 0 if valid_policy_tree != NULL
 		}
@@ -799,12 +799,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 
 			return X509ChainStatusFlags.NoError;
-		}
-
-		private MX.X509Crl OnlineCheck (X509Certificate2 certificate)
-		{
-			// CRL doesn't exists or couldn't be downloaded
-			return null;
 		}
 
 		private MX.X509Crl FindCrl (X509Certificate2 caCertificate)

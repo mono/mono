@@ -578,8 +578,6 @@ namespace System.Configuration
 				if (userSection == null)
 					continue;
 
-				XmlDocument doc = new XmlDocument ();
-
 				foreach (SettingsPropertyValue value in collection) {
 					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
 						continue;
@@ -591,7 +589,6 @@ namespace System.Configuration
 					}
 					if (element.Value.ValueXml == null)
 						element.Value.ValueXml = new XmlDocument ().CreateDocumentFragment ();
-					doc = element.Value.ValueXml.OwnerDocument;
 					switch (value.Property.SerializeAs) {
 					case SettingsSerializeAs.Xml:
 						element.Value.ValueXml.InnerXml = value.SerializedValue as string;

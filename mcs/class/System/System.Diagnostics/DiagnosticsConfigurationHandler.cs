@@ -287,7 +287,7 @@ namespace System.Diagnostics
 					d ["indentsize"] = n;
 					TraceImpl.IndentSize = n;
 				}
-				catch (ConfigurationException e) {
+				catch (ConfigurationException) {
 					throw;
 				}
 				catch (Exception e) {

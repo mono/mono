@@ -299,14 +299,14 @@ namespace System.Net.Security
 		#endregion // Properties
 
 		#region Methods
-
+/*
 		AsymmetricAlgorithm GetPrivateKey (X509Certificate cert, string targetHost)
 		{
 			// FIXME: what can I do for non-X509Certificate2 ?
 			X509Certificate2 cert2 = cert as X509Certificate2;
 			return cert2 != null ? cert2.PrivateKey : null;
 		}
-
+*/
 		X509Certificate OnCertificateSelection (X509CertificateCollection clientCerts, X509Certificate serverCert, string targetHost, X509CertificateCollection serverRequestedCerts)
 		{
 			string [] acceptableIssuers = new string [serverRequestedCerts != null ? serverRequestedCerts.Count : 0];

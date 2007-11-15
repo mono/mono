@@ -25,7 +25,6 @@ namespace System.Net
 		bool disposed;
 		bool isRead;
 		int totalRead;
-		int contentLength;
 
 		ManualResetEvent closewh;
 
@@ -39,7 +38,6 @@ namespace System.Net
 				throw new ArgumentException ("socket");
 
 			this.request = request;
-			this.contentLength = socket.Available;
 			this.networkStream = new NetworkStream (socket, true);
 			this.isRead = isRead;
 
@@ -129,7 +127,6 @@ namespace System.Net
 
 			totalRead += nbytes;
 			if (nbytes == 0) {
-				contentLength = totalRead;
 				networkStream.Close ();
 				request.SetTransferCompleted ();
 			}

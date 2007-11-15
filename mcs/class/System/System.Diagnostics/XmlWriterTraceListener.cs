@@ -79,7 +79,7 @@ namespace System.Diagnostics
 			this.name = name;
 		}
 
-		public virtual void Close ()
+		public override void Close ()
 		{
 			w.Close ();
 		}

@@ -45,8 +45,8 @@ namespace System.Diagnostics
 		private string name;
 		private string description;
 		private int switchSetting;
-		private string value;
 #if NET_2_0
+		private string value;
 		private string defaultSwitchValue;
 #endif
 		// MS Behavior is that (quoting from MSDN for OnSwitchSettingChanged()):

@@ -107,6 +107,7 @@ namespace System.Configuration
 			set { impl.ApplicationName = value; }
 		}
 
+/*
 		bool IsUserSetting (SettingsProperty prop)
 		{
 #if CONFIGURATION_DEP
@@ -122,6 +123,7 @@ namespace System.Configuration
 			return false;
 #endif
 		}
+*/		
 	}
 
 }

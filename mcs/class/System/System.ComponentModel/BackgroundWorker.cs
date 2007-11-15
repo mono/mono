@@ -43,9 +43,6 @@ namespace System.ComponentModel
 		AsyncOperation async;
 		bool cancel_pending, report_progress = false, support_cancel = false;
 
-		Dictionary<object,AsyncOperation> operations =
-			new Dictionary<object,AsyncOperation> ();
-
 		public event DoWorkEventHandler DoWork;
 		public event ProgressChangedEventHandler ProgressChanged;
 		public event RunWorkerCompletedEventHandler RunWorkerCompleted;

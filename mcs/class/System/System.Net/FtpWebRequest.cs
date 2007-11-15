@@ -171,7 +171,7 @@ namespace System.Net
 		}
 
 		[MonoTODO]
-		public static RequestCachePolicy DefaultCachePolicy
+		public static new RequestCachePolicy DefaultCachePolicy
 		{
 			get {
 				throw GetMustImplement ();
