@@ -1,7 +1,9 @@
 2007-11-15  Jb Evain  <jbevain@novell.com>
 
-	* LinkedList.cs: let's not have an access to the SerializationInfo
-	field outside of serializations methods (We need a gendarme rule). Fixes #341938.
+	* LinkedList.cs: ifdef out manually the Serialization part of the
+	LinkedList.Enumerator. As it is a struct, the field SerializationInfo
+	have to be assigned in the default constructor, and the tuner cannot
+	remove that. Fixes #341938 for real.
 
 2007-10-09  Raja R Harinath  <rharinath@novell.com>
 

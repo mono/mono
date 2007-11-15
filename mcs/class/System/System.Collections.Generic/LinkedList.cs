@@ -370,7 +370,10 @@ namespace System.Collections.Generic
 		}
 
 		[Serializable, StructLayout (LayoutKind.Sequential)]
-		public struct Enumerator : IEnumerator <T>, IDisposable, IEnumerator, ISerializable, IDeserializationCallback
+		public struct Enumerator : IEnumerator <T>, IDisposable, IEnumerator
+#if !NET_2_1
+			, ISerializable, IDeserializationCallback
+#endif
 		{
 			const String VersionKey = "version";
 			const String IndexKey = "index";
@@ -380,17 +383,9 @@ namespace System.Collections.Generic
 			LinkedListNode <T> current;
 			int index;
 			uint version;
+#if !NET_2_1
 			SerializationInfo si;
-			
-			internal Enumerator (LinkedList <T> parent)
-			{
-				si = null;
-				this.list = parent;
-				current = null;
-				index = -1;
-				version = parent.version;
-			}
-			
+
 			internal Enumerator (SerializationInfo info, StreamingContext context)
 			{
 				si = info;
@@ -399,7 +394,19 @@ namespace System.Collections.Generic
 				version = si.GetUInt32 (VersionKey);
 				current = null;
 			}
+#endif
 			
+			internal Enumerator (LinkedList <T> parent)
+			{
+#if !NET_2_1
+				si = null;
+#endif
+				this.list = parent;
+				current = null;
+				index = -1;
+				version = parent.version;
+			}
+
 			public T Current {
 				get {
 					if (list == null)
@@ -457,6 +464,7 @@ namespace System.Collections.Generic
 				list = null;
 			}
 			
+#if !NET_2_1
 			[SecurityPermission (SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.SerializationFormatter)]
 			void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 			{
@@ -486,6 +494,7 @@ namespace System.Collections.Generic
 					current = node;
 				}
 			}
+#endif
 		}
 	}
 }
