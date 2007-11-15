@@ -21,7 +21,7 @@ ASSEMBLY=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 
 # Setup the environment for MWF if needed
 if [ "$MWF_MODE" -eq "1" ]; then
-	export MONO_MWF_USE_QUARTZ_BACKEND=1
+	export MONO_MWF_USE_CARBON_BACKEND=1
 	export GDIPLUS_NOX=1
 fi
 
