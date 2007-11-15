@@ -1,3 +1,7 @@
+2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SectionGroupInfo.cs : remove extra StringBuilder creation.
+
 2007-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Configuration.cs : (Save) when the given file path is relative
