@@ -1,3 +1,9 @@
+2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbProviderFactoriesConfigurationHandler.cs : Create() now takes
+	  parent DataSet into consideration i.e. it now merges items in
+	  different configurations. Fixed bug #323708.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbDataPermissionAttribute.cs: In KeyRestrictionBehavior, reuse

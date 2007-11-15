@@ -54,13 +54,14 @@ namespace System.Data.Common
 
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
-			DataSet ds = new DataSet (DbProviderFactories.CONFIG_SECTION_NAME);
-			CreateDataTables (ds, section);
+			DataSet ds = parent as DataSet ?? CreateDataSet ();
+			FillDataTables (ds, section);
 			return ds;
 		}
 
-		internal virtual void CreateDataTables (DataSet ds, XmlNode section)
+		DataSet CreateDataSet ()
 		{
+			DataSet ds = new DataSet (DbProviderFactories.CONFIG_SECTION_NAME);
 			DataTable dt = ds.Tables.Add (DbProviderFactories.CONFIG_SEC_TABLE_NAME);
 			DataColumn [] columns = new DataColumn [4];
 			columns [0] = new DataColumn ("Name", typeof (string));
@@ -69,7 +70,12 @@ namespace System.Data.Common
 			columns [3] = new DataColumn ("AssemblyQualifiedName", typeof (string));
 			dt.Columns.AddRange (columns);
 			dt.PrimaryKey = new DataColumn [] { columns [2] };
+			return ds;
+		}
 
+		void FillDataTables (DataSet ds, XmlNode section)
+		{
+			DataTable dt = ds.Tables [0];
 			foreach (XmlNode node in section.ChildNodes) {
 				if (node.NodeType != XmlNodeType.Element)
 					continue;
