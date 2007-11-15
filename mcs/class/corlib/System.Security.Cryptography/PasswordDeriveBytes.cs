@@ -230,10 +230,13 @@ public class PasswordDeriveBytes : DeriveBytes {
 	// note: Key is returned - we can't zeroize it ourselve :-(
 #if NET_2_0
 	[Obsolete ("see Rfc2898DeriveBytes for PKCS#5 v2 support")]
+ #pragma warning disable 809
 #endif
 	public override byte[] GetBytes (int cb) 
 	{
-#if ! NET_2_0
+#if NET_2_0
+ #pragma warning restore 809
+#else
 		// 1.0/1.1 was a little late at throwing the argument exception ;-)
 		if (password == null)
 			throw new ArgumentNullException ("Password");

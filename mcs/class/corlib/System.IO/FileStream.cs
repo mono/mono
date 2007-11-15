@@ -401,7 +401,7 @@ namespace System.IO
 			}
 		}
 
-#if NET_2_0_SAFEFILEHANDLE_ENABLED
+#if NET_2_0
 		[Obsolete ("Use SafeFileHandle instead")]
 #endif
 		public virtual IntPtr Handle {
