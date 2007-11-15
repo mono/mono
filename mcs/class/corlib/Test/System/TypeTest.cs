@@ -637,6 +637,224 @@ PublicKeyToken=b77a5c561934e089"));
 			return sb.ToString ();
 		}
 
+		[Test]
+		public void InvokeMember_GetSetField ()
+		{
+			typeof (X).InvokeMember ("Value", BindingFlags.Public |
+				BindingFlags.Static | BindingFlags.FlattenHierarchy |
+				BindingFlags.SetField, null, null, new object [] { 5 });
+
+			Assert.AreEqual (5, X.Value, "#A1");
+			Assert.AreEqual (5, typeof (X).InvokeMember ("Value",
+				BindingFlags.Public | BindingFlags.Static |
+				BindingFlags.FlattenHierarchy | BindingFlags.GetField,
+				null, null, new object [0]), "#A2");
+			Assert.AreEqual (5, Y.Value, "#A3");
+			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value",
+				BindingFlags.Public | BindingFlags.Static |
+				BindingFlags.FlattenHierarchy | BindingFlags.GetField,
+				null, null, new object [0]), "#A4");
+
+			try {
+				typeof (X).InvokeMember ("Value", BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.FlattenHierarchy |
+					BindingFlags.GetField | BindingFlags.SetField,
+					null, null, new object [] { 5 });
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot specify both Get and Set on a field
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
+#endif
+			}
+		}
+
+		[Test]
+		public void InvokeMember_GetSetProperty ()
+		{
+			try {
+				typeof (ArrayList).InvokeMember ("Item",
+					BindingFlags.GetProperty | BindingFlags.SetProperty |
+					BindingFlags.Instance | BindingFlags.Public,
+					null, new ArrayList (), new object [] { 0, "bar" });
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Cannot specify both Get and Set on a property
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
+#endif
+			}
+		}
+
+
+		[Test]
+		public void InvokeMember_InvokeMethod_Set ()
+		{
+			try {
+				typeof (ArrayList).InvokeMember ("ToString",
+					BindingFlags.InvokeMethod | BindingFlags.SetField |
+					BindingFlags.Instance | BindingFlags.Public,
+					null, new ArrayList (), new object [0]);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Cannot specify Set on a field and Invoke on a method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#A6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#A6");
+#endif
+			}
+
+			try {
+				typeof (ArrayList).InvokeMember ("ToString",
+					BindingFlags.InvokeMethod | BindingFlags.SetProperty |
+					BindingFlags.Instance | BindingFlags.Public,
+					null, new ArrayList (), new object [0]);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Cannot specify Set on a property and Invoke on a method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
+#endif
+			}
+		}
+
+		[Test]
+		public void InvokeMember_MatchPrimitiveTypeWithInterface ()
+		{
+			object [] invokeargs = { 1 };
+			typeof (Z).InvokeMember ("", BindingFlags.DeclaredOnly |
+				BindingFlags.Public | BindingFlags.NonPublic |
+				BindingFlags.Instance | BindingFlags.CreateInstance,
+				null, null, invokeargs);
+		}
+
+		[Test]
+		public void InvokeMember_Name_Null ()
+		{
+			try {
+				typeof (X).InvokeMember ((string) null,
+					BindingFlags.Public | BindingFlags.Static |
+					BindingFlags.FlattenHierarchy | BindingFlags.SetField,
+					null, null, new object [] { 5 });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test]
+		public void InvokeMember_NoOperation ()
+		{
+			try {
+				typeof (TypeTest).InvokeMember ("Run", BindingFlags.Public |
+					BindingFlags.Static, null, null, new object [0]);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Must specify binding flags describing the
+				// invoke operation required
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
+#endif
+			}
+		}
+
+		[Test] // bug #321735
+		public void InvokeMember_SetFieldProperty ()
+		{
+			ArrayList list = new ArrayList ();
+			list.Add ("foo");
+			list.GetType ().InvokeMember ("Item",
+				BindingFlags.SetField | BindingFlags.SetProperty |
+				BindingFlags.Instance | BindingFlags.Public,
+				null, list, new object [] { 0, "bar" });
+			Assert.AreEqual ("bar", list [0]);
+		}
+
+		[Test]
+		public void InvokeMember_SetField_ProvidedArgs ()
+		{
+			try {
+				typeof (X).InvokeMember ("Value", BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.SetField,
+					null, null, new object [0]);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Only the field value can be specified to set
+				// a field value
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
+#endif
+			}
+
+			try {
+				typeof (X).InvokeMember ("Value", BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.SetField,
+					null, null, null);
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("providedArgs", ex.ParamName, "#B6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// Only the field value can be specified to set
+				// a field value
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+#if NET_2_0
+				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
+#else
+				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
+#endif
+			}
+#endif
+		}
+
 		[Test] // bug #336841
 		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=306797
 		public void InvokeMember_VarArgs ()
@@ -667,17 +885,6 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 		}
 
-		[Test]
-		public void InvokeMemberGetSetField ()
-		{
-			typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.SetField, null, null, new object [] { 5 });
-
-			Assert.AreEqual (5, X.Value);
-			Assert.AreEqual (5, typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
-			Assert.AreEqual (5, Y.Value);
-			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
-		}
-
 		class Z
 		{
 			public Z (IComparable value)
@@ -685,30 +892,9 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 	
-		[Test]
-		public void InvokeMemberMatchPrimitiveTypeWithInterface ()
+		public static void Run ()
 		{
-			object[] invokeargs = {1};
-			typeof (Z).InvokeMember( "", 
-											BindingFlags.DeclaredOnly |
-											BindingFlags.Public |
-											BindingFlags.NonPublic |
-											BindingFlags.Instance |
-											BindingFlags.CreateInstance,
-											null, null, invokeargs 
-											);
 		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvokeMember_NoOperation ()
-		{
-			typeof (TypeTest).InvokeMember ("Run", BindingFlags.Public|BindingFlags.Static, null, null, new object [0]);
-		}
-
-        public static void Run ()
-        {
-        }
 
 		class TakesInt
 		{
@@ -735,14 +921,6 @@ PublicKeyToken=b77a5c561934e089"));
 			// This ends up calling type.GetConstructor ()
 			Activator.CreateInstance (typeof (TakesInt), new object [] { null });
 			Activator.CreateInstance (typeof (TakesObject), new object [] { null });
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetConstructorNullInTypes_Bug71300 ()
-		{
-			typeof (TakesInt).GetConstructor (new Type[1] { null });
-			// so null in types isn't valid for GetConstructor!
 		}
 
 		[Test]
@@ -1095,32 +1273,82 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetConstructor1a_Bug71300 ()
+		[Test] // GetConstructor (Type [])
+		public void GetConstructor1_Types_Null ()
 		{
-			typeof (BindingFlags).GetConstructor (null);
+			try {
+				typeof (BindingFlags).GetConstructor (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("types", ex.ParamName, "#6");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetConstructor1b_Bug71300 ()
+		[Test] // GetConstructor (Type [])
+		public void GetConstructor1_Types_ItemNull ()
 		{
-			typeof (BindingFlags).GetConstructor (new Type[1] { null });
+			Type type = typeof (BindingFlags);
+			try {
+				type.GetConstructor (new Type[1] { null });
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("types", ex.ParamName, "#A6");
+			}
+
+			type = typeof (TakesInt);
+			try {
+				type.GetConstructor (new Type [1] { null });
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("types", ex.ParamName, "#B6");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetConstructor4_Bug71300 ()
+		[Test] // GetConstructor (BindingFlags, Binder, Type [], ParameterModifier [])
+		public void GetConstructor2_Types_ItemNull ()
 		{
-			typeof (BindingFlags).GetConstructor (BindingFlags.Default, null, new Type[1] { null }, null);
+			Type type = typeof (BindingFlags);
+			try {
+				type.GetConstructor (BindingFlags.Default, null,
+					new Type[1] { null }, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("types", ex.ParamName, "#6");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetConstructor5_Bug71300 ()
+		[Test] // GetConstructor (BindingFlags, Binder, CallingConventions, Type [], ParameterModifier [])
+		public void GetConstructor3_Types_ItemNull ()
 		{
-			typeof (BindingFlags).GetConstructor (BindingFlags.Default, null, CallingConventions.Any, new Type[1] { null }, null);
+			Type type = typeof (BindingFlags);
+			try {
+				type.GetConstructor (BindingFlags.Default,
+					null, CallingConventions.Any,
+					new Type[1] { null }, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("types", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -1257,21 +1485,6 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (byref_type_param.DeclaringType);
 		}
 
-		[Test]
-		[Category ("NotWorking")] // BindingFlags.SetField throws since args.Length != 1, even though we have SetProperty
-		public void Bug79023 ()
-		{
-			ArrayList list = new ArrayList();
-			list.Add("foo");
-
-			// The next line used to throw because we had SetProperty
-			list.GetType().InvokeMember("Item",
-						    BindingFlags.SetField|BindingFlags.SetProperty|
-						    BindingFlags.Instance|BindingFlags.Public,
-						    null, list, new object[] { 0, "bar" });
-			Assert.AreEqual ("bar", list[0]);
-		}
-		
 		[ComVisible (true)]
 		public class ComFoo<T> {
 		}
@@ -1361,30 +1574,34 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] //bug #331199
-		public void TestMakeGenericTypeWithUserDefinedType () 
+		public void MakeGenericType_UserDefinedType ()
 		{
-			Type ut = new UserType(typeof(int));
-			Type t = typeof(Foo<>).MakeGenericType(ut);
-			Assert.IsTrue (t.IsGenericType, "#1");
+			Type ut = new UserType (typeof (int));
+			Type t = typeof (Foo<>).MakeGenericType (ut);
+			Assert.IsTrue (t.IsGenericType, "#A1");
+			Assert.AreEqual (1, t.GetGenericArguments ().Length, "#A2");
 
-			Assert.AreEqual (typeof(int), t.GetGenericArguments()[0], "#2");
+			Type arg = t.GetGenericArguments () [0];
+			Assert.IsNotNull (arg, "#B1");
+			Assert.IsFalse (arg.IsGenericType, "#B2");
+			Assert.AreEqual (typeof (int), arg, "#B3");
 		}
 
 		[Test]
-		public void TestMakeGenericTypeWithBadUserType () 
+		public void MakeGenericType_BadUserType ()
 		{
-			Type ut = new UserType(null);
+			Type ut = new UserType (null);
 			try {
-				Type t = typeof(Foo<>).MakeGenericType(ut);
+				Type t = typeof (Foo<>).MakeGenericType (ut);
 				Assert.Fail ("#1");
-			} catch(Exception) {
+			} catch (ArgumentException) {
 			}
 
-			ut = new UserType(new UserType(typeof(int)));
+			ut = new UserType (new UserType (typeof (int)));
 			try {
-				Type t = typeof(Foo<>).MakeGenericType(ut);
+				Type t = typeof (Foo<>).MakeGenericType (ut);
 				Assert.Fail ("#2");
-			} catch(Exception) {
+			} catch (ArgumentException) {
 			}
 		}
 #endif

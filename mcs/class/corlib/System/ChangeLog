@@ -1,6 +1,13 @@
+2007-11-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonoType.cs: Modified ParamName for ArgumentException to match
+	MS. Provide meaningful exception messages. On 2.0, throw ANE instead
+	of ArgumentException when args is null.
+
 2007-11-15  Zoltan Varga  <vargaz@gmail.com>
 
-	* MonoType.cs (Invoke): Allow BindingFlags.SetField and BindingFlags.SetProperty to be specified together. Fixes #321735.
+	* MonoType.cs (Invoke): Allow BindingFlags.SetField and
+	BindingFlags.SetProperty to be specified together. Fixes #321735.
 
 2007-11-14  Miguel de Icaza  <miguel@novell.com>
 

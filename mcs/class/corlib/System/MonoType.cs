@@ -314,24 +314,34 @@ namespace System
 						     ParameterModifier[] modifiers,
 						     CultureInfo culture, string[] namedParameters)
 		{
+#if NET_2_0
+			const string bindingflags_arg = "bindingFlags";
+#else
+			const string bindingflags_arg = "invokeAttr";
+#endif
+
 
 			if ((invokeAttr & BindingFlags.CreateInstance) != 0) {
 				if ((invokeAttr & (BindingFlags.GetField |
 						BindingFlags.GetField | BindingFlags.GetProperty |
 						BindingFlags.SetProperty)) != 0)
-					throw new ArgumentException ("invokeAttr");
+					throw new ArgumentException (bindingflags_arg);
 			} else if (name == null)
 				throw new ArgumentNullException ("name");
 			if ((invokeAttr & BindingFlags.GetField) != 0 && (invokeAttr & BindingFlags.SetField) != 0)
-				throw new ArgumentException ("invokeAttr");
+				throw new ArgumentException ("Cannot specify both Get and Set on a field.", bindingflags_arg);
 			if ((invokeAttr & BindingFlags.GetProperty) != 0 && (invokeAttr & BindingFlags.SetProperty) != 0)
-				throw new ArgumentException ("invokeAttr");
-			if ((invokeAttr & BindingFlags.InvokeMethod) != 0 && (invokeAttr & (BindingFlags.SetProperty|BindingFlags.SetField)) != 0)
-				throw new ArgumentException ("invokeAttr");
+				throw new ArgumentException ("Cannot specify both Get and Set on a property.", bindingflags_arg);
+			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
+				if ((invokeAttr & BindingFlags.SetField) != 0)
+					throw new ArgumentException ("Cannot specify Set on a field and Invoke on a method.", bindingflags_arg);
+				if ((invokeAttr & BindingFlags.SetProperty) != 0)
+					throw new ArgumentException ("Cannot specify Set on a property and Invoke on a method.", bindingflags_arg);
+			}
 			if ((namedParameters != null) && ((args == null) || args.Length < namedParameters.Length))
 				throw new ArgumentException ("namedParameters cannot be more than named arguments in number");
 			if ((invokeAttr & (BindingFlags.InvokeMethod|BindingFlags.CreateInstance|BindingFlags.GetField|BindingFlags.SetField|BindingFlags.GetProperty|BindingFlags.SetProperty)) == 0)
-				throw new ArgumentException ("Must specify binding flags describing the invoke operation required (BindingFlags.InvokeMethod CreateInstance GetField SetField GetProperty SetProperty).", "invokeAttr");
+				throw new ArgumentException ("Must specify binding flags describing the invoke operation required.", bindingflags_arg);
 
 			/* set some defaults if none are provided :-( */
 			if ((invokeAttr & (BindingFlags.Public|BindingFlags.NonPublic)) == 0)
@@ -396,8 +406,12 @@ namespace System
 			} else if ((invokeAttr & BindingFlags.SetField) != 0) {
 				FieldInfo f = GetField (name, invokeAttr);
 				if (f != null) {
+#if NET_2_0
+					if (args == null)
+						throw new ArgumentNullException ("providedArgs");
+#endif
 					if ((args == null) || args.Length != 1)
-						throw new ArgumentException ("invokeAttr");
+						throw new ArgumentException ("Only the field value can be specified to set a field value.", bindingflags_arg);
 					f.SetValue (target, args [0]);
 					return null;
 				} else if ((invokeAttr & BindingFlags.SetProperty) == 0) {

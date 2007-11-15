@@ -1,3 +1,8 @@
+2007-11-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Typetest.cs: Added and improve tests for InvokeMember. Enabled test
+	for bug #321735.
+
 2007-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Add a test for Copy () and exceptions.
