@@ -1,3 +1,11 @@
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* process.c: Read file version info from the files pointed at by
+	process modules, not the current process.  Fixes bug 315969.
+
+	Use windows typedef names in some places to fix warnings on the
+	windows build.
+
 2007-11-15  Mark Probst  <mark.probst@gmail.com>
 
 	* image.c, metadata-internals.h: Added a generic_class_cache hash
