@@ -1,3 +1,11 @@
+2007-11-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripPanel.cs: Make Join at least add the control to the panel,
+	even if the rest of what Join does isn't supported.  Add some more
+	support for vertical toolbars.
+	* ToolStripPanelRow.cs: Add some more support for vertical toolbars.
+	[Fixes the application breaking parts of bug #341998]
+
 2007-11-15  Jonathan Pobst <monkey@jpobst.com>
 
 	* ToolStripItem.cs: When determining if we have a check/image margin,

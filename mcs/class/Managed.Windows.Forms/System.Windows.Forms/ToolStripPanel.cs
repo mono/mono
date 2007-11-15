@@ -102,7 +102,21 @@ namespace System.Windows.Forms
 
 		public override DockStyle Dock {
 			get { return base.Dock; }
-			set { base.Dock = value; }
+			set {
+				base.Dock = value;
+
+				switch (value) {
+					case DockStyle.Top:
+					case DockStyle.Bottom:
+					case DockStyle.None:
+						this.orientation = Orientation.Horizontal;
+						break;
+					case DockStyle.Left:
+					case DockStyle.Right:
+						this.orientation = Orientation.Vertical;
+						break;
+				}
+			}
 		}
 
 		public override LayoutEngine LayoutEngine {
@@ -222,21 +236,26 @@ namespace System.Windows.Forms
 		[MonoTODO("Not implemented")]
 		public void Join (ToolStrip toolStripToDrag)
 		{
+			if (!Contains (toolStripToDrag))
+				Controls.Add (toolStripToDrag);
 		}
 
 		[MonoTODO("Not implemented")]
 		public void Join (ToolStrip toolStripToDrag, int row)
 		{
+			Join (toolStripToDrag);
 		}
 
 		[MonoTODO("Not implemented")]
 		public void Join (ToolStrip toolStripToDrag, Point location)
 		{
+			Join (toolStripToDrag);
 		}
 
 		[MonoTODO("Not implemented")]
 		public void Join (ToolStrip toolStripToDrag, int x, int y)
 		{
+			Join (toolStripToDrag);
 		}
 		
 		public ToolStripPanelRow PointToRow (Point clientLocation)
@@ -262,6 +281,11 @@ namespace System.Windows.Forms
 
 		protected override void OnControlAdded (ControlEventArgs e)
 		{
+			if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+				(e.Control as ToolStrip).LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
+			else
+				(e.Control as ToolStrip).LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+			
 			if (done_first_layout && e.Control is ToolStrip)
 				this.AddControlToRows (e.Control);
 			
@@ -303,18 +327,34 @@ namespace System.Windows.Forms
 			// Lay out all the rows
 			Point position = this.DisplayRectangle.Location;
 
-			foreach (ToolStripPanelRow row in this.rows) {
-				row.SetBounds (new Rectangle (position, new Size (this.Width, row.Bounds.Height)));
+			if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right) {
+				foreach (ToolStripPanelRow row in this.rows) {
+					row.SetBounds (new Rectangle (position, new Size (row.Bounds.Width, this.Height)));
 
-				position.Y += row.Bounds.Height;
-			}
+					position.X += row.Bounds.Width;
+				}
 
-			// Find how big we are so we can autosize ourself
-			if (this.rows.Count > 0) {
-				int last_row_bottom = this.rows[this.rows.Count - 1].Bounds.Bottom;
-			
-				if (last_row_bottom != this.Height)
-					this.SetBounds (bounds.X, bounds.Y, bounds.Width, last_row_bottom);
+				// Find how big we are so we can autosize ourself
+				if (this.rows.Count > 0) {
+					int last_row_right = this.rows[this.rows.Count - 1].Bounds.Right;
+
+					if (last_row_right != this.Width)
+						this.SetBounds (bounds.X, bounds.Y, last_row_right, bounds.Bottom);
+				}
+			} else {
+				foreach (ToolStripPanelRow row in this.rows) {
+					row.SetBounds (new Rectangle (position, new Size (this.Width, row.Bounds.Height)));
+
+					position.Y += row.Bounds.Height;
+				}
+
+				// Find how big we are so we can autosize ourself
+				if (this.rows.Count > 0) {
+					int last_row_bottom = this.rows[this.rows.Count - 1].Bounds.Bottom;
+				
+					if (last_row_bottom != this.Height)
+						this.SetBounds (bounds.X, bounds.Y, bounds.Width, last_row_bottom);
+				}
 			}
 			
 			this.Invalidate ();
@@ -415,7 +455,12 @@ namespace System.Windows.Forms
 				}
 
 			ToolStripPanelRow new_row = new ToolStripPanelRow (this);
-			new_row.SetBounds (new Rectangle (0, 0, this.Width, 25));
+			
+			if (this.Dock == DockStyle.Left || this.Dock == DockStyle.Right)
+				new_row.SetBounds (new Rectangle (0, 0, 25, this.Height));
+			else
+				new_row.SetBounds (new Rectangle (0, 0, this.Width, 25));
+				
 			this.rows.Add (new_row);
 			new_row.OnControlAdded (control, 0);
 		}

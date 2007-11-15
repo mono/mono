@@ -151,12 +151,21 @@ namespace System.Windows.Forms
 		{
 			int height = 0;
 			
-			foreach (ToolStrip ts in this.controls)
-				if (ts.Height > height)
-					height = ts.Height;
-					
-			if (height != this.bounds.Height)
-				this.bounds.Height = height;
+			if (this.Orientation == Orientation.Horizontal) {
+				foreach (ToolStrip ts in this.controls)
+					if (ts.Height > height)
+						height = ts.Height;
+						
+				if (height != this.bounds.Height)
+					this.bounds.Height = height;
+			} else {
+				foreach (ToolStrip ts in this.controls)
+					if (ts.GetPreferredSize (Size.Empty).Width > height)
+						height = ts.GetPreferredSize (Size.Empty).Width;
+
+				if (height != this.bounds.Width)
+					this.bounds.Width = height;
+			}
 				
 			this.Layout (this, e);
 		}
@@ -183,15 +192,27 @@ namespace System.Windows.Forms
 			Point position = tspr.DisplayRectangle.Location;
 			foreach (ToolStrip ts in tspr.Controls)
 			{
-				if (ts.Stretch)
-					ts.Width = this.bounds.Width - ts.Margin.Horizontal - this.Padding.Horizontal;
-				else
-					ts.Width = ts.GetToolStripPreferredSize (Size.Empty).Width;
+				if (Orientation == Orientation.Horizontal) {
+					if (ts.Stretch)
+						ts.Width = this.bounds.Width - ts.Margin.Horizontal - this.Padding.Horizontal;
+					else
+						ts.Width = ts.GetToolStripPreferredSize (Size.Empty).Width;
+						
+					position.X += ts.Margin.Left;
+					ts.Location = position;
 					
-				position.X += ts.Margin.Left;
-				ts.Location = position;
-				
-				position.X += (ts.Width + ts.Margin.Left);
+					position.X += (ts.Width + ts.Margin.Left);
+				} else {
+					if (ts.Stretch)
+						ts.Size = new Size (ts.GetToolStripPreferredSize (Size.Empty).Width, this.bounds.Height - ts.Margin.Vertical - this.Padding.Vertical);
+					else
+						ts.Size = ts.GetToolStripPreferredSize (Size.Empty);
+
+					position.Y += ts.Margin.Top;
+					ts.Location = position;
+
+					position.Y += (ts.Height + ts.Margin.Top);
+				}
 			}
 			
 			return false;
