@@ -1,3 +1,7 @@
+2007-11-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* Assembly.cs (GetFiles): Include the assembly itself as the first entry.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyName.cs : remove extraneous MonoTODO.

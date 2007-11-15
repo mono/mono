@@ -234,9 +234,19 @@ namespace System.Reflection {
 			if (names == null)
 				return new FileStream [0];
 
-			FileStream[] res = new FileStream [names.Length];
-			for (int i = 0; i < names.Length; ++i)
-				res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			string location = Location;
+
+			FileStream[] res;
+			if (location != String.Empty) {
+				res = new FileStream [names.Length + 1];
+				res [0] = new FileStream (location, FileMode.Open, FileAccess.Read);
+				for (int i = 0; i < names.Length; ++i)
+					res [i + 1] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			} else {
+				res = new FileStream [names.Length];
+				for (int i = 0; i < names.Length; ++i)
+					res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			}
 			return res;
 		}
 
