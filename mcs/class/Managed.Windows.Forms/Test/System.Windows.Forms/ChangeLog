@@ -1,3 +1,7 @@
+2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewTest.cs: New exception test for 2.0 FindNearestItem method.
+
 2007-11-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePickerTest.cs: Remove a compare on seconds in a format

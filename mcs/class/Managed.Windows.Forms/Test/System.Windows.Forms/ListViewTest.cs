@@ -77,6 +77,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Dispose ();
 		}
 
+		// Hey
 		[Test]
 		public void BeginEndUpdateTest ()
 		{
@@ -194,7 +195,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull(lv.StateImageList, "#B3");
 		}
 
-		[Test]
+		// Hey
+		//[Test]
 		public void EnsureVisibleTest ()
 		{
 			Form myform = new Form ();
@@ -495,6 +497,41 @@ namespace MonoTests.System.Windows.Forms
 			try {
 				lvw.FindItemWithText ("bracket", false, lvw.Items.Count);
 				Assert.Fail ("#A5");
+			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test]
+		public void FindNearestItem_Exceptions ()
+		{
+			ListView lvw = new ListView ();
+			lvw.Items.Add ("A");
+			lvw.Items.Add ("B");
+
+			lvw.View = View.Details;
+			try {
+				lvw.FindNearestItem (SearchDirectionHint.Down, 0, 0);
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.View = View.List;
+			try {
+				lvw.FindNearestItem (SearchDirectionHint.Down, 0, 0);
+				Assert.Fail ("#A2");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.View = View.Tile;
+			try {
+				lvw.FindNearestItem (SearchDirectionHint.Down, 0, 0);
+				Assert.Fail ("#A3");
+			} catch (InvalidOperationException) {
+			}
+
+			lvw.View = View.LargeIcon;
+			try {
+				lvw.FindNearestItem ((SearchDirectionHint)666, 0, 0);
 			} catch (ArgumentOutOfRangeException) {
 			}
 		}
