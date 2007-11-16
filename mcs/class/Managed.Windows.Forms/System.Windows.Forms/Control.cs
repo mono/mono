@@ -4900,7 +4900,7 @@ namespace System.Windows.Forms
 					XplatUI.SetZOrder(child.Handle, all_controls [index - 1].Handle, false, false);
 				} else {
 					IntPtr after = AfterTopMostControl ();
-					if (after != IntPtr.Zero)
+					if (after != IntPtr.Zero && after != child.Handle)
 						XplatUI.SetZOrder (child.Handle, after, false, false);
 					else
 						XplatUI.SetZOrder (child.Handle, IntPtr.Zero, true, false);

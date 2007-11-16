@@ -1,3 +1,9 @@
+2007-11-16  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: When updating the zorder, check if the child to update is
+	the same control that is set to always be on top (i.e., scrollbars), and 
+	just put it on top directly. Fixes BadMatch error on pdn3
+
 2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Throw the needed exceptions for FindNearestItem.
