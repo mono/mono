@@ -1,3 +1,9 @@
+2007-11-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Don't perform a new layout when a label changes its text,
+	cause label handles its own autosizing.
+	[Fixes bug #342077]
+
 2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Implement 2.0 FindNearestItem methods.

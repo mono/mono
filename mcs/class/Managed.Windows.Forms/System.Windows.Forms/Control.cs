@@ -3182,7 +3182,8 @@ namespace System.Windows.Forms
 					OnTextChanged (EventArgs.Empty);
 
 #if NET_2_0
-					if (AutoSize && Parent != null)
+					// Label has its own AutoSize implementation
+					if (AutoSize && Parent != null && (!(this is Label)))
 						Parent.PerformLayout (this, "Text");
 #endif
 				}
