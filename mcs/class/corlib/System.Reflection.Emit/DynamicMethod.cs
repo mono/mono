@@ -349,11 +349,13 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+/*
 		public override int MetadataToken {
 			get {
 				return 0;
 			}
 		}
+*/
 
 		private void RejectIfCreated () {
 			if (mhandle.Value != IntPtr.Zero)

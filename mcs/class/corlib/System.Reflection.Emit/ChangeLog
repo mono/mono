@@ -1,5 +1,12 @@
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AssemblyBuilder.cs : added missing 2.0 member.
+	* DynamicMethod.cs : removed extra stuff.
+	* DynamicILInfo.cs : no public .ctor().
+	* ILGenerator.cs : fixed 2.0 member signatures.
+
+2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EnumBuilder.cs, TypeBuilder.cs : implemented missing 2.0
 	  stuff, in harmless manner.
 

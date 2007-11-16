@@ -37,6 +37,10 @@ namespace System.Reflection.Emit {
 	[ComVisible (true)]
 	public class DynamicILInfo {
 
+		internal DynamicILInfo ()
+		{
+		}
+
 		[MonoTODO]
 		public DynamicMethod DynamicMethod { 
 			get {

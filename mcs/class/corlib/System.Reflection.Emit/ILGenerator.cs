@@ -182,6 +182,7 @@ namespace System.Reflection.Emit {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_ILGenerator))]
 #endif
 	[ClassInterface (ClassInterfaceType.None)]
 	public class ILGenerator: _ILGenerator {
@@ -454,7 +455,7 @@ namespace System.Reflection.Emit {
 		public virtual void BeginScope ()
 		{ }
 		
-		public LocalBuilder DeclareLocal (Type localType)
+		public virtual LocalBuilder DeclareLocal (Type localType)
 		{
 			return DeclareLocal (localType, false);
 		}
@@ -465,7 +466,7 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-		LocalBuilder DeclareLocal (Type localType, bool pinned)
+		virtual LocalBuilder DeclareLocal (Type localType, bool pinned)
 		{
 			if (localType == null)
 				throw new ArgumentNullException ("localType");
@@ -814,7 +815,12 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoLimitation ("vararg methods are not supported")]
-		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
 		{
 			if (methodinfo == null)
 				throw new ArgumentNullException ("methodInfo");
@@ -833,14 +839,24 @@ namespace System.Reflection.Emit {
 			Emit (opcode, methodinfo);
 		}
 
-		public void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes)
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes)
 		{
 			SignatureHelper helper 
 				= SignatureHelper.GetMethodSigHelper (module, 0, unmanagedCallConv, returnType, paramTypes);
 			Emit (opcode, helper);
 		}
 
-		public void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes)
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes)
 		{
 			if (optionalParamTypes != null)
 				throw new NotImplementedException ();
@@ -985,7 +1001,12 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoTODO("Not implemented")]
-		public void UsingNamespace (String usingNamespace)
+#if NET_2_0
+		public virtual
+#else
+		public
+#endif
+		void UsingNamespace (String usingNamespace)
 		{
 			throw new NotImplementedException ();
 		}

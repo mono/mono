@@ -192,6 +192,13 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
+#if NET_2_0
+		[MonoTODO]
+		public override bool ReflectionOnly {
+			get { return base.ReflectionOnly; }
+		}
+#endif
+
 		public void AddResourceFile (string name, string fileName)
 		{
 			AddResourceFile (name, fileName, ResourceAttributes.Public);
