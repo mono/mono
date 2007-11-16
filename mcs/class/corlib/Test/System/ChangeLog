@@ -1,3 +1,12 @@
+2007-11-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Splited MakeGenericType_UserDefinedType is two tests.
+	MakeGenericType_NestedUserDefinedType is the NotWorking part of 
+	the fix for bug #331199.
+
+	* TypeTest.cs: Added a NotWorking version of TestMakeGenericType_UserDefinedType
+	that has the behavior of .net 2.0 SP1.
+
 2007-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add new test for GetProperties () and virtual new properties.

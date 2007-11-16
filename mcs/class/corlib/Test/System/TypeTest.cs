@@ -1590,6 +1590,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] //bug #331199
+		//FIXME: 2.0 SP 1 has a diferent behavior
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -1603,6 +1604,32 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (typeof (int), arg, "#B3");
 		}
 
+		[Category ("NotWorking")]
+		//We dont support instantiating a user type 
+		public void MakeGenericType_NestedUserDefinedType ()
+		{
+			Type ut = new UserType (new UserType (typeof (int)));
+			Type t = typeof (Foo<>).MakeGenericType (ut);
+			Assert.IsTrue (t.IsGenericType, "#A1");
+			Assert.AreEqual (1, t.GetGenericArguments ().Length, "#A2");
+
+			Type arg = t.GetGenericArguments () [0];
+			Assert.IsNotNull (arg, "#B1");
+			Assert.IsFalse (arg.IsGenericType, "#B2");
+			Assert.AreEqual (ut, arg, "#B3");
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
+		{
+			Type ut = new UserType(typeof(int));
+			Type t = typeof(Foo<>).MakeGenericType(ut);
+			Assert.IsTrue (t.IsGenericType, "#1");
+
+			Assert.AreEqual (ut, t.GetGenericArguments()[0], "#2");
+		}
+		
 		[Test]
 		public void MakeGenericType_BadUserType ()
 		{
@@ -1610,13 +1637,6 @@ PublicKeyToken=b77a5c561934e089"));
 			try {
 				Type t = typeof (Foo<>).MakeGenericType (ut);
 				Assert.Fail ("#1");
-			} catch (ArgumentException) {
-			}
-
-			ut = new UserType (new UserType (typeof (int)));
-			try {
-				Type t = typeof (Foo<>).MakeGenericType (ut);
-				Assert.Fail ("#2");
 			} catch (ArgumentException) {
 			}
 		}
