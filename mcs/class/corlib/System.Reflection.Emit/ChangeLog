@@ -1,5 +1,10 @@
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EnumBuilder.cs, TypeBuilder.cs : implemented missing 2.0
+	  stuff, in harmless manner.
+
+2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConstructorBuilder.cs : added CallingConvention.
 
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>

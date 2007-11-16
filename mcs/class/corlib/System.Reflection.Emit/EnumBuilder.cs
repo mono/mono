@@ -184,6 +184,9 @@ namespace System.Reflection.Emit {
 				modifiers);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
 		{
 			return _tb.GetConstructors (bindingAttr);
@@ -234,6 +237,9 @@ namespace System.Reflection.Emit {
 			return _tb.GetInterface (name, ignoreCase);
 		}
 
+#if NET_2_0
+		[ComVisible (true)]
+#endif
 		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
 		{
 			return _tb.GetInterfaceMap (interfaceType);
@@ -345,6 +351,32 @@ namespace System.Reflection.Emit {
 			return _tb.IsDefined (attributeType, inherit);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override Type MakeArrayType ()
+		{
+			return base.MakeArrayType ();
+		}
+
+		[MonoTODO]
+		public override Type MakeArrayType (int rank)
+		{
+			return base.MakeArrayType (rank);
+		}
+
+		[MonoTODO]
+		public override Type MakeByRefType ()
+		{
+			return base.MakeByRefType ();
+		}
+
+		[MonoTODO]
+		public override Type MakePointerType ()
+		{
+			return base.MakePointerType ();
+		}
+#endif
+
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
 			_tb.SetCustomAttribute (customBuilder);
@@ -357,35 +389,6 @@ namespace System.Reflection.Emit {
 		{
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		[MonoTODO("Not implemented")]
-		public override Type[] GetGenericArguments ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO("Not implemented")]
-		public override bool ContainsGenericParameters {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public override bool IsGenericParameter {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public override int GenericParameterPosition {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
 
 		private Exception CreateNotSupportedException ()
 		{

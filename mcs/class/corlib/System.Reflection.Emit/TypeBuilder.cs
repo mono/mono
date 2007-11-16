@@ -1280,12 +1280,45 @@ namespace System.Reflection.Emit
 			return false;
 		}
 
+		// FIXME: I doubt just removing this still works.
 		protected override bool IsValueTypeImpl ()
 		{
 			return ((type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false)) &&
 				this != pmodule.assemblyb.corlib_value_type &&
 				this != pmodule.assemblyb.corlib_enum_type);
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		public override Type MakeArrayType ()
+		{
+			return base.MakeArrayType ();
+		}
+
+		[MonoTODO]
+		public override Type MakeArrayType (int rank)
+		{
+			return base.MakeArrayType (rank);
+		}
+
+		[MonoTODO]
+		public override Type MakeByRefType ()
+		{
+			return base.MakeByRefType ();
+		}
+
+		[MonoTODO]
+		public override Type MakeGenericType (params Type [] typeArguments)
+		{
+			return base.MakeGenericType (typeArguments);
+		}
+
+		[MonoTODO]
+		public override Type MakePointerType ()
+		{
+			return base.MakePointerType ();
+		}
+#endif
 		
 		public override RuntimeTypeHandle TypeHandle {
 			get {
