@@ -3519,6 +3519,64 @@ namespace System.Windows.Forms
 
 			return null;
 		}
+
+		public ListViewItem FindNearestItem (SearchDirectionHint direction, int x, int y)
+		{
+			return FindNearestItem (direction, new Point (x, y));
+		}
+
+		public ListViewItem FindNearestItem (SearchDirectionHint direction, Point location)
+		{
+			ListViewItem item = null;
+			int min_dist = Int32.MaxValue;
+
+			//
+			// It looks like .Net does a previous adjustment
+			//
+			switch (direction) {
+				case SearchDirectionHint.Up:
+					location.Y -= item_size.Height;
+					break;
+				case SearchDirectionHint.Down:
+					location.Y += item_size.Height;
+					break;
+				case SearchDirectionHint.Left:
+					location.X -= item_size.Width;
+					break;
+				case SearchDirectionHint.Right:
+					location.X += item_size.Width;
+					break;
+			}
+
+			for (int i = 0; i < items.Count; i++) {
+				Point item_loc = GetItemLocation (i);
+
+				if (direction == SearchDirectionHint.Up) {
+					if (location.Y < item_loc.Y)
+						continue;
+				} else if (direction == SearchDirectionHint.Down) {
+					if (location.Y > item_loc.Y)
+						continue;
+				} else if (direction == SearchDirectionHint.Left) {
+					if (location.X < item_loc.X)
+						continue;
+				} else if (direction == SearchDirectionHint.Right) {
+					if (location.X > item_loc.X)
+						continue;
+				}
+
+				int x_dist = location.X - item_loc.X;
+				int y_dist = location.Y - item_loc.Y;
+
+				int dist = x_dist * x_dist  + y_dist * y_dist;
+				if (dist < min_dist) {
+					item = items [i];
+					min_dist = dist;
+				}
+			}
+
+			return item;
+		}
 #endif
 		
 		public ListViewItem GetItemAt (int x, int y)

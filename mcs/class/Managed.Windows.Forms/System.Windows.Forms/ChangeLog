@@ -1,3 +1,7 @@
+2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Implement 2.0 FindNearestItem methods.
+
 2007-11-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripPanel.cs: Make Join at least add the control to the panel,
