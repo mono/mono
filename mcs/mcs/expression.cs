@@ -1440,6 +1440,68 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 		}
 	}
+	
+	//
+	// C# 2.0 Default value expression
+	//
+	public class DefaultValueExpression : Expression
+	{
+		Expression expr;
+
+		public DefaultValueExpression (Expression expr, Location loc)
+		{
+			this.expr = expr;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
+				return null;
+
+			type = texpr.Type;
+
+			if (type == TypeManager.void_type) {
+				Error_VoidInvalidInTheContext (loc);
+				return null;
+			}
+
+			if (TypeManager.IsGenericParameter (type))
+			{
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
+				if (constraints != null && constraints.IsReferenceType)
+					return new NullDefault (new NullLiteral (Location), type);
+			}
+			else
+			{
+				Constant c = New.Constantify(type);
+				if (c != null)
+					return new NullDefault (c, type);
+
+				if (!TypeManager.IsValueType (type))
+					return new NullDefault (new NullLiteral (Location), type);
+			}
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			LocalTemporary temp_storage = new LocalTemporary(type);
+
+			temp_storage.AddressOf(ec, AddressOp.LoadStore);
+			ec.ig.Emit(OpCodes.Initobj, type);
+			temp_storage.Emit(ec);
+		}
+		
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			DefaultValueExpression target = (DefaultValueExpression) t;
+			
+			target.expr = expr.Clone (clonectx);
+		}
+	}
 
 	/// <summary>
 	///   Binary operators
@@ -8142,18 +8204,16 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-#if GMCS_SOURCE
 		public Expression RemoveNullable ()
 		{
 			if (dim.EndsWith ("?")) {
 				dim = dim.Substring (0, dim.Length - 1);
-				if (dim == "")
+				if (dim.Length == 0)
 					return left;
 			}
 
 			return this;
 		}
-#endif
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{

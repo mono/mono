@@ -2958,6 +2958,22 @@ namespace Mono.CSharp {
 		throw new InternalErrorException ();
 #endif
 	}
+			
+	public static GenericConstraints GetTypeParameterConstraints (Type t)
+	{
+#if GMCS_SOURCE				
+		if (!t.IsGenericParameter)
+			throw new InvalidOperationException ();
+
+		TypeParameter tparam = LookupTypeParameter (t);
+		if (tparam != null)
+			return tparam.GenericConstraints;
+
+		return ReflectionConstraints.GetConstraints (t);
+#else
+		throw new InternalErrorException ();
+#endif				
+	}
 
 	public static bool HasGenericArguments (Type t)
 	{

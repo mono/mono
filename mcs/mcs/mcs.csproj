@@ -173,6 +173,9 @@
     <Compile Include="lambda.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="linq.cs">
+      <SubType>Code</SubType>
+    </Compile>    
     <Compile Include="literal.cs">
       <SubType>Code</SubType>
     </Compile>

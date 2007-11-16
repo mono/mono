@@ -9,7 +9,6 @@ EXTRA_DISTFILES = \
 	*cs-parser.jay		\
 	*.sources		\
 	generic.cs		\
-	linq.cs			\
 	NOTES			\
 	TODO			\
 	gmcs.exe.config
@@ -17,7 +16,6 @@ EXTRA_DISTFILES = \
 GMCS_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
 
 ifdef GMCS_PROFILE
-	BUILT_SOURCES = gcs-parser.cs
 	LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
 
 	ifeq (net_2_1, $(PROFILE))
@@ -29,9 +27,10 @@ ifdef GMCS_PROFILE
 		PROGRAM = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 	endif	
 else
-	BUILT_SOURCES = cs-parser.cs
 	PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 endif
+
+BUILT_SOURCES = cs-parser.cs
 
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 

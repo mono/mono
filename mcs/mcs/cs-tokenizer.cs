@@ -45,10 +45,7 @@ namespace Mono.CSharp
 		Location current_comment_location = Location.Null;
 		ArrayList escaped_identifiers = new ArrayList ();
 		public int parsing_block;
-
-#if GMCS_SOURCE
 		internal int query_parsing;
-#endif
 		
 		static bool IsLinqEnabled {
 			get {
@@ -656,7 +653,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-#if GMCS_SOURCE
 		public void PutbackNullable ()
 		{
 			if (nullable_pos < 0)
@@ -685,6 +681,7 @@ namespace Mono.CSharp
 				nullable_pos = -1;
 		}
 		
+#if GMCS_SOURCE		
 		bool parse_generic_dimension (out int dimension)
 		{
 			dimension = 1;
@@ -699,8 +696,8 @@ namespace Mono.CSharp
 			}
 
 			return false;
-		}		
-#endif
+		}
+#endif		
 		
 		public int peek_token ()
 		{
@@ -1568,7 +1565,6 @@ namespace Mono.CSharp
 		{
 			current_token = xtoken ();
 
-#if GMCS_SOURCE
 			if (current_token != Token.DEFAULT)
 				return current_token;
 
@@ -1582,7 +1578,7 @@ namespace Mono.CSharp
 				current_token = Token.DEFAULT_COLON;
 			else
 				PopPosition();
-#endif
+			
 			return current_token;
 		}
 

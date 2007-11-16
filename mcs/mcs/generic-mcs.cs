@@ -13,6 +13,13 @@ using System.Collections;
 
 namespace Mono.CSharp
 {
+	public enum SpecialConstraint
+	{
+		Constructor,
+		ReferenceType,
+		ValueType
+	}
+	
 	public abstract class GenericConstraints
 	{
 		public abstract string TypeParameter {
@@ -24,18 +31,28 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class Constraints : GenericConstraints
+	public class Constraints : GenericConstraints
 	{
+		public Constraints (string name, ArrayList constraints, Location loc)
+		{
+		}
+		
 		public Constraints Clone ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public abstract Location Location {
-			get;
+		public Location Location {
+			get { return Location.Null; } 
 		}
+		
+		public override string TypeParameter {
+			get { throw new NotImplementedException (); }
+		}		
 
-		public abstract void VerifyClsCompliance ();
+		public void VerifyClsCompliance ()
+		{
+		}
 	}
 
 	public class TypeParameter : MemberCore, IMemberContainer
@@ -287,22 +304,22 @@ namespace Mono.CSharp
 	{
 		public TypeArguments (Location loc)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public TypeArguments (Location loc, params Expression[] types)
 		{
-			throw new NotImplementedException ();
-		}		
+		}
+
+		public TypeArguments (int dimension, Location loc)
+		{
+		}
 
 		public void Add (Expression type)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public void Add (TypeArguments new_args)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public bool Resolve (IResolveContext ec)
@@ -353,6 +370,23 @@ namespace Mono.CSharp
 	
 	public class Nullable
 	{
+		public class NullCoalescingOperator : Expression
+		{
+			public NullCoalescingOperator (Expression left, Expression right, Location loc)
+			{
+			}
+			
+			public override Expression DoResolve (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+			
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
 		public class HasValue
 		{
 			public static Expression Create (Expression expr, EmitContext ec)

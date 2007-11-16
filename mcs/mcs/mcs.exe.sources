@@ -34,6 +34,7 @@ support.cs
 typemanager.cs
 symbolwriter.cs
 lambda.cs
+linq.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs

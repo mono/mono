@@ -89,6 +89,7 @@ namespace Mono.CSharp.Linq
 
 			public bool NoExactMatch (EmitContext ec, MethodBase method)
 			{
+#if GMCS_SOURCE				
 				ParameterData pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
@@ -116,6 +117,9 @@ namespace Mono.CSharp.Linq
 					"Try specifying the type argument explicitly",
 					mg.Name.ToLower ());
 				return true;
+#else
+				return false;
+#endif
 			}
 		}
 

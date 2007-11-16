@@ -88,7 +88,7 @@
     </Compile>
     <Compile Include="lambda.cs">
     </Compile>
-    <Compile Include="gcs-parser.cs" />
+    <Compile Include="cs-parser.cs" />
     <Compile Include="cs-tokenizer.cs">
     </Compile>
     <Compile Include="decl.cs">

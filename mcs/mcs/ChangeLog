@@ -1,5 +1,12 @@
 2007-11-16  Marek Safar  <marek.safar@gmail.com>
 
+ 	* gcs-parser.jay: Merged to cs-parser.jay.
+ 	
+ 	* generic.cs, typemanager.cs, cs-tokenizer.cs, linq.cs, Makefile
+ 	* *.csproj, *.sources: Updated to use only jay parser file.
+
+2007-11-16  Marek Safar  <marek.safar@gmail.com>
+
  	* gcs-parser.jay: Added nullable and default expression feature checks.
  	
 2007-11-16  Marek Safar  <marek.safar@gmail.com>

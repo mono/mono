@@ -1990,65 +1990,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class DefaultValueExpression : Expression
-	{
-		Expression expr;
-
-		public DefaultValueExpression (Expression expr, Location loc)
-		{
-			this.expr = expr;
-			this.loc = loc;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
-			if (texpr == null)
-				return null;
-
-			type = texpr.Type;
-
-			if (type == TypeManager.void_type) {
-				Error_VoidInvalidInTheContext (loc);
-				return null;
-			}
-
-			if (type.IsGenericParameter)
-			{
-				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
-				if (constraints != null && constraints.IsReferenceType)
-					return new NullDefault (new NullLiteral (Location), type);
-			}
-			else
-			{
-				Constant c = New.Constantify(type);
-				if (c != null)
-					return new NullDefault (c, type);
-
-				if (!TypeManager.IsValueType (type))
-					return new NullDefault (new NullLiteral (Location), type);
-			}
-			eclass = ExprClass.Variable;
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			LocalTemporary temp_storage = new LocalTemporary(type);
-
-			temp_storage.AddressOf(ec, AddressOp.LoadStore);
-			ec.ig.Emit(OpCodes.Initobj, type);
-			temp_storage.Emit(ec);
-		}
-		
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			DefaultValueExpression target = (DefaultValueExpression) t;
-			
-			target.expr = expr.Clone (clonectx);
-		}
-	}
-
 	public class NullableType : TypeExpr
 	{
 		Expression underlying;
@@ -2132,18 +2073,6 @@ namespace Mono.CSharp {
 		{
 			t = DropGenericTypeArguments (t);
 			return LookupTypeContainer (t);
-		}
-
-		public static GenericConstraints GetTypeParameterConstraints (Type t)
-		{
-			if (!t.IsGenericParameter)
-				throw new InvalidOperationException ();
-
-			TypeParameter tparam = LookupTypeParameter (t);
-			if (tparam != null)
-				return tparam.GenericConstraints;
-
-			return ReflectionConstraints.GetConstraints (t);
 		}
 
 		/// <summary>
