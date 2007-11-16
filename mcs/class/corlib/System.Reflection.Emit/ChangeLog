@@ -1,3 +1,9 @@
+2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignatureHelper.cs : Module can be null, and for non-
+	  ModuleBuilder argument, throw ArgumentException.
+	  Added missing 2.0 stuff.
+
 2007-11-08  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* TypeBuilder.cs: Workaround for #82625 not needed anymore.

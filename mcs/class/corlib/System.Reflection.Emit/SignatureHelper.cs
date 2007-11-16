@@ -52,7 +52,7 @@ namespace System.Reflection.Emit {
 			HELPER_PROPERTY
 		}
 
-		private ModuleBuilder module;
+		private ModuleBuilder module; // can be null in 2.0
 		private Type[] arguments;
 		private SignatureHelperType type;
 		private Type returnType;
@@ -67,19 +67,37 @@ namespace System.Reflection.Emit {
 
 		public static SignatureHelper GetFieldSigHelper (Module mod)
 		{
-			if (!(mod is ModuleBuilder))
-				throw new NotImplementedException ();
+			if (mod != null && !(mod is ModuleBuilder))
+				throw new ArgumentException ("ModuleBuilder is expected");
 
 			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_FIELD);
 		}
 
 		public static SignatureHelper GetLocalVarSigHelper (Module mod)
 		{
-			if (!(mod is ModuleBuilder))
-				throw new NotImplementedException ();
+			if (mod != null && !(mod is ModuleBuilder))
+				throw new ArgumentException ("ModuleBuilder is expected");
 
 			return new SignatureHelper ((ModuleBuilder) mod, SignatureHelperType.HELPER_LOCAL);
 		}
+
+#if NET_2_0
+		public static SignatureHelper GetLocalVarSigHelper ()
+		{
+			return new SignatureHelper (null, SignatureHelperType.HELPER_LOCAL);
+		}
+
+		public static SignatureHelper GetMethodSigHelper(CallingConventions callingConvention, Type returnType)
+		{
+			return GetMethodSigHelper (null, callingConvention, (CallingConvention)0, returnType, null);
+		}
+
+		public static SignatureHelper GetMethodSigHelper (CallingConvention unmanagedCallingConvention,
+								  Type returnType)
+		{
+			return GetMethodSigHelper (null, CallingConventions.Standard, unmanagedCallingConvention, returnType, null);
+		}
+#endif
 
 		public static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callingConvention, Type returnType)
 		{
@@ -103,6 +121,19 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[MonoTODO("Not implemented")]
+		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType,
+								    Type [] requiredReturnTypeCustomModifiers,
+								    Type [] optionalReturnTypeCustomModifiers,
+								    Type [] parameterTypes,
+								    Type [] [] requiredParameterTypeCustomModifiers,
+								    Type [] [] optionalParameterTypeCustomModifiers)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public void AddArgument (Type clsArgument)
 		{
 			if (arguments != null) {
@@ -115,6 +146,20 @@ namespace System.Reflection.Emit {
 				arguments [0] = clsArgument;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("pinned is ignored")]
+		public void AddArgument (Type argument, bool pinned)
+		{
+			AddArgument (argument);
+		}
+
+		[MonoTODO ("not implemented")]
+		public void AddArgument (Type argument, Type [] requiredCustomModifiers, Type [] optionalCustomModifiers)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		[MonoTODO("Not implemented")]
 		public void AddSentinel ()
@@ -159,8 +204,8 @@ namespace System.Reflection.Emit {
 		internal static SignatureHelper GetMethodSigHelper( Module mod, CallingConventions callConv, CallingConvention unmanagedCallConv, Type returnType,
 														   Type [] parameters)
 		{
-			if (!(mod is ModuleBuilder))
-				throw new NotImplementedException ();
+			if (mod != null && !(mod is ModuleBuilder))
+				throw new ArgumentException ("ModuleBuilder is expected");
 
 			SignatureHelper helper = 
 				new SignatureHelper ((ModuleBuilder)mod, SignatureHelperType.HELPER_METHOD);
