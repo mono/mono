@@ -222,7 +222,7 @@ namespace System {
 		}
 
 #if NET_2_0
-		[Obsolete ("")]
+		[Obsolete ("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
 #endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void AppendPrivatePath (string path)
@@ -246,7 +246,7 @@ namespace System {
 		}
 
 #if NET_2_0
-		[Obsolete ("")]
+		[Obsolete ("AppDomain.ClearPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
 #endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearPrivatePath ()
@@ -850,7 +850,11 @@ namespace System {
 		}
 
 #if NET_2_0
-		[Obsolete ("")]
+		[Obsolete ("AppDomain.GetCurrentThreadId has been deprecated"
+			+ " because it does not provide a stable Id when managed"
+			+ " threads are running on fibers (aka lightweight"
+			+ " threads). To get a stable identifier for a managed"
+			+ " thread, use the ManagedThreadId property on Thread.'")]
 #endif
 		public static int GetCurrentThreadId ()
 		{
