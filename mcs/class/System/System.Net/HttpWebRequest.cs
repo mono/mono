@@ -912,6 +912,9 @@ namespace System.Net
 					return false;
 				*/
 
+				contentLength = 0;
+				bodyBufferLength = 0;
+				bodyBuffer = null;
 				method = "GET";
 				uriString = webResponse.Headers ["Location"];
 				break;
