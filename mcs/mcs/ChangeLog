@@ -1,5 +1,16 @@
 2007-11-16  Marek Safar  <marek.safar@gmail.com>
 
+ 	* cs-tokenizer.cs: Removed GMCS ifdefs.
+ 	
+ 	* rootcontext.cs, report.cs: Report unavailable gmcs features used by
+ 	mcs.
+ 	
+	* cs-parser.jay: Disabled nullable check.
+	
+	* generic-mcs: Copied more generic stuff.
+	 	
+2007-11-16  Marek Safar  <marek.safar@gmail.com>
+
  	* gcs-parser.jay: Merged to cs-parser.jay.
  	
  	* generic.cs, typemanager.cs, cs-tokenizer.cs, linq.cs, Makefile

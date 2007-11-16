@@ -21,11 +21,18 @@ namespace Mono.CSharp {
 
 	public enum LanguageVersion
 	{
-		ISO_1	= 1,
-		ISO_2	= 2,
-		LINQ	= 3,
+		ISO_1		= 1,
+		Default_MCS	= 2,
+		ISO_2		= 3,
+		LINQ		= 4,
 
-		Default	= ISO_2
+#if NET_2_1		
+		Default		= LINQ
+#elif GMCS_SOURCE
+		Default		= ISO_2
+#else
+		Default		= Default_MCS
+#endif
 	}
 
 	public class RootContext {

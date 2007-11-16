@@ -438,12 +438,20 @@ namespace Mono.CSharp {
 		public static void FeatureIsNotAvailable (Location loc, string feature)
 		{
 			string version;
-			if (RootContext.Version == LanguageVersion.ISO_1)
+			switch (RootContext.Version) {
+			case LanguageVersion.ISO_1:
 				version = "1.0";
-			else if (RootContext.Version == LanguageVersion.ISO_2)
+				break;
+			case LanguageVersion.ISO_2:
 				version = "2.0";
-			else
+				break;
+			case LanguageVersion.Default_MCS:
+				Report.Error (1644, loc, "Feature `{0}' is not available in Mono mcs compiler. Consider using Mono gmcs compiler instead",
+				              feature);
+				return;
+			default:
 				throw new InternalErrorException ("Invalid feature version", RootContext.Version);
+			}
 
 			Report.Error (1644, loc,
 				"Feature `{0}' cannot be used because it is not part of the C# {1} language specification",

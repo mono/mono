@@ -389,7 +389,6 @@ namespace Mono.CSharp
 			AddKeyword ("volatile", Token.VOLATILE);
 			AddKeyword ("while", Token.WHILE);
 			AddKeyword ("partial", Token.PARTIAL);
-#if GMCS_SOURCE
 			AddKeyword ("where", Token.WHERE);
 
 			// LINQ keywords
@@ -405,7 +404,6 @@ namespace Mono.CSharp
 			AddKeyword ("ascending", Token.ASCENDING);
 			AddKeyword ("descending", Token.DESCENDING);
 			AddKeyword ("into", Token.INTO);
-#endif
 		}
 
 		//
@@ -447,7 +445,7 @@ namespace Mono.CSharp
 				return -1;
 			if (!handle_assembly && res == Token.ASSEMBLY)
 				return -1;
-#if GMCS_SOURCE
+			
 			//
 			// A query expression is any expression that starts with `from identifier'
 			// followed by any token except ; , =
@@ -499,9 +497,8 @@ namespace Mono.CSharp
 
 			if (res == Token.WHERE && !handle_where && query_parsing == 0)
 				return -1;
-#endif
-			return res;
 			
+			return res;
 		}
 
 		public Location Location {
@@ -681,7 +678,6 @@ namespace Mono.CSharp
 				nullable_pos = -1;
 		}
 		
-#if GMCS_SOURCE		
 		bool parse_generic_dimension (out int dimension)
 		{
 			dimension = 1;
@@ -697,7 +693,6 @@ namespace Mono.CSharp
 
 			return false;
 		}
-#endif		
 		
 		public int peek_token ()
 		{
@@ -775,16 +770,14 @@ namespace Mono.CSharp
 				val = Location;
 				return Token.TILDE;
 			case '?':
-#if GMCS_SOURCE
 				d = peek_char ();
 				if (d == '?') {
 					get_char ();
 					return Token.OP_COALESCING;
 				}
-#endif
 				return Token.INTERR;
 			}
-#if GMCS_SOURCE
+			
 			if (c == '<') {
 				if (parsing_generic_less_than++ > 0)
 					return Token.OP_GENERICS_LT;
@@ -847,7 +840,7 @@ namespace Mono.CSharp
 				}
 				return Token.OP_GT;
 			}
-#endif
+			
 			d = peek_char ();
 			if (c == '+'){
 				
@@ -960,41 +953,6 @@ namespace Mono.CSharp
 				return Token.CARRET;
 			}
 
-#if !GMCS_SOURCE
-			if (c == '<'){
-				if (d == '<'){
-					get_char ();
-					d = peek_char ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_LEFT_ASSIGN;
-					}
-					return Token.OP_SHIFT_LEFT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_LE;
-				}
-				return Token.OP_LT;
-			}
-
-			if (c == '>'){
-				if (d == '>'){
-					get_char ();
-					d = peek_char ();
-
-					if (d == '='){
-						doread = true;
-						return Token.OP_SHIFT_RIGHT_ASSIGN;
-					}
-					return Token.OP_SHIFT_RIGHT;
-				} else if (d == '='){
-					doread = true;
-					return Token.OP_GE;
-				}
-				return Token.OP_GT;
-			}
-#endif
 			if (c == ':'){
 				if (d == ':'){
 					doread = true;
@@ -1538,9 +1496,7 @@ namespace Mono.CSharp
 			case Token.TYPEOF:
 			case Token.UNCHECKED:
 			case Token.UNSAFE:
-#if GMCS_SOURCE
 			case Token.DEFAULT:
-#endif
 
 				//
 				// These can be part of a member access
@@ -2255,8 +2211,9 @@ namespace Mono.CSharp
 				PopPosition ();
 
 				if (ok) {
-					if (RootContext.Version == LanguageVersion.ISO_2 && next_token == Token.VOID) {
-						Report.FeatureIsNotAvailable (Location, "partial methods");
+					if (next_token == Token.VOID) {
+						if (RootContext.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (Location, "partial methods");
 					} else if (RootContext.Version == LanguageVersion.ISO_1)
 						Report.FeatureIsNotAvailable (Location, "partial types");
 

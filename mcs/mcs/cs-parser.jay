@@ -2889,8 +2889,9 @@ opt_nullable
 	  }
 	| INTERR
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
-			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
+	  	// FIXME: A hack with parsing conditional operator as nullable type
+		//if (RootContext.Version < LanguageVersion.ISO_2)
+		//	Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
 	  		
 		lexer.CheckNullable (true);
 		$$ = true;
@@ -2943,8 +2944,8 @@ opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lexer.Location, "generics");	  
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");	  
 	  
 		$$ = $2;
 	  }
@@ -2958,8 +2959,8 @@ opt_type_parameter_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		if (RootContext.Version == LanguageVersion.ISO_1)
-			Report.FeatureIsNotAvailable (lexer.Location, "generics");
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
 	  }
@@ -3752,7 +3753,7 @@ typeof_type_expression
 unbound_type_name
 	: IDENTIFIER GENERIC_DIMENSION
 	  {
-		if (RootContext.Version == LanguageVersion.ISO_1)
+		if (RootContext.Version < LanguageVersion.ISO_1)
 			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 	  
 		LocatedToken lt = (LocatedToken) $1;
