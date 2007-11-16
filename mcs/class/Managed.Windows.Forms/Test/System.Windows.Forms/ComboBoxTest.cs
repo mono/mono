@@ -62,7 +62,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #331144
-		[Category ("NotWorking")]
 		public void DropDownStyle ()
 		{
 			ComboBox comboBox = new ComboBox ();

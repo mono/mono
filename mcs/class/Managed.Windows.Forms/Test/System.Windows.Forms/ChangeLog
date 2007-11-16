@@ -1,3 +1,7 @@
+2007-11-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComboBoxTest.cs: Enabled test for bug #331144.
+
 2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewTest.cs: New exception test for 2.0 FindNearestItem method.
