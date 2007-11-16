@@ -2885,6 +2885,9 @@ opt_nullable
 	  }
 	| INTERR
 	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
+	  		
 		lexer.CheckNullable (true);
 		$$ = true;
 	  }
@@ -3841,6 +3844,9 @@ anonymous_method_signature
 default_value_expression
 	: DEFAULT_OPEN_PARENS type CLOSE_PARENS
 	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (lexer.Location, "default value expression");
+
 		$$ = new DefaultValueExpression ((Expression) $2, lexer.Location);
 	  }
 	;
@@ -3913,22 +3919,6 @@ prefixed_unary_expression
 	| BITWISE_AND prefixed_unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, (Location) $1);
-	  }
-	;
-
-pre_increment_expression
-	: OP_INC prefixed_unary_expression 
-	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement,
-				       (Expression) $2, (Location) $1);
-	  }
-	;
-
-pre_decrement_expression
-	: OP_DEC prefixed_unary_expression 
-	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement,
-				       (Expression) $2, (Location) $1);
 	  }
 	;
 
@@ -4697,7 +4687,7 @@ statement_expression
 		Expression expr = (Expression) $1;
 		ExpressionStatement s = expr as ExpressionStatement;
 		if (s == null) {
-			Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+			expr.Error_InvalidExpressionStatement ();
 			$$ = null;
 		}
 		$$ = new StatementExpression (s);
@@ -5751,7 +5741,7 @@ void Error_ExpectingTypeName (Expression expr)
 	if (expr is Invocation){
 		Report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
+		expr.Error_InvalidExpressionStatement ();
 	}
 }
 

@@ -1,5 +1,9 @@
 2007-11-16  Marek Safar  <marek.safar@gmail.com>
 
+ 	* gcs-parser.jay: Added nullable and default expression feature checks.
+ 	
+2007-11-16  Marek Safar  <marek.safar@gmail.com>
+
  	* gcs-parser.jay, cs-parser.jay, class.cs: Unified parameters parsing, 
  	it fixes many TODOs and hidden bugs.
  	
