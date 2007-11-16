@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Microsoft.Vsa;
@@ -61,6 +62,7 @@ namespace Mono.JScript {
 		private static bool want_debugging_support = false;
 
 		private static string output_file;
+		private static int warning_level = -1;
 
 		private static Assembly [] assemblies = new Assembly [0];
 
@@ -392,6 +394,41 @@ namespace Mono.JScript {
 			case "/nostdlib-":
 				StdLib = true;
 				return true;
+			case "/target":
+				if (value.Length == 0) {
+					Console.WriteLine ("fatal error JS2013: Target type is invalid");
+					Environment.Exit (1);
+				}
+
+				if (string.Compare ("exe", value, true) == 0) {
+					// this is the default (and only) supported target
+				} else if (string.Compare ("library", value, true) != 0) {
+					Console.WriteLine ("mjs currently does not support creating libraries");
+					Environment.Exit (1);
+				} else {
+					Console.WriteLine ("fatal error JS2013: Target '{0}' is invalid."
+						+ " Specify 'exe' or 'library'", value);
+					Environment.Exit (1);
+				}
+				return true;
+			case "/warn":
+				if (value.Length == 0) {
+					Console.WriteLine ("fatal error JS2028: No warning level specified"
+						+ " with option '{0}'", option);
+					Environment.Exit (1);
+				}
+
+				try {
+					warning_level = int.Parse (value, CultureInfo.InvariantCulture);
+				} catch {
+				}
+
+				if (warning_level < 0 || warning_level > 4) {
+					Console.WriteLine ("fatal error JS2015: Invalid warning level specified"
+						+ " with option '{0}'", option);
+					Environment.Exit (1);
+				}
+				return true;
 			}
 			return false;
 		}
@@ -619,6 +656,8 @@ namespace Mono.JScript {
 			engine.SetOption ("first_source", first_source);
 			engine.SetOption ("assemblies", assemblies);
 			engine.SetOption ("out", output_file);
+			if (warning_level != -1)
+				engine.SetOption ("WarningLevel", warning_level);
 			engine.Compile ();
 		}
 
