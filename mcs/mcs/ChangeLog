@@ -1,5 +1,12 @@
 2007-11-16  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #325423
+ 	* assign.cs (FieldInitializer): Use resolved expression for emit.
+ 	
+ 	* class.cs: Print less confusing error message.
+ 	
+2007-11-16  Marek Safar  <marek.safar@gmail.com>
+
  	* cs-tokenizer.cs: Removed GMCS ifdefs.
  	
  	* rootcontext.cs, report.cs: Report unavailable gmcs features used by

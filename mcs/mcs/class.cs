@@ -6083,15 +6083,6 @@ namespace Mono.CSharp {
 
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
-			if (Parent.PartialContainer.Kind == Kind.Struct && 
-			    ((fa & FieldAttributes.Static) == 0) &&
-			    MemberType == Parent.TypeBuilder &&
-			    !TypeManager.IsBuiltinType (MemberType)){
-				Report.Error (523, Location, "Struct member `" + Parent.Name + "." + Name + 
-					      "' causes a cycle in the structure layout");
-				return false;
-			}
-
 			try {
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, Modifiers.FieldAttr (ModFlags));
@@ -6107,6 +6098,14 @@ namespace Mono.CSharp {
 			if (initializer != null)
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
 					new FieldInitializer (FieldBuilder, initializer));
+
+			if (Parent.PartialContainer.Kind == Kind.Struct && (fa & FieldAttributes.Static) == 0 &&
+				MemberType == Parent.TypeBuilder && !TypeManager.IsBuiltinType (MemberType) && initializer == null) {
+				Report.Error (523, Location, "Struct member `{0}' causes a cycle in the structure layout",
+					GetSignatureForError ());
+				return false;
+			}
+
 			return true;
 		}
 

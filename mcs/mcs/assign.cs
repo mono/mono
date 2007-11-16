@@ -600,6 +600,11 @@ namespace Mono.CSharp {
 	// This class implements fields and events class initializers
 	public class FieldInitializer : Assign
 	{
+		//
+		// Keep resolved value because field initializers have their own rules
+		//
+		ExpressionStatement resolved;
+
 		public FieldInitializer (FieldBuilder field, Expression expression)
 			: base (new FieldExpr (field, expression.Location, true), expression)
 		{
@@ -613,7 +618,21 @@ namespace Mono.CSharp {
 			if (Source == null)
 				return null;
 
-			return base.DoResolve (ec);
+			if (resolved == null)
+				resolved = base.DoResolve (ec) as ExpressionStatement;
+
+			return resolved;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			if (resolved == null)
+				return;
+			
+			if (resolved != this)
+				resolved.EmitStatement (ec);
+			else
+				base.EmitStatement (ec);
 		}
 		
 		public bool IsComplexInitializer {
