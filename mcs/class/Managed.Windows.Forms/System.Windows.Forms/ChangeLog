@@ -1,3 +1,9 @@
+2007-11-16  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.2.6]
+	* Control.cs: Don't perform a new layout when a label changes its text,
+	cause label handles its own autosizing.
+	[Fixes bug #342077]
+
 2007-11-15  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.2.6]
 	* KeysConverter.cs: The default values should be an array of Keys, not
