@@ -57,12 +57,6 @@ namespace System.Web.Configuration {
 			
 			if (verb != "*")
 				Verbs = verb.Split (',');
-			string [] paths = path.Split (',');
-			files = new FileMatchingInfo [paths.Length];
-
-			int i = 0;
-			foreach (string s in paths)
-				files [i++] = new FileMatchingInfo (s);
 			
 			this.TypeName = typename;
 			type = t;
@@ -91,6 +85,13 @@ namespace System.Web.Configuration {
 
 		public bool PathMatches (string p)
 		{
+			string [] paths = OriginalPath.Split (',');
+			files = new FileMatchingInfo [paths.Length];
+
+			int i = 0;
+			foreach (string s in paths)
+				files [i++] = new FileMatchingInfo (s);
+			
 			int slash = p.LastIndexOf ('/');
 			string orig = p;
 			if (slash != -1)

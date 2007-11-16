@@ -1,3 +1,9 @@
+2007-11-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HandlerFactoryConfiguration.cs: FileMatchingInfo array must be
+	created anew on each request (before the result is cached). Fixes
+	bug #335669.
+
 2007-11-14  Marek Habersack  <mhabersack@novell.com>
 
 	* FileMatchingInfo.cs: if Request is present, construct MatchExact
