@@ -109,6 +109,9 @@ namespace Mono.CSharp
 		/// assembly and module attribute definitions are enabled
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
+		bool parameter_modifiers_not_allowed;
+		bool params_modifiers_not_allowed;
+		bool arglist_allowed;
 
 %}
 
@@ -1138,15 +1141,20 @@ method_header
 	: opt_attributes
 	  opt_modifiers
 	  type namespace_or_type_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS 
+	  open_parens
 	  {
+		arglist_allowed = true;
+	  }
+	  opt_formal_parameter_list CLOSE_PARENS
+	  {
+		arglist_allowed = false;
 		MemberName name = (MemberName) $4;
+		current_local_parameters = (Parameters) $7;
 
 		Method method = new Method (current_class, null, (Expression) $3, (int) $2,
-					    false, name,  (Parameters) $6, (Attributes) $1);
+					    false, name, current_local_parameters, (Attributes) $1);
 
 		anonymous_host = method;
-		current_local_parameters = (Parameters) $6;
 
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1156,16 +1164,22 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  VOID namespace_or_type_name
-	  open_parens opt_formal_parameter_list CLOSE_PARENS 
+	  open_parens
 	  {
+		arglist_allowed = true;
+	  }	  
+	  opt_formal_parameter_list CLOSE_PARENS 
+	  {
+		arglist_allowed = false;
+	  
 		MemberName name = (MemberName) $4;
+		current_local_parameters = (Parameters) $7;
 
 		Method method = new Method (current_class, null, TypeManager.system_void_expr,
-					    (int) $2, false, name, (Parameters) $6,
+					    (int) $2, false, name, current_local_parameters,
 					    (Attributes) $1);
 
 		anonymous_host = method;
-		current_local_parameters = (Parameters) $6;
 
 		if (RootContext.Documentation != null)
 			method.DocComment = Lexer.consume_doc_comment ();
@@ -1202,6 +1216,19 @@ opt_formal_parameter_list
 	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
 	| formal_parameter_list
 	;
+	
+opt_parameter_list_no_mod
+	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| 
+	  {
+		parameter_modifiers_not_allowed = true;
+	  }
+	  formal_parameter_list
+	  {
+		parameter_modifiers_not_allowed = false;
+		$$ = $2;
+	  }
+	;
 
 formal_parameter_list
 	: fixed_parameters		
@@ -1223,7 +1250,7 @@ formal_parameter_list
 
 		$$ = new Parameters (pars); 
 	  }
-	| fixed_parameters COMMA ARGLIST
+	| fixed_parameters COMMA arglist_modifier
 	  {
 		ArrayList pars_list = (ArrayList) $1;
 		//pars_list.Add (new ArglistParameter (GetLocation ($3)));
@@ -1245,7 +1272,7 @@ formal_parameter_list
 			Report.Error (231, ((Parameter) $3).Location, "A params parameter must be the last parameter in a formal parameter list");
 		$$ = null;
 	  }
-	| ARGLIST COMMA error
+	| arglist_modifier COMMA error
 	  {
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
 		$$ = null;
@@ -1259,7 +1286,7 @@ formal_parameter_list
 	  {
 		$$ = new Parameters (new Parameter[] { (Parameter) $1 } );
 	  }
-	| ARGLIST
+	| arglist_modifier
 	  {
 		$$ = new Parameters (new Parameter[0], true);
 	  }
@@ -1351,35 +1378,67 @@ parameter_modifiers
 	;
 
 parameter_modifier
-	: REF			{ $$ = Parameter.Modifier.REF; }
-	| OUT			{ $$ = Parameter.Modifier.OUT; }
-	| THIS			{ $$ = Parameter.Modifier.This; }
+	: REF
+	  {
+	  	if (parameter_modifiers_not_allowed)
+	  		Error_ParameterModifierNotValid ("ref", (Location)$1);
+	  		
+	  	$$ = Parameter.Modifier.REF;
+	  }
+	| OUT
+	  {
+	  	if (parameter_modifiers_not_allowed)
+	  		Error_ParameterModifierNotValid ("out", (Location)$1);
+	  
+	  	$$ = Parameter.Modifier.OUT;
+	  }
+	| THIS
+	  {
+		if (parameter_modifiers_not_allowed)
+	  		Error_ParameterModifierNotValid ("this", (Location)$1);
+	  			
+		$$ = Parameter.Modifier.This;
+	  }
 	;
 
 parameter_array
-	: opt_attributes PARAMS type IDENTIFIER
+	: opt_attributes params_modifier type IDENTIFIER
 	  { 
 		LocatedToken lt = (LocatedToken) $4;
 		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
 	  }
-	| opt_attributes PARAMS PARAMS type IDENTIFIER 
-	  {
-		Error_DuplicateParameterModifier (lexer.Location, Parameter.Modifier.PARAMS);
-		$$ = null;
-	  }
-	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
-	  {
-		Parameter.Modifier mod = (Parameter.Modifier)$3;
-		if ((mod & Parameter.Modifier.This) != 0) {
-			Report.Error (1104, lexer.Location, "The parameter modifiers `this' and `params' cannot be used altogether");
-		} else {
-			Report.Error (1611, (Location) $2, "The params parameter cannot be declared as ref or out");
-		}
-		$$ = null;
-	  }
-	| opt_attributes PARAMS type error {
+	| opt_attributes params_modifier type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
 		$$ = null;
+	  }
+	;
+	
+params_modifier
+	: PARAMS
+	  {
+		if (params_modifiers_not_allowed)
+			Report.Error (1670, ((Location) $1), "The `params' modifier is not allowed in current context");
+	  }
+	| PARAMS parameter_modifier
+	  {
+		Parameter.Modifier mod = (Parameter.Modifier)$2;
+		if ((mod & Parameter.Modifier.This) != 0) {
+			Report.Error (1104, (Location)$1, "The parameter modifiers `this' and `params' cannot be used altogether");
+		} else {
+			Report.Error (1611, (Location)$1, "The params parameter cannot be declared as ref or out");
+		}	  
+	  }
+	| PARAMS params_modifier
+	  {
+		Error_DuplicateParameterModifier ((Location)$1, Parameter.Modifier.PARAMS);
+	  }
+	;
+	
+arglist_modifier
+	: ARGLIST
+	  {
+	  	if (!arglist_allowed)
+	  		Report.Error (1669, (Location) $1, "__arglist is not valid in this context");
 	  }
 	;
 
@@ -1837,7 +1896,7 @@ interface_event_declaration
 
 interface_indexer_declaration 
 	: opt_attributes opt_new type THIS 
-	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	  OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
 	  OPEN_BRACE
 	  {
 		lexer.PropertyParsing = true;
@@ -1898,16 +1957,9 @@ operator_declaration
 			break;
 
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
-		
-		Parameter [] param_list = new Parameter [decl.arg2type != null ? 2 : 1];
-
-		param_list[0] = new Parameter (decl.arg1type, decl.arg1name, Parameter.Modifier.NONE, null, decl.location);
-		if (decl.arg2type != null)
-			param_list[1] = new Parameter (decl.arg2type, decl.arg2name, Parameter.Modifier.NONE, null, decl.location);
-
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
-			new Parameters (param_list),
+			current_local_parameters,
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
 		if (RootContext.Documentation != null) {
@@ -1929,89 +1981,52 @@ operator_body
 	: block
 	| SEMICOLON { $$ = null; }
 	; 
+
 operator_declarator
-	: type OPERATOR overloadable_operator 
-	  open_parens opt_attributes opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	: type OPERATOR overloadable_operator open_parens
 	  {
-		// TODO: wrong location
-		if ((Parameter.Modifier)$6 != Parameter.Modifier.NONE)
-			Error_ParameterModifierNotValid ((Location) $2);
-	  
-		LocatedToken lt = (LocatedToken) $8;
+		params_modifiers_not_allowed = true;
+	  }
+	  opt_parameter_list_no_mod CLOSE_PARENS
+	  {
+		params_modifiers_not_allowed = false;
+
+		Location loc = (Location) $2;
 		Operator.OpType op = (Operator.OpType) $3;
-		CheckUnaryOperator (op, lt.Location);
-
-		if (op == Operator.OpType.Addition)
-			op = Operator.OpType.UnaryPlus;
-
-		if (op == Operator.OpType.Subtraction)
-			op = Operator.OpType.UnaryNegation;
-
-		Parameter [] pars = new Parameter [1];
-		Expression type = (Expression) $7;
-
-		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, (Attributes) $5, lt.Location);
-
-		current_local_parameters = new Parameters (pars);
-
+		current_local_parameters = (Parameters)$6;
+		
+		int p_count = current_local_parameters.Count;
+		if (p_count == 1) {
+			if (op == Operator.OpType.Addition)
+				op = Operator.OpType.UnaryPlus;
+			else if (op == Operator.OpType.Subtraction)
+				op = Operator.OpType.UnaryNegation;
+		}
+		
+		if (IsUnaryOperator (op)) {
+			if (p_count == 2) {
+				Report.Error (1020, loc, "Overloadable binary operator expected");
+			} else if (p_count != 1) {
+				Report.Error (1535, loc, "Overloaded unary operator `{0}' takes one parameter",
+					Operator.GetName (op));
+			}
+		} else {
+			if (p_count > 2) {
+				Report.Error (1534, loc, "Overloaded binary operator `{0}' takes two parameters",
+					Operator.GetName (op));
+			} else if (p_count != 2) {
+				Report.Error (1019, loc, "Overloadable unary operator expected");
+			}
+		}
+		
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (op, (Expression) $1, type, lt.Value,
-					      null, null, (Location) $2);
+		$$ = new OperatorDeclaration (op, (Expression) $1, loc);
 	  }
-	| type OPERATOR overloadable_operator
-	  open_parens 
-		opt_attributes opt_parameter_modifier type IDENTIFIER COMMA
-	  	opt_attributes opt_parameter_modifier type IDENTIFIER 
-	  CLOSE_PARENS
-          {
-   		// TODO: wrong location
-		if ((Parameter.Modifier)$6 != Parameter.Modifier.NONE || (Parameter.Modifier)$11 != Parameter.Modifier.NONE)
-			Error_ParameterModifierNotValid ((Location) $2);
-
-		LocatedToken ltParam1 = (LocatedToken) $8;
-		LocatedToken ltParam2 = (LocatedToken) $13;
-		CheckBinaryOperator ((Operator.OpType) $3, (Location) $2);
-
-		Parameter [] pars = new Parameter [2];
-
-		Expression typeL = (Expression) $7;
-		Expression typeR = (Expression) $12;
-
-	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, (Attributes) $5, ltParam1.Location);
-	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, (Attributes) $10, ltParam2.Location);
-
-	       current_local_parameters = new Parameters (pars);
-
-		if (RootContext.Documentation != null) {
-			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.NotAllowed;
-		}
-	       
-	       $$ = new OperatorDeclaration ((Operator.OpType) $3, (Expression) $1, 
-					     typeL, ltParam1.Value,
-					     typeR, ltParam2.Value, (Location) $2);
-          }
 	| conversion_operator_declarator
-	| type OPERATOR overloadable_operator
-	  open_parens 
-		opt_attributes opt_parameter_modifier type IDENTIFIER COMMA
-	  	opt_attributes opt_parameter_modifier type IDENTIFIER COMMA error
-	  {
-		Report.Error (1534, (Location) $2, "Overloaded binary operator `{0}' takes two parameters",
-			Operator.GetName ((Operator.OpType) $3));
-		$$ = null;
-	  }
-	| type OPERATOR overloadable_operator 
-	  open_parens CLOSE_PARENS
-	  {
-		Report.Error (1535, (Location) $2, "Overloaded unary operator `{0}' takes one parameter",
-			Operator.GetName ((Operator.OpType) $3));
-		$$ = null;
-	  }
 	;
 
 overloadable_operator
@@ -2043,47 +2058,41 @@ overloadable_operator
 	;
 
 conversion_operator_declarator
-	: IMPLICIT OPERATOR type open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	: IMPLICIT OPERATOR type open_parens
 	  {
-  		// TODO: wrong location
-		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
-			Error_ParameterModifierNotValid (GetLocation ($4));
-
-		LocatedToken lt = (LocatedToken) $7;
-		Parameter [] pars = new Parameter [1];
-
-		pars [0] = new Parameter ((Expression) $6, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
-
-		current_local_parameters = new Parameters (pars);  
-		  
-		if (RootContext.Documentation != null) {
-			tmpComment = Lexer.consume_doc_comment ();
-			Lexer.doc_state = XmlCommentState.NotAllowed;
-		}
-
-		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, (Expression) $6, lt.Value,
-					      null, null, (Location) $2);
+		params_modifiers_not_allowed = true;
 	  }
-	| EXPLICIT OPERATOR type open_parens opt_parameter_modifier type IDENTIFIER CLOSE_PARENS
+	  opt_parameter_list_no_mod CLOSE_PARENS
 	  {
-  		// TODO: wrong location
-		if ((Parameter.Modifier)$5 != Parameter.Modifier.NONE)
-			Error_ParameterModifierNotValid (GetLocation ($4));
-	  
-		LocatedToken lt = (LocatedToken) $7;
-		Parameter [] pars = new Parameter [1];
+		params_modifiers_not_allowed = false;
 
-		pars [0] = new Parameter ((Expression) $6, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
-
-		current_local_parameters = new Parameters (pars);  
+		Location loc = (Location) $2;
+		current_local_parameters = (Parameters)$6;  
 		  
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, (Expression) $6, lt.Value,
-					      null, null, (Location) $2);
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, loc);
+	  }
+	| EXPLICIT OPERATOR type open_parens
+	  {
+		params_modifiers_not_allowed = true;
+	  }
+	  opt_parameter_list_no_mod CLOSE_PARENS
+	  {
+		params_modifiers_not_allowed = false;
+		
+		Location loc = (Location) $2;
+		current_local_parameters = (Parameters)$6;  
+		  
+		if (RootContext.Documentation != null) {
+			tmpComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.NotAllowed;
+		}
+
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, loc);
 	  }
 	| IMPLICIT error 
 	  {
@@ -2455,13 +2464,10 @@ indexer_declaration
 	;
 
 indexer_declarator
-	: type THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
+	: type THIS OPEN_BRACKET opt_parameter_list_no_mod CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $4;
-		if (pars.HasArglist) {
-			// "__arglist is not valid in this context"
-			Report.Error (1669, (Location) $2, "__arglist is not valid in this context");
-		} else if (pars.Empty){
+		if (pars.Empty){
 			Report.Error (1551, (Location) $2, "Indexers must have at least one parameter");
 		}
 		if (RootContext.Documentation != null) {
@@ -2474,11 +2480,7 @@ indexer_declarator
 	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $6;
-
-		if (pars.HasArglist) {
-			// "__arglist is not valid in this context"
-			Report.Error (1669, (Location) $4, "__arglist is not valid in this context");
-		} else if (pars.Empty){
+		if (pars.Empty){
 			Report.Error (1551, (Location) $4, "Indexers must have at least one parameter");
 		}
 
@@ -2621,10 +2623,6 @@ delegate_declaration
 	  {
 		MemberName name = MakeName ((MemberName) $6);
 		Parameters p = (Parameters) $8;
-		if (p.HasArglist) {
-			// TODO: wrong location
-			Report.Error (1669, name.Location, "__arglist is not valid in this context");
-		}
 
 		Delegate del = new Delegate (current_namespace, current_class, (Expression) $5,
 					     (int) $2, name, p, (Attributes) $1);
@@ -3276,47 +3274,14 @@ opt_anonymous_method_signature
 	;
 
 anonymous_method_signature
-	: open_parens opt_anonymous_method_parameter_list CLOSE_PARENS 
+	: open_parens
 	  {
-		if ($2 == null)
-			$$ = Parameters.EmptyReadOnlyParameters;
-		else {
-			ArrayList par_list = (ArrayList) $2;
-			Parameter [] pars = new Parameter [par_list.Count];
-			par_list.CopyTo (pars);
-			$$ = new Parameters (pars);
-		}
+	  	params_modifiers_not_allowed = true; 
 	  }
-	;
-
-opt_anonymous_method_parameter_list
-	: /* empty */	                   { $$ = null; } 
-	| anonymous_method_parameter_list  { $$ = $1; }
-	;
-
-anonymous_method_parameter_list
-	: anonymous_method_parameter 
+	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-		ArrayList a = new ArrayList (4);
-		a.Add ($1);
-		$$ = a;
-	  }
-	| anonymous_method_parameter_list COMMA anonymous_method_parameter 
-	  {
-		ArrayList a = (ArrayList) $1;
-		a.Add ($3);
-		$$ = a;
-	  }
-	; 
-
-anonymous_method_parameter
-	: opt_parameter_modifier type IDENTIFIER {
-		LocatedToken lt = (LocatedToken) $3;
-		$$ = new Parameter ((Expression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
-	  }
-	| PARAMS type IDENTIFIER {
-		Report.Error (1670, ((LocatedToken) $3).Location, "The `params' modifier is not allowed in anonymous method declaration");
-		$$ = null;
+	  	params_modifiers_not_allowed = false;
+	  	$$ = $3;
 	  }
 	;
 
@@ -4078,11 +4043,6 @@ statement_expression
 		Report.Error (1002, GetLocation ($1), "Expecting `;'");
 		$$ = null;
 	  }
-	;
-
-object_creation_expression
-	: object_or_delegate_creation_expression
-	  { note ("complain if this is a delegate maybe?"); } 
 	;
 
 selection_statement
@@ -4856,25 +4816,17 @@ public class SimpleAnonymousHost : IAnonymousHost {
 // <summary>
 //  A class used to hold info about an operator declarator
 // </summary>
-public class OperatorDeclaration {
-	public Operator.OpType optype;
-	public Expression ret_type, arg1type, arg2type;
-	public string arg1name, arg2name;
-	public Location location;
+struct OperatorDeclaration {
+	public readonly Operator.OpType optype;
+	public readonly Expression ret_type;
+	public readonly Location location;
 
-	public OperatorDeclaration (Operator.OpType op, Expression ret_type, 
-				    Expression arg1type, string arg1name,
-				    Expression arg2type, string arg2name, Location location)
+	public OperatorDeclaration (Operator.OpType op, Expression ret_type, Location location)
 	{
 		optype = op;
 		this.ret_type = ret_type;
-		this.arg1type = arg1type;
-		this.arg1name = arg1name;
-		this.arg2type = arg2type;
-		this.arg2name = arg2name;
 		this.location = location;
 	}
-
 }
 
 void Error_ExpectingTypeName (Expression expr)
@@ -4886,9 +4838,10 @@ void Error_ExpectingTypeName (Expression expr)
 	}
 }
 
-public static void Error_ParameterModifierNotValid (Location loc)
+static void Error_ParameterModifierNotValid (string modifier, Location loc)
 {
-	Report.Error (631, loc, "The modifiers `ref' and `out' are not valid in this context");
+	Report.Error (631, loc, "The parameter modifier `{0}' is not valid in this context",
+			              modifier);
 }
 
 static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
@@ -5017,7 +4970,7 @@ string CheckAttributeTarget (string a, Location l)
 	return string.Empty;
 }
 
-void CheckUnaryOperator (Operator.OpType op, Location l)
+static bool IsUnaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
@@ -5027,45 +4980,11 @@ void CheckUnaryOperator (Operator.OpType op, Location l)
 	case Operator.OpType.Decrement:
 	case Operator.OpType.True: 
 	case Operator.OpType.False: 
-	case Operator.OpType.Addition: 
-	case Operator.OpType.Subtraction:
-		
-		break;
-		
-	default :
-		Report.Error (1019, l, "Overloadable unary operator expected"); 
-		break;
-		
+	case Operator.OpType.UnaryPlus: 
+	case Operator.OpType.UnaryNegation:
+		return true;
 	}
-}
-
-void CheckBinaryOperator (Operator.OpType op, Location l)
-{
-	switch (op) {
-		
-	case Operator.OpType.Addition: 
-	case Operator.OpType.Subtraction: 
-	case Operator.OpType.Multiply:
-	case Operator.OpType.Division:
-	case Operator.OpType.Modulus: 
-	case Operator.OpType.BitwiseAnd: 
-	case Operator.OpType.BitwiseOr:
-	case Operator.OpType.ExclusiveOr: 
-	case Operator.OpType.LeftShift: 
-	case Operator.OpType.RightShift:
-	case Operator.OpType.Equality: 
-	case Operator.OpType.Inequality:
-	case Operator.OpType.GreaterThan: 
-	case Operator.OpType.LessThan: 
-	case Operator.OpType.GreaterThanOrEqual:
-	case Operator.OpType.LessThanOrEqual:
-		break;
-		
-	default :
-		Report.Error (1020, l, "Overloadable binary operator expected");
-		break;
-	}
-	
+	return false;
 }
 
 void syntax_error (Location l, string msg)

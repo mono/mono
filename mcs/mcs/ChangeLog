@@ -1,3 +1,10 @@
+2007-11-16  Marek Safar  <marek.safar@gmail.com>
+
+ 	* gcs-parser.jay, cs-parser.jay, class.cs: Unified parameters parsing, 
+ 	it fixes many TODOs and hidden bugs.
+ 	
+ 	* expression: Removed duplicate error check.
+
 2007-11-15  Marek Safar  <marek.safar@gmail.com>
 
  	* gcs-parser.jay, statement.cs, decl.cs, ecore.cs: Try to resolve an

@@ -4226,11 +4226,6 @@ namespace Mono.CSharp {
 						MemberExpr.error176 (loc, mg.GetSignatureForError ());
 						return null;
 					}
-				} else {
-					if (iexpr == null || iexpr is EmptyExpression) {
-						SimpleName.Error_ObjectRefRequired (ec, loc, mg.GetSignatureForError ());
-						return null;
-					}
 				}
 			}
 

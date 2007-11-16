@@ -7831,15 +7831,6 @@ namespace Mono.CSharp {
 			//
 			// Now name the parameters
 			//
-			Parameter [] p = parameters.FixedParameters;
-			if (p != null) {
-				// TODO: should be done in parser and it needs to do cycle
-				if ((p [0].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
-					CSharpParser.Error_ParameterModifierNotValid (Location);
-					return false;
-				}
-			}
-
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
 				Name, PropertyAttributes.None, MemberType, parameters.Types);
 
