@@ -78,7 +78,13 @@ namespace System.Reflection.Emit {
 			this.paramModReq = paramModReq;
 			this.paramModOpt = paramModOpt;
 		}
-		
+
+#if NET_2_0
+		[MonoTODO]
+		public override CallingConventions CallingConvention {
+			get { return call_conv; }
+		}
+#endif
 		public bool InitLocals {
 			get {return init_locals;}
 			set {init_locals = value;}

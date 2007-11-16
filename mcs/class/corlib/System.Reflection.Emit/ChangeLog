@@ -1,5 +1,9 @@
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConstructorBuilder.cs : added CallingConvention.
+
+2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SignatureHelper.cs : Module can be null, and for non-
 	  ModuleBuilder argument, throw ArgumentException.
 	  Added missing 2.0 stuff.
