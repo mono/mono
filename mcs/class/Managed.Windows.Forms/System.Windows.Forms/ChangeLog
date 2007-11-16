@@ -1,3 +1,7 @@
+2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Throw the needed exceptions for FindNearestItem.
+
 2007-11-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Don't perform a new layout when a label changes its text,

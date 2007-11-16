@@ -3527,6 +3527,12 @@ namespace System.Windows.Forms
 
 		public ListViewItem FindNearestItem (SearchDirectionHint direction, Point location)
 		{
+			if (direction < SearchDirectionHint.Left || direction > SearchDirectionHint.Down)
+				throw new ArgumentOutOfRangeException ("searchDirection");
+
+			if (view != View.LargeIcon && view != View.SmallIcon)
+				throw new InvalidOperationException ();
+
 			ListViewItem item = null;
 			int min_dist = Int32.MaxValue;
 
