@@ -1,3 +1,9 @@
+2007-11-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpWebRequest.cs: when folding a request into a GET one, set
+	content length to 0 and kill the buffers. Fixes bug #327314. Patch
+	from Geoff Norton <gnorton@novell.com>, thanks!
+
 2007-11-08  Jb Evain  <jbevain@novell.com>
 
 	* WebHeaderCollection_2_1.cs: add a custom WebHeaderCollection
