@@ -1,4 +1,4 @@
-// cs1670-2.cs: The `params' modifier is not allowed in anonymous method declaration
+// CS1670: The `params' modifier is not allowed in current context
 // Line: 6
 
 class C

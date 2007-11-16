@@ -1,4 +1,4 @@
-// CS0631: The modifiers `ref' and `out' are not valid in this context
+// CS0631: The parameter modifier `ref' is not valid in this context
 // Line: 5
 
 class X {
