@@ -1,3 +1,8 @@
+2007-11-16  Jb Evain  <jbevain@novell.com>
+
+	* Debug_2_1.cs: simply write debug messages to the
+	console.
+
 2007-11-15  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Pass the process handle to GetModules_internal();

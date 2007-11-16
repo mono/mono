@@ -54,17 +54,17 @@ namespace System.Diagnostics {
 
 		public static void WriteLine (object obj)
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine (obj);
 		}
 
 		public static void WriteLine (string message)
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine (message);
 		}
 
 		public static void WriteLine (string format, params object [] args)
 		{
-			throw new NotImplementedException ();
+			Console.WriteLine (format, args);
 		}
 	}
 }
