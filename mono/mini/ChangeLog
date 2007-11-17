@@ -1,3 +1,8 @@
+2007-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (get_call_info): Receive a MonoContext instead of a 
+	MonoGenericSharingContext. Allocate memory from the cfg mempool.
+
 2007-11-15  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, mini.h, generic-sharing.c: Functions for producing code
