@@ -1,5 +1,6 @@
 #ifndef __UTILS_MONO_COMPILER_H__
 #define __UTILS_MONO_COMPILER_H__
+
 /*
  * This file includes macros used in the runtime to encapsulate different
  * compiler behaviours.
@@ -8,6 +9,16 @@
 
 #ifdef HAVE_KW_THREAD
 #if HAVE_TLS_MODEL_ATTR
+
+#if defined(__PIC__) && !defined(PIC)
+/*
+ * Must be compiling -fPIE, for executables.  Build PIC
+ * but with initial-exec.
+ * http://bugs.gentoo.org/show_bug.cgi?id=165547
+ */
+#define PIC
+#define PIC_INITIAL_EXEC
+#endif
 
 /* 
  * Define this if you want a faster libmono, which cannot be loaded dynamically as a 
@@ -74,7 +85,7 @@
 
 #include <float.h>
 #define isnan(x)	_isnan(x)
-#define trunc(x)	floor((x))
+#define trunc(x)	(((x) < 0) ? ceil((x)) : floor((x)))
 #define isinf(x)	(_isnan(x) ? 0 : (_fpclass(x) == _FPCLASS_NINF) ? -1 : (_fpclass(x) == _FPCLASS_PINF) ? 1 : 0)
 #define isnormal(x)	_finite(x)
 
@@ -91,7 +102,7 @@
 
 #endif /* _MSC_VER */
 
-#if !defined(_MSC_VER) && HAVE_VISIBILITY_HIDDEN
+#if !defined(PLATFORM_WIN32) && HAVE_VISIBILITY_HIDDEN
 #define MONO_INTERNAL __attribute__ ((visibility ("hidden")))
 #else
 #define MONO_INTERNAL 

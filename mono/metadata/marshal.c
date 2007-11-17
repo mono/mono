@@ -52,6 +52,7 @@ struct _MonoMethodBuilder {
 	GList *locals_list;
 	int locals;
 	gboolean dynamic;
+	gboolean no_dup_name;
 	guint32 code_size, pos;
 	unsigned char *code;
 };
@@ -1129,7 +1130,7 @@ mono_string_from_bstr (gpointer bstr)
 		return NULL;
 	return mono_string_new_utf16 (mono_domain_get (), bstr, SysStringLen (bstr));
 #else
-	return mono_string_new_utf16 (mono_domain_get (), bstr, *(guint32 *)((char *)bstr - 4));
+	return mono_string_new_utf16 (mono_domain_get (), bstr, *(guint32 *)((char *)bstr - 4) / 2);
 #endif
 }
 
@@ -1209,20 +1210,20 @@ mono_mb_free (MonoMethodBuilder *mb)
 	g_list_free (mb->locals_list);
 	if (!mb->dynamic) {
 		g_free (mb->method);
-		g_free (mb->name);
+		if (!mb->no_dup_name)
+			g_free (mb->name);
 		g_free (mb->code);
 	}
 	g_free (mb);
 }
 
-MonoMethodBuilder *
-mono_mb_new (MonoClass *klass, const char *name, MonoWrapperType type)
+static MonoMethodBuilder *
+mono_mb_new_base (MonoClass *klass, MonoWrapperType type)
 {
 	MonoMethodBuilder *mb;
 	MonoMethod *m;
 
 	g_assert (klass != NULL);
-	g_assert (name != NULL);
 
 	mb = g_new0 (MonoMethodBuilder, 1);
 
@@ -1232,10 +1233,26 @@ mono_mb_new (MonoClass *klass, const char *name, MonoWrapperType type)
 	m->inline_info = 1;
 	m->wrapper_type = type;
 
-	mb->name = g_strdup (name);
 	mb->code_size = 40;
 	mb->code = g_malloc (mb->code_size);
 	
+	return mb;
+}
+
+static MonoMethodBuilder *
+mono_mb_new_no_dup_name (MonoClass *klass, const char *name, MonoWrapperType type)
+{
+	MonoMethodBuilder *mb = mono_mb_new_base (klass, type);
+	mb->name = (char*)name;
+	mb->no_dup_name = TRUE;
+	return mb;
+}
+
+MonoMethodBuilder *
+mono_mb_new (MonoClass *klass, const char *name, MonoWrapperType type)
+{
+	MonoMethodBuilder *mb = mono_mb_new_base (klass, type);
+	mb->name = g_strdup (name);
 	return mb;
 }
 
@@ -1294,10 +1311,13 @@ mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, in
 	} else {
 		/* Realloc the method info into a mempool */
 
-		method = mono_mempool_alloc (mp, sizeof (MonoMethodWrapper));
+		method = mono_mempool_alloc0 (mp, sizeof (MonoMethodWrapper));
 		memcpy (method, mb->method, sizeof (MonoMethodWrapper));
 
-		method->name = mono_mempool_strdup (mp, mb->name);
+		if (mb->no_dup_name)
+			method->name = mb->name;
+		else
+			method->name = mono_mempool_strdup (mp, mb->name);
 
 		((MonoMethodNormal *)method)->header = header = (MonoMethodHeader *) 
 			mono_mempool_alloc0 (mp, sizeof (MonoMethodHeader) + mb->locals * sizeof (MonoType *));
@@ -1567,6 +1587,12 @@ mono_mb_emit_icon (MonoMethodBuilder *mb, gint32 value)
 	}
 }
 
+int
+mono_mb_get_label (MonoMethodBuilder *mb)
+{
+	return mb->pos;
+}
+
 guint32
 mono_mb_emit_branch (MonoMethodBuilder *mb, guint8 op)
 {
@@ -1594,7 +1620,7 @@ mono_mb_patch_branch (MonoMethodBuilder *mb, guint32 pos)
 	mono_mb_patch_addr (mb, pos, mb->pos - (pos + 4));
 }
 
-static void
+void
 mono_mb_patch_short_branch (MonoMethodBuilder *mb, guint32 pos)
 {
 	mono_mb_patch_addr_s (mb, pos, mb->pos - (pos + 1));
@@ -1630,7 +1656,7 @@ mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpoin
 	mono_mb_emit_byte (mb, CEE_MONO_RESTORE_LMF);
 }
 
-static void
+void
 mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func)
 {
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
@@ -4036,7 +4062,9 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 
 	/* try */
 
-	main_clause = g_new0 (MonoExceptionClause, 1);
+	mono_loader_lock ();
+	main_clause = mono_mempool_alloc0 (method->klass->image->mempool, sizeof (MonoExceptionClause));
+	mono_loader_unlock ();
 	main_clause->try_offset = mb->pos;
 
 	/* Clean the call context */
@@ -4641,28 +4669,83 @@ mono_marshal_get_remoting_invoke_with_check (MonoMethod *method)
 	return res;
 }
 
+typedef struct
+{
+	MonoMethodSignature *sig;
+	MonoMethod *method;
+} SignatureMethodPair;
+
+static guint
+signature_method_pair_hash (gconstpointer data)
+{
+	SignatureMethodPair *pair = (SignatureMethodPair*)data;
+
+	return mono_signature_hash (pair->sig) ^ mono_aligned_addr_hash (pair->method);
+}
+
+static gboolean
+signature_method_pair_equal (SignatureMethodPair *pair1, SignatureMethodPair *pair2)
+{
+	return mono_metadata_signature_equal (pair1->sig, pair2->sig) && (pair1->method == pair2->method);
+}
+
+static void
+free_signature_method_pair (SignatureMethodPair *pair)
+{
+	g_free (pair);
+}
+
 /*
- * the returned method invokes all methods in a multicast delegate 
+ * the returned method invokes all methods in a multicast delegate.
  */
 MonoMethod *
-mono_marshal_get_delegate_invoke (MonoMethod *method)
+mono_marshal_get_delegate_invoke (MonoMethod *method, MonoDelegate *del)
 {
 	MonoMethodSignature *sig, *static_sig;
 	int i;
 	MonoMethodBuilder *mb;
-	MonoMethod *res;
+	MonoMethod *res, *newm;
 	GHashTable *cache;
+	SignatureMethodPair key;
+	SignatureMethodPair *new_key;
+	int local_prev, local_target;
 	int pos0;
 	char *name;
+	MonoMethod *target_method = NULL;
+	gboolean callvirt = FALSE;
+
+	/*
+	 * If the delegate target is null, and the target method is not static, a virtual 
+	 * call is made to that method with the first delegate argument as this. This is 
+	 * a non-documented .NET feature.
+	 */
+	if (del && !del->target && del->method_info && mono_method_signature (del->method_info->method)->hasthis) {
+		callvirt = TRUE;
+		target_method = del->method_info->method;
+	}
 
 	g_assert (method && method->klass->parent == mono_defaults.multicastdelegate_class &&
 		  !strcmp (method->name, "Invoke"));
 		
 	sig = signature_no_pinvoke (method);
 
-	cache = method->klass->image->delegate_invoke_cache;
-	if ((res = mono_marshal_find_in_cache (cache, sig)))
-		return res;
+	if (callvirt) {
+		/* We need to cache the signature+method pair */
+		mono_marshal_lock ();
+		if (!method->klass->image->delegate_abstract_invoke_cache)
+			method->klass->image->delegate_abstract_invoke_cache = g_hash_table_new_full (signature_method_pair_hash, (GEqualFunc)signature_method_pair_equal, (GDestroyNotify)free_signature_method_pair, NULL);
+		cache = method->klass->image->delegate_abstract_invoke_cache;
+		key.sig = sig;
+		key.method = target_method;
+		res = g_hash_table_lookup (cache, &key);
+		mono_marshal_unlock ();
+		if (res)
+			return res;
+	} else {
+		cache = method->klass->image->delegate_invoke_cache;
+		if ((res = mono_marshal_find_in_cache (cache, sig)))
+			return res;
+	}
 
 	static_sig = signature_dup (method->klass->image, sig);
 	static_sig->hasthis = 0;
@@ -4672,7 +4755,8 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	g_free (name);
 
 	/* allocate local 0 (object) */
-	mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
+	local_target = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
+	local_prev = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);
 
 	g_assert (sig->hasthis);
 	
@@ -4689,6 +4773,8 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoMulticastDelegate, prev));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
+	mono_mb_emit_stloc (mb, local_prev);
+	mono_mb_emit_ldloc (mb, local_prev);
 
 	/* if prev != null */
 	pos0 = mono_mb_emit_branch (mb, CEE_BRFALSE);
@@ -4698,12 +4784,10 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
 	mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoMulticastDelegate, prev));
-	mono_mb_emit_byte (mb, CEE_LDIND_REF);
+	mono_mb_emit_ldloc (mb, local_prev);
 	for (i = 0; i < sig->param_count; i++)
 		mono_mb_emit_ldarg (mb, i + 1);
-	mono_mb_emit_managed_call (mb, method, mono_method_signature (method));
+	mono_mb_emit_op (mb, CEE_CALLVIRT, method);
 	if (sig->ret->type != MONO_TYPE_VOID)
 		mono_mb_emit_byte (mb, CEE_POP);
 
@@ -4714,37 +4798,68 @@ mono_marshal_get_delegate_invoke (MonoMethod *method)
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoDelegate, target));
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
-	mono_mb_emit_stloc (mb, 0);
+	mono_mb_emit_stloc (mb, local_target);
 
 	/* if target != null */
-	mono_mb_emit_ldloc (mb, 0);
+	mono_mb_emit_ldloc (mb, local_target);
 	pos0 = mono_mb_emit_branch (mb, CEE_BRFALSE);
 	
 	/* then call this->method_ptr nonstatic */
-	mono_mb_emit_ldloc (mb, 0); 
-	for (i = 0; i < sig->param_count; ++i)
-		mono_mb_emit_ldarg (mb, i + 1);
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
-	mono_mb_emit_byte (mb, CEE_LDIND_I );
-	mono_mb_emit_op (mb, CEE_CALLI, sig);
+	if (callvirt) {
+		// FIXME:
+		mono_mb_emit_exception_full (mb, "System", "NotImplementedException", "");
+	} else {
+		mono_mb_emit_ldloc (mb, local_target); 
+		for (i = 0; i < sig->param_count; ++i)
+			mono_mb_emit_ldarg (mb, i + 1);
+		mono_mb_emit_ldarg (mb, 0);
+		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		mono_mb_emit_byte (mb, CEE_LDIND_I );
+		mono_mb_emit_op (mb, CEE_CALLI, sig);
 
-	mono_mb_emit_byte (mb, CEE_RET);
+		mono_mb_emit_byte (mb, CEE_RET);
+	}
 
 	/* else [target == null] call this->method_ptr static */
 	mono_mb_patch_branch (mb, pos0);
 
-	for (i = 0; i < sig->param_count; ++i)
-		mono_mb_emit_ldarg (mb, i + 1);
-	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
-	mono_mb_emit_byte (mb, CEE_LDIND_I );
-	mono_mb_emit_op (mb, CEE_CALLI, static_sig);
+	if (callvirt) {
+		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_op (mb, CEE_CASTCLASS, target_method->klass);
+		for (i = 1; i < sig->param_count; ++i)
+			mono_mb_emit_ldarg (mb, i + 1);
+		mono_mb_emit_op (mb, CEE_CALLVIRT, target_method);
+	} else {
+		for (i = 0; i < sig->param_count; ++i)
+			mono_mb_emit_ldarg (mb, i + 1);
+		mono_mb_emit_ldarg (mb, 0);
+		mono_mb_emit_ldflda (mb, G_STRUCT_OFFSET (MonoDelegate, method_ptr));
+		mono_mb_emit_byte (mb, CEE_LDIND_I );
+		mono_mb_emit_op (mb, CEE_CALLI, static_sig);
+	}
 
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	res = mono_mb_create_and_cache (cache, sig,
-										 mb, sig, sig->param_count + 16);
+	if (callvirt) {
+		// From mono_mb_create_and_cache
+		newm = mono_mb_create_method (mb, sig, sig->param_count + 16);
+		mono_marshal_lock ();
+		res = g_hash_table_lookup (cache, &key);
+		if (!res) {
+			res = newm;
+			new_key = g_new0 (SignatureMethodPair, 1);
+			new_key->sig = sig;
+			new_key->method = target_method;
+			g_hash_table_insert (cache, new_key, res);
+			g_hash_table_insert (wrapper_hash, res, new_key);
+			mono_marshal_unlock ();
+		} else {
+			mono_marshal_unlock ();
+			mono_free_method (newm);
+		}
+	} else {
+		res = mono_mb_create_and_cache (cache, sig, mb, sig, sig->param_count + 16);
+	}
 	mono_mb_free (mb);
 
 	return res;	
@@ -4841,8 +4956,18 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 	static MonoMethodSignature *dealy_abort_sig = NULL;
 	int i, pos, posna;
 	char *name;
+	gboolean need_direct_wrapper = FALSE;
 
 	g_assert (method);
+
+	if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
+		(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
+		/* 
+		 * Array Get/Set/Address methods. The JIT implements them using inline code
+		 * so we need to create an invoke wrapper which calls the method directly.
+		 */
+		need_direct_wrapper = TRUE;
+	}
 
 	if (method->string_ctor) {
 		callsig = lookup_string_ctor_signature (mono_method_signature (method));
@@ -4856,7 +4981,10 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 			 */
 			callsig = signature_dup_add_this (mono_method_signature (method), method->klass);
 		} else {
-			callsig = mono_method_signature (method);
+			if (method->dynamic)
+				callsig = signature_dup (method->klass->image, mono_method_signature (method));
+			else
+				callsig = mono_method_signature (method);
 		}
 	}
 
@@ -4879,12 +5007,17 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 		}
 	}
 #endif
-	cache = target_klass->image->runtime_invoke_cache;
+	if (need_direct_wrapper) {
+		cache = target_klass->image->runtime_invoke_direct_cache;
+		res = mono_marshal_find_in_cache (cache, method);
+	} else {
+		cache = target_klass->image->runtime_invoke_cache;
 
-	/* from mono_marshal_find_in_cache */
-	mono_marshal_lock ();
-	res = g_hash_table_lookup (cache, callsig);
-	mono_marshal_unlock ();
+		/* from mono_marshal_find_in_cache */
+		mono_marshal_lock ();
+		res = g_hash_table_lookup (cache, callsig);
+		mono_marshal_unlock ();
+	}
 
 	if (res) {
 		return res;
@@ -4951,10 +5084,11 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 			mono_mb_emit_icon (mb, sizeof (gpointer) * i);
 			mono_mb_emit_byte (mb, CEE_ADD);
 		}
-		mono_mb_emit_byte (mb, CEE_LDIND_I);
 
-		if (t->byref)
+		if (t->byref) {
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
 			continue;
+		}
 
 		type = sig->params [i]->type;
 handle_enum:
@@ -4973,6 +5107,7 @@ handle_enum:
 		case MONO_TYPE_R8:
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
 			mono_mb_emit_byte (mb, mono_type_to_ldind (sig->params [i]));
 			break;
 		case MONO_TYPE_STRING:
@@ -4981,11 +5116,11 @@ handle_enum:
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_OBJECT:
-			/* do nothing */
+			mono_mb_emit_byte (mb, mono_type_to_ldind (sig->params [i]));
 			break;
 		case MONO_TYPE_GENERICINST:
 			if (!mono_type_generic_inst_is_valuetype (sig->params [i])) {
-				/* do nothing */
+				mono_mb_emit_byte (mb, CEE_LDIND_I);
 				break;
 			}
 
@@ -4995,6 +5130,7 @@ handle_enum:
 				type = t->data.klass->enum_basetype->type;
 				goto handle_enum;
 			}
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
 			if (mono_class_is_nullable (mono_class_from_mono_type (sig->params [i]))) {
 				/* Need to convert a boxed vtype to an mp to a Nullable struct */
 				mono_mb_emit_op (mb, CEE_UNBOX, mono_class_from_mono_type (sig->params [i]));
@@ -5008,8 +5144,12 @@ handle_enum:
 		}		
 	}
 	
-	mono_mb_emit_ldarg (mb, 3);
-	mono_mb_emit_calli (mb, callsig);
+	if (need_direct_wrapper) {
+		mono_mb_emit_op (mb, CEE_CALL, method);
+	} else {
+		mono_mb_emit_ldarg (mb, 3);
+		mono_mb_emit_calli (mb, callsig);
+	}
 
 	if (sig->ret->byref) {
 		/* fixme: */
@@ -5106,29 +5246,33 @@ handle_enum:
 	mono_mb_emit_ldloc (mb, 0);
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	/* taken from mono_mb_create_and_cache */
-	mono_marshal_lock ();
-	res = g_hash_table_lookup (cache, callsig);
-	mono_marshal_unlock ();
-
-	/* Somebody may have created it before us */
-	if (!res) {
-		MonoMethod *newm;
-		newm = mono_mb_create_method (mb, csig, sig->param_count + 16);
-
+	if (need_direct_wrapper) {
+		res = mono_mb_create_and_cache (cache, method, mb, csig, sig->param_count + 16);
+	} else {
+		/* taken from mono_mb_create_and_cache */
 		mono_marshal_lock ();
 		res = g_hash_table_lookup (cache, callsig);
-		if (!res) {
-			res = newm;
-			g_hash_table_insert (cache, callsig, res);
-			g_hash_table_insert (wrapper_hash, res, callsig);
-		} else {
-			mono_free_method (newm);
-		}
 		mono_marshal_unlock ();
-	}
 
-	/* end mono_mb_create_and_cache */
+		/* Somebody may have created it before us */
+		if (!res) {
+			MonoMethod *newm;
+			newm = mono_mb_create_method (mb, csig, sig->param_count + 16);
+
+			mono_marshal_lock ();
+			res = g_hash_table_lookup (cache, callsig);
+			if (!res) {
+				res = newm;
+				g_hash_table_insert (cache, callsig, res);
+				g_hash_table_insert (wrapper_hash, res, callsig);
+			} else {
+				mono_free_method (newm);
+			}
+			mono_marshal_unlock ();
+		}
+
+		/* end mono_mb_create_and_cache */
+	}
 
 	mono_mb_free (mb);
 
@@ -7707,7 +7851,7 @@ emit_marshal_array (EmitMarshalContext *m, int argnum, MonoType *t,
 					/* set dst_ptr */
 					mono_mb_emit_ldarg (mb, argnum);
 					if (t->byref)
-						mono_mb_emit_byte (mb, CEE_LDIND_I);
+						mono_mb_emit_byte (mb, CEE_LDIND_REF);
 					mono_mb_emit_ldloc (mb, index_var);
 					mono_mb_emit_op (mb, CEE_LDELEMA, eklass);
 					mono_mb_emit_stloc (mb, 1);
@@ -8169,6 +8313,7 @@ emit_marshal_boolean (EmitMarshalContext *m, int argnum, MonoType *t,
 		} else {
 			switch (spec->native) {
 			case MONO_NATIVE_I1:
+			case MONO_NATIVE_U1:
 				local_type = &mono_defaults.byte_class->byval_arg;
 				break;
 			case MONO_NATIVE_VARIANTBOOL:
@@ -11366,7 +11511,7 @@ mono_marshal_get_generic_array_helper (MonoClass *class, MonoClass *iface, gchar
 	MonoMethod *res;
 	int i;
 
-	mb = mono_mb_new (class, name, MONO_WRAPPER_MANAGED_TO_MANAGED);
+	mb = mono_mb_new_no_dup_name (class, name, MONO_WRAPPER_MANAGED_TO_MANAGED);
 	mb->method->slot = -1;
 
 	mb->method->flags = METHOD_ATTRIBUTE_PRIVATE | METHOD_ATTRIBUTE_VIRTUAL |
@@ -11719,7 +11864,7 @@ mono_marshal_free_ccw (MonoObject* object)
 
 	/* if list is empty remove original address from hash */
 	if (g_list_length (ccw_list) == 0)
-		g_hash_table_remove (ccw_hash, ccw_list_orig);
+		g_hash_table_remove (ccw_hash, GINT_TO_POINTER (mono_object_hash (object)));
 
 
 	return TRUE;

@@ -44,7 +44,7 @@ AC_SUBST(GC_CFLAGS)
 
 case $enable_embed_check in
 no) ;;
-*) AC_MSG_ERROR([This module is now part of `mono' and can't be built as a stand-alone module any longer.]) ;;
+*) AC_MSG_ERROR([This module is now part of 'mono' and cannot be built as a stand-alone module any longer.]) ;;
 esac
 
 THREADS=$with_libgc_threads

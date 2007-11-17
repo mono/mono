@@ -134,6 +134,10 @@ struct MonoLMF {
 	guint64     r13;
 	guint64     r14;
 	guint64     r15;
+#ifdef PLATFORM_WIN32
+	guint64     rdi;
+	guint64     rsi;
+#endif
 };
 
 typedef struct MonoCompileArch {
@@ -143,6 +147,7 @@ typedef struct MonoCompileArch {
 	gint32 stack_alloc_size;
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
+	gint32 async_point_count;
 } MonoCompileArch;
 
 typedef struct {
@@ -174,7 +179,7 @@ typedef struct {
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx, start_func) do { \
     guint64 stackptr; \
 	mono_arch_flush_register_windows (); \
-	stackptr = ((guint64)_GetAddressOfReturnAddress () - sizeof (void*));\
+	stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));\
 	MONO_CONTEXT_SET_IP ((ctx), (start_func)); \
 	MONO_CONTEXT_SET_BP ((ctx), stackptr); \
 	MONO_CONTEXT_SET_SP ((ctx), stackptr); \
@@ -265,6 +270,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_IMT_REG AMD64_R11
+#define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
 
@@ -272,7 +278,17 @@ typedef struct {
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
 
 gboolean
-mono_amd64_is_sse2 (void);
+mono_amd64_is_sse2 (void) MONO_INTERNAL;
+
+void 
+mono_amd64_patch (unsigned char* code, gpointer target) MONO_INTERNAL;
+
+typedef struct {
+	guint8 *address;
+	guint8 saved_byte;
+} MonoBreakpointInfo;
+
+extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 #endif /* __MONO_MINI_AMD64_H__ */  
 

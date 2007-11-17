@@ -1,3 +1,31 @@
+2007-11-03  David S. Miller  <davem@davemloft.net>
+
+       * sparc/sparc-codegen.h (sparc_set32, sparc_set): A plain sethi
+       can be used if the constant value only has the top 22 bits set.
+
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* x86/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
+	Fixes the build on Leopard.
+
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* ppc/Makefile.am:  Only compile tramp.c if INTERP_SUPPORTED is true
+	Fixes the build on Leopard.
+
+2007-10-26  Jonathan Chambers <joncham@gmail.com>
+
+	* amd64/amd64-codegen.h: Begin Win64 port. Use AMD64_ARG_REG#
+	defines to access param registers. Replace long usage with
+	gsize as sizeof(long) != sizeof(void*) on Win64.
+
+	Code is contributed under MIT/X11 license.
+
+2007-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_jump_membase_size): Remove an unneccesary
+	rex prefix which trips up valgrind.
+
 2007-07-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h: Remove some unused rex prefixes.

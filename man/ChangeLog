@@ -1,3 +1,14 @@
+2007-10-23  Marek Habersack  <mhabersack@novell.com>
+
+	* mconfig.1: added
+
+	* Makefile.am (man_MANS): added mconfig.1
+
+2007-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.1: Fix help for -T / -t as this shows the public key token
+	(and not the public key).
+
 2007-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* permview.1: add documentation for the -xml option now available

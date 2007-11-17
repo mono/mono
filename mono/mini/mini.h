@@ -15,7 +15,10 @@
 #include "mono/metadata/class-internals.h"
 #include "mono/metadata/object-internals.h"
 #include <mono/metadata/profiler-private.h>
+#include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-compiler.h>
+
+#define MONO_BREAKPOINT_ARRAY_SIZE 64
 
 #include "mini-arch.h"
 #include "regalloc.h"
@@ -50,6 +53,9 @@
 #define MINI_MS_WORD_OFFSET (MINI_MS_WORD_IDX * 4)
 #define inst_ls_word data.op[MINI_LS_WORD_IDX].const_val
 #define inst_ms_word data.op[MINI_MS_WORD_IDX].const_val
+
+#define MONO_FAKE_IMT_METHOD ((MonoMethod*)GINT_TO_POINTER(-1))
+#define MONO_FAKE_VTABLE_METHOD ((MonoMethod*)GINT_TO_POINTER(-2))
 
 /* Version number of the AOT file format */
 #define MONO_AOT_FILE_VERSION "32"
@@ -155,6 +161,8 @@ extern int mono_exc_esp_offset;
 #else
 extern gboolean mono_compile_aot;
 #endif
+extern MonoMethodDesc *mono_inject_async_exc_method;
+extern int mono_inject_async_exc_pos;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 
@@ -643,6 +651,8 @@ typedef struct {
 	/* The current virtual register number */
 	guint32 next_vreg;
 
+	MonoGenericSharingContext *generic_sharing_context;
+
 	unsigned char   *cil_start;
 	unsigned char   *native_code;
 	guint            code_size;
@@ -948,6 +958,28 @@ enum {
 	MONO_EXC_INTRINS_NUM
 };
 
+/*
+ * Flags for which contexts were used in inflating a generic.
+ */
+enum {
+	MONO_GENERIC_CONTEXT_USED_CLASS = 1,
+	MONO_GENERIC_CONTEXT_USED_METHOD = 2
+};
+
+#define MONO_GENERIC_CONTEXT_USED_BOTH		(MONO_GENERIC_CONTEXT_USED_CLASS | MONO_GENERIC_CONTEXT_USED_METHOD)
+
+enum {
+	MINI_GENERIC_CLASS_RELATION_SELF,
+	MINI_GENERIC_CLASS_RELATION_ARGUMENT,
+	MINI_GENERIC_CLASS_RELATION_OTHER
+};
+
+enum {
+	MINI_RGCTX_STATIC_DATA,
+	MINI_RGCTX_KLASS,
+	MINI_RGCTX_VTABLE
+};
+
 typedef void (*MonoInstFunc) (MonoInst *tree, gpointer data);
 
 /* main function */
@@ -994,8 +1026,9 @@ const char* mono_inst_name                  (int op);
 int       mono_op_to_op_imm                 (int opcode) MONO_INTERNAL;
 int       mono_op_imm_to_op                 (int opcode) MONO_INTERNAL;
 int       mono_load_membase_to_load_mem     (int opcode) MONO_INTERNAL;
-guint     mono_type_to_load_membase         (MonoType *type) MONO_INTERNAL;
-guint     mono_type_to_store_membase        (MonoType *type) MONO_INTERNAL;
+guint     mono_type_to_load_membase         (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
+guint     mono_type_to_store_membase        (MonoCompile *cfg, MonoType *type) MONO_INTERNAL;
+guint     mini_type_to_stind                (MonoCompile* cfg, MonoType *type) MONO_INTERNAL;
 void      mono_inst_foreach                 (MonoInst *tree, MonoInstFunc func, gpointer data) MONO_INTERNAL;
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id) MONO_INTERNAL;
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target) MONO_INTERNAL;
@@ -1024,7 +1057,6 @@ void      mono_destroy_compile              (MonoCompile *cfg);
 gboolean  mini_class_is_system_array (MonoClass *klass);
 MonoJitICallInfo    *mono_find_jit_opcode_emulation (int opcode);
 MonoMethodSignature *mono_get_element_address_signature (int arity);
-MonoMethodSignature *mono_get_array_new_va_signature (int arity);
 MonoJitICallInfo    *mono_get_element_address_icall (int rank);
 MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
 
@@ -1116,6 +1148,8 @@ void              mono_handle_global_vregs (MonoCompile *cfg);
 void              mono_spill_global_vars (MonoCompile *cfg);
 
 /* methods that must be provided by the arch-specific port */
+void      mono_arch_init                        (void) MONO_INTERNAL;
+void      mono_arch_cleanup                     (void) MONO_INTERNAL;
 void      mono_arch_cpu_init                    (void);
 guint32   mono_arch_cpu_optimizazions           (guint32 *exclude_mask);
 void      mono_arch_instrument_mem_needs        (MonoMethod *method, int *stack, int *code);
@@ -1157,6 +1191,7 @@ void      mono_arch_emit_this_vret_args         (MonoCompile *cfg, MonoCallInst 
 void      mono_arch_allocate_vars               (MonoCompile *m);
 int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info);
 gboolean  mono_arch_print_tree			(MonoInst *tree, int arity);
+
 MonoJitInfo *mono_arch_find_jit_info            (MonoDomain *domain, 
 						 MonoJitTlsData *jit_tls, 
 						 MonoJitInfo *res, 
@@ -1182,6 +1217,7 @@ gboolean mono_arch_is_int_overflow              (void *sigctx, void *info) MONO_
 void     mono_arch_invalidate_method            (MonoJitInfo *ji, void *func, gpointer func_arg) MONO_INTERNAL;
 guint32  mono_arch_get_patch_offset             (guint8 *code) MONO_INTERNAL;
 gpointer*mono_arch_get_vcall_slot_addr          (guint8* code, gpointer *regs) MONO_INTERNAL;
+gpointer mono_arch_get_vcall_slot               (guint8 *code, gpointer *regs, int *displacement) MONO_INTERNAL;
 gpointer*mono_arch_get_delegate_method_ptr_addr (guint8* code, gpointer *regs) MONO_INTERNAL;
 void     mono_arch_create_vars                  (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_save_unwind_info             (MonoCompile *cfg) MONO_INTERNAL;
@@ -1252,6 +1288,10 @@ void      mono_debug_add_icall_wrapper          (MonoMethod *method, MonoJitICal
 void      mono_debug_print_vars                 (gpointer ip, gboolean only_arguments);
 void      mono_debugger_run_finally             (MonoContext *start_ctx);
 
+extern gssize mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
+
+gboolean mono_breakpoint_clean_code (guint8 *code, guint8 *buf, int size);
+
 /* Mono Debugger support */
 void      mono_debugger_init                    (void);
 int       mono_debugger_main                    (MonoDomain *domain, MonoAssembly *assembly, int argc, char **argv);
@@ -1282,5 +1322,36 @@ MonoArray* ves_icall_System_Security_SecurityFrame_GetSecurityStack (gint32 skip
 int mini_wapi_hps     (int argc, char **argv);
 int mini_wapi_semdel  (int argc, char **argv);
 int mini_wapi_seminfo (int argc, char **argv);
+
+/* Generic sharing */
+
+MonoGenericContext* mini_method_get_context (MonoMethod *method) MONO_INTERNAL;
+
+int mono_method_check_context_used (MonoMethod *method) MONO_INTERNAL;
+int mono_class_check_context_used (MonoClass *class) MONO_INTERNAL;
+
+gboolean mono_generic_context_equal_deep (MonoGenericContext *context1, MonoGenericContext *context2) MONO_INTERNAL;
+
+gboolean mono_generic_context_is_sharable (MonoGenericContext *context) MONO_INTERNAL;
+
+gboolean mono_method_is_generic_impl (MonoMethod *method) MONO_INTERNAL;
+gboolean mono_method_is_generic_sharable_impl (MonoMethod *method) MONO_INTERNAL;
+
+MonoMethod* mono_method_get_declaring_generic_method (MonoMethod *method) MONO_INTERNAL;
+
+int mono_class_generic_class_relation (MonoClass *klass, MonoClass *method_klass,
+				       MonoGenericContext *generic_context, int *arg_num) MONO_INTERNAL;
+
+gpointer mono_helper_get_rgctx_other_ptr (MonoMethod *method, MonoRuntimeGenericContext *rgctx,
+					  guint32 token, guint32 rgctx_type) MONO_INTERNAL;
+
+void mono_generic_sharing_init (void) MONO_INTERNAL;
+
+MonoClass* mini_class_get_container_class (MonoClass *class) MONO_INTERNAL;
+MonoGenericContext* mini_class_get_context (MonoClass *class) MONO_INTERNAL;
+
+MonoType* mini_get_basic_type_from_generic (MonoGenericSharingContext *gsctx, MonoType *type) MONO_INTERNAL;
+
+int mini_type_stack_size (MonoGenericSharingContext *gsctx, MonoType *t, int *align) MONO_INTERNAL;
 
 #endif /* __MONO_MINI_H__ */

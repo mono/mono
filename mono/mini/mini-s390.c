@@ -383,7 +383,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig,
 		if (csig->pinvoke)
 			size = mono_type_native_stack_size (csig->params [k], &align);
 		else
-			size = mono_type_stack_size (csig->params [k], &align);
+			size = mini_type_stack_size (NULL, csig->params [k], &align);
 
 		frame_size += pad = (align - (frame_size & (align - 1))) & (align - 1);	
 		arg_info [k].pad = pad;
@@ -991,6 +991,23 @@ mono_arch_cpu_init (void)
 }
 
 /*========================= End of Function ========================*/
+
+
+/*
+ * Initialize architecture specific code.
+ */
+void
+mono_arch_init (void)
+{
+}
+
+/*
+ * Cleanup architecture specific code.
+ */
+void
+mono_arch_cleanup (void)
+{
+}
 
 /*------------------------------------------------------------------*/
 /*                                                                  */

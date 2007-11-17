@@ -252,6 +252,45 @@ mono_test_marshal_bool_byref (int a, int *b, int c)
 	return res;
 }
 
+STDCALL int
+mono_test_marshal_bool_in_as_I1_U1 (char bTrue, char bFalse)
+{
+	if (!bTrue)
+                return 1;
+	if (bFalse)
+                return 2;
+        return 0;
+}
+
+STDCALL int
+mono_test_marshal_bool_out_as_I1_U1 (char* bTrue, char* bFalse)
+{
+        if (!bTrue || !bFalse)
+		return 3;
+
+	*bTrue = 1;
+	*bFalse = 0;
+
+	return 0;
+}
+
+STDCALL int
+mono_test_marshal_bool_ref_as_I1_U1 (char* bTrue, char* bFalse)
+{
+	if (!bTrue || !bFalse)
+                return 4;
+
+	if (!(*bTrue))
+                return 5;
+        if (*bFalse)
+                return 6;
+
+	*bFalse = 1;
+        *bTrue = 0;
+
+	return 0;
+}
+
 STDCALL int 
 mono_test_marshal_array (int *a1)
 {
@@ -1597,6 +1636,21 @@ mono_test_marshal_pass_return_custom_null_in_delegate (PassReturnPtrDelegate del
 	return (ptr == NULL) ? 15 : 0;
 }
 
+typedef void (STDCALL *CustomOutParamDelegate) (void **pptr);
+
+STDCALL int
+mono_test_marshal_custom_out_param_delegate (CustomOutParamDelegate del)
+{
+	void* pptr = del;
+
+	del (&pptr);
+
+	if(pptr != NULL)
+		return 1;
+
+	return 0;
+}
+
 typedef int (STDCALL *ReturnEnumDelegate) (int e);
 
 STDCALL int
@@ -1962,12 +2016,25 @@ mono_test_marshal_return_fnptr (void)
 	return &add_delegate;
 }
 
-STDCALL int mono_xr (int code)
+STDCALL int
+mono_xr (int code)
 {
 	printf ("codigo %x\n", code);
 	return code + 1234;
 }
 
+typedef struct {
+	int handle;
+} HandleRef;
+
+STDCALL HandleRef
+mono_xr_as_handle (int code)
+{
+	HandleRef ref;
+
+	return ref;
+}
+ 
 typedef struct {
 	int   a;
 	void *handle1;

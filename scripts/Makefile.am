@@ -5,7 +5,8 @@ bin_SCRIPTS = \
 	$(scripts_2_1)		\
 	$(scripts_service)	\
 	$(scripts_nunit)	\
-	$(scripts_rpmhelpers)
+	$(scripts_rpmhelpers)	\
+	mono-test-install
 
 scripts_1_0 = \
 	al			\
@@ -53,6 +54,7 @@ scripts_2_0 = \
 	gmcs			\
 	httpcfg			\
 	ilasm2			\
+	mconfig			\
 	mkbundle2		\
 	mono-api-info2 		\
 	monop2 			\
@@ -79,7 +81,8 @@ EXTRA_DIST =                   \
 	mono-service.in        \
 	mono-nunit.pc.in       \
 	mono-find-provides.in  \
-	mono-find-requires.in
+	mono-find-requires.in	\
+	mono-test-install
 
 if USE_JIT
 mono_interp = mono

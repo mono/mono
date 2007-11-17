@@ -74,6 +74,12 @@ memory_usage (MonoObject *obj, GHashTable *visited)
 
                         break;
 
+		case MONO_TYPE_STRING:
+			mono_field_get_value (obj, field, &value);
+			if (value != NULL)
+				total += mono_object_get_size ((MonoObject *) value);
+			break;
+
                 case MONO_TYPE_SZARRAY:
                         mono_field_get_value (obj, field, &value);
 

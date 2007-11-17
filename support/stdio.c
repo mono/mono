@@ -26,7 +26,11 @@ Mono_Posix_Syscall_L_ctermid (void)
 gint32
 Mono_Posix_Syscall_L_cuserid (void)
 {
+#ifdef __APPLE__
+	return -1;
+#else
 	return L_cuserid;
+#endif
 }
 #endif /* ndef PLATFORM_WIN32 */
 
@@ -204,8 +208,9 @@ Mono_Posix_Stdlib_clearerr (void* stream)
 }
 
 int
-Mono_Posix_Stdlib_perror (const char* s)
+Mono_Posix_Stdlib_perror (const char* s, int err)
 {
+	errno = err;
 	perror (s);
 	return 0;
 }

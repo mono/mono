@@ -102,6 +102,14 @@ When passed, DIR will be set for the MONO_CFG_DIR environment variable
 By default \fImkbundle\fP dynamically links to mono and glib.  This option
 causes it to statically link instead.
 .TP
+.B Important:
+Since the Mono runtime is licensed under the LGPL, even if you use
+static you should transfer the component pieces of the mkbundle to
+your users so they are able to upgrade the Mono runtime on their own.
+.TP
+If you want to use this for commercial licenses, you must obtain a
+proprietary license for Mono from mono@novell.com
+.TP
 .I "-z"
 Compresses the assemblies before embedding. This results in smaller
 executable files, but increases startup time and requires zlib to be

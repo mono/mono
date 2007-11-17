@@ -207,6 +207,22 @@ mono_arch_cpu_init (void)
 }
 
 /*
+ * Initialize architecture specific code.
+ */
+void
+mono_arch_init (void)
+{
+}
+
+/*
+ * Cleanup architecture specific code.
+ */
+void
+mono_arch_cleanup (void)
+{
+}
+
+/*
  * This function returns the optimizations supported on this cpu.
  */
 guint32
@@ -272,18 +288,28 @@ mono_arch_flush_icache (guint8 *code, gint size)
 	/* Hopefully this is optimized based on the actual CPU */
 	sync_instruction_memory (code, size);
 #else
-	guint64 *p = (guint64*)code;
-	guint64 *end = (guint64*)(code + ((size + 8) /8));
+	gulong start = (gulong) code;
+	gulong end = start + size;
+	gulong align;
 
-	/* 
-	 * FIXME: Flushing code in dword chunks in _slow_.
+	/* Sparcv9 chips only need flushes on 32 byte
+	 * cacheline boundaries.
+	 *
+	 * Sparcv8 needs a flush every 8 bytes.
 	 */
-	while (p < end)
+	align = (sparcv9 ? 32 : 8);
+
+	start &= ~(align - 1);
+	end = (end + (align - 1)) & ~(align - 1);
+
+	while (start < end) {
 #ifdef __GNUC__
-		__asm__ __volatile__ ("iflush %0"::"r"(p++));
+		__asm__ __volatile__ ("iflush %0"::"r"(start));
 #else
-			flushi (p ++);
+		flushi (start);
 #endif
+		start += align;
+	}
 #endif
 }
 
@@ -858,7 +884,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
 			size = mono_class_native_size (inst->inst_vtype->data.klass, &align);
 		else
-			size = mono_type_stack_size (inst->inst_vtype, &align);
+			size = mini_type_stack_size (m->generic_sharing_context, inst->inst_vtype, &align);
 
 		/* 
 		 * This is needed since structures containing doubles must be doubleword 
@@ -1136,7 +1162,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
 				else {
 					/* 
-					 * Can't use mono_type_stack_size (), but that
+					 * Can't use mini_type_stack_size (), but that
 					 * aligns the size to sizeof (gpointer), which is larger 
 					 * than the size of the source, leading to reads of invalid
 					 * memory if the source is at the end of address space or
@@ -1734,7 +1760,7 @@ if (ins->flags & MONO_INST_BRLABEL) { \
 #define EMIT_COND_SYSTEM_EXCEPTION_GENERAL(ins,cond,sexc_name,filldelay,icc) do {     \
 		mono_add_patch_info (cfg, (guint8*)(code) - (cfg)->native_code,   \
 				    MONO_PATCH_INFO_EXC, sexc_name);  \
-        if (sparcv9) { \
+        if (sparcv9 && ((icc) != sparc_icc_short)) {          \
            sparc_branchp (code, 0, (cond), (icc), 0, 0); \
         } \
         else { \
@@ -2259,7 +2285,7 @@ emit_save_sp_to_lmf (MonoCompile *cfg, guint32 *code)
 }
 
 static guint32*
-emit_vret_token (MonoInst *ins, guint32 *code)
+emit_vret_token (MonoGenericSharingContext *gsctx, MonoInst *ins, guint32 *code)
 {
 	MonoCallInst *call = (MonoCallInst*)ins;
 	guint32 size;
@@ -2270,7 +2296,7 @@ emit_vret_token (MonoInst *ins, guint32 *code)
 	 */
 	if (call->signature->pinvoke && MONO_TYPE_ISSTRUCT(call->signature->ret)) {
 		if (call->signature->ret->type == MONO_TYPE_TYPEDBYREF)
-			size = mono_type_stack_size (call->signature->ret, NULL);
+			size = mini_type_stack_size (gsctx, call->signature->ret, NULL);
 		else
 			size = mono_class_native_size (call->signature->ret->data.klass, NULL);
 		sparc_unimp (code, size & 0xfff);
@@ -2494,18 +2520,20 @@ mono_sparc_is_virtual_call (guint32 *code)
 }
 
 /*
- * mono_arch_get_vcall_slot_addr:
+ * mono_arch_get_vcall_slot:
  *
  *  Determine the vtable slot used by a virtual call.
  */
-gpointer*
-mono_arch_get_vcall_slot_addr (guint8 *code8, gpointer *regs)
+gpointer
+mono_arch_get_vcall_slot (guint8 *code8, gpointer *regs, int *displacement)
 {
 	guint32 *code = (guint32*)(gpointer)code8;
 	guint32 ins = code [0];
 	guint32 prev_ins = code [-1];
 
 	mono_sparc_flushw ();
+
+	*displacement = 0;
 
 	if (!mono_sparc_is_virtual_call (code))
 		return NULL;
@@ -2514,16 +2542,18 @@ mono_arch_get_vcall_slot_addr (guint8 *code8, gpointer *regs)
 		if ((sparc_inst_op (prev_ins) == 0x3) && (sparc_inst_i (prev_ins) == 1) && (sparc_inst_op3 (prev_ins) == 0 || sparc_inst_op3 (prev_ins) == 0xb)) {
 			/* ld [r1 + CONST ], r2; call r2 */
 			guint32 base = sparc_inst_rs1 (prev_ins);
-			guint32 disp = sparc_inst_imm13 (prev_ins);
+			gint32 disp = (((gint32)(sparc_inst_imm13 (prev_ins))) << 19) >> 19;
 			gpointer base_val;
 
 			g_assert (sparc_inst_rd (prev_ins) == sparc_inst_rs1 (ins));
 
 			g_assert ((base >= sparc_o0) && (base <= sparc_i7));
 
-			base_val = regs [base - sparc_o0];
+			base_val = regs [base];
 
-			return (gpointer)((guint8*)base_val + disp);
+			*displacement = disp;
+
+			return (gpointer)base_val;
 		}
 		else if ((sparc_inst_op (prev_ins) == 0x3) && (sparc_inst_i (prev_ins) == 0) && (sparc_inst_op3 (prev_ins) == 0)) {
 			/* set r1, ICONST; ld [r1 + r2], r2; call r2 */
@@ -2553,9 +2583,11 @@ mono_arch_get_vcall_slot_addr (guint8 *code8, gpointer *regs)
 
 			g_assert ((base >= sparc_o0) && (base <= sparc_i7));
 
-			base_val = regs [base - sparc_o0];
+			base_val = regs [base];
 
-			return (gpointer)((guint8*)base_val + disp);
+			*displacement = disp;
+
+			return (gpointer)base_val;
 		} else
 			g_assert_not_reached ();
 	}
@@ -2563,6 +2595,127 @@ mono_arch_get_vcall_slot_addr (guint8 *code8, gpointer *regs)
 		g_assert_not_reached ();
 
 	return NULL;
+}
+
+gpointer*
+mono_arch_get_vcall_slot_addr (guint8 *code, gpointer *regs)
+{
+	gpointer vt;
+	int displacement;
+	vt = mono_arch_get_vcall_slot (code, regs, &displacement);
+	if (!vt)
+		return NULL;
+	return (gpointer*)((char*)vt + displacement);
+}
+
+#define CMP_SIZE 3
+#define BR_SMALL_SIZE 2
+#define BR_LARGE_SIZE 2
+#define JUMP_IMM_SIZE 5
+#define ENABLE_WRONG_METHOD_CHECK 0
+
+/*
+ * LOCKING: called with the domain lock held
+ */
+gpointer
+mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count)
+{
+	int i;
+	int size = 0;
+	guint32 *code, *start;
+
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done)
+					item->chunk_size += CMP_SIZE;
+				item->chunk_size += BR_SMALL_SIZE + JUMP_IMM_SIZE;
+			} else {
+				item->chunk_size += JUMP_IMM_SIZE;
+#if ENABLE_WRONG_METHOD_CHECK
+				item->chunk_size += CMP_SIZE + BR_SMALL_SIZE + 1;
+#endif
+			}
+		} else {
+			item->chunk_size += CMP_SIZE + BR_LARGE_SIZE;
+			imt_entries [item->check_target_idx]->compare_done = TRUE;
+		}
+		size += item->chunk_size;
+	}
+	code = mono_code_manager_reserve (domain->code_mp, size * 4);
+	start = code;
+
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		item->code_target = (guint8*)code;
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done) {
+					sparc_set (code, (guint32)item->method, sparc_g5);
+					sparc_cmp (code, MONO_ARCH_IMT_REG, sparc_g5);
+				}
+				item->jmp_code = (guint8*)code;
+				sparc_branch (code, 0, sparc_bne, 0);
+				sparc_nop (code);
+				sparc_set (code, ((guint32)(&(vtable->vtable [item->vtable_slot]))), sparc_g5);
+				sparc_ld (code, sparc_g5, 0, sparc_g5);
+				sparc_jmpl (code, sparc_g5, sparc_g0, sparc_g0);
+				sparc_nop (code);
+			} else {
+				/* enable the commented code to assert on wrong method */
+#if ENABLE_WRONG_METHOD_CHECK
+				g_assert_not_reached ();
+#endif
+				sparc_set (code, ((guint32)(&(vtable->vtable [item->vtable_slot]))), sparc_g5);
+				sparc_ld (code, sparc_g5, 0, sparc_g5);
+				sparc_jmpl (code, sparc_g5, sparc_g0, sparc_g0);
+				sparc_nop (code);
+#if ENABLE_WRONG_METHOD_CHECK
+				g_assert_not_reached ();
+#endif
+			}
+		} else {
+			sparc_set (code, (guint32)item->method, sparc_g5);
+			sparc_cmp (code, MONO_ARCH_IMT_REG, sparc_g5);
+			item->jmp_code = (guint8*)code;
+			sparc_branch (code, 0, sparc_beu, 0);
+			sparc_nop (code);
+		}
+	}
+	/* patch the branches to get to the target items */
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->jmp_code) {
+			if (item->check_target_idx) {
+				sparc_patch ((guint32*)item->jmp_code, imt_entries [item->check_target_idx]->code_target);
+			}
+		}
+	}
+
+	mono_arch_flush_icache ((guint8*)start, (code - start) * 4);
+
+	mono_stats.imt_thunks_size += (code - start) * 4;
+	g_assert (code - start <= size);
+	return start;
+}
+
+MonoMethod*
+mono_arch_find_imt_method (gpointer *regs, guint8 *code)
+{
+#ifdef SPARCV9
+	g_assert_not_reached ();
+#endif
+
+	return (MonoMethod*)regs [sparc_g1];
+}
+
+MonoObject*
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+{
+	mono_sparc_flushw ();
+
+	return (gpointer)regs [sparc_o0];
 }
 
 /*
@@ -3123,7 +3276,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 			    code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
 
-			code = emit_vret_token (ins, code);
+			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_FCALL_REG:
@@ -3145,7 +3298,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				sparc_nop (code);
 
-			code = emit_vret_token (ins, code);
+			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_FCALL_MEMBASE:
@@ -3168,7 +3321,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				sparc_nop (code);
 
-			code = emit_vret_token (ins, code);
+			code = emit_vret_token (cfg->generic_sharing_context, ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
 		case OP_SETFRET:
@@ -4489,8 +4642,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			sparc_patch ((guint32*)(cfg->native_code + patch_info->ip.i), code);
 
 			exc_class = mono_class_from_name (mono_defaults.corlib, "System", patch_info->data.name);
-			type_idx = exc_class->type_token - MONO_TOKEN_TYPE_DEF;
 			g_assert (exc_class);
+			type_idx = exc_class->type_token - MONO_TOKEN_TYPE_DEF;
 			throw_ip = patch_info->ip.i;
 
 			/* Find a throw sequence for the same exception class */

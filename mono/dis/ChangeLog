@@ -1,3 +1,21 @@
+2007-11-06  Jb Evain  <jbevain@novell.com>
+
+	* main.c: Don't crash when a referenced assembly cannot be
+	found. Fix #323943.
+
+2007-11-05  Jackson Harper  <jackson@ximian.com>
+
+	* declsec.c (declsec_20_write_type): support for strings.
+
+2007-10-02  Jb Evain  <jbevain@novell.com>
+
+	* declsec.c (declsec_20_write_type): support for bools.
+
+2007-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* main.c (dis_property_signature): Remove some calls to mono_metadata_free_type ().
+
+	* get.c (get_type): Ditto.	
 
 Mon Jul 16 19:45:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

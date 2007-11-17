@@ -315,7 +315,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	guint32 idx = mono_metadata_token_index (token);
 
 	if (image->dynamic) {
-		MonoClassField *result = mono_lookup_dynamic_token (image, token);
+		MonoClassField *result = mono_lookup_dynamic_token (image, token, context);
 		*retklass = result->parent;
 		return result;
 	}
@@ -398,7 +398,7 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 	MonoClassField *field;
 
 	if (image->dynamic) {
-		MonoClassField *result = mono_lookup_dynamic_token (image, token);
+		MonoClassField *result = mono_lookup_dynamic_token (image, token, context);
 		*retklass = result->parent;
 		return result;
 	}
@@ -427,7 +427,7 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 	}
 
 	mono_loader_lock ();
-	if (field && !field->parent->generic_class)
+	if (field && !field->parent->generic_class && !field->parent->generic_container)
 		g_hash_table_insert (image->field_cache, GUINT_TO_POINTER (token), field);
 	mono_loader_unlock ();
 	return field;
@@ -522,18 +522,18 @@ find_method (MonoClass *in_class, MonoClass *ic, const char* name, MonoMethodSig
 
 		g_assert (from_class->interface_count == in_class->interface_count);
 		for (i = 0; i < in_class->interface_count; i++) {
-			MonoClass *ic = in_class->interfaces [i];
+			MonoClass *in_ic = in_class->interfaces [i];
 			MonoClass *from_ic = from_class->interfaces [i];
 			char *ic_qname, *ic_fqname, *ic_class_name;
 			
-			ic_class_name = mono_type_get_name_full (&ic->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
+			ic_class_name = mono_type_get_name_full (&in_ic->byval_arg, MONO_TYPE_NAME_FORMAT_IL);
 			ic_qname = g_strconcat (ic_class_name, ".", name, NULL); 
-			if (ic->name_space && ic->name_space [0])
-				ic_fqname = g_strconcat (ic->name_space, ".", ic_class_name, ".", name, NULL);
+			if (in_ic->name_space && in_ic->name_space [0])
+				ic_fqname = g_strconcat (in_ic->name_space, ".", ic_class_name, ".", name, NULL);
 			else
 				ic_fqname = NULL;
 
-			result = find_method_in_class (ic, NULL, ic_qname, ic_fqname, sig, from_ic);
+			result = find_method_in_class (in_ic, ic ? name : NULL, ic_qname, ic_fqname, sig, from_ic);
 			g_free (ic_class_name);
 			g_free (ic_fqname);
 			g_free (ic_qname);
@@ -566,7 +566,9 @@ inflate_generic_signature (MonoImage *image, MonoMethodSignature *sig, MonoGener
 	if (!context)
 		return sig;
 
-	res = mono_metadata_signature_alloc (image, sig->param_count);
+	res = g_malloc0 (sizeof (MonoMethodSignature) + ((gint32)sig->param_count - MONO_ZERO_LEN_ARRAY) * sizeof (MonoType*));
+	res->param_count = sig->param_count;
+	res->sentinelpos = -1;
 	res->ret = mono_class_inflate_generic_type (sig->ret, context);
 	is_open = mono_class_is_open_constructed_type (res->ret);
 	for (i = 0; i < sig->param_count; ++i) {
@@ -609,6 +611,7 @@ inflate_generic_header (MonoMethodHeader *header, MonoGenericContext *context)
 				continue;
 			t = mono_class_inflate_generic_type (&clause->data.catch_class->byval_arg, context);
 			clause->data.catch_class = mono_class_from_mono_type (t);
+			mono_metadata_free_type (t);
 		}
 	}
 	return res;
@@ -660,7 +663,6 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 		prev_sig = g_hash_table_lookup (image->memberref_signatures, GUINT_TO_POINTER (token));
 		if (prev_sig) {
 			/* Somebody got in before us */
-			/* FIXME: Free sig */
 			sig = prev_sig;
 		}
 		else
@@ -668,7 +670,16 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 		mono_loader_unlock ();
 	}
 
-	sig = inflate_generic_signature (image, sig, context);
+	if (context) {
+		MonoMethodSignature *cached;
+
+		/* This signature is not owned by a MonoMethod, so need to cache */
+		sig = inflate_generic_signature (image, sig, context);
+		cached = mono_metadata_get_inflated_signature (sig, context);
+		if (cached != sig)
+			mono_metadata_free_inflated_signature (sig);
+		sig = cached;
+	}
 
 	return sig;
 }
@@ -833,7 +844,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 static MonoMethod *
 method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 idx)
 {
-	MonoMethod *method, *inflated;
+	MonoMethod *method;
 	MonoClass *klass;
 	MonoTableInfo *tables = image->tables;
 	MonoGenericContext new_context;
@@ -853,32 +864,10 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	param_count = mono_metadata_decode_value (ptr, &ptr);
 	g_assert (param_count);
 
-	/*
-	 * Be careful with the two contexts here:
-	 *
-	 * ----------------------------------------
-	 * class Foo<S> {
-	 *   static void Hello<T> (S s, T t) { }
-	 *
-	 *   static void Test<U> (U u) {
-	 *     Foo<U>.Hello<string> (u, "World");
-	 *   }
-	 * }
-	 * ----------------------------------------
-	 *
-	 * Let's assume we're currently JITing Foo<int>.Test<long>
-	 * (ie. `S' is instantiated as `int' and `U' is instantiated as `long').
-	 *
-	 * The call to Hello() is encoded with a MethodSpec with a TypeSpec as parent
-	 * (MONO_MEMBERREF_PARENT_TYPESPEC).
-	 *
-	 * The TypeSpec is encoded as `Foo<!!0>', so we need to parse it in the current
-	 * context (S=int, U=long) to get the correct `Foo<long>'.
-	 * 
-	 * After that, we parse the memberref signature in the new context
-	 * (S=int, T=uninstantiated) and get the open generic method `Foo<long>.Hello<T>'.
-	 *
-	 */
+	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
+	if (context && inst->is_open)
+		inst = mono_metadata_inflate_generic_inst (inst, context);
+
 	if ((token & MONO_METHODDEFORREF_MASK) == MONO_METHODDEFORREF_METHODDEF)
 		method = mono_get_method_full (image, MONO_TOKEN_METHOD_DEF | nindex, NULL, context);
 	else
@@ -886,47 +875,15 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 
 	klass = method->klass;
 
-	/* FIXME: Is this invalid metadata?  Should we throw an exception instead?  */
-	g_assert (!klass->generic_container);
-
 	if (klass->generic_class) {
 		g_assert (method->is_inflated);
 		method = ((MonoMethodInflated *) method)->declaring;
 	}
 
 	new_context.class_inst = klass->generic_class ? klass->generic_class->context.class_inst : NULL;
-
-	/*
-	 * When parsing the methodspec signature, we're in the old context again:
-	 *
-	 * ----------------------------------------
-	 * class Foo {
-	 *   static void Hello<T> (T t) { }
-	 *
-	 *   static void Test<U> (U u) {
-	 *     Foo.Hello<U> (u);
-	 *   }
-	 * }
-	 * ----------------------------------------
-	 *
-	 * Let's assume we're currently JITing "Foo.Test<float>".
-	 *
-	 * In this case, we already parsed the memberref as "Foo.Hello<T>" and the methodspec
-	 * signature is "<!!0>".  This means that we must instantiate the method type parameter
-	 * `T' from the new method with the method type parameter `U' from the current context;
-	 * ie. instantiate the method as `Foo.Hello<float>.
-	 */
-
-	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
-
-	if (context && inst->is_open)
-		inst = mono_metadata_inflate_generic_inst (inst, context);
-
 	new_context.method_inst = inst;
 
-	inflated = mono_class_inflate_generic_method_full (method, klass, &new_context);
-
-	return inflated;
+	return mono_class_inflate_generic_method_full (method, klass, &new_context);
 }
 
 struct _MonoDllMap {
@@ -1326,7 +1283,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	guint32 cols [MONO_TYPEDEF_SIZE];
 
 	if (image->dynamic)
-		return mono_lookup_dynamic_token (image, token);
+		return mono_lookup_dynamic_token (image, token, context);
 
 	if (table != MONO_TABLE_METHOD) {
 		if (table == MONO_TABLE_METHODSPEC) {
@@ -1514,6 +1471,10 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 void
 mono_free_method  (MonoMethod *method)
 {
+	if (mono_profiler_get_events () & MONO_PROFILE_METHOD_EVENTS)
+		mono_profiler_method_free (method);
+	
+	/* FIXME: This hack will go away when the profiler will support freeing methods */
 	if (mono_profiler_get_events () != MONO_PROFILE_NONE)
 		return;
 	

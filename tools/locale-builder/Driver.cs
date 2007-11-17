@@ -523,6 +523,8 @@ namespace Mono.Tools.LocaleBuilder {
 						df.MonthNames.Clear ();
 					df.MonthNames.Add (ni2.Current.Value);
 				}
+				if (df.MonthNames.Count == 12)
+					df.MonthNames.Add (String.Empty);
 
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("dayNames/day");
 				while (ni2.MoveNext ()) {
@@ -544,6 +546,8 @@ namespace Mono.Tools.LocaleBuilder {
 						df.AbbreviatedMonthNames.Clear ();
 					df.AbbreviatedMonthNames.Add (ni2.Current.Value);
 				}
+				if (df.AbbreviatedMonthNames.Count == 12)
+					df.AbbreviatedMonthNames.Add (String.Empty);
 
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("dateFormats/dateFormatLength");
 				while (ni2.MoveNext ()) {
@@ -639,8 +643,8 @@ namespace Mono.Tools.LocaleBuilder {
 
 				ni2 = (XPathNodeIterator) ni.Current.Evaluate ("dateTimeFormats/dateTimeFormatLength/dateTimeFormat/pattern");
 				if (ni2.MoveNext ())
-					df.FullDateTimePattern = String.Format (ni2.Current.ToString (),
-							df.LongTimePattern, df.LongDatePattern);
+					df.RawFullDateTimePattern = ni2.Current.ToString ();/*String.Format (ni2.Current.ToString (),
+							df.LongTimePattern, df.LongDatePattern);*/
 
 				XPathNodeIterator am = ni.Current.SelectChildren ("am", "");
 				if (am.MoveNext ())

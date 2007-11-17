@@ -167,6 +167,22 @@ mono_arch_cpu_init (void)
 }
 
 /*
+ * Initialize architecture specific code.
+ */
+void
+mono_arch_init (void)
+{
+}
+
+/*
+ * Cleanup architecture specific code.
+ */
+void
+mono_arch_cleanup (void)
+{
+}
+
+/*
  * This function returns the optimizations supported on this cpu.
  */
 guint32
@@ -575,7 +591,7 @@ mono_arch_allocate_vars (MonoCompile *m)
 		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF)
 			size = mono_class_native_size (inst->inst_vtype->data.klass, &align);
 		else
-			size = mono_type_stack_size (inst->inst_vtype, &align);
+			size = mini_type_stack_size (cfg->generic_sharing_context, inst->inst_vtype, &align);
 
 		/* 
 		 * This is needed since structures containing doubles must be doubleword 

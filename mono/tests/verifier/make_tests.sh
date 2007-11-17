@@ -419,6 +419,60 @@ do
   I=`expr $I + 1`
 done
 
+#valid coersion between native int and int32
+I=1
+for OP in stloc.0 "starg 0" 
+do
+	./make_store_test.sh coercion_83_${I} valid "$OP" int32 "native int"
+ 	./make_store_test.sh coercion_84_${I} valid "$OP" "native int" int32
+
+	./make_store_test.sh coercion_85_${I} valid "$OP" "unsigned int32" "native int"
+ 	./make_store_test.sh coercion_86_${I} valid "$OP" "native int" "unsigned int32"
+
+	./make_store_test.sh coercion_87_${I} valid "$OP" int32 "native unsigned int"
+ 	./make_store_test.sh coercion_88_${I} valid "$OP" "native unsigned int" int32
+
+	./make_store_test.sh coercion_89_${I} valid "$OP" "unsigned int32" "native int"
+ 	./make_store_test.sh coercion_90_${I} valid "$OP" "native unsigned int" "unsigned int32"
+
+	I=`expr $I + 1`
+done
+
+#test for unverifiable types
+
+I=1
+for OP in "stloc.0" "starg 0"
+do
+  ./make_store_test.sh misc_types_store_1_${I} valid "$OP" typedref typedref
+  ./make_store_test.sh misc_types_store_2_${I} unverifiable "$OP" "int32*" "int32*"
+  ./make_store_test.sh misc_types_store_3_${I} unverifiable "$OP" "method int32 *(int32)" "method int32 *(int32)"
+
+  ./make_store_test.sh misc_types_store_4_${I} unverifiable "$OP" "method int32 *(int32)" "method void *(int32)"
+  ./make_store_test.sh misc_types_store_5_${I} unverifiable "$OP" "int32*" "int8*"
+  ./make_store_test.sh misc_types_store_6_${I} unverifiable "$OP" typedref "native int&"
+
+
+  ./make_store_test.sh managed_pointer_store_1_${I} valid "$OP" "int32&" "int32&"
+  ./make_store_test.sh managed_pointer_store_2_${I} valid "$OP" "int32&" "native int&"
+  ./make_store_test.sh managed_pointer_store_3_${I} valid "$OP" "int32&" "unsigned int32&"
+  ./make_store_test.sh managed_pointer_store_4_${I} valid "$OP" "native int&" "int32&"
+  ./make_store_test.sh managed_pointer_store_5_${I} unverifiable "$OP" "int32&" "int16&"
+
+  ./make_store_test.sh managed_pointer_store_6_${I} valid "$OP" "int8&" "unsigned int8&"
+  ./make_store_test.sh managed_pointer_store_7_${I} valid "$OP" "int8&" "bool&"
+  ./make_store_test.sh managed_pointer_store_8_${I} unverifiable "$OP" "int8&" "int16&"
+
+  ./make_store_test.sh managed_pointer_store_9_${I} valid "$OP" "int16&" "unsigned int16&"
+  ./make_store_test.sh managed_pointer_store_10_${I} valid "$OP" "int16&" "char&"
+  ./make_store_test.sh managed_pointer_store_11_${I} unverifiable "$OP" "int16&" "int32&"
+
+  ./make_store_test.sh managed_pointer_store_12_${I} unverifiable "$OP" "float32&" "float64&"
+  ./make_store_test.sh managed_pointer_store_13_${I} unverifiable "$OP" "float64&" "float32&"
+
+  I=`expr $I + 1`
+done
+
+
 function fix () {
 	if [ "$3" != "" ]; then
 		A=$3;
@@ -597,12 +651,29 @@ do
   #./make_obj_store_test.sh obj_coercion_75_${I} invalid "$OP" 'int32&' float64
   #./make_obj_store_test.sh obj_coercion_76_${I} invalid "$OP" 'int32&' object
   
-  ./make_obj_store_test.sh obj_coercion_77_${I} invalid "$OP" typedref int32
-  ./make_obj_store_test.sh obj_coercion_78_${I} invalid "$OP" typedref 'native int'
-  ./make_obj_store_test.sh obj_coercion_79_${I} invalid "$OP" typedref int64
-  ./make_obj_store_test.sh obj_coercion_80_${I} invalid "$OP" typedref float64
-  ./make_obj_store_test.sh obj_coercion_81_${I} invalid "$OP" typedref 'typedref&'
-  ./make_obj_store_test.sh obj_coercion_82_${I} invalid "$OP" typedref object
+
+  ./make_obj_store_test.sh obj_coercion_83_${I} valid "$OP" int32 "native int"
+  ./make_obj_store_test.sh obj_coercion_84_${I} valid "$OP" "native int" int32
+ 
+  ./make_obj_store_test.sh obj_coercion_85_${I} valid "$OP" "unsigned int32" "native int"
+  ./make_obj_store_test.sh obj_coercion_86_${I} valid "$OP" "native int" "unsigned int32"
+ 
+  ./make_obj_store_test.sh obj_coercion_87_${I} valid "$OP" int32 "native unsigned int"
+  ./make_obj_store_test.sh obj_coercion_88_${I} valid "$OP" "native unsigned int" int32
+ 
+  ./make_obj_store_test.sh obj_coercion_89_${I} valid "$OP" "unsigned int32" "native int"
+  ./make_obj_store_test.sh obj_coercion_90_${I} valid "$OP" "native unsigned int" "unsigned int32"
+  I=`expr $I + 1`
+done
+
+I=1
+for OP in "call void Class::Method(TYPE1)"
+do
+  ./make_obj_store_test.sh obj_coercion_77_${I} unverifiable "$OP" typedref int32 "no"
+  ./make_obj_store_test.sh obj_coercion_78_${I} unverifiable "$OP" typedref 'native int' "no"
+  ./make_obj_store_test.sh obj_coercion_79_${I} unverifiable "$OP" typedref int64 "no"
+  ./make_obj_store_test.sh obj_coercion_80_${I} unverifiable "$OP" typedref float64 "no"
+  ./make_obj_store_test.sh obj_coercion_82_${I} unverifiable "$OP" typedref object "no"
   I=`expr $I + 1`
 done
 
@@ -805,8 +876,9 @@ do
   ./make_unary_test.sh ${OP}_obj_int64 unverifiable "$OP int32 Class::valid\n\tpop" int64
   ./make_unary_test.sh ${OP}_obj_float64 unverifiable "$OP int32 Class::valid\n\tpop" float64
   ./make_unary_test.sh ${OP}_obj_native_int unverifiable "$OP int32 Class::valid\n\tpop" 'native int'
-  ./make_unary_test.sh ${OP}_obj_ref_overlapped unverifiable "$OP object Overlapped::objVal\n\tpop" "class Overlapped"
-  ./make_unary_test.sh ${OP}_obj_overlapped_field_not_accessible unverifiable "$OP int32 Overlapped::publicIntVal\n\tpop" "class Overlapped"
+#overlapped checks must be done separatedly
+#  ./make_unary_test.sh ${OP}_obj_ref_overlapped unverifiable "$OP object Overlapped::objVal\n\tpop" "class Overlapped"
+#  ./make_unary_test.sh ${OP}_obj_overlapped_field_not_accessible unverifiable "$OP int32 Overlapped::publicIntVal\n\tpop" "class Overlapped"
 done
 
 #TODO: these tests are bogus, they need to be fixed
@@ -833,6 +905,10 @@ done
 
 # Box byref-like type.
 ./make_unary_test.sh box_byref_like unverifiable "box [mscorlib]System.TypedReference\n\tpop" typedref
+
+#boxing between Int32 and IntPtr
+./make_unary_test.sh box_compat_1 valid "box [mscorlib]System.Int32\n\tpop" "native int"
+./make_unary_test.sh box_compat_2 valid "box [mscorlib]System.IntPtr\n\tpop" "int32"
 
 #This is illegal since you cannot have a Void local variable, it should go into the structural tests part
 # Box void type.
@@ -943,6 +1019,28 @@ done
 ./make_ret_test.sh ret_coercion_80 unverifiable typedref float64
 ./make_ret_test.sh ret_coercion_81 unverifiable typedref 'typedref&'
 ./make_ret_test.sh ret_coercion_82 unverifiable typedref object
+
+./make_ret_test.sh ret_coercion_83 valid int32 "native int"
+./make_ret_test.sh ret_coercion_84 valid "native int" int32
+./make_ret_test.sh ret_coercion_85 valid "unsigned int32" "native int"
+./make_ret_test.sh ret_coercion_86 valid "native int" "unsigned int32"
+./make_ret_test.sh ret_coercion_87 valid int32 "native unsigned int"
+./make_ret_test.sh ret_coercion_88 valid "native unsigned int" int32
+./make_ret_test.sh ret_coercion_89 valid "unsigned int32" "native int"
+./make_ret_test.sh ret_coercion_90 valid "native unsigned int" "unsigned int32"
+
+#type is unverifable
+./make_ret_test.sh ret_coercion_100 unverifiable "int32*" "int32*"
+./make_ret_test.sh ret_coercion_101 unverifiable "method int32* (int32)" "method int32* (int32)"
+
+#typedbyref as parm is ok
+./make_ret_test.sh ret_coercion_102 unverifiable int32 typedref
+./make_ret_test.sh ret_coercion_103 unverifiable typedref int32
+
+#unverifable return type: byref, typedbyref and ArgInterator
+./make_ret_test.sh bad_ret_type_1 unverifiable typedref typedref
+./make_ret_test.sh bad_ret_type_2 unverifiable "int32&" "int32&"
+./make_ret_test.sh bad_ret_type_4 unverifiable "valuetype [mscorlib]System.ArgIterator" "valuetype [mscorlib]System.ArgIterator"
 
 
 ./make_ret_test.sh ret_sub_type valid ClassA ClassSubA
@@ -1299,14 +1397,15 @@ do
 	./make_field_store_test.sh field_store_${I}_9 unverifiable "${OP} int32 MyValueType::fld" int32 'native int'
 	./make_field_store_test.sh field_store_${I}_10 unverifiable "${OP} int32 MyValueType::fld" int32 'class MyValueType *'
 	./make_field_store_test.sh field_store_${I}_11 unverifiable "${OP} int32 ClassA::fld" int32 'class ClassA *'
-	./make_field_store_test.sh field_store_${I}_12 valid "${OP} int32 Overlapped::field1" int32 'class Overlapped' yes
-	./make_field_store_test.sh field_store_${I}_13 unverifiable "${OP} ClassA Overlapped::field1" 'class ClassA' 'class Overlapped' yes
-	./make_field_store_test.sh field_store_${I}_14 valid "${OP} int32 Overlapped::field1" int32 'class SubOverlapped' yes
-	./make_field_store_test.sh field_store_${I}_15 unverifiable "${OP} ClassA Overlapped::field1" 'class ClassA' 'class SubOverlapped' yes
-	./make_field_store_test.sh field_store_${I}_16 valid "${OP} int32 SubOverlapped::field6" int32 'class SubOverlapped' yes
-	./make_field_store_test.sh field_store_${I}_17 unverifiable "${OP} ClassA SubOverlapped::field6" 'class ClassA' 'class SubOverlapped' yes
-	./make_field_store_test.sh field_store_${I}_18 valid "${OP} int32 Overlapped::field10" int32 'class Overlapped' yes
-	./make_field_store_test.sh field_store_${I}_20 unverifiable "${OP} int32 Overlapped::field10" 'class ClassA' 'class Overlapped' yes
+	#overlapped field tests should be done separatedly
+	#./make_field_store_test.sh field_store_${I}_12 valid "${OP} int32 Overlapped::field1" int32 'class Overlapped' yes
+	#./make_field_store_test.sh field_store_${I}_13 unverifiable "${OP} ClassA Overlapped::field1" 'class ClassA' 'class Overlapped' yes
+	#./make_field_store_test.sh field_store_${I}_14 valid "${OP} int32 Overlapped::field1" int32 'class SubOverlapped' yes
+	#./make_field_store_test.sh field_store_${I}_15 unverifiable "${OP} ClassA Overlapped::field1" 'class ClassA' 'class SubOverlapped' yes
+	#./make_field_store_test.sh field_store_${I}_16 valid "${OP} int32 SubOverlapped::field6" int32 'class SubOverlapped' yes
+	#./make_field_store_test.sh field_store_${I}_17 unverifiable "${OP} ClassA SubOverlapped::field6" 'class ClassA' 'class SubOverlapped' yes
+	#./make_field_store_test.sh field_store_${I}_18 valid "${OP} int32 Overlapped::field10" int32 'class Overlapped' yes
+	#./make_field_store_test.sh field_store_${I}_20 unverifiable "${OP} int32 Overlapped::field10" 'class ClassA' 'class Overlapped' yes
 
 	./make_field_store_test.sh field_store_${I}_22 invalid "${OP} int32 ClassA::unknown_field" 'class ClassA' 'class ClassA' yes
 	./make_field_store_test.sh field_store_${I}_23 unverifiable "${OP} int32 ClassA::const_field" int32 'int32 \&'
@@ -1767,7 +1866,7 @@ function create_nesting_test_only_first_ok () {
         for LOAD in yes no
         do
           if ! ( [ "$NESTED" == "no" ] && [ "$LOAD" == "yes" ] ) ; then
-	   EXPECT=unverifiable
+	       EXPECT=unverifiable
            if [ "$FIRST" == "$K" ]; then
               EXPECT=valid
            fi
@@ -2121,7 +2220,7 @@ done
 ./make_unbox_test.sh unbox_byref_type invalid "int32" 'int32\&'
 
 # Box unbox-like type.
-./make_unbox_test.sh unbox_byref_like unverifiable int32 typedref
+./make_unbox_test.sh unbox_byref_like unverifiable typedref typedref
 
 # Box unbox-like type.
 ./make_unbox_test.sh unbox_wrong_types valid object int32
@@ -2159,7 +2258,6 @@ done
 ./make_unbox_test.sh unbox_use_result_3 valid "int32" "int32" "ldind.i4\n\tstloc.1\n\tldc.i4.0"
 
 
-
 # newarray Test
 
 #no int size on stack
@@ -2181,4 +2279,340 @@ done
 
 #Check if the verifier push the right type on stack
 ./make_newarr_test.sh newarr_array_value valid int32 int32 nop "ldc.i4.0\n\tcallvirt instance int32 class [mscorlib]System.Array::GetLength(int32)"
+
+
+
+
+#Tests for ldind.X
+I=1
+for OP in "ldind.i1" "ldind.u1"
+do
+	for TYPE in "int8" "bool" "unsigned int8"
+	do
+		./make_load_indirect_test.sh indirect_load_i1_${I} valid "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int16" "char" "unsigned int16" "int32" "unsigned int32" "int64" "unsigned int64" "native int" "native unsigned int" "object" "string" "float32" "float64" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+	do
+		./make_load_indirect_test.sh indirect_load_i1_${I} unverifiable "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+done
+
+I=1
+for OP in "ldind.i2" "ldind.u2"
+do
+	for TYPE in "int16" "char" "unsigned int16"
+	do
+		./make_load_indirect_test.sh indirect_load_i2_${I} valid "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int8" "bool" "unsigned int8" "int32" "unsigned int32" "int64" "unsigned int64" "native int" "native unsigned int" "object" "string" "float32" "float64" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+	do
+		./make_load_indirect_test.sh indirect_load_i2_${I} unverifiable "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+done
+
+I=1
+for OP in "ldind.i4" "ldind.u4"
+do
+	for TYPE in "int32" "unsigned int32" "native int" "native unsigned int"
+	do
+		./make_load_indirect_test.sh indirect_load_i4_${I} valid "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int64" "unsigned int64" "object" "string" "float32" "float64" "class Class" "valuetype MyStruct" "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+	do
+		./make_load_indirect_test.sh indirect_load_i4_${I} unverifiable "${OP}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+done
+
+
+#no need to test ldind.u8 as it aliases to ldind.i8
+I=1
+for TYPE in "int64" "unsigned int64"
+do
+	./make_load_indirect_test.sh indirect_load_i8_${I} valid "ldind.i8" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "object" "string" "float32" "float64" "class Class" "valuetype MyStruct" "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_load_indirect_test.sh indirect_load_i8_${I} unverifiable "ldind.i8" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE in "float32"
+do
+	./make_load_indirect_test.sh indirect_load_r4_${I} valid "ldind.r4" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "int64" "unsigned int64" "float64" "native int" "native unsigned int" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_load_indirect_test.sh indirect_load_r4_${I} unverifiable "ldind.r4" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE in "float64"
+do
+	./make_load_indirect_test.sh indirect_load_r8_${I} valid "ldind.r8" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "int64" "unsigned int64" "float32" "native int" "native unsigned int" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_load_indirect_test.sh indirect_load_r8_${I} unverifiable "ldind.r8" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE in "int32" "unsigned int32" "native int" "native unsigned int" 
+do
+	./make_load_indirect_test.sh indirect_load_i_${I} valid "ldind.i" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int64" "unsigned int64" "float32" "float64" "object" "string" "class Class" "valuetype MyStruct" "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_load_indirect_test.sh indirect_load_i_${I} unverifiable "ldind.i" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE in "object" "string" "class Class"  "int32[]" "int32[,]" "class Template\`1<object>"
+do
+	./make_load_indirect_test.sh indirect_load_r_${I} valid "ldind.ref" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+for TYPE in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "int64" "unsigned int64" "native int" "native unsigned int" "float32" "float64" "valuetype MyStruct" "int32*" "method int32 *(int32)"
+do
+	./make_load_indirect_test.sh indirect_load_r_${I} unverifiable "ldind.ref" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+#valid stores
+./make_store_indirect_test.sh indirect_store_i1_1 valid "stind.i1" "int8\&" "int8"
+./make_store_indirect_test.sh indirect_store_i1_2 valid "stind.i1" "bool\&" "int8"
+./make_store_indirect_test.sh indirect_store_i1_3 valid "stind.i1" "int8\&" "bool"
+./make_store_indirect_test.sh indirect_store_i1_4 valid "stind.i1" "bool\&" "bool"
+
+./make_store_indirect_test.sh indirect_store_i2_1 valid "stind.i2" "int16\&" "int16"
+./make_store_indirect_test.sh indirect_store_i2_2 valid "stind.i2" "char\&" "int16"
+./make_store_indirect_test.sh indirect_store_i2_3 valid "stind.i2" "int16\&" "char"
+./make_store_indirect_test.sh indirect_store_i2_4 valid "stind.i2" "char\&" "char"
+
+./make_store_indirect_test.sh indirect_store_i4_1 valid "stind.i4" "int32\&" "int32"
+./make_store_indirect_test.sh indirect_store_i4_2 valid "stind.i4" "native int\&" "int32"
+./make_store_indirect_test.sh indirect_store_i4_3 valid "stind.i4" "int32\&" "native int"
+./make_store_indirect_test.sh indirect_store_i4_4 valid "stind.i4" "native int\&" "native int"
+
+
+./make_store_indirect_test.sh indirect_store_i8_1 valid "stind.i8" "int64\&" "int64"
+
+./make_store_indirect_test.sh indirect_store_r4_1 valid "stind.r4" "float32\&" "float32"
+
+./make_store_indirect_test.sh indirect_store_r8_1 valid "stind.r8" "float64\&" "float64"
+
+./make_store_indirect_test.sh indirect_store_i_1 valid "stind.i" "native int\&" "int32"
+./make_store_indirect_test.sh indirect_store_i_2 valid "stind.i" "int32\&" "int32"
+./make_store_indirect_test.sh indirect_store_i_3 valid "stind.i" "native int\&" "native int"
+./make_store_indirect_test.sh indirect_store_i_4 valid "stind.i" "int32\&" "native int"
+
+./make_store_indirect_test.sh indirect_store_r_1 valid "stind.ref" "object\&" "object"
+./make_store_indirect_test.sh indirect_store_r_2 valid "stind.ref" "object\&" "string"
+./make_store_indirect_test.sh indirect_store_r_3 valid "stind.ref" "string\&" "string"
+./make_store_indirect_test.sh indirect_store_r_4 unverifiable "stind.ref" "valuetype MyStruct\&" "MyStruct"
+
+
+
+
+#stdind tests
+#unverifiable due to unmanaged pointers
+./make_store_indirect_test.sh indirect_store_unmanaged_pointer_1 unverifiable "stind.i1" "int8*" "int8"
+./make_store_indirect_test.sh indirect_store_unmanaged_pointer_2 unverifiable "stind.i1" "native int" "int8"
+
+#invalid due to unrelated types on stack
+./make_store_indirect_test.sh indirect_store_bad_type_1 unverifiable "stind.i1" "int8" "int8"
+./make_store_indirect_test.sh indirect_store_bad_type_2 unverifiable "stind.i1" "int8" "int8"
+
+#invalid stind.ref with valuetypes
+./make_store_indirect_test.sh indirect_store_bad_type_r_3 valid "stind.ref" "int32[]\&" "int32[]"
+
+#invalid operands
+I=1
+for TYPE1 in "int16" "char" "int32" "native int"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i1_${I} unverifiable "stind.i1" "${TYPE1}\&" "int8"
+	./make_store_indirect_test.sh indirect_store_good_val_i1_${I} valid "stind.i1" "int8\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+for TYPE1 in  "int64" "float32" "float64" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i1_${I} unverifiable "stind.i1" "${TYPE1}\&" "int8"
+	./make_store_indirect_test.sh indirect_store_bad_val_i1_${I} unverifiable "stind.i1" "int8\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int32" "native int"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i2_${I} unverifiable "stind.i2" "${TYPE1}\&" "int16"
+	./make_store_indirect_test.sh indirect_store_good_val_i2_${I} valid "stind.i2" "int16\&" "${TYPE1}" 
+	I=`expr $I + 1`
+done
+
+for TYPE1 in "int64" "float32" "float64" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i2_${I} unverifiable "stind.i2" "${TYPE1}\&" "int16"
+	./make_store_indirect_test.sh indirect_store_bad_val_i2_${I} unverifiable "stind.i2" "int16\&" "${TYPE1}" 
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i4_${I} unverifiable "stind.i4" "${TYPE1}\&" "int32"
+	./make_store_indirect_test.sh indirect_store_good_val_i4_${I} valid "stind.i4" "int32\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+for TYPE1 in  "int64" "float32" "float64" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i4_${I} unverifiable "stind.i4" "${TYPE1}\&" "int32"
+	./make_store_indirect_test.sh indirect_store_bad_val_i4_${I} unverifiable "stind.i4" "int32\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char" "int32" "float32" "float64" "native int" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i8_${I} unverifiable "stind.i8" "${TYPE1}\&" "int64"
+	./make_store_indirect_test.sh indirect_store_bad_val_i8_${I} unverifiable "stind.i8" "int64\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char" "int32" "int64" "float64" "native int" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_r4_${I} unverifiable "stind.r4" "${TYPE1}\&" "float32"
+	if [ "$TYPE1" == "float64" ]; then
+		./make_store_indirect_test.sh indirect_store_good_val_r4_${I} valid "stind.r4" "float32\&" "${TYPE1}"
+	else
+		./make_store_indirect_test.sh indirect_store_bad_val_r4_${I} unverifiable "stind.r4" "float32\&" "${TYPE1}"
+	fi
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char" "int32" "int64" "float32" "native int" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_r8_${I} unverifiable "stind.r8" "${TYPE1}\&" "float64"
+	if [ "$TYPE1" == "float32" ]; then
+		./make_store_indirect_test.sh indirect_store_good_val_r8_${I} valid "stind.r8" "float64\&" "${TYPE1}";
+	else
+		./make_store_indirect_test.sh indirect_store_bad_val_r8_${I} unverifiable "stind.r8" "float64\&" "${TYPE1}";
+	fi
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i_${I} unverifiable "stind.i" "${TYPE1}\&" "native int" 
+	./make_store_indirect_test.sh indirect_store_good_val_i_${I} valid "stind.i" "native int\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+for TYPE1 in "int64" "float32" "float64" "object" "string" "class Class" "valuetype MyStruct"  "int32[]" "int32[,]" "int32*" "method int32 *(int32)"  "class Template\`1<object>"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_i_${I} unverifiable "stind.i" "${TYPE1}\&" "native int" 
+	./make_store_indirect_test.sh indirect_store_bad_val_i_${I} unverifiable "stind.i" "native int\&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for TYPE1 in "int8" "bool" "int16" "char" "int32" "int64" "float32" "float64" "native int"
+do
+	./make_store_indirect_test.sh indirect_store_bad_addr_ref_${I} unverifiable "stind.ref" "${TYPE1}\&" "object"
+	./make_store_indirect_test.sh indirect_store_bad_val_ref_${I} unverifiable "stind.ref" "object&" "${TYPE1}"
+	I=`expr $I + 1`
+done
+
+
+#TODO validate delegate construction (Wait for ldftn, ldvirtftn and calli to be fully checking)
+#underflow
+./make_newobj_test.sh newobj_underflow invalid "newobj instance void class ClassA::.ctor(int32,int32)" "int32" "int32"
+
+#good simple cases
+./make_newobj_test.sh newobj_good_instantiation_1 valid "newobj instance void class ClassA::.ctor(int32)" "int32" "int32"
+./make_newobj_test.sh newobj_good_instantiation_2 valid "newobj instance void class ClassA::.ctor(int32)" "native int" "int32"
+./make_newobj_test.sh newobj_good_instantiation_3 valid "newobj instance void class ClassA::.ctor(native int)" "int32" "native int"
+./make_newobj_test.sh newobj_good_instantiation_4 valid "newobj instance void class ClassA::.ctor(native int)" "int32" "native int"
+./make_newobj_test.sh newobj_good_instantiation_5 valid "ldloc.0\n\tnewobj instance void int32[,]::.ctor(int32, int32)" "int32" "native int"
+./make_newobj_test.sh newobj_good_instantiation_6 valid "newobj instance void class ClassA::.ctor(typedref)" "typedref" "typedref"
+
+#unverifable types
+./make_newobj_test.sh newobj_unverifiable_types_1 unverifiable "newobj instance void class ClassA::.ctor(int32*)" "int32*" "int32*"
+./make_newobj_test.sh newobj_unverifiable_types_2 unverifiable "newobj instance void class ClassA::.ctor(method int32 *(int32))" "method int32 *(int32)" "method int32 *(int32)"
+
+
+
+#abstract type
+./make_newobj_test.sh newobj_bad_inst_1 unverifiable "newobj instance void class AbsClass::.ctor()" "int32" "int32"
+
+#bad types
+./make_newobj_test.sh newobj_bad_args_1 unverifiable "newobj instance void class ClassA::.ctor(int32)" "int64" "int32"
+./make_newobj_test.sh newobj_bad_args_2 unverifiable "newobj instance void class ClassA::.ctor(int32)" "object" "int32"
+./make_newobj_test.sh newobj_bad_args_3 unverifiable "newobj instance void class ClassA::.ctor(int32)" "int32\&" "int32"
+./make_newobj_test.sh newobj_bad_args_4 unverifiable "newobj instance void class ClassA::.ctor(int32)" "float32" "int32"
+
+./make_newobj_test.sh newobj_bad_args_5 unverifiable "newobj instance void class ClassA::.ctor(int64)" "int32" "int64"
+./make_newobj_test.sh newobj_bad_args_6 unverifiable "newobj instance void class ClassA::.ctor(int64)" "object" "int64"
+./make_newobj_test.sh newobj_bad_args_7 unverifiable "newobj instance void class ClassA::.ctor(int64)" "int32\&" "int64"
+./make_newobj_test.sh newobj_bad_args_8 unverifiable "newobj instance void class ClassA::.ctor(int64)" "float32" "int64"
+
+./make_newobj_test.sh newobj_bad_args_9 unverifiable "newobj instance void class ClassA::.ctor(object)" "int64" "object"
+./make_newobj_test.sh newobj_bad_args_10 unverifiable "newobj instance void class ClassA::.ctor(object)" "int32" "object"
+./make_newobj_test.sh newobj_bad_args_11 unverifiable "newobj instance void class ClassA::.ctor(object)" "int32\&" "object"
+./make_newobj_test.sh newobj_bad_args_12 unverifiable "newobj instance void class ClassA::.ctor(object)" "float32" "object"
+
+./make_newobj_test.sh newobj_bad_args_13 unverifiable "newobj instance void class ClassA::.ctor(float32)" "int64" "float32"
+./make_newobj_test.sh newobj_bad_args_14 unverifiable "newobj instance void class ClassA::.ctor(float32)" "object" "float32"
+./make_newobj_test.sh newobj_bad_args_15 unverifiable "newobj instance void class ClassA::.ctor(float32)" "int32\&" "float32"
+./make_newobj_test.sh newobj_bad_args_16 unverifiable "newobj instance void class ClassA::.ctor(float32)" "int32" "float32"
+
+./make_newobj_test.sh newobj_bad_args_17 unverifiable "newobj instance void class ClassA::.ctor(typedref)" "int32" "typedref"
+./make_newobj_test.sh newobj_bad_args_18 unverifiable "newobj instance void class ClassA::.ctor(typedref)" "object" "typedref"
+./make_newobj_test.sh newobj_bad_args_19 unverifiable "newobj instance void class ClassA::.ctor(typedref)" "int32\&" "typedref"
+./make_newobj_test.sh newobj_bad_args_20 unverifiable "newobj instance void class ClassA::.ctor(typedref)" "float32" "typedref"
+
+
+#calling something that it's not an instance constructor
+
+./make_newobj_test.sh newobj_method_not_ctor_1 invalid "newobj instance void class ClassA::ctor(int32)" "int32" "int32"
+./make_newobj_test.sh newobj_method_not_ctor_2 invalid "newobj instance void class ClassA::sctor(int32)" "int32" "int32"
+./make_newobj_test.sh newobj_method_not_ctor_1 invalid "pop\n\tnewobj instance void class ClassA::.cctor()" "int32" "int32"
+
 

@@ -16,7 +16,7 @@
 #ifdef MONO_ARCH_HAVE_IMT
 
 static gpointer*
-mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *code, MonoMethod *method)
+mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *code, MonoMethod *method, MonoMethod **impl_method)
 {
 	MonoObject *this_argument = mono_arch_find_this_argument (regs, method);
 	MonoVTable *vt = this_argument->vtable;
@@ -30,9 +30,20 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *co
 		return slot;
 	} else {
 		MonoMethod *imt_method = mono_arch_find_imt_method (regs, code);
-		int interface_offset = mono_class_interface_offset (vt->klass, imt_method->klass);
+		int interface_offset;
 		int imt_slot = MONO_IMT_SIZE + displacement;
 
+		mono_class_setup_vtable (vt->klass);
+		interface_offset = mono_class_interface_offset (vt->klass, imt_method->klass);
+
+		if (interface_offset < 0) {
+			g_print ("%s doesn't implement interface %s\n", mono_type_get_name_full (&vt->klass->byval_arg, 0), mono_type_get_name_full (&imt_method->klass->byval_arg, 0));
+			g_assert_not_reached ();
+		}
+		mono_vtable_build_imt_slot (vt, mono_method_get_imt_slot (imt_method));
+
+		if (impl_method)
+			*impl_method = vt->klass->vtable [interface_offset + imt_method->slot];
 #if DEBUG_IMT
 		printf ("mono_convert_imt_slot_to_vtable_slot: method = %s.%s.%s, imt_method = %s.%s.%s\n",
 				method->klass->name_space, method->klass->name, method->name, 
@@ -45,7 +56,6 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *co
 #if DEBUG_IMT
 			printf ("mono_convert_imt_slot_to_vtable_slot: slot %p[%d] is in the IMT, and colliding becomes %p[%d] (interface_offset = %d, method->slot = %d)\n", slot, imt_slot, vtable_slot, vtable_offset, interface_offset, imt_method->slot);
 #endif
-			g_assert (vtable_offset >= 0);
 			return vtable_slot;
 		} else {
 #if DEBUG_IMT
@@ -68,8 +78,50 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 	gpointer addr;
 	gpointer *vtable_slot;
 
+#if MONO_ARCH_COMMON_VTABLE_TRAMPOLINE
+	if (m == MONO_FAKE_VTABLE_METHOD) {
+		int displacement;
+		MonoVTable *vt = mono_arch_get_vcall_slot (code, (gpointer*)regs, &displacement);
+		g_assert (vt);
+		if (displacement > 0) {
+			displacement -= G_STRUCT_OFFSET (MonoVTable, vtable);
+			g_assert (displacement >= 0);
+			displacement /= sizeof (gpointer);
+			mono_class_setup_vtable (vt->klass);
+			m = vt->klass->vtable [displacement];
+			if (m->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
+				m = mono_marshal_get_synchronized_wrapper (m);
+			/*g_print ("%s with disp %d: %s at %p\n", vt->klass->name, displacement, m->name, code);*/
+		} else {
+			/* We got here from an interface method: redirect to IMT handling */
+			m = MONO_FAKE_IMT_METHOD;
+			/*g_print ("vtable with disp %d at %p\n", displacement, code);*/
+		}
+	}
+#endif
+	/* this is the IMT trampoline */
+#ifdef MONO_ARCH_HAVE_IMT
+	if (m == MONO_FAKE_IMT_METHOD) {
+		MonoMethod *impl_method;
+		/* we get the interface method because mono_convert_imt_slot_to_vtable_slot ()
+		 * needs the signature to be able to find the this argument
+		 */
+		m = mono_arch_find_imt_method (regs, code);
+		vtable_slot = mono_arch_get_vcall_slot_addr (code, (gpointer*)regs);
+		g_assert (vtable_slot);
+		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, m, &impl_method);
+		/* mono_convert_imt_slot_to_vtable_slot () also gives us the method that is supposed
+		 * to be called, so we compile it and go ahead as usual.
+		 */
+		/*g_print ("imt found method %p (%s) at %p\n", impl_method, impl_method->name, code);*/
+		m = impl_method;
+	}
+#endif
+
 	addr = mono_compile_method (m);
 	g_assert (addr);
+
+	mono_debugger_trampoline_compiled (m, addr);
 
 	/* the method was jumped to */
 	if (!code)
@@ -85,7 +137,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 
 		if (mono_aot_is_got_entry (code, (guint8*)vtable_slot) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot)) {
 #ifdef MONO_ARCH_HAVE_IMT
-			vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, m);
+			vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, m, NULL);
 #endif
 			*vtable_slot = mono_get_addr_from_ftnptr (addr);
 		}
@@ -178,7 +230,7 @@ mono_aot_trampoline (gssize *regs, guint8 *code, guint8 *token_info,
 #ifdef MONO_ARCH_HAVE_IMT
 		if (!method)
 			method = mono_get_method (image, token, NULL);
-		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, method);
+		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, method, NULL);
 #endif
 		*vtable_slot = addr;
 	}
@@ -242,7 +294,7 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 	MonoJitInfo *ji;
 	gpointer iter;
 	MonoMethod *invoke;
-	gboolean multicast;
+	gboolean multicast, callvirt;
 
 	/* Find the Invoke method */
 	iter = NULL;
@@ -261,45 +313,22 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 	 * further calls don't have to go through the trampoline.
 	 */
 	ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (delegate->method_ptr));
-	if (ji)
+	callvirt = !delegate->target && ji && mono_method_signature (ji->method)->hasthis;
+	if (ji && !callvirt)
 		delegate->method_ptr = mono_compile_method (ji->method);
 
 	multicast = ((MonoMulticastDelegate*)delegate)->prev != NULL;
-	if (!multicast) {
-		guint8* code;
-		GHashTable *cache;
-
-		mono_domain_lock (domain);
-		if (delegate->target != NULL) {
-			if (!domain->delegate_invoke_impl_with_target_hash)
-				domain->delegate_invoke_impl_with_target_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-			cache = domain->delegate_invoke_impl_with_target_hash;
-		} else {
-			if (!domain->delegate_invoke_impl_no_target_hash)
-				domain->delegate_invoke_impl_no_target_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-			cache = domain->delegate_invoke_impl_no_target_hash;
-		}
-		code = g_hash_table_lookup (cache, mono_method_signature (invoke));
-		mono_domain_unlock (domain);
-		if (code) {
-			delegate->invoke_impl = code;
-			return code;
-		}
-
+	if (!multicast && !callvirt) {
 		code = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), delegate->target != NULL);
 
 		if (code) {
-			mono_domain_lock (domain);
-			g_hash_table_insert (cache, mono_method_signature (invoke), code);
-			mono_domain_unlock (domain);
-
 			delegate->invoke_impl = code;
 			return code;
 		}
 	}
 
 	/* The general, unoptimized case */
-	delegate->invoke_impl = mono_compile_method (mono_marshal_get_delegate_invoke (invoke));
+	delegate->invoke_impl = mono_compile_method (mono_marshal_get_delegate_invoke (invoke, delegate));
 	return delegate->invoke_impl;
 }
 

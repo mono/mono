@@ -1,3 +1,26 @@
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* stdio.c:  Handle Leopards lack of L_cuserid.
+
+2007-10-25  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* stdio.c: Provide errno as a parameter and set errno before calling
+	  perror(3), as errno is cleared during P/Invoke.
+	* map.h: Updated prototype for Mono_Posix_Stdlib_perror().
+
+2007-09-08  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c: NAME_MAX isn't defined on Solaris; fix the build.
+
+2007-09-04  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c: Fix `struct dirent' overflow on Solaris.  See #82678.
+
+2007-09-03  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* dirent.c: Fix logic to determine if readdir_r() succeeded.  
+	  Thanks to Albert Lee for the patch; see #82678.
+
 2007-08-14  Wade Berrier  <wberrier@novell.com>
 
 	* serial.c: include sys/time.h for mac osx 10.3 for timeval

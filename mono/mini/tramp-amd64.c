@@ -40,11 +40,12 @@ gpointer
 mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 {
 	guint8 *code, *start;
-	int this_reg = AMD64_RDI;
+	int this_reg = AMD64_ARG_REG1;
+
 	MonoDomain *domain = mono_domain_get ();
 
 	if (!mono_method_signature (m)->ret->byref && MONO_TYPE_ISSTRUCT (mono_method_signature (m)->ret))
-		this_reg = AMD64_RSI;
+		this_reg = AMD64_ARG_REG2;
 
 	mono_domain_lock (domain);
 	start = code = mono_code_manager_reserve (domain->code_mp, 20);
@@ -62,21 +63,30 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 void
-mono_arch_patch_callsite (guint8 *code, guint8 *addr)
+mono_arch_patch_callsite (guint8 *orig_code, guint8 *addr)
 {
+	guint8 *code;
+	guint8 buf [16];
+	gboolean can_write = mono_breakpoint_clean_code (orig_code - 14, buf, sizeof (buf));
+
+	code = buf + 14;
+
 	if (((code [-13] == 0x49) && (code [-12] == 0xbb)) || (code [-5] == 0xe8)) {
-		if (code [-5] != 0xe8)
-			InterlockedExchangePointer ((gpointer*)(code - 11), addr);
-		else {
+		if (code [-5] != 0xe8) {
+			if (can_write)
+				InterlockedExchangePointer ((gpointer*)(orig_code - 11), addr);
+		} else {
 			g_assert ((((guint64)(addr)) >> 32) == 0);
-			g_assert ((((guint64)(code)) >> 32) == 0);
-			InterlockedExchange ((gint32*)(code - 4), ((gint64)addr - (gint64)code));
+			g_assert ((((guint64)(orig_code)) >> 32) == 0);
+			if (can_write)
+				InterlockedExchange ((gint32*)(orig_code - 4), ((gint64)addr - (gint64)orig_code));
 		}
 	}
 	else if ((code [-7] == 0x41) && (code [-6] == 0xff) && (code [-5] == 0x15)) {
 		/* call *<OFFSET>(%rip) */
-		gpointer *got_entry = (gpointer*)((guint8*)code + (*(guint32*)(code - 4)));
-		InterlockedExchangePointer (got_entry, addr);
+		gpointer *got_entry = (gpointer*)((guint8*)orig_code + (*(guint32*)(orig_code - 4)));
+		if (can_write)
+			InterlockedExchangePointer (got_entry, addr);
 	}
 }
 
@@ -164,7 +174,7 @@ mono_arch_nullify_plt_entry (guint8 *code)
 guchar*
 mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 {
-	guint8 *buf, *code, *tramp;
+	guint8 *buf, *code, *tramp, *br [2];
 	int i, lmf_offset, offset, method_offset, tramp_offset, saved_regs_offset, saved_fpregs_offset, framesize;
 	gboolean has_caller;
 
@@ -180,26 +190,25 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 
 	offset = 0;
 
-	/* 
-	 * Allocate a new stack frame and transfer the two arguments received on 
-	 * the stack to our frame.
-	 */
-	amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
+	/* Pop the return address off the stack */
 	amd64_pop_reg (code, AMD64_R11);
 
+	/* 
+	 * Allocate a new stack frame
+	 */
 	amd64_push_reg (code, AMD64_RBP);
 	amd64_mov_reg_reg (code, AMD64_RBP, AMD64_RSP, 8);
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, framesize);
 
-	/* 
-	 * The method is at offset -8 from the new RBP, so no need to
-	 * copy it.
-	 */
+	offset += 8;
+	tramp_offset = - offset;
+
 	offset += 8;
 	method_offset = - offset;
 
-	offset += 8;
-	tramp_offset = - offset;
+	/* Compute the trampoline address from the return address */
+	/* 5 = length of amd64_call_membase () */
+	amd64_alu_reg_imm (code, X86_SUB, AMD64_R11, 5);
 	amd64_mov_membase_reg (code, AMD64_RBP, tramp_offset, AMD64_R11, 8);
 
 	/* Save all registers */
@@ -212,6 +221,23 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	saved_fpregs_offset = - offset;
 	for (i = 0; i < 8; ++i)
 		amd64_movsd_membase_reg (code, AMD64_RBP, saved_fpregs_offset + (i * 8), i);
+
+	/* Obtain the trampoline argument which is encoded in the instruction stream */
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, tramp_offset, 8);
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_R11, 5, 1);
+	amd64_widen_reg (code, AMD64_RAX, AMD64_RAX, TRUE, FALSE);
+	amd64_alu_reg_imm_size (code, X86_CMP, AMD64_RAX, 4, 1);
+	br [0] = code;
+	x86_branch8 (code, X86_CC_NE, 6, FALSE);
+	/* 32 bit immediate */
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11, 6, 4);
+	br [1] = code;
+	x86_jump8 (code, 10);
+	/* 64 bit immediate */
+	mono_amd64_patch (br [0], code);
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11, 6, 8);
+	mono_amd64_patch (br [1], code);
+	amd64_mov_membase_reg (code, AMD64_RBP, method_offset, AMD64_R11, 8);
 
 	/* Save LMF begin */
 
@@ -235,6 +261,10 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, method_offset, 8);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, method), AMD64_R11, 8);
 	/* Save callee saved regs */
+#ifdef PLATFORM_WIN32
+	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rdi), AMD64_RDI, 8);
+	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rsi), AMD64_RSI, 8);
+#endif
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rbx), AMD64_RBX, 8);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, r12), AMD64_R12, 8);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, r13), AMD64_R13, 8);
@@ -256,19 +286,19 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	/* Save LMF end */
 
 	/* Arg1 is the pointer to the saved registers */
-	amd64_lea_membase (code, AMD64_RDI, AMD64_RBP, saved_regs_offset);
+	amd64_lea_membase (code, AMD64_ARG_REG1, AMD64_RBP, saved_regs_offset);
 
 	/* Arg2 is the address of the calling code */
 	if (has_caller)
-		amd64_mov_reg_membase (code, AMD64_RSI, AMD64_RBP, 8, 8);
+		amd64_mov_reg_membase (code, AMD64_ARG_REG2, AMD64_RBP, 8, 8);
 	else
-		amd64_mov_reg_imm (code, AMD64_RSI, 0);
+		amd64_mov_reg_imm (code, AMD64_ARG_REG2, 0);
 
 	/* Arg3 is the method/vtable ptr */
-	amd64_mov_reg_membase (code, AMD64_RDX, AMD64_RBP, method_offset, 8);
+	amd64_mov_reg_membase (code, AMD64_ARG_REG3, AMD64_RBP, method_offset, 8);
 
 	/* Arg4 is the trampoline address */
-	amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RBP, tramp_offset, 8);
+	amd64_mov_reg_membase (code, AMD64_ARG_REG4, AMD64_RBP, tramp_offset, 8);
 
 	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT)
 		tramp = (guint8*)mono_class_init_trampoline;
@@ -320,53 +350,43 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	return buf;
 }
 
-#define TRAMPOLINE_SIZE 34
-
 gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len)
 {
-	guint8 *code, *buf, *tramp, *real_code;
-	int size, jump_offset;
+	guint8 *code, *buf, *tramp;
+	int size;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	code = buf = g_alloca (TRAMPOLINE_SIZE);
-
-	/* push trampoline address */
-	amd64_lea_membase (code, AMD64_R11, AMD64_RIP, -7);
-	amd64_push_reg (code, AMD64_R11);
-
-	/* push argument */
-	if (amd64_is_imm32 ((gint64)arg1))
-		amd64_push_imm (code, (gint64)arg1);
-	else {
-		amd64_mov_reg_imm (code, AMD64_R11, arg1);
-		amd64_push_reg (code, AMD64_R11);
-	}
-
-	jump_offset = code - buf;
-	amd64_jump_disp (code, 0xffffffff);
-
-	g_assert ((code - buf) <= TRAMPOLINE_SIZE);
+	if ((((guint64)arg1) >> 32) == 0)
+		size = 5 + 1 + 4;
+	else
+		size = 5 + 1 + 8;
 
 	mono_domain_lock (domain);
-	real_code = mono_code_manager_reserve (domain->code_mp, code - buf);
-	size = code - buf;
+	code = buf = mono_code_manager_reserve_align (domain->code_mp, size, 1);
 	mono_domain_unlock (domain);
 
-	memcpy (real_code, buf, size);
+	amd64_call_code (code, tramp);
+	/* The trampoline code will obtain the argument from the instruction stream */
+	if ((((guint64)arg1) >> 32) == 0) {
+		*code = 0x4;
+		*(guint32*)(code + 1) = (gint64)arg1;
+		code += 5;
+	} else {
+		*code = 0x8;
+		*(guint64*)(code + 1) = (gint64)arg1;
+		code += 9;
+	}
 
-	/* Fix up jump */
-	code = (guint8*)real_code + jump_offset;
-	g_assert (amd64_is_imm32 (((gint64)tramp - (gint64)code)));
-	amd64_jump_disp (code, tramp - code);
+	g_assert ((code - buf) <= size);
 
 	if (code_len)
 		*code_len = size;
 
-	mono_arch_flush_icache (real_code, size);
+	mono_arch_flush_icache (buf, size);
 
-	return real_code;
+	return buf;
 }	
 
 void
@@ -375,7 +395,7 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 	/* FIXME: This is not thread safe */
 	guint8 *code = ji->code_start;
 
-	amd64_mov_reg_imm (code, AMD64_RDI, func_arg);
+	amd64_mov_reg_imm (code, AMD64_ARG_REG1, func_arg);
 	amd64_mov_reg_imm (code, AMD64_R11, func);
 
 	x86_push_imm (code, (guint64)func_arg);

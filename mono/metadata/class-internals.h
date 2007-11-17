@@ -175,6 +175,7 @@ enum {
 	MONO_EXCEPTION_FILE_NOT_FOUND = 8,
 	MONO_EXCEPTION_METHOD_ACCESS = 9,
 	MONO_EXCEPTION_FIELD_ACCESS = 10,
+	MONO_EXCEPTION_GENERIC_SHARING_FAILED = 11,
 	/* add other exception type */
 };
 
@@ -188,16 +189,19 @@ typedef struct {
 } MonoClassRuntimeInfo;
 
 struct _MonoClass {
-	MonoImage *image;
-
-	/* The underlying type of the enum */
-	MonoType *enum_basetype;
 	/* element class for arrays and enum */
 	MonoClass *element_class; 
 	/* used for subtype checks */
 	MonoClass *cast_class; 
+
+	/* for fast subtype checks */
+	MonoClass **supertypes;
+	guint16     idepth;
+
 	/* array dimension */
 	guint8     rank;          
+
+	int        instance_size; /* object instance size */
 
 	guint inited          : 1;
 	/* We use init_pending to detect cyclic calls to mono_class_init */
@@ -241,19 +245,21 @@ struct _MonoClass {
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
 	void*      exception_data;	/* Additional information about the exception */
-	guint32    declsec_flags;	/* declarative security attributes flags */
 
 	MonoClass  *parent;
 	MonoClass  *nested_in;
 	GList      *nested_classes;
 
-	guint32    type_token;
+	MonoImage *image;
 	const char *name;
 	const char *name_space;
-	
-	/* for fast subtype checks */
-	MonoClass **supertypes;
-	guint16     idepth;
+
+	/* The underlying type of the enum */
+	MonoType *enum_basetype;
+
+	guint32    declsec_flags;	/* declarative security attributes flags */
+	guint32    type_token;
+	int        vtable_size; /* number of slots */
 
 	guint16     interface_count;
 	guint16     interface_id;        /* unique inderface id (for interfaces) */
@@ -266,11 +272,6 @@ struct _MonoClass {
 	
 	MonoClass **interfaces;
 
-	/*
-	 * Computed object instance size, total.
-	 */
-	int        instance_size;
-	int        vtable_size; /* number of slots */
 	union {
 		int class_size; /* size of area for static fields */
 		int element_size; /* for array types */
@@ -323,6 +324,23 @@ struct _MonoClass {
 #define MONO_CLASS_IMPLEMENTS_INTERFACE(k,uiid) (((uiid) <= (k)->max_interface_id) && ((k)->interface_bitmap [(uiid) >> 3] & (1 << ((uiid)&7))))
 int mono_class_interface_offset (MonoClass *klass, MonoClass *itf);
 
+typedef struct {
+	gpointer static_data;
+	MonoClass *klass;
+	MonoVTable *vtable;
+} MonoRuntimeGenericSuperInfo;
+
+typedef struct {
+	gpointer static_data;
+	MonoClass *klass;
+	MonoVTable *vtable;
+} MonoRuntimeGenericArgInfo;
+
+typedef struct {
+	MonoDomain *domain;
+	MonoRuntimeGenericArgInfo arg_infos [MONO_ZERO_LEN_ARRAY];
+} MonoRuntimeGenericContext;
+
 /* the interface_offsets array is stored in memory before this struct */
 struct MonoVTable {
 	MonoClass  *klass;
@@ -341,6 +359,7 @@ struct MonoVTable {
 	guint initialized     : 1; /* cctor has been run */
 	guint init_failed     : 1; /* cctor execution failed */
 	guint32     imt_collisions_bitmap;
+	MonoRuntimeGenericContext *runtime_generic_context;
 	/* do not add any fields after vtable, the structure is dynamically extended */
         gpointer    vtable [MONO_ZERO_LEN_ARRAY];	
 };
@@ -399,6 +418,7 @@ struct _MonoGenericClass {
 	MonoClass *container_class;	/* the generic type definition */
 	MonoGenericContext context;	/* a context that contains the type instantiation doesn't contain any method instantiation */
 	guint is_dynamic  : 1;		/* We're a MonoDynamicGenericClass */
+	guint is_tb_open  : 1;		/* This is the fully open instantiation for a type_builder. Quite ugly, but it's temporary.*/
 	MonoClass *cached_class;	/* if present, the MonoClass corresponding to the instantiation.  */
 };
 
@@ -517,6 +537,7 @@ typedef struct {
 	gulong dynamic_code_alloc_count;
 	gulong dynamic_code_bytes_count;
 	gulong dynamic_code_frees_count;
+	gulong delegate_creations;
 	gulong imt_tables_size;
 	gulong imt_number_of_tables;
 	gulong imt_number_of_methods;
@@ -529,6 +550,9 @@ typedef struct {
 	gulong jit_info_table_remove_count;
 	gulong jit_info_table_lookup_count;
 	gulong hazardous_pointer_count;
+	gulong generics_sharable_methods;
+	gulong generics_unsharable_methods;
+	gulong generics_shared_methods;
 	gboolean enabled;
 } MonoStats;
 
@@ -553,10 +577,11 @@ typedef struct {
 extern MonoStats mono_stats MONO_INTERNAL;
 
 typedef gpointer (*MonoTrampoline)       (MonoMethod *method);
+typedef gpointer (*MonoJumpTrampoline)       (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper);
 typedef gpointer (*MonoRemotingTrampoline)       (MonoMethod *method, MonoRemotingTarget target);
 typedef gpointer (*MonoDelegateTrampoline)       (MonoClass *klass);
 
-typedef gpointer (*MonoLookupDynamicToken) (MonoImage *image, guint32 token, MonoClass **handle_class);
+typedef gpointer (*MonoLookupDynamicToken) (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context);
 
 typedef gboolean (*MonoGetCachedClassInfo) (MonoClass *klass, MonoCachedClassInfo *res);
 
@@ -618,19 +643,25 @@ void
 mono_install_trampoline (MonoTrampoline func) MONO_INTERNAL;
 
 void
+mono_install_jump_trampoline (MonoJumpTrampoline func) MONO_INTERNAL;
+
+void
 mono_install_remoting_trampoline (MonoRemotingTrampoline func) MONO_INTERNAL;
 
 void
 mono_install_delegate_trampoline (MonoDelegateTrampoline func) MONO_INTERNAL;
 
 gpointer
-mono_lookup_dynamic_token (MonoImage *image, guint32 token) MONO_INTERNAL;
+mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *context) MONO_INTERNAL;
 
 gpointer
-mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, MonoClass **handle_class) MONO_INTERNAL;
+mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context) MONO_INTERNAL;
 
 void
 mono_install_lookup_dynamic_token (MonoLookupDynamicToken func) MONO_INTERNAL;
+
+gpointer
+mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper) MONO_INTERNAL;
 
 void
 mono_install_get_cached_class_info (MonoGetCachedClassInfo func) MONO_INTERNAL;
@@ -655,6 +686,12 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 
 MonoMethodInflated*
 mono_method_inflated_lookup (MonoMethodInflated* method, gboolean cache) MONO_INTERNAL;
+
+MonoMethodSignature *
+mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericContext *context);
+
+void
+mono_metadata_free_inflated_signature (MonoMethodSignature *sig);
 
 typedef struct {
 	MonoImage *corlib;
@@ -836,6 +873,12 @@ mono_class_is_valid_enum (MonoClass *klass);
 
 MonoType *
 mono_type_get_full        (MonoImage *image, guint32 type_token, MonoGenericContext *context) MONO_INTERNAL;
+
+gboolean
+mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass) MONO_INTERNAL;
+
+MonoType*
+mono_type_get_basic_type_from_generic (MonoType *type) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */
 

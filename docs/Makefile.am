@@ -28,6 +28,7 @@ EXTRA_DIST = \
 	remoting		\
 	ssapre.txt		\
 	stack-alignment		\
+	stack-overflow.txt	\
 	threading		\
 	thread-safety.txt	\
 	tree-mover.txt		\

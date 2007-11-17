@@ -18,6 +18,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-membar.h>
+#include <mono/utils/mono-counters.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/domain-internals.h>
@@ -32,6 +33,7 @@
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/threads-types.h>
 #include <metadata/threads.h>
+#include <metadata/profiler-private.h>
 
 /* #define DEBUG_DOMAIN_UNLOAD */
 
@@ -63,12 +65,18 @@ static __thread MonoDomain * tls_appdomain MONO_TLS_FAST;
 static guint16 appdomain_list_size = 0;
 static guint16 appdomain_next = 0;
 static MonoDomain **appdomains_list = NULL;
+static MonoImage *exe_image;
 
 #define mono_appdomains_lock() EnterCriticalSection (&appdomains_mutex)
 #define mono_appdomains_unlock() LeaveCriticalSection (&appdomains_mutex)
 static CRITICAL_SECTION appdomains_mutex;
 
 static MonoDomain *mono_root_domain = NULL;
+
+/* some statistics */
+static int max_domain_code_size = 0;
+static int max_domain_code_alloc = 0;
+static int total_domain_code_alloc = 0;
 
 /* AppConfigInfo: Information about runtime versions supported by an 
  * aplication.
@@ -115,7 +123,7 @@ static const MonoRuntimeInfo supported_runtimes[] = {
 extern void _mono_debug_init_corlib (MonoDomain *domain);
 
 static void
-get_runtimes_from_exe (const char *exe_file, const MonoRuntimeInfo** runtimes);
+get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRuntimeInfo** runtimes);
 
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
@@ -903,6 +911,38 @@ mono_jit_code_hash_init (MonoInternalHashTable *jit_code_hash)
 				       jit_info_next_value);
 }
 
+/*
+ * mono_jit_info_get_generic_sharing_context:
+ * @ji: a jit info
+ *
+ * Returns the jit info's generic sharing context, or NULL if it
+ * doesn't have one.
+ */
+MonoGenericSharingContext*
+mono_jit_info_get_generic_sharing_context (MonoJitInfo *ji)
+{
+	if (ji->has_generic_sharing_context)
+		return *((MonoGenericSharingContext**)&ji->clauses [ji->num_clauses]);
+	else
+		return NULL;
+}
+
+/*
+ * mono_jit_info_set_generic_sharing_context:
+ * @ji: a jit info
+ * @gsctx: a generic sharing context
+ *
+ * Sets the jit info's generic sharing context.  The jit info must
+ * have memory allocated for the context.
+ */
+void
+mono_jit_info_set_generic_sharing_context (MonoJitInfo *ji, MonoGenericSharingContext *gsctx)
+{
+	g_assert (ji->has_generic_sharing_context);
+
+	*((MonoGenericSharingContext**)&ji->clauses [ji->num_clauses]) = gsctx;
+}
+
 /**
  * mono_string_equal:
  * @s1: First string to compare
@@ -1048,6 +1088,8 @@ mono_domain_create (void)
 	domain->friendly_name = NULL;
 	domain->search_path = NULL;
 
+	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_LOAD);
+
 	domain->mp = mono_mempool_new ();
 	domain->code_mp = mono_code_manager_new ();
 	domain->env = mono_g_hash_table_new_type ((GHashFunc)mono_string_hash, (GCompareFunc)mono_string_equal, MONO_HASH_KEY_VALUE_GC);
@@ -1067,12 +1109,16 @@ mono_domain_create (void)
 	InitializeCriticalSection (&domain->lock);
 	InitializeCriticalSection (&domain->assemblies_lock);
 
+	domain->shared_generics_hash = NULL;
+
 	mono_debug_domain_create (domain);
 
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
 	mono_appdomains_unlock ();
 
+	mono_profiler_appdomain_loaded (domain, MONO_PROFILE_OK);
+	
 	return domain;
 }
 
@@ -1101,6 +1147,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	if (domain)
 		g_assert_not_reached ();
 
+	mono_counters_register ("Max native code in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_size);
+	mono_counters_register ("Max code space allocated in a domain", MONO_COUNTER_INT|MONO_COUNTER_JIT, &max_domain_code_alloc);
+	mono_counters_register ("Total code space allocated", MONO_COUNTER_INT|MONO_COUNTER_JIT, &total_domain_code_alloc);
+
 	MONO_GC_PRE_INIT ();
 
 	appdomain_thread_id = TlsAlloc ();
@@ -1125,7 +1175,12 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	
 	/* Get a list of runtimes supported by the exe */
 	if (exe_filename != NULL) {
-		get_runtimes_from_exe (exe_filename, runtimes);
+		/*
+		 * This function will load the exe file as a MonoImage. We need to close it, but
+		 * that would mean it would be reloaded later. So instead, we save it to
+		 * exe_image, and close it during shutdown.
+		 */
+		get_runtimes_from_exe (exe_filename, &exe_image, runtimes);
 	} else if (runtime_version != NULL) {
 		runtimes [0] = get_runtime_by_version (runtime_version);
 		runtimes [1] = NULL;
@@ -1146,6 +1201,11 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		if (status != MONO_IMAGE_OK && status != MONO_IMAGE_ERROR_ERRNO)
 			break;
 
+	}
+	
+	/* Now that we have a runtime, set the policy for unhandled exceptions */
+	if (mono_get_runtime_info ()->framework_version [0] < '2') {
+		mono_runtime_unhandled_exception_policy_set (MONO_UNHANLED_POLICY_LEGACY);
 	}
 
 	if ((status != MONO_IMAGE_OK) || (ass == NULL)) {
@@ -1524,10 +1584,14 @@ mono_init_com_types (void)
 void
 mono_cleanup (void)
 {
+	if (exe_image)
+		mono_image_close (exe_image);
+
 	mono_loader_cleanup ();
 	mono_classes_cleanup ();
 	mono_assemblies_cleanup ();
 	mono_images_cleanup ();
+	mono_debug_cleanup ();
 	mono_raw_buffer_cleanup ();
 	mono_metadata_cleanup ();
 
@@ -1630,6 +1694,26 @@ mono_domain_assembly_open (MonoDomain *domain, const char *name)
 	return ass;
 }
 
+MonoJitInfo*
+mono_domain_lookup_shared_generic (MonoDomain *domain, MonoMethod *method)
+{
+	if (!domain->shared_generics_hash)
+		return NULL;
+
+	return g_hash_table_lookup (domain->shared_generics_hash, method);
+}
+
+void
+mono_domain_register_shared_generic (MonoDomain *domain, MonoMethod *method, MonoJitInfo *jit_info)
+{
+	if (!domain->shared_generics_hash)
+		domain->shared_generics_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+
+	g_assert (domain->shared_generics_hash);
+
+	g_hash_table_insert (domain->shared_generics_hash, method, jit_info);
+}
+
 static void
 dynamic_method_info_free (gpointer key, gpointer value, gpointer user_data)
 {
@@ -1647,11 +1731,14 @@ delete_jump_list (gpointer key, gpointer value, gpointer user_data)
 void
 mono_domain_free (MonoDomain *domain, gboolean force)
 {
+	int code_size, code_alloc;
 	GSList *tmp;
 	if ((domain == mono_root_domain) && !force) {
 		g_warning ("cant unload root domain");
 		return;
 	}
+
+	mono_profiler_appdomain_event (domain, MONO_PROFILE_START_UNLOAD);
 
 	mono_debug_domain_unload (domain);
 
@@ -1707,6 +1794,13 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	domain->ldstr_table = NULL;
 	jit_info_table_free (domain->jit_info_table);
 	domain->jit_info_table = NULL;
+
+	/* collect statistics */
+	code_alloc = mono_code_manager_size (domain->code_mp, &code_size);
+	total_domain_code_alloc += code_alloc;
+	max_domain_code_alloc = MAX (max_domain_code_alloc, code_alloc);
+	max_domain_code_size = MAX (max_domain_code_size, code_size);
+
 #ifdef DEBUG_DOMAIN_UNLOAD
 	mono_mempool_invalidate (domain->mp);
 	mono_code_manager_invalidate (domain->code_mp);
@@ -1743,19 +1837,18 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	domain->jit_trampoline_hash = NULL;
 	g_hash_table_destroy (domain->delegate_trampoline_hash);
 	domain->delegate_trampoline_hash = NULL;
-	if (domain->delegate_invoke_impl_with_target_hash) {
-		g_hash_table_destroy (domain->delegate_invoke_impl_with_target_hash);
-		domain->delegate_invoke_impl_with_target_hash = NULL;
+	if (domain->shared_generics_hash) {
+		g_hash_table_destroy (domain->shared_generics_hash);
+		domain->shared_generics_hash = NULL;
 	}
-	if (domain->delegate_invoke_impl_no_target_hash) {
-		g_hash_table_destroy (domain->delegate_invoke_impl_no_target_hash);
-		domain->delegate_invoke_impl_no_target_hash = NULL;
-	}
+
 	DeleteCriticalSection (&domain->assemblies_lock);
 	DeleteCriticalSection (&domain->lock);
 	domain->setup = NULL;
 
 	/* FIXME: anything else required ? */
+
+	mono_profiler_appdomain_event (domain, MONO_PROFILE_END_UNLOAD);
 
 	mono_gc_free_fixed (domain);
 
@@ -2102,7 +2195,7 @@ get_runtime_by_version (const char *version)
 }
 
 static void
-get_runtimes_from_exe (const char *exe_file, const MonoRuntimeInfo** runtimes)
+get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRuntimeInfo** runtimes)
 {
 	AppConfigInfo* app_config;
 	char *version;
@@ -2156,11 +2249,7 @@ get_runtimes_from_exe (const char *exe_file, const MonoRuntimeInfo** runtimes)
 		return;
 	}
 
-	/* 
-	 * FIXME: This would cause us to unload the image, and it will be loaded again later.
-	 * Disabling it will mean the initial exe will not be unloaded on shutdown.
-	 */
-	//mono_image_close (image);
+	*exe_image = image;
 
 	runtimes [0] = get_runtime_by_version (image->version);
 	runtimes [1] = NULL;
@@ -2183,8 +2272,9 @@ mono_debugger_check_runtime_version (const char *filename)
 {
 	const MonoRuntimeInfo* runtimes [G_N_ELEMENTS (supported_runtimes) + 1];
 	const MonoRuntimeInfo *rinfo;
+	MonoImage *image;
 
-	get_runtimes_from_exe (filename, runtimes);
+	get_runtimes_from_exe (filename, &image, runtimes);
 	rinfo = runtimes [0];
 
 	if (!rinfo)

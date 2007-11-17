@@ -48,7 +48,14 @@ AM_CONDITIONAL(PLATFORM_WIN32, test x$OS = xWIN32)
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)
-AC_CHECK_FUNCS(strlcpy)
+AC_CHECK_FUNCS(strndup strlcpy getpwent_r)
+AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
+old_ldflags="${LDFLAGS}"
+LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
+AC_TRY_LINK(, [int i;], found_export_dynamic=yes, found_export_dynamic=no)
+if test $found_export_dynamic = no; then
+	LDFLAGS="${old_ldflags}"
+fi
 
 AC_CHECK_HEADERS(getopt.h sys/time.h sys/wait.h pwd.h)
 
@@ -69,6 +76,11 @@ else
    GSIZE_FORMAT='"u"'
    G_GUINT64_FORMAT='"llu"'
 fi
+
+PKG_CHECK_MODULES(GLIB, glib-2.0,
+	[AM_CONDITIONAL(HAVE_GLIB, test x = x)],
+	[AM_CONDITIONAL(HAVE_GLIB, test x = y)]
+	)
 AC_SUBST(GPOINTER_TO_INT)
 AC_SUBST(GPOINTER_TO_UINT)
 AC_SUBST(GINT_TO_POINTER)

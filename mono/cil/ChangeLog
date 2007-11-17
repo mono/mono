@@ -1,3 +1,9 @@
+
+Tue Sep 11 15:09:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cil-opcodes.xml opcode.def: added custom opcode used to access
+	runtime thread local storage.
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cil-opcodes.xml opcode.def: Correct definition of mono_classconst and

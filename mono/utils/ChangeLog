@@ -1,3 +1,91 @@
+2007-11-06  Geoff Norton  <gnorton@novell.com>
+
+	* strtod.c: Use a G_MUTEX call pattern compatible with eglib.  Patch
+	from Jonathan Chambers
+
+2007-10-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-mmap.c (mono_vfree): Fix call to VirtualFree (). Fixes #332165.
+
+Mon Oct 8 11:47:44 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c, mono-codeman.h: added a function to be able
+	to specify alignment per-allocation. Changed the code to align
+	the starting position instead of the size, which wouldn't work
+	with variable-alignment.
+
+Mon Oct 8 10:51:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c, mono-codeman.h: fixed alignment code to not
+	be wasteful, Added documentation. Added mono_code_manager_size ()
+	to gather statistics info about a code manager.
+
+Mon Oct 8 10:21:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mono-counters.h, mono-counters.c: better formatting of the output
+	and added a cleanup function.
+
+2007-10-03  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-compiler.h (trunc): Make the definition of trunk for MSC
+	use ceil or floor instead of always using floor which is
+	incorrect.
+
+	Issue pointed out by Aras Pranckevicius <aras@unity3d.com>
+
+2007-10-02  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-io-portability.c: Init __mono_io_portability_helpers
+	to PORTABILITY_NONE on windows as mono_portability_helpers_init
+	is not always called before mono_portability_find_file.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-10-01  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-io-portability.c: Only support on non-Windows
+	platforms.
+	
+	Code is contributed under MIT/X11 license.
+
+Mon Sep 24 17:14:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* strtod.h, strtod.c: made the code threadsafe, fixed gcc warnings,
+	renamed exported call and made it properly internal.
+
+2007-09-14  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-io-portability.c: Add HAVE_UNISTD_H check around include.
+	
+	Code is contributed under MIT/X11 license.
+
+Wed Sep 12 15:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: don't install internal headers.
+
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-io-portability.c: added. Moved options_init from io-layer.
+	(find_in_dir): moved from io-layer/io-portability.c
+	(mono_portability_find_file): moved find_file from
+	io-layer/io-portability.c, renamed and made MONO_INTERNAL.
+
+	* mono-io-portability.h: added. Contains declarations utility
+	functions and acros for checking whether MONO_IOMAP is in effect.
+	Added a prototype for mono_portability_find_file.
+
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h: Applied patch from Jurek Bartuszek (jurek@gentoo.org).
+	Fixes build with -fPIE.
+
+2007-08-31  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-compiler.h: Define MONO_INTERNAL to nothing on Windows.
+	Fixes tons of warnings we get on cygwin build.
+	
+	Code is contributed under MIT/X11 license.
+
 2007-08-14  Jonathan Chambers <joncham@gmail.com>
 
 	* mono-membar.h: Use intrinsic functions in msvc.

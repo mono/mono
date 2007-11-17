@@ -55,7 +55,7 @@ typedef struct MonoCompileArch {
 //#define MONO_ARCH_ENABLE_EMIT_STATE_OPT 1
 
 /* Parameters used by the register allocator */
-#define MONO_ARCH_CALLEE_REGS ((0xff << ppc_r3) | (1 << ppc_r12))
+#define MONO_ARCH_CALLEE_REGS ((0xff << ppc_r3) | (1 << ppc_r11) | (1 << ppc_r12))
 #define MONO_ARCH_CALLEE_SAVED_REGS (0xfffff << ppc_r13) /* ppc_13 - ppc_31 */
 
 #ifdef __APPLE__
@@ -106,6 +106,13 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_SIGSEGV_ON_ALTSTACK 1
 #define MONO_ARCH_SIGNAL_STACK_SIZE (12 * 1024)
 #endif /* HAVE_WORKING_SIGALTSTACK */
+
+#define MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
+#define MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN
+#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+#define MONO_ARCH_HAVE_IMT 1
+#define MONO_ARCH_IMT_REG ppc_r12
+#define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 
 #define MONO_ARCH_USE_SIGACTION 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
@@ -164,5 +171,35 @@ typedef struct {
 	int vtsize;
 	int offset;
 } MonoPPCArgInfo;
+
+#if defined(__linux__)
+	typedef struct ucontext os_ucontext;
+
+	#define UCONTEXT_REG_Rn(ctx, n)   ((ctx)->uc_mcontext.uc_regs->gregs [(n)])
+	#define UCONTEXT_REG_FPRn(ctx, n) ((ctx)->uc_mcontext.uc_regs->fpregs.fpregs [(n)])
+	#define UCONTEXT_REG_NIP(ctx)     ((ctx)->uc_mcontext.uc_regs->gregs [PT_NIP])
+	#define UCONTEXT_REG_LNK(ctx)     ((ctx)->uc_mcontext.uc_regs->gregs [PT_LNK])
+#elif defined (__APPLE__) && defined (_STRUCT_MCONTEXT)
+	typedef struct __darwin_ucontext os_ucontext;
+
+	#define UCONTEXT_REG_Rn(ctx, n)   ((ctx)->uc_mcontext->__ss.__r##n)
+	#define UCONTEXT_REG_FPRn(ctx, n) ((ctx)->uc_mcontext->__fs.__fpregs [(n)])
+	#define UCONTEXT_REG_NIP(ctx)     ((ctx)->uc_mcontext->__ss.__srr0)
+#elif defined (__APPLE__) && !defined (_STRUCT_MCONTEXT)
+	typedef struct ucontext os_ucontext;
+
+	#define UCONTEXT_REG_Rn(ctx, n)   ((ctx)->uc_mcontext->ss.r##n)
+	#define UCONTEXT_REG_FPRn(ctx, n) ((ctx)->uc_mcontext->fs.fpregs [(n)])
+	#define UCONTEXT_REG_NIP(ctx)     ((ctx)->uc_mcontext->ss.srr0)
+#elif defined(__NetBSD__)
+	typedef ucontext_t os_ucontext;
+
+	#define UCONTEXT_REG_Rn(ctx, n)   ((ctx)->uc_mcontext.__gregs [(n)])
+	#define UCONTEXT_REG_FPRn(ctx, n) ((ctx)->uc_mcontext.__fpregs.__fpu_regs [(n)])
+	#define UCONTEXT_REG_NIP(ctx)     _UC_MACHINE_PC(ctx)
+	#define UCONTEXT_REG_LNK(ctx)     ((ctx)->uc_mcontext.__gregs [_REG_LR])
+#else
+#error Unknown OS
+#endif
 
 #endif /* __MONO_MINI_PPC_H__ */  

@@ -1,3 +1,17 @@
+2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* web.config, machine.config: moved webSerices section from former
+	  to latter.
+
+2007-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* machine.config : added WCF sectionGroups.
+
+2007-09-04  Marek Habersack  <mhabersack@novell.com>
+
+	* machine.config: added an entry to ignore the <system.webServer>
+	section. Fixes bug #82535
+
 2007-07-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultWsdlHelpGenerator.aspx: make head server-side, for the

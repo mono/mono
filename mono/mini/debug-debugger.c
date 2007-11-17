@@ -42,9 +42,11 @@ static gint64 debugger_lookup_class (guint64 image_argument, G_GNUC_UNUSED guint
 				     gchar *full_name);
 static guint64 debugger_insert_method_breakpoint (guint64 method_argument, guint64 index);
 static void debugger_remove_method_breakpoint (G_GNUC_UNUSED guint64 dummy, guint64 index);
-static void debugger_runtime_class_init (guint64 klass_arg);
 
 static void (*mono_debugger_notification_function) (guint64 command, guint64 data, guint64 data2);
+
+#define EXECUTABLE_CODE_BUFFER_SIZE 4096
+static guint8 *debugger_executable_code_buffer = NULL;
 
 static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	sizeof (MonoDebuggerMetadataInfo),
@@ -57,6 +59,7 @@ static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	G_STRUCT_OFFSET (MonoThread, tid),
 	G_STRUCT_OFFSET (MonoThread, stack_ptr),
 	G_STRUCT_OFFSET (MonoThread, end_stack),
+	G_STRUCT_OFFSET (MonoClass, image),
 	G_STRUCT_OFFSET (MonoClass, instance_size),
 	G_STRUCT_OFFSET (MonoClass, parent),
 	G_STRUCT_OFFSET (MonoClass, type_token),
@@ -67,7 +70,10 @@ static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	G_STRUCT_OFFSET (MonoClass, byval_arg),
 	G_STRUCT_OFFSET (MonoClass, generic_class),
 	G_STRUCT_OFFSET (MonoClass, generic_container),
+	G_STRUCT_OFFSET (MonoClass, vtable),
 	sizeof (MonoClassField),
+	G_STRUCT_OFFSET (MonoClassField, type),
+	G_STRUCT_OFFSET (MonoClassField, offset),
 	G_STRUCT_OFFSET (MonoDefaults, corlib),
 	G_STRUCT_OFFSET (MonoDefaults, object_class),
 	G_STRUCT_OFFSET (MonoDefaults, byte_class),
@@ -89,7 +95,13 @@ static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	G_STRUCT_OFFSET (MonoDefaults, enum_class),
 	G_STRUCT_OFFSET (MonoDefaults, array_class),
 	G_STRUCT_OFFSET (MonoDefaults, delegate_class),
-	G_STRUCT_OFFSET (MonoDefaults, exception_class)
+	G_STRUCT_OFFSET (MonoDefaults, exception_class),
+	G_STRUCT_OFFSET (MonoMethod, klass),
+	G_STRUCT_OFFSET (MonoMethod, token),
+	G_STRUCT_OFFSET (MonoMethod, name) + sizeof (void *),
+	G_STRUCT_OFFSET (MonoMethodInflated, declaring),
+	G_STRUCT_OFFSET (MonoVTable, klass),
+	G_STRUCT_OFFSET (MonoVTable, vtable)
 };
 
 /*
@@ -120,10 +132,16 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	&debugger_lookup_class,
 	&debugger_insert_method_breakpoint,
 	&debugger_remove_method_breakpoint,
-	&debugger_runtime_class_init,
 
 	&mono_debug_debugger_version,
-	&mono_debugger_thread_table
+	&mono_debugger_thread_table,
+
+	&debugger_executable_code_buffer,
+	mono_breakpoint_info,
+	mono_breakpoint_info_index,
+
+	EXECUTABLE_CODE_BUFFER_SIZE,
+	MONO_BREAKPOINT_ARRAY_SIZE
 };
 
 static guint64
@@ -230,7 +248,7 @@ debugger_insert_method_breakpoint (guint64 method_argument, guint64 index)
 
 		if (method->klass->parent == mono_defaults.multicastdelegate_class) {
 			if (*name == 'I' && (strcmp (name, "Invoke") == 0))
-			        nm = mono_marshal_get_delegate_invoke (method);
+			        nm = mono_marshal_get_delegate_invoke (method, NULL);
 			else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0))
 				nm = mono_marshal_get_delegate_begin_invoke (method);
 			else if (*name == 'E' && (strcmp (name, "EndInvoke") == 0))
@@ -257,13 +275,6 @@ debugger_remove_method_breakpoint (G_GNUC_UNUSED guint64 dummy, guint64 index)
 	mono_debugger_lock ();
 	mono_debugger_remove_method_breakpoint (index);
 	mono_debugger_unlock ();
-}
-
-static void
-debugger_runtime_class_init (guint64 klass_arg)
-{
-	MonoClass *klass = (MonoClass *) GUINT_TO_POINTER ((gsize) klass_arg);
-	mono_runtime_class_init (mono_class_vtable (mono_domain_get (), klass));
 }
 
 static void
@@ -328,6 +339,7 @@ debugger_attach (void)
 	mono_debugger_init ();
 
 	mono_debugger_event_handler = debugger_event_handler;
+	debugger_executable_code_buffer = mono_global_codeman_reserve (EXECUTABLE_CODE_BUFFER_SIZE);
 	debugger_init_threads ();
 }
 
@@ -350,6 +362,7 @@ void
 mono_debugger_init (void)
 {
 	mono_debugger_notification_function = mono_debugger_create_notification_function ();
+	debugger_executable_code_buffer = mono_global_codeman_reserve (EXECUTABLE_CODE_BUFFER_SIZE);
 	mono_debugger_event_handler = debugger_event_handler;
 
 	/*
@@ -361,10 +374,13 @@ mono_debugger_init (void)
 
 	/*
 	 * Initialize the thread manager.
+	 *
+	 * NOTE: We only reference the `MONO_DEBUGGER__debugger_info_ptr' here to prevent the
+	 * linker from removing the .mdb_debug_info section.
 	 */
 
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_THREAD_MANAGER,
-					     GetCurrentThreadId (), 0);
+					     (guint64) (gssize) MONO_DEBUGGER__debugger_info_ptr, 0);
 }
 
 typedef struct 
@@ -416,13 +432,10 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 	main_method = mono_get_method (image, mono_image_get_entry_point (image), NULL);
 
 	/*
-	 * Reload symbol tables.
-	 *
-	 * NOTE: We only reference the `MONO_DEBUGGER__debugger_info_ptr' here to prevent the
-	 * linker from removing the .mdb_debug_info section.
+	 * Initialize managed code.
 	 */
 	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE,
-					     (guint64) (gssize) MONO_DEBUGGER__debugger_info_ptr, 0);
+					     (guint64) (gssize) main_method, 0);
 
 	/*
 	 * Start the main thread and wait until it's ready.

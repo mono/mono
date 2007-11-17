@@ -54,10 +54,16 @@ struct _MonoDebuggerInfo {
 				gchar *full_name);
 	guint64 (*insert_breakpoint) (guint64 method_argument, guint64 index);
 	void (*remove_breakpoint) (G_GNUC_UNUSED guint64 dummy, guint64 index);
-	void (*runtime_class_init) (guint64 klass_arg);
 
 	gint32 *debugger_version;
 	MonoDebuggerThreadInfo **thread_table;
+
+	guint8 **executable_code_buffer;
+	MonoBreakpointInfo *mono_breakpoint_info;
+	gssize *mono_breakpoint_info_index;
+
+	guint32 executable_code_buffer_size;
+	guint32 breakpoint_array_size;
 };
 
 struct _MonoDebuggerMetadataInfo {
@@ -71,6 +77,7 @@ struct _MonoDebuggerMetadataInfo {
 	int thread_tid_offset;
 	int thread_stack_ptr_offset;
 	int thread_end_stack_offset;
+	int klass_image_offset;
 	int klass_instance_size_offset;
 	int klass_parent_offset;
 	int klass_token_offset;
@@ -81,7 +88,10 @@ struct _MonoDebuggerMetadataInfo {
 	int klass_byval_arg_offset;
 	int klass_generic_class_offset;
 	int klass_generic_container_offset;
+	int klass_vtable_offset;
 	int field_info_size;
+	int field_info_type_offset;
+	int field_info_offset_offset;
 	int mono_defaults_corlib_offset;
 	int mono_defaults_object_offset;
 	int mono_defaults_byte_offset;
@@ -104,6 +114,12 @@ struct _MonoDebuggerMetadataInfo {
 	int mono_defaults_array_offset;
 	int mono_defaults_delegate_offset;
 	int mono_defaults_exception_offset;
+	int mono_method_klass_offset;
+	int mono_method_token_offset;
+	int mono_method_flags_offset;
+	int mono_method_inflated_offset;
+	int mono_vtable_klass_offset;
+	int mono_vtable_vtable_offset;
 };
 
 #endif

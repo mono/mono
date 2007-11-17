@@ -1,3 +1,84 @@
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* processes.c (load_modules): Don't bother if we don't have
+	g_strsplit_set() and g_strv_length().  Allows building against old
+	glib versions.
+	(EnumProcessModules): Don't miss the first module returned by
+	load_modules().
+
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Implement process module support by reading from
+	/proc if it's available.
+
+	* versioninfo.h: 
+	* versioninfo.c: New functions to implement PE file version info
+	support.
+
+2007-11-08  Dick Porter  <dick@ximian.com>
+
+	* critical-sections.h (EnterCriticalSection): Disable the critical
+	section asserts for the release branch
+
+2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* io-layer.h: Added includes for run-time GetProcessId API detection for
+	Windows.
+
+2007-10-26  Dick Porter  <dick@ximian.com>
+
+	* shared.c (_wapi_shm_file_open): Set the umask when opening
+	shared files, so restrictive defaults don't prevent subsequent
+	processes re-opening them.
+
+2007-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h (InterlockedCompareExchange): Fix the ia64 version so it works for
+	negative values too. Hopefully fixes #332700.
+
+2007-09-26  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_io_scandir): Only update the error
+	status of glob() when performing a secondary glob() if the first
+	returned an error.  Fixes bug 325107.
+
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* io-portability.c: options_init moved to
+	utils/mono-io-portability.c
+	Do not initialize portability helpers here, it's done in
+	mono_runtime_init.
+	find_file and find_in_dir moved to utils/mono-io-portability.c
+
+2007-09-09  Robert Jordan  <robertj@gmx.net>
+
+	* sockets.c (_wapi_setsockopt): Add support for FreeBSD multicast
+	sockets. Fixes #81891.
+	Code is contributed under MIT/X11 license.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.h, processes.c : ok, they are simple string.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.h : sigh, I really hate fixing them on windows :(
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.c : fix build again.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.h : removed extra parameters from CreateProcessWithLogonW.
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* processes.c, processes.h: added CreateProcessWithLogonW(). For now
+	  it just calls CreateProcess().
+	* io-layer.h : CreateProcessWithLogonW() requires WINVER 0x0500
+	  on Windows.
+
 2007-08-23  Robert Jordan  <robertj@gmx.net>
 
 	* processes.[c|h]: Implement Get|SetPriorityClass ().

@@ -50,6 +50,7 @@ typedef enum {
 
 int           mono_reflection_parse_type (char *name, MonoTypeNameParse *info);
 MonoType*     mono_reflection_get_type   (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve);
+void          mono_reflection_free_type_info (MonoTypeNameParse *info);
 MonoType*     mono_reflection_type_from_name (char *name, MonoImage *image);
 guint32       mono_reflection_get_token (MonoObject *obj);
 
@@ -64,7 +65,9 @@ MonoReflectionEvent*    mono_event_get_object    (MonoDomain *domain, MonoClass 
 /* note: this one is slightly different: we keep the whole array of params in the cache */
 MonoArray* mono_param_get_objects  (MonoDomain *domain, MonoMethod *method);
 MonoReflectionMethodBody* mono_method_body_get_object (MonoDomain *domain, MonoMethod *method);
-MonoObject* mono_get_dbnull_object (MonoDomain *domain);
+
+MonoObject *mono_get_dbnull_object (MonoDomain *domain);
+
 MonoArray*  mono_reflection_get_custom_attrs_by_type (MonoObject *obj, MonoClass *attr_klass);
 MonoArray*  mono_reflection_get_custom_attrs (MonoObject *obj);
 MonoArray*  mono_reflection_get_custom_attrs_data (MonoObject *obj);

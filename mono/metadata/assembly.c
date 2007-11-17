@@ -16,9 +16,11 @@
 #include "assembly.h"
 #include "image.h"
 #include "rawbuffer.h"
+#include "object-internals.h"
 #include <mono/metadata/loader.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/metadata/profiler-private.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/mono-endian.h>
@@ -1417,7 +1419,6 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 		return NULL;
 	}
 
-
 #if defined (PLATFORM_WIN32)
 	{
 		gchar *tmp_fn;
@@ -1451,6 +1452,8 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	ass->basedir = base_dir;
 	ass->ref_only = refonly;
 	ass->image = image;
+
+	mono_profiler_assembly_event (ass, MONO_PROFILE_START_LOAD);
 
 	/* Add a non-temporary reference because of ass->image */
 	mono_image_addref (image);
@@ -1497,6 +1500,9 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 		g_hash_table_insert (ass_loading, (gpointer)GetCurrentThreadId (), loading);
 	if (*status != MONO_IMAGE_OK) {
 		mono_assemblies_unlock ();
+		
+		mono_profiler_assembly_loaded (ass, MONO_PROFILE_FAILED);
+		
 		mono_assembly_close (ass);
 		return NULL;
 	}
@@ -1506,6 +1512,9 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 		if (ass2) {
 			/* Somebody else has loaded the assembly before us */
 			mono_assemblies_unlock ();
+			
+			mono_profiler_assembly_loaded (ass, MONO_PROFILE_FAILED);
+			
 			mono_assembly_close (ass);
 			return ass2;
 		}
@@ -1518,6 +1527,8 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	mono_assembly_invoke_load_hook (ass);
 
+	mono_profiler_assembly_loaded (ass, MONO_PROFILE_OK);
+	
 	return ass;
 }
 
@@ -1920,7 +1931,13 @@ mono_assembly_load_with_partial_name (const char *name, MonoImageOpenStatus *sta
 
 	if (res)
 		res->in_gac = TRUE;
-
+	else {
+		MonoDomain *domain = mono_domain_get ();
+		MonoReflectionAssembly *refasm = mono_try_assembly_resolve (domain, mono_string_new (domain, name), FALSE);
+		if (refasm)
+			res = refasm->assembly;
+	}
+	
 	g_free (fullname);
 	mono_assembly_name_free (aname);
 
@@ -2173,24 +2190,10 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	return corlib;
 }
 
-/**
- * mono_assembly_load_full:
- * @aname: A MonoAssemblyName with the assembly name to load.
- * @basedir: A directory to look up the assembly at.
- * @status: a pointer to a MonoImageOpenStatus to return the status of the load operation
- * @refonly: Whether this assembly is being opened in "reflection-only" mode.
- *
- * Loads the assembly referenced by @aname, if the value of @basedir is not NULL, it
- * attempts to load the assembly from that directory before probing the standard locations.
- *
- * If the assembly is being opened in reflection-only mode (@refonly set to TRUE) then no 
- * assembly binding takes place.
- *
- * Returns: the assembly referenced by @aname loaded or NULL on error.   On error the
- * value pointed by status is updated with an error code.
- */
-MonoAssembly*
-mono_assembly_load_full (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status, gboolean refonly)
+MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
+						const char       *basedir, 
+						MonoImageOpenStatus *status,
+						gboolean refonly)
 {
 	MonoAssembly *result;
 	char *fullpath, *filename;
@@ -2258,9 +2261,33 @@ mono_assembly_load_full (MonoAssemblyName *aname, const char *basedir, MonoImage
 			return result;
 	}
 
-	/* Try a postload search hook */
-	result = mono_assembly_invoke_search_hook_internal (aname, refonly, TRUE);
+	return result;
+}
 
+/**
+ * mono_assembly_load_full:
+ * @aname: A MonoAssemblyName with the assembly name to load.
+ * @basedir: A directory to look up the assembly at.
+ * @status: a pointer to a MonoImageOpenStatus to return the status of the load operation
+ * @refonly: Whether this assembly is being opened in "reflection-only" mode.
+ *
+ * Loads the assembly referenced by @aname, if the value of @basedir is not NULL, it
+ * attempts to load the assembly from that directory before probing the standard locations.
+ *
+ * If the assembly is being opened in reflection-only mode (@refonly set to TRUE) then no 
+ * assembly binding takes place.
+ *
+ * Returns: the assembly referenced by @aname loaded or NULL on error.   On error the
+ * value pointed by status is updated with an error code.
+ */
+MonoAssembly*
+mono_assembly_load_full (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status, gboolean refonly)
+{
+	MonoAssembly *result = mono_assembly_load_full_nosearch (aname, basedir, status, refonly);
+	
+	if (!result)
+		/* Try a postload search hook */
+		result = mono_assembly_invoke_search_hook_internal (aname, refonly, TRUE);
 	return result;
 }
 
@@ -2330,6 +2357,8 @@ mono_assembly_close (MonoAssembly *assembly)
 	if (InterlockedDecrement (&assembly->ref_count) > 0)
 		return;
 
+	mono_profiler_assembly_event (assembly, MONO_PROFILE_START_UNLOAD);
+
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading assembly %s [%p].", assembly->aname.name, assembly);
 
 	mono_debug_close_image (assembly->image);
@@ -2354,6 +2383,8 @@ mono_assembly_close (MonoAssembly *assembly)
 	} else {
 		g_free (assembly);
 	}
+
+	mono_profiler_assembly_event (assembly, MONO_PROFILE_END_UNLOAD);
 }
 
 MonoImage*

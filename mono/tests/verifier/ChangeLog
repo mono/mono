@@ -1,3 +1,57 @@
+2007-10-26 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_array_method.cs: test for invoking array methods.
+
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: tests for the return type of the invoked method.
+	tests for passing typedbyref as param.
+
+	* make_obj_store_test.sh: add new optional script parameter to tell
+	if class fields should be generated. This fix some bogus tests using
+	typedbyref.
+
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+	* make_tests.sh: unbox_byref_like test was flawed, it was not testing
+	the proper unverifable condition.
+
+2007-10-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_unary_test.sh: fixed an invalid struct that has no fields,
+	this was not the subject of the tests.
+	* make_newobj_test.sh: added, generate tests for newobj.
+	* make_tests.sh: added the new tests for newobj and some corner
+	cases of local/arg load/store.
+
+
+2007-10-04 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_store_indirect_test.sh: added, generate tests for stind.X.
+	* make_tests.sh: added the new tests for ldind.X.
+
+2007-10-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: added the new tests for ops mixing Int32 and IntPtr, disabled
+	the overlapped tests for now
+	* make_unary_test.sh: disabled the overlapped tests for now
+	* make_field_store_test.sh: sames
+
+2007-09-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_load_indirect_test.sh: added, generate tests for ldind.X.
+	* make_tests.sh: added the new tests for ldind.X and new tests for stloc/starg using 
+	native int and int32.
+
+2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_load_addr.il: Tests for valid uses of ldarga and ldloca
+	* make_double_nesting_test.sh: Generate tests for calling nested classes from a diferent outer class
+
+2007-09-25 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_generic_params.cs (added): Tests for valid use of generic types.
+	* Makedfile: added valid_generic_params.cs
+
 2007-08-16 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_newarr_test.sh (added):  Generate newarr related tests.

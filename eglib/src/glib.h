@@ -168,6 +168,7 @@ void            g_hash_table_foreach         (GHashTable *hash, GHFunc func, gpo
 gpointer        g_hash_table_find            (GHashTable *hash, GHRFunc predicate, gpointer user_data);
 gboolean        g_hash_table_remove          (GHashTable *hash, gconstpointer key);
 guint           g_hash_table_foreach_remove  (GHashTable *hash, GHRFunc func, gpointer user_data);
+guint           g_hash_table_foreach_steal   (GHashTable *hash, GHRFunc func, gpointer user_data);
 void            g_hash_table_destroy         (GHashTable *hash);
 
 guint           g_spaced_primes_closest      (guint x);
@@ -397,6 +398,7 @@ gchar*  g_array_free              (GArray *array, gboolean free_segment);
 GArray *g_array_append_vals       (GArray *array, gconstpointer data, guint len);
 GArray* g_array_insert_vals       (GArray *array, guint index_, gconstpointer data, guint len);
 GArray* g_array_remove_index      (GArray *array, guint index_);
+GArray* g_array_remove_index_fast (GArray *array, guint index_);
 
 #define g_array_append_val(a,v)   (g_array_append_vals((a),&(v),1))
 #define g_array_insert_val(a,i,v) (g_array_insert_vals((a),(i),&(v),1))
@@ -469,14 +471,24 @@ GLogLevelFlags g_log_set_fatal_mask   (const gchar *log_domain, GLogLevelFlags f
 void           g_logv                 (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, va_list args);
 void           g_log                  (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, ...);
 
+#ifdef HAVE_C99_SUPPORT
 #define g_error(format, ...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, __VA_ARGS__)
 #define g_critical(format, ...) g_log (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, format, __VA_ARGS__)
 #define g_warning(format, ...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, format, __VA_ARGS__)
 #define g_message(format, ...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, format, __VA_ARGS__)
 #define g_debug(format, ...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, format, __VA_ARGS__)
 
-#define g_log_set_handler(a,b,c,d)
 #define g_printerr(format, ...) fprintf (stderr, format, __VA_ARGS__)
+#else
+#define g_error(...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, __VA_ARGS__)
+#define g_critical(...) g_log (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, __VA_ARGS__)
+#define g_warning(...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, __VA_ARGS__)
+#define g_message(...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
+#define g_debug(...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, __VA_ARGS__)
+
+#define g_printerr(...) fprintf (stderr, __VA_ARGS__)
+#endif
+#define g_log_set_handler(a,b,c,d)
 /*
  * Conversions
  */

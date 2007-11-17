@@ -146,7 +146,15 @@ gboolean
 g_path_is_absolute (const char *filename)
 {
 	g_return_val_if_fail (filename != NULL, FALSE);
+#ifdef G_OS_WIN32
+	if (filename[0] != '\0' && filename[1] != '\0' && filename[1] == ':' && 
+		filename[2] != '\0' && filename[2] == '\\')
+		return TRUE;
+	else
+		return FALSE;
+#else
 	return (*filename == '/');
+#endif
 }
 
 gchar *
@@ -210,12 +218,12 @@ const gchar *
 g_get_home_dir (void)
 {
 	if (home_dir == NULL){
-		uid_t uid;
-
 		pthread_mutex_lock (&home_lock);
 		if (home_dir == NULL){
+#ifdef HAVE_GETPWENT_R
 			struct passwd pwbuf, *track;
 			char buf [4096];
+			uid_t uid;
 			
 			uid = getuid ();
 
@@ -228,6 +236,7 @@ g_get_home_dir (void)
 				}
 			}
 			endpwent ();
+#endif
 			if (home_dir == NULL)
 				home_dir = g_getenv ("HOME");
 			pthread_mutex_unlock (&home_lock);

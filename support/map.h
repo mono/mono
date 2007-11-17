@@ -1560,7 +1560,7 @@ void Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void* handler);
 int Mono_Posix_Stdlib_L_tmpnam (void);
 void* Mono_Posix_Stdlib_malloc (guint64 size);
 int Mono_Posix_Stdlib_MB_CUR_MAX (void);
-int Mono_Posix_Stdlib_perror (const char* s);
+int Mono_Posix_Stdlib_perror (const char* s, int err);
 int Mono_Posix_Stdlib_RAND_MAX (void);
 void* Mono_Posix_Stdlib_realloc (void* ptr, guint64 size);
 int Mono_Posix_Stdlib_rewind (void* stream);

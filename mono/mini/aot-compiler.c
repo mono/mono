@@ -38,6 +38,7 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-logger.h>
 #include "mono/utils/mono-compiler.h"
 
@@ -106,6 +107,7 @@ typedef struct MonoAotCompile {
 	MonoImage *image;
 	MonoCompile **cfgs;
 	GHashTable *patch_to_plt_offset;
+	GHashTable **patch_to_plt_offset_wrapper;
 	GHashTable *plt_offset_to_patch;
 	GHashTable *patch_to_shared_got_offset;
 	GPtrArray *shared_patches;
@@ -1730,6 +1732,7 @@ get_plt_index (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 {
 	int res = -1;
 	int idx;
+	GHashTable *hash = acfg->patch_to_plt_offset;
 
 	switch (patch_info->type) {
 	case MONO_PATCH_INFO_METHOD:
@@ -1751,20 +1754,23 @@ get_plt_index (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 			patch_id = patch_info->data.klass;
 			break;
 		case MONO_PATCH_INFO_WRAPPER:
-			/* A bit ugly, but works */
-			g_assert (patch_info->data.method->wrapper_type < sizeof (MonoMethod));
-			patch_id = (gpointer)(((guint8*)patch_info->data.method) + patch_info->data.method->wrapper_type);
+			hash = acfg->patch_to_plt_offset_wrapper [patch_info->data.method->wrapper_type];
+			if (!hash) {
+				acfg->patch_to_plt_offset_wrapper [patch_info->data.method->wrapper_type] = g_hash_table_new (NULL, NULL);
+				hash = acfg->patch_to_plt_offset_wrapper [patch_info->data.method->wrapper_type];
+			}
+			patch_id = patch_info->data.method;
 			break;
 		default:
 			g_assert_not_reached ();
 		}
 
 		if (patch_id) {
-			idx = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->patch_to_plt_offset, patch_id));
+			idx = GPOINTER_TO_UINT (g_hash_table_lookup (hash, patch_id));
 			if (idx)
 				res = idx;
 			else
-				g_hash_table_insert (acfg->patch_to_plt_offset, patch_id, GUINT_TO_POINTER (acfg->plt_offset));
+				g_hash_table_insert (hash, patch_id, GUINT_TO_POINTER (acfg->plt_offset));
 		}
 
 		if (res == -1) {
@@ -1827,7 +1833,7 @@ static void
 emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 {
 	MonoMethod *method;
-	int i, pindex, method_index;
+	int i, pindex, start_index, method_index;
 	guint8 *code;
 	char *symbol;
 	int func_alignment = 16;
@@ -1863,18 +1869,21 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 	g_ptr_array_sort (patches, compare_patches);
 
 	acfg->method_got_offsets [method_index] = acfg->got_offset;
+	start_index = 0;
 	for (i = 0; i < cfg->code_len; i++) {
 		patch_info = NULL;
-		for (pindex = 0; pindex < patches->len; ++pindex) {
+		for (pindex = start_index; pindex < patches->len; ++pindex) {
 			patch_info = g_ptr_array_index (patches, pindex);
-			if (patch_info->ip.i == i)
+			if (patch_info->ip.i >= i)
 				break;
 		}
 
 #ifdef MONO_ARCH_HAVE_PIC_AOT
 
 		skip = FALSE;
-		if (patch_info && (pindex < patches->len)) {
+		if (patch_info && (patch_info->ip.i == i) && (pindex < patches->len)) {
+			start_index = pindex;
+
 			switch (patch_info->type) {
 			case MONO_PATCH_INFO_LABEL:
 			case MONO_PATCH_INFO_BB:
@@ -2090,6 +2099,12 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 		case MONO_WRAPPER_ISINST: {
 			MonoClass *proxy_class = (MonoClass*)mono_marshal_method_from_wrapper (patch_info->data.method);
 			encode_klass_info (acfg, proxy_class, p, &p);
+			break;
+		}
+		case MONO_WRAPPER_ALLOC: {
+			int alloc_type = mono_gc_get_managed_allocator_type (patch_info->data.method);
+			g_assert (alloc_type != -1);
+			encode_value (alloc_type, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_STELEMREF:
@@ -2332,7 +2347,7 @@ emit_klass_info (MonoAotCompile *acfg, guint32 token)
 	char *label;
 	gboolean no_special_static;
 
-	buf_size = 10240;
+	buf_size = 10240 + (klass->vtable_size * 16);
 	p = buf = g_malloc (buf_size);
 
 	g_assert (klass);
@@ -2712,6 +2727,7 @@ compile_method (MonoAotCompile *acfg, int index)
 			case MONO_WRAPPER_STELEMREF:
 			case MONO_WRAPPER_ISINST:
 			case MONO_WRAPPER_PROXY_ISINST:
+			case MONO_WRAPPER_ALLOC:
 				patch_info->type = MONO_PATCH_INFO_WRAPPER;
 				break;
 			}
@@ -2828,6 +2844,7 @@ load_profile_files (MonoAotCompile *acfg)
 	int file_index, res, method_index, i;
 	char ver [256];
 	guint32 token;
+	GList *unordered;
 
 	file_index = 0;
 	while (TRUE) {
@@ -2864,10 +2881,16 @@ load_profile_files (MonoAotCompile *acfg)
 	}
 
 	/* Add missing methods */
+	unordered = NULL;
 	for (i = 0; i < acfg->image->tables [MONO_TABLE_METHOD].rows; ++i) {
 		if (!g_list_find (acfg->method_order, GUINT_TO_POINTER (i)))
-			acfg->method_order = g_list_append (acfg->method_order, GUINT_TO_POINTER (i));
-	}		
+			unordered = g_list_prepend (unordered, GUINT_TO_POINTER (i));
+	}
+	unordered = g_list_reverse (unordered);
+	if (acfg->method_order)
+		g_list_last (acfg->method_order)->next = unordered;
+	else
+		acfg->method_order = unordered;
 }
 
 /**
@@ -3343,6 +3366,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	acfg = g_new0 (MonoAotCompile, 1);
 	acfg->plt_offset_to_patch = g_hash_table_new (NULL, NULL);
 	acfg->patch_to_plt_offset = g_hash_table_new (NULL, NULL);
+	acfg->patch_to_plt_offset_wrapper = g_malloc0 (sizeof (GHashTable*) * 128);
 	acfg->patch_to_shared_got_offset = g_hash_table_new (mono_patch_info_hash, mono_patch_info_equal);
 	acfg->shared_patches = g_ptr_array_new ();
 	acfg->method_to_cfg = g_hash_table_new (NULL, NULL);
@@ -3357,16 +3381,6 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	load_profile_files (acfg);
 
-#if 0
-	if (mono_defaults.generic_nullable_class) {
-		/* 
-		 * FIXME: Its hard to skip generic methods or methods which use generics.
-		 */
-		printf ("Error: Can't AOT Net 2.0 assemblies.\n");
-		return 1;
-	}
-#endif
-
 	emit_start (acfg);
 
 	cfgs = g_new0 (MonoCompile*, image->tables [MONO_TABLE_METHOD].rows + 32);
@@ -3379,7 +3393,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	acfg->plt_offset = 1;
 
 	/* Compile methods */
-	for (i = 0; i < image->tables [MONO_TABLE_METHOD].rows; ++i)
+	for (i = 0; i < acfg->nmethods; ++i)
 		compile_method (acfg, i);
 
 	alloc_got_slots (acfg);

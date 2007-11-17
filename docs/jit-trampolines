@@ -1,6 +1,9 @@
 Author: Dietmar Maurer (dietmar@ximian.com)
 (C) 2001 Ximian, Inc.
- 
+(C) 2007 Novell, Inc.
+
+[ 2007 extensions based on posts from Paolo Molaro ]
+
 Howto trigger JIT compilation
 =============================
 
@@ -39,8 +42,109 @@ where it is called. It is then possible for the JIT to patch the call
 instruction in the caller, so that it directly calls the JIT compiled code
 next time.
 
-Implementation for x86
+Implementation Details
 ======================
+
+Mono 1.2.6 has quite a few improvements in this area compared to mono
+1.2.5 which was released just a few weeks ago. I'll try to detail the
+major changes below.
+
+The first change is related to how the memory for the specific
+trampolines is allocated: this is executable memory so it is not
+allocated with malloc, but with a custom allocator, called Mono Code
+Manager. Since the code manager is used primarily for methods, it
+allocates chunks of memory that are aligned to multiples of 8 or 16
+bytes depending on the architecture: this allows the cpu to fetch the
+instructions faster. But the specific trampolines are not performance
+critical (we'll spend lots of time JITting the method anyway), so they
+can tolerate a smaller alignment. Considering the fact that most
+trampolines are allocated one after the other and that in most
+architectures they are 10 or 12 bytes, this change alone saved about
+25% of the memory used (they used to be aligned up to 16 bytes).
+
+To give a rough idea of how many trampolines are generated I'll give a
+few examples:
+
+    * MonoDevelop startup creates about 21 thousand trampolines
+    * IronPython 2.0 running a benchmark creates about 17 thousand trampolines
+    * an "hello, world" style program about 800 
+
+This change in the first case saved more than 80 KB of memory (plus
+about the same because reviewing the code allowed me to fix also a
+related overallocation issue).
+
+So reducing the size of the trampolines is great, but it's really not
+possible to reduce them much further in size, if at all. The next step
+is trying just not to create them.
+
+There are two primary ways a trampoline is generated: a direct call to
+the method is made or a virtual table slot is filled with a trampoline
+for the case when the method is invoked using a virtual call. I'll
+note here than in both cases, after compiling the method, the magic
+trampoline will do the needed changes so that the trampoline is not
+executed again, but execution goes directly to the newly compiled
+code. In one case the callsite is changed so that the branch or call
+instruction will transfer control to the new address. In the virtual
+call case the magic trampoline will change the virtual table slot
+directly.
+
+The sequence of instructions used by the JIT to implement a virtual
+call are well-known and the magic trampoline (inspecting the registers
+and the code sequence) can easily get the virtual table slot that was
+used for the invocation. The idea here then is: if we know the virtual
+table slot we know also the method that is supposed to be compiled and
+executed, since each vtable slot is assigned a unique method by the
+class loader. This simple fact allows us to use a completely generic
+trampoline in the virtual table slots, avoiding the creation of many
+method-specific trampolines.
+
+In the cases above, the number of generated trampolines goes from
+21000 to 7700 for MonoDevelop (saving 160 KB of memory), from 17000 to
+5400 for the IronPython case and from 800 to 150 for the hello world
+case.
+
+
+Implementation for x86/x86-64
+=============================
+
+Usually code looks like this:
+
+	     mov <some address>, %r11
+	     call *0xfffffffc(%rax)
+
+First, the first call instruction can go directly to the compiled
+address or to a trampoline.
+
+If it goes to a trampoline, on amd64 it looks as the one above (on x86
+it is different). Currently the trampoline is not modified, but it will
+be in the future. On x86 the trampoline looks like:
+
+        push constant
+        jmp generic_trampoline
+
+Note that constant can be a MonoMethod*, but it's not necessarily so
+(these are the recent changes: this constant can be -1 or -2, the first
+for the case of interface calls, the second for virtual calls).
+
+Other architectures are similar in the semantics, but different in the
+details.
+
+The above is what happens for virtual calls.
+
+For interfaces call 3 things can happen:
+
+	1) the calls goes directly to the method address.
+	   
+	2) it goes to a trampoline as described above.
+	   
+	3) it goes into an IMT collision resolution stub: this is a
+	   chunk of code that, based on the constant put inside the
+	   imt_register above, will perform a jump to the correct
+	   vtable slot for the interface method.
+
+Note that the vtable slot itself could then contain a trampoline.
+
+Some functions that are used here:
 
 emit-x86.c (arch_create_jit_trampoline): return the JIT trampoline function
 
@@ -49,4 +153,30 @@ patch the call instruction.
 
 emit-x86.c (arch_compile_method): JIT compile a method
 
+Call Sites
+==========
+
+There are 3 basic different kinds of call sites:
+
+	1) normal calls:
+	        call relative_displacement
+	
+	2) virtual calls:
+	        call *positive_offset(%register)
+	
+	3) interface calls:
+	        mov constant, %imt_register
+	        call *negative_offset(%register)
+	
+The above is what happens on x86 and amd64, with different values of
+%imt_register for each arch (this register is a constant, but it could
+change with different mono builds, it should be likely one of
+constants the runtime comunicates to the debugger). %register can
+change depending on the callsite based on the register allocator
+choices.  Note that the constant for the interface calls won't
+necessarily be a MonoMethod address: this could change in the future
+to a simple number.
+
+In all the 3 cases the JIT trampolines will need to inspect the call
+site, but only in the first case the call site will be changed.
 

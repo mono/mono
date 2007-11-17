@@ -150,7 +150,17 @@ typedef void* MonoCompileArch;
 	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext.mc_esi)
 	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext.mc_edi)
 	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext.mc_eip)
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) && defined(_STRUCT_MCONTEXT)
+	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext->__ss.__eax)
+	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext->__ss.__ebx)
+	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext->__ss.__ecx)
+	#define UCONTEXT_REG_EDX(ctx) ((ctx)->uc_mcontext->__ss.__edx)
+	#define UCONTEXT_REG_EBP(ctx) ((ctx)->uc_mcontext->__ss.__ebp)
+	#define UCONTEXT_REG_ESP(ctx) ((ctx)->uc_mcontext->__ss.__esp)
+	#define UCONTEXT_REG_ESI(ctx) ((ctx)->uc_mcontext->__ss.__esi)
+	#define UCONTEXT_REG_EDI(ctx) ((ctx)->uc_mcontext->__ss.__edi)
+	#define UCONTEXT_REG_EIP(ctx) ((ctx)->uc_mcontext->__ss.__eip)
+#elif defined(__APPLE__) && !defined(_STRUCT_MCONTEXT)
 	#define UCONTEXT_REG_EAX(ctx) ((ctx)->uc_mcontext->ss.eax)
 	#define UCONTEXT_REG_EBX(ctx) ((ctx)->uc_mcontext->ss.ebx)
 	#define UCONTEXT_REG_ECX(ctx) ((ctx)->uc_mcontext->ss.ecx)
@@ -268,11 +278,19 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_IMT_REG X86_EDX
+#define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
+
+typedef struct {
+	guint8 *address;
+	guint8 saved_byte;
+} MonoBreakpointInfo;
+
+extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 #endif /* __MONO_MINI_X86_H__ */  
 

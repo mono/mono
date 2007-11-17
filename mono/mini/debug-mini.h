@@ -16,10 +16,16 @@ typedef struct _MonoDebuggerThreadInfo MonoDebuggerThreadInfo;
 extern MonoDebuggerThreadInfo *mono_debugger_thread_table;
 
 void
-mono_debugger_thread_created (gsize tid, MonoJitTlsData *jit_tls);
+mono_debugger_thread_created (gsize tid, MonoThread *thread, MonoJitTlsData *jit_tls);
 
 void
 mono_debugger_thread_cleanup (MonoJitTlsData *jit_tls);
+
+void
+mono_debugger_extended_notification (MonoDebuggerEvent event, guint64 data, guint64 arg);
+
+void
+mono_debugger_trampoline_compiled (MonoMethod *method, const guint8 *code);
 
 /*
  * This is the old breakpoint interface.

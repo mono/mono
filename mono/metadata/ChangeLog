@@ -1,3 +1,1087 @@
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Join_internal):
+	When joining a thread, it's the thread that's calling Join that
+	gets WaitSleepJoin state not the target.  Fixes the standalone
+	test case in bug 334740, and hopefully the whole bug too.
+
+2007-11-15  Dick Porter  <dick@ximian.com>
+
+	* process.c: Read file version info from the files pointed at by
+	process modules, not the current process.  Fixes bug 315969.
+
+	Use windows typedef names in some places to fix warnings on the
+	windows build.
+
+2007-11-15  Mark Probst  <mark.probst@gmail.com>
+
+	* image.c, metadata-internals.h: Added a generic_class_cache hash
+	to MonoImage for looking up generic classes when sharing generics.
+
+Thu Nov 15 16:11:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: warning cleanups.
+
+2007-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetPropertiesByName): Implement proper hiding of
+	inherited properties.
+
+2007-11-14  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, class-internals.h: Added more information to the
+	runtime generic context.
+
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Take a delegate as argument
+	instead of just the target method. Generalize the abstract method handling to
+	handle any non-static method.
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Update after
+	mono_marshal_get_delegate_invoke () signature change.
+
+2007-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h: Made
+	mono_type_get_basic_type_from_generic () public.  Fixed member
+	access check for shared generics.
+
+	* loader.c: Don't insert field into field cache if it's part of a
+	non-inflated generic class.
+
+	* domain.c, domain-internals.h: The generic sharing context is now
+	part of the jit info data structure.  Added two accessor
+	functions.
+
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Create a non-shared wrapper for
+	the array Get/Set/Address methods, since the JIT inlines them.
+
+	* metadata-internals.h (MonoImage): Add 'runtime_invoke_direct_cache'.
+
+	* image.c (mono_image_close): Free runtime_invoke_direct_cache.
+	(mono_image_init): Initialize runtime_invoke_direct_cache.	
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Update after
+	mono_marshal_get_delegate_invoke signature change.
+
+	* marshal.c (mono_marshal_get_delegate_invoke): Receive the target_method as
+	an additional argument. Add support for invoking abstract methods.
+
+	* metadata-internals.h (MonoImage): Add 'delegate_abstract_invoke_cache'.
+
+	* image.c (mono_image_close): Free delegate_abstract_invoke_cache.	
+
+2007-11-09  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c: Do field layout for open generic classes as well.
+
+2007-11-09  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c, gc-internal.h: Don't finalize threadpool threads with
+	other objects, because the threadpool is still around.  Put them
+	in a list instead and after finalizing all other objects in the
+	root domain shut down the thread pool and then finalize the
+	threads.  Fixes bug #337383.
+
+	* threads.c, thread-types.h: New mono_thread_create_internal()
+	function for marking a thread with the threadpool flag before it
+	started.  Set synch_cs to NULL after freeing it.
+
+	* threadpool.c: Mark threadpool threads before they start.
+
+Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: don't export random functions
+	and lazy load dbnull and missing objects.
+
+2007-11-07  Jonathan Chambers <joncham@gmail.com>
+
+	* class.c: Initialize COM types if COM interfaces
+	are present (not just COM classes).
+	
+	Code is contributed under MIT/X11 license.
+
+2007-11-07  Massimiliano Mantione  <massi@ximian.com>
+	* reflection.c:
+	create_dynamic_mono_image: hook module profiler events (dynamic case).
+	mono_image_basic_init: hook assembly profiler events (dynamic case).
+
+2007-11-07  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.c:
+	simple_appdomain_unload: completely terminate the profiler
+	instead of only processing the statistical samples.
+	simple_shutdown: make sure this is really called exactly once,
+	even in multithreaded applications, and always listen to
+	appdomain events.
+	* gc.c (mono_domain_finalize): don't call mono_profiler_appdomain_event
+	here, the "[un]load" functions will do it.
+	Fixes bugs #333791 and #325261.
+
+2007-11-07  Geoff Norton  <gnorton@novell.com>
+
+	* socket-io.c:  Use the configure defines for HAVE_SOCKADDR_IN(6)_SIN_LEN
+	rather than depend on __APPLE__.
+
+2007-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c: Safety checks in InitializeArray.  Fixes bug #324535.
+
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* object.c: Fix mono_string_to_utf8 to handle NULL values inside the
+	UTF16 MonoString. Fix the crash from bug #335488
+
+2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* marshal.c: Correct (for non-Win32 OS) length != size in 
+	mono_string_from_bstr. Fix #339530.
+
+2007-11-06  Geoff Norton  <gnorton@novell.com>
+
+	* socket-io.c: Apple requires sin(6)_len to be set for getnameinfo
+	to succeed
+
+2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+
+	* process.c: Added run-time GetProcessId API detection for Windows.
+
+2007-11-04  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c 	(mono_param_get_objects): If a parameter has the
+	attribute [System.Runtime.InteropServices.Optional] we should
+	set the DefaultValue of the ParameterInfo to be
+	System.Reflection.Missing instead of DBNull.
+
+	See bug #339013.
+
+	(mono_get_reflection_missing_object): New method,
+	returns the System.Reflection.Missing.Value singleton instance.
+
+2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+2007-11-02  Jonathan Chambers <joncham@gmail.com>
+
+	* icall.c: Use GetEnvironmentStrings on windows
+	so we are using the same environment block as 
+	GetEnvironmentVariable/SetEnvironmentVariable. Fixes
+	#333740.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-10-31  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 64.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Add `MONO_DEBUGGER_EVENT_TRAMPOLINE'.
+
+2007-10-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_class): Add support for dynamic inflated 
+	classes.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+2007-10-30  Robert Jordan  <robertj@gmx.net>
+
+	* icall-def.h, icall.c:
+	Add ves_icall_Remoting_RemotingServices_GetVirtualMethod ().
+
+	Code is contributed under MIT/X11 license.
+
+2007-10-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable): Find the inflated methods in the
+	inflated class instead of inflating them again.
+	
+	* class.c (mono_class_setup_vtable): Inflate the override methods in the 
+	dynamic case.
+
+	* class.c (mono_generic_class_get_class): Set klass->property.count as well.
+	Call setup_supertypes () after klass->parent is set.
+	(mono_class_setup_properties): Enable this to work on dynamic generic classes.
+
+	* reflection.c (mono_type_get_object): Only return a MonoGenericClass object
+	for inflated instances of not yet created dynamic generic classes.
+	(ctorbuilder_to_mono_method): Handle the case when this is called multiple
+	times from inflated_method.
+	(methodbuilder_to_mono_method): Ditto.
+
+Mon Oct 29 21:02:53 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: code cleanup and removed old untested option of not creating the
+	finalizer thread.
+
+2007-10-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Avoid
+	creating a jump trampoline for dynamic methods.
+
+2007-10-29 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* reflection.c (mono_image_create_token): Correctly encode methods and constructors of
+	generic TypeBuilders when called from another method of the same type (bug #335131).
+
+
+2007-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (methodbuilder_to_mono_method): Revert the last change as it
+	doesn't seem to work perfectly.
+	
+	* reflection.c (ctorbuilder_to_mono_method): Handle the case when this is
+	called multiple times.
+	(methodbuilder_to_mono_method): Ditto.
+	(resolve_object): Inflate FieldBuilder's.
+
+Fri Oct 26 19:38:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c, string-icalls.h, appdomain.c: patch from
+	Tyler Larson <mono-devel@tlarson.com> to fix the handling of
+	RemoveEmptyEntries in the string.Split implementation (bug #322375).
+
+2007-10-26  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump version because of
+	Thread initialisation changes
+
+2007-10-26 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* verify.c: fix compatibility check between arrays and System.Array
+
+2007-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Handle MonoGenericClass
+	too. Fixes #336999.
+
+2007-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_value_box): Use typed allocation here.
+
+2007-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Create a jump
+	trampoline instead of compiling the method right away.
+
+	* class-internals.h object.c: Add a JIT callback to create a jump trampoline.
+
+2007-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_generic_class_get_class): Avoid setting klass->size_inited and
+	related fields for dynamic classes. Fixes #334493.
+
+2007-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_generic_class_get_class): Set klass->field.count as well.
+	
+	* class.c (mono_class_layout_fields): Use 1 instead of TRUE for consistency.
+
+	* class.c (mono_class_layout_fields): Set size_inited for generic classes as well.
+	(mono_class_setup_vtable): Obtain overrides for dynamic generic classes correctly.
+
+	* class.c (mono_class_setup_methods): Handle dynamic inflated classes correctly.
+
+	* reflection.c (create_generic_typespec): Initialize klass->generic_container
+	if needed.
+	(reflection_methodbuilder_to_mono_method): Set container->is_method to TRUE.
+
+2007-10-18  Jonathan Chambers <joncham@gmail.com>
+
+	* marshal.c: Use correct key when removing item
+	from ccw_hash.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-10-17  William Holmes  <billholmes54@gmail.com>
+
+	*marshal.c: Adding a case to marshal booleans to U1
+
+	Code is contributed under MIT/X11 license.
+
+2007-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Search the modules compromising dynamic
+	assemblies. Fixes #331601.
+
+2007-10-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Throw an
+	exception if the type name contains an assembly component. Fixes #334203.
+
+	* reflection.c (mono_reflection_get_type_with_rootimage): Search all the
+	modules inside dynamic assemblies. Fixes #334200.
+	
+	* reflection.c: Set image->public_key and image->public_key_length;
+
+	* metadata-internals.h (MonoDynamicImage): Add public_key and public_key_len
+	fields.
+
+	* image.c (mono_image_get_public_key): Handle dynamic assemblies. Fixes #334173.	
+	
+2007-10-16  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata.c: Implemented correct comparing of generic classes.
+	An inflated generic class can be equal to a non-inflated one if it
+	is inflated with generic type variables as type arguments.  Fixes
+	bug #333798.
+
+2007-10-15  Dick Porter  <dick@ximian.com>
+
+	* monitor.c (mono_monitor_try_enter_internal): Set thread state to
+	WaitSleepJoin while it is waiting to acquire a lock.  Fixes bug
+	81646.
+
+	* threads.c: Turn the thread synch_lock into a CRITICAL_SECTION,
+	instead of a monitor lock.  This means that monitor_try_enter and
+	co can set the thread state safely.
+	(ves_icall_System_Threading_Thread_Interrupt_internal): Always set
+	thread_interrupt_requested, so interrupt actually works.
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Poll_internal,
+	ves_icall_System_Net_Sockets_Socket_Select_internal): Use thread
+	state accessor function
+
+2007-10-15  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MONO_DEBUGGER_VERSION): Bump to 63 to make it impossible to use
+	the debugger with the current runtime.
+
+Mon Oct 15 10:20:56 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, object-internals.h: added the ability to set a single
+	trampoline for all the slots in a vtable.
+
+Fri Oct 12 17:50:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: deal with a possible race condition during multicast
+	delegate invocation.
+
+Fri Oct 12 13:31:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: ensure value type methods don't have the synchronized
+	flag set.
+
+Fri Oct 12 08:10:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* string-icalls.c, string-icalls.h: reverted unapproved patch that
+	breaks the build.
+
+2007-10-11  Joel Reed  <joelwreed@comcast.com>
+
+	* string-icalls.c, string-icalls.h: modify System_String_InternalSplit
+	to take an options parameter so that empty entries can be removed during
+	the split procedure. Patch from: Tyler Larson <mono-devel@tlarson.com>
+
+Thu Oct 11 20:16:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make sure we don't store the signature from a dynamic
+	method into the runtime invoke cache (bug #327189).
+
+Thu Oct 11 18:22:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: make sure the wrapper methods are properly initialized.
+
+2007-10-11  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata.c, metadata-internals.h: Generalized
+	mono_type_stack_size() to mono_type_stack_size_internal() which
+	takes an additional argument specifying whether it allows open
+	types.
+
+2007-10-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): handle typedbyref params
+	correctly and check for unverifiable return values.
+
+	* verify.c (do_newobj): fix a warning.
+
+2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: don't tread typedbyref as allways unverifable,
+	so uses, like (ld/st)loc.0 are valid. verify for the cases
+	that it matters, like boxing related operations.
+
+2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: add verification of the newobj opcode. verification
+	of delegate instantation still missing due ldftn and virldftn not
+	pushing the function type on stack
+
+2007-10-08  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h: Runtime generic context data structure
+	definition.
+
+	* object.c: Initialization of runtime generic context at runtime
+	vtable creation time.
+
+2007-10-08  Massimiliano Mantione  <massi@ximian.com>
+	* class.c (mono_class_create_from_typedef,
+	mono_class_from_generic_parameter, mono_ptr_class_get,
+	mono_fnptr_class_get, mono_bounded_array_class_get)
+	* domain.c (mono_domain_create, mono_domain_free)
+	* assembly.c (mono_assembly_load_from_full, mono_assembly_close)
+	* image.c (do_mono_image_load, mono_image_close):
+	Hooked up load-unload profiler events.
+
+Mon Oct 8 11:38:04 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: track statistics about the actual amount of native code
+	allocated.
+
+Sat Oct 6 10:01:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: the valuetype enumerators don't have the additional
+	supertypes interfaces.
+
+Fri Oct 5 20:33:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: need more interfaces setup for the IEnumerator<T>
+	object created for arrays (tests/ienumerator-interfaces.2.cs).
+
+2007-10-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_ldtoken): Handle methodspec tokens as well. Fixes #331097.
+
+2007-10-05  Alp Toker  <alp@atoker.com>
+
+	* icall.c (ves_icall_MonoType_GetElementType): For enums, return null
+	rather than the underlying type. Based on a patch by Ben Maurer. Fixes
+	#315863.
+
+2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_type_compatibility_full): verification of
+	compatibility improved, validates correctly non-strict checks between
+	native int and I4 types different than (unsigned)int32.
+
+	* verify.c (do_store_indirect): added, do all verification of
+	ldind.X opcodes. 
+
+	* verify.c (get_load_indirect_mono_type): renamed to
+	get_indirect_op_mono_type, as it now returns the MonoType for 
+	ldind.X and stind.X opcodes.
+
+2007-10-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Fix the encoding of generic type definition for
+	TypeBuilders.
+
+	* reflection.c (mono_image_typedef_or_ref_full: do the same thing as
+	mono_image_typedef_or_ref but allows to specify if typespec lookups should
+	be made. Typespec check is done prior to typeref cache lookup.
+
+	* reflection.c (mono_image_typedef_or_ref): now just delegate to
+	mono_image_typedef_or_ref_full.
+
+	* reflection.c (encode_generic_class): encode the generic class
+	directly instead of calling encode_type.
+
+	* reflection.c (encode_type): encode the generic type definition
+	MonoClass as a generic instantiation.
+
+	* reflection.c (create_typespec): cache typespec tokens in
+	the assembly->typespec cache. Don't create typespec for a generic
+	instance MonoClass. Create typespec for the generic type defintion.
+
+	* reflection.c (create_generic_typespec): encode the generic
+	class directly instead of calling encode_type.
+
+	* reflection.c (mono_image_create_token): encode the generic
+	type definition not using a typespec for MonoType instances.
+
+
+2007-10-04  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #328812
+	* class.c (mono_image_init_name_cache): Don't return nested
+	'protected internal' classes.
+	(mono_class_from_name_case): Likewise.
+
+2007-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall-def.h, icall.c : get_bundled_machine_config() is now the
+	  common function used by both DefaultConfig in System.dll and
+	  InternalConfigurationHost in System.Configuration.dll.
+
+Wed Oct 3 17:26:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: automatically add to vectors only a few essential explicit
+	generic interfaces. The rest of the interfaces that arrays should
+	provide are currently implicitly added (but still not lazily, see the
+	design in the discussion of bug#325495 for the details of what is
+	needed for that). Additionally, implicit interfaces are assigned the
+	same vtable slot as the explicit interfaces (as they are compatible):
+	this enables huge memory savings since we don't need to instantiate
+	as many memthods and as large vtables anymore. Also, Since
+	GetEnumerator<T> returns an instance of a type that is required to
+	support a similarly large set of interfaces as arrays, we add
+	implicit interfaces and interface offset sharing support to those
+	types, too. This change adds all the required interfaces so that
+	the anonarray.cs test case in the bug report works (we don't add
+	all the interfaces to arrays of arrays 3-level deep and more because
+	of the memory requirements explained in the bug and since they are much
+	less common: the lazy-loading support will enabled them to work, too).
+
+2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (merge_stacks): major clean up, all type compatibility
+	checks are done by verify_type_compatibility. This fix my earlier lack
+	of understanding of the CLR type system and merge_stacks no longer looks
+	scary.
+
+	* verify.c: fixed some bad spelling.
+
+2007-10-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_from_stack_slot): added. returns the MonoType for
+	a given stack slock.
+	
+	* verify.c: killed verify_type_compat in favor of verify_type_compatibility and
+	verify_type_compatibility_full. This removed a near indentical function and fixed
+	handling of Int32 and IntPtr across all opcodes.
+
+Tue Oct 2 15:24:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: only vectors have the additional generic interfaces.
+
+2007-10-01  Jonathan Chambers <joncham@gmail.com>
+
+	* mono-config.c: Use g_strcasecmp instead of
+	strcasecmp like everywhere else to fix
+	compilation with MSVC.
+	
+	Code is contributed under MIT/X11 license.
+
+Mon Oct 1 14:39:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, object-internals.h: refactored the IMT code to enable
+	building a single slot at a time and lazily creating the IMT trampolines
+	and thunks.
+
+2007-09-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (inflate_generic_signature): Allocate inflated signatures from the heap.
+
+	* metadata.c (mono_metadata_free_inflated_signature): Free the signature itself	too.
+	Fixes #328501.
+	
+2007-09-29  Raja R Harinath  <harinath@gmail.com>
+
+	* loader.c (method_from_methodspec): Rearrange to avoid
+	un-necessary exposition.  Don't assert out if the method's
+	declaring type is a generic type definition.
+
+2007-09-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 61.
+
+Fri Sep 28 20:15:47 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h: optimize field layout of MonoClass to
+	requires less cachelines at runtime and save a few bytes on 64 bit
+	systems.
+
+2007-09-28  Jb Evain  <jbevain@novell.com>
+
+	* reflection.c: when encoding type names in custom attributes,
+	if the type is a closed generic type, its generic arguments
+	have to be serialized as AssemblyQualifiedName, so that when
+	they are deserialized, it's possible to re-create them properly.
+	Fixes #329450.
+
+
+Fri Sep 28 19:19:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, class-internals.h: added delegate-creation counter.
+
+Fri Sep 28 18:07:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: cleanup of the code that synthetizes interfaces for
+	arrays in 2.0: saves quit a bit of corlib mempool memory.
+	Code to fix bug #325495 ifdeffed out for now until the issues
+	with memory usage and O(n^2) behaviour are fixed.
+
+Fri Sep 28 17:19:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: when possible, do not duplicate the name of the methods
+	in the method builder and in the generated MonoMethod.
+
+2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+	* verify.c: added support for type checking ldind_* opcodes.
+
+2007-09-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h (struct _MonoGenericClass): new field is_tb_open
+	which is used to distinguish the fully open instantiation of a TypeBuilder
+	with the rest. This temporary hack is required to restore the property that
+	the fully open instantiation is the same type of the generic type definition.
+
+	* class-internals.h (mono_generic_class_is_generic_type_definition):
+	new function as part of the internal API.
+
+	* class.c (inflate_generic_type): return NULL when the generic inst is
+	fully open. The fully open generic type is now the same as the generic type
+	definition for non TypeBuilder types.
+
+	* class.c (mono_generic_class_get_class): removed assert since it is
+	no longer valid, gklass->cached_class can point to the generic type definition.
+
+	* class.c (mono_generic_class_is_generic_type_definition): new.
+
+	* metadata.c (mono_generic_class_hash): added is_tb_open field
+	to the hash calculation.
+
+	* metadata.c (free_generic_class): if the generic class is associated
+	with the generic type definition, its field will come from the mempool and
+	must not be freed.
+
+	* metadata.c (mono_metadata_is_type_builder_generic_type_definition):
+	new, this function identifies the corner case of a TypeBuilder fully open
+	instantiation.
+
+	* metadata.c (mono_metadata_lookup_generic_class): use is_tb_open
+	for lookup. Set gclass->cached_class to be the container class in case of
+	the fully open instantiation of non TypeBuilder types.
+
+	* metadata.c (_mono_metadata_generic_class_equal): use is_tb_open
+	to compare generic classes.
+
+	* reflection.c (method_encode_methodspec): remove assert that
+	no longer is valid.
+
+	* reflection.c (mono_reflection_generic_class_initialize): add
+	an aditional assert to ensure the proper type is used.
+
+2007-09-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: disabled all debug spew by default, define MONO_VERIFIER_DEBUG
+	to enjoy it.
+
+2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (push_arg): Fixed support for ldarga
+	* verify.c (set_stack_value): Removed superfluous parameter, fixed the
+	MonoType used as first arg in case of instance calls.
+
+2007-09-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Support for verifying VAR and MVAR types, 
+
+2007-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_get_property_info): Set the reflected type of the
+	accessors correctly.
+
+Tue Sep 25 14:56:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: support OSX and other systems in
+	mono_thread_get_stack_bounds (bug #328026).
+
+2007-09-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MonoDebugVarInfo): Replace `MonoClass *klass' with `MonoType *type'.
+
+2007-09-24  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MonoDebugClassEntry): Moved the definition of this struct into
+	mono-debug.c to make it private.
+
+	* mono-debug.c
+	(MonoDebugClassEntry): Removed `symfile_id'; since we now use one
+	type table per symbol file, we don't need to store the symfile id
+	any longer.
+
+2007-09-24  Martin Baulig  <martin@ximian.com>
+
+	Create one type table per symbol file, since a `MonoClass *' gets
+	invalid when its image is unloaded.
+
+	* mono-debug.h (MonoSymbolTable): Removed `type_table'.
+	(MonoDebugHandle): Added `type_table'.
+
+Mon Sep 24 17:25:43 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mempool.c, mempool.h: added mono_mempool_new_size () API
+	to be able to specify a smaller initial size for the pool.
+	Adjusted the code to slowly increase pool size before using
+	the previous default size.
+	* image.c: use a small initial size for image mempools.
+
+2007-09-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_array): Generate valid IL for byref array case.
+	Fixes ##320990.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_get_ManifestModuleInternal): 
+	Rename this to ves_icall_System_Reflection_Assembly_GetManifestModuleInternal.
+
+2007-09-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_type_create_from_typespec): Remove an invalid
+	free. Fixes #327438.
+
+2007-09-21  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (type_in_image) <MONO_TYPE_SZARRAY>: Handle arrays of
+	generic instantiations, etc.
+	<MONO_TYPE_ARRAY>: Likewise.
+
+2007-09-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MonoSymbolFilePriv, MonoDebugHandlePriv): Removed;
+	these structs were never defined.
+	(MonoDebugHandle): Removed the `_priv' field, it was never used.
+
+2007-09-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MonoDebugVarInfo): Add `MonoClass *klass'.
+
+Fri Sep 21 14:39:45 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: removed the guid hash tables: we can get the same info
+	without the additional memory usage hit (partially fixes also bug #327052).
+
+2007-09-10  Massimiliano Mantione  <massi@ximian.com>
+
+	* profiler.h, profiler-private.h, profiler.c: add a new profiler
+	event to handle unloading methods. After the event is called, the
+	corresponding MonoMethod* must be considered invalid.
+	* loader.c (mono_free_method): call the new mono_profiler_method_free
+	event.
+
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* domain-internals.h: New flag in MonoJitInfo which marks shared
+	generic methods.  New hash table (shared_generics_hash) in
+	MonoDomain to keep track of shared generic methods.  Prototypes
+	for functions to register and lookup shared generic methods.
+
+	* domain.c: Support for registering and looking up shared generic
+	methods via a hash table (shared_generics_hash) in MonoDomain.
+
+	* class-internals.h: New exception to signal failure of shared
+	compilation of a generic method.  New counters for generics
+	sharing in MonoStats.
+
+Thu Sep 20 16:59:36 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, metadata-internals.h: don't keep a file descriptor open
+	for loaded assemblies (bug#325988).
+
+2007-09-19  Raja R Harinath  <rharinath@novell.com>
+
+	* metadata.c (signature_in_image): New.  Carve out of type_in_image.
+	(ginst_in_image, gclass_in_image): Simplify.  Change signature to
+	use the corresponding datatypes.
+	(type_in_image): Update to changes.
+	(CleanForImageUserData): Simplify.
+	(steal_gclass_in_image): Carved out of old 'gclass_in_image'.
+	Avoid quadratic behaviour in handling the "stolen" list by
+	separating the filter predicate out, and by prepending the stolen
+	items rather than appending them.
+	(steal_ginst_in_image): Likewise.
+	(mono_metadata_clean_for_image): Update to changes.
+
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
+	* domain.c (mono_cleanup): Call mono_debug_cleanup() here.
+
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_cleanup): Don't call
+	mono_debugger_cleanup(); this is now called earlier from mini_cleanup().
+
+2007-09-19  Raja R Harinath  <harinath@gmail.com>
+
+	Fix crash on 'make run-test' in mcs/errors
+	* metadata.c (type_in_image): New.  Carve out of ginst_in_image.
+	Avoid more potential allocations in mono_class_from_mono_type.
+	(ginst_in_image): Update to changes.
+	(gclass_in_image): Rearrange slightly.
+
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Move the code that sets up class->methods to 
+	mono_class_setup_methods () for inflated generic classes too. Ditto for properties.
+
+	* metadata.c (mono_metadata_get_inflated_signature): New function to return a
+	canonical instance of an inflated generic signature.
+	(mono_type_create_from_typespec): Remove an invalid free.
+
+	* loader.c (mono_method_get_signature_full): Use mono_metadata_get_inflated_signature.	
+
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* domain-internals.h: added a declaration of the
+	mono_assembly_load_full_nosearch internal function.
+
+	* assembly.c (mono_assembly_load_with_partial_name): use
+	mono_try_assembly_resolve return value properly.
+	(mono_assembly_load_full_nosearch): copied the function body from
+	mono_assembly_load_full, without the code to invoke assembly
+	search hooks.
+	(mono_assembly_load_full): calls the above new function and if the
+	assembly is not resolved, invokes the search hooks.
+
+	* appdomain.c (mono_runtime_init): restore the global postload
+	assembly search handlers.
+
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Make sure class->methods and class->properties
+	are never NULL in the generics case.
+
+	* metadata.c (free_generic_class): Enable this again, skip the dynamic case.
+
+2007-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (free_generic_class): Disable some code to fix the build.
+
+	* domain.c (mono_cleanup): Fix a crash introduced by a previous patch.
+
+	* marshal.c (mono_marshal_get_xappdomain_dispatch): Allocate a piece of data
+	from the image mempool.
+
+	* metadata.c (free_generic_class): Free more data from the inflated class.
+
+	* class.c (mono_class_from_generic_parameter): Allocate memory from the mempool.
+
+	* metadata.c (mono_metadata_parse_generic_param): Allocate memory from the image
+	mempool.
+	(mono_type_create_from_typespec): Ditto.
+
+	* domain.c (get_runtimes_from_exe): Add an out parameter to return the opened
+	MonoImage to the caller.
+	(mono_init_internal): Save the opened image in a global variable.
+	(mono_cleanup): Close the image opened in get_runtimes_from_exe.
+
+	* reflection.c (resolve_object): Fix a leak.
+
+	* metadata.c: Fix the freeing of data in the generics caches.
+	
+	* metadata.c (free_generic_inst): Comment this out to fix the build.
+	(free_generic_class): Ditto.
+
+	* metadata.c: Free cached generic methods, instantinations and classes when
+	they are removed from the caches.
+	(mono_metadata_free_type): Free the type itself.
+
+	* class.c: Free the result of mono_class_inflate_generic_type () in a few
+	places.
+
+Mon Sep 17 16:14:07 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c: restrict managed allocs to __thread supporting
+	architectures.
+
+2007-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_inflate_generic_type): Add a comment describing memory ownership.
+	(mono_generic_class_get_class): Fix a leak.
+
+	* metadata.c (do_mono_metadata_parse_type): Remove an unneccesary call to
+	mono_metadata_free_type ().
+	(mono_metadata_inflate_generic_inst): Fix a leak.
+
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (free_header_data): Fix a leak missed earlier.
+
+	* metadata.c (mono_metadata_parse_array_full): Allocate memory from the image
+	mempool.
+
+	* mono-debug.c (mono_debug_close_image): Fix call to 
+	g_hash_table_remove ().
+
+Fri Sep 14 19:36:37 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h: redirect all the string ctor to the managed
+	CreateString () methods.
+	* string-icalls.c, string-icalls.h: removed dead code for string
+	ctors and icalls.
+
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c: Fix memory leaks.
+
+2007-09-14  Jonathan Chambers <joncham@gmail.com>
+
+	* threads-types.h: Implement mono_hazard_pointer_set and 
+	mono_hazard_pointer_clear macros using do/while(0) to fix
+	compilation with MSVC.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (ves_icall_System_GCHandle_GetAddrOfPinnedObject): Use a return value of
+	-2 to communicate to managed code that the handle is not pinned. Fixes #82848.
+
+Fri Sep 14 14:04:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, string-icalls.c: get rid of old, no longer used, string
+	icalls.
+
+Fri Sep 14 11:41:31 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c, gc-internal.h, object.c: allow strings to be
+	managed-code allocated as well.
+
+2007-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_is_assignable_from): Add support for generic variance.
+
+Thu Sep 13 11:55:55 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c: fixed the build after the AOT changes.
+
+2007-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* wrapper-types.h: Add an ALLOC wrapper type.
+
+	* gc-internals.h boehm-gc.c null-gc.c sgen-gc.c: Add functions needed by AOT to
+	reference managed allocator methods.
+
+2007-09-12  Marek Safar  <marek.safar@gmail.com>
+
+	* icall.c (ves_icall_MonoType_GetGenericArguments): Create an instance
+	of Type array and not MonoType, a fix suggested by Hari.
+	
+2007-09-12  Jonathan Chambers <joncham@gmail.com>
+
+	* domain-internals.h, domain.c : Remove delegate_invoke_impl_with_target_hash
+	and delegate_invoke_impl_no_target_hash from _MonoDomain struct.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-09-10  Massimiliano Mantione  <massi@ximian.com>
+
+	* domain.c, object.c, mono-config.c, object-internals.h: Fixed  #82416.
+
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* image.c (do_mono_image_open): if assembly file fails to open and
+	MONO_IOMAP is in effect, try to find the path in a
+	case-insensitive way.
+
+	* appdomain.c (mono_runtime_init): do not install postload hooks -
+	tests show that MS.NET doesn't use anything of that sort to
+	trigger the AppDomain.AssemblyResolve event.
+	(mono_try_assembly_resolve): renamed from try_assembly_resolve and
+	made non-static.
+	(mono_runtime_init): init portability helpers here.
+
+	* assembly.c (mono_assembly_load_with_partial_name): if other	
+	attempts fail, trigger the AppDomain.AssemblyResolve event handler
+	to resolve the assembly.
+
+	* domain-internals.h: added mono_try_assembly_resolve and marked
+	it as internal.
+
+2007-09-11  Jb Evain  <jbevain@novell.com>
+
+	* object-internals.h (MonoReflectionDynamicMethod): add
+	a `MonoReflectionType *owner` field. The owner is used
+	* reflection.c:
+	(mono_reflection_create_dynamic_method): use the owner of the dynamic
+	method as the class declaring the dynamic method.
+	(reflection_methodbuilder_from_dynamic_method): copy the owner of the
+	dynamic method to the declaring type of the methodbuilder.
+
+2007-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c (ves_icall_InternalInvoke): Enforce CoreCLR security
+	rules for calling methods via reflection.
+
+2007-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Add support for MonoGenericClass. 
+	Inflate MonoType's.
+
+Tue Sep 11 16:08:08 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, boehm-gc.c, null-gc.c, sgen-gc.c: allow the GC to
+	provide a managed method that does fast allocations without needing
+	a managed->unmanaged transition. Boehm GC implementation currently
+	enabled for ptrfree objects on sane architectures.
+
+Tue Sep 11 16:00:35 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, marshal.h: exported a couple of useful functions and
+	added mono_mb_get_label () to easily handle backward branches.
+
+2007-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Inflate generic methods. Fixes #82782.
+
+2007-09-10  Massimiliano Mantione  <massi@ximian.com>
+
+	* loader.c (find_method): Fixed the regression introduced while
+	fixing bug #81466.
+
+2007-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_lookup_dynamic_token_class): Pass along the context here as
+	well.
+	
+	* class.c loader.c metadata.c object.c class-internals.h object-internals.h
+	icall.c reflection.c: Pass a MonoGenericContext argument to 
+	mono_lookup_dynamic_token ().
+
+	* reflection.c (resolve_object): Handle GenericTypeParameterBuilder. Fixes
+	#82744.
+	
+2007-09-09  Robert Jordan  <robertj@gmx.net>
+
+	* object.c (mono_class_proxy_vtable): Don't create remoting trampolines
+	for generic methods.
+
+	* object.c (mono_object_get_virtual_method): Handle generic methods.
+	Fixes bug #78882.
+
+	Code is contributed under MIT/X11 license.
+
+Sat Sep 8 18:16:01 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: fix locking in mono_image_load_file_for_image ().
+
+Thu Sep 6 19:48:00 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, icall.c, icall-def.h: the methodinfos name field is
+	used only as a cache: added an icall to fill it.
+
+2007-09-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.h: exposed mono_reflection_free_type_info
+	* reflection.c (mono_reflection_get_type_internal): type_args is always freed
+	since mono_reflection_bind_generic_parameters makes a copy of it.
+	* reflection.c (free_type_info): subinfos should be freed.
+ 	* reflection.c (free_type_info): renamed to mono_reflection_free_type_info and 
+	made non static.
+	* icall.c (type_from_name and ves_icall_System_Reflection_Assembly_InternalGetType):
+	replaced explicit cleanup of MonoTypeNameParse struct with a call to mono_reflection_free_type_info,
+	this fixes #82695 and #81726.
+   
+
+2007-09-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* process.h, process.c:  added support for user profile/info in
+	  ProcessStartInfo. For now only Windows works.
+
+Fri Aug 31 17:30:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: consider the generic arguments when comparing
+	signatures (bug #82614).
 
 Thu Aug 30 18:34:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
 

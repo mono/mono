@@ -39,7 +39,7 @@ main(int argc, char* argv[]) {
 	int retval;
 	
 	if (argc < 2){
-		fprintf (stderr, "Please provide an assembly to load");
+		fprintf (stderr, "Please provide an assembly to load\n");
 		return 1;
 	}
 	file = argv [1];

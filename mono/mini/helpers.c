@@ -127,7 +127,7 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	}
 	fprintf (ofd, ":\n");
 
-	if (emit_debug_info) {
+	if (emit_debug_info && cfg != NULL) {
 		MonoBasicBlock *bb;
 
 		fprintf (ofd, ".stabs	\"\",100,0,0,.Ltext0\n");
@@ -200,6 +200,10 @@ mono_disassemble_code (MonoCompile *cfg, guint8 *code, int size, char *id)
 	system (cmd);
 	g_free (cmd);
 	
+#ifndef PLATFORM_WIN32
+	unlink (o_file);
+	unlink (as_file);
+#endif
 	g_free (o_file);
 	g_free (as_file);
 #endif

@@ -241,7 +241,7 @@ add_float (guint32 *gr, guint32 *fr, guint32 *stack_size, ArgInfo *ainfo, gboole
 }
 
 static void
-add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
+add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	       gboolean is_return,
 	       guint32 *gr, guint32 *fr, guint32 *stack_size)
 {
@@ -257,7 +257,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
 	else if (sig->pinvoke) 
 		size = mono_type_native_stack_size (&klass->byval_arg, NULL);
 	else 
-		size = mono_type_stack_size (&klass->byval_arg, NULL);
+		size = mini_type_stack_size (gsctx, &klass->byval_arg, NULL);
 
 	if (!sig->pinvoke || (size == 0)) {
 		/* Allways pass in memory */
@@ -347,7 +347,7 @@ add_valuetype (MonoMethodSignature *sig, ArgInfo *ainfo, MonoType *type,
  * Gude" document for more information.
  */
 static CallInfo*
-get_call_info (MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
+get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint32 i, gr, fr;
 	MonoType *ret_type;
@@ -412,7 +412,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 				/* This seems to happen with ldfld wrappers */
 				cinfo->ret.storage = ArgInIReg;
 			} else {
-				add_valuetype (sig, &cinfo->ret, sig->ret, TRUE, &tmp_gr, &tmp_fr, &tmp_stacksize);
+				add_valuetype (gsctx, sig, &cinfo->ret, sig->ret, TRUE, &tmp_gr, &tmp_fr, &tmp_stacksize);
 				if (cinfo->ret.storage == ArgOnStack)
 					/* The caller passes the address where the value is stored */
 					add_general (&gr, &stack_size, &cinfo->ret);
@@ -499,7 +499,7 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 		case MONO_TYPE_TYPEDBYREF:
 			/* FIXME: */
 			/* We allways pass valuetypes on the stack */
-			add_valuetype (sig, ainfo, sig->params [i], FALSE, &gr, &fr, &stack_size);
+			add_valuetype (gsctx, sig, ainfo, sig->params [i], FALSE, &gr, &fr, &stack_size);
 			break;
 		case MONO_TYPE_U8:
 		case MONO_TYPE_I8:
@@ -573,6 +573,22 @@ mono_arch_cpu_init (void)
 }
 
 /*
+ * Initialize architecture specific code.
+ */
+void
+mono_arch_init (void)
+{
+}
+
+/*
+ * Cleanup architecture specific code.
+ */
+void
+mono_arch_cleanup (void)
+{
+}
+
+/*
  * This function returns the optimizations supported on this cpu.
  */
 guint32
@@ -601,7 +617,7 @@ mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		MonoInst *ins = cfg->args [i];
@@ -653,7 +669,7 @@ mono_ia64_alloc_stacked_registers (MonoCompile *cfg)
 		/* Already done */
 		return;
 
-	cinfo = get_call_info (cfg->mempool, mono_method_signature (cfg->method), FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, mono_method_signature (cfg->method), FALSE);
 
 	header = mono_method_get_header (cfg->method);
 	
@@ -745,7 +761,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	/*
 	 * Determine whenever the frame pointer can be eliminated.
@@ -954,7 +970,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	if (cinfo->ret.storage == ArgAggregate)
 		cfg->ret_var_is_local = TRUE;
@@ -1077,8 +1093,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 
-	cinfo = get_call_info (cfg->mempool, sig, sig->pinvoke);
-
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, sig->pinvoke);
 	if (cinfo->ret.storage == ArgAggregate) {
 		/* The code in emit_this_vret_arg needs a local */
 		cfg->arch.ret_var_addr_local = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
@@ -1127,7 +1142,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
 				else {
 					/* 
-					 * Other backends use mono_type_stack_size (), but that
+					 * Other backends use mini_type_stack_size (), but that
 					 * aligns the size to 8, which is larger than the size of
 					 * the source, leading to reads of invalid memory if the
 					 * source is at the end of address space.
@@ -2128,7 +2143,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, Ia64CodegenState code)
 
 	sig = mono_method_signature (method);
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 	
 	/* This is the opposite of the code in emit_prolog */
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
@@ -2232,7 +2247,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, Ia64CodegenState code)
 	case OP_VCALL2_MEMBASE: {
 		ArgStorage storage;
 
-		cinfo = get_call_info (cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
+		cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
 		storage = cinfo->ret.storage;
 
 		if (storage == ArgAggregate) {
@@ -3088,19 +3103,44 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL_MEMBASE:
 		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
-		case OP_CALL_MEMBASE:
+		case OP_CALL_MEMBASE: {
+			MonoCallInst *call = (MonoCallInst*)ins;
+			CallInfo *cinfo;
+			int out_reg;
+
 			/* 
 			 * There are no membase instructions on ia64, but we can't 
 			 * lower this since get_vcall_slot_addr () needs to decode it.
 			 */
 
 			/* Keep this in synch with get_vcall_slot_addr */
+			ia64_mov (code, IA64_R11, ins->sreg1);
 			if (ia64_is_imm14 (ins->inst_offset))
 				ia64_adds_imm (code, IA64_R8, ins->inst_offset, ins->sreg1);
 			else {
 				ia64_movl (code, GP_SCRATCH_REG, ins->inst_offset);
 				ia64_add (code, IA64_R8, GP_SCRATCH_REG, ins->sreg1);
 			}
+
+			if (call->method && ins->inst_offset < 0) {
+				/* 
+				 * This is a possible IMT call so save the IMT method in a global 
+				 * register where mono_arch_find_imt_method () and its friends can access 
+				 * it.
+				 */
+				ia64_movl (code, IA64_R9, call->method);
+			}
+
+			/* 
+			 * mono_arch_find_this_arg () needs to find the this argument in a global 
+			 * register.
+			 */
+			cinfo = get_call_info (NULL, call->signature, FALSE);
+			out_reg = cfg->arch.reg_out0;
+			if (cinfo->ret.storage == ArgValuetypeAddrInIReg)
+				out_reg ++;
+			g_free (cinfo);
+			ia64_mov (code, IA64_R10, out_reg);
 
 			ia64_begin_bundle (code);
 			ia64_codegen_set_one_ins_per_bundle (code, TRUE);
@@ -3121,6 +3161,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = emit_move_return_value (cfg, ins, code);
 			break;
+		}
 		case OP_JMP: {
 			/*
 			 * Keep in sync with the code in emit_epilog.
@@ -4118,7 +4159,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	cfg->code_size =  MAX (((MonoMethodNormal *)method)->header->code_size * 4, 512);
 
@@ -4355,7 +4396,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	}
 
 	/* Load returned vtypes into registers if needed */
-	cinfo = get_call_info (cfg->mempool, mono_method_signature (method), FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, mono_method_signature (method), FALSE);
 	ainfo = &cinfo->ret;
 	switch (ainfo->storage) {
 	case ArgAggregate:
@@ -4578,7 +4619,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 		/* Allocate a new area on the stack and save arguments there */
 		sig = mono_method_signature (cfg->method);
 
-		cinfo = get_call_info (cfg->mempool, sig, FALSE);
+		cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 		n = sig->param_count + sig->hasthis;
 
@@ -4652,7 +4693,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	ia64_codegen_init (code, p);
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	/* Save return value + pass it to func */
 	switch (cinfo->ret.storage) {
@@ -4790,8 +4831,8 @@ mono_arch_get_patch_offset (guint8 *code)
 	return 0;
 }
 
-gpointer*
-mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
+gpointer
+mono_arch_get_vcall_slot (guint8* code, gpointer *regs, int *displacement)
 {
 	guint8 *bundle2 = code - 48;
 	guint8 *bundle3 = code - 32;
@@ -4805,7 +4846,6 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	guint64 ins41 = ia64_bundle_ins1 (bundle4);
 	guint64 ins42 = ia64_bundle_ins2 (bundle4);
 	guint64 ins43 = ia64_bundle_ins3 (bundle4);
-	int reg;
 
 	/* 
 	 * Virtual calls are made with:
@@ -4841,19 +4881,23 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 		g_assert (ia64_ins_x (ins22) == 0);
 		g_assert (ia64_ins_b1 (ins22) == IA64_B6);
 
-		reg = IA64_R8;
+		*displacement = (gssize)regs [IA64_R8] - (gssize)regs [IA64_R11];
 
-		/* 
-		 * Must be a scratch register, since only those are saved by the trampoline
-		 */
-		g_assert ((1 << reg) & MONO_ARCH_CALLEE_REGS);
-
-		g_assert (regs [reg]);
-
-		return regs [reg];
+		return regs [IA64_R11];
 	}
 
 	return NULL;
+}
+
+gpointer*
+mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
+{
+	gpointer vt;
+	int displacement;
+	vt = mono_arch_get_vcall_slot (code, regs, &displacement);
+	if (!vt)
+		return NULL;
+	return (gpointer*)(gpointer)((char*)vt + displacement);
 }
 
 gpointer*
@@ -4889,7 +4933,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	int out_reg = cfg->arch.reg_out0;
 
 	if (vt_reg != -1) {
-		CallInfo * cinfo = get_call_info (cfg->mempool, inst->signature, FALSE);
+		CallInfo * cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, inst->signature, FALSE);
 		MonoInst *vtarg;
 
 		if (cinfo->ret.storage == ArgAggregate) {
@@ -4927,6 +4971,106 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		mono_call_inst_add_outarg_reg (cfg, call, this->dreg, out_reg, FALSE);
 	}
 }
+
+
+#ifdef MONO_ARCH_HAVE_IMT
+
+/*
+ * LOCKING: called with the domain lock held
+ */
+gpointer
+mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count)
+{
+	int i;
+	int size = 0;
+	guint8 *start, *buf;
+	Ia64CodegenState code;
+
+	size = count * 256;
+	buf = g_malloc0 (size);
+	ia64_codegen_init (code, buf);
+
+	/* IA64_R9 contains the IMT method */
+
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		ia64_begin_bundle (code);
+		item->code_target = (guint8*)code.buf + code.nins;
+		if (item->is_equals) {
+			if (item->check_target_idx) {
+				if (!item->compare_done) {
+					ia64_movl (code, GP_SCRATCH_REG, item->method);
+					ia64_cmp_eq (code, 6, 7, IA64_R9, GP_SCRATCH_REG);
+				}
+				item->jmp_code = (guint8*)code.buf + code.nins;
+				ia64_br_cond_pred (code, 7, 0);
+
+				ia64_movl (code, GP_SCRATCH_REG, &(vtable->vtable [item->vtable_slot]));
+				ia64_ld8 (code, GP_SCRATCH_REG, GP_SCRATCH_REG);
+				ia64_mov_to_br (code, IA64_B6, GP_SCRATCH_REG);
+				ia64_br_cond_reg (code, IA64_B6);
+			} else {
+				/* enable the commented code to assert on wrong method */
+#if ENABLE_WRONG_METHOD_CHECK
+				g_assert_not_reached ();
+#endif
+				ia64_movl (code, GP_SCRATCH_REG, &(vtable->vtable [item->vtable_slot]));
+				ia64_ld8 (code, GP_SCRATCH_REG, GP_SCRATCH_REG);
+				ia64_mov_to_br (code, IA64_B6, GP_SCRATCH_REG);
+				ia64_br_cond_reg (code, IA64_B6);
+#if ENABLE_WRONG_METHOD_CHECK
+				g_assert_not_reached ();
+#endif
+			}
+		} else {
+			ia64_movl (code, GP_SCRATCH_REG, item->method);
+			ia64_cmp_geu (code, 6, 7, IA64_R9, GP_SCRATCH_REG);
+			item->jmp_code = (guint8*)code.buf + code.nins;
+			ia64_br_cond_pred (code, 6, 0);
+		}
+	}
+	/* patch the branches to get to the target items */
+	for (i = 0; i < count; ++i) {
+		MonoIMTCheckItem *item = imt_entries [i];
+		if (item->jmp_code) {
+			if (item->check_target_idx) {
+				ia64_patch (item->jmp_code, imt_entries [item->check_target_idx]->code_target);
+			}
+		}
+	}
+
+	ia64_codegen_close (code);
+	g_assert (code.buf - buf <= size);
+
+	size = code.buf - buf;
+	start = mono_code_manager_reserve (domain->code_mp, size);
+	memcpy (start, buf, size);
+
+	mono_arch_flush_icache (start, size);
+
+	mono_stats.imt_thunks_size += size;
+
+	return start;
+}
+
+MonoMethod*
+mono_arch_find_imt_method (gpointer *regs, guint8 *code)
+{
+	return regs [IA64_R9];
+}
+
+MonoObject*
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+{
+	return regs [IA64_R10];
+}
+
+void
+mono_arch_emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
+{
+	/* Done by the implementation of the CALL_MEMBASE opcodes */
+}
+#endif
 
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)

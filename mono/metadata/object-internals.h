@@ -262,7 +262,7 @@ struct _MonoThread {
 	gpointer suspend_event;
 	gpointer suspended_event;
 	gpointer resume_event;
-	MonoObject *synch_lock;
+	CRITICAL_SECTION *synch_cs;
 	guint8* serialized_culture_info;
 	guint32 serialized_culture_info_len;
 	guint8* serialized_ui_culture_info;
@@ -1016,6 +1016,7 @@ typedef struct {
 	gint32 nrefs;
 	MonoArray *refs;
 	GSList *referenced_by;
+	MonoReflectionType *owner;
 } MonoReflectionDynamicMethod;	
 
 typedef struct {
@@ -1098,7 +1099,7 @@ MonoArray  *mono_reflection_sighelper_get_signature_field (MonoReflectionSigHelp
 MonoReflectionMarshal* mono_reflection_marshal_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec) MONO_INTERNAL;
 
 gpointer
-mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, MonoClass **handle_class) MONO_INTERNAL;
+mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context) MONO_INTERNAL;
 
 gboolean
 mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass) MONO_INTERNAL;
@@ -1126,6 +1127,9 @@ mono_remote_class_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mon
 
 void
 mono_upgrade_remote_class (MonoDomain *domain, MonoObject *tproxy, MonoClass *klass) MONO_INTERNAL;
+
+gpointer
+mono_create_ftnptr (MonoDomain *domain, gpointer addr) MONO_INTERNAL;
 
 gpointer
 mono_get_addr_from_ftnptr (gpointer descr) MONO_INTERNAL;
@@ -1164,8 +1168,27 @@ typedef gpointer (*MonoImtThunkBuilder) (MonoVTable *vtable, MonoDomain *domain,
 void
 mono_install_imt_thunk_builder (MonoImtThunkBuilder func) MONO_INTERNAL;
 
+void
+mono_install_imt_trampoline (gpointer tramp) MONO_INTERNAL;
+
+void
+mono_install_vtable_trampoline (gpointer tramp) MONO_INTERNAL;
+
+void
+mono_vtable_build_imt_slot (MonoVTable* vtable, int imt_slot) MONO_INTERNAL;
+
 guint32
 mono_method_get_imt_slot (MonoMethod *method) MONO_INTERNAL;
+
+typedef enum {
+	MONO_UNHANLED_POLICY_LEGACY,
+	MONO_UNHANLED_POLICY_CURRENT
+} MonoRuntimeUnhandledExceptionPolicy;
+
+MonoRuntimeUnhandledExceptionPolicy
+mono_runtime_unhandled_exception_policy_get (void) MONO_INTERNAL;
+void
+mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy policy) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
 

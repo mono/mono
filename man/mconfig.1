@@ -1,0 +1,88 @@
+.TH Mono "mconfig"
+.SH NAME
+mconfig, \- Utility for modifying .NET configuration files
+.SH SYNOPSIS
+.B mconfig [options] command [command_parameters]
+.SH DESCRIPTION
+mconfig can be used to edit .NET configuration files, by adding "features"
+(that is sets of xml statements) defined in one of the config files read
+by mconfig. The config file can also define layouts of default configuration
+files, which may be useful for bootstrapping your .NET projects.
+.SH OPTIONS
+.TP
+.B -c <config_file>, --config=<config_file>
+Read the specified config file after reading the other, preconfigured, config
+files for the utility. Settings in the specified file override those found in
+the other configuration locations.
+.TP
+.B -t {any | web | application}, --target={any | web | application}
+Features and default configuration files defined in the mconfig config file(s)
+can be assigned to one of the three targets - \fIweb\fR (for ASP.NET features/config files),
+\fIapplication\fR - for .NET applications, \fIany\fR - applicable in both of the previous
+targets. Defaults to \fIany\fR.
+.TP
+.B -C, --list-configs
+List all the default configuration file names that are defined in the mconfig
+configuration files.
+.TP
+.B -F, --list-features
+List all the features that are defined in the mconfig configuration files and
+which can be added to your existing (or new) .NET configuration files.
+.TP
+.B -?, -h, --help
+Show a summary usage screen.
+.TP
+.B -v, --version
+Show the mconfig version
+.SH COMMANDS
+.TP
+.B {addfeature, af} <feature_name> [config_file_path]
+Adds the feature named \fI<feature_name>\fR to the specified config file. If 
+\fI[config_file_path]\fR is omitted, the name of the output configuration file 
+will be chosen based on the selected target (see the \fI-t\fR option). The \fIweb\fR
+target outputs configuration to file named \fIWeb.config\fR, and the \fIapplication\fR
+target outputs to file named \fIapplication.exe.config\fR. The \fIany\fR target does not
+have a default output file.
+
+If the specified config file exists, the feature will be injected into it at the locations
+specified by mconfig configuration. If the target config file does not exist, it will be created
+and will contain only the specified feature and all its dependencies.
+.TP
+.B {defaultconfig, dc} [config_name [target_directory]]
+Generates a default config file using the configuration entry named \fI[config_name]\fR and outputs
+the resulting configuration file to the directory given by the \fI[target_directory]\fR option.
+If \fI[config_name]\fR is omitted, it defaults to \fIWeb.config\fR for the \fIweb\fR target and
+\fIapplication\fR target. The \fIany\fR target does not specify any default output configuration
+name. If the \fI[target_directory]\fR parameter is omitted, it defaults to the current directory.
+
+Name of the output config file created in \fI[target_directory]\fR is given in the config file
+layout definition.
+.PP
+.SH FILES
+Config files are read in the order given below. Each subsequent file may override settings found
+in the files read before it.
+.TP
+.B $prefix/etc/mono/mconfig/config.xml
+.Sp
+The default configuration file, distributed with mconfig. \fI$prefix\fR is the mconfig installation
+prefix specified on the compilation time.
+.TP
+.B $config_dir/mconfig/config.xml
+.Sp
+$config_dir is the directory specified in the \fIXDG_CONFIG_HOME\fR environment variable or,
+ if it is empty, in the \fI.config\fR directory located in the user's home directory. This file
+is not distributed with Mono.
+.TP
+.B ./mconfig.xml
+.Sp
+Local configuration file which can contain per-application settings.
+.SH SEE ALSO
+mconfig.config (5)
+.SH AUTHOR
+Written by Marek Habersack
+.SH COPYRIGHT
+Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
+.SH WEB SITE
+Visit: http://www.mono-project.com for details

@@ -427,6 +427,14 @@ default_trampoline (MonoMethod *method)
 }
 
 static gpointer
+default_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper)
+{
+	g_assert_not_reached ();
+
+	return NULL;
+}
+
+static gpointer
 default_remoting_trampoline (MonoMethod *method, MonoRemotingTarget target)
 {
 	g_error ("remoting not installed");
@@ -441,6 +449,7 @@ default_delegate_trampoline (MonoClass *klass)
 }
 
 static MonoTrampoline arch_create_jit_trampoline = default_trampoline;
+static MonoJumpTrampoline arch_create_jump_trampoline = default_jump_trampoline;
 static MonoRemotingTrampoline arch_create_remoting_trampoline = default_remoting_trampoline;
 static MonoDelegateTrampoline arch_create_delegate_trampoline = default_delegate_trampoline;
 static MonoImtThunkBuilder imt_thunk_builder = NULL;
@@ -453,6 +462,12 @@ void
 mono_install_trampoline (MonoTrampoline func) 
 {
 	arch_create_jit_trampoline = func? func: default_trampoline;
+}
+
+void
+mono_install_jump_trampoline (MonoJumpTrampoline func) 
+{
+	arch_create_jump_trampoline = func? func: default_jump_trampoline;
 }
 
 void
@@ -501,6 +516,12 @@ mono_compile_method (MonoMethod *method)
 		return NULL;
 	}
 	return default_mono_compile_method (method);
+}
+
+gpointer
+mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper)
+{
+	return arch_create_jump_trampoline (domain, method, add_sync_wrapper);
 }
 
 static MonoFreeMethodFunc default_mono_free_method = NULL;
@@ -809,6 +830,12 @@ mono_class_insecure_overlapping (MonoClass *klass)
 }
 #endif
 
+MonoString*
+mono_string_alloc (int length)
+{
+	return mono_string_new_size (mono_domain_get (), length);
+}
+
 static void
 mono_class_compute_gc_descriptor (MonoClass *class)
 {
@@ -823,6 +850,7 @@ mono_class_compute_gc_descriptor (MonoClass *class)
 		mono_register_jit_icall (mono_object_new_ptrfree, "mono_object_new_ptrfree", mono_create_icall_signature ("object ptr"), FALSE);
 		mono_register_jit_icall (mono_object_new_ptrfree_box, "mono_object_new_ptrfree_box", mono_create_icall_signature ("object ptr"), FALSE);
 		mono_register_jit_icall (mono_object_new_fast, "mono_object_new_fast", mono_create_icall_signature ("object ptr"), FALSE);
+		mono_register_jit_icall (mono_string_alloc, "mono_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 
 #ifdef HAVE_GC_GCJ_MALLOC
 
@@ -1001,10 +1029,16 @@ mono_method_get_imt_slot (MonoMethod *method) {
 #define DEBUG_IMT 0
 
 static void
-add_imt_builder_entry (MonoImtBuilderEntry **imt_builder, MonoMethod *method, guint32 *imt_collisions_bitmap, int vtable_slot) {
+add_imt_builder_entry (MonoImtBuilderEntry **imt_builder, MonoMethod *method, guint32 *imt_collisions_bitmap, int vtable_slot, int slot_num) {
 	guint32 imt_slot = mono_method_get_imt_slot (method);
-	MonoImtBuilderEntry *entry = malloc (sizeof (MonoImtBuilderEntry));
+	MonoImtBuilderEntry *entry;
+
+	if (slot_num >= 0 && imt_slot != slot_num) {
+		/* we build just a single imt slot and this is not it */
+		return;
+	}
 	
+	entry = malloc (sizeof (MonoImtBuilderEntry));
 	entry->method = method;
 	entry->vtable_slot = vtable_slot;
 	entry->next = imt_builder [imt_slot];
@@ -1020,8 +1054,8 @@ add_imt_builder_entry (MonoImtBuilderEntry **imt_builder, MonoMethod *method, gu
 	}
 	imt_builder [imt_slot] = entry;
 #if DEBUG_IMT
-	printf ("Added IMT slot for method %s.%s.%s: imt_slot = %d, vtable_slot = %d, colliding with other %d entries\n",
-			method->klass->name_space, method->klass->name,
+	printf ("Added IMT slot for method (%p) %s.%s.%s: imt_slot = %d, vtable_slot = %d, colliding with other %d entries\n",
+			method, method->klass->name_space, method->klass->name,
 			method->name, imt_slot, vtable_slot, entry->children);
 #endif
 }
@@ -1129,7 +1163,7 @@ initialize_imt_slot (MonoVTable *vtable, MonoDomain *domain, MonoImtBuilderEntry
 }
 
 static void
-build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, GSList *extra_interfaces) {
+build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, GSList *extra_interfaces, int slot_num) {
 	int i;
 	GSList *list_item;
 	guint32 imt_collisions_bitmap = 0;
@@ -1147,7 +1181,7 @@ build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, 
 		mono_class_setup_methods (iface);
 		for (method_slot_in_interface = 0; method_slot_in_interface < iface->method.count; method_slot_in_interface++) {
 			MonoMethod *method = iface->methods [method_slot_in_interface];
-			add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface);
+			add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface, slot_num);
 		}
 	}
 	if (extra_interfaces) {
@@ -1159,13 +1193,17 @@ build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, 
 			mono_class_setup_methods (iface);
 			for (method_slot_in_interface = 0; method_slot_in_interface < iface->method.count; method_slot_in_interface++) {
 				MonoMethod *method = iface->methods [method_slot_in_interface];
-				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface);
+				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface, slot_num);
 			}
 			interface_offset += iface->method.count;
 		}
 	}
 	for (i = 0; i < MONO_IMT_SIZE; ++i) {
-		imt [i] = initialize_imt_slot (vt, domain, imt_builder [i]);
+		/* overwrite the imt slot only if we're building all the entries or if 
+		 * we're uilding this specific one
+		 */
+		if (slot_num < 0 || i == slot_num)
+			imt [i] = initialize_imt_slot (vt, domain, imt_builder [i]);
 #if DEBUG_IMT
 		printf ("initialize_imt_slot[%d]: %p\n", i, imt [i]);
 #endif
@@ -1193,7 +1231,101 @@ build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, 
 		}
 	}
 	free (imt_builder);
-	vt->imt_collisions_bitmap = imt_collisions_bitmap;
+	/* we OR the bitmap since we may build just a single imt slot at a time */
+	vt->imt_collisions_bitmap |= imt_collisions_bitmap;
+}
+
+static void
+mono_class_setup_runtime_generic_context (MonoClass *class, MonoDomain *domain)
+{
+	MonoVTable *vtable = mono_class_vtable (domain, class);
+	int depth = class->idepth;
+	MonoClass *super;
+	MonoRuntimeGenericSuperInfo *super_infos;
+	MonoRuntimeGenericContext *rgctx;
+	MonoGenericInst *class_inst = class->generic_class->context.class_inst;
+	int i;
+
+	/* We don't allocate arg_infos because we don't use it yet.
+	 */
+	super_infos = mono_mempool_alloc0 (domain->mp,
+		sizeof (MonoRuntimeGenericSuperInfo) * depth +
+		sizeof (MonoRuntimeGenericContext) +
+		sizeof (MonoRuntimeGenericArgInfo) * class_inst->type_argc);
+
+	rgctx = vtable->runtime_generic_context = (MonoRuntimeGenericContext*) (super_infos + depth);
+
+	rgctx->domain = domain;
+
+	depth = 0;
+	for (super = class; super; super = super->parent) {
+		vtable = mono_class_vtable (domain, super);
+
+		super_infos [depth].static_data = vtable->data;
+		super_infos [depth].klass = super;
+		super_infos [depth].vtable = vtable;
+
+		depth++;
+	}
+
+	for (i = 0; i < class_inst->type_argc; ++i) {
+		MonoClass *arg_class = mono_class_from_mono_type (class_inst->type_argv [i]);
+
+		vtable = mono_class_vtable (domain, arg_class);
+
+		rgctx->arg_infos [i].static_data = vtable->data;
+		rgctx->arg_infos [i].klass = arg_class;
+		rgctx->arg_infos [i].vtable = vtable;
+	}
+}
+
+static void
+build_imt (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer* imt, GSList *extra_interfaces) {
+	build_imt_slots (klass, vt, domain, imt, extra_interfaces, -1);
+}
+
+static gpointer imt_trampoline = NULL;
+
+void
+mono_install_imt_trampoline (gpointer tramp_code)
+{
+	imt_trampoline = tramp_code;
+}
+
+static gpointer vtable_trampoline = NULL;
+
+void
+mono_install_vtable_trampoline (gpointer tramp_code)
+{
+	vtable_trampoline = tramp_code;
+}
+
+/**
+ * mono_vtable_build_imt_slot:
+ * @vtable: virtual object table struct
+ * @imt_slot: slot in the IMT table
+ *
+ * Fill the given @imt_slot in the IMT table of @vtable with
+ * a trampoline or a thunk for the case of collisions.
+ * This is part of the internal mono API.
+ */
+void
+mono_vtable_build_imt_slot (MonoVTable* vtable, int imt_slot)
+{
+	gpointer *imt = (gpointer*)vtable;
+	imt -= MONO_IMT_SIZE;
+	g_assert (imt_slot >= 0 && imt_slot < MONO_IMT_SIZE);
+
+	/* no support for extra interfaces: the proxy objects will need
+	 * to build the complete IMT
+	 * Update and heck needs to ahppen inside the proper domain lock, as all
+	 * the changes made to a MonoVTable.
+	 */
+	mono_domain_lock (vtable->domain);
+	/* we change the slot only if it wasn't changed from the generic imt trampoline already */
+	if (imt [imt_slot] == imt_trampoline)
+		build_imt_slots (vtable->klass, vtable, vtable->domain, imt, NULL, imt_slot);
+	mono_domain_unlock (vtable->domain);
 }
 
 static MonoVTable *mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class);
@@ -1443,15 +1575,24 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 				if (mono_method_signature (cm)->generic_param_count)
 					vt->vtable [i] = cm;
 				else
-					vt->vtable [i] = arch_create_jit_trampoline (cm);
+					vt->vtable [i] = vtable_trampoline? vtable_trampoline: arch_create_jit_trampoline (cm);
 			}
 		}
 	}
 
 	if (ARCH_USE_IMT && imt_table_bytes) {
 		/* Now that the vtable is full, we can actually fill up the IMT */
-		build_imt (class, vt, domain, interface_offsets, NULL);
+		if (imt_trampoline) {
+			/* lazy construction of the IMT entries enabled */
+			for (i = 0; i < MONO_IMT_SIZE; ++i)
+				interface_offsets [i] = imt_trampoline;
+		} else {
+			build_imt (class, vt, domain, interface_offsets, NULL);
+		}
 	}
+
+	if (class->generic_class)
+		mono_class_setup_runtime_generic_context (class, domain);
 
 	mono_domain_unlock (domain);
 
@@ -1560,7 +1701,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		MonoMethod *cm;
 		    
 		if ((cm = class->vtable [i]))
-			pvt->vtable [i] = arch_create_remoting_trampoline (cm, target_type);
+			pvt->vtable [i] = mono_method_signature (cm)->generic_param_count
+				? cm : arch_create_remoting_trampoline (cm, target_type);
 	}
 
 	if (class->flags & TYPE_ATTRIBUTE_ABSTRACT) {
@@ -1570,7 +1712,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 			gpointer iter = NULL;
 			while ((m = mono_class_get_methods (k, &iter)))
 				if (!pvt->vtable [m->slot])
-					pvt->vtable [m->slot] = arch_create_remoting_trampoline (m, target_type);
+					pvt->vtable [m->slot] = mono_method_signature (m)->generic_param_count ? m : arch_create_remoting_trampoline (m, target_type);
 		}
 	}
 
@@ -1609,7 +1751,7 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 			iter = NULL;
 			j = 0;
 			while ((cm = mono_class_get_methods (interf, &iter)))
-				pvt->vtable [slot + j++] = arch_create_remoting_trampoline (cm, target_type);
+				pvt->vtable [slot + j++] = mono_method_signature (cm)->generic_param_count ? cm : arch_create_remoting_trampoline (cm, target_type);
 			
 			slot += mono_class_num_methods (interf);
 		}
@@ -1933,8 +2075,15 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 	}
 
 	if (is_proxy) {
-		if (!res) res = method;   /* It may be an interface or abstract class method */
-		res = mono_marshal_get_remoting_invoke (res);
+		/* It may be an interface, abstract class method or generic method */
+		if (!res || mono_method_signature (res)->generic_param_count)
+			res = method;
+
+		/* generic methods demand invoke_with_check */
+		if (mono_method_signature (res)->generic_param_count)
+			res = mono_marshal_get_remoting_invoke_with_check (res);
+		else
+			res = mono_marshal_get_remoting_invoke (res);
 	}
 
 	g_assert (res);
@@ -2618,7 +2767,7 @@ mono_runtime_run_main (MonoMethod *method, int argc, char* argv[],
 	return result;
 }
 
-/* Used in mono_unhandled_exception */
+/* Used in call_unhandled_exception_delegate */
 static MonoObject *
 create_unhandled_exception_eventargs (MonoObject *exc)
 {
@@ -2646,6 +2795,50 @@ create_unhandled_exception_eventargs (MonoObject *exc)
 	return obj;
 }
 
+/* Used in mono_unhandled_exception */
+static void
+call_unhandled_exception_delegate (MonoDomain *domain, MonoObject *delegate, MonoObject *exc) {
+	MonoObject *e = NULL;
+	gpointer pa [2];
+
+	pa [0] = domain->domain;
+	pa [1] = create_unhandled_exception_eventargs (exc);
+	mono_runtime_delegate_invoke (delegate, pa, &e);
+	
+	if (e) {
+		gchar *msg = mono_string_to_utf8 (((MonoException *) e)->message);
+		g_warning ("exception inside UnhandledException handler: %s\n", msg);
+		g_free (msg);
+	}
+}
+
+static MonoRuntimeUnhandledExceptionPolicy runtime_unhandled_exception_policy = MONO_UNHANLED_POLICY_CURRENT;
+
+/**
+ * mono_runtime_unhandled_exception_policy_set:
+ * @policy: the new policy
+ * 
+ * This is a VM internal routine.
+ *
+ * Sets the runtime policy for handling unhandled exceptions.
+ */
+void
+mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy policy) {
+	runtime_unhandled_exception_policy = policy;
+}
+
+/**
+ * mono_runtime_unhandled_exception_policy_get:
+ *
+ * This is a VM internal routine.
+ *
+ * Gets the runtime policy for handling unhandled exceptions.
+ */
+MonoRuntimeUnhandledExceptionPolicy
+mono_runtime_unhandled_exception_policy_get (void) {
+	return runtime_unhandled_exception_policy;
+}
+
 /**
  * mono_unhandled_exception:
  * @exc: exception thrown
@@ -2661,34 +2854,37 @@ create_unhandled_exception_eventargs (MonoObject *exc)
 void
 mono_unhandled_exception (MonoObject *exc)
 {
-	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *current_domain = mono_domain_get ();
+	MonoDomain *root_domain = mono_get_root_domain ();
 	MonoClassField *field;
-	MonoObject *delegate;
+	MonoObject *current_appdomain_delegate;
+	MonoObject *root_appdomain_delegate;
 
 	field=mono_class_get_field_from_name(mono_defaults.appdomain_class, 
 					     "UnhandledException");
 	g_assert (field);
 
 	if (exc->vtable->klass != mono_defaults.threadabortexception_class) {
-		delegate = *(MonoObject **)(((char *)domain->domain) + field->offset); 
+		gboolean abort_process = (mono_thread_current () == main_thread) ||
+				(mono_runtime_unhandled_exception_policy_get () == MONO_UNHANLED_POLICY_CURRENT);
+		root_appdomain_delegate = *(MonoObject **)(((char *)root_domain->domain) + field->offset);
+		if (current_domain != root_domain && (mono_get_runtime_info ()->framework_version [0] >= '2')) {
+			current_appdomain_delegate = *(MonoObject **)(((char *)current_domain->domain) + field->offset);
+		} else {
+			current_appdomain_delegate = NULL;
+		}
 
-		/* set exitcode only in the main thread */
-		if (mono_thread_current () == main_thread)
+		/* set exitcode only if we will abort the process */
+		if (abort_process)
 			mono_environment_exitcode_set (1);
-		if (domain != mono_get_root_domain () || !delegate) {
+		if ((current_appdomain_delegate == NULL) && (root_appdomain_delegate == NULL)) {
 			mono_print_unhandled_exception (exc);
 		} else {
-			MonoObject *e = NULL;
-			gpointer pa [2];
-
-			pa [0] = domain->domain;
-			pa [1] = create_unhandled_exception_eventargs (exc);
-			mono_runtime_delegate_invoke (delegate, pa, &e);
-			
-			if (e) {
-				gchar *msg = mono_string_to_utf8 (((MonoException *) e)->message);
-				g_warning ("exception inside UnhandledException handler: %s\n", msg);
-				g_free (msg);
+			if (root_appdomain_delegate) {
+				call_unhandled_exception_delegate (root_domain, root_appdomain_delegate, exc);
+			}
+			if (current_appdomain_delegate) {
+				call_unhandled_exception_delegate (current_domain, current_appdomain_delegate, exc);
 			}
 		}
 	}
@@ -3647,7 +3843,7 @@ mono_value_box (MonoDomain *domain, MonoClass *class, gpointer value)
 
 	vtable = mono_class_vtable (domain, class);
 	size = mono_class_instance_size (class);
-	res = mono_object_allocate (size, vtable);
+	res = mono_object_new_alloc_specific (vtable);
 	mono_profiler_allocation (res, class);
 
 	size = size - sizeof (MonoObject);
@@ -3989,7 +4185,7 @@ mono_ldstr (MonoDomain *domain, MonoImage *image, guint32 idx)
 	MONO_ARCH_SAVE_REGS;
 
 	if (image->dynamic)
-		return mono_lookup_dynamic_token (image, MONO_TOKEN_STRING | idx);
+		return mono_lookup_dynamic_token (image, MONO_TOKEN_STRING | idx, NULL);
 	else
 		return mono_ldstr_metdata_sig (domain, mono_metadata_user_string (image, idx));
 }
@@ -4046,6 +4242,7 @@ mono_ldstr_metdata_sig (MonoDomain *domain, const char* sig)
 char *
 mono_string_to_utf8 (MonoString *s)
 {
+	long written = 0;
 	char *as;
 	GError *error = NULL;
 
@@ -4055,11 +4252,19 @@ mono_string_to_utf8 (MonoString *s)
 	if (!s->length)
 		return g_strdup ("");
 
-	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, NULL, &error);
+	as = g_utf16_to_utf8 (mono_string_chars (s), s->length, NULL, &written, &error);
 	if (error) {
 		MonoException *exc = mono_get_exception_argument ("string", error->message);
 		g_error_free (error);
 		mono_raise_exception(exc);
+	}
+	/* g_utf16_to_utf8  may not be able to complete the convertion (e.g. NULL values were found, #335488) */
+	if (s->length > written) {
+		/* allocate the total length and copy the part of the string that has been converted */
+		char *as2 = g_malloc0 (s->length);
+		memcpy (as2, as, written);
+		g_free (as);
+		as = as2;
 	}
 
 	return as;
@@ -4467,6 +4672,7 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 	g_assert (addr);
 
 	class = this->vtable->klass;
+	mono_stats.delegate_creations++;
 
 	if ((ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr)))) {
 		method = ji->method;
@@ -4855,6 +5061,31 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
 	mono_remoting_invoke ((MonoObject *)(tp->rp), msg, &exc, &out_args);
 
 	if (exc) mono_raise_exception ((MonoException *)exc);
+}
+
+/*
+ * mono_create_ftnptr:
+ *
+ *   Given a function address, create a function descriptor for it.
+ * This is only needed on IA64.
+ */
+gpointer
+mono_create_ftnptr (MonoDomain *domain, gpointer addr)
+{
+#ifdef __ia64__
+	gpointer *desc;
+
+	mono_domain_lock (domain);
+	desc = mono_code_manager_reserve (domain->code_mp, 2 * sizeof (gpointer));
+	mono_domain_unlock (domain);
+
+	desc [0] = addr;
+	desc [1] = NULL;
+
+	return desc;
+#else
+	return addr;
+#endif
 }
 
 /*

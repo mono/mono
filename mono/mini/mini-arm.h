@@ -108,8 +108,14 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_USE_SIGACTION 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
+#define MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
+#define MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN
+#define MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+
 #define ARM_NUM_REG_ARGS (ARM_LAST_ARG_REG-ARM_FIRST_ARG_REG+1)
 #define ARM_NUM_REG_FPARGS 0
+
+#define MONO_ARCH_HAVE_IMT 1
 
 /* we have the stack pointer, not the base pointer in sigcontext */
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->eip = (int)ip; } while (0); 

@@ -1,3 +1,203 @@
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* invoke.cs: Add tests for invoking the Array Get/Set methods.
+
+2007-11-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-322722_patch_bx.2.cs : Added test for bug #322722.
+
+	* bug-322722_dyn_method_throw.2.cs: Same.
+
+	* Makefile.am: Added the two tests for bug #322722.
+
+2007-11-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Removed bug-318677 since the corresponding patch was reverted.
+
+2007-11-07  Massimiliano Mantione  <massi@ximian.com>
+
+	* bug-318677.il: Added.
+
+	* Makefile.am: Added test for bug #318677.
+
+2007-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-324535.cs, bug-324535-il.il: Added.
+
+	* Makefile.am: Added test for bug #324525.
+
+2007-11-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* soft-float-tests.cs: Tests for soft-float.
+	Bug #323746 is regression tested by test.
+
+	* Makefile.am: Added the new test to the suite.
+
+
+2007-10-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-335131.2.cs: Regression test for bug #335131.
+	It tests the enconding of methods and constructor from
+	a generic types that are called from the same type
+	that defines then.
+
+	* Makefile.am: Added the new test to the suite.
+	
+
+2007-10-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* make_imt_test.sh: added, this script generates
+	an interface with 2000 methods, an implementation and
+	test code that calls all methods. This is enough to
+	stress the IMT machinery, as thunks should have more
+	than 100 methods with the current IMT table size.
+ 
+	* Makefile.am: added the generated imt test and
+	associated rules to use the script to create it.
+
+2007-10-20  William Holmes  <billholmes54@gmail.com>
+
+	* pinvoke2.cs, libtest.c Adding test cases for marshaling
+	  booleans as I1 and U1.  Tests commit r87725.
+
+	Code is contributed under MIT/X11 license.
+
+2007-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked.cs: Add a test for CompareExchange and negative values.
+
+2007-10-17  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-331798-tb.2.cs: added for Rodrigo
+
+	* Makefile.am: added bug-331798-tb.2.cs
+
+2007-10-17 Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* bug-331958.cs: added.
+	* Makefile.am: added bug-331958.cs.
+
+2007-10-16  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-333798.2.cs: added
+
+	* Makefile.am: added bug-333798.2.cs
+
+2007-10-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic_type_definition_encoding.2.cs: added, this tests
+	 the regression fixed in r86912.
+
+	* Makefile.am: added generic_type_definition.2.cs
+
+2007-09-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* generic_type_definition.2.cs: added
+
+	* Makefile.am: added generic_type_definition.2.cs
+
+
+2007-09-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-327438.2.il: added
+
+	* Makefile.am: added bug-327438.2.il
+
+
+2007-09-21  Robert Jordan  <robertj@gmx.net>
+
+	* assemblyresolve/Makefile.am: remove the superfluous --security
+	flag.
+
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: added
+
+	* Makefile.am: added generics-sharing.2.cs
+
+2007-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* assemblyresolve/Makefile.am (prereq): build the assemblies in
+	the 'prereq' target instead of in the 'all' one.
+
+2007-09-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile.am: assemblyresolve/ assemblies are built only when the
+	make test is ran.
+
+2007-09-19  Raja R Harinath  <harinath@gmail.com>
+
+	* assemblyresolve/Makefile.am: Fix srcdir != builddir issues.
+	(EXTRA_DIST): Add asm.cs, TestBase.cs, Test.cs.
+
+2007-09-18  Marek Habersack  <mhabersack@novell.com>
+
+	* assemblyresolve/asm.cs: added
+
+	* assemblyresolve/TestBase.cs: added
+
+	* assemblyresolve/Test.cs: added
+
+	* assemblyresolve/Makefile.am: added
+
+	* assemblyresolve_event3.cs: added new AssemblyResolve event
+	test.
+
+2007-09-13  Massimiliano Mantione  <massi@ximian.com>
+
+	* Makefile.am: Fixed and re-enabled test for bug #82416 (the
+	config files were not in place).
+
+2007-09-12  Massimiliano Mantione  <massi@ximian.com>
+
+	* Makefile.am: disabled test for bug #82416 since it fails on the
+	buildbot, will investigate.
+
+2007-09-12  Massimiliano Mantione  <massi@ximian.com>
+
+	* unhandled-exception-test-runner.2.cs,
+	unhandled-exception-test-case.2.cs,
+	unhandled-exception-base-configuration.config,
+	unhandled-exception-legacy-configuration.config,
+	Makefile.am: added test for bug #82416.
+
+2007-09-12  Marek Habersack  <mhabersack@novell.com>
+
+	* assemblyresolve_event2.2.cs: added tests for assembly resolution
+	event handler.
+
+	* assemblyresolve_event.cs: added tests for assembly resolution
+	event handler.
+
+2007-09-11  Mark Probst  <mark.probst@gmail.com>
+
+	* coreclr-security.cs: Added positive and negative tests for
+	calling methods via reflection.
+
+2007-09-10  William Holmes  <billholmes54@gmail.com>
+
+	* marshal9.cs, libtest.c Adding test case for marshal.c r84161
+	  Calling native to managed should not call 
+	  ICustomMarshaler.MarshalNativeToManaged for out params.
+
+	Code is contributed under MIT/X11 license.
+
+2007-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* async-exceptions.cs Makefile.am: Add a test for frames with a frame pointer.
+	
+	* async-exceptions.cs Makefile.am: New test case, not working yet.
+
+	* Makefile.am: Allways distribute coreclr-security.cs.
+
+2007-09-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Increase a timeout.
+
+2007-08-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c handleref.cs: Fix handleref.exe test on sparc.
+
 2007-08-24  Mark Probst  <mark.probst@gmail.com>
 
 	* coreclr-security.cs, Makefile.am: Added test for CoreCLR

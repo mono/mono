@@ -687,6 +687,7 @@ MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex", NONE, NONE, NO
 #if  defined(__ppc__) || defined(__powerpc__)	
 MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", NONE, NONE, NONE)
 MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", NONE, NONE, NONE)
+MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite")
 #endif
 
 #if defined(__arm__)

@@ -136,12 +136,14 @@ ppc_sources = \
 	mini-ppc.c		\
 	mini-ppc.h		\
 	exceptions-ppc.c	\
+	mini-trampolines.c	\
 	tramp-ppc.c
 
 arm_sources = \
 	mini-arm.c		\
 	mini-arm.h		\
 	exceptions-arm.c	\
+	mini-trampolines.c	\
 	tramp-arm.c
 
 mips_sources = \
@@ -233,7 +235,8 @@ common_sources = \
 	declsec.c	\
 	declsec.h	\
 	wapihandles.c	\
-	branch-opts.c
+	branch-opts.c	\
+	generic-sharing.c
 
 test_sources = 		\
 	basic-calls.cs 	\
@@ -249,7 +252,7 @@ test_sources = 		\
 	iltests.il.in		\
 	test.cs
 
-test_sources2 = generics.2.cs il2tests.2.il
+test_sources2 = generics.2.cs il2tests.2.il generics-variant-types.2.il
 
 if MONO_DEBUGGER_SUPPORTED
 if AMD64
@@ -376,8 +379,8 @@ libmonoinclude_HEADERS = jit.h
 libmono_la_LIBADD = \
 	$(libs)
 
-generics.exe: generics.cs TestDriver.dll
-	$(GMCS) -out:$@ $< -r:TestDriver.dll 
+%.exe: %.2.cs TestDriver.dll generics-variant-types.dll
+	$(GMCS) -out:$@ $< -r:TestDriver.dll -r:generics-variant-types.dll
 
 %.exe: %.cs TestDriver.dll
 	$(MCS) -out:$@ -unsafe $< -r:TestDriver.dll
@@ -394,6 +397,9 @@ iltests.il: iltests.il.in Makefile.am
 
 TestDriver.dll: $(srcdir)/TestDriver.cs
 	$(MCS) -out:$@ -target:library $<
+
+generics-variant-types.dll: generics-variant-types.2.il
+	$(ILASM2) -dll -output=$@ $<
 
 # we don't always use the perl impl because it's an additional
 # build dependency for the poor windows users

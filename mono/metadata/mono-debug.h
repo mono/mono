@@ -14,10 +14,8 @@ typedef struct _MonoSymbolTable			MonoSymbolTable;
 typedef struct _MonoDebugDataTable		MonoDebugDataTable;
 
 typedef struct _MonoSymbolFile			MonoSymbolFile;
-typedef struct _MonoSymbolFilePriv		MonoSymbolFilePriv;
 
 typedef struct _MonoDebugHandle			MonoDebugHandle;
-typedef struct _MonoDebugHandlePriv		MonoDebugHandlePriv;
 
 typedef struct _MonoDebugLineNumberEntry	MonoDebugLineNumberEntry;
 typedef struct _MonoDebugLexicalBlockEntry	MonoDebugLexicalBlockEntry;
@@ -75,7 +73,6 @@ struct _MonoSymbolTable {
 	MonoDebugHandle *corlib;
 
 	MonoDebugList *data_tables;
-	MonoDebugDataTable *type_table;
 
 	/*
 	 * The symbol files.
@@ -87,8 +84,8 @@ struct _MonoDebugHandle {
 	guint32 index;
 	char *image_file;
 	MonoImage *image;
+	MonoDebugDataTable *type_table;
 	MonoSymbolFile *symfile;
-	MonoDebugHandlePriv *_priv;
 };
 
 struct _MonoDebugMethodJitInfo {
@@ -111,12 +108,6 @@ struct _MonoDebugMethodJitInfo {
 struct _MonoDebugMethodAddressList {
 	guint32 size;
 	guint32 count;
-	guint8 data [MONO_ZERO_LEN_ARRAY];
-};
-
-struct _MonoDebugClassEntry {
-	guint32 size;
-	guint32 symfile_id;
 	guint8 data [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -149,9 +140,10 @@ struct _MonoDebugVarInfo {
 	guint32 size;
 	guint32 begin_scope;
 	guint32 end_scope;
+	MonoType *type;
 };
 
-#define MONO_DEBUGGER_VERSION				60
+#define MONO_DEBUGGER_VERSION				64
 #define MONO_DEBUGGER_MAGIC				0x7aff65af4253d427ULL
 
 extern MonoSymbolTable *mono_symbol_table;

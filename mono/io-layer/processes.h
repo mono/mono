@@ -14,6 +14,7 @@
 
 #include <mono/io-layer/handles.h>
 #include <mono/io-layer/access.h>
+#include <mono/io-layer/versioninfo.h>
 
 G_BEGIN_DECLS
 
@@ -171,6 +172,20 @@ extern gboolean CreateProcess (const gunichar2 *appname,
 			       gpointer environ, const gunichar2 *cwd,
 			       WapiStartupInfo *startup,
 			       WapiProcessInformation *process_info);
+extern gboolean CreateProcessWithLogonW (const gunichar2 *username,
+					 const gunichar2 *domain,
+					 const gunichar2 *password,
+					 const guint32 logonFlags,
+					 const gunichar2 *appname,
+					 const gunichar2 *cmdline,
+					 guint32 create_flags,
+					 gpointer environ,
+					 const gunichar2 *cwd,
+					 WapiStartupInfo *startup,
+					 WapiProcessInformation *process_info);
+#define LOGON_WITH_PROFILE 0x00000001
+#define LOGON_NETCREDENTIALS_ONLY 0x00000002
+
 extern gpointer GetCurrentProcess (void);
 extern guint32 GetProcessId (gpointer handle);
 extern guint32 GetCurrentProcessId (void);
@@ -185,6 +200,10 @@ extern gboolean EnumProcessModules (gpointer process, gpointer *modules,
 				    guint32 size, guint32 *needed);
 extern guint32 GetModuleBaseName (gpointer process, gpointer module,
 				  gunichar2 *basename, guint32 size);
+extern guint32 GetModuleFileNameEx (gpointer process, gpointer module,
+				    gunichar2 *filename, guint32 size);
+extern gboolean GetModuleInformation (gpointer process, gpointer module,
+				      WapiModuleInfo *modinfo, guint32 size);
 extern gboolean GetProcessWorkingSetSize (gpointer process, size_t *min,
 					  size_t *max);
 extern gboolean SetProcessWorkingSetSize (gpointer process, size_t min,

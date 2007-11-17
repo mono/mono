@@ -72,10 +72,9 @@ struct _MonoImage {
 	 * this image between calls of mono_image_open () and mono_image_close ().
 	 */
 	int   ref_count;
-	FILE *file_descr;
-	/* if file_descr is NULL the image was loaded from raw data */
 	char *raw_data;
 	guint32 raw_data_len;
+	guint8 raw_buffer_used    : 1;
 	guint8 raw_data_allocated : 1;
 
 	/* Whenever this is a dynamically emitted module */
@@ -171,11 +170,17 @@ struct _MonoImage {
 	GHashTable *delegate_begin_invoke_cache;
 	GHashTable *delegate_end_invoke_cache;
 	GHashTable *delegate_invoke_cache;
+	GHashTable *runtime_invoke_cache;
+
+	/*
+	 * indexed by SignatureMethodPair
+	 */
+	GHashTable *delegate_abstract_invoke_cache;
 
 	/*
 	 * indexed by MonoMethod pointers 
 	 */
-	GHashTable *runtime_invoke_cache;
+	GHashTable *runtime_invoke_direct_cache;
 	GHashTable *managed_wrapper_cache;
 	GHashTable *native_wrapper_cache;
 	GHashTable *remoting_invoke_cache;
@@ -195,6 +200,11 @@ struct _MonoImage {
 	GHashTable *isinst_cache;
 	GHashTable *castclass_cache;
 	GHashTable *proxy_isinst_cache;
+
+	/*
+	 * indexed by token and MonoGenericContext pointer
+	 */
+	GHashTable *generic_class_cache;
 
 	void *reflection_info;
 
@@ -279,6 +289,8 @@ struct _MonoDynamicImage {
 	guint32 strong_name_size;
 	char *win32_res;
 	guint32 win32_res_size;
+	guint8 *public_key;
+	int public_key_len;
 	MonoDynamicStream sheap;
 	MonoDynamicStream code; /* used to store method headers and bytecode */
 	MonoDynamicStream resources; /* managed embedded resources */
@@ -420,6 +432,9 @@ MonoType *mono_metadata_type_dup (MonoMemPool *mp, const MonoType *original) MON
 
 MonoGenericInst *
 mono_get_shared_generic_inst (MonoGenericContainer *container) MONO_INTERNAL;
+
+int
+mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

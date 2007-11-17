@@ -399,6 +399,12 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 	return 1;
 }
 
+void
+breakprop (int fd)
+{
+	tcsendbreak (fd, 0);
+}
+
 gboolean
 poll_serial (int fd, gint32 *error, int timeout)
 {

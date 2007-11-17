@@ -72,6 +72,14 @@ typedef struct {
 	} data;
 } MonoJitExceptionInfo;
 
+/*
+ * Will contain information on the generic type arguments in the
+ * future.  For now, all arguments are always reference types.
+ */
+typedef struct {
+	int dummy;
+} MonoGenericSharingContext;
+
 struct _MonoJitInfo {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
@@ -82,7 +90,7 @@ struct _MonoJitInfo {
 	gpointer    code_start;
 	guint32     used_regs;
 	int         code_size;
-	guint32     num_clauses:24;
+	guint32     num_clauses:16;
 	/* Whenever the code is domain neutral or 'shared' */
 	gboolean    domain_neutral:1;
 	gboolean    cas_inited:1;
@@ -92,7 +100,9 @@ struct _MonoJitInfo {
 	gboolean    cas_method_assert:1;
 	gboolean    cas_method_deny:1;
 	gboolean    cas_method_permitonly:1;
+	gboolean    has_generic_sharing_context:1;
 	MonoJitExceptionInfo clauses [MONO_ZERO_LEN_ARRAY];
+	/* There is an optional MonoGenericSharingContext* after the clauses */
 };
 
 typedef struct {
@@ -172,8 +182,6 @@ struct _MonoDomain {
 	GHashTable         *jump_trampoline_hash;
 	GHashTable         *jit_trampoline_hash;
 	GHashTable         *delegate_trampoline_hash;
-	GHashTable         *delegate_invoke_impl_with_target_hash;
-	GHashTable         *delegate_invoke_impl_no_target_hash;
 	/* 
 	 * This must be a GHashTable, since these objects can't be finalized
 	 * if the hashtable contains a GC visible reference to them.
@@ -181,6 +189,8 @@ struct _MonoDomain {
 	GHashTable         *finalizable_objects_hash;
 	/* Used when accessing 'domain_assemblies' */
 	CRITICAL_SECTION    assemblies_lock;
+
+	GHashTable	   *shared_generics_hash;
 };
 
 typedef struct  {
@@ -213,6 +223,19 @@ mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji) MONO_INTERNAL;
 
 void
 mono_jit_info_add_aot_module (MonoImage *image, gpointer start, gpointer end) MONO_INTERNAL;
+
+MonoGenericSharingContext*
+mono_jit_info_get_generic_sharing_context (MonoJitInfo *ji) MONO_INTERNAL;
+
+void
+mono_jit_info_set_generic_sharing_context (MonoJitInfo *ji, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
+
+MonoJitInfo*
+mono_domain_lookup_shared_generic (MonoDomain *domain, MonoMethod *method) MONO_INTERNAL;
+
+void
+mono_domain_register_shared_generic (MonoDomain *domain, MonoMethod *method, MonoJitInfo *jit_info) MONO_INTERNAL;
+
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside
@@ -330,5 +353,13 @@ MonoImage *mono_assembly_open_from_bundle (const char *filename,
 
 void
 mono_domain_add_class_static_data (MonoDomain *domain, MonoClass *klass, gpointer data, guint32 *bitmap);
+
+MonoReflectionAssembly *
+mono_try_assembly_resolve (MonoDomain *domain, MonoString *fname, gboolean refonly) MONO_INTERNAL;
+
+MonoAssembly* mono_assembly_load_full_nosearch (MonoAssemblyName *aname, 
+						const char       *basedir, 
+						MonoImageOpenStatus *status,
+						gboolean refonly) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

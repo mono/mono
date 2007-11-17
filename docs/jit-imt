@@ -1,20 +1,41 @@
 
+		IMT-based interface invocation support
+
 The mono JIT can use an IMT-style invocation system to call interface methods.
 This considerably reduces the runtime memory usage when many interface types
 are loaded, because the old system required an array in MonoVTable indexed
 by the interface id, which grows linearly as more interfaces are loaded.
+In some cases there are also speedups, since an interface call can reduce to
+a virtual call automatically.
 
 IMT instead uses a fixed-size table and hashes each method in the implemented
 interfaces to a slot in the IMT table. To be able to resolve collisions, at each
-callsite we store the interface MonoMethod in a well-known register and the
-IMT table will contain a snippet of code that uses it to jumpt to the
-proper vtable slot. The interface invocation sequence becomes (in pseud-ocode):
+callsite we store the interface MonoMethod to be called in a well-known register and
+the IMT table will contain a snippet of code that uses it to jump to the
+proper vtable slot. The interface invocation sequence becomes (in pseudo-code):
 
 	mov magic_reg, interface_monomethod
 	call vtable [imt_slot]
 
 The IMT table is stored at negative addresses in the vtable, like the old
 interface array used to be.
+
+A small note on the choice of magic_reg for different JIT backends: the IMT
+method identifier doesn't necessarily need to be stored in a register, though
+doing so is fast and the JIT code has already the infrastructure to handle this
+case in an arch-independent way. A JIT porter just needs to #define
+MONO_ARCH_IMT_REG to the choosen register. Note that this register should be
+part of the MONO_ARCH_CALLEE_REGS set as it will be handled by the local register
+allocator (see mini/inssel.brg) and it must not be part of the registers used for
+argument passing as you'd overwrite an argument in that case.
+Also note that the method-specific trampoline code should make sure to preserve
+this register (but it should already if it's in MONO_ARCH_CALLEE_REGS as
+it could have been used for a vtable indirect call).
+
+Note that in the case of a nono-colliding IMT slot, the interface call
+instruction sequence becomes equivalent to a virtual call, as the IMT slot
+will contain the direct trampoline for the method and the magic trampoline will
+set the slot to the method's native code address once it is compiled.
 
 In case of collisions in the IMT slot, the JIT performs a linear search if
 the colliding methods are few or a binary search otherwise.
@@ -24,7 +45,7 @@ built in a way to allow easy generation of a bsearch, when the list of colliding
 methods becomes large.
 
 Each item in the array represents either a direct check for a method to be invoked
-of a bisection check in the bsearch algorithm.
+or a bisection check in the bsearch algorithm.
 
 struct _MonoIMTCheckItem {
 	MonoMethod       *method;
@@ -46,7 +67,13 @@ should be equivalent to:
 
 Note that if item->check_target_idx is 0, the jump should be omitted
 since this is the end of a linear sequence (you might want to insert a jump to
-a breakpoint, tough, for debugging).
+a breakpoint, though, for debugging) and this would mean that we have an error:
+the IMT slot was asked to execute an interface method that the type doesn't implement.
+In the future we might want to handle this case not with a breakpoint or assert, but
+by either throwing an InvalidCast exception or by going into the runtime and
+adding support for the interface automagically to the type/vtable: this could be used
+both for tranparent proxies and for the implicit interfaces that vectors in 2.0
+provide.
 
 For a bisect check the code is even simpler:
 
@@ -63,15 +90,20 @@ As each item's code is emitted, the start of it is stored in the code_target
 field. At the same time when a conditional branch is inserted, its address
 is stored in jmp_code: this way with a single forward pass on the array at
 the end of the emission phase the branches can be patched to point to the
-proper target item's code.
+proper target item's code (this process would patch the jump_to_item pseudo
+instructions described above).
 
 chunk_size can be used to store the size of the code generated for the item: this
 can be used to optimize the short/long branch instructions, together with
-info stored in short_branch.
+info stored in short_branch. It is also used to calculate the size of the
+code to allocate for the whole IMT thunk.
 
 The compare_done field can be used to avoid doing an additional compare
-in a is_equals item for the same MonoMethod that was just compare in a
+in a is_equals item for the same MonoMethod that was just compared in a
 bisecting item. Suppose we have 4 methods colliding in a slot, A, B, C and D.
+The arch-independent code already took care of sorting them, so that:
+	A < B < C < D
+
 The generated code will look like (M is the method to call):
 
 	compare (C, M)
@@ -91,4 +123,17 @@ D_found:
 	jump to D's slot
 
 This optimization is of course valid for architectures with flags registers.
+
+As a further optimization to reduce memory usage, the Mono runtime sets the
+IMT slots initially to a single-instance magic trampoline so there is actually no
+memory used up by the thunks in the case of collisions. When an interface method is
+called the magic trampoline will fill-in the IMT slot with the proper thunk or
+trampoline, so later calls will use the fast path.
+This single-instance trampoline will use MONO_FAKE_IMT_METHOD as the method
+it's asking to be compiled and executed: the trampoline code does recognize
+this special value and retrives the interface method to call from the usual
+MONO_ARCH_IMT_REG saved by the trampoline code.
+Given that only the IMT slots that are actually used will be initialized, this saves
+quite a bit of memory, as it's unlikely that all the interface methods are called on
+all the different types.
 

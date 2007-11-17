@@ -1,4 +1,4 @@
-SUBDIRS = cas
+SUBDIRS = cas assemblyresolve
 
 check-local: test
 
@@ -43,6 +43,8 @@ STRESS_TESTS_SRC=	\
 TEST_CS_SRC=			\
 	array-init.cs		\
 	arraylist.cs		\
+	assemblyresolve_event.cs	\
+	assemblyresolve_event3.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	create-instance.cs	\
@@ -131,6 +133,7 @@ TEST_CS_SRC=			\
 	iface4.cs		\
 	iface-large.cs		\
 	virtual-method.cs	\
+	virtual-sync.cs	\
 	intptrcast.cs		\
 	indexer.cs		\
 	stream.cs		\
@@ -212,6 +215,7 @@ TEST_CS_SRC=			\
 	bug-78653.cs		\
 	bug-78656.cs		\
 	bug-77127.cs		\
+	bug-331958.cs		\
 	interlocked.cs		\
 	cross-domain.cs		\
 	appdomain-exit.cs	\
@@ -233,7 +237,10 @@ TEST_CS_SRC=			\
 	cominterop.cs		\
 	exists.cs		\
 	handleref.cs	\
-	transparentproxy.cs
+	transparentproxy.cs \
+	imt_big_iface_test.cs \
+	dbnull-missing.cs	\
+	soft-float-tests.cs
 
 if X86
 # bug #71274
@@ -258,6 +265,7 @@ TEST_CSC_SRC=			\
 TEST_IL_SRC=			\
 	field-access.il		\
 	method-access.il	\
+	ldftn-access.il		\
 	cpblkTest.il		\
 	vbinterface.il		\
 	jmpTest.il		\
@@ -277,9 +285,13 @@ TEST_IL_SRC=			\
 	filter-bug.il		\
 	even-odd.il		\
 	bug-82022.il	\
+	vt-sync-method.il	\
 	enum_types.il
 
+#	bug-318677.il
+
 TEST_CS2_SRC = \
+	assemblyresolve_event2.2.cs	\
 	interlocked-2.2.cs	\
 	pinvoke-2.2.cs 		\
 	bug-78431.2.cs 		\
@@ -290,12 +302,25 @@ TEST_CS2_SRC = \
 	stackframes-async.2.cs		\
 	module-cctor-loader.2.cs	\
 	generics-invoke-byref.2.cs	\
+	generic-signature-compare.2.cs	\
+	generics-sharing.2.cs	\
 	bug-80392.2.cs		\
-	bug-82194.2.cs
+	dynamic-method-access.2.cs	\
+	bug-82194.2.cs	\
+	anonarray.2.cs	\
+	ienumerator-interfaces.2.cs	\
+	generic_type_definition_encoding.2.cs \
+	generic_type_definition.2.cs	\
+	bug-333798.2.cs		\
+	bug-333798-tb.2.cs		\
+	bug-335131.2.cs		\
+	bug-322722_patch_bx.2.cs		\
+	bug-322722_dyn_method_throw.2.cs
 
 TEST_IL2_SRC = find-method.2.il	\
 	bug-79215.2.il	\
 	bug-79956.2.il	\
+	bug-327438.2.il \
 	ldtoken_with_byref_typespec.2.il
 
 # pre-requisite test sources: files that are not test themselves
@@ -331,19 +356,23 @@ EXTRA_DIST=test-driver $(TEST_CS_SRC) $(TEST_CS2_SRC) $(TEST_IL_SRC) $(TEST_IL2_
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
 if POWERPC
-test:	testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
+test:	assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535
 else
 # Can't use mkbundle on win32 since there is no static build there
+# Can't run test-unhandled-exception on Windows because of all the debug popups...
 if PLATFORM_WIN32
-test:   testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
+test:   assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535
 else
-test:	testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466
+test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535
 endif
 endif
 
 if INSTALL_2_1
 test : test-coreclr-security
 endif
+
+assemblyresolve/test/asm.dll:
+	$(MAKE) -C assemblyresolve prereq
 
 TestDriver.dll:
 	$(MCS) -target:library -out:$@ $(srcdir)/../mini/TestDriver.cs
@@ -515,6 +544,36 @@ test-inline-call-stack.exe: TestDriver.dll test-inline-call-stack-library.dll $(
 test-inline-call-stack: TestDriver.dll test-inline-call-stack-library.dll test-inline-call-stack.exe
 	$(RUNTIME) test-inline-call-stack.exe
 
+
+EXTRA_DIST += unhandled-exception-base-configuration.config
+EXTRA_DIST += unhandled-exception-legacy-configuration.config
+EXTRA_DIST += unhandled-exception-test-case.2.cs
+EXTRA_DIST += unhandled-exception-test-runner.2.cs
+unhandled-exception-test-case.1.cs: unhandled-exception-test-case.2.cs
+	cp unhandled-exception-test-case.2.cs unhandled-exception-test-case.1.cs
+unhandled-exception-test-case-legacy.1.cs: unhandled-exception-test-case.1.cs
+	cp unhandled-exception-test-case.1.cs unhandled-exception-test-case-legacy.1.cs
+unhandled-exception-test-case-legacy.2.cs: unhandled-exception-test-case.2.cs
+	cp unhandled-exception-test-case.2.cs unhandled-exception-test-case-legacy.2.cs
+unhandled-exception-config_files: unhandled-exception-base-configuration.config unhandled-exception-legacy-configuration.config
+	cp unhandled-exception-base-configuration.config unhandled-exception-test-case.1.exe.config
+	cp unhandled-exception-base-configuration.config unhandled-exception-test-case.2.exe.config
+	cp unhandled-exception-legacy-configuration.config unhandled-exception-test-case-legacy.1.exe.config
+	cp unhandled-exception-legacy-configuration.config unhandled-exception-test-case-legacy.2.exe.config
+unhandled-exception-test-case.1.exe: unhandled-exception-test-case.1.cs
+	$(MCS) /debug unhandled-exception-test-case.1.cs
+unhandled-exception-test-case-legacy.1.exe: unhandled-exception-test-case-legacy.1.cs
+	$(MCS) /debug unhandled-exception-test-case-legacy.1.cs
+unhandled-exception-test-case.2.exe: unhandled-exception-test-case.2.cs
+	$(GMCS) /debug unhandled-exception-test-case.2.cs
+unhandled-exception-test-case-legacy.2.exe: unhandled-exception-test-case-legacy.2.cs
+	$(GMCS) /debug unhandled-exception-test-case-legacy.2.cs
+unhandled-exception-test-runner.2.exe: unhandled-exception-test-runner.2.cs
+	$(GMCS) /debug unhandled-exception-test-runner.2.cs
+
+test-unhandled-exception: unhandled-exception-test-runner.2.exe unhandled-exception-config_files unhandled-exception-test-case.1.exe unhandled-exception-test-case-legacy.1.exe  unhandled-exception-test-case.2.exe unhandled-exception-test-case-legacy.2.exe
+	$(RUNTIME) unhandled-exception-test-runner.2.exe RUNTIME:../mini/mono,GTC:F
+
 EXTRA_DIST += bug-80307.cs
 bug-80307.exe: $(srcdir)/bug-80307.cs
 	$(MCS) -r:System.Web -out:$@ $(srcdir)/bug-80307.cs
@@ -551,14 +610,34 @@ bug-81466.exe: bug-81466.il bug-81466-lib.dll
 test-bug-81466: bug-81466.exe bug-81466-lib.dll
 	$(RUNTIME) bug-81466.exe
 
-if INSTALL_2_1
+EXTRA_DIST += bug-324535-il.il bug-324535.cs
+bug-324535-il.dll : bug-324535-il.il
+	$(ILASM) /dll /output:bug-324535-il.dll $(srcdir)/bug-324535-il.il
+bug-324535.exe : bug-324535.cs bug-324535-il.dll
+	$(MCS) -r:bug-324535-il.dll -out:bug-324535.exe $(srcdir)/bug-324535.cs
+test-bug-324535 : bug-324535.exe bug-324535-il.dll
+	$(RUNTIME) bug-324535.exe
+
+EXTRA_DIST += make_imt_test.sh
+imt_big_iface_test.cs: $(srcdir)/make_imt_test.sh
+	$(srcdir)/make_imt_test.sh > imt_big_iface_test.cs
+
 EXTRA_DIST += coreclr-security.cs
+
+if INSTALL_2_1
 coreclr-security.exe : coreclr-security.cs
 	$(SMCS) -out:coreclr-security.exe $(srcdir)/coreclr-security.cs
 
 test-coreclr-security : coreclr-security.exe
 	$(RUNTIME21) --security=core-clr-test coreclr-security.exe
 endif
+
+EXTRA_DIST += async-exceptions.cs
+async-exceptions.exe : async-exceptions.cs
+	$(MCS) -out:async-exceptions.exe $(srcdir)/async-exceptions.cs
+test-async-exceptions : async-exceptions.exe
+	for i in `echo 0 1 2 3 4 5 6 7 8 9 10`; do $(RUNTIME) --inject-async-exc Tests:foo $$i async-exceptions.exe || exit 1; done
+	for i in `echo 0 1 2 3 4 5 6 7 8 9 10`; do $(RUNTIME) --inject-async-exc Tests:bar $$i async-exceptions.exe || exit 1; done
 
 # Useful if mono is compiled with --enable-shared=no
 patch-libtool:

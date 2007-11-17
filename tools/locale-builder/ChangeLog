@@ -1,3 +1,15 @@
+2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatEntry.cs, Driver.cs : adjust the count of
+	  MonthNames and AbbreviatedMonthNames entries to 13.
+	  Fixed bug #332553.
+
+2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs, DateTimeFormatEntry.cs : since FullDateTimePattern
+	  should be computed on the overriden Long[Date/Time]Pattern, compute
+	  it later than reading all format resources (langs/locales/supp).
+
 2007-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs : for Euskara culture (eu_ES) do not trim dd which is

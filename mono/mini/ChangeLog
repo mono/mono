@@ -105,6 +105,620 @@
 
 	* linear-scan.c (mono_linear_scan): Update mono_jit_stats.regvars.
 
+=======
+	* mini.c, mini.h, generic-sharing.c: Functions for producing code
+	which extract fields out of the runtime generic context.  Full
+	sharing of the NEWARR opcode.
+
+Thu Nov 15 14:20:21 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* abcremoval.c, mini.c, ssa.c, ssapre.c: updated to implement
+	--enable-minimal=ssa.
+
+2007-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline): Update after 
+	mono_marshal_get_delegate_invoke () signature change.
+
+2007-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Removed the shared context in favor of the generic
+	sharing context.  Allocate the MonoJitInfo structure with room for
+	the generic sharing context if it's needed.
+
+	* mini.h: Remove MonoGenericSharingContext declaration.  It's in
+	domain-internals.h now.
+
+	* mini-x86.c: Pass the generic sharing context to get_call_info ().
+
+	* generic-sharing.c: Several changes for working without a shared
+	context and instead operating on open types instead.
+
+2007-11-12  David S. Miller  <davem@davemloft.net>
+
+       * inssel-sparc.brg: Fix double instruction emit.
+
+2007-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_runtime_invoke): Avoid trying to compile the Array 
+	Get/Set/Address methods.
+	
+	* mini.c debug-debugger.c mini-trampolines.c: Update after 
+	mono_marshal_get_delegate_invoke signature change.
+
+2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-arm.md: Increase the max size of OP_THROW to 24 bytes.
+	This can happens with dynamic methods. Fixes the other bug in #322722.
+
+2007-11-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* tramp-arm.c (mono_arch_patch_callsite): Support patching
+	BX call sequence.
+
+	* mini-arm.c (arm_patch): Implement patching of BX call
+	sequence. Fixes one of the bugs in #322722.
+
+2007-11-03  David S. Miller  <davem@huronp11.davemloft.net>
+
+       * mini-sparc.c (mono_arch_flush_icache): Make more efficient
+       under Linux.  We only need to flush every 32-byte cache line.	
+
+2007-11-07  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c:
+	move_basic_block_to_end: Add branches when needed, eventually creating
+	a new BB.
+	optimize_branches: added a parameter that tells if it's ok to create
+	new BBs (doing is "df_visit" has been called is (IMHO) a nightmare),
+	and avoid calling move_basic_block_to_end when it's not ok.
+	Fixes bug 318677.
+
+2007-11-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Abort inlining call to InitializeArray if something
+	looks wrong.  Let the icall handle it, which now has proper safety
+	checks.
+
+2007-11-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_spill_call): add support for soft-float.
+
+	* mini.c (mono_method_to_ir): add support for soft-float
+	to inlined functions that return float.
+
+	* mini.c (mono_method_to_ir): add support for soft-float
+	to cee_stsfld opcode on float fields.
+
+2007-11-05  Geoff Norton  <gnorton@novell.com>
+
+	* mini-x86.h: Fix the structure access for X86 Leopard.
+
+
+2007-11-05  Martin Baulig  <martin@ximian.com>
+
+	* mini-trampolines.c
+	(mono_magic_trampoline): Call mono_debugger_trampoline_compiled()
+	after compiling the method to notify the debugger.
+
+2007-11-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Use the new breakpoint tables.
+
+2007-11-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (EMIT_COND_SYSTEM_EXCEPTION_GENERAL): Applied patch from
+	David Miller <davem@davemloft.net>. Allow larger offsets in branches.
+
+2007-11-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Check the domain as well for
+	native-to-managed wrappers.
+	
+2007-11-01  Geoff Norton  <gnorton@novell.com>
+
+	* mini-ppc.h, mini-x86.h:  Handle Leopards renaming of some structure 
+	members.
+
+Wed Oct 31 20:23:14 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-x86.c: when getting back from unmanaged code
+	to managed via a marshaled delegate we also need to set the
+	right domain.
+
+Wed Oct 31 19:53:33 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-amd64.c, mini-amd64.h, tramp-amd64.c: breakpoint table support
+	for amd64.
+
+Wed Oct 31 19:29:30 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, mini-x86, tramp-x86.c, mini-x86.h: added API to
+	let the debugger or other external agents to tell the JIT when
+	a sw breakpoint has been inserted in the code that the JIT needs
+	to be able to inspect.
+
+2007-10-31  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerInfo): Remove `runtime_class_init'.
+
+2007-10-30  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.h
+	(mono_debugger_thread_created): Added `MonoThread *' argument.
+	(mono_debugger_extended_notification): New public method.
+	(mono_debugger_trampoline_compiled): New public method.
+
+	* debug-mini.c
+	(MonoDebuggerThreadInfo): Added `thread' and
+	`extended_notifications' fields.
+
+	* debug-debugger.c
+	(debugger_executable_code_buffer): New static variable.
+
+	* debug-debugger.h
+	(MonoDebuggerInfo): Added `executable_code_buffer',
+	`executable_code_buffer_size', `breakpoint_info_area',
+	`breakpoint_table' and `breakpoint_table_size'.
+
+2007-10-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-arm.c (mono_arch_build_imt_thunk): Take the advantage
+	that IP  either is an unused value or the vtable pointer. IMT 
+	calls use vtable + offset now. Reduced by almost half the size
+	of IMT entries.
+
+2007-10-26  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c: Begin Win64 port. Use AMD64_ARG_REG#
+	defines to access param registers. Replace long usage with
+	gsize as sizeof(long) != sizeof(void*) on Win64.
+
+	* mini-amd64.h: Add %rdi and %rsi to MonoLMF structure
+	on Win64. Fix intrinsic, use _AddressOfReturnAddress
+	instead of non-existant _GetAddressOfReturnAddress.
+
+	* tramp-amd64.c: Use AMD64_ARG_REG#	defines to access 
+	param registers. Save/restore %rdi and %rsi in MonoLMF.
+
+	* exceptions-amd64.c: Use AMD64_ARG_REG# defines to access 
+	param registers. Modify (throw_exception) signature to take 
+	%rdi and %rsi on Win64. 
+
+	Code is contributed under MIT/X11 license.
+
+Thu Oct 25 23:06:58 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* helpers.c: unlink debugging output files.
+
+2007-10-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Move mono_create_ftnptr () to object.c.
+
+2007-10-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* helpers.c (mono_disassemble_code): MonoCompile parameter is now
+	optional. This function can now be used to disassemble code generated
+	outside the JIT such as trampolines and IMT thunks.
+
+	* mini-arm.h: defined MONO_ARCH_HAVE_IMT.
+
+	* mini-arm.c (decode_vcall_slot_from_ldr): added, extract the
+	vtable pointer from a ldr instruction.
+
+	* mini-arm.c (mono_arch_get_vcall_slot_addr): support the
+	new IMT call sequence.
+
+	* mini-arm.c (mono_arch_output_basic_block): emit the IMT
+	call sequence for interface invocations.
+
+	* mini-arm.c (mono_arch_emit_imt_argument): added, required
+	for imt support. This function is empty since IMT on ARM requires no
+	special handling on the IR side.
+
+	* mini-arm.c (mono_arch_find_imt_method): added, required for
+	imt support.
+
+	* mini-arm.c (mono_arch_find_this_argument): added, required
+	for imt support.
+
+	* mini-arm.c (arm_emit_value_and_patch_ldr): added, patches
+	a ldr instruction to load a value stored in the code stream.
+
+	* mini-arm.c (mono_arch_build_imt_thunk):added, required
+	for imt support.
+
+
+2007-10-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Install the jump trampoline callback.
+
+Tue Oct 23 17:07:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: handle synchronized methods with the common
+	vtable trampoline (bug #335601).
+
+2007-10-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.h mini-amd64.c: Add support for the common vtable trampoline.
+
+	* inssel.brg (mini_emit_virtual_call): Fix the computation of ins->inst_offset on
+	64 bit platforms.
+
+	* mini-ia64.h mini-ia64.c: Add support for IMT.
+
+	* mini-x86.c (mono_arch_emit_prolog): Increase the size allocated for the
+	prolog. Fixes #331958.
+
+2007-10-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.h mini-sparc.c: Add support for the common vtable trampoline.
+
+Mon Oct 15 11:18:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h: ppc support for the common vtable
+	trampoline.
+
+Mon Oct 15 10:41:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-amd64.c, mini-amd64.h: amd64 support for the common vtable
+	trampoline.
+
+Mon Oct 15 10:39:26 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini-x86.h: x86 support for the common vtable
+	trampoline.
+
+Mon Oct 15 10:37:15 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: changed the magic rampoline to understand
+	the common vtable trampoline method: the method to invoke is
+	determined by the vtable displacement of the call.
+
+Mon Oct 15 10:35:12 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: register the common vtable trampoline if the
+	architecture supports it.
+
+Mon Oct 15 09:50:52 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-amd64.md: use the correct max length for tls_get.
+
+2007-10-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Use mini_get_class in CEE_LDELEM_ANY and
+	CEE_STELEM_ANY. Fixes #333696.
+
+Thu Oct 11 18:04:29 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c: provide more graceful handling of the case where
+	we followed a bogus function pointer from managed code (bug #332866).
+
+2007-10-11  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini.c: Introduced the MonoGenericSharingContext, which
+	replaces the generic_shared flag and will carry more information
+	in the future.
+
+	* generic-sharing.c: Added mini_type_stack_size() which allows
+	allows open types if given a generic sharing context.
+	mini_get_basic_type_from_generic() takes a
+	MonoGenericSharingContext* instead of a MonoCompile* now.
+
+	* mini-alpha.c, mini-amd64.c, mini-arm.c, mini-hppa.c,
+	mini-ia64.c, mini-mips.c, mini-ppc.c, mini-s390.c, mini-s390x.c,
+	mini-sparc.c, mini-x86.c: Trivial changes required by the two
+	changes above.  Just passing arguments through to the right
+	places.
+
+Wed Oct 10 19:44:42 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: unify the call emission to emit_code_seq().
+
+Wed Oct 10 13:05:46 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-arm.c: reduced the trampoline size.
+
+2007-10-10  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, mini.h, mini-amd64.c, mini-x86.c: Moved type
+	variable handling out of arch-specific code.
+
+Wed Oct 10 10:49:28 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: implemented fast delegate dispatch.
+
+2007-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Add more checks to ensure
+	that fp elimination is turned off if the space required by locals is too
+	big. Fixes #331958.
+
+Tue Oct 9 21:01:03 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mini-arm.c, mini-arm.h, tramp-arm.c: ported
+	ARM to the new style trampoline.
+
+2007-10-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c: Rework the specific trampoline code to make it smaller.
+
+	* mini-amd64.h mini-amd64.c: Export amd64_patch as mono_amd64_patch.
+
+2007-10-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Added `field_info_type_offset' and
+	`field_info_offset_offset'.	
+
+Tue Oct 9 09:47:51 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h, mini-ops.h, inssel-ppc.brg, cpu-g4.md:
+	removed more internal usage of the r11 register and made it available
+	to the register allocator.
+
+2007-10-08  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini-amd64.c, mini-x86.c: Allow open generic contexts
+	when sharing generics and treat type variables as references.
+
+Mon Oct 8 10:55:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: started removing the internal uses of register r11
+	to eventually allow the register allocator to manage it as an
+	additional available register.
+
+Mon Oct 8 14:25:39 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-amd64.c: fixed memory corruption in the trampoline generation.
+
+Mon Oct 8 12:06:33 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, tramp-x86.c: reduce the alignment requirements for
+	specific trampolines as they are not performance critical as a jump
+	target (maybe align as before only for AOT code?). This saves about
+	200 KB of native code on x86 for monodevelop startup.
+
+Mon Oct 8 10:04:40 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: reduce the size of the trampolines, saves 160KB on
+	monodevelop startup.
+
+2007-10-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Allow signed displacements.
+
+	* mini-sparc.h mini-sparc.c: Implement IMT support.
+
+	* tramp-sparc.c (mono_arch_create_trampoline_code): Rework the trampoline code so
+	its smaller and doesn't clobber sparc_g1.
+
+	* mini-sparc.c (mono_arch_get_vcall_slot_addr): Update after trampoline changes.
+
+Fri Oct 5 18:28:11 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: optimized the size of the IMT thunks a bit.
+
+Fri Oct 5 18:08:30 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: implemented fast delegate invocation.
+
+Fri Oct 5 00:01:05 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, mini-ppc.c: IMT support for the PPC architecture.
+
+Thu Oct 4 22:04:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc.h, tramp-ppc.c, Makefile.am: port the PPC
+	code to the new style trampoline in preparation for IMT support.
+
+Thu Oct 4 19:01:59 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, tramp-ppc.c: don't use r13 as it's used by the PPC EABI
+	systems already. This also reduces the specific trampiline sizes and
+	prepares for the use of r12 as the IMT identifier register.
+
+Thu Oct 4 16:38:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-mips.h: endianess fix (simplified from a patch by
+	Thomas Kunze <thommy@tabao.de>, bug #323737).
+
+Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c, mini-ppc.h: refactor to use macros
+	to access ucontext fields and enable netbsd support
+	(partially from Magnus Henoch <mange@freemail.hu>).
+
+Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
+	use the preprocessor from the CPP env var if it is set.
+
+Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-trampolines.c: fixed an assertion and moved it earlier in the
+	code, before interface_offset gets used.
+
+2007-10-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call 
+	mono_class_setup_vtable () before accessing klass->vtable.
+
+2007-10-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (get_plt_index): Rework the handling of wrappers to be not so
+	hackish.
+
+Mon Oct 1 15:00:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-trampolines.c, mini.h: enable the lazy filling of the
+	IMT slots (this saves hundreds of KB of memory in programs like
+	IronPython and Monodevelop).
+
+Mon Oct 1 14:44:19 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: print the delegate counter.
+
+Mon Oct 1 14:36:50 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: make it easier to enable the debugging code for IMT
+	slots.
+
+2007-09-28  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Add `klass_image_offset',
+	`mono_method_klass_offset' and `mono_method_token_offset'.
+
+2007-09-20  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: First generics sharing implementation.  Can only share
+	in very simple cases.  If sharing doesn't work it falls back to
+	dedicated compilation.
+
+	* mini.h: Flag in MonoCompile to specify whether generic
+	compilation is shared.  Flags enum for marking which generic inst
+	of a context is used.  Prototypes for helper functions.
+
+	* generic-sharing.c: Helper functions for generic method sharing.
+
+	* optflags-def.h: Optimization flag (gshared) for enabling generic
+	method sharing added.
+
+	* Makefile.am: generic-sharing.c added.
+
+2007-09-19 Daniel Nauck <dna@mono-project.de>
+
+	* mini.c (mono_thread_abort): fixed typo in r86014. It should be '==' instead of '!='.
+
+2007-09-19  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c (mono_thread_abort): Correctly handle ThreadAbortException,
+	fixes bug 325507.
+
+2007-09-19  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_cleanup): Only call mono_debugger_cleanup() here;
+	mono_debug_cleanup() is now part of mono_cleanup().
+
+2007-09-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Fix a warning.
+
+2007-09-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Optimize various parts when processing large assemblies.
+	Fixes ##325568.
+
+	* mini.c (mono_patch_info_hash): Improve hash function.
+
+2007-09-14  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-exceptions.c: Add HAVE_UNISTD_H check around include.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Fix a leak.
+
+	* debug-mini.c (mono_debug_free_method_jit_info): Fix a leak.
+
+Fri Sep 14 12:53:13 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: redirect string.InternalAllocStr() to the managed allocator.
+
+2007-09-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_find_imt_method): Add support for AOT code.
+
+2007-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am generics-variant-types.2.il generics.cs: Add some generics
+	variance tests.
+
+	* inssel.brg: Reorganize the isinst/castclass code to reduce code duplication.
+
+	* mini.c (handle_alloc): Enable managed allocators in AOT code.
+
+	* aot-compiler.c (encode_patch): Add support for MONO_WRAPPER_ALLOC.
+
+	* aot-runtime.c (decode_patch_info): Ditto.
+
+2007-09-12  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Implement
+	static case. Cache delegates in architecture specific code, 
+	based on number of parameters.
+	
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Cache delegates
+	in architecture specific code, based on number of parameters.
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Architecture specific 
+	caching happen in architecture specific code now.
+	
+	Code is contributed under MIT/X11 license.
+
+2007-09-12  Jonathan Chambers <joncham@gmail.com>
+
+	* mini.h, mini.c, mini-x86.c, mini-amd64.c, mini-hppa.c, mini-mips.c,
+	mini-s390x.c, mini-arm.c, mini-ia64.c, mini-sparc.c, mini-ppc.c, mini-alpha.c,
+	mini-s390.c: Add mono_arch_init and mono_arch_cleanup methods.
+
+	Code is contributed under MIT/X11 license.
+
+2007-05-15  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c: (mono_thread_abort) Fixed bug #82416.
+
+Tue Sep 11 16:15:53 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.: hook the new managed GC allocation feature into the JIT.
+
+Tue Sep 11 16:14:16 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: implementation for the new runtime tls opcode.
+
+2007-09-11  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerMetadataInfo): Add `mono_method_flags_offset' and
+	`mono_method_inflated_offset'.
+
+2007-09-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c mini.h mini.c: Add a new devel command line option for injecting
+	async exceptions into a method.
+
+	* mini-amd64.h mini-amd64.c: Implement injecting of async exceptions for the
+	purpose of testing whenever the unwinder works at every instruction.
+
+Thu Sep 6 12:42:14 CEST 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: check accessibility of method used in ldftn (fixes
+	bug #82635).
+
+2007-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a warning.
+
+	* inssel.brg: Fix a warning.
+
+2007-09-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c: `MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE'
+	now takes the `main_method' as argument.
+
+2007-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-sparc.md (endfilter): Add missing src1:i argument.
+
+2007-08-30  Jonathan Chambers <joncham@gmail.com>
+
+	* driver.c: include the cil-coff.h header on Windows.
+	
+	Code is contributed under MIT/X11 license.
+
+>>>>>>> .merge-right.r89791
 Thu Aug 30 16:17:23 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, driver.c: don't include the cil-coff.h header.
@@ -11365,6 +11979,8 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
+
 
 
 

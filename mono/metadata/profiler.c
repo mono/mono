@@ -55,6 +55,7 @@ static MonoProfileClassFunc   class_end_unload;
 static MonoProfileMethodFunc   jit_start;
 static MonoProfileMethodResult jit_end;
 static MonoProfileJitResult    jit_end2;
+static MonoProfileMethodFunc   method_free;
 static MonoProfileMethodResult man_unman_transition;
 static MonoProfileAllocFunc    allocation_cb;
 static MonoProfileStatFunc     statistical_cb;
@@ -172,6 +173,12 @@ mono_profiler_install_jit_end (MonoProfileJitResult end)
 }
 
 void 
+mono_profiler_install_method_free (MonoProfileMethodFunc callback)
+{
+	method_free = callback;
+}
+
+void 
 mono_profiler_install_thread (MonoProfileThreadFunc start, MonoProfileThreadFunc end)
 {
 	thread_start = start;
@@ -280,6 +287,13 @@ mono_profiler_method_end_jit (MonoMethod *method, MonoJitInfo* jinfo, int result
 		if (jit_end2)
 			jit_end2 (current_profiler, method, jinfo, result);
 	}
+}
+
+void 
+mono_profiler_method_free (MonoMethod *method)
+{
+	if ((mono_profiler_events & MONO_PROFILE_METHOD_EVENTS) && method_free)
+		method_free (current_profiler, method);
 }
 
 void 
@@ -1377,11 +1391,12 @@ static void
 simple_appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 {
 	/* FIXME: we should actually record partial data for each domain, 
-	 * since the ip->ji->method mappings are going away at domain unload time.
+	 * but at this point it's must easier using the new logging profiler.
 	 */
-	if (domain == mono_get_root_domain ())
-		stat_prof_report ();
+	mono_profiler_shutdown ();
 }
+
+static gint32 simple_shutdown_done = FALSE;
 
 static void
 simple_shutdown (MonoProfiler *prof)
@@ -1390,7 +1405,16 @@ simple_shutdown (MonoProfiler *prof)
 	MonoProfiler *tprof;
 	GSList *tmp;
 	char *str;
+	gint32 see_shutdown_done;
+	
+	// Make sure we execute simple_shutdown only once
+	see_shutdown_done = InterlockedExchange(& simple_shutdown_done, TRUE);
+	if (see_shutdown_done)
+		return;
 
+	// Stop all incoming events
+	mono_profiler_set_events (0);
+	
 	for (tmp = prof->per_thread; tmp; tmp = tmp->next) {
 		tprof = tmp->data;
 		merge_thread_data (prof, tprof);
@@ -1440,12 +1464,14 @@ mono_profiler_install_simple (const char *desc)
 		for (ptr = args; ptr && *ptr; ptr++) {
 			const char *arg = *ptr;
 
+			// Alwais listen to appdomaon events to shutdown at the first unload
+			flags |= MONO_PROFILE_APPDOMAIN_EVENTS;
 			if (!strcmp (arg, "time"))
 				flags |= MONO_PROFILE_ENTER_LEAVE | MONO_PROFILE_EXCEPTIONS;
 			else if (!strcmp (arg, "alloc"))
 				flags |= MONO_PROFILE_ALLOCATIONS;
 			else if (!strcmp (arg, "stat"))
-				flags |= MONO_PROFILE_STATISTICAL | MONO_PROFILE_APPDOMAIN_EVENTS;
+				flags |= MONO_PROFILE_STATISTICAL;
 			else if (!strcmp (arg, "jit"))
 				flags |= MONO_PROFILE_JIT_COMPILATION;
 			else if (strncmp (arg, "file=", 5) == 0) {
