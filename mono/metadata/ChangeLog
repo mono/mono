@@ -1,3 +1,8 @@
+2007-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (create_allocator): Fix size calculation for the string allocator.
+	(mono_gc_get_managed_allocator): Enable the string allocator on amd64.
+
 2007-11-15  Dick Porter  <dick@ximian.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Join_internal):
