@@ -82,8 +82,6 @@ namespace System.Windows.Forms {
 			}
 			
 			DataGridView.EditingControlInternal = null;
-			
-			Console.WriteLine("Detached: ({0}, {1});", RowIndex, ColumnIndex);
 		}
 
 		public override void InitializeEditingControl (int rowIndex, object initialFormattedValue, DataGridViewCellStyle dataGridViewCellStyle)

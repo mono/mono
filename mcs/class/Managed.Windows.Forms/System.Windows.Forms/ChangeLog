@@ -1,3 +1,7 @@
+2007-11-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridViewTextBoxCell.cs: Removed CWL.
+
 2007-11-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Implement 2.0 SearchForVirtualItem event support.
