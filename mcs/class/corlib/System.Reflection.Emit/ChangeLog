@@ -1,3 +1,9 @@
+2007-11-17  Miguel de Icaza  <miguel@novell.com>
+
+	* SignatureHelper.cs (AddArguments): Add new 2.0 API, used by
+	new versions of the DLR.   Currently does not have support for
+	modreq, modopts.   Just a simple wrapper as consumed by the DLR.
+
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyBuilder.cs : added missing 2.0 member.
