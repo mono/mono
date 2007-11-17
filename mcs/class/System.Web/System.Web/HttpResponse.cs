@@ -142,6 +142,14 @@ namespace System.Web {
 			}
 		}
 		
+		ArrayList FileDependenciesArray {
+			get {
+				if (fileDependencies == null)
+					fileDependencies = new ArrayList ();
+				return fileDependencies;
+			}
+		}
+		
 		public bool Buffer {
 			get {
 				return buffer;
@@ -420,19 +428,19 @@ namespace System.Web {
 		{
 			// TODO: talk to jackson about the cache
 		}
-
+		
 		public void AddFileDependencies (ArrayList filenames)
 		{
 			if (filenames == null || filenames.Count == 0)
 				return;
-			fileDependencies.AddRange (filenames);
+			FileDependenciesArray.AddRange (filenames);
 		}
 #if NET_2_0
 		public void AddFileDependencies (string[] filenames)
 		{
 			if (filenames == null || filenames.Length == 0)
 				return;
-			fileDependencies.AddRange (filenames);
+			FileDependenciesArray.AddRange (filenames);
 		}
 #endif		
 
@@ -440,7 +448,7 @@ namespace System.Web {
 		{
 			if (filename == null || filename == String.Empty)
 				return;
-			fileDependencies.Add (filename);
+			FileDependenciesArray.Add (filename);
 		}
 
 		public void AddHeader (string name, string value)
