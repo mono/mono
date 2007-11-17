@@ -228,6 +228,10 @@ namespace System.Windows.Forms
 				
 			MdiClient mdi = parent_form.MdiContainer;
 			
+			// If there isn't a MdiContainer, we don't need to worry about MdiItems  :)
+			if (mdi == null)
+				return;
+				
 			// Make a copy so we can delete from the real one
 			ToolStripItem[] loopitems = new ToolStripItem[this.mdi_window_list_item.DropDownItems.Count];
 			this.mdi_window_list_item.DropDownItems.CopyTo (loopitems, 0);

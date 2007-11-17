@@ -1,5 +1,11 @@
 2007-11-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MenuStrip.cs: Guard against a NRE when a MdiWindowItem is set
+	but there isn't a MdiContainer.
+	[Fixes bug #342358]
+
+2007-11-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Don't recalculate document if the recalc_start and
 	recalc_end hasn't changed.
 	[Fixes bug #342505]
