@@ -1,3 +1,9 @@
+2007-11-17  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.2.6]
+	* TextControl.cs: Don't recalculate document if the recalc_start and
+	recalc_end hasn't changed.
+	[Fixes bug #342505]
+
 2007-11-16  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.2.6]
 	* TextControl.cs: Missed some code for bug 341534 to trigger a

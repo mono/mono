@@ -505,7 +505,7 @@ namespace System.Windows.Forms {
 			if (recalc_suspended > 0)
 				recalc_suspended--;
 
-			if (recalc_suspended == 0 && (immediate_update || recalc_pending)) {
+			if (recalc_suspended == 0 && (immediate_update || recalc_pending) && !(recalc_start == int.MaxValue && recalc_end == int.MinValue)) {
 				RecalculateDocument (owner.CreateGraphicsInternal (), recalc_start, recalc_end, recalc_optimize);
 				recalc_pending = false;
 			}
