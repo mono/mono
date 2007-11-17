@@ -1,3 +1,9 @@
+2007-11-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextControl.cs: Don't recalculate document if the recalc_start and
+	recalc_end hasn't changed.
+	[Fixes bug #342505]
+
 2007-11-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridViewTextBoxCell.cs: Removed CWL.
