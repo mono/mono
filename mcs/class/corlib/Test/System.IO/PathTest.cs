@@ -871,6 +871,27 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void GetRandomFileNameIsAlphaNumerical ()
+		{
+			string [] names = new string [1000];
+			for (int i = 0; i < names.Length; i++)
+				names [i] = Path.GetRandomFileName ();
+
+			foreach (string name in names) {
+				AssertEquals (12, name.Length);
+				AssertEquals ('.', name [8]);
+
+				for (int i = 0; i < 12; i++) {
+					if (i == 8)
+						continue;
+
+					char c = name [i];
+					Assert (('a' <= c && c <= 'z') || ('0' <= c && c <= '9'));
+				}
+			}
+		}
+
+		[Test]
 		public void TestGetDirectoryName ()
 		{
 			if (Unix){

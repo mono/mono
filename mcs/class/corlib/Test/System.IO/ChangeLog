@@ -1,3 +1,8 @@
+2007-11-17  Jb Evain  <jbevain@novell.com>
+
+	* PathTest.cs: Add test for #341034, GetRandomFileName should
+	return only file names in [a..z0..9].
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStreamTest.cs: Add test case for #322672 (which seems already
