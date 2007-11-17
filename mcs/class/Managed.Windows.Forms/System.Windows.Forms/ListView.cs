@@ -136,6 +136,7 @@ namespace System.Windows.Forms
 		static object CacheVirtualItemsEvent = new object ();
 		static object RetrieveVirtualItemEvent = new object ();
 		static object RightToLeftLayoutChangedEvent = new object ();
+		static object SearchForVirtualItemEvent = new object ();
 		static object VirtualItemsSelectionRangeChangedEvent = new object ();
 #endif
 
@@ -263,6 +264,11 @@ namespace System.Windows.Forms
 		public event EventHandler RightToLeftLayoutChanged {
 			add { Events.AddHandler (RightToLeftLayoutChangedEvent, value); }
 			remove { Events.RemoveHandler (RightToLeftLayoutChangedEvent, value); }
+		}
+
+		public event SearchForVirtualItemEventHandler SearchForVirtualItem {
+			add { Events.AddHandler (SearchForVirtualItemEvent, value); }
+			remove { Events.AddHandler (SearchForVirtualItemEvent, value); }
 		}
 		
 		public event ListViewVirtualItemsSelectionRangeChangedEventHandler VirtualItemsSelectionRangeChanged {
@@ -3351,6 +3357,13 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+		protected virtual void OnSearchForVirtualItem (SearchForVirtualItemEventArgs args)
+		{
+			SearchForVirtualItemEventHandler eh = (SearchForVirtualItemEventHandler) Events [SearchForVirtualItemEvent];
+			if (eh != null)
+				eh (this, args);
+		}
 		
 		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs args)
 		{
@@ -3499,6 +3512,19 @@ namespace System.Windows.Forms
 			if (text == null)
 				throw new ArgumentNullException ("text");
 
+			if (virtual_mode) {
+				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (true,
+						prefixSearch, includeSubItems, text, Point.Empty, 
+						SearchDirectionHint.Down, startIndex);
+
+				OnSearchForVirtualItem (args);
+				int idx = args.Index;
+				if (idx >= 0 && idx < virtual_list_size)
+					return items [idx];
+
+				return null;
+			}
+
 			for (int i = startIndex; i < items.Count; i++) {
 				ListViewItem lvi = items [i];
 
@@ -3532,6 +3558,19 @@ namespace System.Windows.Forms
 
 			if (view != View.LargeIcon && view != View.SmallIcon)
 				throw new InvalidOperationException ();
+
+			if (virtual_mode) {
+				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (false,
+						false, false, String.Empty, location, 
+						direction, 0);
+
+				OnSearchForVirtualItem (args);
+				int idx = args.Index;
+				if (idx >= 0 && idx < virtual_list_size)
+					return items [idx];
+
+				return null;
+			}
 
 			ListViewItem item = null;
 			int min_dist = Int32.MaxValue;
