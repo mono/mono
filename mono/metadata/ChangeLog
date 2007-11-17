@@ -1,3 +1,9 @@
+2007-11-17  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c (mono_reflection_encode_sighelper): Generate the
+	modopts and modreqs.   I have a useless test that crashes monodis,
+	but that shows the code working.
+
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (create_allocator): Fix size calculation for the string allocator.
