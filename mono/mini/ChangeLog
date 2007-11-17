@@ -1,5 +1,11 @@
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Add some micro optimizations.
+	(mono_arch_emit_prolog): Increment maximum prolog size.
+
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Move the implementation of the
+	START_HANDLER/ENDFINALLY/ENDFILTER opcodes to mini-amd64.c.
+
 	* mini-x86.c (get_call_info): Receive a MonoCompile instead of a 
 	MonoGenericSharingContext.
 
