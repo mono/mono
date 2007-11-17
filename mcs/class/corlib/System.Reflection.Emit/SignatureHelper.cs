@@ -103,6 +103,59 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+
+		static void ValidateCustomModifier (int n, Type [][] custom_modifiers, string name)
+		{
+			if (custom_modifiers == null)
+				return;
+
+			if (custom_modifiers.Length != n)
+				throw new ArgumentException (
+				     Locale.GetText (
+				     	String.Format ("Custom modifiers length `{0}' does not match the size of the arguments")));
+			
+			for (int i = 0; i < n; i++)
+			foreach (Type [] parameter_modifiers in custom_modifiers){
+				if (parameter_modifiers == null)
+					continue;
+				
+				foreach (Type modififier in parameter_modifiers){
+					if (modififier == null)
+						throw new ArgumentNullException (name);
+					if (modififier.IsArray)
+						throw new ArgumentException (Locale.GetText ("Array type not permitted"), name);
+					if (modififier.ContainsGenericParameters)
+						throw new ArgumentException (Locale.GetText ("Open Generic Type not permitted"), name);
+				}
+			}
+		}
+
+		static Exception MissingFeature ()
+		{
+			throw new NotImplementedException ("Mono does not currently support setting modOpt/modReq through SignatureHelper");
+		}
+
+		[MonoTODO("Currently we ignore requiredCustomModifiers and optionalCustomModifiers")]
+		public void AddArguments (Type[] arguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
+		{
+			if (arguments == null)
+				throw new ArgumentNullException ("arguments");
+
+			// For now
+			if (requiredCustomModifiers != null || optionalCustomModifiers != null){
+				throw MissingFeature();
+			}
+			
+			ValidateCustomModifier (arguments.Length, requiredCustomModifiers, "requiredCustomModifiers");
+			ValidateCustomModifier (arguments.Length, optionalCustomModifiers, "optionalCustomModifiers");
+			
+			foreach (Type t in arguments){
+				AddArgument (t);
+			}
+		}
+#endif
+	
 		public void AddArgument (Type clsArgument)
 		{
 			if (arguments != null) {
