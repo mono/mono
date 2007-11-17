@@ -1,6 +1,9 @@
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini-ia64.c (get_call_info): Receive a MonoContext instead of a 
+	* mini-x86.c (get_call_info): Receive a MonoCompile instead of a 
+	MonoGenericSharingContext.
+
+	* mini-ia64.c (get_call_info): Receive a MonoCompile instead of a 
 	MonoGenericSharingContext. Allocate memory from the cfg mempool.
 
 2007-11-15  Mark Probst  <mark.probst@gmail.com>
