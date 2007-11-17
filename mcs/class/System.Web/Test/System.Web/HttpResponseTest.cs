@@ -29,6 +29,7 @@
 using System.Text;
 using System.Web;
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using NUnit.Framework;
 
@@ -359,6 +360,29 @@ namespace MonoTests.System.Web {
 
 			c.Response.CacheControl = "";
 			Assert.AreEqual ("private", c.Response.CacheControl, "D6");
+		}
+
+		//
+		// Just checks if the AddFileDepend* methods accept values, added after bug #342511
+		[Test]
+		[Category ("NotDotNet")]
+		public void AddFileDependencies ()
+		{
+			FakeHttpWorkerRequest2 f;
+			HttpContext c = Cook (1, out f);
+
+			ArrayList a = new ArrayList (1);
+			a.Add ("somefile.txt");
+			c.Response.AddFileDependencies (a);
+
+#if NET_2_0
+			string[] sa = new string [1] {"somefile.txt"};
+			c = Cook (1, out f);
+			c.Response.AddFileDependencies (sa);
+#endif
+
+			c = Cook (1, out f);
+			c.Response.AddFileDependency ("somefile.txt");
 		}
 		
 		//[Test][ExpectedException (typeof (HttpException))]

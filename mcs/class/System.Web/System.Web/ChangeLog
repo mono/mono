@@ -1,3 +1,8 @@
+2007-11-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: make sure fileDependencies is not null before
+	attempting to use it. Fixes bug #342511.
+
 2007-11-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TraceContext.cs:

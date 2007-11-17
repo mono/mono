@@ -1,3 +1,8 @@
+2007-11-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponseTest.cs: added a simple test for AddFileDep*
+	methods, for bug #342511
+
 2007-11-05  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequestTest.cs: added a test for case when the query string
