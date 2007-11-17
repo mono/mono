@@ -79,8 +79,8 @@ public class AssemblyBuilderTest
 	private AssemblyBuilder genAssembly ()
 	{
 		return domain.DefineDynamicAssembly (genAssemblyName (),
-											 AssemblyBuilderAccess.RunAndSave,
-											 tempDir);
+						     AssemblyBuilderAccess.RunAndSave,
+						     tempDir);
 	}
 
 	private MethodInfo genEntryFunction (AssemblyBuilder assembly)

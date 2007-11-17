@@ -134,7 +134,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (array, new_a, array.Length);
 				new_a [array.Length] = t;
 				array = new_a;
-				return array.Length;
+				return array.Length-1;
 			} else {
 				array = new Type [1];
 				array [0] = t;
@@ -184,7 +184,6 @@ namespace System.Reflection.Emit {
 				     Locale.GetText (
 				     	String.Format ("Custom modifiers length `{0}' does not match the size of the arguments")));
 			
-			for (int i = 0; i < n; i++)
 			foreach (Type [] parameter_modifiers in custom_modifiers){
 				if (parameter_modifiers == null)
 					continue;
@@ -225,14 +224,15 @@ namespace System.Reflection.Emit {
 			AddArgument (argument);
 		}
 
-		[MonoTODO ("not implemented")]
 		public void AddArgument (Type argument, Type [] requiredCustomModifiers, Type [] optionalCustomModifiers)
 		{
 			if (argument == null)
 				throw new ArgumentNullException ("argument");
 
-			ValidateParameterModifiers ("requiredCustomModifiers", requiredCustomModifiers);
-			ValidateParameterModifiers ("optionalCustomModifiers", optionalCustomModifiers);
+			if (requiredCustomModifiers != null)
+				ValidateParameterModifiers ("requiredCustomModifiers", requiredCustomModifiers);
+			if (optionalCustomModifiers != null)
+				ValidateParameterModifiers ("optionalCustomModifiers", optionalCustomModifiers);
 
 			int p = AppendArray (ref arguments, argument);
 			if (requiredCustomModifiers != null)
