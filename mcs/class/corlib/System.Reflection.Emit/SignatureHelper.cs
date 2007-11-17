@@ -58,6 +58,8 @@ namespace System.Reflection.Emit {
 		private Type returnType;
 		private CallingConventions callConv;
 		private CallingConvention unmanagedCallConv;
+		private Type[][] modreqs;
+		private Type[][] modopts;
 
 		internal SignatureHelper (ModuleBuilder module, SignatureHelperType type)
 		{
@@ -121,7 +123,56 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+		//
+		// Grows the given array, and returns the index where the element
+		// was added
+		//
+		static int AppendArray (ref Type [] array, Type t)
+		{
+			if (array != null) {
+				Type[] new_a = new Type [array.Length + 1];
+				System.Array.Copy (array, new_a, array.Length);
+				new_a [array.Length] = t;
+				array = new_a;
+				return array.Length;
+			} else {
+				array = new Type [1];
+				array [0] = t;
+				return 0;
+			}
+		}
+
 #if NET_2_0
+		//
+		// Appends the given type array @t into the @array passed at
+		// position @pos.   If there is no array, it gets created
+		//
+		// This allows adding data to a null array at position 5 for
+		// example, creating 4 empty slots before the slot where @t
+		// is stored.
+		//
+		//
+		static void AppendArrayAt (ref Type [][] array, Type [] t, int pos)
+		{
+			int top = Math.Max (pos, array == null ? 0 : array.Length);
+			Type[][] new_a = new Type [top+1][];
+			if (array != null)
+				System.Array.Copy (array, new_a, top);
+			new_a [pos] = t;
+			array = new_a;
+		}
+		
+		static void ValidateParameterModifiers(string name, Type [] parameter_modifiers)
+		{
+			foreach (Type modifier in parameter_modifiers){
+				if (modifier == null)
+					throw new ArgumentNullException (name);
+				if (modifier.IsArray)
+					throw new ArgumentException (Locale.GetText ("Array type not permitted"), name);
+				if (modifier.ContainsGenericParameters)
+					throw new ArgumentException (Locale.GetText ("Open Generic Type not permitted"), name);
+			}
+		}
 
 		static void ValidateCustomModifier (int n, Type [][] custom_modifiers, string name)
 		{
@@ -137,15 +188,8 @@ namespace System.Reflection.Emit {
 			foreach (Type [] parameter_modifiers in custom_modifiers){
 				if (parameter_modifiers == null)
 					continue;
-				
-				foreach (Type modififier in parameter_modifiers){
-					if (modififier == null)
-						throw new ArgumentNullException (name);
-					if (modififier.IsArray)
-						throw new ArgumentException (Locale.GetText ("Array type not permitted"), name);
-					if (modififier.ContainsGenericParameters)
-						throw new ArgumentException (Locale.GetText ("Open Generic Type not permitted"), name);
-				}
+
+				ValidateParameterModifiers (name, parameter_modifiers);
 			}
 		}
 
@@ -167,10 +211,34 @@ namespace System.Reflection.Emit {
 			
 			ValidateCustomModifier (arguments.Length, requiredCustomModifiers, "requiredCustomModifiers");
 			ValidateCustomModifier (arguments.Length, optionalCustomModifiers, "optionalCustomModifiers");
-			
-			foreach (Type t in arguments){
-				AddArgument (t);
+
+			for (int i = 0; i < arguments.Length; i++){
+				AddArgument (arguments [i],
+					     requiredCustomModifiers != null ? requiredCustomModifiers [i] : null,
+					     optionalCustomModifiers != null ? optionalCustomModifiers [i] : null);
 			}
+		}
+
+		[MonoTODO ("pinned is ignored")]
+		public void AddArgument (Type argument, bool pinned)
+		{
+			AddArgument (argument);
+		}
+
+		[MonoTODO ("not implemented")]
+		public void AddArgument (Type argument, Type [] requiredCustomModifiers, Type [] optionalCustomModifiers)
+		{
+			if (argument == null)
+				throw new ArgumentNullException ("argument");
+
+			ValidateParameterModifiers ("requiredCustomModifiers", requiredCustomModifiers);
+			ValidateParameterModifiers ("optionalCustomModifiers", optionalCustomModifiers);
+
+			int p = AppendArray (ref arguments, argument);
+			if (requiredCustomModifiers != null)
+				AppendArrayAt (ref modreqs, requiredCustomModifiers, p);
+			if (optionalCustomModifiers != null)
+				AppendArrayAt (ref modopts, optionalCustomModifiers, p);
 		}
 
 		[MonoTODO("Not implemented")]
@@ -187,30 +255,11 @@ namespace System.Reflection.Emit {
 
 		public void AddArgument (Type clsArgument)
 		{
-			if (arguments != null) {
-				Type[] new_a = new Type [arguments.Length + 1];
-				System.Array.Copy (arguments, new_a, arguments.Length);
-				new_a [arguments.Length] = clsArgument;
-				arguments = new_a;
-			} else {
-				arguments = new Type [1];
-				arguments [0] = clsArgument;
-			}
-		}
+			if (clsArgument == null)
+				throw new ArgumentNullException ("argument");
 
-#if NET_2_0
-		[MonoTODO ("pinned is ignored")]
-		public void AddArgument (Type argument, bool pinned)
-		{
-			AddArgument (argument);
+			AppendArray (ref arguments, clsArgument);
 		}
-
-		[MonoTODO ("not implemented")]
-		public void AddArgument (Type argument, Type [] requiredCustomModifiers, Type [] optionalCustomModifiers)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 
 		[MonoTODO("Not implemented")]
 		public void AddSentinel ()
