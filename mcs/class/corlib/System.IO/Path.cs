@@ -518,24 +518,23 @@ namespace System.IO {
 
 		public static string GetRandomFileName ()
 		{
-			char[] invalid = GetInvalidFileNameChars ();
 			// returns a 8.3 filename (total size 12)
 			StringBuilder sb = new StringBuilder (12);
 			// using strong crypto but without creating the file
 			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			byte[] buffer = new byte [16];
-			while (sb.Length < 12) {
-				int i = 0;
-				rng.GetNonZeroBytes (buffer);
-				while ((i < buffer.Length) && (sb.Length < 12)) {
-					char c = (char) buffer [i];
-					if (Array.IndexOf (invalid, c) == -1)
-						sb.Append (c);
-					i++;
-					if (sb.Length == 8)
-						sb.Append ('.');
-				}
+			byte [] buffer = new byte [11];
+			rng.GetBytes (buffer);
+
+			for (int i = 0; i < buffer.Length; i++) {
+				if (sb.Length == 8)
+					sb.Append ('.');
+
+				// restrict to length of range [a..z0..9]
+				int b = (buffer [i] % 36);
+				char c = (char) (b < 26 ? (b + 'a') : (b - 26 + '0'));
+				sb.Append (c);
 			}
+
 			return sb.ToString ();
 		}
 #endif
