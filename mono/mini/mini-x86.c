@@ -258,13 +258,14 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
  * For x86 win32, see ???.
  */
 static CallInfo*
-get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
+get_call_info (MonoCompile *cfg, MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint32 i, gr, fr;
 	MonoType *ret_type;
 	int n = sig->hasthis + sig->param_count;
 	guint32 stack_size = 0;
 	CallInfo *cinfo;
+	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 
 	if (mp)
 		cinfo = mono_mempool_alloc0 (mp, sizeof (CallInfo) + (sizeof (ArgInfo) * n));
@@ -798,7 +799,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	header = mono_method_get_header (cfg->method);
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 
 	cfg->frame_reg = MONO_ARCH_BASEREG;
 	offset = 0;
@@ -919,7 +920,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
@@ -1005,7 +1006,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 
-	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
@@ -2339,7 +2340,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 	case OP_VCALL2:
 	case OP_VCALL2_REG:
 	case OP_VCALL2_MEMBASE:
-		cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
+		cinfo = get_call_info (cfg, cfg->mempool, ((MonoCallInst*)ins)->signature, FALSE);
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
 			/* Pop the destination address from the stack */
 			x86_pop_reg (code, X86_ECX);
@@ -2421,7 +2422,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 
 	sig = mono_method_signature (method);
 
-	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 	
 	/* This is the opposite of the code in emit_prolog */
 
@@ -4582,7 +4583,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	}
 
 	/* Load returned vtypes into registers if needed */
-	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 	if (cinfo->ret.storage == ArgValuetypeInReg) {
 		for (quad = 0; quad < 2; quad ++) {
 			switch (cinfo->ret.pair_storage [quad]) {
@@ -4798,7 +4799,7 @@ void
 mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg)
 {
 	MonoCallInst *call = (MonoCallInst*)inst;
-	CallInfo *cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, inst->signature, FALSE);
+	CallInfo *cinfo = get_call_info (cfg, cfg->mempool, inst->signature, FALSE);
 
 	/* add the this argument */
 	if (this_reg != -1) {
@@ -5018,42 +5019,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			ins->inst_i1 = args [1];
 		}
 #endif
-	} else if (cmethod->klass == mono_defaults.thread_class &&
-			   strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-	} else if(cmethod->klass->image == mono_defaults.corlib &&
-			   (strcmp (cmethod->klass->name_space, "System.Threading") == 0) &&
-			   (strcmp (cmethod->klass->name, "Interlocked") == 0)) {
-
-		if (strcmp (cmethod->name, "Increment") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MonoInst *ins_iconst;
-
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = 1;
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
-		} else if (strcmp (cmethod->name, "Decrement") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MonoInst *ins_iconst;
-
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = -1;
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = ins_iconst;
-		} else if (strcmp (cmethod->name, "Exchange") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_EXCHANGE_I4);
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
-		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->params [0]->type == MONO_TYPE_I4) {
-			MONO_INST_NEW (cfg, ins, OP_ATOMIC_ADD_NEW_I4);
-
-			ins->inst_i0 = args [0];
-			ins->inst_i1 = args [1];
-		}
 	}
 
 	return ins;
