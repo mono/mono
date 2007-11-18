@@ -1,3 +1,10 @@
+2007-11-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	[Backport r89888]
+	* RSAManaged.cs: Fix the rare case where the inverse of q modulo p 
+	can result in bigint one byte shorter than expected, which could 
+	mess up the export/import of the key.
+
 2007-05-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Sync with Mono.Security version - mostly the patch
