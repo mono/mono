@@ -267,16 +267,81 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
+		static bool CompareOK (Type [][] one, Type [][] two)
+		{
+			if (one == null){
+				if (two == null)
+					return true;
+				return false;
+			} else if (two == null)
+				return false;
+
+			if (one.Length != two.Length)
+				return false;
+
+			for (int i = 0; i < one.Length; i++){
+				Type [] tone = one [i];
+				Type [] ttwo = two [i];
+
+				if (tone == null){
+					if (ttwo == null)
+						continue;
+				} else if (ttwo == null)
+					return false;
+
+				if (tone.Length != ttwo.Length)
+					return false;
+
+				for (int j = 0; j < tone.Length; j++){
+					Type uone = tone [j];
+					Type utwo = ttwo [j];
+					
+					if (uone == null){
+						if (utwo == null)
+							continue;
+						return false;
+					} else if (utwo == null)
+						return false;
+
+					if (!uone.Equals (utwo))
+						return false;
+				}
+			}
+			return true;
+		}
+		
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			SignatureHelper other = obj as SignatureHelper;
+			if (other == null)
+				return false;
+
+			if (other.module != module ||
+			    other.returnType != returnType ||
+			    other.callConv != callConv ||
+			    other.unmanagedCallConv != unmanagedCallConv)
+				return false;
+
+			if (arguments != null){
+				if (other.arguments == null)
+					return false;
+				if (arguments.Length != other.arguments.Length)
+					return false;
+
+				for (int i = 0; i < arguments.Length; i++)
+					if (!other.arguments [i].Equals (arguments [i]))
+						return false;
+			} else if (other.arguments != null)
+				return false;
+
+			return CompareOK (other.modreqs, modreqs) && CompareOK (other.modopts, modopts);
 		}
 
-		[MonoTODO("Not implemented")]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			// Lame, but easy, and will work, and chances are
+			// you will only need a few of these.
+			return 0;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -1,3 +1,7 @@
+2007-11-18  Miguel de Icaza  <miguel@novell.com>
+
+	* SignatureHelper.cs: Implement Equals and GetHashCode
+
 2007-11-17  Miguel de Icaza  <miguel@novell.com>
 
 	* SignatureHelper.cs: Preparational tasks to support the
