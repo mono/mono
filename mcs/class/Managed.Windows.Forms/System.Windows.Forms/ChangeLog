@@ -1,3 +1,7 @@
+2007-11-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Implement 2.0 FindNearestItem method.
+
 2007-11-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuStrip.cs: Guard against a NRE when a MdiWindowItem is set

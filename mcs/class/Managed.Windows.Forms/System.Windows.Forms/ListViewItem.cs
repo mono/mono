@@ -671,6 +671,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		public ListViewItem FindNearestItem (SearchDirectionHint searchDirection)
+		{
+			if (owner == null)
+				return null;
+
+			Point loc = owner.GetItemLocation (display_index);
+			return owner.FindNearestItem (searchDirection, loc);
+		}
+#endif
+
 		public Rectangle GetBounds (ItemBoundsPortion portion)
 		{
 			if (owner == null)
