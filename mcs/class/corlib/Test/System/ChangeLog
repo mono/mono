@@ -1,3 +1,9 @@
+2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* EnumTest.cs: No longer derive from deprecated TestCase. Improved
+	and added tests for argument checks. Added tests to ToObject. Code
+	formatting. Group enums.
+
 2007-11-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Splited MakeGenericType_UserDefinedType is two tests.

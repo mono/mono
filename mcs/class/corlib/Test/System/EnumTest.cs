@@ -1,904 +1,1003 @@
 // EnumTest.cs - NUnit Test Cases for the System.Enum class
 //
 // David Brandt (bucky@keystreams.com)
+// Gert Driesen (drieseng@users.sourceforge.net)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // 
 
-using NUnit.Framework;
 using System;
 using System.IO;
 using System.Reflection;
 
+using NUnit.Framework;
 
 namespace MonoTests.System
 {
-
-public class EnumTest : TestCase
-{
-	public EnumTest() {}
-
-	protected override void SetUp() 
+	[TestFixture]
+	public class EnumTest
 	{
-	}
-
-	protected override void TearDown() 
-	{
-	}
-
-	enum TestingEnum {This, Is, A, Test};
-	enum TestingEnum2 {This, Is, A, Test};
-	enum TestingEnum3: ulong {This, Is, A, Test = ulong.MaxValue };
-	enum TestingEnum4: byte { This, Is, A, Test = byte.MaxValue }
-	enum TestingEnum5: short { This, Is, A, Test = short.MaxValue }
-	enum TestingEnum6 { This, Is, A, Test = int.MaxValue }
-
-	public void TestCompareTo() {
-		Enum e1 = new TestingEnum();
-		Enum e2 = new TestingEnum();
-		Enum e3 = new TestingEnum2();
-
-		AssertEquals("An enum should equal itself", 
-			     0, e1.CompareTo(e1));
-		AssertEquals("An enum should equal a copy", 
-			     0, e1.CompareTo(e2));
-
-		TestingEnum x = TestingEnum.This;
-		TestingEnum y = TestingEnum.Is;
-		AssertEquals("should equal", 0, x.CompareTo(x));
-		AssertEquals("less than", -1, x.CompareTo(y));
-		AssertEquals("greater than", 1, y.CompareTo(x));
-
+		[Test]
+		public void TestCompareTo ()
 		{
-			bool errorThrown = false;
+			Enum e1 = new TestingEnum ();
+			Enum e2 = new TestingEnum ();
+			Enum e3 = new TestingEnum2 ();
+
+			Assert.AreEqual (0, e1.CompareTo (e1), "#A1");
+			Assert.AreEqual (0, e1.CompareTo (e2), "#A2");
+
+			TestingEnum x = TestingEnum.This;
+			TestingEnum y = TestingEnum.Is;
+			Assert.AreEqual (0, x.CompareTo (x), "#B1");
+			Assert.AreEqual (-1, x.CompareTo (y), "#B2");
+			Assert.AreEqual (1, y.CompareTo (x), "#B3");
+
 			try {
-				e1.CompareTo(e3);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				e1.CompareTo (e3);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Object must be the same type as the enum.
+				// The type passed in was MonoTests.System.EnumTest+TestingEnum2;
+				// the enum type was MonoTests.System.EnumTest+TestingEnum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum).FullName) != -1, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum2).FullName) != -1, "#A6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
-			Assert("1) Compare type mismatch not caught.", 
-			       errorThrown);
+
+			try {
+				((Enum) e1).CompareTo ((Enum) e3);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Object must be the same type as the enum.
+				// The type passed in was MonoTests.System.EnumTest+TestingEnum2;
+				// the enum type was MonoTests.System.EnumTest+TestingEnum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum).FullName) != -1, "#D5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum2).FullName) != -1, "#D6");
+				Assert.IsNull (ex.ParamName, "#D7");
+			}
 		}
+
+		[Test]
+		public void TestEquals ()
 		{
-			bool errorThrown = false;
-			try {
-				((Enum)e1).CompareTo((Enum)e3);
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("2) Compare type mismatch not caught.", 
-			       errorThrown);
-		}
-	}
-	
-	public void TestEquals() {
-		Enum e1 = new TestingEnum();
-		Enum e2 = new TestingEnum();
-		Enum e3 = new TestingEnum2();
+			Enum e1 = new TestingEnum ();
+			Enum e2 = new TestingEnum ();
+			Enum e3 = new TestingEnum2 ();
 
-		Assert("An enum should equal itself", e1.Equals(e1));
-		Assert("An enum should equal a copy", e1.Equals(e2));
-
-		Assert("Shouldn't match", !e1.Equals(e3));
-		Assert("Shouldn't match null", !e1.Equals(null));
-	}
-
-	public void TestFormat_Args() {
-		try {
-			TestingEnum x = TestingEnum.Test;
-			Enum.Format(null, x, "G");
-			Fail("#A1: null first arg not caught.");
-		} catch (ArgumentNullException ex) {
-			AssertEquals ("#A2", "enumType", ex.ParamName);
-		} catch (Exception e) {
-			Fail("#A3: first arg null, wrong exception: " + e.ToString());
+			Assert.IsTrue (e1.Equals (e1), "#1");
+			Assert.IsTrue (e1.Equals (e2), "#2");
+			Assert.IsFalse (e1.Equals (e3), "#3");
+			Assert.IsFalse (e1.Equals (null), "#4");
 		}
 
-		try {
-			Enum.Format(typeof(TestingEnum), null, "G");
-			Fail("#B1: null second arg not caught.");
-		} catch (ArgumentNullException ex) {
-			AssertEquals ("#B2", "value", ex.ParamName);
-		} catch (Exception e) {
-			Fail("#B3: second arg null, wrong exception: " + e.ToString());
-		}
-
-		try {
-			TestingEnum x = TestingEnum.Test;
-			Enum.Format(x.GetType(), x, null);
-			Fail("#C1: null third arg not caught.");
-		} catch (ArgumentNullException ex) {
-			AssertEquals ("#C2", "format", ex.ParamName);
-		} catch (Exception e) {
-			Fail("#C3: third arg null, wrong exception: " + e.ToString());
-		}
-
-		try {
-			TestingEnum x = TestingEnum.Test;
-			Enum.Format(typeof(string), x, "G");
-			Fail("#D1: bad type arg not caught.");
-		} catch (ArgumentException) {
-			// Type provided must be an Enum
-		} catch (Exception e) {
-			Fail("#D2: bad type, wrong exception: " + e.ToString());
-		}
-
-		try {
-			TestingEnum x = TestingEnum.Test;
-			TestingEnum2 y = TestingEnum2.Test;
-			Enum.Format(y.GetType(), x, "G");
-			Fail("#E1: wrong enum type not caught.");
-		} catch (ArgumentException ex) {
-			// Object must be the same type as the enum. The type passed in was
-			// MonoTests.System.EnumTest.TestingEnum2; the enum type was
-			// MonoTests.System.EnumTest.TestingEnum
-			AssertNotNull ("#E2", ex.Message);
-			Assert ("#E3", ex.Message.IndexOf (typeof (TestingEnum2).FullName) != -1);
-			Assert ("#E4", ex.Message.IndexOf (typeof (TestingEnum).FullName) != -1);
-		} catch (Exception e) {
-			Fail("#E5: wrong enum type, wrong exception: " + e.ToString());
-		}
-
-		try {
-			String bad = "huh?";
-			TestingEnum x = TestingEnum.Test;
-			Enum.Format(x.GetType(), bad, "G");
-			Fail("#F1: non-enum object not caught.");
-		} catch (ArgumentException ex) {
-			// Enum underlying type and the object must be the same type or
-			// object. Type passed in was String.String; the enum underlying
-			// was System.Int32
-			AssertNotNull ("#F2", ex.Message);
-			Assert ("#F3", ex.Message.IndexOf (typeof (string).FullName) != -1);
-			Assert ("#F4", ex.Message.IndexOf (typeof (int).FullName) != -1);
-		} catch (Exception e) {
-			Fail("#F5: non-enum object, wrong exception: " + e.ToString());
-		}
-
-		string[] codes = {"a", "b", "c", "ad", "e", "af", "ag", "h", 
-				  "i", "j", "k", "l", "m", "n", "o", "p", 
-				  "q", "r", "s", "t", "u", "v", "w", "ax", 
-				  "y", "z"};
-		foreach (string code in codes) {
+		[Test]
+		public void TestFormat_Args ()
+		{
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.Format(x.GetType(), x, code);
-				Fail ("bad format code not caught - " + code);
-			} catch (FormatException) {
-				// do nothing
-			} catch (Exception e) {
-				Fail (String.Format ("bad format code ({0}), wrong exception: {1}", 
-				                     code, e.ToString()));
+				Enum.Format (null, x, "G");
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
 			}
-		}
 
-		TestingEnum test = TestingEnum.Test;
-		AssertEquals("decimal format wrong",
-				 "3", Enum.Format (test.GetType (), test, "d"));
-		AssertEquals("decimal format wrong for ulong enums", 
-			     "18446744073709551615", Enum.Format(typeof(TestingEnum3), TestingEnum3.Test, "d"));
-		AssertEquals("named format wrong",
-				 "Test", Enum.Format (test.GetType (), test, "g"));
-		AssertEquals("hex format wrong",
-				 "00000003", Enum.Format (test.GetType (), test, "x"));
-		AssertEquals("bitfield format wrong",
-				 "Test", Enum.Format (test.GetType (), test, "f"));
-	}
+			try {
+				Enum.Format (typeof (TestingEnum), null, "G");
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("value", ex.ParamName, "#B6");
+			}
 
-	public void TestFormat_FormatSpecifier ()
-	{
-		ParameterAttributes pa = 
-			ParameterAttributes.In | ParameterAttributes.HasDefault;
-		const string fFormatOutput = "In, HasDefault";
-		const string xFormatOutput = "00001001";
-		string fOutput = Enum.Format (pa.GetType(), pa, "f");
-		AssertEquals ("#F_FS:f", fFormatOutput, fOutput);
-		string xOutput = Enum.Format (pa.GetType(), pa, "x");
-		AssertEquals ("#F_FS:x", xFormatOutput, xOutput);
-
-		AssertEquals ("#F_FSX:01", "00", TestingEnum4.This.ToString("x"));
-		AssertEquals ("#F_FSX:02", "00", TestingEnum4.This.ToString("X"));
-#if !TARGET_JVM // This appears not to work under .Net 
-		AssertEquals ("#F_FSX:03", "ff", TestingEnum4.Test.ToString("x"));
-#endif // TARGET_JVM
-		AssertEquals ("#F_FSX:04", "FF", TestingEnum4.Test.ToString("X"));
-
-		AssertEquals ("#F_FSX:05", "0000", TestingEnum5.This.ToString("x"));
-		AssertEquals ("#F_FSX:06", "0000", TestingEnum5.This.ToString("X"));
-#if !TARGET_JVM // This appears not to work under .Net 
-		AssertEquals ("#F_FSX:07", "7fff", TestingEnum5.Test.ToString("x"));
-#endif // TARGET_JVM
-		AssertEquals ("#F_FSX:08", "7FFF", TestingEnum5.Test.ToString("X"));
-
-		AssertEquals ("#F_FSX:09", "00000000", TestingEnum6.This.ToString("x"));
-		AssertEquals ("#F_FSX:10", "00000000", TestingEnum6.This.ToString("X"));
-#if !TARGET_JVM // This appears not to work under .Net 
-		AssertEquals ("#F_FSX:11", "7fffffff", TestingEnum6.Test.ToString("x"));
-#endif // TARGET_JVM
-		AssertEquals ("#F_FSX:12", "7FFFFFFF", TestingEnum6.Test.ToString("X"));
-
-		AssertEquals ("#F_FSX:13", "0000000000000000", TestingEnum3.This.ToString("x"));
-		AssertEquals ("#F_FSX:14", "0000000000000000", TestingEnum3.This.ToString("X"));
-#if !TARGET_JVM // This appears not to work under .Net 
-		AssertEquals ("#F_FSX:15", "ffffffffffffffff", TestingEnum3.Test.ToString("x"));
-#endif // TARGET_JVM
-		AssertEquals ("#F_FSX:16", "FFFFFFFFFFFFFFFF", TestingEnum3.Test.ToString("X"));
-	}
-
-	public void TestGetHashCode() {
-		Enum e1 = new TestingEnum();
-		Enum e2 = new TestingEnum2();
-
-		AssertEquals("hash code is deterministic", 
-			     e1.GetHashCode(), e1.GetHashCode());
-	}
-	
-	public void GetName() {
-		{
-			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.GetName(null, x);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.Format (x.GetType (), x, null);
+				Assert.Fail ("#C1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("format", ex.ParamName, "#C6");
 			}
-			Assert("null first arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.GetName(x.GetType(), null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.Format (typeof (string), x, "G");
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
 			}
-			Assert("null second arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
-			try {
-				String bad = "huh?";
-				TestingEnum x = TestingEnum.Test;
-				Enum.GetName(bad.GetType(), x);
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
 				TestingEnum2 y = TestingEnum2.Test;
-				Enum.GetName(y.GetType(), x);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Format (y.GetType (), x, "G");
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// Object must be the same type as the enum. The type passed in was
+				// MonoTests.System.EnumTest.TestingEnum2; the enum type was
+				// MonoTests.System.EnumTest.TestingEnum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum2).FullName) != -1, "#E5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (TestingEnum).FullName) != -1, "#E6");
+				Assert.IsNull (ex.ParamName, "#A7");
 			}
-			Assert("wrong enum type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
 				TestingEnum x = TestingEnum.Test;
-				Enum.GetName(x.GetType(), bad);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Format (x.GetType (), bad, "G");
+				Assert.Fail ("#F1");
+			} catch (ArgumentException ex) {
+				// Enum underlying type and the object must be the same type or
+				// object. Type passed in was String.String; the enum underlying
+				// was System.Int32
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (string).FullName) != -1, "#F5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (int).FullName) != -1, "#F6");
+				Assert.IsNull (ex.ParamName, "#F7");
 			}
-			Assert("non-enum object not caught.", 
-			       errorThrown);
-		}
-		{
-			TestingEnum x = TestingEnum.This;
-			TestingEnum y = TestingEnum.Is;
-			TestingEnum z = TestingEnum.A;
 
-			AssertEquals("first name doesn't match",
-				     "This", Enum.GetName(x.GetType(), x));
-			AssertEquals("second name doesn't match",
-				     "Is", Enum.GetName(y.GetType(), y));
-			AssertEquals("third name doesn't match",
-				     "A", Enum.GetName(z.GetType(), z));
-		}
-	}
+			string [] codes = {"a", "b", "c", "ad", "e", "af", "ag", "h", 
+				  "i", "j", "k", "l", "m", "n", "o", "p", 
+				  "q", "r", "s", "t", "u", "v", "w", "ax", 
+				  "y", "z"};
+			foreach (string code in codes) {
+				try {
+					TestingEnum x = TestingEnum.Test;
+					Enum.Format (x.GetType (), x, code);
+					Assert.Fail ("#G1:" + code);
+				} catch (FormatException ex) {
+					// Format String can be only "G","g","X","x","F","f","D" or "d"
+					Assert.AreEqual (typeof (FormatException), ex.GetType (), "#G2");
+					Assert.IsNull (ex.InnerException, "#G3");
+					Assert.IsNotNull (ex.Message, "#G4");
+				}
+			}
 
-	public void TestGetNames() {
+			TestingEnum test = TestingEnum.Test;
+			Assert.AreEqual ("3", Enum.Format (test.GetType (), test, "d"), "#H1");
+			Assert.AreEqual ("18446744073709551615", Enum.Format (typeof (TestingEnum3), TestingEnum3.Test, "d"), "#H2");
+			Assert.AreEqual ("Test", Enum.Format (test.GetType (), test, "g"), "#H3");
+			Assert.AreEqual ("00000003", Enum.Format (test.GetType (), test, "x"), "#H4");
+			Assert.AreEqual ("Test", Enum.Format (test.GetType (), test, "f"), "#H5");
+		}
+
+		public void TestFormat_FormatSpecifier ()
 		{
-			bool errorThrown = false;
+			ParameterAttributes pa =
+				ParameterAttributes.In | ParameterAttributes.HasDefault;
+			const string fFormatOutput = "In, HasDefault";
+			const string xFormatOutput = "00001001";
+			string fOutput = Enum.Format (pa.GetType (), pa, "f");
+			Assert.AreEqual (fFormatOutput, fOutput, "#A1");
+			string xOutput = Enum.Format (pa.GetType (), pa, "x");
+			Assert.AreEqual (xFormatOutput, xOutput, "#A2");
+
+			Assert.AreEqual ("00", TestingEnum4.This.ToString ("x"), "#B1");
+			Assert.AreEqual ("00", TestingEnum4.This.ToString ("X"), "#B2");
+#if !TARGET_JVM // This appears not to work under .Net
+			Assert.AreEqual ("ff", TestingEnum4.Test.ToString ("x"), "#B3");
+#endif // TARGET_JVM
+			Assert.AreEqual ("FF", TestingEnum4.Test.ToString ("X"), "#B4");
+
+			Assert.AreEqual ("0000", TestingEnum5.This.ToString ("x"), "#C1");
+			Assert.AreEqual ("0000", TestingEnum5.This.ToString ("X"), "#C2");
+#if !TARGET_JVM // This appears not to work under .Net
+			Assert.AreEqual ("7fff", TestingEnum5.Test.ToString ("x"), "#C3");
+#endif // TARGET_JVM
+			Assert.AreEqual ("7FFF", TestingEnum5.Test.ToString ("X"), "#C4");
+
+			Assert.AreEqual ("00000000", TestingEnum6.This.ToString ("x"), "#D1");
+			Assert.AreEqual ("00000000", TestingEnum6.This.ToString ("X"), "#D2");
+#if !TARGET_JVM // This appears not to work under .Net
+			Assert.AreEqual ("7fffffff", TestingEnum6.Test.ToString ("x"), "#D3");
+#endif // TARGET_JVM
+			Assert.AreEqual ("7FFFFFFF", TestingEnum6.Test.ToString ("X"), "#D4");
+
+			Assert.AreEqual ("0000000000000000", TestingEnum3.This.ToString ("x"), "#E1");
+			Assert.AreEqual ("0000000000000000", TestingEnum3.This.ToString ("X"), "#E2");
+#if !TARGET_JVM // This appears not to work under .Net
+			Assert.AreEqual ("ffffffffffffffff", TestingEnum3.Test.ToString ("x"), "#E3");
+#endif // TARGET_JVM
+			Assert.AreEqual ("FFFFFFFFFFFFFFFF", TestingEnum3.Test.ToString ("X"), "#E4");
+		}
+
+		[Test]
+		public void TestGetHashCode ()
+		{
+			Enum e1 = new TestingEnum ();
+			Enum e2 = new TestingEnum2 ();
+
+			Assert.AreEqual (e1.GetHashCode (), e1.GetHashCode ());
+		}
+
+		[Test]
+		public void GetName ()
+		{
 			try {
-				Enum.GetNames(null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				TestingEnum x = TestingEnum.Test;
+				Enum.GetName (null, x);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
 			}
-			Assert("null type not caught.", 
-			       errorThrown);
-		}
-		{
-			TestingEnum x = TestingEnum.This;
-			string[] match = {"This", "Is", "A", "Test"};
-			string[] names = Enum.GetNames(x.GetType());
-			AssertNotNull("Got no names", names);
-			AssertEquals("names wrong size", 
-				     match.Length, names.Length);
-			for (int i = 0; i < names.Length; i++) {
-				AssertEquals("name mismatch",
-					     match[i], names[i]);
-			}
-		}
-	}
 
-	public void TestGetTypeCode() {
-		TestingEnum x = TestingEnum.This;
-		TestingEnum y = new TestingEnum();
-		AssertEquals("01 bad type code", 
-			     TypeCode.Int32, x.GetTypeCode());
-		AssertEquals("02 bad type code", 
-			     TypeCode.Int32, y.GetTypeCode());
-	}
-
-	enum TestShortEnum : short { zero, one, two, three, four, five, six};
-	public void TestGetUnderlyingType() {
-		{
-			bool errorThrown = false;
 			try {
-				Enum.GetUnderlyingType(null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				TestingEnum x = TestingEnum.Test;
+				Enum.GetName (x.GetType (), null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("value", ex.ParamName, "#B6");
 			}
-			Assert("null type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
-				Enum.GetUnderlyingType(bad.GetType());
-			} catch (ArgumentException) {
-				errorThrown = true;
+				TestingEnum x = TestingEnum.Test;
+				Enum.GetName (bad.GetType (), x);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#C6");
 			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
+
+			try {
+				String bad = "huh?";
+				TestingEnum x = TestingEnum.Test;
+				Enum.GetName (x.GetType (), bad);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNotNull (ex.ParamName, "#D5");
+				Assert.AreEqual ("value", ex.ParamName, "#D6");
+			}
+
+			TestingEnum a = TestingEnum.This;
+			TestingEnum b = TestingEnum.Is;
+			TestingEnum c = TestingEnum.A;
+			TestingEnum2 d = TestingEnum2.Test;
+
+			Assert.AreEqual ("This", Enum.GetName (a.GetType (), a), "#E1");
+			Assert.AreEqual ("Is", Enum.GetName (b.GetType (), b), "#E2");
+			Assert.AreEqual ("A", Enum.GetName (c.GetType (), c), "#E3");
+			Assert.AreEqual ("Test", Enum.GetName (c.GetType (), d), "#E4");
 		}
+
+		[Test]
+		public void TestGetNames ()
 		{
+			try {
+				Enum.GetNames (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
+			}
+
+			TestingEnum x = TestingEnum.This;
+			string [] match = { "This", "Is", "A", "Test" };
+			string [] names = Enum.GetNames (x.GetType ());
+			Assert.IsNotNull (names, "#B1");
+			Assert.AreEqual (match.Length, names.Length, "#B2");
+			for (int i = 0; i < names.Length; i++)
+				Assert.AreEqual (match [i], names [i], "#B3");
+		}
+
+		[Test]
+		public void TestGetTypeCode ()
+		{
+			TestingEnum x = TestingEnum.This;
+			TestingEnum y = new TestingEnum ();
+			Assert.AreEqual (TypeCode.Int32, x.GetTypeCode (), "#1");
+			Assert.AreEqual (TypeCode.Int32, y.GetTypeCode (), "#2");
+		}
+
+		[Test]
+		public void TestGetUnderlyingType ()
+		{
+			try {
+				Enum.GetUnderlyingType (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
+			}
+
+			try {
+				String bad = "huh?";
+				Enum.GetUnderlyingType (bad.GetType ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#B6");
+			}
+
 			short sh = 5;
 			int i = 5;
-			Enum t1 = new TestingEnum();
-			Enum t2 = new TestShortEnum();
-			AssertEquals("Wrong default underlying type",
-				     i.GetType(), 
-				     Enum.GetUnderlyingType(t1.GetType()));
-			AssertEquals("Not short underlying type",
-				     sh.GetType(), 
-				     Enum.GetUnderlyingType(t2.GetType()));
+			Enum t1 = new TestingEnum ();
+			Enum t2 = new TestShortEnum ();
+			Assert.AreEqual (i.GetType (), Enum.GetUnderlyingType (t1.GetType ()), "#C1");
+			Assert.AreEqual (sh.GetType (), Enum.GetUnderlyingType (t2.GetType ()), "#C2");
 		}
-	}
 
-	public void TestGetValues() {
+		[Test]
+		public void TestGetValues ()
 		{
-			bool errorThrown = false;
 			try {
-				Enum.GetValues(null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.GetValues (null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
 			}
-			Assert("null type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
-				Enum.GetValues(bad.GetType());
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.GetValues (bad.GetType ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#B6");
 			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
-		}
-		{
-			Enum t1 = new TestingEnum();
-			Array a1 = Enum.GetValues(t1.GetType());
-			for (int i= 0; i < a1.Length; i++) {
-				AssertEquals("wrong enum value",
-					     (TestingEnum)i,
-					     a1.GetValue(i));
-			}
-		}
-		{
-			Enum t1 = new TestShortEnum();
-			Array a1 = Enum.GetValues(t1.GetType());
-			for (short i= 0; i < a1.Length; i++) {
-				AssertEquals("wrong short enum value",
-					     (TestShortEnum)i,
-					     a1.GetValue(i));
-			}
-		}
-	}
 
-	public void TestIsDefined() {
-		{
-			bool errorThrown = false;
-			try {
-				Enum.IsDefined(null, 1);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("null first arg not caught.", 
-			       errorThrown);
+			Enum t1 = new TestingEnum ();
+			Array a1 = Enum.GetValues (t1.GetType ());
+			for (int i = 0; i < a1.Length; i++)
+				Assert.AreEqual ((TestingEnum) i, a1.GetValue (i), "#C1");
+
+			Enum t2 = new TestShortEnum ();
+			Array a2 = Enum.GetValues (t2.GetType ());
+			for (short i = 0; i < a1.Length; i++)
+				Assert.AreEqual ((TestShortEnum) i, a2.GetValue (i), "#C2");
 		}
+
+		[Test]
+		public void TestIsDefined ()
 		{
-			bool errorThrown = false;
+			try {
+				Enum.IsDefined (null, 1);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
+			}
+
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.IsDefined(x.GetType(), null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.IsDefined (x.GetType (), null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("value", ex.ParamName, "#B6");
 			}
-			Assert("null second arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
 				int i = 4;
-				Enum.IsDefined(bad.GetType(), i);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.IsDefined (bad.GetType (), i);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#C6");
 			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
-		}
 
-		try {
-			TestingEnum x = TestingEnum.Test;
-			short i = 4;
-			Enum.IsDefined(x.GetType(), i);
-			Fail("wrong underlying type not caught.");
-		} catch (ArgumentException) {
-		} catch (Exception e) {
-			Fail("wrong Exception thrown ("+e.ToString()+")for underlying type not caught.");
-		}
-
-		// spec says yes, MS impl says no.
-		//{
-		//bool errorThrown = false;
-		//try {
-		//String bad = "huh?";
-		//TestingEnum x = TestingEnum.Test;
-		//Enum.IsDefined(x.GetType(), bad);
-		//} catch (ExecutionEngineException) {
-		//errorThrown = true;
-		//}
-		//Assert("non-enum object not caught.", 
-		//errorThrown);
-		//}
-		{
-			Enum t1 = new TestingEnum();
-			int i = 0;
-			for (i = 0; 
-			     i < Enum.GetValues(t1.GetType()).Length; i++) {
-				Assert("should have value for i=" + i,
-				       Enum.IsDefined(t1.GetType(), i));
-			}
-			Assert("Shouldn't have value",
-			       !Enum.IsDefined(t1.GetType(), i));
-		}
-	}
-
-	public void TestParse1() {
-		{
-			bool errorThrown = false;
-			try {
-				String name = "huh?";
-				Enum.Parse(null, name);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("null first arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.Parse(x.GetType(), null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				short i = 4;
+				Enum.IsDefined (x.GetType (), i);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNull (ex.ParamName, "#D5");
 			}
-			Assert("null second arg not caught.", 
-			       errorThrown);
+
+			Enum t1 = new TestingEnum ();
+			int valCount = Enum.GetValues (t1.GetType ()).Length;
+			for (int i = 0; i < valCount; i++)
+				Assert.IsTrue (Enum.IsDefined (t1.GetType (), i), "#F1:" + i);
+			Assert.IsFalse (Enum.IsDefined (t1.GetType (), valCount), "#F2");
+			Assert.IsFalse (Enum.IsDefined (typeof (TestingEnum), "huh?"), "#F3");
 		}
+
+		[Test]
+		public void TestParse1 ()
 		{
-			bool errorThrown = false;
+			try {
+				String name = "huh?";
+				Enum.Parse (null, name);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
+			}
+
+			try {
+				TestingEnum x = TestingEnum.Test;
+				Enum.Parse (x.GetType (), null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("value", ex.ParamName, "#B6");
+			}
+
 			try {
 				String bad = "huh?";
-				Enum.Parse(bad.GetType(), bad);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (bad.GetType (), bad);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNotNull (ex.ParamName, "#C5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#C6");
 			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = "";
-				Enum.Parse(x.GetType(), bad);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad);
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Must specify valid information for parsing
+				// in the string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNull (ex.ParamName, "#D5");
 			}
-			Assert("empty string not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = " ";
-				Enum.Parse(x.GetType(), bad);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad);
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.IsNull (ex.ParamName, "#E5");
 			}
-			Assert("space-only string not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
 				TestingEnum x = TestingEnum.Test;
-				Enum.Parse(x.GetType(), bad);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad);
+				Assert.Fail ("#F1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+				Assert.IsNull (ex.ParamName, "#F5");
 			}
-			Assert("not-in-enum error not caught.", 
-			       errorThrown);
+
+			TestingEnum t1 = new TestingEnum ();
+			Assert.AreEqual (TestingEnum.This, Enum.Parse (t1.GetType (), "This"), "#G1");
+			Assert.AreEqual (TestingEnum.Is, Enum.Parse (t1.GetType (), "Is"), "#G2");
+			Assert.AreEqual (TestingEnum.A, Enum.Parse (t1.GetType (), "A"), "#G3");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "Test"), "#G4");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "    \n\nTest\t"), "#G5");
+			Assert.AreEqual (TestingEnum.Is, Enum.Parse (t1.GetType (), "This,Is"), "#G6");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "This,Test"), "#G7");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "This,Is,A"), "#G8");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "   \n\tThis \t\n,    Is,A \n"), "#G9");
 		}
+
+		[Test]
+		public void TestParse2 ()
 		{
-			TestingEnum t1 = new TestingEnum();
-			AssertEquals("parse first enum",
-				     TestingEnum.This, 
-				     Enum.Parse(t1.GetType(), "This"));
-			AssertEquals("parse second enum",
-				     TestingEnum.Is, 
-				     Enum.Parse(t1.GetType(), "Is"));
-			AssertEquals("parse third enum",
-				     TestingEnum.A, 
-				     Enum.Parse(t1.GetType(), "A"));
-			AssertEquals("parse last enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "Test"));
-
-			AssertEquals("parse last enum with whitespace",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "    \n\nTest\t"));
-
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Is, 
-				     Enum.Parse(t1.GetType(), "This,Is"));
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "This,Test"));
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "This,Is,A"));
-
-			AssertEquals("parse bitwise-or enum with whitespace",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "   \n\tThis \t\n,    Is,A \n"));
-		}
-	}
-	public void TestParse2() {
-		{
-			bool errorThrown = false;
 			try {
 				String name = "huh?";
-				Enum.Parse(null, name, true);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.Parse (null, name, true);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#A6");
 			}
-			Assert("null first arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
-				Enum.Parse(x.GetType(), null, true);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), null, true);
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("value", ex.ParamName, "#B6");
 			}
-			Assert("null second arg not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
-				Enum.Parse(bad.GetType(), bad, true);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (bad.GetType (), bad, true);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNotNull (ex.ParamName, "#D5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#D6");
 			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = "";
-				Enum.Parse(x.GetType(), bad, true);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad, true);
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// Must specify valid information for parsing
+				// in the string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.IsNull (ex.ParamName, "#E5");
 			}
-			Assert("empty string not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				TestingEnum x = TestingEnum.Test;
 				String bad = " ";
-				Enum.Parse(x.GetType(), bad, true);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad, true);
+				Assert.Fail ("#F1");
+			} catch (ArgumentException ex) {
+				// Must specify valid information for parsing
+				// in the string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
+				Assert.IsFalse (ex.Message.IndexOf ("' '") != -1, "#F5");
+				Assert.IsNull (ex.ParamName, "#F6");
 			}
-			Assert("space-only string not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "huh?";
 				TestingEnum x = TestingEnum.Test;
-				Enum.Parse(x.GetType(), bad, true);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad, true);
+				Assert.Fail ("#G1");
+			} catch (ArgumentException ex) {
+				// Requested value 'huh?' was not found
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
+				Assert.IsNull (ex.InnerException, "#G3");
+				Assert.IsNotNull (ex.Message, "#G4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'huh?'") != -1, "#G5");
+#else
+				Assert.IsTrue (ex.Message.IndexOf ("huh?") != -1, "#G5");
+#endif
+				Assert.IsNull (ex.ParamName, "#G6");
 			}
-			Assert("not-in-enum error not caught.", 
-			       errorThrown);
-		}
-		{
-			bool errorThrown = false;
+
 			try {
 				String bad = "test";
 				TestingEnum x = TestingEnum.Test;
-				Enum.Parse(x.GetType(), bad, false);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.Parse (x.GetType (), bad, false);
+				Assert.Fail ("#H1");
+			} catch (ArgumentException ex) {
+				// Requested value 'test' was not found
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
+				Assert.IsNull (ex.InnerException, "#H3");
+				Assert.IsNotNull (ex.Message, "#H4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf ("'test'") != -1, "#H5");
+#else
+				Assert.IsTrue (ex.Message.IndexOf ("test") != -1, "#H5");
+#endif
+				Assert.IsNull (ex.ParamName, "#H6");
 			}
-			Assert("not-in-enum error not caught.", 
-			       errorThrown);
+
+			TestingEnum t1 = new TestingEnum ();
+			Assert.AreEqual (TestingEnum.This, Enum.Parse (t1.GetType (), "this", true), "#I1");
+			Assert.AreEqual (TestingEnum.Is, Enum.Parse (t1.GetType (), "is", true), "#I2");
+			Assert.AreEqual (TestingEnum.A, Enum.Parse (t1.GetType (), "a", true), "#I3");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "test", true), "#I4");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "    \n\ntest\t", true), "#I5");
+
+			Assert.AreEqual (TestingEnum.Is, Enum.Parse (t1.GetType (), "This,is", true), "#J1");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "This,test", true), "#J2");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "This,is,A", true), "#J3");
+			Assert.AreEqual (TestingEnum.Test, Enum.Parse (t1.GetType (), "   \n\tThis \t\n,    is,a \n", true), "#J4");
 		}
+
+		[Test]
+		public void ParseValue ()
 		{
-			TestingEnum t1 = new TestingEnum();
-			AssertEquals("parse first enum",
-				     TestingEnum.This, 
-				     Enum.Parse(t1.GetType(), "this", true));
-			AssertEquals("parse second enum",
-				     TestingEnum.Is, 
-				     Enum.Parse(t1.GetType(), "is", true));
-			AssertEquals("parse third enum",
-				     TestingEnum.A, 
-				     Enum.Parse(t1.GetType(), "a", true));
-			AssertEquals("parse last enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "test", true));
-
-			AssertEquals("parse last enum with whitespace",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "    \n\ntest\t", true));
-
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Is, 
-				     Enum.Parse(t1.GetType(), "This,is", true));
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "This,test", true));
-			AssertEquals("parse bitwise-or enum",
-				     TestingEnum.Test, 
-				     Enum.Parse(t1.GetType(), "This,is,A", true));
-
-			AssertEquals("parse bitwise-or enum with whitespace",
-				     TestingEnum.Test, 
-					 Enum.Parse(t1.GetType(), "   \n\tThis \t\n,    is,a \n",
-						        true));
+			TestingEnum3 t1 = new TestingEnum3 ();
+			Assert.AreEqual (TestingEnum3.Test, Enum.Parse (t1.GetType (), "18446744073709551615", false));
 		}
-	}
 
-	[Test]
-	public void ParseValue() {
-		TestingEnum3 t1 = new TestingEnum3();
-		AssertEquals ("Parse numeric value", TestingEnum3.Test, Enum.Parse(t1.GetType(), "18446744073709551615", false));
-	}
-
-	public void TestToObject() {
+		[Test]
+		public void ToObject_EnumType_Int32 ()
 		{
-			bool errorThrown = false;
+			object value = Enum.ToObject (typeof (TestingEnum), 0);
+			Assert.AreEqual (TestingEnum.This, value, "#1");
+			value = Enum.ToObject (typeof (TestingEnum), 2);
+			Assert.AreEqual (TestingEnum.A, value, "#2");
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")]
+#endif
+		public void ToObject_EnumType_UInt64 ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum3), 0);
+			Assert.AreEqual (TestingEnum3.This, value, "#1");
+			value = Enum.ToObject (typeof (TestingEnum3), 1);
+			Assert.AreEqual (TestingEnum3.Is, value, "#2");
+			value = Enum.ToObject (typeof (TestingEnum3), ulong.MaxValue);
+			Assert.AreEqual (TestingEnum3.Test, value, "#3");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Byte ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum4), 0);
+			Assert.AreEqual (TestingEnum4.This, value, "#1");
+			value = Enum.ToObject (typeof (TestingEnum4), byte.MaxValue);
+			Assert.AreEqual (TestingEnum4.Test, value, "#2");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Int16 ()
+		{
+			object value = Enum.ToObject (typeof (TestingEnum5), 0);
+			Assert.AreEqual (TestingEnum5.This, value, "#1");
+			value = Enum.ToObject (typeof (TestingEnum5), short.MaxValue);
+			Assert.AreEqual (TestingEnum5.Test, value, "#2");
+		}
+
+		[Test]
+		public void ToObject_EnumType_Invalid ()
+		{
 			try {
-				Enum.ToObject(null, 1);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
+				Enum.ToObject (typeof (string), 1);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Type provided must be an Enum
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#6");
 			}
-			Assert("null type not caught.", 
-			       errorThrown);
 		}
+
+		[Test]
+		public void ToObject_EnumType_Null ()
 		{
-			bool errorThrown = false;
 			try {
-				Enum.ToObject("huh?".GetType(), 1);
-			} catch (ArgumentException) {
-				errorThrown = true;
+				Enum.ToObject (null, 1);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#6");
 			}
-			Assert("null type not caught.", 
-			       errorThrown);
 		}
+
+		[Test]
+		public void ToObject_Value_Null ()
 		{
-			TestingEnum t1 = new TestingEnum();
-			AssertEquals("Should get object",
-				     TestingEnum.This,
-				     Enum.ToObject(t1.GetType(), 0));
+			try {
+				Enum.ToObject (typeof (TestingEnum), (object) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
 		}
-		// TODO - should probably test all the different underlying types
-	}
 
-	[Flags]
-	enum SomeEnum {a,b,c};
+		[Test]
+		public void ToObject_Value_Invalid ()
+		{
+			try {
+				Enum.ToObject (typeof (TestingEnum), "This");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The value passed in must be an enum base or
+				// an underlying type for an enum, such as an
+				// Int32
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("value", ex.ParamName, "#6");
+			}
+		}
 
-	[Flags]
-	enum SomeByteEnum : byte {a,b,c};
-
-	[Flags]
-	enum SomeInt64Enum : long {a,b,c};
-
-	public void TestToString() {
-		int i = 0;
-		try {
-			i++;
-			AssertEquals("invalid string", "This", 
-				     TestingEnum.This.ToString());
-			i++;
-			AssertEquals("invalid string", "Is", 
-				     TestingEnum.Is.ToString());
-			i++;
-			AssertEquals("invalid string", "A", 
-				     TestingEnum.A.ToString());
-			i++;
-			AssertEquals("invalid string", "Test", 
-				     TestingEnum.Test.ToString());
+		[Test]
+		public void TestToString ()
+		{
+			Assert.AreEqual ("This", TestingEnum.This.ToString (), "#A1");
+			Assert.AreEqual ("Is", TestingEnum.Is.ToString (), "#A2");
+			Assert.AreEqual ("A", TestingEnum.A.ToString (), "#A3");
+			Assert.AreEqual ("Test", TestingEnum.Test.ToString (), "#A4");
 
 			Enum is1 = TestingEnum.Is;
 
-			i++;
-			AssertEquals("decimal parse wrong", 
-				     "1", is1.ToString("d"));
-			i++;
-			AssertEquals("named format wrong", 
-				     "Is", is1.ToString("g"));
-			i++;
-			AssertEquals("hex format wrong", 
-				     "00000001", is1.ToString("x"));
-			i++;
-			AssertEquals("bitfield format wrong", 
-				     "Is", is1.ToString("f"));
+			Assert.AreEqual ("1", is1.ToString ("d"), "#B1");
+			Assert.AreEqual ("Is", is1.ToString ("g"), "#B2");
+			Assert.AreEqual ("00000001", is1.ToString ("x"), "#B3");
+			Assert.AreEqual ("Is", is1.ToString ("f"), "#B4");
 
-			i++;
-			AssertEquals("bitfield with flags format wrong for Int32 enum", 
-				     "b, c", ((SomeEnum)3).ToString("f"));
-			i++;
-			AssertEquals("bitfield with flags format wrong for Byte enum", 
-				     "b, c", ((SomeByteEnum)3).ToString("f"));
-			i++;
-			AssertEquals("bitfield with flags format wrong for Int64 enum", 
-				     "b, c", ((SomeInt64Enum)3).ToString("f"));
+			Assert.AreEqual ("b, c", ((SomeEnum) 3).ToString ("f"), "#C1");
+			Assert.AreEqual ("b, c", ((SomeByteEnum) 3).ToString ("f"), "#C2");
+			Assert.AreEqual ("b, c", ((SomeInt64Enum) 3).ToString ("f"), "#C3");
 
-			i++;
-			AssertEquals("bitfield with unknown flags format wrong for Int32 enum",
-				     "12", ((SomeEnum)12).ToString("f"));
-			i++;
-			AssertEquals("bitfield with unknown flags format wrong for Byte enum",
-				     "12", ((SomeByteEnum)12).ToString("f"));
-			i++;
-			AssertEquals("bitfield with unknown flags format wrong for Int64 enum",
-				     "12", ((SomeInt64Enum)12).ToString("f"));
+			Assert.AreEqual ("12", ((SomeEnum) 12).ToString ("f"), "#D1");
+			Assert.AreEqual ("12", ((SomeByteEnum) 12).ToString ("f"), "#D2");
+			Assert.AreEqual ("12", ((SomeInt64Enum) 12).ToString ("f"), "#D3");
+		}
 
-		} catch (Exception e) {
-			Fail ("Unexpected exception at i = " + i + " with e=" + e);
+		[Test]
+		public void FlagTest ()
+		{
+			int [] evalues = new int [4] { 0, 1, 2, 3 };
+			E [] e = new E [4] { E.Aa, E.Bb, E.Cc, E.Dd };
+
+			for (int i = 0; i < 4; ++i)
+				Assert.AreEqual (e [i].ToString (),
+					Enum.Format (typeof (E), evalues [i], "f"),
+					"#1" + i);
+
+			int invalidValue = 1000;
+
+			Assert.AreEqual (invalidValue.ToString (),
+				Enum.Format (typeof (E2), invalidValue, "g"),
+				"#2");
+		}
+
+		[Test]
+		public void FlagTest_Negative ()
+		{
+			FlagsNegativeTestEnum t;
+
+			t = FlagsNegativeTestEnum.None;
+			Assertion.AssertEquals ("#01", "None", t.ToString ());
+			t = FlagsNegativeTestEnum.One;
+			Assertion.AssertEquals ("#02", "One", t.ToString ());
+		}
+
+		[Test]
+		public void AnotherFormatBugPinned ()
+		{
+			Assert.AreEqual ("100", Enum.Format (typeof (E3), 100, "f"));
+		}
+
+		[Test]
+		public void LogicBugPinned ()
+		{
+			string format = null;
+			string [] names = new string [] { "A", "B", "C", "D", };
+			string [] fmtSpl = null;
+			UE ue = UE.A | UE.B | UE.C | UE.D;
+
+			//all flags must be in format return
+			format = Enum.Format (typeof (UE), ue, "f");
+			fmtSpl = format.Split (',');
+			for (int i = 0; i < fmtSpl.Length; ++i)
+				fmtSpl [i] = fmtSpl [i].Trim ();
+
+			foreach (string nval in fmtSpl)
+				Assert.IsTrue (Array.IndexOf (names, nval) >= 0, "#1:" + nval);
+
+			foreach (string nval in names)
+				Assert.IsTrue (Array.IndexOf (fmtSpl, nval) >= 0, "#2:" + nval);
+		}
+		// TODO - ToString with IFormatProviders
+
+		[Flags]
+		enum SomeEnum
+		{
+			a,
+			b,
+			c
+		}
+
+		[Flags]
+		enum SomeByteEnum : byte
+		{
+			a,
+			b,
+			c
+		}
+
+		[Flags]
+		enum SomeInt64Enum : long
+		{
+			a,
+			b,
+			c
+		}
+
+		enum TestShortEnum : short
+		{
+			zero,
+			one,
+			two,
+			three,
+			four,
+			five,
+			six
+		}
+
+		enum E
+		{
+			Aa = 0,
+			Bb = 1,
+			Cc = 2,
+			Dd = 3,
+		}
+
+		[Flags]
+		enum E2
+		{
+			Aa,
+			Bb,
+			Cc,
+			Dd,
+		}
+
+		[Flags]
+		enum FlagsNegativeTestEnum
+		{
+			None = 0,
+			One = 1,
+			Two = 2,
+			Negative = unchecked ((int) 0xFFFF0000)
+		}
+
+		enum TestingEnum
+		{
+			This,
+			Is,
+			A,
+			Test
+		}
+
+		enum TestingEnum2
+		{
+			This,
+			Is,
+			A,
+			Test
+		}
+
+		enum TestingEnum3 : ulong
+		{
+			This,
+			Is,
+			A,
+			Test = ulong.MaxValue
+		}
+
+		enum TestingEnum4 : byte
+		{
+			This,
+			Is,
+			A,
+			Test = byte.MaxValue
+		}
+
+		enum TestingEnum5 : short
+		{
+			This,
+			Is,
+			A,
+			Test = short.MaxValue
+		}
+
+		enum TestingEnum6
+		{
+			This,
+			Is,
+			A,
+			Test = int.MaxValue
+		}
+
+		enum E3
+		{
+			A = 0,
+			B = 1,
+			C = 2,
+			D = 3
+		}
+
+		enum UE : ulong
+		{
+			A = 1,
+			B = 2,
+			C = 4,
+			D = 8
+		}
+
+		enum EA
+		{
+			A = 0,
+			B = 2,
+			C = 3,
+			D = 4
 		}
 	}
-
-	enum E {
-		Aa=0,
-		Bb=1,
-		Cc=2,
-		Dd=3,
-	}
-	
-	[Flags]
-	enum E2 {
-		Aa,
-		Bb,
-		Cc,
-		Dd,
-	}
-	
-	[Test]
-	public void FlagTest ()
-	{
-		int [] evalues = new int [4] {0,1,2,3};
-		E [] e = new E [4] {E.Aa, E.Bb, E.Cc, E.Dd};
-		
-		for (int i = 0; i < 4; ++i) {
-			Assertion.AssertEquals ("#" + i,
-				e [i].ToString (),
-				Enum.Format (typeof (E), evalues [i], "f"));
-		}
-	}
-
-
-	[Test]
-	public void FlagTest2 () {
-		int invalidValue = 1000;
-		
-		Assertion.AssertEquals ("#01",
-				invalidValue.ToString (),
-				Enum.Format (typeof (E2), invalidValue, "g"));
-	}
-
-	enum E3 {A=0,B=1,C=2,D=3,}
-	enum UE : ulong {A=1,B=2,C=4,D=8,} 
-	enum EA {A=0, B=2, C=3, D=4}
-	
-	[Test]
-	public void AnotherFormatBugPinned ()
-	{
-		Assertion.AssertEquals ("#01", "100", Enum.Format (typeof (E3), 100, "f"));
-	}
-	
-	[Test]
-	public void LogicBugPinned ()
-	{
-		string format=null;
-		string[] names=new string[] {"A","B","C","D",};
-		string[] fmtSpl=null;
-		UE ue = UE.A | UE.B | UE.C | UE.D;
-		
-		//all flags must be in format return
-		format = Enum.Format (typeof (UE), ue, "f");
-		fmtSpl = format.Split (',');
-		for( int i=0 ; i<fmtSpl.Length ; ++i )
-			fmtSpl [i] = fmtSpl[i].Trim ();
-
-		foreach (string nval in fmtSpl)
-			Assertion.Assert (nval + " is not a valid enum value name", Array.IndexOf (names, nval) >= 0);
-
-		foreach (string nval in names)
-			Assertion.Assert (nval + " is not contained in format return.", Array.IndexOf (fmtSpl, nval) >= 0);
-	}
-	// TODO - ToString with IFormatProviders
-
-        [Flags]
-        enum FlagsNegativeTestEnum {
-                None = 0,
-                One = 1,
-                Two = 2,
-                Negative = unchecked((int)0xFFFF0000)
-        }
-
-	[Test]
-	public void FlagTest3 () {
-                FlagsNegativeTestEnum t;
-
-                t = FlagsNegativeTestEnum.None;
-		Assertion.AssertEquals("#01", "None", t.ToString());
-                t = FlagsNegativeTestEnum.One;
-		Assertion.AssertEquals("#02", "One", t.ToString());
-	}
-}
 }
