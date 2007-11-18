@@ -1,3 +1,10 @@
+2007-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Unify the implementation of
+	CEE_CONV_I1/SEXT_I1 and I2 since they are the same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Ditto.	
+
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix a typo.
