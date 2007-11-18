@@ -226,7 +226,7 @@ namespace Mono.Security.Cryptography {
 
 			// it's sometimes possible for the results to be a byte short
 			// and this can break some software (see #79502) so we 0x00 pad the result
-			byte[] result = GetPaddedValue (output);
+			byte[] result = GetPaddedValue (output, (KeySize >> 3));
 			// zeroize values
 			input.Clear ();	
 			output.Clear ();
@@ -245,12 +245,14 @@ namespace Mono.Security.Cryptography {
 			BigInteger output = input.ModPow (e, n);
 			// it's sometimes possible for the results to be a byte short
 			// and this can break some software (see #79502) so we 0x00 pad the result
-			byte[] result = GetPaddedValue (output);
+			byte[] result = GetPaddedValue (output, (KeySize >> 3));
 			// zeroize value
 			input.Clear ();	
 			output.Clear ();
 			return result;
 		}
+
+
 
 		public override RSAParameters ExportParameters (bool includePrivateParameters) 
 		{
@@ -277,11 +279,12 @@ namespace Mono.Security.Cryptography {
 				// but CRT parameters are optionals
 				if ((p != null) && (q != null) && (dp != null) && (dq != null) && (qInv != null)) {
 					// and we include them only if we have them all
-					param.P = p.GetBytes ();
-					param.Q = q.GetBytes ();
-					param.DP = dp.GetBytes ();
-					param.DQ = dq.GetBytes ();
-					param.InverseQ = qInv.GetBytes ();
+					int length = (KeySize >> 4);
+					param.P = GetPaddedValue (p, length);
+					param.Q = GetPaddedValue (q, length);
+					param.DP = GetPaddedValue (dp, length);
+					param.DQ = GetPaddedValue (dq, length);
+					param.InverseQ = GetPaddedValue (qInv, length);
 				}
 			}
 			return param;
@@ -462,10 +465,9 @@ namespace Mono.Security.Cryptography {
 			get { return (!keypairGenerated || isCRTpossible); }
 		}
 
-		private byte[] GetPaddedValue (BigInteger value)
+		private byte[] GetPaddedValue (BigInteger value, int length)
 		{
 			byte[] result = value.GetBytes ();
-			int length = (KeySize >> 3);
 			if (result.Length >= length)
 				return result;
 
