@@ -1,5 +1,7 @@
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Merge generic sharing changes.
+
 	* mini-amd64.c mini-x86.c mini-ia64.c: Remove usage of OP_ICONV_TO_I4 which is
 	never passed to the back ends.
 

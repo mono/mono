@@ -4651,6 +4651,132 @@ set_exception_type_from_invalid_il (MonoCompile *cfg, MonoMethod *method, unsign
 }
 
 /*
+ * Generates this->vtable->runtime_generic_context
+ */
+static MonoInst*
+emit_get_runtime_generic_context_from_this (MonoCompile *cfg, guint32 this_reg)
+{
+	MonoInst *ins;
+	int vtable_reg, res_reg;
+	
+	vtable_reg = alloc_preg (cfg);
+	res_reg = alloc_preg (cfg);
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, this_reg, G_STRUCT_OFFSET (MonoObject, vtable));
+	EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, res_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, runtime_generic_context));
+
+	return ins;
+}
+
+/*
+ * Generates ((MonoRuntimeGenericSuperInfo*)rgc)[-depth].XXX where XXX
+ * is specified by rgctx_type.
+ */
+static MonoInst*
+emit_get_runtime_generic_context_super_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int depth, int rgctx_type)
+{
+	int field_offset_const, offset;
+	MonoInst *ins;
+	int dreg;
+
+	g_assert (depth >= 1);
+
+	switch (rgctx_type) {
+	case MINI_RGCTX_STATIC_DATA :
+		field_offset_const = G_STRUCT_OFFSET (MonoRuntimeGenericSuperInfo, static_data);
+		break;
+	case MINI_RGCTX_KLASS :
+		field_offset_const = G_STRUCT_OFFSET (MonoRuntimeGenericSuperInfo, klass);
+		break;
+	case MINI_RGCTX_VTABLE:
+		field_offset_const = G_STRUCT_OFFSET (MonoRuntimeGenericSuperInfo, vtable);
+		break;
+	default :
+		g_assert_not_reached ();
+	}
+
+	offset = field_offset_const + (-depth * sizeof (MonoRuntimeGenericSuperInfo));
+
+	dreg = alloc_preg (cfg);
+	EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgc_ptr->dreg, offset);
+
+	return ins;
+}
+
+/*
+ * Generic rgc->arg_infos [arg_num].XXX where XXX is specified by
+ * rgctx_type;
+ */
+static MonoInst*
+emit_get_runtime_generic_context_arg_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int arg_num, int rgctx_type)
+{
+	MonoInst *ins;
+	int dreg, arg_info_offset, arg_info_field_offset;
+
+	g_assert (arg_num >= 0);
+
+	arg_info_offset = G_STRUCT_OFFSET (MonoRuntimeGenericContext, arg_infos) +
+		arg_num * sizeof (MonoRuntimeGenericArgInfo);
+
+	switch (rgctx_type) {
+	case MINI_RGCTX_STATIC_DATA :
+		arg_info_field_offset = G_STRUCT_OFFSET (MonoRuntimeGenericArgInfo, static_data);
+		break;
+	case MINI_RGCTX_KLASS:
+		arg_info_field_offset = G_STRUCT_OFFSET (MonoRuntimeGenericArgInfo, klass);
+		break;
+	case MINI_RGCTX_VTABLE :
+		arg_info_field_offset = G_STRUCT_OFFSET (MonoRuntimeGenericArgInfo, vtable);
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	dreg = alloc_preg (cfg);
+	EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgc_ptr->dreg, arg_info_offset + arg_info_field_offset);
+
+	return ins;
+}
+
+static MonoInst*
+emit_get_runtime_generic_context_other_ptr (MonoCompile *cfg, MonoMethod *method,
+											MonoInst *rgc_ptr, guint32 token, int rgctx_type)
+{
+	MonoInst *args [4];
+
+	g_assert (method->wrapper_type == MONO_WRAPPER_NONE);
+
+	EMIT_NEW_PCONST (cfg, args [0], method);
+	args [1] = rgc_ptr;
+	EMIT_NEW_ICONST (cfg, args [2], token);
+	EMIT_NEW_ICONST (cfg, args [3], rgctx_type);
+
+	return mono_emit_jit_icall (cfg, mono_helper_get_rgctx_other_ptr, args);
+}
+
+static MonoInst*
+emit_get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method,
+									  MonoClass *klass, guint32 type_token, 
+									  MonoGenericContext *generic_context, MonoInst *rgctx,
+									  int rgctx_type)
+{
+	int arg_num = -1;
+	int relation = mono_class_generic_class_relation (klass, method->klass, generic_context, &arg_num);
+
+	switch (relation) {
+	case MINI_GENERIC_CLASS_RELATION_SELF: {
+		int depth = klass->idepth;
+		return emit_get_runtime_generic_context_super_ptr (cfg, rgctx, depth, rgctx_type);
+	}
+	case MINI_GENERIC_CLASS_RELATION_ARGUMENT:
+		return emit_get_runtime_generic_context_arg_ptr (cfg, rgctx, arg_num, rgctx_type);
+	case MINI_GENERIC_CLASS_RELATION_OTHER:
+		return emit_get_runtime_generic_context_other_ptr (cfg, method, rgctx, type_token, rgctx_type);
+	default:
+		g_assert_not_reached ();
+	}
+}
+
+/*
  * decompose_opcode:
  *
  *   Decompose complex opcodes into ones closer to opcodes supported by
@@ -8114,6 +8240,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MonoInst *len_ins;
 			const char *data_ptr;
 			int data_size = 0;
+			gboolean shared_access = FALSE;
 
 			CHECK_STACK (1);
 			--sp;
@@ -8124,28 +8251,60 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
 
-			/* FIXME: */
-			GENERIC_SHARING_FAILURE (CEE_NEWARR);
+			if (cfg->generic_sharing_context) {
+				int context_used = mono_class_check_context_used (klass);
 
-			if (cfg->opt & MONO_OPT_SHARED) {
-				/* Decompose now to avoid problems with references to the domainvar */
-				MonoInst *iargs [3];
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD || klass->valuetype)
+					GENERIC_SHARING_FAILURE (CEE_NEWARR);
 
-				EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
-				EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
-				iargs [2] = sp [0];
-
-				ins = mono_emit_jit_icall (cfg, mono_array_new, iargs);
-			} else {
-				/* Decompose later since it is needed by abcrem */
-				MONO_INST_NEW (cfg, ins, OP_NEWARR);
-				ins->dreg = alloc_preg (cfg);
-				ins->sreg1 = sp [0]->dreg;
-				ins->inst_newa_class = klass;
-				ins->type = STACK_OBJ;
-				ins->klass = klass;
-				MONO_ADD_INS (cfg->cbb, ins);				
+				if (context_used) {
+					if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
+						shared_access = TRUE;
+					else
+						GENERIC_SHARING_FAILURE (CEE_NEWARR);
+				}
 			}
+
+
+			if (shared_access) {
+				MonoInst *rgctx;
+				MonoInst *args [3];
+
+				/* FIXME: Decompose later to help abcrem */
+
+				/* domain */
+				EMIT_NEW_DOMAINCONST (cfg, args [0]);
+
+				/* klass */
+				rgctx = emit_get_runtime_generic_context_from_this (cfg, cfg->args [0]->dreg);
+				args [1] = emit_get_runtime_generic_context_ptr (cfg, method, klass, token, generic_context, rgctx, MINI_RGCTX_KLASS);
+
+				/* array len */
+				args [2] = sp [0];
+
+				ins = mono_emit_jit_icall (cfg, mono_array_new, args);
+			} else {
+				if (cfg->opt & MONO_OPT_SHARED) {
+					/* Decompose now to avoid problems with references to the domainvar */
+					MonoInst *iargs [3];
+
+					EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
+					EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
+					iargs [2] = sp [0];
+
+					ins = mono_emit_jit_icall (cfg, mono_array_new, iargs);
+				} else {
+					/* Decompose later since it is needed by abcrem */
+					MONO_INST_NEW (cfg, ins, OP_NEWARR);
+					ins->dreg = alloc_preg (cfg);
+					ins->sreg1 = sp [0]->dreg;
+					ins->inst_newa_class = klass;
+					ins->type = STACK_OBJ;
+					ins->klass = klass;
+					MONO_ADD_INS (cfg->cbb, ins);				
+				}
+			}
+
 			len_ins = sp [0];
 			ip += 5;
 			*sp++ = ins;
@@ -10523,7 +10682,6 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge r68207.
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
- * - merge the generic sharing changes.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
