@@ -1,3 +1,8 @@
+2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c: Renamed arguments for ves_icall_System_Enum_ToObject to
+	fix ParamName of ArgumentNullExceptions.
+
 2007-11-17  Miguel de Icaza  <miguel@novell.com>
 
 	* reflection.c (mono_reflection_encode_sighelper): Generate the
