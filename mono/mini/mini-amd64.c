@@ -3703,7 +3703,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
-		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			amd64_mov_reg_reg (code, ins->dreg, ins->sreg1, sizeof (gpointer));
 			break;

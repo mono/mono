@@ -1,3 +1,8 @@
+2007-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c mini-x86.c mini-ia64.c: Remove usage of OP_ICONV_TO_I4 which is
+	never passed to the back ends.
+
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_inst_for_method): Remove code which is now in

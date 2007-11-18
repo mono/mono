@@ -2889,7 +2889,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ia64_sxt2 (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_CONV_I4:
-		case OP_ICONV_TO_I4:
 		case OP_LCONV_TO_I4:
 			/* FIXME: Is this needed ? */
 			ia64_sxt4 (code, ins->dreg, ins->sreg1);
@@ -2907,7 +2906,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ia64_zxt2 (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_CONV_U4:
-		case OP_ICONV_TO_U4:
 		case OP_LCONV_TO_U4:
 			/* FIXME: Is this needed */
 			ia64_zxt4 (code, ins->dreg, ins->sreg1);

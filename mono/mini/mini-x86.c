@@ -1806,7 +1806,6 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
-		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			/*
 			 * Removes:
@@ -2028,7 +2027,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
-		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			/*
 			 * Removes:
@@ -3140,7 +3138,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_push_membase (code, ins->inst_basereg, 0xf0f0f0f0);
 			break;
 		case CEE_CONV_I4:
-		case OP_ICONV_TO_I4:
 		case OP_MOVE:
 			x86_mov_reg_reg (code, ins->dreg, ins->sreg1, 4);
 			break;
