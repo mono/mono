@@ -182,7 +182,7 @@ namespace System
 				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -198,7 +198,7 @@ namespace System
 				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("Type provided must be an Enum.");
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -216,7 +216,7 @@ namespace System
 				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 
 			MonoEnumInfo info;
 			int i;
@@ -240,7 +240,7 @@ namespace System
 				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -273,7 +273,7 @@ namespace System
 				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("enumType is not an Enum type.");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -336,11 +336,11 @@ namespace System
 				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("not an Enum type", "enumType");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 
 			value = value.Trim ();
-			if (String.Empty == value)
-				throw new ArgumentException ("cannot be an empty string", "value");
+			if (value.Length == 0)
+				throw new ArgumentException ("Must specify valid information for parsing in the string.");
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -368,8 +368,8 @@ namespace System
 			// is 'value' a number?
 			try {
 				return ToObject (enumType, Convert.ChangeType (value, typeCode));
-			} catch (Exception e) {
-				throw new ArgumentException (String.Format ("The requested value '{0}' was not found", value), e);
+			} catch (FormatException) {
+				throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
 			}
 		}
 
@@ -409,7 +409,7 @@ namespace System
 		}
 
 #if NET_2_0
-	[Obsolete("Provider is ignored, just use ToString")]
+		[Obsolete("Provider is ignored, just use ToString")]
 #endif
 		public string ToString (IFormatProvider provider)
 		{
@@ -710,7 +710,7 @@ namespace System
 				throw new ArgumentNullException ("format");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException ("Type provided must be an Enum.");
+				throw new ArgumentException ("Type provided must be an Enum.", "enumType");
 			
 			Type vType = value.GetType();
 			Type underlyingType = Enum.GetUnderlyingType (enumType);
