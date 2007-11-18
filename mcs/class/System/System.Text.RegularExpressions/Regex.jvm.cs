@@ -90,7 +90,6 @@ namespace System.Text.RegularExpressions
 				this.group_count = this.machineFactory.GroupCount;
 				this.mapping = this.machineFactory.Mapping;
 				this._groupNumberToNameMap = this.machineFactory.NamesMapping;
-				this.machine = this.machineFactory.NewInstance ();
 
 				return;
 			}
@@ -112,7 +111,6 @@ namespace System.Text.RegularExpressions
 			this.group_count = this.machineFactory.GroupCount;
 			this.mapping = this.machineFactory.Mapping;
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
-			this.machine = this.machineFactory.NewInstance ();
 		}
 
 	}
