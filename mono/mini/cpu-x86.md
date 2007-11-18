@@ -60,6 +60,7 @@ nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
+not_null: src1:i len:0
 break: len:1
 jmp: len:32
 call: dest:a clob:c len:17

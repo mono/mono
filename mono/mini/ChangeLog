@@ -1,5 +1,16 @@
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add new opcode OP_NOT_NULL.
+
+	* mini.h: Add MONO_CFG_HAS_CHECK_THIS cfg flag.
+
+	* method-to-ir.c: Emit OP_NOT_NULL instructions in a few places. Set
+	the CHECK_THIS flag when emitting OP_CHECK_THIS instructions.
+
+	* abcremoval2.c (process_block): Eliminate needless OP_CHECK_THIS instructions.
+
+	* cpu-<ARCH>.md mini-<ARCH>.c: Add support for OP_NOT_NULL instruction.
+
 	* abcremoval2.c (remove_abc_from_inst): Derive relations from bounds check
 	instructions in order to optimize array accesses made with the same index
 	variable.

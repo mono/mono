@@ -3,7 +3,6 @@ using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 /*
  * Regression tests for the mono JIT.
@@ -1049,5 +1048,43 @@ ncells ) {
 			temp = (uint)(data[temp >> 24] | data[temp >> 0]);
 		return 0;
 	}
+
+	class Foo2 {
+		public virtual int foo () {
+			return 0;
+		}
+	}
+
+	sealed class Bar2 : Foo2 {
+		public override int foo () {
+			return 0;
+		}
+	}
+
+	static int test_0_abcrem_check_this_removal () {
+		Bar2 b = new Bar2 ();
+
+		// The check_this generated here by the JIT should be removed
+		b.foo ();
+
+		return 0;
+	}
+
+	static int invoke_twice (Bar2 b) {
+		b.foo ();
+		// The check_this generated here by the JIT should be removed
+		b.foo ();
+
+		return 0;
+	}
+
+	static int test_0_abcrem_check_this_removal2 () {
+		Bar2 b = new Bar2 ();
+
+		invoke_twice (b);
+
+		return 0;
+	}
+
 }
 

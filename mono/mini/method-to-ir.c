@@ -2822,8 +2822,11 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 				method = call->method = mono_marshal_get_remoting_invoke_with_check (method);
 			}
 
-			if (!method->string_ctor)
+			if (!method->string_ctor) {
+				cfg->flags |= MONO_CFG_HAS_CHECK_THIS;
 				MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, this_reg);
+				MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, this_reg);
+			}
 
 			call->inst.opcode = callvirt_to_call (call->inst.opcode);
 
@@ -2843,7 +2846,7 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 			return (MonoInst*)call;
 		}
 #endif
-	
+
 		if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) &&
 			((method->flags &  METHOD_ATTRIBUTE_FINAL) ||
 			 (method->klass && method->klass->flags & TYPE_ATTRIBUTE_SEALED))) {
@@ -2852,7 +2855,9 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 			 * it's class or the method itself are sealed.
 			 * But first we need to ensure it's not a null reference.
 			 */
+			cfg->flags |= MONO_CFG_HAS_CHECK_THIS;
 			MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, this_reg);
+			MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, this_reg);
 
 			call->inst.opcode = callvirt_to_call (call->inst.opcode);
 			MONO_ADD_INS (cfg->cbb, (MonoInst*)call);
@@ -6231,7 +6236,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 		NEW_ARGLOAD (cfg, arg_ins, 0);
 		MONO_ADD_INS (cfg->cbb, arg_ins);
+		cfg->flags |= MONO_CFG_HAS_CHECK_THIS;
 		MONO_EMIT_NEW_UNALU (cfg, OP_CHECK_THIS, -1, arg_ins->dreg);
+		MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, arg_ins->dreg);
 	}
 
 	/* we use a spare stack slot in SWITCH and NEWOBJ and others */
@@ -7649,6 +7656,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					alloc = handle_alloc (cfg, cmethod->klass, FALSE);
 					*sp = alloc;
 				}
+
+				if (alloc)
+					MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, alloc->dreg);
 
 				/* Avoid virtual calls to ctors if possible */
 				if (cmethod->klass->marshalbyref)

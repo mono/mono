@@ -2435,6 +2435,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
 		case OP_NOT_REACHED:
+		case OP_NOT_NULL:
 			break;
 		case OP_BR_REG:
 			ia64_mov_to_br (code, IA64_B6, ins->sreg1);

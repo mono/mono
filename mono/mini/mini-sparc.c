@@ -3530,6 +3530,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
 		case OP_NOT_REACHED:
+		case OP_NOT_NULL:
 			break;
 		case OP_BR:
 			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);

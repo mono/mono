@@ -57,6 +57,7 @@ nop: len:0
 dummy_use: len:0
 dummy_store: len:0
 not_reached: len:0
+not_null: src1:i len:0
 break: len:2
 jmp: len:120
 br: len:6

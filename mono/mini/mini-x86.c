@@ -2714,6 +2714,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_DUMMY_USE:
 		case OP_DUMMY_STORE:
 		case OP_NOT_REACHED:
+		case OP_NOT_NULL:
 			break;
 		case OP_ADDCC:
 		case OP_IADDCC:

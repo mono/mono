@@ -11994,10 +11994,11 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			deadce_has_run = TRUE;
 		}
 		
-		if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM)) {
-			if (cfg->new_ir)
+		if (cfg->new_ir) {
+			if ((cfg->flags & (MONO_CFG_HAS_LDELEMA|MONO_CFG_HAS_CHECK_THIS)) && (cfg->opt & MONO_OPT_ABCREM))
 				mono_perform_abc_removal2 (cfg);
-			else
+		} else {
+			if ((cfg->flags & MONO_CFG_HAS_LDELEMA) && (cfg->opt & MONO_OPT_ABCREM))
 				mono_perform_abc_removal (cfg);
 		}
 

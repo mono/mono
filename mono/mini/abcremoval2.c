@@ -1023,20 +1023,47 @@ process_block (MonoCompile *cfg, MonoBasicBlock *bb, MonoVariableRelationsEvalua
 			remove_abc_from_inst (ins, area);
 
 			/* We can derive additional relations from the bounds check */
+			if (ins->opcode != OP_NOP) {
+				rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
+				rel->variable = index_var;
+				rel->relation.relation = MONO_LT_RELATION;
+				rel->relation.related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
+				rel->relation.related_value.value.variable.variable = array_var;
+				rel->relation.related_value.value.variable.delta = 0;
+
+				apply_change_to_evaluation_area (area, rel);
+
+				check_relations = g_slist_append_mempool (cfg->mempool, check_relations, rel);
+
+				rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
+				rel->variable = index_var;
+				rel->relation.relation = MONO_GE_RELATION;
+				rel->relation.related_value.type = MONO_CONSTANT_SUMMARIZED_VALUE;
+				rel->relation.related_value.value.constant.value = 0;
+
+				apply_change_to_evaluation_area (area, rel);
+
+				check_relations = g_slist_append_mempool (cfg->mempool, check_relations, rel);
+			}
+		}
+
+		if (ins->opcode == OP_CHECK_THIS) {
+			MonoRelationsEvaluationContext *context = &(area->contexts [ins->sreg1]);
+
+			clean_contexts (area->contexts, area->cfg->next_vreg);
+			evaluate_relation_with_target_variable (area, ins->sreg1, ins->sreg1, NULL);
+				
+			if (context->ranges.zero.lower > 0) {
+				if (REPORT_ABC_REMOVAL)
+					printf ("ARRAY-ACCESS: removed check_this instruction.\n");
+				NULLIFY_INS (ins);
+			}
+		}
+
+		if (ins->opcode == OP_NOT_NULL) {
 			rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
-			rel->variable = index_var;
-			rel->relation.relation = MONO_LT_RELATION;
-			rel->relation.related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
-			rel->relation.related_value.value.variable.variable = array_var;
-			rel->relation.related_value.value.variable.delta = 0;
-
-			apply_change_to_evaluation_area (area, rel);
-
-			check_relations = g_slist_append_mempool (cfg->mempool, check_relations, rel);
-
-			rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
-			rel->variable = index_var;
-			rel->relation.relation = MONO_GE_RELATION;
+			rel->variable = ins->sreg1;
+			rel->relation.relation = MONO_GT_RELATION;
 			rel->relation.related_value.type = MONO_CONSTANT_SUMMARIZED_VALUE;
 			rel->relation.related_value.value.constant.value = 0;
 
