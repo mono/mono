@@ -1,5 +1,9 @@
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* abcremoval2.c (remove_abc_from_inst): Derive relations from bounds check
+	instructions in order to optimize array accesses made with the same index
+	variable.
+
 	* method-to-ir.c: Merge generic sharing changes.
 
 	* mini-amd64.c mini-x86.c mini-ia64.c: Remove usage of OP_ICONV_TO_I4 which is

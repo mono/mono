@@ -212,6 +212,27 @@ print_evaluation_area_contexts (MonoVariableRelationsEvaluationArea *area) {
 }
 #endif
 
+static inline GSList*
+g_slist_append_mempool (MonoMemPool *mp, GSList *list, gpointer data)
+{
+	GSList *new_list;
+	GSList *last;
+	
+	new_list = mono_mempool_alloc (mp, sizeof (GSList));
+	new_list->data = data;
+	new_list->next = NULL;
+	
+	if (list) {
+		last = list;
+		while (last->next)
+			last = last->next;
+		last->next = new_list;
+		
+		return list;
+	} else
+		return new_list;
+}
+
 /*
  * Check if the delta of an integer variable value is safe with respect
  * to the variable size in bytes and its kind (signed or unsigned).
@@ -361,7 +382,8 @@ get_relation_from_branch_instruction (MonoInst *ins)
  * relations: the resulting relations (entry condition of the given BB)
  */
 static void
-get_relations_from_previous_bb (MonoVariableRelationsEvaluationArea *area, MonoBasicBlock *bb, MonoAdditionalVariableRelationsForBB *relations) {
+get_relations_from_previous_bb (MonoVariableRelationsEvaluationArea *area, MonoBasicBlock *bb, MonoAdditionalVariableRelationsForBB *relations)
+{
 	MonoBasicBlock *in_bb;
 	MonoInst *ins, *compare, *branch;
 	MonoValueRelation branch_relation;
@@ -370,13 +392,14 @@ get_relations_from_previous_bb (MonoVariableRelationsEvaluationArea *area, MonoB
 	
 	INITIALIZE_VALUE_RELATION (&(relations->relation1.relation));
 	relations->relation1.relation.relation_is_static_definition = FALSE;
+	relations->relation1.relation.next = NULL;
 	relations->relation1.insertion_point = NULL;
 	relations->relation1.variable = -1;
 	INITIALIZE_VALUE_RELATION (&(relations->relation2.relation));
 	relations->relation2.relation.relation_is_static_definition = FALSE;
+	relations->relation2.relation.next = NULL;	
 	relations->relation2.insertion_point = NULL;
 	relations->relation2.variable = -1;
-	
 	
 	if (bb->in_count == 1) { /* Should write the code to "sum" conditions... */
 		in_bb = bb->in_bb [0];
@@ -433,7 +456,8 @@ get_relations_from_previous_bb (MonoVariableRelationsEvaluationArea *area, MonoB
  * change: the relations that must be added
  */
 static void
-apply_change_to_evaluation_area (MonoVariableRelationsEvaluationArea *area, MonoAdditionalVariableRelation *change) {
+apply_change_to_evaluation_area (MonoVariableRelationsEvaluationArea *area, MonoAdditionalVariableRelation *change)
+{
 	MonoSummarizedValueRelation *base_relation;
 	
 	if (change->relation.relation != MONO_ANY_RELATION) {
@@ -452,7 +476,8 @@ apply_change_to_evaluation_area (MonoVariableRelationsEvaluationArea *area, Mono
  * change: the relation that must be removed
  */
 static void
-remove_change_from_evaluation_area (MonoAdditionalVariableRelation *change) {
+remove_change_from_evaluation_area (MonoAdditionalVariableRelation *change)
+{
 	if (change->insertion_point != NULL) {
 		change->insertion_point->next = change->relation.next;
 		change->relation.next = NULL;
@@ -461,7 +486,8 @@ remove_change_from_evaluation_area (MonoAdditionalVariableRelation *change) {
 
 
 static void
-clean_contexts (MonoRelationsEvaluationContext *contexts, int number) {
+clean_contexts (MonoRelationsEvaluationContext *contexts, int number)
+{
 	int i;
 	for (i = 0; i < number; i++) {
 		contexts [i].status = MONO_RELATIONS_EVALUATION_NOT_STARTED;
@@ -477,7 +503,8 @@ clean_contexts (MonoRelationsEvaluationContext *contexts, int number) {
  * relation: the relation between the range and the value
  */
 static void
-intersect_value( MonoRelationsEvaluationRange *range, int value, MonoValueRelation relation ) {
+intersect_value( MonoRelationsEvaluationRange *range, int value, MonoValueRelation relation )
+{
 	switch (relation) {
 	case MONO_NO_RELATION:
 		MONO_MAKE_RELATIONS_EVALUATION_RANGE_IMPOSSIBLE (*range);
@@ -519,7 +546,8 @@ intersect_value( MonoRelationsEvaluationRange *range, int value, MonoValueRelati
  * relation: the relation between the pairs of ranges
  */
 static void
-intersect_ranges( MonoRelationsEvaluationRanges *ranges, MonoRelationsEvaluationRanges *other_ranges, int delta, MonoValueRelation relation ) {
+intersect_ranges( MonoRelationsEvaluationRanges *ranges, MonoRelationsEvaluationRanges *other_ranges, int delta, MonoValueRelation relation )
+{
 	if (delta == 0) {
 		switch (relation) {
 		case MONO_NO_RELATION:
@@ -576,7 +604,8 @@ intersect_ranges( MonoRelationsEvaluationRanges *ranges, MonoRelationsEvaluation
  *                 (or NULL for the first invocation)
  */
 static void
-evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *area, int variable, int target_variable, MonoRelationsEvaluationContext *father_context) {
+evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *area, int variable, int target_variable, MonoRelationsEvaluationContext *father_context)
+{
 	MonoRelationsEvaluationContext *context = &(area->contexts [variable]);
 	
 	// First of all, we check the evaluation status
@@ -853,7 +882,9 @@ evaluate_relation_with_target_variable (MonoVariableRelationsEvaluationArea *are
 /*
  * Apply the given value kind to the given range
  */
-static void apply_value_kind_to_range (MonoRelationsEvaluationRange *range, MonoIntegerValueKind value_kind) {
+static void
+apply_value_kind_to_range (MonoRelationsEvaluationRange *range, MonoIntegerValueKind value_kind)
+{
 	if (value_kind != MONO_UNKNOWN_INTEGER_VALUE) {
 		if (value_kind & MONO_UNSIGNED_VALUE_FLAG) {
 			if (range->lower < 0) {
@@ -931,26 +962,6 @@ remove_abc_from_inst (MonoInst *ins, MonoVariableRelationsEvaluationArea *area)
 }
 
 /*
- * Recursively scan a tree of MonoInst looking for array accesses.
- * inst: the root of the MonoInst tree
- * area: the current evaluation area (it contains the relation graph and
- *       memory for all the evaluation contexts is already allocated)
- */
-static void
-process_inst (MonoInst *inst, MonoVariableRelationsEvaluationArea *area) {
-	if (inst->opcode == OP_BOUNDS_CHECK) { /* Handle OP_LDELEMA2D, too */
-		if (TRACE_ABC_REMOVAL) {
-			printf ("Attempting check removal...\n");
-		}
-		
-		remove_abc_from_inst (inst, area);
-	}
-}
-
-
-
-
-/*
  * Process a BB removing bounds checks from array accesses.
  * It does the following (in sequence):
  * - Get the BB entry condition
@@ -964,11 +975,12 @@ process_inst (MonoInst *inst, MonoVariableRelationsEvaluationArea *area) {
  *       memory for all the evaluation contexts is already allocated)
  */
 static void
-process_block (MonoBasicBlock *bb, MonoVariableRelationsEvaluationArea *area) {
+process_block (MonoCompile *cfg, MonoBasicBlock *bb, MonoVariableRelationsEvaluationArea *area) {
 	int inst_index;
-	MonoInst *current_inst;
+	MonoInst *ins;
 	MonoAdditionalVariableRelationsForBB additional_relations;
-	GSList *dominated_bb;
+	GSList *dominated_bb, *l;
+	GSList *check_relations = NULL;
 	
 	if (TRACE_ABC_REMOVAL) {
 		printf ("\nProcessing block %d [dfn %d]...\n", bb->block_num, bb->dfn);
@@ -991,26 +1003,59 @@ process_block (MonoBasicBlock *bb, MonoVariableRelationsEvaluationArea *area) {
 	apply_change_to_evaluation_area (area, &(additional_relations.relation2));
 
 	inst_index = 0;
-	current_inst = bb->code;
-	while (current_inst != NULL) {
+	for (ins = bb->code; ins; ins = ins->next) {
+		MonoAdditionalVariableRelation *rel;
+		int array_var, index_var;
+
 		if (TRACE_ABC_REMOVAL) {
 			printf ("Processing instruction %d\n", inst_index);
 			inst_index++;
 		}
+
+		if (ins->opcode == OP_BOUNDS_CHECK) { /* Handle OP_LDELEMA2D, too */
+			if (TRACE_ABC_REMOVAL) {
+				printf ("Attempting check removal...\n");
+			}
+
+			array_var = ins->sreg1;
+			index_var = ins->sreg2;
 		
-		process_inst (current_inst, area);
-		
-		current_inst = current_inst->next;
-	}
-	
+			remove_abc_from_inst (ins, area);
+
+			/* We can derive additional relations from the bounds check */
+			rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
+			rel->variable = index_var;
+			rel->relation.relation = MONO_LT_RELATION;
+			rel->relation.related_value.type = MONO_VARIABLE_SUMMARIZED_VALUE;
+			rel->relation.related_value.value.variable.variable = array_var;
+			rel->relation.related_value.value.variable.delta = 0;
+
+			apply_change_to_evaluation_area (area, rel);
+
+			check_relations = g_slist_append_mempool (cfg->mempool, check_relations, rel);
+
+			rel = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoAdditionalVariableRelation));
+			rel->variable = index_var;
+			rel->relation.relation = MONO_GE_RELATION;
+			rel->relation.related_value.type = MONO_CONSTANT_SUMMARIZED_VALUE;
+			rel->relation.related_value.value.constant.value = 0;
+
+			apply_change_to_evaluation_area (area, rel);
+
+			check_relations = g_slist_append_mempool (cfg->mempool, check_relations, rel);
+		}
+	}	
 	
 	if (TRACE_ABC_REMOVAL) {
 		printf ("Processing block %d [dfn %d] done.\n", bb->block_num, bb->dfn);
 	}
 	
 	for (dominated_bb = bb->dominated; dominated_bb != NULL; dominated_bb = dominated_bb->next) {
-		process_block ((MonoBasicBlock*) (dominated_bb->data), area);
+		process_block (cfg, (MonoBasicBlock*) (dominated_bb->data), area);
 	}
+
+	for (l = check_relations; l; l = l->next)
+		remove_change_from_evaluation_area (l->data);
 	
 	remove_change_from_evaluation_area (&(additional_relations.relation1));
 	remove_change_from_evaluation_area (&(additional_relations.relation2));
@@ -1187,5 +1232,5 @@ mono_perform_abc_removal2 (MonoCompile *cfg)
 		}
 	}
 
-	process_block (cfg->bblocks [0], &area);
+	process_block (cfg, cfg->bblocks [0], &area);
 }
