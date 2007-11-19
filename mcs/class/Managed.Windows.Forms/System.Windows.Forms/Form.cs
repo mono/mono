@@ -1323,8 +1323,8 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams cp = new CreateParams ();
 
-				cp.Caption = Text;
-				cp.Caption = cp.Caption.Replace (Environment.NewLine, string.Empty);
+				if (Text != null)
+					cp.Caption = Text.Replace (Environment.NewLine, string.Empty);
 				
 				cp.ClassName = XplatUI.DefaultClassName;
 				cp.ClassStyle = 0;
