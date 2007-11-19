@@ -1,5 +1,11 @@
 2007-11-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Calendar.cs: performance optimizations:
+	BuildLink fixed, StringBuilder used.
+	TodaysDate DateTime.Today call cahced.
+
+2007-11-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* Unit.cs: performance optimization: ToString fixed, string.Concat used
 	instead of string.Format
 

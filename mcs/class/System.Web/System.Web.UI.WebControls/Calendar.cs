@@ -35,6 +35,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Threading;
+using System.Text;
 
 namespace System.Web.UI.WebControls {
 	// CAS
@@ -63,6 +64,7 @@ namespace System.Web.UI.WebControls {
 		private DateTimeFormatInfo dateInfo;
 		private SelectedDatesCollection selectedDatesCollection;
 		private ArrayList dateList;
+		private DateTime today = DateTime.Today;
 		private static DateTime dateZenith  = new DateTime (2000, 1,1);
 		private const int daysInAWeek = 7;
 		private static readonly object DayRenderEvent = new object ();
@@ -573,7 +575,7 @@ namespace System.Web.UI.WebControls {
 				if (obj != null)
 					return (DateTime) obj;
 
-				return DateTime.Today;
+				return today;
 			}
 
 			set {
@@ -1089,18 +1091,18 @@ namespace System.Web.UI.WebControls {
 
 		private string BuildLink (string arg, string text, Color foreColor, bool hasLink)
 		{
-			string str = string.Empty;
+			StringBuilder str = new StringBuilder ();
 			Color clr;
 			hasLink = (Page != null && hasLink == true) ? true : false;
 
 			if (hasLink) {
-				str = "<a href=\"";
+				str.Append ("<a href=\"");
 #if NET_2_0
-				str += Page.ClientScript.GetPostBackClientHyperlink (this, arg, true);
+				str.Append (Page.ClientScript.GetPostBackClientHyperlink (this, arg, true));
 #else
-				str += Page.ClientScript.GetPostBackClientHyperlink (this, arg);
+				str.Append (Page.ClientScript.GetPostBackClientHyperlink (this, arg));
 #endif			
-				str += "\"";
+				str.Append ('\"');
 			
 
 				if (!foreColor.IsEmpty) {
@@ -1112,15 +1114,15 @@ namespace System.Web.UI.WebControls {
 						clr = ForeColor;
 				}
 
-				str += " style=\"color:" + ColorTranslator.ToHtml (clr);
-				str += "\">";
-				str += text;
-				str += "</a>";
+				str.Append (" style=\"color:" + ColorTranslator.ToHtml (clr));
+				str.Append ("\">");
+				str.Append (text);
+				str.Append ("</a>");
 			}
 			else 
-				str += text;
+				str.Append (text);
 
-			return str;
+			return str.ToString ();
 		}
 
 		private int GetDaysFromZenith (DateTime date)
