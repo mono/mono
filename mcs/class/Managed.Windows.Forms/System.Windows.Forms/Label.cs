@@ -728,7 +728,7 @@ namespace System.Windows.Forms
 
 			Size s = InternalGetPreferredSize (Size.Empty);
 			
-			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.None);
+			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.Size);
 		}
 
 		private void OnHandleCreatedLB (Object o, EventArgs e)
