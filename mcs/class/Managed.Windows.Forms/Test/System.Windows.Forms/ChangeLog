@@ -1,3 +1,7 @@
+2007-11-19  Everaldo Canuto  <ecanuto@novell.com>
+
+	* NotifyIconTest.cs: Add Balloon test, bug #342141.
+
 2007-11-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ComboBoxTest.cs: Enabled test for bug #331144.

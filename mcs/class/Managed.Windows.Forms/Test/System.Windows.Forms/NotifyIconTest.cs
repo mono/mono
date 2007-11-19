@@ -34,6 +34,18 @@ namespace MonoTests.System.Windows.Forms
 			ni.ContextMenuStrip = cms;
 			Assert.AreSame (cms, ni.ContextMenuStrip, "B2");
 		}
+		
+		[Test]
+		public void Balloon ()
+		{
+			NotifyIcon ni = new NotifyIcon ();
+			ni.Text = "NotifyIcon Text";
+			ni.BalloonTipTitle = "Balloon Tip Title";
+			ni.BalloonTipText = "Balloon Tip Text.";
+			ni.BalloonTipIcon = ToolTipIcon.None;
+			ni.Visible = true;
+			ni.ShowBalloonTip (1);
+		}
 #endif
 	}
 }
