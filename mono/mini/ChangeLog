@@ -1,3 +1,7 @@
+2007-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_isinst): Remove unused ip argument.
+
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add new opcode OP_NOT_NULL.

@@ -3110,7 +3110,7 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass)
 }
 
 static MonoInst*
-handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
+handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	MonoBasicBlock *is_null_bb;
 	int obj_reg = src->dreg;
@@ -3151,7 +3151,7 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned ch
 }
 
 static MonoInst*
-handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
+handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	MonoInst *ins;
 	MonoBasicBlock *is_null_bb, *false_bb, *end_bb;
@@ -3252,7 +3252,7 @@ handle_isinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char 
 }
 
 static MonoInst*
-handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
+handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	/* This opcode takes as input an object reference and a class, and returns:
 	0) if the object is an instance of the class,
@@ -3339,7 +3339,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char
 }
 
 static MonoInst*
-handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src, unsigned char *ip)
+handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 {
 	/* This opcode takes as input an object reference and a class, and returns:
 	0) if the object is an instance of the class,
@@ -7735,7 +7735,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				inline_costs += costs;
 			}
 			else {
-				ins = handle_castclass (cfg, klass, *sp, ip);
+				ins = handle_castclass (cfg, klass, *sp);
 				bblock = cfg->cbb;
 				*sp ++ = ins;
 				ip += 5;
@@ -7776,7 +7776,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				inline_costs += costs;
 			}
 			else {
-				ins = handle_isinst (cfg, klass, *sp, ip);
+				ins = handle_isinst (cfg, klass, *sp);
 				bblock = cfg->cbb;
 				*sp ++ = ins;
 				ip += 5;
@@ -7817,7 +7817,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					inline_costs += costs;
 				}
 				else {
-					ins = handle_castclass (cfg, klass, *sp, ip);
+					ins = handle_castclass (cfg, klass, *sp);
 					bblock = cfg->cbb;
 					*sp ++ = ins;
 					ip += 5;
@@ -8941,9 +8941,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				token = read32 (ip + 2);
 				klass = (MonoClass *)mono_method_get_wrapper_data (method, token);
 				if (ip [1] == CEE_MONO_CISINST)
-					ins = handle_cisinst (cfg, klass, sp [0], ip);
+					ins = handle_cisinst (cfg, klass, sp [0]);
 				else
-					ins = handle_ccastclass (cfg, klass, sp [0], ip);
+					ins = handle_ccastclass (cfg, klass, sp [0]);
 				bblock = cfg->cbb;
 				*sp++ = ins;
 				ip += 6;
