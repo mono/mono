@@ -103,7 +103,16 @@ namespace System.Drawing {
 			if (image == null)
 				return false;
 
-			return (image.GetFrameCount (FrameDimension.Time) > 1);
+			int n = image.FrameDimensionsList.Length;
+			if (n < 1)
+				return false;
+
+			for (int i = 0; i < n; i++) {
+				if (image.FrameDimensionsList [i].Equals (FrameDimension.Time.Guid)) {
+					return (image.GetFrameCount (FrameDimension.Time) > 1);
+				}
+			}
+			return false;
 		}
 
 		public static void StopAnimate (Image image, EventHandler onFrameChangeHandler)

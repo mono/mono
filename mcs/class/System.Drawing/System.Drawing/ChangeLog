@@ -1,3 +1,9 @@
+2007-11-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ImageAnimator.cs: Check for FrameDimension.Time availability before
+	asking the frame count (since MS GDI+ prefers to return an error than
+	saying it has a single frame). Fix bug #342733
+
 2007-11-15  Geoff Norton  <gnorton@novell.com>
 
 	* gdipFunctions.cs: Reflect the renamed environment variable in the new Carbon driver.
