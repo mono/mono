@@ -1,5 +1,7 @@
 2007-11-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_cprop2): Fix detection of MONO_ARCH_USE_FPSTACK. Allow the result of a call to be copy propagated.
+
 	* method-to-ir.c (handle_isinst): Remove unused ip argument.
 
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>

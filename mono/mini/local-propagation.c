@@ -1330,7 +1330,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 				 * The third check avoids copy propagating local vregs through a call, 
 				 * since the lvreg will be spilled 
 				 */
-#ifdef MONO_ARCH_USE_FPSTACK
+#if MONO_ARCH_USE_FPSTACK
 				if (MONO_IS_MOVE (def) && (def->opcode != OP_FMOVE) &&
 #else
 				/* Enabling this for floats trips up the fp stack */
@@ -1339,7 +1339,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 					(!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg])) &&
 					!vreg_is_volatile (cfg, def->sreg1) &&
 					/* This avoids propagating local vregs across calls */
-					(get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] > last_call_index) || (def->opcode == OP_VMOVE))) {
+					((get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] >= last_call_index) || (def->opcode == OP_VMOVE)))) {
 					int vreg = def->sreg1;
 
 					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);
