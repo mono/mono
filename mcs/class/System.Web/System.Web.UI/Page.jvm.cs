@@ -79,12 +79,19 @@ namespace System.Web.UI
 			}
 		}
 		
+		bool _isMultiForm = false;
+		bool _isMultiFormInited = false;
+
 		internal bool IsMultiForm {
 			get {
-				Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) System.Web.Configuration.WebConfigurationManager.GetSection ("mainsoft.web/pages");
-				if (pageSection != null)
-					return pageSection.MultiForm;
-				return false;
+				if (!_isMultiFormInited) {
+					Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) System.Web.Configuration.WebConfigurationManager.GetSection ("mainsoft.web/pages");
+					if (pageSection != null)
+						_isMultiForm = pageSection.MultiForm;
+
+					_isMultiFormInited = true;
+				}
+				return _isMultiForm;
 			}
 		}
 
