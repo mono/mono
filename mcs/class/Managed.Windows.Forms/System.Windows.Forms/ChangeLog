@@ -1,3 +1,7 @@
+2007-11-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Label.cs: Use Size instead of None.  Fixes bug #342077.
+
 2007-11-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Implement 2.0 FindNearestItem method.
