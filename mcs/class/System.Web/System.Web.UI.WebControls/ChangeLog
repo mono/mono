@@ -1,3 +1,7 @@
+2007-11-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Style.cs: performance optimization: suppress finalizer added
+
 2007-11-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BoundField.cs:

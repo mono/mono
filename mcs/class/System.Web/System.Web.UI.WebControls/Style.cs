@@ -84,6 +84,7 @@ namespace System.Web.UI.WebControls {
 		public Style()
 		{
 			viewstate = new StateBag ();
+			GC.SuppressFinalize (this);
 		}
 
 		public Style(System.Web.UI.StateBag bag) 
@@ -92,6 +93,7 @@ namespace System.Web.UI.WebControls {
 			if (viewstate == null)
 				viewstate = new StateBag ();
 			_isSharedViewState = true;
+			GC.SuppressFinalize (this);
 		}
 		#endregion	// Public Constructors
 
