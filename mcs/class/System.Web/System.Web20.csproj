@@ -1193,6 +1193,7 @@
     <Compile Include="System.Web.UI.WebControls\XmlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\Control.jsf.cs" />
     <Compile Include="System.Web.UI\ControlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1209,6 +1210,7 @@
     <Compile Include="System.Web.UI\Page.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\Page.jsf.cs" />
     <Compile Include="System.Web.UI\Page.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1229,6 +1231,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web\HttpWorkerRequest.jvm.cs" />
+    <Compile Include="System.Web\IHttpExtendedHandler.cs" />
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1372,6 +1375,11 @@
     <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\lib\Mainsoft.Configuration.dll</HintPath>
     </Reference>
+    <Reference Include="myfaces-api-1.1.0, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\myfaces-api-1.1.0.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="rt">
       <HintPath>..\lib\rt.dll</HintPath>
       <Private>False</Private>
@@ -1401,7 +1409,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" />
+      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-myfaces-api-1-1-0="..\lib\myfaces-api-1.1.0.jar" REFS-RefInfo-myfaces-api-1-1-0="j2il:" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

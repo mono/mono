@@ -779,6 +779,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 			allow_load = (c.ID == GetTypeHashCode ());
 
+#if TARGET_J2EE
+		if (Context.IsActionRequest)
+			return coll;
+#endif
+
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
 
@@ -1014,7 +1019,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		writer.WriteLine ("\t{0}._instanceVariableName = '{0}';", theForm);
 #if TARGET_J2EE
-		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
+		string serverUrl = EncodeURL (Request.RawUrl);
 		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
 		writer.WriteLine ("\twindow.TARGET_J2EE = true;");
 		writer.WriteLine ("\twindow.IsMultiForm = {0};", IsMultiForm ? "true" : "false");
@@ -1036,6 +1041,13 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 		if (handleViewState)
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				javax.faces.application.StateManager manager = getFacesContext ().getApplication ().getStateManager ();
+				manager.writeState (getFacesContext (), _facesSerializedView);
+			}
+			else
+#endif
 			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
 
 		scriptManager.WriteHiddenFields (writer);
@@ -1159,12 +1171,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Unknown;
 #endif
-		_context = context;
-
-		_application = context.Application;
-		_response = context.Response;
-		_request = context.Request;
-		_cache = context.Cache;
+		SetContext (context);
 		
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
@@ -1183,12 +1190,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		} catch (ThreadAbortException) {
 			// Do nothing, just ignore it by now.
 		} catch (Exception e) {
-			context.AddError (e); // OnError might access LastError
-			OnError (EventArgs.Empty);
-			context.ClearError (e);
-			// We want to remove that error, as we're rethrowing to stop
-			// further processing.
-			Trace.Warn ("Unhandled Exception", e.ToString (), e);
+			ProcessException (e);
 			throw;
 		} finally {
 			try {
@@ -1207,6 +1209,15 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (Thread.CurrentThread.CurrentUICulture.Equals (uiculture) == false)
 				Thread.CurrentThread.CurrentUICulture = uiculture;
 		}
+	}
+
+	void ProcessException (Exception ex) {
+		_context.AddError (ex); // OnError might access LastError
+		OnError (EventArgs.Empty);
+		_context.ClearError (ex);
+		// We want to remove that error, as we're rethrowing to stop
+		// further processing.
+		Trace.Warn ("Unhandled Exception", ex.ToString (), ex);
 	}
 	
 #if NET_2_0
@@ -1326,22 +1337,50 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 			
 		renderingForm = false;	
+
+#if TARGET_J2EE
+		//kostat
+		if (Context.IsActionRequest || IsGetBack)
+			return;
+#endif
+
+		RestorePageState ();
+		ProcessLoadPage ();
+		ProcessRaiseChangedEvents ();
+		ProcessRaisePostBackEvents ();
+		ProcessLoadComplete ();
+		RenderPage ();
+	}
+
+	void RestorePageState () {
 #if NET_2_0
 		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
+#if NET_2_0
 			_lifeCycle = PageLifeCycle.PreLoad;
 			if (_requestValueCollection != null)
 				scriptManager.RestoreEventValidationState (
 					_requestValueCollection [ClientScriptManager.EventStateFieldName]);
-#else
-		if (IsPostBack) {
 #endif
 			Trace.Write ("aspx.page", "Begin LoadViewState");
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
-			Trace.Write ("aspx.page", "Begin ProcessPostData");
+		}
+	}
+
+	void ProcessLoadPage () {
+
+#if NET_2_0
 #if TARGET_J2EE
-			if (!IsGetBack)
+		if (!IsGetBack)
 #endif
+		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
+			Trace.Write ("aspx.page", "Begin ProcessPostData");
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
@@ -1363,20 +1402,51 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 #endif
 		if (IsPostBack || IsCallback) {
-			_lifeCycle = PageLifeCycle.ControlEvents;
 #else
 		if (IsPostBack) {
+#endif
+#if NET_2_0
+			_lifeCycle = PageLifeCycle.ControlEvents;
 #endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
 			ProcessPostData (secondPostData, true);
 			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
+		}
+	}
+
+	void ProcessRaiseChangedEvents () {
+
+#if NET_2_0
+#if TARGET_J2EE
+		if (!IsGetBack)
+#endif
+		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
 			Trace.Write ("aspx.page", "Begin Raise ChangedEvents");
 			RaiseChangedEvents ();
 			Trace.Write ("aspx.page", "End Raise ChangedEvents");
+		}
+	}
+
+	void ProcessRaisePostBackEvents () {
+
+#if NET_2_0
+#if TARGET_J2EE
+		if (!IsGetBack)
+#endif
+		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
 			Trace.Write ("aspx.page", "Begin Raise PostBackEvent");
 			RaisePostBackEvents ();
 			Trace.Write ("aspx.page", "End Raise PostBackEvent");
 		}
+	}
+
+	void ProcessLoadComplete() {
 		
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.LoadComplete;
@@ -1421,11 +1491,16 @@ public partial class Page : TemplateControl, IHttpHandler
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
 #if TARGET_J2EE
-		if (OnSaveStateCompleteForPortlet ())
-			return;
+		if (getFacesContext () != null) {
+			javax.faces.application.StateManager manager = getFacesContext ().getApplication ().getStateManager ();
+			_facesSerializedView = manager.saveSerializedView (getFacesContext ());
+		}
 #endif // TARGET_J2EE
 #endif // NET_2_0
+	
+	}
 
+	internal void RenderPage () {
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Render;
 		scriptManager.ResetEventValidationState ();
@@ -1434,8 +1509,18 @@ public partial class Page : TemplateControl, IHttpHandler
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
 		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
+		SetupResponseWriter (output);
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
+	}
+
+	void SetContext (HttpContext context) {
+		_context = context;
+
+		_application = context.Application;
+		_response = context.Response;
+		_request = context.Request;
+		_cache = context.Cache;
 	}
 
 	private void RenderTrace ()
@@ -1628,6 +1713,8 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal string RawViewState {
 		get {
+			if (_savedViewState != null)
+				return _savedViewState;
 			NameValueCollection postdata = _requestValueCollection;
 			string view_state;
 			if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)

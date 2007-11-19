@@ -33,11 +33,16 @@ using System.Configuration;
 using System.Threading;
 using javax.servlet.http;
 using vmw.@internal.j2ee;
+using javax.faces.context;
+using System.Web.J2EE;
+using System.Web.UI;
+using javax.servlet;
 
 namespace System.Web {
 	
 	public sealed partial class HttpContext {
-		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
+		static readonly LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
+		string _PortletNamespace;
 		// No remoting support (CallContext) yet in Grasshopper
 		[MonoInternalNote("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
 		public static HttpContext Current
@@ -66,6 +71,14 @@ namespace System.Web {
 			get { return (HttpServletResponse)GetWorkerService(typeof(HttpServletResponse)); }
 		}
 
+		static readonly Type typeOfFacesContext = typeof (FacesContext);
+		internal FacesContext FacesContext {
+			get {
+				FacesContext faces = (FacesContext) GetWorkerService (typeOfFacesContext);
+				return faces ?? javax.faces.context.FacesContext.getCurrentInstance ();
+			}
+		}
+
 		HttpRuntime _httpRuntime = null;
 		internal HttpRuntime HttpRuntimeInstance {
 			get
@@ -87,7 +100,47 @@ namespace System.Web {
 			get { return true; }
 		}
 
-		internal bool IsPortletRequest { get { return ServletRequest is IPortletRequest; } }
+		internal bool IsActionRequest {
+			get {
+				FacesContext faces = FacesContext;
+				return faces != null && !faces.getRenderResponse ();
+			}
+		}
+		internal bool IsPortletRequest {
+			get {
+				FacesContext faces = FacesContext;
+				return faces != null && !(faces.getExternalContext ().getContext () is ServletContext);
+			}
+		}
+
+		internal bool IsFacesRequest {
+			get {
+				return FacesContext != null;
+			}
+		}
+
+		internal string PortletNamespace
+		{
+			get {
+				if (_PortletNamespace == null) {
+					FacesContext faces = null;
+
+					//kostat: BUGBUG: complete
+					//string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
+					//if (usePortletNamespace == null || Boolean.Parse (usePortletNamespace))
+						faces = FacesContext;
+
+					if (faces != null) {
+						_PortletNamespace = faces.getRenderResponse () ?
+							faces.getExternalContext ().encodeNamespace (String.Empty) :
+							Request.Form [Page.NamespaceKey];
+					}
+					
+					_PortletNamespace = _PortletNamespace ?? String.Empty;
+				}
+				return _PortletNamespace;
+			}
+		}
 
 		internal void BeginTimeoutPossible ()
 		{

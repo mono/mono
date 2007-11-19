@@ -33,11 +33,18 @@ using System.Globalization;
 using System.Web.Hosting;
 using System.Web.J2EE;
 using System.ComponentModel;
+using System.IO;
+using javax.faces.context;
+using javax.faces.render;
+using javax.servlet;
+using javax.faces;
+using javax.faces.application;
 
 namespace System.Web.UI
 {
 	public partial class Page
 	{
+		internal const string NamespaceKey = "__NAMESPACE";
 		const string PageNamespaceKey = "__PAGENAMESPACE";
 		const string RenderPageMark = "vmw.render.page=";
 		const string ActionPageMark = "vmw.action.page=";
@@ -48,28 +55,13 @@ namespace System.Web.UI
 		string _PortletNamespace = null;
 		bool _renderResponseInit = false;
 		IPortletRenderResponse _renderResponse = null;
+		StateManager.SerializedView _facesSerializedView;
+
 
 		internal string PortletNamespace
 		{
 			get {
-				if (_emptyPortletNamespace)
-					return null;
-
-				if (_PortletNamespace == null) {
-					IPortletResponse portletResponse = null;
-					if (Context != null) {
-						string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
-						if (usePortletNamespace == null || Boolean.Parse(usePortletNamespace))
-							portletResponse = Context.ServletResponse as IPortletResponse;
-					}
-					if (portletResponse != null)
-						_PortletNamespace = portletResponse.getNamespace ();
-					else if (_requestValueCollection != null && _requestValueCollection [PageNamespaceKey] != null)
-						_PortletNamespace = _requestValueCollection [PageNamespaceKey];
-						
-					_emptyPortletNamespace = _PortletNamespace == null;
-				}
-				return _PortletNamespace;
+				return Context.PortletNamespace;
 			}
 		}
 
@@ -104,8 +96,7 @@ namespace System.Web.UI
 
 		internal bool IsGetBack {
 			get {
-				return IsPostBack && IsPortletRender &&
-					(0 == String.Compare (Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase));
+				return IsPostBack && Context.IsPortletRequest && !Context.IsActionRequest;
 			}
 		}
 
@@ -123,37 +114,21 @@ namespace System.Web.UI
 
 		public string CreateRenderUrl (string url)
 		{
-			if (RenderResponse != null)
-				return RenderResponse.createRenderURL (url);
-			if (PortletNamespace == null)
-				return url;
-
-			string internalUrl = RemoveAppPathIfInternal (url);
-			if (internalUrl == null)
-				return url;
-
-			PostBackOptions options = new PostBackOptions (this);
-			options.ActionUrl = RenderPageMark + internalUrl;
-			options.RequiresJavaScriptProtocol = true;
-			return ClientScript.GetPostBackEventReference (options);
+			FacesContext faces = getFacesContext ();
+			return faces != null ? faces.getExternalContext ().encodeResourceURL (url) : url;
 		}
 
 		public string CreateActionUrl (string url)
 		{
-			if (url.StartsWith (RenderPageMark, StringComparison.Ordinal) || url.StartsWith (ActionPageMark, StringComparison.Ordinal))
+			FacesContext faces = getFacesContext ();
+			if (faces == null)
 				return url;
 
-			if (RenderResponse != null)
-				return RenderResponse.createActionURL (url);
-			if (PortletNamespace == null)
-				return url;
-
-			Uri requestUrl = Request.Url;
-			string internalUrl = RemoveAppPathIfInternal (url);
-			if (internalUrl == null)
-				return url;
-
-			return ActionPageMark + internalUrl;
+			//kostat: handle QueryString!
+			Application application = faces.getApplication ();
+			ViewHandler viewHandler = application.getViewHandler ();
+			String viewId = faces.getViewRoot ().getViewId ();
+			return viewHandler.getActionURL (faces, viewId);
 		}
 
 		private string RemoveAppPathIfInternal (string url)
@@ -232,5 +207,30 @@ namespace System.Web.UI
 				val.IsValid = validatorsState [i];
 			}
 		}
+
+		void SetupResponseWriter (TextWriter httpWriter) {
+			FacesContext facesContext = getFacesContext ();
+			if (facesContext == null)
+				return;
+			ResponseWriter writer = facesContext.getResponseWriter ();
+			if (writer == null) {
+				RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
+				RenderKit renderKit = renderFactory.getRenderKit (facesContext,
+																 facesContext.getViewRoot ().getRenderKitId ());
+
+				ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
+
+				writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
+														 response.getContentType (), //TODO: is this the correct content type?
+														 response.getCharacterEncoding ());
+				facesContext.setResponseWriter (writer);
+			}
+		}
+
+		internal string EncodeURL (string raw) {
+			//kostat: BUGBUG: complete
+			return raw;
+		}
+
 	}
 }

@@ -258,13 +258,12 @@ namespace System.Web.UI.HtmlControls
 			action += Page.Request.QueryStringRaw;
 #if TARGET_J2EE
 			// Allow the page to transform action to a portlet action url
-			if (Page.IsPortletRender) {
-				string customAction = Attributes ["action"];
-				if (customAction != null && customAction.Length > 0)
-					action = customAction;
-				else
-					action = Page.RenderResponse.createActionURL (action);
-			}
+			string customAction = Attributes ["action"];
+			if (String.IsNullOrEmpty(customAction))
+				action = Page.CreateActionUrl (action);
+			else
+				action = customAction;
+
 #endif
 
 #if NET_2_0
