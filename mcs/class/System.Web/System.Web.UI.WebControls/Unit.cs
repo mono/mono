@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
 			
 			string ex = GetExtension ();
 			
-			return String.Format (culture, "{0}{1}", value, ex);
+			return value.ToString (culture) + ex;
 		}
 			
 		public override string ToString ()
@@ -287,7 +287,7 @@ namespace System.Web.UI.WebControls {
 
 			string ex = GetExtension ();
 
-			return String.Format (provider, "{0}{1}", value, ex);
+			return value.ToString (provider) + ex;
 		}
 #endif
 	}
