@@ -706,6 +706,19 @@ namespace Mono.CSharp {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
+			DoResolveInstanceExpression (ec);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		void DoResolveInstanceExpression (EmitContext ec)
+		{
+			//
+			// Argument is another delegate
+			//
+			if (delegate_instance_expression != null)
+				return;
+			
 			if (method_group.InstanceExpression != null)
 				delegate_instance_expression = method_group.InstanceExpression;
 			else if (!ec.IsStatic)
@@ -714,9 +727,6 @@ namespace Mono.CSharp {
 			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
 				delegate_instance_expression = new BoxedCast (
 					delegate_instance_expression, TypeManager.object_type);
-
-			eclass = ExprClass.Value;
-			return this;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -726,7 +736,7 @@ namespace Mono.CSharp {
 			else
 				delegate_instance_expression.Emit (ec);
 
-			if (delegate_method.IsVirtual && !method_group.IsBase) {
+			if (!delegate_method.DeclaringType.IsSealed && delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
 				ec.ig.Emit (OpCodes.Ldvirtftn, (MethodInfo) delegate_method);
 			} else

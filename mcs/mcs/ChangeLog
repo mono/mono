@@ -1,3 +1,9 @@
+2007-11-19  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for regression #342512
+ 	* delegate.cs: Use delegate argument expression when is available. Don't
+ 	emit virtual call when class is sealed.
+ 	
 2007-11-14  Marek Safar  <marek.safar@gmail.com>
 
  	A fix for a regression cause by #324222
