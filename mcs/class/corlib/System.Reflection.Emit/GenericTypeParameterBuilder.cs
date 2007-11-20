@@ -85,6 +85,7 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void initialize ();
 
+		[ComVisible (true)]
 		public override bool IsSubclassOf (Type c)
 		{
 			if (BaseType == null)
@@ -107,12 +108,18 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
+		[ComVisible (true)]
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
 		{
 			throw not_supported ();
 		}
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
+		{
+			throw not_supported ();
+		}
+
+		public override EventInfo[] GetEvents ()
 		{
 			throw not_supported ();
 		}
@@ -143,6 +150,11 @@ namespace System.Reflection.Emit
 		}
 		
 		public override MemberInfo[] GetMembers (BindingFlags bindingAttr)
+		{
+			throw not_supported ();
+		}
+
+		public override MemberInfo[] GetMember (string name, MemberTypes type, BindingFlags bindingAttr)
 		{
 			throw not_supported ();
 		}
@@ -186,6 +198,11 @@ namespace System.Reflection.Emit
 		protected override bool HasElementTypeImpl ()
 		{
 			return false;
+		}
+
+		public override bool IsAssignableFrom (Type c)
+		{
+			throw not_supported ();
 		}
 
 		protected override bool IsArrayImpl ()
@@ -272,8 +289,10 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
-		public override MemberTypes MemberType {
-			get { return MemberTypes.TypeInfo; }
+		[ComVisible (true)]
+		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
+		{
+			throw not_supported ();
 		}
 
 		public override string Name {
@@ -300,11 +319,6 @@ namespace System.Reflection.Emit
 			get { throw not_supported (); }
 		}
 
-		public override int GetArrayRank ()
-		{
-			throw not_supported ();
-		}
-
 		public override Type[] GetGenericArguments ()
 		{
 			throw not_supported ();
@@ -323,14 +337,16 @@ namespace System.Reflection.Emit
 			get { return true; }
 		}
 
-		public override int GenericParameterPosition {
-			get { return index; }
+		public override bool IsGenericType {
+			get { return false; }
 		}
 
-		public override GenericParameterAttributes GenericParameterAttributes {
-			get {
-				return attrs;
-			}
+		public override bool IsGenericTypeDefinition {
+			get { return false; }
+		}
+
+		public override int GenericParameterPosition {
+			get { return index; }
 		}
 
 		public override Type[] GetGenericParameterConstraints ()
@@ -371,6 +387,12 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		[MonoTODO ("unverified implementation")]
+		public void SetCustomAttribute (ConstructorInfo con, byte [] binaryAttribute)
+		{
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
+		}
+
 		private Exception not_supported ()
 		{
 			return new NotSupportedException ();
@@ -379,6 +401,48 @@ namespace System.Reflection.Emit
 		public override string ToString ()
 		{
 			return name;
+		}
+
+		[MonoTODO]
+		public override bool Equals (object other)
+		{
+			return base.Equals (other);
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		[MonoTODO]
+		public override Type MakeArrayType ()
+		{
+			return base.MakeArrayType ();
+		}
+
+		[MonoTODO]
+		public override Type MakeArrayType (int rank)
+		{
+			return base.MakeArrayType (rank);
+		}
+
+		[MonoTODO]
+		public override Type MakeByRefType ()
+		{
+			return base.MakeByRefType ();
+		}
+
+		[MonoTODO]
+		public override Type MakeGenericType (params Type [] typeArguments)
+		{
+			return base.MakeGenericType (typeArguments);
+		}
+
+		[MonoTODO]
+		public override Type MakePointerType ()
+		{
+			return base.MakePointerType ();
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2007-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MethodBuilder.cs : implemented ContainsGenericParameters().
+	* GenericTypeParameterBuilder.cs : removed most of extra members
+	  and added missing members for 2.0 API.
+
 2007-11-18  Miguel de Icaza  <miguel@novell.com>
 
 	* SignatureHelper.cs: Implement Equals and GetHashCode

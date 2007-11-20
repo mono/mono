@@ -118,6 +118,12 @@ namespace System.Reflection.Emit
 			charset = nativeCharset;
 		}
 
+#if NET_2_0
+		public override bool ContainsGenericParameters {
+			get { throw new NotSupportedException (); }
+		}
+#endif
+
 		public bool InitLocals {
 			get {return init_locals;}
 			set {init_locals = value;}
