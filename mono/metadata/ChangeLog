@@ -1,3 +1,9 @@
+
+Tue Nov 20 20:54:12 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: more interface implementations needed for the
+	array enumerator (fixes bug #341112).
+
 2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* icall.c: Renamed arguments for ves_icall_System_Enum_ToObject to
