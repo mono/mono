@@ -1,3 +1,8 @@
+2007-11-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Revert r89650, as it broke a common case to fix
+	an obscure case.  Fixes bug #342606.
+
 2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ThemeWin32Classic.cs: Fix extra space on end of tooltip.
