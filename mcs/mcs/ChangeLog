@@ -1,3 +1,9 @@
+2007-11-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #342584
+ 	* convert.cs: Added not documented explicit IntPtr/UIntPtr to enum
+ 	conversion.
+ 	
 2007-11-19  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #342512

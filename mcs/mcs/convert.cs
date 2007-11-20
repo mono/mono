@@ -1977,6 +1977,17 @@ namespace Mono.CSharp {
 				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
 				if (ce != null)
 					return EmptyCast.Create (ce, target_type);
+				
+				//
+				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
+				//
+                if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
+					ne = ExplicitUserConversion (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
+					if (ne != null)
+						return ExplicitConversionCore (ec, ne, target_type, loc);
+                }
+				
+				return null;
 			}
 
 			ne = ExplicitNumericConversion (expr, target_type);
