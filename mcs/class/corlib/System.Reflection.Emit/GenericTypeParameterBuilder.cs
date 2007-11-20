@@ -345,6 +345,12 @@ namespace System.Reflection.Emit
 			get { return false; }
 		}
 
+		public override GenericParameterAttributes GenericParameterAttributes {
+			get {
+				return attrs;
+			}
+		}
+
 		public override int GenericParameterPosition {
 			get { return index; }
 		}
