@@ -1,3 +1,12 @@
+2007-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add OP_IMIN,OP_IMAX,OP_LMIN,OP_LMAX opcodes.
+
+	* mini-amd64.c: Implement cpuid function. Implement min/max intrinsics based
+	on conditional moves.
+
+	* basic-math.cs: Add min/max tests.
+	
 2007-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_local_cprop2): Fix detection of MONO_ARCH_USE_FPSTACK. Allow the result of a call to be copy propagated.

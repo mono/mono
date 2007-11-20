@@ -751,7 +751,10 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 static int 
 cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 {
-	return 0;
+	__asm__ __volatile__ ("cpuid"
+		: "=a" (*p_eax), "=b" (*p_ebx), "=c" (*p_ecx), "=d" (*p_edx)
+		: "a" (id));
+	return 1;
 }
 
 /*
@@ -4389,6 +4392,30 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				amd64_fsqrt (code);
 			break;		
+		case OP_IMIN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
+			amd64_cmov_reg_size (code, X86_CC_GT, TRUE, ins->dreg, ins->sreg2, 4);
+			break;
+		case OP_IMAX:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
+			amd64_cmov_reg_size (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2, 4);
+			break;
+		case OP_LMIN:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			amd64_cmov_reg (code, X86_CC_GT, TRUE, ins->dreg, ins->sreg2);
+			break;
+		case OP_LMAX:
+			g_assert (cfg->opt & MONO_OPT_CMOV);
+			g_assert (ins->dreg == ins->sreg1);
+			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
+			amd64_cmov_reg (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2);
+			break;
 		case OP_X86_FPOP:
 			if (!use_sse2)
 				amd64_fstp (code, 0);
@@ -6425,6 +6452,30 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			ins->type = STACK_R8;
 			ins->dreg = mono_alloc_freg (cfg);
 			ins->sreg1 = args [0]->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+		}
+
+		opcode = 0;
+		if (cfg->opt & MONO_OPT_CMOV) {
+			if (strcmp (cmethod->name, "Min") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMIN;
+			} else if (strcmp (cmethod->name, "Max") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMAX;
+			}
+		}
+		
+		if (opcode) {
+			MONO_INST_NEW (cfg, ins, opcode);
+			ins->type = fsig->params [0]->type == MONO_TYPE_I4 ? STACK_I4 : STACK_I8;
+			ins->dreg = mono_alloc_ireg (cfg);
+			ins->sreg1 = args [0]->dreg;
+			ins->sreg2 = args [1]->dreg;
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 

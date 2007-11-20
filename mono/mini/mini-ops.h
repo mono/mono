@@ -508,8 +508,14 @@ MINI_OP(OP_ENDFINALLY,  "endfinally", NONE, NONE, NONE)
 /* inline (long)int * (long)int */
 MINI_OP(OP_BIGMUL, "op_bigmul", NONE, NONE, NONE)
 MINI_OP(OP_BIGMUL_UN, "op_bigmul_un", NONE, NONE, NONE)
-MINI_OP(OP_MIN, "op_min", NONE, NONE, NONE)
-MINI_OP(OP_MAX, "op_max", NONE, NONE, NONE)
+
+MINI_OP(OP_MIN, "op_min", IREG, IREG, IREG)
+MINI_OP(OP_MAX, "op_max", IREG, IREG, IREG)
+
+MINI_OP(OP_IMIN, "int_min", IREG, IREG, IREG)
+MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
+MINI_OP(OP_LMIN, "long_min", LREG, LREG, LREG)
+MINI_OP(OP_LMAX, "long_max", LREG, LREG, LREG)
 
 /* opcodes most architecture have */
 MINI_OP(OP_ADC,     "adc", IREG, IREG, IREG)
