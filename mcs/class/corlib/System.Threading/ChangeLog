@@ -1,3 +1,6 @@
+2007-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ReaderWriterLock.cs : adding missing 2.0 destructor (does nothing).
 
 Thu Nov 8 18:36:25 CET 2007 Paolo Molaro <lupus@ximian.com>
 

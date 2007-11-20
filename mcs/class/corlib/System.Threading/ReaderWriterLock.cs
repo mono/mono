@@ -62,6 +62,13 @@ namespace System.Threading
 			reader_locks = new Hashtable ();
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		~ReaderWriterLock ()
+		{
+		}
+#endif
+
 		public bool IsReaderLockHeld {
 #if NET_2_0
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
