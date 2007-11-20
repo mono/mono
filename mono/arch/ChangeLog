@@ -1,3 +1,8 @@
+2007-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_alu_reg_imm_size): Prefer the smaller 
+	instruction encoding.
+
 2007-11-03  David S. Miller  <davem@davemloft.net>
 
        * sparc/sparc-codegen.h (sparc_set32, sparc_set): A plain sethi
