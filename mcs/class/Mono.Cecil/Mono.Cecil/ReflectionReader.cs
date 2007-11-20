@@ -1140,6 +1140,7 @@ namespace Mono.Cecil {
 			int size = 0;
 			TypeReference fieldType = field.FieldType;
 			switch (fieldType.FullName) {
+			case Constants.Boolean:
 			case Constants.Byte:
 			case Constants.SByte:
 				size = 1;
