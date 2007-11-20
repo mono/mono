@@ -1,3 +1,7 @@
+2007-11-20 Juraj Skripsky <js@hotfeet.ch>
+
+	* WebUIValidation_2.0.js: Fix typo. 
+
 2007-11-06 Juraj Skripsky <js@hotfeet.ch>
 
 	* webform.js (WebForm_FireDefaultButton): Gecko-based browsers

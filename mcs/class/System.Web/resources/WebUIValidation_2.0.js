@@ -382,7 +382,7 @@ webForm.CompareValidatorEvaluateIsValid = function (validator)
 	}
 	var compare = "";
 	if (typeof(validator.controltocompare) == "string" && document.getElementById(validator.controltocompare))
-		compare = webForm.ValidatorTrim(webForm.ValidatorGetValue(val.controltocompare));
+		compare = webForm.ValidatorTrim(webForm.ValidatorGetValue(validator.controltocompare));
 	else if (typeof(validator.valuetocompare) == "string")
 		compare = validator.valuetocompare;
 
