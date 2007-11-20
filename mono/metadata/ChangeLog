@@ -1,4 +1,9 @@
 
+Tue Nov 20 20:54:12 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: more interface implementations needed for the
+	array enumerator (fixes bug #341112).
+
 Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: don't export random functions
