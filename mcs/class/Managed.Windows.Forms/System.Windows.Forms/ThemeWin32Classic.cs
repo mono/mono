@@ -5133,7 +5133,7 @@ namespace System.Windows.Forms
 			dc.FillRectangle (back_brush, control.ClientRectangle);
 			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
 
-			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter;
+			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter;
 			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, text_rect, foreground, flags, false);
 		}
 
