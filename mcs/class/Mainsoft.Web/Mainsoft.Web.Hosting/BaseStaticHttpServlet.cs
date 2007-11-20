@@ -47,7 +47,7 @@ namespace Mainsoft.Web.Hosting
 		override public void init(ServletConfig config)
 		{
 			base.init(config);
-			AppDir = J2EEUtils.GetInitParameterByHierarchy(config, IAppDomainConfig.APP_DIR_NAME);
+			AppDir = config.getServletContext ().getInitParameter (IAppDomainConfig.APP_DIR_NAME);
 			if (AppDir != null) {
 				AppDir = AppDir.Replace('\\', '/');
 				if (AppDir[AppDir.Length - 1] != '/')

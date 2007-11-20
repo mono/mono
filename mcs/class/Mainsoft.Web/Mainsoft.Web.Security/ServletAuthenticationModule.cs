@@ -31,6 +31,7 @@ using System.Web.Configuration;
 using System.Web.Util;
 using javax.servlet;
 using javax.servlet.http;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web.Security
 {
@@ -49,32 +50,32 @@ namespace Mainsoft.Web.Security
 
 		void OnAuthenticateRequest (object sender, EventArgs args) {
 			HttpApplication app = (HttpApplication) sender;
-			HttpServletRequest req = J2EEUtils.GetWorkerRequest (app.Context).ServletRequest;
-			if (req.getRemoteUser () != null)
+			BaseWorkerRequest req = J2EEUtils.GetWorkerRequest (app.Context);
+			if (req.GetRemoteUser () != null)
 				app.Context.User = new ServletPrincipal (req);
 		}
 	}
 
 	public sealed class ServletPrincipal : IPrincipal
 	{
-		readonly HttpServletRequest _request;
+		readonly BaseWorkerRequest _request;
 		readonly IIdentity _identity;
 
-		public ServletPrincipal (HttpServletRequest req) {
+		internal ServletPrincipal (BaseWorkerRequest req) {
 			_request = req;
-			string authType = req.getAuthType ();
+			string authType = req.GetAuthType ();
 			if (authType == null)
 				authType = String.Empty;
-			_identity = new GenericIdentity (req.getRemoteUser (), authType);
+			_identity = new GenericIdentity (req.GetRemoteUser (), authType);
 		}
 
 		public bool IsInRole (string role) {
-			return _request.isUserInRole (role);
+			return _request.IsUserInRole (role);
 		}
 
 		public IIdentity Identity { get { return _identity; } }
 
-		public java.security.Principal Principal { get { return _request.getUserPrincipal (); } }
+		public java.security.Principal Principal { get { return _request.GetUserPrincipal (); } }
 	}
 }
 

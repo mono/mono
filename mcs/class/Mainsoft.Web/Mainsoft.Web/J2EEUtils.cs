@@ -37,28 +37,28 @@ namespace Mainsoft.Web
 {
 	internal static class J2EEUtils
 	{
-		public static string GetInitParameterByHierarchy(ServletConfig config, string name)
-		{
-			if (config == null)
-				throw new ArgumentNullException("config");
+		//public static string GetInitParameterByHierarchy(ServletConfig config, string name)
+		//{
+		//    if (config == null)
+		//        throw new ArgumentNullException("config");
 
-			string value = config.getInitParameter(name);
-			if (value != null)
-				return value;
+		//    string value = config.getInitParameter(name);
+		//    if (value != null)
+		//        return value;
 
-			return config.getServletContext().getInitParameter(name);
+		//    return config.getServletContext().getInitParameter(name);
+		//}
+
+		public static string GetApplicationRealPath (ServletContext context) {
+			return GetApplicationRealPath (context, "/");
 		}
 
-		public static string GetApplicationRealPath (ServletConfig config) {
-			return GetApplicationRealPath (config, "/");
-		}
-
-		public static string GetApplicationRealPath (ServletConfig config, string appVirtualPath)
+		public static string GetApplicationRealPath (ServletContext context, string appVirtualPath)
 		{
-			string realFs = GetInitParameterByHierarchy (config, J2EEConsts.FILESYSTEM_ACCESS);
+			string realFs = context.getInitParameter (J2EEConsts.FILESYSTEM_ACCESS);
 			if (realFs == null || realFs == J2EEConsts.ACCESS_FULL) {
 				try {
-					string realPath = config.getServletContext ().getRealPath (appVirtualPath);
+					string realPath = context.getRealPath (appVirtualPath);
 					if (!String.IsNullOrEmpty (realPath)) {
 						if (!String.IsNullOrEmpty (appVirtualPath) &&
 							appVirtualPath [appVirtualPath.Length - 1] == '/')
@@ -77,11 +77,10 @@ namespace Mainsoft.Web
 			return IAppDomainConfig.WAR_ROOT_SYMBOL + appVirtualPath;
 		}
 
-		public static string GetApplicationPhysicalPath (ServletConfig config) {
+		public static string GetApplicationPhysicalPath (ServletContext context) {
 			string path = String.Empty;
 
-			ServletContext context = config.getServletContext ();
-			string appDir = GetInitParameterByHierarchy (config, IAppDomainConfig.APP_DIR_NAME);
+			string appDir = context.getInitParameter(IAppDomainConfig.APP_DIR_NAME);
 			if (appDir != null) {
 				try {
 					if (Directory.Exists(appDir))
@@ -95,14 +94,14 @@ namespace Mainsoft.Web
 				}
 			}
 			if (path.Length == 0)
-				path = GetApplicationRealPath (config);
+				path = GetApplicationRealPath (context);
 
 			return path;
 		}
 
-		static internal ServletWorkerRequest GetWorkerRequest (HttpContext context) {
+		static internal BaseWorkerRequest GetWorkerRequest (HttpContext context) {
 			IServiceProvider sp = (IServiceProvider) context;
-			return (ServletWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
+			return (BaseWorkerRequest) sp.GetService (typeof (HttpWorkerRequest));
 		}
 	}
 }

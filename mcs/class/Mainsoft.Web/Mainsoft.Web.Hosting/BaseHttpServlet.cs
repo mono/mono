@@ -49,9 +49,9 @@ namespace Mainsoft.Web.Hosting
 	public class BaseHttpServlet : HttpServlet
 	{
 		//private AppDomain _servletDomain;
-		static readonly LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_REQUEST);
-		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
-		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
+		//static readonly LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_REQUEST);
+		//static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
+		//static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
 
 		bool _appVirDirInited = false;
 
@@ -62,73 +62,46 @@ namespace Mainsoft.Web.Hosting
 		override public void init(ServletConfig config)
 		{
 			base.init(config);
-			InitServlet(config);
-			
+			InitRuntime (config, this, GetDeserializer (), getDriverUtils ());
 		}
 
-		protected virtual void InitServlet(ServletConfig config)
-		{
-			if (config.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN) != null)
-				return;
+		public static void InitRuntime (ServletConfig config, object evidence,
+			vmw.@internal.io.IObjectsDeserializer deserializer, vmw.@internal.IDriverUtils driverUtils) {
+			AppDomain servletDomain = createServletDomain (config);
+			// Mordechai : setting the web app deserializer object.
+			servletDomain.SetData (J2EEConsts.DESERIALIZER_CONST, deserializer);
+			servletDomain.SetData (vmw.@internal.EnvironmentUtils.GH_DRIVER_UTILS_CONST, driverUtils);
+			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
 
-			try 
-			{
-				AppDomain servletDomain = createServletDomain(config);
-				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
-
+			try {
+				ServletContext context = config.getServletContext ();
 				//GH Infromation Initizalization
-				int nowInt = DateTime.Now.ToString().GetHashCode();
-				servletDomain.SetData(".domainId", nowInt.ToString("x"));
-				nowInt += "/".GetHashCode ();
-				servletDomain.SetData(".appId", nowInt.ToString("x"));
-				servletDomain.SetData(".appName", nowInt.ToString("x"));
+				long currentTime = java.lang.System.currentTimeMillis ();
+				servletDomain.SetData (".domainId", currentTime.ToString ("x"));
+				currentTime = ~currentTime;
+				servletDomain.SetData (".appId", currentTime.ToString ("x"));
+				servletDomain.SetData (".appName", context.getServletContextName ());
 
-				servletDomain.SetData(J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass(this).getClassLoader());
-				servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
-				servletDomain.SetData(J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader(config.getServletContext()));
+				servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
+				//servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
+				servletDomain.SetData (J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader (context));
 
-				config.getServletContext().setAttribute(J2EEConsts.APP_DOMAIN, servletDomain);
-				config.getServletContext ().setAttribute (J2EEConsts.CURRENT_SERVLET, this);
+				lock (evidence) {
+					if (context.getAttribute (J2EEConsts.APP_DOMAIN) == null)
+						context.setAttribute (J2EEConsts.APP_DOMAIN, servletDomain);
+				}
+				//config.getServletContext ().setAttribute (J2EEConsts.CURRENT_SERVLET, this);
 			}
-			finally 
-			{
-				vmw.@internal.EnvironmentUtils.cleanTLS();
-				vmw.@internal.EnvironmentUtils.clearAppDomain();
+			finally {
+				vmw.@internal.EnvironmentUtils.cleanTLS ();
+				vmw.@internal.EnvironmentUtils.clearAppDomain ();
 			}
 		}
 
 		protected override void service (HttpServletRequest req, HttpServletResponse resp)
 		{
-			const string assemblies = "/assemblies";
-			const string getping = "getping";
-			const string setping = "setping";
-			string servletPath = req.getServletPath ();
+			resp.setContentType ("text/html");
 
-			if (String.CompareOrdinal (assemblies, 0, servletPath, 0, assemblies.Length) == 0) {
-				if (servletPath.Length == assemblies.Length ||
-					servletPath [assemblies.Length] == '/') {
-					string requestURI = req.getRequestURI ();
-					bool getp = requestURI.EndsWith (getping, StringComparison.Ordinal);
-					if (!getp && requestURI.EndsWith (setping, StringComparison.Ordinal)) {
-						getServletContext ().setAttribute (getping, "1");
-						getp = true;
-					}
-
-					if (getp) {
-						string ping = (string) getServletContext ().getAttribute (getping);
-						if (ping == null)
-							ping = "0";
-						resp.getOutputStream ().print (ping);
-						return;
-					}
-				}
-			}
-			resp.setContentType("text/html");
-			service(req, resp, false);
-		}
-
-		public virtual void service(HttpServletRequest req, HttpServletResponse resp, bool alwaysUsePrintWriter)
-		{
 			try 
 			{
 				// Very important - to update Virtual Path!!!
@@ -143,16 +116,16 @@ namespace Mainsoft.Web.Hosting
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 
 				// put request to the TLS
-				Thread.SetData(_servletRequestSlot, req);
-				// put response to the TLS
-				Thread.SetData(_servletResponseSlot, resp);
-				// put the servlet object to the TLS
-				Thread.SetData(_servletSlot, this);
+				//Thread.SetData(_servletRequestSlot, req);
+				//// put response to the TLS
+				//Thread.SetData(_servletResponseSlot, resp);
+				//// put the servlet object to the TLS
+				//Thread.SetData(_servletSlot, this);
 
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
 
-				HttpWorkerRequest gwr = new ServletWorkerRequest (this, req, resp, alwaysUsePrintWriter);
+				HttpWorkerRequest gwr = new ServletWorkerRequest (this, req, resp);
 				CultureInfo culture = (CultureInfo) vmw.@internal.EnvironmentUtils.getCultureInfoFromLocale (req.getLocale ());
 				Thread currentTread = Thread.CurrentThread;
 				currentTread.CurrentCulture = culture;
@@ -162,9 +135,9 @@ namespace Mainsoft.Web.Hosting
 			finally 
 			{
 				HttpContext.Current = null;
-				Thread.SetData(_servletRequestSlot, null);
-				Thread.SetData(_servletResponseSlot, null);
-				Thread.SetData(_servletSlot, null);
+				//Thread.SetData(_servletRequestSlot, null);
+				//Thread.SetData(_servletResponseSlot, null);
+				//Thread.SetData(_servletSlot, null);
 				vmw.@internal.EnvironmentUtils.clearAppDomain();
 			}
 		}
@@ -172,37 +145,38 @@ namespace Mainsoft.Web.Hosting
 		override public void destroy()
 		{
 			base.destroy();
-			AppDomain servletDomain = (AppDomain) getServletContext ().getAttribute (J2EEConsts.APP_DOMAIN);
+			DestroyRuntime (getServletContext (), this);
+		}
+
+		public static void DestroyRuntime (ServletContext context, object evidence) {
+			AppDomain servletDomain = (AppDomain) context.getAttribute (J2EEConsts.APP_DOMAIN);
 			if (servletDomain == null)
 				return;
 
-			try 
-			{
-				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
+			try {
+				vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
 #if DEBUG
-				Console.WriteLine("Destroy of GhHttpServlet");
+				Console.WriteLine ("Destroy of GhHttpServlet");
 #endif
-				HttpRuntime.Close();
-				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy(this);
-				this.getServletContext().removeAttribute(J2EEConsts.APP_DOMAIN);
-				java.lang.Thread.currentThread().setContextClassLoader(null);
+				HttpRuntime.Close ();
+				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy (evidence);
+				context.removeAttribute (J2EEConsts.APP_DOMAIN);
+				java.lang.Thread.currentThread ().setContextClassLoader (null);
 			}
-			catch(Exception e) 
-			{
+			catch (Exception e) {
 #if DEBUG
-				Console.WriteLine("ERROR in Servlet Destroy {0},{1}",e.GetType(), e.Message);
-				Console.WriteLine(e.StackTrace);
+				Console.WriteLine ("ERROR in Servlet Destroy {0},{1}", e.GetType (), e.Message);
+				Console.WriteLine (e.StackTrace);
 #endif
 			}
-			finally
-			{
-				vmw.@internal.EnvironmentUtils.clearAppDomain();
+			finally {
+				vmw.@internal.EnvironmentUtils.clearAppDomain ();
 			}
 		}
 
-		private AppDomain createServletDomain(ServletConfig config)
+		private static AppDomain createServletDomain(ServletConfig config)
 		{
-				string rootPath = J2EEUtils.GetApplicationRealPath(config);
+				string rootPath = J2EEUtils.GetApplicationRealPath(config.getServletContext ());
 				AppDomainSetup domainSetup = new AppDomainSetup();
 				string name = config.getServletName();//.getServletContextName();
 				if (name == null)
@@ -220,11 +194,11 @@ namespace Mainsoft.Web.Hosting
 				//servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config));
 				//servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
 
-				servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config));
+				servletDomain.SetData(IAppDomainConfig.APP_PHYS_DIR, J2EEUtils.GetApplicationPhysicalPath(config.getServletContext ()));
 				servletDomain.SetData(IAppDomainConfig.WEB_APP_DIR, rootPath);
 
 				//Set DataDirectory substitution string (http://blogs.msdn.com/dataaccess/archive/2005/10/28/486273.aspx)
-				string dataDirectory = J2EEUtils.GetInitParameterByHierarchy(config, "DataDirectory");
+				string dataDirectory = config.getServletContext ().getInitParameter ("DataDirectory");
 				if (dataDirectory == null)
 					dataDirectory = "App_Data";
 
@@ -268,9 +242,6 @@ namespace Mainsoft.Web.Hosting
 #if DEBUG
 				Console.WriteLine("Initialization of webapp " + webApp_baseDir);
 #endif
-				// Mordechai : setting the web app deserializer object.
-				servletDomain.SetData(J2EEConsts.DESERIALIZER_CONST , this.GetDeserializer());
-				servletDomain.SetData(vmw.@internal.EnvironmentUtils.GH_DRIVER_UTILS_CONST, this.getDriverUtils());
 				//servletDomain.SetData(".hostingVirtualPath", "/");
 				//servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
@@ -278,12 +249,9 @@ namespace Mainsoft.Web.Hosting
 	
 		virtual protected vmw.@internal.io.IObjectsDeserializer GetDeserializer()
 		{
-			if (m_deseializer == null)
-				m_deseializer = new GHWebDeseserializer();
-			return m_deseializer;
+			return new GHWebDeseserializer ();
 		}
 
-		protected vmw.@internal.io.IObjectsDeserializer m_deseializer = null;
 		/// Mordechai: This class comes to solve a problem in class deserialize
 		/// within web application. The problem is that the classloader that created 
 		/// some user web class (for example aspx page) is not the class loader

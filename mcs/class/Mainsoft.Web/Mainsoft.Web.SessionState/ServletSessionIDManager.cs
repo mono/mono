@@ -30,6 +30,7 @@ using System.Text;
 using System.Web;
 using System.Web.SessionState;
 using javax.servlet.http;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web.SessionState
 {
@@ -45,8 +46,8 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		public string GetSessionID (HttpContext context) {
-			HttpServletRequest request = J2EEUtils.GetWorkerRequest (context).ServletRequest;
-			return request.isRequestedSessionIdValid () ? request.getRequestedSessionId () : null;
+			BaseWorkerRequest request = J2EEUtils.GetWorkerRequest (context);
+			return request.IsRequestedSessionIdValid () ? request.GetRequestedSessionId () : null;
 		}
 
 		public void Initialize () {
