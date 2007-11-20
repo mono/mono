@@ -1401,6 +1401,34 @@ namespace System.Windows.Forms
 		{
 			Size new_size = Size.Empty;
 
+			// TODO: This is total duct tape.  We really have to call into the correct
+			// layout engine, do a dry run of the layout, and find out our true
+			// preferred dimensions.
+			if (this.LayoutStyle == ToolStripLayoutStyle.Flow) {
+				Point currentLocation = Point.Empty;
+				int tallest = 0;
+				
+				foreach (ToolStripItem tsi in items) {
+					if ((DisplayRectangle.Width - currentLocation.X) < (tsi.Width + tsi.Margin.Horizontal)) {
+
+						currentLocation.Y += tallest;
+						tallest = 0;
+						
+						currentLocation.X = DisplayRectangle.Left;
+					}
+
+					// Offset the left margin and set the control to our point
+					currentLocation.Offset (tsi.Margin.Left, 0);
+					tallest = Math.Max (tallest, tsi.Height + tsi.Margin.Vertical);
+					
+					// Update our location pointer
+					currentLocation.X += tsi.Width + tsi.Margin.Right;
+				}
+
+				currentLocation.Y += tallest;
+				return new Size (currentLocation.X, currentLocation.Y);
+			}
+				
 			if (this.orientation == Orientation.Vertical) {
 				foreach (ToolStripItem tsi in this.items)
 					if (tsi.Available)  {
