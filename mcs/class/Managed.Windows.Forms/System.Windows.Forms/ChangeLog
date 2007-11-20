@@ -1,3 +1,8 @@
+2007-11-19  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.2.6]
+	* ToolStrip.cs: Handle flow layout in GetPreferredSize to fix PDN3.
+	[Fixes bug #342123]
+
 2007-11-19  Everaldo Canuto  <ecanuto@novell.com>
 	[Backport to 1.2.6]
 	* Form.cs: Check for empty Text before assign to cp.Caption in CreateParams
