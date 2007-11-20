@@ -396,7 +396,7 @@ function RegularExpressionValidatorEvaluateIsValid (validator)
   
 	var r = new RegExp (ValidationExpression);
 	match = r.exec (ctrl_value);
-	if (match == null || match[0] == "") {
+	if (match == null || match[0] != ctrl_value) {
 		ValidatorFailed (validator);
 		return false;
 	}
