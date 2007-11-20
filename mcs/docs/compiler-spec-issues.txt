@@ -1,0 +1,15 @@
+This document is to track limitations on the C# compiler spec, we
+should have started this in 2001, but it is never too late.
+
+* IntPtr and UIntPtr conversions
+
+	The conversions to and from IntPtr and UIntPtr to other types
+	and to enumerations was originally planned to be based on
+	operator overloads, but it was eventually baked into the
+	compiler due to historical accidents (See Luke's pasted reply
+	in bug #XXXXXX)
+
+	Currently MCS implements this based on observations made in
+	real-life code. 
+
+
