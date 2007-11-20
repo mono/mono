@@ -60,6 +60,10 @@ namespace System.Threading
 		{
 			writer_queue = new LockQueue (this);
 			reader_locks = new Hashtable ();
+
+#if NET_2_0
+			GC.SuppressFinalize (this);
+#endif
 		}
 
 #if NET_2_0
