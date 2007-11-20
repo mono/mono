@@ -1,3 +1,7 @@
+2007-11-20  Jb Evain  <jbevain@novell.com>
+
+	* main.c: support for uninitialized .data.
+
 2007-11-06  Jb Evain  <jbevain@novell.com>
 
 	* main.c: Don't crash when a referenced assembly cannot be
