@@ -1,3 +1,12 @@
+2007-11-20  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(mono_debugger_insert_method_breakpoint): Moved into mono-debug-debugger.c.
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): Likewise.
+
+	* debug-debugger.c: Implement the new breakpoint interface here.
+
 2007-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Unify the implementation of
