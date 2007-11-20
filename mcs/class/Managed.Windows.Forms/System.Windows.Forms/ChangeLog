@@ -1,3 +1,12 @@
+2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
+	[Backport to 1.2.6]
+	* ThemeWin32Classic.cs: Fix extra space on end of tooltip.
+
+2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
+	[Backport to 1.2.6]
+	* ThemeWin32Classic.cs: Fix tooltip text align removing horizontal 
+	alignment. [Fixes #324228]
+
 2007-11-19  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.2.6]
 	* ToolStrip.cs: Handle flow layout in GetPreferredSize to fix PDN3.
