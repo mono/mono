@@ -5141,7 +5141,7 @@ namespace System.Windows.Forms
 		{
 			Size size = TextRenderer.MeasureTextInternal (text, tt.Font, false);
 
-			size.Width += 8;
+			size.Width += 4;
 			size.Height += 3;
 			
 			return size;

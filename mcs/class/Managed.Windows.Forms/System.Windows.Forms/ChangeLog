@@ -1,5 +1,9 @@
 2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ThemeWin32Classic.cs: Fix extra space on end of tooltip.
+
+2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ThemeWin32Classic.cs: Fix tooltip text align removing horizontal 
 	alignment. [Fixes #324228]
 
