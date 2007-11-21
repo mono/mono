@@ -601,6 +601,37 @@ MINI_OP(OP_ATOMIC_ADD_IMM_NEW_I8, "atomic_add_imm_new_i8", IREG, IREG, NONE)
 MINI_OP(OP_ATOMIC_EXCHANGE_I8, "atomic_exchange_i8", IREG, IREG, IREG)
 MINI_OP(OP_MEMORY_BARRIER, "memory_barrier", NONE, NONE, NONE)
 
+/* Conditional move opcodes.
+ * Must be in the same order as the matching CEE_B... opcodes
+ * sreg2 will be assigned to dreg if the condition is true.
+ * sreg1 should be equal to dreg and models the fact the instruction doesn't necessary
+ * modify dreg. The sreg1==dreg condition could be violated by SSA, so the local
+ * register allocator or the code generator should generate a mov dreg, sreg1 before
+ * the cmov in those cases.
+ * These opcodes operate on pointer sized values.
+ */
+MINI_OP(OP_CMOV_IEQ,    "cmov_ieq", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_IGE,    "cmov_ige", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_IGT,    "cmov_igt", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_ILE,    "cmov_ile", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_ILT,    "cmov_ilt", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_INE_UN, "cmov_ine_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_IGE_UN, "cmov_ige_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_IGT_UN, "cmov_igt_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_ILE_UN, "cmov_ile_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_ILT_UN, "cmov_ilt_un", IREG, IREG, IREG)
+
+MINI_OP(OP_CMOV_LEQ,    "cmov_leq", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LGE,    "cmov_lge", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LGT,    "cmov_lgt", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LLE,    "cmov_lle", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LLT,    "cmov_llt", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LNE_UN, "cmov_lne_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LGE_UN, "cmov_lge_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LGT_UN, "cmov_lgt_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LLE_UN, "cmov_lle_un", IREG, IREG, IREG)
+MINI_OP(OP_CMOV_LLT_UN, "cmov_llt_un", IREG, IREG, IREG)
+
 /* Arch specific opcodes */
 #if defined(__i386__) || defined(__x86_64__)
 MINI_OP(OP_X86_TEST_NULL,          "x86_test_null", NONE, NONE, NONE)

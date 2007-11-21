@@ -537,3 +537,25 @@ long_bge: len:64
 long_bge_un: len:64
 long_ble: len:64
 long_ble_un: len:64
+
+cmov_ieq: dest:i src1:i src2:i len:16 clob:1
+cmov_ige: dest:i src1:i src2:i len:16 clob:1
+cmov_igt: dest:i src1:i src2:i len:16 clob:1
+cmov_ile: dest:i src1:i src2:i len:16 clob:1
+cmov_ilt: dest:i src1:i src2:i len:16 clob:1
+cmov_ine_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ige_un: dest:i src1:i src2:i len:16 clob:1
+cmov_igt_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ile_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ilt_un: dest:i src1:i src2:i len:16 clob:1
+
+cmov_leq: dest:i src1:i src2:i len:16 clob:1
+cmov_lge: dest:i src1:i src2:i len:16 clob:1
+cmov_lgt: dest:i src1:i src2:i len:16 clob:1
+cmov_lle: dest:i src1:i src2:i len:16 clob:1
+cmov_llt: dest:i src1:i src2:i len:16 clob:1
+cmov_lne_un: dest:i src1:i src2:i len:16 clob:1
+cmov_lge_un: dest:i src1:i src2:i len:16 clob:1
+cmov_lgt_un: dest:i src1:i src2:i len:16 clob:1
+cmov_lle_un: dest:i src1:i src2:i len:16 clob:1
+cmov_llt_un: dest:i src1:i src2:i len:16 clob:1

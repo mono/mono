@@ -1023,6 +1023,12 @@ link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 	}
 }
 
+void
+mono_link_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
+{
+	link_bblock (cfg, from, to);
+}
+
 /**
  * mono_find_block_region:
  *
@@ -10696,6 +10702,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
  * - optimize mono_regstate2_alloc_int/float.
+ * - fix the pessimistic handling of variables accessed in exception handler blocks.
  * - need to write a tree optimization pass, but the creation of trees is difficult, i.e.
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other

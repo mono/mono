@@ -3670,6 +3670,32 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LBLE_UN:
 			EMIT_COND_BRANCH (ins, cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)]);
 			break;
+
+		case OP_CMOV_IEQ:
+		case OP_CMOV_IGE:
+		case OP_CMOV_IGT:
+		case OP_CMOV_ILE:
+		case OP_CMOV_ILT:
+		case OP_CMOV_INE_UN:
+		case OP_CMOV_IGE_UN:
+		case OP_CMOV_IGT_UN:
+		case OP_CMOV_ILE_UN:
+		case OP_CMOV_ILT_UN:
+		case OP_CMOV_LEQ:
+		case OP_CMOV_LGE:
+		case OP_CMOV_LGT:
+		case OP_CMOV_LLE:
+		case OP_CMOV_LLT:
+		case OP_CMOV_LNE_UN:
+		case OP_CMOV_LGE_UN:
+		case OP_CMOV_LGT_UN:
+		case OP_CMOV_LLE_UN:
+		case OP_CMOV_LLT_UN:
+			g_assert (ins->dreg == ins->sreg1);
+			/* This needs to operate on 64 bit values */
+			amd64_cmov_reg (code, cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)], ins->dreg, ins->sreg2);
+			break;
+
 		case CEE_NOT:
 		case OP_LNOT:
 			amd64_not_reg (code, ins->sreg1);

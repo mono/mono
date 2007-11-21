@@ -1,3 +1,13 @@
+2007-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add CMOV opcodes.
+
+	* cpu-amd64.md mini-amd64.c: Implement CMOV opcodes.
+
+	* local-propagation.c: Add a branch->conditional move transformation pass.
+
+	* driver.c: Add CMOV to default optimizations.
+	
 2007-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_IMIN,OP_IMAX,OP_LMIN,OP_LMAX opcodes.
