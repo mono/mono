@@ -167,10 +167,10 @@ namespace Mono.MonoConfig
 			string desc = fn.Description;
 			if (String.IsNullOrEmpty (desc))
 				return ret.ToString ();
-
-			string indent = "   ";
+			
+			string indent = "     ";
 			int maxLineWidth = Console.WindowWidth - indent.Length;
-			string[] dlines = desc.Split ('\n');
+			string[] dlines = desc.Trim ().Split ('\n');
 			string line;
 			
 			foreach (string l in dlines) {
@@ -186,6 +186,7 @@ namespace Mono.MonoConfig
 					ret.AppendFormat ("{0}{1}\n", indent, line);
 			}
 
+			ret.Append ("\n");
 			return ret.ToString ();
 		}
 		
