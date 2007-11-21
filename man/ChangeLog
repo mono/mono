@@ -1,3 +1,7 @@
+2007-11-21  Marek Habersack  <mhabersack@novell.com>
+
+	* mconfig.1: modify to reflect parameter changes in mconfig.
+
 2007-10-23  Marek Habersack  <mhabersack@novell.com>
 
 	* mconfig.1: added
