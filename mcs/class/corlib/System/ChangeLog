@@ -1,3 +1,9 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MarshalByRefObject.cs : Added MemberwiseClose() stub.
+	  GetLifetimeService() is not virtual (in both 2.0 and 1.1).
+	* Console.cs : implemented missing 2.0 key members.
+
 2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Enum.cs: Provided ParamName of Argument(Null)Exceptions. Rewrote

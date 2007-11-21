@@ -79,8 +79,10 @@ namespace System
 			return _identity.CreateObjRef (type);
 		}
 
+		// corcompare says it is "virtual final", so there is likely
+		// an internal interface in .NET.
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		public virtual object GetLifetimeService ()
+		public object GetLifetimeService ()
 		{
 			if (_identity == null)
 				return null;
@@ -92,5 +94,13 @@ namespace System
 		{
 			return new System.Runtime.Remoting.Lifetime.Lease();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected MarshalByRefObject MemberwiseClone (bool cloneIdentity)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

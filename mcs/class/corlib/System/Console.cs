@@ -520,6 +520,10 @@ namespace System
 			set { ConsoleDriver.BufferWidth = value; }
 		}
 
+		public static bool CapsLock {
+			get { return ConsoleDriver.CapsLock; }
+		}
+
 		public static int CursorLeft {
 			get { return ConsoleDriver.CursorLeft; }
 			set { ConsoleDriver.CursorLeft = value; }
@@ -528,6 +532,11 @@ namespace System
 		public static int CursorTop {
 			get { return ConsoleDriver.CursorTop; }
 			set { ConsoleDriver.CursorTop = value; }
+		}
+
+		public static int CursorSize {
+			get { return ConsoleDriver.CursorSize; }
+			set { ConsoleDriver.CursorSize = value; }
 		}
 
 		public static bool CursorVisible {
@@ -542,6 +551,18 @@ namespace System
 
 		public static bool KeyAvailable {
 			get { return ConsoleDriver.KeyAvailable; }
+		}
+
+		public static int LargestWindowHeight {
+			get { return ConsoleDriver.LargestWindowHeight; }
+		}
+
+		public static int LargestWindowWidth {
+			get { return ConsoleDriver.LargestWindowWidth; }
+		}
+
+		public static bool NumberLock {
+			get { return ConsoleDriver.NumberLock; }
 		}
 
 		public static string Title {
