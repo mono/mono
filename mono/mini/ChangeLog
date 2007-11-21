@@ -1,5 +1,9 @@
 2007-11-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_unbox_nullable): Disable AOT here since we can't encode
+	the method reference.
+	(handle_box): Ditto.
+
 	* local-propagation.c (mono_branch_to_cmov): Implement another form
 	of branch->cmov conversion.
 

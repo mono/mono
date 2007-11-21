@@ -3021,6 +3021,8 @@ static MonoInst*
 handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass)
 {
 	MonoMethod* method = mono_class_get_method_from_name (klass, "Unbox", 1);
+	// Can't encode method ref
+	cfg->disable_aot = TRUE;
 	return mono_emit_method_call (cfg, method, mono_method_signature (method), &val, NULL);
 }
 
@@ -3105,6 +3107,8 @@ handle_box (MonoCompile *cfg, MonoInst *val, MonoClass *klass)
 
 	if (mono_class_is_nullable (klass)) {
 		MonoMethod* method = mono_class_get_method_from_name (klass, "Box", 1);
+		// Can't encode method ref
+		cfg->disable_aot = TRUE;
 		return mono_emit_method_call (cfg, method, mono_method_signature (method), &val, NULL);
 	}
 
