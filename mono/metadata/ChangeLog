@@ -1,4 +1,10 @@
+2007-11-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_generic_array_helper): Skip visibility checks for
+	these methods.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+	
 Tue Nov 20 23:10:41 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: some fields don't have a valid rva: ignore them (bug #343083).
