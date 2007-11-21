@@ -1,0 +1,4 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InternalActivationContextHelper.cs,
+	  InternalApplicationIdentityHelper.cs : initial checkin (stubs).

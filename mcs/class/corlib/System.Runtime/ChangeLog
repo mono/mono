@@ -1,0 +1,3 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GCSettings.cs, MemoryFailPoint.cs : initial checkin (stubs).

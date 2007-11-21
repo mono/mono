@@ -287,6 +287,8 @@ System.Configuration.Assemblies/AssemblyHash.cs
 System.Configuration.Assemblies/AssemblyHashAlgorithm.cs
 System.Configuration.Assemblies/AssemblyVersionCompatibility.cs
 System.Configuration.Assemblies/ProcessorID.cs
+System.Deployment.Internal/InternalActivationContextHelper.cs
+System.Deployment.Internal/InternalApplicationIdentityHelper.cs
 System.Diagnostics/ConditionalAttribute.cs
 System.Diagnostics/DebuggableAttribute.cs
 System.Diagnostics/Debugger.cs
@@ -544,6 +546,8 @@ System.Resources/ResourceWriter.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
+System.Runtime/GCSettings.cs
+System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
 System.Runtime.CompilerServices/CallConvCdecl.cs
 System.Runtime.CompilerServices/CallConvFastcall.cs
