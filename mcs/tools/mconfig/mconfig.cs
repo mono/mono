@@ -57,29 +57,27 @@ namespace Mono.MonoConfig
 			"                                    the standard ones. Settings in this file override ones",
 			"                                    in the other files.",
 			"  -t,--target={any,web,application} Use this target when executing 'command'",
-			"  -C,--list-configs                 List all the default config file names defined in the",
-			"                                    configuration files.",
-			"  -F,--list-features                List all the features defined in the configuration files.",
 			"",
-			"Commands:",
-			"  {addfeature,af} <feature_name> [config_file_path]",
-			"  {defconfig,dc} [config_name] [target_directory]"
+			"To see the list of commands, features and default config file templates, run mconfig",
+			"without any parameters"
 		};
-		
-		public delegate void ListDefaultConfigsHandler ();
-		public delegate void ListFeaturesHandler ();
 
-		public event ListDefaultConfigsHandler OnListDefaultConfigs;
-		public event ListFeaturesHandler OnListFeatures;
+		string[] usageCommands = {
+			"Available commands (see 'man mconfig' for details):",
+			"  {addfeature,af} <feature_name> [config_file_path]",
+			"     Add the named feature to the specified config file",
+			"",
+			"  {defconfig,dc} [template_name] [target_directory]",
+			"     Write a config file based on the named template.",
+			""
+		};		
 
 		List <string> plain_arguments;
 		Dictionary <string, string> unknown_arguments;
 
 		public string ConfigFile;
 		public FeatureTarget Target = FeatureTarget.Any;
-		public bool ListDefaultConfigs;
-		public bool ListFeatures;
-		
+
 		public Dictionary <string, string> UnknownArguments {
 			get {
 				if (unknown_arguments == null || unknown_arguments.Count == 0)
@@ -107,7 +105,7 @@ namespace Mono.MonoConfig
 		public void Parse (string[] args)
 		{
 			if (args == null || args.Length == 0)
-				Usage ();
+				return;
 
 			int len = args.Length;
 			string arg;
@@ -198,16 +196,6 @@ namespace Mono.MonoConfig
 					}
 					break;
 
-				case "C":
-				case "list-configs":
-					ListDefaultConfigs = true;
-					break;
-
-				case "F":
-				case "list-features":
-					ListFeatures = true;
-					break;
-
 				default:
 					unknown_arguments.Add (argName, argParam);
 					break;
@@ -230,11 +218,22 @@ namespace Mono.MonoConfig
 			Environment.Exit (1);
 		}
 
+		void ShowUsage (string[] msg, bool exit)
+		{
+			foreach (string line in msg)
+				Console.WriteLine (line);
+			if (exit)
+				Environment.Exit (1);
+		}
+		
 		public void Usage ()
 		{
-			foreach (string line in usage)
-				Console.WriteLine (line);
-			Environment.Exit (1);
+			ShowUsage (usage, true);
+		}
+
+		public void UsageCommands ()
+		{
+			ShowUsage (usageCommands, false);
 		}
 		
 		void ShowVersion ()
@@ -311,7 +310,7 @@ namespace Mono.MonoConfig
 			}
 
 			foreach (string item in list)
-				Console.WriteLine (" {0}", item);
+				Console.WriteLine ("  {0}", item);
 		}
 
 		static void PrintException (Exception ex, string format, params object[] parms)
@@ -340,23 +339,12 @@ namespace Mono.MonoConfig
 				return 1;
 			}
 			
-			bool doQuit = false;
-			if (options.ListDefaultConfigs) {
-				DisplayList ("Default config files", config.DefaultConfigFiles);
-				doQuit = true;
-			}
-
-			if (options.ListFeatures) {
-				DisplayList ("Available features", config.Features);
-				doQuit = true;
-			}
-
-			if (doQuit)
-				return 0;
-			
 			string[] commandArguments = options.PlainArguments;
 			if (commandArguments == null || commandArguments.Length == 0) {
-				options.Usage ();
+				options.UsageCommands ();
+				DisplayList ("Default config files:", config.DefaultConfigFiles);
+				Console.WriteLine ();
+				DisplayList ("Available features:", config.Features);
 				return 1;
 			}
 			
