@@ -1,3 +1,11 @@
+2007-11-21  Dick Porter  <dick@ximian.com>
+
+	* processes.c (load_modules): Rewrite based on the libgc
+	/proc/<pid>/maps parsing to avoid using glib functions only
+	available since 2004.
+	(load_modules): Check for duplicates before adding a module to the
+	list.
+
 2007-11-15  Dick Porter  <dick@ximian.com>
 
 	* processes.c (load_modules): Don't bother if we don't have
