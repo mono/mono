@@ -1,3 +1,9 @@
+2007-11-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When setting focused item, try to give focus to the
+	previous one _only_ if the previous one remains valid. 
+	Fixes #342504.
+
 2007-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Application.cs: Revert r89650, as it broke a common case to fix
