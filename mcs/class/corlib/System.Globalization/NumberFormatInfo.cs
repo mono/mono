@@ -45,10 +45,12 @@
 // Other than that this is totally ECMA compliant.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Globalization {
 
 #if NET_2_0
-	[System.Runtime.InteropServices.ComVisible(true)]
+	[ComVisible (true)]
 #endif
 	[Serializable]
 	public sealed class NumberFormatInfo : ICloneable, IFormatProvider {
@@ -524,6 +526,7 @@ namespace System.Globalization {
 		
 #if NET_2_0
 		[MonoNotSupported ("We don't have native digit info")]
+		[ComVisible (false)]
 		public string [] NativeDigits {
 			get { return nativeDigits; }
 			set {
@@ -539,6 +542,7 @@ namespace System.Globalization {
 		}
 
 		[MonoNotSupported ("We don't have native digit info")]
+		[ComVisible (false)]
 		public DigitShapes DigitSubstitution {
 			get { return (DigitShapes) digitSubstitution; }
 			set { digitSubstitution = (int) value; }

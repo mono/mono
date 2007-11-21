@@ -1,3 +1,8 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NumberFormatInfo.cs :
+	  NativeDigits and DigitSubstitution are [ComVisible(false)].
+
 2007-09-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : implemented SetAllDateTimePatterns().
