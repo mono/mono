@@ -8,6 +8,9 @@ mconfig can be used to edit .NET configuration files, by adding "features"
 (that is sets of xml statements) defined in one of the config files read
 by mconfig. The config file can also define layouts of default configuration
 files, which may be useful for bootstrapping your .NET projects.
+
+To see the list of recognized commands, default configuration files and features, run
+mconfig without passing any parameters.
 .SH OPTIONS
 .TP
 .B -c <config_file>, --config=<config_file>
@@ -20,14 +23,6 @@ Features and default configuration files defined in the mconfig config file(s)
 can be assigned to one of the three targets - \fIweb\fR (for ASP.NET features/config files),
 \fIapplication\fR - for .NET applications, \fIany\fR - applicable in both of the previous
 targets. Defaults to \fIany\fR.
-.TP
-.B -C, --list-configs
-List all the default configuration file names that are defined in the mconfig
-configuration files.
-.TP
-.B -F, --list-features
-List all the features that are defined in the mconfig configuration files and
-which can be added to your existing (or new) .NET configuration files.
 .TP
 .B -?, -h, --help
 Show a summary usage screen.
