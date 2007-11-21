@@ -816,11 +816,12 @@ namespace System.IO
 			//MonoIO.Flush (handle);
 		}
 
+#if !NET_2_0
 		public override void Close ()
 		{
 			Dispose (true);
-			GC.SuppressFinalize (this);	// remove from finalize queue
 		}
+#endif
 
 		public virtual void Lock (long position, long length)
 		{
@@ -902,6 +903,8 @@ namespace System.IO
 			if (disposing) {
 				buf = null;
 			}
+			if (disposing)
+				GC.SupressFinalize (this);
 		}
 
 #if NET_2_0

@@ -1,3 +1,8 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FileStream.cs : Close() does not exist in 2.0 (Stream does).
+	  Move GC.SuppressFinalize() to Dispose(true).
+
 2007-11-12  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Path.cs (GetRandomFileName): Return filenames containing only
