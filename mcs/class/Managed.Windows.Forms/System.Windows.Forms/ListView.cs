@@ -3006,7 +3006,7 @@ namespace System.Windows.Forms
 		{
 			if (index != -1)
 				items [index].Focused = true;
-			else if (focused_item_index != -1) // Previous focused item
+			else if (focused_item_index != -1 && focused_item_index < items.Count) // Previous focused item
 				items [focused_item_index].Focused = false;
 
 			focused_item_index = index;

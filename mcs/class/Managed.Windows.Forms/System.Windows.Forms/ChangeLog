@@ -1,3 +1,10 @@
+2007-11-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	[Backport to 1.2.6]
+	* ListView.cs: When setting focused item, try to give focus to the
+	previous one _only_ if the previous one remains valid. 
+	Fixes #342504.
+
 2007-11-20  Everaldo Canuto  <ecanuto@novell.com>
 	[Backport to 1.2.6]
 	* ThemeWin32Classic.cs: Fix extra space on end of tooltip.
