@@ -2020,6 +2020,35 @@ mono_opcode_to_cond (int opcode)
 	}
 }
 
+CompRelation
+mono_negate_cond (CompRelation cond)
+{
+	switch (cond) {
+	case CMP_EQ:
+		return CMP_NE;
+	case CMP_NE:
+		return CMP_EQ;
+	case CMP_LE:
+		return CMP_GT;
+	case CMP_GE:
+		return CMP_LT;
+	case CMP_LT:
+		return CMP_GE;
+	case CMP_GT:
+		return CMP_LE;
+	case CMP_LE_UN:
+		return CMP_GT_UN;
+	case CMP_GE_UN:
+		return CMP_LT_UN;
+	case CMP_LT_UN:
+		return CMP_GE_UN;
+	case CMP_GT_UN:
+		return CMP_LE_UN;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
 CompType
 mono_opcode_to_type (int opcode, int cmp_opcode)
 {

@@ -1013,7 +1013,9 @@ guint32   mono_alloc_preg                   (MonoCompile *cfg) MONO_INTERNAL;
 guint32   mono_alloc_dreg                   (MonoCompile *cfg, MonoStackType stack_type) MONO_INTERNAL;
 void      mono_link_bblock                  (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to) MONO_INTERNAL;
 void      mono_unlink_bblock                (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to) MONO_INTERNAL;
+void      mono_remove_bblock                (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
 void      mono_merge_basic_blocks           (MonoBasicBlock *bb, MonoBasicBlock *bbn) MONO_INTERNAL;
+void      mono_optimize_branches            (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom) MONO_INTERNAL;
 void      mono_print_tree                   (MonoInst *tree) MONO_INTERNAL;
 void      mono_print_tree_nl                (MonoInst *tree) MONO_INTERNAL;
@@ -1142,6 +1144,7 @@ gboolean          mono_is_regsize_var (MonoType *t) MONO_INTERNAL;
 void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align) MONO_INTERNAL;
 CompRelation      mono_opcode_to_cond (int opcode) MONO_INTERNAL;
 CompType          mono_opcode_to_type (int opcode, int cmp_opcode) MONO_INTERNAL;
+CompRelation      mono_negate_cond (CompRelation cond) MONO_INTERNAL;
 
 void              mono_decompose_long_opts (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_decompose_vtype_opts (MonoCompile *cfg) MONO_INTERNAL;

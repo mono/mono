@@ -1,5 +1,14 @@
 2007-11-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_branch_to_cmov): Implement another form
+	of branch->cmov conversion.
+
+	* mini.c (mini_method_compile): Reorder order of optimizations a bit.
+
+	* mini.c: Export some bblock related functions.
+
+	* basic.cs: Add more branch->cmov tests.
+
 	* mini-ops.h: Add CMOV opcodes.
 
 	* cpu-amd64.md mini-amd64.c: Implement CMOV opcodes.

@@ -10802,6 +10802,23 @@ move_basic_block_to_end (MonoCompile *cfg, MonoBasicBlock *bb)
 	}		
 }
 
+/*
+ * mono_remove_block:
+ *
+ *   Remove BB from the control flow graph
+ */
+void
+mono_remove_bblock (MonoCompile *cfg, MonoBasicBlock *bb) 
+{
+	MonoBasicBlock *tmp_bb;
+
+	for (tmp_bb = cfg->bb_entry; tmp_bb && tmp_bb->next_bb != bb; tmp_bb = tmp_bb->next_bb)
+		;
+
+	g_assert (tmp_bb);
+	tmp_bb->next_bb = bb->next_bb;
+}
+
 /* checks that a and b represent the same instructions, conservatively,
  * it can return FALSE also for two trees that are equal.
  * FIXME: also make sure there are no side effects.
@@ -10909,8 +10926,8 @@ try_unsigned_compare (MonoCompile *cfg, MonoBasicBlock *bb)
  * Optimizes the branches on the Control Flow Graph
  *
  */
-static void
-optimize_branches (MonoCompile *cfg)
+void
+mono_optimize_branches (MonoCompile *cfg)
 {
 	int i, changed = FALSE;
 	MonoBasicBlock *bb, *bbn;
@@ -11871,10 +11888,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	if (cfg->opt & MONO_OPT_BRANCH)
-		optimize_branches (cfg);
+		mono_optimize_branches (cfg);
 
 	if (cfg->opt & MONO_OPT_SSAPRE) {
 		remove_critical_edges (cfg);
+	}
+
+	if (cfg->new_ir) {
+		/* This must be done _before_ global reg alloc and _after_ decompose */
+		mono_handle_global_vregs (cfg);
+		mono_local_deadce (cfg);
+		mono_branch_to_cmov (cfg);
 	}
 
 	/* Depth-first ordering on basic blocks */
@@ -11911,14 +11935,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->opt & MONO_OPT_LOOP) {
 		mono_compile_dominator_info (cfg, MONO_COMP_DOM | MONO_COMP_IDOM);
 		mono_compute_natural_loops (cfg);
-	}
-
-
-	if (cfg->new_ir) {
-		/* This must be done _before_ global reg alloc and _after_ decompose */
-		mono_handle_global_vregs (cfg);
-		mono_local_deadce (cfg);
-		mono_branch_to_cmov (cfg);
 	}
 
 	/* after method_to_ir */
@@ -12013,7 +12029,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			mono_ssa_remove (cfg);
 
 		if (cfg->opt & MONO_OPT_BRANCH)
-			optimize_branches (cfg);
+			mono_optimize_branches (cfg);
 	}
 #endif
 

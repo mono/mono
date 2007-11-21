@@ -1763,7 +1763,8 @@ mono_branch_to_cmov (MonoCompile *cfg)
 
 	/* 
 	 * This pass requires somewhat optimized IR code so it should be run after
-	 * local cprop/deadce.
+	 * local cprop/deadce. Also, it should be run before dominator computation, since
+	 * it changes control flow.
 	 */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoBasicBlock *bb1, *bb2;
@@ -1931,17 +1932,163 @@ mono_branch_to_cmov (MonoCompile *cfg)
 			mono_unlink_bblock (cfg, bb, bb2);
 			mono_unlink_bblock (cfg, bb1, bb1->out_bb [0]);
 			mono_unlink_bblock (cfg, bb2, bb2->out_bb [0]);
+			mono_remove_bblock (cfg, bb1);
+			mono_remove_bblock (cfg, bb2);
 
-			/* Merge bb1 and its successor if possible */
+			/* Merge bb and its successor if possible */
 			if ((bb->out_bb [0]->in_count == 1) && (bb->out_bb [0] != cfg->bb_exit) &&
 				(bb->region == bb->out_bb [0]->region)) {
 				// FIXME:
-				//mono_merge_basic_blocks (bb, bb->out_bb [0]);
+				mono_merge_basic_blocks (bb, bb->out_bb [0]);
+			}
+		}
+
+		/* Look for the IR code generated from if (cond) <var> <- <a>
+		 * which is:
+		 * BB:
+		 * b<cond> [BB1BB2]
+		 * BB1:
+		 * <var> <- <a>
+		 * br BB2
+		 */
+
+		if ((bb2->in_count == 1 && bb2->out_count == 1 && bb2->out_bb [0] == bb1) ||
+			(bb1->in_count == 1 && bb1->out_count == 1 && bb1->out_bb [0] == bb2)) {
+			MonoInst *prev, *compare, *branch, *ins1, *cmov, *tmp;
+			gboolean simple;
+			int dreg, tmp_reg;
+			CompType comp_type;
+			CompRelation cond;
+			MonoBasicBlock *next_bb, *code_bb;
+
+			/* code_bb is the bblock containing code, next_bb is the successor bblock */
+			if (bb2->in_count == 1 && bb2->out_count == 1 && bb2->out_bb [0] == bb1) {
+				code_bb = bb2;
+				next_bb = bb1;
+			} else {
+				code_bb = bb1;
+				next_bb = bb2;
+			}
+
+			ins1 = code_bb->code;
+
+			/* Check that code_bb is simple */
+			simple = TRUE;
+			for (tmp = ins1->next; tmp; tmp = tmp->next)
+				if (!((tmp->opcode == OP_NOP) || (tmp->opcode == OP_BR)))
+					simple = FALSE;
+
+			if (!simple)
+				continue;
+
+			/* We move ins1 before the compare so it should have no side effect */
+			if (!INS_HAS_NO_SIDE_EFFECT (ins1))
+				continue;
+
+			if (bb->last_ins && bb->last_ins->opcode == OP_BR_REG)
+				continue;
+
+			/* Find the compare instruction */
+			prev = NULL;
+			compare = bb->code;
+			g_assert (compare);
+			while (compare->next && !MONO_IS_COND_BRANCH_OP (compare->next)) {
+				prev = compare;
+				compare = compare->next;
+			}
+			g_assert (compare->next && MONO_IS_COND_BRANCH_OP (compare->next));
+			branch = compare->next;
+
+			/* Moving ins1 could change the comparison */
+			/* FIXME: */
+			if (!((compare->sreg1 != ins1->dreg) && (compare->sreg2 != ins1->dreg)))
+				continue;
+
+			/* FIXME: */
+			comp_type = mono_opcode_to_type (branch->opcode, compare->opcode);
+			if (!((comp_type == CMP_TYPE_I) || (comp_type == CMP_TYPE_L)))
+				continue;
+
+			/* FIXME: */
+			/* ins->type might not be set */
+			if (INS_INFO (ins1->opcode) [MONO_INST_DEST] != 'i')
+				continue;
+
+			/* FIXME: */
+			if (cfg->ret && ins1->dreg == cfg->ret->dreg)
+				continue;
+
+			if (cfg->verbose_level > 2) {
+				printf ("\tBranch -> CMove optimization (2) in BB%d on\n", bb->block_num);
+				printf ("\t\t"); mono_print_ins (compare);
+				printf ("\t\t"); mono_print_ins (compare->next);
+				printf ("\t\t"); mono_print_ins (ins1);
+			}
+
+			changed = TRUE;
+
+			//printf ("HIT!\n");
+
+			tmp_reg = mono_alloc_dreg (cfg, STACK_I4);
+			dreg = ins1->dreg;
+
+			/* Rewrite ins1 to emit to tmp_reg */
+			ins1->dreg = tmp_reg;
+
+			/* Remove ins1 from code_bb */
+			code_bb->code = code_bb->last_ins = NULL;
+
+			/* Move ins1 before the comparison */
+			/* FIXME: Move this to a helper function */
+			if (prev == NULL) {
+				bb->code = ins1;
+			} else {
+				prev->next = ins1;
+			}
+			ins1->next = compare;
+
+			/* Add cmov instruction */
+			MONO_INST_NEW (cfg, cmov, OP_NOP);
+			cmov->dreg = dreg;
+			cmov->sreg1 = dreg;
+			cmov->sreg2 = tmp_reg;
+			cond = mono_opcode_to_cond (branch->opcode);
+			if (code_bb == bb2)
+				cond = mono_negate_cond (cond);
+			switch (mono_opcode_to_type (branch->opcode, compare->opcode)) {
+			case CMP_TYPE_I:
+				cmov->opcode = int_cmov_opcodes [cond];
+				break;
+			case CMP_TYPE_L:
+				cmov->opcode = long_cmov_opcodes [cond];
+				break;
+			default:
+				g_assert_not_reached ();
+			}
+			compare->next = cmov;
+			cmov->next = branch;
+
+			/* Rewrite the branch */
+			branch->opcode = OP_BR;
+			branch->inst_target_bb = next_bb;
+			mono_link_bblock (cfg, bb, branch->inst_target_bb);
+
+			/* Reorder bblocks */
+			mono_unlink_bblock (cfg, bb, code_bb);
+			mono_unlink_bblock (cfg, code_bb, next_bb);
+
+			/* Merge bb and its successor if possible */
+			if ((bb->out_bb [0]->in_count == 1) && (bb->out_bb [0] != cfg->bb_exit) &&
+				(bb->region == bb->out_bb [0]->region)) {
+				mono_merge_basic_blocks (bb, bb->out_bb [0]);
 			}
 		}
 	}
 
-	if (changed)
+	if (changed) {
+		if (cfg->opt & MONO_OPT_BRANCH)
+			mono_optimize_branches (cfg);
 		/* Merging bblocks could make some variables local */
 		mono_handle_global_vregs (cfg);
+	}
 }
