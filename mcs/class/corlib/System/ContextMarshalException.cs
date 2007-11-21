@@ -39,6 +39,7 @@ namespace System
 	[Serializable]
 #if NET_2_0
 	[ComVisible (true)]
+	[Obsolete ("this type is obsoleted in 2.0 profile")]
 #endif
 	public class ContextMarshalException : SystemException
 	{

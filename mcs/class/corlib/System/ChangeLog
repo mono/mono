@@ -1,5 +1,10 @@
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AppDomain.cs : filled 2.0 API (extra ones are from 2.0 SP1).
+	* ContextMarshalException.cs : obsolete in 2.0.
+
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MarshalByRefObject.cs : Added MemberwiseClose() stub.
 	  GetLifetimeService() is not virtual (in both 2.0 and 1.1).
 	* Console.cs : implemented missing 2.0 key members.

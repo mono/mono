@@ -59,6 +59,7 @@ namespace System {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[ComDefaultInterface (typeof (_AppDomain))]
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory
@@ -101,6 +102,13 @@ namespace System {
 				return new AppDomainSetup (setup);
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public ApplicationTrust ApplicationTrust {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		public string BaseDirectory {
 			get {
@@ -254,6 +262,9 @@ namespace System {
 			SetupInformationNoCopy.PrivateBinPath = String.Empty;
 		}
 
+#if NET_2_0
+		[Obsolete ("Use AppDomainSetup.ShadowCopyDirectories")]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void ClearShadowCopyPath ()
 		{
@@ -607,6 +618,9 @@ namespace System {
 			_granted = ps.PermissionSet;
 		}
 
+#if NET_2_0
+		[Obsolete ("Use AppDomainSetup.SetCachePath")]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetCachePath (string path)
 		{
@@ -623,12 +637,18 @@ namespace System {
 			_principal = null;
 		}
 
+#if NET_2_0
+		[Obsolete ("Use AppDomainSetup.ShadowCopyFiles")]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyFiles()
 		{
 			SetupInformationNoCopy.ShadowCopyFiles = "true";
 		}
 
+#if NET_2_0
+		[Obsolete ("Use AppDomainSetup.ShadowCopyDirectories")]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetShadowCopyPath (string path)
 		{
@@ -809,6 +829,15 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, info);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info,
+		                                      PermissionSet grantSet, params StrongName [] fullTrustAssemblies)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern bool InternalIsFinalizingForUnload (int domain_id);
 
@@ -843,6 +872,17 @@ namespace System {
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public extern void SetData (string name, object data);
 
+#if NET_2_0
+		[MonoTODO]
+		public void SetData (string name, object data, IPermission permission)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_2_0
+		[Obsolete ("Use AppDomainSetup.DynamicBase")]
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
 		public void SetDynamicBase (string path)
 		{
