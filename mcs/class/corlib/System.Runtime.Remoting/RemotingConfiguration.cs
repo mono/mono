@@ -91,7 +91,16 @@ namespace System.Runtime.Remoting
 			get { return applicationName; }
 			set { applicationName = value; }
 		}
-		
+
+#if NET_2_0
+		[MonoTODO]
+		public static CustomErrorsModes CustomErrorsMode
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
 		public static string ProcessId 
 		{
 			get {

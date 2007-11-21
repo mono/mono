@@ -1,3 +1,7 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallContext.cs : added missing 2.0 stuff.
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* MethodCall.cs (ResolveMethod): Lookup the interface

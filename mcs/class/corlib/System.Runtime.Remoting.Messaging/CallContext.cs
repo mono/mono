@@ -54,6 +54,13 @@ namespace System.Runtime.Remoting.Messaging
 		{
 		}
 
+#if NET_2_0
+		public static object HostContext {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
 		// public methods
 		public static void FreeNamedDataSlot (string name) 
 		{
@@ -69,6 +76,20 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			Datastore [name] = data;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static object LogicalGetData (string name) 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static void LogicalSetData (string name, object data) 
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public static Header[] GetHeaders () 
 		{
