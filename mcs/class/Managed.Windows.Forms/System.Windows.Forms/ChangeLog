@@ -1,3 +1,10 @@
+2007-11-21  Andreia Gaita <avidigal@novell.com>
+
+	* XPlatUIX11.cs: Do not treat tool windows as if they have no 
+	window manager, since that stretches the drawing area to include
+	the window decorations, and they get hidden. Reverts r84444 and fixes
+	#335849 and #342790 (mdi and pdn3 regression)
+
 2007-11-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When setting focused item, try to give focus to the
