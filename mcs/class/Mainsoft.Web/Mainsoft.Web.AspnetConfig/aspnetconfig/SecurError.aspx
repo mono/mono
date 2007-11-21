@@ -32,9 +32,15 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div style="font-weight: bold; font-size: 20pt; color: red">
-        Error occurred on this request! <br />
-        This tool cannot be remotely accessed!
+    <div style="font-weight: bold; font-size: 11pt;">
+        By default, the Web Site Administration Tool may only be accessed locally. 
+        To enable accessing it from a remote computer, open the Web.config file, add the key <br />
+        allowRemoteConfiguration to the appSettings section, and set its value to true: <br />
+        <pre>
+        &lt appSettings &gt 
+              &lt/ add key="allowRemoteConfiguration" value="True" /&gt 
+        &lt/ appSettings &gt
+        </pre>
     </div>
     </form>
 </body>
