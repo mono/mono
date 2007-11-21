@@ -130,6 +130,12 @@ namespace MonoTests.System.Security.Cryptography {
 			ICryptoTransform decryptor = des.CreateDecryptor (null, des.IV);
 			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
 			// null key != SymmetricAlgorithm.Key
+
+			// in about 1 out of 256 runs the exception will not be thrown because the padding will be
+			// the same as expected - however this still won't produce the right results (next check)
+			Assert.IsFalse (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
+			// so this case is ok too, throw the expected exception to make the unit test succeed
+			throw new CryptographicException ("1/256");
 		}
 
 		[Test]
