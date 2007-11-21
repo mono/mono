@@ -1,3 +1,10 @@
+2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomizableFileSettingsProvider.cs : when a property is found
+	  only in the config file and not in the corresponding config type,
+	  do not raise NRE but just add it as a simple property value.
+	  Fixed bug #343459.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigXmlDocument.cs : corcompare cleanup.

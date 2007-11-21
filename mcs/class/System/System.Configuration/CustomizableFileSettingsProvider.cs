@@ -648,6 +648,11 @@ namespace System.Configuration
 		private void LoadPropertyValue (SettingsPropertyCollection collection, SettingElement element, bool allowOverwrite)
 		{
 			SettingsProperty prop = collection [element.Name];
+			if (prop == null) { // see bug #343459
+				prop = new SettingsProperty (element.Name);
+				collection.Add (prop);
+			}
+
 			SettingsPropertyValue value = new SettingsPropertyValue (prop);
 			value.IsDirty = false;
 			value.SerializedValue = element.Value.ValueXml != null ? element.Value.ValueXml.InnerText : prop.DefaultValue;
