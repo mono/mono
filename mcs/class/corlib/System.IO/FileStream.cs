@@ -904,7 +904,7 @@ namespace System.IO
 				buf = null;
 			}
 			if (disposing)
-				GC.SupressFinalize (this);
+				GC.SuppressFinalize (this);
 		}
 
 #if NET_2_0
