@@ -1,3 +1,9 @@
+2007-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* Array.cs: Make the InternalArray_... methods internal.
+
+	* Environment.cs: Bump corlib version.
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AppDomain.cs : filled 2.0 API (extra ones are from 2.0 SP1).
