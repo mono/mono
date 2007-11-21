@@ -6,6 +6,12 @@ using mainsoft.apache.commons.httpclient;
 using mainsoft.apache.commons.httpclient.methods;
 using mainsoft.apache.commons.httpclient.@params;
 using mainsoft.apache.commons.httpclient.auth;
+using mainsoft.apache.commons.httpclient.auth.negotiate;
+using javax.security.auth;
+using org.ietf.jgss;
+using java.security;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace System.Net
 {
@@ -30,7 +36,7 @@ namespace System.Net
 		protected bool _hasResponse;
 		protected bool _hasRequest;
 		protected Stream _writeStream;
-		private GHWebAsyncResult _asyncWrite;
+		private GHWebAsyncResult _asyncWrite;		
 
 		private bool _isConnectionOpened;
 		
@@ -62,6 +68,8 @@ namespace System.Net
 			{
 				_disableHttpConnectionPooling = bool.Parse(s);
 			}
+			InitDefaultCredentialsProvider ();
+			InitSPNProviders ();
 		}
 
 		internal override ServicePoint ServicePoint
@@ -169,17 +177,9 @@ namespace System.Net
 						new NTCredentials(nc.UserName, nc.Password, host, domain));
 				}
 			}
-			else if (String.Compare (type, "negotiate", StringComparison.InvariantCultureIgnoreCase) == 0) {
-				if (!proxyCredentials) {
-					_state.setCredentials (new AuthScope (AuthScope.ANY_HOST,
-						AuthScope.ANY_PORT, AuthScope.ANY_REALM, "negotiate"),
-						new NTCredentials (nc.UserName, nc.Password, host, domain));
-				}
-				else {
-					_state.setProxyCredentials (new AuthScope (AuthScope.ANY_HOST,
-						AuthScope.ANY_PORT, AuthScope.ANY_REALM, "negotiate"),
-						new NTCredentials (nc.UserName, nc.Password, host, domain));
-				}
+			else if(String.Compare (type, "negotiate", StringComparison.InvariantCultureIgnoreCase) == 0)
+			{
+				SetAuthenticationScheme (AuthPolicy.NEGOTIATE);
 			}
 			else
 			{
@@ -195,27 +195,92 @@ namespace System.Net
 						AuthScope.ANY_PORT, AuthScope.ANY_REALM, type),
 						new UsernamePasswordCredentials(nc.UserName, nc.Password));
 				}
-			}
-			SetAuthenticationScheme (Char.ToUpper (type [0]) + type.Substring (1));
-
+			}						
 		}
 
-		private void SetAuthenticationScheme (string type) {
-			try {
-				_method.getHostAuthState ().setAuthScheme (AuthPolicy.getAuthScheme (type));
+		private void SetAuthenticationScheme (string type) {			
+			_method.getHostAuthState ().setAuthScheme (AuthPolicy.getAuthScheme (type));								
+			if (type != null && type.ToLower () == AuthPolicy.NEGOTIATE.ToLower ()) {					
+				_method.getParams ().setParameter (CredentialsProvider__Finals.PROVIDER, new HTTPClientCredentialsBridge( DefaultCredentialsProvider));
+				_method.getParams ().setParameter (NegotiateScheme.SPN_LIST_PARAM, SPNProviders);
+			}			
+		}
+
+		private java.util.ArrayList SPNProviders {
+			get {
+				return (java.util.ArrayList) AppDomain.CurrentDomain.GetData ("GH$SPNProviders");
 			}
-			catch (Exception) {//ignore no such scheme, will be selected by the chalenges order
+			set {
+				AppDomain.CurrentDomain.SetData ("GH$SPNProviders", value);
 			}
 		}
-		private void InitProxyCredentials()
-		{
-			if(this.Proxy == null)
-				return;
 
-			if(!(this.Proxy is WebProxy))
+		private void InitSPNProviders () {
+			if (SPNProviders != null)
 				return;
+			java.util.ArrayList spnProviders = new java.util.ArrayList ();
+			NameValueCollection configAttributes = System.Configuration.ConfigurationSettings.AppSettings;
+			string providersList = configAttributes ["SPNProviders"];
+			if (providersList == null)
+				return;
+			string[] tokens = providersList.Split (',');
+			foreach (string spnClass in tokens) {
+				try {
+					spnProviders.add (Activator.CreateInstance (Type.GetType (spnClass)));
+				}
+				catch (Exception) { }
+			}
+			SPNProviders = spnProviders;
+		}
+
+		private vmw.@internal.auth.CredentialsProvider DefaultCredentialsProvider {
+			get {
+				return (vmw.@internal.auth.CredentialsProvider) AppDomain.CurrentDomain.GetData ("GH$DefaultCredentialsProvider");
+			}
+			set {
+				AppDomain.CurrentDomain.SetData ("GH$DefaultCredentialsProvider", value);
+			}
+		}
+
+		private void InitDefaultCredentialsProvider () {
+			if (DefaultCredentialsProvider != null)
+				return;
+			vmw.@internal.auth.CredentialsProvider defaultProvider = null;
+			NameValueCollection configAttributes = System.Configuration.ConfigurationSettings.AppSettings;
 			
-			WebProxy proxy = (WebProxy)this.Proxy;
+			string defaultProviderClass = configAttributes ["DefaultCredentialsProvider"];
+			if (defaultProviderClass != null) {
+				try {					
+					defaultProvider = (vmw.@internal.auth.CredentialsProvider)
+						Activator.CreateInstance (Type.GetType (defaultProviderClass));
+				}
+				catch (Exception e) {
+					Console.WriteLine ("Failed to initialize Credentials Provider: " + defaultProviderClass + " Message: " + e.Message);					
+				}
+			}			
+
+			if (defaultProvider == null) 
+				defaultProvider = new vmw.@internal.auth.SubjectCredentialsPrvider ();
+
+			defaultProvider.init (ConvertToTable (configAttributes));
+			DefaultCredentialsProvider = defaultProvider;
+		}
+
+		private java.util.Properties ConvertToTable (NameValueCollection col) {
+			java.util.Properties table = new java.util.Properties ();
+			foreach (String key in col.Keys)
+				table.put (key, col [key]);
+			return table;
+		}
+
+		private void InitProxyCredentials () {
+			if (this.Proxy == null)
+				return;
+
+			if (!(this.Proxy is WebProxy))
+				return;
+
+			WebProxy proxy = (WebProxy) this.Proxy;
 			ICredentials creds = proxy.Credentials;
 
 			if(creds == null)
@@ -256,9 +321,11 @@ namespace System.Net
 		{
 			if(_credentials == null)
 				return;
-			if(_credentials is CredentialCache)
-			{
-				NetworkCredential nc = ((CredentialCache)_credentials).GetCredential(GetOriginalAddress(), "basic");
+			if (_credentials == CredentialCache.DefaultCredentials) {
+				SetAuthenticationScheme (AuthPolicy.NEGOTIATE);
+			}
+			else if (_credentials is CredentialCache) {
+				NetworkCredential nc = ((CredentialCache) _credentials).GetCredential (GetOriginalAddress (), "basic");
 				string type = "basic";
 				if(nc == null)
 				{
@@ -424,11 +491,10 @@ namespace System.Net
 					java.util.ArrayList schemas = new java.util.ArrayList ();
 					schemas.add ("Ntlm");
 					schemas.add ("Digest");
-					schemas.add ("Basic");					
+					schemas.add ("Basic");
 					schemas.add ("Negotiate");
 					_client.getParams ().setParameter (AuthPolicy.AUTH_SCHEME_PRIORITY, schemas);
-					if(!_disableHttpConnectionPooling) 
-					{
+					if (!_disableHttpConnectionPooling) {
 						_sclient = _client;
 					}
 				}
@@ -1145,5 +1211,21 @@ namespace System.Net
 
 
 
+	}
+
+	class HTTPClientCredentialsBridge : CredentialsProvider
+	{
+		private vmw.@internal.auth.CredentialsProvider m_internalProvider;
+
+		public HTTPClientCredentialsBridge (vmw.@internal.auth.CredentialsProvider internalProvider) {
+			m_internalProvider = internalProvider;
+		}
+
+		public Credentials getCredentials (AuthScheme scheme, string __p2, int __p3, bool __p4) {
+			if (scheme.isComplete ())
+				return null;			
+			GSSCredential creds = m_internalProvider.getCredentials ();			
+			return new DelegatedCredentials (creds);
+		}
 	}
 }
