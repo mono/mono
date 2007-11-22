@@ -1,3 +1,9 @@
+2007-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/SecurityDeclarationReader.cs:	Change default read
+	value to true. Fix reading 2.0 security	declaration format used by
+	MS compilers (#343553).
+
 2007-11-15	Rodrigo B. de Oliveira <rodrigobamboo@gmail.com>
 
 	* Mono.Cecil.Cil/MethodBody.cs:

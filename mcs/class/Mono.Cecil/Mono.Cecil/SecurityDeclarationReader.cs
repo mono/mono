@@ -139,7 +139,7 @@ namespace Mono.Cecil {
 
 			br.BaseStream.Position = start;
 			for (int j = 0; j < numparams; j++) {
-				bool read = false;
+				bool read = true;
 				CustomAttrib.NamedArg na = sr.ReadNamedArg (permset, br, ref read, resolve);
 				if (!read)
 					return null;
