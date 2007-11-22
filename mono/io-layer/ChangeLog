@@ -1,3 +1,8 @@
+2007-11-22  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (find_pe_file_resources): Make it work on 64bit
+	systems.  Fixes bug 343353.
+
 2007-11-21  Dick Porter  <dick@ximian.com>
 
 	* processes.c (load_modules): Rewrite based on the libgc
