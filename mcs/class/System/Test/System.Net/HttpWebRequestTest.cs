@@ -279,6 +279,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		public void ReadTimeout ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
@@ -312,6 +315,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #81624
+#if TARGET_JVM
+		[Category("NotWorking")]
+#endif
 		public void AllowAutoRedirect ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
@@ -521,6 +527,9 @@ namespace MonoTests.System.Net
 
 #if NET_2_0
 		[Test] // bug #81504
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void Stream_CanTimeout ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);

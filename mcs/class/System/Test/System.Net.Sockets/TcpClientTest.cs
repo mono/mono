@@ -27,6 +27,9 @@ namespace MonoTests.System.Net.Sockets
 		/// (from System.Net.Sockets)
 		/// </summary>
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")]
+#endif
 		public void TcpClient()
 		{
 			// set up a listening Socket
