@@ -853,6 +853,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		if (cacheSettings.Enabled)
 			InitOutputCache(cacheSettings.Duration,
+					cacheSettings.VaryByContentEncoding,
 					cacheSettings.VaryByHeader,
 					cacheSettings.VaryByCustom,
 					cacheSettings.Location,
@@ -860,12 +861,16 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 #endif
 
-	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected virtual void InitOutputCache (int duration,
-						string varyByHeader,
-						string varyByCustom,
-						OutputCacheLocation location,
-						string varyByParam)
+#if NET_2_0
+	[MonoTODO ("varyByContentEncoding is not currently used")]
+	protected virtual
+#endif
+	void InitOutputCache(int duration,
+			     string varyByContentEncoding,
+			     string varyByHeader,
+			     string varyByCustom,
+			     OutputCacheLocation location,
+			     string varyByParam)
 	{
 		HttpCachePolicy cache = Response.Cache;
 		bool set_vary = false;
@@ -919,6 +924,17 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 		cache.Duration = duration;
 		cache.SetExpires (timestamp.AddSeconds (duration));
+	}
+	
+
+	[EditorBrowsable (EditorBrowsableState.Never)]
+	protected virtual void InitOutputCache (int duration,
+						string varyByHeader,
+						string varyByCustom,
+						OutputCacheLocation location,
+						string varyByParam)
+	{
+		InitOutputCache (duration, null, varyByHeader, varyByCustom, location, varyByParam);
 	}
 
 #if NET_2_0

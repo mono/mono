@@ -59,7 +59,7 @@ namespace MonoTests.System.Web
 
 			exceptionCaught = false;
 			try {
-				encs [null];
+				bool t = encs [null];
 			} catch (ArgumentNullException) {
 				exceptionCaught = true;
 			}

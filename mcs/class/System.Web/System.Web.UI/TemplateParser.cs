@@ -74,6 +74,9 @@ namespace System.Web.UI {
 		bool output_cache;
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
+#if NET_2_0
+		string oc_content_encodings;
+#endif
 		bool oc_shared;
 		OutputCacheLocation oc_location;
 		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
@@ -300,58 +303,63 @@ namespace System.Web.UI {
 				foreach (DictionaryEntry entry in atts) {
 					string key = (string) entry.Key;
 					switch (key.ToLower ()) {
-					case "duration":
-						oc_duration = Int32.Parse ((string) entry.Value);
-						if (oc_duration < 1)
-							ThrowParseException ("The 'duration' attribute must be set " +
-									"to a positive integer value");
-						break;
-					case "varybyparam":
-						oc_param = (string) entry.Value;
-						if (String.Compare (oc_param, "none") == 0)
-							oc_param = null;
-						break;
-					case "varybyheader":
-						oc_header = (string) entry.Value;
-						break;
-					case "varybycustom":
-						oc_custom = (string) entry.Value;
-						break;
-					case "location":
-						if (!(this is PageParser))
-							goto default;
-						
-						try {
-							oc_location = (OutputCacheLocation) Enum.Parse (
-								typeof (OutputCacheLocation), (string) entry.Value, true);
-						} catch {
-							ThrowParseException ("The 'location' attribute is case sensitive and " +
-									"must be one of the following values: Any, Client, " +
-									"Downstream, Server, None, ServerAndClient.");
-						}
-						break;
-					case "varybycontrol":
-#if ONLY_1_1
-						if (this is PageParser)
-							goto default;
+						case "duration":
+							oc_duration = Int32.Parse ((string) entry.Value);
+							if (oc_duration < 1)
+								ThrowParseException ("The 'duration' attribute must be set " +
+										     "to a positive integer value");
+							break;
+#if NET_2_0
+						case "varybycontentencodings":
+							oc_content_encodings = (string) entry.Value;
+							break;
 #endif
-                                                oc_controls = (string) entry.Value;
-						break;
-					case "shared":
-						if (this is PageParser)
-							goto default;
+						case "varybyparam":
+							oc_param = (string) entry.Value;
+							if (String.Compare (oc_param, "none") == 0)
+								oc_param = null;
+							break;
+						case "varybyheader":
+							oc_header = (string) entry.Value;
+							break;
+						case "varybycustom":
+							oc_custom = (string) entry.Value;
+							break;
+						case "location":
+							if (!(this is PageParser))
+								goto default;
+						
+							try {
+								oc_location = (OutputCacheLocation) Enum.Parse (
+									typeof (OutputCacheLocation), (string) entry.Value, true);
+							} catch {
+								ThrowParseException ("The 'location' attribute is case sensitive and " +
+										     "must be one of the following values: Any, Client, " +
+										     "Downstream, Server, None, ServerAndClient.");
+							}
+							break;
+						case "varybycontrol":
+#if ONLY_1_1
+							if (this is PageParser)
+								goto default;
+#endif
+							oc_controls = (string) entry.Value;
+							break;
+						case "shared":
+							if (this is PageParser)
+								goto default;
 
-						try {
-							oc_shared = Boolean.Parse ((string) entry.Value);
-						} catch {
-							ThrowParseException ("The 'shared' attribute is case sensitive" +
-									" and must be set to 'true' or 'false'.");
-						}
-						break;
-					default:
-						ThrowParseException ("The '" + key + "' attribute is not " +
-								"supported by the 'Outputcache' directive.");
-						break;
+							try {
+								oc_shared = Boolean.Parse ((string) entry.Value);
+							} catch {
+								ThrowParseException ("The 'shared' attribute is case sensitive" +
+										     " and must be set to 'true' or 'false'.");
+							}
+							break;
+						default:
+							ThrowParseException ("The '" + key + "' attribute is not " +
+									     "supported by the 'Outputcache' directive.");
+							break;
 					}
 					
 				}
@@ -898,6 +906,12 @@ namespace System.Web.UI {
 			get { return oc_duration; }
 		}
 
+#if NET_2_0
+		internal string OutputCacheVaryByContentEncodings {
+			get { return oc_content_encodings; }
+		}
+#endif
+		
 		internal string OutputCacheVaryByHeader {
 			get { return oc_header; }
 		}

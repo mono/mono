@@ -1,3 +1,13 @@
+2007-11-22  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheParameters.cs: added the VaryByContentEncoding
+	property.
+
+	* Page.cs: added new InitCache overload.
+
+	* TemplateParser.cs: added support for the VaryByContentEncodings
+	attribute of the OutputCache directive.
+
 2007-11-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.jvm.cs: IsMultiForm optimized, cached configuration call

@@ -44,7 +44,8 @@ namespace System.Web.UI
 		string _varByCustom;
 		string _varByHeader;
 		string _varByParam;
-
+		string _varyByContentEncoding;
+		
 		#endregion
 
 		#region Constructors
@@ -90,6 +91,11 @@ namespace System.Web.UI
 			set { _sqlDependency = value; }
 		}
 
+		public string VaryByContentEncoding {
+			get { return _varyByContentEncoding; }
+			set { _varyByContentEncoding = value; }
+		}
+		
 		public string VaryByControl {
 			get { return _varByControl; }
 			set { _varByControl = value; }

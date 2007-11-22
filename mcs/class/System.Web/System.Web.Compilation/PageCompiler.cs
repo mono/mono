@@ -254,6 +254,9 @@ namespace System.Web.Compilation
 		{
 			return new CodeExpression [] {
 				new CodePrimitiveExpression (pageParser.OutputCacheDuration),
+#if NET_2_0
+				new CodePrimitiveExpression (pageParser.OutputCacheVaryByContentEncodings),
+#endif
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByHeader),
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByCustom),
 				new CodeSnippetExpression (typeof (OutputCacheLocation).ToString () +
