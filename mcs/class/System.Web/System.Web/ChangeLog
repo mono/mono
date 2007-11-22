@@ -1,3 +1,7 @@
+2007-11-22  Daniel Nauck  <dna@mono-project.de>
+
+        * WebPageTraceListener.cs: initial checkin (stubs).
+
 2007-11-17  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: make sure fileDependencies is not null before
