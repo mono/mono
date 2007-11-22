@@ -1,5 +1,10 @@
 2007-11-22  Martin Baulig  <martin@ximian.com>
 
+	* debug-debugger.h
+	(MonoDebuggerInfo): Move `debugger_version' up.
+
+2007-11-22  Martin Baulig  <martin@ximian.com>
+
 	* mini-amd64.c
 	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_impl().
 
