@@ -1,5 +1,10 @@
 2007-11-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (get_runtime_generic_context_other_ptr): Use NEW_METHODCONST instead of
+	NEW_PCONST.
+	(mono_method_to_ir): Use NEW_DOMAINCONST in one place.
+	(generic_class_is_reference_type): Remove unused function.
+
 	* mini-trampolines.c (mono_magic_trampoline): Avoid loading metadata if possible
 	in the generic vtable trampoline case.
 
