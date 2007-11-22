@@ -1,5 +1,9 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* IConfigMapPathFactory.cs: added
+
+	* IConfigMapPath.cs: added
+
 	* RoleManagerSection.cs: added a static constructor, a collection
 	of properties, the missing Properties property.
 
