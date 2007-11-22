@@ -1,3 +1,7 @@
+2007-11-22  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableTest.cs: Add test for Range.
+
 2007-11-13  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: unit tests are good.

@@ -235,6 +235,14 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (typeof (int []), array.GetType ());
 		}
 
+		[Test]
+		public void TestRange ()
+		{
+			int [] result = {1, 2, 3, 4};
+
+			AssertAreSame (result, Enumerable.Range (1, 4));
+		}
+
 		static void AssertAreSame<T> (IEnumerable<T> expected, IEnumerable<T> actual)
 		{
 			if (expected == null) {
