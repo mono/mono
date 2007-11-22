@@ -3706,23 +3706,20 @@ namespace Mono.CSharp {
 			if ((base_classp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
 				//
 				// when overriding protected internal, the method can be declared
-				// protected internal only within the same assembly
+				// protected internal only within the same assembly or assembly
+				// which has InternalsVisibleTo
 				//
-
 				if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					if (Parent.TypeBuilder.Assembly != base_method.DeclaringType.Assembly){
-						//
-						// assemblies differ - report an error
-						//
-						
-						return false;
-					} else if (thisp != base_classp) {
+					if (Parent.TypeBuilder.Assembly != base_method.DeclaringType.Assembly)
+						return TypeManager.IsFriendAssembly (base_method.DeclaringType.Assembly);
+
+					if (thisp != base_classp) {
 						//
 						// same assembly, but other attributes differ - report an error
 						//
 						
 						return false;
-					};
+					}
 				} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
 					//
 					// if it's not "protected internal", it must be "protected"
