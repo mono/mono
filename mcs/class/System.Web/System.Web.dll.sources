@@ -308,6 +308,7 @@ System.Web/IHttpHandler.cs
 System.Web/IHttpHandlerFactory.cs
 System.Web/IHttpMapPath.cs
 System.Web/IHttpModule.cs
+System.Web/IPartitionResolver.cs
 System.Web/InputFilterStream.cs
 System.Web/OutputFilterStream.cs
 System.Web/RequestNotification.cs

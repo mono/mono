@@ -1,5 +1,9 @@
 2007-11-22  Daniel Nauck  <dna@mono-project.de>
 
+        * IPartitionResolver.cs: implemented
+
+2007-11-22  Daniel Nauck  <dna@mono-project.de>
+
         * WebPageTraceListener.cs: implemented
 
 2007-11-22  Marek Habersack  <mhabersack@novell.com>
