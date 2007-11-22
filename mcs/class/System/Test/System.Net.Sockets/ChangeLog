@@ -1,3 +1,7 @@
+2007-11-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UdpClientTest.cs: Fixed line endings.
+
 2007-11-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* SocketTest.cs: Disable the send/receive buffer size tests.
