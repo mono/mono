@@ -39,12 +39,9 @@ namespace System.Web
 	{
 		Dictionary <string, bool> encodings;
 
-		Dictionary <string, bool> Encodings {
-			get {
-				if (encodings == null)
-					encodings = new Dictionary <string, bool> ();
-				return encodings;
-			}
+		public HttpCacheVaryByContentEncodings ()
+		{
+			encodings = new Dictionary <string, bool> ();
 		}
 		
 		public bool this [string contentEncoding] {
@@ -52,9 +49,8 @@ namespace System.Web
 				if (contentEncoding == null)
 					throw new ArgumentNullException ("contentEncoding");
 
-				Dictionary <string, bool> e = Encodings;
-				if (e.ContainsKey (contentEncoding))
-					return e [contentEncoding];
+				if (encodings.ContainsKey (contentEncoding))
+					return encodings [contentEncoding];
 
 				return false;
 			}
@@ -63,7 +59,7 @@ namespace System.Web
 				if (contentEncoding == null)
 					throw new ArgumentNullException ("contentEncoding");
 
-				Encodings [contentEncoding] = value;
+				encodings [contentEncoding] = value;
 			}
 		}
 	}
