@@ -1,3 +1,13 @@
+2007-11-22  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpCacheVaryByContentEncodings.cs: added
+
+	* HttpCachePolicy.cs: added the HttpCacheVaryByContentEncodings
+	property.
+
+	* HttpApplication.cs: added 3 new events to the pipeline (for
+	compatibility with the 2.0sp1/3.5 version of System.Web)
+
 2007-11-22  Daniel Nauck  <dna@mono-project.de>
 
         * WebPageTraceListener.cs: initial checkin (stubs).

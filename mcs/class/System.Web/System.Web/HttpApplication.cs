@@ -578,6 +578,45 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
 			UpdateRequestCache += new EventHandler (invoker.Invoke);
 		}
+
+		// Added in 2.0 SP1
+		// They are for use with the IIS7 integrated mode, but have been added for compatibility
+		public event EventHandler LogRequest;
+		public void AddOnLogRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			AddOnLogRequestAsync (bh, eh, null);
+		}
+		
+		public void AddOnLogRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
+		{
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			LogRequest += new EventHandler (invoker.Invoke);
+		}
+
+		public event EventHandler MapRequestHandler;
+		public void AddOnMapRequestHandlerAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			AddOnMapRequestHandlerAsync (bh, eh, null);
+		}
+
+		public void AddOnMapRequestHandlerAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
+		{
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			MapRequestHandler += new EventHandler (invoker.Invoke);
+		}
+
+		public event EventHandler PostLogRequest;
+		public void AddOnPostLogRequestAsync (BeginEventHandler bh, EndEventHandler eh)
+		{
+			AddOnPostLogRequestAsync (bh, eh, null);
+		}
+
+		public void AddOnPostLogRequestAsync (BeginEventHandler beginHandler, EndEventHandler endHandler, object state)
+		{
+			AsyncInvoker invoker = new AsyncInvoker (beginHandler, endHandler, state);
+			PostLogRequest += new EventHandler (invoker.Invoke);
+		}
+
 #endif
 		
 		internal event EventHandler DefaultAuthentication;
@@ -912,8 +951,13 @@ namespace System.Web {
 			if (PostResolveRequestCache != null)
 				foreach (bool stop in RunHooks (PostResolveRequestCache))
 					yield return stop;
-#endif
 
+			// As per http://msdn2.microsoft.com/en-us/library/bb470252(VS.90).aspx
+			if (MapRequestHandler != null)
+				foreach (bool stop in RunHooks (MapRequestHandler))
+					yield return stop;
+#endif
+			
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
@@ -1035,6 +1079,14 @@ namespace System.Web {
 #if NET_2_0
 			if (PostUpdateRequestCache != null)
 				foreach (bool stop in RunHooks (PostUpdateRequestCache))
+					yield return stop;
+
+			if (LogRequest != null)
+				foreach (bool stop in RunHooks (LogRequest))
+					yield return stop;
+
+			if (PostLogRequest != null)
+				foreach (bool stop in RunHooks (PostLogRequest))
 					yield return stop;
 #endif
 			PipelineDone ();

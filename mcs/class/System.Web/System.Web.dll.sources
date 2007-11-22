@@ -271,6 +271,7 @@ System.Web/HttpCacheability.cs
 System.Web/HttpCachePolicy.cs
 System.Web/HttpCacheRevalidation.cs
 System.Web/HttpCacheValidateHandler.cs
+System.Web/HttpCacheVaryByContentEncodings.cs
 System.Web/HttpCacheVaryByHeaders.cs
 System.Web/HttpCacheVaryByParams.cs
 System.Web/HttpClientCertificate.cs

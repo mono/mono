@@ -58,7 +58,10 @@ namespace System.Web {
 		}
 
 #region Fields
-
+		
+#if NET_2_0
+		HttpCacheVaryByContentEncodings vary_by_content_encodings = new HttpCacheVaryByContentEncodings ();
+#endif
 		HttpCacheVaryByHeaders vary_by_headers = new HttpCacheVaryByHeaders ();
 		HttpCacheVaryByParams vary_by_params = new HttpCacheVaryByParams ();
 		ArrayList validation_callbacks;
@@ -100,7 +103,13 @@ namespace System.Web {
                 internal event CacheabilityUpdatedCallback CacheabilityUpdated;
                 
 #region Properties
-                
+
+#if NET_2_0
+		public HttpCacheVaryByContentEncodings VaryByContentEncodings {
+			get { return vary_by_content_encodings; }
+		}
+#endif
+		
 		public HttpCacheVaryByHeaders VaryByHeaders {
 			get { return vary_by_headers; }
 		}
