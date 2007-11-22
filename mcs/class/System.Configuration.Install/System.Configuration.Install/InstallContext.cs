@@ -34,15 +34,21 @@ namespace System.Configuration.Install
 	public class InstallContext
 	{
 		private StringDictionary parameters;
+		string log_file;
+		bool log = false;
 		
-		[MonoTODO]
-		public InstallContext () {
-			throw new NotImplementedException ();
+		public InstallContext ()
+		{
+			log_file = null;
+			log = false;
+			parameters = ParseCommandLine (new string [0]);
 		}
 
-		[MonoTODO]
-		public InstallContext (string logFilePath, string[] commandLine) {
-			throw new NotImplementedException ();
+		public InstallContext (string logFilePath, string[] commandLine)
+		{
+			log_file = logFilePath;
+			parameters = ParseCommandLine (commandLine);
+			log = IsParameterTrue ("LogtoConsole");
 		}
 
 		public StringDictionary Parameters {
@@ -51,22 +57,35 @@ namespace System.Configuration.Install
 			}
 		}
 
-		[MonoTODO]
 		public bool IsParameterTrue (string paramName)
 		{
-			throw new NotImplementedException ();
+			return parameters [paramName] == "true";
 		}
 
-		[MonoTODO]
 		public void LogMessage (string message)
 		{
-			throw new NotImplementedException ();
+			if (log)
+				Console.WriteLine (message);
 		}
 
-		[MonoTODO]
 		protected static StringDictionary ParseCommandLine (string[] args)
 		{
-			throw new NotImplementedException ();
+			StringDictionary d = new StringDictionary ();
+			
+			foreach (string s in args){
+				int p = s.IndexOf ("=");
+				if (p == -1)
+					d [s] = "true";
+				else {
+					string key = s.Substring (0, p);
+					string value = s.Substring (p+1).ToLower ();
+					if (value == "yes" || value == "true" || value == "1")
+						value = "true";
+
+					d [key] = value;
+				}
+			}
+			return d;
 		}
 	}
 }

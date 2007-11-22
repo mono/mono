@@ -37,14 +37,14 @@ namespace System.Configuration.Install
 		{
 		}
 
-		[MonoTODO]
 		public override void Install (IDictionary savedState)
 		{
+			base.Install (savedState);
 		}
 
-		[MonoTODO]
 		public override void Uninstall (IDictionary savedState)
 		{
+			base.Uninstall (savedState);
 		}
 	}
 }

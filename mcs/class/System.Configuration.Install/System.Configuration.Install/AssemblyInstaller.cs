@@ -59,28 +59,24 @@ namespace System.Configuration.Install
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Commit (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			base.Commit (savedState);
 		}
 
-		[MonoTODO]
 		public override void Install (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			base.Install (savedState);
 		}
 
-		[MonoTODO]
 		public override void Rollback (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			base.Rollback (savedState);
 		}
 
-		[MonoTODO]
 		public override void Uninstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			base.Uninstall (savedState);
 		}
 
 		public Assembly Assembly {
@@ -103,7 +99,7 @@ namespace System.Configuration.Install
 
 		public override string HelpText {
 			get {
-				throw new NotImplementedException ();
+				return base.HelpText;
 			}
 		}
 		public string Path {

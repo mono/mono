@@ -34,10 +34,6 @@ using System.ComponentModel.Design;
 namespace System.Configuration.Install
 {
 	[DefaultEvent("AfterInstall")]
-#if (!NET_2_0)
-	// .NET 2.0 (Community Preview) no longer has this attribute
-	[Designer("Microsoft.VisualStudio.Configuration.InstallerDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, typeof(IRootDesigner))]
-#endif
 	public class Installer : Component
 	{
 		private InstallContext context;
@@ -45,9 +41,7 @@ namespace System.Configuration.Install
 		private InstallerCollection installers;
 		internal Installer parent;
 		
-		[MonoTODO]
 		public Installer () {
-			throw new NotImplementedException ();
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -68,17 +62,12 @@ namespace System.Configuration.Install
 			}
 		}
 
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		[BrowsableAttribute(false)]
 		public InstallerCollection Installers {
 			get {
 				return installers;
 			}
 		}
 
-		[TypeConverter ("System.Configuration.Design.InstallerParentConverter")]
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (true)]
 		public Installer Parent {
 			get {
 				return parent;
@@ -89,76 +78,68 @@ namespace System.Configuration.Install
 			}
 		}
 		
-		[MonoTODO]
 		public virtual void Commit (IDictionary savedState) 
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void Install (IDictionary stateSaver)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void OnAfterInstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (AfterInstall != null)
+				AfterInstall (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		protected virtual void OnAfterRollback (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (AfterRollback != null)
+				AfterRollback (this, new InstallEventArgs (savedState));
 		}
 
-		[MonoTODO]
 		protected virtual void OnAfterUninstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (AfterUninstall != null)
+				AfterUninstall (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		protected virtual void OnBeforeInstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (BeforeInstall != null)
+				BeforeInstall (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		protected virtual void OnBeforeRollback (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (BeforeRollback != null)
+				BeforeRollback (this, new InstallEventArgs (savedState));
 		}
 
-		[MonoTODO]
 		protected virtual void OnBeforeUninstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (BeforeUninstall != null)
+				BeforeUninstall (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCommitted (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (Committed != null)
+				Committed (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCommitting (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
+			if (Committing != null)
+				Committing (this, new InstallEventArgs (savedState));
 		}
 		
-		[MonoTODO]
 		public virtual void Rollback (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void Uninstall (IDictionary savedState)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public event InstallEventHandler AfterInstall;
