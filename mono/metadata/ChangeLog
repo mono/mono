@@ -1,3 +1,8 @@
+
+Thu Nov 22 12:34:04 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: r89126 broke the statistial profiler, unbreak.
+
 2007-11-15  Dick Porter  <dick@ximian.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Join_internal):
