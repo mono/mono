@@ -1,3 +1,8 @@
+
+Thu Nov 22 12:34:04 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: r89126 broke the statistial profiler, unbreak.
+
 2007-11-22  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 66.
