@@ -1,5 +1,11 @@
 2007-11-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (get_runtime_generic_context_other_ptr): Disable AOT here.
+	(mini_method_compile): Add preliminary support for AOTing shared generic code.
+
+	* aot-compiler.c (compile_method): Add preliminary support for AOTing shared
+	generic code.
+
 	* mini-trampolines.c: Fix a warning.
 
 	* mini.c (get_runtime_generic_context_other_ptr): Use NEW_METHODCONST instead of
