@@ -1,5 +1,10 @@
 2007-11-22  Dick Porter  <dick@ximian.com>
 
+	* critical-sections.h (EnterCriticalSection): Reinstate the
+	asserts in the devel branch, so any problems aren't obscured.
+
+2007-11-22  Dick Porter  <dick@ximian.com>
+
 	* versioninfo.c (find_pe_file_resources): Make it work on 64bit
 	systems.  Fixes bug 343353.
 
