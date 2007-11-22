@@ -1799,7 +1799,7 @@ namespace System.Linq
 			if (count < 0 || upto > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = start; i < upto; i++)
+			for (int i = start; i <= upto; i++)
 				yield return i;
 		}
 

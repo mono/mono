@@ -1,3 +1,8 @@
+2007-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Enumerable.cs : fixed Range(int,int) that iterated one less.
+	  Thanks to http://d.hatena.ne.jp/NyaRuRu/ .
+
 2007-11-13  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: make the new unit tests pass.
