@@ -39,7 +39,7 @@ namespace System.Text.RegularExpressions
 	sealed class ReplacedRegularCharacterConstruct : IConstructType
 	{
 		private const string BACKSLASH_IN_CC_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*\[[^\[\]]*)\\b(?=[^\[\]]*\])";
-		private const string BRACKET_IN_CC_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*\[[^\[\]]*)\[(?=[^\[\]]*\])";
+		private const string BRACKET_IN_CC_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\[(?=[^\[\]]*\])";
 		private const string BACKSLASH = @"\\u0008";
 		private const string BRACKET = @"\\[";
 		private const string LEFT_FIGURE_PAREN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*)\{(?!\d\d*(,(\d\d*)?)?\})";
