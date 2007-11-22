@@ -1,4 +1,12 @@
+2007-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* RoleManagerSection.cs: added a static constructor, a collection
+	of properties, the missing Properties property.
+
 2007-11-22  Marek Habersack  <mhabersack@novell.com>
+
+	* RoleManagerSection.cs: CookieTimeout property custom attributes
+	changed to match MS.NET's ones.
 
 	* AuthorizationRuleCollection.cs: removed the ThrowOnDuplicate
 	property - it's not found in the MS.NET version of the class.
