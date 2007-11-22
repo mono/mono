@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Security.Permissions;
 using System.Text;
 using System.Web;
@@ -43,32 +44,47 @@ namespace System.Web
 	{
 		public override void TraceEvent (TraceEventCache eventCache, string source, TraceEventType severity, int id, string message)
 		{
-			throw new NotImplementedException ();
+			if (HttpContext.Current == null || HttpContext.Current.Trace == null)
+				return;
+
+			HttpContext.Current.Trace.Write (source, message);
 		}
 
 		public override void TraceEvent (TraceEventCache eventCache, string source, TraceEventType severity, int id, string format, params object[] args)
 		{
-			throw new NotImplementedException ();
+			TraceEvent (eventCache, source, severity, id, string.Format (CultureInfo.InvariantCulture, format, args));
 		}
 
 		public override void Write (string message)
 		{
-			throw new NotImplementedException ();
+			if (HttpContext.Current == null || HttpContext.Current.Trace == null)
+				return;
+
+			HttpContext.Current.Trace.Write (message);
 		}
 
 		public override void Write (string message, string category)
 		{
-			throw new NotImplementedException ();
+			if (HttpContext.Current == null || HttpContext.Current.Trace == null)
+				return;
+
+			HttpContext.Current.Trace.Write (category, message);
 		}
 
 		public override void WriteLine (string message)
 		{
-			throw new NotImplementedException ();
+			if (HttpContext.Current == null || HttpContext.Current.Trace == null)
+				return;
+
+			HttpContext.Current.Trace.Write (message);
 		}
 
 		public override void WriteLine (string message, string category)
 		{
-			throw new NotImplementedException ();
+			if (HttpContext.Current == null || HttpContext.Current.Trace == null)
+				return;
+
+			HttpContext.Current.Trace.Write (category, message);
 		}
 	}
 }
