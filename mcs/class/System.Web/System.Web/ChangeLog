@@ -1,5 +1,9 @@
 2007-11-22  Marek Habersack  <mhabersack@novell.com>
 
+	* RequestNotificationStatus.cs: added
+
+	* RequestNotification.cs: added
+
 	* HttpCacheVaryByContentEncodings.cs: added
 
 	* HttpCachePolicy.cs: added the HttpCacheVaryByContentEncodings

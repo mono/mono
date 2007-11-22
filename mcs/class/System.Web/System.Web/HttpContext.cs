@@ -75,6 +75,8 @@ namespace System.Web {
 		bool inTransit; // the page is being transferred to another
 
 #if NET_2_0
+		RequestNotification _currentNotification;
+		
 #if TARGET_JVM
 		const string app_global_res_key = "HttpContext.app_global_res_key";
 		internal static Assembly AppGlobalResourcesAssembly {
@@ -302,7 +304,17 @@ namespace System.Web {
 			}
 		}
 
-#if NET_2_0		
+#if NET_2_0
+		// The two properties below are defined only when the IIS7 integrated mode is used.
+		// They are useless under Mono
+		public RequestNotification CurrentNotification {
+			get { throw new PlatformNotSupportedException ("This property is not supported on Mono.");  }
+		}
+
+		public bool IsPostNotification {
+			get { throw new PlatformNotSupportedException ("This property is not supported on Mono."); }
+		}
+		
 		internal void PushHandler (IHttpHandler handler)
 		{
 			if (handler == null)
