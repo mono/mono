@@ -55,6 +55,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		
 		internal static EventTypeSpec [] ControlEvents = new EventTypeSpec [] {
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlSetFocusPart), 
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlGetFocusPart), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlClick), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlContextualMenuClick), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlTrack), 

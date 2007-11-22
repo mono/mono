@@ -1,3 +1,10 @@
+2007-11-21  Geoff Norton  <gnorton@novell.com>
+
+	* ControlHandler.cs: Allow custom HIView to get keyboard focus.
+	* Enums.cs: Remove some unused Enums.
+	* EventHandler.cs: Make controls listen to kEventControlGetFocusPart
+	* KeyboardHandler.cs: Get the focus control from Carbon before returning control from the function
+
 2007-11-15  Geoff Norton  <gnorton@novell.com>
 
 	* EventHandler.cs: The new event handler dispatcher for the Carbon port.

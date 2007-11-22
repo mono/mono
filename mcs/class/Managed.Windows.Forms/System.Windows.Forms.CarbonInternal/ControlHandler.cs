@@ -87,10 +87,12 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventParamDirectObject = 757935405;
 		internal const uint kEventParamMouseButton = 1835168878;
 		internal const uint kEventParamMouseLocation = 1835822947;
+		internal const uint kEventParamControlPart = 1668313716;
 		internal const uint typeControlRef = 1668575852;
 		internal const uint typeCGContextRef = 1668183160;
 		internal const uint typeMouseButton = 1835168878;
 		internal const uint typeQDPoint = 1363439732;
+		internal const uint typeControlPartCode = 1668313716;
 
 		internal ControlHandler (XplatUICarbon driver) : base (driver) {}
 
@@ -191,7 +193,13 @@ namespace System.Windows.Forms.CarbonInternal {
 					Driver.mouse_position.X = (int) point.x;
 					Driver.mouse_position.Y = (int) point.y;
 
+					SetKeyboardFocus (GetControlOwner (hwnd.Handle), hwnd.Handle, 1);
 					return true;
+				}
+				case kEventControlGetFocusPart: {
+					short pcode = 0;
+					SetEventParameter (eventref, kEventParamControlPart, typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
+					return false;
 				}
 			}
 			return false;
@@ -294,35 +302,20 @@ namespace System.Windows.Forms.CarbonInternal {
 			}
 		}
 			
-/*
-
-
-
-				case Constants.kEventControlSetFocusPart: {
-					// This handles setting focus
-					short pcode = 1;
-					GetEventParameter (inEvent, Constants.EventParamName.kEventParamControlPart, Constants.EventParamType.typeControlPartCode, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (short)), IntPtr.Zero, ref pcode);
-					switch (pcode) {
-						case 0:
-						case -1:
-						case -2:
-							pcode = 0;
-							break;
-					}
-					SetEventParameter (inEvent, Constants.EventParamName.kEventParamControlPart, Constants.EventParamType.typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
-					return 0;
-				}
-			}
-			return -9874;
-		}
-*/
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref IntPtr data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref ushort data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref QDPoint data);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int SetEventParameter (IntPtr eventref, uint name, uint type, uint size, ref short data);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern void SetKeyboardFocus (IntPtr window, IntPtr handle, short part);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern IntPtr GetControlOwner (IntPtr handle);
 		
+
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int HIViewGetBounds (IntPtr handle, ref HIRect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

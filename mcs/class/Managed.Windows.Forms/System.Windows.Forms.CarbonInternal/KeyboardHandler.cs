@@ -83,16 +83,10 @@ namespace System.Windows.Forms.CarbonInternal {
 
 
 		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			int vkey = -1;
 			bool result = true;
 			byte charCode = 0x0;
 			UInt32 new_modifiers = 0;
-
-			if (hwnd == null)
-				return false;
-
-			msg.hwnd = hwnd.Handle;
 
 			GetEventParameter (eventref, kEventParamKeyMacCharCodes, typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
 			GetEventParameter (eventref, kEventParamKeyModifiers, typeUInt32, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (UInt32)), IntPtr.Zero, ref new_modifiers);

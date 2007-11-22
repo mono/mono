@@ -26,14 +26,6 @@
 using System;
 
 namespace System.Windows.Forms.CarbonInternal {
-	internal enum EventParamName : uint {
-		kEventParamControlPart = 1668313716,
-	}
-
-	internal enum EventParamType : uint {
-		typeControlPartCode = 1668313716,
-	}
-
 	internal enum WindowClass : uint {
 		kAlertWindowClass = 1,
 		kMovableAlertWindowClass = 2,
