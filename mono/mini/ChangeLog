@@ -1,3 +1,17 @@
+2007-11-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Avoid loading metadata if possible
+	in the generic vtable trampoline case.
+
+	* aot-runtime.c (mono_aot_init_vtable): Use the generic vtable trampoline.
+	
+	* aot-runtime.c (mono_aot_get_method_from_vt_slot): New helper function to
+	return an AOT method based on a vtable slot.
+
+	* aot-compiler.c (compile_method): Avoid AOTing synchronized methods for now.
+
+	* mini.c (mini_get_vtable_trampoline): Export this.
+
 2007-11-22  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h
