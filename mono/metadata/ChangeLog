@@ -18,8 +18,8 @@
 2007-11-22  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c
-	(mono_debug_add_delegate_impl): New public method.
-	(MonoDebugDataItemType): Added `MONO_DEBUG_DATA_ITEM_DELEGATE_IMPL'.
+	(mono_debug_add_delegate_trampoline): New public method.
+	(MonoDebugDataItemType): Added `MONO_DEBUG_DATA_ITEM_DELEGATE_TRAMPOLINE'.
 
 	* mono-debug.h
 	(MonoSymbolTable): Added `global_data_table'.

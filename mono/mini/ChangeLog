@@ -6,7 +6,7 @@
 2007-11-22  Martin Baulig  <martin@ximian.com>
 
 	* mini-amd64.c
-	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_impl().
+	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_trampoline().
 
 	* mini-trampolines.c
 	(mono_delegate_trampoline): Call mono_debugger_trampoline_compiled()
