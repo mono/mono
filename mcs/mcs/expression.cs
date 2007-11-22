@@ -6687,6 +6687,9 @@ namespace Mono.CSharp {
 					"System.NullReferenceException");
 			}
 
+			if (args != null)
+				args.Resolve (ec);
+
 			Expression member_lookup;
 			member_lookup = MemberLookup (
 				ec.ContainerType, expr_type, expr_type, Identifier, loc);
@@ -6701,8 +6704,10 @@ namespace Mono.CSharp {
 				if (ex_method_lookup != null) {
 					ex_method_lookup.ExtensionExpression = expr_resolved;
 
-					if (args != null)
+					if (args != null) {
+						ex_method_lookup.SetTypeArguments (args);
 						return ex_method_lookup.ResolveGeneric (ec, args);
+					}
 
 					return ex_method_lookup.DoResolve (ec);
 				}
@@ -6749,21 +6754,17 @@ namespace Mono.CSharp {
 			}
 
 			MemberExpr me = (MemberExpr) member_lookup;
-			member_lookup = me.ResolveMemberAccess (ec, expr_resolved, loc, original);
-			if (member_lookup == null)
-				return me;
+			me = me.ResolveMemberAccess (ec, expr_resolved, loc, original);
+			if (me == null)
+				return null;
 
 			if (args != null) {
-				MethodGroupExpr mg = member_lookup as MethodGroupExpr;
-				if (mg == null)
-					throw new InternalErrorException ();
-
-				return mg.ResolveGeneric (ec, args);
+				me.SetTypeArguments (args);
+				return me.ResolveGeneric (ec, args);
 			}
 
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
-				me = member_lookup as MemberExpr;
-				if (me != null && me.IsInstance) {
+				if (me.IsInstance) {
 					LocalVariableReference var = expr_resolved as LocalVariableReference;
 					if (var != null && !var.VerifyAssigned (ec))
 						return null;
@@ -6774,9 +6775,9 @@ namespace Mono.CSharp {
 			// check.
 
 			if (right_side != null)
-				return member_lookup.DoResolveLValue (ec, right_side);
+				return me.DoResolveLValue (ec, right_side);
 			else
-				return member_lookup.DoResolve (ec);
+				return me.DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -7977,31 +7978,18 @@ namespace Mono.CSharp {
 				left = ec.GetThis (loc);
 
 			MemberExpr me = (MemberExpr) member_lookup;
-			
-			Expression e = me.ResolveMemberAccess (ec, left, loc, null);
-
-			if (e is PropertyExpr) {
-				PropertyExpr pe = (PropertyExpr) e;
-				pe.IsBase = true;
-			} else if (e is EventExpr) {
-				EventExpr ee = (EventExpr) e;
-				ee.IsBase = true;
-			}
-
-			MethodGroupExpr mg = e as MethodGroupExpr;
-			if (mg != null)
-				mg.IsBase = true;
-
-			if (args != null) {
-				if (mg != null)
-					return mg.ResolveGeneric (ec, args);
-
-				Report.Error (307, loc, "`{0}' cannot be used with type arguments",
-					      Identifier);
+			me = me.ResolveMemberAccess (ec, left, loc, null);
+			if (me == null)
 				return null;
+
+			me.IsBase = true;
+			if (args != null) {
+				args.Resolve (ec);
+				me.SetTypeArguments (args);
+				return me.ResolveGeneric (ec, args);
 			}
 
-			return e;
+			return me;
 		}
 
 		public override void Emit (EmitContext ec)

@@ -474,7 +474,7 @@ namespace Mono.CSharp {
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 #if GMCS_SOURCE
-			if (!old_mg.HasTypeArguments &&
+			if (old_mg.type_arguments == null &&
 			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
 				return null;
 #endif

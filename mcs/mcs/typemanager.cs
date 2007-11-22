@@ -2926,7 +2926,7 @@ namespace Mono.CSharp {
 		return m;
 	}
 
-	public static Type[] GetGenericArguments (MethodInfo mi)
+	public static Type[] GetGenericArguments (MethodBase mi)
 	{
 #if GMCS_SOURCE
 		return mi.GetGenericArguments ();

@@ -602,11 +602,14 @@ namespace Mono.CSharp {
 		{
 			if (mi is EventInfo)
 				return new EventExpr ((EventInfo) mi, loc);
-			else if (mi is FieldInfo)
-				return new FieldExpr ((FieldInfo) mi, loc);
-			else if (mi is PropertyInfo)
+			else if (mi is FieldInfo) {
+				FieldInfo fi = (FieldInfo) mi;
+				if (fi.IsLiteral || (fi.IsInitOnly && fi.FieldType == TypeManager.decimal_type))
+					return new ConstantExpr (fi, loc);
+				return new FieldExpr (fi, loc);
+			} else if (mi is PropertyInfo)
 				return new PropertyExpr (container_type, (PropertyInfo) mi, loc);
-		        else if (mi is Type){
+			else if (mi is Type) {
 				return new TypeExpression ((System.Type) mi, loc);
 			}
 
@@ -2452,20 +2455,14 @@ namespace Mono.CSharp {
 					left = new TypeExpression (ec.ContainerType, loc);
 				}
 
-				e = me.ResolveMemberAccess (ec, left, loc, null);
-				if (e == null)
+				me = me.ResolveMemberAccess (ec, left, loc, null);
+				if (me == null)
 					return null;
 
-				me = e as MemberExpr;
-				if (me == null)
-					return e;
-
 				if (Arguments != null) {
-					MethodGroupExpr mg = me as MethodGroupExpr;
-					if (mg == null)
-						return null;
-
-					return mg.ResolveGeneric (ec, Arguments);
+					Arguments.Resolve (ec);
+					me.SetTypeArguments (Arguments);
+					return me.ResolveGeneric (ec, Arguments);
 				}
 
 				if (!me.IsStatic && (me.InstanceExpression != null) &&
@@ -2930,11 +2927,21 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class MemberExpr : Expression
 	{
+		protected bool is_base;
+
 		/// <summary>
 		///   The name of this member.
 		/// </summary>
 		public abstract string Name {
 			get;
+		}
+
+		//
+		// When base.member is used
+		//
+		public bool IsBase {
+			get { return is_base; }
+			set { is_base = value; }
 		}
 
 		/// <summary>
@@ -2972,7 +2979,7 @@ namespace Mono.CSharp {
 
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
-		public virtual Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public virtual MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 							       SimpleName original)
 		{
 			//
@@ -3004,10 +3011,76 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected virtual Expression ResolveExtensionMemberAccess (Expression left)
+		protected virtual MemberExpr ResolveExtensionMemberAccess (Expression left)
 		{
 			error176 (loc, GetSignatureForError ());
 			return this;
+		}
+
+		// This method is very wrong, it will be deleted completely
+		[Obsolete ("This method will be removed soon")]
+		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
+		{
+#if GMCS_SOURCE
+			MethodGroupExpr mge = this as MethodGroupExpr;
+			if (mge == null)
+				return null;
+
+			Type [] atypes = args.Arguments;
+
+			int first_count = 0;
+			MethodInfo first = null;
+
+			ArrayList list = new ArrayList ();
+			foreach (MethodBase mb in mge.Methods) {
+				MethodInfo mi = mb as MethodInfo;
+				if ((mi == null) || !mb.IsGenericMethod)
+					continue;
+
+				Type [] gen_params = mb.GetGenericArguments ();
+
+				if (first == null) {
+					first = mi;
+					first_count = gen_params.Length;
+				}
+
+				if (gen_params.Length != atypes.Length)
+					continue;
+
+				mi = mi.MakeGenericMethod (atypes);
+				list.Add (mi);
+
+#if MS_COMPATIBLE
+				// MS implementation throws NotSupportedException for GetParameters
+				// on unbaked generic method
+				Parameters p = TypeManager.GetParameterData (mi) as Parameters;
+				if (p != null) {
+					p = p.Clone ();
+					p.InflateTypes (gen_params, atypes);
+					TypeManager.RegisterMethod (mi, p);
+				}
+#endif
+			}
+
+			if (list.Count > 0) {
+				mge.Methods = (MethodBase []) list.ToArray (typeof (MethodBase));
+				return this;
+			}
+
+			if (first != null) {
+				Report.SymbolRelatedToPreviousError (first);
+				Report.Error (
+					305, loc, "Using the generic method `{0}' requires `{1}' type arguments",
+					TypeManager.CSharpSignature (first), first_count.ToString ());
+			} else
+				Report.Error (
+					308, loc, "The non-generic method `{0}' " +
+					"cannot be used with type arguments", Name);
+
+			return null;
+#else
+			throw new NotImplementedException ();
+#endif
 		}
 
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
@@ -3035,6 +3108,13 @@ namespace Mono.CSharp {
 			if (prepare_for_load)
 				ec.ig.Emit (OpCodes.Dup);
 		}
+
+		public virtual void SetTypeArguments (TypeArguments ta)
+		{
+			// TODO: need to get correct member type
+			Report.Error (307, loc, "The property `{0}' cannot be used with type arguments",
+				GetSignatureForError ());
+		}
 	}
 
 	/// 
@@ -3050,10 +3130,6 @@ namespace Mono.CSharp {
 			: base (list, extensionType, l)
 		{
 			this.namespace_entry = n;
-		}
-
-		public override bool IsBase {
-			get { return true; }
 		}
 
 		public override bool IsStatic {
@@ -3133,9 +3209,9 @@ namespace Mono.CSharp {
 		public IErrorHandler CustomErrorHandler;		
 		public MethodBase [] Methods;
 		MethodBase best_candidate;
-		bool has_type_arguments;
+		// TODO: make private
+		public TypeArguments type_arguments;
  		bool identical_type_name;
-		bool is_base;
 		Type delegate_type;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
@@ -3186,12 +3262,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool HasTypeArguments {
-			get {
-				return has_type_arguments;
-			}
-		}
-
 		public bool IdenticalTypeName {
 			get {
 				return identical_type_name;
@@ -3199,15 +3269,6 @@ namespace Mono.CSharp {
 
 			set {
 				identical_type_name = value;
-			}
-		}
-
-		public virtual bool IsBase {
-			get {
-				return is_base;
-			}
-			set {
-				is_base = value;
 			}
 		}
 
@@ -3490,7 +3551,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override Expression ResolveExtensionMemberAccess (Expression left)
+		protected override MemberExpr ResolveExtensionMemberAccess (Expression left)
 		{
 			if (!IsStatic)
 				return base.ResolveExtensionMemberAccess (left);
@@ -3503,7 +3564,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			if (!(left is TypeExpr) &&
@@ -3616,21 +3677,34 @@ namespace Mono.CSharp {
 			int param_count = GetApplicableParametersCount (candidate, pd);
 
 			if (arg_count != param_count)
-				return int.MaxValue - arg_count - param_count;
+				return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
 
+#if GMCS_SOURCE
 			//
-			// 1. Infer type arguments for generic method
+			// 1. Handle generic method using type arguments when speficified or type inference
 			//
-#if GMCS_SOURCE			
-			if (!HasTypeArguments && TypeManager.IsGenericMethod (method)) {
-				int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
-				if (score != 0)
-					return score - 1024;
-				
-				if (TypeManager.IsGenericMethodDefinition (candidate))
-					throw new InternalErrorException ("a generic method definition took part in overload resolution");
-				
-				pd = TypeManager.GetParameterData (candidate);
+			if (TypeManager.IsGenericMethod (method)) {
+				if (type_arguments != null) {
+/*
+					Type [] g_args = candidate.GetGenericArguments ();
+					if (g_args.Length != type_arguments.Count)
+						return int.MaxValue - 20000 + Math.Abs (type_arguments.Count - g_args.Length);
+
+					// TODO: Don't create new method, create Parameters only
+					method = ((MethodInfo) candidate).MakeGenericMethod (type_arguments.Arguments);
+					candidate = method;
+					pd = TypeManager.GetParameterData (candidate);
+*/
+				} else {
+					int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
+					if (score != 0)
+						return score - 20000;
+
+					if (TypeManager.IsGenericMethodDefinition (candidate))
+						throw new InternalErrorException ("a generic method definition took part in overload resolution");
+
+					pd = TypeManager.GetParameterData (candidate);
+				}
 			}
 #endif			
 
@@ -3716,7 +3790,7 @@ namespace Mono.CSharp {
 						      bool do_varargs, ref MethodBase candidate)
 		{
 #if GMCS_SOURCE
-			if (!HasTypeArguments &&
+			if (type_arguments == null &&
 			    !TypeManager.InferParamsTypeArguments (ec, arguments, ref candidate))
 				return false;
 
@@ -4080,18 +4154,30 @@ namespace Mono.CSharp {
 						if (CustomErrorHandler.NoExactMatch (ec, best_candidate))
 							return null;
 					}
-					
+
 					if (TypeManager.IsGenericMethod (best_candidate)) {
-						Report.Error (411, loc,
-							"The type arguments for method `{0}' cannot be inferred from " +
-							"the usage. Try specifying the type arguments explicitly",
-							TypeManager.CSharpSignature (best_candidate));
-						return null;
+						if (type_arguments == null) {
+							Report.Error (411, loc,
+								"The type arguments for method `{0}' cannot be inferred from " +
+								"the usage. Try specifying the type arguments explicitly",
+								TypeManager.CSharpSignature (best_candidate));
+							return null;
+						}
+
+						Type [] g_args = TypeManager.GetGenericArguments (best_candidate);
+						if (type_arguments.Count != g_args.Length) {
+							Report.SymbolRelatedToPreviousError (best_candidate);
+							Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
+								TypeManager.CSharpSignature (best_candidate),
+								g_args.Length.ToString ());
+							return null;
+						}
 					}
 					
 					ParameterData pd = TypeManager.GetParameterData (best_candidate);
 					if (arg_count == pd.Count) {
-						VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, may_fail, loc);
+						if (VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, may_fail, loc))
+							throw new InternalErrorException ("Overload verification expected failure");
 						return null;
 					}
 				}
@@ -4265,68 +4351,9 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
-		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
+		public override void SetTypeArguments (TypeArguments ta)
 		{
-#if GMCS_SOURCE
-			if (!args.Resolve (ec))
-				return null;
-
-			Type[] atypes = args.Arguments;
-
-			int first_count = 0;
-			MethodInfo first = null;
-
-			ArrayList list = new ArrayList ();
-			foreach (MethodBase mb in Methods) {
-				MethodInfo mi = mb as MethodInfo;
-				if ((mi == null) || !mb.IsGenericMethod)
-					continue;
-
-				Type[] gen_params = mb.GetGenericArguments ();
-
-				if (first == null) {
-					first = mi;
-					first_count = gen_params.Length;
-				}
-
-				if (gen_params.Length != atypes.Length)
-					continue;
-
-				mi = mi.MakeGenericMethod (atypes);
-				list.Add (mi);
-
-#if MS_COMPATIBLE
-				// MS implementation throws NotSupportedException for GetParameters
-				// on unbaked generic method
-				Parameters p = TypeManager.GetParameterData (mi) as Parameters;
-				if (p != null) {
-					p = p.Clone ();
-					p.InflateTypes (gen_params, atypes);
-					TypeManager.RegisterMethod (mi, p);
-				}
-#endif
-			}
-
-			if (list.Count > 0) {
-				this.Methods = (MethodBase []) list.ToArray (typeof (MethodBase));
-				has_type_arguments = true;
-				return this;
-			}
-
-			if (first != null) {
-				Report.SymbolRelatedToPreviousError (first);
-				Report.Error (
-					305, loc, "Using the generic method `{0}' requires `{1}' type arguments",
-					TypeManager.CSharpSignature (first), first_count.ToString ());
-			} else
-				Report.Error (
-					308, loc, "The non-generic method `{0}' " +
-					"cannot be used with type arguments", Name);
-
-			return null;
-#else
-			throw new NotImplementedException ();
-#endif
+			type_arguments = ta;
 		}
 
 		public bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
@@ -4401,6 +4428,74 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class ConstantExpr : MemberExpr
+	{
+		FieldInfo constant;
+
+		public ConstantExpr (FieldInfo constant, Location loc)
+		{
+			this.constant = constant;
+			this.loc = loc;
+		}
+
+		public override string Name {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override bool IsInstance {
+			get { return !IsStatic; }
+		}
+
+		public override bool IsStatic {
+			get { return constant.IsStatic; }
+		}
+
+		public override Type DeclaringType {
+			get { return constant.DeclaringType; }
+		}
+
+		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc, SimpleName original)
+		{
+			constant = TypeManager.GetGenericFieldDefinition (constant);
+
+			IConstant ic = TypeManager.GetConstant (constant);
+			if (ic == null) {
+				if (constant.IsLiteral) {
+					ic = new ExternalConstant (constant);
+				} else {
+					ic = ExternalConstant.CreateDecimal (constant);
+					// HACK: decimal field was not resolved as constant
+					if (ic == null)
+						return new FieldExpr (constant, loc).ResolveMemberAccess (ec, left, loc, original);
+				}
+				TypeManager.RegisterConstant (constant, ic);
+			}
+
+			return base.ResolveMemberAccess (ec, left, loc, original);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			IConstant ic = TypeManager.GetConstant (constant);
+			if (ic.ResolveValue ()) {
+				if (!ec.IsInObsoleteScope)
+					ic.CheckObsoleteness (loc);
+			}
+
+			return ic.CreateConstantReference (loc);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.GetFullNameSignature (constant);
+		}
+	}
+
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
@@ -4461,41 +4556,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			FieldInfo fi = TypeManager.GetGenericFieldDefinition (FieldInfo);
-
 			Type t = fi.FieldType;
 
-			if (fi.IsLiteral || (fi.IsInitOnly && t == TypeManager.decimal_type)) {
-				IConstant ic = TypeManager.GetConstant (fi);
-				if (ic == null) {
-					if (fi.IsLiteral) {
-						ic = new ExternalConstant (fi);
-					} else {
-						ic = ExternalConstant.CreateDecimal (fi);
-						if (ic == null) {
-							return base.ResolveMemberAccess (ec, left, loc, original);
-						}
-					}
-					TypeManager.RegisterConstant (fi, ic);
-				}
-
-				bool left_is_type = left is TypeExpr;
-				if (!left_is_type && (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
-//					Report.SymbolRelatedToPreviousError (FieldInfo);
-					return ResolveExtensionMemberAccess (left);
-				}
-
-				if (ic.ResolveValue ()) {
-					if (!ec.IsInObsoleteScope)
-						ic.CheckObsoleteness (loc);
-				}
-
-				return ic.CreateConstantReference (loc);
-			}
-			
 			if (t.IsPointer && !ec.InUnsafe) {
 				UnsafeError (loc);
 			}
@@ -4871,19 +4937,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// A FieldExpr whose address can not be taken
-	//
-	public class FieldExprNoAddress : FieldExpr, IMemoryLocation {
-		public FieldExprNoAddress (FieldInfo fi, Location loc) : base (fi, loc)
-		{
-		}
-		
-		public new void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			Report.Error (-215, "Report this: Taking the address of a remapped parameter not supported");
-		}
-	}
 	
 	/// <summary>
 	///   Expression that evaluates to a Property.  The Assign class
@@ -4894,11 +4947,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class PropertyExpr : MemberExpr, IAssignMethod {
 		public readonly PropertyInfo PropertyInfo;
-
-		//
-		// This is set externally by the  `BaseAccess' class
-		//
-		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
 
@@ -5288,7 +5336,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventExpr : MemberExpr {
 		public readonly EventInfo EventInfo;
-		public bool IsBase;
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
@@ -5336,7 +5383,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
 			//

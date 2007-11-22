@@ -1,3 +1,9 @@
+2007-11-22  Marek Safar  <marek.safar@gmail.com>
+
+ 	* ecore.cs, typemanager.cs, delegate.cs, expression.cs: The first of 
+ 	refactorings required to resolve extension methods correctly when mixing
+ 	generics and non-generics members.
+ 	
 2007-11-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #342584
