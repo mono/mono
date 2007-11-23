@@ -12,6 +12,7 @@
 #endif
 
 #include "mini.h"
+#include "debug-mini.h"
 
 #ifdef MONO_ARCH_HAVE_IMT
 
@@ -329,7 +330,7 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 	}
 
 	/* The general, unoptimized case */
-	m = mono_marshal_get_delegate_invoke (invoke, delegate);
+	m = mono_marshal_get_delegate_invoke (invoke);
 	delegate->invoke_impl = mono_compile_method (m);
 	mono_debugger_trampoline_compiled (m, delegate->invoke_impl);
 
