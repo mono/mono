@@ -1,3 +1,8 @@
+2007-11-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	* NotifyIcon.cs: Remove duplicated code before call realculate and put this
+	code inside recalculate, it makes code more simple.
+
 2007-11-22  Everaldo Canuto  <ecanuto@novell.com>
 
 	* NotifyIcon.cs: When recalculate icon verify if icon is active to decide

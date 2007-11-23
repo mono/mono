@@ -524,7 +524,10 @@ namespace System.Windows.Forms {
 		{
 			window.CalculateIconRect ();
 
-			if (Visible) {
+			if (!Visible || (text == string.Empty && icon == null)) {
+				HideSystray ();
+			} else {
+
 				if (systray_active)
 					UpdateSystray ();
 				else
@@ -648,12 +651,7 @@ namespace System.Windows.Forms {
 			set {
 				if (icon != value) {
 					icon = value;
-					if (text == string.Empty && icon == null) {
-						HideSystray ();
-					}
-					else {
-						Recalculate ();
-					}
+					Recalculate ();
 				}
 			}
 		}
@@ -684,11 +682,7 @@ namespace System.Windows.Forms {
 						throw new ArgumentException("ToolTip length must be less than 64 characters long", "Text");
 					}
 					text = value;
-					if (text == string.Empty && icon == null) {
-						HideSystray();
-					} else {
-						Recalculate ();
-					}
+					Recalculate ();
 				}
 			}
 		}
