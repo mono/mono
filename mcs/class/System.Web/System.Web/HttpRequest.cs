@@ -36,6 +36,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Security.Principal;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
@@ -227,6 +228,10 @@ namespace System.Web {
 		}
 
 #if NET_2_0
+		public WindowsIdentity LogonUserIdentity {
+			get { throw new NotImplementedException (); }
+		}
+		
 		string anonymous_id;
 		public string AnonymousID {
 			get {

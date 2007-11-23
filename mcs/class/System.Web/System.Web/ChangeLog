@@ -1,5 +1,7 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpRequest.cs: added missing property LogonUserIdentity.
+
 	* HttpCacheVaryByContentEncodings.cs: this constructor should not
 	be public.
 
