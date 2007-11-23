@@ -351,6 +351,9 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		public bool JavaScript {
 			get {
 				if (!Get (HaveJavaScript)) {

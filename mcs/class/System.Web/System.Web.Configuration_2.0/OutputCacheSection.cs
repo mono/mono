@@ -41,6 +41,8 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty enableOutputCacheProp;
 		static ConfigurationProperty omitVaryStarProp;
 		static ConfigurationProperty sendCacheControlHeaderProp;
+		static ConfigurationProperty enableKernelCacheForVaryByStarProp;
+		
 		static ConfigurationPropertyCollection properties;
 
 		static OutputCacheSection ()
@@ -49,13 +51,16 @@ namespace System.Web.Configuration {
 			enableOutputCacheProp = new ConfigurationProperty ("enableOutputCache", typeof (bool), true);
 			omitVaryStarProp = new ConfigurationProperty ("omitVaryStar", typeof (bool), false);
 			sendCacheControlHeaderProp = new ConfigurationProperty ("sendCacheControlHeader", typeof (bool), true);
+			enableKernelCacheForVaryByStarProp = new ConfigurationProperty ("enableKernelCacheForVaryByStar",
+											typeof (bool), false);
+			
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (enableFragmentCacheProp);
 			properties.Add (enableOutputCacheProp);
 			properties.Add (omitVaryStarProp);
 			properties.Add (sendCacheControlHeaderProp);
-
+			properties.Add (enableKernelCacheForVaryByStarProp);
 		}
 
 		[ConfigurationProperty ("enableFragmentCache", DefaultValue = "True")]
@@ -70,6 +75,12 @@ namespace System.Web.Configuration {
 			set { base[enableOutputCacheProp] = value; }
 		}
 
+		[ConfigurationProperty ("enableKernelCacheForVaryByStar", DefaultValue = "False")]
+		public bool EnableKernelCacheForVaryByStar {
+			get { return (bool) base [enableKernelCacheForVaryByStarProp]; }
+			set { base [enableKernelCacheForVaryByStarProp] = value; }
+		}
+		
 		[ConfigurationProperty ("omitVaryStar", DefaultValue = "False")]
 		public bool OmitVaryStar {
 			get { return (bool) base [omitVaryStarProp];}

@@ -45,6 +45,7 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty nameProp;
 		static ConfigurationProperty noStoreProp;
 		static ConfigurationProperty sqlDependencyProp;
+		static ConfigurationProperty varyByContentEncodingProp;
 		static ConfigurationProperty varyByControlProp;
 		static ConfigurationProperty varyByCustomProp;
 		static ConfigurationProperty varyByHeaderProp;
@@ -65,6 +66,7 @@ namespace System.Web.Configuration {
 							      ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
 			noStoreProp = new ConfigurationProperty ("noStore", typeof (bool), false);
 			sqlDependencyProp = new ConfigurationProperty ("sqlDependency", typeof (string));
+			varyByContentEncodingProp = new ConfigurationProperty ("varyByContentEncoding", typeof (string));
 			varyByControlProp = new ConfigurationProperty ("varyByControl", typeof (string));
 			varyByCustomProp = new ConfigurationProperty ("varyByCustom", typeof (string));
 			varyByHeaderProp = new ConfigurationProperty ("varyByHeader", typeof (string));
@@ -77,6 +79,7 @@ namespace System.Web.Configuration {
 			properties.Add (nameProp);
 			properties.Add (noStoreProp);
 			properties.Add (sqlDependencyProp);
+			properties.Add (varyByContentEncodingProp);
 			properties.Add (varyByControlProp);
 			properties.Add (varyByCustomProp);
 			properties.Add (varyByHeaderProp);
@@ -130,6 +133,12 @@ namespace System.Web.Configuration {
 			set { base[sqlDependencyProp] = value; }
 		}
 
+		[ConfigurationPropertyAttribute("varyByContentEncoding")]
+		public string VaryByContentEncoding {
+			get { return (string) base [varyByContentEncodingProp]; }
+			set { base [varyByContentEncodingProp] = value; }
+		}
+		
 		[ConfigurationProperty ("varyByControl")]
 		public string VaryByControl {
 			get { return (string) base [varyByControlProp];}

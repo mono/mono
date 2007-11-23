@@ -1,5 +1,10 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* OutputCacheSection.cs: added the EnableKernelCacheForVaryByStar
+	property.
+
+	* OutputCacheProfile.cs: added the VaryByContentEncoding property.
+
 	* FormsAuthenticationConfiguration.cs: corrected defaults for the
 	Timeout property.
 

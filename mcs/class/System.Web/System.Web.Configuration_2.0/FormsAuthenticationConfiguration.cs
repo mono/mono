@@ -89,7 +89,7 @@ namespace System.Web.Configuration
 			slidingExpirationProp = new ConfigurationProperty ("slidingExpiration", typeof (bool), true);
 			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (30),
 								 PropertyHelper.TimeSpanMinutesConverter,
-								 new TimeSpanValidator (new TimeSpan (0,1,0,0), TimeSpan.MaxValue),
+								 new TimeSpanValidator (new TimeSpan (0,1,0), TimeSpan.MaxValue),
 								 ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
