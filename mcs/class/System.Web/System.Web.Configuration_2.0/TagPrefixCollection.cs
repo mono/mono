@@ -36,7 +36,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (TagPrefixInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+	[ConfigurationCollection (typeof (TagPrefixInfo), CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	public sealed class TagPrefixCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;

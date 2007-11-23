@@ -1,5 +1,8 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* TagPrefixCollection.cs: changed the collection type to
+	BasicMap.
+
 	* ProfileSection.cs: added missing Properties property, added a
 	static constructor to create property descriptors. Use property
 	descriptors in property accessors.
