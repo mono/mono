@@ -122,7 +122,13 @@ namespace System.Configuration
 		}
 
 		protected virtual bool ThrowOnDuplicate {
-			get { return true; }
+			get {
+				if (CollectionType != ConfigurationElementCollectionType.AddRemoveClearMap &&
+				    CollectionType != ConfigurationElementCollectionType.AddRemoveClearMapAlternate)
+					return false;
+				
+				return true;
+			}
 		}
 		
 		protected internal string AddElementName {
