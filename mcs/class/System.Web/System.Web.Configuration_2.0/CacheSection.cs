@@ -49,7 +49,8 @@ namespace System.Web.Configuration {
 		{
 			disableExpirationProp = new ConfigurationProperty("disableExpiration", typeof (bool), false);
 			disableMemoryCollectionProp = new ConfigurationProperty("disableMemoryCollection", typeof (bool), false);
-			percentagePhysicalMemoryUsedLimitProp = new ConfigurationProperty("percentagePhysicalMemoryUsedLimit", typeof (int), 89,
+			percentagePhysicalMemoryUsedLimitProp = new ConfigurationProperty("percentagePhysicalMemoryUsedLimit",
+											  typeof (int), 0,
 											  TypeDescriptor.GetConverter (typeof (int)),
 											  PropertyHelper.IntFromZeroToMaxValidator,
 											  ConfigurationPropertyOptions.None);
@@ -84,8 +85,8 @@ namespace System.Web.Configuration {
 			set { base[disableMemoryCollectionProp] = value; }
 		}
 			
-		[IntegerValidator (MinValue = 0, MaxValue = Int32.MaxValue)]
-		[ConfigurationProperty ("percentagePhysicalMemoryUsedLimit", DefaultValue = "89")]
+		[IntegerValidator (MinValue = 0, MaxValue = 100)]
+		[ConfigurationProperty ("percentagePhysicalMemoryUsedLimit", DefaultValue = "0")]
 		public int PercentagePhysicalMemoryUsedLimit {
 			get { return (int) base [percentagePhysicalMemoryUsedLimitProp];}
 			set { base[percentagePhysicalMemoryUsedLimitProp] = value; }

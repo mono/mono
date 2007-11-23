@@ -37,9 +37,27 @@ namespace System.Web.Configuration {
 
 	public sealed class ClientTargetSection : ConfigurationSection
 	{
+		static ConfigurationProperty clientTargetsProp;
+
+		static ConfigurationPropertyCollection properties;
+
+		static ClientTargetSection ()
+		{
+			clientTargetsProp = new ConfigurationProperty (null, typeof (ClientTargetCollection), null,
+								       ConfigurationPropertyOptions.IsDefaultCollection |
+								       ConfigurationPropertyOptions.IsRequired);
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (clientTargetsProp);
+		}
+		
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection | ConfigurationPropertyOptions.IsRequired)]
 		public ClientTargetCollection ClientTargets {
-			get { return (ClientTargetCollection) base [""];}
+			get { return (ClientTargetCollection) base [clientTargetsProp];}
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

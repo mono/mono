@@ -30,7 +30,7 @@
 #if NET_2_0
 using System;
 
-namespace System.Web 
+namespace System.Web.Configuration
 {
 	public interface IConfigMapPath
 	{

@@ -32,7 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 
-namespace System.Web 
+namespace System.Web.Configuration
 {
 	public interface IConfigMapPathFactory
 	{

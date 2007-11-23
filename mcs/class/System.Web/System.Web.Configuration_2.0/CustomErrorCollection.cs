@@ -134,11 +134,6 @@ namespace System.Web.Configuration {
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-		protected override bool ThrowOnDuplicate
-		{
-			get { return false; }
-		}
 	}
 }
 
