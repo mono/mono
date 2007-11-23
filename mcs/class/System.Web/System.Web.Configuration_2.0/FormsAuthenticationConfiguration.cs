@@ -89,7 +89,7 @@ namespace System.Web.Configuration
 			slidingExpirationProp = new ConfigurationProperty ("slidingExpiration", typeof (bool), true);
 			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (30),
 								 PropertyHelper.TimeSpanMinutesConverter,
-								 new TimeSpanValidator (new TimeSpan (0,0,0,0), TimeSpan.MaxValue),
+								 new TimeSpanValidator (new TimeSpan (0,1,0,0), TimeSpan.MaxValue),
 								 ConfigurationPropertyOptions.None);
 
 			properties = new ConfigurationPropertyCollection ();
@@ -192,7 +192,7 @@ namespace System.Web.Configuration
 		}
 
 		[TypeConverter (typeof (TimeSpanMinutesConverter))]
-		[TimeSpanValidator (MinValueString = "00:00:00")]
+		[TimeSpanValidator (MinValueString = "00:01:00")]
 		[ConfigurationProperty ("timeout", DefaultValue = "00:30:00")]
 		public TimeSpan Timeout {
 			get { return (TimeSpan) base[timeoutProp]; }

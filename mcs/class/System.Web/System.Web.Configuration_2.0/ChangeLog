@@ -1,5 +1,8 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* FormsAuthenticationConfiguration.cs: corrected defaults for the
+	Timeout property.
+
 	* ExpressionBuilder.cs: corrected defaults for the
 	ExpressionPrefix and Type properties.
 
