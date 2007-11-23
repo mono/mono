@@ -46,6 +46,7 @@ System.Web/HttpUtilityTest.cs
 System.Web/SiteMapProviderTest.cs
 System.Web/SiteMapNodeTest.cs
 System.Web/StaticSiteMapProviderTest.cs
+System.Web/TraceContextRecordTest.cs
 System.Web.Compilation/ClientBuildManagerParameterTest.cs
 System.Web.Compilation/TemplateControlCompilerTest.cs
 System.Web.Configuration/AnonymousIdentificationSectionTest.cs

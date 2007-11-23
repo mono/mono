@@ -467,6 +467,7 @@ System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs
 System.Web/TraceContextEventArgs.cs
 System.Web/TraceContextEventHandler.cs
+System.Web/TraceContextRecord.cs
 System.Web/TraceData.cs
 System.Web/TraceManager.cs
 System.Web/TraceMode.cs

@@ -1,3 +1,10 @@
+2007-11-23  Daniel Nauck  <dna@mono-project.de>
+
+        * System.Web.dll.sources: added
+	System.Web/TraceContextRecord.cs
+	* System.Web_test.dll.sources: added
+	System.Web/TraceContextRecordTest.cs
+
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added
