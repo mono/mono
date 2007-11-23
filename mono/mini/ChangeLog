@@ -1,5 +1,7 @@
 2007-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_class_name_table): Properly encode generic class names.
+	
 	* aot-compiler.c (compile_method): Correct check for generic method definitions.
 	(encode_method_ref): No need to handle generic method definitions specially.
 
