@@ -61,6 +61,18 @@ namespace System.Web.Configuration {
 
 		}
 
+		// Why override?
+		protected override void DeserializeSection (XmlReader reader)
+		{
+			base.DeserializeSection (reader);
+		}
+
+		// Why override?
+		protected override void Reset (ConfigurationElement parentElement)
+		{
+			base.Reset (parentElement);
+		}
+		
 		[ConfigurationProperty ("defaultRedirect")]
 		public string DefaultRedirect {
 			get { return (string) base [defaultRedirectProp];}

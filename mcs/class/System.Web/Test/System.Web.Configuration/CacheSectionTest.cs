@@ -48,7 +48,7 @@ namespace MonoTests.System.Web.Configuration {
 			CacheSection c = new CacheSection ();
 			Assert.AreEqual (false, c.DisableExpiration, "A1");
 			Assert.AreEqual (false, c.DisableMemoryCollection, "A2");
-			Assert.AreEqual (89, c.PercentagePhysicalMemoryUsedLimit, "A3");
+			Assert.AreEqual (0, c.PercentagePhysicalMemoryUsedLimit, "A3");
 			Assert.AreEqual (0, c.PrivateBytesLimit, "A4");
 			Assert.AreEqual (TimeSpan.FromMinutes (2), c.PrivateBytesPollTime, "A4");
 		}

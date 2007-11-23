@@ -1,5 +1,8 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* CustomErrorsSection.cs: added two missing overrides -
+	DeserializeSection and Reset.
+
 	* ClientTargetSection.cs: added the missing Properties property.
 	Added static constructor to create the property collection.
 
