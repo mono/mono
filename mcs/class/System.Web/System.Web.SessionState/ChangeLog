@@ -1,3 +1,10 @@
+2007-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionSQLServerHandler.cs: Remove a memory leak and improve
+	performance by preparing SQL statements and caching them for later
+	reuse. Patch from Hubert FONGARNAND
+	<informatique.internet@fiducial.fr>, thanks!
+
 2007-11-06  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateServerHandler.cs: properly retrieve session id in

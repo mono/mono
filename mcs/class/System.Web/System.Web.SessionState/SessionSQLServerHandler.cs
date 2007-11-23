@@ -47,10 +47,14 @@ namespace System.Web.SessionState {
                 
 		const string defaultParamPrefix = ":";
 		string paramPrefix;
-		string selectCommand = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires AND AppPath = :AppPath";
-		string insertCommand = "INSERT INTO ASPStateTempSessions (SessionId, AppPath, Created, expires, timeout, StaticObjectsData, SessionData)  VALUES (:SessionID, :AppPath, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
-		string updateCommand = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
-		string deleteCommand = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
+		string selectCommandText = "SELECT timeout,staticobjectsdata,sessiondata FROM ASPStateTempSessions WHERE SessionID = :SessionID AND Expires > :Expires AND AppPath = :AppPath";
+		IDbCommand selectCommand = null;
+		string insertCommandText = "INSERT INTO ASPStateTempSessions (SessionId, AppPath, Created, expires, timeout, StaticObjectsData, SessionData)  VALUES (:SessionID, :AppPath, :Created, :Expires, :Timeout, :StaticObjectsData, :SessionData)";
+		IDbCommand insertCommand = null;
+		string updateCommandText = "UPDATE ASPStateTempSessions SET expires = :Expires, timeout = :Timeout, SessionData = :SessionData WHERE SessionId = :SessionID";
+		IDbCommand updateCommand = null;
+		string deleteCommandText = "DELETE FROM ASPStateTempSessions WHERE SessionId = :SessionID";
+		IDbCommand deleteCommand = null;
 
 		public void Dispose ()
 		{
@@ -83,17 +87,17 @@ namespace System.Web.SessionState {
 			cnc = (IDbConnection) Activator.CreateInstance (cncType);
 			cnc.ConnectionString = cncString;
 			try {
-				cnc.Open ();
+				InitializeConnection ();
 			} catch (Exception exc) {
 				cnc = null;
 				throw exc;
 			}
 
 			if (paramPrefix != defaultParamPrefix) {
-				ReplaceParamPrefix (ref selectCommand);
-				ReplaceParamPrefix (ref insertCommand);
-				ReplaceParamPrefix (ref updateCommand);
-				ReplaceParamPrefix (ref deleteCommand);
+				ReplaceParamPrefix (ref selectCommandText);
+				ReplaceParamPrefix (ref insertCommandText);
+				ReplaceParamPrefix (ref updateCommandText);
+				ReplaceParamPrefix (ref deleteCommandText);
 			}
 		}
 
@@ -174,14 +178,10 @@ namespace System.Web.SessionState {
 
 		IDataReader GetReader (string id)
 		{
-			IDbCommand command = null;
-			command = cnc.CreateCommand();
-			command.CommandText = selectCommand;
-			command.Parameters.Add (CreateParam (command, DbType.String, "SessionID", id));
-			command.Parameters.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now ));
-			command.Parameters.Add (CreateParam (command, DbType.String, "AppPath", this.AppPath));
-			command.Prepare ();
-			return command.ExecuteReader ();
+			((IDataParameter)selectCommand.Parameters["SessionID"]).Value = id;
+			((IDataParameter)selectCommand.Parameters["Expires"]).Value = DateTime.Now;
+			((IDataParameter)selectCommand.Parameters["AppPath"]).Value = this.AppPath;
+			return selectCommand.ExecuteReader ();
 		}
 
 		IDataReader GetReaderWithRetry (string id)
@@ -192,11 +192,11 @@ namespace System.Web.SessionState {
 			}
 
 			try {
-				cnc.Close ();
+				DisposeConnection();
 			} catch {
 			}
 
-			cnc.Open ();
+			InitializeConnection();
 			return GetReader (id);
 		}
 
@@ -224,25 +224,14 @@ namespace System.Web.SessionState {
 
 		void InsertSession (HttpSessionState session, int timeout)
 		{
-			IDbCommand command = cnc.CreateCommand ();
-			IDataParameterCollection param;
-
-			command.CommandText = insertCommand;
-			
-
-			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, "SessionID", session.SessionID));
-			param.Add (CreateParam (command, DbType.String, "AppPath", this.AppPath));
-			param.Add (CreateParam (command, DbType.DateTime, "Created", DateTime.Now));
-			param.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now.AddMinutes (timeout)));
-			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
-			param.Add (CreateParam (command, DbType.Binary, "StaticObjectsData",
-						   session.StaticObjects.ToByteArray ()));
-			param.Add (CreateParam (command, DbType.Binary, "SessionData",
-						   session.SessionDictionary.ToByteArray ()));
-
-			command.Prepare ();
-			command.ExecuteNonQuery ();
+			((IDataParameter)insertCommand.Parameters["SessionID"]).Value = session.SessionID;
+			((IDataParameter)insertCommand.Parameters["AppPath"]).Value = this.AppPath;
+			((IDataParameter)insertCommand.Parameters["Created"]).Value = DateTime.Now;
+			((IDataParameter)insertCommand.Parameters["Expires"]).Value = DateTime.Now.AddMinutes (timeout);
+			((IDataParameter)insertCommand.Parameters["Timeout"]).Value = timeout;
+			((IDataParameter)insertCommand.Parameters["StaticObjectsData"]).Value = session.StaticObjects.ToByteArray ();
+			((IDataParameter)insertCommand.Parameters["SessionData"]).Value = session.SessionDictionary.ToByteArray ();
+			insertCommand.ExecuteNonQuery ();
 		}
 
 		void InsertSessionWithRetry (HttpSessionState session, int timeout)
@@ -254,30 +243,22 @@ namespace System.Web.SessionState {
 			}
 
 			try {
-				cnc.Close ();
+				DisposeConnection ();
 			} catch {
 			}
 
-			cnc.Open ();
+			InitializeConnection ();
 			InsertSession (session, timeout);
 		}
 
 		void UpdateSession (string id, int timeout, SessionDictionary dict)
 		{
-			IDbCommand command = cnc.CreateCommand ();
-			IDataParameterCollection param;
-
-			command.CommandText = updateCommand;
-
-			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, "SessionID", id));
-			param.Add (CreateParam (command, DbType.DateTime, "Expires", DateTime.Now.AddMinutes (timeout)));
-			param.Add (CreateParam (command, DbType.Int32, "Timeout", timeout));
-			param.Add (CreateParam (command, DbType.Binary, "SessionData",
-								dict.ToByteArray ()));
-
-			command.Prepare ();
-			command.ExecuteNonQuery ();
+			((IDataParameter)updateCommand.Parameters["SessionID"]).Value = id;
+			((IDataParameter)updateCommand.Parameters["Expires"]).Value = DateTime.Now.AddMinutes (timeout);
+			((IDataParameter)updateCommand.Parameters["Timeout"]).Value = timeout;
+			((IDataParameter)updateCommand.Parameters["SessionData"]).Value = dict.ToByteArray ();
+			
+			updateCommand.ExecuteNonQuery ();
 		}
 
 		void UpdateSessionWithRetry (string id, int timeout, SessionDictionary dict)
@@ -289,24 +270,19 @@ namespace System.Web.SessionState {
 			}
 
 			try {
-				cnc.Close ();
+				DisposeConnection ();
 			} catch {
 			}
 
-			cnc.Open ();
+			InitializeConnection ();
 			UpdateSession (id, timeout, dict);
 		}
 
 		void DeleteSession (string id)
 		{
-			IDbCommand command = cnc.CreateCommand ();
-			IDataParameterCollection param;
-
-			command.CommandText = deleteCommand;
-			param = command.Parameters;
-			param.Add (CreateParam (command, DbType.String, "SessionID", id));
-			command.Prepare ();
-			command.ExecuteNonQuery ();
+			
+			((IDataParameter)deleteCommand.Parameters["SessionID"]).Value = id;
+			deleteCommand.ExecuteNonQuery ();
 		}
 
 		void DeleteSessionWithRetry (string id)
@@ -318,14 +294,60 @@ namespace System.Web.SessionState {
 			}
 
 			try {
-				cnc.Close ();
+				DisposeConnection ();
 			} catch {
 			}
 
-			cnc.Open ();
+			InitializeConnection ();
 			DeleteSession (id);
 		}
 
+		void InitializeConnection()
+		{
+			cnc.Open ();
+			selectCommand = cnc.CreateCommand ();
+			selectCommand.CommandText = selectCommandText;
+			selectCommand.Parameters.Add (CreateParam (selectCommand, DbType.String, "SessionID", String.Empty));
+			selectCommand.Parameters.Add (CreateParam (selectCommand, DbType.DateTime, "Expires", DateTime.MinValue ));
+			selectCommand.Parameters.Add (CreateParam (selectCommand, DbType.String, "AppPath", String.Empty));
+			selectCommand.Prepare ();
+			
+			insertCommand = cnc.CreateCommand ();
+			insertCommand.CommandText = insertCommandText;
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.String, "SessionID", String.Empty));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.String, "AppPath", String.Empty));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.DateTime, "Created", DateTime.MinValue));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.DateTime, "Expires", DateTime.MinValue));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.Int32, "Timeout", 0));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.Binary, "StaticObjectsData",new byte[0] ));
+			insertCommand.Parameters.Add (CreateParam (insertCommand, DbType.Binary, "SessionData",
+						   new byte[0]));
+			insertCommand.Prepare();
+			
+			updateCommand = cnc.CreateCommand ();
+			updateCommand.CommandText = updateCommandText;
+			updateCommand.Parameters.Add (CreateParam (updateCommand, DbType.String, "SessionID", String.Empty));
+			updateCommand.Parameters.Add (CreateParam (updateCommand, DbType.DateTime, "Expires", DateTime.MinValue));
+			updateCommand.Parameters.Add (CreateParam (updateCommand, DbType.Int32, "Timeout", 0));
+			updateCommand.Parameters.Add (CreateParam (updateCommand, DbType.Binary, "SessionData",
+								new byte[0]));
+			updateCommand.Prepare();
+			
+			deleteCommand = cnc.CreateCommand ();
+			deleteCommand.CommandText = deleteCommandText;
+			deleteCommand.Parameters.Add (CreateParam (deleteCommand, DbType.String, "SessionID", String.Empty));
+			deleteCommand.Prepare();
+		}
+		
+		void DisposeConnection()
+		{
+			selectCommand.Dispose();
+			insertCommand.Dispose();
+			updateCommand.Dispose();
+			deleteCommand.Dispose();
+			cnc.Close();
+		}
+		
 		private IDataParameter CreateParam (IDbCommand command, DbType type,
 				string name, object value)
 		{
