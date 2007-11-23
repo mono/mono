@@ -36,22 +36,22 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class RootProfilePropertySettingsCollection : ProfilePropertySettingsCollection
 	{
-		protected override ConfigurationElement CreateNewElement ()
+		static ConfigurationPropertyCollection properties;
+
+		ProfileGroupSettingsCollection groupSettings;
+		
+		static RootProfilePropertySettingsCollection ()
 		{
-			return new ProfilePropertySettings ();
+			properties = new ConfigurationPropertyCollection ();
 		}
 
-		protected override Object GetElementKey (ConfigurationElement element)
+		public RootProfilePropertySettingsCollection ()
 		{
-			return ((ProfilePropertySettings) element).Name;
-		}
-
-		public override ConfigurationElementCollectionType CollectionType
-		{
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
-		}
+			groupSettings = new ProfileGroupSettingsCollection ();
+		}		
 		
 		public override bool Equals (object obj)
 		{
@@ -80,12 +80,35 @@ namespace System.Web.Configuration
 			return code;
 		}
 
-		[ConfigurationProperty ("", IsDefaultCollection = true)]
-		[ConfigurationCollection (typeof (ProfileGroupSettingsCollection), AddItemName = "group")]
+		protected override bool AllowClear {
+			get { return true; }
+		}
+		
+		[ConfigurationProperty ("group")]
 		public ProfileGroupSettingsCollection GroupSettings {
-			get { return (ProfileGroupSettingsCollection) base [""]; }
+			get { return groupSettings; }
 		}
 
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		protected override bool ThrowOnDuplicate {
+			get { return true; }
+		}
+
+		// Why override?
+		protected override bool IsModified ()
+		{
+			return base.IsModified ();
+		}
+
+		// Why override?
+		protected override void ResetModified ()
+		{
+			base.ResetModified ();
+		}
+		
 		protected override void Reset (ConfigurationElement parentElement)
 		{
 			base.Reset (parentElement);

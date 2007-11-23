@@ -36,8 +36,16 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public class ProfilePropertySettingsCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static ProfilePropertySettingsCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+		
 		public void Add (ProfilePropertySettings propertySettings)
 		{
 			BaseAdd (propertySettings);
@@ -46,11 +54,6 @@ namespace System.Web.Configuration
 		public void Clear ()
 		{
 			BaseClear ();
-		}
-
-		public override ConfigurationElementCollectionType CollectionType
-		{
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
 		}
 		
 		protected override ConfigurationElement CreateNewElement ()
@@ -142,11 +145,19 @@ namespace System.Web.Configuration
 			get { return Get (index); }
 			set { if (Get (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
-
+		
+		public new ProfilePropertySettings this [string name] {
+			get { return (ProfilePropertySettings) base.BaseGet (name); }
+		}
+		
 		protected override bool ThrowOnDuplicate {
 			get {
 				return true;
 			}
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

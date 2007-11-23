@@ -1,5 +1,16 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* ProfileGroupSettingsCollection.cs: added missing attribute to
+	the class, removed CollectionType method, added missing IsModified
+	and ResetModified methods, added missing Properties property.
+
+	* ProfileGroupSettings.cs: added missing Properties property,
+	adjusted the set of custom attributes of the PropertySettings
+	property.
+
+	* ProcessModelSection.cs: change the default value of the CpuMask
+	property.
+
 	* OutputCacheSection.cs: added the EnableKernelCacheForVaryByStar
 	property.
 

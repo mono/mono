@@ -84,7 +84,7 @@ namespace System.Web.Configuration {
 									       new GenericEnumConverter (typeof (ProcessModelComImpersonationLevel)),
 									       PropertyHelper.DefaultValidator,
 									       ConfigurationPropertyOptions.None);
-			cpuMaskProp = new ConfigurationProperty ("cpuMask", typeof (int), (int) (int.MaxValue & 0x80000000));
+			cpuMaskProp = new ConfigurationProperty ("cpuMask", typeof (int), (int) (int.MaxValue & 0xfffffff));
 			enableProp = new ConfigurationProperty ("enable", typeof (bool), true);
 			idleTimeoutProp = new ConfigurationProperty ("idleTimeout", typeof (TimeSpan), TimeSpan.MaxValue,
 								     PropertyHelper.InfiniteTimeSpanConverter,
@@ -222,7 +222,7 @@ namespace System.Web.Configuration {
 			set { base[comImpersonationLevelProp] = value; }
 		}
 
-		[ConfigurationProperty ("cpuMask", DefaultValue = (int) (int.MaxValue & 0x80000000))]
+		[ConfigurationProperty ("cpuMask", DefaultValue = "0xffffffff")]
 		public int CpuMask {
 			get { return (int) base [cpuMaskProp];}
 			set { base[cpuMaskProp] = value; }

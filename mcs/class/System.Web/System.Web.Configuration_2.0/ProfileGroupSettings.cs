@@ -38,6 +38,18 @@ namespace System.Web.Configuration
 {
 	public sealed class ProfileGroupSettings : ConfigurationElement
 	{
+		static ConfigurationProperty propertySettingsProp;
+		
+		static ConfigurationPropertyCollection properties;
+		
+		static ProfileGroupSettings ()
+		{
+			propertySettingsProp = new ConfigurationProperty (null, typeof (ProfilePropertySettingsCollection), null);
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (propertySettingsProp);
+		}
+		
 		internal ProfileGroupSettings ()
 		{
 		}
@@ -71,10 +83,12 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
-		//[ConfigurationProperty ("", IsDefaultCollection = true)]
-		[ConfigurationCollection (typeof (ProfilePropertySettingsCollection), AddItemName = "add", ClearItemsName = "clear")]
 		public ProfilePropertySettingsCollection PropertySettings {
-			get { return (ProfilePropertySettingsCollection) base [""]; }
+			get { return (ProfilePropertySettingsCollection) base [propertySettingsProp]; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

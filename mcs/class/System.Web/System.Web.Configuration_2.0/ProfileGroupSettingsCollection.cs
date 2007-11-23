@@ -35,21 +35,46 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (ProfileGroupSettings), AddItemName="group", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ProfileGroupSettingsCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+		
+		static ProfileGroupSettingsCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+		
 		public void Add (ProfileGroupSettings group)
 		{
 			BaseAdd (group);
 		}
 
+		public string[] AllKeys {
+			get {
+				string[] ret = new string [Count];
+				for (int i = 0; i < Count; i++)
+					ret [i] = this [i].Name;
+
+				return ret;
+			}
+		}
+
+		// Why override?
+		protected override bool IsModified ()
+		{
+			return base.IsModified ();
+		}
+
+		// Why override?
+		protected override void ResetModified ()
+		{
+			base.ResetModified ();
+		}
+		
 		public void Clear ()
 		{
 			BaseClear ();
-		}
-
-		public override ConfigurationElementCollectionType CollectionType
-		{
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
@@ -115,6 +140,10 @@ namespace System.Web.Configuration
 			get { return (ProfileGroupSettings) BaseGet (name); }
 		}
 
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+		
 		internal void ResetInternal (ConfigurationElement parentElement)
 		{
 			Reset (parentElement);
