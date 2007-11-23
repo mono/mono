@@ -54,7 +54,7 @@ namespace System.Windows.Forms
 			string			msgbox_text;
 			bool			size_known	= false;
 			Image			icon_image;
-			Point			textleft_up;
+			RectangleF		text_rect;
 			MessageBoxButtons	msgbox_buttons;
 			MessageBoxDefaultButton	msgbox_default;
 			bool			buttons_placed	= false;
@@ -193,7 +193,7 @@ namespace System.Windows.Forms
 
 			internal override void OnPaintInternal (PaintEventArgs e)
 			{
-				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), textleft_up);
+				e.Graphics.DrawString (msgbox_text, this.Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black), text_rect);
 				if (icon_image != null) {
 					e.Graphics.DrawImage(icon_image, new Point(space_border, space_border));
 				}
@@ -208,20 +208,21 @@ namespace System.Windows.Forms
 
 				// First we have to know the size of text + image
 				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font, max_width);
-
+				text_rect.Size = tsize;
+				
 				if (icon_image != null) {
 					tsize.Width += icon_image.Width + 10;
 					if(icon_image.Height > tsize.Height) {
 						// Place text middle-right
-						textleft_up = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
+						text_rect.Location = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
 					} else {
-						textleft_up = new Point (icon_image.Width + space_image_text + space_border, 2 + space_border);
+						text_rect.Location = new Point (icon_image.Width + space_image_text + space_border, 2 + space_border);
 					}
 					if (tsize.Height < icon_image.Height)
 						tsize.Height = icon_image.Height;
 				} else {
 					tsize.Width += space_border * 2;
-					textleft_up = new Point (space_border + button_space, space_border);
+					text_rect.Location = new Point (space_border + button_space, space_border);
 				}
 				tsize.Height += space_border * 2;
 
