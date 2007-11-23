@@ -38,6 +38,13 @@ namespace System.Web.Configuration {
 	[ConfigurationCollection (typeof (ClientTarget), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ClientTargetCollection : ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+		
+		static ClientTargetCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+		
 		public void Add (ClientTarget clientTarget)
 		{
 			BaseAdd (clientTarget);
@@ -94,6 +101,10 @@ namespace System.Web.Configuration {
 
 		public new ClientTarget this [string name] {
 			get { return (ClientTarget) BaseGet (name); }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

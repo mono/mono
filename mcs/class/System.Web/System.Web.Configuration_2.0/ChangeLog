@@ -1,5 +1,7 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* ClientTargetCollection.cs: added missing Properties property.
+
 	* IConfigMapPathFactory.cs: added
 
 	* IConfigMapPath.cs: added
