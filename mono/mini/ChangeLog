@@ -1,5 +1,8 @@
 2007-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Correct check for generic method definitions.
+	(encode_method_ref): No need to handle generic method definitions specially.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
 
 	* aot-runtime.c (decode_klass_ref): Clean this up and rename from 
