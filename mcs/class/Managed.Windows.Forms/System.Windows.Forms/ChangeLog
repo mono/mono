@@ -1,3 +1,14 @@
+2007-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When changing the position of a given item,
+	don't use item bounds, but item areas (which includes the item spacing
+	between them). Also, use first/last position if the requested
+	position is outside bounds (as .Net does). Invalidate the previous and
+	new bounds. Finally, in ItemControl.ItemsMouseDown use the actual item
+	in a specific position, instead of directly accessing Items collection
+	(this is done to get the right item - remember an Item can have a
+	different position in the grid than in the Items collection).
+
 2007-11-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MessageBox.cs: Calculate text area instead of just top left, this rect 

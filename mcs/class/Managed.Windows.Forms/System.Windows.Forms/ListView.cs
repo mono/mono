@@ -1585,6 +1585,7 @@ namespace System.Windows.Forms
 				return;
 
 			int item_index = reordered_items_indices [display_index];
+			ListViewItem item = items [item_index];
 
 			bool forward = new_display_index < display_index;
 			int index_from, index_to;
@@ -1599,19 +1600,42 @@ namespace System.Windows.Forms
 			ShiftItemsPositions (index_from, index_to, forward);
 
 			reordered_items_indices [new_display_index] = item_index;
-			items [item_index].DisplayIndex = new_display_index;
+
+			item_control.Invalidate (item.Bounds);
+			item.DisplayIndex = new_display_index;
+			item_control.Invalidate (item.Bounds);
 		}
 
 		int GetDisplayIndexFromLocation (Point loc)
 		{
-			// TODO: We could try to compute the corresponding
-			// position using rows, cols and other information, instead
-			// of iterating over all the positions
-			ListViewItem item = GetItemAt (loc.X, loc.Y);
-			if (item == null)
-				return -1;
+			int display_index = -1;
+			Rectangle item_area;
 
-			return item.DisplayIndex;
+			// First item
+			if (loc.X < 0 || loc.Y < 0)
+				return 0;
+
+			// Adjustment to put in the next position refered by 'loc'
+			loc.X -= item_size.Width / 2;
+			if (loc.X < 0)
+				loc.X = 0;
+
+			for (int i = 0; i < items.Count; i++) {
+				item_area = new Rectangle (GetItemLocation (i), item_size);
+				item_area.Inflate (ThemeEngine.Current.ListViewHorizontalSpacing,
+						ThemeEngine.Current.ListViewVerticalSpacing);
+
+				if (item_area.Contains (loc)) {
+					display_index = i;
+					break;
+				}
+			}
+
+			// Put in in last position
+			if (display_index == -1)
+				display_index = items.Count - 1;
+
+			return display_index;
 		}
 
 		// When using groups, the items with no group assigned
@@ -2427,9 +2451,10 @@ namespace System.Windows.Forms
 					if (!item_rect.Contains (pt))
 						continue;
 
-					if (owner.items [i].CheckRectReal.Contains (pt)) {
-						ListViewItem item = owner.items [i];
+					// Actual item in 'i' position
+					ListViewItem item = owner.items [owner.reordered_items_indices [i]];
 
+					if (item.CheckRectReal.Contains (pt)) {
 						// Don't modify check state if we have only one image
 						// and if we are in 1.1 profile only take into account
 						// double clicks
@@ -2451,18 +2476,18 @@ namespace System.Windows.Forms
 					}
 					
 					if (owner.View == View.Details) {
-						bool over_text = owner.items [i].TextBounds.Contains (pt);
+						bool over_text = item.TextBounds.Contains (pt);
 						if (owner.FullRowSelect) {
 							clicked_item = owner.items [i];
 							bool over_item_column = (me.X > owner.Columns[0].X && me.X < owner.Columns[0].X + owner.Columns[0].Width);
 							if (!over_text && over_item_column && owner.MultiSelect)
 								box_selecting = true;
 						} else if (over_text)
-							clicked_item = owner.items [i];
+							clicked_item = item;
 						else
 							owner.SetFocusedItem (i);
 					} else
-						clicked_item = owner.items [i];
+						clicked_item = item;
 
 					break;
 				}
