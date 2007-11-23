@@ -37,6 +37,8 @@ struct _MonoDebuggerInfo {
 	guint8 **mono_trampoline_code;
 	MonoSymbolTable **symbol_table;
 	MonoDebuggerMetadataInfo *metadata_info;
+	gint32 *debugger_version;
+
 	guint64 (*compile_method) (guint64 method_argument);
 	guint64 (*get_virtual_method) (guint64 object_argument, guint64 method_argument);
 	guint64 (*get_boxed_object_method) (guint64 klass_argument, guint64 val_argument);
@@ -55,7 +57,6 @@ struct _MonoDebuggerInfo {
 	guint64 (*insert_breakpoint) (guint64 method_argument, guint64 index);
 	void (*remove_breakpoint) (G_GNUC_UNUSED guint64 dummy, guint64 index);
 
-	gint32 *debugger_version;
 	MonoDebuggerThreadInfo **thread_table;
 
 	guint8 **executable_code_buffer;

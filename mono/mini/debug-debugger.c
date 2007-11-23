@@ -117,6 +117,8 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	mono_trampoline_code,
 	&mono_symbol_table,
 	&debugger_metadata_info,
+	&mono_debug_debugger_version,
+
 	&debugger_compile_method,
 	&debugger_get_virtual_method,
 	&debugger_get_boxed_object,
@@ -133,7 +135,6 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	&debugger_insert_method_breakpoint,
 	&debugger_remove_method_breakpoint,
 
-	&mono_debug_debugger_version,
 	&mono_debugger_thread_table,
 
 	&debugger_executable_code_buffer,
