@@ -35,13 +35,6 @@ typedef struct {
 
 typedef struct
 {
-	guint64 index;
-	MonoMethod *method;
-	MonoDebugMethodAddressList *address_list;
-} MiniDebugMethodBreakpointInfo;
-
-typedef struct
-{
 	MonoDebugMethodJitInfo *jit;
 	GArray *line_numbers;
 	guint32 has_line_numbers;
