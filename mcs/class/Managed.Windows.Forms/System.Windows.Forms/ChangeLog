@@ -1,3 +1,8 @@
+2007-11-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* NotifyIcon.cs: When recalculate icon verify if icon is active to decide
+	between update or add icon. Fixes bug #324344.
+
 2007-11-21  Andreia Gaita <avidigal@novell.com>
 
 	* XPlatUIX11.cs: Do not treat tool windows as if they have no 

@@ -524,19 +524,22 @@ namespace System.Windows.Forms {
 		{
 			window.CalculateIconRect ();
 
-			if (systray_active)
-				UpdateSystray ();
+			if (Visible) {
+				if (systray_active)
+					UpdateSystray ();
+				else
+					ShowSystray ();
+			}
 		}
 
 		private void ShowSystray()
 		{
-			systray_active = true;
-
 			if (icon == null)
 				return;
 
 			icon_bitmap = icon.ToBitmap();
 
+			systray_active = true;
 			XplatUI.SystrayAdd(window.Handle, text, icon, out tooltip);
 		}
 
