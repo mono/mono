@@ -1,3 +1,17 @@
+2007-11-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 65.
+
+	* mono-debug-debugger.c
+	(mono_debugger_insert_method_breakpoint): Moved here from debug-mini.c
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): Likewise.
+	(mono_debugger_register_class_init_callback): New public method.
+	(mono_debugger_remove_class_init_callback): Likewise.
+	(mono_debugger_add_type): Likewise.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Add `MONO_DEBUGGER_EVENT_CLASS_INITIALIZED'.
 
 Thu Nov 22 12:34:04 CET 2007 Paolo Molaro <lupus@ximian.com>
 
