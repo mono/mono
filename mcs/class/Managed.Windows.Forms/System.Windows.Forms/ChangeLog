@@ -1,5 +1,10 @@
 2007-11-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MessageBox.cs: Calculate max amount for text area width, it must be 60% of
+	screen width. Partially fixes bug #343364.
+
+2007-11-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* NotifyIcon.cs: Remove duplicated code before call realculate and put this
 	code inside recalculate, it makes code more simple.
 

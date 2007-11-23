@@ -202,9 +202,12 @@ namespace System.Windows.Forms
 			private void InitFormsSize ()
 			{
 				int tb_width = 0;
-		
+
+				// Max width of messagebox must be 60% of screen width
+				int max_width = (int) (Screen.GetWorkingArea (this).Width * 0.6);
+
 				// First we have to know the size of text + image
-				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font);
+				Drawing.SizeF tsize = TextRenderer.MeasureString (msgbox_text, this.Font, max_width);
 
 				if (icon_image != null) {
 					tsize.Width += icon_image.Width + 10;
