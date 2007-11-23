@@ -1,5 +1,9 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* ProfileSection.cs: added missing Properties property, added a
+	static constructor to create property descriptors. Use property
+	descriptors in property accessors.
+
 	* ProfileGroupSettingsCollection.cs: added missing attribute to
 	the class, removed CollectionType method, added missing IsModified
 	and ResetModified methods, added missing Properties property.
