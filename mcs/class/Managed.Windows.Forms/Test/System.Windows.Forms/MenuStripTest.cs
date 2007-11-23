@@ -137,7 +137,7 @@ namespace MonoTests.System.Windows.Forms
 			Form c1 = new Form ();
 			c1.MdiParent = f;
 			Form c2 = new Form ();
-			c2.MdiParent = f;				
+			c2.MdiParent = f;
 		
 			MenuStrip ms = new MenuStrip ();
 			ToolStripMenuItem tsmi = (ToolStripMenuItem)ms.Items.Add ("Window");
@@ -183,6 +183,17 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, (tsmi.DropDownItems[4] as ToolStripMenuItem).Checked, "Q15");
 			
 			f.Close ();
+		}
+
+		[Test] // bug #342358
+		public void MdiWindowListItem_NoMdiContainer ()
+		{
+			Form f = new Form ();
+			MenuStrip ms = new MenuStrip ();
+			f.MainMenuStrip = ms;
+			f.Controls.Add (ms);
+			ms.MdiWindowListItem = new ToolStripMenuItem ("Window");
+			Assert.IsNotNull (ms.MdiWindowListItem);
 		}
 
 		private class ExposeProtectedProperties : MenuStrip
