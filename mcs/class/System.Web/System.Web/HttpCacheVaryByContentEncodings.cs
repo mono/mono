@@ -39,7 +39,7 @@ namespace System.Web
 	{
 		Dictionary <string, bool> encodings;
 
-		public HttpCacheVaryByContentEncodings ()
+		internal HttpCacheVaryByContentEncodings ()
 		{
 			encodings = new Dictionary <string, bool> ();
 		}
