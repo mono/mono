@@ -1,5 +1,8 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* ExpressionBuilder.cs: corrected defaults for the
+	ExpressionPrefix and Type properties.
+
 	* CustomErrorsSection.cs: added two missing overrides -
 	DeserializeSection and Reset.
 
@@ -9,7 +12,7 @@
 	* CustomErrorCollection.cs: removed the ThrowOnDuplicate
 	property.
 
-	* CacheSection.cs: corrected the defaults for the
+	* CacheSection.cs: corrected defaults for the
 	PercentagePhysicalMemoryUsedLimit property.
 
 	* ClientTargetCollection.cs: added missing Properties property.
