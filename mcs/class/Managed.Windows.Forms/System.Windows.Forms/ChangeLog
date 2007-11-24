@@ -1,3 +1,10 @@
+2007-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When changing ListViewItem.Position (which calls
+	ListView.ChangeItemLocation), invalidate not only the area
+	corresponding to the main item, but also to the area occupied
+	by the items being moved.
+
 2007-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When changing the position of a given item,

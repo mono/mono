@@ -1568,12 +1568,20 @@ namespace System.Windows.Forms
 			if (forward) {
 				for (int i = to + 1; i > from; i--) {
 					reordered_items_indices [i] = reordered_items_indices [i - 1];
-					items [reordered_items_indices [i]].DisplayIndex = i;
+
+					ListViewItem item = items [reordered_items_indices [i]];
+					item_control.Invalidate (item.Bounds);
+					item.DisplayIndex = i;
+					item_control.Invalidate (item.Bounds);
 				}
 			} else {
 				for (int i = from - 1; i < to; i++) {
 					reordered_items_indices [i] = reordered_items_indices [i + 1];
-					items [reordered_items_indices [i]].DisplayIndex = i;
+
+					ListViewItem item = items [reordered_items_indices [i]];
+					item_control.Invalidate (item.Bounds);
+					item.DisplayIndex = i;
+					item_control.Invalidate (item.Bounds);
 				}
 			}
 		}
