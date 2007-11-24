@@ -60,7 +60,7 @@ namespace System.Reflection {
 
 		public override string ToString ()
 		{
-			string val = value.ToString ();
+			string val = value != null ? value.ToString () : String.Empty;
 			if (argumentType == typeof (string))
 				return "\"" + val + "\"";
 			if (argumentType == typeof (Type)) 
