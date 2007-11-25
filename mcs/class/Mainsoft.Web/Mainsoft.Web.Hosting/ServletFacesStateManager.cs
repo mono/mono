@@ -14,54 +14,11 @@ using java.util;
 
 namespace Mainsoft.Web.Hosting
 {
-	public sealed class ServletFacesStateManager : StateManager
+	public sealed class ServletFacesStateManager : BaseFacesStateManager
 	{
 		static RenderKitFactory RenderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
 
-		public override StateManager.SerializedView saveSerializedView (FacesContext facesContext) {
-			Object treeStruct = getTreeStructureToSave (facesContext);
-			Object compStates = getComponentStateToSave (facesContext);
-			SerializedView serializedView = new SerializedView (this, treeStruct, compStates);
-
-			//if (!isSavingStateInClient (facesContext))
-			//    saveSerializedViewInSession (facesContext, facesContext.getViewRoot ().getViewId (), serializedView);
-
-			return serializedView;
-		}
-
-		static readonly object [] emptyArray = new object [0];
-
-		protected override Object getTreeStructureToSave (FacesContext facesContext) {
-			UIViewRoot viewRoot = facesContext.getViewRoot ();
-			//kostat ???
-			//if (((StateHolder) viewRoot).isTransient ()) {
-			//    return null;
-			//}
-
-			Console.WriteLine ("saving root:" + viewRoot.getViewId ());
-			return new int [] { 1, 2, 3 };
-
-			//myfaces save id. What is it for?
-			// save ViewRoot tree
-			//return new String [] { viewRoot.GetType().FullName, viewRoot.getId () };
-		}
-
-		protected override Object getComponentStateToSave (FacesContext facesContext) {
-			Console.WriteLine ("Entering getComponentStateToSave");
-
-			UIViewRoot viewRoot = facesContext.getViewRoot ();
-			if (viewRoot.isTransient ()) {
-				return null;
-			}
-
-			Object serializedComponentStates = viewRoot.processSaveState (facesContext);
-			//Locale is a state attribute of UIViewRoot and need not be saved explicitly
-			Console.WriteLine ("Exiting getComponentStateToSave");
-			return serializedComponentStates;
-		}
-
-		public override void writeState (FacesContext facesContext,
-										StateManager.SerializedView serializedView) {
+		public override void writeState (FacesContext facesContext, StateManager.SerializedView serializedView) {
 			if (serializedView != null) {
 				UIViewRoot uiViewRoot = facesContext.getViewRoot ();
 				//save state in response (client-side: full state; server-side: sequence)
@@ -69,22 +26,6 @@ namespace Mainsoft.Web.Hosting
 				// not us.
 				renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
 			}
-		}
-
-		public override UIViewRoot restoreView (FacesContext facesContext,
-																 String viewId,
-																String renderKitId) {
-
-			UIViewRoot uiViewRoot = restoreTreeStructure (facesContext, viewId, renderKitId);
-			if (uiViewRoot != null) {
-				uiViewRoot.setViewId (viewId);
-				restoreComponentState (facesContext, uiViewRoot, renderKitId);
-				String restoredViewId = uiViewRoot.getViewId ();
-				if (restoredViewId == null || !(restoredViewId.Equals (viewId))) {
-					return null;
-				}
-			}
-			return uiViewRoot;
 		}
 
 		protected override UIViewRoot restoreTreeStructure (FacesContext facesContext,
@@ -96,19 +37,12 @@ namespace Mainsoft.Web.Hosting
 			if (isSavingStateInClient (facesContext)) {
 				RenderKit rk = RenderKitFactory.getRenderKit (facesContext, renderKitId);
 				ResponseStateManager responseStateManager = rk.getResponseStateManager ();
-				Object treeStructure = responseStateManager.getTreeStructureToRestore (facesContext, viewId);
-				if (treeStructure == null) {
+				Object componentState = responseStateManager.getComponentStateToRestore (facesContext);
+				if (componentState == null) {
 					Console.WriteLine ("Exiting restoreTreeStructure - No tree structure state found in client request");
 					return null;
 				}
-
-				AspNetFacesContext aspNetFacesContext = (AspNetFacesContext) facesContext;
-				UIComponent page = aspNetFacesContext.Handler as UIComponent;
-				if (page == null)
-					return null;
-				
 				uiViewRoot = facesContext.getApplication ().getViewHandler ().createView (facesContext, viewId);
-				uiViewRoot.getChildren ().add (0, page);
 			}
 			else {
 				throw new NotImplementedException ();
@@ -151,30 +85,6 @@ namespace Mainsoft.Web.Hosting
 
 			Console.WriteLine ("Exiting restoreComponentState");
 		}
-
-		//readonly object _stateKey = new object ();
-
-
-		//SerializedView getSerializedViewFromServletSession (FacesContext facesContext, string viewId) {
-		//    Map sessionMap = facesContext.getExternalContext ().getSessionMap ();
-		//    System.Collections.Hashtable states = sessionMap.get (_stateKey) as System.Collections.Hashtable;
-		//    if (states == null)
-		//        return null;
-
-		//    return states [viewId] as SerializedView;
-		//}
-
-		//void saveSerializedViewInSession (FacesContext context, string viewId, SerializedView serializedView) {
-		//    Map sessionMap = context.getExternalContext ().getSessionMap ();
-
-		//    System.Collections.Hashtable states = sessionMap.get (_stateKey) as System.Collections.Hashtable;
-		//    if (states == null) {
-		//        states = new System.Collections.Hashtable ();
-		//        sessionMap.put (_stateKey, states);
-		//    }
-
-		//    states [viewId] = serializedView;
-		//}
 
 	}
 }

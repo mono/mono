@@ -54,7 +54,7 @@ namespace Mainsoft.Web.Hosting
 														   response,
 														   _lifecycle);
 
-			return new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context, handler), _lifecycle);
+			return new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context, (Page) handler), _lifecycle);
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler) {

@@ -82,7 +82,8 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData (".appId", currentTime.ToString ("x"));
 				servletDomain.SetData (".appName", context.getServletContextName ());
 
-				servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
+				servletDomain.SetData (J2EEConsts.CLASS_LOADER, java.lang.Thread.currentThread ().getContextClassLoader ());
+				//servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
 				//servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
 				servletDomain.SetData (J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader (context));
 
@@ -298,4 +299,48 @@ namespace System.Web.J2EE
 	{
 	}
 
+}
+
+public class GhDynamicHttpServlet : System.Web.GH.BaseHttpServlet
+{
+}
+
+public class GhStaticHttpServlet : System.Web.GH.BaseStaticHttpServlet
+{ 
+}
+
+public class GhHttpServlet : System.Web.GH.BaseHttpServlet
+{
+	GhStaticHttpServlet staticServlet;
+
+	public GhHttpServlet () {
+		staticServlet = new GhStaticHttpServlet ();
+	}
+
+	override public void init (ServletConfig config) {
+		base.init (config);
+		staticServlet.init (config);
+	}
+
+	override protected void service (HttpServletRequest req, HttpServletResponse resp) {
+		string pathInfo = req.getRequestURI ();
+		string contextPath = req.getContextPath ();
+		if (pathInfo.Equals (contextPath) ||
+			((pathInfo.Length - contextPath.Length) == 1) &&
+			pathInfo [pathInfo.Length - 1] == '/' && pathInfo.StartsWith (contextPath))
+			pathInfo = contextPath + req.getServletPath ();
+		if (pathInfo.EndsWith (".aspx") ||
+			pathInfo.EndsWith (".asmx") ||
+			pathInfo.EndsWith (".invoke")) {
+			base.service (req, resp);
+		}
+		else {
+			staticServlet.service (req, resp);
+		}
+	}
+
+	override public void destroy () {
+		staticServlet.destroy ();
+		base.destroy ();
+	}
 }

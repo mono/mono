@@ -11,9 +11,9 @@ namespace Mainsoft.Web.Hosting
 	{
 		readonly FacesContext _facesContex;
 		readonly HttpContext _httpContext;
-		readonly IHttpHandler _handler;
+		readonly Page _handler;
 
-		public IHttpHandler Handler {
+		public Page Handler {
 			get { return _handler; }
 		}
 
@@ -21,13 +21,13 @@ namespace Mainsoft.Web.Hosting
 			get { return _httpContext; }
 		}
 
-		AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, IHttpHandler handler) {
+		protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, Page handler) {
 			_facesContex = facesContex;
 			_httpContext = httpContext;
 			_handler = handler;
 		}
 
-		public static AspNetFacesContext WrapFacesContext (FacesContext facesContex, HttpContext httpContext, IHttpHandler page) {
+		public static AspNetFacesContext WrapFacesContext (FacesContext facesContex, HttpContext httpContext, Page page) {
 			AspNetFacesContext ctx = new AspNetFacesContext (facesContex, httpContext, page);
 			FacesContext.setCurrentInstance (ctx);
 			return ctx;
