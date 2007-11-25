@@ -2990,11 +2990,11 @@ namespace System.Data {
 					string rawColumnName = columnExpression[c].Trim ();
 
 					Match match = SortRegex.Match (rawColumnName);
-					CaptureCollection cc = match.Groups["ColName"].Captures ;
-					if (cc.Count == 0)
+					Group g = match.Groups["ColName"] ;
+					if (!g.Success)
 						throw new IndexOutOfRangeException ("Could not find column: " + rawColumnName);
 
-					string columnName = cc[0].Value;
+					string columnName = g.Value;
 					DataColumn dc = table.Columns[columnName];
 					if (dc == null){
 						try {
@@ -3005,8 +3005,8 @@ namespace System.Data {
 					}
 					columns.Add (dc);
 
-					cc = match.Groups["Order"].Captures;
-					if (cc.Count == 0 || String.Compare (cc [0].Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
+					g = match.Groups["Order"];
+					if (!g.Success || String.Compare (g.Value, "ASC", true, CultureInfo.InvariantCulture) == 0)
 						sorts.Add(ListSortDirection.Ascending);
 					else
 						sorts.Add (ListSortDirection.Descending);
