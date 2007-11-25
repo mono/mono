@@ -47,7 +47,7 @@ namespace System.Web {
 	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpResponse {
+	public sealed partial class HttpResponse {
 		internal HttpWorkerRequest WorkerRequest;
 		internal HttpResponseStream output_stream;
 		internal bool buffer = true;

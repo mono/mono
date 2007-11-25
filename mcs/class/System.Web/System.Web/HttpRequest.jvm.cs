@@ -34,6 +34,7 @@ using System.Web.Configuration;
 using System.IO;
 using System.Collections;
 using vmw.@internal.j2ee;
+using System.Collections.Specialized;
 
 namespace System.Web
 {
@@ -58,7 +59,11 @@ namespace System.Web
 		{
 			HttpServletRequest servletReq = context.ServletRequest;
 			if (servletReq == null) {
-				RawLoadWwwForm ();
+				NameValueCollection requestParameters = context.RequestParameters;
+				if (requestParameters != null)
+					form.Add (requestParameters);
+				else
+					RawLoadWwwForm ();
 				return;
 			}
 
@@ -218,5 +223,10 @@ namespace System.Web
 					javaSession.setAttribute (SessionCookies, sessionCookies);
 			}
 		}
+
+		internal void SetWorkerRequest (HttpWorkerRequest wr) {
+			worker_request = wr;
+		}
+
 	}
 }

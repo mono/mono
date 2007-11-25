@@ -42,6 +42,9 @@ using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
 using System.Threading;
+#if TARGET_J2EE
+using vmw.@internal.j2ee;
+#endif
 
 #if NET_2_0 && !TARGET_JVM
 using System.CodeDom.Compiler;
@@ -417,7 +420,15 @@ namespace System.Web {
 		
 		static void RealProcessRequest (object o)
 		{
+#if TARGET_J2EE
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+				context = new HttpContext ((HttpWorkerRequest) o);
+			else
+				context.SetWorkerRequest ((HttpWorkerRequest) o);
+#else
 			HttpContext context = new HttpContext ((HttpWorkerRequest) o);
+#endif
 			HttpContext.Current = context;
 			bool error = false;
 #if !TARGET_J2EE
@@ -461,10 +472,23 @@ namespace System.Web {
 				//
 				// Ask application to service the request
 				//
+#if TARGET_J2EE
 				IHttpAsyncHandler ihah = app;
+				if (context.Handler == null)
+					ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
+				else
+					app.Tick ();
+				//ihh.ProcessRequest (context);
+				IHttpExtendedHandler extHandler = context.Handler as IHttpExtendedHandler;
+				if (extHandler != null && !extHandler.getCompleted ())
+					return;
 
+				ihah.EndProcessRequest (null);
+#else
+				IHttpAsyncHandler ihah = app;
 				IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
 				ihah.EndProcessRequest (appiar);
+#endif
 
 				HttpApplicationFactory.Recycle (app);
 			}

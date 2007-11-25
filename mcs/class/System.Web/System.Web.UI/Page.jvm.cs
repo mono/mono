@@ -44,7 +44,6 @@ namespace System.Web.UI
 {
 	public partial class Page
 	{
-		internal const string NamespaceKey = "__NAMESPACE";
 		const string PageNamespaceKey = "__PAGENAMESPACE";
 		const string RenderPageMark = "vmw.render.page=";
 		const string ActionPageMark = "vmw.action.page=";

@@ -1349,6 +1349,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		ProcessRaiseChangedEvents ();
 		ProcessRaisePostBackEvents ();
 		ProcessLoadComplete ();
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			return;
+#endif
 		RenderPage ();
 	}
 

@@ -37,6 +37,7 @@ using javax.faces.context;
 using System.Web.J2EE;
 using System.Web.UI;
 using javax.servlet;
+using System.Collections.Specialized;
 
 namespace System.Web {
 	
@@ -65,6 +66,10 @@ namespace System.Web {
 
 		internal HttpServletRequest ServletRequest {
 			get { return (HttpServletRequest)GetWorkerService(typeof(HttpServletRequest)); }
+		}
+		
+		internal NameValueCollection RequestParameters {
+			get { return (NameValueCollection) GetWorkerService (typeof (NameValueCollection)); }
 		}
 
 		internal HttpServletResponse ServletResponse {
@@ -131,9 +136,7 @@ namespace System.Web {
 						faces = FacesContext;
 
 					if (faces != null) {
-						_PortletNamespace = faces.getRenderResponse () ?
-							faces.getExternalContext ().encodeNamespace (String.Empty) :
-							Request.Form [Page.NamespaceKey];
+						_PortletNamespace = faces.getExternalContext ().encodeNamespace (String.Empty);
 					}
 					
 					_PortletNamespace = _PortletNamespace ?? String.Empty;
@@ -148,6 +151,12 @@ namespace System.Web {
 
 		internal void EndTimeoutPossible ()
 		{
+		}
+
+		internal void SetWorkerRequest (HttpWorkerRequest wr) {
+			WorkerRequest = wr;
+			Request.SetWorkerRequest (wr);
+			Response.SetWorkerRequest (wr);
 		}
 	}
 }

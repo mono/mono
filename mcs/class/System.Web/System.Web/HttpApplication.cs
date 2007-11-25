@@ -654,7 +654,7 @@ namespace System.Web {
 		//
 		// Ticks the clock: next step on the pipeline.
 		//
-		void Tick ()
+		internal void Tick ()
 		{
 			try {
 				if (pipeline.MoveNext ()){
@@ -966,6 +966,10 @@ namespace System.Web {
 					if (stop)
 						goto release;
 				
+#if TARGET_J2EE
+			bool doProcessHandler = false;
+		processHandler:
+#endif
 			try {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
@@ -978,6 +982,10 @@ namespace System.Web {
 					} else {
 						must_yield = false;
 						handler.ProcessRequest (context);
+#if TARGET_J2EE
+						IHttpExtendedHandler extHandler=handler as IHttpExtendedHandler;
+						doProcessHandler = extHandler != null && !extHandler.getCompleted ();
+#endif
 					}
 				}
 			} catch (ThreadAbortException taex){
@@ -992,6 +1000,12 @@ namespace System.Web {
 				in_begin = false;
 				context.EndTimeoutPossible ();
 			}
+#if TARGET_J2EE
+			if (doProcessHandler) {
+				yield return false;
+				goto processHandler;
+			}
+#endif
 			if (must_yield)
 				yield return stop_processing;
 			else if (stop_processing)
@@ -1257,6 +1271,10 @@ namespace System.Web {
 
 		void IHttpAsyncHandler.EndProcessRequest (IAsyncResult result)
 		{
+#if TARGET_J2EE
+			if (result == null)
+				result = begin_iar;
+#endif
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne ();
 			begin_iar = null;
