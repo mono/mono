@@ -1224,12 +1224,15 @@
     <Compile Include="System.Web\BaseParamsCollection.cs" />
     <Compile Include="System.Web\HeadersCollection.cs" />
     <Compile Include="System.Web\HttpApplication.cs" />
+    <Compile Include="System.Web\HttpCacheVaryByContentEncodings.cs" />
     <Compile Include="System.Web\HttpParamsCollection.cs" />
     <Compile Include="System.Web\HttpResponseStream.jvm.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web\HttpWorkerRequest.jvm.cs" />
+    <Compile Include="System.Web\RequestNotification.cs" />
+    <Compile Include="System.Web\RequestNotificationStatus.cs" />
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>

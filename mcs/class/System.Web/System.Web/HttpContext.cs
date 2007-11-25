@@ -75,7 +75,6 @@ namespace System.Web {
 		bool inTransit; // the page is being transferred to another
 
 #if NET_2_0
-		RequestNotification _currentNotification;
 		
 #if TARGET_JVM
 		const string app_global_res_key = "HttpContext.app_global_res_key";
@@ -84,6 +83,7 @@ namespace System.Web {
 			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
 		}
 #else
+		RequestNotification _currentNotification;
 		internal static Assembly AppGlobalResourcesAssembly;
 #endif
 		ProfileBase profile = null;

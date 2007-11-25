@@ -381,6 +381,7 @@
     <Compile Include="System.Web.UI\ToolboxDataAttributeTest.cs" />
     <Compile Include="System.Web.UI\XhtmlTextWriterTest.cs" />
     <Compile Include="System.Web\HttpBrowserCapabilitiesTest.cs" />
+    <Compile Include="System.Web\HttpCacheVaryByContentEncodingsTest.cs" />
     <Compile Include="System.Web\HttpCacheVaryByHeadersTest.cs" />
     <Compile Include="System.Web\HttpCacheVaryByParamsTest.cs" />
     <Compile Include="System.Web\HttpClientCertificateTest.cs" />
