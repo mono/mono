@@ -49,6 +49,7 @@ namespace System.Net
 			_originalUri = uri;
 			_headers = new WebHeaderCollection(true);
 			_allowAutoRedirect = true;
+			_proxy = GlobalProxySelection.Select;
 		}
 
 		public static HttpProvider GetHttpProvider(Uri uri)
