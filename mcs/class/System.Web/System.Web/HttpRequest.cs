@@ -228,9 +228,11 @@ namespace System.Web {
 		}
 
 #if NET_2_0
+#if !TARGET_JVM
 		public WindowsIdentity LogonUserIdentity {
 			get { throw new NotImplementedException (); }
 		}
+#endif
 		
 		string anonymous_id;
 		public string AnonymousID {
