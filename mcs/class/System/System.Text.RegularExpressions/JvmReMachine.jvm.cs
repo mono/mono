@@ -173,7 +173,7 @@ namespace System.Text.RegularExpressions
 
 			int index = m.start (javaGroupNumber);
 
-			if (index < 0) {
+			if (index < 0 && groups[netGroupNumber] == null) {
 				groups.SetValue (new Group (), netGroupNumber);
 				return;
 			}
