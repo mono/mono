@@ -35,6 +35,7 @@ namespace System.Linq
 	public static class Enumerable
 	{
 		#region Aggregate
+
 		public static TSource Aggregate<TSource> (this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
 		{
 			CheckSourceAndFunc (source, func);
@@ -52,7 +53,6 @@ namespace System.Linq
 			}
 		}
 
-
 		public static TAccumulate Aggregate<TSource, TAccumulate> (this IEnumerable<TSource> source,
 			TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
 		{
@@ -63,7 +63,6 @@ namespace System.Linq
 				folded = func (folded, element);
 			return folded;
 		}
-
 
 		public static TResult Aggregate<TSource, TAccumulate, TResult> (this IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector)
 		{
@@ -76,9 +75,11 @@ namespace System.Linq
 				result = func (result, e);
 			return resultSelector (result);
 		}
+
 		#endregion
 
 		#region All
+
 		public static bool All<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			CheckSourceAndPredicate (source, predicate);
@@ -86,11 +87,14 @@ namespace System.Linq
 			foreach (TSource element in source)
 				if (!predicate (element))
 					return false;
+
 			return true;
 		}
+
 		#endregion
 
 		#region Any
+
 		public static bool Any<TSource> (this IEnumerable<TSource> source)
 		{
 			CheckSource (source);
@@ -99,7 +103,6 @@ namespace System.Linq
 				return true;
 			return false;
 		}
-
 
 		public static bool Any<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
@@ -110,16 +113,20 @@ namespace System.Linq
 					return true;
 			return false;
 		}
+
 		#endregion
 
 		#region AsEnumerable
+
 		public static IEnumerable<TSource> AsEnumerable<TSource> (this IEnumerable<TSource> source)
 		{
 			return source;
 		}
+
 		#endregion
 
 		#region Average
+
 		public static double Average (this IEnumerable<int> source)
 		{
 			CheckSource (source);
@@ -136,7 +143,6 @@ namespace System.Linq
 			else
 				return (double) sum / (double) counter;
 		}
-
 
 		public static double? Average (this IEnumerable<int?> source)
 		{
@@ -155,7 +161,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) sum / (double?) counter);
 		}
 
-
 		public static double Average (this IEnumerable<long> source)
 		{
 			CheckSource (source);
@@ -172,7 +177,6 @@ namespace System.Linq
 			else
 				return (double) sum / (double) counter;
 		}
-
 
 		public static double? Average (this IEnumerable<long?> source)
 		{
@@ -191,7 +195,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) sum / (double?) counter);
 		}
 
-
 		public static double Average (this IEnumerable<double> source)
 		{
 			CheckSource (source);
@@ -208,7 +211,6 @@ namespace System.Linq
 			else
 				return sum / counter;
 		}
-
 
 		public static double? Average (this IEnumerable<double?> source)
 		{
@@ -227,7 +229,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) (sum / counter));
 		}
 
-
 		public static decimal Average (this IEnumerable<decimal> source)
 		{
 			CheckSource (source);
@@ -244,7 +245,6 @@ namespace System.Linq
 			else
 				return sum / counter;
 		}
-
 
 		public static decimal? Average (this IEnumerable<decimal?> source)
 		{
@@ -263,7 +263,6 @@ namespace System.Linq
 			return (onlyNull ? null : (decimal?) (sum / counter));
 		}
 
-
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
 			CheckSourceAndSelector (source, selector);
@@ -280,7 +279,6 @@ namespace System.Linq
 			else
 				return (double) sum / (double) counter;
 		}
-
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
@@ -300,7 +298,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) sum / (double?) counter);
 		}
 
-
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			CheckSourceAndSelector (source, selector);
@@ -317,7 +314,6 @@ namespace System.Linq
 			else
 				return (double) sum / (double) counter;
 		}
-
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
@@ -337,7 +333,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) sum / (double?) counter);
 		}
 
-
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			CheckSourceAndSelector (source, selector);
@@ -354,7 +349,6 @@ namespace System.Linq
 			else
 				return sum / counter;
 		}
-
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
@@ -374,7 +368,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) (sum / counter));
 		}
 
-
 		public static decimal Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			CheckSourceAndSelector (source, selector);
@@ -391,7 +384,6 @@ namespace System.Linq
 			else
 				return sum / counter;
 		}
-
 
 		public static decimal? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
 		{
@@ -413,6 +405,7 @@ namespace System.Linq
 		#endregion
 
 		#region Cast
+
 		public static IEnumerable<TResult> Cast<TResult> (this IEnumerable source)
 		{
 			CheckSource (source);
@@ -420,9 +413,11 @@ namespace System.Linq
 			foreach (object element in source)
 				yield return (TResult) element;
 		}
+
 		#endregion
 
 		#region Concat
+
 		public static IEnumerable<TSource> Concat<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
 		{
 			CheckFirstAndSecond (first, second);
@@ -463,6 +458,7 @@ namespace System.Linq
 		#endregion
 
 		#region Count
+
 		public static int Count<TSource> (this IEnumerable<TSource> source)
 		{
 			CheckSource (source);
@@ -489,6 +485,7 @@ namespace System.Linq
 
 			return counter;
 		}
+
 		#endregion
 
 		#region DefaultIfEmpty
@@ -536,6 +533,7 @@ namespace System.Linq
 				}
 			}
 		}
+
 		#endregion
 
 		#region ElementAt
@@ -587,10 +585,12 @@ namespace System.Linq
 		#endregion
 
 		#region Empty
+
 		public static IEnumerable<TResult> Empty<TResult> ()
 		{
 			return new TResult [0];
 		}
+
 		#endregion
 
 		#region Except
@@ -885,6 +885,7 @@ namespace System.Linq
 		{
 			return Join<TOuter, TInner, TKey, TResult> (outer, inner, outerKeySelector, innerKeySelector, resultSelector, null);
 		}
+
 		# endregion
 
 		#region Last
@@ -1007,7 +1008,6 @@ namespace System.Linq
 				return maximum;
 		}
 
-
 		public static int? Max (this IEnumerable<int?> source)
 		{
 			CheckSource (source);
@@ -1023,7 +1023,6 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : maximum);
 		}
-
 
 		public static long Max (this IEnumerable<long> source)
 		{
@@ -1843,7 +1842,6 @@ namespace System.Linq
 				yield return selector (element);
 		}
 
-
 		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, int, TResult> selector)
 		{
@@ -2479,6 +2477,8 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
 		{
+			CheckFirstAndSecond (first, second);
+
 			return first.Union (second, null);
 		}
 
@@ -2621,46 +2621,6 @@ namespace System.Linq
 				throw new ArgumentNullException ("resultSelector");
 		}
 
-		#endregion
-
-		#region Compare
-
-		static bool Equals<T> (T first, T second)
-		{
-			// Mostly, values in Enumerable<T> 
-			// sequences need to be compared using
-			// Equals and GetHashCode
-
-			if (first == null || second == null)
-				return (first == null && second == null);
-			else
-				return ((first.Equals (second) ||
-						 first.GetHashCode () == second.GetHashCode ()));
-		}
-
-		#endregion
-
-		#region IndexOf
-
-		static int IndexOf<T> (this IEnumerable<T> source, T item, IEqualityComparer<T> comparer)
-		{
-			if (comparer == null)
-				comparer = EqualityComparer<T>.Default;
-
-			int counter = 0;
-			foreach (T element in source) {
-				if (comparer.Equals (element, item))
-					return counter;
-				counter++;
-			}
-			// The item was not found
-			return -1;
-		}
-
-		static int IndexOf<T> (this IEnumerable<T> source, T item)
-		{
-			return IndexOf<T> (source, item, null);
-		}
 		#endregion
 
 		#region ToReadOnlyCollection
