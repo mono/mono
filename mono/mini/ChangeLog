@@ -1,3 +1,8 @@
+2007-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_init_vtable): Simplify this if MONO_ARCH_COMMON_VTABLE_TRAMPOLINE
+	is defined.
+
 2007-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_class_name_table): Properly encode generic class names.
