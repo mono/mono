@@ -1,3 +1,8 @@
+2007-11-27  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (mono_generic_inst_equal_full): Short-circuit
+	equality check if we're comparing canonicalized MonoGenericInsts.
+
 2007-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (generic_array_methods): Call mono_class_setup_methods () before
