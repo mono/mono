@@ -1,3 +1,7 @@
+2007-11-27  Scott Peterson  <lunchtimemama@gmail.com>
+
+	* InternalOrderedSequence.cs: updated Quicksort algorithm.
+
 2007-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Enumerable.cs : fixed Range(int,int) that iterated one less.

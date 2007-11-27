@@ -1,3 +1,7 @@
+2007-11-27  Scott Peterson <lunchtimemama@gmail.com>
+
+	* EnumerableTest.cs: Added orderby test.
+
 2007-11-22  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: Add test for Range.

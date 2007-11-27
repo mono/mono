@@ -51,9 +51,9 @@ namespace System.Linq
                 
                 public override IEnumerable<TElement> Sort (IEnumerable<TElement> parentSource)
                 {
-                	if (parent != null)
-                		return parent.Sort (source);
-			return PerformSort (parentSource);
+                        if (parent != null)
+                                return parent.Sort (source);
+                        return PerformSort (parentSource);
                 }
                 
                 public override IEnumerator<TElement> GetEnumerator ()
@@ -77,16 +77,15 @@ namespace System.Linq
                         // Then evaluate the keySelector function for each element,
                         // collecting the key values
                         keys = new TKey [source_list.Count];
-                        for (int i = 0; i < source_list.Count; i++)
-                                keys[i] = key_selector(source_list [i]);
+                        indexes = new int [source_list.Count];
+                        for (int i = 0; i < source_list.Count; i++) {
+                                keys [i] = key_selector (source_list [i]);
+                                indexes [i] = i;
+                        }
                         
                         // Then sorts the elements according to the collected
                         // key values and the selected ordering
-                        indexes = new int [keys.Length];
-                        for (int i = 0; i < indexes.Length; i++)
-                                indexes [i] = i;
-                        
-                        QuickSort(indexes, 0, indexes.Length - 1);
+                        QuickSort(0, indexes.Length - 1);
                         
                         // Return the values as IEnumerable<TElement>
                         TElement[] orderedList = new TElement [indexes.Length];
@@ -103,49 +102,59 @@ namespace System.Linq
                         return (descending ? -comparison : comparison);
                 }
                 
-                /** QuickSort implementation
-                    Based on implementation found in Wikipedia 
-                    http://en.wikipedia.org/wiki/Quicksort_implementations
-                    that was released under the GNU Free Documentation License **/
-               
-                void QuickSort (int[] array, int left, int right)
+                // We look at the first, middle, and last items in the subarray.
+                // Then we put the largest on the right side, the smallest on
+                // the left side, and the median becomes our pivot.
+                int MedianOfThree (int left, int right)
                 {
-                        int lhold = left;
-                        int rhold = right;
-                        Random random = new Random ();
-                        int pivot = random.Next (left, right);
-                        Swap (array, pivot, left);
-                        pivot = left;
-                        left++;
-                        
-                        while (right >= left) {
-                                int leftComparison = CompareItems (indexes [left], indexes [pivot]);
-                                int rightComparison = CompareItems (indexes [right], indexes [pivot]);
-                                if (leftComparison >= 0 && rightComparison < 0)
-                                        Swap (array, left, right);
-                                else if (leftComparison >= 0)
-                                        right--;
-                                else if (rightComparison < 0)
-                                        left++;
-                                else {
-                                        right--;
-                                        left++;
-                                }
-                        }
-                        
-                        Swap (array, pivot, right);
-                        pivot = right;
-                        if (pivot > lhold)
-                                QuickSort (array, lhold, pivot);
-                        if (rhold > pivot + 1)
-                                QuickSort (array, pivot + 1, rhold);
+                        int center = (left + right) / 2;
+                        if (CompareItems (indexes [center], indexes [left]) < 0)
+                                Swap (left, center);
+                        if (CompareItems (indexes [right], indexes [left]) < 0)
+                                Swap (left, right);
+                        if (CompareItems (indexes [right], indexes [center]) < 0)
+                                Swap (center, right);
+                        Swap (center, right - 1);
+                        return indexes [right - 1];
                 }
                 
-                static void Swap (int[] items, int left, int right)
+                void QuickSort (int left, int right)
                 {
-                        int temp = items [right];
-                        items [right] = items [left];
-                        items [left] = temp;
+                        if (left + 3 <= right) {
+                                int l = left, r = right - 1, pivot = MedianOfThree (left, right);
+                                while (true) {
+                                        while (CompareItems (indexes [++l], pivot) < 0) {}
+                                        while (CompareItems (indexes [--r], pivot) > 0) {}
+                                        if (l < r)
+                                                Swap (l, r);
+                                        else
+                                                break;
+                                }
+                                // Restore pivot
+                                Swap (l, right - 1);
+                                // Partition and sort
+                                QuickSort (left, l - 1);
+                                QuickSort (l + 1, right);
+                        } else
+                                // If there are three items in the subarray, insertion sort is better
+                                InsertionSort (left, right);
+                }
+                
+                void InsertionSort (int left, int right)
+                {
+                        for (int i = left + 1; i <= right; i++) {
+                                int j, tmp = indexes [i];
+                                for (j = i; j > left && CompareItems (tmp, indexes [j - 1]) < 0; j--)
+                                     indexes [j] = indexes [j - 1];
+                                indexes [j] = tmp;
+                        }
+                }
+                
+                void Swap (int left, int right)
+                {
+                        int temp = indexes [right];
+                        indexes [right] = indexes [left];
+                        indexes [left] = temp;
                 }
                 
         }
