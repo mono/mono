@@ -1,3 +1,9 @@
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api-diff.cs : expand all missing types in missing
+	  namespaces so that we don't get just one "missing" mark
+	  for the entire namespace.
+
 2007-08-12  Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Build transform too.
