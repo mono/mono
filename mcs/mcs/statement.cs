@@ -2183,10 +2183,10 @@ namespace Mono.CSharp {
 				//
 
 				if (!s.Resolve (ec)) {
-					if (ec.IsInProbingMode)
-						return false;
-
 					ok = false;
+					if (ec.IsInProbingMode)
+						break;
+
 					statements [ix] = EmptyStatement.Value;
 					continue;
 				}
@@ -2203,9 +2203,6 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
 				      ec.CurrentBranching, statement_count, num_statements);
-
-			if (!ok)
-				return false;
 
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
@@ -3585,6 +3582,7 @@ namespace Mono.CSharp {
 			}
 
 			bool first = true;
+			bool ok = true;
 			foreach (SwitchSection ss in Sections){
 				if (!first)
 					ec.CurrentBranching.CreateSibling (
@@ -3597,11 +3595,12 @@ namespace Mono.CSharp {
 					// one single section - mark all the others as
 					// unreachable.
 					ec.CurrentBranching.CurrentUsageVector.Goto ();
-					if (!ss.Block.ResolveUnreachable (ec, true))
-						return false;
+					if (!ss.Block.ResolveUnreachable (ec, true)) {
+						ok = false;
+					}
 				} else {
 					if (!ss.Block.Resolve (ec))
-						return false;
+						ok = false;
 				}
 			}
 
@@ -3614,7 +3613,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching);
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)

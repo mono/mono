@@ -1,3 +1,9 @@
+2007-11-27  Raja R Harinath  <harinath@gmail.com>
+
+	* statement.cs (Block.Resolve): Ensure flow-branching tree is
+	consistent even when an error has occured.
+	(Switch.Resolve): Likewise.
+
 2007-11-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #334505
