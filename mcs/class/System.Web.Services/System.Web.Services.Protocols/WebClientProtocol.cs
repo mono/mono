@@ -48,6 +48,8 @@ namespace System.Web.Services.Protocols {
 		bool preAuthenticate;
 		Encoding requestEncoding;
 		int timeout;
+		string url;
+		bool abort;
 
 		//
 		// Used by SoapHttpClientProtocol, use this to avoid creating a new Uri on each invocation.
@@ -87,6 +89,8 @@ namespace System.Web.Services.Protocols {
 			preAuthenticate = false;
 			requestEncoding = null;
 			timeout = 100000;
+			url = String.Empty;
+			abort = false;
 		}
 		
 		#endregion // Constructors
@@ -131,8 +135,11 @@ namespace System.Web.Services.Protocols {
 		[RecommendedAsConfigurable (true)]
 		[WebServicesDescription ("The base URL to the server to use for requests.")]
 		public string Url {
-			get { return uri == null? String.Empty : uri.OriginalString; }
-			set { uri = new Uri (value); }
+			get { return url; }
+			set {
+				url = value;
+				uri = new Uri (url);
+			}
 		}
 #if NET_2_0
 		public bool UseDefaultCredentials {
@@ -147,10 +154,11 @@ namespace System.Web.Services.Protocols {
 
 		public virtual void Abort ()
 		{
-			WebRequest request = current_request;
-			current_request = null;
-			if (request != null) 
-				request.Abort ();
+			if (current_request != null){
+				current_request.Abort ();
+				current_request = null;
+			}
+			abort = true;
 		}
 
 		protected static void AddToCache (Type type, object value)
@@ -168,20 +176,22 @@ namespace System.Web.Services.Protocols {
 			if (uri == null)
 				throw new InvalidOperationException ("uri is null");
 
-			WebRequest request = WebRequest.Create (uri);
-			request.Timeout = timeout;
-			request.PreAuthenticate = preAuthenticate;
-			request.ConnectionGroupName = connectionGroupName;
+			current_request = WebRequest.Create (uri);
+			current_request.Timeout = timeout;
+			current_request.PreAuthenticate = preAuthenticate;
+			current_request.ConnectionGroupName = connectionGroupName;
 
 			if (credentials != null)
-				request.Credentials = credentials;
+				current_request.Credentials = credentials;
 
-			current_request = request;
-			return request;
+			return current_request;
 		}
 
 		protected virtual WebResponse GetWebResponse (WebRequest request)
 		{
+			if (abort)
+				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
+
 			WebResponse response = null;
 			try {
 				request.Timeout = timeout;
@@ -197,6 +207,9 @@ namespace System.Web.Services.Protocols {
 
 		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
 		{
+			if (abort)
+				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
+
 			return request.EndGetResponse (result);
 		}
 

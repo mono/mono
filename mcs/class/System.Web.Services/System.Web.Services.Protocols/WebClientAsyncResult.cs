@@ -116,8 +116,6 @@ namespace System.Web.Services.Protocols {
 		{
 			lock (this)
 			{
-				if (_done)
-					return;
 				Monitor.Wait (this);
 			}
 		}
