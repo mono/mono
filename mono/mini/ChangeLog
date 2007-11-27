@@ -1,3 +1,15 @@
+2007-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Check runtime version if needed.
+
+	* aot-compiler.c: Add bind-to-runtime-version for producing AOT files which only load into a runtime with
+	the same version.
+
+	* generic-sharing.c (mono_helper_get_rgctx_other_ptr): Change the signature to take the calling class
+	instead of the calling method to help AOT.
+
+	* mini.c (get_runtime_generic_context_other_ptr): Update after the change.
+
 2007-11-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_init_vtable): Simplify this if MONO_ARCH_COMMON_VTABLE_TRAMPOLINE
