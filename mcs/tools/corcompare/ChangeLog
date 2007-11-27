@@ -1,5 +1,10 @@
 2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* mono-api-diff.cs : ... and do the same for missing members.
+	  I don't like this change but ppl wanted me to make it so :p
+
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono-api-diff.cs : expand all missing types in missing
 	  namespaces so that we don't get just one "missing" mark
 	  for the entire namespace.

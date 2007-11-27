@@ -577,16 +577,13 @@ namespace Mono.AssemblyCompare
 				AddAttribute (node, "name", xclass.Name);
 				AddAttribute (node, "type", xclass.Type);
 
-				if (oh.ContainsKey (xclass.Name)) {
-					int idx = (int) oh [xclass.Name];
-					xclass.CompareTo (document, node, other [idx]);
+				int idx = -1;
+				if (oh.ContainsKey (xclass.Name))
+					idx = (int) oh [xclass.Name];
+				xclass.CompareTo (document, node, idx >= 0 ? other [idx] : new XMLClass ());
+				if (idx >= 0)
 					other [idx] = null;
-					counters.AddPartialToPartial (xclass.Counters);
-				} else {
-					AddAttribute (node, "presence", "missing");
-					counters.Missing++;
-					counters.MissingTotal++;
-				}
+				counters.AddPartialToPartial (xclass.Counters);
 			}
 
 			if (other != null) {
