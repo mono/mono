@@ -552,6 +552,8 @@ namespace System.Net
 				throw new ProtocolViolationException();
 			lock(this)
 			{
+				if (_isAborted)
+					throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
 				if(_writeStream != null)
 					return _writeStream;
 				this.OpenConnection();
@@ -665,10 +667,22 @@ namespace System.Net
 			#endregion
 		}
 		
+		WebResponse GetAsyncResponse()
+		{
+			try {
+				return GetResponse ();
+			}
+			catch {
+				return null;
+			}
+		}
+
 		public override WebResponse GetResponse()
 		{
 			lock(this)
 			{
+				if (_isAborted)
+					throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
 				if(!_isConnectionOpened)
 					OpenConnection();
 				if(_response == null)
@@ -744,17 +758,22 @@ namespace System.Net
 
 		public override void Abort()
 		{
-			_isAborted = true;
-			try
-			{
-				if(_hasResponse)
-				{
-					_response.Close();
+			lock (this) {
+				if (_isAborted)
+					return;
+				_isAborted = true;
+				try {
+					if (_hasResponse) {
+						_response.Close ();
+					}
 				}
-			}
-			finally
-			{
-				_method.releaseConnection();				
+				finally {
+					if (_method != null)
+						_method.releaseConnection ();
+					_method = null;
+					_hasResponse = false;
+					_response = null;
+				}
 			}
 		}
 
@@ -787,6 +806,8 @@ namespace System.Net
 				catch(Exception e)
 				{
 					_asyncWrite.SetCompleted(false, e);
+					_asyncWrite.DoCallback ();
+					return _asyncWrite;
 				}
 
 				_asyncWrite.SetCompleted (true, _writeStream);
@@ -819,7 +840,7 @@ namespace System.Net
 
 		public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
 		{
-			GetResponseDelegate d = new GetResponseDelegate (GetResponse);
+			GetResponseDelegate d = new GetResponseDelegate (GetAsyncResponse);
 			DelegateAsyncResult result = new DelegateAsyncResult ();
 			AsyncContext userContext = new AsyncContext (d, result, callback, state);
 			result.AsyncResult = d.BeginInvoke (new AsyncCallback (DelegateAsyncResult.Callback), userContext);
@@ -828,6 +849,8 @@ namespace System.Net
 
 		public override WebResponse EndGetResponse(IAsyncResult asyncResult)
 		{
+			if (_isAborted)
+				throw new WebException ("The operation has been aborted.", WebExceptionStatus.RequestCanceled);
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
 
