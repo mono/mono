@@ -9933,6 +9933,23 @@ mono_bblock_add_inst (MonoBasicBlock *bb, MonoInst *inst)
 }
 
 void
+mono_bblock_insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
+{
+	if (ins == NULL) {
+		ins = bb->code;
+		bb->code = ins_to_insert;
+		ins_to_insert->next = ins;
+		if (bb->last_ins == NULL)
+			bb->last_ins = ins_to_insert;
+	} else {
+		ins_to_insert->next = ins->next;
+		ins->next = ins_to_insert;
+		if (bb->last_ins == ins)
+			bb->last_ins = ins_to_insert;
+	}
+}
+
+void
 mono_destroy_compile (MonoCompile *cfg)
 {
 	//mono_mempool_stats (cfg->mempool);

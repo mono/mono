@@ -1654,24 +1654,10 @@ opcode_to_ia64_cmp_imm (int opcode, int cmp_opcode)
 	return cond_to_ia64_cmp_imm [mono_opcode_to_cond (opcode)][mono_opcode_to_type (opcode, cmp_opcode)];
 }
 
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
-{
-	if (ins == NULL) {
-		ins = bb->code;
-		bb->code = to_insert;
-		to_insert->next = ins;
-	}
-	else {
-		to_insert->next = ins->next;
-		ins->next = to_insert;
-	}
-}
-
 #define NEW_INS(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = (op);	\
-        insert_after_ins (bb, last_ins, (dest)); \
+        mono_bblock_insert_after_ins (bb, last_ins, (dest)); \
         last_ins = (dest); \
 	} while (0)
 

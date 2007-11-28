@@ -459,3 +459,13 @@ atomic_add_new_i4: src1:b src2:i dest:i len:16
 atomic_exchange_i4: src1:b src2:i dest:i len:24
 memory_barrier: len:16
 
+cmov_ieq: dest:i src1:i src2:i len:16 clob:1
+cmov_ige: dest:i src1:i src2:i len:16 clob:1
+cmov_igt: dest:i src1:i src2:i len:16 clob:1
+cmov_ile: dest:i src1:i src2:i len:16 clob:1
+cmov_ilt: dest:i src1:i src2:i len:16 clob:1
+cmov_ine_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ige_un: dest:i src1:i src2:i len:16 clob:1
+cmov_igt_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ile_un: dest:i src1:i src2:i len:16 clob:1
+cmov_ilt_un: dest:i src1:i src2:i len:16 clob:1

@@ -20,6 +20,20 @@
 #include <mono/metadata/opcodes.h>
 #include "mini.h"
 
+/* FIXME: Get rid of these */
+#define NEW_BIALU(cfg,dest,op,dr,sr1,sr2) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = (dr); \
+        (dest)->sreg1 = (sr1); \
+        (dest)->sreg2 = (sr2); \
+	} while (0)
+
+#define NEW_BIALU_IMM(cfg,dest,op,dr,sr,imm) do { \
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->dreg = (dr);				 \
+        (dest)->sreg1 = (sr);					   \
+        (dest)->inst_p1 = (gpointer)(gssize)(imm); \
+	} while (0)
 
 #define MONO_DEBUG_LOCAL_PROP 0
 #define MONO_DEBUG_TREE_MOVER 0
@@ -1230,6 +1244,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 	guint32 *def_index;
 	int max = cfg->next_vreg;
 
+restart:
 	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vreg + 1));
 	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vreg + 1));
 
@@ -1516,6 +1531,48 @@ mono_local_cprop2 (MonoCompile *cfg)
 				spec = INS_INFO (ins->opcode);
 				break;
 			}
+			case OP_IDIV_IMM: {
+				/* FIXME: Make this work on 64 bit as well */
+				/* FIXME: Move this elsewhere cause its hard to implement it here */
+#if SIZEOF_VOID_P == 4
+				int c = ins->inst_imm;
+				int power2 = mono_is_power_of_two (c);
+				MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
+
+				if (power2 == 1) {
+					int r1 = mono_alloc_ireg (cfg);
+
+					NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_UN_IMM, r1, ins->sreg1, 31);
+					mono_bblock_insert_after_ins (bb, ins, tmp1);
+					NEW_BIALU (cfg, tmp2, OP_IADD, r1, r1, ins->sreg1);
+					mono_bblock_insert_after_ins (bb, tmp1, tmp2);
+					NEW_BIALU_IMM (cfg, tmp3, OP_ISHR_IMM, ins->dreg, r1, 1);
+					mono_bblock_insert_after_ins (bb, tmp2, tmp3);
+
+					NULLIFY_INS (ins);
+
+					// We allocated a new vreg, so need to restart
+					goto restart;
+				} else if (power2 > 0) {
+					int r1 = mono_alloc_ireg (cfg);
+
+					NEW_BIALU_IMM (cfg, tmp1, OP_ISHR_IMM, r1, ins->sreg1, 31);
+					mono_bblock_insert_after_ins (bb, ins, tmp1);
+					NEW_BIALU_IMM (cfg, tmp2, OP_ISHR_UN_IMM, r1, r1, (32 - power2));
+					mono_bblock_insert_after_ins (bb, tmp1, tmp2);
+					NEW_BIALU (cfg, tmp3, OP_IADD, r1, r1, ins->sreg1);
+					mono_bblock_insert_after_ins (bb, tmp2, tmp3);
+					NEW_BIALU_IMM (cfg, tmp4, OP_ISHR_IMM, ins->dreg, r1, power2);
+					mono_bblock_insert_after_ins (bb, tmp3, tmp4);
+
+					NULLIFY_INS (ins);
+
+					// We allocated a new vreg, so need to restart
+					goto restart;
+				}
+#endif
+				break;
+			}
 			}
 			
 			if (spec [MONO_INST_DEST] != ' ') {
@@ -1651,7 +1708,7 @@ mono_local_deadce (MonoCompile *cfg)
 				if (ins_index + 1 < nins) {
 					int j;
 					MonoInst *def;
-					const char *spec2 = INS_INFO (def->opcode);
+					const char *spec2;
 
 					j = ins_index + 1;
 					def = reverse [ins_index + 1];
@@ -1659,6 +1716,7 @@ mono_local_deadce (MonoCompile *cfg)
 						j ++;
 						def = reverse [j];
 					}
+					spec2 = INS_INFO (def->opcode);
 
 					/* 
 					 * Perform a limited kind of reverse copy propagation, i.e.

@@ -2455,24 +2455,10 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->last_ins = last_ins;
 }
 
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
-{
-	if (ins == NULL) {
-		ins = bb->code;
-		bb->code = to_insert;
-		to_insert->next = ins;
-	}
-	else {
-		to_insert->next = ins->next;
-		ins->next = to_insert;
-	}
-}
-
 #define NEW_INS(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = (op);	\
-        insert_after_ins (bb, last_ins, (dest)); \
+        mono_bblock_insert_after_ins (bb, last_ins, (dest)); \
 	} while (0)
 
 /*

@@ -995,6 +995,7 @@ MonoInst* mono_find_spvar_for_region        (MonoCompile *cfg, int region) MONO_
 void      mono_precompile_assemblies        (void) MONO_INTERNAL;
 int       mono_parse_default_optimizations  (const char* p);
 void      mono_bblock_add_inst              (MonoBasicBlock *bb, MonoInst *inst) MONO_INTERNAL;
+void      mono_bblock_insert_after_ins      (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert) MONO_INTERNAL;
 void      mono_constant_fold                (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_constant_fold_inst           (MonoInst *inst, gpointer data) MONO_INTERNAL;
 MonoInst* mono_constant_fold_ins2           (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoInst *arg2, gboolean overwrite) MONO_INTERNAL;
