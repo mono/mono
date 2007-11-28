@@ -1,5 +1,8 @@
 2007-11-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Clean up the fp stack properly in CKFINITE.
+	(mono_arch_output_basic_block): Get rid of unused last_ins and last_offset.
+
 	* mini-x86.c (mono_arch_output_basic_block): Add some micro optimizations.
 
 	* mini-x86.c inssel-x86.brg cpu-x86.md: Move the implementation of the 
