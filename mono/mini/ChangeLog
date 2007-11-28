@@ -1,3 +1,9 @@
+2007-11-28  Martin Baulig  <martin@ximian.com>
+
+	* mini-x86.c
+	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_trampoline()
+	after creating the trampoline.
+
 2007-11-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_aot_module): Check runtime version if needed.
