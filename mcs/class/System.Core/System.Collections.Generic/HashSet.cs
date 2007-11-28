@@ -341,6 +341,9 @@ namespace System.Collections.Generic {
 
 		public void IntersectWith (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			var copy = new T [count];
 			CopyTo (copy, 0);
 
@@ -355,12 +358,18 @@ namespace System.Collections.Generic {
 
 		public void ExceptWith (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in other)
 				Remove (item);
 		}
 
 		public bool Overlaps (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in other)
 				if (Contains (item))
 					return true;
@@ -370,6 +379,9 @@ namespace System.Collections.Generic {
 
 		public bool SetEquals (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			if (count != other.Count ())
 				return false;
 
@@ -382,6 +394,9 @@ namespace System.Collections.Generic {
 
 		public void SymmetricExceptWith (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in other) {
 				if (Contains (item))
 					Remove (item);
@@ -392,12 +407,18 @@ namespace System.Collections.Generic {
 
 		public void UnionWith (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in other)
 				Add (item);
 		}
 
 		bool CheckIsSubsetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in this)
 				if (!other.Contains (item))
 					return false;
@@ -407,6 +428,9 @@ namespace System.Collections.Generic {
 
 		public bool IsSubsetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			if (count == 0)
 				return true;
 
@@ -418,6 +442,9 @@ namespace System.Collections.Generic {
 
 		public bool IsProperSubsetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			if (count == 0)
 				return true;
 
@@ -429,6 +456,9 @@ namespace System.Collections.Generic {
 
 		bool CheckIsSupersetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			foreach (var item in other)
 				if (!Contains (item))
 					return false;
@@ -438,6 +468,9 @@ namespace System.Collections.Generic {
 
 		public bool IsSupersetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			if (count < other.Count ())
 				return false;
 
@@ -446,6 +479,9 @@ namespace System.Collections.Generic {
 
 		public bool IsProperSupersetOf (IEnumerable<T> other)
 		{
+			if (other == null)
+				throw new ArgumentNullException ("other");
+
 			if (count <= other.Count ())
 				return false;
 
