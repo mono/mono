@@ -33,19 +33,19 @@ namespace System.Web
 	[FlagsAttribute]
 	public enum RequestNotification
 	{
-		AcquireRequestState,
-		AuthenticateRequest,
-		AuthorizeRequest,
-		BeginRequest,
-		EndRequest,
-		ExecuteRequestHandler,
-		LogRequest,
-		MapRequestHandler,
-		PreExecuteRequestHandler,
-		ReleaseRequestState,
-		ResolveRequestCache,
-		SendResponse,
-		UpdateRequestCache
+		BeginRequest = 0x0001,
+		AuthenticateRequest = 0x0002,
+		AuthorizeRequest = 0x0004,
+		ResolveRequestCache = 0x0008,
+		MapRequestHandler = 0x0010,
+		AcquireRequestState = 0x0020,
+		PreExecuteRequestHandler = 0x0040,
+		ExecuteRequestHandler = 0x0080,
+		ReleaseRequestState = 0x0100,
+		UpdateRequestCache = 0x0200,
+		LogRequest = 0x0400,
+		EndRequest = 0x0800,
+		SendResponse = 0x20000000
 	}
 }
 #endif

@@ -37,8 +37,8 @@ namespace System.Web
 	public enum RequestNotificationStatus
 	{
 		Continue,
-		FinishRequest,
-		Pending
+		Pending,
+		FinishRequest
 	}
 }
 #endif

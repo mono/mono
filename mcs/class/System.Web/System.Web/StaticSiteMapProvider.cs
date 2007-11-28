@@ -43,7 +43,7 @@ namespace System.Web
 		Dictionary<SiteMapNode, SiteMapNodeCollection> nodeToChildren;
 		Dictionary<string, SiteMapNode> urlToNode;
 			
-		public StaticSiteMapProvider ()
+		protected StaticSiteMapProvider ()
 		{
 			keyToNode = new Dictionary<string, SiteMapNode> ();
 			nodeToParent = new Dictionary<SiteMapNode, SiteMapNode> ();

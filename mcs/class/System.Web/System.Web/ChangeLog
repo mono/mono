@@ -1,5 +1,12 @@
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
+	* RequestNotificationStatus.cs: fix the order of enum members.
+
+	* RequestNotification.cs: assign correct values to the enum
+	members.
+
+	* StaticSiteMapProvider.cs: change visibility of the constructor.
+
 	* HttpRequest.cs: added missing property LogonUserIdentity.
 
 	* HttpCacheVaryByContentEncodings.cs: this constructor should not

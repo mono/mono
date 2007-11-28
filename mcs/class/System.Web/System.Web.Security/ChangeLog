@@ -1,3 +1,8 @@
+2007-11-28  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlMembershipProvider.cs: handle situation when there is no
+	connection string configured for the SQL Membership Provider.
+
 2007-11-01  Marek Habersack  <mhabersack@novell.com>
 
 	* RolePrincipal.cs, MembershipProvider.cs: use the new

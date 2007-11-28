@@ -62,10 +62,20 @@ namespace System.Web.Security {
 
 		DbConnection CreateConnection ()
 		{
-			DbConnection connection = factory.CreateConnection ();
-			connection.ConnectionString = connectionString.ConnectionString;
+			DbConnection connection;
 
-			connection.Open ();
+			if (connectionString == null)
+				throw new ProviderException ("Connection string for the SQL Membership Provider has not been provided.");
+			
+			try {
+				connection = factory.CreateConnection ();
+				connection.ConnectionString = connectionString.ConnectionString;
+				connection.Open ();
+			} catch (Exception ex) {
+				throw new ProviderException ("Unable to open SQL connection for the SQL Membership Provider.",
+							     ex);
+			}
+			
 			return connection;
 		}
 
