@@ -446,7 +446,9 @@ namespace TestRunner {
 			if (doc_output != null) {
 				string ref_file = filename.Replace (".cs", "-ref.xml");
 				try {
+#if !NET_2_1
 					XmlComparer.Compare (ref_file, doc_output);
+#endif
 				}
 				catch (Exception e) {
 					HandleFailure (filename, TestResult.XmlError, e.Message);
@@ -841,7 +843,9 @@ namespace TestRunner {
 			}
 
 			string mode = args[0].ToLower ();
-#if NET_2_0
+#if NET_2_1
+			string test_pattern ="fubar";
+#elif NET_2_0
 			string test_pattern = args [1] == "0" ? "*cs*.cs" : "*test-*.cs"; //args [1];
 #else
 			string test_pattern = args [1] == "0" ? "cs*.cs" : "test-*.cs"; //args [1];

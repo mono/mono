@@ -57,16 +57,17 @@ test-everything:
 	$(MAKE) PROFILE=default run-test
 	$(MAKE) PROFILE=net_2_0 run-test
 
+ifeq (net_2_1, $(PROFILE))
+COMPILER_NAME = smcs
+else
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
-COMPILER = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
-TEST_PATTERN = '*cs*.cs'
 else
 COMPILER_NAME = mcs
-COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
-TEST_PATTERN = 'cs*.cs'
+endif
 endif
 
+COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:

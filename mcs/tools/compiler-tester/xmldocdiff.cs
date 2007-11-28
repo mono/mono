@@ -1,3 +1,5 @@
+#if !NET_2_1
+
 using System;
 using System.Collections;
 using System.Xml;
@@ -119,3 +121,4 @@ Node2: {1}", v1, v2);
 	}
 }
 
+#endif

@@ -52,12 +52,17 @@ test-casts: boot-casts.out mcs-casts.out
 
 test-local: casts-boot.exe
 
+ifeq (net_2_1, $(PROFILE))
+COMPILER_NAME = smcs
+TEST_PATTERN = 'fubar'
+else
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*test-*.cs'
 else
 COMPILER_NAME = mcs
 TEST_PATTERN = 'test-*.cs'
+endif
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
