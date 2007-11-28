@@ -1,3 +1,4 @@
+System.Collections.Generic/HashSetTest.cs
 System.Linq/EnumerableTest.cs
 System.Linq.Expressions/ExpressionTest_Add.cs
 System.Linq.Expressions/ExpressionTest_AddChecked.cs
