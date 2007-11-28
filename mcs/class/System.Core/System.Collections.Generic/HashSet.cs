@@ -317,6 +317,9 @@ namespace System.Collections.Generic {
 
 		public int RemoveWhere (Predicate<T> predicate)
 		{
+			if (predicate == null)
+				throw new ArgumentNullException ("predicate");
+
 			int counter = 0;
 
 			var copy = new T [count];
