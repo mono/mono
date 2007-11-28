@@ -1,3 +1,9 @@
+2007-11-28  Jb Evain  <jbevain@novell.com>
+
+	* HashSet.cs: start implementation of HashSet<T>, actually
+	implemented as a reduction of Dictionary<K, V>. Contains
+	basic set operations (that requires optimization though).
+
 2007-08-12  Marek Safar  <marek.safar@gmail.com>
 
     * Initial commit
