@@ -1,3 +1,8 @@
+2007-11-28  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile (_boot_): Incorporate 'net_2_1' into the bootstrap
+	process -- it depends on 'net_2_0' profile being built.
+
 2007-07-27  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Removed gmcs and smcs, removed DIST_ONLY_SUBDIRS.
