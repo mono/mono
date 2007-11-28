@@ -1,3 +1,8 @@
+2007-11-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: peform the check of whether we're running on
+	Windows from within a static constructor.
+
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* RequestNotificationStatus.cs: fix the order of enum members.

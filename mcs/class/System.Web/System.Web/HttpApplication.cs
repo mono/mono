@@ -141,6 +141,9 @@ namespace System.Web {
 		CultureInfo prev_app_culture;
 		CultureInfo prev_appui_culture;
 		IPrincipal prev_user;
+
+		static bool _runningOnWindows;
+		
 #if NET_2_0
 #if TARGET_J2EE
 		const string initialization_exception_key = "System.Web.HttpApplication.initialization_exception";
@@ -162,6 +165,12 @@ namespace System.Web {
 		bool must_yield;
 		bool in_begin;
 
+		static HttpApplication ()
+		{
+			PlatformID pid = Environment.OSVersion.Platform;
+			_runningOnWindows = ((int) pid != 128 && (int) pid != 4);
+		}
+		
 		public HttpApplication ()
 		{
 			done = new ManualResetEvent (false);
@@ -1385,10 +1394,7 @@ namespace System.Web {
 		}
 #endregion
 		internal static bool IsRunningOnWindows {
-                        get {
-				PlatformID pid = Environment.OSVersion.Platform;	
-				return ((int) pid != 128 && (int) pid != 4);
-			}
+                        get { return _runningOnWindows; }
                 }
 		
 		internal static IEnumerable BinDirectories
