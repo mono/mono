@@ -1,3 +1,7 @@
+2007-11-28  Marek Safar  <marek.safar@gmail.com>
+
+ 	* expression.cs (BaseAccess): Type arguments can be null.
+
 2007-11-27  Raja R Harinath  <harinath@gmail.com>
 
 	* statement.cs (Block.Resolve): Ensure flow-branching tree is

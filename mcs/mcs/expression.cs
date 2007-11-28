@@ -8001,7 +8001,8 @@ namespace Mono.CSharp {
 		{
 			BaseAccess target = (BaseAccess) t;
 
-			target.args = args.Clone ();
+			if (args != null)
+				target.args = args.Clone ();
 		}
 	}
 
