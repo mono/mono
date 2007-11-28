@@ -1,3 +1,14 @@
+//
+// Enumerable.cs
+//
+// Authors:
+//  Marek Safar (marek.safar@gmail.com)
+//  Antonello Provenzano  <antonello@deveel.com>
+//  Alejandro Serrano "Serras" (trupill@yahoo.es)
+//  Jb Evain (jbevain@novell.com)
+//
+// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -5,22 +16,17 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-//
-// Authors:
-//        Marek Safar (marek.safar@gmail.com)
-//        Antonello Provenzano  <antonello@deveel.com>
-//        Alejandro Serrano "Serras" (trupill@yahoo.es)
-//        Jb Evain  (jbevain@novell.com)
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 // precious: http://www.hookedonlinq.com
@@ -61,6 +67,7 @@ namespace System.Linq
 			TAccumulate folded = seed;
 			foreach (TSource element in source)
 				folded = func (folded, element);
+
 			return folded;
 		}
 
@@ -73,6 +80,7 @@ namespace System.Linq
 			TAccumulate result = seed;
 			foreach (TSource e in source)
 				result = func (result, e);
+
 			return resultSelector (result);
 		}
 
@@ -99,9 +107,8 @@ namespace System.Linq
 		{
 			CheckSource (source);
 
-			foreach (TSource element in source)
-				return true;
-			return false;
+			using (var enumerator = source.GetEnumerator ())
+				return enumerator.MoveNext ();
 		}
 
 		public static bool Any<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
@@ -111,6 +118,7 @@ namespace System.Linq
 			foreach (TSource element in source)
 				if (predicate (element))
 					return true;
+
 			return false;
 		}
 
@@ -468,8 +476,9 @@ namespace System.Linq
 				return collection.Count;
 
 			int counter = 0;
-			foreach (var element in source)
-				counter++;
+			using (var enumerator = source.GetEnumerator ())
+				while (enumerator.MoveNext ())
+					counter++;
 
 			return counter;
 		}
@@ -499,13 +508,13 @@ namespace System.Linq
 		{
 			CheckSource (source);
 
-			bool noYield = true;
+			bool empty = true;
 			foreach (TSource item in source) {
-				noYield = false;
+				empty = false;
 				yield return item;
 			}
 
-			if (noYield)
+			if (empty)
 				yield return defaultValue;
 		}
 
@@ -842,7 +851,7 @@ namespace System.Linq
 
 			List<TSource> items = new List<TSource> (Distinct (first));
 			foreach (TSource element in second) {
-				if (Contains (items, element, comparer))
+				if (items.Contains (element, comparer))
 					yield return element;
 			}
 		}
@@ -968,11 +977,12 @@ namespace System.Linq
 			CheckSource (source);
 
 			long counter = 0;
-			foreach (TSource element in source)
-				counter++;
+			using (var enumerator = source.GetEnumerator ())
+				while (enumerator.MoveNext ())
+					counter++;
+
 			return counter;
 		}
-
 
 		public static long LongCount<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
 		{
