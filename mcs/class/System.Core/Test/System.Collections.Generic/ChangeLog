@@ -1,0 +1,3 @@
+2007-11-28  Jb Evain  <jbevain@novell.com>
+
+	* HashSetTest.cs: tests for HashSet<T>.
