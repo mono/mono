@@ -55,14 +55,21 @@ namespace System.Collections.Specialized {
 		public HybridDictionary (int initialSize, bool caseInsensitive)
 		{
 			this.caseInsensitive = caseInsensitive;
-
+#if NET_2_0
+			StringComparer comparer = caseInsensitive ? StringComparer.OrdinalIgnoreCase : null;
+#else
 			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.DefaultInvariant : null;
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.DefaultInvariant : null;
+#endif
 
 			if (initialSize <= switchAfter)
 				list = new ListDictionary (comparer);
 			else
+#if NET_2_0
+				hashtable = new Hashtable (initialSize, comparer);
+#else
 				hashtable = new Hashtable (initialSize, hcp, comparer);
+#endif
 		}
 
 		// Properties
@@ -155,10 +162,15 @@ namespace System.Collections.Specialized {
 
 		private void Switch ()
 		{
+#if NET_2_0
+			StringComparer comparer = caseInsensitive ? StringComparer.OrdinalIgnoreCase : null;
+			hashtable = new Hashtable (list, comparer);
+#else
 			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.DefaultInvariant : null;
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.DefaultInvariant : null;
 
 			hashtable = new Hashtable (list, hcp, comparer);
+#endif
 			list.Clear ();
 			list = null;
 		}
