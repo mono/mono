@@ -1,9 +1,3 @@
-2007-11-29  Konstantin Triger <kostat@mainsoft.com>
-
-	* XmlConvert.cs : Correctly handle
-		ToDateTime(XmlDateTimeSerializationMode.Unspecified)/ToString(DateTime)
-		for local time.
-
 2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToDateTime(XmlDateTimeSerializationMode) should
