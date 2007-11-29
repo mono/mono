@@ -619,6 +619,16 @@ namespace MonoTests.System.Xml
 			AssertType.AreEqual ('Z', s [s.Length -1], "#2-1");
 			AssertType.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime (s, XmlDateTimeSerializationMode.RoundtripKind).Kind, "#2-2");
 		}
+		
+		[Test]
+		public void XmlDateTimeSerializationModeUnspecified ()
+		{
+			AssertEquals ("#1", 27, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc), XmlDateTimeSerializationMode.Unspecified).Length);
+			AssertEquals ("#2", 27+6, XmlConvert.ToString (new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Local), XmlDateTimeSerializationMode.Unspecified).Length);
+			DateTime dt1 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000+09:00", XmlDateTimeSerializationMode.Unspecified);
+			DateTime dt2 = XmlConvert.ToDateTime ("0001-02-03T10:20:30.0000", XmlDateTimeSerializationMode.Unspecified);
+			AssertEquals ("#3", false, dt1 == dt2);
+		}
 
 		[Test]
 		public void XmlDateTimeSerializationModeSeveralFormats ()

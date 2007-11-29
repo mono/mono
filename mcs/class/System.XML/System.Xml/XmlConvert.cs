@@ -134,6 +134,7 @@ namespace System.Xml {
 		static readonly string [] roundtripDateTimeFormats;
 		static readonly string [] localDateTimeFormats;
 		static readonly string [] utcDateTimeFormats;
+		static readonly string [] unspecifiedDateTimeFormats;
 
 		static XmlConvert ()
 		{
@@ -141,11 +142,14 @@ namespace System.Xml {
 			roundtripDateTimeFormats = new string [l];
 			localDateTimeFormats = new string [l];
 			utcDateTimeFormats = new string [l];
+			unspecifiedDateTimeFormats = new string [l*2];
 			for (int i = 0; i < l; i++) {
 				string s = defaultDateTimeFormats [i];
 				localDateTimeFormats [i] = s + "zzz";
 				roundtripDateTimeFormats [i] = s + 'K';
 				utcDateTimeFormats [i] = s + 'Z';
+				unspecifiedDateTimeFormats [i*2] = s;
+				unspecifiedDateTimeFormats [i*2 + 1] = localDateTimeFormats [i];
 			}
 		}
 #endif
@@ -337,6 +341,7 @@ namespace System.Xml {
 				dt = ToDateTime (value, utcDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
 			case XmlDateTimeSerializationMode.Unspecified:
+				return ToDateTime (value, unspecifiedDateTimeFormats);
 			default:
 				return ToDateTime (value, defaultDateTimeFormats);
 			}
@@ -567,7 +572,7 @@ namespace System.Xml {
 				break;
 			case XmlDateTimeSerializationMode.Unspecified:
 				return value.ToString (
-					"yyyy-MM-ddTHH:mm:ss.FFFFFFF",
+					value.Kind == DateTimeKind.Local ? "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz" : "yyyy-MM-ddTHH:mm:ss.FFFFFFF",
 					CultureInfo.InvariantCulture);
 				break;
 			}
