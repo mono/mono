@@ -1,0 +1,173 @@
+2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XStreamingElement.cs : implement some members.
+
+2007-11-23  Marek Safar  <marek.safar@gmail.com>
+
+	* XElement.cs, XNamespace.cs, XStreamingElement.cs, XObject.cs,
+	XDocument.cs: API update.
+	
+	* XObjectChangeEventHandler.cs: Removed.
+
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs : use ConformanceLevel.Auto for ToString().
+	  Fixed bug #336927.
+
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs, XAttribute.cs : implemented missing explicit operators.
+	* XNamespace.cs : Blank is not public anymore.
+
+2007-08-26  Marek Safar  <marek.safar@gmail.com>
+
+	* XElement.cs : Implemented explicit operators.
+	
+2007-05-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNamespace.cs : added missing implicit operator.
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeNavigator.cs : implemented XPathNavigator (untested!)
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XContainer.cs
+	  XNodeWriter.cs : implemented CreateWriter().
+	* XElement.cs : when writing default xmlns attribute, namespace URI
+	  should be w3c xmlns URI (unlike blank in XLinq's context).
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs
+	  XNodeReader.cs : implemented XNode.CreateReader().
+	* XDeclaration.cs : removed extra code.
+	* XElement.cs : support explicit IsEmpty value (like XmlElement).
+	* XProcessingInstruction.cs : null check.
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs : implemented namespace retrieval, and
+	  ReplaceAttributes().
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeDocumentOrderComparer.cs : implemented.
+	* XObject.cs : Owner is internally referenced now.
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeEqualityComparer.cs : implemented.
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs
+	  XDocument.cs
+	  XElement.cs
+	  XContainer.cs
+	  XUtil.cs : added members for schema support.
+	  Shrink object array so that sequential strings are concatenated.
+
+2007-05-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs : Nodes() is safe for removal of current item.
+	* XElement.cs : Attributes() is safe for ditto. Removed unused code.
+	* XUtil.cs : ToString() handles any type of object.
+	* Extensions.cs : implemented everything but sorter.
+	* XAttribute.cs : SetValue() and ToString() are done.
+	* XNode.cs : set missing tree link info in AddBeforeSelf() and
+	  AddAfterSelf(). ReplaceWith() are done.
+
+2007-05-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs
+	  XElement.cs
+	  XAttribute.cs
+	  XObject.cs
+	  XContainer.cs : Attribute support. Fixed Document property.
+
+2007-05-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNode.cs
+	  XElement.cs
+	  XDocument.cs
+	  XContainer.cs : some basic tree implementation.
+	  Removed list-based code. Fixed erroneous reader settings.
+	* XDeclaration.cs : removed extra space in ToString().
+	* XNamespace.cs : added operator overloads.
+	* XName.cs : implemented ToString().
+
+2007-05-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	yuck, I was updating things based on March CTP, not Beta1 ...
+	* LoadOptions.cs
+	  SaveOptions.cs
+	  XStreamingElement.cs : new missing files.
+	* XNode.cs
+	  XDeclaration.cs
+	  XElement.cs
+	  XObject.cs
+	  XDocument.cs
+	  XDocumentType.cs
+	  XContainer.cs : thus, updated again.
+	* XName.cs
+	  XNamespace.cs : updates, plus some implementation.
+
+2007-05-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XText.cs
+	  XNode.cs
+	  XDeclaration.cs
+	  XElement.cs
+	  XObjectChangeEventArgs.cs
+	  XNodeEqualityComparer.cs
+	  XComment.cs
+	  XObject.cs
+	  XNodeDocumentOrderComparer.cs
+	  XCData.cs
+	  XObjectChange.cs
+	  XObjectChangeEventHandler.cs
+	  XDocument.cs
+	  XProcessingInstruction.cs
+	  XDocumentType.cs
+	  XContainer.cs : new files (split from System.Xml.Linq.cs).
+	* System.Xml.XLinq.cs : removed old file.
+	* XAttribute.cs
+	  Extensions.cs
+	  XIterators.cs
+	  XNamespace.cs : updated to Orcas beta1 API. The entire code just
+	  does not work. The API updates are mostly for testing compilers.
+
+2007-02-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementSequence.cs, Extensions.cs : renamed former to latter.
+
+2007-02-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementSequence.cs, Makefile : build fix for recent gmcs updates,
+	  and some more implementation.
+
+2007-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.XLinq.cs, XName.cs : a few updates from years ago.
+	* XNamespace.cs : new file. not correct at all for now.
+
+2007-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XAttribute.cs, System.Xml.XLinq.cs, XIterators.cs, XUtil.cs,
+	  XName.cs, XElementSequence.cs: namespaces have chanced as well.
+
+2006-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementSequence.cs : implemented (not sure if it works).
+	* XName.cs : strict null comparison.
+	* XIterators.cs : (XFilterIterator) check attribute XName as well.
+	* System.Xml.XLinq.cs : solved FIXMEs.
+
+2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XAttribute.cs, XIterators.cs, XName.cs, XElementSequence.cs,
+	  System.Xml.XLinq.cs :
+	  Minimum implementation to run ms XLinqIntro.
+

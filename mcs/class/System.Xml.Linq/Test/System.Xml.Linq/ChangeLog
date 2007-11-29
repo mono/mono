@@ -1,0 +1,63 @@
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XTextTest.cs : added test for ToString().
+
+2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs, XNamespaceTest.cs, XNodeWriterTest.cs:
+	  XNamespace.Blank does not exist anymore.
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReaderTest.cs : removed debug console output.
+	* XNodeWriterTest.cs : new test for XContainer.CreateWriter().
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XProcessingInstructionTest.cs
+	  XNodeReaderTest.cs : new tests.
+
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs :
+	  test for ReplaceAttributes(), GetDefaultNamespace(), 
+	  GetPrefixOfNamespace() and GetNamespaceOfPrefix().
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeDocumentOrderComparerTest.cs : new test.
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XTextTest.cs : test for NodeType (and whitespace),
+	* XNodeEqualityComparerTest.cs : test for GetHashCode(null) and
+	  Compare().
+
+2007-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : Tests for ReplaceAll() and AddBeforeSelf() for
+	  sequential strings.
+
+2007-05-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : added tests for Add[Before|After]Self().
+	* XAttributeTest.cs :
+	  added tests for SetValue(), ToString() and ctor.
+	* ExtensionsTest.cs : new file, tests for extension methods.
+
+2007-05-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XAttributeTest.cs : new test, for XAttribute.
+	* XElementTest.cs : attribute related tests.
+
+2007-05-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : new test.
+	* XNamespaceTest.cs
+	  XDocumentTest.cs : some tests for simple tree structure.
+
+2007-05-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XDocumentTest.cs
+	  XNameTest.cs
+	  XNamespaceTest.cs : initial commit.

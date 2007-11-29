@@ -1,0 +1,7 @@
+2007-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Extensions.cs : implemented.
+
+2007-05-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Extensions.cs : new stub file.
