@@ -125,7 +125,9 @@ namespace Mainsoft.Web.Hosting
 		 * @throws IOException
 		 */
 		public override void writeState (FacesContext facesContext) {
-			throw new NotImplementedException ();
+			StateManager manager = facesContext.getApplication ().getStateManager ();
+			StateManager.SerializedView serializedView = manager.saveSerializedView (facesContext);
+			manager.writeState (facesContext, serializedView);
 		}
 
 	}
