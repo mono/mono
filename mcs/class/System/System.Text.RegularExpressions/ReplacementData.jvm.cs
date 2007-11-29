@@ -40,18 +40,18 @@ namespace System.Text.RegularExpressions
 	{
 		private const string SINGLE_DOLLAR_PATTERN = @"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\$(?:\{(\w+)\}|(\d+))?";
 		private const string DOUBLE_DOLLAR_PATTERN =		@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\$\$";
-		private const string DOUBLE_BACKSLASH_PATTERN = @"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\\";
+		private const string BACKSLASH_PATTERN = @"\\";
 		private const string COPY_ENTIRE_MATCH_PATTERN =	@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\$\&";
 		private const string INPUT_BEFORE_MATCH_PATTERN =	@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\$\`";
 		private const string INPUT_AFTER_MATCH_PATTERN =	@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\$\'";
 		private const string LAST_CAPTURED_GROUP_PATTERN =	@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\$\+";
 		private const string INPUT_PATTERN =				@"(?<=(?:\A|[^\\])(?:\\{2}){0,1073741823})\\\$_";
 		private const string JAVA_DOLLAR = @"\\\$";
-		private const string JAVA_BACKSLASH = @"\\\\\\\\";
+		private const string JAVA_BACKSLASH = @"\\\\";
 
 		internal static string Reformat (Regex regex, string replacement) {
 
-			replacement = JavaUtils.ReplaceAll (replacement, DOUBLE_BACKSLASH_PATTERN, JAVA_BACKSLASH);
+			replacement = JavaUtils.ReplaceAll (replacement, BACKSLASH_PATTERN, JAVA_BACKSLASH);
 			replacement = JavaUtils.ReplaceAll (replacement, DOUBLE_DOLLAR_PATTERN, JAVA_DOLLAR);
 
 			Pattern p = Pattern.compile (SINGLE_DOLLAR_PATTERN);

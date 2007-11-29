@@ -74,6 +74,8 @@ namespace System.Text.RegularExpressions
 			_monoConstructTypesList.Add (new AlternationExpressionConstruct ());
 			_monoConstructTypesList.Add (new RightToLeftOptionConstruct ());
 			_monoConstructTypesList.Add (new InlineExplicitCaptureConstruct ());
+			_monoConstructTypesList.Add (new LookBehindWithUndefinedLength ());
+			_monoConstructTypesList.Add (new NotAllowedConstruct ());
 		}
 
 		private static void FillJvmOrderedConstructTypesList () {
