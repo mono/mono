@@ -1,7 +1,3 @@
-2007-11-29  Konstantin Triger <kostat@mainsoft.com>
-
-	* HybridDictionary.cs: fix default case-insensitive comparer.
-
 2007-04-29  Ilya Kharmatsky <ilyak@mainsoft.com>
 
 	* NameValueCollection.cs: Proper exception handling in several

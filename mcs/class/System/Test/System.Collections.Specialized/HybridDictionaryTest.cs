@@ -94,20 +94,5 @@ namespace MonoTests.System.Collections.Specialized
 			// ArgumentNullException under all fx versions
 			Assert.IsFalse (hd.Contains (null), "Contains(null)");
 		}
-
-#if NET_2_0
-		[Test]
-		public void Comparer ()
-		{
-			string separated = "\u0061\u030a";
-			string combined = "\u00e5";
-
-			HybridDictionary hd = new HybridDictionary (true);
-			hd.Add (separated, "val1");
-			hd.Add (combined, "val2");
-
-			Assert.AreEqual (2, hd.Count, "Count");
-		}
-#endif
 	}
 }
