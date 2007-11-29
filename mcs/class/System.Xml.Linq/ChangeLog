@@ -1,3 +1,7 @@
+2007-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : couple of adjustment for migration from olive to mcs.
+
 2007-08-24  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile : Build as 3.5 assembly

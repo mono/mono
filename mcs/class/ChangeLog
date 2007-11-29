@@ -1,3 +1,7 @@
+2007-11-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: added System.Xml.Linq.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: In 2.0 System.EnterpriseServices.dll depends on
