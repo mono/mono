@@ -1,3 +1,8 @@
+2007-11-22  Arina Itkes
+
+	* WebClientAsyncResult.cs, WebClientProtocol.cs: 
+	  Synchronization fix
+
 2007-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Services_test.dll.sources : added WebServiceTest.cs.
