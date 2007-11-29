@@ -1,5 +1,11 @@
+2007-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-x86.md: Fix the length of ckfinite.
+
 2007-11-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Unify div/rem code and handle the case when sreg2 is EDX.
+	
 	* mini-x86.c (mono_arch_output_basic_block): Clean up the fp stack properly in CKFINITE.
 	(mono_arch_output_basic_block): Get rid of unused last_ins and last_offset.
 
