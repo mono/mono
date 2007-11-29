@@ -629,6 +629,17 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#1", "x", doc.FirstChild.FirstChild.Prefix);
 			AssertEquals ("#2", "x", doc.FirstChild.FirstChild.Attributes [0].Prefix);
 		}
+
+		[Test]
+		public void ValueAs ()
+		{
+			string xml = "<root>1</root>";
+			XPathNavigator nav = new XPathDocument (XmlReader.Create (new StringReader (xml))).CreateNavigator ();
+			nav.MoveToFirstChild ();
+			nav.MoveToFirstChild ();
+			AssertEquals ("1", nav.ValueAs (typeof (string), null));
+			AssertEquals (1, nav.ValueAs (typeof (int), null));
+		}
 #endif
 	}
 }

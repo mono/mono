@@ -867,10 +867,10 @@ namespace System.Xml.XPath
 				return null;
 		}
 
-		[MonoTODO]
+		// it is not very effective code but should just work
 		public override object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
 		{
-			throw new NotImplementedException ();
+			return new XmlAtomicValue (Value, XmlSchemaSimpleType.XsString).ValueAs (type, nsResolver);
 		}
 
 		public virtual void WriteSubtree (XmlWriter writer)

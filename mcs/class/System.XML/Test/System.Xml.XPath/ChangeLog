@@ -1,3 +1,7 @@
+2007-11-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorTests.cs : added ValueAs() test.
+
 2007-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorCommonTests.cs : added test for incorrect namespace
