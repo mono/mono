@@ -44,11 +44,11 @@ namespace System.Web.UI
 {
 	public partial class Page
 	{
-		const string PageNamespaceKey = "__PAGENAMESPACE";
-		const string RenderPageMark = "vmw.render.page=";
-		const string ActionPageMark = "vmw.action.page=";
-		static readonly string NextActionPageKey = PortletInternalUtils.NextActionPage;
-		static readonly string NextRenderPageKey = PortletInternalUtils.NextRenderPage;
+		//const string PageNamespaceKey = "__PAGENAMESPACE";
+		//const string RenderPageMark = "vmw.render.page=";
+		//const string ActionPageMark = "vmw.action.page=";
+		//static readonly string NextActionPageKey = PortletInternalUtils.NextActionPage;
+		//static readonly string NextRenderPageKey = PortletInternalUtils.NextRenderPage;
 
 		bool _emptyPortletNamespace = false;
 		string _PortletNamespace = null;
@@ -60,7 +60,15 @@ namespace System.Web.UI
 		internal string PortletNamespace
 		{
 			get {
-				return Context.PortletNamespace;
+				if (_PortletNamespace == null) {
+
+					if (getFacesContext () != null) {
+						_PortletNamespace = getFacesContext ().getExternalContext ().encodeNamespace (String.Empty);
+					}
+
+					_PortletNamespace = _PortletNamespace ?? String.Empty;
+				}
+				return _PortletNamespace;
 			}
 		}
 
@@ -93,11 +101,11 @@ namespace System.Web.UI
 			}
 		}
 
-		internal bool IsGetBack {
-			get {
-				return IsPostBack && Context.IsPortletRequest && !Context.IsActionRequest;
-			}
-		}
+		//internal bool IsGetBack {
+		//    get {
+		//        return IsPostBack && Context.IsPortletRequest && !Context.IsActionRequest;
+		//    }
+		//}
 
 		internal IPortletRenderResponse RenderResponse
 		{
@@ -140,91 +148,44 @@ namespace System.Web.UI
 			return PortletInternalUtils.mapPathIfInternal (url, reqUrl.Host, reqUrl.Port, reqUrl.Scheme, appPath, currPage);
 		}
 
-		internal bool OnSaveStateCompleteForPortlet ()
-		{
-			if (PortletNamespace != null) {
-				ClientScript.RegisterHiddenField (PageNamespaceKey, PortletNamespace);
-				ClientScript.RegisterHiddenField (NextActionPageKey, "");
-				ClientScript.RegisterHiddenField (NextRenderPageKey, "");
-			}
+//        internal bool OnSaveStateCompleteForPortlet ()
+//        {
+//            if (PortletNamespace != null) {
+//                ClientScript.RegisterHiddenField (PageNamespaceKey, PortletNamespace);
+//                ClientScript.RegisterHiddenField (NextActionPageKey, "");
+//                ClientScript.RegisterHiddenField (NextRenderPageKey, "");
+//            }
 
-			IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
-			IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
-			if (req == null)
-				return false;
+//            IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
+//            IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
+//            if (req == null)
+//                return false;
 
-			// When redirecting don't save the page viewstate and hidden fields
-			if (resp.isRedirected ())
-				return true;
+//            // When redirecting don't save the page viewstate and hidden fields
+//            if (resp.isRedirected ())
+//                return true;
 
-			if (IsPostBack && 0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
-				resp.setRenderParameter ("__VIEWSTATE", GetSavedViewState ());
-				if (ClientScript.hiddenFields != null)
-					foreach (string key in ClientScript.hiddenFields.Keys)
-						resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
+//            if (IsPostBack && 0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
+//                resp.setRenderParameter ("__VIEWSTATE", GetSavedViewState ());
+//                if (ClientScript.hiddenFields != null)
+//                    foreach (string key in ClientScript.hiddenFields.Keys)
+//                        resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
 
-				if (is_validated && Validators.Count > 0) {
-					string validatorsState = GetValidatorsState ();
-#if DEBUG
-					Console.WriteLine ("__VALIDATORSSTATE: " + validatorsState);
-#endif
-					if (!String.IsNullOrEmpty (validatorsState))
-						resp.setRenderParameter ("__VALIDATORSSTATE", validatorsState);
-				}
-			}
+//                if (is_validated && Validators.Count > 0) {
+//                    string validatorsState = GetValidatorsState ();
+//#if DEBUG
+//                    Console.WriteLine ("__VALIDATORSSTATE: " + validatorsState);
+//#endif
+//                    if (!String.IsNullOrEmpty (validatorsState))
+//                        resp.setRenderParameter ("__VALIDATORSSTATE", validatorsState);
+//                }
+//            }
 
-			// Stop processing only if we are handling processAction. If we
-			// are handling a postback from render then fall through.
-			return req.processActionOnly ();
-		}
+//            // Stop processing only if we are handling processAction. If we
+//            // are handling a postback from render then fall through.
+//            return req.processActionOnly ();
+//        }
 
-		string GetValidatorsState () {
-			bool [] validatorsState = new bool [Validators.Count];
-			bool isValid = true;
-			for (int i = 0; i < Validators.Count; i++) {
-				IValidator val = Validators [i];
-				if (!val.IsValid)
-					isValid = false;
-				else
-					validatorsState [i] = true;
-			}
-			if (isValid)
-				return null;
-
-			return GetFormatter ().Serialize (validatorsState);
-		}
-
-		void RestoreValidatorsState () {
-			string validatorsStateSerialized = Request.Form ["__VALIDATORSSTATE"];
-			if (String.IsNullOrEmpty (validatorsStateSerialized))
-				return;
-
-			is_validated = true;
-			bool [] validatorsState = (bool []) GetFormatter ().Deserialize (validatorsStateSerialized);
-			for (int i = 0; i < Math.Min (validatorsState.Length, Validators.Count); i++) {
-				IValidator val = Validators [i];
-				val.IsValid = validatorsState [i];
-			}
-		}
-
-		void SetupResponseWriter (TextWriter httpWriter) {
-			FacesContext facesContext = getFacesContext ();
-			if (facesContext == null)
-				return;
-			ResponseWriter writer = facesContext.getResponseWriter ();
-			if (writer == null) {
-				RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
-				RenderKit renderKit = renderFactory.getRenderKit (facesContext,
-																 facesContext.getViewRoot ().getRenderKitId ());
-
-				ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
-
-				writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
-														 response.getContentType (), //TODO: is this the correct content type?
-														 response.getCharacterEncoding ());
-				facesContext.setResponseWriter (writer);
-			}
-		}
 
 		internal string EncodeURL (string raw) {
 			//kostat: BUGBUG: complete

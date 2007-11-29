@@ -104,6 +104,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	ClientScriptManager scriptManager;
 	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
 	PageStatePersister page_state_persister;
+	CultureInfo _appCulture;
+	CultureInfo _appUICulture;
 
 	// The initial context
 	private HttpContext _context;
@@ -710,7 +712,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		CultureInfo ret = null;
 		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
 #if TARGET_J2EE
-			if (Context.IsPortletRequest)
+			//if (Context.IsPortletRequest)
 				return deflt;
 #endif
 			string[] languages = Request.UserLanguages;
@@ -765,10 +767,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		NameValueCollection coll = null;
 		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture))
 			coll = req.Form;
-#if TARGET_J2EE
-		else if (IsPortletRender && req.Form ["__VIEWSTATE"] != null)
-			coll = req.Form;
-#endif
 		else
 			coll = req.QueryString;
 
@@ -779,10 +777,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 			allow_load = (c.ID == GetTypeHashCode ());
 
-#if TARGET_J2EE
-		if (Context.IsActionRequest)
-			return coll;
-#endif
+//#if TARGET_J2EE
+//        if (Context.IsActionRequest)
+//            return coll;
+//#endif
 
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
@@ -1043,10 +1041,15 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (handleViewState)
 #if TARGET_J2EE
 			if (getFacesContext () != null) {
-				javax.faces.application.StateManager manager = getFacesContext ().getApplication ().getStateManager ();
-				manager.writeState (getFacesContext (), _facesSerializedView);
+				javax.faces.application.ViewHandler viewHandler = getFacesContext ().getApplication ().getViewHandler ();
+				javax.faces.context.ResponseWriter oldFacesWriter = SetupResponseWriter (writer);
+				try {
+					viewHandler.writeState (getFacesContext ());
+				}
+				finally {
+					getFacesContext ().setResponseWriter (oldFacesWriter);
+				}
 			}
-			else
 #endif
 			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
 
@@ -1180,19 +1183,42 @@ public partial class Page : TemplateControl, IHttpHandler
 		//-- Control execution lifecycle in the docs
 
 		// Save culture information because it can be modified in FrameworkInitialize()
-		CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-		CultureInfo uiculture = Thread.CurrentThread.CurrentUICulture;
+		_appCulture = Thread.CurrentThread.CurrentCulture;
+		_appUICulture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
 		context.ErrorPage = _errorPage;
 
 		try {
 			InternalProcessRequest ();
-		} catch (ThreadAbortException) {
+		}
+#if TARGET_JVM
+		catch (Exception ex) {
+			HandleException (ex);
+			throw;
+		}
+#else
+		catch (ThreadAbortException) {
 			// Do nothing, just ignore it by now.
 		} catch (Exception e) {
 			ProcessException (e);
 			throw;
-		} finally {
+		}
+		finally {
+			ProcessUnload ();
+		}
+#endif
+	}
+
+	void ProcessException (Exception ex) {
+		_context.AddError (ex); // OnError might access LastError
+		OnError (EventArgs.Empty);
+		_context.ClearError (ex);
+		// We want to remove that error, as we're rethrowing to stop
+		// further processing.
+		Trace.Warn ("Unhandled Exception", ex.ToString (), ex);
+	}
+
+	void ProcessUnload () {
 			try {
 #if NET_2_0
 				_lifeCycle = PageLifeCycle.Unload;
@@ -1203,21 +1229,14 @@ public partial class Page : TemplateControl, IHttpHandler
 				_lifeCycle = PageLifeCycle.End;
 #endif
 			} catch {}
-			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
-				Thread.CurrentThread.CurrentCulture = culture;
+			if (Thread.CurrentThread.CurrentCulture.Equals (_appCulture) == false)
+				Thread.CurrentThread.CurrentCulture = _appCulture;
 
-			if (Thread.CurrentThread.CurrentUICulture.Equals (uiculture) == false)
-				Thread.CurrentThread.CurrentUICulture = uiculture;
-		}
-	}
-
-	void ProcessException (Exception ex) {
-		_context.AddError (ex); // OnError might access LastError
-		OnError (EventArgs.Empty);
-		_context.ClearError (ex);
-		// We want to remove that error, as we're rethrowing to stop
-		// further processing.
-		Trace.Warn ("Unhandled Exception", ex.ToString (), ex);
+			if (Thread.CurrentThread.CurrentUICulture.Equals (_appUICulture) == false)
+				Thread.CurrentThread.CurrentUICulture = _appUICulture;
+			
+			_appCulture = null;
+			_appUICulture = null;
 	}
 	
 #if NET_2_0
@@ -1339,13 +1358,12 @@ public partial class Page : TemplateControl, IHttpHandler
 		renderingForm = false;	
 
 #if TARGET_J2EE
-		//kostat
-		if (Context.IsActionRequest || IsGetBack)
+		if (getFacesContext () != null)
 			return;
 #endif
 
 		RestorePageState ();
-		ProcessLoadPage ();
+		ProcessPostData ();
 		ProcessRaiseChangedEvents ();
 		ProcessRaisePostBackEvents ();
 		ProcessLoadComplete ();
@@ -1374,12 +1392,12 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	void ProcessLoadPage () {
+	void ProcessPostData () {
 
 #if NET_2_0
-#if TARGET_J2EE
-		if (!IsGetBack)
-#endif
+//#if TARGET_J2EE
+//        if (!IsGetBack)
+//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1389,22 +1407,14 @@ public partial class Page : TemplateControl, IHttpHandler
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
 
-#if NET_2_0
-		Trace.Write ("aspx.page", "Begin PreLoad");
-		OnPreLoad (EventArgs.Empty);
-		Trace.Write ("aspx.page", "End PreLoad");
-		_lifeCycle = PageLifeCycle.Load;
-#endif
+		ProcessLoad ();
 
-		Trace.Write ("aspx.page", "Begin Load");
-		LoadRecursive ();
-		Trace.Write ("aspx.page", "End Load");
 #if NET_2_0
-#if TARGET_J2EE
-		if (IsGetBack)
-			RestoreValidatorsState ();
-		else
-#endif
+//#if TARGET_J2EE
+//        if (IsGetBack)
+//            RestoreValidatorsState ();
+//        else
+//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1418,12 +1428,25 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+	void ProcessLoad () { 
+#if NET_2_0
+		Trace.Write ("aspx.page", "Begin PreLoad");
+		OnPreLoad (EventArgs.Empty);
+		Trace.Write ("aspx.page", "End PreLoad");
+		_lifeCycle = PageLifeCycle.Load;
+#endif
+
+		Trace.Write ("aspx.page", "Begin Load");
+		LoadRecursive ();
+		Trace.Write ("aspx.page", "End Load");
+	}
+
 	void ProcessRaiseChangedEvents () {
 
 #if NET_2_0
-#if TARGET_J2EE
-		if (!IsGetBack)
-#endif
+//#if TARGET_J2EE
+//        if (!IsGetBack)
+//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1437,9 +1460,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ProcessRaisePostBackEvents () {
 
 #if NET_2_0
-#if TARGET_J2EE
-		if (!IsGetBack)
-#endif
+//#if TARGET_J2EE
+//        if (!IsGetBack)
+//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1494,12 +1517,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin SaveStateComplete");
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
-#if TARGET_J2EE
-		if (getFacesContext () != null) {
-			javax.faces.application.StateManager manager = getFacesContext ().getApplication ().getStateManager ();
-			_facesSerializedView = manager.saveSerializedView (getFacesContext ());
-		}
-#endif // TARGET_J2EE
 #endif // NET_2_0
 	
 	}
@@ -1717,8 +1734,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal string RawViewState {
 		get {
-			if (_savedViewState != null)
-				return _savedViewState;
 			NameValueCollection postdata = _requestValueCollection;
 			string view_state;
 			if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
@@ -1739,6 +1754,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	PageStatePersister PageStatePersister {
 		get {
 			if (page_state_persister == null)
+#if TARGET_J2EE
+				if (getFacesContext () != null)
+					return new FacesPageStatePersister (this);
+				else
+#endif
 				page_state_persister = new HiddenFieldPageStatePersister (this);
 			return page_state_persister;
 		}

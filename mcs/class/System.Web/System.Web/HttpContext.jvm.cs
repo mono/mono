@@ -43,7 +43,7 @@ namespace System.Web {
 	
 	public sealed partial class HttpContext {
 		static readonly LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
-		string _PortletNamespace;
+		//string _PortletNamespace;
 		// No remoting support (CallContext) yet in Grasshopper
 		[MonoInternalNote("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
 		public static HttpContext Current
@@ -76,13 +76,13 @@ namespace System.Web {
 			get { return (HttpServletResponse)GetWorkerService(typeof(HttpServletResponse)); }
 		}
 
-		static readonly Type typeOfFacesContext = typeof (FacesContext);
-		internal FacesContext FacesContext {
-			get {
-				FacesContext faces = (FacesContext) GetWorkerService (typeOfFacesContext);
-				return faces ?? javax.faces.context.FacesContext.getCurrentInstance ();
-			}
-		}
+		//static readonly Type typeOfFacesContext = typeof (FacesContext);
+		//internal FacesContext FacesContext {
+		//    get {
+		//        FacesContext faces = (FacesContext) GetWorkerService (typeOfFacesContext);
+		//        return faces ?? javax.faces.context.FacesContext.getCurrentInstance ();
+		//    }
+		//}
 
 		HttpRuntime _httpRuntime = null;
 		internal HttpRuntime HttpRuntimeInstance {
@@ -105,45 +105,44 @@ namespace System.Web {
 			get { return true; }
 		}
 
-		internal bool IsActionRequest {
-			get {
-				FacesContext faces = FacesContext;
-				return faces != null && !faces.getRenderResponse ();
-			}
-		}
-		internal bool IsPortletRequest {
-			get {
-				FacesContext faces = FacesContext;
-				return faces != null && !(faces.getExternalContext ().getContext () is ServletContext);
-			}
-		}
+		//internal bool IsActionRequest {
+		//    get {
+		//        FacesContext faces = FacesContext;
+		//        return faces != null && !faces.getRenderResponse ();
+		//    }
+		//}
+		//internal bool IsServletRequest {
+		//    get {
+		//        return ServletRequest!=null;
+		//    }
+		//}
 
-		internal bool IsFacesRequest {
-			get {
-				return FacesContext != null;
-			}
-		}
+		//internal bool IsFacesRequest {
+		//    get {
+		//        return FacesContext != null;
+		//    }
+		//}
 
-		internal string PortletNamespace
-		{
-			get {
-				if (_PortletNamespace == null) {
-					FacesContext faces = null;
+		//internal string PortletNamespace
+		//{
+		//    get {
+		//        if (_PortletNamespace == null) {
+		//            FacesContext faces = null;
 
-					//kostat: BUGBUG: complete
-					//string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
-					//if (usePortletNamespace == null || Boolean.Parse (usePortletNamespace))
-						faces = FacesContext;
+		//            //kostat: BUGBUG: complete
+		//            //string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
+		//            //if (usePortletNamespace == null || Boolean.Parse (usePortletNamespace))
+		//                faces = FacesContext;
 
-					if (faces != null) {
-						_PortletNamespace = faces.getExternalContext ().encodeNamespace (String.Empty);
-					}
+		//            if (faces != null) {
+		//                _PortletNamespace = faces.getExternalContext ().encodeNamespace (String.Empty);
+		//            }
 					
-					_PortletNamespace = _PortletNamespace ?? String.Empty;
-				}
-				return _PortletNamespace;
-			}
-		}
+		//            _PortletNamespace = _PortletNamespace ?? String.Empty;
+		//        }
+		//        return _PortletNamespace;
+		//    }
+		//}
 
 		internal void BeginTimeoutPossible ()
 		{

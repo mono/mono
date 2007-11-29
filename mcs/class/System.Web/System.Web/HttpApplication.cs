@@ -967,8 +967,8 @@ namespace System.Web {
 						goto release;
 				
 #if TARGET_J2EE
-			bool doProcessHandler = false;
 		processHandler:
+			bool doProcessHandler = false;
 #endif
 			try {
 				context.BeginTimeoutPossible ();

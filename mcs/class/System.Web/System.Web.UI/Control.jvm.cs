@@ -69,5 +69,13 @@ namespace System.Web.UI
 				relativeUrl = Page.CreateRenderUrl (relativeUrl);
 			return relativeUrl;
 		}
+
+		internal bool IsLoaded {
+			get { return (stateMask & LOADED) != 0; }
+		}
+
+		internal bool IsPrerendered {
+			get { return (stateMask & PRERENDERED) != 0; }
+		}
 	}
 }

@@ -37,138 +37,195 @@ using javax.faces.context;
 
 namespace System.Web.UI
 {
-	public partial class Control : UIComponentBase
+	public partial class Control : UIComponent, StateHolder
 	{
+		ComponentChildrenList _childrenList;
 
-		#region Forward to base
+		protected override void addFacesListener (FacesListener __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void broadcast (FacesEvent __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void decode (FacesContext context) {
+			// do nothing
+		}
+
+		public override void encodeBegin (FacesContext __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void encodeChildren (FacesContext __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void encodeEnd (FacesContext __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override UIComponent findComponent (string __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
 
 		public override Map getAttributes () {
-			return base.getAttributes ();
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		public override ValueBinding getValueBinding (string name) {
-			return base.getValueBinding (name);
+		public override int getChildCount () {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		public override void setValueBinding (string name, ValueBinding binding) {
-			base.setValueBinding (name, binding);
+		public override List getChildren () {
+			if (_childrenList == null)
+				_childrenList = new ComponentChildrenList (this);
+			return _childrenList;
+		}
+
+		public override string getClientId (FacesContext __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		protected override FacesContext getFacesContext () {
+			return FacesContext.getCurrentInstance ();
+		}
+
+		protected override FacesListener [] getFacesListeners (java.lang.Class __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override UIComponent getFacet (string __p1) {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
 		public override Map getFacets () {
-			return base.getFacets ();
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		public override UIComponent getFacet (string name) {
-			return base.getFacet (name);
+		public override Iterator getFacetsAndChildren () {
+			// TODO: consider facets.
+			return getChildren ().iterator ();
 		}
 
-		public override void broadcast (FacesEvent @event) {
-			base.broadcast (@event);
+		public override string getFamily () {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		[MonoTODO ("is this correct")]
-		public override void decode (FacesContext context) {
-			base.decode (context);
+		public override string getId () {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		[MonoTODO ("should integrate this")]
-		public override void encodeBegin (FacesContext context) {
-			base.encodeBegin (context);
+		public override UIComponent getParent () {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		[MonoTODO ("should integrate this")]
-		public override void encodeEnd (FacesContext context) {
-			base.encodeEnd (context);
+		protected override javax.faces.render.Renderer getRenderer (FacesContext __p1) {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		[MonoTODO ("should integrate this")]
-		public override object saveState (FacesContext context) {
-			return base.saveState (context);
+		public override string getRendererType () {
+			throw new Exception ("The method or operation is not implemented.");
 		}
 
-		[MonoTODO ("should integrate this")]
-		public override void restoreState (FacesContext context, object state) {
-			base.restoreState (context, state);
+		public override bool getRendersChildren () {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override ValueBinding getValueBinding (string name) {
+			return null;
+		}
+
+		public override bool isRendered () {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		// TODO: implement
+		public override void processDecodes (FacesContext context) {
+			// call processDecodes for all jsf children
+		}
+
+		public override void processRestoreState (FacesContext context, object state) {
+			throw new NotSupportedException ();
+		}
+
+		public override object processSaveState (FacesContext context) {
+			throw new NotSupportedException ();
+		}
+
+		// TODO: implement
+		public override void processUpdates (FacesContext context) {
+			// call processUpdates for all jsf children
+		}
+
+		// TODO: implement
+		public override void processValidators (FacesContext context) {
+			// call processValidators for all jsf children
+		}
+
+		public override void queueEvent (FacesEvent __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		protected override void removeFacesListener (FacesListener __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void setId (string __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void setParent (UIComponent __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void setRendered (bool __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void setRendererType (string __p1) {
+			throw new Exception ("The method or operation is not implemented.");
+		}
+
+		public override void setValueBinding (string name, ValueBinding binding) {
+			throw new NotSupportedException ();
+		}
+
+		#region StateHolder Members
+
+		bool StateHolder.isTransient () {
+			return !EnableViewState;
+		}
+
+		void StateHolder.restoreState (FacesContext context, object state) {
+			LoadViewState (state);
+		}
+
+		object StateHolder.saveState (FacesContext context) {
+			return SaveViewState ();
+		}
+
+		void StateHolder.setTransient (bool newTransientValue) {
+			EnableViewState = !newTransientValue;
 		}
 
 		#endregion
 
-		//kostat should use set
-		public override bool isTransient () {
-			return true;
-		}
+		class ComponentChildrenList : AbstractList
+		{
+			Control _owner;
 
+			public ComponentChildrenList (Control owner) {
+				_owner = owner;
+			}
 
+			public override object get (int index) {
+				return _owner.Controls [index];
+			}
 
-		//public Control () {
-		//}
-
-		[MonoTODO ("shouldn't be the reverse?")]
-		public override string getClientId (FacesContext context) {
-			return ClientID;
-		}
-
-		[MonoTODO ("shouldn't be the reverse?")]
-		public override string getId () {
-			return ID;
-		}
-
-		[MonoTODO ("shouldn't be the reverse?")]
-		public override void setId (string id) {
-			ID = id;
-		}
-
-		[MonoTODO ("shouldn't be the reverse?")]
-		public override UIComponent getParent () {
-			//return Parent;
-			return base.getParent ();
-		}
-
-		[MonoTODO ("shouldn't be the reverse?")]
-		public override void setParent (UIComponent parent) {
-			Control p = parent as Control;
-			if (p != null)
-				p.Controls.Add (this);
-			//throw new NotImplementedException("parent is not a Control"); //need to write a wrapper
-
-			//Wrong, wrong code!!
-			base.setParent (parent);
-		}
-
-		public override bool getRendersChildren () {
-			return true; //see Control.Render
-		}
-
-		public override List getChildren () {
-			//throw new NotImplementedException (); //should actually return Controls collection
-			return base.getChildren ();
-		}
-
-		public override int getChildCount () {
-			//throw new NotImplementedException (); //should actually return Controls.Count
-			return base.getChildCount ();
-		}
-
-		public override UIComponent findComponent (string expr) {
-			return FindControl (expr);
-		}
-
-		public override Iterator getFacetsAndChildren () {
-			//throw new NotImplementedException (); //should actually return Controls collection
-			return base.getFacetsAndChildren ();
-		}
-
-		[MonoTODO ("should integrate this, i.e. reverse call")]
-		public override void encodeChildren (FacesContext context) {
-
-			RenderControl (new HtmlTextWriter (Context.Response.Output));
-			//throw new NotImplementedException (); //should actually get the writer
-			//context.
-			//base.encodeChildren (context.getResponseWriter);
-		}
-
-		public override string getFamily () {
-			return null;
+			public override int size () {
+				return _owner.Controls.Count;
+			}
 		}
 	}
 }
