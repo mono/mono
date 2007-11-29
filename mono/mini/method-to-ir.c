@@ -9692,6 +9692,14 @@ mono_op_imm_to_op (int opcode)
 		return OP_ISHR_UN;
 	case OP_LSHR_UN_IMM:
 		return OP_LSHR_UN;
+	case OP_IDIV_IMM:
+		return OP_IDIV;
+	case OP_IDIV_UN_IMM:
+		return OP_IDIV_UN;
+	case OP_IREM_UN_IMM:
+		return OP_IREM_UN;
+	case OP_IREM_IMM:
+		return OP_IREM;
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
 		g_assert_not_reached ();
@@ -10229,15 +10237,6 @@ insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert, M
 	*prev = ins_to_insert;
 }
 
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
-{
-   ins_to_insert->next = ins->next;
-   ins->next = ins_to_insert;
-   if (bb->last_ins == ins)
-	   bb->last_ins = ins_to_insert;
-}
-
 /**
  * mono_spill_global_vars:
  *
@@ -10439,9 +10438,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 					if (regtype == 'l') {
 						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg + 1);
-						insert_after_ins (bb, ins, store_ins);
+						mono_bblock_insert_after_ins (bb, ins, store_ins);
 						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET, ins->dreg + 2);
-						insert_after_ins (bb, ins, store_ins);
+						mono_bblock_insert_after_ins (bb, ins, store_ins);
 					}
 					else {
 						store_opcode = mono_type_to_store_membase (cfg, var->inst_vtype);
@@ -10472,7 +10471,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 							NEW_STORE_MEMBASE (cfg, store_ins, store_opcode, var->inst_basereg, var->inst_offset, ins->dreg);
 
 							/* Insert it after the instruction */
-							insert_after_ins (bb, ins, store_ins);
+							mono_bblock_insert_after_ins (bb, ins, store_ins);
 
 							/* 
 							 * We can't assign ins->dreg to var->dreg here, since the
@@ -10711,6 +10710,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   parts of the tree could be separated by other instructions, killing the tree
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
+ * - make the REM_IMM optimization in mini-x86.c arch-independent.
  * - LAST MERGE: 89863.
  */
 

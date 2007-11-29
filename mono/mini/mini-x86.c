@@ -1051,7 +1051,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				}
 				else
 					if (sig->pinvoke)
-						size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+						size = mono_type_native_stack_size (&in->klass->byval_arg, &ialign);
 					else {
 						int ialign;
 						size = mini_type_stack_size (cfg->generic_sharing_context, &in->klass->byval_arg, &ialign);
@@ -1191,7 +1191,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 
-	cinfo = get_call_info (cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
@@ -2077,34 +2077,21 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	 */
 	while (ins) {
 		switch (ins->opcode) {
-		case OP_DIV_IMM:
-		case OP_REM_IMM:
-		case OP_IDIV_IMM:
 		case OP_IREM_IMM:
+		case OP_IDIV_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_IREM_UN_IMM:
 			/* 
 			 * Keep the cases where we could generated optimized code, otherwise convert
 			 * to the non-imm variant.
 			 */
-			if (mono_is_power_of_two (ins->inst_imm) >= 0)
+			if ((ins->opcode == OP_IREM_IMM) && mono_is_power_of_two (ins->inst_imm) >= 0)
 				break;
 
 			NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
-			switch (ins->opcode) {
-			case OP_DIV_IMM:
-				ins->opcode = OP_LDIV;
-				break;
-			case OP_REM_IMM:
-				ins->opcode = OP_LREM;
-				break;
-			case OP_IDIV_IMM:
-				ins->opcode = OP_IDIV;
-				break;
-			case OP_IREM_IMM:
-				ins->opcode = OP_IREM;
-				break;
-			}
+			ins->opcode = mono_op_imm_to_op (ins->opcode);
 			ins->sreg2 = temp->dreg;
 			break;
 		default:
@@ -2781,33 +2768,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_div_reg (code, ins->sreg2, FALSE);
 			}
 			break;
-		case OP_DIV_IMM:
-		case OP_IDIV_IMM: {
-			int power = mono_is_power_of_two (ins->inst_imm);
-
-			g_assert (ins->sreg1 == X86_EAX);
-			g_assert (ins->dreg == X86_EAX);
-			g_assert (power >= 0);
-
-			/* Based on http://compilers.iecc.com/comparch/article/93-04-079 */
-			if (power == 1) {
-				x86_alu_reg_imm (code, X86_CMP, X86_EAX, 0x80000000);
-				/* Inc %eax, if divident < 0 */
-				x86_alu_reg_imm (code, X86_SBB, X86_EAX, -1);
-				/* Do right shift */
-				x86_shift_reg_imm (code, X86_SAR, X86_EAX, 1);
-			} else {
-				x86_cdq (code);
-				/* Mask correction */
-				x86_alu_reg_imm (code, X86_AND, X86_EDX, (1 << power) - 1);
-				/* Apply correction if neccesary */
-				x86_alu_reg_reg (code, X86_ADD, X86_EAX, X86_EDX);
-				/* Do right shift */
-				x86_shift_reg_imm (code, X86_SAR, X86_EAX, power);
-			}
-			break;
-		}
-		case OP_REM_IMM:
 		case OP_IREM_IMM: {
 			int power = mono_is_power_of_two (ins->inst_imm);
 
@@ -2839,16 +2799,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case OP_DIV_UN_IMM:
-		case OP_IDIV_UN_IMM:
-		case OP_REM_UN_IMM:
-		case OP_IREM_UN_IMM:
-			/* FIXME: Optimize this */
-			x86_push_imm (code, ins->inst_imm);
-			x86_alu_reg_reg (code, X86_XOR, X86_EDX, X86_EDX);
-			x86_div_membase (code, X86_ESP, 0, FALSE);	
-			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
-			break;
 		case CEE_OR:
 		case OP_IOR:
 			x86_alu_reg_reg (code, X86_OR, ins->sreg1, ins->sreg2);
@@ -3461,6 +3411,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBLE_UN:
 			EMIT_COND_BRANCH (ins, cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)]);
 			break;
+
+		case OP_CMOV_IEQ:
+		case OP_CMOV_IGE:
+		case OP_CMOV_IGT:
+		case OP_CMOV_ILE:
+		case OP_CMOV_ILT:
+		case OP_CMOV_INE_UN:
+		case OP_CMOV_IGE_UN:
+		case OP_CMOV_IGT_UN:
+		case OP_CMOV_ILE_UN:
+		case OP_CMOV_ILT_UN:
+			g_assert (ins->dreg == ins->sreg1);
+			x86_cmov_reg (code, cc_table [mono_opcode_to_cond (ins->opcode)], cc_signed_table [mono_opcode_to_cond (ins->opcode)], ins->dreg, ins->sreg2);
+			break;
+
 		/* floating point opcodes */
 		case OP_R8CONST: {
 			double d = *(double *)ins->inst_p0;

@@ -1,3 +1,20 @@
+2007-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm): Add more opcodes.
+
+	* mini-x86.c (mono_arch_lowering_pass): Lower some div/rem opcodes here.
+	(mono_arch_output_basic_block): Remove opcodes lowered earlier.
+
+2007-11-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_bblock_insert_after_ins): New helper function.
+
+	* mini-x86.c mini-amd64.c mini-ia64.c: Use the new helper function.
+
+	* mini-x86.c cpu-x86.md: Add cmov opcodes.
+
+	* local-propagation.c: Add div imm optimizations from the current JIT.
+
 2007-11-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_unbox_nullable): Disable AOT here since we can't encode
