@@ -1,5 +1,7 @@
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* Delegate.cs: Compute the Method property lazily.
+	
 	* Delegate.cs: Add a 'method' field.
 
 	* Environment.cs: Bump corlib version.

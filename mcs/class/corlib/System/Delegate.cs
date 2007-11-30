@@ -93,7 +93,13 @@ namespace System
 
 		public MethodInfo Method {
 			get {
-				return method_info;
+				if (method_info != null) {
+					return method_info;
+				} else {
+					if (method != IntPtr.Zero)
+						method_info = (MethodInfo)MethodBase.GetMethodFromHandle (new RuntimeMethodHandle (method));
+					return method_info;
+				}
 			}
 		}
 
@@ -406,7 +412,7 @@ namespace System
 			
 			// Do not compare method_ptr, since it can point to a trampoline
 			if ((d.target_type == target_type) && (d.m_target == m_target) &&
-				(d.method_name == method_name) && (d.method_info == method_info))
+				(d.method_name == method_name) && (d.method == method))
 				return true;
 
 			return false;
