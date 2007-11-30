@@ -1,5 +1,7 @@
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime (mono_aot_get_method_from_vt_slot): Add support for multi-byte method ref encodings.
+	
 	* aot-runtime.c (decode_klass_ref): Implement decoding of generic instances.
 
 	* aot-compiler.c (encode_klass_ref): Implement proper encoding of generic instances.
