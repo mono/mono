@@ -1,3 +1,11 @@
+2007-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_delegate_ctor): Set delegate->method.
+
+	* object-internals.h (struct _MonoDelegate): Add 'method' field.
+
+	* appdomain.c: Bump corlib version.
+
 2007-11-27  Raja R Harinath  <harinath@gmail.com>
 
 	* metadata.c (mono_generic_inst_equal_full): Short-circuit
