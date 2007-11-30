@@ -1,5 +1,9 @@
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c: Avoid depending on delegate->method_info being set.
+
+	* object.c (mono_delegate_ctor): Avoid initializing delegate->method_info.
+	
 	* object.c (mono_delegate_ctor): Set delegate->method.
 
 	* object-internals.h (struct _MonoDelegate): Add 'method' field.
