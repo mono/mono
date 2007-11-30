@@ -52,6 +52,7 @@ namespace System
 		private IntPtr method_ptr;
 		private IntPtr invoke_impl;
 		private object m_target;
+		private IntPtr method;
 		private Type target_type;
 		private string method_name;
 		private IntPtr delegate_trampoline;

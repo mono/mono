@@ -1,3 +1,9 @@
+2007-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs: Add a 'method' field.
+
+	* Environment.cs: Bump corlib version.
+
 2007-11-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs: Make the InternalArray_... methods internal.
