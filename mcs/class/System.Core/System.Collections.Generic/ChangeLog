@@ -1,3 +1,7 @@
+2007-11-30  Jb Evain  <jbevain@novell.com>
+
+	* HashSet.cs: corcompare love.
+
 2007-11-28  Jb Evain  <jbevain@novell.com>
 
 	* HashSet.cs: do the ArgumentNullException dance.

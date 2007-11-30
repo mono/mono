@@ -160,7 +160,17 @@ namespace System.Collections.Generic {
 			return false;
 		}
 
+		public void CopyTo (T [] array)
+		{
+			CopyTo (array, 0, count);
+		}
+
 		public void CopyTo (T [] array, int index)
+		{
+			CopyTo (array, index, count);
+		}
+
+		public void CopyTo (T [] array, int index, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -171,7 +181,7 @@ namespace System.Collections.Generic {
 			if (array.Length - index < count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-			for (int i = 0; i < table.Length; i++) {
+			for (int i = 0; i < table.Length && index < count; i++) {
 				int current = table [i] - 1;
 				while (current != NO_SLOT) {
 					array [index++] = slots [current];
@@ -513,11 +523,6 @@ namespace System.Collections.Generic {
 			throw new NotImplementedException ();
 		}
 
-		public IEnumerator<T> GetEnumerator ()
-		{
-			return new Enumerator (this);
-		}
-
 		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
 		{
 			return new Enumerator (this);
@@ -543,13 +548,19 @@ namespace System.Collections.Generic {
 			return new Enumerator (this);
 		}
 
-		struct Enumerator : IEnumerator<T>, IDisposable {
+		public Enumerator GetEnumerator ()
+		{
+			return new Enumerator (this);
+		}
+
+		[Serializable]
+		public struct Enumerator : IEnumerator<T>, IDisposable {
 
 			HashSet<T> hashset;
 			int index, current;
 			int stamp;
 
-			public Enumerator (HashSet<T> hashset)
+			internal Enumerator (HashSet<T> hashset)
 			{
 				this.hashset = hashset;
 				this.stamp = hashset.generation;
@@ -595,7 +606,7 @@ namespace System.Collections.Generic {
 				current = NO_SLOT;
 			}
 
-			void IDisposable.Dispose ()
+			public void Dispose ()
 			{
 				hashset = null;
 			}
