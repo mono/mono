@@ -1,5 +1,10 @@
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Optimize the common ldftn+create delegate combination.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Add some code to handle the case when the delegate
+	is created by the inlined delegate ctor.
+
 	* mini-x86.c (mono_arch_output_basic_block): Unify div/rem code and handle the case when sreg2 is EDX.	
 
 	* mini.c (mono_jit_compile_method_inner): Replace calls to delegate invoke with the trampoline here too.
