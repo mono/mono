@@ -1,5 +1,10 @@
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Use the delegate trampoline instead of
+	the general one.
+
+	* object.c (mono_runtime_create_delegate_trampoline): New helper function.
+
 	* marshal.c: Avoid depending on delegate->method_info being set.
 
 	* object.c (mono_delegate_ctor): Avoid initializing delegate->method_info.
