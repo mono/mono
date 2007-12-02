@@ -40,10 +40,6 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path) {
-			IHttpHandler handler = PageParser.GetCompiledPageInstance (url, path, context);
-			if (!(handler is Page))
-				return handler;
-
 			HttpWorkerRequest wr = (HttpWorkerRequest) ((IServiceProvider) context).GetService (typeof (HttpWorkerRequest));
 			HttpServletRequest request = (HttpServletRequest) ((IServiceProvider) wr).GetService (typeof (HttpServletRequest));
 			HttpServletResponse response = (HttpServletResponse) ((IServiceProvider) wr).GetService (typeof (HttpServletResponse));
@@ -54,7 +50,7 @@ namespace Mainsoft.Web.Hosting
 														   response,
 														   _lifecycle);
 
-			return new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context, (Page) handler), _lifecycle);
+			return new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context), _lifecycle);
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler) {

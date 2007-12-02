@@ -25,15 +25,12 @@ namespace Mainsoft.Web.Hosting
 																String renderKitId) {
 
 			UIViewRoot uiViewRoot = restoreTreeStructure (facesContext, viewId, renderKitId);
-			if (uiViewRoot != null) {
-				uiViewRoot.setViewId (viewId);
-				restoreComponentState (facesContext, uiViewRoot, renderKitId);
-				String restoredViewId = uiViewRoot.getViewId ();
-				if (restoredViewId == null || !(restoredViewId.Equals (viewId))) {
-					return null;
-				}
-			}
+			restoreComponentState (facesContext, uiViewRoot, renderKitId);
 			return uiViewRoot;
+		}
+
+		protected override UIViewRoot restoreTreeStructure (FacesContext facesContext, string viewId, string renderKitId) {
+			return facesContext.getApplication ().getViewHandler ().createView (facesContext, viewId);
 		}
 
 		protected override Object getComponentStateToSave (FacesContext facesContext) {

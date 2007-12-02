@@ -11,24 +11,42 @@ namespace Mainsoft.Web.Hosting
 	{
 		readonly FacesContext _facesContex;
 		readonly HttpContext _httpContext;
-		readonly Page _handler;
+		//readonly string _url;
+		//readonly string _path;
+		//Page _handler;
 
-		public Page Handler {
-			get { return _handler; }
-		}
+		//public Page Handler {
+		//    get {
+		//        if (_handler == null)
+		//            _handler = (Page) PageParser.GetCompiledPageInstance (_url, _path, _httpContext);
+		//        return _handler;
+		//    }
+		//}
 
 		public HttpContext Context {
 			get { return _httpContext; }
 		}
 
-		protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, Page handler) {
+		protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext) {
 			_facesContex = facesContex;
 			_httpContext = httpContext;
-			_handler = handler;
 		}
 
-		public static AspNetFacesContext WrapFacesContext (FacesContext facesContex, HttpContext httpContext, Page page) {
-			AspNetFacesContext ctx = new AspNetFacesContext (facesContex, httpContext, page);
+		//protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, Page handler) {
+		//    _facesContex = facesContex;
+		//    _httpContext = httpContext;
+		//    _handler = handler;
+		//}
+
+		//protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, string url, string path) {
+		//    _facesContex = facesContex;
+		//    _httpContext = httpContext;
+		//    _url = url;
+		//    _path = path;
+		//}
+
+		public static AspNetFacesContext WrapFacesContext (FacesContext facesContex, HttpContext httpContext) {
+			AspNetFacesContext ctx = new AspNetFacesContext (facesContex, httpContext);
 			FacesContext.setCurrentInstance (ctx);
 			return ctx;
 		}

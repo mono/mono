@@ -28,30 +28,6 @@ namespace Mainsoft.Web.Hosting
 			}
 		}
 
-		protected override UIViewRoot restoreTreeStructure (FacesContext facesContext,
-																			 String viewId,
-																			 String renderKitId) {
-			Console.WriteLine ("Entering restoreTreeStructure");
-
-			UIViewRoot uiViewRoot;
-			if (isSavingStateInClient (facesContext)) {
-				RenderKit rk = RenderKitFactory.getRenderKit (facesContext, renderKitId);
-				ResponseStateManager responseStateManager = rk.getResponseStateManager ();
-				Object componentState = responseStateManager.getComponentStateToRestore (facesContext);
-				if (componentState == null) {
-					Console.WriteLine ("Exiting restoreTreeStructure - No tree structure state found in client request");
-					return null;
-				}
-				uiViewRoot = facesContext.getApplication ().getViewHandler ().createView (facesContext, viewId);
-			}
-			else {
-				throw new NotImplementedException ();
-			}
-
-			Console.WriteLine ("Exiting restoreTreeStructure");
-			return uiViewRoot;
-		}
-
 		protected override void restoreComponentState (FacesContext facesContext,
 												  javax.faces.component.UIViewRoot uiViewRoot,
 												  String renderKitId) {
@@ -71,7 +47,7 @@ namespace Mainsoft.Web.Hosting
 
 			if (serializedComponentStates == null) {
 				Console.WriteLine ("No serialized component state found!");
-				uiViewRoot.setViewId (null);
+				facesContext.renderResponse ();
 				return;
 			}
 
