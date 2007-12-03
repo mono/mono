@@ -1,3 +1,7 @@
+2007-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Build 3.5 assemblies under NET_3_5 profile.
+	
 2007-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: added System.Xml.Linq.

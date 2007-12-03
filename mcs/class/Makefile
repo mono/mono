@@ -96,7 +96,6 @@ default_dirs := FirebirdSql.Data.Firebird
 
 net_2_0_dirs := \
 	System.Core			\
-	System.Xml.Linq			\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	Microsoft.Build.Framework	\
@@ -109,14 +108,20 @@ net_2_1_dirs := \
 	System			\
 	System.Xml.Core	\
 	System.Core		\
+	
+net_3_5_dirs := \
+	System.Xml.Linq			\
+	System.Web.Extensions		\
+	System.Web.Extensions.Design	\
 
 default_SUBDIRS := $(common_dirs) $(default_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
 net_2_1_SUBDIRS := $(net_2_1_dirs)
+net_3_5_SUBDIRS := $(net_3_5_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs) $(net_2_1_dirs)
+SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs) $(net_2_1_dirs) $(net_3_5_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
