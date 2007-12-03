@@ -974,6 +974,8 @@
     <Compile Include="System.Text.RegularExpressions\Group.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\GroupCollection.cs" />
     <Compile Include="System.Text.RegularExpressions\JavaUtils.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\LookBehindWithUndefinedLength.jvm.cs" />
+    <Compile Include="System.Text.RegularExpressions\NotAllowedConstruct.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\PatternGrouping.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\IConstructType.jvm.cs" />
     <Compile Include="System.Text.RegularExpressions\InlineExplicitCaptureConstruct.jvm.cs" />
