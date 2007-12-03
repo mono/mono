@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace System.IO.Ports
 {
@@ -59,8 +60,6 @@ namespace System.IO.Ports
 		object error_received = new object ();
 		object data_received = new object ();
 		object pin_changed = new object ();
-		
-		static string default_port_name = "ttyS0";
 
 		public SerialPort () : 
 			this (GetDefaultPortName (), DefaultBaudRate, DefaultParity, DefaultDataBits, DefaultStopBits)
@@ -103,7 +102,16 @@ namespace System.IO.Ports
 
 		static string GetDefaultPortName ()
 		{
-			return default_port_name;
+			string[] ports = GetPortNames();
+			if (ports.Length > 0) {
+				return ports[0];
+			} else {
+				int p = (int)Environment.OSVersion.Platform;
+				if (p == 4 || p == 128)
+					return "ttyS0"; // Default for Unix
+				else
+					return "COM1"; // Default for Windows
+			}
 		}
 
 		[Browsable (false)]
@@ -506,28 +514,32 @@ namespace System.IO.Ports
 			stream.DiscardOutBuffer ();
 		}
 
-		static Exception GetNotImplemented ()
-		{
-			return new NotImplementedException ("Detection of ports is not implemented for this platform yet.");
-		}
-
 		public static string [] GetPortNames ()
 		{
 			int p = (int) Environment.OSVersion.Platform;
+			List<string> serial_ports = new List<string>();
 			
 			// Are we on Unix?
-			if (p == 4 || p == 128){
-				string [] ttys = Directory.GetFiles ("/dev/", "tty*");
-				List<string> serial_ports = new List<string> ();
-				
-				foreach (string dev in ttys){
-					if (dev.StartsWith ("/dev/ttyS") || dev.StartsWith ("/dev/ttyUSB"))
-						serial_ports.Add (dev);
-						
+			if (p == 4 || p == 128) {
+				string[] ttys = Directory.GetFiles("/dev/", "tty*");
+				foreach (string dev in ttys) {
+					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
+						serial_ports.Add(dev);
 				}
-				return serial_ports.ToArray ();
+			} else {
+				using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey("HARDWARE\\DEVICEMAP\\SERIALCOMM"))
+				{
+					if (subkey != null) {
+						string[] names = subkey.GetValueNames();
+						foreach (string value in names) {
+							string port = subkey.GetValue(value, "").ToString();
+							if (port != "")
+								serial_ports.Add(port);
+						}
+					}
+				}
 			}
-			throw GetNotImplemented ();
+			return serial_ports.ToArray();
 		}
 
 		static bool IsWindows {
