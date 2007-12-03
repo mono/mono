@@ -1006,22 +1006,18 @@ namespace System.Net
 
 				if (response [3] == '-'){
 					string line = null;
+					string find = code.ToString() + ' ';
 					while (true){
 						try {
 							line = controlReader.ReadLine();
 						} catch (IOException) {
 						}
-						if (line == null || response.Length < 3)
+						if (line == null)
 							return ServiceNotAvailable ();
 						
 						response += Environment.NewLine + line;
-						if (line.Length < 3)
-							break;
 
-						if (!Int32.TryParse (line.Substring (0, 3), out fcode))
-							return ServiceNotAvailable ();
-
-						if (code == fcode && line[3] == ' ')
+						if (line.StartsWith(find, StringComparison.Ordinal))
 							break;
 					} 
 				}
