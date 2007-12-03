@@ -791,12 +791,14 @@ namespace System.Windows.Forms
 								continue;
 							case PreProcessControlState.MessageNeeded:
 							case PreProcessControlState.MessageNotNeeded:
-								if ((m.Msg == (int)Msg.WM_KEYDOWN && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
+								if (((m.Msg == (int)Msg.WM_KEYDOWN || m.Msg == (int)Msg.WM_CHAR) && !keyboard_capture.ProcessControlMnemonic ((char)m.WParam))) {
 									if (c == null || !ControlOnToolStrip (c))
 										continue;
 									else
 										m.HWnd = msg.hwnd;
-								}
+								} else
+									continue;
+								
 								break;
 						}
 					}

@@ -1,3 +1,8 @@
+2007-12-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Application.cs: Let WM_CHAR messages flow through to controls
+	hosted in Strips.  [Fixes bug #343972]
+
 2007-12-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripManager.cs: Guard against an NRE I ran into.
