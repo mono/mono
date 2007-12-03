@@ -874,6 +874,10 @@ namespace System.Windows.Forms
 					active = value;
 				}
 			}
+
+			internal LinkLabel Owner {
+				set { owner = value; }
+			}
 			#endregion
 
 			private void Invalidate ()
@@ -963,6 +967,7 @@ namespace System.Windows.Forms
 #endif
 			int Add (Link link)
 			{
+				link.Owner = owner;
 				/* remove the default 0,-1 link */
 				if (IsDefault) {
 					/* don't call Clear() here to save the additional CreateLinkPieces */

@@ -1,3 +1,10 @@
+2007-12-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LinkLabel.cs: Apply patch from George to fix bug 344012.  If
+	a Link is manually added to the Links collection, we need to set
+	its owner, so it can invalidate properly.
+	[Fixes bug #344012]
+
 2007-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When changing ListViewItem.Position (which calls
