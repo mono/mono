@@ -1,3 +1,7 @@
+2007-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile : Fixed 3.5 settings.
+
 2007-11-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : couple of adjustment for migration from olive to mcs.

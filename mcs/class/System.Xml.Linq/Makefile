@@ -4,21 +4,16 @@ include ../../build/rules.make
 
 LIBRARY = System.Xml.Linq.dll
 LIB_MCS_FLAGS = \
-		/langversion:linq \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /r:System.Xml.dll
-
-ifeq (2.0, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:NET_3_5
-endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 
-# This is a .NET 3.0 only assembly
-VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
+# This is a .NET 3.5 only assembly
+VALID_PROFILE := $(filter net_3_5, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Xml.Linq.dll
 NO_INSTALL = yes
