@@ -316,6 +316,46 @@ namespace MonoTests.System.Reflection
 			Assert.IsNotNull (f);
 		}
 #endif // TARGET_JVM
+
+		[Test]
+		public void GetRawDefaultValue ()
+		{
+			Assert.AreEqual (5, typeof (FieldInfoTest).GetField ("int_field").GetRawConstantValue ());
+			Assert.AreEqual (Int64.MaxValue, typeof (FieldInfoTest).GetField ("long_field").GetRawConstantValue ());
+			Assert.AreEqual (2, typeof (FieldInfoTest).GetField ("int_enum_field").GetRawConstantValue ());
+			Assert.AreEqual (typeof (int), typeof (FieldInfoTest).GetField ("int_enum_field").GetRawConstantValue ().GetType ());
+			Assert.AreEqual (2, typeof (FieldInfoTest).GetField ("long_enum_field").GetRawConstantValue ());
+			Assert.AreEqual (typeof (long), typeof (FieldInfoTest).GetField ("long_enum_field").GetRawConstantValue ().GetType ());
+			Assert.AreEqual ("Hello", typeof (FieldInfoTest).GetField ("string_field").GetRawConstantValue ());
+			Assert.AreEqual (null, typeof (FieldInfoTest).GetField ("object_field").GetRawConstantValue ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void GetRawDefaultValueNoDefault ()
+		{
+			typeof (FieldInfoTest).GetField ("non_const_field").GetRawConstantValue ();
+		}
+
+		public enum IntEnum {
+			First = 1,
+			Second = 2,
+			Third = 3
+		}
+
+		public enum LongEnum : long {
+			First = 1,
+		    Second = 2,
+			Third = 3
+		}
+
+		public const int int_field = 5;
+		public const long long_field = Int64.MaxValue;
+		public const IntEnum int_enum_field = IntEnum.Second;
+		public const LongEnum long_enum_field = LongEnum.Second;
+		public const string string_field = "Hello";
+		public const FieldInfoTest object_field = null;
+		public int non_const_field;
 	
 #endif
 	}
