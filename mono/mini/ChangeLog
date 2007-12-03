@@ -3,6 +3,13 @@
 	* mini-arm.c (mono_arch_emit_exceptions): Avoid uninitialized memory in the
 	code stream.
 
+2007-12-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* patch-info.h (PATCH_INFO): Add DELEGATE_TRAMPOLINE.
+
+	* mini.c aot-compiler.c aot-runtime.c: Implement the delegate creation 
+	optimization in the AOT case.
+	
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime (mono_aot_get_method_from_vt_slot): Add support for multi-byte method ref encodings.
