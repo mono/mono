@@ -2848,16 +2848,13 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE
-	  {
-		lexer.ConstraintsParsing = true;
-	  }
 	  type type_name
 	  open_parens opt_formal_parameter_list CLOSE_PARENS
 	  {
-		MemberName name = MakeName ((MemberName) $6);
-		Parameters p = (Parameters) $8;
+		MemberName name = MakeName ((MemberName) $5);
+		Parameters p = (Parameters) $7;
 
-		Delegate del = new Delegate (current_namespace, current_class, (Expression) $5,
+		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
 					     (int) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
@@ -2867,6 +2864,7 @@ delegate_declaration
 
 		current_container.AddDelegate (del);
 		current_delegate = del;
+		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
 	  {
@@ -2874,7 +2872,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		current_delegate.SetParameterInfo ((ArrayList) $11);
+		current_delegate.SetParameterInfo ((ArrayList) $10);
 		$$ = current_delegate;
 
 		current_delegate = null;
