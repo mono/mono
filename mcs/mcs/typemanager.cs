@@ -2836,9 +2836,10 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 		if (a.IsGenericParameter && b.IsGenericParameter) {
-			if (a.DeclaringMethod != b.DeclaringMethod &&
-			    (a.DeclaringMethod == null || b.DeclaringMethod == null))
-				return false;
+			// TODO: needs more testing before cleaning up
+			//if (a.DeclaringMethod != b.DeclaringMethod &&
+			//    (a.DeclaringMethod == null || b.DeclaringMethod == null))
+			//	return false;
 			return a.GenericParameterPosition == b.GenericParameterPosition;
 		}
 
