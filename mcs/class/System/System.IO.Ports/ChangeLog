@@ -1,3 +1,9 @@
+2007-12-03  Miguel de Icaza  <miguel@novell.com>
+ 
+	* SerialPort.cs: Apply patch from Martin Green
+	<martin@martsoft.co.uk> to support Serial Ports enumeration on
+	Windows.
+	
 2007-11-05  Miguel de Icaza  <miguel@novell.com>
 
 	* SerialPort.cs: Cope with multi-character newlines.  Fixes #321988.
