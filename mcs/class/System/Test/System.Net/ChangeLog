@@ -1,3 +1,7 @@
+2007-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebClient.cs: Added tests for argument checks.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebProxyTest.cs: Remove unused fields.

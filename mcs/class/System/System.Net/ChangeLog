@@ -1,3 +1,8 @@
+2007-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebClient.cs: Modified argument checks to match MS, and wrap
+	exceptions in a WebException. Fixes bug #343064.
+
 2007-12-03  Miguel de Icaza  <miguel@novell.com>
 
 	* FtpWebRequest.cs: Applied patch from Jerome Haltom that fixes
