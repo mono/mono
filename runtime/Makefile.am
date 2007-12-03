@@ -20,9 +20,9 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
 if INSTALL_2_1
-build_profiles = default net_2_0 net_2_1
+build_profiles = default net_2_0 net_3_5 net_2_1
 else
-build_profiles = default net_2_0
+build_profiles = default net_2_0 net_3_5
 endif
 else
 build_profiles = default
