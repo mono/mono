@@ -1,3 +1,10 @@
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_MonoField_GetRawConstantValue): New icall.
+
+	* class.c (mono_class_get_field_default_value): New helper function to initialize
+	field->def_type and field->data.
+
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Use the delegate trampoline instead of
