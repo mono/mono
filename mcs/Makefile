@@ -7,7 +7,7 @@ net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors
 net_2_1_SUBDIRS := build mcs class tools
-net_3_5_SUBDIRS := build class
+net_3_5_SUBDIRS := build
 
 # List of test subdirs that should pass 100%
 centum_tests := \
