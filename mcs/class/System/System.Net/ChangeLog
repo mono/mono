@@ -1,3 +1,10 @@
+2007-12-03  Miguel de Icaza  <miguel@novell.com>
+
+	* FtpWebRequest.cs: Applied patch from Jerome Haltom that fixes
+	multi-line responses (after my fix).
+
+	Closes #333978
+
 2007-11-16  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpWebRequest.cs: when folding a request into a GET one, set
