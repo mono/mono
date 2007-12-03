@@ -150,5 +150,10 @@ namespace System.Reflection {
 			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
 				ToString(), MemberTypes.Field);
 		}
+
+#if NET_2_0
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public override extern object GetRawConstantValue ();
+#endif
 	}
 }

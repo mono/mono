@@ -1,3 +1,7 @@
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoField.cs: Implement GetRawConstantValue ().
+
 2007-11-24  Marek Habersack  <mhabersack@novell.com>
 
 	* CustomAttributeTypedArgument.cs: value can be null in ToString.
