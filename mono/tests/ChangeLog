@@ -1,3 +1,8 @@
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* custom-modifiers.2.cs custom-modifiers-il.cs: New test for the 2.0
+	GetRequiredCustomModifiers ()/GetOptionalCustomModifiers () methods.
+
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* stackframes-async.2.cs: Fix this test to work with the new delegate optimization.
