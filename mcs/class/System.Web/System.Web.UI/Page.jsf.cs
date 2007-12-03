@@ -152,15 +152,7 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("processSaveState");
 #endif
-			NameValueCollection hiddenFields;
-			if (ClientScript.hiddenFields != null) {
-				hiddenFields = new NameValueCollection ();
-				foreach (string key in ClientScript.hiddenFields.Keys)
-					hiddenFields.Add (key, (string) ClientScript.hiddenFields [key] ?? String.Empty);
-			}
-			else
-				hiddenFields = null;
-			return new object [] { _state, hiddenFields, GetValidatorsState () };
+			return new object [] { _state, GetValidatorsState () };
 		}
 
 		public override void processRestoreState (FacesContext context, object state) {
@@ -170,7 +162,7 @@ namespace System.Web.UI
 			EnterThread (context);
 			try {
 				_state = (Pair) ((object []) state) [0];
-				_validatorsState = (bool []) ((object []) state) [2];
+				_validatorsState = (bool []) ((object []) state) [1];
 				RestorePageState ();
 			}
 			catch (Exception ex) {

@@ -45,7 +45,7 @@ using System.Globalization;
 namespace System.Web.UI
 {
 	#if NET_2_0
-	public sealed
+	public sealed partial
 	#else
 	internal
 	#endif

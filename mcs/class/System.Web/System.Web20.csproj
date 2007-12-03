@@ -1193,6 +1193,7 @@
     <Compile Include="System.Web.UI.WebControls\XmlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\ClientScriptManager.jvm.cs" />
     <Compile Include="System.Web.UI\Control.jsf.cs" />
     <Compile Include="System.Web.UI\ControlBuilder.jvm.cs">
       <SubType>Code</SubType>
