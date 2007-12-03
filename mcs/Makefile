@@ -7,6 +7,7 @@ net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors
 net_2_1_SUBDIRS := build mcs class tools
+net_3_5_SUBDIRS := build class
 
 # List of test subdirs that should pass 100%
 centum_tests := \
@@ -51,7 +52,7 @@ all-local $(STD_TARGETS:=-local):
 
 # fun specialty targets
 
-PROFILES = default net_2_0
+PROFILES = default net_2_0 net_3_5
 
 .PHONY: all-profiles $(STD_TARGETS:=-profiles)
 all-profiles $(STD_TARGETS:=-profiles): %-profiles: profiles-do--%
@@ -70,6 +71,7 @@ profiles-do--run-test:
 
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
+$(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           profile-do--net_2_0--%
 $(_boot_:%=profile-do--net_2_1--%):           profile-do--net_2_1--%:           profile-do--net_2_0--%
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
 $(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--default--%
