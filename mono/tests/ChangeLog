@@ -1,5 +1,8 @@
 2007-12-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* async-exc-compilation.cs: New not yet enabled test for async exceptions
+	received during JIT compilation.
+
 	* custom-modifiers.2.cs custom-modifiers-il.cs: New test for the 2.0
 	GetRequiredCustomModifiers ()/GetOptionalCustomModifiers () methods.
 
