@@ -62,15 +62,11 @@ namespace Mainsoft.Web.Hosting
 		override public void init(ServletConfig config)
 		{
 			base.init(config);
-			InitRuntime (config, this, GetDeserializer (), getDriverUtils ());
+			InitRuntime (config, this);
 		}
 
-		public static void InitRuntime (ServletConfig config, object evidence,
-			vmw.@internal.io.IObjectsDeserializer deserializer, vmw.@internal.IDriverUtils driverUtils) {
+		public static void InitRuntime (ServletConfig config, object evidence) {
 			AppDomain servletDomain = createServletDomain (config);
-			// Mordechai : setting the web app deserializer object.
-			servletDomain.SetData (J2EEConsts.DESERIALIZER_CONST, deserializer);
-			servletDomain.SetData (vmw.@internal.EnvironmentUtils.GH_DRIVER_UTILS_CONST, driverUtils);
 			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
 
 			try {
@@ -80,7 +76,7 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData (".domainId", currentTime.ToString ("x"));
 				currentTime = ~currentTime;
 				servletDomain.SetData (".appId", currentTime.ToString ("x"));
-				servletDomain.SetData (".appName", context.getServletContextName ());
+				servletDomain.SetData (".appName", servletDomain.SetupInformation.ApplicationName);
 
 				servletDomain.SetData (J2EEConsts.CLASS_LOADER, java.lang.Thread.currentThread ().getContextClassLoader ());
 				//servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
@@ -247,35 +243,6 @@ namespace Mainsoft.Web.Hosting
 				//servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
 		}
-	
-		virtual protected vmw.@internal.io.IObjectsDeserializer GetDeserializer()
-		{
-			return new GHWebDeseserializer ();
-		}
-
-		/// Mordechai: This class comes to solve a problem in class deserialize
-		/// within web application. The problem is that the classloader that created 
-		/// some user web class (for example aspx page) is not the class loader
-		/// that de-serialize it - thus we end with ClassDefNotFoundException.
-		/// To prevent this situation we delegate the serialization back the the 
-		/// web app (which has the correct class loader...)
-		/// 
-
-		virtual protected vmw.@internal.IDriverUtils getDriverUtils()
-		{
-			//by default no driver utils, the specific servlet will override this method
-			return null;
-		}
-	}
-
-	class GHWebDeseserializer : vmw.@internal.io.IObjectsDeserializer 
-	{
-
-			Object vmw.@internal.io.IObjectsDeserializer.Deserialize(java.io.ObjectInputStream stream)
-			{
-				object obj = stream.readObject();
-				return obj;
-			}
 	}
 }
 
