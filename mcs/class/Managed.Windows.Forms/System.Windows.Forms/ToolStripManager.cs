@@ -507,6 +507,10 @@ namespace System.Windows.Forms
 			// Get the parent form of this message
 			Form f = (Form)Control.FromHandle (m.HWnd).TopLevelControl;
 
+			// If there isn't a Form with this, there isn't much we can do
+			if (f == null)
+				return false;
+				
 			// Check the MainMenuStrip property first
 			if (f.MainMenuStrip != null)
 				if (f.MainMenuStrip.OnMenuKey ())
