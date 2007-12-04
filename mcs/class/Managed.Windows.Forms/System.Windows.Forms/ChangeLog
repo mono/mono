@@ -1,3 +1,8 @@
+2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+	[Backport to 1.2.6]
+	* XplatUIX11.cs: Make toolwindows' decorations show up without causing any
+	  tests to fail (hopefully).
+
 2007-12-03  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.2.6]
 	* Application.cs: Let WM_CHAR messages flow through to controls

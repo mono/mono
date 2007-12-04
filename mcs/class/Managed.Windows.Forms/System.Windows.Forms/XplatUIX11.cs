@@ -783,7 +783,7 @@ namespace System.Windows.Forms {
 			if (form != null)
 				cp = form.GetCreateParams ();
 
-			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
 				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
 				Rectangle xrect = rect;
 
@@ -818,7 +818,7 @@ namespace System.Windows.Forms {
 			 * we're painting in only)
 			 */
 			Form form = cp.control as Form;
-			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
 				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
 				Size xrect = size;
 
@@ -843,7 +843,7 @@ namespace System.Windows.Forms {
 			 */
 			Size rect = new Size (xWidth, xHeight);
 			Form form = cp.control as Form;
-			if (form != null && (form.window_manager == null || cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
+			if (form != null && (form.window_manager == null && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW))) {
 				Hwnd.Borders borders = Hwnd.GetBorders (cp, null);
 				Size xrect = rect;
 
