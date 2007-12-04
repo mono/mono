@@ -1,3 +1,8 @@
+2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* XplatUIX11.cs: Make toolwindows' decorations show up without causing any
+	  tests to fail (hopefully).
+
 2007-12-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownMenu.cs: Fill in AffectedBounds when drawing
