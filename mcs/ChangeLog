@@ -1,3 +1,7 @@
+2007-12-04  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Added more tests.
+	
 2007-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added 3.5 profile, it probably not used here.

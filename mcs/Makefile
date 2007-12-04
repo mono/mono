@@ -13,6 +13,7 @@ net_3_5_SUBDIRS := build class
 centum_tests := \
 	class/corlib \
 	class/System \
+	class/System.XML	\
 	class/Commons.Xml.Relaxng \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
@@ -29,10 +30,21 @@ centum_tests := \
 
 default_centum_tests :=		\
 	$(centum_tests) 	\
-	class/System.XML	\
 	class/System.Data
 
-net_2_0_centum_tests := $(centum_tests) #class/Mono.C5
+net_2_0_centum_tests := \
+	$(centum_tests) 	\
+	class/System.Core			\
+	class/System.Configuration	\
+	class/Microsoft.Build.Framework	\
+	class/Microsoft.Build.Utilities	\
+	class/Microsoft.Build.Engine
+	#class/Microsoft.Build.Tasks	
+	#class/Mono.C5
+	
+net_3_5_centum_tests := \
+	class/System.Xml.Linq			\
+	class/System.Web.Extensions		
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
