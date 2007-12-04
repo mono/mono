@@ -1571,8 +1571,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	}
 
 	call->stack_usage = cinfo->stack_usage + extra_space;
-	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
-	cfg->flags |= MONO_CFG_HAS_CALLS;
 
 	g_free (cinfo);
 }

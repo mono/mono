@@ -2766,6 +2766,9 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		call->inst.dreg = alloc_dreg (cfg, call->inst.type);
 
 	mono_arch_emit_call (cfg, call, virtual);
+
+	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
+	cfg->flags |= MONO_CFG_HAS_CALLS;
 	
 	return call;
 }
