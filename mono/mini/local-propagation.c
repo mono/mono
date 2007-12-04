@@ -1813,6 +1813,7 @@ mono_local_deadce (MonoCompile *cfg)
 void
 mono_branch_to_cmov (MonoCompile *cfg)
 {
+#ifdef MONO_ARCH_HAVE_CMOV_OPTS
 	MonoBasicBlock *bb;
 	gboolean changed = FALSE;
 
@@ -2149,4 +2150,5 @@ mono_branch_to_cmov (MonoCompile *cfg)
 		/* Merging bblocks could make some variables local */
 		mono_handle_global_vregs (cfg);
 	}
+#endif
 }

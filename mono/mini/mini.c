@@ -123,14 +123,9 @@
  */
 #define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
 
-#define MONO_IS_BRANCH_OP(ins) (MONO_IS_COND_BRANCH_OP(ins) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_BR_REG) || ((ins)->opcode == CEE_SWITCH))
+#define MONO_IS_BRANCH_OP(ins) (MONO_IS_COND_BRANCH_OP(ins) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_BR_REG) || ((ins)->opcode == CEE_SWITCH) || ((ins)->opcode == OP_SWITCH))
 
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
-
-/* FIXME: Handle OP_GOT_ENTRY too */
-#define MONO_IS_JUMP_TABLE(ins) (((ins)->opcode == OP_JUMP_TABLE) ? TRUE : ((((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH)) ? TRUE : FALSE))
-
-#define MONO_JUMP_TABLE_FROM_INS(ins) (((ins)->opcode == OP_JUMP_TABLE) ? (ins)->inst_p0 : (((ins)->opcode == OP_AOTCONST) && (ins->inst_i1 == (gpointer)MONO_PATCH_INFO_SWITCH) ? (ins)->inst_p0 : NULL))
 
 static void setup_stat_profiler (void);
 gboolean  mono_arch_print_tree(MonoInst *tree, int arity);
@@ -2074,6 +2069,7 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	case CEE_BLE_UN:
 	case CEE_BLT_UN:
 	case CEE_SWITCH:
+	case OP_SWITCH:
 		prev = bb->code;
 		while (prev->next && prev->next != bb->last_ins)
 			prev = prev->next;
@@ -10601,7 +10597,8 @@ replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBl
 				bb->last_ins->inst_target_bb = repl;
 			}
 			break;
-		case CEE_SWITCH: {
+		case CEE_SWITCH:
+		case OP_SWITCH: {
 			int i;
 			int n = GPOINTER_TO_INT (bb->last_ins->klass);
 			for (i = 0; i < n; i++ ) {

@@ -1113,10 +1113,19 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 						add_cprop_bb (cfg, table->table [idx], bblist);
 			}
 			else {
-				for (i = 0; i < table->table_size; i++ )
+				for (i = 0; i < table->table_size; i++)
 					if (table->table [i])
 						add_cprop_bb (cfg, table->table [i], bblist);
 			}
+		}
+
+		if (ins->opcode == OP_SWITCH) {
+			int i;
+			MonoJumpInfoBBTable *table = ins->inst_p0;
+
+			for (i = 0; i < table->table_size; i++)
+				if (table->table [i])
+					add_cprop_bb (cfg, table->table [i], bblist);
 		}
 
 		/* Handle COMPARE+BRCOND pairs */
