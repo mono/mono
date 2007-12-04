@@ -1,4 +1,8 @@
-2007-11-15  Gert Driesen  <drieseng@susers.sourceforge.net>
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32Exception.cs: Do not pass native error to base ctors.
+
+2007-11-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MemberDescriptor.cs: Spaces to tabs, code formatting.
 	* PropertyDescriptor.cs: When adding or removing a new handler for an

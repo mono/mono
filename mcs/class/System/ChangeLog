@@ -1,3 +1,7 @@
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added Win32ExceptionTest.cs.
+
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
 	* parser.cs: Max value of m for a construct {n,m} is 2147483647.
