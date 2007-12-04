@@ -1,3 +1,14 @@
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Process.cs: Modified StartInfo to throw ArgumentNullException when
+	value is set to null, instead of ArgumentException. Remove check if
+	file name is rooted and exists when UseShellExecute is false, and let
+	runtime handle this. Fixes bug #3455655. When a process cannot be
+	started, do not access ProcessStartInfo.EnvironmentVariables since that
+	would not allow us to re-use the instance when changing
+	UseShellExecute. Added argument check in Start (ProcessStartInfo).
+	Code formatting.
+
 2007-11-16  Jb Evain  <jbevain@novell.com>
 
 	* Debug_2_1.cs: simply write debug messages to the

@@ -658,18 +658,14 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Information for the start of this process.")]
 		public ProcessStartInfo StartInfo {
 			get {
-				if(start_info==null) {
-					start_info=new ProcessStartInfo();
-				}
-				
-				return(start_info);
+				if (start_info == null)
+					start_info = new ProcessStartInfo();
+				return start_info;
 			}
 			set {
-				if(value==null) {
-					throw new ArgumentException("value is null");
-				}
-				
-				start_info=value;
+				if (value == null)
+					throw new ArgumentNullException("value");
+				start_info = value;
 			}
 		}
 
@@ -911,7 +907,7 @@ namespace System.Diagnostics {
 		}
 
 		public void Refresh ()
-	    	{
+		{
 			// FIXME: should refresh any cached data we might have about
 			// the process (currently we have none).
 		}
@@ -967,8 +963,6 @@ namespace System.Diagnostics {
 		private static bool Start_noshell (ProcessStartInfo startInfo,
 						   Process process)
 		{
-			if (Path.IsPathRooted (startInfo.FileName) && !File.Exists (startInfo.FileName))
-				throw new FileNotFoundException  ("Executable not found: " + startInfo.FileName);
 			ProcInfo proc_info=new ProcInfo();
 			IntPtr stdin_rd, stdin_wr;
 			IntPtr stdout_wr;
@@ -1069,11 +1063,10 @@ namespace System.Diagnostics {
 					MonoIO.Close (stderr_wr, out error);
 				}
 
-				throw new Win32Exception (-proc_info.pid, 
-					"ApplicationName='"+startInfo.FileName+
-					"', CommandLine='"+startInfo.Arguments+
-					"', CurrentDirectory='"+startInfo.WorkingDirectory+
-					"', PATH='"+startInfo.EnvironmentVariables["PATH"]+"'");
+				throw new Win32Exception (-proc_info.pid,
+					"ApplicationName='" + startInfo.FileName +
+					"', CommandLine='" + startInfo.Arguments +
+					"', CurrentDirectory='" + startInfo.WorkingDirectory + "'");
 			}
 
 			process.process_handle = proc_info.process_handle;
@@ -1150,40 +1143,35 @@ namespace System.Diagnostics {
 			}
 		}
 		
-		public bool Start() {
-			bool ret;
-
+		public bool Start ()
+		{
 			if (process_handle != IntPtr.Zero) {
 				Process_free_internal (process_handle);
 				process_handle = IntPtr.Zero;
 			}
-			ret=Start_common(start_info, this);
-			
-			return(ret);
+			return Start_common(start_info, this);
 		}
 
-		public static Process Start(ProcessStartInfo startInfo) {
+		public static Process Start (ProcessStartInfo startInfo)
+		{
+			if (startInfo == null)
+				throw new ArgumentNullException ("startInfo");
 
 			Process process=new Process();
-			bool ret;
-
 			process.StartInfo = startInfo;
-			ret=Start_common(startInfo, process);
-			
-			if(ret==true) {
-				return(process);
-			} else {
-				return(null);
-			}
+			if (Start_common(startInfo, process))
+				return process;
+			return null;
 		}
 
-		public static Process Start(string fileName) {
-                       return Start(new ProcessStartInfo(fileName));
+		public static Process Start (string fileName)
+		{
+			return Start (new ProcessStartInfo (fileName));
 		}
 
-		public static Process Start(string fileName,
-					    string arguments) {
-                       return Start(new ProcessStartInfo(fileName, arguments));
+		public static Process Start(string fileName, string arguments)
+		{
+			return Start (new ProcessStartInfo (fileName, arguments));
 		}
 
 #if NET_2_0
@@ -1201,9 +1189,9 @@ namespace System.Diagnostics {
 		}
 #endif
 
-		public override string ToString() {
-			return(base.ToString() +
-			       " (" + this.ProcessName + ")");
+		public override string ToString()
+		{
+			return(base.ToString() + " (" + this.ProcessName + ")");
 		}
 
 		/* Waits up to ms milliseconds for process 'handle' to
