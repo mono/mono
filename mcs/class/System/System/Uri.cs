@@ -1284,7 +1284,7 @@ namespace System {
 				throw new UriFormatException("Invalid URI: The format of the URI could not be determined.");
 			} else if (pos < 0) {
 				// It must be Unix file path or Windows UNC
-				if (uriString [0] == '/'){
+				if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 					ParseAsUnixAbsoluteFilePath (uriString);
 					if (kind == UriKind.Relative)
 						isAbsoluteUri = false;

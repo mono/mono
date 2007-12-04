@@ -70,6 +70,8 @@ namespace MonoTests.System
 #endif
 		public void AbsoluteUriFromFileManual ()
 		{
+			if (Path.DirectorySeparatorChar == '\\')
+				return;
 			FromResource ("test-uri-props-manual.txt", null);
 		}
 		

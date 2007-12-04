@@ -743,8 +743,10 @@ namespace MonoTests.System
 		[Category("NotDotNet")]
 		public void UncFail ()
 		{
-			Uri uri = new Uri ("/home/user/dir/filename.ext");
-			Assert ("#7", !uri.IsUnc);
+			if (!isWin32) {
+				Uri uri = new Uri ("/home/user/dir/filename.ext");
+				Assert ("#7", !uri.IsUnc);
+			}
 		}
 
 		[Test]

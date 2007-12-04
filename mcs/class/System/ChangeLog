@@ -1,5 +1,9 @@
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
+	* Uri.cs: Unix absolute path should not be valid on Windows.
+
+2007-12-04  Arina Itkes <arinai@mainsoft.com>
+
 	* HelpKeywordAttribute.cs, WarningException.cs,
 	  SmtpException.cs, SmtpFailedRecipientException.cs,
 	  SmtpFailedRecipientsException.cs: 
