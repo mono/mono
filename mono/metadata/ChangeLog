@@ -1,3 +1,9 @@
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* process.c: When ProcessStartInfo.ErrorDialog is true, pass window
+	handle to use when error dialog is shown; otherwise, update mask
+	to show no error dialog when an error occurs.
+
 2007-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_MonoField_GetRawConstantValue): New icall.
