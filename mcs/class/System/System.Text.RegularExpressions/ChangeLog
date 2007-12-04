@@ -1,3 +1,7 @@
+2007-12-04  Arina Itkes <arinai@mainsoft.com>
+
+	* parser.cs: Max value of m for a construct {n,m} is 2147483647.
+
 2007-11-15  Miguel de Icaza  <miguel@novell.com>
 
 	* Revert the patch from Juraj Skripsky as it made the class

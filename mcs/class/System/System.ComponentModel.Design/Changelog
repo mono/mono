@@ -1,3 +1,8 @@
+2007-12-04  Arina Itkes <arinai@mainsoft.com>
+
+	* HelpKeywordAttribute.cs: 
+	  Changes for SOAP serialization compatibility with .NET. 
+
 2007-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ITypeDiscoveryService.cs : new.

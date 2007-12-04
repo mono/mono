@@ -2,21 +2,6 @@
 
 	* System_test.dll.sources: Added Win32ExceptionTest.cs.
 
-2007-12-04  Arina Itkes <arinai@mainsoft.com>
-
-	* parser.cs: Max value of m for a construct {n,m} is 2147483647.
-
-2007-12-04  Arina Itkes <arinai@mainsoft.com>
-
-	* Uri.cs: Unix absolute path should not be valid on Windows.
-
-2007-12-04  Arina Itkes <arinai@mainsoft.com>
-
-	* HelpKeywordAttribute.cs, WarningException.cs,
-	  SmtpException.cs, SmtpFailedRecipientException.cs,
-	  SmtpFailedRecipientsException.cs: 
-	  Changes for SOAP serialization compatibility with .NET. 
-
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources : added S.R.InteropSvcs.ComTypes types.
