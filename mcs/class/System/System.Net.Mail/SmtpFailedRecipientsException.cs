@@ -63,6 +63,7 @@ namespace System.Net.Mail {
 		}
 
 		protected SmtpFailedRecipientsException (SerializationInfo info, StreamingContext context)
+		: base(info, context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
@@ -85,6 +86,7 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
+			base.GetObjectData (info, context);
 			info.AddValue ("innerExceptions", innerExceptions);
 		}
 

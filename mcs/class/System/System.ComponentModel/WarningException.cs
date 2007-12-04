@@ -72,8 +72,15 @@ namespace System.ComponentModel {
 		protected WarningException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			helpTopic = info.GetString ("HelpTopic");
-			helpUrl = info.GetString ("HelpUrl");
+			try {
+				helpTopic = info.GetString ("helpTopic");
+				helpUrl = info.GetString ("helpUrl");
+			}
+			catch (SerializationException) {
+				//For compliance with previously serialized version:
+				helpTopic = info.GetString ("HelpTopic");
+				helpUrl = info.GetString ("HelpUrl");
+			}
 		}
 
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
@@ -82,9 +89,9 @@ namespace System.ComponentModel {
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			info.AddValue ("HelpTopic", helpTopic);
-			info.AddValue ("HelpUrl", helpUrl);
 			base.GetObjectData (info, context);
+			info.AddValue ("helpTopic", helpTopic);
+			info.AddValue ("helpUrl", helpUrl);
 		}
 #endif
 

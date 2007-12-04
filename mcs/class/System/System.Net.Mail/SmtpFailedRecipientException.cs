@@ -55,6 +55,7 @@ namespace System.Net.Mail {
 		}
 
 		protected SmtpFailedRecipientException (SerializationInfo serializationInfo, StreamingContext streamingContext)
+			: base (serializationInfo, streamingContext)
 		{
 			if (serializationInfo == null)
 				throw new ArgumentNullException ("serializationInfo");
@@ -96,6 +97,7 @@ namespace System.Net.Mail {
 		{
 			if (serializationInfo == null)
 				throw new ArgumentNullException ("serializationInfo");
+			base.GetObjectData (serializationInfo, streamingContext);
 			serializationInfo.AddValue ("failedRecipient", failedRecipient);
 		}
 #if !TARGET_JVM //remove private implementation

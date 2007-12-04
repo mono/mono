@@ -36,7 +36,7 @@ namespace System.ComponentModel.Design {
 
 		public static readonly HelpKeywordAttribute Default = null;
 
-		string keyword;
+		string contextKeyword;
 		
 		public HelpKeywordAttribute ()
 		{
@@ -44,14 +44,14 @@ namespace System.ComponentModel.Design {
 
 		public HelpKeywordAttribute (string keyword)
 		{
-			this.keyword = keyword;
+			this.contextKeyword = keyword;
 		}
 
 		public HelpKeywordAttribute (Type t)
 		{
 			if (t == null)
 				throw new ArgumentNullException ("t");
-			this.keyword = t.FullName;
+			this.contextKeyword = t.FullName;
 		}
 
 		public override bool Equals (object other)
@@ -63,22 +63,22 @@ namespace System.ComponentModel.Design {
 			if (o == null)
 				return false;
 			
-			return (o.keyword == keyword);
+			return (o.contextKeyword == contextKeyword);
 		}
 
 		public override int GetHashCode ()
 		{
-			return keyword != null ? keyword.GetHashCode () : 0;
+			return contextKeyword != null ? contextKeyword.GetHashCode () : 0;
 		}
 
 		public override bool IsDefaultAttribute ()
 		{
-			return keyword == null;
+			return contextKeyword == null;
 		}
 
 		public string HelpKeyword {
 			get {
-				return keyword;
+				return contextKeyword;
 			}
 		}
 	}

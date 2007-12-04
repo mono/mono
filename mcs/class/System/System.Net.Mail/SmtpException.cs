@@ -45,8 +45,9 @@ namespace System.Net.Mail {
 		#region Constructors
 
 		public SmtpException ()
-			: this ("SMTP error occured")
+			: this ("Syntax error, command unrecognized.")
 		{
+			statusCode = SmtpStatusCode.GeneralFailure;
 		}
 
 		public SmtpException (SmtpStatusCode statusCode)
@@ -58,6 +59,7 @@ namespace System.Net.Mail {
 		public SmtpException (string message)
 			: base (message)
 		{
+			statusCode = SmtpStatusCode.GeneralFailure;
 		}
 
 		protected SmtpException (SerializationInfo info, StreamingContext context)
@@ -65,7 +67,13 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			StatusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
+			try {
+				statusCode = (SmtpStatusCode) info.GetValue ("Status", typeof (int));
+			}
+			catch (SerializationException) {
+				//For compliance with previously serialized version:
+				statusCode = (SmtpStatusCode) info.GetValue ("statusCode", typeof (SmtpStatusCode));
+			}
 		}
 
 		public SmtpException (SmtpStatusCode statusCode, string message)
@@ -94,7 +102,8 @@ namespace System.Net.Mail {
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
-			info.AddValue ("statusCode", statusCode, typeof (SmtpStatusCode));
+			base.GetObjectData (info, context);
+			info.AddValue ("Status", statusCode, typeof (int));
 		}
 #if !TARGET_JVM //remove private implementation
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
