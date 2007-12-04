@@ -30,16 +30,14 @@ System.Linq/IQueryProvider.cs
 System.Linq.Expressions/BinaryExpression.cs
 System.Linq.Expressions/ConditionalExpression.cs
 System.Linq.Expressions/ConstantExpression.cs
+System.Linq.Expressions/ElementInit.cs
 System.Linq.Expressions/Expression.cs
 System.Linq.Expressions/Expression_T.cs
 System.Linq.Expressions/ExpressionCompiler.cs
 System.Linq.Expressions/ExpressionType.cs
 System.Linq.Expressions/ExpressionUtil.cs
-System.Linq.Expressions/Funclet.cs
-System.Linq.Expressions/FuncletExpression.cs
 System.Linq.Expressions/InvocationExpression.cs
 System.Linq.Expressions/LambdaExpression.cs
-System.Linq.Expressions/LiftExpression.cs
 System.Linq.Expressions/ListInitExpression.cs
 System.Linq.Expressions/MemberAssignment.cs
 System.Linq.Expressions/MemberBinding.cs

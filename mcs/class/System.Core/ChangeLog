@@ -1,3 +1,7 @@
+2007-12-04  Marek Safar  <marek.safar@gmail.com>
+
+	* System.Core.dll.sources: System.Linq.Expression refresh.
+	
 2007-08-20  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Hardcoded 3.5 define for now.
