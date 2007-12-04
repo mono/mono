@@ -1,3 +1,11 @@
+2007-12-04  Marek Safar <marek.safar@gmail.com>
+
+	* ElementInit.cs: New implementation.
+	
+	* Funclet.cs, FuncletExpression.cs, LiftExpression.cs: Removed.
+	* ListInitExpression.cs, MemberListBinding.cs, Expression.cs,
+	  ExpressionType.cs, BinaryExpression.cs, NewExpression.cs: API update.
+
 2007-08-17  Federico Di Gregorio <fog@initd.org>
 
 	* Expression.cs: fixed Field() and Property() behaviour when accessing static

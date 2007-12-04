@@ -727,16 +727,6 @@ namespace System.Linq.Expressions
         }
         #endregion
 
-        public static FuncletExpression Funclet(Funclet funclet, Type type)
-        {
-            if (funclet == null)
-                throw new ArgumentNullException("funclet");
-            if (type == null)
-                throw new ArgumentNullException("type");
-
-            return new FuncletExpression(funclet, type);
-        }
-
         public static Type GetFuncType(params Type[] typeArgs)
         {
             if (typeArgs == null)
@@ -773,22 +763,22 @@ namespace System.Linq.Expressions
         }
         #endregion
         
-        public static ListInitExpression ListInit(NewExpression newExpression, params Expression[] initializers)
+        public static ListInitExpression ListInit(NewExpression newExpression, params ElementInit[] initializers)
         {
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return ListInit(newExpression, Enumerable.ToReadOnlyCollection<Expression>(initializers));
+            return ListInit(newExpression, Enumerable.ToReadOnlyCollection<ElementInit>(initializers));
         }
 
-        public static ListInitExpression ListInit(NewExpression newExpression, IEnumerable<Expression> initializers)
+        public static ListInitExpression ListInit(NewExpression newExpression, IEnumerable<ElementInit> initializers)
         {
             if (newExpression == null)
                 throw new ArgumentNullException("newExpression");
             if (initializers == null)
                 throw new ArgumentNullException("inizializers");
 
-            return new ListInitExpression(newExpression, Enumerable.ToReadOnlyCollection<Expression>(initializers));
+            return new ListInitExpression(newExpression, Enumerable.ToReadOnlyCollection<ElementInit>(initializers));
         }
 
         public static MemberInitExpression MemberInit(NewExpression newExpression, IEnumerable<MemberBinding> bindings)

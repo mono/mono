@@ -50,6 +50,11 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Properties
+		[MonoTODO]
+		public LambdaExpression Conversion {
+			get { throw new System.NotImplementedException (); }
+		}
+		
         public Expression Left {
             get { return left; }
         }

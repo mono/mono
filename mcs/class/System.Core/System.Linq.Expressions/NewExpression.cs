@@ -38,7 +38,8 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Fields
-        private ReadOnlyCollection<Expression> arguments;
+        ReadOnlyCollection<Expression> arguments;
+		ReadOnlyCollection<MemberInfo> members;
         private ConstructorInfo constructor;
         #endregion
 
@@ -52,6 +53,11 @@ namespace System.Linq.Expressions
         {
             get { return constructor; }
         }
+		
+		public ReadOnlyCollection<MemberInfo> Members {
+			get { return members; }
+		}
+					
         #endregion
 
         #region Internal Methods

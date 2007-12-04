@@ -37,13 +37,13 @@ namespace System.Linq.Expressions
         #endregion
 
         #region Fields
-        private ReadOnlyCollection<Expression> expressions;
+        ReadOnlyCollection<Expression> expressions;
+		ReadOnlyCollection<ElementInit> initializers;
         #endregion
 
         #region Properties
-        public ReadOnlyCollection<Expression> Expressions
-        {
-            get { return expressions; }
+        public ReadOnlyCollection<ElementInit> Initializers {
+            get { return initializers; }
         }
         #endregion
 

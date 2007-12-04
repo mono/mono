@@ -28,23 +28,23 @@ namespace System.Linq.Expressions
     public sealed class ListInitExpression : Expression
     {
         #region .ctor
-        internal ListInitExpression(NewExpression newExpression, ReadOnlyCollection<Expression> expressions)
+        internal ListInitExpression(NewExpression newExpression, ReadOnlyCollection<ElementInit> expressions)
             : base(ExpressionType.ListInit, newExpression.Type)
         {
             this.newExpression = newExpression;
-            this.expressions = expressions;
+            this.initializers = initializers;
         }
         #endregion
 
         #region Fields
-        private ReadOnlyCollection<Expression> expressions;
+        private ReadOnlyCollection<ElementInit> initializers;
         private NewExpression newExpression;
         #endregion
 
         #region Properties
-        public ReadOnlyCollection<Expression> Expressions
+        public ReadOnlyCollection<ElementInit> Initializers
         {
-            get { return expressions; }
+            get { return initializers; }
         }
 
         public NewExpression NewExpression
@@ -62,12 +62,13 @@ namespace System.Linq.Expressions
             //... and the elements of the list ...
             builder.Append("{");
 
-            int exprc = expressions.Count;
+            int exprc = initializers.Count;
             for (int i = 0; i < exprc; i++)
             {
-                expressions[i].BuildString(builder);
-                if (i < expressions.Count - 1)
-                    builder.Append(", ");
+				throw new System.NotImplementedException ();
+                //initializers[i].BuildString(builder);
+                //if (i < initializers.Count - 1)
+                //    builder.Append(", ");
             }
 
             builder.Append("}");
