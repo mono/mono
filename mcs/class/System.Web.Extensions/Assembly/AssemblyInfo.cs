@@ -36,16 +36,23 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions assembly
-
+#if !NET_3_5 || TARGET_JVM || TARGET_DOTNET
 [assembly: AssemblyVersion ("1.0.61025.0")]
+[assembly: AssemblyInformationalVersion ("0.0.0.1")]
+[assembly: AssemblyTrademark ("")]
+[assembly: AssemblyConfiguration ("Development version")]
+#else
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyVersion(Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersionAttribute (Consts.FxVersion)]
+#endif
 
 [assembly: AssemblyTitle ("System.Web.Extensions.dll")]
 [assembly: AssemblyDescription ("System.Web.Extensions.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2007 Various Authors")]
-[assembly: AssemblyTrademark ("")]
 #if TARGET_JVM
 [assembly: CLSCompliant(false)]
 #else
@@ -53,7 +60,6 @@ using System.Security;
 #endif
 [assembly: ComVisible (false)]
 [assembly: AssemblyDefaultAlias ("System.Web.Extensions.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AllowPartiallyTrustedCallers ()]
