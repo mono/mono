@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Mainsoft.Web
 {
-	public interface IHttpExtendedHandler
+	public interface IHttpExtendedHandler : IHttpHandler
 	{
 		bool IsCompleted { get;}
 	}
