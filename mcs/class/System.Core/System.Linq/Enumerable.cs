@@ -134,22 +134,47 @@ namespace System.Linq
 		#endregion
 
 		#region Average
-
+		
 		public static double Average (this IEnumerable<int> source)
+		{
+			return Average (source, (a, b) => a + b, (a, b) => a / b);
+		}
+		
+		public static double Average (this IEnumerable<long> source)
+		{
+			return Average (source, (a, b) => a + b, (a, b) => a / b);		
+		}
+		
+		public static double Average (this IEnumerable<double> source)
+		{
+			return Average (source, (a, b) => a + b, (a, b) => a / b);				
+		}
+
+		public static float Average (this IEnumerable<float> source)
+		{
+			return Average (source, (a, b) => a + b, (a, b) => a / b);				
+		}
+		
+		public static decimal Average (this IEnumerable<decimal> source)
+		{
+			return Average (source, (a, b) => a + b, (a, b) => a / b);		
+		}
+
+		static TR Average<TA, TR> (this IEnumerable<TA> source, Func<TA, TA, TA> func, Func<TA, int, TR> result)
 		{
 			CheckSource (source);
 
-			long sum = 0;
-			long counter = 0;
-			foreach (int element in source) {
-				sum += element;
-				counter++;
+			TA total = default (TA);
+			int counter = 0;
+			foreach (var element in source) {
+				total = func (total, element);
+				++counter;
 			}
 
 			if (counter == 0)
 				throw new InvalidOperationException ();
-			else
-				return (double) sum / (double) counter;
+				
+			return result (total, counter);
 		}
 
 		public static double? Average (this IEnumerable<int?> source)
@@ -169,23 +194,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) sum / (double?) counter);
 		}
 
-		public static double Average (this IEnumerable<long> source)
-		{
-			CheckSource (source);
-
-			long sum = 0;
-			long counter = 0;
-			foreach (long element in source) {
-				sum += element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return (double) sum / (double) counter;
-		}
-
 		public static double? Average (this IEnumerable<long?> source)
 		{
 			CheckSource (source);
@@ -201,23 +209,6 @@ namespace System.Linq
 				}
 			}
 			return (onlyNull ? null : (double?) sum / (double?) counter);
-		}
-
-		public static double Average (this IEnumerable<double> source)
-		{
-			CheckSource (source);
-
-			double sum = 0;
-			double counter = 0;
-			foreach (double element in source) {
-				sum += element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return sum / counter;
 		}
 
 		public static double? Average (this IEnumerable<double?> source)
@@ -237,23 +228,6 @@ namespace System.Linq
 			return (onlyNull ? null : (double?) (sum / counter));
 		}
 
-		public static decimal Average (this IEnumerable<decimal> source)
-		{
-			CheckSource (source);
-
-			decimal sum = 0;
-			decimal counter = 0;
-			foreach (decimal element in source) {
-				sum += element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return sum / counter;
-		}
-
 		public static decimal? Average (this IEnumerable<decimal?> source)
 		{
 			CheckSource (source);
@@ -270,7 +244,26 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : (decimal?) (sum / counter));
 		}
+		
+		public static float? Average (this IEnumerable<float?> source)
+		{
+			CheckSource (source);
 
+			float sum = 0;
+			float counter = 0;
+			foreach (float? element in source) {
+				if (element.HasValue) {
+					sum += element.Value;
+					++counter;
+				}
+			}
+
+			if (counter == 0)
+				return null;
+			
+			return sum / counter;
+		}		
+		
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
 			CheckSourceAndSelector (source, selector);
@@ -375,6 +368,43 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : (double?) (sum / counter));
 		}
+
+		public static float Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
+		{
+			CheckSourceAndSelector (source, selector);
+
+			float sum = 0;
+			float counter = 0;
+			foreach (TSource item in source) {
+				sum += selector (item);
+				++counter;
+			}
+
+			if (counter == 0)
+				throw new InvalidOperationException ();
+			
+			return sum / counter;
+		}
+		
+		public static float? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
+		{
+			CheckSourceAndSelector (source, selector);
+
+			float sum = 0;
+			float counter = 0;
+			foreach (TSource item in source) {
+				float? value = selector (item);
+				if (value.HasValue) {
+					sum  += value.Value;
+					++counter;
+				}
+			}
+
+			if (counter == 0)
+				throw new InvalidOperationException ();
+			
+			return sum / counter;
+		}		
 
 		public static decimal Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
@@ -699,7 +729,6 @@ namespace System.Linq
 			return GroupBy<TSource, TKey> (source, keySelector, null);
 		}
 
-
 		public static IEnumerable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
@@ -749,7 +778,6 @@ namespace System.Linq
 			return GroupBy<TSource, TKey, TElement> (source, keySelector, elementSelector, null);
 		}
 
-
 		public static IEnumerable<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
@@ -792,7 +820,39 @@ namespace System.Linq
 				counter++;
 			}
 		}
+		
+		public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
+			Func<TKey, IEnumerable<TElement>, TResult> resultSelector)
+		{
+			return GroupBy (source, keySelector, elementSelector, resultSelector, null);
+		}
 
+		[MonoTODO]
+		public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
+			Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
+			IEqualityComparer<TKey> comparer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector,
+			Func<TKey, IEnumerable<TSource>, TResult> resultSelector)
+		{
+			return GroupBy (source, keySelector, resultSelector, null);
+		}
+
+		[MonoTODO]		
+		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector,
+			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
+			IEqualityComparer<TKey> comparer)		                                                                    
+		{
+			throw new NotImplementedException ();
+		}
+		
 		#endregion
 
 		# region GroupJoin
@@ -814,7 +874,7 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
 
-			Lookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
+			ILookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
 			/*Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
 			foreach (U element in inner)
 			{
@@ -869,7 +929,7 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
 
-			Lookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
+			ILookup<TKey, TInner> innerKeys = ToLookup<TInner, TKey> (inner, innerKeySelector, comparer);
 			/*Dictionary<K, List<U>> innerKeys = new Dictionary<K, List<U>> ();
 			foreach (U element in inner)
 			{
@@ -1002,145 +1062,90 @@ namespace System.Linq
 
 		public static int Max (this IEnumerable<int> source)
 		{
-			CheckSource (source);
+			return Iterate (source, int.MinValue, (a, b) => a > b);
+		}
+		
+		public static long Max (this IEnumerable<long> source)
+		{
+			return Iterate (source, long.MinValue, (a, b) => a > b);
+		}
+		
+		public static double Max (this IEnumerable<double> source)
+		{
+			return Iterate (source, double.MinValue, (a, b) => a > b);
+		}
 
-			int maximum = int.MinValue;
+		public static float Max (this IEnumerable<float> source)
+		{
+			return Iterate (source, float.MinValue, (a, b) => a > b);
+		}
+
+		public static decimal Max (this IEnumerable<decimal> source)
+		{
+			return Iterate (source, decimal.MinValue, (a, b) => a > b);
+		}
+
+		static T Iterate<T> (IEnumerable<T> source, T initValue, Func<T, T, bool> selector)
+		{
+			CheckSource (source);
+			
 			int counter = 0;
-			foreach (int element in source) {
-				if (element > maximum)
-					maximum = element;
-				counter++;
+			foreach (var element in source) {
+				if (selector (element, initValue))
+					initValue = element;
+				++counter;
 			}
 
 			if (counter == 0)
 				throw new InvalidOperationException ();
-			else
-				return maximum;
+			
+			return initValue;
 		}
 
 		public static int? Max (this IEnumerable<int?> source)
 		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			int? maximum = int.MinValue;
-			foreach (int? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element > maximum)
-						maximum = element;
-				}
-			}
-			return (onlyNull ? null : maximum);
+			return IterateNullable (source, int.MinValue, (a, b) => a > b);
 		}
-
-		public static long Max (this IEnumerable<long> source)
-		{
-			CheckSource (source);
-
-			long maximum = long.MinValue;
-			int counter = 0;
-			foreach (long element in source) {
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
-		}
-
 
 		public static long? Max (this IEnumerable<long?> source)
 		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			long? maximum = long.MinValue;
-			foreach (long? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element > maximum)
-						maximum = element;
-				}
-			}
-			return (onlyNull ? null : maximum);
+			return IterateNullable (source, long.MinValue, (a, b) => a > b);
 		}
-
-
-		public static double Max (this IEnumerable<double> source)
-		{
-			CheckSource (source);
-
-			double maximum = double.MinValue;
-			int counter = 0;
-			foreach (double element in source) {
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
-		}
-
-
+		
 		public static double? Max (this IEnumerable<double?> source)
 		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			double? maximum = double.MinValue;
-			foreach (double? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element > maximum)
-						maximum = element;
-				}
-			}
-			return (onlyNull ? null : maximum);
+			return IterateNullable (source, double.MinValue, (a, b) => a > b);
 		}
 
-
-		public static decimal Max (this IEnumerable<decimal> source)
+		public static float? Max (this IEnumerable<float?> source)
 		{
-			CheckSource (source);
-
-			decimal maximum = decimal.MinValue;
-			int counter = 0;
-			foreach (decimal element in source) {
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
+			return IterateNullable (source, float.MinValue, (a, b) => a > b);
 		}
-
 
 		public static decimal? Max (this IEnumerable<decimal?> source)
 		{
+			return IterateNullable (source, decimal.MinValue, (a, b) => a > b);
+		}		
+
+		static T? IterateNullable<T> (IEnumerable<T?> source, T? initValue, Func<T?, T?, bool> selector) where T : struct
+		{
 			CheckSource (source);
+			
+			int counter = 0;
+			foreach (var element in source) {
+				if (!element.HasValue)
+					continue;
 
-			bool onlyNull = true;
-			decimal? maximum = decimal.MinValue;
-			foreach (decimal? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element > maximum)
-						maximum = element;
-				}
+				if (selector (element.Value, initValue))
+					initValue = element;
+				++counter;
 			}
-			return (onlyNull ? null : maximum);
-		}
 
+			if (counter == 0)
+				return null;
+			
+			return initValue;
+		}
 
 		public static TSource Max<TSource> (this IEnumerable<TSource> source)
 		{
@@ -1174,30 +1179,58 @@ namespace System.Linq
 				return maximum;
 		}
 
+		public static int Max<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
+		{
+			return Iterate (source, int.MinValue, (a, b) => { 
+				var v = selector (a); return v > b ? v : b;
+			});
+		}
+		
+		public static long Max<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
+		{
+			return Iterate (source, long.MinValue, (a, b) => { 
+				var v = selector (a); return v > b ? v : b;
+			});
+		}
 
-		public static int Max<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, int> selector)
+		public static double Max<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
+		{
+			return Iterate (source, double.MinValue, (a, b) => { 
+				var v = selector (a); return v > b ? v : b;
+			});
+		}
+		
+		public static float Max<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
+		{
+			return Iterate (source, float.MinValue, (a, b) => { 
+				var v = selector (a); return v > b ? v : b;
+			});
+		}
+		
+		public static decimal Max<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
+		{
+			return Iterate (source, decimal.MinValue, (a, b) => { 
+				var v = selector (a); return v > b ? v : b;
+			});
+		}		
+		
+		static U Iterate<T, U> (IEnumerable<T> source, U initValue, Func<T, U, U> selector)
 		{
 			CheckSourceAndSelector (source, selector);
-
-			int maximum = int.MinValue;
+			
 			int counter = 0;
-			foreach (TSource item in source) {
-				int element = selector (item);
-				if (element > maximum)
-					maximum = element;
-				counter++;
+			foreach (var element in source) {
+				initValue = selector (element, initValue);
+				++counter;
 			}
 
 			if (counter == 0)
 				throw new InvalidOperationException ();
-			else
-				return maximum;
+			
+			return initValue;
 		}
 
-
-		public static int? Max<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, int?> selector)
+		public static int? Max<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
 			CheckSourceAndSelector (source, selector);
 
@@ -1213,29 +1246,7 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : maximum);
 		}
-
-
-		public static long Max<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, long> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			long maximum = long.MinValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				long element = selector (item);
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
-		}
-
-
+		
 		public static long? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, long?> selector)
 		{
@@ -1253,28 +1264,6 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : maximum);
 		}
-
-
-		public static double Max<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, double> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			double maximum = double.MinValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				double element = selector (item);
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
-		}
-
 
 		public static double? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, double?> selector)
@@ -1295,27 +1284,6 @@ namespace System.Linq
 		}
 
 
-		public static decimal Max<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, decimal> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			decimal maximum = decimal.MinValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				decimal element = selector (item);
-				if (element > maximum)
-					maximum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
-		}
-
-
 		public static decimal? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, decimal?> selector)
 		{
@@ -1333,7 +1301,6 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : maximum);
 		}
-
 
 		public static TResult Max<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, TResult> selector)
@@ -1375,147 +1342,54 @@ namespace System.Linq
 
 		public static int Min (this IEnumerable<int> source)
 		{
-			CheckSource (source);
-
-			int minimum = int.MaxValue;
-			int counter = 0;
-			foreach (int element in source) {
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
-		}
-
-
-		public static int? Min (this IEnumerable<int?> source)
-		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			int? minimum = int.MaxValue;
-			foreach (int? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return Iterate (source, int.MaxValue, (a, b) => a < b);
 		}
 
 		public static long Min (this IEnumerable<long> source)
 		{
-			CheckSource (source);
-
-			long minimum = long.MaxValue;
-			int counter = 0;
-			foreach (long element in source) {
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return Iterate (source, long.MaxValue, (a, b) => a < b);
 		}
-
-
-		public static long? Min (this IEnumerable<long?> source)
-		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			long? minimum = long.MaxValue;
-			foreach (long? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
-		}
-
-
+		
 		public static double Min (this IEnumerable<double> source)
 		{
-			CheckSource (source);
-
-			double minimum = double.MaxValue;
-			int counter = 0;
-			foreach (double element in source) {
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return Iterate (source, double.MaxValue, (a, b) => a < b);
 		}
 
-
-		public static double? Min (this IEnumerable<double?> source)
+		public static float Min (this IEnumerable<float> source)
 		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			double? minimum = double.MaxValue;
-			foreach (double? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return Iterate (source, float.MaxValue, (a, b) => a < b);
 		}
-
 
 		public static decimal Min (this IEnumerable<decimal> source)
 		{
-			CheckSource (source);
-
-			decimal minimum = decimal.MaxValue;
-			int counter = 0;
-			foreach (decimal element in source) {
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return Iterate (source, decimal.MaxValue, (a, b) => a < b);
 		}
 
+		public static int? Min (this IEnumerable<int?> source)
+		{
+			return IterateNullable (source, int.MaxValue, (a, b) => a < b);
+		}
+
+		public static long? Min (this IEnumerable<long?> source)
+		{
+			return IterateNullable (source, long.MaxValue, (a, b) => a < b);
+		}
+		
+		public static double? Min (this IEnumerable<double?> source)
+		{
+			return IterateNullable (source, double.MaxValue, (a, b) => a < b);
+		}
+
+		public static float? Min (this IEnumerable<float?> source)
+		{
+			return IterateNullable (source, float.MaxValue, (a, b) => a < b);
+		}
 
 		public static decimal? Min (this IEnumerable<decimal?> source)
 		{
-			CheckSource (source);
-
-			bool onlyNull = true;
-			decimal? minimum = decimal.MaxValue;
-			foreach (decimal? element in source) {
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return IterateNullable (source, decimal.MaxValue, (a, b) => a < b);
 		}
-
-
+		
 		public static TSource Min<TSource> (this IEnumerable<TSource> source)
 		{
 			CheckSource (source);
@@ -1548,27 +1422,40 @@ namespace System.Linq
 				return minimum;
 		}
 
-
-		public static int Min<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, int> selector)
+		public static int Min<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
-			CheckSourceAndSelector (source, selector);
-
-			int minimum = int.MaxValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				int element = selector (item);
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return Iterate (source, int.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
 		}
-
+		
+		public static long Min<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
+		{
+			return Iterate (source, long.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
+		}
+		
+		public static double Min<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
+		{
+			return Iterate (source, double.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
+		}
+		
+		public static float Min<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
+		{
+			return Iterate (source, float.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
+		}
+		
+		public static decimal Min<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
+		{
+			return Iterate (source, decimal.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
+		}
 
 		public static int? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, int?> selector)
@@ -1588,28 +1475,6 @@ namespace System.Linq
 			return (onlyNull ? null : minimum);
 		}
 
-
-		public static long Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, long> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			long minimum = long.MaxValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				long element = selector (item);
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
-		}
-
-
 		public static long? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, long?> selector)
 		{
@@ -1628,28 +1493,6 @@ namespace System.Linq
 			return (onlyNull ? null : minimum);
 		}
 
-
-		public static double Min<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, double> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			double minimum = double.MaxValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				double element = selector (item);
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
-		}
-
-
 		public static double? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, double?> selector)
 		{
@@ -1667,28 +1510,6 @@ namespace System.Linq
 			}
 			return (onlyNull ? null : minimum);
 		}
-
-
-		public static decimal Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, decimal> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			decimal minimum = decimal.MaxValue;
-			int counter = 0;
-			foreach (TSource item in source) {
-				decimal element = selector (item);
-				if (element < minimum)
-					minimum = element;
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
-		}
-
 
 		public static decimal? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, decimal?> selector)
@@ -2060,208 +1881,146 @@ namespace System.Linq
 
 		public static int Sum (this IEnumerable<int> source)
 		{
-			CheckSource (source);
-
-			int sum = 0;
-			foreach (int element in source)
-				sum += element;
-
-			return sum;
+			return Sum<int, int> (source, (a, b) => a + b);
 		}
-
-		public static int Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			int sum = 0;
-			foreach (TSource element in source)
-				sum += selector (element);
-
-			return sum;
-		}
-
-
+		
 		public static int? Sum (this IEnumerable<int?> source)
 		{
-			CheckSource (source);
-
-			int? sum = 0;
-			foreach (int? element in source)
-				if (element.HasValue)
-					sum += element.Value;
-
-			return sum;
+			return SumNullable<int?, int?> (source, (a, b) => a.HasValue ? a + b : a);
 		}
-
-
+		
+		public static int Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
+		{
+			return Sum<TSource, int> (source, (a, b) => a + selector (b));
+		}
+		
 		public static int? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
-
-			int? sum = 0;
-			foreach (TSource element in source) {
-				int? item = selector (element);
-				if (item.HasValue)
-					sum += item.Value;
-			}
-
-			return sum;
+			return SumNullable<TSource, int?> (source, (a, b) => { 
+				var value = selector (b);
+				return value.HasValue ? a + value.Value : a;
+			});
 		}
-
-
+		
 		public static long Sum (this IEnumerable<long> source)
 		{
-			CheckSource (source);
-
-			long sum = 0;
-			foreach (long element in source)
-				sum += element;
-
-			return sum;
+			return Sum<long, long> (source, (a, b) => a + b);
 		}
-
-
-		public static long Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			long sum = 0;
-			foreach (TSource element in source)
-				sum += selector (element);
-
-			return sum;
-		}
-
-
+		
 		public static long? Sum (this IEnumerable<long?> source)
 		{
-			CheckSource (source);
-
-			long? sum = 0;
-			foreach (long? element in source)
-				if (element.HasValue)
-					sum += element.Value;
-
-			return sum;
+			return SumNullable<long?, long?> (source, (a, b) => a.HasValue ? a + b : a);
+		}		
+		
+		public static long Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
+		{
+			return Sum<TSource, long> (source, (a, b) => a + selector (b));
 		}
-
-
+		
 		public static long? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
-
-			long? sum = 0;
-			foreach (TSource element in source) {
-				long? item = selector (element);
-				if (item.HasValue)
-					sum += item.Value;
-			}
-
-			return sum;
-		}
-
-
+			return SumNullable<TSource, long?> (source, (a, b) => { 
+				var value = selector (b);
+				return value.HasValue ? a + value.Value : a;
+			});
+		}	
+		
 		public static double Sum (this IEnumerable<double> source)
 		{
-			CheckSource (source);
-
-			double sum = 0;
-			foreach (double element in source)
-				sum += element;
-
-			return sum;
+			return Sum<double, double> (source, (a, b) => a + b);
 		}
-
-
-		public static double Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			double sum = 0;
-			foreach (TSource element in source)
-				sum += selector (element);
-
-			return sum;
-		}
-
-
+		
 		public static double? Sum (this IEnumerable<double?> source)
 		{
-			CheckSource (source);
-
-			double? sum = 0;
-			foreach (double? element in source)
-				if (element.HasValue)
-					sum += element.Value;
-
-			return sum;
+			return SumNullable<double?, double?> (source, (a, b) => a.HasValue ? a + b : a);
 		}
-
-
+		
+		public static double Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
+		{
+			return Sum<TSource, double> (source, (a, b) => a + selector (b));
+		}
+		
 		public static double? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
-
-			double? sum = 0;
-			foreach (TSource element in source) {
-				double? item = selector (element);
-				if (item.HasValue)
-					sum += item.Value;
-			}
-
-			return sum;
+			return SumNullable<TSource, double?> (source, (a, b) => { 
+				var value = selector (b);
+				return value.HasValue ? a + value.Value : a;
+			});
+		}	
+		
+		public static float Sum (this IEnumerable<float> source)
+		{
+			return Sum<float, float> (source, (a, b) => a + b);
 		}
-
-
+		
+		public static float? Sum (this IEnumerable<float?> source)
+		{
+			return SumNullable<float?, float?> (source, (a, b) => a.HasValue ? a + b : a);
+		}		
+		
+		public static float Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
+		{
+			return Sum<TSource, float> (source, (a, b) => a + selector (b));
+		}
+		
+		public static float? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
+		{
+			return SumNullable<TSource, float?> (source, (a, b) => { 
+				var value = selector (b);
+				return value.HasValue ? a + value.Value : a;
+			});
+		}		
+		
 		public static decimal Sum (this IEnumerable<decimal> source)
 		{
-			CheckSource (source);
-
-			decimal sum = 0;
-			foreach (decimal element in source)
-				sum += element;
-
-			return sum;
+			return Sum<decimal, decimal> (source, (a, b) => a + b);
 		}
-
-
-		public static decimal Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
-		{
-			CheckSourceAndSelector (source, selector);
-
-			decimal sum = 0;
-			foreach (TSource element in source)
-				sum += selector (element);
-
-			return sum;
-		}
-
-
+		
 		public static decimal? Sum (this IEnumerable<decimal?> source)
 		{
-			CheckSource (source);
-
-			decimal? sum = 0;
-			foreach (decimal? element in source)
-				if (element.HasValue)
-					sum += element.Value;
-
-			return sum;
+			return SumNullable<decimal?, decimal?> (source, (a, b) => a.HasValue ? a + b : a);
+		}		
+		
+		public static decimal Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
+		{
+			return Sum<TSource, decimal> (source, (a, b) => a + selector (b));
 		}
-
-
+		
 		public static decimal? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			return SumNullable<TSource, decimal?> (source, (a, b) => { 
+				var value = selector (b);
+				return value.HasValue ? a + value.Value : a;
+			});
+		}		
+		
+		static TR Sum<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> func)
+		{
+			CheckSource (source);
 
-			decimal? sum = 0;
-			foreach (TSource element in source) {
-				decimal? item = selector (element);
-				if (item.HasValue)
-					sum += item.Value;
+			TR total = default (TR);
+			int counter = 0;
+			foreach (var element in source) {
+				total = func (total, element);
+				++counter;
 			}
 
-			return sum;
+			if (counter == 0)
+				throw new InvalidOperationException ();
+				
+			return total;
+		}
+		
+		static TR SumNullable<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> func)
+		{
+			CheckSource (source);
+
+			TR total = default (TR);
+			foreach (var element in source) {
+				total = func (total, element);
+			}
+
+			return total;
 		}
 
 		#endregion
@@ -2365,13 +2124,14 @@ namespace System.Linq
 		#endregion
 
 		#region ToDictionary
-		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
+		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement> (this IEnumerable<TSource> source,
+				Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
 		{
 			return ToDictionary<TSource, TKey, TElement> (source, keySelector, elementSelector, null);
 		}
 
-
-		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
+		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement> (this IEnumerable<TSource> source,
+				Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
 			CheckSourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
@@ -2381,6 +2141,21 @@ namespace System.Linq
 
 			return dict;
 		}
+		
+		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this IEnumerable<TSource> source,
+				Func<TSource, TKey> keySelector)
+		{
+			return ToDictionary (source, keySelector, null);
+		}
+
+		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this IEnumerable<TSource> source,
+				Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
+		{
+			throw new NotImplementedException ();
+			// FIXME: compiler issue
+			//return ToDictionary (source, keySelector, (a) => a, comparer);
+		}
+		
 		#endregion
 
 		#region ToList
@@ -2394,13 +2169,12 @@ namespace System.Linq
 
 		#region ToLookup
 
-		public static Lookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
 		{
 			return ToLookup<TSource, TKey> (source, keySelector, null);
 		}
 
-
-		public static Lookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
+		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
 			CheckSourceAndKeySelector (source, keySelector);
@@ -2417,15 +2191,13 @@ namespace System.Linq
 			return new Lookup<TKey, TSource> (dictionary);
 		}
 
-
-		public static Lookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
+		public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector)
 		{
 			return ToLookup<TSource, TKey, TElement> (source, keySelector, elementSelector, null);
 		}
 
-
-		public static Lookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
+		public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
 			CheckSourceAndKeyElementSelectors (source, keySelector, elementSelector);
@@ -2440,15 +2212,6 @@ namespace System.Linq
 				dictionary [key].Add (elementSelector (element));
 			}
 			return new Lookup<TKey, TElement> (dictionary);
-		}
-
-		#endregion
-
-		#region ToSequence
-
-		public static IEnumerable<T> ToSequence<T> (this IEnumerable<T> source)
-		{
-			return (IEnumerable<T>) source;
 		}
 
 		#endregion

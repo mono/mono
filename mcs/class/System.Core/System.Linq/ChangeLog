@@ -1,3 +1,7 @@
+2007-12-04  Marek Safar <marek.safar@gmail.com>
+
+	* Enumerable.cs: Refactor some copy&paste blocks.
+
 2007-11-28  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: fix warnings.
