@@ -1004,7 +1004,35 @@ namespace MonoTests.System.Text.RegularExpressions {
                         new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, ")(","Fail."),
                         new RegexTrial (@"^(((?<foo>\()[^()]*)+((?<bar-foo>\))[^()]*)+)+(?(foo)(?!))$", RegexOptions.None, "((a((b))c)","Fail."),
 
-    			new RegexTrial (@"b", RegexOptions.RightToLeft, "babaaa", "Pass. Group[0]=(2,1)")
-               };
+    			new RegexTrial (@"b", RegexOptions.RightToLeft, "babaaa", "Pass. Group[0]=(2,1)"),
+			
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[n]", "Pass. Group[0]=(0,3) Group[1]=(1,1)"),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "n", "Pass. Group[0]=(0,1) Group[1]=(0,1)"),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "n[i]e", "Fail."),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[n", "Fail."),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "]n]", "Fail."),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, @"\[n\]", "Fail."),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, @"[n\]", "Pass. Group[0]=(0,4) Group[1]=(1,2)"),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, @"[n\[]", "Pass. Group[0]=(0,5) Group[1]=(1,3)"),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, @"[[n]", "Pass. Group[0]=(0,4) Group[1]=(1,2)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s] . [n]", "Pass. Group[0]=(0,9) Group[1]=(1,1) Group[2]=(7,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s] . n", "Pass. Group[0]=(0,7) Group[1]=(1,1) Group[2]=(6,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "s.[ n ]", "Pass. Group[0]=(0,7) Group[1]=(0,1) Group[2]=(3,3)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, " . n", "Pass. Group[0]=(0,4) Group[1]=(0,1) Group[2]=(3,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "s. ", "Pass. Group[0]=(0,3) Group[1]=(0,1) Group[2]=(2,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[.]. ", "Pass. Group[0]=(0,5) Group[1]=(1,1) Group[2]=(4,1)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[c].[s].[n]", "Pass. Group[0]=(0,11) Group[1]=(1,1) Group[2]=(5,1) Group[3]=(9,1)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, " c . s . n ", "Pass. Group[0]=(0,11) Group[1]=(0,3) Group[2]=(5,2) Group[3]=(9,2)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, " . [.] . [ ]", "Pass. Group[0]=(0,12) Group[1]=(0,1) Group[2]=(4,1) Group[3]=(10,1)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "c.n", "Pass. Group[0]=(0,3) Group[1]=(0,1) Group[2]=(2,1)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[c] .[n]", "Pass. Group[0]=(0,8) Group[1]=(1,1) Group[2]=(6,1)"),
+			new RegexTrial(@"^((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "c.n.", "Fail."),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "s.c.n", "Pass. Group[0]=(0,5) Group[1]=(0,1) Group[2]=(2,1) Group[3]=(4,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s].[c].[n]", "Pass. Group[0]=(0,11) Group[1]=(1,1) Group[2]=(5,1) Group[3]=(9,1)"),
+			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s].[c].", "Fail."),
+			new RegexTrial(@"^((\[(?<ColName>.+)\])|(?<ColName>\S+))([ ]+(?<Order>ASC|DESC))?$", RegexOptions.IgnoreCase|RegexOptions.ExplicitCapture, "[id]]", "Pass. Group[0]=(0,5) Group[1]=(1,3) Group[2]="),
+			new RegexTrial(@"a{1,2147483647}", RegexOptions.None, "a", "Pass. Group[0]=(0,1)")
+
+		};
 	}
 }

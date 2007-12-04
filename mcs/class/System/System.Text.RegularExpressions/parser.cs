@@ -761,8 +761,8 @@ namespace System.Text.RegularExpressions.Syntax {
 
 			/* check bounds and ordering */
 
-			if (n >= 0xffff || m >= 0xffff)
-				throw NewParseException ("Illegal {x, y} - maximum of 65535.");
+			if (n > 0x7fffffff || m > 0x7fffffff)
+				throw NewParseException ("Illegal {x, y} - maximum of 2147483647.");
 			if (m >= 0 && m < n)
 				throw NewParseException ("Illegal {x, y} with x > y.");
 
@@ -772,7 +772,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			if (m > 0)
 				max = m;
 			else
-				max = 0xffff;
+				max = 0x7fffffff;
 
 			return true;
 		}

@@ -1,5 +1,9 @@
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
+	* parser.cs: Max value of m for a construct {n,m} is 2147483647.
+
+2007-12-04  Arina Itkes <arinai@mainsoft.com>
+
 	* Uri.cs: Unix absolute path should not be valid on Windows.
 
 2007-12-04  Arina Itkes <arinai@mainsoft.com>

@@ -269,6 +269,7 @@
     <Compile Include="System.Text.RegularExpressions\RegexCompilationInfoTest.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexMatchTests.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexReplace.cs" />
+    <Compile Include="System.Text.RegularExpressions\RegexReplaceTests.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexResultTests.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexRunnerFactoryCas.cs" />
     <Compile Include="System.Text.RegularExpressions\RegexTest.cs" />

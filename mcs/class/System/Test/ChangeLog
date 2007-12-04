@@ -1,5 +1,10 @@
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
+	* System_test.dll.sources : added RegexReplaceTests.cs
+	* PerlTest.cs, PerlTrials.cs, RegexResultTests.cs: New tests added.
+
+2007-12-04  Arina Itkes <arinai@mainsoft.com>
+
 	* UriTest.cs, UriTest2.cs : Tests that check Unix path should 
 	  not run on Windows.
 

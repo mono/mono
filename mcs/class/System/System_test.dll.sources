@@ -268,6 +268,7 @@ System.Text.RegularExpressions/MatchTest.cs
 System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexCompilationInfoTest.cs
+System.Text.RegularExpressions/RegexReplaceTests.cs
 System.Text.RegularExpressions/RegexTrial.cs
 System.Text.RegularExpressions/RegexTest.cs
 System.Text.RegularExpressions/RegexBugs.cs

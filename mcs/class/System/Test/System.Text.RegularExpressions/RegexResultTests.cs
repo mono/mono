@@ -79,6 +79,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			new testcase ("2 314 1592 65358", 	@"\d\d\d\d|\d\d\d", "a",	"a"	),//42
 			new testcase ("<i>am not</i>", 		"<(.+?)>", 	"[$0:$1]",	"[<i>:i]"),//43
 			new testcase ("F2345678910L71",	@"(F)(2)(3)(4)(5)(6)(?<S>7)(8)(9)(10)(L)\11", 	"${S}$11$1", "77F" 	),//44
+			new testcase ("a", "a", @"\\", @"\\"), // bug #317092 //45
 		};
 
 		[Test]
@@ -172,5 +173,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]
 		[Category("NotWorking")]
 		public void ResultTest_044 () { tests [44].Execute (); }
+		[Test]
+		public void ResultTest_045 () { tests [45].Execute (); }
 	}
 }

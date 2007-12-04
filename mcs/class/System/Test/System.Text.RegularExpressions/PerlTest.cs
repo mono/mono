@@ -994,5 +994,31 @@ namespace MonoTests.System.Text.RegularExpressions {
 		[Test] public void Trial0962 () { PerlTrials.trials [962].Execute (); }
 		[Test] public void Trial0963 () { PerlTrials.trials [963].Execute (); }
 		[Test] public void Trial0964 () { PerlTrials.trials [964].Execute (); }
+		[Test] public void Trial0965 () { PerlTrials.trials [965].Execute (); }
+		[Test] public void Trial0966 () { PerlTrials.trials [966].Execute (); }
+		[Test] public void Trial0967 () { PerlTrials.trials [967].Execute (); }
+		[Test] public void Trial0968 () { PerlTrials.trials [968].Execute (); }
+		[Test] public void Trial0969 () { PerlTrials.trials [969].Execute (); }
+		[Test] public void Trial0970 () { PerlTrials.trials [970].Execute (); }
+		[Test] public void Trial0971 () { PerlTrials.trials [971].Execute (); }
+		[Test] public void Trial0972 () { PerlTrials.trials [972].Execute (); }
+		[Test] public void Trial0973 () { PerlTrials.trials [973].Execute (); }
+		[Test] public void Trial0974 () { PerlTrials.trials [974].Execute (); }
+		[Test] public void Trial0975 () { PerlTrials.trials [975].Execute (); }
+		[Test] public void Trial0976 () { PerlTrials.trials [976].Execute (); }
+		[Test] public void Trial0977 () { PerlTrials.trials [977].Execute (); }
+		[Test] public void Trial0978 () { PerlTrials.trials [978].Execute (); }
+		[Test] public void Trial0979 () { PerlTrials.trials [979].Execute (); }
+		[Test] public void Trial0980 () { PerlTrials.trials [980].Execute (); }
+		[Test] public void Trial0981 () { PerlTrials.trials [981].Execute (); }
+		[Test] public void Trial0982 () { PerlTrials.trials [982].Execute (); }
+		[Test] public void Trial0983 () { PerlTrials.trials [983].Execute (); }
+		[Test] public void Trial0984 () { PerlTrials.trials [984].Execute (); }
+		[Test] public void Trial0985 () { PerlTrials.trials [985].Execute (); }
+		[Test] public void Trial0986 () { PerlTrials.trials [986].Execute (); }
+		[Test] public void Trial0987 () { PerlTrials.trials [987].Execute (); }
+		[Test] public void Trial0988 () { PerlTrials.trials [988].Execute (); }
+		[Test] public void Trial0989 () { PerlTrials.trials [989].Execute (); }
+		[Test] public void Trial0990 () { PerlTrials.trials [990].Execute (); }
 	}
 }
