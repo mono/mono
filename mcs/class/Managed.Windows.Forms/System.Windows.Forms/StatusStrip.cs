@@ -155,7 +155,7 @@ namespace System.Windows.Forms
 			base.OnPaintBackground (pevent);
 			
 			if (this.sizing_grip)
-				this.Renderer.DrawStatusStripSizingGrip (new ToolStripRenderEventArgs (pevent.Graphics, this));
+				this.Renderer.DrawStatusStripSizingGrip (new ToolStripRenderEventArgs (pevent.Graphics, this, Bounds, SystemColors.Control));
 		}
 
 		protected virtual void OnSpringTableLayoutCore ()

@@ -1,5 +1,10 @@
 2007-12-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* StatusStrip.cs: Fill in AffectedBounds when drawing the grip
+	so custom renderers can correctly place it.
+
+2007-12-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Application.cs: Let WM_CHAR messages flow through to controls
 	hosted in Strips.  [Fixes bug #343972]
 
