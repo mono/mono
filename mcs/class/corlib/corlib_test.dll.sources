@@ -141,6 +141,7 @@ System.Resources/ResourceManagerTest.cs
 System.Resources/ResourceWriterTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
+System.Runtime.InteropServices/ExternalExceptionTest.cs
 System.Runtime.InteropServices/GCHandleTest.cs
 System.Runtime.InteropServices/MarshalTest.cs
 System.Runtime.InteropServices/RuntimeEnvironmentTest.cs

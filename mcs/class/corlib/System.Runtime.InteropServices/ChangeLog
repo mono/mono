@@ -1,3 +1,7 @@
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ExternalException.cs: Set HResult to match MS.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ComVisible.cs: Fix parameter name (part of #322850).

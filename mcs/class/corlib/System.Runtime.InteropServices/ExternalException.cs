@@ -33,30 +33,34 @@
 using System.Runtime.Serialization;
 using System.Globalization;
 
-namespace System.Runtime.InteropServices {
+namespace System.Runtime.InteropServices
+{
 	[Serializable]
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	public class ExternalException : SystemException {
-		// Constructors
+	public class ExternalException : SystemException
+	{
 		public ExternalException ()
 			: base (Locale.GetText ("External exception"))
 		{
+			HResult = -2147467259;
 		}
 
 		public ExternalException (string message)
 			: base (message)
 		{
+			HResult = -2147467259;
 		}
 
 		protected ExternalException(SerializationInfo info, StreamingContext context)
 			: base (info, context) {
 		}
-		
+
 		public ExternalException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = -2147467259;
 		}
 
 		public ExternalException (string message, int errorCode)
