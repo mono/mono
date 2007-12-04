@@ -9703,6 +9703,18 @@ mono_op_imm_to_op (int opcode)
 		return OP_IREM_UN;
 	case OP_IREM_IMM:
 		return OP_IREM;
+	case OP_DIV_IMM:
+#if SIZEOF_VOID_P == 4
+		return OP_IDIV;
+#else
+		return OP_LDIV;
+#endif
+	case OP_REM_IMM:
+#if SIZEOF_VOID_P == 4
+		return OP_IREM;
+#else
+		return OP_LREM;
+#endif
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
 		g_assert_not_reached ();

@@ -1,3 +1,9 @@
+2007-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm): Add more opcodes.
+	
+	* mini-amd64.c (mono_arch_lowering_pass): Use mono_op_to_op_imm () here.
+
 2007-11-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm): Add more opcodes.

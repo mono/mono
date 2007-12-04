@@ -2490,26 +2490,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			NEW_INS (cfg, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
-			switch (ins->opcode) {
-			case OP_DIV_IMM:
-				ins->opcode = OP_LDIV;
-				break;
-			case OP_REM_IMM:
-				ins->opcode = OP_LREM;
-				break;
-			case OP_IDIV_IMM:
-				ins->opcode = OP_IDIV;
-				break;
-			case OP_IREM_IMM:
-				ins->opcode = OP_IREM;
-				break;
-			case OP_IDIV_UN_IMM:
-				ins->opcode = OP_IDIV_UN;
-				break;
-			case OP_IREM_UN_IMM:
-				ins->opcode = OP_IREM_UN;
-				break;
-			}
+			ins->opcode = mono_op_imm_to_op (ins->opcode);
 			ins->sreg2 = temp->dreg;
 			break;
 		case OP_COMPARE_IMM:
