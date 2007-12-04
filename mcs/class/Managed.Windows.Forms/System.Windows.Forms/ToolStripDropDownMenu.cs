@@ -155,8 +155,10 @@ namespace System.Windows.Forms
 
 			this.Renderer.DrawToolStripBackground (e);
 			
-			if (this.ShowCheckMargin || this.ShowImageMargin)
+			if (this.ShowCheckMargin || this.ShowImageMargin) {
+				e = new ToolStripRenderEventArgs (pevent.Graphics, this, new Rectangle (e.AffectedBounds.Location, new Size (25, e.AffectedBounds.Height)), SystemColors.Control);
 				this.Renderer.DrawImageMargin (e);
+			}
 		}
 
 		protected override void SetDisplayedItems ()
