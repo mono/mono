@@ -1,3 +1,8 @@
+2007-12-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for regression #345467
+ 	* typemanager.cs: Fixed type arguments comparison.
+ 	
 2007-11-28  Marek Safar  <marek.safar@gmail.com>
 
  	* expression.cs (BaseAccess): Type arguments can be null.
