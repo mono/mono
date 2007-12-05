@@ -1,3 +1,8 @@
+2007-12-05  Geoff Norton  <gnorton@novell.com>
+
+	* DnsTest.cs: Update the IP address for go-mono.com to the
+	new address
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebProxyTest.cs: Remove unused fields.
