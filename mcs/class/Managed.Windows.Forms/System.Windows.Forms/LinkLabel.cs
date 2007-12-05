@@ -219,11 +219,10 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LinkLabel.LinkCollection Links {
 			get {
-                                if (link_collection == null)
-                                        link_collection = new LinkCollection (this);
-                                        
-                                return link_collection;
-                        }
+				if (link_collection == null)
+					link_collection = new LinkCollection (this);
+				return link_collection;
+			}
 		}
 
 		[DefaultValue (false)]
@@ -249,13 +248,13 @@ namespace System.Windows.Forms
 
 		[RefreshProperties(RefreshProperties.Repaint)]
 		public override string Text {
-			get { return base.Text;	}
+			get { return base.Text; }
 			set {
 				if (base.Text == value)
 					return;
 
 				base.Text = value;
-				CreateLinkPieces ();				
+				CreateLinkPieces ();
 			}
 		}
 
@@ -309,7 +308,7 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-			CreateLinkPieces ();			
+			CreateLinkPieces ();
 		}
 
 #if NET_2_0
@@ -333,7 +332,7 @@ namespace System.Windows.Forms
 
 		protected override void OnGotFocus (EventArgs e)
 		{
-			base.OnGotFocus (e);			
+			base.OnGotFocus (e);
 
 			// Set focus to the first enabled link piece
 			if (focused_index == -1) {
@@ -381,7 +380,7 @@ namespace System.Windows.Forms
 
 		protected override void OnLostFocus (EventArgs e)
 		{
-			base.OnLostFocus (e);			
+			base.OnLostFocus (e);
 			
 			// Clean focus in link pieces
 			if (focused_index != -1)
@@ -493,7 +492,7 @@ namespace System.Windows.Forms
 
 		protected override void OnTextAlignChanged (EventArgs e)
 		{
-			CreateLinkPieces ();			
+			CreateLinkPieces ();
 			base.OnTextAlignChanged (e);
 		}
 
@@ -536,8 +535,7 @@ namespace System.Windows.Forms
 							return;
 						}
 					}
-				}
-				else {
+				} else {
 					if (focused_index == -1)
 						focused_index = sorted_links.Length;
 
@@ -719,7 +717,7 @@ namespace System.Windows.Forms
 			internal int length;
 			private object linkData;
 			private int start;
-			private bool visited;			
+			private bool visited;
 			private LinkLabel owner;
 			private bool hovered;
 			internal ArrayList pieces;
@@ -917,8 +915,8 @@ namespace System.Windows.Forms
 
 			public LinkCollection (LinkLabel owner)
 			{
-				if (owner==null)
-					throw new ArgumentNullException ();
+				if (owner == null)
+					throw new ArgumentNullException ("owner");
 
 				this.owner = owner;
 			}
@@ -932,7 +930,7 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
-			public virtual LinkLabel.Link this[int index]  {
+			public virtual LinkLabel.Link this[int index] {
 				get {
 					if (index < 0 || index >= Count)
 						throw  new  ArgumentOutOfRangeException();
@@ -1136,7 +1134,6 @@ namespace System.Windows.Forms
 			get {
 				return use_compatible_text_rendering;
 			}
-
 			set {
 				use_compatible_text_rendering = value;
 			}
