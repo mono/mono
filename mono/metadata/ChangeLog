@@ -1,5 +1,12 @@
 2007-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): null literal requires special handling,
+	the value pushed on stack need to be flagged as so.
+
+	* verify.c (do_ldelema): Verify ldelema properly.
+
+2007-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Verify ldlen properly.
 
 2007-12-05  Zoltan Varga  <vargaz@gmail.com>
