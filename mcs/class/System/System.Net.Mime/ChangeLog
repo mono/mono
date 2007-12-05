@@ -1,3 +1,9 @@
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentType.cs : added GuessTransferEncoding() to guess correct
+	  encoding type for sys.net.mail.Attachment.
+	  Here UTF8Encoding should not include BOM.
+
 2007-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContentType.cs : moved couple of encoding stuff to here.

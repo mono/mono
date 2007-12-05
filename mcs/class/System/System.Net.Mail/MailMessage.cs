@@ -145,17 +145,7 @@ namespace System.Net.Mail {
 		}
 
 		internal TransferEncoding ContentTransferEncoding {
-			get {
-				Encoding enc = BodyEncoding;
-				if (Encoding.ASCII.Equals (enc))
-					return TransferEncoding.SevenBit;
-				else if (Encoding.UTF8.CodePage == enc.CodePage ||
-				    Encoding.Unicode.CodePage == enc.CodePage ||
-				    Encoding.UTF32.CodePage == enc.CodePage)
-					return TransferEncoding.Base64;
-				else
-					return TransferEncoding.QuotedPrintable;
-			}
+			get { return ContentType.GuessTransferEncoding (BodyEncoding); }
 		}
 
 		public Encoding BodyEncoding {
