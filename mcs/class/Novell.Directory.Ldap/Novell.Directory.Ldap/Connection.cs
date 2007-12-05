@@ -951,17 +951,29 @@ namespace Novell.Directory.Ldap
 		/* package */
 		internal void  writeMessage(Message info)
 		{
+			ExceptionMessages em = new ExceptionMessages();
+			System.Object [][]contents = em.getContents();
 			messages.Add(info);
 			// For bind requests, if not connected, attempt to reconnect
 			if (info.BindRequest && (Connected == false) && ((System.Object) host != null))
 			{
 				connect(host, port, info.MessageID);
 			}
-			LdapMessage msg = info.Request;
-			writeMessage(msg);
-			return ;
+			if(Connected == true)
+			{
+				LdapMessage msg = info.Request;
+				writeMessage(msg);
+				return ;
+			}
+			else
+			{
+				int errorCount=0;
+				for(errorCount=0;errorCount<contents.Length;errorCount++)
+					if(contents[errorCount][0] == "CONNECTION_CLOSED")
+						break;
+				throw new LdapException(ExceptionMessages.CONNECTION_CLOSED, new System.Object[]{host, port}, LdapException.CONNECT_ERROR, (String)contents[errorCount][1]);
+			}
 		}
-		
 		
 		/// <summary> Writes an LdapMessage to the Ldap server over a socket.
 		/// 
