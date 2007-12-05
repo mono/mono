@@ -1,3 +1,10 @@
+2007-12-05  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (socket_io_add_poll): Asynchronous connect() on
+	Solaris needs the same workaround as BSD-derived systems.  Fixes
+	bug 323524, patch by Burkhard Linke
+	<burkhard.linke@CeBiTec.Uni-Bielefeld.DE>
+
 2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* process.c: When ProcessStartInfo.ErrorDialog is true, pass window
