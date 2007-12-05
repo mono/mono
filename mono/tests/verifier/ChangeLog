@@ -1,3 +1,8 @@
+2007-12-05 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for ldlen
+	* make_ldlen_test.sh: new test generator
+
 2007-10-26 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_array_method.cs: test for invoking array methods.
