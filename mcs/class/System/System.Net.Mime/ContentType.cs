@@ -40,6 +40,7 @@ namespace System.Net.Mime {
 	public class ContentType
 	{
 		#region Fields
+		static Encoding utf8unmarked;
 
 		string mediaType;
 		StringDictionary parameters = new StringDictionary ();
@@ -103,6 +104,14 @@ namespace System.Net.Mime {
 		#endregion // Constructors
 
 		#region Properties
+
+		static Encoding UTF8Unmarked {
+			get {
+				if (utf8unmarked == null)
+					utf8unmarked = new UTF8Encoding (false);
+				return utf8unmarked;
+			}
+		}
 
 		public string Boundary {
 			get { return parameters["boundary"]; }
@@ -178,8 +187,20 @@ namespace System.Net.Mime {
 		{
 			for (int i = 0; i < s.Length; i++)
 				if (s [i] >= '\u0080')
-					return Encoding.UTF8;
+					return UTF8Unmarked;
 			return Encoding.ASCII;
+		}
+
+		internal static TransferEncoding GuessTransferEncoding (Encoding enc)
+		{
+			if (Encoding.ASCII.Equals (enc))
+				return TransferEncoding.SevenBit;
+			else if (Encoding.UTF8.CodePage == enc.CodePage ||
+			    Encoding.Unicode.CodePage == enc.CodePage ||
+			    Encoding.UTF32.CodePage == enc.CodePage)
+				return TransferEncoding.Base64;
+			else
+				return TransferEncoding.QuotedPrintable;
 		}
 
 		internal static string EncodeSubjectRFC2047 (string s, Encoding enc)

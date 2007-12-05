@@ -138,7 +138,7 @@ namespace System.Net.Mail {
 			sw.Flush ();
 			ms.Position = 0;
 			Attachment a = new Attachment (ms, name, mediaType);
-			a.TransferEncoding = TransferEncoding.QuotedPrintable;
+			a.TransferEncoding = ContentType.GuessTransferEncoding (contentEncoding);
 			return a;
 		}
 

@@ -1,3 +1,10 @@
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Attachment.cs : use correct TransferEncoding when (Text)Encoding
+	  is specified.
+	* MailMessage.cs : ContentTransferEncoding implementation went into
+	  ContentType.
+
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
 	* SmtpException.cs, SmtpFailedRecipientException.cs,
