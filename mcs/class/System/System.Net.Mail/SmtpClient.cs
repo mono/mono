@@ -267,7 +267,7 @@ namespace System.Net.Mail {
 			case TransferEncoding.SevenBit:
 				return body;
 			case TransferEncoding.Base64:
-				return Convert.ToBase64String (encoding.GetBytes (body));
+				return Convert.ToBase64String (encoding.GetBytes (body), Base64FormattingOptions.InsertLineBreaks);
 			default:
 				return ToQuotedPrintable (body, encoding);
 			}
@@ -285,7 +285,7 @@ namespace System.Net.Mail {
 			case TransferEncoding.SevenBit:
 				return Encoding.ASCII.GetString (bytes);
 			case TransferEncoding.Base64:
-				return Convert.ToBase64String (bytes);
+				return Convert.ToBase64String (bytes, Base64FormattingOptions.InsertLineBreaks);
 			default:
 				return ToQuotedPrintable (bytes);
 			}
@@ -997,12 +997,12 @@ try {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username)));
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username), Base64FormattingOptions.InsertLineBreaks));
 			if (((int) status.StatusCode) != 334) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password)));
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password), Base64FormattingOptions.InsertLineBreaks));
 			if (IsError (status)) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
