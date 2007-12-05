@@ -253,8 +253,16 @@ namespace System.Configuration
 		public override int GetHashCode ()
 		{
 			int code = 0;
-			foreach (ConfigurationProperty prop in Properties)
-				code += this [prop].GetHashCode ();
+			object o;
+			
+			foreach (ConfigurationProperty prop in Properties) {
+				o = this [prop];
+				if (o == null)
+					continue;
+				
+				code += o.GetHashCode ();
+			}
+			
 			return code;
 		}
 
