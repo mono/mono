@@ -1,3 +1,7 @@
+2007-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldInfoTest.cs: Add tests for #346160.
+
 2007-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfoTest.cs: Add GetRawDefaultValue () tests.

@@ -240,6 +240,27 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
+		class Foo {
+			public static int static_field;
+			public int field;
+		}
+
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetValueWrongObject ()
+		{
+			Foo f = new Foo ();
+
+			typeof (Foo).GetField ("field").GetValue (typeof (int));
+		}
+
+		public void GetValueWrongObjectStatic ()
+		{
+			Foo f = new Foo ();
+
+			// This is allowed in MS.NET
+			typeof (Foo).GetField ("static_field").GetValue (typeof (int));
+		}
+
 #if NET_2_0
 #if !TARGET_JVM // ReflectionOnlyLoad not supported for TARGET_JVM
 		[Test]
