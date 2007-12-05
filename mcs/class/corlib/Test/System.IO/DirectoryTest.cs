@@ -1458,6 +1458,25 @@ public class DirectoryTest
 		}
 	}
 
+	[Test] // bug #346123
+	[Category ("NotWorking")]
+	public void GetDirectories_Backslash ()
+	{
+		if (!RunningOnUnix)
+			// on Windows, backslash is used as directory separator
+			return;
+
+		string dir = Path.Combine (TempFolder, @"sub\dir");
+		Directory.CreateDirectory (dir);
+
+		Assert.IsTrue (Directory.Exists (dir), "#A1");
+		Assert.IsFalse (Directory.Exists (Path.Combine (TempFolder, "dir")), "#A2");
+
+		string [] dirs = Directory.GetDirectories (TempFolder);
+		Assert.AreEqual (1, dirs.Length, "#B1");
+		Assert.AreEqual (dir, dirs [0], "#B2");
+	}
+
 	[Test]
 	public void GetParentOfRootDirectory ()
 	{
@@ -1489,6 +1508,25 @@ public class DirectoryTest
 			if (File.Exists (DirPath))
 				File.Delete (DirPath);
 		}
+	}
+
+	[Test] // bug #346123
+	[Category ("NotWorking")]
+	public void GetFiles_Backslash ()
+	{
+		if (!RunningOnUnix)
+			// on Windows, backslash is used as directory separator
+			return;
+
+		string file = Path.Combine (TempFolder, @"doc\temp1.file");
+		File.Create (file).Close ();
+
+		Assert.IsTrue (File.Exists (file), "#A1");
+		Assert.IsFalse (File.Exists (Path.Combine (TempFolder, "temp1.file")), "#A2");
+
+		string [] files = Directory.GetFiles (TempFolder);
+		Assert.AreEqual (1, files.Length, "#B1");
+		Assert.AreEqual (file, files [0], "#B2");
 	}
 
 	[Test] // bug #82212 and bug #325107
