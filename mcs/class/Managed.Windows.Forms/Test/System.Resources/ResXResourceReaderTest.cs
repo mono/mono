@@ -1472,60 +1472,6 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-
-		
-		[Test]
-		public void useResXDataNodes ()
-		{
-			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
-
-			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
-			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
-				sw.Write (string.Format (CultureInfo.InvariantCulture,
-					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
-					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
-			}
-
-			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-				r.UseResXDataNodes = true;
-				IDictionaryEnumerator enumerator = r.GetEnumerator ();
-				enumerator.MoveNext ();
-				Assert.IsNotNull (enumerator.Current, "#A1");
-				Assert.AreEqual ("foo", enumerator.Key, "#A2");
-				ResXDataNode node = enumerator.Value as ResXDataNode;
-				Assert.IsNotNull (node, "#A3");
-				Assert.AreEqual ("foo", node.Name, "#A4");
-			}
-		}
-		//TODO assemblyNames
-
-		[Test]
-		public void GetMetadataEnumerator ()
-		{
-			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
-			WriteEmbeddedResource ("32x32.ico", refFile);
-
-			string resxFile = Path.Combine (_tempDirectory, "resources.resx");
-			using (StreamWriter sw = new StreamWriter (resxFile, false, Encoding.UTF8)) {
-				sw.Write (string.Format (CultureInfo.InvariantCulture,
-					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
-					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
-			}
-
-			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
-				IDictionaryEnumerator enumerator = r.GetMetadataEnumerator ();
-				enumerator.MoveNext ();
-				Assert.IsNotNull (enumerator.Current, "#A1");
-				Assert.AreEqual ("panel_label.Locked", enumerator.Key, "#A2");
-				bool flag = (bool)enumerator.Value;
-				Assert.IsNotNull (flag, "#A3");
-				Assert.AreEqual (true, flag, "#A4");
-			}
-		}
-
 		[Test]
 		public void TypeConversion ()
 		{
@@ -1715,13 +1661,9 @@ namespace MonoTests.System.Resources
 			"	<resheader name=\"writer\">" +
 			"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
 			"	</resheader>" +
-			"	<metadata name=\"panel_label.Locked\" type=\"System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\">" +
-			"		<value>True</value>" +
-			" 	</metadata>" +
 			"	<data name=\"foo\" type=\"System.Resources.ResXFileRef, {2}\">" +
 			"		<value>{3};{4}{5}</value>" +
 			"	</data>" +
 			"</root>";
 	}
 }
-
