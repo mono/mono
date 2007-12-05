@@ -1,3 +1,8 @@
+2007-12-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationElement.cs: some property values may be null
+	objects in GetHashCode.
+
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationElementCollection.cs: ThrowOnDuplicate returns true
