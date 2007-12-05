@@ -188,7 +188,7 @@ namespace System.Net.Mime {
 			for (int i = 0; i < s.Length; i++)
 				if (s [i] >= '\u0080')
 					return UTF8Unmarked;
-			return Encoding.ASCII;
+			return null;
 		}
 
 		internal static TransferEncoding GuessTransferEncoding (Encoding enc)

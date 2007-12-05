@@ -1,5 +1,10 @@
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MailMessage.cs : fixing cosmetic .net compatibility. Automatically
+	  fill ASCII when guessed encoding is nothing.
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SmtpClient.cs : fold base64 string at 76 characters.
 	  Should fix bug #344974.
 

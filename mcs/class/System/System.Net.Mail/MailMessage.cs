@@ -131,7 +131,7 @@ namespace System.Net.Mail {
 			set {
 				// autodetect suitable body encoding (ASCII or UTF-8), if it is not initialized yet.
 				if (value != null && bodyEncoding == null)
-					bodyEncoding = GuessEncoding (value);
+					bodyEncoding = GuessEncoding (value) ?? Encoding.ASCII;
 				body = value;
 			}
 		}

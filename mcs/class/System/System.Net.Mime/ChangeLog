@@ -1,5 +1,11 @@
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContentType.cs : for SubjectEncoding, null is returned instead of 
+	  ASCII (.net compat way). For this cosmetic change, BodyEncoding is 
+	  changed to fill ASCII automatically.
+
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContentType.cs : added GuessTransferEncoding() to guess correct
 	  encoding type for sys.net.mail.Attachment.
 	  Here UTF8Encoding should not include BOM.
