@@ -1,5 +1,10 @@
 2007-12-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.h mini.c aot-compiler.c aot-runtime.c: Get rid of the
+	HAVE_PIC_AOT define and use AOT_SUPPORTED instead.
+
+2007-12-06  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-arm.h mini-arm.c: Add support for the common vtable trampoline.
 
 2007-12-03  Zoltan Varga  <vargaz@gmail.com>
