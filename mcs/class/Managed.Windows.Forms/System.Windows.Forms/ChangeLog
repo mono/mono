@@ -1,3 +1,8 @@
+2007-12-06  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: When removing controls, get the actual container
+	to notify about active control changes. Fixes 341314.
+
 2007-12-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Forgot to add Font to our serialization stuff.

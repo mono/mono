@@ -793,7 +793,7 @@ namespace System.Windows.Forms
 				owner.PerformLayout(value, "Parent");
 				owner.OnControlRemoved(new ControlEventArgs(value));
 
-				ContainerControl container = owner as ContainerControl;
+				ContainerControl container = owner.InternalGetContainerControl ();
 				if (container != null) { 
 					// Inform any container controls about the loss of a child control
 					// so that they can update their active control
@@ -3718,6 +3718,18 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		internal ContainerControl InternalGetContainerControl() {
+			Control	current = this;
+
+			while (current!=null) {
+				if ((current is ContainerControl) && ((current.control_style & ControlStyles.ContainerControl)!=0)) {
+					return current as ContainerControl;
+				}
+				current = current.parent;
+			}
+			return null;
+		}
+
 		public Control GetNextControl(Control ctl, bool forward) {
 
 			if (!this.Contains(ctl)) {
@@ -4107,6 +4119,9 @@ namespace System.Windows.Forms
 					break;
 				}
 
+#if DebugFocus
+				Console.WriteLine("{0} {1}", c, c.CanSelect);
+#endif
 				if (c.CanSelect && ((c.parent == this) || nested) && (c.tab_stop || !tabStopOnly)) {
 					c.Select (true, true);
 					return true;
