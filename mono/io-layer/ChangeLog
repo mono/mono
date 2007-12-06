@@ -1,3 +1,8 @@
+2007-12-05  Dick Porter  <dick@ximian.com>
+
+	* io.c (CreateFile): Create files with mode 0666 (&~umask) by
+	default.  Fixes bugs 325299 and 337040.
+
 2007-11-08  Dick Porter  <dick@ximian.com>
 
 	* critical-sections.h (EnterCriticalSection): Disable the critical
