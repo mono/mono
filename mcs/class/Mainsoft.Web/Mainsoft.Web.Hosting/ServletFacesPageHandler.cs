@@ -15,25 +15,31 @@ namespace Mainsoft.Web.Hosting
 {
 	class ServletFacesPageHandler : IHttpHandler
 	{
-		readonly AspNetFacesContext _facesContext;
+		readonly FacesContextFactory _facesContextFactory;
 		readonly Lifecycle _lifecycle;
 
 		public bool IsReusable {
 			get { return false; }
 		}
 
-		public ServletFacesPageHandler (AspNetFacesContext facesContext, Lifecycle lifecycle) {
-			_facesContext = facesContext;
+		public ServletFacesPageHandler (FacesContextFactory facesContextFactory, Lifecycle lifecycle) {
+			_facesContextFactory = facesContextFactory;
 			_lifecycle = lifecycle;
 		}
 
 		public void ProcessRequest (HttpContext context) {
+			ServletWorkerRequest wr = (ServletWorkerRequest) ((IServiceProvider) context).GetService (typeof (HttpWorkerRequest));
+			ServletContext servletContext = wr.GetContext ();
+			HttpServletRequest request = wr.ServletRequest;
+			HttpServletResponse response = wr.ServletResponse;
+
+			FacesContext facesContext = AspNetFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context);
 			try {
-				_lifecycle.execute (_facesContext);
+				_lifecycle.execute (facesContext);
 #if DEBUG
 				Console.WriteLine ("FacesPageHandler: before render");
 #endif
-				_lifecycle.render (_facesContext);
+				_lifecycle.render (facesContext);
 #if DEBUG
 				Console.WriteLine ("FacesPageHandler: after render");
 #endif
@@ -42,7 +48,7 @@ namespace Mainsoft.Web.Hosting
 				throw;
 			}
 			finally {
-				_facesContext.release ();
+				facesContext.release ();
 			}
 		}
 	}

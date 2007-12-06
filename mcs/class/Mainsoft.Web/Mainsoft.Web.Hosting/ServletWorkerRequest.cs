@@ -43,17 +43,17 @@ namespace Mainsoft.Web.Hosting
 		//    }
 		//}
 
-		//public HttpServletRequest ServletRequest {
-		//    get {
-		//        return _HttpServletRequest;
-		//    }
-		//}
+		public HttpServletRequest ServletRequest {
+			get {
+				return _HttpServletRequest;
+			}
+		}
 
-		//public HttpServletResponse ServletResponse {
-		//    get {
-		//        return _HttpServletResponse;
-		//    }
-		//}
+		public HttpServletResponse ServletResponse {
+			get {
+				return _HttpServletResponse;
+			}
+		}
 
 		public override string GetHttpVerbName () {
 			return _HttpServletRequest.getMethod ();

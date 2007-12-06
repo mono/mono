@@ -40,16 +40,7 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path) {
-			HttpWorkerRequest wr = (HttpWorkerRequest) ((IServiceProvider) context).GetService (typeof (HttpWorkerRequest));
-			HttpServletRequest request = (HttpServletRequest) ((IServiceProvider) wr).GetService (typeof (HttpServletRequest));
-			HttpServletResponse response = (HttpServletResponse) ((IServiceProvider) wr).GetService (typeof (HttpServletResponse));
-
-			FacesContext facesContext
-					= _facesContextFactory.getFacesContext (_servletConfig.getServletContext (),
-														   request,
-														   response,
-														   _lifecycle);
-			IHttpHandler handler = new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context), _lifecycle);
+			IHttpHandler handler = new ServletFacesPageHandler (_facesContextFactory, _lifecycle);
 			return SessionWrapper.WrapHandler (handler, context, url);
 		}
 

@@ -4,51 +4,38 @@ using System.Text;
 using javax.faces.context;
 using System.Web;
 using System.Web.UI;
+using javax.servlet;
+using javax.faces.lifecycle;
 
 namespace Mainsoft.Web.Hosting
 {
 	public class AspNetFacesContext : FacesContext
 	{
+		readonly FacesContext _oldFacesContex;
 		readonly FacesContext _facesContex;
 		readonly HttpContext _httpContext;
-		//readonly string _url;
-		//readonly string _path;
-		//Page _handler;
-
-		//public Page Handler {
-		//    get {
-		//        if (_handler == null)
-		//            _handler = (Page) PageParser.GetCompiledPageInstance (_url, _path, _httpContext);
-		//        return _handler;
-		//    }
-		//}
 
 		public HttpContext Context {
 			get { return _httpContext; }
 		}
 
-		protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext) {
-			_facesContex = facesContex;
+		protected AspNetFacesContext (FacesContext wrappedFacesContex, HttpContext httpContext, FacesContext oldFacesContex) {
+			_facesContex = wrappedFacesContex;
 			_httpContext = httpContext;
+			_oldFacesContex = oldFacesContex;
 		}
 
-		//protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, Page handler) {
-		//    _facesContex = facesContex;
-		//    _httpContext = httpContext;
-		//    _handler = handler;
-		//}
-
-		//protected AspNetFacesContext (FacesContext facesContex, HttpContext httpContext, string url, string path) {
-		//    _facesContex = facesContex;
-		//    _httpContext = httpContext;
-		//    _url = url;
-		//    _path = path;
-		//}
-
-		public static AspNetFacesContext WrapFacesContext (FacesContext facesContex, HttpContext httpContext) {
-			AspNetFacesContext ctx = new AspNetFacesContext (facesContex, httpContext);
-			FacesContext.setCurrentInstance (ctx);
-			return ctx;
+		public static AspNetFacesContext GetFacesContext (FacesContextFactory facesContextFactory,
+															ServletContext servletContext,
+															ServletRequest servletRequest,
+															ServletResponse servletResponse,
+															Lifecycle lifecycle,
+															HttpContext httpContext) {
+			FacesContext oldFacesContex = FacesContext.getCurrentInstance ();
+			FacesContext wrappedFacesContex = facesContextFactory.getFacesContext (servletContext, servletRequest, servletResponse, lifecycle);
+			AspNetFacesContext context = new AspNetFacesContext (wrappedFacesContex, httpContext, oldFacesContex);
+			FacesContext.setCurrentInstance (context);
+			return context;
 		}
 
 		public override void addMessage (string __p1, javax.faces.application.FacesMessage __p2) {
@@ -105,6 +92,7 @@ namespace Mainsoft.Web.Hosting
 
 		public override void release () {
 			_facesContex.release ();
+			FacesContext.setCurrentInstance (_oldFacesContex);
 		}
 
 		public override void renderResponse () {
