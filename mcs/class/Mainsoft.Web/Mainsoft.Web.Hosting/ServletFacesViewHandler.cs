@@ -16,5 +16,14 @@ namespace Mainsoft.Web.Hosting
 		public ServletFacesViewHandler (ViewHandler viewHandler)
 			: base (viewHandler) {
 		}
+
+		public override string getActionURL (FacesContext facesContext, string viewId) {
+			if (viewId.Length > 0 && viewId [0] == '/') {
+				return facesContext.getExternalContext ().getRequestContextPath () + viewId;
+			}
+			else {
+				return viewId;
+			}
+		}
 	}
 }

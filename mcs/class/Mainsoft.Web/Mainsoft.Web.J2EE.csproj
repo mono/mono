@@ -147,6 +147,7 @@
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesPageHandlerFactory.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\SessionWrapper.cs" />
     <Compile Include="Mainsoft.Web.Profile\CloudscapeProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileProvider.cs" />
@@ -168,5 +169,12 @@
     <Compile Include="Mainsoft.Web\J2EEConsts.cs" />
     <Compile Include="Mainsoft.Web\J2EEUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Mainsoft.Web.Phantom\Mainsoft.Web.Phantom.csproj">
+      <Project>{D01569DF-A398-480C-9A34-C231E760D7F8}</Project>
+      <Name>Mainsoft.Web.Phantom</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

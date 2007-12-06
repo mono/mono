@@ -49,8 +49,8 @@ namespace Mainsoft.Web.Hosting
 														   request,
 														   response,
 														   _lifecycle);
-
-			return new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context), _lifecycle);
+			IHttpHandler handler = new ServletFacesPageHandler (AspNetFacesContext.WrapFacesContext (facesContext, context), _lifecycle);
+			return SessionWrapper.WrapHandler (handler, context, url);
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler) {
