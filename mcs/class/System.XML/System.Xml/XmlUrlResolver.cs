@@ -65,6 +65,11 @@ namespace System.Xml
 			if (ofObjectToReturn != typeof (Stream))
 				throw new XmlException ("This object type is not supported.");
 
+#if NET_2_0
+			if (!absoluteUri.IsAbsoluteUri)
+				throw new ArgumentException ("uri must be absolute.", "absoluteUri");
+#endif
+
 			if (absoluteUri.Scheme == "file") {
 				if (absoluteUri.AbsolutePath == String.Empty)
 					throw new ArgumentException ("uri must be absolute.", "absoluteUri");

@@ -73,12 +73,14 @@ namespace MonoTests.System.Xml
 			resolver.GetEntity (uri, null, null);
 		}
 
+#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetEntityWithRelativeFileUri ()
 		{
-			resolver.GetEntity (new Uri ("file://file.txt"), null, typeof (Stream));
+			resolver.GetEntity (new Uri ("file.txt", UriKind.Relative), null, typeof (Stream));
 		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (XmlException))]

@@ -1,3 +1,9 @@
+2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlUrlResolverTests.cs : fixed test; file://file.txt is to access
+	  such a server whose (domain) name is "file.txt", which is actually
+	  an absolute URI. Remove "regression" in the nunit test.
+
 2007-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReaderTests.cs : added test for #339934.

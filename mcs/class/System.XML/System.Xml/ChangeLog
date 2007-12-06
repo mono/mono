@@ -1,3 +1,8 @@
+2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlUrlResolver.cs : in net_2_0, use Uri.IsAbsoluteUri to filter
+	  relative URIs out.
+
 2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToDateTime(XmlDateTimeSerializationMode) should
