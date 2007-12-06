@@ -1,3 +1,7 @@
+2007-12-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItemTest.cs: Added new serialization test.
+
 2007-12-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* LinkLabelTest.cs: Added tests for bug #344012, bug #346154 and

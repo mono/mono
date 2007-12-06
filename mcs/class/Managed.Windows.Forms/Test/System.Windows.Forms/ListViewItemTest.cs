@@ -27,9 +27,12 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
-
+	
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -249,6 +252,69 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("B", item.SubItems [1].Text, "#8");
 		}
 #endif
+
+		[Test]
+		public void Constructor_Serializable ()
+		{
+			ListViewItem item = new ListViewItem ("A");
+			ListView lvw = new ListView ();
+			lvw.Items.Add (item);
+			lvw.CreateControl (); // Need to calculate layout
+
+			item.SubItems.Add ("B");
+			item.SubItems.Add ("C");
+			item.SubItems.Add ("D");
+			item.BackColor = Color.AliceBlue;
+			item.Checked = true;
+			item.Font = new Font (item.Font, FontStyle.Bold);
+			item.ForeColor = Color.AntiqueWhite;
+			item.ImageIndex = 1;
+			item.Selected = true;
+			item.Tag = "Tag";
+			item.UseItemStyleForSubItems = false;
+
+#if NET_2_0
+			ListViewGroup group = lvw.Groups.Add ("GroupKey", "MyGroup");
+			group.Items.Add (item);
+
+			item.ImageKey = "MyKey";
+			item.IndentCount = 2;
+			item.Name = "MyName";
+			item.ToolTipText = "MyTooltipText";
+#endif
+
+			MemoryStream ms = new MemoryStream ();
+			BinaryFormatter formatter = new BinaryFormatter ();
+			formatter.Serialize (ms, item);
+
+			ListViewItem item2 = null;
+			ms.Position = 0;
+
+			item2 = (ListViewItem) formatter.Deserialize (ms);
+			Assert.AreEqual ("A", item2.Text, "#A1");
+			Assert.AreEqual ("A", item2.SubItems [0].Text, "#A2");
+			Assert.AreEqual ("B", item2.SubItems [1].Text, "#A3");
+			Assert.AreEqual ("C", item2.SubItems [2].Text, "#A4");
+			Assert.AreEqual (Color.AliceBlue, item2.BackColor, "#A4");
+			Assert.AreEqual (null, item2.ListView, "#A5");
+			Assert.AreEqual (Rectangle.Empty, item2.Bounds, "#A6");
+			Assert.AreEqual (item.Checked, item2.Checked, "#A7");
+			Assert.AreEqual (item.Font, item2.Font, "#A8");
+			Assert.AreEqual (item.ForeColor, item2.ForeColor, "#A9");
+			Assert.AreEqual (item.ImageIndex, item2.ImageIndex, "#A10");
+			Assert.AreEqual (-1, item2.Index, "#A11");
+			Assert.AreEqual (false, item2.Selected, "#A12");
+			Assert.AreEqual (null, item2.Tag, "#A13");
+			Assert.AreEqual (item.UseItemStyleForSubItems, item2.UseItemStyleForSubItems, "#A14");
+#if NET_2_0
+			Assert.AreEqual (item.ImageKey, item2.ImageKey, "#A15");
+			Assert.AreEqual (0, item2.IndentCount, "#A16");
+			Assert.AreEqual (String.Empty, item2.Name, "#A17");
+			Assert.AreEqual (new Point (-1, -1), item2.Position, "#A18");
+			Assert.AreEqual (String.Empty, item2.ToolTipText, "#A19");
+			Assert.AreEqual (item.Group.Header, item2.Group.Header, "#A20");
+#endif
+		}
 
 		[Test]
 		public void ListViewItemDefaultValues ()
