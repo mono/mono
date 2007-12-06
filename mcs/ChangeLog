@@ -1,3 +1,8 @@
+2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: currently Sys.Web.Extensions is not ready for
+	  centum_tests.
+
 2007-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added more tests.

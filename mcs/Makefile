@@ -43,8 +43,8 @@ net_2_0_centum_tests := \
 	#class/Mono.C5
 	
 net_3_5_centum_tests := \
-	class/System.Xml.Linq			\
-	class/System.Web.Extensions		
+	class/System.Xml.Linq
+	#class/System.Web.Extensions		
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
