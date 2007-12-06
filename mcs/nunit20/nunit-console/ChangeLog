@@ -1,3 +1,9 @@
+2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* nunit-console.exe.config.net_3_5 : It is just a copy of *_net_2_0.
+	  net_3_5 profile requires it.
+	* Makefile : added above as EXTRA_DISTFILES.
+
 2007-09-18  Massimiliano Mantione  <massi@ximian.com>
 
 	* Added "<legacyUnhandledExceptionPolicy enabled="1"/>" to the
