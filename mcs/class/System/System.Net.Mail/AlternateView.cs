@@ -120,7 +120,10 @@ namespace System.Net.Mail {
 			if (encoding == null)
 				encoding = Encoding.UTF8;
 			MemoryStream ms = new MemoryStream (encoding.GetBytes (content));
-			AlternateView av = new AlternateView (ms, mediaType);
+			ContentType ct = new ContentType ();
+			ct.MediaType = mediaType;
+			ct.CharSet = encoding.HeaderName;
+			AlternateView av = new AlternateView (ms, ct);
 			av.TransferEncoding = TransferEncoding.QuotedPrintable;
 			return av;
 		}

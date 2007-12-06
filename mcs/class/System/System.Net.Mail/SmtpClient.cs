@@ -774,9 +774,9 @@ try {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					StreamReader sr = new StreamReader (av.ContentStream);
-					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
-					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
+					byte [] bytes = new byte [av.ContentStream.Length];
+					av.ContentStream.Read (bytes, 0, bytes.Length);
+					SendData (ToQuotedPrintable (bytes));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
@@ -818,9 +818,9 @@ try {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					StreamReader sr = new StreamReader (lr.ContentStream);
-					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
-					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
+					byte [] bytes = new byte [lr.ContentStream.Length];
+					lr.ContentStream.Read (bytes, 0, bytes.Length);
+					SendData (ToQuotedPrintable (bytes));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:
@@ -853,9 +853,9 @@ try {
 #endif
 					break;
 				case TransferEncoding.QuotedPrintable:
-					StreamReader sr = new StreamReader (att.ContentStream);
-					Encoding encoding = contentType.CharSet != null ? Encoding.GetEncoding (contentType.CharSet) : Encoding.ASCII;
-					SendData (ToQuotedPrintable (sr.ReadToEnd (), encoding));
+					byte [] bytes = new byte [att.ContentStream.Length];
+					att.ContentStream.Read (bytes, 0, bytes.Length);
+					SendData (ToQuotedPrintable (bytes));
 					break;
 				case TransferEncoding.SevenBit:
 				case TransferEncoding.Unknown:

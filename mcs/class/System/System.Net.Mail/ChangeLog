@@ -1,3 +1,10 @@
+2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AlternateView.cs : supply charset info for ContentType.
+	* SmtpClient.cs : for ToQuotedPrintable() input, don't use utf8
+	  StreamReader to get input string. Just use Encoding.GetBytes().
+	  Fixed bug #346162.
+
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MailMessage.cs : fixing cosmetic .net compatibility. Automatically
