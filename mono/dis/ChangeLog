@@ -1,8 +1,3 @@
-2007-11-06  Jb Evain  <jbevain@novell.com>
-
-	* main.c: Don't crash when a referenced assembly cannot be
-	found. Fix #323943.
-
 2007-11-05  Jackson Harper  <jackson@ximian.com>
 
 	* declsec.c (declsec_20_write_type): support for strings.
