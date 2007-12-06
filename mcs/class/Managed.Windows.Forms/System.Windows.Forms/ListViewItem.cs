@@ -780,6 +780,7 @@ namespace System.Windows.Forms
 				sub_items.AddRange (si);
 			}
 
+			font = (Font) info.GetValue ("font", typeof (Font));
 			is_checked = info.GetBoolean ("is_checked");
 			image_index = info.GetInt32 ("image_index");
 			state_image_index = info.GetInt32 ("state_image_index");
@@ -798,6 +799,7 @@ namespace System.Windows.Forms
 			for (int i = 0; i < sub_items.Count; i++)
 				info.AddValue ("subitem" + i, sub_items [i]);
 
+			info.AddValue ("font", Font);
 			info.AddValue ("image_index", image_index);
 			info.AddValue ("is_checked", is_checked);
 			info.AddValue ("state_image_index", state_image_index);
