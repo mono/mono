@@ -260,7 +260,7 @@ namespace System.Web.UI.HtmlControls
 			// Allow the page to transform action to a portlet action url
 			string customAction = Attributes ["action"];
 			if (String.IsNullOrEmpty(customAction))
-				action = Page.CreateActionUrl (action);
+				action = CreateActionUrl (action);
 			else
 				action = customAction;
 

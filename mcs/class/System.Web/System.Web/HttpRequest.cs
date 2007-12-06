@@ -1303,7 +1303,7 @@ namespace System.Web {
 		{
 			cached_url = null;
 			current_exe_path = path;
-			file_path = path;
+			//file_path = path;
 			UrlComponents.Path = path;
 			// recreated on demand
 			root_virtual_dir = null;

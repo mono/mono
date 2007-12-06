@@ -1233,6 +1233,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web\HttpWorkerRequest.jvm.cs" />
+    <Compile Include="System.Web\IHttpExtendedHandler.cs" />
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1414,6 +1415,6 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)..\..\class\lib\net_2_0\culevel.exe" -o "$(ProjectDir)System.Web\UplevelHelper.cs" "$(ProjectDir)UplevelHelperDefinitions.xml"</PreBuildEvent>
+    <PreBuildEvent>"$(ProjectDir)..\lib\net_2_0\culevel.exe" -o "$(ProjectDir)System.Web\UplevelHelper.cs" "$(ProjectDir)UplevelHelperDefinitions.xml"</PreBuildEvent>
   </PropertyGroup>
 </Project>

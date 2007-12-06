@@ -1306,9 +1306,10 @@ namespace System.Web.UI
 		string ResolveClientUrl (string relativeUrl)
 		{
 #if TARGET_J2EE
-			// There are no relative paths when rendering a J2EE portlet
-			if (Page != null && Page.PortletNamespace != null)
-				return ResolveUrl (relativeUrl);
+			return CreateResourceUrl (ResolveClientUrlInternal (relativeUrl));
+		}
+		
+		string ResolveClientUrlInternal (string relativeUrl) {
 #endif
 			if (relativeUrl == null)
 				throw new ArgumentNullException ("relativeUrl");

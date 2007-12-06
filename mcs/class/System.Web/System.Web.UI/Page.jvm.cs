@@ -44,12 +44,6 @@ namespace System.Web.UI
 {
 	public partial class Page
 	{
-		//const string PageNamespaceKey = "__PAGENAMESPACE";
-		//const string RenderPageMark = "vmw.render.page=";
-		//const string ActionPageMark = "vmw.action.page=";
-		//static readonly string NextActionPageKey = PortletInternalUtils.NextActionPage;
-		//static readonly string NextRenderPageKey = PortletInternalUtils.NextRenderPage;
-
 		bool _emptyPortletNamespace = false;
 		string _PortletNamespace = null;
 		bool _renderResponseInit = false;
@@ -101,12 +95,6 @@ namespace System.Web.UI
 			}
 		}
 
-		//internal bool IsGetBack {
-		//    get {
-		//        return IsPostBack && Context.IsPortletRequest && !Context.IsActionRequest;
-		//    }
-		//}
-
 		internal IPortletRenderResponse RenderResponse
 		{
 			get {
@@ -118,74 +106,6 @@ namespace System.Web.UI
 				return _renderResponse;
 			}
 		}
-
-		public string CreateRenderUrl (string url)
-		{
-			FacesContext faces = getFacesContext ();
-			return faces != null ? faces.getExternalContext ().encodeResourceURL (url) : url;
-		}
-
-		public string CreateActionUrl (string url)
-		{
-			FacesContext faces = getFacesContext ();
-			if (faces == null)
-				return url;
-
-			//kostat: handle QueryString!
-			Application application = faces.getApplication ();
-			ViewHandler viewHandler = application.getViewHandler ();
-			String viewId = faces.getViewRoot ().getViewId ();
-			return viewHandler.getActionURL (faces, viewId);
-		}
-
-		private string RemoveAppPathIfInternal (string url)
-		{
-			Uri reqUrl = Request.Url;
-			string appPath = Request.ApplicationPath;
-			string currPage = Request.CurrentExecutionFilePath;
-			if (currPage.StartsWith (appPath, StringComparison.InvariantCultureIgnoreCase))
-				currPage = currPage.Substring (appPath.Length);
-			return PortletInternalUtils.mapPathIfInternal (url, reqUrl.Host, reqUrl.Port, reqUrl.Scheme, appPath, currPage);
-		}
-
-//        internal bool OnSaveStateCompleteForPortlet ()
-//        {
-//            if (PortletNamespace != null) {
-//                ClientScript.RegisterHiddenField (PageNamespaceKey, PortletNamespace);
-//                ClientScript.RegisterHiddenField (NextActionPageKey, "");
-//                ClientScript.RegisterHiddenField (NextRenderPageKey, "");
-//            }
-
-//            IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
-//            IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
-//            if (req == null)
-//                return false;
-
-//            // When redirecting don't save the page viewstate and hidden fields
-//            if (resp.isRedirected ())
-//                return true;
-
-//            if (IsPostBack && 0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
-//                resp.setRenderParameter ("__VIEWSTATE", GetSavedViewState ());
-//                if (ClientScript.hiddenFields != null)
-//                    foreach (string key in ClientScript.hiddenFields.Keys)
-//                        resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
-
-//                if (is_validated && Validators.Count > 0) {
-//                    string validatorsState = GetValidatorsState ();
-//#if DEBUG
-//                    Console.WriteLine ("__VALIDATORSSTATE: " + validatorsState);
-//#endif
-//                    if (!String.IsNullOrEmpty (validatorsState))
-//                        resp.setRenderParameter ("__VALIDATORSSTATE", validatorsState);
-//                }
-//            }
-
-//            // Stop processing only if we are handling processAction. If we
-//            // are handling a postback from render then fall through.
-//            return req.processActionOnly ();
-//        }
-
 
 		internal string EncodeURL (string raw) {
 			//kostat: BUGBUG: complete

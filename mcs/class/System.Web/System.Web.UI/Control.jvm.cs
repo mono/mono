@@ -31,6 +31,7 @@
 using vmw.@internal.j2ee;
 using System.Web.Hosting;
 using System.Text;
+using javax.faces.context;
 
 namespace System.Web.UI
 {
@@ -52,22 +53,42 @@ namespace System.Web.UI
 			}
 		}
 
+		internal string CreateResourceUrl (string url) {
+			FacesContext faces = getFacesContext ();
+			if (faces == null)
+				return url;
 
-		// Add a variant for specifying use of portlet resolveRenderUrl
-		internal string ResolveUrl (string relativeUrl, bool usePortletRenderResolve)
-		{
-			relativeUrl = ResolveUrl (relativeUrl);
-			if (usePortletRenderResolve && Page != null)
-				relativeUrl = Page.CreateRenderUrl (relativeUrl);
-			return relativeUrl;
+			url = Asp2Jsf (url);
+
+			return faces.getApplication ().getViewHandler ().getResourceURL (faces, url);
 		}
 
-		internal string ResolveClientUrl (string relativeUrl, bool usePortletRenderResolve)
-		{
-			relativeUrl = ResolveClientUrl (relativeUrl);
-			if (usePortletRenderResolve && Page != null)
-				relativeUrl = Page.CreateRenderUrl (relativeUrl);
-			return relativeUrl;
+		internal string CreateActionUrl (string url) {
+			FacesContext faces = getFacesContext ();
+			if (faces == null)
+				return url;
+
+			url = Asp2Jsf (url);
+
+			return faces.getApplication ().getViewHandler ().getActionURL (faces, url);
+		}
+
+		string Asp2Jsf (string url) {
+			if (VirtualPathUtility.IsAbsolute (url))
+				url = VirtualPathUtility.ToAppRelative (url);
+
+			if (VirtualPathUtility.IsAppRelative (url)) {
+				url = url.Substring (1);
+				return url.Length == 0 ? "/" : url;
+			}
+			return url;
+		}
+
+		internal string ResolveClientUrl (string relativeUrl, bool usePortletRenderResolve) {
+			if (usePortletRenderResolve)
+				return ResolveClientUrl (relativeUrl);
+			else
+				return ResolveUrl (relativeUrl);
 		}
 
 		internal bool IsLoaded {

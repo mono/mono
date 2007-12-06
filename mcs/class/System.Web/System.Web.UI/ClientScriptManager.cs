@@ -161,7 +161,7 @@ namespace System.Web.UI
 #if TARGET_J2EE
 			// Allow the page to transform ActionUrl to a portlet action url
 			if (actionUrl != null) {
-				actionUrl = page.CreateActionUrl(actionUrl);
+				actionUrl = options.TargetControl.CreateActionUrl(actionUrl);
 				prefix += "Portal";
 			}
 #endif

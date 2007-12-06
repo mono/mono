@@ -43,7 +43,7 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Threading;
 #if TARGET_J2EE
-using vmw.@internal.j2ee;
+using Mainsoft.Web;
 #endif
 
 #if NET_2_0 && !TARGET_JVM
@@ -480,7 +480,7 @@ namespace System.Web {
 					app.Tick ();
 				//ihh.ProcessRequest (context);
 				IHttpExtendedHandler extHandler = context.Handler as IHttpExtendedHandler;
-				if (extHandler != null && !extHandler.getCompleted ())
+				if (extHandler != null && !extHandler.IsCompleted)
 					return;
 
 				ihah.EndProcessRequest (null);

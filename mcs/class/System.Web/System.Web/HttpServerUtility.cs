@@ -36,6 +36,9 @@ using System.Web.Util;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Text;
+#if TARGET_J2EE
+using Mainsoft.Web;
+#endif
 
 namespace System.Web {
 
@@ -127,12 +130,10 @@ namespace System.Web {
 			if (output == null)
 			 	output = response.Output;
 
-			string oldFilePath = request.FilePath;
-			request.SetCurrentExePath (UrlUtils.Combine (request.BaseVirtualDir, path));
-			IHttpHandler handler = context.ApplicationInstance.GetHandler (context);
-			request.SetCurrentExePath (oldFilePath);
-			
-#if NET_2_0
+			string exePath = UrlUtils.Combine (request.BaseVirtualDir, path);
+			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath);
+
+#if NET_2_0 && !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
 			if (context.InTransit && !(handler is Page))
@@ -140,15 +141,34 @@ namespace System.Web {
 #endif
 			
 			TextWriter previous = null;
+			string oldExePath = request.CurrentExecutionFilePath;
 			try {
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
+				request.SetCurrentExePath (exePath);
 				previous = response.SetTextWriter (output);
 				
 				if (!(handler is IHttpAsyncHandler)) {
-					handler.ProcessRequest (context);
-				} else {
+#if TARGET_J2EE
+					if (!preserveForm && handler is IHttpExtendedHandler) {
+						IHttpExtendedHandler ehandler = (IHttpExtendedHandler) handler;
+						object oldState = ehandler.GetContextState(context);
+						if (oldState != null)
+							ehandler.SetContextState (context, null);
+						try {
+							handler.ProcessRequest (context);
+						}
+						finally {
+							if (oldState != null)
+								ehandler.SetContextState (context, oldState);
+						}
+					}
+					else
+#endif
+						handler.ProcessRequest (context);
+				}
+				else {
 					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;
 					IAsyncResult ar = asyncHandler.BeginProcessRequest (context, null, null);
 					ar.AsyncWaitHandle.WaitOne ();
@@ -166,6 +186,7 @@ namespace System.Web {
 #if NET_2_0
 				context.PopHandler ();
 #endif
+				request.SetCurrentExePath (oldExePath);
 			}
 		}
 
@@ -210,20 +231,19 @@ namespace System.Web {
 				Page page = (Page) context.Handler;
 				preserveForm = !page.IsPostBack;
 			}
-#if NET_2_0
-			else
-				throw new HttpException ("Transfer may only be called from within a Page instance");
-#endif
+			//#if NET_2_0
+			//            else
+			//                throw new HttpException ("Transfer may only be called from within a Page instance");
+			//#endif
 
 			Transfer (path, preserveForm);
 		}
 
-		public void Transfer (string path, bool preserveForm)
-		{
-#if NET_2_0
-			if (!(context.Handler is Page))
-				throw new HttpException ("Transfer may only be called from within a Page instance");
-#endif
+		public void Transfer (string path, bool preserveForm) {
+			//#if NET_2_0
+			//            if (!(context.Handler is Page))
+			//                throw new HttpException ("Transfer may only be called from within a Page instance");
+			//#endif
 
 			context.InTransit = true;
 			Execute (path, null, preserveForm);
@@ -234,13 +254,13 @@ namespace System.Web {
 		{
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
-			if (!(handler is Page))
-				throw new HttpException ("Transfer may only be called from within a Page instance");
-			
+			//if (!(handler is Page))
+			//    throw new HttpException ("Transfer may only be called from within a Page instance");
+
 			// TODO: see the MS doc and search for "enableViewStateMac": this method is not
 			// allowed for pages when preserveForm is true and the page IsCallback property
 			// is true.
-
+			context.InTransit = true;
 			Execute (handler, null, preserveForm);
 			context.Response.End ();
 		}
@@ -250,11 +270,13 @@ namespace System.Web {
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
 
+#if !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
 			if (context.InTransit && !(handler is Page))
 				throw new HttpException ("Transfer is possible only to .aspx files");
-			
+#endif
+
 			HttpRequest request = context.Request;
 			string oldQuery = request.QueryStringRaw;
 			if (!preserveForm) {
@@ -276,6 +298,22 @@ namespace System.Web {
 			try {
 				previous = response.SetTextWriter (output);
 				if (!(handler is IHttpAsyncHandler)) {
+#if TARGET_J2EE
+					if (!preserveForm && handler is IHttpExtendedHandler) {
+						IHttpExtendedHandler ehandler = (IHttpExtendedHandler) handler;
+						object oldState = ehandler.GetContextState (context);
+						if (oldState != null)
+							ehandler.SetContextState (context, null);
+						try {
+							handler.ProcessRequest (context);
+						}
+						finally {
+							if (oldState != null)
+								ehandler.SetContextState (context, oldState);
+						}
+					}
+					else
+#endif
 					handler.ProcessRequest (context);
 				} else {
 					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;

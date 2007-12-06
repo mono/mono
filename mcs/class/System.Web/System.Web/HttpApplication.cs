@@ -77,7 +77,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 
 #if TARGET_J2EE
-using vmw.@internal.j2ee;
+using Mainsoft.Web;
 #endif
 	
 namespace System.Web {
@@ -796,17 +796,6 @@ namespace System.Web {
 			if (error != null){
 				HttpResponse response = context.Response;
 
-#if TARGET_J2EE
-				IPortletActionRequest actionRequest = context.ServletRequest as IPortletActionRequest;
-				IPortletActionResponse actionResponse = context.ServletResponse as IPortletActionResponse;
-				if (actionRequest != null && actionResponse != null && actionRequest.processActionOnly ()) {
-					string exception = "Exception of type " + context.Error.GetType () + 
-						" during processAction: " + context.Error.Message + Console.Out.NewLine + 
-						context.Error.StackTrace;
-					actionResponse.setRenderParameter ("vmw.action.exception", exception);
-					return;
-				}
-#endif
 				if (!response.HeadersSent){
 					response.ClearHeaders ();
 					response.ClearContent ();
@@ -917,7 +906,7 @@ namespace System.Web {
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
-				handler = GetHandler (context);
+				handler = GetHandler (context, context.Request.FilePath);
 				context.Handler = handler;
 #if NET_2_0
 				context.PushHandler (handler);
@@ -984,7 +973,7 @@ namespace System.Web {
 						handler.ProcessRequest (context);
 #if TARGET_J2EE
 						IHttpExtendedHandler extHandler=handler as IHttpExtendedHandler;
-						doProcessHandler = extHandler != null && !extHandler.getCompleted ();
+						doProcessHandler = extHandler != null && !extHandler.IsCompleted;
 #endif
 					}
 				}
@@ -1193,11 +1182,11 @@ namespace System.Web {
 		}
 		
 		// Used by HttpServerUtility.Execute
-		internal IHttpHandler GetHandler (HttpContext context)
+		internal IHttpHandler GetHandler (HttpContext context,string url)
 		{
 			HttpRequest request = context.Request;
 			string verb = request.RequestType;
-			string url = request.FilePath;
+			//string url = request.FilePath;
 			
 			IHttpHandler handler = null;
 			object o = LocateHandler (verb, url);
@@ -1207,7 +1196,7 @@ namespace System.Web {
 			if (factory == null) {
 				handler = (IHttpHandler) o;
 			} else {
-				handler = factory.GetHandler (context, verb, url, request.PhysicalPath);
+				handler = factory.GetHandler (context, verb, url, request.MapPath (url));
 			}
 
 			return handler;
@@ -1244,18 +1233,6 @@ namespace System.Web {
 			done.Reset ();
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
-
-#if TARGET_J2EE
-			IPortletRenderRequest renderRequest = context.ServletRequest as IPortletRenderRequest;
-			if (renderRequest != null) {
-				string actionException = context.ServletRequest.getParameter ("vmw.action.exception");
-				if (actionException != null && actionException.Length > 0) {
-					FinalErrorWrite (context.Response, actionException.Replace("\n", "<br>"));
-					begin_iar.Complete ();
-					return begin_iar;
-				}
-			}
-#endif
 
 #if TARGET_JVM
 			if (true)
