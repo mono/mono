@@ -1,3 +1,8 @@
+2007-12-05  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: When updating the zorder, ignore windows that are not
+	mapped. Fixes #342509
+
 2007-12-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: Actually implement serialization on this class.
