@@ -1,3 +1,8 @@
+2007-12-05  Andreia Gaita <avidigal@novell.com>
+	[Backport to 1.2.6]
+	* Control.cs: When updating the zorder, ignore windows that are not
+	mapped. Fixes #342509
+
 2007-12-04  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 	[Backport to 1.2.6]
 	* XplatUIX11.cs: Make toolwindows' decorations show up without causing any

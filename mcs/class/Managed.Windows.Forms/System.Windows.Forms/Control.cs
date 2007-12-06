@@ -4891,15 +4891,21 @@ namespace System.Windows.Forms
 		private void UpdateZOrderOfChild(Control child) {
 			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this)) {
 				// Need to take into account all controls
-				int	index;
 				Control [] all_controls = child_controls.GetAllControls ();
-				index = Array.IndexOf (all_controls, child);
 
-				if (index > 0) {
+				int index = Array.IndexOf (all_controls, child);
+				
+				for (; index > 0; index--) {
+					if (!all_controls [index - 1].IsHandleCreated || !all_controls [index - 1].VisibleInternal)
+						continue;
+					break;
+				}
+				
+				if (index > 0)	{
 					XplatUI.SetZOrder(child.Handle, all_controls [index - 1].Handle, false, false);
 				} else {
 					IntPtr after = AfterTopMostControl ();
-					if (after != IntPtr.Zero /*&& child.Handle != after*/)
+					if (after != IntPtr.Zero && after != child.Handle)
 						XplatUI.SetZOrder (child.Handle, after, false, false);
 					else
 						XplatUI.SetZOrder (child.Handle, IntPtr.Zero, true, false);
