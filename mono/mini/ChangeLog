@@ -1,5 +1,7 @@
 2007-12-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_method_code): Put back an #ifdef which is needed.
+
 	* mini-<ARCH>.h mini.c aot-compiler.c aot-runtime.c: Get rid of the
 	HAVE_PIC_AOT define and use AOT_SUPPORTED instead.
 
