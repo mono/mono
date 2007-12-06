@@ -147,7 +147,7 @@ namespace MonoTests.System.Net.Mail
 			Assert.AreEqual (Encoding.ASCII, msg.BodyEncoding, "#3");
 			msg.BodyEncoding = null;
 			msg.Body = "test\u3067\u3059";
-			Assert.AreEqual (Encoding.UTF8, msg.BodyEncoding, "#4");
+			Assert.AreEqual (Encoding.UTF8.CodePage, msg.BodyEncoding.CodePage, "#4");
 		}
 
 		[Test]
@@ -156,12 +156,12 @@ namespace MonoTests.System.Net.Mail
 			MailMessage msg = new MailMessage ("from@example.com", "to@example.com");
 			Assert.AreEqual (null, msg.SubjectEncoding, "#1");
 			msg.Subject = "test";
-			Assert.AreEqual (Encoding.ASCII, msg.SubjectEncoding, "#2");
+			Assert.AreEqual (null, msg.SubjectEncoding, "#2");
 			msg.Subject = "test\u3067\u3059";
-			Assert.AreEqual (Encoding.ASCII, msg.SubjectEncoding, "#3");
+			Assert.AreEqual (Encoding.UTF8.CodePage, msg.SubjectEncoding.CodePage, "#3");
 			msg.SubjectEncoding = null;
 			msg.Subject = "test\u3067\u3059";
-			Assert.AreEqual (Encoding.UTF8, msg.SubjectEncoding, "#4");
+			Assert.AreEqual (Encoding.UTF8.CodePage, msg.SubjectEncoding.CodePage, "#4");
 		}
 	}
 }

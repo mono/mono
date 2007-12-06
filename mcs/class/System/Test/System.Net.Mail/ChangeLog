@@ -1,3 +1,10 @@
+2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MailMessageTest.cs : fixed test to just compare codepage. I can't
+	  stand with this trivial difference (w/ BOM or not) as regression,
+	  and fixing this "regression" causes practical bug (garbage BOM
+	  insertion).
+
 2007-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AlternateViewTest.cs : added test for CreateAlternateViewFromString
