@@ -1,3 +1,12 @@
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_indirect_op_mono_type): renamed to mono_type_from_opcode,
+	added ldelem.X opcodes.
+
+	* verify.c (do_ldelema): fixed possible invalid usage of MonoType.
+
+	* verify.c: proper verification of ldelem.X 
+
 2007-12-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor): Allow interface cctors to be called too.
