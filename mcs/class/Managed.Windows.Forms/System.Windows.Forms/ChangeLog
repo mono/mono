@@ -1,3 +1,7 @@
+2007-12-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: Actually implement serialization on this class.
+
 2007-12-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* LinkLabel.cs: Fixed paramname of ArgumentNullException in ctor of

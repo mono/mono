@@ -211,6 +211,11 @@ namespace System.Windows.Forms
 #endif
 		#endregion	// Public Constructors
 
+		protected ListViewItem (SerializationInfo info, StreamingContext context)
+		{
+			Deserialize (info, context);
+		}
+
 		#region Public Instance Properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color BackColor {
@@ -724,7 +729,7 @@ namespace System.Windows.Forms
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			// FIXME: TODO
+			Serialize (info, context);
 		}
 
 #if NET_2_0
@@ -760,12 +765,48 @@ namespace System.Windows.Forms
 		#region Protected Methods
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{
-			// FIXME: TODO
+			sub_items = new ListViewSubItemCollection (this);
+
+			Type lvsubitem_type = typeof (ListViewSubItem);
+
+			int count = info.GetInt32 ("subitems_count");
+			if (count > 0) {
+				sub_items.Clear ();
+
+				ListViewSubItem [] si = new ListViewSubItem [count];
+				for (int i = 0; i < count; i++)
+					si [i] = (ListViewSubItem) info.GetValue ("subitem" + i, lvsubitem_type);
+
+				sub_items.AddRange (si);
+			}
+
+			is_checked = info.GetBoolean ("is_checked");
+			image_index = info.GetInt32 ("image_index");
+			state_image_index = info.GetInt32 ("state_image_index");
+			use_item_style = info.GetBoolean ("use_item_style");
+#if NET_2_0
+			group = (ListViewGroup) info.GetValue ("group", typeof (ListViewGroup));
+			if (image_index == -1)
+				image_key = info.GetString ("image_key");
+#endif
+
 		}
 
 		protected virtual void Serialize (SerializationInfo info, StreamingContext context)
 		{
-			// FIXME: TODO
+			info.AddValue ("subitems_count", sub_items.Count);
+			for (int i = 0; i < sub_items.Count; i++)
+				info.AddValue ("subitem" + i, sub_items [i]);
+
+			info.AddValue ("image_index", image_index);
+			info.AddValue ("is_checked", is_checked);
+			info.AddValue ("state_image_index", state_image_index);
+			info.AddValue ("use_item_style", use_item_style);
+#if NET_2_0
+			info.AddValue ("image_key", image_key);
+			info.AddValue ("group", group);
+#endif
+
 		}
 		#endregion	// Protected Methods
 
