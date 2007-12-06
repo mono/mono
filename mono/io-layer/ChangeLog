@@ -1,3 +1,8 @@
+2007-12-06  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c: Resource language values must be compared in a
+	'case'-insensitive manner.  Fixes bug 345972.
+
 2007-12-05  Dick Porter  <dick@ximian.com>
 
 	* io.c (CreateFile): Create files with mode 0666 (&~umask) by
