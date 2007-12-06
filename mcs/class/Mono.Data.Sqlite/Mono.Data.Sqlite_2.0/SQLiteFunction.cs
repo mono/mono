@@ -445,12 +445,30 @@ namespace Mono.Data.Sqlite
       SqliteFunctionAttribute at;
       System.Reflection.Assembly[] arAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       int w = arAssemblies.Length;
+      System.Reflection.AssemblyName sqlite = System.Reflection.Assembly.GetCallingAssembly().GetName();
 
       for (int n = 0; n < w; n++)
       {
         Type[] arTypes;
+        bool found = false;
+        System.Reflection.AssemblyName[] references;
         try
         {
+          // Inspect only assemblies that reference SQLite
+          references = arAssemblies[n].GetReferencedAssemblies();
+          int t = references.Length;
+          for (int z = 0; z < t; z++)
+          {
+            if (references[z].Name == sqlite.Name)
+            {
+              found = true;
+              break;
+            }
+          }
+          
+          if (found == false)
+            continue;
+
           arTypes = arAssemblies[n].GetTypes();
         }
         catch (System.Reflection.ReflectionTypeLoadException e)
