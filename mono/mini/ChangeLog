@@ -1,3 +1,9 @@
+
+Fri Dec 7 22:08:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: run type ctor before allocating an object, not only
+	when running it's constructor method (fixes at least part of bug #342507).
+
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Fix a warning.
