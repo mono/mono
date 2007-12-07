@@ -135,10 +135,14 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TextBoxTestlPage.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
+ifeq (net_2_0, $(PROFILE))
+RESX_RES = resources/TranslationResources.resources
+endif
+
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll -r:System.Windows.Forms.dll
+OTHER_LIB_MCS_FLAGS = -nowarn:618 -r:System.Configuration.dll -r:System.Windows.Forms.dll -r:Mono.Data.Sqlite.dll
 endif
 
 LIB_MCS_FLAGS = \
@@ -151,12 +155,13 @@ LIB_MCS_FLAGS = \
 	-r:System.Xml.dll		\
 	-r:System.EnterpriseServices.dll \
 	$(OTHER_LIB_MCS_FLAGS) \
+	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
-all-local: System.Web/UplevelHelper.cs echo-warning
+all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources echo-warning
 .PHONY: echo-warning
 
 ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
@@ -167,8 +172,9 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml
-BUILT_SOURCES = System.Web/UplevelHelper.cs
+EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml $(RESX_RES:.resources=.resx) \
+		  SQLiteProviders_DatabaseSchema.sql
+BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
 include ../../build/library.make
 
@@ -176,6 +182,11 @@ ifdef WEBSERVICES_DEP_FILE
 LIB_MCS_FLAGS += -define:WEBSERVICES_DEP -r:$(WEBSERVICES_DEP)
 $(the_lib): $(WEBSERVICES_DEP_FILE)
 endif
+
+$(the_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
+
+$(RESX_RES): %.resources: %.resx
+	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
 System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
 	$(TEST_RUNTIME) $(topdir)/class/lib/net_1_1_bootstrap/culevel.exe -o $@ $^

@@ -1,3 +1,8 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: initialize the Settings Mapping Manager once per
+	application, just after initalizing the WebConfigurationManager.
+
 2007-11-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: peform the check of whether we're running on

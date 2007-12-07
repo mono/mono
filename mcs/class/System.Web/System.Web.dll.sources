@@ -372,7 +372,9 @@ System.Web.Profile/ProfileProviderAttribute.cs
 System.Web.Profile/ProfileProviderCollection.cs
 System.Web.Profile/ProfileProvider.cs
 System.Web.Profile/SettingsAllowAnonymousAttribute.cs
+System.Web.Profile/SqliteProfileProvider.cs
 System.Web.Profile/SqlProfileProvider.cs
+System.Web.Properties/TranslationProperties.Designer.cs
 System.Web/QueueManager.cs
 System.Web.Security/ActiveDirectoryConnectionProtection.cs
 System.Web.Security/ActiveDirectoryMembershipProvider.cs
@@ -411,6 +413,8 @@ System.Web.Security/RolePrincipal.cs
 System.Web.Security/RoleProviderCollection.cs
 System.Web.Security/RoleProvider.cs
 System.Web.Security/Roles.cs
+System.Web.Security/SqliteMembershipProvider.cs
+System.Web.Security/SqliteRoleProvider.cs
 System.Web.Security/SqlMembershipProvider.cs
 System.Web.Security/SqlRoleProvider.cs
 System.Web.Security/UrlAuthorizationModule.cs
@@ -1126,8 +1130,15 @@ System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
 System.Web.Util/FileUtils.cs
 System.Web.Util/ICalls.cs
+System.Web.Util/ISectionSettingsMapper.cs
 System.Web.Util/IWebObjectFactory.cs
 System.Web.Util/IWebPropertyAccessor.cs
+System.Web.Util/MembershipSectionMapper.cs
+System.Web.Util/RoleManagerSectionMapper.cs
+System.Web.Util/SerializationHelper.cs
+System.Web.Util/SettingsMapping.cs
+System.Web.Util/SettingsMappingManager.cs
+System.Web.Util/SettingsMappingWhat.cs
 System.Web.Util/StrUtils.cs
 System.Web.Util/TimeUtil.cs
 System.Web.Util/TransactedCallback.cs

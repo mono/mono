@@ -125,10 +125,10 @@ namespace System.Web {
 #if NET_2_0
 			try {
 				WebConfigurationManager.Init ();
+				SettingsMappingManager.Init ();
 			} catch (Exception ex) {
 				initialException = ex;
 			}
-			
 #endif
 
 			// The classes in whose constructors exceptions may be thrown, should be handled the same way QueueManager

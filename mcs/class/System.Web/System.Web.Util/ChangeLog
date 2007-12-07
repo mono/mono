@@ -1,3 +1,26 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* SerializationHelper.cs: added - serialization helper for the
+	Sqlite Profile Provider.
+
+	* RoleManagerSectionMapper.cs: added - section settings mapper for
+	the RoleManager section.
+
+	* MembershipSectionMapper.cs: added - section settings mapper for
+	the Membership section.
+
+	* ISectionSettingsMapper.cs: added - interface definition for
+	section settings mappers.
+
+	* SettingsMappingWhat.cs: added - describes a single 'what' tag
+	instance inside the mapper definition in the settings.map file.
+
+	* SettingsMapping.cs: added - represents a single mapper entry in
+	the settings.map file.
+
+	* SettingsMappingManager.cs: added - manages settings mapping as
+	defined in the settings.map file.
+
 2006-08-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* UrlUtils.cs: optimized string.Replace in RemoveDoubleSlashes

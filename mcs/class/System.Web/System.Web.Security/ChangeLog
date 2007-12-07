@@ -1,3 +1,13 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* SqliteRoleProvider.cs: added - a Role Provider for
+	Sqlite, based on PostgreSQL Role Provider code from Daniel
+	Nauck <dna@informatik.uni-kiel.de>
+
+	* SqliteMembershipProvider.cs: added - a Membership Provider for
+	Sqlite, based on PostgreSQL Membership Provider code from Daniel
+	Nauck <dna@informatik.uni-kiel.de>
+
 2007-11-28  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlMembershipProvider.cs: handle situation when there is no

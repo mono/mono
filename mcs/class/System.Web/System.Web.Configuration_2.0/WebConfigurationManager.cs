@@ -34,6 +34,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.Web.Util;
 using System.Xml;
 using System.Configuration;
 using System.Configuration.Internal;
@@ -270,7 +271,7 @@ namespace System.Web.Configuration {
 			if (section == null)
 				return null;
 
-			return get_runtime_object.Invoke (section, new object [0]);
+			return SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
 		}
 
 		static string GetCurrentPath (HttpContext ctx)

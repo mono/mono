@@ -1,3 +1,9 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* SqliteProfileProvider.cs: added - a Profile Provider for
+        Sqlite, based on PostgreSQL Profile Provider code from Daniel
+        Nauck <dna@informatik.uni-kiel.de>
+
 2007-10-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ProfileBase.cs: use HttpApplication.LoadType instead of
