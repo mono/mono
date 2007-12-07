@@ -1,3 +1,8 @@
+2007-12-06  Andreia Gaita <avidigal@novell.com>
+
+	* FormTest.cs: Run ChildFocused test for win only, relies
+	on synch messages on X
+
 2007-12-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Added new 2.0 Position test.

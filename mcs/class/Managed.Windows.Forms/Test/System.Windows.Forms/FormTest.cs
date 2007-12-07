@@ -2321,9 +2321,11 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #339641
-		[Category ("NotWorking")]
 		public void ChildFocused ()
 		{
+			if (TestHelper.RunningOnUnix) {
+				Assert.Ignore ("Relies on form.Show() synchronously generating WM_ACTIVATE");
+			}
 			using (Form f = new TimeBombedForm ()) {
 				TreeView tv = new TreeView ();
 				EventLogger log = new EventLogger (tv);
