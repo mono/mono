@@ -1,3 +1,9 @@
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (mono_generic_class_init_trampoline): Fixed
+	build for archs which don't have the vtable trampoline defined
+	yet.
+
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_trampoline_code): Fix the build.
