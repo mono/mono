@@ -1,5 +1,11 @@
 2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_ldelem): refactor it to work with ldelem.any.
+
+	* verify.c (mono_method_verify): property verification of ldelem.any.
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (get_indirect_op_mono_type): renamed to mono_type_from_opcode,
 	added ldelem.X opcodes.
 
