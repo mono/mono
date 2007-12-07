@@ -33,7 +33,35 @@
     </blocks>
   </feature>
 
+  <feature name="SettingsMapProtection" target="web">
+    <description><![CDATA[
+      Adds an entry to your config file which will prevent download of the 'settings.map' file. The
+file is used by the settings mapping manager to modify configuration settings depending on the operating
+system under which your application runs. Add this feature only if you have your own custom 'settings.map'
+file in the top-level directory of your ASP.NET application.
+]]></description>
+    <blocks>
+      <block name="SettingsMap Handler"/>
+    </blocks>
+  </feature>
+
   <!-- configuration blocks required by the features -->
+  <configBlock name="SettingsMap Handler">
+    <requires>
+      <section name="configuration">
+	<section name="system.web">
+	  <section name="httpHandlers" defaultBlockName="system.web.httpHandlers"/>
+	</section>
+      </section>
+    </requires>
+
+    <contents>
+      <![CDATA[
+<add verb="*" path="settings.map" type="System.Web.HttpForbiddenHandler, System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+]]>
+    </contents>
+  </configBlock>
+
   <configBlock name="AJAX config sections">
     <requires>
       <section name="configuration">

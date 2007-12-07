@@ -1,3 +1,8 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* data/config.xml: added a feature to protect the 'settings.map'
+	file from download, if used by the application.
+
 2007-11-21  Marek Habersack  <mhabersack@novell.com>
 
 	* mconfig.cs: drop the -F and -C parameters, default config files,
