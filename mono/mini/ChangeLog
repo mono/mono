@@ -1,3 +1,8 @@
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't compile methods with sharing enabled if their
+	classes are disabled for sharing.
+
 2007-12-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg: Add a missing sign extension to the GETCHR and array access

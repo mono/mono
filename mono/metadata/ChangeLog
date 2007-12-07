@@ -1,3 +1,13 @@
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h: Introduce an environment variable
+	(MONO_GENERIC_SHARING) through which the extent of generic code
+	sharing can be controlled (share all classes, share only corlib
+	classes, or share nothing).
+
+	* object.c: Only create runtime generic context for classes for
+	which sharing is enabled.
+
 2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_ldelem): refactor it to work with ldelem.any.
