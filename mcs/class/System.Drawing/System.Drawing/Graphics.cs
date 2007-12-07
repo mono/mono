@@ -274,12 +274,14 @@ namespace System.Drawing
 		{
 			Status status;
 			if (! disposed) {
+				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero) {
+					Flush ();
+					Carbon.CGContextSynchronize (context.ctx);
+					Carbon.ReleaseContext (context.port, context.ctx);
+				}
 				status = GDIPlus.GdipDeleteGraphics (nativeObject);
 				nativeObject = IntPtr.Zero;
 				GDIPlus.CheckStatus (status);
-				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero) {
-					Carbon.ReleaseContext (context.port, context.ctx);
-				}
 				disposed = true;				
 			}
 

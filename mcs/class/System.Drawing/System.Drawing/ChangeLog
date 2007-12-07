@@ -1,3 +1,11 @@
+2007-12-07  Geoff Norton  <gnorton@novell.com>
+
+	* Graphics.cs: Ensure that we Flush and Synchornize our CGContexts
+	before disposing.  Fixes drawing bugs when drawn out of the event
+	loop and the caller doesn't Flush.
+	* carbonFunctions.cs: Rework the cross-assembly data marshalling to
+	use a delegate as suggested by lupus.
+
 2007-11-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ImageAnimator.cs: Check for FrameDimension.Time availability before

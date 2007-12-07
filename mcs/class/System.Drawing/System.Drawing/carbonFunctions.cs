@@ -26,12 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#define EnableClipping
-#define EnableSiblingClipping
-#undef EnableNCClipping
-#undef DebugClipping
-#undef DebugDrawing
-
 using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -44,39 +38,18 @@ namespace System.Drawing {
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();
 
-#if EnableClipping
-		internal static Type handle_type;
-		internal static FieldInfo handle_children_field;
-		internal static FieldInfo handle_client_rectangle_field;
-		internal static FieldInfo handle_x_field;
-		internal static FieldInfo handle_y_field;
-		internal static FieldInfo handle_width_field;
-		internal static FieldInfo handle_height_field;
-		internal static FieldInfo handle_whole_window_field;
-		internal static FieldInfo handle_client_window_field;
-		internal static MethodInfo get_handle;
-		internal static MethodInfo get_clipping_rectangles;
+		internal static Delegate hwnd_delegate;
 
 		static Carbon () {
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
 				if (String.Equals (asm.GetName ().Name, "System.Windows.Forms")) {
-					handle_type = asm.GetType ("System.Windows.Forms.Hwnd");
-					if (handle_type != null) {
-						get_handle = handle_type.GetMethod ("ObjectFromHandle");
-						get_clipping_rectangles = handle_type.GetMethod ("GetClippingRectangles");
-						handle_children_field = handle_type.GetField ("children", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_client_rectangle_field = handle_type.GetField ("client_rectangle", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_x_field = handle_type.GetField ("x", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_y_field = handle_type.GetField ("y", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_width_field = handle_type.GetField ("width", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_height_field = handle_type.GetField ("height", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_whole_window_field = handle_type.GetField ("whole_window", BindingFlags.NonPublic | BindingFlags.Instance);
-						handle_client_window_field = handle_type.GetField ("client", BindingFlags.NonPublic | BindingFlags.Instance);
+					Type driver_type = asm.GetType ("System.Windows.Forms.XplatUICarbon");
+					if (driver_type != null) {
+						hwnd_delegate = (Delegate) driver_type.GetField ("HwndDelegate", BindingFlags.NonPublic | BindingFlags.Static).GetValue (null);
 					}
 				}
 			}
 		}
-#endif
 
 		internal static CarbonContext GetCGContextForNSView (IntPtr handle) {
 			IntPtr context = IntPtr.Zero;
@@ -101,107 +74,36 @@ namespace System.Drawing {
 			context = GetContext (port);
 
 			GetWindowBounds (window, 32, ref window_bounds);
+
 			HIViewGetBounds (handle, ref view_bounds);
 
 			HIViewConvertRect (ref view_bounds, handle, IntPtr.Zero);
 
 			CGContextTranslateCTM (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
 
-#if EnableClipping
-			if (get_handle != null) {
-				// Create the original rect path and clip to it
-				IntPtr clip_path = CGPathCreateMutable ();
-				Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
-#if DebugClipping
-				Console.WriteLine ("--CLIP: {0}x{1}", view_bounds.size.width, view_bounds.size.height);
-#endif
-				CGPathAddRect (clip_path, IntPtr.Zero, rc_clip);
-				CGContextBeginPath (context);
-				object handle_object = get_handle.Invoke (null, new object [] {handle});
-				if (handle_object != null) {
-					IntPtr whole_window = (IntPtr) handle_whole_window_field.GetValue (handle_object);
+			// Create the original rect path and clip to it
+			IntPtr clip_path = CGPathCreateMutable ();
+			Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
+			CGPathAddRect (clip_path, IntPtr.Zero, rc_clip);
+			CGContextBeginPath (context);
 
-					if (handle == whole_window) {
-#if EnableNCClipping
-#if DebugClipping
-						Console.WriteLine ("\tNCCLIP:");
-#endif
-						Rect clip_rect = new Rect ();
-						Rectangle client_rect = (Rectangle) handle_client_rectangle_field.GetValue (handle_object);
-						clip_rect.origin.x = (int) client_rect.X;
-						clip_rect.origin.y = (int) client_rect.Y;
-						clip_rect.size.width = (int) client_rect.Width;
-						clip_rect.size.height = (int) client_rect.Height;
-#if DebugClipping
-						Console.WriteLine ("\tnc xor: {0}x{1} @ {2}x{3}", clip_rect.size.width, clip_rect.size.height, clip_rect.origin.x, clip_rect.origin.y);
-#endif
-						CGPathAddRect (clip_path, IntPtr.Zero, clip_rect);
-						CGContextAddPath (context, clip_path);
-						CGContextEOClip (context);
-#if DebugClipping
-						Console.WriteLine ("\tEOClip client_window");
-#endif
-#endif
-					} else {
-						ArrayList handle_children = (ArrayList) handle_children_field.GetValue (handle_object);
-						ArrayList handle_clips = (ArrayList) get_clipping_rectangles.Invoke (handle_object, new object [0]); 
-						int count = handle_children.Count;
-#if EnableSiblingClipping
-						count += handle_clips.Count;
-#endif
-						if (count > 0) {
-#if DebugClipping
-							Console.WriteLine ("\tCLIP:");
-#endif
-							Rect [] clip_rects = new Rect [count];
-							for (int i = 0; i < handle_children.Count; i++) {
-								clip_rects [i] = new Rect ();
-								clip_rects [i].origin.x = (int) handle_x_field.GetValue (handle_children [i]);
-								clip_rects [i].origin.y = view_bounds.size.height - (int) handle_y_field.GetValue (handle_children [i]) - (int) handle_height_field.GetValue (handle_children [i]);
-								clip_rects [i].size.width = (int) handle_width_field.GetValue (handle_children [i]);
-								clip_rects [i].size.height = (int) handle_height_field.GetValue (handle_children [i]);
-#if DebugClipping
-								Console.WriteLine ("\tc xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
-#endif
-							}
-
-#if EnableSiblingClipping
-							for (int i = 0; i < handle_clips.Count; i++) {
-								clip_rects [handle_children.Count+i] = new Rect ();
-								clip_rects [handle_children.Count+i].origin.x = ((Rectangle) handle_clips [i]).X;
-								clip_rects [handle_children.Count+i].origin.y = ((Rectangle) handle_clips [i]).Y;
-								clip_rects [handle_children.Count+i].size.width = ((Rectangle) handle_clips [i]).Width;
-								clip_rects [handle_children.Count+i].size.height = ((Rectangle) handle_clips [i]).Height;
-#if DebugClipping
-								Console.WriteLine ("\ts xor: {0}x{1} @ {2}x{3}", clip_rects [i].size.width, clip_rects [i].size.height, clip_rects [i].origin.x, clip_rects [i].origin.y);
-#endif
-							}
-#endif
-							CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, count);
-							CGContextAddPath (context, clip_path);
-							CGContextEOClip (context);
-#if DebugClipping
-							Console.WriteLine ("\tEOClip");
-#endif
-						} else {
-#if DebugClipping
-							Console.WriteLine ("\tClip");
-#endif
-							CGContextAddPath (context, clip_path);
-							CGContextClip (context);
-						}
-					}
-#if DebugClipping
-					Console.WriteLine ("--ENDCLIP:");
-#endif
+			Rectangle [] clip_rectangles = (Rectangle []) hwnd_delegate.DynamicInvoke (new object [] {handle});
+			if (clip_rectangles != null) {
+				int length = clip_rectangles.Length;
+				Rect [] clip_rects = new Rect [length];
+				for (int i = 0; i < length; i++) {
+					Rectangle r = (Rectangle) clip_rectangles [i];
+					clip_rects [i] = new Rect ();
+					clip_rects [i].origin.x = r.X; 
+					clip_rects [i].origin.y = view_bounds.size.height - r.Y - r.Height; 
+					clip_rects [i].size.width = r.Width; 
+					clip_rects [i].size.height = r.Height; 
 				}
-#endif
+				CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, length);
+				CGContextAddPath (context, clip_path);
+				CGContextEOClip (context);
 			}
 
-#if DebugDrawing
-			Console.WriteLine ("--DRAW:");
-			Console.WriteLine ("\t{0:X}: {1}x{2}", handle, (int)view_bounds.size.width, (int)view_bounds.size.height);
-#endif
 			return new CarbonContext (port, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
 		}
 
