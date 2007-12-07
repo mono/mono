@@ -1,5 +1,10 @@
 2007-12-07 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_test.sh: added tests for castclass and isinst
+	* make_cast_test.sh: new test generator
+
+2007-12-07 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_test.sh: added tests for stelem.X
 	* make_stelem_test.sh: new test generator
 
