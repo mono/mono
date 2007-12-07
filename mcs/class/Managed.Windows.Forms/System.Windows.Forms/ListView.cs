@@ -1743,14 +1743,6 @@ namespace System.Windows.Forms
 			for (int i = 0; i < items.Count; i++) {
 				ListViewItem item = items [i];
 #if NET_2_0
-				if (!virtual_mode) 
-#endif
-				{
-					item.Layout ();
-					item.DisplayIndex = i;
-				}
-
-#if NET_2_0
 				if (using_groups) {
 					ListViewGroup group = item.Group;
 					if (group == null)
@@ -1790,6 +1782,15 @@ namespace System.Windows.Forms
 						}
 					}
 				}
+#if NET_2_0
+				if (!virtual_mode) 
+#endif
+				{
+					item.Layout ();
+					item.DisplayIndex = i;
+					item.SetPosition (new Point (x, y));
+				}
+
 
 			}
 
@@ -1897,11 +1898,14 @@ namespace System.Windows.Forms
 					int current_item = group.current_item++;
 					Point group_items_loc = group.items_area_location;
 
-					SetItemLocation (i, 0, current_item * (item_height + 2) + group_items_loc.Y, 0, 0);
+					y = current_item * (item_height + 2) + group_items_loc.Y;
+					SetItemLocation (i, 0, y, 0, 0);
+					item.SetPosition (new Point (0, y));
 				} else
 #endif
 				{
 					SetItemLocation (i, 0, y, 0, 0);
+					item.SetPosition (new Point (0, y));
 					y += item_height;
 				}
 			}

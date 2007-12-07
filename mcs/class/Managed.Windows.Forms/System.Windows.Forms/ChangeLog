@@ -1,3 +1,11 @@
+2007-12-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When doing layout computations, set position in the
+	ListView instances (we cache the position just as .Net does).
+	* ListViewItem.cs: New internal setter method for Position. Also set
+	position field as also available in 1.1, since we are going to use it
+	now in the common case.
+
 2007-12-06  Andreia Gaita <avidigal@novell.com>
 
 	* Control.cs: When removing controls, get the actual container
