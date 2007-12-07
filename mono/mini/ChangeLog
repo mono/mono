@@ -1,5 +1,12 @@
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h mini-amd64.c mini-x86.c: Get rid of the mono_arch_find_vtable () 
+	function.
+
+	* tramp-x86.c tramp-amd64.c mini-trampolines.c: Pass the vtable argument to
+	mono_generic_class_init_trampoline () the same as it is done with the other
+	trampolines.
+
 	* mini-arm.h mini-arm.c tramp-arm.c inssel-arm.brg cpu-arm.md 
 	aot-runtime.c aot-compiler.c: Implement AOT support.	
 
