@@ -307,7 +307,11 @@ namespace System.Resources
 			string name = GetAttribute ("name");
 			string type_name = GetAttribute ("type");
 			string mime_type = GetAttribute ("mimetype");
+#if NET_2_0
 			Hashtable hashtable = (meta ? hashtm : hasht);
+#else
+			Hashtable hashtable = hasht;
+#endif
 
 			Type type = type_name == null ? null : ResolveType (type_name);
 
