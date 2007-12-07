@@ -1,5 +1,7 @@
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* pinvoke2.cs: Fix the names of two tests.
+
 	* checked.cs: Make exit codes positive.
 
 2007-12-05  Zoltan Varga  <vargaz@gmail.com>
