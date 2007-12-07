@@ -1,5 +1,7 @@
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Use the new helper function.
+
 	* mini-trampolines.c (mono_get_trampoline_func): New helper function.
 
 	* tramp-<ARCH>.c: Use the new helper function.
