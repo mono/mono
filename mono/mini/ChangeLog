@@ -1,5 +1,26 @@
 2007-12-07  Mark Probst  <mark.probst@gmail.com>
 
+	* inssel.brg: Added a pattern for the OP_TRAMPCALL_VTABLE
+	trampoline call, which takes a vtable argument.
+
+	* graph.c, mini-ops.h, local-propagation.c, aliasing.c: Treat
+	OP_TRAMPCALL_VTABLEs like other calls.
+
+	* mini-amd64.c, mini-amd64.h, mini-x86.c, mini-x86.h: Designated a
+	register to hold the vtable argument to the OP_TRAMPCALL_VTABLE
+	call.  Implemented a support function which fetches the vtable
+	from a register set.
+
+	* mini.c, mini.h, tramp-amd64.c, tramp-x86.c, mini-trampolines.c:
+	Implemented a generic class init trampoline, using the
+	OP_TRAMPCALL_VTABLE opcode.
+
+	* mini.c: Implemented static field access when sharing generic
+	code.  This implies initing the class using the new
+	OP_TRAMPCALL_VTABLE call.
+
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Don't compile methods with sharing enabled if their
 	classes are disabled for sharing.
 
