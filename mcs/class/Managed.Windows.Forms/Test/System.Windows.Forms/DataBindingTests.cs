@@ -172,7 +172,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			row.Delete ();
 
-			Console.WriteLine (event_log);
+			// Console.WriteLine (event_log);
 
 			Assert.AreEqual (
 #if NET_2_0

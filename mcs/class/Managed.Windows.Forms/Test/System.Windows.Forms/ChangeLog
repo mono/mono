@@ -1,3 +1,7 @@
+2007-12-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataBindingTests.cs: Silence some debug spew.
+
 2007-12-06  Andreia Gaita <avidigal@novell.com>
 
 	* FormTest.cs: Run ChildFocused test for win only, relies
