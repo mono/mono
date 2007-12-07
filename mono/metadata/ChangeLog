@@ -1,5 +1,12 @@
 2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_cast): added.
+
+	* verify.c (mono_method_verify): property verification of castclass and isinst.
+
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_type_from_opcode): added opcodes for stelem.X.
 
 	* verify.c (do_stelem): added.
