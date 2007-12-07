@@ -1,3 +1,6 @@
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Add a missing instruction check.
 
 Fri Dec 7 22:08:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 
@@ -5,7 +8,7 @@ Fri Dec 7 22:08:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 	when running it's constructor method (fixes at least part of bug #342507).
 
 2007-12-07  Zoltan Varga  <vargaz@gmail.com>
-
+	
 	* mini-trampolines.c (mono_delegate_trampoline): Fix a warning.
 	
 	* mini-trampolines.c (mono_generic_class_init_trampoline): Remove a debug printf.
