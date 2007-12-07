@@ -1,3 +1,9 @@
+
+2007-12-06  Andreia Gaita <avidigal@novell.com>
+
+	* X11Keyboard.cs: Use Xutf8LookupString to support international 
+	characters under alternate codepages. Patch from #340878
+
 2007-12-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When doing layout computations, set position in the

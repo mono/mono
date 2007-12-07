@@ -695,7 +695,7 @@ namespace System.Windows.Forms {
 			status = IntPtr.Zero;
 			lookup_buffer.Length = 0;
 			if (xic != IntPtr.Zero)
-				res = XmbLookupString (xic, ref xevent, lookup_buffer, len, out keysym_res,  out status);
+				res = Xutf8LookupString (xic, ref xevent, lookup_buffer, len, out keysym_res,  out status);
 			else
 				res = XLookupString (ref xevent, lookup_buffer, len, out keysym_res, IntPtr.Zero);
 
@@ -724,13 +724,13 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		internal extern static int XLookupString(ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, IntPtr status);
 		[DllImport ("libX11")]
-		internal extern static int XmbLookupString(IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
+		internal extern static int Xutf8LookupString(IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
 
-		internal static int XmbLookupString (IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, out IntPtr status) {
+		internal static int Xutf8LookupString (IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, out IntPtr status) {
 			IntPtr	keysym_ret;
 			int	ret;
 
-			ret = XmbLookupString (xic, ref xevent, buffer, num_bytes, out keysym_ret, out status);
+			ret = Xutf8LookupString (xic, ref xevent, buffer, num_bytes, out keysym_ret, out status);
 
 			keysym = (XKeySym)keysym_ret.ToInt32();
 
