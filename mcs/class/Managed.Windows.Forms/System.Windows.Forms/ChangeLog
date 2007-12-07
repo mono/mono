@@ -1,3 +1,7 @@
+2007-12-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* CurrencyManager.cs: Silence some debug spew.
+
 2007-12-07  Geoff Norton  <gnorton@novell.com>
 	
 	* Hwnd.cs: Refactor GetClippingRectangles to suppose returning the

@@ -58,8 +58,8 @@ namespace System.Windows.Forms {
 		public override object Current {
 			get {
 				if (listposition == -1 || listposition >= list.Count) {
-					Console.WriteLine ("throwing exception from here");
-					Console.WriteLine (Environment.StackTrace);
+					// Console.WriteLine ("throwing exception from here");
+					// Console.WriteLine (Environment.StackTrace);
 					throw new IndexOutOfRangeException ("list position");
 				}
 				return list [listposition];
