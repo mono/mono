@@ -429,6 +429,63 @@ namespace MonoTests.System.Windows.Forms
 			ListViewItem item = new ListViewItem ();
 			item.IndentCount = -1;
 		}
+
+		[Test]
+		public void ListViewItemPosition ()
+		{
+			ListViewItem itemA = new ListViewItem ();
+			ListViewItem itemB = new ListViewItem ();
+			Point initial_pos = new Point (-1, -1);
+
+			Assert.AreEqual (itemA.Position, initial_pos, "#A1");
+			Assert.AreEqual (itemB.Position, initial_pos, "#A2");
+
+			ListView lvw = new ListView ();
+			lvw.Items.AddRange (new ListViewItem [] { itemA, itemB });
+
+			Assert.AreEqual (itemA.Position, initial_pos, "#B1");
+			Assert.AreEqual (itemB.Position, initial_pos, "#B2");
+
+			// Create handle for lvw
+			lvw.CreateControl ();
+
+			Point itemA_pos = itemA.Position;
+			Point itemB_pos = itemB.Position;
+
+			Assert.IsTrue (itemA_pos != initial_pos, "#C1");
+			Assert.IsTrue (itemB_pos != initial_pos, "#C2");
+
+			// Now remove
+			lvw.Items.Clear ();
+
+			Assert.AreEqual (itemA_pos, itemA.Position, "#D1");
+			Assert.AreEqual (itemB_pos, itemB.Position, "#D2");
+
+			// Add in reverse order
+			lvw.Items.AddRange (new ListViewItem [] { itemB, itemA });
+
+			Assert.IsTrue (itemA_pos != itemA.Position, "#E1");
+			Assert.IsTrue (itemB_pos != itemB.Position, "#E2");
+
+			// Remove from ListView
+			lvw.Items.Clear ();
+			Assert.IsTrue (initial_pos != itemA.Position, "#F1");
+			Assert.IsTrue (initial_pos != itemB.Position, "#F2");
+
+			//
+			// Now add them in other view (no effect)
+			//
+			lvw.Items.AddRange (new ListViewItem [] { itemA, itemB });
+			lvw.Columns.Add ("Column A");
+			lvw.View = View.Details;
+
+			itemB_pos = itemB.Position;
+			Assert.IsTrue (Point.Empty != itemB_pos, "#G1");
+			Assert.IsTrue (initial_pos != itemB_pos, "#G2");
+
+			itemB.Position = Point.Empty;
+			Assert.AreEqual (itemB_pos, itemB.Position, "#H1");
+		}
 #endif
 
 		[Test] // bug #330415 and #331643
