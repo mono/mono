@@ -136,7 +136,7 @@ namespace System.Web.Util
 				return mappedSection;
 			
 			object ret = _instance.MapSection (input, input.GetType ());
-			if (ret != null)
+			if (ret != null && !_mappedSections.ContainsKey (ret))
 				_mappedSections.Add (ret, ret);
 
 			return ret;
