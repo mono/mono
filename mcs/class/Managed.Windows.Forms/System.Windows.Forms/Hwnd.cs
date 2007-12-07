@@ -86,7 +86,6 @@ namespace System.Windows.Forms {
 		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
 		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
 		internal ArrayList children;
-		internal ArrayList masks;
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)
@@ -117,7 +116,6 @@ namespace System.Windows.Forms {
 			fixed_size = false;
 			drawing_stack = new Stack ();
 			children = new ArrayList ();
-			masks = new ArrayList ();
 		}
 
 		public void Dispose() {
@@ -282,10 +280,17 @@ namespace System.Windows.Forms {
 		// in the parent planar space.  To do that we need to track z-order in the parent space as well
 		public ArrayList GetClippingRectangles ()
 		{
-			if (parent == null)
-				return masks;
+			ArrayList masks = new ArrayList ();
 
-			masks = new ArrayList ();
+			foreach (Hwnd child in children) {
+				if (child.visible)
+					masks.Add (new Rectangle (child.X, child.Y, child.Width, child.Height));
+			}
+
+			if (parent == null) {
+				return masks;
+			}
+
 			ArrayList siblings = parent.children;
 
 			foreach (Hwnd sibling in siblings) {
@@ -299,7 +304,7 @@ namespace System.Windows.Forms {
 				do {
 					sibling_handle = XplatUI.GetPreviousWindow (sibling_handle);
 
-					if (sibling_handle == sibling.WholeWindow) {
+					if (sibling_handle == sibling.WholeWindow && sibling.visible) {
 
 						Rectangle intersect = Rectangle.Intersect (new Rectangle (X, Y, Width, Height), new Rectangle (sibling.X, sibling.Y, sibling.Width, sibling.Height));
 				

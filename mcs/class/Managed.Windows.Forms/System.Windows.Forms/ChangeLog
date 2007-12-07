@@ -1,3 +1,13 @@
+2007-12-07  Geoff Norton  <gnorton@novell.com>
+	
+	* Hwnd.cs: Refactor GetClippingRectangles to suppose returning the
+	masks for our children as well as siblings to avoid having to query
+	Quartz for this information.
+	* XplatUICarbon.cs: Implement a delegate based system to pass
+	information to System.Drawing.  Implement Async methods.  Remove
+	the hack for the resize thumb and imlpement a transparent Grow Box.
+	Rework the messaging system to proplery create window's and messages,
+	fixes TabControl.
 
 2007-12-06  Andreia Gaita <avidigal@novell.com>
 

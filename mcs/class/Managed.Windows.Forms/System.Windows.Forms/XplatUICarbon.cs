@@ -36,6 +36,8 @@ using Carbon = System.Windows.Forms.CarbonInternal;
 
 /// Carbon Version
 namespace System.Windows.Forms {
+	internal delegate Rectangle [] HwndDelegate (IntPtr handle);
+
 	internal class XplatUICarbon : XplatUIDriver {
 		#region Local Variables
 		// General driver variables
@@ -55,6 +57,7 @@ namespace System.Windows.Forms {
 		internal static MouseButtons MouseState;
 		internal static Carbon.Hover Hover;
 
+		internal static HwndDelegate HwndDelegate = new HwndDelegate (GetClippingRectangles);
 		// Instance members
 		internal Point mouse_position;
 
@@ -82,8 +85,8 @@ namespace System.Windows.Forms {
 		// Timers
 		private ArrayList TimerList;
 		
-		static readonly object lockobj = new object ();
-		static readonly object queueobj = new object ();
+		static readonly object instancelock = new object ();
+		static readonly object queuelock = new object ();
 		
 		// Event Handlers
 		internal override event EventHandler Idle;
@@ -106,7 +109,7 @@ namespace System.Windows.Forms {
 
 		#region Singleton specific code
 		public static XplatUICarbon GetInstance() {
-			lock (lockobj) {
+			lock (instancelock) {
 				if (Instance == null) {
 					Instance = new XplatUICarbon ();
 				}
@@ -126,13 +129,33 @@ namespace System.Windows.Forms {
 		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect) {
 			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height);
 		}
+		
+		internal void AddExpose (Hwnd hwnd, bool client, Rectangle rect) {
+			AddExpose (hwnd, client, (int) rect.X, (int) rect.Y, (int) rect.Width, (int) rect.Height);
+		}
 
 		internal void FlushQueue () {
 			CheckTimers (DateTime.UtcNow);
 			while (MessageQueue.Count > 0) {
-				MSG msg = (MSG)MessageQueue.Dequeue ();
-				NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
+				object queueobj = MessageQueue.Dequeue ();
+				if (queueobj is GCHandle) {
+					XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
+				} else {
+					MSG msg = (MSG)queueobj;
+					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
+				}
 			}
+		}
+
+		internal static Rectangle [] GetClippingRectangles (IntPtr handle) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null)
+				return null;
+ 			if (hwnd.Handle != handle)
+				return new Rectangle [] {hwnd.ClientRect};
+
+			return (Rectangle []) hwnd.GetClippingRectangles ().ToArray (typeof (Rectangle));
 		}
 
 		internal IntPtr GetMousewParam(int Delta) {
@@ -321,7 +344,7 @@ namespace System.Windows.Forms {
 				Size qsize = size;
 
 				qsize.Width -= borders.left + borders.right;
-				qsize.Height -= borders.top + borders.bottom - 15;
+				qsize.Height -= borders.top + borders.bottom; 
 				
 				size = qsize;
 			}
@@ -346,7 +369,7 @@ namespace System.Windows.Forms {
 				Size qsize = size;
 
 				qsize.Width += borders.left + borders.right;
-				qsize.Height += borders.top + borders.bottom - 15;
+				qsize.Height += borders.top + borders.bottom;
 				
 				size = qsize;
 			}
@@ -448,6 +471,31 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+		}
+		
+		private void WaitForHwndMessage (Hwnd hwnd, Msg message) {
+			MSG msg = new MSG ();
+
+			bool done = false;
+			do {
+				if (GetMessage(null, ref msg, IntPtr.Zero, 0, 0)) {
+					if ((Msg)msg.message == Msg.WM_QUIT) {
+						PostQuitMessage (0);
+						done = true;
+					}
+					else {
+						if (msg.hwnd == hwnd.Handle) {
+							if ((Msg)msg.message == message)
+								break;
+							else if ((Msg)msg.message == Msg.WM_DESTROY)
+								done = true;
+						}
+
+						TranslateMessage (ref msg);
+						DispatchMessage (ref msg);
+					}
+				}
+			} while (!done);
 		}
 
 		//TODO: The old implementation does QD drawing where we cannot do that anymore
@@ -654,48 +702,27 @@ namespace System.Windows.Forms {
 
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
-#if OptimizeDrawing
 				if (!hwnd.expose_pending) {
 					if (!hwnd.nc_expose_pending) {
-#endif
-						MSG msg = new MSG ();
-						msg.message = Msg.WM_PAINT;
-						msg.hwnd = hwnd.Handle;
-						msg.lParam = IntPtr.Zero;
-						msg.wParam = IntPtr.Zero;
-						MessageQueue.Enqueue (msg);
-#if OptimizeDrawing
+						HIViewSetNeedsDisplay (hwnd.ClientWindow, true);
 					}
 					hwnd.expose_pending = true;
 				}
-#endif
 			} else {
 				hwnd.AddNcInvalidArea (x, y, width, height);
-#if OptimizeDrawing
 				if (!hwnd.nc_expose_pending) {
 					if (!hwnd.expose_pending) {
-#endif
-						MSG msg = new MSG ();
-						Rectangle rect = new Rectangle (x, y, width, height);
-						Region region = new Region (rect);
-						IntPtr hrgn = region.GetHrgn (null); 
-						msg.message = Msg.WM_NCPAINT;
-						msg.hwnd = hwnd.Handle;
-						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
-						msg.refobject = region;
-						MessageQueue.Enqueue (msg);
-#if OptimizeDrawing
+						HIViewSetNeedsDisplay (hwnd.WholeWindow, true);
 					}
 					hwnd.nc_expose_pending = true;
 				}
-#endif
 			}
 		}
 		#endregion 
 		
 		#region Public Methods
 		internal void EnqueueMessage (MSG msg) {
-			lock (queueobj) {
+			lock (queuelock) {
 				MessageQueue.Enqueue (msg);
 			}
 		}
@@ -856,6 +883,7 @@ namespace System.Windows.Forms {
 			hwnd.Parent = Hwnd.ObjectFromHandle (cp.Parent);
 			hwnd.initial_style = cp.WindowStyle;
 			hwnd.initial_ex_style = cp.WindowExStyle;
+			hwnd.visible = false;
 
 			if (StyleSet (cp.Style, WindowStyles.WS_DISABLED)) {
 				hwnd.enabled = false;
@@ -868,7 +896,8 @@ namespace System.Windows.Forms {
 
 /* FIXME */
 			if (ParentHandle == IntPtr.Zero) {
-				IntPtr window_view = IntPtr.Zero;
+				IntPtr WindowView = IntPtr.Zero;
+				IntPtr GrowBox = IntPtr.Zero;
 				Carbon.WindowClass windowklass = Carbon.WindowClass.kOverlayWindowClass;
 				Carbon.WindowAttributes attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
 				if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZEBOX)) {
@@ -896,9 +925,14 @@ namespace System.Windows.Forms {
 				}
 
 				CreateNewWindow (windowklass, attributes, ref rect, ref WindowHandle);
+#if DEBUG_DIRTY
+				HIViewFlashDirtyArea (WindowHandle);
+#endif
 				Carbon.EventHandler.InstallWindowHandler (WindowHandle);
-				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref window_view);
-				ParentHandle = window_view;
+				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref WindowView);
+				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 7), ref GrowBox);
+				HIGrowBoxViewSetTransparent (GrowBox, true);
+				ParentHandle = WindowView;
 			}
 
 			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref WholeWindow);
@@ -927,28 +961,35 @@ namespace System.Windows.Forms {
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
+			Text (hwnd.Handle, cp.Caption);
+			
+			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
+			SendParentNotify (hwnd.Handle, Msg.WM_CREATE, int.MaxValue, int.MaxValue);
+
 			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 				if (WindowHandle != IntPtr.Zero) {
 					WindowMapping [hwnd.Handle] = WindowHandle;
 					HandleMapping [WindowHandle] = hwnd.Handle;
+
+					if (Control.FromHandle(hwnd.Handle) is Form) {
+						Form f = Control.FromHandle(hwnd.Handle) as Form;
+						if (f.WindowState == FormWindowState.Normal) {
+							SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+						}
+					}
 					IntPtr active = GetActive ();
 					ShowWindow (WindowHandle);
+					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 					if (active != IntPtr.Zero)
 						Activate (active);
 				}
 				HIViewSetVisible (WholeWindow, true);
 				HIViewSetVisible (ClientWindow, true);
 				hwnd.visible = true;
-			} else {
-				HIViewSetVisible (WholeWindow, false);
-				HIViewSetVisible (ClientWindow, false);
-				hwnd.visible = false;
+				if (!(Control.FromHandle(hwnd.Handle) is Form)) {
+					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+				}
 			}
-
-			Text (hwnd.Handle, cp.Caption);
-			
-			SendMessage (hwnd.Handle, Msg.WM_CREATE, (IntPtr)1, IntPtr.Zero /* XXX unused */);
-			SendMessage (hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 
 			return hwnd.Handle;
 		}
@@ -1054,15 +1095,11 @@ namespace System.Windows.Forms {
 					break;
 				}
 				case Msg.WM_PAINT: {
-#if OptimizeDrawing
 					hwnd.expose_pending = false;
-#endif
 					break;
 				}
 				case Msg.WM_NCPAINT: {
-#if OptimizeDrawing
 					hwnd.nc_expose_pending = false;
-#endif
 					break;
 				}  
 				case Msg.WM_NCCALCSIZE: {
@@ -1236,7 +1273,9 @@ namespace System.Windows.Forms {
 				ReleaseEvent (evtRef);
 			}
 			
-			lock (queueobj) {
+			lock (queuelock) {
+				loop:
+
 				if (MessageQueue.Count <= 0) {
 					if (Idle != null) 
 						Idle (this, EventArgs.Empty);
@@ -1257,7 +1296,13 @@ namespace System.Windows.Forms {
 					msg.message = Msg.WM_ENTERIDLE;
 					return GetMessageResult;
 				}
-				msg = (MSG) MessageQueue.Dequeue ();
+				object queueobj = MessageQueue.Dequeue ();
+				if (queueobj is GCHandle) {
+					XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
+					goto loop;
+				} else {
+					msg = (MSG)queueobj;
+				}
 			}
 			return GetMessageResult;
 		}
@@ -1268,16 +1313,33 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle rect = hwnd.ClientRect;
-			
-			x = hwnd.x;
-			y = hwnd.y;
-			width = hwnd.width;
-			height = hwnd.height;
+			Hwnd		hwnd;
 
-			client_width = rect.Width;
-			client_height = rect.Height;
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (hwnd != null) {
+				x = hwnd.x;
+				y = hwnd.y;
+				width = hwnd.width;
+				height = hwnd.height;
+
+				PerformNCCalc(hwnd);
+
+				client_width = hwnd.ClientRect.Width;
+				client_height = hwnd.ClientRect.Height;
+
+				return;
+			}
+
+			// Should we throw an exception or fail silently?
+			// throw new ArgumentException("Called with an invalid window handle", "handle");
+
+			x = 0;
+			y = 0;
+			width = 0;
+			height = 0;
+			client_width = 0;
+			client_height = 0;
 		}
 		
 		internal override FormWindowState GetWindowState(IntPtr hwnd) {
@@ -1385,11 +1447,10 @@ namespace System.Windows.Forms {
 					clip_region.Intersect(hwnd.UserClip);
 				}
 
+				// FIXME: Clip region is hosed
 //				dc.Clip = clip_region;
 				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
-#if OptimizeDrawing
 				hwnd.expose_pending = false;
-#endif
 				hwnd.ClearInvalidArea();
 
 				hwnd.drawing_stack.Push (paint_event);
@@ -1398,14 +1459,13 @@ namespace System.Windows.Forms {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
 
 				if (!hwnd.nc_invalid.IsEmpty) {
-					dc.SetClip (hwnd.nc_invalid);
+					// FIXME: Clip region is hosed
+//					dc.SetClip (hwnd.nc_invalid);
 					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
 				} else {
 					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
 				}
-#if OptimizeDrawing
 				hwnd.nc_expose_pending = false;
-#endif
 				hwnd.ClearNcInvalidArea ();
 
 				hwnd.drawing_stack.Push (paint_event);
@@ -1420,13 +1480,16 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-			dc.Flush ();
-			dc.Dispose ();
+			// FIXME: Pop is causing invalid stack ops sometimes; race condition?
+			try {
+				Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
+				dc.Flush ();
+				dc.Dispose ();
 			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();  
+				PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
+				pe.SetGraphics (null);
+				pe.Dispose ();  
+			} catch {}
 
 			if (Caret.Visible == 1) {
 				ShowCaret();
@@ -1511,7 +1574,8 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		internal override void SendAsyncMethod (AsyncMethodData method) {
-			throw new NotImplementedException ();
+			// Fake async
+			MessageQueue.Enqueue (GCHandle.Alloc (method));
 		}
 
 		[MonoTODO]
@@ -1661,9 +1725,13 @@ namespace System.Windows.Forms {
 					ShowWindow ((IntPtr)window);
 				else
 					HideWindow ((IntPtr)window);
+			
+			if (visible)
+				SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 					
 			HIViewSetVisible (hwnd.whole_window, visible);
 			HIViewSetVisible (hwnd.client_window, visible);
+
 			hwnd.visible = visible;
 			return true;
 		}
@@ -1867,20 +1935,15 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void UpdateWindow(IntPtr handle) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			
-#if OptimizeDrawing
-			if (hwnd.visible && HIViewIsVisible (handle) && !hwnd.expose_pending) { 
-#else
-			if (hwnd.visible && HIViewIsVisible (handle)) {
-#endif
-				MSG msg = new MSG ();
-				msg.message = Msg.WM_PAINT;
-				msg.hwnd = hwnd.Handle;
-				msg.lParam = IntPtr.Zero;
-				msg.wParam = IntPtr.Zero;
-				MessageQueue.Enqueue (msg);
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			if (!hwnd.visible || !HIViewIsVisible (handle)) {
+				return;
 			}
+
+			SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 		}
 		
 		internal override bool TranslateMessage(ref MSG msg) {
@@ -2037,6 +2100,10 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewFindByID (IntPtr rootWnd, Carbon.HIViewID id, ref IntPtr outPtr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HIViewFlashDirtyArea (IntPtr view);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HIGrowBoxViewSetTransparent (IntPtr GrowBox, bool transparency);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static IntPtr HIViewGetRoot (IntPtr hWnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIObjectCreate (IntPtr cfStr, uint what, ref IntPtr hwnd);
@@ -2066,6 +2133,8 @@ namespace System.Windows.Forms {
 		extern static IntPtr HIViewGetWindow (IntPtr aView);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewSetFrame (IntPtr view_handle, ref Carbon.HIRect bounds);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HIViewSetNeedsDisplay (IntPtr view_handle, bool needs_display);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static void SetRect (ref Carbon.Rect r, short left, short top, short right, short bottom);
