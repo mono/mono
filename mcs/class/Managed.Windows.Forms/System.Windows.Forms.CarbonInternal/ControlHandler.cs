@@ -85,12 +85,9 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		internal const uint kEventParamCGContextRef = 1668183160;
 		internal const uint kEventParamDirectObject = 757935405;
-		internal const uint kEventParamMouseButton = 1835168878;
-		internal const uint kEventParamMouseLocation = 1835822947;
 		internal const uint kEventParamControlPart = 1668313716;
 		internal const uint typeControlRef = 1668575852;
 		internal const uint typeCGContextRef = 1668183160;
-		internal const uint typeMouseButton = 1835168878;
 		internal const uint typeQDPoint = 1363439732;
 		internal const uint typeControlPartCode = 1668313716;
 
@@ -111,15 +108,54 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			switch (kind) {
 				case kEventControlDraw: {
-					HIRect view_bounds = new HIRect ();
+					//FIXME: This is a hack which masks our over-redraw-expose problem
+					if (client) {
+						HIRect bounds = new HIRect ();
+						HIViewGetBounds (handle, ref bounds);
+						Driver.AddExpose (hwnd, client, bounds);
+					}
 
-					HIViewGetBounds (handle, ref view_bounds);
-					Driver.AddExpose (hwnd, client, view_bounds);
-					DrawBackground (hwnd, eventref, view_bounds);
-					if (!client)
+					if (!hwnd.visible) {
+						if (client) {
+							hwnd.expose_pending = false;
+						} else {
+							hwnd.nc_expose_pending = false;
+						}
+                                                return false;
+					}
+
+					if (client) {
+						if (!hwnd.expose_pending) {
+                                                	return false;
+						}
+                                                msg.message = Msg.WM_PAINT;
+					} else {
+						if (!hwnd.nc_expose_pending) {
+                                                	return false;
+						}
+						//DrawBackground here
 						DrawBorders (hwnd);
-					
-					break;
+						Region region = new Region (hwnd.Invalid);
+						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
+						msg.message = Msg.WM_NCPAINT;
+						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+						msg.refobject = region;
+						
+					}
+					return true;
+				}
+				case kEventControlVisibilityChanged: {
+					HIRect bounds = new HIRect ();
+
+					HIViewGetBounds (handle, ref bounds);
+					Driver.AddExpose (hwnd, client, bounds);
+					if (client) {
+						msg.message = Msg.WM_SHOWWINDOW;
+						msg.lParam = (IntPtr) 0;
+						msg.wParam = (HIViewIsVisible (handle) ? (IntPtr)1 : (IntPtr)0);
+						return true;
+					}
+					return false;
 				}
 				case kEventControlBoundsChanged: {
 					HIRect view_frame = new HIRect ();
@@ -134,68 +170,6 @@ namespace System.Windows.Forms.CarbonInternal {
 					}
 					return false;
 				}
-				case kEventControlClick: {
-					QDPoint point = new QDPoint ();
-					ushort button = 0;
-
-					if (XplatUICarbon.GrabHwnd != null) {
-						hwnd = XplatUICarbon.GrabHwnd; 
-						msg.hwnd = hwnd.Handle;
-						client = true;
-					}
-					
-					GetEventParameter (eventref, kEventParamMouseLocation, typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point);
-					GetEventParameter (eventref, kEventParamMouseButton, typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
-
-					Driver.ScreenToClient (hwnd.Handle, ref point);
-
-					msg.wParam = ButtonTowParam (button);
-					msg.lParam = (IntPtr) ((ushort) point.y << 16 | (ushort) point.x);
-					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 1;
-
-					Driver.mouse_position.X = (int) point.x;
-					Driver.mouse_position.Y = (int) point.y;
-
-					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
-					
-					HandleControlClick (handle, point, 0, IntPtr.Zero);
-					break;
-				}
-				case kEventControlTrack: {
-					QDPoint point = new QDPoint ();
-					MouseTrackingResult mousestatus = MouseTrackingResult.kMouseTrackingMouseDown;
-
-					if (XplatUICarbon.GrabHwnd != null) {
-						hwnd = XplatUICarbon.GrabHwnd; 
-						client = true;
-						msg.hwnd = hwnd.Handle;
-					}
-
-					GetEventParameter (eventref, kEventParamMouseLocation, typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point);
-					
-					while (mousestatus != MouseTrackingResult.kMouseTrackingMouseUp) {
-						uint modifiers = 0; 
-
-						if (mousestatus == MouseTrackingResult.kMouseTrackingMouseDragged) {
-							Driver.ScreenToClient (hwnd.Handle, ref point);
-							NativeWindow.WndProc (hwnd.Handle, (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE), Driver.GetMousewParam (0), (IntPtr) ((ushort) point.y << 16 | (ushort) point.x));
-						}
-						Driver.FlushQueue ();
-
-						TrackMouseLocationWithOptions (IntPtr.Zero, 0, 0.01, ref point, ref modifiers, ref mousestatus);
-					}
-					Driver.ScreenToClient (hwnd.Handle, ref point);
-					
-					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((StateToButton (XplatUICarbon.MouseState) - 1) * 3) + 2;
-					msg.wParam = StateTowParam (XplatUICarbon.MouseState);
-					msg.lParam = (IntPtr) ((ushort) point.y << 16 | (ushort) point.x);
-
-					Driver.mouse_position.X = (int) point.x;
-					Driver.mouse_position.Y = (int) point.y;
-
-					SetKeyboardFocus (GetControlOwner (hwnd.Handle), hwnd.Handle, 1);
-					return true;
-				}
 				case kEventControlGetFocusPart: {
 					short pcode = 0;
 					SetEventParameter (eventref, kEventParamControlPart, typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
@@ -203,66 +177,6 @@ namespace System.Windows.Forms.CarbonInternal {
 				}
 			}
 			return false;
-		}
-
-		private int StateToButton (MouseButtons state) {
-			int button = 0;
-
-			switch (state) {
-				case MouseButtons.Left: 
-					button = 1;
-					break;
-				case MouseButtons.Right: 
-					button = 2;
-					break;
-				case MouseButtons.Middle:
-					button = 3;
-					break;
-			}
-			
-			return button;
-		}
-
-		private IntPtr StateTowParam (MouseButtons state) {
-			int wparam = (int) Driver.GetMousewParam (0);
-
-			switch (state) {
-				case MouseButtons.Left: 
-					XplatUICarbon.MouseState &= ~MouseButtons.Left;
-					wparam &= (int)MsgButtons.MK_LBUTTON;
-					break;
-				case MouseButtons.Right: 
-					XplatUICarbon.MouseState &= ~MouseButtons.Right;
-					wparam &= (int)MsgButtons.MK_RBUTTON;
-					break;
-				case MouseButtons.Middle:
-					XplatUICarbon.MouseState &= ~MouseButtons.Middle;
-					wparam &= (int)MsgButtons.MK_MBUTTON;
-					break;
-			}
-			
-			return (IntPtr) wparam;
-		}
-
-		private IntPtr ButtonTowParam (ushort button) {
-			int wparam = (int) Driver.GetMousewParam (0);
-
-			switch (button) {
-				case 1:
-					XplatUICarbon.MouseState |= MouseButtons.Left;
-					wparam |= (int)MsgButtons.MK_LBUTTON;
-					break;
-				case 2:
-					XplatUICarbon.MouseState |= MouseButtons.Right;
-					wparam |= (int)MsgButtons.MK_RBUTTON;
-					break;
-				case 3:
-					XplatUICarbon.MouseState |= MouseButtons.Middle;
-					wparam |= (int)MsgButtons.MK_MBUTTON;
-					break;
-			}
-			
-			return (IntPtr) wparam;
 		}
 
 		private void DrawBackground (Hwnd hwnd, IntPtr eventref, HIRect bounds) {
@@ -305,27 +219,15 @@ namespace System.Windows.Forms.CarbonInternal {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref IntPtr data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref ushort data);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref QDPoint data);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetEventParameter (IntPtr eventref, uint name, uint type, uint size, ref short data);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern void SetKeyboardFocus (IntPtr window, IntPtr handle, short part);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern IntPtr GetControlOwner (IntPtr handle);
-		
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int HIViewGetBounds (IntPtr handle, ref HIRect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int HIViewGetFrame (IntPtr handle, ref HIRect rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static bool HIViewIsVisible (IntPtr vHnd);
 
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern void HandleControlClick (IntPtr handle, QDPoint point, uint modifiers, IntPtr callback);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern void TrackMouseLocationWithOptions (IntPtr port, int options, double eventtimeout, ref QDPoint point, ref uint modifier, ref MouseTrackingResult status);
-		
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int CGContextSetRGBFillColor (IntPtr cgContext, float r, float g, float b, float alpha);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

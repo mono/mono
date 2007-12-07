@@ -116,6 +116,16 @@ namespace System.Windows.Forms.CarbonInternal {
 					case kEventWindowClose:
 						NativeWindow.WndProc (window, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 						return false;
+					case kEventWindowShown: { 
+						Hwnd hwnd = Hwnd.ObjectFromHandle (window);
+
+						msg.message = Msg.WM_SHOWWINDOW;
+						msg.lParam = (IntPtr) 1;
+						msg.wParam = (IntPtr) 0;
+						msg.hwnd = hwnd.Handle;
+
+						return true;
+					}
 					case kEventWindowBoundsChanged: {
 						Rect window_bounds = new Rect ();
 						HIRect view_bounds = new HIRect ();
@@ -149,9 +159,9 @@ namespace System.Windows.Forms.CarbonInternal {
 		}
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		internal static extern int GetWindowBounds (IntPtr handle, uint region, ref Rect bounds);
+		static extern int GetWindowBounds (IntPtr handle, uint region, ref Rect bounds);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-                internal static extern int HIViewSetFrame (IntPtr handle, ref HIRect bounds);
+		static extern int HIViewSetFrame (IntPtr handle, ref HIRect bounds);
 	}
 }

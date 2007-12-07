@@ -54,16 +54,10 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventClassAccessibility = 1633903461;
 		
 		internal static EventTypeSpec [] ControlEvents = new EventTypeSpec [] {
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlSetFocusPart), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlGetFocusPart), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlClick), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlContextualMenuClick), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlTrack), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlSimulateHit), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlBoundsChanged), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlTrackingAreaEntered), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlTrackingAreaExited), 
-									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDraw) 
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDraw),
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlGetFocusPart), 
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlVisibilityChanged) 
 									};
 
 		internal static EventTypeSpec [] ApplicationEvents = new EventTypeSpec[] {
@@ -73,9 +67,13 @@ namespace System.Windows.Forms.CarbonInternal {
 		
 		private static EventTypeSpec [] WindowEvents = new EventTypeSpec[] {
 									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseMoved),
+									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseDragged),
+									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseDown),
+									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseUp),
 
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowBoundsChanged),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowClose),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowShown),
 
 									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyModifiersChanged),
 									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyDown),

@@ -38,58 +38,88 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventMouseWheelMoved = 10;
 
 		internal const uint kEventParamMouseLocation = 1835822947;
+		internal const uint kEventParamMouseButton = 1835168878;
+		internal const uint typeMouseButton = 1835168878;
 		internal const uint typeQDPoint = 1363439732;
+
+		internal const uint DoubleClickInterval = 7500000;
+		internal static ClickStruct ClickPending;
 		
 		internal MouseHandler (XplatUICarbon driver) : base (driver) {}
 
 		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			QDPoint qdpoint = new QDPoint ();
 			CGPoint point = new CGPoint ();
+			Rect window_bounds = new Rect ();
+			IntPtr view_handle = IntPtr.Zero;
+			IntPtr window_handle = IntPtr.Zero;
+			bool client = true;
+			ushort button = 0;
+			Hwnd hwnd;
 
 			GetEventParameter (eventref, kEventParamMouseLocation, typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref qdpoint);
+			GetEventParameter (eventref, kEventParamMouseButton, typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
 
 			point.x = qdpoint.x;
 			point.y = qdpoint.y;
 
-			switch (kind) {
-				case kEventMouseMoved: {
-					Rect window_bounds = new Rect ();
-					IntPtr view_handle = IntPtr.Zero;
-					IntPtr window_handle = IntPtr.Zero;
-					bool client = true;
-					Hwnd hwnd;
+			GetWindowBounds (handle, 33, ref window_bounds);
+			HIViewFindByID (HIViewGetRoot (handle), new HIViewID (EventHandler.kEventClassWindow, 1), ref window_handle);
 
-					GetWindowBounds (handle, 33, ref window_bounds);
-					HIViewFindByID (HIViewGetRoot (handle), new HIViewID (EventHandler.kEventClassWindow, 1), ref window_handle);
+			point.x -= window_bounds.left;
+			point.y -= window_bounds.top;
 
-					point.x -= window_bounds.left;
-					point.y -= window_bounds.top;
+			HIViewGetSubviewHit (window_handle, ref point, true, ref view_handle);
+			HIViewConvertPoint (ref point, window_handle, view_handle);
 
-					HIViewGetSubviewHit (window_handle, ref point, true, ref view_handle);
-					HIViewConvertPoint (ref point, window_handle, view_handle);
+			qdpoint.x = (short) point.x;
+			qdpoint.y = (short) point.y;
 
-					hwnd = Hwnd.ObjectFromHandle (view_handle);
-					if (XplatUICarbon.GrabHwnd != null)
-						hwnd = XplatUICarbon.GrabHwnd; 
-					if (hwnd == null)
-						return false;
-
-					client = (hwnd.ClientWindow == view_handle ? true : hwnd == XplatUICarbon.GrabHwnd ? true : false);
-
-					msg.hwnd = hwnd.Handle;
-					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
-					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
-					msg.wParam = Driver.GetMousewParam (0);
-					
-					Driver.mouse_position.X = (int)point.x;
-					Driver.mouse_position.Y = (int)point.y;
-					XplatUICarbon.Hover.Hwnd = hwnd.Handle;
-					XplatUICarbon.Hover.Timer.Enabled = true;
-					
-					return true;
-				}
+			hwnd = Hwnd.ObjectFromHandle (view_handle);
+			if (XplatUICarbon.GrabHwnd != null) {
+				hwnd = XplatUICarbon.GrabHwnd; 
+				client = true;
 			}
-			return false;
+			if (hwnd == null)
+				return false;
+
+			Driver.ScreenToClient (hwnd.Handle, ref qdpoint);
+
+			msg.hwnd = hwnd.Handle;
+			msg.lParam = (IntPtr) ((ushort) point.y << 16 | (ushort) point.x);
+			client = (hwnd.ClientWindow == view_handle ? true : hwnd == XplatUICarbon.GrabHwnd ? true : false);
+
+			switch (kind) {
+				case kEventMouseDown:
+					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 1;
+					msg.wParam = ButtonTowParam (button);
+					if (ClickPending.Pending && (((DateTime.Now.Ticks - ClickPending.Time) < DoubleClickInterval) && (msg.hwnd == ClickPending.Hwnd) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message))) {
+						msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 3;
+						ClickPending.Pending = false;
+					} else {
+						ClickPending.Pending = true;
+						ClickPending.Hwnd = msg.hwnd;
+						ClickPending.Message = msg.message;
+						ClickPending.wParam = msg.wParam;
+						ClickPending.lParam = msg.lParam;
+						ClickPending.Time = DateTime.Now.Ticks;
+					}
+					break;
+				case kEventMouseUp:
+					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((StateToButton (XplatUICarbon.MouseState) - 1) * 3) + 2;
+					msg.wParam = StateTowParam (XplatUICarbon.MouseState);
+					break;
+				case kEventMouseDragged:
+				case kEventMouseMoved:
+					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
+					msg.wParam = Driver.GetMousewParam (0);
+					break;
+				default:
+					return false;
+			}
+			Driver.mouse_position.X = (int) point.x;
+			Driver.mouse_position.Y = (int) point.y;
+			return true;
 		}
 		
 		internal bool TranslateMessage (ref MSG msg) {
@@ -107,8 +137,71 @@ namespace System.Windows.Forms.CarbonInternal {
 			return false;
 		}
 
+		private int StateToButton (MouseButtons state) {
+			int button = 0;
+
+			switch (state) {
+				case MouseButtons.Left: 
+					button = 1;
+					break;
+				case MouseButtons.Right: 
+					button = 2;
+					break;
+				case MouseButtons.Middle:
+					button = 3;
+					break;
+			}
+			
+			return button;
+		}
+
+		private IntPtr StateTowParam (MouseButtons state) {
+			int wparam = (int) Driver.GetMousewParam (0);
+
+			switch (state) {
+				case MouseButtons.Left: 
+					XplatUICarbon.MouseState &= ~MouseButtons.Left;
+					wparam &= (int)MsgButtons.MK_LBUTTON;
+					break;
+				case MouseButtons.Right: 
+					XplatUICarbon.MouseState &= ~MouseButtons.Right;
+					wparam &= (int)MsgButtons.MK_RBUTTON;
+					break;
+				case MouseButtons.Middle:
+					XplatUICarbon.MouseState &= ~MouseButtons.Middle;
+					wparam &= (int)MsgButtons.MK_MBUTTON;
+					break;
+			}
+			
+			return (IntPtr) wparam;
+		}
+
+		private IntPtr ButtonTowParam (ushort button) {
+			int wparam = (int) Driver.GetMousewParam (0);
+
+			switch (button) {
+				case 1:
+					XplatUICarbon.MouseState |= MouseButtons.Left;
+					wparam |= (int)MsgButtons.MK_LBUTTON;
+					break;
+				case 2:
+					XplatUICarbon.MouseState |= MouseButtons.Right;
+					wparam |= (int)MsgButtons.MK_RBUTTON;
+					break;
+				case 3:
+					XplatUICarbon.MouseState |= MouseButtons.Middle;
+					wparam |= (int)MsgButtons.MK_MBUTTON;
+					break;
+			}
+			
+			return (IntPtr) wparam;
+		}
+
+
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref QDPoint data);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref ushort data);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int GetWindowBounds (IntPtr handle, uint region, ref Rect bounds);

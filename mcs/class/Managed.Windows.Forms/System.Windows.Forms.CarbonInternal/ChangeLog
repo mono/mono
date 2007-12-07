@@ -1,3 +1,19 @@
+2007-12-07  Geoff Norton  <gnorton@novell.com>
+
+	* ControlHandler.cs: Properly update our invalidated information when
+	Quartz asks us to redraw.  This helps fix TabControl but introduces
+	over-zealous drawing causing our flicker.  Implement visibility tracking
+	to generate out WM_SHOWWINDOW calls.  Refactor mouse tracking to live
+	entirely in MouseHandler.
+	* EventHandler.cs: Unregister some events we no longer handle.  Register
+	the new MouseEvents that we do handle.
+	* KeyboardHandler.cs: Implement some more key translations.
+	* MouseHandler.cs:  Handle all mouse events at the application level now
+	This allows us to paint while dragging the mouse, and handle double
+	click events properly.
+	* WindowHandler.cs: Properly generate WM_SHOWWINDOW messages when
+	our application window is exposed.
+
 2007-11-21  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHandler.cs: Allow custom HIView to get keyboard focus.

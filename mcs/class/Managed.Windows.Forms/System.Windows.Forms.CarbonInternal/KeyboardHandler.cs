@@ -77,6 +77,20 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		private bool CharCodeToVirtualKeys (byte charCode, out int vkey) {
 			vkey = (int) charCode;
+			switch (vkey) {
+				case 28:
+					vkey = (int) VirtualKeys.VK_LEFT;
+					break;
+				case 29:
+					vkey = (int) VirtualKeys.VK_RIGHT;
+					break;
+				case 30:
+					vkey = (int) VirtualKeys.VK_UP;
+					break;
+				case 31:
+					vkey = (int) VirtualKeys.VK_DOWN;
+					break;
+			}	
 			
 			return true;
 		}
@@ -109,7 +123,7 @@ namespace System.Windows.Forms.CarbonInternal {
 			msg.wParam = (IntPtr) vkey;
 
 			if (result) {
-				GetKeyboardFocus (handle, ref msg.hwnd);
+				msg.hwnd = XplatUICarbon.FocusWindow;
 			}
 			
 			return result;
@@ -135,8 +149,6 @@ namespace System.Windows.Forms.CarbonInternal {
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref byte data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref UInt32 data);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetKeyboardFocus (IntPtr handle, ref IntPtr control);
 	}
 
 	internal enum KeyboardModifiers : uint {
