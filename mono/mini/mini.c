@@ -10671,7 +10671,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	MonoJitInfo *jinfo;
 	int dfn = 0, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
-	gboolean try_generic_shared = (opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable_impl (method);
+	gboolean try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
+		(opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable_impl (method);
 	MonoGenericContext *shared_context;
 
 	mono_jit_stats.methods_compiled++;

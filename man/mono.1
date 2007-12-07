@@ -907,6 +907,13 @@ with the X11 backend.  This is used to debug problems in Windows.Forms
 as it forces all of the commands send to X11 server to be done
 synchronously.   The default mode of operation is asynchronous which
 makes it hard to isolate the root of certain problems.
+.TP
+.I "MONO_GENERIC_SHARING"
+This controls for which classes to enable generic code sharing in
+principle.  Permissible values are "all", "corlib" and "none".  The
+default is "none", meaning that sharing can only happen for corlib
+classes.  Note that to enable generation of shared code the "gshared"
+compiler option has to be set as well.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger
