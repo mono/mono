@@ -1,3 +1,9 @@
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_get_trampoline_func): New helper function.
+
+	* tramp-<ARCH>.c: Use the new helper function.
+
 2007-12-07  Mark Probst  <mark.probst@gmail.com>
 
 	* inssel.brg: Added a pattern for the OP_TRAMPCALL_VTABLE
