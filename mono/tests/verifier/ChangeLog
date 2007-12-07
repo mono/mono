@@ -1,7 +1,10 @@
 2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
 
-	* make_test.sh: fixed compilation issues with some tests.
+	* make_test.sh: added tests for ldelem
 
+2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: fixed compilation issues with some tests.
 
 2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
 
