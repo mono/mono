@@ -1,3 +1,8 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* mono.1: added short documentation about the
+	MONO_ASPNET_INHIBIT_SETTINGSMAP environment variable.
+
 2007-12-07  Mark Probst  <mark.probst@gmail.com>
 
 	* mono.1: Added a short paragraph on the MONO_GENERIC_SHARING

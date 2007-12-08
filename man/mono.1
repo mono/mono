@@ -864,6 +864,16 @@ the a custom serializer will be produced on the 50th use.
 Set this value to 1 to prevent the serializer from removing the
 temporary files that are created for fast serialization;  This might
 be useful when debugging.
+.TP
+.I "MONO_ASPNET_INHIBIT_SETTINGSMAP"
+Mono contains a feature which allows modifying settings in the .config files shipped
+with Mono by using config section mappers. The mappers and the mapping rules are
+defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
+settings.map file found in the top-level directory of your ASP.NET application.
+Both files are read by System.Web on application startup, if they are found at the
+above locations. If you don't want the mapping to be performed you can set this
+variable in your environment before starting the application and no action will
+be taken.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 .I "MONO_ASPNET_NODELETE"
