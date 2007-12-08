@@ -55,6 +55,8 @@ common_dirs := \
 	Accessibility			\
 	Mono.Mozilla			\
 	Managed.Windows.Forms		\
+	Mono.Data.Sqlite		\
+	Mono.Data.SqliteClient		\
 	System.Web			\
 	System.Web.Services		\
 	System.Web			\
@@ -62,8 +64,6 @@ common_dirs := \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	Mono.Data.Sqlite		\
-	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
