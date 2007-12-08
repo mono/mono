@@ -4,6 +4,8 @@
 	* Makefile: added support for compiling .resx resources.
 	Added SQLiteProviders_DatabaseSchema.sql to EXTRA_DISTFILES.
 	Added new resource files to EXTRA_DISTFILES
+	Added a RESX_DIST variable which contains all the .resx files. The
+	variable is used by RESX_RES and by EXTRA_DISTFILES.
 
 2007-11-23  Daniel Nauck  <dna@mono-project.de>
 

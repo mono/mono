@@ -135,8 +135,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TextBoxTestlPage.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
+RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))
-RESX_RES = resources/TranslationResources.resources
+RESX_RES = $(RESX_DIST:.resx=.resources)
 endif
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
@@ -172,7 +173,7 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219 -nowarn:169 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml $(RESX_RES:.resources=.resx) \
+EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml $(RESX_DIST) \
 		  SQLiteProviders_DatabaseSchema.sql
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
