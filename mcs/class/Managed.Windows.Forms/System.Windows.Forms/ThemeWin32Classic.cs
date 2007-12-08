@@ -2472,6 +2472,18 @@ namespace System.Windows.Forms
 						DrawListViewGroupHeader (dc, control, group);
 				}
 			}
+
+			ListViewInsertionMark insertion_mark = control.InsertionMark;
+			int insertion_mark_index = insertion_mark.Index;
+			if (insertion_mark.Bounds != Rectangle.Empty &&
+					(control.View != View.Details && control.View != View.List) &&
+					insertion_mark_index > -1 && insertion_mark_index < control.Items.Count) {
+
+				Brush brush = ResPool.GetSolidBrush (insertion_mark.Color);
+				dc.FillRectangle (brush, insertion_mark.Line);
+				dc.FillPolygon (brush, insertion_mark.TopTriangle);
+				dc.FillPolygon (brush, insertion_mark.BottomTriangle);
+			}
 #endif
 			
 			// draw the gridlines

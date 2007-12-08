@@ -36,7 +36,7 @@ namespace System.Windows.Forms
 		bool appears_after_item;
 		Rectangle bounds;
 		Color? color;
-		int index = -1;
+		int index = 0;
 
 		internal ListViewInsertionMark (ListView listview)
 		{
@@ -48,7 +48,14 @@ namespace System.Windows.Forms
 				return appears_after_item;
 			}
 			set {
+				if (value == appears_after_item)
+					return;
+
 				appears_after_item = value;
+
+				listview_owner.item_control.Invalidate (bounds);
+				UpdateBounds ();
+				listview_owner.item_control.Invalidate (bounds);
 			}
 		}
 
@@ -72,13 +79,60 @@ namespace System.Windows.Forms
 				return index;
 			}
 			set {
+				if (value == index)
+					return;
+
 				index = value;
+
+				listview_owner.item_control.Invalidate (bounds);
+				UpdateBounds ();
+				listview_owner.item_control.Invalidate (bounds);
 			}
+		}
+
+		void UpdateBounds ()
+		{
+			if (index < 0 || index >= listview_owner.Items.Count) {
+				bounds = Rectangle.Empty;
+				return;
+			}
+
+			Rectangle item_bounds = listview_owner.Items [index].Bounds;
+			int x_origin = (appears_after_item ? item_bounds.Right : item_bounds.Left) - 2;
+			int height = item_bounds.Height + ThemeEngine.Current.ListViewVerticalSpacing;
+
+			bounds = new Rectangle (x_origin, item_bounds.Top, 7, height);
 		}
 
 		public int NearestIndex (Point pt)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal PointF [] TopTriangle {
+			get {
+				PointF p1 = new PointF (bounds.X, bounds.Y);
+				PointF p2 = new PointF (bounds.Right, bounds.Y);
+				PointF p3 = new PointF (bounds.X + (bounds.Right - bounds.X) / 2, bounds.Y + 5);
+
+				return new PointF [] {p1, p2, p3};
+			}
+		}
+
+		internal PointF [] BottomTriangle {
+			get {
+				PointF p1 = new PointF (bounds.X, bounds.Bottom);
+				PointF p2 = new PointF (bounds.Right, bounds.Bottom);
+				PointF p3 = new PointF (bounds.X + (bounds.Right - bounds.X) / 2, bounds.Bottom - 5);
+
+				return new PointF [] {p1, p2, p3};
+			}
+		}
+
+		internal Rectangle Line {
+			get {
+				return new Rectangle (bounds.X + 2, bounds.Y + 2, 2, bounds.Height - 5);
+			}
 		}
 	}
 }

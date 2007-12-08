@@ -105,6 +105,7 @@ namespace System.Windows.Forms
 		private int hot_item_index = -1;
 #if NET_2_0
 		private bool hot_tracking;
+		private ListViewInsertionMark insertion_mark;
 		private bool show_item_tooltips;
 		private ToolTip item_tooltip;
 		private Size tile_size;
@@ -299,6 +300,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 			item_tooltip = new ToolTip ();
 			item_tooltip.Active = false;
+			insertion_mark = new ListViewInsertionMark (this);
 #endif
 
 			InternalBorderStyle = BorderStyle.Fixed3D;
@@ -676,6 +678,15 @@ namespace System.Windows.Forms
 				hover_selection = value; 
 			}
 		}
+
+#if NET_2_0
+		[Browsable (false)]
+		public ListViewInsertionMark InsertionMark {
+			get {
+				return insertion_mark;
+			}
+		}
+#endif
 
 #if NET_2_0
 		[Editor ("System.Windows.Forms.Design.ListViewItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
