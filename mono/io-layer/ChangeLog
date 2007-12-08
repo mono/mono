@@ -1,3 +1,7 @@
+2007-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Include sys/mkdev.h if exists. Fixes solaris x86 build.
+
 2007-12-06  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c: Resource language values must be compared in a
