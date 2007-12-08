@@ -1,3 +1,9 @@
+2007-12-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* LocalFileEventLog.cs: To allow entry to be fully written before
+	attempting to read it, added small sleep period in the Created event
+	of the FSW.
+
 2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Process.cs: Modified StartInfo to throw ArgumentNullException when

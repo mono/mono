@@ -37,6 +37,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using System.Threading;
 
 namespace System.Diagnostics
 {
@@ -155,6 +156,9 @@ namespace System.Diagnostics
 							return;
 						_notifying = true;
 					}
+
+					// allow for file to be finished writing
+					Thread.Sleep (100);
 
 					// Process every new entry in one notification event.
 					try {
