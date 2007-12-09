@@ -986,8 +986,12 @@
     <Compile Include="System.Web.Util\AltSerialization.cs" />
     <Compile Include="System.Web.Util\DataSourceHelper.cs" />
     <Compile Include="System.Web.Util\DataSourceResolver.cs" />
+    <Compile Include="System.Web.Util\ISectionSettingsMapper.cs" />
     <Compile Include="System.Web.Util\IWebObjectFactory.cs" />
     <Compile Include="System.Web.Util\IWebPropertyAccessor.cs" />
+    <Compile Include="System.Web.Util\SettingsMapping.cs" />
+    <Compile Include="System.Web.Util\SettingsMappingManager.cs" />
+    <Compile Include="System.Web.Util\SettingsMappingWhat.cs" />
     <Compile Include="System.Web.Util\StrUtils.cs" />
     <Compile Include="System.Web.Util\TimeUtil.cs" />
     <Compile Include="System.Web.Util\TransactedCallback.cs" />
