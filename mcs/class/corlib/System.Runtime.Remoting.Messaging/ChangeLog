@@ -1,3 +1,9 @@
+2007-12-04  Robert Jordan  <robertj@gmx.net>
+
+	* MethodCall.cs (ResolveMethod): Handle server objects registered
+	with RemotingServices.Marshal (obj, typeof (ISomeInterface)).
+	Fixes #324232. Test case: /trunk/gert/standalone/bug82302/.
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CallContext.cs : added missing 2.0 stuff.

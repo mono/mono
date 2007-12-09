@@ -333,7 +333,7 @@ namespace System.Runtime.Remoting.Messaging {
 				// If the method is implemented in an interface, look for the method implementation.
 				// It can't be done in the previous GetMethodBaseFromName call because at that point we
 				// may not yet have the method signature.
-				if (requestType != type && requestType.IsInterface) {
+				if (requestType != type && requestType.IsInterface && !type.IsInterface) {
 					_methodBase = RemotingServices.GetVirtualMethod (type, _methodBase);
 					if (_methodBase == null)
 						throw new RemotingException ("Method " + _methodName + " not found in " + type);
