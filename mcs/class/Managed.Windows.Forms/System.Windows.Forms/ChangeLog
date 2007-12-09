@@ -1,3 +1,8 @@
+2007-12-09  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: check if windows are actually mapped before
+	trying to zorder. Fixes #342509, #346955
+
 2007-12-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs:
