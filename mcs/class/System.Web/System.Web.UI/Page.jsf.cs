@@ -152,7 +152,18 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("processSaveState");
 #endif
-			return new object [] { _state, GetValidatorsState () };
+			object state = new Pair (_state, GetValidatorsState ());
+			if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
+				int length;
+				byte [] buffer = new ObjectStateFormatter (this).SerializeInternal (state, out length);
+				if (buffer.Length != length) {
+					byte [] trimmedBuffer = new byte [length];
+					Array.Copy (buffer, trimmedBuffer, length);
+					buffer = trimmedBuffer;
+				}
+				state = vmw.common.TypeUtils.ToSByteArray (buffer);
+			}
+			return state;
 		}
 
 		public override void processRestoreState (FacesContext context, object state) {
@@ -161,8 +172,12 @@ namespace System.Web.UI
 #endif
 			EnterThread (context);
 			try {
-				_state = (Pair) ((object []) state) [0];
-				_validatorsState = (bool []) ((object []) state) [1];
+				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
+					byte [] buffer = (byte []) vmw.common.TypeUtils.ToByteArray ((sbyte []) state);
+					state = new ObjectStateFormatter (this).DeserializeInternal (buffer);
+				}
+				_state = (Pair) ((Pair) state).First;
+				_validatorsState = (bool []) ((Pair) state).Second;
 				RestorePageState ();
 			}
 			catch (Exception ex) {
@@ -323,7 +338,8 @@ namespace System.Web.UI
 			}
 
 			public override void Save () {
-				Page._state = new Pair (ViewState, ControlState);
+				if (ViewState != null || ControlState != null)
+					Page._state = new Pair (ViewState, ControlState);
 			}
 		}
 
