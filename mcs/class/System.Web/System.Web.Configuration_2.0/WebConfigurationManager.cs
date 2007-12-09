@@ -271,7 +271,11 @@ namespace System.Web.Configuration {
 			if (section == null)
 				return null;
 
+#if TARGET_J2EE
+			return get_runtime_object.Invoke (section, new object [0]);
+#else
 			return SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
+#endif
 		}
 
 		static string GetCurrentPath (HttpContext ctx)
