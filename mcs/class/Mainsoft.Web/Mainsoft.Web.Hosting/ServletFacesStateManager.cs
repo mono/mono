@@ -57,7 +57,7 @@ namespace Mainsoft.Web.Hosting
 			}
 
 			// now ask the view root component to restore its state
-			uiViewRoot.processRestoreState (facesContext, serializedComponentStates);
+			((UIComponent) uiViewRoot.getChildren ().get (0)).processRestoreState (facesContext, serializedComponentStates);
 
 			Console.WriteLine ("Exiting restoreComponentState");
 		}

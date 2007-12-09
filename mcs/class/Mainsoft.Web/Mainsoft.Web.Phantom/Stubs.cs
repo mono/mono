@@ -30,7 +30,8 @@ namespace System.Web.J2EE
 	public class PageMapper
 	{
 		public static Type GetObjectType (HttpContext context, string url) {
-			throw new InvalidOperationException ();
+			return null;
+			//throw new InvalidOperationException ();
 		}
 	}
 }

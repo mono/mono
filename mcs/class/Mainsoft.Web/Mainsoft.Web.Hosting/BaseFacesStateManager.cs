@@ -41,7 +41,7 @@ namespace Mainsoft.Web.Hosting
 				return null;
 			}
 
-			Object serializedComponentStates = viewRoot.processSaveState (facesContext);
+			Object serializedComponentStates = ((UIComponent) viewRoot.getChildren ().get (0)).processSaveState (facesContext);
 			//Locale is a state attribute of UIViewRoot and need not be saved explicitly
 			Console.WriteLine ("Exiting getComponentStateToSave");
 			return serializedComponentStates;
