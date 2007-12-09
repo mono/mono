@@ -1449,6 +1449,7 @@ namespace System.Web {
 			if (type != null)
 				return type;
 
+#if !TARGET_JVM
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 			foreach (Assembly ass in assemblies) {
 				type = ass.GetType (typeName, false);
@@ -1472,7 +1473,7 @@ namespace System.Web {
 			type = LoadTypeFromBin (typeName);
 			if (type != null)
 				return type;
-			
+#endif
 			if (throwOnMissing)
 				throw new TypeLoadException (String.Format ("Type '{0}' cannot be found", typeName));
 			

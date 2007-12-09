@@ -1,3 +1,7 @@
+2007-12-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpApplication.cs: added TARGET_JVM to LoadType method
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: initialize the Settings Mapping Manager once per
