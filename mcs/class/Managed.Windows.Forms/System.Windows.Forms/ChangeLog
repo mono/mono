@@ -1,3 +1,8 @@
+2007-12-09  Andreia Gaita <avidigal@novell.com>
+	[Backport to 1.2.6]
+	* Control.cs: check if windows are actually mapped before
+	trying to zorder. Fixes #342509, #346955
+
 2007-12-05  Andreia Gaita <avidigal@novell.com>
 	[Backport to 1.2.6]
 	* Control.cs: When updating the zorder, ignore windows that are not

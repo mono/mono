@@ -4889,14 +4889,14 @@ namespace System.Windows.Forms
 		}
 
 		private void UpdateZOrderOfChild(Control child) {
-			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this)) {
+			if (IsHandleCreated && child.IsHandleCreated && (child.parent == this) && Hwnd.ObjectFromHandle(child.Handle).Mapped) {
 				// Need to take into account all controls
 				Control [] all_controls = child_controls.GetAllControls ();
 
 				int index = Array.IndexOf (all_controls, child);
 				
 				for (; index > 0; index--) {
-					if (!all_controls [index - 1].IsHandleCreated || !all_controls [index - 1].VisibleInternal)
+					if (!all_controls [index - 1].IsHandleCreated || !all_controls [index - 1].VisibleInternal || !Hwnd.ObjectFromHandle(all_controls [index - 1].Handle).Mapped)
 						continue;
 					break;
 				}
