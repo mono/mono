@@ -1,3 +1,12 @@
+2007-12-10  Miguel de Icaza  <miguel@novell.com>
+
+	* DefaultTraceListener.cs: By default set the AssertUiEnabled to
+	false, as this is what we had previously and some broken
+	applications (Tomboy) are too trigger happy with Debug.Assert. 
+
+	Also, we now load the Windows.Forms code on demand, instead of
+	preloading it on the static ctor to reduce memory usage.
+	
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* Process.cs: Wrap the redirected streams with a stream
