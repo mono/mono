@@ -1,3 +1,7 @@
+2007-12-10  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffset.cs: partial implementation. no longer just a stub.
+
 2007-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs: Compute the Method property lazily.
