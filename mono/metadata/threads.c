@@ -606,7 +606,7 @@ guint32 mono_threads_get_default_stacksize (void)
 	return default_stacksize;
 }
 
-void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
+void mono_thread_create_internal (MonoDomain *domain, gpointer func, gpointer arg, gboolean threadpool_thread)
 {
 	MonoThread *thread;
 	HANDLE thread_handle;
@@ -641,10 +641,18 @@ void mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
 
 	thread->synch_cs = g_new0 (CRITICAL_SECTION, 1);
 	InitializeCriticalSection (thread->synch_cs);
-						  
+
+	thread->threadpool_thread = threadpool_thread;
+
 	handle_store(thread);
 
 	ResumeThread (thread_handle);
+}
+
+void
+mono_thread_create (MonoDomain *domain, gpointer func, gpointer arg)
+{
+	mono_thread_create_internal (domain, func, arg, FALSE);
 }
 
 /*
@@ -894,6 +902,7 @@ void ves_icall_System_Threading_Thread_Thread_free_internal (MonoThread *this,
 
 	DeleteCriticalSection (this->synch_cs);
 	g_free (this->synch_cs);
+	this->synch_cs = NULL;
 }
 
 static void mono_thread_start (MonoThread *thread)
