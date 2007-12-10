@@ -1,3 +1,8 @@
+2007-12-10  Andreia Gaita <avidigal@novell.com>
+
+	* PrintingServicesWin32.cs: Add enumeration flag to get remote 
+	printers as well as locally connected ones. Fixes #325258
+
 2007-06-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Margins.cs: Overloaded operators are 2.0 only.

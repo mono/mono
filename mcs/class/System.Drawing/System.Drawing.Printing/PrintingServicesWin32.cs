@@ -327,8 +327,8 @@ namespace System.Drawing.Printing
 				IntPtr ptr, buff;
 				string s;
 
-				// Determine space need it
-        		Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
+				// Determine space needed
+        		Win32EnumPrinters ((int)EnumPrinters.PRINTER_ENUM_CONNECTIONS | (int)EnumPrinters.PRINTER_ENUM_LOCAL,
             			null, 2, IntPtr.Zero, 0, ref cbNeeded, ref printers);
 
 				if (cbNeeded <= 0)
@@ -338,7 +338,7 @@ namespace System.Drawing.Printing
 
 				try {
 					// Give us the printer list
-					Win32EnumPrinters (2 /* PRINTER_ENUM_LOCAL */,
+					Win32EnumPrinters ((int)EnumPrinters.PRINTER_ENUM_CONNECTIONS | (int)EnumPrinters.PRINTER_ENUM_LOCAL,
 						null, 2, buff, (uint)cbNeeded, ref cbNeeded, ref printers);
 
 					for (int i = 0; i < printers; i++) {
@@ -638,6 +638,18 @@ namespace System.Drawing.Printing
 			DT_DISPFILE		= 6, // Display-file
 		}
 
+		[Flags]
+		internal enum EnumPrinters: uint
+		{
+			PRINTER_ENUM_DEFAULT 		= 0x1,
+			PRINTER_ENUM_LOCAL   		= 0x2,
+			PRINTER_ENUM_CONNECTIONS 	= 0x4,
+			PRINTER_ENUM_FAVORITE 		= 0x4,
+			PRINTER_ENUM_NAME 			= 0x8,
+			PRINTER_ENUM_REMOTE 		= 0x10,
+			PRINTER_ENUM_SHARED 		= 0x20,
+			PRINTER_ENUM_NETWORK 		= 0x40,
+		}
  	}
 
 	class GlobalPrintingServicesWin32 : GlobalPrintingServices
