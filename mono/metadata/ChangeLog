@@ -1,3 +1,22 @@
+2007-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_get_token): Call mono_image_create_token () for
+	FieldBuilders.
+
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor): Fix a warning.
+
+	* class.c (mono_lookup_dynamic_token_class): Add a 'valid token' argument to
+	prevent asserts when this is called with a token which might not be valid.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): Call
+	lookup_dynamic_token_class with valid_token == FALSE.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveMethodToken): Ditto.	
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveStringToken): Ditto.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveFieldToken): Ditto.
+	
 2007-12-10  Mark Probst  <mark.probst@gmail.com>
 
 	* gc.c: Don't delay threadpool thread finalization unless Mono is
