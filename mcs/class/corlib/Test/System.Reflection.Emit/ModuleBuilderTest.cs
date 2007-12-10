@@ -24,16 +24,17 @@ namespace MonoTests.System.Reflection.Emit
 	[TestFixture]
 	public class ModuleBuilderTest
 	{
-		static string TempFolder = Path.Combine (Path.GetTempPath (), "MT.S.R.E.MBT");
+		static string tempDir = Path.Combine (Path.GetTempPath (), typeof (ModuleBuilderTest).FullName);
+		static int nameIndex = 0;
 
 		[SetUp]
 		public void SetUp ()
 		{
 			Random AutoRand = new Random ();
-			string TempPath = TempFolder;
-			while (Directory.Exists (TempFolder))
-				TempFolder = Path.Combine (TempPath, AutoRand.Next ().ToString ());
-			Directory.CreateDirectory (TempFolder);
+			string basePath = tempDir;
+			while (Directory.Exists (tempDir))
+				tempDir = Path.Combine (basePath, AutoRand.Next ().ToString ());
+			Directory.CreateDirectory (tempDir);
 		}
 
 		[TearDown]
@@ -42,20 +43,29 @@ namespace MonoTests.System.Reflection.Emit
 			try {
 				// This throws an exception under MS.NET, since the directory contains loaded
 				// assemblies.
-				Directory.Delete (TempFolder, true);
+				Directory.Delete (tempDir, true);
 			} catch (Exception) {
 			}
+		}
+
+		private AssemblyName genAssemblyName ()
+		{
+			AssemblyName assemblyName = new AssemblyName();
+			assemblyName.Name = typeof (ModuleBuilderTest).FullName + (nameIndex ++);
+			return assemblyName;
+		}
+
+		private AssemblyBuilder genAssembly ()
+		{
+			return Thread.GetDomain ().DefineDynamicAssembly (genAssemblyName (),
+															  AssemblyBuilderAccess.RunAndSave,
+															  tempDir);
 		}
 
 		[Test]
 		public void TestIsTransient ()
 		{
-			AssemblyName assemblyName = new AssemblyName ();
-			assemblyName.Name = "foo";
-
-			AssemblyBuilder ab
-				= Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
+			AssemblyBuilder ab = genAssembly ();
 			ModuleBuilder mb1 = ab.DefineDynamicModule ("foo.dll");
 			Assert.IsTrue (mb1.IsTransient (), "#1");
 			ModuleBuilder mb2 = ab.DefineDynamicModule ("foo2.dll", "foo2.dll");
@@ -67,15 +77,9 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void TestGlobalData ()
 		{
+			AssemblyBuilder ab = genAssembly ();
 
-			AssemblyName assemblyName = new AssemblyName ();
-			assemblyName.Name = "foo";
-
-			AssemblyBuilder ab
-				= Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
-
-			string resfile = Path.Combine (TempFolder, "res");
+			string resfile = Path.Combine (tempDir, "res");
 			using (StreamWriter sw = new StreamWriter (resfile)) {
 				sw.WriteLine ("FOO");
 			}
@@ -91,7 +95,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			ab.Save ("foo.dll");
 
-			Assembly assembly = Assembly.LoadFrom (Path.Combine (TempFolder, "foo.dll"));
+			Assembly assembly = Assembly.LoadFrom (Path.Combine (tempDir, "foo.dll"));
 
 			Module module = assembly.GetLoadedModules () [0];
 
@@ -114,10 +118,7 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void TestGlobalMethods ()
 		{
-			AssemblyName an = new AssemblyName ();
-			an.Name = "TestGlobalMethods";
-			AssemblyBuilder builder =
-				AppDomain.CurrentDomain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
+			AssemblyBuilder builder = genAssembly ();
 			ModuleBuilder module = builder.DefineDynamicModule ("MessageModule");
 			MethodBuilder method = module.DefinePInvokeMethod ("printf", "libc.so",
 															  MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public,
@@ -133,13 +134,7 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void TestDefineType_InterfaceNotAbstract ()
 		{
-			AssemblyName assemblyName = new AssemblyName ();
-			assemblyName.Name = "ModuleBuilderTest.DuplicateSymbolDocument";
-
-			AssemblyBuilder ab
-				= Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
-
+			AssemblyBuilder ab = genAssembly ();
 			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
 
 			try {
@@ -177,13 +172,7 @@ namespace MonoTests.System.Reflection.Emit
 		[Test]
 		public void DuplicateSymbolDocument ()
 		{
-			AssemblyName assemblyName = new AssemblyName ();
-			assemblyName.Name = "ModuleBuilderTest.DuplicateSymbolDocument";
-
-			AssemblyBuilder ab
-				= Thread.GetDomain ().DefineDynamicAssembly (
-					assemblyName, AssemblyBuilderAccess.RunAndSave, TempFolder);
-
+			AssemblyBuilder ab = genAssembly ();
 			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
 
 			// Check that it is possible to redefine a symbol document
@@ -198,10 +187,7 @@ namespace MonoTests.System.Reflection.Emit
 		[Test] // Test case for #80435.
 		public void GetArrayMethodToStringTest ()
 		{
-			AssemblyName name = new AssemblyName ();
-			name.Name = "a";
-			AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (name, AssemblyBuilderAccess.RunAndSave);
-
+			AssemblyBuilder assembly = genAssembly ();
 			ModuleBuilder module = assembly.DefineDynamicModule ("m", "test.dll");
 
 			Type [] myArrayClass = new Type [1];
@@ -226,5 +212,32 @@ namespace MonoTests.System.Reflection.Emit
 			for (int i = 0; i < s1.Length; ++i)
 				Assert.AreEqual (s1.GetValue (i), s2.GetValue (i), "#2: " + i);
 		}
+
+#if NET_2_0
+		[Test]
+		public void ResolveFieldTokenFieldBuilder ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = mb.DefineType ("foo");
+			FieldBuilder fb = tb.DefineField ("foo", typeof (int), 0);
+			tb.CreateType ();
+
+			FieldInfo fi = mb.ResolveField (fb.GetToken ().Token);
+			Assert.IsNotNull (fi);
+			Assert.AreEqual ("foo", fi.Name);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ResolveFieldTokenInvalidToken ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			mb.ResolveField (0x4001234);
+		}
+#endif
 	}
 }

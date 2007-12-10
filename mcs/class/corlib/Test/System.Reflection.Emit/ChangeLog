@@ -1,3 +1,8 @@
+2007-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleBuilderTest.cs: Simplify some code. Add tests for ResolveField ()
+	and FieldBuilders.
+
 2007-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SignatureHelperTest.cs : new test.
