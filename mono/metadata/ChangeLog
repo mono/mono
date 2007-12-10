@@ -1,3 +1,7 @@
+2007-12-10  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c: Don't delay threadpool thread finalization unless Mono is
+	shutting down.
 
 Mon Dec 10 11:06:23 CET 2007 Paolo Molaro <lupus@ximian.com>
 
