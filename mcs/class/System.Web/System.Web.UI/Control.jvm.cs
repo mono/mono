@@ -53,14 +53,13 @@ namespace System.Web.UI
 			}
 		}
 
-		internal string CreateResourceUrl (string url) {
-			FacesContext faces = getFacesContext ();
-			if (faces == null)
-				return url;
-
-			url = Asp2Jsf (url);
-
-			return faces.getApplication ().getViewHandler ().getResourceURL (faces, url);
+		string ResolveAppRelativeFromFullPath (string url) {
+			Uri uri = new Uri (url);
+			if (String.Compare (uri.Scheme, Page.Request.Url.Scheme, StringComparison.OrdinalIgnoreCase) == 0 &&
+				String.Compare (uri.Host, Page.Request.Url.Host, StringComparison.OrdinalIgnoreCase) == 0 &&
+				uri.Port == Page.Request.Url.Port)
+				return VirtualPathUtility.ToAppRelative (uri.PathAndQuery);
+			return url;
 		}
 
 		internal string CreateActionUrl (string url) {
