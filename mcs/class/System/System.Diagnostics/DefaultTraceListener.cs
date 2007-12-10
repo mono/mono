@@ -57,9 +57,6 @@ namespace System.Diagnostics {
 		private static readonly string MonoTracePrefix;
 		private static readonly string MonoTraceFile;
 
-		private static readonly object messageBoxButtonsAbortRetryIgnore;
-		private static readonly MethodInfo msgboxShow;
-
 		static DefaultTraceListener ()
 		{
 			// Determine what platform we're on.  This impacts how where we send
@@ -110,19 +107,6 @@ namespace System.Diagnostics {
 					MonoTracePrefix = prefix;
 				}
 			}
-
-			// AssertUiEnabled support
-			try {
-				Assembly wfAsm = Assembly.Load (Consts.AssemblySystem_Windows_Forms);
-				if (wfAsm != null) {
-					Type buttons = wfAsm.GetType ("System.Windows.Forms.MessageBoxButtons");
-					messageBoxButtonsAbortRetryIgnore = Enum.Parse (buttons, "AbortRetryIgnore");
-					msgboxShow = wfAsm.GetType ("System.Windows.Forms.MessageBox").GetMethod ("Show", new Type [] {typeof (string), typeof (string), buttons});
-				}
-			} catch {
-				// failed to load the assembly (likely when
-				// MWF is not installed).
-			}
 		}
 
 		/**
@@ -153,7 +137,7 @@ namespace System.Diagnostics {
 
 		private string logFileName = null;
 
-		private bool assertUiEnabled = true;
+		private bool assertUiEnabled = false;
 
 		public DefaultTraceListener () : base ("Default")
 		{
@@ -185,7 +169,28 @@ namespace System.Diagnostics {
 
 		DialogResult ProcessUI (string message, string detailMessage)
 		{
-			if (!AssertUiEnabled || msgboxShow == null || messageBoxButtonsAbortRetryIgnore == null)
+			
+			if (!AssertUiEnabled)
+				return DialogResult.None;
+
+			object messageBoxButtonsAbortRetryIgnore;
+			MethodInfo msgboxShow;
+			
+			try {
+				Assembly wfAsm = Assembly.Load (Consts.AssemblySystem_Windows_Forms);
+				if (wfAsm == null)
+				    return DialogResult.None;
+				
+				Type buttons = wfAsm.GetType ("System.Windows.Forms.MessageBoxButtons");
+				messageBoxButtonsAbortRetryIgnore = Enum.Parse (buttons, "AbortRetryIgnore");
+				msgboxShow = wfAsm.GetType ("System.Windows.Forms.MessageBox").GetMethod (
+					"Show",
+					new Type [] {typeof (string), typeof (string), buttons});
+			} catch {
+				return DialogResult.None;
+			}
+
+			if (msgboxShow == null || messageBoxButtonsAbortRetryIgnore == null)
 				return DialogResult.None;
 
 			string caption = String.Format ("Assertion Failed: {0} to quit, {1} to debug, {2} to continue", "Abort", "Retry", "Ignore");
