@@ -1,3 +1,8 @@
+2007-12-10  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Ensure that the synch_cs is set before trying to use
+	it.
+
 2007-12-10  Mark Probst  <mark.probst@gmail.com>
 
 	* gc.c: Don't delay threadpool thread finalization unless Mono is

@@ -437,6 +437,25 @@ mono_thread_hazardous_free_or_queue (gpointer p, MonoHazardousFreeFunc free_func
 		free_func (p);
 }
 
+static void ensure_synch_cs_set (MonoThread *thread)
+{
+	CRITICAL_SECTION *synch_cs;
+	
+	if (thread->synch_cs != NULL) {
+		return;
+	}
+	
+	synch_cs = g_new0 (CRITICAL_SECTION, 1);
+	InitializeCriticalSection (synch_cs);
+	
+	if (InterlockedCompareExchangePointer ((gpointer *)&thread->synch_cs,
+					       synch_cs, NULL) != NULL) {
+		/* Another thread must have installed this CS */
+		DeleteCriticalSection (synch_cs);
+		g_free (synch_cs);
+	}
+}
+
 /*
  * NOTE: this function can be called also for threads different from the current one:
  * make sure no code called from it will ever assume it is run on the thread that is
@@ -807,21 +826,12 @@ HANDLE ves_icall_System_Threading_Thread_Thread_internal(MonoThread *this,
 	struct StartInfo *start_info;
 	HANDLE thread;
 	gsize tid;
-	CRITICAL_SECTION *synch_cs;
 	
 	MONO_ARCH_SAVE_REGS;
 
 	THREAD_DEBUG (g_message("%s: Trying to start a new thread: this (%p) start (%p)", __func__, this, start));
 
-	synch_cs = g_new0 (CRITICAL_SECTION, 1);
-	InitializeCriticalSection (synch_cs);
-
-	if (InterlockedCompareExchangePointer ((gpointer *)&this->synch_cs,
-					       synch_cs, NULL) != NULL) {
-		/* This thread must have already been started! */
-		DeleteCriticalSection (synch_cs);
-		g_free (synch_cs);
-	}
+	ensure_synch_cs_set (this);
 
 	EnterCriticalSection (this->synch_cs);
 
@@ -887,8 +897,7 @@ void ves_icall_System_Threading_Thread_Thread_init (MonoThread *this)
 {
 	MONO_ARCH_SAVE_REGS;
 
-	this->synch_cs = g_new0 (CRITICAL_SECTION, 1);
-	InitializeCriticalSection (this->synch_cs);
+	ensure_synch_cs_set (this);
 }
 
 void ves_icall_System_Threading_Thread_Thread_free_internal (MonoThread *this,
@@ -978,6 +987,8 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj)
 {
 	MonoString* str;
 
+	ensure_synch_cs_set (this_obj);
+	
 	EnterCriticalSection (this_obj->synch_cs);
 	
 	if (!this_obj->name)
@@ -993,6 +1004,8 @@ ves_icall_System_Threading_Thread_GetName_internal (MonoThread *this_obj)
 void 
 ves_icall_System_Threading_Thread_SetName_internal (MonoThread *this_obj, MonoString *name)
 {
+	ensure_synch_cs_set (this_obj);
+	
 	EnterCriticalSection (this_obj->synch_cs);
 	
 	if (this_obj->name) {
@@ -1041,6 +1054,8 @@ ves_icall_System_Threading_Thread_GetSerializedCurrentCulture (MonoThread *this)
 {
 	MonoArray *res;
 
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if (this->serialized_culture_info) {
@@ -1064,6 +1079,8 @@ cache_culture (MonoThread *this, MonoObject *culture, int start_idx)
 	int free_slot = -1;
 	int same_domain_slot = -1;
 
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if (!this->cached_culture_info)
@@ -1101,6 +1118,8 @@ ves_icall_System_Threading_Thread_SetCachedCurrentCulture (MonoThread *this, Mon
 void
 ves_icall_System_Threading_Thread_SetSerializedCurrentCulture (MonoThread *this, MonoArray *arr)
 {
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if (this->serialized_culture_info)
@@ -1124,6 +1143,8 @@ ves_icall_System_Threading_Thread_GetSerializedCurrentUICulture (MonoThread *thi
 {
 	MonoArray *res;
 
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if (this->serialized_ui_culture_info) {
@@ -1147,6 +1168,8 @@ ves_icall_System_Threading_Thread_SetCachedCurrentUICulture (MonoThread *this, M
 void
 ves_icall_System_Threading_Thread_SetSerializedCurrentUICulture (MonoThread *this, MonoArray *arr)
 {
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if (this->serialized_ui_culture_info)
@@ -1176,6 +1199,8 @@ gboolean ves_icall_System_Threading_Thread_Join_internal(MonoThread *this,
 	
 	mono_thread_current_check_pending_interrupt ();
 
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	if ((this->state & ThreadState_Unstarted) != 0) {
@@ -1801,6 +1826,8 @@ ves_icall_System_Threading_Thread_GetState (MonoThread* this)
 {
 	guint32 state;
 
+	ensure_synch_cs_set (this);
+	
 	EnterCriticalSection (this->synch_cs);
 	
 	state = this->state;
@@ -1813,6 +1840,8 @@ ves_icall_System_Threading_Thread_GetState (MonoThread* this)
 void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this)
 {
 	gboolean throw = FALSE;
+	
+	ensure_synch_cs_set (this);
 	
 	EnterCriticalSection (this->synch_cs);
 	
@@ -1833,6 +1862,8 @@ void mono_thread_current_check_pending_interrupt ()
 {
 	MonoThread *thread = mono_thread_current ();
 	gboolean throw = FALSE;
+
+	ensure_synch_cs_set (thread);
 	
 	EnterCriticalSection (thread->synch_cs);
 	
@@ -1916,6 +1947,8 @@ ves_icall_System_Threading_Thread_Abort (MonoThread *thread, MonoObject *state)
 {
 	MONO_ARCH_SAVE_REGS;
 
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 	
 	if ((thread->state & ThreadState_AbortRequested) != 0 || 
@@ -1952,6 +1985,8 @@ ves_icall_System_Threading_Thread_ResetAbort (void)
 	MonoThread *thread = mono_thread_current ();
 
 	MONO_ARCH_SAVE_REGS;
+
+	ensure_synch_cs_set (thread);
 	
 	EnterCriticalSection (thread->synch_cs);
 
@@ -1974,6 +2009,8 @@ mono_thread_suspend (MonoThread *thread)
 {
 	MONO_ARCH_SAVE_REGS;
 
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 
 	if ((thread->state & ThreadState_Unstarted) != 0 || 
@@ -2012,6 +2049,8 @@ mono_thread_resume (MonoThread *thread)
 {
 	MONO_ARCH_SAVE_REGS;
 
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 
 	if ((thread->state & ThreadState_SuspendRequested) != 0) {
@@ -2081,6 +2120,8 @@ is_running_protected_wrapper (void)
 
 void mono_thread_stop (MonoThread *thread)
 {
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 
 	if ((thread->state & ThreadState_StopRequested) != 0 ||
@@ -2565,6 +2606,8 @@ void mono_thread_suspend_all_other_threads (void)
 			continue;
 		}
 
+		ensure_synch_cs_set (thread);
+		
 		EnterCriticalSection (thread->synch_cs);
 
 		if ((thread->state & ThreadState_Suspended) != 0 || 
@@ -3153,6 +3196,8 @@ static guint32 dummy_apc (gpointer param)
  */
 static MonoException* mono_thread_execute_interruption (MonoThread *thread)
 {
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 
 	if (thread->interruption_requested) {
@@ -3232,6 +3277,8 @@ MonoException* mono_thread_request_interruption (gboolean running_managed)
 	/* The thread may already be stopping */
 	if (thread == NULL) 
 		return NULL;
+	
+	ensure_synch_cs_set (thread);
 	
 	EnterCriticalSection (thread->synch_cs);
 	
@@ -3356,6 +3403,8 @@ mono_thread_cleanup_apartment_state (void)
 void
 mono_thread_set_state (MonoThread *thread, MonoThreadState state)
 {
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 	thread->state |= state;
 	LeaveCriticalSection (thread->synch_cs);
@@ -3364,6 +3413,8 @@ mono_thread_set_state (MonoThread *thread, MonoThreadState state)
 void
 mono_thread_clr_state (MonoThread *thread, MonoThreadState state)
 {
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 	thread->state &= ~state;
 	LeaveCriticalSection (thread->synch_cs);
@@ -3374,6 +3425,8 @@ mono_thread_test_state (MonoThread *thread, MonoThreadState test)
 {
 	gboolean ret = FALSE;
 
+	ensure_synch_cs_set (thread);
+	
 	EnterCriticalSection (thread->synch_cs);
 
 	if ((thread->state & test) != 0) {
