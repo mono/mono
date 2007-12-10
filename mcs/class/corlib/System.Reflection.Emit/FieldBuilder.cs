@@ -116,7 +116,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public FieldToken GetToken() {
-			return new FieldToken (0x04000000 | table_idx);
+			return new FieldToken (MetadataToken);
 		}
 
 		public override object GetValue(object obj) {

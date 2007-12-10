@@ -1,3 +1,7 @@
+2007-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldBuilder.cs (GetToken): Use the MetadataToken property.
+
 2007-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericTypeParameterBuilder.cs : fixed regression.
