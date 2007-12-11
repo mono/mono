@@ -1,3 +1,7 @@
+2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripManagerTest.cs: Add a test for bug #347669.
+
 2007-12-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataBindingTests.cs: Silence some debug spew.
