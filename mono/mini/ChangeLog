@@ -1,3 +1,9 @@
+
+Mon Dec 10 11:08:49 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: call type ctor before allocating objects of the type
+	(fixes at least part of bug #342507).
+
 2007-12-07  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Don't compile methods with sharing enabled if their
