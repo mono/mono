@@ -125,6 +125,9 @@ namespace System.Drawing
 			else
 				ic = ImageCodec.CreateReader(format);
 
+			if (ic == null)
+				throw new ArgumentException ("Parameter is not valid.");
+
 			try {
 				ic.NativeStream = input;
 				PlainImage pi = ic.ReadPlainImage();

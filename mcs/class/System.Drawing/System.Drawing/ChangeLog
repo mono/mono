@@ -1,3 +1,7 @@
+2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: ArgumentException on unknown format from stream
+
 2007-12-07  Geoff Norton  <gnorton@novell.com>
 
 	* Graphics.cs: Ensure that we Flush and Synchornize our CGContexts
