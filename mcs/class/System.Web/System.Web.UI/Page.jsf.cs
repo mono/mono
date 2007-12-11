@@ -338,6 +338,12 @@ namespace System.Web.UI
 			return oldWriter;
 		}
 
+		string DecodeNamespace (string id) {
+			if (PortletNamespace.Length > 0 && id.Length > PortletNamespace.Length && id.StartsWith (PortletNamespace, StringComparison.Ordinal))
+				id = id.Substring (PortletNamespace.Length);
+			return id;
+		}
+
 		sealed class FacesPageStatePersister : PageStatePersister
 		{
 			public FacesPageStatePersister (Page page)
