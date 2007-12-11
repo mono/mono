@@ -3833,13 +3833,10 @@ namespace System.Windows.Forms
 					break;
 
 				case PictureBoxSizeMode.CenterImage:
-					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					dc.DrawImage (pb.Image, (client.Width / 2) - (pb.Image.Width / 2), (client.Height / 2) - (pb.Image.Height / 2));
 					break;
 #if NET_2_0
 				case PictureBoxSizeMode.Zoom:
-					dc.FillRectangle (GetControlBackBrush (pb.BackColor), clip);
-					
 					Size image_size;
 					
 					if (((float)pb.Image.Width / (float)pb.Image.Height) >= ((float)client.Width / (float)client.Height))
@@ -3851,7 +3848,6 @@ namespace System.Windows.Forms
 					break;
 #endif
 				default:
-					dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 					// Normal, AutoSize
 					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
 					break;
@@ -3859,9 +3855,6 @@ namespace System.Windows.Forms
 
 				return;
 			}
-
-			// We only get here if no image is set. At least paint the background
-			dc.FillRectangle(GetControlBackBrush (pb.BackColor), clip);
 		}
 
 		public override Size PictureBoxDefaultSize {

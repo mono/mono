@@ -1,3 +1,9 @@
+2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Don't draw a PictureBox's background in
+	DrawPictureBox, this is handled by Control.PaintBackground.
+	[Fixes bug #347276]
+
 2007-12-10  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: When process menu keys return true by default only if menu is
