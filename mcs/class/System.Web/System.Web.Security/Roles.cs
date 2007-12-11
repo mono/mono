@@ -253,8 +253,9 @@ namespace System.Web.Security {
 			get {
 				CheckEnabled ();
 				if (providersCollection == null) {
-					providersCollection = new RoleProviderCollection ();
-					ProvidersHelper.InstantiateProviders (config.Providers, providersCollection, typeof (RoleProvider));
+					RoleProviderCollection providersCollectionTmp = new RoleProviderCollection ();
+					ProvidersHelper.InstantiateProviders (config.Providers, providersCollectionTmp, typeof (RoleProvider));
+					providersCollection = providersCollectionTmp;
 				}
 				return providersCollection;
 			}

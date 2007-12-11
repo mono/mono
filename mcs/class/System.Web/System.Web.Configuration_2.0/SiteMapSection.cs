@@ -77,8 +77,9 @@ namespace System.Web.Configuration
 		internal SiteMapProviderCollection ProvidersInternal {
 			get {
 				if (providers == null) {
-					providers = new SiteMapProviderCollection ();
-					ProvidersHelper.InstantiateProviders (Providers, providers, typeof (SiteMapProvider));
+					SiteMapProviderCollection providersTmp = new SiteMapProviderCollection ();
+					ProvidersHelper.InstantiateProviders (Providers, providersTmp, typeof (SiteMapProvider));
+					providers = providersTmp;
 				}
 				return providers;
 			}

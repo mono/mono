@@ -195,8 +195,9 @@ namespace System.Web.Profile
 			get {
 				CheckEnabled ();
 				if (providersCollection == null) {
-					providersCollection = new ProfileProviderCollection ();
-					ProvidersHelper.InstantiateProviders (config.Providers, providersCollection, typeof (ProfileProvider));
+					ProfileProviderCollection providersCollectionTmp = new ProfileProviderCollection ();
+					ProvidersHelper.InstantiateProviders (config.Providers, providersCollectionTmp, typeof (ProfileProvider));
+					providersCollection = providersCollectionTmp;
 				}
 				return providersCollection;
 			}

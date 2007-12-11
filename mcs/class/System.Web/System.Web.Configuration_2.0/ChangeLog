@@ -1,3 +1,7 @@
+2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SiteMapSection.cs: fixed ProvidersInternal property to be thread safe
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: GetSection now runs each section
