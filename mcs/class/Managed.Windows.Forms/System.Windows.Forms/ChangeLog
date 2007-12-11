@@ -1,5 +1,11 @@
 2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItemCollection.cs: If we try to insert a ToolStripItem
+	at an index higher than Count, just use Add instead of Insert.
+	[Fixes bug #347669]
+
+2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Don't draw a PictureBox's background in
 	DrawPictureBox, this is handled by Control.PaintBackground.
 	[Fixes bug #347276]

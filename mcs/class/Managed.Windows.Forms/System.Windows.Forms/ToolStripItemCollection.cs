@@ -301,7 +301,10 @@ namespace System.Windows.Forms
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			base.Insert (index, value);
+			if (index > Count)
+				base.Add (value);
+			else
+				base.Insert (index, value);
 		}
 
 		internal void RemoveNoOwnerOrLayout (ToolStripItem value)
