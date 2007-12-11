@@ -1,5 +1,12 @@
 2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DateTimePicker.cs: Don't set the internal MonthCalendar's
+	Parent property.  Doing this causes the control to be hosted by
+	the Form instead of being a popup window.
+	[Fixes bug #347665]
+
+2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItemCollection.cs: If we try to insert a ToolStripItem
 	at an index higher than Count, just use Add instead of Insert.
 	[Fixes bug #347669]

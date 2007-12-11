@@ -1252,7 +1252,6 @@ namespace System.Windows.Forms {
 			align_area.Y = this.ClientRectangle.Y;
 			align_area.Height = this.ClientRectangle.Height;
 
-			month_calendar.Parent = this.FindForm ();
 			// establish the month calendar's location
 			month_calendar.Location = CalculateDropDownLocation (
 				align_area,
