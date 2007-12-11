@@ -1,3 +1,9 @@
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_throw): added.
+
+	* verify.c (mono_method_verify): property verification of throw
+
 2007-12-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_reference): Try an assembly resolve for ref-only
