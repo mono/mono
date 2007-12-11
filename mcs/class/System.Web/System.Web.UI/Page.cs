@@ -1366,7 +1366,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		ProcessPostData ();
 		ProcessRaiseChangedEvents ();
 		ProcessRaisePostBackEvents ();
-		ProcessLoadComplete ();
+		if (ProcessLoadComplete ())
+			return;
 #if TARGET_J2EE
 		if (getFacesContext () != null)
 			return;
@@ -1473,7 +1474,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	void ProcessLoadComplete() {
+	bool ProcessLoadComplete() {
 		
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.LoadComplete;
@@ -1482,14 +1483,21 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End LoadComplete");
 
 		if (IsCrossPagePostBack)
-			return;
+			return true;
 
 		if (IsCallback) {
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				_callbackTarget = GetCallbackTarget ();
+				ProcessRaiseCallbackEvent (_callbackTarget, ref _callbackEventError);
+				return true;
+			}
+#endif
 			string result = ProcessCallbackData ();
 			HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
 			callbackOutput.Write (result);
 			callbackOutput.Flush ();
-			return;
+			return true;
 		}
 
 		_lifeCycle = PageLifeCycle.PreRender;
@@ -1518,7 +1526,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
 #endif // NET_2_0
-	
+		return false;
 	}
 
 	internal void RenderPage () {
@@ -2111,6 +2119,13 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	string ProcessCallbackData ()
 	{
+		ICallbackEventHandler target = GetCallbackTarget ();
+		string callbackEventError = String.Empty;
+		ProcessRaiseCallbackEvent (target, ref callbackEventError);
+		return ProcessGetCallbackResult (target, callbackEventError);
+	}
+
+	ICallbackEventHandler GetCallbackTarget () {
 		string callbackTarget = _requestValueCollection [CallbackSourceID];
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
@@ -2119,9 +2134,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		ICallbackEventHandler target = targetControl as ICallbackEventHandler;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
+		return target;
+	}
 
-		string callbackEventError = String.Empty;
-		string callBackResult;
+	void ProcessRaiseCallbackEvent (ICallbackEventHandler target, ref string callbackEventError) {
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
 
 		try {
@@ -2130,7 +2146,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		catch (Exception ex) {
 			callbackEventError = String.Format ("e{0}", ex.Message);
 		}
-		
+	}
+
+	string ProcessGetCallbackResult (ICallbackEventHandler target, string callbackEventError) {
+		string callBackResult;
 		try {
 			callBackResult = target.GetCallbackResult ();
 		}

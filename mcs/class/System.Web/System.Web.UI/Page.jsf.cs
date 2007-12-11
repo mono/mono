@@ -88,6 +88,8 @@ namespace System.Web.UI
 		bool _immediate;
 		Pair _state;
 		bool [] _validatorsState;
+		ICallbackEventHandler _callbackTarget;
+		string _callbackEventError = String.Empty;
 
 		void EnterThread (FacesContext context) {
 			if (_lifeCycle == PageLifeCycle.Unknown)
@@ -113,6 +115,18 @@ namespace System.Web.UI
 			EnterThread (context);
 			try {
 				if (!context.getResponseComplete ()) {
+
+					if (IsCrossPagePostBack)
+						return;
+
+					if (IsCallback) {
+						string result = ProcessGetCallbackResult (_callbackTarget, _callbackEventError);
+						HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
+						callbackOutput.Write (result);
+						callbackOutput.Flush ();
+						return;
+					}
+
 					// ensure lifecycle complete.
 					if (!IsLoaded) {
 						ProcessLoad ();
