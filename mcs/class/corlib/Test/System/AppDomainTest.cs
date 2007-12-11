@@ -1425,6 +1425,19 @@ namespace MonoTests.System
 			Assert.IsNotNull (a, "ReflectionOnlyGetAssemblies");
 			Assert.AreEqual (0, a.Length, "Count");
 		}
+
+	    [Test]
+		public void ReflectionOnlyAssemblyResolve ()
+		{
+			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += new ResolveEventHandler(CurrentDomain_ReflectionOnlyAssemblyResolve);
+			Assembly asm = Assembly.ReflectionOnlyLoad(Assembly.LoadWithPartialName("System").FullName);
+			asm.GetTypes();
+	    }
+
+	    private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
+		{
+			return Assembly.ReflectionOnlyLoad(args.Name);
+        }
 #endif
 
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
@@ -1575,7 +1588,7 @@ namespace MonoTests.System
 					new ResolveEventHandler (ResolveAssembly);
 			}
 
-			private Assembly ResolveAssembly (Object sender, ResolveEventArgs args)
+			private Assembly ResolveAssembly (object sender, ResolveEventArgs args)
 			{
 				if (args.Name == _assemblyName)
 					return Assembly.LoadFrom (_assemblyFile);

@@ -1,3 +1,7 @@
+2007-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomainTest.cs: Add test for reflection only assembly resolve events.
+
 2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EnumTest.cs: No longer derive from deprecated TestCase. Improved
