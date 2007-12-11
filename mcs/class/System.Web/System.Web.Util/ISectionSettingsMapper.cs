@@ -33,9 +33,9 @@ using System.Collections.Generic;
 
 namespace System.Web.Util
 {
-  internal interface ISectionSettingsMapper
+  public interface ISectionSettingsMapper
   {
-    object MapSection (object section, List <SettingsMappingWhat> whats);
+	  object MapSection (object section, List <SettingsMappingWhat> whats);
   }
 }
 #endif

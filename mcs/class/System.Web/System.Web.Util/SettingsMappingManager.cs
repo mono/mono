@@ -40,7 +40,7 @@ using System.Xml.XPath;
 
 namespace System.Web.Util
 {
-	internal class SettingsMappingManager
+	public class SettingsMappingManager
 	{
 		const string settingsMapFileName = "settings.map";
 		
@@ -48,8 +48,12 @@ namespace System.Web.Util
 		static string _mappingFile;
 		Dictionary <Type, SettingsMapping> _mappers;
 		static Dictionary <object, object> _mappedSections;
-		PlatformID _platform = Environment.OSVersion.Platform;
+		static SettingsMappingPlatform _myPlatform;
 
+		public static SettingsMappingPlatform Platform {
+			get { return _myPlatform; }
+		}
+		
 		public bool HasMappings {
 			get { return (_mappers != null && _mappers.Count > 0); }
 		}
@@ -66,7 +70,7 @@ namespace System.Web.Util
 			
 			if (Environment.GetEnvironmentVariable ("MONO_ASPNET_INHIBIT_SETTINGSMAP") != null)
 				return;
-
+				
 			NameValueCollection appSettings = WebConfigurationManager.AppSettings;
 			if (appSettings != null) {
 				string inhibit = appSettings ["MonoAspnetInhibitSettingsMap"];
@@ -74,6 +78,11 @@ namespace System.Web.Util
 					return;
 			}
 
+			if (HttpApplication.IsRunningOnWindows)
+				_myPlatform = SettingsMappingPlatform.Windows;
+			else
+				_myPlatform = SettingsMappingPlatform.Unix;
+		
 			SettingsMappingManager mapper = new SettingsMappingManager ();
 			mapper.LoadMappings ();
 
@@ -83,7 +92,7 @@ namespace System.Web.Util
 			}
 		}
 		
-		public void LoadMappings ()
+		void LoadMappings ()
 		{
 			if (File.Exists (_mappingFile))
 				LoadMappings (_mappingFile);
@@ -116,9 +125,12 @@ namespace System.Web.Util
 
 			iter = top.Select ("//settingsMap/map[string-length (@sectionType) > 0 and string-length (@mapperType) > 0 and string-length (@platform) > 0]");
 			SettingsMapping map;
-      
+			
 			while (iter.MoveNext ()) {
 				map = new SettingsMapping (iter.Current);
+				if (_myPlatform != map.Platform)
+					continue;
+				
 				if (!_mappers.ContainsKey (map.SectionType))
 					_mappers.Add (map.SectionType, map);
 				else
@@ -152,12 +164,6 @@ namespace System.Web.Util
 				return input;
 			
 			if (map == null)
-				return input;
-
-			if ((int) _platform != 128 && (int) _platform != 4) {
-				if (map.Platform != SettingsMappingPlatform.Windows)
-					return input;
-			} else if (map.Platform != SettingsMappingPlatform.Unix)
 				return input;
       
 			return map.MapSection (input, type);

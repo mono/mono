@@ -35,7 +35,7 @@ using System.Xml.XPath;
 
 namespace System.Web.Util
 {
-	internal enum SettingsMappingWhatOperation
+	public enum SettingsMappingWhatOperation
 	{
 		Add,
 		Clear,
@@ -43,10 +43,10 @@ namespace System.Web.Util
 		Remove
 	}
 
-	internal class SettingsMappingWhatContents
+	public class SettingsMappingWhatContents
 	{
 		SettingsMappingWhatOperation _operation;
-		Dictionary <string, string> _attributes;
+		Dictionary <string, string> _attributes = new Dictionary <string, string> ();
 
 		public SettingsMappingWhatOperation Operation {
 			get { return _operation; }
@@ -60,9 +60,7 @@ namespace System.Web.Util
 		{
 			_operation = operation;
       
-			if (nav.HasAttributes) {
-				_attributes = new Dictionary <string, string> ();
-	
+			if (nav.HasAttributes) {	
 				nav.MoveToFirstAttribute ();
 				_attributes.Add (nav.Name, nav.Value);
 	
@@ -72,7 +70,7 @@ namespace System.Web.Util
 		}
 	}
   
-	internal class SettingsMappingWhat
+	public class SettingsMappingWhat
 	{    
 		string _value;
 		List <SettingsMappingWhatContents> _contents;

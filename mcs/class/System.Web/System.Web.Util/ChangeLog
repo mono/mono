@@ -1,3 +1,19 @@
+2007-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* SettingsMappingManager.cs: made the class public - it is
+	required for user-defined mappers to work.
+	Added a new property, Platform, which specifies the platform we're
+	running on. Platform check is now done only on initialization
+	time.
+	LoadMappings considers only the mappings which apply to the
+	current platform. Other entries are not loaded.
+
+	* SettingsMapping.cs: made the class public.
+	
+	* SettingsMappingWhat.cs: made the class public.
+
+	* ISectionSettingsMapper.cs: made the interface public.
+	
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SerializationHelper.cs: added - serialization helper for the

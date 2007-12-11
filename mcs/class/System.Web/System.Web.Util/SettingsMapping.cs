@@ -36,7 +36,7 @@ using System.Xml.XPath;
 
 namespace System.Web.Util
 {
-	internal enum SettingsMappingPlatform
+	public enum SettingsMappingPlatform
 	{
 		Windows,
 		Unix
@@ -68,7 +68,7 @@ namespace System.Web.Util
 						throw new InvalidOperationException ("Mapper type does not implement the ISectionSettingsMapper interface");
 					}
 				}
-	
+
 				return _mapperType;
 			}
 		}
