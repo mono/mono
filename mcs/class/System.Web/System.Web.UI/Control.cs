@@ -1322,7 +1322,7 @@ namespace System.Web.UI
 			else if (VirtualPathUtility.IsAbsolute (relativeUrl))
 				url = VirtualPathUtility.ToAppRelative (relativeUrl);
 			else
-				return relativeUrl;
+				return faces.getApplication ().getViewHandler ().getResourceURL (faces, relativeUrl);
 
 			if (VirtualPathUtility.IsAppRelative (url)) {
 				url = url.Substring (1);
