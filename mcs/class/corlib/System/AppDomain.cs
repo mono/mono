@@ -917,11 +917,16 @@ namespace System {
 
 		private Assembly DoAssemblyResolve (string name, bool refonly)
 		{
+			ResolveEventHandler del;
 #if NET_2_0
-			if (refonly && ReflectionOnlyAssemblyResolve == null)
-				return null;
+			if (refonly)
+				del = ReflectionOnlyAssemblyResolve;
+			else
+				del = AssemblyResolve;
+#else
+			del = AssemblyResolve;
 #endif
-			if (AssemblyResolve == null)
+			if (del == null)
 				return null;
 			
 			/* Prevent infinite recursion */
@@ -941,13 +946,7 @@ namespace System {
 #endif
 			ht [name] = name;
 			try {
-				
-#if NET_2_0
-				Delegate [] invocation_list = refonly ? ReflectionOnlyAssemblyResolve.GetInvocationList () : 
-					AssemblyResolve.GetInvocationList ();
-#else
-				Delegate [] invocation_list = AssemblyResolve.GetInvocationList ();
-#endif
+				Delegate[] invocation_list = del.GetInvocationList ();
 
 				foreach (Delegate eh in invocation_list) {
 					ResolveEventHandler handler = (ResolveEventHandler) eh;

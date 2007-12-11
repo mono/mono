@@ -1,3 +1,8 @@
+2007-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs (DoAssemblyResolve): Fix detection of whenever there is a
+	reflection-only assembly resolve hook.
+
 2007-12-10  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: partial implementation. no longer just a stub.
