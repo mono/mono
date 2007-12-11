@@ -1,3 +1,9 @@
+2007-12-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for throw
+	* make_throw_test.sh: new test generator
+
+
 2007-12-07 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added tests for castclass and isinst
