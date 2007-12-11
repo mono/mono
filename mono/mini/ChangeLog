@@ -1,5 +1,14 @@
 2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	exceptions-arm.c (mono_arch_get_restore_context): Restore
+	the frame pointer.
+
+	exceptions-arm.c (throw_exception): Save the frame pointer.
+	This is a partial fix for #323747. Only the client side is
+	fixed.
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini.c (mono_method_to_ir): Verbose message in CEE_NEWOBJ
 	was using an unrelated variable to log the class which
 	needed the cctor to be called. This was crashing on arm.
