@@ -1,3 +1,8 @@
+2007-12-11  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ProtocolReflector.cs: fixed ImportBinding method, ports with the same
+	name declaration when non-default binding used, #345449 
+
 2007-11-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SoapProtocolImporter.cs: Only output Required argument for
