@@ -1,3 +1,7 @@
+#if TARGET_JVM
+#define BUG_78521_FIXED
+#endif
+
 using System;
 using System.Web.UI;
 
