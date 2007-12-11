@@ -47,6 +47,10 @@
         base.Render(writer);
     }
 
+	public override string ToString () {
+		return GetType ().Name;
+	}
+
 </script>
 
 <script type="text/javascript">
