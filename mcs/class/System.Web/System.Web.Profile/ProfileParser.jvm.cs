@@ -39,6 +39,9 @@ namespace System.Web.Profile
 {
 	internal sealed class ProfileParser
 	{
+		const string virtualPathCommon = "~/App_Code/ProfileCommon";
+		const string virtualPathGroup = "~/App_Code/ProfileGroup";
+
 		internal ProfileParser (HttpContext context)
 		{
 		}
@@ -48,15 +51,10 @@ namespace System.Web.Profile
 			if (!ProfileCommonTypeExists)
 				return null;
 
-			Type profileBaseType = Type.GetType ("ProfileCommon");
-			if (profileBaseType == null) {
-				//PageMapper call
-				string virtualPath = "~/App_Code/ProfileCommon";
-				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
-				profileBaseType = PageMapper.GetObjectType (context, resolvedUrl, false);
+			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPathCommon).TrimEnd ('/');
+			Type profileBaseType = PageMapper.GetObjectType (context, resolvedUrl, false);
 
-				ProfileCommonTypeExists = profileBaseType != null;
-			}
+			ProfileCommonTypeExists = profileBaseType != null;
 			return profileBaseType;
 		}
 
@@ -64,20 +62,15 @@ namespace System.Web.Profile
 		{
 			if (!ProfileGroupTypeExists)
 				return null;
-			
-			Type profileGroupType = Type.GetType ("ProfileGroup" + groupName);
-			if (profileGroupType == null) {
-				//PageMapper call
-				string virtualPath = "~/App_Code/ProfileGroup" + groupName;
-				string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPath).TrimEnd ('/');
-				profileGroupType = PageMapper.GetObjectType (context, resolvedUrl, false);
 
-				ProfileGroupTypeExists = profileGroupType != null;
-			}
+			string resolvedUrl = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute (virtualPathGroup + groupName).TrimEnd ('/');
+			Type profileGroupType = PageMapper.GetObjectType (context, resolvedUrl, false);
+
+			ProfileGroupTypeExists = profileGroupType != null;
 			return profileGroupType;
 		}
 
-		const string profileKey = "System.Web.Profile.ProfileCommonType";
+		const string profileKey = "Profile.ProfileCommonType";
 		private static bool ProfileCommonTypeExists
 		{
 			get
@@ -90,7 +83,7 @@ namespace System.Web.Profile
 			set { AppDomain.CurrentDomain.SetData (profileKey, value); }
 		}
 
-		const string groupKey = "System.Web.Profile.ProfileGroupType";
+		const string groupKey = "Profile.ProfileGroupType";
 		private static bool ProfileGroupTypeExists
 		{
 			get
