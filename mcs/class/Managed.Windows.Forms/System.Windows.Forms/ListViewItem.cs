@@ -146,67 +146,67 @@ namespace System.Windows.Forms
 
 		public ListViewItem(ListViewGroup group) : this()
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string text, ListViewGroup group) : this(text)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string[] items, ListViewGroup group) : this(items)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(ListViewSubItem[] subItems, int imageIndex, ListViewGroup group)
 			: this(subItems, imageIndex)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(ListViewSubItem[] subItems, string imageKey, ListViewGroup group)
 			: this(subItems, imageKey)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string text, int imageIndex, ListViewGroup group)
 			: this(text, imageIndex)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string text, string imageKey, ListViewGroup group)
 			: this(text, imageKey)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string[] items, int imageIndex, ListViewGroup group)
 			: this(items, imageIndex)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string[] items, string imageKey, ListViewGroup group)
 			: this(items, imageKey)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string[] items, int imageIndex, Color foreColor, Color backColor,
 				Font font, ListViewGroup group)
 			: this(items, imageIndex, foreColor, backColor, font)
 		{
-			this.group = group;
+			Group = group;
 		}
 
 		public ListViewItem(string[] items, string imageKey, Color foreColor, Color backColor,
 				Font font, ListViewGroup group)
 			: this(items, imageKey, foreColor, backColor, font)
 		{
-			this.group = group;
+			Group = group;
 		}
 #endif
 		#endregion	// Public Constructors

@@ -1,3 +1,11 @@
+2007-12-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: When using a .ctor taking a ListViewGroup,
+	don't simply assign it to our internal group field, but instead 
+	use our Group property, which should do all the neccessary work
+	required to support groups. Fixes an issue reported to me (mail) by a 
+	guy using this new feature.
+
 2007-12-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Use Scale instead of ScaleControl to ensure the
