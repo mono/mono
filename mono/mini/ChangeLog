@@ -1,3 +1,9 @@
+2007-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (decompose_opcode): Handle OP_FCONV_TO_R8 here.
+
+	* mini-<ARCH>.c cpu-<ARCH>.md: Remove OP_FCONV_TO_R8.
+
 2007-12-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm): Add more opcodes.

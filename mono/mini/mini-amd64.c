@@ -4194,9 +4194,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert_not_reached ();
 			amd64_fild_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
 			break;
-		case OP_FCONV_TO_R8:
-			/* Nothing to do */
-			break;
 		case OP_FCONV_TO_R4:
 			/* FIXME: nothing to do ?? */
 			break;

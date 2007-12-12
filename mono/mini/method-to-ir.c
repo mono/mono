@@ -138,7 +138,7 @@ MonoMethodSignature *helper_sig_domain_get;
 #define LREG 'l'
 #endif
 /* keep in sync with the enum in mini.h */
-const char const
+const char
 ins_info[] = {
 #include "mini-ops.h"
 };
@@ -4898,6 +4898,10 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 #else
 		ins->opcode = OP_MOVE;
 #endif
+		break;
+
+	case OP_FCONV_TO_R8:
+		ins->opcode = OP_FMOVE;
 		break;
 
 		/* Long opcodes on 64 bit machines */

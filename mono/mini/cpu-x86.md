@@ -355,7 +355,6 @@ float_rem: dest:f src1:f src2:f len:17
 float_rem_un: dest:f src1:f src2:f len:17
 float_neg: dest:f src1:f len:2
 float_not: dest:f src1:f len:2
-float_conv_to_r8: dest:f src1:f
 float_conv_to_r4: dest:f src1:f
 float_conv_to_i1: dest:y src1:f len:39
 float_conv_to_i2: dest:y src1:f len:39

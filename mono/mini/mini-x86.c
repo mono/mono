@@ -3506,9 +3506,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_FP_LOAD_I4:
 			x86_fild_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
 			break;
-		case OP_FCONV_TO_R8:
-			/* Nothing to do */
-			break;
 		case OP_FCONV_TO_R4:
 			/* FIXME: nothing to do ?? */
 			break;

@@ -3881,14 +3881,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
 			break;
-		case OP_FCONV_TO_R8:
-#ifdef SPARCV9
-			sparc_fmovd (code, ins->sreg1, ins->dreg);
-#else
-			sparc_fmovs (code, ins->sreg1, ins->dreg);
-			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
-#endif
-			break;
 		case CEE_CONV_R_UN:
 			/* Emulated */
 			g_assert_not_reached ();

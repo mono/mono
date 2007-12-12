@@ -298,7 +298,6 @@ float_conv_to_u2: dest:i src1:f len:40
 float_conv_to_u1: dest:i src1:f len:40
 float_conv_to_i: dest:i src1:f len:40
 float_conv_to_r4: dest:f src1:f len:8
-float_conv_to_r8: dest:f src1:f len:8
 
 float_ceq: dest:i src1:f src2:f len:64
 float_cgt: dest:i src1:f src2:f len:64
