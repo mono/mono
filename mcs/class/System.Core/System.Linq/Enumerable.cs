@@ -44,7 +44,7 @@ namespace System.Linq
 
 		public static TSource Aggregate<TSource> (this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
 		{
-			CheckSourceAndFunc (source, func);
+			Check.SourceAndFunc (source, func);
 
 			// custom foreach so that we can efficiently throw an exception 
 			// if zero elements and treat the first element differently
@@ -62,7 +62,7 @@ namespace System.Linq
 		public static TAccumulate Aggregate<TSource, TAccumulate> (this IEnumerable<TSource> source,
 			TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func)
 		{
-			CheckSourceAndFunc (source, func);
+			Check.SourceAndFunc (source, func);
 
 			TAccumulate folded = seed;
 			foreach (TSource element in source)
@@ -73,7 +73,7 @@ namespace System.Linq
 
 		public static TResult Aggregate<TSource, TAccumulate, TResult> (this IEnumerable<TSource> source, TAccumulate seed, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector)
 		{
-			CheckSourceAndFunc (source, func);
+			Check.SourceAndFunc (source, func);
 			if (resultSelector == null)
 				throw new ArgumentNullException ("resultSelector");
 
@@ -90,7 +90,7 @@ namespace System.Linq
 
 		public static bool All<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source)
 				if (!predicate (element))
@@ -105,7 +105,7 @@ namespace System.Linq
 
 		public static bool Any<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			using (var enumerator = source.GetEnumerator ())
 				return enumerator.MoveNext ();
@@ -113,7 +113,7 @@ namespace System.Linq
 
 		public static bool Any<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source)
 				if (predicate (element))
@@ -162,7 +162,7 @@ namespace System.Linq
 
 		static TR Average<TA, TR> (this IEnumerable<TA> source, Func<TA, TA, TA> func, Func<TA, int, TR> result)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			TA total = default (TA);
 			int counter = 0;
@@ -179,7 +179,7 @@ namespace System.Linq
 
 		public static double? Average (this IEnumerable<int?> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool onlyNull = true;
 			long sum = 0;
@@ -196,7 +196,7 @@ namespace System.Linq
 
 		public static double? Average (this IEnumerable<long?> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool onlyNull = true;
 			long sum = 0;
@@ -213,7 +213,7 @@ namespace System.Linq
 
 		public static double? Average (this IEnumerable<double?> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool onlyNull = true;
 			double sum = 0;
@@ -230,7 +230,7 @@ namespace System.Linq
 
 		public static decimal? Average (this IEnumerable<decimal?> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool onlyNull = true;
 			decimal sum = 0;
@@ -247,7 +247,7 @@ namespace System.Linq
 		
 		public static float? Average (this IEnumerable<float?> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			float sum = 0;
 			float counter = 0;
@@ -266,7 +266,7 @@ namespace System.Linq
 		
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			long sum = 0;
 			long counter = 0;
@@ -283,7 +283,7 @@ namespace System.Linq
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			long sum = 0;
@@ -301,7 +301,7 @@ namespace System.Linq
 
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			long sum = 0;
 			long counter = 0;
@@ -318,7 +318,7 @@ namespace System.Linq
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			long sum = 0;
@@ -336,7 +336,7 @@ namespace System.Linq
 
 		public static double Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			double sum = 0;
 			double counter = 0;
@@ -353,7 +353,7 @@ namespace System.Linq
 
 		public static double? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			double sum = 0;
@@ -371,7 +371,7 @@ namespace System.Linq
 
 		public static float Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			float sum = 0;
 			float counter = 0;
@@ -388,7 +388,7 @@ namespace System.Linq
 		
 		public static float? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			float sum = 0;
 			float counter = 0;
@@ -408,7 +408,7 @@ namespace System.Linq
 
 		public static decimal Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			decimal sum = 0;
 			decimal counter = 0;
@@ -425,7 +425,7 @@ namespace System.Linq
 
 		public static decimal? Average<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			decimal sum = 0;
@@ -446,7 +446,7 @@ namespace System.Linq
 
 		public static IEnumerable<TResult> Cast<TResult> (this IEnumerable source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			foreach (object element in source)
 				yield return (TResult) element;
@@ -458,7 +458,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Concat<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			foreach (TSource element in first)
 				yield return element;
@@ -481,7 +481,7 @@ namespace System.Linq
 
 		public static bool Contains<TSource> (this IEnumerable<TSource> source, TSource value, IEqualityComparer<TSource> comparer)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -499,7 +499,7 @@ namespace System.Linq
 
 		public static int Count<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			var collection = source as ICollection<TSource>;
 			if (collection != null)
@@ -515,7 +515,7 @@ namespace System.Linq
 
 		public static int Count<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			int counter = 0;
 			foreach (var element in source)
@@ -536,7 +536,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> DefaultIfEmpty<TSource> (this IEnumerable<TSource> source, TSource defaultValue)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool empty = true;
 			foreach (TSource item in source) {
@@ -559,7 +559,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Distinct<TSource> (this IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -579,7 +579,7 @@ namespace System.Linq
 
 		public static TSource ElementAt<TSource> (this IEnumerable<TSource> source, int index)
 		{
-			CheckSource (source);
+			Check.Source (source);
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ();
 
@@ -603,7 +603,7 @@ namespace System.Linq
 
 		public static TSource ElementAtOrDefault<TSource> (this IEnumerable<TSource> source, int index)
 		{
-			CheckSource (source);
+			Check.Source (source);
 			if (index < 0)
 				return default (TSource);
 
@@ -641,7 +641,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Except<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -659,7 +659,7 @@ namespace System.Linq
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			foreach (TSource element in source)
 				return element;
@@ -670,7 +670,7 @@ namespace System.Linq
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source) {
 				if (predicate (element))
@@ -686,7 +686,7 @@ namespace System.Linq
 
 		public static TSource FirstOrDefault<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			foreach (TSource element in source)
 				return element;
@@ -697,7 +697,7 @@ namespace System.Linq
 
 		public static TSource FirstOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source) {
 				if (predicate (element))
@@ -732,7 +732,7 @@ namespace System.Linq
 		public static IEnumerable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			Dictionary<TKey, List<TSource>> groups = new Dictionary<TKey, List<TSource>> ();
 			List<TSource> nullList = new List<TSource> ();
@@ -781,7 +781,7 @@ namespace System.Linq
 		public static IEnumerable<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckSourceAndKeyElementSelectors (source, keySelector, elementSelector);
+			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
 			Dictionary<TKey, List<TElement>> groups = new Dictionary<TKey, List<TElement>> ();
 			List<TElement> nullList = new List<TElement> ();
@@ -869,7 +869,7 @@ namespace System.Linq
 			Func<TInner, TKey> innerKeySelector, Func<TOuter, IEnumerable<TInner>, TResult> resultSelector,
 			IEqualityComparer<TKey> comparer)
 		{
-			CheckJoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
+			Check.JoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
@@ -904,7 +904,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Intersect<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -924,7 +924,7 @@ namespace System.Linq
 			IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector,
 			Func<TInner, TKey> innerKeySelector, Func<TOuter, TInner, TResult> resultSelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckJoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
+			Check.JoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
@@ -961,7 +961,7 @@ namespace System.Linq
 
 		public static TSource Last<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool noElements = true;
 			TSource lastElement = default (TSource);
@@ -979,7 +979,7 @@ namespace System.Linq
 		public static TSource Last<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			bool noElements = true;
 			TSource lastElement = default (TSource);
@@ -1002,7 +1002,7 @@ namespace System.Linq
 
 		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			var list = source as IList<TSource>;
 			if (list != null)
@@ -1018,7 +1018,7 @@ namespace System.Linq
 		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			TSource lastElement = default (TSource);
 			foreach (TSource element in source) {
@@ -1034,7 +1034,7 @@ namespace System.Linq
 		#region LongCount
 		public static long LongCount<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			long counter = 0;
 			using (var enumerator = source.GetEnumerator ())
@@ -1046,7 +1046,7 @@ namespace System.Linq
 
 		public static long LongCount<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			long counter = 0;
 			foreach (TSource element in source)
@@ -1087,7 +1087,7 @@ namespace System.Linq
 
 		static T Iterate<T> (IEnumerable<T> source, T initValue, Func<T, T, bool> selector)
 		{
-			CheckSource (source);
+			Check.Source (source);
 			
 			int counter = 0;
 			foreach (var element in source) {
@@ -1129,7 +1129,7 @@ namespace System.Linq
 
 		static T? IterateNullable<T> (IEnumerable<T?> source, T? initValue, Func<T?, T?, bool> selector) where T : struct
 		{
-			CheckSource (source);
+			Check.Source (source);
 			
 			int counter = 0;
 			foreach (var element in source) {
@@ -1149,7 +1149,7 @@ namespace System.Linq
 
 		public static TSource Max<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool notAssigned = true;
 			TSource maximum = default (TSource);
@@ -1216,7 +1216,7 @@ namespace System.Linq
 		
 		static U Iterate<T, U> (IEnumerable<T> source, U initValue, Func<T, U, U> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 			
 			int counter = 0;
 			foreach (var element in source) {
@@ -1232,7 +1232,7 @@ namespace System.Linq
 
 		public static int? Max<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			int? maximum = int.MinValue;
@@ -1250,7 +1250,7 @@ namespace System.Linq
 		public static long? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, long?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			long? maximum = long.MinValue;
@@ -1268,7 +1268,7 @@ namespace System.Linq
 		public static double? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, double?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			double? maximum = double.MinValue;
@@ -1287,7 +1287,7 @@ namespace System.Linq
 		public static decimal? Max<TSource> (this IEnumerable<TSource> source,
 			Func<TSource, decimal?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			decimal? maximum = decimal.MinValue;
@@ -1305,7 +1305,7 @@ namespace System.Linq
 		public static TResult Max<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, TResult> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool notAssigned = true;
 			TResult maximum = default (TResult);
@@ -1392,7 +1392,7 @@ namespace System.Linq
 		
 		public static TSource Min<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool notAssigned = true;
 			TSource minimum = default (TSource);
@@ -1460,7 +1460,7 @@ namespace System.Linq
 		public static int? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, int?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			int? minimum = int.MaxValue;
@@ -1478,7 +1478,7 @@ namespace System.Linq
 		public static long? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, long?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			long? minimum = long.MaxValue;
@@ -1496,7 +1496,7 @@ namespace System.Linq
 		public static double? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, double?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			double? minimum = double.MaxValue;
@@ -1514,7 +1514,7 @@ namespace System.Linq
 		public static decimal? Min<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, decimal?> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool onlyNull = true;
 			decimal? minimum = decimal.MaxValue;
@@ -1533,7 +1533,7 @@ namespace System.Linq
 		public static TResult Min<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, TResult> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			bool notAssigned = true;
 			TResult minimum = default (TResult);
@@ -1570,7 +1570,7 @@ namespace System.Linq
 
 		public static IEnumerable<TResult> OfType<TResult> (this IEnumerable source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			foreach (object element in source)
 				if (element is TResult)
@@ -1592,7 +1592,7 @@ namespace System.Linq
 				Func<TSource, TKey> keySelector,
 				IComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			return new InternalOrderedSequence<TSource, TKey> (
 					source, keySelector, comparer, false);
@@ -1612,7 +1612,7 @@ namespace System.Linq
 		public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			return new InternalOrderedSequence<TSource, TKey> (
 					source, keySelector, comparer, true);
@@ -1653,7 +1653,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Reverse<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			List<TSource> list = new List<TSource> (source);
 			list.Reverse ();
@@ -1667,7 +1667,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, TResult> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			foreach (TSource element in source)
 				yield return selector (element);
@@ -1676,7 +1676,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, int, TResult> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			int counter = 0;
 			foreach (TSource element in source) {
@@ -1692,7 +1692,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, IEnumerable<TResult>> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			foreach (TSource element in source)
 				foreach (TResult item in selector (element))
@@ -1703,7 +1703,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, int, IEnumerable<TResult>> selector)
 		{
-			CheckSourceAndSelector (source, selector);
+			Check.SourceAndSelector (source, selector);
 
 			int counter = 0;
 			foreach (TSource element in source) {
@@ -1716,7 +1716,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
 		{
-			CheckSourceAndCollectionSelectors (source, collectionSelector, selector);
+			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
 
 			foreach (TSource element in source)
 				foreach (TCollection collection in collectionSelector (element))
@@ -1726,7 +1726,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
 		Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
 		{
-			CheckSourceAndCollectionSelectors (source, collectionSelector, selector);
+			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
 
 			int counter = 0;
 			foreach (TSource element in source)
@@ -1740,7 +1740,7 @@ namespace System.Linq
 
 		public static TSource Single<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool otherElement = false;
 			TSource singleElement = default (TSource);
@@ -1760,7 +1760,7 @@ namespace System.Linq
 		public static TSource Single<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			bool otherElement = false;
 			TSource singleElement = default (TSource);
@@ -1784,7 +1784,7 @@ namespace System.Linq
 
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			bool otherElement = false;
 			TSource singleElement = default (TSource);
@@ -1801,7 +1801,7 @@ namespace System.Linq
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			bool otherElement = false;
 			TSource singleElement = default (TSource);
@@ -1821,7 +1821,7 @@ namespace System.Linq
 		#region Skip
 		public static IEnumerable<TSource> Skip<TSource> (this IEnumerable<TSource> source, int count)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			int i = 0;
 			foreach (var element in source) {
@@ -1840,7 +1840,7 @@ namespace System.Linq
 				this IEnumerable<TSource> source,
 				Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			bool yield = false;
 
@@ -1858,7 +1858,7 @@ namespace System.Linq
 		public static IEnumerable<TSource> SkipWhile<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, int, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			int counter = 0;
 			bool yield = false;
@@ -1996,7 +1996,7 @@ namespace System.Linq
 		
 		static TR Sum<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> func)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			TR total = default (TR);
 			int counter = 0;
@@ -2013,7 +2013,7 @@ namespace System.Linq
 		
 		static TR SumNullable<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> func)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			TR total = default (TR);
 			foreach (var element in source) {
@@ -2029,7 +2029,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Take<TSource> (this IEnumerable<TSource> source, int count)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			if (count <= 0)
 				yield break;
@@ -2049,7 +2049,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> TakeWhile<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source) {
 				if (!predicate (element))
@@ -2061,7 +2061,7 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> TakeWhile<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			int counter = 0;
 			foreach (var element in source) {
@@ -2086,7 +2086,7 @@ namespace System.Linq
 		public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey> (this IOrderedEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			return source.CreateOrderedEnumerable (keySelector, comparer, false);
 		}
@@ -2105,7 +2105,7 @@ namespace System.Linq
 		public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey> (this IOrderedEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			return source.CreateOrderedEnumerable (keySelector, comparer, true);
 		}
@@ -2115,7 +2115,7 @@ namespace System.Linq
 		#region ToArray
 		public static TSource [] ToArray<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			List<TSource> list = new List<TSource> (source);
 			return list.ToArray ();
@@ -2133,7 +2133,7 @@ namespace System.Linq
 		public static Dictionary<TKey, TElement> ToDictionary<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckSourceAndKeyElementSelectors (source, keySelector, elementSelector);
+			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
 			var dict = new Dictionary<TKey, TElement> (comparer);
 			foreach (var e in source)
@@ -2161,7 +2161,7 @@ namespace System.Linq
 		#region ToList
 		public static List<TSource> ToList<TSource> (this IEnumerable<TSource> source)
 		{
-			CheckSource (source);
+			Check.Source (source);
 
 			return new List<TSource> (source);
 		}
@@ -2177,7 +2177,7 @@ namespace System.Linq
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckSourceAndKeySelector (source, keySelector);
+			Check.SourceAndKeySelector (source, keySelector);
 
 			var dictionary = new Dictionary<TKey, List<TSource>> (comparer ?? EqualityComparer<TKey>.Default);
 			foreach (TSource element in source) {
@@ -2200,7 +2200,7 @@ namespace System.Linq
 		public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
 		{
-			CheckSourceAndKeyElementSelectors (source, keySelector, elementSelector);
+			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
 			Dictionary<TKey, List<TElement>> dictionary = new Dictionary<TKey, List<TElement>> (comparer ?? EqualityComparer<TKey>.Default);
 			foreach (TSource element in source) {
@@ -2225,7 +2225,7 @@ namespace System.Linq
 
 		public static bool SequenceEqual<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -2250,14 +2250,14 @@ namespace System.Linq
 
 		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			return first.Union (second, null);
 		}
 
 		public static IEnumerable<TSource> Union<TSource> (this IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			CheckFirstAndSecond (first, second);
+			Check.FirstAndSecond (first, second);
 
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
@@ -2285,7 +2285,7 @@ namespace System.Linq
 		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			foreach (TSource element in source)
 				if (predicate (element))
@@ -2296,7 +2296,7 @@ namespace System.Linq
 		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source,
 				Func<TSource, int, bool> predicate)
 		{
-			CheckSourceAndPredicate (source, predicate);
+			Check.SourceAndPredicate (source, predicate);
 
 			int counter = 0;
 			foreach (TSource element in source) {
@@ -2311,90 +2311,6 @@ namespace System.Linq
 		// These methods are not included in the
 		// .NET Standard Query Operators Specification,
 		// but they provide additional useful commands
-
-		#region Checks
-
-		static void CheckSource (object source)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-		}
-
-		static void CheckSourceAndFunc (object source, object func)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (func == null)
-				throw new ArgumentNullException ("func");
-		}
-
-		static void CheckSourceAndSelector (object source, object selector)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (selector == null)
-				throw new ArgumentNullException ("selector");
-		}
-
-		static void CheckSourceAndPredicate (object source, object predicate)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (predicate == null)
-				throw new ArgumentNullException ("predicate");
-		}
-
-		static void CheckFirstAndSecond (object first, object second)
-		{
-			if (first == null)
-				throw new ArgumentNullException ("first");
-			if (second == null)
-				throw new ArgumentNullException ("second");
-		}
-
-		static void CheckSourceAndKeySelector (object source, object keySelector)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (keySelector == null)
-				throw new ArgumentNullException ("keySelector");
-		}
-
-		static void CheckSourceAndKeyElementSelectors (object source, object keySelector, object elementSelector)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (keySelector == null)
-				throw new ArgumentNullException ("keySelector");
-			if (elementSelector == null)
-				throw new ArgumentNullException ("elementSelector");
-		}
-
-		static void CheckSourceAndCollectionSelectors (object source, object collectionSelector, object selector)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-			if (collectionSelector == null)
-				throw new ArgumentNullException ("collectionSelector");
-			if (selector == null)
-				throw new ArgumentNullException ("selector");
-		}
-
-		static void CheckJoinSelectors (object outer, object inner, object outerKeySelector, object innerKeySelector, object resultSelector)
-		{
-			if (outer == null)
-				throw new ArgumentNullException ("outer");
-			if (inner == null)
-				throw new ArgumentNullException ("inner");
-			if (outerKeySelector == null)
-				throw new ArgumentNullException ("outerKeySelector");
-			if (innerKeySelector == null)
-				throw new ArgumentNullException ("innerKeySelector");
-			if (resultSelector == null)
-				throw new ArgumentNullException ("resultSelector");
-		}
-
-		#endregion
 
 		#region ToReadOnlyCollection
 		internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource> (IEnumerable<TSource> source)
