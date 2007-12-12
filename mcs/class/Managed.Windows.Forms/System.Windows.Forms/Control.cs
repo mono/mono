@@ -4080,7 +4080,7 @@ namespace System.Windows.Forms
 			// Scale children
 			if (ScaleChildren)
 				foreach (Control c in Controls.GetAllControls ())
-					c.ScaleControl (factor, BoundsSpecified.All);
+					c.Scale (factor);
 
 			ResumeLayout ();
 		}

@@ -1,3 +1,9 @@
+2007-12-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Use Scale instead of ScaleControl to ensure the
+	whole hierarchy gets scaled.
+	[Fixes bug #347282]
+
 2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePicker.cs: Don't set the internal MonthCalendar's

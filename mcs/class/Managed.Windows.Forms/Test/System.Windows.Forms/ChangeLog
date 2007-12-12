@@ -1,3 +1,7 @@
+2007-12-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ControlTest.cs: Add a test for bug #347282.
+
 2007-12-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripManagerTest.cs: Add a test for bug #347669.

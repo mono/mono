@@ -1317,6 +1317,29 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		[Test]	// Bug #347282
+		public void ScaleHierarchy ()
+		{
+			Form f = new Form ();
+			Panel p = new Panel ();
+			Button b = new Button ();
+			
+			f.ClientSize = new Size (300, 300);
+
+			f.Controls.Add (p);
+			p.Controls.Add (b);
+			
+			f.AutoScaleBaseSize = new Size (3, 11);
+			f.Show ();
+			
+			// Due to font differences, all we can guarantee is that
+			// the button is larger that the default.
+			Assert.IsTrue (b.Width > 75, "A1");
+			Assert.IsTrue (b.Height > 23, "A2");
+			
+			f.Dispose ();
+		}
+		
 		class TestWindowTarget : IWindowTarget
 		{
 			public void OnHandleChange (IntPtr newHandle) {
