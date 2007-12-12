@@ -1089,7 +1089,8 @@ namespace Mono.CSharp {
 		{
 			Throw target = (Throw) t;
 
-			target.expr = expr.Clone (clonectx);
+			if (expr != null)
+				target.expr = expr.Clone (clonectx);
 		}
 	}
 
