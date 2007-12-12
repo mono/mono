@@ -1,5 +1,15 @@
 2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (in_any_block): check for filter clauses.
+
+	* verify.c (is_correct_rethrow): added.
+
+	* verify.c (mono_method_verify): property verification of rethrow.
+
+	* metadata.h: added MONO_OFFSET_IN_FILTER macro.
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_throw): added.
 
 	* verify.c (mono_method_verify): property verification of throw
