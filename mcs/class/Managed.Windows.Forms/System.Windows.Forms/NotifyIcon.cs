@@ -566,8 +566,8 @@ namespace System.Windows.Forms {
 				icon_bitmap = icon.ToBitmap();
 			}
 
-			XplatUI.SystrayChange(window.Handle, text, icon, ref tooltip);
 			window.Invalidate();
+			XplatUI.SystrayChange(window.Handle, text, icon, ref tooltip);
 		}
 		#endregion	// Private Methods
 

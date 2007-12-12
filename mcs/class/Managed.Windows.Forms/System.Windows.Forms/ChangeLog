@@ -1,3 +1,10 @@
+2007-12-12  Andreia Gaita <avidigal@novell.com>
+
+	* XPlatUIX11.cs: Send paint messages when updating a systray icon
+	* NotifyIcon.cs: Invalidate the window before doing a systray change so it is
+	properly invalidated. 
+	Fixes #324237
+
 2007-12-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: When using a .ctor taking a ListViewGroup,

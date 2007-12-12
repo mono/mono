@@ -5602,6 +5602,7 @@ namespace System.Windows.Forms {
 			if (control != null && tt != null) {
 				tt.SetToolTip(control, tip);
 				tt.Active = true;
+				SendMessage(handle, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
 				return true;
 			} else {
 				return false;
