@@ -1,3 +1,12 @@
+2007-12-12  Marek Habersack  <mhabersack@novell.com>
+
+	* SettingsMappingManager.cs: use the 'settings.map.config' name
+	for the application-specific mapper configuration. This ensures
+	that the file won't be downloadable on systems which don't support
+	the mapping feature without the need to add the extra handler
+	entry to the app's Web.config file. Thanks to Joe Audette for the
+	idea.
+
 2007-12-11  Marek Habersack  <mhabersack@novell.com>
 
 	* SettingsMappingManager.cs: made the class public - it is

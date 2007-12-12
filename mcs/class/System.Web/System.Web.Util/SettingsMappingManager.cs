@@ -43,6 +43,7 @@ namespace System.Web.Util
 	public class SettingsMappingManager
 	{
 		const string settingsMapFileName = "settings.map";
+		const string localSettingsMapFileName = settingsMapFileName + ".config";
 		
 		static SettingsMappingManager _instance;
 		static string _mappingFile;
@@ -98,7 +99,7 @@ namespace System.Web.Util
 				LoadMappings (_mappingFile);
 
 			AppDomainSetup domain = AppDomain.CurrentDomain.SetupInformation;
-			string appMappingFile = Path.Combine (domain.ApplicationBase, settingsMapFileName);
+			string appMappingFile = Path.Combine (domain.ApplicationBase, localSettingsMapFileName);
 			if (File.Exists (appMappingFile))
 				LoadMappings (appMappingFile);
 		}
