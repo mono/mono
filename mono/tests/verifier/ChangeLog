@@ -1,3 +1,19 @@
+2007-12-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_filter_ends_at_endfilter_1.il: tests if the
+	filter block is limited by the start of the associated 
+	handler clause or it is limited by the ocurrence of
+	endfilter. These 3 tests show that even if the endfilter
+	instruction must be the last, it doesn't define the end
+	of the filter block.
+
+	* invalid_filter_ends_at_endfilter_2.il: same
+
+	* invalid_filter_ends_at_endfilter_3.il: same
+
+	* make_test.sh: added tests for endfinally / endfault
+	* make_endfinally_test.sh: new test generator
+
 2007-12-11 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added tests for rethrow
