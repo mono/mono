@@ -1,3 +1,9 @@
+2007-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_endfinally): added.
+
+	* verify.c (mono_method_verify): property verification of endfinally.
+
 2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (in_any_block): check for filter clauses.
