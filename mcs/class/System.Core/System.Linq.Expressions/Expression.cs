@@ -934,14 +934,6 @@ namespace System.Linq.Expressions
             return OrElse(left, right, null);
         }
         #endregion
-        
-        public static UnaryExpression Quote(Expression expression)
-        {
-            if (expression == null)
-                throw new ArgumentNullException("expression");
-
-            return new UnaryExpression(ExpressionType.Quote, expression, expression.GetType());
-        }
 
         #region Property
         public static MemberExpression Property (Expression expression, MethodInfo propertyAccessor)
@@ -1006,7 +998,7 @@ namespace System.Linq.Expressions
         #endregion
         
         #region Quote
-        public static UnaryExpression QUote(Expression expression)
+        public static UnaryExpression Quote(Expression expression)
         {
             if (expression == null)
                 throw new ArgumentNullException ("expression");
