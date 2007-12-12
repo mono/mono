@@ -46,7 +46,9 @@ namespace System.Net
 		byte [] result;
 
 		public byte [] Result {
-			get { return result; }
+			get {
+				return result;
+			}
 		}
 	}
 }

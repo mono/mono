@@ -36,9 +36,8 @@ namespace System.Net
 {
 	public class DownloadProgressChangedEventArgs : ProgressChangedEventArgs
 	{
-		internal DownloadProgressChangedEventArgs (long bytesReceived, long totalBytesToReceive,
-			int progressPercentage, object userState)
-			: base (progressPercentage, userState)
+		internal DownloadProgressChangedEventArgs (long bytesReceived, long totalBytesToReceive, object userState)
+			: base (totalBytesToReceive != -1 ? ((int)(bytesReceived * 100 / totalBytesToReceive)) : 0, userState)
 		{
 			this.received = bytesReceived;
 			this.total = totalBytesToReceive;

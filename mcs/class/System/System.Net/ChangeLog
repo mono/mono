@@ -1,3 +1,45 @@
+2007-12-12  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs (DownloadFileCore): use longs for the
+	ContentLength, although the other code (loading into a byte array,
+	or a string) still uses ints, the DownloadFileCore should not.
+
+2007-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs: 
+
+	Lots of fixes to get the *Async methods to work.
+	
+	* WebClient.cs: async, new boolean flag, used to track whether we
+	are an async invocation, and if so, we need to invoke some
+	methods. 
+
+	Switch to using System.Threading.Thread instead of the ThreadPool
+	as there is no way with the ThreadPool to abort threads (to
+	implemente CancelAsync). 
+
+	(CompleteAsync): Helper method used to clear the state after an
+	async operation completes, otherwise the WebClient can only be
+	used once. 
+
+	(CancelAsync): Use Thread.Interrupt to signal the thread that we
+	are aborting it (it is a lot milder than Thread.Abort, and we are
+	in no rush to cancel this anyways); Also the documentation states
+	that we need to call the WebRequest.Abort method, so we do that in
+	every Download instance.
+
+	(DownloadDataAsync, DownloadFileAsync, DownloadStringAsync,
+	OpenReadAsync, OpenWriteAsync, UplaodDataAsync, UploadFileAsync,
+	UploadStringAsync): Make signature parameters match MS; use
+	threads instead of threadpool (so we can implement CancelAsync),
+	catch ThreadAbortException here so we can also raise the proper
+	DownloadDataCompleteEventArgs.
+
+	These routines will also call the WebRequest.Abort when
+	appropriate when ThreadInterrupted is used.
+	
+	(ReadAll): Raise DownloadProgressChanged events.
+	
 2007-12-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebClient.cs: Modified argument checks to match MS, and wrap

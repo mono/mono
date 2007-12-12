@@ -1000,7 +1000,7 @@ namespace System.Net
 				if (response == null || response.Length < 3)
 					return ServiceNotAvailable ();
 
-				int code, fcode;
+				int code;
 				if (!Int32.TryParse (response.Substring (0, 3), out code))
 					return ServiceNotAvailable ();
 
