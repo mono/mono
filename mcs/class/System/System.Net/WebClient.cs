@@ -308,6 +308,7 @@ namespace System.Net
 					int nread = 0;
 					long notify_total = 0;
 					while ((nread = st.Read (buffer, 0, length)) != 0){
+#if NET_2_0
 						if (async && DownloadProgressChanged != null){
 							notify_total += nread;
 							DownloadProgressChanged (
@@ -315,6 +316,7 @@ namespace System.Net
 								new DownloadProgressChangedEventArgs (response.ContentLength, notify_total, userToken));
 												      
 						}
+#endif
 						f.Write (buffer, 0, nread);
 					}
 				} catch (ThreadInterruptedException){
@@ -928,10 +930,12 @@ namespace System.Net
 					offset += nread;
 					size -= nread;
 				}
+#if NET_2_0
 				if (async && DownloadProgressChanged != null){
 					total += nread;
 					DownloadProgressChanged (this, new DownloadProgressChangedEventArgs (nread, length, userToken));
 				}
+#endif
 			}
 
 			if (nolength)
