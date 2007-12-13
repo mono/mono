@@ -359,7 +359,7 @@ namespace System.Web.Compilation
 				nsname = "Resources";
 			} else {
 				if (!nsname.StartsWith ("Resources", StringComparison.InvariantCulture))
-					nsname = String.Format ("Resources.{0}", nsname);
+					nsname = String.Concat ("Resources.", nsname);
 				classname = classname.Substring(1);
 			}
 

@@ -1469,8 +1469,8 @@ namespace System.Web {
 			
 			public override string ToString ()
 			{
-				return string.Format ("ContentType {0}, Name {1}, Filename {2}, Start {3}, Length {4}",
-					ContentType, Name, Filename, Start, Length);
+				return "ContentType " + ContentType + ", Name " + Name + ", Filename " + Filename + ", Start " +
+					Start.ToString () + ", Length " + Length.ToString ();
 			}
 		}
 		

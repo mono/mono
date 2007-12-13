@@ -211,7 +211,7 @@ namespace System.Web.Mail {
 			// set the Content-Type header to multipart/mixed
 			string bodyContentType = msg.Header.ContentType;
 
-			msg.Header.ContentType = String.Format ("multipart/mixed;\r\n   boundary={0}", boundary);
+			msg.Header.ContentType = String.Concat ("multipart/mixed;\r\n   boundary=", boundary);
 		
 			// write the header
 			smtp.WriteHeader (msg.Header);
@@ -258,9 +258,9 @@ namespace System.Web.Mail {
 				MailHeader aHeader = new MailHeader ();
 		
 				aHeader.ContentType = 
-					String.Format (MimeTypes.GetMimeType (fileInfo.Name) + "; name=\"{0}\"",fileInfo.Name);
+					String.Concat (MimeTypes.GetMimeType (fileInfo.Name), "; name=\"", fileInfo.Name, "\"");
 		
-				aHeader.ContentDisposition = String.Format ("attachment; filename=\"{0}\"", fileInfo.Name);
+				aHeader.ContentDisposition = String.Concat ("attachment; filename=\"", fileInfo.Name, "\"");
 				aHeader.ContentTransferEncoding = a.Encoding.ToString();
 				smtp.WriteHeader (aHeader);
 		   

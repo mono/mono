@@ -337,9 +337,7 @@ namespace System.Web {
 		}
 		
 		public string Status {
-			get {
-				return String.Format ("{0} {1}", status_code, StatusDescription);
-			}
+			get { return String.Concat (status_code.ToString (), " ", StatusDescription); }
 
 			set {
 				int p = value.IndexOf (' ');

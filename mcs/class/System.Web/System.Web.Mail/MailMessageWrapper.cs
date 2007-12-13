@@ -79,9 +79,7 @@ namespace System.Web.Mail {
 		    		
 		    byte[] subjectBytes = message.BodyEncoding.GetBytes( message.Subject );
 		    // encode the subject with Base64
-		    header.Subject = String.Format( "=?{0}?B?{1}?=" , 
-						    message.BodyEncoding.BodyName ,
-						    Convert.ToBase64String( subjectBytes ) );
+		    header.Subject = "=?" + message.BodyEncoding.BodyName + "?B?" + Convert.ToBase64String (subjectBytes) + "?=";
 		} else {
 		    
 		    header.Subject = message.Subject;
@@ -109,22 +107,18 @@ namespace System.Web.Mail {
 
 	    	    
 	    // set the content type
-	    switch( message.BodyFormat ) {
-		
-	    case MailFormat.Html: 
-		header.ContentType = 
-		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName ); 
-		break;
+	    switch( message.BodyFormat ) {		
+		    case MailFormat.Html: 
+			    header.ContentType = String.Concat ( "text/html; charset=\"", message.BodyEncoding.BodyName, "\""); 
+			    break;
 	    
-	    case MailFormat.Text: 
-		header.ContentType = 
-		    String.Format( "text/plain; charset=\"{0}\"" , message.BodyEncoding.BodyName );
-		break;
+		    case MailFormat.Text: 
+			    header.ContentType = String.Concat ( "text/plain; charset=\"", message.BodyEncoding.BodyName, "\"");
+			    break;
 	    
-	    default: 
-		header.ContentType = 
-		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName );
-		break;
+		    default: 
+			    header.ContentType = String.Concat ( "text/html; charset=\"", message.BodyEncoding.BodyName, "\"");
+			    break;
 	    }
 	    
 	    	    

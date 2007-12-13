@@ -141,7 +141,7 @@ namespace System.Web.Compilation
 				Directory.CreateDirectory (baseDir);
 			
 			string baseFileName = Path.GetFileNameWithoutExtension (baseAssemblyPath);
-			string fileName = String.Format ("{0}.resources.dll", baseFileName);
+			string fileName = String.Concat (baseFileName, ".resources.dll");
 			fileName = Path.Combine (baseDir, fileName);
 
 			CodeCompileUnit assemblyInfo = GenerateAssemblyInfo (cultureName);

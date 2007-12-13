@@ -596,7 +596,7 @@ namespace System.Web {
 							genericNameBase + ".compiled");
 			PreservationFile pf = new PreservationFile ();
 			try {
-				pf.VirtualPath = String.Format ("/{0}/", genericNameBase);
+				pf.VirtualPath = String.Concat ("/", genericNameBase, "/");
 
 				AssemblyName an = asm.GetName ();
 				pf.Assembly = an.Name;

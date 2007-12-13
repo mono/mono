@@ -231,9 +231,9 @@ namespace System.Web {
 				string reskey = provider.ResourceKey;
 
 				if (!String.IsNullOrEmpty (reskey))
-					reskey = String.Format ("{0}.{1}.{2}", reskey, implicitResourceKey, attributeName);
+					reskey = reskey + "." + implicitResourceKey + "." + attributeName;
 				else
-					reskey = String.Format ("{0}.{1}", implicitResourceKey, attributeName);
+					reskey = String.Concat (implicitResourceKey, ".", attributeName);
 				object o = HttpContext.GetGlobalResourceObject ("Web.sitemap", reskey);
 				if (o is string)
 					return (string) o;

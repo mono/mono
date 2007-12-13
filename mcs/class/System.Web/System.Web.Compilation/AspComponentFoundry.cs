@@ -313,7 +313,7 @@ namespace System.Web.Compilation
 				if (assembly == null && assemblyName != null)
 					assembly = GetAssemblyByName (assemblyName, true);
 #endif
-				string typeName = String.Format ("{0}.{1}", nameSpace, componentName);
+				string typeName = String.Concat (nameSpace, ".", componentName);
 				if (assembly != null)
 					return assembly.GetType (typeName, true, true);
 

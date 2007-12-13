@@ -372,16 +372,16 @@ namespace System.Web {
 				}
 			} else {
 				if (MaxAge.TotalSeconds != 0)
-					cc = String.Format ("{0}, max-age={1}", cc, (long) MaxAge.TotalSeconds);
+					cc = String.Concat (cc, ", max-age=", ((long) MaxAge.TotalSeconds).ToString ());
 
 				string expires = TimeUtil.ToUtcTimeString (expire_date);
 				headers.Add (new UnknownResponseHeader ("Expires", expires));
 			}
 
 			if (set_no_store)
-				cc = String.Format ("{0}, no-store", cc);
+				cc = String.Concat (cc, ", no-store");
 			if (set_no_transform)
-				cc = String.Format ("{0}, no-transform", cc);
+				cc = String.Concat (cc, ", no-transform");
 			
 			headers.Add (new UnknownResponseHeader ("Cache-Control", cc));
 

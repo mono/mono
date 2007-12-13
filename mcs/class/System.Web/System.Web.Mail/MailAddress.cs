@@ -54,7 +54,7 @@ namespace System.Web.Mail {
 	}
 
 	public string Address {
-	    get { return String.Format( "{0}@{1}" , user , host ); }
+		get { return String.Concat (user, "@", host); }
 	    set {
 		
 		string[] parts = value.Split( new char[] { '@' } );
@@ -112,20 +112,16 @@ namespace System.Web.Mail {
 	
 	    if( name == null ) {
 		
-		retString = String.Format( "<{0}>" , this.Address );
+		    retString = String.Concat ("<", this.Address, ">");
 	    
 	    } else {
 		
 		string personName = this.Name;
 
-		if( MailUtil.NeedEncoding( personName ) ) {
-		    personName = String.Format( "=?{0}?B?{1}?=",
-					        Encoding.Default.BodyName , 
-						MailUtil.Base64Encode( personName ) ) ;
-		}
+		if( MailUtil.NeedEncoding( personName ))
+		    personName = "=?" + Encoding.Default.BodyName + "?B?" + MailUtil.Base64Encode(personName) + "?=";
 
-		retString = String.Format( "\"{0}\" <{1}>" , personName , this.Address);
-	    
+		retString = "\"" + personName + "\" <" + this.Address + ">";
 	    }
 	    
 	    return retString;

@@ -748,7 +748,7 @@ namespace System.Web.Compilation
 				return;			
 
 			string memberName = mi.Name;
-			string resname = String.Format ("{0}.{1}", attvalue, memberName);
+			string resname = String.Concat (attvalue, ".", memberName);
 
 			// __ctrl.Text = System.Convert.ToString(HttpContext.GetLocalResourceObject("ButtonResource1.Text"));
 			string inputFile = parser.InputFile;

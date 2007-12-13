@@ -1221,7 +1221,7 @@ namespace System.Web {
 		internal object LocateHandler (string verb, string url)
 		{
 			Hashtable cache = GetHandlerCache ();
-			string id = String.Format ("{0}{1}", verb, url);
+			string id = String.Concat (verb, url);
 			object ret = cache [id];
 
 			if (ret != null)

@@ -324,7 +324,7 @@ namespace System.Web {
 
 			public override string ToString ()
 			{
-				return String.Format ("file {0} {1} bytes from position {2}", file, length, offset);
+				return "file " + file + " " + length.ToString () + " bytes from position " + offset.ToString ();
 			}	
 		}
 	
@@ -354,7 +354,7 @@ namespace System.Web {
 
 			int i = 0;
 			if (l >= 0) {
-				string s = String.Format ("{0:x}", l);
+				string s = l.ToString ("x");
 				for (; i < s.Length; i++)
 					chunk_buffer [i] = (byte) s [i];
 			}

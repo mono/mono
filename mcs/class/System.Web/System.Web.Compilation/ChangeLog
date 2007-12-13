@@ -1,3 +1,11 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs, AspComponentFoundry.cs,
+	AssemblyBuilder.cs, AppResourcesCompiler.cs,
+	AppResourcesAssemblyBuilder.cs, AppCodeCompiler.cs: speed
+	optimization - use String.Concat instead of String.Format in some
+	cases.
+
 2007-11-22  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: use

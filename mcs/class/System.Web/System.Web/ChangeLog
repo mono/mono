@@ -1,3 +1,10 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs, HttpResponse.cs, SiteMapNode.cs, HttpRuntime.cs,
+	HttpResponseStream.cs, HttpApplication.cs, HttpCachePolicy.cs:
+	speed optimization - use String.Concat instead of String.Format in
+	some cases.
+
 2007-12-13 Igor Zelmanovich <igorz@mainsoft.com>
 	
 	* HttpApplication.cs:

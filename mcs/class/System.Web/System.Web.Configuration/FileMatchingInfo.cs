@@ -61,7 +61,7 @@ namespace System.Web.Configuration
 						if (vpath == "/")
 							vpath = String.Empty;
 						
-						MatchExact = String.Format ("{0}/{1}", vpath, s);
+						MatchExact = String.Concat (vpath, "/", s);
 					}
 			}
 				

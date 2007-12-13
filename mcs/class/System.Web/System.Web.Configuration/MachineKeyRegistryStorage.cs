@@ -58,14 +58,10 @@ namespace System.Web.Configuration
 			}
 			
 			string hash = appName.GetHashCode ().ToString ("x");
-			keyEncryption = String.Format ("software\\mono\\asp.net\\{0}\\autogenkeys\\{1}-{2}",
-						       Environment.Version,
-						       hash,
-						       (int)KeyType.Encryption);
-			keyValidation = String.Format ("software\\mono\\asp.net\\{0}\\autogenkeys\\{1}-{2}",
-						       Environment.Version,
-						       hash,
-						       (int)KeyType.Validation);
+			keyEncryption = "software\\mono\\asp.net\\" + Environment.Version.ToString () +
+				"\\autogenkeys\\" + hash + "-" + ((int)KeyType.Encryption).ToString ();
+			keyValidation = "software\\mono\\asp.net\\" + Environment.Version.ToString () +
+				"\\autogenkeys\\" + hash + "-" + ((int)KeyType.Validation).ToString ();
 		}
 		
 		public static byte[] Retrieve (KeyType kt)

@@ -178,7 +178,7 @@ namespace System.Web.Compilation {
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
 			
-			return temp_files.AddExtension (String.Format ("_{0}.{1}", temp_files.Count, extension), true);
+			return temp_files.AddExtension (String.Concat ("_", temp_files.Count, ".", extension), true);
 		}
 
 		public CodeDomProvider CodeDomProvider {

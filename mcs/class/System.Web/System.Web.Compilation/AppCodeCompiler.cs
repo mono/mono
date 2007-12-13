@@ -364,7 +364,7 @@ namespace System.Web.Compilation
 			if (cs != null) {
 				string aname;
 				for (int i = 0; i < cs.CodeSubDirectories.Count; i++) {
-					aname = String.Format ("App_SubCode_{0}", cs.CodeSubDirectories[i].DirectoryName);
+					aname = String.Concat ("App_SubCode_", cs.CodeSubDirectories[i].DirectoryName);
 					assemblies.Add (new AppCodeAssembly (
 								aname,
 								Path.Combine (appCode, cs.CodeSubDirectories[i].DirectoryName)));
@@ -416,7 +416,7 @@ namespace System.Web.Compilation
 		void GetProfileSettingsSerializeAsAttribute (ProfileSection ps, CodeAttributeDeclarationCollection collection,
 							     SerializationMode mode)
 		{
-			string parameter = String.Format ("SettingsSerializeAs.{0}", mode.ToString ());
+			string parameter = String.Concat ("SettingsSerializeAs.", mode.ToString ());
 			collection.Add (
 				new CodeAttributeDeclaration (
 					"SettingsSerializeAs",
@@ -549,7 +549,7 @@ namespace System.Web.Compilation
 
 		string MakeGroupName (string name)
 		{
-			return String.Format ("ProfileGroup{0}", name);
+			return String.Concat ("ProfileGroup", name);
 		}
 		
 		// FIXME: there should be some validation of syntactic correctness of the member/class name
