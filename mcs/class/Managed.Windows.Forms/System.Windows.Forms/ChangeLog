@@ -1,5 +1,11 @@
 2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Perform our layout after we resize ourselves
+	if we had to adjust our AutoSize.  Missed commit for bug
+	#346246.
+
+2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutPanel.cs: Override GetPreferredSizeCore so
 	we can provide an implementation of AutoSize.
 	[Fixes bug #346246]

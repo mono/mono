@@ -5913,7 +5913,6 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 			Size s = Size;
-			LayoutEngine.Layout (this, levent);
 			
 			// If our layout changed our PreferredSize, our parent
 			// needs to re-lay us out.  However, it's not always possible to
@@ -5923,9 +5922,9 @@ namespace System.Windows.Forms
 				Parent.PerformLayout ();
 				nested_layout = false;
 			}
-#else
-			LayoutEngine.Layout (this, levent);
 #endif
+			
+			LayoutEngine.Layout (this, levent);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
