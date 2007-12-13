@@ -2738,7 +2738,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		foreach (string lss in themes) {
 			HtmlLink hl = new HtmlLink ();
-			hl.Href = ResolveUrl (lss);
+			hl.Href = lss;
 			hl.Attributes["type"] = "text/css";
 			hl.Attributes["rel"] = "stylesheet";
 			Header.Controls.Add (hl);
