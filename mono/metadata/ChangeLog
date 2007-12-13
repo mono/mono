@@ -1,3 +1,18 @@
+2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.h: new flags to support fail fast of unverifiable code and
+	do non-strict verification. Non-strict verification is required to
+	have MS runtime compatibility. There are a huge amount of unverifiable
+	code that it accepts as verifiable. The strict mode verifies the code
+	as the specs says.
+	Non-strict mode will be required in cases where code needs to be
+	accepted as verifiable but fails under strict mode.
+
+	* pedump.c: added support to fail fast and non-strict verification.
+
+	* verify.c: added support for both fail fast and non-strict verification.
+
+
 2007-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (is_correct_endfinally): added.
