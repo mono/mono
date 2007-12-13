@@ -93,17 +93,31 @@ namespace System.Web.UI
 		IHttpHandler _jsfHandler;
 		static readonly object CrossPagePostBack = new object ();
 
-		void EnterThread (FacesContext context) {
+		void EnterThread (FacesContext facesContext) {
+			HttpContext context = HttpContext.Current;
+			
+			_jsfHandler = context.CurrentHandler;
+			context.PopHandler ();
+			context.PushHandler (this);
+			if (_jsfHandler == context.Handler)
+				context.Handler = this;
+
 			if (_lifeCycle == PageLifeCycle.Unknown)
-				ProcessRequest (HttpContext.Current);
+				ProcessRequest (context);
 			else
-				SetContext (HttpContext.Current);
+				SetContext (context);
 		}
 
-		void ExitThread (FacesContext context) {
+		void ExitThread (FacesContext facesContext) {
 			// TODO
 			//if (context.getResponseComplete ())
 			//    Response.End ();
+			
+			_context.PopHandler ();
+			_context.PushHandler (_jsfHandler);
+			if (this == _context.Handler)
+				_context.Handler = _jsfHandler;
+
 		}
 
 		public override void encodeBegin (FacesContext context) {

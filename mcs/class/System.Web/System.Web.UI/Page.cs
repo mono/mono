@@ -1195,15 +1195,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Unknown;
 #endif
-#if TARGET_J2EE
-		if (getFacesContext () != null) {
-			_jsfHandler = context.CurrentHandler;
-			context.PopHandler ();
-			context.PushHandler (this);
-			if (_jsfHandler == context.Handler)
-				context.Handler = this;
-		}
-#endif
 		SetContext (context);
 		
 		if (clientTarget != null)
@@ -1261,11 +1252,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			} catch {}
 #if TARGET_J2EE
 			if (getFacesContext () != null) {
-				_context.PopHandler ();
-				_context.PushHandler (_jsfHandler);
-				if (this == _context.Handler)
-					_context.Handler = _jsfHandler;
-
 				if(IsCrossPagePostBack)
 					_context.Items [CrossPagePostBack] = this;
 			}
