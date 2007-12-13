@@ -1,3 +1,11 @@
+2007-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Add the internal overload Sort (bool paint),
+	to indicate whether we actually need a paint or we will
+	call Refresh ourselves. This way we don't request a paint
+	_before_ having an updated and valid layout.
+	Fixes #347233.
+
 2007-12-12  Andreia Gaita <avidigal@novell.com>
 
 	* XPlatUIX11.cs: Send paint messages when updating a systray icon

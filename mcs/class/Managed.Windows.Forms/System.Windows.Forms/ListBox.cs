@@ -1118,11 +1118,22 @@ namespace System.Windows.Forms
 
 		protected virtual void Sort ()
 		{
+			Sort (true);
+		}
+
+		//
+		// Sometimes we could need to Sort, and request a Refresh
+		// in a different place, to not have the painting done twice
+		//
+		void Sort (bool paint)
+		{
 			if (Items.Count == 0)
 				return;
 
 			Items.Sort ();
-			base.Refresh ();
+
+			if (paint)
+				base.Refresh ();
 		}
 
 		public override string ToString ()
@@ -1999,7 +2010,7 @@ namespace System.Windows.Forms
 		internal virtual void CollectionChanged ()
 		{
 			if (sorted) 
-				Sort ();
+				Sort (false);
 			
 			if (Items.Count == 0) {
 				selected_index = -1;
