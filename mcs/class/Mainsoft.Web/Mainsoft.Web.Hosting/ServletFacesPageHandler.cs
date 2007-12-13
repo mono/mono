@@ -17,14 +17,16 @@ namespace Mainsoft.Web.Hosting
 	{
 		readonly FacesContextFactory _facesContextFactory;
 		readonly Lifecycle _lifecycle;
+		readonly string _executionFilePath;
 
 		public bool IsReusable {
 			get { return false; }
 		}
 
-		public ServletFacesPageHandler (FacesContextFactory facesContextFactory, Lifecycle lifecycle) {
+		public ServletFacesPageHandler (string executionFilePath, FacesContextFactory facesContextFactory, Lifecycle lifecycle) {
 			_facesContextFactory = facesContextFactory;
 			_lifecycle = lifecycle;
+			_executionFilePath = executionFilePath;
 		}
 
 		public void ProcessRequest (HttpContext context) {
@@ -33,7 +35,7 @@ namespace Mainsoft.Web.Hosting
 			HttpServletRequest request = wr.ServletRequest;
 			HttpServletResponse response = wr.ServletResponse;
 
-			FacesContext facesContext = AspNetFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context);
+			FacesContext facesContext = AspNetFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
 				_lifecycle.execute (facesContext);
 #if DEBUG

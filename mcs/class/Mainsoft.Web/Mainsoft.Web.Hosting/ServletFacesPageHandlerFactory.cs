@@ -40,7 +40,7 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path) {
-			IHttpHandler handler = new ServletFacesPageHandler (_facesContextFactory, _lifecycle);
+			IHttpHandler handler = new ServletFacesPageHandler (url, _facesContextFactory, _lifecycle);
 			return SessionWrapper.WrapHandler (handler, context, url);
 		}
 
