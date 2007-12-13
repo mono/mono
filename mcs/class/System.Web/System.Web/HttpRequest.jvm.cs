@@ -227,6 +227,8 @@ namespace System.Web
 		internal void SetWorkerRequest (HttpWorkerRequest wr) {
 			worker_request = wr;
 			current_exe_path = null;
+			file_path = null;
+			base_virtual_dir = null;
 		}
 
 	}
