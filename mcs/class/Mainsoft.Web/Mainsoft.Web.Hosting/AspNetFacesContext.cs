@@ -121,8 +121,8 @@ namespace Mainsoft.Web.Hosting
 
 		sealed class AspNetExternalContext : ExternalContext
 		{
-			ExternalContext _externalContext;
-			string _executionFilePath;
+			readonly ExternalContext _externalContext;
+			readonly string _executionFilePath;
 
 			public AspNetExternalContext (ExternalContext externalContext, string executionFilePath) {
 				_externalContext = externalContext;
