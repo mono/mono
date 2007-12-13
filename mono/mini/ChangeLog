@@ -1,5 +1,10 @@
 2007-12-11  Geoff Norton  <gnorton@novell.com>
 
+	* mini-s390x.c: Minor change to the MAX() define to allow
+	it to compile with other gcc versions.
+
+2007-12-11  Geoff Norton  <gnorton@novell.com>
+
 	* cpu-s390x.md:
 	* mini-s390x.c: Implement sext_i4 to fix the build on s390x
 
