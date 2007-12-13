@@ -504,6 +504,80 @@ namespace System.Windows.Forms
 				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (BackColor), new Point (3, y + 1), new Point (Right - 4, y + 1));
 			}
 		}
+
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			// If the tablelayoutpanel is autosize, we have to make sure it is big enough
+			// to hold every non-autosize control
+			actual_positions = (LayoutEngine as TableLayout).CalculateControlPositions (this, Math.Max (ColumnCount, 1), Math.Max (RowCount, 1));
+			
+			// Figure out how wide the panel needs to be
+			int[] column_widths = new int[ColumnCount];
+
+			// Figure out how tall each column wants to be
+			for (int i = 0; i < ColumnCount; i++) {
+				int biggest = 0;
+				int percent_pixels = 0;
+				float enlarge_factor = 0f;
+
+				for (int j = 0; j < RowCount; j++) {
+					Control c = actual_positions[i, j];
+
+					if (c != null && !c.AutoSize)
+						biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+				}
+
+				column_widths[i] = biggest;
+			}
+
+			// Because percentage based rows divy up the remaining space,
+			// we have to make the panel big enough so that all the rows
+			// get bigger, even if we only need one to be bigger.
+			int non_percent_total_width = 0;
+			int percent_total_width = 0;
+
+			for (int i = 0; i < ColumnCount; i++) {
+				if (ColumnStyles[i].SizeType == SizeType.Percent)
+					percent_total_width = Math.Max (percent_total_width, (int)(column_widths[i] / ((ColumnStyles[i].Width) / 100)));
+				else
+					non_percent_total_width += column_widths[i];
+			}
+
+
+			// Figure out how tall the panel needs to be
+			int[] row_heights = new int[RowCount];
+			
+			// Figure out how tall each row wants to be
+			for (int j = 0; j < RowCount; j++) {
+				int biggest = 0;
+				int percent_pixels = 0;
+				float enlarge_factor = 0f;
+				
+				for (int i = 0; i < ColumnCount; i++) {
+					Control c = actual_positions[i, j];
+
+					if (c != null && !c.AutoSize)
+						biggest = Math.Max (biggest, c.ExplicitBounds.Height + c.Margin.Vertical + Padding.Vertical);
+				}
+
+				row_heights[j] = biggest;
+			}
+			
+			// Because percentage based rows divy up the remaining space,
+			// we have to make the panel big enough so that all the rows
+			// get bigger, even if we only need one to be bigger.
+			int non_percent_total_height = 0;
+			int percent_total_height = 0;
+			
+			for (int j = 0; j < RowCount; j++) {
+				if (RowStyles[j].SizeType == SizeType.Percent)
+					percent_total_height = Math.Max (percent_total_height, (int)(row_heights[j] / ((RowStyles[j].Height) / 100)));
+				else
+					non_percent_total_height += row_heights[j];
+			}
+
+			return new Size (non_percent_total_width + percent_total_width, non_percent_total_height + percent_total_height);
+		}
 		#endregion
 		
 		#region Public Events

@@ -1,3 +1,7 @@
+2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs: Add tests for bug #346246.
+
 2007-12-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ControlTest.cs: Add a test for bug #347282.

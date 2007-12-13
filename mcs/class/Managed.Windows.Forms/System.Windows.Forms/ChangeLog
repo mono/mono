@@ -1,3 +1,9 @@
+2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: Override GetPreferredSizeCore so
+	we can provide an implementation of AutoSize.
+	[Fixes bug #346246]
+
 2007-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Add the internal overload Sort (bool paint),

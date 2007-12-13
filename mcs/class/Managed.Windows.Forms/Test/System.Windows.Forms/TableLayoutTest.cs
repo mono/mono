@@ -1159,6 +1159,110 @@ namespace MonoTests.System.Windows.Forms
 			form.Refresh ();
 			form.Dispose ();
 		}
+		
+		[Test] // bug #346246
+		public void AutoSizePanelVerical ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			tlp.ColumnCount = 1;
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 100F));
+			tlp.Location = new Point (12, 12);
+			tlp.Name = "tableLayoutPanel1";
+			tlp.RowCount = 2;
+			tlp.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			tlp.RowStyles.Add (new RowStyle (SizeType.Percent, 50F));
+			tlp.Size = new Size (139, 182);
+			tlp.TabIndex = 0;
+
+			f.Controls.Add (tlp);
+
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+			tlp.Controls.Add (b, 0, 0);
+
+			PictureBox p = new PictureBox ();
+			p.Size = new Size (100, 100);
+			tlp.Controls.Add (p,0,1);
+			
+			f.Show ();
+
+			Assert.AreEqual (new Rectangle (12, 12, 106, 212), tlp.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (3, 3, 100, 100), b.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (3, 109, 100, 100), p.Bounds, "A3");
+			
+			b.Width += 20;
+			b.Height += 20;
+
+			Assert.AreEqual (new Rectangle (12, 12, 126, 252), tlp.Bounds, "B1");
+			Assert.AreEqual (new Rectangle (3, 3, 120, 120), b.Bounds, "B2");
+			Assert.AreEqual (new Rectangle (3, 129, 100, 100), p.Bounds, "B3");
+
+			p.Width += 20;
+			p.Height += 20;
+
+			Assert.AreEqual (new Rectangle (12, 12, 126, 252), tlp.Bounds, "C1");
+			Assert.AreEqual (new Rectangle (3, 3, 120, 120), b.Bounds, "C2");
+			Assert.AreEqual (new Rectangle (3, 129, 120, 120), p.Bounds, "C3");
+			
+			f.Dispose ();
+		}
+
+		[Test] // bug #346246
+		public void AutoSizePanelHorizontal ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			tlp.ColumnCount = 2;
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 50F));
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 50F));
+			tlp.Location = new Point (12, 12);
+			tlp.Name = "tableLayoutPanel1";
+			tlp.RowCount = 1;
+			tlp.RowStyles.Add (new RowStyle (SizeType.Percent, 100F));
+			tlp.Size = new Size (139, 182);
+			tlp.TabIndex = 0;
+
+			f.Controls.Add (tlp);
+
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+			tlp.Controls.Add (b, 0, 0);
+
+			PictureBox p = new PictureBox ();
+			p.Size = new Size (100, 100);
+			tlp.Controls.Add (p, 1, 0);
+
+			f.Show ();
+
+			Assert.AreEqual (new Rectangle (12, 12, 212, 106), tlp.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (3, 3, 100, 100), b.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (109, 3, 100, 100), p.Bounds, "A3");
+
+			b.Width += 20;
+			b.Height += 20;
+
+			Assert.AreEqual (new Rectangle (12, 12, 252, 126), tlp.Bounds, "B1");
+			Assert.AreEqual (new Rectangle (3, 3, 120, 120), b.Bounds, "B2");
+			Assert.AreEqual (new Rectangle (129, 3, 100, 100), p.Bounds, "B3");
+
+			p.Width += 20;
+			p.Height += 20;
+
+			Assert.AreEqual (new Rectangle (12, 12, 252, 126), tlp.Bounds, "C1");
+			Assert.AreEqual (new Rectangle (3, 3, 120, 120), b.Bounds, "C2");
+			Assert.AreEqual (new Rectangle (129, 3, 120, 120), p.Bounds, "C3");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif

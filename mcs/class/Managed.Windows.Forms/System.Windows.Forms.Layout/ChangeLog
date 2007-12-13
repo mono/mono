@@ -1,3 +1,10 @@
+2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: Use ExplicitBounds so that we get the user requested
+	size, not the AutoSize/Dock size.  Make CalculateControlPositions
+	internal so that TableLayoutPanel can call it.
+	[Fixes bug #346246]
+
 2007-10-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: Revert the last change to TableLayout.  It breaks

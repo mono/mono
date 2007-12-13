@@ -75,7 +75,7 @@ namespace System.Windows.Forms.Layout
 			return false;
 		}
 
-		private Control[,] CalculateControlPositions (TableLayoutPanel panel, int columns, int rows)
+		internal Control[,] CalculateControlPositions (TableLayoutPanel panel, int columns, int rows)
 		{
 			Control[,] grid = new Control[columns, rows];
 
@@ -417,7 +417,7 @@ namespace System.Windows.Forms.Layout
 						if (c.AutoSize)
 							preferred = c.PreferredSize;
 						else
-							preferred = c.Size;
+							preferred = c.ExplicitBounds.Size;
 						
 						int new_x = 0;
 						int new_y = 0;
