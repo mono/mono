@@ -1,3 +1,14 @@
+2007-12-13 Igor Zelmanovich <igorz@mainsoft.com>
+	
+	* HttpApplication.cs:
+	* HttpContext.cs:
+	* HttpRequest.cs:
+	* HttpServerUtility.cs:
+	- When Transfer/Execute is called with preserveForm=true, transferred 
+	page is not processed as PostBack but form collection is preserved.
+	- When Execute is called more than once, PreviousPage property is set 
+	correct.
+
 2007-12-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpApplication.cs: added TARGET_JVM to LoadType method

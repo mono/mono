@@ -970,7 +970,7 @@ namespace System.Web {
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
-				handler = GetHandler (context);
+				handler = GetHandler (context, context.Request.FilePath);
 				context.Handler = handler;
 #if NET_2_0
 				context.PushHandler (handler);
@@ -1240,11 +1240,10 @@ namespace System.Web {
 		}
 		
 		// Used by HttpServerUtility.Execute
-		internal IHttpHandler GetHandler (HttpContext context)
+		internal IHttpHandler GetHandler (HttpContext context,string url)
 		{
 			HttpRequest request = context.Request;
 			string verb = request.RequestType;
-			string url = request.FilePath;
 			
 			IHttpHandler handler = null;
 			object o = LocateHandler (verb, url);
@@ -1254,7 +1253,7 @@ namespace System.Web {
 			if (factory == null) {
 				handler = (IHttpHandler) o;
 			} else {
-				handler = factory.GetHandler (context, verb, url, request.PhysicalPath);
+				handler = factory.GetHandler (context, verb, url, request.MapPath (url));
 			}
 
 			return handler;

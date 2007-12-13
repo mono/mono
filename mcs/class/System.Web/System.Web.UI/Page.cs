@@ -385,7 +385,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 			return isPostBack;
 #else
-			return _requestValueCollection != null && !HttpContext.Current.InTransit;
+			return _requestValueCollection != null;
 #endif
 		}
 	}
@@ -758,6 +758,13 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
+		// if request was transfered from other page such Transfer
+#if NET_2_0
+		if(!isCrossPagePostBack)
+#endif
+		if (this != _context.Handler)
+			return null;
+		
 		HttpRequest req = Request;
 		if (req == null)
 			return null;
@@ -1284,12 +1291,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected void AsyncPageEndProcessRequest (IAsyncResult result) 
 	{
 	}
-
-	internal void ProcessCrossPagePostBack (HttpContext context)
-	{
-		isCrossPagePostBack = true;
-		ProcessRequest (context);
-	}
 #endif
 
 	void InternalProcessRequest ()
@@ -1297,8 +1298,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		_requestValueCollection = this.DeterminePostBackMode();
 
 #if NET_2_0
-		HttpContext ctx = Context;
-				
 		_lifeCycle = PageLifeCycle.Start;
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
@@ -1309,7 +1308,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
 				// LAMESPEC: on Callback IsPostBack is set to false, but true.
 				//isPostBack = !isCallback;
-				isPostBack = !ctx.InTransit;
+				isPostBack = true;
 			}
 			string lastFocus = _requestValueCollection [LastFocusID];
 			if (!String.IsNullOrEmpty (lastFocus)) {
@@ -1317,9 +1316,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 		}
 		
-		// if request was transfered from other page - track Prev. Page
-		previousPage = ctx.LastPage;
-		ctx.LastPage = this;
+		if (!isCrossPagePostBack) {
+			if (_context.PreviousHandler is Page) {
+				previousPage = (Page) _context.PreviousHandler;
+			}
+		}
 
 		_lifeCycle = PageLifeCycle.PreInit;
 		Trace.Write ("aspx.page", "Begin PreInit");
@@ -2520,7 +2521,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
 				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
-				previousPage.ProcessCrossPagePostBack (Context);
+				previousPage.isCrossPagePostBack = true;
+				previousPage.ProcessRequest (Context);
 			} 
 		}
 	}
