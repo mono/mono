@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>System</AssemblyName>
-    <JDKName>1.6</JDKName>
+    <JDKName>1.4.2</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <MergeExternal>..\lib\apache_http_client.jar</MergeExternal>
@@ -36,7 +36,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
@@ -86,7 +86,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <GHProjectKind>framework</GHProjectKind>
     <TargetPlatform>0</TargetPlatform>
@@ -108,7 +108,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <GHProjectKind>framework</GHProjectKind>
     <TargetPlatform>0</TargetPlatform>
@@ -130,7 +130,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
@@ -151,7 +151,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <GHProjectKind>framework</GHProjectKind>
     <TargetPlatform>0</TargetPlatform>
@@ -173,7 +173,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
@@ -188,7 +188,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-j2se-helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\J2SE.Helpers.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\jre5\lib\rt.jar" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-apache_http_client="..\lib\apache_http_client.jar" />
+      <UserProperties REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-j2se-helpers="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\J2SE.Helpers.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-apache_http_client="..\lib\apache_http_client.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -201,10 +201,7 @@
       <Private>False</Private>
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.XML" />
   </ItemGroup>

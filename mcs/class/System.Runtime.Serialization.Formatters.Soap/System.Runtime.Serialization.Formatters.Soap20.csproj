@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Runtime.Serialization.Formatters.Soap</RootNamespace>
     <AssemblyName>System.Runtime.Serialization.Formatters.Soap</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -35,7 +35,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
@@ -87,7 +87,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
@@ -102,14 +102,11 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt="..\lib\rt.jar" />
+      <UserProperties REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Configuration</RootNamespace>
     <AssemblyName>System.Configuration</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -33,7 +33,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
@@ -53,7 +53,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
@@ -92,10 +92,7 @@
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.XML" />
   </ItemGroup>
@@ -244,7 +241,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-xml="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
+      <UserProperties REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-system-xml="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

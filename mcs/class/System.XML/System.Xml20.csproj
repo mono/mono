@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Xml</RootNamespace>
     <AssemblyName>System.Xml</AssemblyName>
-    <JDKName>1.6</JDKName>
+    <JDKName>1.4.2</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -33,7 +33,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
@@ -85,7 +85,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_Prepare|AnyCPU' ">
@@ -106,7 +106,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_Prepare|AnyCPU' ">
@@ -127,14 +127,11 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System">
       <HintPath>..\lib\System.dll</HintPath>
       <Private>False</Private>
@@ -549,7 +546,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-rt="..\lib\rt.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" />
+      <UserProperties REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

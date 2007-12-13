@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Data.OracleClient</RootNamespace>
     <AssemblyName>System.Data.OracleClient</AssemblyName>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <GHProjectType>1</GHProjectType>
     <GHProjectKind>framework</GHProjectKind>
     <Version>2.0</Version>
@@ -32,7 +32,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
@@ -52,7 +52,7 @@
     <ApplicationServerType>
     </ApplicationServerType>
     <Version>2.0</Version>
-    <JDKName>1.5.0_05</JDKName>
+    <JDKName>1.4.2</JDKName>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
@@ -97,7 +97,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-rt="..\lib\rt.jar" />
+      <UserProperties REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -152,10 +152,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="rt">
-      <HintPath>..\lib\rt.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
   </ItemGroup>
