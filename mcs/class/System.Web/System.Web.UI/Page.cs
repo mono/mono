@@ -387,7 +387,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 			return isPostBack;
 #else
-			return _requestValueCollection != null && !HttpContext.Current.InTransit;
+			return _requestValueCollection != null;
 #endif
 		}
 	}
@@ -760,6 +760,15 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
+#if !TARGET_J2EE
+		// if request was transfered from other page such Transfer
+#if NET_2_0
+		if(!isCrossPagePostBack)
+#endif
+		if (this != _context.Handler)
+			return null;
+#endif
+
 		HttpRequest req = Request;
 		if (req == null)
 			return null;
@@ -777,14 +786,23 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 			allow_load = (c.ID == GetTypeHashCode ());
 
-//#if TARGET_J2EE
-//        if (Context.IsActionRequest)
-//            return coll;
-//#endif
-
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
-
+#if TARGET_J2EE
+		if (this != _context.Handler) {
+			if (getFacesContext () != null) {
+				// check if it is PreviousPage
+				string prevViewId = coll [PreviousPageID];
+				if (!String.IsNullOrEmpty (prevViewId)) {
+					string appPath = VirtualPathUtility.RemoveTrailingSlash (Request.ApplicationPath);
+					prevViewId = prevViewId.Substring (appPath.Length);
+					isCrossPagePostBack = String.Compare (prevViewId, getFacesContext ().getExternalContext ().getRequestPathInfo (), StringComparison.OrdinalIgnoreCase) == 0;
+				}
+			}
+			if (!isCrossPagePostBack)
+				return null;
+		}
+#endif
 		return coll;
 	}
 
@@ -1177,6 +1195,15 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Unknown;
 #endif
+#if TARGET_J2EE
+		if (getFacesContext () != null) {
+			_jsfHandler = context.CurrentHandler;
+			context.PopHandler ();
+			context.PushHandler (this);
+			if (_jsfHandler == context.Handler)
+				context.Handler = this;
+		}
+#endif
 		SetContext (context);
 		
 		if (clientTarget != null)
@@ -1194,7 +1221,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		try {
 			InternalProcessRequest ();
 		}
-#if TARGET_JVM
+#if TARGET_J2EE
 		catch (Exception ex) {
 			HandleException (ex);
 			throw;
@@ -1232,6 +1259,17 @@ public partial class Page : TemplateControl, IHttpHandler
 				_lifeCycle = PageLifeCycle.End;
 #endif
 			} catch {}
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				_context.PopHandler ();
+				_context.PushHandler (_jsfHandler);
+				if (this == _context.Handler)
+					_context.Handler = _jsfHandler;
+
+				if(IsCrossPagePostBack)
+					_context.Items [CrossPagePostBack] = this;
+			}
+#endif
 			if (Thread.CurrentThread.CurrentCulture.Equals (_appCulture) == false)
 				Thread.CurrentThread.CurrentCulture = _appCulture;
 
@@ -1301,22 +1339,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected void AsyncPageEndProcessRequest (IAsyncResult result) 
 	{
 	}
-
-	internal void ProcessCrossPagePostBack (HttpContext context)
-	{
-		isCrossPagePostBack = true;
-		ProcessRequest (context);
-	}
 #endif
 
 	void InternalProcessRequest ()
 	{
 		_requestValueCollection = this.DeterminePostBackMode();
-
+		
 #if NET_2_0
-		HttpContext ctx = Context;
-				
-		_lifeCycle = PageLifeCycle.Start;
+
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
 			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
@@ -1326,7 +1356,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				isCallback = _requestValueCollection [CallbackArgumentID] != null;
 				// LAMESPEC: on Callback IsPostBack is set to false, but true.
 				//isPostBack = !isCallback;
-				isPostBack = !ctx.InTransit;
+				isPostBack = true;
 			}
 			string lastFocus = _requestValueCollection [LastFocusID];
 			if (!String.IsNullOrEmpty (lastFocus)) {
@@ -1334,9 +1364,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 		}
 		
-		// if request was transfered from other page - track Prev. Page
-		previousPage = ctx.LastPage;
-		ctx.LastPage = this;
+		if (!isCrossPagePostBack) {
+			if (_context.PreviousHandler is Page) {
+				previousPage = (Page) _context.PreviousHandler;
+			}
+		}
 
 		_lifeCycle = PageLifeCycle.PreInit;
 		Trace.Write ("aspx.page", "Begin PreInit");
@@ -1361,8 +1393,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		renderingForm = false;	
 
 #if TARGET_J2EE
-		if (getFacesContext () != null)
+		if (getFacesContext () != null) {
+			if (!(IsPostBack || IsCallback))
+				getFacesContext ().renderResponse ();
 			return;
+		}
 #endif
 
 		RestorePageState ();
@@ -1541,7 +1576,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
 		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
-		SetupResponseWriter (output);
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			SetupResponseWriter (output);
+#endif
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
 	}
@@ -2636,8 +2674,21 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requestValueCollection != null) {
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
+#if TARGET_J2EE
+				if (getFacesContext () != null) {
+					IHttpHandler handler = Context.ApplicationInstance.GetHandler (Context, prevPage);
+					Server.Execute (handler, null, true);
+					if (_context.Items.Contains (CrossPagePostBack)) {
+						previousPage = (Page) _context.Items [CrossPagePostBack];
+						_context.Items.Remove (CrossPagePostBack);
+					}
+					return;
+				}
+#else
 				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
-				previousPage.ProcessCrossPagePostBack (Context);
+				previousPage.isCrossPagePostBack = true;
+				previousPage.ProcessRequest (Context);
+#endif
 			} 
 		}
 	}

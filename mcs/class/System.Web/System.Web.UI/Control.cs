@@ -823,10 +823,10 @@ namespace System.Web.UI
 
 		Control LookForControlByName (string id)
 		{
-#if TARGET_J2EE
-			if (this == Page && id != null && id == Page.PortletNamespace)
-				return this;
-#endif
+//#if TARGET_J2EE
+//            if (this == Page && id != null && id == Page.PortletNamespace)
+//                return this;
+//#endif
 			EnsureControlsCache ();
 			return (Control) _controlsCache [id];
 		}

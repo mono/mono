@@ -72,7 +72,6 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
-		bool inTransit; // the page is being transferred to another
 
 #if NET_2_0
 #if TARGET_JVM
@@ -87,11 +86,6 @@ namespace System.Web {
 		ProfileBase profile = null;
 		LinkedList<IHttpHandler> handlers;
 #endif
-
-		internal bool InTransit {
-			get { return inTransit; }
-			set { inTransit = value; }
-		}
 		
 		public HttpContext (HttpWorkerRequest wr)
 		{
@@ -632,19 +626,5 @@ namespace System.Web {
 		}
 #endif
 #endregion
-
-#if NET_2_0
-		Page last_page;
-		
-		internal Page LastPage {
-			get {
-				return last_page;
-			}
-
-			set {
-				last_page = value;
-			}
-		}
-#endif
 	}
 }

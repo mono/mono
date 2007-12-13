@@ -90,6 +90,8 @@ namespace System.Web.UI
 		bool [] _validatorsState;
 		ICallbackEventHandler _callbackTarget;
 		string _callbackEventError = String.Empty;
+		IHttpHandler _jsfHandler;
+		static readonly object CrossPagePostBack = new object ();
 
 		void EnterThread (FacesContext context) {
 			if (_lifeCycle == PageLifeCycle.Unknown)
