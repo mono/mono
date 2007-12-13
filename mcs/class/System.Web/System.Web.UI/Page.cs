@@ -790,6 +790,9 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	public override Control FindControl (string id) {
+#if TARGET_J2EE
+		id = DecodeNamespace (id);
+#endif
 		if (id == ID)
 			return this;
 		else
