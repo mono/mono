@@ -1365,10 +1365,10 @@ namespace System.Web.UI.WebControls
 			HtmlTextWriter writer = _dynamicTemplate.GetMenuTemplateWriter ();
 
 			if (Page.Header != null) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Class, MenuRenderHtmlTemplate.Marker);
+				writer.AddAttribute (HtmlTextWriterAttribute.Class, MenuRenderHtmlTemplate.GetMarker (0));
 			}
 			else {
-				writer.AddAttribute (HtmlTextWriterAttribute.Style, MenuRenderHtmlTemplate.Marker);
+				writer.AddAttribute (HtmlTextWriterAttribute.Style, MenuRenderHtmlTemplate.GetMarker (0));
 			}
 
 			writer.AddStyleAttribute ("visibility", "hidden");
@@ -1376,45 +1376,45 @@ namespace System.Web.UI.WebControls
 			writer.AddStyleAttribute ("z-index", "1");
 			writer.AddStyleAttribute ("left", "0px");
 			writer.AddStyleAttribute ("top", "0px");
-			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.GetMarker (1));
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 
 			// Up button
-			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.GetMarker (2));
 			writer.AddStyleAttribute ("display", "block");
 			writer.AddStyleAttribute ("text-align", "center");
-			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','u')")); 
-			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','u')")); 
+			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.GetMarker (3), "','u')"));
+			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.GetMarker (4), "','u')")); 
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			writer.AddAttribute ("src", MenuRenderHtmlTemplate.Marker); //src
-			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.Marker); //ScrollUpText
+			writer.AddAttribute ("src", MenuRenderHtmlTemplate.GetMarker (5)); //src
+			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.GetMarker (6)); //ScrollUpText
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
 			writer.RenderEndTag ();	// IMG
 			
 			writer.RenderEndTag ();	// DIV scroll button
 		
-			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.GetMarker (7));
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
-			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.GetMarker (8));
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
 			// call of RenderMenu
-			writer.Write (MenuRenderHtmlTemplate.Marker);
+			writer.Write (MenuRenderHtmlTemplate.GetMarker (9));
 			
 			writer.RenderEndTag ();	// DIV Content
 			writer.RenderEndTag ();	// DIV Scroll container
 
 			// Down button
-			writer.AddAttribute ("id", MenuRenderHtmlTemplate.Marker);
+			writer.AddAttribute ("id", MenuRenderHtmlTemplate.GetMarker (0));
 			writer.AddStyleAttribute ("display", "block");
 			writer.AddStyleAttribute ("text-align", "center");
-			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','d')")); 
-			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.Marker, "','d')")); 
+			writer.AddAttribute ("onmouseover", string.Concat ("Menu_OverScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.GetMarker (1), "','d')"));
+			writer.AddAttribute ("onmouseout", string.Concat ("Menu_OutScrollBtn ('", ClientID, "','", MenuRenderHtmlTemplate.GetMarker (2), "','d')")); 
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			writer.AddAttribute ("src", MenuRenderHtmlTemplate.Marker); //src
-			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.Marker); //ScrollDownText
+			writer.AddAttribute ("src", MenuRenderHtmlTemplate.GetMarker (3)); //src
+			writer.AddAttribute ("alt", MenuRenderHtmlTemplate.GetMarker (4)); //ScrollDownText
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
 			writer.RenderEndTag ();	// IMG
 			
@@ -2027,6 +2027,12 @@ namespace System.Web.UI.WebControls
 				_templateWriter = new MenuTemplateWriter (_templateHtml);
 			}
 
+			public static string GetMarker (int num)
+			{
+				char charNum = (char) ((int) '\u0971' + num);
+				return string.Concat (Marker, charNum);
+			}
+
 			public HtmlTextWriter GetMenuTemplateWriter()
 			{
 				return new HtmlTextWriter (_templateWriter);
@@ -2060,24 +2066,25 @@ namespace System.Web.UI.WebControls
 					return;
 
 				int partStart = 0;
-				int partEnd = (start == 0) ? -Marker.Length : (int) idxs [start - 1];
+				int partEnd = (start == 0) ? -Marker.Length - 1 : (int) idxs [start - 1];
 				int di = 0;
 
 				int i = start;
 				int total = start + count;
 				for (; i < total; i++) {
 
-					partStart = partEnd + Marker.Length;
+					partStart = partEnd + Marker.Length + 1;
 					partEnd = (int) idxs [i];
 					
 					// write static part
 					writer.Write (_templateHtml, partStart, partEnd - partStart);
 
 					// write synamic part
-					writer.Write (dynamicParts [di++]);
+					di = (int) _templateHtml [partEnd + Marker.Length] - 0x971;
+					writer.Write (dynamicParts [di]);
 				}
 
-				partStart = partEnd + Marker.Length;
+				partStart = partEnd + Marker.Length + 1;
 				partEnd = (int) idxs [i];
 
 				writer.Write (_templateHtml, partStart, partEnd - partStart);

@@ -1,3 +1,7 @@
+2007-12-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Menu.cs: fixed rendering without head tag on page
+
 2007-11-19  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Calendar.cs: performance optimizations:
