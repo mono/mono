@@ -134,8 +134,8 @@ namespace System.Web.UI.HtmlControls {
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
 				if (postback)
 					writer.WriteAttribute ("onclick",
-							       String.Format ("javascript:{{if (typeof(Page_ClientValidate) != 'function' ||  Page_ClientValidate()) {0}}}",
-									      csm.GetPostBackEventReference (this, String.Empty)));
+							       String.Concat ("javascript:{if (typeof(Page_ClientValidate) != 'function' ||  Page_ClientValidate()) ",
+									      csm.GetPostBackEventReference (this, String.Empty), "}"));
 				else
 					writer.WriteAttribute ("onclick",
 							       "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();");

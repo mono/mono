@@ -46,7 +46,7 @@ namespace System.Web.Profile
 		{
 			string typeName;
 			if (AppCodeCompiler.DefaultAppCodeAssemblyName != null)
-				typeName = String.Format ("ProfileCommon, {0}", AppCodeCompiler.DefaultAppCodeAssemblyName);
+				typeName = String.Concat ("ProfileCommon, ", AppCodeCompiler.DefaultAppCodeAssemblyName);
 			else
 				typeName = "ProfileCommon";
 			
@@ -61,11 +61,9 @@ namespace System.Web.Profile
 		{
 			string typeName;
 			if (AppCodeCompiler.DefaultAppCodeAssemblyName != null)
-				typeName = String.Format ("ProfileCommon{0}, {1}",
-							  groupName,
-							  AppCodeCompiler.DefaultAppCodeAssemblyName);
+				typeName = String.Concat ("ProfileCommon", groupName, ", ", AppCodeCompiler.DefaultAppCodeAssemblyName);
 			else
-				typeName = String.Format ("ProfileCommon{0}", groupName);
+				typeName = String.Concat ("ProfileCommon", groupName);
 			
 			Type profileGroupType = Type.GetType (typeName);
 			if (profileGroupType == null) {

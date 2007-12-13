@@ -258,7 +258,7 @@ namespace System.Web.UI.WebControls {
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
 #endif
 				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
-									    String.Format ("document.getElementById ('{0}')", ClientID));
+									    String.Concat ("document.getElementById ('", ClientID, "')"));
 			}
 
 			if ((ShowSummary && has_errors) || (EnableClientScript && pre_render_called))

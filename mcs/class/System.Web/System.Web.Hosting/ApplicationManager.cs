@@ -71,10 +71,8 @@ namespace System.Web.Hosting {
 				throw new ArgumentException ("Cannot be null or empty", "physicalPath");
 
 			// 'type' is not checked. If it's null, we'll throw a NullReferenceException
-			if (!typeof (IRegisteredObject).IsAssignableFrom (type)) {
-				string msg = String.Format ("Type '{0}' does not implement IRegisteredObject.", type.Name);
-				throw new ArgumentException (msg, "type");
-			}
+			if (!typeof (IRegisteredObject).IsAssignableFrom (type))
+				throw new ArgumentException (String.Concat ("Type '", type.Name, "' does not implement IRegisteredObject."), "type");
 
 			//
 			// ArgumentException is thrown for the physical path from the internal object created
@@ -135,11 +133,8 @@ namespace System.Web.Hosting {
 			if (ireg == null)
 				return null;
 
-			if (failIfExists) {
-				string msg = String.Format ("Well known object of type '{0}' already " +
-						"exists in this domain.", type.Name);
-				throw new InvalidOperationException (msg);
-			}
+			if (failIfExists)
+				throw new InvalidOperationException (String.Concat ("Well known object of type '", type.Name, "' already exists in this domain."));
 
 			return ireg;
 		}

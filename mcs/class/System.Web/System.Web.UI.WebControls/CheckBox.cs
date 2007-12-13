@@ -435,7 +435,7 @@ namespace System.Web.UI.WebControls {
 			if (AutoPostBack) {
 #if NET_2_0
 				string onclick = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
-				onclick = String.Format ("setTimeout('{0}', 0)", onclick.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				onclick = String.Concat ("setTimeout('", onclick.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
 				w.AddAttribute (HtmlTextWriterAttribute.Onclick, BuildScriptAttribute ("onclick", onclick));
 #else
 					w.AddAttribute (HtmlTextWriterAttribute.Onclick,

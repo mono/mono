@@ -319,10 +319,11 @@ namespace System.Web.UI.HtmlControls
 											   ID));
 
 				if (DetermineRenderUplevel ()) {
+					string formReference = Page.IsMultiForm ? Page.theForm + "." : String.Empty;
+					
 					w.WriteAttribute (
 						"onkeypress",
-						String.Format ("javascript:return {1}WebForm_FireDefaultButton(event, '{0}')",
-							       c.ClientID, Page.IsMultiForm ? Page.theForm + "." : null));
+						"javascript:return " + formReference + "WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
 				}
 			}
 #endif

@@ -180,10 +180,10 @@ namespace System.Web.Hosting {
 			string dynamic_dir = null;
 			string user = Environment.UserName;
 			int tempDirTag = 0;
+			string dirPrefix = String.Concat (user, "-temp-aspnet-");
 			
 			for (int i = 0; ; i++){
-				string d = Path.Combine (Path.GetTempPath (),
-					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
+				string d = Path.Combine (Path.GetTempPath (), String.Concat (dirPrefix, i.ToString ("x")));
 			
 				try {
 					CreateDirectory (d);

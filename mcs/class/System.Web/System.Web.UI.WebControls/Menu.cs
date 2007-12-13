@@ -1151,6 +1151,8 @@ namespace System.Web.UI.WebControls
 			EnsureChildControls ();
 			base.OnDataBinding (e);
 		}
+
+		const string onPreRenderScript = "var {0} = new Object ();\n{0}.webForm = {1};\n{0}.disappearAfter = {2};\n{0}.vertical = {3};";
 		
 		protected internal override void OnPreRender (EventArgs e)
 		{
@@ -1162,14 +1164,16 @@ namespace System.Web.UI.WebControls
 			}
 			
 			string cmenu = ClientID + "_data";
-			string script = string.Concat ("var ", cmenu, " = new Object ();\n");
-			script += string.Format ("{0}.webForm = {1};\n", cmenu, Page.IsMultiForm ? Page.theForm : "window");
-			script += string.Format ("{0}.disappearAfter = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DisappearAfter));
-			script += string.Format ("{0}.vertical = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (Orientation == Orientation.Vertical));
+			string script = String.Format (onPreRenderScript,
+						       cmenu,
+						       Page.IsMultiForm ? Page.theForm : "window",
+						       ClientScriptManager.GetScriptLiteral (DisappearAfter),
+						       ClientScriptManager.GetScriptLiteral (Orientation == Orientation.Vertical));			
+
 			if (DynamicHorizontalOffset != 0)
-				script += string.Format ("{0}.dho = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicHorizontalOffset));
+				script += String.Concat (cmenu, ".dho = ", ClientScriptManager.GetScriptLiteral (DynamicHorizontalOffset), ";\n");
 			if (DynamicVerticalOffset != 0)
-				script += string.Format ("{0}.dvo = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicVerticalOffset));
+				script += String.Concat (cmenu, ".dvo = ", ClientScriptManager.GetScriptLiteral (DynamicVerticalOffset), ";\n");
 			
 			// The order in which styles are defined matters when more than one class
 			// is assigned to an element
@@ -1597,6 +1601,11 @@ namespace System.Web.UI.WebControls
 			return (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels) && item.ChildItems.Count > 0;
 		}
 
+		static string MakeHandlerJavaScript (string handlerName, string param1, string param2, string param3)
+		{
+			return "javascript:Menu_" + handlerName + "('" + param1 + "','" + param2 + "'," + param3 + ")";
+		}
+		
 		void RenderMenuItem (HtmlTextWriter writer, MenuItem item, bool notLast, bool isFirst) {
 			bool displayChildren = DisplayChildren (item);
 			bool dynamicChildren = displayChildren && (item.Depth + 1 >= StaticDisplayLevels);
@@ -1615,16 +1624,20 @@ namespace System.Web.UI.WebControls
 
 			string parentId = isDynamicItem ? "'" + item.Parent.Path + "'" : "null";
 			if (dynamicChildren) {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}')", ClientID, item.Path));
-			}
-			else if (isDynamicItem) {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverDynamicLeafItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
-			}
-			else {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverStaticLeafItem ('{0}','{1}')", ClientID, item.Path));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}')", ClientID, item.Path));
+				writer.AddAttribute ("onmouseover",
+						     "javascript:Menu_OverItem ('" + ClientID + "','" + item.Path + "'," + parentId + ")");
+				writer.AddAttribute ("onmouseout",
+						     "javascript:Menu_OutItem ('" + ClientID + "','" + item.Path + "')");
+			} else if (isDynamicItem) {
+				writer.AddAttribute ("onmouseover",
+						     "javascript:Menu_OverDynamicLeafItem ('" + ClientID + "','" + item.Path + "'," + parentId + ")");
+				writer.AddAttribute ("onmouseout",
+						     "javascript:Menu_OutItem ('" + ClientID + "','" + item.Path + "'," + parentId + ")");
+			} else {
+				writer.AddAttribute ("onmouseover",
+						     "javascript:Menu_OverStaticLeafItem ('" + ClientID + "','" + item.Path + "')");
+				writer.AddAttribute ("onmouseout",
+						     "javascript:Menu_OutItem ('" + ClientID + "','" + item.Path + "')");
 			}
 
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
@@ -1872,10 +1885,10 @@ namespace System.Web.UI.WebControls
 				}
 
 				if (isDynamicItem && DynamicItemFormatString.Length > 0) {
-					writer.Write (string.Format (DynamicItemFormatString, item.Text));
+					writer.Write (String.Format (DynamicItemFormatString, item.Text));
 				}
 				else if (!isDynamicItem && StaticItemFormatString.Length > 0) {
-					writer.Write (string.Format (StaticItemFormatString, item.Text));
+					writer.Write (String.Format (StaticItemFormatString, item.Text));
 				}
 				else {
 					writer.Write (item.Text);

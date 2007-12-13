@@ -56,7 +56,7 @@ namespace System.Web.SessionState {
 			if (key == null)
 				throw new ArgumentNullException ("key");
 			if (key.Length != half_len)
-				throw new ArgumentException (String.Format ("key must be {0} bytes long.", half_len));
+				throw new ArgumentException (String.Concat ("key must be ", half_len.ToString (), " bytes long."));
 
 			// Just a standard hex conversion
 			char[] res = new char [IdLength];

@@ -1943,12 +1943,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			ClientScript.RegisterWebFormClientScript ();
 			ClientScript.RegisterStartupScript (
 				"HtmlForm-DefaultButton-StartupScript",
-				String.Format (
-					"<script type=\"text/javascript\">\n{0}\nWebForm_AutoFocus('{1}');\n{2}\n</script>\n",
-					ClientScriptManager.SCRIPT_BLOCK_START,
-					_focusedControlID,
-					ClientScriptManager.SCRIPT_BLOCK_END)
-			);
+				"<script type=\"text/javascript\">\n" + ClientScriptManager.SCRIPT_BLOCK_START +
+				"\nWebForm_AutoFocus('" + _focusedControlID + "');\n" + ClientScriptManager.SCRIPT_BLOCK_END +
+				"\n</script>\n");
 		}
 		
 		if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
@@ -1963,7 +1960,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (Form == null || !Page.Form.SubmitDisabledControls || !Page.Form.DetermineRenderUplevel ())
 			return;
 		_hasEnabledControlArray = true;
-		Page.ClientScript.RegisterArrayDeclaration (EnabledControlArrayID, String.Format ("'{0}'", control.ClientID));
+		Page.ClientScript.RegisterArrayDeclaration (EnabledControlArrayID, String.Concat ("'", control.ClientID, "'"));
 	}
 	
 	protected virtual void OnSaveStateComplete (EventArgs e)
@@ -2032,20 +2029,19 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		try {
 			target.RaiseCallbackEvent (callbackArgument);
-		}
-		catch (Exception ex) {
-			callbackEventError = String.Format ("e{0}", ex.Message);
+		} catch (Exception ex) {
+			callbackEventError = String.Concat ("e", ex.Message);
 		}
 		
 		try {
 			callBackResult = target.GetCallbackResult ();
-		}
-		catch (Exception ex) {
-			return String.Format ("e{0}", ex.Message);
+		} catch (Exception ex) {
+			return String.Concat ("e", ex.Message);
 		}
 		
 		string eventValidation = ClientScript.GetEventValidationStateFormatted ();
-		return String.Format ("{0}{1}|{2}{3}", callbackEventError, eventValidation == null ? 0 : eventValidation.Length, eventValidation, callBackResult);
+		return callbackEventError + (eventValidation == null ? "0" : eventValidation.Length.ToString ()) + "|" +
+			eventValidation + callBackResult;
 	}
 
 	[BrowsableAttribute (false)]

@@ -1,3 +1,18 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Menu.cs, TreeView.cs: optimize use of String.Format in
+	OnPreRender.
+	Speed optimization - use String.Concat instead of String.Format in
+	some cases.
+
+	* GridView.cs, DetailsView.cs: optimize use of String.Format in
+	OnPreRender.
+
+	* CheckBox.cs, AccessDataSource.cs, WebColorConverter.cs,
+	WebControl.cs,TextBox.cs, DropDownList.cs, ValidationSummary.cs,
+	ListBox.cs, Panel.cs, BaseValidator.cs, LinkButton.cs: speed
+	optimization - use String.Concat instead of String.Format in some cases.
+
 2007-12-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Menu.cs: fixed rendering without head tag on page

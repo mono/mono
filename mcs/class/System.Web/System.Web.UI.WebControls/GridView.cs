@@ -2121,25 +2121,34 @@ namespace System.Web.UI.WebControls
 				SortExpression = Page.Request.Form [ClientID + "_SortExpression"];
 			}
 		}
-		
+
+
+		const string onPreRenderScript = @"var {0} = new Object ();
+{0}.pageIndex = {1};
+{0}.sortExp = {2};
+{0}.sortDir = {3};
+{0}.uid = {4};
+{0}.form = {5};
+";
 		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			
-			if (EnableSortingAndPagingCallbacks)
-			{
+
+			if (EnableSortingAndPagingCallbacks) {
 				if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(GridView), "GridView.js")) {
 					string url = Page.ClientScript.GetWebResourceUrl (typeof(GridView), "GridView.js");
 					Page.ClientScript.RegisterClientScriptInclude (typeof(GridView), "GridView.js", url);
 				}
 				
 				string cgrid = ClientID + "_data";
-				string script = string.Format ("var {0} = new Object ();\n", cgrid);
-				script += string.Format ("{0}.pageIndex = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (PageIndex));
-				script += string.Format ("{0}.sortExp = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (SortExpression == null ? "" : SortExpression));
-				script += string.Format ("{0}.sortDir = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral ((int) SortDirection));
-				script += string.Format ("{0}.uid = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (UniqueID));
-				script += string.Format ("{0}.form = {1};\n", cgrid, Page.theForm);
+				string script = String.Format (onPreRenderScript,
+							cgrid,
+							ClientScriptManager.GetScriptLiteral (PageIndex),
+							ClientScriptManager.GetScriptLiteral (SortExpression == null ? "" : SortExpression),
+							ClientScriptManager.GetScriptLiteral ((int) SortDirection),
+							ClientScriptManager.GetScriptLiteral (UniqueID),
+							Page.theForm);
+				
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				
 				// Make sure the basic script infrastructure is rendered
@@ -2147,7 +2156,7 @@ namespace System.Web.UI.WebControls
 				Page.ClientScript.GetPostBackClientHyperlink (this, "");
 			}
 		}
-
+		
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy ();

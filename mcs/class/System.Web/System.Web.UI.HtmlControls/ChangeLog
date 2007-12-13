@@ -1,3 +1,8 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlForm.cs, HtmlButton.cs: speed optimization - use String.Concat
+	instead of String.Format in some cases.
+
 2007-11-07  Juraj Skripsky  <js@hotfeet.ch>
 
 	* HtmlForm.cs (RenderAttributes): Render ClientID of DefaultButton.

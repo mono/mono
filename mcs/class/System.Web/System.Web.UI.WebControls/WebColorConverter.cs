@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
 			if (s != "0")
 				return s;
 
-			return String.Format (culture, "#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+			return String.Concat ("#", c.R.ToString ("X2"), c.G.ToString ("X2"), c.B.ToString ("X2"));
 		}
 	}
 }

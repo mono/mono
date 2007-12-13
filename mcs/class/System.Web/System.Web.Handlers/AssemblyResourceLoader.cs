@@ -126,14 +126,14 @@ namespace System.Web.Handlers {
 		static string EncryptAssemblyResource (string asmName, string resName)
 		{
 			byte[] key = GetEncryptionKey ();
-			byte[] bytes = Encoding.UTF8.GetBytes (String.Format ("{0};{1}", asmName, resName));
+			byte[] bytes = Encoding.UTF8.GetBytes (String.Concat (asmName, ";", resName));
 			string result;
 			
 			ICryptoTransform encryptor = TripleDES.Create ().CreateEncryptor (key, init_vector);
 			result = GetHexString (encryptor.TransformFinalBlock (bytes, 0, bytes.Length));
 			bytes = null;
 
-			return String.Format ("d={0}", result.ToLower (CultureInfo.InvariantCulture));
+			return String.Concat ("d=", result.ToLower (CultureInfo.InvariantCulture));
 		}
 
 		static void DecryptAssemblyResource (string val, out string asmName, out string resName)
@@ -186,17 +186,16 @@ namespace System.Web.Handlers {
 			string atime = String.Empty;
 			string extra = String.Empty;
 #if SYSTEM_WEB_EXTENSIONS
-			extra = String.Format ("{0}n={1}", QueryParamSeparator, notifyScriptLoaded ? "t" : "f");
+			extra = String.Concat (QueryParamSeparator, "n=", notifyScriptLoaded ? "t" : "f");
 #endif
 
 #if TARGET_JVM
 			atime = String.Format ("{0}t={1}", QueryParamSeparator, assembly.GetHashCode ());
 #else
 			if (apath != String.Empty)
-				atime = String.Format ("{0}t={1}", QueryParamSeparator, File.GetLastWriteTimeUtc (apath).Ticks);
+				atime = String.Concat (QueryParamSeparator, "t=", File.GetLastWriteTimeUtc (apath).Ticks);
 #endif
-			string href = String.Format ("{0}?{1}{2}{3}", HandlerFileName,
-						     EncryptAssemblyResource (aname, resourceName), atime, extra);
+			string href = HandlerFileName + "?" + EncryptAssemblyResource (aname, resourceName) + atime + extra;
 
 			HttpContext ctx = HttpContext.Current;
 			if (ctx != null && ctx.Request != null) {
@@ -248,7 +247,7 @@ namespace System.Web.Handlers {
 			}
 #endif
 			if (wra == null)
-				throw new HttpException (404, string.Format ("Resource {0} not found", resourceName));
+				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
 			
 			context.Response.ContentType = wra.ContentType;
 
@@ -258,7 +257,7 @@ namespace System.Web.Handlers {
 
 			Stream s = assembly.GetManifestResourceStream (resourceName);
 			if (s == null)
-				throw new HttpException (404, string.Format ("Resource {0} not found", resourceName));
+				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
 
 			if (wra.PerformSubstitution) {
 				StreamReader r = new StreamReader (s);

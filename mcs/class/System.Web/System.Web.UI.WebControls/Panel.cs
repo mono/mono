@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls {
 			if (image != "") {
 				image = ResolveClientUrl (image);
 #if !NET_2_0 // see HtmlTextWriter.WriteStyleAttribute(string, string, bool) 
-				image = String.Format ("url({0})", image);
+				image = String.Concat ("url(", image, ")");
 #endif
 				w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, image);
 			}
@@ -68,7 +68,10 @@ namespace System.Web.UI.WebControls {
 					throw new InvalidOperationException (String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.", ID));
 
 				Page.ClientScript.RegisterWebFormClientScript ();
-				w.AddAttribute ("onkeypress", String.Format ("javascript:return {1}WebForm_FireDefaultButton(event, '{0}')", button.ClientID, Page.IsMultiForm ? Page.theForm + "." : null));
+
+				string formReference = Page.IsMultiForm ? Page.theForm + "." : String.Empty;
+				w.AddAttribute ("onkeypress",
+						"javascript:return " + formReference + "WebForm_FireDefaultButton(event, '" + button.ClientID + "')");
 			}
 
 			if (Direction != ContentDirection.NotSet) {

@@ -57,10 +57,8 @@ namespace System.Web.Hosting {
 			if (virtualDir == null || virtualDir == "")
 				throw new ArgumentNullException ("virtualDir");
 
-			if (UrlUtils.IsRelativeUrl (virtualDir)) {
-				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualDir);
-				throw new ArgumentException (msg);
-			}
+			if (UrlUtils.IsRelativeUrl (virtualDir))
+				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualDir, "', is not allowed here."));
 
 			string phys_path = HostingEnvironment.MapPath (virtualDir);
 			return Directory.Exists (phys_path);
@@ -71,10 +69,8 @@ namespace System.Web.Hosting {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			if (UrlUtils.IsRelativeUrl (virtualPath)) {
-				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualPath);
-				throw new ArgumentException (msg);
-			}
+			if (UrlUtils.IsRelativeUrl (virtualPath))
+				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
 
 			string phys_path = HostingEnvironment.MapPath (virtualPath);
 			return File.Exists (phys_path);
@@ -97,10 +93,8 @@ namespace System.Web.Hosting {
 			if (virtualDir == null || virtualDir == "")
 				throw new ArgumentNullException ("virtualDir");
 
-			if (UrlUtils.IsRelativeUrl (virtualDir)) {
-				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualDir);
-				throw new ArgumentException (msg);
-			}
+			if (UrlUtils.IsRelativeUrl (virtualDir)) 
+				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualDir, "', is not allowed here."));
 
 			return new DefaultVirtualDirectory (virtualDir);
 		}
@@ -110,10 +104,8 @@ namespace System.Web.Hosting {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			if (UrlUtils.IsRelativeUrl (virtualPath)) {
-				string msg = String.Format ("The relative virtual path '{0}', is not allowed here.", virtualPath);
-				throw new ArgumentException (msg);
-			}
+			if (UrlUtils.IsRelativeUrl (virtualPath))
+				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
 
 			return new DefaultVirtualFile (virtualPath);
 		}

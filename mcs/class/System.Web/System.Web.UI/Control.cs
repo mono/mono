@@ -139,7 +139,7 @@ namespace System.Web.UI
 			defaultNameArray = new string [100];
 			for (int i = 0; i < 100; i++)
 #if NET_2_0
-				defaultNameArray [i] = String.Format ("ctl{0:D2}", i);
+				defaultNameArray [i] = String.Concat ("ctl", i.ToString ("D2"));
 #else
 				defaultNameArray [i] = "_ctl" + i;
 #endif
@@ -889,7 +889,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("OnBubbleEvent {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("OnBubbleEvent ", _userId, " ", type_name));
 			}
 #endif
 			return false;
@@ -905,7 +905,7 @@ namespace System.Web.UI
 					string type_name = null;
 					if (trace != null) {
 						type_name = GetType ().Name;
-						trace.Write ("control", String.Format ("OnDataBinding {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("OnDataBinding ", _userId, " ", type_name));
 					}
 #endif
 					eh (this, e);
@@ -928,7 +928,7 @@ namespace System.Web.UI
 					string type_name = null;
 					if (trace != null) {
 						type_name = GetType ().Name;
-						trace.Write ("control", String.Format ("OnInit {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("OnInit ", _userId, " ", type_name));
 					}
 #endif
 					eh (this, e);
@@ -951,7 +951,7 @@ namespace System.Web.UI
 					string type_name = null;
 					if (trace != null) {
 						type_name = GetType ().Name;
-						trace.Write ("control", String.Format ("OnLoad {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("OnLoad ", _userId, " ", type_name));
 					}
 #endif
 					eh (this, e);
@@ -974,7 +974,7 @@ namespace System.Web.UI
 					string type_name = null;
 					if (trace != null) {
 						type_name = GetType ().Name;
-						trace.Write ("control", String.Format ("OnPreRender {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("OnPreRender ", _userId, " ", type_name));
 					}
 #endif
 					eh (this, e);
@@ -997,7 +997,7 @@ namespace System.Web.UI
 					string type_name = null;
 					if (trace != null) {
 						type_name = GetType ().Name;
-						trace.Write ("control", String.Format ("OnUnload {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("OnUnload ", _userId, " ", type_name));
 					}
 #endif
 					eh (this, e);
@@ -1068,19 +1068,19 @@ namespace System.Web.UI
 				string type_name = null;
 				if (trace != null) {
 					type_name = GetType ().Name;
-					trace.Write ("control", String.Format ("RaiseBubbleEvent {0} {1}", _userId, type_name));
+					trace.Write ("control", String.Concat ("RaiseBubbleEvent ", _userId, " ", type_name));
 				}
 #endif
 				if (c.OnBubbleEvent (source, args)) {
 #if MONO_TRACE
 					if (trace != null)
-						trace.Write ("control", String.Format ("End RaiseBubbleEvent (false) {0} {1}", _userId, type_name));
+						trace.Write ("control", String.Concat ("End RaiseBubbleEvent (false) ", _userId, " ", type_name));
 #endif
 					break;
 				}
 #if MONO_TRACE
 				if (trace != null)
-					trace.Write ("control", String.Format ("End RaiseBubbleEvent (true) {0} {1}", _userId, type_name));
+					trace.Write ("control", String.Concat ("End RaiseBubbleEvent (true) ", _userId, " ", type_name));
 #endif
 				c = c.Parent;
 			}
@@ -1362,7 +1362,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("LoadRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("LoadRecursive ", _userId, " ", type_name));
 			}
 #endif
 #if NET_2_0
@@ -1381,7 +1381,7 @@ namespace System.Web.UI
 
 #if MONO_TRACE
 			if (trace != null)
-				trace.Write ("control", String.Format ("End LoadRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("End LoadRecursive ", _userId, " ", type_name));
 #endif
 			stateMask |= LOADED;
 		}
@@ -1393,7 +1393,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("UnloadRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("UnloadRecursive ", _userId, " ", type_name));
 			}
 #endif
 			if (HasControls ()) {
@@ -1406,7 +1406,7 @@ namespace System.Web.UI
 
 #if MONO_TRACE
 			if (trace != null)
-				trace.Write ("control", String.Format ("End UnloadRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("End UnloadRecursive ", _userId, " ", type_name));
 #endif
 #if NET_2_0
 			if (Adapter != null)
@@ -1438,7 +1438,7 @@ namespace System.Web.UI
 				string type_name = null;
 				if (trace != null) {
 					type_name = GetType ().Name;
-					trace.Write ("control", String.Format ("PreRenderRecursive {0} {1}", _userId, type_name));
+					trace.Write ("control", String.Concat ("PreRenderRecursive ", _userId, " ", type_name));
 				}
 #endif
 #if NET_2_0
@@ -1457,7 +1457,7 @@ namespace System.Web.UI
 				}
 #if MONO_TRACE
 				if (trace != null)
-					trace.Write ("control", String.Format ("End PreRenderRecursive {0} {1}", _userId, type_name));
+					trace.Write ("control", String.Concat ("End PreRenderRecursive ", _userId, " ", type_name));
 #endif
 			}
 #if NET_2_0
@@ -1475,7 +1475,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("InitRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("InitRecursive ", _userId, " ", type_name));
 			}
 #endif
 			SetNamingContainer (namingContainer);
@@ -1502,7 +1502,7 @@ namespace System.Web.UI
 				OnInit (EventArgs.Empty);
 #if MONO_TRACE
 			if (trace != null)
-				trace.Write ("control", String.Format ("End InitRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("End InitRecursive ", _userId, " ", type_name));
 #endif
 			TrackViewState ();
 			stateMask |= INITED;
@@ -1519,7 +1519,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("SaveViewStateRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("SaveViewStateRecursive ", _userId, " ", type_name));
 			}
 #endif
 
@@ -1550,7 +1550,7 @@ namespace System.Web.UI
 			if (thisState == null && controlList == null && controlStates == null) {
 #if MONO_TRACE
 				if (trace != null) {
-					trace.Write ("control", String.Format ("End SaveViewStateRecursive {0} {1} saved nothing", _userId, type_name));
+					trace.Write ("control", "End SaveViewStateRecursive " + _userId + " " + type_name + " saved nothing");
 					trace.SaveViewState (this, null);
 				}
 #endif
@@ -1559,7 +1559,7 @@ namespace System.Web.UI
 
 #if MONO_TRACE
 			if (trace != null) {
-				trace.Write ("control", String.Format ("End SaveViewStateRecursive {0} {1} saved a Triplet", _userId, type_name));
+				trace.Write ("control", "End SaveViewStateRecursive " + _userId + " " + type_name + " saved a Triplet");
 				trace.SaveViewState (this, thisState);
 			}
 #endif
@@ -1576,7 +1576,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("LoadViewStateRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("LoadViewStateRecursive ", _userId, " ", type_name));
 			}
 #endif
 			Triplet savedInfo = (Triplet) savedState;
@@ -1603,7 +1603,7 @@ namespace System.Web.UI
 
 #if MONO_TRACE
 			if (trace != null)
-				trace.Write ("control", String.Format ("End LoadViewStateRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("End LoadViewStateRecursive ", _userId, " ", type_name));
 #endif
 			stateMask |= VIEWSTATE_LOADED;
 		}
@@ -1618,7 +1618,7 @@ namespace System.Web.UI
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
-				trace.Write ("control", String.Format ("ApplyThemeRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("ApplyThemeRecursive ", _userId, " ", type_name));
 			}
 #endif
 			if (Page.PageTheme != null && EnableTheming) {
@@ -1629,7 +1629,7 @@ namespace System.Web.UI
 
 #if MONO_TRACE
 			if (trace != null)
-				trace.Write ("control", String.Format ("End ApplyThemeRecursive {0} {1}", _userId, type_name));
+				trace.Write ("control", String.Concat ("End ApplyThemeRecursive ", _userId, " ", type_name));
 #endif
 		}
 #endif

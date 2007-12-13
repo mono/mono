@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
 			if (AutoPostBack) {
 #if NET_2_0
 				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
-				onchange = String.Format ("setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 #else
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,

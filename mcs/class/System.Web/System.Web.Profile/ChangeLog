@@ -1,3 +1,8 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlProfileProvider.cs, ProfileParser.cs: speed optimization -
+	use String.Concat instead of String.Format in some cases.
+
 2007-12-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProfileParser.jvm.cs: Profile types loading optimized

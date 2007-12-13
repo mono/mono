@@ -103,10 +103,10 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("control");
 			
 			page.RequiresPostBackScript ();
-		if(page.IsMultiForm)
-			return String.Format ("{0}.__doPostBack('{1}','{2}')", page.theForm, control.UniqueID, argument);
-		else
-			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
+			if(page.IsMultiForm)
+				return page.theForm + ".__doPostBack('" + control.UniqueID + "','" + argument + "')";
+			else
+				return "__doPostBack('" + control.UniqueID + "','" + argument + "')";
 		}
 
 #if NET_2_0
@@ -166,17 +166,15 @@ namespace System.Web.UI
 			}
 #endif
 
-			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
-					prefix,
-					ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
-					ClientScriptManager.GetScriptLiteral (options.Argument),
-					ClientScriptManager.GetScriptLiteral (actionUrl),
-					ClientScriptManager.GetScriptLiteral (options.AutoPostBack),
-					ClientScriptManager.GetScriptLiteral (options.PerformValidation),
-					ClientScriptManager.GetScriptLiteral (options.TrackFocus),
-					ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
-					ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
-				);
+			return prefix + "WebForm_DoPostback(" +
+				ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID) + "," +
+				ClientScriptManager.GetScriptLiteral (options.Argument) + "," +
+				ClientScriptManager.GetScriptLiteral (actionUrl) + "," +
+				ClientScriptManager.GetScriptLiteral (options.AutoPostBack) + "," +
+				ClientScriptManager.GetScriptLiteral (options.PerformValidation) + "," +
+				ClientScriptManager.GetScriptLiteral (options.TrackFocus) + "," +
+				ClientScriptManager.GetScriptLiteral (options.ClientSubmit) + "," +
+				ClientScriptManager.GetScriptLiteral (options.ValidationGroup) + ")";
 		}
 
 		internal void RegisterWebFormClientScript ()
@@ -225,8 +223,16 @@ namespace System.Web.UI
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
 			RegisterWebFormClientScript ();
-			
-			return string.Format ("{6}WebForm_DoCallback({0},{1},{2},{3},{4},{5})", target, ((argument == null) ? "null" : argument), clientCallback, ((context == null) ? "null" : context), ((clientErrorCallback == null) ? "null" : clientErrorCallback), (useAsync ? "true" : "false"), (page.IsMultiForm ? page.theForm + "." : null));
+
+			string formReference = page.IsMultiForm ? page.theForm + "." : String.Empty;
+
+			return formReference + "WebForm_DoCallback(" +
+				target + "," +
+				((argument == null) ? "null" : argument) + "," +
+				clientCallback + "," +
+				((context == null) ? "null" : context) + "," +
+				((clientErrorCallback == null) ? "null" : clientErrorCallback) + "," +
+				(useAsync ? "true" : "false") + ")";
 		}
 #endif
 		

@@ -89,8 +89,8 @@ namespace System.Web.UI.WebControls {
 			if (CausesValidation && Page.AreValidatorsUplevel ()) {
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				w.AddAttribute (HtmlTextWriterAttribute.Href,
-						String.Format ("javascript:{{if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate(); {0};}}",
-							       csm.GetPostBackEventReference (this, String.Empty)));
+						String.Concat ("javascript:{if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate(); ",
+							       csm.GetPostBackEventReference (this, String.Empty), ";}"));
 			} else {
 				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}

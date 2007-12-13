@@ -49,7 +49,7 @@ namespace System.Web.UI
 		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
 		: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
-			this.cacheEntryName = String.Format ("@@MasterPagePHIDS:{0}:{1}", virtualPath, inputFile);
+			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", inputFile);
 			
 			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
 		}

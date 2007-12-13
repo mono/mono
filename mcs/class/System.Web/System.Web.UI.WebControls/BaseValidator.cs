@@ -476,7 +476,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual void RegisterValidatorDeclaration ()
 		{
 			Page.ClientScript.RegisterArrayDeclaration ("Page_Validators",
-								    String.Format ("document.getElementById ('{0}')", ClientID));
+								    String.Concat ("document.getElementById ('", ClientID, "')"));
 		}
 
 #if NET_2_0

@@ -98,8 +98,7 @@ namespace System.Web.UI.WebControls {
 		public override string ConnectionString {
 			get {
 				if (connectionString == null) {
-					connectionString = String.Format ("Provider={0}; Data Source={1}",
-									  PROVIDER_STRING, GetPhysicalDataFilePath ());
+					connectionString = String.Concat ("Provider=", PROVIDER_STRING, "; Data Source=", GetPhysicalDataFilePath ());
 				}
 
 				return connectionString;

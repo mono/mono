@@ -488,7 +488,7 @@ namespace System.Web.UI.WebControls {
 			if (attr [attr.Length - 1] == ';')
 				attr = attr.TrimEnd (_script_trim_chars);
 			
-			attr = String.Format ("{0};{1}", attr, tail);
+			attr = String.Concat (attr, ";", tail);
 			attrs.Remove (name);
 			
 			return attr;

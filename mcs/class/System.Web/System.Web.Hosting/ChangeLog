@@ -1,3 +1,9 @@
+2007-12-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationManager.cs, ApplicationHost.cs,
+	DefaultVirtualPathProvider.cs: speed optimization - use
+	String.Concat instead of String.Format in some cases.
+
 2007-11-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ApplicationHost.cs: On 2.0, also make PrivateBinPath an absolute

@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
 				w.AddAttribute ("onkeypress", "if (WebForm_TextBoxKeyHandler(event) == false) return false;", false);
 				
 				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
-				onchange = String.Format ("setTimeout('{0}', 0)", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"));
+				onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
 				w.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
 			}
 #else		

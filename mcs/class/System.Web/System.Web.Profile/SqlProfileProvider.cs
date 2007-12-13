@@ -416,7 +416,7 @@ namespace System.Web.Profile
 			if (p == null)
 				throw new ArgumentNullException (pName);
 			if (p.Length == 0 || p.Length > length || p.IndexOf (",") != -1)
-				throw new ArgumentException (String.Format ("invalid format for {0}", pName));
+				throw new ArgumentException (String.Concat ("invalid format for ", pName));
 		}
 		
 		static int GetReturnValue (DbParameter returnValue)

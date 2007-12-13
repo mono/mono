@@ -1900,11 +1900,17 @@ namespace System.Web.UI.WebControls
 					PageIndex = page;
 			}
 		}
-		
+
+		const string onPreRenderScript = @"var {0} = new Object ();
+{0}.pageIndex = {1};
+{0}.uid = {2};
+{0}.form = {3};
+";
+
 		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			
+
 			if (EnablePagingCallbacks)
 			{
 				if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(DetailsView), "DetailsView.js")) {
@@ -1914,10 +1920,12 @@ namespace System.Web.UI.WebControls
 				Page.ClientScript.RegisterHiddenField (ClientID + "_Page", PageIndex.ToString ());
 				
 				string cgrid = ClientID + "_data";
-				string script = string.Format ("var {0} = new Object ();\n", cgrid);
-				script += string.Format ("{0}.pageIndex = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (PageIndex));
-				script += string.Format ("{0}.uid = {1};\n", cgrid, ClientScriptManager.GetScriptLiteral (UniqueID));
-				script += string.Format ("{0}.form = {1};\n", cgrid, Page.theForm);
+				string script = String.Format (onPreRenderScript,
+							       cgrid,
+							       ClientScriptManager.GetScriptLiteral (PageIndex),
+							       ClientScriptManager.GetScriptLiteral (UniqueID),
+							       Page.theForm);
+				
 				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 				
 				// Make sure the basic script infrastructure is rendered
