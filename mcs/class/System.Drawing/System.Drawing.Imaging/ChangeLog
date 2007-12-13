@@ -1,3 +1,7 @@
+2007-12-13 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodec.jvm.cs: fixed bitmap resolution
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Metafile.cs: Stream position is not moved for metafiles.

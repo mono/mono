@@ -299,7 +299,7 @@ namespace Mainsoft.Drawing.Imaging {
 			foreach (ImageCodecInfo codec in Decoders.Values)
 				for (int i=0; i<mimeTypes.Length; i++)
 					if (codec.MimeType == mimeTypes [i])
-						return new ImageFormat (codec.FormatID);
+						return ClsidToImageFormat (codec.Clsid);
 			return null;
 		}
 
