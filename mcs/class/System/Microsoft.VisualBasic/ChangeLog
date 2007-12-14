@@ -1,3 +1,7 @@
+2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* VBCodeProvider.cs: Implement constructor added in 2.0SP1.
+
 2007-10-30  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VBCodeGenerator.cs: Fix array indexer expressions by don't adding a

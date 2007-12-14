@@ -44,6 +44,12 @@ namespace Microsoft.VisualBasic {
 		{
 		}
 
+#if NET_2_0
+		public VBCodeProvider(System.Collections.Generic.IDictionary<string, string> providerOptions)
+		{
+			// TODO: Do something meaningful here...
+		}
+#endif
 		public override string FileExtension {
 			get {
 				return "vb";
