@@ -670,11 +670,12 @@ namespace System.Web.Compilation
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
 
 			// First let's find the correct expression builder
-			string expr = value.Substring (3, value.Length - 5).Trim ();
-			int colon = expr.IndexOf (':');
+			value = value.Substring (3, value.Length - 5).Trim ();
+			int colon = value.IndexOf (':');
 			if (colon == -1)
 				return;
-			string prefix = expr.Substring (0, colon).Trim ();
+			string prefix = value.Substring (0, colon).Trim ();
+			string expr = value.Substring (colon + 1).Trim ();
 			
 			System.Configuration.Configuration config = WebConfigurationManager.OpenWebConfiguration ("");
 			if (config == null)
@@ -711,7 +712,7 @@ namespace System.Web.Compilation
 			try {
 				eb = Activator.CreateInstance (t) as System.Web.Compilation.ExpressionBuilder;
 				ctx = new ExpressionBuilderContext (HttpContext.Current.Request.FilePath);
-				parsedData = eb.ParseExpression (expr.Substring (colon + 1).Trim (), type, ctx);
+				parsedData = eb.ParseExpression (expr, type, ctx);
 			} catch (Exception e) {
 				throw new HttpException (
 					String.Format ("Failed to create an instance of type `{0}'", builderType), e);

@@ -75,7 +75,7 @@ namespace System.Web.Compilation {
 			PropertyDescriptor descriptor = TypeDescriptor.GetProperties(type)[entry.PropertyInfo.Name];
 			CodeExpression[] expressionArray = new CodeExpression[3];
 			expressionArray[0] = new CodePrimitiveExpression(entry.Expression.Trim());
-			expressionArray[1] = new CodeTypeOfExpression(type);
+			expressionArray[1] = new CodeTypeOfExpression(entry.Type);
 			expressionArray[2] = new CodePrimitiveExpression(entry.Name);
 			return new CodeCastExpression(descriptor.PropertyType, new CodeMethodInvokeExpression(new 
 								       CodeTypeReferenceExpression(base.GetType()), "GetAppSetting", expressionArray));

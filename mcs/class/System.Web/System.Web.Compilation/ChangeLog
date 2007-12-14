@@ -1,3 +1,11 @@
+2007-12-14  Juraj Skripsky  <js@hotfeet.ch>
+
+	* TemplateControlCompiler.cs (AddExpressionAssign):
+	Make sure expression does not contain prefix.
+	
+	* AppSettingsExpressionBuilder.cs: Pass type of property to
+	GetAppSetting, not type of declaring type.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs, AspComponentFoundry.cs,
