@@ -1,3 +1,10 @@
+2007-12-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add OP_SWITCH.
+
+	* mini.c graph.c ssa.c aliasing.c mini-<ARCH>.c inssel-<ARCH>.brg: Avoid using
+	CEE_SWITCH in back-end code, use OP_SWITCH instead.
+
 2007-12-11  Geoff Norton  <gnorton@novell.com>
 
 	* mini-s390x.c: Minor change to the MAX() define to allow
