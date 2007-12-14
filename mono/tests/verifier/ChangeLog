@@ -1,3 +1,10 @@
+2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* Makefile: add support to check strict tests.
+
+	* AssemblyRunner.cs: start using peverify as part of the
+	process. Support for strict tests.
+
 2007-12-12 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_filter_ends_at_endfilter_1.il: tests if the
