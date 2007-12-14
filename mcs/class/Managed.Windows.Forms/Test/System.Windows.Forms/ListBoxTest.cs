@@ -291,6 +291,26 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void SelectedIndex_Removed ()
+		{
+			ListBox listBox = new ListBox ();
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#1");
+			listBox.SelectedIndex = 2;
+			Assert.AreEqual (2, listBox.SelectedIndex, "#2");
+			listBox.Items.RemoveAt (2);
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#3");
+
+			listBox.SelectedIndex = 0;
+			Assert.AreEqual (0, listBox.SelectedIndex, "#4");
+			listBox.Items.RemoveAt (0);
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#5");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SelectedIndexException ()
 		{
