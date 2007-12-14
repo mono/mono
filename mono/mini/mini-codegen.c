@@ -45,17 +45,15 @@ g_slist_append_mempool (MonoMemPool *mp, GSList *list, gpointer data)
 }
 
 static inline void
-mono_regstate_assign (MonoRegState *rs) {
+mono_regstate_assign (MonoRegState *rs)
+{
 	if (rs->next_vreg > rs->vassign_size) {
 		g_free (rs->vassign);
 		rs->vassign_size = MAX (rs->next_vreg, 256);
 		rs->vassign = g_malloc (rs->vassign_size * sizeof (int));
 	}
 
-
 	memset (rs->isymbolic, 0, MONO_MAX_IREGS * sizeof (rs->isymbolic [0]));
-	memset (rs->vassign, -1, sizeof (rs->vassign [0]) * rs->next_vreg);
-
 	memset (rs->fsymbolic, 0, MONO_MAX_FREGS * sizeof (rs->fsymbolic [0]));
 }
 

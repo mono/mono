@@ -326,7 +326,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		/* SREG1 */
 		sreg = ins->sreg1;
-		if ((spec [MONO_INST_SRC1] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+		if ((spec [MONO_INST_SRC1] != ' ') && get_vreg_to_inst (cfg, sreg)) {
 			MonoInst *var = get_vreg_to_inst (cfg, sreg);
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
@@ -342,7 +342,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		/* SREG2 */
 		sreg = ins->sreg2;
-		if ((spec [MONO_INST_SRC2] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+		if ((spec [MONO_INST_SRC2] != ' ') && get_vreg_to_inst (cfg, sreg)) {
 			MonoInst *var = get_vreg_to_inst (cfg, sreg);
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
@@ -357,7 +357,7 @@ analyze_liveness_bb (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		/* DREG */
-		if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg != -1) && get_vreg_to_inst (cfg, ins->dreg)) {
+		if ((spec [MONO_INST_DEST] != ' ') && get_vreg_to_inst (cfg, ins->dreg)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 			int idx = var->inst_c0;
 			MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
@@ -633,7 +633,9 @@ mono_analyze_liveness (MonoCompile *cfg)
 	if (cfg->new_ir) {
 		optimize_initlocals2 (cfg);
 
-		mono_analyze_liveness2 (cfg);
+		/* This improves code size by about 5% but slows down compilation too much */
+		if (cfg->compile_aot)
+			mono_analyze_liveness2 (cfg);
 	}
 	else
 		optimize_initlocals (cfg);
@@ -811,7 +813,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 		return;
 
 	/* DREG */
-	if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg != -1) && get_vreg_to_inst (cfg, ins->dreg)) {
+	if ((spec [MONO_INST_DEST] != ' ') && get_vreg_to_inst (cfg, ins->dreg)) {
 		MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 		int idx = var->inst_c0;
 		MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
@@ -844,7 +846,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 
 	/* SREG1 */
 	sreg = ins->sreg1;
-	if ((spec [MONO_INST_SRC1] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+	if ((spec [MONO_INST_SRC1] != ' ') && get_vreg_to_inst (cfg, sreg)) {
 		MonoInst *var = get_vreg_to_inst (cfg, sreg);
 		int idx = var->inst_c0;
 
@@ -856,7 +858,7 @@ update_liveness2 (MonoCompile *cfg, MonoInst *ins, gboolean set_volatile, int in
 
 	/* SREG2 */
 	sreg = ins->sreg2;
-	if ((spec [MONO_INST_SRC2] != ' ') && (sreg != -1) && get_vreg_to_inst (cfg, sreg)) {
+	if ((spec [MONO_INST_SRC2] != ' ') && get_vreg_to_inst (cfg, sreg)) {
 		MonoInst *var = get_vreg_to_inst (cfg, sreg);
 		int idx = var->inst_c0;
 
@@ -985,7 +987,7 @@ mono_analyze_liveness2 (MonoCompile *cfg)
 			mono_linterval_add_range (cfg, vi->interval, 0, 1);
 	}
 
-#if 1
+#if 0
 	for (idx = 0; idx < max_vars; ++idx) {
 		MonoMethodVar *vi = MONO_VARINFO (cfg, idx);
 		

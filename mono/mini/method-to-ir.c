@@ -10207,7 +10207,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				 * that would cause the lvreg to be spilled, making the whole optimization
 				 * useless.
 				 */
-				if (vreg_to_bb [var->dreg]) {
+				/* This is too slow for JIT compilation */
+				if (cfg->compile_aot && vreg_to_bb [var->dreg]) {
 					MonoInst *ins;
 					int def_index, call_index, ins_index;
 					gboolean spilled = FALSE;
@@ -10239,7 +10240,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 						break;
 				}
 
-				if (cfg->verbose_level > 2)
+				if (G_UNLIKELY (cfg->verbose_level > 2))
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
 				var->flags |= MONO_INST_IS_DEAD;
 				cfg->vreg_to_inst [var->dreg] = NULL;

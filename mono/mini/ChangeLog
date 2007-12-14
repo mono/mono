@@ -1,5 +1,13 @@
 2007-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_handle_global_vregs): Disable some code which slows down
+	compilation too much.
+
+	* liveness.c (mono_analyze_liveness): Disable the new liveness code as it slows
+	down compilation too much.
+
+	* mini-codegen.c (mono_regstate_assign): Remove an unnecessary memset.
+
 	* mini-<ARCH>.c: Add a 'src' argument to mono_arch_emit_outarg_vt () to remove
 	some duplicated code.
 
