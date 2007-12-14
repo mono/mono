@@ -1,5 +1,11 @@
 2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_test.sh: added tests for endfilter
+
+	* make_endfilter_test.sh: new test generator
+
+2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* Makefile: add support to check strict tests.
 
 	* AssemblyRunner.cs: start using peverify as part of the
