@@ -253,6 +253,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+#if NET_2_0
 		[Test]
 		public void Constructor_Serializable ()
 		{
@@ -273,7 +274,6 @@ namespace MonoTests.System.Windows.Forms
 			item.Tag = "Tag";
 			item.UseItemStyleForSubItems = false;
 
-#if NET_2_0
 			ListViewGroup group = lvw.Groups.Add ("GroupKey", "MyGroup");
 			group.Items.Add (item);
 
@@ -281,7 +281,6 @@ namespace MonoTests.System.Windows.Forms
 			item.IndentCount = 2;
 			item.Name = "MyName";
 			item.ToolTipText = "MyTooltipText";
-#endif
 
 			MemoryStream ms = new MemoryStream ();
 			BinaryFormatter formatter = new BinaryFormatter ();
@@ -306,15 +305,14 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, item2.Selected, "#A12");
 			Assert.AreEqual (null, item2.Tag, "#A13");
 			Assert.AreEqual (item.UseItemStyleForSubItems, item2.UseItemStyleForSubItems, "#A14");
-#if NET_2_0
 			Assert.AreEqual (item.ImageKey, item2.ImageKey, "#A15");
 			Assert.AreEqual (0, item2.IndentCount, "#A16");
 			Assert.AreEqual (String.Empty, item2.Name, "#A17");
 			Assert.AreEqual (new Point (-1, -1), item2.Position, "#A18");
 			Assert.AreEqual (String.Empty, item2.ToolTipText, "#A19");
 			Assert.AreEqual (item.Group.Header, item2.Group.Header, "#A20");
-#endif
 		}
+#endif
 
 		[Test]
 		public void ListViewItemDefaultValues ()
