@@ -50,5 +50,17 @@ namespace MonoTests.Commons.Xml.Relaxng
 			p.Compile ();
 		}
 
+		[Test]
+		public void Bug347945 ()
+		{
+			string rng = @"
+<element name='x' xmlns='http://relaxng.org/ns/structure/1.0'>
+  <interleave>
+    <element name='y'><text/></element>
+    <element name='z'><text/></element>
+  </interleave>
+</element>";
+			RelaxngPattern p = RelaxngPattern.Read (new XmlTextReader (rng, XmlNodeType.Document, null));
+		}
 	}
 }

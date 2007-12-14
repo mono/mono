@@ -1,3 +1,9 @@
+2007-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpPattern.cs : For ContainsText() (for interleave text/text 
+	  constraint check), element pattern should return false.
+	  Fixed bug #347945.
+
 2007-04-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPatterns.cs : inside elements, reset oneOrMore[Group] flags in

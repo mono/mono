@@ -2130,7 +2130,7 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal override bool ContainsText()
 		{
-			return children.ContainsText ();
+			return false;
 		}
 	}
 
