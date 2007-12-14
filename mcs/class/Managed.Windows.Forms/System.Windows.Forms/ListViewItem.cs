@@ -211,10 +211,12 @@ namespace System.Windows.Forms
 #endif
 		#endregion	// Public Constructors
 
+#if NET_2_0
 		protected ListViewItem (SerializationInfo info, StreamingContext context)
 		{
 			Deserialize (info, context);
 		}
+#endif
 
 		#region Public Instance Properties
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
