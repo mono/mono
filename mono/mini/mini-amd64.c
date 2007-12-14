@@ -1517,19 +1517,6 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
-/* FIXME: Remove these later */
-#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
-        MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
-		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
-		(dest)->inst_p0 = (var); \
-		(var)->flags |= MONO_INST_INDIRECT;	\
-		(dest)->type = STACK_MP;	\
-		(dest)->klass = (var)->klass;	\
-        (dest)->dreg = mono_alloc_dreg ((cfg), STACK_MP); \
-	} while (0)
-
-#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
 static void
 emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 {
@@ -1697,20 +1684,12 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 }
 
 void
-mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 {
-	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
-	MonoInst *src, *arg;
+	MonoInst *arg;
 	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
-
-	g_assert (ins->klass);
-
-	if (!src_var)
-		src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
-
-	EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 
 	if (ainfo->storage == ArgValuetypeInReg) {
 		MonoInst *load, *arg;
@@ -1741,13 +1720,9 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 			add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [part], ainfo->pair_regs [part], load);
 		}
 	} else {
-		MONO_INST_NEW (cfg, arg, OP_NOP);
-
-		EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
-
 		if (size == 8) {
 			/* Can't use this for < 8 since it does an 8 byte memory load */
-			arg->opcode = OP_X86_PUSH_MEMBASE;
+			MONO_INST_NEW (cfg, arg, OP_X86_PUSH_MEMBASE);
 			arg->inst_basereg = src->dreg;
 			arg->inst_offset = 0;
 			MONO_ADD_INS (cfg->cbb, arg);
@@ -1755,7 +1730,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 8));
 			mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
 		} else {
-			arg->opcode = OP_X86_PUSH_OBJ;
+			MONO_INST_NEW (cfg, arg, OP_X86_PUSH_OBJ);
 			arg->inst_basereg = src->dreg;
 			arg->inst_offset = 0;
 			arg->inst_imm = size;

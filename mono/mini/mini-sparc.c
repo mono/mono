@@ -1575,33 +1575,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	g_free (cinfo);
 }
 
-/* FIXME: Remove these later */
-#define NEW_VARLOADA(cfg,dest,var,vartype) do {	\
-        MONO_INST_NEW ((cfg), (dest), OP_LDADDR); \
-		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
-		(dest)->inst_p0 = (var); \
-		(var)->flags |= MONO_INST_INDIRECT;	\
-		(dest)->type = STACK_MP;	\
-		(dest)->klass = (var)->klass;	\
-        (dest)->dreg = mono_alloc_dreg ((cfg), STACK_MP); \
-	} while (0)
-
-#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
 void
-mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins)
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 {
-	MonoInst *src_var = get_vreg_to_inst (cfg, ins->sreg1);
-	MonoInst *src;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
-
-	g_assert (ins->klass);
-
-	if (!src_var)
-		src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
-
-	EMIT_NEW_VARLOADA ((cfg), (src), src_var, src_var->inst_vtype);
 
 	mini_emit_memcpy2 (cfg, sparc_sp, ainfo->offset, src->dreg, 0, size, 0);
 }

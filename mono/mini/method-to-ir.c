@@ -5790,7 +5790,12 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				case OP_OUTARG_VT: {
 					g_assert (ins->klass);
 
-					mono_arch_emit_outarg_vt (cfg, ins);
+					src_var = get_vreg_to_inst (cfg, ins->sreg1);
+					if (!src_var)
+						src_var = mono_compile_create_var_for_vreg (cfg, &ins->klass->byval_arg, OP_LOCAL, ins->sreg1);
+					EMIT_NEW_VARLOADA (cfg, src, src_var, src_var->inst_vtype);
+
+					mono_arch_emit_outarg_vt (cfg, ins, src);
 
 					/* This might be decomposed into other vtype opcodes */
 					restart = TRUE;

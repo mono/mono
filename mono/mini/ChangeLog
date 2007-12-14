@@ -1,3 +1,8 @@
+2007-12-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-<ARCH>.c: Add a 'src' argument to mono_arch_emit_outarg_vt () to remove
+	some duplicated code.
+
 2007-12-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (decompose_opcode): Handle OP_FCONV_TO_R8 here.
