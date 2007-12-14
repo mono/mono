@@ -10945,6 +10945,7 @@ mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn)
 
 	bb->out_count = bbn->out_count;
 	bb->out_bb = bbn->out_bb;
+	bb->has_array_access |= bbn->has_array_access;
 
 	replace_basic_block (bb, bbn, bb);
 
@@ -12272,7 +12273,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (cfg->new_ir) {
 		mono_decompose_vtype_opts (cfg);
-		mono_decompose_array_access_opts (cfg);
+		if (cfg->flags & MONO_CFG_HAS_ARRAY_ACCESS)
+			mono_decompose_array_access_opts (cfg);
 	}
 	
 	if (!cfg->new_ir) {

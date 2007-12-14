@@ -1,5 +1,10 @@
 2007-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoInst): Reorder members so frequently used members come first.
+
+	* method-to-ir.c mini.c: Add flags to MonoCompile and MonoBasicBlock so the
+	decompose_array_access_opts () pass is only run when needed.
+
 	* method-to-ir.c (mono_handle_global_vregs): Disable some code which slows down
 	compilation too much.
 

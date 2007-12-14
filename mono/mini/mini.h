@@ -266,7 +266,9 @@ struct MonoBasicBlock {
 	guint out_of_line : 1;
 	/* Caches the result of uselessness calculation during optimize_branches */
 	guint not_useless : 1;
-
+	/* Whenever the decompose_array_access_opts () pass needs to process this bblock */
+	guint has_array_access : 1;
+	
 	/* use for liveness analysis */
 	MonoBitSet *gen_set;
 	MonoBitSet *kill_set;
@@ -315,6 +317,16 @@ typedef struct MonoMemcpyArgs {
 } MonoMemcpyArgs;
 
 struct MonoInst {
+ 	guint16 opcode;
+	guint8  type; /* stack type */
+	guint   ssa_op : 3;
+	guint8  flags  : 5;
+	
+	/* used by the register allocator */
+	gint32 dreg, sreg1, sreg2;
+
+	MonoInst *next;
+
 	union {
 		union {
 			MonoInst *src;
@@ -334,13 +346,9 @@ struct MonoInst {
 		gint64 i8const;
 		double r8const;
 	} data;
-	guint16 opcode;
-	guint8  type; /* stack type */
-	guint   ssa_op : 3;
-	guint8  flags  : 5;
-	
-	/* used by the register allocator */
-	gint32 dreg, sreg1, sreg2;
+
+	const unsigned char* cil_code; /* for debugging and bblock splitting */
+
 	/* used mostly by the backend to store additional info it may need */
 	union {
 		gint32 reg3;
@@ -351,9 +359,7 @@ struct MonoInst {
 		gboolean is_pinvoke; /* for variables in the unmanaged marshal format */
 	} backend;
 	
-	MonoInst *next;
 	MonoClass *klass;
-	const unsigned char* cil_code; /* for debugging and bblock splitting */
 };
 	
 struct MonoCallInst {
@@ -721,6 +727,7 @@ typedef enum {
 	MONO_CFG_HAS_FPOUT    = 1 << 5, /* there are fp values passed in int registers */
 	MONO_CFG_HAS_SPILLUP  = 1 << 6, /* spill var slots are allocated from bottom to top */
 	MONO_CFG_HAS_CHECK_THIS  = 1 << 7,
+	MONO_CFG_HAS_ARRAY_ACCESS = 1 << 8
 } MonoCompileFlags;
 
 typedef struct {

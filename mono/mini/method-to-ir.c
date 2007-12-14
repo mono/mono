@@ -149,7 +149,7 @@ extern GHashTable *jit_icall_name_hash;
 #define MONO_INIT_VARINFO(vi,id) do { \
 	(vi)->range.first_use.pos.bid = 0xffff; \
 	(vi)->reg = -1; \
-        (vi)->idx = (id); \
+	(vi)->idx = (id); \
 } while (0)
 
 static inline guint32
@@ -361,6 +361,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		(dest)->opcode = (op);	\
         (dest)->flags = 0; \
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
+        (dest)->cil_code = (cfg)->ip;  \
 	} while (0)
 
 /*
@@ -875,6 +876,8 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
             ins->sreg2 = index_reg; \
             ins->inst_imm = G_STRUCT_OFFSET (array_type, array_length_field); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
+			(cfg)->flags |= MONO_CFG_HAS_ARRAY_ACCESS; \
+            (cfg)->cbb->has_array_access = TRUE; \
     } while (0)
 
 #if defined(__i386__)
@@ -5877,6 +5880,9 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 		MonoInst *iargs [3];
 		gboolean restart;
 
+		if (!bb->has_array_access)
+			continue;
+
 		if (cfg->verbose_level > 3) mono_print_bb (bb, "BEFORE DECOMPOSE-ARRAY-ACCESS-OPTS ");
 
 		cfg->cbb->code = cfg->cbb->last_ins = NULL;
@@ -8297,7 +8303,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 			}
 
-
 			if (shared_access) {
 				MonoInst *rgctx;
 				MonoInst *args [3];
@@ -8333,7 +8338,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					ins->inst_newa_class = klass;
 					ins->type = STACK_OBJ;
 					ins->klass = klass;
-					MONO_ADD_INS (cfg->cbb, ins);				
+					MONO_ADD_INS (cfg->cbb, ins);
+					cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
+					cfg->cbb->has_array_access = TRUE;
 				}
 			}
 
@@ -8378,6 +8385,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins->sreg1 = sp [0]->dreg;
 			ins->type = STACK_I4;
 			MONO_ADD_INS (cfg->cbb, ins);
+			cfg->flags |= MONO_CFG_HAS_ARRAY_ACCESS;
+			cfg->cbb->has_array_access = TRUE;
 			ip ++;
 			*sp++ = ins;
 			break;
