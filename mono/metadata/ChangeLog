@@ -1,3 +1,15 @@
+2007-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_endfilter): added.
+
+	* verify.c (is_unverifiable_endfilter): added.
+
+	* verify.c (do_endfilter): added.
+
+	* verify.c (mono_method_verify): property verification of endfilter
+	and fixed a corner case or endfinally.
+
+
 2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.h: new flags to support fail fast of unverifiable code and
