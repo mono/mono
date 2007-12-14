@@ -33,6 +33,9 @@ enum {
 #endif
 
 //////////////////////////////////////////////////////////////////
+#define IS_STRICT_MODE(ctx) (((ctx)->level & MONO_VERIFY_NON_STRICT) == 0)
+#define IS_FAIL_FAST_MODE(ctx) (((ctx)->level & MONO_VERIFY_FAIL_FAST) == MONO_VERIFY_FAIL_FAST)
+
 #define ADD_VERIFY_INFO(__ctx, __msg, __status)	\
 	do {	\
 		MonoVerifyInfo *vinfo = g_new (MonoVerifyInfo, 1);	\
@@ -52,11 +55,14 @@ enum {
 		if ((__ctx)->verifiable) { \
 			ADD_VERIFY_INFO(__ctx, __msg, MONO_VERIFY_NOT_VERIFIABLE); \
 			(__ctx)->verifiable = 0; \
+			if (IS_FAIL_FAST_MODE (__ctx)) \
+				(__ctx)->valid = 0; \
 		} \
 	} while (0)
 
 #define UNMASK_TYPE(type) ((type) & TYPE_MASK)
 #define IS_MANAGED_POINTER(type) (((type) & POINTER_MASK) == POINTER_MASK)
+#define IS_NULL_LITERAL(type) (((type) & NULL_LITERAL_MASK) == NULL_LITERAL_MASK)
 
 enum {
 	IL_CODE_FLAG_NOT_PROCESSED  = 0,
@@ -80,6 +86,7 @@ typedef struct {
 	int max_stack;
 	int verifiable;
 	int valid;
+	int level;
 
 	int code_size;
 	ILCodeDesc *code;
@@ -130,6 +137,9 @@ enum {
 
 	/* Controlled Mutability Manager Pointer */
 	CMMP_MASK = 0x200,
+
+	/* The stack type is a null literal*/
+	NULL_LITERAL_MASK = 0x400,
 };
 
 static const char* const
@@ -1064,7 +1074,8 @@ in_any_block (MonoMethodHeader *header, guint offset)
 			return 1;
 		if (MONO_OFFSET_IN_HANDLER (clause, offset))
 			return 1;
-		/* need to check filter ... */
+		if (MONO_OFFSET_IN_FILTER (clause, offset))
+			return 1;
 	}
 	return 0;
 }
@@ -1103,6 +1114,43 @@ is_correct_leave (MonoMethodHeader *header, guint offset, guint target)
 	}
 	return 1;
 }
+
+/*
+ * A rethrow can't happen outside of a catch handler.
+ */
+static int
+is_correct_rethrow (MonoMethodHeader *header, guint offset)
+{
+	int i;
+	MonoExceptionClause *clause;
+
+	for (i = 0; i < header->num_clauses; ++i) {
+		clause = &header->clauses [i];
+		if (MONO_OFFSET_IN_HANDLER (clause, offset))
+			return 1;
+		if (MONO_OFFSET_IN_FILTER (clause, offset))
+			return 1;
+	}
+	return 0;
+}
+
+/*
+ * An endfinally can't happen outside of a finally/fault handler.
+ */
+static int
+is_correct_endfinally (MonoMethodHeader *header, guint offset)
+{
+	int i;
+	MonoExceptionClause *clause;
+
+	for (i = 0; i < header->num_clauses; ++i) {
+		clause = &header->clauses [i];
+		if (MONO_OFFSET_IN_HANDLER (clause, offset) && (clause->flags == MONO_EXCEPTION_CLAUSE_FAULT || clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY))
+			return 1;
+	}
+	return 0;
+}
+
 
 static int
 can_merge_stack (ILCodeDesc *a, ILCodeDesc *b)
@@ -2721,46 +2769,102 @@ do_newobj (VerifyContext *ctx, int token)
 		set_stack_value (stack_push (ctx),  &method->klass->byval_arg, FALSE);
 }
 
+static void
+do_cast (VerifyContext *ctx, int token) {
+	ILStackDesc *value;
+	MonoType *type;
+
+	if (!check_underflow (ctx, 1))
+		return;
+
+	type = mono_type_get_full (ctx->image, token, ctx->generic_context);
+
+	if (!type) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Type (0x%08x) not found at 0x%04x", token, ctx->ip_offset));
+		return;
+	}
+
+	if (type->byref) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid castclass type at 0x%04x",  ctx->ip_offset));
+		return;
+	}
+
+	value = stack_top (ctx);
+
+	if (IS_MANAGED_POINTER (value->stype))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid value for checkast at 0x%04x", ctx->ip_offset));
+	else if (mono_class_from_mono_type (value->type)->valuetype)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Value cannot be a valuetype for checkast at 0x%04x", ctx->ip_offset));
+
+	switch (value->type->type) {
+	case MONO_TYPE_FNPTR:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_TYPEDBYREF: 
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid value for checkast at 0x%04x", ctx->ip_offset));
+	}
+
+	set_stack_value (value, type, FALSE);
+}
+
 static MonoType *
-get_indirect_op_mono_type (int opcode) {
+mono_type_from_opcode (int opcode) {
 	switch (opcode) {
 	case CEE_LDIND_I1:
 	case CEE_LDIND_U1:
 	case CEE_STIND_I1:
+	case CEE_LDELEM_I1:
+	case CEE_LDELEM_U1:
+	case CEE_STELEM_I1:
 		return &mono_defaults.sbyte_class->byval_arg;
 
 	case CEE_LDIND_I2:
 	case CEE_LDIND_U2:
 	case CEE_STIND_I2:
+	case CEE_LDELEM_I2:
+	case CEE_LDELEM_U2:
+	case CEE_STELEM_I2:
 		return &mono_defaults.int16_class->byval_arg;
 
 	case CEE_LDIND_I4:
 	case CEE_LDIND_U4:
 	case CEE_STIND_I4:
+	case CEE_LDELEM_I4:
+	case CEE_LDELEM_U4:
+	case CEE_STELEM_I4:
 		return &mono_defaults.int32_class->byval_arg;
 
 	case CEE_LDIND_I8:
 	case CEE_STIND_I8:
+	case CEE_LDELEM_I8:
+	case CEE_STELEM_I8:
 		return &mono_defaults.int64_class->byval_arg;
 
 	case CEE_LDIND_R4:
 	case CEE_STIND_R4:
+	case CEE_LDELEM_R4:
+	case CEE_STELEM_R4:
 		return &mono_defaults.single_class->byval_arg;
 
 	case CEE_LDIND_R8:
 	case CEE_STIND_R8:
+	case CEE_LDELEM_R8:
+	case CEE_STELEM_R8:
 		return &mono_defaults.double_class->byval_arg;
 
 	case CEE_LDIND_I:
 	case CEE_STIND_I:
+	case CEE_LDELEM_I:
+	case CEE_STELEM_I:
 		return &mono_defaults.int_class->byval_arg;
 
 	case CEE_LDIND_REF:
 	case CEE_STIND_REF:
+	case CEE_LDELEM_REF:
+	case CEE_STELEM_REF:
 		return &mono_defaults.object_class->byval_arg;
 
 	default:
-		g_error ("unknown opcode %02x in get_indirect_op_mono_type ", opcode);
+		g_error ("unknown opcode %02x in mono_type_from_opcode ", opcode);
 		return NULL;
 	}
 }
@@ -2775,7 +2879,7 @@ do_load_indirect (VerifyContext *ctx, int opcode)
 	value = stack_pop (ctx);
 	if (!IS_MANAGED_POINTER (value->stype)) {
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Load indirect not using a manager pointer at 0x%04x", ctx->ip_offset));
-		set_stack_value (stack_push (ctx), get_indirect_op_mono_type (opcode), FALSE);
+		set_stack_value (stack_push (ctx), mono_type_from_opcode (opcode), FALSE);
 		return;
 	}
 
@@ -2784,9 +2888,9 @@ do_load_indirect (VerifyContext *ctx, int opcode)
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for ldind_ref expected object byref operation at 0x%04x", ctx->ip_offset));
 		set_stack_value (stack_push (ctx), mono_type_get_type_byval (value->type), FALSE);
 	} else {
-		if (!verify_type_compatibility_full (ctx, get_indirect_op_mono_type (opcode), mono_type_get_type_byval (value->type), TRUE))
+		if (!verify_type_compatibility_full (ctx, mono_type_from_opcode (opcode), mono_type_get_type_byval (value->type), TRUE))
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for ldind 0x%x operation at 0x%04x", opcode, ctx->ip_offset));
-		set_stack_value (stack_push (ctx), get_indirect_op_mono_type (opcode), FALSE);
+		set_stack_value (stack_push (ctx), mono_type_from_opcode (opcode), FALSE);
 	}
 }
 
@@ -2807,10 +2911,10 @@ do_store_indirect (VerifyContext *ctx, int opcode)
 		return;
 	}
 
-	if (!verify_type_compatibility_full (ctx, get_indirect_op_mono_type (opcode), mono_type_get_type_byval (addr->type), TRUE))
+	if (!verify_type_compatibility_full (ctx, mono_type_from_opcode (opcode), mono_type_get_type_byval (addr->type), TRUE))
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid addr type at stack for stind 0x%x operation at 0x%04x", opcode, ctx->ip_offset));
 
-	if (!verify_type_compatibility_full (ctx, get_indirect_op_mono_type (opcode), mono_type_get_type_byval (val->type), FALSE))
+	if (!verify_type_compatibility_full (ctx, mono_type_from_opcode (opcode), mono_type_get_type_byval (val->type), FALSE))
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid addr type at stack for stind 0x%x operation at 0x%04x", opcode, ctx->ip_offset));
 }
 
@@ -2832,6 +2936,166 @@ do_newarr (VerifyContext *ctx, int token)
 
 	set_stack_value (stack_push (ctx), mono_class_get_type (mono_array_class_get (mono_class_from_mono_type (type), 1)), FALSE);
 }
+
+/*FIXME handle arrays that are not 0-indexed*/
+static void
+do_ldlen (VerifyContext *ctx)
+{
+	ILStackDesc *value;
+
+	if (!check_underflow (ctx, 1))
+		return;
+
+	value = stack_pop (ctx);
+
+	if (value->stype != TYPE_COMPLEX || value->type->type != MONO_TYPE_SZARRAY)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type for ldlen at 0x%04x", ctx->ip_offset));
+
+	stack_push_val (ctx, TYPE_NATIVE_INT, &mono_defaults.int_class->byval_arg);	
+}
+
+/*FIXME handle arrays that are not 0-indexed*/
+/*FIXME handle readonly prefix and CMMP*/
+static void
+do_ldelema (VerifyContext *ctx, int klass_token)
+{
+	ILStackDesc *index, *array;
+	MonoType *type = get_boxable_mono_type (ctx, klass_token);
+	gboolean valid; 
+
+	if (!type)
+		return;
+
+	if (!check_underflow (ctx, 2))
+		return;
+
+	index = stack_pop (ctx);
+	array = stack_pop (ctx);
+
+	if (index->stype != TYPE_I4 && index->stype != TYPE_NATIVE_INT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Index type(%s) for ldelema is not an int or a native int at 0x%04x", type_names [UNMASK_TYPE (index->stype)], ctx->ip_offset));
+
+	if (!IS_NULL_LITERAL (array->stype)) {
+		if (array->stype != TYPE_COMPLEX || array->type->type != MONO_TYPE_SZARRAY)
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type(%s) for ldelema at 0x%04x", type_names [UNMASK_TYPE (array->stype)], ctx->ip_offset));
+		else {
+			if (get_stack_type (type) == TYPE_I4 || get_stack_type (type) == TYPE_NATIVE_INT)
+				valid = verify_type_compatibility_full (ctx, type, &array->type->data.klass->byval_arg, TRUE);
+			else
+				valid = mono_metadata_type_equal (type, &array->type->data.klass->byval_arg);
+			if (!valid)
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for ldelema at 0x%04x", ctx->ip_offset));
+		}
+	}
+
+	set_stack_value (stack_push (ctx), type, TRUE);	
+}
+
+/*FIXME handle arrays that are not 0-indexed*/
+/*FIXME handle readonly prefix and CMMP*/
+static void
+do_ldelem (VerifyContext *ctx, int opcode, int token)
+{
+	ILStackDesc *index, *array;
+	MonoType *type;
+	if (!check_underflow (ctx, 2))
+		return;
+
+	if (opcode == CEE_LDELEM_ANY) {
+		type = mono_type_get_full (ctx->image, token, ctx->generic_context);
+		if (!type) {
+			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Type (0x%08x) not found at 0x%04x", token, ctx->ip_offset));
+			return;
+		}
+	} else {
+		type = mono_type_from_opcode (opcode);
+	}
+
+	index = stack_pop (ctx);
+	array = stack_pop (ctx);
+
+	if (index->stype != TYPE_I4 && index->stype != TYPE_NATIVE_INT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Index type(%s) for ldelema is not an int or a native int at 0x%04x", type_names [UNMASK_TYPE (index->stype)], ctx->ip_offset));
+
+	if (!IS_NULL_LITERAL (array->stype)) {
+		if (array->stype != TYPE_COMPLEX || array->type->type != MONO_TYPE_SZARRAY)
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type(%s) for ldelem.X at 0x%04x", type_names [UNMASK_TYPE (array->stype)], ctx->ip_offset));
+		else {
+			if (opcode == CEE_LDELEM_REF) {
+				if (array->type->data.klass->valuetype)
+					CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type is not a reference type for ldelem.ref 0x%04x", ctx->ip_offset));
+				type = &array->type->data.klass->byval_arg;
+			} else if (!verify_type_compatibility_full (ctx, type, &array->type->data.klass->byval_arg, TRUE)) {
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for ldelem.X at 0x%04x", ctx->ip_offset));
+			}
+		}
+	}
+
+	set_stack_value (stack_push (ctx), type, FALSE);
+}
+
+/*FIXME handle arrays that are not 0-indexed*/
+static void
+do_stelem (VerifyContext *ctx, int opcode, int token)
+{
+	ILStackDesc *index, *array, *value;
+	MonoType *type;
+	if (!check_underflow (ctx, 3))
+		return;
+
+	if (opcode == CEE_STELEM_ANY) {
+		type = mono_type_get_full (ctx->image, token, ctx->generic_context);
+		if (!type) {
+			ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Type (0x%08x) not found at 0x%04x", token, ctx->ip_offset));
+			return;
+		}
+	} else {
+		type = mono_type_from_opcode (opcode);
+	}
+	
+	value = stack_pop (ctx);
+	index = stack_pop (ctx);
+	array = stack_pop (ctx);
+
+	if (index->stype != TYPE_I4 && index->stype != TYPE_NATIVE_INT)
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Index type(%s) for stdelem.X is not an int or a native int at 0x%04x", type_names [UNMASK_TYPE (index->stype)], ctx->ip_offset));
+
+	if (!IS_NULL_LITERAL (array->stype)) {
+		if (array->stype != TYPE_COMPLEX || array->type->type != MONO_TYPE_SZARRAY) {
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type(%s) for stelem.X at 0x%04x", type_names [UNMASK_TYPE (array->stype)], ctx->ip_offset));
+		} else {
+			if (opcode == CEE_STELEM_REF) {
+				if (array->type->data.klass->valuetype)
+					CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type is not a reference type for stelem.ref 0x%04x", ctx->ip_offset));
+			} else if (!verify_type_compatibility_full (ctx, &array->type->data.klass->byval_arg, type, TRUE)) {
+					CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for stdelem.X at 0x%04x", ctx->ip_offset));
+			}
+		}
+	}
+
+	if (opcode == CEE_STELEM_REF) {
+		if (mono_class_from_mono_type(value->type)->valuetype)
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid value is not a reference type for stelem.ref 0x%04x", ctx->ip_offset));
+	} else if (opcode != CEE_STELEM_REF && !verify_type_compatibility_full (ctx, type, mono_type_from_stack_slot (value), FALSE)) {
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid value on stack for stdelem.X at 0x%04x", ctx->ip_offset));
+	}
+}
+
+static void
+do_throw (VerifyContext *ctx)
+{
+	ILStackDesc *exception;
+	if (!check_underflow (ctx, 1))
+		return;
+	exception = stack_pop (ctx);
+
+	if (!IS_NULL_LITERAL (exception->stype) && !(exception->stype == TYPE_COMPLEX && !mono_class_from_mono_type (exception->type)->valuetype))
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type on stack for throw, expected reference type at 0x%04x", ctx->ip_offset));
+
+	/*The stack is left empty after a throw*/
+	ctx->eval.size = 0;
+}
+
 
 /*Merge the stacks and perform compat checks*/
 static void
@@ -2922,6 +3186,7 @@ mono_method_verify (MonoMethod *method, int level)
 	ctx.max_args = ctx.signature->param_count + ctx.signature->hasthis;
 	ctx.max_stack = ctx.header->max_stack;
 	ctx.verifiable = ctx.valid = 1;
+	ctx.level = level;
 
 	ctx.code = g_new0 (ILCodeDesc, ctx.header->code_size);
 	ctx.code_size = ctx.header->code_size;
@@ -2949,6 +3214,7 @@ mono_method_verify (MonoMethod *method, int level)
 
 	for (i = 0; i < ctx.header->num_clauses; ++i) {
 		MonoExceptionClause *clause = ctx.header->clauses + i;
+		printf ("clause try %x len %x filter at %x handler at %x len %x\n", clause->try_offset, clause->try_len, clause->data.filter_offset, clause->handler_offset, clause->handler_len);
 		/* catch blocks and filter have the exception on the stack. */
 		/* must check boundaries for handler_offset and handler_start < handler_start*/
 		if (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) {
@@ -3134,7 +3400,7 @@ mono_method_verify (MonoMethod *method, int level)
 
 		case CEE_LDNULL:
 			if (check_overflow (&ctx))
-				stack_push_val (&ctx,TYPE_COMPLEX, &mono_defaults.object_class->byval_arg);
+				stack_push_val (&ctx, TYPE_COMPLEX | NULL_LITERAL_MASK, &mono_defaults.object_class->byval_arg);
 			++ip;
 			break;
 
@@ -3364,11 +3630,10 @@ mono_method_verify (MonoMethod *method, int level)
 
 		case CEE_CASTCLASS:
 		case CEE_ISINST:
-			token = read32 (ip + 1);
-			if (!check_underflow (&ctx, 1))
-				break;
+			do_cast (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_UNUSED58:
 		case CEE_UNUSED1:
 			++ip; /* warn, error ? */
@@ -3377,12 +3642,10 @@ mono_method_verify (MonoMethod *method, int level)
 			do_unbox_value (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_THROW:
-			if (!check_underflow (&ctx, 1))
-				break;
-			stack_pop (&ctx);
+			do_throw (&ctx);
 			++ip;
-			start = 1;
 			break;
 
 		case CEE_LDFLD:
@@ -3447,26 +3710,15 @@ mono_method_verify (MonoMethod *method, int level)
 			break;
 
 		case CEE_LDLEN:
-			if (!check_underflow (&ctx, 1))
-				break;
-			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid argument to ldlen at 0x%04x", ip_offset));
-			stack_top (&ctx)->type = &mono_defaults.int32_class->byval_arg; /* FIXME: use a native int type */
-			stack_top (&ctx)->stype = TYPE_PTR;
+			do_ldlen (&ctx);
 			++ip;
 			break;
+
 		case CEE_LDELEMA:
-			if (check_underflow (&ctx, 2))
-				break;
-			--ctx.eval.size;
-			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid array argument to ldelema at 0x%04x", ip_offset));
-			if (stack_top (&ctx)->stype != TYPE_I4 && stack_top (&ctx)->stype != TYPE_PTR)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Array index needs to be Int32 or IntPtr at 0x%04x", ip_offset));
-			stack_top (&ctx)->stype = TYPE_COMPLEX;
-			token = read32 (ip + 1);
+			do_ldelema (&ctx, read32 (ip + 1));
 			ip += 5;
 			break;
+
 		case CEE_LDELEM_I1:
 		case CEE_LDELEM_U1:
 		case CEE_LDELEM_I2:
@@ -3478,16 +3730,10 @@ mono_method_verify (MonoMethod *method, int level)
 		case CEE_LDELEM_R4:
 		case CEE_LDELEM_R8:
 		case CEE_LDELEM_REF:
-			if (!check_underflow (&ctx, 2))
-				break;
-			--ctx.eval.size;
-			if (stack_top (&ctx)->stype != TYPE_COMPLEX)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid array argument to ldelem at 0x%04x", ip_offset));
-			if (stack_top (&ctx)->stype != TYPE_I4 && stack_top (&ctx)->stype != TYPE_PTR)
-				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Array index needs to be Int32 or IntPtr at 0x%04x", ip_offset));
-			stack_top (&ctx)->stype = ldelem_type [*ip - CEE_LDELEM_I1];
+			do_ldelem (&ctx, *ip, 0);
 			++ip;
 			break;
+
 		case CEE_STELEM_I:
 		case CEE_STELEM_I1:
 		case CEE_STELEM_I2:
@@ -3496,13 +3742,20 @@ mono_method_verify (MonoMethod *method, int level)
 		case CEE_STELEM_R4:
 		case CEE_STELEM_R8:
 		case CEE_STELEM_REF:
-			if (!check_underflow (&ctx, 3))
-				break;
-			ctx.eval.size -= 3;
+			do_stelem (&ctx, *ip, 0);
 			++ip;
 			break;
+
 		case CEE_LDELEM_ANY:
+			do_ldelem (&ctx, *ip, read32 (ip + 1));
+			ip += 5;
+			break;
+
 		case CEE_STELEM_ANY:
+			do_stelem (&ctx, *ip, read32 (ip + 1));
+			ip += 5;
+			break;
+			
 		case CEE_UNBOX_ANY:
 		case CEE_UNUSED5:
 		case CEE_UNUSED6:
@@ -3599,8 +3852,10 @@ mono_method_verify (MonoMethod *method, int level)
 			++ip;
 			break;
 		case CEE_ENDFINALLY:
+			if (!is_correct_endfinally (ctx.header, ip_offset))
+				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("endfinally must be used inside a finally/fault handler at 0x%04x", ctx.ip_offset));
+			ctx.eval.size = 0;
 			++ip;
-			start = 1;
 			break;
 		case CEE_LEAVE:
 			target = ip + (gint32)read32(ip + 1) + 5;
@@ -3772,6 +4027,9 @@ mono_method_verify (MonoMethod *method, int level)
 				ip += 2;
 				break;
 			case CEE_RETHROW:
+				if (!is_correct_rethrow (ctx.header, ip_offset))
+					ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("rethrow must be used inside a catch handler at 0x%04x", ctx.ip_offset));
+				ctx.eval.size = 0;
 				++ip;
 				break;
 			case CEE_UNUSED:

@@ -123,7 +123,7 @@
  */
 #define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
 
-#define MONO_IS_BRANCH_OP(ins) (MONO_IS_COND_BRANCH_OP(ins) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_BR_REG) || ((ins)->opcode == CEE_SWITCH) || ((ins)->opcode == OP_SWITCH))
+#define MONO_IS_BRANCH_OP(ins) (MONO_IS_COND_BRANCH_OP(ins) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_BR_REG) || ((ins)->opcode == OP_SWITCH))
 
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
@@ -157,6 +157,7 @@ handle_store_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, Mon
 /* FIXME: Make these static again */
 MonoMethodSignature *helper_sig_class_init_trampoline = NULL;
 MonoMethodSignature *helper_sig_domain_get = NULL;
+static MonoMethodSignature *helper_sig_generic_class_init_trampoline = NULL;
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -177,6 +178,7 @@ static int mini_verbose = 0;
 static CRITICAL_SECTION jit_mutex;
 
 static GHashTable *class_init_hash_addr = NULL;
+static GHashTable *delegate_trampoline_hash_addr = NULL;
 
 static MonoCodeManager *global_codeman = NULL;
 
@@ -2068,7 +2070,6 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	case CEE_BGT_UN:
 	case CEE_BLE_UN:
 	case CEE_BLT_UN:
-	case CEE_SWITCH:
 	case OP_SWITCH:
 		prev = bb->code;
 		while (prev->next && prev->next != bb->last_ins)
@@ -3466,6 +3467,71 @@ handle_box (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *val, const gucha
 	return dest;
 }
 
+static MonoInst*
+handle_delegate_ctor (MonoCompile *cfg, MonoBasicBlock *bblock, MonoClass *klass, MonoInst *target, MonoMethod *method, unsigned char *ip)
+{
+	gpointer *trampoline;
+	MonoInst *obj, *ins, *store, *offset_ins, *method_ins, *tramp_ins;
+	int temp;
+
+	temp = handle_alloc (cfg, bblock, klass, FALSE, ip);
+
+	/* Inline the contents of mono_delegate_ctor */
+
+	/* Set target field */
+	NEW_TEMPLOAD (cfg, obj, temp);
+	NEW_ICONST (cfg, offset_ins, G_STRUCT_OFFSET (MonoDelegate, target));
+	MONO_INST_NEW (cfg, ins, OP_PADD);
+	ins->cil_code = ip;
+	ins->inst_left = obj;
+	ins->inst_right = offset_ins;
+
+	MONO_INST_NEW (cfg, store, CEE_STIND_REF);
+	store->cil_code = ip;
+	store->inst_left = ins;
+	store->inst_right = target;
+	mono_bblock_add_inst (bblock, store);
+
+	/* Set method field */
+	NEW_TEMPLOAD (cfg, obj, temp);
+	NEW_ICONST (cfg, offset_ins, G_STRUCT_OFFSET (MonoDelegate, method));
+	MONO_INST_NEW (cfg, ins, OP_PADD);
+	ins->cil_code = ip;
+	ins->inst_left = obj;
+	ins->inst_right = offset_ins;
+
+	NEW_METHODCONST (cfg, method_ins, method);
+
+	MONO_INST_NEW (cfg, store, CEE_STIND_I);
+	store->cil_code = ip;
+	store->inst_left = ins;
+	store->inst_right = method_ins;
+	mono_bblock_add_inst (bblock, store);
+
+	/* Set invoke_impl field */
+	NEW_TEMPLOAD (cfg, obj, temp);
+	NEW_ICONST (cfg, offset_ins, G_STRUCT_OFFSET (MonoDelegate, invoke_impl));
+	MONO_INST_NEW (cfg, ins, OP_PADD);
+	ins->cil_code = ip;
+	ins->inst_left = obj;
+	ins->inst_right = offset_ins;
+
+	trampoline = mono_create_delegate_trampoline (klass);
+	NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_ABS, trampoline);
+
+	MONO_INST_NEW (cfg, store, CEE_STIND_I);
+	store->cil_code = ip;
+	store->inst_left = ins;
+	store->inst_right = tramp_ins;
+	mono_bblock_add_inst (bblock, store);
+
+	/* All the checks which are in mono_delegate_ctor () are done by the delegate trampoline */
+
+	NEW_TEMPLOAD (cfg, obj, temp);
+
+	return obj;
+}
+
 static int
 handle_array_new (MonoCompile *cfg, MonoBasicBlock *bblock, int rank, MonoInst **sp, unsigned char *ip)
 {
@@ -4652,7 +4718,7 @@ get_runtime_generic_context_other_ptr (MonoCompile *cfg, MonoMethod *method, Mon
 
 	g_assert (method->wrapper_type == MONO_WRAPPER_NONE);
 
-	NEW_PCONST (cfg, args [0], method);
+	NEW_CLASSCONST (cfg, args [0], method->klass);
 	args [1] = rgc_ptr;
 	NEW_ICONST (cfg, args [2], token);
 	NEW_ICONST (cfg, args [3], rgctx_type);
@@ -4683,14 +4749,6 @@ get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, MonoBasic
 	default:
 		g_assert_not_reached ();
 	}
-}
-
-static gboolean
-generic_class_is_reference_type (MonoCompile *cfg, MonoClass *klass)
-{
-	MonoType *type = mini_get_basic_type_from_generic (cfg->generic_sharing_context, &klass->byval_arg);
-
-	return MONO_TYPE_IS_REFERENCE (type);
 }
 
 /*
@@ -6040,7 +6098,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			CHECK_OPSIZE (5);
 			CHECK_STACK (1);
 			n = read32 (ip + 1);
-			MONO_INST_NEW (cfg, ins, *ip);
+			MONO_INST_NEW (cfg, ins, OP_SWITCH);
 			--sp;
 			ins->inst_left = *sp;
 			if ((ins->inst_left->type != STACK_I4) && (ins->inst_left->type != STACK_PTR)) 
@@ -6535,6 +6593,16 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 * will be transformed into a normal call there.
 					 */
 				} else {
+					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
+					if (mini_field_access_needs_cctor_run (cfg, method, vtable) && !(g_slist_find (class_inits, vtable))) {
+						guint8 *tramp = mono_create_class_init_trampoline (vtable);
+						mono_emit_native_call (cfg, bblock, tramp, 
+											   helper_sig_class_init_trampoline,
+											   NULL, ip, FALSE, FALSE);
+						if (cfg->verbose_level > 2)
+							g_print ("class %s.%s needs init call for ctor\n", cmethod->klass->name_space, cmethod->klass->name);
+						class_inits = g_slist_prepend (class_inits, vtable);
+					}
 					temp = handle_alloc (cfg, bblock, cmethod->klass, FALSE, ip);
 					NEW_TEMPLOAD (cfg, *sp, temp);
 				}
@@ -7057,6 +7125,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		case CEE_STSFLD: {
 			MonoClassField *field;
 			gpointer addr = NULL;
+			gboolean shared_access = FALSE;
+			int relation;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -7072,8 +7142,32 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE;
 
-			if (cfg->generic_sharing_context && mono_class_check_context_used (klass))
-				GENERIC_SHARING_FAILURE (*ip);
+			/*
+			 * We can only support shared generic static
+			 * field access on architectures where the
+			 * trampoline code has been extended to handle
+			 * the generic class init.
+			 */
+#ifndef MONO_ARCH_VTABLE_REG
+			GENERIC_SHARING_FAILURE (*ip);
+#endif
+
+			if (cfg->generic_sharing_context) {
+				int context_used = mono_class_check_context_used (klass);
+
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD ||
+						klass->valuetype)
+					GENERIC_SHARING_FAILURE (*ip);
+
+				if (context_used) {
+					relation = mono_class_generic_class_relation (klass, method->klass, generic_context, NULL);
+
+					if (!(method->flags & METHOD_ATTRIBUTE_STATIC) /*&& relation != MINI_GENERIC_CLASS_RELATION_OTHER*/)
+						shared_access = TRUE;
+					else
+						GENERIC_SHARING_FAILURE (*ip);
+				}
+			}
 
 			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
 
@@ -7090,7 +7184,70 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				addr = g_hash_table_lookup (cfg->domain->special_static_fields, field);
 			mono_domain_unlock (cfg->domain);
 
-			if ((cfg->opt & MONO_OPT_SHARED) || (cfg->compile_aot && addr)) {
+			if (shared_access) {
+				MonoInst *this, *rgctx, *static_data;
+
+				/*
+				g_print ("sharing static field access in %s.%s.%s - depth %d offset %d\n",
+					method->klass->name_space, method->klass->name, method->name,
+					depth, field->offset);
+				*/
+
+				if (mono_class_needs_cctor_run (klass, method)) {
+					MonoMethodSignature *sig = helper_sig_generic_class_init_trampoline;
+					MonoCallInst *call;
+					MonoInst *this, *vtable;
+
+					NEW_ARGLOAD (cfg, this, 0);
+
+					if (relation == MINI_GENERIC_CLASS_RELATION_SELF) {
+						MONO_INST_NEW (cfg, vtable, CEE_LDIND_I);
+						vtable->cil_code = ip;
+						vtable->inst_left = this;
+						vtable->type = STACK_PTR;
+						vtable->klass = klass;
+					} else {
+						MonoInst *rgctx = get_runtime_generic_context_from_this (cfg, this, ip);
+
+						vtable = get_runtime_generic_context_ptr (cfg, method, bblock, klass,
+							token, generic_context, rgctx, MINI_RGCTX_VTABLE, ip);
+					}
+
+					call = mono_emit_call_args (cfg, bblock, sig, NULL, FALSE, FALSE, ip, FALSE);
+					call->inst.opcode = OP_TRAMPCALL_VTABLE;
+					call->fptr = mono_get_trampoline_code (MONO_TRAMPOLINE_GENERIC_CLASS_INIT);
+
+					call->inst.inst_left = vtable;
+
+					mono_spill_call (cfg, bblock, call, sig, FALSE, ip, FALSE);
+				}
+
+				/*
+				 * The pointer we're computing here is
+				 *
+				 *   super_info.static_data + field->offset
+				 */
+
+				NEW_ARGLOAD (cfg, this, 0);
+				rgctx = get_runtime_generic_context_from_this (cfg, this, ip);
+				static_data = get_runtime_generic_context_ptr (cfg, method, bblock, klass,
+					token, generic_context, rgctx, MINI_RGCTX_STATIC_DATA, ip);
+
+				if (field->offset == 0) {
+					ins = static_data;
+				} else {
+					MonoInst *field_offset;
+
+					NEW_ICONST (cfg, field_offset, field->offset);
+
+					MONO_INST_NEW (cfg, ins, OP_PADD);
+					ins->cil_code = ip;
+					ins->inst_left = static_data;
+					ins->inst_right = field_offset;
+					ins->type = STACK_PTR;
+					ins->klass = klass;
+				}
+			} else if ((cfg->opt & MONO_OPT_SHARED) || (cfg->compile_aot && addr)) {
 				int temp;
 				MonoInst *iargs [2];
 				MonoInst *domain_var;
@@ -7172,7 +7329,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
-				if (!((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && 
+				if (!shared_access && !((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && 
 				    vtable->initialized && (field->type->attrs & FIELD_ATTRIBUTE_INIT_ONLY)) {
 					gpointer addr = (char*)vtable->data + field->offset;
 					int ro_type = field->type->type;
@@ -7384,18 +7541,12 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			if (shared_access) {
-				MonoInst *domain_var;
 				MonoInst *this, *rgctx;
 				MonoInst *args [3];
 				int temp;
 
 				/* domain */
-				if (cfg->opt & MONO_OPT_SHARED) {
-					domain_var = mono_get_domainvar (cfg);
-					NEW_TEMPLOAD (cfg, args [0], domain_var->inst_c0);
-				} else {
-					NEW_PCONST (cfg, args [0], cfg->domain);
-				}
+				NEW_DOMAINCONST (cfg, args [0]);
 
 				/* klass */
 				NEW_ARGLOAD (cfg, this, 0);
@@ -8233,7 +8384,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 			case CEE_LDFTN: {
 				MonoInst *argconst;
-				MonoMethod *cil_method;
+				MonoMethod *cil_method, *ctor_method;
 				int temp;
 
 				CHECK_STACK_OVF (1);
@@ -8257,6 +8408,26 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
 					ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
 				}
+
+				/* 
+				 * Optimize the common case of ldftn+delegate creation
+				 */
+#if defined(MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE) && !defined(HAVE_WRITE_BARRIERS)
+				/* FIXME: SGEN support */
+				if ((sp > stack_start) && (ip + 6 + 5 < end) && ip_in_bb (cfg, bblock, ip + 6) && (ip [6] == CEE_NEWOBJ) && (ctor_method = mini_get_method (method, read32 (ip + 7), NULL, generic_context)) && (ctor_method->klass->parent == mono_defaults.multicastdelegate_class)) {
+					MonoInst *target_ins;
+
+					ip += 6;
+					if (cfg->verbose_level > 3)
+						g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
+					target_ins = sp [-1];
+					sp --;
+					*sp = handle_delegate_ctor (cfg, bblock, ctor_method->klass, target_ins, cmethod, ip);
+					ip += 5;					
+					sp ++;
+					break;
+				}
+#endif
 
 				handle_loaded_temps (cfg, bblock, stack_start, sp);
 
@@ -8797,7 +8968,8 @@ mono_print_tree (MonoInst *tree) {
 	case OP_VCALL:
 	case OP_VCALLVIRT:
 	case OP_VOIDCALL:
-	case OP_VOIDCALLVIRT: {
+	case OP_VOIDCALLVIRT:
+	case OP_TRAMPCALL_VTABLE: {
 		MonoCallInst *call = (MonoCallInst*)tree;
 		if (call->method)
 			printf ("[%s]", call->method->name);
@@ -8838,7 +9010,7 @@ mono_print_tree (MonoInst *tree) {
 	case OP_CALL_HANDLER:
 		printf ("[B%d]", tree->inst_target_bb->block_num);
 		break;
-	case CEE_SWITCH:
+	case OP_SWITCH:
 	case CEE_ISINST:
 	case CEE_CASTCLASS:
 	case OP_OUTARG:
@@ -8889,6 +9061,7 @@ create_helper_signature (void)
 {
 	helper_sig_domain_get = mono_create_icall_signature ("ptr");
 	helper_sig_class_init_trampoline = mono_create_icall_signature ("void");
+	helper_sig_generic_class_init_trampoline = mono_create_icall_signature ("void");
 }
 
 gconstpointer
@@ -8937,7 +9110,8 @@ mono_init_trampolines (void)
 	mono_trampoline_code [MONO_TRAMPOLINE_GENERIC] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_GENERIC);
 	mono_trampoline_code [MONO_TRAMPOLINE_JUMP] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_JUMP);
 	mono_trampoline_code [MONO_TRAMPOLINE_CLASS_INIT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_CLASS_INIT);
-#ifdef MONO_ARCH_HAVE_PIC_AOT
+ 	mono_trampoline_code [MONO_TRAMPOLINE_GENERIC_CLASS_INIT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_GENERIC_CLASS_INIT);
+#ifdef MONO_ARCH_AOT_SUPPORTED
 	mono_trampoline_code [MONO_TRAMPOLINE_AOT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_AOT);
 	mono_trampoline_code [MONO_TRAMPOLINE_AOT_PLT] = mono_arch_create_trampoline_code (MONO_TRAMPOLINE_AOT_PLT);
 #endif
@@ -8967,6 +9141,8 @@ gpointer
 mono_create_class_init_trampoline (MonoVTable *vtable)
 {
 	gpointer code, ptr;
+
+	g_assert (!vtable->klass->generic_container);
 
 	/* previously created trampoline code */
 	mono_domain_lock (vtable->domain);
@@ -9110,7 +9286,7 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 }	
 #endif
 
-static gpointer
+gpointer
 mono_create_delegate_trampoline (MonoClass *klass)
 {
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
@@ -9134,6 +9310,12 @@ mono_create_delegate_trampoline (MonoClass *klass)
 							  klass, ptr);
 	mono_domain_unlock (domain);
 
+	mono_jit_lock ();
+	if (!delegate_trampoline_hash_addr)
+		delegate_trampoline_hash_addr = g_hash_table_new (NULL, NULL);
+	g_hash_table_insert (delegate_trampoline_hash_addr, ptr, klass);
+	mono_jit_unlock ();
+
 	return ptr;
 #else
 	return NULL;
@@ -9148,6 +9330,20 @@ mono_find_class_init_trampoline_by_addr (gconstpointer addr)
 	mono_jit_lock ();
 	if (class_init_hash_addr)
 		res = g_hash_table_lookup (class_init_hash_addr, addr);
+	else
+		res = NULL;
+	mono_jit_unlock ();
+	return res;
+}
+
+static MonoClass*
+mono_find_delegate_trampoline_by_addr (gconstpointer addr)
+{
+	MonoClass *res;
+
+	mono_jit_lock ();
+	if (delegate_trampoline_hash_addr)
+		res = g_hash_table_lookup (delegate_trampoline_hash_addr, addr);
 	else
 		res = NULL;
 	mono_jit_unlock ();
@@ -10378,6 +10574,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_CLASS_INIT:
 		target = mono_create_class_init_trampoline (mono_class_vtable (domain, patch_info->data.klass));
 		break;
+	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
+		target = mono_create_delegate_trampoline (patch_info->data.klass);
+		break;
 	case MONO_PATCH_INFO_SFLDA: {
 		MonoVTable *vtable = mono_class_vtable (domain, patch_info->data.field->parent);
 		if (!vtable->initialized && !(vtable->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) && (method && mono_class_needs_cctor_run (vtable->klass, method)))
@@ -10597,7 +10796,6 @@ replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBl
 				bb->last_ins->inst_target_bb = repl;
 			}
 			break;
-		case CEE_SWITCH:
 		case OP_SWITCH: {
 			int i;
 			int n = GPOINTER_TO_INT (bb->last_ins->klass);
@@ -10678,7 +10876,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 	}
 	
 	/* Do not touch BBs following a switch (they are the "default" branch) */
-	if ((previous_bb->last_ins != NULL) && (previous_bb->last_ins->opcode == CEE_SWITCH)) {
+	if ((previous_bb->last_ins != NULL) && (previous_bb->last_ins->opcode == OP_SWITCH)) {
 		return FALSE;
 	}
 	
@@ -10718,7 +10916,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 				((previous_bb->last_ins == NULL) ||
 				((previous_bb->last_ins->opcode != OP_BR) &&
 				(! (MONO_IS_COND_BRANCH_OP (previous_bb->last_ins))) &&
-				(previous_bb->last_ins->opcode != CEE_SWITCH)))) {
+				(previous_bb->last_ins->opcode != OP_SWITCH)))) {
 			for (i = 0; i < previous_bb->out_count; i++) {
 				if (previous_bb->out_bb [i] == target_bb) {
 					MonoInst *jump;
@@ -11538,6 +11736,12 @@ mono_codegen (MonoCompile *cfg)
 				if (vtable) {
 					patch_info->type = MONO_PATCH_INFO_CLASS_INIT;
 					patch_info->data.klass = vtable->klass;
+				} else {
+					MonoClass *klass = mono_find_delegate_trampoline_by_addr (patch_info->data.target);
+					if (klass) {
+						patch_info->type = MONO_PATCH_INFO_DELEGATE_TRAMPOLINE;
+						patch_info->data.klass = klass;
+					}
 				}
 			}
 			break;
@@ -11652,7 +11856,7 @@ remove_critical_edges (MonoCompile *cfg) {
 							if ((previous_bb->last_ins == NULL) ||
 									((previous_bb->last_ins->opcode != OP_BR) &&
 									(! (MONO_IS_COND_BRANCH_OP (previous_bb->last_ins))) &&
-									(previous_bb->last_ins->opcode != CEE_SWITCH))) {
+									(previous_bb->last_ins->opcode != OP_SWITCH))) {
 								int i;
 								/* Make sure previous_bb really falls through bb */
 								for (i = 0; i < previous_bb->out_count; i++) {
@@ -11757,13 +11961,21 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	MonoJitInfo *jinfo;
 	int dfn = 0, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
-	gboolean try_generic_shared = (opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable_impl (method);
+	gboolean try_generic_shared;
 	MonoMethod *method_to_compile;
 	int gsctx_size;
 
 	mono_jit_stats.methods_compiled++;
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
 		mono_profiler_method_jit (method);
+ 
+	if (compile_aot)
+		/* We are passed the original generic method definition */
+		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
+			(opts & MONO_OPT_GSHARED) && (method->generic_container || method->klass->generic_container);
+	else
+		try_generic_shared = mono_class_generic_sharing_enabled (method->klass) &&
+			(opts & MONO_OPT_GSHARED) && mono_method_is_generic_sharable_impl (method);
 
 	if (opts & MONO_OPT_GSHARED) {
 		if (try_generic_shared)
@@ -11774,10 +11986,15 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
  restart_compile:
 	if (try_generic_shared) {
-		MonoMethod *declaring_method = mono_method_get_declaring_generic_method (method);
+		MonoMethod *declaring_method;
 		MonoGenericContext *shared_context;
 
-		g_assert (method->klass->generic_class->container_class == declaring_method->klass);
+		if (compile_aot) {
+			declaring_method = method;
+		} else {
+			declaring_method = mono_method_get_declaring_generic_method (method);
+			g_assert (method->klass->generic_class->container_class == declaring_method->klass);
+		}
 
 		if (declaring_method->generic_container)
 			shared_context = &declaring_method->generic_container->context;
@@ -11867,6 +12084,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (i < 0) {
 		if (try_generic_shared && cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
+			if (compile_aot)
+				return cfg;
 			mono_destroy_compile (cfg);
 			try_generic_shared = FALSE;
 			goto restart_compile;
@@ -12369,8 +12588,12 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 				g_assert (mi);
 				return mono_get_addr_from_ftnptr ((gpointer)mono_icall_get_wrapper (mi));
 			} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
-			        nm = mono_marshal_get_delegate_invoke (method, NULL);
-					return mono_get_addr_from_ftnptr (mono_compile_method (nm));
+#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+				return mono_create_delegate_trampoline (method->klass);
+#else
+				nm = mono_marshal_get_delegate_invoke (method, NULL);
+				return mono_get_addr_from_ftnptr (mono_compile_method (nm));
+#endif
 			} else if (*name == 'B' && (strcmp (name, "BeginInvoke") == 0)) {
 				nm = mono_marshal_get_delegate_begin_invoke (method);
 				return mono_get_addr_from_ftnptr (mono_compile_method (nm));
@@ -13312,7 +13535,7 @@ mini_get_imt_trampoline (void)
 #endif
 
 #ifdef MONO_ARCH_COMMON_VTABLE_TRAMPOLINE
-static gpointer
+gpointer
 mini_get_vtable_trampoline (void)
 {
 	static gpointer tramp = NULL;
@@ -13795,6 +14018,8 @@ mini_cleanup (MonoDomain *domain)
 	g_hash_table_destroy (jit_icall_name_hash);
 	if (class_init_hash_addr)
 		g_hash_table_destroy (class_init_hash_addr);
+	if (delegate_trampoline_hash_addr)
+		g_hash_table_destroy (delegate_trampoline_hash_addr);
 	g_free (emul_opcode_map);
 
 	mono_arch_cleanup ();

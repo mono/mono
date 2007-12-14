@@ -46,8 +46,8 @@ static MonoGetClassFromName get_class_from_name = NULL;
 static MonoClass * mono_class_create_from_typedef (MonoImage *image, guint32 type_token);
 static gboolean mono_class_get_cached_class_info (MonoClass *klass, MonoCachedClassInfo *res);
 
-void (*mono_debugger_start_class_init_func) (MonoClass *klass) = NULL;
 void (*mono_debugger_class_init_func) (MonoClass *klass) = NULL;
+void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass) = NULL;
 
 /*
  * mono_class_from_typeref:
@@ -1328,6 +1328,9 @@ mono_class_setup_methods (MonoClass *class)
 	/* Leave this assignment as the last op in this function */
 	class->methods = methods;
 
+	if (mono_debugger_class_loaded_methods_func)
+		mono_debugger_class_loaded_methods_func (class);
+
 	mono_loader_unlock ();
 }
 
@@ -1892,7 +1895,7 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 		interface_count *= 3;
 		real_count = interface_count;
 		if (internal_enumerator)
-			real_count += idepth;
+			real_count += idepth + eclass->interface_offsets_count;
 		interfaces = g_malloc0 (sizeof (MonoClass*) * real_count);
 		if (MONO_CLASS_IS_INTERFACE (eclass)) {
 			interfaces [0] = mono_defaults.object_class;
@@ -1953,6 +1956,15 @@ get_implicit_generic_array_interfaces (MonoClass *class, int *num, int *is_enume
 			for (i = 0; i < eclass->idepth; i++) {
 				MonoType *args [1];
 				args [0] = &eclass->supertypes [i]->byval_arg;
+				interfaces [j] = mono_class_bind_generic_parameters (
+					generic_ienumerator_class, 1, args, FALSE);
+				/*g_print ("%s implements %s\n", class->name, mono_type_get_name_full (&interfaces [i]->byval_arg, 0));*/
+				j ++;
+			}
+			for (i = 0; i < eclass->interface_offsets_count; i++) {
+				MonoClass *iface = eclass->interfaces_packed [i];
+				MonoType *args [1];
+				args [0] = &iface->byval_arg;
 				interfaces [j] = mono_class_bind_generic_parameters (
 					generic_ienumerator_class, 1, args, FALSE);
 				/*g_print ("%s implements %s\n", class->name, mono_type_get_name_full (&interfaces [i]->byval_arg, 0));*/
@@ -2738,6 +2750,7 @@ generic_array_methods (MonoClass *class)
 	GList *list = NULL, *tmp;
 	if (generic_array_method_num)
 		return generic_array_method_num;
+	mono_class_setup_methods (class->parent);
 	for (i = 0; i < class->parent->method.count; i++) {
 		MonoMethod *m = class->parent->methods [i];
 		if (!strncmp (m->name, "InternalArray__", 15)) {
@@ -2947,9 +2960,6 @@ mono_class_init (MonoClass *class)
 
 	if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR)
 		check_core_clr_inheritance (class);
-
-	if (mono_debugger_start_class_init_func)
-		mono_debugger_start_class_init_func (class);
 
 	mono_stats.initialized_class_count++;
 
@@ -4334,6 +4344,33 @@ mono_class_get_field_token (MonoClassField *field)
 	return 0;
 }
 
+/*
+ * mono_class_get_field_default_value:
+ *
+ * Return the default value of the field as a pointer into the metadata blob.
+ */
+const char*
+mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_type)
+{
+	guint32 cindex;
+	guint32 constant_cols [MONO_CONSTANT_SIZE];
+
+	g_assert (field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT);
+
+	if (!field->data) {
+		cindex = mono_metadata_get_constant_index (field->parent->image, mono_class_get_field_token (field), cindex + 1);
+		g_assert (cindex);
+		g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA));
+
+		mono_metadata_decode_row (&field->parent->image->tables [MONO_TABLE_CONSTANT], cindex - 1, constant_cols, MONO_CONSTANT_SIZE);
+		field->def_type = constant_cols [MONO_CONSTANT_TYPE];
+		field->data = (gpointer)mono_metadata_blob_heap (field->parent->image, constant_cols [MONO_CONSTANT_VALUE]);
+	}
+
+	*def_type = field->def_type;
+	return field->data;
+}
+
 guint32
 mono_class_get_event_token (MonoEvent *event)
 {
@@ -5172,7 +5209,7 @@ mono_ldtoken (MonoImage *image, guint32 token, MonoClass **handle_class,
 {
 	if (image->dynamic) {
 		MonoClass *tmp_handle_class;
-		gpointer obj = mono_lookup_dynamic_token_class (image, token, &tmp_handle_class, context);
+		gpointer obj = mono_lookup_dynamic_token_class (image, token, TRUE, &tmp_handle_class, context);
 
 		g_assert (tmp_handle_class);
 		if (handle_class)
@@ -5262,13 +5299,13 @@ mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *
 {
 	MonoClass *handle_class;
 
-	return lookup_dynamic (image, token, &handle_class, context);
+	return lookup_dynamic (image, token, TRUE, &handle_class, context);
 }
 
 gpointer
-mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context)
+mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context)
 {
-	return lookup_dynamic (image, token, handle_class, context);
+	return lookup_dynamic (image, token, valid_token, handle_class, context);
 }
 
 static MonoGetCachedClassInfo get_cached_class_info = NULL;
@@ -6353,4 +6390,49 @@ gboolean
 mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass)
 {
 	return gklass->context.class_inst == gklass->container_class->generic_container->context.class_inst;
+}
+
+/*
+ * mono_class_generic_sharing_enabled:
+ * @class: a class
+ *
+ * Returns whether generic sharing is enabled for class.
+ *
+ * This is a stop-gap measure to slowly introduce generic sharing
+ * until we have all the issues sorted out, at which time this
+ * function will disappear and generic sharing will always be enabled.
+ */
+gboolean
+mono_class_generic_sharing_enabled (MonoClass *class)
+{
+	static int generic_sharing = MONO_GENERIC_SHARING_CORLIB;
+	static gboolean inited = FALSE;
+
+	if (!inited) {
+		const char *option;
+
+		if ((option = g_getenv ("MONO_GENERIC_SHARING"))) {
+			if (strcmp (option, "corlib") == 0)
+				generic_sharing = MONO_GENERIC_SHARING_CORLIB;
+			else if (strcmp (option, "all") == 0)
+				generic_sharing = MONO_GENERIC_SHARING_ALL;
+			else if (strcmp (option, "none") == 0)
+				generic_sharing = MONO_GENERIC_SHARING_NONE;
+			else
+				g_warning ("Unknown generic sharing option `%s'.", option);
+		}
+
+		inited = TRUE;
+	}
+
+	switch (generic_sharing) {
+	case MONO_GENERIC_SHARING_NONE:
+		return FALSE;
+	case MONO_GENERIC_SHARING_ALL:
+		return TRUE;
+	case MONO_GENERIC_SHARING_CORLIB :
+		return class->image == mono_defaults.corlib;
+	default:
+		g_assert_not_reached ();
+	}
 }

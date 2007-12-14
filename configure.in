@@ -212,7 +212,7 @@ case "$host" in
 		;;
 	*-*-solaris*)
 		platform_win32=no
-		CPPFLAGS="$CPPFLAGS -DGC_SOLARIS_THREADS -DGC_SOLARIS_PTHREADS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_MMAP -DUSE_MUNMAP"
+		CPPFLAGS="$CPPFLAGS -DGC_SOLARIS_THREADS -DGC_SOLARIS_PTHREADS -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS -DUSE_MMAP -DUSE_MUNMAP -DPLATFORM_SOLARIS"
 		need_link_unlink=yes
 		libmono_cflags="-D_REENTRANT"
 		libgc_threads=pthreads
@@ -300,7 +300,7 @@ fi
 
 AM_CONDITIONAL(NO_VERSION_SCRIPT, test x$no_version_script = xyes)
 
-AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h)
+AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h)
 
 AC_CHECK_HEADER(zlib.h, [have_zlib=yes], [have_zlib=no])
 if test x$have_zlib = xyes; then
@@ -1455,7 +1455,7 @@ if test x$platform_win32 = xno; then
 		AC_CHECK_LIB(attr, lsetxattr, XATTR_LIB="-lattr",)
 	)
 	AC_SUBST(XATTR_LIB)
-	
+
 	dnl *********************************
 	dnl *** Checks for Windows compilation ***
 	dnl *********************************
@@ -1484,6 +1484,7 @@ else
 	AC_CHECK_LIB(winmm, main, LIBS="$LIBS -lwinmm", AC_ERROR(bad mingw install?))
 	AC_CHECK_LIB(oleaut32, main, LIBS="$LIBS -loleaut32", AC_ERROR(bad mingw install?))
 	AC_CHECK_LIB(advapi32, main, LIBS="$LIBS -ladvapi32", AC_ERROR(bad mingw install?))
+	AC_CHECK_LIB(version, main, LIBS="$LIBS -lversion", AC_ERROR(bad mingw install?))
 
 	dnl *********************************
 	dnl *** Check for struct ip_mreqn ***
@@ -1631,17 +1632,6 @@ if test "x$try_shared_handles" != "xyes"; then
 	AC_SUBST(DISABLE_SHARED_HANDLES)
 fi
 
-# Check for glib functions that we can do without if they aren't present.
-# This means we don't have to make the required version too new for some
-# prehistoric distros we still have to build on.
-OLD_LIBS="$LIBS"
-LIBS="$LIBS $GLIB_LIBS"
-OLD_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $GLIB_CFLAGS"
-AC_CHECK_FUNCS(g_strsplit_set)
-AC_CHECK_FUNCS(g_strv_length)
-LIBS="$OLD_LIBS"
-CPPFLAGS="$OLD_CPPFLAGS"
 
 AC_ARG_ENABLE(nunit-tests, [ --enable-nunit-tests	Run the nunit tests of the class library on 'make check'])
 AM_CONDITIONAL(ENABLE_NUNIT_TESTS, [test x$enable_nunit_tests = xyes])

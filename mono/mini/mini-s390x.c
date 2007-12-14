@@ -166,7 +166,7 @@ if (ins->flags & MONO_INST_BRLABEL) { 							\
 
 #define S390_TRACE_STACK_SIZE (5*sizeof(gpointer)+4*sizeof(gdouble))
 
-#define MAX (a, b) ((a) > (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 /*========================= End of Defines =========================*/
 
@@ -3472,6 +3472,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I:
 		case CEE_CONV_I8:
+		case OP_SEXT_I4:
 		case OP_MOVE:
 		case OP_SETREG: {
 			if (ins->dreg != ins->sreg1) {

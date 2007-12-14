@@ -1,3 +1,33 @@
+2007-12-09  Robert Jordan  <robertj@gmx.net>
+
+	* bug-323114.cs: Add test case for #323114.
+
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs: Fix the names of two tests.
+
+	* checked.cs: Make exit codes positive.
+
+2007-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (EXTRA_DIST): Add a missing file.
+
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* async-exc-compilation.cs: New not yet enabled test for async exceptions
+	received during JIT compilation.
+
+	* custom-modifiers.2.cs custom-modifiers-il.cs: New test for the 2.0
+	GetRequiredCustomModifiers ()/GetOptionalCustomModifiers () methods.
+
+2007-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* stackframes-async.2.cs: Fix this test to work with the new delegate optimization.
+
+2007-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Add a target for testing aot on the 2.0 profile.
+
 2007-11-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* invoke.cs: Add tests for invoking the Array Get/Set methods.

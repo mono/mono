@@ -10725,6 +10725,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - merge r68207.
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
+ * - merge the generics sharing static fields changes.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
@@ -10735,7 +10736,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 89863.
+ * - LAST MERGE: 91290.
  */
 
 /*

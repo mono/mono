@@ -36,7 +36,8 @@
 typedef enum {
 	MONO_DEBUG_DATA_ITEM_UNKNOWN		= 0,
 	MONO_DEBUG_DATA_ITEM_CLASS,
-	MONO_DEBUG_DATA_ITEM_METHOD
+	MONO_DEBUG_DATA_ITEM_METHOD,
+	MONO_DEBUG_DATA_ITEM_DELEGATE_TRAMPOLINE
 } MonoDebugDataItemType;
 
 typedef struct _MonoDebugDataChunk MonoDebugDataChunk;
@@ -88,9 +89,14 @@ struct _MonoDebugClassEntry {
 	guint8 data [MONO_ZERO_LEN_ARRAY];
 };
 
+typedef struct {
+	gpointer code;
+	guint32 size;
+} MonoDebugDelegateTrampolineEntry;
+
 MonoSymbolTable *mono_symbol_table = NULL;
 MonoDebugFormat mono_debug_format = MONO_DEBUG_FORMAT_NONE;
-gint32 mono_debug_debugger_version = 2;
+gint32 mono_debug_debugger_version = 3;
 
 static gboolean in_the_mono_debugger = FALSE;
 static gboolean mono_debug_initialized = FALSE;
@@ -104,13 +110,12 @@ static MonoDebugHandle     *mono_debug_open_image      (MonoImage *image, const 
 static MonoDebugHandle     *_mono_debug_get_image      (MonoImage *image);
 static void                 mono_debug_add_assembly    (MonoAssembly *assembly,
 							gpointer user_data);
-static void                 mono_debug_start_add_type  (MonoClass *klass);
 static void                 mono_debug_add_type        (MonoClass *klass);
 
 void _mono_debug_init_corlib (MonoDomain *domain);
 
 extern void (*mono_debugger_class_init_func) (MonoClass *klass);
-extern void (*mono_debugger_start_class_init_func) (MonoClass *klass);
+extern void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass);
 
 static MonoDebugDataTable *
 create_data_table (MonoDomain *domain)
@@ -227,9 +232,11 @@ mono_debug_init (MonoDebugFormat format)
 	data_table_hash = g_hash_table_new_full (
 		NULL, NULL, NULL, (GDestroyNotify) free_data_table);
 
-	mono_debugger_start_class_init_func = mono_debug_start_add_type;
 	mono_debugger_class_init_func = mono_debug_add_type;
+	mono_debugger_class_loaded_methods_func = mono_debugger_class_initialized;
 	mono_install_assembly_load_hook (mono_debug_add_assembly, NULL);
+
+	mono_symbol_table->global_data_table = create_data_table (NULL);
 
 	mono_debugger_unlock ();
 }
@@ -691,6 +698,27 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 	return address;
 }
 
+void
+mono_debug_add_delegate_trampoline (gpointer code, int size)
+{
+	MonoDebugDelegateTrampolineEntry *entry;
+
+	if (!mono_debug_initialized)
+		return;
+
+	mono_debugger_lock ();
+
+	entry = (MonoDebugDelegateTrampolineEntry *) allocate_data_item (
+		mono_symbol_table->global_data_table, MONO_DEBUG_DATA_ITEM_DELEGATE_TRAMPOLINE,
+		sizeof (MonoDebugDelegateTrampolineEntry));
+	entry->code = code;
+	entry->size = size;
+
+	write_data_item (mono_symbol_table->global_data_table, (guint8 *) entry);
+
+	mono_debugger_unlock ();
+}
+
 static inline guint32
 read_leb128 (guint8 *ptr, guint8 **rptr)
 {
@@ -813,20 +841,6 @@ mono_debug_read_method (MonoDebugMethodAddress *address)
 	return jit;
 }
 
-/*
- * This is called via the `mono_debugger_class_init_func' from mono_class_init() each time
- * a new class is initialized.
- */
-static void
-mono_debug_start_add_type (MonoClass *klass)
-{
-	MonoDebugHandle *handle;
-
-	handle = _mono_debug_get_image (klass->image);
-	if (!handle)
-		return;
-}
-
 static void
 mono_debug_add_type (MonoClass *klass)
 {
@@ -936,7 +950,7 @@ mono_debug_lookup_method_addresses (MonoMethod *method)
 	GSList *list;
 	guint8 *ptr;
 
-	g_assert (mono_debug_debugger_version == 2);
+	g_assert (mono_debug_debugger_version == 3);
 
 	mono_debugger_lock ();
 

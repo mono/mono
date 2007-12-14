@@ -236,8 +236,8 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	return frame_size;
 }
 
-static gpointer*
-decode_vcall_slot_from_ldr (guint32 ldr, gpointer *regs)
+static gpointer
+decode_vcall_slot_from_ldr (guint32 ldr, gpointer *regs, int *displacement)
 {
 	char *o = NULL;
 	int reg, offset = 0;
@@ -247,11 +247,13 @@ decode_vcall_slot_from_ldr (guint32 ldr, gpointer *regs)
 		offset = -offset;
 	/*g_print ("found vcall at r%d + %d for code at %p 0x%x\n", reg, offset, code, *code);*/
 	o = regs [reg];
-	return (gpointer*)(o + offset);
+
+	*displacement = offset;
+	return o;
 }
 
-gpointer*
-mono_arch_get_vcall_slot_addr (guint8 *code_ptr, gpointer *regs)
+gpointer
+mono_arch_get_vcall_slot (guint8 *code_ptr, gpointer *regs, int *displacement)
 {
 	guint32* code = (guint32*)code_ptr;
 
@@ -305,12 +307,23 @@ mono_arch_get_vcall_slot_addr (guint8 *code_ptr, gpointer *regs)
 	 * 
 	 */
 	if (IS_LDR_PC (code [-1]) && code [-2] == ADD_LR_PC_4)
-		return decode_vcall_slot_from_ldr (code [-1], regs);
+		return decode_vcall_slot_from_ldr (code [-1], regs, displacement);
 
 	if (IS_LDR_PC (code [0]) && code [-1] == MOV_LR_PC)
-		return decode_vcall_slot_from_ldr (code [0], regs);
+		return decode_vcall_slot_from_ldr (code [0], regs, displacement);
 
 	return NULL;
+}
+
+gpointer*
+mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
+{
+	gpointer vt;
+	int displacement;
+	vt = mono_arch_get_vcall_slot (code, regs, &displacement);
+	if (!vt)
+		return NULL;
+	return (gpointer*)((char*)vt + displacement);
 }
 
 #define MAX_ARCH_DELEGATE_PARAMS 3
@@ -2394,8 +2407,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = mono_arm_emit_load_imm (code, ins->dreg, ins->inst_c0);
 			break;
 		case OP_AOTCONST:
-			g_assert_not_reached ();
+			/* Load the GOT offset */
 			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
+			ARM_LDR_IMM (code, ins->dreg, ARMREG_PC, 0);
+			ARM_B (code, 0);
+			*(gpointer*)code = NULL;
+			code += 4;
+			/* Load the value from the GOT */
+			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
@@ -2486,6 +2505,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (ins->sreg1 != ARMREG_LR);
 			call = (MonoCallInst*)ins;
 			if (call->method->klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
+				if (cfg->compile_aot)
+					/* FIXME: */
+					cfg->disable_aot = 1;
 				ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_PC, 4);
 				ARM_LDR_IMM (code, ARMREG_PC, ins->sreg1, ins->inst_offset);
 				*((gpointer*)code) = (gpointer)call->method;
@@ -2604,7 +2626,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_BR_REG:
 			ARM_MOV_REG_REG (code, ARMREG_PC, ins->sreg1);
 			break;
-		case CEE_SWITCH:
+		case OP_SWITCH:
 			/* 
 			 * In the normal case we have:
 			 * 	ldr pc, [pc, ins->sreg1 << 2]
@@ -2680,15 +2702,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		/* floating point opcodes */
 #ifdef ARM_FPU_FPA
 		case OP_R8CONST:
-			/* FIXME: we can optimize the imm load by dealing with part of 
-			 * the displacement in LDFD (aligning to 512).
-			 */
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-			ARM_LDFD (code, ins->dreg, ARMREG_LR, 0);
+			if (cfg->compile_aot) {
+				ARM_LDFD (code, ins->dreg, ARMREG_PC, 0);
+				ARM_B (code, 1);
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
+				code += 4;
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[1];
+				code += 4;
+			} else {
+				/* FIXME: we can optimize the imm load by dealing with part of 
+				 * the displacement in LDFD (aligning to 512).
+				 */
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				ARM_LDFD (code, ins->dreg, ARMREG_LR, 0);
+			}
 			break;
 		case OP_R4CONST:
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-			ARM_LDFS (code, ins->dreg, ARMREG_LR, 0);
+			if (cfg->compile_aot) {
+				ARM_LDFS (code, ins->dreg, ARMREG_PC, 0);
+				ARM_B (code, 0);
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
+				code += 4;
+			} else {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				ARM_LDFS (code, ins->dreg, ARMREG_LR, 0);
+			}
 			break;
 		case OP_STORER8_MEMBASE_REG:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
@@ -2740,16 +2778,33 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 #elif defined(ARM_FPU_VFP)
 		case OP_R8CONST:
-			/* FIXME: we can optimize the imm load by dealing with part of 
-			 * the displacement in LDFD (aligning to 512).
-			 */
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-			ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
+			if (cfg->compile_aot) {
+				ARM_LDFD (code, ins->dreg, ARMREG_PC, 0);
+				ARM_B (code, 1);
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
+				code += 4;
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[1];
+				code += 4;
+			} else {
+				/* FIXME: we can optimize the imm load by dealing with part of 
+				 * the displacement in LDFD (aligning to 512).
+				 */
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
+			}
 			break;
 		case OP_R4CONST:
-			code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
-			ARM_FLDS (code, ins->dreg, ARMREG_LR, 0);
-			ARM_CVTS (code, ins->dreg, ins->dreg);
+			if (cfg->compile_aot) {
+				ARM_FLDS (code, ins->dreg, ARMREG_PC, 0);
+				ARM_B (code, 0);
+				*(guint32*)code = ((guint32*)(ins->inst_p0))[0];
+				code += 4;
+				ARM_CVTS (code, ins->dreg, ins->dreg);
+			} else {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, (guint32)ins->inst_p0);
+				ARM_FLDS (code, ins->dreg, ARMREG_LR, 0);
+				ARM_CVTS (code, ins->dreg, ins->dreg);
+			}
 			break;
 		case OP_STORER8_MEMBASE_REG:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
@@ -3066,24 +3121,35 @@ void
 mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors)
 {
 	MonoJumpInfo *patch_info;
+	gboolean compile_aot = !run_cctors;
 
 	for (patch_info = ji; patch_info; patch_info = patch_info->next) {
 		unsigned char *ip = patch_info->ip.i + code;
 		const unsigned char *target;
 
-		if (patch_info->type == MONO_PATCH_INFO_SWITCH) {
+		if (patch_info->type == MONO_PATCH_INFO_SWITCH && !compile_aot) {
 			gpointer *jt = (gpointer*)(ip + 8);
 			int i;
 			/* jt is the inlined jump table, 2 instructions after ip
 			 * In the normal case we store the absolute addresses,
 			 * otherwise the displacements.
 			 */
-			for (i = 0; i < patch_info->data.table->table_size; i++) { 
+			for (i = 0; i < patch_info->data.table->table_size; i++)
 				jt [i] = code + (int)patch_info->data.table->table [i];
-			}
 			continue;
 		}
 		target = mono_resolve_patch_target (method, domain, code, patch_info, run_cctors);
+
+		if (compile_aot) {
+			switch (patch_info->type) {
+			case MONO_PATCH_INFO_BB:
+			case MONO_PATCH_INFO_LABEL:
+				break;
+			default:
+				/* No need to patch these */
+				continue;
+			}
+		}
 
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_IP:
@@ -3542,7 +3608,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 			}
 			arm_patch (ip, code);
 			//*(int*)code = 0xef9f0001;
-			code += 4;
+			//code += 4;
+			ARM_NOP (code);
 			/*mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC_NAME, patch_info->data.target);*/
 			ARM_LDR_IMM (code, ARMREG_R0, ARMREG_PC, 0);
 			/* we got here from a conditional call, so the calling ip is set in lr already */
@@ -3633,6 +3700,13 @@ MonoInst*
 mono_arch_get_thread_intrinsic (MonoCompile* cfg)
 {
 	return NULL;
+}
+
+guint32
+mono_arch_get_patch_offset (guint8 *code)
+{
+	/* OP_AOTCONST */
+	return 8;
 }
 
 void

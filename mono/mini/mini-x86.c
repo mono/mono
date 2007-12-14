@@ -19,6 +19,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/profiler-private.h>
+#include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-math.h>
 
 #include "trace.h"
@@ -64,13 +65,15 @@ MonoBreakpointInfo
 mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 const char*
-mono_arch_regname (int reg) {
+mono_arch_regname (int reg)
+{
 	switch (reg) {
 	case X86_EAX: return "%eax";
 	case X86_EBX: return "%ebx";
 	case X86_ECX: return "%ecx";
 	case X86_EDX: return "%edx";
-	case X86_ESP: return "%esp";	case X86_EBP: return "%ebp";
+	case X86_ESP: return "%esp";	
+	case X86_EBP: return "%ebp";
 	case X86_EDI: return "%edi";
 	case X86_ESI: return "%esi";
 	}
@@ -78,7 +81,8 @@ mono_arch_regname (int reg) {
 }
 
 const char*
-mono_arch_fregname (int reg) {
+mono_arch_fregname (int reg)
+{
 	switch (reg) {
 	case 0:
 		return "%fr0";
@@ -2423,8 +2427,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoCallInst *call;
 	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
-	MonoInst *last_ins = NULL;
-	guint last_offset = 0;
 	int max_len, cpos;
 
 	if (cfg->opt & MONO_OPT_PEEPHOLE)
@@ -2553,10 +2555,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I1:
 		case OP_ICONV_TO_I1:
+		case OP_SEXT_I1:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
 			break;
 		case CEE_CONV_I2:
 		case OP_ICONV_TO_I2:
+		case OP_SEXT_I2:
 			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_CONV_U1:
@@ -2744,6 +2748,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_div_reg (code, ins->sreg2, FALSE);
 			}
 			break;
+		case OP_DIV_IMM:
+			x86_mov_reg_imm (code, ins->sreg2, ins->inst_imm);
+			x86_cdq (code);
+			x86_div_reg (code, ins->sreg2, TRUE);
+			break;
 		case OP_IREM_IMM: {
 			int power = mono_is_power_of_two (ins->inst_imm);
 
@@ -2907,12 +2916,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_INEG:
 			x86_neg_reg (code, ins->sreg1);
 			break;
-		case OP_SEXT_I1:
-			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
-			break;
-		case OP_SEXT_I2:
-			x86_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
-			break;
+
 		case CEE_MUL:
 		case OP_IMUL:
 			x86_imul_reg_reg (code, ins->sreg1, ins->sreg2);
@@ -3265,6 +3269,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 12);
 #endif
 			break;
+<<<<<<< .working
 		case OP_START_HANDLER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
 			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
@@ -3283,13 +3288,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_ret (code);
 			break;
 		}
+=======
+		case OP_START_HANDLER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
+			break;
+		}
+		case OP_ENDFINALLY: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
+			x86_ret (code);
+			break;
+		}
+		case OP_ENDFILTER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
+			/* The local allocator will put the result into EAX */
+			x86_ret (code);
+			break;
+		}
+
+>>>>>>> .merge-right.r91290
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;
 			break;
 		case OP_BR:
-			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);
-			//if ((ins->inst_target_bb == bb->next_bb) && ins == bb->last_ins)
-			//break;
 			if (ins->flags & MONO_INST_BRLABEL) {
 				if (ins->inst_i0->inst_c0) {
 					x86_jump_code (code, cfg->native_code + ins->inst_i0->inst_c0);
@@ -4117,9 +4140,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	       
 		cpos += max_len;
 
-		last_ins = ins;
-		last_offset = offset;
-		
 		ins = ins->next;
 	}
 
@@ -4445,7 +4465,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			x86_mov_mem_reg (code, lmf_tls_offset, X86_ECX, 4);
 		} else {
 			/* Find a spare register */
-			switch (sig->ret->type) {
+			switch (mono_type_get_underlying_type (sig->ret)->type) {
 			case MONO_TYPE_I8:
 			case MONO_TYPE_U8:
 				prev_lmf_reg = X86_EDI;
@@ -5217,7 +5237,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		g_assert ((code - start) < 64);
 
 		cached = start;
-
+		mono_debug_add_delegate_trampoline (start, code - start);
 		mono_mini_arch_unlock ();
 	} else {
 		static guint8* cache [MAX_ARCH_DELEGATE_PARAMS + 1] = {NULL};
@@ -5269,6 +5289,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 		cache [sig->param_count] = start;
 
+		mono_debug_add_delegate_trampoline (start, code - start);
 		mono_mini_arch_unlock ();
 	}
 

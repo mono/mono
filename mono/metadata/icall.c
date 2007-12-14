@@ -826,8 +826,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor (Mo
 	MONO_CHECK_ARG (handle, klass);
 
 	/* This will call the type constructor */
-	if (! (klass->flags & TYPE_ATTRIBUTE_INTERFACE))
-		mono_runtime_class_init (mono_class_vtable (mono_domain_get (), klass));
+	mono_runtime_class_init (mono_class_vtable (mono_domain_get (), klass));
 }
 
 static void
@@ -1505,6 +1504,29 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	
 	mono_class_init (field->klass);
 
+	if (cf->type->attrs & FIELD_ATTRIBUTE_STATIC)
+		is_static = TRUE;
+
+	if (obj && !is_static) {
+		/* Check that the field belongs to the object */
+		gboolean found = FALSE;
+		MonoClass *k;
+
+		for (k = obj->vtable->klass; k; k = k->parent) {
+			if (k == cf->parent) {
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (!found) {
+			char *msg = g_strdup_printf ("Field '%s' defined on type '%s' is not a field on the target object which is of type '%s'.", cf->name, cf->parent->name, obj->vtable->klass->name);
+			MonoException *ex = mono_get_exception_argument (NULL, msg);
+			g_free (msg);
+			mono_raise_exception (ex);
+		}
+	}
+
 	t = mono_type_get_underlying_type (cf->type);
 	switch (t->type) {
 	case MONO_TYPE_STRING:
@@ -1545,8 +1567,7 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 	}
 
 	vtable = NULL;
-	if (cf->type->attrs & FIELD_ATTRIBUTE_STATIC) {
-		is_static = TRUE;
+	if (is_static) {
 		vtable = mono_class_vtable (domain, cf->parent);
 		if (!vtable->initialized && !(cf->type->attrs & FIELD_ATTRIBUTE_LITERAL))
 			mono_runtime_class_init (vtable);
@@ -1588,7 +1609,7 @@ ves_icall_MonoField_GetValueInternal (MonoReflectionField *field, MonoObject *ob
 }
 
 static void
-ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *obj, MonoObject *value)
+ves_icall_MonoField_SetValueInternal (MonoReflectionField *field, MonoObject *obj, MonoObject *value)
 {
 	MonoClassField *cf = field->field;
 	gchar *v;
@@ -1666,6 +1687,69 @@ ves_icall_FieldInfo_SetValueInternal (MonoReflectionField *field, MonoObject *ob
 	} else {
 		mono_field_set_value (obj, cf, v);
 	}
+}
+
+static MonoObject *
+ves_icall_MonoField_GetRawConstantValue (MonoReflectionField *this)
+{	
+	MonoObject *o = NULL;
+	MonoClassField *field = this->field;
+	MonoClass *klass;
+	MonoDomain *domain = mono_object_domain (this); 
+	gchar *v;
+	MonoTypeEnum def_type;
+	const char *def_value;
+
+	MONO_ARCH_SAVE_REGS;
+	
+	mono_class_init (field->parent);
+
+	if (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT))
+		mono_raise_exception (mono_get_exception_invalid_operation (NULL));
+
+	if (field->parent->image->dynamic) {
+		/* FIXME: */
+		g_assert_not_reached ();
+	}
+
+	def_value = mono_class_get_field_default_value (field, &def_type);
+
+	switch (def_type) {
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I1:
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_U:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_R4:
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+	case MONO_TYPE_R8: {
+		MonoType *t;
+
+		/* boxed value type */
+		t = g_new0 (MonoType, 1);
+		t->type = def_type;
+		klass = mono_class_from_mono_type (t);
+		g_free (t);
+		o = mono_object_new (domain, klass);
+		v = ((gchar *) o) + sizeof (MonoObject);
+		mono_get_constant_value_from_blob (domain, def_type, def_value, v);
+		break;
+	}
+	case MONO_TYPE_STRING:
+	case MONO_TYPE_CLASS:
+		mono_get_constant_value_from_blob (domain, def_type, def_value, &o);
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	return o;
 }
 
 static MonoReflectionType*
@@ -2992,7 +3076,7 @@ write_enum_value (char *mem, int type, guint64 value)
 }
 
 static MonoObject *
-ves_icall_System_Enum_ToObject (MonoReflectionType *type, MonoObject *obj)
+ves_icall_System_Enum_ToObject (MonoReflectionType *enumType, MonoObject *value)
 {
 	MonoDomain *domain; 
 	MonoClass *enumc, *objc;
@@ -3001,12 +3085,12 @@ ves_icall_System_Enum_ToObject (MonoReflectionType *type, MonoObject *obj)
 	
 	MONO_ARCH_SAVE_REGS;
 
-	MONO_CHECK_ARG_NULL (type);
-	MONO_CHECK_ARG_NULL (obj);
+	MONO_CHECK_ARG_NULL (enumType);
+	MONO_CHECK_ARG_NULL (value);
 
-	domain = mono_object_domain (type); 
-	enumc = mono_class_from_mono_type (type->type);
-	objc = obj->vtable->klass;
+	domain = mono_object_domain (enumType); 
+	enumc = mono_class_from_mono_type (enumType->type);
+	objc = value->vtable->klass;
 
 	if (!enumc->enumtype)
 		mono_raise_exception (mono_get_exception_argument ("enumType", "Type provided must be an Enum."));
@@ -3014,7 +3098,7 @@ ves_icall_System_Enum_ToObject (MonoReflectionType *type, MonoObject *obj)
 		mono_raise_exception (mono_get_exception_argument ("value", "The value passed in must be an enum base or an underlying type for an enum, such as an Int32."));
 
 	res = mono_object_new (domain, enumc);
-	val = read_enum_value ((char *)obj + sizeof (MonoObject), objc->enumtype? objc->enum_basetype->type: objc->byval_arg.type);
+	val = read_enum_value ((char *)value + sizeof (MonoObject), objc->enumtype? objc->enum_basetype->type: objc->byval_arg.type);
 	write_enum_value ((char *)res + sizeof (MonoObject), enumc->enum_basetype->type, val);
 
 	return res;
@@ -5064,7 +5148,7 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 	if (image->dynamic) {
 		if (type_args || method_args)
 			mono_raise_exception (mono_get_exception_not_implemented (NULL));
-		return mono_lookup_dynamic_token (image, token, NULL);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
@@ -5102,7 +5186,7 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 		if (type_args || method_args)
 			mono_raise_exception (mono_get_exception_not_implemented (NULL));
 		/* FIXME: validate memberref token type */
-		return mono_lookup_dynamic_token (image, token, NULL);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
@@ -5134,7 +5218,7 @@ ves_icall_System_Reflection_Module_ResolveStringToken (MonoImage *image, guint32
 	}
 
 	if (image->dynamic)
-		return mono_lookup_dynamic_token (image, token, NULL);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
 
 	if ((index <= 0) || (index >= image->heap_us.size)) {
 		*error = ResolveTokenError_OutOfRange;
@@ -5167,7 +5251,7 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 		if (type_args || method_args)
 			mono_raise_exception (mono_get_exception_not_implemented (NULL));
 		/* FIXME: validate memberref token type */
-		return mono_lookup_dynamic_token (image, token, NULL);
+		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
@@ -5413,18 +5497,8 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 static void
 ves_icall_System_Delegate_SetMulticastInvoke (MonoDelegate *this)
 {
-	gpointer iter;
-	MonoMethod *invoke;
-
-	/* Find the Invoke method */
-	iter = NULL;
-	while ((invoke = mono_class_get_methods (this->object.vtable->klass, &iter))) {
-		if (!strcmp (invoke->name, "Invoke"))
-			break;
-	}
-	g_assert (invoke);
-
-	this->invoke_impl = mono_compile_method (mono_marshal_get_delegate_invoke (invoke, this));
+	/* Reset the invoke impl to the default one */
+	this->invoke_impl = mono_runtime_create_delegate_trampoline (this->object.vtable->klass);
 }
 
 /*
@@ -6287,6 +6361,9 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 
 	method = rmethod->method;
 	klass = mono_class_from_mono_type (rtype->type);
+
+	if (MONO_CLASS_IS_INTERFACE (klass))
+		return NULL;
 
 	if (method->flags & METHOD_ATTRIBUTE_STATIC)
 		return NULL;

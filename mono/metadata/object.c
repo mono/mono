@@ -524,6 +524,12 @@ mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gbo
 	return arch_create_jump_trampoline (domain, method, add_sync_wrapper);
 }
 
+gpointer
+mono_runtime_create_delegate_trampoline (MonoClass *klass)
+{
+	return arch_create_delegate_trampoline (klass);
+}
+
 static MonoFreeMethodFunc default_mono_free_method = NULL;
 
 /**
@@ -1479,6 +1485,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 			MonoClass *fklass = mono_class_from_mono_type (field->type);
 			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT));
 			t = (char*)vt->data + field->offset;
+			/* some fields don't really have rva, they are just zeroed (bss? bug #343083) */
+			if (!field->data)
+				continue;
 			if (fklass->valuetype) {
 				memcpy (t, field->data, mono_class_value_size (fklass, NULL));
 			} else {
@@ -1591,7 +1600,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		}
 	}
 
-	if (class->generic_class)
+	if (class->generic_class && mono_class_generic_sharing_enabled (class))
 		mono_class_setup_runtime_generic_context (class, domain);
 
 	mono_domain_unlock (domain);
@@ -4656,8 +4665,7 @@ mono_print_unhandled_exception (MonoObject *exc)
  * @target: target object
  * @addr: pointer to native code
  *
- * This is used to initialize a delegate. We also insert the method_info if
- * we find the info with mono_jit_info_table_find().
+ * This is used to initialize a delegate.
  */
 void
 mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
@@ -4676,7 +4684,7 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 
 	if ((ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (addr)))) {
 		method = ji->method;
-		MONO_OBJECT_SETREF (delegate, method_info, mono_method_get_object (domain, method, NULL));
+		delegate->method = method;
 	}
 
 	if (target && target->vtable->klass == mono_defaults.transparent_proxy_class) {

@@ -304,9 +304,10 @@ cond_exc_ic: len:8
 cond_exc_inc: len:8
 
 long_conv_to_ovf_i: dest:i src1:i src2:i len:40
+long_conv_to_r_un: dest:f src1:i src2:i len:48 
+
 long_mul_ovf: dest:i src1:i src2:i clob:1 len:16
 long_mul_ovf_un: dest:i src1:i src2:i len:22
-long_conv_to_r_un: dest:f src1:i src2:i len:48 
 
 long_add_imm: dest:i src1:i clob:1 len:12
 long_sub_imm: dest:i src1:i clob:1 len:12
@@ -502,6 +503,7 @@ int_xor_imm: dest:i src1:i clob:1 len:64
 int_shl_imm: dest:i src1:i clob:1 len:64
 int_shr_imm: dest:i src1:i clob:1 len:64
 int_shr_un_imm: dest:i src1:i clob:1 len:64
+
 int_min: dest:i src1:i src2:i len:16 clob:1
 int_max: dest:i src1:i src2:i len:16 clob:1
 

@@ -1,3 +1,69 @@
+2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* Makefile: add support to check strict tests.
+
+	* AssemblyRunner.cs: start using peverify as part of the
+	process. Support for strict tests.
+
+2007-12-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_filter_ends_at_endfilter_1.il: tests if the
+	filter block is limited by the start of the associated 
+	handler clause or it is limited by the ocurrence of
+	endfilter. These 3 tests show that even if the endfilter
+	instruction must be the last, it doesn't define the end
+	of the filter block.
+
+	* invalid_filter_ends_at_endfilter_2.il: same
+
+	* invalid_filter_ends_at_endfilter_3.il: same
+
+	* make_test.sh: added tests for endfinally / endfault
+	* make_endfinally_test.sh: new test generator
+
+2007-12-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for rethrow
+	* make_rethrow_test.sh: new test generator
+
+2007-12-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for throw
+	* make_throw_test.sh: new test generator
+
+2007-12-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for castclass and isinst
+	* make_cast_test.sh: new test generator
+
+2007-12-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for stelem.X
+	* make_stelem_test.sh: new test generator
+
+2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for ldelem
+
+2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: fixed compilation issues with some tests.
+
+2007-12-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for ldelem.X
+	* make_ldelem_test.sh: new test generator
+
+2007-12-05 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for ldelema
+	* make_ldelema_test.sh: new test generator
+
+2007-12-05 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for ldlen
+	* make_ldlen_test.sh: new test generator
+
 2007-10-26 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_array_method.cs: test for invoking array methods.

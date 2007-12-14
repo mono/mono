@@ -1,7 +1,10 @@
-2007-11-06  Jb Evain  <jbevain@novell.com>
+2007-12-06  Jb Evain  <jbevain@novell.com>
 
-	* main.c: Don't crash when a referenced assembly cannot be
-	found. Fix #323943.
+	* main.c: fix regression #346283.
+
+2007-11-20  Jb Evain  <jbevain@novell.com>
+
+	* main.c: support for uninitialized .data.
 
 2007-11-05  Jackson Harper  <jackson@ximian.com>
 

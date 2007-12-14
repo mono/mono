@@ -1,3 +1,15 @@
+2007-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* machine.config: updated the LocalSqlServer connection string to
+	match MS.NET and added a new connection string, LocalSqliteServer,
+	to be used by default on Unix.
+	Updated the AspNetSqlMembershipProvider definition to match
+	MS.NET.
+
+	* settings.map: added
+
+	* Makefile.am: added settings.map
+
 2007-10-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* web.config, machine.config: moved webSerices section from former

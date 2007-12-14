@@ -20,9 +20,9 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
 if INSTALL_2_1
-build_profiles = default net_2_0 net_2_1
+build_profiles = default net_2_0 net_3_5 net_2_1
 else
-build_profiles = default net_2_0
+build_profiles = default net_2_0 net_3_5
 endif
 else
 build_profiles = default
@@ -85,8 +85,16 @@ endif
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(build_profiles); do \
-	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
-	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
+	  if [ "net_3_5" = "$$profile" ]; then \
+		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
+	  else \
+		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
+	  fi; \
+	  export MONO_PATH; \
+	  for i in $(mcs_topdir)/class/lib/$$profile/*.{dll,exe}; do \
+		if [ ! -f $$i ] ; then \
+			continue ; \
+		fi ;  \	  
 	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
 	    else \

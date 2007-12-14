@@ -168,7 +168,8 @@ print_tree_node (MonoInst *tree) {
 	case OP_VCALL:
 	case OP_VCALLVIRT:
 	case OP_VOIDCALL:
-	case OP_VOIDCALLVIRT: {
+	case OP_VOIDCALLVIRT:
+	case OP_TRAMPCALL_VTABLE: {
 		MonoCallInst *call = (MonoCallInst*)tree;
 		if (call->method)
 			printf ("[%s]", call->method->name);
@@ -643,7 +644,7 @@ update_aliasing_information_on_inst (MonoAliasingInformation *info, MonoAliasing
 	} else if ((inst->opcode == OP_UNBOXCAST) || OP_IS_PCONV (inst->opcode) || OP_IS_ICONV (inst->opcode)) {
 		father_alias->type = context.subtree_aliases [0].type;
 		father_alias->variable_index = context.subtree_aliases [0].variable_index;
-	} else if ((inst->opcode == CEE_LDELEMA) || (inst->opcode == OP_COMPARE) || (inst->opcode == CEE_SWITCH)) {
+	} else if ((inst->opcode == CEE_LDELEMA) || (inst->opcode == OP_COMPARE) || (inst->opcode == OP_SWITCH)) {
 		if (father_alias != NULL) {
 			father_alias->type = MONO_ALIASING_TYPE_NO_ALIAS;
 		}

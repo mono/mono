@@ -574,6 +574,12 @@ typedef struct {
 	void       *handle;
 } MonoHandleRef;
 
+enum {
+	MONO_GENERIC_SHARING_NONE,
+	MONO_GENERIC_SHARING_CORLIB,
+	MONO_GENERIC_SHARING_ALL
+};
+
 extern MonoStats mono_stats MONO_INTERNAL;
 
 typedef gpointer (*MonoTrampoline)       (MonoMethod *method);
@@ -581,7 +587,7 @@ typedef gpointer (*MonoJumpTrampoline)       (MonoDomain *domain, MonoMethod *me
 typedef gpointer (*MonoRemotingTrampoline)       (MonoMethod *method, MonoRemotingTarget target);
 typedef gpointer (*MonoDelegateTrampoline)       (MonoClass *klass);
 
-typedef gpointer (*MonoLookupDynamicToken) (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context);
+typedef gpointer (*MonoLookupDynamicToken) (MonoImage *image, guint32 token, gboolean valid_token, MonoClass **handle_class, MonoGenericContext *context);
 
 typedef gboolean (*MonoGetCachedClassInfo) (MonoClass *klass, MonoCachedClassInfo *res);
 
@@ -639,6 +645,9 @@ mono_class_needs_cctor_run (MonoClass *klass, MonoMethod *caller) MONO_INTERNAL;
 gboolean
 mono_class_has_special_static_fields (MonoClass *klass) MONO_INTERNAL;
 
+const char*
+mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_type) MONO_INTERNAL;
+
 void
 mono_install_trampoline (MonoTrampoline func) MONO_INTERNAL;
 
@@ -655,13 +664,16 @@ gpointer
 mono_lookup_dynamic_token (MonoImage *image, guint32 token, MonoGenericContext *context) MONO_INTERNAL;
 
 gpointer
-mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, MonoClass **handle_class, MonoGenericContext *context) MONO_INTERNAL;
+mono_lookup_dynamic_token_class (MonoImage *image, guint32 token, gboolean check_token, MonoClass **handle_class, MonoGenericContext *context) MONO_INTERNAL;
 
 void
 mono_install_lookup_dynamic_token (MonoLookupDynamicToken func) MONO_INTERNAL;
 
 gpointer
 mono_runtime_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper) MONO_INTERNAL;
+
+gpointer
+mono_runtime_create_delegate_trampoline (MonoClass *klass) MONO_INTERNAL;
 
 void
 mono_install_get_cached_class_info (MonoGetCachedClassInfo func) MONO_INTERNAL;
@@ -879,6 +891,9 @@ mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass) MONO_IN
 
 MonoType*
 mono_type_get_basic_type_from_generic (MonoType *type) MONO_INTERNAL;
+
+gboolean
+mono_class_generic_sharing_enabled (MonoClass *class) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */
 

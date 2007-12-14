@@ -2556,7 +2556,7 @@ I=1
 for TYPE1 in "int8" "bool" "int16" "char" "int32" "int64" "float32" "float64" "native int"
 do
 	./make_store_indirect_test.sh indirect_store_bad_addr_ref_${I} unverifiable "stind.ref" "${TYPE1}\&" "object"
-	./make_store_indirect_test.sh indirect_store_bad_val_ref_${I} unverifiable "stind.ref" "object&" "${TYPE1}"
+	./make_store_indirect_test.sh indirect_store_bad_val_ref_${I} unverifiable "stind.ref" "object\&" "${TYPE1}"
 	I=`expr $I + 1`
 done
 
@@ -2615,4 +2615,579 @@ done
 ./make_newobj_test.sh newobj_method_not_ctor_2 invalid "newobj instance void class ClassA::sctor(int32)" "int32" "int32"
 ./make_newobj_test.sh newobj_method_not_ctor_1 invalid "pop\n\tnewobj instance void class ClassA::.cctor()" "int32" "int32"
 
+
+#ldlen tests
+./make_ldlen_test.sh ldlen_int_array valid "ldc.i4.0\n\tnewarr int32"
+./make_ldlen_test.sh ldlen_array_array valid "ldc.i4.0\n\tnewarr string[]"
+
+./make_ldlen_test.sh ldlen_multi_dyn_array unverifiable "ldc.i4.0\n\tldc.i4.0\n\tnewobj instance void string[,]::.ctor(int32, int32)"
+
+#TODO add tests for arrays that are not zero-based
+#./make_ldlen_test.sh ldlen_size_bounded_array unverifiable "call int32[1...5] mkarr()"
+
+./make_ldlen_test.sh ldlen_empty_stack invalid "nop"
+
+I=1
+for OP in "ldc.i4.0" "ldc.r4 0" " newobj instance void object::.ctor()"
+do
+  ./make_ldlen_test.sh ldlen_bad_stuff_on_stack_${I} unverifiable "$OP"
+  I=`expr $I + 1`
+done
+
+
+#ldelema
+
+#TODO add tests for CMMP (read only prefix)
+#TODO add tests for arrays that are not zero-based
+
+./make_ldelema_test.sh ldelema_int_array valid "newarr int32" "ldc.i4.0" "int32"
+./make_ldelema_test.sh ldelema_null_array valid "pop\n\tldnull" "ldc.i4.0" "int32"
+
+./make_ldelema_test.sh ldelema_int_array_native_int valid "newarr int32" "ldc.i4.0\n\tconv.i" "int32"
+./make_ldelema_test.sh ldelema_null_array_native_int valid "pop\n\tldnull" "ldc.i4.0\n\tconv.i" "int32"
+
+
+./make_ldelema_test.sh ldelema_empty_stack_1 invalid "pop" "nop" "int32"
+./make_ldelema_test.sh ldelema_empty_stack_2 invalid "newarr int32" "nop" "int32"
+./make_ldelema_test.sh ldelema_empty_stack_3 invalid "pop" "ldc.i4.0" "int32"
+
+I=1
+for ARR in "int8" "int16" "int32" 
+do
+ ./make_ldelema_test.sh ldelema_size_compat_${I} valid "newarr ${ARR}" "ldc.i4.0" "unsigned ${ARR}"
+  I=`expr $I + 1`
+done
+
+for ARR in "int8" "int16" "int32"
+do
+ ./make_ldelema_test.sh ldelema_size_compat_${I} valid "newarr unsigned ${ARR}" "ldc.i4.0" "${ARR}"
+  I=`expr $I + 1`
+done
+
+./make_ldelema_test.sh ldelema_size_compat_nat_1 valid "newarr native int" "ldc.i4.0" "native unsigned int"
+./make_ldelema_test.sh ldelema_size_compat_nat_2 valid "newarr native unsigned int" "ldc.i4.0" "native int"
+
+
+./make_ldelema_test.sh ldelema_misc_size_compat_1 valid "newarr bool" "ldc.i4.0" "int8"
+./make_ldelema_test.sh ldelema_misc_size_compat_2 valid "newarr char" "ldc.i4.0" "int16"
+./make_ldelema_test.sh ldelema_misc_size_compat_3 valid "newarr native int" "ldc.i4.0" "int32"
+./make_ldelema_test.sh ldelema_misc_size_compat_4 valid "newarr native unsigned int" "ldc.i4.0" "int32"
+
+./make_ldelema_test.sh ldelema_misc_size_compat_5 valid "newarr int8" "ldc.i4.0" "bool" 
+./make_ldelema_test.sh ldelema_misc_size_compat_6 valid "newarr int16" "ldc.i4.0" "char"
+./make_ldelema_test.sh ldelema_misc_size_compat_7 valid "newarr int32" "ldc.i4.0" "native int"
+./make_ldelema_test.sh ldelema_misc_size_compat_8 valid "newarr int32" "ldc.i4.0" "native unsigned int"
+
+./make_ldelema_test.sh ldelema_misc_size_compat_9 valid "newarr unsigned int8" "ldc.i4.0" "bool" 
+./make_ldelema_test.sh ldelema_misc_size_compat_10 valid "newarr unsigned int16" "ldc.i4.0" "char"
+./make_ldelema_test.sh ldelema_misc_size_compat_11 valid "newarr unsigned int32" "ldc.i4.0" "native int"
+./make_ldelema_test.sh ldelema_misc_size_compat_12 valid "newarr unsigned int32" "ldc.i4.0" "native unsigned int"
+
+
+I=1
+for ARR in "newobj instance void object::.ctor()" "ldc.i4.0\n\tldc.i4.0\n\tnewobj instance void string[,]::.ctor(int32, int32)" "ldc.r4 0" "ldc.r8 0" "ldc.i8 0" "ldc.i4.0" "ldc.i4.0\n\tconv.i"
+do
+ ./make_ldelema_test.sh ldelema_bad_array_${I} unverifiable "pop\n\t${ARR}" "ldc.i4.0" "int32"
+  I=`expr $I + 1`
+done
+
+
+I=1
+for IDX in "newobj instance void object::.ctor()" "ldc.i8 0" "ldc.r4 0"
+do
+ ./make_ldelema_test.sh ldelema_bad_index_${I} unverifiable "newarr int32" "${IDX}" "int32"
+  I=`expr $I + 1`
+done
+
+I=1
+for TOKEN in "object" "int64" "int32[]"
+do
+./make_ldelema_test.sh ldelema_type_mismatch_${I} unverifiable "newarr int32" "ldc.i4.0" "${TOKEN}"
+  I=`expr $I + 1`
+done
+
+for TOKEN in "object" "int32"
+do
+./make_ldelema_test.sh ldelema_type_mismatch_${I} unverifiable "newarr string" "ldc.i4.0" "${TOKEN}"
+  I=`expr $I + 1`
+done
+
+for TOKEN in "object" "int32" "ClassSubA"
+do
+./make_ldelema_test.sh ldelema_type_mismatch_${I} unverifiable "newarr ClassA" "ldc.i4.0" "${TOKEN}"
+  I=`expr $I + 1`
+done
+
+
+#ldelem.X
+
+#TODO add tests for CMMP (read only prefix)
+#TODO add tests for arrays that are not zero-based
+
+
+I=1
+for ARR in "int8" "bool" "unsigned int8"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.i1"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.u1"
+	I=`expr $I + 1`
+done
+
+for ARR in "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.i1"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.u1"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int16" "char" "unsigned int16"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.i2"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.u2"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.i2"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.u2"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int32" "unsigned int32" "native int" "native unsigned int"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.i4"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.u4"
+	./make_ldelem_test.sh ldelem_base_types_n_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.i"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.i4"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.u4"
+	./make_ldelem_test.sh ldelem_base_types_n_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.i"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int64" "unsigned int64"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.i8"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.u8"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "float32" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.i8"
+	./make_ldelem_test.sh ldelem_base_types_u_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.u8"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "float32"
+do
+	./make_ldelem_test.sh ldelem_base_types_f_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.r4"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_f_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.r4"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "float64"
+do
+	./make_ldelem_test.sh ldelem_base_types_f_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.r8"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "object"
+do
+	./make_ldelem_test.sh ldelem_base_types_f_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.r8"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "object" "string" "ClassA"
+do
+	./make_ldelem_test.sh ldelem_base_types_o_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem.ref"
+	I=`expr $I + 1`
+done
+
+for ARR in "valuetype MyStruct" "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" 
+do
+	./make_ldelem_test.sh ldelem_base_types_o_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldelem.ref"
+	I=`expr $I + 1`
+done
+
+I=1
+for OP in i1 u1 i2 u2 i4 u4 i8 u8 r4 r8 i ref
+do
+	./make_ldelem_test.sh ldelem_null_array_${I} valid "pop\n\tldnull" "ldc.i4.0" "ldelem.${OP}"
+	I=`expr $I + 1`
+done
+
+
+I=1
+for OP in i1 u1 i2 u2 i4 u4 i8 u8 r4 r8 i ref
+do
+	./make_ldelem_test.sh ldelem_empty_stack_1_${I} invalid "pop" "nop" "ldelem.${OP}"
+	./make_ldelem_test.sh ldelem_empty_stack_2_${I} invalid "newarr int32" "nop" "ldelem.${OP}"
+	./make_ldelem_test.sh ldelem_empty_stack_3_${I} invalid "pop" "ldc.i4.0" "ldelem.${OP}"
+	I=`expr $I + 1`
+done
+
+I=1
+for OP in i1 u1 i2 u2 i4 u4 i8 u8 r4 r8 i ref
+do
+	for ARR in "newobj instance void object::.ctor()" "ldc.i4.0\n\tldc.i4.0\n\tnewobj instance void string[,]::.ctor(int32, int32)" "ldc.r4 0" "ldc.r8 0" "ldc.i8 0" "ldc.i4.0" "ldc.i4.0\n\tconv.i"
+	do
+	 ./make_ldelem_test.sh ldelema_bad_array_${I} unverifiable "pop\n\t${ARR}" "ldc.i4.0" "ldelem.${OP}"
+	  I=`expr $I + 1`
+	done
+done
+
+
+I=1
+for OP in i1 u1 i2 u2 i4 u4 i8 u8 r4 r8 i ref
+do
+	for IDX in "newobj instance void object::.ctor()" "ldc.i8 0" "ldc.r4 0"
+	do
+	 ./make_ldelem_test.sh ldelema_bad_index_${I} unverifiable "pop\n\tldnull" "${IDX}" "ldelem.${OP}"
+	  I=`expr $I + 1`
+	done
+done
+
+
+#adicional tests for ldelem
+I=1
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_ldelem_test.sh ldelem_token_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldelem ${ARR}"
+	I=`expr $I + 1`
+done
+
+
+#stdelem.X
+#TODO add tests for arrays that are not zero-based
+
+I=1
+for ARR in "int8" "bool" "unsigned int8"
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i1"
+	I=`expr $I + 1`
+done
+
+for ARR in "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i1"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int16" "char" "unsigned int16"
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i2"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i2"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int32" "unsigned int32" "native int" "native unsigned int"
+do
+	./make_stelem_test.sh stelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0\n\tconv.i" "stelem.i4"
+	./make_stelem_test.sh stelem_base_types_i4_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i4"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0\n\tconv.i" "stelem.i4"
+	./make_stelem_test.sh stelem_base_types_i4_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i4"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int64" "unsigned int64"
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i8 0" "stelem.i8"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "float32" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i8 0" "stelem.i8"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "float32"
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.r4 0" "stelem.r4"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.r4 0" "stelem.r4"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "float64"
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.r8 0" "stelem.r8"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "object"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.r8 0" "stelem.r8"
+	I=`expr $I + 1`
+done
+
+
+for ARR in "int32" "unsigned int32" "native int" "native unsigned int"
+do
+	./make_stelem_test.sh stelem_base_types_i_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0\n\tconv.i" "stelem.i"
+	./make_stelem_test.sh stelem_base_types_i4_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16"  "int64" "unsigned int64" "float32" "float64" "object"
+do
+	./make_stelem_test.sh stelem_base_types_i_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0\n\tconv.i" "stelem.i"
+	./make_stelem_test.sh stelem_base_types_i4_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i"
+	I=`expr $I + 1`
+done
+
+
+for ARR in object ClassA ClassSubA
+do
+	./make_stelem_test.sh stelem_base_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "newobj instance void ${ARR}::.ctor()" "stelem.ref"
+	I=`expr $I + 1`
+done
+
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int" "int64" "unsigned int64" "float32" "float64"
+do
+	./make_stelem_test.sh stelem_base_types_${I} unverifiable "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.ref"
+	I=`expr $I + 1`
+done
+
+
+
+./make_stelem_test.sh stelem_native_int_index valid "newarr int32" "ldc.i4.0\n\tconv.i" "ldc.i4.0" "stelem.i4"
+
+
+#tests with null arrays and values (for ref types)
+
+I=1
+for OP in i1 i2 i4 i
+do
+	./make_stelem_test.sh stelem_null_array_index_i_${I} valid "pop\n\tldnull" "ldc.i4.0" "ldc.i4.0" "stelem.${OP}"
+	I=`expr $I + 1`
+done
+
+./make_stelem_test.sh stelem_null_array_index_i8 valid "pop\n\tldnull" "ldc.i4.0" "ldc.i8 0" "stelem.i8"
+./make_stelem_test.sh stelem_null_array_index_r4 valid "pop\n\tldnull" "ldc.i4.0" "ldc.r4 0" "stelem.r4"
+./make_stelem_test.sh stelem_null_array_index_r8 valid "pop\n\tldnull" "ldc.i4.0" "ldc.r8 0" "stelem.r4"
+./make_stelem_test.sh stelem_null_array_index_ref valid "pop\n\tldnull" "ldc.i4.0" "newobj instance void object::.ctor()" "stelem.ref"
+
+./make_stelem_test.sh stelem_null_value_1 valid "newarr object" "ldc.i4.0" "ldnull" "stelem.ref"
+./make_stelem_test.sh stelem_null_value_2 valid "newarr string" "ldc.i4.0" "ldnull" "stelem.ref"
+
+#both need to be reference types
+./make_stelem_test.sh stelem_variance_1 valid "newarr object" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_variance_2 valid "newarr object" "ldc.i4.0" "newobj instance void ClassSubA::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_variance_3 valid "newarr ClassA" "ldc.i4.0" "newobj instance void ClassSubA::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_variance_4 valid "newarr ClassSubA" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_variance_5 valid "newarr ClassSubA" "ldc.i4.0" "newobj instance void object::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_variance_6 valid "newarr string" "ldc.i4.0" "newobj instance void object::.ctor()" "stelem.ref"
+
+./make_stelem_test.sh stelem_value_type_1 unverifiable "newarr object" "ldc.i4.0" "ldloc.0" "stelem.ref"
+./make_stelem_test.sh stelem_value_type_2 unverifiable "newarr object" "ldc.i4.0" "ldloca.s 0" "stelem.ref"
+./make_stelem_test.sh stelem_value_type_3 unverifiable "newarr MyStruct" "ldc.i4.0" "newobj instance void object::.ctor()" "stelem.ref"
+./make_stelem_test.sh stelem_value_type_4 unverifiable "newarr MyStruct" "ldc.i4.0" "ldloc.0" "stelem.ref"
+./make_stelem_test.sh stelem_value_type_5 unverifiable "newarr MyStruct" "ldc.i4.0" "ldloca.s 0" "stelem.ref"
+
+
+#bad index values
+I=1
+for IDX in "ldc.i8 0" "ldc.r4 0" "ldc.r8 0" "newobj instance void ClassA::.ctor()"
+do
+	./make_stelem_test.sh stelem_bad_index_${I} unverifiable "newarr int32" "${IDX}" "ldc.i4.0" "stelem.i4"
+	I=`expr $I + 1`
+done
+
+#bad array values
+I=1
+for ARR in "ldc.i4.0" "ldc.i8 0" "ldc.r4 0" "ldc.r8 0" "newobj instance void ClassA::.ctor()"
+do
+	./make_stelem_test.sh stelem_bad_index_${I} unverifiable "pop\n\t${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem.i4"
+	I=`expr $I + 1`
+done
+
+
+#empty stack
+./make_stelem_test.sh stelem_empty_stack_1 invalid "newarr object" "ldc.i4.0" "pop" "stelem.ref"
+./make_stelem_test.sh stelem_empty_stack_2 invalid "newarr object" "nop" "ldnull" "stelem.ref"
+./make_stelem_test.sh stelem_empty_stack_3 invalid "newarr object" "nop" "nop" "stelem.ref"
+./make_stelem_test.sh stelem_empty_stack_4 invalid "pop" "nop" "nop" "stelem.ref"
+
+
+#test with multi-dim array
+./make_stelem_test.sh stelem_multi_dim_array unverifiable "ldc.i4.0\n\tnewobj instance void string[,]::.ctor(int32, int32)" "ldc.i4.0" "ldc.i4.0" "stelem.i4"
+
+
+
+
+#adicional tests for stelem
+I=1
+for ARR in "int8" "bool" "unsigned int8" "int16" "char" "unsigned int16" "int32" "unsigned int32" "native int" "native unsigned int"
+do
+	./make_stelem_test.sh stelem_token_basic_types_${I} valid "newarr ${ARR}" "ldc.i4.0" "ldc.i4.0" "stelem ${ARR}"
+	I=`expr $I + 1`
+done
+
+./make_stelem_test.sh stelem_token_basic_types_i8 valid "newarr int64" "ldc.i4.0" "ldc.i8 0" "stelem int64"
+./make_stelem_test.sh stelem_token_basic_types_r4 valid "newarr float32" "ldc.i4.0" "ldc.r4 0" "stelem float32"
+./make_stelem_test.sh stelem_token_basic_types_r8 valid "newarr float64" "ldc.i4.0" "ldc.r8 0" "stelem float64"
+
+I=1
+for TYPE in "object" "ClassA" "ClassSubA"
+do
+	./make_stelem_test.sh stelem_token_simple_ref_${I} valid "newarr object" "ldc.i4.0" "newobj instance void ${TYPE}::.ctor()" "stelem object"
+	I=`expr $I + 1`
+done
+
+#the array elem type must be a super type of the stelem token
+./make_stelem_test.sh stelem_token_ref_1 valid "newarr object" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem ClassA"
+./make_stelem_test.sh stelem_token_ref_2 valid "newarr ClassA" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem ClassA"
+./make_stelem_test.sh stelem_token_ref_3 unverifiable "newarr ClassSubA" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem ClassA"
+
+#the value type must be assignment compatible with token
+./make_stelem_test.sh stelem_token_ref_4 valid "newarr object" "ldc.i4.0" "newobj instance void ClassA::.ctor()" "stelem ClassA"
+./make_stelem_test.sh stelem_token_ref_5 valid "newarr object" "ldc.i4.0" "newobj instance void ClassSubA::.ctor()" "stelem ClassA"
+./make_stelem_test.sh stelem_token_ref_6 unverifiable "newarr object" "ldc.i4.0" "newobj instance void object::.ctor()" "stelem ClassA"
+
+
+
+#cast class and isins tests
+
+#empty stack
+./make_cast_test.sh cast_empty_stack invalid "int32" "nop" "castclass object"
+./make_cast_test.sh isinst_empty_stack invalid "int32"  "nop" "isinst object"
+
+#type
+I=1
+for OBJ in int32 int64 float32 float64 "int32\&" "valuetype MyStruct" "int32*" "typedref" "method int32 *(int32)"
+do
+	./make_cast_test.sh cast_object_${I} unverifiable "$OBJ" "ldloc.0" "castclass object"
+	./make_cast_test.sh isinst_object_${I} unverifiable "$OBJ" "ldloc.0" "isinst object"
+	I=`expr $I + 1`
+done
+
+for OBJ in "int32[]" "string"
+do
+	./make_cast_test.sh cast_object_${I} valid "$OBJ" "ldloc.0" "castclass object"
+	./make_cast_test.sh isinst_object_${I} valid "$OBJ" "ldloc.0" "isinst object"
+	I=`expr $I + 1`
+done
+#token
+
+I=1
+for TOKEN in int32 int64 float32 float64 "valuetype MyStruct" "int32*" "typedref" "int32[]" "string" "method int32 *(int32)"
+do
+	./make_cast_test.sh cast_token_${I} valid "object" "ldloc.0" "castclass $TOKEN"
+	./make_cast_test.sh isinst_token_${I} valid "object" "ldloc.0" "isinst $TOKEN"
+	I=`expr $I + 1`
+done
+
+for TOKEN in "int32\&"
+do
+	./make_cast_test.sh cast_token_${I} invalid "object" "ldloc.0" "castclass $TOKEN"
+	./make_cast_test.sh isinst_token_${I} invalid "object" "ldloc.0" "isinst $TOKEN"
+	I=`expr $I + 1`
+done
+
+#object
+
+I=1
+for LOAD in "ldloc.0" "ldnull" 
+do
+	./make_cast_test.sh cast_good_obj_${I} valid "object" "$LOAD" "castclass object"
+	./make_cast_test.sh isinst_good_obj_${I} valid "object" "$LOAD" "isinst object"
+	I=`expr $I + 1`
+done
+
+
+
+#throw tests
+
+#empty stack
+./make_throw_test.sh throw_empty_stack invalid int32 pop
+
+#null literal
+./make_throw_test.sh throw_null_literal valid int32 "pop\n\tldnull"
+
+#valid types
+I=1
+for TYPE in object string "[mscorlib]System.Exception" "int32[]" "ClassA" "class [mscorlib]System.IComparable\`1<int32>" "int32[,]"
+do
+	./make_throw_test.sh throw_ref_type_${I} valid "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#invalid types
+I=1
+for TYPE in "valuetype MyStruct" int32 int64 float32 float64 "native int" "int32*" "typedref" "object\&"
+do
+	./make_throw_test.sh throw_value_type_${I} unverifiable "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+# Exception block branch tests (see 2.19)
+
+for I in {1..2};
+do
+	./make_rethrow_test.sh rethrow_from_catch_${I} invalid ${I}
+done
+
+for I in {3..10};
+do
+	./make_rethrow_test.sh rethrow_from_catch_${I} valid ${I}
+done
+
+
+
+# endfinally / endfault
+
+for I in {1..7};
+do
+	./make_endfinally_test.sh endfinally_block_${I} invalid finally ${I}
+	./make_endfinally_test.sh endfault_block_${I} invalid fault ${I}
+done
+
+for I in {8..9};
+do
+	./make_endfinally_test.sh endfinally_block_${I} valid finally ${I}
+	./make_endfinally_test.sh endfault_block_${I} valid fault ${I}
+done
+
+#stack can have stuff and endfinally or endfault will just empty it
+
+./make_endfinally_test.sh endfinally_clean_stack valid finally 8 "ldc.i4.0"
+./make_endfinally_test.sh endfault_clean_stack valid fault 8 "ldc.i4.0"
 

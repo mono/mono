@@ -58,7 +58,7 @@
 #define MONO_FAKE_VTABLE_METHOD ((MonoMethod*)GINT_TO_POINTER(-2))
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION "32"
+#define MONO_AOT_FILE_VERSION "33"
 
 #if 0
 #define mono_bitset_foreach_bit(set,b,n) \
@@ -561,6 +561,7 @@ typedef enum {
 	MONO_TRAMPOLINE_GENERIC,
 	MONO_TRAMPOLINE_JUMP,
 	MONO_TRAMPOLINE_CLASS_INIT,
+	MONO_TRAMPOLINE_GENERIC_CLASS_INIT,
 	MONO_TRAMPOLINE_AOT,
 	MONO_TRAMPOLINE_AOT_PLT,
 	MONO_TRAMPOLINE_DELEGATE,
@@ -1099,6 +1100,7 @@ gboolean mono_aot_is_pagefault              (void *ptr) MONO_INTERNAL;
 void mono_aot_handle_pagefault              (void *ptr) MONO_INTERNAL;
 guint32 mono_aot_get_n_pagefaults           (void) MONO_INTERNAL;
 gpointer mono_aot_plt_resolve               (gpointer aot_module, guint32 plt_info_offset, guint8 *code) MONO_INTERNAL;
+gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vtable, int slot) MONO_INTERNAL;
 
 gboolean  mono_method_blittable             (MonoMethod *method) MONO_INTERNAL;
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee) MONO_INTERNAL;
@@ -1128,6 +1130,7 @@ gpointer          mono_create_jump_trampoline (MonoDomain *domain,
 gpointer          mono_create_class_init_trampoline (MonoVTable *vtable) MONO_INTERNAL;
 gpointer          mono_create_jit_trampoline (MonoMethod *method) MONO_INTERNAL;
 gpointer          mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token) MONO_INTERNAL;
+gpointer          mono_create_delegate_trampoline (MonoClass *klass) MONO_INTERNAL;
 MonoVTable*       mono_find_class_init_trampoline_by_addr (gconstpointer addr) MONO_INTERNAL;
 gpointer          mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp) MONO_INTERNAL;
 gpointer          mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* tramp) MONO_INTERNAL;
@@ -1136,6 +1139,9 @@ gpointer          mono_aot_trampoline (gssize *regs, guint8 *code, guint8 *token
 gpointer          mono_aot_plt_trampoline (gssize *regs, guint8 *code, guint8 *token_info, 
 										   guint8* tramp) MONO_INTERNAL;
 void              mono_class_init_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp) MONO_INTERNAL;
+void              mono_generic_class_init_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp) MONO_INTERNAL;
+gconstpointer     mono_get_trampoline_func (MonoTrampolineType tramp_type);
+gpointer          mini_get_vtable_trampoline (void) MONO_INTERNAL;
 gpointer          mono_debugger_create_notification_function (void) MONO_INTERNAL;
 
 
@@ -1354,7 +1360,7 @@ MonoMethod* mono_method_get_declaring_generic_method (MonoMethod *method) MONO_I
 int mono_class_generic_class_relation (MonoClass *klass, MonoClass *method_klass,
 				       MonoGenericContext *generic_context, int *arg_num) MONO_INTERNAL;
 
-gpointer mono_helper_get_rgctx_other_ptr (MonoMethod *method, MonoRuntimeGenericContext *rgctx,
+gpointer mono_helper_get_rgctx_other_ptr (MonoClass *caller_class, MonoRuntimeGenericContext *rgctx,
 					  guint32 token, guint32 rgctx_type) MONO_INTERNAL;
 
 void mono_generic_sharing_init (void) MONO_INTERNAL;

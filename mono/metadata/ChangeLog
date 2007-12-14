@@ -1,3 +1,267 @@
+2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.h: new flags to support fail fast of unverifiable code and
+	do non-strict verification. Non-strict verification is required to
+	have MS runtime compatibility. There are a huge amount of unverifiable
+	code that it accepts as verifiable. The strict mode verifies the code
+	as the specs says.
+	Non-strict mode will be required in cases where code needs to be
+	accepted as verifiable but fails under strict mode.
+
+	* pedump.c: added support to fail fast and non-strict verification.
+
+	* verify.c: added support for both fail fast and non-strict verification.
+
+
+2007-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_endfinally): added.
+
+	* verify.c (mono_method_verify): property verification of endfinally.
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (in_any_block): check for filter clauses.
+
+	* verify.c (is_correct_rethrow): added.
+
+	* verify.c (mono_method_verify): property verification of rethrow.
+
+	* metadata.h: added MONO_OFFSET_IN_FILTER macro.
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_throw): added.
+
+	* verify.c (mono_method_verify): property verification of throw
+
+2007-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_reference): Try an assembly resolve for ref-only
+	assemblies. Fixes #346425.
+
+2007-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_get_token): Call mono_image_create_token () for
+	FieldBuilders.
+
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor): Fix a warning.
+
+	* class.c (mono_lookup_dynamic_token_class): Add a 'valid token' argument to
+	prevent asserts when this is called with a token which might not be valid.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): Call
+	lookup_dynamic_token_class with valid_token == FALSE.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveMethodToken): Ditto.	
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveStringToken): Ditto.
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveFieldToken): Ditto.
+	
+2007-12-10  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c: Don't delay threadpool thread finalization unless Mono is
+	shutting down.
+
+Mon Dec 10 11:06:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: turn an assert into a non-fatal warning.
+
+2007-12-09  Robert Jordan  <robertj@gmx.net>
+
+	* icall.c (GetVirtualMethod): Add missing argument validation.
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_cast): added.
+
+	* verify.c (mono_method_verify): property verification of castclass and isinst.
+
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_from_opcode): added opcodes for stelem.X.
+
+	* verify.c (do_stelem): added.
+
+	* verify.c (mono_method_verify): property verification of stelem.X.
+
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h: Introduce an environment variable
+	(MONO_GENERIC_SHARING) through which the extent of generic code
+	sharing can be controlled (share all classes, share only corlib
+	classes, or share nothing).
+
+	* object.c: Only create runtime generic context for classes for
+	which sharing is enabled.
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_ldelem): refactor it to work with ldelem.any.
+
+	* verify.c (mono_method_verify): property verification of ldelem.any.
+
+2007-12-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_indirect_op_mono_type): renamed to mono_type_from_opcode,
+	added ldelem.X opcodes.
+
+	* verify.c (do_ldelema): fixed possible invalid usage of MonoType.
+
+	* verify.c: proper verification of ldelem.X 
+
+2007-12-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor): Allow interface cctors to be called too.
+
+2007-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): null literal requires special handling,
+	the value pushed on stack need to be flagged as so.
+
+	* verify.c (do_ldelema): Verify ldelema properly.
+
+2007-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Verify ldlen properly.
+
+2007-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_MonoField_GetValueInternal): Check that the field belongs
+	to the target object's type. Fixes #346160.
+
+2007-12-05  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (socket_io_add_poll): Asynchronous connect() on
+	Solaris needs the same workaround as BSD-derived systems.  Fixes
+	bug 323524, patch by Burkhard Linke
+	<burkhard.linke@CeBiTec.Uni-Bielefeld.DE>
+
+2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* process.c: When ProcessStartInfo.ErrorDialog is true, pass window
+	handle to use when error dialog is shown; otherwise, update mask
+	to show no error dialog when an error occurs.
+
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_MonoField_GetRawConstantValue): New icall.
+
+	* class.c (mono_class_get_field_default_value): New helper function to initialize
+	field->def_type and field->data.
+
+2007-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Delegate_SetMulticastInvoke): Use the delegate trampoline instead of
+	the general one.
+
+	* object.c (mono_runtime_create_delegate_trampoline): New helper function.
+
+	* marshal.c: Avoid depending on delegate->method_info being set.
+
+	* object.c (mono_delegate_ctor): Avoid initializing delegate->method_info.
+	
+	* object.c (mono_delegate_ctor): Set delegate->method.
+
+	* object-internals.h (struct _MonoDelegate): Add 'method' field.
+
+	* appdomain.c: Bump corlib version.
+
+2007-11-27  Raja R Harinath  <harinath@gmail.com>
+
+	* metadata.c (mono_generic_inst_equal_full): Short-circuit
+	equality check if we're comparing canonicalized MonoGenericInsts.
+
+2007-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (generic_array_methods): Call mono_class_setup_methods () before
+	accessing class->methods.
+
+2007-11-22  Dick Porter  <dick@ximian.com>
+
+	* threads.c: Ensure that the synch_cs is set before trying to use
+	it.
+
+Thu Nov 22 12:34:04 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: r89126 broke the statistial profiler, unbreak.
+
+2007-11-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 66.
+
+	* mono-debug.c
+	(mono_debug_debugger_version): Bump to 3.
+	(mono_debug_init): Hook `mono_debugger_class_loaded_methods_func'
+	-> mono_debugger_class_initialized().
+
+	* mono-debug-debugger.c
+	(mono_debugger_add_type): Renamed into mono_debugger_class_initialized().
+
+	* class.c
+	(mono_debugger_start_class_init_func): Removed.
+	(mono_debugger_class_loaded_methods_func): Added.
+	(mono_class_setup_methods): Call it here.
+
+2007-11-22  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c
+	(mono_debug_add_delegate_trampoline): New public method.
+	(MonoDebugDataItemType): Added `MONO_DEBUG_DATA_ITEM_DELEGATE_TRAMPOLINE'.
+
+	* mono-debug.h
+	(MonoSymbolTable): Added `global_data_table'.
+	(MonoDebuggerTypeKind): Removed.
+
+2007-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_generic_array_helper): Skip visibility checks for
+	these methods.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+	
+Tue Nov 20 23:10:41 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: some fields don't have a valid rva: ignore them (bug #343083).
+
+2007-11-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 65.
+
+	* mono-debug-debugger.c
+	(mono_debugger_insert_method_breakpoint): Moved here from debug-mini.c
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): Likewise.
+	(mono_debugger_register_class_init_callback): New public method.
+	(mono_debugger_remove_class_init_callback): Likewise.
+	(mono_debugger_add_type): Likewise.
+
+	* mono-debug-debugger.h
+	(MonoDebuggerEvent): Add `MONO_DEBUGGER_EVENT_CLASS_INITIALIZED'.
+
+Tue Nov 20 20:54:12 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: more interface implementations needed for the
+	array enumerator (fixes bug #341112).
+
+2007-11-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c: Renamed arguments for ves_icall_System_Enum_ToObject to
+	fix ParamName of ArgumentNullExceptions.
+
+2007-11-17  Miguel de Icaza  <miguel@novell.com>
+
+	* reflection.c (mono_reflection_encode_sighelper): Generate the
+	modopts and modreqs.   I have a useless test that crashes monodis,
+	but that shows the code working.
+
+2007-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (create_allocator): Fix size calculation for the string allocator.
+	(mono_gc_get_managed_allocator): Enable the string allocator on amd64.
+
 2007-11-15  Dick Porter  <dick@ximian.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Join_internal):

@@ -12,6 +12,7 @@
 #endif
 
 #include "mini.h"
+#include "debug-mini.h"
 
 #ifdef MONO_ARCH_HAVE_IMT
 
@@ -87,6 +88,18 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 			displacement -= G_STRUCT_OFFSET (MonoVTable, vtable);
 			g_assert (displacement >= 0);
 			displacement /= sizeof (gpointer);
+
+			/* Avoid loading metadata or creating a generic vtable if possible */
+			addr = mono_aot_get_method_from_vt_slot (mono_domain_get (), vt, displacement);
+			if (addr && !vt->klass->valuetype) {
+				vtable_slot = mono_arch_get_vcall_slot_addr (code, (gpointer*)regs);
+				if (mono_aot_is_got_entry (code, (guint8*)vtable_slot) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot)) {
+					*vtable_slot = mono_get_addr_from_ftnptr (addr);
+				}
+
+				return addr;
+			}
+
 			mono_class_setup_vtable (vt->klass);
 			m = vt->klass->vtable [displacement];
 			if (m->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
@@ -106,7 +119,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 		/* we get the interface method because mono_convert_imt_slot_to_vtable_slot ()
 		 * needs the signature to be able to find the this argument
 		 */
-		m = mono_arch_find_imt_method (regs, code);
+		m = mono_arch_find_imt_method ((gpointer*)regs, code);
 		vtable_slot = mono_arch_get_vcall_slot_addr (code, (gpointer*)regs);
 		g_assert (vtable_slot);
 		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, (gpointer*)regs, code, m, &impl_method);
@@ -279,6 +292,22 @@ mono_class_init_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable, guin
 	}
 }
 
+/**
+ * mono_generic_class_init_trampoline:
+ *
+ * This method calls mono_runtime_class_init () to run the static constructor
+ * for the type.
+ */
+void
+mono_generic_class_init_trampoline (gssize *regs, guint8 *code, MonoVTable *vtable, guint8 *tramp)
+{
+	//g_print ("generic class init for class %s.%s\n", vtable->klass->name_space, vtable->klass->name);
+
+	mono_runtime_class_init (vtable);
+
+	//g_print ("done initing generic\n");
+}
+
 #ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
 
 /**
@@ -293,7 +322,8 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 	MonoDelegate *delegate;
 	MonoJitInfo *ji;
 	gpointer iter;
-	MonoMethod *invoke;
+	MonoMethod *invoke, *m;
+	MonoMethod *method = NULL;
 	gboolean multicast, callvirt;
 
 	/* Find the Invoke method */
@@ -308,14 +338,29 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 
 	delegate = mono_arch_get_this_arg_from_call (mono_method_signature (invoke), regs, code);
 
+	if (!delegate->method_ptr && delegate->method) {
+		/* The delegate was initialized by mini_delegate_ctor */
+		method = delegate->method;
+
+		if (delegate->target && delegate->target->vtable->klass == mono_defaults.transparent_proxy_class)
+			method = mono_marshal_get_remoting_invoke (method);
+		else if (mono_method_signature (method)->hasthis && method->klass->valuetype)
+			method = mono_marshal_get_unbox_wrapper (method);
+	} else {
+		ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (delegate->method_ptr));
+		if (ji)
+			method = ji->method;
+	}
+	callvirt = !delegate->target && method && mono_method_signature (method)->hasthis;
+
 	/* 
 	 * If the called address is a trampoline, replace it with the compiled method so
 	 * further calls don't have to go through the trampoline.
 	 */
-	ji = mono_jit_info_table_find (domain, mono_get_addr_from_ftnptr (delegate->method_ptr));
-	callvirt = !delegate->target && ji && mono_method_signature (ji->method)->hasthis;
-	if (ji && !callvirt)
-		delegate->method_ptr = mono_compile_method (ji->method);
+	if (method && !callvirt) {
+		delegate->method_ptr = mono_compile_method (method);
+		mono_debugger_trampoline_compiled (method, delegate->method_ptr);
+	}
 
 	multicast = ((MonoMulticastDelegate*)delegate)->prev != NULL;
 	if (!multicast && !callvirt) {
@@ -328,10 +373,46 @@ mono_delegate_trampoline (gssize *regs, guint8 *code, MonoClass *klass, guint8* 
 	}
 
 	/* The general, unoptimized case */
-	delegate->invoke_impl = mono_compile_method (mono_marshal_get_delegate_invoke (invoke, delegate));
+	m = mono_marshal_get_delegate_invoke (invoke, delegate);
+	delegate->invoke_impl = mono_compile_method (m);
+	mono_debugger_trampoline_compiled (m, delegate->invoke_impl);
+
 	return delegate->invoke_impl;
 }
 
 #endif
+
+/*
+ * mono_get_trampoline_func:
+ *
+ *   Return the C function which needs to be called by the generic trampoline of type
+ * TRAMP_TYPE.
+ */
+gconstpointer
+mono_get_trampoline_func (MonoTrampolineType tramp_type)
+{
+	switch (tramp_type) {
+	case MONO_TRAMPOLINE_GENERIC:
+	case MONO_TRAMPOLINE_JUMP:
+		return mono_magic_trampoline;
+	case MONO_TRAMPOLINE_CLASS_INIT:
+		return mono_class_init_trampoline;
+	case MONO_TRAMPOLINE_GENERIC_CLASS_INIT:
+		return mono_generic_class_init_trampoline;
+#ifdef MONO_ARCH_AOT_SUPPORTED
+	case MONO_TRAMPOLINE_AOT:
+		return mono_aot_trampoline;
+	case MONO_TRAMPOLINE_AOT_PLT:
+		return mono_aot_plt_trampoline;
+#endif
+#ifdef MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE
+	case MONO_TRAMPOLINE_DELEGATE:
+		return mono_delegate_trampoline;
+#endif
+	default:
+		g_assert_not_reached ();
+		return NULL;
+	}
+}
 
 

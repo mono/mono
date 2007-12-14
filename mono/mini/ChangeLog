@@ -92,7 +92,273 @@
 	* mini-amd64.c mini-x86.c mini-ia64.c: Remove usage of OP_ICONV_TO_I4 which is
 	never passed to the back ends.
 
+2007-12-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add OP_SWITCH.
+
+	* mini.c graph.c ssa.c aliasing.c mini-<ARCH>.c inssel-<ARCH>.brg: Avoid using
+	CEE_SWITCH in back-end code, use OP_SWITCH instead.
+
+2007-12-11  Geoff Norton  <gnorton@novell.com>
+
+	* mini-s390x.c: Minor change to the MAX() define to allow
+	it to compile with other gcc versions.
+
+2007-12-11  Geoff Norton  <gnorton@novell.com>
+
+	* cpu-s390x.md:
+	* mini-s390x.c: Implement sext_i4 to fix the build on s390x
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	exceptions-arm.c (mono_arch_get_restore_context): Restore
+	the frame pointer.
+
+	exceptions-arm.c (throw_exception): Save the frame pointer.
+	This is a partial fix for #323747. Only the client side is
+	fixed.
+
+2007-12-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_method_to_ir): Verbose message in CEE_NEWOBJ
+	was using an unrelated variable to log the class which
+	needed the cctor to be called. This was crashing on arm.
+
+2007-12-09  Robert Jordan  <robertj@gmx.net>
+
+	* mini-x86.c (mono_arch_emit_epilog):
+	Consider all kinds of 64-bit types. Fixes #323114.
+
+2007-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code): Clean up the code a bit.
+
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Add a missing instruction check.
+
+Fri Dec 7 22:08:23 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: run type ctor before allocating an object, not only
+	when running it's constructor method (fixes at least part of bug #342507).
+
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Fix a warning.
+	
+	* mini-trampolines.c (mono_generic_class_init_trampoline): Remove a debug printf.
+	* mini.h mini-amd64.c mini-x86.c: Get rid of the mono_arch_find_vtable () 
+	function.
+
+	* tramp-x86.c tramp-amd64.c mini-trampolines.c: Pass the vtable argument to
+	mono_generic_class_init_trampoline () the same as it is done with the other
+	trampolines.
+
+	* mini-arm.h mini-arm.c tramp-arm.c inssel-arm.brg cpu-arm.md 
+	aot-runtime.c aot-compiler.c: Implement AOT support.	
+
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (mono_generic_class_init_trampoline): Fixed
+	build for archs which don't have the vtable trampoline defined
+	yet.
+
+2007-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_create_trampoline_code): Fix the build.
+
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Use the new helper function.
+
+	* mini-trampolines.c (mono_get_trampoline_func): New helper function.
+
+	* tramp-<ARCH>.c: Use the new helper function.
+
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* inssel.brg: Added a pattern for the OP_TRAMPCALL_VTABLE
+	trampoline call, which takes a vtable argument.
+
+	* graph.c, mini-ops.h, local-propagation.c, aliasing.c: Treat
+	OP_TRAMPCALL_VTABLEs like other calls.
+
+	* mini-amd64.c, mini-amd64.h, mini-x86.c, mini-x86.h: Designated a
+	register to hold the vtable argument to the OP_TRAMPCALL_VTABLE
+	call.  Implemented a support function which fetches the vtable
+	from a register set.
+
+	* mini.c, mini.h, tramp-amd64.c, tramp-x86.c, mini-trampolines.c:
+	Implemented a generic class init trampoline, using the
+	OP_TRAMPCALL_VTABLE opcode.
+
+	* mini.c: Implemented static field access when sharing generic
+	code.  This implies initing the class using the new
+	OP_TRAMPCALL_VTABLE call.
+
+2007-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't compile methods with sharing enabled if their
+	classes are disabled for sharing.
+
+2007-12-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg: Add a missing sign extension to the GETCHR and array access
+	opcodes. Fixes #346563.
+
+	* objects.cs: Add a new test.
+
+	* aot-compiler.c (emit_method_code): Put back an #ifdef which is needed.
+
+	* mini-<ARCH>.h mini.c aot-compiler.c aot-runtime.c: Get rid of the
+	HAVE_PIC_AOT define and use AOT_SUPPORTED instead.
+
+2007-12-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.h mini-arm.c: Add support for the common vtable trampoline.
+
+2007-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_emit_exceptions): Avoid uninitialized memory in the
+	code stream.
+
+2007-12-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* patch-info.h (PATCH_INFO): Add DELEGATE_TRAMPOLINE.
+
+	* mini.c aot-compiler.c aot-runtime.c: Implement the delegate creation 
+	optimization in the AOT case.
+	
+2007-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime (mono_aot_get_method_from_vt_slot): Add support for multi-byte method ref encodings.
+	
+	* aot-runtime.c (decode_klass_ref): Implement decoding of generic instances.
+
+	* aot-compiler.c (encode_klass_ref): Implement proper encoding of generic instances.
+
+	* mini.c (mono_method_to_ir): Optimize the common ldftn+create delegate combination.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Add some code to handle the case when the delegate
+	is created by the inlined delegate ctor.
+
+	* mini-x86.c (mono_arch_output_basic_block): Unify div/rem code and handle the case when sreg2 is EDX.	
+
+	* mini.c (mono_jit_compile_method_inner): Replace calls to delegate invoke with the trampoline here too.
+
+2007-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-x86.md: Fix the length of ckfinite.
+
+2007-11-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Unify div/rem code and handle the case when sreg2 is EDX.
+	
+	* mini-x86.c (mono_arch_output_basic_block): Clean up the fp stack properly in CKFINITE.
+	(mono_arch_output_basic_block): Get rid of unused last_ins and last_offset.
+
+	* mini-x86.c (mono_arch_output_basic_block): Add some micro optimizations.
+
+	* mini-x86.c inssel-x86.brg cpu-x86.md: Move the implementation of the 
+	OP_START_HANDLER/OP_ENDFINALLY/OP_ENDFILTER opcodes to mini-x86.c.
+
+2007-11-28  Martin Baulig  <martin@ximian.com>
+
+	* mini-x86.c
+	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_trampoline()
+	after creating the trampoline.
+
+2007-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Check runtime version if needed.
+
+	* aot-compiler.c: Add bind-to-runtime-version for producing AOT files which only load into a runtime with
+	the same version.
+
+	* generic-sharing.c (mono_helper_get_rgctx_other_ptr): Change the signature to take the calling class
+	instead of the calling method to help AOT.
+
+	* mini.c (get_runtime_generic_context_other_ptr): Update after the change.
+
+2007-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_init_vtable): Simplify this if MONO_ARCH_COMMON_VTABLE_TRAMPOLINE
+	is defined.
+
+2007-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_class_name_table): Properly encode generic class names.
+	
+	* aot-compiler.c (compile_method): Correct check for generic method definitions.
+	(encode_method_ref): No need to handle generic method definitions specially.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+
+	* aot-runtime.c (decode_klass_ref): Clean this up and rename from 
+	decode_klass_info.
+
+	* aot-compiler.c (encode_klass_ref): Clean this up and rename from
+	encode_klass_info.
+	(compile_method): Enable generic sharing.
+
+2007-11-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (get_runtime_generic_context_other_ptr): Disable AOT here.
+	(mini_method_compile): Add preliminary support for AOTing shared generic code.
+
+	* aot-compiler.c (compile_method): Add preliminary support for AOTing shared
+	generic code.
+
+	* mini-trampolines.c: Fix a warning.
+
+	* mini.c (get_runtime_generic_context_other_ptr): Use NEW_METHODCONST instead of
+	NEW_PCONST.
+	(mono_method_to_ir): Use NEW_DOMAINCONST in one place.
+	(generic_class_is_reference_type): Remove unused function.
+
+	* mini-trampolines.c (mono_magic_trampoline): Avoid loading metadata if possible
+	in the generic vtable trampoline case.
+
+	* aot-runtime.c (mono_aot_init_vtable): Use the generic vtable trampoline.
+	
+	* aot-runtime.c (mono_aot_get_method_from_vt_slot): New helper function to
+	return an AOT method based on a vtable slot.
+
+	* aot-compiler.c (compile_method): Avoid AOTing synchronized methods for now.
+
+	* mini.c (mini_get_vtable_trampoline): Export this.
+
+2007-11-22  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h
+	(MonoDebuggerInfo): Move `debugger_version' up.
+
+2007-11-22  Martin Baulig  <martin@ximian.com>
+
+	* mini-amd64.c
+	(mono_arch_get_delegate_invoke_impl): Call mono_debug_add_delegate_trampoline().
+
+	* mini-trampolines.c
+	(mono_delegate_trampoline): Call mono_debugger_trampoline_compiled()
+	after compiling the method.
+
+2007-11-20  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(mono_debugger_insert_method_breakpoint): Moved into mono-debug-debugger.c.
+	(mono_debugger_remove_breakpoint): Likewise.
+	(mono_debugger_check_breakpoints): Likewise.
+
+	* debug-debugger.c: Implement the new breakpoint interface here.
+
+2007-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Unify the implementation of
+	CEE_CONV_I1/SEXT_I1 and I2 since they are the same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Ditto.	
+
 2007-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix a typo.
 
 	* mini-x86.c (mono_arch_get_inst_for_method): Remove code which is now in
 	mini.c.

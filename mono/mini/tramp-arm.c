@@ -105,7 +105,15 @@ mono_arch_patch_callsite (guint8 *code_ptr, guint8 *addr)
 void
 mono_arch_patch_plt_entry (guint8 *code, guint8 *addr)
 {
-	g_assert_not_reached ();
+	guint32 ins = branch_for_target_reachable (code, addr);
+
+	if (ins)
+		/* Patch the branch */
+		((guint32*)code) [0] = ins;
+	else
+		/* Patch the jump address */
+		((guint32*)code) [1] = addr;
+	mono_arch_flush_icache ((char*)code, 4);
 }
 
 void
@@ -117,7 +125,14 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, gssize *regs)
 void
 mono_arch_nullify_plt_entry (guint8 *code)
 {
-	g_assert_not_reached ();
+	guint8 buf [4];
+	guint8 *p;
+
+	p = buf;
+	ARM_MOV_REG_REG (p, ARMREG_PC, ARMREG_LR);
+
+	((guint32*)code) [0] = ((guint32*)buf) [0];
+	mono_arch_flush_icache ((char*)code, 4);
 }
 
 
@@ -259,16 +274,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 
 	constants = (gpointer*)buf;
 	constants [0] = mono_get_lmf_addr;
-	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT)
-		constants [1] = mono_class_init_trampoline;
-	else if (tramp_type == MONO_TRAMPOLINE_AOT)
-		constants [1] = mono_aot_trampoline;
-	else if (tramp_type == MONO_TRAMPOLINE_AOT_PLT)
-		constants [1] = mono_aot_plt_trampoline;
-	else if (tramp_type == MONO_TRAMPOLINE_DELEGATE)
-		constants [1] = mono_delegate_trampoline;
-	else
-		constants [1] = mono_magic_trampoline;
+	constants [1] = mono_get_trampoline_func (tramp_type);
 
 	/* backpatch by emitting the missing instructions skipped above */
 	ARM_LDR_IMM (load_get_lmf_addr, ARMREG_R0, ARMREG_PC, (buf - load_get_lmf_addr - 8));

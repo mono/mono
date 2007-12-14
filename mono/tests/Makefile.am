@@ -215,6 +215,7 @@ TEST_CS_SRC=			\
 	bug-78653.cs		\
 	bug-78656.cs		\
 	bug-77127.cs		\
+	bug-323114.cs		\
 	bug-331958.cs		\
 	interlocked.cs		\
 	cross-domain.cs		\
@@ -240,6 +241,7 @@ TEST_CS_SRC=			\
 	transparentproxy.cs \
 	imt_big_iface_test.cs \
 	dbnull-missing.cs	\
+	test-type-ctor.cs 	\
 	soft-float-tests.cs
 
 if X86
@@ -309,6 +311,7 @@ TEST_CS2_SRC = \
 	bug-82194.2.cs	\
 	anonarray.2.cs	\
 	ienumerator-interfaces.2.cs	\
+	array-enumerator-ifaces.2.cs	\
 	generic_type_definition_encoding.2.cs \
 	generic_type_definition.2.cs	\
 	bug-333798.2.cs		\
@@ -363,7 +366,7 @@ else
 if PLATFORM_WIN32
 test:   assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535
 else
-test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535
+test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 custom-modifiers
 endif
 endif
 
@@ -452,7 +455,9 @@ testjit-net_2_0: $(TESTSI_CS2) $(TESTSI_IL2) libtest.la
 	if [ $${failed} != 0 ]; then echo -e "\nFailed tests:\n"; \
 	  for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
 
-testaot: $(TESTSI_CS) $(TESTBS) libtest.la
+testaot: testaot-default testaot-net_2_0
+
+testaot-default: $(TESTSI_CS) $(TESTBS) libtest.la
 	@failed=0; \
 	passed=0; \
 	failed_tests="";\
@@ -471,6 +476,26 @@ testaot: $(TESTSI_CS) $(TESTBS) libtest.la
 	done; \
 	echo "$${passed} test(s) passed. $${failed} test(s) did not pass."; \
 	if [ $$failed != 0 ]; then echo -e "\nFailed tests:\n"; \
+	  for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
+
+testaot-net_2_0: $(TESTSI_CS2) $(TESTSI_IL2) libtest.la
+	@failed=0; \
+	passed=0; \
+	failed_tests="";\
+	for i in $(TESTSI_CS2) $(TESTSI_IL2); do	\
+		rm -f $${i}.so; \
+		$(JITTEST_PROG_RUN) --aot $${i} > /dev/null; \
+		if $(srcdir)/test-driver '$(with_mono_path2) $(JITTEST_PROG_RUN)' $$i '$(DISABLED_TESTS)' $(RUNTIME_ARGS); \
+		then \
+			passed=`expr $${passed} + 1`; \
+		else \
+			if [ $$? = 2 ]; then break; fi; \
+			failed=`expr $${failed} + 1`; \
+			failed_tests="$${failed_tests} $$i"; \
+		fi \
+	done; \
+	echo "$${passed} test(s) passed. $${failed} test(s) did not pass."; \
+	if [ $${failed} != 0 ]; then echo -e "\nFailed tests:\n"; \
 	  for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
 
 testtrace:
@@ -621,6 +646,14 @@ test-bug-324535 : bug-324535.exe bug-324535-il.dll
 EXTRA_DIST += make_imt_test.sh
 imt_big_iface_test.cs: $(srcdir)/make_imt_test.sh
 	$(srcdir)/make_imt_test.sh > imt_big_iface_test.cs
+
+EXTRA_DIST += custom-modifiers.2.cs custom-modifiers-lib.il
+custom-modifiers-lib.dll: custom-modifiers-lib.il
+	$(ILASM) /dll /output:custom-modifiers-lib.dll $(srcdir)/custom-modifiers-lib.il
+custom-modifiers.exe: custom-modifiers.2.cs custom-modifiers-lib.dll
+	$(GMCS) -r:custom-modifiers-lib.dll -out:custom-modifiers.exe $(srcdir)/custom-modifiers.2.cs
+custom-modifiers: custom-modifiers.exe
+	$(RUNTIME2) custom-modifiers.exe
 
 EXTRA_DIST += coreclr-security.cs
 

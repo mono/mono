@@ -2206,7 +2206,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 					if (((ins2->opcode == OP_STORE_MEMBASE_IMM) || (ins2->opcode == OP_STOREI4_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_IMM) || (ins2->opcode == OP_STORE_MEMBASE_IMM)) && (ins2->inst_imm == 0)) {
 						ins2->opcode = store_membase_imm_to_store_membase_reg (ins2->opcode);
 						ins2->sreg1 = ins->dreg;
-					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM) || (ins2->opcode == OP_STOREI8_MEMBASE_REG) || (ins2->opcode == OP_STORE_MEMBASE_REG)) {
+					} else if ((ins2->opcode == OP_STOREI1_MEMBASE_IMM) || (ins2->opcode == OP_STOREI2_MEMBASE_IMM) || (ins2->opcode == OP_STOREI4_MEMBASE_REG) || (ins2->opcode == OP_STOREI8_MEMBASE_REG) || (ins2->opcode == OP_STORE_MEMBASE_REG)) {
 						/* Continue */
 					} else if (((ins2->opcode == OP_ICONST) || (ins2->opcode == OP_I8CONST)) && (ins2->dreg == ins->dreg) && (ins2->inst_c0 == 0)) {
 						NULLIFY_INS (ins2);
@@ -3034,11 +3034,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I1:
 		case OP_LCONV_TO_I1:
 		case OP_ICONV_TO_I1:
+		case OP_SEXT_I1:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
 			break;
 		case CEE_CONV_I2:
 		case OP_LCONV_TO_I2:
 		case OP_ICONV_TO_I2:
+		case OP_SEXT_I2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
 			break;
 		case CEE_CONV_U1:
@@ -3058,6 +3060,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I8:
 		case CEE_CONV_I:
+		case OP_SEXT_I4:
 			amd64_movsxd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;			
 		case OP_COMPARE:
@@ -3644,15 +3647,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LNEG:
 			amd64_neg_reg (code, ins->sreg1);
 			break;
-		case OP_SEXT_I1:
-			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, FALSE);
-			break;
-		case OP_SEXT_I2:
-			amd64_widen_reg (code, ins->dreg, ins->sreg1, TRUE, TRUE);
-			break;
-		case OP_SEXT_I4:
-			amd64_movsxd_reg_reg (code, ins->dreg, ins->sreg1);
-			break;
+
 		case OP_ZEXT_I4:
 			amd64_mov_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
 			break;
@@ -4354,7 +4349,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			else
 				amd64_fsqrt (code);
-			break;		
+			break;
 		case OP_IMIN:
 			g_assert (cfg->opt & MONO_OPT_CMOV);
 			g_assert (ins->dreg == ins->sreg1);
@@ -4378,7 +4373,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (ins->dreg == ins->sreg1);
 			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
 			amd64_cmov_reg (code, X86_CC_LT, TRUE, ins->dreg, ins->sreg2);
-			break;
+			break;	
 		case OP_X86_FPOP:
 			if (!use_sse2)
 				amd64_fstp (code, 0);
@@ -6035,6 +6030,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 		g_assert ((code - start) < 64);
 
 		cached = start;
+		mono_debug_add_delegate_trampoline (start, code - start);
 		mono_mini_arch_unlock ();
 	} else {
 		static guint8* cache [MAX_ARCH_DELEGATE_PARAMS + 1] = {NULL};
@@ -6067,6 +6063,7 @@ mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_targe
 
 		cache [sig->param_count] = start;
 		
+		mono_debug_add_delegate_trampoline (start, code - start);
 		mono_mini_arch_unlock ();
 	}
 
@@ -6365,6 +6362,29 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			MONO_INST_NEW (cfg, ins, OP_ABS);
 			ins->inst_i0 = args [0];
 		}
+
+		if (cfg->opt & MONO_OPT_CMOV) {
+			int opcode = 0;
+
+			if (strcmp (cmethod->name, "Min") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMIN;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMIN;
+			} else if (strcmp (cmethod->name, "Max") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMAX;
+				else if (fsig->params [0]->type == MONO_TYPE_I8)
+					opcode = OP_LMAX;
+			}		
+
+			if (opcode) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->inst_i0 = args [0];
+				ins->inst_i1 = args [1];
+			}
+		}
+
 #if 0
 		/* OP_FREM is not IEEE compatible */
 		else if (strcmp (cmethod->name, "IEEERemainder") == 0) {

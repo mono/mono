@@ -212,6 +212,7 @@ gchar       *g_strndup        (const gchar *str, gsize n);
 void         g_strfreev       (gchar **str_array);
 gchar       *g_strconcat      (const gchar *first, ...);
 gchar      **g_strsplit       (const gchar *string, const gchar *delimiter, gint max_tokens);
+gchar      **g_strsplit_set   (const gchar *string, const gchar *delimiter, gint max_tokens);
 gchar       *g_strreverse     (gchar *str);
 gboolean     g_str_has_prefix (const gchar *str, const gchar *prefix);
 gboolean     g_str_has_suffix (const gchar *str, const gchar *suffix);
@@ -314,6 +315,9 @@ void    g_slist_foreach       (GSList        *list,
 GSList *g_slist_last          (GSList        *list);
 GSList *g_slist_find          (GSList        *list,
 			       gconstpointer  data);
+GSList *g_slist_find_custom   (GSList	     *list,
+			       gconstpointer  data,
+			       GCompareFunc   func);
 GSList *g_slist_remove        (GSList        *list,
 			       gconstpointer  data);
 GSList *g_slist_remove_all    (GSList        *list,
@@ -332,7 +336,15 @@ GSList *g_slist_insert_before (GSList        *list,
 			       gpointer       data);
 GSList *g_slist_sort          (GSList        *list,
 			       GCompareFunc   func);
+gint    g_slist_index	      (GSList        *list,
+			       gconstpointer  data);
+GSList *g_slist_nth	      (GSList	     *list,
+			       guint	      n);
+gpointer g_slist_nth_data     (GSList	     *list,
+			       guint	      n);
+
 #define g_slist_next(slist) ((slist) ? (((GSList *) (slist))->next) : NULL)
+
 
 typedef struct _GList GList;
 struct _GList {
@@ -367,6 +379,9 @@ void   g_list_foreach       (GList         *list,
 GList *g_list_first         (GList         *list);
 GList *g_list_find          (GList         *list,
 			     gconstpointer  data);
+GList *g_list_find_custom   (GList	   *list,
+			     gconstpointer  data,
+			     GCompareFunc   func);
 GList *g_list_remove        (GList         *list,
 			     gconstpointer  data);
 GList *g_list_reverse       (GList         *list);

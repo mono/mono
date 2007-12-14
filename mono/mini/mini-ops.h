@@ -57,6 +57,8 @@ MINI_OP(OP_VCALLVIRT, 	"vcallvirt", VREG, NONE, NONE)
 MINI_OP(OP_VCALL_REG,	"vcall_reg", VREG, IREG, NONE)
 MINI_OP(OP_VCALL_MEMBASE,	"vcall_membase", VREG, IREG, NONE)
 
+MINI_OP(OP_TRAMPCALL_VTABLE,	"trampcall_vtable", NONE, NONE, NONE)
+
 /* Represents the decomposed vcall which doesn't return a vtype no more */
 MINI_OP(OP_VCALL2, 	"vcall2", NONE, NONE, NONE)
 MINI_OP(OP_VCALL2_REG,	"vcall2_reg", NONE, IREG, NONE)

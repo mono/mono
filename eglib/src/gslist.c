@@ -181,6 +181,22 @@ g_slist_find (GSList *list, gconstpointer data)
 	return list;
 }
 
+GSList *
+g_slist_find_custom (GSList *list, gconstpointer data, GCompareFunc func)
+{
+	if (!func)
+		return NULL;
+	
+	while (list) {
+		if (func (list->data, data) == 0)
+			return list;
+		
+		list = list->next;
+	}
+	
+	return NULL;
+}
+
 guint
 g_slist_length (GSList *list)
 {
@@ -298,6 +314,40 @@ g_slist_insert_sorted (GSList *list, gpointer data, GCompareFunc func)
 	/* ... && (prev->next == 0 || func (prev->next->data, data) > 0)) */
 	insert_after (prev, data);
 	return list;
+}
+
+gint
+g_slist_index (GSList *list, gconstpointer data)
+{
+	gint index = 0;
+	
+	while (list) {
+		if (list->data == data)
+			return index;
+		
+		index++;
+		list = list->next;
+	}
+	
+	return -1;
+}
+
+GSList*
+g_slist_nth (GSList *list, guint n)
+{
+	for (; list; list = list->next) {
+		if (n == 0)
+			break;
+		n--;
+	}
+	return list;
+}
+
+gpointer
+g_slist_nth_data (GSList *list, guint n)
+{
+	GSList *node = g_slist_nth (list, n);
+	return node ? node->data : NULL;
 }
 
 typedef GSList list_node;

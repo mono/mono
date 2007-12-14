@@ -88,6 +88,11 @@ code sharing across multiple mono processes and avoid just-in-time
 compilation program startup costs.  The original assembly must still
 be present, as the metadata is contained there.
 .Sp
+AOT code typically can not be moved from one computer to another
+(CPU-specific optimizations that are detected at runtime) so you
+should not try to move the pre-generated assemblies or package the
+pre-generated assemblies for deployment.    
+.Sp
 For more information about AOT, see: http://www.mono-project.com/AOT
 .TP
 .I "--config filename"
@@ -110,6 +115,10 @@ MODE is a comma separated list of optimizations.  They also allow
 optimizations to be turned off by prefixing the optimization name with
 a minus sign.
 .Sp
+In general, Mono has been tuned to use the default set of flags,
+before using these flags for a deployment setting, you might want to
+actually measure the benefits of using them.    
+.Sp
 The following optimizations are implemented:
 .nf
              all        Turn on all optimizations
@@ -121,19 +130,19 @@ The following optimizations are implemented:
              copyprop   Copy propagation
              deadce     Dead code elimination
              linears    Linear scan global reg allocation
-             cmov       Conditional moves
+             cmov       Conditional moves [arch-dependency]
              shared     Emit per-domain code
              sched      Instruction scheduling
              intrins    Intrinsic method implementations
              tailc      Tail recursion and tail calls
              loop       Loop related optimizations
-             fcmov      Fast x86 FP compares
+             fcmov      Fast x86 FP compares [arch-dependency]
              leaf       Leaf procedures optimizations
              aot        Usage of Ahead Of Time compiled code
              precomp    Precompile all methods before executing Main
              abcrem     Array bound checks removal
              ssapre     SSA based Partial Redundancy Elimination
-             sse2       SSE2 instructions on x86
+             sse2       SSE2 instructions on x86 [arch-dependency]
 .fi
 .Sp
 For example, to enable all the optimization but dead code
@@ -141,6 +150,11 @@ elimination and inlining, you can use:
 .nf
 	-O=all,-deadce,-inline
 .fi
+.Sp
+The flags that are flagged with [arch-dependency] indicate that the
+given option if used in combination with Ahead of Time compilation
+(--aot flag) would produce pre-compiled code that will depend on the
+current CPU and might not be safely moved to another computer. 
 .TP
 .I "--runtime=VERSION"
 Mono supports different runtime versions. The version used depends on the program
@@ -850,6 +864,16 @@ the a custom serializer will be produced on the 50th use.
 Set this value to 1 to prevent the serializer from removing the
 temporary files that are created for fast serialization;  This might
 be useful when debugging.
+.TP
+.I "MONO_ASPNET_INHIBIT_SETTINGSMAP"
+Mono contains a feature which allows modifying settings in the .config files shipped
+with Mono by using config section mappers. The mappers and the mapping rules are
+defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
+settings.map file found in the top-level directory of your ASP.NET application.
+Both files are read by System.Web on application startup, if they are found at the
+above locations. If you don't want the mapping to be performed you can set this
+variable in your environment before starting the application and no action will
+be taken.
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 .I "MONO_ASPNET_NODELETE"
@@ -907,6 +931,14 @@ with the X11 backend.  This is used to debug problems in Windows.Forms
 as it forces all of the commands send to X11 server to be done
 synchronously.   The default mode of operation is asynchronous which
 makes it hard to isolate the root of certain problems.
+.TP
+.I "MONO_GENERIC_SHARING"
+This environment variable is completely unsupported, don't use it.
+This controls for which classes to enable generic code sharing in
+principle.  Permissible values are "all", "corlib" and "none".  The
+default is "corlib", meaning that sharing can only happen for corlib
+classes.  Note that to enable generation of shared code the "gshared"
+compiler option has to be set as well.
 .SH VALGRIND
 If you want to use Valgrind, you will find the file `mono.supp'
 useful, it contains the suppressions for the GC which trigger
