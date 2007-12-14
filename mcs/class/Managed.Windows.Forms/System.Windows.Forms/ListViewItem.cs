@@ -463,6 +463,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public Point Position {
 			get {

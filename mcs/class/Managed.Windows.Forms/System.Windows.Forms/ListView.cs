@@ -680,6 +680,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public ListViewInsertionMark InsertionMark {
 			get {

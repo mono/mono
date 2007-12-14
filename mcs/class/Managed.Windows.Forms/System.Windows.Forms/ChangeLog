@@ -1,5 +1,11 @@
 2007-12-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Add DesignerSerializationVisibility attribute to
+	InsertionMark property.
+	* ListViewItem.cs: Add same attribute to Position property.
+
+2007-12-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListViewItem.cs: .ctor (SerializationInfo, StreamingContext)
 	is 2.0 only.
 
