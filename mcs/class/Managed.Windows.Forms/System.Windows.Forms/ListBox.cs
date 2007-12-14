@@ -2011,13 +2011,15 @@ namespace System.Windows.Forms
 		{
 			if (sorted) 
 				Sort (false);
-			
+
 			if (Items.Count == 0) {
 				selected_index = -1;
 				focused_item = -1;
 				top_index = 0;
 			}
-			
+			if (Items.Count <= focused_item)
+				focused_item = Items.Count - 1;
+
 			if (!IsHandleCreated || suspend_layout)
 				return;
 
@@ -2475,6 +2477,8 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
+				if (index == owner.selected_index)
+					owner.selected_index = -1;
 				owner.selection.Remove (object_items [index]);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();

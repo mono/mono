@@ -1,3 +1,10 @@
+2007-12-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: If we remove the item currently selected,
+	remove it not only from SelectedItems, but also
+	resetting selected_index. Moreover, set focused_item to Items.Count - 1 if 
+	the items count decreased and focused_item has bigger value than that.
+
 2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Perform our layout after we resize ourselves
