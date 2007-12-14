@@ -208,7 +208,8 @@ namespace System.Windows.Forms
 		public override void DrawFlatButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
 		{
 			// Draw Button Background
-			DrawFlatButtonBackground (g, b, clipRectangle);
+			if (b.BackgroundImage == null)
+				DrawFlatButtonBackground (g, b, clipRectangle);
 
 			// If we have an image, draw it
 			if (imageBounds.Size != Size.Empty)

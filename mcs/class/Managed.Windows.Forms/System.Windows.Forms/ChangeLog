@@ -1,3 +1,9 @@
+2007-12-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Don't draw the background on a
+	flat button if there is a background image.
+	[Fixes bug #348649]
+
 2007-12-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: If we remove the item currently selected,
