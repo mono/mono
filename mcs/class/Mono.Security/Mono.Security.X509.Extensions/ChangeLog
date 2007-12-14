@@ -1,3 +1,10 @@
+2007-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthorityKeyIdentifierExtension.cs: Don't throw on what we don't
+	yet support (e.g. authorityCertIssuer/authorityCertSerialNumber). 
+	It's possible that a chain of certificate can be build without this
+	information. Fix #346821
+
 2006-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthorityKeyIdentifierExtension.cs: Added property to publish the 

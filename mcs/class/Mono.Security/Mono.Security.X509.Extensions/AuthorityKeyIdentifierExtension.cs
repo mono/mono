@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005,2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -74,10 +74,10 @@ namespace Mono.Security.X509.Extensions {
 					case 0x80:
 						aki = el.Value;
 						break;
-					case 0x81:
-					case 0x82:
 					default:
-						throw new ArgumentException ("Invalid AuthorityKeyIdentifier extension");
+						// don't throw on stuff we don't yet support
+						// e.g. authorityCertIssuer/authorityCertSerialNumber
+						break;
 				}
 			}
 		}
