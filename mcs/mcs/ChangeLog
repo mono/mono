@@ -1,3 +1,8 @@
+2007-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	* generic.cs (NullCoalescingOperator.CloneTo): implement this one,
+	as this is also created from the parser.  Fixes #349034
+
 2007-12-12  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs (Throw.CloneTo): it is valid to have empty

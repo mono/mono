@@ -3910,6 +3910,14 @@ namespace Mono.CSharp {
 					ig.MarkLabel (end_label);
 				}
 			}
+
+			protected override void CloneTo (CloneContext clonectx, Expression t)
+			{
+				NullCoalescingOperator target = (NullCoalescingOperator) t;
+
+				target.left = left.Clone (clonectx);
+				target.right = right.Clone (clonectx);
+			}
 		}
 
 		public class LiftedUnaryMutator : ExpressionStatement
