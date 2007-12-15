@@ -1,5 +1,7 @@
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Move the check for too-large methods later.
+
 	* method-to-ir.c (mono_handle_global_vregs): Optimize this a little.
 
 	* liveness.c (mono_analyze_liveness): Reorganize this to improve data locality
