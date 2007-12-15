@@ -1,5 +1,10 @@
 2007-12-15  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Binary/AggressiveReflectionReader.cs: protect
+	against zeroed tokens.
+
+2007-12-15  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil.Binary/ImageReader.cs: fix crash when reading
 	some non .net binaries.
 

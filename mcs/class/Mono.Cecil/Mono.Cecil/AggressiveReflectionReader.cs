@@ -420,6 +420,9 @@ namespace Mono.Cecil {
 			for (int i = 0; i < fmTable.Rows.Count; i++) {
 				FieldMarshalRow fmRow = fmTable [i];
 
+				if (fmRow.Parent.RID == 0)
+					continue;
+
 				IHasMarshalSpec owner = null;
 				switch (fmRow.Parent.TokenType) {
 				case TokenType.Field:
