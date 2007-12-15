@@ -1,7 +1,9 @@
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
-	* method-to-ir.c (MINI_OP): Fix	breakage.
+	* method-to-ir.c (mono_handle_global_vregs): Fix crashes on 32 bit systems.
 	
+	* method-to-ir.c (MINI_OP): Fix	breakage.
+
 	* method-to-ir.c (mono_handle_global_vregs): Compress the varinfo tables as
 	lots of variables might be made dead by this pass.
 

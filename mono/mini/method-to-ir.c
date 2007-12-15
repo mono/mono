@@ -10268,6 +10268,17 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				cfg->varinfo [pos]->inst_c0 = pos;
 				memcpy (&cfg->vars [pos], &cfg->vars [i], sizeof (MonoMethodVar));
 				cfg->vars [pos].idx = pos;
+#if SIZEOF_VOID_P == 4
+				if (cfg->varinfo [pos]->type == STACK_I8) {
+					/* Modify the two component vars too */
+					MonoInst *var1;
+
+					var1 = get_vreg_to_inst (cfg, cfg->varinfo [pos]->dreg + 1);
+					var1->inst_c0 = pos;
+					var1 = get_vreg_to_inst (cfg, cfg->varinfo [pos]->dreg + 2);
+					var1->inst_c0 = pos;
+				}
+#endif
 			}
 			pos ++;
 		}
