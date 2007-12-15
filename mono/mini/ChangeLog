@@ -1,5 +1,8 @@
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_handle_global_vregs): Compress the varinfo tables as
+	lots of variables might be made dead by this pass.
+
 	* mini.c (mini_method_compile): Move the check for too-large methods later.
 
 	* method-to-ir.c (mono_handle_global_vregs): Optimize this a little.

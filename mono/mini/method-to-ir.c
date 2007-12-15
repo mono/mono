@@ -4186,7 +4186,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	}
 	/* allocate space to store the return value */
 	if (!MONO_TYPE_IS_VOID (fsig->ret)) {
-		rvar =  mono_compile_create_var (cfg, fsig->ret, OP_LOCAL);
+		rvar = mono_compile_create_var (cfg, fsig->ret, OP_LOCAL);
 	}
 
 	/* allocate local variables */
@@ -10090,7 +10090,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 {
 	gint32 *vreg_to_bb;
 	MonoBasicBlock *bb;
-	int i;
+	int i, pos;
 
 	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (gint32*) * cfg->next_vreg + 1);
 
@@ -10254,6 +10254,25 @@ mono_handle_global_vregs (MonoCompile *cfg)
 			break;
 		}
 	}
+
+	/* 
+	 * Compress the varinfo and vars tables so the liveness computation is faster and
+	 * takes up less space.
+	 */
+	pos = 0;
+	for (i = 0; i < cfg->num_varinfo; ++i) {
+		MonoInst *var = cfg->varinfo [i];
+		if (!(var->flags & MONO_INST_IS_DEAD)) {
+			if (pos < i) {
+				cfg->varinfo [pos] = cfg->varinfo [i];
+				cfg->varinfo [pos]->inst_c0 = pos;
+				memcpy (&cfg->vars [pos], &cfg->vars [i], sizeof (MonoMethodVar));
+				cfg->vars [pos].idx = pos;
+			}
+			pos ++;
+		}
+	}
+	cfg->num_varinfo = pos;
 }
 
 static void
