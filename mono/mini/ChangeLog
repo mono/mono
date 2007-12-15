@@ -1,3 +1,7 @@
+2007-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix a warning.
+
 2007-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_SWITCH.
