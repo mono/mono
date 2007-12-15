@@ -369,7 +369,7 @@ namespace Mono.Cecil.Binary {
 			if (m_image.ImportAddressTable.HintNameTableRVA == RVA.Zero)
 				return;
 
-			if ((m_image.ImportAddressTable.HintNameTableRVA >> 31) == 1)
+			if ((m_image.ImportAddressTable.HintNameTableRVA & 0x80000000) != 0)
 				return;
 
 			SetPositionToAddress (m_image.ImportAddressTable.HintNameTableRVA);
