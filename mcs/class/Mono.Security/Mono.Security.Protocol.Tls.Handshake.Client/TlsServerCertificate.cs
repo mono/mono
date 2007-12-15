@@ -1,6 +1,6 @@
 // Transport Security Layer (TLS)
 // Copyright (c) 2003-2004 Carlos Guzman Alvarez
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006-2007 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -319,7 +319,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				foreach (string dns in subjectAltName.DNSNames) 
 				{
 					// 1.2 TODO - wildcard support
-					if (dns == targetHost)
+					if (Match (targetHost, dns))
 						return true;
 				}
 				// 2. ipAddress
@@ -351,39 +351,56 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				}
 			}
 
-			// TODO: add wildcard * support
-			return (String.Compare (context.ClientSettings.TargetHost, domainName, true, CultureInfo.InvariantCulture) == 0);
+			return Match (context.ClientSettings.TargetHost, domainName);
+		}
 
-			/*
-			 * the only document found describing this is:
-			 * http://www.geocities.com/SiliconValley/Byte/4170/articulos/tls/autentic.htm#Autenticaci%F3n%20del%20Server
-			 * however I don't see how this could deal with wildcards ?
-			 * other issues
-			 * a. there could also be many address returned
-			 * b. Address property is obsoleted in .NET 1.1
-			 * 
-						if (domainName == String.Empty)
-						{
-							return false;
-						}
-						else
-						{
-							string targetHost = context.ClientSettings.TargetHost;
+		// ensure the pattern is valid wrt to RFC2595 and RFC2818
+		// http://www.ietf.org/rfc/rfc2595.txt
+		// http://www.ietf.org/rfc/rfc2818.txt
+		static bool Match (string hostname, string pattern)
+		{
+			// check if this is a pattern
+			int index = pattern.IndexOf ('*');
+			if (index == -1) {
+				// not a pattern, do a direct case-insensitive comparison
+				return (String.Compare (hostname, pattern, true, CultureInfo.InvariantCulture) == 0);
+			}
 
-							// Check that the IP is correct
-							try
-							{
-								IPAddress	ipHost		= Dns.Resolve(targetHost).AddressList[0];
-								IPAddress	ipDomain	= Dns.Resolve(domainName).AddressList[0];
+			// check pattern validity
+			// A "*" wildcard character MAY be used as the left-most name component in the certificate.
 
-								// Note: Address is obsolete in 1.1
-								return (ipHost.Address == ipDomain.Address);
-							}
-							catch (Exception)
-							{
-								return false;
-							}
-						}*/
+			// unless this is the last char (valid)
+			if (index != pattern.Length - 1) {
+				// then the next char must be a dot .'.
+				if (pattern [index + 1] != '.')
+					return false;
+			}
+
+			// only one (A) wildcard is supported
+			int i2 = pattern.IndexOf ('*', index + 1);
+			if (i2 != -1)
+				return false;
+
+			// match the end of the pattern
+			string end = pattern.Substring (index + 1);
+			int length = hostname.Length - end.Length;
+			// no point to check a pattern that is longer than the hostname
+			if (length <= 0)
+				return false;
+
+			if (String.Compare (hostname, length, end, 0, end.Length, true, CultureInfo.InvariantCulture) != 0)
+				return false;
+
+			// special case, we start with the wildcard
+			if (index == 0) {
+				// ensure we hostname non-matched part (start) doesn't contain a dot
+				int i3 = hostname.IndexOf ('.');
+				return ((i3 == -1) || (i3 >= (hostname.Length - end.Length)));
+			}
+
+			// match the start of the pattern
+			string start = pattern.Substring (0, index);
+			return (String.Compare (hostname, 0, start, 0, start.Length, true, CultureInfo.InvariantCulture) == 0);
 		}
 
 		#endregion

@@ -1,3 +1,8 @@
+2007-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsServerCertificate.cs: Add support for wilcard (*) when matching
+	the target host with the certificate. Fix bug #346812
+
 2007-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TlsClientCertificate.cs: If possible avoid to export the private key
