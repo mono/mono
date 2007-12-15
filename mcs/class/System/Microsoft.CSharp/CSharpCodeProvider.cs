@@ -34,12 +34,19 @@ using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace Microsoft.CSharp {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class CSharpCodeProvider : CodeDomProvider {
-
+#if NET_2_0
+		Dictionary <string, string> providerOptions;
+#endif
+		
 		//
 		// Constructors
 		//
@@ -47,6 +54,12 @@ namespace Microsoft.CSharp {
 		{
 		}
 
+#if NET_2_0
+		public CSharpCodeProvider (Dictionary <string, string> providerOptions)
+		{
+			this.providerOptions = providerOptions;
+		}
+#endif
 		//
 		// Properties
 		//
@@ -64,6 +77,10 @@ namespace Microsoft.CSharp {
 #endif
 		public override ICodeCompiler CreateCompiler()
 		{
+#if NET_2_0
+			if (providerOptions != null && providerOptions.Count > 0)
+				return new Mono.CSharp.CSharpCodeCompiler (providerOptions);
+#endif
 			return new Mono.CSharp.CSharpCodeCompiler();
 		}
 
@@ -72,6 +89,10 @@ namespace Microsoft.CSharp {
 #endif
 		public override ICodeGenerator CreateGenerator()
 		{
+#if NET_2_0
+			if (providerOptions != null && providerOptions.Count > 0)
+				return new Mono.CSharp.CSharpCodeGenerator (providerOptions);
+#endif
 			return new Mono.CSharp.CSharpCodeGenerator();
 		}
 		

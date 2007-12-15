@@ -40,41 +40,55 @@ namespace System.CodeDom.Compiler
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;
-		static List<CompilerInfo> compiler_infos;
+		static List <CompilerInfo> compiler_infos;
+		static Dictionary <string, CompilerInfo> compiler_languages;
+		static Dictionary <string, CompilerInfo> compiler_extensions;
 		
 		static CompilerCollection ()
 		{
 			properties = new ConfigurationPropertyCollection ();
 			compiler_infos = new List <CompilerInfo> ();
-			
+			compiler_languages = new Dictionary <string, CompilerInfo> (16, StringComparer.OrdinalIgnoreCase);
+			compiler_extensions = new Dictionary <string, CompilerInfo> (6, StringComparer.OrdinalIgnoreCase);
+				
 			CompilerInfo compiler = new CompilerInfo ();
                         compiler.Languages = "c#;cs;csharp";
                         compiler.Extensions = ".cs";
                         compiler.TypeName = "Microsoft.CSharp.CSharpCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
 			compiler.Languages = "vb;vbs;visualbasic;vbscript";
                         compiler.Extensions = ".vb";
                         compiler.TypeName = "Microsoft.VisualBasic.VBCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
+			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
                         compiler.Languages = "js;jscript;javascript";
                         compiler.Extensions = ".js";
                         compiler.TypeName = "Microsoft.JScript.JScriptCodeProvider, Microsoft.JScript, Version=8.0.1100.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
                         compiler.Languages = "vj#;vjs;vjsharp";
                         compiler.Extensions = ".jsl;.java";
                         compiler.TypeName = "Microsoft.VJSharp.VJSharpCodeProvider, VJSharpCodeProvider, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
                         compiler.Languages = "c++;mc;cpp";
                         compiler.Extensions = ".h";
                         compiler.TypeName = "Microsoft.VisualC.CppCodeProvider, CppCodeProvider, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
+			compiler.ProviderOptions = new Dictionary <string, string> (1);
+			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
 			AddCompilerInfo (compiler);
 		}
 
@@ -86,6 +100,16 @@ namespace System.CodeDom.Compiler
 		{
 			ci.Init ();
 			compiler_infos.Add (ci);
+
+			string[] languages = ci.GetLanguages ();
+			if (languages != null)
+				foreach (string language in languages)
+					compiler_languages [language] = ci;
+			
+			string[] extensions = ci.GetExtensions ();
+			if (extensions != null)
+				foreach (string extension in extensions)
+					compiler_extensions [extension] = ci;
 		}
 
 		static void AddCompilerInfo (Compiler compiler)
@@ -94,6 +118,7 @@ namespace System.CodeDom.Compiler
 			ci.Languages = compiler.Language;
 			ci.Extensions = compiler.Extension;
 			ci.TypeName = compiler.Type;
+			ci.ProviderOptions = compiler.ProviderOptionsDictionary;
 			AddCompilerInfo (ci);
 		}
 		
@@ -116,17 +141,25 @@ namespace System.CodeDom.Compiler
 
 		public CompilerInfo GetCompilerInfoForLanguage (string language)
 		{
-			foreach (CompilerInfo ci in compiler_infos)
-				if (ci.Languages.IndexOf (language, StringComparison.InvariantCultureIgnoreCase) != -1)
-					return ci;
+			if (compiler_languages.Count == 0)
+				return null;
+			
+			CompilerInfo ci;
+			if (compiler_languages.TryGetValue (language, out ci))
+				return ci;
+			
 			return null;
 		}
 
 		public CompilerInfo GetCompilerInfoForExtension (string extension)
 		{
-			foreach (CompilerInfo ci in compiler_infos)
-				if (ci.Extensions.IndexOf (extension, StringComparison.InvariantCultureIgnoreCase) != -1)
-					return ci;
+			if (compiler_extensions.Count == 0)
+				return null;
+			
+			CompilerInfo ci;
+			if (compiler_extensions.TryGetValue (extension, out ci))
+				return ci;
+			
 			return null;
 		}
 
@@ -135,9 +168,9 @@ namespace System.CodeDom.Compiler
 			CompilerInfo ci = GetCompilerInfoForExtension (extension);
 			if (ci == null)
 				return null;
-			string[] languages = ci.Languages.Split (';');
+			string[] languages = ci.GetLanguages ();
 			if (languages != null && languages.Length > 0)
-				return languages[0];
+				return languages [0];
 			return null;
 		}
 		

@@ -42,6 +42,10 @@ namespace Mono.CSharp
 	using System.Diagnostics;
 	using System.Text.RegularExpressions;
 
+#if NET_2_0
+	using System.Collections.Generic;
+#endif
+	
 	internal class CSharpCodeCompiler : CSharpCodeGenerator, ICodeCompiler
 	{
 		static string windowsMcsPath;
@@ -102,6 +106,13 @@ namespace Mono.CSharp
 		{
 		}
 
+#if NET_2_0
+		public CSharpCodeCompiler (Dictionary <string, string> providerOptions) :
+			base (providerOptions)
+		{
+		}
+#endif
+		
 		//
 		// Methods
 		//
@@ -175,15 +186,21 @@ namespace Mono.CSharp
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = windowsMonoPath;
-				mcs.StartInfo.Arguments = "\"" + windowsMcsPath + "\" " + BuildArgs (options, fileNames);
+				mcs.StartInfo.Arguments = "\"" + windowsMcsPath + "\" " +
+#if NET_2_0
+					BuildArgs (options, fileNames, ProviderOptions);
+#else
+					BuildArgs (options, fileNames);
+#endif
 			} else {
 #if NET_2_0
 				// FIXME: This is a temporary hack to make code genaration work in 2.0
 				mcs.StartInfo.FileName="gmcs";
+				mcs.StartInfo.Arguments=BuildArgs(options, fileNames, ProviderOptions);
 #else
 				mcs.StartInfo.FileName="mcs";
+				mcs.StartInfo.Arguments=BuildArgs(options, fileNames);
 #endif
-				mcs.StartInfo.Arguments=BuildArgs(options,fileNames);
 			}
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
@@ -234,7 +251,11 @@ namespace Mono.CSharp
 			return results;
 		}
 
+#if NET_2_0
+		private static string BuildArgs(CompilerParameters options,string[] fileNames, Dictionary <string, string> providerOptions)
+#else
 		private static string BuildArgs(CompilerParameters options,string[] fileNames)
+#endif
 		{
 			StringBuilder args=new StringBuilder();
 			if (options.GenerateExecutable)
@@ -283,6 +304,28 @@ namespace Mono.CSharp
 
 			foreach (string linkedResource in options.LinkedResources) {
 				args.AppendFormat("/linkresource:\"{0}\" ", linkedResource);
+			}
+			
+			if (providerOptions != null && providerOptions.Count > 0) {
+				string langver;
+
+				if (!providerOptions.TryGetValue ("CompilerVersion", out langver))
+					langver = "2.0";
+
+				if (langver.Length >= 1 && langver [0] == 'v')
+					langver = langver.Substring (1);
+
+				// NOTE: when -langversion:linq becomes obsolete/default, the code
+				// below must be changed!
+				switch (langver) {
+					case "2.0":
+						// current default, omit the switch
+						break;
+
+					case "3.5":
+						args.Append ("/langversion:linq");
+						break;
+				}
 			}
 #endif
 

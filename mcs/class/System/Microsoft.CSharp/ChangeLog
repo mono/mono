@@ -1,3 +1,21 @@
+2007-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* CSharpCodeProvider.cs: added support for the 2.0sp1 constructor
+	which takes a Dictionary <string, string> parameter with compiler
+	provider options. If any options are present, the
+	generator/compiler are created using appropriate constructor
+	overload.
+
+	* CSharpCodeGenerator.cs: added support for the 2.0sp1 constructor
+	which takes a Dictionary <string, string> parameter with compiler
+	provider options.
+
+	* CSharpCodeCompiler.cs: added support for the 2.0sp1 constructor
+	which takes a Dictionary <string, string> parameter with compiler
+	provider options. The "CompilerVersion" option is supported, with
+	possible values "2.0" (currently maps to -langversion:Default) and
+	"3.5" (currently maps to -langversion:linq).
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs : property name was not escaped.

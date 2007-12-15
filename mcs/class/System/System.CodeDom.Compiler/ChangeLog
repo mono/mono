@@ -1,3 +1,31 @@
+2007-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Compiler.cs: added support for the default collection of
+	<providerOption> child elements and corresponding public
+	properties (ProviderOptions and ProviderOptionsDictionary).
+
+	* CompilerInfo.cs: added ProviderOptions dictionary, to hold
+	values from the <providerOption> collection of the
+	system.codeDom/compilers/compiler/ element.
+	CodeDomProviderType throws an exception if the provider type
+	cannot be found, as per MSDN.
+	CreateProvider uses the new provider constructor which takes
+	provider options dictionary as its parameter, if found in the
+	provider type.
+
+	* CompilerCollection.cs: compiler defaults are initialized using
+	the provider options dictionary, with one option present -
+	"CompilerVersion" set to "2.0".
+	Two dictionaries to map languages and extensions to compiler
+	information objects added.
+
+	* CompilerProviderOption.cs: added - implements the
+	<providerOption> element.
+
+	* CompilerProviderOptionsCollection.cs: added - implements
+	collection for the 2.0sp1 <providerOption> child element of the
+	system.codeDom/compilers/compiler element.
+
 2007-03-05  Peter Dettman <peter.dettman@iinet.net.au>
 
 	* Codegenerator.cs: I noticed an `unreachable code' warning while

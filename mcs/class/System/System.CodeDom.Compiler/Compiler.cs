@@ -33,6 +33,7 @@ extern alias PrebuiltSystem;
 using TypeDescriptor = PrebuiltSystem.System.ComponentModel.TypeDescriptor;
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 
@@ -45,7 +46,8 @@ namespace System.CodeDom.Compiler
 		static ConfigurationProperty languageProp;
 		static ConfigurationProperty typeProp;
 		static ConfigurationProperty warningLevelProp;
-
+		static ConfigurationProperty providerOptionsProp;
+		
 		static ConfigurationPropertyCollection properties;
 
 		static Compiler ()
@@ -58,13 +60,16 @@ namespace System.CodeDom.Compiler
 								     TypeDescriptor.GetConverter (typeof (int)),
 								     new IntegerValidator (0, 4),
 								     ConfigurationPropertyOptions.None);
-
+			providerOptionsProp = new ConfigurationProperty ("", typeof (CompilerProviderOptionsCollection), null, null, null,
+									 ConfigurationPropertyOptions.IsDefaultCollection);
+			
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (compilerOptionsProp);
 			properties.Add (extensionProp);
 			properties.Add (languageProp);
 			properties.Add (typeProp);
 			properties.Add (warningLevelProp);
+			properties.Add (providerOptionsProp);
 		}
 
 		internal Compiler ()
@@ -111,6 +116,16 @@ namespace System.CodeDom.Compiler
 			internal set { base[warningLevelProp] = value; }
 		}
 
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public CompilerProviderOptionsCollection ProviderOptions {
+			get { return (CompilerProviderOptionsCollection) base [providerOptionsProp]; }
+			internal set { base [providerOptionsProp] = value; }
+		}
+
+		public Dictionary <string, string> ProviderOptionsDictionary {
+			get { return ProviderOptions.ProviderOptions; }
+		}
+		
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

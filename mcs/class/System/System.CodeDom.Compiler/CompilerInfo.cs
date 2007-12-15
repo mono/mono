@@ -31,18 +31,23 @@
 
 #if NET_2_0
 
+using System.Configuration;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Permissions;
 
 namespace System.CodeDom.Compiler {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-	public sealed class CompilerInfo {
-
+	public sealed class CompilerInfo
+	{
 		internal string Languages;
 		internal string Extensions;
 		internal string TypeName;
 		internal int WarningLevel;
 		internal string CompilerOptions;
+		internal Dictionary <string, string> ProviderOptions;
+		
 		bool inited;
 		Type type;
 
@@ -65,9 +70,18 @@ namespace System.CodeDom.Compiler {
 		}
 
 		public Type CodeDomProviderType {
-			get { return type; }
+			get {
+				if (type == null) {
+					type = Type.GetType (TypeName, false);
+					if (type == null)
+						throw new ConfigurationErrorsException ("Unable to locate compiler type '" + TypeName + "'");
+				}
+				
+				return type;
+			}
 		}
 
+		
 		public bool IsCodeDomProviderTypeValid {
 			get { return type != null; }
 		}
@@ -86,7 +100,14 @@ namespace System.CodeDom.Compiler {
 
 		public CodeDomProvider CreateProvider ()
 		{
-			return (CodeDomProvider) Activator.CreateInstance (type);
+			Type providerType = CodeDomProviderType;
+			if (ProviderOptions != null && ProviderOptions.Count > 0) {
+				ConstructorInfo ctor = providerType.GetConstructor (new Type[] {typeof (Dictionary <string, string>)});
+				if (ctor != null)
+					return (CodeDomProvider) ctor.Invoke (new object[] {ProviderOptions});
+			}
+			
+			return (CodeDomProvider) Activator.CreateInstance (providerType);
 		}
 
 		public override bool Equals (object o)

@@ -124,6 +124,8 @@ System.CodeDom.Compiler/CompilerErrorCollection.cs
 System.CodeDom.Compiler/CompilerError.cs
 System.CodeDom.Compiler/CompilerInfo.cs
 System.CodeDom.Compiler/CompilerParameters.cs
+System.CodeDom.Compiler/CompilerProviderOption.cs
+System.CodeDom.Compiler/CompilerProviderOptionsCollection.cs
 System.CodeDom.Compiler/CompilerResults.cs
 System.CodeDom.Compiler/Executor.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs

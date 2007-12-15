@@ -40,9 +40,17 @@ namespace Mono.CSharp
 	using System.Collections;
 	using System.Text;
 
+#if NET_2_0
+	using System.Collections.Generic;
+#endif
+	
 	internal class CSharpCodeGenerator
 		: CodeGenerator
 	{
+#if NET_2_0
+		Dictionary <string, string> providerOptions;
+#endif
+		
 		// It is used for beautiful "for" syntax
 		bool dont_write_semicolon;
 
@@ -54,6 +62,17 @@ namespace Mono.CSharp
 			dont_write_semicolon = false;
 		}
 
+#if NET_2_0
+		public CSharpCodeGenerator (Dictionary <string, string> providerOptions)
+		{
+			this.providerOptions = providerOptions;
+		}
+
+		protected Dictionary <string, string> ProviderOptions {
+			get { return providerOptions; }
+		}
+#endif
+		
 		//
 		// Properties
 		//
