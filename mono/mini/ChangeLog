@@ -1,3 +1,8 @@
+2007-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (mono_analyze_liveness): Reorganize this to improve data locality
+	a bit.
+
 2007-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoInst): Reorder members so frequently used members come first.

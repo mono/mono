@@ -34,22 +34,16 @@ optimize_initlocals2 (MonoCompile *cfg);
  * allocates a MonoBitSet inside a memory pool
  */
 static inline MonoBitSet* 
-mono_bitset_mp_new (MonoMemPool *mp,  guint32 max_size)
+mono_bitset_mp_new (MonoMemPool *mp, guint32 size, guint32 max_size)
 {
-	int size = mono_bitset_alloc_size (max_size, 0);
-	gpointer mem;
-
-	mem = mono_mempool_alloc0 (mp, size);
+	guint8 *mem = mono_mempool_alloc0 (mp, size);
 	return mono_bitset_mem_new (mem, max_size, MONO_BITSET_DONT_FREE);
 }
 
 static inline MonoBitSet* 
-mono_bitset_mp_new_noinit (MonoMemPool *mp,  guint32 max_size)
+mono_bitset_mp_new_noinit (MonoMemPool *mp, guint32 size, guint32 max_size)
 {
-	int size = mono_bitset_alloc_size (max_size, 0);
-	gpointer mem;
-
-	mem = mono_mempool_alloc (mp, size);
+	guint8 *mem = mono_mempool_alloc (mp, size);
 	return mono_bitset_mem_new (mem, max_size, MONO_BITSET_DONT_FREE);
 }
 
@@ -79,16 +73,6 @@ update_live_range (MonoCompile *cfg, int idx, int block_dfn, int tree_pos)
 
 	if (range->last_use.abs_pos < abs_pos)
 		range->last_use.abs_pos = abs_pos;
-}
-
-static inline void
-update_live_range2 (MonoMethodVar *var, int abs_pos)
-{
-	if (var->range.first_use.abs_pos > abs_pos)
-		var->range.first_use.abs_pos = abs_pos;
-
-	if (var->range.last_use.abs_pos < abs_pos)
-		var->range.last_use.abs_pos = abs_pos;
 }
 
 static void
@@ -211,7 +195,6 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 		return;
 
 	if (cfg->new_ir) {
-		/* FIXME: Rewrite this using the aliasing framework */
 		for (ins = bb->code; ins; ins = ins->next) {
 			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg;
@@ -288,6 +271,16 @@ mono_liveness_handle_exception_clauses (MonoCompile *cfg)
 		visit_bb (cfg, bb, &visited);
 	}
 	g_slist_free (visited);
+}
+
+static inline void
+update_live_range2 (MonoMethodVar *var, int abs_pos)
+{
+	if (var->range.first_use.abs_pos > abs_pos)
+		var->range.first_use.abs_pos = abs_pos;
+
+	if (var->range.last_use.abs_pos < abs_pos)
+		var->range.last_use.abs_pos = abs_pos;
 }
 
 static void
@@ -392,7 +385,6 @@ mono_analyze_liveness (MonoCompile *cfg)
 	MonoBasicBlock **worklist;
 	guint32 l_end;
 	int bitsize;
-	guint8 *mem;
 
 #ifdef DEBUG_LIVENESS
 	printf ("LIVENESS %s\n", mono_method_full_name (cfg->method, TRUE));
@@ -406,20 +398,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 		return;
 
 	bitsize = mono_bitset_alloc_size (max_vars, 0);
-	mem = mono_mempool_alloc0 (cfg->mempool, cfg->num_bblocks * bitsize * 4);
 
-	for (i = 0; i < cfg->num_bblocks; ++i) {
-		MonoBasicBlock *bb = cfg->bblocks [i];
-
-		bb->gen_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-		mem += bitsize;
-		bb->kill_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-		mem += bitsize;
-		/* Initialized later */
-		bb->live_in_set = NULL;
-		bb->live_out_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-		mem += bitsize;
-	}
 	for (i = 0; i < max_vars; i ++) {
 		MONO_VARINFO (cfg, i)->range.first_use.abs_pos = ~ 0;
 		MONO_VARINFO (cfg, i)->range.last_use .abs_pos =   0;
@@ -431,12 +410,15 @@ mono_analyze_liveness (MonoCompile *cfg)
 		MonoInst *inst;
 		int tree_num;
 
-		if (cfg->aliasing_info != NULL)
-			mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
+		bb->gen_set = mono_bitset_mp_new (cfg->mempool, bitsize, max_vars);
+		bb->kill_set = mono_bitset_mp_new (cfg->mempool, bitsize, max_vars);
 
 		if (cfg->new_ir) {
 			analyze_liveness_bb (cfg, bb);
 		} else {
+			if (cfg->aliasing_info != NULL)
+				mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
+
 			for (tree_num = 0, inst = bb->code; inst; inst = inst->next, tree_num++) {
 #ifdef DEBUG_LIVENESS
 				mono_print_tree (inst); printf ("\n");
@@ -471,6 +453,10 @@ mono_analyze_liveness (MonoCompile *cfg)
 
 		worklist [l_end ++] = bb;
 		in_worklist [bb->dfn] = TRUE;
+
+		/* Initialized later */
+		bb->live_in_set = NULL;
+		bb->live_out_set = mono_bitset_mp_new (cfg->mempool, bitsize, max_vars);
 	}
 
 	out_iter = 0;
@@ -511,8 +497,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 			out_bb = bb->out_bb [j];
 
 			if (!out_bb->live_in_set) {
-				out_bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-				mem += bitsize;
+				out_bb->live_in_set = mono_bitset_mp_new_noinit (cfg->mempool, bitsize, max_vars);
 
 				mono_bitset_copyto_fast (out_bb->live_out_set, out_bb->live_in_set);
 				mono_bitset_sub_fast (out_bb->live_in_set, out_bb->kill_set);
@@ -523,10 +508,8 @@ mono_analyze_liveness (MonoCompile *cfg)
 		}
 				
 		if (changed || !mono_bitset_equal (old_live_out_set, bb->live_out_set)) {
-			if (!bb->live_in_set) {
-				bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-				mem += bitsize;
-			}
+			if (!bb->live_in_set)
+				bb->live_in_set = mono_bitset_mp_new_noinit (cfg->mempool, bitsize, max_vars);
 			mono_bitset_copyto_fast (bb->live_out_set, bb->live_in_set);
 			mono_bitset_sub_fast (bb->live_in_set, bb->kill_set);
 			mono_bitset_union_fast (bb->live_in_set, bb->gen_set);
@@ -566,8 +549,7 @@ mono_analyze_liveness (MonoCompile *cfg)
 		MonoBasicBlock *bb = cfg->bblocks [i];
 
 		if (!bb->live_in_set) {
-			bb->live_in_set = mono_bitset_mem_new (mem, max_vars, MONO_BITSET_DONT_FREE);
-			mem += bitsize;
+			bb->live_in_set = mono_bitset_mp_new (cfg->mempool, bitsize, max_vars);
 
 			mono_bitset_copyto_fast (bb->live_out_set, bb->live_in_set);
 			mono_bitset_sub_fast (bb->live_in_set, bb->kill_set);
