@@ -44,7 +44,7 @@ namespace Mono.Cecil.Cil {
 		public static readonly Guid JScript = new Guid ("3a12d0b6-c26c-11d0-b442-00a0244a1dd2");
 		public static readonly Guid SMC = new Guid ("0d9b9f7b-6611-11d3-bd2a-0000f80849bd");
 		public static readonly Guid MCpp = new Guid ("4b35fde8-07c6-11d3-9053-00c04fa302a1");
-#else		
+#else
 		public static readonly Guid None = new Guid (0x00000000, 0x0000, 0x0000, 0x00, 0x00, 0x0, 0x00, 0x00, 0x00, 0x00, 0x00);
 		public static readonly Guid C = new Guid (0x63a08714, 0xfc37, 0x11d2, 0x90, 0x4c, 0x0, 0xc0, 0x4f, 0xa3, 0x02, 0xa1);
 		public static readonly Guid Cpp = new Guid (0x3a12d0b7, 0xc26c, 0x11d0, 0xb4, 0x42, 0x0, 0xa0, 0x24, 0x4a, 0x1d, 0xd2);
