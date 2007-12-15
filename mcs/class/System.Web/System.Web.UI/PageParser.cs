@@ -78,7 +78,7 @@ namespace System.Web.UI
 
 		public PageParser ()
 		{
-			LoadPagesConfigDefaults ();
+			LoadConfigDefaults ();
 		}
 		
 		internal PageParser (string virtualPath, string inputFile, HttpContext context)
@@ -88,7 +88,7 @@ namespace System.Web.UI
 			InputFile = inputFile;
 			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
-			LoadPagesConfigDefaults ();
+			LoadConfigDefaults ();
 		}
 
 #if NET_2_0
@@ -99,18 +99,18 @@ namespace System.Web.UI
 			Reader = reader;
 			SetBaseType (PagesConfig.PageBaseType);
 			AddApplicationAssembly ();
-			LoadPagesConfigDefaults ();
+			LoadConfigDefaults ();
 		}
 #endif
 
-		internal override void LoadPagesConfigDefaults ()
+		internal override void LoadConfigDefaults ()
 		{
-			base.LoadPagesConfigDefaults ();
+			base.LoadConfigDefaults ();
 #if NET_2_0
 			PagesSection ps = PagesConfig;
 #else
 			PagesConfiguration ps = PagesConfig;
-#endif
+#endif			
 
 			notBuffer = !ps.Buffer;
 			enableSessionState = ps.EnableSessionState;

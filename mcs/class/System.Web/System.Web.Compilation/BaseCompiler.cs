@@ -498,15 +498,13 @@ namespace System.Web.Compilation
 				// warningLevel or compilerOptions out
 				// of the provider.. they're in the
 				// configuration section, though.
-			}
-			else {
+			} else {
 				Type t = HttpApplication.LoadType (comp.Type, true);
 				provider = Activator.CreateInstance (t) as CodeDomProvider;
 
 				compilerOptions = comp.CompilerOptions;
 				warningLevel = comp.WarningLevel;
 			}
-
 #else
 			CompilationConfiguration config;
 
@@ -520,8 +518,10 @@ namespace System.Web.Compilation
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
 
+#if !NET_2_0
 			compiler = provider.CreateCompiler ();
-
+#endif
+			
 			compilerParameters.IncludeDebugInformation = parser.Debug;
 			compilerParameters.CompilerOptions = compilerOptions + " " + parser.CompilerOptions;
 

@@ -93,6 +93,8 @@ namespace System.Web.UI {
 
 		internal TemplateParser ()
 		{
+			LoadConfigDefaults ();
+			
 			imports = new ArrayList ();
 #if NET_2_0
 			AddNamespaces (imports);
@@ -114,8 +116,10 @@ namespace System.Web.UI {
 
 			assemblies = new ArrayList ();
 #if NET_2_0
+			CompilationSection compConfig = CompilationConfig;
+			
 			bool addAssembliesInBin = false;
-			foreach (AssemblyInfo info in CompilationConfig.Assemblies) {
+			foreach (AssemblyInfo info in compConfig.Assemblies) {
 				if (info.Assembly == "*")
 					addAssembliesInBin = true;
 				else
@@ -128,14 +132,21 @@ namespace System.Web.UI {
 				imports.Add (info.Namespace);
 			}
 #else
-			foreach (string a in CompilationConfig.Assemblies)
+			CompilationConfiguration compConfig = CompilationConfig;
+			
+			foreach (string a in compConfig.Assemblies)
 				AddAssemblyByName (a);
-			if (CompilationConfig.AssembliesInBin)
+			if (compConfig.AssembliesInBin)
 				AddAssembliesInBin ();
 #endif
 
-			language = CompilationConfig.DefaultLanguage;
+			language = compConfig.DefaultLanguage;
 			implicitLanguage = true;
+		}
+
+		internal virtual void LoadConfigDefaults ()
+		{
+			debug = CompilationConfig.Debug;
 		}
 		
 		internal void AddApplicationAssembly ()
@@ -515,22 +526,30 @@ namespace System.Web.UI {
 		
 		internal virtual void ProcessMainAttributes (Hashtable atts)
 		{
+#if NET_2_0
+			CompilationSection compConfig;
+#else
+			CompilationConfiguration compConfig;
+#endif
+
+			compConfig = CompilationConfig;
+			
 			atts.Remove ("Description"); // ignored
 #if NET_1_1
 			atts.Remove ("CodeBehind");  // ignored
 #endif
 			atts.Remove ("AspCompat"); // ignored
 			
-			debug = GetBool (atts, "Debug", true);
+			debug = GetBool (atts, "Debug", compConfig.Debug);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", "");
 			if (language.Length != 0)
 				implicitLanguage = false;
 			else
-				language = CompilationConfig.DefaultLanguage;
+				language = compConfig.DefaultLanguage;
 			
-			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
-			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
+			strictOn = GetBool (atts, "Strict", compConfig.Strict);
+			explicitOn = GetBool (atts, "Explicit", compConfig.Explicit);
 			linePragmasOn = GetBool (atts, "LinePragmas", false);
 			
 			string inherits = GetString (atts, "Inherits", null);

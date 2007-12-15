@@ -1,3 +1,18 @@
+2007-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: Default value for Debug is taken from
+	the compilation config section.
+
+	* TemplateParser.cs: Added LoadConfigDefaults here, loads default
+	value for Debug from the compilation section.
+	Cache CompilationConfig in methods where it is accessed more than
+	once.
+	Default value for Debug in ProcessMainAttributes is taken from the
+	compilation config.
+
+	* PageParser.cs, TemplateControlParser.cs: LoadPagesConfigDefaults
+	renamed to LoadConfigDefaults.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientScriptManager.cs, MasterPageParser.cs, Control.cs,

@@ -1,3 +1,20 @@
+2007-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: do not instantiate CodeDomProvider twice.
+
+	* BaseCompiler.cs: do not use CreateCompiler () in the 2.0
+	profile, it's obsoleted. CachingCompiler will use the
+	CodeDomProvider methods directly in that case.
+
+	* WebServiceCompiler.cs: Updated GetCompiledType to acquire
+	compiler information for the 2.0 profile from system.codeDom.
+
+	* CachingCompiler.cs: the Compile overloads do not use the
+	compiler instance, but call appropriate methods on the
+	CodeDomProvider instance directly.
+	Updated some Compile overloads to acquire compiler information for
+	the 2.0 profile from system.codeDom.
+
 2007-12-14  Juraj Skripsky  <js@hotfeet.ch>
 
 	* TemplateControlCompiler.cs (AddExpressionAssign):

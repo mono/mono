@@ -57,11 +57,12 @@ namespace System.Web.UI {
 
 		protected TemplateControlParser ()
 		{
-			LoadPagesConfigDefaults ();
+			LoadConfigDefaults ();
 		}
 		
-		internal virtual void LoadPagesConfigDefaults ()
+		internal override void LoadConfigDefaults ()
 		{
+			base.LoadConfigDefaults ();
 #if NET_2_0
 			PagesSection ps = PagesConfig;
 #else

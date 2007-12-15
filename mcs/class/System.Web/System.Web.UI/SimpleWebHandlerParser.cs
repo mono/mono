@@ -240,6 +240,13 @@ namespace System.Web.UI
 
 		internal virtual void AddDefaultDirective (ILocation location, TagAttributes attrs)
 		{
+#if NET_2_0
+			CompilationSection compConfig;
+#else
+			CompilationConfiguration compConfig;
+#endif
+			compConfig = CompilationConfig;
+			
 			if (gotDefault)
 				throw new ParseException (location, "duplicate " + DefaultDirectiveName + " directive");
 
@@ -254,11 +261,12 @@ namespace System.Web.UI
 				debug = (String.Compare (d, "true", true) == 0);
 				if (debug == false && String.Compare (d, "false", true) != 0)
 					throw new ParseException (null, "Invalid value for Debug attribute");
-			}
+			} else
+				debug = compConfig.Debug;
 
 			language = GetAndRemove (attributes, "language");
 			if (language == null)
-				language = CompilationConfig.DefaultLanguage;
+				language = compConfig.DefaultLanguage;
 
 			GetAndRemove (attributes, "codebehind");
 			if (attributes.Count > 0)

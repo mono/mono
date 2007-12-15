@@ -91,9 +91,14 @@ namespace System.Web.Compilation
 				if (results != null)
 					return results;
 
+#if NET_2_0
+				CodeDomProvider comp = compiler.Provider;
+#else
 				ICodeCompiler comp = compiler.Compiler;
-				GetExtraAssemblies (compiler.CompilerParameters);
-				results = comp.CompileAssemblyFromDom (compiler.CompilerParameters, compiler.Unit);
+#endif
+				CompilerParameters options = compiler.CompilerParameters;
+				GetExtraAssemblies (options);
+				results = comp.CompileAssemblyFromDom (options, compiler.Unit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
 			} finally {
@@ -122,12 +127,16 @@ namespace System.Web.Compilation
 				if (results != null)
 					return results;
 
-				SimpleWebHandlerParser parser = compiler.Parser;
+#if NET_2_0
+				CodeDomProvider comp = compiler.Provider;
+#else
+				ICodeCompiler comp = compiler.Compiler;
+#endif
 				CompilerParameters options = compiler.CompilerOptions;
-				options.IncludeDebugInformation = parser.Debug;
+
 				GetExtraAssemblies (options);
-				results = compiler.Compiler.CompileAssemblyFromFile (options, compiler.InputFile);
-				string [] deps = (string []) parser.Dependencies.ToArray (typeof (string));
+				results = comp.CompileAssemblyFromFile (options, compiler.InputFile);
+				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
 			} finally {
 				Monitor.Exit (ticket);
@@ -150,8 +159,7 @@ namespace System.Web.Compilation
 			return options;
 		}
 
-		public static CompilerResults Compile (string language, string key, string file,
-							ArrayList assemblies)
+		public static CompilerResults Compile (string language, string key, string file, ArrayList assemblies)
 		{
 			Cache cache = HttpRuntime.InternalCache;
 			CompilerResults results = (CompilerResults) cache [cachePrefix + key];
@@ -169,21 +177,45 @@ namespace System.Web.Compilation
 				results = (CompilerResults) cache [cachePrefix + key];
 				if (results != null)
 					return results;
- 
+
+				CodeDomProvider provider = null;
 #if NET_2_0
 				CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-				Compiler c = config.Compilers[language];
-				Type t = HttpApplication.LoadType (c.Type, true);
-				CodeDomProvider provider = Activator.CreateInstance (t) as CodeDomProvider;
+				Compiler comp = config.Compilers[language];
+
+				string compilerOptions = "";
+				int warningLevel = 0;
+
+				if (comp == null) {
+					CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
+					if (info != null && info.IsCodeDomProviderTypeValid)
+						provider = info.CreateProvider ();
+
+					// XXX there's no way to get
+					// warningLevel or compilerOptions out
+					// of the provider.. they're in the
+					// configuration section, though.
+				} else {
+					Type t = HttpApplication.LoadType (comp.Type, true);
+					provider = Activator.CreateInstance (t) as CodeDomProvider;
+
+					compilerOptions = comp.CompilerOptions;
+					warningLevel = comp.WarningLevel;
+				}
 #else
 				CompilationConfiguration config;
 				config = CompilationConfiguration.GetInstance (HttpContext.Current);
-				CodeDomProvider provider = config.GetProvider (language);
+				provider = config.GetProvider (language);
 #endif
 				if (provider == null)
 					throw new HttpException ("Configuration error. Language not supported: " +
 								  language, 500);
+#if !NET_2_0
 				ICodeCompiler compiler = provider.CreateCompiler ();
+#else
+				CodeDomProvider compiler = provider;
+#endif
+				
 				CompilerParameters options = GetOptions (assemblies);
 				TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, true);
 				string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));

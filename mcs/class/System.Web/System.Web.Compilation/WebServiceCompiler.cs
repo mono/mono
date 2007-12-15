@@ -71,10 +71,28 @@ namespace System.Web.Compilation
 
 			string lang = parser.Language;
 #if NET_2_0
-			CompilationSection config = (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
-			Compiler c = config.Compilers[lang];
-			Type t = HttpApplication.LoadType (c.Type, true);
-			provider = Activator.CreateInstance (t) as CodeDomProvider;
+			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			Compiler comp = config.Compilers[lang];
+
+			string compilerOptions = "";
+			int warningLevel = 0;
+
+			if (comp == null) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
+				if (info != null && info.IsCodeDomProviderTypeValid)
+					provider = info.CreateProvider ();
+
+				// XXX there's no way to get
+				// warningLevel or compilerOptions out
+				// of the provider.. they're in the
+				// configuration section, though.
+			} else {
+				Type t = HttpApplication.LoadType (comp.Type, true);
+				provider = Activator.CreateInstance (t) as CodeDomProvider;
+
+				compilerOptions = comp.CompilerOptions;
+				warningLevel = comp.WarningLevel;
+			}
 #else
 			CompilationConfiguration config;
 			config = CompilationConfiguration.GetInstance (parser.Context);
@@ -84,13 +102,15 @@ namespace System.Web.Compilation
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
 
+#if !NET_2_0
 			compiler = provider.CreateCompiler ();
+#endif
 
 			compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
 			compilerParameters.IncludeDebugInformation = parser.Debug;
 #if NET_2_0
-			compilerParameters.CompilerOptions = c.CompilerOptions;
-			compilerParameters.WarningLevel = c.WarningLevel;
+			compilerParameters.CompilerOptions = comp.CompilerOptions;
+			compilerParameters.WarningLevel = comp.WarningLevel;
 #else
 			compilerParameters.CompilerOptions = config.GetCompilerOptions (lang);
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);

@@ -205,9 +205,6 @@ namespace System.Web.Compilation
 				compilerInfo = CodeDomProvider.GetCompilerInfo (compilationSection.DefaultLanguage);
 				if (compilerInfo == null || !compilerInfo.IsCodeDomProviderTypeValid)
 					throw new HttpException ("Internal error while initializing application");
-				provider = compilerInfo.CreateProvider ();
-				if (provider == null)
-					throw new HttpException ("A code provider error occurred while initializing application.");
 			}
 
 			provider = compilerInfo.CreateProvider ();
