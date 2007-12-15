@@ -369,6 +369,9 @@ namespace Mono.Cecil.Binary {
 			if (m_image.ImportAddressTable.HintNameTableRVA == RVA.Zero)
 				return;
 
+			if ((m_image.ImportAddressTable.HintNameTableRVA >> 31) == 1)
+				return;
+
 			SetPositionToAddress (m_image.ImportAddressTable.HintNameTableRVA);
 
 			hnt.Hint = m_binaryReader.ReadUInt16 ();

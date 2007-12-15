@@ -1,3 +1,8 @@
+2007-12-15  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Binary/ImageReader.cs: fix crash when reading
+	some non .net binaries.
+
 2007-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/SecurityDeclarationReader.cs:	Change default read
