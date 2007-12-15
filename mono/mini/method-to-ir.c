@@ -127,7 +127,7 @@ MonoMethodSignature *helper_sig_domain_get;
 #ifdef MINI_OP
 #undef MINI_OP
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2,
+#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2, ' ',
 #define NONE ' '
 #define IREG 'i'
 #define FREG 'f'
@@ -10088,16 +10088,16 @@ mono_op_to_op_imm_noemul (int opcode)
 void
 mono_handle_global_vregs (MonoCompile *cfg)
 {
-	MonoBasicBlock **vreg_to_bb;
+	gint32 *vreg_to_bb;
 	MonoBasicBlock *bb;
 	int i;
 
-	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * cfg->next_vreg + 1);
+	vreg_to_bb = mono_mempool_alloc0 (cfg->mempool, sizeof (gint32*) * cfg->next_vreg + 1);
 
 	/* Find local vregs used in more than one bb */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins = bb->code;	
-		MonoInst *prev = NULL;
+		int block_num = bb->block_num;
 
 		if (cfg->verbose_level > 1)
 			printf ("\nHANDLE-GLOBAL-VREGS BLOCK %d:\n", bb->block_num);
@@ -10106,15 +10106,10 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		for (; ins; ins = ins->next) {
 			const char *spec = INS_INFO (ins->opcode);
 			int regtype, regindex;
-			MonoBasicBlock *prev_bb;
+			gint32 prev_bb;
 
 			if (G_UNLIKELY (cfg->verbose_level > 1))
 				mono_print_ins (ins);
-
-			if (ins->opcode == OP_NOP) {
-				prev = ins;
-				continue;
-			}
 
 			g_assert (ins->opcode >= MONO_CEE_LAST);
 
@@ -10139,7 +10134,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				}
 
 #if SIZEOF_VOID_P == 4
-				if ((regtype == 'l') && (vreg != -1)) {
+				if (regtype == 'l') {
 					/*
 					 * Since some instructions reference the original long vreg,
 					 * and some reference the two component vregs, it is quite hard
@@ -10157,15 +10152,16 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				g_assert (vreg != -1);
 
 				prev_bb = vreg_to_bb [vreg];
-				if (prev_bb == NULL) {
-					vreg_to_bb [vreg] = bb;
-				} else if ((prev_bb != bb) && (prev_bb != (gpointer)(gssize)-1)) {
+				if (prev_bb == 0) {
+					/* 0 is a valid block num */
+					vreg_to_bb [vreg] = block_num + 1;
+				} else if ((prev_bb != block_num + 1) && (prev_bb != -1)) {
 					if (((regtype == 'i' && (vreg < MONO_MAX_IREGS))) || (regtype == 'f' && (vreg < MONO_MAX_FREGS)))
 						continue;
 
 					if (!get_vreg_to_inst (cfg, vreg)) {
 						if (G_UNLIKELY (cfg->verbose_level > 1))
-							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [vreg]->block_num, bb->block_num);
+							printf ("VREG R%d used in BB%d and BB%d made global.\n", vreg, vreg_to_bb [vreg], block_num);
 
 						switch (regtype) {
 						case 'i':
@@ -10183,8 +10179,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					}
 
 					/* Flag as having been used in more than one bb */
-					if (prev_bb != (gpointer)(gssize)-1)
-						vreg_to_bb [vreg] = (gpointer)(gssize)-1;
+					vreg_to_bb [vreg] = -1;
 				}
 			}
 		}
@@ -10210,13 +10205,14 @@ mono_handle_global_vregs (MonoCompile *cfg)
 #endif
 			/* Arguments are implicitly global */
 			/* Putting R4 vars into registers doesn't work currently */
-			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != (gpointer)(gssize)-1) && (var->klass->byval_arg.type != MONO_TYPE_R4)) {
+			if ((var->opcode != OP_ARG) && (var != cfg->ret) && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && (vreg_to_bb [var->dreg] != -1) && (var->klass->byval_arg.type != MONO_TYPE_R4)) {
 				/* 
 				 * Make that the variable's liveness interval doesn't contain a call, since
 				 * that would cause the lvreg to be spilled, making the whole optimization
 				 * useless.
 				 */
 				/* This is too slow for JIT compilation */
+#if 0
 				if (cfg->compile_aot && vreg_to_bb [var->dreg]) {
 					MonoInst *ins;
 					int def_index, call_index, ins_index;
@@ -10248,6 +10244,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					if (spilled)
 						break;
 				}
+#endif
 
 				if (G_UNLIKELY (cfg->verbose_level > 2))
 					printf ("CONVERTED R%d(%d) TO VREG.\n", var->dreg, vmv->idx);
