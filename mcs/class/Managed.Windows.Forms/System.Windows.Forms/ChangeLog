@@ -1,3 +1,11 @@
+2007-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When SetBoundsCore gets called, besides
+	calling UpdateScrollBars, update the value of
+	last_visible_index, since we could need to show more items
+	than before, and we need to let the paint routines know that.
+	Fixes #344445.
+
 2007-12-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Add DesignerSerializationVisibility attribute to

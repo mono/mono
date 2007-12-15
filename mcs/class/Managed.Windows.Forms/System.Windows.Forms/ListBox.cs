@@ -1081,6 +1081,7 @@ namespace System.Windows.Forms
 
 			base.SetBoundsCore (x, y, width, height, specified);
 			UpdateScrollBars ();
+			last_visible_index = LastVisibleItem ();
 		}
 
 		protected override void SetItemCore (int index,  object value)
