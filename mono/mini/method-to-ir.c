@@ -127,7 +127,7 @@ MonoMethodSignature *helper_sig_domain_get;
 #ifdef MINI_OP
 #undef MINI_OP
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2, ' ',
+#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2,
 #define NONE ' '
 #define IREG 'i'
 #define FREG 'f'
