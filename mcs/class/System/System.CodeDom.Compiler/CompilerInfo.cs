@@ -73,8 +73,10 @@ namespace System.CodeDom.Compiler {
 			get {
 				if (type == null) {
 					type = Type.GetType (TypeName, false);
+#if CONFIGURATION_DEP
 					if (type == null)
 						throw new ConfigurationErrorsException ("Unable to locate compiler type '" + TypeName + "'");
+#endif
 				}
 				
 				return type;
