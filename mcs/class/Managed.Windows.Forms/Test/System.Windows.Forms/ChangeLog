@@ -1,3 +1,8 @@
+2007-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItemTest.cs: Added new Constructor_Group test, that I
+	forgot to add after fixing a 2.0 bug.
+
 2007-12-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Contructor_Serializable test only applies for 

@@ -251,9 +251,22 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (item.SubItems [1].Text, "#7");
 			Assert.AreEqual ("B", item.SubItems [1].Text, "#8");
 		}
-#endif
 
-#if NET_2_0
+		[Test]
+		public void Constructor_Groups ()
+		{
+			ListViewItem itemA = new ListViewItem ((ListViewGroup) null);
+			Assert.AreEqual (null, itemA.Group, "#A1");
+
+			ListViewGroup group = new ListViewGroup ("Group A");
+			group.Items.Add (itemA);
+
+			ListViewItem itemB = new ListViewItem ("B", group);
+			Assert.AreEqual (group, itemB.Group, "#B1");
+			Assert.AreEqual (2, group.Items.Count, "#B2");
+			Assert.AreEqual (itemB, group.Items [1], "#B3");
+		}
+
 		[Test]
 		public void Constructor_Serializable ()
 		{
