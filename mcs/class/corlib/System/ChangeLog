@@ -1,3 +1,8 @@
+2007-12-16  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffset.cs: almost complete implementation, still missing the
+	Parse* and ToString methods.
+
 2007-12-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomain.cs (DoAssemblyResolve): Fix detection of whenever there is a

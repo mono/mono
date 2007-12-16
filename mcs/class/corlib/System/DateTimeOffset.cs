@@ -100,19 +100,74 @@ namespace System
 		{
 		}
 
-		public DateTimeOffset AddSeconds (double seconds)
+		public DateTimeOffset Add (TimeSpan timeSpan)
 		{
-			return new DateTimeOffset (this.dt.AddSeconds (seconds));
+			return new DateTimeOffset (dt.Add (timeSpan), utc_offset);
+		}
+	
+		public DateTimeOffset AddDays (double days)
+		{
+			return new DateTimeOffset (dt.AddDays (days), utc_offset);	
 		}
 		
+		public DateTimeOffset AddHours (double hours)
+		{
+			return new DateTimeOffset (dt.AddHours (hours), utc_offset);
+		}
+
+		public static DateTimeOffset operator + (DateTimeOffset dateTimeTz, TimeSpan timeSpan)
+		{
+			return dateTimeTz.Add (timeSpan);
+		}
+
+		public DateTimeOffset AddMilliseconds (double milliseconds)
+		{
+			return new DateTimeOffset (dt.AddMilliseconds (milliseconds), utc_offset);
+		}
+
+		public DateTimeOffset AddMinutes (double minutes)
+		{
+			return new DateTimeOffset (dt.AddMinutes (minutes), utc_offset);	
+		}
+
+		public DateTimeOffset AddMonths (int months)
+		{
+			return new DateTimeOffset (dt.AddMonths (months), utc_offset);
+		}
+
+		public DateTimeOffset AddSeconds (double seconds)
+		{
+			return new DateTimeOffset (dt.AddSeconds (seconds), utc_offset);
+		}
+
+		public DateTimeOffset AddTicks (long ticks)
+		{
+			return new DateTimeOffset (dt.AddTicks (ticks), utc_offset);	
+		}
+
+		public DateTimeOffset AddYears (int years)
+		{
+			return new DateTimeOffset (dt.AddYears (years), utc_offset);
+		}
+
+		public static int Compare (DateTimeOffset first, DateTimeOffset second)
+		{
+			return first.CompareTo (second);	
+		}
+
 		public int CompareTo (DateTimeOffset other)
 		{
-			return UtcDateTime.CompareTo (other);
+			return UtcDateTime.CompareTo (other.UtcDateTime);
 		}
 
 		public int CompareTo (object other)
 		{
 			return UtcDateTime.CompareTo (other);
+		}
+
+		public static bool operator == (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.Equals (right);	
 		}
 
 		public bool Equals (DateTimeOffset other)
@@ -130,21 +185,195 @@ namespace System
 			return first.Equals (second);	
 		}
 
+		public bool EqualsExact (DateTimeOffset other)
+		{
+			return dt == other.dt && utc_offset == other.utc_offset;	
+		}
+
+		public static DateTimeOffset FromFileTime (long fileTime)
+		{
+			if (fileTime < 0 || fileTime > MaxValue.Ticks)
+				throw new ArgumentOutOfRangeException ("fileTime is less than zero or greater than DateTimeOffset.MaxValue.Ticks.");
+			
+			return new DateTimeOffset (DateTime.FromFileTime (fileTime), TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.FromFileTime (fileTime)));
+
+		}
+
 		public override int GetHashCode ()
 		{
 			return dt.GetHashCode () ^ utc_offset.GetHashCode ();
 		}
 
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("datetime", dt);
+			info.AddValue ("offset", utc_offset);
+		}
+
+		public static bool operator > (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.UtcDateTime > right.UtcDateTime;
+		}			
+
+		public static bool operator >= (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.UtcDateTime >= right.UtcDateTime;
+		}			
+
+		public static implicit operator DateTimeOffset (DateTime dateTime)
+		{
+			return new DateTimeOffset (dateTime);
+		}
+
+		public static bool operator != (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.UtcDateTime != right.UtcDateTime;
+		}
+
+		public static bool operator < (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.UtcDateTime < right.UtcDateTime;
+		}
+		
+		public static bool operator <= (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.UtcDateTime <= right.UtcDateTime;
+		}
+	
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+		}
+
 		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		public static DateTimeOffset Parse (string input)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DateTimeOffset Parse (string input, IFormatProvider formatProvider)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DateTimeOffset Parse (string input, IFormatProvider formatProvider, DateTimeStyles styles)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DateTimeOffset ParseExact (string input, string format, IFormatProvider formatProvider)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+				
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			if (input == String.Empty)
+				throw new FormatException ("input is an empty string");
+
+			if (format == String.Empty)
+				throw new FormatException ("format is an empty string");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DateTimeOffset ParseExact (string input, string format, IFormatProvider formatProvider, DateTimeStyles styles)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+				
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			if (input == String.Empty)
+				throw new FormatException ("input is an empty string");
+
+			if (format == String.Empty)
+				throw new FormatException ("format is an empty string");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DateTimeOffset ParseExact (string input, string[] formats, IFormatProvider formatProvider, DateTimeStyles styles)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+				
+
+			if (input == String.Empty)
+				throw new FormatException ("input is an empty string");
+
+			throw new NotImplementedException ();
+		}
+
+		public TimeSpan Subtract (DateTimeOffset other)
+		{
+			return UtcDateTime - other.UtcDateTime;
+		}
+
+		public DateTimeOffset Subtract (TimeSpan timeSpan)
+		{
+			return Add (-timeSpan);
+		}
+
+		public static TimeSpan operator - (DateTimeOffset left, DateTimeOffset right)
+		{
+			return left.Subtract (right);
+		}
+
+		public static DateTimeOffset operator - (DateTimeOffset dateTimeTz, TimeSpan timeSpan)
+		{
+			return dateTimeTz.Subtract (timeSpan);	
+		}
+
+		public long ToFileTime ()
+		{
+			return UtcDateTime.ToFileTime ();
+		}
+
+		public DateTimeOffset ToLocalTime ()
+		{
+			return new DateTimeOffset (UtcDateTime.ToLocalTime (), TimeZone.CurrentTimeZone.GetUtcOffset (UtcDateTime.ToLocalTime ()));
+		}
+
+		public DateTimeOffset ToOffset (TimeSpan offset)
+		{
+			return new DateTimeOffset (dt - utc_offset + offset, offset);
+		}
+
+		[MonoTODO]
+		public override string ToString ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public string ToString (IFormatProvider formatProvider)
 		{
 			throw new NotImplementedException ();	
 		}
 
 		[MonoTODO]
-		public void OnDeserialization (object sender)
+		public string ToString (string format)
 		{
-			throw new NotImplementedException ();	
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -153,43 +382,130 @@ namespace System
 			throw new NotImplementedException ();	
 		}
 
-		public DateTime DateTime {
-			get {
-				if (dt.Kind == DateTimeKind.Unspecified)
-					return dt;
-				else
-					return DateTime.SpecifyKind (dt, DateTimeKind.Unspecified);
+		public DateTimeOffset ToUniversalTime ()
+		{
+			return new DateTimeOffset (UtcDateTime, TimeSpan.Zero);	
+		}
+
+		public static bool TryParse (string input, out DateTimeOffset result)
+		{
+			try {
+				result = Parse (input);
+				return true;
+			} catch {
+				result = MinValue;
+				return false;
 			}
+		}
+
+		public static bool TryParse (string input, IFormatProvider formatProvider, DateTimeStyles styles, out DateTimeOffset result)
+		{
+			try {
+				result = Parse (input, formatProvider, styles);
+				return true;
+			} catch {
+				result = MinValue;
+				return false;
+			}	
+		}
+
+		public static bool TryParseExact (string input, string format, IFormatProvider formatProvider, DateTimeStyles styles, out DateTimeOffset result)
+		{
+			try {
+				result = ParseExact (input, format, formatProvider, styles);
+				return true;
+			} catch {
+				result = MinValue;
+				return false;
+			}
+		}
+
+		public static bool TryParseExact (string input, string[] formats, IFormatProvider formatProvider, DateTimeStyles styles, out DateTimeOffset result)
+		{
+			try {
+				result = ParseExact (input, formats, formatProvider, styles);
+				return true;
+			} catch {
+				result = MinValue;
+				return false;
+			}
+		}
+
+		public DateTime Date {
+			get { return DateTime.SpecifyKind (dt.Date, DateTimeKind.Unspecified); }
+		}
+
+		public DateTime DateTime {
+			get { return DateTime.SpecifyKind (dt, DateTimeKind.Unspecified); }
+		}
+
+		public int Day {
+			get { return dt.Day; }
+		}
+
+		public DayOfWeek DayOfWeek {
+			get { return dt.DayOfWeek; }
+		}
+
+		public int DayOfYear {
+			get { return dt.DayOfYear; }
+		}
+
+		public int Hour {
+			get { return dt.Hour; }
+		}
+
+		public DateTime LocalDateTime {
+			get { return UtcDateTime.ToLocalTime (); }
+		}
+
+		public int Millisecond {
+			get { return dt.Millisecond; }
+		}
+
+		public int Minute {
+			get { return dt.Minute; }
+		}
+
+		public int Month {
+			get { return dt.Month; }
+		}
+
+		public static DateTimeOffset Now {
+			get { return new DateTimeOffset (DateTime.Now);}
 		}
 
 		public TimeSpan Offset {
-			get {
-				return utc_offset;	
-			}	
+			get { return utc_offset; }	
+		}
+
+		public int Second {
+			get { return dt.Second; }
+		}
+
+		public long Ticks {
+			get { return dt.Ticks; }	
+		}
+
+		public TimeSpan TimeOfDay {
+			get { return dt.TimeOfDay; }
 		}
 
 		public DateTime UtcDateTime {
-			get {
-				return DateTime.SpecifyKind (dt - utc_offset, DateTimeKind.Utc);
-			}	
+			get { return DateTime.SpecifyKind (dt - utc_offset, DateTimeKind.Utc); }	
 		}
 		
-		public static DateTimeOffset Now {
-			get {
-				return new DateTimeOffset (DateTime.Now);
-			}
+		public static DateTimeOffset UtcNow {
+			get { return new DateTimeOffset (DateTime.UtcNow); }
 		}
-		
-		public static bool operator < (DateTimeOffset dto1, DateTimeOffset dto2)
-		{
-			return dto1.UtcDateTime < dto2.UtcDateTime;
+
+		public long UtcTicks {
+			get { return UtcDateTime.Ticks; }
 		}
-		
-		public static bool operator > (DateTimeOffset dto1, DateTimeOffset dto2)
-		{
-			return dto1.UtcDateTime > dto2.UtcDateTime;
-		}			
+
+		public int Year {
+			get { return dt.Year; }
+		}
 	}
 }
-
 #endif

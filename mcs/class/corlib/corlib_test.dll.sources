@@ -41,6 +41,7 @@ System.Collections.ObjectModel/CollectionTest.cs
 System.Collections.ObjectModel/KeyedCollectionTest.cs
 System/ConsoleTest.cs
 System/ConvertTest.cs
+System/DateTimeOffsetTest.cs
 System/DateTimeTest.cs
 System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
