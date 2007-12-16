@@ -1,3 +1,8 @@
+2007-12-16 Igor Zelmanovich <igorz@mainsoft.com>
+	
+	* HttpContext.cs: added IsProcessingInclude property.
+	* HttpServerUtility.cs: set IsProcessingInclude value within Execute.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs, HttpResponse.cs, SiteMapNode.cs, HttpRuntime.cs,

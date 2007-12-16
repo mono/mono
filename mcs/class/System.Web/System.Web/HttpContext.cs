@@ -72,6 +72,7 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
+		bool _isProcessingInclude;
 
 #if NET_2_0
 		
@@ -101,6 +102,11 @@ namespace System.Web {
 			this.request = request;
 			this.response = response;
 			
+		}
+
+		internal bool IsProcessingInclude {
+			get { return _isProcessingInclude; }
+			set { _isProcessingInclude = value; }
 		}
 
 		public Exception [] AllErrors {

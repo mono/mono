@@ -759,10 +759,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
 		// if request was transfered from other page such Transfer
-#if NET_2_0
-		if(!isCrossPagePostBack)
-#endif
-		if (this != _context.Handler)
+		if (_context.IsProcessingInclude)
 			return null;
 		
 		HttpRequest req = Request;
@@ -2516,9 +2513,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requestValueCollection != null) {
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
-				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				IHttpHandler handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
-				previousPage.ProcessRequest (Context);
+				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
 			} 
 		}
 	}

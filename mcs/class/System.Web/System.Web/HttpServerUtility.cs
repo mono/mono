@@ -120,10 +120,10 @@ namespace System.Web {
 			string exePath = UrlUtils.Combine (context.Request.BaseVirtualDir, path);
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath);
 
-			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer);
+			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer, true);
 		}
 
-		void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm, string exePath, string queryString, bool isTransfer) {
+		internal void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm, string exePath, string queryString, bool isTransfer, bool isInclude) {
 #if NET_2_0 && !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
@@ -151,11 +151,13 @@ namespace System.Web {
 			
 			TextWriter previous = response.SetTextWriter (output);
 			string oldExePath = request.CurrentExecutionFilePath;
+			bool oldIsInclude = context.IsProcessingInclude;
 			try {
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
 				request.SetCurrentExePath (exePath);
+				context.IsProcessingInclude = isInclude;
 				
 				if (!(handler is IHttpAsyncHandler)) {
 					handler.ProcessRequest (context);
@@ -177,6 +179,7 @@ namespace System.Web {
 				context.PopHandler ();
 #endif
 				request.SetCurrentExePath (oldExePath);
+				context.IsProcessingInclude = oldIsInclude;
 			}
 		}
 
@@ -230,7 +233,7 @@ namespace System.Web {
 			// TODO: see the MS doc and search for "enableViewStateMac": this method is not
 			// allowed for pages when preserveForm is true and the page IsCallback property
 			// is true.
-			Execute (handler, null, preserveForm, context.Request.CurrentExecutionFilePath, null, true);
+			Execute (handler, null, preserveForm, context.Request.CurrentExecutionFilePath, null, true, true);
 			context.Response.End ();
 		}
 
@@ -239,7 +242,7 @@ namespace System.Web {
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
 
-			Execute (handler, writer, preserveForm, context.Request.CurrentExecutionFilePath, null, false);
+			Execute (handler, writer, preserveForm, context.Request.CurrentExecutionFilePath, null, false, true);
 		}
 
 		public static byte[] UrlTokenDecode (string input)
