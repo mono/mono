@@ -1,3 +1,7 @@
+2007-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* *: Add preliminary ARM port.
+
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_handle_global_vregs): Fix crashes on 32 bit systems.
@@ -39,6 +43,16 @@
 	* mini-<ARCH>.c cpu-<ARCH>.md: Remove OP_FCONV_TO_R8.
 
 2007-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_branch_to_cmov): Only run this if MONO_ARCH_HAVE_CMOV_OPTS is defined.
+
+	* mini-amd64.h mini-x86.h: Define the cmov define.
+
+	* mini-ops.h: Add OP_SWITCH opcode.
+
+	* mini.h: Move the IS_JUMP_INFO defines here from mini.c.
+
+	* ssa2.c (visit_inst): Handle OP_SWITCH.
 
 	* method-to-ir.c (mono_op_to_op_imm): Add more opcodes.
 	

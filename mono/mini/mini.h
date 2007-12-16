@@ -171,7 +171,7 @@ extern int mono_inject_async_exc_pos;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 
-extern const char const ins_info[];
+extern const char ins_info[];
 
 struct MonoEdge {
 	MonoEdge *next;

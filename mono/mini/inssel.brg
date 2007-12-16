@@ -116,8 +116,7 @@
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE(cfg,dr,base,offset) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = OP_LOAD_MEMBASE; \
+                MONO_INST_NEW ((cfg), (inst), OP_LOAD_MEMBASE); \
                 inst->dreg = dr; \
                 inst->inst_basereg = base; \
                 inst->inst_offset = offset; \
@@ -126,8 +125,7 @@
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg,op,dr,base,offset) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+                MONO_INST_NEW ((cfg), (inst), (op)); \
                 inst->dreg = dr; \
                 inst->inst_basereg = base; \
                 inst->inst_offset = offset; \

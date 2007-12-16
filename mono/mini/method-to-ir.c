@@ -5434,6 +5434,9 @@ mono_decompose_long_opts (MonoCompile *cfg)
 #elif defined(__sparc__)
 				MONO_EMIT_NEW_BIALU (cfg, OP_SUBCC, tree->dreg + 1, 0, tree->sreg1 + 1);
 				MONO_EMIT_NEW_BIALU (cfg, OP_SBB, tree->dreg + 2, 0, tree->sreg1 + 2);
+#elif defined(__arm__)
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSBS_IMM, tree->dreg + 1, tree->sreg1 + 1, 0);
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSC_IMM, tree->dreg + 2, tree->sreg1 + 2, 0);
 #else
 				NOT_IMPLEMENTED;
 #endif
@@ -7222,14 +7225,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			for (i = 0; i < n; ++i)
 				link_bblock (cfg, bblock, targets [i]);
 
+			table = mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
+			table->table = targets;
+			table->table_size = n;
+
+#ifdef __arm__
+			/* ARM implements SWITCH statements differently */
+			/* FIXME: Make it use the generic implementation */
+			/* the backend code will deal with aot vs normal case */
+			MONO_INST_NEW (cfg, ins, OP_SWITCH);
+			ins->sreg1 = src1->dreg;
+			ins->inst_p0 = table;
+			ins->inst_many_bb = targets;
+			ins->klass = GPOINTER_TO_INT (n);
+			MONO_ADD_INS (cfg->cbb, ins);
+#else
 			if (sizeof (gpointer) == 8)
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 3);
 			else
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 2);
-
-			table = mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
-			table->table = targets;
-			table->table_size = n;
 
 			if (cfg->compile_aot) {
 				MONO_EMIT_NEW_AOTCONST (cfg, table_reg, table, MONO_PATCH_INFO_SWITCH);
@@ -7245,6 +7259,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, sum_reg, table_reg, offset_reg);
 			MONO_EMIT_NEW_LOAD_MEMBASE (cfg, target_reg, sum_reg, 0);
 			MONO_EMIT_NEW_UNALU (cfg, OP_BR_REG, -1, target_reg);
+#endif
 			start_new_bblock = 1;
 			inline_costs += (BRANCH_COST * 2);
 			break;
@@ -9733,6 +9748,22 @@ mono_op_imm_to_op (int opcode)
 #else
 		return OP_LREM;
 #endif
+	case OP_ADDCC_IMM:
+		return OP_ADDCC;
+	case OP_ADC_IMM:
+		return OP_ADC;
+	case OP_SUBCC_IMM:
+		return OP_SUBCC;
+	case OP_SBB_IMM:
+		return OP_SBB;
+	case OP_IADC_IMM:
+		return OP_IADC;
+	case OP_ISBB_IMM:
+		return OP_ISBB;
+	case OP_COMPARE_IMM:
+		return OP_COMPARE;
+	case OP_ICOMPARE_IMM:
+		return OP_ICOMPARE;
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
 		g_assert_not_reached ();

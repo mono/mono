@@ -43,7 +43,7 @@ static int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
  * 2) softfloat: the compiler emulates all the fp ops. Usually uses the
  *    ugly swapped double format (I guess a softfloat-vfp exists, too, though).
  * 3) VFP: the new and actually sensible and useful FP support. Implemented
- *    in HW or kernel-emulated, requires new tools. I think this ios what symbian uses.
+ *    in HW or kernel-emulated, requires new tools. I think this is what symbian uses.
  *
  * The plan is to write the FPA support first. softfloat can be tested in a chroot.
  */
@@ -61,8 +61,17 @@ int mono_exc_esp_offset = 0;
 #define MOV_LR_PC ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 24) | (0xa << 20) |  (ARMREG_LR << 12) | ARMREG_PC)
 #define DEBUG_IMT 0
 
+#ifdef MONO_ARCH_SOFT_FLOAT
+#define SOFT_FLOAT_IMPL TRUE
+#else
+#define SOFT_FLOAT_IMPL FALSE
+#endif
+
+void mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
+
 const char*
-mono_arch_regname (int reg) {
+mono_arch_regname (int reg)
+{
 	static const char * rnames[] = {
 		"arm_r0", "arm_r1", "arm_r2", "arm_r3", "arm_v1",
 		"arm_v2", "arm_v3", "arm_v4", "arm_v5", "arm_v6",
@@ -75,7 +84,8 @@ mono_arch_regname (int reg) {
 }
 
 const char*
-mono_arch_fregname (int reg) {
+mono_arch_fregname (int reg)
+{
 	static const char * rnames[] = {
 		"arm_f0", "arm_f1", "arm_f2", "arm_f3", "arm_f4",
 		"arm_f5", "arm_f6", "arm_f7", "arm_f8", "arm_f9",
@@ -174,6 +184,23 @@ emit_call_seq (MonoCompile *cfg, guint8 *code)
 	} else {
 		ARM_BL (code, 0);
 	}
+	return code;
+}
+
+static guint8*
+emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
+{
+	switch (ins->opcode) {
+	case OP_FCALL:
+	case OP_FCALL_REG:
+	case OP_FCALL_MEMBASE:
+#ifdef ARM_FPU_FPA
+		if (ins->dreg != ARM_FPA_F0)
+			ARM_MVFD (code, ins->dreg, ARM_FPA_F0);
+#endif
+		break;
+	}
+
 	return code;
 }
 
@@ -876,8 +903,10 @@ mono_arch_allocate_vars (MonoCompile *m)
 	offset = 0;
 	curinst = 0;
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		m->ret->opcode = OP_REGVAR;
-		m->ret->inst_c0 = ARMREG_R0;
+		if (!m->new_ir) {
+			m->ret->opcode = OP_REGVAR;
+			m->ret->inst_c0 = ARMREG_R0;
+		}
 	} else {
 		/* FIXME: handle long and FP values */
 		switch (mono_type_get_underlying_type (sig->ret)->type) {
@@ -917,12 +946,24 @@ mono_arch_allocate_vars (MonoCompile *m)
         }
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		inst = m->ret;
+		if (m->new_ir) {
+			/* 
+			 * In the new IR, the cfg->vret_addr variable represents the
+			 * vtype return value.
+			 */
+			inst = m->vret_addr;
+		} else {
+			inst = m->ret;
+		}
 		offset += sizeof(gpointer) - 1;
 		offset &= ~(sizeof(gpointer) - 1);
 		inst->inst_offset = offset;
 		inst->opcode = OP_REGOFFSET;
 		inst->inst_basereg = frame_reg;
+		if (m->new_ir && G_UNLIKELY (m->verbose_level > 1)) {
+			printf ("vret_addr =");
+			mono_print_ins (m->vret_addr);
+		}
 		offset += sizeof(gpointer);
 		if (sig->call_convention == MONO_CALL_VARARG)
 			m->sig_cookie += sizeof (gpointer);
@@ -1001,9 +1042,22 @@ mono_arch_allocate_vars (MonoCompile *m)
 
 }
 
-/* Fixme: we need an alignment solution for enter_method and mono_arch_call_opcode,
- * currently alignment in mono_arch_call_opcode is computed without arch_get_argument_info 
- */
+void
+mono_arch_create_vars (MonoCompile *cfg)
+{
+	MonoMethodSignature *sig;
+
+	sig = mono_method_signature (cfg->method);
+
+	if (cfg->new_ir && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr = ");
+			mono_print_ins (cfg->vret_addr);
+		}
+	}
+
+}
 
 /* 
  * take the arguments and generate the arch-specific
@@ -1136,6 +1190,219 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 	g_free (cinfo);
 	return call;
+}
+
+void
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
+{
+	MonoInst *in, *ins;
+	MonoMethodSignature *sig;
+	int i, n;
+	CallInfo *cinfo;
+
+	sig = call->signature;
+	n = sig->param_count + sig->hasthis;
+	
+	cinfo = calculate_sizes (sig, sig->pinvoke);
+
+	for (i = 0; i < n; ++i) {
+		ArgInfo *ainfo = cinfo->args + i;
+		MonoType *t;
+
+		if (i >= sig->hasthis)
+			t = sig->params [i - sig->hasthis];
+		else
+			t = &mono_defaults.int_class->byval_arg;
+		t = mono_type_get_underlying_type (t);
+
+		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
+			/* FIXME: */
+			NOT_IMPLEMENTED;
+		}
+
+		in = call->args [i];
+
+		if (ainfo->regtype == RegTypeGeneral) {
+			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
+				MONO_INST_NEW (cfg, ins, OP_MOVE);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->sreg1 = in->dreg + 1;
+				MONO_ADD_INS (cfg->cbb, ins);
+				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
+
+				MONO_INST_NEW (cfg, ins, OP_MOVE);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->sreg1 = in->dreg + 2;
+				MONO_ADD_INS (cfg->cbb, ins);
+				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg + 1, FALSE);
+			} else if (!t->byref && ((t->type == MONO_TYPE_R8) || (t->type == MONO_TYPE_R4))) {
+				int creg;
+
+				if (ainfo->size == 4) {
+					if (SOFT_FLOAT_IMPL)
+						NOT_IMPLEMENTED;
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
+					creg = mono_alloc_ireg (cfg);
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
+				} else {
+					if (SOFT_FLOAT_IMPL)
+						NOT_IMPLEMENTED;
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
+					creg = mono_alloc_ireg (cfg);
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
+					creg = mono_alloc_ireg (cfg);
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg + 1, FALSE);
+					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8 + 4));
+				}
+				cfg->flags |= MONO_CFG_HAS_FPOUT;
+			} else {
+				MONO_INST_NEW (cfg, ins, OP_MOVE);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->sreg1 = in->dreg;
+				MONO_ADD_INS (cfg->cbb, ins);
+
+				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
+			}
+		} else if (ainfo->regtype == RegTypeStructByAddr) {
+			NOT_IMPLEMENTED;
+#if 0
+			/* FIXME: where si the data allocated? */
+			arg->backend.reg3 = ainfo->reg;
+			call->used_iregs |= 1 << ainfo->reg;
+			g_assert_not_reached ();
+#endif
+		} else if (ainfo->regtype == RegTypeStructByVal) {
+			MONO_INST_NEW (cfg, ins, OP_OUTARG_VT);
+			ins->opcode = OP_OUTARG_VT;
+			ins->sreg1 = in->dreg;
+			ins->klass = in->klass;
+			ins->inst_p0 = call;
+			ins->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
+			memcpy (ins->inst_p1, ainfo, sizeof (ArgInfo));
+			MONO_ADD_INS (cfg->cbb, ins);
+		} else if (ainfo->regtype == RegTypeBase) {
+			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+			} else if (!t->byref && ((t->type == MONO_TYPE_R4) || (t->type == MONO_TYPE_R8))) {
+				if (SOFT_FLOAT_IMPL)
+					NOT_IMPLEMENTED;
+
+				if (t->type == MONO_TYPE_R8)
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+				else
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+			} else {
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+			}
+		} else if (ainfo->regtype == RegTypeBaseGen) {
+			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, (G_BYTE_ORDER == G_BIG_ENDIAN) ? in->dreg + 1 : in->dreg + 2);
+				MONO_INST_NEW (cfg, ins, OP_MOVE);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->sreg1 = G_BYTE_ORDER == G_BIG_ENDIAN ? in->dreg + 2 : in->dreg + 1;
+				MONO_ADD_INS (cfg->cbb, ins);
+				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ARMREG_R3, FALSE);
+			} else if (!t->byref && (t->type == MONO_TYPE_R8)) {
+				int creg;
+
+				if (SOFT_FLOAT_IMPL)
+					NOT_IMPLEMENTED;
+
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
+				creg = mono_alloc_ireg (cfg);
+				mono_call_inst_add_outarg_reg (cfg, call, creg, ARMREG_R3, FALSE);
+				MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
+				creg = mono_alloc_ireg (cfg);
+				MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 4));
+				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, creg);
+				cfg->flags |= MONO_CFG_HAS_FPOUT;
+			} else {
+				g_assert_not_reached ();
+			}
+		} else if (ainfo->regtype == RegTypeFP) {
+			/* FIXME: */
+			NOT_IMPLEMENTED;
+#if 0
+			arg->backend.reg3 = ainfo->reg;
+			/* FP args are passed in int regs */
+			call->used_iregs |= 1 << ainfo->reg;
+			if (ainfo->size == 8) {
+				arg->opcode = OP_OUTARG_R8;
+				call->used_iregs |= 1 << (ainfo->reg + 1);
+			} else {
+				arg->opcode = OP_OUTARG_R4;
+			}
+#endif
+			cfg->flags |= MONO_CFG_HAS_FPOUT;
+		} else {
+			g_assert_not_reached ();
+		}
+	}
+
+	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		MonoInst *vtarg;
+
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+		vtarg->sreg1 = call->vret_var->dreg;
+		vtarg->dreg = mono_alloc_preg (cfg);
+		MONO_ADD_INS (cfg->cbb, vtarg);
+
+		mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
+	}
+
+	call->stack_usage = cinfo->stack_usage;
+
+	g_free (cinfo);
+}
+
+void
+mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
+{
+	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
+	ArgInfo *ainfo = ins->inst_p1;
+	int ovf_size = ainfo->vtsize;
+	int doffset = ainfo->offset;
+	int i, soffset, dreg;
+
+	soffset = 0;
+	for (i = 0; i < ainfo->size; ++i) {
+		dreg = mono_alloc_ireg (cfg);
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, dreg, src->dreg, soffset);
+		mono_call_inst_add_outarg_reg (cfg, call, dreg, ainfo->reg + i, FALSE);
+		soffset += sizeof (gpointer);
+	}
+	//g_print ("vt size: %d at R%d + %d\n", doffset, vt->inst_basereg, vt->inst_offset);
+	if (ovf_size != 0)
+		mini_emit_memcpy2 (cfg, ARMREG_SP, doffset, src->dreg, soffset, ovf_size * sizeof (gpointer), 0);
+}
+
+void
+mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
+{
+	MonoType *ret = mono_type_get_underlying_type (mono_method_signature (method)->ret);
+
+	if (!ret->byref) {
+		if (ret->type == MONO_TYPE_I8 || ret->type == MONO_TYPE_U8) {
+			MonoInst *ins;
+
+			MONO_INST_NEW (cfg, ins, OP_SETLRET);
+			ins->sreg1 = val->dreg + 1;
+			ins->sreg2 = val->dreg + 2;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return;
+		}
+	}
+
+	/* FIXME: */
+	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
+}
+
+gboolean 
+mono_arch_is_inst_imm (gint64 imm)
+{
+	return TRUE;
 }
 
 /*
@@ -1306,6 +1573,11 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		switch (ins->opcode) {
 		case OP_MUL_IMM: 
+		case OP_IMUL_IMM: 
+			/* Already done by an arch-independent pass */
+			if (cfg->new_ir)
+				break;
+
 			/* remove unnecessary multiplication with 1 */
 			if (ins->inst_imm == 1) {
 				if (ins->dreg != ins->sreg1) {
@@ -1499,6 +1771,8 @@ map_to_reg_reg_op (int op)
 		return CEE_AND;
 	case OP_COMPARE_IMM:
 		return OP_COMPARE;
+	case OP_ICOMPARE_IMM:
+		return OP_ICOMPARE;
 	case OP_ADDCC_IMM:
 		return OP_ADDCC;
 	case OP_ADC_IMM:
@@ -1572,21 +1846,33 @@ loop_start:
 		case OP_SUB_IMM:
 		case OP_AND_IMM:
 		case OP_COMPARE_IMM:
+		case OP_ICOMPARE_IMM:
 		case OP_ADDCC_IMM:
 		case OP_ADC_IMM:
 		case OP_SUBCC_IMM:
 		case OP_SBB_IMM:
 		case OP_OR_IMM:
 		case OP_XOR_IMM:
+		case OP_IADD_IMM:
+		case OP_ISUB_IMM:
+		case OP_IAND_IMM:
+		case OP_IADC_IMM:
+		case OP_ISBB_IMM:
+		case OP_IOR_IMM:
+		case OP_IXOR_IMM:
 			if ((imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount)) < 0) {
 				NEW_INS (cfg, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_regstate_next_int (cfg->rs);
 				ins->sreg2 = temp->dreg;
-				ins->opcode = map_to_reg_reg_op (ins->opcode);
+				if (cfg->new_ir)
+					ins->opcode = mono_op_imm_to_op (ins->opcode);
+				else
+					ins->opcode = map_to_reg_reg_op (ins->opcode);
 			}
 			break;
 		case OP_MUL_IMM:
+		case OP_IMUL_IMM:
 			if (ins->inst_imm == 1) {
 				ins->opcode = OP_MOVE;
 				break;
@@ -1607,6 +1893,13 @@ loop_start:
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->sreg2 = temp->dreg;
 			ins->opcode = CEE_MUL;
+			break;
+		case OP_LOCALLOC_IMM:
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			temp->dreg = mono_regstate_next_int (cfg->rs);
+			ins->sreg1 = temp->dreg;
+			ins->opcode = OP_LOCALLOC;
 			break;
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI4_MEMBASE:
@@ -1702,7 +1995,41 @@ loop_start:
 			ins->opcode = map_to_reg_reg_op (ins->opcode);
 			last_ins = temp;
 			goto loop_start; /* make it handle the possibly big ins->inst_offset */
+		case OP_FCOMPARE: {
+			gboolean swap = FALSE;
+			int reg;
+
+			/* Some fp compares require swapped operands */
+			g_assert (ins->next);
+			switch (ins->next->opcode) {
+			case OP_FBGT:
+				ins->next->opcode = OP_FBLT;
+				swap = TRUE;
+				break;
+			case OP_FBGT_UN:
+				ins->next->opcode = OP_FBLT_UN;
+				swap = TRUE;
+				break;
+			case OP_FBLE:
+				ins->next->opcode = OP_FBGE;
+				swap = TRUE;
+				break;
+			case OP_FBLE_UN:
+				ins->next->opcode = OP_FBGE_UN;
+				swap = TRUE;
+				break;
+			default:
+				break;
+			}
+			if (swap) {
+				reg = ins->sreg1;
+				ins->sreg1 = ins->sreg2;
+				ins->sreg2 = reg;
+			}
+			break;
 		}
+		}
+
 		last_ins = ins;
 		ins = ins->next;
 	}
@@ -2208,41 +2535,55 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_LDRSH_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
 		case CEE_CONV_I1:
+		case OP_ICONV_TO_I1:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 24);
 			ARM_SAR_IMM (code, ins->dreg, ins->dreg, 24);
 			break;
 		case CEE_CONV_I2:
+		case OP_ICONV_TO_I2:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 16);
 			ARM_SAR_IMM (code, ins->dreg, ins->dreg, 16);
 			break;
 		case CEE_CONV_U1:
+		case OP_ICONV_TO_U1:
 			ARM_AND_REG_IMM8 (code, ins->dreg, ins->sreg1, 0xff);
 			break;
 		case CEE_CONV_U2:
+		case OP_ICONV_TO_U2:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 16);
 			ARM_SHR_IMM (code, ins->dreg, ins->dreg, 16);
 			break;
 		case OP_COMPARE:
+		case OP_ICOMPARE:
 			ARM_CMP_REG_REG (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
+		case OP_ICOMPARE_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_CMP_REG_IMM (code, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_BREAK:
-			*(int*)code = 0xe7f001f0;
 			*(int*)code = 0xef9f0001;
 			code += 4;
 			//ARM_DBRK (code);
 			break;
+		case OP_NOP:
+		case OP_DUMMY_USE:
+		case OP_DUMMY_STORE:
+		case OP_NOT_REACHED:
+		case OP_NOT_NULL:
+			break;
 		case OP_ADDCC:
+		case OP_IADDCC:
 			ARM_ADDS_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case CEE_ADD:
+		case OP_IADD:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADC:
+		case OP_IADC:
 			ARM_ADCS_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ADDCC_IMM:
@@ -2251,28 +2592,34 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_ADDS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_ADD_IMM:
+		case OP_IADD_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_ADD_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_ADC_IMM:
+		case OP_IADC_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_ADCS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case CEE_ADD_OVF:
+		case OP_IADD_OVF:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
 		case CEE_ADD_OVF_UN:
+		case OP_IADD_OVF_UN:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
 		case CEE_SUB_OVF:
+		case OP_ISUB_OVF:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
 		case CEE_SUB_OVF_UN:
+		case OP_ISUB_OVF_UN:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_TRUE, PPC_BR_EQ, "OverflowException");
 			break;
@@ -2293,6 +2640,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_TRUE, PPC_BR_EQ, "OverflowException");
 			break;
 		case OP_SUBCC:
+		case OP_ISUBCC:
 			ARM_SUBS_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SUBCC_IMM:
@@ -2301,17 +2649,21 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_SUBS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case CEE_SUB:
+		case OP_ISUB:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SBB:
+		case OP_ISBB:
 			ARM_SBCS_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SUB_IMM:
+		case OP_ISUB_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_SUB_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_SBB_IMM:
+		case OP_ISBB_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_SBCS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
@@ -2327,9 +2679,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_RSC_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case CEE_AND:
+		case OP_IAND:
 			ARM_AND_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_AND_IMM:
+		case OP_IAND_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_AND_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
@@ -2343,49 +2697,68 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* crappy ARM arch doesn't have a DIV instruction */
 			g_assert_not_reached ();
 		case CEE_OR:
+		case OP_IOR:
 			ARM_ORR_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_OR_IMM:
+		case OP_IOR_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_ORR_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case CEE_XOR:
+		case OP_IXOR:
 			ARM_EOR_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_XOR_IMM:
+		case OP_IXOR_IMM:
 			imm8 = mono_arm_is_rotated_imm8 (ins->inst_imm, &rot_amount);
 			g_assert (imm8 >= 0);
 			ARM_EOR_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
 		case CEE_SHL:
+		case OP_ISHL:
 			ARM_SHL_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SHL_IMM:
+		case OP_ISHL_IMM:
 			if (ins->inst_imm)
 				ARM_SHL_IMM (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
+			else if (ins->dreg != ins->sreg1)
+				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_SHR:
+		case OP_ISHR:
 			ARM_SAR_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_SHR_IMM:
+		case OP_ISHR_IMM:
 			if (ins->inst_imm)
 				ARM_SAR_IMM (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
+			else if (ins->dreg != ins->sreg1)
+				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		case OP_SHR_UN_IMM:
+		case OP_ISHR_UN_IMM:
 			if (ins->inst_imm)
 				ARM_SHR_IMM (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
+			else if (ins->dreg != ins->sreg1)
+				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);				
 			break;
 		case CEE_SHR_UN:
+		case OP_ISHR_UN:
 			ARM_SHR_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case CEE_NOT:
+		case OP_INOT:
 			ARM_MVN_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_NEG:
+		case OP_INEG:
 			ARM_RSB_REG_IMM8 (code, ins->dreg, ins->sreg1, 0);
 			break;
 		case CEE_MUL:
+		case OP_IMUL:
 			if (ins->dreg == ins->sreg2)
 				ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			else
@@ -2395,10 +2768,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		case CEE_MUL_OVF:
+		case OP_IMUL_OVF:
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case CEE_MUL_OVF_UN:
+		case OP_IMUL_OVF_UN:
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2418,6 +2793,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
+		case OP_ICONV_TO_I4:
+		case OP_ICONV_TO_U4:
 		case OP_MOVE:
 		case OP_SETREG:
 			if (ins->dreg != ins->sreg1)
@@ -2480,25 +2857,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_FCALL:
 		case OP_LCALL:
 		case OP_VCALL:
+		case OP_VCALL2:
 		case OP_VOIDCALL:
 		case CEE_CALL:
+		case OP_CALL:
 			call = (MonoCallInst*)ins;
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
 			else
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, call->fptr);
 			code = emit_call_seq (cfg, code);
+			code = emit_move_return_value (cfg, ins, code);
 			break;
 		case OP_FCALL_REG:
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
+		case OP_VCALL2_REG:
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
 			code = emit_call_reg (code, ins->sreg1);
+			code = emit_move_return_value (cfg, ins, code);
 			break;
 		case OP_FCALL_MEMBASE:
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
+		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE:
 			g_assert (arm_is_imm12 (ins->inst_offset));
@@ -2516,6 +2899,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
 				ARM_LDR_IMM (code, ARMREG_PC, ins->sreg1, ins->inst_offset);
 			}
+			code = emit_move_return_value (cfg, ins, code);
 			break;
 		case OP_OUTARG:
 			g_assert_not_reached ();
@@ -2527,8 +2911,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			alloca_waste &= ~7;
 			/* round the size to 8 bytes */
 			ARM_ADD_REG_IMM8 (code, ins->dreg, ins->sreg1, 7);
-			ARM_BIC_REG_IMM8 (code, ins->dreg, ins->sreg1, 7);
-			ARM_ADD_REG_IMM8 (code, ins->dreg, ins->dreg, alloca_waste);
+			ARM_BIC_REG_IMM8 (code, ins->dreg, ins->dreg, 7);
+			if (alloca_waste)
+				ARM_ADD_REG_IMM8 (code, ins->dreg, ins->dreg, alloca_waste);
 			ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ins->dreg);
 			/* memzero the area: dreg holds the size, sp is the pointer */
 			if (ins->flags & MONO_INST_INIT) {
@@ -2541,7 +2926,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				arm_patch (branch_to_cond, code);
 				/* decrement by 4 and set flags */
 				ARM_SUBS_REG_IMM8 (code, ins->dreg, ins->dreg, 4);
-				ARM_B_COND (code, ARMCOND_LT, 0);
+				ARM_B_COND (code, ARMCOND_GE, 0);
 				arm_patch (code - 4, start_loop);
 			}
 			ARM_ADD_REG_IMM8 (code, ins->dreg, ARMREG_SP, alloca_waste);
@@ -2567,36 +2952,45 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_call_seq (cfg, code);
 			break;
 		}
-		case OP_START_HANDLER:
-			if (arm_is_imm12 (ins->inst_left->inst_offset)) {
-				ARM_STR_IMM (code, ARMREG_LR, ins->inst_left->inst_basereg, ins->inst_left->inst_offset);
+		case OP_START_HANDLER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+
+			if (arm_is_imm12 (spvar->inst_offset)) {
+				ARM_STR_IMM (code, ARMREG_LR, spvar->inst_basereg, spvar->inst_offset);
 			} else {
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, ins->inst_left->inst_offset);
-				ARM_STR_REG_REG (code, ARMREG_LR, ins->inst_left->inst_basereg, ARMREG_IP);
+				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
+				ARM_STR_REG_REG (code, ARMREG_LR, spvar->inst_basereg, ARMREG_IP);
 			}
 			break;
-		case OP_ENDFILTER:
+		}
+		case OP_ENDFILTER: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+
 			if (ins->sreg1 != ARMREG_R0)
 				ARM_MOV_REG_REG (code, ARMREG_R0, ins->sreg1);
-			if (arm_is_imm12 (ins->inst_left->inst_offset)) {
-				ARM_LDR_IMM (code, ARMREG_IP, ins->inst_left->inst_basereg, ins->inst_left->inst_offset);
+			if (arm_is_imm12 (spvar->inst_offset)) {
+				ARM_LDR_IMM (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset);
 			} else {
-				g_assert (ARMREG_IP != ins->inst_left->inst_basereg);
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, ins->inst_left->inst_offset);
-				ARM_LDR_REG_REG (code, ARMREG_IP, ins->inst_left->inst_basereg, ARMREG_IP);
+				g_assert (ARMREG_IP != spvar->inst_basereg);
+				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
+				ARM_LDR_REG_REG (code, ARMREG_IP, spvar->inst_basereg, ARMREG_IP);
 			}
 			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
 			break;
-		case OP_ENDFINALLY:
-			if (arm_is_imm12 (ins->inst_left->inst_offset)) {
-				ARM_LDR_IMM (code, ARMREG_IP, ins->inst_left->inst_basereg, ins->inst_left->inst_offset);
+		}
+		case OP_ENDFINALLY: {
+			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
+
+			if (arm_is_imm12 (spvar->inst_offset)) {
+				ARM_LDR_IMM (code, ARMREG_IP, spvar->inst_basereg, spvar->inst_offset);
 			} else {
-				g_assert (ARMREG_IP != ins->inst_left->inst_basereg);
-				code = mono_arm_emit_load_imm (code, ARMREG_IP, ins->inst_left->inst_offset);
-				ARM_LDR_REG_REG (code, ARMREG_IP, ins->inst_left->inst_basereg, ARMREG_IP);
+				g_assert (ARMREG_IP != spvar->inst_basereg);
+				code = mono_arm_emit_load_imm (code, ARMREG_IP, spvar->inst_offset);
+				ARM_LDR_REG_REG (code, ARMREG_IP, spvar->inst_basereg, ARMREG_IP);
 			}
 			ARM_MOV_REG_REG (code, ARMREG_PC, ARMREG_IP);
 			break;
+		}
 		case OP_CALL_HANDLER: 
 			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_BB, ins->inst_target_bb);
 			ARM_BL (code, 0);
@@ -2637,6 +3031,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * After follows the data.
 			 * FIXME: add aot support.
 			 */
+			if (cfg->new_ir)
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_SWITCH, ins->inst_p0);
 			max_len += 4 * GPOINTER_TO_INT (ins->klass);
 			if (offset > (cfg->code_size - max_len - 16)) {
 				cfg->code_size += max_len;
@@ -2649,22 +3045,27 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code += 4 * GPOINTER_TO_INT (ins->klass);
 			break;
 		case OP_CEQ:
+		case OP_ICEQ:
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 0, ARMCOND_NE);
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_EQ);
 			break;
 		case OP_CLT:
+		case OP_ICLT:
 			ARM_MOV_REG_IMM8 (code, ins->dreg, 0);
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_LT);
 			break;
 		case OP_CLT_UN:
+		case OP_ICLT_UN:
 			ARM_MOV_REG_IMM8 (code, ins->dreg, 0);
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_LO);
 			break;
 		case OP_CGT:
+		case OP_ICGT:
 			ARM_MOV_REG_IMM8 (code, ins->dreg, 0);
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_GT);
 			break;
 		case OP_CGT_UN:
+		case OP_ICGT_UN:
 			ARM_MOV_REG_IMM8 (code, ins->dreg, 0);
 			ARM_MOV_REG_IMM8_COND (code, ins->dreg, 1, ARMCOND_HI);
 			break;
@@ -2680,11 +3081,27 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COND_EXC_LE_UN:
 			EMIT_COND_SYSTEM_EXCEPTION (ins->opcode - OP_COND_EXC_EQ, ins->inst_p1);
 			break;
+		case OP_COND_EXC_IEQ:
+		case OP_COND_EXC_INE_UN:
+		case OP_COND_EXC_ILT:
+		case OP_COND_EXC_ILT_UN:
+		case OP_COND_EXC_IGT:
+		case OP_COND_EXC_IGT_UN:
+		case OP_COND_EXC_IGE:
+		case OP_COND_EXC_IGE_UN:
+		case OP_COND_EXC_ILE:
+		case OP_COND_EXC_ILE_UN:
+			EMIT_COND_SYSTEM_EXCEPTION (ins->opcode - OP_COND_EXC_IEQ, ins->inst_p1);
+			break;
 		case OP_COND_EXC_C:
 		case OP_COND_EXC_OV:
 		case OP_COND_EXC_NC:
 		case OP_COND_EXC_NO:
-			g_assert_not_reached ();
+		case OP_COND_EXC_IC:
+		case OP_COND_EXC_IOV:
+		case OP_COND_EXC_INC:
+		case OP_COND_EXC_INO:
+			/* FIXME: */
 			break;
 		case CEE_BEQ:
 		case CEE_BNE_UN:
@@ -2697,6 +3114,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_BLE:
 		case CEE_BLE_UN:
 			EMIT_COND_BRANCH (ins, ins->opcode - CEE_BEQ);
+			break;
+		case OP_IBEQ:
+		case OP_IBNE_UN:
+		case OP_IBLT:
+		case OP_IBLT_UN:
+		case OP_IBGT:
+		case OP_IBGT_UN:
+		case OP_IBGE:
+		case OP_IBGE_UN:
+		case OP_IBLE:
+		case OP_IBLE_UN:
+			EMIT_COND_BRANCH (ins, ins->opcode - OP_IBEQ);
 			break;
 
 		/* floating point opcodes */
@@ -2729,12 +3158,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_STORER8_MEMBASE_REG:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_STFD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			/* This is generated by the local regalloc pass which runs after the lowering pass */
+			if (!arm_is_fpimm8 (ins->inst_offset)) {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+				ARM_STFD (code, ins->sreg1, ARMREG_LR, 0);
+			} else {
+				ARM_STFD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			}
 			break;
 		case OP_LOADR8_MEMBASE:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_LDFD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			/* This is generated by the local regalloc pass which runs after the lowering pass */
+			if (!arm_is_fpimm8 (ins->inst_offset)) {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+				ARM_LDFD (code, ins->dreg, ARMREG_LR, 0);
+			} else {
+				ARM_LDFD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			}
 			break;
 		case OP_STORER4_MEMBASE_REG:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
@@ -2771,9 +3210,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case CEE_CONV_R4:
+		case OP_ICONV_TO_R4:
 			ARM_FLTS (code, ins->dreg, ins->sreg1);
 			break;
 		case CEE_CONV_R8:
+		case OP_ICONV_TO_R8:
 			ARM_FLTD (code, ins->dreg, ins->sreg1);
 			break;
 #elif defined(ARM_FPU_VFP)
@@ -2864,7 +3305,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			/* Implemented as helper calls */
 			break;
-		case OP_LCONV_TO_OVF_I: {
+		case OP_LCONV_TO_OVF_I:
+		case OP_LCONV_TO_OVF_I4_2: {
 #if ARM_PORT
 			guint32 *negative_branch, *msword_positive_branch, *msword_negative_branch, *ovf_ex_target;
 			// Check if its negative
@@ -2931,9 +3373,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		case OP_FCOMPARE:
-			/* each fp compare op needs to do its own */
-			g_assert_not_reached ();
-			//ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
+#ifdef ARM_FPU_FPA
+			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
+#elif defined(ARM_FPU_VFP)
+			ARM_CMPD (code, ins->sreg1, ins->sreg2);
+#endif
 			break;
 		case OP_FCEQ:
 #ifdef ARM_FPU_FPA
@@ -2991,89 +3435,32 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * V        Unordered               ARMCOND_VS
 		 */
 		case OP_FBEQ:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH (ins, CEE_BEQ - CEE_BEQ);
 			break;
 		case OP_FBNE_UN:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH (ins, CEE_BNE_UN - CEE_BEQ);
 			break;
 		case OP_FBLT:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_MI); /* N set */
 			break;
 		case OP_FBLT_UN:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_VS); /* V set */
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_MI); /* N set */
 			break;
 		case OP_FBGT:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg2, ins->sreg1);
-#endif
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_MI); /* N set, swapped args */
-			break;
 		case OP_FBGT_UN:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg2, ins->sreg1);
-#endif
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_VS); /* V set */
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_MI); /* N set, swapped args */
+		case OP_FBLE:
+		case OP_FBLE_UN:
+			g_assert_not_reached ();
 			break;
 		case OP_FBGE:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_CS);
 			break;
 		case OP_FBGE_UN:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg1, ins->sreg2);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg1, ins->sreg2);
-#endif
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_VS); /* V set */
 			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_GE);
 			break;
-		case OP_FBLE:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg2, ins->sreg1);
-#endif
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_CS); /* swapped */
-			break;
-		case OP_FBLE_UN:
-#ifdef ARM_FPU_FPA
-			ARM_FCMP (code, ARM_FPA_CMF, ins->sreg2, ins->sreg1);
-#elif defined(ARM_FPU_VFP)
-			ARM_CMPD (code, ins->sreg2, ins->sreg1);
-#endif
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_VS); /* V set */
-			EMIT_COND_BRANCH_FLAGS (ins, ARMCOND_GE); /* swapped */
-			break;
+
 		case OP_CKFINITE: {
 			/*ppc_stfd (code, ins->sreg1, -8, ppc_sp);
 			ppc_lwz (code, ppc_r11, -8, ppc_sp);
@@ -3298,7 +3685,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		ArgInfo *ainfo = &cinfo->ret;
-		inst = cfg->ret;
+		if (cfg->new_ir)
+			inst = cfg->vret_addr;
+		else
+			inst = cfg->ret;
 		g_assert (arm_is_imm12 (inst->inst_offset));
 		ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
 	}
@@ -3683,6 +4073,13 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
 	}
 	return ins;
+}
+
+MonoInst*
+mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	/* FIXME: */
+	return NULL;
 }
 
 gboolean

@@ -197,6 +197,7 @@ class Tests {
 		return 0;
 	}
 
+	/*
 	public static int test_0_conv_to_r8 () {
 		long a = 150;
 		double b = (double) a;
@@ -214,6 +215,8 @@ class Tests {
 			return 1;
 		return 0;
 	}
+	*/
+
 	/*
 	public static int test_0_conv_from_r8 () {
 		double b = 2.0;
@@ -1021,7 +1024,7 @@ class Tests {
 		}
 		return j;
 	}
-
+/*
 	public static int test_0_ftol_clobber () {
 		long m;
 		doit (1.3, out m);
@@ -1029,6 +1032,7 @@ class Tests {
 			return 2;
 		return 0;
 	}
+*/
 
 	public static int test_0_ulong_regress () {
 		ulong u = 4257145737;

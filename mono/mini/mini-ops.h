@@ -32,7 +32,7 @@ MINI_OP(OP_INARG_VT,	"inarg_vt", NONE, NONE, NONE)
 MINI_OP(OP_RETARG,	"retarg", NONE, NONE, NONE)
 MINI_OP(OP_SETRET,	"setret", NONE, NONE, NONE)
 MINI_OP(OP_SETFRET,	"setfret", FREG, FREG, NONE)
-MINI_OP(OP_SETLRET,	"setlret", NONE, NONE, NONE)
+MINI_OP(OP_SETLRET,	"setlret", NONE, IREG, IREG)
 MINI_OP(OP_SETREG,	"setreg", NONE, NONE, NONE)
 MINI_OP(OP_SETREGIMM,	"setregimm", NONE, NONE, NONE)
 MINI_OP(OP_SETFREG,	"setfreg", NONE, NONE, NONE)
@@ -732,8 +732,8 @@ MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite")
 #endif
 
 #if defined(__arm__)
-MINI_OP(OP_ARM_RSBS_IMM,            "arm_rsbs_imm", NONE, NONE, NONE)
-MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", NONE, NONE, NONE)
+MINI_OP(OP_ARM_RSBS_IMM,            "arm_rsbs_imm", IREG, IREG, NONE)
+MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", IREG, IREG, NONE)
 #endif
 
 #if defined(__sparc__) || defined(sparc)
