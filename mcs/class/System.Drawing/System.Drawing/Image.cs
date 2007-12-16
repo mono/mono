@@ -525,16 +525,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		
 		return frameIndex;		
 	}
-	
+
 	public void SetPropertyItem(PropertyItem propitem)
 	{
-		IntPtr property;
-		int size = Marshal.SizeOf (typeof(GdipPropertyItem));
-		property = Marshal.AllocHGlobal (size);
-
-		Marshal.StructureToPtr (propitem, property, true);
-		Status status = GDIPlus.GdipSetPropertyItem (nativeObject, property);
-		GDIPlus.CheckStatus (status);
+		GdipPropertyItem pi = new GdipPropertyItem ();
+		GdipPropertyItem.MarshalTo (pi, propitem);
+		unsafe {
+			Status status = GDIPlus.GdipSetPropertyItem (nativeObject, &pi);
+			
+			GDIPlus.CheckStatus (status);
+		}
 		// FIXME: GdipSetPropertyItem isn't implemented in libgdiplus (but returns Ok)
 		// so who's freeing "property" ? GDI+ ?
 	}

@@ -1069,7 +1069,7 @@ namespace System.Drawing
 		internal static extern Status GdipRemovePropertyItem (IntPtr image, int propertyId);
 		
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipSetPropertyItem (IntPtr image, IntPtr propertyItem);
+		internal unsafe static extern Status GdipSetPropertyItem (IntPtr image, GdipPropertyItem *propertyItem);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageThumbnail ( IntPtr image, uint width, uint height, out IntPtr thumbImage, IntPtr callback, IntPtr callBackData );

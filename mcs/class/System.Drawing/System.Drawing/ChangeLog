@@ -1,3 +1,9 @@
+2007-12-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Image.cs: Use the existing GdipPropertyItem.MarshalTo method to
+	conver the PropertyItem into a property item with Sequential
+	attached to it, and pass that to unmanaged code.   Fixes #349103.
+
 2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: ArgumentException on unknown format from stream
