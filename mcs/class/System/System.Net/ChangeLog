@@ -1,3 +1,7 @@
+2007-12-16  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs: Got the arguments in the wrong order, fix
+
 2007-12-12  Marek Habersack  <mhabersack@novell.com>
 
 	* WebClient.cs: DownloadProgressChanged is available only in the

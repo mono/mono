@@ -313,7 +313,7 @@ namespace System.Net
 							notify_total += nread;
 							DownloadProgressChanged (
 								this,
-								new DownloadProgressChangedEventArgs (response.ContentLength, notify_total, userToken));
+								new DownloadProgressChangedEventArgs (notify_total, response.ContentLength, userToken));
 												      
 						}
 #endif
