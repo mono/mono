@@ -38,10 +38,12 @@ using System.Web.J2EE;
 using System.Web.UI;
 using javax.servlet;
 using System.Collections.Specialized;
+using Mainsoft.Web;
 
 namespace System.Web {
 	
-	public sealed partial class HttpContext {
+	public sealed partial class HttpContext : IHttpExtendedContext
+	{
 		static readonly LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
 		//string _PortletNamespace;
 		// No remoting support (CallContext) yet in Grasshopper
@@ -157,5 +159,13 @@ namespace System.Web {
 			Request.SetWorkerRequest (wr);
 			Response.SetWorkerRequest (wr);
 		}
+
+		#region IHttpExtendedContext Members
+
+		bool IHttpExtendedContext.IsProcessingInclude {
+			get { return IsProcessingInclude; }
+		}
+
+		#endregion
 	}
 }

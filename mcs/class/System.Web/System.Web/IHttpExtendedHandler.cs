@@ -33,7 +33,5 @@ namespace Mainsoft.Web
 	public interface IHttpExtendedHandler : IHttpHandler
 	{
 		bool IsCompleted { get;}
-		object GetContextState (HttpContext context);
-		void SetContextState (HttpContext context, object state);
 	}
 }

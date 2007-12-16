@@ -36,9 +36,6 @@ using System.Web.Util;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Text;
-#if TARGET_J2EE
-using Mainsoft.Web;
-#endif
 
 namespace System.Web {
 
@@ -102,7 +99,7 @@ namespace System.Web {
 		internal
 #endif
 		void Execute (string path, TextWriter writer, bool preserveForm)
-		{
+		{			
 			Execute (path, writer, preserveForm, false);
 		}
 
@@ -123,10 +120,10 @@ namespace System.Web {
 			string exePath = UrlUtils.Combine (context.Request.BaseVirtualDir, path);
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath);
 
-			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer);
+			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer, true);
 		}
 
-		void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm, string exePath, string queryString, bool isTransfer) {
+		internal void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm, string exePath, string queryString, bool isTransfer, bool isInclude) {
 #if NET_2_0 && !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
@@ -154,32 +151,17 @@ namespace System.Web {
 			
 			TextWriter previous = response.SetTextWriter (output);
 			string oldExePath = request.CurrentExecutionFilePath;
+			bool oldIsInclude = context.IsProcessingInclude;
 			try {
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
 				request.SetCurrentExePath (exePath);
+				context.IsProcessingInclude = isInclude;
 				
 				if (!(handler is IHttpAsyncHandler)) {
-#if TARGET_J2EE
-					if (!preserveForm && handler is IHttpExtendedHandler) {
-						IHttpExtendedHandler ehandler = (IHttpExtendedHandler) handler;
-						object oldState = ehandler.GetContextState(context);
-						if (oldState != null)
-							ehandler.SetContextState (context, null);
-						try {
-							handler.ProcessRequest (context);
-						}
-						finally {
-							if (oldState != null)
-								ehandler.SetContextState (context, oldState);
-						}
-					}
-					else
-#endif
-						handler.ProcessRequest (context);
-				}
-				else {
+					handler.ProcessRequest (context);
+				} else {
 					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;
 					IAsyncResult ar = asyncHandler.BeginProcessRequest (context, null, null);
 					ar.AsyncWaitHandle.WaitOne ();
@@ -197,6 +179,7 @@ namespace System.Web {
 				context.PopHandler ();
 #endif
 				request.SetCurrentExePath (oldExePath);
+				context.IsProcessingInclude = oldIsInclude;
 			}
 		}
 
@@ -250,18 +233,16 @@ namespace System.Web {
 			// TODO: see the MS doc and search for "enableViewStateMac": this method is not
 			// allowed for pages when preserveForm is true and the page IsCallback property
 			// is true.
-			Execute (handler, null, preserveForm, context.Request.CurrentExecutionFilePath, null, true);
+			Execute (handler, null, preserveForm, context.Request.CurrentExecutionFilePath, null, true, true);
 			context.Response.End ();
 		}
-#endif
 
-#if NET_2_0
 		public void Execute (IHttpHandler handler, TextWriter writer, bool preserveForm)
 		{
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
 
-			Execute (handler, writer, preserveForm, context.Request.CurrentExecutionFilePath, null, false);
+			Execute (handler, writer, preserveForm, context.Request.CurrentExecutionFilePath, null, false, true);
 		}
 
 		public static byte[] UrlTokenDecode (string input)

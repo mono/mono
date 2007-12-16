@@ -760,14 +760,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
-#if !TARGET_J2EE
-		// if request was transfered from other page such Transfer
-#if NET_2_0
-		if(!isCrossPagePostBack)
-#endif
-		if (this != _context.Handler)
+		if (_context.IsProcessingInclude)
 			return null;
-#endif
 
 		HttpRequest req = Request;
 		if (req == null)
@@ -789,18 +783,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
 #if TARGET_J2EE
-		if (this != _context.Handler) {
-			if (getFacesContext () != null) {
-				// check if it is PreviousPage
-				string prevViewId = coll [PreviousPageID];
-				if (!String.IsNullOrEmpty (prevViewId)) {
-					string appPath = VirtualPathUtility.RemoveTrailingSlash (Request.ApplicationPath);
-					prevViewId = prevViewId.Substring (appPath.Length);
-					isCrossPagePostBack = String.Compare (prevViewId, getFacesContext ().getExternalContext ().getRequestPathInfo (), StringComparison.OrdinalIgnoreCase) == 0;
-				}
+		if (getFacesContext () != null) {
+			// check if it is PreviousPage
+			string prevViewId = coll [PreviousPageID];
+			if (!String.IsNullOrEmpty (prevViewId)) {
+				string appPath = VirtualPathUtility.RemoveTrailingSlash (Request.ApplicationPath);
+				prevViewId = prevViewId.Substring (appPath.Length);
+				isCrossPagePostBack = String.Compare (prevViewId, getFacesContext ().getExternalContext ().getRequestPathInfo (), StringComparison.OrdinalIgnoreCase) == 0;
 			}
-			if (!isCrossPagePostBack)
-				return null;
 		}
 #endif
 		return coll;
@@ -2663,7 +2653,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if TARGET_J2EE
 				if (getFacesContext () != null) {
 					IHttpHandler handler = Context.ApplicationInstance.GetHandler (Context, prevPage);
-					Server.Execute (handler, null, true);
+					Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
 					if (_context.Items.Contains (CrossPagePostBack)) {
 						previousPage = (Page) _context.Items [CrossPagePostBack];
 						_context.Items.Remove (CrossPagePostBack);
@@ -2671,9 +2661,10 @@ public partial class Page : TemplateControl, IHttpHandler
 					return;
 				}
 #else
-				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				IHttpHandler handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
-				previousPage.ProcessRequest (Context);
+				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
 #endif
 			} 
 		}

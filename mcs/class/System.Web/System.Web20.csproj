@@ -1233,6 +1233,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web\HttpWorkerRequest.jvm.cs" />
+    <Compile Include="System.Web\IHttpExtendedContext.cs" />
     <Compile Include="System.Web\IHttpExtendedHandler.cs" />
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
