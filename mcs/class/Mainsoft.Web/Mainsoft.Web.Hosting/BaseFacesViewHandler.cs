@@ -7,6 +7,7 @@ using javax.faces.context;
 using javax.faces.component;
 using javax.faces.render;
 using System.Web.UI;
+using System.Web;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -31,19 +32,18 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public override UIViewRoot createView (FacesContext facesContext, String viewId) {
-			UIViewRoot uiViewRoot = _viewHandler.createView (facesContext, viewId);
-			
+
 			// create instance of Page by viewId
 			StringBuilder sb = new StringBuilder ();
 			sb.Append (facesContext.getExternalContext ().getRequestContextPath ());
-			int index = viewId.IndexOf ('?');
-			if (index >= 0)
-				sb.Append (viewId, 0, index);
-			else
-				sb.Append (viewId);
-			UIComponent page = (UIComponent) PageParser.GetCompiledPageInstance (sb.ToString (), null, ((AspNetFacesContext) facesContext).Context);
-			uiViewRoot.getChildren ().add (0, page);
+			sb.Append (viewId);
+			IHttpHandler page = PageParser.GetCompiledPageInstance (sb.ToString (), null, ((AspNetFacesContext) facesContext).Context);
+
+			HttpContext context = ((AspNetFacesContext) facesContext).Context;
+			page.ProcessRequest (context);
 			
+			UIViewRoot uiViewRoot = _viewHandler.createView (facesContext, viewId);
+			uiViewRoot.getChildren ().add (0, (UIComponent) page);
 			return uiViewRoot;
 		}
 

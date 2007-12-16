@@ -34,30 +34,32 @@ namespace Mainsoft.Web.Hosting
 
 			Console.WriteLine ("Entering restoreComponentState");
 
-			Object serializedComponentStates;
+			Page page = (Page) uiViewRoot.getChildren ().get (0);
 
-			if (isSavingStateInClient (facesContext)) {
-				RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
-				ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
-				serializedComponentStates = responseStateManager.getComponentStateToRestore (facesContext);
+			if (page.IsPostBack || page.IsCallback) {
+				Object serializedComponentStates;
+				if (isSavingStateInClient (facesContext)) {
+					RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
+					ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
+					serializedComponentStates = responseStateManager.getComponentStateToRestore (facesContext);
+				}
+				else {
+					throw new NotImplementedException ();
+				}
+				((UIComponent) (object) page).processRestoreState (facesContext, serializedComponentStates);
 			}
 			else {
-				throw new NotImplementedException ();
-			}
-
-			if (serializedComponentStates == null) {
 				Console.WriteLine ("No serialized component state found!");
 				facesContext.renderResponse ();
-				return;
+				//return;
 			}
 
-			if (uiViewRoot.getRenderKitId () == null) {
-				//Just to be sure...
-				uiViewRoot.setRenderKitId (renderKitId);
-			}
+			//if (uiViewRoot.getRenderKitId () == null) {
+			//    //Just to be sure...
+			//    uiViewRoot.setRenderKitId (renderKitId);
+			//}
 
 			// now ask the view root component to restore its state
-			((UIComponent) uiViewRoot.getChildren ().get (0)).processRestoreState (facesContext, serializedComponentStates);
 
 			Console.WriteLine ("Exiting restoreComponentState");
 		}
