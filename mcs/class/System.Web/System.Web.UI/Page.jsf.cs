@@ -284,6 +284,7 @@ namespace System.Web.UI
 				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
 
 			FacesContext context = getFacesContext ();
+			EnterThread (context);
 			try {
 				ProcessRaiseChangedEvents ();
 				ProcessRaisePostBackEvents ();

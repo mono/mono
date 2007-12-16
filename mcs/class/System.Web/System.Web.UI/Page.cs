@@ -783,7 +783,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
 #if TARGET_J2EE
-		if (getFacesContext () != null) {
+		if (getFacesContext () != null && _context.Handler != _context.CurrentHandler) {
 			// check if it is PreviousPage
 			string prevViewId = coll [PreviousPageID];
 			if (!String.IsNullOrEmpty (prevViewId)) {
