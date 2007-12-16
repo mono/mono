@@ -86,6 +86,7 @@ namespace MonoTests.System {
 			DateTimeOffset dt1 = new DateTimeOffset (2007, 12, 16, 15, 06, 00, new TimeSpan (1, 0, 0));
 			DateTimeOffset dt2 = new DateTimeOffset (2007, 12, 16, 9, 06, 00, new TimeSpan (-5, 0, 0));
 			DateTimeOffset dt3 = new DateTimeOffset (2007, 12, 16, 14, 06, 00, new TimeSpan (1, 0, 0));
+			object o = dt1;
 			Assert.IsTrue (dt1.CompareTo (dt2) == 0);
 			Assert.IsTrue (DateTimeOffset.Compare (dt1, dt2) == 0);
 			Assert.IsTrue (dt1 == dt2);
@@ -94,6 +95,16 @@ namespace MonoTests.System {
 			Assert.IsTrue (dt1 != dt3);
 			Assert.IsFalse (dt1.EqualsExact (dt2));
 			Assert.IsTrue (dt1.CompareTo (dt3) > 0);
+			Assert.IsTrue (dt1.CompareTo (o) == 0);
+		}
+
+		[Test]
+		public void UtcDateTime ()
+		{
+			DateTimeOffset dt = new DateTimeOffset (2007, 12, 16, 15, 49, 00, new TimeSpan (1, 0, 0));
+			object o = dt.UtcDateTime;
+			Assert.IsTrue (o is DateTime);
+			Assert.IsTrue (dt.UtcDateTime == new DateTime (2007,12,16,14,49,00,DateTimeKind.Utc));
 		}
 	}
 }

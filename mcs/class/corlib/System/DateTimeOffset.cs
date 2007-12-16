@@ -162,7 +162,7 @@ namespace System
 
 		public int CompareTo (object other)
 		{
-			return UtcDateTime.CompareTo (other);
+			return CompareTo ((DateTimeOffset) other);
 		}
 
 		public static bool operator == (DateTimeOffset left, DateTimeOffset right)
@@ -243,6 +243,7 @@ namespace System
 			return left.UtcDateTime <= right.UtcDateTime;
 		}
 	
+		[monoTODO]
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 		}

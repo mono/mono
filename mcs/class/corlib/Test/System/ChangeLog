@@ -1,5 +1,9 @@
 2007-12-16  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* DateTimeOffsetTest.cs: additional tests.
+
+2007-12-16  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* DateTimeOffsetTest.cs: first batch of tests.
 
 2007-12-11  Zoltan Varga  <vargaz@gmail.com>
