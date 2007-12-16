@@ -66,14 +66,6 @@ namespace Mainsoft.Web.Hosting
 			public bool IsCompleted {
 				get { return ((IHttpExtendedHandler) _handler).IsCompleted; }
 			}
-
-			public object GetContextState (HttpContext context) {
-				return ((IHttpExtendedHandler) _handler).GetContextState (context);
-			}
-
-			public void SetContextState (HttpContext context, object state) {
-				((IHttpExtendedHandler) _handler).SetContextState (context, state);
-			}
 		}
 
 		sealed class ReadOnlySessionWrapperExtendedHandler : SessionWrapperExtendedHandler, IReadOnlySessionState

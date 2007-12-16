@@ -171,9 +171,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Mainsoft.Web.Phantom\Mainsoft.Web.Phantom.csproj">
-      <Project>{D01569DF-A398-480C-9A34-C231E760D7F8}</Project>
-      <Name>Mainsoft.Web.Phantom</Name>
+    <ProjectReference Include="..\System.Web\System.Web.Phantom\System.Web.Phantom.csproj">
+      <Project>{FBFDAD51-74B6-4660-81C0-9C8B6C8D3B47}</Project>
+      <Name>System.Web.Phantom</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
