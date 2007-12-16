@@ -798,8 +798,13 @@ public partial class Page : TemplateControl, IHttpHandler
 
 #if NET_2_0
 	public override Control FindControl (string id) {
+		return FindControl (id, false);
+	}
+
+	private Control FindControl (string id, bool decode) {
 #if TARGET_J2EE
-		id = DecodeNamespace (id);
+		if (decode)
+			id = DecodeNamespace (id);
 #endif
 		if (id == ID)
 			return this;
@@ -1122,7 +1127,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 				used.Add (id, id);
 
-				Control ctrl = FindControl (id);
+				Control ctrl = FindControl (id, true);
 				if (ctrl != null){
 					IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
 					IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
@@ -1154,7 +1159,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
 			string [] handlers = (string []) _requiresPostBackCopy.ToArray (typeof (string));
 			foreach (string id in handlers) {
-				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
+				IPostBackDataHandler pbdh = FindControl (id, true) as IPostBackDataHandler;
 				if (pbdh != null) {			
 					_requiresPostBackCopy.Remove (id);
 					if (pbdh.LoadPostData (id, requestValues)) {
@@ -1369,11 +1374,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		renderingForm = false;	
 
 #if TARGET_J2EE
-		if (getFacesContext () != null) {
-			if (!(IsPostBack || IsCallback))
-				getFacesContext ().renderResponse ();
-			return;
-		}
+		if (getFacesContext () != null)
+			if (IsPostBack || IsCallback)
+				return;
 #endif
 
 		RestorePageState ();
@@ -1622,7 +1625,7 @@ public partial class Page : TemplateControl, IHttpHandler
                 }
 
 #if NET_2_0
-		targetControl = FindControl (eventTarget);
+		targetControl = FindControl (eventTarget, true);
 		IPostBackEventHandler target = targetControl as IPostBackEventHandler;
 #else
 		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
@@ -2147,7 +2150,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
 
-		Control targetControl = FindControl (callbackTarget);
+		Control targetControl = FindControl (callbackTarget, true);
 		ICallbackEventHandler target = targetControl as ICallbackEventHandler;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
