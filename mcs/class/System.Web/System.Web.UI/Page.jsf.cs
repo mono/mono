@@ -93,22 +93,18 @@ namespace System.Web.UI
 		IHttpHandler _jsfHandler;
 		static readonly object CrossPagePostBack = new object ();
 
-		void EnterThread (FacesContext facesContext) {
-			HttpContext context = HttpContext.Current;
-			
+		void EnterThread (HttpContext context) {
+
 			_jsfHandler = context.CurrentHandler;
 			context.PopHandler ();
 			context.PushHandler (this);
 			if (_jsfHandler == context.Handler)
 				context.Handler = this;
 
-			if (_lifeCycle == PageLifeCycle.Unknown)
-				ProcessRequest (context);
-			else
-				SetContext (context);
+			SetContext (context);
 		}
 
-		void ExitThread (FacesContext facesContext) {
+		void ExitThread () {
 			// TODO
 			//if (context.getResponseComplete ())
 			//    Response.End ();
@@ -128,7 +124,7 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("encodeChildren");
 #endif
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				if (!context.getResponseComplete ()) {
 
@@ -161,7 +157,7 @@ namespace System.Web.UI
 			}
 			finally {
 				ProcessUnload ();
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
@@ -197,10 +193,12 @@ namespace System.Web.UI
 		}
 
 		public override void processRestoreState (FacesContext context, object state) {
+			if (state == null)
+				throw new ArgumentNullException ("state");
 #if DEBUG
 			Console.WriteLine ("processRestoreState");
 #endif
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
 					byte [] buffer = (byte []) vmw.common.TypeUtils.ToByteArray ((sbyte []) state);
@@ -215,7 +213,7 @@ namespace System.Web.UI
 				throw;
 			}
 			finally {
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
@@ -223,7 +221,7 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("processDecodes");
 #endif
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				ProcessPostData ();
 
@@ -238,7 +236,7 @@ namespace System.Web.UI
 				throw;
 			}
 			finally {
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
@@ -246,7 +244,7 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("processValidators");
 #endif
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				base.processValidators (context);
 			}
@@ -255,7 +253,7 @@ namespace System.Web.UI
 				throw;
 			}
 			finally {
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
@@ -263,7 +261,7 @@ namespace System.Web.UI
 #if DEBUG
 			Console.WriteLine ("processUpdates");
 #endif
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				base.processUpdates (context);
 			}
@@ -272,7 +270,7 @@ namespace System.Web.UI
 				throw;
 			}
 			finally {
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
@@ -283,8 +281,7 @@ namespace System.Web.UI
 			if (!(e is EventRaiserFacesEvent))
 				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
 
-			FacesContext context = getFacesContext ();
-			EnterThread (context);
+			EnterThread (HttpContext.Current);
 			try {
 				ProcessRaiseChangedEvents ();
 				ProcessRaisePostBackEvents ();
@@ -295,12 +292,11 @@ namespace System.Web.UI
 				throw;
 			}
 			finally {
-				ExitThread (context);
+				ExitThread ();
 			}
 		}
 
 		void HandleException (Exception ex) {
-			Console.WriteLine (ex.ToString ());
 			try {
 				if (!(ex is ThreadAbortException))
 					ProcessException (ex);

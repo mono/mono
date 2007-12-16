@@ -1190,6 +1190,11 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		_lifeCycle = PageLifeCycle.Unknown;
 #endif
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			EnterThread (context);
+		else
+#endif
 		SetContext (context);
 		
 		if (clientTarget != null)
@@ -1211,6 +1216,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		catch (Exception ex) {
 			HandleException (ex);
 			throw;
+		}
+		finally {
+			if (getFacesContext () != null)
+				ExitThread ();
 		}
 #else
 		catch (ThreadAbortException) {
@@ -1386,8 +1395,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (ProcessLoadComplete ())
 			return;
 #if TARGET_J2EE
-		if (getFacesContext () != null)
+		if (getFacesContext () != null) {
+			getFacesContext ().renderResponse ();
 			return;
+		}
 #endif
 		RenderPage ();
 	}
