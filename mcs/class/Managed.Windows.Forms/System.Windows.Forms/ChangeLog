@@ -1,3 +1,9 @@
+2007-12-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDown.cs: Guard against an NRE when there
+	hasn't been a mainform set in the application context.
+	[Fixes bug #349108]
+
 2007-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When SetBoundsCore gets called, besides

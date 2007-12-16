@@ -560,7 +560,7 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);
 
-			if (Application.MWFThread.Current.Context != null)
+			if (Application.MWFThread.Current.Context != null && Application.MWFThread.Current.Context.MainForm != null)
 				XplatUI.SetOwner (this.Handle, Application.MWFThread.Current.Context.MainForm.Handle);
 		}
 
