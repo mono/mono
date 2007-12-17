@@ -1,3 +1,7 @@
+2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GDIPlusTest.cs : fix test build.
+
 2007-11-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ColorTranslator.cs: Add test case for #340917 (LightGrey).
