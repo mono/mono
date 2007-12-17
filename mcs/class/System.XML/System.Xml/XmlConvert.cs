@@ -801,5 +801,33 @@ namespace System.Xml {
 
 			return bufIndex - offset;
 		}
+
+#if NET_2_0 // actually NET_3_5
+
+		public static DateTimeOffset ToDateTimeOffset (string s)
+		{
+			return ToDateTimeOffset (s, datetimeFormats);
+		}
+
+		public static DateTimeOffset ToDateTimeOffset (string s, string format)
+		{
+			return ToDateTimeOffset (s, format);
+		}
+
+		public static DateTimeOffset ToDateTimeOffset (string s, string [] formats)
+		{
+			return ToDateTimeOffset (s, formats);
+		}
+
+		public static string ToString (DateTimeOffset value)
+		{
+			return ToString (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+		}
+
+		public static string ToString (DateTimeOffset value, string format)
+		{
+			return value.ToString (format, CultureInfo.InvariantCulture);
+		}
+#endif
 	}
 }
