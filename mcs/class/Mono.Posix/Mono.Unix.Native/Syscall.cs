@@ -1343,6 +1343,58 @@ namespace Mono.Unix.Native {
 		}
 	}
 
+	public sealed class Utsname
+#if NET_2_0
+		: IEquatable <Utsname>
+#endif
+	{
+		public string sysname;
+		public string nodename;
+		public string release;
+		public string version;
+		public string machine;
+		public string domainname;
+
+		public override int GetHashCode ()
+		{
+			return sysname.GetHashCode () ^ nodename.GetHashCode () ^ 
+				release.GetHashCode () ^ version.GetHashCode () ^
+				machine.GetHashCode () ^ domainname.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			Utsname u = (Utsname) obj;
+			return Equals (u);
+		}
+
+		public bool Equals (Utsname value)
+		{
+			return value.sysname == sysname && value.nodename == nodename && 
+				value.release == release && value.version == version && 
+				value.machine == machine && value.domainname == domainname;
+		}
+
+		// Generate string in /etc/passwd format
+		public override string ToString ()
+		{
+			return string.Format ("{0} {1} {2} {3} {4}",
+				sysname, nodename, release, version, machine);
+		}
+
+		public static bool operator== (Utsname lhs, Utsname rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (Utsname lhs, Utsname rhs)
+		{
+			return !Object.Equals (lhs, rhs);
+		}
+	}
+
 	//
 	// Convention: Functions *not* part of the standard C library AND part of
 	// a POSIX and/or Unix standard (X/Open, SUS, XPG, etc.) go here.
@@ -2876,7 +2928,49 @@ namespace Mono.Unix.Native {
 		// <sys/utsname.h>
 		//
 
-		// TODO: uname(2)
+		[Map]
+		private struct _Utsname
+		{
+			public IntPtr sysname;
+			public IntPtr nodename;
+			public IntPtr release;
+			public IntPtr version;
+			public IntPtr machine;
+			public IntPtr domainname;
+			public IntPtr _buf_;
+		}
+
+		private static void CopyUtsname (ref Utsname to, ref _Utsname from)
+		{
+			try {
+				to = new Utsname ();
+				to.sysname     = UnixMarshal.PtrToString (from.sysname);
+				to.nodename    = UnixMarshal.PtrToString (from.nodename);
+				to.release     = UnixMarshal.PtrToString (from.release);
+				to.version     = UnixMarshal.PtrToString (from.version);
+				to.machine     = UnixMarshal.PtrToString (from.machine);
+				to.domainname  = UnixMarshal.PtrToString (from.domainname);
+			}
+			finally {
+				Stdlib.free (from._buf_);
+				from._buf_ = IntPtr.Zero;
+			}
+		}
+
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_uname")]
+		private static extern int sys_uname (out _Utsname buf);
+
+		public static int uname (out Utsname buf)
+		{
+			_Utsname _buf;
+			int r = sys_uname (out _buf);
+			buf = new Utsname ();
+			if (r == 0) {
+				CopyUtsname (ref buf, ref _buf);
+			}
+			return r;
+		}
 
 		#region <sys/wait.h> Declarations
 		//
