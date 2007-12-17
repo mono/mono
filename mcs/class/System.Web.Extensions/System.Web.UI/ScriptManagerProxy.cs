@@ -103,7 +103,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected internal override void OnInit (EventArgs e) {
+		protected override void OnInit (EventArgs e) {
 			base.OnInit (e);
 		}
 	}

@@ -129,7 +129,7 @@ namespace System.Web.UI
 			yield break;
 		}
 
-		protected internal override void OnPreRender (EventArgs e) {
+		protected override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 			ScriptManager.RegisterScriptControl (this);
 
@@ -141,7 +141,7 @@ namespace System.Web.UI
 			Controls.Add (container);
 		}
 
-		protected internal override void Render (HtmlTextWriter writer) {
+		protected override void Render (HtmlTextWriter writer) {
 			if (DynamicLayout)
 				writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "none");
 			else {
