@@ -44,9 +44,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Consts.cs" />
-    <Compile Include="Locale.cs" />
-    <Compile Include="MonoTODOAttribute.cs" />
+    <Compile Include="..\..\build\common\Consts.cs.in">
+      <Link>Consts.cs.in</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\Locale.cs">
+      <Link>Locale.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
+      <Link>MonoTODOAttribute.cs</Link>
+    </Compile>
     <Compile Include="System.Web.Extensions.Design\AsyncPostBackTriggerControlIDConverter.cs" />
     <Compile Include="System.Web.Extensions.Design\AsyncPostBackTriggerEventNameConverter.cs" />
     <Compile Include="System.Web.Extensions.Design\CollectionEditorBase.cs" />
