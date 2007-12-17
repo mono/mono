@@ -1,3 +1,8 @@
+2007-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Avoid calling
+	the assembly resolve handler for refonly assemblies.
+
 2007-12-17  Mark Probst  <mark.probst@gmail.com>
 
 	* threads.c, thread-types.h, icall.c: New shutdown safeguards.
@@ -16,7 +21,6 @@
 	* verify.c (mono_method_verify): property verification of endfilter
 	and fixed a corner case or endfinally.
 
-
 2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.h: new flags to support fail fast of unverifiable code and
@@ -30,7 +34,6 @@
 	* pedump.c: added support to fail fast and non-strict verification.
 
 	* verify.c: added support for both fail fast and non-strict verification.
-
 
 2007-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
