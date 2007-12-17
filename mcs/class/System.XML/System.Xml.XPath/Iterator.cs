@@ -1008,6 +1008,8 @@ namespace System.Xml.XPath
 
 		public override bool MoveNextCore ()
 		{
+			if (finished)
+				return false;
 			while (_iter.MoveNext ())
 			{
 				switch (resType) {

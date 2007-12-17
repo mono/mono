@@ -1,5 +1,9 @@
 2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Iterator.cs : oops, extra removal that causes perf. loss.
+
+2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Iterator.cs : be more strict to detect the end of
 	  PredicateIterator. Fixed bug #349111.
 
