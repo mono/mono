@@ -1621,13 +1621,30 @@ namespace System.Windows.Forms {
 					value %= 12;
 					if (value == 0)
 						value = 12;
-					if (value >= 1 && value <= 12)
-						Value = new DateTime(Value.Year, value, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+						
+					if (value >= 1 && value <= 12) {
+						// if we move from say december to november with days on 31, we must
+						// remap to the maximum number of days
+						int days_in_new_month = DateTime.DaysInMonth (Value.Year, value);
+						
+						if (Value.Day > days_in_new_month)
+							Value = new DateTime (Value.Year, value, days_in_new_month, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+						else
+							Value = new DateTime (Value.Year, value, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					}
 					break;
 				case 'y': // years
 					value %= 10000;
-					if (value > 0 && value <= 9999)
-						Value = new DateTime(value, Value.Month, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					
+					if (value > 0 && value <= 9999) {
+						// if we move to a leap year, the days in month could throw an exception
+						int days_in_new_month = DateTime.DaysInMonth (value, Value.Month);
+						
+						if (Value.Day > days_in_new_month)
+							Value = new DateTime (value, Value.Month, days_in_new_month, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+						else
+							Value = new DateTime (value, Value.Month, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+					}
 					break;
 			}
 		}
