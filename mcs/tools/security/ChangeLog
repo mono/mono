@@ -1,3 +1,9 @@
+2007-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* certmgr.cs: Fixed reflection magic to look for ServerCertificates in
+	SslStreamBase. This avoids breakage once patch for bug #349078 is
+	applied. Added support for removing CRL's from store.
+
 2007-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* sn.cs: Fix help for -T / -t as this shows the public key token

@@ -273,7 +273,14 @@ namespace Mono.Tools {
 					}
 					break;
 				case ObjectType.CRL:
-					throw new NotImplementedException ("Delete not yet supported");
+					foreach (X509Crl crl in store.Crls) {
+						if (hash == CryptoConvert.ToHex (crl.Hash)) {
+							store.Remove (crl);
+							Console.WriteLine ("CRL removed from store.");
+							return;
+						}
+					}
+					break;
 				default:
 					throw new NotSupportedException (type.ToString ());
 			}
@@ -356,7 +363,7 @@ namespace Mono.Tools {
 			}
 
 			// we need a little reflection magic to get this information
-			PropertyInfo pi = typeof (SslClientStream).GetProperty ("ServerCertificates", BindingFlags.Instance | BindingFlags.NonPublic);
+			PropertyInfo pi = typeof (SslStreamBase).GetProperty ("ServerCertificates", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (pi == null) {
 				Console.WriteLine ("Sorry but you need a newer version of Mono.Security.dll to use this feature.");
 				return null;
