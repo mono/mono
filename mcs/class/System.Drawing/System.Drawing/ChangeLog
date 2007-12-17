@@ -1,3 +1,11 @@
+2007-12-16  Miguel de Icaza  <miguel@novell.com>
+
+	[Backport r91391, fix for #349103]
+	
+ 	* Image.cs: Use the existing GdipPropertyItem.MarshalTo method to
+ 	conver the PropertyItem into a property item with Sequential
+ 	attached to it, and pass that to unmanaged code.   Fixes #349103.
+ 
 2007-11-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	[Backport r89932]
