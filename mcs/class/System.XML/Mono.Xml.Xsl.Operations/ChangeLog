@@ -1,3 +1,8 @@
+2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslValueOf.cs : allow external elements in xsl:value-of.
+	  Fixed bug #348786.
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslMessage.cs, XslText.cs, XslVariable.cs, XslNumber.cs,

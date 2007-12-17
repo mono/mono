@@ -53,8 +53,20 @@ namespace Mono.Xml.Xsl.Operations {
 			c.AssertAttribute ("select");
 			select = c.CompileExpression (c.GetAttribute ("select"));
 			disableOutputEscaping = c.ParseYesNoAttribute ("disable-output-escaping", false);
-			if (c.CurrentStylesheet.Version == "1.0" && c.Input.MoveToFirstChild ())
-				throw new XsltCompileException ("XSLT value-of element cannot contain any child.", null, c.Input);
+			if (c.Input.MoveToFirstChild ()) {
+				do {
+					switch (c.Input.NodeType) {
+					case XPathNodeType.Element:
+						if (c.Input.NamespaceURI == XsltNamespace)
+							goto case XPathNodeType.SignificantWhitespace;
+						// otherwise element in external namespace -> ignore
+						break;
+					case XPathNodeType.Text:
+					case XPathNodeType.SignificantWhitespace:
+						throw new XsltCompileException ("XSLT value-of element cannot contain any child.", null, c.Input);
+					}
+				} while (c.Input.MoveToNext ());
+			}
 		}
 		
 		public override void Evaluate (XslTransformProcessor p)

@@ -1980,5 +1980,21 @@ Services
 				}
 			}
 		}
+
+		[Test] // bug #348786
+		public void ValueOfContainsExternalElements ()
+		{
+			string xsl = @"
+<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+  <xsl:template match=""x"">
+    <y>
+      <xsl:value-of select=""@bar"">
+        <!-- enter comment here -->
+      </xsl:value-of>
+    </y>
+  </xsl:template>
+</xsl:stylesheet>";
+			new XslTransform ().Load (new XmlTextReader (xsl, XmlNodeType.Document, null));
+		}
 	}
 }
