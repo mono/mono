@@ -1,3 +1,7 @@
+2007-12-17  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: build Mono.Cecil only in the default profile.
+
 2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: In 2.0 System.Design.dll has cyclic dep on
