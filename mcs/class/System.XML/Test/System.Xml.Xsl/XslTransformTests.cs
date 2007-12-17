@@ -2036,5 +2036,31 @@ Services
 			string expected = "<bar>bar is not empty:'HaHa'</bar><bar>bar is empty</bar>";
 			Assert.AreEqual (expected, sw.ToString ());
 		}
+
+		[Test]
+		public void Bug349111 ()
+		{
+			XslTransform xslt = new XslTransform ();
+			xslt.Load (new XmlTextReader (new StringReader (@"
+<xsl:stylesheet version=""1.0"" xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+  <xsl:template match=""book"">
+    <xsl:for-each select=""child::node()[position()]"">
+      <yyy>
+        <xsl:value-of select="".""/>
+      </yyy>
+    </xsl:for-each>
+  </xsl:template>
+</xsl:stylesheet>"
+				)));
+			XPathDocument input = new XPathDocument (new StringReader (@"
+<bookstore>
+  <book> <title lang=""eng"">Harry Potter</title> <price>29.99</price> </book>
+</bookstore>"
+				));
+			StringWriter sw = new StringWriter ();
+			xslt.Transform (input, null, new XmlTextWriter (sw));
+			string expected = "<yyy>Harry Potter</yyy><yyy>29.99</yyy>";
+			Assert.AreEqual (expected, sw.ToString ());
+		}
 	}
 }

@@ -1008,15 +1008,12 @@ namespace System.Xml.XPath
 
 		public override bool MoveNextCore ()
 		{
-			if (finished)
-				return false;
 			while (_iter.MoveNext ())
 			{
 				switch (resType) {
 					case XPathResultType.Number:
 						if (_pred.EvaluateNumber (_iter) != _iter.ComparablePosition)
 							continue;
-						finished = true;
 						break;
 					case XPathResultType.Any: {
 						object result = _pred.Evaluate (_iter);
@@ -1024,7 +1021,6 @@ namespace System.Xml.XPath
 						{
 							if ((double) result != _iter.ComparablePosition)
 								continue;
-							finished = true;
 						}
 						else if (!XPathFunctions.ToBoolean (result))
 							continue;
@@ -1038,6 +1034,7 @@ namespace System.Xml.XPath
 
 				return true;
 			}
+			finished = true;
 			return false;
 		}
 		public override XPathNavigator Current { get { return _iter.Current; }}

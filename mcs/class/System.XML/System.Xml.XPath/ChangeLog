@@ -1,5 +1,10 @@
 2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Iterator.cs : be more strict to detect the end of
+	  PredicateIterator. Fixed bug #349111.
+
+2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Expression.cs : In any comparison expr, treat RTF as equivalent to
 	  string type (as specified in XSLT 1.0 section 11.1: "An operation
 	  is permitted on a result tree fragment only if that operation would
