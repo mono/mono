@@ -1,3 +1,7 @@
+2007-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* thread-exit.cs, Makefile.am: Test case for #347676.
+
 2007-12-09  Robert Jordan  <robertj@gmx.net>
 
 	* bug-323114.cs: Add test case for #323114.

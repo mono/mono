@@ -1,3 +1,10 @@
+2007-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c, thread-types.h, icall.c: New shutdown safeguards.
+	Make sure only one thread is allowed to commence shutdown, and
+	don't allow new threads to be started once shutdown is in
+	progress.
+
 2007-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (is_correct_endfilter): added.
