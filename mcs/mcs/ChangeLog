@@ -1,3 +1,10 @@
+2007-12-15  Miguel de Icaza  <miguel@novell.com>
+
+	[Backport of r91348, fix for #349034]
+	
+	* generic.cs (NullCoalescingOperator.CloneTo): implement this one,
+	as this is also created from the parser.  Fixes #349034
+	
 2007-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for regression #345467
