@@ -48,17 +48,10 @@ namespace Mono.Unix {
 
 		public static string MachineName {
 			get {
-				StringBuilder buf = new StringBuilder (8);
-				int r = 0;
-				Native.Errno e = (Native.Errno) 0;
-				do {
-					buf.Capacity *= 2;
-					r = Native.Syscall.gethostname (buf);
-				} while (r == (-1) && ((e = Native.Stdlib.GetLastError()) == Native.Errno.EINVAL) || 
-						(e == Native.Errno.ENAMETOOLONG));
-				if (r == (-1))
-					UnixMarshal.ThrowExceptionForLastError ();
-				return buf.ToString ();
+				Native.Utsname buf;
+				if (Native.Syscall.uname (out buf) != 0)
+					throw UnixMarshal.CreateExceptionForLastError ();
+				return buf.nodename;
 			}
 			set {
 				int r = Native.Syscall.sethostname (value);

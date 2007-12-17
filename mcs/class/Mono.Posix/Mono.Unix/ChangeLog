@@ -1,3 +1,9 @@
+2007-12-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixEnvironment.cs: Update MachineName property accesor to use uname(2)
+	  instead of gethostname(2), as gethostname(2) truncates the machine name to
+	  16 characters, while uname(2) doesn't.
+
 2007-12-17  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixDirectoryInfo.cs: Fix Parent property so that it properly handles
