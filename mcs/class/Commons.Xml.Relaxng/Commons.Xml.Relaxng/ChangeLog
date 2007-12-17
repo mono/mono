@@ -1,3 +1,10 @@
+2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : (RelaxngInclude) when it is constructed from
+	  the compact syntax, resolve included file as compact syntax too.
+	* RelaxngGrammar.cs : to make above possible, add a new
+	  IsSourceCompactSyntax field that is to be set in RncParser.
+
 2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : (.ctor) reject null pattern.

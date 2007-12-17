@@ -46,6 +46,9 @@ namespace Commons.Xml.Relaxng
 		public static string NamespaceURI =
 			"http://relaxng.org/ns/structure/1.0";
 
+		// Parser condition: it is used to resolve "included" source
+		bool isSourceRnc;
+
 		// object model fields
 		string defaultNamespace;
 		RelaxngGrammarContentList starts = new RelaxngGrammarContentList ();
@@ -98,6 +101,11 @@ namespace Commons.Xml.Relaxng
 			checkedDefs.Clear ();
 			unresolvedPatterns.Clear ();
 			ElementDefMap.Clear ();
+		}
+
+		internal bool IsSourceCompactSyntax {
+			get { return isSourceRnc; }
+			set { isSourceRnc = value; }
 		}
 
 		internal RelaxngGrammar ParentGrammar {

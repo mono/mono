@@ -88,7 +88,10 @@ namespace Commons.Xml.Relaxng.Rnc
 				if (Environment.GetEnvironmentVariable ("MONO_RELAXNG_COMPACT_DEBUG") == "yes")
 					debug = new yydebug.yyDebugSimple ();
 				tokenizer = new RncTokenizer (source);
-				return (RelaxngPattern) yyparse (tokenizer);
+				RelaxngPattern p = (RelaxngPattern) yyparse (tokenizer);
+				if (p is RelaxngGrammar)
+					((RelaxngGrammar) p).IsSourceCompactSyntax = true;
+				return p;
 			} catch (Exception ex) {
 				throw new RelaxngException (String.Format ("Tokenizer error at line {0}, column {1}: {2}", Line, Column, ex.Message), ex);
 			}

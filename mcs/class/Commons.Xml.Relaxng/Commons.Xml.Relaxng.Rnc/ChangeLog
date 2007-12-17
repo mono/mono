@@ -1,3 +1,9 @@
+2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : if the parsed pattern is grammar, set
+	  IsSourceCompactSyntax so that "include" pattern is resolved to
+	  parse compact syntax, not xml syntax.
+
 2006-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : handle "nested" annotations as well. This fixes
