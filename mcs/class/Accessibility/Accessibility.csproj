@@ -21,8 +21,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug_Java\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;JAVA;NET_1_1;NET_2_0;</DefineConstants>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;JAVA;NET_1_1;NET_2_0;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -33,8 +33,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>TRACE;JAVA;NET_1_1;NET_2_0;</DefineConstants>
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_1_1;NET_2_0;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -46,7 +46,9 @@
     <Compile Include="Accessibility\IAccessible.cs" />
     <Compile Include="Accessibility\IAccessibleHandler.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-    <Compile Include="Consts.cs" />
+   <Compile Include="..\..\build\common\Consts.cs.in">
+      <Link>Consts.cs.in</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

@@ -63,4 +63,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("1ea4dbf0-3c3b-11cf-810c-00aa00389b71")]
 
 [assembly: AssemblyDelaySign(true)]
+#if !TARGET_JVM
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
