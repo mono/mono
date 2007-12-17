@@ -27,6 +27,7 @@
 
 #include <config.h>
 
+#include <stddef.h>             /* offsetof */
 #include <limits.h>             /* LONG_MAX, ULONG_MAX */
 #include <errno.h>              /* for ERANGE */
 #include <glib.h>               /* for g* types, etc. */
@@ -198,10 +199,20 @@ recheck_range (int ret)
 	return 0;
 }
 
+typedef unsigned int mph_string_offset_t;
+
+enum {
+	MPH_STRING_OFFSET_PTR   = 0x0,
+	MPH_STRING_OFFSET_ARRAY = 0x1,
+	MPH_STRING_OFFSET_MASK  = 0x1
+};
+
+#define MPH_STRING_OFFSET(type,member,kind) ((offsetof(type,member) << 1) | kind)
+
 MPH_INTERNAL char* 
 _mph_copy_structure_strings (
-	void *to,         const size_t *to_offsets, 
-	const void *from, const size_t *from_offsets, 
+	void *to,         const mph_string_offset_t *to_offsets, 
+	const void *from, const mph_string_offset_t *from_offsets, 
 	size_t num_strings);
 
 #endif /* ndef INC_mph_H */

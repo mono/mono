@@ -10,12 +10,20 @@
 
 #define MAX_OFFSETS 10
 
-#define str_at(p, n) (*(char**)(((char*)p)+n))
+#define OFFSET_SHIFT 1
+
+#define lstr_at(p, n) (*(char**)(((char*)(p))+(n >> OFFSET_SHIFT)))
+
+#define str_at(p, n) (                                          \
+		(((n) & MPH_STRING_OFFSET_MASK) == MPH_STRING_OFFSET_ARRAY) \
+		? (char*)(p) + (n >> OFFSET_SHIFT)                          \
+		: lstr_at(p, n)                                             \
+)
 
 char* MPH_INTERNAL
 _mph_copy_structure_strings (
-	void *to,         const size_t *to_offsets, 
-	const void *from, const size_t *from_offsets, 
+	void *to,         const mph_string_offset_t *to_offsets, 
+	const void *from, const mph_string_offset_t *from_offsets, 
 	size_t num_strings)
 {
 	int i;
@@ -26,7 +34,7 @@ _mph_copy_structure_strings (
 	g_assert (num_strings < MAX_OFFSETS);
 
 	for (i = 0; i < num_strings; ++i) {
-		str_at (to, to_offsets[i]) = NULL;
+		lstr_at (to, to_offsets[i]) = NULL;
 	}
 
 	buflen = num_strings;
@@ -45,7 +53,7 @@ _mph_copy_structure_strings (
 
 	for (i = 0; i < num_strings; ++i) {
 		if (len[i] > 0) {
-			str_at (to, to_offsets[i]) = 
+			lstr_at (to, to_offsets[i]) = 
 				strcpy (cur, str_at (from, from_offsets[i]));
 			cur += (len[i] +1);
 		}
@@ -62,6 +70,7 @@ struct foo {
 	char *a;
 	int   b;
 	char *c;
+	char d[10];
 };
 
 struct bar {
@@ -69,22 +78,32 @@ struct bar {
 	char  *a;
 	double d;
 	char  *c;
+	char  *e;
 };
 
 int
 main ()
 {
 	/* test copying foo to bar */
-	struct foo f = {"hello", 42, "world"};
+	struct foo f = {"hello", 42, "world", "!!"};
 	struct bar b;
-	size_t foo_offsets[] = {offsetof(struct foo, a), offsetof(struct foo, c)};
-	size_t bar_offsets[] = {offsetof(struct bar, a), offsetof(struct bar, c)};
+	mph_string_offset_t foo_offsets[] = {
+		MPH_STRING_OFFSET(struct foo, a, MPH_STRING_OFFSET_PTR),
+		MPH_STRING_OFFSET(struct foo, c, MPH_STRING_OFFSET_PTR),
+		MPH_STRING_OFFSET(struct foo, d, MPH_STRING_OFFSET_ARRAY)
+	};
+	mph_string_offset_t bar_offsets[] = {
+		MPH_STRING_OFFSET(struct bar, a, MPH_STRING_OFFSET_PTR), 
+		MPH_STRING_OFFSET(struct bar, c, MPH_STRING_OFFSET_PTR), 
+		MPH_STRING_OFFSET(struct bar, e, MPH_STRING_OFFSET_PTR)
+	};
 	char *buf;
 
 	buf = _mph_copy_structure_strings (&b, bar_offsets, 
-			&f, foo_offsets, 2);
+			&f, foo_offsets, 3);
 	printf ("b.a=%s\n", b.a);
 	printf ("b.c=%s\n", b.c);
+	printf ("b.e=%s\n", b.e);
 
 	return 0;
 }

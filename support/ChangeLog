@@ -1,3 +1,16 @@
+2007-12-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* map.h: Flush; add Mono_Posix_Syscall__Utsname, Mono_Posix_Syscall_uname()
+	  declarations.
+	* Makefile.am: Add sys-utsname.c to the build.
+	* sys-utsname.c: Added; binding for uname(2).
+	* mph.h: Change definition of _mph_copy_structure_strings() so that the
+	  offset array specifies whether the string is a pointer (char*) or inline
+	  array (char[]) within the structure.  Necessary because most bound
+	  structure string members are pointers, but `struct utsname' uses arrays.
+	* fstab.c, pwd.c: Update offset array generation due to above.
+	* x-struct-str.c: Update _mph_copy_structure_strings() as above.
+
 2007-11-01  Geoff Norton  <gnorton@novell.com>
 
 	* stdio.c:  Handle Leopards lack of L_cuserid.

@@ -1372,6 +1372,7 @@ struct Mono_Posix_Syscall__Dirent;
 struct Mono_Posix_Syscall__Fstab;
 struct Mono_Posix_Syscall__Group;
 struct Mono_Posix_Syscall__Passwd;
+struct Mono_Posix_Syscall__Utsname;
 struct Mono_Posix_Timeval;
 struct Mono_Posix_Timezone;
 struct Mono_Posix_Utimbuf;
@@ -1489,6 +1490,16 @@ struct Mono_Posix_Syscall__Passwd {
 	void*        pw_dir;
 	void*        pw_shell;
 	void*        _pw_buf_;
+};
+
+struct Mono_Posix_Syscall__Utsname {
+	void* sysname;
+	void* nodename;
+	void* release;
+	void* version;
+	void* machine;
+	void* domainname;
+	void* _buf_;
 };
 
 struct Mono_Posix_Timeval {
@@ -1678,6 +1689,7 @@ gint64 Mono_Posix_Syscall_telldir (void* dir);
 gint64 Mono_Posix_Syscall_time (gint64* t);
 int Mono_Posix_Syscall_truncate (const char* path, gint64 length);
 int Mono_Posix_Syscall_ttyname_r (int fd, char* buf, guint64 buflen);
+int Mono_Posix_Syscall_uname (struct Mono_Posix_Syscall__Utsname* buf);
 int Mono_Posix_Syscall_utime (const char* filename, struct Mono_Posix_Utimbuf* buf, int use_buf);
 int Mono_Posix_Syscall_utimes (const char* filename, struct Mono_Posix_Timeval* tvp);
 int Mono_Posix_Syscall_WEXITSTATUS (int status);
