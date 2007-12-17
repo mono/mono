@@ -37,17 +37,22 @@ namespace Mainsoft.Web.Hosting
 
 			FacesContext facesContext = AspNetFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
-				_lifecycle.execute (facesContext);
+				try {
+					_lifecycle.execute (facesContext);
 #if DEBUG
-				Console.WriteLine ("FacesPageHandler: before render");
+					Console.WriteLine ("FacesPageHandler: before render");
 #endif
-				_lifecycle.render (facesContext);
+					_lifecycle.render (facesContext);
 #if DEBUG
-				Console.WriteLine ("FacesPageHandler: after render");
+					Console.WriteLine ("FacesPageHandler: after render");
 #endif
-			}
-			catch (Exception e) {
-				throw;
+				}
+				catch (FacesException fex) {
+					Exception inner = fex.InnerException;
+					if (inner != null)
+						throw inner;
+					throw;
+				}
 			}
 			finally {
 				facesContext.release ();
