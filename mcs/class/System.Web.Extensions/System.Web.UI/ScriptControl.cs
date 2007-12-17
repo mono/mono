@@ -55,12 +55,12 @@ namespace System.Web.UI
 
 		protected abstract IEnumerable<ScriptReference> GetScriptReferences ();
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 			ScriptManager.RegisterScriptControl (this);
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			ScriptManager.RegisterScriptDescriptors (this);
 			base.Render (writer);
 		}

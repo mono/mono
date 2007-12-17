@@ -175,7 +175,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected override void OnInit (EventArgs e) {
+		protected internal override void OnInit (EventArgs e) {
 			base.OnInit (e);
 
 			ScriptManager.RegisterUpdatePanel (this);
@@ -184,24 +184,24 @@ namespace System.Web.UI
 				ContentTemplate.InstantiateIn (ContentTemplateContainer);
 		}
 
-		protected override void OnLoad (EventArgs e) {
+		protected internal override void OnLoad (EventArgs e) {
 			base.OnLoad (e);
 
 			Initialize ();
 		}
 
-		protected override void OnPreRender (EventArgs e) {
+		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
 			if (UpdateMode == UpdatePanelUpdateMode.Always && !ChildrenAsTriggers)
 				throw new InvalidOperationException (String.Format ("ChildrenAsTriggers cannot be set to false when UpdateMode is set to Always on UpdatePanel '{0}'", ID));
 		}
 
-		protected override void OnUnload (EventArgs e) {
+		protected internal override void OnUnload (EventArgs e) {
 			base.OnUnload (e);
 		}
 
-		protected override void Render (HtmlTextWriter writer) {
+		protected internal override void Render (HtmlTextWriter writer) {
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 			if (RenderMode == UpdatePanelRenderMode.Block)
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
@@ -211,7 +211,7 @@ namespace System.Web.UI
 			writer.RenderEndTag ();
 		}
 
-		protected override void RenderChildren (HtmlTextWriter writer) {
+		protected internal override void RenderChildren (HtmlTextWriter writer) {
 			if (ScriptManager.IsInAsyncPostBack){
 				if (RequiresUpdate && !ScriptManager.IsInPartialRendering) {
 					ScriptManager.IsInPartialRendering = true;
