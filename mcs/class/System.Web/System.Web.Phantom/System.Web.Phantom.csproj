@@ -44,9 +44,6 @@
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\System.Web\IHttpExtendedContext.cs">
-      <Link>IHttpExtendedContext.cs</Link>
-    </Compile>
     <Compile Include="..\System.Web\IHttpExtendedHandler.cs">
       <Link>IHttpExtendedHandler.cs</Link>
     </Compile>
@@ -69,7 +66,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

@@ -42,7 +42,7 @@ using Mainsoft.Web;
 
 namespace System.Web {
 	
-	public sealed partial class HttpContext : IHttpExtendedContext
+	public sealed partial class HttpContext 
 	{
 		static readonly LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
 		//string _PortletNamespace;
@@ -159,13 +159,5 @@ namespace System.Web {
 			Request.SetWorkerRequest (wr);
 			Response.SetWorkerRequest (wr);
 		}
-
-		#region IHttpExtendedContext Members
-
-		bool IHttpExtendedContext.IsProcessingInclude {
-			get { return IsProcessingInclude; }
-		}
-
-		#endregion
 	}
 }
