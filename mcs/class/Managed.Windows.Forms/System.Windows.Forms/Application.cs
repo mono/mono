@@ -526,8 +526,12 @@ namespace System.Windows.Forms
 
 		public static void Exit ()
 		{
+#if NET_2_0
+			Exit (new CancelEventArgs ());
+#else
 			XplatUI.PostQuitMessage (0);
 			CloseForms (null);
+#endif
 		}
 
 #if NET_2_0
@@ -546,6 +550,7 @@ namespace System.Windows.Forms
 					if (e.Cancel)
 						return;
 
+					f.suppress_closing_events = true;
 					f.Close ();
 					f.Dispose ();
 				}

@@ -92,6 +92,7 @@ namespace System.Windows.Forms {
 		internal bool			has_been_visible;
 		private bool			shown_raised;  // The shown event is only raised once
 		private bool			is_clientsize_set;
+		internal bool			suppress_closing_events;
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;
@@ -2546,7 +2547,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (!RaiseCloseEvents (false)) {
+			if (suppress_closing_events || !RaiseCloseEvents (false)) {
 				if (is_modal) {
 					Hide ();
 				} else {
