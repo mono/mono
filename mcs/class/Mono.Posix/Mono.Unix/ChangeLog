@@ -1,3 +1,16 @@
+2007-12-17  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixDirectoryInfo.cs: Fix Parent property so that it properly handles
+	  returning the parent of "/".  UnixPath.GetDirectoryName() returns "" on
+	  "error", not null; act accordingly.
+	* UnixDriveInfo.cs: Fix IsReady property so that it returns `false' if no
+	  media is mounted.  The presence of media is determined by comparing the
+	  Statvfs.f_fsid value of the current and parent directories; if they
+	  differ, it is assumed that media is present, and thus the directory is
+	  ready.  If they're identical, then media isn't present, and the directory
+	  isn't ready.
+	* UnixPath.cs: UnixPath.GetDirectoryName("/mnt") should return "/", not "".
+
 2007-09-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixStream.cs: Don't read/write if the buffer has no data.  Fixes #82836.

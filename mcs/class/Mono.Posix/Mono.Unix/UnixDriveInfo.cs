@@ -100,7 +100,17 @@ namespace Mono.Unix {
 
 		// this throws no exceptions
 		public bool IsReady {
-			get {return Refresh (false);}
+			get {
+				bool ready = Refresh (false);
+				if (mount_point == "/" || !ready)
+					return ready;
+				Native.Statvfs parent;
+				int r = Native.Syscall.statvfs (RootDirectory.Parent.FullName, 
+						out parent);
+				if (r != 0)
+					return false;
+				return parent.f_fsid != stat.f_fsid;
+			}
 		}
 
 		public string Name {

@@ -101,6 +101,8 @@ namespace Mono.Unix {
 			int lastDir = path.LastIndexOf (DirectorySeparatorChar);
 			if (lastDir > 0)
 				return path.Substring (0, lastDir);
+			if (lastDir == 0)
+				return "/";
 			return "";
 		}
 

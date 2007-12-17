@@ -58,9 +58,11 @@ namespace Mono.Unix {
 
 		public UnixDirectoryInfo Parent {
 			get {
+				if (FullPath == "/")
+					return this;
 				string dirname = UnixPath.GetDirectoryName (FullPath);
-				if (dirname == null)
-					return null;
+				if (dirname == "")
+					throw new InvalidOperationException ("Do not know parent directory for path `" + FullPath + "'");
 				return new UnixDirectoryInfo (dirname);
 			}
 		}
