@@ -1,5 +1,8 @@
 2007-12-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Fix a crash introduced
+	by the previous patch.
+	
 	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Avoid calling
 	the assembly resolve handler for refonly assemblies.
 
