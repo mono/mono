@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -1156,6 +1156,9 @@
     <Compile Include="System.Web.Compilation\ThemeDirectoryCompiler.jvm.cs" />
     <Compile Include="System.Web.Configuration\FileMatchingInfo.cs" />
     <Compile Include="System.Web.Configuration_2.0\MachineKeySectionUtils.cs" />
+    <Compile Include="System.Web.SessionState\HttpSessionState.cs" />
+    <Compile Include="System.Web.SessionState\ISessionHandler.cs" />
+    <Compile Include="System.Web.SessionState\SessionStateModule.cs" />
     <Compile Include="System.Web.UI.HtmlControls\HtmlEmptyTagControlBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1198,16 +1201,31 @@
     <Compile Include="System.Web.UI.WebControls\XmlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\BaseParser.jvm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Web.UI\BaseTemplateParser.jvm.cs" />
+    <Compile Include="System.Web.UI\BuilderPropertyEntry .jvm.cs" />
+    <Compile Include="System.Web.UI\ComplexPropertyEntry.jvm.cs" />
     <Compile Include="System.Web.UI\ControlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\DataSourceCacheDurationConverter .jvm.cs" />
     <Compile Include="System.Web.UI\DataSourceControlBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\DesignTimeParseData.jvm.cs" />
+    <Compile Include="System.Web.UI\EventEntry.jvm.cs" />
+    <Compile Include="System.Web.UI\FileLevelControlBuilderAttribute .jvm.cs" />
+    <Compile Include="System.Web.UI\FileLevelPageControlBuilder.jvm.cs" />
+    <Compile Include="System.Web.UI\FileLevelUserControlBuilder.jvm.cs" />
+    <Compile Include="System.Web.UI\IndexedString.jvm.cs" />
+    <Compile Include="System.Web.UI\IThemeResolutionService.cs" />
     <Compile Include="System.Web.UI\MasterPageControlBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web.UI\MasterPageParser.jvm.cs" />
+    <Compile Include="System.Web.UI\ObjectPersistData.jvm.cs" />
     <Compile Include="System.Web.UI\ObjectTagBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1219,10 +1237,27 @@
     </Compile>
     <Compile Include="System.Web.UI\PageAsyncTask.cs" />
     <Compile Include="System.Web.UI\PageParser.jvm.cs" />
+    <Compile Include="System.Web.UI\PageParserFilter.jvm.cs" />
+    <Compile Include="System.Web.UI\RootBuilder.jvm.cs" />
+    <Compile Include="System.Web.UI\SessionPageStatePersister.jvm.cs" />
+    <Compile Include="System.Web.UI\SimpleWebHandlerParser.jvm.cs" />
+    <Compile Include="System.Web.UI\SkinBuilder.jvm.cs" />
+    <Compile Include="System.Web.UI\TemplateBuilder.jvm.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="System.Web.UI\TemplateControl.jvm.cs" />
+    <Compile Include="System.Web.UI\TemplateControlParser.jvm.cs" />
+    <Compile Include="System.Web.UI\TemplateParser.jvm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Web.UI\TemplatePropertyEntry.jvm.cs" />
+    <Compile Include="System.Web.UI\ThemeProvider.jvm.cs" />
     <Compile Include="System.Web.UI\UserControlControlBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\VerificationAttribute.jvm.cs" />
+    <Compile Include="System.Web.UI\ViewStateException .jvm.cs" />
+    <Compile Include="System.Web.UI\ViewStateModeByIdAttribute.jvm.cs" />
     <Compile Include="System.Web.UI\WebServiceParser.jvm.cs" />
     <Compile Include="System.Web.Util\ICalls.jvm.cs" />
     <Compile Include="System.Web\BaseParamsCollection.cs" />
