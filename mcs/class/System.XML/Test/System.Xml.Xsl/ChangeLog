@@ -1,5 +1,9 @@
 2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslTransformTests.cs : added test for bug #349035.
+
+2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTransformTests.cs : added test for bug #348786.
 
 2007-09-21  Atsushi Enomoto  <atsushi@ximian.com>

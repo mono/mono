@@ -751,11 +751,11 @@ namespace System.Xml.XPath
 			if (typeR == XPathResultType.Any)
 				typeR = GetReturnType (_right.Evaluate (iter));
 
-			// Regard RTF as nodeset
+			// Regard RTF as string
 			if (typeL == XPathResultType.Navigator)
-				typeL = XPathResultType.NodeSet;
+				typeL = XPathResultType.String;
 			if (typeR == XPathResultType.Navigator)
-				typeR = XPathResultType.NodeSet;
+				typeR = XPathResultType.String;
 
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{
@@ -851,11 +851,11 @@ namespace System.Xml.XPath
 			if (typeR == XPathResultType.Any)
 				typeR = GetReturnType (_right.Evaluate (iter));
 
-			// Regard RTF as nodeset
+			// Regard RTF as string
 			if (typeL == XPathResultType.Navigator)
-				typeL = XPathResultType.NodeSet;
+				typeL = XPathResultType.String;
 			if (typeR == XPathResultType.Navigator)
-				typeR = XPathResultType.NodeSet;
+				typeR = XPathResultType.String;
 
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{

@@ -1996,5 +1996,45 @@ Services
 </xsl:stylesheet>";
 			new XslTransform ().Load (new XmlTextReader (xsl, XmlNodeType.Document, null));
 		}
+
+		[Test] // bug #349035
+		public void CompareRTFAsStringNotNodeset ()
+		{
+			XslTransform xslt = new XslTransform ();
+			xslt.Load (new XmlTextReader (new StringReader (@"
+<xsl:stylesheet version=""1.0""
+  xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+  <xsl:template name=""foo"">
+    <xsl:param name=""bar""/>
+    <xsl:if test=""$bar!=''"">
+      <bar>bar is not empty:'<xsl:value-of select=""$bar""/>'</bar>
+    </xsl:if>
+    <xsl:if test=""$bar=''"">
+      <bar>bar is empty</bar>
+    </xsl:if>
+  </xsl:template>
+  <xsl:template match=""zap"">
+    <xsl:call-template name=""foo"">
+      <xsl:with-param name=""bar"">
+        <xsl:for-each select=""@bar"">
+          <xsl:value-of select="".""/>
+        </xsl:for-each>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+</xsl:stylesheet>"
+			)));
+			XPathDocument input = new XPathDocument (new StringReader (
+                        @"<root>
+        <zap bar=""HaHa""/>
+        <zap/>
+</root>"
+		));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xslt.Transform (input, null, xtw);
+			string expected = "<bar>bar is not empty:'HaHa'</bar><bar>bar is empty</bar>";
+			Assert.AreEqual (expected, sw.ToString ());
+		}
 	}
 }

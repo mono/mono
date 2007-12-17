@@ -1,3 +1,10 @@
+2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : In any comparison expr, treat RTF as equivalent to
+	  string type (as specified in XSLT 1.0 section 11.1: "An operation
+	  is permitted on a result tree fragment only if that operation would
+	  be permitted on a string." ...). Fixed bug #349035.
+
 2007-11-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : implemented ValueAs().
