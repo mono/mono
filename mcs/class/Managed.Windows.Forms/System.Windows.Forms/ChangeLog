@@ -1,5 +1,9 @@
 2007-12-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutPanel.cs: Remove some unused variables.
+
+2007-12-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DateTimePicker.cs: Commit patch from Luke Page that ensures
 	we don't end up at an invalid date when we click the up/down
 	spinner to change the month or year.  Fixes bug #348682.

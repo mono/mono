@@ -517,8 +517,6 @@ namespace System.Windows.Forms
 			// Figure out how tall each column wants to be
 			for (int i = 0; i < ColumnCount; i++) {
 				int biggest = 0;
-				int percent_pixels = 0;
-				float enlarge_factor = 0f;
 
 				for (int j = 0; j < RowCount; j++) {
 					Control c = actual_positions[i, j];
@@ -550,8 +548,6 @@ namespace System.Windows.Forms
 			// Figure out how tall each row wants to be
 			for (int j = 0; j < RowCount; j++) {
 				int biggest = 0;
-				int percent_pixels = 0;
-				float enlarge_factor = 0f;
 				
 				for (int i = 0; i < ColumnCount; i++) {
 					Control c = actual_positions[i, j];
