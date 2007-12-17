@@ -563,6 +563,18 @@ namespace System.Web.UI {
 
 			if (src == null && codeFileBaseClass != null)
 				ThrowParseException ("The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute");
+
+			string legacySrc = GetString (atts, "Src", null);
+			if (legacySrc != null) {
+				if (src == null)
+					src = legacySrc;
+				else
+					// We need to compile it even though CodeFile is present, to
+					// report errors.
+					GetAssemblyFromSource (legacySrc);
+				
+				AddDependency (MapPath (legacySrc, false));
+			}
 			
 			if (src != null && inherits != null) {
 				// Make sure the source exists
