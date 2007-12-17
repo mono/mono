@@ -1,3 +1,7 @@
+2007-12-17  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: build Mono.Cecil only in the default profile.
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (common_dirs): Mono.Data.Sqlite must be built before

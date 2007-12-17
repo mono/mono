@@ -45,8 +45,6 @@ common_dirs := \
 	System.EnterpriseServices	\
 	Mono.C5				\
 	Mono.Data.Tds			\
-	Mono.Cecil			\
-	Mono.Cecil.Mdb		\
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
@@ -92,7 +90,10 @@ common_dirs := \
 	CustomMarshalers		\
 	OpenSystem.C
 
-default_dirs := FirebirdSql.Data.Firebird
+default_dirs :=		\
+	FirebirdSql.Data.Firebird	\
+	Mono.Cecil			\
+	Mono.Cecil.Mdb		\
 
 net_2_0_dirs := \
 	System.Core			\
