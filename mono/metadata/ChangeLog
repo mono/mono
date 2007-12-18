@@ -1,3 +1,9 @@
+2007-12-18  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Disable calls to _wapi_thread_signal_self() to fix
+	Win32 build, until we figure out how to do the proper thing on
+	Win32.
+
 2007-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Fix a crash introduced
