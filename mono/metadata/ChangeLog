@@ -1,3 +1,7 @@
+2007-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mempool.c (mono_mempool_destroy): Remove some debug cruft.
+
 2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.h: new flags to support fail fast of unverifiable code and

@@ -79,7 +79,6 @@ mono_mempool_destroy (MonoMemPool *pool)
 {
 	MonoMemPool *p, *n;
 
-	return;
 	p = pool;
 	while (p) {
 		n = p->next;
