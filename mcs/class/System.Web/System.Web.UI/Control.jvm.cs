@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using vmw.@internal.j2ee;
 using System.Web.Hosting;
 using System.Text;
 using javax.faces.context;

@@ -32,7 +32,6 @@ using System.Collections;
 using System.Configuration;
 using System.Threading;
 using javax.servlet.http;
-using vmw.@internal.j2ee;
 using javax.faces.context;
 using System.Web.J2EE;
 using System.Web.UI;

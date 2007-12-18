@@ -33,7 +33,6 @@ using javax.servlet.http;
 using System.Web.Configuration;
 using System.IO;
 using System.Collections;
-using vmw.@internal.j2ee;
 using System.Collections.Specialized;
 
 namespace System.Web
@@ -183,7 +182,7 @@ namespace System.Web
 			HttpServletRequest servletReq = context.ServletRequest;
 			if (servletReq == null)
 				return;
-			bool inPortletMode = servletReq is IPortletRequest;
+			bool inPortletMode = true; //servletReq is IPortletRequest;
 			bool shouldStoreCookiesCollection = false;
 			HttpSession javaSession = servletReq.getSession(false);
 

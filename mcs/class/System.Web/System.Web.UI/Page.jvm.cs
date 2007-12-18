@@ -26,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using vmw.@internal.j2ee;
 using javax.servlet.http;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -46,8 +45,6 @@ namespace System.Web.UI
 	{
 		bool _emptyPortletNamespace = false;
 		string _PortletNamespace = null;
-		bool _renderResponseInit = false;
-		IPortletRenderResponse _renderResponse = null;
 		StateManager.SerializedView _facesSerializedView;
 
 
@@ -85,25 +82,6 @@ namespace System.Web.UI
 					_isMultiFormInited = true;
 				}
 				return _isMultiForm;
-			}
-		}
-
-		internal bool IsPortletRender
-		{
-			get {
-				return RenderResponse != null;
-			}
-		}
-
-		internal IPortletRenderResponse RenderResponse
-		{
-			get {
-				if (!_renderResponseInit)
-					if (Context != null) {
-						_renderResponse = Context.ServletResponse as IPortletRenderResponse;
-						_renderResponseInit = true;
-					}
-				return _renderResponse;
 			}
 		}
 

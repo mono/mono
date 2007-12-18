@@ -39,9 +39,6 @@ using System.Web.Util;
 using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
-#if TARGET_J2EE
-using vmw.@internal.j2ee;
-#endif
 
 namespace System.Web {
 	
@@ -796,18 +793,6 @@ namespace System.Web {
 		{
 			if (headers_sent)
 				throw new HttpException ("Headers have already been sent");
-
-#if TARGET_J2EE
-			// In J2EE portal we need to handle Redirect at the processAction phase
-			// using the portlet ActionResponse that will send for us the redirect header.
-			IPortletActionResponse resp = context.ServletResponse as IPortletActionResponse;
-			if (resp != null) {
-				resp.sendRedirect (ApplyAppPathModifier (url));
-				if (endResponse)
-					End ();
-				return;
-			}
-#endif
 
 #if NET_2_0
 			is_request_being_redirected = true;
