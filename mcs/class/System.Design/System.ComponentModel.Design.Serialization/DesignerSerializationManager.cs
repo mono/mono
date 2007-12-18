@@ -246,16 +246,31 @@ namespace System.ComponentModel.Design.Serialization
 				DefaultSerializationProviderAttribute providerAttribute = attributes[typeof (DefaultSerializationProviderAttribute)] 
 																			   as DefaultSerializationProviderAttribute;
 				if (providerAttribute != null && this.GetType (providerAttribute.ProviderTypeName) == serializerType) {
-					
 					object provider = Activator.CreateInstance (this.GetType (providerAttribute.ProviderTypeName), 
 																 BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.NonPublic, 
 																 null, null, null);
-	
 					((IDesignerSerializationManager)this).AddSerializationProvider ((IDesignerSerializationProvider) provider);
 				}
 			}
-			
-			// try 2: from provider
+
+			// try 2: DesignerSerializerAttribute
+			//
+			if (serializer == null && componentType != null) {
+				AttributeCollection attributes = TypeDescriptor.GetAttributes (componentType);
+				DesignerSerializerAttribute serializerAttribute = attributes[typeof (DesignerSerializerAttribute)] as DesignerSerializerAttribute;
+				if (serializerAttribute != null && 
+					this.GetType (serializerAttribute.SerializerBaseTypeName) == serializerType) {
+					serializer = Activator.CreateInstance (this.GetType (serializerAttribute.SerializerTypeName), 
+														   BindingFlags.CreateInstance | BindingFlags.Instance | 
+														   BindingFlags.Public | BindingFlags.NonPublic, 
+														   null, null, null);
+				}
+				
+				if (serializer != null)
+					_serializersCache[componentType] = serializer;
+			}
+
+			// try 3: from provider
 			//
 			if (serializer == null) {
 				foreach (IDesignerSerializationProvider provider in _serializationProviders) {
@@ -265,26 +280,9 @@ namespace System.ComponentModel.Design.Serialization
 				}
 			}
 
-			if (componentType != null) {
-				// try 3: Activator
-				//
-				if (serializer == null) {
-					AttributeCollection attributes = TypeDescriptor.GetAttributes (componentType);
-					DesignerSerializerAttribute serializerAttribute = attributes[typeof (DesignerSerializerAttribute)] as DesignerSerializerAttribute;
-					if (serializerAttribute != null && this.GetType (serializerAttribute.SerializerTypeName) == serializerType) {
-							serializer = Activator.CreateInstance (this.GetType (serializerAttribute.SerializerTypeName), 
-										 BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.NonPublic, 
-										 null, null, null);
-					}
-				}
-				
-				if (serializer != null)
-					_serializersCache[componentType] = serializer;
-			}
-			
 			return serializer;
 		}
-		
+
 		private void VerifyInSession ()
 		{
 			if (_session == null)

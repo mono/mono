@@ -1,3 +1,11 @@
+2007-12-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ControlCodeDomSerializer.cs: Add. Handles Resume/Suspend
+	layout serialization.
+	* ControlCollectionCodeDomSerializer.cs: Add.
+	* DesignerSerializationManager.cs: DesignerSerializerAttribute
+	should have higher precedence than the serializer providers.
+
 2007-11-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs:

@@ -261,6 +261,8 @@ System.Windows.Forms.Design/BorderSidesEditor.cs
 System.Windows.Forms.Design/ComponentDocumentDesigner.cs
 System.Windows.Forms.Design/ComponentTray.cs
 System.Windows.Forms.Design/ControlBindingsConverter.cs
+System.Windows.Forms.Design/ControlCodeDomSerializer.cs
+System.Windows.Forms.Design/ControlCollectionCodeDomSerializer.cs
 System.Windows.Forms.Design/ControlDataObject.cs
 System.Windows.Forms.Design/ControlDesigner.cs
 System.Windows.Forms.Design/DataMemberFieldConverter.cs
