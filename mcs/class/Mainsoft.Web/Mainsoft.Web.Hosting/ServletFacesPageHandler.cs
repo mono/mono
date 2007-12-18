@@ -10,6 +10,7 @@ using javax.faces;
 using javax.servlet;
 using javax.faces.webapp;
 using javax.servlet.http;
+using vmw.common;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -50,7 +51,7 @@ namespace Mainsoft.Web.Hosting
 				catch (FacesException fex) {
 					Exception inner = fex.InnerException;
 					if (inner != null)
-						throw inner;
+						TypeUtils.Throw (inner);
 					throw;
 				}
 			}
