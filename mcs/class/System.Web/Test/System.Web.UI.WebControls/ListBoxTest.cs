@@ -40,6 +40,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
 using MonoTests.stand_alone.WebHarness;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -382,6 +383,319 @@ namespace MonoTests.System.Web.UI.WebControls
             list.SelectionMode = ListSelectionMode.Single;
             list.VerifyMultiSelect();
         }
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsViewState1 ()
+		{
+			PageInvoker pi = PageInvoker.CreateOnLoad (new PageDelegate (ListItemsViewState_PageLoad));
+			WebTest test = new WebTest (pi);
+
+			string html = test.Run ();
+
+			test.Request = new FormRequest (test.Response, "form1");
+			test.Invoker = pi;
+			html = test.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsViewState2 ()
+		{
+			PageInvoker pi = PageInvoker.CreateOnLoad (new PageDelegate (ListItemsViewState_PageLoad2));
+			WebTest test = new WebTest (pi);
+
+			string html = test.Run ();
+
+			test.Request = new FormRequest (test.Response, "form1");
+			test.Invoker = pi;
+			html = test.Run ();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsViewState3 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsViewState_Init;
+			pd.Load = ListItemsViewState_PageLoad3;
+			WebTest test = new WebTest (new PageInvoker (pd));
+
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsViewState3 #1");
+			Assert.IsTrue (html.IndexOf ("value=\"4\"") > 0, "ListItemsViewState3 #2");
+
+			test.Request = new FormRequest (test.Response, "form1");
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsViewState3 #3");
+			Assert.IsTrue (html.IndexOf ("value=\"4\"") > 0, "ListItemsViewState3 #4");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsViewState4 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsViewState_Init;
+			pd.Load = ListItemsViewState_PageLoad4;
+			WebTest test = new WebTest (new PageInvoker (pd));
+
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") < 0, "ListItemsViewState4 #1");
+			Assert.IsTrue (html.IndexOf ("value=\"heh\"") > 0, "ListItemsViewState4 #2");
+
+			test.Request = new FormRequest (test.Response, "form1");
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"2\"") > 0, "ListItemsViewState4 #3");
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") < 0, "ListItemsViewState4 #4");
+			Assert.IsTrue (html.IndexOf ("value=\"heh\"") > 0, "ListItemsViewState4 #5");
+		}
+
+		public static void ListItemsViewState_Init (Page p)
+		{
+			ListBox lb = new ListBox ();
+			lb.ID = "TestedListBox";
+			lb.Items.Add (new ListItem ("1", "1"));
+			lb.Items.Add (new ListItem ("2", "2"));
+			lb.Items.Add (new ListItem ("3", "3"));
+
+			p.Form.Controls.Add (lb);
+		}
+
+		public static void ListItemsViewState_PageLoad (Page p)
+		{
+			ListBox lb = new ListBox ();
+			if (!p.IsPostBack) {
+				lb.Items.Add (new ListItem ("1", "1"));
+				lb.Items.Add (new ListItem ("2", "2"));
+				lb.Items.Add (new ListItem ("3", "3"));
+				lb.Items.Add (new ListItem ("4", "4"));
+				lb.Items.Add (new ListItem ("5", "5"));
+
+				lb.Items [2].Selected = true;
+			}
+
+			p.Form.Controls.Add (lb);
+		}
+
+		public static void ListItemsViewState_PageLoad2 (Page p)
+		{
+			ListBox lb = new ListBox ();
+			if (!p.IsPostBack) {
+				lb.Items.Add (new ListItem ("1", "1"));
+				lb.Items.Add (new ListItem ("2", "2"));
+				lb.Items.Add (new ListItem ("3", "3"));
+				lb.Items.Add (new ListItem ("4", "4"));
+				lb.Items.Add (new ListItem ("5", "5"));
+
+				lb.SelectedIndex = 2;
+			}
+
+			p.Form.Controls.Add (lb);
+		}
+
+		public static void ListItemsViewState_PageLoad3 (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+			if (!p.IsPostBack) {
+				lb.Items.Add (new ListItem ("4", "4"));
+				lb.Items.Add (new ListItem ("5", "5"));
+			}
+		}
+
+		public static void ListItemsViewState_PageLoad4 (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+			if (!p.IsPostBack) {
+				lb.Items [2].Text = "heh";
+				lb.Items [2].Value = "heh";
+				lb.Items [2].Selected = true;
+			}
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsSelectedTest1 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsSelectedTest_Init;
+			WebTest test = new WebTest (new PageInvoker (pd));
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") < 0, "ListItemsSelectedTest1 #1");
+
+			test.Request = new FormRequest (test.Response, "form1");
+			//test.Invoker = new PageInvoker (pd);
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") < 0, "ListItemsSelectedTest1 #2");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsSelectedTest2 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsSelectedTest_Init;
+			pd.Load = ListItemsSelectedTest_Load;
+			WebTest test = new WebTest (new PageInvoker (pd));
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") < 0, "ListItemsSelectedTest2 #1");
+
+			test.Request = new FormRequest (test.Response, "form1");
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsSelectedTest2 #2");
+			Assert.IsTrue (html.IndexOf ("selected=") < 0, "ListItemsSelectedTest2 #3");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsSelectedTest3 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsSelectedTest_Init;
+			pd.Load = ListItemsSelectedTest_Load2;
+			WebTest test = new WebTest (new PageInvoker (pd));
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest3 #1");
+
+			FormRequest fr = new FormRequest (test.Response, "form1");
+			fr.Controls.Add ("TestedListBox");
+			fr.Controls ["TestedListBox"].Value = "2";
+			test.Request = fr;
+			test.UserData = "";
+
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsSelectedTest3 #2");
+			Assert.IsTrue (html.IndexOf ("value=\"2\"") > 0, "ListItemsSelectedTest3 #3");
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest3 #4");
+			Assert.AreEqual ("SelectedIndexChanged", test.UserData, "ListItemsSelectedTest3 #5");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsSelectedTest4 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsSelectedTest_Init;
+			pd.Load = ListItemsSelectedTest_Load3;
+			WebTest test = new WebTest (new PageInvoker (pd));
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest4 #1");
+
+			FormRequest fr = new FormRequest (test.Response, "form1");
+			fr.Controls.Add ("TestedListBox");
+			fr.Controls ["TestedListBox"].Value = "2";
+			test.Request = fr;
+			test.UserData = "";
+
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsSelectedTest4 #2");
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest4 #3");
+			Assert.AreEqual ("SelectedIndexChanged", test.UserData, "ListItemsSelectedTest4 #4");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void ListItemsSelectedTest5 ()
+		{
+			PageDelegates pd = new PageDelegates ();
+			pd.Init = ListItemsSelectedTest_Init2;
+			pd.Load = ListItemsSelectedTest_Load4;
+			WebTest test = new WebTest (new PageInvoker (pd));
+			string html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest5 #1");
+
+			FormRequest fr = new FormRequest (test.Response, "form1");
+			fr.Controls.Add ("TestedListBox");
+			fr.Controls ["TestedListBox"].Value = "2";
+			test.Request = fr;
+			test.UserData = "";
+
+			html = test.Run ();
+			Assert.IsTrue (html.IndexOf ("value=\"1\"") > 0, "ListItemsSelectedTest5 #2");
+			Assert.IsTrue (html.IndexOf ("value=\"2\"") > 0, "ListItemsSelectedTest5 #2");
+			Assert.IsTrue (html.IndexOf ("value=\"3\"") > 0, "ListItemsSelectedTest5 #3");
+			Assert.IsTrue (html.IndexOf ("selected=") > 0, "ListItemsSelectedTest5 #4");
+			Assert.AreEqual ("SelectedIndexChanged", test.UserData, "ListItemsSelectedTest5 #5");
+		}
+
+		public static void ListItemsSelectedTest_Init (Page p)
+		{
+			ListBox lb = new ListBox ();
+			lb.ID = "TestedListBox";
+			lb.SelectedIndex = 2;
+
+			lb.SelectedIndexChanged += new EventHandler (ListItemsSelectedTest_lb_SelectedIndexChanged);
+
+			p.Form.Controls.Add (lb);
+		}
+
+		public static void ListItemsSelectedTest_Init2 (Page p)
+		{
+			ListBox lb = new ListBox ();
+			lb.ID = "TestedListBox";
+			lb.Items.Add (new ListItem ("1", "1"));
+			lb.Items.Add (new ListItem ("2", "2"));
+			lb.Items.Add (new ListItem ("3", "3"));
+			lb.Items.Add (new ListItem ("4", "4"));
+			lb.Items.Add (new ListItem ("5", "5"));
+
+			lb.SelectedIndexChanged += new EventHandler (ListItemsSelectedTest_lb_SelectedIndexChanged);
+
+			p.Form.Controls.Add (lb);
+		}
+
+		public static void ListItemsSelectedTest_Load (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+
+			if (!p.IsPostBack) {
+				lb.Items.Add (new ListItem ("1", "1"));
+				lb.Items.Add (new ListItem ("2", "2"));
+				lb.Items.Add (new ListItem ("3", "3"));
+				lb.Items.Add (new ListItem ("4", "4"));
+				lb.Items.Add (new ListItem ("5", "5"));
+			}
+		}
+
+		public static void ListItemsSelectedTest_Load2 (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+
+			if (!p.IsPostBack) {
+				lb.DataSource = new string [] { "1", "2", "3", "4", "5" };
+				lb.DataBind ();
+			}
+		}
+
+		public static void ListItemsSelectedTest_Load3 (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+
+			if (!p.IsPostBack) {
+				lb.Items.Add (new ListItem ("1", "1"));
+				lb.Items.Add (new ListItem ("2", "2"));
+				lb.Items.Add (new ListItem ("3", "3"));
+				lb.Items.Add (new ListItem ("4", "4"));
+				lb.Items.Add (new ListItem ("5", "5")); 
+				
+				lb.Items [2].Selected = true;
+			}
+		}
+
+		public static void ListItemsSelectedTest_Load4 (Page p)
+		{
+			ListBox lb = (ListBox) p.FindControl ("TestedListBox");
+
+			if (!p.IsPostBack) {
+				lb.Items [2].Text = "heh";
+				lb.Items [2].Selected = true;
+			}
+		}
+
+		public static void ListItemsSelectedTest_lb_SelectedIndexChanged (object sender, EventArgs e)
+		{
+			WebTest.CurrentTest.UserData = "SelectedIndexChanged";
+		}
 #endif
 	}
 }
