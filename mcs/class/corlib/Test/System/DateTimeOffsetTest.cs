@@ -157,13 +157,13 @@ namespace MonoTests.System {
 			Assert.AreEqual ("10/31/2007 9:00 PM", dto.ToString ("g", new CultureInfo ("en-us")));
 			Assert.AreEqual ("10/31/2007 9:00:00 PM", dto.ToString ("G", new CultureInfo ("en-us")));
 			Assert.AreEqual ("October 31", dto.ToString ("M", new CultureInfo ("en-us")));
-			Assert.AreEqual (dto.ToString ("m"), dto.ToString ("M", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("m", new CultureInfo ("en-us")), dto.ToString ("M", new CultureInfo ("en-us")));
 			Assert.AreEqual ("Thu, 01 Nov 2007 05:00:00 GMT", dto.ToString ("R", new CultureInfo ("en-us")));
-			Assert.AreEqual (dto.ToString ("r"), dto.ToString ("R", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("r", new CultureInfo ("en-us")), dto.ToString ("R", new CultureInfo ("en-us")));
 			Assert.AreEqual ("2007-10-31T21:00:00", dto.ToString ("s", new CultureInfo ("en-us")));
 			Assert.AreEqual ("2007-11-01 05:00:00Z", dto.ToString ("u", new CultureInfo ("en-us")));
 			Assert.AreEqual ("October, 2007", dto.ToString ("Y", new CultureInfo ("en-us")));
-			Assert.AreEqual (dto.ToString ("y"), dto.ToString ("Y", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("y", new CultureInfo ("en-us")), dto.ToString ("Y", new CultureInfo ("en-us")));
 		}
 
 		[Test]
