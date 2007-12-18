@@ -1,3 +1,12 @@
+2007-12-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_leave): check for filter clauses.
+
+	* verify.c (do_filter): added.
+
+	* verify.c (mono_method_verify): property verification of leave.
+
+
 2007-12-18  Mark Probst  <mark.probst@gmail.com>
 
 	* threads.c: Disable calls to _wapi_thread_signal_self() to fix
