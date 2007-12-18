@@ -43,6 +43,10 @@ namespace System.IO.IsolatedStorage {
 
 		None = 0,
 		User = 1,
+#if NET_2_1
+		// Available in Silverlight
+		Application = 32,
+#else
 		Domain = 2,
 		Assembly = 4,
 
@@ -52,6 +56,7 @@ namespace System.IO.IsolatedStorage {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		Machine = 16,
 		Application = 32
+#endif
 #endif
 	}
 }

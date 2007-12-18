@@ -1,3 +1,14 @@
+2007-12-18  Miguel de Icaza  <miguel@novell.com>
+
+	* Ifdef out the large bodies of code that will just not work with
+	Silverlight, ran into this problem again trying to run
+	http://fluxtools.net/emailphotos
+
+	Its not worth trying to alter this implementation of
+	IsolatedStorage to work in both the regular and the Moonlight
+	profiles, instead am going to write a simple implementation while
+	we wait for the real 2.0 API to come out.
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileStream.cs: Handle rooted paths. Patch by Jay
