@@ -137,7 +137,7 @@ namespace System.Web {
 
 		public HttpCookie Get (string name)
 		{
-			return (HttpCookie)BaseGet (name);
+			return this [name];
 		}
 
 		public HttpCookie this [int index]

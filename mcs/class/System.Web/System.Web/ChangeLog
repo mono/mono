@@ -1,3 +1,8 @@
+2007-12-18  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpCookieCollection.cs (Get): implement using the indexer to
+	share some code.   Should fix #349564.
+
 2007-12-16 Igor Zelmanovich <igorz@mainsoft.com>
 	
 	* HttpContext.cs: added IsProcessingInclude property.
