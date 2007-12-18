@@ -134,6 +134,7 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
+    <Compile Include="Mainsoft.Web.Hosting\BaseFacesPageHandlerFactory.cs" />
     <Compile Include="Mainsoft.Web.Hosting\AspNetFacesContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesStateManager.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesViewHandler.cs" />
