@@ -122,9 +122,11 @@ namespace System.Web.UI.WebControls {
 				text = (string) states [1];
 			if (states [2] != null)
 				value = (string) states [2];
-#if NET_2_0
 			if (states [3] != null)
-				enabled = (bool) states [3];
+				selected = (bool) states [3];
+#if NET_2_0
+			if (states [4] != null)
+				enabled = (bool) states [4];
 #endif
 		}
 
@@ -139,15 +141,16 @@ namespace System.Web.UI.WebControls {
 				return null;
 
 #if NET_2_0
-			object [] state = new object [4];
+			object [] state = new object [5];
 #else
-			object [] state = new object [3];
+			object [] state = new object [4];
 #endif
 			state [0] = sb != null ? sb.SaveViewState () : null;
 			state [1] = (object) text;
 			state [2] = (object) value;
+			state [3] = (object) selected;
 #if NET_2_0
-			state [3] = (object) enabled;
+			state [4] = (object) enabled;
 #endif			
 			return state;
 		}
@@ -191,7 +194,11 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(false)]
 		public bool Selected {
 			get { return selected; }
-			set { selected = value; }
+			set { 
+				selected = value;
+				if (tracking)
+					SetDirty ();
+			}
 		}
 
 		[DefaultValue("")]

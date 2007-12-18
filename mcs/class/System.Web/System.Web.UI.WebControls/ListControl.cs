@@ -554,47 +554,37 @@ namespace System.Web.UI.WebControls {
 
 		protected override object SaveViewState ()
 		{
-			object first = null;
-			object second = null;
+			object baseState = null;
+			object itemsState = null;
 
-			first = base.SaveViewState ();
+			baseState = base.SaveViewState ();
 
 			IStateManager manager = items as IStateManager;
 			if (manager != null)
-				second = manager.SaveViewState ();
+				itemsState = manager.SaveViewState ();
 
-			ArrayList selected = GetSelectedIndicesInternal ();
-			if (first == null && second == null && (selected == null || selected.Count == 0))
+			if (baseState == null && itemsState == null)
 				return null;
 
-			return new Triplet (first, second, selected);
+			return new Pair (baseState, itemsState);
 		}
 
 		protected override void LoadViewState (object savedState)
 		{
-			object first = null;
-			object second = null;
-			ArrayList indices = null;
+			object baseState = null;
+			object itemsState = null;
 
-			Triplet triplet = savedState as Triplet;
-			if (triplet != null) {
-				first = triplet.First;
-				second = triplet.Second;
-				indices = triplet.Third as ArrayList;
+			Pair pair = savedState as Pair;
+			if (pair != null) {
+				baseState = pair.First;
+				itemsState = pair.Second;
 			}
 
-			base.LoadViewState (first);
+			base.LoadViewState (baseState);
 
-			if (second != null) {
+			if (itemsState != null) {
 				IStateManager manager = Items as IStateManager;
-				manager.LoadViewState (second);
-			}
-
-			if (indices != null) {
-				for (int i = 0; i < Items.Count; i++)
-					Items [i].Selected = false;
-				foreach (int index in indices)
-					Items [index].Selected = true;
+				manager.LoadViewState (itemsState);
 			}
 		}
 

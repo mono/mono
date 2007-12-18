@@ -271,42 +271,54 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		void IStateManager.LoadViewState(object state) {
-
-			if (state == null)
+		void IStateManager.LoadViewState (object savedState) {
+			Pair pair = savedState as Pair;
+			if (pair == null)
 				return;
 
-			object [] stateObj = (object[]) state;
-			int count = stateObj.Length;
+			bool newCollection = (bool) pair.First;
+			object [] itemsArray = (object []) pair.Second;
+			int count = itemsArray.Length;
 
-			items = new ArrayList(count);
+			if (newCollection)
+				items = new ArrayList(count);
 
 			for (int i = 0; i < count; i++) {
 				ListItem item = new ListItem ();
-				if (stateObj [i] != null)
-					item.LoadViewState (stateObj [i]);
-
-				Add (item);
+				
+				if (newCollection) {
+					item.LoadViewState (itemsArray [i]);
+					Add (item);
+				}
+				else{
+					if (itemsArray [i] != null){
+						item.LoadViewState (itemsArray [i]);
+						item.SetDirty ();
+						items [i] = item;
+					}
+				}
 			}
 		}
 
 		object IStateManager.SaveViewState() {
 			int count;
+			bool itemsDirty = false;
+
 			count = items.Count;
 			if (count == 0)
 				return null;
 
-			object [] state = new object [count];
+			object [] itemsState = new object [count];
 			for (int i = 0; i < count; i++) {
-				state [i] = ((IStateManager) items [i]).SaveViewState ();
-				if (state [i] != null)
-					dirty = true;
+				itemsState [i] = ((IStateManager) items [i]).SaveViewState ();
+				if (itemsState [i] != null)
+					itemsDirty = true;
 			}
 
-			if (dirty)
-				return state;
+			if (!dirty && !itemsDirty)
+				return null;
 
-			return null;
+			return new Pair (dirty, itemsState);
 		}
 
 		void IStateManager.TrackViewState() {

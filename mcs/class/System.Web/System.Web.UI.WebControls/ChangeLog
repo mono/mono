@@ -1,3 +1,11 @@
+2007-12-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ListControl.cs: fixed Load/SaveViewState, removed selected indices
+	storing
+	* ListItem.cs: fixed Load/SaveViewState, added selected state storing
+	* ListItemCollection.cs: fixed Load/SaveViewState, added flag to not
+	rebuild the collection if was'nt changed
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Menu.cs, TreeView.cs: optimize use of String.Format in
