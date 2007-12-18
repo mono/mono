@@ -1440,78 +1440,40 @@ namespace System.Linq
 			});
 		}
 
-		public static int? Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, int?> selector)
+		public static int? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
-
-			bool onlyNull = true;
-			int? minimum = int.MaxValue;
-			foreach (TSource item in source) {
-				int? element = selector (item);
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return IterateNullable (source, int.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
 		}
 
-		public static long? Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, long?> selector)
+		public static long? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
-
-			bool onlyNull = true;
-			long? minimum = long.MaxValue;
-			foreach (TSource item in source) {
-				long? element = selector (item);
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return IterateNullable (source, long.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
 		}
 
-		public static double? Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, double?> selector)
+		public static double? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
-
-			bool onlyNull = true;
-			double? minimum = double.MaxValue;
-			foreach (TSource item in source) {
-				double? element = selector (item);
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return IterateNullable (source, float.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
 		}
 
-		public static decimal? Min<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, decimal?> selector)
+		public static double? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
 		{
-			Check.SourceAndSelector (source, selector);
-
-			bool onlyNull = true;
-			decimal? minimum = decimal.MaxValue;
-			foreach (TSource item in source) {
-				decimal? element = selector (item);
-				if (element.HasValue) {
-					onlyNull = false;
-					if (element < minimum)
-						minimum = element;
-				}
-			}
-			return (onlyNull ? null : minimum);
+			return IterateNullable (source, double.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
 		}
 
+		public static decimal? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
+		{
+			return IterateNullable (source, decimal.MaxValue, (a, b) => { 
+				var v = selector (a); return v < b ? v : b;
+			});
+		}
 
 		public static TResult Min<TSource, TResult> (this IEnumerable<TSource> source,
 				Func<TSource, TResult> selector)

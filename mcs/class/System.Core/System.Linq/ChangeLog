@@ -1,5 +1,9 @@
 2007-12-18  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs: refactor some Min.
+
+2007-12-18  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: refactor some more Max.
 
 2007-12-12  Jb Evain  <jbevain@novell.com>
