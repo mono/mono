@@ -112,11 +112,11 @@ namespace MonoTests.System {
 		public void ParameterlessToString ()
 		{
 			DateTimeOffset dt = new DateTimeOffset (2007, 12, 18, 12, 16, 30, new TimeSpan (1, 0, 0));
-			Assert.AreEqual ("12/18/2007 12:16:30 PM +01:00", dt.ToString());
+			Assert.AreEqual ("12/18/2007 12:16:30 PM +01:00", dt.ToString (new CultureInfo ("en-us")));
 			dt = new DateTimeOffset (2007, 12, 18, 12, 16, 30, new TimeSpan (-5, 0, 0));
-			Assert.AreEqual ("12/18/2007 12:16:30 PM -05:00", dt.ToString());
+			Assert.AreEqual ("12/18/2007 12:16:30 PM -05:00", dt.ToString (new CultureInfo ("en-us")));
 			dt = new DateTimeOffset (2007, 12, 18, 12, 16, 30, TimeSpan.Zero);
-			Assert.AreEqual ("12/18/2007 12:16:30 PM +00:00", dt.ToString());
+			Assert.AreEqual ("12/18/2007 12:16:30 PM +00:00", dt.ToString (new CultureInfo ("en-us")));
 		}
 
 		[Test]
@@ -148,22 +148,22 @@ namespace MonoTests.System {
 		public void ToStringWithFormat ()
 		{
 			DateTimeOffset dto = new DateTimeOffset (2007, 10, 31, 21, 0, 0, new TimeSpan(-8, 0, 0));
-			Assert.AreEqual ("10/31/2007", dto.ToString ("d"));
-			Assert.AreEqual ("Wednesday, October 31, 2007", dto.ToString ("D"));
-			Assert.AreEqual ("9:00 PM", dto.ToString ("t"));
-			Assert.AreEqual ("9:00:00 PM", dto.ToString ("T"));
-			Assert.AreEqual ("Wednesday, October 31, 2007 9:00 PM", dto.ToString ("f"));
-			Assert.AreEqual ("Wednesday, October 31, 2007 9:00:00 PM", dto.ToString ("F"));
-			Assert.AreEqual ("10/31/2007 9:00 PM", dto.ToString ("g"));
-			Assert.AreEqual ("10/31/2007 9:00:00 PM", dto.ToString ("G"));
-			Assert.AreEqual ("October 31", dto.ToString ("M"));
-			Assert.AreEqual (dto.ToString ("m"), dto.ToString ("M"));
-			Assert.AreEqual ("Thu, 01 Nov 2007 05:00:00 GMT", dto.ToString ("R"));
-			Assert.AreEqual (dto.ToString ("r"), dto.ToString ("R"));
-			Assert.AreEqual ("2007-10-31T21:00:00", dto.ToString ("s"));
-			Assert.AreEqual ("2007-11-01 05:00:00Z", dto.ToString ("u"));
-			Assert.AreEqual ("October, 2007", dto.ToString ("Y"));
-			Assert.AreEqual (dto.ToString ("y"), dto.ToString ("Y"));
+			Assert.AreEqual ("10/31/2007", dto.ToString ("d", new CultureInfo ("en-us")));
+			Assert.AreEqual ("Wednesday, October 31, 2007", dto.ToString ("D", new CultureInfo ("en-us")));
+			Assert.AreEqual ("9:00 PM", dto.ToString ("t", new CultureInfo ("en-us")));
+			Assert.AreEqual ("9:00:00 PM", dto.ToString ("T", new CultureInfo ("en-us")));
+			Assert.AreEqual ("Wednesday, October 31, 2007 9:00 PM", dto.ToString ("f", new CultureInfo ("en-us")));
+			Assert.AreEqual ("Wednesday, October 31, 2007 9:00:00 PM", dto.ToString ("F", new CultureInfo ("en-us")));
+			Assert.AreEqual ("10/31/2007 9:00 PM", dto.ToString ("g", new CultureInfo ("en-us")));
+			Assert.AreEqual ("10/31/2007 9:00:00 PM", dto.ToString ("G", new CultureInfo ("en-us")));
+			Assert.AreEqual ("October 31", dto.ToString ("M", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("m"), dto.ToString ("M", new CultureInfo ("en-us")));
+			Assert.AreEqual ("Thu, 01 Nov 2007 05:00:00 GMT", dto.ToString ("R", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("r"), dto.ToString ("R", new CultureInfo ("en-us")));
+			Assert.AreEqual ("2007-10-31T21:00:00", dto.ToString ("s", new CultureInfo ("en-us")));
+			Assert.AreEqual ("2007-11-01 05:00:00Z", dto.ToString ("u", new CultureInfo ("en-us")));
+			Assert.AreEqual ("October, 2007", dto.ToString ("Y", new CultureInfo ("en-us")));
+			Assert.AreEqual (dto.ToString ("y"), dto.ToString ("Y", new CultureInfo ("en-us")));
 		}
 
 		[Test]
