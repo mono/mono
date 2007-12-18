@@ -28,6 +28,7 @@
 
 using System.Collections;
 
+#if !NET_2_1
 namespace System.IO.IsolatedStorage {
 
 	internal class IsolatedStorageFileEnumerator : IEnumerator {
@@ -67,3 +68,4 @@ namespace System.IO.IsolatedStorage {
 		}
 	}
 }
+#endif
