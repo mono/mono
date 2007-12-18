@@ -1,3 +1,7 @@
+2007-12-18  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffsetTest.cs: tests for ToString methods.
+
 2007-12-16  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffsetTest.cs: additional tests.
