@@ -1,3 +1,9 @@
+2007-12-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for filter
+
+	* make_filter_test.sh: new test generator
+
 2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added tests for endfilter
