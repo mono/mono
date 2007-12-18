@@ -1,3 +1,8 @@
+2007-12-18  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffset.cs: implementing the 4 ToString overloads by reusing
+	large chunks of System.DateTime code.
+
 2007-12-16  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: some bugfix discovered by unit tests.
