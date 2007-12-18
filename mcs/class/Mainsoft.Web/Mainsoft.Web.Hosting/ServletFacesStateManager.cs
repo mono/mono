@@ -16,7 +16,7 @@ namespace Mainsoft.Web.Hosting
 {
 	public sealed class ServletFacesStateManager : BaseFacesStateManager
 	{
-		static RenderKitFactory RenderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
+		static readonly RenderKitFactory RenderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
 
 		public override void writeState (FacesContext facesContext, StateManager.SerializedView serializedView) {
 			if (serializedView != null) {
@@ -64,5 +64,8 @@ namespace Mainsoft.Web.Hosting
 			Console.WriteLine ("Exiting restoreComponentState");
 		}
 
+		public override bool isSavingStateInClient (FacesContext facesContext) {
+			return true;
+		}
 	}
 }

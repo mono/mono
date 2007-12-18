@@ -35,7 +35,7 @@ namespace Mainsoft.Web.Hosting
 			HttpServletRequest request = wr.ServletRequest;
 			HttpServletResponse response = wr.ServletResponse;
 
-			FacesContext facesContext = AspNetFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
+			FacesContext facesContext = ServletFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
 				try {
 					_lifecycle.execute (facesContext);
