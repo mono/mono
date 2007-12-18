@@ -51,15 +51,7 @@ namespace Mainsoft.Web.Hosting
 			else {
 				Console.WriteLine ("No serialized component state found!");
 				facesContext.renderResponse ();
-				//return;
 			}
-
-			//if (uiViewRoot.getRenderKitId () == null) {
-			//    //Just to be sure...
-			//    uiViewRoot.setRenderKitId (renderKitId);
-			//}
-
-			// now ask the view root component to restore its state
 
 			Console.WriteLine ("Exiting restoreComponentState");
 		}

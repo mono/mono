@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using javax.servlet.http;
 using java.security;
+using javax.servlet;
 
 namespace Mainsoft.Web.Hosting
 {
-	sealed class ServletWorkerRequest : BaseWorkerRequest
+	public sealed class ServletWorkerRequest : BaseWorkerRequest
 	{
 		readonly HttpServlet _HttpServlet;
 		readonly HttpServletRequest _HttpServletRequest;
@@ -25,8 +26,11 @@ namespace Mainsoft.Web.Hosting
 		static readonly Type typeOfHttpServletResponse = typeof (HttpServletResponse);
 		static readonly Type typeOfHttpServlet = typeof (HttpServlet);
 		static readonly Type typeOfHttpSession = typeof (HttpSession);
+		static readonly Type typeOfServletContext = typeof (ServletContext);
+		static readonly Type typeOfServletConfig = typeof (ServletConfig);
 		public override object GetService (Type serviceType) {
-			if (serviceType == typeOfHttpServlet)
+			if (serviceType == typeOfHttpServlet ||
+				serviceType == typeOfServletConfig)
 				return _HttpServlet;
 			if (serviceType == typeOfHttpServletRequest)
 				return _HttpServletRequest;
@@ -34,6 +38,8 @@ namespace Mainsoft.Web.Hosting
 				return _HttpServletResponse;
 			if (serviceType == typeOfHttpSession)
 				return GetSession (false);
+			if (serviceType == typeOfServletContext)
+				return _HttpServlet.getServletContext ();
 			return base.GetService (serviceType);
 		}
 

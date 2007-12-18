@@ -10,7 +10,7 @@ using javax.faces.application;
 
 namespace Mainsoft.Web.Hosting
 {
-	sealed class ServletFacesContext : AspNetFacesContext
+	public sealed class ServletFacesContext : AspNetFacesContext
 	{
 		ServletFacesContext (FacesContext wrappedFacesContext, ExternalContext externalContext, HttpContext httpContext, FacesContext oldFacesContext)
 			: base (wrappedFacesContext, externalContext, httpContext, oldFacesContext) {

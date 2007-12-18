@@ -11,7 +11,7 @@ using javax.faces.render;
 
 namespace Mainsoft.Web.Hosting
 {
-	public class ServletFacesViewHandler : BaseFacesViewHandler
+	public sealed class ServletFacesViewHandler : BaseFacesViewHandler
 	{
 		public ServletFacesViewHandler (ViewHandler viewHandler)
 			: base (viewHandler) {

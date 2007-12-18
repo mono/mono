@@ -14,7 +14,7 @@ using vmw.common;
 
 namespace Mainsoft.Web.Hosting
 {
-	class ServletFacesPageHandler : IHttpHandler
+	public sealed class ServletFacesPageHandler : IHttpHandler
 	{
 		readonly FacesContextFactory _facesContextFactory;
 		readonly Lifecycle _lifecycle;
