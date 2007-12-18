@@ -98,11 +98,12 @@ namespace System.ComponentModel.Design.Serialization
 				serialized = statements;
 			} else {
 				serialized = base.GetExpression (manager, value);
-				if (serialized == null) {
-					base.SetExpression (manager, value, componentRef);
+				if (serialized == null)
 					serialized = componentRef;
-				}
 			}
+
+			if (base.GetExpression (manager,value) == null)
+				base.SetExpression (manager, value, componentRef);
 
 			return serialized;
 		}

@@ -1,5 +1,12 @@
 2007-12-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CodeDomDesignerLoader.cs: Fix the serialization to use the same
+	type as the deserialization.
+	* CodeDomSerializer.cs, ComponentCodeDomSerializer.cs:
+	Always SetExpression if not set yet.
+
+2007-12-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ControlCodeDomSerializer.cs: Add. Handles Resume/Suspend
 	layout serialization.
 	* ControlCollectionCodeDomSerializer.cs: Add.

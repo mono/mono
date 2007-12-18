@@ -124,7 +124,7 @@ namespace System.ComponentModel.Design.Serialization
 
 			foreach (CodeNamespace namesp in unit.Namespaces) {
 				for (int i=0; i< namesp.Types.Count; i++) {
-					if (namesp.Types[i].Name == typeDecl.Name) {
+					if (namesp.Types[i].IsClass) {
 						typeIndex = i;
 						namespac = namesp;
 					}
@@ -135,6 +135,7 @@ namespace System.ComponentModel.Design.Serialization
 				namespac.Types.RemoveAt (typeIndex);
 
 			namespac.Types.Add (typeDecl);
+
 			return unit;
 		}
 
