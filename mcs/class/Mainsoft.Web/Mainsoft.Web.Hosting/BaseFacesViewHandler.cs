@@ -8,6 +8,7 @@ using javax.faces.component;
 using javax.faces.render;
 using System.Web.UI;
 using System.Web;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -44,6 +45,8 @@ namespace Mainsoft.Web.Hosting
 			
 			UIViewRoot uiViewRoot = _viewHandler.createView (facesContext, viewId);
 			uiViewRoot.getChildren ().add (0, (UIComponent) page);
+			
+			Trace.WriteLine ("Created view " + viewId);
 			return uiViewRoot;
 		}
 

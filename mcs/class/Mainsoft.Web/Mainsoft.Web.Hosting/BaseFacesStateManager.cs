@@ -4,6 +4,8 @@ using System.Text;
 using javax.faces.application;
 using javax.faces.component;
 using javax.faces.context;
+using System.Diagnostics;
+using System.Web.UI;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -16,7 +18,7 @@ namespace Mainsoft.Web.Hosting
 			return serializedView;
 		}
 
-		protected override Object getTreeStructureToSave (FacesContext facesContext) {
+		protected override sealed Object getTreeStructureToSave (FacesContext facesContext) {
 			return null;
 		}
 
@@ -25,16 +27,18 @@ namespace Mainsoft.Web.Hosting
 																String renderKitId) {
 
 			UIViewRoot uiViewRoot = restoreTreeStructure (facesContext, viewId, renderKitId);
-			restoreComponentState (facesContext, uiViewRoot, renderKitId);
+			Page page = (Page) uiViewRoot.getChildren ().get (0);
+			if (page.IsPostBack || page.IsCallback)
+				restoreComponentState (facesContext, uiViewRoot, renderKitId);
 			return uiViewRoot;
 		}
 
-		protected override UIViewRoot restoreTreeStructure (FacesContext facesContext, string viewId, string renderKitId) {
+		protected override sealed UIViewRoot restoreTreeStructure (FacesContext facesContext, string viewId, string renderKitId) {
 			return facesContext.getApplication ().getViewHandler ().createView (facesContext, viewId);
 		}
 
 		protected override Object getComponentStateToSave (FacesContext facesContext) {
-			Console.WriteLine ("Entering getComponentStateToSave");
+			Trace.WriteLine ("Entering getComponentStateToSave");
 
 			UIViewRoot viewRoot = facesContext.getViewRoot ();
 			if (viewRoot.isTransient ()) {
@@ -43,7 +47,7 @@ namespace Mainsoft.Web.Hosting
 
 			Object serializedComponentStates = ((UIComponent) viewRoot.getChildren ().get (0)).processSaveState (facesContext);
 			//Locale is a state attribute of UIViewRoot and need not be saved explicitly
-			Console.WriteLine ("Exiting getComponentStateToSave");
+			Trace.WriteLine ("Exiting getComponentStateToSave");
 			return serializedComponentStates;
 		}
 	}

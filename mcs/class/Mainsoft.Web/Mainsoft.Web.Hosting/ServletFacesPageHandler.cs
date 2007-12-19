@@ -11,6 +11,7 @@ using javax.servlet;
 using javax.faces.webapp;
 using javax.servlet.http;
 using vmw.common;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -39,14 +40,13 @@ namespace Mainsoft.Web.Hosting
 			FacesContext facesContext = ServletFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
 				try {
+					Trace.WriteLine ("FacesPageHandler: before execute");
 					_lifecycle.execute (facesContext);
-#if DEBUG
-					Console.WriteLine ("FacesPageHandler: before render");
-#endif
+					Trace.WriteLine ("FacesPageHandler: after execute");
+					
+					Trace.WriteLine ("FacesPageHandler: before render");
 					_lifecycle.render (facesContext);
-#if DEBUG
-					Console.WriteLine ("FacesPageHandler: after render");
-#endif
+					Trace.WriteLine ("FacesPageHandler: after render");
 				}
 				catch (FacesException fex) {
 					Exception inner = fex.InnerException;
