@@ -961,19 +961,20 @@ namespace Novell.Directory.Ldap
 			}
 			if(Connected == true)
 			{
-				LdapMessage msg = info.Request;
-				writeMessage(msg);
-				return ;
+			LdapMessage msg = info.Request;
+			writeMessage(msg);
+			return ;
 			}
 			else
 			{
-				int errorCount=0;
-				for(errorCount=0;errorCount<contents.Length;errorCount++)
-					if(contents[errorCount][0] == "CONNECTION_CLOSED")
+				int errorcount=0;
+				for(errorcount=0;errorcount<contents.Length;errorcount++)
+					if(contents[errorcount][0]=="CONNECTION_CLOSED")
 						break;
-				throw new LdapException(ExceptionMessages.CONNECTION_CLOSED, new System.Object[]{host, port}, LdapException.CONNECT_ERROR, (String)contents[errorCount][1]);
+				throw new LdapException(ExceptionMessages.CONNECTION_CLOSED, new System.Object[]{host, port}, LdapException.CONNECT_ERROR, (String)contents[errorcount][1]);
 			}
 		}
+		
 		
 		/// <summary> Writes an LdapMessage to the Ldap server over a socket.
 		/// 
@@ -1130,7 +1131,7 @@ namespace Novell.Directory.Ldap
 					sbyte[] ber = msg.Asn1Object.getEncoding(encoder);
 					out_Renamed.Write(SupportClass.ToByteArray(ber), 0, ber.Length);
 					out_Renamed.Flush();
-
+					out_Renamed.Close();
 				}
 				catch (System.Exception ex)
 				{
