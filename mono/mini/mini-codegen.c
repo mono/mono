@@ -396,6 +396,9 @@ mono_print_ins_index (int i, MonoInst *ins)
 		break;
 	case CEE_CALL:
 	case CEE_CALLVIRT:
+	case OP_CALL:
+	case OP_CALL_MEMBASE:
+	case OP_CALL_REG:
 	case OP_FCALL:
 	case OP_FCALLVIRT:
 	case OP_LCALL:
@@ -406,6 +409,8 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_VOIDCALL:
 	case OP_VOIDCALLVIRT: {
 		MonoCallInst *call = (MonoCallInst*)ins;
+		GSList *list;
+
 		if (call->method) {
 			char *full_name = mono_method_full_name (call->method, TRUE);
 			printf (" [%s]", full_name);
@@ -414,6 +419,20 @@ mono_print_ins_index (int i, MonoInst *ins)
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
 			if (info)
 				printf (" [%s]", info->name);
+		}
+
+		list = call->out_ireg_args;
+		while (list) {
+			guint32 regpair;
+			int reg, hreg;
+
+			regpair = (guint32)(gssize)(list->data);
+			hreg = regpair >> 24;
+			reg = regpair & 0xffffff;
+
+			printf (" [%s <- R%d]", mono_arch_regname (hreg), reg);
+
+			list = g_slist_next (list);
 		}
 		break;
 	}

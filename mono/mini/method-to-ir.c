@@ -165,13 +165,6 @@ alloc_preg (MonoCompile *cfg)
 }
 
 static inline guint32
-alloc_freg (MonoCompile *cfg)
-{
-	/* Allocate these from the same pool as the int regs */
-	return cfg->next_vreg ++;
-}
-
-static inline guint32
 alloc_lreg (MonoCompile *cfg)
 {
 #if SIZEOF_VOID_P == 8
@@ -183,6 +176,18 @@ alloc_lreg (MonoCompile *cfg)
 	cfg->next_vreg += 3;
 
 	return res;
+#endif
+}
+
+static inline guint32
+alloc_freg (MonoCompile *cfg)
+{
+#ifdef MONO_ARCH_SOFT_FLOAT
+	/* Allocate an lvreg so float ops can be decomposed into long ops */
+	return alloc_lreg (cfg);
+#else
+	/* Allocate these from the same pool as the int regs */
+	return cfg->next_vreg ++;
 #endif
 }
 
@@ -560,11 +565,13 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define NEW_TEMPSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->varinfo [(num)], (cfg)->varinfo [(num)]->inst_vtype, (inst))
 
-#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst))
-
 #define NEW_ARGLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)])
 
 #define NEW_LOCLOAD(cfg,dest,num) NEW_VARLOAD ((cfg), (dest), cfg->locals [(num)], header->locals [(num)])
+
+#define NEW_LOCSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst))
+
+#define NEW_ARGSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), arg_array [(num)], param_types [(num)], (inst))
 
 #define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype)
 
@@ -581,8 +588,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 	} while (0)
 
 #define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)], param_types [(num)])
-
-#define NEW_ARGSTORE(cfg,dest,num,inst) NEW_VARSTORE ((cfg), (dest), arg_array [(num)], param_types [(num)], (inst))
 
 /* Promote the vreg to a variable so its address can be taken */
 #define NEW_VARLOADA_VREG(cfg,dest,vreg,ltype) do { \
@@ -648,13 +653,61 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define EMIT_NEW_DECLSECCONST(cfg,dest,image,entry) do { NEW_DECLSECCONST ((cfg), (dest), (image), (entry)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_ARGLOAD(cfg,dest,num) do { NEW_VARLOAD ((cfg), (dest), arg_array [(num)], param_types [(num)]); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+#define EMIT_NEW_VARLOAD(cfg,dest,var,vartype) do { NEW_VARLOAD ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_TEMPLOAD(cfg,dest,num) do { NEW_TEMPLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+#define EMIT_NEW_VARSTORE(cfg,dest,var,vartype,inst) do { NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+
+/*
+ * Since the IL stack (and our vregs) contain double values, we have to do a conversion
+ * when loading/storing args/locals of type R4.
+ */
+
+#define EMIT_NEW_VARLOAD_SFLOAT(cfg,dest,var,vartype) do { \
+        if (!(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
+             MonoInst *iargs [1]; \
+             EMIT_NEW_VARLOADA (cfg, iargs [0], (var), (vartype)); \
+             (dest) = mono_emit_jit_icall (cfg, mono_fload_r4, iargs); \
+        } else { \
+             EMIT_NEW_VARLOAD ((cfg), (dest), (var), (vartype)); \
+        } \
+    } while (0)
+
+#define EMIT_NEW_VARSTORE_SFLOAT(cfg,dest,var,vartype,inst) do {	\
+        if (!(vartype)->byref && (vartype)->type == MONO_TYPE_R4) { \
+             MonoInst *iargs [2]; \
+             iargs [0] = (inst); \
+             EMIT_NEW_VARLOADA (cfg, iargs [1], (var), (vartype)); \
+             mono_emit_jit_icall (cfg, mono_fstore_r4, iargs); \
+        } else { \
+             EMIT_NEW_VARSTORE ((cfg), (dest), (var), (vartype), (inst)); \
+        } \
+    } while (0)
+
+#define EMIT_NEW_ARGLOAD(cfg,dest,num) EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), arg_array [(num)], param_types [(num)])
+
+#define EMIT_NEW_LOCLOAD(cfg,dest,num) EMIT_NEW_VARLOAD_SFLOAT ((cfg), (dest), cfg->locals [(num)], header->locals [(num)])
+
+#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype, (inst))
+
+#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) EMIT_NEW_VARSTORE_SFLOAT ((cfg), (dest), arg_array [(num)], param_types [(num)], (inst))
+
+#else
+
+#define EMIT_NEW_ARGLOAD(cfg,dest,num) do { NEW_ARGLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_LOCLOAD(cfg,dest,num) do { NEW_LOCLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
-#define EMIT_NEW_VARLOADA(cfg,dest,var,vartype) do { NEW_VARLOADA ((cfg), (dest), (var), (vartype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do { NEW_LOCSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do { NEW_ARGSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
+
+#endif
+
+#define EMIT_NEW_TEMPLOAD(cfg,dest,num) do { NEW_TEMPLOAD ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_TEMPLOADA(cfg,dest,num) do { NEW_TEMPLOADA ((cfg), (dest), (num)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -665,10 +718,6 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define EMIT_NEW_RETLOADA(cfg,dest) do { NEW_RETLOADA ((cfg), (dest)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_TEMPSTORE(cfg,dest,num,inst) do { NEW_TEMPSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#define EMIT_NEW_LOCSTORE(cfg,dest,num,inst) do { NEW_LOCSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
-
-#define EMIT_NEW_ARGSTORE(cfg,dest,num,inst) do { NEW_ARGSTORE ((cfg), (dest), (num), (inst)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
 #define EMIT_NEW_VARLOADA_VREG(cfg,dest,vreg,ltype) do { NEW_VARLOADA_VREG ((cfg), (dest), (vreg), (ltype)); MONO_ADD_INS ((cfg)->cbb, (dest)); } while (0)
 
@@ -2728,11 +2777,17 @@ emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
 }
 #endif
 
+inline static MonoInst*
+mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args);
+
 inline static MonoCallInst *
 mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig, 
 		     MonoInst **args, int calli, int virtual)
 {
 	MonoCallInst *call;
+#ifdef MONO_ARCH_SOFT_FLOAT
+	int i;
+#endif
 
 	MONO_INST_NEW_CALL (cfg, call, ret_type_to_call_opcode (sig->ret, calli, virtual, cfg->generic_sharing_context));
 
@@ -2767,6 +2822,35 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 		call->vret_var = loada;
 	} else if (!MONO_TYPE_IS_VOID (sig->ret))
 		call->inst.dreg = alloc_dreg (cfg, call->inst.type);
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+	/* 
+	 * If the call has a float argument, we would need to do an r8->r4 conversion using 
+	 * an icall, but that cannot be done during the call sequence since it would clobber
+	 * the call registers + the stack. So we do it before emitting the call.
+	 */
+	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
+		MonoType *t;
+		MonoInst *in = call->args [i];
+
+		if (i >= sig->hasthis)
+			t = sig->params [i - sig->hasthis];
+		else
+			t = &mono_defaults.int_class->byval_arg;
+		t = mono_type_get_underlying_type (t);
+
+		if (!t->byref && t->type == MONO_TYPE_R4) {
+			MonoInst *iargs [1];
+			MonoInst *conv;
+
+			iargs [0] = in;
+			conv = mono_emit_jit_icall (cfg, mono_fload_r4_arg, iargs);
+
+			/* The result will be in an int vreg */
+			call->args [i] = conv;
+		}
+	}
+#endif
 
 	mono_arch_emit_call (cfg, call, virtual);
 
@@ -3492,6 +3576,10 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 {
 	MonoMethodHeader *header = mono_method_get_header (method);
 	MonoVTable *vtable;
+#ifdef MONO_ARCH_SOFT_FLOAT
+	MonoMethodSignature *sig = mono_method_signature (method);
+	int i;
+#endif
 
 	if (cfg->generic_sharing_context)
 		return FALSE;
@@ -3548,6 +3636,15 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	 */
 	if (mono_method_has_declsec (method))
 		return FALSE;
+
+#ifdef MONO_ARCH_SOFT_FLOAT
+	/* FIXME: */
+	if (sig->ret && sig->ret->type == MONO_TYPE_R4)
+		return FALSE;
+	for (i = 0; i < sig->param_count; ++i)
+		if (!sig->params [i]->byref && sig->params [i]->type == MONO_TYPE_R4)
+			return FALSE;
+#endif
 
 	/* also consider num_locals? */
 	if (getenv ("MONO_INLINELIMIT")) {
@@ -4478,7 +4575,7 @@ mini_get_class (MonoMethod *method, guint32 token, MonoGenericContext *context)
  * is influenced by security attributes.
  */
 static
-gboolean check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee, MonoBasicBlock *bblock, unsigned char *ip)
+gboolean check_linkdemand (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee)
 {
 	guint32 result;
 	
@@ -5866,7 +5963,7 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 
 	/*
 	 * Unlike decompose_long_opts, this pass does not alter the CFG of the method so it 
-	 * can be executed anytime. 
+	 * can be executed anytime. It should be run before decompose_long
 	 */
 
 	/**
@@ -5946,6 +6043,265 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 
 		if (cfg->verbose_level > 3) mono_print_bb (bb, "AFTER DECOMPOSE-ARRAY-ACCESS-OPTS ");
 	}
+}
+
+typedef union {
+	guint32 vali [2];
+	gint64 vall;
+	double vald;
+} DVal;
+
+/**
+ * mono_handle_soft_float:
+ *
+ *  Soft float support on ARM. We store each double value in a pair of integer vregs,
+ * similar to long support on 32 bit platforms. 32 bit float values require special
+ * handling when used as locals, arguments, and in calls.
+ * One big problem with soft-float is that few r4 test cases in our test suite.
+ */
+void
+mono_handle_soft_float (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb, *first_bb;
+
+	/*
+	 * This pass creates long opcodes, so it should be run before decompose_long_opts ().
+	 */
+
+	/**
+	 * Create a dummy bblock and emit code into it so we can use the normal 
+	 * code generation macros.
+	 */
+	cfg->cbb = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	first_bb = cfg->cbb;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		MonoInst *ins;
+		MonoInst *prev = NULL;
+		gboolean restart;
+
+		if (cfg->verbose_level > 3) mono_print_bb (bb, "BEFORE HANDLE-SOFT-FLOAT ");
+
+		cfg->cbb->code = cfg->cbb->last_ins = NULL;
+		restart = TRUE;
+
+		while (restart) {
+			restart = FALSE;
+
+			for (ins = bb->code; ins; ins = ins->next) {
+				const char *spec = INS_INFO (ins->opcode);
+
+				/* Most fp operations are handled automatically by opcode emulation */
+
+				switch (ins->opcode) {
+				case OP_R8CONST: {
+					DVal d;
+					d.vald = *(double*)ins->inst_p0;
+					MONO_EMIT_NEW_I8CONST (cfg, ins->dreg, d.vall);
+					break;
+				}
+				case OP_R4CONST: {
+					DVal d;
+					/* We load the r8 value */
+					d.vald = *(float*)ins->inst_p0;
+					MONO_EMIT_NEW_I8CONST (cfg, ins->dreg, d.vall);
+					break;
+				}
+				case OP_FMOVE:
+					ins->opcode = OP_LMOVE;
+					break;
+				case OP_FGETLOW32:
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = ins->sreg1 + 1;
+					break;
+				case OP_FGETHIGH32:
+					ins->opcode = OP_MOVE;
+					ins->sreg1 = ins->sreg1 + 2;
+					break;
+				case OP_SETFRET: {
+					int reg = ins->sreg1;
+
+					ins->opcode = OP_SETLRET;
+					ins->dreg = -1;
+					ins->sreg1 = reg + 1;
+					ins->sreg2 = reg + 2;
+					break;
+				}
+				case OP_LOADR8_MEMBASE:
+					ins->opcode = OP_LOADI8_MEMBASE;
+					break;
+				case OP_STORER8_MEMBASE_REG:
+					ins->opcode = OP_STOREI8_MEMBASE_REG;
+					break;
+				case OP_STORER4_MEMBASE_REG: {
+					MonoInst *iargs [2];
+					int addr_reg;
+
+					/* Arg 1 is the double value */
+					MONO_INST_NEW (cfg, iargs [0], OP_ARG);
+					iargs [0]->dreg = ins->sreg1;
+
+					/* Arg 2 is the address to store to */
+					addr_reg = mono_alloc_preg (cfg);
+					EMIT_NEW_BIALU_IMM (cfg, iargs [1], OP_PADD_IMM, addr_reg, ins->inst_destbasereg, ins->inst_offset);
+					mono_emit_jit_icall (cfg, mono_fstore_r4, iargs);
+					restart = TRUE;
+					break;
+				}
+				case OP_LOADR4_MEMBASE: {
+					MonoInst *iargs [1];
+					MonoInst *conv;
+					int addr_reg;
+
+					addr_reg = mono_alloc_preg (cfg);
+					EMIT_NEW_BIALU_IMM (cfg, iargs [0], OP_PADD_IMM, addr_reg, ins->inst_basereg, ins->inst_offset);
+					conv = mono_emit_jit_icall (cfg, mono_fload_r4, iargs);
+					conv->dreg = ins->dreg;
+					break;
+				}					
+				case OP_FCALL:
+				case OP_FCALL_REG:
+				case OP_FCALL_MEMBASE: {
+					MonoCallInst *call = (MonoCallInst*)ins;
+					if (call->signature->ret->type == MONO_TYPE_R4) {
+						MonoCallInst *call2;
+						MonoInst *iargs [1];
+						MonoInst *conv;
+
+						/* Convert the call into a call returning an int */
+						MONO_INST_NEW_CALL (cfg, call2, OP_CALL);
+						memcpy (call2, call, sizeof (MonoCallInst));
+						switch (ins->opcode) {
+						case OP_FCALL:
+							call2->inst.opcode = OP_CALL;
+							break;
+						case OP_FCALL_REG:
+							call2->inst.opcode = OP_CALL_REG;
+							break;
+						case OP_FCALL_MEMBASE:
+							call2->inst.opcode = OP_CALL_MEMBASE;
+							break;
+						default:
+							g_assert_not_reached ();
+						}
+						call2->inst.dreg = mono_alloc_ireg (cfg);
+						MONO_ADD_INS (cfg->cbb, (MonoInst*)call2);
+
+						/* FIXME: Optimize this */
+
+						/* Emit an r4->r8 conversion */
+						EMIT_NEW_VARLOADA_VREG (cfg, iargs [0], call2->inst.dreg, &mono_defaults.int32_class->byval_arg);
+						conv = mono_emit_jit_icall (cfg, mono_fload_r4, iargs);
+						conv->dreg = ins->dreg;
+					} else {
+						switch (ins->opcode) {
+						case OP_FCALL:
+							ins->opcode = OP_LCALL;
+							break;
+						case OP_FCALL_REG:
+							ins->opcode = OP_LCALL_REG;
+							break;
+						case OP_FCALL_MEMBASE:
+							ins->opcode = OP_LCALL_MEMBASE;
+							break;
+						default:
+							g_assert_not_reached ();
+						}
+					}
+					break;
+				}
+				case OP_FCOMPARE: {
+					MonoJitICallInfo *info;
+					MonoInst *iargs [2];
+					MonoInst *call, *cmp, *br;
+
+					/* Convert fcompare+fbcc to icall+icompare+beq */
+
+					info = mono_find_jit_opcode_emulation (ins->next->opcode);
+					g_assert (info);
+
+					/* Create dummy MonoInst's for the arguments */
+					MONO_INST_NEW (cfg, iargs [0], OP_ARG);
+					iargs [0]->dreg = ins->sreg1;
+					MONO_INST_NEW (cfg, iargs [1], OP_ARG);
+					iargs [1]->dreg = ins->sreg2;
+
+					call = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, iargs);
+
+					MONO_INST_NEW (cfg, cmp, OP_ICOMPARE_IMM);
+					cmp->sreg1 = call->dreg;
+					cmp->inst_imm = 0;
+					MONO_ADD_INS (cfg->cbb, cmp);
+					
+					MONO_INST_NEW (cfg, br, OP_IBNE_UN);
+					br->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof (gpointer) * 2);
+					br->inst_true_bb = ins->next->inst_true_bb;
+					br->inst_false_bb = ins->next->inst_false_bb;
+					MONO_ADD_INS (cfg->cbb, br);
+
+					/* The call sequence might include fp ins */
+					restart = TRUE;
+
+					/* Skip fbcc or fccc */
+					NULLIFY_INS (ins->next);
+					break;
+				}
+				case OP_FCEQ:
+				case OP_FCGT:
+				case OP_FCGT_UN:
+				case OP_FCLT:
+				case OP_FCLT_UN: {
+					MonoJitICallInfo *info;
+					MonoInst *iargs [2];
+					MonoInst *call;
+
+					/* Convert fccc to icall+icompare+iceq */
+
+					info = mono_find_jit_opcode_emulation (ins->opcode);
+					g_assert (info);
+
+					/* Create dummy MonoInst's for the arguments */
+					MONO_INST_NEW (cfg, iargs [0], OP_ARG);
+					iargs [0]->dreg = ins->sreg1;
+					MONO_INST_NEW (cfg, iargs [1], OP_ARG);
+					iargs [1]->dreg = ins->sreg2;
+
+					call = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, iargs);
+
+					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, call->dreg, 1);
+					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, ins->dreg, -1);
+
+					/* The call sequence might include fp ins */
+					restart = TRUE;
+					break;
+				}
+				default:
+					if (spec [MONO_INST_SRC1] == 'f' || spec [MONO_INST_SRC2] == 'f' || spec [MONO_INST_DEST] == 'f') {
+						mono_print_ins (ins);
+						g_assert_not_reached ();
+					}
+					break;
+				}
+
+				g_assert (cfg->cbb == first_bb);
+
+				if (cfg->cbb->code || (cfg->cbb != first_bb)) {
+					/* Replace the original instruction with the new code sequence */
+
+					mono_replace_ins (cfg, bb, ins, &prev, first_bb, cfg->cbb);
+					first_bb->code = first_bb->last_ins = NULL;
+					first_bb->in_count = first_bb->out_count = 0;
+					cfg->cbb = first_bb;
+				}
+				else
+					prev = ins;
+			}
+		}
+
+		if (cfg->verbose_level > 3) mono_print_bb (bb, "AFTER HANDLE-SOFT-FLOAT ");
+	}
+
+	mono_decompose_long_opts (cfg);
 }
 
 /*
@@ -6627,7 +6983,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				GENERIC_SHARING_FAILURE (CEE_JMP);
 
 			if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
- 				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+ 				if (check_linkdemand (cfg, method, cmethod))
  					INLINE_FAILURE;
 				CHECK_CFG_EXCEPTION;
  			}
@@ -6706,7 +7062,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				n = fsig->param_count + fsig->hasthis;
 
 				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
-					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+					if (check_linkdemand (cfg, method, cmethod))
 						INLINE_FAILURE;
 					CHECK_CFG_EXCEPTION;
 				}
@@ -6902,10 +7258,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 
 				if (!has_vtargs) {
-					for (i = 0; i < n; ++i) {
-						NEW_ARGSTORE (cfg, ins, i, sp [i]);
-						MONO_ADD_INS (bblock, ins);
-					}
+					for (i = 0; i < n; ++i)
+						EMIT_NEW_ARGSTORE (cfg, ins, i, sp [i]);
 					MONO_INST_NEW (cfg, ins, OP_BR);
 					MONO_ADD_INS (bblock, ins);
 					tblock = start_bblock->out_bb [0];
@@ -7017,7 +7371,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, (*sp)->dreg);
 						ins->klass = mono_class_from_mono_type (ret_type);
 					} else {
+#ifdef MONO_ARCH_SOFT_FLOAT
+						if (!ret_type->byref && ret_type->type == MONO_TYPE_R4) {
+							MonoInst *iargs [1];
+							MonoInst *conv;
+
+							iargs [0] = *sp;
+							conv = mono_emit_jit_icall (cfg, mono_fload_r4_arg, iargs);
+							mono_arch_emit_setret (cfg, method, conv);
+						} else {
+							mono_arch_emit_setret (cfg, method, *sp);
+						}
+#else
 						mono_arch_emit_setret (cfg, method, *sp);
+#endif
 					}
 				}
 			}
@@ -7237,7 +7604,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ins->sreg1 = src1->dreg;
 			ins->inst_p0 = table;
 			ins->inst_many_bb = targets;
-			ins->klass = GPOINTER_TO_INT (n);
+			ins->klass = GUINT_TO_POINTER (n);
 			MONO_ADD_INS (cfg->cbb, ins);
 #else
 			if (sizeof (gpointer) == 8)
@@ -7649,7 +8016,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				GENERIC_SHARING_FAILURE (CEE_NEWOBJ);
 
 			if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
-				if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+				if (check_linkdemand (cfg, method, cmethod))
 					INLINE_FAILURE;
 				CHECK_CFG_EXCEPTION;
 			} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
@@ -9122,7 +9489,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					METHOD_ACCESS_FAILURE;
 
 				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
-					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+					if (check_linkdemand (cfg, method, cmethod))
 						INLINE_FAILURE;
 					CHECK_CFG_EXCEPTION;
 				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
@@ -9155,7 +9522,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					GENERIC_SHARING_FAILURE (CEE_LDVIRTFTN);
 
 				if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
-					if (check_linkdemand (cfg, method, cmethod, bblock, ip))
+					if (check_linkdemand (cfg, method, cmethod))
 						INLINE_FAILURE;
 					CHECK_CFG_EXCEPTION;
 				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
@@ -9498,8 +9865,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				ins->inst_p0 = (void*)&r8_0;
 				ins->dreg = alloc_dreg (cfg, STACK_R8);
 				MONO_ADD_INS (init_localsbb, ins);
-				NEW_LOCSTORE (cfg, store, i, ins);
-				MONO_ADD_INS (init_localsbb, store);
+				EMIT_NEW_LOCSTORE (cfg, store, i, ins);
 			} else if ((t == MONO_TYPE_VALUETYPE) || (t == MONO_TYPE_TYPEDBYREF) ||
 +				   ((t == MONO_TYPE_GENERICINST) && mono_type_generic_inst_is_valuetype (ptype))) {
 				MONO_EMIT_NEW_VZERO (cfg, dreg, mono_class_from_mono_type (ptype));
@@ -10230,7 +10596,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 #if SIZEOF_VOID_P == 8
 		case STACK_I8:
 #endif
-#ifndef __i386__
+#if !defined(__i386__) && !defined(MONO_ARCH_SOFT_FLOAT)
 		/* Enabling this screws up the fp stack on x86 */
 		case STACK_R8:
 #endif
@@ -10361,6 +10727,9 @@ mono_spill_global_vars (MonoCompile *cfg)
 
 		if ((ins->opcode != OP_REGVAR) && !(ins->flags & MONO_INST_IS_DEAD)) {
 			switch (ins->type) {
+#ifdef MONO_ARCH_SOFT_FLOAT
+			case STACK_R8:
+#endif
 			case STACK_I8: {
 				MonoInst *tree;
 

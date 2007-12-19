@@ -568,7 +568,7 @@ mono_fcgt (double a, double b)
 gboolean
 mono_fcgt_un (double a, double b)
 {
-	return a > b;
+	return isunordered (a, b) || a > b;
 }
 
 gboolean
@@ -580,7 +580,7 @@ mono_fclt (double a, double b)
 gboolean
 mono_fclt_un (double a, double b)
 {
-	return a < b;
+	return isunordered (a, b) || a < b;
 }
 
 double
@@ -833,4 +833,14 @@ mono_helper_newobj_mscorlib (guint32 idx)
 	g_assert (klass);
 
 	return mono_object_new (mono_domain_get (), klass);
+}
+
+/*
+ * On some architectures, gdb doesn't like encountering the cpu breakpoint instructions
+ * in generated code. So instead we emit a call to this function and place a gdb
+ * breakpoint here.
+ */
+void
+mono_break (void)
+{
 }

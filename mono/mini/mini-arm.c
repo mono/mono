@@ -61,12 +61,6 @@ int mono_exc_esp_offset = 0;
 #define MOV_LR_PC ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 24) | (0xa << 20) |  (ARMREG_LR << 12) | ARMREG_PC)
 #define DEBUG_IMT 0
 
-#ifdef MONO_ARCH_SOFT_FLOAT
-#define SOFT_FLOAT_IMPL TRUE
-#else
-#define SOFT_FLOAT_IMPL FALSE
-#endif
-
 void mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
 
 const char*
@@ -647,7 +641,7 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 			ainfo->reg = ARMREG_SP; /* in the caller */
 			ainfo->regtype = RegTypeBaseGen;
 			*stack_size += 4;
-		} else if (*gr > ARMREG_R3) {
+		} else if (*gr >= ARMREG_R3) {
 #ifdef __ARM_EABI__
 			*stack_size += 7;
 			*stack_size &= ~7;
@@ -1236,25 +1230,45 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 				MONO_ADD_INS (cfg->cbb, ins);
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg + 1, FALSE);
 			} else if (!t->byref && ((t->type == MONO_TYPE_R8) || (t->type == MONO_TYPE_R4))) {
-				int creg;
-
 				if (ainfo->size == 4) {
-					if (SOFT_FLOAT_IMPL)
-						NOT_IMPLEMENTED;
+#ifdef MONO_ARCH_SOFT_FLOAT
+					/* mono_emit_call_args () have already done the r8->r4 conversion */
+					/* The converted value is in an int vreg */
+					MONO_INST_NEW (cfg, ins, OP_MOVE);
+					ins->dreg = mono_alloc_ireg (cfg);
+					ins->sreg1 = in->dreg;
+					MONO_ADD_INS (cfg->cbb, ins);
+					mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
+#else
+					int creg;
+
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 					creg = mono_alloc_ireg (cfg);
-					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
 					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
+#endif
 				} else {
-					if (SOFT_FLOAT_IMPL)
-						NOT_IMPLEMENTED;
+#ifdef MONO_ARCH_SOFT_FLOAT
+					MONO_INST_NEW (cfg, ins, OP_FGETLOW32);
+					ins->dreg = mono_alloc_ireg (cfg);
+					ins->sreg1 = in->dreg;
+					MONO_ADD_INS (cfg->cbb, ins);
+					mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
+
+					MONO_INST_NEW (cfg, ins, OP_FGETHIGH32);
+					ins->dreg = mono_alloc_ireg (cfg);
+					ins->sreg1 = in->dreg;
+					MONO_ADD_INS (cfg->cbb, ins);
+					mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg + 1, FALSE);
+#else
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 					creg = mono_alloc_ireg (cfg);
-					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
 					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg, FALSE);
 					creg = mono_alloc_ireg (cfg);
-					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg + 1, FALSE);
 					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8 + 4));
+					mono_call_inst_add_outarg_reg (cfg, call, creg, ainfo->reg + 1, FALSE);
+#endif
 				}
 				cfg->flags |= MONO_CFG_HAS_FPOUT;
 			} else {
@@ -1286,9 +1300,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
 			} else if (!t->byref && ((t->type == MONO_TYPE_R4) || (t->type == MONO_TYPE_R8))) {
-				if (SOFT_FLOAT_IMPL)
-					NOT_IMPLEMENTED;
-
+				/* This works for the soft-float case too */
 				if (t->type == MONO_TYPE_R8)
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
 				else
@@ -1307,8 +1319,9 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			} else if (!t->byref && (t->type == MONO_TYPE_R8)) {
 				int creg;
 
-				if (SOFT_FLOAT_IMPL)
-					NOT_IMPLEMENTED;
+#ifdef MONO_ARCH_SOFT_FLOAT
+				NOT_IMPLEMENTED;
+#endif
 
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 				creg = mono_alloc_ireg (cfg);
@@ -1393,6 +1406,22 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 			MONO_ADD_INS (cfg->cbb, ins);
 			return;
 		}
+#ifdef MONO_ARCH_SOFT_FLOAT
+		if (ret->type == MONO_TYPE_R8) {
+			MonoInst *ins;
+
+			MONO_INST_NEW (cfg, ins, OP_SETFRET);
+			ins->dreg = cfg->ret->dreg;
+			ins->sreg1 = val->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			return;
+		}
+		if (ret->type == MONO_TYPE_R4) {
+			/* Already converted to an int in method_to_ir () */
+			MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
+			return;
+		}			
+#endif
 	}
 
 	/* FIXME: */
@@ -2405,6 +2434,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		//x86_inc_mem (code, &cov->data [bb->dfn].count); 
 	}
 
+    if (mono_break_at_bb_method && mono_method_desc_full_match (mono_break_at_bb_method, cfg->method) && bb->block_num == mono_break_at_bb_bb_num) {
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+							 (gpointer)"mono_break");
+		code = emit_call_seq (cfg, code);
+	}
+
 	ins = bb->code;
 	while (ins) {
 		offset = code - cfg->native_code;
@@ -2564,9 +2599,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_CMP_REG_IMM (code, ins->sreg1, imm8, rot_amount);
 			break;
 		case OP_BREAK:
-			*(int*)code = 0xef9f0001;
-			code += 4;
+			/*
+			 * gdb does not like encountering the hw breakpoint ins in the debugged code. 
+			 * So instead of emitting a trap, we emit a call a C function and place a 
+			 * breakpoint there.
+			 */
+			//*(int*)code = 0xef9f0001;
+			//code += 4;
 			//ARM_DBRK (code);
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
+								 (gpointer)"mono_break");
+			code = emit_call_seq (cfg, code);
 			break;
 		case OP_NOP:
 		case OP_DUMMY_USE:

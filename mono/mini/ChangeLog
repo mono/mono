@@ -1,3 +1,12 @@
+2007-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* *: Add soft-float support.
+
+	* driver.c: Add a new debug option --break-at-bb to insert breakpoints at a
+	specified bblock.
+
+	* helpers.c: Fix disassembly on arm.
+	
 2007-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* *: Add preliminary ARM port.

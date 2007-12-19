@@ -491,6 +491,11 @@ MINI_OP(OP_FCLT_UN_MEMBASE,"float_clt_un_membase", NONE, NONE, NONE)
 MINI_OP(OP_FCONV_TO_U,	"float_conv_to_u", NONE, NONE, NONE)
 MINI_OP(OP_CKFINITE, "ckfinite", FREG, FREG, NONE)
 
+/* Return the low 32 bits of a double vreg */
+MINI_OP(OP_FGETLOW32, "float_getlow32", IREG, FREG, NONE)
+/* Return the high 32 bits of a double vreg */
+MINI_OP(OP_FGETHIGH32, "float_gethigh32", IREG, FREG, NONE)
+
 MINI_OP(OP_GROUP, "group", NONE, NONE, NONE)
 MINI_OP(OP_JUMP_TABLE, "op_jump_table", IREG, NONE, NONE)
 

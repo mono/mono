@@ -168,6 +168,8 @@ extern gboolean mono_compile_aot;
 #endif
 extern MonoMethodDesc *mono_inject_async_exc_method;
 extern int mono_inject_async_exc_pos;
+extern MonoMethodDesc *mono_break_at_bb_method;
+extern int mono_break_at_bb_bb_num;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 
@@ -1168,6 +1170,7 @@ CompRelation      mono_negate_cond (CompRelation cond) MONO_INTERNAL;
 void              mono_decompose_long_opts (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_decompose_vtype_opts (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_decompose_array_access_opts (MonoCompile *cfg) MONO_INTERNAL;
+void              mono_handle_soft_float (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_handle_global_vregs (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_spill_global_vars (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_branch_to_cmov (MonoCompile *cfg) MONO_INTERNAL;

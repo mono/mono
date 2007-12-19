@@ -170,6 +170,8 @@ gboolean mono_compile_aot = FALSE;
 #endif
 MonoMethodDesc *mono_inject_async_exc_method = NULL;
 int mono_inject_async_exc_pos;
+MonoMethodDesc *mono_break_at_bb_method = NULL;
+int mono_break_at_bb_bb_num;
 
 static int mini_verbose = 0;
 
@@ -1837,12 +1839,14 @@ set_vreg_to_inst (MonoCompile *cfg, int vreg, MonoInst *inst)
 }
 
 #define mono_type_is_long(type) (!(type)->byref && ((mono_type_get_underlying_type (type)->type == MONO_TYPE_I8) || (mono_type_get_underlying_type (type)->type == MONO_TYPE_U8)))
+#define mono_type_is_float(type) (!(type)->byref && (((type)->type == MONO_TYPE_R8) || ((type)->type == MONO_TYPE_R4)))
 
 MonoInst*
 mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, int vreg)
 {
 	MonoInst *inst;
 	int num = cfg->num_varinfo;
+	gboolean regpair;
 
 	if ((num + 1) >= cfg->varinfo_count) {
 		int orig_count = cfg->varinfo_count;
@@ -1872,7 +1876,16 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		set_vreg_to_inst (cfg, vreg, inst);
 
 #if SIZEOF_VOID_P == 4
-	if (mono_type_is_long (type)) {
+#ifdef MONO_ARCH_SOFT_FLOAT
+	regpair = mono_type_is_long (type) || mono_type_is_float (type);
+#else
+	regpair = mono_type_is_long (type);
+#endif
+#else
+	regpair = FALSE;
+#endif
+
+	if (regpair) {
 		MonoInst *tree;
 
 		/* 
@@ -1910,7 +1923,6 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 
 		set_vreg_to_inst (cfg, inst->dreg + 2, tree);
 	}
-#endif
 
 	cfg->num_varinfo++;
 	if (cfg->verbose_level > 2)
@@ -1925,6 +1937,10 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 
 	if (mono_type_is_long (type))
 		dreg = mono_alloc_dreg (cfg, STACK_I8);
+#ifdef MONO_ARCH_SOFT_FLOAT
+	else if (mono_type_is_float (type))
+		dreg = mono_alloc_dreg (cfg, STACK_R8);
+#endif
 	else
 		/* All the others are unified */
 		dreg = mono_alloc_preg (cfg);
@@ -12272,6 +12288,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		return cfg;
 
 	if (cfg->new_ir) {
+#ifdef MONO_ARCH_SOFT_FLOAT
+		mono_handle_soft_float (cfg);
+#endif
 		mono_decompose_vtype_opts (cfg);
 		if (cfg->flags & MONO_CFG_HAS_ARRAY_ACCESS)
 			mono_decompose_array_access_opts (cfg);
@@ -13831,7 +13850,9 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_register_opcode_emulation (OP_FMUL, "__emul_fmul", "double double double", mono_fmul, FALSE);
 	mono_register_opcode_emulation (OP_FNEG, "__emul_fneg", "double double", mono_fneg, FALSE);
 	mono_register_opcode_emulation (CEE_CONV_R8, "__emul_conv_r8", "double int32", mono_conv_to_r8, FALSE);
+	mono_register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", "double int32", mono_conv_to_r8, FALSE);
 	mono_register_opcode_emulation (CEE_CONV_R4, "__emul_conv_r4", "double int32", mono_conv_to_r4, FALSE);
+	mono_register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", "double int32", mono_conv_to_r4, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", "double double", mono_fconv_r4, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", "int8 double", mono_fconv_i1, FALSE);
 	mono_register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", "int16 double", mono_fconv_i2, FALSE);
@@ -13887,6 +13908,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_helper_newobj_mscorlib, "helper_newobj_mscorlib", "object int", FALSE);
 	register_icall (mono_value_copy, "mono_value_copy", "void ptr ptr ptr", FALSE);
 	register_icall (mono_helper_get_rgctx_other_ptr, "get_rgctx_other_ptr", "ptr ptr ptr int32 int32", FALSE);
+	register_icall (mono_break, "mono_break", NULL, TRUE);
 #endif
 
 #define JIT_RUNTIME_WORKS

@@ -50,7 +50,7 @@ dummy_store: len:0
 not_reached: len:0
 not_null: src1:i len:0
 memory_barrier: len:4
-break: len:4
+break: len:32
 
 jmp: len:92
 call: dest:a clob:c len:20
