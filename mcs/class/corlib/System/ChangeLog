@@ -1,3 +1,9 @@
+2007-12-19  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTime.cs:
+	* DateTimeOffset.cs:
+	* DateTimeUtils.cs: factored out the common pieces of DT and DTO into DTU.
+
 2007-12-18  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: implementing the 4 ToString overloads by reusing
