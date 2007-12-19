@@ -192,6 +192,7 @@ namespace System.Windows.Forms {
 		private StringBuilder	password_cache;
 		private bool		calc_pass;
 		private int		char_count;
+		private bool		enable_links;
 
 		// For calculating widths/heights
 		public static readonly StringFormat string_format = new StringFormat (StringFormat.GenericTypographic);
@@ -350,6 +351,14 @@ namespace System.Windows.Forms {
 			set {
 				crlf_size = value;
 			}
+		}
+
+		/// <summary>
+		///  Whether text is scanned for links
+		/// </summary>
+		internal bool EnableLinks {
+			get { return enable_links; }
+			set { enable_links = value; }
 		}
 
 		internal string PasswordChar {
@@ -899,9 +908,252 @@ namespace System.Windows.Forms {
 				owner.Invalidate (new Rectangle (x, y, w, h));
 			}
 		}
+
+		/// <summary>
+		///  Scans the next paragraph for http:/ ftp:/ www. https:/ etc and marks the tags
+		///  as links.
+		/// </summary>
+		/// <param name="start_line">The line to start on</param>
+		/// <param name="link_changed">marks as true if something is changed</param>
+		private void ScanForLinks (Line start_line, ref bool link_changed)
+		{
+			Line current_line = start_line;
+			StringBuilder line_no_breaks = new StringBuilder ();
+			StringBuilder line_link_record = new StringBuilder ();
+			ArrayList cumulative_length_list = new ArrayList ();
+			bool update_caret_tag = false;
+
+			cumulative_length_list.Add (0);
+
+			while (current_line != null) {
+				line_no_breaks.Append (current_line.text);
+
+				if (link_changed == false)
+					current_line.LinkRecord (line_link_record);
+
+				current_line.ClearLinks ();
+
+				cumulative_length_list.Add (line_no_breaks.Length);
+
+				if (current_line.ending == LineEnding.Wrap)
+					current_line = GetLine (current_line.LineNo + 1);
+				else
+					break;
+			}
+
+			// search for protocols.. make sure www. is first!
+			string [] search_terms = new string [] { "www.", "http:/", "ftp:/", "https:/" };
+			int search_found = 0;
+			int index_found = 0;
+			string line_no_breaks_string = line_no_breaks.ToString ();
+			int line_no_breaks_index = 0;
+			int link_end = 0;
+
+			while (true) {
+				if (line_no_breaks_index >= line_no_breaks_string.Length)
+					break;
+
+				index_found = FirstIndexOfAny (line_no_breaks_string, search_terms, line_no_breaks_index, out search_found);
+
+				//no links found on this line
+				if (index_found == -1)
+					break;
+
+				if (search_found == 0) {
+					// if we are at the end of the line to analyse and the end of the line
+					// is "www." then there are no links here
+					if (line_no_breaks_string.Length == index_found + search_terms [0].Length)
+						break;
+
+					// if after www. we don't have a letter a digit or a @ or - or /
+					// then it is not a web address, we should continue searching
+					if (char.IsLetterOrDigit (line_no_breaks_string [index_found + search_terms [0].Length]) == false &&
+						"@/~".IndexOf (line_no_breaks_string [index_found + search_terms [0].Length].ToString ()) == -1) {
+						line_no_breaks_index = index_found + search_terms [0].Length;
+						continue;
+					}
+				}
+
+				link_end = line_no_breaks_string.Length - 1;
+				line_no_breaks_index = line_no_breaks_string.Length;
+
+				// we've found a link, we just need to find where it ends now
+				for (int i = index_found + search_terms [search_found].Length; i < line_no_breaks_string.Length; i++) {
+					if (line_no_breaks_string [i - 1] == '.') {
+						if (char.IsLetterOrDigit (line_no_breaks_string [i]) == false &&
+							"@/~".IndexOf (line_no_breaks_string [i].ToString ()) == -1) {
+							link_end = i - 1;
+							line_no_breaks_index = i;
+							break;
+						}
+					} else {
+						if (char.IsLetterOrDigit (line_no_breaks_string [i]) == false &&
+							"@-/:~.?=".IndexOf (line_no_breaks_string [i].ToString ()) == -1) {
+							link_end = i - 1;
+							line_no_breaks_index = i;
+							break;
+						}
+					}
+				}
+
+				string link_text = line_no_breaks_string.Substring (index_found, link_end - index_found + 1);
+				int current_cumulative = 0;
+
+				// we've found a link - index_found -> link_end
+				// now we just make all the tags as containing link and
+				// point them to the text for the whole link
+
+				current_line = start_line;
+
+				//find the line we start on
+				for (current_cumulative = 1; current_cumulative < cumulative_length_list.Count; current_cumulative++)
+					if ((int)cumulative_length_list [current_cumulative] > index_found)
+						break;
+
+				current_line = GetLine (start_line.LineNo + current_cumulative - 1);
+
+				// find the tag we start on
+				LineTag current_tag = current_line.FindTag (index_found - (int)cumulative_length_list [current_cumulative - 1]);
+
+				if (current_tag.Start != (index_found - (int)cumulative_length_list [current_cumulative - 1]) + 1) {
+					if (current_tag == CaretTag)
+						update_caret_tag = true;
+
+					current_tag = current_tag.Break ((index_found - (int)cumulative_length_list [current_cumulative - 1]) + 1);
+				}
+
+				// set the tag
+				current_tag.IsLink = true;
+				current_tag.LinkText = link_text;
+
+				//go through each character
+				// find the tag we are in
+				// skip the number of characters in the tag
+				for (int i = 1; i < link_text.Length; i++) {
+					// on to a new word-wrapped line
+					if ((int)cumulative_length_list [current_cumulative] <= index_found + i) {
+
+						current_line = GetLine (start_line.LineNo + current_cumulative++);
+						current_tag = current_line.FindTag (index_found + i - (int)cumulative_length_list [current_cumulative - 1]);
+
+						current_tag.IsLink = true;
+						current_tag.LinkText = link_text;
+
+						continue;
+					}
+
+					if (current_tag.End < index_found + 1 + i - (int)cumulative_length_list [current_cumulative - 1]) {
+						//todo - last tag in case there is a non text tag?
+						current_tag = current_tag.Next;
+
+						current_tag.IsLink = true;
+						current_tag.LinkText = link_text;
+					}
+				}
+
+				//if there are characters left in the tag after the link
+				// split the tag
+				// make the second part a non link
+				if (current_tag.End > (index_found + link_text.Length + 1) - (int)cumulative_length_list [current_cumulative - 1]) {
+					if (current_tag == CaretTag)
+						update_caret_tag = true;
+
+					current_tag.Break ((index_found + link_text.Length + 1) - (int)cumulative_length_list [current_cumulative - 1]);
+				}
+			}
+
+			if (update_caret_tag) {
+				CaretTag = LineTag.FindTag (CaretLine, CaretPosition);
+				link_changed = true;
+			} else {
+				if (link_changed == false) {
+					current_line = start_line;
+					StringBuilder new_link_record = new StringBuilder ();
+
+					while (current_line != null) {
+						current_line.LinkRecord (new_link_record);
+
+						if (current_line.ending == LineEnding.Wrap)
+							current_line = GetLine (current_line.LineNo + 1);
+						else
+							break;
+					}
+
+					if (new_link_record.Equals (line_link_record) == false)
+						link_changed = true;
+				}
+			}
+		}
+
+		private int FirstIndexOfAny (string haystack, string [] needles, int start_index, out int term_found)
+		{
+			term_found = -1;
+			int best_index = -1;
+
+			for (int i = 0; i < needles.Length; i++) {
+#if  NET_2_0
+				int index = haystack.IndexOf (needles [i], start_index,	StringComparison.InvariantCultureIgnoreCase);
+#else
+				int index = haystack.ToLower().IndexOf(needles[i], start_index);
+#endif
+
+				if (index > -1) {
+					if (term_found > -1) {
+						if (index < best_index) {
+							best_index = index;
+							term_found = i;
+						}
+					} else {
+						best_index = index;
+						term_found = i;
+					}
+				}
+			}
+
+			return best_index;
+		}
+
+
+
+		private void InvalidateLinks (Rectangle clip)
+		{
+			for (int i = (owner.list_links.Count - 1); i >= 0; i--) {
+				TextBoxBase.LinkRectangle link = (TextBoxBase.LinkRectangle) owner.list_links [i];
+
+				if (clip.IntersectsWith (link.LinkAreaRectangle))
+					owner.list_links.RemoveAt (i);
+			}
+		}
 		#endregion	// Private Methods
 
 		#region Internal Methods
+
+		internal void ScanForLinks (int start, int end, ref bool link_changed)
+		{
+			Line line = null;
+			LineEnding lastending = LineEnding.Rich;
+
+			// make sure we start scanning at the real begining of the line
+			while (true) {
+				if (start != 1 && GetLine (start - 1).ending == LineEnding.Wrap)
+					start--;
+				else
+					break;
+			}
+
+			for (int i = start; i <= end && i < lines; i++) {
+				line = GetLine (i);
+
+				if (lastending != LineEnding.Wrap)
+					ScanForLinks (line, ref link_changed);
+
+				lastending = line.ending;
+
+				if (lastending == LineEnding.Wrap && (i + 1) <= end)
+					end++;
+			}
+		}
+
 		// Clear the document and reset state
 		internal void Empty() {
 
@@ -1371,6 +1623,9 @@ namespace System.Windows.Forms {
 				end = GetLineByPixel(clip.Right + viewport_x, false).line_no;
 			}
 
+			// remove links in the list (used for mouse down events) that are within the clip area.
+			InvalidateLinks (clip);
+
 			///
 			/// We draw the single border ourself
 			///
@@ -1497,11 +1752,19 @@ namespace System.Windows.Forms {
 							tag_pos = tag.End;
 						}
 
+						Rectangle text_size;
+
 						tag.Draw (g, current_color,
 								line.X - viewport_x,
 								line_y + tag.Shift,
 								old_tag_pos - 1, Math.Min (tag.Start + tag.Length, tag_pos) - 1,
-								text.ToString() );
+								text.ToString (), out text_size, tag.IsLink);
+
+						if (tag.IsLink) {
+							TextBoxBase.LinkRectangle link = new TextBoxBase.LinkRectangle (text_size);
+							link.LinkTag = tag;
+							owner.list_links.Add (link);
+						}
 					}
 					tag = tag.Next;
 				}
@@ -3227,6 +3490,12 @@ namespace System.Windows.Forms {
 					HeightChanged(this, null);
 				}
 			}
+
+			// scan for links and tell us if its all
+			// changed, so we can update everything
+			if (EnableLinks)
+				ScanForLinks (start, end, ref changed);
+
 			UpdateCaret();
 			return changed;
 		}

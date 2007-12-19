@@ -90,7 +90,7 @@ namespace System.Windows.Forms
 			
 			tags = new LineTag(this, 1);
 			tags.Font = font;
-			tags.Color = color;				
+			tags.Color = color;
 		}
 
 		internal Line (Document document, int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending) : this(document, ending)
@@ -201,7 +201,40 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Internal Methods
-		public void DeleteCharacters (int pos, int count)
+
+		/// <summary>
+		///  Builds a simple code to record which tags are links and how many tags
+		///  used to compare lines before and after to see if the scan for links
+		///  process has changed anything.
+		/// </summary>
+		internal void LinkRecord (StringBuilder linkRecord)
+		{
+			LineTag tag = tags;
+
+			while (tag != null) {
+				if (tag.IsLink)
+					linkRecord.Append ("L");
+				else
+					linkRecord.Append ("N");
+
+				tag = tag.Next;
+			}
+		}
+
+		/// <summary>
+		///  Clears all link properties from tags
+		/// </summary>
+		internal void ClearLinks ()
+		{
+			LineTag tag = tags;
+
+			while (tag != null) {
+				tag.IsLink = false;
+				tag = tag.Next;
+			}
+		}
+
+		public void DeleteCharacters(int pos, int count)
 		{
 			LineTag tag;
 			bool streamline = false;

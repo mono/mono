@@ -39,9 +39,15 @@ namespace System.Windows.Forms
 		private Font		font;		// System.Drawing.Font object for this tag
 		private Color		color;		// The font color for this tag
 		private Color		back_color;	// In 2.0 tags can have background colours.
+		private Font		link_font;	// Cached font used for link if IsLink
+		private bool		is_link;	// Whether this tag is a link
+		private string		link_text;	// The full link text e.g. this might be 
+							// word-wrapped to "w" but this would be
+							// "www.mono-project.com"
 
 		// Payload; text
 		private int		start;		// start, in chars; index into Line.text
+							// 1 based!!
 
 		// Drawing support
 		private int		height;		// Height in pixels of the text this tag describes
@@ -59,7 +65,10 @@ namespace System.Windows.Forms
 		public LineTag (Line line, int start)
 		{
 			this.line = line;
-			this.start = start;
+			Start = start;
+			link_font = null;
+			is_link = false;
+			link_text = null;
 		}
 		#endregion	// Constructors
 
@@ -72,9 +81,14 @@ namespace System.Windows.Forms
 			get { return back_color; }
 			set { back_color = value; }
 		}
-		
+
 		public Color Color {
-			get { return color; }
+			get {
+				if (IsLink == true)
+					return Color.Blue;
+
+				return color;
+			}
 			set { color = value; }
 		}
 		
@@ -87,12 +101,23 @@ namespace System.Windows.Forms
 		}
 
 		public Font Font {
-			get { return font; }
+			get {
+				if (IsLink) {
+					if (link_font == null)
+						link_font = new Font (font.FontFamily, font.Size, font.Style | FontStyle.Underline);
+					
+					return link_font;
+				}
+
+				return font;
+			}
 			set { 
 				if (font != value) {
-					font = value;		
-					height = font.Height;
-					XplatUI.GetFontMetrics (Hwnd.bmp_g, font, out ascent, out descent);
+					link_font = null;
+					font = value;
+	
+					height = Font.Height;
+					XplatUI.GetFontMetrics (Hwnd.bmp_g, Font, out ascent, out descent);
 					line.recalc = true;
 				}
 			}
@@ -141,7 +166,20 @@ namespace System.Windows.Forms
 
 		public int Start {
 			get { return start; }
-			set { start = value; }
+			set {
+#if DEBUG
+				if (value <= 0)
+					throw new Exception("Start of tag must be 1 or higher!");
+
+				if (this.Previous != null) {
+					if  (this.Previous.Start == value)
+						System.Console.Write("Creating empty tag");
+					if  (this.Previous.Start > value)
+						throw new Exception("New tag makes an insane tag");
+				}
+#endif
+				start = value; 
+			}
 		}
 
 		public int TextEnd {
@@ -175,6 +213,16 @@ namespace System.Windows.Forms
 				return line.X + line.widths [start - 1];
 			}
 		}
+
+		public bool IsLink {
+			get { return is_link; }
+			set { is_link = value; }
+		}
+
+		public string LinkText {
+			get { return link_text; }
+			set { link_text = value; }
+		}
 		#endregion
 		
 		#region Public Methods
@@ -183,11 +231,25 @@ namespace System.Windows.Forms
 		{
 			LineTag	new_tag;
 
+#if DEBUG
 			// Sanity
+			if (pos < this.Start)
+				throw new Exception ("Breaking at a negative point");
+#endif
+
 			if (pos == this.start)
+#if DEBUG
+				throw new Exception ("Breaking at the begining");
+#else
 				return this;
-			else if (pos >= (start + Length))
+#endif
+
+			else if (pos >= End)
+#if DEBUG
+				throw new Exception ("Breaking at the end of a line");
+#else
 				return null;
+#endif
 
 			new_tag = new LineTag(line, pos);
 			new_tag.CopyFormattingFrom (this);
@@ -251,23 +313,46 @@ namespace System.Windows.Forms
 		
 		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
-			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), font, color, x, y, false);
+			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), Font, color, x, y, false);
 		}
-
+		
 		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
-			while (start < end) {
-				int tab_index = text.IndexOf ("\t", start);
-				if (tab_index == -1)
-					tab_index = end;
+			Rectangle measured_text;
+			Draw (dc, color, xoff, y, start, end, text, out measured_text, false);
+		}
 
-				TextBoxTextRenderer.DrawText (dc, text.Substring (start, tab_index - start).Replace ("\r", string.Empty), font, color, xoff + line.widths[start], y, false);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="drawStart">0 based start index</param>
+		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int drawStart, int drawEnd,
+					  string text, out Rectangle measuredText, bool measureText)
+		{
+			if (measureText) {
+				int xstart = (int)line.widths [drawStart] + (int)xoff;
+				int xend = (int)line.widths [drawEnd] - (int)line.widths [drawStart];
+				int ystart = (int)y;
+				int yend = (int)TextBoxTextRenderer.MeasureText (dc, Text (), Font).Height;
+
+				measuredText = new Rectangle (xstart, ystart, xend, yend);
+			} else {
+				measuredText = new Rectangle ();
+			}
+
+			while (drawStart < drawEnd) {
+				int tab_index = text.IndexOf ("\t", start);
+				
+				if (tab_index == -1)
+					tab_index = drawEnd;
+
+				TextBoxTextRenderer.DrawText (dc, text.Substring (drawStart, tab_index - drawStart).Replace ("\r", string.Empty), Font, color, xoff + line.widths [drawStart], y, false);
 
 				// non multilines get the unknown char 
-				if (!line.document.multiline && tab_index != end)
-					TextBoxTextRenderer.DrawText (dc, "\u0013", font, color, xoff + line.widths[tab_index], y, true);
+				if (!line.document.multiline && tab_index != drawEnd)
+					TextBoxTextRenderer.DrawText (dc, "\u0013", Font, color, xoff + line.widths [tab_index], y, true);
 
-				start = tab_index + 1;
+				drawStart = tab_index + 1;
 			}
 		}
 
@@ -290,13 +375,19 @@ namespace System.Windows.Forms
 			if (other.IsTextTag != IsTextTag)
 				return false;
 
-			if (this.font.Equals (other.font) && this.color.Equals (other.color))	// FIXME add checking for things like link or type later
+			if (this.IsLink != other.IsLink)
+				return false;
+
+			if (this.LinkText != other.LinkText)
+				return false;
+
+			if (this.font.Equals (other.font) && this.color.Equals (other.color))
 				return true;
 
 			return false;
 		}
 
-		/// <summary>Finds the tag that describes the character at position 'pos' on 'line'</summary>
+		/// <summary>Finds the tag that describes the character at position 'pos' (0 based) on 'line'</summary>
 		public static LineTag FindTag (Line line, int pos)
 		{
 			LineTag tag = line.tags;
@@ -318,8 +409,8 @@ namespace System.Windows.Forms
 		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
-		/// <param name="start">1-based character position on line</param>
-		public static bool FormatText (Line line, int start, int length, Font font, Color color, Color back_color, FormatSpecified specified)
+		/// <param name="formatStart">1-based character position on line</param>
+		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -338,20 +429,20 @@ namespace System.Windows.Forms
 				length = line.text.Length;
 
 			tag = line.tags;
-			end = start + length;
+			end = formatStart + length;
 
 			// Common special case
-			if ((start == 1) && (length == tag.Length)) {
+			if ((formatStart == 1) && (length == tag.Length)) {
 				tag.ascent = 0;
-				SetFormat (tag, font, color, back_color, specified);
+				SetFormat (tag, font, color, backColor, specified);
 				return retval;
 			}
 
-			start_tag = FindTag (line, start);
-			tag = start_tag.Break (start);
+			start_tag = FindTag (line, formatStart);
+			tag = start_tag.Break (formatStart);
 
 			while (tag != null && tag.End <= end) {
-				SetFormat (tag, font, color, back_color, specified);
+				SetFormat (tag, font, color, backColor, specified);
 				tag = tag.next;
 			}
 
@@ -363,7 +454,7 @@ namespace System.Windows.Forms
 
 			if (end_tag != null) {
 				end_tag.Break (end);
-				SetFormat (end_tag, font, color, back_color, specified);
+				SetFormat (end_tag, font, color, backColor, specified);
 			}
 
 			return retval;
@@ -405,6 +496,9 @@ namespace System.Windows.Forms
 		
 		// There can be multiple tags at the same position, we want to make
 		// sure we are using the very last tag at the given position
+		// TODO - Ideally having empty line tags floating about is not
+		// a good idea as it just clutters the object tree. If this is fixed to
+		// not create empty line tags then this function will be obsolete.
 		public static LineTag GetFinalTag (LineTag tag)
 		{
 			LineTag res = tag;

@@ -78,13 +78,13 @@ namespace System.Windows.Forms {
 			accepts_return = true;
 			auto_word_select = false;
 			bullet_indent = 0;
-			detect_urls = true;
 			max_length = Int32.MaxValue;
 			margin_right = 0;
 			zoom = 1;
 			base.Multiline = true;
 			document.CRLFSize = 1;
 			shortcuts_enabled = true;
+			base.EnableLinks = true;
 
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;
@@ -109,6 +109,12 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Private & Internal Methods
+
+		internal override void HandleLinkClicked (LinkRectangle link)
+		{
+			OnLinkClicked (new LinkClickedEventArgs (link.LinkTag.LinkText));
+		}
+
 		internal override Color ChangeBackColor (Color backColor)
 		{
 			if (backColor == Color.Empty) {
@@ -215,13 +221,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(true)]
 		public bool DetectUrls {
-			get {
-				return detect_urls;
-			}
-
-			set {
-				detect_urls = true;
-			}
+			get { return base.EnableLinks; }
+			set { base.EnableLinks = value; }
 		}
 
 #if NET_2_0

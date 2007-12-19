@@ -69,6 +69,9 @@ namespace System.Windows.Forms
 		internal Timer			scroll_timer;
 		internal bool			richtext;
 		internal bool			show_selection;		// set to true to always show selection, even if no focus is set
+		internal ArrayList		list_links;		// currently showing links
+		private LinkRectangle		current_link;		// currently hovering link
+		private bool			enable_links;		// whether links are enabled
 		
 		internal bool has_been_focused;
 
@@ -109,6 +112,9 @@ namespace System.Windows.Forms
 			word_wrap = true;
 			richtext = false;
 			show_selection = false;
+			enable_links = false;
+			list_links = new ArrayList ();
+			current_link = null;
 			show_caret_w_selection = (this is TextBox);
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
@@ -955,6 +961,10 @@ namespace System.Windows.Forms
 			ScrollToCaret();
 		}
 
+		internal virtual void HandleLinkClicked (LinkRectangle link_clicked)
+		{
+		}
+
 		protected override bool IsInputKey (Keys keyData)
 		{
 			if ((keyData & Keys.Alt) != 0)
@@ -1681,6 +1691,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal bool EnableLinks {
+			get { return enable_links; }
+			set {
+				enable_links = value;
+
+				document.EnableLinks = value;
+			}
+		}
+
 		internal bool ShowSelection {
 			get {
 				if (show_selection || !hide_selection) {
@@ -1753,6 +1772,11 @@ namespace System.Windows.Forms
 		private void TextBoxBase_MouseDown (object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left) {
+
+				if (current_link != null) {
+					HandleLinkClicked (current_link);
+					return;
+				}
 
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 
@@ -2001,6 +2025,12 @@ namespace System.Windows.Forms
 			CalculateScrollBars();
 		}
 
+		private void ScrollLinks (int xChange, int yChange)
+		{
+			foreach (LinkRectangle link in list_links)
+				link.Scroll (xChange, yChange);
+		}
+
 		private void hscroll_ValueChanged (object sender, EventArgs e)
 		{
 			int old_viewport_x;
@@ -2021,6 +2051,8 @@ namespace System.Windows.Forms
 			} else {
 				XplatUI.ScrollWindow(this.Handle, ClientRectangle, old_viewport_x - this.hscroll.Value, 0, false);
 			}
+
+			ScrollLinks (old_viewport_x - this.hscroll.Value, 0);
 
 			if (Focused)
 				document.CaretHasFocus ();
@@ -2050,6 +2082,8 @@ namespace System.Windows.Forms
 			} else {
 				XplatUI.ScrollWindow(this.Handle, ClientRectangle, 0, old_viewport_y - this.vscroll.Value, false);
 			}
+
+			ScrollLinks (0, old_viewport_y - this.vscroll.Value);
 
 			if (Focused)
 				document.CaretHasFocus ();
@@ -2083,6 +2117,28 @@ namespace System.Windows.Forms
 					document.SetSelectionToCaret(false);
 					document.DisplayCaret();
 				}
+			}
+
+			//search through link boxes to see if the mouse is over one of them
+
+			bool found_link = false;
+			foreach (LinkRectangle link in list_links) {
+				if (link.LinkAreaRectangle.Contains (e.X, e.Y)) {
+					XplatUI.SetCursor (window.Handle, Cursors.Hand.handle);
+
+					found_link = true;
+					current_link = link;
+					break;
+				}
+			}
+
+			if (found_link == false) {
+#if NET_2_0
+				XplatUI.SetCursor (window.Handle, DefaultCursor.handle);
+#else
+				XplatUI.SetCursor(window.Handle, Cursors.IBeam.handle);
+#endif
+				current_link = null;
 			}
 		}
 
@@ -2276,6 +2332,35 @@ namespace System.Windows.Forms
 			return true;
 		}
 		#endregion	// Private Methods
+
+		#region Private Classes
+		internal class LinkRectangle {
+			private Rectangle link_area_rectangle;
+			private LineTag link_tag;
+
+			public LinkRectangle (Rectangle rect)
+			{
+				link_tag = null;
+				link_area_rectangle = rect;
+			}
+
+			public Rectangle LinkAreaRectangle {
+				get { return link_area_rectangle; }
+				set { link_area_rectangle = value; }
+			}
+
+			public LineTag LinkTag {
+				get { return link_tag; }
+				set { link_tag = value; }
+			}
+
+			public void Scroll (int x_change, int y_change)
+			{
+				link_area_rectangle.X += x_change;
+				link_area_rectangle.Y += y_change;
+			}
+		}
+		#endregion
 
 #if NET_2_0
 		// This is called just before OnTextChanged is called.
