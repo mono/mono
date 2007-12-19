@@ -31,11 +31,11 @@ using System.Web;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Web {
-
+namespace MonoTests.System.Web
+{
 	[TestFixture]
-	public class HttpCookieCollectionTest {
-
+	public class HttpCookieCollectionTest
+	{
 		[Test]
 		public void TestCollection ()
 		{
@@ -117,6 +117,47 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("cookie1", allkeys[0], "allkeys[0]");
 			Assert.AreEqual ("cookie2", allkeys[1], "allkeys[1]");
 		}
-	}
 
+		[Test] // Get (string)
+		public void Get_Name ()
+		{
+			HttpCookieCollection col = new HttpCookieCollection ();
+			Assert.IsNull (col.Get ("DOESNOTEXIST"), "#1");
+
+			HttpCookie cookie1 = new HttpCookie ("cOokiE1", "value1");
+			col.Add (cookie1);
+			HttpCookie cookie2 = new HttpCookie ("cOokiE2", "value2");
+			col.Add (cookie2);
+			HttpCookie cookie3 = new HttpCookie ("cookie1", "value3");
+			col.Add (cookie3);
+
+			Assert.AreSame (cookie1, col.Get ("cOokiE1"), "#2");
+			Assert.AreSame (cookie1, col.Get ("cookiE1"), "#3");
+			Assert.AreSame (cookie2, col.Get ("cOokiE2"), "#4");
+			Assert.AreSame (cookie2, col.Get ("COOkiE2"), "#5");
+			Assert.IsNull (col.Get ((string) null), "#6");
+			Assert.IsNull (col.Get ("DOESNOTEXIST"), "#7");
+		}
+
+		[Test] // this [string]
+		public void Indexer_Name ()
+		{
+			HttpCookieCollection col = new HttpCookieCollection ();
+			Assert.IsNull (col ["DOESNOTEXIST"], "#1");
+
+			HttpCookie cookie1 = new HttpCookie ("cOokiE1", "value1");
+			col.Add (cookie1);
+			HttpCookie cookie2 = new HttpCookie ("cOokiE2", "value2");
+			col.Add (cookie2);
+			HttpCookie cookie3 = new HttpCookie ("cookie1", "value3");
+			col.Add (cookie3);
+
+			Assert.AreSame (cookie1, col ["cOokiE1"], "#2");
+			Assert.AreSame (cookie1, col ["cookiE1"], "#3");
+			Assert.AreSame (cookie2, col ["cOokiE2"], "#4");
+			Assert.AreSame (cookie2, col ["COOkiE2"], "#5");
+			Assert.IsNull (col [(string) null], "#6");
+			Assert.IsNull (col ["DOESNOTEXIST"], "#7");
+		}
+	}
 }

@@ -1,3 +1,8 @@
+2007-12-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpCookieCollectionTest.cs: Added test for string indexer and
+	Get (String) overload.
+
 2007-11-23  Daniel Nauck  <dna@mono-project.de>
 
 	* TraceContextRecordTest.cs: added
