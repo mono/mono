@@ -141,6 +141,7 @@ DISTFILES = \
 	doc/NUnitGuidelines	\
 	doc/TemplateTest.cs	\
 	notes/BitVecto32.txt	\
+	MicrosoftAjaxLibrary/License.htm	\
 	$(monolite_files)
 
 .PHONY: all-local $(STD_TARGETS:=-local)

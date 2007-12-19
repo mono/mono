@@ -1,3 +1,8 @@
+2007-12-19  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: include MicrosoftAjaxLibrary/License.htm
+	in the dist.
+
 2007-12-17  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build Mono.Cecil only in the default profile.
