@@ -53,6 +53,7 @@ namespace System.Windows.Forms
 		internal bool			accepts_return;
 		internal bool			auto_size;
 		internal bool			backcolor_set;
+		internal bool			disabled_foreground_grey;
 		internal CharacterCasing	character_casing;
 		internal bool			hide_selection;
 		internal int			max_length;
@@ -116,6 +117,7 @@ namespace System.Windows.Forms
 			list_links = new ArrayList ();
 			current_link = null;
 			show_caret_w_selection = (this is TextBox);
+			disabled_foreground_grey = true;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			document.HeightChanged += new EventHandler(document_HeightChanged);
@@ -1098,7 +1100,7 @@ namespace System.Windows.Forms
 			if (shortcuts_enabled) {
 				switch (keyData & Keys.KeyCode) {
 				case Keys.X:
-					if (control) {
+					if (control && read_only == false) {
 						Cut();
 						return true;
 					}
@@ -1112,13 +1114,13 @@ namespace System.Windows.Forms
 					return false;
 
 				case Keys.V:
-					if (control) {
+					if (control && read_only == false) {
 						return Paste(Clipboard.GetDataObject(), null, true);
 					}
 					return false;
 
 				case Keys.Z:
-					if (control) {
+					if (control && read_only == false) {
 						Undo();
 						return true;
 					}
@@ -1132,26 +1134,30 @@ namespace System.Windows.Forms
 					return false;
 
 				case Keys.Insert:
-					if (shift) {
-						Paste(Clipboard.GetDataObject(), null, true);
-						return true;
-					}
 
-					if (control) {
-						Copy();
-						return true;
+					if (read_only == false) {
+						if (shift) {
+							Paste (Clipboard.GetDataObject (), null, true);
+							return true;
+						}
+
+						if (control) {
+							Copy ();
+							return true;
+						}
 					}
 
 					return false;
 
 				case Keys.Delete:
-					if (shift) {
-						Cut();
-						return true;
-					}
 
 					if (read_only)
 						break;
+
+					if (shift && read_only == false) {
+						Cut ();
+						return true;
+					}
 
 					if (document.selection_visible) {
 						document.ReplaceSelection("", false);

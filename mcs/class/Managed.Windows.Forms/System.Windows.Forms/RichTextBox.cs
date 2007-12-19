@@ -82,6 +82,7 @@ namespace System.Windows.Forms {
 			base.Multiline = true;
 			document.CRLFSize = 1;
 			shortcuts_enabled = true;
+			disabled_foreground_grey = false;
 			base.EnableLinks = true;
 			
 			rtf_style = new RtfSectionStyle ();
