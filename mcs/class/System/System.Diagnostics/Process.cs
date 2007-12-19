@@ -486,6 +486,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The relative process priority.")]
 		public ProcessPriorityClass PriorityClass {
 			get {
+				if (process_handle == IntPtr.Zero) {
+					throw new InvalidOperationException ("Process has not been started.");
+				}
+				
 				int error;
 				int prio = GetPriorityClass (process_handle, out error);
 				if (prio == 0)
@@ -493,6 +497,10 @@ namespace System.Diagnostics {
 				return (ProcessPriorityClass) prio;
 			}
 			set {
+				if (process_handle == IntPtr.Zero) {
+					throw new InvalidOperationException ("Process has not been started.");
+				}
+				
 				// LAMESPEC: not documented on MSDN for NET_1_1
 				if (!Enum.IsDefined (typeof (ProcessPriorityClass), value))
 					throw new InvalidEnumArgumentException ();

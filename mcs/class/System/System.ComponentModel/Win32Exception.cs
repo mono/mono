@@ -119,6 +119,9 @@ namespace System.ComponentModel
 			case 3:
 				message = Locale.GetText ("Cannot find the specified file");
 				break;
+			case 5:
+				message = Locale.GetText ("Access denied");
+				break;
 			case 50:
 				message = Locale.GetText ("Operation not supported");
 				break;

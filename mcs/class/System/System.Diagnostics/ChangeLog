@@ -1,3 +1,8 @@
+2007-12-19  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Check that the process has been started before
+	getting or setting the priority class.  Fixes bug 348415.
+
 2007-12-10  Miguel de Icaza  <miguel@novell.com>
 
 	* DefaultTraceListener.cs: By default set the AssertUiEnabled to
