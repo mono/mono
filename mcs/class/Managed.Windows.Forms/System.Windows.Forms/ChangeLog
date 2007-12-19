@@ -1,5 +1,11 @@
 2007-12-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Apply patch from Luke Page that fixes a scrolling
+	redraw issue, and allows RichTextBox to draw colored text even while
+	disabled or readonly.
+
+2007-12-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* RichTextBox.cs, TextBoxBase.cs: Apply patch from Luke Page that
 	disallows cut/paste in a readonly textbox, adds support for Shift-Insert,
 	and doesn't grey text in a disabled RichTextBox.

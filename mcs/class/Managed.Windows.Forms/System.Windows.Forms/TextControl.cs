@@ -1635,8 +1635,8 @@ namespace System.Windows.Forms {
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
-			if (line != null && clip.Bottom == line.Y + line.height + viewport_y)
-				end--;			
+			if (line != null && clip.Bottom == line.Y + line.height - viewport_y)
+				end--;
 
 			line_no = start;
 
@@ -1729,10 +1729,10 @@ namespace System.Windows.Forms {
 						Color a = tag.Color;
 						Color b = ThemeEngine.Current.ColorWindowText;
 
-						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
+						if (owner.disabled_foreground_grey && (a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
 							tag_color = ThemeEngine.Current.ColorGrayText;
 						}
-					} else if (owner.read_only && !owner.backcolor_set) {
+					} else if (owner.read_only && !owner.backcolor_set && owner.disabled_foreground_grey) {
 						tag_color = ThemeEngine.Current.ColorControlText;
 					}
 
@@ -2185,7 +2185,7 @@ namespace System.Windows.Forms {
 		}
 
 		///<summary>Split line at given tag and position into two lines</summary>
-		///if more space becomes available on previous line</param>
+		///if more space becomes available on previous line
 		internal void Split(Line line, LineTag tag, int pos) {
 			LineTag	new_tag;
 			Line	new_line;
@@ -2196,6 +2196,13 @@ namespace System.Windows.Forms {
 			move_caret = false;
 			move_sel_start = false;
 			move_sel_end = false;
+
+#if DEBUG
+			SanityCheck();
+
+			if (tag.End < pos)
+				throw new Exception ("Split called with the wrong tag");
+#endif
 
 			// Adjust selection and cursors
 			if (caret.line == line && caret.pos >= pos) {
@@ -2232,6 +2239,10 @@ namespace System.Windows.Forms {
 					selection_end.pos = 0;
 					selection_end.tag = new_line.tags;
 				}
+
+#if DEBUG
+				SanityCheck ();
+#endif
 				return;
 			}
 
@@ -2244,10 +2255,19 @@ namespace System.Windows.Forms {
 			line.recalc = true;
 			new_line.recalc = true;
 
+			//make sure that if we are at the end of a tag, we start on the begining
+			//of a new one, if one exists... Stops us creating an empty tag and
+			//make the operation easier.
+			if (tag.Next != null && (tag.Next.Start - 1) == pos)
+				tag = tag.Next;
+
 			if ((tag.Start - 1) == pos) {
 				int	shift;
 
 				// We can simply break the chain and move the tag into the next line
+
+				// if the tag we are moving is the first, create an empty tag
+				// for the line we are leaving behind
 				if (tag == line.tags) {
 					new_tag = new LineTag(line, 1);
 					new_tag.CopyFormattingFrom (tag);
@@ -2312,7 +2332,35 @@ namespace System.Windows.Forms {
 
 			CharCount -= line.text.Length - pos;
 			line.text.Remove(pos, line.text.Length - pos);
+#if DEBUG
+			SanityCheck ();
+#endif
 		}
+
+#if DEBUG
+		private void SanityCheck () {
+			for (int i = 1; i < lines; i++) {
+				LineTag tag = GetLine (i).tags;
+
+				if (tag.Start != 1)
+					throw new Exception ("Line doesn't start at the begining");
+
+				int start = 1;
+				tag = tag.Next;
+
+				while (tag != null) {
+					if (tag.Start == start)
+						throw new Exception ("Empty tag!");
+
+					if (tag.Start < start)
+						throw new Exception ("Insane!!");
+
+					start = tag.Start;
+					tag = tag.Next;
+				}
+			}
+		}
+#endif
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
@@ -3409,6 +3457,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Fixup the positions, they can go kinda nuts
+			// (this is suspend and resume recalc - they set them to 1 and max)
 			start = Math.Max (start, 1);
 			end = Math.Min (end, lines);
 
@@ -3426,6 +3475,7 @@ namespace System.Windows.Forms {
 				line = GetLine(line_no++);
 				line.offset = offset;
 
+				// if we are not calculating a password
 				if (!calc_pass) {
 					if (!optimize) {
 						line.RecalculateLine(g, this);
