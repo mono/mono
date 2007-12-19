@@ -253,8 +253,15 @@ namespace System.Windows.Forms.RTF {
 			font.Name = name;
 		}
 
+		/// <summary>Read the next character from the input - skip any crlf</summary>
+		private char GetChar ()
+		{
+			return GetChar (true);
+		}
+
 		/// <summary>Read the next character from the input</summary>
-		private char GetChar() {
+		private char GetChar(bool skipCrLf) 
+		{
 			int	c;
 			bool	old_bump_line;
 
@@ -270,18 +277,20 @@ SkipCRLF:
 			old_bump_line = bump_line;
 			bump_line = false;
 
-			if (c == '\r') {
-				bump_line = true;
-				text_buffer.Length--;
-				goto SkipCRLF;
-			} else if (c == '\n') {
-				bump_line = true;
-				if (this.prev_char == '\r') {
-					old_bump_line = false;
+			if (skipCrLf) {
+				if (c == '\r') {
+					bump_line = true;
+					text_buffer.Length--;
+					goto SkipCRLF;
+				} else if (c == '\n') {
+					bump_line = true;
+					if (this.prev_char == '\r') {
+						old_bump_line = false;
+					}
+
+					text_buffer.Length--;
+					goto SkipCRLF;
 				}
-				
-				text_buffer.Length--;
-				goto SkipCRLF;
 			}
 
 			this.line_pos ++;
@@ -323,7 +332,7 @@ SkipCRLF:
 			
 		}
 
-		/// <summary>Skip to the end of the current group</summary>
+		/// <summary>Skip to the end of the next group to start or current group we are in</summary>
 		public void SkipGroup() {
 			int	level;
 
@@ -480,7 +489,7 @@ SkipCRLF:
 			}
 
 			while (Char.IsLetter(c)) {
-				if ((c = GetChar()) == EOF) {
+				if ((c = GetChar(false)) == EOF) {
 					break;
 				}
 			}
@@ -513,7 +522,7 @@ SkipCRLF:
 			}
 
 			if (c != EOF) {
-				if (c != ' ') {
+				if (c != ' ' && c != '\r' && c != '\n') {
 					this.pushed_char = c;
 				}
 				this.text_buffer.Length--;
@@ -601,18 +610,29 @@ SkipCRLF:
 
 		private void HandleOptDest (RTF rtf)
 		{
+			int group_levels = 1;
+
 			while (true) {
 				GetToken ();
 
-				if (rtf.CheckCM (TokenClass.Group, Major.EndGroup))
-					break;
-
+				// Here is where we should handle recognised optional
+				// destinations.
 				//
-				// We don't want to skip all optional dests
+				// Handle a picture group 
 				//
 				if (rtf.CheckCMM (TokenClass.Control, Major.Destination, Minor.Pict)) {
 					ReadPictGroup (rtf);
 					return;
+				}
+
+				if (rtf.CheckCM (TokenClass.Group, Major.EndGroup)) {
+					if ((--group_levels) == 0) {
+						break;
+					}
+				}
+
+				if (rtf.CheckCM (TokenClass.Group, Major.BeginGroup)) {
+					group_levels++;
 				}
 			}
 		}

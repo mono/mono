@@ -1,3 +1,9 @@
+2007-12-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* RTF.cs: Patch from Luke Page that ignores CRLF during tokenisation
+	and to support multiple groups inside an optional destination.  Fixes
+	a part of bug #324589.
+
 2007-11-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Picture.cs: Reset the data stream position back to 0 before trying
