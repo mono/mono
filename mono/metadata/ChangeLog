@@ -1,5 +1,11 @@
 2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): proper verification
+	of exception handling clauses ranges and fallthru in
+	and out of protected blocks.
+
+2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): fixed compilation issue.
 
 2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
