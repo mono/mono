@@ -263,11 +263,6 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return opts;
 }
 
-static void
-mono_arch_break (void)
-{
-}
-
 #ifdef __GNUC__
 #define flushi(addr)    __asm__ __volatile__ ("iflush %0"::"r"(addr):"memory")
 #else /* assume Sun's compiler */
@@ -2914,7 +2909,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * breakpoint there.
 			 */
 			//sparc_ta (code, 1);
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_arch_break);
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_break);
 			EMIT_CALL();
 			break;
 		case OP_ADDCC:
@@ -4058,7 +4053,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_register_lowlevel_calls (void)
 {
-	mono_register_jit_icall (mono_arch_break, "mono_arch_break", NULL, TRUE);
 	mono_register_jit_icall (mono_arch_get_lmf_addr, "mono_arch_get_lmf_addr", NULL, TRUE);
 }
 

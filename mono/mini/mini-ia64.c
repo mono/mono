@@ -602,11 +602,6 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return 0;
 }
 
-static void
-mono_arch_break (void)
-{
-}
-
 GList *
 mono_arch_get_allocatable_int_vars (MonoCompile *cfg)
 {
@@ -3159,7 +3154,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_BREAK:
-			code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, mono_arch_break);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, mono_break);
 			break;
 
 		case OP_LOCALLOC: {
@@ -3441,7 +3436,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_register_lowlevel_calls (void)
 {
-	mono_register_jit_icall (mono_arch_break, "mono_arch_break", NULL, TRUE);
 }
 
 static Ia64InsType ins_types_in_template [32][3] = {

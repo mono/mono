@@ -1,5 +1,10 @@
 2007-12-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c mini-sparc.c: Get rid of mono_arch_break (), use mono_break ()
+	instead.
+
+	* method-to-ir.c: Fix build.
+
 	* *: Add soft-float support.
 
 	* driver.c: Add a new debug option --break-at-bb to insert breakpoints at a

@@ -6051,6 +6051,8 @@ typedef union {
 	double vald;
 } DVal;
 
+#ifdef MONO_ARCH_SOFT_FLOAT
+
 /**
  * mono_handle_soft_float:
  *
@@ -6303,6 +6305,8 @@ mono_handle_soft_float (MonoCompile *cfg)
 
 	mono_decompose_long_opts (cfg);
 }
+
+#endif
 
 /*
  * mono_method_to_ir: translates IL into basic blocks containing trees
