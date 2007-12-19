@@ -1583,11 +1583,27 @@ namespace System.Windows.Forms
 				InvalidateItem (FocusedItem);
 		}		
 
+		private bool KeySearch (Keys key)
+		{
+			char c = (char) key;
+			if (!Char.IsLetterOrDigit (c))
+				return false;
+
+			int idx = FindString (c.ToString (), FocusedItem);
+			if (idx != ListBox.NoMatches)
+				SelectedIndex = idx;
+
+			return true;
+		}
+
 		private void OnKeyDownLB (object sender, KeyEventArgs e)
 		{					
 			int new_item = -1;
 			
 			if (Items.Count == 0)
+				return;
+
+			if (KeySearch (e.KeyCode))
 				return;
 
 			switch (e.KeyCode) {
