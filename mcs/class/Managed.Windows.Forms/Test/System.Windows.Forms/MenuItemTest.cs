@@ -216,6 +216,91 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[Test]
+		public void CloneTest ()
+		{
+			MenuItem mi1, mi2;
+			
+			mi1 = new MenuItem();
+			mi1.BarBreak = true;
+			mi1.Break = true;
+			mi1.Checked = true;
+			mi1.DefaultItem = true;
+			mi1.Enabled = true;
+			mi1.MergeOrder = 1;
+			mi1.MergeType = MenuMerge.Replace;
+			mi1.OwnerDraw = true;
+			mi1.RadioCheck = true;
+			mi1.Shortcut = Shortcut.Alt0;
+			mi1.ShowShortcut = true;
+			mi1.Text = "text1";
+			mi1.Visible = true;
+#if NET_2_0
+			mi1.Name = "name1";
+			mi1.Tag = "tag1";
+#endif
+			
+			mi2 = mi1.CloneMenu();
+			
+			Assert.AreEqual(mi1.BarBreak, mi2.BarBreak, "BarBreak #1");
+			Assert.AreEqual(mi1.Break, mi2.Break, "Break #1");
+			Assert.AreEqual(mi1.Checked, mi2.Checked, "Checked #1");
+			Assert.AreEqual(mi1.DefaultItem, mi2.DefaultItem, "DefaultItem #1");
+			Assert.AreEqual(mi1.Enabled, mi2.Enabled, "Enabled #1");
+			Assert.AreEqual(mi1.MergeOrder, mi2.MergeOrder, "MergeOrder #1");
+			Assert.AreEqual(mi1.MergeType, mi2.MergeType, "MergeType #1");
+			Assert.AreEqual(mi1.OwnerDraw, mi2.OwnerDraw, "OwnerDraw #1");
+			Assert.AreEqual(mi1.RadioCheck, mi2.RadioCheck, "RadioCheck #1");
+			Assert.AreEqual(mi1.Shortcut, mi2.Shortcut, "Shortcut #1");
+			Assert.AreEqual(mi1.ShowShortcut, mi2.ShowShortcut, "ShowShortcut #1");
+			Assert.AreEqual(mi1.Text, mi2.Text, "Text #1");
+			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #1");
+			
+#if NET_2_0
+			Assert.AreEqual(mi1.Name, mi2.Name, "Name #1");
+			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #1");
+#endif
+			
+			mi1.BarBreak = false;
+			mi1.Break = false;
+			mi1.Checked = false;
+			mi1.DefaultItem = false;
+			mi1.Enabled = false;
+			mi1.MergeOrder = 0;
+			mi1.MergeType = MenuMerge.Remove;
+			mi1.OwnerDraw = false;
+			mi1.RadioCheck = false;			
+			mi1.Shortcut = Shortcut.Alt1;
+			mi1.ShowShortcut = false;
+			mi1.Text = "text2";
+			mi1.Visible = false;
+			
+#if NET_2_0
+			mi1.Name = "name2";
+			mi1.Tag = "tag2";
+#endif
+			
+			mi2 = mi1.CloneMenu();
+			
+			Assert.AreEqual(mi1.BarBreak, mi2.BarBreak, "BarBreak #2");
+			Assert.AreEqual(mi1.Break, mi2.Break, "Break #2");
+			Assert.AreEqual(mi1.Checked, mi2.Checked, "Checked #2");
+			Assert.AreEqual(mi1.DefaultItem, mi2.DefaultItem, "DefaultItem #2");
+			Assert.AreEqual(mi1.Enabled, mi2.Enabled, "Enabled #2");
+			Assert.AreEqual(mi1.MergeOrder, mi2.MergeOrder, "MergeOrder #2");
+			Assert.AreEqual(mi1.MergeType, mi2.MergeType, "MergeType #2");
+			Assert.AreEqual(mi1.OwnerDraw, mi2.OwnerDraw, "OwnerDraw #2");
+			Assert.AreEqual(mi1.RadioCheck, mi2.RadioCheck, "RadioCheck #2");
+			Assert.AreEqual(mi1.Shortcut, mi2.Shortcut, "Shortcut #2");
+			Assert.AreEqual(mi1.ShowShortcut, mi2.ShowShortcut, "ShowShortcut #2");
+			Assert.AreEqual(mi1.Text, mi2.Text, "Text #2");
+			Assert.AreEqual(mi1.Visible, mi2.Visible, "Visible #2");
+#if NET_2_0
+			Assert.AreEqual(mi1.Name, mi2.Name, "Name #2");
+			Assert.AreEqual(mi1.Tag, mi2.Tag, "Tag #2");
+#endif
+		}
+	
+		[Test]
 		public void CloneEventTest ()
 		{
 			MenuItem mi1, mi2;

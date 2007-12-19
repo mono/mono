@@ -1,3 +1,8 @@
+2007-12-18  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuItemTest.cs: Add a test case for menuitem properties when created by
+	CloneMenu. Thanks Luke Page for test case.
+
 2007-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItemTest.cs: Added new Constructor_Group test, that I
