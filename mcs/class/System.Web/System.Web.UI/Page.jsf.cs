@@ -121,9 +121,8 @@ namespace System.Web.UI
 		}
 
 		public override void encodeChildren (FacesContext context) {
-#if DEBUG
-			Console.WriteLine ("encodeChildren");
-#endif
+			System.Diagnostics.Trace.WriteLine ("encodeChildren");
+			
 			EnterThread (HttpContext.Current);
 			try {
 				if (!context.getResponseComplete ()) {
@@ -175,9 +174,8 @@ namespace System.Web.UI
 
 		// TODO: consider validators state
 		public override object processSaveState (FacesContext context) {
-#if DEBUG
-			Console.WriteLine ("processSaveState");
-#endif
+			System.Diagnostics.Trace.WriteLine ("processSaveState");
+			
 			object state = new Pair (_state, GetValidatorsState ());
 			if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
 				int length;
@@ -193,11 +191,10 @@ namespace System.Web.UI
 		}
 
 		public override void processRestoreState (FacesContext context, object state) {
+			System.Diagnostics.Trace.WriteLine ("processRestoreState");
+			
 			if (state == null)
 				throw new ArgumentNullException ("state");
-#if DEBUG
-			Console.WriteLine ("processRestoreState");
-#endif
 			EnterThread (HttpContext.Current);
 			try {
 				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
@@ -218,9 +215,8 @@ namespace System.Web.UI
 		}
 
 		public override void processDecodes (FacesContext context) {
-#if DEBUG
-			Console.WriteLine ("processDecodes");
-#endif
+			System.Diagnostics.Trace.WriteLine ("processDecodes");
+			
 			EnterThread (HttpContext.Current);
 			try {
 				ProcessPostData ();
@@ -241,9 +237,8 @@ namespace System.Web.UI
 		}
 
 		public override void processValidators (FacesContext context) {
-#if DEBUG
-			Console.WriteLine ("processValidators");
-#endif
+			System.Diagnostics.Trace.WriteLine ("processValidators");
+
 			EnterThread (HttpContext.Current);
 			try {
 				base.processValidators (context);
@@ -258,9 +253,8 @@ namespace System.Web.UI
 		}
 
 		public override void processUpdates (FacesContext context) {
-#if DEBUG
-			Console.WriteLine ("processUpdates");
-#endif
+			System.Diagnostics.Trace.WriteLine ("processUpdates");
+
 			EnterThread (HttpContext.Current);
 			try {
 				base.processUpdates (context);
@@ -275,9 +269,8 @@ namespace System.Web.UI
 		}
 
 		public override void broadcast (FacesEvent e) {
-#if DEBUG
-			Console.WriteLine ("broadcast");
-#endif
+			System.Diagnostics.Trace.WriteLine ("broadcast");
+
 			if (!(e is EventRaiserFacesEvent))
 				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
 
