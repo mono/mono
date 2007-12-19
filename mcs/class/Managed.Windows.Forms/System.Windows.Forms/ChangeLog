@@ -1,5 +1,10 @@
 2007-12-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* LineTag.cs: Fix an error in the new Draw method that caused
+	a crash when rendering the document on bug #324589.
+
+2007-12-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Line.cs, LineTag.cs, RichTextBox.cs, TextBoxBase.cs,
 	TextControl.cs: Apply patch from Luke Page that adds support
 	for URL links in RichTextBox.

@@ -341,7 +341,7 @@ namespace System.Windows.Forms
 			}
 
 			while (drawStart < drawEnd) {
-				int tab_index = text.IndexOf ("\t", start);
+				int tab_index = text.IndexOf ("\t", drawStart);
 				
 				if (tab_index == -1)
 					tab_index = drawEnd;
