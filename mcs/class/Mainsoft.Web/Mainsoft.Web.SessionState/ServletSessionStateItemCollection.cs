@@ -34,6 +34,7 @@ using System.Threading;
 
 using javax.servlet;
 using javax.servlet.http;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.SessionState
 {
@@ -65,9 +66,7 @@ namespace Mainsoft.Web.SessionState
 						}
 						catch (Exception) {
 							_needSessionPersistence = false;
-#if DEBUG
-							Console.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
-#endif
+							Debug.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
 						}
 					}
 				}

@@ -32,6 +32,7 @@ using System.Threading;
 using javax.servlet;
 using javax.servlet.http;
 using vmw.common;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -106,7 +107,7 @@ namespace Mainsoft.Web.Hosting
 			}
 			catch(Exception e) 
 			{
-				Console.WriteLine("ERROR in Static File Reading {0},{1}",e.GetType(), e.Message);
+				Trace.WriteLine (String.Format ("ERROR in Static File Reading {0},{1}", e.GetType (), e.Message));
 				resp.setStatus(500);
 				HttpException myExp = new HttpException ("Exception in Reading static file", e);
 				hos.print(((HttpException) myExp).GetHtmlErrorMessage ());
@@ -143,7 +144,7 @@ namespace Mainsoft.Web.Hosting
 			}
 			catch(Exception e) 
 			{
-				Console.WriteLine("ERROR in Static File Reading {0},{1}",e.GetType(), e.Message);
+				Trace.WriteLine (String.Format ("ERROR in Static File Reading {0},{1}", e.GetType (), e.Message));
 				resp.setStatus(500);
 				HttpException myExp = new HttpException ("Exception in Reading static file", e);
 				writer.print(((HttpException) myExp).GetHtmlErrorMessage ());

@@ -40,6 +40,7 @@ using vmw.@internal;
 using java.lang.reflect;
 using java.net;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -152,19 +153,15 @@ namespace Mainsoft.Web.Hosting
 
 			try {
 				vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
-#if DEBUG
-				Console.WriteLine ("Destroy of GhHttpServlet");
-#endif
+				Debug.WriteLine ("Destroy of GhHttpServlet");
 				HttpRuntime.Close ();
 				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy (evidence);
 				context.removeAttribute (J2EEConsts.APP_DOMAIN);
 				java.lang.Thread.currentThread ().setContextClassLoader (null);
 			}
 			catch (Exception e) {
-#if DEBUG
-				Console.WriteLine ("ERROR in Servlet Destroy {0},{1}", e.GetType (), e.Message);
-				Console.WriteLine (e.StackTrace);
-#endif
+				Debug.WriteLine (String.Format ("ERROR in Servlet Destroy {0},{1}", e.GetType (), e.Message));
+				Debug.WriteLine (e.StackTrace);
 			}
 			finally {
 				vmw.@internal.EnvironmentUtils.clearAppDomain ();
@@ -236,9 +233,7 @@ namespace Mainsoft.Web.Hosting
 				if (webApp_baseDir == null || webApp_baseDir == "")
 					webApp_baseDir = rootPath;
 				servletDomain.SetData(IAppDomainConfig.APP_BASE_DIR , webApp_baseDir);
-#if DEBUG
-				Console.WriteLine("Initialization of webapp " + webApp_baseDir);
-#endif
+				Debug.WriteLine("Initialization of webapp " + webApp_baseDir);
 				//servletDomain.SetData(".hostingVirtualPath", "/");
 				//servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;

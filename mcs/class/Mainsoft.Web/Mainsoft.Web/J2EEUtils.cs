@@ -32,6 +32,7 @@ using vmw.common;
 using javax.servlet;
 using System.Web;
 using Mainsoft.Web.Hosting;
+using System.Diagnostics;
 
 namespace Mainsoft.Web
 {
@@ -69,9 +70,7 @@ namespace Mainsoft.Web
 					}
 				}
 				catch (Exception e) {
-#if TRACE
-					Console.WriteLine (e.ToString());
-#endif
+					Trace.WriteLine (e.ToString());
 				}
 			}
 			return IAppDomainConfig.WAR_ROOT_SYMBOL + appVirtualPath;
@@ -87,10 +86,8 @@ namespace Mainsoft.Web
 						path = appDir;
 				}
 				catch (Exception e) {
-#if TRACE
-					Console.WriteLine (e.Message + appDir + "is invalid or unaccessible." +
+					Trace.WriteLine (e.Message + appDir + "is invalid or unaccessible." +
 						" If " + appDir + " really exists, check your security permissions");
-#endif
 				}
 			}
 			if (path.Length == 0)

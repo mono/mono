@@ -28,6 +28,7 @@ using System.Web.SessionState;
 using System.Reflection;
 using javax.servlet.http;
 using Mainsoft.Web.Hosting;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.SessionState
 {
@@ -54,12 +55,10 @@ namespace Mainsoft.Web.SessionState
 
 				SessionStateUtility.RaiseSessionEnd (container, this, EventArgs.Empty);
 			}
-#if DEBUG
 			catch (Exception e) {
-				Console.WriteLine (e.Message);
-				Console.WriteLine (e.StackTrace);
+				Debug.WriteLine (e.Message);
+				Debug.WriteLine (e.StackTrace);
 			}
-#endif
 			finally {
 				if (setDomain) {
 					vmw.@internal.EnvironmentUtils.clearAppDomain ();
