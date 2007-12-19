@@ -59,7 +59,7 @@ namespace Novell.Directory.Ldap.Events
       StringBuilder buf = new StringBuilder();
 
       buf.AppendFormat("[{0}:", GetType());
-      buf.Append("(Classification=LDAP Persistence Search Event)");
+      buf.AppendFormat("(Classification={0})",eClassification);
       buf.AppendFormat("(Type={0})", getChangeTypeString());
       buf.AppendFormat("(EventInformation:{0})", getStringRepresentaionOfEventInformation());
       buf.Append("]");
