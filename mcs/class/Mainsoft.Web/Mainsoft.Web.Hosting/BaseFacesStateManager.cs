@@ -30,6 +30,8 @@ namespace Mainsoft.Web.Hosting
 			Page page = (Page) uiViewRoot.getChildren ().get (0);
 			if (page.IsPostBack || page.IsCallback)
 				restoreComponentState (facesContext, uiViewRoot, renderKitId);
+			else
+				facesContext.renderResponse ();
 			return uiViewRoot;
 		}
 
