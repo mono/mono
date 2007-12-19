@@ -1238,34 +1238,38 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 }
 
 static void
-add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage storage, int reg, MonoInst *tree)
+add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int reg, MonoInst *tree)
 {
-	arg->sreg1 = tree->dreg;
+	MonoInst *ins;
 
 	switch (storage) {
 	case ArgInIReg:
-		arg->opcode = OP_MOVE;
-		arg->dreg = mono_alloc_ireg (cfg);
-
-		mono_call_inst_add_outarg_reg (cfg, call, arg->dreg, reg, FALSE);
+		MONO_INST_NEW (cfg, ins, OP_MOVE);
+		ins->dreg = mono_alloc_ireg (cfg);
+		ins->sreg1 = tree->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
+		mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, reg, FALSE);
 		break;
 	case ArgInFloatSSEReg:
-		arg->opcode = OP_AMD64_SET_XMMREG_R4;
-		arg->dreg = mono_alloc_freg (cfg);
+		MONO_INST_NEW (cfg, ins, OP_AMD64_SET_XMMREG_R4);
+		ins->dreg = mono_alloc_freg (cfg);
+		ins->sreg1 = tree->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
 
-		mono_call_inst_add_outarg_reg (cfg, call, arg->dreg, reg, TRUE);
+		mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, reg, TRUE);
 		break;
 	case ArgInDoubleSSEReg:
-		arg->opcode = OP_AMD64_SET_XMMREG_R8;
-		arg->dreg = mono_alloc_freg (cfg);
+		MONO_INST_NEW (cfg, ins, OP_AMD64_SET_XMMREG_R8);
+		ins->dreg = mono_alloc_freg (cfg);
+		ins->sreg1 = tree->dreg;
+		MONO_ADD_INS (cfg->cbb, ins);
 
-		mono_call_inst_add_outarg_reg (cfg, call, arg->dreg, reg, TRUE);
+		mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, reg, TRUE);
+
 		break;
 	default:
 		g_assert_not_reached ();
 	}
-
-	MONO_ADD_INS (cfg->cbb, arg);
 }
 
 static int
@@ -1573,9 +1577,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	for (i = n - 1; i >= 0; --i) {
 		ainfo = cinfo->args + i;
 
-		MONO_INST_NEW (cfg, arg, OP_OUTARG);
 		in = call->args [i];
-		arg->sreg1 = in->dreg;
 
 		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
 			guint32 align;
@@ -1601,7 +1603,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			g_assert (in->klass);
 
 			if (size > 0) {
-				arg->opcode = OP_OUTARG_VT;
+				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
 				arg->sreg1 = in->dreg;
 				arg->klass = in->klass;
 				arg->backend.size = size;
@@ -1615,14 +1617,15 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		else {
 			switch (ainfo->storage) {
 			case ArgInIReg:
-				add_outarg_reg2 (cfg, call, arg, ainfo->storage, ainfo->reg, in);
+				add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
 				break;
 			case ArgInFloatSSEReg:
 			case ArgInDoubleSSEReg:
-				add_outarg_reg2 (cfg, call, arg, ainfo->storage, ainfo->reg, in);
+				add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
 				break;
 			case ArgOnStack:
-				arg->opcode = OP_X86_PUSH;
+				MONO_INST_NEW (cfg, arg, OP_X86_PUSH);
+				arg->sreg1 = in->dreg;
 				if (!sig->params [i - sig->hasthis]->byref) {
 					if (sig->params [i - sig->hasthis]->type == MONO_TYPE_R4) {
 						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
@@ -1692,7 +1695,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	int size = ins->backend.size;
 
 	if (ainfo->storage == ArgValuetypeInReg) {
-		MonoInst *load, *arg;
+		MonoInst *load;
 		int part;
 
 		for (part = 0; part < 2; ++part) {
@@ -1716,8 +1719,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			}
 			MONO_ADD_INS (cfg->cbb, load);
 
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
-			add_outarg_reg2 (cfg, call, arg, ainfo->pair_storage [part], ainfo->pair_regs [part], load);
+			add_outarg_reg2 (cfg, call, ainfo->pair_storage [part], ainfo->pair_regs [part], load);
 		}
 	} else {
 		if (size == 8) {
