@@ -483,7 +483,11 @@ namespace System.Windows.Forms
 			ShowShortcut = menuitem.ShowShortcut;
 			Text = menuitem.Text;
 			Visible = menuitem.Visible;
-
+			
+#if NET_2_0
+			Name = menuitem.Name;
+			Tag = menuitem.Tag;
+#endif
 			// Events
 			Events[ClickEvent] = menuitem.Events[ClickEvent];
 			Events[DrawItemEvent] = menuitem.Events[DrawItemEvent];
