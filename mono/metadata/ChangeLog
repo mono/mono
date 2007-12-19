@@ -1,5 +1,9 @@
 2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): fixed compilation issue.
+
+2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): a printf slipped in, changed
 	to use verifier debug macro.
 
