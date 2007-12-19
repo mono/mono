@@ -45,9 +45,6 @@ namespace System.Web.Caching
 #else
 		Hashtable cache;
 #endif
-		Timer timer;
-		bool needsTimer;
-		
 		public static readonly DateTime NoAbsoluteExpiration = DateTime.MaxValue;
 		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
 		
@@ -109,6 +106,7 @@ namespace System.Web.Caching
 
 				if (it.SlidingExpiration != NoSlidingExpiration) {
 					it.AbsoluteExpiration = DateTime.Now + it.SlidingExpiration;
+					it.Timer.Change ((int)it.SlidingExpiration.TotalMilliseconds, Timeout.Infinite);
 				} else if (DateTime.Now >= it.AbsoluteExpiration) {
 					Remove (key, CacheItemRemovedReason.Expired);
 					return null;
@@ -165,9 +163,9 @@ namespace System.Web.Caching
 			lock (cache) {
 				cache [key] = ci;
 				ci.LastChange = DateTime.Now;
-				if (ci.AbsoluteExpiration != NoAbsoluteExpiration && timer == null) {
-					timer = new Timer (new TimerCallback (TimerRun), null, 60000, 60000);
-					needsTimer = true;
+				if (ci.AbsoluteExpiration != NoAbsoluteExpiration) {
+					int remaining = Math.Max (0, (int)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);
+					ci.Timer = new Timer (new TimerCallback (ItemExpired), ci, remaining, Timeout.Infinite);
 				}
 			}
 		}
@@ -254,17 +252,20 @@ namespace System.Web.Caching
 			return GetEnumerator ();
 		}
 		
-		void TimerRun (object ob)
-		{
-			CheckExpiration ();
-		}
-		
 		void OnDependencyChanged (object o, EventArgs a)
 		{
-			CheckExpiration ();
+			CheckDependencies ();
 		}
 		
-		internal void CheckExpiration ()
+		void ItemExpired(object cacheItem) {
+			CacheItem ci = (CacheItem)cacheItem;
+			ci.Timer.Dispose();
+			ci.Timer = null;
+
+			Remove(ci.Key, CacheItemRemovedReason.Expired);			
+		}
+		
+		internal void CheckDependencies ()
 		{
 			ArrayList list;
 			lock (cache) {
@@ -275,26 +276,11 @@ namespace System.Web.Caching
 #else
 				list.AddRange (cache.Values);
 #endif
-				needsTimer = false;
 			}
 			
-			DateTime now = DateTime.Now;
 			foreach (CacheItem it in list) {
 				if (it.Dependency != null && it.Dependency.HasChanged)
 					Remove (it.Key, CacheItemRemovedReason.DependencyChanged);
-				else if (it.AbsoluteExpiration != NoAbsoluteExpiration) {
-					if (now >= it.AbsoluteExpiration)
-						Remove (it.Key, CacheItemRemovedReason.Expired);
-					else 
-						needsTimer = true;
-				}
-			}
-			
-			lock (cache) {
-				if (!needsTimer && timer != null) {
-					timer.Dispose ();
-					timer = null;
-				}
 			}
 		}
 		
@@ -323,6 +309,7 @@ namespace System.Web.Caching
 		public CacheItemPriority Priority;
 		public CacheItemRemovedCallback OnRemoveCallback;
 		public DateTime LastChange;
+		public Timer Timer;
 	}
 		
 	class CacheItemEnumerator: IDictionaryEnumerator

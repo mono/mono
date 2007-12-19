@@ -467,7 +467,6 @@ System.Web/SiteMapResolveEventArgs.cs
 System.Web/StaticFileHandler.cs
 System.Web/StaticSiteMapProvider.cs
 System.Web/TempFileStream.cs
-System.Web/TimeoutManager.cs
 System.Web/TraceContext.cs
 System.Web/TraceContextEventArgs.cs
 System.Web/TraceContextEventHandler.cs

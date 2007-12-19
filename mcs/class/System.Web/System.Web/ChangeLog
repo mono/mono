@@ -1,3 +1,10 @@
+2007-12-19  Juraj Skripsky <js@hotfeet.ch>
+
+	* HttpContext.cs, HttpApplication.cs: Move timeout tracking from
+	TimeoutManager into HttpContext. Replace periodic timeout checks with
+	separate per-context timeout timers.  
+	* HttpRuntime.cs: remove TimeoutManager.
+
 2007-12-18  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpCookieCollection.cs (Get): implement using the indexer to

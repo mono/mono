@@ -106,7 +106,6 @@ namespace System.Web {
 #else
 		static QueueManager queue_manager;
 		static TraceManager trace_manager;
-		static TimeoutManager timeout_manager;
 		static Cache cache;
 		static Cache internalCache;
 		static WaitCallback do_RealProcessRequest;
@@ -142,7 +141,6 @@ namespace System.Web {
 			if (trace_manager.HasException)
 					initialException = trace_manager.InitialException;
 
-			timeout_manager = new TimeoutManager ();
 			cache = new Cache ();
 			internalCache = new Cache ();
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
@@ -656,13 +654,5 @@ namespace System.Web {
 				return trace_manager;
 			}
 		}
-
-#if !TARGET_JVM
-		internal static TimeoutManager TimeoutManager {
-			get {
-				return timeout_manager;
-			}
-		}
-#endif
 	}
 }

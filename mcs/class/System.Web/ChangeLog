@@ -1,3 +1,7 @@
+2007-12-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* System.Web.dll.sources: removed TimeoutManager.cs
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SQLiteProviders_DatabaseSchema.sql: added

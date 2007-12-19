@@ -1128,7 +1128,7 @@ namespace System.Web {
 		void PreStart ()
 		{
 #if !TARGET_J2EE
-			HttpRuntime.TimeoutManager.Add (context);
+			context.StartTimeoutTimer ();
 #endif
 			Thread th = Thread.CurrentThread;
 			if (app_culture != null) {
@@ -1171,7 +1171,7 @@ namespace System.Web {
 #if !TARGET_J2EE
 			if (context == null)
 				context = HttpContext.Current;
-			HttpRuntime.TimeoutManager.Remove (context);
+			context.StopTimeoutTimer ();
 #endif
 			context = null;
 			session = null;

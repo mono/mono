@@ -52,7 +52,6 @@ using CustomErrorMode = System.Web.Configuration.CustomErrorsMode;
 #endif
 
 namespace System.Web {
-	
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed partial class HttpContext : IServiceProvider {
@@ -72,6 +71,8 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
+		Timer timer;
+		Thread thread;
 		bool _isProcessingInclude;
 
 #if NET_2_0
@@ -616,17 +617,37 @@ namespace System.Web {
 
 			set {
 				config_timeout = value;
+#if !TARGET_J2EE
+				if (timer != null) {
+					TimeSpan remaining = value - (DateTime.UtcNow - time_stamp);
+					int remaining_ms = Math.Max ((int)remaining.TotalMilliseconds, 0);
+					timer.Change (remaining_ms, Timeout.Infinite);
+				}
+#endif
 			}
 		}
 
 #if !TARGET_J2EE
-		internal bool CheckIfTimeout (DateTime t)
-		{
-			if (Interlocked.CompareExchange (ref timeout_possible, 0, 0) == 0)
-				return false;
-
-			TimeSpan ts = t - time_stamp;
-			return (ts > ConfigTimeout);
+		void TimeoutReached(object state) {
+			if (Interlocked.CompareExchange (ref timeout_possible, 0, 0) == 0) {
+				timer.Change(2000, 0);
+				return;			
+			}
+			StopTimeoutTimer();
+			
+			thread.Abort (new StepTimeout ());
+		}
+		
+		internal void StartTimeoutTimer() {
+			thread = Thread.CurrentThread;
+			timer = new Timer (TimeoutReached, null, (int)ConfigTimeout.TotalMilliseconds, Timeout.Infinite);
+		}
+		
+		internal void StopTimeoutTimer() {
+			if(timer != null) {
+				timer.Dispose ();
+				timer = null;
+			}
 		}
 
 		internal bool TimeoutPossible {
@@ -644,5 +665,9 @@ namespace System.Web {
 		}
 #endif
 #endregion
+	}
+	
+	class StepTimeout
+	{
 	}
 }

@@ -163,7 +163,7 @@ namespace System.Web.Caching
 			DisposeWatchers ();
 			
 			if (cache != null)
-				cache.CheckExpiration ();
+				cache.CheckDependencies ();
 
 			return true;
 		}

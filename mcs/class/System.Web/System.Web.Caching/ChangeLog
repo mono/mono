@@ -1,3 +1,8 @@
+2007-12-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Cache.cs: Replace periodic timer (60s) with per-cache-item expiration
+	timers.
+
 2007-08-17  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheDependency.cs: use DependencyChanged as a list of events.
