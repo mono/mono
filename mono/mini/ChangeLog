@@ -1,3 +1,11 @@
+2007-12-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-dbg.[ch]: New files.  Initial version of the debugger
+	runtime library.  We only use this for generics at the moment.
+
+	* Makefile.am: Create libmono-dbg.la if the debugger is supported;
+	also install <mono/jit/mono-dbg.h>.
+
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix a warning.
