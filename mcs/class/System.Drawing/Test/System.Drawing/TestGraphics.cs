@@ -3504,6 +3504,31 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
+
+		[Test]
+		public void TransformPoints_349800 ()
+		{
+			using (Bitmap bmp = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (bmp)) {
+					Point [] pts = new Point [5];
+					PointF [] ptf = new PointF [5];
+					for (int i = 0; i < 5; i++) {
+						pts [i] = new Point (i, i);
+						ptf [i] = new PointF (i, i);
+					}
+
+					g.TransformPoints (CoordinateSpace.Page, CoordinateSpace.Device, pts);
+					g.TransformPoints (CoordinateSpace.Page, CoordinateSpace.Device, ptf);
+
+					for (int i = 0; i < 5; i++) {
+						Assert.AreEqual (i, pts [i].X, "Point.X " + i.ToString ());
+						Assert.AreEqual (i, pts [i].Y, "Point.Y " + i.ToString ());
+						Assert.AreEqual (i, ptf [i].X, "PointF.X " + i.ToString ());
+						Assert.AreEqual (i, ptf [i].Y, "PointF.Y " + i.ToString ());
+					}
+				}
+			}
+		}
 	}
 
 	[TestFixture]

@@ -1,3 +1,7 @@
+2007-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestGraphics.cs: Add test case on TransformPoints for #349800.
+
 2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GDIPlusTest.cs : fix test build.
