@@ -1,3 +1,36 @@
+2007-12-19 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_empty_catch_block.il
+	* invalid_empty_fault_block.il
+	* invalid_empty_filter_block.il
+	* invalid_empty_finally_block.il
+	* invalid_empty_handler_block.il
+	* invalid_empty_try_block.il
+	tests for empty protected blocks.
+
+	* invalid_exception_blocks_order.il:
+	test for the required ordering of exception
+	clauses.
+
+	* invalid_finally_block_overlap_try_block.il
+	* invalid_try_block_includes_catch_block.il
+	* invalid_try_block_inside_filter_block.il
+	tests for ill formed exception clauses.
+		
+	* invalid_fallout_of_filter_block.il
+	* invalid_fallout_of_handler_block.il
+	* invalid_fallthru_into_filter_block.il
+	* invalid_fallthru_into_handler_block.il
+	* unverifiable_fallout_of_catch_block.il
+	* unverifiable_fallout_of_fault_block.il
+	* unverifiable_fallout_of_finally_block.il
+	* unverifiable_fallout_of_try_block.il
+	* unverifiable_fallthru_into_catch_block.il
+	* unverifiable_fallthru_into_fault_block.il
+	* unverifiable_fallthru_into_finally_block.il
+	* valid_end_try_block_with_throw.il:
+	tests for fallthru in and out of protected blocks.
+
 2007-12-18 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added tests for filter
