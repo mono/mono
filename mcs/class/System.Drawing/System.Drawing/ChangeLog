@@ -1,3 +1,8 @@
+2007-12-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Fix Point/PointF typo in FromUnManagedMemoryToPoint.
+	Added a few space to make it easier to read those methods. Fix #349800
+
 2007-12-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Image.cs: Use the existing GdipPropertyItem.MarshalTo method to
