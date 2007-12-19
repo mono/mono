@@ -50,20 +50,18 @@ namespace System.Windows.Forms {
 		internal bool		detect_urls;
 		internal int		margin_right;
 		internal float		zoom;
-
-		private RTF.TextMap	rtf_text_map;
-		private int		rtf_skip_width;
-		private int		rtf_skip_count;
 		private StringBuilder	rtf_line;
-		private Color		rtf_color;
-		private RTF.Font	rtf_rtffont;
-		private int		rtf_rtffont_size;
-		private FontStyle	rtf_rtfstyle;
-		private HorizontalAlignment rtf_rtfalign;
+
+		private RtfSectionStyle rtf_style;	// Replaces individual style
+							// properties so we can revert
+		private Stack		rtf_section_stack;
+
+		private RTF.TextMap rtf_text_map;
+		private int rtf_skip_width;
+		private int rtf_skip_count;
 		private int		rtf_cursor_x;
 		private int		rtf_cursor_y;
 		private int		rtf_chars;
-		private int rtf_par_line_left_indent;
 
 #if NET_2_0
 		private bool		enable_auto_drag_drop;
@@ -85,6 +83,9 @@ namespace System.Windows.Forms {
 			document.CRLFSize = 1;
 			shortcuts_enabled = true;
 			base.EnableLinks = true;
+			
+			rtf_style = new RtfSectionStyle ();
+			rtf_section_stack = null;
 
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;
@@ -1358,6 +1359,51 @@ namespace System.Windows.Forms {
 			document.ExpandSelection(CaretSelection.Word, false);
 		}
 
+		private class RtfSectionStyle : ICloneable {
+			internal Color rtf_color;
+			internal RTF.Font rtf_rtffont;
+			internal int rtf_rtffont_size;
+			internal FontStyle rtf_rtfstyle;
+			internal HorizontalAlignment rtf_rtfalign;
+			internal int rtf_par_line_left_indent;
+
+			public object Clone ()
+			{
+				RtfSectionStyle new_style = new RtfSectionStyle ();
+
+				new_style.rtf_color = rtf_color;
+				new_style.rtf_par_line_left_indent = rtf_par_line_left_indent;
+				new_style.rtf_rtfalign = rtf_rtfalign;
+				new_style.rtf_rtffont = rtf_rtffont;
+				new_style.rtf_rtffont_size = rtf_rtffont_size;
+				new_style.rtf_rtfstyle = rtf_rtfstyle;
+
+				return new_style;
+			}
+		}
+
+		// To allow us to keep track of the sections and revert formatting
+		// as we go in and out of sections of the document.
+		private void HandleGroup (RTF.RTF rtf)
+		{
+			//start group - save the current formatting on to a stack
+			//end group - go back to the formatting at the current group
+			if (rtf_section_stack == null) {
+				rtf_section_stack = new Stack ();
+			}
+
+			if (rtf.Major == RTF.Major.BeginGroup) {
+				rtf_section_stack.Push (rtf_style.Clone ());
+			} else if (rtf.Major == RTF.Major.EndGroup) {
+				if (rtf_section_stack.Count > 0) {
+					FlushText (rtf, false);
+
+					rtf_style = (RtfSectionStyle) rtf_section_stack.Pop ();
+				}
+			}
+		}
+
+		[MonoTODO("Add QuadJust support for justified alignment")]
 		private void HandleControl(RTF.RTF rtf) {
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
@@ -1403,9 +1449,9 @@ namespace System.Windows.Forms {
 							if (color != null) {
 								FlushText(rtf, false);
 								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
-									this.rtf_color = ForeColor;
+									this.rtf_style.rtf_color = ForeColor;
 								} else {
-									this.rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
+									this.rtf_style.rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
 								}
 								FlushText (rtf, false);
 							}
@@ -1414,7 +1460,7 @@ namespace System.Windows.Forms {
 
 						case RTF.Minor.FontSize: {
 							FlushText(rtf, false);
-							this.rtf_rtffont_size = rtf.Param / 2;
+							this.rtf_style.rtf_rtffont_size = rtf.Param / 2;
 							break;
 						}
 
@@ -1424,23 +1470,23 @@ namespace System.Windows.Forms {
 							font = System.Windows.Forms.RTF.Font.GetFont(rtf, rtf.Param);
 							if (font != null) {
 								FlushText(rtf, false);
-								this.rtf_rtffont = font;
+								this.rtf_style.rtf_rtffont = font;
 							}
 							break;
 						}
 
 						case RTF.Minor.Plain: {
 							FlushText(rtf, false);
-							rtf_rtfstyle = FontStyle.Regular;
+							rtf_style.rtf_rtfstyle = FontStyle.Regular;
 							break;
 						}
 
 						case RTF.Minor.Bold: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
-								rtf_rtfstyle |= FontStyle.Bold;
+								rtf_style.rtf_rtfstyle |= FontStyle.Bold;
 							} else {
-								rtf_rtfstyle &= ~FontStyle.Bold;
+								rtf_style.rtf_rtfstyle &= ~FontStyle.Bold;
 							}
 							break;
 						}
@@ -1448,9 +1494,9 @@ namespace System.Windows.Forms {
 						case RTF.Minor.Italic: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
-								rtf_rtfstyle |= FontStyle.Italic;
+								rtf_style.rtf_rtfstyle |= FontStyle.Italic;
 							} else {
-								rtf_rtfstyle &= ~FontStyle.Italic;
+								rtf_style.rtf_rtfstyle &= ~FontStyle.Italic;
 							}
 							break;
 						}
@@ -1458,9 +1504,9 @@ namespace System.Windows.Forms {
 						case RTF.Minor.StrikeThru: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
-								rtf_rtfstyle |= FontStyle.Strikeout;
+								rtf_style.rtf_rtfstyle |= FontStyle.Strikeout;
 							} else {
-								rtf_rtfstyle &= ~FontStyle.Strikeout;
+								rtf_style.rtf_rtfstyle &= ~FontStyle.Strikeout;
 							}
 							break;
 						}
@@ -1468,16 +1514,16 @@ namespace System.Windows.Forms {
 						case RTF.Minor.Underline: {
 							FlushText(rtf, false);
 							if (rtf.Param == RTF.RTF.NoParam) {
-								rtf_rtfstyle |= FontStyle.Underline;
+								rtf_style.rtf_rtfstyle |= FontStyle.Underline;
 							} else {
-								rtf_rtfstyle = rtf_rtfstyle & ~FontStyle.Underline;
+								rtf_style.rtf_rtfstyle = rtf_style.rtf_rtfstyle & ~FontStyle.Underline;
 							}
 							break;
 						}
 
 						case RTF.Minor.NoUnderline: {
 							FlushText(rtf, false);
-							rtf_rtfstyle &= ~FontStyle.Underline;
+							rtf_style.rtf_rtfstyle &= ~FontStyle.Underline;
 							break;
 						}
 					}
@@ -1486,16 +1532,43 @@ namespace System.Windows.Forms {
 
 			case RTF.Major.ParAttr: {
 				switch (rtf.Minor) {
+
+				case RTF.Minor.ParDef:
+					FlushText (rtf, false);
+					rtf_style.rtf_par_line_left_indent = 0;
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					break;
+
 				case RTF.Minor.LeftIndent:
-					rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * CreateGraphics ().DpiX + 0.5F);
+					rtf_style.rtf_par_line_left_indent = (int) (((float) rtf.Param / 1440.0F) * CreateGraphics ().DpiX + 0.5F);
+					break;
+
+				case RTF.Minor.QuadCenter:
+					FlushText (rtf, false);
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Center;
+					break;
+
+				case RTF.Minor.QuadJust:
+					FlushText (rtf, false);
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Center;
+					break;
+
+				case RTF.Minor.QuadLeft:
+					FlushText (rtf, false);
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+					break;
+
+				case RTF.Minor.QuadRight:
+					FlushText (rtf, false);
+					rtf_style.rtf_rtfalign = HorizontalAlignment.Right;
 					break;
 				}
 				break;
 			}
-				
-				case RTF.Major.SpecialChar: {
+
+			case RTF.Major.SpecialChar: {
 					//Console.Write("[Got SpecialChar control {0}]", rtf.Minor);
-					SpecialChar(rtf);
+					SpecialChar (rtf);
 					break;
 				}
 			}
@@ -1611,51 +1684,51 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (rtf_rtffont == null) {
+			if (rtf_style.rtf_rtffont == null) {
 				// First font in table is default
-				rtf_rtffont = System.Windows.Forms.RTF.Font.GetFont(rtf, 0);
+				rtf_style.rtf_rtffont = System.Windows.Forms.RTF.Font.GetFont (rtf, 0);
 			}
 
-			font = new Font(rtf_rtffont.Name, rtf_rtffont_size, rtf_rtfstyle);
+			font = new Font (rtf_style.rtf_rtffont.Name, rtf_style.rtf_rtffont_size, rtf_style.rtf_rtfstyle);
 
-			if (rtf_color == Color.Empty) {
+			if (rtf_style.rtf_color == Color.Empty) {
 				System.Windows.Forms.RTF.Color color;
 
 				// First color in table is default
-				color = System.Windows.Forms.RTF.Color.GetColor(rtf, 0);
+				color = System.Windows.Forms.RTF.Color.GetColor (rtf, 0);
 
 				if ((color == null) || (color.Red == -1 && color.Green == -1 && color.Blue == -1)) {
-					rtf_color = ForeColor;
+					rtf_style.rtf_color = ForeColor;
 				} else {
-					rtf_color = Color.FromArgb(color.Red, color.Green, color.Blue);
+					rtf_style.rtf_color = Color.FromArgb (color.Red, color.Green, color.Blue);
 				}
-				
+
 			}
 
 			rtf_chars += rtf_line.Length;
 
-			
+
 
 			if (rtf_cursor_x == 0) {
-				document.Add(rtf_cursor_y, rtf_line.ToString(), rtf_rtfalign, font, rtf_color,
-						newline ? LineEnding.Rich : LineEnding.Wrap);
-				if (rtf_par_line_left_indent != 0) {
+				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
+								newline ? LineEnding.Rich : LineEnding.Wrap);
+				if (rtf_style.rtf_par_line_left_indent != 0) {
 					Line line = document.GetLine (rtf_cursor_y);
-					line.indent = rtf_par_line_left_indent;
+					line.indent = rtf_style.rtf_par_line_left_indent;
 				}
 			} else {
-				Line	line;
+				Line line;
 
-				line = document.GetLine(rtf_cursor_y);
-				line.indent = rtf_par_line_left_indent;
+				line = document.GetLine (rtf_cursor_y);
+				line.indent = rtf_style.rtf_par_line_left_indent;
 				if (rtf_line.Length > 0) {
-					document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
+					document.InsertString (line, rtf_cursor_x, rtf_line.ToString ());
 					document.FormatText (line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length,
-							font, rtf_color, Color.Empty,
+			    font, rtf_style.rtf_color, Color.Empty,
 							FormatSpecified.Font | FormatSpecified.Color);
 				}
 				if (newline) {
-					document.Split(line, rtf_cursor_x + length);
+					document.Split (line, rtf_cursor_x + length);
 					line = document.GetLine (rtf_cursor_y);
 					line.ending = LineEnding.Rich;
 				}
@@ -1686,15 +1759,16 @@ namespace System.Windows.Forms {
 			// Prepare
 			rtf.ClassCallback[RTF.TokenClass.Text] = new RTF.ClassDelegate(HandleText);
 			rtf.ClassCallback[RTF.TokenClass.Control] = new RTF.ClassDelegate(HandleControl);
+			rtf.ClassCallback[RTF.TokenClass.Group] = new RTF.ClassDelegate(HandleGroup);
 
 			rtf_skip_width = 0;
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
-			rtf_color = Color.Empty;
-			rtf_rtffont_size = (int)this.Font.Size;
-			rtf_rtfalign = HorizontalAlignment.Left;
-			rtf_rtfstyle = FontStyle.Regular;
-			rtf_rtffont = null;
+			rtf_style.rtf_color = Color.Empty;
+			rtf_style.rtf_rtffont_size = (int)this.Font.Size;
+			rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
+			rtf_style.rtf_rtfstyle = FontStyle.Regular;
+			rtf_style.rtf_rtffont = null;
 			rtf_cursor_x = cursor_x;
 			rtf_cursor_y = cursor_y;
 			rtf_chars = 0;
@@ -1723,6 +1797,10 @@ namespace System.Windows.Forms {
 			to_x = rtf_cursor_x;
 			to_y = rtf_cursor_y;
 			chars = rtf_chars;
+
+			// clear the section stack if it was used
+			if (rtf_section_stack != null)
+				rtf_section_stack.Clear();
 
 			document.RecalculateDocument(CreateGraphicsInternal(), cursor_y, document.Lines, false);
 			document.ResumeRecalc (true);
