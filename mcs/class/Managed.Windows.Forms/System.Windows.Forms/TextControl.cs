@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms {
 				current_line = GetLine (start_line.LineNo + current_cumulative - 1);
 
 				// find the tag we start on
-				LineTag current_tag = current_line.FindTag (index_found - (int)cumulative_length_list [current_cumulative - 1] + 1);
+				LineTag current_tag = current_line.FindTag (index_found - (int)cumulative_length_list [current_cumulative - 1]);
 
 				if (current_tag.Start != (index_found - (int)cumulative_length_list [current_cumulative - 1]) + 1) {
 					if (current_tag == CaretTag)
