@@ -1,3 +1,10 @@
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md mini-amd64.h mini-amd64.c inssel-amd64.brg: Add ulong->double 
+	implementation.
+
+	* basic-float.cs: Add an ulong->double cast test.
+
 2007-12-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix a warning.
