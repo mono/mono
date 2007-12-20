@@ -1,17 +1,18 @@
 using System;
 using System.Threading;
 
+delegate void D (object o);
+
 class T {
         static void Main () {
-		new Thread (delegate (object state) {
+			D d = delegate (object state) {
 			try {
 			} catch {
 				throw;
 			} finally {
 			}
-		});
-        }
-
+			};
+		}
 }
 
 
