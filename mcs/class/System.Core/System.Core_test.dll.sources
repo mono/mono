@@ -1,3 +1,6 @@
+System/TimeZoneInfoTest.cs
+System/TimeZoneInfo.AdjustmentRuleTest.cs
+System/TimeZoneInfo.TransitionTimeTest.cs
 System.Collections.Generic/HashSetTest.cs
 System.Linq/EnumerableTest.cs
 System.Linq/QueryableTest.cs

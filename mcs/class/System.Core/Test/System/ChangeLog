@@ -1,0 +1,5 @@
+2007-12-20  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZoneInfoTest.cs:
+	* TimeZoneInfo.AdjustmentRule.cs:
+	* TimeZoneInfo.TransitionTime.cs: Finally adding the 60 tests.
