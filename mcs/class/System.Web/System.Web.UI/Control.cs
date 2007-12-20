@@ -1768,6 +1768,18 @@ namespace System.Web.UI
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal bool IsInited {
+			get { return (stateMask & INITED) != 0; }
+		}
+
+		internal bool IsLoaded {
+			get { return (stateMask & LOADED) != 0; }
+		}
+
+		internal bool IsPrerendered {
+			get { return (stateMask & PRERENDERED) != 0; }
+		}
 #endif
 		void IParserAccessor.AddParsedSubObject (object obj)
 		{

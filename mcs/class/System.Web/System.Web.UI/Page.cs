@@ -74,7 +74,6 @@ public partial class Page : TemplateControl, IHttpHandler
 {
 	static string machineKeyConfigPath = "system.web/machineKey";
 #if NET_2_0
-	private PageLifeCycle _lifeCycle = PageLifeCycle.Unknown;
 	private bool _eventValidation = true;
 	private object [] _savedControlState;
 	private bool _doLoadPreviousPage;
@@ -305,14 +304,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	public virtual bool EnableEventValidation {
 		get { return _eventValidation; }
 		set {
-			if (_lifeCycle > PageLifeCycle.Init)
+			if (IsInited)
 				throw new InvalidOperationException ("The 'EnableEventValidation' property can be set only in the Page_init, the Page directive or in the <pages> configuration section.");
 			_eventValidation = value;
 		}
-	}
-
-	internal PageLifeCycle LifeCycle {
-		get { return _lifeCycle; }
 	}
 #endif
 
@@ -1176,9 +1171,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 #endif
 	{
-#if NET_2_0
-		_lifeCycle = PageLifeCycle.Unknown;
-#endif
 		_context = context;
 
 		_application = context.Application;
@@ -1212,14 +1204,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			throw;
 		} finally {
 			try {
-#if NET_2_0
-				_lifeCycle = PageLifeCycle.Unload;
-#endif
 				RenderTrace ();
 				UnloadRecursive (true);
-#if NET_2_0
-				_lifeCycle = PageLifeCycle.End;
-#endif
 			} catch {}
 			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
 				Thread.CurrentThread.CurrentCulture = culture;
@@ -1295,7 +1281,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		_requestValueCollection = this.DeterminePostBackMode();
 
 #if NET_2_0
-		_lifeCycle = PageLifeCycle.Start;
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
 			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
@@ -1319,21 +1304,18 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 		}
 
-		_lifeCycle = PageLifeCycle.PreInit;
 		Trace.Write ("aspx.page", "Begin PreInit");
 		OnPreInit (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End PreInit");
 
 		InitializeTheme ();
 		ApplyMasterPage ();
-		_lifeCycle = PageLifeCycle.Init;
 #endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
 
 #if NET_2_0
-		_lifeCycle = PageLifeCycle.InitComplete;
 		Trace.Write ("aspx.page", "Begin InitComplete");
 		OnInitComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End InitComplete");
@@ -1342,7 +1324,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		renderingForm = false;	
 #if NET_2_0
 		if (IsPostBack || IsCallback) {
-			_lifeCycle = PageLifeCycle.PreLoad;
 			if (_requestValueCollection != null)
 				scriptManager.RestoreEventValidationState (
 					_requestValueCollection [ClientScriptManager.EventStateFieldName]);
@@ -1364,7 +1345,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin PreLoad");
 		OnPreLoad (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End PreLoad");
-		_lifeCycle = PageLifeCycle.Load;
 #endif
 
 		Trace.Write ("aspx.page", "Begin Load");
@@ -1377,7 +1357,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 #endif
 		if (IsPostBack || IsCallback) {
-			_lifeCycle = PageLifeCycle.ControlEvents;
 #else
 		if (IsPostBack) {
 #endif
@@ -1393,7 +1372,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 		
 #if NET_2_0
-		_lifeCycle = PageLifeCycle.LoadComplete;
 		Trace.Write ("aspx.page", "Begin LoadComplete");
 		OnLoadComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End LoadComplete");
@@ -1408,8 +1386,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			callbackOutput.Flush ();
 			return;
 		}
-
-		_lifeCycle = PageLifeCycle.PreRender;
 #endif
 		
 		Trace.Write ("aspx.page", "Begin PreRender");
@@ -1419,7 +1395,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 		ExecuteRegisteredAsyncTasks ();
 
-		_lifeCycle = PageLifeCycle.PreRenderComplete;
 		Trace.Write ("aspx.page", "Begin PreRenderComplete");
 		OnPreRenderComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End PreRenderComplete");
@@ -1430,7 +1405,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End SaveViewState");
 		
 #if NET_2_0
-		_lifeCycle = PageLifeCycle.SaveStateComplete;
 		Trace.Write ("aspx.page", "Begin SaveStateComplete");
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
@@ -1441,7 +1415,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif // NET_2_0
 
 #if NET_2_0
-		_lifeCycle = PageLifeCycle.Render;
 		scriptManager.ResetEventValidationState ();
 #endif
 		
@@ -2098,8 +2071,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			throw new InvalidOperationException ("AddOnPreRenderCompleteAsync called and Page.IsAsync == false");
 		}
 
-		if (_lifeCycle >= PageLifeCycle.PreRender) {
-			throw new InvalidOperationException ("AddOnPreRenderCompleteAsync can only be called before PreRender.");
+		if (IsPrerendered) {
+			throw new InvalidOperationException ("AddOnPreRenderCompleteAsync can only be called before and during PreRender.");
 		}
 
 		if (beginHandler == null) {
@@ -2396,7 +2369,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (String.IsNullOrEmpty (clientID))
 			throw new ArgumentNullException ("control");
 
-		if (_lifeCycle > PageLifeCycle.PreRender)
+		if (IsPrerendered)
 			throw new InvalidOperationException ("SetFocus can only be called before and during PreRender.");
 
 		if(Form==null)
