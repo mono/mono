@@ -1,3 +1,16 @@
+2007-12-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (init_stack_with_value): added
+
+	* verify.c (mono_method_verify): extracted common
+	code for exception initialization into init_stack_with_value.
+
+	* verify.c (mono_method_verify): initialize the exception
+	for handler clauses as well.
+
+	* verify.c (mono_method_verify): fix the exception clause
+	ordering rules, it should use handler end offset and not
+	start offset.
 
 Thu Dec 20 12:27:24 CET 2007 Paolo Molaro <lupus@ximian.com>
 
