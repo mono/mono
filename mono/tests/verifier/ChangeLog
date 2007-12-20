@@ -1,3 +1,9 @@
+2007-12-20 Rodrigo Kumpera <rkumpera@novell.com>
+
+	*valid_exception_sequence.il: new test
+	for what blocks take an exception on
+	stack at the begin.
+
 2007-12-19 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_empty_catch_block.il
