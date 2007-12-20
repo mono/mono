@@ -657,7 +657,7 @@ namespace System
 			int typecnt = enc.GetInt32 (buffer, 36);
 			int charcnt = enc.GetInt32 (buffer, 40);
 
-			if (length != 44 + timecnt * 5 + typecnt * 6 + charcnt + leapcnt * 8 + ttisstdcnt + ttisgmtcnt)
+			if (length < 44 + timecnt * 5 + typecnt * 6 + charcnt + leapcnt * 8 + ttisstdcnt + ttisgmtcnt)
 				throw new InvalidTimeZoneException ();
 
 			Hashtable abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
