@@ -1,5 +1,7 @@
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Use OP_FMOVE instead of OP_AMD64_SET_XMMREG_R8 if possible.
+	
 	* mini-amd64.c (add_outarg_reg2): Get rid of the 'arg' argument.
 
 2007-12-19  Zoltan Varga  <vargaz@gmail.com>

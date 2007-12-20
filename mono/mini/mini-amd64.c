@@ -1259,7 +1259,7 @@ add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int r
 		mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, reg, TRUE);
 		break;
 	case ArgInDoubleSSEReg:
-		MONO_INST_NEW (cfg, ins, OP_AMD64_SET_XMMREG_R8);
+		MONO_INST_NEW (cfg, ins, use_sse2 ? OP_FMOVE : OP_AMD64_SET_XMMREG_R8);
 		ins->dreg = mono_alloc_freg (cfg);
 		ins->sreg1 = tree->dreg;
 		MONO_ADD_INS (cfg->cbb, ins);
@@ -1751,7 +1751,7 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 			MONO_EMIT_NEW_UNALU (cfg, OP_AMD64_SET_XMMREG_R4, cfg->ret->dreg, val->dreg);
 			return;
 		} else if (ret->type == MONO_TYPE_R8) {
-			MONO_EMIT_NEW_UNALU (cfg, OP_AMD64_SET_XMMREG_R8, cfg->ret->dreg, val->dreg);
+			MONO_EMIT_NEW_UNALU (cfg, use_sse2 ? OP_FMOVE : OP_AMD64_SET_XMMREG_R8, cfg->ret->dreg, val->dreg);
 			return;
 		}
 	}
