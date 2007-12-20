@@ -84,11 +84,5 @@ namespace System.Web.UI
 				return _isMultiForm;
 			}
 		}
-
-		internal string EncodeURL (string raw) {
-			//kostat: BUGBUG: complete
-			return raw;
-		}
-
 	}
 }
