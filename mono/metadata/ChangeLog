@@ -1,3 +1,9 @@
+
+Thu Dec 20 12:10:38 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.h, threads-types.h: move functions to the correct header
+	(fixes bug#349952).
+
 2007-12-10  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Ensure that the synch_cs is set before trying to use
