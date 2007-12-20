@@ -32,6 +32,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -749,13 +750,21 @@ namespace System.Windows.Forms
 			if (Items.Count == 0)
 				return -1; // No exception throwing if empty
 
-			if (startIndex < -1 || startIndex >= Items.Count - 1)
+			if (startIndex < -1 || startIndex >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
-			startIndex++;
-			for (int i = startIndex; i < Items.Count; i++) {
-				if ((GetItemText (Items[i])).StartsWith (s))
+			startIndex = (startIndex == Items.Count - 1) ? 0 : startIndex + 1;
+
+			int i = startIndex;
+			while (true) {
+				string text = GetItemText (Items [i]);
+				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (text, s,
+						CompareOptions.IgnoreCase))
 					return i;
+
+				i = (i == Items.Count - 1) ? 0 : i + 1;
+				if (i == startIndex)
+					break;
 			}
 
 			return NoMatches;
@@ -771,13 +780,19 @@ namespace System.Windows.Forms
 			if (Items.Count == 0)
 				return -1; // No exception throwing if empty
 
-			if (startIndex < -1 || startIndex >= Items.Count - 1)
+			if (startIndex < -1 || startIndex >= Items.Count)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
-			startIndex++;
-			for (int i = startIndex; i < Items.Count; i++) {
-				if ((GetItemText (Items[i])).Equals (s))
+			startIndex = (startIndex + 1 == Items.Count) ? 0 : startIndex + 1;
+
+			int i = startIndex;
+			while (true) {
+				if (String.Compare (GetItemText (Items[i]), s, true) == 0)
 					return i;
+
+				i = (i + 1 == Items.Count) ? 0 : i + 1;
+				if (i == startIndex)
+					break;
 			}
 
 			return NoMatches;
