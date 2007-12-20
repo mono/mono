@@ -1,3 +1,7 @@
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Enable the async-exc-compilation test on x86/amd64.
+
 2007-12-17  Mark Probst  <mark.probst@gmail.com>
 
 	* thread-exit.cs, Makefile.am: Test case for #347676.
