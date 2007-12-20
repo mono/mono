@@ -680,6 +680,7 @@
     <Compile Include="System.Web.UI.WebControls\MenuItemBindingCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuItemStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemTemplateContainer.cs" />
@@ -709,6 +710,7 @@
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
     <Compile Include="System.Web.UI.WebControls\Panel.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
     <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
@@ -770,6 +772,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\Table.cs" />
@@ -787,6 +790,7 @@
     <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRowSection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyle.cs">
       <SubType>Component</SubType>
@@ -807,6 +811,7 @@
     <Compile Include="System.Web.UI.WebControls\TreeNodeEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeSelectAction.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
@@ -1113,7 +1118,6 @@
     <Compile Include="System.Web\StaticFileHandler.cs" />
     <Compile Include="System.Web\StaticSiteMapProvider.cs" />
     <Compile Include="System.Web\TempFileStream.cs" />
-    <Compile Include="System.Web\TimeoutManager.cs" />
     <Compile Include="System.Web\TraceContext.cs" />
     <Compile Include="System.Web\TraceContextEventArgs.cs" />
     <Compile Include="System.Web\TraceContextEventHandler.cs" />
@@ -1400,27 +1404,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <Private>False</Private>
-      <HintPath>..\lib\JavaEE.dll</HintPath>
-    </Reference>
-    <Reference Include="J2EE.Helpers">
-      <Private>False</Private>
-      <HintPath>..\lib\J2EE.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="J2SE.Helpers">
-      <Private>False</Private>
-      <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\lib\Mainsoft.Configuration.dll</HintPath>
-    </Reference>
+    <Reference Include="J2EE.Helpers, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="System" />
-    <Reference Include="System.XML" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Configuration" />
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
+    <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\..\mono\data\browscap.ini">
@@ -1441,7 +1434,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-configuration="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-system-data="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Data.jar" REFS-JarPath-system-drawing="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Drawing.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_imageio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_core.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\jai_codec.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\clibwrapper_jiio.jar;..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\mlibwrapper_jai.jar" REFS-JarPath-system-xml="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Xml.jar" REFS-JarPath-system="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" />
+      <UserProperties REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-javaee="" REFS-JarPath-j2se-helpers="" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" REFS-JarPath-mscorlib="" REFS-JarPath-system="" REFS-JarPath-system-xml="" REFS-JarPath-system-drawing="" REFS-JarPath-system-data="" REFS-JarPath-system-configuration="" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
