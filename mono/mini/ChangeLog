@@ -1,5 +1,9 @@
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Ditto.
+
+	* tramp-sparc.c (mono_arch_create_trampoline_code): Check for thread interruption.
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code): Ditto.
 
 	* tramp-x86.c (mono_arch_create_trampoline_code): Check for thread interruption.
