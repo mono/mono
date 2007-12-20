@@ -1,3 +1,8 @@
+2007-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h: Move the internal mono_thread_get_pending_exception () to
+	threads-types.h and rename it to mono_thread_get_undeniable_exception ().
+
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_compute_gc_descriptor): Remove unused GC_gcj_fast_malloc
