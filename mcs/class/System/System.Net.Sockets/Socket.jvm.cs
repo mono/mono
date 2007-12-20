@@ -31,18 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Net;
 using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using System.Net.Configuration;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Reflection;
-using System.IO;
-using System.Net.Configuration;
-#if NET_2_0
-using System.Collections.Generic;
-#endif
 
 namespace System.Net.Sockets 
 {
@@ -737,8 +730,6 @@ namespace System.Net.Sockets
 		{
 			get 
 			{
-                		EnsureStillUsable();
-
                 		return(blocking);
 			}
 			set 
@@ -1019,7 +1010,6 @@ namespace System.Net.Sockets
 		}
 #endif
 
-		Thread blocking_thread;
 		public Socket Accept() 
 		{
             		EnsureStillUsable();
@@ -1030,18 +1020,7 @@ namespace System.Net.Sockets
 #else
 			GHSocket sock = null;
 #endif
-			blocking_thread = Thread.CurrentThread;
-			try {
-				sock = Accept_internal(socket, out error);
-			} catch (ThreadAbortException the) {
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = 10004;
-				}
-			} finally {
-				blocking_thread = null;
-			}
-
+			sock = Accept_internal(socket, out error);
 			if (error != 0) {
 				throw new SocketException (error);
 			}
@@ -1382,24 +1361,11 @@ namespace System.Net.Sockets
 
 			int error = 0;
 
-			blocking_thread = Thread.CurrentThread;
-			try {
 #if !TARGET_JVM
 				Connect_internal (socket, remote_end.Serialize(), out error);
 #else
 				Connect_internal (socket, remote_end, out error);
 #endif
-			} 
-			catch (ThreadAbortException the) 
-			{
-				if (disposed) {
-					Thread.ResetAbort ();
-					error = 10004;
-				}
-			} finally {
-				blocking_thread = null;
-			}
-
 			if (error != 0) {
 				throw new SocketException (error);
 			}
@@ -2359,11 +2325,6 @@ namespace System.Net.Sockets
 				GHSocket x = socket;
 				socket = null;
 				Close_internal (x, out error);
-				if (blocking_thread != null) 
-				{
-					blocking_thread.Abort ();
-					blocking_thread = null;
-				}
 
 				if (error != 0)
 					throw new SocketException (error);

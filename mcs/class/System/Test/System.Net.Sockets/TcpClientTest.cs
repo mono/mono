@@ -73,9 +73,6 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // bug #81105
-#if TARGET_JVM
-		[Category ("NotWorking")]
-#endif
 		public void CloseTest ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8765);

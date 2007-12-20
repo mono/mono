@@ -1,8 +1,6 @@
-using System;
-using System.Net;
-using javax.net;
-using javax.net.ssl;
+using java.nio.channels;
 using java.security;
+using javax.net.ssl;
 
 namespace System.Net.Sockets
 {
@@ -205,6 +203,9 @@ namespace System.Net.Sockets
 
 				return new GHStreamSocket(acceptedSocket);
 			}
+			catch (AsynchronousCloseException) {
+				error = 10004;
+			}
 			catch (Exception e)
 			{
 				error = 10061; //WSAECONNREFUSED (Connection refused)
@@ -373,6 +374,9 @@ namespace System.Net.Sockets
 			catch (java.nio.channels.UnsupportedAddressTypeException uate)
 			{				
 				error = 10041; //WSAEPROTOTYPE (Protocol wrong type for socket)
+			}
+			catch (AsynchronousCloseException) {
+				error = 10004;
 			}
 			catch (Exception e)
 			{				
