@@ -653,12 +653,16 @@ namespace System.Web.UI
 			if (hiddenFields == null)
 				return;
 
+#if NET_2_0
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+#endif
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
 				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
 			}
+#if NET_2_0
 			writer.RenderEndTag (); // DIV
+#endif
 			hiddenFields = null;
 		}
 		
