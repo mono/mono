@@ -1,5 +1,8 @@
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_compute_gc_descriptor): Remove unused GC_gcj_fast_malloc
+	icall registration. Fixes #348193.
+
 	* marshal.c (mono_marshal_get_runtime_invoke): Put all runtime invoke wrappers
 	for corlib classes into object. Fixes #349621.
 
