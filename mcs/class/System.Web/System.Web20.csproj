@@ -941,7 +941,6 @@
     <Compile Include="System.Web.UI\OutputCacheLocation.cs" />
     <Compile Include="System.Web.UI\OutputCacheParameters.cs" />
     <Compile Include="System.Web.UI\PageHandlerFactory.cs" />
-    <Compile Include="System.Web.UI\PageLifeCycle.cs" />
     <Compile Include="System.Web.UI\PageStatePersister.cs" />
     <Compile Include="System.Web.UI\PageTheme.cs" />
     <Compile Include="System.Web.UI\Pair.cs" />

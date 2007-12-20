@@ -88,13 +88,5 @@ namespace System.Web.UI
 			else
 				return ResolveUrl (relativeUrl);
 		}
-
-		internal bool IsLoaded {
-			get { return (stateMask & LOADED) != 0; }
-		}
-
-		internal bool IsPrerendered {
-			get { return (stateMask & PRERENDERED) != 0; }
-		}
 	}
 }

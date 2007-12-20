@@ -64,6 +64,7 @@ namespace System.Web.UI
 		int eventValidationPos = 0;
 		Hashtable expandoAttributes;
 		bool _hasRegisteredForEventValidationOnCallback;
+		bool _pageInRender;
 #endif
 		
 		internal ClientScriptManager (Page page)
@@ -444,6 +445,7 @@ namespace System.Web.UI
 
 		internal void ResetEventValidationState ()
 		{
+			_pageInRender = true;
 			eventValidationPos = 0;
 		}
 
@@ -474,7 +476,7 @@ namespace System.Web.UI
 				return;
 			if (page.IsCallback)
 				_hasRegisteredForEventValidationOnCallback = true;
-			else if (page.LifeCycle < PageLifeCycle.Render)
+			else if (!_pageInRender)
 				throw new InvalidOperationException ("RegisterForEventValidation may only be called from the Render method");
 
 			EnsureEventValidationArray ();
