@@ -1390,8 +1390,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		RestorePageState ();
 		ProcessPostData ();
-		ProcessRaiseChangedEvents ();
-		ProcessRaisePostBackEvents ();
+		ProcessRaiseEvents ();
 		if (ProcessLoadComplete ())
 			return;
 #if TARGET_J2EE
@@ -1424,9 +1423,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ProcessPostData () {
 
 #if NET_2_0
-//#if TARGET_J2EE
-//        if (!IsGetBack)
-//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1439,11 +1435,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		ProcessLoad ();
 
 #if NET_2_0
-//#if TARGET_J2EE
-//        if (IsGetBack)
-//            RestoreValidatorsState ();
-//        else
-//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1470,12 +1461,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End Load");
 	}
 
-	void ProcessRaiseChangedEvents () {
+	void ProcessRaiseEvents () {
 
 #if NET_2_0
-//#if TARGET_J2EE
-//        if (!IsGetBack)
-//#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1483,19 +1471,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			Trace.Write ("aspx.page", "Begin Raise ChangedEvents");
 			RaiseChangedEvents ();
 			Trace.Write ("aspx.page", "End Raise ChangedEvents");
-		}
-	}
-
-	void ProcessRaisePostBackEvents () {
-
-#if NET_2_0
-//#if TARGET_J2EE
-//        if (!IsGetBack)
-//#endif
-		if (IsPostBack || IsCallback) {
-#else
-		if (IsPostBack) {
-#endif
 			Trace.Write ("aspx.page", "Begin Raise PostBackEvent");
 			RaisePostBackEvents ();
 			Trace.Write ("aspx.page", "End Raise PostBackEvent");

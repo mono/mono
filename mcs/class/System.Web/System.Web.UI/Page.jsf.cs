@@ -276,8 +276,7 @@ namespace System.Web.UI
 
 			EnterThread (HttpContext.Current);
 			try {
-				ProcessRaiseChangedEvents ();
-				ProcessRaisePostBackEvents ();
+				ProcessRaiseEvents ();
 				ProcessLoadComplete ();
 			}
 			catch (Exception ex) {
