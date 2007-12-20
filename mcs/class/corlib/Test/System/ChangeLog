@@ -1,5 +1,10 @@
 2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TypeTest.cs: Added GetProperty and GetProperties tests for bug
+	#349078.
+
+2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* AppDomainTest.cs: Added tests for AssemblyName argument checks in
 	DefineDynamicAssembly overloads.
 

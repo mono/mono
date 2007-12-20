@@ -339,6 +339,1158 @@ namespace MonoTests.System
 			Assert.AreEqual (typeof (Derived2), typeof (Derived2).GetProperties ()[0].DeclaringType);
 		}
 
+		[Test] // GetProperties (BindingFlags)
+		public void GetProperties_Flags ()
+		{
+			PropertyInfo [] props;
+			Type type = typeof (Bar);
+			BindingFlags flags;
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#A1");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#A2");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#A3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#A4");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#A5");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#A5");
+#endif
+			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#A6");
+			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#A7");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#A8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#A9");
+			Assert.IsTrue (ContainsProperty (props, "IntInst"), "#A10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#A11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#A12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#A13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#A14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#A15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#A16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#A17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#A18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#A19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#A20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#A21");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#A22");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#A23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#A24");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#A25");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#A25");
+#endif
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#A26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#A27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#A28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#A29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#A30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#B1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#B2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#B3");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBase"), "#B4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#B5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#B6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#B7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#B8");
+			Assert.IsTrue (ContainsProperty (props, "PubInst"), "#B9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#B10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#B11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#B12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#B13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#B14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#B15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#B16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#B17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#B18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#B19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#B20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#B21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#B22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#B23");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBlue"), "#B24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#B25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#B26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#B27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#B28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#B29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#B30");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#C1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#C2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#C3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#C4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#C5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#C6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#C7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#C8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#C9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#C10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#C11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#C12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#C13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#C14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#C15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#C16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#C17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#C18");
+			Assert.IsTrue (ContainsProperty (props, "PubStat"), "#C19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#C20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#C21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#C22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#C23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#C24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#C25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#C26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#C27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#C28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#C29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#C30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#D1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#D2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#D3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#D4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#D5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#D6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#D7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#D8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#D9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#D10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#D11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#D12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#D13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#D14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#D15");
+			Assert.IsTrue (ContainsProperty (props, "PrivStat"), "#D16");
+			Assert.IsTrue (ContainsProperty (props, "ProtStat"), "#D17");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStat"), "#D18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#D19");
+			Assert.IsTrue (ContainsProperty (props, "IntStat"), "#D20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#D21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#D22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#D23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#D24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#D25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#D26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#D27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#D28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#D29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#D30");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#E1");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#E2");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#E3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#E4");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#E5");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#E5");
+#endif
+			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#E6");
+			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#E7");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#E8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#E9");
+			Assert.IsTrue (ContainsProperty (props, "IntInst"), "#E10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#E11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#E12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#E13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#E14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#E15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#E16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#E17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#E18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#E19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#E20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#E21");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#E22");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#E23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#E24");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#E25");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#E25");
+#endif
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#E26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#E27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#E28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#E29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#E30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#F1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#F2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#F3");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBase"), "#F4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#F5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#F6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#F7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#F8");
+			Assert.IsTrue (ContainsProperty (props, "PubInst"), "#F9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#F10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#F11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#F12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#F13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#F14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#F15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#F16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#F17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#F18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#F19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#F20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#F21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#F22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#F23");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBlue"), "#F24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#F25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#F26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#F27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#F28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#F29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#F30");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#G1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#G2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#G3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#G4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#G5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#G6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#G7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#G8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#G9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#G10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#G11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#G12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#G13");
+			Assert.IsTrue (ContainsProperty (props, "PubStatBase"), "#G14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#G15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#G16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#G17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#G18");
+			Assert.IsTrue (ContainsProperty (props, "PubStat"), "#G19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#G20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#G21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#G22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#G23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#G24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#G25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#G26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#G27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#G28");
+			Assert.IsTrue (ContainsProperty (props, "PubStatBlue"), "#G29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#G30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#H1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#H2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#H3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#H4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#H5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#H6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#H7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#H8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#H9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#H10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#H11");
+			Assert.IsTrue (ContainsProperty (props, "ProtStatBase"), "#H12");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStatBase"), "#H13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#H14");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntStatBase"), "#H15");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#H15");
+#endif
+			Assert.IsTrue (ContainsProperty (props, "PrivStat"), "#H16");
+			Assert.IsTrue (ContainsProperty (props, "ProtStat"), "#H17");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStat"), "#H18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#H19");
+			Assert.IsTrue (ContainsProperty (props, "IntStat"), "#H20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#H21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#H22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#H23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#H24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#H25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#H26");
+			Assert.IsTrue (ContainsProperty (props, "ProtStatBlue"), "#H27");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStatBlue"), "#H28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#H29");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntStatBlue"), "#H30");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#H50");
+#endif
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#I1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#I2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#I3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#I4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#I5");
+			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#I6");
+			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#I7");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#I8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#I9");
+			Assert.IsTrue (ContainsProperty (props, "IntInst"), "#I10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#I11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#I12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#I13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#I14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#I15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#I16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#I17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#I18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#I19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#I20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#I21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#I22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#I23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#I24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#I25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#I26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#I27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#I28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#I29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#I30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#J1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#J2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#J3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#J4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#J5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#J6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#J7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#J8");
+			Assert.IsTrue (ContainsProperty (props, "PubInst"), "#J9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#J10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#J11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#J12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#J13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#J14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#J15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#J16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#J17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#J18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#J19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#J20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#J21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#J22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#J23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#J24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#J25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#J26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#J27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#J28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#J29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#J30");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#K1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#K2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#K3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#K4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#K5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#K6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#K7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#K8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#K9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#K10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#K11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#K12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#K13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#K14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#K15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#K16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#K17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#K18");
+			Assert.IsTrue (ContainsProperty (props, "PubStat"), "#K19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#K20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#K21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#K22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#K23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#K24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#K25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#K26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#K27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#K28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#K29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#K30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#L1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#L2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#L3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#L4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#L5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#L6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#L7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#L8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#L9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#L10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#L11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#L12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#L13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#L14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#L15");
+			Assert.IsTrue (ContainsProperty (props, "PrivStat"), "#L16");
+			Assert.IsTrue (ContainsProperty (props, "ProtStat"), "#L17");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStat"), "#L18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#L19");
+			Assert.IsTrue (ContainsProperty (props, "IntStat"), "#L20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#L21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#L22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#L23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#L24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#L25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#L26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#L27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#L28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#L29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#L30");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#M1");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#M2");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#M3");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBase"), "#M4");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#M5");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#M5");
+#endif
+			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#M6");
+			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#M7");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#M8");
+			Assert.IsTrue (ContainsProperty (props, "PubInst"), "#M9");
+			Assert.IsTrue (ContainsProperty (props, "IntInst"), "#M10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#M11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#M12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#M13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#M14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#M15");
+			Assert.IsFalse (ContainsProperty (props, "PrivStat"), "#M16");
+			Assert.IsFalse (ContainsProperty (props, "ProtStat"), "#M17");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStat"), "#M18");
+			Assert.IsFalse (ContainsProperty (props, "PubStat"), "#M19");
+			Assert.IsFalse (ContainsProperty (props, "IntStat"), "#M20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#M21");
+			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#M22");
+			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#M23");
+			Assert.IsTrue (ContainsProperty (props, "PubInstBlue"), "#M24");
+#if NET_2_0
+			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#M25");
+#else
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#M25");
+#endif
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#M26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#M27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#M28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#M29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#M30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			props = type.GetProperties (flags);
+
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBase"), "#N1");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBase"), "#N2");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBase"), "#N3");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#N4");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#N5");
+			Assert.IsFalse (ContainsProperty (props, "PrivInst"), "#N6");
+			Assert.IsFalse (ContainsProperty (props, "ProtInst"), "#N7");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInst"), "#N8");
+			Assert.IsFalse (ContainsProperty (props, "PubInst"), "#N9");
+			Assert.IsFalse (ContainsProperty (props, "IntInst"), "#N10");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBase"), "#N11");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBase"), "#N12");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBase"), "#N13");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#N14");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#N15");
+			Assert.IsTrue (ContainsProperty (props, "PrivStat"), "#N16");
+			Assert.IsTrue (ContainsProperty (props, "ProtStat"), "#N17");
+			Assert.IsTrue (ContainsProperty (props, "ProIntStat"), "#N18");
+			Assert.IsTrue (ContainsProperty (props, "PubStat"), "#N19");
+			Assert.IsTrue (ContainsProperty (props, "IntStat"), "#N20");
+			Assert.IsFalse (ContainsProperty (props, "PrivInstBlue"), "#N21");
+			Assert.IsFalse (ContainsProperty (props, "ProtInstBlue"), "#N22");
+			Assert.IsFalse (ContainsProperty (props, "ProIntInstBlue"), "#N23");
+			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#N24");
+			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#N25");
+			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#N26");
+			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#N27");
+			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#N28");
+			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#N29");
+			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#N30");
+		}
+
+		[Test] // GetProperty (String)
+		public void GetProperty1_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, BindingFlags)
+		public void GetProperty2 ()
+		{
+			Type type = typeof (Bar);
+			BindingFlags flags;
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#A1");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#A2");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#A3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#A4");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#A5");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#A5");
+#endif
+			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#A6");
+			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#A7");
+			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#A8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#A9");
+			Assert.IsNotNull (type.GetProperty ("IntInst", flags), "#A10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#A11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#A12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#A13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#A14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#A15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#A16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#A17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#A18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#A19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#A20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#A21");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#A22");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#A23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#A24");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#A25");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#A25");
+#endif
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#A26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#A27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#A28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#A29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#A30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#B1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#B2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#B3");
+			Assert.IsNotNull (type.GetProperty ("PubInstBase", flags), "#B4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#B5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#B6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#B7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#B8");
+			Assert.IsNotNull (type.GetProperty ("PubInst", flags), "#B9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#B10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#B11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#B12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#B13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#B14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#B15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#B16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#B17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#B18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#B19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#B20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#B21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#B22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#B23");
+			Assert.IsNotNull (type.GetProperty ("PubInstBlue", flags), "#B24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#B25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#B26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#B27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#B28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#B29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#B30");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#C1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#C2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#C3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#C4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#C5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#C6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#C7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#C8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#C9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#C10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#C11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#C12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#C13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#C14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#C15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#C16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#C17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#C18");
+			Assert.IsNotNull (type.GetProperty ("PubStat", flags), "#C19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#C20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#C21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#C22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#C23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#C24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#C25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#C26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#C27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#C28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#C29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#C30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#D1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#D2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#D3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#D4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#D5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#D6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#D7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#D8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#D9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#D10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#D11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#D12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#D13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#D14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#D15");
+			Assert.IsNotNull (type.GetProperty ("PrivStat", flags), "#D16");
+			Assert.IsNotNull (type.GetProperty ("ProtStat", flags), "#D17");
+			Assert.IsNotNull (type.GetProperty ("ProIntStat", flags), "#D18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#D19");
+			Assert.IsNotNull (type.GetProperty ("IntStat", flags), "#D20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#D21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#D22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#D23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#D24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#D25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#D26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#D27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#D28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#D29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#D30");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#E1");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#E2");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#E3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#E4");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#E5");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#E5");
+#endif
+			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#E6");
+			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#E7");
+			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#E8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#E9");
+			Assert.IsNotNull (type.GetProperty ("IntInst", flags), "#E10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#E11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#E12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#E13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#E14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#E15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#E16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#E17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#E18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#E19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#E20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#E21");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#E22");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#E23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#E24");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#E25");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#E25");
+#endif
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#E26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#E27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#E28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#E29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#E30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#F1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#F2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#F3");
+			Assert.IsNotNull (type.GetProperty ("PubInstBase", flags), "#F4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#F5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#F6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#F7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#F8");
+			Assert.IsNotNull (type.GetProperty ("PubInst", flags), "#F9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#F10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#F11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#F12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#F13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#F14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#F15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#F16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#F17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#F18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#F19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#F20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#F21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#F22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#F23");
+			Assert.IsNotNull (type.GetProperty ("PubInstBlue", flags), "#F24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#F25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#F26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#F27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#F28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#F29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#F30");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#G1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#G2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#G3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#G4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#G5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#G6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#G7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#G8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#G9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#G10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#G11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#G12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#G13");
+			Assert.IsNotNull (type.GetProperty ("PubStatBase", flags), "#G14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#G15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#G16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#G17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#G18");
+			Assert.IsNotNull (type.GetProperty ("PubStat", flags), "#G19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#G20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#G21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#G22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#G23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#G24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#G25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#G26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#G27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#G28");
+			Assert.IsNotNull (type.GetProperty ("PubStatBlue", flags), "#G29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#G30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#H1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#H2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#H3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#H4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#H5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#H6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#H7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#H8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#H9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#H10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#H11");
+			Assert.IsNotNull (type.GetProperty ("ProtStatBase", flags), "#H12");
+			Assert.IsNotNull (type.GetProperty ("ProIntStatBase", flags), "#H13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#H14");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntStatBase", flags), "#H15");
+#else
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#H15");
+#endif
+			Assert.IsNotNull (type.GetProperty ("PrivStat", flags), "#H16");
+			Assert.IsNotNull (type.GetProperty ("ProtStat", flags), "#H17");
+			Assert.IsNotNull (type.GetProperty ("ProIntStat", flags), "#H18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#H19");
+			Assert.IsNotNull (type.GetProperty ("IntStat", flags), "#H20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#H21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#H22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#H23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#H24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#H25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#H26");
+			Assert.IsNotNull (type.GetProperty ("ProtStatBlue", flags), "#H27");
+			Assert.IsNotNull (type.GetProperty ("ProIntStatBlue", flags), "#H28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#H29");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntStatBlue", flags), "#H30");
+#else
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#H60");
+#endif
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#I1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#I2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#I3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#I4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#I5");
+			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#I6");
+			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#I7");
+			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#I8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#I9");
+			Assert.IsNotNull (type.GetProperty ("IntInst", flags), "#I10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#I11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#I12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#I13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#I14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#I15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#I16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#I17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#I18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#I19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#I20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#I21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#I22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#I23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#I24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#I25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#I26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#I27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#I28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#I29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#I30");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#J1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#J2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#J3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#J4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#J5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#J6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#J7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#J8");
+			Assert.IsNotNull (type.GetProperty ("PubInst", flags), "#J9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#J10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#J11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#J12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#J13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#J14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#J15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#J16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#J17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#J18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#J19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#J20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#J21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#J22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#J23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#J24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#J25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#J26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#J27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#J28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#J29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#J30");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#K1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#K2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#K3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#K4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#K5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#K6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#K7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#K8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#K9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#K10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#K11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#K12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#K13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#K14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#K15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#K16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#K17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#K18");
+			Assert.IsNotNull (type.GetProperty ("PubStat", flags), "#K19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#K20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#K21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#K22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#K23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#K24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#K25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#K26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#K27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#K28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#K29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#K30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#L1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#L2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#L3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#L4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#L5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#L6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#L7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#L8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#L9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#L10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#L11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#L12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#L13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#L14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#L15");
+			Assert.IsNotNull (type.GetProperty ("PrivStat", flags), "#L16");
+			Assert.IsNotNull (type.GetProperty ("ProtStat", flags), "#L17");
+			Assert.IsNotNull (type.GetProperty ("ProIntStat", flags), "#L18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#L19");
+			Assert.IsNotNull (type.GetProperty ("IntStat", flags), "#L20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#L21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#L22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#L23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#L24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#L25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#L26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#L27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#L28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#L29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#L30");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#M1");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#M2");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#M3");
+			Assert.IsNotNull (type.GetProperty ("PubInstBase", flags), "#M4");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#M5");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#M5");
+#endif
+			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#M6");
+			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#M7");
+			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#M8");
+			Assert.IsNotNull (type.GetProperty ("PubInst", flags), "#M9");
+			Assert.IsNotNull (type.GetProperty ("IntInst", flags), "#M10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#M11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#M12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#M13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#M14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#M15");
+			Assert.IsNull (type.GetProperty ("PrivStat", flags), "#M16");
+			Assert.IsNull (type.GetProperty ("ProtStat", flags), "#M17");
+			Assert.IsNull (type.GetProperty ("ProIntStat", flags), "#M18");
+			Assert.IsNull (type.GetProperty ("PubStat", flags), "#M19");
+			Assert.IsNull (type.GetProperty ("IntStat", flags), "#M20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#M21");
+			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#M22");
+			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#M23");
+			Assert.IsNotNull (type.GetProperty ("PubInstBlue", flags), "#M24");
+#if NET_2_0
+			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#M25");
+#else
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#M25");
+#endif
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#M26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#M27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#M28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#M29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#M30");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (type.GetProperty ("PrivInstBase", flags), "#N1");
+			Assert.IsNull (type.GetProperty ("ProtInstBase", flags), "#N2");
+			Assert.IsNull (type.GetProperty ("ProIntInstBase", flags), "#N3");
+			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#N4");
+			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#N5");
+			Assert.IsNull (type.GetProperty ("PrivInst", flags), "#N6");
+			Assert.IsNull (type.GetProperty ("ProtInst", flags), "#N7");
+			Assert.IsNull (type.GetProperty ("ProIntInst", flags), "#N8");
+			Assert.IsNull (type.GetProperty ("PubInst", flags), "#N9");
+			Assert.IsNull (type.GetProperty ("IntInst", flags), "#N10");
+			Assert.IsNull (type.GetProperty ("PrivStatBase", flags), "#N11");
+			Assert.IsNull (type.GetProperty ("ProtStatBase", flags), "#N12");
+			Assert.IsNull (type.GetProperty ("ProIntStatBase", flags), "#N13");
+			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#N14");
+			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#N15");
+			Assert.IsNotNull (type.GetProperty ("PrivStat", flags), "#N16");
+			Assert.IsNotNull (type.GetProperty ("ProtStat", flags), "#N17");
+			Assert.IsNotNull (type.GetProperty ("ProIntStat", flags), "#N18");
+			Assert.IsNotNull (type.GetProperty ("PubStat", flags), "#N19");
+			Assert.IsNotNull (type.GetProperty ("IntStat", flags), "#N20");
+			Assert.IsNull (type.GetProperty ("PrivInstBlue", flags), "#N21");
+			Assert.IsNull (type.GetProperty ("ProtInstBlue", flags), "#N22");
+			Assert.IsNull (type.GetProperty ("ProIntInstBlue", flags), "#N23");
+			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#N24");
+			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#N25");
+			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#N26");
+			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#N27");
+			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#N28");
+			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#N29");
+			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#N30");
+		}
+
+		[Test] // GetProperty (String, BindingFlags)
+		public void GetProperty2_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, Type)
+		public void GetProperty3_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null, typeof (int));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, Type [])
+		public void GetProperty4_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null, Type.EmptyTypes);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, Type, Type [])
+		public void GetProperty5_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null, typeof (int),
+					Type.EmptyTypes);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, Type, Type [], ParameterModifier [])
+		public void GetProperty6_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null, typeof (int),
+					Type.EmptyTypes, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // GetProperty (String, BindingFlags, Binder, Type, Type [], ParameterModifier [])
+		public void GetProperty7_Name_Null ()
+		{
+			Type type = typeof (Bar);
+			try {
+				type.GetProperty ((string) null, BindingFlags.Public,
+					null, typeof (int), Type.EmptyTypes, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("name", ex.ParamName, "#6");
+			}
+		}
+
 #if !TARGET_JVM // StructLayout not supported for TARGET_JVM
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1
@@ -1642,6 +2794,14 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 #endif
 
+		static bool ContainsProperty (PropertyInfo [] props, string name)
+		{
+			foreach (PropertyInfo p in props)
+				if (p.Name == name)
+					return true;
+			return false;
+		}
+
 		public class NemerleAttribute : Attribute
 		{
 		}
@@ -1729,6 +2889,195 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			public void Run (bool b)
 			{
+			}
+		}
+
+		public class Blue
+		{
+			private string PrivInstBlue
+			{
+				get { return null; }
+			}
+
+			protected string ProtInstBlue
+			{
+				get { return null; }
+			}
+
+			protected internal string ProIntInstBlue
+			{
+				get { return null; }
+			}
+
+			public long PubInstBlue
+			{
+				get
+				{
+					if (PrivInstBlue == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal int IntInstBlue
+			{
+				get { return 0; }
+			}
+
+			private static string PrivStatBlue
+			{
+				get { return null; }
+			}
+
+			protected static string ProtStatBlue
+			{
+				get { return null; }
+			}
+
+			protected static internal string ProIntStatBlue
+			{
+				get { return null; }
+			}
+
+			public static long PubStatBlue
+			{
+				get
+				{
+					if (PrivStatBlue == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal static int IntStatBlue
+			{
+				get { return 0; }
+			}
+		}
+
+		public class Foo : Blue
+		{
+			private string PrivInstBase
+			{
+				get { return null; }
+			}
+
+			protected string ProtInstBase
+			{
+				get { return null; }
+			}
+
+			protected internal string ProIntInstBase
+			{
+				get { return null; }
+			}
+
+			public long PubInstBase
+			{
+				get
+				{
+					if (PrivInstBase == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal int IntInstBase
+			{
+				get { return 0; }
+			}
+
+			private static string PrivStatBase
+			{
+				get { return null; }
+			}
+
+			protected static string ProtStatBase
+			{
+				get { return null; }
+			}
+
+			protected static internal string ProIntStatBase
+			{
+				get { return null; }
+			}
+
+			public static long PubStatBase
+			{
+				get
+				{
+					if (PrivStatBase == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal static int IntStatBase
+			{
+				get { return 0; }
+			}
+		}
+
+		public class Bar : Foo
+		{
+			private string PrivInst
+			{
+				get { return null; }
+			}
+
+			protected string ProtInst
+			{
+				get { return null; }
+			}
+
+			protected internal string ProIntInst
+			{
+				get { return null; }
+			}
+
+			public long PubInst
+			{
+				get
+				{
+					if (PrivInst == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal int IntInst
+			{
+				get { return 0; }
+			}
+
+			private static string PrivStat
+			{
+				get { return null; }
+			}
+
+			protected static string ProtStat
+			{
+				get { return null; }
+			}
+
+			protected static internal string ProIntStat
+			{
+				get { return null; }
+			}
+
+			public static long PubStat
+			{
+				get
+				{
+					if (PrivStat == null)
+						return 0;
+					return long.MaxValue;
+				}
+			}
+
+			internal static int IntStat
+			{
+				get { return 0; }
 			}
 		}
 	}
