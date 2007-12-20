@@ -1,3 +1,8 @@
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Put all runtime invoke wrappers
+	for corlib classes into object. Fixes #349621.
+
 2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* icall.c (property_accessor_nonpublic): new function to determine
@@ -10,7 +15,7 @@
 
 2007-12-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* verify.c (init_stack_with_value): added
+	* verify.c (init_stack_with_value): added.
 
 	* verify.c (mono_method_verify): extracted common
 	code for exception initialization into init_stack_with_value.
