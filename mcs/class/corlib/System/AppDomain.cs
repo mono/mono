@@ -446,6 +446,10 @@ namespace System {
 		                                              PermissionSet optionalPermissions,
 		                                              PermissionSet refusedPermissions, bool isSynchronized)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			ValidateAssemblyName (name.Name);
+
 			// FIXME: examine all other parameters
 			
 			AssemblyBuilder ab = new AssemblyBuilder (name, dir, access, false);
@@ -904,6 +908,38 @@ namespace System {
 		public override string ToString ()
 		{
 			return getFriendlyName ();
+		}
+
+		private static void ValidateAssemblyName (string name)
+		{
+			if (name == null || name.Length == 0)
+				throw new ArgumentException ("The Name of " +
+					"AssemblyName cannot be null or a " +
+					"zero-length string.");
+
+			bool isValid = true;
+
+			for (int i = 0; i < name.Length; i++) {
+				char c = name [i];
+
+				// do not allow leading whitespace
+				if (i == 0 && char.IsWhiteSpace (c)) {
+					isValid = false;
+					break;
+				}
+
+				// do not allow /,\ or : in name
+				if (c == '/' || c == '\\' || c == ':') {
+					isValid = false;
+					break;
+				}
+			}
+
+			if (!isValid)
+				throw new ArgumentException ("The Name of " +
+					"AssemblyName cannot start with " +
+					"whitespace, or contain '/', '\\' " +
+					" or ':'.");
 		}
 
 		// The following methods are called from the runtime. Don't change signatures.

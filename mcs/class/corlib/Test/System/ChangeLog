@@ -1,3 +1,8 @@
+2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomainTest.cs: Added tests for AssemblyName argument checks in
+	DefineDynamicAssembly overloads.
+
 2007-12-18  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffsetTest.cs: forcing the tests to fix the build. en-us

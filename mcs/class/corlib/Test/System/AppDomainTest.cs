@@ -29,6 +29,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -221,6 +224,1057 @@ namespace MonoTests.System
 			Assert.AreEqual (expectedAppBase, cdt.GetApplicationBase (), "#B2");
 			AppDomain.Unload (ad);
 		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
+		public void DefineDynamicAssembly1_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
+		public void DefineDynamicAssembly1_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
+		public void DefineDynamicAssembly2_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						AppDomain.CurrentDomain.Evidence);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
+		public void DefineDynamicAssembly2_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
+		public void DefineDynamicAssembly3_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath ());
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
+		public void DefineDynamicAssembly3_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath ());
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath ());
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
+		public void DefineDynamicAssembly4_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath (),
+						AppDomain.CurrentDomain.Evidence);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
+		public void DefineDynamicAssembly4_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly5_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly5_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly6_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						AppDomain.CurrentDomain.Evidence,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly6_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly7_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath (),
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly7_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly8_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath (),
+						AppDomain.CurrentDomain.Evidence,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly8_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
+		public void DefineDynamicAssembly9_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath (),
+						AppDomain.CurrentDomain.Evidence,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						true);
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
+		public void DefineDynamicAssembly9_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+#if NET_2_0
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly10_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						Path.GetTempPath (),
+						AppDomain.CurrentDomain.Evidence,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						(PermissionSet) null,
+						true,
+						new List<CustomAttributeBuilder> ());
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly10_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly11_Name_InvalidChars ()
+		{
+			string [] invalid_char_names = new string [] {
+				"\tAB",
+				" AB",
+				"\rAB",
+				"A/B",
+				":AB",
+				"B:A",
+				"B\\A",
+				"BA\\"};
+
+			AssemblyName name = new AssemblyName ();
+
+			foreach (string invalid_name in invalid_char_names) {
+				name.Name = invalid_name;
+				try {
+					AppDomain.CurrentDomain.DefineDynamicAssembly (
+						name,
+						AssemblyBuilderAccess.Run,
+						new List<CustomAttributeBuilder> ());
+					Assert.Fail ("#1:" + invalid_name);
+				} catch (ArgumentException ex) {
+					// Assembly names may not begin with whitespace
+					// or contain the characters '/', '\' or ':'
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2:" + invalid_name);
+					Assert.IsNull (ex.InnerException, "#3:" + invalid_name);
+					Assert.IsNotNull (ex.Message, "#4:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'/'") != -1, "#5:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("'\\'") != -1, "#6:" + invalid_name);
+					Assert.IsTrue (ex.Message.IndexOf ("':'") != -1, "#7:" + invalid_name);
+					Assert.IsNull (ex.ParamName, "#8:" + invalid_name);
+				}
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly11_Name_Null ()
+		{
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					(AssemblyName) null,
+					AssemblyBuilderAccess.Run,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("name", ex.ParamName, "#A6");
+			}
+
+			AssemblyName name = new AssemblyName ();
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
+			}
+
+			name.Name = string.Empty;
+
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name,
+					AssemblyBuilderAccess.Run,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// AssemblyName.Name cannot be null or an empty string
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
+			}
+		}
+#endif
 
 		[Test]
 		public void SetThreadPrincipal ()
