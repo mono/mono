@@ -1,5 +1,9 @@
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_create_trampoline_code): Ditto.
+
+	* tramp-x86.c (mono_arch_create_trampoline_code): Check for thread interruption.
+
 	* cpu-amd64.md mini-amd64.h mini-amd64.c inssel-amd64.brg: Add ulong->double 
 	implementation.
 
