@@ -1,3 +1,9 @@
+2007-12-20 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:	refactoring:
+	split method such InternalProcessRequest to several methods.
+	It is required for implementing alternative hosting under TARGET_J2EE.
+
 2007-12-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientScriptManager.cs: write hidden fields inside a div only in

@@ -103,6 +103,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	ClientScriptManager scriptManager;
 	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
 	PageStatePersister page_state_persister;
+	CultureInfo _appCulture;
+	CultureInfo _appUICulture;
 
 	// The initial context
 	private HttpContext _context;
@@ -1171,12 +1173,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 #endif
 	{
-		_context = context;
-
-		_application = context.Application;
-		_response = context.Response;
-		_request = context.Request;
-		_cache = context.Cache;
+		SetContext (context);
 		
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
@@ -1185,8 +1182,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		//-- Control execution lifecycle in the docs
 
 		// Save culture information because it can be modified in FrameworkInitialize()
-		CultureInfo culture = Thread.CurrentThread.CurrentCulture;
-		CultureInfo uiculture = Thread.CurrentThread.CurrentUICulture;
+		_appCulture = Thread.CurrentThread.CurrentCulture;
+		_appUICulture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
 		context.ErrorPage = _errorPage;
 
@@ -1195,24 +1192,36 @@ public partial class Page : TemplateControl, IHttpHandler
 		} catch (ThreadAbortException) {
 			// Do nothing, just ignore it by now.
 		} catch (Exception e) {
-			context.AddError (e); // OnError might access LastError
-			OnError (EventArgs.Empty);
-			context.ClearError (e);
-			// We want to remove that error, as we're rethrowing to stop
-			// further processing.
-			Trace.Warn ("Unhandled Exception", e.ToString (), e);
+			ProcessException (e);
 			throw;
 		} finally {
+			ProcessUnload ();
+		}
+	}
+
+	void ProcessException (Exception ex) {
+		_context.AddError (ex); // OnError might access LastError
+		OnError (EventArgs.Empty);
+		_context.ClearError (ex);
+		// We want to remove that error, as we're rethrowing to stop
+		// further processing.
+		Trace.Warn ("Unhandled Exception", ex.ToString (), ex);
+	}
+
+	void ProcessUnload () {
 			try {
 				RenderTrace ();
 				UnloadRecursive (true);
 			} catch {}
-			if (Thread.CurrentThread.CurrentCulture.Equals (culture) == false)
-				Thread.CurrentThread.CurrentCulture = culture;
 
-			if (Thread.CurrentThread.CurrentUICulture.Equals (uiculture) == false)
-				Thread.CurrentThread.CurrentUICulture = uiculture;
-		}
+			if (Thread.CurrentThread.CurrentCulture.Equals (_appCulture) == false)
+				Thread.CurrentThread.CurrentCulture = _appCulture;
+
+			if (Thread.CurrentThread.CurrentUICulture.Equals (_appUICulture) == false)
+				Thread.CurrentThread.CurrentUICulture = _appUICulture;
+			
+			_appCulture = null;
+			_appUICulture = null;
 	}
 	
 #if NET_2_0
@@ -1322,6 +1331,16 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 			
 		renderingForm = false;	
+
+		RestorePageState ();
+		ProcessPostData ();
+		ProcessRaiseEvents ();
+		if (ProcessLoadComplete ())
+			return;
+		RenderPage ();
+	}
+
+	void RestorePageState () {
 #if NET_2_0
 		if (IsPostBack || IsCallback) {
 			if (_requestValueCollection != null)
@@ -1333,6 +1352,16 @@ public partial class Page : TemplateControl, IHttpHandler
 			Trace.Write ("aspx.page", "Begin LoadViewState");
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
+		}
+	}
+
+	void ProcessPostData () {
+
+#if NET_2_0
+		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData");
 #if TARGET_J2EE
 			if (!IsGetBack)
@@ -1341,6 +1370,23 @@ public partial class Page : TemplateControl, IHttpHandler
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
 
+		ProcessLoad ();
+
+#if NET_2_0
+		if (IsPostBack || IsCallback) {
+#else
+		if (IsPostBack) {
+#endif
+			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
+#if TARGET_J2EE
+			if (!IsGetBack)
+#endif
+			ProcessPostData (secondPostData, true);
+			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
+		}
+	}
+
+	void ProcessLoad () { 
 #if NET_2_0
 		Trace.Write ("aspx.page", "Begin PreLoad");
 		OnPreLoad (EventArgs.Empty);
@@ -1350,6 +1396,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin Load");
 		LoadRecursive ();
 		Trace.Write ("aspx.page", "End Load");
+	}
+
+	void ProcessRaiseEvents () {
+
 #if NET_2_0
 #if TARGET_J2EE
 		if (IsGetBack)
@@ -1360,9 +1410,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #else
 		if (IsPostBack) {
 #endif
-			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
-			ProcessPostData (secondPostData, true);
-			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
 			Trace.Write ("aspx.page", "Begin Raise ChangedEvents");
 			RaiseChangedEvents ();
 			Trace.Write ("aspx.page", "End Raise ChangedEvents");
@@ -1370,6 +1417,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			RaisePostBackEvents ();
 			Trace.Write ("aspx.page", "End Raise PostBackEvent");
 		}
+	}
+
+	bool ProcessLoadComplete() {
 		
 #if NET_2_0
 		Trace.Write ("aspx.page", "Begin LoadComplete");
@@ -1377,14 +1427,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End LoadComplete");
 
 		if (IsCrossPagePostBack)
-			return;
+			return true;
 
 		if (IsCallback) {
 			string result = ProcessCallbackData ();
 			HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
 			callbackOutput.Write (result);
 			callbackOutput.Flush ();
-			return;
+			return true;
 		}
 #endif
 		
@@ -1410,10 +1460,13 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End SaveStateComplete");
 #if TARGET_J2EE
 		if (OnSaveStateCompleteForPortlet ())
-			return;
+			return true;
 #endif // TARGET_J2EE
 #endif // NET_2_0
+		return false;
+	}
 
+	internal void RenderPage () {
 #if NET_2_0
 		scriptManager.ResetEventValidationState ();
 #endif
@@ -1423,6 +1476,15 @@ public partial class Page : TemplateControl, IHttpHandler
 		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
+	}
+
+	void SetContext (HttpContext context) {
+		_context = context;
+
+		_application = context.Application;
+		_response = context.Response;
+		_request = context.Request;
+		_cache = context.Cache;
 	}
 
 	private void RenderTrace ()
@@ -1984,6 +2046,13 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	string ProcessCallbackData ()
 	{
+		ICallbackEventHandler target = GetCallbackTarget ();
+		string callbackEventError = String.Empty;
+		ProcessRaiseCallbackEvent (target, ref callbackEventError);
+		return ProcessGetCallbackResult (target, callbackEventError);
+	}
+
+	ICallbackEventHandler GetCallbackTarget () {
 		string callbackTarget = _requestValueCollection [CallbackSourceID];
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
@@ -1992,9 +2061,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		ICallbackEventHandler target = targetControl as ICallbackEventHandler;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
+		return target;
+	}
 
-		string callbackEventError = String.Empty;
-		string callBackResult;
+	void ProcessRaiseCallbackEvent (ICallbackEventHandler target, ref string callbackEventError) {
 		string callbackArgument = _requestValueCollection [CallbackArgumentID];
 
 		try {
@@ -2003,6 +2073,10 @@ public partial class Page : TemplateControl, IHttpHandler
 			callbackEventError = String.Concat ("e", ex.Message);
 		}
 		
+	}
+
+	string ProcessGetCallbackResult (ICallbackEventHandler target, string callbackEventError) {
+		string callBackResult;
 		try {
 			callBackResult = target.GetCallbackResult ();
 		} catch (Exception ex) {
