@@ -184,6 +184,15 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, x, "#192");
 			x = listBox.FindString ("NonExistant");
 			Assert.AreEqual (-1, x, "#193");
+
+			x = listBox.FindString ("A", -1);
+			Assert.AreEqual (0, x, "#194");
+			x = listBox.FindString ("A", 0);
+			Assert.AreEqual (1, x, "#195");
+			x = listBox.FindString ("A", listBox.Items.Count - 1);
+			Assert.AreEqual (0, x, "#196");
+			x = listBox.FindString ("a", listBox.Items.Count - 1);
+			Assert.AreEqual (0, x, "#197");
 		}
 
 		[Test]
@@ -200,6 +209,15 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, x, "#202");
 			x = listBox.FindStringExact ("NonExistant");
 			Assert.AreEqual (-1, x, "#203");
+
+			x = listBox.FindStringExact ("ABCD", -1);
+			Assert.AreEqual (0, x, "#204");
+			x = listBox.FindStringExact ("ABC", 0);
+			Assert.AreEqual (1, x, "#205");
+			x = listBox.FindStringExact ("ABC", listBox.Items.Count - 1);
+			Assert.AreEqual (1, x, "#206");
+			x = listBox.FindStringExact ("abcd", listBox.Items.Count - 1);
+			Assert.AreEqual (0, x, "#207");
 		}
 
 #if NET_2_0
