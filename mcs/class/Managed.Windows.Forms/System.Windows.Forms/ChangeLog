@@ -1,3 +1,9 @@
+2007-12-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Line.cs, TextControl.cs: Apply patch from Luke Page that finds the
+	end of a tag better, fixing a IndexOutOfRangeException.
+	[Fixes bug #349926]
+
 2007-12-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Both FindString and FindStringExact methods must do an

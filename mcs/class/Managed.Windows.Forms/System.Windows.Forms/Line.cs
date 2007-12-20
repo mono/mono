@@ -348,7 +348,9 @@ namespace System.Windows.Forms
 				pos = text.Length - 1;
 
 			while (tag != null) {
-				if (((tag.Start - 1) <= pos) && (pos < (tag.Start + tag.Length - 1)))
+				// if its less than or equal on the second part then 
+				// we find the tag which the caret is at the end of
+				if (((tag.Start - 1) <= pos) && (pos <= (tag.Start + tag.Length - 1)))
 					return LineTag.GetFinalTag (tag);
 
 				tag = tag.Next;
