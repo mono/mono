@@ -1,3 +1,8 @@
+
+Thu Dec 20 12:27:24 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* rawbuffer.c: remove useless warning.
+
 Thu Dec 20 12:10:38 CET 2007 Paolo Molaro <lupus@ximian.com>
 
 	* threads.h, threads-types.h: move functions to the correct header
