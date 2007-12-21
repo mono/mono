@@ -479,6 +479,10 @@ namespace Mono.CSharp {
 						xterm_colors = true;
 					}
 					break;
+
+				case "xterm-color":
+					xterm_colors = true;
+					break;
 				}
 				string config = Environment.GetEnvironmentVariable ("MCS_COLORS");
 				if (config == null){
