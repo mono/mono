@@ -1,5 +1,9 @@
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (reflection_methodbuilder_from_ctor_builder): Initialize
+	skip_visibility field.
+	(reflection_methodbuilder_from_dynamic_method): Ditto.
+
 	* object.c (mono_class_compute_gc_descriptor): Remove more unused icall
 	registrations. Fixes #348193.
 
