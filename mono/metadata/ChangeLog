@@ -1,5 +1,8 @@
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_compute_gc_descriptor): Remove more unused icall
+	registrations. Fixes #348193.
+
 	* threads.h: Move the internal mono_thread_get_pending_exception () to
 	threads-types.h and rename it to mono_thread_get_undeniable_exception ().
 
