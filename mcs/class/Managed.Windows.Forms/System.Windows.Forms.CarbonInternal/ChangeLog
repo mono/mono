@@ -1,5 +1,10 @@
 2007-12-21  Geoff Norton  <gnorton@novell.com>
 
+	* Dnd.cs: Add support for D&D of objects internally and serialized
+	objects across instances.
+
+2007-12-21  Geoff Norton  <gnorton@novell.com>
+
 	* *Handler.cs: Update the ProcessEvent method to pass the callref
 	in as well.
 	* ControlHandler.cs: Direct the kEventControlDrag events to our

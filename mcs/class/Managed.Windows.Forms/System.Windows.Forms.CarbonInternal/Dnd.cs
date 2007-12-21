@@ -41,7 +41,10 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventParamDragRef = 1685217639; 
 		internal const uint typeDragRef = 1685217639;
 
-		private IntPtr dragref;
+		internal const uint typeMono = 1836019311;
+		internal const uint typeMonoSerializedObject = 1836279154;
+
+		private static DragDropEffects effects = DragDropEffects.None;
 
 		internal Dnd () {
 		}
@@ -112,10 +115,12 @@ namespace System.Windows.Forms.CarbonInternal {
 					SetEventParameter (eventref, ControlHandler.kEventParamControlLikesDrag, ControlHandler.typeBoolean, (uint)Marshal.SizeOf (typeof (bool)), ref accept);
 
 					control.DndEnter (drag_event);
+					effects = drag_event.Effect;
 					return false;
 				}
 				case ControlHandler.kEventControlDragWithin:
 					control.DndOver (drag_event);
+					effects = drag_event.Effect;
 					break;
 				case ControlHandler.kEventControlDragLeave:
 					control.DndLeave (drag_event);
@@ -140,17 +145,53 @@ namespace System.Windows.Forms.CarbonInternal {
 		}
 
 		public DragDropEffects StartDrag (IntPtr handle, object data, DragDropEffects allowed_effects) {
-			IntPtr handleptr = IntPtr.Zero;
+			IntPtr dragref = IntPtr.Zero;
 			EventRecord eventrecord = new EventRecord ();
 
-			XplatUICarbon.GetGlobalMouse (ref eventrecord.mouse);
+			effects = DragDropEffects.None;
+
 			NewDrag (ref dragref);
-			handleptr = (IntPtr) GCHandle.Alloc (data);
-			// We only support self-drag for now
-			AddDragItemFlavor (dragref, handle, (IntPtr)0xF0F0, ref handleptr, Marshal.SizeOf (typeof (IntPtr)), 1 << 0);
+			XplatUICarbon.GetGlobalMouse (ref eventrecord.mouse);
+			StoreObjectInDrag (handle, dragref, data);
 
 			TrackDrag (dragref, ref eventrecord, IntPtr.Zero);
-			return DragDropEffects.None;
+
+			DisposeDrag (dragref);
+
+			return effects;
+		}
+
+		public void StoreObjectInDrag (IntPtr handle, IntPtr dragref, object data) {
+			IntPtr type = IntPtr.Zero;
+			IntPtr dataptr = IntPtr.Zero;
+			Int32 size = 0;
+
+			if (data is string) {
+				// implement me
+				throw new NotSupportedException ("Implement me.");
+			} else if (data is ISerializable) {
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+
+				bf.Serialize (stream, data);
+
+				dataptr = Marshal.AllocHGlobal ((int) stream.Length);
+				stream.Seek (0, 0);
+
+				for (int i = 0; i < stream.Length; i++) {
+					Marshal.WriteByte (dataptr, i, (byte) stream.ReadByte ());
+				}
+				
+				type = (IntPtr) typeMonoSerializedObject;
+				size = (int) stream.Length;
+			} else {
+				dataptr = (IntPtr) GCHandle.Alloc (data);
+
+				type = (IntPtr) typeMono;
+				size = Marshal.SizeOf (typeof (IntPtr));
+			}
+
+			AddDragItemFlavor (dragref, handle, type, ref dataptr, size, 1 << 0);
 		}
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -172,6 +213,8 @@ namespace System.Windows.Forms.CarbonInternal {
 		extern static int NewDrag (ref IntPtr dragref);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int TrackDrag (IntPtr dragref, ref EventRecord eventrecord, IntPtr region);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int DisposeDrag (IntPtr dragref);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int GetDragAllowableActions (IntPtr dragref, ref UInt32 actions);
 	}
@@ -210,14 +253,26 @@ namespace System.Windows.Forms.CarbonInternal {
 			GetFlavorData (dragref, itemref, flavorref, data, ref size, 0);
 		}
 
-		internal string Data {
+		internal string DataString {
 			get { return Encoding.Default.GetString (this.data); }
+		}
+		
+		internal byte[] DataArray {
+			get { return this.data; }
+		}
+
+		internal IntPtr DataPtr {
+			get { return (IntPtr) BitConverter.ToInt32 (this.data, 0); }
 		}
 
 		internal bool Supported {
 			get {
 				switch (fourcc) {
 					case "furl":
+						return true;
+					case "mono":
+						return true;
+					case "mser":
 						return true;
 				}
 				return false;
@@ -228,9 +283,39 @@ namespace System.Windows.Forms.CarbonInternal {
 			switch (fourcc) {
 				case "furl":
 					return ConvertToFileDrop (flavorlist);
+				case "mono":
+					return ConvertToObject (flavorlist);
+				case "mser":
+					return DeserializeObject (flavorlist);
 			}
 
 			return new DataObject ();
+		}
+
+		internal DataObject DeserializeObject (ArrayList flavorlist) {
+			DataObject data = new DataObject ();
+			MemoryStream stream = new MemoryStream (this.DataArray);
+			BinaryFormatter bf = new BinaryFormatter ();
+
+			if (stream.Length == 0)
+				return data;
+
+			stream.Seek (0, 0);
+			data.SetData (bf.Deserialize (stream));
+
+			return data;
+		}
+
+		internal DataObject ConvertToObject (ArrayList flavorlist) {
+			DataObject data = new DataObject ();
+			
+			foreach (FlavorHandler flavor in flavorlist) {
+				GCHandle handle = (GCHandle) flavor.DataPtr;
+
+				data.SetData (handle.Target);
+			}
+			
+			return data;
 		}
 
 		internal DataObject ConvertToFileDrop (ArrayList flavorlist) {
@@ -239,7 +324,7 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			foreach (FlavorHandler flavor in flavorlist) {
 				try {
-					uri_list.Add (new Uri (flavor.Data).LocalPath);			
+					uri_list.Add (new Uri (flavor.DataString).LocalPath);			
 				} catch { }
 			}
 
