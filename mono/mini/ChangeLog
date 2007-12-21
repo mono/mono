@@ -1,5 +1,8 @@
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_find_jit_info): Fix the detection of whenever
+	the top LMF entry belongs to the current method.
+
 	* mini.c: Update after renaming of mono_thread_get_pending_exception ().
 
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
