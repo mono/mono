@@ -811,12 +811,15 @@ System.Windows.Forms.Layout/TableLayout.cs
 System.Windows.Forms.Layout/TableLayoutSettingsTypeConverter.cs
 System.Windows.Forms.CarbonInternal/ApplicationHandler.cs
 System.Windows.Forms.CarbonInternal/ControlHandler.cs
+System.Windows.Forms.CarbonInternal/Dnd.cs
 System.Windows.Forms.CarbonInternal/EventHandler.cs
 System.Windows.Forms.CarbonInternal/EventHandlerBase.cs
 System.Windows.Forms.CarbonInternal/Enums.cs
+System.Windows.Forms.CarbonInternal/HIObjectHandler.cs
 System.Windows.Forms.CarbonInternal/IEventHandler.cs
 System.Windows.Forms.CarbonInternal/KeyboardHandler.cs
 System.Windows.Forms.CarbonInternal/MouseHandler.cs
+System.Windows.Forms.CarbonInternal/Pasteboard.cs
 System.Windows.Forms.CarbonInternal/Structs.cs
 System.Windows.Forms.CarbonInternal/WindowHandler.cs
 System.Windows.Forms.Theming/ThemeElements.cs
