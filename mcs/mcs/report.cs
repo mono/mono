@@ -489,7 +489,7 @@ namespace Mono.CSharp {
 				if (config == "disable")
 					return;
 
-				if (!config.StartsWith ("errors"))
+				if (!config.StartsWith ("errors="))
 					return;
 
 				config = config.Substring (7);
