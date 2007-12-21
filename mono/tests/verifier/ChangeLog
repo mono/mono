@@ -1,6 +1,23 @@
+2007-12-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_branch_test.sh: new test generator.
+
+	* make_exception_branch_test.sh: added
+	support to test generator to specify
+	the expected result.
+
+	* make_tests.sh: some results for
+	make_exception_branch_test.sh were
+	wrong, fixed that.
+
+	* make_tests.sh: added some tests
+	to beq and bge.
+
+	* make_tests.sh added tests for br.
+
 2007-12-20 Rodrigo Kumpera <rkumpera@novell.com>
 
-	*valid_exception_sequence.il: new test
+	* valid_exception_sequence.il: new test
 	for what blocks take an exception on
 	stack at the begin.
 
