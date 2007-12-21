@@ -1,3 +1,11 @@
+2007-12-21  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionReader.cs
+	  Mono.Cecil/AggressiveReflectionReader.cs
+	  Mono.Cecil.Signatures/SignatureReader.cs:
+		Don't crash on force resolve for nested arrays
+		in custom attributes.
+
 2007-12-17  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/IMemberDefinition.cs: make IMemberDefinition

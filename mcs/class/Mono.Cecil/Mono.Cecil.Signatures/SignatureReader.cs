@@ -717,6 +717,7 @@ namespace Mono.Cecil.Signatures {
 		{
 			switch (elemType) {
 			case ElementType.Boxed :
+			case ElementType.Object:
 				return m_reflectReader.SearchCoreType (Constants.Object);
 			case ElementType.String :
 				return m_reflectReader.SearchCoreType (Constants.String);
@@ -785,7 +786,7 @@ namespace Mono.Cecil.Signatures {
 					return elem;
 				} else if (elemType.FullName == Constants.Object)
 					throw new MetadataFormatException ("Non valid type in CustomAttrib.Elem after boxed prefix: 0x{0}",
-						((byte) elem.FieldOrPropType).ToString("x2"));
+						((byte) elem.FieldOrPropType).ToString ("x2"));
 
 				elem = ReadElem (data, br, elemType, ref read, resolve);
 				elem.String = elem.Simple = elem.Type = false;

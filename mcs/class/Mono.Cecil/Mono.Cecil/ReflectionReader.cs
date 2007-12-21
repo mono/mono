@@ -402,7 +402,7 @@ namespace Mono.Cecil {
 		public CustomAttribute GetCustomAttribute (MethodReference ctor, byte [] data, bool resolve)
 		{
 			CustomAttrib sig = m_sigReader.GetCustomAttrib (data, ctor, resolve);
-			return BuildCustomAttribute (ctor, sig);
+			return BuildCustomAttribute (ctor, data, sig);
 		}
 
 		public CustomAttribute GetCustomAttribute (MethodReference ctor, byte [] data)
@@ -824,9 +824,14 @@ namespace Mono.Cecil {
 			return GetFixedArgType (na.FixedArg);
 		}
 
-		protected CustomAttribute BuildCustomAttribute (MethodReference ctor, CustomAttrib sig)
+		protected CustomAttribute BuildCustomAttribute (MethodReference ctor, byte [] data, CustomAttrib sig)
 		{
 			CustomAttribute cattr = new CustomAttribute (ctor);
+			if (!sig.Read) {
+				cattr.Resolved = false;
+				cattr.Blob = data;
+				return cattr;
+			}
 
 			foreach (CustomAttrib.FixedArg fa in sig.FixedArgs)
 				cattr.ConstructorParameters.Add (GetFixedArgValue (fa));

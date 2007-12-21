@@ -325,13 +325,7 @@ namespace Mono.Cecil {
 					ctor = GetMemberRefAt (caRow.Type.RID, new GenericContext ()) as MethodReference;
 
 				CustomAttrib ca = m_sigReader.GetCustomAttrib (caRow.Value, ctor);
-				CustomAttribute cattr;
-				if (!ca.Read) {
-					cattr = new CustomAttribute (ctor);
-					cattr.Resolved = false;
-					cattr.Blob = m_root.Streams.BlobHeap.Read (caRow.Value);
-				} else
-					cattr = BuildCustomAttribute (ctor, ca);
+				CustomAttribute cattr = BuildCustomAttribute (ctor, m_root.Streams.BlobHeap.Read (caRow.Value), ca);
 
 				if (caRow.Parent.RID == 0)
 					continue;
