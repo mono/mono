@@ -1,5 +1,11 @@
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (setup_jit_tls_data): Use the MONO_ARCH_INIT_TOP_LMF_ENTRY macro if
+	defined.
+
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c tramp-amd64.c: Rename lmf->ebp to 
+	lmf->rbp.
+
 	* exceptions-amd64.c (mono_arch_find_jit_info): Fix the detection of whenever
 	the top LMF entry belongs to the current method.
 
