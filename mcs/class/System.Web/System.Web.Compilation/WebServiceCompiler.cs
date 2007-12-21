@@ -40,9 +40,6 @@ namespace System.Web.Compilation
 	class WebServiceCompiler : BaseCompiler
 	{
 		SimpleWebHandlerParser parser;
-		ICodeCompiler compiler;
-		CodeDomProvider provider;
-		CompilerParameters compilerParameters;
 		string inputFile;
 
 		public WebServiceCompiler (SimpleWebHandlerParser wService)
@@ -70,56 +67,30 @@ namespace System.Web.Compilation
 			}
 
 			string lang = parser.Language;
-#if NET_2_0
-			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-			Compiler comp = config.Compilers[lang];
+			string compilerOptions;
+			string tempdir;
+			int warningLevel;
 
-			string compilerOptions = "";
-			int warningLevel = 0;
-
-			if (comp == null) {
-				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
-				if (info != null && info.IsCodeDomProviderTypeValid)
-					provider = info.CreateProvider ();
-
-				// XXX there's no way to get
-				// warningLevel or compilerOptions out
-				// of the provider.. they're in the
-				// configuration section, though.
-			} else {
-				Type t = HttpApplication.LoadType (comp.Type, true);
-				provider = Activator.CreateInstance (t) as CodeDomProvider;
-
-				compilerOptions = comp.CompilerOptions;
-				warningLevel = comp.WarningLevel;
-			}
-#else
-			CompilationConfiguration config;
-			config = CompilationConfiguration.GetInstance (parser.Context);
-			provider = config.GetProvider (lang);
-#endif
-			if (provider == null)
+			CodeDomProvider provider;
+			Provider = provider = CreateProvider (parser.Context, lang, out compilerOptions, out warningLevel, out tempdir);
+			if (Provider == null)
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
 
 #if !NET_2_0
-			compiler = provider.CreateCompiler ();
+			Compiler = provider.CreateCompiler ();
 #endif
 
-			compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
+			CompilerParameters compilerParameters;
+			CompilerParameters = compilerParameters = CachingCompiler.GetOptions (parser.Assemblies);
 			compilerParameters.IncludeDebugInformation = parser.Debug;
-#if NET_2_0
-			compilerParameters.CompilerOptions = comp.CompilerOptions;
-			compilerParameters.WarningLevel = comp.WarningLevel;
-#else
-			compilerParameters.CompilerOptions = config.GetCompilerOptions (lang);
-			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
-#endif
+			compilerParameters.CompilerOptions = compilerOptions;
+			compilerParameters.WarningLevel = warningLevel;
 
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 
 			TempFileCollection tempcoll;
-			tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
+			tempcoll = new TempFileCollection (tempdir, keepFiles);
 			compilerParameters.TempFiles = tempcoll;
 
 			inputFile = tempcoll.AddExtension (provider.FileExtension);
@@ -158,14 +129,6 @@ namespace System.Web.Compilation
 
 		internal new SimpleWebHandlerParser Parser {
 			get { return parser; }
-		}
-
-		internal override ICodeCompiler Compiler {
-			get { return compiler; }
-		}
-
-		internal CompilerParameters CompilerOptions {
-			get { return compilerParameters; }
 		}
 
 		internal string InputFile {

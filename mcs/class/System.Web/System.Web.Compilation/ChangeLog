@@ -1,3 +1,17 @@
+2007-12-21  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseCompiler.cs: Refactoring. Move the provider creation code to
+	an internal static method, so that other piece of code which need
+	to create the provider can do it using the same code. 
+	Added setters to several internal properties, so that they can be
+	shared with derivative classes.
+
+	* WebServiceCompiler.cs: adjust to the changes above. Fixes bug
+	#350398.
+
+	* CachingCompiler.cs: adjust to the changes above. Also some
+	refactoring.
+
 2007-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: do not instantiate CodeDomProvider twice.

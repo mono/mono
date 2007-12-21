@@ -66,7 +66,6 @@ namespace System.Web.Compilation
 
 		protected BaseCompiler (TemplateParser parser)
 		{
-			compilerParameters = new CompilerParameters ();
 			this.parser = parser;
 		}
 
@@ -184,15 +183,6 @@ namespace System.Web.Compilation
 			CreateConstructor (null, null);
 		}
 
-#if NET_2_0
-		internal CodeDomProvider Provider {
-			get { return provider; }
-		}
-
-		internal CodeCompileUnit CompileUnit {
-			get { return unit; }
-		}
-#endif
 		protected virtual void CreateStaticFields ()
 		{
 			CodeMemberField fld = new CodeMemberField (typeof (bool), "__initialized");
@@ -473,6 +463,52 @@ namespace System.Web.Compilation
 			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 
+		internal static CodeDomProvider CreateProvider (string lang, out string compilerOptions, out int warningLevel, out string tempdir)
+		{
+			return CreateProvider (HttpContext.Current, lang, out compilerOptions, out warningLevel, out tempdir);
+		}
+		
+		internal static CodeDomProvider CreateProvider (HttpContext context, string lang, out string compilerOptions, out int warningLevel, out string tempdir)
+		{
+			CodeDomProvider ret = null;
+			
+#if NET_2_0
+			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			Compiler comp = config.Compilers[lang];
+			
+			if (comp == null) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
+				if (info != null && info.IsCodeDomProviderTypeValid) {
+					ret = info.CreateProvider ();
+
+					CompilerParameters cp = info.CreateDefaultCompilerParameters ();
+					compilerOptions = cp.CompilerOptions;
+					warningLevel = cp.WarningLevel;
+				} else {
+					compilerOptions = String.Empty;
+					warningLevel = 2;
+				}
+			} else {
+				Type t = HttpApplication.LoadType (comp.Type, true);
+				ret = Activator.CreateInstance (t) as CodeDomProvider;
+
+				compilerOptions = comp.CompilerOptions;
+				warningLevel = comp.WarningLevel;
+			}
+#else
+			CompilationConfiguration config;
+
+			config = CompilationConfiguration.GetInstance (context);
+			ret = config.GetProvider (lang);
+
+			compilerOptions = config.GetCompilerOptions (lang);
+			warningLevel = config.GetWarningLevel (lang);
+#endif
+			tempdir = config.TempDirectory;
+
+			return ret;
+		}
+		
 		[MonoTODO ("find out how to extract the warningLevel and compilerOptions in the <system.codedom> case")]
 		public virtual Type GetCompiledType () 
 		{
@@ -482,72 +518,45 @@ namespace System.Web.Compilation
 
 			Init ();
 			string lang = parser.Language;
-#if NET_2_0
-			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-			Compiler comp = config.Compilers[lang];
+			string tempdir;
+			string compilerOptions;
+			int warningLevel;
 
-			string compilerOptions = "";
-			int warningLevel = 0;
-
-			if (comp == null) {
-				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
-				if (info != null && info.IsCodeDomProviderTypeValid)
-					provider = info.CreateProvider ();
-
-				// XXX there's no way to get
-				// warningLevel or compilerOptions out
-				// of the provider.. they're in the
-				// configuration section, though.
-			} else {
-				Type t = HttpApplication.LoadType (comp.Type, true);
-				provider = Activator.CreateInstance (t) as CodeDomProvider;
-
-				compilerOptions = comp.CompilerOptions;
-				warningLevel = comp.WarningLevel;
-			}
-#else
-			CompilationConfiguration config;
-
-			config = CompilationConfiguration.GetInstance (parser.Context);
-			provider = config.GetProvider (lang);
-
-			string compilerOptions = config.GetCompilerOptions (lang);
-			int warningLevel = config.GetWarningLevel (lang);
-#endif
-			if (provider == null)
+			Provider = CreateProvider (parser.Context, lang, out compilerOptions, out warningLevel, out tempdir);
+			if (Provider == null)
 				throw new HttpException ("Configuration error. Language not supported: " +
 							  lang, 500);
 
 #if !NET_2_0
 			compiler = provider.CreateCompiler ();
 #endif
-			
-			compilerParameters.IncludeDebugInformation = parser.Debug;
-			compilerParameters.CompilerOptions = compilerOptions + " " + parser.CompilerOptions;
 
-			compilerParameters.WarningLevel = warningLevel;
+			CompilerParameters parameters = CompilerParameters;
+			parameters.IncludeDebugInformation = parser.Debug;
+			parameters.CompilerOptions = compilerOptions + " " + parser.CompilerOptions;
+			parameters.WarningLevel = warningLevel;
+			
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 
-			string tempdir = config.TempDirectory;
 			if (tempdir == null || tempdir == "")
 				tempdir = DynamicDir ();
 				
 			TempFileCollection tempcoll = new TempFileCollection (tempdir, keepFiles);
-			compilerParameters.TempFiles = tempcoll;
+			parameters.TempFiles = tempcoll;
 			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
-			compilerParameters.OutputAssembly = Path.Combine (DynamicDir (), dllfilename);
+			parameters.OutputAssembly = Path.Combine (DynamicDir (), dllfilename);
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
-				if (!File.Exists (compilerParameters.OutputAssembly)) {
+				if (!File.Exists (parameters.OutputAssembly)) {
 					results.TempFiles.Delete ();
 					throw new CompilationException (parser.InputFile, results.Errors,
 						"No assembly returned after compilation!?");
 				}
 
-				assembly = Assembly.LoadFrom (compilerParameters.OutputAssembly);
+				assembly = Assembly.LoadFrom (parameters.OutputAssembly);
 			}
 
 			results.TempFiles.Delete ();
@@ -635,16 +644,29 @@ namespace System.Web.Compilation
 		}
 #endif
 
-		internal CompilerParameters CompilerParameters {
-			get { return compilerParameters; }
+		internal CodeDomProvider Provider {
+			get { return provider; }
+			set { provider = value; }
 		}
 
-		internal CodeCompileUnit Unit {
-			get { return unit; }
-		}
-
-		internal virtual ICodeCompiler Compiler {
+		internal ICodeCompiler Compiler {
 			get { return compiler; }
+			set { compiler = value; }
+		}		
+
+		internal CompilerParameters CompilerParameters {
+			get {
+				if (compilerParameters == null)
+					compilerParameters = new CompilerParameters ();
+				
+				return compilerParameters;
+			}
+			
+			set { compilerParameters = value; }
+		}
+
+		internal CodeCompileUnit CompileUnit {
+			get { return unit; }
 		}
 
 		internal TemplateParser Parser {

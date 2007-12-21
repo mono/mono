@@ -98,7 +98,7 @@ namespace System.Web.Compilation
 #endif
 				CompilerParameters options = compiler.CompilerParameters;
 				GetExtraAssemblies (options);
-				results = comp.CompileAssemblyFromDom (options, compiler.Unit);
+				results = comp.CompileAssemblyFromDom (options, compiler.CompileUnit);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
 			} finally {
@@ -132,9 +132,10 @@ namespace System.Web.Compilation
 #else
 				ICodeCompiler comp = compiler.Compiler;
 #endif
-				CompilerParameters options = compiler.CompilerOptions;
+				CompilerParameters options = compiler.CompilerParameters;
 
 				GetExtraAssemblies (options);
+				
 				results = comp.CompileAssemblyFromFile (options, compiler.InputFile);
 				string [] deps = (string []) compiler.Parser.Dependencies.ToArray (typeof (string));
 				cache.Insert (key, results, new CacheDependency (deps));
@@ -179,34 +180,11 @@ namespace System.Web.Compilation
 					return results;
 
 				CodeDomProvider provider = null;
-#if NET_2_0
-				CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-				Compiler comp = config.Compilers[language];
+				int warningLevel;
+				string compilerOptions;
+				string tempdir;
 
-				string compilerOptions = "";
-				int warningLevel = 0;
-
-				if (comp == null) {
-					CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
-					if (info != null && info.IsCodeDomProviderTypeValid)
-						provider = info.CreateProvider ();
-
-					// XXX there's no way to get
-					// warningLevel or compilerOptions out
-					// of the provider.. they're in the
-					// configuration section, though.
-				} else {
-					Type t = HttpApplication.LoadType (comp.Type, true);
-					provider = Activator.CreateInstance (t) as CodeDomProvider;
-
-					compilerOptions = comp.CompilerOptions;
-					warningLevel = comp.WarningLevel;
-				}
-#else
-				CompilationConfiguration config;
-				config = CompilationConfiguration.GetInstance (HttpContext.Current);
-				provider = config.GetProvider (language);
-#endif
+				provider = BaseCompiler.CreateProvider (language, out compilerOptions, out warningLevel, out tempdir);
 				if (provider == null)
 					throw new HttpException ("Configuration error. Language not supported: " +
 								  language, 500);
@@ -217,7 +195,10 @@ namespace System.Web.Compilation
 #endif
 				
 				CompilerParameters options = GetOptions (assemblies);
-				TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, true);
+				options.WarningLevel = warningLevel;
+				options.CompilerOptions = compilerOptions;
+				
+				TempFileCollection tempcoll = new TempFileCollection (tempdir, true);
 				string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 				options.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 				results = compiler.CompileAssemblyFromFile (options, file);
