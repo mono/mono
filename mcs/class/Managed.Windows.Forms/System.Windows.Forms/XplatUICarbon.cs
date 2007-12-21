@@ -64,6 +64,7 @@ namespace System.Windows.Forms {
 		// Event handlers
 		internal Carbon.ApplicationHandler ApplicationHandler;
 		internal Carbon.ControlHandler ControlHandler;
+		internal Carbon.HIObjectHandler HIObjectHandler;
 		internal Carbon.KeyboardHandler KeyboardHandler;
 		internal Carbon.MouseHandler MouseHandler;
 		internal Carbon.WindowHandler WindowHandler;
@@ -71,9 +72,11 @@ namespace System.Windows.Forms {
 		// Carbon Specific
 		private static GrabStruct Grab;
 		private static Carbon.Caret Caret;
+		private static Carbon.Dnd Dnd;
 		private static Hashtable WindowMapping;
 		private static Hashtable HandleMapping;
 		private static IntPtr FosterParent;
+		private static IntPtr Subclass;
 		private static int MenuBarHeight;
 
 		// Message loop
@@ -187,6 +190,7 @@ namespace System.Windows.Forms {
 			Carbon.EventHandler.Driver = this;
 			ApplicationHandler = new Carbon.ApplicationHandler (this);
 			ControlHandler = new Carbon.ControlHandler (this);
+			HIObjectHandler = new Carbon.HIObjectHandler (this);
 			KeyboardHandler = new Carbon.KeyboardHandler (this);
 			MouseHandler = new Carbon.MouseHandler (this);
 			WindowHandler = new Carbon.WindowHandler (this);
@@ -206,6 +210,9 @@ namespace System.Windows.Forms {
 			Caret.Timer = new Timer ();
 			Caret.Timer.Interval = 500;
 			Caret.Timer.Tick += new EventHandler (CaretCallback);
+
+			// Initialize the D&D
+			Dnd = new Carbon.Dnd (); 
 			
 			// Initialize the Carbon Specific stuff
 			WindowMapping = new Hashtable ();
@@ -220,6 +227,8 @@ namespace System.Windows.Forms {
 			GetCurrentProcess( ref psn );
 			TransformProcessType (ref psn, 1);
 			SetFrontProcess (ref psn);
+
+			HIObjectRegisterSubclass (__CFStringMakeConstantString ("com.novell.mwfview"), __CFStringMakeConstantString ("com.apple.hiview"), 0, Carbon.EventHandler.EventHandlerDelegate, (uint)Carbon.EventHandler.HIObjectEvents.Length, Carbon.EventHandler.HIObjectEvents, IntPtr.Zero, ref Subclass);
 
 			Carbon.EventHandler.InstallApplicationHandler ();
 
@@ -719,7 +728,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion 
-		
+
 		#region Public Methods
 		internal void EnqueueMessage (MSG msg) {
 			lock (queuelock) {
@@ -797,26 +806,37 @@ namespace System.Windows.Forms {
 		}
 
 		internal override int[] ClipboardAvailableFormats(IntPtr handle) {
-			return null;
+			ArrayList list = new ArrayList ();
+			DataFormats.Format f = DataFormats.Format.List;
+
+			while (f != null) {
+				list.Add (f.Id);
+				f = f.Next;
+			}
+
+			return (int [])list.ToArray (typeof (int));
 		}
 
 		internal override void ClipboardClose(IntPtr handle) {
 		}
 
+		//TODO: Map our internal formats to the right os code where we can
 		internal override int ClipboardGetID(IntPtr handle, string format) {
-			return 0;
+			return (int)__CFStringMakeConstantString (format);
 		}
 
 		internal override IntPtr ClipboardOpen(bool primary_selection) {
-			return IntPtr.Zero;
+			if (primary_selection)
+				return Carbon.Pasteboard.Primary;
+			return Carbon.Pasteboard.Application;
 		}
 
-		internal override object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter) {
-			throw new NotImplementedException();
+		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter) {
+			return Carbon.Pasteboard.Retrieve (handle, type);
 		}
 
 		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
-			throw new NotImplementedException();
+			Carbon.Pasteboard.Store (handle, obj, type);
 		}
 		
 		internal override void CreateCaret (IntPtr hwnd, int width, int height) {
@@ -932,17 +952,20 @@ namespace System.Windows.Forms {
 				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref WindowView);
 				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 7), ref GrowBox);
 				HIGrowBoxViewSetTransparent (GrowBox, true);
+				SetAutomaticControlDragTrackingEnabledForWindow (WindowHandle, true);
 				ParentHandle = WindowView;
 			}
 
-			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref WholeWindow);
-			HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref ClientWindow);
+			HIObjectCreate (__CFStringMakeConstantString ("com.novell.mwfview"), 0, ref WholeWindow);
+			HIObjectCreate (__CFStringMakeConstantString ("com.novell.mwfview"), 0, ref ClientWindow);
 
 			Carbon.EventHandler.InstallControlHandler (WholeWindow);
 			Carbon.EventHandler.InstallControlHandler (ClientWindow);
 
+			// Enable embedding on controls
 			HIViewChangeFeatures (WholeWindow, 1<<1, 0);
 			HIViewChangeFeatures (ClientWindow, 1<<1, 0);
+
 			HIViewNewTrackingArea (WholeWindow, IntPtr.Zero, (UInt64)WholeWindow, ref WholeWindowTracking);
 			HIViewNewTrackingArea (ClientWindow, IntPtr.Zero, (UInt64)ClientWindow, ref ClientWindowTracking);
 			Carbon.HIRect WholeRect;
@@ -960,6 +983,9 @@ namespace System.Windows.Forms {
 
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
+
+			// Allow dnd on controls
+			Dnd.SetAllowDrop (hwnd, true);
 
 			Text (hwnd.Handle, cp.Caption);
 			
@@ -1167,10 +1193,12 @@ namespace System.Windows.Forms {
 			}
 
 			// TODO: This is crashing swf-messageboxes
+			/*
 			if (false && hwnd.whole_window != IntPtr.Zero)
 				CFRelease (hwnd.whole_window);
 			if (false && hwnd.client_window != IntPtr.Zero)
 				CFRelease (hwnd.client_window);
+			*/
 
 			if (WindowMapping [hwnd.Handle] != null) 
 				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
@@ -1736,6 +1764,19 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
+		internal override void SetAllowDrop (IntPtr handle, bool value) {
+			// Like X11 we allow drop on al windows and filter in our handler
+		}
+
+		internal override DragDropEffects StartDrag (IntPtr handle, object data, DragDropEffects allowed_effects) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			
+			if (hwnd == null)
+				throw new ArgumentException ("Attempt to begin drag from invalid window handle (" + handle.ToInt32 () + ").");
+
+			return Dnd.StartDrag (hwnd.client_window, data, allowed_effects);
+		}
+
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			Form form = Control.FromHandle (handle) as Form;
 			if (form != null && form.window_manager == null && (border_style == FormBorderStyle.FixedToolWindow ||
@@ -2067,6 +2108,12 @@ namespace System.Windows.Forms {
 		internal override Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
 		internal override Size MinimumWindowSize { get{ throw new NotImplementedException(); } }
 		internal override Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
+		
+		internal override Keys ModifierKeys {
+			get {
+				return KeyboardHandler.ModifierKeys;
+			}
+		}
 		internal override Size SmallIconSize { get{ throw new NotImplementedException(); } }
 		internal override int MouseButtonCount { get{ throw new NotImplementedException(); } }
 		internal override bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
@@ -2108,6 +2155,8 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIObjectCreate (IntPtr cfStr, uint what, ref IntPtr hwnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static int HIObjectRegisterSubclass (IntPtr classid, IntPtr superclassid, uint options, Carbon.EventDelegate upp, uint count, Carbon.EventTypeSpec [] list, IntPtr state, ref IntPtr cls);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewPlaceInSuperviewAt (IntPtr view, float x, float y);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewAddSubview (IntPtr parentHnd, IntPtr childHnd);
@@ -2142,6 +2191,8 @@ namespace System.Windows.Forms {
 		static extern int ActivateWindow (IntPtr windowHnd, bool inActivate);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern bool IsWindowActive (IntPtr windowHnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int SetAutomaticControlDragTrackingEnabledForWindow (IntPtr window, bool enabled);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static IntPtr GetEventDispatcherTarget ();
@@ -2165,7 +2216,7 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int ChangeWindowAttributes (IntPtr hWnd, Carbon.WindowAttributes inAttributes, Carbon.WindowAttributes outAttributes);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int GetGlobalMouse (ref Carbon.QDPoint outData);
+		internal extern static int GetGlobalMouse (ref Carbon.QDPoint outData);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int BeginAppModalStateForWindow (IntPtr window);
@@ -2189,7 +2240,7 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int SetWindowTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static IntPtr __CFStringMakeConstantString (string cString);
+		internal extern static IntPtr __CFStringMakeConstantString (string cString);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int CFRelease (IntPtr wHnd);
