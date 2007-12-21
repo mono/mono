@@ -1443,30 +1443,30 @@ namespace System.Windows.Forms
 			switch (navigation) {
 
 			case ItemNavigation.PreviousColumn: {
-				if (FocusedItem - RowCount < 0) {
+				if (SelectedIndex - RowCount < 0) {
 					return -1;
 				}
 
-				if (FocusedItem - RowCount < top_index) {
-					top_index = FocusedItem - RowCount;
+				if (SelectedIndex - RowCount < top_index) {
+					top_index = SelectedIndex - RowCount;
 					UpdateTopItem ();
 				}
 					
-				selected_index = FocusedItem - RowCount;
+				selected_index = SelectedIndex - RowCount;
 				break;
 			}
 			
 			case ItemNavigation.NextColumn: {
-				if (FocusedItem + RowCount >= Items.Count) {
+				if (SelectedIndex + RowCount >= Items.Count) {
 					break;
 				}
 
-				if (FocusedItem + RowCount > last_visible_index) {
-					top_index = FocusedItem;
+				if (SelectedIndex + RowCount > last_visible_index) {
+					top_index = SelectedIndex;
 					UpdateTopItem ();
 				}
 					
-				selected_index = FocusedItem + RowCount;					
+				selected_index = SelectedIndex + RowCount;					
 				break;
 			}
 
@@ -1493,19 +1493,19 @@ namespace System.Windows.Forms
 			}
 
 			case ItemNavigation.Next: {
-				if (FocusedItem == Items.Count - 1)
+				if (SelectedIndex == Items.Count - 1)
 					return -1;
 
 				int bottom = 0;
 				ArrayList heights = new ArrayList ();
 				if (draw_mode == DrawMode.OwnerDrawVariable) {
-					for (int i = top_index; i <= FocusedItem + 1; i++) {
+					for (int i = top_index; i <= SelectedIndex + 1; i++) {
 						int h = GetItemHeight (i);
 						bottom += h;
 						heights.Add (h);
 					}
 				} else {
-					bottom = ((FocusedItem + 1) - top_index + 1) * ItemHeight;
+					bottom = ((SelectedIndex + 1) - top_index + 1) * ItemHeight;
 				}
 
 				if (bottom >= items_area.Height) {
@@ -1520,17 +1520,17 @@ namespace System.Windows.Forms
 					top_index += offset;
 					UpdateTopItem ();						
 				}
-				selected_index = FocusedItem + 1;
+				selected_index = SelectedIndex + 1;
 				break;
 			}
 
 			case ItemNavigation.Previous: {
-				if (FocusedItem > 0) {
-					if (FocusedItem - 1 < top_index) {
+				if (SelectedIndex > 0) {
+					if (SelectedIndex - 1 < top_index) {
 						top_index--;
 						UpdateTopItem ();
 					}
-					selected_index = FocusedItem - 1;
+					selected_index = SelectedIndex - 1;
 				}					
 				break;
 			}
@@ -1541,18 +1541,18 @@ namespace System.Windows.Forms
 					break;
 				}
 
-				if (FocusedItem + page_size - 1 >= Items.Count) {
+				if (SelectedIndex + page_size - 1 >= Items.Count) {
 					top_index = Items.Count - page_size;
 					UpdateTopItem ();
 					selected_index = Items.Count - 1;						
 				}
 				else {
-					if (FocusedItem + page_size - 1  > last_visible_index) {
-						top_index = FocusedItem;
+					if (SelectedIndex + page_size - 1  > last_visible_index) {
+						top_index = SelectedIndex;
 						UpdateTopItem ();
 					}
 					
-					selected_index = FocusedItem + page_size - 1;						
+					selected_index = SelectedIndex + page_size - 1;						
 				}
 					
 				break;
@@ -1561,19 +1561,19 @@ namespace System.Windows.Forms
 			case ItemNavigation.PreviousPage: {
 					
 				int rows = items_area.Height / ItemHeight;
-				if (FocusedItem - (rows - 1) <= 0) {
+				if (SelectedIndex - (rows - 1) <= 0) {
 																		
 					top_index = 0;					
 					UpdateTopItem ();					
 					SelectedIndex = 0;					
 				}
 				else { 
-					if (FocusedItem - (rows - 1)  < top_index) {
-						top_index = FocusedItem - (rows - 1);
+					if (SelectedIndex - (rows - 1)  < top_index) {
+						top_index = SelectedIndex - (rows - 1);
 						UpdateTopItem ();						
 					}
 					
-					selected_index = FocusedItem - (rows - 1);
+					selected_index = SelectedIndex - (rows - 1);
 				}
 					
 				break;
@@ -1588,8 +1588,13 @@ namespace System.Windows.Forms
 		
 		private void OnGotFocus (object sender, EventArgs e) 			
 		{			
-			if (FocusedItem != -1)
-				InvalidateItem (FocusedItem);
+			if (Items.Count == 0)
+				return;
+
+			if (FocusedItem == -1)
+				FocusedItem = 0;
+
+			InvalidateItem (FocusedItem);
 		}		
 		
 		private void OnLostFocus (object sender, EventArgs e) 			
@@ -1604,7 +1609,7 @@ namespace System.Windows.Forms
 			if (!Char.IsLetterOrDigit (c))
 				return false;
 
-			int idx = FindString (c.ToString (), FocusedItem);
+			int idx = FindString (c.ToString (), SelectedIndex);
 			if (idx != ListBox.NoMatches)
 				SelectedIndex = idx;
 
