@@ -553,11 +553,7 @@ namespace Mono.CSharp {
 			bool params_method = pd.HasParams;
 			bool is_params_applicable = false;
 			me.DelegateType = delegate_type;
-			bool is_applicable = me.IsApplicable (ec, args, arg_count, ref mb) == 0;
-
-			if (!is_applicable && params_method &&
-			    me.IsParamsMethodApplicable (ec, args, arg_count, ref mb))
-				is_applicable = is_params_applicable = true;
+			bool is_applicable = me.IsApplicable (ec, args, arg_count, ref mb, ref is_params_applicable) == 0;
 
 			if (!is_applicable && !params_method && arg_count != pd_count) {
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",

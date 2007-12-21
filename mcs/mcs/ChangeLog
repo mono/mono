@@ -1,3 +1,8 @@
+2007-12-21  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, generic.cs, delegate.cs: Refactoring of method overloading code
+	and logic for params overloads.
+	
 2007-12-15  Miguel de Icaza  <miguel@novell.com>
 
 	* generic.cs (NullCoalescingOperator.CloneTo): implement this one,

@@ -3607,7 +3607,7 @@ namespace Mono.CSharp {
 		}
 
 		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
-													Argument a, ParameterData expected_par)
+													Argument a, ParameterData expected_par, Type paramType)
 		{
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
 				Report.SymbolRelatedToPreviousError (method);
@@ -3639,12 +3639,12 @@ namespace Mono.CSharp {
 						index, Parameter.GetModifierSignature (mod));
 			} else {
 				string p1 = Argument.FullDesc (a);
-				string p2 = TypeManager.CSharpName (expected_par.ParameterType (idx));
+				string p2 = TypeManager.CSharpName (paramType);
 
 				if (p1 == p2) {
 					Report.ExtraInformation (loc, "(equally named types possibly from different assemblies in previous ");
 					Report.SymbolRelatedToPreviousError (a.Expr.Type);
-					Report.SymbolRelatedToPreviousError (expected_par.ParameterType (idx));
+					Report.SymbolRelatedToPreviousError (paramType);
 				}
 				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
 			}
@@ -3669,15 +3669,19 @@ namespace Mono.CSharp {
 		/// 0 = the best, int.MaxValue = the worst
 		///
 		public int IsApplicable (EmitContext ec,
-						 ArrayList arguments, int arg_count, ref MethodBase method)
+						 ArrayList arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
 		{
 			MethodBase candidate = method;
 
 			ParameterData pd = TypeManager.GetParameterData (candidate);
 			int param_count = GetApplicableParametersCount (candidate, pd);
 
-			if (arg_count != param_count)
-				return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+			if (arg_count != param_count) {
+				if (!pd.HasParams)
+					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+				if (arg_count < param_count - 1)
+					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+			}
 
 #if GMCS_SOURCE
 			//
@@ -3711,40 +3715,82 @@ namespace Mono.CSharp {
 			//
 			// 2. Each argument has to be implicitly convertible to method parameter
 			//
-			for (int i = arg_count; i > 0; ) {
-				i--;
-
+			Parameter.Modifier p_mod = 0;
+			Type pt = null;
+			for (int i = 0; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
-
 				Parameter.Modifier a_mod = a.Modifier &
 					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK | Parameter.Modifier.PARAMS);
+				if (p_mod != Parameter.Modifier.PARAMS) {
+					p_mod = pd.ParameterModifier (i) & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
-				Type pt = pd.ParameterType (i);
+					if (p_mod == Parameter.Modifier.ARGLIST) {
+						if (a.Type == TypeManager.runtime_argument_handle_type)
+							continue;
 
-				// FIXME: Kill this abomination (EmitContext.TempEc)
-				EmitContext prevec = EmitContext.TempEc;
-				EmitContext.TempEc = ec;
-				try {
-					if (pt.IsByRef)
-						pt = pt.GetElementType ();
-					
-					if (delegate_type != null ? 
-						!Delegate.IsTypeCovariant (a.Expr, pt) :
-						!Convert.ImplicitConversionExists (ec, a.Expr, pt))
-						return ++i * 2;
+						p_mod = 0;
+					}
 
-					if (a_mod != p_mod)
-						return ++i * 2 - 1;
-
-				} finally {
-					EmitContext.TempEc = prevec;
+					pt = pd.ParameterType (i);
 				}
+
+				int score = 1;
+				if (!params_expanded_form)
+					score = IsArgumentCompatible (ec, a_mod, a, p_mod & ~Parameter.Modifier.PARAMS, pt);
+
+				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0) {
+					// It can be applicable in expanded form
+					score = IsArgumentCompatible (ec, a_mod, a, 0, pt.GetElementType ());
+					params_expanded_form = true;
+				}
+
+				if (score != 0)
+					return (arg_count - i) * 2 + score;
 			}
 
+			if (arg_count != param_count)
+				params_expanded_form = true;			
+			
 			method = candidate;			
+			return 0;
+		}
+
+		int IsArgumentCompatible (EmitContext ec, Parameter.Modifier arg_mod, Argument argument, Parameter.Modifier param_mod, Type parameter)
+		{
+			//
+			// Types have to be identical when ref or out modifer is used 
+			//
+			if (arg_mod != 0 || param_mod != 0) {
+				if (TypeManager.HasElementType (parameter))
+					parameter = parameter.GetElementType ();
+
+				Type a_type = argument.Type;
+				if (TypeManager.HasElementType (a_type))
+					a_type = a_type.GetElementType ();
+
+				if (a_type != parameter)
+					return 2;
+
+				return 0;
+			}
+
+			// FIXME: Kill this abomination (EmitContext.TempEc)
+			EmitContext prevec = EmitContext.TempEc;
+			EmitContext.TempEc = ec;
+			try {
+				if (delegate_type != null ?
+					!Delegate.IsTypeCovariant (argument.Expr, parameter) :
+					!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
+					return 2;
+
+				if (arg_mod != param_mod)
+					return 1;
+
+			} finally {
+				EmitContext.TempEc = prevec;
+			}
+
 			return 0;
 		}
 
@@ -3772,125 +3818,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
-		public bool IsParamsMethodApplicable (EmitContext ec,
-							     ArrayList arguments, int arg_count,
-							     ref MethodBase candidate)
-		{
-			return IsParamsMethodApplicable (
-				ec, arguments, arg_count, false, ref candidate) ||
-				IsParamsMethodApplicable (
-					ec, arguments, arg_count, true, ref candidate);
-
-
-		}
-
-		bool IsParamsMethodApplicable (EmitContext ec,
-						      ArrayList arguments, int arg_count,
-						      bool do_varargs, ref MethodBase candidate)
-		{
-#if GMCS_SOURCE
-			if (type_arguments == null &&
-			    !TypeManager.InferParamsTypeArguments (ec, arguments, ref candidate))
-				return false;
-
-			if (TypeManager.IsGenericMethodDefinition (candidate))
-				throw new InternalErrorException ("a generic method definition took part in overload resolution");
-#endif
-
-			return IsParamsMethodApplicable (
-				ec, arguments, arg_count, candidate, do_varargs);
-		}
-
-		/// <summary>
-		///   Determines if the candidate method, if a params method, is applicable
-		///   in its expanded form to the given set of arguments
-		/// </summary>
-		bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
-						      int arg_count, MethodBase candidate,
-						      bool do_varargs)
-		{
-			ParameterData pd = TypeManager.GetParameterData (candidate);
-			int pd_count = GetApplicableParametersCount (candidate, pd);
-			if (pd_count == 0)
-				return false;
-
-			int count = pd_count - 1;
-			if (do_varargs) {
-				if (pd.ParameterModifier (count) != Parameter.Modifier.ARGLIST)
-					return false;
-				if (pd_count != arg_count)
-					return false;
-
-				if (!(((Argument) arguments [count]).Expr is Arglist))
-					return false;
-				--pd_count;
-			} else {
-				if (!pd.HasParams)
-					return false;
-			}
-			
-			if (count > arg_count)
-				return false;
-			
-			if (pd_count == 1 && arg_count == 0)
-				return true;
-
-			//
-			// If we have come this far, the case which
-			// remains is when the number of parameters is
-			// less than or equal to the argument count.
-			//
-			int argument_index = 0;
-			Argument a;
-			for (int i = 0; i < pd_count; ++i) {
-
-				if ((pd.ParameterModifier (i) & Parameter.Modifier.PARAMS) != 0) {
-					Type element_type = TypeManager.GetElementType (pd.ParameterType (i));
-					int params_args_count = arg_count - pd_count;
-					if (params_args_count < 0)
-						continue;
-
-					do {
-						a = (Argument) arguments [argument_index++];
-
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
-							return false;
-					} while (params_args_count-- > 0);
-					continue;
-				}
-
-				a = (Argument) arguments [argument_index++];
-
-				Parameter.Modifier a_mod = a.Modifier & 
-					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
-				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					(unchecked (~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK)));
-
-				if (a_mod == p_mod) {
-
-					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec,
-							a.Expr,
-							pd.ParameterType (i)))
-							return false;
-
-					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
-						Type pt = pd.ParameterType (i);
-
-						if (!pt.IsByRef)
-							pt = TypeManager.GetReferenceType (pt);
-						
-						if (pt != a.Type)
-							return false;
-					}
-				} else
-					return false;
-				
-			}
-
-			return true;
-		}		
 		
 		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2, Location loc)
 		{
@@ -4086,18 +4013,9 @@ namespace Mono.CSharp {
 
 				//
 				// Check if candidate is applicable (section 14.4.2.1)
-				//   Is candidate applicable in normal form?
 				//
-				int candidate_rate = IsApplicable (ec, Arguments, arg_count, ref Methods [i]);
-
-				if (candidate_rate != 0 && IsParamsMethodApplicable (ec, Arguments, arg_count, ref Methods [i])) {
-					MethodBase candidate = Methods [i];
-					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
-					candidate_to_form [candidate] = candidate;
-					// Candidate is applicable in expanded form
-					candidate_rate = 0;
-				}
+				bool params_expanded_form = false;
+				int candidate_rate = IsApplicable (ec, Arguments, arg_count, ref Methods [i], ref params_expanded_form);
 
 				if (candidate_rate < best_candidate_rate) {
 					best_candidate_rate = candidate_rate;
@@ -4111,6 +4029,13 @@ namespace Mono.CSharp {
 				}
 
 				msg_recorder = null;
+
+				if (params_expanded_form) {
+					if (candidate_to_form == null)
+						candidate_to_form = new PtrHashtable ();
+					MethodBase candidate = Methods [i];
+					candidate_to_form [candidate] = candidate;
+				}
 
 				candidates.Add (Methods [i]);
 
@@ -4356,74 +4281,77 @@ namespace Mono.CSharp {
 			type_arguments = ta;
 		}
 
-		public bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
+		public bool VerifyArgumentsCompat (EmitContext ec, ArrayList arguments,
 							  int arg_count, MethodBase method,
 							  bool chose_params_expanded,
 							  bool may_fail, Location loc)
 		{
 			ParameterData pd = TypeManager.GetParameterData (method);
-			int param_count = GetApplicableParametersCount (method, pd);
 
-			int j;
+			int errors = Report.Errors;
+			Parameter.Modifier p_mod = 0;
+			Type pt = null;
 			int a_idx = 0;
 			Argument a = null;
-			int errors = Report.Errors;
-			for (j = 0; j < param_count; j++) {
-				Type parameter_type = pd.ParameterType (j);
-				Parameter.Modifier pm = pd.ParameterModifier (j);
+			for (; a_idx < arg_count; a_idx++) {
+				a = (Argument) arguments [a_idx];
+				if (p_mod != Parameter.Modifier.PARAMS) {
+					p_mod = pd.ParameterModifier (a_idx);
+					pt = pd.ParameterType (a_idx);
 
-				if (pm == Parameter.Modifier.ARGLIST) {
-					a = (Argument) Arguments [a_idx];
-					if (!(a.Expr is Arglist))
-						break;
-					++a_idx;
-					continue;
-				}
-
-				int params_arg_count = 1;
-				if (pm == Parameter.Modifier.PARAMS) {
-					pm = Parameter.Modifier.NONE;
-					params_arg_count = arg_count - param_count + 1;
-					if (chose_params_expanded)
-						parameter_type = TypeManager.GetElementType (parameter_type);
-				}
-
-				while (params_arg_count > 0) {
-					a = (Argument) Arguments [a_idx];
-					if (pm != a.Modifier)
-						break;
-
-					if (!TypeManager.IsEqual (a.Type, parameter_type)) {
-						if (pm == Parameter.Modifier.OUT || pm == Parameter.Modifier.REF)
+					if (p_mod == Parameter.Modifier.ARGLIST) {
+						if (a.Type != TypeManager.runtime_argument_handle_type)
 							break;
-
-						Expression conv = Convert.ImplicitConversion (ec, a.Expr, parameter_type, loc);
-						if (conv == null)
-							break;
-
-						// Update the argument with the implicit conversion
-						if (a.Expr != conv)
-							a.Expr = conv;
+						continue;
 					}
 
-					--params_arg_count;
-					++a_idx;
+					if (pt.IsPointer && !ec.InUnsafe) {
+						if (may_fail)
+							return false;
+
+						UnsafeError (loc);
+					}
+
+					if (p_mod == Parameter.Modifier.PARAMS) {
+						if (chose_params_expanded)
+							pt = TypeManager.GetElementType (pt);
+					} else if (p_mod != 0) {
+						pt = TypeManager.GetElementType (pt);
+					}
 				}
-				if (params_arg_count > 0)
+
+				//
+				// Types have to be identical when ref or out modifer is used 
+				//
+				if (a.Modifier != 0 || (p_mod & ~Parameter.Modifier.PARAMS) != 0) {
+					if ((p_mod & ~Parameter.Modifier.PARAMS) != a.Modifier)
+						break;
+
+					if (!TypeManager.IsEqual (a.Expr.Type, pt))
+						break;
+
+					continue;
+				}
+		
+				if (TypeManager.IsEqual (a.Type, pt))
+					continue;
+				
+				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+				if (conv == null)
 					break;
 
-				if (parameter_type.IsPointer && !ec.InUnsafe) {
-					if (!may_fail)
-						UnsafeError (loc);
-					return false;
-				}
+				if (!chose_params_expanded && (p_mod & Parameter.Modifier.PARAMS) != 0 && a.Type == TypeManager.null_type)
+					conv.Type = pd.ParameterType (a_idx);
+
+				// Update the argument with the implicit conversion
+				a.Expr = conv;
 			}
 
 			if (a_idx == arg_count)
 				return true;
 
 			if (!may_fail && Report.Errors == errors)
-				Error_InvalidArguments (ec, loc, a_idx, method, a, pd);
+				Error_InvalidArguments (ec, loc, a_idx, method, a, pd, pt);
 			return false;
 		}
 	}

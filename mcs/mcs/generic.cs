@@ -2377,22 +2377,38 @@ namespace Mono.CSharp {
 		public override Type[] InferMethodArguments (EmitContext ec, MethodBase method)
 		{
 			ParameterData pd = TypeManager.GetParameterData (method);
-			if (arg_count != pd.Count)
-				return null;
-
 			Type[] method_generic_args = method.GetGenericArguments ();
-			Type[] arg_types = new Type[pd.Count];
-			for (int i = 0; i < arg_count; i++) {
+			Type [] inferred_types = new Type [method_generic_args.Length];
+			Type[] arg_types = new Type [pd.Count];
+
+			int a_count = arg_types.Length;
+			if (pd.HasParams)
+				--a_count;
+
+			for (int i = 0; i < a_count; i++) {
 				Argument a = (Argument) arguments[i];
 				if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr || a.Expr is AnonymousMethodExpression)
 					continue;
 
-				arg_types[i] = a.Type;
+				if (!TypeInferenceV2.UnifyType (pd.ParameterType (i), a.Type, inferred_types))
+					return null;
 			}
 
-			Type[] inferred_types = new Type [method_generic_args.Length];
-			if (!InferTypeArguments (pd.Types, arg_types, inferred_types))
-				return null;
+			if (pd.HasParams) {
+				Type element_type = TypeManager.GetElementType (pd.ParameterType (a_count));
+				for (int i = a_count; i < arg_count; i++) {
+					Argument a = (Argument) arguments [i];
+					if (a.Expr is NullLiteral || a.Expr is MethodGroupExpr || a.Expr is AnonymousMethodExpression)
+						continue;
+
+					if (!TypeInferenceV2.UnifyType (element_type, a.Type, inferred_types))
+						return null;
+				}
+			}
+
+			for (int i = 0; i < inferred_types.Length; i++)
+				if (inferred_types [i] == null)
+					return null;
 
 			return inferred_types;
 		}
