@@ -3733,6 +3733,8 @@ namespace Mono.CSharp {
 					}
 
 					pt = pd.ParameterType (i);
+				} else {
+					params_expanded_form = true;
 				}
 
 				int score = 1;
@@ -3742,13 +3744,14 @@ namespace Mono.CSharp {
 				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0) {
 					// It can be applicable in expanded form
 					score = IsArgumentCompatible (ec, a_mod, a, 0, pt.GetElementType ());
-					params_expanded_form = true;
+					if (score == 0)
+						params_expanded_form = true;
 				}
 
 				if (score != 0)
 					return (arg_count - i) * 2 + score;
 			}
-
+			
 			if (arg_count != param_count)
 				params_expanded_form = true;			
 			
@@ -4021,6 +4024,13 @@ namespace Mono.CSharp {
 					best_candidate_rate = candidate_rate;
 					best_candidate = Methods [i];
 				}
+				
+				if (params_expanded_form) {
+					if (candidate_to_form == null)
+						candidate_to_form = new PtrHashtable ();
+					MethodBase candidate = Methods [i];
+					candidate_to_form [candidate] = candidate;
+				}
 
 				if (candidate_rate != 0) {
 					if (msg_recorder != null)
@@ -4029,14 +4039,6 @@ namespace Mono.CSharp {
 				}
 
 				msg_recorder = null;
-
-				if (params_expanded_form) {
-					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
-					MethodBase candidate = Methods [i];
-					candidate_to_form [candidate] = candidate;
-				}
-
 				candidates.Add (Methods [i]);
 
 				if (applicable_type == null)
@@ -4100,8 +4102,9 @@ namespace Mono.CSharp {
 					}
 					
 					ParameterData pd = TypeManager.GetParameterData (best_candidate);
-					if (arg_count == pd.Count) {
-						if (VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, false, may_fail, loc))
+					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+					if (arg_count == pd.Count || pd.HasParams) {
+						if (VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
 							throw new InternalErrorException ("Overload verification expected failure");
 						return null;
 					}

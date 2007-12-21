@@ -1,5 +1,9 @@
 2007-12-21  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: Use information about expanded params for error reporting.
+
+2007-12-21  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, generic.cs, delegate.cs: Refactoring of method overloading code
 	and logic for params overloads.
 	
