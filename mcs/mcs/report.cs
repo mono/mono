@@ -331,7 +331,13 @@ namespace Mono.CSharp {
 					msg.Append (" ");
 				}
 				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, message);
-				Stderr.WriteLine (msg.ToString ());
+
+				//
+				// 
+				if (Stderr == Console.Error)
+					Stderr.WriteLine (ColorFormat (msg.ToString ()));
+				else
+					Stderr.WriteLine (msg.ToString ());
 
 				if (extra_info != null) {
 					foreach (string s in extra_info)
@@ -347,6 +353,11 @@ namespace Mono.CSharp {
 				}
 
 				Check (code);
+			}
+
+			public virtual string ColorFormat (string s)
+			{
+				return s;
 			}
 		}
 
@@ -406,8 +417,89 @@ namespace Mono.CSharp {
 			}
 		}
 
+		static int NameToCode (string s)
+		{
+			switch (s){
+			case "black":
+				return 0;
+			case "red":
+				return 1;
+			case "green":
+				return 2;
+			case "yellow":
+				return 3;
+			case "blue":
+				return 4;
+			case "magenta":
+				return 5;
+			case "cyan":
+				return 6;
+			case "grey":
+			case "white":
+				return 7;
+			}
+			return 7;
+		}
+		
+		//
+		// maps a color name to its xterm color code
+		//
+		static string GetForeground (string s)
+		{
+			string highcode;
+
+			if (s.StartsWith ("bright")){
+				highcode = "1;";
+				s = s.Substring (6);
+			} else
+				highcode = "";
+
+			return "\x001b[" + highcode + (30 + NameToCode (s)).ToString () + "m";
+		}
+
+		static string GetBackground (string s)
+		{
+			return "\x001b[" + (40 + NameToCode (s)).ToString () + "m";
+		}
+		
 		sealed class ErrorMessage : AbstractMessage
 		{
+			static string prefix, postfix;
+			
+			static ErrorMessage ()
+			{
+				string term = Environment.GetEnvironmentVariable ("TERM");
+				bool xterm_colors = false;
+				
+				switch (term){
+				case "xterm":
+				case "rxvt":
+				case "rxvt-unicode": 
+					if (Environment.GetEnvironmentVariable ("COLORTERM") != null){
+						xterm_colors = true;
+					}
+					break;
+				}
+				string config = Environment.GetEnvironmentVariable ("MCS_COLORS");
+				if (config == null){
+					config = "red";
+					//config = "brightwhite,red";
+				}
+
+				if (config == "disable")
+					return;
+				
+				if (!xterm_colors)
+					return;
+
+				int p = config.IndexOf (",");
+				if (p == -1)
+					prefix = GetForeground (config);
+				else
+					prefix = GetBackground (config.Substring (p+1)) + GetForeground (config.Substring (0, p));
+				postfix = "\x001b[0m";
+			}
+
 			public ErrorMessage (int code, Location loc, string message, ArrayList extraInfo)
 				: base (code, loc, message, extraInfo)
 			{
@@ -418,6 +510,13 @@ namespace Mono.CSharp {
 			{
 			}
 
+			public override string ColorFormat (string s)
+			{
+				if (prefix != null)
+					return prefix + s + postfix;
+				return s;
+			}
+			
 			public override void Print()
 			{
 				Errors++;
