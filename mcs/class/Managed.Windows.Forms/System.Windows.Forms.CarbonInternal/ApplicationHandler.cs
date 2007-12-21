@@ -50,7 +50,7 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		internal ApplicationHandler (XplatUICarbon driver) : base (driver) {}
 
-		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
+		public bool ProcessEvent (IntPtr callref, IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			switch (kind) {
 				case kEventAppDeactivated: {
 					if (XplatUICarbon.FocusWindow != IntPtr.Zero) {

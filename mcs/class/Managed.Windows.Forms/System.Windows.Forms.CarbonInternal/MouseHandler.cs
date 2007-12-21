@@ -47,7 +47,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		
 		internal MouseHandler (XplatUICarbon driver) : base (driver) {}
 
-		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
+		public bool ProcessEvent (IntPtr callref, IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			QDPoint qdpoint = new QDPoint ();
 			CGPoint point = new CGPoint ();
 			Rect window_bounds = new Rect ();
@@ -81,7 +81,7 @@ namespace System.Windows.Forms.CarbonInternal {
 				client = true;
 			}
 			if (hwnd == null)
-				return false;
+				return true;
 
 			Driver.ScreenToClient (hwnd.Handle, ref qdpoint);
 

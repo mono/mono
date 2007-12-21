@@ -86,14 +86,16 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventParamCGContextRef = 1668183160;
 		internal const uint kEventParamDirectObject = 757935405;
 		internal const uint kEventParamControlPart = 1668313716;
+		internal const uint kEventParamControlLikesDrag = 1668047975;
 		internal const uint typeControlRef = 1668575852;
 		internal const uint typeCGContextRef = 1668183160;
 		internal const uint typeQDPoint = 1363439732;
 		internal const uint typeControlPartCode = 1668313716;
+		internal const uint typeBoolean = 1651470188;
 
 		internal ControlHandler (XplatUICarbon driver) : base (driver) {}
 
-		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
+		public bool ProcessEvent (IntPtr callref, IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			Hwnd hwnd;
 			bool client;
 
@@ -108,7 +110,7 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			switch (kind) {
 				case kEventControlDraw: {
-					//FIXME: This is a hack which masks our over-redraw-expose problem
+					//TODO: This is a hack which masks our over-redraw-expose problem
 					if (client) {
 						HIRect bounds = new HIRect ();
 						HIViewGetBounds (handle, ref bounds);
@@ -175,6 +177,11 @@ namespace System.Windows.Forms.CarbonInternal {
 					SetEventParameter (eventref, kEventParamControlPart, typeControlPartCode, (uint)Marshal.SizeOf (typeof (short)), ref pcode);
 					return false;
 				}
+				case kEventControlDragEnter: 
+				case kEventControlDragWithin: 
+				case kEventControlDragLeave: 
+				case kEventControlDragReceive: 
+					return Dnd.HandleEvent (callref, eventref, handle, kind, ref msg);
 			}
 			return false;
 		}
@@ -232,6 +239,5 @@ namespace System.Windows.Forms.CarbonInternal {
 		static extern int CGContextSetRGBFillColor (IntPtr cgContext, float r, float g, float b, float alpha);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int CGContextFillRect (IntPtr context, HIRect rect);
-
 	}
 }

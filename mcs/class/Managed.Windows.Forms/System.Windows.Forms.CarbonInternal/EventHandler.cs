@@ -52,11 +52,22 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventClassToolbar = 1952604530;
 		internal const uint kEventClassToolbarItem = 1952606580;
 		internal const uint kEventClassAccessibility = 1633903461;
+		internal const uint kEventClassHIObject = 1751740258;
 		
+		internal static EventTypeSpec [] HIObjectEvents = new EventTypeSpec [] {
+									new EventTypeSpec (kEventClassHIObject, HIObjectHandler.kEventHIObjectConstruct),
+									new EventTypeSpec (kEventClassHIObject, HIObjectHandler.kEventHIObjectInitialize),
+									new EventTypeSpec (kEventClassHIObject, HIObjectHandler.kEventHIObjectDestruct)
+									};
 		internal static EventTypeSpec [] ControlEvents = new EventTypeSpec [] {
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlBoundsChanged), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDraw),
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDragEnter),
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDragWithin),
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDragLeave),
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlDragReceive),
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlGetFocusPart), 
+									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlInitialize), 
 									new EventTypeSpec (kEventClassControl, ControlHandler.kEventControlVisibilityChanged) 
 									};
 
@@ -88,6 +99,10 @@ namespace System.Windows.Forms.CarbonInternal {
 			IEventHandler handler = null;
 
 			switch (klass) {
+				case kEventClassHIObject: {
+					handler = (IEventHandler) Driver.HIObjectHandler;
+					break;
+				}
 				case kEventClassKeyboard:
 					handler = (IEventHandler) Driver.KeyboardHandler;
 					break;
@@ -107,7 +122,7 @@ namespace System.Windows.Forms.CarbonInternal {
 					return EVENT_NOT_HANDLED;
 			}
 
-			if (handler.ProcessEvent (eventref, handle, kind, ref msg)) {
+			if (handler.ProcessEvent (callref, eventref, handle, kind, ref msg)) {
 				Driver.EnqueueMessage (msg);
 				return EVENT_HANDLED;
 			}

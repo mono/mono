@@ -45,6 +45,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint typeUInt32 = 1835100014;
 
 		UInt32 modifiers = 0;
+		Keys keys = Keys.None;
 
 		internal KeyboardHandler (XplatUICarbon driver) : base (driver) {}
 
@@ -53,21 +54,34 @@ namespace System.Windows.Forms.CarbonInternal {
 			if ((new_modifiers & (uint)KeyboardModifiers.shiftKey) == (uint)KeyboardModifiers.shiftKey && ((modifiers & (uint)KeyboardModifiers.shiftKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_SHIFT;
+				keys |= Keys.Shift;
 			} else if ((new_modifiers & (uint)KeyboardModifiers.shiftKey) == 0 && ((modifiers & (uint)KeyboardModifiers.shiftKey) == (uint)KeyboardModifiers.shiftKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_SHIFT;
+				keys &= ~Keys.Shift;
 			} else if ((new_modifiers & (uint)KeyboardModifiers.rightShiftKey) == (uint)KeyboardModifiers.rightShiftKey && ((modifiers & (uint)KeyboardModifiers.rightShiftKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_SHIFT;
+				keys |= Keys.Shift;
 			} else if ((new_modifiers & (uint)KeyboardModifiers.rightShiftKey) == 0 && ((modifiers & (uint)KeyboardModifiers.rightShiftKey) == (uint)KeyboardModifiers.rightShiftKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_SHIFT;
+				keys &= ~Keys.Shift;
 			} else if ((new_modifiers & (uint)KeyboardModifiers.cmdKey) == (uint)KeyboardModifiers.cmdKey && ((modifiers & (uint)KeyboardModifiers.cmdKey) == 0)) {
 				msg.message = Msg.WM_KEYDOWN;
 				vkey = (int) VirtualKeys.VK_LWIN;
 			} else if ((new_modifiers & (uint)KeyboardModifiers.cmdKey) == 0 && ((modifiers & (uint)KeyboardModifiers.cmdKey) == (uint)KeyboardModifiers.cmdKey)) {
 				msg.message = Msg.WM_KEYUP;
 				vkey = (int) VirtualKeys.VK_LWIN;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.optionKey) == (uint)KeyboardModifiers.optionKey && ((modifiers & (uint)KeyboardModifiers.optionKey) == 0)) {
+				msg.message = Msg.WM_SYSKEYDOWN;
+				msg.lParam = new IntPtr (0x20000000);
+				vkey = (int) VirtualKeys.VK_MENU;
+				keys |= Keys.Alt;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.optionKey) == 0 && ((modifiers & (uint)KeyboardModifiers.optionKey) == (uint)KeyboardModifiers.optionKey)) {
+				msg.message = Msg.WM_SYSKEYUP;
+				vkey = (int) VirtualKeys.VK_MENU;
+				keys &= ~Keys.Alt;
 			} else {
 				vkey = -1;
 				return false;
@@ -96,7 +110,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		}
 
 
-		public bool ProcessEvent (IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
+		public bool ProcessEvent (IntPtr callref, IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			int vkey = -1;
 			bool result = true;
 			byte charCode = 0x0;
@@ -143,6 +157,12 @@ namespace System.Windows.Forms.CarbonInternal {
 			XplatUI.PostMessage (msg.hwnd, message, msg.wParam, msg.lParam);
 			
 			return res;
+		}
+
+		internal Keys ModifierKeys {
+			get {
+				return keys;
+			}
 		}
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

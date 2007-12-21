@@ -1,3 +1,20 @@
+2007-12-21  Geoff Norton  <gnorton@novell.com>
+
+	* *Handler.cs: Update the ProcessEvent method to pass the callref
+	in as well.
+	* ControlHandler.cs: Direct the kEventControlDrag events to our
+	Dnd implementation.
+	* EventHandler.cs: Register kEventControlDrag event callbacks and 
+	HIObject subclassing callbacks.
+	* KeyboardHandler.cs: Keep some key modifiers in a Keys state.
+	* MouseHandler.cs: Dont prevent non-hwnd events from going to the next
+	Event handler.
+	* Dnd.cs: Initial D&D implementation.  Supports dragging internally
+	and from finder->mwf apps.
+	* Pasteboard.cs: Initial clipboard support.
+	* HIObjectHandler.cs: Subclass HIView and run our own specialized
+	native object constructor.  This is required for dnd.
+
 2007-12-07  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHandler.cs: Properly update our invalidated information when
