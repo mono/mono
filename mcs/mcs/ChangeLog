@@ -1,3 +1,8 @@
+2007-12-21  Miguel de Icaza  <miguel@novell.com>
+
+	* report.cs (ErrorMessage): Add support for using colors on
+	terminals that support it. 
+
 2007-12-21  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Use information about expanded params for error reporting.

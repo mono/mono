@@ -482,12 +482,17 @@ namespace Mono.CSharp {
 				}
 				string config = Environment.GetEnvironmentVariable ("MCS_COLORS");
 				if (config == null){
-					config = "red";
+					config = "errors=red";
 					//config = "brightwhite,red";
 				}
 
 				if (config == "disable")
 					return;
+
+				if (!config.StartsWith ("errors"))
+					return;
+
+				config = config.Substring (7);
 				
 				if (!xterm_colors)
 					return;
