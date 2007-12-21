@@ -1,3 +1,7 @@
+2007-12-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CodeGeneratorFromTypeTest.cs: Added PartialTypeTest.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeGeneratorFromTypeTest.cs : added test case for escaped

@@ -1,3 +1,9 @@
+2007-12-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VBCodeGenerator.cs: Split array of keywords in two, one for 1.1 and one
+	  for 2.0. Add some 2.0 specific keywords. When writing a type, escape the
+	  name of the type if necessary. Output "Partial" if a type is partial.
+
 2007-12-14  Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* VBCodeProvider.cs: Implement constructor added in 2.0SP1.

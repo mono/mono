@@ -878,6 +878,17 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Partial Public Class Test1{0}" +
+				"End Class{0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -1364,6 +1375,16 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture, 
 				"Public Delegate Sub A(ByVal param As type){0}", NewLine), code);
 		}
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -2053,6 +2074,17 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Interface{0}", NewLine), code);
 		}
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Partial Public Interface Test1{0}" +
+				"End Interface{0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -2852,6 +2884,17 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Partial Public Structure Test1{0}" +
+				"End Structure{0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -3426,5 +3469,16 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Enum{0}", NewLine), code);
 		}
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Partial Public Enum Test1{0}" +
+				"End Enum{0}", NewLine), code);
+		}
+#endif
 	}
 }

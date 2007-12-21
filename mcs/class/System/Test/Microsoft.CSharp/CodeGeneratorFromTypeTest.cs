@@ -955,6 +955,17 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 #endif
+		
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public partial class Test1 {{{0}" +
+				"}}{0}", NewLine), code);
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -1439,6 +1450,17 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public delegate void Test1();{0}"
+				, NewLine), code);
+		}
+#endif
+		
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -2191,6 +2213,16 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public partial interface Test1 {{{0}" +
+				"}}{0}", NewLine), code);
+		}
+#endif
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -3031,6 +3063,16 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public partial struct Test1 {{{0}" +
+				"}}{0}", NewLine), code);
+		}
+#endif
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -3684,6 +3726,17 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 
+#if NET_2_0
+		[Test]
+		public override void PartialTypeTest ()
+		{
+			string code = GeneratePartialType (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1 {{{0}" +
+				"}}{0}", NewLine), code);
+		}
+#endif
+		
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 }

@@ -1,3 +1,7 @@
+2007-12-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CodeGeneratorFromTypeTestBase.cs: Added PartialTypeTest.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeGeneratorFromTypeTestBase.cs :

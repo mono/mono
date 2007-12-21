@@ -56,6 +56,45 @@ namespace Microsoft.VisualBasic
 {
 	internal class VBCodeGenerator : CodeGenerator
 	{
+#if NET_2_0
+		private string[] Keywords = new string[] {
+			"AddHandler", "AddressOf", "Alias", "And",
+			"AndAlso", "Ansi", "As", "Assembly",
+			"Auto", "Boolean", "ByRef", "Byte", 
+			"ByVal", "Call", "Case", "Catch", 
+			"CBool", "CByte", "CChar", "CDate", 
+			"CDec", "CDbl", "Char", "CInt", 
+			"Class", "CLng", "CObj", "Const", 
+			"CShort", "CSng", "CStr", "CType", 
+			"Date", "Decimal", "Declare", "Default", 
+			"Delegate", "Dim", "DirectCast", "Do", 
+			"Double", "Each", "Else", "ElseIf", 
+			"End", "Enum", "Erase", "Error", 
+			"Event", "Exit", "False", "Finally", 
+			"For", "Friend", "Function", "Get", 
+			"GetType", "Global", "GoSub", "GoTo", "Handles", 
+			"If", "Implements", "Imports", "In", 
+			"Inherits", "Integer", "Interface", "Is", 
+			"Let", "Lib", "Like", "Long", 
+			"Loop", "Me", "Mod", "Module", 
+			"MustInherit", "MustOverride", "MyBase", "MyClass", 
+			"Namespace", "New", "Next", "Not", 
+			"Nothing", "NotInheritable", "NotOverridable", "Object", 
+			"On", "Option", "Optional", "Or", 
+			"OrElse", "Overloads", "Overridable", "Overrides", 
+			"ParamArray", "Partial", "Preserve", "Private", "Property", 
+			"Protected", "Public", "RaiseEvent", "ReadOnly", 
+			"ReDim", "REM", "RemoveHandler", "Resume", 
+			"Return", "Select", "Set", "Shadows", 
+			"Shared", "Short", "Single", "Static", 
+			"Step", "Stop", "String", "Structure", 
+			"Sub", "SyncLock", "Then", "Throw", 
+			"To", "True", "Try", "TypeOf", 
+			"Unicode", "Until", "Variant", "When", 
+			"While", "With", "WithEvents", "WriteOnly", 
+			"Xor" 
+		};
+#else
 		private string[] Keywords = new string[] {
 			"AddHandler", "AddressOf", "Alias", "And",
 			"AndAlso", "Ansi", "As", "Assembly",
@@ -93,6 +132,7 @@ namespace Microsoft.VisualBasic
 			"While", "With", "WithEvents", "WriteOnly", 
 			"Xor" 
 		};
+#endif
 
 		public VBCodeGenerator()
 		{
@@ -979,7 +1019,7 @@ namespace Microsoft.VisualBasic
 					output.Write ("Delegate Function ");
 				}
 
-				output.Write (delegateDecl.Name);
+				output.Write (CreateEscapedIdentifier (delegateDecl.Name));
 				output.Write ("(");
 				OutputParameters (delegateDecl.Parameters);
 				Output.Write (")");
@@ -991,7 +1031,7 @@ namespace Microsoft.VisualBasic
 			} else {
 				OutputTypeAttributes (declaration);
 
-				output.Write (declaration.Name);
+				output.Write (CreateEscapedIdentifier (declaration.Name));
 
 				if (IsCurrentEnum) {
 					if (declaration.BaseTypes.Count > 0) {
@@ -1357,6 +1397,11 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 			TypeAttributes attributes = declaration.TypeAttributes;
 
+#if NET_2_0
+			if (declaration.IsPartial)
+				output.Write ("Partial ");
+#endif
+			
 			switch (attributes & TypeAttributes.VisibilityMask) {
 				case TypeAttributes.Public:
 				case TypeAttributes.NestedPublic:
