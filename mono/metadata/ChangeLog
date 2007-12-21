@@ -1,3 +1,36 @@
+2007-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added enum value IL_CODE_FLAG_WAS_TARGET, to represent
+	instructions that were target of branches or are at protected block boundaries.
+
+	* verify.c (in_same_block): handle filter clauses.
+
+	* verify.c (is_valid_branch_instruction): added. checks the target of
+	instructions br or brtrue/false.
+
+	* verify.c (is_valid_cmp_branch_instruction): added. checks the target of
+	binary branch instructions such as beq and bge.
+
+	* verify.c (init_stack_with_value): renamed to init_stack_with_value_at_exception_boundary
+	and made it pin the instruction as been part of the exception block.
+
+	* verify.c (do_boolean_branch_op): use is_valid_branch_instruction instead
+	of in_same_block.
+
+ 	* verify.c (do_branch_op): use is_valid_cmp_branch_instruction instead
+	of in_same_block.
+
+	* verify.c (do_ret): ret from a protected block is unverifiable and
+	not invalid.
+
+	* verify.c (do_static_branch): verify br and br.s instructions.
+
+	* verify.c (merge_stacks): add extra param to support detection
+	of branches in the middle of instructions.
+	
+	* verify.c (mono_method_verify): verify branches and exception blocks
+	that target the middle of instructions. Proper verification of br and br.s.
+
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (reflection_methodbuilder_from_ctor_builder): Initialize
