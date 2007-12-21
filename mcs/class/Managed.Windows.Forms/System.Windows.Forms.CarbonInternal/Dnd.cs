@@ -37,6 +37,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Windows.Forms.CarbonInternal {
+	internal delegate void DragTrackingDelegate (short message, IntPtr window, IntPtr data, IntPtr dragref);
+
 	internal class Dnd {
 		internal const uint kEventParamDragRef = 1685217639; 
 		internal const uint typeDragRef = 1685217639;
@@ -45,13 +47,21 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint typeMonoSerializedObject = 1836279154;
 
 		private static DragDropEffects effects = DragDropEffects.None;
+		private static DragTrackingDelegate DragTrackingHandler = new DragTrackingDelegate (TrackingCallback);
+
+		static Dnd () {
+			InstallTrackingHandler (DragTrackingHandler, IntPtr.Zero, IntPtr.Zero);
+		}
 
 		internal Dnd () {
 		}
 
+		internal static void TrackingCallback (short message, IntPtr window, IntPtr data, IntPtr dragref) {
+			XplatUICarbon.GetInstance ().FlushQueue ();
+		}
+	
 		internal static DragDropEffects DragActionsToEffects (UInt32 actions) {
 			DragDropEffects effects = DragDropEffects.None;
-
 			if ((actions & 1) != 0)
 				effects |= DragDropEffects.Copy;
 			if ((actions & (1 << 4)) != 0)
@@ -193,6 +203,9 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			AddDragItemFlavor (dragref, handle, type, ref dataptr, size, 1 << 0);
 		}
+
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int InstallTrackingHandler (DragTrackingDelegate callback, IntPtr window, IntPtr data);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref IntPtr data);

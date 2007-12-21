@@ -1,5 +1,10 @@
 2007-12-21  Geoff Norton  <gnorton@novell.com>
 
+	* Dnd.cs: Flush the message queue during drag callbacks.  This allows
+	queued paints to occur when we're dragging.
+
+2007-12-21  Geoff Norton  <gnorton@novell.com>
+
 	* Dnd.cs: Add support for D&D of objects internally and serialized
 	objects across instances.
 
