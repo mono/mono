@@ -409,8 +409,10 @@ System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
 System.IO.IsolatedStorage/IsolatedStorageFile.cs
+System.IO.IsolatedStorage/MoonIsolatedStorageFile.cs
 System.IO.IsolatedStorage/IsolatedStorageFileEnumerator.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStream.cs
+System.IO.IsolatedStorage/MoonIsolatedStorageFileStream.cs
 System.IO.IsolatedStorage/IsolatedStorageScope.cs
 System.Reflection/AmbiguousMatchException.cs
 System.Reflection/Assembly.cs
