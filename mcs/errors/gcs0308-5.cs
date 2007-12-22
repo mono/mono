@@ -1,4 +1,4 @@
-// CS0308: The non-generic method `Foo' cannot be used with type arguments
+// CS0308: The non-generic method `X.Foo()' cannot be used with the type arguments
 // Line: 12
 
 class X

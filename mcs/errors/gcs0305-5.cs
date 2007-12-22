@@ -1,4 +1,4 @@
-// CS0305: Using the generic method `C.Test<T,Y>(C.Func<T>)' requires `2' type arguments
+// CS0305: Using the generic method `C.Test<T,Y>(C.Func<T>)' requires `2' type argument(s)
 // Line: 14
 
 public class C
