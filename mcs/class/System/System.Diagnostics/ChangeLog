@@ -1,3 +1,9 @@
+2007-12-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Process.cs: In PriorityClass setter, first check whether value is
+	valid and remove LAMESPEC since the documentation has been corrected
+	for .NET 3.5. Code formatting.
+
 2007-12-19  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Check that the process has been started before

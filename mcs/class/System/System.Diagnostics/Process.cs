@@ -209,9 +209,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Process identifier.")]
 		public int Id {
 			get {
-				if (pid == 0) {
+				if (pid == 0)
 					throw new InvalidOperationException ("Process ID has not been set.");
-				}
 
 				return(pid);
 			}
@@ -262,9 +261,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The maximum working set for this process.")]
 		public IntPtr MaxWorkingSet {
 			get {
-				if(HasExited) {
-					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
-				}
+				if(HasExited)
+					throw new InvalidOperationException(
+						"The process " + ProcessName +
+						" (ID " + Id + ") has exited");
 				
 				int min;
 				int max;
@@ -291,28 +291,27 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The minimum working set for this process.")]
 		public IntPtr MinWorkingSet {
 			get {
-				if(HasExited) {
-					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
-				}
+				if(HasExited)
+					throw new InvalidOperationException(
+						"The process " + ProcessName +
+						" (ID " + Id + ") has exited");
 				
 				int min;
 				int max;
-				bool ok=GetWorkingSet_internal(process_handle, out min, out max);
-				if(ok==false) {
+				bool ok= GetWorkingSet_internal (process_handle, out min, out max);
+				if(!ok)
 					throw new Win32Exception();
-				}
-				
-				return((IntPtr)min);
+				return ((IntPtr) min);
 			}
 			set {
-				if(HasExited) {
-					throw new InvalidOperationException("The process " + ProcessName + " (ID " + Id + ") has exited");
-				}
+				if(HasExited)
+					throw new InvalidOperationException(
+						"The process " + ProcessName +
+						" (ID " + Id + ") has exited");
 				
-				bool ok=SetWorkingSet_internal(process_handle, value.ToInt32(), 0, true);
-				if(ok==false) {
+				bool ok = SetWorkingSet_internal (process_handle, value.ToInt32(), 0, true);
+				if (!ok)
 					throw new Win32Exception();
-				}
 			}
 		}
 
@@ -328,10 +327,9 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The modules that are loaded as part of this process.")]
 		public ProcessModuleCollection Modules {
 			get {
-				if(module_collection==null) {
-					module_collection=new ProcessModuleCollection(GetModules_internal(process_handle));
-				}
-
+				if (module_collection == null)
+					module_collection = new ProcessModuleCollection(
+						GetModules_internal (process_handle));
 				return(module_collection);
 			}
 		}
@@ -486,9 +484,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The relative process priority.")]
 		public ProcessPriorityClass PriorityClass {
 			get {
-				if (process_handle == IntPtr.Zero) {
+				if (process_handle == IntPtr.Zero)
 					throw new InvalidOperationException ("Process has not been started.");
-				}
 				
 				int error;
 				int prio = GetPriorityClass (process_handle, out error);
@@ -497,14 +494,14 @@ namespace System.Diagnostics {
 				return (ProcessPriorityClass) prio;
 			}
 			set {
-				if (process_handle == IntPtr.Zero) {
-					throw new InvalidOperationException ("Process has not been started.");
-				}
-				
-				// LAMESPEC: not documented on MSDN for NET_1_1
 				if (!Enum.IsDefined (typeof (ProcessPriorityClass), value))
-					throw new InvalidEnumArgumentException ();
+					throw new InvalidEnumArgumentException (
+						"value", (int) value,
+						typeof (ProcessPriorityClass));
 
+				if (process_handle == IntPtr.Zero)
+					throw new InvalidOperationException ("Process has not been started.");
+				
 				int error;
 				if (!SetPriorityClass (process_handle, (int) value, out error))
 					throw new Win32Exception (error);
@@ -565,9 +562,8 @@ namespace System.Diagnostics {
 					 * null, assume the process
 					 * has exited
 					 */
-					if(process_name==null) {
+					if (process_name == null)
 						throw new SystemException("The process has exited");
-					}
 					
 					/* Strip the suffix (if it
 					 * exists) simplistically
@@ -612,9 +608,9 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard error stream of this process.")]
 		public StreamReader StandardError {
 			get {
-				if (error_stream == null) {
+				if (error_stream == null)
 					throw new InvalidOperationException("Standard error has not been redirected");
-				}
+
 #if NET_2_0
 				if ((async_mode & AsyncModes.AsyncError) != 0)
 					throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
@@ -632,9 +628,8 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard input stream of this process.")]
 		public StreamWriter StandardInput {
 			get {
-				if (input_stream == null) {
+				if (input_stream == null)
 					throw new InvalidOperationException("Standard input has not been redirected");
-				}
 
 				return(input_stream);
 			}
@@ -646,9 +641,9 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("The standard output stream of this process.")]
 		public StreamReader StandardOutput {
 			get {
-				if (output_stream == null) {
+				if (output_stream == null)
 					throw new InvalidOperationException("Standard output has not been redirected");
-				}
+
 #if NET_2_0
 				if ((async_mode & AsyncModes.AsyncOutput) != 0)
 					throw new InvalidOperationException ("Cannot mix asynchronous and synchonous reads.");
@@ -820,9 +815,8 @@ namespace System.Diagnostics {
 			int pid = GetPid_internal();
 			IntPtr proc = GetProcess_internal(pid);
 			
-			if (proc == IntPtr.Zero) {
+			if (proc == IntPtr.Zero)
 				throw new SystemException("Can't find current process");
-			}
 
 			return (new Process (proc, pid));
 		}
@@ -831,9 +825,8 @@ namespace System.Diagnostics {
 		{
 			IntPtr proc = GetProcess_internal(processId);
 			
-			if (proc == IntPtr.Zero) {
+			if (proc == IntPtr.Zero)
 				throw new ArgumentException ("Can't find process with ID " + processId.ToString ());
-			}
 
 			return (new Process (proc, processId));
 		}
@@ -943,9 +936,8 @@ namespace System.Diagnostics {
 				throw new InvalidOperationException ("UseShellExecute must be false when redirecting I/O.");
 			}
 
-			if (startInfo.HaveEnvVars) {
+			if (startInfo.HaveEnvVars)
 				throw new InvalidOperationException ("UseShellExecute must be false in order to use environment variables.");
-			}
 
 			FillUserInfo (startInfo, ref proc_info);
 			try {
@@ -1128,10 +1120,8 @@ namespace System.Diagnostics {
 		private static bool Start_common (ProcessStartInfo startInfo,
 						  Process process)
 		{
-			if(startInfo.FileName == null ||
-			   startInfo.FileName == "") {
+			if (startInfo.FileName == null || startInfo.FileName.Length == 0)
 				throw new InvalidOperationException("File name has not been set");
-			}
 			
 #if NET_2_0
 			if (startInfo.StandardErrorEncoding != null && !startInfo.RedirectStandardError)

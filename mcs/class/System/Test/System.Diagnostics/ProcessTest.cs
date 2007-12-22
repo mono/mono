@@ -51,6 +51,48 @@ namespace MonoTests.System.Diagnostics
 			}
 		}
 
+		[Test]
+		public void PriorityClass_NotStarted ()
+		{
+			Process process = new Process ();
+			try {
+				process.PriorityClass = ProcessPriorityClass.Normal;
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// No process is associated with this object
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				Assert.Fail ("#B1:" + process.PriorityClass);
+			} catch (InvalidOperationException ex) {
+				// No process is associated with this object
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void PriorityClass_Invalid ()
+		{
+			Process process = new Process ();
+			try {
+				process.PriorityClass = (ProcessPriorityClass) 666;
+				Assert.Fail ("#1");
+			} catch (InvalidEnumArgumentException ex) {
+				Assert.AreEqual (typeof (InvalidEnumArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf (typeof (ProcessPriorityClass).Name) != -1, "#6");
+				Assert.IsNotNull (ex.ParamName, "#7");
+				Assert.AreEqual ("value", ex.ParamName, "#8");
+			}
+		}
+
 		[Test] // Start ()
 		public void Start1_FileName_Empty ()
 		{

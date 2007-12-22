@@ -1,3 +1,7 @@
+2007-12-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ProcessTest.cs: Added tests for PriorityClass.
+
 2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ProcessTest.cs: Added tests for Start overloads.
