@@ -1,3 +1,7 @@
+2007-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h: Don't include  the internal threads-types.h header file. Fixes
+	#349952.
 
 Thu Dec 20 12:27:24 CET 2007 Paolo Molaro <lupus@ximian.com>
 
