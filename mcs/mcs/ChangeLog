@@ -1,5 +1,10 @@
 2007-12-22  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (MethodGroupExpr.OverloadResolve): Set type arguments for
+	discovered extension methods.
+
+2007-12-22  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, namespace.cs, expression.cs: Removed broken ResolveGeneric
 	method.
 

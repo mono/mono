@@ -3618,9 +3618,9 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			//
-			// 1. Handle generic method using type arguments when speficified or type inference
+			// 1. Handle generic method using type arguments when specified or type inference
 			//
-			if (TypeManager.IsGenericMethod (method)) {
+			if (TypeManager.IsGenericMethod (candidate)) {
 				if (type_arguments != null) {
 					Type [] g_args = candidate.GetGenericArguments ();
 					if (g_args.Length != type_arguments.Count)
@@ -3642,7 +3642,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				if (type_arguments != null)
-					return 8811192;
+					return int.MaxValue - 15000;
 			}
 #endif			
 
@@ -3987,6 +3987,7 @@ namespace Mono.CSharp {
 					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
+						ex_method_lookup.SetTypeArguments (type_arguments);
 						return ex_method_lookup.OverloadResolve (ec, Arguments, may_fail, loc);
 					}
 				}
