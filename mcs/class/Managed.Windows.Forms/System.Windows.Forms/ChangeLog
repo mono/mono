@@ -1,5 +1,11 @@
 2007-12-21  Geoff Norton  <gnorton@novell.com>
 
+	* XplatUICarbon.cs:  Ensure that we create WindowMapping handles
+	for windows that are originally created as invisible.  Fixes missing
+	main window in paint-mono.
+
+2007-12-21  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUICarbon.cs:  Register our D&D handler.  Register our custom
 	subclass handler for com.novell.mwfview subclassing HIView.  Implement
 	Pasteboard and Dnd methods.

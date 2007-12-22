@@ -984,6 +984,11 @@ namespace System.Windows.Forms {
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
+			if (WindowHandle != IntPtr.Zero) {
+				WindowMapping [hwnd.Handle] = WindowHandle;
+				HandleMapping [WindowHandle] = hwnd.Handle;
+			}
+
 			// Allow dnd on controls
 			Dnd.SetAllowDrop (hwnd, true);
 
@@ -994,9 +999,6 @@ namespace System.Windows.Forms {
 
 			if (StyleSet (cp.Style, WindowStyles.WS_VISIBLE) || StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 				if (WindowHandle != IntPtr.Zero) {
-					WindowMapping [hwnd.Handle] = WindowHandle;
-					HandleMapping [WindowHandle] = hwnd.Handle;
-
 					if (Control.FromHandle(hwnd.Handle) is Form) {
 						Form f = Control.FromHandle(hwnd.Handle) as Form;
 						if (f.WindowState == FormWindowState.Normal) {
