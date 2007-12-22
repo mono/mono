@@ -6706,7 +6706,6 @@ namespace Mono.CSharp {
 
 					if (args != null) {
 						ex_method_lookup.SetTypeArguments (args);
-						return ex_method_lookup.ResolveGeneric (ec, args);
 					}
 
 					return ex_method_lookup.DoResolve (ec);
@@ -6760,7 +6759,6 @@ namespace Mono.CSharp {
 
 			if (args != null) {
 				me.SetTypeArguments (args);
-				return me.ResolveGeneric (ec, args);
 			}
 
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
@@ -7986,7 +7984,6 @@ namespace Mono.CSharp {
 			if (args != null) {
 				args.Resolve (ec);
 				me.SetTypeArguments (args);
-				return me.ResolveGeneric (ec, args);
 			}
 
 			return me;

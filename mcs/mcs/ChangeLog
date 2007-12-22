@@ -1,3 +1,8 @@
+2007-12-22  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, namespace.cs, expression.cs: Removed broken ResolveGeneric
+	method.
+
 2007-12-21  Miguel de Icaza  <miguel@novell.com>
 
 	* report.cs (ErrorMessage): Add support for using colors on

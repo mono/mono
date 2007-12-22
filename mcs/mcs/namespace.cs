@@ -344,7 +344,7 @@ namespace Mono.CSharp {
 			if (name.IndexOf ('`') > 0) {
 				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
-					Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");
+					Error_TypeArgumentsCannotBeUsed (retval.Type, loc);
 					return;
 				}
 			} else {
@@ -366,11 +366,22 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
 		}
 
-		public static void Error_TypeArgumentsCannotBeUsed(Type t, Location loc, string symbol)
+		public static void Error_TypeArgumentsCannotBeUsed (Type t, Location loc)
 		{
-			Report.SymbolRelatedToPreviousError(t);
+			Report.SymbolRelatedToPreviousError (t);
+			Error_TypeArgumentsCannotBeUsed (loc, "type", TypeManager.CSharpName (t));
+		}
+
+		public static void Error_TypeArgumentsCannotBeUsed (MethodBase mi, Location loc)
+		{
+			Report.SymbolRelatedToPreviousError (mi);
+			Error_TypeArgumentsCannotBeUsed (loc, "method", TypeManager.CSharpSignature (mi));
+		}
+
+		static void Error_TypeArgumentsCannotBeUsed (Location loc, string type, string name)
+		{
 			Report.Error(308, loc, "The non-generic {0} `{1}' cannot be used with the type arguments",
-				symbol, TypeManager.CSharpName(t));
+				type, name);
 		}
 
 		public override void Emit (EmitContext ec)

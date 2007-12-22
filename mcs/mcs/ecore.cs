@@ -2237,7 +2237,7 @@ namespace Mono.CSharp {
 			if (Arguments != null) {
 				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
-					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc, "type");
+					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc);
 					return;
 				}
 			}
@@ -2462,7 +2462,6 @@ namespace Mono.CSharp {
 				if (Arguments != null) {
 					Arguments.Resolve (ec);
 					me.SetTypeArguments (Arguments);
-					return me.ResolveGeneric (ec, Arguments);
 				}
 
 				if (!me.IsStatic && (me.InstanceExpression != null) &&
@@ -3015,72 +3014,6 @@ namespace Mono.CSharp {
 		{
 			error176 (loc, GetSignatureForError ());
 			return this;
-		}
-
-		// This method is very wrong, it will be deleted completely
-		[Obsolete ("This method will be removed soon")]
-		public Expression ResolveGeneric (EmitContext ec, TypeArguments args)
-		{
-#if GMCS_SOURCE
-			MethodGroupExpr mge = this as MethodGroupExpr;
-			if (mge == null)
-				return null;
-
-			Type [] atypes = args.Arguments;
-
-			int first_count = 0;
-			MethodInfo first = null;
-
-			ArrayList list = new ArrayList ();
-			foreach (MethodBase mb in mge.Methods) {
-				MethodInfo mi = mb as MethodInfo;
-				if ((mi == null) || !mb.IsGenericMethod)
-					continue;
-
-				Type [] gen_params = mb.GetGenericArguments ();
-
-				if (first == null) {
-					first = mi;
-					first_count = gen_params.Length;
-				}
-
-				if (gen_params.Length != atypes.Length)
-					continue;
-
-				mi = mi.MakeGenericMethod (atypes);
-				list.Add (mi);
-
-#if MS_COMPATIBLE
-				// MS implementation throws NotSupportedException for GetParameters
-				// on unbaked generic method
-				Parameters p = TypeManager.GetParameterData (mi) as Parameters;
-				if (p != null) {
-					p = p.Clone ();
-					p.InflateTypes (gen_params, atypes);
-					TypeManager.RegisterMethod (mi, p);
-				}
-#endif
-			}
-
-			if (list.Count > 0) {
-				mge.Methods = (MethodBase []) list.ToArray (typeof (MethodBase));
-				return this;
-			}
-
-			if (first != null) {
-				Report.SymbolRelatedToPreviousError (first);
-				Report.Error (
-					305, loc, "Using the generic method `{0}' requires `{1}' type arguments",
-					TypeManager.CSharpSignature (first), first_count.ToString ());
-			} else
-				Report.Error (
-					308, loc, "The non-generic method `{0}' " +
-					"cannot be used with type arguments", Name);
-
-			return null;
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
@@ -3689,7 +3622,6 @@ namespace Mono.CSharp {
 			//
 			if (TypeManager.IsGenericMethod (method)) {
 				if (type_arguments != null) {
-/*
 					Type [] g_args = candidate.GetGenericArguments ();
 					if (g_args.Length != type_arguments.Count)
 						return int.MaxValue - 20000 + Math.Abs (type_arguments.Count - g_args.Length);
@@ -3698,7 +3630,6 @@ namespace Mono.CSharp {
 					method = ((MethodInfo) candidate).MakeGenericMethod (type_arguments.Arguments);
 					candidate = method;
 					pd = TypeManager.GetParameterData (candidate);
-*/
 				} else {
 					int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
 					if (score != 0)
@@ -3709,6 +3640,9 @@ namespace Mono.CSharp {
 
 					pd = TypeManager.GetParameterData (candidate);
 				}
+			} else {
+				if (type_arguments != null)
+					return 8811192;
 			}
 #endif			
 
@@ -3969,23 +3903,11 @@ namespace Mono.CSharp {
 				int j = 0;
 				for (int i = 0; i < Methods.Length; ++i) {
 					MethodBase m = Methods [i];
-#if GMCS_SOURCE
-					Type [] gen_args = null;
-					if (m.IsGenericMethod && !m.IsGenericMethodDefinition)
-						gen_args = m.GetGenericArguments ();
-#endif
 					if (TypeManager.IsOverride (m)) {
 						if (candidate_overrides == null)
 							candidate_overrides = new ArrayList ();
 						candidate_overrides.Add (m);
 						m = TypeManager.TryGetBaseDefinition (m);
-#if GMCS_SOURCE
-						if (m != null && gen_args != null) {
-							if (!m.IsGenericMethodDefinition)
-								throw new InternalErrorException ("GetBaseDefinition didn't return a GenericMethodDefinition");
-							m = ((MethodInfo) m).MakeGenericMethod (gen_args);
-						}
-#endif
 					}
 					if (m != null)
 						Methods [j++] = m;
@@ -4097,6 +4019,11 @@ namespace Mono.CSharp {
 							Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
 								TypeManager.CSharpSignature (best_candidate),
 								g_args.Length.ToString ());
+							return null;
+						}
+					} else {
+						if (type_arguments != null) {
+							Namespace.Error_TypeArgumentsCannotBeUsed (best_candidate, loc);
 							return null;
 						}
 					}
@@ -4241,11 +4168,25 @@ namespace Mono.CSharp {
 					throw new InternalErrorException (
 						"Should not happen.  An 'override' method took part in overload resolution: " + best_candidate);
 
-				if (candidate_overrides != null)
+				if (candidate_overrides != null) {
+					Type[] gen_args = null;
+					bool gen_override = false;
+					if (TypeManager.IsGenericMethod (best_candidate))
+						gen_args = TypeManager.GetGenericArguments (best_candidate);
+
 					foreach (MethodBase candidate in candidate_overrides) {
-						if (IsOverride (candidate, best_candidate))
+						if (IsOverride (candidate, best_candidate)) {
+							gen_override = true;
 							best_candidate = candidate;
+						}
 					}
+
+					if (gen_override && gen_args != null) {
+#if GMCS_SOURCE
+						best_candidate = ((MethodInfo) best_candidate).MakeGenericMethod (gen_args);
+#endif						
+					}
+				}
 			}
 
 			// We can stop here when probing is on
