@@ -1,5 +1,7 @@
 2007-12-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-amd64.md: Fix the size of int opcodes.
+
 	* method-to-ir.c (mono_decompose_long_opts): Fix a typo.
 
 	* mini.c mini-ops.h inssel-long.brg inssel-long32.brg simple-mini-ops.h:

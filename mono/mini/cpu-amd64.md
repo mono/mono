@@ -447,12 +447,14 @@ atomic_add_i8: src1:b src2:i dest:i len:32
 atomic_add_new_i8: src1:b src2:i dest:i len:32
 atomic_exchange_i8: src1:b src2:i dest:i len:32
 memory_barrier: len:16
+
 adc: dest:i src1:i src2:i len:3 clob:1
 addcc: dest:i src1:i src2:i len:3 clob:1
 subcc: dest:i src1:i src2:i len:3 clob:1
 adc_imm: dest:i src1:i len:8 clob:1
 sbb: dest:i src1:i src2:i len:3 clob:1
 sbb_imm: dest:i src1:i len:8 clob:1
+
 br_reg: src1:i len:3
 sin: dest:f src1:f len:32
 cos: dest:f src1:f len:32
@@ -468,41 +470,40 @@ sext_i4: dest:i src1:i len:8
 zext_i4: dest:i src1:i len:8
 
 # 32 bit opcodes
-# FIXME: fix sizes
-int_add: dest:i src1:i src2:i clob:1 len:64
-int_sub: dest:i src1:i src2:i clob:1 len:64
-int_mul: dest:i src1:i src2:i clob:1 len:64
-int_mul_ovf: dest:i src1:i src2:i clob:1 len:64
-int_mul_ovf_un: dest:i src1:i src2:i clob:1 len:64
-int_div: dest:a src1:a src2:i clob:d len:64
-int_div_un: dest:a src1:a src2:i clob:d len:64
-int_rem: dest:d src1:a src2:i clob:a len:64
-int_rem_un: dest:d src1:a src2:i clob:a len:64
-int_and: dest:i src1:i src2:i clob:1 len:64
-int_or: dest:i src1:i src2:i clob:1 len:64
-int_xor: dest:i src1:i src2:i clob:1 len:64
-int_shl: dest:i src1:i src2:s clob:1 len:64
-int_shr: dest:i src1:i src2:s clob:1 len:64
-int_shr_un: dest:i src1:i src2:s clob:1 len:64
-int_adc: dest:i src1:i src2:i clob:1 len:64
-int_adc_imm: dest:i src1:i clob:1 len:64
-int_sbb: dest:i src1:i src2:i clob:1 len:64
-int_sbb_imm: dest:i src1:i clob:1 len:64
-int_addcc: dest:i src1:i src2:i clob:1 len:64
-int_subcc: dest:i src1:i src2:i clob:1 len:64
-int_add_imm: dest:i src1:i clob:1 len:64
-int_sub_imm: dest:i src1:i clob:1 len:64
-int_mul_imm: dest:i src1:i clob:1 len:64
-int_div_imm: dest:a src1:i clob:d len:64
-int_div_un_imm: dest:a src1:i clob:d len:64
-int_rem_imm: dest:d src1:i clob:a len:64
-int_rem_un_imm: dest:d src1:i clob:a len:64
-int_and_imm: dest:i src1:i clob:1 len:64
-int_or_imm: dest:i src1:i clob:1 len:64
-int_xor_imm: dest:i src1:i clob:1 len:64
-int_shl_imm: dest:i src1:i clob:1 len:64
-int_shr_imm: dest:i src1:i clob:1 len:64
-int_shr_un_imm: dest:i src1:i clob:1 len:64
+int_add: dest:i src1:i src2:i clob:1 len:3
+int_sub: dest:i src1:i src2:i clob:1 len:3
+int_mul: dest:i src1:i src2:i clob:1 len:4
+int_mul_ovf: dest:i src1:i src2:i clob:1 len:16
+int_mul_ovf_un: dest:i src1:i src2:i clob:1 len:16
+int_div: dest:a src1:a src2:i clob:d len:16
+int_div_un: dest:a src1:a src2:i clob:d len:16
+int_rem: dest:d src1:a src2:i clob:a len:16
+int_rem_un: dest:d src1:a src2:i clob:a len:16
+int_and: dest:i src1:i src2:i clob:1 len:3
+int_or: dest:i src1:i src2:i clob:1 len:3
+int_xor: dest:i src1:i src2:i clob:1 len:3
+int_shl: dest:i src1:i src2:s clob:1 len:3
+int_shr: dest:i src1:i src2:s clob:1 len:3
+int_shr_un: dest:i src1:i src2:s clob:1 len:3
+int_adc: dest:i src1:i src2:i clob:1 len:3
+int_adc_imm: dest:i src1:i clob:1 len:8
+int_sbb: dest:i src1:i src2:i clob:1 len:3
+int_sbb_imm: dest:i src1:i clob:1 len:8
+int_addcc: dest:i src1:i src2:i clob:1 len:3
+int_subcc: dest:i src1:i src2:i clob:1 len:3
+int_add_imm: dest:i src1:i clob:1 len:8
+int_sub_imm: dest:i src1:i clob:1 len:8
+int_mul_imm: dest:i src1:i clob:1 len:16
+int_div_imm: dest:a src1:i clob:d len:16
+int_div_un_imm: dest:a src1:i clob:d len:16
+int_rem_imm: dest:d src1:i clob:a len:16
+int_rem_un_imm: dest:d src1:i clob:a len:16
+int_and_imm: dest:i src1:i clob:1 len:8
+int_or_imm: dest:i src1:i clob:1 len:8
+int_xor_imm: dest:i src1:i clob:1 len:8
+int_shl_imm: dest:i src1:i clob:1 len:8
+int_shr_imm: dest:i src1:i clob:1 len:8
+int_shr_un_imm: dest:i src1:i clob:1 len:8
 
 int_min: dest:i src1:i src2:i len:16 clob:1
 int_max: dest:i src1:i src2:i len:16 clob:1
