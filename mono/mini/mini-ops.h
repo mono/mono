@@ -299,7 +299,7 @@ MINI_OP(OP_LBGT_UN, "long_bgt_un", NONE, NONE, NONE)
 MINI_OP(OP_LBLE_UN, "long_ble_un", NONE, NONE, NONE)
 MINI_OP(OP_LBLT_UN, "long_blt_un", NONE, NONE, NONE)
 
-MINI_OP(OP_LONG_SHRUN_32, "long_shr_un_32", NONE, NONE, NONE)
+MINI_OP(OP_LSHR_UN_32, "long_shr_un_32", NONE, NONE, NONE)
 
 /* Variants of the original opcodes which take the two parts of the long as two arguments */
 MINI_OP(OP_LCONV_TO_R8_2,"long_conv_to_r8_2", FREG, IREG, IREG)

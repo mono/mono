@@ -5571,7 +5571,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 					 * later apply the speedup to the left shift as well
 					 * See BUG# 57957.
 					 */
-					/* FIXME: Move this to the strenght reduction pass */
+					/* FIXME: Move this to the strength reduction pass */
 					/* just move the upper half to the lower and zero the high word */
 					MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg + 1, tree->sreg1 + 2);
 					MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 2, 0);

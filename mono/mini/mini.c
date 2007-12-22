@@ -6263,7 +6263,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			 */
 			if ((ins->opcode == OP_LSHR_UN) && (ins->type == STACK_I8) 
 					&& (ins->inst_right->opcode == OP_ICONST) && (ins->inst_right->inst_c0 == 32)) {
-				ins->opcode = OP_LONG_SHRUN_32;
+				ins->opcode = OP_LSHR_UN_32;
 				/*g_print ("applied long shr speedup to %s\n", cfg->method->name);*/
 				ip++;
 				break;

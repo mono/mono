@@ -1,3 +1,10 @@
+2007-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_decompose_long_opts): Fix a typo.
+
+	* mini.c mini-ops.h inssel-long.brg inssel-long32.brg simple-mini-ops.h:
+	Rename OP_LONG_SHRUN_32 to OP_LSHR_UN_32 for consistency.
+
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c: Use OP_FMOVE instead of OP_AMD64_SET_XMMREG_R8 if possible.
