@@ -1,3 +1,8 @@
+2007-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h: Don't include  the internal threads-types.h header file. Fixes
+	#349952.
+
 2007-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: added enum value IL_CODE_FLAG_WAS_TARGET, to represent
