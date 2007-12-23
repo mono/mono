@@ -437,6 +437,10 @@ namespace System.Web {
 		//
 		internal static HttpApplication GetApplication (HttpContext context)
 		{
+#if TARGET_J2EE
+			if (context.ApplicationInstance!=null)
+				return context.ApplicationInstance;
+#endif
 			HttpApplicationFactory factory = theFactory;
 			HttpApplication app = null;
 			if (factory.app_start_needed){

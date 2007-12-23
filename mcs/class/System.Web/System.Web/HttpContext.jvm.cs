@@ -32,12 +32,17 @@ using System.Collections;
 using System.Configuration;
 using System.Threading;
 using javax.servlet.http;
-using vmw.@internal.j2ee;
+using javax.faces.context;
+using System.Web.J2EE;
+using System.Web.UI;
+using javax.servlet;
+using System.Collections.Specialized;
+using Mainsoft.Web;
 
 namespace System.Web {
 	
 	public sealed partial class HttpContext {
-		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
+		static readonly LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
 		// No remoting support (CallContext) yet in Grasshopper
 		[MonoInternalNote("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
 		public static HttpContext Current
@@ -60,6 +65,10 @@ namespace System.Web {
 
 		internal HttpServletRequest ServletRequest {
 			get { return (HttpServletRequest)GetWorkerService(typeof(HttpServletRequest)); }
+		}
+		
+		internal NameValueCollection RequestParameters {
+			get { return (NameValueCollection) GetWorkerService (typeof (NameValueCollection)); }
 		}
 
 		internal HttpServletResponse ServletResponse {
@@ -87,14 +96,18 @@ namespace System.Web {
 			get { return true; }
 		}
 
-		internal bool IsPortletRequest { get { return ServletRequest is IPortletRequest; } }
-
 		internal void BeginTimeoutPossible ()
 		{
 		}
 
 		internal void EndTimeoutPossible ()
 		{
+		}
+
+		internal void SetWorkerRequest (HttpWorkerRequest wr) {
+			WorkerRequest = wr;
+			Request.SetWorkerRequest (wr);
+			Response.SetWorkerRequest (wr);
 		}
 	}
 }

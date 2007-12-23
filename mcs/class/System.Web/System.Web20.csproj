@@ -946,7 +946,6 @@
     <Compile Include="System.Web.UI\OutputCacheLocation.cs" />
     <Compile Include="System.Web.UI\OutputCacheParameters.cs" />
     <Compile Include="System.Web.UI\PageHandlerFactory.cs" />
-    <Compile Include="System.Web.UI\PageLifeCycle.cs" />
     <Compile Include="System.Web.UI\PageStatePersister.cs" />
     <Compile Include="System.Web.UI\PageTheme.cs" />
     <Compile Include="System.Web.UI\Pair.cs" />
@@ -1205,6 +1204,7 @@
     <Compile Include="System.Web.UI.WebControls\XmlBuilder.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Web.UI\ClientScriptManager.jvm.cs" />
     <Compile Include="System.Web.UI\BaseParser.jvm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1269,6 +1269,7 @@
     <Compile Include="System.Web\HttpApplication.cs" />
     <Compile Include="System.Web\HttpCacheVaryByContentEncodings.cs" />
     <Compile Include="System.Web\HttpParamsCollection.cs" />
+    <Compile Include="System.Web\HttpResponse.jvm.cs" />
     <Compile Include="System.Web\HttpResponseStream.jvm.cs" />
     <Compile Include="System.Web\HttpStaticObjectsCollection.cs">
       <SubType>Code</SubType>
@@ -1404,9 +1405,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="J2EE.Helpers, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="jsf-api, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Refs\jsf-api.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -1434,7 +1439,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-javaee="" REFS-JarPath-j2se-helpers="" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" REFS-JarPath-mscorlib="" REFS-JarPath-system="" REFS-JarPath-system-xml="" REFS-JarPath-system-drawing="" REFS-JarPath-system-data="" REFS-JarPath-system-configuration="" />
+      <UserProperties REFS-RefInfo-jsf-api="j2il:" REFS-JarPath-jsf-api="..\lib\jsf-api.jar" REFS-JarPath-system-configuration="" REFS-JarPath-system-data="" REFS-JarPath-system-drawing="" REFS-JarPath-system-xml="" REFS-JarPath-system="" REFS-JarPath-mscorlib="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2se-helpers="" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

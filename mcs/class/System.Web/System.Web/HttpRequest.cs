@@ -601,9 +601,6 @@ namespace System.Web {
 					if (IsContentType ("multipart/form-data", true))
 						LoadMultiPart ();
 					else if (
-#if TARGET_J2EE
-						Context.IsPortletRequest ||
-#endif
 						IsContentType ("application/x-www-form-urlencoded", true))
 						LoadWwwForm ();
 

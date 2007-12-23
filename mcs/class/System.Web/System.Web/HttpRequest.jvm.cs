@@ -33,7 +33,7 @@ using javax.servlet.http;
 using System.Web.Configuration;
 using System.IO;
 using System.Collections;
-using vmw.@internal.j2ee;
+using System.Collections.Specialized;
 
 namespace System.Web
 {
@@ -58,7 +58,11 @@ namespace System.Web
 		{
 			HttpServletRequest servletReq = context.ServletRequest;
 			if (servletReq == null) {
-				RawLoadWwwForm ();
+				NameValueCollection requestParameters = context.RequestParameters;
+				if (requestParameters != null)
+					form.Add (requestParameters);
+				else
+					RawLoadWwwForm ();
 				return;
 			}
 
@@ -66,7 +70,7 @@ namespace System.Web
 
 			for (java.util.Enumeration e = servletReq.getParameterNames(); e.hasMoreElements() ;) {
 				string key = (string) e.nextElement();
-				string [] qvalue = Context.IsPortletRequest ? null : QueryString.GetValues (key);
+				string [] qvalue = QueryString.GetValues (key);
 				string [] qfvalue = servletReq.getParameterValues (key);
 
 				for (int i = (qvalue != null) ? qvalue.Length : 0; i < qfvalue.Length; i++)
@@ -178,7 +182,7 @@ namespace System.Web
 			HttpServletRequest servletReq = context.ServletRequest;
 			if (servletReq == null)
 				return;
-			bool inPortletMode = servletReq is IPortletRequest;
+			bool inPortletMode = true; //servletReq is IPortletRequest;
 			bool shouldStoreCookiesCollection = false;
 			HttpSession javaSession = servletReq.getSession(false);
 
@@ -218,5 +222,13 @@ namespace System.Web
 					javaSession.setAttribute (SessionCookies, sessionCookies);
 			}
 		}
+
+		internal void SetWorkerRequest (HttpWorkerRequest wr) {
+			worker_request = wr;
+			current_exe_path = null;
+			file_path = null;
+			base_virtual_dir = null;
+		}
+
 	}
 }

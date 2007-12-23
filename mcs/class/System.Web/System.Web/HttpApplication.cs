@@ -77,7 +77,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 
 #if TARGET_J2EE
-using vmw.@internal.j2ee;
+using Mainsoft.Web;
 #endif
 	
 namespace System.Web {
@@ -702,7 +702,7 @@ namespace System.Web {
 		//
 		// Ticks the clock: next step on the pipeline.
 		//
-		void Tick ()
+		internal void Tick ()
 		{
 			try {
 				if (pipeline.MoveNext ()){
@@ -844,17 +844,6 @@ namespace System.Web {
 			if (error != null){
 				HttpResponse response = context.Response;
 
-#if TARGET_J2EE
-				IPortletActionRequest actionRequest = context.ServletRequest as IPortletActionRequest;
-				IPortletActionResponse actionResponse = context.ServletResponse as IPortletActionResponse;
-				if (actionRequest != null && actionResponse != null && actionRequest.processActionOnly ()) {
-					string exception = "Exception of type " + context.Error.GetType () + 
-						" during processAction: " + context.Error.Message + Console.Out.NewLine + 
-						context.Error.StackTrace;
-					actionResponse.setRenderParameter ("vmw.action.exception", exception);
-					return;
-				}
-#endif
 				if (!response.HeadersSent){
 					response.ClearHeaders ();
 					response.ClearContent ();
@@ -1019,6 +1008,10 @@ namespace System.Web {
 					if (stop)
 						goto release;
 				
+#if TARGET_J2EE
+		processHandler:
+			bool doProcessHandler = false;
+#endif
 			try {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
@@ -1031,6 +1024,10 @@ namespace System.Web {
 					} else {
 						must_yield = false;
 						handler.ProcessRequest (context);
+#if TARGET_J2EE
+						IHttpExtendedHandler extHandler=handler as IHttpExtendedHandler;
+						doProcessHandler = extHandler != null && !extHandler.IsCompleted;
+#endif
 					}
 				}
 			} catch (ThreadAbortException taex){
@@ -1045,6 +1042,12 @@ namespace System.Web {
 				in_begin = false;
 				context.EndTimeoutPossible ();
 			}
+#if TARGET_J2EE
+			if (doProcessHandler) {
+				yield return false;
+				goto processHandler;
+			}
+#endif
 			if (must_yield)
 				yield return stop_processing;
 			else if (stop_processing)
@@ -1291,18 +1294,6 @@ namespace System.Web {
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
 
-#if TARGET_J2EE
-			IPortletRenderRequest renderRequest = context.ServletRequest as IPortletRenderRequest;
-			if (renderRequest != null) {
-				string actionException = context.ServletRequest.getParameter ("vmw.action.exception");
-				if (actionException != null && actionException.Length > 0) {
-					FinalErrorWrite (context.Response, actionException.Replace("\n", "<br>"));
-					begin_iar.Complete ();
-					return begin_iar;
-				}
-			}
-#endif
-
 #if TARGET_JVM
 			if (true)
 #else
@@ -1317,6 +1308,10 @@ namespace System.Web {
 
 		void IHttpAsyncHandler.EndProcessRequest (IAsyncResult result)
 		{
+#if TARGET_J2EE
+			if (result == null)
+				result = begin_iar;
+#endif
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne ();
 			begin_iar = null;

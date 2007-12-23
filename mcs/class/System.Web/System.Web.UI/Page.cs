@@ -707,7 +707,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		CultureInfo ret = null;
 		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
 #if TARGET_J2EE
-			if (Context.IsPortletRequest)
+			if (Context.ServletRequest == null)
 				return deflt;
 #endif
 			string[] languages = Request.UserLanguages;
@@ -766,10 +766,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		NameValueCollection coll = null;
 		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture))
 			coll = req.Form;
-#if TARGET_J2EE
-		else if (IsPortletRender && req.Form ["__VIEWSTATE"] != null)
-			coll = req.Form;
-#endif
 		else
 			coll = req.QueryString;
 
@@ -782,7 +778,17 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		if (coll != null && coll ["__VIEWSTATE"] == null && coll ["__EVENTTARGET"] == null)
 			return null;
-
+#if TARGET_J2EE
+		if (getFacesContext () != null && _context.Handler != _context.CurrentHandler) {
+			// check if it is PreviousPage
+			string prevViewId = coll [PreviousPageID];
+			if (!String.IsNullOrEmpty (prevViewId)) {
+				string appPath = VirtualPathUtility.RemoveTrailingSlash (Request.ApplicationPath);
+				prevViewId = prevViewId.Substring (appPath.Length);
+				isCrossPagePostBack = String.Compare (prevViewId, getFacesContext ().getExternalContext ().getRequestPathInfo (), StringComparison.OrdinalIgnoreCase) == 0;
+			}
+		}
+#endif
 		return coll;
 	}
 
@@ -794,6 +800,14 @@ public partial class Page : TemplateControl, IHttpHandler
 			return base.FindControl (id);
 	}
 #endif
+
+	Control FindControl (string id, bool decode) {
+#if TARGET_J2EE
+		if (decode)
+			id = DecodeNamespace (id);
+#endif
+		return FindControl (id);
+	}
 
 #if NET_2_0
 	[Obsolete]
@@ -1031,7 +1045,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		writer.WriteLine ("\t{0}._instanceVariableName = '{0}';", theForm);
 #if TARGET_J2EE
-		string serverUrl = Context.ServletResponse.encodeURL (Request.RawUrl);
+		// TODO implement callback on portlet
+		string serverUrl = Request.RawUrl;
 		writer.WriteLine ("\t{0}.serverURL = {1};", theForm, ClientScriptManager.GetScriptLiteral (serverUrl));
 		writer.WriteLine ("\twindow.TARGET_J2EE = true;");
 		writer.WriteLine ("\twindow.IsMultiForm = {0};", IsMultiForm ? "true" : "false");
@@ -1053,6 +1068,18 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 		if (handleViewState)
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				javax.faces.application.ViewHandler viewHandler = getFacesContext ().getApplication ().getViewHandler ();
+				javax.faces.context.ResponseWriter oldFacesWriter = SetupResponseWriter (writer);
+				try {
+					viewHandler.writeState (getFacesContext ());
+				}
+				finally {
+					getFacesContext ().setResponseWriter (oldFacesWriter);
+				}
+			}
+#endif
 			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
 
 		scriptManager.WriteHiddenFields (writer);
@@ -1113,7 +1140,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 				used.Add (id, id);
 
-				Control ctrl = FindControl (id);
+				Control ctrl = FindControl (id, true);
 				if (ctrl != null){
 					IPostBackDataHandler pbdh = ctrl as IPostBackDataHandler;
 					IPostBackEventHandler pbeh = ctrl as IPostBackEventHandler;
@@ -1145,7 +1172,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
 			string [] handlers = (string []) _requiresPostBackCopy.ToArray (typeof (string));
 			foreach (string id in handlers) {
-				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
+				IPostBackDataHandler pbdh = FindControl (id, true) as IPostBackDataHandler;
 				if (pbdh != null) {			
 					_requiresPostBackCopy.Remove (id);
 					if (pbdh.LoadPostData (id, requestValues)) {
@@ -1173,6 +1200,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 #endif
 	{
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			EnterThread (context);
+		else
+#endif
 		SetContext (context);
 		
 		if (clientTarget != null)
@@ -1189,6 +1221,16 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		try {
 			InternalProcessRequest ();
+#if TARGET_J2EE
+		} catch (Exception ex) {
+			HandleException (ex);
+			throw;
+		}
+		finally {
+			if (getFacesContext () != null)
+				ExitThread ();
+		}
+#else
 		} catch (ThreadAbortException) {
 			// Do nothing, just ignore it by now.
 		} catch (Exception e) {
@@ -1197,6 +1239,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		} finally {
 			ProcessUnload ();
 		}
+#endif
 	}
 
 	void ProcessException (Exception ex) {
@@ -1213,7 +1256,12 @@ public partial class Page : TemplateControl, IHttpHandler
 				RenderTrace ();
 				UnloadRecursive (true);
 			} catch {}
-
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				if(IsCrossPagePostBack)
+					_context.Items [CrossPagePostBack] = this;
+			}
+#endif
 			if (Thread.CurrentThread.CurrentCulture.Equals (_appCulture) == false)
 				Thread.CurrentThread.CurrentCulture = _appCulture;
 
@@ -1332,11 +1380,23 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 		renderingForm = false;	
 
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			if (IsPostBack || IsCallback)
+				return;
+#endif
+
 		RestorePageState ();
 		ProcessPostData ();
 		ProcessRaiseEvents ();
 		if (ProcessLoadComplete ())
 			return;
+#if TARGET_J2EE
+		if (getFacesContext () != null) {
+			getFacesContext ().renderResponse ();
+			return;
+		}
+#endif
 		RenderPage ();
 	}
 
@@ -1363,9 +1423,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (IsPostBack) {
 #endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData");
-#if TARGET_J2EE
-			if (!IsGetBack)
-#endif
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
@@ -1378,9 +1435,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (IsPostBack) {
 #endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
-#if TARGET_J2EE
-			if (!IsGetBack)
-#endif
 			ProcessPostData (secondPostData, true);
 			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
 		}
@@ -1401,11 +1455,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ProcessRaiseEvents () {
 
 #if NET_2_0
-#if TARGET_J2EE
-		if (IsGetBack)
-			RestoreValidatorsState ();
-		else
-#endif
 		if (IsPostBack || IsCallback) {
 #else
 		if (IsPostBack) {
@@ -1430,6 +1479,13 @@ public partial class Page : TemplateControl, IHttpHandler
 			return true;
 
 		if (IsCallback) {
+#if TARGET_J2EE
+			if (getFacesContext () != null) {
+				_callbackTarget = GetCallbackTarget ();
+				ProcessRaiseCallbackEvent (_callbackTarget, ref _callbackEventError);
+				return true;
+			}
+#endif
 			string result = ProcessCallbackData ();
 			HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
 			callbackOutput.Write (result);
@@ -1458,10 +1514,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "Begin SaveStateComplete");
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
-#if TARGET_J2EE
-		if (OnSaveStateCompleteForPortlet ())
-			return true;
-#endif // TARGET_J2EE
 #endif // NET_2_0
 		return false;
 	}
@@ -1474,6 +1526,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
 		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
+#if TARGET_J2EE
+		if (getFacesContext () != null)
+			SetupResponseWriter (output);
+#endif
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
 	}
@@ -1540,7 +1596,7 @@ public partial class Page : TemplateControl, IHttpHandler
                 }
 
 #if NET_2_0
-		targetControl = FindControl (eventTarget);
+		targetControl = FindControl (eventTarget, true);
 		IPostBackEventHandler target = targetControl as IPostBackEventHandler;
 #else
 		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
@@ -1697,6 +1753,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	PageStatePersister PageStatePersister {
 		get {
 			if (page_state_persister == null)
+#if TARGET_J2EE
+				if (getFacesContext () != null)
+					return new FacesPageStatePersister (this);
+				else
+#endif
 				page_state_persister = new HiddenFieldPageStatePersister (this);
 			return page_state_persister;
 		}
@@ -2057,7 +2118,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
 
-		Control targetControl = FindControl (callbackTarget);
+		Control targetControl = FindControl (callbackTarget, true);
 		ICallbackEventHandler target = targetControl as ICallbackEventHandler;
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
@@ -2560,10 +2621,22 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requestValueCollection != null) {
 			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
+#if TARGET_J2EE
+				if (getFacesContext () != null) {
+					IHttpHandler handler = Context.ApplicationInstance.GetHandler (Context, prevPage);
+					Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
+					if (_context.Items.Contains (CrossPagePostBack)) {
+						previousPage = (Page) _context.Items [CrossPagePostBack];
+						_context.Items.Remove (CrossPagePostBack);
+					}
+					return;
+				}
+#else
 				IHttpHandler handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
 				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
 				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
+#endif
 			} 
 		}
 	}
@@ -2627,7 +2700,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		foreach (string lss in themes) {
 			HtmlLink hl = new HtmlLink ();
-			hl.Href = ResolveUrl (lss);
+			hl.Href = lss;
 			hl.Attributes["type"] = "text/css";
 			hl.Attributes["rel"] = "stylesheet";
 			Header.Controls.Add (hl);

@@ -26,61 +26,62 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using vmw.@internal.j2ee;
 using javax.servlet.http;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Web.Hosting;
 using System.Web.J2EE;
 using System.ComponentModel;
+using System.IO;
+using javax.faces.context;
+using javax.faces.render;
+using javax.servlet;
+using javax.faces;
+using javax.faces.application;
+using javax.faces.@event;
+using javax.faces.el;
+using javax.faces.component;
+using System.Threading;
 
 namespace System.Web.UI
 {
 	public partial class Page
 	{
-		const string PageNamespaceKey = "__PAGENAMESPACE";
-		const string RenderPageMark = "vmw.render.page=";
-		const string ActionPageMark = "vmw.action.page=";
-		static readonly string NextActionPageKey = PortletInternalUtils.NextActionPage;
-		static readonly string NextRenderPageKey = PortletInternalUtils.NextRenderPage;
+		string _namespace = null;
+		StateManager.SerializedView _facesSerializedView;
+		MethodBinding _action;
+		MethodBinding _actionListener;
+		bool _immediate;
+		Pair _state;
+		bool [] _validatorsState;
+		ICallbackEventHandler _callbackTarget;
+		string _callbackEventError = String.Empty;
+		IHttpHandler _jsfHandler;
+		static readonly object CrossPagePostBack = new object ();
 
-		bool _emptyPortletNamespace = false;
-		string _PortletNamespace = null;
-		bool _renderResponseInit = false;
-		IPortletRenderResponse _renderResponse = null;
+		bool _isMultiForm = false;
+		bool _isMultiFormInited = false;
 
-		internal string PortletNamespace
+		internal string Namespace
 		{
 			get {
-				if (_emptyPortletNamespace)
-					return null;
+				if (_namespace == null) {
 
-				if (_PortletNamespace == null) {
-					IPortletResponse portletResponse = null;
-					if (Context != null) {
-						string usePortletNamespace = J2EEUtils.GetInitParameterByHierarchy (Context.Servlet.getServletConfig (), "mainsoft.use.portlet.namespace");
-						if (usePortletNamespace == null || Boolean.Parse(usePortletNamespace))
-							portletResponse = Context.ServletResponse as IPortletResponse;
+					if (getFacesContext () != null) {
+						_namespace = getFacesContext ().getExternalContext ().encodeNamespace (String.Empty);
 					}
-					if (portletResponse != null)
-						_PortletNamespace = portletResponse.getNamespace ();
-					else if (_requestValueCollection != null && _requestValueCollection [PageNamespaceKey] != null)
-						_PortletNamespace = _requestValueCollection [PageNamespaceKey];
-						
-					_emptyPortletNamespace = _PortletNamespace == null;
+
+					_namespace = _namespace ?? String.Empty;
 				}
-				return _PortletNamespace;
+				return _namespace;
 			}
 		}
 
 		internal string theForm {
 			get {
-				return "theForm" + PortletNamespace;
+				return "theForm" + Namespace;
 			}
 		}
-		
-		bool _isMultiForm = false;
-		bool _isMultiFormInited = false;
 
 		internal bool IsMultiForm {
 			get {
@@ -95,142 +96,335 @@ namespace System.Web.UI
 			}
 		}
 
-		internal bool IsPortletRender
-		{
-			get {
-				return RenderResponse != null;
-			}
+		void EnterThread (HttpContext context) {
+
+			_jsfHandler = context.CurrentHandler;
+			context.PopHandler ();
+			context.PushHandler (this);
+			if (_jsfHandler == context.Handler)
+				context.Handler = this;
+
+			SetContext (context);
 		}
 
-		internal bool IsGetBack {
-			get {
-				return IsPostBack && IsPortletRender &&
-					(0 == String.Compare (Request.HttpMethod, "GET", StringComparison.OrdinalIgnoreCase));
-			}
+		void ExitThread () {
+			// TODO
+			//if (context.getResponseComplete ())
+			//    Response.End ();
+
+			_context.PopHandler ();
+			_context.PushHandler (_jsfHandler);
+			if (this == _context.Handler)
+				_context.Handler = _jsfHandler;
+
 		}
 
-		internal IPortletRenderResponse RenderResponse
-		{
-			get {
-				if (!_renderResponseInit)
-					if (Context != null) {
-						_renderResponse = Context.ServletResponse as IPortletRenderResponse;
-						_renderResponseInit = true;
+		public override void encodeBegin (FacesContext context) {
+			// do nothing
+		}
+
+		public override void encodeChildren (FacesContext context) {
+			System.Diagnostics.Trace.WriteLine ("encodeChildren");
+
+			EnterThread (HttpContext.Current);
+			try {
+				if (!context.getResponseComplete ()) {
+
+					if (IsCrossPagePostBack)
+						return;
+
+					if (IsCallback) {
+						string result = ProcessGetCallbackResult (_callbackTarget, _callbackEventError);
+						HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
+						callbackOutput.Write (result);
+						callbackOutput.Flush ();
+						return;
 					}
-				return _renderResponse;
-			}
-		}
 
-		public string CreateRenderUrl (string url)
-		{
-			if (RenderResponse != null)
-				return RenderResponse.createRenderURL (url);
-			if (PortletNamespace == null)
-				return url;
+					// ensure lifecycle complete.
+					if (!IsLoaded) {
+						ProcessLoad ();
+						RestoreValidatorsState (_validatorsState);
+					}
+					if (!IsPrerendered)
+						ProcessLoadComplete ();
 
-			string internalUrl = RemoveAppPathIfInternal (url);
-			if (internalUrl == null)
-				return url;
-
-			PostBackOptions options = new PostBackOptions (this);
-			options.ActionUrl = RenderPageMark + internalUrl;
-			options.RequiresJavaScriptProtocol = true;
-			return ClientScript.GetPostBackEventReference (options);
-		}
-
-		public string CreateActionUrl (string url)
-		{
-			if (url.StartsWith (RenderPageMark, StringComparison.Ordinal) || url.StartsWith (ActionPageMark, StringComparison.Ordinal))
-				return url;
-
-			if (RenderResponse != null)
-				return RenderResponse.createActionURL (url);
-			if (PortletNamespace == null)
-				return url;
-
-			Uri requestUrl = Request.Url;
-			string internalUrl = RemoveAppPathIfInternal (url);
-			if (internalUrl == null)
-				return url;
-
-			return ActionPageMark + internalUrl;
-		}
-
-		private string RemoveAppPathIfInternal (string url)
-		{
-			Uri reqUrl = Request.Url;
-			string appPath = Request.ApplicationPath;
-			string currPage = Request.CurrentExecutionFilePath;
-			if (currPage.StartsWith (appPath, StringComparison.InvariantCultureIgnoreCase))
-				currPage = currPage.Substring (appPath.Length);
-			return PortletInternalUtils.mapPathIfInternal (url, reqUrl.Host, reqUrl.Port, reqUrl.Scheme, appPath, currPage);
-		}
-
-		internal bool OnSaveStateCompleteForPortlet ()
-		{
-			if (PortletNamespace != null) {
-				ClientScript.RegisterHiddenField (PageNamespaceKey, PortletNamespace);
-				ClientScript.RegisterHiddenField (NextActionPageKey, "");
-				ClientScript.RegisterHiddenField (NextRenderPageKey, "");
-			}
-
-			IPortletActionResponse resp = Context.ServletResponse as IPortletActionResponse;
-			IPortletActionRequest req = Context.ServletRequest as IPortletActionRequest;
-			if (req == null)
-				return false;
-
-			// When redirecting don't save the page viewstate and hidden fields
-			if (resp.isRedirected ())
-				return true;
-
-			if (IsPostBack && 0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
-				resp.setRenderParameter ("__VIEWSTATE", GetSavedViewState ());
-				if (ClientScript.hiddenFields != null)
-					foreach (string key in ClientScript.hiddenFields.Keys)
-						resp.setRenderParameter (key, (string) ClientScript.hiddenFields [key]);
-
-				if (is_validated && Validators.Count > 0) {
-					string validatorsState = GetValidatorsState ();
-#if DEBUG
-					Console.WriteLine ("__VALIDATORSSTATE: " + validatorsState);
-#endif
-					if (!String.IsNullOrEmpty (validatorsState))
-						resp.setRenderParameter ("__VALIDATORSSTATE", validatorsState);
+					RenderPage ();
 				}
 			}
-
-			// Stop processing only if we are handling processAction. If we
-			// are handling a postback from render then fall through.
-			return req.processActionOnly ();
-		}
-
-		string GetValidatorsState () {
-			bool [] validatorsState = new bool [Validators.Count];
-			bool isValid = true;
-			for (int i = 0; i < Validators.Count; i++) {
-				IValidator val = Validators [i];
-				if (!val.IsValid)
-					isValid = false;
-				else
-					validatorsState [i] = true;
+			catch (Exception ex) {
+				if (!(ex is ThreadAbortException))
+					ProcessException (ex);
+				throw;
 			}
-			if (isValid)
-				return null;
-
-			return GetFormatter ().Serialize (validatorsState);
+			finally {
+				ProcessUnload ();
+				ExitThread ();
+			}
 		}
 
-		void RestoreValidatorsState () {
-			string validatorsStateSerialized = Request.Form ["__VALIDATORSSTATE"];
-			if (String.IsNullOrEmpty (validatorsStateSerialized))
+		public override void encodeEnd (FacesContext context) {
+			// do nothing
+		}
+
+		public override UIComponent getParent () {
+			return null;
+		}
+
+		public override void setParent (UIComponent parent) {
+			//ignore: parent is root
+		}
+
+		// TODO: consider validators state
+		public override object processSaveState (FacesContext context) {
+			System.Diagnostics.Trace.WriteLine ("processSaveState");
+
+			object state = new Pair (_state, GetValidatorsState ());
+			if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
+				int length;
+				byte [] buffer = new ObjectStateFormatter (this).SerializeInternal (state, out length);
+				if (buffer.Length != length) {
+					byte [] trimmedBuffer = new byte [length];
+					Array.Copy (buffer, trimmedBuffer, length);
+					buffer = trimmedBuffer;
+				}
+				state = vmw.common.TypeUtils.ToSByteArray (buffer);
+			}
+			return state;
+		}
+
+		public override void processRestoreState (FacesContext context, object state) {
+			System.Diagnostics.Trace.WriteLine ("processRestoreState");
+
+			if (state == null)
+				throw new ArgumentNullException ("state");
+			EnterThread (HttpContext.Current);
+			try {
+				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
+					byte [] buffer = (byte []) vmw.common.TypeUtils.ToByteArray ((sbyte []) state);
+					state = new ObjectStateFormatter (this).DeserializeInternal (buffer);
+				}
+				_state = (Pair) ((Pair) state).First;
+				_validatorsState = (bool []) ((Pair) state).Second;
+				RestorePageState ();
+			}
+			catch (Exception ex) {
+				HandleException (ex);
+				throw;
+			}
+			finally {
+				ExitThread ();
+			}
+		}
+
+		public override void processDecodes (FacesContext context) {
+			System.Diagnostics.Trace.WriteLine ("processDecodes");
+
+			EnterThread (HttpContext.Current);
+			try {
+				ProcessPostData ();
+
+				EventRaiserFacesEvent facesEvent = new EventRaiserFacesEvent (this);
+				facesEvent.setPhaseId (PhaseId.INVOKE_APPLICATION);
+				context.getViewRoot ().queueEvent (facesEvent);
+
+				base.processDecodes (context);
+			}
+			catch (Exception ex) {
+				HandleException (ex);
+				throw;
+			}
+			finally {
+				ExitThread ();
+			}
+		}
+
+		public override void processValidators (FacesContext context) {
+			System.Diagnostics.Trace.WriteLine ("processValidators");
+
+			EnterThread (HttpContext.Current);
+			try {
+				base.processValidators (context);
+			}
+			catch (Exception ex) {
+				HandleException (ex);
+				throw;
+			}
+			finally {
+				ExitThread ();
+			}
+		}
+
+		public override void processUpdates (FacesContext context) {
+			System.Diagnostics.Trace.WriteLine ("processUpdates");
+
+			EnterThread (HttpContext.Current);
+			try {
+				base.processUpdates (context);
+			}
+			catch (Exception ex) {
+				HandleException (ex);
+				throw;
+			}
+			finally {
+				ExitThread ();
+			}
+		}
+
+		public override void broadcast (FacesEvent e) {
+			System.Diagnostics.Trace.WriteLine ("broadcast");
+
+			if (!(e is EventRaiserFacesEvent))
+				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
+
+			EnterThread (HttpContext.Current);
+			try {
+				ProcessRaiseEvents ();
+				ProcessLoadComplete ();
+			}
+			catch (Exception ex) {
+				HandleException (ex);
+				throw;
+			}
+			finally {
+				ExitThread ();
+			}
+		}
+
+		void HandleException (Exception ex) {
+			try {
+				if (!(ex is ThreadAbortException))
+					ProcessException (ex);
+			}
+			finally {
+				ProcessUnload ();
+			}
+		}
+
+		bool [] GetValidatorsState () {
+			if (is_validated && Validators.Count > 0) {
+				bool [] validatorsState = new bool [Validators.Count];
+				bool isValid = true;
+				for (int i = 0; i < Validators.Count; i++) {
+					IValidator val = Validators [i];
+					if (!val.IsValid)
+						isValid = false;
+					else
+						validatorsState [i] = true;
+				}
+				return validatorsState;
+			}
+			return null;
+		}
+
+		void RestoreValidatorsState (bool [] validatorsState) {
+			if (validatorsState == null)
 				return;
 
 			is_validated = true;
-			bool [] validatorsState = (bool []) GetFormatter ().Deserialize (validatorsStateSerialized);
 			for (int i = 0; i < Math.Min (validatorsState.Length, Validators.Count); i++) {
 				IValidator val = Validators [i];
 				val.IsValid = validatorsState [i];
 			}
 		}
+
+		ResponseWriter SetupResponseWriter (TextWriter httpWriter) { //TODO
+			FacesContext facesContext = getFacesContext ();
+
+			ResponseWriter oldWriter = facesContext.getResponseWriter ();
+			RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
+			RenderKit renderKit = renderFactory.getRenderKit (facesContext,
+															 facesContext.getViewRoot ().getRenderKitId ());
+
+			ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
+
+			ResponseWriter writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
+													 response.getContentType (), //TODO: is this the correct content type?
+													 response.getCharacterEncoding ());
+			facesContext.setResponseWriter (writer);
+
+			return oldWriter;
+		}
+
+		string DecodeNamespace (string id) {
+			if (Namespace.Length > 0 && id.Length > Namespace.Length && id.StartsWith (Namespace, StringComparison.Ordinal))
+				id = id.Substring (Namespace.Length);
+			return id;
+		}
+
+		#region FacesPageStatePersister
+		sealed class FacesPageStatePersister : PageStatePersister
+		{
+			public FacesPageStatePersister (Page page)
+				: base (page) {
+			}
+
+			public override void Load () {
+				if (Page._state != null) {
+					ViewState = Page._state.First;
+					ControlState = Page._state.Second;
+				}
+			}
+
+			public override void Save () {
+				if (ViewState != null || ControlState != null)
+					Page._state = new Pair (ViewState, ControlState);
+			}
+		}
+		#endregion
+
+		#region EventRaiserFacesEvent
+		sealed class EventRaiserFacesEvent : FacesEvent
+		{
+			public EventRaiserFacesEvent (Page page)
+				: base (page) {
+			}
+
+			public override bool isAppropriateListener (FacesListener __p1) {
+				throw new NotSupportedException ();
+			}
+
+			public override void processListener (FacesListener __p1) {
+				throw new NotSupportedException ();
+			}
+		}
+		#endregion
+
+		#region AspNetResponseWriter
+		private sealed class AspNetResponseWriter : java.io.Writer
+		{
+			readonly TextWriter _writer;
+			public AspNetResponseWriter (TextWriter writer) {
+				_writer = writer;
+			}
+			public override void close () {
+				_writer.Close ();
+			}
+
+			public override void flush () {
+				_writer.Flush ();
+			}
+
+			public override void write (char [] __p1, int __p2, int __p3) {
+				_writer.Write (__p1, __p2, __p3);
+			}
+
+			public override void write (int __p1) {
+				_writer.Write ((char) __p1);
+			}
+
+			public override void write (char [] __p1) {
+				_writer.Write (__p1);
+			}
+
+			public override void write (string __p1) {
+				_writer.Write (__p1);
+			}
+
+			public override void write (string __p1, int __p2, int __p3) {
+				_writer.Write (__p1, __p2, __p3);
+			}
+		}
+		#endregion
 	}
 }

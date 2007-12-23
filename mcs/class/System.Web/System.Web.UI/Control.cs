@@ -453,14 +453,12 @@ namespace System.Web.UI
 				EnsureIDInternal ();
 
 				string prefix = NamingContainer.UniqueID;
-#if TARGET_J2EE
-				// For J2EE portlets we need to add the namespace to the ID.
-				if (NamingContainer == Page && Page.PortletNamespace != null)
-					prefix = Page.PortletNamespace;
-				else
-#endif
 				if (NamingContainer == Page || prefix == null) {
 					uniqueID = _userId;
+#if TARGET_J2EE
+					if (getFacesContext () != null)
+						uniqueID = getFacesContext ().getExternalContext ().encodeNamespace (uniqueID);
+#endif
 					return uniqueID;
 				}
 
@@ -825,10 +823,6 @@ namespace System.Web.UI
 
 		Control LookForControlByName (string id)
 		{
-#if TARGET_J2EE
-			if (this == Page && id != null && id == Page.PortletNamespace)
-				return this;
-#endif
 			EnsureControlsCache ();
 			return (Control) _controlsCache [id];
 		}
@@ -1305,17 +1299,37 @@ namespace System.Web.UI
 #endif
 		string ResolveClientUrl (string relativeUrl)
 		{
-#if TARGET_J2EE
-			// There are no relative paths when rendering a J2EE portlet
-			if (Page != null && Page.PortletNamespace != null)
-				return ResolveUrl (relativeUrl);
-#endif
 			if (relativeUrl == null)
 				throw new ArgumentNullException ("relativeUrl");
 
 			if (relativeUrl.Length == 0)
 				return String.Empty;
 
+#if TARGET_J2EE
+			relativeUrl = ResolveClientUrlInternal (relativeUrl);
+
+			javax.faces.context.FacesContext faces = getFacesContext ();
+			if (faces == null)
+				return relativeUrl;
+
+			string url;
+			if (relativeUrl.IndexOf (':') >= 0)
+				url = ResolveAppRelativeFromFullPath (relativeUrl);
+			else if (VirtualPathUtility.IsAbsolute (relativeUrl))
+				url = VirtualPathUtility.ToAppRelative (relativeUrl);
+			else
+				return faces.getApplication ().getViewHandler ().getResourceURL (faces, relativeUrl);
+
+			if (VirtualPathUtility.IsAppRelative (url)) {
+				url = url.Substring (1);
+				url = url.Length == 0 ? "/" : url;
+				return faces.getApplication ().getViewHandler ().getResourceURL (faces, url);
+			}
+			return relativeUrl;
+		}
+		
+		string ResolveClientUrlInternal (string relativeUrl) {
+#endif
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 

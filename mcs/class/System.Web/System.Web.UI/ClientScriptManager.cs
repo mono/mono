@@ -45,7 +45,7 @@ using System.Globalization;
 namespace System.Web.UI
 {
 	#if NET_2_0
-	public sealed
+	public sealed partial
 	#else
 	internal
 	#endif
@@ -161,7 +161,7 @@ namespace System.Web.UI
 				prefix += page.theForm + ".";
 #if TARGET_J2EE
 			// Allow the page to transform ActionUrl to a portlet action url
-			if (actionUrl != null && page.PortletNamespace != null) {
+			if (actionUrl != null) {
 				actionUrl = page.CreateActionUrl(actionUrl);
 				prefix += "Portal";
 			}
