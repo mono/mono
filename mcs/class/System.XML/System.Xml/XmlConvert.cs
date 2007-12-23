@@ -803,6 +803,7 @@ namespace System.Xml {
 		}
 
 #if NET_2_0 // actually NET_3_5
+#if !TARGET_JVM
 
 		public static DateTimeOffset ToDateTimeOffset (string s)
 		{
@@ -828,6 +829,7 @@ namespace System.Xml {
 		{
 			return value.ToString (format, CultureInfo.InvariantCulture);
 		}
+#endif
 #endif
 	}
 }
