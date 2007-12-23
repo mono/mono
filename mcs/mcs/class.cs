@@ -5906,12 +5906,6 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) != 0)
 				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
 #endif
-
-			if (Parent.PartialContainer.Kind != Kind.Struct) {
-				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
-					GetSignatureForError ());
-			}
-
 			if (!Parent.IsInUnsafeScope)
 				Expression.UnsafeError (Location);
 
@@ -5921,45 +5915,17 @@ namespace Mono.CSharp {
 			if (!TypeManager.IsPrimitiveType (MemberType)) {
 				Report.Error (1663, Location, "`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
-				return false;
-			}
-
-			EmitContext ec = new EmitContext (this, Parent, Location, null, TypeManager.void_type, ModFlags);
-			Constant c = size_expr.ResolveAsConstant (ec, this);
-			if (c == null)
-				return false;
-
-			IntConstant buffer_size_const = c.ImplicitConversionRequired (TypeManager.int32_type, Location) as IntConstant;
-			if (buffer_size_const == null)
-				return false;
-
-			buffer_size = buffer_size_const.Value;
-
-			if (buffer_size <= 0) {
-				Report.Error (1665, Location, "`{0}': Fixed size buffers must have a length greater than zero", GetSignatureForError ());
-				return false;
-			}
-
-			int type_size = Expression.GetTypeSize (MemberType);
-
-			if (buffer_size > int.MaxValue / type_size) {
-				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
-					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
-				return false;
-			}
-
-			buffer_size *= type_size;
-
-			// Define nested
+			}			
+			
+			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
-
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name,
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type);
+			
 			element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
 			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
-
+			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, Modifiers.FieldAttr (ModFlags));
-
 			Parent.MemberCache.AddMember (FieldBuilder, this);
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 
@@ -5968,6 +5934,37 @@ namespace Mono.CSharp {
 
 		public override void Emit()
 		{
+			if (Parent.PartialContainer.Kind != Kind.Struct) {
+				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
+					GetSignatureForError ());
+			}
+
+			EmitContext ec = new EmitContext (this, Parent, Location, null, TypeManager.void_type, ModFlags);
+			Constant c = size_expr.ResolveAsConstant (ec, this);
+			if (c == null)
+				return;
+
+			IntConstant buffer_size_const = c.ImplicitConversionRequired (TypeManager.int32_type, Location) as IntConstant;
+			if (buffer_size_const == null)
+				return;
+
+			buffer_size = buffer_size_const.Value;
+
+			if (buffer_size <= 0) {
+				Report.Error (1665, Location, "`{0}': Fixed size buffers must have a length greater than zero", GetSignatureForError ());
+				return;
+			}
+
+			int type_size = Expression.GetTypeSize (MemberType);
+
+			if (buffer_size > int.MaxValue / type_size) {
+				Report.Error (1664, Location, "Fixed size buffer `{0}' of length `{1}' and type `{2}' exceeded 2^31 limit",
+					GetSignatureForError (), buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+				return;
+			}
+
+			buffer_size *= type_size;
+
 			if (fi == null)
 				fi = new FieldInfo [] { TypeManager.struct_layout_attribute_type.GetField ("Size") };
 

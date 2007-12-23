@@ -1,5 +1,10 @@
 2007-12-23  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #347189
+ 	* class.cs (FixedField): Use non-dependent code only in the define phase.
+
+2007-12-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #348076
  	* ecore.cs (FieldExpr.DoResolve): Allow any variable based expression.
 
