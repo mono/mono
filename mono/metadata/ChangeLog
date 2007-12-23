@@ -1,3 +1,7 @@
+2007-12-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Remove some code which is now in method-builder.c.
+
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-builder.c: New file, extraction of the method builder functionality 
