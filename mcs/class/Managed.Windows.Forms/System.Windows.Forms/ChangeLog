@@ -1,3 +1,11 @@
+2007-12-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In ItemControl.ItemsMouseMove, try to avoid
+	calling GetItemAt for every MouseMove event by also taking into
+	account whether any mouse button is pressed (probably dragging); 
+	if so, we can call GetItemAt, and if not, try to not call it 
+	(GetItemAt can be quite expensive when used with a large number of items).
+
 2007-12-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Implement -finally- support for dnd, by calling

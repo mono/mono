@@ -2578,9 +2578,10 @@ namespace System.Windows.Forms
 
 				if (done)
 					return;
-				if (!hover_processed && owner.Activation != ItemActivation.OneClick
+				if ((me.Button != MouseButtons.Left && me.Button != MouseButtons.Right) &&
+					!hover_processed && owner.Activation != ItemActivation.OneClick
 #if NET_2_0
-						&& !owner.ShowItemToolTips
+					&& !owner.ShowItemToolTips
 #endif
 						)
 					return;
