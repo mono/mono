@@ -146,7 +146,7 @@ namespace Mainsoft.Web.SessionState
 		}
 
 		internal static HttpSession GetSession (HttpContext context, bool create, bool throwOnError) {
-			HttpSession session = J2EEUtils.GetWorkerRequest (context).ServletRequest.getSession (create);
+			HttpSession session = J2EEUtils.GetWorkerRequest (context).GetSession (create);
 			if (session == null && throwOnError)
 				throw new HttpException ("Session is not established");
 

@@ -101,7 +101,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-rt=""  REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-JavaEE="" />
+      <UserProperties REFS-RefInfo-jsf-api="j2il:" REFS-JarPath-jsf-api="..\lib\jsf-api.jar" REFS-JarPath-JavaEE="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" REFS-JarPath-mscorlib="..\lib\mscorlib.jar" REFS-JarPath-system="..\lib\System.jar" REFS-JarPath-system-data="..\lib\System.Data.jar" REFS-JarPath-system-xml="..\lib\System.Xml.jar" REFS-JarPath-system-configuration="..\lib\System.Configuration.jar" REFS-JarPath-system-web="..\lib\System.Web.jar" REFS-JarPath-j2se-helpers="..\lib\J2SE.Helpers.jar" REFS-JarPath-j2ee-helpers="..\lib\J2EE.Helpers.jar" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -114,6 +114,10 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="jsf-api, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Refs\jsf-api.dll</HintPath>
+    </Reference>
     <Reference Include="rt, Version=1.4.2.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -122,17 +126,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\build\common\Locale.cs">
-      <Link>Locale.cs</Link>
-    </Compile>
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
+    <Compile Include="Mainsoft.Web.Hosting\BaseFacesPageHandlerFactory.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\AspNetFacesContext.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\BaseFacesStateManager.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\BaseFacesViewHandler.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletFacesContext.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletFacesStateManager.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletFacesViewHandler.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseHttpServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseStaticHttpServlet.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletFacesPageHandler.cs" />
     <Compile Include="Mainsoft.Web.Hosting\IncludeHelperServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\OutputStreamWrapper.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletFacesPageHandlerFactory.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\SessionWrapper.cs" />
     <Compile Include="Mainsoft.Web.Profile\CloudscapeProfileProvider.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileHelper.cs" />
     <Compile Include="Mainsoft.Web.Profile\DerbyProfileProvider.cs" />
@@ -154,5 +166,12 @@
     <Compile Include="Mainsoft.Web\J2EEConsts.cs" />
     <Compile Include="Mainsoft.Web\J2EEUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Web\System.Web.Phantom\System.Web.Phantom.csproj">
+      <Project>{FBFDAD51-74B6-4660-81C0-9C8B6C8D3B47}</Project>
+      <Name>System.Web.Phantom</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

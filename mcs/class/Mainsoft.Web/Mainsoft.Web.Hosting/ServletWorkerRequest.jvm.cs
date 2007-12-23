@@ -38,16 +38,15 @@ using System.Web.Hosting;
 using vmw.common;
 using vmw.@internal.j2ee;
 using InputStream=java.io.InputStream;
+using java.security;
 
 namespace Mainsoft.Web.Hosting {
 	[MonoTODO("Implement security demands on the path usage functions (and review)")]
 	[ComVisible (false)]
-	internal sealed class ServletWorkerRequest : HttpWorkerRequest, IServiceProvider {
-		readonly HttpServlet _HttpServlet;
-		readonly HttpServletRequest _HttpServletRequest;
-		readonly HttpServletResponse _HttpServletResponse;
+	public abstract class BaseWorkerRequest : HttpWorkerRequest, IServiceProvider {
 		OutputStreamWrapper _OutputStream;
 
+		readonly string _contextPath;
 		readonly string _requestUri;
 		readonly string _pathInfo;
 
@@ -79,7 +78,7 @@ namespace Mainsoft.Web.Hosting {
 
 		static readonly Hashtable KnownServerVariableMap;
 
-		static ServletWorkerRequest() {
+		static BaseWorkerRequest() {
 			_srvVarsToHeaderMap = new StringDictionary();
 			_srvVarsToHeaderMap.Add("HTTP_ACCEPT", "Accept");
 			_srvVarsToHeaderMap.Add("HTTP_REFERER", "Referer");
@@ -96,17 +95,14 @@ namespace Mainsoft.Web.Hosting {
 				KnownServerVariableMap[knownServerVariableNames[i]] = (KnownServerVariable)i;
 		}
 
-		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp, bool alwaysUsePrintWriter) {
-			_HttpServlet = servlet;
-			_HttpServletRequest = req;
-			_HttpServletResponse = resp;
+		public BaseWorkerRequest (string contextPath, string servletPath, string requestURI) {
 
-			if (alwaysUsePrintWriter)
-				_OutputStream = CreateOutputStream (false);
 
-			string contextPath = req.getContextPath();
-			string servletPath = req.getServletPath ();
-			string requestURI = req.getRequestURI ();
+			_contextPath = contextPath;
+
+			//string contextPath = req.getContextPath();
+			//string servletPath = req.getServletPath ();
+			//string requestURI = req.getRequestURI ();
 			// servletPath - Returns the part of this request's URL that calls the servlet.
 			//		so it contains default page.
 			// requestURI - Returns the part of this request's URL from the protocol name up to the query string in the first line of the HTTP request.
@@ -145,35 +141,12 @@ namespace Mainsoft.Web.Hosting {
 			}
 		}
 
-		public object GetService (Type serviceType)
+		static readonly Type typeOfWriter = typeof (java.io.Writer);
+		public virtual object GetService (Type serviceType)
 		{
-			if (serviceType == typeof(HttpServlet))
-				return Servlet;
-			if (serviceType == typeof(HttpServletRequest))
-				return ServletRequest;
-			if (serviceType == typeof(HttpServletResponse))
-				return ServletResponse;
-			if (serviceType == typeof (java.io.Writer))
+			if (serviceType == typeOfWriter)
 				return CreateOutputStream (false);
 			return null;
-		}
-
-		public HttpServlet Servlet {
-			get {
-				return _HttpServlet;
-			}
-		}
-		
-		public HttpServletRequest ServletRequest {
-			get{
-				return _HttpServletRequest;
-			}
-		}
-
-		public HttpServletResponse ServletResponse {
-			get{
-				return _HttpServletResponse;
-			}
 		}
 		
 		[MonoTODO("Implement security")]
@@ -194,8 +167,11 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override void FlushResponse (bool finalFlush) {
-			IPortletActionResponse resp =_HttpServletResponse as IPortletActionResponse;
-			if (_OutputStream == null || resp != null && resp.isRedirected())
+			//kostat
+			//IPortletActionResponse resp =_HttpServletResponse as IPortletActionResponse;
+			//if (_OutputStream == null || resp != null && resp.isRedirected())
+			//	return;
+			if (_OutputStream == null)
 				return;
 
 			_OutputStream.flush();
@@ -204,10 +180,7 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override string GetAppPath () {
-			return _HttpServletRequest.getContextPath();
-		}
-   		public override string GetAppPathTranslated () {
-			return J2EEUtils.GetApplicationRealPath(_HttpServlet.getServletConfig());;
+			return _contextPath;
 		}
 
 		public override string GetFilePath () {
@@ -231,30 +204,9 @@ namespace Mainsoft.Web.Hosting {
 			return Path.Combine (GetAppPathTranslated (), page);
 		}
 
-		public override string GetHttpVerbName () {
-			return _HttpServletRequest.getMethod();
-		}
-
-		public override string GetHttpVersion () {
-			return _HttpServletRequest.getProtocol();
-		}
-
-		public override string GetLocalAddress () {
-			return _HttpServletRequest.getLocalAddr();
-		}
-
-		public override int GetLocalPort () {
-			return _HttpServletRequest.getServerPort();
-		}
-
 		public override string GetPathInfo () {
-			string pathInfo = _pathInfo != null ? _pathInfo : _HttpServletRequest.getPathInfo();
-			return pathInfo != null ? pathInfo : String.Empty;
-		}
-
-		public override string GetQueryString () {
-			return _HttpServletRequest.getQueryString();
-		}
+			return _pathInfo;
+		}		
 
 		public override string GetRawUrl () {
 			if (_rawUrl == null) {
@@ -273,26 +225,6 @@ namespace Mainsoft.Web.Hosting {
 			return _rawUrl;
 		}
 
-		public override string GetRemoteAddress() {
-			return _HttpServletRequest.getRemoteAddr();
-		}
-
-		public override string GetRemoteName() {
-			return _HttpServletRequest.getRemoteHost();
-		}
-
-
-		public override int GetRemotePort() {
-			try {
-				return _HttpServletRequest.getRemotePort();
-			}
-			catch(Exception e) {
-				// if servlet API is 2.3 and below - there is no method getRemotePort 
-                // in ServletRequest interface... should be described as limitation.
-				return 0;
-			}
-		}
-
 		public override string GetServerVariable(string name) {
 			// FIXME: We need to make a proper mapping between the standard server
 			// variables and java equivalent. probably we have to have a configuration file 
@@ -302,31 +234,48 @@ namespace Mainsoft.Web.Hosting {
 			string headerName = _srvVarsToHeaderMap[name];
 
 			if (headerName != null)
-				return _HttpServletRequest.getHeader( headerName );
+				return getHeader( headerName );
 
 			object knownVariable = KnownServerVariableMap[name];
 			if (knownVariable != null)
 				return GetKnownServerVariable((KnownServerVariable)knownVariable);
 
-			return _HttpServletRequest.getHeader( name );
+			return getHeader( name );
 		}
+
+		public abstract string GetAuthType ();
+		protected abstract int getContentLength ();
+		protected abstract string getContentType ();
+		public abstract string GetRemoteUser ();
+		protected abstract int getServerPort ();
+		protected abstract string getHeader (string name);
+		protected abstract java.util.Enumeration getHeaderNames ();
+		protected abstract InputStream getInputStream ();
+		public abstract ServletContext GetContext ();
+		protected abstract OutputStreamWrapper CreateOutputStream (bool binary);
+
+		public abstract HttpSession GetSession (bool create);
+		public abstract bool IsRequestedSessionIdValid ();
+		public abstract string GetRequestedSessionId ();
+		public abstract bool IsUserInRole (string name);
+		public abstract Principal GetUserPrincipal ();
 
 		string GetKnownServerVariable(KnownServerVariable index) {
 			switch (index) {
-				case KnownServerVariable.AUTH_TYPE : return _HttpServletRequest.getAuthType();
-				case KnownServerVariable.CONTENT_LENGTH : return Convert.ToString(_HttpServletRequest.getContentLength());
-				case KnownServerVariable.CONTENT_TYPE : return _HttpServletRequest.getContentType();
+				case KnownServerVariable.AUTH_TYPE : return GetAuthType();
+				case KnownServerVariable.CONTENT_LENGTH : return Convert.ToString(getContentLength());
+				case KnownServerVariable.CONTENT_TYPE : return getContentType();
 				case KnownServerVariable.QUERY_STRING : return GetQueryString();
 				case KnownServerVariable.REMOTE_ADDR : return GetRemoteAddress();
 				case KnownServerVariable.REMOTE_HOST : return GetRemoteName();
-				case KnownServerVariable.REMOTE_USER : return _HttpServletRequest.getRemoteUser();
+				case KnownServerVariable.REMOTE_USER : return GetRemoteUser();
 				case KnownServerVariable.REQUEST_METHOD : return GetHttpVerbName ();
 				case KnownServerVariable.REQUEST_URI : return GetUriPath();
 				case KnownServerVariable.SCRIPT_NAME : return GetFilePath ();
 				case KnownServerVariable.SERVER_NAME : return GetServerName();
-				case KnownServerVariable.SERVER_PORT : return Convert.ToString(_HttpServletRequest.getServerPort());
+				case KnownServerVariable.SERVER_PORT : return Convert.ToString(getServerPort());
 				case KnownServerVariable.SERVER_PROTOCOL : return GetHttpVersion ();
-				case KnownServerVariable.SERVER_SOFTWARE : return Servlet.getServletContext().getServerInfo();
+				case KnownServerVariable.SERVER_SOFTWARE : return GetContext().getServerInfo();
 				case KnownServerVariable.PATH_INFO : return GetPathInfo();
 				default: throw new IndexOutOfRangeException("index");
 			}
@@ -340,11 +289,15 @@ namespace Mainsoft.Web.Hosting {
 			return IntPtr.Zero;
 		}
 
+		public override string GetAppPathTranslated () {
+			return J2EEUtils.GetApplicationRealPath (GetContext ());
+		}
+
 		public override string MapPath (string virtualPath) {
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
 
-			ServletConfig config = _HttpServlet.getServletConfig ();			
+			ServletContext context = GetContext ();
 
 			string contextPath = GetAppPath ();
 			if ((virtualPath.Length > contextPath.Length && virtualPath [contextPath.Length] != '/') ||
@@ -354,11 +307,11 @@ namespace Mainsoft.Web.Hosting {
 					appVirtualPathIndex = virtualPath.IndexOf ('/', appVirtualPathIndex + 1);
 					string crossContextPath = appVirtualPathIndex > 0 ?
 						virtualPath.Remove (appVirtualPathIndex) : virtualPath;
-					ServletContext context = config.getServletContext ().getContext (crossContextPath);
-					if (context != null) {
+					ServletContext other = context.getContext (crossContextPath);
+					if (other != null) {
 						string appVirtualPath = appVirtualPathIndex > 0 ?
 							virtualPath.Substring (appVirtualPathIndex) : String.Empty;
-						return context.getRealPath (appVirtualPath);
+						return other.getRealPath (appVirtualPath);
 					}
 				}
 
@@ -368,7 +321,7 @@ namespace Mainsoft.Web.Hosting {
 			}
 
 			string thisAppVirtualPath = virtualPath.Length > contextPath.Length ? virtualPath.Substring (contextPath.Length) : String.Empty;
-			return J2EEUtils.GetApplicationRealPath (config, thisAppVirtualPath);
+			return J2EEUtils.GetApplicationRealPath (context, thisAppVirtualPath);
 
 		}
 
@@ -392,24 +345,25 @@ namespace Mainsoft.Web.Hosting {
 			}
 		}
 
-		private OutputStreamWrapper CreateOutputStream (bool binary)
-		{
-			IPortletActionResponse resp = _HttpServletResponse as IPortletActionResponse;
-			if (resp != null)
-				return null; // no output stream while processAction
+		//kostat
+		//private OutputStreamWrapper CreateOutputStream (bool binary)
+		//{
+		//    IPortletActionResponse resp = _HttpServletResponse as IPortletActionResponse;
+		//    if (resp != null)
+		//        return null; // no output stream while processAction
 
-			if (_OutputStream != null)
-				return _OutputStream;
+		//    if (_OutputStream != null)
+		//        return _OutputStream;
 
-			if (_HttpServletResponse != null) {
-				if (binary)
-					_OutputStream = new OutputStreamWrapper (_HttpServletResponse.getOutputStream ());
-				else
-					_OutputStream = new OutputStreamWrapper (_HttpServletResponse.getWriter ());
-			}
+		//    if (_HttpServletResponse != null) {
+		//        if (binary)
+		//            _OutputStream = new OutputStreamWrapper (_HttpServletResponse.getOutputStream ());
+		//        else
+		//            _OutputStream = new OutputStreamWrapper (_HttpServletResponse.getWriter ());
+		//    }
 
-			return _OutputStream;
-		}
+		//    return _OutputStream;
+		//}
 
 		public override void SendResponseFromMemory (byte [] data, int length) {
 			_OutputStream = CreateOutputStream (true);
@@ -421,26 +375,6 @@ namespace Mainsoft.Web.Hosting {
 			_OutputStream.write(sdata, 0 , length);
 		}
 
-		public override void SendStatus(int statusCode, string statusDescription) {
-			// setStatus(int, string) is deprecated
-			_HttpServletResponse.setStatus(statusCode/*, statusDescription*/);
-		}
-
-		public override void SendUnknownResponseHeader(string name, string value) {
-			if (HeadersSent ())
-				return;
-
-			_HttpServletResponse.addHeader(name, value);
-		}
-
-		public override bool HeadersSent () {
-			return _HttpServletResponse.isCommitted();
-		}
-
-		public override void SendCalculatedContentLength (int contentLength) {
-			_HttpServletResponse.setContentLength(contentLength);
-		}
-
 		public override void SendKnownResponseHeader (int index, string value) {
 			SendUnknownResponseHeader (GetKnownResponseHeaderName (index), value);
 		}
@@ -450,18 +384,18 @@ namespace Mainsoft.Web.Hosting {
 		}
 
 		public override string GetUnknownRequestHeader (string name) {
-			return _HttpServletRequest.getHeader(name);
+			return getHeader(name);
 		}
 
 		public override string [][] GetUnknownRequestHeaders () {
 			if (unknownHeaders == null) {
 				ArrayList pairs = new ArrayList ();
-				for (java.util.Enumeration he = _HttpServletRequest.getHeaderNames(); he.hasMoreElements() ;) {
+				for (java.util.Enumeration he = getHeaderNames(); he.hasMoreElements() ;) {
 					string key = (string) he.nextElement();
 					int index = HttpWorkerRequest.GetKnownRequestHeaderIndex (key);
 					if (index != -1)
 						continue;
-					pairs.Add (new string [] {key, _HttpServletRequest.getHeader(key)});
+					pairs.Add (new string [] {key, getHeader(key)});
 				}
 				
 				if (pairs.Count != 0) {
@@ -479,28 +413,16 @@ namespace Mainsoft.Web.Hosting {
 			if (buffer == null || size == 0)
 				return 0;
 			sbyte [] sbuffer = vmw.common.TypeUtils.ToSByteArray(buffer);
-			InputStream inp = _HttpServletRequest.getInputStream();
-			if (inp == null && _HttpServletRequest is IPortletActionRequest)
-				inp = ((IPortletActionRequest) _HttpServletRequest).getPortletInputStream();
-			int r = (inp != null) ? inp.read(sbuffer, 0, size) : -1;
-			return r == -1 ? 0 : r;
+			InputStream inp = getInputStream();
+			if (inp == null)
+				return 0;
+			int r = inp.read (sbuffer, 0, size);
+			return r < 0 ? 0 : r;
 		}
 
 		public override void SetEndOfSendNotification(System.Web.HttpWorkerRequest.EndOfSendNotification callback, object extraData) {
 			_endOfSendCallback = callback;
 			_endOfSendArgs = extraData;
-		}
-
-		public override string GetProtocol() {
-			return _HttpServletRequest.getScheme();
-		}
-
-		public override string GetServerName() {
-			return _HttpServletRequest.getServerName();
-		}
-
-		public override bool IsSecure() {
-			return _HttpServletRequest.isSecure();
 		}
 	}
 }

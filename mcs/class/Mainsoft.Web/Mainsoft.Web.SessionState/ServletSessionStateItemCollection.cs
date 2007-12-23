@@ -34,6 +34,7 @@ using System.Threading;
 
 using javax.servlet;
 using javax.servlet.http;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.SessionState
 {
@@ -57,19 +58,15 @@ namespace Mainsoft.Web.SessionState
 				_staticObjects = new HttpStaticObjectsCollection ();
 
 				if (context != null) {
-					ServletConfig config = J2EEUtils.GetWorkerRequest (context).Servlet.getServletConfig ();
-					string sessionPersistance = J2EEUtils.GetInitParameterByHierarchy(config, J2EEConsts.Enable_Session_Persistency);
-					if (sessionPersistance == null)
-						sessionPersistance = config.getServletContext().getInitParameter (J2EEConsts.Enable_Session_Persistency);
+					ServletContext servletContext = J2EEUtils.GetWorkerRequest (context).GetContext ();
+					string sessionPersistance = servletContext.getInitParameter (J2EEConsts.Enable_Session_Persistency);
 					if (sessionPersistance != null) {
 						try {
 							_needSessionPersistence = Boolean.Parse (sessionPersistance);
 						}
 						catch (Exception) {
 							_needSessionPersistence = false;
-#if DEBUG
-							Console.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
-#endif
+							Debug.WriteLine ("EnableSessionPersistency init param's value is invalid. the value is " + sessionPersistance);
 						}
 					}
 				}

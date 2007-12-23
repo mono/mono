@@ -27,7 +27,7 @@ using System;
 
 namespace Mainsoft.Web
 {
-	internal static class J2EEConsts
+	public static class J2EEConsts
 	{
 		public const string SESSION_STATE = "GH_SESSION_STATE";
 

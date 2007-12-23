@@ -34,6 +34,7 @@ using System.Data.OleDb;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration.Provider;
+using System.Diagnostics;
 
 namespace Mainsoft.Web.Security
 {
@@ -290,9 +291,7 @@ namespace Mainsoft.Web.Security
 					new OleDbConnection (String.Format (shuttingConnection, shutUrl)).Open ();
 				}
 				catch (Exception ex) {
-#if TRACE
-					Console.Write (ex.ToString ());
-#endif
+					Trace.Write (ex.ToString ());
 				}
 			}
 		}

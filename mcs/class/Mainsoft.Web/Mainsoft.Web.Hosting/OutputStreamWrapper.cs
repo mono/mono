@@ -41,7 +41,7 @@ namespace Mainsoft.Web.Hosting
 	/// <summary>
 	/// 
 	/// </summary>
-	internal sealed class OutputStreamWrapper : java.io.Writer
+	public sealed class OutputStreamWrapper : java.io.Writer
 	{
 		enum OutputMode
 		{
@@ -53,9 +53,9 @@ namespace Mainsoft.Web.Hosting
 		readonly OutputStream _outputStream;
 		readonly OutputMode _outputMode;
 
-		private byte [] _bytebuffer = new byte [1024];
-		private char [] _charBuffer = new char [1024];
-		sbyte [] _oneByte = new sbyte [1];
+		private byte [] _bytebuffer;
+		private char [] _charBuffer;
+		//sbyte [] _oneByte = new sbyte [1];
 
 		Encoding _encoding = null;
 
@@ -144,11 +144,14 @@ namespace Mainsoft.Web.Hosting
 		private char [] GetCharBuffer (int length)
 		{
 			// We will reuse the buffer if its size is < 32K
-			if (_charBuffer.Length >= length)
+			if (_charBuffer != null && _charBuffer.Length >= length)
 				return _charBuffer;
 
 			if (length > 32 * 1024)
 				return new char [length];
+
+			if (length < 1024)
+				length = 1024;
 
 			_charBuffer = new char [length];
 			return _charBuffer;
@@ -157,11 +160,14 @@ namespace Mainsoft.Web.Hosting
 		private byte [] GetByteBuffer (int length)
 		{
 			// We will reuse the buffer if its size is < 32K
-			if (_bytebuffer.Length >= length)
+			if (_bytebuffer != null && _bytebuffer.Length >= length)
 				return _bytebuffer;
 
 			if (length > 32 * 1024)
 				return new byte [length];
+
+			if (length < 1024)
+				length = 1024;
 
 			_bytebuffer = new byte [length];
 			return _bytebuffer;
