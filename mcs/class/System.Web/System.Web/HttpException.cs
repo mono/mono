@@ -163,7 +163,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			WriteFileTop (builder, "Runtime Error");
 			builder.Append (@"<p><strong>Description:</strong> An application error occurred on the server. The current custom error settings for this application prevent the details of the application error from being viewed remotely (for security reasons)." + (
 #if TARGET_J2EE //on portal we cannot know if we run locally
-				HttpContext.Current.ServletRequest == null ? String.Empty :
+				!HttpContext.Current.IsServletRequest ? String.Empty :
 #endif
 				" It could, however, be viewed by browsers running on the local server machine.") 
 				+ @"</p>

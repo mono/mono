@@ -53,6 +53,10 @@ namespace System.Web {
 
 		public bool IsDebuggingEnabled { get { return false; } }
 
+		internal bool IsServletRequest {
+			get { return ServletRequest != null; }
+		}
+
 		internal object GetWorkerService(Type t)
 		{
 			IServiceProvider prv = WorkerRequest as IServiceProvider;

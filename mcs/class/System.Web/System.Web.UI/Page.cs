@@ -707,7 +707,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		CultureInfo ret = null;
 		if (culture.StartsWith ("auto", StringComparison.InvariantCultureIgnoreCase)) {
 #if TARGET_J2EE
-			if (Context.ServletRequest == null)
+			if (!Context.IsServletRequest)
 				return deflt;
 #endif
 			string[] languages = Request.UserLanguages;
