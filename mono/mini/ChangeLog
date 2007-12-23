@@ -1,3 +1,9 @@
+2007-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_klass_info): Avoid emitting info if one of the methods
+	in the vtable can't be encoded.
+	(compile_method): Ditto.
+
 2007-12-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (setup_jit_tls_data): Use the MONO_ARCH_INIT_TOP_LMF_ENTRY macro if
