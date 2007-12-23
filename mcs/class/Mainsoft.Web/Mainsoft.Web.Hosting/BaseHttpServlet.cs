@@ -82,7 +82,7 @@ namespace Mainsoft.Web.Hosting
 				servletDomain.SetData (J2EEConsts.CLASS_LOADER, java.lang.Thread.currentThread ().getContextClassLoader ());
 				//servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
 				//servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
-				servletDomain.SetData (J2EEConsts.RESOURCE_LOADER, new vmw.@internal.j2ee.ServletResourceLoader (context));
+				servletDomain.SetData (J2EEConsts.RESOURCE_LOADER, new ServletResourceLoader (context));
 
 				lock (evidence) {
 					if (context.getAttribute (J2EEConsts.APP_DOMAIN) == null)

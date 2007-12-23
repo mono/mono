@@ -105,10 +105,6 @@
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="J2EE.Helpers">
-      <HintPath>..\lib\J2EE.Helpers.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="J2SE.Helpers">
       <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
       <Private>False</Private>
@@ -142,6 +138,8 @@
     <Compile Include="Mainsoft.Web.Hosting\IncludeHelperServlet.cs" />
     <Compile Include="Mainsoft.Web.Hosting\OutputStreamWrapper.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesPageHandlerFactory.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletIncludeUtils.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\ServletResourceLoader.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletWorkerRequest.jvm.cs" />
     <Compile Include="Mainsoft.Web.Hosting\SessionWrapper.cs" />

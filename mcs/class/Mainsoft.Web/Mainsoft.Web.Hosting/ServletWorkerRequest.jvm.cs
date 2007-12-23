@@ -36,7 +36,6 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Web.Hosting;
 using vmw.common;
-using vmw.@internal.j2ee;
 using InputStream=java.io.InputStream;
 using java.security;
 
