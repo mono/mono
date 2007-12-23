@@ -1,5 +1,15 @@
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (field_from_memberref): Remove the dynamic case, it is handled in
+	the caller.
+
+	* class.c (mono_class_get_full): Check the token type in the dynamic case.
+
+	* loader.c (mono_field_from_token): Ditto.	
+
+	* loader.c (mono_get_method_from_token): Change the check so it checks memberref
+	type as well.
+	
 	* loader.c (mono_get_method_from_token): Check the token type in the dynamic case.
 	Fixes #342565.
 
