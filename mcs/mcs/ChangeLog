@@ -1,3 +1,8 @@
+2007-12-23  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #348076
+ 	* ecore.cs (FieldExpr.DoResolve): Allow any variable based expression.
+
 2007-12-22  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs (MethodGroupExpr.OverloadResolve): Set type arguments for

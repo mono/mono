@@ -4513,8 +4513,7 @@ namespace Mono.CSharp {
 					Report.Error (1666, loc, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
 				}
 
-				if (!(InstanceExpression is LocalVariableReference) &&
-					!(InstanceExpression is This)) {
+				if (InstanceExpression.eclass != ExprClass.Variable) {
 					Report.SymbolRelatedToPreviousError (FieldInfo);
 					Report.Error (1708, loc, "`{0}': Fixed size buffers can only be accessed through locals or fields",
 						TypeManager.GetFullNameSignature (FieldInfo));
