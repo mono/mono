@@ -4242,6 +4242,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			// Don't resolve already resolved expression
+			if (eclass != ExprClass.Invalid)
+				return this;
+			
 			Expression expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr_resolved == null)
 				return null;
