@@ -106,7 +106,22 @@ namespace System.Windows.Forms
 
 		public int NearestIndex (Point pt)
 		{
-			throw new NotImplementedException ();
+			double distance = Double.MaxValue;
+			int nearest = -1;
+
+			for (int i = 0; i < listview_owner.Items.Count; i++) {
+				Point pos = listview_owner.GetItemLocation (i);
+				double d = Math.Pow (pos.X - pt.X, 2) + Math.Pow (pos.Y - pt.Y, 2);
+				if (d < distance) {
+					distance = d;
+					nearest = i;
+				}
+			}
+
+			if (listview_owner.item_control.dragged_item_index == nearest)
+				return -1;
+
+			return nearest;
 		}
 
 		internal PointF [] TopTriangle {

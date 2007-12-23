@@ -24,9 +24,8 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Mike Kestner (mkestner@novell.com)
 //	Daniel Nauck (dna(at)mono-project(dot)de)
+//	Carlos Alberto Cortez <calberto.cortez@gmail.com>
 //
-// TODO:
-//   - Drag and drop
 
 
 // NOT COMPLETE
@@ -2305,6 +2304,8 @@ namespace System.Windows.Forms
 			ListViewItem prev_tooltip_item;
 #endif
 			int clicks;
+			Point drag_begin = new Point (-1, -1);
+			internal int dragged_item_index = -1;
 			
 			ListViewLabelEditTextBox edit_text_box;
 			internal ListViewItem edit_item;
@@ -2613,6 +2614,23 @@ namespace System.Windows.Forms
 					}
 				}
 
+				if (me.Button == MouseButtons.Left || me.Button == MouseButtons.Right) {
+					if (drag_begin.X == -1 && drag_begin.Y == -1)
+						drag_begin = new Point (me.X, me.Y);
+					else {
+						Rectangle r = new Rectangle (drag_begin, SystemInformation.DragSize);
+						if (!r.Contains (me.X, me.Y)) {
+							dragged_item_index = item.Index;
+
+							if (item != null)
+								owner.OnItemDrag (new ItemDragEventArgs (me.Button, item));
+
+							drag_begin = new Point (-1, -1);
+							dragged_item_index = -1;
+						}
+					}
+				}
+
 #if NET_2_0
 				if (owner.ShowItemToolTips) {
 					if (item == null) {
@@ -2627,7 +2645,6 @@ namespace System.Windows.Forms
 #endif
 
 			}
-
 
 			private void ItemsMouseHover (object sender, EventArgs e)
 			{
@@ -3340,7 +3357,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [ItemDragEvent]);
+			ItemDragEventHandler eh = (ItemDragEventHandler)(Events [ItemDragEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
