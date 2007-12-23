@@ -17,8 +17,8 @@
     </StartupObject>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
-    <OutputPath>bin\Release_Java20\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
+    <OutputPath>bin\Release_Java\</OutputPath>
     <DefineConstants>JAVA;NET_2_0</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
@@ -37,11 +37,11 @@
     <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
-    <DocumentationFile>bin\Release_Java20\Mainsoft.Web.XML</DocumentationFile>
+    <DocumentationFile>bin\Release_Java\Mainsoft.Web.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <OutputPath>bin\Debug_Java\</OutputPath>
     <DefineConstants>TRACE;DEBUG;JAVA;NET_2_0</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DebugType>full</DebugType>
@@ -59,36 +59,7 @@
     <JDKName>1.4.2</JDKName>
     <jarserver>iap2</jarserver>
     <TargetPlatform>0</TargetPlatform>
-    <DocumentationFile>bin\Debug_Java20\Mainsoft.Web.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug_Java\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;JAVA</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>false</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
-    <TargetPlatform>0</TargetPlatform>
-    <AdditionalClassPath>
-    </AdditionalClassPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>JAVA</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <BaseAddress>285212672</BaseAddress>
-    <SkipValidation>false</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
-    <TargetPlatform>0</TargetPlatform>
-    <AdditionalClassPath>
-    </AdditionalClassPath>
+    <DocumentationFile>bin\Debug_Java\Mainsoft.Web.XML</DocumentationFile>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
   <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
