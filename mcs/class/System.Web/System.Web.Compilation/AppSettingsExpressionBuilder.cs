@@ -36,6 +36,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Web.Configuration;
 using System.Web.UI;
+using System.Reflection;
 
 namespace System.Web.Compilation {
 
@@ -60,8 +61,14 @@ namespace System.Web.Compilation {
 		public static object GetAppSetting (string key, Type targetType, string propertyName)
 		{
 			try {
-				TypeConverter converter = TypeDescriptor.GetConverter (targetType);
-				return converter.ConvertFrom (GetAppSetting (key));
+				object value = GetAppSetting (key);
+
+				PropertyInfo pi = targetType.GetProperty(propertyName);
+				if (pi == null)
+					return value.ToString ();
+
+				TypeConverter converter = TypeDescriptor.GetConverter (pi.PropertyType);
+				return converter.ConvertFrom (value);
 			}
 			catch (NotSupportedException) {
 				throw new InvalidOperationException (String.Format ("Could not convert app setting {0} to type {1}", key, targetType));

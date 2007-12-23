@@ -1,3 +1,8 @@
+2007-12-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AppSettingsExpressionBuilder.cs: fixed GetAppSetting, should convert
+	to property type
+
 2007-12-21  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: Refactoring. Move the provider creation code to
