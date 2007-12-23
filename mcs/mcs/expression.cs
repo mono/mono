@@ -915,11 +915,6 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
-		static int PtrTypeSize (Type t)
-		{
-			return GetTypeSize (TypeManager.GetElementType (t));
-		}
-
 		//
 		// Loads the proper "1" into the stack based on the type, then it emits the
 		// opcode for the operation requested
@@ -939,10 +934,11 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.float_type)
 				ig.Emit (OpCodes.Ldc_R4, 1.0F);
 			else if (t.IsPointer){
-				int n = PtrTypeSize (t);
+				Type et = TypeManager.GetElementType (t);
+				int n = GetTypeSize (et);
 				
 				if (n == 0)
-					ig.Emit (OpCodes.Sizeof, t);
+					ig.Emit (OpCodes.Sizeof, et);
 				else
 					IntConstant.EmitInt (ig, n);
 			} else 

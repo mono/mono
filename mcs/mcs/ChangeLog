@@ -1,5 +1,10 @@
 2007-12-23  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #346379
+ 	* expression.cs (UnaryMutator): Emit size of type for pointer mutator.
+
+2007-12-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #347359
  	* expression.cs (Invocation): Don't resolve already resolved expression.
 
