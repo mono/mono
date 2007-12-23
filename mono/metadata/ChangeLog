@@ -1,5 +1,10 @@
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-builder.c: New file, extraction of the method builder functionality 
+	from marshal.c.
+
+	* marshal.c: Move the mb functions into method-builder.c.
+
 	* marshal.h marshal.c: Export some mono_mb_... functions.
 
 	* marshal.c: Use mono_mb_get_label () and mono_mb_patch_branch () in all places.
