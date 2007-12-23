@@ -1,5 +1,7 @@
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_delegate_invoke ().
+
 	* aot-compiler.c (emit_klass_info): Avoid emitting info if one of the methods
 	in the vtable can't be encoded.
 	(compile_method): Ditto.
