@@ -1,5 +1,14 @@
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_get_method_from_token): Check the token type in the dynamic case.
+	Fixes #342565.
+
+	* class-internals.h: Add new loader error type MONO_EXCEPTION_BAD_IMAGE plus
+	a helper function for setting it.
+
+	* loader.c (mono_loader_error_prepare_exception): Handle MONO_EXCEPTION_BAD_IMAGE.
+
+	
 	* assembly.c: Significally simplify code now that referenced assemblies are 
 	loaded lazily. Get rid of the 'loading' hashtables. Hopefully fixes #347629.
 
