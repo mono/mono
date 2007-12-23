@@ -1,5 +1,8 @@
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c: Significally simplify code now that referenced assemblies are 
+	loaded lazily. Get rid of the 'loading' hashtables. Hopefully fixes #347629.
+
 	* threads.h: Don't include  the internal threads-types.h header file. Fixes
 	#349952.
 
