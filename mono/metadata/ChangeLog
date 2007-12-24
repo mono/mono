@@ -1,5 +1,12 @@
 2007-12-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-builder.h: New file, moved the mono_mb_ declarations here from 
+	marshal.h.
+
+	* boehm-gc.c marshal.c: Include method-builder.h.
+
+	* marshal.c: Use mono_mb_emit_branch_label () in a few places.
+
 	* marshal.c: Remove some code which is now in method-builder.c.
 
 2007-12-23  Zoltan Varga  <vargaz@gmail.com>
