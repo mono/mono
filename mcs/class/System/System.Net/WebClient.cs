@@ -1181,8 +1181,6 @@ namespace System.Net
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
-			if (method == null)
-				throw new ArgumentNullException ("method");
 
 			lock (this) {
 				SetBusy ();

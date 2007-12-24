@@ -1,3 +1,10 @@
+2007-12-24  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs: Do not validate method to be null, we do not do
+	that in OpenWrite, the detection is done later on.  
+
+	Fixes #350622
+
 2007-12-16  Miguel de Icaza  <miguel@novell.com>
 
 	* WebClient.cs: Got the arguments in the wrong order, fix
