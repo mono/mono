@@ -1,3 +1,7 @@
+2007-12-24 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.cs: revert changes from r91230
+
 2007-12-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListControl.cs: fixed Load/SaveViewState, removed selected indices
