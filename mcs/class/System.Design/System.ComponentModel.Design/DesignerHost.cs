@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
+using System.Windows.Forms.Design;
 using System.Reflection;
 
 namespace System.ComponentModel.Design
@@ -126,7 +127,11 @@ namespace System.ComponentModel.Design
 				_designers[component] = designer;
 				designer.Initialize (component);
 			} else {
-				Console.WriteLine ("Unable to load a designer for " + component.GetType ().FullName);
+				IUIService uiService = GetService (typeof (IUIService)) as IUIService;
+				if (uiService != null) {
+					uiService.ShowError ("Unable to load a designer for component type '" +
+							     component.GetType ().Name + "'");
+				}
 			}
 
 			// Activate the host and design surface once the root component is added to

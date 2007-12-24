@@ -1,3 +1,7 @@
+2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignerHost.cs: Report Errors.
+
 2007-10-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignSurface.cs: 
