@@ -44,12 +44,12 @@ namespace System.ComponentModel.Design
 		public static readonly CheckoutException Canceled = new CheckoutException ();
 
 		public CheckoutException()
-			: this (null, 0)
+			: this (null)
 		{
 		}
 
 		public CheckoutException (string message)
-			: this (message, 0)
+			: base (message)
 		{
 		}
 
