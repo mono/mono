@@ -261,7 +261,8 @@ namespace System.ComponentModel.Design.Serialization
 						     "Value Type: " + value.GetType ().Name + System.Environment.NewLine + 
 						     "Value (ToString): " + value.ToString ());
 			} else {
-				expression = new CodeObjectCreateExpression (value.GetType ().FullName, new CodeExpression[0]);
+				if (value.GetType().GetConstructor (new Type[0]) != null)
+					expression = new CodeObjectCreateExpression (value.GetType ().FullName, new CodeExpression[0]);
 				isComplete = false;
 			}
 			return expression;

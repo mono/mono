@@ -1,5 +1,12 @@
 2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CodeDomSerializerBase.cs: Check for a public ctor with no params
+	before returning a CodeCreateObject.
+	* CodeDomSerializer.cs: Handle null return value 
+	from SerializeCreationExpression
+
+2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CodeDomSerializerBase.cs: 
 	 - Refactor deserialization error reporting.
 	 - Return a CodeExpression if DeserializeExpression fails.

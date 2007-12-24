@@ -73,17 +73,18 @@ namespace System.ComponentModel.Design.Serialization
 				ExpressionContext context = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
 				if (context != null && context.PresetValue == value) {
 					CodeStatementCollection statements = new CodeStatementCollection ();
-					statements.Add (new CodeAssignStatement (context.Expression, createExpr));
+					if (createExpr != null) {
+						statements.Add (new CodeAssignStatement (context.Expression, createExpr));
+						CodeExpression expression = base.GetExpression (manager, value);
+						if (expression == null)
+							base.SetExpression (manager, value, createExpr);
+					}
 					base.SerializeProperties (manager, statements, value, new Attribute[0]);
 					base.SerializeEvents (manager, statements, value, new Attribute[0]);
 				}
 			}
 
-			CodeExpression expression = base.GetExpression (manager, value);
-			if (expression == null)
-				base.SetExpression (manager, value, createExpr);
-
-			return (object)createExpr;
+			return createExpr;
 		}
 
         [Obsolete ("This method has been deprecated. Use SerializeToExpression or GetExpression instead.")] 
