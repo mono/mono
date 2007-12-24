@@ -1020,5 +1020,6 @@ namespace MonoTests.System.Text.RegularExpressions {
 		[Test] public void Trial0988 () { PerlTrials.trials [988].Execute (); }
 		[Test] public void Trial0989 () { PerlTrials.trials [989].Execute (); }
 		[Test] public void Trial0990 () { PerlTrials.trials [990].Execute (); }
+		[Test] public void Trial0991 () { PerlTrials.trials [991].Execute (); }
 	}
 }

@@ -1031,7 +1031,8 @@ namespace MonoTests.System.Text.RegularExpressions {
 			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s].[c].[n]", "Pass. Group[0]=(0,11) Group[1]=(1,1) Group[2]=(5,1) Group[3]=(9,1)"),
 			new RegexTrial(@"^((\[(?<SCHEMA>[^\]]+)\])|(?<SCHEMA>[^\.\[\]]+))\s*\.\s*((\[(?<CATALOG>[^\]]+)\])|(?<CATALOG>[^\.\[\]]+))\s*\.\s*((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture, "[s].[c].", "Fail."),
 			new RegexTrial(@"^((\[(?<ColName>.+)\])|(?<ColName>\S+))([ ]+(?<Order>ASC|DESC))?$", RegexOptions.IgnoreCase|RegexOptions.ExplicitCapture, "[id]]", "Pass. Group[0]=(0,5) Group[1]=(1,3) Group[2]="),
-			new RegexTrial(@"a{1,2147483647}", RegexOptions.None, "a", "Pass. Group[0]=(0,1)")
+			new RegexTrial(@"a{1,2147483647}", RegexOptions.None, "a", "Pass. Group[0]=(0,1)"),
+			new RegexTrial(@"^((\[(?<NAME>[^\]]+)\])|(?<NAME>[^\.\[\]]+))$", RegexOptions.None, "[a]", "Pass. Group[0]=(0,3) Group[1]=(0,3) Group[2]=(0,3) Group[3]=(1,1)"),
 
 		};
 	}
