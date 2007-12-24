@@ -271,8 +271,12 @@ AggFunctionName
 	;
 
 StringExpr
-	: SingleColumnValue
-	| StringLiteral
+	: PAROPEN StringExpr PARCLOSE
+	{
+		$$ = (IExpression)$2;
+	}
+	| SingleColumnValue
+	| StringLiteral { $$ = new Literal ($1); }
 	| StringFunction
 	;
 
@@ -284,6 +288,10 @@ StringFunction
 	| SUBSTRING PAROPEN StringExpr COMMA ArithExpr COMMA ArithExpr PARCLOSE
 	{
 		$$ = new SubstringFunction ((IExpression)$3, (IExpression)$5, (IExpression)$7);
+	}
+	| StringExpr PLUS StringExpr
+	{
+		$$ = new ConcatFunction ((IExpression)$1, (IExpression)$3);
 	}
 	;
 
@@ -312,33 +320,33 @@ TypeSpecifier
 	;
 
 IsPredicate
-	: SingleColumnValue IS NULL
+	: ArithExpr IS NULL
 	{
 		$$ = new Comparison (Operation.EQ, (IExpression)$1, new Literal (null));
 	}
-	| SingleColumnValue IS NOT NULL
+	| ArithExpr IS NOT NULL
 	{
 		$$ = new Comparison (Operation.NE, (IExpression)$1, new Literal (null));
 	}
 	;
 
 LikePredicate
-	: ArithExpr LIKE StringLiteral
+	: StringExpr LIKE StringExpr
 	{
-		$$ = new Like ((IExpression)$1, (string)$3);
+		$$ = new Like ((IExpression)$1, (IExpression)$3);
 	}
-	| ArithExpr NOT LIKE StringLiteral
+	| StringExpr NOT LIKE StringExpr
 	{
-		$$ = new Negation (new Like ((IExpression)$1, (string)$4));
+		$$ = new Negation (new Like ((IExpression)$1, (IExpression)$4));
 	}
 	;
 
 InPredicate
-	: SingleColumnValue IN InPredicateValue
+	: ArithExpr IN InPredicateValue
 	{
 		$$ = new In ((IExpression)$1, (IList)$3);
 	}
-	| SingleColumnValue NOT IN InPredicateValue
+	| ArithExpr NOT IN InPredicateValue
 	{
 		$$ = new Negation (new In ((IExpression)$1, (IList)$4));
 	}

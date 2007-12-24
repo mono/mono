@@ -36,26 +36,11 @@ using System.Data;
 
 namespace Mono.Data.SqlExpressions {
 	internal class Like : UnaryExpression {
-		string pattern;
-		bool openStart, openEnd;
+		readonly IExpression _pattern;
 		
-		public Like (IExpression e, string pattern) : base (e)
+		public Like (IExpression e, IExpression pattern) : base (e)
 		{
-			string original = pattern;
-			int len = pattern.Length;
-			openStart = (pattern[0] == '*' || pattern[0] == '%');
-			openEnd = (pattern[len - 1] == '*' || pattern[len - 1] == '%');
-			
-			pattern = pattern.Trim ('*', '%');
-			pattern = pattern.Replace ("[*]", "[[0]]");
-			pattern = pattern.Replace ("[%]", "[[1]]");
-			if (pattern.IndexOf('*') != -1 || pattern.IndexOf('%') != -1)
-				throw new EvaluateException (String.Format ("Pattern '{0}' is invalid.", original));
-			pattern = pattern.Replace ("[[0]]", "*");
-			pattern = pattern.Replace ("[[1]]", "%");
-			pattern = pattern.Replace ("[[]", "[");
-			pattern = pattern.Replace ("[]]", "]");
-			this.pattern = pattern;
+			_pattern = pattern;
 		}
 
 		public override bool Equals(object obj)
@@ -67,15 +52,12 @@ namespace Mono.Data.SqlExpressions {
 				return false;
 
 			Like other = (Like) obj;
-			if (other.pattern != pattern)
-				return false;
-
-			return true;
+			return _pattern.Equals (other._pattern);
 		}
 
 		public override int GetHashCode()
 		{
-			return pattern.GetHashCode () ^ base.GetHashCode ();
+			return _pattern.GetHashCode () ^ base.GetHashCode ();
 		}
 
 		override public object Eval (DataRow row)
@@ -84,7 +66,23 @@ namespace Mono.Data.SqlExpressions {
 			if (o == DBNull.Value)
 				return o;
 			string str = (string)o;
-			string pattern = this.pattern;
+			bool openStart, openEnd;
+			string pattern = (string) _pattern.Eval (row);
+			string original = pattern;
+			int len = pattern.Length;
+			openStart = (pattern [0] == '*' || pattern [0] == '%');
+			openEnd = (pattern [len - 1] == '*' || pattern [len - 1] == '%');
+
+			pattern = pattern.Trim ('*', '%');
+			pattern = pattern.Replace ("[*]", "[[0]]");
+			pattern = pattern.Replace ("[%]", "[[1]]");
+			if (pattern.IndexOf ('*') != -1 || pattern.IndexOf ('%') != -1)
+				throw new EvaluateException (String.Format ("Pattern '{0}' is invalid.", original));
+			pattern = pattern.Replace ("[[0]]", "*");
+			pattern = pattern.Replace ("[[1]]", "%");
+			pattern = pattern.Replace ("[[]", "[");
+			pattern = pattern.Replace ("[]]", "]");
+
 			if (!row.Table.CaseSensitive) {
 				str = str.ToLower();
 				pattern = pattern.ToLower();

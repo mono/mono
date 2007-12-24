@@ -72,13 +72,36 @@ namespace Monotests_Mono.Data.SqlExpressions
 		{
 			DataTable table = new DataTable ();
 			table.Columns.Add ("Col_0", Type.GetType ("System.String"));
-			table.Columns.Add ("Result", Type.GetType ("System.String"), "SUBSTRING(Col_0, 2+2, 2)");
+			table.Columns.Add ("Result", Type.GetType ("System.String"), "SUBSTRING(Col_0+'K?', 2+2, 2)");
 
 			DataRow row = table.NewRow ();
-			row ["Col_0"] = "Is OK?";
+			row ["Col_0"] = "Is O";
 
 			table.Rows.Add (row);
 			Assert.AreEqual ("OK", (string)table.Rows[0][1], "#1");
+		}
+		[Test]
+		public void TestConcat ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Result", Type.GetType ("System.Int32"), "'3' + '2'");
+
+			DataRow row = table.NewRow ();
+
+			table.Rows.Add (row);
+			Assert.AreEqual (32, table.Rows[0][0], "#1");
+		}
+		
+		[Test]
+		public void TestIsNull ()
+		{
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Result", typeof(bool), "('3') IS NULL");
+
+			DataRow row = table.NewRow ();
+
+			table.Rows.Add (row);
+			Assert.AreEqual (false, table.Rows[0][0], "#1");
 		}
 	}
 	[TestFixture]

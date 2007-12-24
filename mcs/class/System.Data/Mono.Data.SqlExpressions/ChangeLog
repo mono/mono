@@ -1,3 +1,7 @@
+2007-12-24 Konstantin Triger <kostat@mainsoft.com>
+
+	* Parser.jay, StringFunctions.cs, Like.cs: add support for string concat.
+
 2007-07-26  Nagappan A  <anagappan@novell.com>
 
 	* Comparison.cs (Compare): Should always parse the object of type
