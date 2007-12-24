@@ -1,3 +1,7 @@
+2007-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CheckoutExceptionTest.cs: Added test for ctors and Canceled.
+
 2004-01-01  Nick Drochak <ndrochak@gol.com>
 
 	* ServiceContainerTest.cs: Eliminate unused variable that was giving us
@@ -6,5 +10,5 @@
 2003-08-31 Alexandre Pigolkine <pigolkine@gmx.de>
 
 	* ChangeLog:
-	* ServiceContainerTest.cs		new test
+	* ServiceContainerTest.cs: new test
 

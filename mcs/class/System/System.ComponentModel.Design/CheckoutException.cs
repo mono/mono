@@ -41,10 +41,16 @@ namespace System.ComponentModel.Design
 #endif
 	public class CheckoutException : ExternalException
 	{
-		public static readonly CheckoutException Canceled = new CheckoutException ();
+		public static readonly CheckoutException Canceled = new CheckoutException (
+			"The user canceled the checkout.",
+#if NET_2_0
+			-2147467260);
+#else
+			-2147467259);
+#endif
 
 		public CheckoutException()
-			: this (null)
+			: base ()
 		{
 		}
 

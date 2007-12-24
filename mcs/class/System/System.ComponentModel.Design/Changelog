@@ -1,3 +1,8 @@
+2007-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CheckoutException.cs: Provide customized message and error code
+	(2.0 only) for Canceled. Call base ctor in default ctor.
+
 2007-12-24  Arina Itkes <arinai@mainsoft.com>
 
 	* CheckoutException.cs: 
