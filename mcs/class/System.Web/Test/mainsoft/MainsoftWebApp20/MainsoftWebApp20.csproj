@@ -197,6 +197,7 @@
   <ItemGroup>
     <Content Include="App_Themes\Theme2\Theme2.skin" />
     <Content Include="GridViewUpdate.aspx" />
+    <Content Include="WEB-INF\faces-config.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

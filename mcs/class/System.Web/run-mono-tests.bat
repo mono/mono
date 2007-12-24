@@ -46,6 +46,7 @@ REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\java_refs\framework\
 set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
+set TOMCAT_SHARED_PATH=%VMW_HOME%\jakarta-tomcat\shared\lib\
 set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
@@ -65,6 +66,7 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\De
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\MainsoftWebTest\bin\Debug_Java20\HtmlCompare.jar
 
 set TOMCAT_CLASSPATH=%TOMCAT_PATH%servlet-api.jar
+set TOMCAT_CLASSPATH=%TOMCAT_CLASSPATH%;%TOMCAT_SHARED_PATH%myfaces-api-1.1.5.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
 if "%GH_VERSION%"=="" (
@@ -85,6 +87,8 @@ set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;.
 set NUNIT_CLASSPATH=%NUNIT_CLASSPATH%;%TEST_ASSEMBLY%
 
 set CLASSPATH="%RUNTIME_CLASSPATH%;%NUNIT_CLASSPATH%;%TOMCAT_CLASSPATH%"
+
+IF "%BUILD_OPTION%"=="nobuild" GOTO RUN
 
 REM ********************************************************
 @echo Building GH solution...
