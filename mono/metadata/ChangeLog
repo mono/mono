@@ -1,3 +1,16 @@
+2007-12-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: add prototype for merge_stacks at top
+
+	* verify.c (do_switch): added.
+
+	* verify.c (merge_stacks): on some cases the stack merging
+	was not happening properly. Unequal stack sizes at merge
+	points should be invalid.
+
+	* verify.c (mono_method_verify): added more debug info on stack state.
+	verify switch properly.
+
 2007-12-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-builder.h: New file, moved the mono_mb_ declarations here from 
