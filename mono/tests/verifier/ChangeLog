@@ -1,3 +1,12 @@
+2007-12-24 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_switch_test.sh: new test generator.
+
+	* make_exception_branch_test.sh: the filter
+	handler did not pop the exception argument.
+
+	* make_tests.sh: add tests for switch.
+
 2007-12-21 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_branch_test.sh: new test generator.
