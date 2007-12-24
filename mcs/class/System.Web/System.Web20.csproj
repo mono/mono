@@ -1134,6 +1134,7 @@
       <Link>Consts.cs.in</Link>
     </Compile>
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="System.Web.Compilation\AppSettingsExpressionBuilder.cs" />
     <Compile Include="System.Web.Compilation\BuildManager.jvm.cs" />
     <Compile Include="System.Web.Compilation\ConnectionStringsExpressionBuilder.cs" />
     <Compile Include="System.Web.Compilation\AppResourcesCompiler.jvm.cs" />
