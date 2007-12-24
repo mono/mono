@@ -95,7 +95,7 @@ namespace System.ComponentModel.Design.Serialization
 			if (valuesToSerialize.Count == 0)
 				return null;
 
-            MethodInfo method = null;
+			MethodInfo method = null;
 			try {
 				object sampleParam = null;
 				IEnumerator e = valuesToSerialize.GetEnumerator ();
@@ -105,7 +105,8 @@ namespace System.ComponentModel.Design.Serialization
 				// Assuming objects in the collection are from the same base type
 				method = GetExactMethod (targetType, "Add", new object [] { sampleParam });
 			} catch {
-				Console.WriteLine ("SerializeCollection: No compatible Add method found in " + targetType);
+				base.ReportError (manager, "A compatible Add/AddRange method is missing in the collection type '" 
+						  + targetType.Name + "'");
 			}
 
 			if (method == null)
@@ -119,12 +120,8 @@ namespace System.ComponentModel.Design.Serialization
 
 				manager.Context.Push (new ExpressionContext (methodInvoke, methodInvoke.GetType (), null, originalCollection));
 				CodeExpression expression = base.SerializeToExpression (manager, value);
-				if (expression == null) {
-					Console.WriteLine ("SerializeCollection: Unable to serialize " + value);
-					methodInvoke = null;
-				} else {
+				if (expression != null)
 					methodInvoke.Parameters.AddRange (new CodeExpression[] { expression });
-				}
 				manager.Context.Pop ();
 
 				if (methodInvoke != null)

@@ -60,7 +60,7 @@ namespace System.ComponentModel.Design.Serialization
 				return rootContext.Expression;
 
 			if (((IComponent)value).Site == null) {
-				Console.WriteLine ("ComponentCodeDomSerializer: Not sited : " + value);
+				ReportError (manager, "Component of type '" + value.GetType().Name + "' not sited");
 				return null;
 			}
 

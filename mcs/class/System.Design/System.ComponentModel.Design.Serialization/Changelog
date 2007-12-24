@@ -1,3 +1,12 @@
+2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs: 
+	 - Refactor deserialization error reporting.
+	 - Return a CodeExpression if DeserializeExpression fails.
+	 - Add support for variable deserialization.
+	* CollectionCodeDomSerializer.cs: Report Errors.
+	* ComponentCodeDomSerializer.cs: Report Errors.
+
 2007-12-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomDesignerLoader.cs: Fix the serialization to use the same
