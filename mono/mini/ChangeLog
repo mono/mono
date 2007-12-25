@@ -1,5 +1,7 @@
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Move the setting of GC_stackbottom to mono_gc_base_init ().
+	
 	* mini.c (mini_init): Call mono_gc_base_init () instead of MONO_GC_PRE_INIT ().
 
 	* driver.c (mono_main): Ditto.
