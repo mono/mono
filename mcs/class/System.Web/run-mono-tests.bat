@@ -118,6 +118,8 @@ set CATALINA_HOME=%VMW_HOME%\jakarta-tomcat
 call "%VMW_HOME%\jakarta-tomcat\bin\shutdown.bat"
 echo Waiting 5 sec for tomcat to stop....
 @ping 127.0.0.1 -n 5 -w 1000 > nul
+del /q "%VMW_HOME%\jakarta-tomcat\webapps\MainsoftWebApp20.war"
+rmdir /s /q "%VMW_HOME%\jakarta-tomcat\webapps\MainsoftWebApp20"
 xcopy /Y Test\mainsoft\MainsoftWebApp20\bin\%PROJECT_CONFIGURATION%\MainsoftWebApp20.war "%VMW_HOME%\jakarta-tomcat\webapps"
 call "%VMW_HOME%\jakarta-tomcat\bin\startup.bat"
 echo Waiting 5 sec for tomcat to start....
