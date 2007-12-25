@@ -741,5 +741,6 @@
     <Content Include="Sys.Net.XmlHttpExecutor\getTarget.aspx" />
     <Content Include="UpdatePanelTutorialIntro8\MasterPage.master" />
     <Content Include="UpdatePanelTutorialIntro9\MasterPage.master" />
+    <Content Include="WEB-INF\faces-config.xml" />
   </ItemGroup>
 </Project>

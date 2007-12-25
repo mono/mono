@@ -6,6 +6,7 @@
 <script runat="server">
     protected override void OnLoad(EventArgs e)
     {
+		Calendar.TodaysDate = new DateTime (2007, 7, 1);
         if (IsPostBack)
             Label1.Text = "This page posted back";
         base.OnLoad(e);
