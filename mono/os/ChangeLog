@@ -1,3 +1,8 @@
+2007-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: Get rid of the MONO_GC_PRE_INIT () macro and unify definition
+	of MONO_GC_REGISTER_ROOT.
+
 2006-06-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Disable GC_REDIRECT_TO_LOCAL on solaris/x86 as well.
