@@ -1,5 +1,7 @@
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (ALLOC_REFENTRY): Use mono_gc_alloc_fixed for boehm as well.
+
 	* boehm-gc.c (mono_gc_register_root): Moved definition here from gc_wrapper.h.
 	(mono_gc_base_init): Call GC_init ().
 
