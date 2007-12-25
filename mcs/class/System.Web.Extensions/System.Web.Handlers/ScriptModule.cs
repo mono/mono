@@ -67,8 +67,16 @@ namespace System.Web.Handlers
 			HttpContext context = app.Context;
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
-			if (context.CurrentHandler is Page && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
-				IHttpHandler h = RestHandler.GetHandler(context, ((Page) context.CurrentHandler).GetType (), request.FilePath);
+			Type pageType = context.CurrentHandler.GetType ();
+#if TARGET_J2EE
+			if (!context.CurrentHandler is Page && context.CurrentHandler is IServiceProvider) {
+				pageType = (Type) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Type));
+				if (pageType == null)
+					return;
+			}
+#endif
+			if (typeof (Page).IsAssignableFrom (pageType) && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
+				IHttpHandler h = RestHandler.GetHandler (context, pageType, request.FilePath);
 				h.ProcessRequest (context);
 				app.CompleteRequest ();
 			}
