@@ -17,15 +17,8 @@ namespace Mainsoft.Web.Hosting
 
 			if (IRequiresSessionStateType.IsAssignableFrom (type))
 				return IReadOnlySessionStateType.IsAssignableFrom (type) ?
-					new ReadOnlySessionWrapperHandler (handler) : new SessionWrapperHandler (handler);
-			return handler;
-		}
-		public static IHttpHandler WrapHandler (IHttpExtendedHandler handler) {
-			Type type = (Type) ((IServiceProvider) handler).GetService (typeof (Type));
-
-			if (IRequiresSessionStateType.IsAssignableFrom (type))
-				return IReadOnlySessionStateType.IsAssignableFrom (type) ?
-					new ReadOnlySessionWrapperExtendedHandler (handler) : new SessionWrapperExtendedHandler (handler);
+					(handler is IHttpExtendedHandler ? (IHttpHandler) new ReadOnlySessionWrapperExtendedHandler ((IHttpExtendedHandler) handler) : new ReadOnlySessionWrapperHandler (handler)) :
+					(handler is IHttpExtendedHandler ? new SessionWrapperExtendedHandler ((IHttpExtendedHandler) handler) : new SessionWrapperHandler (handler));
 			return handler;
 		}
 
