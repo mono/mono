@@ -12,16 +12,16 @@ namespace Mainsoft.Web.Hosting
 		static readonly Type IRequiresSessionStateType = typeof (IRequiresSessionState);
 		static readonly Type IReadOnlySessionStateType = typeof (IReadOnlySessionState);
 
-		public static IHttpHandler WrapHandler (IHttpHandler handler, HttpContext context, string url) {
-			Type type = PageMapper.GetObjectType (context, url);
+		public static IHttpHandler WrapHandler (IHttpHandler handler) {
+			Type type = (Type) ((IServiceProvider) handler).GetService (typeof (Type));
 
 			if (IRequiresSessionStateType.IsAssignableFrom (type))
 				return IReadOnlySessionStateType.IsAssignableFrom (type) ?
 					new ReadOnlySessionWrapperHandler (handler) : new SessionWrapperHandler (handler);
 			return handler;
 		}
-		public static IHttpHandler WrapHandler (IHttpExtendedHandler handler, HttpContext context, string url) {
-			Type type = PageMapper.GetObjectType (context, url);
+		public static IHttpHandler WrapHandler (IHttpExtendedHandler handler) {
+			Type type = (Type) ((IServiceProvider) handler).GetService (typeof (Type));
 
 			if (IRequiresSessionStateType.IsAssignableFrom (type))
 				return IReadOnlySessionStateType.IsAssignableFrom (type) ?
@@ -31,7 +31,7 @@ namespace Mainsoft.Web.Hosting
 
 		#region SessionWrappers
 
-		class SessionWrapperHandler : IHttpHandler, IRequiresSessionState
+		class SessionWrapperHandler : IHttpHandler, IRequiresSessionState, IServiceProvider
 		{
 			protected readonly IHttpHandler _handler;
 
@@ -45,6 +45,10 @@ namespace Mainsoft.Web.Hosting
 
 			public void ProcessRequest (HttpContext context) {
 				_handler.ProcessRequest (context);
+			}
+
+			public object GetService (Type serviceType) {
+				return ((IServiceProvider) _handler).GetService (serviceType);
 			}
 		}
 

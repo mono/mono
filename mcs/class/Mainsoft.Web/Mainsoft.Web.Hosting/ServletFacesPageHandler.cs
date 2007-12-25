@@ -15,20 +15,22 @@ using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
-	public sealed class ServletFacesPageHandler : IHttpHandler
+	public sealed class ServletFacesPageHandler : IHttpHandler, IServiceProvider
 	{
 		readonly FacesContextFactory _facesContextFactory;
 		readonly Lifecycle _lifecycle;
 		readonly string _executionFilePath;
+		readonly Type _pageType;
 
 		public bool IsReusable {
 			get { return false; }
 		}
 
-		public ServletFacesPageHandler (string executionFilePath, FacesContextFactory facesContextFactory, Lifecycle lifecycle) {
+		public ServletFacesPageHandler (string executionFilePath, Type pageType, FacesContextFactory facesContextFactory, Lifecycle lifecycle) {
 			_facesContextFactory = facesContextFactory;
 			_lifecycle = lifecycle;
 			_executionFilePath = executionFilePath;
+			_pageType = pageType;
 		}
 
 		public void ProcessRequest (HttpContext context) {
@@ -43,7 +45,7 @@ namespace Mainsoft.Web.Hosting
 					Trace.WriteLine ("FacesPageHandler: before execute");
 					_lifecycle.execute (facesContext);
 					Trace.WriteLine ("FacesPageHandler: after execute");
-					
+
 					Trace.WriteLine ("FacesPageHandler: before render");
 					_lifecycle.render (facesContext);
 					Trace.WriteLine ("FacesPageHandler: after render");
@@ -58,6 +60,12 @@ namespace Mainsoft.Web.Hosting
 			finally {
 				facesContext.release ();
 			}
+		}
+
+		public object GetService (Type serviceType) {
+			if (serviceType == typeof (Type))
+				return _pageType;
+			return null;
 		}
 	}
 }
