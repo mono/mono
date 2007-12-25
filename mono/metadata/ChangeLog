@@ -1,3 +1,12 @@
+2007-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_register_root): Moved definition here from gc_wrapper.h.
+	(mono_gc_base_init): Call GC_init ().
+
+	* null-gc.c: Define mono_gc_register_root () as a no-op.
+
+	* domain.c appdomain.c: Call mono_gc_base_init () instead of MONO_GC_PRE_INIT ().
+
 2007-12-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: add prototype for merge_stacks at top
