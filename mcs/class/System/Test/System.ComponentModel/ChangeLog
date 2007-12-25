@@ -1,3 +1,7 @@
+2007-12-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* PropertyDescriptorCollectionTests.cs: added test for Find method
+
 2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Win32ExceptionTest.cs: Added ctor tests.

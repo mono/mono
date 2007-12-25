@@ -144,8 +144,26 @@ namespace System.ComponentModel
 			}
 
 			foreach (PropertyDescriptor p in properties) {
-				if (0 == String.Compare (name, p.Name, ignoreCase, System.Globalization.CultureInfo.InvariantCulture))
-					return p;
+#if NET_2_0
+				if (ignoreCase) {
+					if (0 == String.Compare (name, p.Name, StringComparison.OrdinalIgnoreCase))
+						return p;
+				}
+				else {
+					if (0 == String.Compare (name, p.Name, StringComparison.Ordinal))
+						return p;
+				}
+#else
+				if (ignoreCase) {
+					if (0 == String.CompareOrdinal (name.ToLower (System.Globalization.CultureInfo.InvariantCulture),
+						p.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture)))
+						return p;
+				}
+				else {
+					if (0 == String.CompareOrdinal (name, p.Name))
+						return p;
+				}
+#endif
 			}
 			return null;
 		}

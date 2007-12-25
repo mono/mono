@@ -118,6 +118,21 @@ namespace MonoTests.System.ComponentModel
 			dictionary.Add ("whatever", 5);
 		}
 
+		[Test]
+		public void CultureInsensitiveFindTest ()
+		{
+			Assert.AreEqual(0, string.Compare ("\u0061\u030a", "\u00e5", true), "#1");
+
+			PropertyDescriptorCollection col =
+				new PropertyDescriptorCollection (
+				new PropertyDescriptor [] {
+					new MockPropertyDescriptor ("hehe_\u0061\u030a", null),
+					new MockPropertyDescriptor ("heh_\u00e5", null) });
+
+			Assert.IsNull (col.Find ("heh_\u0061\u030a", false), "#2");
+			Assert.IsNull (col.Find ("hehe_\u00e5", false), "#3");
+
+		}
 #if NET_2_0
 		public void ReadOnly ()
 		{

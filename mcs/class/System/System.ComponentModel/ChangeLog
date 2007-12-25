@@ -1,3 +1,8 @@
+2007-12-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* PropertyDescriptorCollection.cs: optimized Find method, removed
+	culture sensitive string comparison
+
 2007-12-19  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Add text for error 5, Access denied.
