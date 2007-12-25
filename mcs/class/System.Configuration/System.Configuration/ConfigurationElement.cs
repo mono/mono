@@ -322,7 +322,7 @@ namespace System.Configuration
 					throw;
 				} catch (Exception ex) {
 					string msg = String.Format ("The value of the property '{0}' cannot be parsed.", prop.Name);
-					throw new ConfigurationErrorsException (msg, reader);
+					throw new ConfigurationErrorsException (msg, ex, reader);
 				}
 				readProps [prop] = prop.Name;
 			}
@@ -608,10 +608,10 @@ namespace System.Configuration
 				if (at == null) continue;
 				string name = at.Name != null ? at.Name : prop.Name;
 
-				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (t, typeof(ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
+				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (prop, typeof (ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
 				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : null;
 
-				TypeConverterAttribute convertAttr = (TypeConverterAttribute) Attribute.GetCustomAttribute (t, typeof (TypeConverterAttribute));
+				TypeConverterAttribute convertAttr = (TypeConverterAttribute) Attribute.GetCustomAttribute (prop, typeof (TypeConverterAttribute));
 				TypeConverter converter = convertAttr != null ? (TypeConverter) Activator.CreateInstance (Type.GetType (convertAttr.ConverterTypeName)) : null;
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
 

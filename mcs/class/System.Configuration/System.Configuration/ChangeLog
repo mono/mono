@@ -1,3 +1,9 @@
+2007-12-25  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConfigurationElement.cs:
+		1. typo - pass the correct property to Attribute.GetCustomAttribute.
+		2. Pass oroginal exception as inner.
+
 2007-12-05  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationElement.cs: some property values may be null
