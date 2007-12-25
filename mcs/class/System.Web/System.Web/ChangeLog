@@ -1,3 +1,8 @@
+2007-12-25 Igor Zelmanovich <igorz@mainsoft.com>
+	
+	* HttpApplication.cs: initialize culture each request.
+	makes it consider culture settings from nested web.config 		
+
 2007-12-19  Juraj Skripsky <js@hotfeet.ch>
 
 	* HttpContext.cs, HttpApplication.cs: Move timeout tracking from

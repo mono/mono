@@ -197,22 +197,6 @@ namespace System.Web {
 					HttpApplicationFactory.AttachEvents (this);
 					Init ();
 				}
-
-#if NET_2_0
-				GlobalizationSection cfg;
-				cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
-				app_culture = cfg.GetCulture();
-				autoCulture = cfg.IsAutoCulture;
-				appui_culture = cfg.GetUICulture();
-				autoUICulture = cfg.IsAutoUICulture;
-#else
-				GlobalizationConfiguration cfg;
-				cfg = GlobalizationConfiguration.GetInstance (null);
-				if (cfg != null) {
-					app_culture = cfg.Culture;
-					appui_culture = cfg.UICulture;
-				}
-#endif
 			}
 		}
 
@@ -1130,6 +1114,22 @@ namespace System.Web {
 
 		void PreStart ()
 		{
+#if NET_2_0
+			GlobalizationSection cfg;
+			cfg = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
+			app_culture = cfg.GetCulture ();
+			autoCulture = cfg.IsAutoCulture;
+			appui_culture = cfg.GetUICulture ();
+			autoUICulture = cfg.IsAutoUICulture;
+#else
+			GlobalizationConfiguration cfg;
+			cfg = GlobalizationConfiguration.GetInstance (null);
+			if (cfg != null) {
+				app_culture = cfg.Culture;
+				appui_culture = cfg.UICulture;
+			}
+#endif
+
 #if !TARGET_J2EE
 			context.StartTimeoutTimer ();
 #endif
