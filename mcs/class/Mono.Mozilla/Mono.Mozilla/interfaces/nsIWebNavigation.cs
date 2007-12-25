@@ -43,52 +43,33 @@ namespace Mono.Mozilla
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int CanGoForward (out bool canGoForward);
 
-		/// <summary>
-		/// Do not use on non-windows platforms due to threading problems
-		/// </summary>
-		/// <returns></returns>
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int GoBack ();
 
-		/// <summary>
-		/// Do not use on non-windows platforms due to threading problems
-		/// </summary>
-		/// <returns></returns>
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int GoForward ();
 
-		/// <summary>
-		/// Do not use on non-windows platforms due to threading problems
-		/// </summary>
-		/// <returns></returns>
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int GotoIndex (Int32 index);
 
-		/// <summary>
-		/// Do not use on non-windows platforms due to threading problems
-		/// </summary>
-		/// <returns></returns>
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int LoadURI (string uri, UInt32 loadFlags,
+		int LoadURI ([MarshalAs(UnmanagedType.LPWStr)] string uri, 
+					Mono.WebBrowser.ReloadOption loadFlags,
 					[MarshalAs (UnmanagedType.Interface)] nsIURI referrer,
 				   [MarshalAs (UnmanagedType.Interface)] nsIInputStream postData,
 				   [MarshalAs (UnmanagedType.Interface)] nsIInputStream headers);
 
-		/// <summary>
-		/// Do not use on non-windows platforms due to threading problems
-		/// </summary>
-		/// <returns></returns>
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int Reload (UInt32 reloadFlags);
+		int Reload (Mono.WebBrowser.ReloadOption reloadFlags);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int Stop (UInt32 stopFlags);
+		int Stop (StopOption stopFlags);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
@@ -111,4 +92,11 @@ namespace Mono.Mozilla
 		int SetSessionHistory ([MarshalAs (UnmanagedType.Interface)] nsISHistory sessionHistory);
 
 	}
+	
+	internal enum StopOption : uint
+	{
+		Network = 1,
+		Content = 2,
+		All = 3
+	}
 }

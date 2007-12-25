@@ -34,7 +34,7 @@ namespace Mono.WebBrowser
 {
 	public interface IWebBrowser
 	{
-		void Load (IntPtr handle, int width, int height);
+		bool Load (IntPtr handle, int width, int height);
 		void Shutdown ();
 		void FocusIn (FocusOption focus);
 		void FocusOut ();
@@ -62,7 +62,7 @@ namespace Mono.WebBrowser
 		event EventHandler Navigated;
 	}
 
-	public enum ReloadOption
+	public enum ReloadOption : uint
 	{
 		None = 0,
 		Proxy = 1,

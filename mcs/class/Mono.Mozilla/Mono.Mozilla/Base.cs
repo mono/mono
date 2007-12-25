@@ -72,7 +72,7 @@ namespace Mono.Mozilla
 			Trace.AutoFlush = true;
 		}
 
-		public static void Init (WebBrowser control)
+		public static bool Init (WebBrowser control)
 		{
 			BindingInfo info = new BindingInfo ();
 			info.callback = new CallbackBinder (control);
@@ -94,11 +94,12 @@ namespace Mono.Mozilla
 				Console.WriteLine ("libgluezilla not found. To have webbrowser support, you need libgluezilla installed");
 				Marshal.FreeHGlobal (ptrCallback);
 				gluezillaInstalled = false;
-				return;
+				return false;
 			}
 			gluezillaInstalled = true;
 			boundControls.Add (control as IWebBrowser, info);
 			DebugStartup ();
+			return true;
 		}
 
 		public static void Shutdown (IWebBrowser control)
@@ -260,7 +261,16 @@ namespace Mono.Mozilla
 		{
 			gluezilla_stringSet (str, text);
 		}
+/*		
+		public static nsIServiceManager GetServiceManager (IWebBrowser control)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
 
+			return gluezilla_getServiceManager (info.gluezilla);
+		}
+*/
 		#region pinvokes
 		[DllImport("gluezilla")]
 		private static extern void gluezilla_debug_startup();
@@ -316,6 +326,10 @@ namespace Mono.Mozilla
 		private static extern IntPtr gluezilla_stringGet (HandleRef str);
 		[DllImport ("gluezilla")]
 		private static extern void gluezilla_stringSet (HandleRef str, [MarshalAs (UnmanagedType.LPWStr)] string text);
+
+
+//		[DllImport ("gluezilla")]
+//		private static extern nsIServiceManager gluezilla_getServiceManager (IntPtr instance);
 		#endregion
 	}
 }

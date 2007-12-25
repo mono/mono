@@ -38,5 +38,6 @@ namespace Mono.WebBrowser.DOM
 		void Reload ();
 		void Reload (ReloadOption option);
 		void Stop ();
+		void Go (string url);
 	}
 }

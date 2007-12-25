@@ -32,6 +32,7 @@ namespace Mono.Mozilla.DOM
 	internal class DOMObject : IDisposable
 	{
 		internal HandleRef storage;
+		private bool disposed = false;
 
 		internal DOMObject ()
 		{
@@ -41,14 +42,25 @@ namespace Mono.Mozilla.DOM
 
 		~DOMObject ()
 		{
-			this.Dispose ();
+			Dispose (false);
 		}
 
 		#region IDisposable Members
 
+		protected virtual void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					Base.StringFinish (storage);
+				}
+				disposed = true;
+			}
+		}
+
 		public void Dispose ()
 		{
-			Base.StringFinish (storage);
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		#endregion

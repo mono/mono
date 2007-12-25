@@ -31,43 +31,73 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class Navigation: INavigation
+	internal class Navigation: DOMObject, INavigation
 	{
 
-		private nsIWebNavigation webNav;
+		private nsIWebNavigation navigation;
 		private IWebBrowser control;
+		private bool disposed = false;
+		
 		public Navigation (IWebBrowser control, nsIWebNavigation webNav)
 		{
-			this.webNav = webNav;
+			this.navigation = webNav;
 			this.control = control;
 		}
+
+
+		#region IDisposable Members
+		protected override  void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					this.navigation = null;
+				}
+				disposed = true;
+			}
+			base.Dispose(disposing);
+		}		
+		#endregion	
 
 		#region INavigation Members
 
 		public bool CanGoBack {
 			get {
+				if (navigation == null)
+					return false;
+					
 				bool canGoBack;
-				webNav.CanGoBack (out canGoBack);
+				navigation.CanGoBack (out canGoBack);
 				return canGoBack;
 			}
 		}
 
 		public bool CanGoForward {
 			get {
+				if (navigation == null)
+					return false;
+
 				bool canGoForward;
-				webNav.CanGoForward (out canGoForward);
+				navigation.CanGoForward (out canGoForward);
 				return canGoForward;
 			}
 		}
 
 		public bool Back ()
 		{
-			return Base.Back (control);
+			if (navigation == null)
+				return false;
+
+			//return Base.Back (control);
+			return navigation.GoBack () == 0;
 		}
 
 		public bool Forward ()
 		{
-			return Base.Forward (control);
+			if (navigation == null)
+				return false;
+
+			//return Base.Forward (control);
+			return navigation.GoForward () == 0;
 		}
 
 		public void Home ()
@@ -77,17 +107,37 @@ namespace Mono.Mozilla.DOM
 
 		public void Reload ()
 		{
-			Base.Reload (control, ReloadOption.None);
+			if (navigation == null)
+				return;
+
+			//Base.Reload (control, ReloadOption.None);
+			navigation.Reload (ReloadOption.None);
 		}
 
 		public void Reload (ReloadOption option)
 		{
-			Base.Reload (control, option);
+			if (navigation == null)
+				return;
+
+			//Base.Reload (control, option);
+			navigation.Reload (option);
 		}
 
 		public void Stop ()
 		{
-			Base.Stop (control);
+			if (navigation == null)
+				return;
+
+			//Base.Stop (control);
+			navigation.Stop (StopOption.All);
+		}
+		
+		public void Go (string url)
+		{
+			if (navigation == null)
+				return;
+
+			navigation.LoadURI (url, ReloadOption.None, null, null, null);
 		}
 
 		#endregion

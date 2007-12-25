@@ -1,3 +1,28 @@
+2007-12-25  Andreia Gaita  <avidigal@novell.com>
+
+	* Mono.Mozilla/DOM/DOMHTMLDocument.cs,
+	  Mono.Mozilla/DOM/DOMObject.cs
+	  Mono.Mozilla/DOM/Navigation.cs:
+	  
+	Properly dispose unmanaged resources.
+	Use native mozilla dom interfaces through com directly instead
+	of going through the glue, as they are now proxies that invoke
+	the methods on the main mozilla ui properly (avoiding threading problems).
+	Check if library was properly initialized.
+	Add Go method - implements navigation
+	directly through COM instead of going through the glue.
+	
+	* Mono.Mozilla/interfaces/nsIWebNavigation.cs: Use typed flags instead of
+	generic uint32. Remove comments about threading (as it is now safe to use
+	this interface)
+
+	* Mono.Mozilla/Base.cs: Return bool on initialization so I can track if
+	library was properly initialized from the interfaces that go directly 
+	through COM and not through the glue
+
+	* Mono.Mozilla/WebBrowser.cs: Save initialization result so interfaces
+	don't get called if the library was not initialized.
+
 2007-11-08  Andreia Gaita  <avidigal@novell.com>
 
 	* Mono.Mozilla.csproj, Mono.Mozilla2K5.csproj: Synch with .sources

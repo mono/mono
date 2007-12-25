@@ -34,11 +34,25 @@ namespace Mono.Mozilla.DOM
 	internal class DOMHTMLDocument: DOMObject, IDOMHTMLDocument
 	{
 		private nsIDOMHTMLDocument document;
+		private bool disposed = false;
 		
 		public DOMHTMLDocument (nsIDOMHTMLDocument document)
 		{
 			this.document = document;
 		}
+
+		#region IDisposable Members
+		protected override  void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					this.document = null;
+				}
+				disposed = true;
+			}
+			base.Dispose(disposing);
+		}		
+		#endregion
 
 		#region IDOMDocument Members
 
@@ -47,6 +61,14 @@ namespace Mono.Mozilla.DOM
 				nsIDOMHTMLElement body;
 				this.document.getBody (out body);
 				return new DOMHTMLElement (body);
+			}
+		}
+
+		public string Text {
+			set {
+				nsIDOMElement element;
+				this.document.getDocumentElement (out element);
+				
 			}
 		}
 

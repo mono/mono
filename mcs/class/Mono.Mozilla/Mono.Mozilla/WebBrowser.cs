@@ -40,18 +40,18 @@ namespace Mono.Mozilla
 	public class WebBrowser : Component, IWebBrowser, ICallback
 	{
 		private bool loaded;
-		private IDOMHTMLDocument document;
-		private INavigation navigation;
+		private DOM.DOMHTMLDocument document;
+		private DOM.Navigation navigation;
 
 		public WebBrowser ()
 		{
-			loaded = false;
-			Base.Init (this);
+			loaded = Base.Init (this);
 		}
 
-		public void Load (IntPtr handle, int width, int height)
+		public bool Load (IntPtr handle, int width, int height)
 		{
 			Base.Bind (this, handle, width, height);
+			return loaded;
 		}
 
 		public void Shutdown ()
@@ -67,7 +67,7 @@ namespace Mono.Mozilla
 					nsIDOMHTMLDocument doc = Base.GetDOMDocument (this);
 					document = new DOM.DOMHTMLDocument (doc);
 				}
-				return document;
+				return document as IDOMHTMLDocument;
 			}
 		}
 
@@ -76,10 +76,11 @@ namespace Mono.Mozilla
 			get
 			{
 				if (navigation == null) {
+					
 					nsIWebNavigation webNav = Base.GetWebNavigation (this);
 					navigation = new DOM.Navigation (this, webNav);
 				}
-				return navigation;
+				return navigation as INavigation;
 			}
 		}
 
