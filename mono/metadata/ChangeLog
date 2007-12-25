@@ -1,5 +1,8 @@
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* boehm-gc.c (mono_gc_base_init): Moved the setting of GC_stackbottom here from
+	mini.c.
+
 	* object.c (mono_class_compute_gc_descriptor): Move the GC_init_gcj_malloc () 
 	call to boehm-gc.c.
 
