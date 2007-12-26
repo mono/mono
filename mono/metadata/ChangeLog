@@ -1,5 +1,13 @@
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc-internal.h: Change the signature of mono_gc_make_descr_for_string ()
+	to take the same arguments as the other make_descr functions.
+
+	* boehm-gc.c null-gc.c: Add implementation for make_descr functions.
+
+	* objects.c: Get rid of the MAKE_DESCRIPTOR macros, call make_descr functions
+	directly.
+
 	* boehm-gc.c (mono_gc_base_init): Moved the setting of GC_stackbottom here from
 	mini.c.
 
