@@ -1,3 +1,8 @@
+2007-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Assembly.cs (GetSatelliteAssembly): Search in the assembly directory as well.
+	Fixes ##345627.
+
 2007-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoField.cs: Implement GetRawConstantValue ().

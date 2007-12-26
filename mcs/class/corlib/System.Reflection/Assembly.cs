@@ -436,7 +436,13 @@ namespace System.Reflection {
 
 			aname.CultureInfo = culture;
 			aname.Name = aname.Name + ".resources";
-			return Load (aname);
+			try {
+				return Load (aname);
+			} catch (Exception) {
+				// Try the assembly directory
+				string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
+				return LoadFrom (fullName);
+			}
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
