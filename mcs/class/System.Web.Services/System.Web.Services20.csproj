@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -91,7 +91,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-   <Reference Include="J2EE.Helpers">
+    <Reference Include="J2EE.Helpers">
       <Private>False</Private>
       <HintPath>..\lib\J2EE.Helpers.dll</HintPath>
     </Reference>
@@ -382,6 +382,7 @@ md pack\assemblies
 copy parse\assemblies\defaultwsdlhelpgenerator.aspx.xml pack\assemblies\defaultwsdlhelpgenerator.aspx.xml 
 cd parse\assemblies\A*
 copy *.ghres ..\..\..\pack
+copy *Attrib.class ..\..\..\pack
 copy ASP ..\..\..\pack\ASP
 cd ..\..\..\pack
 
