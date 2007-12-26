@@ -2598,6 +2598,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		for (int n=0; n<state.Length; n++) {
 			state [n] = ((Control) requireStateControls [n]).SaveControlState ();
 			if (state [n] != null) allNull = false;
+			
+			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+			if (trace != null)
+				trace.SaveControlState ((Control) requireStateControls [n], state [n]);
+
 		}
 		if (allNull) return null;
 		else return state;

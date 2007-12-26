@@ -1,3 +1,9 @@
+2007-12-26 Igor Zelmanovich <igorz@mainsoft.com>
+	
+	* TraceContext.cs:
+	* TraceData.cs:
+	make trace considers control state info. 		
+
 2007-12-25 Igor Zelmanovich <igorz@mainsoft.com>
 	
 	* HttpApplication.cs: initialize culture each request.

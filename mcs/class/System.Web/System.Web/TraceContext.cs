@@ -45,6 +45,9 @@ namespace System.Web {
 		bool data_saved;
 		bool _haveTrace;
 		Hashtable view_states;
+#if NET_2_0
+		Hashtable control_states;
+#endif
 		Hashtable sizes;
 
 		public TraceContext (HttpContext Context)
@@ -143,7 +146,11 @@ namespace System.Web {
 
 			SetRequestDetails ();
 			if (_Context.Handler is Page)
+#if NET_2_0
+				data.AddControlTree ((Page) _Context.Handler, view_states, control_states, sizes);
+#else
 				data.AddControlTree ((Page) _Context.Handler, view_states, sizes);
+#endif
 
 			AddCookies ();
 			AddHeaders ();
@@ -159,6 +166,15 @@ namespace System.Web {
 
 			view_states [ctrl] = vs;
 		}
+
+#if NET_2_0
+		internal void SaveControlState (Control ctrl, object vs) {
+			if (control_states == null)
+				control_states = new Hashtable ();
+
+			control_states [ctrl] = vs;
+		}
+#endif
 
 		internal void SaveSize (Control ctrl, int size)
 		{

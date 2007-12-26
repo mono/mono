@@ -1,3 +1,9 @@
+2007-12-26 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Control.cs:
+	* Page.cs:
+	make Trace considers control state info.		
+
 2007-12-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs:	refactoring:

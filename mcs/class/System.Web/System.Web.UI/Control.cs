@@ -1528,8 +1528,8 @@ namespace System.Web.UI
 			if (!EnableViewState)
 				return null;
 
-#if MONO_TRACE
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
+#if MONO_TRACE
 			string type_name = null;
 			if (trace != null) {
 				type_name = GetType ().Name;
@@ -1562,21 +1562,21 @@ namespace System.Web.UI
 
 			object thisState = SaveViewState ();
 			if (thisState == null && controlList == null && controlStates == null) {
-#if MONO_TRACE
 				if (trace != null) {
+#if MONO_TRACE
 					trace.Write ("control", "End SaveViewStateRecursive " + _userId + " " + type_name + " saved nothing");
+#endif
 					trace.SaveViewState (this, null);
 				}
-#endif
 				return null;
 			}
 
-#if MONO_TRACE
 			if (trace != null) {
+#if MONO_TRACE
 				trace.Write ("control", "End SaveViewStateRecursive " + _userId + " " + type_name + " saved a Triplet");
+#endif
 				trace.SaveViewState (this, thisState);
 			}
-#endif
 			return new Triplet (thisState, controlList, controlStates);
 		}
 

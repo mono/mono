@@ -69,14 +69,24 @@ namespace System.Web {
 		public int RenderSize;
 		public int ViewstateSize;
 		public int Depth;
+#if NET_2_0
+		public int ControlstateSize;
+#endif
 
+#if NET_2_0
+		public ControlTraceData (string controlId, Type type, int renderSize, int viewstateSize, int controlstateSize, int depth)
+#else
 		public ControlTraceData (string controlId, Type type, int renderSize, int viewstateSize, int depth)
+#endif
 		{
 			this.ControlId = controlId;
 			this.Type = type;
 			this.RenderSize = renderSize;
 			this.ViewstateSize = viewstateSize;
 			this.Depth = depth;
+#if NET_2_0
+			this.ControlstateSize = controlstateSize;
+#endif
 		}
 	}
 
@@ -104,6 +114,7 @@ namespace System.Web {
 		private Queue <NameValueTraceData> cookie_data;
 		private Queue <NameValueTraceData> header_data;
 		private Queue <NameValueTraceData> servervar_data;
+		Hashtable ctrl_cs;
 #else
 		private Queue info;
 		private Queue control_data;
@@ -224,11 +235,18 @@ namespace System.Web {
 			return res.Replace (" ", "&nbsp;");
 		}
 		
+#if NET_2_0
+		public void AddControlTree (Page page, Hashtable ctrl_vs, Hashtable ctrl_cs, Hashtable sizes)
+#else
 		public void AddControlTree (Page page, Hashtable ctrl_vs, Hashtable sizes)
+#endif
 		{
 			this.page = page;
 			this.ctrl_vs = ctrl_vs;
 			this.sizes = sizes;
+#if NET_2_0
+			this.ctrl_cs = ctrl_cs;
+#endif
 			AddControl (page, 0);
 		}
 
@@ -242,6 +260,9 @@ namespace System.Web {
 					c.GetType (),
 					GetRenderSize (c),
 					GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null),
+#if NET_2_0
+					GetViewStateSize (c, (ctrl_cs != null) ? ctrl_cs [c] : null),
+#endif
 					control_pos));
 			
 			if (c.HasControls ()) {
@@ -354,8 +375,16 @@ namespace System.Web {
 			table.Rows.Add (AltRow ("Control Tree"));
 			table.Rows.Add (SubHeadRow ("Control Id", "Type",
 						"Render Size Bytes (including children)",
-						String.Format ("View state Size (total: {0} bytes)(excluding children)",
-								page_vs_size)));
+#if TARGET_J2EE
+						"ViewState Size (excluding children)"
+#else
+						String.Format ("ViewState Size (total: {0} bytes)(excluding children)",
+								page_vs_size)
+#endif
+#if NET_2_0
+						,"ControlState Size (excluding children)"
+#endif
+							));
 			
 			int pos = 0;
 #if NET_2_0
@@ -379,7 +408,11 @@ namespace System.Web {
 				prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
 			RenderAltRow (table, pos, prefix + r.ControlId,
 				      r.Type.ToString (), r.RenderSize.ToString (),
+#if NET_2_0
+					  r.ViewstateSize.ToString (), r.ControlstateSize.ToString ());
+#else
 				      r.ViewstateSize.ToString ());
+#endif
 		}
 		
 		private void RenderCookies (HtmlTextWriter output)
@@ -484,9 +517,12 @@ namespace System.Web {
 			}
 
 			string t1, t2;
+#if !TARGET_J2EE
 			if (i.TimeSinceFirst == 0) {
 				t1 = t2 = String.Empty;
-			} else {
+			} else
+#endif
+			{
 				t1 = i.TimeSinceFirst.ToString ("0.000000");
 				t2 = i.TimeSinceLast.ToString ("0.000000");
 			}
