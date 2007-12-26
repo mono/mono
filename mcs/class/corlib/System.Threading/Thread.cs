@@ -88,8 +88,7 @@ namespace System.Threading {
 		private IntPtr suspend_event;
 		private IntPtr suspended_event;
 		private IntPtr resume_event;
-		/* Don't lock on synch_cs in managed code, since it can result in deadlocks */
-		private object synch_cs = null;
+		private IntPtr synch_cs;
 		private IntPtr serialized_culture_info;
 		private int serialized_culture_info_len;
 		private IntPtr serialized_ui_culture_info;

@@ -1,3 +1,8 @@
+2007-12-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Change the type of synch_cs to an IntPtr to be in synch with the
+	unmanaged definition.
+
 2007-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReaderWriterLock.cs : ... and avoid extra finalizer call.
