@@ -254,25 +254,26 @@ namespace System.Web.UI
 			return url;
 		}
 
-		internal string CreateActionUrl (string url) {
+		internal string CreateActionUrl (string relativeUrl) {
 			FacesContext faces = getFacesContext ();
 			if (faces == null)
-				return url;
+				return relativeUrl;
 
-			url = Asp2Jsf (url);
+			string url;
+			if (relativeUrl.IndexOf (':') >= 0)
+				url = ResolveAppRelativeFromFullPath (relativeUrl);
+			else
+				url = VirtualPathUtility.Combine (Context.Request.FilePath, relativeUrl);
 
-			return faces.getApplication ().getViewHandler ().getActionURL (faces, url);
-		}
-
-		string Asp2Jsf (string url) {
 			if (VirtualPathUtility.IsAbsolute (url))
 				url = VirtualPathUtility.ToAppRelative (url);
 
 			if (VirtualPathUtility.IsAppRelative (url)) {
 				url = url.Substring (1);
-				return url.Length == 0 ? "/" : url;
+				url = url.Length == 0 ? "/" : url;
+				return faces.getApplication ().getViewHandler ().getActionURL (faces, url);
 			}
-			return url;
+			return relativeUrl;
 		}
 
 		internal string ResolveClientUrl (string relativeUrl, bool usePortletRenderResolve) {
