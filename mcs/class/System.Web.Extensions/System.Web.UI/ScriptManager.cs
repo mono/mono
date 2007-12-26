@@ -120,6 +120,7 @@ namespace System.Web.UI
 		bool _loadScriptsBeforeUI = true;
 		AuthenticationServiceManager _authenticationService;
 		ProfileServiceManager _profileService;
+		List<ScriptManagerProxy> _proxies;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -538,9 +539,9 @@ namespace System.Web.UI
 
 			if (!IsInAsyncPostBack) {
 				// Register Ajax framework script.
-				RegisterScriptReference (ajaxScript, true);
+				RegisterScriptReference (this, ajaxScript, true);
 				if (IsMultiForm) {
-					RegisterScriptReference (ajaxExtensionScript, true);
+					RegisterScriptReference (this, ajaxExtensionScript, true);
 					RegisterClientScriptBlock (this, typeof (ScriptManager), "Sys.Application", "\nSys.Application._initialize(document.getElementById('" + Page.Form.ClientID + "'));\n", true);
 				}
 
@@ -550,33 +551,44 @@ namespace System.Web.UI
 				ScriptingProfileServiceSection profileService = (ScriptingProfileServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/profileService");
 				if (profileService.Enabled)
 					sb.AppendLine ("Sys.Services._ProfileService.DefaultWebServicePath = '" + ResolveClientUrl ("~" + System.Web.Script.Services.ProfileService.DefaultWebServicePath) + "';");
-				if (_profileService != null && !String.IsNullOrEmpty (_profileService.Path))
-					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + ResolveUrl (_profileService.Path) + "');");
+				string profileServicePath = GetProfileServicePath ();
+				if (!String.IsNullOrEmpty (profileServicePath))
+					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + profileServicePath + "');");
 
 				ScriptingAuthenticationServiceSection authenticationService = (ScriptingAuthenticationServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/authenticationService");
 				if (authenticationService.Enabled)
 					sb.AppendLine ("Sys.Services._AuthenticationService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Authentication_JSON_AppService.axd") + "';");
-				if (_authenticationService != null && !String.IsNullOrEmpty (_authenticationService.Path))
-					sb.AppendLine ("Sys.Services.AuthenticationService.set_path('" + ResolveUrl (_authenticationService.Path) + "');");
+				string authenticationServicePath = GetAuthenticationServicePath ();
+				if (!String.IsNullOrEmpty (authenticationServicePath))
+					sb.AppendLine ("Sys.Services.AuthenticationService.set_path('" + authenticationServicePath + "');");
 
 				RegisterClientScriptBlock (this, typeof (ScriptManager), "Framework", sb.ToString (), true);
 
-				RegisterScriptReference (ajaxWebFormsScript, true);
+				RegisterScriptReference (this, ajaxWebFormsScript, true);
 
 				if (IsMultiForm)
-					RegisterScriptReference (ajaxWebFormsExtensionScript, true);
+					RegisterScriptReference (this, ajaxWebFormsExtensionScript, true);
 			}
 
 			// Register Scripts
 			if (_scriptToRegister != null)
 				for (int i = 0; i < _scriptToRegister.Count; i++)
-					RegisterScriptReference (_scriptToRegister [i].ScriptReference, _scriptToRegister [i].LoadScriptsBeforeUI);
+					RegisterScriptReference (_scriptToRegister [i].Control, _scriptToRegister [i].ScriptReference, _scriptToRegister [i].LoadScriptsBeforeUI);
 
 			if (!IsInAsyncPostBack) {
 				// Register services
 				if (_services != null && _services.Count > 0) {
 					for (int i = 0; i < _services.Count; i++) {
 						RegisterServiceReference (_services [i]);
+					}
+				}
+
+				if (_proxies != null && _proxies.Count > 0) {
+					for (int i = 0; i < _proxies.Count; i++) {
+						ScriptManagerProxy proxy = _proxies [i];
+						for (int j = 0; j < proxy.Services.Count; j++) {
+							RegisterServiceReference (proxy.Services [j]);
+						}
 					}
 				}
 
@@ -591,6 +603,28 @@ namespace System.Web.UI
 				else
 				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.initialize();\n", true);
 			}
+		}
+
+		string GetProfileServicePath () {
+			if (_profileService != null && !String.IsNullOrEmpty (_profileService.Path))
+				return ResolveClientUrl (_profileService.Path);
+
+			if (_proxies != null && _proxies.Count > 0)
+				for (int i = 0; i < _proxies.Count; i++)
+					if (!String.IsNullOrEmpty (_proxies [i].ProfileService.Path))
+						return _proxies [i].ResolveClientUrl (_proxies [i].ProfileService.Path);
+			return null;
+		}
+
+		string GetAuthenticationServicePath () {
+			if (_authenticationService != null && !String.IsNullOrEmpty (_authenticationService.Path))
+				return ResolveClientUrl (_authenticationService.Path);
+
+			if (_proxies != null && _proxies.Count > 0)
+				for (int i = 0; i < _proxies.Count; i++)
+					if (!String.IsNullOrEmpty (_proxies [i].AuthenticationService.Path))
+						return _proxies [i].ResolveClientUrl (_proxies [i].AuthenticationService.Path);
+			return null;
 		}
 
 #if TARGET_J2EE
@@ -623,6 +657,14 @@ namespace System.Web.UI
 			if (_scripts != null && _scripts.Count > 0) {
 				for (int i = 0; i < _scripts.Count; i++) {
 					yield return new ScriptReferenceEntry (this, _scripts [i], LoadScriptsBeforeUI);
+				}
+			}
+
+			if (_proxies != null && _proxies.Count > 0) {
+				for (int i = 0; i < _proxies.Count; i++) {
+					ScriptManagerProxy proxy = _proxies [i];
+					for (int j = 0; j < proxy.Scripts.Count; j++)
+						yield return new ScriptReferenceEntry (proxy, proxy.Scripts [j], LoadScriptsBeforeUI);
 				}
 			}
 
@@ -720,12 +762,12 @@ namespace System.Web.UI
 			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
-		void RegisterScriptReference (ScriptReference script, bool loadScriptsBeforeUI) {
+		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI) {
 
 			bool isDebugMode = IsDeploymentRetail ? false : (script.ScriptModeInternal == ScriptMode.Inherit ? IsDebuggingEnabled : (script.ScriptModeInternal == ScriptMode.Debug));
 			string url;
 			if (!String.IsNullOrEmpty (script.Path)) {
-				url = GetScriptName (ResolveClientUrl (script.Path), isDebugMode, EnableScriptLocalization ? script.ResourceUICultures : null);
+				url = GetScriptName (control.ResolveClientUrl (script.Path), isDebugMode, EnableScriptLocalization ? script.ResourceUICultures : null);
 			}
 			else if (!String.IsNullOrEmpty (script.Name)) {
 				Assembly assembly;
@@ -1530,6 +1572,13 @@ namespace System.Web.UI
 				_updatePanel = updatePanel;
 				_script = script;
 			}
+		}
+
+		internal void RegisterProxy (ScriptManagerProxy scriptManagerProxy) {
+			if (_proxies == null)
+				_proxies = new List<ScriptManagerProxy> ();
+
+			_proxies.Add (scriptManagerProxy);
 		}
 	}
 }

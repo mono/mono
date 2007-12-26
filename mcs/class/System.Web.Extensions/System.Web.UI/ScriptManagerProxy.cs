@@ -41,6 +41,10 @@ namespace System.Web.UI
 	public class ScriptManagerProxy : Control
 	{
 		ScriptManager _scriptManager;
+		ScriptReferenceCollection _scripts;
+		ServiceReferenceCollection _services;
+		AuthenticationServiceManager _authenticationService;
+		ProfileServiceManager _profileService;
 
 		[Category ("Behavior")]
 		[MergableProperty (false)]
@@ -48,7 +52,9 @@ namespace System.Web.UI
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public AuthenticationServiceManager AuthenticationService {
 			get {
-				return ScriptManager.AuthenticationService;
+				if (_authenticationService == null)
+					_authenticationService = new AuthenticationServiceManager ();
+				return _authenticationService;
 			}
 		}
 
@@ -58,7 +64,9 @@ namespace System.Web.UI
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		public ProfileServiceManager ProfileService {
 			get {
-				return ScriptManager.ProfileService;
+				if (_profileService == null)
+					_profileService = new ProfileServiceManager ();
+				return _profileService;
 			}
 		}
 
@@ -67,7 +75,10 @@ namespace System.Web.UI
 		[MergableProperty (false)]
 		public ScriptReferenceCollection Scripts {
 			get {
-				return ScriptManager.Scripts;
+				if (_scripts == null)
+					_scripts = new ScriptReferenceCollection ();
+
+				return _scripts;
 			}
 		}
 
@@ -76,7 +87,10 @@ namespace System.Web.UI
 		[Category ("Behavior")]
 		public ServiceReferenceCollection Services {
 			get {
-				return ScriptManager.Services;
+				if (_services == null)
+					_services = new ServiceReferenceCollection ();
+
+				return _services;
 			}
 		}
 
@@ -105,6 +119,7 @@ namespace System.Web.UI
 
 		protected override void OnInit (EventArgs e) {
 			base.OnInit (e);
+			ScriptManager.RegisterProxy (this);
 		}
 	}
 }
