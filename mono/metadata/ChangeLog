@@ -1,5 +1,11 @@
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* boehm-gc.c (mono_gc_make_descr_for_array): Implement.
+
+	* null-gc.c (mono_gc_make_descr_for_array): Implement.
+
+	* object.c (mono_class_compute_gc_descriptor): Remove an #ifdef SGEN_GC.
+
 	* gc-internal.h: Change the signature of mono_gc_make_descr_for_string ()
 	to take the same arguments as the other make_descr functions.
 
