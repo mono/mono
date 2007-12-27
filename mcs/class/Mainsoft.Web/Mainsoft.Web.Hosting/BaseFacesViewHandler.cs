@@ -15,6 +15,7 @@ namespace Mainsoft.Web.Hosting
 	public abstract class BaseFacesViewHandler : ViewHandler
 	{
 		readonly ViewHandler _viewHandler;
+		public static readonly string NAMESPACE = "__NAMESPACE";
 
 		public BaseFacesViewHandler (ViewHandler viewHandler) {
 			_viewHandler = viewHandler;
@@ -71,5 +72,12 @@ namespace Mainsoft.Web.Hosting
 			manager.writeState (facesContext, serializedView);
 		}
 
+		public virtual string EncodeNamespace (FacesContext facesContext, string value) {
+			HttpContext context = ((AspNetFacesContext) facesContext).Context;
+			string ns = context.Request.Form [NAMESPACE];
+			if (String.IsNullOrEmpty (ns))
+				return value;
+			return ns + value;
+		}
 	}
 }

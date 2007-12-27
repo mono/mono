@@ -11,6 +11,8 @@ namespace Mainsoft.Web.Hosting
 {
 	public abstract class BaseFacesStateManager : StateManager
 	{
+		protected static readonly string VIEWSTATE = "__VIEWSTATE";
+
 		public override StateManager.SerializedView saveSerializedView (FacesContext facesContext) {
 			Object treeStruct = getTreeStructureToSave (facesContext);
 			Object compStates = getComponentStateToSave (facesContext);

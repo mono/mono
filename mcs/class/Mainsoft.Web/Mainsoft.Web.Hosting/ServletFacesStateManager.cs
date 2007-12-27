@@ -12,6 +12,7 @@ using System.Web.Hosting;
 using System.Web;
 using java.util;
 using System.Diagnostics;
+using javax.servlet.http;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -23,11 +24,18 @@ namespace Mainsoft.Web.Hosting
 			Trace.WriteLine ("Entering writeState");
 
 			if (serializedView != null) {
-				UIViewRoot uiViewRoot = facesContext.getViewRoot ();
-				//save state in response (client-side: full state; server-side: sequence)
-				RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
-				// not us.
-				renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+				if (isSavingStateInClient (facesContext)) {
+					UIViewRoot uiViewRoot = facesContext.getViewRoot ();
+					//save state in response (client-side: full state; server-side: sequence)
+					RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
+					// not us.
+					renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+				}
+				else {
+					HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (true);
+					string key = ((BaseFacesViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
+					session.setAttribute (key, serializedView);
+				}
 			}
 
 			Trace.WriteLine ("Exiting writeState");
@@ -46,15 +54,21 @@ namespace Mainsoft.Web.Hosting
 				serializedComponentStates = responseStateManager.getComponentStateToRestore (facesContext);
 			}
 			else {
-				throw new NotImplementedException ();
+				HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (false);
+				if (session == null)
+					serializedComponentStates = null;
+				else {
+					string key = ((BaseFacesViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
+					SerializedView serializedView = session.getAttribute (key) as SerializedView;
+					if (serializedView == null)
+						serializedComponentStates = null;
+					else
+						serializedComponentStates = serializedView.getState ();
+				}
 			}
 			((UIComponent) uiViewRoot.getChildren ().get (0)).processRestoreState (facesContext, serializedComponentStates);
 
 			Trace.WriteLine ("Exiting restoreComponentState");
-		}
-
-		public override bool isSavingStateInClient (FacesContext facesContext) {
-			return true;
 		}
 	}
 }
