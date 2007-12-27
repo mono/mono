@@ -69,7 +69,7 @@ namespace System.Web.Handlers
 			string contentType = request.ContentType;
 			Type pageType = context.CurrentHandler.GetType ();
 #if TARGET_J2EE
-			if (!context.CurrentHandler is Page && context.CurrentHandler is IServiceProvider) {
+			if (!(context.CurrentHandler is Page) && context.CurrentHandler is IServiceProvider) {
 				pageType = (Type) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Type));
 				if (pageType == null)
 					return;
