@@ -1,3 +1,13 @@
+2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_exception_overlap_test.sh: new test generator.
+
+	* make_tests.sh: new tests for exception clause restrictions
+	enumerated in P1 12.4.2.7.
+
+	* invalid_catch_block_starts_after_prefix.il: new test
+	for a catch block that starts in the middle of an instruction.
+
 2007-12-24 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_switch_test.sh: new test generator.
