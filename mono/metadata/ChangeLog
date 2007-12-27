@@ -1,5 +1,24 @@
 2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: added IL_CODE_FLAG_STACK_INITED and IL_CODE_STACK_MERGED
+	flags.
+
+	* verify.c (is_valid_branch_instruction): allow branching to the
+	first instruction of the protected block.
+
+	* verify.c (is_valid_cmp_branch_instruction): same.
+
+	* verify.c (stack_init): use IL_CODE_FLAG_STACK_INITED flag to
+	avoid double initialization.
+
+	* verify.c (merge_stacks): use IL_CODE_STACK_MERGED to
+	detect which cases the eval stack should just be copied.
+
+	* verify.c (mono_method_verify): check if the eval stack
+	is empty when entering a protected block.
+
+2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: added is_clause_in_range, is_clause_inside_range,
 	is_clause_nested and verify_clause_relationship. They perform
 	the verifications stated in P1 12.4.2.7.
