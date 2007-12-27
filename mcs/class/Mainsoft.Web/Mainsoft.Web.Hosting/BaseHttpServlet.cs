@@ -41,6 +41,7 @@ using java.lang.reflect;
 using java.net;
 using System.Globalization;
 using System.Diagnostics;
+using javax.faces;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -157,6 +158,10 @@ namespace Mainsoft.Web.Hosting
 				HttpRuntime.Close ();
 				vmw.@internal.EnvironmentUtils.cleanAllBeforeServletDestroy (evidence);
 				context.removeAttribute (J2EEConsts.APP_DOMAIN);
+				try {
+					FactoryFinder.releaseFactories ();
+				}
+				catch (FacesException) { }
 				java.lang.Thread.currentThread ().setContextClassLoader (null);
 			}
 			catch (Exception e) {
