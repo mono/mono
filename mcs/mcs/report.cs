@@ -465,6 +465,18 @@ namespace Mono.CSharp {
 		sealed class ErrorMessage : AbstractMessage
 		{
 			static string prefix, postfix;
+
+			[System.Runtime.InteropServices.DllImport ("libc", EntryPoint="isatty")]
+			extern static int _isatty (int fd);
+			
+			static bool isatty (int fd)
+			{
+				try {
+					return _isatty (fd) == 1;
+				} catch {
+					return false;
+				}
+			}
 			
 			static ErrorMessage ()
 			{
@@ -484,6 +496,12 @@ namespace Mono.CSharp {
 					xterm_colors = true;
 					break;
 				}
+				if (!xterm_colors)
+					return;
+
+				if (!(isatty (1) && isatty (2)))
+					return;
+				
 				string config = Environment.GetEnvironmentVariable ("MCS_COLORS");
 				if (config == null){
 					config = "errors=red";
@@ -498,9 +516,6 @@ namespace Mono.CSharp {
 
 				config = config.Substring (7);
 				
-				if (!xterm_colors)
-					return;
-
 				int p = config.IndexOf (",");
 				if (p == -1)
 					prefix = GetForeground (config);
