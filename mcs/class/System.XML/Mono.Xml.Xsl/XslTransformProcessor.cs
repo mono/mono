@@ -457,6 +457,15 @@ namespace Mono.Xml.Xsl {
 		{
 			if (!iter.MoveNext ())
 				return false;
+			// FIXME: this check should not be required.
+			// Since removal of this check causes some regressions,
+			// there should be some wrong assumption on our
+			// BaseIterator usage. Actually BaseIterator should
+			// not do whitespace check and every PreserveWhitespace
+			// evaluation in XslTransform should be done at
+			// different level. One possible solution is to wrap
+			// the input XmlReader by a new XmlReader that takes
+			// whitespace stripping into consideration.
 			if (iter.Current.NodeType == XPathNodeType.Whitespace && !XPathContext.PreserveWhitespace (iter.Current))
 				return NodesetMoveNext (iter);
 			return true;
@@ -601,10 +610,8 @@ namespace Mono.Xml.Xsl {
 			Out.InsideCDataSection = XPathContext.IsCData;
 		}
 
-		public bool PreserveWhitespace ()
-		{
-//			return XPathContext.PreserveWhitespace (CurrentNode);
-			return XPathContext.Whitespace;
+		public bool PreserveOutputWhitespace {
+			get { return XPathContext.Whitespace; }
 		}
 	}
 }

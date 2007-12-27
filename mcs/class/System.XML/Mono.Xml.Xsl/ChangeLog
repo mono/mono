@@ -1,3 +1,13 @@
+2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTemplate.cs, XslTransformProcessor.cs :
+	  Some disambiguation around whitespace handling (input strip/preserve
+	  and output control).
+	* XslStylesheet.cs : change GetPreserveWhitespace() to match the
+	  actual behavior; it does not (and should not) really walk through
+	  ancestors. Default whitespace handling depends on the default ("*")
+	  handling. (Those changes should not affect anything.)
+
 2007-10-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs : added CheckExtraAttributes() to check invalid

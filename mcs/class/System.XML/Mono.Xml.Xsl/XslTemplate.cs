@@ -467,7 +467,7 @@ namespace Mono.Xml.Xsl {
 		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
 			if (p.CurrentNode.NodeType == XPathNodeType.Whitespace) {
-				if (p.PreserveWhitespace ())
+				if (p.PreserveOutputWhitespace)
 					p.Out.WriteWhitespace (p.CurrentNode.Value);
 			}
 			else

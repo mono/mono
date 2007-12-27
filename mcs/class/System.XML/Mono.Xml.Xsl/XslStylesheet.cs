@@ -233,11 +233,13 @@ namespace Mono.Xml.Xsl {
 		{
 			if (!HasSpaceControls)
 				return true;
-			return GetPreserveWhitespaceInternal (nav.Clone ());
-		}
+			nav = nav.Clone ();
 
-		private bool GetPreserveWhitespaceInternal (XPathNavigator nav)
-		{
+			if (!nav.MoveToParent () || nav.NodeType != XPathNodeType.Element) {
+				object def = GetDefaultXmlSpace ();
+				return def == null || (XmlSpace) def == XmlSpace.Preserve;
+			}
+
 			string localName = nav.LocalName;
 			string ns = nav.NamespaceURI;
 
@@ -263,16 +265,8 @@ namespace Mono.Xml.Xsl {
 				}
 			}
 
-			if (o == null) {
-				o = spaceControls [allMatchName];
-				if (o == null) {
-					for (int i = 0; i < imports.Count; i++) {
-						o = ((XslStylesheet) imports [i]).SpaceControls [qname];
-						if (o != null)
-							break;
-					}
-				}
-			}
+			if (o == null)
+				o = GetDefaultXmlSpace ();
 
 			if (o != null) {
 				switch ((XmlSpace) o) {
@@ -282,10 +276,20 @@ namespace Mono.Xml.Xsl {
 					return false;
 				}
 			}
-			if (nav.MoveToParent () &&
-				nav.NodeType == XPathNodeType.Element)
-				return GetPreserveWhitespace (nav);
-			return true;
+			throw new SystemException ("Mono BUG: should not reach here");
+		}
+
+		object GetDefaultXmlSpace ()
+		{
+			object o = spaceControls [allMatchName];
+			if (o == null) {
+				for (int i = 0; i < imports.Count; i++) {
+					o = ((XslStylesheet) imports [i]).SpaceControls [allMatchName];
+					if (o != null)
+						break;
+				}
+			}
+			return o;
 		}
 
 		bool countedNamespaceAliases;
