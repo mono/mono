@@ -1,5 +1,10 @@
 2007-12-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Previous change should be != null, not == null.
+	Thanks Gert!
+
+2007-12-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Guard against an NRE after ItemClicked is called, the
 	user may have moved the mouse off the current item during the event.
 

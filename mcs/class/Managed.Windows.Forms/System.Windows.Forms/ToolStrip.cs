@@ -948,7 +948,7 @@ namespace System.Windows.Forms
 				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
 					
 				// Fire the item's MouseUp event
-				if (mouse_currently_over == null)
+				if (mouse_currently_over != null)
 					mouse_currently_over.FireEvent (mea, ToolStripItemEventType.MouseUp);
 
 				// The event handler may have blocked until the mouse moved off of the ToolStripItem
