@@ -1,3 +1,15 @@
+2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added is_clause_in_range, is_clause_inside_range,
+	is_clause_nested and verify_clause_relationship. They perform
+	the verifications stated in P1 12.4.2.7.
+
+	* verify.c (mono_method_verify): remove some unused variables,
+	add the new exception clause checks, add instruction border
+	checks for protected block start/end, improved some error 
+	messages and fixed a bug in the way invalid instruction access
+	is detected.
+
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (mono_gc_register_thread): Use the new GC_register_my_thread () routine
