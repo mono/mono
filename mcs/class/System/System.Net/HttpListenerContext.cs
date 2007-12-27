@@ -96,7 +96,7 @@ namespace System.Net {
 		internal IPrincipal ParseBasicAuthentication (string authData) {
 			try {
 				// Basic AUTH Data is a formatted Base64 String
-				string domain = null;
+				//string domain = null;
 				string user = null;
 				string password = null;
 				int pos = -1;
@@ -117,7 +117,7 @@ namespace System.Net {
 				pos = authString.IndexOf ("\\");
 	
 				if (pos > 0) {
-					domain = authString.Substring (0, pos);
+					//domain = authString.Substring (0, pos);
 					user = authString.Substring (pos);
 				} else {
 					user = authString;

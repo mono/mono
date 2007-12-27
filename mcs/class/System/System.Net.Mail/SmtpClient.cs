@@ -275,7 +275,7 @@ namespace System.Net.Mail {
 
 		private string EncodeBody (AlternateView av)
 		{
-			Encoding encoding = av.ContentType.CharSet != null ? Encoding.GetEncoding (av.ContentType.CharSet) : Encoding.UTF8;
+			//Encoding encoding = av.ContentType.CharSet != null ? Encoding.GetEncoding (av.ContentType.CharSet) : Encoding.UTF8;
 
 			byte [] bytes = new byte [av.ContentStream.Length];
 			av.ContentStream.Read (bytes, 0, bytes.Length);

@@ -1,3 +1,24 @@
+2007-12-27  Miguel de Icaza  <miguel@novell.com>
+
+	* WebClient.cs: We catch exceptions that happen on the helper
+	async threads toa void terminating the application on errors, and
+	also raise a variant of the OnXXXXCompleted methods that take an
+	Exception argument.
+
+	Note that this differs from the .NET implementation in that
+	we actually raise a signal on error, and set the exception, and in
+	their case no error is ever raised.
+
+	We now call CompleteAsync in the OnXXXCompleted handlers to ensure
+	that the WebClient can be reused immediately by the callback.
+
+	This fixes #350621.
+
+	This also should fix the bug report on IRC where someone
+	complained that they could not "chain" invocations to XXXAsync
+	methods from the OnXXXXCompleted handlers due to the WebClient
+	refusing to work if there was an ongoing operation
+
 2007-12-24  Miguel de Icaza  <miguel@novell.com>
 
 	* WebClient.cs: Do not validate method to be null, we do not do

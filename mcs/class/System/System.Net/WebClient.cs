@@ -30,7 +30,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+//
+// Notes on CancelAsync and Async methods:
+//
+//    WebClient.CancelAsync is implemented by calling Thread.Interrupt
+//    in our helper thread.   The various async methods have to cancel
+//    any ongoing requests by calling request.Abort () at that point.
+//    In a few places (UploadDataCore, UploadValuesCore,
+//    UploadFileCore) we catch the ThreadInterruptedException and
+//    abort the request there.
+//
+//    Higher level routines (the async callbacks) also need to catch
+//    the exception and raise the OnXXXXCompleted events there with
+//    the "canceled" flag set to true. 
+//
+//    In a few other places where these helper routines are not used
+//    (OpenReadAsync for example) catching the ThreadAbortException
+//    also must abort the request.
+//
+//    The Async methods currently differ in their implementation from
+//    the .NET implementation in that we manually catch any other
+//    exceptions and correctly raise the OnXXXXCompleted passing the
+//    Exception that caused the problem.   The .NET implementation
+//    does not seem to have a mechanism to flag errors that happen
+//    during downloads though.    We do this because we still need to
+//    catch the exception on these helper threads, or we would
+//    otherwise kill the application (on the 2.x profile, uncaught
+//    exceptions in threads terminate the application).
+//
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -1047,12 +1074,14 @@ namespace System.Net
 						byte [] data = DownloadDataCore ((Uri) args [0], args [1]);
 						OnDownloadDataCompleted (
 							new DownloadDataCompletedEventArgs (data, null, false, args [1]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnDownloadDataCompleted (
 							new DownloadDataCompletedEventArgs (null, null, true, args [1]));
 						throw;
-					} 
+					} catch (Exception e){
+						OnDownloadDataCompleted (
+							new DownloadDataCompletedEventArgs (null, e, false, args [1]));
+					}
 				});
 				object [] cb_args = new object [] {address, userToken};
 				async_thread.Start (cb_args);
@@ -1083,12 +1112,13 @@ namespace System.Net
 						DownloadFileCore ((Uri) args [0], (string) args [1], args [2]);
 						OnDownloadFileCompleted (
 							new AsyncCompletedEventArgs (null, false, args [2]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnDownloadFileCompleted (
 							new AsyncCompletedEventArgs (null, true, args [2]));
-					} 
-					});
+					} catch (Exception e){
+						OnDownloadFileCompleted (
+							new AsyncCompletedEventArgs (e, false, args [2]));
+					}});
 				object [] cb_args = new object [] {address, fileName, userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1116,12 +1146,13 @@ namespace System.Net
 						string data = encoding.GetString (DownloadDataCore ((Uri) args [0], args [1]));
 						OnDownloadStringCompleted (
 							new DownloadStringCompletedEventArgs (data, null, false, args [1]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnDownloadStringCompleted (
 							new DownloadStringCompletedEventArgs (null, null, true, args [1]));
-					} 
-					});
+					} catch (Exception e){
+						OnDownloadStringCompleted (
+							new DownloadStringCompletedEventArgs (null, e, false, args [1]));
+					}});
 				object [] cb_args = new object [] {address, userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1152,14 +1183,14 @@ namespace System.Net
 						Stream stream = ProcessResponse (response);
 						OnOpenReadCompleted (
 							new OpenReadCompletedEventArgs (stream, null, false, args [1]));
-						CompleteAsync ();						
 					} catch (ThreadInterruptedException){
 						if (request != null)
 							request.Abort ();
 						
 						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, null, true, args [1]));
-					}
-					} );
+					} catch (Exception e){
+						OnOpenReadCompleted (new OpenReadCompletedEventArgs (null, e, false, args [1]));
+					} });
 				object [] cb_args = new object [] {address, userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1194,14 +1225,15 @@ namespace System.Net
 						Stream stream = request.GetRequestStream ();
 						OnOpenWriteCompleted (
 							new OpenWriteCompletedEventArgs (stream, null, false, args [2]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						if (request != null)
 							request.Abort ();
 						OnOpenWriteCompleted (
 							new OpenWriteCompletedEventArgs (null, null, true, args [2]));
-					} 
-					});
+					} catch (Exception e){
+						OnOpenWriteCompleted (
+							new OpenWriteCompletedEventArgs (null, e, false, args [2]));
+					}});
 				object [] cb_args = new object [] {address, method, userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1239,10 +1271,12 @@ namespace System.Net
 					
 						OnUploadDataCompleted (
 							new UploadDataCompletedEventArgs (data2, null, false, args [3]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnUploadDataCompleted (
 							new UploadDataCompletedEventArgs (null, null, true, args [3]));
+					} catch (Exception e){
+						OnUploadDataCompleted (
+							new UploadDataCompletedEventArgs (null, e, false, args [3]));
 					}});
 				object [] cb_args = new object [] {address, method, data,  userToken};
 				async_thread.Start (cb_args);
@@ -1283,8 +1317,10 @@ namespace System.Net
 					} catch (ThreadInterruptedException){
 						OnUploadFileCompleted (
 							new UploadFileCompletedEventArgs (null, null, true, args [3]));
-					}
-					});
+					} catch (Exception e){
+						OnUploadFileCompleted (
+							new UploadFileCompletedEventArgs (null, e, false, args [3]));
+					}});
 				object [] cb_args = new object [] {address, method, fileName,  userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1320,12 +1356,13 @@ namespace System.Net
 						string data2 = UploadString ((Uri) args [0], (string) args [1], (string) args [2]);
 						OnUploadStringCompleted (
 							new UploadStringCompletedEventArgs (data2, null, false, args [3]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnUploadStringCompleted (
 							new UploadStringCompletedEventArgs (null, null, true, args [3]));
-					} 
-					});
+					} catch (Exception e){
+						OnUploadStringCompleted (
+							new UploadStringCompletedEventArgs (null, e, false, args [3]));
+					}});
 				object [] cb_args = new object [] {address, method, data, userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1360,12 +1397,13 @@ namespace System.Net
 						byte [] data = UploadValuesCore ((Uri) args [0], (string) args [1], (NameValueCollection) args [2], args [3]);
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (data, null, false, args [3]));
-						CompleteAsync ();
 					} catch (ThreadInterruptedException){
 						OnUploadValuesCompleted (
 							new UploadValuesCompletedEventArgs (null, null, true, args [3]));
-					}
-					});
+					} catch (Exception e){
+						OnUploadValuesCompleted (
+							new UploadValuesCompletedEventArgs (null, e, false, args [3]));
+					}});
 				object [] cb_args = new object [] {address, method, values,  userToken};
 				async_thread.Start (cb_args);
 			}
@@ -1373,12 +1411,14 @@ namespace System.Net
 
 		protected virtual void OnDownloadDataCompleted (DownloadDataCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (DownloadDataCompleted != null)
 				DownloadDataCompleted (this, args);
 		}
 
 		protected virtual void OnDownloadFileCompleted (AsyncCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (DownloadFileCompleted != null)
 				DownloadFileCompleted (this, args);
 		}
@@ -1391,30 +1431,35 @@ namespace System.Net
 
 		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (DownloadStringCompleted != null)
 				DownloadStringCompleted (this, args);
 		}
 
 		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (OpenReadCompleted != null)
 				OpenReadCompleted (this, args);
 		}
 
 		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (OpenWriteCompleted != null)
 				OpenWriteCompleted (this, args);
 		}
 
 		protected virtual void OnUploadDataCompleted (UploadDataCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (UploadDataCompleted != null)
 				UploadDataCompleted (this, args);
 		}
 
 		protected virtual void OnUploadFileCompleted (UploadFileCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (UploadFileCompleted != null)
 				UploadFileCompleted (this, args);
 		}
@@ -1427,12 +1472,14 @@ namespace System.Net
 
 		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (UploadStringCompleted != null)
 				UploadStringCompleted (this, args);
 		}
 
 		protected virtual void OnUploadValuesCompleted (UploadValuesCompletedEventArgs args)
 		{
+			CompleteAsync ();
 			if (UploadValuesCompleted != null)
 				UploadValuesCompleted (this, args);
 		}
