@@ -148,6 +148,12 @@ namespace System.Web.Configuration
 		{
 			Reset (parentElement);
 		}
+
+		internal void AddNewSettings (ProfileGroupSettings newSettings)
+		{
+			// allow overriding - no exception should be thrown
+			BaseAdd (newSettings, false);
+		}
 	}
 
 }

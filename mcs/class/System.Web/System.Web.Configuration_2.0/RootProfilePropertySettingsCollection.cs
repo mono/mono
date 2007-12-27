@@ -40,7 +40,6 @@ namespace System.Web.Configuration
 	public sealed class RootProfilePropertySettingsCollection : ProfilePropertySettingsCollection
 	{
 		static ConfigurationPropertyCollection properties;
-
 		ProfileGroupSettingsCollection groupSettings;
 		
 		static RootProfilePropertySettingsCollection ()
@@ -82,6 +81,29 @@ namespace System.Web.Configuration
 
 		protected override bool AllowClear {
 			get { return true; }
+		}
+
+		// LAMESPEC: this is missing from MSDN but is present in 2.0sp1 version of the
+		// class.
+		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader)
+		{
+			if (elementName == "group") {
+				ProfileGroupSettings newSettings = new ProfileGroupSettings ();
+				newSettings.DoDeserialize (reader);
+				GroupSettings.AddNewSettings (newSettings);
+				
+				return true;
+			}
+			
+			return base.OnDeserializeUnrecognizedElement (elementName, reader);
+		}
+
+		// LAMESPEC: this is missing from MSDN, but is present in the 2.0sp1 version of the
+		// class
+		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
+		{
+			// Why override?
+			base.Unmerge (sourceElement, parentElement, saveMode);
 		}
 		
 		[ConfigurationProperty ("group")]

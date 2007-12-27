@@ -33,21 +33,27 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Xml;
 
 namespace System.Web.Configuration
 {
 	public sealed class ProfileGroupSettings : ConfigurationElement
 	{
 		static ConfigurationProperty propertySettingsProp;
+		static ConfigurationProperty nameProp;
 		
 		static ConfigurationPropertyCollection properties;
 		
 		static ProfileGroupSettings ()
 		{
-			propertySettingsProp = new ConfigurationProperty (null, typeof (ProfilePropertySettingsCollection), null);
-
+			propertySettingsProp = new ConfigurationProperty (null, typeof (ProfilePropertySettingsCollection), null, null, null,
+									  ConfigurationPropertyOptions.IsDefaultCollection);
+			nameProp = new ConfigurationProperty ("name", typeof (string), null, null, PropertyHelper.NonEmptyStringValidator,
+							      ConfigurationPropertyOptions.IsKey | ConfigurationPropertyOptions.IsRequired);
+			
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (propertySettingsProp);
+			properties.Add (nameProp);
 		}
 		
 		internal ProfileGroupSettings ()
@@ -76,10 +82,15 @@ namespace System.Web.Configuration
 			return Name.GetHashCode ();
 		}
 
+		internal void DoDeserialize (XmlReader reader)
+		{
+			DeserializeElement (reader, false);
+		}
+		
 		[ConfigurationProperty ("name", IsRequired = true, IsKey = true)]
 		public string Name {
-			get { return (string)base ["name"]; }
-			internal set { base ["name"] = value; }
+			get { return (string)base [nameProp]; }
+			internal set { base [nameProp] = value; }
 		}
 
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]

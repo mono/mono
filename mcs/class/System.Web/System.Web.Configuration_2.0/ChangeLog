@@ -1,3 +1,25 @@
+2007-12-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileGroupSettingsCollection.cs: added an internal method to
+	add/overwrite new group settings. Used from
+	RootProfilePropertySettingsCollection.
+
+	* ProfileGroupSettings.cs: added the missing "name" property to
+	the properties collection.
+	Marked the propertySettingsProp property as the default
+	collection.
+	Added internal deserialization method, used from
+	RootProfilePropertySettingsCollection to support the 'group'
+	element.
+
+	* ProfileSection.cs: defaultProviderProp typo - the name of the
+	provider should be "AspNetSqlProfileProvider"
+
+	* RootProfilePropertySettingsCollection.cs: added
+	OnDeseerializeUnrecognizedElement to support the profile 'group'
+	element.
+	Added a missing Unmerge method.
+
 2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SiteMapSection.cs: fixed ProvidersInternal property to be thread safe
