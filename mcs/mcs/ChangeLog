@@ -4,6 +4,25 @@
 	GHOP:
 	
 	http://code.google.com/p/google-highly-open-participation-mono/issues/detail?id=4 
+
+	* statement.cs: Changed some Hashtables to use HybridDictionaries
+	instead. It was observed that some HashTables only contained a few
+	items in the vast majority of cases. Since HybridDictionary is
+	more efficient on small sets (<10 elements), "known_variables"
+	from class ExplicitBlock as well as "labels" and "constants " from
+	class Block were changed to HybridDictionaries. 
+
+	Atsai results: (56216kb->54987kb)
+
+	Miguel results (bootstrap of mcs): 59819kb -> 59290kb
+
+
+2007-12-27  AdTsai (http://code.google.com/u/AdTsai/)
+
+	Reviewed by Ben Maurer, Miguel de Icaza, patches from Google's
+	GHOP:
+	
+	http://code.google.com/p/google-highly-open-participation-mono/issues/detail?id=4 
 	
 	* expression.cs: foreach loop to for loop, saved on allocation of
 	enumerator (59333kb->59141kb)

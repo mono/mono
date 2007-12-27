@@ -1510,7 +1510,7 @@ namespace Mono.CSharp {
 		//
 		// Labels.  (label, block) pairs.
 		//
-		Hashtable labels;
+		HybridDictionary labels;
 
 		//
 		// Keeps track of (name, type) pairs
@@ -1519,7 +1519,7 @@ namespace Mono.CSharp {
 
 		//
 		// Keeps track of constants
-		Hashtable constants;
+		HybridDictionary constants;
 
 		//
 		// Temporary variables.
@@ -1669,7 +1669,7 @@ namespace Mono.CSharp {
 			Toplevel.CheckError158 (name, target.loc);
 
 			if (labels == null)
-				labels = new Hashtable ();
+				labels = new HybridDictionary();
 
 			labels.Add (name, target);
 			return true;
@@ -1844,7 +1844,7 @@ namespace Mono.CSharp {
 				return false;
 			
 			if (constants == null)
-				constants = new Hashtable ();
+				constants = new HybridDictionary();
 
 			constants.Add (name, value);
 
@@ -2350,7 +2350,7 @@ namespace Mono.CSharp {
 			this.Explicit = this;
 		}
 
-		Hashtable known_variables;
+		HybridDictionary known_variables;
 
 		// <summary>
 		//   Marks a variable with name @name as being used in this or a child block.
@@ -2360,7 +2360,7 @@ namespace Mono.CSharp {
 		internal void AddKnownVariable (string name, IKnownVariable info)
 		{
 			if (known_variables == null)
-				known_variables = new Hashtable ();
+				known_variables = new HybridDictionary();
 
 			known_variables [name] = info;
 
