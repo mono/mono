@@ -48,6 +48,7 @@ namespace System.Web.Configuration {
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 #else
+		static readonly object AppSettingsKey = new object ();
 		static internal IInternalConfigConfigurationFactory configFactory
 		{
 			get{
@@ -272,7 +273,35 @@ namespace System.Web.Configuration {
 				return null;
 
 #if TARGET_J2EE
-			return get_runtime_object.Invoke (section, new object [0]);
+			object value = get_runtime_object.Invoke (section, new object [0]);
+			if (String.CompareOrdinal ("appSettings", sectionName) == 0) {
+				HttpContext hc = HttpContext.Current;
+				NameValueCollection collection = (NameValueCollection) hc.Items [AppSettingsKey];
+
+				if (collection == null) {
+					IServiceProvider provider = (IServiceProvider) ((IServiceProvider) hc).GetService (typeof (HttpWorkerRequest));
+					javax.servlet.ServletConfig config = (javax.servlet.ServletConfig) provider.GetService (typeof (javax.servlet.ServletConfig));
+					javax.servlet.ServletContext context = config.getServletContext ();
+
+					collection = new NameValueCollection ((NameValueCollection)value);
+
+					for (java.util.Enumeration e = context.getInitParameterNames (); e.hasMoreElements (); ) {
+						string key = (string) e.nextElement ();
+						collection.Add (key, context.getInitParameter (key));
+					}
+
+					for (java.util.Enumeration e = config.getInitParameterNames (); e.hasMoreElements (); ) {
+						string key = (string) e.nextElement ();
+						collection.Add (key, config.getInitParameter (key));
+					}
+
+					hc.Items [AppSettingsKey] = collection;
+				}
+
+				value = collection;
+			}
+
+			return value;
 #else
 			return SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
 #endif
