@@ -2062,5 +2062,112 @@ Services
 			string expected = "<yyy>Harry Potter</yyy><yyy>29.99</yyy>";
 			Assert.AreEqual (expected, sw.ToString ());
 		}
+
+#if NET_2_0
+		[Test] // bug #349375
+		public void PreserveWhitespace ()
+		{
+			XslCompiledTransform xslt = new XslCompiledTransform ();
+			xslt.Load (new XmlTextReader (new StringReader (@"
+<xsl:stylesheet
+  version=""1.0""
+  xmlns:xsl=""http://www.w3.org/1999/XSL/Transform""
+  >
+  <xsl:output omit-xml-declaration='yes' />
+  <xsl:strip-space elements='*'/>
+  <xsl:preserve-space elements='p span'/>
+
+  <xsl:template name='foo'>
+    <xsl:for-each select='node()'>
+        <xsl:attribute name='yes-one-node'/>
+        <xsl:value-of select='.'/>
+    </xsl:for-each>
+    <xsl:if test='not(node())'>
+        <xsl:attribute name='not-node'/>
+        <xsl:value-of select='.'/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match='p'>
+    <y>
+      <xsl:for-each select='child::node()[position()]'>
+        <xsl:choose>
+          <xsl:when test='name()=""span""'>
+              <t>
+                <xsl:call-template name='foo'/>
+              </t>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:for-each>
+    </y>
+  </xsl:template>
+
+</xsl:stylesheet>")));
+			StringWriter sw = new StringWriter ();
+			xslt.Transform (new XmlTextReader (new StringReader (@"
+<root>
+  <l0>
+    <p>
+      <span>1</span>
+      <span> </span>
+    </p>
+  </l0>
+</root>")), null, sw);
+			Assert.AreEqual (@"<y><t yes-one-node="""">1</t><t yes-one-node=""""> </t></y>", sw.ToString ());
+		}
+
+		[Test] // reverse case of #349375
+		[Category ("NotWorking")]
+		public void PreserveWhitespace2 ()
+		{
+			XslCompiledTransform xslt = new XslCompiledTransform ();
+			xslt.Load (new XmlTextReader (new StringReader (@"
+<xsl:stylesheet
+  version=""1.0""
+  xmlns:xsl=""http://www.w3.org/1999/XSL/Transform""
+  >
+  <xsl:output omit-xml-declaration='yes' />
+  <xsl:preserve-space elements='*'/>
+  <xsl:strip-space elements='p span'/>
+
+  <xsl:template name='foo'>
+    <xsl:for-each select='node()'>
+        <xsl:attribute name='yes-one-node'/>
+        <xsl:value-of select='.'/>
+    </xsl:for-each>
+    <xsl:if test='not(node())'>
+        <xsl:attribute name='not-node'/>
+        <xsl:value-of select='.'/>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match='p'>
+    <y>
+      <xsl:for-each select='child::node()[position()]'>
+        <xsl:choose>
+          <xsl:when test='name()=""span""'>
+              <t>
+                <xsl:call-template name='foo'/>
+              </t>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:for-each>
+    </y>
+  </xsl:template>
+
+</xsl:stylesheet>")));
+			StringWriter sw = new StringWriter ();
+			xslt.Transform (new XmlTextReader (new StringReader (@"
+<root>
+  <l0>
+    <p>
+      <span>1</span>
+      <span> </span>
+    </p>
+  </l0>
+</root>")), null, sw);
+			Assert.AreEqual (@"<y><t yes-one-node="""">1</t><t not-node=""""></t></y>", sw.ToString ());
+		}
+#endif
 	}
 }
