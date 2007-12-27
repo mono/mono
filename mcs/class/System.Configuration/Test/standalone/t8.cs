@@ -22,6 +22,7 @@ class T1
 				Console.WriteLine ("ConfigurationManager.AppSettings.Add resulted in exception");
 			}
 
+			AppSettings = new NameValueCollection (AppSettings);
 			foreach (string key in AppSettings.AllKeys) {
 				Console.WriteLine ("AppSettings[{0}] = {1}", key, AppSettings[key]);
 			}

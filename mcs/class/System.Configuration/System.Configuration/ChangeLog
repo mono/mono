@@ -1,5 +1,10 @@
 2007-12-25  Konstantin Triger <kostat@mainsoft.com>
 
+	* KeyValueInternalCollection.cs: properly override NameValueCollection
+		to support interop with it.
+
+2007-12-25  Konstantin Triger <kostat@mainsoft.com>
+
 	* ConfigurationElement.cs:
 		1. typo - pass the correct property to Attribute.GetCustomAttribute.
 		2. Pass oroginal exception as inner.

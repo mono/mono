@@ -41,26 +41,8 @@ namespace System.Configuration
 
 		public override void Add (string name, string val)
 		{
-			BaseAdd (name, val);
-		}
-
-		public override void Remove (string name)
-		{
-			BaseRemove (name);
-		}
-
-		public override string[] AllKeys {
-			get { return BaseGetAllKeys (); }
-		}
-
-		public override string Get (string name)
-		{
-			return (string)BaseGet (name);
-		}
-
-		public override string Get (int index)
-		{
-			return (string)BaseGet (index);
+			Remove (name);
+			base.Add (name, val);
 		}
 
 			/*
