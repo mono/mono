@@ -43,11 +43,11 @@ namespace MonoTests.System.Text
 		public void FallbackEmptyForEncodingUTF8 ()
 		{
 			Buffer b = Encoding.UTF8.EncoderFallback.CreateFallbackBuffer () as Buffer;
-			Assert.IsFalse (b.Fallback ('X', 0), "#1");
+			Assert.IsTrue (b.Fallback ('X', 0), "#1");
 			Assert.IsFalse (b.MovePrevious (), "#2");
-			Assert.AreEqual (0, b.Remaining, "#3");
+			Assert.AreEqual (1, b.Remaining, "#3");
 			// the string does not exist.
-			Assert.AreEqual (char.MinValue, b.GetNextChar (), "#4");
+			Assert.AreEqual ('\uFFFD', b.GetNextChar (), "#4");
 		}
 
 		[Test]

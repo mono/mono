@@ -81,8 +81,8 @@ public abstract class Encoding
 		case 12001: // UTF32
 		case 65000: // UTF7
 		case 65001: // UTF8
-			decoder_fallback = new DecoderReplacementFallback (String.Empty);
-			encoder_fallback = new EncoderReplacementFallback (String.Empty);
+			decoder_fallback = DecoderFallback.StandardSafeFallback;
+			encoder_fallback = EncoderFallback.StandardSafeFallback;
 			break;
 		}
 #endif
@@ -107,14 +107,9 @@ public abstract class Encoding
 		get { return false; }
 	}
 
-	[MonoTODO ("not used yet")]
 	[ComVisible (false)]
 	public DecoderFallback DecoderFallback {
-		get {
-			if (decoder_fallback == null)
-				decoder_fallback = new DecoderReplacementFallback (String.Empty);
-			return decoder_fallback;
-		}
+		get { return decoder_fallback; }
 		set {
 			if (IsReadOnly)
 				throw new InvalidOperationException ("This Encoding is readonly.");
@@ -124,14 +119,9 @@ public abstract class Encoding
 		}
 	}
 
-	[MonoTODO ("not used yet")]
 	[ComVisible (false)]
 	public EncoderFallback EncoderFallback {
-		get {
-			if (encoder_fallback == null)
-				encoder_fallback = new EncoderReplacementFallback (String.Empty);
-			return encoder_fallback;
-		}
+		get { return encoder_fallback; }
 		set {
 			if (IsReadOnly)
 				throw new InvalidOperationException ("This Encoding is readonly.");

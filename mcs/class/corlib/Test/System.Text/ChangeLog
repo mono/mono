@@ -1,3 +1,9 @@
+2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncoderReplacementFallbackTest.cs,
+	  EncoderReplacementFallbackBufferTest.cs : encoder test for
+	  "\uFFFD" replacement.
+
 2007-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : looks like the issue is not fixed in .NET 1.x

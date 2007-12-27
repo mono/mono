@@ -39,6 +39,8 @@ namespace System.Text
 			new DecoderExceptionFallback ();
 		static DecoderFallback replacement_fallback =
 			new DecoderReplacementFallback ();
+		static DecoderFallback standard_safe_fallback =
+			new DecoderReplacementFallback ("\uFFFD");
 
 		protected DecoderFallback ()
 		{
@@ -52,6 +54,10 @@ namespace System.Text
 
 		public static DecoderFallback ReplacementFallback {
 			get { return replacement_fallback; }
+		}
+
+		internal static DecoderFallback StandardSafeFallback {
+			get { return standard_safe_fallback; }
 		}
 
 		public abstract DecoderFallbackBuffer CreateFallbackBuffer ();

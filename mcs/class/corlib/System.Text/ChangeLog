@@ -1,3 +1,9 @@
+2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DecoderFallback.cs, EncoderFallback.cs, Encoding.cs :
+	  the same "\uFFFD" fix for encoder fallback.
+	  Reduced extra instantiation of those fallbacks.
+
 2007-10-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Encoding.cs : fixed UTF8UnmarkedUnsafe for 1.1; should not be null.

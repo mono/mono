@@ -39,6 +39,8 @@ namespace System.Text
 			new EncoderExceptionFallback ();
 		static EncoderFallback replacement_fallback =
 			new EncoderReplacementFallback ();
+		static EncoderFallback standard_safe_fallback =
+			new EncoderReplacementFallback ("\uFFFD");
 
 		protected EncoderFallback ()
 		{
@@ -52,6 +54,10 @@ namespace System.Text
 
 		public static EncoderFallback ReplacementFallback {
 			get { return replacement_fallback; }
+		}
+
+		internal static EncoderFallback StandardSafeFallback {
+			get { return standard_safe_fallback; }
 		}
 
 		public abstract EncoderFallbackBuffer CreateFallbackBuffer ();
