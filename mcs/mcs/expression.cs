@@ -4266,9 +4266,11 @@ namespace Mono.CSharp {
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
-			if (Arguments != null){
-				foreach (Argument a in Arguments){
-					if (!a.Resolve (ec, loc))
+			if (Arguments != null)
+			{
+				for (int i = 0; i < Arguments.Count; ++i)
+				{
+					if (!((Argument)Arguments[i]).Resolve(ec, loc))
 						return null;
 				}
 			}

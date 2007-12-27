@@ -1572,7 +1572,7 @@ namespace Mono.CSharp {
 			this.EndLocation = end;
 			this.loc = start;
 			this_id = id++;
-			statements = new ArrayList ();
+			statements = new ArrayList (1);
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -1598,7 +1598,7 @@ namespace Mono.CSharp {
 		void AddChild (Block b)
 		{
 			if (children == null)
-				children = new ArrayList ();
+				children = new ArrayList (1);
 			
 			children.Add (b);
 		}
@@ -2069,13 +2069,13 @@ namespace Mono.CSharp {
 			}
 
 			if (temporary_variables != null) {
-				foreach (LocalInfo vi in temporary_variables)
-					vi.ResolveVariable (ec);
+				for (int i = 0; i < temporary_variables.Count; i++)
+					((LocalInfo)temporary_variables[i]).ResolveVariable(ec);
 			}
 
 			if (children != null){
-				foreach (Block b in children)
-					b.EmitMeta (ec);
+				for (int i = 0; i < children.Count; i++)
+					((Block)children[i]).EmitMeta(ec);
 			}
 		}
 

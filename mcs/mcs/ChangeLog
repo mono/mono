@@ -1,3 +1,16 @@
+2007-12-27  AdTsai (http://code.google.com/u/AdTsai/)
+
+	Reviewed by Ben Maurer, Miguel de Icaza, patches from Google's
+	GHOP:
+	
+	http://code.google.com/p/google-highly-open-participation-mono/issues/detail?id=4 
+	
+	* expression.cs: foreach loop to for loop, saved on allocation of
+	enumerator (59333kb->59141kb)
+
+	* statement.cs. Changed foreach loops to for loops, saved on
+	allocation of enumerator (59141kb->59006kb)
+
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #347189 (2nd issue)
@@ -5,7 +18,7 @@
  	type.
 
 2007-12-27  Miguel de Icaza  <miguel@novell.com>
-
+	
 	* report.cs: Do not use colors if stdout and stderr are not a
 	terminal.
 

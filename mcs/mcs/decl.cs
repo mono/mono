@@ -1833,7 +1833,7 @@ namespace Mono.CSharp {
 			// We use a name-based hash table of ArrayList's.
 			ArrayList list = (ArrayList) member_hash [name];
 			if (list == null) {
-				list = new ArrayList ();
+				list = new ArrayList (1);
 				member_hash.Add (name, list);
 			}
 
@@ -1894,7 +1894,7 @@ namespace Mono.CSharp {
 				// We use a name-based hash table of ArrayList's.
 				ArrayList list = (ArrayList) method_hash [name];
 				if (list == null) {
-					list = new ArrayList ();
+					list = new ArrayList (1);
 					method_hash.Add (name, list);
 				}
 
