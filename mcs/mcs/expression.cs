@@ -1153,7 +1153,7 @@ namespace Mono.CSharp {
 				// If E is a method group or the null literal, of if the type of E is a reference
 				// type or a nullable type and the value of E is null, the result is false
 				//
-				if (((Constant) expr).GetValue () == null)
+				if (expr.IsNull)
 					return CreateConstantResult (false);
 			} else if (TypeManager.IsNullableType (d) && !TypeManager.ContainsGenericParameters (d)) {
 				d = TypeManager.GetTypeArguments (d) [0];
@@ -1319,7 +1319,11 @@ namespace Mono.CSharp {
 				}
 			}
 #endif
-
+			if (expr.IsNull && TypeManager.IsNullableType (type)) {
+				Report.Warning (458, 2, loc, "The result of the expression is always `null' of type `{0}'",
+					TypeManager.CSharpName (type));
+			}
+			
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (e != null){
 				expr = e;

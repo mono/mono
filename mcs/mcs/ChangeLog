@@ -1,3 +1,14 @@
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Report type inference errors only when arguments count matches
+	parameter count.
+	
+	* generic.cs (NullCoalescingOperator): Cannot be applied to null.
+	
+ 	* expression.cs, report.cs: New warning.
+ 	
+ 	* typemanager.cs: Catch anonymous method type too.
+
 2007-12-23  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #346379

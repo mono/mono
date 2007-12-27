@@ -3856,11 +3856,6 @@ namespace Mono.CSharp {
 
 				Type ltype = left.Type, rtype = right.Type;
 
-				if (!TypeManager.IsNullableType (ltype) && ltype.IsValueType) {
-					Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
-					return null;
-				}
-
 				if (TypeManager.IsNullableType (ltype)) {
 					NullableInfo info = new NullableInfo (ltype);
 
@@ -3873,6 +3868,11 @@ namespace Mono.CSharp {
 						left = unwrap;
 						type = expr.Type;
 						return this;
+					}
+				} else {
+					if (left.IsNull || ltype.IsValueType) {
+						Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+						return null;
 					}
 				}
 

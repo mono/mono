@@ -4005,33 +4005,33 @@ namespace Mono.CSharp {
 							return null;
 					}
 
-					if (TypeManager.IsGenericMethod (best_candidate)) {
-						if (type_arguments == null) {
-							Report.Error (411, loc,
-								"The type arguments for method `{0}' cannot be inferred from " +
-								"the usage. Try specifying the type arguments explicitly",
-								TypeManager.CSharpSignature (best_candidate));
-							return null;
-						}
-
-						Type [] g_args = TypeManager.GetGenericArguments (best_candidate);
-						if (type_arguments.Count != g_args.Length) {
-							Report.SymbolRelatedToPreviousError (best_candidate);
-							Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
-								TypeManager.CSharpSignature (best_candidate),
-								g_args.Length.ToString ());
-							return null;
-						}
-					} else {
-						if (type_arguments != null) {
-							Namespace.Error_TypeArgumentsCannotBeUsed (best_candidate, loc);
-							return null;
-						}
-					}
-					
 					ParameterData pd = TypeManager.GetParameterData (best_candidate);
 					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 					if (arg_count == pd.Count || pd.HasParams) {
+						if (TypeManager.IsGenericMethod (best_candidate)) {
+							if (type_arguments == null) {
+								Report.Error (411, loc,
+									"The type arguments for method `{0}' cannot be inferred from " +
+									"the usage. Try specifying the type arguments explicitly",
+									TypeManager.CSharpSignature (best_candidate));
+								return null;
+							}
+								
+							Type [] g_args = TypeManager.GetGenericArguments (best_candidate);
+							if (type_arguments.Count != g_args.Length) {
+								Report.SymbolRelatedToPreviousError (best_candidate);
+								Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
+									TypeManager.CSharpSignature (best_candidate),
+									g_args.Length.ToString ());
+								return null;
+							}
+						} else {
+							if (type_arguments != null) {
+								Namespace.Error_TypeArgumentsCannotBeUsed (best_candidate, loc);
+								return null;
+							}
+						}
+						
 						if (VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
 							throw new InternalErrorException ("Overload verification expected failure");
 						return null;
