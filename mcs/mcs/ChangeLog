@@ -11,6 +11,13 @@
 	* statement.cs. Changed foreach loops to for loops, saved on
 	allocation of enumerator (59141kb->59006kb)
 
+	* decl.cs: ArrayLists in .NET 1.1 allocate 16 elements by default
+	when constructed with no specified capacity. This was causing a
+	few ArrayLists to allocate more memory than they would potentially
+	need in the Block class and MemberCache class. Setting the
+	ArrayLists to construct with a capacity of 1 saves some
+	memory. (56216kb->55585kb)
+
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #347189 (2nd issue)
