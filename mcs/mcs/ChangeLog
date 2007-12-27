@@ -1,5 +1,10 @@
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #343465
+ 	* class.cs: Explicit method name for nested types uses dots only.
+
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #343707
  	* cs-tokenizer.cs: Advance line number for mixed CR/LF files correctly.
 

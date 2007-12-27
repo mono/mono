@@ -5250,8 +5250,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					method_name = member.InterfaceType.FullName + 
-						'.' + method_name;
+					method_name = member.InterfaceType.FullName.Replace ('+', '.') + "." + method_name; 
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
