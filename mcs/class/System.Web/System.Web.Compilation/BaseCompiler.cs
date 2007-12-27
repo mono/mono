@@ -207,7 +207,11 @@ namespace System.Web.Compilation
 			if (VirtualPathUtility.IsAbsolute (arvp))
 				arvp = "~" + arvp;
 
-			CodeExpression cast = new CodeCastExpression (baseType, new CodeThisReferenceExpression ());
+			CodeTypeReference baseTypeRef = new CodeTypeReference (baseType.FullName);
+			if (parser.BaseTypeIsGlobal)
+				baseTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+			
+			CodeExpression cast = new CodeCastExpression (baseTypeRef, new CodeThisReferenceExpression ());
 			CodePropertyReferenceExpression arvpProp = new CodePropertyReferenceExpression (cast, "AppRelativeVirtualPath");
 			CodeAssignStatement arvpAssign = new CodeAssignStatement ();
 			arvpAssign.Left = arvpProp;

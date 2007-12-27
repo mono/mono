@@ -732,12 +732,28 @@ namespace System.Web.UI {
 			unknownMainAttributes.Add (desc);
 		}
 #endif
+
+		void CheckIfBaseTypeIsGlobal ()
+		{
+			if (baseType == null)
+				return;
+
+			// If we have a fully-qualified type name, then we don't need to use the
+			// global:: prefix
+			if (baseType.FullName.IndexOf ('.') == -1)
+				baseTypeIsGlobal = true;
+			else
+				baseTypeIsGlobal = false;
+		}
 		
 		internal void SetBaseType (string type)
 		{
-			if (type == DefaultBaseTypeName)
+			if (type == DefaultBaseTypeName) {
+				baseType = DefaultBaseType;
+				CheckIfBaseTypeIsGlobal ();
 				return;
-
+			}
+			
 			Type parent = null;
 			if (srcAssembly != null)
 				parent = srcAssembly.GetType (type);
@@ -752,8 +768,7 @@ namespace System.Web.UI {
 				ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
 
 			baseType = parent;
-			if (parent.FullName.IndexOf ('.') == -1)
-				baseTypeIsGlobal = true;
+			CheckIfBaseTypeIsGlobal ();
 		}
 
 		internal void SetLanguage (string language)
@@ -819,18 +834,16 @@ namespace System.Web.UI {
 		}
 #endif
 
-		internal string Text
-		{
+		internal string Text {
 			get { return text; }
 			set { text = value; }
 		}
 
-		internal Type BaseType
-		{
+		internal Type BaseType {
 			get {
 				if (baseType == null)
-					baseType = DefaultBaseType;
-
+					SetBaseType (DefaultBaseTypeName);
+				
 				return baseType;
 			}
 		}
