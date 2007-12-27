@@ -1,3 +1,9 @@
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #347189 (2nd issue)
+ 	* expression.cs (MemberAccess): Nested type can be found in base non-generic
+ 	type.
+
 2007-12-27  Miguel de Icaza  <miguel@novell.com>
 
 	* report.cs: Do not use colors if stdout and stderr are not a

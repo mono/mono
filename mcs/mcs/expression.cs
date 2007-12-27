@@ -6855,7 +6855,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			TypeArguments the_args = args;
-			if (TypeManager.HasGenericArguments (expr_type)) {
+			if (TypeManager.HasGenericArguments (texpr.Type.DeclaringType)) {
 				Type[] decl_args = TypeManager.GetTypeArguments (expr_type);
 
 				TypeArguments new_args = new TypeArguments (loc);
