@@ -1,5 +1,11 @@
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #346998
+ 	* ecore.cs (MethodGroupExpr): Implemented override filter for generic
+ 	overloads.
+
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #343465
  	* class.cs: Explicit method name for nested types uses dots only.
 

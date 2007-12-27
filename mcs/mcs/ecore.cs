@@ -4176,6 +4176,17 @@ namespace Mono.CSharp {
 						gen_args = TypeManager.GetGenericArguments (best_candidate);
 
 					foreach (MethodBase candidate in candidate_overrides) {
+						if (TypeManager.IsGenericMethod (candidate)) {
+							if (gen_args == null)
+								continue;
+
+							if (gen_args.Length != TypeManager.GetGenericArguments (candidate).Length)
+								continue;
+						} else {
+							if (gen_args != null)
+								continue;
+						}
+						
 						if (IsOverride (candidate, best_candidate)) {
 							gen_override = true;
 							best_candidate = candidate;
