@@ -1,3 +1,10 @@
+2007-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay, RncTokenizer.cs : some changes to fill element
+	  locations in *.rnc. To make it possible, added some overrides to
+	  pass BaseUri to Parse() and ParseRnc().
+	  Allow null nameTable (just create a new instance).
+
 2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : if the parsed pattern is grammar, set

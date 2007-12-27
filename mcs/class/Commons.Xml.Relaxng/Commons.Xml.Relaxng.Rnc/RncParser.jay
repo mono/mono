@@ -51,7 +51,12 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public static RelaxngPattern ParseRnc (TextReader reader, XmlNameTable nameTable)
 		{
-			return new RncParser (nameTable).Parse (reader);
+			return ParseRnc (reader, nameTable, null);
+		}
+
+		public static RelaxngPattern ParseRnc (TextReader reader, XmlNameTable nameTable, string baseUri)
+		{
+			return new RncParser (nameTable).Parse (reader, baseUri);
 		}
 
 		XmlNamespaceManager nsmgr;
@@ -63,6 +68,8 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public RncParser (XmlNameTable nameTable)
 		{
+			if (nameTable == null)
+				nameTable = new NameTable ();
 			nsmgr = new XmlNamespaceManager (nameTable);
 			dtnsmgr = new XmlNamespaceManager (nameTable);
 			dtnsmgr.AddNamespace ("xsd", "http://www.w3.org/2001/XMLSchema-datatypes");
@@ -77,6 +84,10 @@ namespace Commons.Xml.Relaxng.Rnc
 			get { return tokenizer.Column; }
 		}
 
+		public string BaseUri {
+			get { return tokenizer.BaseUri; }
+		}
+
 		// note that this is different notion than that of xmlns.
 		public string DefaultNamespace {
 			get { return defaultNamespace; }
@@ -84,10 +95,15 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public RelaxngPattern Parse (TextReader source)
 		{
+			return Parse (source, null);
+		}
+
+		public RelaxngPattern Parse (TextReader source, string baseUri)
+		{
 			try {
 				if (Environment.GetEnvironmentVariable ("MONO_RELAXNG_COMPACT_DEBUG") == "yes")
 					debug = new yydebug.yyDebugSimple ();
-				tokenizer = new RncTokenizer (source);
+				tokenizer = new RncTokenizer (source, baseUri);
 				RelaxngPattern p = (RelaxngPattern) yyparse (tokenizer);
 				if (p is RelaxngGrammar)
 					((RelaxngGrammar) p).IsSourceCompactSyntax = true;
@@ -97,6 +113,12 @@ namespace Commons.Xml.Relaxng.Rnc
 			}
 		}
 
+		private void FillLocation (RelaxngElementBase el)
+		{
+			el.BaseUri = BaseUri;
+			el.LineNumber = Line;
+			el.LinePosition = Column;
+		}
 
 		private void FillGrammarContent (IList source, IList starts, IList defines, IList divs, IList includes)
 		{
@@ -309,6 +331,7 @@ TopLevelBody /* returns RelaxngPattern */
 	| Grammar
 	{
 		RelaxngGrammar g = new RelaxngGrammar ();
+		FillLocation (g);
 		if (nsmgr.DefaultNamespace != String.Empty)
 			g.DefaultNamespace = nsmgr.DefaultNamespace;
 		RelaxngGrammarContentList list = (RelaxngGrammarContentList) $1;
@@ -373,6 +396,7 @@ Start /* returns RelaxngStart */
 	: KeywordStart AssignOp Pattern
 	{
 		RelaxngStart start = new RelaxngStart ();
+		FillLocation (start);
 		start.Combine = (string) $2;
 		start.Pattern = (RelaxngPattern) $3;
 		$$ = start;
@@ -383,6 +407,7 @@ Define /* returns RelaxngDefine */
 	: Identifier AssignOp Pattern
 	{
 		RelaxngDefine def = new RelaxngDefine ();
+		FillLocation (def);
 		def.Name = (string) $1;
 		def.Combine = (string) $2;
 		def.Patterns.Add ((RelaxngPattern) $3);
@@ -410,6 +435,7 @@ Include /* returns RelaxngInclude */
 	{
 		// FIXME: OptInherit is not handled properly.
 		RelaxngInclude include = new RelaxngInclude ();
+		FillLocation (include);
 		include.Href = (string) $2;
 		include.NSContext = (string) $3;
 		FillGrammarContent ((IList) $4, include.Starts, include.Defines, include.Divs, null);
@@ -501,6 +527,7 @@ Div /* returns RelaxngDiv */
 	: KeywordDiv OpenCurly Grammar CloseCurly
 	{
 		RelaxngDiv div = new RelaxngDiv ();
+		FillLocation (div);
 		FillGrammarContent ((IList) $3, div.Starts, div.Defines, div.Divs, div.Includes);
 		$$ = div;
 	}
@@ -510,6 +537,7 @@ IncludeDiv /* returns RelaxngDiv */
 	: KeywordDiv OpenCurly IncludeBody CloseCurly
 	{
 		RelaxngDiv div = new RelaxngDiv ();
+		FillLocation (div);
 		FillGrammarContent ((IList) $3, div.Starts, div.Defines, div.Divs, div.Includes);
 		$$ = div;
 	}
@@ -529,6 +557,7 @@ InnerPattern /* returns RelaxngPattern */
 	{
 		RelaxngPatternList list = (RelaxngPatternList) $1;
 		RelaxngChoice choice = new RelaxngChoice ();
+		FillLocation (choice);
 		for (int i = 0; i < list.Count; i++)
 			choice.Patterns.Add (list [i]);
 		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
@@ -538,6 +567,7 @@ InnerPattern /* returns RelaxngPattern */
 	{
 		RelaxngPatternList list = (RelaxngPatternList) $1;
 		RelaxngGroup group = new RelaxngGroup ();
+		FillLocation (group);
 		for (int i = 0; i < list.Count; i++)
 			group.Patterns.Add (list [i]);
 		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
@@ -547,6 +577,7 @@ InnerPattern /* returns RelaxngPattern */
 	{
 		RelaxngPatternList list = (RelaxngPatternList) $1;
 		RelaxngInterleave interleave = new RelaxngInterleave ();
+		FillLocation (interleave);
 		for (int i = 0; i < list.Count; i++)
 			interleave.Patterns.Add (list [i]);
 		// This is said as to return Elements, while ApplyAnnotations() is said to return Element
@@ -631,18 +662,21 @@ RepeatedPrimary /* returns RelaxngPattern */
 	: AnnotatedPrimary Asterisk
 	{
 		RelaxngZeroOrMore zom = new RelaxngZeroOrMore ();
+		FillLocation (zom);
 		zom.Patterns.Add ((RelaxngPattern) $1);
 		$$ = zom;
 	}
 	| AnnotatedPrimary Plus
 	{
 		RelaxngOneOrMore oom = new RelaxngOneOrMore ();
+		FillLocation (oom);
 		oom.Patterns.Add ((RelaxngPattern) $1);
 		$$ = oom;
 	}
 	| AnnotatedPrimary Question
 	{
 		RelaxngOptional opt = new RelaxngOptional ();
+		FillLocation (opt);
 		opt.Patterns.Add ((RelaxngPattern) $1);
 		$$ = opt;
 	}
@@ -692,6 +726,7 @@ Primary /* returns RelaxngPattern */
 	{
 		RelaxngNameClass nc = (RelaxngNameClass) $2;
 		RelaxngElement el = new RelaxngElement ();
+		FillLocation (el);
 		el.NameClass = nc;
 		FillElementDefaultNS (el.NameClass);
 		el.Patterns.Add ((RelaxngPattern) $4);
@@ -702,6 +737,7 @@ Primary /* returns RelaxngPattern */
 		RelaxngNameClass nc = (RelaxngNameClass) $2;
 
 		RelaxngAttribute attr = new RelaxngAttribute ();
+		FillLocation (attr);
 		attr.NameClass = nc;
 		FillAttributeDefaultNS (attr.NameClass);
 		attr.Pattern = (RelaxngPattern) $4;
@@ -710,18 +746,21 @@ Primary /* returns RelaxngPattern */
 	| KeywordMixed OpenCurly Pattern CloseCurly
 	{
 		RelaxngMixed mixed = new RelaxngMixed ();
+		FillLocation (mixed);
 		mixed.Patterns.Add ((RelaxngPattern) $3);
 		$$ = mixed;
 	}
 	| KeywordList OpenCurly Pattern CloseCurly
 	{
 		RelaxngList list = new RelaxngList ();
+		FillLocation (list);
 		list.Patterns.Add ((RelaxngPattern) $3);
 		$$ = list;
 	}
 	| DatatypeName OptParams
 	{
 		RelaxngData data = new RelaxngData ();
+		FillLocation (data);
 		XmlQualifiedName dtName = (XmlQualifiedName) $1;
 		data.DatatypeLibrary = dtName.Namespace;
 		data.Type = dtName.Name;
@@ -733,6 +772,7 @@ Primary /* returns RelaxngPattern */
 	| DatatypeName DatatypeValue
 	{
 		RelaxngValue value = new RelaxngValue ();
+		FillLocation (value);
 		XmlQualifiedName dtName = (XmlQualifiedName) $1;
 		if (dtName.Namespace != RelaxngGrammar.NamespaceURI)
 			value.DatatypeLibrary = dtName.Namespace;
@@ -744,6 +784,7 @@ Primary /* returns RelaxngPattern */
 	| DatatypeValue
 	{
 		RelaxngValue value = new RelaxngValue ();
+		FillLocation (value);
 		value.Value = (string) $1;
 
 		// RELAX NG default type
@@ -754,37 +795,47 @@ Primary /* returns RelaxngPattern */
 	}
 	| KeywordEmpty
 	{
-		$$ = new RelaxngEmpty ();
+		RelaxngEmpty empty = new RelaxngEmpty ();
+		FillLocation (empty);
+		$$ = empty;
 	}
 	| KeywordNotAllowed
 	{
-		$$ = new RelaxngNotAllowed ();
+		RelaxngNotAllowed na = new RelaxngNotAllowed ();
+		FillLocation (na);
+		$$ = na;
 	}
 	| KeywordText
 	{
-		$$ = new RelaxngText ();
+		RelaxngText text = new RelaxngText ();
+		FillLocation (text);
+		$$ = text;
 	}
 	| Ref
 	{
 		RelaxngRef r = new RelaxngRef ();
+		FillLocation (r);
 		r.Name = (string) $1;
 		$$ = r;
 	}
 	| KeywordParent Ref
 	{
 		RelaxngParentRef pref = new RelaxngParentRef ();
+		FillLocation (pref);
 		pref.Name = (string) $2;
 		$$ = pref;
 	}
 	| KeywordGrammar OpenCurly Grammar CloseCurly
 	{
 		RelaxngGrammar g = new RelaxngGrammar ();
+		FillLocation (g);
 		FillGrammarContent ((IList) $3, g.Starts, g.Defines, g.Divs, g.Includes);
 		$$ = g;
 	}
 	| KeywordExternal AnyURILiteral OptInherit
 	{
 		RelaxngExternalRef extref = new RelaxngExternalRef ();
+		FillLocation (extref);
 		extref.Href = (string) $2;
 		extref.NSContext = (string) $3;
 		$$ = extref;
@@ -796,11 +847,13 @@ DataExcept /* returns RelaxngData */
 	{
 		XmlQualifiedName type = (XmlQualifiedName) $1;
 		RelaxngData data = new RelaxngData ();
+		FillLocation (data);
 		data.Type = type.Name;
 		data.DatatypeLibrary = type.Namespace;
 		foreach (RelaxngParam p in (RelaxngParamList) $2)
 			data.ParamList.Add (p);
 		data.Except = new RelaxngExcept ();
+		FillLocation (data.Except);
 		data.Except.Patterns.Add ((RelaxngPattern) $4);
 		$$ = data;
 	}
@@ -858,6 +911,7 @@ Param /* returns RelaxngParam */
 	: Annotations IdentifierOrKeyword Equal Literal
 	{
 		RelaxngParam prm = new RelaxngParam ();
+		FillLocation (prm);
 		prm.Name = (string) $2;
 		prm.Value = (string) $4;
 
@@ -881,6 +935,7 @@ InnerNameClass /* returns RelaxngNameClass */
 	| NameClassChoice
 	{
 		RelaxngNameChoice cho = new RelaxngNameChoice ();
+		FillLocation (cho);
 		RelaxngNameClassList list = (RelaxngNameClassList) $1;
 		for (int i = 0; i < list.Count; i++)
 			cho.Children.Add ((RelaxngNameClass) list [i]);
@@ -946,15 +1001,19 @@ ExceptNameClass
 	: NsName Minus LeadAnnotatedSimpleNameClass
 	{
 		RelaxngNsName nsName = new RelaxngNsName ();
+		FillLocation (nsName);
 		nsName.Namespace = nsmgr.LookupNamespace ((string) $1);
 		nsName.Except = new RelaxngExceptNameClass ();
+		FillLocation (nsName.Except);
 		nsName.Except.Names.Add ((RelaxngNameClass) $3);
 		$$ = nsName;
 	}
 	| Asterisk Minus LeadAnnotatedSimpleNameClass
 	{
 		RelaxngAnyName anyName = new RelaxngAnyName ();
+		FillLocation (anyName);
 		anyName.Except = new RelaxngExceptNameClass ();
+		FillLocation (anyName.Except);
 		anyName.Except.Names.Add ((RelaxngNameClass) $3);
 		$$ = anyName;
 	}
@@ -964,6 +1023,7 @@ SimpleNameClass /* returns RelaxngNameClass */
 	: IdentifierOrKeyword
 	{
 		RelaxngName name = new RelaxngName ();
+		FillLocation (name);
 		name.LocalName = (string) $1;
 		name.Namespace = null;
 		$$ = name;
@@ -973,6 +1033,7 @@ SimpleNameClass /* returns RelaxngNameClass */
 		string cname = (string) $1;
 		XmlQualifiedName qname = SplitQName (nsmgr, cname);
 		RelaxngName name = new RelaxngName ();
+		FillLocation (name);
 		name.LocalName = qname.Name;
 		name.Namespace = qname.Namespace;
 		$$ = name;
@@ -980,12 +1041,15 @@ SimpleNameClass /* returns RelaxngNameClass */
 	| NsName
 	{
 		RelaxngNsName nsName = new RelaxngNsName ();
+		FillLocation (nsName);
 		nsName.Namespace = nsmgr.LookupNamespace ((string) $1);
 		$$ = nsName;
 	}
 	| Asterisk
 	{
-		$$ = new RelaxngAnyName ();
+		RelaxngAnyName anyName= new RelaxngAnyName ();
+		FillLocation (anyName);
+		$$ = anyName;
 	}
 	;
 

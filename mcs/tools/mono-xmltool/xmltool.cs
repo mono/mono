@@ -121,7 +121,7 @@ environment variable that affects behavior:
 		static void ValidateRelaxngCompact (string [] args)
 		{
 			StreamReader sr = new StreamReader (args [1]);
-			RelaxngPattern p = RncParser.ParseRnc (sr);
+			RelaxngPattern p = RncParser.ParseRnc (sr, null, Path.GetFullPath (args [1]));
 			sr.Close ();
 			ValidateRelaxng (p, args);
 		}

@@ -53,10 +53,12 @@ namespace Commons.Xml.Relaxng.Rnc
 		int savedLineNumber = 1;
 		int savedLinePosition;
 		bool nextIncrementLine;
+		string baseUri;
 
-		public RncTokenizer (TextReader source)
+		public RncTokenizer (TextReader source, string baseUri)
 		{
 			this.source = source;
+			this.baseUri = baseUri;
 		}
 
 		public bool IsElement {
@@ -69,6 +71,10 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public int Column {
 			get { return savedLinePosition; }
+		}
+
+		public string BaseUri {
+			get { return baseUri; }
 		}
 
 		// jay interface implementation

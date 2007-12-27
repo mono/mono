@@ -27,11 +27,12 @@ namespace Commons.Xml.Nvdl
 			if (schemaUri == null)
 				return null;
 			Uri baseUri = resolver.ResolveUri (null, validate.SourceUri);
+			Uri absUri = resolver.ResolveUri (baseUri, schemaUri);
 			RelaxngPattern p = RncParser.ParseRnc (
 				new StreamReader ((Stream) resolver.GetEntity (
-					resolver.ResolveUri (baseUri, schemaUri),
+					absUri,
 					null,
-					typeof (Stream))));
+					typeof (Stream))), null, absUri.ToString ());
 			return new NvdlRelaxngValidatorGenerator (p, config);
 		}
 

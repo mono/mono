@@ -1,3 +1,9 @@
+2007-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngPattern.cs : (RelaxngInclude) when a relative Uri is
+	  specified as its BaseUri, make it into an absolute path and
+	  then resolve the URI.
+
 2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : (RelaxngInclude) when it is constructed from

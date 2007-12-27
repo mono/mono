@@ -317,12 +317,20 @@ namespace Commons.Xml.Relaxng
 			grammar.IncludedUris.Add (Href, Href);
 			if (grammar.Resolver == null)
 				throw new RelaxngException (this, "To compile 'include' element, XmlResolver is required.");
-			Uri uri = grammar.Resolver.ResolveUri (BaseUri != null && BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
+			Uri baseUri = null;
+			try {
+				if (BaseUri != null && BaseUri != String.Empty)
+					baseUri = new Uri (BaseUri);
+			} catch (UriFormatException) {
+				if (Path.IsPathRooted (BaseUri))
+					baseUri = new Uri (Path.GetFullPath (BaseUri));
+			}
+			Uri uri = grammar.Resolver.ResolveUri (baseUri, Href);
 			XmlTextReader xtr = null;
 			RelaxngGrammar g = null;
 			try {
 				if (grammar.IsSourceCompactSyntax) {
-					g = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)))) as RelaxngGrammar;
+					g = RncParser.ParseRnc (new StreamReader ((Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream))), null, BaseUri) as RelaxngGrammar;
 				} else {
 					xtr = new XmlTextReader (uri.AbsoluteUri, (Stream) grammar.Resolver.GetEntity (uri, null, typeof (Stream)));
 					RelaxngReader r = new RelaxngReader (xtr, ns, grammar.Resolver);

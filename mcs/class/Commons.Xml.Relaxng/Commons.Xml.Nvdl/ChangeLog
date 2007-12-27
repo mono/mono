@@ -1,3 +1,7 @@
+2007-12-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlRelaxngSupport.cs : pass baseUri to RncParser.
+
 2006-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlFilteredXmlReader.cs :

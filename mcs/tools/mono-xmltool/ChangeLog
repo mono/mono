@@ -1,3 +1,7 @@
+2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs : use absolute path as the base uri for *.rnc.
+
 2006-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs : compile schema to validate the schema itself. It is
