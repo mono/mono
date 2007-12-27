@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Mainsoft.Web.Hosting
 {
-	public abstract class BaseFacesViewHandler : ViewHandler
+	public abstract class BaseFacesViewHandler : ViewHandler, IExtendedViewHandler
 	{
 		readonly ViewHandler _viewHandler;
 		public static readonly string NAMESPACE = "__NAMESPACE";

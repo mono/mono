@@ -33,7 +33,7 @@ namespace Mainsoft.Web.Hosting
 				}
 				else {
 					HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (true);
-					string key = ((BaseFacesViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
+					string key = ((IExtendedViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
 					session.setAttribute (key, serializedView);
 				}
 			}
@@ -58,7 +58,7 @@ namespace Mainsoft.Web.Hosting
 				if (session == null)
 					serializedComponentStates = null;
 				else {
-					string key = ((BaseFacesViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
+					string key = ((IExtendedViewHandler) facesContext.getApplication ().getViewHandler ()).EncodeNamespace (facesContext, VIEWSTATE);
 					SerializedView serializedView = session.getAttribute (key) as SerializedView;
 					if (serializedView == null)
 						serializedComponentStates = null;

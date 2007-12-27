@@ -100,6 +100,7 @@
     <Compile Include="Mainsoft.Web.Hosting\AspNetFacesContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesStateManager.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesViewHandler.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\IExtendedViewHandler.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesStateManager.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesViewHandler.cs" />
