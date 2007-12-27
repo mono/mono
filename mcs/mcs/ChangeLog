@@ -1,5 +1,10 @@
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #343707
+ 	* cs-tokenizer.cs: Advance line number for mixed CR/LF files correctly.
+
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Report type inference errors only when arguments count matches
 	parameter count.
 	

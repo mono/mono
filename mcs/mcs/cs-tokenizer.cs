@@ -2329,8 +2329,9 @@ namespace Mono.CSharp
 					continue;
 
 				if (c == '\r') {
-					if (peek_char () == '\n')
-						get_char ();
+					if (peek_char () != '\n')
+						putback_char = '\n';
+					get_char ();
 
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
