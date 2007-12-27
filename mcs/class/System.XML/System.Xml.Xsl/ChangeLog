@@ -1,3 +1,9 @@
+2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : when loading XmlReader as an input to
+	  Transform(), preserve whitespaces in the input document. Based on
+	  the patch by Tor Lillqvist (part of #349375 fix).
+
 2007-10-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : actually previous change was not enough.

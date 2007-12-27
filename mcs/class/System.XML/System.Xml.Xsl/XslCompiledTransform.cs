@@ -96,17 +96,17 @@ namespace System.Xml.Xsl
 
 		public void Transform (string inputfile, XsltArgumentList args, Stream output)
 		{
-			Transform (new XPathDocument (inputfile), args, output);
+			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
 		}
 
 		public void Transform (string inputfile, XsltArgumentList args, TextWriter output)
 		{
-			Transform (new XPathDocument (inputfile), args, output);
+			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
 		}
 
 		public void Transform (string inputfile, XsltArgumentList args, XmlWriter output)
 		{
-			Transform (new XPathDocument (inputfile), args, output);
+			Transform (new XPathDocument (inputfile, XmlSpace.Preserve), args, output);
 		}
 
 		public void Transform (XmlReader reader, XmlWriter output)
@@ -116,12 +116,12 @@ namespace System.Xml.Xsl
 
 		public void Transform (XmlReader reader, XsltArgumentList args, Stream output)
 		{
-			Transform (new XPathDocument (reader), args, output);
+			Transform (new XPathDocument (reader, XmlSpace.Preserve), args, output);
 		}
 
 		public void Transform (XmlReader reader, XsltArgumentList args, TextWriter output)
 		{
-			Transform (new XPathDocument (reader), args, output);
+			Transform (new XPathDocument (reader, XmlSpace.Preserve), args, output);
 		}
 
 		public void Transform (XmlReader reader, XsltArgumentList args, XmlWriter output)
@@ -151,7 +151,7 @@ namespace System.Xml.Xsl
 
 		public void Transform (XmlReader input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
-			Transform (new XPathDocument (input).CreateNavigator (), args, output, resolver);
+			Transform (new XPathDocument (input, XmlSpace.Preserve).CreateNavigator (), args, output, resolver);
 		}
 
 		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
