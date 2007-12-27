@@ -1,5 +1,12 @@
 2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* invalid_non_empty_stack_at_try_begin.il: added.
+
+	* valid_branch_to_first_intruction_of_try.il: added.
+
+
+2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_exception_overlap_test.sh: new test generator.
 
 	* make_tests.sh: new tests for exception clause restrictions
