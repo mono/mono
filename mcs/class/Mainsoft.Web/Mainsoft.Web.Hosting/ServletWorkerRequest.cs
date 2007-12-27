@@ -43,11 +43,11 @@ namespace Mainsoft.Web.Hosting
 			return base.GetService (serviceType);
 		}
 
-		//public HttpServlet Servlet {
-		//    get {
-		//        return _HttpServlet;
-		//    }
-		//}
+		public HttpServlet Servlet {
+			get {
+				return _HttpServlet;
+			}
+		}
 
 		public HttpServletRequest ServletRequest {
 			get {
@@ -197,6 +197,10 @@ namespace Mainsoft.Web.Hosting
 
 		public override Principal GetUserPrincipal () {
 			return _HttpServletRequest.getUserPrincipal ();
+		}
+
+		public override BaseHttpContext CreateContext (System.Web.HttpContext context) {
+			return new ServletHttpContext (context);
 		}
 	}
 }

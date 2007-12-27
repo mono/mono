@@ -133,8 +133,10 @@
     <Compile Include="Mainsoft.Web.SessionState\ServletSessionIDManager.cs" />
     <Compile Include="Mainsoft.Web.SessionState\ServletSessionStateStoreProvider.cs" />
     <Compile Include="Mainsoft.Web.SessionState\SessionListener.cs" />
+    <Compile Include="Mainsoft.Web\BaseHttpContext.cs" />
     <Compile Include="Mainsoft.Web\J2EEConsts.cs" />
     <Compile Include="Mainsoft.Web\J2EEUtils.cs" />
+    <Compile Include="Mainsoft.Web\ServletHttpContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

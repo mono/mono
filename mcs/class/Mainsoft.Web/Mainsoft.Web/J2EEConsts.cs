@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Mainsoft.Web
+namespace Mainsoft.Web.Hosting
 {
 	public static class J2EEConsts
 	{

@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration.Provider;
 using System.Diagnostics;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web.Security
 {

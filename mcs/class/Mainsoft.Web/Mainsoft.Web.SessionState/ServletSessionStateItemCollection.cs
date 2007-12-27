@@ -35,6 +35,7 @@ using System.Threading;
 using javax.servlet;
 using javax.servlet.http;
 using System.Diagnostics;
+using Mainsoft.Web.Hosting;
 
 namespace Mainsoft.Web.SessionState
 {

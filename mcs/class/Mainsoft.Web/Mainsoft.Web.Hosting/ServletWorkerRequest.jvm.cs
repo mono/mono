@@ -423,6 +423,8 @@ namespace Mainsoft.Web.Hosting {
 			_endOfSendCallback = callback;
 			_endOfSendArgs = extraData;
 		}
+
+		public abstract BaseHttpContext CreateContext (HttpContext context);
 	}
 }
 
