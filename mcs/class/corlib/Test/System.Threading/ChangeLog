@@ -1,5 +1,10 @@
 2007-12-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ThreadTest.cs : made couple of tests fail under Windows and made
+	  corlib tests run without timtout.
+
+2007-12-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ThreadTest.cs : marked TestStart() as NotDotNet. It hangs.
 
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
