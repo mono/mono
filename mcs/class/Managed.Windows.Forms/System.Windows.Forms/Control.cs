@@ -2648,12 +2648,14 @@ namespace System.Windows.Forms
 		[MWFCategory("Appearance")]
 		public virtual Font Font {
 			get {
-				if (font != null) {
+				if (font != null)
 					return font;
-				}
 
-				if (Parent != null && Parent.Font != null) {
-					return Parent.Font;
+				if (parent != null) {
+					Font f = parent.Font;
+					
+					if (f != null)
+						return f;
 				}
 
 				return DefaultFont;
