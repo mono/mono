@@ -441,7 +441,8 @@ namespace System.Windows.Forms {
 							break;
 						
 						HandleButtonUpMsg ();
-						break;
+						// We don't want to dispatch button up neither (Match .Net)
+						continue;
 					case Msg.WM_MOUSEMOVE:
 						drag_data.CurMousePos.X = Control.LowOrder ((int) msg.lParam.ToInt32 ());
 						drag_data.CurMousePos.Y = Control.HighOrder ((int) msg.lParam.ToInt32 ());

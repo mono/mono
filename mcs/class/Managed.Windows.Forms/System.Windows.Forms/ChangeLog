@@ -1,3 +1,11 @@
+2007-12-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When the dnd operation has started and we are 
+	in the dnd loop, don't dispatch either WM_LBUTTONUP nor WM_RBUTTONUP.
+	This is done to match .Net, which doesn't send those messages after
+	dnd operation was completed/cancelled.
+	Fixes #349922.
+
 2007-12-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Previous change should be != null, not == null.
