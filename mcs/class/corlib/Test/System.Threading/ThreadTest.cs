@@ -277,6 +277,7 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
+		[Category ("NotDotNet")] // it hangs.
 		public void TestStart()
 		{
 		{
