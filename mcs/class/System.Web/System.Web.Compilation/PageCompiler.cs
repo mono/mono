@@ -29,6 +29,7 @@
 //
 using System;
 using System.CodeDom;
+using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -53,6 +54,18 @@ namespace System.Web.Compilation
 			this.pageParser = pageParser;
 		}
 
+#if NET_2_0
+		protected override void CreateStaticFields ()
+		{
+			base.CreateStaticFields ();
+			
+			CodeMemberField fld = new CodeMemberField (typeof (object), "__fileDependencies");
+			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
+			fld.InitExpression = new CodePrimitiveExpression (null);
+			mainClass.Members.Add (fld);
+		}
+#endif
+		
 		protected override void CreateConstructor (CodeStatementCollection localVars,
 							   CodeStatementCollection trueStmt)
 		{
@@ -65,6 +78,48 @@ namespace System.Web.Compilation
 				localVars.Add (new CodeAssignStatement (prop, ct));
 			}
 
+#if NET_2_0
+			ArrayList deps = pageParser.Dependencies;
+			int depsCount = deps != null ? deps.Count : 0;
+			
+			if (depsCount > 0) {
+				if (localVars == null)
+					localVars = new CodeStatementCollection ();
+				if (trueStmt == null)
+					trueStmt = new CodeStatementCollection ();
+
+				localVars.Add (
+					new CodeVariableDeclarationStatement (
+						typeof (string[]),
+						"dependencies")
+				);
+
+				CodeVariableReferenceExpression dependencies = new CodeVariableReferenceExpression ("dependencies");
+				trueStmt.Add (
+					new CodeAssignStatement (dependencies, new CodeArrayCreateExpression (typeof (string), depsCount))
+				);
+				
+				CodeArrayIndexerExpression arrayIndex;
+				CodeAssignStatement assign;
+				object o;
+				
+				for (int i = 0; i < depsCount; i++) {
+					o = deps [i];
+					arrayIndex = new CodeArrayIndexerExpression (dependencies, new CodeExpression[] {new CodePrimitiveExpression (i)});
+					assign = new CodeAssignStatement (arrayIndex, new CodePrimitiveExpression (o));
+					trueStmt.Add (assign);
+				}
+				
+				CodeMethodInvokeExpression getDepsCall = new CodeMethodInvokeExpression (
+					thisRef,
+					"GetWrappedFileDependencies",
+					new CodeExpression[] {dependencies}
+				);
+
+				assign = new CodeAssignStatement (GetMainClassFieldReferenceExpression ("__fileDependencies"), getDepsCall);
+				trueStmt.Add (assign);
+			}
+#endif
 			base.CreateConstructor (localVars, trueStmt);
 		}
 		
@@ -74,9 +129,8 @@ namespace System.Web.Compilation
 			CodeTypeReference cref;
 			
 			if (pageParser.EnableSessionState) {
-				cref = new CodeTypeReference (typeof(IRequiresSessionState));
+				cref = new CodeTypeReference (typeof (IRequiresSessionState));
 #if NET_2_0
-				cref.Options |= CodeTypeReferenceOptions.GlobalReference;
 				if (partialClass != null)
 					partialClass.BaseTypes.Add (cref);
 				else
@@ -87,13 +141,20 @@ namespace System.Web.Compilation
 			if (pageParser.ReadOnlySessionState) {
 				cref = new CodeTypeReference (typeof (IReadOnlySessionState));
 #if NET_2_0
-				cref.Options |= CodeTypeReferenceOptions.GlobalReference;
 				if (partialClass != null)
 					partialClass.BaseTypes.Add (cref);					
 				else
 #endif
 					mainClass.BaseTypes.Add (cref);
 			}
+
+#if NET_2_0
+			if (pageParser.Async)
+				cref = new CodeTypeReference (typeof (System.Web.IHttpAsyncHandler));
+			else
+				cref = new CodeTypeReference (typeof (System.Web.IHttpHandler));
+			mainClass.BaseTypes.Add (cref);
+#endif
 		}
 
 		void CreateGetTypeHashCode () 
@@ -160,6 +221,24 @@ namespace System.Web.Compilation
 
 		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
+			base.AppendStatementsToFrameworkInitialize (method);
+			
+#if NET_2_0
+			ArrayList deps = pageParser.Dependencies;
+			int depsCount = deps != null ? deps.Count : 0;
+			
+			if (depsCount > 0) {
+				CodeFieldReferenceExpression fileDependencies = GetMainClassFieldReferenceExpression ("__fileDependencies");
+
+				method.Statements.Add (
+					new CodeMethodInvokeExpression (
+						thisRef,
+						"AddWrappedFileDependencies",
+						new CodeExpression[] {fileDependencies})
+				);
+			}
+#endif
+			
 			string responseEncoding = pageParser.ResponseEncoding;
 			if (responseEncoding != null)
 				method.Statements.Add (CreatePropertyAssign ("ResponseEncoding", responseEncoding));
@@ -246,8 +325,6 @@ namespace System.Web.Compilation
 				method.Statements.Add (stmt);
 			}
 #endif
-                        
-			base.AppendStatementsToFrameworkInitialize (method);
 		}
 
 		private CodeExpression[] OutputCacheParams ()

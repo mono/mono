@@ -183,6 +183,18 @@ namespace System.Web.Compilation
 			CreateConstructor (null, null);
 		}
 
+		internal CodeFieldReferenceExpression GetMainClassFieldReferenceExpression (string fieldName)
+		{
+			CodeTypeReference mainClassTypeRef;
+			mainClassTypeRef = new CodeTypeReference (mainNS.Name + "." + mainClass.Name);
+
+#if NET_2_0
+			mainClassTypeRef.Options |= CodeTypeReferenceOptions.GlobalReference;
+#endif
+			return new CodeFieldReferenceExpression (
+				new CodeTypeReferenceExpression (mainClassTypeRef), fieldName);
+		}
+		
 		protected virtual void CreateStaticFields ()
 		{
 			CodeMemberField fld = new CodeMemberField (typeof (bool), "__initialized");
@@ -227,21 +239,14 @@ namespace System.Web.Compilation
 			ctor.Attributes = MemberAttributes.Public;
 			mainClass.Members.Add (ctor);
 
-#if NET_2_0
-			AssignAppRelativeVirtualPath (ctor);
-#endif
 			if (localVars != null)
 				ctor.Statements.AddRange (localVars);
 
-			CodeTypeReferenceExpression r;
 #if NET_2_0
-			if (parser.IsPartial)
-				r = new CodeTypeReferenceExpression (mainClass.Name);
-			else
+			AssignAppRelativeVirtualPath (ctor);
 #endif
-			r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
-			CodeFieldReferenceExpression initialized;
-			initialized = new CodeFieldReferenceExpression (r, "__initialized");
+
+			CodeFieldReferenceExpression initialized = GetMainClassFieldReferenceExpression ("__initialized");
 			
 			CodeBinaryOperatorExpression bin;
 			bin = new CodeBinaryOperatorExpression (initialized,
@@ -251,9 +256,12 @@ namespace System.Web.Compilation
 			CodeAssignStatement assign = new CodeAssignStatement (initialized,
 									      new CodePrimitiveExpression (true));
 
-			CodeConditionStatement cond = new CodeConditionStatement (bin, assign);
+			CodeConditionStatement cond = new CodeConditionStatement ();
+			cond.Condition = bin;
+			
 			if (trueStmt != null)
 				cond.TrueStatements.AddRange (trueStmt);
+			cond.TrueStatements.Add (assign);
 			
 			ctor.Statements.Add (cond);
 		}

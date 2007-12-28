@@ -1,3 +1,15 @@
+2007-12-28  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: MS.NET compatibility: added the
+	__fileDependencies object to the generated class.
+	Refactored the output to match MS.NET more closely.
+	IHttpHandler or IHttpAsyncHandler are now added to the generated
+	class list of implemented interfaces.
+	
+	* BaseCompiler.cs: Main class field references are prefixed with
+	'global::' now. 
+	Refactored the output to match MS.NET more closely.
+
 2007-12-27  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: check for base type globality in all the
