@@ -1,0 +1,8 @@
+2007-12-28  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: Generates c# interfaces from xpcom (mozilla) 
+	idl files.
+	From a given idl file, generates the corresponding cs file,
+	and recursively generates all the parents up to nsISupports. 
+	Also generates all related interfaces that are used on methods 
+	and properties.
