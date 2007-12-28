@@ -5452,14 +5452,15 @@ namespace System.Windows.Forms
 					Control [] controls = child_controls.GetAllControls ();
 					bool parented = false;
 					for (int i=0; i<controls.Length; i++) {
-						if (controls [i].is_visible && controls[i].IsHandleCreated) {
-							XplatUI.SetParent(controls[i].Handle, window.Handle);
-							parented = true;
+						if (controls [i].is_visible && controls[i].IsHandleCreated)
+							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
+								XplatUI.SetParent(controls[i].Handle, window.Handle);
+								parented = true;
 						} 
 					}
-					if (parented) {
+					
+					if (parented)
 						UpdateChildrenZOrder ();
-					}
 				}
 			}
 			else {

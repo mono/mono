@@ -1,3 +1,10 @@
+2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Avoid setting a parent (and more importantly, updating
+	the zorder of all its children) if the parent is already correct in
+	WmShowWindow.  Decreases the startup time of the test case on bug
+	#347238 from 35 seconds to 11 seconds.
+
 2007-12-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: When the dnd operation has started and we are 
