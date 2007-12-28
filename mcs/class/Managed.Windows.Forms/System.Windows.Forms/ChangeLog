@@ -1,5 +1,13 @@
 2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxTextRenderer.cs: Implement a cache for measuring each
+	character.  This is effective because the typical usage of a
+	TextBox is with a limited amount of fonts and characters, and
+	the current implementation of TextBox measures everything one
+	character at a time.  Another second or two speedup for bug #347238.
+
+2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Rewrite the Font getter to only query the parent's
 	Font property once instead of twice.  Since this operation is
 	recursive, the queries were growing exponentially as the control

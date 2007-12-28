@@ -28,6 +28,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
+using System.Collections;
 
 namespace System.Windows.Forms
 {
@@ -36,7 +37,8 @@ namespace System.Windows.Forms
 		private static Size max_size;
 		private static bool use_textrenderer;
 		private static StringFormat sf_nonprinting;
-		
+		private static Hashtable measure_cache;
+				
 		static TextBoxTextRenderer ()
 		{
 			// On Windows, we want to use TextRenderer (GDI)
@@ -57,6 +59,8 @@ namespace System.Windows.Forms
 			sf_nonprinting = new StringFormat (StringFormat.GenericTypographic);
 			sf_nonprinting.Trimming = StringTrimming.None;
 			sf_nonprinting.FormatFlags = StringFormatFlags.DisplayFormatControl;			
+
+			measure_cache = new Hashtable ();
 		}
 		
 		public static void DrawText (Graphics g, string text, Font font, Color color, float x, float y, bool showNonPrint)
@@ -76,6 +80,31 @@ namespace System.Windows.Forms
 		
 		public static SizeF MeasureText (Graphics g, string text, Font font)
 		{
+			// Due to the way the TextBox currently works, it measures each
+			// character one at a time.  And it does this alot.  So here we
+			// are implementing a cache for each font/character combination
+			// measurement.  Since the number of fonts and number of characters
+			// used tends to be small, this is a good performance gain for
+			// not too much memory.
+			if (text.Length == 1) {
+				string key = font.GetHashCode ().ToString () + "|" + text;
+				
+				if (measure_cache.ContainsKey (key)) {
+					return (SizeF)measure_cache[key];
+				} else {
+					SizeF size;
+					
+					if (!use_textrenderer)
+						size = g.MeasureString (text, font, 10000, sf_nonprinting);
+					else
+						size = TextRenderer.MeasureTextInternal (g, text, font, Size.Empty, TextFormatFlags.NoPadding, false);
+				
+					measure_cache[key] = size;
+				
+					return size;
+				}
+			}
+			
 			if (!use_textrenderer)
 				return g.MeasureString (text, font, 10000, sf_nonprinting);
 			else
