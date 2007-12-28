@@ -1,6 +1,29 @@
+2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* driver.cs: Ignore the /nologo option instead of considering it to
+	be part of the assembly (file) name. Modified Uninstall to take ref
+	arguments for number of uninstalled assemblies and number of failures,
+	and bool for indicating whether it's being executed in list mode.
+	Depending on the command, report the number of assemblies that were
+	processed, uninstalled, installed and the number of failures. Updated
+	failure messages for install command to include path of assembly that
+	is being installed. In Uninstall, only increment failure count for a
+	no-match condition and only process first match when executing in list
+	mode. In InstallFromList and UninstallFromList, skip lines containing
+	only whitespace characters. In non-list mode, the uninstall command
+	reports success if there are no matches for the specified assembly
+	name. In list-mode, the uninstall command reports an error if there's
+	no match for at least one of the specified assembly names. The version
+	number of the assembly - that you want to uninstall or for which you
+	want a list of assemblies that are in the GAC - can be partial and
+	will then match the version numbers starting with that text. Removed
+	unused CombinePatchs method.
+	
+
 2007-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 
-	* driver.cs: accept absolute *nix paths for library names without getting them confused with options
+	* driver.cs: accept absolute *nix paths for library names without
+	getting them confused with options
 
 2006-07-24  Alp Toker  <alp@atoker.com>
 

@@ -106,6 +106,13 @@ namespace Mono.Tools {
 					case "/gacdir":
 						gacdir = args [++i];
 						continue;
+					case "/nologo":
+					case "-nologo":
+						// we currently don't display a
+						// logo banner, so ignore it
+						// for command-line compatibility
+						// with MS gacutil
+						continue;
 					}
 				}
 				if (name == null)
@@ -162,8 +169,14 @@ namespace Mono.Tools {
 					WriteLine ("Option " + command_str + " takes 1 argument");
 					return 1;
 				}
-				if (!Uninstall (name, package, gacdir, libdir))
-					Environment.Exit (1);
+				int uninstallCount = 0;
+				int uninstallFailures = 0;
+				Uninstall (name, package, gacdir, libdir, false,
+					ref uninstallCount, ref uninstallFailures);
+				WriteLine ("Assemblies uninstalled = {0}", uninstallCount);
+				WriteLine ("Failures = {0}", uninstallFailures);
+				if (uninstallFailures > 0)
+					return 1;
 				break;
 			case Command.UninstallFromList:
 				if (name == null) {
@@ -200,12 +213,12 @@ namespace Mono.Tools {
 		private static bool Install (bool check_refs, string name, string package,
 				string gacdir, string link_gacdir, string libdir, string link_libdir)
 		{
-			string failure_msg = "Failure adding assembly to the cache: ";
+			string failure_msg = "Failure adding assembly {0} to the cache: ";
 			ArrayList resources;
 
 			if (!File.Exists (name)) {
-				WriteLine (failure_msg + "The system cannot find the file specified.");
-				Environment.Exit (1);
+				WriteLine (string.Format (failure_msg, name) + "The system cannot find the file specified.");
+				return false;
 			}
 
 			Assembly assembly = null;
@@ -215,14 +228,14 @@ namespace Mono.Tools {
 			try {
 				assembly = Assembly.LoadFrom (name);
 			} catch {
-				WriteLine (failure_msg + "The file specified is not a valid assembly.");
+				WriteLine (string.Format (failure_msg, name) + "The file specified is not a valid assembly.");
 				return false;
 			}
 
 			an = assembly.GetName ();
 			pub_tok = an.GetPublicKeyToken ();
 			if (pub_tok == null || pub_tok.Length == 0) {
-				WriteLine (failure_msg + "Attempt to install an assembly without a strong name.");
+				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
 				return false;
 			}
 
@@ -232,7 +245,7 @@ namespace Mono.Tools {
 				
 				if ((res_info.ResourceLocation & ResourceLocation.Embedded) == 0) {
 					if (!File.Exists (res_info.FileName)) {
-						WriteLine (failure_msg + "The system cannot find resource " + res_info.FileName);
+						WriteLine (string.Format (failure_msg, name) + "The system cannot find resource " + res_info.FileName);
 						return false;
 					}
 
@@ -241,8 +254,10 @@ namespace Mono.Tools {
 			}
 
 			if (check_refs && !CheckReferencedAssemblies (an)) {
-				WriteLine (failure_msg + "Attempt to install an assembly that references non " +
-						"strong named assemblies with -check_refs enabled.");
+				WriteLine (string.Format (failure_msg, name) +
+					"Attempt to install an assembly that " +
+					"references non strong named assemblies " +
+					"with -check_refs enabled.");
 				return false;
 			}
 
@@ -262,8 +277,9 @@ namespace Mono.Tools {
 				}
 				Directory.CreateDirectory (full_path);
 			} catch {
-				WriteLine (failure_msg + "gac directories could not be created, " +
-						"possibly permission issues.");
+				WriteLine (string.Format (failure_msg, name) +
+					"gac directories could not be created, " +
+					"possibly permission issues.");
 				return false;
 			}
 
@@ -314,7 +330,7 @@ namespace Mono.Tools {
 						}
 					}
 					WriteLine ("Package exported to: {0} -> {1}", ref_path, pkg_path);
- 				} else {
+				} else {
 					// string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
 					//
 					// We can't use 'link_path' here, since it need not be a valid path at the time 'gacutil'
@@ -324,11 +340,13 @@ namespace Mono.Tools {
  				}
 			}
 
-			WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir);
+			WriteLine ("Installed {0} into the gac ({1})", name,
+				gacdir);
+
 			return true;
 		}
 
-		private static bool Uninstall (string name, string package, string gacdir, string libdir)
+		private static void Uninstall (string name, string package, string gacdir, string libdir, bool listMode, ref int uninstalled, ref int failures)
 		{
 			string [] assembly_pieces = name.Split (new char[] { ',' });
 			Hashtable asm_info = new Hashtable ();
@@ -342,20 +360,43 @@ namespace Mono.Tools {
 					asm_info [pieces[0].Trim ().ToLower (CultureInfo.InvariantCulture)] = pieces [1];
 			}
 
-			string asmdir = Path.Combine (gacdir, (string) asm_info ["assembly"]);
+			string assembly_name = (string) asm_info ["assembly"];
+			string asmdir = Path.Combine (gacdir, assembly_name);
 			if (!Directory.Exists (asmdir)) {
+				if (listMode) {
+					failures++;
+					WriteLine ("Assembly: " + name);
+				}
 				WriteLine ("No assemblies found that match: " + name);
-				return false;
+				return;
 			}
 
 			string searchString = GetSearchString (asm_info);
 			string [] directories = Directory.GetDirectories (asmdir, searchString);
 
-			foreach (string dir in directories) {
+			if (directories.Length == 0) {
+				if (listMode) {
+					failures++;
+					WriteLine ("Assembly: " + name);
+					WriteLine ("No assemblies found that match: " + name);
+				}
+				return;
+			}
+
+			for (int i = 0; i < directories.Length; i++) {
+				if (listMode && i > 0)
+					break;
+
+				string dir = directories [i];
+
+				AssemblyName an = AssemblyName.GetAssemblyName (
+					Path.Combine (dir, assembly_name + ".dll"));
+				WriteLine ("Assembly: " + an.FullName);
+
 				Directory.Delete (dir, true);
 				if (package != null) {
 					string link_dir = Path.Combine (libdir, package);
-					string link = Path.Combine (link_dir, (string) asm_info ["assembly"] + ".dll");
+					string link = Path.Combine (link_dir, assembly_name + ".dll");
 					try { 
 						File.Delete (link);
 					} catch {
@@ -372,10 +413,12 @@ namespace Mono.Tools {
 						}
 					}
 				}
-				WriteLine ("Assembly removed from the gac.");
+
+				uninstalled++;
+				WriteLine ("Uninstalled: " + an.FullName);
 			}
 
-			if(Directory.GetDirectories (asmdir).Length == 0) {
+			if (Directory.GetDirectories (asmdir).Length == 0) {
 				WriteLine ("Cleaning assembly dir, it is empty");
 				try {
 					Directory.Delete (asmdir);
@@ -383,8 +426,6 @@ namespace Mono.Tools {
 					// Workaround: GetFiles does not list Symlinks
 				}
 			}
-
-			return true;
 		}
 
 		private static bool UninstallSpecific (string name, string package,
@@ -406,8 +447,14 @@ namespace Mono.Tools {
 				return false;
 			}
 
-			return Uninstall (an.FullName.Replace (" ", String.Empty),
-					package, gacdir, libdir);
+			int uninstallCount = 0;
+			int uninstallFailures = 0;
+			Uninstall (an.FullName.Replace (" ", String.Empty),
+				package, gacdir, libdir, true, ref uninstallCount,
+				ref uninstallFailures);
+			WriteLine ("Assemblies uninstalled = {0}", uninstallCount);
+			WriteLine ("Failures = {0}", uninstallFailures);
+			return (uninstallFailures == 0);
 		}
 
 		private static void List (string name, string gacdir)
@@ -471,57 +518,78 @@ namespace Mono.Tools {
 		{
 			StreamReader s = null;
 			int processed, failed;
+			string listdir = Path.GetDirectoryName (
+				Path.GetFullPath (list_file));
 
 			processed = failed = 0;
+
 
 			try {
 				s = new StreamReader (list_file);
 
 				string line;
 				while ((line = s.ReadLine ()) != null) {
-					if (!Install (check_refs, line, package, gacdir, link_gacdir,
-							    libdir, link_libdir))
+					string file = line.Trim ();
+					if (file.Length == 0)
+						continue;
+
+					string assemblyPath = Path.Combine (listdir,
+						file);
+
+					if (!Install (check_refs, assemblyPath, package, gacdir,
+						     link_gacdir, libdir, link_libdir))
 						failed++;
 					processed++;
-							
 				}
-			} catch (IOException ioe) {
+
+				WriteLine ("Assemblies processed = {0}", processed);
+				WriteLine ("Assemblies installed = {0}", processed - failed);
+				WriteLine ("Failures = {0}", failed);
+
+				return (failed == 0);
+			} catch (IOException) {
 				WriteLine ("Failed to open assemblies list file " + list_file + ".");
 				return false;
 			} finally {
 				if (s != null)
 					s.Close ();
 			}
-
-			return true;
 		}
 
 		private static bool UninstallFromList (string list_file, string package,
 				string gacdir, string libdir)
 		{
 			StreamReader s = null;
-			int processed, failed;
+			int failed, uninstalled;
 
-			processed = failed = 0;
+			failed = uninstalled = 0;
 
 			try {
 				s = new StreamReader (list_file);
 
 				string line;
 				while ((line = s.ReadLine ()) != null) {
-					if (!Uninstall (line, package, gacdir, libdir))
-						failed++;
-					processed++;
+					string name = line.Trim ();
+					if (name.Length == 0)
+						continue;
+					Uninstall (line, package, gacdir, libdir,
+						true, ref uninstalled, ref failed);
 				}
-			} catch (IOException ioe) {
+
+				WriteLine ("Assemblies processed = {0}", uninstalled+failed);
+				WriteLine ("Assemblies uninstalled = {0}", uninstalled);
+				WriteLine ("Failures = {0}", failed);
+
+				return (failed == 0);
+			} catch (IOException) {
 				WriteLine ("Failed to open assemblies list file " + list_file + ".");
 				return false;
 			} finally {
 				if (s != null)
 					s.Close ();
-			}
 
-			return true;
+
+			}
 		}
 
 		private static bool CheckReferencedAssemblies (AssemblyName an)
@@ -540,7 +608,7 @@ namespace Mono.Tools {
 						return false;
 					}
 				}
-			} catch	 (Exception e) {
+			} catch (Exception e) {
 				WriteLine (e.ToString ()); // This should be removed pre beta3
 				return false;
 			} finally {
@@ -561,7 +629,7 @@ namespace Mono.Tools {
 			string version, culture, token;
 
 			version = asm_info ["version"] as string;
-			version = (version == null ? "*" : version);
+			version = (version == null ? "*" : version + "*");
 			culture = asm_info ["culture"] as string;
 			culture = (culture == null ? "*" : (culture == "neutral") ? String.Empty : culture.ToLower (CultureInfo.InvariantCulture));
 			token = asm_info ["publickeytoken"] as string;
@@ -660,14 +728,6 @@ namespace Mono.Tools {
 			for (int i = 0; i < tok.Length ; i++)
 				sb.Append (tok[i].ToString ("x2"));
 			return sb.ToString ();
-		}
-
-		private static string CombinePaths (string a, string b)
-		{
-			string dsc = Path.DirectorySeparatorChar.ToString ();
-			string sep = (a.EndsWith (dsc) ? String.Empty : dsc);
-			string end = (b.StartsWith (dsc) ? b.Substring (1) : b);
-			return String.Concat (a, sep, end);
 		}
 
 		private static string EnsureLib (string dir)
