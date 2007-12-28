@@ -1,3 +1,12 @@
+2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* appdomain.c: Bump corlib version.
+	* icall.c:
+	(ves_icall_System_Reflection_Assembly_GetReferencedAssemblies): Use
+	CultureInfo.CreateCulture to create CultureInfo for name.
+	(fill_reflection_assembly_name): Use CultureInfo.CreateCulture to
+	create CultureInfo for name. Fixes bug #347174.
+
 2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: added IL_CODE_FLAG_STACK_INITED and IL_CODE_STACK_MERGED
