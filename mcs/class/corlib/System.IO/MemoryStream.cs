@@ -173,7 +173,7 @@ namespace System.IO
 				byte [] newBuffer = null;
 				if (value != 0) {
 					newBuffer = new byte [value];
-					Buffer.BlockCopyInternal (internalBuffer, 0, newBuffer, 0, length);
+					Buffer.BlockCopy (internalBuffer, 0, newBuffer, 0, length);
 				}
 
 				internalBuffer = newBuffer; // It's null when capacity is set to 0
@@ -258,7 +258,7 @@ namespace System.IO
 			if (position > length - count)
 				count = length - position;
 
-			Buffer.BlockCopyInternal (internalBuffer, position, buffer, offset, count);
+			Buffer.BlockCopy (internalBuffer, position, buffer, offset, count);
 			position += count;
 			return count;
 		}
@@ -360,7 +360,8 @@ namespace System.IO
 			int l = length - initialIndex;
 			byte[] outBuffer = new byte [l];
 
-			Buffer.BlockCopyInternal (internalBuffer, initialIndex, outBuffer, 0, l);
+			if (internalBuffer != null)
+				Buffer.BlockCopy (internalBuffer, initialIndex, outBuffer, 0, l);
 			return outBuffer; 
 		}
 
@@ -385,7 +386,7 @@ namespace System.IO
 			if (position > capacity - count)
 				Capacity = CalculateNewCapacity (position + count);
 
-			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, position, count);
+			Buffer.BlockCopy (buffer, offset, internalBuffer, position, count);
 			position += count;
 			if (position >= length)
 				length = position;

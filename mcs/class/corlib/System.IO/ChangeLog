@@ -1,3 +1,8 @@
+2007-12-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* MemoryStream.cs: Fix crash if internalBuffer is null. Avoid calling
+	unsafe icalls. Fixes #350860.
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FileStream.cs : Close() does not exist in 2.0 (Stream does).
