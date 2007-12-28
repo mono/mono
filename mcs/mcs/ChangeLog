@@ -1,10 +1,16 @@
-2007-12-27  Marek Safar  <marek.safar@gmail.com>
+2007-12-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #342117
+ 	* gegneric.cs (ConstraintChecker): Struct constraint also satisfies default
+	constructor constraint.
+
+2007-12-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #338273
  	* class.cs (ProbertyBase): Access modifier checks are required for overrides
  	only.
 
-2007-12-27  Marek Safar  <marek.safar@gmail.com>
+2007-12-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #350839
  	* ecore.cs (MethodroupExpr): Probing hacks are no longer required.

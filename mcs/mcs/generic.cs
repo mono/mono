@@ -1752,8 +1752,9 @@ namespace Mono.CSharp {
 			if (tparam != null) {
 				if (tparam.GenericConstraints == null)
 					return false;
-				else
-					return tparam.GenericConstraints.HasConstructorConstraint;
+						
+				return tparam.GenericConstraints.HasConstructorConstraint || 
+					tparam.GenericConstraints.HasValueTypeConstraint;
 			}
 
 			MemberList list = TypeManager.FindMembers (
