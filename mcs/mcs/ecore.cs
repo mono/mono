@@ -3992,7 +3992,7 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (ec.IsInProbingMode || may_fail)
+				if (may_fail)
 					return null;
 
 				//
@@ -4200,10 +4200,6 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
-			// We can stop here when probing is on
-			if (ec.IsInProbingMode)
-				return this;
 
 			//
 			// And now check if the arguments are all

@@ -1,3 +1,8 @@
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #350839
+ 	* ecore.cs (MethodroupExpr): Probing hacks are no longer required.
+
 2007-12-27  AdTsai (http://code.google.com/u/AdTsai/)
 
 	Reviewed by Ben Maurer, Miguel de Icaza, patches from Google's
