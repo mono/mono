@@ -1,5 +1,10 @@
 2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Don't store a 1x1 Bitmap for every TextBox
+	created.
+
+2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxTextRenderer.cs: Implement a cache for measuring each
 	character.  This is effective because the typical usage of a
 	TextBox is with a limited amount of fonts and characters, and

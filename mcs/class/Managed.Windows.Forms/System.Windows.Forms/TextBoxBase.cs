@@ -86,7 +86,6 @@ namespace System.Windows.Forms
 		internal int			click_point_x;
 		internal int 			click_point_y;
 		internal CaretSelection		click_mode;
-		internal Bitmap			bmp;
 		internal BorderStyle actual_border_style;
 		internal bool shortcuts_enabled = true;
 		#if Debug
@@ -125,7 +124,6 @@ namespace System.Windows.Forms
 			document.Wrap = false;
 			click_last = DateTime.Now;
 			click_mode = CaretSelection.Position;
-			bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
@@ -1729,8 +1727,8 @@ namespace System.Windows.Forms
 		{
 			if (IsHandleCreated)
 				return base.CreateGraphics();
-
-			return Graphics.FromImage(bmp);
+				
+			return DeviceContext;
 		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
