@@ -327,11 +327,83 @@ public class AssemblyNameTest {
 	[Test]
 	public void TestCultureInfo ()
 	{
-		AssemblyName name = GenAssemblyName ();
-		name.CultureInfo = CultureInfo.CreateSpecificCulture ("ar-DZ");
+		AssemblyName name;
+		Assembly a;
+		CultureInfo culture;
 
-		Assembly a = GenerateAssembly (name);
-		Assert.AreEqual (a.GetName ().CultureInfo.Name, "ar-DZ");
+		name = GenAssemblyName ();
+		name.CultureInfo = CultureInfo.CreateSpecificCulture ("ar-DZ");
+		a = GenerateAssembly (name);
+		culture = a.GetName ().CultureInfo;
+		Assert.IsFalse (culture.IsNeutralCulture, "#A1");
+		Assert.IsFalse (culture.IsReadOnly, "#A2");
+		Assert.AreEqual (5121, culture.LCID, "#A3");
+		Assert.AreEqual ("ar-DZ", culture.Name, "#A4");
+		Assert.IsTrue (culture.UseUserOverride, "#A5");
+
+		name = GenAssemblyName ();
+		name.CultureInfo = new CultureInfo ("en");
+		a = GenerateAssembly (name);
+		culture = a.GetName ().CultureInfo;
+		Assert.IsTrue (culture.IsNeutralCulture, "#B1");
+		Assert.IsFalse (culture.IsReadOnly, "#B2");
+		Assert.AreEqual (9, culture.LCID, "#B3");
+		Assert.AreEqual ("en", culture.Name, "#B4");
+		Assert.IsTrue (culture.UseUserOverride, "#B5");
+
+		name = GenAssemblyName ();
+		name.CultureInfo = CultureInfo.InvariantCulture;
+		a = GenerateAssembly (name);
+		culture = a.GetName ().CultureInfo;
+		Assert.IsFalse (culture.IsNeutralCulture, "#C1");
+#if NET_2_0
+		Assert.IsFalse (culture.IsReadOnly, "#C2");
+#else
+		Assert.IsTrue (culture.IsReadOnly, "#C2");
+#endif
+		Assert.AreEqual (127, culture.LCID, "#C3");
+		Assert.AreEqual (string.Empty, culture.Name, "#C4");
+		Assert.IsFalse (culture.UseUserOverride, "#C5");
+
+		a = typeof (int).Assembly;
+		name = a.GetName ();
+		culture = name.CultureInfo;
+		Assert.IsFalse (culture.IsNeutralCulture, "#D1");
+#if NET_2_0
+		Assert.IsFalse (culture.IsReadOnly, "#D2");
+#else
+		Assert.IsTrue (culture.IsReadOnly, "#D2");
+#endif
+		Assert.AreEqual (127, culture.LCID, "#D3");
+		Assert.AreEqual (string.Empty, culture.Name, "#D4");
+		Assert.IsFalse (culture.UseUserOverride, "#D5");
+
+		a = Assembly.GetExecutingAssembly ();
+		name = a.GetName ();
+		culture = name.CultureInfo;
+		Assert.IsFalse (culture.IsNeutralCulture, "#E1");
+#if NET_2_0
+		Assert.IsFalse (culture.IsReadOnly, "#E2");
+#else
+		Assert.IsTrue (culture.IsReadOnly, "#E2");
+#endif
+		Assert.AreEqual (127, culture.LCID, "#E3");
+		Assert.AreEqual (string.Empty, culture.Name, "#E4");
+		Assert.IsFalse (culture.UseUserOverride, "#E5");
+
+		AssemblyName [] names = a.GetReferencedAssemblies ();
+		foreach (AssemblyName an in names) {
+			culture = an.CultureInfo;
+			Assert.IsFalse (culture.IsNeutralCulture, "#F1:" + an.Name);
+			Assert.IsFalse (culture.IsReadOnly, "#F2:" + an.Name);
+			Assert.AreEqual (127, culture.LCID, "#F3:" + an.Name);
+			Assert.AreEqual (string.Empty, culture.Name, "#F4:" + an.Name);
+#if NET_2_0
+			Assert.IsFalse (culture.UseUserOverride, "#F5:" + an.Name);
+#else
+			Assert.IsTrue (culture.UseUserOverride, "#F5:" + an.Name);
+#endif
+		}
 	}
 
 	[Test]

@@ -1,3 +1,7 @@
+2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Environment.cs: Bump corlib version.
+
 2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppDomain.cs: Added check for null AssemblyName, and invalid

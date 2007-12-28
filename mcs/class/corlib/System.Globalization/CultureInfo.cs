@@ -807,6 +807,34 @@ namespace System.Globalization
 		}
 #endif
 
+		// used in runtime (icall.c) to construct CultureInfo for
+		// AssemblyName of assemblies
+		internal static CultureInfo CreateCulture (string name, bool reference)
+		{
+			bool read_only;
+			bool use_user_override;
+
+			bool invariant = name.Length == 0;
+			if (reference) {
+#if NET_2_0
+				use_user_override = invariant ? false : true;
+#else
+				use_user_override = true;
+#endif
+				read_only = false;
+			} else {
+#if ONLY_1_1
+				/* Short circuit the invariant culture */
+				if (invariant)
+					return CultureInfo.InvariantCulture;
+#endif
+				read_only = false;
+				use_user_override = invariant ? false : true;
+			}
+
+			return new CultureInfo (name, use_user_override, read_only);
+		}
+
 		unsafe internal void ConstructCalendars ()
 		{
 			if (calendar_data == null) {
