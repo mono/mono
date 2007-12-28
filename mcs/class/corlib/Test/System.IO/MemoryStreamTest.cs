@@ -632,6 +632,14 @@ namespace MonoTests.System.IO
 			Assert.IsNotNull (ms.GetBuffer ());
 		}
 
+		[Test] // bug #350860
+		public void ToArray_Empty ()
+		{
+			MemoryStream ms = new MemoryStream (1);
+			ms.Capacity = 0;
+			ms.ToArray ();
+		}
+
 		[Test] // bug #80205
 		[Category ("NotWorking")]
 		public void SerializeTest ()
