@@ -1,5 +1,11 @@
 2007-12-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #338273
+ 	* class.cs (ProbertyBase): Access modifier checks are required for overrides
+ 	only.
+
+2007-12-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #350839
  	* ecore.cs (MethodroupExpr): Probing hacks are no longer required.
 

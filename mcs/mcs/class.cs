@@ -6789,7 +6789,7 @@ namespace Mono.CSharp {
  			base_ret_type = base_property.PropertyType;
 			MethodInfo get_accessor = base_property.GetGetMethod (true);
 			MethodInfo set_accessor = base_property.GetSetMethod (true);
-			MethodAttributes get_accessor_access, set_accessor_access;
+			MethodAttributes get_accessor_access = 0, set_accessor_access = 0;
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (Get != null && !Get.IsDummy && get_accessor == null) {
@@ -6801,29 +6801,29 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_property);
 					Report.Error (546, Location, "`{0}.set': cannot override because `{1}' does not have an overridable set accessor", GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
 				}
-			}
-			
-			//
-			// Check base class accessors access
-			//
 
-			// TODO: rewrite to reuse Get|Set.CheckAccessModifiers and share code there
-			get_accessor_access = set_accessor_access = 0;
-			if ((ModFlags & Modifiers.NEW) == 0) {
-				if (get_accessor != null) {
-					MethodAttributes get_flags = Modifiers.MethodAttr (Get.ModFlags != 0 ? Get.ModFlags : ModFlags);
-					get_accessor_access = (get_accessor.Attributes & MethodAttributes.MemberAccessMask);
+				//
+				// Check base class accessors access
+				//
 
-					if (!Get.IsDummy && !CheckAccessModifiers (get_flags & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
-						Error_CannotChangeAccessModifiers (get_accessor, get_accessor_access,  ".get");
-				}
+				// TODO: rewrite to reuse Get|Set.CheckAccessModifiers and share code there
+				get_accessor_access = set_accessor_access = 0;
+				if ((ModFlags & Modifiers.NEW) == 0) {
+					if (get_accessor != null) {
+						MethodAttributes get_flags = Modifiers.MethodAttr (Get.ModFlags != 0 ? Get.ModFlags : ModFlags);
+						get_accessor_access = (get_accessor.Attributes & MethodAttributes.MemberAccessMask);
 
-				if (set_accessor != null)  {
-					MethodAttributes set_flags = Modifiers.MethodAttr (Set.ModFlags != 0 ? Set.ModFlags : ModFlags);
-					set_accessor_access = (set_accessor.Attributes & MethodAttributes.MemberAccessMask);
+						if (!Get.IsDummy && !CheckAccessModifiers (get_flags & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
+							Error_CannotChangeAccessModifiers (get_accessor, get_accessor_access, ".get");
+					}
 
-					if (!Set.IsDummy && !CheckAccessModifiers (set_flags & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
-						Error_CannotChangeAccessModifiers (set_accessor, set_accessor_access, ".set");
+					if (set_accessor != null) {
+						MethodAttributes set_flags = Modifiers.MethodAttr (Set.ModFlags != 0 ? Set.ModFlags : ModFlags);
+						set_accessor_access = (set_accessor.Attributes & MethodAttributes.MemberAccessMask);
+
+						if (!Set.IsDummy && !CheckAccessModifiers (set_flags & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
+							Error_CannotChangeAccessModifiers (set_accessor, set_accessor_access, ".set");
+					}
 				}
 			}
 
