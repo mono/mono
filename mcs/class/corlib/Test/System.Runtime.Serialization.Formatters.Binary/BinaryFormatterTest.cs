@@ -35,10 +35,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
-
+namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
+{
 	[Serializable]
-	public class SerializationTest {
+	public class SerializationTest
+	{
 		private int integer;
 		[NonSerialized]
 		private bool boolean;
@@ -60,7 +61,8 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 		}
 	}
 
-	class SurrogateSelector: ISurrogateSelector {
+	class SurrogateSelector: ISurrogateSelector
+	{
 		public void ChainSelector (ISurrogateSelector selector)
 		{
 		}
@@ -109,9 +111,89 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 		}
 	}
 
-	[TestFixture]
-	public class BinaryFormatterTest {
+	[Serializable]
+	class Foo
+	{
+		private int privateFoo;
+		protected int familyFoo;
+		protected internal int familyANDAssemFoo;
+		public int publicFoo;
+		internal int assemblyFoo;
 
+		public int PrivateFoo {
+			get { return privateFoo; }
+		}
+
+		public int FamilyFoo {
+			get { return familyFoo; }
+		}
+
+		public int FamilyANDAssemFoo {
+			get { return familyANDAssemFoo; }
+		}
+
+		public int PublicFoo {
+			get { return publicFoo; }
+		}
+
+		public int AssemblyFoo {
+			get { return assemblyFoo; }
+		}
+
+		public virtual void Init ()
+		{
+			privateFoo = 1;
+			familyFoo = 2;
+			familyANDAssemFoo = 4;
+			publicFoo = 8;
+			assemblyFoo = 16;
+		}
+	}
+
+	[Serializable]
+	class Bar : Foo
+	{
+		private int privateBar;
+		protected int familyBar;
+		protected internal int familyANDAssemBar;
+		public int publicBar;
+		internal int assemblyBar;
+
+		public int PrivateBar {
+			get { return privateBar; }
+		}
+
+		public int FamilyBar {
+			get { return familyBar; }
+		}
+
+		public int FamilyANDAssemBar {
+			get { return familyANDAssemBar; }
+		}
+
+		public int PublicBar {
+			get { return publicBar; }
+		}
+
+		public int AssemblyBar {
+			get { return assemblyBar; }
+		}
+
+		public override void Init ()
+		{
+			privateBar = 1;
+			familyBar = 2;
+			familyANDAssemBar = 4;
+			publicBar = 8;
+			assemblyBar = 16;
+
+			base.Init ();
+		}
+	}
+
+	[TestFixture]
+	public class BinaryFormatterTest
+	{
 		[Test]
 		public void Constructor_Default ()
 		{
@@ -145,14 +227,29 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 			Assert.AreEqual (FormatterTypeStyle.TypesAlways, bf.TypeFormat, "TypeFormat");
 		}
 
-		public Stream GetSerializedStream ()
+		[Test]
+		public void Inheritance ()
 		{
-			SerializationTest test = new SerializationTest (true, Int32.MinValue);
-			BinaryFormatter bf = new BinaryFormatter ();
 			MemoryStream ms = new MemoryStream ();
-			bf.Serialize (ms, test);
+			BinaryFormatter bf = new BinaryFormatter ();
+
+			Bar bar = new Bar ();
+			bar.Init ();
+
+			bf.Serialize (ms, bar);
 			ms.Position = 0;
-			return ms;
+
+			Bar clone = (Bar) bf.Deserialize (ms);
+			Assert.AreEqual (bar.PrivateBar, clone.PrivateBar, "#1");
+			Assert.AreEqual (bar.FamilyBar, clone.FamilyBar, "#2");
+			Assert.AreEqual (bar.FamilyANDAssemBar, clone.FamilyANDAssemBar, "#3");
+			Assert.AreEqual (bar.PublicBar, clone.PublicBar, "#4");
+			Assert.AreEqual (bar.AssemblyBar, clone.AssemblyBar, "#5");
+			Assert.AreEqual (bar.PrivateFoo, clone.PrivateFoo, "#6");
+			Assert.AreEqual (bar.FamilyFoo, clone.FamilyFoo, "#7");
+			Assert.AreEqual (bar.FamilyANDAssemFoo, clone.FamilyANDAssemFoo, "#8");
+			Assert.AreEqual (bar.PublicFoo, clone.PublicFoo, "#9");
+			Assert.AreEqual (bar.AssemblyFoo, clone.AssemblyFoo, "#10");
 		}
 
 		[Test]
@@ -189,12 +286,9 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 			bf.Deserialize(ms);
 			Assert.AreEqual (2, ThisObjectReference.Count, "#2");
 			Assert.AreEqual (0, NewObjectReference.Count, "#3");
-			try
-			{
+			try {
 				bf.Deserialize(ms);
-			}
-			catch (SerializationException e)
-			{
+			} catch (SerializationException) {
 			}
 			Assert.AreEqual (101, NewObjectReference.Count, "#4");
 		}
@@ -223,6 +317,16 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary {
 			Assert.AreEqual (e.Length, a.Length);
 			for (int i = 0; i < e.Length; ++i)
 				Assert.AreEqual (e [i], a [i], names [i]);
+		}
+
+		public Stream GetSerializedStream ()
+		{
+			SerializationTest test = new SerializationTest (true, Int32.MinValue);
+			BinaryFormatter bf = new BinaryFormatter ();
+			MemoryStream ms = new MemoryStream ();
+			bf.Serialize (ms, test);
+			ms.Position = 0;
+			return ms;
 		}
 	}
 }
