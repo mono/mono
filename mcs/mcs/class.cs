@@ -3898,6 +3898,15 @@ namespace Mono.CSharp {
 			get { return MemberName.Name; }
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
+		
+		public string FullName {
+			get {
+				if (!IsExplicitImpl)
+					return ShortName;
+
+				return InterfaceType.FullName.Replace ('+', '.') + "." + ShortName;
+			}
+		}		
 
 		protected override bool VerifyClsCompliance ()
 		{
@@ -4004,17 +4013,11 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if (GenericMethod != null) {
-				string method_name = MemberName.Name;
-
-				if (IsExplicitImpl) {
-					method_name = TypeManager.CSharpName (InterfaceType) +
-						'.' + method_name;
-				}
 
 #if MS_COMPATIBLE
-				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags); //, ReturnType, null);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (FullName, flags); //, ReturnType, null);
 #else
-				MethodBuilder = Parent.TypeBuilder.DefineMethod (method_name, flags);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (FullName, flags);
 #endif
 
 				if (!GenericMethod.Define (MethodBuilder, block))
@@ -5250,7 +5253,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					method_name = member.InterfaceType.FullName.Replace ('+', '.') + "." + method_name; 
+					method_name = member.FullName; 
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
@@ -6993,7 +6996,7 @@ namespace Mono.CSharp {
 			// FIXME - PropertyAttributes.HasDefault ?
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				MemberName.ToString (), PropertyAttributes.None, MemberType, null);
+				FullName, PropertyAttributes.None, MemberType, null);
 
 			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);
@@ -7824,7 +7827,7 @@ namespace Mono.CSharp {
 			// Now name the parameters
 			//
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				Name, PropertyAttributes.None, MemberType, parameters.Types);
+				FullName, PropertyAttributes.None, MemberType, parameters.Types);
 
 			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);
