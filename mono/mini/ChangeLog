@@ -1,3 +1,7 @@
+2007-12-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_get_delegate_invoke_impl): Fix flushing of icache.
+
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Move the setting of GC_stackbottom to mono_gc_base_init ().
