@@ -1,3 +1,12 @@
+2007-12-29  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c
+	(ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData): Turn the
+	assert into a negative result, the managed code already coped with
+	that.
+
+	Some folks on Windows reported this error. 
+
 2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* appdomain.c: Bump corlib version.
@@ -38,6 +47,7 @@
 	messages and fixed a bug in the way invalid instruction access
 	is detected.
 
+>>>>>>> .r92021
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (mono_gc_register_thread): Use the new GC_register_my_thread () routine
