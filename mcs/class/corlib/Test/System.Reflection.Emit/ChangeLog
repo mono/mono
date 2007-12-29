@@ -1,3 +1,10 @@
+2007-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Added tests for GetConstructor(s), GetEvent(s),
+	GetField(s), GetPropert(y/ies) and GetMethod(s) that verify our
+	behavior for inherited members. Most of these are marked NotWorking
+	until bug #322762 is fixed.
+
 2007-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleBuilderTest.cs: Simplify some code. Add tests for ResolveField ()

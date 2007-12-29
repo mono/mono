@@ -1616,6 +1616,1556 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+		[Test] // GetConstructor (Type [])
+		public void GetConstructor1_Incomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			try {
+				tb.GetConstructor (Type.EmptyTypes);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // GetConstructor (BindingFlags, Binder, Type [], ParameterModifier [])
+		[Category ("NotWorking")] // bug #322762
+		public void GetConstructor2_Complete ()
+		{
+			BindingFlags flags;
+			ConstructorInfo ctor;
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (redType, "Red", true);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+			ConstructorBuilder cb = greenType.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#A8a");
+			Assert.IsTrue (ctor.IsPrivate, "#A8b");
+			Assert.IsFalse (ctor.IsStatic, "#A8c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#A8d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#A8e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#A9a");
+			Assert.IsTrue (ctor.IsFamily, "#A9b");
+			Assert.IsFalse (ctor.IsStatic, "#A9c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#A9d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#A9e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#A10a");
+			Assert.IsTrue (ctor.IsFamilyAndAssembly, "#A10b");
+			Assert.IsFalse (ctor.IsStatic, "#A10c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#A10d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#A10e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#A11a");
+			Assert.IsTrue (ctor.IsFamilyOrAssembly, "#A11b");
+			Assert.IsFalse (ctor.IsStatic, "#A11c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#A11d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#A11e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#A13a");
+			Assert.IsTrue (ctor.IsAssembly, "#A13b");
+			Assert.IsFalse (ctor.IsStatic, "#A13c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#A13d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#A13e");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#A14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#B7a");
+			Assert.IsTrue (ctor.IsPublic, "#B7b");
+			Assert.IsFalse (ctor.IsStatic, "#B7c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#B7d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#B7e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#B12a");
+			Assert.IsTrue (ctor.IsPublic, "#B12b");
+			Assert.IsFalse (ctor.IsStatic, "#B12c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#B12d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#B12e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#B14");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C11a");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#C14");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#D13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#D14a");
+			Assert.IsTrue (ctor.IsPrivate, "#D14b");
+			Assert.IsTrue (ctor.IsStatic, "#B14c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#B14d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#B14e");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#E8a");
+			Assert.IsTrue (ctor.IsPrivate, "#E8b");
+			Assert.IsFalse (ctor.IsStatic, "#E8c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#E8d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#E8e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#E9a");
+			Assert.IsTrue (ctor.IsFamily, "#E9b");
+			Assert.IsFalse (ctor.IsStatic, "#E9c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#E9d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#E9e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#E10a");
+			Assert.IsTrue (ctor.IsFamilyAndAssembly, "#E10b");
+			Assert.IsFalse (ctor.IsStatic, "#E10c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#E10d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#E10e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#E11a");
+			Assert.IsTrue (ctor.IsFamilyOrAssembly, "#E11b");
+			Assert.IsFalse (ctor.IsStatic, "#E11c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#E11d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#E11e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#E13a");
+			Assert.IsTrue (ctor.IsAssembly, "#E13b");
+			Assert.IsFalse (ctor.IsStatic, "#E13c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#E13d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#E13e");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#E14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#F7a");
+			Assert.IsTrue (ctor.IsPublic, "#F7b");
+			Assert.IsFalse (ctor.IsStatic, "#F7c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#F7d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#F7e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#F12a");
+			Assert.IsTrue (ctor.IsPublic, "#F12b");
+			Assert.IsFalse (ctor.IsStatic, "#F12c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#F12d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#F12e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#F14");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#G14");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#H13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#H14");
+			Assert.IsTrue (ctor.IsPrivate, "#H14b");
+			Assert.IsTrue (ctor.IsStatic, "#H14c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#H14d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#H14e");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#I8a");
+			Assert.IsTrue (ctor.IsPrivate, "#I8b");
+			Assert.IsFalse (ctor.IsStatic, "#I8c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#I8d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#I8e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#I9a");
+			Assert.IsTrue (ctor.IsFamily, "#I9b");
+			Assert.IsFalse (ctor.IsStatic, "#I9c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#I9d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#I9e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#I10a");
+			Assert.IsTrue (ctor.IsFamilyAndAssembly, "#I10b");
+			Assert.IsFalse (ctor.IsStatic, "#I10c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#I10d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#I10e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#I11a");
+			Assert.IsTrue (ctor.IsFamilyOrAssembly, "#I11b");
+			Assert.IsFalse (ctor.IsStatic, "#I11c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#I11d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#I11e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#I13a");
+			Assert.IsTrue (ctor.IsAssembly, "#I13b");
+			Assert.IsFalse (ctor.IsStatic, "#I13c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#I13d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#I13e");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#I14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#J7a");
+			Assert.IsTrue (ctor.IsPublic, "#J7b");
+			Assert.IsFalse (ctor.IsStatic, "#J7c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#J7d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#J7e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#J12a");
+			Assert.IsTrue (ctor.IsPublic, "#J12b");
+			Assert.IsFalse (ctor.IsStatic, "#J12c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#J12d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#J12e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#J14");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#K14");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#L13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#L14a");
+			Assert.IsTrue (ctor.IsPrivate, "#L14b");
+			Assert.IsTrue (ctor.IsStatic, "#L14c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#L14d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#L14e");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M7a");
+			Assert.IsTrue (ctor.IsPublic, "#M7b");
+			Assert.IsFalse (ctor.IsStatic, "#M7c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#M7d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M7e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M8a");
+			Assert.IsTrue (ctor.IsPrivate, "#M8b");
+			Assert.IsFalse (ctor.IsStatic, "#M8c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#M8d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M8e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M9a");
+			Assert.IsTrue (ctor.IsFamily, "#M9b");
+			Assert.IsFalse (ctor.IsStatic, "#M9c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#M9d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M9e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M10a");
+			Assert.IsTrue (ctor.IsFamilyAndAssembly, "#M10b");
+			Assert.IsFalse (ctor.IsStatic, "#M10c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#M10d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M10e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M11a");
+			Assert.IsTrue (ctor.IsFamilyOrAssembly, "#M11b");
+			Assert.IsFalse (ctor.IsStatic, "#M11c");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#M11d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M11e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M12a");
+			Assert.IsTrue (ctor.IsPublic, "#M12b");
+			Assert.IsFalse (ctor.IsStatic, "#M12c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#M12d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M12e");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#M13a");
+			Assert.IsTrue (ctor.IsAssembly, "#M13b");
+			Assert.IsFalse (ctor.IsStatic, "#M13c");
+			Assert.AreEqual (2, ctor.GetParameters ().Length, "#M13d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#M13e");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#M14");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N1");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N2");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N3");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N4");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N5");
+
+			ctor = greenType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N6");
+
+			ctor = greenType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N7");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N8");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N9");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (string) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N10");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N11");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (int), typeof (bool) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N12");
+
+			ctor = redType.GetConstructor (flags, null,
+				new Type [] { typeof (string), typeof (int) },
+				new ParameterModifier [0]);
+			Assert.IsNull (ctor, "#N13");
+
+			ctor = redType.GetConstructor (flags, null,
+				Type.EmptyTypes,
+				new ParameterModifier [0]);
+			Assert.IsNotNull (ctor, "#N14a");
+			Assert.IsTrue (ctor.IsPrivate, "#N14b");
+			Assert.IsTrue (ctor.IsStatic, "#N14c");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#N14d");
+			Assert.IsFalse (ctor is ConstructorBuilder, "#N14e");
+		}
+
+		[Test] // GetConstructor (BindingFlags, Binder, Type [], ParameterModifier [])
+		public void GetConstructor2_Incomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			try {
+				tb.GetConstructor (BindingFlags.Public | BindingFlags.Instance,
+					null, Type.EmptyTypes, new ParameterModifier [0]);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // GetConstructor (BindingFlags, Binder, CallingConventions, Type [], ParameterModifier [])
+		public void GetConstructor3_Incomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			try {
+				tb.GetConstructor (BindingFlags.Public | BindingFlags.Instance,
+					null, CallingConventions.Standard, Type.EmptyTypes,
+					new ParameterModifier [0]);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // GetConstructors ()
+		[Category ("NotWorking")] // mcs depends on this
+		public void GetConstructors1_Incomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			try {
+				tb.GetConstructors ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test] // GetConstructors (BindingFlags)
+		[Category ("NotWorking")] // bug #322762
+		public void GetConstructors2_Complete ()
+		{
+			BindingFlags flags;
+			ConstructorInfo [] ctors;
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (redType, "Red", true);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+			ConstructorBuilder cb = greenType.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#A1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (5, ctors.Length, "#A2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#A3a");
+			Assert.IsFalse (ctors [0].IsStatic, "#A3b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#A3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#A3d");
+			Assert.IsTrue (ctors [1].IsFamily, "#A4a");
+			Assert.IsFalse (ctors [1].IsStatic, "#A4b");
+			Assert.AreEqual (1, ctors [1].GetParameters ().Length, "#A4c");
+			Assert.IsFalse (ctors [1] is ConstructorBuilder, "#A4d");
+			Assert.IsTrue (ctors [2].IsFamilyAndAssembly, "#A5a");
+			Assert.IsFalse (ctors [2].IsStatic, "#A5b");
+			Assert.AreEqual (2, ctors [2].GetParameters ().Length, "#A5c");
+			Assert.IsFalse (ctors [2] is ConstructorBuilder, "#A5d");
+			Assert.IsTrue (ctors [3].IsFamilyOrAssembly, "#A6a");
+			Assert.IsFalse (ctors [3].IsStatic, "#A6b");
+			Assert.AreEqual (1, ctors [3].GetParameters ().Length, "#A6c");
+			Assert.IsFalse (ctors [3] is ConstructorBuilder, "#A6d");
+			Assert.IsTrue (ctors [4].IsAssembly, "#A7a");
+			Assert.IsFalse (ctors [4].IsStatic, "#A7b");
+			Assert.AreEqual (2, ctors [4].GetParameters ().Length, "#A7c");
+			Assert.IsFalse (ctors [4] is ConstructorBuilder, "#A7d");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#B1");
+			Assert.IsTrue (ctors [0].IsPublic, "#B2a");
+			Assert.IsFalse (ctors [0].IsStatic, "#B2b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#B2c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#B2d");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#B3");
+			Assert.IsTrue (ctors [0].IsPublic, "#B4a");
+			Assert.IsFalse (ctors [0].IsStatic, "#B4b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#B4c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#B4d");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#C1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#C2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#D1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#D2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#D3a");
+			Assert.IsTrue (ctors [0].IsStatic, "#D3b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#D3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#D3d");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#E1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (5, ctors.Length, "#E2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#E3a");
+			Assert.IsFalse (ctors [0].IsStatic, "#E3b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#E3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#E3d");
+			Assert.IsTrue (ctors [1].IsFamily, "#E4a");
+			Assert.IsFalse (ctors [1].IsStatic, "#E4b");
+			Assert.AreEqual (1, ctors [1].GetParameters ().Length, "#E4c");
+			Assert.IsFalse (ctors [1] is ConstructorBuilder, "#E4d");
+			Assert.IsTrue (ctors [2].IsFamilyAndAssembly, "#E5a");
+			Assert.IsFalse (ctors [2].IsStatic, "#A5b");
+			Assert.AreEqual (2, ctors [2].GetParameters ().Length, "#E5c");
+			Assert.IsFalse (ctors [2] is ConstructorBuilder, "#E5d");
+			Assert.IsTrue (ctors [3].IsFamilyOrAssembly, "#E6a");
+			Assert.IsFalse (ctors [3].IsStatic, "#E6b");
+			Assert.AreEqual (1, ctors [3].GetParameters ().Length, "#E6c");
+			Assert.IsFalse (ctors [3] is ConstructorBuilder, "#E6d");
+			Assert.IsTrue (ctors [4].IsAssembly, "#E7a");
+			Assert.IsFalse (ctors [4].IsStatic, "#E7b");
+			Assert.AreEqual (2, ctors [4].GetParameters ().Length, "#E7c");
+			Assert.IsFalse (ctors [4] is ConstructorBuilder, "#E7d");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#F1");
+			Assert.IsTrue (ctors [0].IsPublic, "#F2a");
+			Assert.IsFalse (ctors [0].IsStatic, "#F2b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#F2c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#F2d");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#F3");
+			Assert.IsTrue (ctors [0].IsPublic, "#F4a");
+			Assert.IsFalse (ctors [0].IsStatic, "#F4b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#F4c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#F4d");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#G1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#G2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#H1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#H2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#H3a");
+			Assert.IsTrue (ctors [0].IsStatic, "#H3b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#H3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#H3d");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#I1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (5, ctors.Length, "#I2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#I3a");
+			Assert.IsFalse (ctors [0].IsStatic, "#I3b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#I3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#I3d");
+			Assert.IsTrue (ctors [1].IsFamily, "#I4a");
+			Assert.IsFalse (ctors [1].IsStatic, "#I4b");
+			Assert.AreEqual (1, ctors [1].GetParameters ().Length, "#I4c");
+			Assert.IsFalse (ctors [1] is ConstructorBuilder, "#I4d");
+			Assert.IsTrue (ctors [2].IsFamilyAndAssembly, "#I5a");
+			Assert.IsFalse (ctors [2].IsStatic, "#I5b");
+			Assert.AreEqual (2, ctors [2].GetParameters ().Length, "#I5c");
+			Assert.IsFalse (ctors [2] is ConstructorBuilder, "#I5d");
+			Assert.IsTrue (ctors [3].IsFamilyOrAssembly, "#I6a");
+			Assert.IsFalse (ctors [3].IsStatic, "#I6b");
+			Assert.AreEqual (1, ctors [3].GetParameters ().Length, "#I6c");
+			Assert.IsFalse (ctors [3] is ConstructorBuilder, "#I6d");
+			Assert.IsTrue (ctors [4].IsAssembly, "#I7a");
+			Assert.IsFalse (ctors [4].IsStatic, "#I7b");
+			Assert.AreEqual (2, ctors [4].GetParameters ().Length, "#I7c");
+			Assert.IsFalse (ctors [4] is ConstructorBuilder, "#I7d");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#J1");
+			Assert.IsTrue (ctors [0].IsPublic, "#J2a");
+			Assert.IsFalse (ctors [0].IsStatic, "#J2b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#J2c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#J2d");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#J3");
+			Assert.IsTrue (ctors [0].IsPublic, "#J4a");
+			Assert.IsFalse (ctors [0].IsStatic, "#J4b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#J4c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#J4d");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#K1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#K2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#L1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#L2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#L3a");
+			Assert.IsTrue (ctors [0].IsStatic, "#L3b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#L3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#L3d");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#M1");
+			Assert.IsTrue (ctors [0].IsPublic, "#M2a");
+			Assert.IsFalse (ctors [0].IsStatic, "#M2b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#M2c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#M2d");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (6, ctors.Length, "#M3");
+			Assert.IsTrue (ctors [0].IsPrivate, "#M4a");
+			Assert.IsFalse (ctors [0].IsStatic, "#M4b");
+			Assert.AreEqual (2, ctors [0].GetParameters ().Length, "#M4c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#M4d");
+			Assert.IsTrue (ctors [1].IsFamily, "#M5a");
+			Assert.IsFalse (ctors [1].IsStatic, "#M5b");
+			Assert.AreEqual (1, ctors [1].GetParameters ().Length, "#M5c");
+			Assert.IsFalse (ctors [1] is ConstructorBuilder, "#M5d");
+			Assert.IsTrue (ctors [2].IsFamilyAndAssembly, "#M6a");
+			Assert.IsFalse (ctors [2].IsStatic, "#M6b");
+			Assert.AreEqual (2, ctors [2].GetParameters ().Length, "#M6c");
+			Assert.IsFalse (ctors [2] is ConstructorBuilder, "#M6d");
+			Assert.IsTrue (ctors [3].IsFamilyOrAssembly, "#M7a");
+			Assert.IsFalse (ctors [3].IsStatic, "#M7b");
+			Assert.AreEqual (1, ctors [3].GetParameters ().Length, "#M7c");
+			Assert.IsFalse (ctors [3] is ConstructorBuilder, "#M7d");
+			Assert.IsTrue (ctors [4].IsPublic, "#M8a");
+			Assert.IsFalse (ctors [4].IsStatic, "#M8b");
+			Assert.AreEqual (2, ctors [4].GetParameters ().Length, "#M8c");
+			Assert.IsFalse (ctors [4] is ConstructorBuilder, "#M8d");
+			Assert.IsTrue (ctors [5].IsAssembly, "#M9a");
+			Assert.IsFalse (ctors [5].IsStatic, "#M9b");
+			Assert.AreEqual (2, ctors [5].GetParameters ().Length, "#M9c");
+			Assert.IsFalse (ctors [5] is ConstructorBuilder, "#M9d");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			ctors = greenType.GetConstructors (flags);
+			Assert.AreEqual (0, ctors.Length, "#N1");
+
+			ctors = redType.GetConstructors (flags);
+			Assert.AreEqual (1, ctors.Length, "#N2");
+			Assert.IsTrue (ctors [0].IsPrivate, "#N3a");
+			Assert.IsTrue (ctors [0].IsStatic, "#N3b");
+			Assert.AreEqual (0, ctors [0].GetParameters ().Length, "#N3c");
+			Assert.IsFalse (ctors [0] is ConstructorBuilder, "#N3d");
+		}
+
+		[Test] // GetConstructors (BindingFlags)
+		[Category ("NotWorking")] // mcs depends on this
+		public void GetConstructors2_Incomplete ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				Type.EmptyTypes);
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			try {
+				tb.GetConstructors (BindingFlags.Public |
+					BindingFlags.Instance);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetCustomAttributesIncomplete ()
@@ -1747,6 +3297,198 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetEventsFlagsComplete_Inheritance ()
+		{
+			EventInfo [] events;
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (13, events.Length, "#A1");
+			Assert.AreEqual ("OnPrivateInstanceGreen", events [0].Name, "#A2");
+			Assert.AreEqual ("OnFamilyInstanceGreen", events [1].Name, "#A3");
+			Assert.AreEqual ("OnFamANDAssemInstanceGreen", events [2].Name, "#A4");
+			Assert.AreEqual ("OnFamORAssemInstanceGreen", events [3].Name, "#A5");
+			Assert.AreEqual ("OnAssemblyInstanceGreen", events [4].Name, "#A6");
+			Assert.AreEqual ("OnFamilyInstanceRed", events [5].Name, "#A7");
+			Assert.AreEqual ("OnFamANDAssemInstanceRed", events [6].Name, "#A8");
+			Assert.AreEqual ("OnFamORAssemInstanceRed", events [7].Name, "#A9");
+			Assert.AreEqual ("OnAssemblyInstanceRed", events [8].Name, "#A10");
+			Assert.AreEqual ("OnFamilyInstanceBlue", events [9].Name, "#A11");
+			Assert.AreEqual ("OnFamANDAssemInstanceBlue", events [10].Name, "#A12");
+			Assert.AreEqual ("OnFamORAssemInstanceBlue", events [11].Name, "#A13");
+			Assert.AreEqual ("OnAssemblyInstanceBlue", events [12].Name, "#A14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (3, events.Length, "#B1");
+			Assert.AreEqual ("OnPublicInstanceGreen", events [0].Name, "#B2");
+			Assert.AreEqual ("OnPublicInstanceRed", events [1].Name, "#B3");
+			Assert.AreEqual ("OnPublicInstanceBlue", events [2].Name, "#B4");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (1, events.Length, "#C1");
+			Assert.AreEqual ("OnPublicStaticGreen", events [0].Name, "#C2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (5, events.Length, "#D1");
+			Assert.AreEqual ("OnPrivateStaticGreen", events [0].Name, "#D2");
+			Assert.AreEqual ("OnFamilyStaticGreen", events [1].Name, "#D3");
+			Assert.AreEqual ("OnFamANDAssemStaticGreen", events [2].Name, "#D4");
+			Assert.AreEqual ("OnFamORAssemStaticGreen", events [3].Name, "#D5");
+			Assert.AreEqual ("OnAssemblyStaticGreen", events [4].Name, "#D6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (13, events.Length, "#E1");
+			Assert.AreEqual ("OnPrivateInstanceGreen", events [0].Name, "#E2");
+			Assert.AreEqual ("OnFamilyInstanceGreen", events [1].Name, "#E3");
+			Assert.AreEqual ("OnFamANDAssemInstanceGreen", events [2].Name, "#E4");
+			Assert.AreEqual ("OnFamORAssemInstanceGreen", events [3].Name, "#E5");
+			Assert.AreEqual ("OnAssemblyInstanceGreen", events [4].Name, "#E6");
+			Assert.AreEqual ("OnFamilyInstanceRed", events [5].Name, "#E7");
+			Assert.AreEqual ("OnFamANDAssemInstanceRed", events [6].Name, "#E8");
+			Assert.AreEqual ("OnFamORAssemInstanceRed", events [7].Name, "#E9");
+			Assert.AreEqual ("OnAssemblyInstanceRed", events [8].Name, "#E10");
+			Assert.AreEqual ("OnFamilyInstanceBlue", events [9].Name, "#E11");
+			Assert.AreEqual ("OnFamANDAssemInstanceBlue", events [10].Name, "#E12");
+			Assert.AreEqual ("OnFamORAssemInstanceBlue", events [11].Name, "#E13");
+			Assert.AreEqual ("OnAssemblyInstanceBlue", events [12].Name, "#E14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (3, events.Length, "#F1");
+			Assert.AreEqual ("OnPublicInstanceGreen", events [0].Name, "#F2");
+			Assert.AreEqual ("OnPublicInstanceRed", events [1].Name, "#F3");
+			Assert.AreEqual ("OnPublicInstanceBlue", events [2].Name, "#F4");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (3, events.Length, "#G1");
+			Assert.AreEqual ("OnPublicStaticGreen", events [0].Name, "#G2");
+			Assert.AreEqual ("OnPublicStaticRed", events [1].Name, "#G3");
+			Assert.AreEqual ("OnPublicStaticBlue", events [2].Name, "#G4");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (13, events.Length, "#H1");
+			Assert.AreEqual ("OnPrivateStaticGreen", events [0].Name, "#H2");
+			Assert.AreEqual ("OnFamilyStaticGreen", events [1].Name, "#H3");
+			Assert.AreEqual ("OnFamANDAssemStaticGreen", events [2].Name, "#H4");
+			Assert.AreEqual ("OnFamORAssemStaticGreen", events [3].Name, "#H5");
+			Assert.AreEqual ("OnAssemblyStaticGreen", events [4].Name, "#H6");
+			Assert.AreEqual ("OnFamilyStaticRed", events [5].Name, "#H7");
+			Assert.AreEqual ("OnFamANDAssemStaticRed", events [6].Name, "#H8");
+			Assert.AreEqual ("OnFamORAssemStaticRed", events [7].Name, "#H9");
+			Assert.AreEqual ("OnAssemblyStaticRed", events [8].Name, "#H10");
+			Assert.AreEqual ("OnFamilyStaticBlue", events [9].Name, "#H11");
+			Assert.AreEqual ("OnFamANDAssemStaticBlue", events [10].Name, "#H12");
+			Assert.AreEqual ("OnFamORAssemStaticBlue", events [11].Name, "#H13");
+			Assert.AreEqual ("OnAssemblyStaticBlue", events [12].Name, "#H14");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (5, events.Length, "#I1");
+			Assert.AreEqual ("OnPrivateInstanceGreen", events [0].Name, "#I2");
+			Assert.AreEqual ("OnFamilyInstanceGreen", events [1].Name, "#I3");
+			Assert.AreEqual ("OnFamANDAssemInstanceGreen", events [2].Name, "#I4");
+			Assert.AreEqual ("OnFamORAssemInstanceGreen", events [3].Name, "#I5");
+			Assert.AreEqual ("OnAssemblyInstanceGreen", events [4].Name, "#I6");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (1, events.Length, "#J1");
+			Assert.AreEqual ("OnPublicInstanceGreen", events [0].Name, "#J2");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (1, events.Length, "#K1");
+			Assert.AreEqual ("OnPublicStaticGreen", events [0].Name, "#K2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (5, events.Length, "#L1");
+			Assert.AreEqual ("OnPrivateStaticGreen", events [0].Name, "#L2");
+			Assert.AreEqual ("OnFamilyStaticGreen", events [1].Name, "#L3");
+			Assert.AreEqual ("OnFamANDAssemStaticGreen", events [2].Name, "#L4");
+			Assert.AreEqual ("OnFamORAssemStaticGreen", events [3].Name, "#L5");
+			Assert.AreEqual ("OnAssemblyStaticGreen", events [4].Name, "#L6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (16, events.Length, "#M1");
+			Assert.AreEqual ("OnPrivateInstanceGreen", events [0].Name, "#M2");
+			Assert.AreEqual ("OnFamilyInstanceGreen", events [1].Name, "#M3");
+			Assert.AreEqual ("OnFamANDAssemInstanceGreen", events [2].Name, "#M4");
+			Assert.AreEqual ("OnFamORAssemInstanceGreen", events [3].Name, "#M5");
+			Assert.AreEqual ("OnPublicInstanceGreen", events [4].Name, "#M6");
+			Assert.AreEqual ("OnAssemblyInstanceGreen", events [5].Name, "#M7");
+			Assert.AreEqual ("OnFamilyInstanceRed", events [6].Name, "#M8");
+			Assert.AreEqual ("OnFamANDAssemInstanceRed", events [7].Name, "#M9");
+			Assert.AreEqual ("OnFamORAssemInstanceRed", events [8].Name, "#M10");
+			Assert.AreEqual ("OnPublicInstanceRed", events [9].Name, "#M11");
+			Assert.AreEqual ("OnAssemblyInstanceRed", events [10].Name, "#M12");
+			Assert.AreEqual ("OnFamilyInstanceBlue", events [11].Name, "#M13");
+			Assert.AreEqual ("OnFamANDAssemInstanceBlue", events [12].Name, "#M14");
+			Assert.AreEqual ("OnFamORAssemInstanceBlue", events [13].Name, "#M15");
+			Assert.AreEqual ("OnPublicInstanceBlue", events [14].Name, "#M16");
+			Assert.AreEqual ("OnAssemblyInstanceBlue", events [15].Name, "#M17");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			events = greenType.GetEvents (flags);
+
+			Assert.AreEqual (6, events.Length, "#N1");
+			Assert.AreEqual ("OnPrivateStaticGreen", events [0].Name, "#N2");
+			Assert.AreEqual ("OnFamilyStaticGreen", events [1].Name, "#N3");
+			Assert.AreEqual ("OnFamANDAssemStaticGreen", events [2].Name, "#N4");
+			Assert.AreEqual ("OnFamORAssemStaticGreen", events [3].Name, "#N5");
+			Assert.AreEqual ("OnPublicStaticGreen", events [4].Name, "#N6");
+			Assert.AreEqual ("OnAssemblyStaticGreen", events [5].Name, "#N7");
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		[Ignore ("mcs depends on this")]
 		public void TestGetEventIncomplete ()
@@ -1806,6 +3548,585 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNull (tb.GetEvent ("Change", BindingFlags.Instance | BindingFlags.NonPublic));
 			Assert.AreEqual (tb.GetEvent ("Change", BindingFlags.Instance | BindingFlags.NonPublic),
 				emittedType.GetEvent ("Change", BindingFlags.Instance | BindingFlags.NonPublic));
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetEventFlagsComplete_Inheritance ()
+		{
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#A1");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#A2");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#A3");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#A4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#A5");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#A6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#A7");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#A8");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#A9");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#A10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#A11");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#A12");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#A13");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#A14");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#A15");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#A16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#A17");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#A18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#A19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#A20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#A21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#A22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#A23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#A24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#A25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#A26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#A27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#A28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#A29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#A30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#A31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#A32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#A33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#A34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#A35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#A36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#B1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#B2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#B3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#B4");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#B5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#B6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#B7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#B8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#B9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#B10");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#B11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#B12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#B13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#B14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#B15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#B16");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#B17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#B18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#B19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#B20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#B21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#B22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#B23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#B24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#B25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#B26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#B27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#B28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#B29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#B30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#B31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#B32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#B33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#B34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#B35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#B36");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#C1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#C2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#C3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#C4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#C5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#C6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#C7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#C8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#C9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#C10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#C11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#C12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#C13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#C14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#C15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#C16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#C17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#C18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#C19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#C20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#C21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#C22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#C23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#C24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#C25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#C26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#C27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#C28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#C29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#C30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#C31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#C32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#C33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#C34");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#C35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#C36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#D1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#D2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#D3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#D4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#D5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#D6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#D7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#D8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#D9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#D10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#D11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#D12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#D13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#D14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#D15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#D16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#D17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#D18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#D19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#D20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#D21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#D22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#D23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#D24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#D25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#D26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#D27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#D28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#D29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#D30");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#D31");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#D32");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#D33");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#D34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#D35");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#D36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#E1");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#E2");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#E3");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#E4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#E5");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#E6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#E7");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#E8");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#E9");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#E10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#E11");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#E12");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#E13");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#E14");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#E15");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#E16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#E17");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#E18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#E19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#E20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#E21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#E22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#E23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#E24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#E25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#E26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#E27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#E28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#E29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#E30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#E31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#E32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#E33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#E34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#E35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#E36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#F1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#F2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#F3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#F4");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#F5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#F6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#F7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#F8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#F9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#F10");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#F11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#F12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#F13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#F14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#F15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#F16");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#F17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#F18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#F19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#F20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#F21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#F22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#F23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#F24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#F25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#F26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#F27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#F28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#F29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#F30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#F31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#F32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#F33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#F34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#F35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#F36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#G1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#G2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#G3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#G4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#G5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#G6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#G7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#G8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#G9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#G10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#G11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#G12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#G13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#G14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#G15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#G16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#G17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#G18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#G19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#G20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#G21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#G22");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#G23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#G24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#G25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#G26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#G27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#G28");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#G29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#G30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#G31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#G32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#G33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#G34");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#G35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#G36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#H1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#H2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#H3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#H4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#H5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#H6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#H7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#H8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#H9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#H10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#H11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#H12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#H13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#H14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#H15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#H16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#H17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#H18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#H19");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#H20");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#H21");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#H22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#H23");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#H24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#H25");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#H26");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#H27");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#H28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#H29");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#H30");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#H31");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#H32");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#H33");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#H34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#H35");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#H36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#I1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#I2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#I3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#I4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#I5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#I6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#I7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#I8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#I9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#I10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#I11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#I12");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#I13");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#I14");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#I15");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#I16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#I17");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#I18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#I19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#I20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#I21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#I22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#I23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#I24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#I25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#I26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#I27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#I28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#I29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#I30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#I31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#I32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#I33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#I34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#I35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#I36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#J1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#J2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#J3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#J4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#J5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#J6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#J7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#J8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#J9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#J10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#J11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#J12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#J13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#J14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#J15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#J16");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#J17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#J18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#J19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#J20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#J21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#J22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#J23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#J24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#J25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#J26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#J27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#J28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#J29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#J30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#J31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#J32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#J33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#J34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#J35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#J36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#K1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#K2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#K3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#K4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#K5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#K6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#K7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#K8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#K9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#K10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#K11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#K12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#K13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#K14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#K15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#K16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#K17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#K18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#K19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#K20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#K21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#K22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#K23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#K24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#K25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#K26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#K27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#K28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#K29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#K30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#K31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#K32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#K33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#K34");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#K35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#K36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#L1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#L2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#L3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#L4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#L5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#L6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#L7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#L8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#L9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#L10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#L11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#L12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#L13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#L14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#L15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#L16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#L17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#L18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#L19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#L20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#L21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#L22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#L23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#L24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#L25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#L26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#L27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#L28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#L29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#L30");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#L31");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#L32");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#L33");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#L34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#L35");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#L36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#M1");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#M2");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#M3");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#M4");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#M5");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#M6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#M7");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#M8");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#M9");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#M10");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#M11");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#M12");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#M13");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#M14");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#M15");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#M16");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#M17");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#M18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#M19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#M20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#M21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#M22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#M23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#M24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#M25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#M26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#M27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#M28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#M29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#M30");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#M31");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#M32");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#M33");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#M34");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#M35");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#M36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceBlue", flags), "#N1");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceBlue", flags), "#N2");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceBlue", flags), "#N3");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceBlue", flags), "#N4");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceBlue", flags), "#N5");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceBlue", flags), "#N6");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceRed", flags), "#N7");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceRed", flags), "#N8");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceRed", flags), "#N9");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceRed", flags), "#N10");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceRed", flags), "#N11");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceRed", flags), "#N12");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateInstanceGreen", flags), "#N13");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyInstanceGreen", flags), "#N14");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemInstanceGreen", flags), "#N15");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemInstanceGreen", flags), "#N16");
+			Assert.IsNull (greenType.GetEvent ("OnPublicInstanceGreen", flags), "#N17");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyInstanceGreen", flags), "#N18");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticBlue", flags), "#N19");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticBlue", flags), "#N20");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticBlue", flags), "#N21");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticBlue", flags), "#N22");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticBlue", flags), "#N23");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticBlue", flags), "#N24");
+			Assert.IsNull (greenType.GetEvent ("OnPrivateStaticRed", flags), "#N25");
+			Assert.IsNull (greenType.GetEvent ("OnFamilyStaticRed", flags), "#N26");
+			Assert.IsNull (greenType.GetEvent ("OnFamANDAssemStaticRed", flags), "#N27");
+			Assert.IsNull (greenType.GetEvent ("OnFamORAssemStaticRed", flags), "#N28");
+			Assert.IsNull (greenType.GetEvent ("OnPublicStaticRed", flags), "#N29");
+			Assert.IsNull (greenType.GetEvent ("OnAssemblyStaticRed", flags), "#N30");
+			Assert.IsNotNull (greenType.GetEvent ("OnPrivateStaticGreen", flags), "#N31");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamilyStaticGreen", flags), "#N32");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamANDAssemStaticGreen", flags), "#N33");
+			Assert.IsNotNull (greenType.GetEvent ("OnFamORAssemStaticGreen", flags), "#N34");
+			Assert.IsNotNull (greenType.GetEvent ("OnPublicStaticGreen", flags), "#N35");
+			Assert.IsNotNull (greenType.GetEvent ("OnAssemblyStaticGreen", flags), "#N36");
 		}
 
 		[Test]
@@ -1995,6 +4316,198 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetFieldsFlagsComplete_Inheritance ()
+		{
+			FieldInfo [] fields;
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (13, fields.Length, "#A1");
+			Assert.AreEqual ("privateInstanceGreen", fields [0].Name, "#A2");
+			Assert.AreEqual ("familyInstanceGreen", fields [1].Name, "#A3");
+			Assert.AreEqual ("famANDAssemInstanceGreen", fields [2].Name, "#A4");
+			Assert.AreEqual ("famORAssemInstanceGreen", fields [3].Name, "#A5");
+			Assert.AreEqual ("assemblyInstanceGreen", fields [4].Name, "#A6");
+			Assert.AreEqual ("familyInstanceRed", fields [5].Name, "#A7");
+			Assert.AreEqual ("famANDAssemInstanceRed", fields [6].Name, "#A8");
+			Assert.AreEqual ("famORAssemInstanceRed", fields [7].Name, "#A9");
+			Assert.AreEqual ("assemblyInstanceRed", fields [8].Name, "#A10");
+			Assert.AreEqual ("familyInstanceBlue", fields [9].Name, "#A11");
+			Assert.AreEqual ("famANDAssemInstanceBlue", fields [10].Name, "#A12");
+			Assert.AreEqual ("famORAssemInstanceBlue", fields [11].Name, "#A13");
+			Assert.AreEqual ("assemblyInstanceBlue", fields [12].Name, "#A14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (3, fields.Length, "#B1");
+			Assert.AreEqual ("publicInstanceGreen", fields [0].Name, "#B2");
+			Assert.AreEqual ("publicInstanceRed", fields [1].Name, "#B3");
+			Assert.AreEqual ("publicInstanceBlue", fields [2].Name, "#B4");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (1, fields.Length, "#C1");
+			Assert.AreEqual ("publicStaticGreen", fields [0].Name, "#C2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (5, fields.Length, "#D1");
+			Assert.AreEqual ("privateStaticGreen", fields [0].Name, "#D2");
+			Assert.AreEqual ("familyStaticGreen", fields [1].Name, "#D3");
+			Assert.AreEqual ("famANDAssemStaticGreen", fields [2].Name, "#D4");
+			Assert.AreEqual ("famORAssemStaticGreen", fields [3].Name, "#D5");
+			Assert.AreEqual ("assemblyStaticGreen", fields [4].Name, "#D6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (13, fields.Length, "#E1");
+			Assert.AreEqual ("privateInstanceGreen", fields [0].Name, "#E2");
+			Assert.AreEqual ("familyInstanceGreen", fields [1].Name, "#E3");
+			Assert.AreEqual ("famANDAssemInstanceGreen", fields [2].Name, "#E4");
+			Assert.AreEqual ("famORAssemInstanceGreen", fields [3].Name, "#E5");
+			Assert.AreEqual ("assemblyInstanceGreen", fields [4].Name, "#E6");
+			Assert.AreEqual ("familyInstanceRed", fields [5].Name, "#E7");
+			Assert.AreEqual ("famANDAssemInstanceRed", fields [6].Name, "#E8");
+			Assert.AreEqual ("famORAssemInstanceRed", fields [7].Name, "#E9");
+			Assert.AreEqual ("assemblyInstanceRed", fields [8].Name, "#E10");
+			Assert.AreEqual ("familyInstanceBlue", fields [9].Name, "#E11");
+			Assert.AreEqual ("famANDAssemInstanceBlue", fields [10].Name, "#E12");
+			Assert.AreEqual ("famORAssemInstanceBlue", fields [11].Name, "#E13");
+			Assert.AreEqual ("assemblyInstanceBlue", fields [12].Name, "#E14");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (3, fields.Length, "#F1");
+			Assert.AreEqual ("publicInstanceGreen", fields [0].Name, "#F2");
+			Assert.AreEqual ("publicInstanceRed", fields [1].Name, "#F3");
+			Assert.AreEqual ("publicInstanceBlue", fields [2].Name, "#F4");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (3, fields.Length, "#G1");
+			Assert.AreEqual ("publicStaticGreen", fields [0].Name, "#G2");
+			Assert.AreEqual ("publicStaticRed", fields [1].Name, "#G3");
+			Assert.AreEqual ("publicStaticBlue", fields [2].Name, "#G4");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (13, fields.Length, "#H1");
+			Assert.AreEqual ("privateStaticGreen", fields [0].Name, "#H2");
+			Assert.AreEqual ("familyStaticGreen", fields [1].Name, "#H3");
+			Assert.AreEqual ("famANDAssemStaticGreen", fields [2].Name, "#H4");
+			Assert.AreEqual ("famORAssemStaticGreen", fields [3].Name, "#H5");
+			Assert.AreEqual ("assemblyStaticGreen", fields [4].Name, "#H6");
+			Assert.AreEqual ("familyStaticRed", fields [5].Name, "#H7");
+			Assert.AreEqual ("famANDAssemStaticRed", fields [6].Name, "#H8");
+			Assert.AreEqual ("famORAssemStaticRed", fields [7].Name, "#H9");
+			Assert.AreEqual ("assemblyStaticRed", fields [8].Name, "#H10");
+			Assert.AreEqual ("familyStaticBlue", fields [9].Name, "#H11");
+			Assert.AreEqual ("famANDAssemStaticBlue", fields [10].Name, "#H12");
+			Assert.AreEqual ("famORAssemStaticBlue", fields [11].Name, "#H13");
+			Assert.AreEqual ("assemblyStaticBlue", fields [12].Name, "#H14");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (5, fields.Length, "#I1");
+			Assert.AreEqual ("privateInstanceGreen", fields [0].Name, "#I2");
+			Assert.AreEqual ("familyInstanceGreen", fields [1].Name, "#I3");
+			Assert.AreEqual ("famANDAssemInstanceGreen", fields [2].Name, "#I4");
+			Assert.AreEqual ("famORAssemInstanceGreen", fields [3].Name, "#I5");
+			Assert.AreEqual ("assemblyInstanceGreen", fields [4].Name, "#I6");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (1, fields.Length, "#J1");
+			Assert.AreEqual ("publicInstanceGreen", fields [0].Name, "#J2");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (1, fields.Length, "#K1");
+			Assert.AreEqual ("publicStaticGreen", fields [0].Name, "#K2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (5, fields.Length, "#L1");
+			Assert.AreEqual ("privateStaticGreen", fields [0].Name, "#L2");
+			Assert.AreEqual ("familyStaticGreen", fields [1].Name, "#L3");
+			Assert.AreEqual ("famANDAssemStaticGreen", fields [2].Name, "#L4");
+			Assert.AreEqual ("famORAssemStaticGreen", fields [3].Name, "#L5");
+			Assert.AreEqual ("assemblyStaticGreen", fields [4].Name, "#L6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (16, fields.Length, "#M1");
+			Assert.AreEqual ("privateInstanceGreen", fields [0].Name, "#M2");
+			Assert.AreEqual ("familyInstanceGreen", fields [1].Name, "#M3");
+			Assert.AreEqual ("famANDAssemInstanceGreen", fields [2].Name, "#M4");
+			Assert.AreEqual ("famORAssemInstanceGreen", fields [3].Name, "#M5");
+			Assert.AreEqual ("publicInstanceGreen", fields [4].Name, "#M6");
+			Assert.AreEqual ("assemblyInstanceGreen", fields [5].Name, "#M7");
+			Assert.AreEqual ("familyInstanceRed", fields [6].Name, "#M8");
+			Assert.AreEqual ("famANDAssemInstanceRed", fields [7].Name, "#M9");
+			Assert.AreEqual ("famORAssemInstanceRed", fields [8].Name, "#M10");
+			Assert.AreEqual ("publicInstanceRed", fields [9].Name, "#M11");
+			Assert.AreEqual ("assemblyInstanceRed", fields [10].Name, "#M12");
+			Assert.AreEqual ("familyInstanceBlue", fields [11].Name, "#M13");
+			Assert.AreEqual ("famANDAssemInstanceBlue", fields [12].Name, "#M14");
+			Assert.AreEqual ("famORAssemInstanceBlue", fields [13].Name, "#M15");
+			Assert.AreEqual ("publicInstanceBlue", fields [14].Name, "#M16");
+			Assert.AreEqual ("assemblyInstanceBlue", fields [15].Name, "#M17");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			fields = greenType.GetFields (flags);
+
+			Assert.AreEqual (6, fields.Length, "#N1");
+			Assert.AreEqual ("privateStaticGreen", fields [0].Name, "#N2");
+			Assert.AreEqual ("familyStaticGreen", fields [1].Name, "#N3");
+			Assert.AreEqual ("famANDAssemStaticGreen", fields [2].Name, "#N4");
+			Assert.AreEqual ("famORAssemStaticGreen", fields [3].Name, "#N5");
+			Assert.AreEqual ("publicStaticGreen", fields [4].Name, "#N6");
+			Assert.AreEqual ("assemblyStaticGreen", fields [5].Name, "#N7");
+		}
+
+		[Test]
 		[Category ("NotWorking")] // mcs depends on this
 		public void TestGetFieldIncomplete_MS ()
 		{
@@ -2134,6 +4647,585 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetFieldFlagsComplete_Inheritance ()
+		{
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#A1");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceBlue", flags), "#A2");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#A3");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#A4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#A5");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceBlue", flags), "#A6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#A7");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceRed", flags), "#A8");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#A9");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceRed", flags), "#A10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#A11");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceRed", flags), "#A12");
+			Assert.IsNotNull (greenType.GetField ("privateInstanceGreen", flags), "#A13");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceGreen", flags), "#A14");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#A15");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#A16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#A17");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceGreen", flags), "#A18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#A19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#A20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#A21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#A22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#A23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#A24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#A25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#A26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#A27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#A28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#A29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#A30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#A31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#A32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#A33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#A34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#A35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#A36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#B1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#B2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#B3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#B4");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceBlue", flags), "#B5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#B6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#B7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#B8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#B9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#B10");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceRed", flags), "#B11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#B12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#B13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#B14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#B15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#B16");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceGreen", flags), "#B17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#B18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#B19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#B20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#B21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#B22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#B23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#B24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#B25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#B26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#B27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#B28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#B29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#B30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#B31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#B32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#B33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#B34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#B35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#B36");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#C1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#C2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#C3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#C4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#C5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#C6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#C7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#C8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#C9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#C10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#C11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#C12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#C13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#C14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#C15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#C16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#C17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#C18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#C19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#C20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#C21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#C22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#C23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#C24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#C25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#C26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#C27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#C28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#C29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#C30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#C31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#C32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#C33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#C34");
+			Assert.IsNotNull (greenType.GetField ("publicStaticGreen", flags), "#C35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#C36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#D1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#D2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#D3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#D4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#D5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#D6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#D7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#D8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#D9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#D10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#D11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#D12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#D13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#D14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#D15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#D16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#D17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#D18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#D19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#D20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#D21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#D22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#D23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#D24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#D25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#D26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#D27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#D28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#D29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#D30");
+			Assert.IsNotNull (greenType.GetField ("privateStaticGreen", flags), "#D31");
+			Assert.IsNotNull (greenType.GetField ("familyStaticGreen", flags), "#D32");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#D33");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticGreen", flags), "#D34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#D35");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticGreen", flags), "#D36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#E1");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceBlue", flags), "#E2");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#E3");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#E4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#E5");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceBlue", flags), "#E6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#E7");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceRed", flags), "#E8");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#E9");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceRed", flags), "#E10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#E11");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceRed", flags), "#E12");
+			Assert.IsNotNull (greenType.GetField ("privateInstanceGreen", flags), "#E13");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceGreen", flags), "#E14");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#E15");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#E16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#E17");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceGreen", flags), "#E18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#E19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#E20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#E21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#E22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#E23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#E24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#E25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#E26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#E27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#E28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#E29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#E30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#E31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#E32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#E33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#E34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#E35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#E36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#F1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#F2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#F3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#F4");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceBlue", flags), "#F5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#F6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#F7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#F8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#F9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#F10");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceRed", flags), "#F11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#F12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#F13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#F14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#F15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#F16");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceGreen", flags), "#F17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#F18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#F19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#F20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#F21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#F22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#F23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#F24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#F25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#F26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#F27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#F28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#F29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#F30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#F31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#F32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#F33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#F34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#F35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#F36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#G1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#G2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#G3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#G4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#G5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#G6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#G7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#G8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#G9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#G10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#G11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#G12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#G13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#G14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#G15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#G16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#G17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#G18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#G19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#G20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#G21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#G22");
+			Assert.IsNotNull (greenType.GetField ("publicStaticBlue", flags), "#G23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#G24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#G25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#G26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#G27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#G28");
+			Assert.IsNotNull (greenType.GetField ("publicStaticRed", flags), "#G29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#G30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#G31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#G32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#G33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#G34");
+			Assert.IsNotNull (greenType.GetField ("publicStaticGreen", flags), "#G35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#G36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#H1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#H2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#H3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#H4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#H5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#H6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#H7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#H8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#H9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#H10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#H11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#H12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#H13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#H14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#H15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#H16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#H17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#H18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#H19");
+			Assert.IsNotNull (greenType.GetField ("familyStaticBlue", flags), "#H20");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#H21");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticBlue", flags), "#H22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#H23");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticBlue", flags), "#H24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#H25");
+			Assert.IsNotNull (greenType.GetField ("familyStaticRed", flags), "#H26");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticRed", flags), "#H27");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticRed", flags), "#H28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#H29");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticRed", flags), "#H30");
+			Assert.IsNotNull (greenType.GetField ("privateStaticGreen", flags), "#H31");
+			Assert.IsNotNull (greenType.GetField ("familyStaticGreen", flags), "#H32");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#H33");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticGreen", flags), "#H34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#H35");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticGreen", flags), "#H36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#I1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#I2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#I3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#I4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#I5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#I6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#I7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#I8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#I9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#I10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#I11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#I12");
+			Assert.IsNotNull (greenType.GetField ("privateInstanceGreen", flags), "#I13");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceGreen", flags), "#I14");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#I15");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#I16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#I17");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceGreen", flags), "#I18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#I19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#I20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#I21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#I22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#I23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#I24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#I25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#I26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#I27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#I28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#I29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#I30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#I31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#I32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#I33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#I34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#I35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#I36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#J1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#J2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#J3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#J4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#J5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#J6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#J7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#J8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#J9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#J10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#J11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#J12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#J13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#J14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#J15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#J16");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceGreen", flags), "#J17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#J18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#J19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#J20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#J21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#J22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#J23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#J24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#J25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#J26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#J27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#J28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#J29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#J30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#J31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#J32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#J33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#J34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#J35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#J36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#K1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#K2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#K3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#K4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#K5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#K6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#K7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#K8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#K9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#K10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#K11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#K12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#K13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#K14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#K15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#K16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#K17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#K18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#K19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#K20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#K21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#K22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#K23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#K24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#K25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#K26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#K27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#K28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#K29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#K30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#K31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#K32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#K33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#K34");
+			Assert.IsNotNull (greenType.GetField ("publicStaticGreen", flags), "#K35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#K36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#L1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#L2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#L3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#L4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#L5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#L6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#L7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#L8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#L9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#L10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#L11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#L12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#L13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#L14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#L15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#L16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#L17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#L18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#L19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#L20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#L21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#L22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#L23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#L24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#L25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#L26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#L27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#L28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#L29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#L30");
+			Assert.IsNotNull (greenType.GetField ("privateStaticGreen", flags), "#L31");
+			Assert.IsNotNull (greenType.GetField ("familyStaticGreen", flags), "#L32");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#L33");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticGreen", flags), "#L34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#L35");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticGreen", flags), "#L36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#M1");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceBlue", flags), "#M2");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#M3");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#M4");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceBlue", flags), "#M5");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceBlue", flags), "#M6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#M7");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceRed", flags), "#M8");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#M9");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceRed", flags), "#M10");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceRed", flags), "#M11");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceRed", flags), "#M12");
+			Assert.IsNotNull (greenType.GetField ("privateInstanceGreen", flags), "#M13");
+			Assert.IsNotNull (greenType.GetField ("familyInstanceGreen", flags), "#M14");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#M15");
+			Assert.IsNotNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#M16");
+			Assert.IsNotNull (greenType.GetField ("publicInstanceGreen", flags), "#M17");
+			Assert.IsNotNull (greenType.GetField ("assemblyInstanceGreen", flags), "#M18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#M19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#M20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#M21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#M22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#M23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#M24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#M25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#M26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#M27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#M28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#M29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#M30");
+			Assert.IsNull (greenType.GetField ("privateStaticGreen", flags), "#M31");
+			Assert.IsNull (greenType.GetField ("familyStaticGreen", flags), "#M32");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#M33");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticGreen", flags), "#M34");
+			Assert.IsNull (greenType.GetField ("publicStaticGreen", flags), "#M35");
+			Assert.IsNull (greenType.GetField ("assemblyStaticGreen", flags), "#M36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetField ("privateInstanceBlue", flags), "#N1");
+			Assert.IsNull (greenType.GetField ("familyInstanceBlue", flags), "#N2");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceBlue", flags), "#N3");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceBlue", flags), "#N4");
+			Assert.IsNull (greenType.GetField ("publicInstanceBlue", flags), "#N5");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceBlue", flags), "#N6");
+			Assert.IsNull (greenType.GetField ("privateInstanceRed", flags), "#N7");
+			Assert.IsNull (greenType.GetField ("familyInstanceRed", flags), "#N8");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceRed", flags), "#N9");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceRed", flags), "#N10");
+			Assert.IsNull (greenType.GetField ("publicInstanceRed", flags), "#N11");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceRed", flags), "#N12");
+			Assert.IsNull (greenType.GetField ("privateInstanceGreen", flags), "#N13");
+			Assert.IsNull (greenType.GetField ("familyInstanceGreen", flags), "#N14");
+			Assert.IsNull (greenType.GetField ("famANDAssemInstanceGreen", flags), "#N15");
+			Assert.IsNull (greenType.GetField ("famORAssemInstanceGreen", flags), "#N16");
+			Assert.IsNull (greenType.GetField ("publicInstanceGreen", flags), "#N17");
+			Assert.IsNull (greenType.GetField ("assemblyInstanceGreen", flags), "#N18");
+			Assert.IsNull (greenType.GetField ("privateStaticBlue", flags), "#N19");
+			Assert.IsNull (greenType.GetField ("familyStaticBlue", flags), "#N20");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticBlue", flags), "#N21");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticBlue", flags), "#N22");
+			Assert.IsNull (greenType.GetField ("publicStaticBlue", flags), "#N23");
+			Assert.IsNull (greenType.GetField ("assemblyStaticBlue", flags), "#N24");
+			Assert.IsNull (greenType.GetField ("privateStaticRed", flags), "#N25");
+			Assert.IsNull (greenType.GetField ("familyStaticRed", flags), "#N26");
+			Assert.IsNull (greenType.GetField ("famANDAssemStaticRed", flags), "#N27");
+			Assert.IsNull (greenType.GetField ("famORAssemStaticRed", flags), "#N28");
+			Assert.IsNull (greenType.GetField ("publicStaticRed", flags), "#N29");
+			Assert.IsNull (greenType.GetField ("assemblyStaticRed", flags), "#N30");
+			Assert.IsNotNull (greenType.GetField ("privateStaticGreen", flags), "#N31");
+			Assert.IsNotNull (greenType.GetField ("familyStaticGreen", flags), "#N32");
+			Assert.IsNotNull (greenType.GetField ("famANDAssemStaticGreen", flags), "#N33");
+			Assert.IsNotNull (greenType.GetField ("famORAssemStaticGreen", flags), "#N34");
+			Assert.IsNotNull (greenType.GetField ("publicStaticGreen", flags), "#N35");
+			Assert.IsNotNull (greenType.GetField ("assemblyStaticGreen", flags), "#N36");
+		}
+
+		[Test]
 		[Category ("NotDotNet")] // mcs depends on this
 		public void TestGetPropertiesIncomplete_Mono ()
 		{
@@ -2245,6 +5337,239 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetPropertiesFlagsComplete_Inheritance ()
+		{
+			PropertyInfo [] props;
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			props = greenType.GetProperties (flags);
+
+#if NET_2_0
+			Assert.AreEqual (13, props.Length, "#A1");
+#else
+			Assert.AreEqual (11, props.Length, "#A1");
+#endif
+			Assert.AreEqual ("PrivateInstanceGreen", props [0].Name, "#A2");
+			Assert.AreEqual ("FamilyInstanceGreen", props [1].Name, "#A3");
+			Assert.AreEqual ("FamANDAssemInstanceGreen", props [2].Name, "#A4");
+			Assert.AreEqual ("FamORAssemInstanceGreen", props [3].Name, "#A5");
+			Assert.AreEqual ("AssemblyInstanceGreen", props [4].Name, "#A6");
+			Assert.AreEqual ("FamilyInstanceRed", props [5].Name, "#A7");
+			Assert.AreEqual ("FamANDAssemInstanceRed", props [6].Name, "#A8");
+			Assert.AreEqual ("FamORAssemInstanceRed", props [7].Name, "#A9");
+#if NET_2_0
+			Assert.AreEqual ("AssemblyInstanceRed", props [8].Name, "#A10");
+			Assert.AreEqual ("FamilyInstanceBlue", props [9].Name, "#A11");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [10].Name, "#A12");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [11].Name, "#A13");
+			Assert.AreEqual ("AssemblyInstanceBlue", props [12].Name, "#A15");
+#else
+			Assert.AreEqual ("FamilyInstanceBlue", props [8].Name, "#A10");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [9].Name, "#A11");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [10].Name, "#A12");
+#endif
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (3, props.Length, "#B1");
+			Assert.AreEqual ("PublicInstanceGreen", props [0].Name, "#B2");
+			Assert.AreEqual ("PublicInstanceRed", props [1].Name, "#B3");
+			Assert.AreEqual ("PublicInstanceBlue", props [2].Name, "#B4");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (1, props.Length, "#C1");
+			Assert.AreEqual ("PublicStaticGreen", props [0].Name, "#C2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (5, props.Length, "#D1");
+			Assert.AreEqual ("PrivateStaticGreen", props [0].Name, "#D2");
+			Assert.AreEqual ("FamilyStaticGreen", props [1].Name, "#D3");
+			Assert.AreEqual ("FamANDAssemStaticGreen", props [2].Name, "#D4");
+			Assert.AreEqual ("FamORAssemStaticGreen", props [3].Name, "#D5");
+			Assert.AreEqual ("AssemblyStaticGreen", props [4].Name, "#D6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			props = greenType.GetProperties (flags);
+
+#if NET_2_0
+			Assert.AreEqual (13, props.Length, "#E1");
+#else
+			Assert.AreEqual (11, props.Length, "#E1");
+#endif
+			Assert.AreEqual ("PrivateInstanceGreen", props [0].Name, "#E2");
+			Assert.AreEqual ("FamilyInstanceGreen", props [1].Name, "#E3");
+			Assert.AreEqual ("FamANDAssemInstanceGreen", props [2].Name, "#E4");
+			Assert.AreEqual ("FamORAssemInstanceGreen", props [3].Name, "#E5");
+			Assert.AreEqual ("AssemblyInstanceGreen", props [4].Name, "#E6");
+			Assert.AreEqual ("FamilyInstanceRed", props [5].Name, "#E7");
+			Assert.AreEqual ("FamANDAssemInstanceRed", props [6].Name, "#E8");
+			Assert.AreEqual ("FamORAssemInstanceRed", props [7].Name, "#E9");
+#if NET_2_0
+			Assert.AreEqual ("AssemblyInstanceRed", props [8].Name, "#E10");
+			Assert.AreEqual ("FamilyInstanceBlue", props [9].Name, "#E11");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [10].Name, "#E12");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [11].Name, "#E13");
+			Assert.AreEqual ("AssemblyInstanceBlue", props [12].Name, "#E14");
+#else
+			Assert.AreEqual ("FamilyInstanceBlue", props [8].Name, "#E10");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [9].Name, "#E11");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [10].Name, "#E12");
+#endif
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (3, props.Length, "#F1");
+			Assert.AreEqual ("PublicInstanceGreen", props [0].Name, "#F2");
+			Assert.AreEqual ("PublicInstanceRed", props [1].Name, "#F3");
+			Assert.AreEqual ("PublicInstanceBlue", props [2].Name, "#F4");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (3, props.Length, "#G1");
+			Assert.AreEqual ("PublicStaticGreen", props [0].Name, "#G2");
+			Assert.AreEqual ("PublicStaticRed", props [1].Name, "#G3");
+			Assert.AreEqual ("PublicStaticBlue", props [2].Name, "#G4");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			props = greenType.GetProperties (flags);
+
+#if NET_2_0
+			Assert.AreEqual (13, props.Length, "#H1");
+#else
+			Assert.AreEqual (11, props.Length, "#H1");
+#endif
+			Assert.AreEqual ("PrivateStaticGreen", props [0].Name, "#H2");
+			Assert.AreEqual ("FamilyStaticGreen", props [1].Name, "#H3");
+			Assert.AreEqual ("FamANDAssemStaticGreen", props [2].Name, "#H4");
+			Assert.AreEqual ("FamORAssemStaticGreen", props [3].Name, "#H5");
+			Assert.AreEqual ("AssemblyStaticGreen", props [4].Name, "#H6");
+			Assert.AreEqual ("FamilyStaticRed", props [5].Name, "#H7");
+			Assert.AreEqual ("FamANDAssemStaticRed", props [6].Name, "#H8");
+			Assert.AreEqual ("FamORAssemStaticRed", props [7].Name, "#H9");
+#if NET_2_0
+			Assert.AreEqual ("AssemblyStaticRed", props [8].Name, "#H10");
+			Assert.AreEqual ("FamilyStaticBlue", props [9].Name, "#H11");
+			Assert.AreEqual ("FamANDAssemStaticBlue", props [10].Name, "#H12");
+			Assert.AreEqual ("FamORAssemStaticBlue", props [11].Name, "#H13");
+			Assert.AreEqual ("AssemblyStaticBlue", props [12].Name, "#H14");
+#else
+			Assert.AreEqual ("FamilyStaticBlue", props [8].Name, "#H10");
+			Assert.AreEqual ("FamANDAssemStaticBlue", props [9].Name, "#H11");
+			Assert.AreEqual ("FamORAssemStaticBlue", props [10].Name, "#H12");
+#endif
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (5, props.Length, "#I1");
+			Assert.AreEqual ("PrivateInstanceGreen", props [0].Name, "#I2");
+			Assert.AreEqual ("FamilyInstanceGreen", props [1].Name, "#I3");
+			Assert.AreEqual ("FamANDAssemInstanceGreen", props [2].Name, "#I4");
+			Assert.AreEqual ("FamORAssemInstanceGreen", props [3].Name, "#I5");
+			Assert.AreEqual ("AssemblyInstanceGreen", props [4].Name, "#I6");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (1, props.Length, "#J1");
+			Assert.AreEqual ("PublicInstanceGreen", props [0].Name, "#J2");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (1, props.Length, "#K1");
+			Assert.AreEqual ("PublicStaticGreen", props [0].Name, "#K2");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (5, props.Length, "#L1");
+			Assert.AreEqual ("PrivateStaticGreen", props [0].Name, "#L2");
+			Assert.AreEqual ("FamilyStaticGreen", props [1].Name, "#L3");
+			Assert.AreEqual ("FamANDAssemStaticGreen", props [2].Name, "#L4");
+			Assert.AreEqual ("FamORAssemStaticGreen", props [3].Name, "#L5");
+			Assert.AreEqual ("AssemblyStaticGreen", props [4].Name, "#L6");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			props = greenType.GetProperties (flags);
+
+#if NET_2_0
+			Assert.AreEqual (16, props.Length, "#M1");
+#else
+			Assert.AreEqual (14, props.Length, "#M1");
+#endif
+			Assert.AreEqual ("PrivateInstanceGreen", props [0].Name, "#M2");
+			Assert.AreEqual ("FamilyInstanceGreen", props [1].Name, "#M3");
+			Assert.AreEqual ("FamANDAssemInstanceGreen", props [2].Name, "#M4");
+			Assert.AreEqual ("FamORAssemInstanceGreen", props [3].Name, "#M5");
+			Assert.AreEqual ("PublicInstanceGreen", props [4].Name, "#M6");
+			Assert.AreEqual ("AssemblyInstanceGreen", props [5].Name, "#M7");
+			Assert.AreEqual ("FamilyInstanceRed", props [6].Name, "#M8");
+			Assert.AreEqual ("FamANDAssemInstanceRed", props [7].Name, "#M9");
+			Assert.AreEqual ("FamORAssemInstanceRed", props [8].Name, "#M10");
+			Assert.AreEqual ("PublicInstanceRed", props [9].Name, "#M11");
+#if NET_2_0
+			Assert.AreEqual ("AssemblyInstanceRed", props [10].Name, "#M12");
+			Assert.AreEqual ("FamilyInstanceBlue", props [11].Name, "#M13");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [12].Name, "#M14");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [13].Name, "#M15");
+			Assert.AreEqual ("PublicInstanceBlue", props [14].Name, "#M16");
+			Assert.AreEqual ("AssemblyInstanceBlue", props [15].Name, "#M17");
+#else
+			Assert.AreEqual ("FamilyInstanceBlue", props [10].Name, "#M12");
+			Assert.AreEqual ("FamANDAssemInstanceBlue", props [11].Name, "#M13");
+			Assert.AreEqual ("FamORAssemInstanceBlue", props [12].Name, "#M14");
+			Assert.AreEqual ("PublicInstanceBlue", props [13].Name, "#M15");
+#endif
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			props = greenType.GetProperties (flags);
+
+			Assert.AreEqual (6, props.Length, "#N1");
+			Assert.AreEqual ("PrivateStaticGreen", props [0].Name, "#N2");
+			Assert.AreEqual ("FamilyStaticGreen", props [1].Name, "#N3");
+			Assert.AreEqual ("FamANDAssemStaticGreen", props [2].Name, "#N4");
+			Assert.AreEqual ("FamORAssemStaticGreen", props [3].Name, "#N5");
+			Assert.AreEqual ("PublicStaticGreen", props [4].Name, "#N6");
+			Assert.AreEqual ("AssemblyStaticGreen", props [5].Name, "#N7");
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetPropertyIncomplete ()
 		{
@@ -2302,6 +5627,617 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetMethodFlagsComplete ()
+		{
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#A1");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#A2");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#A3");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#A4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#A5");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#A6");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#A6");
+#endif
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#A7");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#A8");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#A9");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#A10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#A11");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#A12");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#A12");
+#endif
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#A13");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#A14");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#A15");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#A16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#A17");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#A18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#A19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#A20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#A21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#A22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#A23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#A24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#A25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#A26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#A27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#A28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#A29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#A30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#A31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#A32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#A33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#A34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#A35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#A36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#B1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#B2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#B3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#B4");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#B5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#B6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#B7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#B8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#B9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#B10");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#B11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#B12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#B13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#B14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#B15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#B16");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#B17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#B18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#B19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#B20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#B21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#B22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#B23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#B24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#B25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#B26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#B27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#B28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#B29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#B30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#B31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#B32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#B33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#B34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#B35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#B36");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#C1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#C2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#C3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#C4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#C5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#C6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#C7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#C8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#C9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#C10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#C11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#C12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#C13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#C14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#C15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#C16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#C17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#C18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#C19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#C20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#C21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#C22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#C23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#C24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#C25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#C26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#C27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#C28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#C29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#C30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#C31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#C32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#C33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#C34");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#C35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#C36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#D1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#D2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#D3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#D4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#D5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#D6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#D7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#D8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#D9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#D10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#D11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#D12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#D13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#D14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#D15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#D16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#D17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#D18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#D19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#D20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#D21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#D22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#D23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#D24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#D25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#D26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#D27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#D28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#D29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#D30");
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#D31");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#D32");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#D33");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#D34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#D35");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#D36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#E1");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#E2");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#E3");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#E4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#E5");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#E6");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#E6");
+#endif
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#E7");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#E8");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#E9");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#E10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#E11");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#E12");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#E12");
+#endif
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#E13");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#E14");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#E15");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#E16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#E17");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#E18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#E19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#E20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#E21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#E22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#E23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#E24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#E25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#E26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#E27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#E28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#E29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#E30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#E31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#E32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#E33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#E34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#E35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#E36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#F1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#F2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#F3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#F4");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#F5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#F6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#F7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#F8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#F9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#F10");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#F11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#F12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#F13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#F14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#F15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#F16");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#F17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#F18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#F19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#F20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#F21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#F22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#F23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#F24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#F25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#F26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#F27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#F28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#F29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#F30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#F31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#F32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#F33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#F34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#F35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#F36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#G1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#G2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#G3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#G4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#G5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#G6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#G7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#G8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#G9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#G10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#G11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#G12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#G13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#G14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#G15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#G16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#G17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#G18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#G19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#G20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#G21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#G22");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#G23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#G24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#G25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#G26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#G27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#G28");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#G29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#G30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#G31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#G32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#G33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#G34");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#G35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#G36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#H1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#H2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#H3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#H4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#H5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#H6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#H7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#H8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#H9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#H10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#H11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#H12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#H13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#H14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#H15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#H16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#H17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#H18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#H19");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#H20");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#H21");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#H22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#H23");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#H24");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#H24");
+#endif
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#H25");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#H26");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#H27");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#H28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#H29");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#H30");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#H30");
+#endif
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#H31");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#H32");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#H33");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#H34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#H35");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#H36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#I1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#I2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#I3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#I4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#I5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#I6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#I7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#I8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#I9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#I10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#I11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#I12");
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#I13");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#I14");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#I15");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#I16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#I17");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#I18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#I19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#I20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#I21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#I22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#I23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#I24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#I25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#I26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#I27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#I28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#I29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#I30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#I31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#I32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#I33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#I34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#I35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#I36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#J1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#J2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#J3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#J4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#J5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#J6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#J7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#J8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#J9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#J10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#J11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#J12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#J13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#J14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#J15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#J16");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#J17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#J18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#J19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#J20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#J21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#J22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#J23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#J24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#J25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#J26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#J27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#J28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#J29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#J30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#J31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#J32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#J33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#J34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#J35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#J36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#K1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#K2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#K3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#K4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#K5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#K6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#K7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#K8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#K9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#K10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#K11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#K12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#K13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#K14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#K15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#K16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#K17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#K18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#K19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#K20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#K21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#K22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#K23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#K24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#K25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#K26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#K27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#K28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#K29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#K30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#K31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#K32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#K33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#K34");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#K35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#K36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#L1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#L2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#L3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#L4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#L5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#L6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#L7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#L8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#L9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#L10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#L11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#L12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#L13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#L14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#L15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#L16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#L17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#L18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#L19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#L20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#L21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#L22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#L23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#L24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#L25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#L26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#L27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#L28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#L29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#L30");
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#L31");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#L32");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#L33");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#L34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#L35");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#L36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#M1");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#M2");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#M3");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#M4");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#M5");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#M6");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#M6");
+#endif
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#M7");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#M8");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#M9");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#M10");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#M11");
+#if NET_2_0
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#M12");
+#else
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#M12");
+#endif
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#M13");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#M14");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#M15");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#M16");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#M17");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#M18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#M19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#M20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#M21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#M22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#M23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#M24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#M25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#M26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#M27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#M28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#M29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#M30");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#M31");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#M32");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#M33");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#M34");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#M35");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#M36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceBlue", flags), "#N1");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceBlue", flags), "#N2");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceBlue", flags), "#N3");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceBlue", flags), "#N4");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceBlue", flags), "#N5");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceBlue", flags), "#N6");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceRed", flags), "#N7");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceRed", flags), "#N8");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceRed", flags), "#N9");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceRed", flags), "#N10");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceRed", flags), "#N11");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceRed", flags), "#N12");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateInstanceGreen", flags), "#N13");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyInstanceGreen", flags), "#N14");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemInstanceGreen", flags), "#N15");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemInstanceGreen", flags), "#N16");
+			Assert.IsNull (greenType.GetMethod ("GetPublicInstanceGreen", flags), "#N17");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyInstanceGreen", flags), "#N18");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticBlue", flags), "#N19");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticBlue", flags), "#N20");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticBlue", flags), "#N21");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticBlue", flags), "#N22");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticBlue", flags), "#N23");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticBlue", flags), "#N24");
+			Assert.IsNull (greenType.GetMethod ("GetPrivateStaticRed", flags), "#N25");
+			Assert.IsNull (greenType.GetMethod ("GetFamilyStaticRed", flags), "#N26");
+			Assert.IsNull (greenType.GetMethod ("GetFamANDAssemStaticRed", flags), "#N27");
+			Assert.IsNull (greenType.GetMethod ("GetFamORAssemStaticRed", flags), "#N28");
+			Assert.IsNull (greenType.GetMethod ("GetPublicStaticRed", flags), "#N29");
+			Assert.IsNull (greenType.GetMethod ("GetAssemblyStaticRed", flags), "#N30");
+			Assert.IsNotNull (greenType.GetMethod ("GetPrivateStaticGreen", flags), "#N31");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamilyStaticGreen", flags), "#N32");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamANDAssemStaticGreen", flags), "#N33");
+			Assert.IsNotNull (greenType.GetMethod ("GetFamORAssemStaticGreen", flags), "#N34");
+			Assert.IsNotNull (greenType.GetMethod ("GetPublicStaticGreen", flags), "#N35");
+			Assert.IsNotNull (greenType.GetMethod ("GetAssemblyStaticGreen", flags), "#N36");
 		}
 
 		[Test]
@@ -2482,6 +6418,629 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")] // mcs depends on this
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetMethodsFlagsIncomplete_Inheritance ()
+		{
+			MethodInfo [] methods;
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#A1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#A2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#A3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#A4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#A5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#A6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#A6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#A7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#A8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#A9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#A10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#A11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#A12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#A12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#A13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#A14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#A15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#A16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#A17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#A18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#A19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#A20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#A21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#A22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#A23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#A24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#A25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#A26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#A27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#A28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#A29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#A30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#A31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#A32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#A33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#A34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#A35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#A36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#B1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#B2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#B3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#B4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#B5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#B6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#B7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#B8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#B9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#B10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#B11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#B12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#B13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#B14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#B15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#B16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#B17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#B18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#B19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#B20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#B21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#B22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#B23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#B24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#B25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#B26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#B27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#B28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#B29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#B30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#B31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#B32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#B33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#B34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#B35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#B36");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#C1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#C2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#C3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#C4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#C5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#C6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#C7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#C8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#C9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#C10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#C11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#C12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#C13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#C14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#C15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#C16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#C17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#C18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#C19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#C20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#C21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#C22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#C23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#C24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#C25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#C26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#C27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#C28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#C29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#C30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#C31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#C32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#C33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#C34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#C35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#C36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#D1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#D2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#D3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#D4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#D5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#D6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#D7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#D8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#D9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#D10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#D11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#D12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#D13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#D14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#D15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#D16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#D17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#D18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#D19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#D20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#D21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#D22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#D23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#D24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#D25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#D26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#D27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#D28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#D29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#D30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#D31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#D32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#D33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#D34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#D35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#D36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#E1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#E2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#E3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#E4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#E5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#E6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#E6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#E7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#E8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#E9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#E10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#E11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#E12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#E12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#E13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#E14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#E15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#E16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#E17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#E18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#E19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#E20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#E21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#E22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#E23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#E24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#E25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#E26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#E27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#E28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#E29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#E30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#E31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#E32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#E33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#E34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#E35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#E36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#F1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#F2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#F3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#F4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#F5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#F6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#F7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#F8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#F9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#F10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#F11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#F12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#F13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#F14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#F15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#F16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#F17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#F18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#F19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#F20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#F21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#F22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#F23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#F24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#F25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#F26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#F27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#F28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#F29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#F30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#F31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#F32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#F33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#F34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#F35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#F36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#G1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#G2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#G3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#G4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#G5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#G6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#G7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#G8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#G9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#G10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#G11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#G12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#G13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#G14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#G15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#G16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#G17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#G18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#G19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#G20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#G21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#G22");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#G23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#G24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#G25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#G26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#G27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#G28");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticRed"), "#G29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#G30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#G31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#G32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#G33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#G34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#G35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#G36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#H1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#H2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#H3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#H4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#H5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#H6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#H7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#H8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#H9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#H10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#H11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#H12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#H13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#H14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#H15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#H16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#H17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#H18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#H19");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#H20");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#H21");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#H22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#H23");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#H24");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#H24");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#H25");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#H26");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#H27");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#H28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#H29");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#H30");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#H30");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#H31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#H32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#H33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#H34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#H35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#H36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#I1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#I2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#I3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#I4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#I5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#I6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#I7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#I8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#I9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#I10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#I11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#I12");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#I13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#I14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#I15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#I16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#I17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#I18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#I19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#I20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#I21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#I22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#I23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#I24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#I25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#I26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#I27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#I28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#I29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#I30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#I31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#I32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#I33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#I34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#I35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#I36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#J1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#J2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#J3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#J4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#J5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#J6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#J7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#J8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#J9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#J10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#J11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#J12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#J13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#J14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#J15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#J16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#J17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#J18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#J19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#J20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#J21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#J22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#J23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#J24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#J25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#J26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#J27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#J28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#J29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#J30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#J31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#J32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#J33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#J34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#J35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#J36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#K1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#K2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#K3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#K4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#K5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#K6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#K7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#K8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#K9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#K10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#K11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#K12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#K13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#K14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#K15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#K16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#K17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#K18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#K19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#K20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#K21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#K22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#K23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#K24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#K25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#K26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#K27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#K28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#K29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#K30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#K31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#K32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#K33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#K34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#K35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#K36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#L1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#L2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#L3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#L4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#L5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#L6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#L7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#L8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#L9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#L10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#L11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#L12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#L13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#L14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#L15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#L16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#L17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#L18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#L19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#L20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#L21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#L22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#L23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#L24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#L25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#L26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#L27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#L28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#L29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#L30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#L31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#L32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#L33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#L34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#L35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#L36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#M1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#M2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#M3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#M4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#M5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#M6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#M6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#M7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#M8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#M9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#M10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#M11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#M12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#M12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#M13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#M14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#M15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#M16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#M17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#M18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#M19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#M20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#M21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#M22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#M23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#M24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#M25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#M26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#M27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#M28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#M29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#M30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#M31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#M32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#M33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#M34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#M35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#M36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#N1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#N2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#N3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#N4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#N5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#N6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#N7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#N8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#N9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#N10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#N11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#N12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#N13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#N14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#N15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#N16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#N17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#N18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#N19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#N20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#N21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#N22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#N23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#N24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#N25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#N26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#N27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#N28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#N29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#N30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#N31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#N32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#N33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#N34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#N35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#N36");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // mcs depends on this
 		public void TestGetMethodsFlagsIncomplete_Mono ()
 		{
 			MethodBuilder mb;
@@ -2541,6 +7100,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (GetMethodByName (methods, "Run"), "#D2");
 		}
 
+
 		[Test]
 		[Category ("NotWorking")] // mcs depends on this
 		public void TestGetMethodsFlagsIncomplete_MS ()
@@ -2596,12 +7156,638 @@ namespace MonoTests.System.Reflection.Emit
 
 			Type emittedType = tb.CreateType ();
 
-			Assert.AreEqual (1, tb.GetMethods (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Length);
+			Assert.AreEqual (1, tb.GetMethods (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Length, "#1");
 			Assert.AreEqual (tb.GetMethods (BindingFlags.Instance | BindingFlags.Public).Length,
-				emittedType.GetMethods (BindingFlags.Instance | BindingFlags.Public).Length);
-			Assert.AreEqual (0, tb.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly).Length);
+				emittedType.GetMethods (BindingFlags.Instance | BindingFlags.Public).Length, "#2");
+			Assert.AreEqual (0, tb.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly).Length, "#3");
 			Assert.AreEqual (tb.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic).Length,
-				emittedType.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic).Length);
+				emittedType.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic).Length, "#4");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // bug #322762
+		public void TestGetMethodsFlagsComplete_Inheritance ()
+		{
+			MethodInfo [] methods;
+			BindingFlags flags;
+
+			TypeBuilder blueType = module.DefineType (genTypeName (),
+				TypeAttributes.Public);
+			CreateMembers (blueType, "Blue", false);
+
+			TypeBuilder redType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, blueType);
+			CreateMembers (redType, "Red", false);
+
+			TypeBuilder greenType = module.DefineType (genTypeName (),
+				TypeAttributes.Public, redType);
+			CreateMembers (greenType, "Green", false);
+
+			blueType.CreateType ();
+			redType.CreateType ();
+			greenType.CreateType ();
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#A1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#A2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#A3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#A4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#A5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#A6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#A6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#A7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#A8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#A9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#A10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#A11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#A12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#A12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#A13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#A14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#A15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#A16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#A17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#A18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#A19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#A20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#A21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#A22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#A23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#A24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#A25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#A26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#A27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#A28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#A29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#A30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#A31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#A32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#A33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#A34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#A35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#A36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#B1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#B2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#B3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#B4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#B5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#B6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#B7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#B8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#B9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#B10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#B11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#B12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#B13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#B14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#B15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#B16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#B17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#B18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#B19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#B20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#B21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#B22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#B23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#B24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#B25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#B26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#B27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#B28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#B29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#B30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#B31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#B32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#B33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#B34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#B35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#B36");
+
+			flags = BindingFlags.Static | BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#C1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#C2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#C3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#C4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#C5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#C6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#C7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#C8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#C9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#C10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#C11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#C12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#C13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#C14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#C15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#C16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#C17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#C18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#C19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#C20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#C21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#C22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#C23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#C24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#C25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#C26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#C27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#C28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#C29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#C30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#C31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#C32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#C33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#C34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#C35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#C36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#D1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#D2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#D3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#D4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#D5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#D6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#D7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#D8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#D9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#D10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#D11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#D12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#D13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#D14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#D15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#D16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#D17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#D18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#D19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#D20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#D21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#D22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#D23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#D24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#D25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#D26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#D27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#D28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#D29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#D30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#D31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#D32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#D33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#D34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#D35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#D36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#E1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#E2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#E3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#E4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#E5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#E6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#E6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#E7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#E8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#E9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#E10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#E11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#E12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#E12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#E13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#E14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#E15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#E16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#E17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#E18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#E19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#E20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#E21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#E22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#E23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#E24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#E25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#E26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#E27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#E28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#E29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#E30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#E31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#E32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#E33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#E34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#E35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#E36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#F1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#F2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#F3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#F4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#F5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#F6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#F7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#F8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#F9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#F10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#F11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#F12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#F13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#F14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#F15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#F16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#F17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#F18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#F19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#F20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#F21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#F22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#F23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#F24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#F25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#F26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#F27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#F28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#F29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#F30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#F31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#F32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#F33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#F34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#F35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#F36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#G1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#G2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#G3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#G4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#G5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#G6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#G7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#G8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#G9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#G10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#G11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#G12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#G13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#G14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#G15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#G16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#G17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#G18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#G19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#G20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#G21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#G22");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#G23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#G24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#G25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#G26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#G27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#G28");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticRed"), "#G29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#G30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#G31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#G32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#G33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#G34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#G35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#G36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.FlattenHierarchy;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#H1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#H2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#H3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#H4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#H5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#H6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#H7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#H8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#H9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#H10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#H11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#H12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#H13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#H14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#H15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#H16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#H17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#H18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#H19");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#H20");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#H21");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#H22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#H23");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#H24");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#H24");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#H25");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#H26");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#H27");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#H28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#H29");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#H30");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#H30");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#H31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#H32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#H33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#H34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#H35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#H36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#I1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#I2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#I3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#I4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#I5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#I6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#I7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#I8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#I9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#I10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#I11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#I12");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#I13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#I14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#I15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#I16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#I17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#I18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#I19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#I20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#I21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#I22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#I23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#I24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#I25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#I26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#I27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#I28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#I29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#I30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#I31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#I32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#I33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#I34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#I35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#I36");
+
+			flags = BindingFlags.Instance | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#J1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#J2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#J3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#J4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#J5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#J6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#J7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#J8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#J9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#J10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#J11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#J12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#J13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#J14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#J15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#J16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#J17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#J18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#J19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#J20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#J21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#J22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#J23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#J24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#J25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#J26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#J27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#J28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#J29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#J30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#J31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#J32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#J33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#J34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#J35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#J36");
+
+			flags = BindingFlags.Static | BindingFlags.Public |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#K1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#K2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#K3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#K4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#K5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#K6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#K7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#K8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#K9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#K10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#K11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#K12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#K13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#K14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#K15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#K16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#K17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#K18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#K19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#K20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#K21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#K22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#K23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#K24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#K25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#K26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#K27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#K28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#K29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#K30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#K31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#K32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#K33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#K34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#K35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#K36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#L1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#L2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#L3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#L4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#L5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#L6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#L7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#L8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#L9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#L10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#L11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#L12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#L13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#L14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#L15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#L16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#L17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#L18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#L19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#L20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#L21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#L22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#L23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#L24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#L25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#L26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#L27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#L28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#L29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#L30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#L31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#L32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#L33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#L34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#L35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#L36");
+
+			flags = BindingFlags.Instance | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#M1");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#M2");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#M3");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#M4");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#M5");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#M6");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#M6");
+#endif
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#M7");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#M8");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#M9");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#M10");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#M11");
+#if NET_2_0
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#M12");
+#else
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#M12");
+#endif
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#M13");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#M14");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#M15");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#M16");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#M17");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#M18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#M19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#M20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#M21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#M22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#M23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#M24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#M25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#M26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#M27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#M28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#M29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#M30");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#M31");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#M32");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#M33");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#M34");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#M35");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#M36");
+
+			flags = BindingFlags.Static | BindingFlags.NonPublic |
+				BindingFlags.Public;
+			methods = greenType.GetMethods (flags);
+
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceBlue"), "#N1");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceBlue"), "#N2");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceBlue"), "#N3");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceBlue"), "#N4");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceBlue"), "#N5");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceBlue"), "#N6");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceRed"), "#N7");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceRed"), "#N8");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceRed"), "#N9");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceRed"), "#N10");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceRed"), "#N11");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceRed"), "#N12");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateInstanceGreen"), "#N13");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyInstanceGreen"), "#N14");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemInstanceGreen"), "#N15");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemInstanceGreen"), "#N16");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicInstanceGreen"), "#N17");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyInstanceGreen"), "#N18");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticBlue"), "#N19");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticBlue"), "#N20");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticBlue"), "#N21");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticBlue"), "#N22");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticBlue"), "#N23");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticBlue"), "#N24");
+			Assert.IsNull (GetMethodByName (methods, "GetPrivateStaticRed"), "#N25");
+			Assert.IsNull (GetMethodByName (methods, "GetFamilyStaticRed"), "#N26");
+			Assert.IsNull (GetMethodByName (methods, "GetFamANDAssemStaticRed"), "#N27");
+			Assert.IsNull (GetMethodByName (methods, "GetFamORAssemStaticRed"), "#N28");
+			Assert.IsNull (GetMethodByName (methods, "GetPublicStaticRed"), "#N29");
+			Assert.IsNull (GetMethodByName (methods, "GetAssemblyStaticRed"), "#N30");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPrivateStaticGreen"), "#N31");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamilyStaticGreen"), "#N32");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamANDAssemStaticGreen"), "#N33");
+			Assert.IsNotNull (GetMethodByName (methods, "GetFamORAssemStaticGreen"), "#N34");
+			Assert.IsNotNull (GetMethodByName (methods, "GetPublicStaticGreen"), "#N35");
+			Assert.IsNotNull (GetMethodByName (methods, "GetAssemblyStaticGreen"), "#N36");
 		}
 
 		[Test]
@@ -3113,6 +8299,412 @@ namespace MonoTests.System.Reflection.Emit
 				if (mi.Name == name)
 					return mi;
 			return null;
+		}
+
+		void CreateMembers (TypeBuilder tb, string suffix, bool defineCtors)
+		{
+			ConstructorBuilder cb;
+			MethodBuilder mb;
+			PropertyBuilder pb;
+			EventBuilder eb;
+			ILGenerator ilgen;
+
+			if (defineCtors) {
+				//
+				// instance constructors
+				//
+				cb = tb.DefineConstructor (MethodAttributes.Private,
+					CallingConventions.Standard,
+					new Type [] { typeof (int), typeof (int) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				cb = tb.DefineConstructor (MethodAttributes.Family,
+					CallingConventions.Standard,
+					new Type [] { typeof (string) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				cb = tb.DefineConstructor (MethodAttributes.FamANDAssem,
+					CallingConventions.Standard,
+					new Type [] { typeof (string), typeof (string) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				cb = tb.DefineConstructor (MethodAttributes.FamORAssem,
+					CallingConventions.Standard,
+					new Type [] { typeof (int) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				cb = tb.DefineConstructor (MethodAttributes.Public,
+					CallingConventions.Standard,
+					new Type [] { typeof (int), typeof (bool) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				cb = tb.DefineConstructor (MethodAttributes.Assembly,
+					CallingConventions.Standard,
+					new Type [] { typeof (string), typeof (int) });
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+				//
+				// static constructors
+				//
+
+				cb = tb.DefineConstructor (MethodAttributes.Private |
+					MethodAttributes.Static,
+					CallingConventions.Standard,
+					Type.EmptyTypes);
+				cb.GetILGenerator ().Emit (OpCodes.Ret);
+			}
+
+			//
+			// instance methods
+			//
+
+			mb = tb.DefineMethod ("GetPrivateInstance" + suffix,
+				MethodAttributes.Private, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamilyInstance" + suffix,
+				MethodAttributes.Family, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamANDAssemInstance" + suffix,
+				MethodAttributes.FamANDAssem, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamORAssemInstance" + suffix,
+				MethodAttributes.FamORAssem, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetPublicInstance" + suffix,
+				MethodAttributes.Public, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetAssemblyInstance" + suffix,
+				MethodAttributes.Assembly, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			//
+			// static methods
+			//
+
+			mb = tb.DefineMethod ("GetPrivateStatic" + suffix,
+				MethodAttributes.Private | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamilyStatic" + suffix,
+				MethodAttributes.Family | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamANDAssemStatic" + suffix,
+				MethodAttributes.FamANDAssem | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetFamORAssemStatic" + suffix,
+				MethodAttributes.FamORAssem | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetPublicStatic" + suffix,
+				MethodAttributes.Public | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			mb = tb.DefineMethod ("GetAssemblyStatic" + suffix,
+				MethodAttributes.Assembly | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+			//
+			// instance fields
+			//
+
+			tb.DefineField ("privateInstance" + suffix,
+				typeof (string), FieldAttributes.Private);
+			tb.DefineField ("familyInstance" + suffix,
+				typeof (string), FieldAttributes.Family);
+			tb.DefineField ("famANDAssemInstance" + suffix,
+				typeof (string), FieldAttributes.FamANDAssem);
+			tb.DefineField ("famORAssemInstance" + suffix,
+				typeof (string), FieldAttributes.FamORAssem);
+			tb.DefineField ("publicInstance" + suffix,
+				typeof (string), FieldAttributes.Public);
+			tb.DefineField ("assemblyInstance" + suffix,
+				typeof (string), FieldAttributes.Assembly);
+
+			//
+			// static fields
+			//
+
+			tb.DefineField ("privateStatic" + suffix,
+				typeof (string), FieldAttributes.Private |
+				FieldAttributes.Static);
+			tb.DefineField ("familyStatic" + suffix,
+				typeof (string), FieldAttributes.Family |
+				FieldAttributes.Static);
+			tb.DefineField ("famANDAssemStatic" + suffix,
+				typeof (string), FieldAttributes.FamANDAssem |
+				FieldAttributes.Static);
+			tb.DefineField ("famORAssemStatic" + suffix,
+				typeof (string), FieldAttributes.FamORAssem |
+				FieldAttributes.Static);
+			tb.DefineField ("publicStatic" + suffix,
+				typeof (string), FieldAttributes.Public |
+				FieldAttributes.Static);
+			tb.DefineField ("assemblyStatic" + suffix,
+				typeof (string), FieldAttributes.Assembly |
+				FieldAttributes.Static);
+
+			//
+			// instance properties
+			//
+
+			pb = tb.DefineProperty ("PrivateInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_PrivateInstance" + suffix,
+				MethodAttributes.Private, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamilyInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamilyInstance" + suffix,
+				MethodAttributes.Family, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamANDAssemInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamANDAssemInstance" + suffix,
+				MethodAttributes.FamANDAssem, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamORAssemInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamORAssemInstance" + suffix,
+				MethodAttributes.FamORAssem, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("PublicInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_PublicInstance" + suffix,
+				MethodAttributes.Public, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("AssemblyInstance" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_AssemblyInstance" + suffix,
+				MethodAttributes.Assembly, typeof (string),
+				Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			//
+			// static properties
+			//
+
+			pb = tb.DefineProperty ("PrivateStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_PrivateStatic" + suffix,
+				MethodAttributes.Private | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamilyStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamilyStatic" + suffix,
+				MethodAttributes.Family | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamANDAssemStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamANDAssemStatic" + suffix,
+				MethodAttributes.FamANDAssem | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("FamORAssemStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_FamORAssemStatic" + suffix,
+				MethodAttributes.FamORAssem | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("PublicStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_PublicStatic" + suffix,
+				MethodAttributes.Public | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			pb = tb.DefineProperty ("AssemblyStatic" + suffix,
+				PropertyAttributes.None, typeof (string),
+				Type.EmptyTypes);
+			mb = tb.DefineMethod ("get_AssemblyStatic" + suffix,
+				MethodAttributes.Assembly | MethodAttributes.Static,
+				typeof (string), Type.EmptyTypes);
+			ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+			pb.SetGetMethod (mb);
+
+			//
+			// instance events
+			//
+
+			eb = tb.DefineEvent ("OnPrivateInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnPrivateInstance" + suffix,
+				MethodAttributes.Private, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamilyInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamilyInstance" + suffix,
+				MethodAttributes.Family, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamANDAssemInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamANDAssemInstance" + suffix,
+				MethodAttributes.FamANDAssem, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamORAssemInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamORAssemInstance" + suffix,
+				MethodAttributes.FamORAssem, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnPublicInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnPublicInstance" + suffix,
+				MethodAttributes.Public, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnAssemblyInstance" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnAssemblyInstance" + suffix,
+				MethodAttributes.Family, typeof (void),
+				Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			//
+			// static events
+			//
+
+			eb = tb.DefineEvent ("OnPrivateStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnPrivateStatic" + suffix,
+				MethodAttributes.Private | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamilyStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamilyStatic" + suffix,
+				MethodAttributes.Family | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamANDAssemStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamANDAssemStatic" + suffix,
+				MethodAttributes.FamANDAssem | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnFamORAssemStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnFamORAssemStatic" + suffix,
+				MethodAttributes.FamORAssem | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnPublicStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnPublicStatic" + suffix,
+				MethodAttributes.Public | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
+
+			eb = tb.DefineEvent ("OnAssemblyStatic" + suffix,
+				EventAttributes.None, typeof (EventHandler));
+			mb = tb.DefineMethod ("add_OnAssemblyStatic" + suffix,
+				MethodAttributes.Family | MethodAttributes.Static,
+				typeof (void), Type.EmptyTypes);
+			mb.GetILGenerator ().Emit (OpCodes.Ret);
+			eb.SetAddOnMethod (mb);
 		}
 	}
 }
