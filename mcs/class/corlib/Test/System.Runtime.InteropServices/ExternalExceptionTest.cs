@@ -61,7 +61,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			Assert.AreEqual (-2147467259, ex.ErrorCode, "#B1");
 			Assert.IsNull (ex.InnerException, "#B2");
 			Assert.IsNotNull (msg, ex.Message, "#B3");
-			Assert.AreEqual (new ExternalException (null).Message, ex.Message, "#B4");
+			Assert.IsTrue (ex.Message.IndexOf (ex.GetType ().FullName) != -1, "#B4");
 
 			ex = new ExternalException (string.Empty);
 			Assert.AreEqual (-2147467259, ex.ErrorCode, "#C1");
