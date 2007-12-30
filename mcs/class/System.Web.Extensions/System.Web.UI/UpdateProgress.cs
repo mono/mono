@@ -48,19 +48,7 @@ namespace System.Web.UI
 		[IDReferenceProperty (typeof (UpdatePanel))]
 		public string AssociatedUpdatePanelID {
 			get {
-				string value = AssociatedUpdatePanelIDInternal;
-				if (value == null)
-					return String.Empty;
-				return value;
-			}
-			set {
-				AssociatedUpdatePanelIDInternal = value;
-			}
-		}
-
-		public string AssociatedUpdatePanelIDInternal {
-			get {
-				return (string) ViewState ["AssociatedUpdatePanelID"];
+				return (string) ViewState ["AssociatedUpdatePanelID"] ?? String.Empty;
 			}
 			set {
 				ViewState ["AssociatedUpdatePanelID"] = value;
@@ -118,8 +106,17 @@ namespace System.Web.UI
 		}
 
 		protected virtual IEnumerable<ScriptDescriptor> GetScriptDescriptors () {
+			string updatePanelClientId;
+			if (String.IsNullOrEmpty (AssociatedUpdatePanelID))
+				updatePanelClientId = null;
+			else {
+				UpdatePanel updatePanel = FindControl (AssociatedUpdatePanelID) as UpdatePanel;
+				if (updatePanel == null)
+					throw new InvalidOperationException ("No UpdatePanel found for AssociatedUpdatePanelID '" + AssociatedUpdatePanelID + "'.");
+				updatePanelClientId = updatePanel.ClientID;
+			}
 			ScriptControlDescriptor descriptor = new ScriptControlDescriptor ("Sys.UI._UpdateProgress", this.ClientID);
-			descriptor.AddProperty ("associatedUpdatePanelId", AssociatedUpdatePanelIDInternal);
+			descriptor.AddProperty ("associatedUpdatePanelId", updatePanelClientId);
 			descriptor.AddProperty ("displayAfter", DisplayAfter);
 			descriptor.AddProperty ("dynamicLayout", DynamicLayout);
 			yield return descriptor;
