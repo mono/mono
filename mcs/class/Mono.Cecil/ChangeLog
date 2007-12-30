@@ -1,3 +1,8 @@
+2007-12-30  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/CilWorker.cs:
+		Check for null arguments. Fix #350857.
+
 2007-12-21  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs
