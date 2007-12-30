@@ -59,9 +59,13 @@ namespace System.Web.Security {
 		DbProviderFactory factory;
 
 		string applicationName;
+		bool schemaIsOk = false;
 
 		DbConnection CreateConnection ()
 		{
+			if (!schemaIsOk && !(schemaIsOk = AspNetDBSchemaChecker.CheckMembershipSchemaVersion (factory, connectionString.ConnectionString, "membership", "1")))
+				throw new ProviderException ("Incorrect ASP.NET DB Schema Version.");
+
 			DbConnection connection;
 
 			if (connectionString == null)

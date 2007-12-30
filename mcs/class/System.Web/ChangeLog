@@ -1,3 +1,8 @@
+2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* System.Web.dll.sources: added AspNetDBSchemaChecker.cs
+	* System.Web20.csproj: added AspNetDBSchemaChecker.cs
+
 2007-12-19  Juraj Skripsky  <js@hotfeet.ch>
 
 	* System.Web.dll.sources: removed TimeoutManager.cs

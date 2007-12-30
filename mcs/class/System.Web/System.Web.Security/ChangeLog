@@ -1,3 +1,8 @@
+2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqliteMembershipProvider.cs, SqlRoleProvider.cs: added chema checking
+	* added AspNetDBSchemaChecker.cs: schema checker helper class
+
 2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Roles.cs: fixed Providers property to be thread safe

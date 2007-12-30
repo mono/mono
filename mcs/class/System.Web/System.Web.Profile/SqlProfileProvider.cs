@@ -39,6 +39,7 @@ using System.Web.Configuration;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
+using System.Web.Security;
 
 namespace System.Web.Profile
 {
@@ -48,6 +49,7 @@ namespace System.Web.Profile
 		DbProviderFactory factory;
 
 		string applicationName;
+		bool schemaIsOk = false;
 
 		public override int DeleteInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
@@ -389,6 +391,9 @@ namespace System.Web.Profile
 
 		DbConnection CreateConnection ()
 		{
+			if (!schemaIsOk && !(schemaIsOk = AspNetDBSchemaChecker.CheckMembershipSchemaVersion (factory, connectionString.ConnectionString, "profile", "1")))
+				throw new ProviderException ("Incorrect ASP.NET DB Schema Version.");
+
 			DbConnection connection = factory.CreateConnection ();
 			connection.ConnectionString = connectionString.ConnectionString;
 

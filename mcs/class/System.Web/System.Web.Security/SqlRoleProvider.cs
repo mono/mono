@@ -45,12 +45,16 @@ namespace System.Web.Security
 	{
 
 		string applicationName;
+		bool schemaIsOk = false;
 
 		ConnectionStringSettings connectionString;
 		DbProviderFactory factory;
 
 		DbConnection CreateConnection ()
 		{
+			if (!schemaIsOk && !(schemaIsOk = AspNetDBSchemaChecker.CheckMembershipSchemaVersion (factory, connectionString.ConnectionString, "role manager", "1")))
+				throw new ProviderException ("Incorrect ASP.NET DB Schema Version.");
+
 			DbConnection connection = factory.CreateConnection ();
 			connection.ConnectionString = connectionString.ConnectionString;
 
