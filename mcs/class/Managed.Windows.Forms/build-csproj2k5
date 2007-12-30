@@ -63,6 +63,8 @@ SWFhead()
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType> 
+    <AssemblyName>System.Windows.Forms</AssemblyName>     
   </PropertyGroup>
   <PropertyGroup Condition=" '\$(Configuration)|\$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -85,6 +87,8 @@ SWFhead()
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType> 
+    <AssemblyName>System.Windows.Forms</AssemblyName>     
   </PropertyGroup>
   <PropertyGroup Condition=" '\$(Configuration)|\$(Platform)' == 'Debug 1.1|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -107,6 +111,8 @@ SWFhead()
     <WarningLevel>3</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType> 
+    <AssemblyName>System.Windows.Forms</AssemblyName>     
   </PropertyGroup>
   <PropertyGroup Condition=" '\$(Configuration)|\$(Platform)' == 'Release 1.1|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -129,6 +135,8 @@ SWFhead()
     <WarningLevel>3</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <OutputType>Library</OutputType> 
+    <AssemblyName>System.Windows.Forms</AssemblyName>     
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">

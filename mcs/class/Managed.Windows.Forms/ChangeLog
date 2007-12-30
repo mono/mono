@@ -1,3 +1,8 @@
+2007-12-30  Andreia Gaita <avidigal@novell.com>
+
+	* build-csproj2k5: added output types
+	* SWF2K5.csproj: Updated project
+
 2007-12-21  Geoff Norton  <gnorton@novell.com>
 
 	* System.Windows.Forms.dll.sources: Add Dnd.cs, Pasteboard.cs and HIObjectHandler.cs
