@@ -1,3 +1,6 @@
+2007-12-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_get_delegate_invoke_impl): Fix flushing of icache.
 
 Mon Dec 10 11:08:49 CET 2007 Paolo Molaro <lupus@ximian.com>
 
