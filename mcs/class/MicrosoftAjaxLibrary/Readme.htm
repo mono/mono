@@ -1,0 +1,120 @@
+﻿<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns="http://www.w3.org/TR/REC-html40" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml">
+
+<head>
+<title> Microsoft AJAX Library 3.5 Readme </title>
+<style>
+body
+{
+    margin-left:.75in;
+    margin-right:2.25in;
+    margin-top:.5in;
+    margin-botton:.25in;
+    font-family:verdana;
+    font-size:10pt;
+}
+
+h1
+{
+   font-size:20pt;
+   padding-top:.20in;
+   margin-left:-.25in;
+}
+
+h2
+{
+   font-size:16pt;
+   padding-top:.2in;
+   margin-left:-.25in;
+}
+
+li
+{
+   margin-top:3pt;
+   margin-botton:6pt;
+
+}
+
+p.note
+{
+   margin-left:.5in;
+}
+
+</style>
+</head>
+<body>
+<h1>Microsoft AJAX Library 3.5 Readme</h1>
+
+<h2>Overview</h2>
+
+<p>For AJAX development, the Microsoft AJAX Library package contains the
+complete set of client JavaScript resources for ASP.NET AJAX client framework
+components in ASP.NET 3.5. The Microsoft AJAX Library is primarily intended for these
+scenarios:</p>
+
+<ul>
+	<li>Building client-centric AJAX applications on any platform and with any server-based
+	technology, including those that have
+	no dependency on ASP.NET, such as PHP and ColdFusion.</li>
+	<li>In ASP.NET AJAX applications, using the Microsoft AJAX JavaScript runtime
+	from the file system and not from embedded resources. The <strong>ScriptPath</strong> property
+	of the <strong>ScriptManager</strong> class can be used for this purpose. </li>
+</ul>
+
+<p class="note"><strong>Note</strong> &nbsp;For ASP.NET users, the Microsoft AJAX Library includes the JavaScript resource files that are available to ASP.NET pages that
+contain a <strong>ScriptManager</strong> server control.</p>
+
+<h2>Supported Browsers</h2>
+<p>The Microsoft AJAX Library package supports the following browsers:</p>
+<ul>
+	<li>Microsoft Internet Explorer 6.0 and 7.0</li>
+	<li>Mozilla Firefox 1.5 and 2.0</li>
+	<li>Apple Safari 2.0</li>
+	<li>Opera 9</li>
+</ul>
+
+<h2>Known Issues</h2>
+
+<p>A bug in ASP.NET 3.5 requires that the script files in
+the Microsoft AJAX Library have the locale suffix in the file name when referenced by
+the <strong>ScriptManager</strong> control's <strong>ScriptPath</strong> property.</p>
+
+<h3>Problem Description</h3>
+
+<p>In ASP.NET, non-default AJAX script files can be used by specifying
+the <strong>ScriptPath</strong> property of the <strong>ScriptManager</strong> control.
+The issue is that in some scenarios, the <strong>ScriptManager</strong> control
+expects the file names to include the locale suffix. For example, there are
+scenarios where the <strong>ScriptManager</strong> control expects
+the name MicrosoftAjax.<strong>en-US</strong>.js instead of MicrosoftAjax.js.</p>
+
+<h3><strong>Workaround</strong></h3>
+
+<p>The Microsoft AJAX Library 3.5 accounts for this bug and ships duplicate files
+whose name includes the locale suffix. This means that MicrosoftAjax.en-US.js is
+identical to MicrosoftAjax.js;. MicrosoftAjaxWebForms.js is identical to
+MicrosoftAjaxWebForms-en.US.js, and so on for the other framework JavaScript
+(.js) files in the Microsoft AJAX Library.</p>
+
+<p>In other scenarios, in the Microsoft AJAX Library 3.5 you can continue to use the
+files without the locale suffixes, as was the case in the Microsoft AJAX Library 1.0.</p>
+
+<h2>Useful Links</h2>
+<ul>
+<li>
+	Community Web site: <a href ="http://www.asp.net"> http://www.asp.net </a>
+</li>
+<li>
+	 Download location: <a href ="http://www.asp.net/ajax/downloads/">http://www.asp.net/ajax/downloads/</a>
+</li>
+<li>
+	Documentation: <a href ="http://www.asp.net/ajax/documentation/live/">http://www.asp.net/ajax/documentation/live/</a>
+</li>
+<li>
+	Community Forum:
+
+	<a href="http://forums.asp.net/1007.aspx">http://forums.asp.net/1007.aspx</a>
+</li>
+</ul>
+</body>
+</html>
