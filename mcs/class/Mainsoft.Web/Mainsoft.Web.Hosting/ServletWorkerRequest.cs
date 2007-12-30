@@ -12,6 +12,7 @@ namespace Mainsoft.Web.Hosting
 		readonly HttpServlet _HttpServlet;
 		readonly HttpServletRequest _HttpServletRequest;
 		readonly HttpServletResponse _HttpServletResponse;
+		OutputStreamWrapper _outputStream;
 
 		public ServletWorkerRequest (HttpServlet servlet, HttpServletRequest req, HttpServletResponse resp)
 			: base (req.getContextPath(), req.getServletPath (), req.getRequestURI ()) {
@@ -175,9 +176,9 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		protected override OutputStreamWrapper CreateOutputStream (bool binary) {
-			return binary ?
+			return _outputStream ?? (_outputStream = binary ?
 				new OutputStreamWrapper (_HttpServletResponse.getOutputStream ()) :
-				new OutputStreamWrapper (_HttpServletResponse.getWriter ());
+				new OutputStreamWrapper (_HttpServletResponse.getWriter ()));
 		}
 
 		public override HttpSession GetSession (bool create) {
