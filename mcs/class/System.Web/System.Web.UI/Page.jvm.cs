@@ -42,6 +42,7 @@ using javax.faces.@event;
 using javax.faces.el;
 using javax.faces.component;
 using System.Threading;
+using System.Web.Configuration;
 
 namespace System.Web.UI
 {
@@ -86,9 +87,8 @@ namespace System.Web.UI
 		internal bool IsMultiForm {
 			get {
 				if (!_isMultiFormInited) {
-					Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) System.Web.Configuration.WebConfigurationManager.GetSection ("mainsoft.web/pages");
-					if (pageSection != null)
-						_isMultiForm = pageSection.MultiForm;
+					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.web.portal.multiform"];
+					_isMultiForm = isMultiForm != null ? Boolean.Parse(isMultiForm) : false;
 
 					_isMultiFormInited = true;
 				}
