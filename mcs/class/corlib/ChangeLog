@@ -1,3 +1,7 @@
+2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: added Consts.cs.
+
 2007-12-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: added ExternalExceptionTest.cs.

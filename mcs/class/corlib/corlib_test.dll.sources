@@ -1,3 +1,4 @@
+../../../build/common/Consts.cs
 Microsoft.Win32/RegistryKeyTest.cs
 System/ActivatorTest.cs
 System/AppDomainSetupTest.cs
