@@ -2602,7 +2602,7 @@ labels			: /* EMPTY */
 			| id
                           {
                                 ArrayList label_list = new ArrayList ();
-                                label_list.Add ($1);
+                                label_list.Add (codegen.CurrentMethodDef.AddLabelRef ((string) $1));
                                 $$ = label_list;
                           }
 			| int32
@@ -2614,7 +2614,7 @@ labels			: /* EMPTY */
 			| labels COMMA id
                           {
                                 ArrayList label_list = (ArrayList) $1;
-                                label_list.Add ($3);
+                                label_list.Add (codegen.CurrentMethodDef.AddLabelRef ((string) $3));
                           }
 			| labels COMMA int32
                           {

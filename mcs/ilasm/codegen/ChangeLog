@@ -1,3 +1,8 @@
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* SwitchInstr.cs (Emit): Switch from using strings
+	to LabelInfo.
+
 2007-10-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodPointerTypeRef.cs (.ctor): generate

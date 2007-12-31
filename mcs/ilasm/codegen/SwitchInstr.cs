@@ -32,8 +32,8 @@ namespace Mono.ILASM {
                         if (label_list != null) {
                                 label_array = new PEAPI.CILLabel[label_list.Count];
                                 foreach (object lab in label_list) {
-                                        if (lab is string) {
-                                                label_array[count++] = meth.GetLabelDef ((string) lab);
+                                        if (lab is LabelInfo) {
+                                                label_array[count++] = ((LabelInfo)lab).Label;
                                         } else {                                                
                                                 throw new InternalErrorException ("offsets in switch statements.");
                                         }

@@ -1,4 +1,10 @@
-2006-06-05  Rodrigo Kumpera <kumpera@gmail.com>
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILParser.jay: Create LabelInfo instances for switch labels,
+	this allows the code generator to spot invalid labels.
+	Fixes #350480.
+
+2007-06-05  Rodrigo Kumpera <kumpera@gmail.com>
 
 	* ILParser.jay: Support for variance related generic modifiers <+T> and <-T> 
 
