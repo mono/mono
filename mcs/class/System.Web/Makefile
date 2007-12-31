@@ -133,6 +133,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/NoEventValidation.aspx \
 	Test/mainsoft/NunitWebResources/ListControlPage.aspx \
 	Test/mainsoft/NunitWebResources/TextBoxTestlPage.aspx \
+	Test/mainsoft/NunitWebResources/ClearErrorOnError.aspx \
+	Test/mainsoft/NunitWebResources/RedirectOnError.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 RESX_DIST =  resources/TranslationResources.resx

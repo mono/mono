@@ -664,9 +664,14 @@ namespace System.Web {
 				if (Error != null){
 					try {
 						Error (this, EventArgs.Empty);
-					} catch (ThreadAbortException){
-						// This happens on Redirect() or End()
-						Thread.ResetAbort ();
+					} catch (ThreadAbortException taex){
+						context.ClearError ();
+						if (context.Response.FlagEnd == taex.ExceptionState)
+							// This happens on Redirect() or End()
+							Thread.ResetAbort ();
+						else
+							// This happens on Thread.Abort()
+							context.AddError (taex);
 					} catch (Exception ee){
 						context.AddError (ee);
 					}
@@ -699,10 +704,17 @@ namespace System.Web {
 				stop_processing = true;
 				if (obj is StepTimeout)
 					ProcessError (new HttpException ("The request timed out."));
-				else
-					PipelineDone ();
+				else {
+					context.ClearError ();
+					if (context.Response.FlagEnd != obj)
+						context.AddError (taex);
+				}
+
+				PipelineDone ();
 			} catch (Exception e) {
-				Console.WriteLine ("Tick caught an exception that has not been propagated:\n" + e);
+				stop_processing = true;
+				ProcessError (e);
+				PipelineDone ();
 			}
 		}
 
@@ -762,14 +774,6 @@ namespace System.Web {
 						in_begin = true;
 						context.BeginTimeoutPossible ();
 						current_ai.begin (this, EventArgs.Empty, async_callback_completed_cb, current_ai.data);
-					} catch (ThreadAbortException taex){
-						object obj = taex.ExceptionState;
-						Thread.ResetAbort ();
-						stop_processing = true;
-						if (obj is StepTimeout)
-							ProcessError (new HttpException ("The request timed out."));
-					} catch (Exception e){
-						ProcessError (e);
 					} finally {
 						in_begin = false;
 						context.EndTimeoutPossible ();
@@ -787,14 +791,6 @@ namespace System.Web {
 					try {
 						context.BeginTimeoutPossible ();
 						d (this, EventArgs.Empty);
-					} catch (ThreadAbortException taex){
-						object obj = taex.ExceptionState;
-						Thread.ResetAbort ();
-						stop_processing = true;
-						if (obj is StepTimeout)
-							ProcessError (new HttpException ("The request timed out."));
-					} catch (Exception e){
-						ProcessError (e);
 					} finally {
 						context.EndTimeoutPossible ();
 					}
@@ -1014,14 +1010,8 @@ namespace System.Web {
 #endif
 					}
 				}
-			} catch (ThreadAbortException taex){
-				object obj = taex.ExceptionState;
-				Thread.ResetAbort ();
-				stop_processing = true;
-				if (obj is StepTimeout)
-					ProcessError (new HttpException ("The request timed out."));
-			} catch (Exception e){
-				ProcessError (e);
+				if (context.Error != null)
+					throw new TargetInvocationException(context.Error);
 			} finally {
 				in_begin = false;
 				context.EndTimeoutPossible ();
@@ -1579,4 +1569,3 @@ namespace System.Web {
 	}
 #endregion
 }
-

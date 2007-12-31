@@ -1,3 +1,4 @@
+
 //
 // Tests for System.Web.UI.Page
 //
@@ -121,12 +122,16 @@ namespace MonoTests.System.Web.UI {
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RedirectOnError.aspx", "RedirectOnError.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
 #else
 			WebTest.CopyResource (GetType (), "PageCultureTest.aspx", "PageCultureTest.aspx");
 			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
 			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
 			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
 			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "RedirectOnError.aspx", "RedirectOnError.aspx");
+			WebTest.CopyResource (GetType (), "ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
 #endif
 		}
 
@@ -1255,6 +1260,25 @@ namespace MonoTests.System.Web.UI {
 
 			#endregion
 		}
+
+                [Test]
+                [Category ("NunitWeb")]
+                public void ClearErrorOnErrorTest ()
+                {
+                        WebTest t = new WebTest ("ClearErrorOnError.aspx");
+                        string html = t.Run ();
+                        Assert.AreEqual (HttpStatusCode.OK, t.Response.StatusCode);
+                }
+
+                [Test]
+                [Category ("NunitWeb")]
+                public void RedirectOnErrorTest ()
+                {
+                        WebTest t = new WebTest ("RedirectOnError.aspx");
+                        string html = t.Run ();
+                        Assert.AreEqual (HttpStatusCode.Found, t.Response.StatusCode);
+                }
+
 #endif
 
 		[TestFixtureTearDown]

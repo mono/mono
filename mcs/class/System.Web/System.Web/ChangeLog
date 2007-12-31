@@ -1,5 +1,10 @@
 2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* HttpContext.cs: added HasError method
+	* HttpApplication.cs: refactored thread abort handling
+
+2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* HttpRuntime.cs: fixed HttpRuntime, added Cache.DependencyCache
 	initialization
 

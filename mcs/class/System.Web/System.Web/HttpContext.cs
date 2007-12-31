@@ -401,6 +401,15 @@ namespace System.Web {
 				errors = null;
 		}
 
+		internal bool HasError (Exception e)
+		{
+			if (errors == e)
+				return true;
+
+			return (errors is ArrayList) ?
+				((ArrayList) errors).Contains (e) : false;
+		}
+
 		public void ClearError ()
 		{
 			errors = null;

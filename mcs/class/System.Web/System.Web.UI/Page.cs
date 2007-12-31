@@ -49,10 +49,10 @@ using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Reflection;
 #if NET_2_0
 using System.Web.UI.Adapters;
 using System.Collections.Generic;
-using System.Reflection;
 #endif
 
 namespace System.Web.UI
@@ -1231,24 +1231,29 @@ public partial class Page : TemplateControl, IHttpHandler
 				ExitThread ();
 		}
 #else
-		} catch (ThreadAbortException) {
-			// Do nothing, just ignore it by now.
+		} catch (ThreadAbortException taex) {
+			if (context.Response.FlagEnd == taex.ExceptionState)
+				Thread.ResetAbort ();
+			else
+				throw;
 		} catch (Exception e) {
 			ProcessException (e);
-			throw;
 		} finally {
 			ProcessUnload ();
 		}
 #endif
 	}
 
-	void ProcessException (Exception ex) {
-		_context.AddError (ex); // OnError might access LastError
-		OnError (EventArgs.Empty);
-		_context.ClearError (ex);
+	void ProcessException (Exception e) {
 		// We want to remove that error, as we're rethrowing to stop
 		// further processing.
-		Trace.Warn ("Unhandled Exception", ex.ToString (), ex);
+		Trace.Warn ("Unhandled Exception", e.ToString (), e);
+		_context.AddError (e); // OnError might access LastError
+		OnError (EventArgs.Empty);
+		if (_context.HasError (e)) {
+			_context.ClearError (e);
+			throw new TargetInvocationException (e);
+		}
 	}
 
 	void ProcessUnload () {
