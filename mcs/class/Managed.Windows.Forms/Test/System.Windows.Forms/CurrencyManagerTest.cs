@@ -643,6 +643,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		int metadata_changed;
 		string event_log = "";
 		ItemChangedEventArgs item_changed_args;
+#if NET_2_0
+		bool list_changed_called;
+		ListChangedEventArgs list_changed_args;
+#endif
 
 		void CurrentChanged (object sender, EventArgs args)
 		{
@@ -679,6 +683,16 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			//Console.WriteLine (Environment.StackTrace);
 			event_log += String.Format ("{0}: MetaDataChanged\n", metadata_changed);
 		}
+#if NET_2_0
+		// CurrencyManager.ListChanged handler, not IBindingList.ListChanged
+		void ListChangedEvent (object sender, ListChangedEventArgs args)
+		{
+			list_changed_called = true;
+			list_changed_args = args;
+			Console.WriteLine ("CurrencyManager.ListChanged ({0},{1},{2})", args.ListChangedType, args.OldIndex, args.NewIndex);
+
+		}
+#endif
 
 		[Test]
 		public void AddNew ()
@@ -691,6 +705,10 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			cm.CurrentChanged += new EventHandler (CurrentChanged);
 			cm.PositionChanged += new EventHandler (PositionChanged);
 			cm.ItemChanged += new ItemChangedEventHandler (ItemChanged);
+#if NET_2_0
+			list_changed_called = false;
+			cm.ListChanged += new ListChangedEventHandler (ListChangedEvent);
+#endif
 
 			Assert.AreEqual (0, cm.Position, "AddNew1");
 			Assert.AreEqual (10, cm.Count, "AddNew2");
@@ -706,9 +724,17 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (-1, item_changed_args.Index, "AddNew6");
 			Assert.AreEqual (1, current_changed, "AddNew7");
 			Assert.AreEqual (2, position_changed, "AddNew8");
+#if NET_2_0
+			Assert.AreEqual (true, list_changed_called, "AddNew9");
+			Assert.AreEqual (-1, list_changed_args.OldIndex, "AddNew10");
+			Assert.AreEqual (10, list_changed_args.NewIndex, "AddNew11");
+#endif
 
 			cm.CurrentChanged -= new EventHandler (CurrentChanged);
 			cm.PositionChanged -= new EventHandler (PositionChanged);
+#if NET_2_0
+			cm.ListChanged -= new ListChangedEventHandler (ListChangedEvent);
+#endif
 		}
 
 		[Test]
