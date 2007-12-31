@@ -1,3 +1,14 @@
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_decode_row): Assert if index is bigger
+	than the table row count. It's the resposibility of the caller to
+	make the bounds check and raise the correct error.
+
+	* metadata.c (mono_metadata_decode_row_col): Same.
+
+	* loader.c (mono_get_method_from_token): perform bounds check
+	on token for methoddef table.
+
 2007-12-29  Miguel de Icaza  <miguel@novell.com>
 
 	* icall.c
