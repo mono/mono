@@ -447,7 +447,7 @@ namespace System.Web.UI.WebControls {
 		return this.ValidatorCommonOnSubmit();
 	}
 	return true;
-}
+};
 ", true);
 #else		
 						"WebUIValidation.js"));
