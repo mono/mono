@@ -36,7 +36,7 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions assembly
-#if !NET_3_5 || TARGET_JVM || TARGET_DOTNET
+#if !NET_3_5
 [assembly: AssemblyVersion ("1.0.61025.0")]
 [assembly: AssemblyInformationalVersion ("0.0.0.1")]
 [assembly: AssemblyTrademark ("")]
