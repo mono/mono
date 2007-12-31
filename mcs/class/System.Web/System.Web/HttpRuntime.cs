@@ -80,6 +80,7 @@ namespace System.Web {
 			_trace_manager = new TraceManager ();
 			_cache = new Cache ();
 			_internalCache = new Cache();
+			_internalCache.DependencyCache = _cache;
 		}
 
 		static private HttpRuntime _runtimeInstance {
@@ -146,6 +147,7 @@ namespace System.Web {
 
 			cache = new Cache ();
 			internalCache = new Cache ();
+			internalCache.DependencyCache = cache;
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
 		}
 

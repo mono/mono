@@ -93,9 +93,9 @@ namespace System.Web.UI.WebControls
 
 			string [] dependencies;
 			if (cacheKeyDependency.Length > 0)
-				dependencies = new string [] { cacheKeyDependency, controlID };
+				dependencies = new string [] { cacheKeyDependency };
 			else
-				dependencies = new string [] { controlID };
+				dependencies = new string [] { };
 
 			DataCache.Add (key, o,
 				new CacheDependency (new string [] { }, dependencies),

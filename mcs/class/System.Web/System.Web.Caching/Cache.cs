@@ -45,6 +45,7 @@ namespace System.Web.Caching
 #else
 		Hashtable cache;
 #endif
+		Cache dependencyCache;
 		public static readonly DateTime NoAbsoluteExpiration = DateTime.MaxValue;
 		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
 		
@@ -149,7 +150,7 @@ namespace System.Web.Caching
 			if (dependencies != null) {
 				ci.Dependency = dependencies;
 				dependencies.DependencyChanged += new EventHandler (OnDependencyChanged);
-				dependencies.SetCache (this);
+				dependencies.SetCache (DependencyCache);
 			}
 			ci.SlidingExpiration = slidingExpiration;
 			if (slidingExpiration != NoSlidingExpiration)
@@ -296,6 +297,18 @@ namespace System.Web.Caching
 				if (it == null) return DateTime.MaxValue;
 				return it.LastChange;
 			}
+		}
+
+		internal Cache DependencyCache
+		{
+			get
+			{
+				if (dependencyCache == null)
+					return this;
+
+				return dependencyCache;
+			}
+			set { dependencyCache = value; }
 		}
 	}
 

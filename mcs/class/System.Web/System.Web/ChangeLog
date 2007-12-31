@@ -1,3 +1,8 @@
+2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRuntime.cs: fixed HttpRuntime, added Cache.DependencyCache
+	initialization
+
 2007-12-26 Igor Zelmanovich <igorz@mainsoft.com>
 	
 	* TraceContext.cs:

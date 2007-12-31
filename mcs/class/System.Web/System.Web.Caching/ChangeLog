@@ -1,3 +1,8 @@
+2007-12-31  Vladimir Krasnov  <vladimirk@maimsoft.com>
+
+	* Cache.cs: added DependencyCache property, a cache object for
+	creating dependencies
+
 2007-12-19  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Cache.cs: Replace periodic timer (60s) with per-cache-item expiration

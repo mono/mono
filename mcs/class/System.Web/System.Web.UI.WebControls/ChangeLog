@@ -1,3 +1,8 @@
+2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* DataSourceCacheManager.cs: fixed SetCachedObject, fixed
+	CacheDependency keys
+
 2007-12-24 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs: revert changes from r91230
