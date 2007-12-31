@@ -1,3 +1,18 @@
+2007-12-31 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldftn_invalid_token_out_of_bounds.il: added.
+	
+	* invalid_ldftn_invalid_token_type.il: added.
+
+	* make_ldftn_test.sh: added.
+
+	* make_test.sh: new tests for ldftn.
+
+	* AssemblyRunner.cs: added BadImageFormatException
+	to the list of invalid code errors. Removed
+	some dead code and an useless message.
+
+
 2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_non_empty_stack_at_try_begin.il: added.
