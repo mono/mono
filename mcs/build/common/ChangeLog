@@ -1,3 +1,7 @@
+2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Consts.cs.in: Add corlib assembly name.
+
 2007-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	* Consts.cs.in: Update 3.5 to RTM version number.
