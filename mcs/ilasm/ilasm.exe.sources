@@ -70,6 +70,7 @@ codegen/FileRef.cs
 codegen/MethodPointerTypeRef.cs
 codegen/GenericArguments.cs
 codegen/GenericParameters.cs
+codegen/EmitByteInstr.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILTokenizingException.cs

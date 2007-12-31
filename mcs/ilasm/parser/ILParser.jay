@@ -2075,6 +2075,11 @@ method_decls		: /* EMPTY */
 			;
 
 method_decl		: D_EMITBYTE int32
+						{
+							codegen.CurrentMethodDef.AddInstr (new
+                                        EmitByteIntr ((int) $2, tokenizer.Location));
+                          
+						}
 			| D_MAXSTACK int32
                           {
                                 codegen.CurrentMethodDef.SetMaxStack ((int) $2);

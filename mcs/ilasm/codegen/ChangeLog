@@ -1,5 +1,10 @@
 2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* EmiteByteInst.cs: added. Implements support
+	for the .emitbyte directive.
+
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* SwitchInstr.cs (Emit): Switch from using strings
 	to LabelInfo.
 

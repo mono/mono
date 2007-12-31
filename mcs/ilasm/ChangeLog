@@ -1,3 +1,7 @@
+2007-12-31  Rodrigo Kumpera <rkumpera@novell.com>
+
+	* ilasm.exe.sources: added EmiteByteInst.cs.
+
 2006-06-07  Ankit Jain  <jankit@novell.com>
 
 	* Report.cs (Report.FilePath): New, static property.
