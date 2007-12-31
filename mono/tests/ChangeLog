@@ -1,3 +1,8 @@
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid-token.il, Makefile.am: Add test for loading
+	invalid tokens.
+
 2007-12-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Enable the async-exc-compilation test on x86/amd64.
