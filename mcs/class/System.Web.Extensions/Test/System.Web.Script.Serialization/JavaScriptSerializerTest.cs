@@ -752,7 +752,7 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException), "Maximum length exceeded.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void MaxJsonLengthSerializeToLong () 
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
