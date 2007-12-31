@@ -277,6 +277,14 @@ namespace System.Windows.Forms {
 			transfering_data = false;
 		}
 
+#if NET_2_0
+		void OnListChanged (ListChangedEventArgs args)
+		{
+			if (ListChanged != null)
+				ListChanged (this, args);
+		}
+#endif
+
 		protected virtual void OnPositionChanged (EventArgs e)
 		{
 			if (onPositionChangedHandler != null)
@@ -369,6 +377,8 @@ namespace System.Windows.Forms {
 				MetaDataChanged (this, args);
 		}
 
+		/* TODO - We need to fire the 2.0 ListChanged event for -likely- all the events,
+		since we are only doing it by now for ItemChanged - but need tests to ensure it */
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
 			switch (e.ListChangedType) {
@@ -413,6 +423,7 @@ namespace System.Windows.Forms {
 					UpdateIsBinding ();
 #else
 					OnItemChanged (new ItemChangedEventArgs (-1));
+					OnListChanged (e);
 #endif
 				}
 				else {
@@ -421,10 +432,12 @@ namespace System.Windows.Forms {
 						ChangeRecordState (listposition + 1,
 								   false, false, false, false);
 						OnItemChanged (new ItemChangedEventArgs (-1));
+						OnListChanged (e);
 						OnPositionChanged (EventArgs.Empty);
 					}
 					else {
 						OnItemChanged (new ItemChangedEventArgs (-1));
+						OnListChanged (e);
 					}
 #else
 					OnItemChanged (new ItemChangedEventArgs (-1));

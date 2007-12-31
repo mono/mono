@@ -1,3 +1,10 @@
+2007-12-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CurrencyManager.cs: Actually fire the 2.0 ListChanged event when
+	an item in the IBindingList source changes with
+	ListChangedType.ItemAdded. Ignore for now firing the event for other
+	changes, since we want to have tests for those cases as well.
+
 2007-12-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Don't store a 1x1 Bitmap for every TextBox
