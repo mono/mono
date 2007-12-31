@@ -102,7 +102,12 @@ namespace System.Web.Script.Services
 					_xmlSer.Serialize (xwriter, result);
 				}
 				else
+				{
+#if NET_3_5
+					result = new JsonResult (result);
+#endif
 					LogicalTypeInfo.JSSerializer.Serialize (result, writer);
+				}
 			}
 
 			bool HasParameters { get { return _params != null && _params.Length > 0; } }
@@ -470,5 +475,14 @@ if (typeof({0}) === 'undefined') {{", className);
 
 			return tm;
 		}
+#if NET_3_5
+		sealed class JsonResult
+		{
+			public readonly object d;
+			public JsonResult (object result) {
+				d = result;
+			}
+		}
+#endif
 	}
 }
