@@ -6,12 +6,15 @@ using javax.faces.component;
 using javax.faces.context;
 using System.Diagnostics;
 using System.Web.UI;
+using javax.faces.render;
+using javax.faces;
 
 namespace Mainsoft.Web.Hosting
 {
 	public abstract class BaseFacesStateManager : StateManager
 	{
 		protected static readonly string VIEWSTATE = "__VIEWSTATE";
+		protected static readonly RenderKitFactory RenderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
 
 		public override StateManager.SerializedView saveSerializedView (FacesContext facesContext) {
 			Object treeStruct = getTreeStructureToSave (facesContext);

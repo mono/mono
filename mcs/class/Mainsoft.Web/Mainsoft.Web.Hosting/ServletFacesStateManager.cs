@@ -18,8 +18,6 @@ namespace Mainsoft.Web.Hosting
 {
 	public sealed class ServletFacesStateManager : BaseFacesStateManager
 	{
-		static readonly RenderKitFactory RenderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
-
 		public override void writeState (FacesContext facesContext, StateManager.SerializedView serializedView) {
 			Trace.WriteLine ("Entering writeState");
 
