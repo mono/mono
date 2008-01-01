@@ -1,3 +1,7 @@
+2008-01-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* test-607.cs: test for bug #351055.
+
 2007-10-29  Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Fixed gmcs location.

@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -1321,7 +1322,12 @@ namespace Mono.CSharp {
 			try {
 				v = new Version (version);
 			} catch {
-				return false;
+				try {
+					int major = int.Parse (version, CultureInfo.InvariantCulture);
+					v = new Version (major, 0);
+				} catch {
+					return false;
+				}
 			}
 
 			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
