@@ -127,6 +127,9 @@ namespace System.Web.UI
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
+
+			Page.ClientScript.RegisterForEventValidation (UniqueID);
+
 			writer.AddStyleAttribute (HtmlTextWriterStyle.Display, "none");
 			writer.AddStyleAttribute (HtmlTextWriterStyle.Visibility, "hidden");
 			writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
