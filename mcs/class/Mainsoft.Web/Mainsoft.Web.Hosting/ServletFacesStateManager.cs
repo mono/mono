@@ -49,6 +49,7 @@ namespace Mainsoft.Web.Hosting
 			if (isSavingStateInClient (facesContext)) {
 				RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
 				ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
+				responseStateManager.getTreeStructureToRestore (facesContext, viewId); //ignore result. Must call for compatibility with sun implementation.
 				serializedComponentStates = responseStateManager.getComponentStateToRestore (facesContext);
 			}
 			else {
