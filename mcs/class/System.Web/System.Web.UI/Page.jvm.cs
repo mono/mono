@@ -127,6 +127,7 @@ namespace System.Web.UI
 			System.Diagnostics.Trace.WriteLine ("encodeChildren");
 
 			EnterThread (HttpContext.Current);
+			bool wasException = false;
 			try {
 				if (!context.getResponseComplete ()) {
 
@@ -153,12 +154,12 @@ namespace System.Web.UI
 				}
 			}
 			catch (Exception ex) {
-				if (!(ex is ThreadAbortException))
-					ProcessException (ex);
-				throw;
+				wasException = true;
+				HandleException (ex);
 			}
 			finally {
-				ProcessUnload ();
+				if (!wasException)
+					ProcessUnload ();
 				ExitThread ();
 			}
 		}
@@ -210,7 +211,6 @@ namespace System.Web.UI
 			}
 			catch (Exception ex) {
 				HandleException (ex);
-				throw;
 			}
 			finally {
 				ExitThread ();
@@ -232,7 +232,6 @@ namespace System.Web.UI
 			}
 			catch (Exception ex) {
 				HandleException (ex);
-				throw;
 			}
 			finally {
 				ExitThread ();
@@ -248,7 +247,6 @@ namespace System.Web.UI
 			}
 			catch (Exception ex) {
 				HandleException (ex);
-				throw;
 			}
 			finally {
 				ExitThread ();
@@ -264,7 +262,6 @@ namespace System.Web.UI
 			}
 			catch (Exception ex) {
 				HandleException (ex);
-				throw;
 			}
 			finally {
 				ExitThread ();
@@ -284,7 +281,6 @@ namespace System.Web.UI
 			}
 			catch (Exception ex) {
 				HandleException (ex);
-				throw;
 			}
 			finally {
 				ExitThread ();
@@ -293,8 +289,18 @@ namespace System.Web.UI
 
 		void HandleException (Exception ex) {
 			try {
-				if (!(ex is ThreadAbortException))
+				if (ex is ThreadAbortException) {
+					if (_context.Response.FlagEnd == ((ThreadAbortException) ex).ExceptionState) {
+						Thread.ResetAbort ();
+						if (getFacesContext () != null)
+							getFacesContext ().responseComplete ();
+						return;
+					}
+				}
+				else
 					ProcessException (ex);
+
+				vmw.common.TypeUtils.Throw (ex);
 			}
 			finally {
 				ProcessUnload ();

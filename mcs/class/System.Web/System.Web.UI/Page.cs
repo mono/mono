@@ -1201,6 +1201,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 	{
 #if TARGET_J2EE
+		bool wasException = false;
 		if (getFacesContext () != null)
 			EnterThread (context);
 		else
@@ -1223,13 +1224,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			InternalProcessRequest ();
 #if TARGET_J2EE
 		} catch (Exception ex) {
+			wasException = true;
 			HandleException (ex);
-			throw;
-		}
-		finally {
-			if (getFacesContext () != null)
-				ExitThread ();
-		}
 #else
 		} catch (ThreadAbortException taex) {
 			if (context.Response.FlagEnd == taex.ExceptionState)
@@ -1238,10 +1234,15 @@ public partial class Page : TemplateControl, IHttpHandler
 				throw;
 		} catch (Exception e) {
 			ProcessException (e);
+#endif
 		} finally {
+#if TARGET_J2EE
+			if (getFacesContext () != null)
+				ExitThread ();
+			else if (!wasException)
+#endif
 			ProcessUnload ();
 		}
-#endif
 	}
 
 	void ProcessException (Exception e) {
