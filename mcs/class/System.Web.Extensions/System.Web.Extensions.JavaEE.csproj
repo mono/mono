@@ -164,27 +164,27 @@
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.debug.jvm.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjax.debug.jvm.js">
       <Link>Resources\MicrosoftAjax.debug.jvm.js</Link>
       <LogicalName>MicrosoftAjax.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjax.js">
-      <Link>Resources\MicrosoftAjax.js</Link>
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjax.jvm.js">
+      <Link>Resources\MicrosoftAjax.jvm.js</Link>
       <LogicalName>MicrosoftAjax.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.debug.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjaxTimer.debug.js">
       <Link>Resources\MicrosoftAjaxTimer.debug.js</Link>
       <LogicalName>MicrosoftAjaxTimer.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxTimer.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjaxTimer.js">
       <Link>Resources\MicrosoftAjaxTimer.js</Link>
       <LogicalName>MicrosoftAjaxTimer.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.debug.jvm.js">
-      <Link>Resources\MicrosoftAjaxWebForms.debug.jvm.js</Link>
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjaxWebForms.debug.js">
+      <Link>Resources\MicrosoftAjaxWebForms.debug.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.debug.js</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\1.0.61025.0\MicrosoftAjaxWebForms.js">
+    <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjaxWebForms.js">
       <Link>Resources\MicrosoftAjaxWebForms.js</Link>
       <LogicalName>MicrosoftAjaxWebForms.js</LogicalName>
     </EmbeddedResource>
