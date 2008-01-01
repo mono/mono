@@ -36,17 +36,8 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions assembly
-#if !NET_3_5
-[assembly: AssemblyVersion ("1.0.61025.0")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
-[assembly: AssemblyTrademark ("")]
-[assembly: AssemblyConfiguration ("Development version")]
-#else
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: AssemblyVersion(Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyInformationalVersionAttribute (Consts.FxVersion)]
-#endif
+[assembly: AssemblyVersion ("3.5.0.0")]
+[assembly: AssemblyInformationalVersion ("3.5.0.0")]
 
 [assembly: AssemblyTitle ("System.Web.Extensions.dll")]
 [assembly: AssemblyDescription ("System.Web.Extensions.dll")]

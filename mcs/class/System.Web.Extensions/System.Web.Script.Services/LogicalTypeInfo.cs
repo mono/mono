@@ -103,9 +103,7 @@ namespace System.Web.Script.Services
 				}
 				else
 				{
-#if NET_3_5
 					result = new JsonResult (result);
-#endif
 					LogicalTypeInfo.JSSerializer.Serialize (result, writer);
 				}
 			}
@@ -252,7 +250,6 @@ this._failed = null;
 			}
 
 			proxy.AppendFormat (
-#if NET_3_5
 @"}}
 {0}.registerClass('{0}',Sys.Net.WebServiceProxy);
 {0}._staticInstance = new {0}();
@@ -267,22 +264,6 @@ this._failed = null;
 {0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance.set_failed(value); }}
 {0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance.get_failed(); }}
 {0}.set_path(""{1}"");",
-#else
-@"}}
-{0}.registerClass('{0}',Sys.Net.WebServiceProxy);
-{0}._staticInstance = new {0}();
-{0}.set_path = function(value) {{ {0}._staticInstance._path = value; }}
-{0}.get_path = function() {{ return {0}._staticInstance._path; }}
-{0}.set_timeout = function(value) {{ {0}._staticInstance._timeout = value; }}
-{0}.get_timeout = function() {{ return {0}._staticInstance._timeout; }}
-{0}.set_defaultUserContext = function(value) {{ {0}._staticInstance._userContext = value; }}
-{0}.get_defaultUserContext = function() {{ return {0}._staticInstance._userContext; }}
-{0}.set_defaultSucceededCallback = function(value) {{ {0}._staticInstance._succeeded = value; }}
-{0}.get_defaultSucceededCallback = function() {{ return {0}._staticInstance._succeeded; }}
-{0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance._failed = value; }}
-{0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance._failed; }}
-{0}.set_path(""{1}"");",
-#endif
 			service, filePath);
 
 			for (int i = 0; i < logicalMethods.Count; i++)
@@ -475,7 +456,7 @@ if (typeof({0}) === 'undefined') {{", className);
 
 			return tm;
 		}
-#if NET_3_5
+		
 		sealed class JsonResult
 		{
 			public readonly object d;
@@ -483,6 +464,5 @@ if (typeof({0}) === 'undefined') {{", className);
 				d = result;
 			}
 		}
-#endif
 	}
 }
