@@ -1,3 +1,8 @@
+2008-01-01 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	make SubmitDisabledControls and SetFocus works in multiform environment		
+
 2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: fixed thread abort handling in ProcessRequest

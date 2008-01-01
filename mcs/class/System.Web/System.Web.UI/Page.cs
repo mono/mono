@@ -2040,17 +2040,32 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		if (!String.IsNullOrEmpty (_focusedControlID)) {
 			ClientScript.RegisterWebFormClientScript ();
+			
+			string webForm;
+			if (IsMultiForm)
+				webForm = theForm + ".";
+			else
+				webForm = String.Empty;
+			
 			ClientScript.RegisterStartupScript (
+				typeof(Page),
 				"HtmlForm-DefaultButton-StartupScript",
-				"<script type=\"text/javascript\">\n" + ClientScriptManager.SCRIPT_BLOCK_START +
-				"\nWebForm_AutoFocus('" + _focusedControlID + "');\n" + ClientScriptManager.SCRIPT_BLOCK_END +
-				"\n</script>\n");
+				"\n" + webForm + "WebForm_AutoFocus('" + _focusedControlID + "');\n", true);
 		}
 		
 		if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
 			ClientScript.RegisterWebFormClientScript ();
-			ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
-								"WebForm_ReEnableControls(this);");
+
+			string webForm;
+			if (IsMultiForm)
+				webForm = theForm + ".";
+			else
+				webForm = String.Empty;
+
+			ClientScript.RegisterOnSubmitStatement (
+				typeof (Page),
+				"HtmlForm-SubmitDisabledControls-SubmitStatement",
+				webForm + "WebForm_ReEnableControls();");
 		}
 	}
 
