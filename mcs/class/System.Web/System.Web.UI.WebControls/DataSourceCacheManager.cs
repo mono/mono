@@ -88,7 +88,7 @@ namespace System.Web.UI.WebControls
 				if (cacheExpirationPolicy == DataSourceCacheExpiry.Absolute)
 					absoluteExpiration = DateTime.Now.AddSeconds (cacheDuration);
 				else
-					slidindExpiraion = new TimeSpan (cacheDuration * 10000);
+					slidindExpiraion = new TimeSpan (0, 0, cacheDuration);
 			}
 
 			string [] dependencies;
