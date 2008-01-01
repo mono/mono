@@ -42,6 +42,9 @@ using java.net;
 using System.Globalization;
 using System.Diagnostics;
 using javax.faces;
+using javax.faces.context;
+using javax.faces.lifecycle;
+using javax.faces.webapp;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -50,15 +53,21 @@ namespace Mainsoft.Web.Hosting
 	/// </summary>
 	public class BaseHttpServlet : HttpServlet
 	{
-		//private AppDomain _servletDomain;
-		//static readonly LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_REQUEST);
-		//static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot(J2EEConsts.SERVLET_RESPONSE);
-		//static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot(J2EEConsts.CURRENT_SERVLET);
-
 		bool _appVirDirInited = false;
+
+		static FacesContextFactory _facesContextFactory;
+		static Lifecycle _lifecycle;
 
 		public BaseHttpServlet()
 		{
+		}
+
+		public static FacesContextFactory FacesContextFactory {
+			get { return _facesContextFactory; }
+		}
+
+		public static Lifecycle Lifecycle {
+			get { return _lifecycle; }
 		}
 
 		override public void init(ServletConfig config)
@@ -68,11 +77,24 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public static void InitRuntime (ServletConfig config, object evidence) {
+
+			ServletContext context = config.getServletContext ();
+
+			if (context.getAttribute (J2EEConsts.APP_DOMAIN) != null)
+				return;
+
+			_facesContextFactory = (FacesContextFactory) FactoryFinder.getFactory (FactoryFinder.FACES_CONTEXT_FACTORY);
+			//TODO: null-check for Weblogic, that tries to initialize Servlet before ContextListener
+
+			//Javadoc says: Lifecycle instance is shared across multiple simultaneous requests, it must be implemented in a thread-safe manner.
+			//So we can acquire it here once:
+			LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder.getFactory (FactoryFinder.LIFECYCLE_FACTORY);
+			_lifecycle = lifecycleFactory.getLifecycle (context.getInitParameter (FacesServlet.LIFECYCLE_ID_ATTR) ?? LifecycleFactory.DEFAULT_LIFECYCLE);
+
 			AppDomain servletDomain = createServletDomain (config);
 			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
 
 			try {
-				ServletContext context = config.getServletContext ();
 				//GH Infromation Initizalization
 				long currentTime = java.lang.System.currentTimeMillis ();
 				servletDomain.SetData (".domainId", currentTime.ToString ("x"));

@@ -17,7 +17,7 @@ namespace Mainsoft.Web.Hosting
 	{
 		public override IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path) {
 			Type pageType = PageMapper.GetObjectType (context, url);
-			IHttpHandler handler = new ServletFacesPageHandler (url, pageType, FacesContextFactory, Lifecycle);
+			IHttpHandler handler = new ServletFacesPageHandler (url, pageType, BaseHttpServlet.FacesContextFactory, BaseHttpServlet.Lifecycle);
 			return SessionWrapper.WrapHandler (handler);
 		}
 	}
