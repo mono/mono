@@ -878,25 +878,64 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
 	} while (0)
 
-/* Emit a one-way conditional branch and start a new basic block */
-#define	MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
+/* Emit a one-way conditional branch */
+/* 
+ * The inst_false_bb field of the cond branch will not be set, the JIT code should be
+ * prepared to deal with this.
+ */
+#ifdef DEBUG_EXTENDED_BBLOCKS
+static int ccount = 0;
+#define MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
         MonoInst *ins; \
         MonoBasicBlock *falsebb; \
-	    NEW_BBLOCK ((cfg), falsebb); \
         MONO_INST_NEW ((cfg), (ins), (op)); \
         if ((op) == OP_BR) { \
+	        NEW_BBLOCK ((cfg), falsebb); \
             ins->inst_target_bb = (truebb); \
             link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            MONO_START_BB ((cfg), falsebb); \
+        } else { \
+            ccount ++; \
+		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+            ins->inst_true_bb = (truebb); \
+            ins->inst_false_bb = NULL; \
+            link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            if (getenv ("COUNT2") && ccount == atoi (getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
+            if (getenv ("COUNT2") && ccount < atoi (getenv ("COUNT2"))) { \
+                 cfg->cbb->extended = TRUE; \
+            } else { NEW_BBLOCK ((cfg), falsebb); ins->inst_false_bb = (falsebb); link_bblock ((cfg), (cfg)->cbb, (falsebb)); MONO_START_BB ((cfg), falsebb); } \
+        } \
+	} while (0)
+#else
+#define MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
+        MonoInst *ins; \
+        MonoBasicBlock *falsebb; \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+        if ((op) == OP_BR) { \
+	        NEW_BBLOCK ((cfg), falsebb); \
+            ins->inst_target_bb = (truebb); \
+            link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            MONO_START_BB ((cfg), falsebb); \
         } else { \
 		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
             ins->inst_true_bb = (truebb); \
-            ins->inst_false_bb = (falsebb); \
+            ins->inst_false_bb = NULL; \
             link_bblock ((cfg), (cfg)->cbb, (truebb)); \
-            link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            if (cfg->disable_extended_bblocks) { \
+                NEW_BBLOCK ((cfg), falsebb); \
+                ins->inst_false_bb = falsebb; \
+                link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+                MONO_START_BB ((cfg), falsebb); \
+            } else { \
+				cfg->cbb->extended = TRUE; \
+			} \
         } \
-        MONO_ADD_INS ((cfg)->cbb, ins); \
-        MONO_START_BB ((cfg), falsebb); \
 	} while (0)
+#endif
 
 /* Emit a two-way conditional branch */
 #define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb,falsebb) do { \
@@ -912,7 +951,10 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 
 #define MONO_START_BB(cfg, bblock) do { \
         ADD_BBLOCK ((cfg), (bblock)); \
-        if (! (cfg->cbb->last_ins && ((cfg->cbb->last_ins->opcode == OP_BR) || (cfg->cbb->last_ins->opcode == OP_BR_REG) || MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins)))) \
+        if (cfg->cbb->last_ins && MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins) && !cfg->cbb->last_ins->inst_false_bb) { \
+            cfg->cbb->last_ins->inst_false_bb = (bblock); \
+            link_bblock ((cfg), (cfg)->cbb, (bblock)); \
+        } else if (! (cfg->cbb->last_ins && ((cfg->cbb->last_ins->opcode == OP_BR) || (cfg->cbb->last_ins->opcode == OP_BR_REG) || MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins)))) \
             link_bblock ((cfg), (cfg)->cbb, (bblock)); \
 	    (cfg)->cbb->next_bb = (bblock); \
 	    (cfg)->cbb = (bblock); \
@@ -4342,14 +4384,14 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		 * Get rid of the begin and end bblocks if possible to aid local
 		 * optimizations.
 		 */
-		mono_merge_basic_blocks (prev_cbb, sbblock);
+		mono_merge_basic_blocks (cfg, prev_cbb, sbblock);
 
 		if ((prev_cbb->out_count == 1) && (prev_cbb->out_bb [0]->in_count == 1) && (prev_cbb->out_bb [0] != ebblock))
-			mono_merge_basic_blocks (prev_cbb, prev_cbb->out_bb [0]);
+			mono_merge_basic_blocks (cfg, prev_cbb, prev_cbb->out_bb [0]);
 
 		if ((ebblock->in_count == 1) && ebblock->in_bb [0]->out_count == 1) {
 			MonoBasicBlock *prev = ebblock->in_bb [0];
-			mono_merge_basic_blocks (prev, ebblock);
+			mono_merge_basic_blocks (cfg, prev, ebblock);
 			cfg->cbb = prev;
 		} else {
 			cfg->cbb = ebblock;
@@ -10040,7 +10082,10 @@ mono_op_to_op_imm (int opcode)
 	case OP_X86_COMPARE_MEMBASE_REG:
 		return OP_X86_COMPARE_MEMBASE_IMM;
 #endif
-
+#if defined(__x86_64__)
+	case OP_AMD64_ICOMPARE_MEMBASE_REG:
+		return OP_AMD64_ICOMPARE_MEMBASE_IMM;
+#endif
 	case OP_VOIDCALL_REG:
 		return OP_VOIDCALL;
 	case OP_CALL_REG:

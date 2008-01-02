@@ -301,8 +301,12 @@ mono_print_ins_index (int i, MonoInst *ins)
 		case OP_LBGE_UN:
 		case OP_LBLE:
 		case OP_LBLE_UN:
-			if (!(ins->flags & MONO_INST_BRLABEL))
-				printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+			if (!(ins->flags & MONO_INST_BRLABEL)) {
+				if (!ins->inst_false_bb)
+					printf (" [B%d]", ins->inst_true_bb->block_num);
+				else
+					printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+			}
 			break;
 		case OP_PHI:
 		case OP_FPHI: {
@@ -470,8 +474,12 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_LBGE_UN:
 	case OP_LBLE:
 	case OP_LBLE_UN:
-		if (!(ins->flags & MONO_INST_BRLABEL))
-			printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+		if (!(ins->flags & MONO_INST_BRLABEL)) {
+			if (!ins->inst_false_bb)
+				printf (" [B%d]", ins->inst_true_bb->block_num);
+			else
+				printf (" [B%dB%d]", ins->inst_true_bb->block_num, ins->inst_false_bb->block_num);
+		}
 		break;
 	default:
 		break;

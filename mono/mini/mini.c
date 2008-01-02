@@ -926,6 +926,24 @@ mono_unlink_bblock (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to)
 	}
 }
 
+/*
+ * mono_bblocks_linked:
+ *
+ *   Return whenever BB1 and BB2 are linked in the CFG.
+ */
+static gboolean
+mono_bblocks_linked (MonoBasicBlock *bb1, MonoBasicBlock *bb2)
+{
+	int i;
+
+	for (i = 0; i < bb1->out_count; ++i) {
+		if (bb1->out_bb [i] == bb2)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 /**
  * mono_find_block_region:
  *
@@ -10787,69 +10805,45 @@ replace_in_block (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBlock *repl
 
 static void
 replace_out_block_in_code (MonoBasicBlock *bb, MonoBasicBlock *orig, MonoBasicBlock *repl) {
-	MonoInst *inst;
+	MonoInst *ins;
 	
-	for (inst = bb->code; inst != NULL; inst = inst->next) {
-		if (inst->opcode == OP_CALL_HANDLER) {
-			if (inst->inst_target_bb == orig) {
-				inst->inst_target_bb = repl;
-			}
-		}
-		if (MONO_IS_JUMP_TABLE (inst)) {
-			int i;
-			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (inst);
-			for (i = 0; i < table->table_size; i++ ) {
-				if (table->table [i] == orig) {
-					table->table [i] = repl;
-				}
-			}
-		}
-	}
-	if (bb->last_ins != NULL) {
-		switch (bb->last_ins->opcode) {
+	for (ins = bb->code; ins != NULL; ins = ins->next) {
+		switch (ins->opcode) {
 		case OP_BR:
-			if (bb->last_ins->inst_target_bb == orig) {
-				bb->last_ins->inst_target_bb = repl;
-			}
+			if (ins->inst_target_bb == orig)
+				ins->inst_target_bb = repl;
+			break;
+		case OP_CALL_HANDLER:
+			if (ins->inst_target_bb == orig)
+				ins->inst_target_bb = repl;
 			break;
 		case OP_SWITCH: {
 			int i;
-			int n = GPOINTER_TO_INT (bb->last_ins->klass);
+			int n = GPOINTER_TO_INT (ins->klass);
 			for (i = 0; i < n; i++ ) {
-				if (bb->last_ins->inst_many_bb [i] == orig) {
-					bb->last_ins->inst_many_bb [i] = repl;
-				}
+				if (ins->inst_many_bb [i] == orig)
+					ins->inst_many_bb [i] = repl;
 			}
 			break;
 		}
 		default:
-			if (MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
-				if (bb->last_ins->inst_true_bb == orig) {
-					bb->last_ins->inst_true_bb = repl;
-				}
-				if (bb->last_ins->inst_false_bb == orig) {
-					bb->last_ins->inst_false_bb = repl;
+			if (MONO_IS_COND_BRANCH_OP (ins)) {
+				if (ins->inst_true_bb == orig)
+					ins->inst_true_bb = repl;
+				if (ins->inst_false_bb == orig)
+					ins->inst_false_bb = repl;
+			} else if (MONO_IS_JUMP_TABLE (ins)) {
+				int i;
+				MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (ins);
+				for (i = 0; i < table->table_size; i++ ) {
+					if (table->table [i] == orig)
+						table->table [i] = repl;
 				}
 			}
+
 			break;
 		}
 	}
-}
-
-static void 
-replace_basic_block (MonoBasicBlock *bb, MonoBasicBlock *orig,  MonoBasicBlock *repl)
-{
-	int i, j;
-
-	for (i = 0; i < bb->out_count; i++) {
-		MonoBasicBlock *ob = bb->out_bb [i];
-		for (j = 0; j < ob->in_count; j++) {
-			if (ob->in_bb [j] == orig) {
-				ob->in_bb [j] = repl;
-			}
-		}
-	}
-
 }
 
 /**
@@ -10955,17 +10949,22 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 }
 
 void
-mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn) 
+mono_merge_basic_blocks (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *bbn) 
 {
 	MonoInst *inst;
+	MonoBasicBlock *prev_bb;
+	int i;
 
-	bb->out_count = bbn->out_count;
-	bb->out_bb = bbn->out_bb;
 	bb->has_array_access |= bbn->has_array_access;
+	bb->extended |= bbn->extended;
 
-	replace_basic_block (bb, bbn, bb);
+	mono_unlink_bblock (cfg, bb, bbn);
+	for (i = 0; i < bbn->out_count; ++i)
+		mono_link_bblock (cfg, bb, bbn->out_bb [i]);
+	while (bbn->out_count)
+		mono_unlink_bblock (cfg, bbn, bbn->out_bb [0]);
 
-	/* Nullify branch */
+	/* Handle the branch at the end of the bb */
 	for (inst = bb->code; inst != NULL; inst = inst->next) {
 		if (inst->opcode == OP_CALL_HANDLER) {
 			g_assert (inst->inst_target_bb == bbn);
@@ -10981,9 +10980,11 @@ mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn)
 			/* Can't nullify this as later instructions depend on it */
 		}
 	}
-
-	/* Nullify branch at the end of bb */
-	if (bb->last_ins && MONO_IS_BRANCH_OP (bb->last_ins)) {
+	if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
+		g_assert (bb->last_ins->inst_false_bb == bbn);
+		bb->last_ins->inst_false_bb = NULL;
+		bb->extended = TRUE;
+	} else if (bb->last_ins && MONO_IS_BRANCH_OP (bb->last_ins)) {
 		NULLIFY_INS (bb->last_ins);
 	}
 
@@ -10996,7 +10997,15 @@ mono_merge_basic_blocks (MonoBasicBlock *bb, MonoBasicBlock *bbn)
 		bb->code = bbn->code;
 		bb->last_ins = bbn->last_ins;
 	}
-	bb->next_bb = bbn->next_bb;
+	for (prev_bb = cfg->bb_entry; prev_bb && prev_bb->next_bb != bbn; prev_bb = prev_bb->next_bb)
+		;
+	if (prev_bb) {
+		prev_bb->next_bb = bbn->next_bb;
+	} else {
+		/* bbn might not be in the bb list yet */
+		if (bb->next_bb == bbn)
+			bb->next_bb = bbn->next_bb;
+	}
 	nullify_basic_block (bbn);
 }
 
@@ -11233,12 +11242,11 @@ mono_optimize_branches (MonoCompile *cfg)
 							g_print ("br removal triggered %d -> %d\n", bb->block_num, bbn->block_num);
 					}
 
-					if (bbn->in_count == 1) {
-
+					if (bbn->in_count == 1 && !bb->extended) {
 						if (bbn != cfg->bb_exit) {
 							if (cfg->verbose_level > 2)
 								g_print ("block merge triggered %d -> %d\n", bb->block_num, bbn->block_num);
-							mono_merge_basic_blocks (bb, bbn);
+							mono_merge_basic_blocks (cfg, bb, bbn);
 							changed = TRUE;
 							continue;
 						}
@@ -11310,7 +11318,8 @@ mono_optimize_branches (MonoCompile *cfg)
 						 */
 						bb->last_ins->opcode = OP_BR;
 						bb->last_ins->inst_target_bb = taken_branch_target;
-						mono_unlink_bblock (cfg, bb, untaken_branch_target);
+						if (!bb->extended)
+							mono_unlink_bblock (cfg, bb, untaken_branch_target);
 						changed = TRUE;
 						continue;
 					}
@@ -11340,7 +11349,7 @@ mono_optimize_branches (MonoCompile *cfg)
 					}
 
 					bbn = bb->last_ins->inst_false_bb;
-					if (bb->region == bbn->region && bbn->code && bbn->code->opcode == OP_BR &&
+					if (bbn && bb->region == bbn->region && bbn->code && bbn->code->opcode == OP_BR &&
 					    bbn->code->inst_target_bb->region == bb->region) {
 						if (cfg->verbose_level > 2)
 							g_print ("cbranch2 to branch triggered %d -> (%d) %d (0x%02x)\n", 
@@ -11358,6 +11367,23 @@ mono_optimize_branches (MonoCompile *cfg)
 						changed = TRUE;
 						continue;
 					}
+
+					bbn = bb->last_ins->inst_false_bb;
+					/*
+					 * If bb is an extended bb, it could contain an inside branch to bbn.
+					 * FIXME: Enable the optimization if that is not true.
+					 * If bblocks_linked () is true, then merging bb and bbn
+					 * would require addition of an extra branch at the end of bbn 
+					 * slowing down loops.
+					 */
+					if (cfg->new_ir && bbn && bb->region == bbn->region && bbn->in_count == 1 && !cfg->disable_extended_bblocks && bbn != cfg->bb_exit && !bb->extended && !bbn->out_of_line && !mono_bblocks_linked (bbn, bb)) {
+						g_assert (bbn->in_bb [0] == bb);
+						if (cfg->verbose_level > 2)
+							g_print ("merge false branch target triggered BB%d -> BB%d\n", bb->block_num, bbn->block_num);
+						mono_merge_basic_blocks (cfg, bb, bbn);
+						changed = TRUE;
+						continue;
+					}
 				}
 
 				/* detect and optimize to unsigned compares checks like: if (v < 0 || v > limit */
@@ -11370,7 +11396,7 @@ mono_optimize_branches (MonoCompile *cfg)
 				}
 
 				if (bb->last_ins && MONO_IS_COND_BRANCH_NOFP (bb->last_ins)) {
-					if (bb->last_ins->inst_false_bb->out_of_line && (bb->region == bb->last_ins->inst_false_bb->region)) {
+					if (bb->last_ins->inst_false_bb && bb->last_ins->inst_false_bb->out_of_line && (bb->region == bb->last_ins->inst_false_bb->region)) {
 						/* Reverse the branch */
 						bb->last_ins->opcode = reverse_branch_op (bb->last_ins->opcode);
 						bbn = bb->last_ins->inst_false_bb;
@@ -11564,7 +11590,7 @@ mini_select_instructions (MonoCompile *cfg)
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
-		    bb->next_bb != bb->last_ins->inst_false_bb) {
+		    bb->last_ins->inst_false_bb && bb->next_bb != bb->last_ins->inst_false_bb) {
 
 			/* we are careful when inverting, since bugs like #59580
 			 * could show up when dealing with NaNs.
@@ -12085,6 +12111,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->next_vreg = cfg->rs->next_vreg;
 	}
 
+	/* FIXME: Fix SSA to handle branches inside bblocks */
+	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+		cfg->disable_extended_bblocks = TRUE;
+
 	/*
 	 * create MonoInst* which represents arguments and local variables
 	 */
@@ -12206,8 +12236,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 #endif
 	}
 #else 
-
-	/* fixme: add all optimizations which requires SSA */
 	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE)) {
 		if (!(cfg->comp_done & MONO_COMP_SSA) && !header->num_clauses && !cfg->disable_ssa) {
 #ifndef DISABLE_SSA
@@ -12386,8 +12414,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		/* Add branches between non-consecutive bblocks */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 			if (bb->last_ins && MONO_IS_COND_BRANCH_OP (bb->last_ins) &&
-				bb->next_bb != bb->last_ins->inst_false_bb) {
-
+				bb->last_ins->inst_false_bb && bb->next_bb != bb->last_ins->inst_false_bb) {
 				/* we are careful when inverting, since bugs like #59580
 				 * could show up when dealing with NaNs.
 				 */

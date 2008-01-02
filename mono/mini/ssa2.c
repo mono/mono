@@ -1096,6 +1096,15 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 			int i;
 			MonoJumpInfoBBTable *table = ins->inst_p0;
 
+			if (ins->next->opcode != OP_PADD) {
+				/* The PADD was optimized away */
+				/* FIXME: handle this as well */
+				for (i = 0; i < table->table_size; i++)
+					if (table->table [i])
+						add_cprop_bb (cfg, table->table [i], bblist);
+				return;
+			}
+
 			g_assert (ins->next->opcode == OP_PADD);
 			g_assert (ins->next->sreg1 == ins->dreg);
 
@@ -1150,10 +1159,12 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 		if (ins->flags & MONO_INST_CFOLD_TAKEN) {
 			add_cprop_bb (cfg, ins->inst_true_bb, bblist);
 		} else if (ins->flags & MONO_INST_CFOLD_NOT_TAKEN) {
-			add_cprop_bb (cfg, ins->inst_false_bb, bblist);
+			if (ins->inst_false_bb)
+				add_cprop_bb (cfg, ins->inst_false_bb, bblist);
         } else {
 			add_cprop_bb (cfg, ins->inst_true_bb, bblist);
-			add_cprop_bb (cfg, ins->inst_false_bb, bblist);
+			if (ins->inst_false_bb)
+				add_cprop_bb (cfg, ins->inst_false_bb, bblist);
 		}
 	}
 }
@@ -1194,6 +1205,12 @@ fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray
 		if (ins->opcode == OP_JUMP_TABLE) {
 			int i;
 			MonoJumpInfoBBTable *table = ins->inst_p0;
+
+			if (ins->next->opcode != OP_PADD) {
+				/* The PADD was optimized away */
+				/* FIXME: handle this as well */
+				return;
+			}
 
 			g_assert (ins->next->opcode == OP_PADD);
 			g_assert (ins->next->sreg1 == ins->dreg);

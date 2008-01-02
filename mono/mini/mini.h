@@ -197,7 +197,7 @@ typedef struct {
 } MonoStackSlot;
 
 /*
- * The IR-level basic block.  
+ * The IR-level extended basic block.  
  *
  * A basic block can have multiple exits just fine, as long as the point of
  * 'departure' is the last instruction in the basic block. Extended basic
@@ -270,6 +270,8 @@ struct MonoBasicBlock {
 	guint not_useless : 1;
 	/* Whenever the decompose_array_access_opts () pass needs to process this bblock */
 	guint has_array_access : 1;
+	/* Whenever this bblock is extended, ie. it has branches inside it */
+	guint extended : 1;
 	
 	/* use for liveness analysis */
 	MonoBitSet *gen_set;
@@ -283,12 +285,12 @@ struct MonoBasicBlock {
 	MonoInst **in_stack;
 	MonoStackSlot *stack_state; /* Verification stack state on enter to bblock */
 
-	/* we use that to prevent merging of bblock covered by different clauses*/
+	/* we use that to prevent merging of bblocks covered by different clauses*/
 	guint real_offset;
 
 	/*
 	 * The region encodes whether the basic block is inside
-	 * a finally, catch, filter or none of thoese.
+	 * a finally, catch, filter or none of these.
 	 *
 	 * If the value is -1, then it is neither finally, catch nor filter
 	 *
@@ -685,6 +687,7 @@ typedef struct {
 	gint32           sig_cookie;
 	guint            disable_aot : 1;
 	guint            disable_ssa : 1;
+	guint            disable_extended_bblocks : 1;
 	guint            run_cctors : 1;
 	guint            need_lmf_area : 1;
 	guint            compile_aot : 1;
@@ -1030,7 +1033,7 @@ guint32   mono_alloc_dreg                   (MonoCompile *cfg, MonoStackType sta
 void      mono_link_bblock                  (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to) MONO_INTERNAL;
 void      mono_unlink_bblock                (MonoCompile *cfg, MonoBasicBlock *from, MonoBasicBlock* to) MONO_INTERNAL;
 void      mono_remove_bblock                (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
-void      mono_merge_basic_blocks           (MonoBasicBlock *bb, MonoBasicBlock *bbn) MONO_INTERNAL;
+void      mono_merge_basic_blocks           (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *bbn) MONO_INTERNAL;
 void      mono_optimize_branches            (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom) MONO_INTERNAL;
 void      mono_print_tree                   (MonoInst *tree) MONO_INTERNAL;

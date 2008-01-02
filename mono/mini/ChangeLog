@@ -1,3 +1,19 @@
+2008-01-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (MONO_EMIT_NEW_BRANCH_BLOCK): Don't start a new basic block here.
+	(mono_op_to_op_imm): Add OP_AMD64_ICOMPARE_MEMBASE_IMM.
+
+	* mini.h (MonoBasicBlock): Add an 'extended' flag to mark whenever this bblock
+	is extended.
+
+	* mini.h (MonoCompile): Add a 'disable_extended_bblocks' flag.
+
+	* mini.c (optimize_branches): Add an optimization for merging basic blocks into
+	an extended basic block.
+
+	* local-propagation.c ssa2.c mini-codegen.c: Add support for extended basic 
+	blocks.
+
 2007-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md: Fix the size of int opcodes.
