@@ -84,6 +84,7 @@ namespace System.Web {
 			set { AppDomain.CurrentDomain.SetData (app_global_res_key, value); }
 		}
 #else
+		static Hashtable resourceManagerCache = new Hashtable ();
 		RequestNotification _currentNotification;
 		internal static Assembly AppGlobalResourcesAssembly;
 #endif
@@ -442,8 +443,17 @@ namespace System.Web {
 		{
 			ResourceManager rm;
 			try {
-				rm = new ResourceManager (classKey, assembly);
-				rm.IgnoreCase = true;
+				ResourceManagerCacheKey key = new ResourceManagerCacheKey (classKey, assembly);
+				rm = (ResourceManager) resourceManagerCache [key];
+
+				if (rm == null) {
+					rm = new ResourceManager (classKey, assembly);
+					rm.IgnoreCase = true;
+					Hashtable tmp = (Hashtable) resourceManagerCache.Clone ();
+					tmp[key] = rm;
+					resourceManagerCache = tmp;
+				}
+				
 				return rm.GetObject (resourceKey, culture);
 			} catch (MissingManifestResourceException) {
 				throw;
@@ -490,6 +500,31 @@ namespace System.Web {
 		public object GetSection (string name)
 		{
 			return WebConfigurationManager.GetSection (name);
+		}
+
+		private sealed class ResourceManagerCacheKey
+		{
+			readonly string _name;
+			readonly Assembly _asm;
+
+			public ResourceManagerCacheKey (string name, Assembly asm)
+			{
+				_name = name;
+				_asm = asm;
+			}
+
+			public override bool Equals (object obj)
+			{
+				if (!(obj is ResourceManagerCacheKey))
+					return false;
+				ResourceManagerCacheKey key = (ResourceManagerCacheKey) obj;
+				return key._asm == _asm && _name.Equals (key._name, StringComparison.Ordinal);
+			}
+
+			public override int GetHashCode ()
+			{
+				return _name.GetHashCode () + _asm.GetHashCode ();
+			}
 		}
 #endif
 		object IServiceProvider.GetService (Type service)

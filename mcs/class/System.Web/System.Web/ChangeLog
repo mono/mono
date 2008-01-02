@@ -1,3 +1,8 @@
+2008-01-02  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpContext.cs: added resource manager caching in GetResourceObject
+	* HttpContext.jvm.cs: added resourceManagerCache storing in appdomain
+
 2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.cs: added HasError method

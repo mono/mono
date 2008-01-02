@@ -89,6 +89,23 @@ namespace System.Web {
 			}
 		}
 
+		static Hashtable resourceManagerCache
+		{
+			get
+			{
+				Hashtable cache = (Hashtable) AppDomain.CurrentDomain.GetData ("ResourceManagerCache");
+				if (cache == null) {
+					cache = new Hashtable ();
+					AppDomain.CurrentDomain.SetData ("ResourceManagerCache", cache);
+				}
+				return cache;
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData ("ResourceManagerCache", value);
+			}
+		}
+
 		// Timeout is not supported in GH
 		internal bool CheckIfTimeout (DateTime t)
 		{
