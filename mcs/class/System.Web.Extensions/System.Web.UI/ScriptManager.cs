@@ -44,6 +44,7 @@ using System.Threading;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Xml;
+using System.Collections.ObjectModel;
 
 namespace System.Web.UI
 {
@@ -425,7 +426,7 @@ namespace System.Web.UI
 
 		public static ScriptManager GetCurrent (Page page) {
 			if (page == null)
-				throw new ArgumentNullException("page");
+				throw new ArgumentNullException ("page");
 			return (ScriptManager) page.Items [ScriptManagerKey];
 		}
 
@@ -490,7 +491,7 @@ namespace System.Web.UI
 						if (IsMultiForm)
 							sb.Append ("Sys.WebForms.PageRequestManager.getInstance($get(\"" + Page.Form.ClientID + "\"))._registerDisposeScript(\"");
 						else
-						sb.Append ("Sys.WebForms.PageRequestManager.getInstance()._registerDisposeScript(\"");
+							sb.Append ("Sys.WebForms.PageRequestManager.getInstance()._registerDisposeScript(\"");
 						sb.Append (entry.UpdatePanel.ClientID);
 						sb.Append ("\", ");
 						sb.Append (JavaScriptSerializer.DefaultSerializer.Serialize (entry.Script)); //JavaScriptSerializer.Serialize used escape script literal 
@@ -523,7 +524,7 @@ namespace System.Web.UI
 			if (IsMultiForm) {
 				ajaxExtensionScript = new ScriptReference ("MicrosoftAjaxExtension.js", String.Empty);
 				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxExtensionScript));
-				
+
 				ajaxWebFormsExtensionScript = new ScriptReference ("MicrosoftAjaxWebFormsExtension.js", String.Empty);
 				OnResolveScriptReference (new ScriptReferenceEventArgs (ajaxWebFormsExtensionScript));
 			}
@@ -601,7 +602,7 @@ namespace System.Web.UI
 				if (IsMultiForm)
 					RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.getInstance($get(\"" + Page.Form.ClientID + "\")).initialize();\n", true);
 				else
-				RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.initialize();\n", true);
+					RegisterStartupScript (this, typeof (ExtenderControl), "Sys.Application.initialize();", "Sys.Application.initialize();\n", true);
 			}
 		}
 
@@ -625,6 +626,34 @@ namespace System.Web.UI
 					if (!String.IsNullOrEmpty (_proxies [i].AuthenticationService.Path))
 						return _proxies [i].ResolveClientUrl (_proxies [i].AuthenticationService.Path);
 			return null;
+		}
+
+		public ReadOnlyCollection<RegisteredArrayDeclaration> GetRegisteredArrayDeclarations () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredScript> GetRegisteredClientScriptBlocks () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredDisposeScript> GetRegisteredDisposeScripts () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredExpandoAttribute> GetRegisteredExpandoAttributes () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredHiddenField> GetRegisteredHiddenFields () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredScript> GetRegisteredOnSubmitStatements () {
+			throw new NotImplementedException ();
+		}
+
+		public ReadOnlyCollection<RegisteredScript> GetRegisteredStartupScripts () {
+			throw new NotImplementedException ();
 		}
 
 #if TARGET_J2EE
@@ -976,7 +1005,7 @@ namespace System.Web.UI
 					sb.AppendLine ("Sys.Application.getInstance($get(\"" + Page.Form.ClientID + "\")).add_init(function() {");
 				}
 				else
-				sb.AppendLine ("Sys.Application.add_init(function() {");
+					sb.AppendLine ("Sys.Application.add_init(function() {");
 				sb.AppendLine (scriptDescriptor.GetScript ());
 				sb.AppendLine ("});");
 			}
@@ -1051,7 +1080,7 @@ namespace System.Web.UI
 				if (IsMultiForm)
 					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance($get(\"{0}\"))._updateControls([{1}], [{2}], [{3}], {4});", Page.Form.ClientID, FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
 				else
-				writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
+					writer.WriteLine ("Sys.WebForms.PageRequestManager.getInstance()._updateControls([{0}], [{1}], [{2}], {3});", FormatUpdatePanelIDs (_updatePanels, true), FormatListIDs (_asyncPostBackControls, true), FormatListIDs (_postBackControls, true), AsyncPostBackTimeout);
 				writer.WriteLine ("//]]");
 				writer.WriteLine ("</script>");
 			}
