@@ -130,6 +130,7 @@ namespace System.Security {
 		{
 			SecureString ss = new SecureString ();
 			ss.data = (byte[]) data.Clone ();
+			ss.length = length;
 			return ss;
 		}
 

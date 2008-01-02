@@ -1,3 +1,7 @@
+2008-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecureString.cs: Don't forget length in Copy. Fix #350840
+
 2007-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SecurityElement.cs :
