@@ -144,6 +144,32 @@ namespace MonoTests.System.Security {
 		}
 #endif
 		[Test]
+		public void Copy_Empty ()
+		{
+			SecureString empty = new SecureString ();
+			Assert.AreEqual (0, empty.Length, "Empty.Length");
+			SecureString empty_copy = empty.Copy ();
+			Assert.AreEqual (0, empty_copy.Length, "EmptyCopy.Length");
+		}
+
+		[Test]
+		public void Copy ()
+		{
+	                SecureString ss = new SecureString ();
+        	        ss.AppendChar ('a');
+			Assert.AreEqual (1, ss.Length, "Length");
+
+	                SecureString ss2 = ss.Copy();
+			Assert.AreEqual (1, ss2.Length, "Copy.Length");
+			Assert.IsFalse (ss2.IsReadOnly (), "Copy.IsReadOnly");
+			ss2.MakeReadOnly ();
+			Assert.IsTrue (ss2.IsReadOnly (), "Copy.IsReadOnly-2");
+
+			SecureString ss3 = ss2.Copy ();
+			Assert.IsFalse (ss3.IsReadOnly (), "Copy.IsReadOnly-3");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void InsertAt_Negative ()
 		{

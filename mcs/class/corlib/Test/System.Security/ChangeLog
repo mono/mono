@@ -1,3 +1,7 @@
+2008-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecureStringTest.cs: Add test cases for Copy (#350840)
+
 2007-11-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SecurityElementTest.cs: Allow TestToString to pass on 1.0 profile.
