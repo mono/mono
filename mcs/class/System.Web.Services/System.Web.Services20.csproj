@@ -368,29 +368,27 @@ rmdir /S /Q parse
 mkdir parse
 copy System.Web.Services.* parse
 cd parse
-
+mkdir WEB-INF\lib
 copy ..\..\..\..\..\..\mono\data\net_2_0\DefaultWsdlHelpGenerator.jvm.aspx DefaultWsdlHelpGenerator.aspx
 
-"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll" /reference:"..\..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:%25CD%25 /out:C:\views2\builder1\studio\GH\runtime\monobuild\mcs\class\System.Web.Services\\WEB-INF\lib\System.Web.Services.jar /bindir:%25CD%25 /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.aspx /precompileall /tempDir:%25CD%25 /assembly:%CD%\System.Web.Services.dll /nomd5
+"%25VMW_HOME%25\bin\aspxparser.exe" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Web.dll" /reference:"System.Web.Services.dll" /reference:"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll" /reference:"..\..\..\..\lib\J2EE.Helpers.dll" /novalidator /appdir:%25CD%25 /out:C:\views2\builder1\studio\GH\runtime\monobuild\mcs\class\System.Web.Services\\WEB-INF\lib\System.Web.Services.jar /bindir:%25CD%25 /virtdir:/MonoSystemWeb /aspxfiles:DefaultWsdlHelpGenerator.aspx /precompileall /tempDir:%25CD%25 /assembly:%25CD%25\System.Web.Services.dll /nomd5
 
 cd ..
 
 rmdir /S /Q pack
 mkdir pack
-md pack\ASP
-md pack\assemblies
-copy parse\assemblies\defaultwsdlhelpgenerator.aspx.xml pack\assemblies\defaultwsdlhelpgenerator.aspx.xml 
-cd parse\assemblies\A*
-copy *.ghres ..\..\..\pack
-copy *Attrib.class ..\..\..\pack
-copy ASP ..\..\..\pack\ASP
-cd ..\..\..\pack
+cd pack
+mkdir assemblies
+copy ..\parse\assemblies\defaultwsdlhelpgenerator.aspx.xml assemblies
+
+echo Unzipping compiled pages...
+%25JAVA_HOME%25\bin\jar xf ..\parse\WEB-INF\lib\*.jar
 
 echo Unzipping System.Web.Services.jar...
 set jar=$(TargetDir)$(TargetName).jar
 %25JAVA_HOME%25\bin\jar xf "%25jar%25"
 echo Repackaging...
-jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
+%25JAVA_HOME%25\bin\jar cfm "%25jar%25" .\META-INF\MANIFEST.MF *
 
 cd ..</PostBuildEvent>
   </PropertyGroup>
