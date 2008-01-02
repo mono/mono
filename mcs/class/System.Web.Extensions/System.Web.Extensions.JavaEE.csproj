@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -162,6 +162,12 @@
     <Compile Include="System.Web.UI\UpdatePanelTriggerCollection.cs" />
     <Compile Include="System.Web.UI\UpdatePanelUpdateMode.cs" />
     <Compile Include="System.Web.UI\UpdateProgress.cs" />
+    <Compile Include="System.Web.UI\RegisteredArrayDeclaration.cs" />
+    <Compile Include="System.Web.UI\RegisteredDisposeScript.cs" />
+    <Compile Include="System.Web.UI\RegisteredExpandoAttribute.cs" />
+    <Compile Include="System.Web.UI\RegisteredHiddenField.cs" />
+    <Compile Include="System.Web.UI\RegisteredScript.cs" />
+    <Compile Include="System.Web.UI\RegisteredScriptType.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\MicrosoftAjaxLibrary\System.Web.Extensions\3.5.0.0\3.5.21022.8\MicrosoftAjax.debug.jvm.js">
