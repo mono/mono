@@ -1,3 +1,21 @@
+2008-01-02  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: add line pragma wherever necessary.
+
+	* PageCompiler.cs: reorder the statements to match MS.NET output.
+	Output line pragma information for directive attributes.
+
+	* BaseCompiler.cs: add a set of AddLinePragma methods for various
+	CodeDOM elements. 
+	Output line pragmas when adding server-side scripts to the CodeDOM
+	tree.
+
+	* AspGenerator.cs: use ServerSideScript to store script location
+	in the original file.
+
+	* UserControlCompiler.cs: output line pragmas for the init
+	method.
+
 2007-12-28  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: MS.NET compatibility: added the

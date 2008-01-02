@@ -57,7 +57,7 @@ namespace System.Web.Compilation
 
 		TemplateControlParser parser;
 		int dataBoundAtts;
-		ILocation currentLocation;
+		internal ILocation currentLocation;
 
 		static TypeConverter colorConverter;
 
@@ -81,7 +81,7 @@ namespace System.Web.Compilation
 		}
 
 		void CreateField (ControlBuilder builder, bool check)
-		{			
+		{
 			if (builder == null || builder.ID == null || builder.ControlType == null)
 				return;
 #if NET_2_0
@@ -101,10 +101,10 @@ namespace System.Web.Compilation
 			field.Type.Options |= CodeTypeReferenceOptions.GlobalReference;
 
 			if (partialClass != null)
-				partialClass.Members.Add (field);
+				partialClass.Members.Add (AddLinePragma (field, builder));
 			else
 #endif
-				mainClass.Members.Add (field);
+				mainClass.Members.Add (AddLinePragma (field, builder));
 		}
 
 		bool CheckBaseFieldOrProperty (string id, Type type, ref MemberAttributes ma)
@@ -140,7 +140,7 @@ namespace System.Web.Compilation
 
 			return true;
 		}
-
+		
 		void AddParsedSubObjectStmt (ControlBuilder builder, CodeExpression expr) 
 		{
 			if (!builder.haveParserVariable) {
@@ -155,11 +155,13 @@ namespace System.Web.Compilation
 			CodeVariableReferenceExpression var = new CodeVariableReferenceExpression ("__parser");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (var, "AddParsedSubObject");
 			invoke.Parameters.Add (expr);
-			builder.methodStatements.Add (invoke);
+			builder.methodStatements.Add (AddLinePragma (invoke, builder));
 		}
-
+		
 		void InitMethod (ControlBuilder builder, bool isTemplate, bool childrenAsProperties)
 		{
+			currentLocation = builder.location;
+			
 			string tailname = ((builder is RootBuilder) ? "Tree" : ("_" + builder.ID));
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.method = method;
@@ -231,8 +233,8 @@ namespace System.Web.Compilation
 				CodeAssignStatement assign = new CodeAssignStatement ();
 				assign.Left = ctrlVar;
 				assign.Right = newExpr;
-				method.Statements.Add (assign);
-				
+				method.Statements.Add (AddLinePragma (assign, builder));
+								
 				// this.$builderID = _ctrl;
 				//
 				CodeFieldReferenceExpression builderID = new CodeFieldReferenceExpression ();
@@ -241,7 +243,8 @@ namespace System.Web.Compilation
 				assign = new CodeAssignStatement ();
 				assign.Left = builderID;
 				assign.Right = ctrlVar;
-				method.Statements.Add (assign);
+				method.Statements.Add (AddLinePragma (assign, builder));
+
 				if (typeof (UserControl).IsAssignableFrom (type)) {
 					CodeMethodReferenceExpression mref = new CodeMethodReferenceExpression ();
 					mref.TargetObject = builderID;
@@ -419,7 +422,7 @@ namespace System.Web.Compilation
 
 				CodeMethodInvokeExpression expr;
 				expr = new CodeMethodInvokeExpression (methodRef, new CodePrimitiveExpression (str));
-				builder.renderMethod.Statements.Add (expr);
+				builder.renderMethod.Statements.Add (AddLinePragma (expr, builder));
 			}
 		}
 
@@ -446,7 +449,7 @@ namespace System.Web.Compilation
 				}
 			}
 #endif
-			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
+			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), builder.ControlType);
 			
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 
@@ -488,12 +491,12 @@ namespace System.Web.Compilation
 			bool isWritable = IsWritablePropertyOrField (member);
 			if (isDataBound && isWritable) {
 				string dbMethodName = DataBoundProperty (builder, type, var_name, att);
-				AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
+				AddEventAssign (method, builder, "DataBinding", typeof (EventHandler), dbMethodName);
 				return;
 			}
 #if NET_2_0
 			else if (isExpression && isWritable) {
-				AddExpressionAssign (method, member, type, var_name, att);
+				AddExpressionAssign (method, builder, member, type, var_name, att);
 				return;
 			}
 #endif
@@ -503,7 +506,7 @@ namespace System.Web.Compilation
 			currentLocation = builder.location;
 			assign.Right = GetExpressionFromString (type, att, member);
 
-			method.Statements.Add (assign);
+			method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
 		bool IsDataBound (string value)
@@ -664,7 +667,7 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
-		void AddExpressionAssign (CodeMemberMethod method, MemberInfo member, Type type, string name, string value)
+		void AddExpressionAssign (CodeMemberMethod method, ControlBuilder builder, MemberInfo member, Type type, string name, string value)
 		{
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
@@ -721,7 +724,7 @@ namespace System.Web.Compilation
 			BoundPropertyEntry bpe = CreateBoundPropertyEntry (member as PropertyInfo, prefix, expr);
 			assign.Right = eb.GetCodeExpression (bpe, parsedData, ctx);
 			
-			method.Statements.Add (assign);
+			builder.method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
 		BoundPropertyEntry CreateBoundPropertyEntry (PropertyInfo pi, string prefix, string expr)
@@ -740,7 +743,7 @@ namespace System.Web.Compilation
 			return ret;
 		}
 		
-		void AssignPropertyFromResources (CodeMemberMethod method, MemberInfo mi, string attvalue)
+		void AssignPropertyFromResources (ControlBuilder builder, MemberInfo mi, string attvalue)
 		{
 			bool isProperty = mi.MemberType == MemberTypes.Property;
 			bool isField = !isProperty && (mi.MemberType == MemberTypes.Field);
@@ -777,10 +780,10 @@ namespace System.Web.Compilation
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, memberName);
 			assign.Right = ResourceExpressionBuilder.CreateGetLocalResourceObject (mi, resname);
 			
-			method.Statements.Add (assign);
+			builder.method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
-		void AssignPropertiesFromResources (CodeMemberMethod method, Type controlType, string attvalue)
+		void AssignPropertiesFromResources (ControlBuilder builder, Type controlType, string attvalue)
 		{
 			// Process all public fields and properties of the control. We don't use GetMembers to make the code
 			// faster
@@ -792,9 +795,9 @@ namespace System.Web.Compilation
 				BindingFlags.Public | BindingFlags.FlattenHierarchy);
 
 			foreach (FieldInfo fi in fields)
-				AssignPropertyFromResources (method, fi, attvalue);
+				AssignPropertyFromResources (builder, fi, attvalue);
 			foreach (PropertyInfo pi in properties)
-				AssignPropertyFromResources (method, pi, attvalue);
+				AssignPropertyFromResources (builder, pi, attvalue);
 		}
 		
 		void AssignPropertiesFromResources (ControlBuilder builder, string attvalue)
@@ -806,11 +809,11 @@ namespace System.Web.Compilation
 			if (controlType == null)
 				return;
 
-			AssignPropertiesFromResources (builder.method, controlType, attvalue);
+			AssignPropertiesFromResources (builder, controlType, attvalue);
 		}
 #endif
 		
-		void AddEventAssign (CodeMemberMethod method, string name, Type type, string value)
+		void AddEventAssign (CodeMemberMethod method, ControlBuilder builder, string name, Type type, string value)
 		{
 			//"__ctrl.{0} += new {1} (this.{2});"
 			CodeEventReferenceExpression evtID = new CodeEventReferenceExpression (ctrlVar, name);
@@ -836,6 +839,7 @@ namespace System.Web.Compilation
 				foreach (EventInfo ev in ev_info){
 					if (InvariantCompareNoCase (ev.Name, id_as_event)){
 						AddEventAssign (builder.method,
+								builder,
 								ev.Name,
 								ev.EventHandlerType,
 								attvalue);
@@ -885,7 +889,7 @@ namespace System.Web.Compilation
 				expr = new CodeMethodInvokeExpression (methodExpr);
 				expr.Parameters.Add (new CodePrimitiveExpression (id));
 				expr.Parameters.Add (new CodePrimitiveExpression (attvalue));
-				method.Statements.Add (expr);
+				method.Statements.Add (AddLinePragma (expr, builder));
 			}
 
 		}
@@ -933,9 +937,9 @@ namespace System.Web.Compilation
 			string id = builder.GetNextID (null);
 			string dbMethodName = "__DataBind_" + id;
 			CodeMemberMethod method = builder.method;
-			AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
+			AddEventAssign (method, builder, "DataBinding", typeof (EventHandler), dbMethodName);
 
-			method = CreateDBMethod (dbMethodName, GetContainerType (builder), builder.ControlType);
+			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), builder.ControlType);
 			CodeCastExpression cast;
 			CodeMethodReferenceExpression methodExpr;
 			CodeMethodInvokeExpression expr;
@@ -974,6 +978,7 @@ namespace System.Web.Compilation
 		{
 			if (parent == null || child == null)
 				return;
+			
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
 
@@ -1001,8 +1006,8 @@ namespace System.Web.Compilation
 				build.Parameters.Add (new CodeDelegateCreateExpression (
 							      new CodeTypeReference (typeof (System.Web.UI.BuildMethod)),
 							      thisRef, child.method.Name));
-				
-				parent.methodStatements.Add (build);
+
+				parent.methodStatements.Add (AddLinePragma (build, parent));
 				if (parent.HasAspCode)
 					AddRenderControl (parent);
 				return;
@@ -1010,18 +1015,18 @@ namespace System.Web.Compilation
                                 
 			if (child.isProperty || parent.ChildrenAsProperties) {
 				expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
-				parent.methodStatements.Add (expr);
+				parent.methodStatements.Add (AddLinePragma (expr, parent));
 				return;
 			}
 
-			parent.methodStatements.Add (expr);
+			parent.methodStatements.Add (AddLinePragma (expr, parent));
 			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (thisRef, child.ID);
-			if (parent.ControlType == null || typeof (IParserAccessor).IsAssignableFrom (parent.ControlType)) {
+			if (parent.ControlType == null || typeof (IParserAccessor).IsAssignableFrom (parent.ControlType))
 				AddParsedSubObjectStmt (parent, field);
-			} else {
+			else {
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (ctrlVar, "Add");
 				invoke.Parameters.Add (field);
-				parent.methodStatements.Add (invoke);
+				parent.methodStatements.Add (AddLinePragma (invoke, parent));
 			}
 				
 			if (parent.HasAspCode)
@@ -1133,7 +1138,7 @@ namespace System.Web.Compilation
 			invoke.Parameters.Add (new CodePrimitiveExpression (cbuilder.ContentPlaceHolderID));
 			invoke.Parameters.Add (newCompiled);
 
-			method.Statements.Add (invoke);
+			method.Statements.Add (AddLinePragma (invoke, cbuilder));
 		}
 #endif
 
@@ -1144,7 +1149,7 @@ namespace System.Web.Compilation
 
 			if (!cr.IsAssign) {
 				CodeSnippetStatement code = new CodeSnippetStatement (cr.Code);
-				parent.renderMethod.Statements.Add (code);
+				parent.renderMethod.Statements.Add (AddLinePragma (code, cr));
 				return;
 			}
 
@@ -1154,7 +1159,7 @@ namespace System.Web.Compilation
 							"Write");
 
 			expr.Parameters.Add (new CodeSnippetExpression (cr.Code));
-			parent.renderMethod.Statements.Add (expr);
+			parent.renderMethod.Statements.Add (AddLinePragma (expr, cr));
 		}
 
 		static Type GetContainerType (ControlBuilder builder)
@@ -1183,7 +1188,7 @@ namespace System.Web.Compilation
 #endif
 		}
 		
-		CodeMemberMethod CreateDBMethod (string name, Type container, Type target)
+		CodeMemberMethod CreateDBMethod (ControlBuilder builder, string name, Type container, Type target)
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
 			method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
@@ -1198,7 +1203,7 @@ namespace System.Web.Compilation
 			decl.Name = "Container";
 			decl.Type = containerRef;
 			method.Statements.Add (decl);
-
+			
 			decl = new CodeVariableDeclarationStatement();
 			decl.Name = "target";
 			decl.Type = targetRef;
@@ -1208,13 +1213,13 @@ namespace System.Web.Compilation
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = targetExpr;
 			assign.Right = new CodeCastExpression (targetRef, new CodeArgumentReferenceExpression ("sender"));
-			method.Statements.Add (assign);
+			method.Statements.Add (AddLinePragma (assign, builder));
 
 			assign = new CodeAssignStatement ();
 			assign.Left = new CodeVariableReferenceExpression ("Container");
 			assign.Right = new CodeCastExpression (containerRef,
 						new CodePropertyReferenceExpression (targetExpr, "BindingContainer"));
-			method.Statements.Add (assign);
+			method.Statements.Add (AddLinePragma (assign, builder));
 
 			return method;
 		}
@@ -1231,11 +1236,11 @@ namespace System.Web.Compilation
 			// Add the method that builds the DataBoundLiteralControl
 			InitMethod (db, false, false);
 			CodeMemberMethod method = db.method;
-			AddEventAssign (method, "DataBinding", typeof (EventHandler), dbMethodName);
+			AddEventAssign (method, builder, "DataBinding", typeof (EventHandler), dbMethodName);
 			method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 
 			// Add the DataBind handler
-			method = CreateDBMethod (dbMethodName, GetContainerType (builder), typeof (DataBoundLiteralControl));
+			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), typeof (DataBoundLiteralControl));
 
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression ();
@@ -1248,7 +1253,7 @@ namespace System.Web.Compilation
 							"ToString");
 			tostring.Parameters.Add (new CodeSnippetExpression (db.Code));
 			invoke.Parameters.Add (tostring);
-			method.Statements.Add (invoke);
+			method.Statements.Add (AddLinePragma (invoke, builder));
 			
 			mainClass.Members.Add (method);
 
@@ -1329,7 +1334,7 @@ namespace System.Web.Compilation
 							CodeAssignStatement assign = new CodeAssignStatement ();
 							assign.Left = new CodePropertyReferenceExpression (ctrlVar, pb.PropertyName);
 							assign.Right = new CodePrimitiveExpression (asb.ToString ());
-							method.Statements.Add (assign);
+							method.Statements.Add (AddLinePragma (assign, builder));
 						}
 						continue;
 					}
@@ -1418,7 +1423,7 @@ namespace System.Web.Compilation
 #if NET_2_0
 			if (builder is RootBuilder)
 				if (!String.IsNullOrEmpty (parser.MetaResourceKey))
-					AssignPropertiesFromResources (builder.method, parser.BaseType, parser.MetaResourceKey);
+					AssignPropertiesFromResources (builder, parser.BaseType, parser.MetaResourceKey);
 #endif
 		}
 		

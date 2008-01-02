@@ -459,8 +459,7 @@ namespace System.Web.Compilation
 			string t = text.ToString ();
 			text.Length = 0;
 			if (inScript) {
-				// TODO: store location
-				tparser.Scripts.Add (t);
+				tparser.Scripts.Add (new ServerSideScript (t, new System.Web.Compilation.Location (tparser.Location)));
 				return;
 			}
 

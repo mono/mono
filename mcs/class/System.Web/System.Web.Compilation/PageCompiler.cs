@@ -185,28 +185,30 @@ namespace System.Web.Compilation
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
 #if NET_2_0
-			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
-			method.Statements.Add (new CodeExpressionStatement (expr));
-
+			ILocation directiveLocation = pageParser.DirectiveLocation;
+			
 			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
 			if (pageParser.Title != null)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
 
 			if (pageParser.MasterPageFile != null)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile), directiveLocation));
 
 			if (pageParser.Theme != null)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme), directiveLocation));
 
 			if (pageParser.StyleSheetTheme != null)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme), directiveLocation));
 
 			if (pageParser.Async != false)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "AsyncMode", pageParser.Async));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncMode", pageParser.Async), directiveLocation));
 
 			if (pageParser.AsyncTimeout != -1)
-				method.Statements.Add (CreatePropertyAssign (ctrlVar, "AsyncTimeout",
-									     TimeSpan.FromSeconds (pageParser.AsyncTimeout)));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncTimeout",
+											    TimeSpan.FromSeconds (pageParser.AsyncTimeout)), directiveLocation));
+
+			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
+			method.Statements.Add (AddLinePragma (new CodeExpressionStatement (expr), directiveLocation));
 #endif
 		}
 

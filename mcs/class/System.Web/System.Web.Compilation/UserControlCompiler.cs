@@ -87,7 +87,7 @@ namespace System.Web.Compilation
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (new CodeArgumentReferenceExpression("__ctrl"), "MasterPageFile");
 				CodeExpression ct = new CodePrimitiveExpression (parser.MasterPageFile);
-				method.Statements.Add (new CodeAssignStatement (prop, ct));
+				method.Statements.Add (AddLinePragma (new CodeAssignStatement (prop, ct), parser.DirectiveLocation));
 			}
 #endif
 		}

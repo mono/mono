@@ -69,6 +69,74 @@ namespace System.Web.Compilation
 			this.parser = parser;
 		}
 
+		internal CodeStatement AddLinePragma (CodeExpression expression, ControlBuilder builder)
+		{
+			return AddLinePragma (new CodeExpressionStatement (expression), builder);
+		}
+		
+		internal CodeStatement AddLinePragma (CodeStatement statement, ControlBuilder builder)
+		{
+			if (builder == null || statement == null)
+				return statement;
+
+			ILocation location = null;
+
+			if (!(builder is CodeRenderBuilder))
+				location = builder.location;
+			
+			if (location != null)
+				return AddLinePragma (statement, location);
+			else
+				return AddLinePragma (statement, builder.line, builder.fileName);
+		}
+
+		internal CodeStatement AddLinePragma (CodeStatement statement, ILocation location)
+		{
+			if (location == null || statement == null)
+				return statement;
+			
+			return AddLinePragma (statement, location.BeginLine, location.Filename);
+		}
+
+		internal CodeStatement AddLinePragma (CodeStatement statement, int line, string fileName)
+		{
+			if (statement == null)
+				return null;
+			
+			statement.LinePragma = new CodeLinePragma (fileName, line);
+			return statement;			
+		}
+
+		internal CodeTypeMember AddLinePragma (CodeTypeMember member, ControlBuilder builder)
+		{
+			if (builder == null || member == null)
+				return member;
+
+			ILocation location = builder.location;
+			
+			if (location != null)
+				return AddLinePragma (member, location);
+			else
+				return AddLinePragma (member, builder.line, builder.fileName);
+		}
+		
+		internal CodeTypeMember AddLinePragma (CodeTypeMember member, ILocation location)
+		{
+			if (location == null || member == null)
+				return member;
+
+			return AddLinePragma (member, location.BeginLine, location.Filename);
+		}
+		
+		internal CodeTypeMember AddLinePragma (CodeTypeMember member, int line, string fileName)
+		{
+			if (member == null)
+				return null;
+			
+			member.LinePragma = new CodeLinePragma (fileName, line);
+			return member;
+		}
+		
 		void Init ()
 		{
 			unit = new CodeCompileUnit ();
@@ -271,9 +339,15 @@ namespace System.Web.Compilation
 			if (parser.Scripts == null || parser.Scripts.Count == 0)
 				return;
 
+			ServerSideScript sss;
+			
 			foreach (object o in parser.Scripts) {
-				if (o is string)
-					mainClass.Members.Add (new CodeSnippetTypeMember ((string) o));
+				sss = o as ServerSideScript;
+
+				if (sss == null)
+					continue;
+				
+				mainClass.Members.Add (AddLinePragma (new CodeSnippetTypeMember (sss.Script), sss.Location));
 			}
 		}
 		

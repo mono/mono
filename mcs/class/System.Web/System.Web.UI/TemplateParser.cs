@@ -44,7 +44,18 @@ using System.Collections.Generic;
 #endif
 
 namespace System.Web.UI {
-
+	internal class ServerSideScript
+	{
+		public readonly string Script;
+		public readonly ILocation Location;
+		
+		public ServerSideScript (string script, ILocation location)
+		{
+			Script = script;
+			Location = location;
+		}
+	}
+	
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -88,6 +99,8 @@ namespace System.Web.UI {
 		Type codeFileBaseClassType;
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
 #endif
+		ILocation directiveLocation;
+		
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
 
@@ -526,6 +539,8 @@ namespace System.Web.UI {
 		
 		internal virtual void ProcessMainAttributes (Hashtable atts)
 		{
+			directiveLocation = new System.Web.Compilation.Location (Location);
+			
 #if NET_2_0
 			CompilationSection compConfig;
 #else
@@ -800,6 +815,10 @@ namespace System.Web.UI {
 		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
+		internal ILocation DirectiveLocation {
+			get { return directiveLocation; }
+		}
+		
 		internal string InputFile
 		{
 			get { return inputFile; }
