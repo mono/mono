@@ -1,3 +1,7 @@
+2008-01-02  Marek Habersack  <mhabersack@novell.com>
+
+	* Array.cs: fix a typo to unbreak the build.
+
 2008-1-1  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* Array.cs: Slight improvement to the quicksort algorithm.

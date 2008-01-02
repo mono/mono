@@ -1748,7 +1748,7 @@ namespace System
 				while (low < high0 && comparison (array [low], keyPivot) < 0)
 					++low;
 				while (high > low0 && comparison (keyPivot, array [high]) < 0)
-					--high;C
+					--high;
 
 				if (low <= high) {
 					swap<T> (array, low, high);
