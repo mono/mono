@@ -30,6 +30,8 @@
 
 function WebForm_Initialize(webForm) {
 
+webForm.__pendingCallbacks = new Array();
+
 webForm.WebForm_AutoFocus = function (id)
 {
 	var x = this.WebForm_GetElementById (id);
