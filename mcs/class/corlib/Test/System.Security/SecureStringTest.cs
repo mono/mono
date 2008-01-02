@@ -186,6 +186,16 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		public void InsertAt_UsedLikeAppendChar () // #350820
+		{
+			SecureString ss = new SecureString ();
+			ss.AppendChar ('T');
+			Assert.AreEqual (1, ss.Length, "AppendChar");
+			ss.InsertAt (1, 'e');
+			Assert.AreEqual (2, ss.Length, "InsertAt");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SetAt_Negative ()
 		{

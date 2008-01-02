@@ -1,3 +1,7 @@
+2008-01-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecureStringTest.cs: Add test case for InsertAt (#350820)
+
 2008-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecureStringTest.cs: Add test cases for Copy (#350840)
