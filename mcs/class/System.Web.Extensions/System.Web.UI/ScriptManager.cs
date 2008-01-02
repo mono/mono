@@ -104,6 +104,7 @@ namespace System.Web.UI
 		ScriptEntry _scriptIncludes;
 		ScriptEntry _onSubmitStatements;
 		List<RegisteredArrayDeclaration> _arrayDeclarations;
+		List<RegisteredExpandoAttribute> _expandoAttributes;
 		Hashtable _hiddenFields;
 		List<IScriptControl> _registeredScriptControls;
 		Dictionary<IExtenderControl, Control> _registeredExtenderControls;
@@ -629,7 +630,7 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredArrayDeclaration> GetRegisteredArrayDeclarations () {
-			return new ReadOnlyCollection<RegisteredArrayDeclaration> (_arrayDeclarations);
+			return new ReadOnlyCollection<RegisteredArrayDeclaration> (_arrayDeclarations ?? new List<RegisteredArrayDeclaration> ());
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredClientScriptBlocks () {
@@ -641,7 +642,7 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredExpandoAttribute> GetRegisteredExpandoAttributes () {
-			throw new NotImplementedException ();
+			return new ReadOnlyCollection<RegisteredExpandoAttribute> (_expandoAttributes ?? new List<RegisteredExpandoAttribute> ());
 		}
 
 		public ReadOnlyCollection<RegisteredHiddenField> GetRegisteredHiddenFields () {
@@ -904,14 +905,14 @@ namespace System.Web.UI
 		public static void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
 			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				sm.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
-			else
-				page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
-		}
 
-		private void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
-			// seems MS do nothing.
+			if (sm._expandoAttributes == null)
+				sm._expandoAttributes = new List<RegisteredExpandoAttribute> ();
+
+			sm._expandoAttributes.Add (new RegisteredExpandoAttribute (control, controlId, attributeName, attributeValue, encode));
+
+			if (!sm.IsInAsyncPostBack)
+				page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
 
 		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
@@ -1232,6 +1233,7 @@ namespace System.Web.UI
 				}
 
 			WriteArrayDeclarations (output);
+			WriteExpandoAttributes (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
 			WriteScriptBlocks (output, _scriptIncludes);
 			WriteScriptBlocks (output, _startupScriptBlocks);
@@ -1249,11 +1251,22 @@ namespace System.Web.UI
 				}
 		}
 
+		private void WriteExpandoAttributes (HtmlTextWriter writer) {
+			if (_expandoAttributes != null) {
+				for (int i = 0; i < _expandoAttributes.Count; i++) {
+					RegisteredExpandoAttribute attr = _expandoAttributes [i];
+					if (HasBeenRendered (attr.Control))
+						WriteCallbackOutput (writer, expando, "document.getElementById('Label2')['" + attr.Name + "']", "\"" + attr.Value + "\"");
+				}
+			}
+		}
+
 		void WriteArrayDeclarations (HtmlTextWriter writer) {
 			if (_arrayDeclarations != null) {
 				for (int i = 0; i < _arrayDeclarations.Count; i++) {
 					RegisteredArrayDeclaration array = _arrayDeclarations [i];
-					WriteCallbackOutput (writer, arrayDeclaration, array.Name, array.Value);
+					if (Page == array.Control || HasBeenRendered (array.Control))
+						WriteCallbackOutput (writer, arrayDeclaration, array.Name, array.Value);
 				}
 			}
 		}
