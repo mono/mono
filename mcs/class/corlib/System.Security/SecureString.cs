@@ -166,7 +166,7 @@ namespace System.Security {
 				Decrypt ();
 				Alloc (++length, true);
 				int n = index * 2;
-				Buffer.BlockCopy (data, n, data, n + 2, data.Length - 2);
+				Buffer.BlockCopy (data, n, data, n + 2, data.Length - n - 2);
 				data[n++] = (byte) (c >> 8);
 				data[n] = (byte) c;
 			}
