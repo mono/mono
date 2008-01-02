@@ -74,3 +74,9 @@
 ./System.Web.UI/UpdateProgress.cs
 ./System.Web.UI/ScriptMode.cs
 ./System.Web.UI/UpdatePanelUpdateMode.cs
+./System.Web.UI/RegisteredArrayDeclaration.cs
+./System.Web.UI/RegisteredDisposeScript.cs
+./System.Web.UI/RegisteredExpandoAttribute.cs
+./System.Web.UI/RegisteredHiddenField.cs
+./System.Web.UI/RegisteredScript.cs
+./System.Web.UI/RegisteredScriptType.cs
