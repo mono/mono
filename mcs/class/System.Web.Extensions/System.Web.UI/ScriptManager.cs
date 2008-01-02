@@ -103,7 +103,7 @@ namespace System.Web.UI
 		ScriptEntry _startupScriptBlocks;
 		ScriptEntry _scriptIncludes;
 		ScriptEntry _onSubmitStatements;
-		List<ArrayDeclaration> _arrayDeclarations;
+		List<RegisteredArrayDeclaration> _arrayDeclarations;
 		Hashtable _hiddenFields;
 		List<IScriptControl> _registeredScriptControls;
 		Dictionary<IExtenderControl, Control> _registeredExtenderControls;
@@ -629,7 +629,7 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredArrayDeclaration> GetRegisteredArrayDeclarations () {
-			throw new NotImplementedException ();
+			return new ReadOnlyCollection<RegisteredArrayDeclaration> (_arrayDeclarations);
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredClientScriptBlocks () {
@@ -727,23 +727,21 @@ namespace System.Web.UI
 				up.Update ();
 		}
 
-		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
-			RegisterArrayDeclaration (control.Page, arrayName, arrayValue);
-		}
-
 		public static void RegisterArrayDeclaration (Page page, string arrayName, string arrayValue) {
-			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				sm.RegisterArrayDeclaration (arrayName, arrayValue);
-			else
-				page.ClientScript.RegisterArrayDeclaration (arrayName, arrayValue);
+			RegisterArrayDeclaration ((Control) page, arrayName, arrayValue);
 		}
 
-		void RegisterArrayDeclaration (string arrayName, string arrayValue) {
-			if (_arrayDeclarations == null)
-				_arrayDeclarations = new List<ArrayDeclaration> ();
+		public static void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
+			Page page = control.Page;
+			ScriptManager sm = GetCurrent (page);
 
-			_arrayDeclarations.Add (new ArrayDeclaration (arrayName, arrayValue));
+			if (sm._arrayDeclarations == null)
+				sm._arrayDeclarations = new List<RegisteredArrayDeclaration> ();
+
+			sm._arrayDeclarations.Add (new RegisteredArrayDeclaration (control, arrayName, arrayValue));
+
+			if (!sm.IsInAsyncPostBack)
+				page.ClientScript.RegisterArrayDeclaration (arrayName, arrayValue);
 		}
 
 		public void RegisterAsyncPostBackControl (Control control) {
@@ -1254,8 +1252,8 @@ namespace System.Web.UI
 		void WriteArrayDeclarations (HtmlTextWriter writer) {
 			if (_arrayDeclarations != null) {
 				for (int i = 0; i < _arrayDeclarations.Count; i++) {
-					ArrayDeclaration array = _arrayDeclarations [i];
-					WriteCallbackOutput (writer, arrayDeclaration, array.ArrayName, array.ArrayValue);
+					RegisteredArrayDeclaration array = _arrayDeclarations [i];
+					WriteCallbackOutput (writer, arrayDeclaration, array.Name, array.Value);
 				}
 			}
 		}
@@ -1530,17 +1528,6 @@ namespace System.Web.UI
 			ScriptContentWithTags,
 			ScriptPath,
 			OnSubmit
-		}
-
-		sealed class ArrayDeclaration
-		{
-			readonly public string ArrayName;
-			readonly public string ArrayValue;
-
-			public ArrayDeclaration (string arrayName, string arrayValue) {
-				ArrayName = arrayName;
-				ArrayValue = arrayValue;
-			}
 		}
 
 		sealed class CultureInfoSerializer : JavaScriptSerializer.LazyDictionary
