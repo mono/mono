@@ -1,3 +1,8 @@
+2008-01-02  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: Add support for getting idls from other paths, fix
+	script name bug.
+
 2007-12-28  Andreia Gaita  <avidigal@novell.com>
 
 	* xpidl2cs.pl: Generates c# interfaces from xpcom (mozilla) 
