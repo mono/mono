@@ -87,7 +87,7 @@ namespace System.Web.UI
 		internal bool IsMultiForm {
 			get {
 				if (!_isMultiFormInited) {
-					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.web.portal.multiform"];
+					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.use.portlet.namespace"];
 					_isMultiForm = isMultiForm != null ? Boolean.Parse(isMultiForm) : false;
 
 					_isMultiFormInited = true;
