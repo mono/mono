@@ -1490,7 +1490,7 @@ namespace System
 			int mid = low + ((high - low) / 2);
 			object objPivot = keys.GetValueImpl (mid);
 
-			while (low <= high) {
+			while (true) {
 				// Move the walls in
 				while (low < high0 && compare (keys.GetValueImpl (low), objPivot, comparer) < 0)
 					++low;
@@ -1501,7 +1501,8 @@ namespace System
 					swap (keys, items, low, high);
 					++low;
 					--high;
-				}
+				} else
+					break;
 			}
 
 			if (low0 < high)
@@ -1690,7 +1691,7 @@ namespace System
 			int mid = low + ((high - low) / 2);
 			K keyPivot = keys [mid];
 
-			while (low <= high) {
+			while (true) {
 				// Move the walls in
 				//while (low < high0 && comparer.Compare (keys [low], keyPivot) < 0)
 				while (low < high0 && compare (keys [low], keyPivot, comparer) < 0)
@@ -1703,7 +1704,8 @@ namespace System
 					swap<K, V> (keys, items, low, high);
 					++low;
 					--high;
-				}
+				} else
+					break;
 			}
 
 			if (low0 < high)
@@ -1741,18 +1743,19 @@ namespace System
 			int mid = low + ((high - low) / 2);
 			T keyPivot = array [mid];
 
-			while (low <= high) {
+			while (true) {
 				// Move the walls in
 				while (low < high0 && comparison (array [low], keyPivot) < 0)
 					++low;
 				while (high > low0 && comparison (keyPivot, array [high]) < 0)
-					--high;
+					--high;C
 
 				if (low <= high) {
 					swap<T> (array, low, high);
 					++low;
 					--high;
-				}
+				} else
+					break;
 			}
 
 			if (low0 < high)
