@@ -1259,8 +1259,17 @@ namespace System.Web.UI
 			if (_expandoAttributes != null) {
 				for (int i = 0; i < _expandoAttributes.Count; i++) {
 					RegisteredExpandoAttribute attr = _expandoAttributes [i];
-					if (HasBeenRendered (attr.Control))
-						WriteCallbackOutput (writer, expando, "document.getElementById('Label2')['" + attr.Name + "']", "\"" + attr.Value + "\"");
+					if (HasBeenRendered (attr.Control)) {
+						string value;
+						if (attr.Encode) {
+							StringWriter sw = new StringWriter ();
+							Newtonsoft.Json.JavaScriptUtils.WriteEscapedJavaScriptString (attr.Value, sw);
+							value = sw.ToString ();
+						}
+						else
+							value = "\"" + attr.Value + "\"";
+						WriteCallbackOutput (writer, expando, "document.getElementById('Label2')['" + attr.Name + "']", value);
+					}
 				}
 			}
 		}
