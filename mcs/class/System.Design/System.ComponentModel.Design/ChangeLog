@@ -1,3 +1,8 @@
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* SelectionService.cs: Remove the component from the current 
+	selection if it gets removed from the surface.
+
 2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignerHost.cs: Report Errors.

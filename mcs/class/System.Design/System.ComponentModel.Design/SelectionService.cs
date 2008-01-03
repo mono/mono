@@ -39,20 +39,32 @@ namespace System.ComponentModel.Design
 	{
 		
 		private IServiceProvider _serviceProvider;
+		private ArrayList _selection;
+		private IComponent _primarySelection;
 		
 		public SelectionService (IServiceProvider provider)
 		{
 			_serviceProvider = provider;
 			_selection = new ArrayList();
+
+			IComponentChangeService changeService = provider.GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (changeService != null)
+				changeService.ComponentRemoving += new ComponentEventHandler (OnComponentRemoving);
 		}
 		
-		private ArrayList _selection;
-		private IComponent _primarySelection;
+		private void OnComponentRemoving (object sender, ComponentEventArgs args)
+		{
+			if (this.GetComponentSelected (args.Component)) 
+#if NET_2_0
+				this.SetSelectedComponents (new IComponent[] { args.Component }, SelectionTypes.Remove);
+#else
+				this.SetSelectedComponents (new IComponent[] { this.RootComponent }, SelectionTypes.Click);
+#endif
+
+		}
 		
 		public event EventHandler SelectionChanging;
 		public event EventHandler SelectionChanged;
-		
-
 		
 		public ICollection GetSelectedComponents() 
 		{
@@ -208,9 +220,11 @@ namespace System.ComponentModel.Design
 				foreach (object component in components) {
 					if (component is IComponent && _selection.Contains (component)) {
 						_selection.Remove (component);
-						if (component == _primarySelection)
-							_primarySelection = this.RootComponent;
 					}
+				}
+				if (_selection.Count == 0) {
+					_primarySelection = this.RootComponent;
+					_selection.Add (this.RootComponent);
 				}
 			}
 
