@@ -1,3 +1,9 @@
+2008-01-03  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionWriter.cs:
+		Properly emit null type constants. Fix #351141.
+		Patch by Rolf Kvinge <rkvinge@novell.com>.
+
 2007-12-30  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CilWorker.cs:
