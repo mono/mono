@@ -1,3 +1,7 @@
+2008-01-03  Rodrigo Kumpera <rkumpera@novell.com>
+
+	* ILParser.jay: Fixed typo in EmitByteInstr class name.
+
 2007-12-31  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* ILParser.jay: Implement .emitbyte directive 

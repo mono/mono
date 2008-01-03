@@ -13,11 +13,11 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class EmitByteIntr : IInstr {
+        public class EmitByteInstr : IInstr {
 
                 private int value;
 
-                public EmitByteIntr (int value, Location loc)
+                public EmitByteInstr (int value, Location loc)
 			: base (loc)
                 {
                         this.value = value;

@@ -1,6 +1,10 @@
+2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* EmiteByteInstr.cs: Fixed typo in class name.
+
 2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* EmiteByteInst.cs: added. Implements support
+	* EmiteByteInstr.cs: added. Implements support
 	for the .emitbyte directive.
 
 2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
