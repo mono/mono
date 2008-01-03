@@ -1409,14 +1409,19 @@ namespace Mono.CSharp
 			} else
 				x = reader.Read ();
 			if (x == '\n') {
-				line++;
-				ref_line++;
-				previous_col = col;
-				col = 0;
+				advance_line ();
 			}
 			else
 				col++;
 			return x;
+		}
+
+		void advance_line ()
+		{
+			line++;
+			ref_line++;
+			previous_col = col;
+			col = 0;
 		}
 
 		int peek_char ()
@@ -2330,8 +2335,9 @@ namespace Mono.CSharp
 
 				if (c == '\r') {
 					if (peek_char () != '\n')
-						putback_char = '\n';
-					get_char ();
+						advance_line ();
+					else
+						get_char ();
 
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
