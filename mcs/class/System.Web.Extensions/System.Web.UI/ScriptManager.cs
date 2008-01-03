@@ -117,7 +117,7 @@ namespace System.Web.UI
 		string _controlIDToFocus;
 		bool _allowCustomErrorsRedirect = true;
 		string _asyncPostBackErrorMessage;
-		List<DisposeScriptEntry> _disposeScripts;
+		List<RegisteredDisposeScript> _disposeScripts;
 		List<ScriptReferenceEntry> _scriptToRegister;
 		bool _loadScriptsBeforeUI = true;
 		AuthenticationServiceManager _authenticationService;
@@ -488,7 +488,7 @@ namespace System.Web.UI
 					StringBuilder sb = new StringBuilder ();
 					sb.AppendLine ();
 					for (int i = 0; i < _disposeScripts.Count; i++) {
-						DisposeScriptEntry entry = _disposeScripts [i];
+						RegisteredDisposeScript entry = _disposeScripts [i];
 						if (IsMultiForm)
 							sb.Append ("Sys.WebForms.PageRequestManager.getInstance($get(\"" + Page.Form.ClientID + "\"))._registerDisposeScript(\"");
 						else
@@ -640,7 +640,9 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredDisposeScript> GetRegisteredDisposeScripts () {
-			throw new NotImplementedException ();
+			if (_disposeScripts == null)
+				_disposeScripts = new List<RegisteredDisposeScript> ();
+			return new ReadOnlyCollection<RegisteredDisposeScript> (_disposeScripts);
 		}
 
 		public ReadOnlyCollection<RegisteredExpandoAttribute> GetRegisteredExpandoAttributes () {
@@ -893,8 +895,8 @@ namespace System.Web.UI
 				return;
 
 			if (_disposeScripts == null)
-				_disposeScripts = new List<DisposeScriptEntry> ();
-			_disposeScripts.Add (new DisposeScriptEntry (updatePanel, disposeScript));
+				_disposeScripts = new List<RegisteredDisposeScript> ();
+			_disposeScripts.Add (new RegisteredDisposeScript (control, disposeScript, updatePanel));
 		}
 
 		static UpdatePanel GetUpdatePanel (Control control) {
@@ -1248,7 +1250,7 @@ namespace System.Web.UI
 
 			if (_disposeScripts != null)
 				for (int i = 0; i < _disposeScripts.Count; i++) {
-					DisposeScriptEntry entry = _disposeScripts [i];
+					RegisteredDisposeScript entry = _disposeScripts [i];
 					if ((_panelsToRefresh != null && _panelsToRefresh.IndexOf (entry.UpdatePanel) >= 0) || (_childUpdatePanels != null && _childUpdatePanels.IndexOf (entry.UpdatePanel) >= 0))
 						WriteCallbackOutput (output, scriptDispose, entry.UpdatePanel.ClientID, entry.Script);
 				}
@@ -1604,20 +1606,6 @@ namespace System.Web.UI
 			public DataItemEntry (string dataItem, bool isJsonSerialized) {
 				_dataItem = dataItem;
 				_isJsonSerialized = isJsonSerialized;
-			}
-		}
-
-		sealed class DisposeScriptEntry
-		{
-			readonly UpdatePanel _updatePanel;
-			readonly string _script;
-
-			public UpdatePanel UpdatePanel { get { return _updatePanel; } }
-			public string Script { get { return _script; } }
-
-			public DisposeScriptEntry (UpdatePanel updatePanel, string script) {
-				_updatePanel = updatePanel;
-				_script = script;
 			}
 		}
 

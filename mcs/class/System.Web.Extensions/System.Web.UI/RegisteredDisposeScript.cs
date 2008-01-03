@@ -34,11 +34,13 @@ namespace System.Web.UI
 	public sealed class RegisteredDisposeScript
 	{
 		readonly Control _control;
+		readonly UpdatePanel _updatePanel;
 		readonly string _script;
 
-		internal RegisteredDisposeScript (Control control, string script) {
+		internal RegisteredDisposeScript (Control control, string script, UpdatePanel updatePanel) {
 			_control = control;
 			_script = script;
+			_updatePanel = updatePanel;
 		}
 
 		public Control Control {
@@ -47,6 +49,10 @@ namespace System.Web.UI
 
 		public string Script {
 			get { return _script; }
+		}
+
+		internal UpdatePanel UpdatePanel {
+			get { return _updatePanel; }
 		}
 	}
 }
