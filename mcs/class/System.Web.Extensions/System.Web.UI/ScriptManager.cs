@@ -105,7 +105,7 @@ namespace System.Web.UI
 		ScriptEntry _onSubmitStatements;
 		List<RegisteredArrayDeclaration> _arrayDeclarations;
 		List<RegisteredExpandoAttribute> _expandoAttributes;
-		Hashtable _hiddenFields;
+		List<RegisteredHiddenField> _hiddenFields;
 		List<IScriptControl> _registeredScriptControls;
 		Dictionary<IExtenderControl, Control> _registeredExtenderControls;
 		bool? _supportsPartialRendering;
@@ -650,7 +650,9 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredHiddenField> GetRegisteredHiddenFields () {
-			throw new NotImplementedException ();
+			if (_hiddenFields == null)
+				_hiddenFields = new List<RegisteredHiddenField> ();
+			return new ReadOnlyCollection<RegisteredHiddenField> (_hiddenFields);
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredOnSubmitStatements () {
@@ -919,24 +921,21 @@ namespace System.Web.UI
 				page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
 
-		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
-			RegisterHiddenField (control.Page, hiddenFieldName, hiddenFieldInitialValue);
-		}
-
 		public static void RegisterHiddenField (Page page, string hiddenFieldName, string hiddenFieldInitialValue) {
-			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				sm.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
-			else
-				page.ClientScript.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
+			RegisterHiddenField ((Control) page, hiddenFieldName, hiddenFieldInitialValue);
 		}
 
-		void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue) {
-			if (_hiddenFields == null)
-				_hiddenFields = new Hashtable ();
+		public static void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
+			Page page = control.Page;
+			ScriptManager sm = GetCurrent (page);
 
-			if (!_hiddenFields.ContainsKey (hiddenFieldName))
-				_hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
+			if (sm._hiddenFields == null)
+				sm._hiddenFields = new List<RegisteredHiddenField> ();
+
+			sm._hiddenFields.Add (new RegisteredHiddenField (control, hiddenFieldName, hiddenFieldInitialValue));
+
+			if (!sm.IsInAsyncPostBack)
+				page.ClientScript.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
 		}
 
 		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
@@ -1308,9 +1307,15 @@ namespace System.Web.UI
 		void WriteHiddenFields (HtmlTextWriter output) {
 			if (_hiddenFields == null)
 				return;
-			foreach (string key in _hiddenFields.Keys) {
-				string value = _hiddenFields [key] as string;
-				WriteCallbackOutput (output, hiddenField, key, value);
+			Hashtable registeredFields = new Hashtable ();
+			for (int i = 0; i < _hiddenFields.Count; i++) {
+				RegisteredHiddenField field = _hiddenFields [i];
+				if (registeredFields.ContainsKey (field.Name))
+					continue;
+				if (Page == field.Control || HasBeenRendered (field.Control)) {
+					registeredFields.Add (field.Name, field);
+					WriteCallbackOutput (output, hiddenField, field.Name, field.InitialValue);
+				}
 			}
 		}
 
