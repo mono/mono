@@ -1,3 +1,16 @@
+2008-01-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldvirtftn_invalid_token_type.il: added.
+	
+	* make_ldvirtftn_test.sh: added.
+
+	* invalid_ldvirtftn_invalid_token_out_of_bounds.il: added.
+
+	* make_ldftn_test.sh: changed to allow more tests.
+
+	* make_tests.sh: added new tests for ldvirtftn and
+	a buch more for ldftn.
+
 2007-12-31 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_ldftn_invalid_token_out_of_bounds.il: added.
