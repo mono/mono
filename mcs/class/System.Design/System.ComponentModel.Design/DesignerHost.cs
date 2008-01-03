@@ -46,7 +46,13 @@ namespace System.ComponentModel.Design
 
 
 #region DesignerHostTransaction : DesignerTransaction
-		
+
+		private enum TransactionAction
+		{
+			Commit,
+			Cancel
+		}
+
 		private sealed class DesignerHostTransaction : DesignerTransaction
 		{
 			
@@ -59,14 +65,14 @@ namespace System.ComponentModel.Design
 
 			protected override void OnCancel ()
 			{
-				_designerHost.OnTransactionClosing (this, false);
-				_designerHost.OnTransactionClosed (this, false);
+				_designerHost.OnTransactionClosing (this, TransactionAction.Cancel);
+				_designerHost.OnTransactionClosed (this, TransactionAction.Cancel);
 			}
 			
 			protected override void OnCommit ()
 			{
-				_designerHost.OnTransactionClosing (this, true);
-				_designerHost.OnTransactionClosed (this, true);
+				_designerHost.OnTransactionClosing (this, TransactionAction.Commit);
+				_designerHost.OnTransactionClosed (this, TransactionAction.Commit);
 			}
 
 		} // DesignerHostTransaction
@@ -132,6 +138,7 @@ namespace System.ComponentModel.Design
 					uiService.ShowError ("Unable to load a designer for component type '" +
 							     component.GetType ().Name + "'");
 				}
+				this.DestroyComponent (component);
 			}
 
 			// Activate the host and design surface once the root component is added to
@@ -414,26 +421,39 @@ namespace System.ComponentModel.Design
 		public event DesignerTransactionCloseEventHandler TransactionClosing;
 		public event EventHandler TransactionOpened;
 		public event EventHandler TransactionOpening;
-		
-		
-		private void OnTransactionClosing (DesignerHostTransaction raiser, bool commit)
+
+		private void OnTransactionClosing (DesignerHostTransaction raiser, TransactionAction action)
 		{
+			bool commit = false;
 			bool lastTransaction = false;
-			if (_transactions.Count > 0 && _transactions.Peek() == raiser)
+
+			if (_transactions.Peek () != raiser)
+				throw new InvalidOperationException ("Current transaction differs from the one a commit was requested for.");
+
+			if (_transactions.Count == 1)
 				lastTransaction = true;
-				
+			if (action == TransactionAction.Commit)
+				commit = true;
+
 			if (TransactionClosing != null)
 				TransactionClosing (this, new DesignerTransactionCloseEventArgs (commit, lastTransaction));  
 		}
 
-		private void OnTransactionClosed (DesignerHostTransaction raiser, bool commit)
+		private void OnTransactionClosed (DesignerHostTransaction raiser, TransactionAction action)
 		{
+			bool commit = false;
 			bool lastTransaction = false;
-			if (_transactions.Count > 0 && _transactions.Peek() == raiser) {
+
+			if (_transactions.Peek () != raiser)
+				throw new InvalidOperationException ("Current transaction differs from the one a commit was requested for.");
+
+			if (_transactions.Count == 1)
 				lastTransaction = true;
-				_transactions.Pop ();
-			}
-				
+			if (action == TransactionAction.Commit)
+				commit = true;
+
+			_transactions.Pop ();
+
 			if (TransactionClosed != null)
 				TransactionClosed (this, new DesignerTransactionCloseEventArgs (commit, lastTransaction));
 		}

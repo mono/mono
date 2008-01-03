@@ -1,5 +1,10 @@
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 	
+	* DesignerHost.cs: Fix lastTransaction to be set properly.
+	Handle current != raiser transaction commit case.
+
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+	
 	* SelectionService.cs: Remove the component from the current 
 	selection if it gets removed from the surface.
 
