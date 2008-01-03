@@ -153,6 +153,7 @@ namespace System.Windows.Forms.Design
 				throw new ArgumentNullException ("tool");
 
 			IDesignerHost host = GetService (typeof (IDesignerHost)) as IDesignerHost;
+			DesignerTransaction transaction = host.CreateTransaction ("Create components in tool '" + tool.DisplayName + "'");
 			IComponent[] components = tool.CreateComponents (host);
 
 			foreach (IComponent component in components)
@@ -176,6 +177,7 @@ namespace System.Windows.Forms.Design
 			ISelectionService selectionServ = this.GetService (typeof (ISelectionService)) as ISelectionService;
 			if (selectionServ != null)
 				selectionServ.SetSelectedComponents (components, SelectionTypes.Replace);
+			transaction.Commit ();
 			return components;
 		}
 

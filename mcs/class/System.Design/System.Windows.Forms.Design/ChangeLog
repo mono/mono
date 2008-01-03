@@ -1,3 +1,8 @@
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* ParentControlDesigner.cs: Create a Transaction when adding a
+	component.
+
 2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BorderSidesEditor.cs, DesignerOptions.cs,
