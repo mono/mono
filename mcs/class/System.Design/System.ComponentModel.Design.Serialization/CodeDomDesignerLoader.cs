@@ -224,15 +224,19 @@ namespace System.ComponentModel.Design.Serialization
 				throw new ArgumentNullException ("name");
 
 			bool valid = true;
-			if (this.CodeDomProvider != null) {
-				valid = CodeDomProvider.IsValidIdentifier (name);
+			if (base.LoaderHost != null && base.LoaderHost.Container.Components[name] != null) {
+				valid = false;
 			} else {
-				if (name.Trim().Length == 0)
-					valid = false;
-				foreach (char c in name) {
-					if (!Char.IsLetterOrDigit (c)) {
+				if (this.CodeDomProvider != null) {
+					valid = CodeDomProvider.IsValidIdentifier (name);
+				} else {
+					if (name.Trim().Length == 0)
 						valid = false;
-						break;
+					foreach (char c in name) {
+						if (!Char.IsLetterOrDigit (c)) {
+							valid = false;
+							break;
+						}
 					}
 				}
 			}
@@ -243,7 +247,7 @@ namespace System.ComponentModel.Design.Serialization
 		void INameCreationService.ValidateName (string name)
 		{
 			if (!((INameCreationService) this).IsValidName (name))
-				throw new ArgumentException ("Only digits and numbers allows in the name");
+				throw new ArgumentException ("Invalid name '" + name + "'");
 		}
 #endregion
 

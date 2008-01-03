@@ -1,3 +1,8 @@
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomDesignerLoader.cs: Check for duplicate names in
+	IsValidName.
+
 2007-12-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs: Check for a public ctor with no params
