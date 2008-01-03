@@ -1,6 +1,13 @@
 2008-01-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #351047
+ 	* expression.cs (Binary.ResolveOperator): Allow equality operators between
+ 	null and structs only when equality and inequality operators are defined
+ 	either as an user-operators or predefined operators.
+ 	
+2008-01-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #351047
  	* generic.cs, typemanager.cs, class.cs: New IsReferenceType helper method.
  	
 2008-01-03  Marek Safar  <marek.safar@gmail.com>

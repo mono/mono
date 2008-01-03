@@ -1838,15 +1838,25 @@ namespace Mono.CSharp {
 					} 
 
 					//
+					// 7.9.9 Equality operators and null
+					//
 					// CSC 2 has this behavior, it allows structs to be compared
 					// with the null literal *outside* of a generics context and
 					// inlines that as true or false.
 					//
 					// This is, in my opinion, completely wrong.
 					//
-					if (RootContext.Version != LanguageVersion.ISO_1 && l.IsValueType){
+					if (RootContext.Version != LanguageVersion.ISO_1 && l.IsValueType) {
+						if (!TypeManager.IsPrimitiveType (l) && !TypeManager.IsEnumType (l)) {
+							if (MemberLookup (ec.ContainerType, l, oper_names [(int)Operator.Equality], MemberTypes.Method, AllBindingFlags, loc) == null &&
+								MemberLookup (ec.ContainerType, l, oper_names [(int)Operator.Inequality], MemberTypes.Method, AllBindingFlags, loc) == null) {
+								Error_OperatorCannotBeApplied ();
+								return null;
+							}
+						}
+
 						Warning_Constant_Result (loc, oper == Operator.Inequality, l);
-						return new BoolLiteral (oper == Operator.Inequality, loc);
+						return new BoolConstant (oper == Operator.Inequality, loc);
 					}
 				}
 
@@ -1863,6 +1873,8 @@ namespace Mono.CSharp {
 					}
 
 					//
+					// 7.9.9 Equality operators and null
+					//
 					// CSC 2 has this behavior, it allows structs to be compared
 					// with the null literal *outside* of a generics context and
 					// inlines that as true or false.
@@ -1870,8 +1882,16 @@ namespace Mono.CSharp {
 					// This is, in my opinion, completely wrong.
 					//
 					if (RootContext.Version != LanguageVersion.ISO_1 && r.IsValueType){
+						if (!TypeManager.IsPrimitiveType (r) && !TypeManager.IsEnumType (r)) {
+							if (MemberLookup (ec.ContainerType, r, oper_names [(int) Operator.Equality], MemberTypes.Method, AllBindingFlags, loc) == null &&
+								MemberLookup (ec.ContainerType, r, oper_names [(int) Operator.Inequality], MemberTypes.Method, AllBindingFlags, loc) == null) {
+								Error_OperatorCannotBeApplied ();
+								return null;
+							}
+						}
+
 						Warning_Constant_Result (loc, oper == Operator.Inequality, r);
-						return new BoolLiteral (oper == Operator.Inequality, loc);
+						return new BoolConstant (oper == Operator.Inequality, loc);
 					}
 				}
 
