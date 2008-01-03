@@ -630,7 +630,9 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredArrayDeclaration> GetRegisteredArrayDeclarations () {
-			return new ReadOnlyCollection<RegisteredArrayDeclaration> (_arrayDeclarations ?? new List<RegisteredArrayDeclaration> ());
+			if (_arrayDeclarations == null)
+				_arrayDeclarations = new List<RegisteredArrayDeclaration> ();
+			return new ReadOnlyCollection<RegisteredArrayDeclaration> (_arrayDeclarations);
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredClientScriptBlocks () {
@@ -642,7 +644,9 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredExpandoAttribute> GetRegisteredExpandoAttributes () {
-			return new ReadOnlyCollection<RegisteredExpandoAttribute> (_expandoAttributes ?? new List<RegisteredExpandoAttribute> ());
+			if (_expandoAttributes == null)
+				_expandoAttributes = new List<RegisteredExpandoAttribute> ();
+			return new ReadOnlyCollection<RegisteredExpandoAttribute> (_expandoAttributes);
 		}
 
 		public ReadOnlyCollection<RegisteredHiddenField> GetRegisteredHiddenFields () {
