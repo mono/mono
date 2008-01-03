@@ -36,8 +36,8 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions assembly
-[assembly: AssemblyVersion ("3.5.0.0")]
-[assembly: AssemblyInformationalVersion ("3.5.0.0")]
+[assembly: AssemblyVersion ("1.0.61025.0")]
+[assembly: AssemblyInformationalVersion ("1.0.61025.0")]
 
 [assembly: AssemblyTitle ("System.Web.Extensions.dll")]
 [assembly: AssemblyDescription ("System.Web.Extensions.dll")]
