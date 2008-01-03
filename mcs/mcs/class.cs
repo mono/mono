@@ -6034,17 +6034,7 @@ namespace Mono.CSharp {
 
 		bool CanBeVolatile ()
 		{
-#if GMCS_SOURCE			
-			if (TypeManager.IsGenericParameter (MemberType)) {
-				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (MemberType);
-				if (constraints == null)
-					return false;
-
-				return constraints.IsReferenceType;
-			}
-#endif			
-
-			if (!MemberType.IsValueType)
+			if (TypeManager.IsReferenceType (MemberType))
 				return true;
 
 			if (MemberType.IsEnum)

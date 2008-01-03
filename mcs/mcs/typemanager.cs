@@ -1735,6 +1735,22 @@ namespace Mono.CSharp {
 
 		return retval;
 	}
+			
+	public static bool IsReferenceType (Type t)
+	{
+		if (TypeManager.IsGenericParameter (t)) {
+			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
+			if (constraints == null)
+				return false;
+
+			return constraints.IsReferenceType;
+		}
+
+		if (t == TypeManager.null_type)
+			return false;
+
+		return !t.IsValueType;
+	}			
 		
 	public static bool IsValueType (Type t)
 	{

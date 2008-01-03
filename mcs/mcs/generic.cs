@@ -3870,11 +3870,9 @@ namespace Mono.CSharp {
 						type = expr.Type;
 						return this;
 					}
-				} else {
-					if (left.IsNull || ltype.IsValueType) {
-						Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
-						return null;
-					}
+				} else if (!TypeManager.IsReferenceType (ltype)) {
+					Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+					return null;
 				}
 
 				expr = Convert.ImplicitConversion (ec, right, ltype, loc);

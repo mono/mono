@@ -1,5 +1,10 @@
 2008-01-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #351047
+ 	* generic.cs, typemanager.cs, class.cs: New IsReferenceType helper method.
+ 	
+2008-01-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #351257
  	* cs-tokenizer.cs: Advance line number for '\r' correctly.
  	
