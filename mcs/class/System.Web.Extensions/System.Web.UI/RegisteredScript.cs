@@ -48,6 +48,7 @@ namespace System.Web.UI
 			_url = url;
 			_addScriptTags = addScriptTag;
 			_scriptType = scriptType;
+			_key = key;
 		}
 
 		public bool AddScriptTags {

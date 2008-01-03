@@ -99,10 +99,9 @@ namespace System.Web.UI
 		bool _enableScriptGlobalization;
 		bool _enableScriptLocalization;
 		string _scriptPath;
-		ScriptEntry _clientScriptBlocks;
-		ScriptEntry _startupScriptBlocks;
-		ScriptEntry _scriptIncludes;
-		ScriptEntry _onSubmitStatements;
+		List<RegisteredScript> _clientScriptBlocks;
+		List<RegisteredScript> _startupScriptBlocks;
+		List<RegisteredScript> _onSubmitStatements;
 		List<RegisteredArrayDeclaration> _arrayDeclarations;
 		List<RegisteredExpandoAttribute> _expandoAttributes;
 		List<RegisteredHiddenField> _hiddenFields;
@@ -636,7 +635,9 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredClientScriptBlocks () {
-			throw new NotImplementedException ();
+			if (_clientScriptBlocks == null)
+				_clientScriptBlocks = new List<RegisteredScript> ();
+			return new ReadOnlyCollection<RegisteredScript> (_clientScriptBlocks);
 		}
 
 		public ReadOnlyCollection<RegisteredDisposeScript> GetRegisteredDisposeScripts () {
@@ -658,11 +659,15 @@ namespace System.Web.UI
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredOnSubmitStatements () {
-			throw new NotImplementedException ();
+			if (_onSubmitStatements == null)
+				_onSubmitStatements = new List<RegisteredScript> ();
+			return new ReadOnlyCollection<RegisteredScript> (_onSubmitStatements);
 		}
 
 		public ReadOnlyCollection<RegisteredScript> GetRegisteredStartupScripts () {
-			throw new NotImplementedException ();
+			if (_startupScriptBlocks == null)
+				_startupScriptBlocks = new List<RegisteredScript> ();
+			return new ReadOnlyCollection<RegisteredScript> (_startupScriptBlocks);
 		}
 
 #if TARGET_J2EE
@@ -766,36 +771,40 @@ namespace System.Web.UI
 			_asyncPostBackControls.Add (control);
 		}
 
-		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
-			RegisterClientScriptBlock (control.Page, type, key, script, addScriptTags);
+		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags) {
+			RegisterClientScriptBlock ((Control) page, type, key, script, addScriptTags);
 		}
 
-		public static void RegisterClientScriptBlock (Page page, Type type, string key, string script, bool addScriptTags) {
+		public static void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
+			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._clientScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
-			else
+
+			RegisterScript (ref sm._clientScriptBlocks, control, type, key, script, null, addScriptTags, RegisteredScriptType.ClientScriptBlock);
+
+			if (!sm.IsInAsyncPostBack)
 				page.ClientScript.RegisterClientScriptBlock (type, key, script, addScriptTags);
 		}
 
-		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url) {
-			RegisterClientScriptInclude (control.Page, type, key, url);
+		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url) {
+			RegisterClientScriptInclude ((Control) page, type, key, url);
 		}
 
-		public static void RegisterClientScriptInclude (Page page, Type type, string key, string url) {
+		public static void RegisterClientScriptInclude (Control control, Type type, string key, string url) {
+			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._scriptIncludes, type, key, url, ScriptEntryType.ScriptPath);
-			else
+
+			RegisterScript (ref sm._clientScriptBlocks, control, type, key, null, url, false, RegisteredScriptType.ClientScriptInclude);
+
+			if (!sm.IsInAsyncPostBack)
 				page.ClientScript.RegisterClientScriptInclude (type, key, url);
 		}
 
-		public static void RegisterClientScriptResource (Control control, Type type, string resourceName) {
-			RegisterClientScriptResource (control.Page, type, resourceName);
+		public static void RegisterClientScriptResource (Page page, Type type, string resourceName) {
+			RegisterClientScriptResource ((Control) page, type, resourceName);
 		}
 
-		public static void RegisterClientScriptResource (Page page, Type type, string resourceName) {
-			RegisterClientScriptInclude (page, type, "resource-" + resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
+		public static void RegisterClientScriptResource (Control control, Type type, string resourceName) {
+			RegisterClientScriptInclude (control, type, resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
 		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI) {
@@ -940,15 +949,17 @@ namespace System.Web.UI
 				page.ClientScript.RegisterHiddenField (hiddenFieldName, hiddenFieldInitialValue);
 		}
 
-		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
-			RegisterOnSubmitStatement (control.Page, type, key, script);
+		public static void RegisterOnSubmitStatement (Page page, Type type, string key, string script) {
+			RegisterOnSubmitStatement ((Control) page, type, key, script);
 		}
 
-		public static void RegisterOnSubmitStatement (Page page, Type type, string key, string script) {
+		public static void RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
+			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._onSubmitStatements, type, key, script, ScriptEntryType.OnSubmit);
-			else
+
+			RegisterScript (ref sm._onSubmitStatements, control, type, key, script, null, false, RegisteredScriptType.OnSubmitStatement);
+
+			if (!sm.IsInAsyncPostBack)
 				page.ClientScript.RegisterOnSubmitStatement (type, key, script);
 		}
 
@@ -1017,15 +1028,17 @@ namespace System.Web.UI
 			RegisterStartupScript (this, typeof (ExtenderControl), script, script, true);
 		}
 
-		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
-			RegisterStartupScript (control.Page, type, key, script, addScriptTags);
+		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags) {
+			RegisterStartupScript ((Control) page, type, key, script, addScriptTags);
 		}
 
-		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags) {
+		public static void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
+			Page page = control.Page;
 			ScriptManager sm = GetCurrent (page);
-			if (sm.IsInAsyncPostBack)
-				RegisterScript (ref sm._startupScriptBlocks, type, key, script, addScriptTags ? ScriptEntryType.ScriptContentNoTags : ScriptEntryType.ScriptContentWithTags);
-			else
+
+			RegisterScript (ref sm._startupScriptBlocks, control, type, key, script, null, addScriptTags, RegisteredScriptType.ClientStartupScript);
+
+			if (!sm.IsInAsyncPostBack)
 				page.ClientScript.RegisterStartupScript (type, key, script, addScriptTags);
 		}
 
@@ -1053,23 +1066,11 @@ namespace System.Web.UI
 				_registeredExtenderControls.Add (extenderControl, targetControl);
 		}
 
-		static void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, ScriptEntryType scriptEntryType) {
-			ScriptEntry last = null;
-			ScriptEntry entry = scriptList;
+		static void RegisterScript (ref List<RegisteredScript> scriptList, Control control, Type type, string key, string script, string url, bool addScriptTag, RegisteredScriptType scriptType) {
+			if (scriptList == null)
+				scriptList = new List<RegisteredScript> ();
 
-			while (entry != null) {
-				if (entry.Type == type && entry.Key == key)
-					return;
-				last = entry;
-				entry = entry.Next;
-			}
-
-			entry = new ScriptEntry (type, key, script, scriptEntryType);
-
-			if (last != null)
-				last.Next = entry;
-			else
-				scriptList = entry;
+			scriptList.Add (new RegisteredScript (control, type, key, script, url, addScriptTag, scriptType));
 		}
 
 		protected override void Render (HtmlTextWriter writer) {
@@ -1240,7 +1241,6 @@ namespace System.Web.UI
 			WriteArrayDeclarations (output);
 			WriteExpandoAttributes (output);
 			WriteScriptBlocks (output, _clientScriptBlocks);
-			WriteScriptBlocks (output, _scriptIncludes);
 			WriteScriptBlocks (output, _startupScriptBlocks);
 			WriteScriptBlocks (output, _onSubmitStatements);
 			WriteHiddenFields (output);
@@ -1285,24 +1285,34 @@ namespace System.Web.UI
 			}
 		}
 
-		void WriteScriptBlocks (HtmlTextWriter output, ScriptEntry scriptList) {
-			while (scriptList != null) {
-				switch (scriptList.ScriptEntryType) {
-				case ScriptEntryType.ScriptContentNoTags:
-					WriteCallbackOutput (output, scriptBlock, scriptContentNoTags, scriptList.Script);
-					break;
-				case ScriptEntryType.ScriptContentWithTags:
-					string script = SerializeScriptBlock (scriptList);
-					WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, script);
-					break;
-				case ScriptEntryType.ScriptPath:
-					WriteCallbackOutput (output, scriptBlock, scriptPath, scriptList.Script);
-					break;
-				case ScriptEntryType.OnSubmit:
-					WriteCallbackOutput (output, onSubmit, null, scriptList.Script);
-					break;
+		void WriteScriptBlocks (HtmlTextWriter output, List<RegisteredScript> scriptList) {
+			if (scriptList == null)
+				return;
+			Hashtable registeredScripts = new Hashtable ();
+			for (int i = 0; i < scriptList.Count; i++) {
+				RegisteredScript scriptEntry = scriptList [i];
+				if (registeredScripts.ContainsKey (scriptEntry.Key))
+					continue;
+				if (Page == scriptEntry.Control || HasBeenRendered (scriptEntry.Control)) {
+					registeredScripts.Add (scriptEntry.Key, scriptEntry);
+					switch (scriptEntry.ScriptType) {
+					case RegisteredScriptType.ClientScriptBlock:
+					case RegisteredScriptType.ClientStartupScript:
+						if (scriptEntry.AddScriptTags)
+							WriteCallbackOutput (output, scriptBlock, scriptContentNoTags, scriptEntry.Script);
+						else {
+							string script = SerializeScriptBlock (scriptEntry);
+							WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, script);
+						}
+						break;
+					case RegisteredScriptType.ClientScriptInclude:
+						WriteCallbackOutput (output, scriptBlock, scriptPath, scriptEntry.Url);
+						break;
+					case RegisteredScriptType.OnSubmitStatement:
+						WriteCallbackOutput (output, onSubmit, null, scriptEntry.Script);
+						break;
+					}
 				}
-				scriptList = scriptList.Next;
 			}
 		}
 
@@ -1321,9 +1331,9 @@ namespace System.Web.UI
 			}
 		}
 
-		static string SerializeScriptBlock (ScriptEntry scriptList) {
+		static string SerializeScriptBlock (RegisteredScript scriptEntry) {
 			try {
-				XmlTextReader reader = new XmlTextReader (new StringReader (scriptList.Script));
+				XmlTextReader reader = new XmlTextReader (new StringReader (scriptEntry.Script));
 				while (reader.Read ()) {
 					switch (reader.NodeType) {
 					case XmlNodeType.Element:
@@ -1344,7 +1354,7 @@ namespace System.Web.UI
 			}
 			catch {
 			}
-			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptList.Type, scriptList.Key, scriptList.Script));
+			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptEntry.Type, scriptEntry.Key, scriptEntry.Script));
 		}
 
 		void RenderFormCallback (HtmlTextWriter output, Control container) {
@@ -1537,30 +1547,6 @@ namespace System.Web.UI
 			public override Encoding Encoding {
 				get { return Encoding.UTF8; }
 			}
-		}
-
-		sealed class ScriptEntry
-		{
-			readonly public Type Type;
-			readonly public string Key;
-			readonly public string Script;
-			readonly public ScriptEntryType ScriptEntryType;
-			public ScriptEntry Next;
-
-			public ScriptEntry (Type type, string key, string script, ScriptEntryType scriptEntryType) {
-				Key = key;
-				Type = type;
-				Script = script;
-				ScriptEntryType = scriptEntryType;
-			}
-		}
-
-		enum ScriptEntryType
-		{
-			ScriptContentNoTags,
-			ScriptContentWithTags,
-			ScriptPath,
-			OnSubmit
 		}
 
 		sealed class CultureInfoSerializer : JavaScriptSerializer.LazyDictionary
