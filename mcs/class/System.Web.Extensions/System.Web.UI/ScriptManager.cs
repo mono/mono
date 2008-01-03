@@ -62,6 +62,7 @@ namespace System.Web.UI
 		const string hiddenField = "hiddenField";
 		const string arrayDeclaration = "arrayDeclaration";
 		const string scriptBlock = "scriptBlock";
+		const string scriptStartupBlock = "scriptStartupBlock";
 		const string expando = "expando";
 		const string onSubmit = "onSubmit";
 		const string asyncPostBackControlIDs = "asyncPostBackControlIDs";
@@ -1269,7 +1270,7 @@ namespace System.Web.UI
 						}
 						else
 							value = "\"" + attr.Value + "\"";
-						WriteCallbackOutput (writer, expando, "document.getElementById('Label2')['" + attr.Name + "']", value);
+						WriteCallbackOutput (writer, expando, "document.getElementById('" + attr.ControlId + "')['" + attr.Name + "']", value);
 					}
 				}
 			}
@@ -1297,13 +1298,16 @@ namespace System.Web.UI
 					registeredScripts.Add (scriptEntry.Key, scriptEntry);
 					switch (scriptEntry.ScriptType) {
 					case RegisteredScriptType.ClientScriptBlock:
-					case RegisteredScriptType.ClientStartupScript:
 						if (scriptEntry.AddScriptTags)
 							WriteCallbackOutput (output, scriptBlock, scriptContentNoTags, scriptEntry.Script);
-						else {
-							string script = SerializeScriptBlock (scriptEntry);
-							WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, script);
-						}
+						else
+							WriteCallbackOutput (output, scriptBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
+						break;
+					case RegisteredScriptType.ClientStartupScript:
+						if (scriptEntry.AddScriptTags)
+							WriteCallbackOutput (output, scriptStartupBlock, scriptContentNoTags, scriptEntry.Script);
+						else
+							WriteCallbackOutput (output, scriptStartupBlock, scriptContentWithTags, SerializeScriptBlock (scriptEntry));
 						break;
 					case RegisteredScriptType.ClientScriptInclude:
 						WriteCallbackOutput (output, scriptBlock, scriptPath, scriptEntry.Url);
