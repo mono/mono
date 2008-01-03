@@ -1,3 +1,8 @@
+2008-01-03  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: Add more type conversions, don't output return
+	parameters if method returns void, tweak parent interface parsing
+
 2008-01-02  Andreia Gaita  <avidigal@novell.com>
 
 	* xpidl2cs.pl: Add support for getting idls from other paths, fix

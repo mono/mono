@@ -52,17 +52,27 @@ $types{"float"} = {name => "float", out => "out", marshal => ""};
 $types{"boolean"} = {name => "bool", out => "out", marshal => ""};
 $types{"PRBool"} = {name => "bool", out => "out", marshal => ""};
 $types{"void"} = {name => "", out => "", marshal => ""};
-$types{"DOMString"} = {name => "HandleRef", out => "", marshal => ""};
+$types{"DOMString"} = {name => "/*DOMString*/ HandleRef", out => "", marshal => ""};
+$types{"AUTF8String"} = {name => "/*AUTF8String*/ HandleRef", out => "", marshal => ""};
+$types{"ACString"} = {name => "/*ACString*/ HandleRef", out => "", marshal => ""};
+$types{"wstring"} = {name => "string", out => "", marshal => "[MarshalAs(UnmanagedType.LPWStr)] "};
 $types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"Guid"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"string"} = {name => "string", out => "", marshal => "[MarshalAs (UnmanagedType.LPStr)] "};
 $types{"charPtr"} = {name => "StringBuilder", out => "", marshal => ""};
 $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
+$types{"nsISupports"} = {name => "IntPtr", out => "out", "[MarshalAs (UnmanagedType.Interface)] "};
+$types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", ""};
 $types{"others"} = {name => "", out => "out", marshal => "[MarshalAs (UnmanagedType.Interface)] "};
 
-
 my %dependents;
+
+sub trim{
+    $_[0]=~s/^\s+//;
+    $_[0]=~s/\s+$//;
+    return;
+}
 
 sub parse_parent {
     my $x = shift;
@@ -160,7 +170,10 @@ sub get_params {
 	    $name =~ s/ //;
 	    $type = $list{$name}->{"type"};
 	    $marshal = $list{$name}->{"marshal"};
-	    shift @p unless @p == 3;
+	    $marshal = " " if !$marshal;
+	    until (scalar(@p) == 3) {
+		shift @p;
+	    }
 	}
 
 	shift @p unless @p[0] =~ /(in|out)/;
@@ -173,17 +186,23 @@ sub get_params {
 	if (!$type) {
 	    $type = join ",", @p[0..@p-2];
 	    $type=~s/\[.*\],//;
+	    until (scalar(@p) == 1) {
+		shift @p;
+	    }
+
+	    $marshal = &get_marshal ($type);
+	    $marshal = " " if !$marshal;
+	    $type = &get_type ($type);
+	    $name = @p[0];
 	}
-
+#	print "marshal:$marshal\ttype:$type\tname:$name\n";
 	$out = &get_out($type) if $isout;
-
-
 
 	$type = &get_type (@p[0]) unless $type;
 	$marshal = &get_marshal ($type) unless $marshal;
-	$name = @p[1];
+	$name = @p[1] unless $name;
 
-#	print "=======$marshal===$type======\n";
+#	print "marshal:$marshal\ttype:$type\tname:$name\n";
 
 	$list{$name} = {
 	    name => $name,
@@ -196,8 +215,8 @@ sub get_params {
 
 	$ret .= "\n\t\t\t\t$marshal $out $type $name,";
     }
-
-    if (&get_type ($methods{$x}->{"type"}) ne "") {
+#    print "$methods{$x}->{\"type\"}\n";
+    if ($x !~ /void/ && &get_type ($methods{$x}->{"type"}) ne "") {
 	$type = $methods{$x}->{"type"};
 	$type =~ s/\[.*\],//;
 	$marshal = &get_marshal ($type);
@@ -225,6 +244,8 @@ sub parse_file {
 	next if !$start && $line !~ /\[scriptable/;
 	$start = 1;
 	last if $start && $line =~ /\};/;
+
+	trim ($line);
 	
 	if (index($line, "*") == -1 && index ($line, "//") == -1 && index ($line, "#include") == -1) {
 	    
@@ -236,15 +257,17 @@ sub parse_file {
 
 	    elsif (index($line, "interface") != -1) {
 		my $class = $line;
-		$class =~ s/interface ([^\:|\s]+)\s:\s+(.*)/\1/;
-#		print "\t\t==============$class\n";
+		$class =~ s/interface ([^\:|\s]+)\s*:\s*(.*)/\1/;
+#		print "\t\tclass:$class\n";
 		my $parent = $line;
-		$parent =~ s/interface ([^\:|\s]+)\s:\s+(.*)/\2/;
+		$parent =~ s/([^\:]+):\s*(.*)[\s|\{]/\2/;
+#		print "\t\tparent:$parent\n";
 		$interface->{"class"} = $class;
 		$interface->{"parent"} = $parent;
 
 	    }
 	    elsif (index ($line, "const") != -1) {
+		next;
 	    }
 	    elsif (index ($line, "attribute") != -1) {
 		my $att = substr($line, index($line, "attribute") + 10);
@@ -266,18 +289,19 @@ sub parse_file {
 		$interface->{"items"} .= $name . ",";
 	    }
 	    elsif ($line !~ m/[{|}]/ && $line =~ m/./) {
-#	    print $line . "\n";
+#		print $line . "\n";
 		if (!$method) {
 		    $method = 1;
 		    my  $m = substr($line, 0, index($line, "("));
 		    my @atts = split / /, $m;
 
-#		print $m;
+#		    print $m;
 		    $mname = pop @atts;
-#		print "name=$mname\n";
+#		    print "name=$mname\n";
 		    my @nospaces = grep /[^ ]/, @atts;
 		    $mtype = join ",", @nospaces;
-#		print "type=$mtype\n";
+		    $mtype =~ s/\[.*\],//;
+#		    print "type=$mtype\n";
 		    $mparams .= substr($line, index($line, "(") + 1);
 		    $mparams =~ s/;//;
 		    $mparams =~ s/\)//;
@@ -361,7 +385,7 @@ sub output {
     print X "\tinternal interface $name {\n";
 
 
-    if ($interface->{"parent"} ne "nsISupports") {
+    if ($interface->{"parent"} !~ /nsISupports/) {
 	print X &parse_parent ($interface->{"parent"});
     }
     print X "\n";
@@ -377,7 +401,7 @@ sub output {
 	    my $marshal = &get_marshal($properties{$item}->{"type"});
 	    my $out = &get_out($properties{$item}->{"type"});
 	    my $type = &get_type ($properties{$item}->{"type"});
-	    my $name = ucfirst($item);
+	    my $name = ucfirst ($item);
 
 	    &add_external ($properties{$item}->{"type"});
 ## getter
@@ -409,8 +433,8 @@ sub output {
 
 sub generate_dependents {
     for my $file (keys %dependents) {
-	print "generating $path$file.idl\n";
 	if (! (-e "$file.cs") && -e "$path$file.idl") {
+	    print "generating $path$file.idl\n";
 	    my $ret = `perl xpidl2cs.pl $file.idl $path`;
 	    print "\n$ret";
 	}
