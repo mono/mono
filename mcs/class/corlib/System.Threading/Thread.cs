@@ -432,6 +432,10 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
+				CultureInfo culture = GetCachedCurrentCulture ();
+				if (culture == value)
+					return;
+
 				value.CheckNeutral ();
 				in_currentculture = true;
 				try {
