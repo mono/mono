@@ -666,6 +666,9 @@
     <Compile Include="System.Diagnostics\TraceOptions.cs" />
     <Compile Include="System.Diagnostics\TraceSource.cs" />
     <Compile Include="System.Diagnostics\TraceSourceInfo.cs" />
+    <Compile Include="System.IO.Compression\CompressionMode.cs" />
+    <Compile Include="System.IO.Compression\DefalteStream.jvm.cs" />
+    <Compile Include="System.IO.Compression\GzipStream.cs" />
     <Compile Include="System.IO\ErrorEventArgs.cs" />
     <Compile Include="System.IO\ErrorEventHandler.cs" />
     <Compile Include="System.IO\FileAction.cs" />
