@@ -535,15 +535,24 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				start = document.selection_start.line.FindTag (document.selection_start.pos);
-				end = document.selection_start.line.FindTag (document.selection_end.pos);
+				if (selection_length > 0) {
+					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
+					end = document.selection_start.line.FindTag (document.selection_end.pos);
+				} else {
+					start = document.selection_start.line.FindTag (document.selection_start.pos);
+					end = start;
+				}
+
 				color = start.Color;
 
 				tag = start;
-				while (tag != null && tag != end) {
+				while (tag != null) {
 
 					if (!color.Equals (tag.Color))
 						return Color.Empty;
+
+					if (tag == end)
+						break;
 
 					tag = document.NextTag (tag);
 				}
@@ -582,16 +591,25 @@ namespace System.Windows.Forms {
 				LineTag	end;
 				LineTag	tag;
 
-				start = document.selection_start.line.FindTag (document.selection_start.pos);
-				end = document.selection_start.line.FindTag (document.selection_end.pos);
+				if (selection_length > 0) {
+					start = document.selection_start.line.FindTag (document.selection_start.pos + 1);
+					end = document.selection_start.line.FindTag (document.selection_end.pos);
+				} else {
+					start = document.selection_start.line.FindTag (document.selection_start.pos);
+					end = start;
+				}
+
 				font = start.Font;
 
 				if (selection_length > 1) {
 					tag = start;
-					while (tag != null && tag != end) {
+					while (tag != null) {
 
 						if (!font.Equals(tag.Font))
 							return null;
+
+						if (tag == end)
+							break;
 
 						tag = document.NextTag (tag);
 					}

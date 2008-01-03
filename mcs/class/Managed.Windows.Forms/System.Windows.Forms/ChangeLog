@@ -1,3 +1,8 @@
+2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Line.cs, RichTextBox.cs, TextControl.cs: Another awesome patch
+	from Luke Page.  This one fixes bug #349926.
+
 2007-12-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CurrencyManager.cs: Actually fire the 2.0 ListChanged event when

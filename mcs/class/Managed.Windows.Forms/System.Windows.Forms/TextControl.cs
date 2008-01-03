@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms {
 				current_line = GetLine (start_line.LineNo + current_cumulative - 1);
 
 				// find the tag we start on
-				LineTag current_tag = current_line.FindTag (index_found - (int)cumulative_length_list [current_cumulative - 1]);
+				LineTag current_tag = current_line.FindTag (index_found - (int)cumulative_length_list [current_cumulative - 1] + 1);
 
 				if (current_tag.Start != (index_found - (int)cumulative_length_list [current_cumulative - 1]) + 1) {
 					if (current_tag == CaretTag)
@@ -1034,6 +1034,7 @@ namespace System.Windows.Forms {
 					if ((int)cumulative_length_list [current_cumulative] <= index_found + i) {
 
 						current_line = GetLine (start_line.LineNo + current_cumulative++);
+						//todo - +1?
 						current_tag = current_line.FindTag (index_found + i - (int)cumulative_length_list [current_cumulative - 1]);
 
 						current_tag.IsLink = true;
@@ -2321,7 +2322,10 @@ namespace System.Windows.Forms {
 			if (move_sel_start) {
 				selection_start.line = new_line;
 				selection_start.pos = selection_start.pos - pos;
-				selection_start.tag = new_line.FindTag(selection_start.pos);
+				if  (selection_start.Equals(selection_end))
+					selection_start.tag = new_line.FindTag(selection_start.pos);
+				else
+					selection_start.tag = new_line.FindTag (selection_start.pos + 1);
 			}
 
 			if (move_sel_end) {
@@ -2657,7 +2661,7 @@ namespace System.Windows.Forms {
 						} else {
 							selection_start.line = selection_anchor.line;
 							selection_start.pos = selection_anchor.height;
-							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height);
+							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height + 1);
 
 							selection_end.line = caret.line;
 							selection_end.tag = caret.line.tags;
@@ -2688,7 +2692,7 @@ namespace System.Windows.Forms {
 						}
 						if (caret < selection_anchor) {
 							selection_start.line = caret.line;
-							selection_start.tag = caret.line.FindTag(start_pos);
+							selection_start.tag = caret.line.FindTag(start_pos + 1);
 							selection_start.pos = start_pos;
 
 							selection_end.line = selection_anchor.line;
@@ -2703,7 +2707,7 @@ namespace System.Windows.Forms {
 						} else {
 							selection_start.line = selection_anchor.line;
 							selection_start.pos = selection_anchor.height;
-							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height);
+							selection_start.tag = selection_anchor.line.FindTag(selection_anchor.height + 1);
 
 							selection_end.line = caret.line;
 							selection_end.tag = caret.line.FindTag(end_pos);
@@ -2761,7 +2765,7 @@ namespace System.Windows.Forms {
 						this.Invalidate(selection_start.line, start_pos, caret.line, end_pos);
 
 						selection_start.line = caret.line;
-						selection_start.tag = caret.line.FindTag(start_pos);
+						selection_start.tag = caret.line.FindTag(start_pos + 1);
 						selection_start.pos = start_pos;
 
 						selection_end.line = caret.line;
@@ -3050,7 +3054,7 @@ namespace System.Windows.Forms {
 					DeleteChars (selection_start.line, selection_start.pos, selection_end.pos - selection_start.pos);
 
 					// The tag might have been removed, we need to recalc it
-					selection_start.tag = selection_start.line.FindTag(selection_start.pos);
+					selection_start.tag = selection_start.line.FindTag(selection_start.pos + 1);
 				} else {
 					int		start;
 					int		end;
@@ -4272,7 +4276,7 @@ namespace System.Windows.Forms {
 				line.text = new StringBuilder (current.text.ToString (start, end - start));
 
 				// Copy tags from start to start+length onto new line
-				current_tag = current.FindTag (start);
+				current_tag = current.FindTag (start + 1);
 				while ((current_tag != null) && (current_tag.Start <= end)) {
 					if ((current_tag.Start <= start) && (start < (current_tag.Start + current_tag.Length))) {
 						// start tag is within this tag

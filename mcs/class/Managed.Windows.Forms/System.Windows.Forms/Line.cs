@@ -244,7 +244,7 @@ namespace System.Windows.Forms
 				return;
 
 			// Find the first tag that we are deleting from
-			tag = FindTag (pos);
+			tag = FindTag (pos + 1);
 
 			// Remove the characters from the line
 			text.Remove (pos, count);
@@ -348,7 +348,7 @@ namespace System.Windows.Forms
 				pos = text.Length - 1;
 
 			while (tag != null) {
-				if (((tag.Start - 1) <= pos) && (pos < (tag.Start + tag.Length - 1)))
+				if (((tag.Start - 1) <= pos) && (pos <= (tag.Start + tag.Length - 1)))
 					return LineTag.GetFinalTag (tag);
 
 				tag = tag.Next;
