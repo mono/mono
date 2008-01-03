@@ -60,6 +60,13 @@ namespace System.ComponentModel {
 #endif
 
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public virtual ISite Site
+		{
+			get { return mySite; }
+			set { mySite = value; }
+		}
+
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IContainer Container {
 			get {
 				if (mySite == null)
@@ -90,12 +97,6 @@ namespace System.ComponentModel {
 
 				return event_handlers;
 			}
-		}
-
-		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public virtual ISite Site {
-			get { return mySite; }
-			set { mySite = value; }
 		}
 
 		~Component()

@@ -1,3 +1,8 @@
+2008-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeDescriptorProperties.cs: added test for order of
+	PropertyDescriptor instances returned by GetProperties.
+
 2007-12-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* PropertyDescriptorCollectionTests.cs: added test for Find method

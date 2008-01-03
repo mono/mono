@@ -226,6 +226,30 @@ namespace MonoTests.System.ComponentModel
 			get { return prop; }
 			set { prop = value; }
 		}
+
+		public string Name {
+			get { return null; }
+		}
+
+		public string Address {
+			get { return null; }
+		}
+
+		public string Country {
+			get { return null; }
+		}
+
+		private string HairColor {
+			get { return null; }
+		}
+
+		protected int Weight {
+			get { return 5; }
+		}
+
+		internal int Height {
+			get { return 0; }
+		}
 	}
 
 	[DescriptionAttribute ("my test derived component")]
@@ -759,6 +783,25 @@ namespace MonoTests.System.ComponentModel
 			col = TypeDescriptor.GetProperties (sitedcom, filter);
 			Assert.IsNull (col.Find ("TestProperty", true), "#B1");
 			Assert.IsNull (col.Find ("AnotherProperty", true), "#B2");
+		}
+
+		[Test]
+#if ONLY_1_1
+		[NUnit.Framework.Category ("NotDotNet")] // .NET 1.x (or csc 1.x) does not retain the original order
+#endif
+		public void GetProperties_Order ()
+		{
+			MyComponent com = new MyComponent (new MyContainer ());
+
+			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (com);
+			Assert.AreEqual (7, col.Count, "#1");
+			Assert.AreEqual ("TestProperty", col [0].Name, "#2");
+			Assert.AreEqual ("AnotherProperty", col [1].Name, "#3");
+			Assert.AreEqual ("Name", col [2].Name, "#4");
+			Assert.AreEqual ("Address", col [3].Name, "#5");
+			Assert.AreEqual ("Country", col [4].Name, "#6");
+			Assert.AreEqual ("Site", col [5].Name, "#7");
+			Assert.AreEqual ("Container", col [6].Name, "#8");
 		}
 
 		[TypeConverter (typeof (TestConverter))]

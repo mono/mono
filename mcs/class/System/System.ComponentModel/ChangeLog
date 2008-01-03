@@ -1,3 +1,9 @@
+2008-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Component.cs: Moved Site property before Container to match MS. This
+	allows a unit test for ordered result of TypeDescriptor.GetProperties
+	to pass.
+
 2008-01-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TypeDescriptor.cs: fixed properties order in returning collections
