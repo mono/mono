@@ -1091,14 +1091,12 @@ public sealed class TypeDescriptor
 				return _properties;
 			
 			PropertyInfo[] props = InfoType.GetProperties (BindingFlags.Instance | BindingFlags.Public);
-			Hashtable descs = new Hashtable ();
-			for (int n= props.Length-1; n >= 0; n--)
+			ArrayList descs = new ArrayList (props.Length);
+			for (int n=0; n<props.Length; n++)
 				if (props [n].GetIndexParameters ().Length == 0)
-					descs[props[n].Name] = new ReflectionPropertyDescriptor (props[n]);
+					descs.Add (new ReflectionPropertyDescriptor (props[n]));
 
-			PropertyDescriptor[] descriptors = new PropertyDescriptor[descs.Values.Count];
-			descs.Values.CopyTo (descriptors, 0);
-			_properties = new PropertyDescriptorCollection (descriptors, true);
+			_properties = new PropertyDescriptorCollection ((PropertyDescriptor[]) descs.ToArray (typeof (PropertyDescriptor)), true);
 			return _properties;
 		}
 	}

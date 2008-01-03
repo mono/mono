@@ -1,3 +1,8 @@
+2008-01-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TypeDescriptor.cs: fixed properties order in returning collections
+	in PropertyDescriptorCollection
+
 2007-12-25  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* PropertyDescriptorCollection.cs: optimized Find method, removed
