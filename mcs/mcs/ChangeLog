@@ -1,3 +1,10 @@
+2008-01-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #351157
+ 	* class.cs (Using): Fixed yet another broken cloning.
+ 	
+ 	(Block): Put back more sensible default value for statements.
+ 	
 2008-01-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: Allow AssemblyVersion with only major version component.

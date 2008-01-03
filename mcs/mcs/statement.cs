@@ -1572,7 +1572,7 @@ namespace Mono.CSharp {
 			this.EndLocation = end;
 			this.loc = start;
 			this_id = id++;
-			statements = new ArrayList (1);
+			statements = new ArrayList (4);
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -4731,10 +4731,22 @@ namespace Mono.CSharp {
 		{
 			Using target = (Using) t;
 
-			if (expression_or_block is Expression)
+			if (expression_or_block is Expression) {
 				target.expression_or_block = ((Expression) expression_or_block).Clone (clonectx);
-			else
-				target.expression_or_block = ((Statement) expression_or_block).Clone (clonectx);
+			} else {
+				DictionaryEntry de = (DictionaryEntry) expression_or_block;
+				ArrayList var_list = (ArrayList) de.Value;
+				ArrayList target_var_list = new ArrayList (var_list.Count);
+
+				foreach (DictionaryEntry de_variable in var_list)
+					target_var_list.Add (new DictionaryEntry (
+						((Expression) de_variable.Key).Clone (clonectx),
+						((Expression) de_variable.Value).Clone (clonectx)));
+
+				target.expression_or_block = new DictionaryEntry (
+					((Expression) de.Key).Clone (clonectx),
+					target_var_list);
+			}
 			
 			target.Statement = Statement.Clone (clonectx);
 		}
