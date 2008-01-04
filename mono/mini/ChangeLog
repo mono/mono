@@ -1,3 +1,7 @@
+2008-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_allocate_vars): Align argument storage offsets to 8.
+
 2007-12-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_get_delegate_invoke_impl): Fix flushing of icache.
