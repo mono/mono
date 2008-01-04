@@ -65,7 +65,7 @@ namespace System.ComponentModel.Design.Serialization
 
 
 		private void SerializeNormalProperty (IDesignerSerializationManager manager, 
-											  object component, PropertyDescriptor descriptor, CodeStatementCollection statements)
+						      object instance, PropertyDescriptor descriptor, CodeStatementCollection statements)
 		{
 			CodeAssignStatement assignment = new CodeAssignStatement ();
 
@@ -74,34 +74,33 @@ namespace System.ComponentModel.Design.Serialization
 			ExpressionContext expression = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
 			RootContext root = manager.Context[typeof (RootContext)] as RootContext;
 
-			if (expression != null && expression.PresetValue == component && expression.Expression != null) {
+			if (expression != null && expression.PresetValue == instance && expression.Expression != null) {
 				leftSide = new CodePropertyReferenceExpression (expression.Expression, descriptor.Name);
-			} else if (root != null && root.Value == component) {
+			} else if (root != null && root.Value == instance) {
 				leftSide = new CodePropertyReferenceExpression (root.Expression, descriptor.Name);
 			} else {
 				propRef = new CodePropertyReferenceExpression ();
 				propRef.PropertyName =  descriptor.Name;
-				propRef.TargetObject = TryGetCachedExpression (manager, component, propRef);
+				propRef.TargetObject = base.SerializeToExpression (manager, instance);
 				leftSide = propRef;
 			}
 
 			CodeExpression rightSide = null;
 
-			MemberRelationship relationship = GetRelationship (manager, component, descriptor);
+			MemberRelationship relationship = GetRelationship (manager, instance, descriptor);
 			if (!relationship.IsEmpty) {
 				propRef = new CodePropertyReferenceExpression ();
 				propRef.PropertyName = relationship.Member.Name;
-				propRef.TargetObject = TryGetCachedExpression (manager, relationship.Owner, propRef);
+				propRef.TargetObject = base.SerializeToExpression (manager, relationship.Owner);
 				rightSide = propRef;
 			} else {
-				object rightSideValue = descriptor.GetValue (component);
-				rightSide = TryGetCachedExpression (manager, rightSideValue, null, component);
+				rightSide = base.SerializeToExpression (manager, descriptor.GetValue (instance));
 			}
 
 			if (rightSide == null || leftSide == null) {
-				base.ReportError (manager, "Cannot serialize " + ((IComponent)component).Site.Name + "." + descriptor.Name,
-								  "Property Name: " + descriptor.Name + System.Environment.NewLine +
-								  "Property Type: " + descriptor.PropertyType.Name + System.Environment.NewLine);
+				base.ReportError (manager, "Cannot serialize " + ((IComponent)instance).Site.Name + "." + descriptor.Name,
+						  "Property Name: " + descriptor.Name + System.Environment.NewLine +
+						  "Property Type: " + descriptor.PropertyType.Name + System.Environment.NewLine);
 			} else  {
 				assignment.Left = leftSide;
 				assignment.Right = rightSide;
@@ -109,59 +108,25 @@ namespace System.ComponentModel.Design.Serialization
 			}
 		}
 
-		private CodeExpression TryGetCachedExpression (IDesignerSerializationManager manager, object value)
-		{
-			return TryGetCachedExpression (manager, value, null);
-		}
-
-		private CodeExpression TryGetCachedExpression (IDesignerSerializationManager manager, object value, 
-													   CodeExpression parentExpression)
-		{
-			return TryGetCachedExpression (manager, value, parentExpression, null);
-		}
-
-		private CodeExpression TryGetCachedExpression (IDesignerSerializationManager manager, object value, 
-													   CodeExpression parentExpression, object presetValue)
-		{
-			CodeExpression expression = null;
-			if (value != null) // in order to support null value serialization
-				expression = base.GetExpression (manager, value);
-			if (expression == null) {
-				if (parentExpression == null)
-					manager.Context.Push (new ExpressionContext (null, null, value, presetValue));
-				else
-					manager.Context.Push (new ExpressionContext (parentExpression, parentExpression.GetType (), value, presetValue));
-				expression = base.SerializeToExpression (manager, value);
-				manager.Context.Pop ();
-			}
-			return expression;
-		}
-
-		private void SerializeContentProperty (IDesignerSerializationManager manager, object component, 
-											   PropertyDescriptor descriptor, CodeStatementCollection statements)
+		private void SerializeContentProperty (IDesignerSerializationManager manager, object instance, 
+						       PropertyDescriptor descriptor, CodeStatementCollection statements)
 		{
 			CodePropertyReferenceExpression propRef = new CodePropertyReferenceExpression ();
 			propRef.PropertyName = descriptor.Name;
-			object value = descriptor.GetValue (component);
+			object propertyValue = descriptor.GetValue (instance);
 
 			ExpressionContext expressionCtx = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
-			if (expressionCtx != null && expressionCtx.PresetValue == component) {
+			if (expressionCtx != null && expressionCtx.PresetValue == instance)
 				propRef.TargetObject = expressionCtx.Expression;
-			} else {
-				manager.Context.Push (new CodeStatementCollection ());
-				propRef.TargetObject = TryGetCachedExpression (manager, component, propRef, value);
-				manager.Context.Pop ();
-			}
+			else
+				propRef.TargetObject = base.SerializeToExpression (manager, instance);
 
-			CodeDomSerializer serializer = manager.GetSerializer (value.GetType (), typeof (CodeDomSerializer)) as CodeDomSerializer;
-
+			CodeDomSerializer serializer = manager.GetSerializer (propertyValue.GetType (), typeof (CodeDomSerializer)) as CodeDomSerializer;
 			if (propRef.TargetObject != null && serializer != null) {
-				// request full serialization (presetvalue == instance)
-				//
-				manager.Context.Push (new ExpressionContext (propRef, propRef.GetType (), component, value));
-				object serialized = serializer.Serialize (manager, value);
+				manager.Context.Push (new ExpressionContext (propRef, propRef.GetType (), null, propertyValue));
+				object serialized = serializer.Serialize (manager, propertyValue);
 				manager.Context.Pop ();
-				
+
 				CodeStatementCollection serializedStatements = serialized as CodeStatementCollection;
 				if (serializedStatements != null)
 					statements.AddRange (serializedStatements);

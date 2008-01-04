@@ -50,7 +50,8 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 
-		public override void Serialize (IDesignerSerializationManager manager, object value, MemberDescriptor descriptor, CodeStatementCollection statements)
+		public override void Serialize (IDesignerSerializationManager manager, object value, MemberDescriptor descriptor, 
+						CodeStatementCollection statements)
 		{
 			if (statements == null)
 				throw new ArgumentNullException ("statements");
@@ -69,9 +70,7 @@ namespace System.ComponentModel.Design.Serialization
 				if (methodName != null) {
 					CodeDelegateCreateExpression listener = new CodeDelegateCreateExpression (new CodeTypeReference (eventDescriptor.EventType),
 																							   _thisReference, methodName);
-					manager.Context.Push (new ExpressionContext (listener, listener.GetType (), null, eventDescriptor));
 					CodeExpression targetObject = base.SerializeToExpression (manager, value);
-					manager.Context.Pop ();
 					CodeEventReferenceExpression eventRef = new CodeEventReferenceExpression (targetObject, eventDescriptor.Name);
 					statements.Add (new CodeAttachEventStatement (eventRef, listener));
 				}

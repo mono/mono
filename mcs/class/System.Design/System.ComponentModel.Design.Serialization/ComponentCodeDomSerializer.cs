@@ -59,12 +59,13 @@ namespace System.ComponentModel.Design.Serialization
 			if (rootContext != null && rootContext.Value == value)
 				return rootContext.Expression;
 
+			CodeStatementCollection statements = new CodeStatementCollection ();
+
 			if (((IComponent)value).Site == null) {
 				ReportError (manager, "Component of type '" + value.GetType().Name + "' not sited");
-				return null;
+				return statements;
 			}
 
-			object serialized = null;
 			// the trick with the nested components is that GetName will return the full name
 			// e.g splitter1.Panel1 and thus the code below will create a reference to that.
 			// 
@@ -76,36 +77,39 @@ namespace System.ComponentModel.Design.Serialization
 			else
 				componentRef = new CodeFieldReferenceExpression (new CodeThisReferenceExpression () , name);
 
-			ExpressionContext exprContext = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
-			if (exprContext != null && exprContext.PresetValue == value) {
+			base.SetExpression (manager, value, componentRef);
+
+			ExpressionContext context = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
+			// Perform some heuristics here. 
+			// 
+			// If there is an ExpressionContext of PropertyReference where PresetValue == this
+			// partial serialization doesn't make sense, so perform full. E.g in the case of:
+			// 
+			// PropertyCodeDomSerializer.SerializeContentProperty and splitContainer1.*Panel1* 
+			//
+			if (context == null || context.PresetValue != value ||
+			    (context.PresetValue == value && (context.Expression is CodeFieldReferenceExpression ||
+							      context.Expression is CodePropertyReferenceExpression))) {
 				bool isComplete = true;
-				CodeStatementCollection statements = new CodeStatementCollection ();
 				statements.Add (new CodeCommentStatement (String.Empty));
 				statements.Add (new CodeCommentStatement (name));
 				statements.Add (new CodeCommentStatement (String.Empty));
-
+	
 				// Do not serialize a creation expression for Nested components
 				//
-				if (! (((IComponent)value).Site is INestedSite))
-					statements.Add (new CodeAssignStatement (componentRef, 
-															 base.SerializeCreationExpression (manager, value, out isComplete)));
-
-				manager.Context.Push (new ExpressionContext (componentRef, componentRef.GetType (), null, value));
+				if (! (((IComponent)value).Site is INestedSite)) {
+					CodeStatement assignment = new CodeAssignStatement (componentRef, 
+									base.SerializeCreationExpression (manager, value, 
+													  out isComplete));
+					assignment.UserData["statement-order"] = "initializer";
+					statements.Add (assignment);
+				}
+	
 				base.SerializeProperties (manager, statements, value, new Attribute[0]);
 				base.SerializeEvents (manager, statements, value);
-				manager.Context.Pop ();
-
-				serialized = statements;
-			} else {
-				serialized = base.GetExpression (manager, value);
-				if (serialized == null)
-					serialized = componentRef;
 			}
 
-			if (base.GetExpression (manager,value) == null)
-				base.SetExpression (manager, value, componentRef);
-
-			return serialized;
+			return statements;
 		}
 	}
 }

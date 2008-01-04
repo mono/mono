@@ -1,5 +1,18 @@
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CodeDomComponentSerializationService.cs: implemented.
+	* ComponentCodeDomSerializer.cs, CollectionCodeDomSerializer.cs, 
+	CodeDomSerializerBase.cs, CodeDomSerializer.cs, 
+	EventCodeDomSerializer.cs, RootCodeDomSerializer.cs, 
+	PropertyCodeDomSerializer.cs:
+	 - Change the serialization process logic not to require an 
+	 ExpressionContext for full serialization of a component/instance.
+	 - Provide statement ordering hints for the RootCodeDomSerializer.
+	* DesignerSerializationManager.cs: try-catch around CreateInstance 
+	just in case. 
+
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CodeDomDesignerLoader.cs: Check for duplicate names in
 	IsValidName.
 

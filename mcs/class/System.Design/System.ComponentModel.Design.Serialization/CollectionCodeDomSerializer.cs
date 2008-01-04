@@ -81,7 +81,7 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		protected virtual object SerializeCollection (IDesignerSerializationManager manager, CodeExpression targetExpression, 
-													  Type targetType, ICollection originalCollection, ICollection valuesToSerialize)
+							      Type targetType, ICollection originalCollection, ICollection valuesToSerialize)
 		{
 			if (valuesToSerialize == null)
 				throw new ArgumentNullException ("valuesToSerialize");
@@ -115,17 +115,15 @@ namespace System.ComponentModel.Design.Serialization
 			CodeStatementCollection statements = new CodeStatementCollection ();
 
 			foreach (object value in valuesToSerialize) {
+
 				CodeMethodInvokeExpression methodInvoke = new CodeMethodInvokeExpression ();
 				methodInvoke.Method = new CodeMethodReferenceExpression (targetExpression, "Add");
 
-				manager.Context.Push (new ExpressionContext (methodInvoke, methodInvoke.GetType (), null, originalCollection));
 				CodeExpression expression = base.SerializeToExpression (manager, value);
-				if (expression != null)
+				if (expression != null) {
 					methodInvoke.Parameters.AddRange (new CodeExpression[] { expression });
-				manager.Context.Pop ();
-
-				if (methodInvoke != null)
 					statements.Add (methodInvoke);
+				}
 			}
 
 			return statements;

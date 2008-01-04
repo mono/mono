@@ -280,17 +280,13 @@ namespace System.ComponentModel.Design.Serialization
 				expression = new CodeFieldReferenceExpression (target, member.Name);
 			} else if (member is MethodInfo) {
 				CodeMethodInvokeExpression methodInvoke = new CodeMethodInvokeExpression (target, member.Name);
-				manager.Context.Push (new ExpressionContext (methodInvoke, methodInvoke.GetType (), null, null));
 				if (descriptor.Arguments != null && descriptor.Arguments.Count > 0)
 					methodInvoke.Parameters.AddRange (SerializeParameters (manager, descriptor.Arguments));
-				manager.Context.Pop ();
 				expression = methodInvoke;
 			} else if (member is ConstructorInfo) {
 				CodeObjectCreateExpression createExpr = new CodeObjectCreateExpression (member.DeclaringType);
-				manager.Context.Push (new ExpressionContext (createExpr, createExpr.GetType (), null, null));
 				if (descriptor.Arguments != null && descriptor.Arguments.Count > 0)
 					createExpr.Parameters.AddRange (SerializeParameters (manager, descriptor.Arguments));
-				manager.Context.Pop ();
 				expression = createExpr;
 			}
 

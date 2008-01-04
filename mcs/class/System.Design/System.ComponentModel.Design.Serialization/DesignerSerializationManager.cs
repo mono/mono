@@ -260,10 +260,12 @@ namespace System.ComponentModel.Design.Serialization
 				DesignerSerializerAttribute serializerAttribute = attributes[typeof (DesignerSerializerAttribute)] as DesignerSerializerAttribute;
 				if (serializerAttribute != null && 
 					this.GetType (serializerAttribute.SerializerBaseTypeName) == serializerType) {
-					serializer = Activator.CreateInstance (this.GetType (serializerAttribute.SerializerTypeName), 
-														   BindingFlags.CreateInstance | BindingFlags.Instance | 
-														   BindingFlags.Public | BindingFlags.NonPublic, 
-														   null, null, null);
+					try {
+						serializer = Activator.CreateInstance (this.GetType (serializerAttribute.SerializerTypeName), 
+										       BindingFlags.CreateInstance | BindingFlags.Instance | 
+										       BindingFlags.Public | BindingFlags.NonPublic, 
+										       null, null, null);
+					} catch {}
 				}
 				
 				if (serializer != null)

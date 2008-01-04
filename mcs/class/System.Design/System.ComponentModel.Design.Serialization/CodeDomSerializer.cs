@@ -67,27 +67,24 @@ namespace System.ComponentModel.Design.Serialization
 			if (manager == null)
 				throw new ArgumentNullException ("manager");
 
+			object serialized = null;
 			bool isComplete = false;
 			CodeExpression createExpr = base.SerializeCreationExpression (manager, value, out isComplete);
-			if (!isComplete) {
-				ExpressionContext context = manager.Context[typeof (ExpressionContext)] as ExpressionContext;
-				if (context != null && context.PresetValue == value) {
+			if (createExpr != null) {
+				if (isComplete) {
+					serialized = createExpr;
+				} else {
 					CodeStatementCollection statements = new CodeStatementCollection ();
-					if (createExpr != null) {
-						statements.Add (new CodeAssignStatement (context.Expression, createExpr));
-						CodeExpression expression = base.GetExpression (manager, value);
-						if (expression == null)
-							base.SetExpression (manager, value, createExpr);
-					}
 					base.SerializeProperties (manager, statements, value, new Attribute[0]);
 					base.SerializeEvents (manager, statements, value, new Attribute[0]);
+					serialized = statements;
 				}
+				base.SetExpression (manager, value, createExpr);
 			}
-
-			return createExpr;
+			return serialized;
 		}
 
-        [Obsolete ("This method has been deprecated. Use SerializeToExpression or GetExpression instead.")] 
+		[Obsolete ("This method has been deprecated. Use SerializeToExpression or GetExpression instead.")] 
 		protected CodeExpression SerializeToReferenceExpression (IDesignerSerializationManager manager, object value)
 		{
 			return base.SerializeToExpression (manager, value);
@@ -105,7 +102,7 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		public virtual CodeStatementCollection SerializeMember (IDesignerSerializationManager manager, 
-																object owningobject, MemberDescriptor member)
+									object owningobject, MemberDescriptor member)
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");
@@ -125,8 +122,6 @@ namespace System.ComponentModel.Design.Serialization
 				base.SetExpression (manager, owningobject, expression);
 			}
 
-			manager.Context.Push (new ExpressionContext (expression, expression.GetType (), null, owningobject));
-
 			if (member is PropertyDescriptor)
 				base.SerializeProperty (manager, statements, owningobject, (PropertyDescriptor) member);
 			if (member is EventDescriptor)
@@ -138,7 +133,7 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		public virtual CodeStatementCollection SerializeMemberAbsolute (IDesignerSerializationManager manager, 
-																		object owningobject, MemberDescriptor member)
+										object owningobject, MemberDescriptor member)
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");

@@ -48,9 +48,11 @@ namespace System.ComponentModel.Design.Serialization
 			private string _className;
 			private Type _classType;
 			private List<CodeMemberField> _fields;
-			private CodeStatementCollection _preInit;
-			private CodeStatementCollection _init;
-			private CodeStatementCollection _postInit;
+			private CodeStatementCollection _initializers;
+			private CodeStatementCollection _begin;
+			private CodeStatementCollection _default;
+			private CodeStatementCollection _end;
+
 
 			public CodeMap (Type classType, string className)
 			{
@@ -62,10 +64,10 @@ namespace System.ComponentModel.Design.Serialization
 				_classType = classType;
 				_className = className;
 				_fields = new List<CodeMemberField> ();
-				_preInit = new CodeStatementCollection ();
-				_init = new CodeStatementCollection ();
-				_init = new CodeStatementCollection ();
-				_postInit = new CodeStatementCollection ();
+				_initializers = new CodeStatementCollection ();
+				_begin = new CodeStatementCollection ();
+				_default = new CodeStatementCollection ();
+				_end = new CodeStatementCollection ();
 			}
 
 			public void AddField (CodeMemberField field)
@@ -73,24 +75,22 @@ namespace System.ComponentModel.Design.Serialization
 				_fields.Add (field);
 			}
 
-			public void AddPreInitStatement (CodeStatement statement)
+			public void Add (CodeStatementCollection statements)
 			{
-				_preInit.Add (statement);
+				foreach (CodeStatement statement in statements)
+					this.Add (statement);
 			}
 
-			public void AddInitStatement (CodeStatement statement)
+			public void Add (CodeStatement statement)
 			{
-				_init.Add (statement);
-			}
-
-			public void AddInitStatements (CodeStatementCollection statements)
-			{
-				_init.AddRange (statements);
-			}
-
-			public void AddPostInitStatement (CodeStatement statement)
-			{
-				_postInit.Add (statement);
+				if (statement.UserData["statement-order"] == null)
+					_default.Add (statement);
+				else if ((string)statement.UserData["statement-order"] == "initializer")
+					_initializers.Add (statement);
+				else if ((string)statement.UserData["statement-order"] == "begin")
+					_begin.Add (statement);
+				else if ((string)statement.UserData["statement-order"] == "end")
+					_end.Add (statement);
 			}
 
 			/*
@@ -100,9 +100,13 @@ namespace System.ComponentModel.Design.Serialization
 
 					private void InitializeComponent ()
 					{
-						preInit;
-						init;
-						postInit;
+						// statement-order:
+						initializer
+						pre-begin - e.g: // ComponentName
+						begin - e.g: SuspendLayout
+						default
+						end - e.g: ResumeLayout
+						post-end
 					}
 
 					private field1;
@@ -110,7 +114,7 @@ namespace System.ComponentModel.Design.Serialization
 
 					#endregion
 				}
-            */
+			*/
 
 			public CodeTypeDeclaration GenerateClass ()
 			{
@@ -124,9 +128,10 @@ namespace System.ComponentModel.Design.Serialization
 				initialize.ReturnType = new CodeTypeReference (typeof (void));
 				initialize.Attributes = MemberAttributes.Private;
 
-				initialize.Statements.AddRange (_preInit);
-				initialize.Statements.AddRange (_init);
-				initialize.Statements.AddRange (_postInit);
+				initialize.Statements.AddRange (_initializers);
+				initialize.Statements.AddRange (_begin);
+				initialize.Statements.AddRange (_default);
+				initialize.Statements.AddRange (_end);
 
 				clas.Members.Add (initialize);
 
@@ -140,10 +145,10 @@ namespace System.ComponentModel.Design.Serialization
 
 			public void Clear ()
 			{
-				_preInit.Clear ();
-				_init.Clear ();
-				_postInit.Clear ();
-				_fields.Clear ();
+				_initializers.Clear ();
+				_begin.Clear ();
+				_default.Clear ();
+				_end.Clear ();
 			}
 		}
 
@@ -181,7 +186,7 @@ namespace System.ComponentModel.Design.Serialization
 			// It will check for RootContext and return that.
 			base.SerializeProperties (manager, statements, value, new Attribute[0]);
 			base.SerializeEvents (manager, statements, value, new Attribute[0]);
-			_codeMap.AddInitStatements (statements);
+			_codeMap.Add (statements);
 
 			manager.Context.Pop ();
 			return _codeMap.GenerateClass ();
@@ -190,11 +195,8 @@ namespace System.ComponentModel.Design.Serialization
 		private void SerializeComponents (IDesignerSerializationManager manager, ICollection components, IComponent rootComponent)
 		{
 			foreach (IComponent component in components) {
-				if (!Object.ReferenceEquals (component, rootComponent)) {
-					manager.Context.Push (new ExpressionContext (null, null, rootComponent, component));
+				if (!Object.ReferenceEquals (component, rootComponent))
 					SerializeComponent (manager, component);
-					manager.Context.Pop ();
-				}
 			}
 		}
 
@@ -202,46 +204,18 @@ namespace System.ComponentModel.Design.Serialization
 		{
 			CodeDomSerializer serializer = base.GetSerializer (manager, component) as CodeDomSerializer; // ComponentCodeDomSerializer
 			if (serializer != null) {
-				this.Code.AddField (new CodeMemberField (component.GetType (), manager.GetName (component)));
-
-				CodeStatementCollection statements = (CodeStatementCollection) serializer.Serialize (manager, component);
-
-				CodeStatement ctorStatement = ExtractCtorStatement (manager, statements, component);
-				if (ctorStatement != null)
-					Code.AddPreInitStatement (ctorStatement);
-				Code.AddInitStatements (statements);
+				this._codeMap.AddField (new CodeMemberField (component.GetType (), manager.GetName (component)));
+				// statements can be a CodeExpression if the full serialization has been completed prior 
+				// to this serialization call (e.g when it is requested during the serialization of another 
+				// component.
+				// 
+				CodeStatementCollection statements = serializer.Serialize (manager, component) as CodeStatementCollection;
+				if (statements != null)
+					_codeMap.Add (statements);
+				CodeStatement statement = serializer.Serialize (manager, component) as CodeStatement;
+				if (statement != null)
+					_codeMap.Add (statement);
 			}
-		}
-
-		internal CodeMap Code {
-			get { return _codeMap; }
-		}
-
-		// Used to remove the ctor from the statement colletion in order for the ctor statement to be moved.
-		//
-		private CodeStatement ExtractCtorStatement (IDesignerSerializationManager manager, CodeStatementCollection statements, 
-													object component)
-		{
-			CodeStatement result = null;
-			CodeAssignStatement assignment = null;
-			CodeObjectCreateExpression ctor = null;
-			int toRemove = -1;
-
-			for (int i=0; i < statements.Count; i++) {
-				assignment = statements[i] as CodeAssignStatement;
-				if (assignment != null) {
-					ctor = assignment.Right as CodeObjectCreateExpression;
-					if (ctor != null && manager.GetType (ctor.CreateType.BaseType) == component.GetType ()) {
-						result = assignment;
-						toRemove = i;
-					}
-				}
-			}
-
-			if (toRemove != -1)
-				statements.RemoveAt (toRemove);
-
-			return result;
 		}
 
 		public override object Deserialize (IDesignerSerializationManager manager, object codeObject)
