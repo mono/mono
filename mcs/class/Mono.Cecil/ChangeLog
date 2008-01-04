@@ -1,3 +1,9 @@
+2008-01-04  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/DefaultImporter.cs:
+	  Mono.Cecil/ReflectionHelper.cs:
+		Properly import nested types. Fix #351133.
+
 2008-01-03  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionWriter.cs:

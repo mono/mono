@@ -136,7 +136,11 @@ namespace Mono.Cecil {
 			else
 				throw new NotImplementedException ();
 
-			type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
+			if (t.DeclaringType != null) {
+				type = new TypeReference (t.Name, string.Empty, asm, t.IsValueType);
+				type.DeclaringType = ImportTypeReference (t.DeclaringType, context);
+			} else
+				type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
 
 			context.GenericContext.Type = type;
 

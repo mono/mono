@@ -216,7 +216,11 @@ namespace Mono.Cecil {
 			}
 
 			AssemblyNameReference asm = ImportAssembly (t.Assembly);
-			type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
+			if (t.DeclaringType != null) {
+				type = new TypeReference (t.Name, string.Empty, asm, t.IsValueType);
+				type.DeclaringType = ImportSystemType (t.DeclaringType, context);
+			} else
+				type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
 
 			if (IsGenericTypeDefinition (t))
 				foreach (Type genParam in GetGenericArguments (t))
