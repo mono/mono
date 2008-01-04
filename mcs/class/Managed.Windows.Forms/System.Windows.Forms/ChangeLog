@@ -1,3 +1,12 @@
+2008-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When the values are displayed, calculate the
+	ComboListBox scrollbar's LargeChange based on the visible area's
+	height and  the actuall ItemHeight, instead of calculating it
+	based on MaxDropItems value, since it's not used by our _current_ 
+	2.0 profile.
+	Fixes #332366.
+
 2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Line.cs, LineTag.cs, RichTextBox.cs, TextBoxBase.cs, TextControl.cs:

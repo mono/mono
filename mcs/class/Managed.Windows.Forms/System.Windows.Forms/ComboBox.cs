@@ -2153,7 +2153,11 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Dock = DockStyle.Right;
 
 					vscrollbar_ctrl.Maximum = owner.Items.Count - 2;
+#if NET_2_0
+					int large = page_size - 1;
+#else
 					int large = (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
+#endif
 					if (large < 0)
 						large = 0;
 					vscrollbar_ctrl.LargeChange = large;
