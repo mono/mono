@@ -1,3 +1,10 @@
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerQueryValue): Returned buffer length counts
+	chars not bytes for string data.  Fixes bug 345972 again.
+	(get_enclosing_section_header): Make sure values read are treated
+	as LE.  Fixes crash on ppc reported in bug 345972.
+
 2007-12-17  Mark Probst  <mark.probst@gmail.com>
 
 	* threads.c: Guard against a race condition involving

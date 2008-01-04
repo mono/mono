@@ -1,3 +1,8 @@
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_module_string_read): Rename variable to
+	reflect correct usage, after fixing bug 345972.
+
 2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_type_create_fnptr_from_mono_method): 
