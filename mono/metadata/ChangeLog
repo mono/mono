@@ -1,3 +1,23 @@
+2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_create_fnptr_from_mono_method): 
+	created a MonoType function pointer instance to be used during
+	verification. The verifier releases this memory at end.
+
+	* verify.c (mono_method_is_constructor): extracted repeated
+	checks for constructor into a single class.
+
+	* verify.c (do_push_field): use new extracted method
+	for constructor check.
+
+	* verify.c (do_newobj): same.
+
+	* verify.c (do_ldftn): renamed to do_load_function_ptr
+	and make it verify ldvirtftn too.
+
+	* verify.c (mono_method_verify: proper verification
+	of ldvirtftn. release created MonoMethod instances.
+
 2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (token_bounds_check): added.
