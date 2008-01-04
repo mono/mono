@@ -1941,7 +1941,7 @@ interface_method_declaration_body
 		Report.Error (531, (Location)$1,
 			      "`{0}.{1}{2}': interface members cannot have a definition",
 			      current_class.GetSignatureForError (),
-			      ((MemberName) $-0).ToString (),
+			      ((MemberName) $-0).GetSignatureForError (),
 			      ((Parameters)$-4).GetSignatureForError ());
 	  
 		lexer.ConstraintsParsing = false;
@@ -2517,7 +2517,7 @@ event_declaration
 
 		if ($8 == null){
 			Report.Error (65, (Location) $3, "`{0}.{1}': event property must have both add and remove accessors",
-				current_container.Name, name.ToString ());
+				current_container.Name, name.GetSignatureForError ());
 			$$ = null;
 		} else {
 			Accessors accessors = (Accessors) $8;

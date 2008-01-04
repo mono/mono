@@ -7854,7 +7854,7 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder (Parent.GetSignatureForError ());
 			if (MemberName.Left != null) {
 				sb.Append ('.');
-				sb.Append (MemberName.Left);
+				sb.Append (MemberName.Left.GetSignatureForError ());
 			}
 
 			sb.Append (".this");

@@ -182,14 +182,13 @@ namespace Mono.CSharp {
 					return Name;
 			}
 		}
-
-		public override string ToString ()
+		
+		public string GetSignatureForError ()
 		{
-			string connect = is_double_colon ? "::" : ".";
-			if (Left != null)
-				return Left.FullName + connect + FullName;
-			else
-				return FullName;
+			if (TypeArguments != null)
+				return MethodName + "<" + TypeArguments.GetSignatureForError () + ">";
+
+			return MethodName;
 		}
 
 		public override bool Equals (object other)
@@ -405,9 +404,9 @@ namespace Mono.CSharp {
 		public virtual string GetSignatureForError ()
 		{
 			if (Parent == null || Parent.Parent == null)
-				return member_name.ToString ();
+				return member_name.GetSignatureForError ();
 
-			return String.Concat (Parent.GetSignatureForError (), '.', member_name.ToString ());
+			return Parent.GetSignatureForError () + "." + member_name.GetSignatureForError ();
 		}
 
 		/// <summary>
