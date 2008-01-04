@@ -6857,17 +6857,30 @@ namespace Mono.CSharp {
 				if (silent)
 					return null;
 
-		                member_lookup = MemberLookup(
-                		    rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
-                    			MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
+				member_lookup = MemberLookup (
+					rc.DeclContainer.TypeBuilder, expr_type, expr_type, SimpleName.RemoveGenericArity (LookupIdentifier),
+					MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 
-		                if (member_lookup == null) {
+				if (member_lookup != null) {
+					tnew_expr = member_lookup.ResolveAsTypeTerminal (rc, false);
+					if (tnew_expr == null)
+						return null;
+
+					Namespace.Error_TypeArgumentsCannotBeUsed (tnew_expr.Type, loc);
+					return null;
+				}
+
+				member_lookup = MemberLookup (
+					rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
+						MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
+
+				if (member_lookup == null) {
 					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
-						      Identifier, new_expr.GetSignatureForError ());
+							  Identifier, new_expr.GetSignatureForError ());
 				} else {
-    				// TODO: Report.SymbolRelatedToPreviousError
-				    member_lookup.Error_UnexpectedKind (null, "type", loc);
-    				}
+					// TODO: Report.SymbolRelatedToPreviousError
+					member_lookup.Error_UnexpectedKind (null, "type", loc);
+				}
 				return null;
 			}
 
@@ -6877,11 +6890,14 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			TypeArguments the_args = args;
-			if (TypeManager.HasGenericArguments (texpr.Type.DeclaringType)) {
-				Type[] decl_args = TypeManager.GetTypeArguments (expr_type);
-
+			Type declaring_type = texpr.Type.DeclaringType;
+			if (TypeManager.HasGenericArguments (declaring_type)) {
+				while (!TypeManager.IsEqual (TypeManager.DropGenericTypeArguments (expr_type), declaring_type)) {
+					expr_type = expr_type.BaseType;
+				}
+				
 				TypeArguments new_args = new TypeArguments (loc);
-				foreach (Type decl in decl_args)
+				foreach (Type decl in TypeManager.GetTypeArguments (expr_type))
 					new_args.Add (new TypeExpression (decl, loc));
 
 				if (args != null)

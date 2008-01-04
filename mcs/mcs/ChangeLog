@@ -1,5 +1,11 @@
 2008-01-04  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #351481
+ 	* expression.cs (MemberAccess.ResolveNamespaceOrType): Use correct
+ 	declaring type for nested generic types.
+ 	
+2008-01-04  Marek Safar  <marek.safar@gmail.com>
+
  	* namespace.cs, class.cs, decl.cs, cs-parser.jay: Use GetSignatureForError
  	instead of ToString.
  	
