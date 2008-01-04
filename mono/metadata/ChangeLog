@@ -1,3 +1,8 @@
+2008-01-04  Andreas Faerber  <andreas.faerber@web.de>
+
+	* exception.c (mono_exception_from_name_two_strings):
+	Break from loop after method is found.
+
 2008-01-04  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_module_string_read): Rename variable to
