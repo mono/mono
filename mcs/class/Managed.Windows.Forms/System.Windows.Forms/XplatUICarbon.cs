@@ -914,6 +914,7 @@ namespace System.Windows.Forms {
 			Size QWindowSize = TranslateWindowSizeToQuartzWindowSize (cp);
 			Rectangle QClientRect = TranslateClientRectangleToQuartzClientRectangle (hwnd, cp.control);
 
+			SetHwndStyles(hwnd, cp);
 /* FIXME */
 			if (ParentHandle == IntPtr.Zero) {
 				IntPtr WindowView = IntPtr.Zero;
@@ -932,11 +933,11 @@ namespace System.Windows.Forms {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					windowklass = Carbon.WindowClass.kDocumentWindowClass;
 				}
-				if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOOLWINDOW)) {
-					windowklass = Carbon.WindowClass.kOverlayWindowClass;
-					attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
+				if (hwnd.border_style == FormBorderStyle.FixedToolWindow || hwnd.border_style == FormBorderStyle.SizableToolWindow) {
+					windowklass = Carbon.WindowClass.kUtilityWindowClass;
 				}
-					
+				attributes |= Carbon.WindowAttributes.kWindowLiveResizeAttribute;
+
 				Carbon.Rect rect = new Carbon.Rect ();
 				if (StyleSet (cp.Style, WindowStyles.WS_POPUP)) {
 					SetRect (ref rect, (short)X, (short)(Y), (short)(X + QWindowSize.Width), (short)(Y + QWindowSize.Height));
@@ -1898,6 +1899,7 @@ namespace System.Windows.Forms {
 				if ((cp.ExStyle & ((int)WindowExStyles.WS_EX_TOOLWINDOW)) != 0) {
 					attributes = Carbon.WindowAttributes.kWindowStandardHandlerAttribute | Carbon.WindowAttributes.kWindowCompositingAttribute;
 				}
+				attributes |= Carbon.WindowAttributes.kWindowLiveResizeAttribute;
 
 				Carbon.WindowAttributes outAttributes = Carbon.WindowAttributes.kWindowNoAttributes;
 				GetWindowAttributes ((IntPtr)WindowMapping [hwnd.Handle], ref outAttributes);

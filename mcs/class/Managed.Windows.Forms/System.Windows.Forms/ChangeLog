@@ -1,3 +1,8 @@
+2008-01-04  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  Create native toolwindows instead of
+	the managed drawing ones.
+
 2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LineTag.cs: If the line doesn't have any characters, return
