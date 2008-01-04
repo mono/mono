@@ -82,7 +82,6 @@ namespace System.Windows.Forms {
 			base.Multiline = true;
 			document.CRLFSize = 1;
 			shortcuts_enabled = true;
-			disabled_foreground_grey = false;
 			base.EnableLinks = true;
 			
 			rtf_style = new RtfSectionStyle ();
@@ -578,7 +577,10 @@ namespace System.Windows.Forms {
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
 
 				document.UpdateView(document.selection_start.line, 0);
-				document.AlignCaret();
+
+				//Re-Align the caret in case its changed size or position
+				//probably not necessary here
+				document.AlignCaret(false);
 			}
 		}
 
@@ -633,7 +635,8 @@ namespace System.Windows.Forms {
 				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
 
 				document.UpdateView(document.selection_start.line, 0);
-				document.AlignCaret();
+				//Re-Align the caret in case its changed size or position
+				Document.AlignCaret (false);
 
 			}
 		}

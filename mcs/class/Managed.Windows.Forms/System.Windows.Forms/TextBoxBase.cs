@@ -53,7 +53,6 @@ namespace System.Windows.Forms
 		internal bool			accepts_return;
 		internal bool			auto_size;
 		internal bool			backcolor_set;
-		internal bool			disabled_foreground_grey;
 		internal CharacterCasing	character_casing;
 		internal bool			hide_selection;
 		internal int			max_length;
@@ -116,7 +115,6 @@ namespace System.Windows.Forms
 			list_links = new ArrayList ();
 			current_link = null;
 			show_caret_w_selection = (this is TextBox);
-			disabled_foreground_grey = true;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
 			document.HeightChanged += new EventHandler(document_HeightChanged);
@@ -750,8 +748,12 @@ namespace System.Windows.Forms
 			// Save some cycles and only check the Text if we are one line
 			bool is_empty = document.Lines == 1 && Text == String.Empty; 
 
-			document.MoveCaret (CaretDirection.CtrlEnd);
-			document.Insert (document.caret.line, document.caret.pos, false, text);
+			// make sure the caret begins at the end
+			if (document.caret.line.line_no != document.Lines ||
+			     (document.caret.pos) != document.caret.line.TextLengthWithoutEnding ()) {
+				document.MoveCaret (CaretDirection.CtrlEnd);
+			}
+			document.Insert (document.caret.line, document.caret.pos, false, text, document.CaretTag);
 			document.MoveCaret (CaretDirection.CtrlEnd);
 			document.SetSelectionToCaret (true);
 

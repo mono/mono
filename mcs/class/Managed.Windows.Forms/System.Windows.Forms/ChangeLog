@@ -1,5 +1,11 @@
 2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Line.cs, LineTag.cs, RichTextBox.cs, TextBoxBase.cs, TextControl.cs:
+	Patch from Luke Page that fixes issues with font colors and styles
+	not showing up in a readonly RichTextBox.  Fixes bug #324354.
+
+2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Line.cs, RichTextBox.cs, TextControl.cs: Another awesome patch
 	from Luke Page.  This one fixes bug #349926.
 

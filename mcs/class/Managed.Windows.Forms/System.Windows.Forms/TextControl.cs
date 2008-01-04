@@ -1034,8 +1034,7 @@ namespace System.Windows.Forms {
 					if ((int)cumulative_length_list [current_cumulative] <= index_found + i) {
 
 						current_line = GetLine (start_line.LineNo + current_cumulative++);
-						//todo - +1?
-						current_tag = current_line.FindTag (index_found + i - (int)cumulative_length_list [current_cumulative - 1]);
+						current_tag = current_line.FindTag (index_found + i - (int)cumulative_length_list [current_cumulative - 1] + 1);
 
 						current_tag.IsLink = true;
 						current_tag.LinkText = link_text;
@@ -1044,8 +1043,10 @@ namespace System.Windows.Forms {
 					}
 
 					if (current_tag.End < index_found + 1 + i - (int)cumulative_length_list [current_cumulative - 1]) {
-						//todo - last tag in case there is a non text tag?
-						current_tag = current_tag.Next;
+						// skip empty tags in the middle of the URL
+						do {
+							current_tag = current_tag.Next;
+						} while (current_tag.Length == 0);
 
 						current_tag.IsLink = true;
 						current_tag.LinkText = link_text;
@@ -1142,7 +1143,7 @@ namespace System.Windows.Forms {
 					break;
 			}
 
-			for (int i = start; i <= end && i < lines; i++) {
+			for (int i = start; i <= end && i <= lines; i++) {
 				line = GetLine (i);
 
 				if (lastending != LineEnding.Wrap)
@@ -1251,14 +1252,21 @@ namespace System.Windows.Forms {
 			XplatUI.DestroyCaret(owner.Handle);
 		}
 
-		internal void AlignCaret() {
+		internal void AlignCaret ()
+		{
+			AlignCaret (true);
+		}
+
+		internal void AlignCaret(bool changeCaretTag) {
 			if (!owner.IsHandleCreated) {
 				return;
 			}
 
-			caret.tag = LineTag.FindTag (caret.line, caret.pos);
+			if (changeCaretTag) {
+				caret.tag = LineTag.FindTag (caret.line, caret.pos);
 
-			MoveCaretToTextTag ();
+				MoveCaretToTextTag ();
+			}
 
 			caret.height = caret.tag.Height;
 
@@ -1704,7 +1712,7 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				current_color = line.tags.Color;
+				current_color = line.tags.ColorToDisplay;
 				while (tag != null) {
 
 					// Skip empty tags
@@ -1723,19 +1731,17 @@ namespace System.Windows.Forms {
 								line_y + tag.Shift, tag.Width, line.height);
 					}
 
-					tag_color = tag.Color;
+					tag_color = tag.ColorToDisplay;
 					current_color = tag_color;
 
 					if (!owner.Enabled) {
 						Color a = tag.Color;
 						Color b = ThemeEngine.Current.ColorWindowText;
 
-						if (owner.disabled_foreground_grey && (a.R == b.R) && (a.G == b.G) && (a.B == b.B)) {
+						if ((a.R == b.R) && (a.G == b.G) && (a.B == b.B))
 							tag_color = ThemeEngine.Current.ColorGrayText;
-						}
-					} else if (owner.read_only && !owner.backcolor_set && owner.disabled_foreground_grey) {
-						tag_color = ThemeEngine.Current.ColorControlText;
-					}
+
+					} 
 
 					int tag_pos = tag.Start;
 					current_color = tag_color;
@@ -1863,8 +1869,13 @@ namespace System.Windows.Forms {
 			return string.Empty;
 		}
 
-		// Insert text at the given position; use formatting at insertion point for inserted text
 		internal void Insert (Line line, int pos, bool update_caret, string s)
+		{
+			Insert (line, pos, update_caret, s, line.FindTag (pos));
+		}
+
+		// Insert text at the given position; use formatting at insertion point for inserted text
+		internal void Insert (Line line, int pos, bool update_caret, string s, LineTag tag)
 		{
 			int break_index;
 			int base_line;
@@ -1872,9 +1883,6 @@ namespace System.Windows.Forms {
 			int count = 1;
 			LineEnding ending;
 			Line split_line;
-			
-			// Find the LineTag to add to
-			LineTag tag = line.FindTag (pos);
 			
 			// Don't recalculate while we mess around
 			SuspendRecalc ();
@@ -1886,10 +1894,10 @@ namespace System.Windows.Forms {
 
 			// There are no line feeds in our text to be pasted
 			if (break_index == s.Length) {
-				line.InsertString (pos, s);
+				line.InsertString (pos, s, tag);
 			} else {
 				// Add up to the first line feed to our current position
-				line.InsertString (pos, s.Substring (0, break_index + LineEndingLength (ending)));
+				line.InsertString (pos, s.Substring (0, break_index + LineEndingLength (ending)), tag);
 				
 				// Split the rest of the original line to a new line
 				Split (line, pos + (break_index + LineEndingLength (ending)));
@@ -3394,6 +3402,9 @@ namespace System.Windows.Forms {
 			} else {
 				// Special case, single line
 				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color, specified);
+				
+				if ((end_pos - start_pos) == 0 && CaretTag.Length != 0)
+					CaretTag = CaretTag.Next;
 			}
 		}
 

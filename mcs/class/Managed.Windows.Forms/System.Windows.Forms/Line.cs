@@ -408,11 +408,14 @@ namespace System.Windows.Forms
 				widths = new_widths;
 			}
 		}
-
-		// Inserts a string at the given position
 		public void InsertString (int pos, string s)
 		{
-			LineTag tag = FindTag (pos);
+			InsertString (pos, s, FindTag (pos));
+		}
+
+		// Inserts a string at the given position
+		public void InsertString (int pos, string s, LineTag tag)
+		{
 			int len = s.Length;
 
 			// Insert the text into the StringBuilder

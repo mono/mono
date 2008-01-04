@@ -82,13 +82,17 @@ namespace System.Windows.Forms
 			set { back_color = value; }
 		}
 
-		public Color Color {
+		public Color ColorToDisplay {
 			get {
 				if (IsLink == true)
 					return Color.Blue;
 
 				return color;
 			}
+		}
+
+		public Color Color {
+			get { return color; }
 			set { color = value; }
 		}
 		
@@ -100,17 +104,21 @@ namespace System.Windows.Forms
 			get { return start + Length; }
 		}
 
-		public Font Font {
+		public Font FontToDisplay {
 			get {
 				if (IsLink) {
 					if (link_font == null)
 						link_font = new Font (font.FontFamily, font.Size, font.Style | FontStyle.Underline);
-					
+
 					return link_font;
 				}
 
 				return font;
 			}
+		}
+
+		public Font Font {
+			get { return font; }
 			set { 
 				if (font != value) {
 					link_font = null;
@@ -237,18 +245,9 @@ namespace System.Windows.Forms
 				throw new Exception ("Breaking at a negative point");
 #endif
 
-			if (pos == this.start)
 #if DEBUG
-				throw new Exception ("Breaking at the begining");
-#else
-				return this;
-#endif
-
-			else if (pos >= End)
-#if DEBUG
-				throw new Exception ("Breaking at the end of a line");
-#else
-				return null;
+			if (pos > End)
+				throw new Exception ("Breaking past the end of a line");
 #endif
 
 			new_tag = new LineTag(line, pos);
@@ -313,7 +312,7 @@ namespace System.Windows.Forms
 		
 		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
-			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), Font, color, x, y, false);
+			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), FontToDisplay, color, x, y, false);
 		}
 		
 		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
@@ -333,7 +332,7 @@ namespace System.Windows.Forms
 				int xstart = (int)line.widths [drawStart] + (int)xoff;
 				int xend = (int)line.widths [drawEnd] - (int)line.widths [drawStart];
 				int ystart = (int)y;
-				int yend = (int)TextBoxTextRenderer.MeasureText (dc, Text (), Font).Height;
+				int yend = (int)TextBoxTextRenderer.MeasureText (dc, Text (), FontToDisplay).Height;
 
 				measuredText = new Rectangle (xstart, ystart, xend, yend);
 			} else {
@@ -346,11 +345,11 @@ namespace System.Windows.Forms
 				if (tab_index == -1)
 					tab_index = drawEnd;
 
-				TextBoxTextRenderer.DrawText (dc, text.Substring (drawStart, tab_index - drawStart).Replace ("\r", string.Empty), Font, color, xoff + line.widths [drawStart], y, false);
+				TextBoxTextRenderer.DrawText (dc, text.Substring (drawStart, tab_index - drawStart).Replace ("\r", string.Empty), FontToDisplay, color, xoff + line.widths [drawStart], y, false);
 
 				// non multilines get the unknown char 
 				if (!line.document.multiline && tab_index != drawEnd)
-					TextBoxTextRenderer.DrawText (dc, "\u0013", Font, color, xoff + line.widths [tab_index], y, true);
+					TextBoxTextRenderer.DrawText (dc, "\u0013", FontToDisplay, color, xoff + line.widths [tab_index], y, true);
 
 				drawStart = tab_index + 1;
 			}
@@ -433,19 +432,57 @@ namespace System.Windows.Forms
 
 			// Common special case
 			if ((formatStart == 1) && (length == tag.Length)) {
-				tag.ascent = 0;
 				SetFormat (tag, font, color, backColor, specified);
 				return retval;
 			}
 
+			// empty selection style at begining of line means
+			// we only need one new tag
+			if  (formatStart == 1 && length == 0) {
+				line.tags.Break (1);
+				SetFormat (line.tags, font, color, backColor, specified);
+				return retval;
+			}
+
 			start_tag = FindTag (line, formatStart);
+
+			// we are at an empty tag already!
+			// e.g. [Tag 0 - "He"][Tag 1 = 0 length][Tag 2 "llo world"]
+			// Find Tag will return tag 0 at position 3, but we should just
+			// use the empty tag after..
+			if (start_tag.End == formatStart && length == 0 && start_tag.Next != null && start_tag.Next.Length == 0) {
+				SetFormat (start_tag.Next, font, color, backColor, specified);
+				return retval;
+			}
+
+			// if we are at the end of a tag, we want to move to the next tag
+			while (start_tag.End == formatStart && start_tag.Next != null)
+				start_tag = start_tag.Next;
+
 			tag = start_tag.Break (formatStart);
+
+			// empty selection style at end of line - its the only situation
+			// where the rest of the tag would be empty, since we moved to the
+			// begining of next non empty tag
+			if (tag.Length == 0) {
+				SetFormat (tag, font, color, backColor, specified);
+				return retval;
+			}
+
+			// empty - so we just create another tag for
+			// after our new (now) empty one..
+			if (length == 0) {
+				tag.Break (formatStart);
+				SetFormat (tag, font, color, backColor, specified);
+				return retval;
+			}
 
 			while (tag != null && tag.End <= end) {
 				SetFormat (tag, font, color, backColor, specified);
 				tag = tag.next;
 			}
 
+			// did the last tag conveniently fit?
 			if (tag != null && tag.End == end)
 				return retval;
 
@@ -496,9 +533,8 @@ namespace System.Windows.Forms
 		
 		// There can be multiple tags at the same position, we want to make
 		// sure we are using the very last tag at the given position
-		// TODO - Ideally having empty line tags floating about is not
-		// a good idea as it just clutters the object tree. If this is fixed to
-		// not create empty line tags then this function will be obsolete.
+		// Empty tags are necessary if style is set at a position with
+		// no length.
 		public static LineTag GetFinalTag (LineTag tag)
 		{
 			LineTag res = tag;
