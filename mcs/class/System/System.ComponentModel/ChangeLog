@@ -1,3 +1,8 @@
+2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReflectionPropertyDescriptor.cs: Create Transactions with 
+	descriptions when setting/resetting the property.
+
 2008-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Component.cs: Moved Site property before Container to match MS. This

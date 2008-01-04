@@ -99,7 +99,7 @@ namespace System.ComponentModel
 			return GetPropertyInfo ().GetValue (component, null);
 		}
 
-		DesignerTransaction CreateTransaction (object obj)
+		DesignerTransaction CreateTransaction (object obj, string description)
 		{
 			IComponent com = obj as IComponent;
 			if (com == null || com.Site == null)
@@ -109,7 +109,7 @@ namespace System.ComponentModel
 			if (dh == null)
 				return null;
 
-			DesignerTransaction tran = dh.CreateTransaction ();
+			DesignerTransaction tran = dh.CreateTransaction (description);
 			IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
 			if (ccs != null)
 				ccs.OnComponentChanging (com, this);
@@ -138,7 +138,7 @@ namespace System.ComponentModel
 
 		public override void SetValue (object component, object value)
 		{
-			DesignerTransaction tran = CreateTransaction (component);
+			DesignerTransaction tran = CreateTransaction (component, "Set Property '" + Name + "'");
 			
 			object propertyHolder = MemberDescriptor.GetInvokee (_componentType, component);
 			object old = GetValue (propertyHolder);
@@ -176,7 +176,7 @@ namespace System.ComponentModel
 			if (attrib != null)
 				SetValue (propertyHolder, attrib.Value);
 
-			DesignerTransaction tran = CreateTransaction (component);
+			DesignerTransaction tran = CreateTransaction (component, "Reset Property '" + Name + "'");
 			object old = GetValue (propertyHolder);
 
 			try {
