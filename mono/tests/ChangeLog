@@ -1,3 +1,7 @@
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: Make it work on automake-1.6
+
 2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid-token.il, Makefile.am: Add test for loading
