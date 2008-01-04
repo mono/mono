@@ -1,3 +1,10 @@
+2008-01-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TextBoxBase.cs: Apply patch from Luke Page so when backspace
+	is hit when there is selected text, only the selected text gets
+	deleted, not the character in front of the selection as well.
+	Fixes bug #351578.
+
 2008-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When the values are displayed, calculate the

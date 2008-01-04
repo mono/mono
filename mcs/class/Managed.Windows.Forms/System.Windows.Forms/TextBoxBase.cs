@@ -854,6 +854,7 @@ namespace System.Windows.Forms
 			return String.Concat (base.ToString (), ", Text: ", Text);
 		}
 
+		[MonoTODO("Deleting is classed as Typing, instead of its own Undo event")]
 		public void Undo ()
 		{
 			document.undo.Undo();
@@ -1396,8 +1397,9 @@ namespace System.Windows.Forms
 				document.ReplaceSelection("", false);
 				document.undo.EndUserAction ();
 				fire_changed = true;
-			}
-			document.SetSelectionToCaret(true);
+				document.SetSelectionToCaret (true);
+			} else {
+			document.SetSelectionToCaret (true);
 
 			if (document.CaretPosition == 0) {
 				if (document.CaretLine.LineNo > 1) {
@@ -1444,6 +1446,7 @@ namespace System.Windows.Forms
 				}
 				document.UpdateCaret();
 				fire_changed = true;
+				}
 			}
 
 			if (fire_changed)
