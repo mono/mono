@@ -1,5 +1,11 @@
 2008-01-04  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/CilWorker.cs:
+		Allow ldarg/ldloc/stloc to take a integer
+		instead of the actual parameter or variable. Fix #350606.
+
+2008-01-04  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/DefaultImporter.cs:
 	  Mono.Cecil/ReflectionHelper.cs:
 		Properly import nested types. Fix #351133.
