@@ -1,3 +1,8 @@
+2008-01-04  Geoff Norton  <gnorton@novell.com>
+
+	* Enums.cs: Fix a typo
+	* MouseHandler.cs:  Send NC events in global coordinates.
+
 2007-12-21  Geoff Norton  <gnorton@novell.com>
 
 	* Dnd.cs: Flush the message queue during drag callbacks.  This allows

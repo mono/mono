@@ -72,22 +72,29 @@ namespace System.Windows.Forms.CarbonInternal {
 			HIViewGetSubviewHit (window_handle, ref point, true, ref view_handle);
 			HIViewConvertPoint (ref point, window_handle, view_handle);
 
-			qdpoint.x = (short) point.x;
-			qdpoint.y = (short) point.y;
-
 			hwnd = Hwnd.ObjectFromHandle (view_handle);
+
 			if (XplatUICarbon.GrabHwnd != null) {
 				hwnd = XplatUICarbon.GrabHwnd; 
 				client = true;
 			}
 			if (hwnd == null)
 				return true;
+			
+			client = (hwnd.ClientWindow == view_handle ? true : hwnd == XplatUICarbon.GrabHwnd ? true : false);
 
-			Driver.ScreenToClient (hwnd.Handle, ref qdpoint);
+			if (client) {
+				qdpoint.x = (short) point.x;
+				qdpoint.y = (short) point.y;
+
+				Driver.ScreenToClient (hwnd.Handle, ref qdpoint);
+			} else {
+				point.x = qdpoint.x;
+				point.y = qdpoint.y;
+			}
 
 			msg.hwnd = hwnd.Handle;
 			msg.lParam = (IntPtr) ((ushort) point.y << 16 | (ushort) point.x);
-			client = (hwnd.ClientWindow == view_handle ? true : hwnd == XplatUICarbon.GrabHwnd ? true : false);
 
 			switch (kind) {
 				case kEventMouseDown:

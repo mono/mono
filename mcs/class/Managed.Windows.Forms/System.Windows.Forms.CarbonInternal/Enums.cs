@@ -65,7 +65,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		kWindowStandardHandlerAttribute = (1u << 25),
 		kWindowHideOnFullScreenAttribute = (1u << 26),
 		kWindowInWindowMenuAttribute = (1u << 27),
-		kWindowuiveResizeAttribute = (1u << 28),
+		kWindowLiveResizeAttribute = (1u << 28),
 		kWindowIgnoreClicksAttribute = (1u << 29),
 		kWindowNoConstrainAttribute = (1u << 31),
 		kWindowStandardDocumentAttributes = (kWindowCloseBoxAttribute | kWindowFullZoomAttribute | kWindowCollapseBoxAttribute | kWindowResizableAttribute),
