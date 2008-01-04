@@ -499,19 +499,24 @@ namespace System.Windows.Forms
 
 		// Gets the character at the x-coordinate.  Index is based from the
 		// line, not the start of the tag.
+		// returns 0 based index (0 means before character at 1, 1 means at character 1)
 		public int GetCharIndex (int x)
 		{
 			int low = start;
 			int high = low + Length;
+			int length_no_ending = line.TextLengthWithoutEnding ();
 
 			if (Length == 0)
 				return start;
+
+			if (length_no_ending == 0)
+				return 0;
 				
 			if (x < line.widths[low])
 				return low - 1;
-				
-			if (x > line.widths[line.TextLengthWithoutEnding ()])
-				return line.TextWithoutEnding ().Length;
+
+			if (x > line.widths[length_no_ending])
+				return length_no_ending;
 				
 			while (low < high - 1) {
 				int mid = (high + low) / 2;
