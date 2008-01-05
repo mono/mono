@@ -1780,16 +1780,28 @@ namespace System.Windows.Forms
 
 		private void TextBoxBase_MouseDown (object sender, MouseEventArgs e)
 		{
+			bool dbliclick = false;
+
 			if (e.Button == MouseButtons.Left) {
+
+				dbliclick = IsDoubleClick (e);
 
 				if (current_link != null) {
 					HandleLinkClicked (current_link);
 					return;
 				}
 
+				//ensure nothing is selected anymore BEFORE we
+				//position the caret, so the caret is recreated
+				//(caret is only visible when nothing is selected)
+				if (document.selection_visible && dbliclick == false) {
+					document.SetSelectionToCaret (true);
+					click_mode = CaretSelection.Position;
+				}
+
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 
-				if (IsDoubleClick (e)) {
+				if (dbliclick) {
 					switch (click_mode) {
 					case CaretSelection.Position:
 						SelectWord ();

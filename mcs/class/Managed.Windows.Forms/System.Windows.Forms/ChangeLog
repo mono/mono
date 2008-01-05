@@ -1,5 +1,11 @@
 2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Apply patch from Luke Page that ensures the
+	caret gets moved with clicking away from a selected block of
+	text.  Fixes bug #351885.
+
+2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Apply patch from Luke Page that takes line
 	alignment into account for mouse selection, so that center and
 	right aligned text can be selected.
