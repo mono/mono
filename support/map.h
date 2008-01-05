@@ -578,6 +578,8 @@ int Mono_Posix_ToMmapProts (int x, int *r);
 enum Mono_Posix_MountFlags {
 	Mono_Posix_MountFlags_ST_APPEND            = 0x0000000000000100,
 	#define Mono_Posix_MountFlags_ST_APPEND      Mono_Posix_MountFlags_ST_APPEND
+	Mono_Posix_MountFlags_ST_BIND              = 0x0000000000001000,
+	#define Mono_Posix_MountFlags_ST_BIND        Mono_Posix_MountFlags_ST_BIND
 	Mono_Posix_MountFlags_ST_IMMUTABLE         = 0x0000000000000200,
 	#define Mono_Posix_MountFlags_ST_IMMUTABLE   Mono_Posix_MountFlags_ST_IMMUTABLE
 	Mono_Posix_MountFlags_ST_MANDLOCK          = 0x0000000000000040,
@@ -588,10 +590,14 @@ enum Mono_Posix_MountFlags {
 	#define Mono_Posix_MountFlags_ST_NODEV       Mono_Posix_MountFlags_ST_NODEV
 	Mono_Posix_MountFlags_ST_NODIRATIME        = 0x0000000000000800,
 	#define Mono_Posix_MountFlags_ST_NODIRATIME  Mono_Posix_MountFlags_ST_NODIRATIME
+	Mono_Posix_MountFlags_ST_NOEXEC            = 0x0000000000000008,
+	#define Mono_Posix_MountFlags_ST_NOEXEC      Mono_Posix_MountFlags_ST_NOEXEC
 	Mono_Posix_MountFlags_ST_NOSUID            = 0x0000000000000002,
 	#define Mono_Posix_MountFlags_ST_NOSUID      Mono_Posix_MountFlags_ST_NOSUID
 	Mono_Posix_MountFlags_ST_RDONLY            = 0x0000000000000001,
 	#define Mono_Posix_MountFlags_ST_RDONLY      Mono_Posix_MountFlags_ST_RDONLY
+	Mono_Posix_MountFlags_ST_REMOUNT           = 0x0000000000000020,
+	#define Mono_Posix_MountFlags_ST_REMOUNT     Mono_Posix_MountFlags_ST_REMOUNT
 	Mono_Posix_MountFlags_ST_SYNCHRONOUS       = 0x0000000000000010,
 	#define Mono_Posix_MountFlags_ST_SYNCHRONOUS Mono_Posix_MountFlags_ST_SYNCHRONOUS
 	Mono_Posix_MountFlags_ST_WRITE             = 0x0000000000000080,

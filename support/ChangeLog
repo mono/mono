@@ -1,3 +1,8 @@
+2008-01-05  Jonathan Pryor  <jpryor@novell.com>
+
+	* map.h, map.c: Flush; add new ST_NOEXEC, ST_REMOUNT, and ST_BIND MountFlags 
+	  enumeration values.
+
 2007-12-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* map.h: Flush; add Mono_Posix_Syscall__Utsname, Mono_Posix_Syscall_uname()
