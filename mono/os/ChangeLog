@@ -1,3 +1,8 @@
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: Include <stdlib.h> to fix the --with-gc=none build. Fixes
+	#351635.
+
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Get rid of the MONO_GC_PRE_INIT () macro and unify definition
