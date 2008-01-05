@@ -500,7 +500,10 @@ namespace System.Windows.Forms
 
 		private void OnPositionChanged (object sender, EventArgs e)
 		{
-			if (AllowSelection)
+			/* For the first added item, PositionChanged is fired
+			 * _before_ ItemChanged (items not yet added), which leave us in a temporary
+			 * invalid state */
+			if (AllowSelection && data_manager.Count > 1)
 				SelectedIndex = data_manager.Position;
 		}
 

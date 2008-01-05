@@ -1,3 +1,13 @@
+2008-01-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: When getting a CurrencyManager.PositionChanged
+	event, don't set SelectedIndex if the number of items is 1. This is
+	because, for the first item, PositionChanged is fired _before_
+	ItemChanged (the place where we actually populate the items), and
+	leave us in a temporary invalid state (since items collection is
+	empty).
+	Fixes #349655.
+
 2008-01-04  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Create native toolwindows instead of
