@@ -1,5 +1,12 @@
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c: Fix 64 bit warnings. Fix some typos. Update GC stats in mono_stats.
+
+	* sgen-gc.c (build_nursery_fragments): Handle half-constructed objects correctly.
+	
+	* sgen-gc.c (check_consistency): New helper function to do a consistency check
+	of the GC data structures.
+
 	* gc-internal.h: Moved the REGISTER/UNREGISTER macros here from os/gc_wrapper.h.
 
 	* *.c: Include metadata/gc-internal.h instead of os/gc_wrapper.h.
