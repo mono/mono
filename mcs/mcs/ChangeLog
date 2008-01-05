@@ -1,4 +1,4 @@
-2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+2008-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: AssemblyName.GetPublicKey returns a zero-length byte
 	array for assemblies that are not strongnamed.
