@@ -1,5 +1,11 @@
 2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Apply patch from Luke Page that prevents an
+	NRE when determining the beginning of a paragraph.
+	Fixes bug #351886.
+
+2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxBase.cs: Apply patch from Luke Page that ensures the
 	caret gets moved with clicking away from a selected block of
 	text.  Fixes bug #351885.

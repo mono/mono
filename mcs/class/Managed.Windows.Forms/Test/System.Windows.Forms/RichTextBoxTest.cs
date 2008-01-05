@@ -436,5 +436,33 @@ namespace MonoTests.System.Windows.Forms
 			}
 #endif
 		}
+		
+		RichTextBox rtb;
+		
+		[Test]	// This test passes if it doesn't throw an NRE.
+		public void Bug351886 ()
+		{
+			Form form = new Form ();
+			rtb = new RichTextBox ();
+			rtb.Dock = DockStyle.Fill;
+
+			rtb.SelectionFont = new Font (FontFamily.GenericSansSerif, 72f);
+			rtb.AppendText ("Left and make this very long so that it can be word wrapped ");
+
+			form.Load += new EventHandler (Bug351886_Load);
+
+			form.Controls.Add (rtb);
+			form.Show ();
+			
+			form.Close ();
+			form.Dispose ();
+		}
+
+		void Bug351886_Load (object sender, EventArgs e)
+		{
+			rtb.SelectAll ();
+			rtb.SelectionAlignment = HorizontalAlignment.Center;
+		}
+
 	}
 }

@@ -3310,7 +3310,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal Line ParagraphStart(Line line) {
-			while (line.ending == LineEnding.Wrap) {
+			while (line.ending == LineEnding.Wrap && line.line_no > 1) {
 				line = GetLine(line.line_no - 1);
 			}
 			return line;
