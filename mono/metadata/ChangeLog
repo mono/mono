@@ -1,3 +1,22 @@
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_array_full_copy): Fix detection of whenever to use a write
+	barrier.
+	(mono_array_clone_in_domain): Ditto.
+	(mono_array_clone_in_domain): Ditto.
+
+	* threads.c (start_wrapper): Register the thread start argument as a GC root.
+	(cache_culture): Use a write barrier.
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Call a write barrier.
+	(ves_icall_get_property_info): Ditto.
+
+	* object.h (MONO_STRUCT_SETREF): New macro.
+
+	* class-internals.h (MonoStats): Add some GC statistics.
+
+	* boehm-gc.c null-gc.c: Define mono_gc_deregister_root ().
+
 2008-01-04  Andreas Faerber  <andreas.faerber@web.de>
 
 	* exception.c (mono_exception_from_name_two_strings):
