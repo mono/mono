@@ -912,6 +912,7 @@ namespace System.Reflection.Emit {
 			AssemblyName an = base.UnprotectedGetName ();
 			if (sn != null) {
 				an.SetPublicKey (sn.PublicKey);
+				an.SetPublicKeyToken (sn.PublicKeyToken);
 			}
 			return an;
 		}

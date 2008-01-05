@@ -32,6 +32,7 @@
 using System.Configuration.Assemblies;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
@@ -40,6 +41,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 
 using Mono.Security;
+using Mono.Security.Cryptography;
 
 namespace System.Reflection {
 
@@ -68,11 +70,11 @@ namespace System.Reflection {
 		AssemblyVersionCompatibility versioncompat;
 		Version version;
 #if NET_2_0
-		ProcessorArchitecture processor_architecture = ProcessorArchitecture.MSIL;
+		ProcessorArchitecture processor_architecture = ProcessorArchitecture.None;
 #else
 		int processor_architecture;
 #endif
-        #endregion
+		#endregion
 		
 		public AssemblyName ()
 		{
@@ -154,7 +156,11 @@ namespace System.Reflection {
 		public string FullName {
 			get {
 				if (name == null)
+#if NET_2_0
+					return string.Empty;
+#else
 					return null;
+#endif
 				StringBuilder fname = new StringBuilder ();
 				fname.Append (name);
 				if (Version != null) {
@@ -168,7 +174,7 @@ namespace System.Reflection {
 					else
 						fname.Append (cultureinfo.Name);
 				}
-				byte[] pub_tok = GetPublicKeyToken ();
+				byte [] pub_tok = InternalGetPublicKeyToken ();
 				if (pub_tok != null) {
 					if (pub_tok.Length == 0)
 						fname.Append (", PublicKeyToken=null");
@@ -221,37 +227,125 @@ namespace System.Reflection {
 			return (name != null) ? name : base.ToString ();
 		}
 
-		public byte[] GetPublicKey() 
+		public byte[] GetPublicKey()
 		{
 			return publicKey;
-			// FIXME: In some cases MS implementation returns 
-			// "new byte [0]" instead of null
 		}
 
-		public byte[] GetPublicKeyToken() 
+		public byte[] GetPublicKeyToken ()
 		{
 			if (keyToken != null)
 				return keyToken;
 			else if (publicKey == null)
 				return null;
 			else {
-				HashAlgorithm ha = null;
-				switch (hashalg) {
-					case AssemblyHashAlgorithm.MD5:
-						ha = MD5.Create ();
-						break;
-					default:
-						// None default to SHA1
-						ha = SHA1.Create ();
-						break;
-				}
-				byte[] hash = ha.ComputeHash (publicKey);
-				// we need the last 8 bytes in reverse order
-				keyToken = new byte [8];
-				Array.Copy (hash, (hash.Length - 8), keyToken, 0, 8);
-				Array.Reverse (keyToken, 0, 8);
+#if NET_2_0
+				if (publicKey.Length == 0)
+					return new byte [0];
+
+				if (!IsPublicKeyValid)
+					throw new  SecurityException ("The public key is not valid.");
+
+				keyToken = ComputePublicKeyToken ();
 				return keyToken;
+#else
+				if (publicKey.Length == 0)
+					return null;
+
+				keyToken = ComputePublicKeyToken ();
+				return keyToken;
+#endif
 			}
+		}
+
+		private bool IsPublicKeyValid {
+			get {
+				// check for ECMA key
+				if (publicKey.Length == 16) {
+					int i = 0;
+					int sum = 0;
+					while (i < publicKey.Length)
+						sum += publicKey [i++];
+					if (sum == 4)
+						return true;
+				}
+
+				switch (publicKey [0]) {
+				case 0x00: // public key inside a header
+					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
+						try {
+							CryptoConvert.FromCapiPublicKeyBlob (
+								publicKey, 12);
+							return true;
+						} catch (CryptographicException) {
+						}
+					}
+					break;
+				case 0x06: // public key
+					try {
+						CryptoConvert.FromCapiPublicKeyBlob (publicKey);
+						return true;
+					} catch (CryptographicException) {
+					}
+					break;
+				case 0x07: // private key
+					break;
+				}
+
+				return false;
+			}
+		}
+
+		private byte [] InternalGetPublicKeyToken ()
+		{
+#if NET_2_0
+			if (keyToken != null)
+				return keyToken;
+
+			if (publicKey == null)
+				return null;
+
+			if (publicKey.Length == 0)
+				return new byte [0];
+
+			if (!IsPublicKeyValid)
+				throw new  SecurityException ("The public key is not valid.");
+
+			return ComputePublicKeyToken ();
+#else
+			if ((Flags & AssemblyNameFlags.PublicKey) != 0) {
+				if (publicKey == null)
+					return null;
+				if (publicKey.Length == 0)
+					return new byte [0];
+			}
+
+			if (keyToken != null && publicKey == null)
+				return keyToken;
+
+			if (publicKey == null)
+				return null;
+
+			if (publicKey.Length == 0)
+				return new byte [0];
+
+			if (keyToken != null && keyToken.Length == 0)
+				return ComputePublicKeyToken ();
+
+			keyToken = ComputePublicKeyToken ();
+			return keyToken;
+#endif
+		}
+
+		private byte [] ComputePublicKeyToken ()
+		{
+			HashAlgorithm ha = SHA1.Create ();
+			byte [] hash = ha.ComputeHash (publicKey);
+			// we need the last 8 bytes in reverse order
+			byte [] token = new byte [8];
+			Array.Copy (hash, (hash.Length - 8), token, 0, 8);
+			Array.Reverse (token, 0, 8);
+			return token;
 		}
 
 #if NET_2_0
@@ -264,7 +358,14 @@ namespace System.Reflection {
 
 		public void SetPublicKey (byte[] publicKey) 
 		{
-			flags = AssemblyNameFlags.PublicKey;
+#if NET_2_0
+			if (publicKey == null)
+				flags ^= AssemblyNameFlags.PublicKey;
+			else
+				flags |= AssemblyNameFlags.PublicKey;
+#else
+			flags |= AssemblyNameFlags.PublicKey;
+#endif
 			this.publicKey = publicKey;
 		}
 

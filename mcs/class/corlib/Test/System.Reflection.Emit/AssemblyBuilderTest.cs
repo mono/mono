@@ -108,17 +108,15 @@ public class AssemblyBuilderTest
 		ModuleBuilder mb1 = (ModuleBuilder) ab.ManifestModule;
 		Assert.AreSame (mb1, ab.GetModules () [0], "#B1");
 		Assert.IsFalse (mb1.IsResource (), "#B2");
-		Assert.AreSame (ab, mb1.Assembly, "#B3");
-		Assert.AreSame (mb1, ab.ManifestModule, "#B4");
+		Assert.AreSame (mb1, ab.ManifestModule, "#B3");
 
 		ab.Save ("ManifestModule.dll");
 
 		ModuleBuilder mb2 = (ModuleBuilder) ab.ManifestModule;
 		Assert.AreSame (mb2, ab.GetModules () [0], "#C1");
 		Assert.IsFalse (mb2.IsResource (), "#C2");
-		Assert.AreSame (ab, mb2.Assembly, "#C3");
-		Assert.AreSame (mb2, ab.ManifestModule, "#C4");
-		Assert.AreSame (mb1, mb2, "#C5");
+		Assert.AreSame (mb2, ab.ManifestModule, "#C3");
+		Assert.AreSame (mb1, mb2, "#C4");
 	}
 #endif
 
@@ -776,7 +774,20 @@ public class AssemblyBuilderTest
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no exception is thrown (file not found)
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-		Assert.IsNull (check.GetPublicKeyToken (), "Token");
+#if NET_2_0
+		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#1");
+		Assert.IsNull (check.GetPublicKey (), "#2");
+		Assert.IsNotNull (check.GetPublicKeyToken (), "#3a");
+		Assert.AreEqual (0, check.GetPublicKeyToken ().Length, "#3b");
+#else
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#1");
+		Assert.IsNotNull (check.GetPublicKey (), "#2a");
+		Assert.AreEqual (0, check.GetPublicKey ().Length, "#2b");
+		Assert.IsNull (check.GetPublicKeyToken (), "#3");
+#endif
+		Assert.IsTrue (check.FullName.IndexOf ("Version=0.0.0.0") != -1, "#4");
+		Assert.IsTrue (check.FullName.IndexOf ("Culture=neutral") != -1, "#5");
+		Assert.IsTrue (check.FullName.IndexOf ("PublicKeyToken=null") != -1, "#6");
 	}
 
 	[Test]
@@ -795,7 +806,20 @@ public class AssemblyBuilderTest
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		// no public key is inserted into the assembly
 		// because it's not AssemblyBuilder.Save job to do the signing :-/
-		Assert.IsNull (check.GetPublicKeyToken (), "Token");
+#if NET_2_0
+		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#1");
+		Assert.IsNull (check.GetPublicKey (), "#2");
+		Assert.IsNotNull (check.GetPublicKeyToken (), "#3a");
+		Assert.AreEqual (0, check.GetPublicKeyToken ().Length, "#3b");
+#else
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#1");
+		Assert.IsNotNull (check.GetPublicKey (), "#2a");
+		Assert.AreEqual (0, check.GetPublicKey ().Length, "#2b");
+		Assert.IsNull (check.GetPublicKeyToken (), "#3");
+#endif
+		Assert.IsTrue (check.FullName.IndexOf ("Version=0.0.0.0") != -1, "#4");
+		Assert.IsTrue (check.FullName.IndexOf ("Culture=neutral") != -1, "#5");
+		Assert.IsTrue (check.FullName.IndexOf ("PublicKeyToken=null") != -1, "#6");
 	}
 
 	[Test]
@@ -810,7 +834,14 @@ public class AssemblyBuilderTest
 
 		string filename = Path.Combine (tempDir, "StrongName_WithoutAttributes.dll");
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
-		Assert.AreEqual ("0E-EA-7C-E6-5F-35-F2-D8", BitConverter.ToString (check.GetPublicKeyToken ()), "Token");
+		Assert.IsNotNull (check.GetPublicKey (), "#1a");
+		Assert.IsTrue (check.GetPublicKey ().Length > 0, "#1b");
+		Assert.AreEqual ("0E-EA-7C-E6-5F-35-F2-D8", BitConverter.ToString (check.GetPublicKeyToken ()), "#2");
+
+		Assert.IsTrue (check.FullName.IndexOf ("Version=0.0.0.0") != -1, "#3");
+		Assert.IsTrue (check.FullName.IndexOf ("Culture=neutral") != -1, "#4");
+		Assert.IsTrue (check.FullName.IndexOf ("PublicKeyToken=0eea7ce65f35f2d8") != -1, "#5");
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#6");
 	}
 
 	[Test]
@@ -849,7 +880,6 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void AssemblyName_Culture ()
 	{
 		AssemblyName assemblyName = new AssemblyName ();
@@ -871,7 +901,7 @@ public class AssemblyBuilderTest
 		assemblyName.Version = new Version ("1.2.3.4");
 		assemblyName.KeyPair = new StrongNameKeyPair (strongName);
 
-		Assert.AreEqual ("AssemblyNameTest_PublicKey, Version=1.2.3.4", assemblyName.FullName, "#1");
+		Assert.AreEqual ("AssemblyNameTest_PublicKey, Version=1.2.3.4", assemblyName.FullName, "#A1");
 
 		const string fullName = "AssemblyNameTest_PublicKey, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
 
@@ -879,22 +909,32 @@ public class AssemblyBuilderTest
 			assemblyName, AssemblyBuilderAccess.Save, tempDir);
 
 		AssemblyName abName = ab.GetName ();
-		Assert.IsNotNull (abName.GetPublicKeyToken (), "#2");
-		Assert.IsTrue (abName.GetPublicKeyToken ().Length > 0, "#3");
-		Assert.IsNotNull (abName.GetPublicKey () != null, "#4");
-		Assert.IsTrue (abName.GetPublicKey ().Length > 0, "#5");
+		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#B1");
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, abName.Flags, "#B2");
+		Assert.IsNotNull (abName.GetPublicKey () != null, "#B3a");
+		Assert.IsTrue (abName.GetPublicKey ().Length > 0, "#B3b");
+		Assert.IsNotNull (abName.GetPublicKeyToken (), "#B4a");
+		Assert.IsTrue (abName.GetPublicKeyToken ().Length > 0, "#B4b");
+#if NET_2_0
+		Assert.AreEqual (fullName, abName.FullName, "#B5");
+#else
+		//Assert.AreEqual ("AssemblyNameTest_PublicKey, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#B5");
+		Assert.IsTrue (abName.FullName.IndexOf ("AssemblyNameTest_PublicKey, Version=1.2.3.4") != -1, "#B5a");
+		Assert.IsTrue (abName.FullName.IndexOf ("PublicKeyToken=0eea7ce65f35f2d8") != -1, "#B5b");
+#endif
 
 		ab.Save ("AssemblyNameTest_PublicKey.dll");
 		AssemblyName bakedName = AssemblyName.GetAssemblyName (Path.Combine(
 			tempDir, "AssemblyNameTest_PublicKey.dll"));
 
-		Assert.IsNotNull (bakedName.GetPublicKeyToken (), "#6");
-		Assert.IsNotNull (bakedName.GetPublicKey (), "#7");
-		Assert.AreEqual (fullName, bakedName.FullName, "#8");
+		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#C1");
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, bakedName.Flags, "#C2");
+		Assert.IsNotNull (bakedName.GetPublicKeyToken (), "#C3");
+		Assert.IsNotNull (bakedName.GetPublicKey (), "#C4");
+		Assert.AreEqual (fullName, bakedName.FullName, "#C5");
 	}
 
 	[Test]
-	[Category ("NotWorking")] 
 	public void AssemblyName_MoreCultureInfo ()
 	{
 		AssemblyName assemblyName = new AssemblyName ();
@@ -902,8 +942,8 @@ public class AssemblyBuilderTest
 		assemblyName.Version = new Version ("1.2.3.4");
 		assemblyName.KeyPair = new StrongNameKeyPair (strongName);
 
-		Assert.IsNull (assemblyName.CultureInfo, "#1");
-		Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4", assemblyName.FullName, "#2");
+		Assert.IsNull (assemblyName.CultureInfo, "#A1");
+		Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4", assemblyName.FullName, "#A2");
 
 		const string fullName = "AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8";
 
@@ -911,14 +951,18 @@ public class AssemblyBuilderTest
 			assemblyName, AssemblyBuilderAccess.Save, tempDir);
 
 		AssemblyName abName = ab.GetName ();
-		Assert.IsNotNull (abName.CultureInfo != null, "#3");
+		Assert.IsNotNull (abName.CultureInfo != null, "#B1");
 #if NET_2_0
-		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#4");
-		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#5");
-		Assert.AreEqual (fullName, abName.FullName, "#6");
+		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#B2a");
+		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#B2a");
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, abName.Flags, "#B3");
+		Assert.AreEqual (fullName, abName.FullName, "#B4");
 #else
-		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#7");
-		Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#8");
+		Assert.AreEqual (CultureInfo.InvariantCulture, abName.CultureInfo, "#B2");
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, abName.Flags, "#B3");
+		//Assert.AreEqual ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4, PublicKeyToken=0eea7ce65f35f2d8", abName.FullName, "#B4");
+		Assert.IsTrue (abName.FullName.IndexOf ("AssemblyNameTest_MoreCultureInfo, Version=1.2.3.4") != -1, "#B4a");
+		Assert.IsTrue (abName.FullName.IndexOf ("PublicKeyToken=0eea7ce65f35f2d8") != -1, "#B4b");
 #endif
 
 		ab.Save ("AssemblyNameTest_MoreCultureInfo.dll");
@@ -926,19 +970,18 @@ public class AssemblyBuilderTest
 		AssemblyName bakedName = AssemblyName.GetAssemblyName (Path.Combine(
 			tempDir, "AssemblyNameTest_MoreCultureInfo.dll"));
 
-		Assert.IsNotNull (bakedName.CultureInfo, "#9");
+		Assert.IsNotNull (bakedName.CultureInfo, "#C1");
 
 #if NET_2_0
-		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#10");
-		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#11");
+		Assert.IsTrue (abName.CultureInfo != CultureInfo.InvariantCulture, "#C2a");
+		Assert.AreEqual (CultureInfo.InvariantCulture.LCID, abName.CultureInfo.LCID, "#C2b");
 #else
-		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#12");
+		Assert.AreEqual (CultureInfo.InvariantCulture, bakedName.CultureInfo, "#C2");
 #endif
-		Assert.AreEqual (fullName, bakedName.FullName, "#13");
+		Assert.AreEqual (fullName, bakedName.FullName, "#C3");
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void AssemblyName_NoVersion ()
 	{
 		AssemblyName assemblyName = new AssemblyName ();
@@ -951,15 +994,23 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void AssemblyName_Version ()
 	{
 		AssemblyName assemblyName = new AssemblyName ();
 		assemblyName.Name = "AssemblyNameTest";
 		assemblyName.Version = new Version (1, 2, 3, 4);
 
-		const string fullName = "AssemblyNameTest, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null";
-		const string abName = "AssemblyNameTest, Version=1.2.3.4";
+		string fullName = "AssemblyNameTest, Version=1.2.3.4, Culture=neutral, PublicKeyToken=null";
+		string abName = "AssemblyNameTest, Version=1.2.3.4";
+
+		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
+
+		assemblyName = new AssemblyName ();
+		assemblyName.Name = "AssemblyNameTest";
+		assemblyName.Version = new Version (1, 2);
+
+		fullName = "AssemblyNameTest, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null";
+		abName = "AssemblyNameTest, Version=1.2.0.0";
 
 		AssertAssemblyName (tempDir, assemblyName, abName, fullName);
 	}
@@ -994,11 +1045,23 @@ public class AssemblyBuilderTest
 			ab.Save (assemblyName.Name + ".dll");
 
 #if NET_2_0
-			// on .NET 2.0, the full name of the AssemblyBuilder matches the 
+			// on .NET 2.0, the full name of the AssemblyBuilder matches the
 			// fully qualified assembly name
-			Assert.AreEqual (fullName, ab.FullName);
+			Assert.AreEqual (fullName, ab.FullName, "#1");
 #else
-			Assert.AreEqual (abName, ab.FullName);
+			//Assert.AreEqual (abName, ab.FullName, "#1");
+#endif
+
+			AssemblyName an = ab.GetName ();
+
+			Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#2");
+			Assert.IsNotNull (an.GetPublicKey (), "#3a");
+			Assert.AreEqual (0, an.GetPublicKey ().Length, "#3b");
+#if NET_2_0
+			Assert.IsNotNull (an.GetPublicKeyToken (), "#4a");
+			Assert.AreEqual (0, an.GetPublicKeyToken ().Length, "#4b");
+#else
+			Assert.IsNull (an.GetPublicKeyToken (), "#4");
 #endif
 
 			// load assembly in separate domain, so we can clean-up after the 
@@ -1027,6 +1090,7 @@ public class AssemblyBuilderTest
 			_assemblyPath = assemblyPath;
 			_assemblyName = assemblyName;
 		}
+
 		public void Test ()
 		{
 			AssemblyName assemblyName = AssemblyName.GetAssemblyName (_assemblyPath);

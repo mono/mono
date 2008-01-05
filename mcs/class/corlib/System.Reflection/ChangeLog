@@ -1,3 +1,14 @@
+2007-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyName.cs: Fixed default value for ProcessorArchitecture to
+	match MS. On 2.0 profile, return zero-length in FullName is no name
+	is set, and throw a SecurityException in FullName and GetPublicKeyToken
+	if a public key is set with no corresponding public key token. 
+	Fixed FullName to also include PublicKeyToken spec with "null" value
+	if public key is empty byte array. Fixed corlib part of bug #351057.
+	In SetPublicKey, modify Flags accordingly. On the 2.0 profile, verify
+	the public key when the public key token is computed.
+
 2007-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* Assembly.cs (GetSatelliteAssembly): Search in the assembly directory as well.

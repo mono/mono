@@ -1,3 +1,13 @@
+2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyNameCas.cs: Sync test methods with AssemblyNameTest.cs.
+	* AssemblyNameTest.cs: Removed AssertEqualsByteArrays method since
+	NUnit supports this out-of-the-box. Use more meaningful names for
+	some existing tests. Improved existing tests and added lots more.
+	Enabled tests that were previously failing.  Fixed and improved
+	tests for public key; the original "public key" was actually a
+	key pair.
+
 2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyNameTest.cs: Improved culture test to cover bug #347174.

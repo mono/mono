@@ -1,3 +1,8 @@
+2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilderTest.cs: Improved existing AssemblyName related tests.
+	Enabled AssemblyName tests that previously failed.
+
 2007-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added tests for GetConstructor(s), GetEvent(s),

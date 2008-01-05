@@ -1,3 +1,8 @@
+2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilder.cs (UnprotectedGetName): Set the public key token
+	as well.
+
 2007-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldBuilder.cs (GetToken): Use the MetadataToken property.

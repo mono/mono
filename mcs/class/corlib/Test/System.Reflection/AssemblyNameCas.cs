@@ -71,9 +71,9 @@ namespace MonoCasTests.System.Reflection {
 		public void PartialTrust_Deny_Unrestricted ()
 		{
 			// call "normal" unit with reduced privileges
-			ant.EmptyAssembly ();
-			ant.PublicKey ();
-			ant.PublicKeyToken ();
+			ant.Constructor0 ();
+			ant.SetPublicKey ();
+			ant.SetPublicKeyToken ();
 			ant.Clone_Empty ();
 		}
 
@@ -121,14 +121,14 @@ namespace MonoCasTests.System.Reflection {
 		public void PartialTrust_PermitOnly_FileIOPermission ()
 		{
 			// call "normal" unit with reduced privileges
-			ant.FullName1 ();
-			ant.FullName2 ();
-			ant.FullName3 ();
-			ant.FullName4 ();
-			ant.FullName5 ();
-			ant.FullName6 ();
-			ant.FullName7 ();
-			ant.FullName8 ();
+			ant.FullName_Name ();
+			ant.FullName_Version ();
+			ant.FullName_Culture ();
+			ant.FullName_PublicKey ();
+			ant.FullName_PublicKeyToken ();
+			ant.FullName_VersionCulture ();
+			ant.FullName_VersionPublicKey ();
+			ant.FullName_CulturePublicKey ();
 			ant.HashAlgorithm ();
 			ant.Clone_Empty ();
 			// mostly because they call Assembly.GetName
