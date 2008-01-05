@@ -1,5 +1,9 @@
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc-internal.h: Moved the REGISTER/UNREGISTER macros here from os/gc_wrapper.h.
+
+	* *.c: Include metadata/gc-internal.h instead of os/gc_wrapper.h.
+	
 	* object.c (mono_array_full_copy): Fix detection of whenever to use a write
 	barrier.
 	(mono_array_clone_in_domain): Ditto.
