@@ -1,5 +1,11 @@
 2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* RichTextBox.cs: Apply patch from Luke Page that fixes some caret
+	issues after loading an RTF file by using the correct line feeds.
+	Fixes bug #351841.
+
+2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: When deleting multiple line selections, we need
 	to invalidate every line beginning at the first line of the selection.
 	Patch from Luke Page fixes bug #351791.

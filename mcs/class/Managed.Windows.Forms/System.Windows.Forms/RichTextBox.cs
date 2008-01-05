@@ -1732,6 +1732,9 @@ namespace System.Windows.Forms {
 
 
 			if (rtf_cursor_x == 0) {
+				if (newline && rtf_line.ToString ().EndsWith ("\n") == false)
+					rtf_line.Append ("\n");
+
 				document.Add (rtf_cursor_y, rtf_line.ToString (), rtf_style.rtf_rtfalign, font, rtf_style.rtf_color,
 								newline ? LineEnding.Rich : LineEnding.Wrap);
 				if (rtf_style.rtf_par_line_left_indent != 0) {
@@ -1753,6 +1756,9 @@ namespace System.Windows.Forms {
 					document.Split (line, rtf_cursor_x + length);
 					line = document.GetLine (rtf_cursor_y);
 					line.ending = LineEnding.Rich;
+
+					if (line.Text.EndsWith ("\n") == false)
+						line.Text += "\n";
 				}
 			}
 
