@@ -1,5 +1,7 @@
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc_wrapper.h (MONO_GC_UNREGISTER_ROOT): New macro.
+	
 	* gc_wrapper.h: Include <stdlib.h> to fix the --with-gc=none build. Fixes
 	#351635.
 
