@@ -1,5 +1,8 @@
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* object-internals.h (MonoReflectionAssemblyName): Add 'processor_architecture'
+	field to keep it in synch with the managed object.
+
 	* marshal.c (emit_marshal_object): Add support for byref marshalling of
 	delegates. Fixes #351520.
 
