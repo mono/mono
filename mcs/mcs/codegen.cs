@@ -1306,7 +1306,7 @@ namespace Mono.CSharp {
 			else if (aname.Version != null || aname.CultureInfo != null)
 				throw new Exception ("Friend assembly `" + a.GetString () + 
 						"' is invalid. InternalsVisibleTo cannot have version or culture specified.");
-			else if (aname.GetPublicKey () == null && Name.GetPublicKey () != null) {
+			else if (aname.GetPublicKey () == null && Name.GetPublicKey () != null && Name.GetPublicKey ().Length != 0) {
 				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.FullName + "' is invalid." +
 						" Strong named assemblies must specify a public key in their InternalsVisibleTo declarations");
 				return false;

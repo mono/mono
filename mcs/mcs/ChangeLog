@@ -1,3 +1,8 @@
+2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* codegen.cs: AssemblyName.GetPublicKey returns a zero-length byte
+	array for assemblies that are not strongnamed.
+
 2008-01-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #351481
