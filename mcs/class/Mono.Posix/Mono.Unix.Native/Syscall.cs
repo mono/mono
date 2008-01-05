@@ -646,13 +646,16 @@ namespace Mono.Unix.Native {
 		ST_RDONLY      =    1,  // Mount read-only
 		ST_NOSUID      =    2,  // Ignore suid and sgid bits
 		ST_NODEV       =    4,  // Disallow access to device special files
+		ST_NOEXEC      =    8,  // Disallow program execution
 		ST_SYNCHRONOUS =   16,  // Writes are synced at once
+		ST_REMOUNT     =   32,  // Alter flags of a mounted FS
 		ST_MANDLOCK    =   64,  // Allow mandatory locks on an FS
 		ST_WRITE       =  128,  // Write on file/directory/symlink
 		ST_APPEND      =  256,  // Append-only file
 		ST_IMMUTABLE   =  512,  // Immutable file
 		ST_NOATIME     = 1024,  // Do not update access times
 		ST_NODIRATIME  = 2048,  // Do not update directory access times
+		ST_BIND        = 4096,  // Bind directory at different place
 	}
 
 	[Map][Flags]
