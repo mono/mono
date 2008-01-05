@@ -1,5 +1,12 @@
 2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Apply patch from Luke Page that takes line
+	alignment into account for mouse selection, so that center and
+	right aligned text can be selected.
+	Fixes bug #351881.
+
+2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* RichTextBox.cs: Apply patch from Luke Page that fixes some caret
 	issues after loading an RTF file by using the correct line feeds.
 	Fixes bug #351841.
