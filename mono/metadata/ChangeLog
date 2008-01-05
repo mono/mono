@@ -1,3 +1,8 @@
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Use a write barrier when
+	writing a vtype array elem.
+
 2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* assembly.c (build_assembly_name): return FALSE if length of token is
