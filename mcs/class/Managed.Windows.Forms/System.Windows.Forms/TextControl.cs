@@ -2544,6 +2544,11 @@ namespace System.Windows.Forms {
 			this.lines--;
 		}
 
+		// Invalidates the start line until the end of the viewstate
+		internal void InvalidateLinesAfter (Line start) {
+			owner.Invalidate (new Rectangle (0, start.Y - viewport_y, viewport_width, viewport_height - start.Y));
+		}
+
 		// Invalidate a section of the document to trigger redraw
 		internal void Invalidate(Line start, int start_pos, Line end, int end_pos) {
 			Line	l1;
@@ -3072,7 +3077,7 @@ namespace System.Windows.Forms {
 
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 
-					InvalidateSelectionArea ();
+					InvalidateLinesAfter(selection_start.line);
 
 					// Delete first line
 					DeleteChars (selection_start.line, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
