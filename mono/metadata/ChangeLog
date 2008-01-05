@@ -1,5 +1,8 @@
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c (conservatively_pin_objects_from): Tell valgrind that the pin queue
+	contains defined memory.
+	
 	* sgen-gc.c: Fix 64 bit warnings. Fix some typos. Update GC stats in mono_stats.
 
 	* sgen-gc.c (build_nursery_fragments): Handle half-constructed objects correctly.
