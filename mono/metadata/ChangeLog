@@ -1,3 +1,23 @@
+2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* assembly.c (build_assembly_name): return FALSE if length of token is
+	not 16 (if not "null").
+	(mono_assembly_name_parse_full): return FALSE if value of version,
+	culture, token or key is 0.
+	* icall.c (fill_reflection_assembly_name): add boolean arguments to
+	specify whether public key and public key token must be set to default
+	value (zero-length byte array) if not available. Set versioncompat to
+	SameMachine. If public key is available or the default is set, then
+	set PublicKey flag.
+	(ves_icall_System_Reflection_Assembly_FillName): if no public key
+	is available, use empty byte array as default value. On the 2.0
+	profile, use default value for public key token if not set.
+	(ves_icall_System_Reflection_InternalGetAssemblyName): on the 1.0
+	profile, use default value for public key if not set. On the 2.0
+	profile, use default value for public key token if not set.
+	(ves_icall_System_Reflection_AssemblyName_ParseName): do not set
+	default values for public key and public key token.
+
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (MonoReflectionAssemblyName): Add 'processor_architecture'
