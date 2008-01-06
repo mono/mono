@@ -279,22 +279,7 @@ namespace System.Web.Configuration {
 				NameValueCollection collection = (NameValueCollection) hc.Items [AppSettingsKey];
 
 				if (collection == null) {
-					IServiceProvider provider = (IServiceProvider) ((IServiceProvider) hc).GetService (typeof (HttpWorkerRequest));
-					javax.servlet.ServletConfig config = (javax.servlet.ServletConfig) provider.GetService (typeof (javax.servlet.ServletConfig));
-					javax.servlet.ServletContext context = config.getServletContext ();
-
-					collection = new NameValueCollection ((NameValueCollection)value);
-
-					for (java.util.Enumeration e = context.getInitParameterNames (); e.hasMoreElements (); ) {
-						string key = (string) e.nextElement ();
-						collection.Add (key, context.getInitParameter (key));
-					}
-
-					for (java.util.Enumeration e = config.getInitParameterNames (); e.hasMoreElements (); ) {
-						string key = (string) e.nextElement ();
-						collection.Add (key, config.getInitParameter (key));
-					}
-
+					collection = new KeyValueMergedCollection (hc, (NameValueCollection) value);
 					hc.Items [AppSettingsKey] = collection;
 				}
 
