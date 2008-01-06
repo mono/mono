@@ -1,3 +1,9 @@
+2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetReferencedAssemblies)
+	Set public key token to zero-length byte array if assembly is not
+	strongnamed.
+
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Array_SetValueImpl): Use a write barrier when
