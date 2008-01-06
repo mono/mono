@@ -205,7 +205,7 @@ namespace System.Web.Hosting {
 			// 
 			// Unique Domain ID
 			//
-			string domain_id = (virtualDir.GetHashCode () ^ physicalDir.GetHashCode () ^ tempDirTag).ToString ("x");
+			string domain_id = (virtualDir.GetHashCode () + 1 ^ physicalDir.GetHashCode () + 2 ^ tempDirTag).ToString ("x");
 
 			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;

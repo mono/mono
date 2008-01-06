@@ -1,3 +1,9 @@
+2008-01-06  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: make sure that application with virtualDir
+	"/a" and physicalDir "/b" and the other way around get different
+	domain_id values.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationManager.cs, ApplicationHost.cs,
