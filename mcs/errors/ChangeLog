@@ -1,3 +1,8 @@
+2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* gcs0281.cs: Modified expected error message now that fix for bug
+	#315057 has been applied.
+
 2007-10-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* cs0177-8.cs: New test based on #325478.

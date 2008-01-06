@@ -1,3 +1,8 @@
+2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* typemanager.cs: On 2.0 profile, GetPublicKeyToken returns an empty
+	byte array for unsigned "baked" assemblies.
+
 2008-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: AssemblyName.GetPublicKey returns a zero-length byte

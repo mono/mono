@@ -1908,8 +1908,8 @@ namespace Mono.CSharp {
 			
 			byte [] key_token = aname.GetPublicKeyToken ();
 			if (key_token != null) {
-				if (this_token == null) {
-					// Same name, but key token is null
+				if (this_token.Length == 0) {
+					// Same name, but assembly is not strongnamed
 					Error_FriendAccessNameNotMatching (aname.FullName);
 					break;
 				}
