@@ -504,14 +504,20 @@ namespace System {
 			return ExecuteAssembly (assemblyFile, assemblySecurity, null);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
+		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args)
+		{
+			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity);
+			return ExecuteAssembly (a, args);
+		}
 
-		[MonoTODO ("No support for ExecuteAssembly")]
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
-			throw new NotImplementedException ();
+			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity, hashValue, hashAlgorithm);
+			return ExecuteAssembly (a, args);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int ExecuteAssembly (Assembly a, string[] args);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Assembly [] GetAssemblies (bool refOnly);
@@ -1166,35 +1172,28 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopy);
 		}
 
-		[MonoTODO ("resolve assemblyName to location")]
 		public int ExecuteAssemblyByName (string assemblyName)
 		{
 			return ExecuteAssemblyByName (assemblyName, null, null);
 		}
 
-		[MonoTODO ("resolve assemblyName to location")]
 		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity)
 		{
 			return ExecuteAssemblyByName (assemblyName, assemblySecurity, null);
 		}
 
-		[MonoTODO ("resolve assemblyName to location")]
 		public int ExecuteAssemblyByName (string assemblyName, Evidence assemblySecurity, params string[] args)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
 
-			AssemblyName an = new AssemblyName (assemblyName);
-			return ExecuteAssemblyByName (an, assemblySecurity, args);
+			return ExecuteAssembly (a, args);
 		}
 
-		[MonoTODO ("assemblyName may not have a codebase")]
 		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, params string[] args)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
 
-			return ExecuteAssembly (assemblyName.CodeBase, assemblySecurity, args);
+			return ExecuteAssembly (a, args);
 		}
 
 		public bool IsDefaultAppDomain ()

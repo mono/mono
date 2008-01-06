@@ -1,3 +1,10 @@
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs: Move the assembly loading in ExecuteAssembly and 
+	ExecuteAssemblyByName to managed to as said by the MSDN docs. Fixes #350530.
+
+	* Environment.cs: Bump corlib version.
+	
 2008-01-02  Marek Habersack  <mhabersack@novell.com>
 
 	* Array.cs: fix a typo to unbreak the build.
