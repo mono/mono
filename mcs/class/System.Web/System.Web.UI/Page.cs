@@ -1226,6 +1226,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		} catch (Exception ex) {
 			wasException = true;
 			HandleException (ex);
+			if (getFacesContext () != null)
+				getFacesContext ().responseComplete ();
 #else
 		} catch (ThreadAbortException taex) {
 			if (context.Response.FlagEnd == taex.ExceptionState)
@@ -1253,7 +1255,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		OnError (EventArgs.Empty);
 		if (_context.HasError (e)) {
 			_context.ClearError (e);
+#if TARGET_J2EE
+			vmw.common.TypeUtils.Throw (e);
+#else
 			throw new TargetInvocationException (e);
+#endif
 		}
 	}
 

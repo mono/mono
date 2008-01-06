@@ -292,15 +292,12 @@ namespace System.Web.UI
 				if (ex is ThreadAbortException) {
 					if (_context.Response.FlagEnd == ((ThreadAbortException) ex).ExceptionState) {
 						Thread.ResetAbort ();
-						if (getFacesContext () != null)
-							getFacesContext ().responseComplete ();
 						return;
 					}
+					vmw.common.TypeUtils.Throw (ex);
 				}
 				else
 					ProcessException (ex);
-
-				vmw.common.TypeUtils.Throw (ex);
 			}
 			finally {
 				ProcessUnload ();
