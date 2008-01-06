@@ -1461,7 +1461,7 @@ namespace System.Windows.Forms
 				Line	line;
 
 				if (document.selection_visible)
-					document.ReplaceSelection ("\n", false);
+					document.ReplaceSelection ("", false);
 
 				line = document.CaretLine;
 

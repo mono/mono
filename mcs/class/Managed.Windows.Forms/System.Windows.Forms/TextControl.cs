@@ -2235,6 +2235,10 @@ namespace System.Windows.Forms {
 					caret.line = new_line;
 					caret.tag = new_line.tags;
 					caret.pos = 0;
+
+					if (selection_visible == false) {
+						SetSelectionToCaret (true);
+					}
 				}
 
 				if (move_sel_start) {
@@ -2325,6 +2329,10 @@ namespace System.Windows.Forms {
 				caret.line = new_line;
 				caret.pos = caret.pos - pos;
 				caret.tag = caret.line.FindTag(caret.pos);
+
+				if (selection_visible == false) {
+					SetSelectionToCaret (true);
+				}
 			}
 
 			if (move_sel_start) {
@@ -3310,9 +3318,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal Line ParagraphStart(Line line) {
-			while (line.ending == LineEnding.Wrap && line.line_no > 1) {
-				line = GetLine(line.line_no - 1);
-			}
+			Line lastline = line;
+			do {
+				if (line.line_no <= 1)
+					break;
+
+				line = lastline;
+				lastline = GetLine (line.line_no - 1);
+			} while (lastline.ending == LineEnding.Wrap);
+
 			return line;
 		}       
 
