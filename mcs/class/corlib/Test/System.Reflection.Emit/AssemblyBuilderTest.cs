@@ -763,6 +763,8 @@ public class AssemblyBuilderTest
 		0x79, 0xC0, 0x9B, 0x5F, 0x34, 0x86, 0xB2, 0xDE, 0xC4, 0x19, 0x84, 0x5F, 
 		0x0E, 0xED, 0x9B, 0xB8, 0xD3, 0x17, 0xDA, 0x78 };
 
+	static byte [] token = { 0x0e, 0xea, 0x7c, 0xe6, 0x5f, 0x35, 0xf2, 0xd8 };
+
 	[Test]
 	public void StrongName_MissingKeyFile_NoDelay ()
 	{
@@ -845,14 +847,22 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[ExpectedException (typeof (NotSupportedException))]
 	public void SaveUnfinishedTypes ()
 	{
-		TypeBuilder typeBuilder = mb.DefineType ("TestType",
-			TypeAttributes.Class | TypeAttributes.Public |
-			TypeAttributes.Sealed | TypeAttributes.AnsiClass |
-			TypeAttributes.AutoClass, typeof(object));
-		ab.Save ("def_module");
+		mb.DefineType ("TestType", TypeAttributes.Class |
+			TypeAttributes.Public | TypeAttributes.Sealed |
+			TypeAttributes.AnsiClass | TypeAttributes.AutoClass,
+			typeof(object));
+		try {
+			ab.Save ("def_module");
+			Assert.Fail ("#1");
+		} catch (NotSupportedException ex) {
+			// Type 'TestType' was not completed
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsTrue (ex.Message.IndexOf ("TestType") != -1, "#5");
+		}
 	}
 
 	[Test]
@@ -868,6 +878,190 @@ public class AssemblyBuilderTest
 		m = ab2.GetModules ();
 	}
 
+	[Test]
+	[Category ("NotWorking")] // bug #351932
+	public void GetReferencedAssemblies ()
+	{
+		AssemblyBuilder ab1;
+		AssemblyBuilder ab2;
+		AssemblyBuilder ab3;
+		AssemblyName [] refs;
+		TypeBuilder tb1;
+		TypeBuilder tb2;
+		TypeBuilder tb3;
+		TypeBuilder tb4;
+		ModuleBuilder mb1;
+		ModuleBuilder mb2;
+		ModuleBuilder mb3;
+		AssemblyName an1 = genAssemblyName ();
+		an1.Version = new Version (3, 0);
+		AssemblyName an2 = genAssemblyName ();
+		an2.Version = new Version ("1.2.3.4");
+		an2.KeyPair = new StrongNameKeyPair (strongName);
+		AssemblyName an3 = genAssemblyName ();
+
+		ab1 = domain.DefineDynamicAssembly (an1,
+			AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+		ab2 = domain.DefineDynamicAssembly (an2,
+			AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+		ab3 = domain.DefineDynamicAssembly (an3,
+			AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+
+		refs = ab1.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#A1");
+		refs = ab2.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#A2");
+		refs = ab3.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#A3");
+
+		mb1 = ab1.DefineDynamicModule (an1.Name + ".dll");
+		tb1 = mb1.DefineType ("TestType1", TypeAttributes.Class |
+			TypeAttributes.Public, typeof (Attribute));
+		tb1.CreateType ();
+
+		mb2 = ab2.DefineDynamicModule (an2.Name + ".dll");
+		tb2 = mb2.DefineType ("TestType2", TypeAttributes.Class |
+			TypeAttributes.Public, tb1);
+		tb2.CreateType ();
+
+		mb3 = ab3.DefineDynamicModule (an3.Name + ".dll");
+		tb3 = mb3.DefineType ("TestType3", TypeAttributes.Class |
+			TypeAttributes.Public, tb1);
+		tb3.CreateType ();
+		tb4 = mb3.DefineType ("TestType4", TypeAttributes.Class |
+			TypeAttributes.Public, tb2);
+		tb4.CreateType ();
+
+		refs = ab1.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#B1");
+		refs = ab2.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#B2");
+		refs = ab3.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#B3");
+
+		ab1.Save (an1.Name + ".dll");
+		ab2.Save (an2.Name + ".dll");
+		ab3.Save (an3.Name + ".dll");
+
+		refs = ab1.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#C1");
+		refs = ab2.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#C2");
+		refs = ab3.GetReferencedAssemblies ();
+		Assert.AreEqual (0, refs.Length, "#C3");
+
+		string assemblyFile = Path.Combine (tempDir, an1.Name + ".dll");
+
+		using (FileStream fs = File.OpenRead (assemblyFile)) {
+			byte [] buffer = new byte [fs.Length];
+			fs.Read (buffer, 0, buffer.Length);
+			Assembly a = Assembly.Load (buffer);
+			refs = a.GetReferencedAssemblies ();
+			Assert.AreEqual (1, refs.Length, "#D1");
+
+			Assert.IsNull (refs [0].CodeBase, "#D2:CodeBase");
+			Assert.IsNotNull (refs [0].CultureInfo, "#D2:CultureInfo");
+			Assert.IsNull (refs [0].EscapedCodeBase, "#D2:EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, refs [0].Flags, "#D2:Flags");
+			Assert.AreEqual (Consts.AssemblyCorlib, refs [0].FullName, "#D2:FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#D2:HashAlgorithm");
+			Assert.IsNull (refs [0].KeyPair, "#D2:KeyPair");
+			Assert.AreEqual ("mscorlib", refs [0].Name, "#D2:Name");
+#if NET_2_0
+			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#D2:PA");
+#endif
+			Assert.AreEqual (new Version (Consts.FxVersion), refs [0].Version, "#D2:Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
+				refs [0].VersionCompatibility, "#D2:VersionCompatibility");
+			Assert.IsNull (refs [0].GetPublicKey (), "#D2:GetPublicKey");
+			Assert.IsNotNull (refs [0].GetPublicKeyToken (), "#D2:GetPublicKeyToken(a)");
+			Assert.AreEqual (8, refs [0].GetPublicKeyToken ().Length, "#D2:GetPublicKeyToken(b)");
+			Assert.AreEqual (refs [0].FullName, refs [0].ToString (), "#D2:ToString");
+		}
+
+		assemblyFile = Path.Combine (tempDir, an2.Name + ".dll");
+
+		using (FileStream fs = File.OpenRead (assemblyFile)) {
+			byte [] buffer = new byte [fs.Length];
+			fs.Read (buffer, 0, buffer.Length);
+			Assembly a = Assembly.Load (buffer);
+			refs = a.GetReferencedAssemblies ();
+			Assert.AreEqual (1, refs.Length, "#E1");
+
+			Assert.IsNull (refs [0].CodeBase, "#E2:CodeBase");
+			Assert.IsNotNull (refs [0].CultureInfo, "#E2:CultureInfo(a)");
+			Assert.AreEqual (CultureInfo.InvariantCulture, refs [0].CultureInfo, "#E2:CultureInfo(b)");
+			Assert.IsNull (refs [0].EscapedCodeBase, "#E2:EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, refs [0].Flags, "#E2:Flags");
+			Assert.AreEqual (an1.Name + ", Version=3.0.0.0, Culture=neutral, PublicKeyToken=null", refs [0].FullName, "#E2:FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#E2:HashAlgorithm");
+			Assert.IsNull (refs [0].KeyPair, "#E2:KeyPair");
+			Assert.AreEqual (an1.Name, refs [0].Name, "#E2:Name");
+#if NET_2_0
+			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#E2:PA");
+#endif
+			Assert.AreEqual (new Version (3, 0, 0, 0), refs [0].Version, "#E2:Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
+				refs [0].VersionCompatibility, "#E2:VersionCompatibility");
+			Assert.IsNull (refs [0].GetPublicKey (), "#E2:GetPublicKey");
+			Assert.IsNotNull (refs [0].GetPublicKeyToken (), "#E2:GetPublicKeyToken(a)");
+			Assert.AreEqual (0, refs [0].GetPublicKeyToken ().Length, "#E2:GetPublicKeyToken(b)");
+			Assert.AreEqual (refs [0].FullName, refs [0].ToString (), "#E2:ToString");
+		}
+
+		assemblyFile = Path.Combine (tempDir, an3.Name + ".dll");
+
+		using (FileStream fs = File.OpenRead (assemblyFile)) {
+			byte [] buffer = new byte [fs.Length];
+			fs.Read (buffer, 0, buffer.Length);
+			Assembly a = Assembly.Load (buffer);
+			refs = a.GetReferencedAssemblies ();
+			Assert.AreEqual (2, refs.Length, "#F1");
+
+			Assert.IsNull (refs [0].CodeBase, "#F2:CodeBase");
+			Assert.IsNotNull (refs [0].CultureInfo, "#F2:CultureInfo(a)");
+			Assert.AreEqual (CultureInfo.InvariantCulture, refs [0].CultureInfo, "#F2:CultureInfo(b)");
+			Assert.IsNull (refs [0].EscapedCodeBase, "#F2:EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, refs [0].Flags, "#F2:Flags");
+			Assert.AreEqual (an1.Name + ", Version=3.0.0.0, Culture=neutral, PublicKeyToken=null", refs [0].FullName, "#F2:FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [0].HashAlgorithm, "#F2:HashAlgorithm");
+			Assert.IsNull (refs [0].KeyPair, "#F2:KeyPair");
+			Assert.AreEqual (an1.Name, refs [0].Name, "#F2:Name");
+#if NET_2_0
+			Assert.AreEqual (ProcessorArchitecture.None, refs [0].ProcessorArchitecture, "#F2:PA");
+#endif
+			Assert.AreEqual (new Version (3, 0, 0, 0), refs [0].Version, "#F2:Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
+				refs [0].VersionCompatibility, "#F2:VersionCompatibility");
+			Assert.IsNull (refs [0].GetPublicKey (), "#F2:GetPublicKey");
+			Assert.IsNotNull (refs [0].GetPublicKeyToken (), "#F2:GetPublicKeyToken(a)");
+			Assert.AreEqual (0, refs [0].GetPublicKeyToken ().Length, "#F2:GetPublicKeyToken(b)");
+			Assert.AreEqual (refs [0].FullName, refs [0].ToString (), "#F2:ToString");
+
+			Assert.IsNull (refs [1].CodeBase, "#F3:CodeBase");
+			Assert.IsNotNull (refs [1].CultureInfo, "#F3:CultureInfo(a)");
+			Assert.AreEqual (CultureInfo.InvariantCulture, refs [1].CultureInfo, "#F3:CultureInfo(b)");
+			Assert.IsNull (refs [1].EscapedCodeBase, "#F3:EscapedCodeBase");
+			Assert.AreEqual (AssemblyNameFlags.None, refs [1].Flags, "#F3:Flags");
+			Assert.AreEqual (an2.Name + ", Version=1.2.3.4, Culture=neutral, PublicKeyToken=0eea7ce65f35f2d8", refs [1].FullName, "#F3:FullName");
+			Assert.AreEqual (AssemblyHashAlgorithm.SHA1, refs [1].HashAlgorithm, "#F3:HashAlgorithm");
+			Assert.IsNull (refs [1].KeyPair, "#F3:KeyPair");
+			Assert.AreEqual (an2.Name, refs [1].Name, "#F3:Name");
+#if NET_2_0
+			Assert.AreEqual (ProcessorArchitecture.None, refs [1].ProcessorArchitecture, "#F3:PA");
+#endif
+			Assert.AreEqual (new Version (1, 2, 3, 4), refs [1].Version, "#F3:Version");
+			Assert.AreEqual (AssemblyVersionCompatibility.SameMachine,
+				refs [1].VersionCompatibility, "#F3:VersionCompatibility");
+			Assert.IsNull (refs [1].GetPublicKey (), "#F3:GetPublicKey");
+			Assert.AreEqual (token, refs [1].GetPublicKeyToken (), "#F3:GetPublicKeyToken");
+			Assert.AreEqual (refs [1].FullName, refs [1].ToString (), "#F3:ToString");
+		}
+	}
+
 	[Test] // bug #78724
 	public void GetTypes ()
 	{
@@ -875,8 +1069,8 @@ public class AssemblyBuilderTest
 		tb.CreateType ();
 
 		Type[] types = ab.GetTypes ();
-		Assert.AreEqual (1, types.Length);
-		Assert.AreEqual ("sometype", types[0].Name);
+		Assert.AreEqual (1, types.Length, "#1");
+		Assert.AreEqual ("sometype", types[0].Name, "#2");
 	}
 
 	[Test]
@@ -1025,13 +1219,13 @@ public class AssemblyBuilderTest
 		Type t;
 
 		t = ab.GetType ("foo.Test2", true, true);
-		Assert.AreEqual ("Test2", t.Name);
+		Assert.AreEqual ("Test2", t.Name, "#1");
 
 		t = ab.GetType ("foo.test2", true, true);
-		Assert.AreEqual ("Test2", t.Name);
+		Assert.AreEqual ("Test2", t.Name, "#2");
 
 		t = ab.GetType ("Foo.test2", true, true);
-		Assert.AreEqual ("Test2", t.Name);
+		Assert.AreEqual ("Test2", t.Name, "#3");
 	}
 
 	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
