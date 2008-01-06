@@ -3373,7 +3373,7 @@ namespace System.Windows.Forms {
 
 			line = GetLineByPixel (multiline ? y : x, false);
 
-			LineTag tag = line.GetTag (x - line.align_shift);
+			LineTag tag = line.GetTag (x);
 				
 			if (tag.Length == 0 && tag.Start == 1)
 				index = 0;

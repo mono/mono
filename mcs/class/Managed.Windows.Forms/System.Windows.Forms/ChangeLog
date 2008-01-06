@@ -1,5 +1,11 @@
 2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextControl.cs: Revert a piece r92316 that prevented the fix
+	from working when there were multiple tags in the text box.
+	Fixes bug #351881.
+
+2008-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextControl.cs: Apply patch from Luke Page that prevents an
 	NRE when determining the beginning of a paragraph.
 	Fixes bug #351886.
