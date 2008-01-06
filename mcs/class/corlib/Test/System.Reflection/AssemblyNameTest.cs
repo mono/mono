@@ -1467,6 +1467,15 @@ public class AssemblyNameTest {
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
 		Assert.AreEqual ("TestAssembly", an.ToString (), "ToString");
+
+		an = new AssemblyName (assemblyName + ", ProcessorArchitecture=mSiL");
+		Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "PA: MSIL");
+
+		an = new AssemblyName (assemblyName + ", ProcessorArchitecture=AmD64");
+		Assert.AreEqual (ProcessorArchitecture.Amd64, an.ProcessorArchitecture, "PA: Amd64");
+
+		an = new AssemblyName (assemblyName + ", ProcessorArchitecture=iA64");
+		Assert.AreEqual (ProcessorArchitecture.IA64, an.ProcessorArchitecture, "PA: IA64");
 	}
 
 	[Test] // ctor (String)
@@ -1493,13 +1502,24 @@ public class AssemblyNameTest {
 		const string assemblyName = "TestAssembly";
 		try {
 			new AssemblyName (assemblyName + ", ProcessorArchitecture=XXX");
-			Assert.Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (FileLoadException ex) {
 			// The given assembly name or codebase was invalid
-			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#2");
-			Assert.IsNull (ex.FileName, "#3");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.FileName, "#A3");
+			Assert.IsNull (ex.InnerException, "#A4");
+			Assert.IsNotNull (ex.Message, "#A5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", ProcessorArchitecture=None");
+			Assert.Fail ("#B1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.FileName, "#B3");
+			Assert.IsNull (ex.InnerException, "#B4");
+			Assert.IsNotNull (ex.Message, "#B5");
 		}
 	}
 
