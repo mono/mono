@@ -60,7 +60,7 @@ using System.Web.UI;
 
 [assembly: AllowPartiallyTrustedCallers()]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
-#if !TARGET_JVM
+#if !(TARGET_JVM || TARGET_DOTNET)
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
