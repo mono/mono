@@ -386,6 +386,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (bool) val : true;
 			}
 			set { 
+				if (value == Visible)
+					return;
 				viewState ["visible"] = value;
 				OnFieldChanged ();
 			}
