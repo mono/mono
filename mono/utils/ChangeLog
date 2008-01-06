@@ -1,3 +1,7 @@
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c: Don't include os/gc_wrapper.h.
+
 2007-11-06  Geoff Norton  <gnorton@novell.com>
 
 	* strtod.c: Use a G_MUTEX call pattern compatible with eglib.  Patch
