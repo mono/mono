@@ -439,12 +439,23 @@ namespace System.Threading {
 				value.CheckNeutral ();
 				in_currentculture = true;
 				try {
-					BinaryFormatter bf = new BinaryFormatter();
-					MemoryStream ms = new MemoryStream ();
-					bf.Serialize (ms, value);
-
 					SetCachedCurrentCulture (value);
-					SetSerializedCurrentCulture (ms.GetBuffer ());
+
+					byte[] serialized_form = null;
+
+					if (value.IsReadOnly && value.cached_serialized_form != null) {
+						serialized_form = value.cached_serialized_form;
+					} else {
+						BinaryFormatter bf = new BinaryFormatter();
+						MemoryStream ms = new MemoryStream ();
+						bf.Serialize (ms, value);
+
+						serialized_form = ms.GetBuffer ();
+						if (value.IsReadOnly)
+							value.cached_serialized_form = serialized_form;
+					}
+						
+					SetSerializedCurrentCulture (serialized_form);
 				} finally {
 					in_currentculture = false;
 				}
@@ -507,13 +518,28 @@ namespace System.Threading {
 				if (value == null)
 					throw new ArgumentNullException ("value");
 
-				try {
-					BinaryFormatter bf = new BinaryFormatter();
-					MemoryStream ms = new MemoryStream ();
-					bf.Serialize (ms, value);
+				CultureInfo culture = GetCachedCurrentUICulture ();
+				if (culture == value)
+					return;
 
+				try {
 					SetCachedCurrentUICulture (value);
-					SetSerializedCurrentUICulture (ms.GetBuffer ());
+
+					byte[] serialized_form = null;
+
+					if (value.IsReadOnly && value.cached_serialized_form != null) {
+						serialized_form = value.cached_serialized_form;
+					} else {
+						BinaryFormatter bf = new BinaryFormatter();
+						MemoryStream ms = new MemoryStream ();
+						bf.Serialize (ms, value);
+
+						serialized_form = ms.GetBuffer ();
+						if (value.IsReadOnly)
+							value.cached_serialized_form = serialized_form;
+					}
+						
+					SetSerializedCurrentUICulture (serialized_form);
 				} finally {
 					in_currentculture = false;
 				}
