@@ -1,5 +1,9 @@
 2007-01-06 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* DetailsView.cs: render invisible rows correct.
+
+2007-01-06 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* DataControlField.cs: prevent infinite recursion
 
 2008-01-01  Vladimir Krasnov  <vladimirk@mainsoft.com>

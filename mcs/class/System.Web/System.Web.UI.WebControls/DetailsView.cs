@@ -1265,8 +1265,10 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void InitializeRow (DetailsViewRow row, DataControlField field)
 		{
-			if (!field.Visible)
+			if (!field.Visible) {
+				row.Visible = false;
 				return;
+			}
 			
 			row.ContainingField = field;
 			DataControlFieldCell cell;
