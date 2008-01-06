@@ -73,14 +73,7 @@ namespace System.Globalization
 
 		private const string _RoundtripPattern = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fffffffK";
 
-		//
-		// BIG FAT WARNING:
-		//
-		// DO NOT ALTER THE NAME OR ORDER OF THESE FIELDS
-		// AND DO NOT INSERT ANY VARIABLES ANYWHERE BUT AT THE END
-		// SINCE MONO RELIES ON THE ORDER AND ON THE NAMES
-		// see mono/mono/metadata/verify.c
-		//
+		#region Sync with object-internals.h
 		private bool m_isReadOnly;
 		private string amDesignator;
 		private string pmDesignator;
@@ -112,10 +105,7 @@ namespace System.Globalization
 		private string [] monthDayPatterns;
 		private string [] yearMonthPatterns;
 		private string [] shortDayNames;
-
-		//
-		// END OF BIG FAT WARNING
-		//
+		#endregion
 
 		// MS Serialization needs this
 		private int nDataItem;
@@ -139,9 +129,9 @@ namespace System.Globalization
 		private string m_name; // Unused, but MS.NET serializes this
 #endif
 
-		public DateTimeFormatInfo()
+		internal DateTimeFormatInfo(bool read_only)
 		{
-			m_isReadOnly = false;
+			m_isReadOnly = read_only;
 			amDesignator = "AM";
 			pmDesignator = "PM";
 			dateSeparator = "/";
@@ -180,6 +170,10 @@ namespace System.Globalization
 			genitiveMonthNames = INVARIANT_MONTH_NAMES;
 			shortDayNames = INVARIANT_SHORT_DAY_NAMES;
 #endif
+		}
+
+		public DateTimeFormatInfo() : this (false)
+		{
 		}
 				
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)

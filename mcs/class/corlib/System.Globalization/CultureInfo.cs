@@ -317,7 +317,7 @@ namespace System.Globalization
 					if (!constructed) Construct ();
 					lock (this) {
 						if(textInfo == null) {
-							textInfo = new TextInfo (this, cultureID, textinfo_data);
+							textInfo = new TextInfo (this, cultureID, textinfo_data, m_isReadOnly);
 						}
 					}
 				}
@@ -427,6 +427,15 @@ namespace System.Globalization
 			} else {
 				CultureInfo new_ci=(CultureInfo)ci.Clone ();
 				new_ci.m_isReadOnly=true;
+				if (new_ci.numInfo != null)
+					new_ci.numInfo = NumberFormatInfo.ReadOnly (new_ci.numInfo);
+				if (new_ci.dateTimeInfo != null)
+					new_ci.dateTimeInfo = DateTimeFormatInfo.ReadOnly (new_ci.dateTimeInfo);
+#if NET_2_0
+				// TextInfo doesn't have a ReadOnly method in 1.1...
+				if (new_ci.textInfo != null)
+					new_ci.textInfo = TextInfo.ReadOnly (new_ci.textInfo);
+#endif
 				return(new_ci);
 			}
 		}
@@ -490,7 +499,7 @@ namespace System.Globalization
 				if (numInfo == null){
 					lock (this){
 						if (numInfo == null) {
-							numInfo = new NumberFormatInfo ();
+							numInfo = new NumberFormatInfo (m_isReadOnly);
 							construct_number_format ();
 						}
 					}
@@ -521,7 +530,7 @@ namespace System.Globalization
 					lock (this)
 					{
 						if (dateTimeInfo == null) {
-							dateTimeInfo = new DateTimeFormatInfo();
+							dateTimeInfo = new DateTimeFormatInfo(m_isReadOnly);
 							construct_datetime_format ();
 							if (optional_calendars != null)
 								dateTimeInfo.Calendar = optional_calendars [0];
@@ -665,7 +674,7 @@ namespace System.Globalization
 				dateTimeInfo = (DateTimeFormatInfo) dateTimeInfo.Clone ();
 			}
 
-			textInfo=new TextInfo (this, cultureID, this.textinfo_data);
+			textInfo=new TextInfo (this, cultureID, this.textinfo_data,read_only);
 
 			m_name=String.Empty;
 			displayname=

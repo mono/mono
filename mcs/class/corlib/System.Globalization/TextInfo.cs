@@ -80,8 +80,11 @@ namespace System.Globalization {
 		[NonSerialized]
 		readonly Data data;
 
-		internal unsafe TextInfo (CultureInfo ci, int lcid, void* data)
+		internal unsafe TextInfo (CultureInfo ci, int lcid, void* data, bool read_only)
 		{
+#if NET_2_0
+			this.m_isReadOnly = read_only;
+#endif
 			this.m_win32LangID = lcid;
 			this.ci = ci;
 			if (data != null)
@@ -495,7 +498,7 @@ namespace System.Globalization {
 
 #if NET_2_0
 		[ComVisible (false)]
-		static public TextInfo ReadOnly (TextInfo textInfo)
+		public static TextInfo ReadOnly (TextInfo textInfo)
 		{
 			if (textInfo == null)
 				throw new ArgumentNullException ("textInfo");
@@ -505,6 +508,7 @@ namespace System.Globalization {
 			return ti;
 		}
 #endif
+
 		/* IDeserialization interface */
 		[MonoTODO]
 		void IDeserializationCallback.OnDeserialization(object sender)

@@ -107,8 +107,10 @@ namespace System.Globalization {
 		static string [] invariantNativeDigits = new string [] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 #endif
 
-		internal NumberFormatInfo (int lcid)
+		internal NumberFormatInfo (int lcid, bool read_only)
 		{
+			isReadOnly = read_only;
+
 			//FIXME: should add more LCID
 			// CultureInfo uses this one also.
 			if (lcid != 0x007F)
@@ -155,11 +157,15 @@ namespace System.Globalization {
 				break;
 			}
 		}
-		
-		public NumberFormatInfo () : this (0x007f)
+
+		internal NumberFormatInfo (bool read_only) : this (0x007f, read_only)
 		{
 		}
-				
+		
+		public NumberFormatInfo () : this (false)
+		{
+		}
+
 		// this is called by mono/mono/metadata/locales.c
 		void InitPatterns ()
 		{

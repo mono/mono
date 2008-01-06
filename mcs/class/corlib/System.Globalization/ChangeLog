@@ -1,3 +1,8 @@
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* CultureInfo.cs NumberFormatInfo.cs DateTimeFormatInfo.cs TextInfo.cs: Make
+	sure the components of a read-only culture object are read-only as well.
+
 2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CultureInfo.cs: Added internal CreateCulture method, which is used
