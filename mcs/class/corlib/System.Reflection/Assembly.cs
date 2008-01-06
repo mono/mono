@@ -163,7 +163,7 @@ namespace System.Reflection {
 		}
 
 		internal bool FromByteArray {
-			set { fromByteArray = true; }
+			set { fromByteArray = value; }
 		}
 
 		public virtual String Location {

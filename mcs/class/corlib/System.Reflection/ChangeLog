@@ -1,4 +1,9 @@
-2007-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+2008-01-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Fix typo in setter found with Gendarme (was used in a
+	single place, AppDomain, and set to true so it never caused a problem)
+
+2008-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyName.cs: Fixed default value for ProcessorArchitecture to
 	match MS. On 2.0 profile, return zero-length in FullName is no name
