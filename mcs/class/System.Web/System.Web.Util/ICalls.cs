@@ -35,8 +35,14 @@ namespace System.Web.Util
 	{
 		private ICalls () {}
 
+#if TARGET_DOTNET
+		static public string GetMachineConfigPath () {
+			return System.Runtime.InteropServices.RuntimeEnvironment.SystemConfigurationFile;
+		}
+#else
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static public string GetMachineConfigPath ();
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static public string GetMachineInstallDirectory ();
