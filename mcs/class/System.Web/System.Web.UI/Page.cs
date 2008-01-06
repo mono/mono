@@ -1255,7 +1255,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		OnError (EventArgs.Empty);
 		if (_context.HasError (e)) {
 			_context.ClearError (e);
-#if TARGET_J2EE
+#if TARGET_JVM
 			vmw.common.TypeUtils.Throw (e);
 #else
 			throw new TargetInvocationException (e);
