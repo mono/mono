@@ -1,3 +1,9 @@
+2008-01-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ServiceContainer.cs: Check DefaultServices in GetService in 2.0.
+	* MenuCommand.cs: Invoke (args) should call Invoke () and leave
+	args handling for subclasses.
+
 2007-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CheckoutException.cs: Provide customized message and error code

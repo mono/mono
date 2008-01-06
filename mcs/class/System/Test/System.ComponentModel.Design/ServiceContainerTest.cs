@@ -69,6 +69,15 @@ public class ServiceContainerTest : Assertion {
 		sc.AddService (typeof (Svc), new Svc());
 	}
 
+#if NET_2_0
+	[Test]
+	public void TestGetServiceDefaultServices ()
+	{
+		ServiceContainer sc = new ServiceContainer ();
+		AssertEquals ("TGDS#01", sc.GetService (typeof(IServiceContainer)), sc);
+		AssertEquals ("TGDS#02", sc.GetService (typeof(ServiceContainer)), sc);
+	}
+#endif
 	[Test]
 	public void TestServiceCreator () 
 	{

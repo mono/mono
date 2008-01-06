@@ -137,10 +137,22 @@ namespace System.ComponentModel.Design
 #endif
 		object GetService (Type serviceType)
 		{
-			object result = services[serviceType];
-			if (result == null && parentProvider != null){
-				result = parentProvider.GetService (serviceType);
+#if NET_2_0
+			object result = null;
+			Type[] defaultServices = this.DefaultServices;
+			for (int i=0; i < defaultServices.Length; i++) {
+				if (defaultServices[i] == serviceType) {
+					result = this;
+					break;
+				}
 			}
+			if (result == null)
+				result = services[serviceType];
+#else
+			object result = services[serviceType];
+#endif
+			if (result == null && parentProvider != null)
+				result = parentProvider.GetService (serviceType);
 			if (result != null) {
 				ServiceCreatorCallback	cb = result as ServiceCreatorCallback;
 				if (cb != null) {

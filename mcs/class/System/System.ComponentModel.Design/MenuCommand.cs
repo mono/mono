@@ -133,10 +133,9 @@ namespace System.ComponentModel.Design
 		}
 		
 #if NET_2_0
-		[MonoNotSupported("")]
 		public virtual void Invoke (object arg)
 		{
-			throw new NotImplementedException ();
+			this.Invoke ();
 		}
 #endif
 
