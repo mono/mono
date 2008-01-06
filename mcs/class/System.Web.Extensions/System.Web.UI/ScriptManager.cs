@@ -532,11 +532,9 @@ namespace System.Web.UI
 
 			foreach (ScriptReferenceEntry script in GetScriptReferences ()) {
 				OnResolveScriptReference (new ScriptReferenceEventArgs (script.ScriptReference));
-				if (!IsInAsyncPostBack || (script.Control != this && HasBeenRendered (script.Control))) {
 					if (_scriptToRegister == null)
 						_scriptToRegister = new List<ScriptReferenceEntry> ();
 					_scriptToRegister.Add (script);
-				}
 			}
 
 			if (!IsInAsyncPostBack) {
@@ -834,9 +832,9 @@ namespace System.Web.UI
 			}
 
 			if (loadScriptsBeforeUI)
-				RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
 			else
-				RegisterStartupScript (this, typeof (ScriptManager), url, String.Format ("<script src=\"{0}\" type=\"text/javascript\"></script>", url), false);
+				RegisterStartupScript (control, typeof (ScriptManager), url, String.Format ("<script src=\"{0}\" type=\"text/javascript\"></script>", url), false);
 		}
 
 		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
@@ -995,7 +993,7 @@ namespace System.Web.UI
 				return;
 
 			Control targetControl = _registeredExtenderControls [extenderControl];
-			RegisterScriptDescriptors (extenderControl.GetScriptDescriptors (targetControl));
+			RegisterScriptDescriptors ((Control) extenderControl, extenderControl.GetScriptDescriptors (targetControl));
 		}
 
 		public void RegisterScriptDescriptors (IScriptControl scriptControl) {
@@ -1005,13 +1003,11 @@ namespace System.Web.UI
 			if (_registeredScriptControls == null || !_registeredScriptControls.Contains (scriptControl))
 				return;
 
-			RegisterScriptDescriptors (scriptControl.GetScriptDescriptors ());
+			RegisterScriptDescriptors ((Control) scriptControl, scriptControl.GetScriptDescriptors ());
 		}
 
-		void RegisterScriptDescriptors (IEnumerable<ScriptDescriptor> scriptDescriptors) {
+		void RegisterScriptDescriptors (Control control, IEnumerable<ScriptDescriptor> scriptDescriptors) {
 			if (scriptDescriptors == null)
-				return;
-			if (IsInAsyncPostBack && !IsInPartialRendering)
 				return;
 
 			StringBuilder sb = new StringBuilder ();
@@ -1026,7 +1022,7 @@ namespace System.Web.UI
 				sb.AppendLine ("});");
 			}
 			string script = sb.ToString ();
-			RegisterStartupScript (this, typeof (ExtenderControl), script, script, true);
+			RegisterStartupScript (control, typeof (ScriptDescriptor), script, script, true);
 		}
 
 		public static void RegisterStartupScript (Page page, Type type, string key, string script, bool addScriptTags) {
