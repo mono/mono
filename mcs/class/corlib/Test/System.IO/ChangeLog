@@ -1,3 +1,7 @@
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* FileTest.cs: Rename a helper method so it does not begin with Test.
+
 2007-12-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* MemoryStreamTest.cs: Add new test.

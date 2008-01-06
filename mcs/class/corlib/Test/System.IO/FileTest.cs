@@ -1733,7 +1733,7 @@ namespace MonoTests.System.IO
 		}
 
 #if NET_2_0
-		void TestRWAT (string s)
+		void read_all (string s)
 		{
 			string f = Path.GetTempFileName ();
 			try {
@@ -1751,20 +1751,20 @@ namespace MonoTests.System.IO
 			// not including a final new line. it looks
 			// like that was not true. I'm not sure what
 			// that was talking about
-			TestRWAT ("");
-			TestRWAT ("\r");
-			TestRWAT ("\n");
-			TestRWAT ("\r\n");
-			TestRWAT ("a\r");
-			TestRWAT ("a\n");
-			TestRWAT ("a\r\n");
-			TestRWAT ("a\ra");
-			TestRWAT ("a\na");
-			TestRWAT ("a\r\na");
-			TestRWAT ("a");
-			TestRWAT ("\r\r");
-			TestRWAT ("\n\n");
-			TestRWAT ("\r\n\r\n");
+			read_all ("");
+			read_all ("\r");
+			read_all ("\n");
+			read_all ("\r\n");
+			read_all ("a\r");
+			read_all ("a\n");
+			read_all ("a\r\n");
+			read_all ("a\ra");
+			read_all ("a\na");
+			read_all ("a\r\na");
+			read_all ("a");
+			read_all ("\r\r");
+			read_all ("\n\n");
+			read_all ("\r\n\r\n");
 		}
 #endif
 
