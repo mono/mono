@@ -100,6 +100,10 @@ namespace System.Globalization
 		// Deserialized instances will set this to false
 		[NonSerialized]
 		bool constructed;
+
+		[NonSerialized]
+		// Used by Thread.set_CurrentCulture
+		internal byte[] cached_serialized_form;
 		
 		const int InvariantCultureId = 0x7F;
 
@@ -375,6 +379,7 @@ namespace System.Globalization
 			if (!constructed) Construct ();
 			CultureInfo ci=(CultureInfo)MemberwiseClone ();
 			ci.m_isReadOnly=false;
+			ci.cached_serialized_form=null;
 			if (!IsNeutralCulture) {
 				ci.NumberFormat = (NumberFormatInfo)NumberFormat.Clone ();
 				ci.DateTimeFormat = (DateTimeFormatInfo)DateTimeFormat.Clone ();

@@ -1,5 +1,7 @@
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* CultureInfo.cs: Add a 'cached_serialized_form' field.
+	
 	* CultureInfo.cs NumberFormatInfo.cs DateTimeFormatInfo.cs TextInfo.cs: Make
 	sure the components of a read-only culture object are read-only as well.
 
