@@ -1123,7 +1123,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-		void IList_Contains_InvalidType()
+		public void IList_Contains_InvalidType()
 		{
 			List<string> list = new List<string>();
 			list.Add("foo");
@@ -1131,7 +1131,7 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-		void IList_IndexOf_InvalidType()
+		public void IList_IndexOf_InvalidType()
 		{
 			List<string> list = new List<string>();
 			list.Add("foo");

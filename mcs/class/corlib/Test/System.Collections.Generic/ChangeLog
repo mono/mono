@@ -1,3 +1,7 @@
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* ListTest.cs: Make some tests public.
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DictionaryTest.cs: Test case for #322783 based on Francisco Moraes
