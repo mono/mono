@@ -1,3 +1,8 @@
+2008-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Identity.cs: Fix Disposed setter to use value (not true). Found 
+	using Gendarme.
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RemotingConfiguration.cs : added CustomErrorMode (stub).

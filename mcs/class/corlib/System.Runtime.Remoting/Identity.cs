@@ -103,7 +103,7 @@ namespace System.Runtime.Remoting
 		public bool Disposed
 		{
 			get { return _disposed; }
-			set { _disposed = true; }
+			set { _disposed = value; }
 		}
 
 		public DynamicPropertyCollection ClientDynamicProperties
