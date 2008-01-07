@@ -67,7 +67,7 @@ namespace System.Windows.Forms
 
 		public HtmlElement GetElementById (string id)
 		{
-			return new HtmlElement (webHost.Document.getElementById (id));
+			return new HtmlElement (webHost.Document.GetElementById (id));
 		}
 
 		public HtmlElement GetElementFromPoint (Point point) 
