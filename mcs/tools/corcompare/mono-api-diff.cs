@@ -22,8 +22,10 @@ namespace Mono.AssemblyCompare
 	{
 		static int Main (string [] args)
 		{
-			if (args.Length != 2)
+			if (args.Length != 2) {
+				Console.WriteLine ("Usage: mono mono-api-diff.exe <assembly 1 xml> <assembly 2 xml>");
 				return 1;
+			}
 
 			XMLAssembly ms = CreateXMLAssembly (args [0]);
 			XMLAssembly mono = CreateXMLAssembly (args [1]);
@@ -968,6 +970,9 @@ namespace Mono.AssemblyCompare
 			this.document = doc;
 
 			XMLParameter oparm = (XMLParameter) other;
+
+			if (name != oparm.name)
+				AddWarning (parent, "Parameter name is wrong: {0} != {1}", name, oparm.name);
 
 			if (type != oparm.type)
 				AddWarning (parent, "Parameter type is wrong: {0} != {1}", type, oparm.type);

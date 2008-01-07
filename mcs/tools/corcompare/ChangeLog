@@ -1,3 +1,7 @@
+2008-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-api-diff.cs: Check the names of method parameters as well.
+
 2007-11-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api-diff.cs : ... and do the same for missing members.
