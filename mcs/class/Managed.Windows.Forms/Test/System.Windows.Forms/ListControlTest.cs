@@ -251,6 +251,45 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
+		[Test]
+		public void SelectedValue ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			ListControlChild lc = new ListControlChild ();
+			f.Controls.Add (lc);
+
+			ArrayList list = new ArrayList ();
+			list.Add (new MockItem ("TextA", 1));
+			list.Add (new MockItem (String.Empty, 4));
+			list.Add (new MockItem ("TextC", 9));
+
+			lc.ValueMember = "Text";
+			lc.DataSource = list;
+
+			f.Show ();
+
+			lc.SelectedValue = "TextC";
+			Assert.AreEqual (2, lc.SelectedIndex, "#B1");
+			Assert.AreEqual ("TextC", lc.SelectedValue, "#B2");
+
+			lc.SelectedValue = String.Empty;
+			Assert.AreEqual (1, lc.SelectedIndex, "#C1");
+			Assert.AreEqual (String.Empty, lc.SelectedValue, "#C2");
+
+			lc.SelectedValue = "TextA";
+			Assert.AreEqual (0, lc.SelectedIndex, "#D1");
+			Assert.AreEqual ("TextA", lc.SelectedValue, "#D2");
+
+			try {
+				lc.SelectedValue = null;
+				Assert.Fail ("#E1");
+			} catch (ArgumentNullException) {
+			}
+
+			f.Dispose ();
+		}
+
 #if NET_2_0
 		[Test] // bug #81771
 		public void DataSource_BindingList1 ()
@@ -354,11 +393,14 @@ namespace MonoTests.System.Windows.Forms
 
 		public class ListControlChild : ListControl
 		{
+			int selected_index = -1;
+
 			public override int SelectedIndex {
 				get {
-					return -1;
+					return selected_index;
 				}
 				set {
+					selected_index = value;
 				}
 			}
 
