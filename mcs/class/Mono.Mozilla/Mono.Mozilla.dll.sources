@@ -15,6 +15,7 @@ Mono.Mozilla/interfaces/nsIDOMCharacterData.cs
 Mono.Mozilla/interfaces/nsIDOMComment.cs
 Mono.Mozilla/interfaces/nsIDOMDocument.cs
 Mono.Mozilla/interfaces/nsIDOMDocumentFragment.cs
+Mono.Mozilla/interfaces/nsIDOMDocumentRange.cs
 Mono.Mozilla/interfaces/nsIDOMDocumentType.cs
 Mono.Mozilla/interfaces/nsIDOMDOMImplementation.cs
 Mono.Mozilla/interfaces/nsIDOMElement.cs
@@ -27,6 +28,7 @@ Mono.Mozilla/interfaces/nsIDOMNamedNodeMap.cs
 Mono.Mozilla/interfaces/nsIDOMNode.cs
 Mono.Mozilla/interfaces/nsIDOMNodeList.cs
 Mono.Mozilla/interfaces/nsIDOMProcessingInstruction.cs
+Mono.Mozilla/interfaces/nsIDOMRange.cs
 Mono.Mozilla/interfaces/nsIDOMText.cs
 Mono.Mozilla/interfaces/nsIHistoryEntry.cs
 Mono.Mozilla/interfaces/nsIInputStream.cs
@@ -35,6 +37,8 @@ Mono.Mozilla/interfaces/nsISHistoryListener.cs
 Mono.Mozilla/interfaces/nsISimpleEnumerator.cs
 Mono.Mozilla/interfaces/nsIURI.cs
 Mono.Mozilla/interfaces/nsIWebNavigation.cs
+Mono.Mozilla/interfaces/extras/nsIWriteSegmentFun.cs
+Mono.Mozilla/interfaces/extras/Options.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
 Mono.WebBrowser/DOM/IDOMHTMLDocument.cs

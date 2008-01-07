@@ -32,33 +32,25 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("A41661D4-1417-11D5-9882-00C04FA02F40")]
+	[Guid ("7b9badc6-c9bc-447a-8670-dbd195aed24b")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIHistoryEntry {
+	internal interface nsIDOMDocumentRange {
 
-#region nsIHistoryEntry
+#region nsIDOMDocumentRange
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getURI ([MarshalAs (UnmanagedType.Interface)]  out nsIURI ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getTitle ([MarshalAs(UnmanagedType.LPWStr)]   string ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getIsSubFrame ( out bool ret);
+		int createRange ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMRange ret);
 
 #endregion
 	}
 
 
-	internal class nsHistoryEntry {
-		public static nsIHistoryEntry GetProxy (Mono.WebBrowser.IWebBrowser control, nsIHistoryEntry obj)
+	internal class nsDOMDocumentRange {
+		public static nsIDOMDocumentRange GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDocumentRange obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIHistoryEntry).GUID, obj.GetType (), obj);
-			return o as nsIHistoryEntry;
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentRange).GUID, obj.GetType (), obj);
+			return o as nsIDOMDocumentRange;
 		}
 	}
 }

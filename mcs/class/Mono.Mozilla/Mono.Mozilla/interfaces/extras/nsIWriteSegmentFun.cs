@@ -19,7 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007, 2008 Novell, Inc.
+// Copyright (c) 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -28,37 +28,15 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace Mono.Mozilla {
-
-	[Guid ("A41661D4-1417-11D5-9882-00C04FA02F40")]
-	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-	[ComImport ()]
-	internal interface nsIHistoryEntry {
-
-#region nsIHistoryEntry
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getURI ([MarshalAs (UnmanagedType.Interface)]  out nsIURI ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getTitle ([MarshalAs(UnmanagedType.LPWStr)]   string ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getIsSubFrame ( out bool ret);
-
-#endregion
-	}
-
-
-	internal class nsHistoryEntry {
-		public static nsIHistoryEntry GetProxy (Mono.WebBrowser.IWebBrowser control, nsIHistoryEntry obj)
-		{
-			object o = Base.GetProxyForObject (control, typeof(nsIHistoryEntry).GUID, obj.GetType (), obj);
-			return o as nsIHistoryEntry;
-		}
-	}
+namespace Mono.Mozilla
+{	
+	internal delegate void nsIWriteSegmentFunDelegate (
+		[MarshalAs (UnmanagedType.Interface)] nsIInputStream aInStream,
+    	IntPtr aClosure,
+    	string aFromSegment,
+    	UInt32 aToOffset,
+    	UInt32 aCount,
+    	out UInt32 aWriteCount		
+	);
 }

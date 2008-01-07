@@ -1,3 +1,21 @@
+2008-01-07  Andreia Gaita <avidigal@novell.com>
+
+	* Mono.Mozilla/interfaces/nsIDOMRange.cs,
+	  Mono.Mozilla/interfaces/nsIDOMDocumentRange.cs:
+	Added to get the content of elements. 
+
+	* Mono.Mozilla/interfaces/*.cs: Regenerated with the xpidl2cs.pl script.
+	Add helper class to create a proxy for all native mozilla interfaces. 
+
+	* Mono.Mozilla/interfaces/extras/: classes for the mozilla interfaces that 
+	don't get generated automatically, like enums, delegates, etc.
+
+	* Mono.Mozilla/interfaces/extras/nsIWriteSegmentFun.cs: 
+	Delegate callback for a writer function for mozilla	streams 
+	(nsIInputStream.readSegments)
+	
+	* Mono.Mozilla/interfaces/extras/Options.cs: Enum for nsIWebNavigation.stop
+
 2007-12-25  Andreia Gaita  <avidigal@novell.com>
 
 	* Mono.Mozilla/DOM/DOMHTMLDocument.cs,
