@@ -28,7 +28,6 @@
 
 namespace Mono.Cecil {
 
-	using System;
 	using System.Text;
 
 	using Mono.Cecil.Signatures;
@@ -80,7 +79,7 @@ namespace Mono.Cecil {
 			return sb.ToString ();
 		}
 
-		internal ArrayType (TypeReference elementsType, ArrayShape shape) : base (elementsType)
+		internal ArrayType (TypeReference elementType, ArrayShape shape) : base (elementType)
 		{
 			m_dimensions = new ArrayDimensionCollection (this);
 			for (int i = 0; i < shape.Rank; i++) {
@@ -96,10 +95,15 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public ArrayType (TypeReference elementsType) : base (elementsType)
+		public ArrayType (TypeReference elementType, int rank) : base (elementType)
 		{
 			m_dimensions = new ArrayDimensionCollection (this);
-			m_dimensions.Add (new ArrayDimension (0, 0));
+			for (int i = 0; i < rank; i++)
+				m_dimensions.Add (new ArrayDimension (0, 0));
+		}
+
+		public ArrayType (TypeReference elementType) : this (elementType, 1)
+		{
 		}
 	}
 }

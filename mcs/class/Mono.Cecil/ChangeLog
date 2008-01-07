@@ -1,3 +1,9 @@
+2008-01-07  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ArrayType.cs:
+		Add a constructor with the array rank. Fix #351924.
+		Based on a patch by Rolf Kvinge <rkvinge@novell.com>.
+
 2008-01-04  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CilWorker.cs:
