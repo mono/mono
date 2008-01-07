@@ -1,5 +1,10 @@
 2008-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Page.cs: added internal API
+	* IScriptManager.cs: added new internal interface.	
+
+2008-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* ClientScriptManager.cs:
 	* Control.jvm.cs:			
 	* Page.cs:

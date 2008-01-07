@@ -212,14 +212,14 @@ namespace System.Web.UI.WebControls {
 
 				if (ControlToValidate != String.Empty)
 #if NET_2_0
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "controltovalidate", GetControlRenderID (ControlToValidate));
+					RegisterExpandoAttribute (ClientID, "controltovalidate", GetControlRenderID (ControlToValidate));
 #else
 					writer.AddAttribute ("controltovalidate", GetControlRenderID (ControlToValidate));
 #endif
 
 				if (ErrorMessage != String.Empty)
 #if NET_2_0
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "errormessage", ErrorMessage);
+					RegisterExpandoAttribute (ClientID, "errormessage", ErrorMessage, true);
 #else
 					writer.AddAttribute ("errormessage", ErrorMessage);
 
@@ -229,21 +229,21 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 				if (ValidationGroup != String.Empty)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
+					RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup, true);
 
 				if (SetFocusOnError)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "focusOnError", "t");
+					RegisterExpandoAttribute (ClientID, "focusOnError", "t");
 #endif
 				if (!Enabled)
 #if NET_2_0
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "enabled", "False");
+					RegisterExpandoAttribute (ClientID, "enabled", "False");
 #else
 					writer.AddAttribute ("enabled", "false", false);
 #endif
 
 #if NET_2_0
 				if (Enabled && !IsValid) {
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "isvalid", "False");
+					RegisterExpandoAttribute (ClientID, "isvalid", "False");
 #else
 				if (!IsValid) {
 					writer.AddAttribute ("isvalid", "false", false);
@@ -258,7 +258,7 @@ namespace System.Web.UI.WebControls {
 
 				if (Display != ValidatorDisplay.Static)
 #if NET_2_0
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "display", Display.ToString ());
+					RegisterExpandoAttribute (ClientID, "display", Display.ToString ());
 #else
 					writer.AddAttribute ("display", Display.ToString());
 #endif
@@ -266,6 +266,19 @@ namespace System.Web.UI.WebControls {
 
 			base.AddAttributesToRender (writer);
 		}
+
+#if NET_2_0
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue) {
+			RegisterExpandoAttribute (controlId, attributeName, attributeValue, false);
+		}
+
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
+			if (Page.ScriptManager != null)
+				Page.ScriptManager.RegisterExpandoAttribute (this, controlId, attributeName, attributeValue, encode);
+			else
+				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
+		}
+#endif
 
 		protected void CheckControlValidationProperty (string name, string propertyName)
 		{
@@ -429,26 +442,24 @@ namespace System.Web.UI.WebControls {
 
 		protected void RegisterValidatorCommonScript ()
 		{
+#if NET_2_0
+			if (Page.ScriptManager != null) {
+				Page.ScriptManager.RegisterClientScriptResource (this, typeof (BaseValidator), "WebUIValidation_2.0.js");
+				Page.ScriptManager.RegisterClientScriptBlock (this, typeof (BaseValidator), "ValidationInitializeScript", Page.ValidationInitializeScript, true);
+				Page.ScriptManager.RegisterOnSubmitStatement (this, typeof (BaseValidator), "ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
+				Page.ScriptManager.RegisterStartupScript (this, typeof (BaseValidator), "ValidationStartupScript", Page.ValidationStartupScript, true);
+			}
+			else
+#endif
 			if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock"))
 			{
 				Page.ClientScript.RegisterClientScriptInclude (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock",
 					Page.ClientScript.GetWebResourceUrl (typeof (BaseValidator), 
 #if NET_2_0
 						"WebUIValidation_2.0.js"));
-				string webForm = (Page.IsMultiForm ? Page.theForm : "window");
-				Page.ClientScript.RegisterClientScriptBlock (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock.Initialize", "WebFormValidation_Initialize(" + webForm + ");", true);
-				Page.ClientScript.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement", "if (!" + webForm + ".ValidatorOnSubmit()) return false;");
-				Page.ClientScript.RegisterStartupScript (typeof (BaseValidator), "Mono-System.Web-ValidationStartupScript",
-@"
-" + webForm + @".Page_ValidationActive = false;
-" + webForm + @".ValidatorOnLoad();
-" + webForm + @".ValidatorOnSubmit = function () {
-	if (this.Page_ValidationActive) {
-		return this.ValidatorCommonOnSubmit();
-	}
-	return true;
-};
-", true);
+				Page.ClientScript.RegisterClientScriptBlock (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock.Initialize", Page.ValidationInitializeScript, true);
+				Page.ClientScript.RegisterOnSubmitStatement (typeof (BaseValidator), "Mono-System.Web-ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
+				Page.ClientScript.RegisterStartupScript (typeof (BaseValidator), "Mono-System.Web-ValidationStartupScript", Page.ValidationStartupScript, true);
 #else		
 						"WebUIValidation.js"));
 
@@ -475,6 +486,18 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void RegisterValidatorDeclaration ()
 		{
+#if NET_2_0
+			if (Page.ScriptManager != null) {
+				Page.ScriptManager.RegisterArrayDeclaration (this, "Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
+				Page.ScriptManager.RegisterStartupScript (this, typeof (BaseValidator), ClientID + "DisposeScript",
+@"
+document.getElementById('" + ClientID + @"').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('" + ClientID + @"'));
+}
+", true);
+			}
+			else
+#endif
 			Page.ClientScript.RegisterArrayDeclaration ("Page_Validators",
 								    String.Concat ("document.getElementById ('", ClientID, "')"));
 		}

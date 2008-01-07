@@ -44,8 +44,8 @@ namespace System.Web.UI.WebControls {
 		{
 			if (RenderUplevel) {
 #if NET_2_0
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "RequiredFieldValidatorEvaluateIsValid");
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "initialvalue", InitialValue);
+				RegisterExpandoAttribute (ClientID, "evaluationfunction", "RequiredFieldValidatorEvaluateIsValid");
+				RegisterExpandoAttribute (ClientID, "initialvalue", InitialValue, true);
 #else
 				w.AddAttribute ("evaluationfunction", "RequiredFieldValidatorEvaluateIsValid", false);
 				w.AddAttribute ("initialvalue", InitialValue);

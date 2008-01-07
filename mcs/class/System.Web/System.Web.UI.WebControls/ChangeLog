@@ -1,5 +1,17 @@
 2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* BaseCompareValidator.cs:
+	* BaseValidator.cs:
+	* CompareValidator.cs:
+	* CustomValidator.cs:
+	* RangeValidator.cs:
+	* RegularExpressionValidator.cs:
+	* RequiredFieldValidator.cs:
+	refactoring: If page contents instance of IScriptManager, validators call 
+	it's API instead Page.ClientScript.									
+
+2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Button.cs:
 	* ImageButton.cs:
 	* LinkButton.cs:

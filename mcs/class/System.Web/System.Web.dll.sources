@@ -598,6 +598,7 @@ System.Web.UI/IPostBackEventHandler.cs
 System.Web.UI/IResourceUrlGenerator.cs
 System.Web.UI/IStateFormatter.cs
 System.Web.UI/IStateManager.cs
+System.Web.UI/IScriptManager.cs
 System.Web.UI/IStyleSheet.cs
 System.Web.UI/ITagNameToTypeMapper.cs
 System.Web.UI/ITemplate.cs

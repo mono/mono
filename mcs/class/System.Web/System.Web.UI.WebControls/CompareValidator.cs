@@ -50,12 +50,12 @@ namespace System.Web.UI.WebControls {
 		{
 			if (RenderUplevel) {
 #if NET_2_0
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "CompareValidatorEvaluateIsValid");
+				RegisterExpandoAttribute (ClientID, "evaluationfunction", "CompareValidatorEvaluateIsValid");
 				if (ControlToCompare.Length > 0)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "controltocompare", GetControlRenderID (ControlToCompare));
+					RegisterExpandoAttribute (ClientID, "controltocompare", GetControlRenderID (ControlToCompare));
 				if (ValueToCompare.Length > 0)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "valuetocompare", ValueToCompare);
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "operator", Operator.ToString ());
+					RegisterExpandoAttribute (ClientID, "valuetocompare", ValueToCompare, true);
+				RegisterExpandoAttribute (ClientID, "operator", Operator.ToString ());
 #else
 				if (ControlToCompare != "")
 					w.AddAttribute ("controltocompare", GetControlRenderID(ControlToCompare));

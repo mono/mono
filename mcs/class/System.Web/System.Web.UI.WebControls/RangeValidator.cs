@@ -91,9 +91,9 @@ namespace System.Web.UI.WebControls {
 
 			if (RenderUplevel) {
 #if NET_2_0
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "evaluationfunction", "RangeValidatorEvaluateIsValid");
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "minimumvalue", MinimumValue);
-				Page.ClientScript.RegisterExpandoAttribute (ClientID, "maximumvalue", MaximumValue);
+				RegisterExpandoAttribute (ClientID, "evaluationfunction", "RangeValidatorEvaluateIsValid");
+				RegisterExpandoAttribute (ClientID, "minimumvalue", MinimumValue, true);
+				RegisterExpandoAttribute (ClientID, "maximumvalue", MaximumValue, true);
 #else
 				writer.AddAttribute("evaluationfunction", "RangeValidatorEvaluateIsValid", false); // FIXME - we need to define this in client code
 				writer.AddAttribute("minimumValue", MinimumValue.ToString(CultureInfo.InvariantCulture));

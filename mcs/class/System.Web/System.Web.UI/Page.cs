@@ -448,6 +448,59 @@ public partial class Page : TemplateControl, IHttpHandler
 			return (PageAdapter)Adapter;
 		}
 	}
+
+	string _validationStartupScript;
+	string _validationOnSubmitStatement;
+	string _validationInitializeScript;
+	string _webFormScriptReference;
+
+	internal string WebFormScriptReference {
+		get {
+			if (_webFormScriptReference == null)
+				_webFormScriptReference = IsMultiForm ? theForm : "window";
+			return _webFormScriptReference;
+		}
+	}
+
+	internal string ValidationStartupScript {
+		get {
+			if (_validationStartupScript == null) {
+				_validationStartupScript =
+@"
+" + WebFormScriptReference + @".Page_ValidationActive = false;
+" + WebFormScriptReference + @".ValidatorOnLoad();
+" + WebFormScriptReference + @".ValidatorOnSubmit = function () {
+	if (this.Page_ValidationActive) {
+		return this.ValidatorCommonOnSubmit();
+	}
+	return true;
+};
+";
+			}
+			return _validationStartupScript;
+		}
+	}
+
+	internal string ValidationOnSubmitStatement {
+		get {
+			if (_validationOnSubmitStatement == null)
+				_validationOnSubmitStatement = "if (!" + WebFormScriptReference + ".ValidatorOnSubmit()) return false;";
+			return _validationOnSubmitStatement;
+		}
+	}
+
+	internal string ValidationInitializeScript {
+		get {
+			if (_validationInitializeScript == null)
+				_validationInitializeScript = "WebFormValidation_Initialize(" + WebFormScriptReference + ");";
+			return _validationInitializeScript;
+		}
+	}
+
+	internal IScriptManager ScriptManager {
+		get { return (IScriptManager) Items [typeof (IScriptManager)]; }
+	}
+
 #endif
 
 #if !TARGET_J2EE

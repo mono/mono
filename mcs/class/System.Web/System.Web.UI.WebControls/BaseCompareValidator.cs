@@ -53,22 +53,22 @@ namespace System.Web.UI.WebControls {
 			if (RenderUplevel) {
 #if NET_2_0
 				if (Page!=null){
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "type", Type.ToString ());
+					RegisterExpandoAttribute (ClientID, "type", Type.ToString ());
 
 					switch (Type) {
 					case ValidationDataType.Date:
 						DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
 						string pattern = dateTimeFormat.ShortDatePattern;
 						string dateorder = (pattern.StartsWith ("y", true, CultureInfo.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, CultureInfo.InvariantCulture) ? "mdy" : "dmy"));
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString ());
+						RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
+						RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString ());
 						break;
 					case ValidationDataType.Currency:
 						NumberFormatInfo numberFormat = CultureInfo.CurrentCulture.NumberFormat;
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "decimalchar", numberFormat.CurrencyDecimalSeparator);
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "groupchar", numberFormat.CurrencyGroupSeparator);
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "digits", numberFormat.CurrencyDecimalDigits.ToString());
-						Page.ClientScript.RegisterExpandoAttribute (ClientID, "groupsize", numberFormat.CurrencyGroupSizes [0].ToString ());
+						RegisterExpandoAttribute (ClientID, "decimalchar", numberFormat.CurrencyDecimalSeparator, true);
+						RegisterExpandoAttribute (ClientID, "groupchar", numberFormat.CurrencyGroupSeparator, true);
+						RegisterExpandoAttribute (ClientID, "digits", numberFormat.CurrencyDecimalDigits.ToString());
+						RegisterExpandoAttribute (ClientID, "groupsize", numberFormat.CurrencyGroupSizes [0].ToString ());
 						break;
 					}
 				}
