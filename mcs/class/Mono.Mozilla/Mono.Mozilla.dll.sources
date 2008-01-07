@@ -4,9 +4,11 @@ Mono.Mozilla/Base.cs
 Mono.Mozilla/Callback.cs
 Mono.Mozilla/ICallback.cs
 Mono.Mozilla/WebBrowser.cs
+Mono.Mozilla/DOM/DOMElement.cs
 Mono.Mozilla/DOM/DOMHTMLDocument.cs
 Mono.Mozilla/DOM/DOMHTMLElement.cs
 Mono.Mozilla/DOM/DOMNode.cs
+Mono.Mozilla/DOM/DOMNodeList.cs
 Mono.Mozilla/DOM/DOMObject.cs
 Mono.Mozilla/DOM/Navigation.cs
 Mono.Mozilla/interfaces/nsIDOMAttr.cs
@@ -41,7 +43,9 @@ Mono.Mozilla/interfaces/extras/nsIWriteSegmentFun.cs
 Mono.Mozilla/interfaces/extras/Options.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
+Mono.WebBrowser/DOM/IDOMElement.cs
 Mono.WebBrowser/DOM/IDOMHTMLDocument.cs
 Mono.WebBrowser/DOM/IDOMHTMLElement.cs
 Mono.WebBrowser/DOM/IDOMNode.cs
+Mono.WebBrowser/DOM/IDOMNodeList.cs
 Mono.WebBrowser/DOM/INavigation.cs

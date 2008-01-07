@@ -65,7 +65,7 @@ namespace Mono.Mozilla
 			{
 				if (document == null) {
 					nsIDOMHTMLDocument doc = Base.GetDOMDocument (this);
-					document = new DOM.DOMHTMLDocument (doc);
+					document = new DOM.DOMHTMLDocument (this, doc);
 				}
 				return document as IDOMHTMLDocument;
 			}

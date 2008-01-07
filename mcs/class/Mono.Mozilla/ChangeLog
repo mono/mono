@@ -1,5 +1,59 @@
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.Mozilla.dll.sources: Added new classes (see below).
+
+	* Mono.Mozilla/DOM/DOMObject.cs: 
+	- Store reference to the IWebBrowser control that created this (and	
+	subclassed) object. This reference needs to be used in any gluezilla calls 
+	that have to invoke methods on the mozilla ui thread (any Widget method, 
+	whose ptr reference	is stored in Base and indexed by IWebBrowser control).
+	
+	- Tweak the Dispose pattern: subclasses don't have their own private
+	dispose field to keep track of whether they've been disposed already, this
+	base class takes care of that.
+	
+	* Mono.Mozilla/DOM/DOMNode.cs:
+	- Initialize a proxy to the nsI object that this wrapper encapsulates.
+	- Cache all objects returned from this object in an hashtable, so that 
+		1) we can keep track of all objects and release them earlier and 
+		properly
+		2) we don't have to keep creating new objects everytime we get requests 
+		for read-only stuff 
+	- Implement FirstChild and LocalName
+	- Add Dispose pattern
+
+	* Mono.Mozilla/DOM/DOMHTMLElement.cs: 
+	- Change the inheritance to DOMElement.
+	- Change the constructor to send the nsI object and IWebBrowser up the tree.
+	- Get a proxy to the nsI object.
+	- Add dispose pattern.
+	
+	* Mono.Mozilla/DOM/DOMHTMLDocument.cs: 
+	- Change the constructor to send the IWebBrowser instance up the tree.
+	- Add resources hashtable to keep track of already-fetched objects. 
+	Particularly useful here since getElementById can be called n times, so it
+	would be complicated to keep track and dispose properly of all the objects.
+	- Implement DocumentElement
+	- Change Body and GetElementById to use resources cache
+	- Fix GetElementById case
+
+	* Mono.Mozilla/DOM/DOMElement.cs: Added. Inherits from DOMNode, so the 
+	parent class also keeps track of the nsI object.
+	* Mono.Mozilla/DOM/DOMNodeList.cs: Added to support easy iteration of nodes.
+	* Mono.Mozilla/DOM/Navigation.cs: Tweak dispose pattern and constructor to
+	the new model.
+
+	* Mono.Mozilla/WebBrowser.cs: Fix the DOMHTMLDocument creation. 
+	
+	* Mono.WebBrowser/DOM/IDOMHTMLDocument.cs: Fix case on GetElementById, add
+	DocumentElement property.
+
+	* Mono.WebBrowser/DOM/IDOMNodeList.cs, 
+	  Mono.WebBrowser/DOM/IDOMElement.cs:
+	Added, no external functionality for now.
+	
+2008-01-07  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla/DOM/Navigation.cs: Fix calls to the nsIWebNavigation
 	interface (case change from being generated through xpidl2cs. that's what
 	I get for merging in batches :/ )

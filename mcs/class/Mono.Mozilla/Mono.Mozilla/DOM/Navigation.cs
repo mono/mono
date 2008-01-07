@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -35,13 +35,10 @@ namespace Mono.Mozilla.DOM
 	{
 
 		private nsIWebNavigation navigation;
-		private IWebBrowser control;
-		private bool disposed = false;
 		
-		public Navigation (IWebBrowser control, nsIWebNavigation webNav)
+		public Navigation (IWebBrowser control, nsIWebNavigation webNav) : base (control)
 		{
 			this.navigation = webNav;
-			this.control = control;
 		}
 
 
@@ -52,7 +49,6 @@ namespace Mono.Mozilla.DOM
 				if (disposing) {
 					this.navigation = null;
 				}
-				disposed = true;
 			}
 			base.Dispose(disposing);
 		}		

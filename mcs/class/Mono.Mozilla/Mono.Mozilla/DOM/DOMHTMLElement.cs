@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -31,14 +31,26 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class DOMHTMLElement : DOMObject, IDOMHTMLElement
+	internal class DOMHTMLElement : DOMElement, IDOMHTMLElement
 	{
 		private nsIDOMHTMLElement element;
 
-		public DOMHTMLElement (nsIDOMHTMLElement element)
+		public DOMHTMLElement (IWebBrowser control, nsIDOMHTMLElement domHtmlElement) : base (control, domHtmlElement as nsIDOMElement)
 		{
-			this.element = element;
+			this.element = nsDOMHTMLElement.GetProxy (control, domHtmlElement);
 		}
+
+		#region IDisposable Members
+		protected override  void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					this.element = null;
+				}
+			}
+			base.Dispose(disposing);
+		}		
+		#endregion
 
 		#region IDOMHTMLElement Members
 

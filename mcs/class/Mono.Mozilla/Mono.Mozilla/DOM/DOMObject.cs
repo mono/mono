@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -26,16 +26,19 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using Mono.WebBrowser;
 
 namespace Mono.Mozilla.DOM
 {
 	internal class DOMObject : IDisposable
 	{
+		protected IWebBrowser control;
 		internal HandleRef storage;
-		private bool disposed = false;
+		protected bool disposed = false;
 
-		internal DOMObject ()
+		internal DOMObject (IWebBrowser control)
 		{
+			this.control = control;
 			IntPtr p = Base.StringInit ();
 			storage = new HandleRef (this, p);			
 		}

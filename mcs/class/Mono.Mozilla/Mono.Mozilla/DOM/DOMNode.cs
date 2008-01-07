@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -26,6 +26,8 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Collections;
+using Mono.WebBrowser;
 using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
@@ -33,10 +35,45 @@ namespace Mono.Mozilla.DOM
 	internal class DOMNode: DOMObject, IDOMNode
 	{
 		private nsIDOMNode node;
-
-		public DOMNode (nsIDOMNode node)
+		Hashtable resources;
+		
+		public DOMNode (IWebBrowser control, nsIDOMNode domNode) : base (control)
 		{
-			this.node = node;
+			this.node = nsDOMNode.GetProxy (control, domNode);
+			resources = new Hashtable ();
+		}
+
+		#region IDisposable Members
+		protected override  void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					this.resources.Clear ();
+					this.node = null;
+				}
+			}
+			base.Dispose(disposing);
+		}		
+		#endregion
+
+		#region IDOMNode Members
+
+		public IDOMNode FirstChild {
+			get {
+				if (!resources.Contains ("FirstChild")) {
+					nsIDOMNode child;
+					this.node.getFirstChild (out child);
+					resources.Add ("FirstChild", new DOMNode (control, child));
+				}
+				return resources["FirstChild"] as IDOMNode;
+			}
+		}
+
+		public string LocalName {
+			get {
+				this.node.getLocalName (storage);
+				return Base.StringGet (storage);				
+			}
 		}
 
 		public string Value {
@@ -46,5 +83,7 @@ namespace Mono.Mozilla.DOM
 				return Base.StringGet (storage);
 			}
 		}
+		
+		#endregion
 	}
 }
