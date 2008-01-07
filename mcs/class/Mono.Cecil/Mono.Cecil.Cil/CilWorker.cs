@@ -109,6 +109,12 @@ namespace Mono.Cecil.Cil {
 
 		public Instruction Create (OpCode opcode, byte b)
 		{
+			if (opcode.OperandType == OperandType.ShortInlineVar)
+				return Create (opcode, m_mbody.Variables [b]);
+
+			if (opcode.OperandType == OperandType.ShortInlineParam)
+				return Create (opcode, CodeReader.GetParameter (m_mbody, b));
+
 			if (opcode.OperandType != OperandType.ShortInlineI ||
 				opcode == OpCodes.Ldc_I4_S)
 				throw new ArgumentException ("opcode");
@@ -118,12 +124,10 @@ namespace Mono.Cecil.Cil {
 
 		public Instruction Create (OpCode opcode, int i)
 		{
-			if (opcode.OperandType == OperandType.ShortInlineVar ||
-				opcode.OperandType == OperandType.InlineVar)
+			if (opcode.OperandType == OperandType.InlineVar)
 				return Create (opcode, m_mbody.Variables [i]);
 
-			if (opcode.OperandType == OperandType.ShortInlineParam ||
-				opcode.OperandType == OperandType.InlineParam)
+			if (opcode.OperandType == OperandType.InlineParam)
 				return Create (opcode, CodeReader.GetParameter (m_mbody, i));
 
 			if (opcode.OperandType != OperandType.InlineI)
