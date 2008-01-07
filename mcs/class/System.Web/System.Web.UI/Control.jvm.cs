@@ -255,6 +255,8 @@ namespace System.Web.UI
 		}
 
 		internal string CreateActionUrl (string relativeUrl) {
+			relativeUrl = ResolveClientUrlInternal (relativeUrl);
+
 			FacesContext faces = getFacesContext ();
 			if (faces == null)
 				return relativeUrl;
@@ -262,11 +264,11 @@ namespace System.Web.UI
 			string url;
 			if (relativeUrl.IndexOf (':') >= 0)
 				url = ResolveAppRelativeFromFullPath (relativeUrl);
+			else if (VirtualPathUtility.IsAbsolute (relativeUrl))
+				url = VirtualPathUtility.ToAppRelative (relativeUrl);
 			else
-				url = ResolveUrl (relativeUrl);
+				return faces.getApplication ().getViewHandler ().getActionURL (faces, relativeUrl);
 
-			if (VirtualPathUtility.IsAbsolute (url))
-				url = VirtualPathUtility.ToAppRelative (url);
 
 			if (VirtualPathUtility.IsAppRelative (url)) {
 				url = url.Substring (1);
