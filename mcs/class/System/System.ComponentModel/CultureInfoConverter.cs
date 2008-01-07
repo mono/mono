@@ -76,7 +76,7 @@ namespace System.ComponentModel
 					// try to create a new CultureInfo if form is verbose name
 					foreach (CultureInfo CI in CultureInfo.GetCultures (CultureTypes.AllCultures))
 					// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
-						if (CI.EnglishName.ToString().IndexOf (CultureString) >= 0)
+						if (CI.EnglishName.IndexOf (CultureString) >= 0)
 							return CI;
 				}
 				throw new ArgumentException ("Culture incorrect or not available in this environment.", "value");

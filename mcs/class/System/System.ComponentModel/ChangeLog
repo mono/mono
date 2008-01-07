@@ -1,3 +1,10 @@
+2008-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CultureInfoConverter.cs: Gendarme's AvoidToStringOnStringsRule in
+	ConvertFrom method.
+	* DesignerAttribute.cs: Gendarme's AvoidToStringOnStringsRule in 
+	TypeId getter.
+
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReflectionPropertyDescriptor.cs: Create Transactions with 
