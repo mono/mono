@@ -28,6 +28,17 @@ namespace Mainsoft.Web.Hosting
 			setCurrentInstance (this);
 		}
 
+		public bool IsProcessingInclude () {
+			if (_oldFacesContex == null)
+				return false;
+
+			if (getViewRoot ().getChildCount () == 0)
+				throw new InvalidOperationException ();
+
+			Page page = (Page) getViewRoot ().getChildren ().get (0);
+			return !page.IsPostBack;
+		}
+
 		public override void addMessage (string __p1, javax.faces.application.FacesMessage __p2) {
 			_facesContex.addMessage (__p1, __p2);
 		}
