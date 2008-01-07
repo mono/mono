@@ -1117,7 +1117,7 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
 			switch ((Msg)msg.Msg) {
-				case Msg.WM_DESTROY: {
+				case Msg.WM_QUIT: {
 					if (WindowMapping [hwnd.Handle] != null)
 
 						Exit ();

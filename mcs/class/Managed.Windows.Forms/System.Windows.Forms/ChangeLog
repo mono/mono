@@ -1,3 +1,9 @@
+2008-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  WM_DESTROY is a teardown of a single window
+	not a notification to exit the application.  Listen for WM_QUIT
+	instead.
+
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
 	* HtmlDocument.cs: Fix case on GetElementById (interface changed)
