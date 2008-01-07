@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -200,6 +200,13 @@
     <EmbeddedResource Include="Resources\MicrosoftAjaxWebFormsExtension.js">
       <LogicalName>MicrosoftAjaxWebFormsExtension.js</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Web\System.Web.Phantom\System.Web.Phantom.csproj">
+      <Project>{FBFDAD51-74B6-4660-81C0-9C8B6C8D3B47}</Project>
+      <Name>System.Web.Phantom</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
