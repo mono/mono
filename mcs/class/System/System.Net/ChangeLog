@@ -1,3 +1,9 @@
+2008-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CredentialCache.cs: Gendarme's AvoidToStringOnStringsRule in
+	CredentialCacheKey constructor. UseStringEmptyRule on CredentialCache
+	static ctor (3 times).
+
 2007-12-27  Miguel de Icaza  <miguel@novell.com>
 
 	* WebClient.cs: We catch exceptions that happen on the helper

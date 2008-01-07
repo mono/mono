@@ -36,7 +36,7 @@ namespace System.Net {
 				     , ICredentialsByHost
 #endif
 	{
-		static NetworkCredential empty = new NetworkCredential ("", "", "");
+		static NetworkCredential empty = new NetworkCredential (String.Empty, String.Empty, String.Empty);
 		Hashtable cache;
 
 		public CredentialCache () 
@@ -167,7 +167,7 @@ namespace System.Net {
 
 				this.len = uriPrefix.AbsoluteUri.Length;
 				this.hash = uriPrefix.GetHashCode () 
-				          + authType.ToString ().GetHashCode ();
+				          + authType.GetHashCode ();
 			}
 			
 			public int Length {
