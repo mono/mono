@@ -55,7 +55,7 @@ namespace System.Web.UI
 	[PersistChildrenAttribute (false)]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class ScriptManager : Control, IPostBackDataHandler
+	public class ScriptManager : Control, IPostBackDataHandler, IScriptManager
 	{
 		// the keywords are used in fomatting async response
 		const string updatePanel = "updatePanel";
@@ -83,7 +83,7 @@ namespace System.Web.UI
 		const string scriptContentWithTags = "ScriptContentWithTags";
 		const string scriptPath = "ScriptPath";
 
-		static readonly object ScriptManagerKey = new object ();
+		static readonly object ScriptManagerKey = typeof (IScriptManager);
 
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
@@ -1601,5 +1601,41 @@ namespace System.Web.UI
 
 			_proxies.Add (scriptManagerProxy);
 		}
+
+		#region IScriptManager Members
+
+		void IScriptManager.RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
+			RegisterOnSubmitStatement (control, type, key, script);
+		}
+
+		void IScriptManager.RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
+			RegisterExpandoAttribute (control, controlId, attributeName, attributeValue, encode);
+		}
+
+		void IScriptManager.RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
+			RegisterHiddenField (control, hiddenFieldName, hiddenFieldInitialValue);
+		}
+
+		void IScriptManager.RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
+			RegisterStartupScript (control, type, key, script, addScriptTags);
+		}
+
+		void IScriptManager.RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
+			RegisterArrayDeclaration (control, arrayName, arrayValue);
+		}
+
+		void IScriptManager.RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
+			RegisterClientScriptBlock (control, type, key, script, addScriptTags);
+		}
+
+		void IScriptManager.RegisterClientScriptInclude (Control control, Type type, string key, string url) {
+			RegisterClientScriptInclude (control, type, key, url);
+		}
+
+		void IScriptManager.RegisterClientScriptResource (Control control, Type type, string resourceName) {
+			RegisterClientScriptResource (control, type, resourceName);
+		}
+
+		#endregion
 	}
 }
