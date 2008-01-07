@@ -1,3 +1,9 @@
+2008-01-07  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: handle legacy 'src' attribute in the 2.0
+	profile in the correct way. Fixes bug #319016
+	BaseType is global by default.
+
 2008-01-02  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: added a wrapper class for server-side script

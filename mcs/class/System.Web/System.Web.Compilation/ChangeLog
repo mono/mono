@@ -1,3 +1,9 @@
+2008-01-07  Marek Habersack  <mhabersack@novell.com>
+
+	* CachingCompiler.cs: added an overload to the Compile method
+	which accepts a flag whether or not to include debug information
+	in the generated assembly.
+
 2008-01-02  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: add line pragma wherever necessary.

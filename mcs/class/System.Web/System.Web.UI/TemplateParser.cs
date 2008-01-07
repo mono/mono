@@ -72,7 +72,7 @@ namespace System.Web.UI {
 		ArrayList interfaces;
 		ArrayList scripts;
 		Type baseType;
-		bool baseTypeIsGlobal;
+		bool baseTypeIsGlobal = true;
 		string className;
 		RootBuilder rootBuilder;
 		bool debug;
@@ -93,6 +93,7 @@ namespace System.Web.UI {
 		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 #if NET_2_0
 		string src;
+		bool srcIsLegacy;
 		string partialClassName;
 		string codeFileBaseClass;
 		string metaResourceKey;
@@ -581,17 +582,16 @@ namespace System.Web.UI {
 
 			string legacySrc = GetString (atts, "Src", null);
 			if (legacySrc != null) {
-				if (src == null)
+				if (src == null) {
 					src = legacySrc;
-				else
-					// We need to compile it even though CodeFile is present, to
-					// report errors.
-					GetAssemblyFromSource (legacySrc);
+					srcIsLegacy = true;
+				}
 				
+				GetAssemblyFromSource (legacySrc);
 				AddDependency (MapPath (legacySrc, false));
 			}
 			
-			if (src != null && inherits != null) {
+			if (!srcIsLegacy && src != null && inherits != null) {
 				// Make sure the source exists
 				src = UrlUtils.Combine (BaseVirtualDir, src);
 				string realPath = MapPath (src, false);
@@ -747,25 +747,11 @@ namespace System.Web.UI {
 			unknownMainAttributes.Add (desc);
 		}
 #endif
-
-		void CheckIfBaseTypeIsGlobal ()
-		{
-			if (baseType == null)
-				return;
-
-			// If we have a fully-qualified type name, then we don't need to use the
-			// global:: prefix
-			if (baseType.FullName.IndexOf ('.') == -1)
-				baseTypeIsGlobal = true;
-			else
-				baseTypeIsGlobal = false;
-		}
 		
 		internal void SetBaseType (string type)
 		{
 			if (type == DefaultBaseTypeName) {
 				baseType = DefaultBaseType;
-				CheckIfBaseTypeIsGlobal ();
 				return;
 			}
 			
@@ -783,7 +769,6 @@ namespace System.Web.UI {
 				ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
 
 			baseType = parent;
-			CheckIfBaseTypeIsGlobal ();
 		}
 
 		internal void SetLanguage (string language)
@@ -801,7 +786,7 @@ namespace System.Web.UI {
 
 			AddSourceDependency (realPath);
 
-			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
+			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
 			if (result.NativeCompilerReturnValue != 0) {
 				StreamReader reader = new StreamReader (realPath);
 				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
@@ -827,7 +812,7 @@ namespace System.Web.UI {
 
 #if NET_2_0
 		internal bool IsPartial {
-			get { return src != null; }
+			get { return (!srcIsLegacy && src != null); }
 		}
 
 		internal string PartialClassName {
@@ -869,6 +854,7 @@ namespace System.Web.UI {
 		
 		internal bool BaseTypeIsGlobal {
 			get { return baseTypeIsGlobal; }
+			set { baseTypeIsGlobal = value; }
 		}
 		
 		internal string ClassName {

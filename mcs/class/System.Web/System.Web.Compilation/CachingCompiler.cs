@@ -162,6 +162,11 @@ namespace System.Web.Compilation
 
 		public static CompilerResults Compile (string language, string key, string file, ArrayList assemblies)
 		{
+			return Compile (language, key, file, assemblies, false);
+		}
+		
+		public static CompilerResults Compile (string language, string key, string file, ArrayList assemblies, bool debug)
+		{
 			Cache cache = HttpRuntime.InternalCache;
 			CompilerResults results = (CompilerResults) cache [cachePrefix + key];
 			if (results != null)
@@ -195,6 +200,7 @@ namespace System.Web.Compilation
 #endif
 				
 				CompilerParameters options = GetOptions (assemblies);
+				options.IncludeDebugInformation = debug;
 				options.WarningLevel = warningLevel;
 				options.CompilerOptions = compilerOptions;
 				
