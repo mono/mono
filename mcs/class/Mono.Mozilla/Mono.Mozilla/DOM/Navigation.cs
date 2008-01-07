@@ -66,7 +66,7 @@ namespace Mono.Mozilla.DOM
 					return false;
 					
 				bool canGoBack;
-				navigation.CanGoBack (out canGoBack);
+				navigation.getCanGoBack (out canGoBack);
 				return canGoBack;
 			}
 		}
@@ -77,7 +77,7 @@ namespace Mono.Mozilla.DOM
 					return false;
 
 				bool canGoForward;
-				navigation.CanGoForward (out canGoForward);
+				navigation.getCanGoForward (out canGoForward);
 				return canGoForward;
 			}
 		}
@@ -88,7 +88,7 @@ namespace Mono.Mozilla.DOM
 				return false;
 
 			//return Base.Back (control);
-			return navigation.GoBack () == 0;
+			return navigation.goBack () == 0;
 		}
 
 		public bool Forward ()
@@ -97,7 +97,7 @@ namespace Mono.Mozilla.DOM
 				return false;
 
 			//return Base.Forward (control);
-			return navigation.GoForward () == 0;
+			return navigation.goForward () == 0;
 		}
 
 		public void Home ()
@@ -111,7 +111,7 @@ namespace Mono.Mozilla.DOM
 				return;
 
 			//Base.Reload (control, ReloadOption.None);
-			navigation.Reload (ReloadOption.None);
+			navigation.reload ((uint)ReloadOption.None);
 		}
 
 		public void Reload (ReloadOption option)
@@ -120,7 +120,7 @@ namespace Mono.Mozilla.DOM
 				return;
 
 			//Base.Reload (control, option);
-			navigation.Reload (option);
+			navigation.reload ((uint)option);
 		}
 
 		public void Stop ()
@@ -129,7 +129,7 @@ namespace Mono.Mozilla.DOM
 				return;
 
 			//Base.Stop (control);
-			navigation.Stop (StopOption.All);
+			navigation.stop ((uint)StopOption.All);
 		}
 		
 		public void Go (string url)
@@ -137,7 +137,7 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return;
 
-			navigation.LoadURI (url, ReloadOption.None, null, null, null);
+			navigation.loadURI (url, (uint)ReloadOption.None, null, null, null);
 		}
 
 		#endregion

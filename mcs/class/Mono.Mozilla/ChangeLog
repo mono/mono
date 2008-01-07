@@ -1,5 +1,11 @@
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.Mozilla/DOM/Navigation.cs: Fix calls to the nsIWebNavigation
+	interface (case change from being generated through xpidl2cs. that's what
+	I get for merging in batches :/ )
+
+2008-01-07  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla/Base.cs: Add GetProxyForObject method to create proxies
 	for mozilla objects.
 	Remove trace listener.
