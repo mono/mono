@@ -221,7 +221,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object SelectedValue {
 			get {
-				if (data_manager == null)
+				if (data_manager == null || SelectedIndex == -1)
 					return null;
 				
 				object item = data_manager [SelectedIndex];
@@ -229,27 +229,22 @@ namespace System.Windows.Forms
 				return fil;
 			}
 			set {
-				if (value == null)
+				if (data_manager == null)
 					return;
 
-				if (value is string) {
-					string valueString = value as string;
-					if (valueString == String.Empty)
-						return;
-				}
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
-				if (data_manager != null) {
-					PropertyDescriptorCollection col = data_manager.GetItemProperties ();
-					PropertyDescriptor prop = col.Find (ValueMember, true);
-					
-					for (int i = 0; i < data_manager.Count; i++) {
-						if (value.Equals (prop.GetValue (data_manager [i]))) {
-							SelectedIndex = i;
-							return;
-						}
+				PropertyDescriptorCollection col = data_manager.GetItemProperties ();
+				PropertyDescriptor prop = col.Find (ValueMember, true);
+
+				for (int i = 0; i < data_manager.Count; i++) {
+					if (value.Equals (prop.GetValue (data_manager [i]))) {
+						SelectedIndex = i;
+						return;
 					}
-					SelectedIndex = -1;
 				}
+				SelectedIndex = -1;
 			}
 		}
 
