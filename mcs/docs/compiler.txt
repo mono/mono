@@ -703,7 +703,7 @@
 			Foo (x => x + 1)
 
 
-	One of the problems that am facing with lambda expressions is
+	One of the problems that we faced with lambda expressions is
 	that lambda expressions need to be "probed" with different
 	types until a working combination is found.
 
@@ -731,10 +731,34 @@
 	the one it picks (and it also copes with ambiguities if there was
 	more than one matching method).
 
-	To support this, we extended the compiler to support "cloning"
-	blocks of code (ToplevelBlocks, Blocks, Statements, Expressions)
-	doing a complete pass at resolving the expression and picking the
-	one that would compile and would not be ambiguous.
+	To compile this, we need to hook into the resolution process,
+	but since the resolution process has side effects (callig
+	Resolve can either return instances of the resolved expression
+	type, or can alter field internals) it was necessary to
+	incorporate a framework to "clone" expressions before we
+	probe.
+
+	The support for clonning was added into Statements and
+	Expressions and is only necessary for objects of those types
+	that are created during parsing.   It is not necessary to
+	support these in the classes that are the result of calling
+	Resolve.   This means that SimpleName needs support for
+	Cloning, but FieldExpr does not need it (SimpleName is created
+	by the parser, FieldExpr is created during semantic analysis
+	resolution).   
+
+	The work happens through the public method called "Clone" that
+	clones the given Statement or Expression.  The base method in
+	Statement and Expression merely does a MemberwiseCopy of the
+	elements and then calls the virtual CloneTo method to complete
+	the copy.    By default this method throws an exception, this
+	is useful to catch cases where we forgot to override CloneTo
+	for a given Statement/Expression. 
+
+	With the cloning capability it became possible to call resolve
+	multiple times (once for each Cloned copy) and based on this
+	picking the one implementation that would compile and that
+	would not be ambiguous.
 
 	The cloning process is basically a deep copy that happens in the
 	LambdaExpression class and it clones the top-level block for the
