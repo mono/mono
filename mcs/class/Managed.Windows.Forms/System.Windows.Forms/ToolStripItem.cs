@@ -1237,6 +1237,7 @@ namespace System.Windows.Forms
 			if (this.bounds != bounds) {
 				this.bounds = bounds;
 				OnBoundsChanged ();
+				this.Invalidate ();
 			}
 		}
 		
