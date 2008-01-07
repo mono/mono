@@ -128,9 +128,11 @@ namespace System.Web.Configuration
 					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
 					if (cl == null)
 						return null;
-					java.net.URL url = cl.getResource ("META-INF/web.config");
-					if (url == null)
+					java.io.InputStream wcs = cl.getResourceAsStream ("META-INF/web.config");
+					if (wcs == null)
 						return null;
+
+					wcs.close ();
 
 					return "/META-INF/web.config";
 				}
