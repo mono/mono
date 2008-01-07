@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug_Java\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;JAVA</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;JAVA,NET_2_0,TARGET_JVM,TARGET_J2EE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <DefineConstants>TRACE;JAVA,NET_2_0,TARGET_JVM,TARGET_J2EE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -44,6 +44,9 @@
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\System.Web.UI\IScriptManager.cs">
+      <Link>IScriptManager.cs</Link>
+    </Compile>
     <Compile Include="..\System.Web\IHttpExtendedHandler.cs">
       <Link>IHttpExtendedHandler.cs</Link>
     </Compile>
