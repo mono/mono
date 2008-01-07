@@ -1,5 +1,11 @@
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
+	* build-csproj2k5: Added to generate Mono.Mozilla2K5.csproj from .sources
+	* Mono.Mozilla2K5.csproj: updated
+	* Makefile: run the build-csproj2k5
+
+2008-01-07  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla.dll.sources: Added new classes (see below).
 
 	* Mono.Mozilla/DOM/DOMObject.cs: 

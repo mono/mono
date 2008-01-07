@@ -48,7 +48,7 @@ namespace Mono.Mozilla
 		void OnStateChange				(Int32 status, UInt32 state);
 		void OnProgress				(Int32 currentTotalProgress, Int32 maxTotalProgress);
 		void OnProgressAll				(string URI, Int32 currentTotalProgress, Int32 maxTotalProgress);
-		void OnLocationChanged		(string URI);
+		void OnLocationChanged			(string URI);
 		void OnStatusChange			(string message, Int32 status);
 		void OnSecurityChange			(UInt32 state);
 		void OnVisibility				(bool val);
