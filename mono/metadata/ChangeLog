@@ -1,3 +1,15 @@
+2008-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added a bunch of stack_slot_* functions to
+	make access to stack slot type easier. This is required to
+	allow optional flags, like null literal, boxed value and
+	this pointer.
+	All access paths to IlStackDesc::stype have been changed 
+	to use these new funcions.
+	Removed a bunch of unused functions and cleared all warnings.
+	This patch introduces the usage of the this pointer and 
+	boxed value flags.
+
 2008-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (mono_gc_deregister_root): Fix win32 build.
