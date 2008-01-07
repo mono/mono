@@ -1,3 +1,9 @@
+2008-01-08  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: First code drop of new logging profiler
+	(and shamefully forgot to set HAS_OPROFILE to 0...).
+	* Makefile.am: Added logging profiler, but commented in out to avoid
+	breaking the build on Windows.
+
 2005-07-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-cov.c: Applied patch from Iain McCoy (iain@mccoy.id.au). Fixes
