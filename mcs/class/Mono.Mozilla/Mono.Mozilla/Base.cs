@@ -68,10 +68,8 @@ namespace Mono.Mozilla
 		public static void DebugStartup ()
 		{
 			gluezilla_debug_startup ();
-			Trace.Listeners.Add (new TextWriterTraceListener (@"log"));
-			Trace.AutoFlush = true;
 		}
-
+		
 		public static bool Init (WebBrowser control)
 		{
 			BindingInfo info = new BindingInfo ();
@@ -271,6 +269,20 @@ namespace Mono.Mozilla
 			return gluezilla_getServiceManager (info.gluezilla);
 		}
 */
+
+		public static object GetProxyForObject (IWebBrowser control, Guid iid, Type type, object obj)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
+			
+			IntPtr ret;
+			gluezilla_getProxyForObject (info.gluezilla, iid, obj, out ret);
+			
+			object o = Marshal.GetTypedObjectForIUnknown (ret, type);
+			return o;
+		}
+
 		#region pinvokes
 		[DllImport("gluezilla")]
 		private static extern void gluezilla_debug_startup();
@@ -330,6 +342,14 @@ namespace Mono.Mozilla
 
 //		[DllImport ("gluezilla")]
 //		private static extern nsIServiceManager gluezilla_getServiceManager (IntPtr instance);
+
+		[DllImport ("gluezilla")]
+		private static extern void gluezilla_getProxyForObject (
+			IntPtr instance, 
+			[MarshalAs (UnmanagedType.LPStruct)] Guid iid, 
+			[MarshalAs (UnmanagedType.Interface)] object obj,
+			out IntPtr ret);
+
 		#endregion
 	}
 }

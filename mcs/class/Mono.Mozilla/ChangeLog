@@ -1,5 +1,11 @@
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.Mozilla/Base.cs: Add GetProxyForObject method to create proxies
+	for mozilla objects.
+	Remove trace listener.
+
+2008-01-07  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla/interfaces/nsIDOMRange.cs,
 	  Mono.Mozilla/interfaces/nsIDOMDocumentRange.cs:
 	Added to get the content of elements. 
