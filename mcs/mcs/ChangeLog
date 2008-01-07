@@ -1,5 +1,13 @@
 2008-01-07  Marek Safar  <marek.safar@gmail.com>
 
+ 	* cs-tokenizer.cs: Enabled lambda arguments micro-parser for all profiles.
+ 	
+ 	* decl.cs (LookupNamespaceOrType): Don't cache names which caused an error.
+ 	
+ 	* driver.cs: Updated --help option.
+ 	
+2008-01-07  Marek Safar  <marek.safar@gmail.com>
+
  	* generic.cs (InferParamsTypeArguments): Removed.
  	(InferInPhases): Add params type inference.
  	(LowerBoundInference): Fixed scoring mechanism.

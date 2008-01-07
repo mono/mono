@@ -224,13 +224,13 @@ namespace Mono.CSharp
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono C# compiler, (C) 2001 - 2007 Novell, Inc.\n" +
+				"Mono C# compiler, (C) 2001 - 2008 Novell, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn] Adds the module to the generated assembly\n" + 
 				"   -checked[+|-]      Sets default aritmetic overflow context\n" +
 				"   -codepage:ID       Sets code page to the one in ID (number, utf8, reset)\n" +
-				"   -clscheck[+|-]     Disables CLS Compliance verifications" + Environment.NewLine +
+				"   -clscheck[+|-]     Disables CLS Compliance verifications\n" +
 				"   -define:S1[;S2]    Defines one or more conditional symbols (short: -d)\n" +
 				"   -debug[+|-], -g    Generate debugging information\n" + 
 				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
@@ -238,7 +238,7 @@ namespace Mono.CSharp
 				"   -help              Lists all compiler options (short: -?)\n" + 
 				"   -keycontainer:NAME The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE      The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT  Specifies language version modes: ISO-1 or Default\n" + 
+				"   -langversion:TEXT  Specifies language version modes: ISO-1, ISO-2, or Default\n" + 
 				"   -lib:PATH1[,PATHn] Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS        Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
@@ -274,7 +274,7 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001-2007, Novell, Inc.\n\n" +
+				"The Mono C# compiler is (C) 2001-2008, Novell, Inc.\n\n" +
 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +

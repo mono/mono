@@ -47,12 +47,6 @@ namespace Mono.CSharp
 		public int parsing_block;
 		internal int query_parsing;
 		
-		static bool IsLinqEnabled {
-			get {
-				return RootContext.Version == LanguageVersion.LINQ;
-			}
-		}
-
 		//
 		// XML documentation buffer. The save point is used to divide
 		// comments on types and comments on members.
@@ -568,6 +562,7 @@ namespace Mono.CSharp
 					case Token.STAR:
 					case Token.SEMICOLON:
 					case Token.OPEN_PARENS:
+					case Token.LITERAL_STRING:
 						return false;
 				}
 			}
@@ -729,14 +724,18 @@ namespace Mono.CSharp
 			case ']':
 				return Token.CLOSE_BRACKET;
 			case '(':
-				if (IsLinqEnabled && !lambda_arguments_parsing) {
+				if (!lambda_arguments_parsing) {
 					lambda_arguments_parsing = true;
 					PushPosition ();
 					bool lambda_start = IsLambdaOpenParens ();
 					PopPosition ();
 					lambda_arguments_parsing = false;
-					if (lambda_start)
+					if (lambda_start) {
+						if (RootContext.Version <= LanguageVersion.ISO_2)
+							Report.FeatureIsNotAvailable (Location, "lambda expressions");
+						
 						return Token.OPEN_PARENS_LAMBDA;
+					}
 				}
 				return Token.OPEN_PARENS;
 			case ')': {

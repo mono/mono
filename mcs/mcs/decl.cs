@@ -1136,6 +1136,7 @@ namespace Mono.CSharp {
 				return (FullNamedExpression) Cache [name];
 
 			FullNamedExpression e;
+			int errors = Report.Errors;
 			Type t = LookupNestedTypeInHierarchy (name);
 			if (t != null)
 				e = new TypeExpression (t, Location.Null);
@@ -1144,7 +1145,9 @@ namespace Mono.CSharp {
 			else
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
 
-			Cache [name] = e;
+			if (errors == Report.Errors)
+				Cache [name] = e;
+			
 			return e;
 		}
 
