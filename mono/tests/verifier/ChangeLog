@@ -1,3 +1,10 @@
+2008-01-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_delegate_test.sh: added.
+
+	* make_tests.sh: added new tests for delegates
+	constructed with ldftn.
+
 2008-01-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_ldvirtftn_invalid_token_type.il: added.
