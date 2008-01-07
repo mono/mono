@@ -131,9 +131,6 @@ namespace System.Web.UI
 			try {
 				if (!context.getResponseComplete ()) {
 
-					if (IsCrossPagePostBack)
-						return;
-
 					if (IsCallback) {
 						string result = ProcessGetCallbackResult (_callbackTarget, _callbackEventError);
 						HtmlTextWriter callbackOutput = new HtmlTextWriter (Response.Output);
@@ -158,9 +155,13 @@ namespace System.Web.UI
 				HandleException (ex);
 			}
 			finally {
-				if (!wasException)
-					ProcessUnload ();
-				ExitThread ();
+				try {
+					if (!wasException)
+						ProcessUnload ();
+				}
+				finally {
+					ExitThread ();
+				}
 			}
 		}
 
@@ -275,15 +276,25 @@ namespace System.Web.UI
 				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
 
 			EnterThread (HttpContext.Current);
+			bool doUnload = false;
 			try {
 				ProcessRaiseEvents ();
-				ProcessLoadComplete ();
+				doUnload = (ProcessLoadComplete () && IsCrossPagePostBack);
 			}
 			catch (Exception ex) {
+				doUnload = false;
 				HandleException (ex);
 			}
 			finally {
-				ExitThread ();
+				try {
+					if (doUnload) {
+						getFacesContext ().responseComplete ();
+						ProcessUnload ();
+					}
+				}
+				finally {
+					ExitThread ();
+				}
 			}
 		}
 
@@ -300,6 +311,8 @@ namespace System.Web.UI
 					ProcessException (ex);
 			}
 			finally {
+				if (getFacesContext () != null)
+					getFacesContext ().responseComplete ();
 				ProcessUnload ();
 			}
 		}

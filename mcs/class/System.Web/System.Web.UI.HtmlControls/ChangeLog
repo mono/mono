@@ -1,3 +1,7 @@
+2007-01-07 Igor Zelmanovich  <igorz@mainsoft.com>
+
+	* HtmlForm.cs: refactoring.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs, HtmlButton.cs: speed optimization - use String.Concat

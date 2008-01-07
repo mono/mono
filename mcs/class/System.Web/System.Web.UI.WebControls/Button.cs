@@ -217,7 +217,13 @@ namespace System.Web.UI.WebControls {
 		protected virtual PostBackOptions GetPostBackOptions () 
 		{
 			PostBackOptions options = new PostBackOptions (this);
-			options.ActionUrl = (PostBackUrl.Length > 0 ? Page.ResolveClientUrl (PostBackUrl) : null);
+			options.ActionUrl = (PostBackUrl.Length > 0 ? 
+#if TARGET_J2EE
+				CreateActionUrl(PostBackUrl)
+#else
+				Page.ResolveClientUrl (PostBackUrl) 
+#endif
+				: null);
 			options.ValidationGroup = null;
 			options.Argument = "";
 			options.RequiresJavaScriptProtocol = false;

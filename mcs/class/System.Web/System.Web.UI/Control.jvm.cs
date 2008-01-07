@@ -263,7 +263,7 @@ namespace System.Web.UI
 			if (relativeUrl.IndexOf (':') >= 0)
 				url = ResolveAppRelativeFromFullPath (relativeUrl);
 			else
-				url = VirtualPathUtility.Combine (Context.Request.FilePath, relativeUrl);
+				url = ResolveUrl (relativeUrl);
 
 			if (VirtualPathUtility.IsAbsolute (url))
 				url = VirtualPathUtility.ToAppRelative (url);

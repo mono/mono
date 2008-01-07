@@ -1,3 +1,11 @@
+2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Button.cs:
+	* ImageButton.cs:
+	* LinkButton.cs:
+	for TARGET_J2EE used CreateActionUrl instead ResolveClientUrl
+	in GetPostBackOptions.			
+
 2007-01-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: render invisible rows correct.

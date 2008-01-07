@@ -1226,8 +1226,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		} catch (Exception ex) {
 			wasException = true;
 			HandleException (ex);
-			if (getFacesContext () != null)
-				getFacesContext ().responseComplete ();
 #else
 		} catch (ThreadAbortException taex) {
 			if (context.Response.FlagEnd == taex.ExceptionState)

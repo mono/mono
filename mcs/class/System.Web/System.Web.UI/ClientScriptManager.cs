@@ -159,13 +159,6 @@ namespace System.Web.UI
 			string prefix = options.RequiresJavaScriptProtocol ? "javascript:" : "";
 			if (page.IsMultiForm)
 				prefix += page.theForm + ".";
-#if TARGET_J2EE
-			// Allow the page to transform ActionUrl to a portlet action url
-			if (actionUrl != null) {
-				actionUrl = page.CreateActionUrl(actionUrl);
-				prefix += "Portal";
-			}
-#endif
 
 			return prefix + "WebForm_DoPostback(" +
 				ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID) + "," +

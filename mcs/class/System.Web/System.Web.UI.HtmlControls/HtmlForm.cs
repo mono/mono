@@ -242,6 +242,7 @@ namespace System.Web.UI.HtmlControls
 			*/
 			
 			string action;
+#if !TARGET_J2EE
 			string file_path = Page.Request.FilePath;
 			string current_path = Page.Request.CurrentExecutionFilePath;
 			if (file_path == current_path) {
@@ -256,11 +257,11 @@ namespace System.Web.UI.HtmlControls
 			}
 
 			action += Page.Request.QueryStringRaw;
-#if TARGET_J2EE
+#else
 			// Allow the page to transform action to a portlet action url
 			string customAction = Attributes ["action"];
 			if (String.IsNullOrEmpty(customAction))
-				action = CreateActionUrl (action);
+				action = CreateActionUrl (Page.Request.CurrentExecutionFilePath + Page.Request.QueryStringRaw);
 			else
 				action = customAction;
 

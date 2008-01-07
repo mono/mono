@@ -112,23 +112,6 @@ webForm.WebForm_ReDisableControls = function  ()
 	}
 }
 
-// This function is only used in the context of TARGET_J2EE for portlets
-webForm.PortalWebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
-{
-	if (url != null) {
-		if (url.indexOf ("vmw.action.page=") == 0) {
-			this._form.__NEXTVMWACTIONPAGE.value = url.substring ("vmw.action.page=".length);
-			url = this._form.action;
-		}
-		else if (url.indexOf ("vmw.render.page=") == 0)
-		{
-			this._form.__NEXTVMWRENDERPAGE.value = url.substring ("vmw.render.page=".length);
-			this._form.submit ();
-			return;
-		}
-	}
-	return this.WebForm_DoPostback (id, par, url, apb, pval, tf, csubm, vg);
-}
 webForm.WebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
 {
 	var validationResult = true;
