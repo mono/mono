@@ -2203,76 +2203,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Type inference.  Try to infer the type arguments from the params method
-		///   `method', which is invoked with the arguments `arguments'.  This is used
-		///   when resolving an Invocation or a DelegateInvocation and the user
-		///   did not explicitly specify type arguments.
-		/// </summary>
-		public static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
-							     ref MethodBase method)
-		{
-			if (!TypeManager.IsGenericMethod (method))
-				return true;
-
-			// if there are no arguments, there's no way to infer the type-arguments
-			if (arguments == null || arguments.Count == 0)
-				return false;
-
-			ParameterData pd = TypeManager.GetParameterData (method);
-			int pd_count = pd.Count;
-			int arg_count = arguments.Count;
-
-			if (pd_count == 0)
-				return false;
-
-			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
-				return false;
-
-			if (pd_count - 1 > arg_count)
-				return false;
-
-			Type[] method_args = method.GetGenericArguments ();
-			Type[] inferred_types = new Type [method_args.Length];
-
-			//
-			// If we have come this far, the case which
-			// remains is when the number of parameters is
-			// less than or equal to the argument count.
-			//
-			for (int i = 0; i < pd_count - 1; ++i) {
-				Argument a = (Argument) arguments [i];
-
-				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
-					continue;
-
-				Type pt = pd.ParameterType (i);
-				Type at = a.Type;
-
-				if (!TypeInferenceV2.UnifyType (pt, at, inferred_types))
-					return false;
-			}
-
-			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
-
-			for (int i = pd_count - 1; i < arg_count; i++) {
-				Argument a = (Argument) arguments [i];
-
-				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
-					continue;
-
-				if (!TypeInferenceV2.UnifyType (element_type, a.Type, inferred_types))
-					return false;
-			}
-
-			for (int i = 0; i < inferred_types.Length; i++)
-				if (inferred_types [i] == null)
-					return false;
-
-			method = ((MethodInfo)method).MakeGenericMethod (inferred_types);
-			return true;
-		}
-	
-		/// <summary>
 		///   Type inference.  Try to infer the type arguments from `method',
 		///   which is invoked with the arguments `arguments'.  This is used
 		///   when resolving an Invocation or a DelegateInvocation and the user
@@ -2580,11 +2510,23 @@ namespace Mono.CSharp {
 		//
 		bool InferInPhases (EmitContext ec, TypeInferenceContext tic, ParameterData methodParameters)
 		{
+			int params_arguments_start;
+			if (methodParameters.HasParams) {
+				params_arguments_start = arg_count - methodParameters.Count - 1;
+			} else {
+				params_arguments_start = arg_count;
+			}
+			
 			//
 			// The first inference phase
 			//
+			Type method_parameter = null;
 			for (int i = 0; i < arg_count; i++) {
-				Type method_parameter = methodParameters.ParameterType (i);
+				if (i < params_arguments_start) {
+					method_parameter = methodParameters.Types [i];
+				} else if (i == params_arguments_start) {
+					method_parameter = TypeManager.GetElementType (methodParameters.Types [params_arguments_start]);
+				}
 
 				Argument a = (Argument) arguments[i];
 
@@ -3020,6 +2962,7 @@ namespace Mono.CSharp {
 				u_candidates.AddRange (TypeManager.GetInterfaces (u));
 
 				Type open_v = v.GetGenericTypeDefinition ();
+				int score = 0;
 				foreach (Type u_candidate in u_candidates) {
 					if (!u_candidate.IsGenericType || u_candidate.IsGenericTypeDefinition)
 						continue;
@@ -3029,13 +2972,15 @@ namespace Mono.CSharp {
 
 					Type [] ga_u = u_candidate.GetGenericArguments ();
 					Type [] ga_v = v.GetGenericArguments ();
-					int score = 0;
+					bool all_exact = true;
 					for (int i = 0; i < ga_u.Length; ++i)
-						score += ExactInference (ga_u [i], ga_v [i]);
+						if (ExactInference (ga_u [i], ga_v [i]) == 0)
+							all_exact = false;
 
-					return score > 0 ? 1 : 0;
+					if (all_exact && score == 0)
+						++score;
 				}
-				return 0;
+				return score;
 			}
 
 			// If V is one of the unfixed type arguments

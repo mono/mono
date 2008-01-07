@@ -572,7 +572,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			Error_TokenExpected (")");
+			Error_TokenExpected (",' or `)");
 			return false;
 		}
 
@@ -1690,12 +1690,12 @@ namespace Mono.CSharp
 			const string w_restore = "warning restore";
 
 			if (arg == w_disable) {
-				Report.RegisterWarningRegion (Location).WarningDisable (line);
+				Report.RegisterWarningRegion (Location).WarningDisable (Location.Row);
 				return;
 			}
 
 			if (arg == w_restore) {
-				Report.RegisterWarningRegion (Location).WarningEnable (line);
+				Report.RegisterWarningRegion (Location).WarningEnable (Location.Row);
 				return;
 			}
 
@@ -1927,7 +1927,7 @@ namespace Mono.CSharp
 
 		void Error_TokenExpected (string token)
 		{
-			Report.Error (1026, Location, "Expecting `{0}'", token);
+			Report.Error (1026, Location, "Expected `{0}'", token);
 		}
 
 		void Error_TokensSeen ()

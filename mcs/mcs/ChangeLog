@@ -1,3 +1,11 @@
+2008-01-07  Marek Safar  <marek.safar@gmail.com>
+
+ 	* generic.cs (InferParamsTypeArguments): Removed.
+ 	(InferInPhases): Add params type inference.
+ 	(LowerBoundInference): Fixed scoring mechanism.
+ 	
+ 	* cs-tokenizer.cs (PreProcessPragma): Use Location instead of line.
+ 	
 2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* typemanager.cs: On 2.0 profile, GetPublicKeyToken returns an empty
