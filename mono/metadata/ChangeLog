@@ -1,3 +1,24 @@
+2008-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_newobj): do delegate verification.
+
+	* verify.c (verify_delegate_compatibility): perform delegate
+	verification.
+
+	* verify.c (verify_ldftn_delegate): perform tests related to
+	ldftn delegates.
+
+	* verify.c (mono_delegate_signature_equal): perform the
+	slightly diferent signature comparison required by delegates.
+
+	* metadata.c (mono_metadata_type_equal_full): added and exported
+	as MONO_INTERNAL. This is a version of mono_metadata_type_equal that
+	allows signature only comparison.
+
+	* metadata-internal.h (mono_metadata_type_equal_full): added and exported
+	as MONO_INTERNAL.
+
+
 2008-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: added a bunch of stack_slot_* functions to
