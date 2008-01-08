@@ -2154,7 +2154,13 @@ namespace Mono.CSharp
 		{
 			int c;
 			string_builder.Length = 0;
-								
+
+			//
+			// No need to parse full string when parsing lambda arguments
+			//
+			if (lambda_arguments_parsing)
+				return Token.LITERAL_STRING;			
+			
 			while ((c = get_char ()) != -1){
 				if (c == '"'){
 					if (quoted && peek_char () == '"'){

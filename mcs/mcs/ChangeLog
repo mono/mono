@@ -1,3 +1,8 @@
+2008-01-08  Marek Safar  <marek.safar@gmail.com>
+
+ 	* cs-tokenizer.cs: No need to parse full string when parsing lambda
+ 	arguments.
+
 2008-01-07  Marek Safar  <marek.safar@gmail.com>
 
  	* cs-tokenizer.cs: Enabled lambda arguments micro-parser for all profiles.
