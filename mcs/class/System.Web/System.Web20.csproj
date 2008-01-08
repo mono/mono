@@ -1227,6 +1227,7 @@
     <Compile Include="System.Web.UI\FileLevelPageControlBuilder.jvm.cs" />
     <Compile Include="System.Web.UI\FileLevelUserControlBuilder.jvm.cs" />
     <Compile Include="System.Web.UI\IndexedString.jvm.cs" />
+    <Compile Include="System.Web.UI\IScriptManager.cs" />
     <Compile Include="System.Web.UI\IThemeResolutionService.cs" />
     <Compile Include="System.Web.UI\MasterPageControlBuilder.cs">
       <SubType>Code</SubType>
@@ -1442,7 +1443,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-jsf-api="j2il:" REFS-JarPath-jsf-api="..\lib\jsf-api.jar" REFS-JarPath-system-configuration="" REFS-JarPath-system-data="" REFS-JarPath-system-drawing="" REFS-JarPath-system-xml="" REFS-JarPath-system="" REFS-JarPath-mscorlib="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2se-helpers="" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-javaee="" REFS-JarPath-j2se-helpers="" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" REFS-JarPath-mscorlib="" REFS-JarPath-system="" REFS-JarPath-system-xml="" REFS-JarPath-system-drawing="" REFS-JarPath-system-data="" REFS-JarPath-system-configuration="" REFS-JarPath-jsf-api="..\lib\jsf-api.jar" REFS-RefInfo-jsf-api="j2il:" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
