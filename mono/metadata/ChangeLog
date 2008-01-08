@@ -1,3 +1,7 @@
+2008-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_deregister_root): Fix the size passed to libgc.
+
 2008-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_newobj): do delegate verification.
@@ -17,7 +21,6 @@
 
 	* metadata-internal.h (mono_metadata_type_equal_full): added and exported
 	as MONO_INTERNAL.
-
 
 2008-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
