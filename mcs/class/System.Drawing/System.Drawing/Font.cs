@@ -537,7 +537,8 @@ namespace System.Drawing
 
 		public override int GetHashCode ()
 		{
-			return _name.GetHashCode ();
+			return _name.GetHashCode () ^ FontFamily.GetHashCode () ^ _size.GetHashCode () ^ _style.GetHashCode () ^
+				_gdiCharSet ^ _gdiVerticalFont.GetHashCode ();
 		}
 
 		[MonoTODO ("The hdc parameter has no direct equivalent in libgdiplus.")]

@@ -1,3 +1,8 @@
+2008-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Fix GetHashCode to use the same values as Equals. Fix 
+	bug #351647
+
 2007-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Fix Point/PointF typo in FromUnManagedMemoryToPoint.
