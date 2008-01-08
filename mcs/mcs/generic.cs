@@ -2512,7 +2512,7 @@ namespace Mono.CSharp {
 		{
 			int params_arguments_start;
 			if (methodParameters.HasParams) {
-				params_arguments_start = arg_count - methodParameters.Count - 1;
+				params_arguments_start = methodParameters.Count - 1;
 			} else {
 				params_arguments_start = arg_count;
 			}

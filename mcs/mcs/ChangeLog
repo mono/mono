@@ -1,5 +1,9 @@
 2008-01-08  Marek Safar  <marek.safar@gmail.com>
 
+ 	* generic.cs (InferInPhases): Correctly calculate params position.
+ 	
+2008-01-08  Marek Safar  <marek.safar@gmail.com>
+
  	* cs-tokenizer.cs: No need to parse full string when parsing lambda
  	arguments.
 
