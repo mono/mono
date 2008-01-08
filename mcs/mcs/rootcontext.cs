@@ -26,10 +26,8 @@ namespace Mono.CSharp {
 		ISO_2		= 3,
 		LINQ		= 4,
 
-#if NET_2_1		
+#if GMCS_SOURCE
 		Default		= LINQ
-#elif GMCS_SOURCE
-		Default		= ISO_2
 #else
 		Default		= Default_MCS
 #endif

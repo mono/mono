@@ -708,12 +708,6 @@ namespace Mono.CSharp
 			Report.WarningLevel = level;
 		}
 
-		static void SetupV2 ()
-		{
-			RootContext.Version = LanguageVersion.Default;
-			defines.Add ("__V2__");
-		}
-		
 		static void Version ()
 		{
 			string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
@@ -1380,12 +1374,6 @@ namespace Mono.CSharp
 				RootContext.StrongNameDelaySign = false;
 				return true;
 
-			case "/v2":
-			case "/2":
-				Console.WriteLine ("The compiler option -2 is obsolete. Please use /langversion instead");
-				SetupV2 ();
-				return true;
-				
 			case "/langversion":
 				switch (value.ToLower (CultureInfo.InvariantCulture)) {
 				case "iso-1":
@@ -1393,7 +1381,10 @@ namespace Mono.CSharp
 					return true;
 					
 				case "default":
-					SetupV2 ();
+					RootContext.Version = LanguageVersion.Default;
+#if GMCS_SOURCE					
+					defines.Add ("__V2__");
+#endif
 					return true;
 #if GMCS_SOURCE
 				case "iso-2":
@@ -1401,7 +1392,7 @@ namespace Mono.CSharp
 					return true;
 					
 				case "linq":
-					RootContext.Version = LanguageVersion.LINQ;
+					Report.Warning (-30, 1, "Deprecated: The `linq' option is no longer required and should not be used");
 					return true;
 #endif
 				}

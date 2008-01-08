@@ -118,6 +118,7 @@ namespace Mono.CSharp {
 			warning_ignore_table = null;
 			warning_regions_table = null;
 			reporting_disabled = false;
+			error_stack = warning_stack = null;
 		}
 
 		public static void DisableReporting ()

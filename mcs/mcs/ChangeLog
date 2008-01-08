@@ -1,5 +1,11 @@
 2008-01-08  Marek Safar  <marek.safar@gmail.com>
 
+ 	* rootcontext.cs, driver.cs: Switch to linq mode by default.
+ 	
+ 	* report.cs: Reset message stacks.
+ 	
+2008-01-08  Marek Safar  <marek.safar@gmail.com>
+
  	* generic.cs (InferInPhases): Correctly calculate params position.
  	
 2008-01-08  Marek Safar  <marek.safar@gmail.com>
