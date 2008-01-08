@@ -1,3 +1,11 @@
+2008-01-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* StatusStrip.cs: Invalidate after completing a layout.  The base
+	OnLayout does this, but we don't call the base.
+	* ToolStripItem.cs: Revert the previous change to invalidate after
+	the item moves.
+	[Fixes bug #351341 better.]
+
 2008-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  WM_DESTROY is a teardown of a single window

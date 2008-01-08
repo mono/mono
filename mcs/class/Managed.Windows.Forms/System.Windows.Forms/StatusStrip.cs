@@ -148,6 +148,7 @@ namespace System.Windows.Forms
 		protected override void OnLayout (LayoutEventArgs e)
 		{
 			this.OnSpringTableLayoutCore ();
+			this.Invalidate ();
 		}
 
 		protected override void OnPaintBackground (PaintEventArgs pevent)
