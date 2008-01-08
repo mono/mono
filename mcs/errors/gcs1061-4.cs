@@ -1,4 +1,4 @@
-// gcs0117.cs: `X' does not contain a definition for `Test'
+// CS1061: Type `X' does not contain a definition for `Test' and no extension method `Test' of type `X' could be found (are you missing a using directive or an assembly reference?)
 // Line: 12
 
 class A<X>
