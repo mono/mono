@@ -151,8 +151,8 @@ namespace MonoTests.System.Collections.Specialized {
 #endif
 
 	[TestFixture]
-	public class NameObjectCollectionBaseTest {
-
+	public class NameObjectCollectionBaseTest
+	{
 		private void CheckICollection (UnitTestNameObjectCollectionBase coll, int count)
 		{
 			ICollection collection = (coll as ICollection);
@@ -311,15 +311,25 @@ namespace MonoTests.System.Collections.Specialized {
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Constructor_Int_Negative ()
 		{
-			new UnitTestNameObjectCollectionBase (-1, CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
+			new UnitTestNameObjectCollectionBase (-1, 
+				CaseInsensitiveHashCodeProvider.DefaultInvariant,
+				CaseInsensitiveComparer.DefaultInvariant);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetObjectData_Null ()
+		public void GetObjectData_Info_Null ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
-			coll.GetObjectData (null, new StreamingContext ());
+			try {
+				coll.GetObjectData (null, new StreamingContext ());
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("info", ex.ParamName, "#6");
+			}
 		}
 
 		[Test]
@@ -363,58 +373,92 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void Add_ReadOnly ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll._IsReadOnly = true;
-			coll.Add ("a", "1");
+			try {
+				coll.Add ("a", "1");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Collection is read-only
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void Clear_ReadOnly ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll._IsReadOnly = true;
-			// even if we're empty
-			coll.Clear ();
+			try {
+				// even if we're empty
+				coll.Clear ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Collection is read-only
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void Remove_ReadOnly ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll.Add ("a", "!");
 			coll._IsReadOnly = true;
-			coll.Remove ("a");
+			try {
+				coll.Remove ("a");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Collection is read-only
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void RemoveAt_ReadOnly ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll.Add ("a", "!");
 			coll._IsReadOnly = true;
-			coll.RemoveAt (0);
+			try {
+				coll.RemoveAt (0);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Collection is read-only
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (NotSupportedException))]
-#else
-		[Ignore ("Read-only is ignored for Set() under MS 1.x.")]
-#endif
 		public void Set_ReadOnly ()
 		{
 			UnitTestNameObjectCollectionBase coll = new UnitTestNameObjectCollectionBase ();
 			coll.Add ("a", "!");
 			coll._IsReadOnly = true;
+#if NET_2_0
+			try {
+				coll.Set (0, "1");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Collection is read-only
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#else
 			coll.Set (0, "1");
-			// no exception before 2.0
-			Assert.AreEqual ("1", coll.Get (0), "Get(0)"); // :-(
+			Assert.AreEqual ("1", coll.Get (0), "Get(0)");
+#endif
 		}
 
 		[Test]
@@ -451,6 +495,120 @@ namespace MonoTests.System.Collections.Specialized {
 			Assert.AreEqual (2, array.Length, "Length");
 			Assert.AreEqual ("string1", array[0], "[0]");
 			Assert.AreEqual ("string2", array[1], "[1]");
+		}
+
+		[Test]
+		public void CopyTo_Array_Null () 
+		{
+			UnitTestNameObjectCollectionBase c = new UnitTestNameObjectCollectionBase ();
+#if NET_2_0
+			try {
+				((ICollection)c).CopyTo (null, 0);
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.ParamName, "#A5");
+				Assert.AreEqual ("array", ex.ParamName, "#A6");
+			}
+#else
+			((ICollection) c).CopyTo (null, 0);
+#endif
+
+			c.Add ("1", "mono");
+
+			try {
+				((ICollection) c).CopyTo (null, 0);
+				Assert.Fail ("#B1");
+#if NET_2_0
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNotNull (ex.ParamName, "#B5");
+				Assert.AreEqual ("array", ex.ParamName, "#B6");
+			}
+#else
+			} catch (NullReferenceException) {
+			}
+#endif
+		}
+
+		[Test]
+		public void CopyTo_Index_Negative () 
+		{
+			string [] array = new string [1];
+			UnitTestNameObjectCollectionBase c = new UnitTestNameObjectCollectionBase ();
+			c.Add ("1", "mono");
+			try {
+				((ICollection) c).CopyTo (array, -1);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+			}
+#else
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
+		}
+
+		[Test]
+		public void CopyTo_NotEnoughSpace () 
+		{
+			string [] array = new string [4];
+			UnitTestNameObjectCollectionBase c = new UnitTestNameObjectCollectionBase ();
+			c.Add ("1", "mono");
+			c.Add ("2", "MoNo");
+			c.Add ("3", "mOnO");
+			c.Add ("4", "MONO");
+			try {
+				((ICollection) c).CopyTo (array, 2);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentException ex) {
+				// Insufficient space in the target location to
+				// copy the information
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#else
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
+		}
+
+		[Test]
+		public void CopyTo_MultipleDimensionStringArray () 
+		{
+			string [,] matrix = new string [1,1];
+			UnitTestNameObjectCollectionBase c = new UnitTestNameObjectCollectionBase ();
+			c.Add ("1", "mono");
+			try {
+				((ICollection)c).CopyTo (matrix, 0);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Multi dimension array is not supported on
+				// this operation
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	}
 }

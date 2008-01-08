@@ -1,3 +1,8 @@
+2008-01-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* NameObjectCollectionBaseTest.cs: Add tests for argument checking in
+	GetObjectData, Add, Clear, Remove, RemoveAt, Set and CopyTo. 
+
 2007-04-29  Ilya Kharmatsky <ilyak@mainsoft.com>
 
 	* NameValueCollectionTest.cs: Added test which checks proper exception

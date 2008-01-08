@@ -101,7 +101,7 @@ namespace System.Collections.Specialized
 			}
 			public bool MoveNext()
 			{
-				return ((++m_position)<m_collection.Count)?true:false;
+				return ((++m_position) < m_collection.Count);
 			}
 			public void Reset()
 			{
@@ -128,17 +128,29 @@ namespace System.Collections.Specialized
 			}
 			
 			// ICollection methods -----------------------------------
-			void ICollection.CopyTo(Array arr, int index)
+			void ICollection.CopyTo (Array array, int arrayIndex)
 			{
-				if (arr==null)
-					throw new ArgumentNullException("array can't be null");
-				IEnumerator en = this.GetEnumerator();
-				int i = index;
-				while (en.MoveNext())
-				{
-					arr.SetValue(en.Current,i);
-					i++;
-				}			
+				ArrayList items = m_collection.m_ItemsArray;
+#if NET_2_0
+				if (null == array)
+					throw new ArgumentNullException ("array");
+
+				if (arrayIndex < 0)
+					throw new ArgumentOutOfRangeException ("arrayIndex");
+
+				if ((array.Length > 0) && (arrayIndex >= array.Length))
+					throw new ArgumentException ("arrayIndex is equal to or greater than array.Length");
+
+				if (arrayIndex + items.Count > array.Length)
+					throw new ArgumentException ("Not enough room from arrayIndex to end of array for this KeysCollection");
+#endif
+
+				if (array != null && array.Rank > 1)
+					throw new ArgumentException ("array is multidimensional");
+				
+				object[] objArray = (object[])array;
+				for (int i = 0; i < items.Count; i++, arrayIndex++)
+					objArray [arrayIndex] = ((_Item)items [i]).key;
 			}
 
 			bool ICollection.IsSynchronized
@@ -360,7 +372,7 @@ namespace System.Collections.Specialized
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			(Keys as ICollection).CopyTo (array, index);
+			((ICollection)Keys).CopyTo (array, index);
 		}
 
 		// IDeserializationCallback
@@ -595,8 +607,10 @@ namespace System.Collections.Specialized
 		/// <param name="value"></param>
 		protected void BaseSet( int index, object value )
 		{
+#if NET_2_0
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
+#endif
 			_Item item = (_Item)m_ItemsArray[index];
 			item.value = value;
 		}
@@ -608,8 +622,10 @@ namespace System.Collections.Specialized
 		/// <param name="value">The Object that represents the new value of the entry to set. The value can be a null reference</param>
 		protected void BaseSet( string name, object value )
 		{
+#if NET_2_0
 			if (this.IsReadOnly)
 				throw new NotSupportedException("Collection is read-only");
+#endif
 			_Item item = FindFirstMatchedItem(name);
 			if (item!=null)
 				item.value=value;
