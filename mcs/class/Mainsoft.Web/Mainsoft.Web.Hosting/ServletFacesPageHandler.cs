@@ -21,6 +21,7 @@ namespace Mainsoft.Web.Hosting
 		readonly Lifecycle _lifecycle;
 		readonly string _executionFilePath;
 		readonly Type _pageType;
+		Page _page;
 
 		public bool IsReusable {
 			get { return false; }
@@ -42,10 +43,15 @@ namespace Mainsoft.Web.Hosting
 			FacesContext facesContext = ServletFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
 				try {
-					Trace.WriteLine ("FacesPageHandler: before execute");
-					_lifecycle.execute (facesContext);
-					Trace.WriteLine ("FacesPageHandler: after execute");
-
+					try {
+						Trace.WriteLine ("FacesPageHandler: before execute");
+						_lifecycle.execute (facesContext);
+						Trace.WriteLine ("FacesPageHandler: after execute");
+					}
+					finally {
+						if (facesContext.getViewRoot ().getChildCount () > 0)
+							_page = (Page) facesContext.getViewRoot ().getChildren ().get (0);
+					}
 					Trace.WriteLine ("FacesPageHandler: before render");
 					_lifecycle.render (facesContext);
 					Trace.WriteLine ("FacesPageHandler: after render");
@@ -65,6 +71,8 @@ namespace Mainsoft.Web.Hosting
 		public object GetService (Type serviceType) {
 			if (serviceType == typeof (Type))
 				return _pageType;
+			if (serviceType == typeof (Page))
+				return _page;
 			return null;
 		}
 	}
