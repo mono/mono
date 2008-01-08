@@ -57,8 +57,8 @@ namespace System.Web.UI
 		bool [] _validatorsState;
 		ICallbackEventHandler _callbackTarget;
 		string _callbackEventError = String.Empty;
-		IHttpHandler _jsfHandler;
 		static readonly object CrossPagePostBack = new object ();
+		FacesContext _facesContext;
 
 		bool _isMultiForm = false;
 		bool _isMultiFormInited = false;
@@ -96,26 +96,26 @@ namespace System.Web.UI
 			}
 		}
 
-		void EnterThread (HttpContext context) {
+		IHttpHandler EnterThread () {
 
-			_jsfHandler = context.CurrentHandler;
-			context.PopHandler ();
-			context.PushHandler (this);
-			if (_jsfHandler == context.Handler)
-				context.Handler = this;
+			IHttpHandler jsfHandler = _context.CurrentHandler;
+			_context.PopHandler ();
+			_context.PushHandler (this);
+			if (jsfHandler == _context.Handler)
+				_context.Handler = this;
 
-			SetContext (context);
+			return jsfHandler;
 		}
 
-		void ExitThread () {
+		void ExitThread (IHttpHandler jsfHandler) {
 			// TODO
 			//if (context.getResponseComplete ())
 			//    Response.End ();
 
 			_context.PopHandler ();
-			_context.PushHandler (_jsfHandler);
+			_context.PushHandler (jsfHandler);
 			if (this == _context.Handler)
-				_context.Handler = _jsfHandler;
+				_context.Handler = jsfHandler;
 
 		}
 
@@ -126,7 +126,10 @@ namespace System.Web.UI
 		public override void encodeChildren (FacesContext context) {
 			System.Diagnostics.Trace.WriteLine ("encodeChildren");
 
-			EnterThread (HttpContext.Current);
+			// reset _facesContext if changed between action and render phases (such portal).
+			_facesContext = null;
+
+			IHttpHandler jsfHandler = EnterThread ();
 			bool wasException = false;
 			try {
 				if (!context.getResponseComplete ()) {
@@ -160,7 +163,7 @@ namespace System.Web.UI
 						ProcessUnload ();
 				}
 				finally {
-					ExitThread ();
+					ExitThread (jsfHandler);
 				}
 			}
 		}
@@ -200,7 +203,7 @@ namespace System.Web.UI
 
 			if (state == null)
 				throw new ArgumentNullException ("state");
-			EnterThread (HttpContext.Current);
+			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
 					byte [] buffer = (byte []) vmw.common.TypeUtils.ToByteArray ((sbyte []) state);
@@ -214,14 +217,14 @@ namespace System.Web.UI
 				HandleException (ex);
 			}
 			finally {
-				ExitThread ();
+				ExitThread (jsfHandler);
 			}
 		}
 
 		public override void processDecodes (FacesContext context) {
 			System.Diagnostics.Trace.WriteLine ("processDecodes");
 
-			EnterThread (HttpContext.Current);
+			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				ProcessPostData ();
 
@@ -235,14 +238,14 @@ namespace System.Web.UI
 				HandleException (ex);
 			}
 			finally {
-				ExitThread ();
+				ExitThread (jsfHandler);
 			}
 		}
 
 		public override void processValidators (FacesContext context) {
 			System.Diagnostics.Trace.WriteLine ("processValidators");
 
-			EnterThread (HttpContext.Current);
+			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				base.processValidators (context);
 			}
@@ -250,14 +253,14 @@ namespace System.Web.UI
 				HandleException (ex);
 			}
 			finally {
-				ExitThread ();
+				ExitThread (jsfHandler);
 			}
 		}
 
 		public override void processUpdates (FacesContext context) {
 			System.Diagnostics.Trace.WriteLine ("processUpdates");
 
-			EnterThread (HttpContext.Current);
+			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				base.processUpdates (context);
 			}
@@ -265,7 +268,7 @@ namespace System.Web.UI
 				HandleException (ex);
 			}
 			finally {
-				ExitThread ();
+				ExitThread (jsfHandler);
 			}
 		}
 
@@ -275,7 +278,7 @@ namespace System.Web.UI
 			if (!(e is EventRaiserFacesEvent))
 				throw new NotSupportedException ("FacesEvent of class " + e.GetType ().Name + " not supported by Page");
 
-			EnterThread (HttpContext.Current);
+			IHttpHandler jsfHandler = EnterThread ();
 			bool doUnload = false;
 			try {
 				ProcessRaiseEvents ();
@@ -293,7 +296,7 @@ namespace System.Web.UI
 					}
 				}
 				finally {
-					ExitThread ();
+					ExitThread (jsfHandler);
 				}
 			}
 		}
@@ -366,6 +369,10 @@ namespace System.Web.UI
 			if (Namespace.Length > 0 && id.Length > Namespace.Length && id.StartsWith (Namespace, StringComparison.Ordinal))
 				id = id.Substring (Namespace.Length);
 			return id;
+		}
+
+		protected override FacesContext getFacesContext () {
+			return _facesContext ?? (_facesContext = FacesContext.getCurrentInstance ());
 		}
 
 		#region FacesPageStatePersister

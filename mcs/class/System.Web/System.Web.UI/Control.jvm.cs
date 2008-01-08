@@ -89,6 +89,9 @@ namespace System.Web.UI
 		}
 
 		protected override FacesContext getFacesContext () {
+			Page page = Page;
+			if (page != null)
+				return page.getFacesContext ();
 			return FacesContext.getCurrentInstance ();
 		}
 

@@ -1253,13 +1253,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 #endif
 	{
+		SetContext (context);
 #if TARGET_J2EE
 		bool wasException = false;
-		if (getFacesContext () != null)
-			EnterThread (context);
-		else
+		IHttpHandler jsfHandler = getFacesContext () != null ? EnterThread () : null;
 #endif
-		SetContext (context);
 		
 		if (clientTarget != null)
 			Request.ClientTarget = clientTarget;
@@ -1291,7 +1289,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		} finally {
 #if TARGET_J2EE
 			if (getFacesContext () != null)
-				ExitThread ();
+				ExitThread (jsfHandler);
 			else if (!wasException)
 #endif
 			ProcessUnload ();
