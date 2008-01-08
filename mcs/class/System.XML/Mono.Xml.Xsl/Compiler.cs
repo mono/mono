@@ -91,9 +91,9 @@ namespace Mono.Xml.Xsl
 			return (XslGeneralVariable)globalVariables [name];
 		}
 		
-		public XslKey ResolveKey (QName name)
+		public ArrayList ResolveKey (QName name)
 		{
-			return (XslKey) keys [name];
+			return (ArrayList) keys [name];
 		}
 		
 		public XslAttributeSet ResolveAttributeSet (QName name)
@@ -426,7 +426,9 @@ namespace Mono.Xml.Xsl
 
 		public void AddKey (XslKey key)
 		{
-			keys [key.Name] = key;
+			if (keys [key.Name] == null)
+				keys [key.Name] = new ArrayList ();
+			((ArrayList) keys [key.Name]).Add (key);
 		}
 
 		public void AddAttributeSet (XslAttributeSet set)

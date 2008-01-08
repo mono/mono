@@ -57,7 +57,7 @@ namespace Mono.Xml.Xsl {
 		NameValueCollection namespaceAliases = new NameValueCollection ();
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
-		// [QName]=>XslKey
+		// [QName]=>ArrayList of XslKey
 		Hashtable keys = new Hashtable();
 		// [QName]=>XslVariable
 		Hashtable variables = new Hashtable ();
@@ -162,8 +162,9 @@ namespace Mono.Xml.Xsl {
 
 			foreach (XslGlobalVariable v in variables.Values)
 				c.AddGlobalVariable (v);
-			foreach (XslKey key in keys.Values)
-				c.AddKey (key);
+			foreach (ArrayList al in keys.Values)
+				for (int i = 0; i < al.Count; i++)
+					c.AddKey ((XslKey) al[i]);
 
 			c.PopStylesheet ();
 			inProcessIncludes = null;
@@ -436,7 +437,9 @@ namespace Mono.Xml.Xsl {
 
 				case "key":
 					XslKey key = new XslKey (c);
-					keys [key.Name] = key;
+					if (keys [key.Name] == null)
+						keys [key.Name] = new ArrayList ();
+					((ArrayList) keys [key.Name]).Add (key);
 					break;
 					
 				case "output":

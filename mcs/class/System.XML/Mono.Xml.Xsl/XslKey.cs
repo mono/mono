@@ -99,20 +99,26 @@ namespace Mono.Xml.Xsl
 	internal class KeyIndexTable
 	{
 		XsltCompiledContext ctx;
-		XslKey key;
+		ArrayList keys;
 		Hashtable mappedDocuments;
 
-		public KeyIndexTable (XsltCompiledContext ctx, XslKey key)
+		public KeyIndexTable (XsltCompiledContext ctx, ArrayList keys)
 		{
 			this.ctx = ctx;
-			this.key = key;
+			this.keys = keys;
 		}
 
-		public XslKey Key {
-			get { return key; }
+		public ArrayList Keys {
+			get { return keys; }
 		}
 
 		private void CollectTable (XPathNavigator doc, XsltContext ctx, Hashtable map)
+		{
+			for (int i = 0; i < keys.Count; i++)
+				CollectTable (doc, ctx, map, (XslKey) keys[i]);
+		}
+
+		private void CollectTable (XPathNavigator doc, XsltContext ctx, Hashtable map, XslKey key)
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
@@ -159,6 +165,12 @@ namespace Mono.Xml.Xsl
 		}
 
 		private void CollectIndex (XPathNavigator nav, XPathNavigator target, Hashtable map)
+		{
+			for (int i = 0; i < keys.Count; i++)
+				CollectIndex (nav, target, map, (XslKey) keys[i]);
+		}
+
+		private void CollectIndex (XPathNavigator nav, XPathNavigator target, Hashtable map, XslKey key)
 		{
 			XPathNodeIterator iter;
 			switch (key.Use.ReturnType) {

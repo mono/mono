@@ -2063,6 +2063,40 @@ Services
 			Assert.AreEqual (expected, sw.ToString ());
 		}
 
+		[Test]
+		public void Bug351939 ()
+		{
+			XslTransform xslt = new XslTransform ();
+			xslt.Load (new XmlTextReader (new StringReader (
+@"<xsl:stylesheet version=""1.0""
+  xmlns:xsl=""http://www.w3.org/1999/XSL/Transform"">
+  <xsl:key name=""thekey"" match=""aa"" use=""''""/>
+  <xsl:key name=""thekey"" match=""ab"" use=""''""/>
+  <xsl:template match=""root"">
+    <x>
+      <foo><xsl:value-of select=""key('thekey','')[1]""/></foo>
+      <bar><xsl:value-of select=""key('thekey','')[2]""/></bar>
+      <baz><xsl:value-of select=""key('thekey','')[3]""/></baz>
+      <tem><xsl:value-of select=""key('thekey','')[4]""/></tem>
+    </x>
+  </xsl:template>
+</xsl:stylesheet>")));
+			StringWriter sw = new StringWriter ();
+			xslt.Transform (new XPathDocument (new StringReader (
+@"<?xml version=""1.0""?>
+<root>
+  <a>
+    <aa>1</aa>
+    <ab>2</ab>
+  </a>
+  <a>
+    <aa>3</aa>
+    <ab>4</ab>
+  </a>
+</root>")), null, new XmlTextWriter (sw));
+			Assert.AreEqual ("<x><foo>1</foo><bar>2</bar><baz>3</baz><tem>4</tem></x>", sw.ToString ());
+		}
+
 #if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()
