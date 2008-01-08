@@ -1227,7 +1227,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category("NunitWeb")]
-		[Category ("NotWorking")]
 		public void FormView_DataSourceChangedEvent ()
 		{
 			WebTest t = new WebTest();

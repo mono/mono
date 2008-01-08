@@ -1,3 +1,11 @@
+2008-01-08 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* DetailsViewTest.cs:
+	* DropDownListTest.cs:
+	* FormViewTest.cs:
+	* GridViewTest.cs:
+	removed NotWorking attributes.				
+
 2007-12-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ListBoxTest.cs: added tests for ListControl's viewstate

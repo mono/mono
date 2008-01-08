@@ -196,7 +196,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void DropDownList_DataSourceChangedEvent ()
 		{
 			WebTest t = new WebTest ();
@@ -467,7 +466,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if ONLY_1_1
         [Category("NotWorking")]
+#endif
 		public void HtmlEncodeItem ()
 		{
 			DropDownListTestClass d = new DropDownListTestClass ();

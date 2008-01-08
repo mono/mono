@@ -2377,7 +2377,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void DetailsView_DataSourceChangedEvent ()
 		{
 			WebTest t = new WebTest ();
