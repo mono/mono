@@ -603,5 +603,16 @@ namespace MonoTests.System.Drawing{
 				}
 			}
 		}
+
+		[Test]
+		public void FontUniqueHashCode ()
+		{
+			Font f1 = new Font ("Arial", 14);
+			Font f2 = new Font ("Arial", 12);
+			Font f3 = new Font (f1, FontStyle.Bold);
+
+			Assert.IsFalse (f1.GetHashCode () == f2.GetHashCode (), "1) Fonts with different sizes should have different HashCodes");
+			Assert.IsFalse (f1.GetHashCode () == f3.GetHashCode (), "2) Fonts with different styles should have different HashCodes");
+		}
 	}
 }

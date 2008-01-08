@@ -1,3 +1,8 @@
+2008-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestFont.cs: Add test case for GetHashCode from Jonathan Pobst
+	for bug #351647
+
 2007-12-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestGraphics.cs: Add test case on TransformPoints for #349800.
