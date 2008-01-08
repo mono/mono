@@ -250,6 +250,18 @@ namespace MonoTests.System.Web.Services.Description
 			ServiceDescription.Read (new StringReader (sw.ToString ()));
 		}
 
+		[Test]
+		public void EmptyAction ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (EmptyActionService), "urn:foo");
+			Binding b = r.ServiceDescriptions [0].Bindings ["EmptyActionServiceSoap"];
+			OperationBinding o = b.Operations [0];
+			SoapOperationBinding sob = o.Extensions [0] as SoapOperationBinding;
+			Assert.AreEqual (String.Empty, sob.SoapAction);
+		}
+
 #if NET_2_0
 		[Test]
 		public void Bug332150 ()
@@ -260,6 +272,15 @@ namespace MonoTests.System.Web.Services.Description
 			StringWriter sw = new StringWriter ();
 			r.ServiceDescriptions [0].Write (sw);
 			ServiceDescription.Read (new StringReader (sw.ToString ()));
+		}
+
+		[Test]
+		public void Bug345448 ()
+		{
+			ServiceDescriptionReflector r =
+				new ServiceDescriptionReflector ();
+			r.Reflect (typeof (Bug345448Service), "urn:foo");
+			Assert.IsNotNull (r.ServiceDescriptions [0].PortTypes ["Bug345448ServiceSoap"]);
 		}
 #endif
 
@@ -374,6 +395,16 @@ namespace MonoTests.System.Web.Services.Description
 			}
 		}
 
+		[WebService (Namespace = "http://tempuri.org/")]
+		public class EmptyActionService : WebService
+		{
+			[WebMethod]
+			[SoapDocumentMethod ("")]
+			public string HelloWorld () {
+				return "Hello World";
+			}
+		}
+
 #if NET_2_0
 		[WebService (Namespace = "http://tempuri.org/")]
 		[WebServiceBinding (ConformsTo = WsiProfiles.BasicProfile1_1)]
@@ -399,6 +430,18 @@ namespace MonoTests.System.Web.Services.Description
 			}
 
 			[WebMethod]
+			public string HelloWorld ()
+			{
+				return "Hello World";
+			}
+		}
+
+		[WebService (Namespace = "http://tempuri.org/")]
+		[WebServiceBindingAttribute (Name = "AnotherBinding", Namespace = "http://tempuri.org/")]
+		public class Bug345448Service : WebService
+		{
+			[WebMethod]
+			//[SoapDocumentMethodAttribute (Binding="AnotherBinding")]
 			public string HelloWorld ()
 			{
 				return "Hello World";

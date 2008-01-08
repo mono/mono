@@ -1,3 +1,9 @@
+2008-01-08  Arina Itkes  <arinai@mainsoft.com>
+
+	* Methods.cs: Fix for compatibility with .NET:
+	  In .NET if SOAPAction is set to empty string it is regarded like
+	  clearly specified with empty string.
+	  
 2007-12-11  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TypeStubManager.cs: fixed TypeStubInfo ctor, default binding name is

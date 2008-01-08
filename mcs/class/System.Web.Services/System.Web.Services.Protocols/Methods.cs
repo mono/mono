@@ -192,7 +192,7 @@ namespace System.Web.Services.Protocols {
 			if (ResponseNamespace == "") ResponseNamespace = parent.LogicalType.GetWebServiceNamespace (serviceNamespace, Use);
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
-			if (Action == null || Action == "")
+			if (Action == null)
 				Action = serviceNamespace.EndsWith("/") ? (serviceNamespace + Name) : (serviceNamespace + "/" + Name);
 			
 			bool hasWrappingElem = (ParameterStyle == SoapParameterStyle.Wrapped);
