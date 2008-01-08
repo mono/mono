@@ -155,7 +155,7 @@ namespace System
 				this.month = month;
 
 				this.week = -1;
-				this.dayOfWeek = (DayOfWeek)-1;
+				this.dayOfWeek = (System.DayOfWeek)(-1);
 				this.day = -1;
 				this.isFixedDateRule = false;
 			}

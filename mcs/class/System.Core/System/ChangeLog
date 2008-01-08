@@ -1,3 +1,8 @@
+2008-01-08  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZoneInfo.TransitionTime.cs: fully qualify System.DayOfWeek in 
+	casting operation.
+
 2007-12-20  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneInfo.cs: adapting length check to parse TZif2 files
