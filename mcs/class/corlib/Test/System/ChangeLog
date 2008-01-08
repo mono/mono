@@ -1,3 +1,8 @@
+2008-01-08  Marek Safar  <marek.safar@gmail.com>
+
+	* ArrayTest.cs: Test both LastIndexOf versions for
+	ArgumentOutOfRangeException.
+
 2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added GetProperty and GetProperties tests for bug

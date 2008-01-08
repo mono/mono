@@ -1489,11 +1489,20 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void TestLastIndexOf4 ()
 	{
 		short [] a = new short [] { 19, 238, 317, 6, 565, 0, -52, 60, -563, 753, 238, 238};
-		Array.LastIndexOf (a, 16, -1);
+		try {
+			Array.LastIndexOf (a, (object)16, -1);
+			NUnit.Framework.Assert.Fail ("#1");
+		} catch (ArgumentOutOfRangeException) { }
+		
+#if NET_2_0		
+		try {
+			Array.LastIndexOf<short> (a, 16, -1);
+			NUnit.Framework.Assert.Fail ("#2");
+		} catch (ArgumentOutOfRangeException) { }
+#endif		
 	}
 
 	[Test]
