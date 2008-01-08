@@ -4344,22 +4344,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			if (mg.InstanceExpression != null){
-				mg.InstanceExpression.CheckMarshalByRefAccess ();
-
-				//
-				// This is used to check that no methods are called in struct
-				// constructors before all the fields on the struct have been
-				// initialized.
-				//
-				if (!method.IsStatic){
-					This mgthis = mg.InstanceExpression as This;
-					if (mgthis != null){
-						if (!mgthis.CheckThisUsage (ec))
-							return  null;
-					}
-				}
-			}
+			if (mg.InstanceExpression != null)
+				mg.InstanceExpression.CheckMarshalByRefAccess (ec);
 
 			eclass = ExprClass.Value;
 			return this;
@@ -6152,17 +6138,14 @@ namespace Mono.CSharp {
 		//
 		// Called from Invocation to check if the invocation is correct
 		//
-		public bool CheckThisUsage (EmitContext ec)
+		public override void CheckMarshalByRefAccess (EmitContext ec)
 		{
 			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) &&
 			    !variable_info.IsAssigned (ec)) {
 				Error (188, "The `this' object cannot be used before all of its " +
 				       "fields are assigned to");
 				variable_info.SetAssigned (ec);
-				return false;
 			}
-
-			return true;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -6175,7 +6158,7 @@ namespace Mono.CSharp {
 				Error (27, "Keyword `this' is not available in the current context");
 				return null;
 			}
-
+			
 			return this;
 		}
 
@@ -7851,7 +7834,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			instance_expr.CheckMarshalByRefAccess ();
+			instance_expr.CheckMarshalByRefAccess (ec);
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}

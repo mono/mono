@@ -1,5 +1,11 @@
 2008-01-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #352287
+ 	* ecore.cs, expression.cs: Do `this' access checking in all member access
+ 	expressions.
+ 	
+2008-01-08  Marek Safar  <marek.safar@gmail.com>
+
  	* rootcontext.cs, driver.cs: Switch to linq mode by default.
  	
  	* report.cs: Reset message stacks.

@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 		}
 
 		// Not nice but we have broken hierarchy.
-		public virtual void CheckMarshalByRefAccess ()
+		public virtual void CheckMarshalByRefAccess (EmitContext ec)
 		{
 		}
 
@@ -4484,7 +4484,9 @@ namespace Mono.CSharp {
 				if (InstanceExpression == null)
 					return null;
 
-				InstanceExpression.CheckMarshalByRefAccess ();
+				using (ec.Set (EmitContext.Flags.OmitStructFlowAnalysis)) {
+					InstanceExpression.CheckMarshalByRefAccess (ec);
+				}
 			}
 
 			if (!in_initializer && !ec.IsInFieldInitializer) {
@@ -4630,7 +4632,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void CheckMarshalByRefAccess ()
+		public override void CheckMarshalByRefAccess (EmitContext ec)
 		{
 			if (!IsStatic && Type.IsValueType && !(InstanceExpression is This) && DeclaringType.IsSubclassOf (TypeManager.mbr_type)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
@@ -4956,7 +4958,7 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null)
 				return false;
 
-			InstanceExpression.CheckMarshalByRefAccess ();
+			InstanceExpression.CheckMarshalByRefAccess (ec);
 
 			if (must_do_cs1540_check && (InstanceExpression != EmptyExpression.Null) &&
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.ContainerType) &&
