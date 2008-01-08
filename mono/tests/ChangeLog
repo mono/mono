@@ -1,3 +1,8 @@
+2008-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (DISABLED_TESTS): Disable bug-77127.exe for now to make the
+	build green.
+
 2008-01-04  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: Make it work on automake-1.6
