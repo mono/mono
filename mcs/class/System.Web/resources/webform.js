@@ -133,13 +133,12 @@ webForm.WebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
 
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
 {
-	var qs = this.WebForm_getFormData () + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
+	var qs = webForm.WebForm_getFormData () + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
   
-  if (this._form["__EVENTVALIDATION"])
-    qs += "&__EVENTVALIDATION=" + encodeURIComponent(this._form["__EVENTVALIDATION"].value);
+  if (webForm._form["__EVENTVALIDATION"])
+    qs += "&__EVENTVALIDATION=" + encodeURIComponent(webForm._form["__EVENTVALIDATION"].value);
   
-	var This = this;
-	this.WebForm_httpPost (this._form.serverURL || document.URL, qs, function (httpPost) { This.WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+	webForm.WebForm_httpPost (webForm._form.serverURL || document.URL, qs, function (httpPost) { webForm.WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
 }
 
 webForm.WebForm_ClientCallback = function (httpPost, ctx, callback, errorCallback)
