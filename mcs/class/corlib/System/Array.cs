@@ -2133,9 +2133,10 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			
-			if (count < 0 || startIndex > array.Length || startIndex - count + 1 < 0)
+			if (count < 0 || startIndex < array.GetLowerBound (0) ||
+				startIndex > array.GetUpperBound (0) ||	startIndex - count + 1 < array.GetLowerBound (0))
 				throw new ArgumentOutOfRangeException ();
-
+			
 			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
 			for (int i = startIndex; i >= startIndex - count + 1; i--) {
 				if (equalityComparer.Equals (value, array [i]))
