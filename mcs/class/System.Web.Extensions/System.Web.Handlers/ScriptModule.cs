@@ -87,6 +87,10 @@ namespace System.Web.Handlers
 			HttpContext context = app.Context;
 			if (context.Request.Headers ["X-MicrosoftAjax"] == "Delta=true") {
 				Page p = context.CurrentHandler as Page;
+#if TARGET_J2EE
+				if (p == null && context.CurrentHandler is IServiceProvider)
+					p = (Page) ((IServiceProvider) context.CurrentHandler).GetService (typeof (Page));
+#endif
 				if (p == null)
 					return;
 				ScriptManager sm = ScriptManager.GetCurrent (p);
