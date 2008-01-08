@@ -605,9 +605,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
-		private string filterExpression = "";
+		private string filterExpression;
 		public string FilterExpression {
-			get { return filterExpression; }
+			get { return filterExpression ?? string.Empty; }
 			set {
 				if (FilterExpression == value)
 					return;
