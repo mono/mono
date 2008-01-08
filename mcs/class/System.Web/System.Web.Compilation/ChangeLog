@@ -1,3 +1,13 @@
+2008-01-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: statements to assign
+	fields/properties from resources must be processed at the very end
+	of the control creation method. Some controls (like HyperLink) can
+	set their Text attribute using literal content. In such cases, in
+	order to properly localize the control, the value read from the
+	local page resources must be assigned after the literal value has
+	been added to the control. Fixes bug #323494
+
 2008-01-07  Marek Habersack  <mhabersack@novell.com>
 
 	* CachingCompiler.cs: added an overload to the Compile method

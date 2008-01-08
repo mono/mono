@@ -896,9 +896,6 @@ namespace System.Web.Compilation
 
 		protected void CreateAssignStatementsFromAttributes (ControlBuilder builder)
 		{
-#if NET_2_0
-			bool haveMetaKey = false;
-#endif
 			this.dataBoundAtts = 0;
 			IDictionary atts = builder.attribs;
 			if (atts == null || atts.Count == 0)
@@ -915,18 +912,12 @@ namespace System.Web.Compilation
 				/* we skip SkinID here as it's assigned in BuildControlTree */
 				if (InvariantCompareNoCase (id, "skinid"))
 					continue;
-				if (InvariantCompareNoCase (id, "meta:resourcekey")) {
-					haveMetaKey = true;
-					continue;
-				}
+				if (InvariantCompareNoCase (id, "meta:resourcekey"))
+					continue; // ignore, this one's processed at the very end of
+						  // the method
 #endif
 				CreateAssignStatementFromAttribute (builder, id);
 			}
-			
-#if NET_2_0
-			if (haveMetaKey)
-				CreateAssignStatementFromAttribute (builder, "meta:resourcekey");
-#endif
 		}
 
 		void CreateDBAttributeMethod (ControlBuilder builder, string attr, string code)
@@ -1416,15 +1407,18 @@ namespace System.Web.Compilation
 
 				builder.methodStatements.Add (invoke);
 			}
-			
-			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
-				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 
 #if NET_2_0
 			if (builder is RootBuilder)
 				if (!String.IsNullOrEmpty (parser.MetaResourceKey))
 					AssignPropertiesFromResources (builder, parser.BaseType, parser.MetaResourceKey);
+			
+			if ((!isTemplate || builder is RootBuilder) && builder.attribs != null && builder.attribs ["meta:resourcekey"] != null)
+				CreateAssignStatementFromAttribute (builder, "meta:resourcekey");
 #endif
+
+			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
+				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
 		
 		protected internal override void CreateMethods ()
