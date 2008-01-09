@@ -1,3 +1,19 @@
+2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_isinst_with_boxed_valuetype.il: New test for regressions
+	found while validating vbnc.
+
+	* valid_ldfld_valuetype_by_ref.il: same.
+	* valid_ldfld_valuetype_by_value.il: same.
+	* valid_stelem_ref_boxed_value.il: same.
+	* valid_stloc_boxed_valuetype.il: same.
+	* valid_sub_class_of_generic_type_is_compatible.il: same.
+	* unverifiable_ldfld_valuetype_boxed.il:  same.
+	* unverifiable_ldfld_reference_type_by_ref.il: same.
+
+	* make_test.sh: new tests for stfld and cgt.un.
+	
+
 2008-01-08 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_delegate_test.sh: increased max stack for
