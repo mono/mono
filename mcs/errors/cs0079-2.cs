@@ -1,4 +1,4 @@
-// CS0079: The event `Foo.Event2' can only appear on the left hand side of += or -=
+// CS0079: The event `Foo.Event2' can only appear on the left hand side of `+=' or `-=' operator
 // Line: 11
 
 using System;

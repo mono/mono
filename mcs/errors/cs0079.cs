@@ -1,4 +1,4 @@
-// cs0079.cs: The event `ErrorCS0079.OnFoo' can only appear on the left hand side of += or -=
+// CS0079: The event `ErrorCS0079.OnFoo' can only appear on the left hand side of `+=' or `-=' operator
 // Line: 19
  
 using System;
