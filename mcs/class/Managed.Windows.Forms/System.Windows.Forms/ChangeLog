@@ -4,6 +4,10 @@
 	[Fixes bug #323552]
 
 2008-01-09  Geoff Norton  <gnorton@novell.com>
+	
+	* XplatUICarbon.cs: Scroll windows in the correct direction.
+
+2008-01-09  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Track all created utility windows so we can hide them
 	when the app is deactivated or spaces is enabled.

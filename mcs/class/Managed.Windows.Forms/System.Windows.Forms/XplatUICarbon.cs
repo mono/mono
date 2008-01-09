@@ -1601,7 +1601,7 @@ namespace System.Windows.Forms {
 			scroll_rect.origin.y = area.Y;
 			scroll_rect.size.width = area.Width;
 			scroll_rect.size.height = area.Height;
-			HIViewScrollRect (handle, ref scroll_rect, (float)XAmount, (float)-YAmount);
+			HIViewScrollRect (handle, ref scroll_rect, (float)XAmount, (float)YAmount);
 		}
 		
 		
@@ -1609,7 +1609,7 @@ namespace System.Windows.Forms {
 			Carbon.HIRect scroll_rect = new Carbon.HIRect ();
 			
 			HIViewGetBounds (hwnd, ref scroll_rect);
-			HIViewScrollRect (hwnd, ref scroll_rect, (float)XAmount, (float)-YAmount);
+			HIViewScrollRect (hwnd, ref scroll_rect, (float)XAmount, (float)YAmount);
 		}
 		
 		[MonoTODO]
