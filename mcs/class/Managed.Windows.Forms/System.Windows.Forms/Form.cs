@@ -2225,7 +2225,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessTabKey(bool forward) {
-			return SelectNextControl(ActiveControl, forward, true, true, true);
+			bool need_refresh = !show_focus_cues;
+			show_focus_cues = true;
+			
+			bool control_activated = SelectNextControl(ActiveControl, forward, true, true, true);
+			
+			if (need_refresh && ActiveControl != null)
+				ActiveControl.Invalidate ();
+				
+			return control_activated;
 		}
 
 #if NET_2_0

@@ -160,7 +160,7 @@ namespace System.Windows.Forms
 				DrawButtonImage (g, b, imageBounds);
 
 			// If we're focused, draw a focus rectangle
-			if (b.Focused && b.Enabled)
+			if (b.Focused && b.Enabled && b.ShowFocusCues)
 				DrawButtonFocus (g, b);
 
 			// If we have text, draw it
@@ -216,7 +216,7 @@ namespace System.Windows.Forms
 				DrawFlatButtonImage (g, b, imageBounds);
 
 			// If we're focused, draw a focus rectangle
-			if (b.Focused && b.Enabled)
+			if (b.Focused && b.Enabled && b.ShowFocusCues)
 				DrawFlatButtonFocus (g, b);
 
 			// If we have text, draw it
@@ -274,7 +274,7 @@ namespace System.Windows.Forms
 				DrawPopupButtonImage (g, b, imageBounds);
 
 			// If we're focused, draw a focus rectangle
-			if (b.Focused && b.Enabled)
+			if (b.Focused && b.Enabled && b.ShowFocusCues)
 				DrawPopupButtonFocus (g, b);
 
 			// If we have text, draw it
@@ -623,7 +623,7 @@ namespace System.Windows.Forms
 				ButtonBase_DrawImage(button, dc);
 			
 			// Draw the focus rectangle
-			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled)
+			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled && button.ShowFocusCues)
 				ButtonBase_DrawFocus(button, dc);
 			
 			// Now the text
@@ -888,7 +888,7 @@ namespace System.Windows.Forms
 			if (imageBounds.Size != Size.Empty)
 				DrawCheckBoxImage (g, cb, imageBounds);
 
-			if (cb.Focused && cb.Enabled && cb.ShowKeyboardCuesInternal && textBounds != Rectangle.Empty)
+			if (cb.Focused && cb.Enabled && cb.ShowFocusCues && textBounds != Rectangle.Empty)
 				DrawCheckBoxFocus (g, cb, textBounds);
 
 			// If we have text, draw it

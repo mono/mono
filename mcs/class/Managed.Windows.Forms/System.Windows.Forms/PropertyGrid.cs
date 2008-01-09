@@ -818,7 +818,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override bool ShowFocusCues {
+		protected internal override bool ShowFocusCues {
 			get {
 				return base.ShowFocusCues;
 			}

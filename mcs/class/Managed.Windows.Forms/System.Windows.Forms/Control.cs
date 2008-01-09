@@ -105,7 +105,7 @@ namespace System.Windows.Forms
 		string                  text; // window/title text for control
 		internal                BorderStyle		border_style;		// Border style of control
 		bool                    show_keyboard_cues; // Current keyboard cues 
-		bool                    show_focus_cues; // Current focus cues 
+		internal bool           show_focus_cues; // Current focus cues 
 
 		// Layout
 		internal enum LayoutType {
@@ -1011,7 +1011,7 @@ namespace System.Windows.Forms
 			ime_mode = ImeMode.Inherit;
 			use_compatible_text_rendering = true;
 			show_keyboard_cues = false;
-			show_focus_cues = true;
+			show_focus_cues = SystemInformation.MenuAccessKeysUnderlined;
 
 #if NET_2_0
 			backgroundimage_layout = ImageLayout.Tile;
@@ -3448,9 +3448,15 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		protected virtual bool ShowFocusCues {
+		protected internal virtual bool ShowFocusCues {
 			get {
-				return show_focus_cues;
+				if (this is Form)
+					return show_focus_cues;
+					
+				if (this.parent == null)
+					return false;
+					
+				return this.FindForm ().show_focus_cues;
 			}
 		}
 

@@ -1,5 +1,13 @@
 2008-01-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs, Form.cs: Implement the necessary semantics for
+	ShowFocusCues.  All paint code will need to check Control.ShowFocusCues
+	to determine if a focus rectangle should be drawn.
+	* PropertyGrid.cs: Fix property visibility to match override.
+	* ThemeWin32Classic.cs: Use ShowFocusCues for Button.
+
+2008-01-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Application.cs: Use GetCommandLineArgs to calculate ExecutablePath.
 	[Fixes bug #323552]
 
