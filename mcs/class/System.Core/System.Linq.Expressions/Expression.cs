@@ -70,17 +70,12 @@ namespace System.Linq.Expressions
 				return type;
 		}
 
-		internal static bool IsNullableType(Type type)
+		internal static bool IsNullableType (Type type)
 		{
 			if (type == null)
-				throw new ArgumentNullException("type");
+				throw new ArgumentNullException ("type");
 
-			if (type.IsGenericType) {
-				Type genType = type.GetGenericTypeDefinition();
-				return typeof(Nullable<>).IsAssignableFrom(genType);
-			}
-
-			return false;
+			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 		#endregion
 		
@@ -1099,6 +1094,8 @@ namespace System.Linq.Expressions
 				throw new ArgumentNullException ("expression");
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			if (type.IsValueType && !IsNullableType (type))
+				throw new ArgumentException ("Reference or nullable type expected");
 
 			return new UnaryExpression (ExpressionType.TypeAs, expression, type);
 		}
