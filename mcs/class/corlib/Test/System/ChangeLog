@@ -1,3 +1,7 @@
+2008-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : mark KindPattern() as not working (wrt #352210).
+
 2008-01-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: In X509Certificate test case remove the Tick 

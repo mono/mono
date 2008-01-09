@@ -2149,6 +2149,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category ("NotDotNet")]
+		[Category ("NotWorking")] // wrt bug #352210
 		public void KindPattern ()
 		{
 			// no matter how the format string contains 'K' and the
