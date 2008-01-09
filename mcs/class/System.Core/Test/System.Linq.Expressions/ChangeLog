@@ -1,0 +1,5 @@
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_TypeAs.cs: correct wrong test for numerics.
+	Add test for nullable types.
+
