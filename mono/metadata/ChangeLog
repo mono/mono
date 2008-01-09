@@ -1,3 +1,40 @@
+2008-01-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: removed some old unused tables. A huge bunch of small fixes
+	to things found while testing the verifier with mono basic.
+
+	* verify.c (dump_stack_value): dump null literal flag to.
+
+	* verify.c (verify_type_compatibility_full): fix comparison
+	for types that have a generic super type.
+
+	* verify.c (verify_stack_type_compatibility): fix compatibility
+	between null literals and reference types. fix compatibility between
+	boxed valuetypes and object. fix corner case test for enums.
+
+	* verify.c (do_cmp_op): proper verification of cgt.un in case
+	of reference types.
+
+	* verify.c (do_invoke_method): fix error message.
+
+	* verify.c (do_store_indirect
+
+	* verify.c (check_is_valid_type_for_field_ops): proper verification
+	of managed pointers to valuetypes and boxed valuetypes. proper verification
+	of null literals.
+
+	* verify.c (do_unbox_value): expect valuetypes to be always boxed. don't
+	allow token to be a reference type.
+
+	* verify.c (do_cast): proper handling of boxes valuetypes.
+
+	* verify.c (do_stelem): proper handling of storing a boxed valuetype
+	in object[].
+
+	* verify.c (mono_method_verify): pass the opcode to do_cmp_op
+	to handle cgt.un properly. Implement add/mul/sub ovf opcodes.
+	fixed the decoding of unbox_any
+
 2008-01-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c (mono_gc_deregister_root): Fix the size passed to libgc.
