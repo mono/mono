@@ -94,7 +94,7 @@ mcs-compileall: mono-wrapper etc/mono/config
 	  for i in $(mcs_topdir)/class/lib/$$profile/*.{dll,exe}; do \
 		if [ ! -f $$i ] ; then \
 			continue ; \
-		fi ;  \	  
+		fi ;  \
 	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
