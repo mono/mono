@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 		private static IntPtr FosterParent;
 		private static IntPtr Subclass;
 		private static int MenuBarHeight;
+		internal static ArrayList UtilityWindows;
 
 		// Message loop
 		private static Queue MessageQueue;
@@ -218,6 +219,7 @@ namespace System.Windows.Forms {
 			WindowMapping = new Hashtable ();
 			HandleMapping = new Hashtable ();
 			WindowBackgrounds = new Hashtable ();
+			UtilityWindows = new ArrayList ();
 			
 			// Initialize the FosterParent
 			Carbon.Rect rect = new Carbon.Rect ();
@@ -933,7 +935,10 @@ namespace System.Windows.Forms {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					windowklass = Carbon.WindowClass.kDocumentWindowClass;
 				}
-				if (hwnd.border_style == FormBorderStyle.FixedToolWindow || hwnd.border_style == FormBorderStyle.SizableToolWindow) {
+				if (hwnd.border_style == FormBorderStyle.FixedToolWindow) {
+					windowklass = Carbon.WindowClass.kUtilityWindowClass;
+				} else if (hwnd.border_style == FormBorderStyle.SizableToolWindow) {
+					attributes |= Carbon.WindowAttributes.kWindowResizableAttribute;
 					windowklass = Carbon.WindowClass.kUtilityWindowClass;
 				}
 				attributes |= Carbon.WindowAttributes.kWindowLiveResizeAttribute;
@@ -946,6 +951,7 @@ namespace System.Windows.Forms {
 				}
 
 				CreateNewWindow (windowklass, attributes, ref rect, ref WindowHandle);
+
 #if DEBUG_DIRTY
 				HIViewFlashDirtyArea (WindowHandle);
 #endif
@@ -988,6 +994,9 @@ namespace System.Windows.Forms {
 			if (WindowHandle != IntPtr.Zero) {
 				WindowMapping [hwnd.Handle] = WindowHandle;
 				HandleMapping [WindowHandle] = hwnd.Handle;
+				if (hwnd.border_style == FormBorderStyle.FixedToolWindow || hwnd.border_style == FormBorderStyle.SizableToolWindow) {
+					UtilityWindows.Add (WindowHandle);
+				}
 			}
 
 			// Allow dnd on controls
@@ -2231,9 +2240,11 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int DisposeWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int ShowWindow (IntPtr wHnd);
+		internal extern static int ShowWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int HideWindow (IntPtr wHnd);
+		internal extern static int HideWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static bool IsWindowVisible (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int SetWindowBounds (IntPtr wHnd, uint reg, ref Carbon.Rect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
