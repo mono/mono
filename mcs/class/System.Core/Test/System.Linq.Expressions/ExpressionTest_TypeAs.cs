@@ -1,5 +1,5 @@
 //
-// EnumerableTest.cs
+// ExpressionTest_TypeAs.cs
 //
 // Author:
 //   Federico Di Gregorio <fog@initd.org>
@@ -33,23 +33,23 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{        
-    [TestFixture]
-    public class ExpressionTest_TypeAs
-    {
-        [Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void Arg1Null ()
-        {
-            Expression.TypeAs (null, typeof (int));
-        }
+{
+	[TestFixture]
+	public class ExpressionTest_TypeAs
+	{
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg1Null ()
+		{
+			Expression.TypeAs (null, typeof (int));
+		}
 
-        [Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void Arg2Null ()
-        {
-            Expression.TypeAs (Expression.Constant (1), null);
-        }
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg2Null ()
+		{
+			Expression.TypeAs (Expression.Constant (1), null);
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -58,32 +58,32 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.TypeAs (Expression.Constant (1), typeof (int));
 		}
 
-        [Test]
-        public void NullableNumeric ()
-        {
-            UnaryExpression expr = Expression.TypeAs (Expression.Constant (1), typeof (int?));
-            Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#01");
-            Assert.AreEqual (typeof (int?), expr.Type, "TypeAs#02");
-            Assert.AreEqual ("(1 As Nullable`1)", expr.ToString(), "TypeAs#03");
-        }
+		[Test]
+		public void NullableNumeric ()
+		{
+			UnaryExpression expr = Expression.TypeAs (Expression.Constant (1), typeof (int?));
+			Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#01");
+			Assert.AreEqual (typeof (int?), expr.Type, "TypeAs#02");
+			Assert.AreEqual ("(1 As Nullable`1)", expr.ToString(), "TypeAs#03");
+		}
 
-        [Test]
-        public void String ()
-        {
-            UnaryExpression expr = Expression.TypeAs (Expression.Constant (1), typeof (string));
-            Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#04");
-            Assert.AreEqual (typeof (string), expr.Type, "TypeAs#05");
-            Assert.AreEqual ("(1 As String)", expr.ToString(), "TypeAs#06");
-        }
+		[Test]
+		public void String ()
+		{
+			UnaryExpression expr = Expression.TypeAs (Expression.Constant (1), typeof (string));
+			Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#04");
+			Assert.AreEqual (typeof (string), expr.Type, "TypeAs#05");
+			Assert.AreEqual ("(1 As String)", expr.ToString(), "TypeAs#06");
+		}
 
-        [Test]
-        public void UserDefinedClass ()
-        {
-            UnaryExpression expr = Expression.TypeAs (Expression.Constant (new OpClass()), typeof (OpClass));
-            Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#07");
-            Assert.AreEqual (typeof (OpClass), expr.Type, "TypeAs#08");
-            Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) As OpClass)", expr.ToString(), "TypeAs#09");
-        }
+		[Test]
+		public void UserDefinedClass ()
+		{
+			UnaryExpression expr = Expression.TypeAs (Expression.Constant (new OpClass()), typeof (OpClass));
+			Assert.AreEqual (ExpressionType.TypeAs, expr.NodeType, "TypeAs#07");
+			Assert.AreEqual (typeof (OpClass), expr.Type, "TypeAs#08");
+			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) As OpClass)", expr.ToString(), "TypeAs#09");
+		}
 
-    }
+	}
 }
