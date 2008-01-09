@@ -33,7 +33,7 @@ using System.Linq;
 
 using NUnit.Framework;
 
-namespace Mono.Tests.System.Collections.Generic {
+namespace MonoTests.System.Collections.Generic {
 
 	[TestFixture]
 	public class HashSetTest {
