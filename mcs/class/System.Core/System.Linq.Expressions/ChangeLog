@@ -1,5 +1,10 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: throw ArgumentNullException when the type
+	parameter of Call is null.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: make the TypeAs test pass.
 
 2007-12-04  Marek Safar <marek.safar@gmail.com>

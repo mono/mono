@@ -586,15 +586,12 @@ namespace System.Linq.Expressions
 
 		public static MethodCallExpression Call (Type type, string methodName, Type [] typeArguments, params Expression [] arguments)
 		{
-			// FIXME: MS implementation does not check for type here and simply lets FindMethod() raise
-			// a NullReferenceException. Shall we do the same or raise the correct exception here?
-			//if (type == null)
-			//	throw new ArgumentNullException("type");
-			
+			if (type == null)
+				throw new ArgumentNullException ("type");
 			if (methodName == null)
-				throw new ArgumentNullException("methodName");
+				throw new ArgumentNullException ("methodName");
 			if (arguments == null)
-				throw new ArgumentNullException("arguments");
+				throw new ArgumentNullException ("arguments");
 
 			// Note that we're looking for static methods only (this version of Call() doesn't take an instance).
 			return Call (null, FindMethod (type, methodName, typeArguments, arguments,
