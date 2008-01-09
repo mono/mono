@@ -5263,6 +5263,12 @@ namespace Mono.CSharp {
 				return EventInfo.DeclaringType;
 			}
 		}
+		
+		void Error_AssignmentEventOnly ()
+		{
+			Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of `+=' or `-=' operator",
+				GetSignatureForError ());
+		}
 
 		public override MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
@@ -5279,6 +5285,9 @@ namespace Mono.CSharp {
 					if (!ec.IsInObsoleteScope)
 						mi.CheckObsoleteness (loc);
 
+					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.IsInCompoundAssignment)
+						Error_AssignmentEventOnly ();
+					
 					FieldExpr ml = new FieldExpr (mi.FieldBuilder, loc);
 
 					InstanceExpression = null;
@@ -5286,6 +5295,9 @@ namespace Mono.CSharp {
 					return ml.ResolveMemberAccess (ec, left, loc, original);
 				}
 			}
+			
+			if (left is This && !ec.IsInCompoundAssignment)			
+				Error_AssignmentEventOnly ();
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
@@ -5357,11 +5369,8 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (InstanceExpression is This)
-				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=", GetSignatureForError ());
-			else
-				Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
-					      "(except on the defining type)", Name);
+			Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
+				      "(except on the defining type)", GetSignatureForError ());
 		}
 
 		public override string GetSignatureForError ()

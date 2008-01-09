@@ -283,7 +283,9 @@ namespace Mono.CSharp {
 			//
 			InFieldInitializer = 1 << 8,
 			
-			InferReturnType = 1 << 9
+			InferReturnType = 1 << 9,
+			
+			InCompoundAssignment = 1 << 10
 		}
 
 		Flags flags;
@@ -581,6 +583,10 @@ namespace Mono.CSharp {
 		public bool IsInFieldInitializer {
 			get { return (flags & Flags.InFieldInitializer) != 0; }
 		}
+		
+		public bool IsInCompoundAssignment {
+			get { return (flags & Flags.InCompoundAssignment) != 0; }
+		}		
 
 		public FlowBranching CurrentBranching {
 			get { return current_flow_branching; }

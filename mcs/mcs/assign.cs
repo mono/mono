@@ -688,7 +688,10 @@ namespace Mono.CSharp {
 			if (original_source == null)
 				return null;
 
-			target = target.Resolve (ec);
+			using (ec.Set (EmitContext.Flags.InCompoundAssignment)) {
+				target = target.Resolve (ec);
+			}
+			
 			if (target == null)
 				return null;
 
