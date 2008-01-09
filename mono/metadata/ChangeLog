@@ -1,3 +1,8 @@
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_class_native_size): Always set *align even if this is called
+	recursively.
+
 2008-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* verify.c (mono_verify_corlib): Remove this as it was not used and was 
