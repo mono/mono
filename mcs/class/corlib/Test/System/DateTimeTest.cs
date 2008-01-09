@@ -1530,6 +1530,7 @@ namespace MonoTests.System
 		{
 			// if this test fails then *ALL* or *MOST* X509Certificate tests will also fails
 			DateTime dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
+			Assert.AreEqual (629622851270000000, dt.Ticks, "#0");
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Local, dt.Kind, "#1");
 			dt = dt.ToUniversalTime ();
@@ -1991,6 +1992,16 @@ namespace MonoTests.System
 			((IConvertible)DateTime.Now).ToType (typeof (ulong), null);
 		}
 
+		[Test]
+		public void Bug352210 ()
+		{
+			DateTime dt = DateTime.ParseExact ("2007-06-15T10:30:10.5", "yyyy-MM-ddTHH:mm:ss.f", null);
+			Assert.AreEqual (633175002105000000, dt.Ticks, "#1");
+#if NET_2_0
+			Assert.AreEqual (DateTimeKind.Unspecified, dt.Kind, "#2");
+#endif
+		}
+
 #if NET_2_0
 		[Test]
 		public void Kind ()
@@ -2133,15 +2144,20 @@ namespace MonoTests.System
 
 		[Test]
 		[Category ("NotDotNet")]
-		public void RundtripKindPattern ()
+		public void KindPattern ()
 		{
+			// no matter how the format string contains 'K' and the
+			// output string contains kind information, it does not
+			// assure that the string is parsed as roundtrip kind.
+
 			// only 2.0 supports 'K'
 			string format = "yyyy-MM-dd'T'HH:mm:ss.fffK";
 			CultureInfo ci = CultureInfo.CurrentCulture;
 			DateTime dt = DateTime.SpecifyKind (new DateTime (2007, 11, 1, 2, 30, 45), DateTimeKind.Utc);
 			string s = dt.ToString (format);
-			DateTime d1 = DateTime.ParseExact (s, format, ci);
-			Assert.AreEqual (dt.Ticks, d1.Ticks, "#1");
+			DateTime d1 = DateTime.ParseExact (s, format, ci); // d1 is parsed as a local time.
+			Assert.AreEqual (dt.Ticks, d1.ToUniversalTime ().Ticks, "#1");
+			// .NET expects Local here, while s ends with 'Z' and should be parsed as UTC.
 			Assert.AreEqual (DateTimeKind.Utc, d1.Kind, "#2");
 
 			format = "yyyy-MM-dd'T'HH:mm:ssK";
@@ -2150,7 +2166,7 @@ namespace MonoTests.System
 			s = dt.ToString (format);
 			d1 = DateTime.ParseExact (s, format, ci);
 			Assert.AreEqual (dt.Ticks, d1.Ticks, "#3");
-			Assert.AreEqual (DateTimeKind.Local, d1.Kind, "#4");
+			Assert.AreEqual (DateTimeKind.Unspecified, d1.Kind, "#4");
 		}
 #endif
 	}

@@ -1,3 +1,9 @@
+2008-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added test for bug #352210. Renamed 
+	  RoundtripKindPattern() to KindPattern(), as it is not really about
+	  roundtrip. Test tick value for 'Z' pattern (X509 cert) as well.
+
 2008-01-08  Marek Safar  <marek.safar@gmail.com>
 
 	* ArrayTest.cs: Test both LastIndexOf versions for

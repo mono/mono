@@ -1167,7 +1167,7 @@ namespace System
 #if NET_2_0
 			DateTimeKind explicit_kind = DateTimeKind.Unspecified;
 #endif
-			bool useutc = false, use_localtime = true;
+			bool useutc = false, use_localtime = true, x509format = false;
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
 			bool afterTimePart = firstPartIsDate && secondPart == "";
@@ -1547,7 +1547,6 @@ namespace System
 				case 'K':
 					if (s [valuePos] == 'Z') {
 						valuePos++;
-						useutc = true;
 						explicit_kind = DateTimeKind.Utc;
 					}
 					else if (s [valuePos] == '+' || s [valuePos] == '-') {
@@ -1592,6 +1591,7 @@ namespace System
 					num = 0;
 					num_parsed = 1;
 					useutc = true;
+					x509format = true;
 					break;
 
 				case ':':
@@ -1719,7 +1719,7 @@ namespace System
 			// If no timezone was specified, default to the local timezone.
 			TimeSpan utcoffset;
 
-			if (useutc) {
+			if (useutc || x509format) {
 				if ((style & DateTimeStyles.AdjustToUniversal) != 0)
 					use_localtime = false;
 				utcoffset = new TimeSpan (0, 0, 0);
@@ -1744,12 +1744,13 @@ namespace System
 
 			result = new DateTime (false, new TimeSpan (newticks));
 #if NET_2_0
-			if (explicit_kind != DateTimeKind.Unspecified)
-				result.kind = explicit_kind;
-			else if (use_localtime)
+			if (x509format)
 				result = result.ToLocalTime ();
-			else
-				result.kind = DateTimeKind.Utc;
+			else {
+				if (use_localtime)
+					result = result.ToLocalTime ();
+				result.kind = explicit_kind;
+			}
 #else
 			if (use_localtime)
 				result = result.ToLocalTime ();
