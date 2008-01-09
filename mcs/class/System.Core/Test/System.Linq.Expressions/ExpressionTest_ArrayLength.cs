@@ -58,15 +58,12 @@ namespace MonoTests.System.Linq.Expressions
         }
 
         [Test]
+		[ExpectedException (typeof (ArgumentException))]
         public void Rank2String ()
         {
-            string[,] array = {{ "a", "b", "c" }, { "a", "b", "c" }};
+            string[,] array = {{ }, { }};
             
-            UnaryExpression expr = Expression.ArrayLength (Expression.Constant (array));
-            Assert.AreEqual (ExpressionType.ArrayLength, expr.NodeType, "ArrayLength#05");
-            Assert.AreEqual (typeof (int), expr.Type, "ArrayLength#06");
-            Assert.IsNull (expr.Method, "ArrayLength#07");
-            Assert.AreEqual ("ArrayLength(value(System.String[,]))", expr.ToString(), "ArrayLength#08");
+            Expression.ArrayLength (Expression.Constant (array));
         }
     }
 }

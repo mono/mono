@@ -1,5 +1,9 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_ArrayLength.cs: Fix Rank2String to pass on .net.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_Call.cs: fix wrong test.
 
 2008-01-09  Jb Evain  <jbevain@novell.com>
