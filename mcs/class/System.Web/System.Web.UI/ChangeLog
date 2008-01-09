@@ -1,3 +1,9 @@
+2008-01-09 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Page.cs:
+	* ClientScriptManager.cs:
+	refactoring.		
+
 2008-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs: added internal API

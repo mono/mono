@@ -746,15 +746,12 @@ namespace System.Web.UI
 #if NET_2_0
 			RegisterClientScriptBlock (GetType(), "HtmlForm-OnSubmitStatemen",
 @"
-" + (page.IsMultiForm ? page.theForm + "." : null) + @"WebForm_OnSubmit = function () {
+" + page.WebFormScriptReference + @".WebForm_OnSubmit = function () {
 " + sb.ToString () + @"
 return true;
 }
 ", true);
-			if (page.IsMultiForm)
-				return "javascript:return " + page.theForm + ".WebForm_OnSubmit();";
-			else
-				return "javascript:return WebForm_OnSubmit();";
+			return "javascript:return " + page.WebFormScriptReference + ".WebForm_OnSubmit();";
 
 #else
 			return sb.ToString ();

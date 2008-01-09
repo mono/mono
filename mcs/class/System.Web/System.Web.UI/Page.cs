@@ -1073,21 +1073,17 @@ public partial class Page : TemplateControl, IHttpHandler
 #if ONLY_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
 #endif
-		if (IsMultiForm) {
-			writer.WriteLine ("{0}._form = {0};", theForm);
-			writer.Write (theForm + ".");
-		} else {
-			writer.WriteLine ("window._form = {0};", theForm);
-		}
-		writer.WriteLine ("__doPostBack = function (eventTarget, eventArgument) {");
 #if NET_2_0
-		writer.WriteLine ("\tif(this._form.onsubmit && this._form.onsubmit() == false) return;");
+		writer.WriteLine (WebFormScriptReference + "._form = " + theForm + ";");
+		writer.WriteLine (WebFormScriptReference + ".__doPostBack = function (eventTarget, eventArgument) {");
+		writer.WriteLine ("\tif(" + theForm + ".onsubmit && " + theForm + ".onsubmit() == false) return;");
 #else
+		writer.WriteLine ("__doPostBack = function (eventTarget, eventArgument) {");
 		writer.WriteLine ("\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
 #endif
-		writer.WriteLine ("\tthis._form.{0}.value = eventTarget;", postEventSourceID);
-		writer.WriteLine ("\tthis._form.{0}.value = eventArgument;", postEventArgumentID);
-		writer.WriteLine ("\tthis._form.submit();");
+		writer.WriteLine ("\t" + theForm + "." + postEventSourceID + ".value = eventTarget;");
+		writer.WriteLine ("\t" + theForm + "." + postEventArgumentID + ".value = eventArgument;");
+		writer.WriteLine ("\t" + theForm + ".submit();");
 		writer.WriteLine ("}");
 		ClientScriptManager.WriteEndScriptBlock (writer);
 	}
@@ -2096,31 +2092,19 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (!String.IsNullOrEmpty (_focusedControlID)) {
 			ClientScript.RegisterWebFormClientScript ();
 			
-			string webForm;
-			if (IsMultiForm)
-				webForm = theForm + ".";
-			else
-				webForm = String.Empty;
-			
 			ClientScript.RegisterStartupScript (
 				typeof(Page),
 				"HtmlForm-DefaultButton-StartupScript",
-				"\n" + webForm + "WebForm_AutoFocus('" + _focusedControlID + "');\n", true);
+				"\n" + WebFormScriptReference + ".WebForm_AutoFocus('" + _focusedControlID + "');\n", true);
 		}
 		
 		if (Form.SubmitDisabledControls && _hasEnabledControlArray) {
 			ClientScript.RegisterWebFormClientScript ();
 
-			string webForm;
-			if (IsMultiForm)
-				webForm = theForm + ".";
-			else
-				webForm = String.Empty;
-
 			ClientScript.RegisterOnSubmitStatement (
 				typeof (Page),
 				"HtmlForm-SubmitDisabledControls-SubmitStatement",
-				webForm + "WebForm_ReEnableControls();");
+				WebFormScriptReference + ".WebForm_ReEnableControls();");
 		}
 	}
 
