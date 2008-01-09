@@ -1530,7 +1530,6 @@ namespace MonoTests.System
 		{
 			// if this test fails then *ALL* or *MOST* X509Certificate tests will also fails
 			DateTime dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null);
-			Assert.AreEqual (629622851270000000, dt.Ticks, "#0");
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Local, dt.Kind, "#1");
 			dt = dt.ToUniversalTime ();
@@ -1550,6 +1549,11 @@ namespace MonoTests.System
 			dt = dt.ToUniversalTime ();
 #endif
 			Assert.AreEqual ("02/23/1996 19:15:00", dt.ToString (), "#6");
+
+#if NET_2_0
+			dt = DateTime.ParseExact ("19960312183847Z", "yyyyMMddHHmmssZ", null, DateTimeStyles.AdjustToUniversal);
+			Assert.AreEqual (DateTimeKind.Utc, dt.Kind, "#7");
+#endif
 		}
 
 		[Test]

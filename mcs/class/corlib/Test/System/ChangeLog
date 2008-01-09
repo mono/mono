@@ -1,3 +1,9 @@
+2008-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTimeTest.cs: In X509Certificate test case remove the Tick 
+	assert (depends on timezone) and add a test for AdjustToUniversal
+	when using Z.
+
 2008-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : the previous fix was reverted, so mark
