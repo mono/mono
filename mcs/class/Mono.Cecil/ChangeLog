@@ -1,3 +1,7 @@
+2008-01-10  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionHelper.cs: deal with complex arrays.
+
 2008-01-07  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/CilWorker.cs:

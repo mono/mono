@@ -74,10 +74,20 @@ namespace Mono.Cecil {
 			if (t.HasElementType) {
 				if (t.IsPointer)
 					return string.Concat (GetTypeSignature (t.GetElementType ()), "*");
-				else if (t.IsArray) // deal with complex arrays
-					return string.Concat (GetTypeSignature (t.GetElementType ()), "[]");
-				else if (t.IsByRef)
-					return string.Concat (GetTypeSignature (t.GetElementType ()), "&");
+				else if (t.IsArray) {
+					int rank = t.GetArrayRank ();
+					if (rank == 1)
+						return string.Concat (GetTypeSignature (t.GetElementType ()), "[]");
+
+					StringBuilder sb = new StringBuilder ();
+					sb.Append ('[');
+					for (int i = 1; i < rank; i++)
+						sb.Append (',');
+					sb.Append (']');
+
+					return string.Concat (GetTypeSignature (t.GetElementType ()), sb.ToString ());
+				} else if (t.IsByRef)
+					return string.Concat(GetTypeSignature(t.GetElementType()), "&");
 			}
 
 			if (IsGenericTypeSpec (t)) {
@@ -186,8 +196,8 @@ namespace Mono.Cecil {
 				t = (Type) s.Pop ();
 				if (t.IsPointer)
 					elementType = new PointerType (elementType);
-				else if (t.IsArray) // deal with complex arrays
-					elementType = new ArrayType (elementType);
+				else if (t.IsArray)
+					elementType = new ArrayType (elementType, t.GetArrayRank ());
 				else if (t.IsByRef)
 					elementType = new ReferenceType (elementType);
 				else if (IsGenericTypeSpec (t))
@@ -254,7 +264,7 @@ namespace Mono.Cecil {
 			SR.ParameterInfo [] parameters = meth.GetParameters ();
 			for (int i = 0; i < parameters.Length; i++) {
 				if (i > 0)
-					sb.Append (", ");
+					sb.Append (",");
 				sb.Append (GetTypeSignature (parameters [i].ParameterType));
 			}
 			sb.Append (")");
