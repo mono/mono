@@ -1,5 +1,9 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: implement GetActionType.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: fix GetFuncType to return the correct type
 	depending on the asked arity.
 

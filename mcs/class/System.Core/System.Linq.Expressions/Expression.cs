@@ -721,6 +721,33 @@ namespace System.Linq.Expressions
 		}
 		#endregion
 
+		public static Type GetActionType (params Type [] typeArgs)
+		{
+			if (typeArgs == null)
+				throw new ArgumentNullException ("typeArgs");
+
+			if (typeArgs.Length < 1 || typeArgs.Length > 4)
+				throw new ArgumentException ("No Action type of this arity");
+
+			Type action = null;
+			switch (typeArgs.Length) {
+			case 1:
+				action = typeof (Action<>);
+				break;
+			case 2:
+				action = typeof (Action<,>);
+				break;
+			case 3:
+				action = typeof (Action<,,>);
+				break;
+			case 4:
+				action = typeof (Action<,,,>);
+				break;
+			}
+
+			return action.MakeGenericType (typeArgs);
+		}
+
 		public static Type GetFuncType (params Type [] typeArgs)
 		{
 			if (typeArgs == null)
