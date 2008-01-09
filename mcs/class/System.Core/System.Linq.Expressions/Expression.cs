@@ -721,14 +721,34 @@ namespace System.Linq.Expressions
 		}
 		#endregion
 
-		public static Type GetFuncType(params Type[] typeArgs)
+		public static Type GetFuncType (params Type [] typeArgs)
 		{
 			if (typeArgs == null)
-				throw new ArgumentNullException("typeArgs");
-			if (typeArgs.Length > 5)
-				throw new ArgumentException();
+				throw new ArgumentNullException ("typeArgs");
 
-			return typeof(Func<,,,,>).MakeGenericType(typeArgs);
+			if (typeArgs.Length < 1 || typeArgs.Length > 5)
+				throw new ArgumentException ("No Func type of this arity");
+
+			Type func = null;
+			switch (typeArgs.Length) {
+			case 1:
+				func = typeof (Func<>);
+				break;
+			case 2:
+				func = typeof (Func<,>);
+				break;
+			case 3:
+				func = typeof (Func<,,>);
+				break;
+			case 4:
+				func = typeof (Func<,,,>);
+				break;
+			case 5:
+				func = typeof (Func<,,,,>);
+				break;
+			}
+
+			return func.MakeGenericType (typeArgs);
 		}
 
 		#region LeftShift

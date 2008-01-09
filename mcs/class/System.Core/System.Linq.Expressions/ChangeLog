@@ -1,5 +1,10 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: fix GetFuncType to return the correct type
+	depending on the asked arity.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: ArrayLength: only accept single
 	dimensional array.
 
