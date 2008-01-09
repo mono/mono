@@ -112,23 +112,36 @@ webForm.WebForm_ReDisableControls = function  ()
 	}
 }
 
-webForm.WebForm_DoPostback = function  (id, par, url, apb, pval, tf, csubm, vg)
+webForm.WebForm_DoPostback = function (eventTarget, eventArgument, actionUrl, autoPostBack, validation, trackFocus, clientSubmit, validationGroup)
 {
+	webForm.WebForm_DoPostBackWithOptions({
+		"eventTarget" : eventTarget,
+		"eventArgument" : eventArgument,
+		"validation" : validation,
+		"validationGroup" : validationGroup,
+		"actionUrl" : actionUrl,
+		"trackFocus" : trackFocus,
+		"clientSubmit" : clientSubmit,
+		"autoPostBack" : autoPostBack
+		});
+}
+
+webForm.WebForm_DoPostBackWithOptions = function  (options) {
 	var validationResult = true;
-	if (pval && typeof(this.Page_ClientValidate) == "function")
-		validationResult =  this.Page_ClientValidate(vg);
+	if (options.validation && typeof(webForm.Page_ClientValidate) == "function")
+		validationResult =  webForm.Page_ClientValidate(options.validationGroup);
 
 	if (validationResult) {
-		if ((typeof(url) != "undefined") && (url != null) && (url.length > 0))
-			this._form.action = url;
-		if (tf) {
-			var lastFocus = this._form.elements["__LASTFOCUS"];
+		if ((typeof(options.actionUrl) != "undefined") && (options.actionUrl != null) && (options.actionUrl.length > 0))
+			webForm._form.action = options.actionUrl;
+		if (options.trackFocus) {
+			var lastFocus = webForm._form.elements["__LASTFOCUS"];
 			if ((typeof(lastFocus) != "undefined") && (lastFocus != null))
-				lastFocus.value = id;
+				lastFocus.value = options.eventTarget;
 		}
 	}		
-	if (csubm)
-		this.__doPostBack (id, par);
+	if (options.clientSubmit)
+		webForm.__doPostBack (options.eventTarget, options.eventArgument);
 }
 
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)

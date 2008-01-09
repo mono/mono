@@ -47,16 +47,16 @@ webForm.ValidatorOnLoad = function  ()
 		var vo = webForm.Page_Validators [v];
 
 		if (typeof(vo.isvalid) == "string" && vo.isvalid == "False")
-			vo.isvalid = false;
+			vo._isvalid = false;
 		else
-			vo.isvalid = true;
+			vo._isvalid = true;
 
 		if (typeof(vo.enabled) == "string" && vo.enabled == "False")
-			vo.enabled = false;
+			vo._enabled = false;
 		else
-			vo.enabled = true;
+			vo._enabled = true;
 			
-		vo.evaluationfunction = this [vo.evaluationfunction];
+		vo._evaluationfunction = webForm [vo.evaluationfunction];
 	}
 
 	webForm.Page_ValidationActive = true;
@@ -108,7 +108,7 @@ webForm.ValidationSummaryOnSubmit = function (group)
 						for (var v = 0; v < webForm.Page_Validators.length; v++) {
 				      var vo = webForm.Page_Validators [v];
 
-					    if (!vo.isvalid) {
+					    if (!vo._isvalid) {
 						    var text = vo.errormessage;
 						    if (text != null && text != "") {
 							    html += item_pre + text + item_post;
@@ -127,7 +127,7 @@ webForm.ValidationSummaryOnSubmit = function (group)
 						for (var v = 0; v < webForm.Page_Validators.length; v++) {
 				      var vo = webForm.Page_Validators [v];
 
-					    if (!vo.isvalid) {
+					    if (!vo._isvalid) {
 						    var text = vo.errormessage;
 						    if (text != null && text != "") {
 							    v_contents += "-" + text + "\n";
@@ -207,10 +207,10 @@ webForm.Page_ClientValidate = function (group)
 	var invalidControlHasBeenFocused = false;
 	for (var v = 0; v < webForm.Page_Validators.length; v++) {
 		var vo = webForm.Page_Validators [v];
-		var evalfunc = vo.evaluationfunction;
+		var evalfunc = vo._evaluationfunction;
 		var result = false;
 
-		if (!vo.enabled || !webForm.IsValidationGroupMatch(vo, group)) {
+		if (!vo._enabled || !webForm.IsValidationGroupMatch(vo, group)) {
 			result = true;
 			webForm.ValidatorSucceeded (vo);
 		}
@@ -225,7 +225,7 @@ webForm.Page_ClientValidate = function (group)
 			}
 		}
 		
-		vo.isvalid = result;
+		vo._isvalid = result;
 	}
     webForm.ValidationSummaryOnSubmit(group);
 	return webForm.validation_result;
