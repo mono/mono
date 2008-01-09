@@ -950,7 +950,7 @@ namespace System.Windows.Forms
 				label_rect.Height = icon_rect.Height = item_ht;
 				checkbox_rect.Y = item_ht - checkbox_rect.Height;
 
-				label_rect.X = icon_rect.Right + 1;
+				label_rect.X = icon_rect.Width > 0 ? icon_rect.Right + 1 : icon_rect.Right;
 
 				if (owner.Columns.Count > 0)
 					label_rect.Width = owner.Columns[0].Wd - label_rect.X + checkbox_rect.X;
