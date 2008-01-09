@@ -726,8 +726,11 @@ namespace System.Linq.Expressions
 			if (typeArgs == null)
 				throw new ArgumentNullException ("typeArgs");
 
-			if (typeArgs.Length < 1 || typeArgs.Length > 4)
+			if (typeArgs.Length > 4)
 				throw new ArgumentException ("No Action type of this arity");
+
+			if (typeArgs.Length == 0)
+				return typeof (Action);
 
 			Type action = null;
 			switch (typeArgs.Length) {

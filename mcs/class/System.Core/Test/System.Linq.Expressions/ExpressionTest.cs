@@ -87,13 +87,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void GetActionTypeArgEmpty ()
-		{
-			Expression.GetActionType (new Type [0]);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetActionTypeArgTooBig ()
 		{
 			Expression.GetActionType (new Type [5]);
@@ -102,7 +95,10 @@ namespace MonoTests.System.Linq.Expressions {
 		[Test]
 		public void GetActionTypeTest ()
 		{
-			var action = Expression.GetActionType (new [] {typeof (int)});
+			var action = Expression.GetActionType (new Type [0]);
+			Assert.AreEqual (typeof (Action), action);
+
+			action = Expression.GetActionType (new [] {typeof (int)});
 			Assert.AreEqual (typeof (Action<int>), action);
 
 			action = Expression.GetActionType (new [] {typeof (int), typeof (int)});
