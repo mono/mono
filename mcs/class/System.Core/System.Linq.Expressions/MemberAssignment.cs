@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
+//		Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System.Reflection;
@@ -25,32 +25,32 @@ using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class MemberAssignment : MemberBinding
-    {
-        #region .ctor
-        internal MemberAssignment (MemberInfo member, Expression expression)
-            : base (MemberBindingType.Assignment, member)
-        {
-            this.expression = expression;
-        }
-        #endregion
+	public sealed class MemberAssignment : MemberBinding
+	{
+		#region .ctor
+		internal MemberAssignment (MemberInfo member, Expression expression)
+			: base (MemberBindingType.Assignment, member)
+		{
+			this.expression = expression;
+		}
+		#endregion
 
-        #region Fields
-        private Expression expression;
-        #endregion
+		#region Fields
+		private Expression expression;
+		#endregion
 
-        #region Properties
-        public Expression Expression {
-            get { return expression; }
-        }
-        #endregion
+		#region Properties
+		public Expression Expression {
+			get { return expression; }
+		}
+		#endregion
 
-        #region Internal Methods
-        internal override void BuildString (StringBuilder builder)
-        {
-            builder.Append (Member.Name).Append (" = ");
-            expression.BuildString (builder);
-        }
-        #endregion
-    }
+		#region Internal Methods
+		internal override void BuildString (StringBuilder builder)
+		{
+			builder.Append (Member.Name).Append (" = ");
+			expression.BuildString (builder);
+		}
+		#endregion
+	}
 }

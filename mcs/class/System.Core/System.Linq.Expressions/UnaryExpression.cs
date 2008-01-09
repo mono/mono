@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,8 +17,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
-//        Federico Di Gregorio  <fog@initd.org>
+//		Antonello Provenzano  <antonello@deveel.com>
+//		Federico Di Gregorio  <fog@initd.org>
 //
 
 using System.Reflection;
@@ -26,71 +26,71 @@ using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class UnaryExpression : Expression
-    {
-        #region .ctor
-        internal UnaryExpression(ExpressionType nt, Expression operand, MethodInfo method, Type type)
-            : base(nt, type)
-        {
-            this.operand = operand;
-            this.method = method;
-        }
+	public sealed class UnaryExpression : Expression
+	{
+		#region .ctor
+		internal UnaryExpression(ExpressionType nt, Expression operand, MethodInfo method, Type type)
+			: base(nt, type)
+		{
+			this.operand = operand;
+			this.method = method;
+		}
 
-        internal UnaryExpression(ExpressionType nt, Expression operand, Type type)
-            : this(nt, operand, null, type)
-        {
-        }
-        #endregion
+		internal UnaryExpression(ExpressionType nt, Expression operand, Type type)
+			: this(nt, operand, null, type)
+		{
+		}
+		#endregion
 
-        #region Fields
-        private MethodInfo method;
-        private Expression operand;
-        #endregion
+		#region Fields
+		private MethodInfo method;
+		private Expression operand;
+		#endregion
 
-        #region Properties
-        [MonoTODO]
-        public bool IsLifted {
-            get { return false; }
-        }
+		#region Properties
+		[MonoTODO]
+		public bool IsLifted {
+			get { return false; }
+		}
 
-        [MonoTODO]
-        public bool IsLiftedToNull {
-            get { return false; }
-        }
+		[MonoTODO]
+		public bool IsLiftedToNull {
+			get { return false; }
+		}
 
-        public MethodInfo Method {
-            get { return method; }
-        }
+		public MethodInfo Method {
+			get { return method; }
+		}
 
-        public Expression Operand {
-            get { return operand; }
-        }
-        #endregion
+		public Expression Operand {
+			get { return operand; }
+		}
+		#endregion
 
-        #region Internal Methods
-        internal override void BuildString(StringBuilder builder)
-        {
-            switch (NodeType)
-            {
-            case ExpressionType.ArrayLength:
-                builder.Append ("ArrayLength(");
-                operand.BuildString (builder);
-                builder.Append (")");
-                break;
+		#region Internal Methods
+		internal override void BuildString(StringBuilder builder)
+		{
+			switch (NodeType)
+			{
+			case ExpressionType.ArrayLength:
+				builder.Append ("ArrayLength(");
+				operand.BuildString (builder);
+				builder.Append (")");
+				break;
 
-            case ExpressionType.Quote:
-                operand.BuildString (builder);
-                break;
+			case ExpressionType.Quote:
+				operand.BuildString (builder);
+				break;
 
-            case ExpressionType.TypeAs:
-                builder.Append ("(");
-                operand.BuildString (builder);
-                builder.Append (" As ").Append (Type.Name);
-                builder.Append (")");
-                break;
+			case ExpressionType.TypeAs:
+				builder.Append ("(");
+				operand.BuildString (builder);
+				builder.Append (" As ").Append (Type.Name);
+				builder.Append (")");
+				break;
 
-            }
-         }
-        #endregion
-    }
+			}
+		 }
+		#endregion
+	}
 }

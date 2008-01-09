@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,51 +17,51 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
-//        Federico Di Gregorio  <fog@initd.org>
+//		Antonello Provenzano  <antonello@deveel.com>
+//		Federico Di Gregorio  <fog@initd.org>
 //
 
 using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class TypeBinaryExpression : Expression
-    {
-        #region .ctor
-        internal TypeBinaryExpression (ExpressionType nt, Expression expression, Type typeop, Type resultType)
-            : base (nt, resultType)
-        {
-            this.expression = expression;
-            this.typeop = typeop;
-        }
-        #endregion
+	public sealed class TypeBinaryExpression : Expression
+	{
+		#region .ctor
+		internal TypeBinaryExpression (ExpressionType nt, Expression expression, Type typeop, Type resultType)
+			: base (nt, resultType)
+		{
+			this.expression = expression;
+			this.typeop = typeop;
+		}
+		#endregion
 
-        #region Fields
-        private Expression expression;
-        private Type typeop;
-        #endregion
+		#region Fields
+		private Expression expression;
+		private Type typeop;
+		#endregion
 
-        #region Properties
-        public Expression Expression {
-            get { return expression; }
-        }
+		#region Properties
+		public Expression Expression {
+			get { return expression; }
+		}
 
-        public Type TypeOperand {
-            get { return typeop; }
-        }
-        #endregion
+		public Type TypeOperand {
+			get { return typeop; }
+		}
+		#endregion
 
-        #region Internal Methods
-        internal override void BuildString(StringBuilder builder)
-        {
-            builder.Append ("(");
-            expression.BuildString(builder);
-            builder.Append (" Is ");
-            // That would be better (because incorporates namespace information) but MS code does it the other way.
-            // builder.Append (typeop.Namespace == "System" ? typeop.Name : typeop.FullName);
-            builder.Append (typeop.Name);            
-            builder.Append (")");
-        }
-        #endregion
-    }
+		#region Internal Methods
+		internal override void BuildString(StringBuilder builder)
+		{
+			builder.Append ("(");
+			expression.BuildString(builder);
+			builder.Append (" Is ");
+			// That would be better (because incorporates namespace information) but MS code does it the other way.
+			// builder.Append (typeop.Namespace == "System" ? typeop.Name : typeop.FullName);
+			builder.Append (typeop.Name);
+			builder.Append (")");
+		}
+		#endregion
+	}
 }

@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
+//		Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System.Collections.ObjectModel;
@@ -25,54 +25,54 @@ using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class ListInitExpression : Expression
-    {
-        #region .ctor
-        internal ListInitExpression(NewExpression newExpression, ReadOnlyCollection<ElementInit> expressions)
-            : base(ExpressionType.ListInit, newExpression.Type)
-        {
-            this.newExpression = newExpression;
-            this.initializers = initializers;
-        }
-        #endregion
+	public sealed class ListInitExpression : Expression
+	{
+		#region .ctor
+		internal ListInitExpression(NewExpression newExpression, ReadOnlyCollection<ElementInit> expressions)
+			: base(ExpressionType.ListInit, newExpression.Type)
+		{
+			this.newExpression = newExpression;
+			this.initializers = initializers;
+		}
+		#endregion
 
-        #region Fields
-        private ReadOnlyCollection<ElementInit> initializers;
-        private NewExpression newExpression;
-        #endregion
+		#region Fields
+		private ReadOnlyCollection<ElementInit> initializers;
+		private NewExpression newExpression;
+		#endregion
 
-        #region Properties
-        public ReadOnlyCollection<ElementInit> Initializers
-        {
-            get { return initializers; }
-        }
+		#region Properties
+		public ReadOnlyCollection<ElementInit> Initializers
+		{
+			get { return initializers; }
+		}
 
-        public NewExpression NewExpression
-        {
-            get { return newExpression; }
-        }
-        #endregion
+		public NewExpression NewExpression
+		{
+			get { return newExpression; }
+		}
+		#endregion
 
-        #region Internal Methods
-        internal override void BuildString(StringBuilder builder)
-        {
-            // we need to build the "new" expression before...
-            newExpression.BuildString(builder);
+		#region Internal Methods
+		internal override void BuildString(StringBuilder builder)
+		{
+			// we need to build the "new" expression before...
+			newExpression.BuildString(builder);
 
-            //... and the elements of the list ...
-            builder.Append("{");
+			//... and the elements of the list ...
+			builder.Append("{");
 
-            int exprc = initializers.Count;
-            for (int i = 0; i < exprc; i++)
-            {
+			int exprc = initializers.Count;
+			for (int i = 0; i < exprc; i++)
+			{
 				throw new System.NotImplementedException ();
-                //initializers[i].BuildString(builder);
-                //if (i < initializers.Count - 1)
-                //    builder.Append(", ");
-            }
+				//initializers[i].BuildString(builder);
+				//if (i < initializers.Count - 1)
+				//	builder.Append(", ");
+			}
 
-            builder.Append("}");
-        }
-        #endregion
-    }
+			builder.Append("}");
+		}
+		#endregion
+	}
 }

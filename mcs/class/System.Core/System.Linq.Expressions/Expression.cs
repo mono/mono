@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,12 +37,12 @@ namespace System.Linq.Expressions
 			this.type = type;
 		}
 		#endregion
-		
+
 		#region Fields
 		private Type type;
 		private ExpressionType nodeType;
 		#endregion
-		
+
 		#region Properties
 		public Type Type {
 			get { return type; }
@@ -53,17 +53,17 @@ namespace System.Linq.Expressions
 		}
 		#endregion
 
-		#region Internal methods 
+		#region Internal methods
 		internal virtual void BuildString (StringBuilder builder)
 		{
 			builder.Append ("[").Append (nodeType).Append ("]");
 		}
-		
+
 		internal static Type GetNonNullableType(Type type)
 		{
 			// The Nullable<> class takes a single generic type so we can directly return
 			// the first element of the array (if the type is nullable.)
-			
+
 			if (IsNullableType (type))
 				return type.GetGenericArguments ()[0];
 			else
@@ -78,7 +78,7 @@ namespace System.Linq.Expressions
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 		#endregion
-		
+
 		#region Private support methods
 		private static int IsWhat(Type type)
 		{
@@ -88,27 +88,27 @@ namespace System.Linq.Expressions
 
 			if (IsNullableType (type))
 				type = GetNonNullableType (type);
-				
+
 			switch (Type.GetTypeCode (type)) {
 				case TypeCode.Byte:  case TypeCode.SByte:
 				case TypeCode.Int16: case TypeCode.UInt16:
 				case TypeCode.Int32: case TypeCode.UInt32:
 				case TypeCode.Int64: case TypeCode.UInt64:
 				return 1;
-				
+
 				case TypeCode.Boolean:
 				return 2;
-				
+
 				case TypeCode.Single:
 				case TypeCode.Double:
 				case TypeCode.Decimal:
 				return 4;
-				
+
 				default:
 				return 0;
 			}
 		}
-		
+
 		private static bool IsInteger (Type type)
 		{
 			return (IsWhat(type) & 1) != 0;
@@ -121,25 +121,25 @@ namespace System.Linq.Expressions
 
 		private static bool IsNumeric (Type type)
 		{
-			return (IsWhat(type) & 5) != 0;		
+			return (IsWhat(type) & 5) != 0;
 		}
-		
+
 		private const BindingFlags opBindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
 		private static MethodInfo GetUserDefinedBinaryOperator (Type leftType, Type rightType, string name)
 		{
 			Type[] types = new Type[2] { leftType, rightType };
 			MethodInfo method;
-			
+
 			method  = leftType.GetMethod (name, opBindingFlags, null, types, null);
 			if (method != null) return method;
-				
+
 			method = rightType.GetMethod (name, opBindingFlags, null, types, null);
 			if (method != null) return method;
 
 			if (method == null && IsNullableType (leftType) && IsNullableType (rightType))
 				return GetUserDefinedBinaryOperator (GetNonNullableType (leftType), GetNonNullableType (rightType), name);
-		
+
 			return null;
 		}
 
@@ -158,7 +158,7 @@ namespace System.Linq.Expressions
 			// the method is static, that its return type is not void and that the number of
 			// parameters is 2 and they are of the right type, but we already know that! Or not?
 		}
-		
+
 		private static MethodInfo FindMethod (Type type, string methodName, Type [] typeArgs, Expression [] args, BindingFlags flags)
 		{
 			MemberInfo[] members = type.FindMembers(MemberTypes.Method, flags,
@@ -170,7 +170,7 @@ namespace System.Linq.Expressions
 
 			MethodInfo methodDefinition = null;
 			MethodInfo method = null;
-			int methodCount = 1;		
+			int methodCount = 1;
 
 			foreach (MemberInfo member in members) {
 				MethodInfo mi = (MethodInfo)member;
@@ -183,13 +183,13 @@ namespace System.Linq.Expressions
 					methodDefinition = mi;
 					goto next;
 				}
-				
+
 				// If there is a discrepancy between method's generic types and the given types or if
 				// the method is open we simply discard it and go on.
 				if ((mi.IsGenericMethod && (typeArgs == null || mi.ContainsGenericParameters))
 					 || (!mi.IsGenericMethod && typeArgs != null))
 					goto next;
-					
+
 				// If the method is a closed generic we try to match the generic types.
 				if (mi.IsGenericMethod) {
 					Type[] genericArgs = mi.GetGenericArguments();
@@ -197,7 +197,7 @@ namespace System.Linq.Expressions
 					for (int i=0 ; i < genericArgs.Length ; i++)
 						if (genericArgs[i] != typeArgs[i]) goto next;
 				}
-				
+
 				// Finally we test for the method's parameters.
 				ParameterInfo[] parameters = mi.GetParameters ();
 				if (parameters.Length != args.Length) goto next;
@@ -206,11 +206,11 @@ namespace System.Linq.Expressions
 
 				method = mi;
 				break;
-				
+
 			 next:
 				continue;
 			}
-			
+
 			if (method != null)
 				return method;
 			else
@@ -223,7 +223,7 @@ namespace System.Linq.Expressions
 			// If the method has the hidebysig and specialname attributes it can be a property accessor;
 			// if that's the case we try to extract the type of the property and then we use it and the
 			// property name (derived from the method name) to find the right PropertyInfo.
-			
+
 			if (mi.IsHideBySig && mi.IsSpecialName) {
 				Type propertyType = null;
 				if (mi.Name.StartsWith("set_")) {
@@ -234,7 +234,7 @@ namespace System.Linq.Expressions
 				else if (mi.Name.StartsWith("get_")) {
 					propertyType = mi.ReturnType;
 				}
-				
+
 				if (propertyType != null) {
 					PropertyInfo pi = mi.DeclaringType.GetProperty(mi.Name.Substring(4),
 						BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
@@ -242,25 +242,25 @@ namespace System.Linq.Expressions
 					if (pi != null) return pi;
 				}
 			}
-			
-			throw new ArgumentException (String.Format( 
+
+			throw new ArgumentException (String.Format(
 				"The method '{0}.{1}' is not a property accessor", mi.DeclaringType.FullName, mi.Name));
 		}
-		
+
 		private static void ValidateUserDefinedConditionalLogicOperator (ExpressionType nodeType, Type left, Type right, MethodInfo method)
 		{
 			// Conditional logic need the "definitely true" and "definitely false" operators.
 			Type[] types = new Type[1] { left };
-						
+
 			MethodInfo opTrue  = left.GetMethod ("op_True", opBindingFlags, null, types, null);
 			MethodInfo opFalse = left.GetMethod ("op_False", opBindingFlags, null, types, null);
-			
+
 			if (opTrue == null || opFalse == null)
 				throw new ArgumentException (String.Format (
 					"The user-defined operator method '{0}' for operator '{1}' must have associated boolean True and False operators.",
 					method.Name, nodeType));
 		}
-		
+
 		private static void ValidateSettableFieldOrPropertyMember (MemberInfo member, out Type memberType)
 		{
 			if (member.MemberType == MemberTypes.Field) {
@@ -273,7 +273,7 @@ namespace System.Linq.Expressions
 				memberType = (member as PropertyInfo).PropertyType;
 			}
 			else {
-				throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");   
+				throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");
 			}
 		}
 
@@ -289,11 +289,11 @@ namespace System.Linq.Expressions
 				memberType = (member as PropertyInfo).PropertyType;
 			}
 			else {
-				throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");   
+				throw new ArgumentException ("Argument must be either a FieldInfo or PropertyInfo");
 			}
 		}
 		#endregion
-				
+
 		#region ToString
 		public override string ToString()
 		{
@@ -313,7 +313,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.Add, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same numeric type we don't have
 			// to look for the "op_Addition" method.
 			if (left.type == right.type && IsNumeric (left.type))
@@ -328,7 +328,7 @@ namespace System.Linq.Expressions
 			return Add(left, right, null);
 		}
 		#endregion
-		
+
 		#region AddChecked
 		public static BinaryExpression AddChecked(Expression left, Expression right, MethodInfo method)
 		{
@@ -349,7 +349,7 @@ namespace System.Linq.Expressions
 			if (method == null)
 				throw new InvalidOperationException(String.Format(
 					"The binary operator AddChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
-			
+
 			Type retType = method.ReturnType;
 
 			// Note: here the code did some very strange checks for bool (but note that bool does
@@ -375,7 +375,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.And, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same integer or boolean type we don't have
 			// to look for the "op_BitwiseAnd" method.
 			if (left.type == right.type && IsIntegerOrBool (left.type))
@@ -390,7 +390,7 @@ namespace System.Linq.Expressions
 			return And(left, right, null);
 		}
 		#endregion
-		
+
 		#region AndAlso
 		public static BinaryExpression AndAlso(Expression left, Expression right, MethodInfo method)
 		{
@@ -411,7 +411,7 @@ namespace System.Linq.Expressions
 				throw new InvalidOperationException(String.Format(
 					"The binary operator AndAlso is not defined for the types '{0}' and '{1}'.", left.type, right.type));
 			ValidateUserDefinedConditionalLogicOperator(ExpressionType.AndAlso, left.type, right.type, method);
-			
+
 			return new BinaryExpression(ExpressionType.AndAlso, left, right, method, method.ReturnType);
 		}
 
@@ -420,7 +420,7 @@ namespace System.Linq.Expressions
 			return AndAlso(left, right, null);
 		}
 		#endregion
-		
+
 		#region ArrayIndex
 		public static BinaryExpression ArrayIndex(Expression array, Expression index)
 		{
@@ -452,10 +452,10 @@ namespace System.Linq.Expressions
 
 			// We'll need an array of typeof(Type) elements long as the array's rank later
 			// and also a generic List to hold the indexes (ReadOnlyCollection wants that.)
-			
+
 			Type[] types = (Type[])Array.CreateInstance(typeof(Type), array.type.GetArrayRank());
 			Expression[] indexesList = new Expression[array.type.GetArrayRank()];
-			
+
 			int rank = 0;
 			foreach (Expression index in indexes) {
 				if (index.type != typeof(int))
@@ -467,7 +467,7 @@ namespace System.Linq.Expressions
 				indexesList[rank] = index;
 				rank += 1;
 			}
-				
+
 			// If the array's rank is equalto the number of given indexes we can go on and
 			// look for a Get(Int32, ...) method with "rank" parameters to generate the
 			// MethodCallExpression.
@@ -479,11 +479,11 @@ namespace System.Linq.Expressions
 			if (method == null)
 				throw new InvalidOperationException(String.Format(
 					"The method Get(...) is not defined for the type '{0}'.", array.type));
-	
+
 			return new MethodCallExpression(ExpressionType.Call, method, array, new ReadOnlyCollection<Expression>(indexesList));
 		}
 		#endregion
-		
+
 		#region ArrayLength
 		public static UnaryExpression ArrayLength (Expression array)
 		{
@@ -494,10 +494,10 @@ namespace System.Linq.Expressions
 			if (array.type.GetArrayRank () != 1)
 				throw new ArgumentException ("Argument must be a single dimensional array");
 
-			return new UnaryExpression (ExpressionType.ArrayLength, array, typeof (int));		
+			return new UnaryExpression (ExpressionType.ArrayLength, array, typeof (int));
 		}
 		#endregion
-		
+
 		#region Bind
 		public static MemberAssignment Bind (MemberInfo member, Expression expression)
 		{
@@ -505,10 +505,10 @@ namespace System.Linq.Expressions
 				throw new ArgumentNullException ("member");
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
-				
+
 			Type memberType;
-			ValidateSettableFieldOrPropertyMember(member, out memberType);			
-		
+			ValidateSettableFieldOrPropertyMember(member, out memberType);
+
 			return new MemberAssignment(member, expression);
 		}
 
@@ -519,10 +519,10 @@ namespace System.Linq.Expressions
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
-			return new MemberAssignment(GetProperty(propertyAccessor), expression);		
+			return new MemberAssignment(GetProperty(propertyAccessor), expression);
 		}
 		#endregion
-		
+
 		#region Call
 		public static MethodCallExpression Call(Expression instance, MethodInfo method)
 		{
@@ -530,7 +530,7 @@ namespace System.Linq.Expressions
 				throw new ArgumentNullException("method");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException("instance");
-				
+
 			return Call(instance, method, (Expression[])null);
 		}
 
@@ -547,7 +547,7 @@ namespace System.Linq.Expressions
 				throw new ArgumentNullException("arguments");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException("instance");
-				
+
 			if (method.IsGenericMethodDefinition)
 					throw new ArgumentException();
 			if (method.ContainsGenericParameters)
@@ -578,9 +578,9 @@ namespace System.Linq.Expressions
 
 			return Call (null, FindMethod (instance.type, methodName, typeArguments, arguments,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance),
-				(IEnumerable<Expression>)arguments);		
+				(IEnumerable<Expression>)arguments);
 		}
-		
+
 		public static MethodCallExpression Call(MethodInfo method, params Expression[] arguments)
 		{
 			return Call(null, method, (IEnumerable<Expression>)arguments);
@@ -603,7 +603,7 @@ namespace System.Linq.Expressions
 		#endregion
 
 		// NOTE: CallVirtual is not implemented because it is already marked as Obsolete by MS.
-		
+
 		public static ConditionalExpression Condition(Expression test, Expression ifTrue, Expression ifFalse)
 		{
 			if (test == null)
@@ -648,7 +648,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.Divide, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same numeric type we don't have
 			// to look for the "op_Addition" method.
 			if (left.type == right.type && IsNumeric (left.type))
@@ -663,7 +663,7 @@ namespace System.Linq.Expressions
 			return Divide(left, right, null);
 		}
 		#endregion
-		
+
 		#region ExclusiveOr
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right, System.Reflection.MethodInfo method)
 		{
@@ -674,7 +674,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.ExclusiveOr, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same integer or boolean type we don't have
 			// to look for the "op_BitwiseAnd" method.
 			if (left.type == right.type && IsIntegerOrBool (left.type))
@@ -683,13 +683,13 @@ namespace System.Linq.Expressions
 			// Else we try for a user-defined operator.
 			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.ExclusiveOr, "op_ExclusiveOr", left, right);
 		}
-		
+
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right)
 		{
 			return ExclusiveOr (left, right, null);
 		}
 		#endregion
-		
+
 		#region Field
 		public static MemberExpression Field (Expression expression, FieldInfo field)
 		{
@@ -741,7 +741,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.LeftShift, left, right, method, method.ReturnType);
-			
+
 			// If the left side is any kind of integer and the right is int32 we don't have
 			// to look for the "op_Addition" method.
 			if (IsInteger(left.type) && right.type == typeof(Int32))
@@ -756,7 +756,7 @@ namespace System.Linq.Expressions
 			return LeftShift (left, right, null);
 		}
 		#endregion
-		
+
 		public static ListInitExpression ListInit(NewExpression newExpression, params ElementInit[] initializers)
 		{
 			if (initializers == null)
@@ -796,7 +796,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.Modulo, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same integer or boolean type we don't have
 			// to look for the "op_BitwiseAnd" method.
 			if (left.type == right.type && IsNumeric (left.type))
@@ -804,15 +804,15 @@ namespace System.Linq.Expressions
 
 			// Else we try for a user-defined operator.
 			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Modulo, "op_Modulus", left, right);
-		
+
 		}
-		
+
 		public static BinaryExpression Modulo (Expression left, Expression right)
 		{
-			return Modulo (left, right, null);		
+			return Modulo (left, right, null);
 		}
 		#endregion
-		
+
 		#region Multiply
 		public static BinaryExpression Multiply (Expression left, Expression right, MethodInfo method)
 		{
@@ -823,7 +823,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.Multiply, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same integer or boolean type we don't have
 			// to look for the "op_BitwiseAnd" method.
 			if (left.type == right.type && IsNumeric (left.type))
@@ -831,15 +831,15 @@ namespace System.Linq.Expressions
 
 			// Else we try for a user-defined operator.
 			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Multiply, "op_Multiply", left, right);
-		
+
 		}
-		
+
 		public static BinaryExpression Multiply (Expression left, Expression right)
 		{
 			return Multiply (left, right, null);
 		}
 		#endregion
-		
+
 		#region MultiplyChecked
 		public static BinaryExpression MultiplyChecked (Expression left, Expression right, MethodInfo method)
 		{
@@ -860,18 +860,18 @@ namespace System.Linq.Expressions
 			if (method == null)
 				throw new InvalidOperationException(String.Format(
 					"The binary operator MultiplyChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
-			
+
 			Type retType = method.ReturnType;
 
 			return new BinaryExpression(ExpressionType.MultiplyChecked, left, right, method, retType);
 		}
-		
+
 		public static BinaryExpression MultiplyChecked (Expression left, Expression right)
 		{
 			return MultiplyChecked(left, right, null);
 		}
 		#endregion
-		
+
 		#region Or
 		public static BinaryExpression Or (Expression left, Expression right, MethodInfo method)
 		{
@@ -882,7 +882,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression(ExpressionType.Or, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same integer or boolean type we don't have
 			// to look for the "op_BitwiseOr" method.
 			if (left.type == right.type && IsIntegerOrBool (left.type))
@@ -890,7 +890,7 @@ namespace System.Linq.Expressions
 
 			// Else we try for a user-defined operator.
 			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Or, "op_BitwiseOr", left, right);
-		
+
 		}
 
 		public static BinaryExpression Or (Expression left, Expression right)
@@ -898,7 +898,7 @@ namespace System.Linq.Expressions
 			return Or (left, right, null);
 		}
 		#endregion
-		
+
 		#region OrElse
 		public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
 		{
@@ -919,10 +919,10 @@ namespace System.Linq.Expressions
 				throw new InvalidOperationException(String.Format(
 					"The binary operator OrElse is not defined for the types '{0}' and '{1}'.", left.type, right.type));
 			ValidateUserDefinedConditionalLogicOperator(ExpressionType.OrElse, left.type, right.type, method);
-			
+
 			return new BinaryExpression(ExpressionType.OrElse, left, right, method, method.ReturnType);
 		}
-		
+
 		public static BinaryExpression OrElse (Expression left, Expression right)
 		{
 			return OrElse(left, right, null);
@@ -934,7 +934,7 @@ namespace System.Linq.Expressions
 		{
 			if (propertyAccessor == null)
 				throw new ArgumentNullException("propertyAccessor");
-		
+
 			return Property(expression, GetProperty(propertyAccessor));
 		}
 
@@ -945,11 +945,11 @@ namespace System.Linq.Expressions
 
 			Type propertyType;
 			ValidateGettableFieldOrPropertyMember(property, out propertyType);
-			
+
 			return new MemberExpression(expression, property, propertyType);
 		}
-		
-		
+
+
 		public static MemberExpression Property(Expression expression, string propertyName)
 		{
 			if (expression == null)
@@ -967,7 +967,7 @@ namespace System.Linq.Expressions
 			return Property (expression, property);
 		}
 		#endregion
-		
+
 		#region PropertyOrField
 		public static MemberExpression PropertyOrField(Expression expression, string propertyOrFieldName)
 		{
@@ -990,15 +990,15 @@ namespace System.Linq.Expressions
 				propertyOrFieldName, expression.type.FullName));
 		}
 		#endregion
-		
+
 		#region Quote
 		public static UnaryExpression Quote(Expression expression)
 		{
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
-				
+
 			return new UnaryExpression (ExpressionType.Quote, expression, expression.GetType());
-		
+
 		}
 		#endregion
 
@@ -1012,7 +1012,7 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression (ExpressionType.RightShift, left, right, method, method.ReturnType);
-			
+
 			// If the left side is any kind of integer and the right is int32 we don't have
 			// to look for the "op_Addition" method.
 			if (IsInteger(left.type) && right.type == typeof(Int32))
@@ -1038,22 +1038,22 @@ namespace System.Linq.Expressions
 
 			if (method != null)
 				return new BinaryExpression (ExpressionType.Subtract, left, right, method, method.ReturnType);
-			
+
 			// Since both the expressions define the same numeric type we don't have
 			// to look for the "op_Addition" method.
 			if (left.type == right.type && IsNumeric (left.type))
 				return new BinaryExpression (ExpressionType.Subtract, left, right, left.type);
 
 			// Else we try for a user-defined operator.
-			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Subtract, "op_Subtraction", left, right);		
+			return GetUserDefinedBinaryOperatorOrThrow (ExpressionType.Subtract, "op_Subtraction", left, right);
 		}
-		
+
 		public static BinaryExpression Subtract (Expression left, Expression right)
 		{
-			return Subtract (left, right, null);		
+			return Subtract (left, right, null);
 		}
 		#endregion
-		
+
 		#region SubtractChecked
 		public static BinaryExpression SubtractChecked (Expression left, Expression right, MethodInfo method)
 		{
@@ -1074,12 +1074,12 @@ namespace System.Linq.Expressions
 			if (method == null)
 				throw new InvalidOperationException (String.Format (
 					"The binary operator AddChecked is not defined for the types '{0}' and '{1}'.", left.type, right.type));
-			
+
 			Type retType = method.ReturnType;
 
 			return new BinaryExpression (ExpressionType.SubtractChecked, left, right, method, retType);
 		}
-		
+
 		public static BinaryExpression SubtractChecked (Expression left, Expression right)
 		{
 			return SubtractChecked (left, right, null);
@@ -1106,8 +1106,8 @@ namespace System.Linq.Expressions
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 			if (type == null)
-				throw new ArgumentNullException ("type"); 
-			
+				throw new ArgumentNullException ("type");
+
 			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof(bool));
 		}
 		#endregion

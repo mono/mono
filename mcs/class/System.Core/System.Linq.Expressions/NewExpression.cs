@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Antonello Provenzano  <antonello@deveel.com>
+//		Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System.Collections.ObjectModel;
@@ -26,61 +26,61 @@ using System.Text;
 
 namespace System.Linq.Expressions
 {
-    public sealed class NewExpression : Expression
-    {
-        #region .ctor
-        internal NewExpression(Type type, ConstructorInfo constructor, ReadOnlyCollection<Expression> arguments)
-            : base(ExpressionType.New, type)
-        {
-            this.constructor = constructor;
-            this.arguments = arguments;
-        }
-        #endregion
+	public sealed class NewExpression : Expression
+	{
+		#region .ctor
+		internal NewExpression(Type type, ConstructorInfo constructor, ReadOnlyCollection<Expression> arguments)
+			: base(ExpressionType.New, type)
+		{
+			this.constructor = constructor;
+			this.arguments = arguments;
+		}
+		#endregion
 
-        #region Fields
-        ReadOnlyCollection<Expression> arguments;
+		#region Fields
+		ReadOnlyCollection<Expression> arguments;
 		ReadOnlyCollection<MemberInfo> members;
-        private ConstructorInfo constructor;
-        #endregion
+		private ConstructorInfo constructor;
+		#endregion
 
-        #region Properties
-        public ReadOnlyCollection<Expression> Arguments
-        {
-            get { return arguments; }
-        }
+		#region Properties
+		public ReadOnlyCollection<Expression> Arguments
+		{
+			get { return arguments; }
+		}
 
-        public ConstructorInfo Constructor
-        {
-            get { return constructor; }
-        }
-		
+		public ConstructorInfo Constructor
+		{
+			get { return constructor; }
+		}
+
 		public ReadOnlyCollection<MemberInfo> Members {
 			get { return members; }
 		}
-					
-        #endregion
 
-        #region Internal Methods
-        internal override void BuildString(StringBuilder builder)
-        {
-            Type initType = base.Type;
-            if (constructor != null)
-                initType = constructor.DeclaringType;
+		#endregion
 
-            builder.Append("new " + initType.Name + "(");
+		#region Internal Methods
+		internal override void BuildString(StringBuilder builder)
+		{
+			Type initType = base.Type;
+			if (constructor != null)
+				initType = constructor.DeclaringType;
 
-            int argc = arguments.Count;
-            for (int i = 0; i < argc; i++)
-            {
-                Expression argExpr = arguments[i];
-                argExpr.BuildString(builder);
+			builder.Append("new " + initType.Name + "(");
 
-                if (i < argc - 1)
-                    builder.Append(", ");
-            }
+			int argc = arguments.Count;
+			for (int i = 0; i < argc; i++)
+			{
+				Expression argExpr = arguments[i];
+				argExpr.BuildString(builder);
 
-            builder.Append(")");
-        }
-        #endregion
-    }
+				if (i < argc - 1)
+					builder.Append(", ");
+			}
+
+			builder.Append(")");
+		}
+		#endregion
+	}
 }

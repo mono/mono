@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,8 +17,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Atsushi Enomoto  <atsushi@ximian.com>
-//        Antonello Provenzano  <antonello@deveel.com>
+//		Atsushi Enomoto  <atsushi@ximian.com>
+//		Antonello Provenzano  <antonello@deveel.com>
 //
 
 using System;
@@ -26,64 +26,64 @@ using System.Collections.ObjectModel;
 
 namespace System.Linq.Expressions
 {
-    public class LambdaExpression : Expression
-    {
-        #region .ctor
-        internal LambdaExpression(Expression body, Type type, ReadOnlyCollection<ParameterExpression> parameters)
-            : base(ExpressionType.Lambda, type)
-        {
-            this.body = body;
-            this.parameters = parameters;
-        }
-        #endregion
+	public class LambdaExpression : Expression
+	{
+		#region .ctor
+		internal LambdaExpression(Expression body, Type type, ReadOnlyCollection<ParameterExpression> parameters)
+			: base(ExpressionType.Lambda, type)
+		{
+			this.body = body;
+			this.parameters = parameters;
+		}
+		#endregion
 
-        #region Fields
-        private Expression body;
-        private ReadOnlyCollection<ParameterExpression> parameters;
-        #endregion
+		#region Fields
+		private Expression body;
+		private ReadOnlyCollection<ParameterExpression> parameters;
+		#endregion
 
-        #region Properties
-        public Expression Body
-        {
-            get { return body; }
-        }
+		#region Properties
+		public Expression Body
+		{
+			get { return body; }
+		}
 
-        public ReadOnlyCollection<ParameterExpression> Parameters
-        {
-            get { return parameters; }
-        }
-        #endregion
+		public ReadOnlyCollection<ParameterExpression> Parameters
+		{
+			get { return parameters; }
+		}
+		#endregion
 
-        #region Internal Methods
-        internal override void BuildString(System.Text.StringBuilder builder)
-        {
-            int parc = parameters.Count;
+		#region Internal Methods
+		internal override void BuildString(System.Text.StringBuilder builder)
+		{
+			int parc = parameters.Count;
 
-            if (parc > 1)
-                builder.Append("(");
+			if (parc > 1)
+				builder.Append("(");
 
-            for (int i = 0; i < parc; i++)
-            {
-                parameters[i].BuildString(builder);
+			for (int i = 0; i < parc; i++)
+			{
+				parameters[i].BuildString(builder);
 
-                if (i < parc - 1)
-                    builder.Append(", ");
-            }
+				if (i < parc - 1)
+					builder.Append(", ");
+			}
 
-            if (parc > 1)
-                builder.Append(")");
+			if (parc > 1)
+				builder.Append(")");
 
-            builder.Append(" => ");
-            body.BuildString(builder);
-        }
-        #endregion
+			builder.Append(" => ");
+			body.BuildString(builder);
+		}
+		#endregion
 
-        #region Public Methods
-        public Delegate Compile()
-        {
-            //TODO: maybe we should call the ExpressionCompiler here...
-            throw new NotImplementedException();
-        }
-        #endregion
-    }
+		#region Public Methods
+		public Delegate Compile()
+		{
+			//TODO: maybe we should call the ExpressionCompiler here...
+			throw new NotImplementedException();
+		}
+		#endregion
+	}
 }
