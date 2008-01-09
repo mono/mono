@@ -1,3 +1,17 @@
+2008-01-09  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_ptr_from_rva, scan_resource_dir): Make it
+	work on big-endian systems.
+	(scan_resource_dir): Copy the resource directory entry and
+	byteswap if necessary so it works big-endian.  This fixes bug
+	345972 for real this time.
+	(VerQueryValue): String values set the length to the number of
+	unicode chars, but the data length reported was already correct so
+	don't halve it again.  Fixes the previous fix for bug 345972.
+	(GetFileVersionInfo): On big-endian systems, scan the resource
+	data and turn all unicode strings into UTF-16BE.  FileVersionInfo
+	now works big-endian.
+
 2008-01-04  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (VerQueryValue): Returned buffer length counts
