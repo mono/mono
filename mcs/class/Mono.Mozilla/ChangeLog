@@ -1,3 +1,8 @@
+2008-01-09  Andreia Gaita <avidigal@novell.com>
+
+	* build-csproj2k5: take out weird characters creeping in, vstudio 
+	doesn't appreciate them.
+
 2008-01-07  Andreia Gaita <avidigal@novell.com>
 
 	* build-csproj2k5: Added to generate Mono.Mozilla2K5.csproj from .sources

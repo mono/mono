@@ -11,8 +11,8 @@ Source=Mono.Mozilla.dll.sources
 dohead()
 {
     cat <<EOF
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-﻿  <PropertyGroup>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -109,7 +109,7 @@ dotail()
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-</Project>  
+</Project>
 EOF
 }
 
