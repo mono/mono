@@ -1,3 +1,7 @@
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_delegate_ctor): Optimize away setting of NULL target.
+
 2008-01-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Fix possible reading of invalid memory in 
