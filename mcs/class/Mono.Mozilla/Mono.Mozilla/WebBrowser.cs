@@ -42,10 +42,12 @@ namespace Mono.Mozilla
 		private bool loaded;
 		private DOM.DOMHTMLDocument document;
 		private DOM.Navigation navigation;
+		private Platform platform;
 
-		public WebBrowser ()
+		public WebBrowser (Platform platform)
 		{
-			loaded = Base.Init (this);
+			this.platform = platform;
+			loaded = Base.Init (this, platform);
 		}
 
 		public bool Load (IntPtr handle, int width, int height)

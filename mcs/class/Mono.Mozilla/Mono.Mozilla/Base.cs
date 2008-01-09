@@ -70,7 +70,7 @@ namespace Mono.Mozilla
 			gluezilla_debug_startup ();
 		}
 		
-		public static bool Init (WebBrowser control)
+		public static bool Init (WebBrowser control, Platform platform)
 		{
 			BindingInfo info = new BindingInfo ();
 			info.callback = new CallbackBinder (control);

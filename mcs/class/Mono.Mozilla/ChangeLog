@@ -1,5 +1,17 @@
 2008-01-09  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.Mozilla/Base.cs, 
+	  Mono.Mozilla/WebBrowser.cs, 
+	  Mono.WebBrowser/IWebBrowser.cs,
+	  Mono.WebBrowser/Manager.cs:
+	  Add initial support for specifying the toolkit the application is running 
+	  on (gtk or winforms). Knowing this allows gluezilla not to initialize
+	  a gtk loop if the application is already running one (and is passing 
+	  gluezilla a gtk handle and not an X/HWND handle). This should make it 
+	  easy to also use gluezilla/Mono.Mozilla with gtk apps.
+
+2008-01-09  Andreia Gaita <avidigal@novell.com>
+
 	* build-csproj2k5: take out weird characters creeping in, vstudio 
 	doesn't appreciate them.
 

@@ -110,6 +110,12 @@ namespace Mono.WebBrowser
 		Select = 9
 	}
 
+	public enum Platform
+	{
+		Winforms = 1,
+		Gtk = 2
+	}
+
 	public delegate bool CreateNewWindowEventHandler (object sender, CreateNewWindowEventArgs e);
 	public class CreateNewWindowEventArgs : EventArgs
 	{

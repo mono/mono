@@ -31,10 +31,15 @@ namespace Mono.WebBrowser
 	{
 		public static IWebBrowser GetNewInstance ()
 		{
+			return Manager.GetNewInstance (Platform.Winforms);
+		}
+
+		public static IWebBrowser GetNewInstance (Platform platform)
+		{
 			string browserEngine = Environment.GetEnvironmentVariable ("MONO_BROWSER_ENGINE");
 
 			if (browserEngine == null || browserEngine == "mozilla")
-				return new Mono.Mozilla.WebBrowser ();
+				return new Mono.Mozilla.WebBrowser (platform);
 
 			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
 		}
