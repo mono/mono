@@ -1,5 +1,10 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest.cs: add new fixture of assorted tests for
+	Expression. Contains tests for GetFuncType for now.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_ArrayLength.cs: Fix Rank2String to pass on .net.
 
 2008-01-09  Jb Evain  <jbevain@novell.com>
