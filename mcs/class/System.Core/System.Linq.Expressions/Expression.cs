@@ -485,14 +485,16 @@ namespace System.Linq.Expressions
 		#endregion
 		
 		#region ArrayLength
-		public static UnaryExpression ArrayLength(Expression array)
+		public static UnaryExpression ArrayLength (Expression array)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (!array.type.IsArray)
 				throw new ArgumentException ("Argument must be array");
+			if (array.type.GetArrayRank () != 1)
+				throw new ArgumentException ("Argument must be a single dimensional array");
 
-			return new UnaryExpression(ExpressionType.ArrayLength, array, typeof(Int32));		
+			return new UnaryExpression (ExpressionType.ArrayLength, array, typeof (int));		
 		}
 		#endregion
 		
