@@ -1,5 +1,10 @@
 2008-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : revert the previous fix. It caused regression on
+	  the buildbot.
+
+2008-01-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : fixed bug #352210. Kind is unspecified by default,
 	  while the tick is for local time by default. This fix also involved
 	  special x509 handling.

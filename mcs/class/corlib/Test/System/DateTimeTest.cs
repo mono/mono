@@ -1993,6 +1993,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Bug352210 ()
 		{
 			DateTime dt = DateTime.ParseExact ("2007-06-15T10:30:10.5", "yyyy-MM-ddTHH:mm:ss.f", null);
