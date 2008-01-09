@@ -34,7 +34,7 @@ namespace MonoTests.System.Linq.Expressions
     public class ExpressionTest_CallWithType
     {                
         [Test]
-        [ExpectedException (typeof (NullReferenceException))]
+        [ExpectedException (typeof (ArgumentNullException))]
         public void Arg1Null ()
         {
             Expression.Call ((Type)null, "TestMethod", null, Expression.Constant (1));
