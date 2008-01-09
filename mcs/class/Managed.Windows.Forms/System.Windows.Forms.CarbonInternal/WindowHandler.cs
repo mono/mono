@@ -26,6 +26,7 @@
 
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms.CarbonInternal {
@@ -111,14 +112,27 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		public bool ProcessEvent (IntPtr callref, IntPtr eventref, IntPtr handle, uint kind, ref MSG msg) {
 			IntPtr window = Driver.HandleToWindow (handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
 			if (window != IntPtr.Zero) {
 				switch (kind) {
+					case kEventWindowExpanding:
+					case kEventWindowActivated:
+						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
+							if (utility_window != handle && !XplatUICarbon.IsWindowVisible (utility_window))
+								XplatUICarbon.ShowWindow (utility_window);
+						}	
+						break;
+					case kEventWindowCollapsing:
+					case kEventWindowDeactivated: 
+						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
+							if (utility_window != handle && XplatUICarbon.IsWindowVisible (utility_window))
+								XplatUICarbon.HideWindow (utility_window);
+						}	
+						break;
 					case kEventWindowClose:
-						NativeWindow.WndProc (window, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+						NativeWindow.WndProc (hwnd.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 						return false;
 					case kEventWindowShown: { 
-						Hwnd hwnd = Hwnd.ObjectFromHandle (window);
-
 						msg.message = Msg.WM_SHOWWINDOW;
 						msg.lParam = (IntPtr) 1;
 						msg.wParam = (IntPtr) 0;
@@ -129,7 +143,6 @@ namespace System.Windows.Forms.CarbonInternal {
 					case kEventWindowBoundsChanged: {
 						Rect window_bounds = new Rect ();
 						HIRect view_bounds = new HIRect ();
-						Hwnd hwnd = Hwnd.ObjectFromHandle (window);
 						Size size;
 
 						GetWindowBounds (handle, 33, ref window_bounds);

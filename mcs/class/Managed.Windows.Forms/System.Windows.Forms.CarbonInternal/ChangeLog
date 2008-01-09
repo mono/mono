@@ -1,3 +1,10 @@
+2008-01-09  Geoff Norton  <gnorton@novell.com>
+
+	* WindowHandler.cs:  Hide utility windows when the window is minimizing
+	or deactivating.  Show them when the window is restored.
+	* ApplicationHandler.cs: Hide the utility windows when the app
+	deactivates.  Restore them when we get focus back.
+
 2008-01-04  Geoff Norton  <gnorton@novell.com>
 
 	* Enums.cs: Fix a typo

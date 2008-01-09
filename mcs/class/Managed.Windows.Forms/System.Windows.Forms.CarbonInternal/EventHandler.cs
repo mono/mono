@@ -82,6 +82,11 @@ namespace System.Windows.Forms.CarbonInternal {
 									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseDown),
 									new EventTypeSpec (kEventClassMouse, MouseHandler.kEventMouseUp),
 
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowDeactivated),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowActivated),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowDeactivated),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowCollapsing),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowExpanding),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowBoundsChanged),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowClose),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowShown),
