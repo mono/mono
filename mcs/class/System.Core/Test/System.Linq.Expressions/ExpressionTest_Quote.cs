@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Federico Di Gregorio <fog@initd.org>
+//		Federico Di Gregorio <fog@initd.org>
 
 using System;
 using System.Reflection;
@@ -26,24 +26,24 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{        
-    [TestFixture]
-    public class ExpressionTest_Quote
-    {
-        [Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void Arg1Null ()
-        {
-            Expression.Quote (null);
-        }
+{
+	[TestFixture]
+	public class ExpressionTest_Quote
+	{
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg1Null ()
+		{
+			Expression.Quote (null);
+		}
 
-        [Test]
-        public void Constant ()
-        {
-            UnaryExpression expr = Expression.Quote (Expression.Constant (1));
-            Assert.AreEqual (ExpressionType.Quote, expr.NodeType, "Quote#01");
-            Assert.AreEqual (typeof (ConstantExpression), expr.Type, "Quote#02");
-            Assert.AreEqual ("1", expr.ToString(), "Quote#03");
-        }
-    }
+		[Test]
+		public void Constant ()
+		{
+			UnaryExpression expr = Expression.Quote (Expression.Constant (1));
+			Assert.AreEqual (ExpressionType.Quote, expr.NodeType, "Quote#01");
+			Assert.AreEqual (typeof (ConstantExpression), expr.Type, "Quote#02");
+			Assert.AreEqual ("1", expr.ToString(), "Quote#03");
+		}
+	}
 }

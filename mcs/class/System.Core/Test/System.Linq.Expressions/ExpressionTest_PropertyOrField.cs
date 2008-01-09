@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Federico Di Gregorio <fog@initd.org>
+//		Federico Di Gregorio <fog@initd.org>
 
 using System;
 using System.Reflection;
@@ -26,38 +26,38 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{        
-    [TestFixture]
-    public class ExpressionTest_PropertyOrField
-    {
-        [Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void Arg1Null ()
-        {
-            Expression.PropertyOrField (null, "NoPropertyOrField");
-        }
+{
+	[TestFixture]
+	public class ExpressionTest_PropertyOrField
+	{
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg1Null ()
+		{
+			Expression.PropertyOrField (null, "NoPropertyOrField");
+		}
 
-        [Test]
-        [ExpectedException (typeof (ArgumentNullException))]
-        public void Arg2Null ()
-        {
-            Expression.PropertyOrField (Expression.Constant (new MemberClass()), null);
-        }
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg2Null ()
+		{
+			Expression.PropertyOrField (Expression.Constant (new MemberClass()), null);
+		}
 
-        [Test]
-        [ExpectedException (typeof (ArgumentException))]
-        public void NoPropertyOrField ()
-        {
-            Expression.PropertyOrField (Expression.Constant (new MemberClass()), "NoPropertyOrField");
-        }
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NoPropertyOrField ()
+		{
+			Expression.PropertyOrField (Expression.Constant (new MemberClass()), "NoPropertyOrField");
+		}
 
-        [Test]
-        public void InstanceProperty ()
-        {
-            MemberExpression expr = Expression.PropertyOrField (Expression.Constant (new MemberClass()), "TestProperty1");
-            Assert.AreEqual (ExpressionType.MemberAccess, expr.NodeType, "PropertyOrField#01");
-            Assert.AreEqual (typeof (int), expr.Type, "PropertyOrField#02");
-            Assert.AreEqual ("value(MonoTests.System.Linq.Expressions.MemberClass).TestProperty1", expr.ToString(), "PropertyOrField#04");
-        }
-    }
+		[Test]
+		public void InstanceProperty ()
+		{
+			MemberExpression expr = Expression.PropertyOrField (Expression.Constant (new MemberClass()), "TestProperty1");
+			Assert.AreEqual (ExpressionType.MemberAccess, expr.NodeType, "PropertyOrField#01");
+			Assert.AreEqual (typeof (int), expr.Type, "PropertyOrField#02");
+			Assert.AreEqual ("value(MonoTests.System.Linq.Expressions.MemberClass).TestProperty1", expr.ToString(), "PropertyOrField#04");
+		}
+	}
 }

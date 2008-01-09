@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//        Federico Di Gregorio <fog@initd.org>
+//		Federico Di Gregorio <fog@initd.org>
 
 using System;
 using System.Reflection;
@@ -26,154 +26,154 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
-{    
-    public class OpClass
-    {
-        public static OpClass operator + (OpClass a, OpClass b)
-        {
-            return a;
-        }
+{
+	public class OpClass
+	{
+		public static OpClass operator + (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator - (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator - (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator * (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator * (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator / (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator / (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator % (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator % (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator & (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator & (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator | (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator | (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator ^ (OpClass a, OpClass b)
-        {
-            return a;
-        }
+		public static OpClass operator ^ (OpClass a, OpClass b)
+		{
+			return a;
+		}
 
-        public static OpClass operator >> (OpClass a, int b)
-        {
-            return a;
-        }
+		public static OpClass operator >> (OpClass a, int b)
+		{
+			return a;
+		}
 
-        public static OpClass operator << (OpClass a, int b)
-        {
-            return a;
-        }
-        
-        public static bool operator true (OpClass a)
-        {
-            return false;
-        }
+		public static OpClass operator << (OpClass a, int b)
+		{
+			return a;
+		}
 
-        public static bool operator false (OpClass a)
-        {
-            return false;
-        }
-    }
+		public static bool operator true (OpClass a)
+		{
+			return false;
+		}
 
-    public class NoOpClass
-    {
-        // No user-defined operators here (we use this class to test for exceptions.)
-    }
-    
-    public class MemberClass
-    {
-        public int TestField1 = 0;
-        public readonly int TestField2 = 1;
-        public int TestProperty1 { get { return TestField1; }}
-        public int TestProperty2 { get { return TestField1; } set { TestField1 = value; }}
-        public int TestMethod (int i) { return TestField1 + i; }
-        public T TestGenericMethod<T> (T arg) { return arg; }
+		public static bool operator false (OpClass a)
+		{
+			return false;
+		}
+	}
 
-        public delegate int TestDelegate(int i);
-        public event TestDelegate TestEvent;
-        
-        public static int StaticField = 0;
-        public static int StaticProperty { get { return StaticField; } set { StaticField = value; }}
-        public static int StaticMethod (int i) { return 1 + i; }
-        public static T StaticGenericMethod<T> (T arg) { return arg; }
-        
-        public static MethodInfo GetMethodInfo ()
-        {
-            return typeof (MemberClass).GetMethod ("TestMethod");
-        }
+	public class NoOpClass
+	{
+		// No user-defined operators here (we use this class to test for exceptions.)
+	}
 
-        public static FieldInfo GetRoFieldInfo ()
-        {
-            return typeof (MemberClass).GetField ("TestField1");
-        }
+	public class MemberClass
+	{
+		public int TestField1 = 0;
+		public readonly int TestField2 = 1;
+		public int TestProperty1 { get { return TestField1; }}
+		public int TestProperty2 { get { return TestField1; } set { TestField1 = value; }}
+		public int TestMethod (int i) { return TestField1 + i; }
+		public T TestGenericMethod<T> (T arg) { return arg; }
 
-        public static FieldInfo GetRwFieldInfo ()
-        {
-            return typeof (MemberClass).GetField ("TestField2");
-        }
+		public delegate int TestDelegate(int i);
+		public event TestDelegate TestEvent;
 
-        public static PropertyInfo GetRoPropertyInfo ()
-        {
-            return typeof (MemberClass).GetProperty ("TestProperty1");
-        }
+		public static int StaticField = 0;
+		public static int StaticProperty { get { return StaticField; } set { StaticField = value; }}
+		public static int StaticMethod (int i) { return 1 + i; }
+		public static T StaticGenericMethod<T> (T arg) { return arg; }
 
-        public static PropertyInfo GetRwPropertyInfo ()
-        {
-            return typeof (MemberClass).GetProperty ("TestProperty2");
-        }
+		public static MethodInfo GetMethodInfo ()
+		{
+			return typeof (MemberClass).GetMethod ("TestMethod");
+		}
 
-        public static EventInfo GetEventInfo ()
-        {
-            return typeof (MemberClass).GetEvent ("TestEvent");
-        }
+		public static FieldInfo GetRoFieldInfo ()
+		{
+			return typeof (MemberClass).GetField ("TestField1");
+		}
 
-        public static FieldInfo GetStaticFieldInfo ()
-        {
-            return typeof (MemberClass).GetField ("StaticField");
-        }
+		public static FieldInfo GetRwFieldInfo ()
+		{
+			return typeof (MemberClass).GetField ("TestField2");
+		}
 
-        public static PropertyInfo GetStaticPropertyInfo ()
-        {
-            return typeof (MemberClass).GetProperty ("StaticProperty");
-        }
+		public static PropertyInfo GetRoPropertyInfo ()
+		{
+			return typeof (MemberClass).GetProperty ("TestProperty1");
+		}
 
-    }
+		public static PropertyInfo GetRwPropertyInfo ()
+		{
+			return typeof (MemberClass).GetProperty ("TestProperty2");
+		}
 
-    public struct OpStruct
-    {
-        public static OpStruct operator + (OpStruct a, OpStruct b)
-        {
-            return a;
-        }
+		public static EventInfo GetEventInfo ()
+		{
+			return typeof (MemberClass).GetEvent ("TestEvent");
+		}
 
-        public static OpStruct operator - (OpStruct a, OpStruct b)
-        {
-            return a;
-        }
+		public static FieldInfo GetStaticFieldInfo ()
+		{
+			return typeof (MemberClass).GetField ("StaticField");
+		}
 
-        public static OpStruct operator * (OpStruct a, OpStruct b)
-        {
-            return a;
-        }
+		public static PropertyInfo GetStaticPropertyInfo ()
+		{
+			return typeof (MemberClass).GetProperty ("StaticProperty");
+		}
 
-        public static OpStruct operator & (OpStruct a, OpStruct b)
-        {
-            return a;
-        }
-    }
+	}
+
+	public struct OpStruct
+	{
+		public static OpStruct operator + (OpStruct a, OpStruct b)
+		{
+			return a;
+		}
+
+		public static OpStruct operator - (OpStruct a, OpStruct b)
+		{
+			return a;
+		}
+
+		public static OpStruct operator * (OpStruct a, OpStruct b)
+		{
+			return a;
+		}
+
+		public static OpStruct operator & (OpStruct a, OpStruct b)
+		{
+			return a;
+		}
+	}
 }
