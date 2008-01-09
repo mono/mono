@@ -1,3 +1,8 @@
+2008-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify.c (mono_verify_corlib): Remove this as it was not used and was 
+	out-of-date.
+
 2008-01-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: removed some old unused tables. A huge bunch of small fixes
