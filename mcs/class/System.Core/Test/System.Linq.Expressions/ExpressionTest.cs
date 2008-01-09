@@ -77,5 +77,42 @@ namespace MonoTests.System.Linq.Expressions {
 			func = Expression.GetFuncType (new [] {typeof (int), typeof (int), typeof (int), typeof (int), typeof (int)});
 			Assert.AreEqual (typeof (Func<int, int, int, int, int>), func);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetActionTypeArgNull ()
+		{
+			Expression.GetActionType (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetActionTypeArgEmpty ()
+		{
+			Expression.GetActionType (new Type [0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetActionTypeArgTooBig ()
+		{
+			Expression.GetActionType (new Type [5]);
+		}
+
+		[Test]
+		public void GetActionTypeTest ()
+		{
+			var action = Expression.GetActionType (new [] {typeof (int)});
+			Assert.AreEqual (typeof (Action<int>), action);
+
+			action = Expression.GetActionType (new [] {typeof (int), typeof (int)});
+			Assert.AreEqual (typeof (Action<int, int>), action);
+
+			action = Expression.GetActionType (new [] {typeof (int), typeof (int), typeof (int)});
+			Assert.AreEqual (typeof (Action<int, int, int>), action);
+
+			action = Expression.GetActionType (new [] {typeof (int), typeof (int), typeof (int), typeof (int)});
+			Assert.AreEqual (typeof (Action<int, int, int, int>), action);
+		}
 	}
 }

@@ -1,5 +1,9 @@
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest.cs: tests for GetActionType.
+
+2008-01-09  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest.cs: add new fixture of assorted tests for
 	Expression. Contains tests for GetFuncType for now.
 
