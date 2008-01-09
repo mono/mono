@@ -627,7 +627,11 @@ namespace Mono.CSharp {
 		//
 		internal virtual void GenerateDocComment (DeclSpace ds)
 		{
-			DocUtil.GenerateDocComment (this, ds);
+			try {
+				DocUtil.GenerateDocComment (this, ds);
+			} catch (Exception e) {
+				throw new InternalErrorException (this, e);
+			}
 		}
 
 		public override IResolveContext ResolveContext {

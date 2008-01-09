@@ -1,4 +1,8 @@
-2008-01-08  Marek Safar  <marek.safar@gmail.com>
+2008-01-09  Marek Safar  <marek.safar@gmail.com>
+
+ 	* doc.cs: Report better /doc crash details.
+ 	
+2008-01-09  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #352536
  	* ecore.cs, assign.cs, codegen.cs: Check event assignments.
