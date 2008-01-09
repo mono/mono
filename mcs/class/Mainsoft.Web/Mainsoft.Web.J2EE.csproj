@@ -96,11 +96,15 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>MonoTODOAttribute.cs</Link>
     </Compile>
+    <Compile Include="Mainsoft.Web.Hosting\AbstractAttributeMap.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\BaseExternalContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesPageHandlerFactory.cs" />
     <Compile Include="Mainsoft.Web.Hosting\AspNetFacesContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesStateManager.cs" />
     <Compile Include="Mainsoft.Web.Hosting\BaseFacesViewHandler.cs" />
     <Compile Include="Mainsoft.Web.Hosting\IExtendedViewHandler.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\RequestParameterMap.cs" />
+    <Compile Include="Mainsoft.Web.Hosting\RequestParameterValuesMap.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesContext.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesStateManager.cs" />
     <Compile Include="Mainsoft.Web.Hosting\ServletFacesViewHandler.cs" />

@@ -25,21 +25,20 @@ namespace Mainsoft.Web.Hosting
 																	string executionFilePath) {
 			FacesContext oldFacesContex = FacesContext.getCurrentInstance ();
 			FacesContext wrappedFacesContex = facesContextFactory.getFacesContext (servletContext, servletRequest, servletResponse, lifecycle);
-			ExternalContext externalContext = new ServletExternalContext (wrappedFacesContex.getExternalContext (), executionFilePath);
+			ExternalContext externalContext = new ServletExternalContext (wrappedFacesContex.getExternalContext (), httpContext, executionFilePath);
 			ServletFacesContext context = new ServletFacesContext (wrappedFacesContex, externalContext, httpContext, oldFacesContex);
 			return context;
 		}
 
 		#region ServletExternalContext
 
-		sealed class ServletExternalContext : ExternalContext
+		sealed class ServletExternalContext : BaseExternalContext
 		{
 			readonly ExternalContext _externalContext;
-			readonly string _executionFilePath;
 
-			public ServletExternalContext (ExternalContext externalContext, string executionFilePath) {
+			public ServletExternalContext (ExternalContext externalContext, HttpContext httpContext, string executionFilePath)
+				: base (httpContext, executionFilePath) {
 				_externalContext = externalContext;
-				_executionFilePath = executionFilePath;
 			}
 
 			public override void dispatch (string __p1) {
@@ -112,22 +111,6 @@ namespace Mainsoft.Web.Hosting
 
 			public override java.util.Map getRequestMap () {
 				return _externalContext.getRequestMap ();
-			}
-
-			public override java.util.Map getRequestParameterMap () {
-				return _externalContext.getRequestParameterMap ();
-			}
-
-			public override java.util.Iterator getRequestParameterNames () {
-				return _externalContext.getRequestParameterNames ();
-			}
-
-			public override java.util.Map getRequestParameterValuesMap () {
-				return _externalContext.getRequestParameterValuesMap ();
-			}
-
-			public override string getRequestPathInfo () {
-				return _executionFilePath.Substring (getRequestContextPath ().Length);
 			}
 
 			public override string getRequestServletPath () {
