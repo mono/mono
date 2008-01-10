@@ -1,5 +1,11 @@
 2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_test.sh: added tests for unbox.any.
+
+	* make_unbox_any_test.sh: new test generator.
+
+2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_test.sh: added tests for add|sub|mul ovf;
 
 	* unverifiable_unbox_toke_is_reference_type.il: New test for regressions
