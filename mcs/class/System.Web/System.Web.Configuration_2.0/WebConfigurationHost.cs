@@ -383,7 +383,7 @@ namespace System.Web.Configuration
 					java.lang.ClassLoader cl = (java.lang.ClassLoader) AppDomain.CurrentDomain.GetData ("GH_ContextClassLoader");
 					if (cl != null) {
 						java.io.InputStream inputStream = cl.getResourceAsStream (streamName);
-						return (Stream) vmw.common.IOUtils.getStream (inputStream);
+						return new System.Web.J2EE.J2EEUtils.InputStreamWrapper (inputStream);
 					}
 				}
 #endif

@@ -405,7 +405,6 @@ namespace System.Web
 #if TARGET_J2EE
 		private static TextReader GetJavaTextReader(string filename)
 		{
-			Stream s;
 			try
 			{
 				java.lang.ClassLoader cl = (java.lang.ClassLoader)
@@ -419,13 +418,15 @@ namespace System.Web
 				if (inputStream == null)
 					inputStream = cl.getResourceAsStream(filename);
 
-				s = (Stream)vmw.common.IOUtils.getStream(inputStream);
+				if (inputStream == null)
+					return null;
+
+				return new StreamReader (new System.Web.J2EE.J2EEUtils.InputStreamWrapper (inputStream));
 			}
 			catch (Exception e)
 			{
 				return null;
 			}
-			return new StreamReader (s);
 		}
 #endif
 
