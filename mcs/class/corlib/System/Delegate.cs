@@ -132,13 +132,31 @@ namespace System
 			return match;
 		}
 
+		private static bool return_type_match (Type delReturnType, Type returnType) {
+			bool returnMatch = returnType == delReturnType;
+
 #if NET_2_0
-		public
-#else
-		internal
+			if (!returnMatch) {
+				// Delegate covariance
+				if (!delReturnType.IsValueType && (delReturnType != typeof (ValueType)) && (delReturnType.IsAssignableFrom (returnType)))
+					returnMatch = true;
+			}
 #endif
-		static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
+
+			return returnMatch;
+		}
+
+#if NET_2_0
+		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
+#else
+		internal static Delegate CreateDelegate (Type type, object target, MethodInfo method, bool throwOnBindFailure)
+#endif
 		{
+#if NET_2_0
+			// The name of the parameter changed in 2.0
+			object target = firstArgument;
+#endif
+
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
@@ -147,64 +165,76 @@ namespace System
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
-
 #if !NET_2_0
-			if (!method.IsStatic)
+			if ((target == null) && !method.IsStatic) {
 				if (throwOnBindFailure)
 					throw new ArgumentException ("The method should be static.", "method");
 				else
 					return null;
+			}
 #endif
 
 			MethodInfo invoke = type.GetMethod ("Invoke");
 
-			// FIXME: Check the return type on the 1.0 profile as well
-#if NET_2_0
-			Type returnType = method.ReturnType;
-			Type delReturnType = invoke.ReturnType;
-			bool returnMatch = returnType == delReturnType;
-
-			if (!returnMatch) {
-				// Delegate covariance
-				if (!delReturnType.IsValueType && (delReturnType != typeof (ValueType)) && (delReturnType.IsAssignableFrom (returnType)))
-					returnMatch = true;
-			}
-
-			if (!returnMatch)
+			if (!return_type_match (invoke.ReturnType, method.ReturnType))
 				if (throwOnBindFailure)
 					throw new ArgumentException ("method return type is incompatible");
 				else
 					return null;
-#endif
 
+			// FIXME: Figure out how net 1.1 works
+#if NET_2_0
 			ParameterInfo[] delargs = invoke.GetParameters ();
 			ParameterInfo[] args = method.GetParameters ();
 
 			bool argLengthMatch;
-			if (!method.IsStatic)
-				//
-				// Net 2.0 feature. The first argument of the delegate is passed
-				// as the 'this' argument to the method.
-				//
-				argLengthMatch = (args.Length + 1 == delargs.Length);
-			else
-				argLengthMatch = (args.Length == delargs.Length);
-			if (!argLengthMatch)
-					if (throwOnBindFailure)
-						throw new ArgumentException ("method argument length mismatch");
-					else
-						return null;
-			
-			bool argsMatch;
-			if (!method.IsStatic) {
-				// The first argument should match this
-				argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
-				for (int i = 0; i < args.Length; i++)
-					argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
+
+			if (target != null) {
+				// delegate closed over target
+				if (!method.IsStatic)
+					// target is passed as this
+					argLengthMatch = (args.Length == delargs.Length);
+				else
+					// target is passed as the first argument to the static method
+					argLengthMatch = (args.Length == delargs.Length + 1);
 			} else {
-				argsMatch = true;
-				for (int i = 0; i < args.Length; i++)
-					argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+				if (!method.IsStatic)
+					//
+					// Net 2.0 feature. The first argument of the delegate is passed
+					// as the 'this' argument to the method.
+					//
+					argLengthMatch = (args.Length + 1 == delargs.Length);
+				else
+					argLengthMatch = (args.Length == delargs.Length);
+			}
+			if (!argLengthMatch)
+				if (throwOnBindFailure)
+					throw new ArgumentException ("method argument length mismatch");
+				else
+					return null;
+
+			bool argsMatch;
+			if (target != null) {
+				if (!method.IsStatic) {
+					argsMatch = arg_type_match (target.GetType (), method.DeclaringType);
+					for (int i = 0; i < args.Length; i++)
+						argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+				} else {
+					argsMatch = arg_type_match (target.GetType (), args [0].ParameterType);
+					for (int i = 1; i < args.Length; i++)
+						argsMatch &= arg_type_match (delargs [i - 1].ParameterType, args [i].ParameterType);					
+				}
+			} else {
+				if (!method.IsStatic) {
+					// The first argument should match this
+					argsMatch = arg_type_match (delargs [0].ParameterType, method.DeclaringType);
+					for (int i = 0; i < args.Length; i++)
+						argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
+				} else {
+					argsMatch = true;
+					for (int i = 0; i < args.Length; i++)
+						argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+				}
 			}
 
 			if (!argsMatch)
@@ -212,36 +242,11 @@ namespace System
 					throw new ArgumentException ("method arguments are incompatible");
 				else
 					return null;
-
-			Delegate d = CreateDelegate_internal (type, null, method);
-			d.original_method_info = method;
-			return d;
-		}
-
-		public static Delegate CreateDelegate (Type type, MethodInfo method) {
-			return CreateDelegate (type, method, true);
-		}
-
-#if NET_2_0
-		public
-#else
-		internal
 #endif
-		static Delegate CreateDelegate (Type type, object target, MethodInfo method, bool throwOnBindFailure)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-
-			if (method == null)
-				throw new ArgumentNullException ("method");
-
-			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
-				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
 			Delegate d = CreateDelegate_internal (type, target, method);
 			d.original_method_info = method;
 			return d;
-
 		}
 
 #if NET_2_0
@@ -252,7 +257,21 @@ namespace System
 		static Delegate CreateDelegate (Type type, object target, MethodInfo method) {
 			return CreateDelegate (type, target, method, true);
 		}
-		
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
+		{
+			return CreateDelegate (type, null, method, throwOnBindFailure);
+		}
+
+		public static Delegate CreateDelegate (Type type, MethodInfo method) {
+			return CreateDelegate (type, method, true);
+		}
+
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
 			return CreateDelegate(type, target, method, false);

@@ -1,3 +1,9 @@
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs: Implement argument checking in CreateDelegate(Type,object,MethodInfo)
+	method. Make the CreateDelegate(Type,MethodInfo) overload calls this version.
+	Fixes #352805.
+
 2008-01-10  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: chain the Parse* methods together.
