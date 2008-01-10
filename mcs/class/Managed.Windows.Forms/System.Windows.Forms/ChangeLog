@@ -1,3 +1,9 @@
+2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Guard against an NRE if the user open a new form from a
+	SelectedIndexChanged event.  This closes the combobox dropdown, and we
+	were trying to dispose it.  [Fixes bug #352830]
+
 2008-01-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs, Form.cs: Implement the necessary semantics for
