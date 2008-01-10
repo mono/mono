@@ -69,9 +69,8 @@ namespace System.Web.UI.WebControls {
 
 				Page.ClientScript.RegisterWebFormClientScript ();
 
-				string formReference = Page.IsMultiForm ? Page.theForm + "." : String.Empty;
 				w.AddAttribute ("onkeypress",
-						"javascript:return " + formReference + "WebForm_FireDefaultButton(event, '" + button.ClientID + "')");
+						"javascript:return " + Page.WebFormScriptReference + ".WebForm_FireDefaultButton(event, '" + button.ClientID + "')");
 			}
 
 			if (Direction != ContentDirection.NotSet) {

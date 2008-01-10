@@ -47,27 +47,27 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		string defaultbutton = "";
+		string _defaultbutton;
 		[DefaultValue ("")]
 		public string DefaultButton
 		{
 			get {
-				return defaultbutton;
+				return _defaultbutton ?? String.Empty;
 			}
 			set {
-				defaultbutton = (value == null ? "" : value);
+				_defaultbutton = value;
 			}
 		}
 
-		string defaultfocus = "";
+		string _defaultfocus;
 		[DefaultValue ("")]
 		public string DefaultFocus
 		{
 			get {
-				return defaultfocus;
+				return _defaultfocus ?? String.Empty;
 			}
 			set {
-				defaultfocus = (value == null ? "" : value);
+				_defaultfocus = value;
 			}
 		}
 #endif		
@@ -311,7 +311,7 @@ namespace System.Web.UI.HtmlControls
 
 #if NET_2_0
 			string defaultbutton = DefaultButton;
-			if (defaultbutton != null && defaultbutton != "") {
+			if (!String.IsNullOrEmpty (defaultbutton)) {
 				Control c = FindControl (defaultbutton);
 
 				if (c == null || !(c is IButtonControl))
@@ -319,11 +319,9 @@ namespace System.Web.UI.HtmlControls
 											   ID));
 
 				if (DetermineRenderUplevel ()) {
-					string formReference = Page.IsMultiForm ? Page.theForm + "." : String.Empty;
-					
 					w.WriteAttribute (
 						"onkeypress",
-						"javascript:return " + formReference + "WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
+						"javascript:return " + Page.WebFormScriptReference + ".WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
 				}
 			}
 #endif
