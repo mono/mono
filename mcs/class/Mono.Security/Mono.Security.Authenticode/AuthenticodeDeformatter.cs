@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
 
+using Mono.Security.Cryptography;
 using Mono.Security.X509;
 
 namespace Mono.Security.Authenticode {
@@ -421,10 +422,13 @@ namespace Mono.Security.Authenticode {
 			byte[] serial = cs.SerialNumber;
 			foreach (X509Certificate x509 in coll) {
 				if (CompareIssuerSerial (issuer, serial, x509)) {
-					// don't verify if key size don't match
-					if (x509.PublicKey.Length > (counterSignature.Length >> 3)) {
+					if (x509.PublicKey.Length > counterSignature.Length) {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
-						if (rsa.VerifyHash (p7hash, hashOID, counterSignature)) {
+						// we need to HACK around bad (PKCS#1 1.5) signatures made by Verisign Timestamp Service
+						// and this means copying stuff into our own RSAManaged to get the required flexibility
+						RSAManaged rsam = new RSAManaged ();
+						rsam.ImportParameters (rsa.ExportParameters (false));
+						if (PKCS1.Verify_v15 (rsam, ha, p7hash, counterSignature, true)) {
 							timestampChain.LoadCertificates (coll);
 							return (timestampChain.Build (x509));
 						}
