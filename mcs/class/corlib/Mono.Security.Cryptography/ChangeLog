@@ -1,3 +1,10 @@
+2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS1.cs: Add a new method that optionally checks for badly 
+	padding, technically invalid, PKCS#1 block. This is required to
+	support timestamping verification for Authenticode (since the 
+	main timestamping service does this). Fix for #350958
+
 2007-11-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: Fix the rare case where the inverse of q modulo p 
