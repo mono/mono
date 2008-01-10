@@ -249,22 +249,14 @@ namespace System
 		{
 		}
 
-		[MonoTODO]
 		public static DateTimeOffset Parse (string input)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			throw new NotImplementedException ();
+			return Parse (input, null);
 		}
 
-		[MonoTODO]
 		public static DateTimeOffset Parse (string input, IFormatProvider formatProvider)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-
-			throw new NotImplementedException ();
+			return Parse (input, formatProvider, DateTimeStyles.AllowWhiteSpaces);
 		}
 
 		[MonoTODO]
@@ -276,40 +268,20 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static DateTimeOffset ParseExact (string input, string format, IFormatProvider formatProvider)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-				
-			if (format == null)
-				throw new ArgumentNullException ("format");
-
-			if (input == String.Empty)
-				throw new FormatException ("input is an empty string");
-
-			if (format == String.Empty)
-				throw new FormatException ("format is an empty string");
-
-			throw new NotImplementedException ();
+			return ParseExact (input, format, formatProvider, DateTimeStyles.AssumeLocal);
 		}
 
-		[MonoTODO]
 		public static DateTimeOffset ParseExact (string input, string format, IFormatProvider formatProvider, DateTimeStyles styles)
 		{
-			if (input == null)
-				throw new ArgumentNullException ("input");
-				
 			if (format == null)
 				throw new ArgumentNullException ("format");
-
-			if (input == String.Empty)
-				throw new FormatException ("input is an empty string");
 
 			if (format == String.Empty)
 				throw new FormatException ("format is an empty string");
 
-			throw new NotImplementedException ();
+			return ParseExact (input, new string [] {format}, formatProvider, styles);
 		}
 
 		[MonoTODO]
@@ -317,7 +289,6 @@ namespace System
 		{
 			if (input == null)
 				throw new ArgumentNullException ("input");
-				
 
 			if (input == String.Empty)
 				throw new FormatException ("input is an empty string");
