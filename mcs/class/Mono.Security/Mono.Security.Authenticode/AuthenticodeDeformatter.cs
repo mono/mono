@@ -409,7 +409,6 @@ namespace Mono.Security.Authenticode {
 
 			// verify signature
 			byte[] counterSignature = cs.Signature;
-			string hashOID = CryptoConfig.MapNameToOID (hashName);
 
 			// change to SET OF (not [0]) as per PKCS #7 1.5
 			ASN1 aa = new ASN1 (0x31);
