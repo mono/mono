@@ -175,7 +175,7 @@ REM ********************************************************
 copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 
 REM @echo on
-"%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
+"%JAVA_HOME%\bin\java" -Xmx1024M -XX:MaxPermSize=128m -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
 REM @echo off
 
 IF NOT DEFINED VMW_BUILDER GOTO DONT_SHUTDOWN_TOMCAT
