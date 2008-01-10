@@ -387,6 +387,10 @@ namespace MonoTests.SystemWeb.Framework
 				return;
 			EnsureDirectoryExists (dir);
 			File.Copy (oldfn, newfn);
+			if (File.Exists (oldfn + ".mdb"))
+				File.Copy (oldfn + ".mdb", newfn + ".mdb");
+			if (File.Exists (oldfn + ".pdb"))
+				File.Copy (oldfn + ".pdb", newfn + ".pdb");
 		}
 		
 		private static void EnsureDirectoryExists (string directory)

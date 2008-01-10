@@ -1,3 +1,8 @@
+2008-01-08  Dean Brettle <dean@brettle.com> 
+ 
+ 	* NunitWeb/NunitWeb/WebTest.cs: copy .mdb or .pdb files with
+ 	assemblies so we get line numbers in stack traces!
+ 
 2007-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWeb/NunitWeb/WebTest.cs: make sure that files timestamp is
