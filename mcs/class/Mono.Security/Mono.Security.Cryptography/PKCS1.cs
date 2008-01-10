@@ -291,12 +291,38 @@ namespace Mono.Security.Cryptography {
 		// RSASSA-PKCS1-V1_5-VERIFY ((n, e), M, S)
 		public static bool Verify_v15 (RSA rsa, HashAlgorithm hash, byte[] hashValue, byte[] signature) 
 		{
+			return Verify_v15 (rsa, hash, hashValue, signature, false);
+		}
+
+		// DO NOT USE WITHOUT A VERY GOOD REASON
+		public static bool Verify_v15 (RSA rsa, HashAlgorithm hash, byte [] hashValue, byte [] signature, bool tryNonStandardEncoding)
+		{
 			int size = (rsa.KeySize >> 3); // div 8
 			byte[] s = OS2IP (signature);
 			byte[] m = RSAVP1 (rsa, s);
 			byte[] EM2 = I2OSP (m, size);
 			byte[] EM = Encode_v15 (hash, hashValue, size);
-			return Compare (EM, EM2);
+			bool result = Compare (EM, EM2);
+			if (result || !tryNonStandardEncoding)
+				return result;
+
+			// NOTE: some signatures don't include the hash OID (pretty lame but real)
+			// and compatible with MS implementation. E.g. Verisign Authenticode Timestamps
+
+			// we're making this "as safe as possible"
+			if ((EM2 [0] != 0x00) || (EM2 [1] != 0x01))
+				return false;
+			int i;
+			for (i = 2; i < EM2.Length - hashValue.Length - 1; i++) {
+				if (EM2 [i] != 0xFF)
+					return false;
+			}
+			if (EM2 [i++] != 0x00)
+				return false;
+
+			byte [] decryptedHash = new byte [hashValue.Length];
+			Buffer.BlockCopy (EM2, i, decryptedHash, 0, decryptedHash.Length);
+			return Compare (decryptedHash, hashValue);
 		}
 	
 		// PKCS #1 v.2.1, Section 9.2
