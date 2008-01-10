@@ -38,10 +38,10 @@ namespace System.Web.UI {
 
 	public abstract class TemplateControl : Control, INamingContainer
 	{
-		static object abortTransaction = new object ();
-		static object commitTransaction = new object ();
-		static object error = new object ();
-		static string [] methodNames = { "Page_Init",
+		static readonly object abortTransaction = new object ();
+		static readonly object commitTransaction = new object ();
+		static readonly object error = new object ();
+		static readonly string [] methodNames = { "Page_Init",
 #if NET_2_0
 						 "Page_PreInit",
 						 "Page_PreLoad",
@@ -54,17 +54,34 @@ namespace System.Web.UI {
 						 "Page_DataBind",
 						 "Page_PreRender",
 						 "Page_Disposed",
-						 "Page_Error",
 						 "Page_Unload",
+						 "Page_Error",
 						 "Page_AbortTransaction",
 						 "Page_CommitTransaction" };
+
+		static readonly object [] EventKeys = {
+#if NET_2_0
+						 Page.PreInitEvent,
+						 Page.PreLoadEvent,
+						 Page.LoadCompleteEvent,
+						 Page.PreRenderCompleteEvent,
+						 Page.SaveStateCompleteEvent,
+						 Page.InitCompleteEvent,
+#endif
+						Control.LoadEvent,
+						Control.DataBindingEvent,
+						Control.PreRenderEvent,
+						Control.DisposedEvent,
+						Control.UnloadEvent,
+						error,
+						abortTransaction,
+						commitTransaction
+		};
 
 		const BindingFlags bflags = BindingFlags.Public |
 						BindingFlags.NonPublic |
 						BindingFlags.Instance;
-		static readonly Type [] NoParams = new Type [0];
 
-		private static string hashTableMutex = "lock"; //used to sync access ResourceHash property
 		private byte [] GetResourceBytes (Type type)
 		{
 			Hashtable table = (Hashtable) AppDomain.CurrentDomain.GetData ("TemplateControl.RES_BYTES");
@@ -162,14 +179,14 @@ namespace System.Web.UI {
 
 		sealed class EventMethodMap
 		{
-			public EventMethodMap (EventInfo Event, MethodInfo Method, bool NoParameters)
+			public EventMethodMap (object EventKey, MethodInfo Method, bool NoParameters)
 			{
-				this.Event = Event;
+				this.EventKey = EventKey;
 				this.Method = Method;
 				this.NoParameters = NoParameters;
 			}
 
-			public readonly EventInfo Event;
+			public readonly object EventKey;
 			public readonly MethodInfo Method;
 			public readonly bool NoParameters;
 		}
@@ -200,7 +217,8 @@ namespace System.Web.UI {
 				typeof (object),
 				typeof (EventArgs) };
 
-				foreach (string methodName in methodNames) {
+				for (int i = 0; i < methodNames.Length; i++) {
+					string methodName = methodNames [i];
 					MethodInfo method;
 					bool noParams = false;
 					Type type = GetType ();
@@ -217,7 +235,7 @@ namespace System.Web.UI {
 					if (method == null) {
 						type = GetType ();
 						do {
-							method = type.GetMethod (methodName, bflags, null, NoParams, null);
+							method = type.GetMethod (methodName, bflags, null, Type.EmptyTypes, null);
 							if (method != null) {
 								noParams = true;
 								break;
@@ -233,22 +251,7 @@ namespace System.Web.UI {
 					if (method.ReturnType != voidType)
 						continue;
 
-					int pos = methodName.IndexOf ("_");
-					string eventName = methodName.Substring (pos + 1);
-					EventInfo evt = GetType ().GetEvent (eventName);
-					if (evt == null) {
-						/* This should never happen */
-						continue;
-					}
-
-					eventMethodList.Add (new EventMethodMap (evt, method, noParams));
-#if ONLY_1_1
-				if (method.DeclaringType != type) {
-					if (!method.IsPublic && !method.IsFamilyOrAssembly &&
-					    !method.IsFamilyAndAssembly && !method.IsFamily)
-						continue;
-				}
-#endif
+					eventMethodList.Add (new EventMethodMap (EventKeys [i], method, noParams));
 				}
 				// We copy to not lock
 
@@ -258,12 +261,14 @@ namespace System.Web.UI {
 			}
 
 			foreach (EventMethodMap eventMethod in eventMethodList) {
+				if (Events [eventMethod.EventKey] != null)
+					continue;
 				if (eventMethod.NoParameters) {
 					NoParamsInvoker npi = new NoParamsInvoker (this, eventMethod.Method);
-					eventMethod.Event.AddEventHandler (this, npi.FakeDelegate);
+					Events.AddHandler (eventMethod.EventKey, npi.FakeDelegate);
 				}
 				else {
-					eventMethod.Event.AddEventHandler (this, Delegate.CreateDelegate (typeof (EventHandler), this, eventMethod.Method));
+					Events.AddHandler (eventMethod.EventKey, Delegate.CreateDelegate (typeof (EventHandler), this, eventMethod.Method));
 				}
 			}
 		}
