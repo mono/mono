@@ -206,7 +206,20 @@ namespace Mono.CSharp
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
+#if NET_2_0
+			string mono_inside_mdb = null;
+#endif
+			
 			try {
+#if NET_2_0
+				mono_inside_mdb = Environment.GetEnvironmentVariable ("MONO_INSIDE_MDB");
+				if (mono_inside_mdb != null) {
+					if (mono_inside_mdb.Length == 0)
+						mono_inside_mdb = "1";
+					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", null);
+				}
+#endif
+				
 				mcs.Start();
 				// If there are a few kB in stdout, we might lock
 				mcs_output=mcs.StandardError.ReadToEnd();
@@ -215,6 +228,10 @@ namespace Mono.CSharp
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
 				mcs.Close();
+#if NET_2_0
+				if (mono_inside_mdb != null)
+					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", mono_inside_mdb);
+#endif
 			}
 			mcs_output_lines=mcs_output.Split(
 				System.Environment.NewLine.ToCharArray());
