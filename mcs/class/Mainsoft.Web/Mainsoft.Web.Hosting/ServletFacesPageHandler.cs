@@ -49,8 +49,9 @@ namespace Mainsoft.Web.Hosting
 						Trace.WriteLine ("FacesPageHandler: after execute");
 					}
 					finally {
-						if (facesContext.getViewRoot ().getChildCount () > 0)
-							_page = (Page) facesContext.getViewRoot ().getChildren ().get (0);
+						UIViewRoot viewRoot = facesContext.getViewRoot ();
+						if (viewRoot != null && viewRoot.getChildCount () > 0)
+							_page = (Page) viewRoot.getChildren ().get (0);
 					}
 					Trace.WriteLine ("FacesPageHandler: before render");
 					_lifecycle.render (facesContext);
