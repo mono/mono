@@ -500,7 +500,6 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[Test] // bug #330415 and #331643
-		[Category ("NotWorking")]
 		public void RemoveFocusedItem ()
 		{
 			ListView lv = new ListView ();
@@ -514,7 +513,12 @@ namespace MonoTests.System.Windows.Forms
 			form.Controls.Add (lv);
 			form.Show ();
 
-			Assert.IsTrue (itemA.Focused, "#A1");
+			// Calling Form.Show () doesn't fire
+			// GotFocus event on child controls (asynch messages),
+			// thus we can't get the first item focused,
+			// but we DO when calling Application.Run ()
+
+			//Assert.IsTrue (itemA.Focused, "#A1");
 			Assert.IsFalse (itemB.Focused, "#A2");
 			Assert.IsFalse (itemC.Focused, "#A3");
 			Assert.IsFalse (itemD.Focused, "#A4");
