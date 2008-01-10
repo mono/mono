@@ -34,10 +34,10 @@ webForm.__pendingCallbacks = new Array();
 
 webForm.WebForm_AutoFocus = function (id)
 {
-	var x = this.WebForm_GetElementById (id);
+	var x = webForm.WebForm_GetElementById (id);
 
-	if (x && (!this.WebForm_CanFocus(x))) {
-		x = this.WebForm_FindFirstFocusableChild(x);
+	if (x && (!webForm.WebForm_CanFocus(x))) {
+		x = webForm.WebForm_FindFirstFocusableChild(x);
 	}
 	if (x) { x.focus(); }
 }
@@ -69,12 +69,12 @@ webForm.WebForm_FindFirstFocusableChild = function (element) {
 	if (children) {
 		for (var i = 0; i < children.length; i++) {
 			try {
-				if (this.WebForm_CanFocus(children[i])) {
+				if (webForm.WebForm_CanFocus(children[i])) {
 					return children[i];
 				}
 				else {
-					var focused = this.WebForm_FindFirstFocusableChild(children[i]);
-					if (this.WebForm_CanFocus(focused)) {
+					var focused = webForm.WebForm_FindFirstFocusableChild(children[i]);
+					if (webForm.WebForm_CanFocus(focused)) {
 						return focused;
 					}
 				}
@@ -87,28 +87,25 @@ webForm.WebForm_FindFirstFocusableChild = function (element) {
 
 webForm.WebForm_ReEnableControls = function  ()
 {
-	if (typeof(this._form.__enabledControlArray) != 'undefined' && this._form.__enabledControlArray != null)
-		__enabledControlArray = this._form.__enabledControlArray;
-	
-	if (typeof(__enabledControlArray) == 'undefined' || __enabledControlArray == null)
+	if (typeof(webForm.__enabledControlArray) == 'undefined' || webForm.__enabledControlArray == null)
 		return false;
 	
-	this._form.__disabledControlArray = new Array();
-	for (var i = 0; i < __enabledControlArray.length; i++) {
-		var c = this.WebForm_GetElementById (__enabledControlArray[i]);
+	webForm.__disabledControlArray = new Array();
+	for (var i = 0; i < webForm.__enabledControlArray.length; i++) {
+		var c = this.WebForm_GetElementById (webForm.__enabledControlArray[i]);
 		if ((typeof(c) != "undefined") && (c != null) && (c.disabled == true)) {
 			c.disabled = false;
-			this._form.__disabledControlArray[this._form.__disabledControlArray.length] = c;
+			webForm.__disabledControlArray[webForm.__disabledControlArray.length] = c;
 		}
 	}
-	setTimeout((this._instanceVariableName ? this._instanceVariableName + "." : "") + "WebForm_ReDisableControls ()", 0);
+	setTimeout(function () { webForm.WebForm_ReDisableControls (); }, 0);
 	return true;
 }
 
 webForm.WebForm_ReDisableControls = function  ()
 {
-	for (var i = 0; i < this._form.__disabledControlArray.length; i++) {
-		this._form.__disabledControlArray[i].disabled = true;
+	for (var i = 0; i < webForm.__disabledControlArray.length; i++) {
+		webForm.__disabledControlArray[i].disabled = true;
 	}
 }
 
@@ -260,7 +257,7 @@ webForm.WebForm_FireDefaultButton = function (event, target)
 	if(event.srcElement && (event.srcElement.tagName.toLowerCase() == "textarea")) {
 		return true;
 	}
-	var defaultButton = this.WebForm_GetElementById(target);
+	var defaultButton = webForm.WebForm_GetElementById(target);
 	if (!defaultButton)
 		return true;
 	

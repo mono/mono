@@ -1,3 +1,8 @@
+2008-01-10 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* webform.js:
+	make scripts compatible with MicrosoftAjaxLibrary.		
+
 2008-01-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebUIValidation_2.0.js:

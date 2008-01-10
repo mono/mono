@@ -1092,7 +1092,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
 		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
-		writer.WriteLine ("\t{0}._instanceVariableName = '{0}';", theForm);
 #if TARGET_J2EE
 		// TODO implement callback on portlet
 		string serverUrl = Request.RawUrl;
