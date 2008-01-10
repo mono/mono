@@ -1,5 +1,11 @@
 2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Tie CheckBox/RadioButton focus rectangles to
+	ShowFocusCues.  Make focus rectangles fit the text instead of the whole
+	control.  [Fixes bug #325419]
+
+2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Guard against an NRE if the user open a new form from a
 	SelectedIndexChanged event.  This closes the combobox dropdown, and we
 	were trying to dispose it.  [Fixes bug #352830]

@@ -954,9 +954,10 @@ namespace System.Windows.Forms
 
 			switch (button.TextImageRelation) {
 				case TextImageRelation.Overlay:
-					// Overlay is easy, text always goes here
-					textRectangle = content_rect;
-					textRectangle.Offset (2, -1);
+					// Text is centered vertically, and 2 pixels to the right
+					textRectangle.X = content_rect.Left + 2;
+					textRectangle.Y = ((content_rect.Height - text_size.Height) / 2) - 1;
+					textRectangle.Size = text_size;
 
 					// Image is dependent on ImageAlign
 					if (image == null)
@@ -1253,8 +1254,15 @@ namespace System.Windows.Forms
 			
 			CheckBox_DrawText(checkbox, text_rectangle, dc, text_format);
 
-			if (checkbox.Focused && checkbox.Enabled && checkbox.appearance != Appearance.Button && checkbox.Text != String.Empty)
-				CheckBox_DrawFocus (checkbox, dc, text_rectangle);
+			if (checkbox.Focused && checkbox.Enabled && checkbox.appearance != Appearance.Button && checkbox.Text != String.Empty && checkbox.ShowFocusCues) {
+				SizeF text_size = dc.MeasureString (checkbox.Text, checkbox.Font);
+				
+				Rectangle focus_rect = Rectangle.Empty;
+				focus_rect.X = text_rectangle.X;
+				focus_rect.Y = (int)((text_rectangle.Height - text_size.Height) / 2);
+				focus_rect.Size = text_size.ToSize ();
+				CheckBox_DrawFocus (checkbox, dc, focus_rect);
+			}
 
 			text_format.Dispose ();
 		}
@@ -4197,8 +4205,16 @@ namespace System.Windows.Forms
 			
 			RadioButton_DrawText(radio_button, text_rectangle, dc, text_format);
 
-			if (radio_button.Focused && radio_button.Enabled && radio_button.appearance != Appearance.Button && radio_button.Text != String.Empty)
-				RadioButton_DrawFocus (radio_button, dc, text_rectangle);
+			if (radio_button.Focused && radio_button.Enabled && radio_button.appearance != Appearance.Button && radio_button.Text != String.Empty && radio_button.ShowFocusCues) {
+				SizeF text_size = dc.MeasureString (radio_button.Text, radio_button.Font);
+				
+				Rectangle focus_rect = Rectangle.Empty;
+				focus_rect.X = text_rectangle.X;
+				focus_rect.Y = (int)((text_rectangle.Height - text_size.Height) / 2);
+				focus_rect.Size = text_size.ToSize ();
+
+				RadioButton_DrawFocus (radio_button, dc, focus_rect);
+			}
 			
 			text_format.Dispose ();
 		}
@@ -4324,7 +4340,7 @@ namespace System.Windows.Forms
 			if (imageBounds.Size != Size.Empty)
 				DrawRadioButtonImage (g, rb, imageBounds);
 
-			if (rb.Focused && rb.Enabled && rb.ShowKeyboardCuesInternal && textBounds != Rectangle.Empty)
+			if (rb.Focused && rb.Enabled && rb.ShowFocusCues && textBounds.Size != Size.Empty)
 				DrawRadioButtonFocus (g, rb, textBounds);
 
 			// If we have text, draw it
