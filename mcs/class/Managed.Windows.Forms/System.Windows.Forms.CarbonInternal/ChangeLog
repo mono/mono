@@ -1,3 +1,9 @@
+2008-01-10  Geoff Norton  <gnorton@novell.com>
+
+	* ControlHandler.cs:  Ensure we send controls a WM_WINDOWPOSCHANGED
+	when their bounds are changed by the carbon system.  Fixes initial sizing
+	of PDN DocumentWorkspace bug.
+
 2008-01-09  Geoff Norton  <gnorton@novell.com>
 
 	* WindowHandler.cs:  Hide utility windows when the window is minimizing

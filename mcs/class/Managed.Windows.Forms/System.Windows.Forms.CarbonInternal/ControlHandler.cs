@@ -170,7 +170,11 @@ namespace System.Windows.Forms.CarbonInternal {
 						hwnd.Height = (int) view_frame.size.height;
 						Driver.PerformNCCalc (hwnd);
 					}
-					return false;
+
+					msg.message = Msg.WM_WINDOWPOSCHANGED;
+					msg.hwnd = hwnd.Handle;
+
+					return true;
 				}
 				case kEventControlGetFocusPart: {
 					short pcode = 0;
