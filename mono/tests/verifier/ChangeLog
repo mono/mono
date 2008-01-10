@@ -1,3 +1,8 @@
+2008-01-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_ldftn_method_spec_token.il: new test
+	for loading function pointers for generic methods.
+
 2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_test.sh: added tests for unbox.any.
