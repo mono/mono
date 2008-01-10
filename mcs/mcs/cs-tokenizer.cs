@@ -561,6 +561,7 @@ namespace Mono.CSharp
 
 					case Token.STAR:
 					case Token.SEMICOLON:
+					case Token.OPEN_BRACE:
 					case Token.OPEN_PARENS:
 					case Token.LITERAL_STRING:
 						return false;

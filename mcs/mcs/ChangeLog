@@ -1,3 +1,8 @@
+2008-01-10  Geoff Norton  <gnorton@novell.com>
+
+	* cs-tokenizer.cs: One more token to distinguish between method and lambda
+	arguments
+
 2008-01-09  Marek Safar  <marek.safar@gmail.com>
 
  	* doc.cs: Report better /doc crash details.
