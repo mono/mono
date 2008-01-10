@@ -69,13 +69,13 @@ namespace System.Web.UI
 , IUrlResolutionService, IControlBuilderAccessor, IControlDesignerAccessor, IExpressionsAccessor
 #endif
 	{
-		static readonly object DataBindingEvent = new object ();
-		static readonly object DisposedEvent = new object ();
-		static readonly object InitEvent = new object ();
-		static readonly object LoadEvent = new object ();
-		static readonly object PreRenderEvent = new object ();
-		static readonly object UnloadEvent = new object ();
-		static string [] defaultNameArray;
+		internal static readonly object DataBindingEvent = new object ();
+		internal static readonly object DisposedEvent = new object ();
+		internal static readonly object InitEvent = new object ();
+		internal static readonly object LoadEvent = new object ();
+		internal static readonly object PreRenderEvent = new object ();
+		internal static readonly object UnloadEvent = new object ();
+		internal static string [] defaultNameArray;
 		/* */
 		int event_mask;
 		const int databinding_mask = 1;

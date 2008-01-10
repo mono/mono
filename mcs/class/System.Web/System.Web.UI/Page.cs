@@ -1968,13 +1968,13 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 	
 	#if NET_2_0
-	
-	static readonly object InitCompleteEvent = new object ();
-	static readonly object LoadCompleteEvent = new object ();
-	static readonly object PreInitEvent = new object ();
-	static readonly object PreLoadEvent = new object ();
-	static readonly object PreRenderCompleteEvent = new object ();
-	static readonly object SaveStateCompleteEvent = new object ();
+
+	internal static readonly object InitCompleteEvent = new object ();
+	internal static readonly object LoadCompleteEvent = new object ();
+	internal static readonly object PreInitEvent = new object ();
+	internal static readonly object PreLoadEvent = new object ();
+	internal static readonly object PreRenderCompleteEvent = new object ();
+	internal static readonly object SaveStateCompleteEvent = new object ();
 	int event_mask;
 	const int initcomplete_mask = 1;
 	const int loadcomplete_mask = 1 << 1;
