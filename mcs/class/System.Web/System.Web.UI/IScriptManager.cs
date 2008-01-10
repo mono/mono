@@ -40,14 +40,14 @@ namespace System.Web.UI
 #endif
 	interface IScriptManager
 	{
-		void RegisterOnSubmitStatement (Control control, Type type, string key, string script);
-		void RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode);
-		void RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue);
-		void RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags);
-		void RegisterArrayDeclaration (Control control, string arrayName, string arrayValue);
-		void RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags);
-		void RegisterClientScriptInclude (Control control, Type type, string key, string url);
-		void RegisterClientScriptResource (Control control, Type type, string resourceName);
+		void RegisterOnSubmitStatementExternal (Control control, Type type, string key, string script);
+		void RegisterExpandoAttributeExternal (Control control, string controlId, string attributeName, string attributeValue, bool encode);
+		void RegisterHiddenFieldExternal (Control control, string hiddenFieldName, string hiddenFieldInitialValue);
+		void RegisterStartupScriptExternal (Control control, Type type, string key, string script, bool addScriptTags);
+		void RegisterArrayDeclarationExternal (Control control, string arrayName, string arrayValue);
+		void RegisterClientScriptBlockExternal (Control control, Type type, string key, string script, bool addScriptTags);
+		void RegisterClientScriptIncludeExternal (Control control, Type type, string key, string url);
+		void RegisterClientScriptResourceExternal (Control control, Type type, string resourceName);
 	}
 }
 #endif

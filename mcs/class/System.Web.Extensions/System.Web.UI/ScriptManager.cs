@@ -670,12 +670,18 @@ namespace System.Web.UI
 		}
 
 #if TARGET_J2EE
+		bool _isMultiForm = false;
+		bool _isMultiFormInited = false;
+
 		bool IsMultiForm {
 			get {
-				Mainsoft.Web.Configuration.PagesSection pageSection = (Mainsoft.Web.Configuration.PagesSection) WebConfigurationManager.GetSection ("mainsoft.web/pages");
-				if (pageSection != null)
-					return pageSection.MultiForm;
-				return false;
+				if (!_isMultiFormInited) {
+					string isMultiForm = WebConfigurationManager.AppSettings ["mainsoft.use.portlet.namespace"];
+					_isMultiForm = isMultiForm != null ? Boolean.Parse (isMultiForm) : false;
+
+					_isMultiFormInited = true;
+				}
+				return _isMultiForm;
 			}
 		}
 #else
@@ -1604,35 +1610,35 @@ namespace System.Web.UI
 
 		#region IScriptManager Members
 
-		void IScriptManager.RegisterOnSubmitStatement (Control control, Type type, string key, string script) {
+		void IScriptManager.RegisterOnSubmitStatementExternal (Control control, Type type, string key, string script) {
 			RegisterOnSubmitStatement (control, type, key, script);
 		}
 
-		void IScriptManager.RegisterExpandoAttribute (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
+		void IScriptManager.RegisterExpandoAttributeExternal (Control control, string controlId, string attributeName, string attributeValue, bool encode) {
 			RegisterExpandoAttribute (control, controlId, attributeName, attributeValue, encode);
 		}
 
-		void IScriptManager.RegisterHiddenField (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
+		void IScriptManager.RegisterHiddenFieldExternal (Control control, string hiddenFieldName, string hiddenFieldInitialValue) {
 			RegisterHiddenField (control, hiddenFieldName, hiddenFieldInitialValue);
 		}
 
-		void IScriptManager.RegisterStartupScript (Control control, Type type, string key, string script, bool addScriptTags) {
+		void IScriptManager.RegisterStartupScriptExternal (Control control, Type type, string key, string script, bool addScriptTags) {
 			RegisterStartupScript (control, type, key, script, addScriptTags);
 		}
 
-		void IScriptManager.RegisterArrayDeclaration (Control control, string arrayName, string arrayValue) {
+		void IScriptManager.RegisterArrayDeclarationExternal (Control control, string arrayName, string arrayValue) {
 			RegisterArrayDeclaration (control, arrayName, arrayValue);
 		}
 
-		void IScriptManager.RegisterClientScriptBlock (Control control, Type type, string key, string script, bool addScriptTags) {
+		void IScriptManager.RegisterClientScriptBlockExternal (Control control, Type type, string key, string script, bool addScriptTags) {
 			RegisterClientScriptBlock (control, type, key, script, addScriptTags);
 		}
 
-		void IScriptManager.RegisterClientScriptInclude (Control control, Type type, string key, string url) {
+		void IScriptManager.RegisterClientScriptIncludeExternal (Control control, Type type, string key, string url) {
 			RegisterClientScriptInclude (control, type, key, url);
 		}
 
-		void IScriptManager.RegisterClientScriptResource (Control control, Type type, string resourceName) {
+		void IScriptManager.RegisterClientScriptResourceExternal (Control control, Type type, string resourceName) {
 			RegisterClientScriptResource (control, type, resourceName);
 		}
 

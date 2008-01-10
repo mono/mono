@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls {
 
 		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
 			if (Page.ScriptManager != null)
-				Page.ScriptManager.RegisterExpandoAttribute (this, controlId, attributeName, attributeValue, encode);
+				Page.ScriptManager.RegisterExpandoAttributeExternal (this, controlId, attributeName, attributeValue, encode);
 			else
 				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
@@ -444,10 +444,10 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			if (Page.ScriptManager != null) {
-				Page.ScriptManager.RegisterClientScriptResource (this, typeof (BaseValidator), "WebUIValidation_2.0.js");
-				Page.ScriptManager.RegisterClientScriptBlock (this, typeof (BaseValidator), "ValidationInitializeScript", Page.ValidationInitializeScript, true);
-				Page.ScriptManager.RegisterOnSubmitStatement (this, typeof (BaseValidator), "ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
-				Page.ScriptManager.RegisterStartupScript (this, typeof (BaseValidator), "ValidationStartupScript", Page.ValidationStartupScript, true);
+				Page.ScriptManager.RegisterClientScriptResourceExternal (this, typeof (BaseValidator), "WebUIValidation_2.0.js");
+				Page.ScriptManager.RegisterClientScriptBlockExternal (this, typeof (BaseValidator), "ValidationInitializeScript", Page.ValidationInitializeScript, true);
+				Page.ScriptManager.RegisterOnSubmitStatementExternal (this, typeof (BaseValidator), "ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
+				Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), "ValidationStartupScript", Page.ValidationStartupScript, true);
 			}
 			else
 #endif
@@ -488,8 +488,8 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			if (Page.ScriptManager != null) {
-				Page.ScriptManager.RegisterArrayDeclaration (this, "Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
-				Page.ScriptManager.RegisterStartupScript (this, typeof (BaseValidator), ClientID + "DisposeScript",
+				Page.ScriptManager.RegisterArrayDeclarationExternal (this, "Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
+				Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), ClientID + "DisposeScript",
 @"
 document.getElementById('" + ClientID + @"').dispose = function() {
     Array.remove(Page_Validators, document.getElementById('" + ClientID + @"'));
