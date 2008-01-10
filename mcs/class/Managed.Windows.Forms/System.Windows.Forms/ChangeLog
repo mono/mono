@@ -1,5 +1,12 @@
 2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUIX11.cs: Set a minimum window size and enforce it.  Even though
+	Linux doesn't care, having a minimum matches MS and keeps the window
+	from becoming too small to use window decorations.
+	[Fixes bug #338996]
+
+2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Tie CheckBox/RadioButton focus rectangles to
 	ShowFocusCues.  Make focus rectangles fit the text instead of the whole
 	control.  [Fixes bug #325419]

@@ -2127,7 +2127,7 @@ namespace System.Windows.Forms {
 
 		internal override  Size MinimumWindowSize {
 			get {
-				return new Size(0, 0);
+				return new Size(110, 22);
 			}
 		} 
 
@@ -5273,6 +5273,9 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			min.Width = Math.Max (min.Width, SystemInformation.MinimumWindowSize.Width);
+			min.Height = Math.Max (min.Height, SystemInformation.MinimumWindowSize.Height);
+			
 			hints = new XSizeHints();
 
 			XGetWMNormalHints(DisplayHandle, hwnd.whole_window, ref hints, out dummy);
