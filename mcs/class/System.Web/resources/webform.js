@@ -31,6 +31,9 @@
 function WebForm_Initialize(webForm) {
 
 webForm.__pendingCallbacks = new Array();
+webForm.__synchronousCallBackIndex = -1;
+webForm.__theFormPostData = "";
+webForm.__theFormPostCollection = new Array();
 
 webForm.WebForm_AutoFocus = function (id)
 {
@@ -141,19 +144,77 @@ webForm.WebForm_DoPostBackWithOptions = function  (options) {
 		webForm.__doPostBack (options.eventTarget, options.eventArgument);
 }
 
+webForm.WebForm_InitCallback = function () {
+}
+
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
 {
 	var qs = webForm.WebForm_getFormData () + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
   
   if (webForm._form["__EVENTVALIDATION"])
     qs += "&__EVENTVALIDATION=" + encodeURIComponent(webForm._form["__EVENTVALIDATION"].value);
-  
-	webForm.WebForm_httpPost (webForm._form.serverURL || document.URL, qs, function (httpPost) { webForm.WebForm_ClientCallback (httpPost, ctx, callback, errorCallback); });
+
+	var httpPost = null;
+	
+	if (typeof XMLHttpRequest != "undefined") {
+		httpPost = new XMLHttpRequest ();
+	} else {
+		if (this.axName != null)
+			httpPost = new ActiveXObject (this.axName);
+		else {
+			var clsnames = new Array ("MSXML", "MSXML2", "MSXML3", "Microsoft");
+			for (n = 0; n < clsnames.length && httpPost == null; n++) {
+				this.axName = clsnames [n] + ".XMLHTTP";
+				try {
+					httpPost = new ActiveXObject (this.axName);
+				} catch (e) { this.axName = null; }
+			}
+			if (httpPost == null)
+				throw new Error ("XMLHTTP object could not be created.");
+		}
+	}
+
+	var i;
+	for (i = 0; i < webForm.__pendingCallbacks.length; i++)
+		if (!webForm.__pendingCallbacks[i]) break;
+	webForm.__pendingCallbacks[i] = {
+		"eventCallback" : callback,
+		"context" : ctx,
+		"errorCallback" : errorCallback,
+		"async" : useAsync,
+		"xmlRequest" : httpPost
+		};
+
+	if (!useAsync) {
+		if (webForm.__synchronousCallBackIndex != -1)
+			webForm.__pendingCallbacks[webForm.__synchronousCallBackIndex] = null;
+		webForm.__synchronousCallBackIndex = i;
+	}
+
+	httpPost.onreadystatechange = function () { 
+			for (i = 0; i < webForm.__pendingCallbacks.length; i++) {
+				var callbackObject = webForm.__pendingCallbacks[i];
+				if (callbackObject && callbackObject.xmlRequest && (callbackObject.xmlRequest.readyState == 4)) {
+					webForm.WebForm_ClientCallback(
+						callbackObject.xmlRequest.responseText, 
+						callbackObject.context, 
+						callbackObject.eventCallback, 
+						callbackObject.errorCallback 
+						);
+					if (!webForm.__pendingCallbacks[i].async)
+						webForm.__synchronousCallBackIndex = -1;
+					webForm.__pendingCallbacks[i] = null;
+				}
+			}
+		};
+	
+	httpPost.open ("POST", webForm._form.serverURL || webForm._form.action, true);
+	httpPost.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
+	setTimeout (function () { httpPost.send (qs); }, 0);
 }
 
-webForm.WebForm_ClientCallback = function (httpPost, ctx, callback, errorCallback)
+webForm.WebForm_ClientCallback = function (doc, ctx, callback, errorCallback)
 {
-	var doc = httpPost.responseText;
 	if (doc.charAt(0) == "e") {
 		if ((typeof(errorCallback) != "undefined") && (errorCallback != null))
 			errorCallback(doc.substring(1), ctx);
@@ -212,34 +273,6 @@ webForm.WebForm_getFormData = function ()
 		}
 	}
 	return qs;
-}
-
-webForm.WebForm_httpPost = function (url, data, callback)
-{
-	var httpPost = null;
-	
-	if (typeof XMLHttpRequest != "undefined") {
-		httpPost = new XMLHttpRequest ();
-	} else {
-		if (this.axName != null)
-			httpPost = new ActiveXObject (this.axName);
-		else {
-			var clsnames = new Array ("MSXML", "MSXML2", "MSXML3", "Microsoft");
-			for (n = 0; n < clsnames.length && httpPost == null; n++) {
-				this.axName = clsnames [n] + ".XMLHTTP";
-				try {
-					httpPost = new ActiveXObject (this.axName);
-				} catch (e) { this.axName = null; }
-			}
-			if (httpPost == null)
-				throw new Error ("XMLHTTP object could not be created.");
-		}
-	}
-	httpPost.onreadystatechange = function () { if (httpPost.readyState == 4) callback (httpPost); };
-	
-	httpPost.open ("POST", url, true);	// async
-	httpPost.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
-	setTimeout (function () { httpPost.send (data); }, 10);
 }
 
 webForm.WebForm_GetElementById = function (id)
