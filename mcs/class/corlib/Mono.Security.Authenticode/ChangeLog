@@ -1,3 +1,9 @@
+2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: Use RSAManaged and the new overloaded
+	PKCS1.Verify_v15 with tryNonStandardEncoding == true when verifying
+	timestamping certificate signatures. Fix for #350958
+
 2007-04-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: Synch with latest Mono.Security version
