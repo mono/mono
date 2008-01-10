@@ -1,3 +1,8 @@
+2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs, X509Certificate.cs, X509Chain.cs, X509Extension.cs:
+	Synchronize/update with Mono.Security assembly
+
 2006-12-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Added support for (some cases of) T.61 strings, like
