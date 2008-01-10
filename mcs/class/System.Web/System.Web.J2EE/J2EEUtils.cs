@@ -36,16 +36,67 @@ namespace System.Web.J2EE
 {
 	internal static class J2EEUtils
 	{
-		public static string GetInitParameterByHierarchy (ServletConfig config, string name) {
-			if (config == null)
-				throw new ArgumentNullException ("config");
+		#region InputStreamWrapper
 
-			string value = config.getInitParameter (name);
-			if (value != null)
-				return value;
+		public sealed class InputStreamWrapper : Stream
+		{
+			readonly java.io.InputStream _ins;
 
-			return config.getServletContext ().getInitParameter (name);
+			public InputStreamWrapper (java.io.InputStream ins) {
+				_ins = ins;
+			}
+
+			public override bool CanRead {
+				get { return true; }
+			}
+
+			public override bool CanSeek {
+				get { return _ins.markSupported (); }
+			}
+
+			public override bool CanWrite {
+				get { return false; }
+			}
+
+			public override void Flush () {
+			}
+
+			public override long Length {
+				get { return _ins.available (); }
+			}
+
+			public override long Position {
+				get {
+					throw new NotSupportedException ();
+				}
+				set {
+					throw new NotSupportedException ();
+				}
+			}
+
+			public override int Read (byte [] buffer, int offset, int count) {
+				int r = _ins.read (TypeUtils.ToSByteArray (buffer), offset, count);
+				return r < 0 ? 0 : r;
+			}
+
+			public override long Seek (long offset, SeekOrigin origin) {
+				throw new NotImplementedException ();
+			}
+
+			public override void SetLength (long value) {
+				throw new NotSupportedException ();
+			}
+
+			public override void Write (byte [] buffer, int offset, int count) {
+				throw new NotSupportedException ();
+			}
+
+			public override void Close () {
+				_ins.close ();
+			}
 		}
+
+		#endregion
 
 		public static int RunProc(string[] cmd)
 		{	
