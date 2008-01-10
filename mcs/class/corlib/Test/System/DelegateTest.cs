@@ -267,6 +267,70 @@ namespace MonoTests.System
 			FooDelegate2 del5 = (FooDelegate2)Delegate.CreateDelegate (typeof (FooDelegate2), typeof (B).GetMethod ("retarg3"));
 			Assert.AreEqual ("Hello2", del5 (c, "Hello"));
 		}
+
+		int int_field;
+
+		delegate int Del1 (DelegateTest dt, int i);
+
+		public int method1 (int i) {
+			return int_field + i;
+		}
+
+		[Test]
+		public void NullTarget_Instance ()
+		{
+			Del1 d = (Del1)Delegate.CreateDelegate (typeof (Del1), null, typeof (DelegateTest).GetMethod ("method1"));
+
+			DelegateTest dt = new DelegateTest ();
+			dt.int_field = 5;
+
+			Assert.AreEqual (10, d (dt, 5));
+		}
+
+		delegate int Del2 (int i);
+
+		public static int method2 (int i) {
+			return i + 5;
+		}
+
+		[Test]
+		public void NullTarget_Static ()
+		{
+			Del2 d = (Del2)Delegate.CreateDelegate (typeof (Del2), null, typeof (DelegateTest).GetMethod ("method2"));
+
+			Assert.AreEqual (10, d (5));
+		}
+
+		delegate int Del3 (int i);
+
+		public int method3 (int i) {
+			return int_field + 5;
+		}
+
+		[Test]
+		public void HasTarget_Instance ()
+		{
+			DelegateTest dt = new DelegateTest ();
+			dt.int_field = 5;
+
+			Del3 d = (Del3)Delegate.CreateDelegate (typeof (Del3), dt, typeof (DelegateTest).GetMethod ("method3"));
+
+			Assert.AreEqual (10, d (5));
+		}
+
+		delegate int Del4 (int i);
+
+		public static int method4 (string s, int i) {
+			return Int32.Parse (s) + 5;
+		}
+
+		[Test]
+		public void HasTarget_Static ()
+		{
+			Del4 d = (Del4)Delegate.CreateDelegate (typeof (Del4), "5", typeof (DelegateTest).GetMethod ("method4"));
+
+			Assert.AreEqual (10, d (5));
+		}
 #endif
 		delegate string FooDelegate (Iface iface, string s);
 
