@@ -1,5 +1,8 @@
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_output_basic_block): Use a byte load in CHECK_THIS.
+	Fixes #353182.
+
 	* Makefile.am (version.h): Make this work with non-bash shells.
 
 2008-01-10  Zoltan Varga  <vargaz@gmail.com>
