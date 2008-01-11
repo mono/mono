@@ -1,5 +1,9 @@
 2008-01-10  Geoff Norton  <gnorton@novell.com>
 
+	* ControlHAndler.cs:  Mark all dirty areas as dirty with the Hwnd system.
+
+2008-01-10  Geoff Norton  <gnorton@novell.com>
+
 	* ControlHandler.cs:  Ensure we send controls a WM_WINDOWPOSCHANGED
 	when their bounds are changed by the carbon system.  Fixes initial sizing
 	of PDN DocumentWorkspace bug.

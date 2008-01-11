@@ -110,12 +110,9 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			switch (kind) {
 				case kEventControlDraw: {
-					//TODO: This is a hack which masks our over-redraw-expose problem
-					if (client) {
-						HIRect bounds = new HIRect ();
-						HIViewGetBounds (handle, ref bounds);
-						Driver.AddExpose (hwnd, client, bounds);
-					}
+					HIRect bounds = new HIRect ();
+					HIViewGetBounds (handle, ref bounds);
+					Driver.AddExpose (hwnd, client, bounds);
 
 					if (!hwnd.visible) {
 						if (client) {
