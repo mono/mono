@@ -42,7 +42,7 @@ namespace System
 	public struct DateTimeOffset : IComparable, IFormattable, ISerializable, IDeserializationCallback, IComparable<DateTimeOffset>, IEquatable<DateTimeOffset>
 	{
 		public static readonly DateTimeOffset MaxValue = new DateTimeOffset (DateTime.MaxValue, TimeSpan.Zero);
-		public static readonly DateTimeOffset MinValue = new DateTimeOffset (DateTime.MixValue, TimeSpan.Zero);
+		public static readonly DateTimeOffset MinValue = new DateTimeOffset (DateTime.MinValue, TimeSpan.Zero);
 		
 		DateTime dt;
 		TimeSpan utc_offset;
