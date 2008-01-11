@@ -1,5 +1,8 @@
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-io-portability.c: Include errno.h since it is needed by code inside
+	#ifdef DEBUG.
+
 	* mono-ehash.c: Don't include os/gc_wrapper.h.
 
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
