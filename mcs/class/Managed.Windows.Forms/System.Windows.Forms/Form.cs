@@ -2298,6 +2298,11 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
+				width = Math.Max (width, SystemInformation.MinimumWindowSize.Width);
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
+				height = Math.Max (height, SystemInformation.MinimumWindowSize.Height);
+				
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
