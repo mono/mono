@@ -50,7 +50,6 @@ namespace System.Data.Design
 		{
 		}
 
-#if NET_3_5
 		[Flags]
 		public enum GenerateOption
 		{
@@ -58,7 +57,6 @@ namespace System.Data.Design
 			HierarchicalUpdate = 1,
 			LinqOverTypedDatasets = 2
 		}
-#endif
 
 		[MonoTODO]
 		public static ICollection<Assembly> ReferencedAssemblies {
@@ -89,7 +87,6 @@ namespace System.Data.Design
 			throw new NotImplementedException ();
 		}
 
-#if NET_3_5
 		[MonoTODO]
 		public static string Generate (string inputFileContent, CodeCompileUnit compileUnit, CodeNamespace mainNamespace, CodeDomProvider codeProvider, GenerateOption option)
 		{
@@ -101,7 +98,6 @@ namespace System.Data.Design
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static string GetProviderName (string inputFileContent)
