@@ -711,11 +711,12 @@ namespace System.Windows.Forms {
 				height = hwnd.height - y;
 			}
 
+			Carbon.HIRect region = new Carbon.HIRect (x, y, width, height);
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
 				if (!hwnd.expose_pending) {
 					if (!hwnd.nc_expose_pending) {
-						HIViewSetNeedsDisplay (hwnd.ClientWindow, true);
+						HIViewSetNeedsDisplayInRect (hwnd.ClientWindow, ref region, true);
 					}
 					hwnd.expose_pending = true;
 				}
@@ -723,7 +724,7 @@ namespace System.Windows.Forms {
 				hwnd.AddNcInvalidArea (x, y, width, height);
 				if (!hwnd.nc_expose_pending) {
 					if (!hwnd.expose_pending) {
-						HIViewSetNeedsDisplay (hwnd.WholeWindow, true);
+						HIViewSetNeedsDisplayInRect (hwnd.WholeWindow, ref region, true);
 					}
 					hwnd.nc_expose_pending = true;
 				}
@@ -1488,7 +1489,7 @@ namespace System.Windows.Forms {
 				}
 
 				// FIXME: Clip region is hosed
-//				dc.Clip = clip_region;
+				dc.Clip = clip_region;
 				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 				hwnd.ClearInvalidArea();
@@ -1500,7 +1501,7 @@ namespace System.Windows.Forms {
 
 				if (!hwnd.nc_invalid.IsEmpty) {
 					// FIXME: Clip region is hosed
-//					dc.SetClip (hwnd.nc_invalid);
+					dc.SetClip (hwnd.nc_invalid);
 					paint_event = new PaintEventArgs(dc, hwnd.nc_invalid);
 				} else {
 					paint_event = new PaintEventArgs(dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
@@ -2119,7 +2120,13 @@ namespace System.Windows.Forms {
 		}
 		internal override Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
 		internal override Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
-		internal override Size MinimumWindowSize { get{ throw new NotImplementedException(); } }
+
+		internal override Size MinimumWindowSize {
+			get {
+				return new Size(110, 22);
+			}
+		}
+
 		internal override Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
 		
 		internal override Keys ModifierKeys {
@@ -2196,7 +2203,7 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewSetFrame (IntPtr view_handle, ref Carbon.HIRect bounds);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int HIViewSetNeedsDisplay (IntPtr view_handle, bool needs_display);
+		extern static int HIViewSetNeedsDisplayInRect (IntPtr view_handle, ref Carbon.HIRect rect, bool needs_display);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static void SetRect (ref Carbon.Rect r, short left, short top, short right, short bottom);

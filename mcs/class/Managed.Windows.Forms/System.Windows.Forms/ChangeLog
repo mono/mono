@@ -1,3 +1,9 @@
+2008-01-10  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  Clip the Graphics context to the invalid area
+	tracked in the Hwnd.  Only invalidate the dirty region to the Carbon
+	window manager.
+
 2008-01-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Enforce the Form minimum size in SetBoundsCore.  Fixed
