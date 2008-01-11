@@ -1,3 +1,15 @@
+2008-01-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldfld_reference_type_by_ref.il: new test for ldfld.
+
+	* invalid_stojb_bad_token.il: test for bad ldobj token.
+
+	* invalid_stojb_token_out_of_bounds.il: same.
+
+	* make_stobj_test.sh: new test generator.
+
+	* make_test.sh: added new tests for stobj.
+
 2008-01-10 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_ldftn_method_spec_token.il: new test
