@@ -1,4 +1,15 @@
-﻿// Permission is hereby granted, free of charge, to any person obtaining
+﻿//
+// Expression.cs
+//
+// Author:
+//   Marek Safar (marek.safar@seznam.cz)
+//   Antonello Provenzano  <antonello@deveel.com>
+//   Federico Di Gregorio <fog@initd.org>
+//   Jb Evain (jbevain@novell.com)
+//
+// (C) 2008 Novell, Inc. (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -15,12 +26,10 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Authors:
-//		Marek Safar (marek.safar@seznam.cz)
-//		Antonello Provenzano  <antonello@deveel.com>
-//		Federico Di Gregorio <fog@initd.org>
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -30,20 +39,9 @@ namespace System.Linq.Expressions
 {
 	public abstract class Expression
 	{
-		#region .ctor
-		protected Expression (ExpressionType nodeType, Type type)
-		{
-			this.nodeType = nodeType;
-			this.type = type;
-		}
-		#endregion
+		Type type;
+		ExpressionType nodeType;
 
-		#region Fields
-		private Type type;
-		private ExpressionType nodeType;
-		#endregion
-
-		#region Properties
 		public Type Type {
 			get { return type; }
 		}
@@ -51,7 +49,12 @@ namespace System.Linq.Expressions
 		public ExpressionType NodeType {
 			get { return nodeType; }
 		}
-		#endregion
+
+		protected Expression (ExpressionType nodeType, Type type)
+		{
+			this.nodeType = nodeType;
+			this.type = type;
+		}
 
 		#region Internal methods
 		internal virtual void BuildString (StringBuilder builder)
@@ -1161,5 +1164,35 @@ namespace System.Linq.Expressions
 			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof(bool));
 		}
 		#endregion
+
+		[MonoTODO]
+		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, IEnumerable<ParameterExpression> parameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static LambdaExpression Lambda (Expression body, params ParameterExpression [] parameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static LambdaExpression Lambda (Type delegateType, Expression body, params ParameterExpression [] parameters)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static LambdaExpression Lambda (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
