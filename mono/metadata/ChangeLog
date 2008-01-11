@@ -1,3 +1,12 @@
+2008-01-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_boxable_mono_type): check if the token is valid.
+
+	* verify.c (set_stack_value): changed to add an error if an
+	invalid type is set on stack. Changed all callers due to signature change.
+
+	* verify.c (do_stobj): implement stobj validation.
+
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (reflection_methodbuilder_to_mono_method): No need to
