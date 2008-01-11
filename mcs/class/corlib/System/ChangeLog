@@ -1,3 +1,7 @@
+2008-01-11  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffset.cs: Fixes the MinValue (was equal to MaxValue)...
+
 2008-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs: Implement argument checking in CreateDelegate(Type,object,MethodInfo)
