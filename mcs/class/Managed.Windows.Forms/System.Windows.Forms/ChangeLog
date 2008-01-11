@@ -1,3 +1,9 @@
+2008-01-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MenuAPI.cs: If we get an Alt-F4, release our capture so Windows
+	will process the message and close our window.
+	[Fixes bug #324328]
+
 2008-01-10  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Clip the Graphics context to the invalid area

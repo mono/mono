@@ -626,6 +626,13 @@ namespace System.Windows.Forms {
 
 		public bool ProcessKeys (ref Message msg, Keys keyData)
 		{
+			// If we get Alt-F4, Windows will ignore it because we have a capture,
+			// release the capture and the program will exit.  (X11 doesn't care.)
+			if ((keyData & Keys.Alt) == Keys.Alt && (keyData & Keys.F4) == Keys.F4) {
+				grab_control.ActiveTracker = null;
+				return false;
+			}
+			
 			if ((Msg)msg.Msg != Msg.WM_SYSKEYUP && ProcessShortcut (keyData))
 				return true;
 			else if ((keyData & Keys.KeyCode) == Keys.Menu && TopMenu is MainMenu) {
