@@ -1,3 +1,7 @@
+2008-01-11  Marek Safar  <marek.safar@gmail.com>
+
+ 	* lambda.cs: Don't use a cast on unknown expression statement.
+
 2008-01-10  Geoff Norton  <gnorton@novell.com>
 
 	* cs-tokenizer.cs: One more token to distinguish between method and lambda

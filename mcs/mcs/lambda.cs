@@ -137,7 +137,7 @@ namespace Mono.CSharp {
 	// This is a return statement that is prepended lambda expression bodies that happen
 	// to be expressions.  Depending on the return type of the delegate this will behave
 	// as either { expr (); return (); } or { return expr (); }
-
+	//
 	public class ContextualReturn : Return
 	{
 		bool statement_return;
@@ -149,14 +149,22 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (statement_return)
-				((ExpressionStatement)Expr).EmitStatement (ec);
-			else
-				base.Emit (ec);
+			if (statement_return) {
+				ExpressionStatement es = Expr as ExpressionStatement;
+				if (es == null) {
+					Expr.Error_InvalidExpressionStatement ();
+					return;
+				}
+				
+				es.EmitStatement (ec);
+				return;
+			}
+			
+			base.Emit (ec);
 		}
 
 		public override bool Resolve (EmitContext ec)
-		{
+		{		
 			if (ec.ReturnType == TypeManager.void_type) {
 				statement_return = true;
 				return Expr.Resolve (ec) != null;
