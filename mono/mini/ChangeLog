@@ -1,5 +1,7 @@
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Use a 4 byte load in OP_CHECK_THIS.
+
 	* mini-sparc.c (mono_arch_output_basic_block): Use a byte load in CHECK_THIS.
 	Fixes #353182.
 
