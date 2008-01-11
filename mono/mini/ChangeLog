@@ -1,3 +1,7 @@
+2008-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (version.h): Make this work with non-bash shells.
+
 2008-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (handle_delegate_ctor): Optimize away setting of NULL target.
