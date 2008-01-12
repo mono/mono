@@ -59,7 +59,7 @@ namespace Commons.Xml.Relaxng.Inference
 		}
 
 		public InferenceOption TypeInference {
-			get { return TypeInference; }
+			get { return typeInference; }
 			set { typeInference = value; }
 		}
 
