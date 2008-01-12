@@ -1,3 +1,8 @@
+2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConfigurationLocationCollection.cs: Avoid infinite recursion. 
+	Found using Gendarme.
+
 2007-12-25  Konstantin Triger <kostat@mainsoft.com>
 
 	* KeyValueInternalCollection.cs: properly override NameValueCollection

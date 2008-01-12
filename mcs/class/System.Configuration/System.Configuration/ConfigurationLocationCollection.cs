@@ -39,7 +39,7 @@ namespace System.Configuration {
 		}
 		
 		public ConfigurationLocation this [int index] {
-			get { return this [index] as ConfigurationLocation; }
+			get { return InnerList [index] as ConfigurationLocation; }
 		}
 		
 		internal void Add (ConfigurationLocation loc)
