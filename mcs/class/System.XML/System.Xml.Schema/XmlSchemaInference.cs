@@ -93,7 +93,7 @@ namespace System.Xml.Schema
 		}
 
 		public InferenceOption TypeInference {
-			get { return TypeInference; }
+			get { return typeInference; }
 			set { typeInference = value; }
 		}
 
