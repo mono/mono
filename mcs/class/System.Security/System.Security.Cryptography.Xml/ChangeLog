@@ -1,3 +1,10 @@
+2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ReferenceList.cs: Avoid infinite recursion when setting []. 
+	Found by Gendarme.
+	* XmlDsigXPathTransform.cs: Fix direct comparison with NaN. Found 
+	by Gendarme.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigExcC14NTransform.cs : removed extra [ComVisible].

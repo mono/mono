@@ -171,7 +171,7 @@ namespace System.Security.Cryptography.Xml
 				return (bool) ret;
 			if (ret is double) {
 				double d = (double) ret;
-				return !(d == 0.0 || d == double.NaN);
+				return !(d == 0.0 || Double.IsNaN (d));
 			}
 			if (ret is string)
 				return ((string) ret).Length > 0;

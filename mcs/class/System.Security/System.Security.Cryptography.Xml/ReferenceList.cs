@@ -79,7 +79,7 @@ namespace System.Security.Cryptography.Xml {
 		[IndexerName ("ItemOf")]
 		public EncryptedReference this [int index] {
 			get { return (EncryptedReference) list [index]; }
-			set { this [index] = value; }
+			set { list [index] = value; }
 		}
 
 		public object SyncRoot {
