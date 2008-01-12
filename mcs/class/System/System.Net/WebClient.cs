@@ -735,18 +735,15 @@ namespace System.Net
 				if (length > 0)
 					tmpStream.SetLength (--length); // remove trailing '&'
 				
-				tmpStream.WriteByte ((byte) '\r');
-				tmpStream.WriteByte ((byte) '\n');
-				
 				byte [] buf = tmpStream.GetBuffer ();
-				rqStream.Write (buf, 0, length + 2);
+				rqStream.Write (buf, 0, length);
 				rqStream.Close ();
 				tmpStream.Close ();
 				
 				WebResponse response = request.GetResponse ();
 				Stream st = ProcessResponse (response);
 				return ReadAll (st, (int) response.ContentLength, userToken);
-			} catch (ThreadInterruptedException){
+			} catch (ThreadInterruptedException) {
 				request.Abort ();
 				throw;
 			}
