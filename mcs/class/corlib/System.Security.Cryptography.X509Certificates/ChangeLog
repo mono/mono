@@ -1,3 +1,8 @@
+2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Don't wrap our own COMException inside another
+	one. This will provide a better error message to the user (or tool)
+
 2007-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Now that the ASN.1 converted DateTime is 

@@ -122,6 +122,12 @@ namespace System.Security.Cryptography.X509Certificates {
 				// don't wrap SecurityException into a COMException
 				throw;
 			}
+#if !NET_2_0
+			catch (COMException) {
+				// don't wrap COMException into a COMException
+				throw;
+			}
+#endif
 			catch (Exception e) {
 				string msg = Locale.GetText ("Couldn't extract digital signature from {0}.", filename);
 				throw new COMException (msg, e);
