@@ -1,3 +1,8 @@
+2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultContext.cs: Fix direct comparison with NaN. Found by 
+	Gendarme.
+
 2007-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : oops, extra removal that causes perf. loss.

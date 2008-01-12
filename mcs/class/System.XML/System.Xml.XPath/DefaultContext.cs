@@ -71,7 +71,7 @@ namespace System.Xml.XPath
 
 		public static bool ToBoolean (double d)
 		{
-			return d != 0.0 && d != double.NaN;
+			return d != 0.0 && !Double.IsNaN (d);
 		}
 
 		public static bool ToBoolean (string s)
