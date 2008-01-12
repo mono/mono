@@ -441,7 +441,10 @@ namespace System.Windows.Forms {
 							break;
 						
 						HandleButtonUpMsg ();
+
 						// We don't want to dispatch button up neither (Match .Net)
+						// Thus we have to remove capture by ourselves
+						RemoveCapture (msg.hwnd);
 						continue;
 					case Msg.WM_MOUSEMOVE:
 						drag_data.CurMousePos.X = Control.LowOrder ((int) msg.lParam.ToInt32 ());
@@ -501,6 +504,13 @@ namespace System.Windows.Forms {
 			}
 
 			return;
+		}
+
+		private void RemoveCapture (IntPtr handle)
+		{
+			Control c = MwfWindow (handle);
+			if (c.InternalCapture)
+				c.InternalCapture = false;
 		}
 
 		public bool HandleMouseOver ()

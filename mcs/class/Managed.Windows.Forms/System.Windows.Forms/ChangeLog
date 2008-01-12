@@ -1,3 +1,8 @@
+2008-01-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: Since we don't propagate the WM_LBUTTONUP/WM_RBUTTONUP
+	messages (to match .Net), we need to remove the capture ourselves.
+
 2008-01-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuAPI.cs: If we get an Alt-F4, release our capture so Windows
