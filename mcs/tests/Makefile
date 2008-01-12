@@ -25,10 +25,12 @@ endif
 
 USE_MCS_FLAGS :=
 
-all-local install-local uninstall-local:
+# mention all targets
+all-local $(STD_TARGETS:=-local):
 
+VALID_PROFILE := $(filter default net_2_0 net_2_1, $(PROFILE))
+ifdef VALID_PROFILE
 # casts
-
 bootstrap-cast.exe: gen-cast-test.cs
 	$(BOOT_COMPILE) -target:exe /out:$@ $<
 
@@ -72,9 +74,6 @@ TEST_ILS := $(wildcard *-lib.il)
 run-test-local: $(TEST_ILS:.il=.dll)
 	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
-# do nothing for this target
-run-test-ondotnet-local:
-
 test-everything:
 	$(MAKE) PROFILE=default run-test
 	$(MAKE) PROFILE=net_2_0 run-test
@@ -102,4 +101,6 @@ ilasm:
 	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe
+endif
+
 endif

@@ -109,7 +109,7 @@ net_2_1_dirs := \
 	System			\
 	System.Xml.Core	\
 	System.Core		\
-	
+
 net_3_5_dirs := \
 	System.Xml.Linq			\
 	System.Web.Extensions		\

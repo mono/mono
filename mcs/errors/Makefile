@@ -42,11 +42,13 @@ TEST_SUPPORT_FILES = \
 	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
 	$(EXTRA_SUPPORT_FILES) 
 
-all-local:
+# mention all targets
+all-local $(STD_TARGETS:=-local):
+
+VALID_PROFILE := $(filter default net_2_0 net_2_1, $(PROFILE))
+ifdef VALID_PROFILE
 
 test-local: $(TEST_SUPPORT_FILES)
-
-run-test-ondotnet-local:
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
@@ -89,3 +91,5 @@ install-local uninstall-local:
 
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
+
+endif
