@@ -53,7 +53,7 @@ namespace System.Configuration
 				return deserialized;
 			}
 			set {
-				deserialized = true;
+				deserialized = value;
 			}
 		}
 

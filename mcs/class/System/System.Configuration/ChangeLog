@@ -1,3 +1,7 @@
+2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SettingsPropertyValue.cs: Fix typo. Found using Gendarme.
+
 2007-11-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomizableFileSettingsProvider.cs : when a property is found
