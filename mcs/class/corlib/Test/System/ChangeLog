@@ -1,3 +1,7 @@
+2008-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomainTest.cs: Add a test for #350530.
+
 2008-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* DelegateTest.cs: Add CreateDelegate tests.

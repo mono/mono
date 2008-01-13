@@ -1274,6 +1274,13 @@ namespace MonoTests.System
 				Assert.IsNull (ex.ParamName, "#C5");
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof (MissingMethodException))]
+		public void ExecuteAssemblyByName_NoEntryPoint ()
+		{
+			AppDomain.CurrentDomain.ExecuteAssemblyByName ("mscorlib");
+		}
 #endif
 
 		[Test]
