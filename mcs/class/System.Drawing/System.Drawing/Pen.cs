@@ -62,14 +62,14 @@ namespace System.Drawing
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
 
-			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
+			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, GraphicsUnit.World, out nativeObject);
 			GDIPlus.CheckStatus (status);
 			color = Color.Empty;
 		}
 
 		public Pen (Color color, float width)
 		{
-			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
+			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, GraphicsUnit.World, out nativeObject);
 			GDIPlus.CheckStatus (status);
 			this.color = color;
 		}

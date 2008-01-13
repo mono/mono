@@ -1,3 +1,11 @@
+2008-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipEnums.cs: Remove Unit enum since there's a public version
+	(GraphicsUnit) for it.
+	* gdipFunctions.cs: Make GDIPlus class static for 2.0 and remove
+	new lines (both warnings from Gendarme). Stop using Unit enum.
+	* Pen.cs: Stop using Unit enum.
+
 2008-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Fix GetHashCode to use the same values as Equals. Fix 

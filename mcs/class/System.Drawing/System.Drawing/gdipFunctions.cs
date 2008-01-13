@@ -51,8 +51,11 @@ namespace System.Drawing
 	/// GDI+ API Functions
 	/// </summary>
 	[SuppressUnmanagedCodeSecurity]
-	internal class GDIPlus
-	{
+#if NET_2_0
+	internal static class GDIPlus {
+#else
+	internal class GDIPlus {
+#endif
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
@@ -108,9 +111,9 @@ namespace System.Drawing
 			}
 			catch (TypeInitializationException) {
 				Console.Error.WriteLine (
-					"* ERROR: Can not initialize GDI+ library\n" +
-					"\n" +
-					"Please check http://www.mono-project.com/Problem:GDIPlusInit for details");
+					"* ERROR: Can not initialize GDI+ library{0}{0}" +
+					"Please check http://www.mono-project.com/Problem:GDIPlusInit for details",
+					Environment.NewLine);
 			}
 
 			// under MS 1.x this event is raised only for the default application domain
@@ -784,9 +787,9 @@ namespace System.Drawing
 				
 		// Pen functions
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreatePen1 (int argb, float width, Unit unit, out IntPtr pen);
+		internal static extern Status GdipCreatePen1 (int argb, float width, GraphicsUnit unit, out IntPtr pen);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreatePen2 (IntPtr brush, float width, Unit unit, out IntPtr pen);
+		internal static extern Status GdipCreatePen2 (IntPtr brush, float width, GraphicsUnit unit, out IntPtr pen);
                 [DllImport("gdiplus.dll")]
                 internal static extern Status GdipClonePen (IntPtr pen, out IntPtr clonepen);
 		[DllImport("gdiplus.dll")]

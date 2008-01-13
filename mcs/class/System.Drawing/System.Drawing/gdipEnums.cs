@@ -54,16 +54,6 @@ namespace System.Drawing {
 		ProfileNotFound = 21
 	}
 
-	internal enum Unit {
-		UnitWorld	= 0,
-		UnitDisplay 	= 1,
-		UnitPixel 	= 2,
-		UnitPoint	= 3,
-		UnitInch	= 4,
-		UnitDocument	= 5,
-		UnitMillimeter	= 6
-	}
-
         internal enum BrushType {
                 BrushTypeSolidColor = 0,
                 BrushTypeHatchFill = 1,
