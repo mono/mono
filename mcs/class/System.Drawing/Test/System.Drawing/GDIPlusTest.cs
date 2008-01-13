@@ -365,7 +365,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectangles (graphics, IntPtr.Zero, rf, 2), "GdipDrawRectanglesI-PenNull");
 
 			IntPtr pen;
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, GraphicsUnit.World, out pen), "GdipCreatePen1");
 			Assert.IsTrue (pen != IntPtr.Zero, "pen");
 
 			Assert.AreEqual (Status.InvalidParameter, GDIPlus.GdipDrawRectanglesI (IntPtr.Zero, pen, r, 1), "GdipDrawRectanglesI-GraphicsNull");
@@ -480,7 +480,7 @@ namespace MonoTests.System.Drawing {
 		public void Widen ()
 		{
 			IntPtr pen;
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, GraphicsUnit.World, out pen), "GdipCreatePen1");
 
 			IntPtr path;
 			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePath (FillMode.Alternate, out path), "GdipCreatePath");
@@ -1079,7 +1079,7 @@ namespace MonoTests.System.Drawing {
 		public void CreatePen ()
 		{
 			IntPtr pen;
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen), "GdipCreatePen1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0, 0f, GraphicsUnit.World, out pen), "GdipCreatePen1");
 			Assert.IsTrue (pen != IntPtr.Zero, "pen");
 
 			DashStyle ds;
@@ -1108,7 +1108,7 @@ namespace MonoTests.System.Drawing {
 		public void PenColor_81266 ()
 		{
 			IntPtr pen;
-			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0x7f0000ff, 1f, Unit.UnitPixel, out pen), "GdipCreatePen1");
+			Assert.AreEqual (Status.Ok, GDIPlus.GdipCreatePen1 (0x7f0000ff, 1f, GraphicsUnit.Pixel, out pen), "GdipCreatePen1");
 			try {
 				int color = 0;
 				IntPtr brush;
@@ -1166,7 +1166,7 @@ namespace MonoTests.System.Drawing {
 							   out image);
 
 			GDIPlus.GdipGetImageGraphicsContext (image, out graphics);
-			GDIPlus.GdipCreatePen1 (0, 0f, Unit.UnitWorld, out pen);
+			GDIPlus.GdipCreatePen1 (0, 0f, GraphicsUnit.World, out pen);
 
 			// DrawCurve
 
