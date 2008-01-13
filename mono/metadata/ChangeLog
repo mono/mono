@@ -1,3 +1,7 @@
+2008-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix a typo.
+
 2008-01-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (get_boxable_mono_type): check if the token is valid.
