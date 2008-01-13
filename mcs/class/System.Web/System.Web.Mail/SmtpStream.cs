@@ -31,6 +31,7 @@ using System.IO;
 using System.Collections;
 using System.Text;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 namespace System.Web.Mail {
 
@@ -190,10 +191,8 @@ namespace System.Web.Mail {
 	    byte[] buffer = encoding.GetBytes( line + "\r\n" );
 	    
 	    stream.Write( buffer , 0 , buffer.Length );
-	
-	    #if DEBUG 
-	      DebugPrint( line );
-            #endif
+
+		Debug.WriteLine ("smtp: {0}", line);
 	}
 	
 	// read a line from the server
@@ -231,18 +230,9 @@ namespace System.Web.Mail {
 			
 	    // parse the line to the lastResponse object
 	    lastResponse = SmtpResponse.Parse (line);
-	   
-	    #if DEBUG
-	      DebugPrint( line );
-	    #endif
+
+		Debug.WriteLine ("smtp: {0}", line);
 	}
-	
-    #if DEBUG
-	/// debug printing 
-	private void DebugPrint( string line ) {
-	    Console.WriteLine( "smtp: {0}" , line );
-	}
-    #endif
 
     }
 
