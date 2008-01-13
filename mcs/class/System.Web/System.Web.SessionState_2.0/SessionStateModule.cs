@@ -39,6 +39,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Threading;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace System.Web.SessionState
 {	
@@ -190,16 +191,12 @@ namespace System.Web.SessionState
 		}
 
 		void OnAcquireRequestState (object o, EventArgs args) {
-#if TRACE
-			Console.WriteLine ("SessionStateModule.OnAcquireRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
-#endif
+			Trace.WriteLine ("SessionStateModule.OnAcquireRequestState (hash " + this.GetHashCode ().ToString ("x") + ")");
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
 			if (!(context.Handler is IRequiresSessionState)) {
-#if TRACE
-				Console.WriteLine ("Handler ({0}) does not require session state", context.Handler);
-#endif
+				Trace.WriteLine ("Handler (" + context.Handler + ") does not require session state");
 				return;
 			}
 			bool isReadOnly = (context.Handler is IReadOnlySessionState);
@@ -218,9 +215,7 @@ namespace System.Web.SessionState
 			if (storeData == null && !storeLocked) {
 				isNew = true;
 				sessionId = idManager.CreateSessionID (context);
-#if TRACE
-				Console.WriteLine ("New session ID allocated: {0}", sessionId);
-#endif
+				Trace.WriteLine ("New session ID allocated: " + sessionId);
 				bool redirected;
 				bool cookieAdded;
 				idManager.SaveSessionID (context, sessionId, out redirected, out cookieAdded);
@@ -251,35 +246,25 @@ namespace System.Web.SessionState
 
 		void OnReleaseRequestState (object o, EventArgs args) {
 
-#if TRACE
-			Console.WriteLine ("SessionStateModule.OnReleaseRequestState (hash {0})", this.GetHashCode ().ToString ("x"));
-#endif
+			Trace.WriteLine ("SessionStateModule.OnReleaseRequestState (hash " + this.GetHashCode ().ToString ("x") + ")");
 
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 			if (!(context.Handler is IRequiresSessionState))
 				return;
 
-#if TRACE
-			Console.WriteLine ("\tsessionId == {0}", container.SessionID);
-			Console.WriteLine ("\trequest path == {0}", context.Request.FilePath);
-			Console.WriteLine ("\tHandler ({0}) requires session state", context.Handler);
-#endif
+			Trace.WriteLine ("\tsessionId == " + container.SessionID);
+			Trace.WriteLine ("\trequest path == " + context.Request.FilePath);
+			Trace.WriteLine ("\tHandler (" + context.Handler + ") requires session state");
 			try {
 				if (!container.IsAbandoned) {
-#if TRACE
-					Console.WriteLine ("\tnot abandoned");
-#endif
+					Trace.WriteLine ("\tnot abandoned");
 					if (!container.IsReadOnly) {
-#if TRACE
-						Console.WriteLine ("\tnot read only, storing and releasing");
-#endif
+						Trace.WriteLine ("\tnot read only, storing and releasing");
 						handler.SetAndReleaseItemExclusive (context, container.SessionID, storeData, storeLockId, false);
 					}
 					else {
-#if TRACE
-						Console.WriteLine ("\tread only, releasing");
-#endif
+						Trace.WriteLine ("\tread only, releasing");
 						handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					}
 					handler.ResetItemTimeout (context, container.SessionID);

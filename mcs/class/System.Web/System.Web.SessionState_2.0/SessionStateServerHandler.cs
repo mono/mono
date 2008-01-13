@@ -33,6 +33,7 @@ using System.IO;
 using System.Web;
 using System.Web.Configuration;
 using System.Runtime.Remoting;
+using System.Diagnostics;
 
 namespace System.Web.SessionState 
 {
@@ -72,11 +73,9 @@ namespace System.Web.SessionState
 						       out SessionStateActions actions,
 						       bool exclusive)
 		{
-#if TRACE
-			Console.WriteLine ("SessionStateServerHandler.GetItemInternal");
-			Console.WriteLine ("\tid == {0}", id);
-			Console.WriteLine ("\tpath == {0}", context.Request.FilePath);
-#endif
+			Trace.WriteLine ("SessionStateServerHandler.GetItemInternal");
+			Trace.WriteLine ("\tid == " + id);
+			Trace.WriteLine ("\tpath == " + context.Request.FilePath);
 			locked = false;
 			lockAge = TimeSpan.MinValue;
 			lockId = Int32.MinValue;
@@ -93,15 +92,11 @@ namespace System.Web.SessionState
 								    exclusive);
 			
 			if (item == null) {
-#if TRACE
-				Console.WriteLine ("\titem is null (locked == {0}, actions == {1})", locked, actions);
-#endif
+				Trace.WriteLine ("\titem is null (locked == " + locked + ", actions == " + actions + ")");
 				return null;
 			}
 			if (actions == SessionStateActions.InitializeItem) {
-#if TRACE
-				Console.WriteLine ("\titem needs initialization");
-#endif
+				Trace.WriteLine ("\titem needs initialization");
 				return CreateNewStoreData (context, item.Timeout);
 			}
 			SessionStateItemCollection items = null;
@@ -155,9 +150,7 @@ namespace System.Web.SessionState
 
 		public override void Initialize (string name, NameValueCollection config)
 		{
-#if TRACE
-			Console.WriteLine ("SessionStateServerHandler.Initialize");
-#endif
+			Trace.WriteLine ("SessionStateServerHandler.Initialize");
 			this.config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 			if (String.IsNullOrEmpty (name))
 				name = "Session Server handler";
