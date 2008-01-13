@@ -40,6 +40,7 @@ System.Collections.Generic/IListTest.cs
 System.Collections.Generic/ListTest.cs
 System.Collections.ObjectModel/CollectionTest.cs
 System.Collections.ObjectModel/KeyedCollectionTest.cs
+System.Collections.ObjectModel/ReadOnlyCollectionTest.cs
 System/ConsoleTest.cs
 System/ConvertTest.cs
 System/DateTimeOffsetTest.cs

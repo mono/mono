@@ -64,6 +64,36 @@ namespace MonoTests.System.Collections.ObjectModel
 			Assert.IsTrue (cLock.GetType ().Equals (typeof (object)));
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void ICollection_CopyTo ()
+		{
+			Collection <int> c = new Collection <int> ();
+			c.Add (10);
+			c.Add (7);
+
+			Array array = Array.CreateInstance (typeof (int), 2);
+			((ICollection) c).CopyTo (array, 0);
+			Assert.AreEqual (10, array.GetValue (0), "#A1");
+			Assert.AreEqual (7, array.GetValue (1), "#A2");
+
+			array = Array.CreateInstance (typeof (int), 5);
+			((ICollection) c).CopyTo (array, 2);
+			Assert.AreEqual (0, array.GetValue (0), "#B1");
+			Assert.AreEqual (0, array.GetValue (1), "#B2");
+			Assert.AreEqual (10, array.GetValue (2), "#B3");
+			Assert.AreEqual (7, array.GetValue (3), "#B4");
+			Assert.AreEqual (0, array.GetValue (4), "#B5");
+
+			array = Array.CreateInstance (typeof (object), 5);
+			((ICollection) c).CopyTo (array, 2);
+			Assert.IsNull (array.GetValue (0), "#C1");
+			Assert.IsNull (array.GetValue (1), "#C2");
+			Assert.AreEqual (10, array.GetValue (2), "#C3");
+			Assert.AreEqual (7, array.GetValue (3), "#C4");
+			Assert.IsNull (array.GetValue (4), "#C2");
+		}
+
 		class UnimplementedList <T> : IList <T>
 		{
 
