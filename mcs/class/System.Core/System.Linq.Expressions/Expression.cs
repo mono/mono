@@ -178,6 +178,12 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
+		public static MethodCallExpression Call (Expression instance, string methodName, Type [] typeArguments, params Expression [] arguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public static MethodCallExpression Call (Type type, string methodName, Type [] typeArguments, params Expression [] arguments)
 		{
 			throw new NotImplementedException ();
@@ -273,7 +279,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression Equal (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression Equal (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
@@ -369,7 +375,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression GreaterThan (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression GreaterThan (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
@@ -381,7 +387,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression GreaterThanOrEqual (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression GreaterThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
@@ -447,7 +453,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression LessThan (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression LessThan (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
@@ -459,7 +465,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression LessThanOrEqual (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression LessThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
@@ -726,13 +732,13 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static NewExpression NewArrayInit (Type type, params Expression [] bounds)
+		public static NewArrayExpression NewArrayInit (Type type, params Expression [] bounds)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static NewExpression NewArrayInit (Type type, IEnumerable<Expression> bounds)
+		public static NewArrayExpression NewArrayInit (Type type, IEnumerable<Expression> bounds)
 		{
 			throw new NotImplementedException ();
 		}
@@ -756,7 +762,7 @@ namespace System.Linq.Expressions {
 		}
 
 		[MonoTODO]
-		public static BinaryExpression NotEqual (Expression left, Expression right, MethodInfo method)
+		public static BinaryExpression NotEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			throw new NotImplementedException ();
 		}
