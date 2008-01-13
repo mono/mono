@@ -30,40 +30,22 @@ using System.Linq.Expressions;
 
 namespace System.Runtime.CompilerServices
 {
-    public class ExecutionScope
-    {
-        #region .ctor
-        internal ExecutionScope(ExecutionScope parent, ExpressionCompiler.LambdaInfo lambda, object[] globals)
-        {
-            Parent = parent;
-            this.lambda = lambda;
-            Globals = globals;
-            Locals = new object[0];
+	public class ExecutionScope
+	{
+		public object[] Globals;
+		public object[] Locals;
+		public ExecutionScope Parent;
 
-            //TODO:
-        }
-        #endregion
+		[MonoTODO]
+		public Delegate CreateDelegate (int indexLambda)
+		{
+			throw new NotImplementedException();
+		}
 
-        #region Fields
-        private ExpressionCompiler.LambdaInfo lambda;
-
-        public object[] Globals;
-        public object[] Locals;
-        public ExecutionScope Parent;
-        #endregion
-
-        #region Public Methods
-        public Delegate CreateDelegate(int indexLambda)
-        {
-            //TODO:
-            throw new NotImplementedException();
-        }
-
-        public Expression IsolateExpression(Expression expression)
-        {
-            //TODO:
-            throw new NotImplementedException();
-        }
-        #endregion
-    }
+		[MonoTODO]
+		public Expression IsolateExpression (Expression expression)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
