@@ -1,3 +1,8 @@
+2008-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs: Check for a missing entry point in the ExecuteAssembly methods.
+	Fixes #350530.
+
 2008-01-11  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: Fixes the MinValue (was equal to MaxValue)...

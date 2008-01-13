@@ -513,8 +513,15 @@ namespace System {
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
 			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity, hashValue, hashAlgorithm);
-			return ExecuteAssembly (a, args);
+			return ExecuteAssemblyInternal (a, args);
 		}
+
+		int ExecuteAssemblyInternal (Assembly a, string[] args)
+		{
+			if (a.EntryPoint == null)
+				throw new MissingMethodException ("Entry point not found in assembly '" + a.GetName () + "'.");
+			return ExecuteAssembly (a, args);
+		}			
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int ExecuteAssembly (Assembly a, string[] args);
@@ -1186,14 +1193,14 @@ namespace System {
 		{
 			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
 
-			return ExecuteAssembly (a, args);
+			return ExecuteAssemblyInternal (a, args);
 		}
 
 		public int ExecuteAssemblyByName (AssemblyName assemblyName, Evidence assemblySecurity, params string[] args)
 		{
 			Assembly a = Assembly.Load (assemblyName, assemblySecurity);
 
-			return ExecuteAssembly (a, args);
+			return ExecuteAssemblyInternal (a, args);
 		}
 
 		public bool IsDefaultAppDomain ()
