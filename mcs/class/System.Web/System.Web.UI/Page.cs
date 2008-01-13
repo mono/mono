@@ -1038,18 +1038,16 @@ public partial class Page : TemplateControl, IHttpHandler
 			ClientScript.RegisterHiddenField (ScrollPositionXID, Request [ScrollPositionXID]);
 			ClientScript.RegisterHiddenField (ScrollPositionYID, Request [ScrollPositionYID]);
 
-			string webForm = IsMultiForm ? theForm + "." : null;
-
 			StringBuilder script = new StringBuilder ();
 			script.AppendLine ("<script type=\"text/javascript\">");
 			script.AppendLine (ClientScriptManager.SCRIPT_BLOCK_START);
 			script.AppendLine (theForm + ".oldSubmit = " + theForm + ".submit;");
-			script.AppendLine (theForm + ".submit = function () { " + webForm + "WebForm_SaveScrollPositionSubmit(); }");
+			script.AppendLine (theForm + ".submit = function () { " + WebFormScriptReference + ".WebForm_SaveScrollPositionSubmit(); }");
 			script.AppendLine (theForm + ".oldOnSubmit = " + theForm + ".onsubmit;");
-			script.AppendLine (theForm + ".onsubmit = function () { " + webForm + "WebForm_SaveScrollPositionOnSubmit(); }");
+			script.AppendLine (theForm + ".onsubmit = function () { " + WebFormScriptReference + ".WebForm_SaveScrollPositionOnSubmit(); }");
 			if (IsPostBack) {
 				script.AppendLine (theForm + ".oldOnLoad = window.onload;");
-				script.AppendLine ("window.onload = function () { " + webForm + "WebForm_RestoreScrollPosition (); };");
+				script.AppendLine ("window.onload = function () { " + WebFormScriptReference + ".WebForm_RestoreScrollPosition (); };");
 			}
 			script.AppendLine (ClientScriptManager.SCRIPT_BLOCK_END);
 			script.AppendLine ("</script>");
