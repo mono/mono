@@ -1,3 +1,9 @@
+2008-13-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.jvm.cs: optimized SetupResponseWriter, fixed getChildCount and
+	getChildren methods
+	* Control.jvm.cs: fixed getChildCount method
+
 2008-01-09 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Page.cs:

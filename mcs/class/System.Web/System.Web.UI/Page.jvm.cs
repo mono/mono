@@ -60,6 +60,9 @@ namespace System.Web.UI
 		static readonly object CrossPagePostBack = new object ();
 		FacesContext _facesContext;
 
+		static readonly java.util.List emptyList = java.util.Collections.unmodifiableList (new java.util.ArrayList ());
+		static readonly RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
+
 		bool _isMultiForm = false;
 		bool _isMultiFormInited = false;
 
@@ -170,6 +173,18 @@ namespace System.Web.UI
 
 		public override void encodeEnd (FacesContext context) {
 			// do nothing
+		}
+
+		// BUGBUG: must return correct value. Currently returns 0 as performance optimization.
+		public override int getChildCount ()
+		{
+			return 0;
+		}
+
+		// BUGBUG: must return correct value. Currently returns empty list as performance optimization.
+		public override java.util.List getChildren ()
+		{
+			return emptyList;
 		}
 
 		public override UIComponent getParent () {
@@ -351,17 +366,20 @@ namespace System.Web.UI
 			FacesContext facesContext = getFacesContext ();
 
 			ResponseWriter oldWriter = facesContext.getResponseWriter ();
-			RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
-			RenderKit renderKit = renderFactory.getRenderKit (facesContext,
-															 facesContext.getViewRoot ().getRenderKitId ());
+			ResponseWriter writer;
+			if (oldWriter != null) {
+				writer = oldWriter.cloneWithWriter (new AspNetResponseWriter (httpWriter));
+			}
+			else {
+				RenderKit renderKit = renderFactory.getRenderKit (facesContext, facesContext.getViewRoot ().getRenderKitId ());
 
-			ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
+				ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
 
-			ResponseWriter writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
-													 response.getContentType (), //TODO: is this the correct content type?
-													 response.getCharacterEncoding ());
+				writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
+														 response.getContentType (), //TODO: is this the correct content type?
+														 response.getCharacterEncoding ());
+			}
 			facesContext.setResponseWriter (writer);
-
 			return oldWriter;
 		}
 

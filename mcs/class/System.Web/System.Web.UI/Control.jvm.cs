@@ -75,7 +75,7 @@ namespace System.Web.UI
 		}
 
 		public override int getChildCount () {
-			throw new Exception ("The method or operation is not implemented.");
+			return HasControls () ? Controls.Count : 0;
 		}
 
 		public override List getChildren () {
