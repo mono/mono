@@ -60,6 +60,7 @@ namespace System.Web.UI {
 						 "Page_CommitTransaction" };
 
 		static readonly object [] EventKeys = {
+						 Control.InitEvent,
 #if NET_2_0
 						 Page.PreInitEvent,
 						 Page.PreLoadEvent,
@@ -77,6 +78,27 @@ namespace System.Web.UI {
 						abortTransaction,
 						commitTransaction
 		};
+
+		enum LifeCycleEvent
+		{
+			Init,
+#if NET_2_0
+			PreInit,
+			PreLoad,
+			LoadComplete,
+			PreRenderComplete,
+			SaveStateComplete,
+			InitComplete,
+#endif
+			Load,
+			DataBinding,
+			PreRender,
+			Disposed,
+			Unload,
+			Error,
+			AbortTransaction,
+			CommitTransaction
+		}
 
 		const BindingFlags bflags = BindingFlags.Public |
 						BindingFlags.NonPublic |
@@ -179,14 +201,14 @@ namespace System.Web.UI {
 
 		sealed class EventMethodMap
 		{
-			public EventMethodMap (object EventKey, MethodInfo Method, bool NoParameters)
+			public EventMethodMap (LifeCycleEvent EventKeyIndex, MethodInfo Method, bool NoParameters)
 			{
-				this.EventKey = EventKey;
+				this.EventKeyIndex = EventKeyIndex;
 				this.Method = Method;
 				this.NoParameters = NoParameters;
 			}
 
-			public readonly object EventKey;
+			public readonly LifeCycleEvent EventKeyIndex;
 			public readonly MethodInfo Method;
 			public readonly bool NoParameters;
 		}
@@ -251,7 +273,7 @@ namespace System.Web.UI {
 					if (method.ReturnType != voidType)
 						continue;
 
-					eventMethodList.Add (new EventMethodMap (EventKeys [i], method, noParams));
+					eventMethodList.Add (new EventMethodMap ((LifeCycleEvent) i, method, noParams));
 				}
 				// We copy to not lock
 
@@ -261,14 +283,64 @@ namespace System.Web.UI {
 			}
 
 			foreach (EventMethodMap eventMethod in eventMethodList) {
-				if (Events [eventMethod.EventKey] != null)
+				EventHandler handler = eventMethod.NoParameters ?
+					new NoParamsInvoker (this, eventMethod.Method).FakeDelegate :
+					(EventHandler)Delegate.CreateDelegate (typeof (EventHandler), this, eventMethod.Method);
+
+				object eventKey = EventKeys [(int) eventMethod.EventKeyIndex];
+
+				Delegate existing = Events [eventKey];
+				if (existing != null && handler.Equals(existing))
 					continue;
-				if (eventMethod.NoParameters) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, eventMethod.Method);
-					Events.AddHandler (eventMethod.EventKey, npi.FakeDelegate);
-				}
-				else {
-					Events.AddHandler (eventMethod.EventKey, Delegate.CreateDelegate (typeof (EventHandler), this, eventMethod.Method));
+
+				switch (eventMethod.EventKeyIndex) {
+				case LifeCycleEvent.Init:
+					Init += handler;
+					break;
+#if NET_2_0
+				case LifeCycleEvent.PreInit:
+					((Page)this).PreInit += handler;
+					break;
+				case LifeCycleEvent.PreLoad:
+					((Page) this).PreLoad += handler;
+					break;
+				case LifeCycleEvent.LoadComplete:
+					((Page) this).LoadComplete += handler;
+					break;
+				case LifeCycleEvent.PreRenderComplete:
+					((Page) this).PreRenderComplete += handler;
+					break;
+				case LifeCycleEvent.SaveStateComplete:
+					((Page) this).SaveStateComplete += handler;
+					break;
+				case LifeCycleEvent.InitComplete:
+					((Page) this).InitComplete += handler;
+					break;
+#endif
+				case LifeCycleEvent.Load:
+					Load += handler;
+					break;
+				case LifeCycleEvent.DataBinding:
+					DataBinding += handler;
+					break;
+				case LifeCycleEvent.PreRender:
+					PreRender += handler;
+					break;
+				case LifeCycleEvent.Disposed:
+					Disposed += handler;
+					break;
+				case LifeCycleEvent.Unload:
+					Unload += handler;
+					break;
+				case LifeCycleEvent.Error:
+					Error += handler;
+					break;
+				case LifeCycleEvent.AbortTransaction:
+					AbortTransaction += handler;
+					break;
+				case LifeCycleEvent.CommitTransaction:
+					CommitTransaction += handler;
+					break;
 				}
 			}
 		}
