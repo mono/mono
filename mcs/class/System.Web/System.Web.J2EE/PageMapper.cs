@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using vmw.common;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace System.Web.J2EE
 {
@@ -54,9 +55,7 @@ namespace System.Web.J2EE
 			}
 			catch (Exception ex)
 			{
-#if DEBUG
-				Console.WriteLine (ex.ToString ());
-#endif
+				Debug.WriteLine (ex.ToString ());
 				resolvedAssembly = null;
 			}
 
@@ -150,9 +149,7 @@ namespace System.Web.J2EE
 								HttpContext.AppGlobalResourcesAssembly = GetCachedAssembly (context,  context.Request.ApplicationPath + "/app_globalresources");
 							}
 							catch (Exception ex) {
-#if DEBUG
-								Console.WriteLine (ex.ToString ());
-#endif
+								Debug.WriteLine (ex.ToString ());
 							}
 						}
 					}
@@ -359,9 +356,7 @@ namespace System.Web.J2EE
 			if (_assembly == null)
 			{
 				string typeName = GetCachedTypeName();
-#if DEBUG
-				Console.WriteLine ("Loading type:" + typeName);
-#endif
+				Debug.WriteLine ("Loading type:" + typeName);
 				if (typeName != null)
 				{
 					if ((_type = Type.GetType (typeName)) != null)
@@ -373,10 +368,8 @@ namespace System.Web.J2EE
 					}
 				}
 
-#if DEBUG
-				Console.WriteLine ("Loaded type:" + _type);
-				Console.WriteLine ("Loaded assembly:" + _assembly);
-#endif
+				Debug.WriteLine ("Loaded type:" + _type);
+				Debug.WriteLine ("Loaded assembly:" + _assembly);
 			}
 		}
 		private bool InternalCompile()
@@ -384,9 +377,7 @@ namespace System.Web.J2EE
 			string fileName = VirtualPathUtility.GetFileName (_url);
 
 			string fullFileName = (fileName.ToLower () == "global.asax") ? _url : _context.Request.MapPath (_url);
-#if DEBUG
-			Console.WriteLine("fullFileName=" + fullFileName);
-#endif
+			Debug.WriteLine ("fullFileName=" + fullFileName);
 			//type not found - run aspxparser
 			if (false/*File.Exists(fullFileName) || Directory.Exists(fullFileName)*/) //dynamic compilation currently is not supported
 			{
@@ -418,7 +409,7 @@ namespace System.Web.J2EE
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine(ex);
+				Debug.WriteLine(ex);
 				throw ex;
 			}
 		}
@@ -431,9 +422,7 @@ namespace System.Web.J2EE
 
 			try
 			{
-#if DEBUG
-				Console.WriteLine(descPath);
-#endif
+				Debug.WriteLine(descPath);
 				using (Stream fs = (Stream)IOUtils.getStreamRecursive("/" + descPath))
 				{
 					if (fs != null)
@@ -444,9 +433,7 @@ namespace System.Web.J2EE
 			}
 			catch (Exception ex)
 			{
-#if DEBUG
-				Console.WriteLine(ex);
-#endif
+				Debug.WriteLine(ex);
 			}
 			return null;
 		}
@@ -479,9 +466,7 @@ namespace System.Web.J2EE
 				}
 				catch
 				{
-#if DEBUG
-					Console.WriteLine("Failed to load typename from stream");
-#endif
+					Debug.WriteLine("Failed to load typename from stream");
 				}
 			}
 			return false;

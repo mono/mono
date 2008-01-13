@@ -31,6 +31,7 @@ using vmw.common;
 using System.ComponentModel;
 using System.Threading;
 using javax.servlet;
+using System.Diagnostics;
 
 namespace System.Web.J2EE
 {
@@ -137,16 +138,12 @@ namespace System.Web.J2EE
 				String line=null;
 				while ( (line = br.readLine()) != null)
 				{
-#if DEBUG
-					Console.WriteLine(_type + ">" + line); 
-#endif
+					Debug.WriteLine(_type + ">" + line); 
 				}
 			} 
 			catch (Exception ex)
 			{
-#if DEBUG
-				Console.WriteLine(ex);
-#endif
+				Debug.WriteLine (ex);
 			}
 		}
 	}
