@@ -179,7 +179,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			get {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
-				return _cert.ValidUntil;
+				return _cert.ValidUntil.ToLocalTime ();
 			}
 		}
 
@@ -187,7 +187,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			get {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
-				return _cert.ValidFrom;
+				return _cert.ValidFrom.ToLocalTime ();
 			}
 		}
 

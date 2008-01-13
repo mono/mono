@@ -1,3 +1,7 @@
+2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* X509Certificate2.cs: NotAfter and NotBefore must return local time.
+
 2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2.cs: Leave a small stub (PrivateKey property) if

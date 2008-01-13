@@ -225,6 +225,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void VerificationTime ()
 		{
 			X509ChainPolicy cp = GetPolicy ();
+			AssertEquals ("Kind=Local", DateTimeKind.Local, cp.VerificationTime.Kind);
 			cp.VerificationTime = DateTime.Today;
 			AssertEquals ("DateTime=Today", DateTime.Today, cp.VerificationTime);
 			cp.VerificationTime = new DateTime (0);

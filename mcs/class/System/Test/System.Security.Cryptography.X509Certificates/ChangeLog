@@ -1,3 +1,10 @@
+2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* X509Certificate2Test.cs: Added asserts to ensure NotAfter and
+	NotBefore are in local time.
+	* X509ChainPolicyTest.cs: Added assert to ensure VerificationTime is
+	in local time.
+
 2007-02-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate2Test.cs: Add test case for a certificate using dates

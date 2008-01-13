@@ -428,6 +428,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_1_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (629937887260000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629622527270000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_1);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -435,8 +440,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (629937887260000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629622527270000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>LVjpv/AxzXkGUFrVng4s5sL3+dLOVWSFsZCakrM2wbzqyCO3qzqnZGN3X4QijuW2Rd1GrgrdAMIfutmtwHVi+JWCooCxgmn64a9/vH3ifHbVvCqA+w==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_1, x.RawData, "RawData");
@@ -464,6 +473,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_2_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (631152758320000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629575958320000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_2);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -471,8 +485,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("OU=Directory Services, O=AT&T, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (631152758320000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629575958320000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>h2RyiQsgj4cnrMYi/gBAaUivxobNIzPjEcUxGh9+npITtqKs47AfKgdsttTeS/rxoqB9zku+viZICYyFEd7LIufC7kRR/mfVW1rgFjdUBLg7MhKUg56xTYBspKl2rLikl/erC2ylQ7puT8VOADAWPD+ZFNqiIAiLuu12rJcA1W0=</Modulus><Exponent>Dw==</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_2, x.RawData, "RawData");
@@ -500,6 +518,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_3_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (629771327990000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629749728000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_3);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (7, x.Extensions.Count, "Extensions");
@@ -507,8 +530,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=Brand Name:Product Type, O=CCA - Unique ID, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=Brand Name:Product Type, O=CCA - Unique ID, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (629771327990000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629749728000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>rMQOBSW86u8MIn/EDEppMQD5P+nhbFSXd04YxkqV4NRYKVwXXR0eVrxJPeD5n7sB+Ya2ppXd4QQyAVJOj4Yw9w==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_3, x.RawData, "RawData");
@@ -572,6 +599,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_4_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (630822812570000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629200220570000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_4);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -579,8 +611,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("OU=Secure Server Certification Authority, O=\"RSA Data Security, Inc.\", C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (630822812570000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629200220570000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>ks56wa6DPlqqiYNXrCUBdgytro4sN87rNXhkVAPlhEBRyb+PCOKKggjSFoY3VemxIQKtdmiBmgWiS8lLJWYiVmyIB4/3gVlthAdlcBNxdj6bd0zjUIlWmEi5HacpGhMuShFZnB4V1UlULHM6aYKxlzmcbXBnSOXdLdbIHns=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_4, x.RawData, "RawData");
@@ -608,6 +644,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_5_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (632254464000000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (630045216000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_5);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (6, x.Extensions.Count, "Extensions");
@@ -615,8 +656,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("O=SET Root, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("O=SET Root, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (632254464000000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (630045216000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>1Nw+uuGU977N7SF3z9qIWFEOj/TaABQeDaettpZaxtPsJe3YQwtufz+eHnSgHpd2MMpvCmPAozFAJYC4vSjrfXULTkE0xCAAwsv0miAAWNn0QBMYdwy1BN63tkOLpMw2dnnFCxfLfoihM7DTNCe/O2HaxSDr+ZSai3myqI7LwdmUSplmUFWygyh9Ij3s3KPoOduDVMmJqd9ZUp9673wRYlLs5me6PeqrR9vk9B9zwz3sfoR9Lyn+bBc/dW1WbsBOtb8qIIrkV67ALmjJCc+FdwrvOjfLYExFc3+QPoYd+sP8UIqyxYo08PJD7jxWuiTp4KWHHnwwM3f9XeBXDWwZOQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_5, x.RawData, "RawData");
@@ -676,6 +721,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_8_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (631769760000000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (631080288000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_8);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (2, x.Extensions.Count, "Extensions");
@@ -683,8 +733,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=Armed Forces Root, OU=DoD, O=U.S. Government, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=Armed Forces Root, OU=DoD, O=U.S. Government, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (631769760000000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (631080288000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<DSAKeyValue><P>kIk+GBv+ox0WiQC01UCCTC7sPWYNDbkXQG46XAN7G5MoDO+5l+Oh6+KjfGHdb9WtFWkAFrLDCD3EWcbycKWw9R8d9LAV2n4oOSSZNlvsOSX6kkll0kMFap6je/Deoy/Tbzr5NcMp1EVsVpreNm7+EmiWe0UdLP+5LfVSjN8+L2M=</P><Q>gam10ATym6fYVUw7MqFFMk/1Ud0=</Q><G>ZHqIC/I+kYFZnPTqxnsOvuoF6Hf9IDSHocRp9siLGdrN+iGKV6l6JgpW1O1LG3xw7bTmemre0yni6Zoz7QmNnt/aLkrBUJLuL+Va84ViakjcGwKYprDRCUsQ0fD64LEdE1RLwKhA73HoVmuiKcseCX0nOZE7IE+YOeg5ypjFr1Q=</G><Y>VKiItY8BVs4Yj6bWfCkpdUXoMaQHF+0eXbJ7u848l2ceiAr+fQAiJx1m7vYbtpV/Wv8GNAJDw4PEZiyhBQ5os8rc0/kMwGbfhYRLIF1BrMDsN5IOlxm/UzVjJxgzNUJN8C1tp6SYqlfz0rhuTo//vm9ODwtEJO7fTCJbRJiUy7g=</Y></DSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_8, x.RawData, "RawData");
@@ -728,6 +782,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_9_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (630077183990000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629761824000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_9);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (5, x.Extensions.Count, "Extensions");
@@ -735,8 +794,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("OU=VeriSign Class 1 CA - Individual Subscriber, O=\"VeriSign, Inc.\", L=Internet", x.Issuer, "Issuer");
 			Assert.AreEqual ("OU=VeriSign Class 1 CA - Individual Subscriber, O=\"VeriSign, Inc.\", L=Internet", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (630077183990000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629761824000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>xYEHousPuP/4+BzuMv+/EjVq+WvIvi/7Pq8EUUqs3RApqM1AW2YemO/yTHf6j4bRIWeSRErEicmDz4ifb+IyNQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_9, x.RawData, "RawData");
@@ -790,6 +853,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_10_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (630616320000000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629670240000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_10);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -797,8 +865,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca, CN=Keywitness Canada Inc., C=CA", x.Issuer, "Issuer");
 			Assert.AreEqual ("OID.1.3.6.1.4.1.42.2.11.2.1=keywitness@keywitness.ca, CN=Keywitness Canada Inc., C=CA", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (630616320000000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629670240000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>zSP6KuHtmPTp0JM+13qAAkzMwQKvXLYff/pXQm8w0SDFtSEHQCyphsLzZISuPYUu7YW9VLAYKO9q+BvnCxYfkyVPx/iOw7nKmIQOVdAv73h3xXIoX2C/GSvRcqK32D/glzRaAb0EnMh4Rc2TjRXydhARq7hbLp5S3YE+nGTIKZM=</Modulus><Exponent>Aw==</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_10, x.RawData, "RawData");
@@ -826,6 +898,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_11_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (630822815400000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (629606997000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_11);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -833,8 +910,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=GTE CyberTrust Root, O=GTE Corporation, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=GTE CyberTrust Root, O=GTE Corporation, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (630822815400000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (629606997000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>uOZPutuYfHF8r0S30w9G2WTlk8FCjse6SY01LXrni73lBTFZxrEvCgz7n6c/oglmhFYeNykbh+l+DMqan6V/9RWUo9WiRoLYaEzRNxUGaK+9+LCz8Cn1lVoJFmF3CiIl1E9Fqse95Zbf+dSojkLMJMAekSdKtW0GgGM5xKJeOAM=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_11, x.RawData, "RawData");
@@ -862,6 +943,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_12_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (632053191480000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (631578849480000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_12);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (5, x.Extensions.Count, "Extensions");
@@ -869,8 +955,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=Microsoft Code Signing PCA, OU=Copyright (c) 2000 Microsoft Corp., O=Microsoft Corporation, L=Redmond, S=Washington, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=Microsoft Code Signing PCA, OU=Copyright (c) 2000 Microsoft Corp., O=Microsoft Corporation, L=Redmond, S=Washington, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (632053191480000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (631578849480000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>qpm9OagYJ/QrPQtMP3x3LqfLtdGMDcI6dNeTteCgSz9ZXs5FT5p5KfFJzBpH7lXCCD4SIPhV8u5f0+DKlrww3v5YyCcy0IVU6PCRELvzK74Z5QObC4Yd87A5jLj9Cx08cyasVyvKKaIVkIIV4nejQFIDi53CcLof6TT28zWSTlWD+NowtiDeVwa1WkIG3lnL8t+mvRVHcRklI9LLb5sZed9qW/F2BXkp/MNWyo9ECIVVisvID0ZLVcuMlndKh+ipQQbH/w3paFdjcsNpV7RDzzI6MNwb6dVDJip5/pXbImckyS/QNOPm+1FJhrg80CVf1uyeA2GHqWhAx/jiA+bPBQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_12, x.RawData, "RawData");
@@ -927,6 +1017,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_13_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (634388218400000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (631232890400000000,
+				DateTimeKind.Utc);
+
 			// DSA without parameters
 			X509Certificate2 x = new X509Certificate2 (cert_13);
 			Assert.IsFalse (x.Archived, "Archived");
@@ -935,8 +1030,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=DSA CA, O=Test Certificates, C=US", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=DSA CA, O=Test Certificates, C=US", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (634388218400000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (631232890400000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			// note: this test will work if PKITS data is installed
 			// Assert.AreEqual ("<DSAKeyValue><P>3+URPtrptm4Q1uqd4p06sEe9RADHVsjMbtAzhFZHNT32VMjjwq27unXzLzMMpvkx7Gfj5Zlt/CluqleIcjTijgCQ4KOsZI7A9jwdj7TISkgwXn+qnHYmC9sTczODl8DFs+Y39T7/FQ3UoS66Mfirh9gLzHeYQm6sk5jCvS57NAs=</P><Q>zwYE2P+L6wDp9lwHlnP9lmU6Lwc=</Q><G>zOF8sM6SX2PsOLtEut2SNLZevmV72HF3BJ3sZnw7BM6281L+D5JVAu9OEqtdmi4vblbzcOxq7ZsiuKgTywycFurBCo4hJkSlDPmg7GLgcDHMaPULhaRKG2559MH5Nlo4b07vhFPfZ/3M91lij5yczRCPXKQPnLcH7GDzvq9+OZg=</G><Y>Z4xH2gw2gWQ5+Bo3C/C71BP9Zz1AyJyS4TqJVLDyl6Vw0GQXpKd8qeknCWXfoKUc/ATaPt1ia/AM7YFXT10pyAhZGQxfjYjw/4y26HUBvhAKZN9Xe4tsVvBTzkOIuQmZCDyQrwHo2TJd7VYCz2DSATrjCiuekUH2x3zebJljAA4=</Y></DSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
@@ -1006,6 +1105,11 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 		[Test]
 		public void Certificate_14_Properties ()
 		{
+			DateTime expectedNotAfter = new DateTime (633912839400000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (630663336000000000,
+				DateTimeKind.Utc);
+
 			X509Certificate2 x = new X509Certificate2 (cert_14);
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
@@ -1013,8 +1117,12 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("O=C&W HKT SecureNet CA Class A, C=hk", x.Issuer, "Issuer");
 			Assert.AreEqual ("O=C&W HKT SecureNet CA Class A, C=hk", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (633912839400000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (630663336000000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>tBuiCqVMc2NGUUh0Y6i0jBbb9Mhn3qFIAv/Lo8+n39mxMeDjLihxBKZkWsZc/tCnuOo+Ctr7EX9/JCheyIqsbniqyKIYOZ5MUNHwmLXvpLIbYGu/+XO0C3X5Irvp5YGgldJ2THzTp/5dlRXtB9TH3mAwAO7yLpTxhjLlWVHo34CiKgDvPIhdEeMAX1TkDEcQbLD1+DN2HDRmW9S7NGM502aUOuzNIinz9hK71CEpN6VETd+JDAQMfUF7h/MWwUMpZLTWRWerhkxljwG36mOMTnhUREcaU4aMaxgnIQvFVmYOJfbgeaxoAHTpmmQ8SU6e4B3IiBtQBvddCfiNixP9XQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_14, x.RawData, "RawData");
@@ -1162,14 +1270,23 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 				0x71, 0x4F, 0x4A, 0x64, 0xCB, 0xDC, 0x14, 0xC8, 0xC1, 0x7F, 0x6F, 0x23, 0xCE, 0xDD, 0x19, 0x22, 0x4F, 0x24, 0x1E, 0x27, 0x18, 0x66, 0x88, 0x7A, 0x9A, 0x9A, 0x09, 0x37, 0x6D, 0x65, 0x15, 0xE8, 0x28, 0x5E, 
 				0x82, 0xEB, 0x5B, 0x82, 0xE8, 0x8A, 0xAC, 0x8F, 0xC3, 0x6C, 0xEE, 0xF0, 0x3E, 0x20, 0xCB, 0xC7 };
 
+			DateTime expectedNotAfter = new DateTime (632853923270000000,
+				DateTimeKind.Utc);
+			DateTime expectedNotBefore = new DateTime (632538347270000000,
+				DateTimeKind.Utc);
+
 			Assert.IsFalse (x.Archived, "Archived");
 			Assert.AreEqual (0, x.Extensions.Count, "Extensions");
 			Assert.AreEqual (0, x.FriendlyName.Length, "FriendlyName");
 			Assert.IsFalse (x.HasPrivateKey, "HasPrivateKey");
 			Assert.AreEqual ("CN=CASTOR\\poupou", x.Issuer, "Issuer");
 			Assert.AreEqual ("CN=CASTOR\\poupou", x.IssuerName.Name, "IssuerName");
-			Assert.AreEqual (632853923270000000, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter");
-			Assert.AreEqual (632538347270000000, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore");
+			Assert.AreEqual (expectedNotAfter.Ticks, x.NotAfter.ToUniversalTime ().Ticks, "NotAfter#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotAfter.Kind, "NotAfter#2");
+			Assert.AreEqual (expectedNotAfter.ToLocalTime (), x.NotAfter, "NotAfter#3");
+			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
+			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
+			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>2uo5OPY69Iv54sfVLPka1XXPF6yzRr1/P5c4LhBBssTZFBXY5vkROIB149cfwIanPgIRBOlXtdhXZSd7j7q576CPFZzsL4VjTlJrpuMzyoYiuvkG6OzLp6Wo4j7HIXROyekFX654ElEv+mqPfLBkKvu3skCRIOcyUz9YyoCiQcU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (raw, x.RawData, "RawData");
