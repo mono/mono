@@ -192,10 +192,7 @@ namespace System.Collections.ObjectModel
 #region Not generic interface implementations
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			T [] target = array as T [];
-			if (target == null)
-				throw new ArgumentException ("array");
-			list.CopyTo (target, arrayIndex);
+			((ICollection)list).CopyTo (array, arrayIndex);
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator ()

@@ -1,3 +1,8 @@
+2008-01-13  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Collection.cs, ReadonlyCollection.cs (ICollection.CopyTo):
+	Use ICollection.CopyTo of inner list. Fixes bug #350432.
+
 2006-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReadOnlyCollection.cs : added get_IList<T>.this(int).

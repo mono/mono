@@ -69,7 +69,6 @@ namespace MonoTests.System.Collections.ObjectModel
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ICollection_CopyTo ()
 		{
 			Collection <int> c = new Collection <int> ();
