@@ -1,3 +1,7 @@
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* NumberFormatter.cs: Remove some redundant assignments.
+
 2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppDomain.cs: Also fix bug #350530 for overload taking evidence and

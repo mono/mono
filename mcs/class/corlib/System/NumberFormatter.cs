@@ -379,7 +379,6 @@ namespace System
 			: this (format)
 		{
 			_defPrecision = Int32DefPrecision;
-			_infinity = _NaN = false;
 			_positive = value >= 0;
 
 			if (value == 0) {
@@ -402,7 +401,6 @@ namespace System
 		public NumberFormatter (string format, uint value)
 			: this (format)
 		{
-			_infinity = _NaN = false;
 			_defPrecision = UInt32DefPrecision;
 			_positive = true;
 
@@ -423,7 +421,6 @@ namespace System
 		public NumberFormatter (string format, long value)
 			: this (format)
 		{
-			_infinity = _NaN = false;
 			_defPrecision = Int64DefPrecision;
 			_positive = value >= 0;
 
@@ -448,7 +445,6 @@ namespace System
 		public NumberFormatter (string format, ulong value)
 			: this (format)
 		{
-			_infinity = _NaN = false;
 			_defPrecision = UInt64DefPrecision;
 			_positive = true;
 
