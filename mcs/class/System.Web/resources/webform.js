@@ -95,7 +95,7 @@ webForm.WebForm_ReEnableControls = function  ()
 	
 	webForm.__disabledControlArray = new Array();
 	for (var i = 0; i < webForm.__enabledControlArray.length; i++) {
-		var c = this.WebForm_GetElementById (webForm.__enabledControlArray[i]);
+		var c = webForm.WebForm_GetElementById (webForm.__enabledControlArray[i]);
 		if ((typeof(c) != "undefined") && (c != null) && (c.disabled == true)) {
 			c.disabled = false;
 			webForm.__disabledControlArray[webForm.__disabledControlArray.length] = c;
@@ -156,15 +156,15 @@ webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, us
 	if (typeof XMLHttpRequest != "undefined") {
 		httpPost = new XMLHttpRequest ();
 	} else {
-		if (this.axName != null)
-			httpPost = new ActiveXObject (this.axName);
+		if (window.axName != null)
+			httpPost = new ActiveXObject (window.axName);
 		else {
 			var clsnames = new Array ("MSXML", "MSXML2", "MSXML3", "Microsoft");
 			for (n = 0; n < clsnames.length && httpPost == null; n++) {
-				this.axName = clsnames [n] + ".XMLHTTP";
+				window.axName = clsnames [n] + ".XMLHTTP";
 				try {
-					httpPost = new ActiveXObject (this.axName);
-				} catch (e) { this.axName = null; }
+					httpPost = new ActiveXObject (window.axName);
+				} catch (e) { window.axName = null; }
 			}
 			if (httpPost == null)
 				throw new Error ("XMLHTTP object could not be created.");
@@ -222,13 +222,13 @@ webForm.WebForm_ClientCallback = function (doc, ctx, callback, errorCallback)
 			if (!isNaN(validationFieldLength)) {
 				var validationField = doc.substring(separatorIndex + 1, separatorIndex + validationFieldLength + 1);
 				if (validationField != "") {
-					var validationFieldElement = this._form["__EVENTVALIDATION"];
+					var validationFieldElement = webForm._form["__EVENTVALIDATION"];
 					if (!validationFieldElement) {
 						validationFieldElement = document.createElement("INPUT");
 						validationFieldElement.type = "hidden";
 						validationFieldElement.name = "__EVENTVALIDATION";
 						validationFieldElement.id = validationFieldElement.name;
-						this._form.appendChild(validationFieldElement);
+						webForm._form.appendChild(validationFieldElement);
 					}
 					validationFieldElement.value = validationField;
 				}
@@ -243,9 +243,9 @@ webForm.WebForm_ClientCallback = function (doc, ctx, callback, errorCallback)
 }
 
 webForm.WebForm_InitCallback = function () {
-	var len = this._form.elements.length;
+	var len = webForm._form.elements.length;
 	for (n=0; n<len; n++) {
-		var elem = this._form.elements [n];
+		var elem = webForm._form.elements [n];
 		var tagName = elem.tagName.toLowerCase();
 		if (tagName == "input") {
 			var type = elem.type;
@@ -311,36 +311,36 @@ webForm.WebForm_FireDefaultButton = function (event, target)
 
 webForm.WebForm_SaveScrollPositionSubmit = function ()
 {
-	var pos = this.WebForm_GetElementPosition(this._form);
-	this._form.elements['__SCROLLPOSITIONX'].value = this.WebForm_GetScrollX() - pos.x;
-	this._form.elements['__SCROLLPOSITIONY'].value = this.WebForm_GetScrollY() - pos.y;
-	if ((typeof(this._form.oldSubmit) != "undefined") && (this._form.oldSubmit != null)) {
-		return this._form.oldSubmit();
+	var pos = webForm.WebForm_GetElementPosition(webForm._form);
+	webForm._form.elements['__SCROLLPOSITIONX'].value = webForm.WebForm_GetScrollX() - pos.x;
+	webForm._form.elements['__SCROLLPOSITIONY'].value = webForm.WebForm_GetScrollY() - pos.y;
+	if ((typeof(webForm._form.oldSubmit) != "undefined") && (webForm._form.oldSubmit != null)) {
+		return webForm._form.oldSubmit();
 	}
 	return true;
 }
 
 webForm.WebForm_SaveScrollPositionOnSubmit = function ()
 {
-	var pos = this.WebForm_GetElementPosition(this._form);
-	this._form.elements['__SCROLLPOSITIONX'].value = this.WebForm_GetScrollX() - pos.x;
-	this._form.elements['__SCROLLPOSITIONY'].value = this.WebForm_GetScrollY() - pos.y;
-	if ((typeof(this._form.oldOnSubmit) != "undefined") && (this._form.oldOnSubmit != null)) {
-		return this._form.oldOnSubmit();
+	var pos = webForm.WebForm_GetElementPosition(webForm._form);
+	webForm._form.elements['__SCROLLPOSITIONX'].value = webForm.WebForm_GetScrollX() - pos.x;
+	webForm._form.elements['__SCROLLPOSITIONY'].value = webForm.WebForm_GetScrollY() - pos.y;
+	if ((typeof(webForm._form.oldOnSubmit) != "undefined") && (webForm._form.oldOnSubmit != null)) {
+		return webForm._form.oldOnSubmit();
 	}
 	return true;
 }
 
 webForm.WebForm_RestoreScrollPosition = function ()
 {
-	var pos = this.WebForm_GetElementPosition(this._form);
-	var ScrollX = parseInt(this._form.elements['__SCROLLPOSITIONX'].value);
-	var ScrollY = parseInt(this._form.elements['__SCROLLPOSITIONY'].value);
+	var pos = webForm.WebForm_GetElementPosition(webForm._form);
+	var ScrollX = parseInt(webForm._form.elements['__SCROLLPOSITIONX'].value);
+	var ScrollY = parseInt(webForm._form.elements['__SCROLLPOSITIONY'].value);
 	ScrollX = (isNaN(ScrollX)) ? pos.x : (ScrollX + pos.x);
 	ScrollY = (isNaN(ScrollY)) ? pos.y : (ScrollY + pos.y);
 	window.scrollTo(ScrollX, ScrollY);
-	if ((typeof(this._form.oldOnLoad) != "undefined") && (this._form.oldOnLoad != null)) {
-		return this._form.oldOnLoad();
+	if ((typeof(webForm._form.oldOnLoad) != "undefined") && (webForm._form.oldOnLoad != null)) {
+		return webForm._form.oldOnLoad();
 	}
 	return true;
 }
