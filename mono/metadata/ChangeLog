@@ -1,3 +1,8 @@
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* icall-def.h number-formatter.h icall.c: Implemented a cross app-domain
+	  common storage for the tables used in the System/NumberFormatter class.
+
 2008-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix a typo.
