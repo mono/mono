@@ -484,7 +484,7 @@ namespace System {
 			return new AssemblyBuilder (name, null, access, true);
 		}
 
-	    	//
+		//
 		// AppDomain.DoCallBack works because AppDomain is a MarshalByRefObject
 		// so, when you call AppDomain.DoCallBack, that's a remote call
 		//
@@ -507,7 +507,7 @@ namespace System {
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args)
 		{
 			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity);
-			return ExecuteAssembly (a, args);
+			return ExecuteAssemblyInternal (a, args);
 		}
 
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -519,9 +519,13 @@ namespace System {
 		int ExecuteAssemblyInternal (Assembly a, string[] args)
 		{
 			if (a.EntryPoint == null)
-				throw new MissingMethodException ("Entry point not found in assembly '" + a.GetName () + "'.");
+#if NET_2_0
+				throw new MissingMethodException ("Entry point not found in assembly '" + a.FullName + "'.");
+#else
+				throw new COMException ("Unspecified error.", -2147467259);
+#endif
 			return ExecuteAssembly (a, args);
-		}			
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int ExecuteAssembly (Assembly a, string[] args);

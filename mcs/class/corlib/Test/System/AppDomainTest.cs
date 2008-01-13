@@ -32,10 +32,12 @@ using System.Collections;
 #if NET_2_0
 using System.Collections.Generic;
 #endif
+using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
@@ -1275,11 +1277,70 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (MissingMethodException))]
-		public void ExecuteAssemblyByName_NoEntryPoint ()
+		[Test] // ExecuteAssemblyByName (String)
+		public void ExecuteAssemblyByName1_NoEntryPoint ()
 		{
-			AppDomain.CurrentDomain.ExecuteAssemblyByName ("mscorlib");
+			try {
+				AppDomain.CurrentDomain.ExecuteAssemblyByName ("mscorlib");
+				Assert.Fail ("#1");
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+			}
+		}
+
+		[Test] // ExecuteAssemblyByName (String, Evidence)
+		public void ExecuteAssemblyByName2_NoEntryPoint ()
+		{
+			try {
+				AppDomain.CurrentDomain.ExecuteAssemblyByName (
+					"mscorlib", (Evidence) null);
+				Assert.Fail ("#1");
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+			}
+		}
+
+		[Test] // ExecuteAssemblyByName (String, Evidence, String [])
+		public void ExecuteAssemblyByName3_NoEntryPoint ()
+		{
+			try {
+				AppDomain.CurrentDomain.ExecuteAssemblyByName (
+					"mscorlib", (Evidence) null,
+					new string [0]);
+				Assert.Fail ("#1");
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+			}
+		}
+
+		[Test] // ExecuteAssemblyByName (AssemblyName, Evidence, String [])
+		public void ExecuteAssemblyByName4_NoEntryPoint ()
+		{
+			AssemblyName aname = new AssemblyName ("mscorlib");
+
+			try {
+				AppDomain.CurrentDomain.ExecuteAssemblyByName (
+					aname, (Evidence) null, new string [0]);
+				Assert.Fail ("#1");
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (Consts.AssemblyCorlib) != -1, "#5");
+			}
 		}
 #endif
 
@@ -1455,6 +1516,126 @@ namespace MonoTests.System
 			Assert.AreEqual (0, ad.Evidence.Count, "Evidence.Count");
 			// SetupInformation is copied from default app domain
 			Assert.IsNotNull (ad.SetupInformation, "SetupInformation");
+		}
+
+		[Test] // ExecuteAssembly (String)
+		public void ExecuteAssembly1_NoEntryPoint ()
+		{
+			Assembly assembly = typeof (AppDomainTest).Assembly;
+
+			try {
+				AppDomain.CurrentDomain.ExecuteAssembly (
+					assembly.Location);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
+			}
+#else
+			} catch (COMException ex) {
+				// Unspecified error
+				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
+				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+#endif
+		}
+
+		[Test] // ExecuteAssembly (String, Evidence)
+		public void ExecuteAssembly2_NoEntryPoint ()
+		{
+			Assembly assembly = typeof (AppDomainTest).Assembly;
+
+			try {
+				AppDomain.CurrentDomain.ExecuteAssembly (
+					assembly.Location,
+					(Evidence) null);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
+			}
+#else
+			} catch (COMException ex) {
+				// Unspecified error
+				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
+				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+#endif
+		}
+
+		[Test] // ExecuteAssembly (String, Evidence, String [])
+		public void ExecuteAssembly3_NoEntryPoint ()
+		{
+			Assembly assembly = typeof (AppDomainTest).Assembly;
+
+			try {
+				AppDomain.CurrentDomain.ExecuteAssembly (
+					assembly.Location,
+					(Evidence) null,
+					new string [0]);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
+			}
+#else
+			} catch (COMException ex) {
+				// Unspecified error
+				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
+				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+#endif
+		}
+
+		[Test] // ExecuteAssembly (String, Evidence, String [], Byte [], AssemblyHashAlgorithm)
+		[Category ("NotWorking")] // Not implemented
+		public void ExecuteAssembly4_NoEntryPoint ()
+		{
+			Assembly assembly = typeof (AppDomainTest).Assembly;
+
+			try {
+				AppDomain.CurrentDomain.ExecuteAssembly (
+					assembly.Location,
+					(Evidence) null,
+					new string [0],
+					(byte []) null,
+					AssemblyHashAlgorithm.SHA1);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (MissingMethodException ex) {
+				// Entry point not found in assembly '...'
+				Assert.AreEqual (typeof (MissingMethodException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (assembly.FullName) != -1, "#5");
+			}
+#else
+			} catch (COMException ex) {
+				// Unspecified error
+				Assert.AreEqual (typeof (COMException), ex.GetType (), "#2");
+				Assert.AreEqual (-2147467259, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+#endif
 		}
 
 		[Test] // bug #79720

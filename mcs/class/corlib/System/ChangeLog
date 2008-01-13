@@ -1,3 +1,9 @@
+2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomain.cs: Also fix bug #350530 for overload taking evidence and
+	args. On 1.0 profile, throw COMException to match MS and to allow
+	our unit tests to pass on MS.
+
 2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.cs: Check in redesigned implementation. Improves

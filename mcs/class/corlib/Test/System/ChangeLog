@@ -1,3 +1,8 @@
+2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomainTest.cs: Added ExecuteAssemblyByName and ExecuteAssembly
+	tests for assemblies without entrypoint.
+
 2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
 
 	* DecimalTest.cs, DoubleTest.cs: Add a few test cases as part of the
