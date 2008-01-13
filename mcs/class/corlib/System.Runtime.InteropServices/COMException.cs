@@ -58,7 +58,7 @@ public class COMException : ExternalException {
 	public override string ToString ()
 	{
 		return String.Format (
-			"{0} (0x{1:x}) {2} {3}\n{4}",
+			"{0} (0x{1:x}): {2} {3}\n{4}",
 			GetType (), HResult, Message, InnerException == null ? "" : InnerException.ToString (),
 			StackTrace != null ? StackTrace : "");
 	}
