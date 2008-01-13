@@ -638,9 +638,6 @@ namespace System.Web {
 					// If we are not chunked, we need to set "Connection: close".
 					//
 					if (use_chunked){
-#if DEBUG
-						Console.WriteLine ("Setting to close2");
-#endif
 						write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
 					}
 				}
@@ -650,9 +647,6 @@ namespace System.Web {
 				// close at the end.
 				//
 				if (use_chunked){
-#if DEBUG
-					Console.WriteLine ("Setting to close");
-#endif
 					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
 				}
 			}
