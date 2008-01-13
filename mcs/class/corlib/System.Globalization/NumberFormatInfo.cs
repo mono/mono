@@ -395,7 +395,17 @@ namespace System.Globalization {
 
 		public int[] CurrencyGroupSizes {
 			get {
-				return (int []) currencyGroupSizes.Clone ();
+				return (int []) RawCurrencyGroupSizes.Clone ();
+			}
+			
+			set {
+				RawCurrencyGroupSizes = value;
+			}
+		}
+
+		internal int[] RawCurrencyGroupSizes {
+			get {
+				return currencyGroupSizes;
 			}
 			
 			set {
@@ -650,7 +660,17 @@ namespace System.Globalization {
 
 		public int[] NumberGroupSizes {
 			get {
-				return (int []) numberGroupSizes.Clone ();
+				return (int []) RawNumberGroupSizes.Clone ();
+			}
+			
+			set {
+				RawNumberGroupSizes = value;
+			}
+		}
+
+		internal int[] RawNumberGroupSizes {
+			get {
+				return numberGroupSizes;
 			}
 			
 			set {
@@ -760,7 +780,17 @@ namespace System.Globalization {
 
 		public int[] PercentGroupSizes {
 			get {
-				return (int []) percentGroupSizes.Clone ();
+				return (int []) RawPercentGroupSizes.Clone ();
+			}
+			
+			set {
+				RawPercentGroupSizes = value;
+			}
+		}
+
+		internal int[] RawPercentGroupSizes {
+			get {
+				return percentGroupSizes;
 			}
 			
 			set {

@@ -142,12 +142,13 @@ namespace System
 
 		public override string ToString ()
 		{
-			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value));
+			return new NumberFormatter(null, m_value).FormatDecimal(-1, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			return NumberFormatter.FormatGeneral (new NumberFormatter.NumberStore (m_value), provider);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+			return new NumberFormatter(null, m_value).FormatDecimal(-1, nfi);
 		}
 
 		public string ToString (string format)

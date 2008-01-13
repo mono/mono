@@ -3,874 +3,1378 @@
 //
 // Author:
 //   Kazuki Oikawa (kazuki@panicode.com)
+//   Eyal Alaluf (eyala@mainsoft.com)
 //
 
-using System.Collections;
+// NumberFormatter is shared with Grasshopper and hence the #if TARGET_JVM
+// The differentiating issues are:
+//   * Mono runs faster when NumberFormatter is a struct. Grasshopper (and .Net
+//     for that matter) run faster when its a class.
+//   * No support for unsafe code in Grasshopper.
+#if !TARGET_JVM
+#define STRUCT
+#define UNSAFE_TABLES
+#endif
+
 using System.Globalization;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace System
 {
-	class NumberFormatter
+#if STRUCT
+	internal partial struct NumberFormatter
+#else
+	internal sealed partial class NumberFormatter
+#endif
 	{
-		static char[] digitLowerTable = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
-		static char[] digitUpperTable = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+		#region Static Fields
 
-		#region NumberToString
-		public static string NumberToString (string format, sbyte value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 1, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, byte value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value, true, 1, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, ushort value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value, true, 2, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, short value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 2, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, uint value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value, true, 4, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, int value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-(long)value, value >= 0, 4, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, ulong value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value, true, 8, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, long value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X'))
-				return FormatHexadecimal (value >= 0 ? (ulong)value : (ulong)-value, value >= 0, 8, precision, specifier == 'X');
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, float value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, double value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, decimal value, NumberFormatInfo nfi)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-			ParseBasicFormat (format, out specifier, out precision, out custom);
-			if (!custom && (specifier == 'x' || specifier == 'X')) throw new FormatException ();
-			return NumberToString (format, new NumberStore (value), nfi, specifier, precision, custom);
-		}
-		public static string NumberToString (string format, NumberStore ns, NumberFormatInfo nfi, char specifier, int precision, bool custom)
-		{
-			if (ns.IsNaN) {
-				return nfi.NaNSymbol;
-			}
-			if (ns.IsInfinity) {
-				if (ns.Positive)
-					return nfi.PositiveInfinitySymbol;
-				else
-					return nfi.NegativeInfinitySymbol;
-			}
+		const int DefaultExpPrecision = 6;
+		const int HundredMillion = 100000000;
+		const long SeventeenDigitsThreshold = 10000000000000000;
+		const ulong ULongDivHundredMillion = UInt64.MaxValue / HundredMillion;
+		const ulong ULongModHundredMillion = 1 + UInt64.MaxValue % HundredMillion;
 
-			if (nfi == null) 
-				nfi = NumberFormatInfo.GetInstance (null);
-			
-			if (custom){
-				if (ns.IsFloatingSource)
-					ns.RoundEffectiveDigits (ns.DefaultPrecision);
-				return FormatCustom (format, ns, nfi);
-			}
+		const int DoubleBitsExponentShift = 52;
+		const int DoubleBitsExponentMask = 0x7ff;
+		const long DoubleBitsMantissaMask = 0xfffffffffffff;
+		const int DecimalBitsScaleMask = 0x1f0000;
 
-			if (ns.IsFloatingSource) {
-				switch(specifier) {
-				case 'p':
-				case 'P':
-				case 'c':
-				case 'C':
-				case 'f':
-				case 'F':
-				case 'N':
-				case 'n':
-					ns.RoundEffectiveDigits (ns.DefaultPrecision);
-					break;
-				case 'g':
-				case 'G':
-					if (precision <= 0)
-						ns.RoundEffectiveDigits (ns.DefaultPrecision, ns.IsBankerApplicable, true);
-					else
-						ns.RoundEffectiveDigits (precision);
-					break;
-				case 'r':
-				case 'R':
-					ns.RoundEffectiveDigits (ns.DefaultMaxPrecision);
-					break;
-				default:
-					if (precision > ns.DefaultPrecision)
-						ns.RoundEffectiveDigits (precision + 1);
-					else
-						ns.RoundEffectiveDigits (ns.DefaultPrecision + 1);
-					break;
+		const int SingleDefPrecision = 7;
+		const int DoubleDefPrecision = 15;
+		const int Int8DefPrecision = 3;
+		const int UInt8DefPrecision = 3;
+		const int Int16DefPrecision = 5;
+		const int UInt16DefPrecision = 5;
+		const int Int32DefPrecision = 10;
+		const int UInt32DefPrecision = 10;
+		const int Int64DefPrecision = 19;
+		const int UInt64DefPrecision = 20;
+		const int DecimalDefPrecision = 100;
+		const int TenPowersListLength = 19;
+
+#if UNSAFE_TABLES
+		// The below arrays are taken from mono/metatdata/number-formatter.h
+
+		private static readonly unsafe ulong* MantissaBitsTable;
+		private static readonly unsafe int* TensExponentTable;
+		private static readonly unsafe char* DigitLowerTable;
+		private static readonly unsafe char* DigitUpperTable;
+		private static readonly unsafe long* TenPowersList;
+
+		// DecHexDigits s a translation table from a decimal number to its
+		// digits hexadecimal representation (e.g. DecHexDigits [34] = 0x34).
+		private static readonly unsafe int* DecHexDigits;
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private unsafe static extern void GetFormatterTables (out ulong* MantissaBitsTable, out int* TensExponentTable,
+				out char* DigitLowerTable, out char* DigitUpperTable,
+				out long* TenPowersList, out int* DecHexDigits);
+
+		unsafe static NumberFormatter()
+		{
+			GetFormatterTables (out MantissaBitsTable, out TensExponentTable,
+				out DigitLowerTable, out DigitUpperTable, out TenPowersList, out DecHexDigits);
+		}
+
+		unsafe
+#endif
+		static long GetTenPowerOf(int i)
+		{
+			return TenPowersList [i];
+		}
+		#endregion Static Fields
+
+		#region Fields
+
+		private readonly bool _NaN;
+		private readonly bool _infinity;
+		private readonly bool _isCustomFormat;
+		private readonly bool _specifierIsUpper;
+		private readonly char _specifier;
+		private readonly sbyte _precision;
+		private readonly sbyte _defPrecision;
+
+		private bool _positive;
+		private sbyte _digitsLen;
+		private sbyte _offset; // Represent the first digit offset.
+		private int _decPointPos;
+
+		// The following fields are a hexadeimal representation of the digits.
+		// For instance _val = 0x234 represents the digits '2', '3', '4'.
+		private uint _val1; // Digits 0 - 7.
+		private uint _val2; // Digits 8 - 15.
+		private uint _val3; // Digits 16 - 23.
+		private uint _val4; // Digits 23 - 31. Only needed for decimals.
+
+		#endregion Fields
+
+		#region Constructor Helpers
+
+		// Translate an unsigned int to hexadecimal digits.
+		// i.e. 123456789 is represented by _val1 = 0x23456789 and _val2 = 0x1
+		private void InitDecHexDigits (uint value)
+		{
+			if (value >= HundredMillion) {
+				uint div1 = value / HundredMillion;
+				value = value - HundredMillion * div1;
+				_val2 = ToDecHex ((int)div1);
+			}
+			_val1 = ToDecHex ((int)value);
+		}
+
+		// Translate an unsigned long to hexadecimal digits.
+		private void InitDecHexDigits (ulong value)
+		{
+			if (value >= HundredMillion) {
+				long div1 = (long)(value / HundredMillion);
+				value = value - HundredMillion * (ulong)div1;
+				if (div1 >= HundredMillion) {
+					int div2 = (int)(div1 / HundredMillion);
+					div1 = div1 - div2 * (long)HundredMillion;
+					_val3 = ToDecHex (div2);
 				}
+				if (div1 != 0)
+					_val2 = ToDecHex ((int)(div1));
 			}
-
-			switch(specifier) {
-			case 'c':
-			case 'C':
-				return FormatCurrency (ns, precision, nfi);
-			case 'd':
-			case 'D':
-				return FormatDecimal (ns, precision, nfi);
-			case 'e':
-			case 'E':
-				return FormatExponential (ns, precision, nfi, specifier == 'E');
-			case 'f': 
-			case 'F':
-				return FormatFixedPoint (ns, precision, nfi);
-			case 'g':
-			case 'G':
-				if (ns.IsFloatingSource || ns.IsDecimalSource || precision != -1)
-					return FormatGeneral (ns, precision, nfi, specifier == 'G', false);
-				return FormatDecimal (ns, precision, nfi);
-			case 'n':
-			case 'N':
-				return FormatNumber (ns, precision, nfi);
-			case 'p':
-			case 'P':
-				return FormatPercent (ns, precision, nfi);
-			case 'r':
-			case 'R':
-				if (ns.IsFloatingSource) {
-					return FormatGeneral (ns, ns.DefaultPrecision, nfi, true, true);
-				} else {
-					throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-				}
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}	
+			if (value != 0)
+				_val1 = ToDecHex ((int)value);
 		}
-		#endregion
 
-		#region BasicParser
-		private static void ParseBasicFormat (string format, out char specifier, out int precision, out bool custom)
+		// Translate a decimal integer to hexadecimal digits.
+		// The decimal integer is 96 digits and its value is hi * 2^64 + lo.
+		// is the lower 64 bits.
+		private void InitDecHexDigits (uint hi, ulong lo)
 		{
-	 		if (format == null || format.Length == 0) {
-				precision = -1;
-				specifier = 'G';
-				custom = false;
+			if (hi == 0) {
+				InitDecHexDigits (lo); // Only the lower 64 bits matter.
 				return;
 			}
 
-			precision = -1;
-			specifier = format[0];
-			custom = false;
+			// Compute (hi, lo) = (hi , lo) / HundredMillion.
+			uint divhi = hi / HundredMillion;
+			ulong remhi = hi - divhi * HundredMillion;
+			ulong divlo = lo / HundredMillion;
+			ulong remlo = lo - divlo * HundredMillion + remhi * ULongModHundredMillion;
+			hi = divhi;
+			lo = divlo + remhi * ULongDivHundredMillion;
+			divlo = remlo / HundredMillion;
+			remlo -= divlo * HundredMillion;
+			lo += divlo;
+			_val1 = ToDecHex ((int)remlo);
 
-			if (Char.IsLetter (specifier)) {
-				if (format.Length == 1)
-					return;
+			// Divide hi * 2 ^ 64 + lo by HundredMillion using the fact that
+			// hi < HundredMillion.
+			divlo = lo / HundredMillion;
+			remlo = lo - divlo * HundredMillion;
+			lo = divlo;
+			if (hi != 0) {
+				lo += hi * ULongDivHundredMillion;
+				remlo += hi * ULongModHundredMillion;
+				divlo = remlo / HundredMillion;
+				lo += divlo;
+				remlo -= divlo * HundredMillion;
+			}
+			_val2 = ToDecHex ((int)remlo);
 
-				bool flag = true;
-				precision = 0;
-				for (int i = 1; i < format.Length; i++) {
-					char c = format [i];
-					if (char.IsDigit (c)) {
-						precision = precision * 10 + (c - '0');
-						if (precision > 99) {
-							flag = false;
-							break;
-						}
-					}
-					else {
-						flag = false;
-						break;
-					}
+			// Now we are left with 64 bits store in lo.
+			if (lo >= HundredMillion) {
+				divlo = lo / HundredMillion;
+				lo -= divlo * HundredMillion;
+				_val4 = ToDecHex ((int)divlo);
+			}
+			_val3 = ToDecHex ((int)lo);
+		}
+
+		// Helper to translate an int in the range 0 .. 9999 to its
+		// Hexadecimal digits representation.
+#if UNSAFE_TABLES
+		unsafe
+#endif
+		private static int FastToDecHex (int val)
+		{
+			int res = 0;
+			if (val >= 100) {
+				// Uses 2^19 (524288) to compute val / 100 for val < 10000.
+				int v = (val * 5243) >> 19;
+				val -= v * 100;
+				res = DecHexDigits [v] << 8;
+			}
+			return res | DecHexDigits [val];
+		}
+
+		// Helper to translate an int in the range 0 .. 99999999 to its
+		// Hexadecimal digits representation.
+		private static uint ToDecHex (int val)
+		{
+			int res = 0;
+			if (val >= 10000) {
+				int v = val / 10000;
+				val -= v * 10000;
+				res = FastToDecHex (v) << 16;
+			}
+			return (uint)(res | FastToDecHex (val));
+		}
+
+		// Helper to count number of hexadecimal digits in a number.
+		private static int FastDecHexLen (int val)
+		{
+			if (val < 0x100)
+				if (val < 0x10)
+					return 1;
+				else
+					return 2;
+			else if (val < 0x1000)
+				return 3;
+			else
+				return 4;
+		}
+
+		private static int DecHexLen (uint val)
+		{
+			int v = (int)val;
+			if (v < 0)
+				return 8;
+			if (v < 0x10000)
+				return FastDecHexLen (v);
+			return 4 + FastDecHexLen (v >> 16);
+		}
+
+		// Count number of hexadecimal digits stored in _val1 .. _val4.
+		private sbyte DecHexLen ()
+		{
+			if (_val4 != 0)
+				return (sbyte)(DecHexLen (_val4) + 24);
+			if (_val3 != 0)
+				return (sbyte)(DecHexLen (_val3) + 16);
+			if (_val2 != 0)
+				return (sbyte)(DecHexLen (_val2) + 8);
+			if (_val1 != 0)
+				return (sbyte)DecHexLen (_val1);
+			return 0;
+		}
+
+		// Helper to count the 10th scale (number of digits) in a number
+		private static int ScaleOrder (long hi)
+		{
+			for (int i = TenPowersListLength - 1; i >= 0; i--)
+				if (hi >= GetTenPowerOf (i))
+					return i + 1;
+			return 1;
+		}
+
+		// Compute the initial precision for rounding a floating number
+		// according to the used format.
+		int InitialFloatingPrecision ()
+		{
+			if (_specifier == 'R')
+				return _defPrecision + 2;
+			if (_precision < _defPrecision)
+				return _defPrecision;
+			if (_specifier == 'G')
+				return Math.Min (_defPrecision + 2, _precision);
+			if (_specifier == 'E')
+				return Math.Min (_defPrecision + 2, _precision + 1);
+			return _defPrecision;
+		}
+
+		// Parse the given format and extract the precision in it.
+		// Returns -1 for empty formats and -2 to indicate that the format
+		// is a custom format.
+		private static int ParsePrecision (string format)
+		{
+			int precision = 0;
+			for (int i = 1; i < format.Length; i++) {
+				int val = format [i] - '0';
+				precision = precision * 10 + val;
+				if (val < 0 || val > 9 || precision > 99)
+					return -2;
+			}
+			return precision;
+		}
+
+		#endregion Constructor Helpers
+
+		#region Constructors
+
+		// Parse the given format and initialize the following fields:
+		//   _isCustomFormat, _specifierIsUpper, _specifier & _precision.
+		private NumberFormatter (string format)
+		{
+#if STRUCT
+			// Init all fields when using a struct.
+			_val1 = _val2 = _val3 = _val4 = 0;
+			_defPrecision = 0;
+			_offset = 0;
+			_decPointPos = _digitsLen = 0;
+			_positive = _NaN = _infinity = false;
+			_cbuf = null;
+			_ind = 0;
+#endif
+			_isCustomFormat = false;
+			_specifierIsUpper = true;
+			_precision = -1;
+			if (format == null || format.Length == 0) {
+				_specifier = 'G';
+				return;
+			}
+
+			char specifier = format [0];
+			if (specifier >= 'a' && specifier <= 'z') {
+				specifier = (char)(specifier - 'a' + 'A');
+				_specifierIsUpper = false;
+			}
+			else if (specifier < 'A' || specifier > 'Z') {
+				_isCustomFormat = true;
+				_specifier = '0';
+				return;
+			}
+			_specifier = specifier;
+			if (format.Length > 1) {
+				_precision = (sbyte)ParsePrecision (format);
+				if (_precision == -2) { // Is it a custom format?
+					_isCustomFormat = true;
+					_specifier = '0';
+					_precision = -1;
 				}
-				if (flag)
-					return;
+			}
+		}
+
+		public NumberFormatter (string format, sbyte value)
+			: this (format, (int)value)
+		{
+			_defPrecision = Int8DefPrecision;
+			if (_specifier == 'X' && value < 0) {
+				_val1 = (byte)value;
+				_decPointPos = _digitsLen = 2;
+				return;
+			}
+		}
+
+		public NumberFormatter (string format, byte value)
+			: this (format, (uint)value)
+		{
+			_defPrecision = UInt8DefPrecision;
+		}
+
+		public NumberFormatter (string format, short value)
+			: this (format, (int)value)
+		{
+			_defPrecision = Int16DefPrecision;
+			if (_specifier == 'X' && value < 0) {
+				_val1 = (ushort)value;
+				_decPointPos = _digitsLen = 4;
+				return;
+			}
+		}
+
+		public NumberFormatter (string format, ushort value)
+			: this (format, (uint)value)
+		{
+			_defPrecision = UInt16DefPrecision;
+		}
+
+		public NumberFormatter (string format, int value)
+			: this (format)
+		{
+			_defPrecision = Int32DefPrecision;
+			_infinity = _NaN = false;
+			_positive = value >= 0;
+
+			if (value == 0) {
+				_decPointPos = 1;
+				return;
+			}
+			if (_specifier == 'X') {
+				_val1 = (uint)value;
+				_decPointPos = _digitsLen = DecHexLen ();
+				return;
 			}
 
-			custom = true;
-			return;
-		}	
+			if (value < 0)
+				value = -value;
 
-		#endregion
-
-		#region Helpers
-		private static void ZeroTrimEnd (StringBuilder sb)
-		{
-			ZeroTrimEnd (sb, false);
+			InitDecHexDigits ((uint)value);
+			_decPointPos = _digitsLen = DecHexLen ();
 		}
-		private static void ZeroTrimEnd (StringBuilder sb, bool canEmpty)
+
+		public NumberFormatter (string format, uint value)
+			: this (format)
 		{
-			int len = 0;
-			for (int i = sb.Length - 1; (canEmpty ? i >= 0 : i > 0); i --) {
-				if (sb [i] != '0')
-					break;
-				len ++;
+			_infinity = _NaN = false;
+			_defPrecision = UInt32DefPrecision;
+			_positive = true;
+
+			if (value == 0) {
+				_decPointPos = 1;
+				return;
+			}
+			if (_specifier == 'X') {
+				_val1 = value;
+				_decPointPos = _digitsLen = DecHexLen ();
+				return;
 			}
 
-			if (len > 0)
-				sb.Remove (sb.Length - len, len);
+			InitDecHexDigits (value);
+			_decPointPos = _digitsLen = DecHexLen ();
 		}
-		#endregion
 
-		#region Basic
-		internal static string FormatCurrency (NumberStore ns, int precision, NumberFormatInfo nfi)
+		public NumberFormatter (string format, long value)
+			: this (format)
+		{
+			_infinity = _NaN = false;
+			_defPrecision = Int64DefPrecision;
+			_positive = value >= 0;
+
+			if (value == 0) {
+				_decPointPos = 1;
+				return;
+			}
+			if (_specifier == 'X') {
+				_val1 = (uint)value;
+				_val2 = (uint)(value >> 32);
+				_decPointPos = _digitsLen = DecHexLen ();
+				return;
+			}
+
+			if (value < 0)
+				value = -value;
+
+			InitDecHexDigits ((ulong)value);
+			_decPointPos = _digitsLen = DecHexLen ();
+		}
+
+		public NumberFormatter (string format, ulong value)
+			: this (format)
+		{
+			_infinity = _NaN = false;
+			_defPrecision = UInt64DefPrecision;
+			_positive = true;
+
+			if (value == 0) {
+				_decPointPos = 1;
+				return;
+			}
+			if (_specifier == 'X') {
+				_val1 = (uint)value;
+				_val2 = (uint)(value >> 32);
+				_decPointPos = _digitsLen = DecHexLen ();
+				return;
+			}
+
+			InitDecHexDigits (value);
+			_decPointPos = _digitsLen = DecHexLen ();
+		}
+
+		public NumberFormatter (string format, float value)
+			: this (format, value, SingleDefPrecision)
+		{
+		}
+
+		public NumberFormatter (string format, double value)
+			: this (format, value, DoubleDefPrecision)
+		{
+		}
+
+#if UNSAFE_TABLES // No unsafe code under TARGET_JVM
+		unsafe
+#endif
+		public NumberFormatter (string format, double value, sbyte defPrecision)
+			: this (format)
+		{
+			_defPrecision = defPrecision;
+
+			// Double to bits
+			long bits = BitConverter.DoubleToInt64Bits (value);
+		   	_positive = bits >= 0;
+			bits &= Int64.MaxValue;
+			if (bits == 0) {
+				_decPointPos = 1;
+				_positive = true;
+				return;
+			}
+
+			int e = (int)(bits >> DoubleBitsExponentShift);
+			long m = bits & DoubleBitsMantissaMask;
+			if (e == DoubleBitsExponentMask) {
+				_NaN = m != 0;
+				_infinity = m == 0;
+				return;
+			}
+
+			int expAdjust = 0;
+			if (e == 0) {
+				// We need 'm' to be large enough so we won't lose precision.
+				e = 1;
+				int scale = ScaleOrder (m);
+				if (scale < DoubleDefPrecision) {
+					expAdjust = scale - DoubleDefPrecision;
+					m *= GetTenPowerOf (-expAdjust);
+				}
+			}
+			else {
+				m = (m + DoubleBitsMantissaMask + 1) * 10;
+				expAdjust = -1;
+			}
+
+			// multiply the mantissa by 10 ^ N
+			ulong lo = (uint)m;
+			ulong hi = (ulong)m >> 32;
+			ulong lo2 = MantissaBitsTable [e];
+			ulong hi2 = lo2 >> 32;
+			lo2 = (uint)lo2;
+			ulong mm = hi * lo2 + lo * hi2 + ((lo * lo2) >> 32);
+			long res = (long)(hi * hi2 + (mm >> 32));
+			while (res < SeventeenDigitsThreshold) {
+				mm = (mm & UInt32.MaxValue) * 10;
+				res = res * 10 + (long)(mm >> 32);
+				expAdjust--;
+			}
+			if ((mm & 0x80000000) != 0)
+				res++;
+
+			int order = DoubleDefPrecision + 2;
+			_decPointPos = TensExponentTable [e] + expAdjust + order;
+
+			// Rescale 'res' to the initial precision (15-17 for doubles).
+			int initialPrecision = InitialFloatingPrecision ();
+			if (order > initialPrecision) {
+				long val = GetTenPowerOf (order - initialPrecision);
+				res = (res + (val >> 1)) / val;
+				order = initialPrecision;
+			}
+			if (res >= GetTenPowerOf (order)) {
+				order++;
+				_decPointPos++;
+			}
+
+		   	InitDecHexDigits ((ulong)res);
+			_offset = (sbyte)CountTrailingZeros ();
+			_digitsLen = (sbyte)(order - _offset);
+		}
+
+		public NumberFormatter (string format, decimal value)
+			: this (format)
+		{
+			_infinity = _NaN = false;
+			_defPrecision = DecimalDefPrecision;
+
+			int[] bits = decimal.GetBits (value);
+			int scale = (bits [3] & DecimalBitsScaleMask) >> 16;
+			_positive = bits [3] >= 0;
+			if (bits [0] == 0 && bits [1] == 0 && bits [2] == 0) {
+				_decPointPos = -scale;
+				_positive = true;
+				return;
+			}
+
+		   	InitDecHexDigits ((uint)bits [2], ((ulong)bits [1] << 32) | (uint)bits [0]);
+			_digitsLen = DecHexLen ();
+			_decPointPos = _digitsLen - scale;
+		}
+
+		#endregion Constructors
+
+		#region Inner String Buffer
+
+		private char[] _cbuf;
+		private int _ind;
+
+		private void ResetCharBuf (int size)
+		{
+			if (_cbuf == null || _cbuf.Length < size)
+				_cbuf = new char [size];
+			_ind = 0;
+		}
+
+		private void Resize (int len)
+		{
+			char[] newBuf = new char [len];
+			Array.Copy (_cbuf, newBuf, _ind);
+			_cbuf = newBuf;
+		}
+
+		private void Append (char c)
+		{
+			if (_ind == _cbuf.Length)
+				Resize (_ind + 10);
+			_cbuf [_ind++] = c;
+		}
+
+		private void Append (char c, int cnt)
+		{
+			if (_ind + cnt > _cbuf.Length)
+				Resize (_ind + cnt + 10);
+			while (cnt-- > 0)
+				_cbuf [_ind++] = c;
+		}
+
+		private void Append (string s)
+		{
+			int slen = s.Length;
+			if (_ind + slen > _cbuf.Length)
+				Resize (_ind + slen + 10);
+			for (int i = 0; i < slen; i++)
+				_cbuf [_ind++] = s [i];
+		}
+
+		#endregion Inner String Buffer
+
+		#region Helper properties
+
+		private int IntegerDigits {
+			get { return _decPointPos > 0 ? _decPointPos : 1; }
+		}
+
+		private int DecimalDigits {
+			get { return _digitsLen > _decPointPos ? _digitsLen - _decPointPos : 0; }
+		}
+
+		private bool IsIntegerSource {
+			get { return _defPrecision < 30 && _defPrecision != DoubleDefPrecision && _defPrecision != SingleDefPrecision; }
+		}
+
+		private bool IsFloatingSource {
+			get { return _defPrecision == DoubleDefPrecision || _defPrecision == SingleDefPrecision; }
+		}
+
+		private bool IsDecimalSource {
+			get { return _defPrecision > 30; }
+		}
+
+		private bool IsZero {
+			get { return _digitsLen == 0; }
+		}
+
+		private bool IsZeroInteger {
+			get { return _digitsLen == 0 || _decPointPos <= 0; }
+		}
+
+		#endregion Helper properties
+
+		#region Round
+
+		private void RoundPos (int pos)
+		{
+			RoundBits (_digitsLen - pos);
+		}
+
+		private bool RoundDecimal (int decimals)
+		{
+			return RoundBits (_digitsLen - _decPointPos - decimals);
+		}
+
+		private bool RoundBits (int shift)
+		{
+			if (shift <= 0) {
+				if (IsDecimalSource) {
+					_digitsLen += _offset;
+					RemoveTrailingZeros ();
+				}
+				return false;
+			}
+
+			if (shift > _digitsLen) {
+				_digitsLen = 0;
+				_decPointPos = 1;
+				_val1 = _val2 = _val3 = _val4 = 0;
+				_positive = true;
+				return false;
+			}
+			shift += _offset;
+			_digitsLen += _offset;
+			while (shift > 8) {
+				_val1 = _val2;
+				_val2 = _val3;
+				_val3 = _val4;
+				_val4 = 0;
+				_digitsLen -= 8;
+				shift -= 8;
+			}
+			shift = (shift - 1) << 2;
+			uint v = _val1 >> shift;
+			uint rem16 = v & 0xf;
+			_val1 = (v ^ rem16) << shift;
+			bool res = false;
+			if (rem16 >= 0x5) {
+				_val1 |= 0x99999999 >> (28 - shift);
+				AddOneToDecHex ();
+				sbyte newlen = DecHexLen ();
+				res = newlen != _digitsLen;
+				_decPointPos = _decPointPos + newlen - _digitsLen;
+				_digitsLen = newlen;
+			}
+			RemoveTrailingZeros ();
+			return res;
+		}
+
+		private void RemoveTrailingZeros ()
+		{
+			_offset = (sbyte)CountTrailingZeros ();
+			_digitsLen -= _offset;
+			if (_digitsLen == 0) {
+				_offset = 0;
+				_decPointPos = 1;
+				_positive = true;
+			}
+		}
+
+		private void AddOneToDecHex ()
+		{
+			if (_val1 == 0x99999999) {
+				_val1 = 0;
+				if (_val2 == 0x99999999) {
+					_val2 = 0;
+					if (_val3 == 0x99999999) {
+						_val3 = 0;
+						_val4 = AddOneToDecHex (_val4);
+					}
+					else
+						_val3 = AddOneToDecHex (_val3);
+				}
+				else
+					_val2 = AddOneToDecHex (_val2);
+			}
+			else
+				_val1 = AddOneToDecHex (_val1);
+		}
+
+		// Assume val != 0x99999999
+		private static uint AddOneToDecHex (uint val)
+		{
+			if ((val & 0xffff) == 0x9999)
+				if ((val & 0xffffff) == 0x999999)
+					if ((val & 0xfffffff) == 0x9999999)
+						return val + 0x06666667;
+					else
+						return val + 0x00666667;
+				else if ((val & 0xfffff) == 0x99999)
+					return val + 0x00066667;
+				else
+					return val + 0x00006667;
+			else if ((val & 0xff) == 0x99)
+				if ((val & 0xfff) == 0x999)
+					return val + 0x00000667;
+				else
+					return val + 0x00000067;
+			else if ((val & 0xf) == 0x9)
+				return val + 0x00000007;
+			else
+				return val + 1;
+		}
+
+		private int CountTrailingZeros ()
+		{
+			if (_val1 != 0)
+				return CountTrailingZeros (_val1);
+			if (_val2 != 0)
+				return CountTrailingZeros (_val2) + 8;
+			if (_val3 != 0)
+				return CountTrailingZeros (_val3) + 16;
+			if (_val4 != 0)
+				return CountTrailingZeros (_val4) + 24;
+			return _digitsLen;
+		}
+
+		private static int CountTrailingZeros (uint val)
+		{
+			if ((val & 0xffff) == 0)
+				if ((val & 0xffffff) == 0)
+					if ((val & 0xfffffff) == 0)
+						return 7;
+					else
+						return 6;
+				else if ((val & 0xfffff) == 0)
+					return 5;
+				else
+					return 4;
+			else if ((val & 0xff) == 0)
+				if ((val & 0xfff) == 0)
+					return 3;
+				else
+					return 2;
+			else if ((val & 0xf) == 0)
+				return 1;
+			else
+				return 0;
+		}
+
+		#endregion Round
+
+		#region public number formatting methods
+
+		public static string NumberToString (string format, sbyte value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, byte value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, ushort value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, short value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, uint value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, int value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, ulong value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, long value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, float value, NumberFormatInfo nfi)
+		{
+			NumberFormatter rep = new NumberFormatter (format, value);
+			if (rep._specifier == 'R')
+				return rep.FormatRoundtrip (value, nfi);
+			return rep.NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, double value, NumberFormatInfo nfi)
+		{
+			NumberFormatter rep = new NumberFormatter (format, value);
+			if (rep._specifier == 'R')
+				return rep.FormatRoundtrip (value, nfi);
+			return rep.NumberToString (format, nfi);
+		}
+
+		public static string NumberToString (string format, decimal value, NumberFormatInfo nfi)
+		{
+			return new NumberFormatter (format, value).NumberToString (format, nfi);
+		}
+
+		public string NumberToString (string format, NumberFormatInfo nfi)
+		{
+			if (IsFloatingSource) {
+				if (_NaN)
+					return nfi.NaNSymbol;
+
+				if (_infinity) {
+					if (_positive)
+						return nfi.PositiveInfinitySymbol;
+					else
+						return nfi.NegativeInfinitySymbol;
+				}
+			}
+
+			switch (_specifier) {
+			case 'C':
+				return FormatCurrency (_precision, nfi);
+			case 'D':
+				if (IsIntegerSource)
+					return FormatDecimal (_precision, nfi);
+				throw new FormatException ();
+			case 'E':
+				return FormatExponential (_precision, nfi);
+			case 'F':
+				return FormatFixedPoint (_precision, nfi);
+			case 'G':
+				if (IsIntegerSource && _precision <= 0)
+					return FormatDecimal (-1, nfi);
+				return FormatGeneral (_precision, nfi);
+			case 'N':
+				return FormatNumber (_precision, nfi);
+			case 'P':
+				return FormatPercent (_precision, nfi);
+			case 'X':
+				if (IsIntegerSource)
+					return FormatHexadecimal (_precision);
+				throw new FormatException ("The specified format cannot be used in this instance");
+			case 'R':
+				throw new FormatException ("The specified format cannot be used in this instance");
+			default:
+				if (_isCustomFormat)
+					return FormatCustom (format, nfi);
+				throw new FormatException ("The specified format '" + format + "' is invalid");
+			}
+		}
+
+		public string FormatCurrency (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.CurrencyDecimalDigits);
-			ns.RoundDecimal (precision);
-			StringBuilder sb = new StringBuilder (ns.IntegerDigits * 2 + precision * 2 + 16);
-			bool needNegativeSign = !ns.Positive && !ns.ZeroOnly;
+			RoundDecimal (precision);
+			ResetCharBuf (IntegerDigits * 2 + precision * 2 + 16);
 
-			if (!needNegativeSign) {
+			if (_positive) {
 				switch (nfi.CurrencyPositivePattern) {
 				case 0:
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 2:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (' ');
+					Append (nfi.CurrencySymbol);
+					Append (' ');
 					break;
 				}
-			} else {
+			}
+			else {
 				switch (nfi.CurrencyNegativePattern) {
 				case 0:
-					sb.Append ('(');
-					sb.Append (nfi.CurrencySymbol);
+					Append ('(');
+					Append (nfi.CurrencySymbol);
 					break;
 				case 1:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 2:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
 					break;
 				case 3:
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 4:
-					sb.Append ('(');
+					Append ('(');
 					break;
 				case 5:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 8:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 9:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (' ');					
+					Append (nfi.NegativeSign);
+					Append (nfi.CurrencySymbol);
+					Append (' ');
 					break;
 				case 11:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (' ');
+					Append (nfi.CurrencySymbol);
+					Append (' ');
 					break;
 				case 12:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (' ');
-					sb.Append (nfi.NegativeSign);					
+					Append (nfi.CurrencySymbol);
+					Append (' ');
+					Append (nfi.NegativeSign);
 					break;
 				case 14:
-					sb.Append ('(');
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (' ');
+					Append ('(');
+					Append (nfi.CurrencySymbol);
+					Append (' ');
 					break;
 				case 15:
-					sb.Append ('(');
+					Append ('(');
 					break;
 				}
 			}
 
-			ns.AppendIntegerStringWithGroupSeparator (sb, nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.RawCurrencyGroupSizes, nfi.CurrencyGroupSeparator);
 
-			if (precision > 0)
-			{
-				sb.Append (nfi.CurrencyDecimalSeparator);
-				ns.AppendDecimalString (precision, sb);
+			if (precision > 0) {
+				Append (nfi.CurrencyDecimalSeparator);
+				AppendDecimalString (precision);
 			}
 
-			if (!needNegativeSign) {
+			if (_positive) {
 				switch (nfi.CurrencyPositivePattern) {
 				case 1:
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 3:
-					sb.Append (' ');
-					sb.Append (nfi.CurrencySymbol);
+					Append (' ');
+					Append (nfi.CurrencySymbol);
 					break;
 				}
-			} else {
+			}
+			else {
 				switch (nfi.CurrencyNegativePattern) {
 				case 0:
-					sb.Append (')');
+					Append (')');
 					break;
 				case 3:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 4:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (')');
+					Append (nfi.CurrencySymbol);
+					Append (')');
 					break;
 				case 5:
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 6:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
+					Append (nfi.CurrencySymbol);
 					break;
 				case 7:
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
 					break;
 				case 8:
-					sb.Append (' ');
-					sb.Append (nfi.CurrencySymbol);
+					Append (' ');
+					Append (nfi.CurrencySymbol);
 					break;
 				case 10:
-					sb.Append (' ');
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (nfi.NegativeSign);
+					Append (' ');
+					Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
 					break;
 				case 11:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 13:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (' ');
-					sb.Append (nfi.CurrencySymbol);
+					Append (nfi.NegativeSign);
+					Append (' ');
+					Append (nfi.CurrencySymbol);
 					break;
 				case 14:
-					sb.Append (')');
+					Append (')');
 					break;
 				case 15:
-					sb.Append (' ');
-					sb.Append (nfi.CurrencySymbol);
-					sb.Append (')');
+					Append (' ');
+					Append (nfi.CurrencySymbol);
+					Append (')');
 					break;
 				}
 			}
 
-			return sb.ToString ();
-		}
-		internal static string FormatDecimal (NumberStore ns, int precision, NumberFormatInfo nfi)
-		{
-			if (ns.IsFloatingSource || ns.IsDecimalSource)
-				throw new FormatException ();
-
-			precision = precision > 0 ? precision : 1;
-			precision = ns.IntegerDigits > precision ? ns.IntegerDigits : precision;
-
-			StringBuilder sb = new StringBuilder (precision + nfi.NegativeSign.Length);
-
-			if (!ns.Positive && !ns.CheckZeroOnlyInteger ()) {
-				sb.Append (nfi.NegativeSign);
-			}
-
-			ns.AppendIntegerString (precision, sb);
-
-			return sb.ToString ();
-		}
-		internal static string FormatFixedPoint (NumberStore ns, int precision, NumberFormatInfo nfi)
-		{
-			precision = precision >= 0 ? precision : nfi.NumberDecimalDigits;
-			ns.RoundDecimal (precision);
-
-			StringBuilder cb = new StringBuilder (ns.IntegerDigits + precision + nfi.NumberDecimalSeparator.Length);
-
-			if (!ns.Positive && !ns.ZeroOnly)
-				cb.Append (nfi.NegativeSign);
-
-			ns.AppendIntegerString (ns.IntegerDigits > 0 ? ns.IntegerDigits : 1, cb);
-
-			if (precision > 0) {
-				cb.Append (nfi.NumberDecimalSeparator);
-				ns.AppendDecimalString (precision, cb);
-			}
-
-			return cb.ToString ();
+			return new string (_cbuf, 0, _ind);
 		}
 
-		internal static string FormatGeneral (NumberStore ns)
+		public string FormatDecimal (int precision, NumberFormatInfo nfi)
 		{
-			return FormatGeneral (ns, -1, NumberFormatInfo.CurrentInfo, true, false);
-		}
-		internal static string FormatGeneral (NumberStore ns, IFormatProvider provider)
-		{
-			return FormatGeneral (ns, -1, NumberFormatInfo.GetInstance (provider), true, false);
-		}
-		private static string FormatGeneral (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper, bool roundtrip)
-		{
-			if (ns.ZeroOnly)
+			if (precision < _digitsLen)
+				precision = _digitsLen;
+			if (precision == 0)
 				return "0";
 
-			precision = precision > 0 ? precision : ns.DefaultPrecision;
+			ResetCharBuf (precision + 1);
+			if (!_positive) {
+				if (nfi == null)
+					nfi = NumberFormatInfo.GetInstance (null);
 
-			int exponent = 0;
-			bool expMode = (ns.IsDecimalSource && precision == ns.DefaultPrecision ? false : (ns.IntegerDigits > precision || ns.DecimalPointPosition <= -4));
-			if (expMode) {
-				while (!(ns.DecimalPointPosition == 1 && ns.GetChar (0) != '0')) {
-					if (ns.DecimalPointPosition > 1) {
-						ns.Divide10 (1);
-						exponent ++;
-					} else {
-						ns.Multiply10 (1);
-						exponent --;
-					}
-				}
+				Append (nfi.NegativeSign);
 			}
+			AppendDigits (0, precision);
 
-			precision = precision < ns.DefaultPrecision + 2 ? (precision < ns.DefaultMaxPrecision ? precision : ns.DefaultMaxPrecision) : ns.DefaultPrecision + 2;
-			StringBuilder cb = new StringBuilder (ns.IntegerDigits + precision + 16);
-			if (expMode) {
-				if (ns.RoundDecimal (precision - 1)) {
-					ns.Divide10 (1);
-					exponent ++;
-				}
-			} else if (!roundtrip) {
-				if (ns.IsDecimalSource)
-					ns.RoundPos (precision);
-				else
-					ns.RoundDecimal (precision, true, false);
-			}
-
-			if (!ns.Positive) {
-				cb.Append (nfi.NegativeSign);
-			}
-
-			ns.AppendIntegerString (ns.IntegerDigits > 0 ? ns.IntegerDigits : 1, cb);
-
-			if (ns.DecimalDigits > 0) {
-				cb.Append (nfi.NumberDecimalSeparator);
-				ns.AppendDecimalString (ns.DecimalDigits, cb);
-			}
-
-			if (expMode) {
-				if (upper)
-					cb.Append ('E');
-				else
-					cb.Append ('e');
-
-				if (exponent >= 0)
-					cb.Append (nfi.PositiveSign);
-				else {
-					cb.Append (nfi.NegativeSign);
-					exponent = -exponent;
-				}
-
-				if (exponent == 0) {
-					cb.Append ('0', 2);
-				} else if (exponent < 10) {
-					cb.Append ('0');
-					cb.Append (digitLowerTable [exponent]);
-				} else if (exponent < 100) {
-					cb.Append (digitLowerTable [exponent / 10 % 10]);
-					cb.Append (digitLowerTable [exponent % 10]);
-				} else if (exponent < 1000) {
-					cb.Append (digitLowerTable [exponent / 100 % 10]);
-					cb.Append (digitLowerTable [exponent / 10 % 10]);
-					cb.Append (digitLowerTable [exponent % 10]);
-				}
-			}
-
-			return cb.ToString ();
+			return new string (_cbuf, 0, _ind);
 		}
-		internal static string FormatNumber (NumberStore ns, int precision, NumberFormatInfo nfi)
+
+#if UNSAFE_TABLES // No unsafe code under TARGET_JVM
+		unsafe
+#endif
+		public string FormatHexadecimal (int precision)
+		{
+			int size = Math.Max (precision, _decPointPos);
+#if UNSAFE_TABLES
+			char* digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
+#else
+			char[] digits = _specifierIsUpper ? DigitUpperTable : DigitLowerTable;
+#endif
+			ResetCharBuf (size);
+			_ind = size;
+			ulong val = _val1 | ((ulong)_val2 << 32);
+			while (size > 0) {
+				_cbuf [--size] = digits [val & 0xf];
+				val >>= 4;
+			}
+			return new string (_cbuf, 0, _ind);
+		}
+
+		public string FormatFixedPoint (int precision, NumberFormatInfo nfi)
+		{
+			if (precision == -1)
+				precision = nfi.NumberDecimalDigits;
+
+			RoundDecimal (precision);
+
+			ResetCharBuf (IntegerDigits + precision + 2);
+
+			if (!_positive)
+				Append (nfi.NegativeSign);
+
+			AppendIntegerString (IntegerDigits);
+
+			if (precision > 0) {
+				Append (nfi.NumberDecimalSeparator);
+				AppendDecimalString (precision);
+			}
+
+			return new string (_cbuf, 0, _ind);
+		}
+
+		public string FormatRoundtrip (double origval, NumberFormatInfo nfi)
+		{
+			NumberFormatter nfc = GetClone ();
+			string shortRep = FormatGeneral (_defPrecision, nfi);
+			// Check roundtrip only for "normal" double values.
+			if (!_NaN && !_infinity && origval == Double.Parse (shortRep, nfi))
+				return shortRep;
+			return nfc.FormatGeneral (_defPrecision + 2, nfi);
+		}
+
+		public string FormatRoundtrip (float origval, NumberFormatInfo nfi)
+		{
+			NumberFormatter nfc = GetClone ();
+			string shortRep = FormatGeneral (_defPrecision, nfi);
+			// Check roundtrip only for "normal" double values.
+			if (!_NaN && !_infinity && origval == Single.Parse (shortRep, nfi))
+				return shortRep;
+			return nfc.FormatGeneral (_defPrecision + 2, nfi);
+		}
+
+		public string FormatGeneral (int precision, NumberFormatInfo nfi)
+		{
+			bool enableExp;
+			if (precision == -1) {
+				enableExp = IsFloatingSource;
+				precision = _defPrecision;
+			}
+			else {
+				enableExp = true;
+				if (precision == 0)
+					precision = _defPrecision;
+				RoundPos (precision);
+			}
+
+			int intDigits = _decPointPos;
+			int digits = _digitsLen;
+			int decDigits = digits - intDigits;
+
+			if ((intDigits > precision || intDigits <= -4) && enableExp)
+				return FormatExponential (digits - 1, nfi, 2);
+
+			if (decDigits < 0)
+				decDigits = 0;
+			if (intDigits < 0)
+				intDigits = 0;
+			ResetCharBuf (decDigits + intDigits + 3);
+
+			if (!_positive)
+				Append (nfi.NegativeSign);
+
+			if (intDigits == 0)
+				Append ('0');
+			else
+				AppendDigits (digits - intDigits, digits);
+
+			if (decDigits > 0) {
+				Append (nfi.NumberDecimalSeparator);
+				AppendDigits (0, decDigits);
+			}
+
+			return new string (_cbuf, 0, _ind);
+		}
+
+		public string FormatNumber (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.NumberDecimalDigits);
-			StringBuilder sb = new StringBuilder(ns.IntegerDigits * 3 + precision);
+			ResetCharBuf (IntegerDigits * 3 + precision);
+			RoundDecimal (precision);
 
-			ns.RoundDecimal (precision);
-			bool needNegativeSign = (!ns.Positive && !ns.ZeroOnly);
-
-			if (needNegativeSign) {
+			if (!_positive) {
 				switch (nfi.NumberNegativePattern) {
 				case 0:
-					sb.Append ('(');
+					Append ('(');
 					break;
 				case 1:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 2:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (' ');
+					Append (nfi.NegativeSign);
+					Append (' ');
 					break;
 				}
 			}
 
-			ns.AppendIntegerStringWithGroupSeparator (sb, nfi.NumberGroupSizes, nfi.NumberGroupSeparator);
+			AppendIntegerStringWithGroupSeparator (nfi.RawNumberGroupSizes, nfi.NumberGroupSeparator);
 
 			if (precision > 0) {
-				sb.Append (nfi.NumberDecimalSeparator);
-				ns.AppendDecimalString (precision, sb);
+				Append (nfi.NumberDecimalSeparator);
+				AppendDecimalString (precision);
 			}
 
-			if (needNegativeSign) {
+			if (!_positive) {
 				switch (nfi.NumberNegativePattern) {
 				case 0:
-					sb.Append (')');
+					Append (')');
 					break;
 				case 3:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 4:
-					sb.Append (' ');
-					sb.Append (nfi.NegativeSign);
+					Append (' ');
+					Append (nfi.NegativeSign);
 					break;
 				}
 			}
 
-			return sb.ToString ();
+			return new string (_cbuf, 0, _ind);
 		}
-		internal static string FormatPercent (NumberStore ns, int precision, NumberFormatInfo nfi)
+
+		public string FormatPercent (int precision, NumberFormatInfo nfi)
 		{
 			precision = (precision >= 0 ? precision : nfi.PercentDecimalDigits);
-			ns.Multiply10 (2);
-			ns.RoundDecimal (precision);
-			bool needNegativeSign = (!ns.Positive && !ns.ZeroOnly);
+			Multiply10(2);
+			RoundDecimal (precision);
+			ResetCharBuf (IntegerDigits * 2 + precision + 16);
 
-			StringBuilder sb = new StringBuilder(ns.IntegerDigits * 2 + precision + 16);
-
-			if (!needNegativeSign) {
-				if (nfi.PercentPositivePattern == 2) {
-					sb.Append (nfi.PercentSymbol);
-				}
-			} else {
+			if (_positive) {
+				if (nfi.PercentPositivePattern == 2)
+					Append (nfi.PercentSymbol);
+			}
+			else {
 				switch (nfi.PercentNegativePattern) {
 				case 0:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 1:
-					sb.Append (nfi.NegativeSign);
+					Append (nfi.NegativeSign);
 					break;
 				case 2:
-					sb.Append (nfi.NegativeSign);
-					sb.Append (nfi.PercentSymbol);
+					Append (nfi.NegativeSign);
+					Append (nfi.PercentSymbol);
 					break;
 				}
 			}
 
-			ns.AppendIntegerStringWithGroupSeparator (sb, nfi.PercentGroupSizes, nfi.PercentGroupSeparator);
-			
+			AppendIntegerStringWithGroupSeparator (nfi.RawPercentGroupSizes, nfi.PercentGroupSeparator);
+
 			if (precision > 0) {
-				sb.Append (nfi.PercentDecimalSeparator);
-				ns.AppendDecimalString (precision, sb);
+				Append (nfi.PercentDecimalSeparator);
+				AppendDecimalString (precision);
 			}
 
-			if (!needNegativeSign) {
+			if (_positive) {
 				switch (nfi.PercentPositivePattern) {
 				case 0:
-					sb.Append (' ');
-					sb.Append (nfi.PercentSymbol);
+					Append (' ');
+					Append (nfi.PercentSymbol);
 					break;
 				case 1:
-					sb.Append (nfi.PercentSymbol);
+					Append (nfi.PercentSymbol);
 					break;
 				}
-			} else {
+			}
+			else {
 				switch (nfi.PercentNegativePattern) {
 				case 0:
-					sb.Append (' ');
-					sb.Append (nfi.PercentSymbol);
+					Append (' ');
+					Append (nfi.PercentSymbol);
 					break;
 				case 1:
-					sb.Append (nfi.PercentSymbol);
+					Append (nfi.PercentSymbol);
 					break;
 				}
 			}
 
-			return sb.ToString ();
+			return new string (_cbuf, 0, _ind);
 		}
-		unsafe static string FormatHexadecimal (ulong value, bool positive, int byteSize, int precision, bool upper)
+
+		public string FormatExponential (int precision, NumberFormatInfo nfi)
 		{
-			if (!positive) {
-				/* for large values the cast to ulong is going to return 0 anyway (at least on x86, possibly a MS/Mono runtime bug) */
-#if FALSE
-				if (byteSize < 8) {
-					value = (ulong)(Math.Pow (2, byteSize * 8)) - value;
-				} else {
-					value = 0 - value;
-				}
-#else
-				switch (byteSize) {
-				case 1:
-					value = (ulong)(256UL - value);
-					break;
-				case 2:
-					value = (ulong)(65536UL - value);
-					break;
-				case 4:
-					value = (ulong)(4294967296UL - value);
-					break;
-				case 8:
-					value = 0 - value;
-					break;
-				}
-#endif
-			}
+			if (precision == -1)
+				precision = DefaultExpPrecision;
 
-			char[] digits = (upper ? digitUpperTable : digitLowerTable);
-			int size = precision > 16 ? precision : 16;
-			char* buffer = stackalloc char [size];
-			char* last = buffer + size;
-			char* ptr = last;
-			
-			while (value > 0) {
-				*--ptr = digits[value & 0xF];
-				value >>= 4;
-			}
-
-			while (ptr == last || last - ptr < precision)
-				*--ptr = '0';
-
-			return new string (ptr, 0, (int)(last - ptr));
+			RoundPos (precision + 1);
+			return FormatExponential (precision, nfi, 3);
 		}
-		internal static string FormatExponential (NumberStore ns, int precision, NumberFormatInfo nfi, bool upper)
+
+		private string FormatExponential (int precision, NumberFormatInfo nfi, int expDigits)
 		{
-			if (precision < 0)
-				precision = 6;
+			int decDigits = _decPointPos;
+			int digits = _digitsLen;
+			int exponent = decDigits - 1;
+			decDigits = _decPointPos = 1;
 
-			if (ns.ZeroOnly) {
-				StringBuilder sb = new StringBuilder (precision + nfi.PositiveSign.Length + 6);
-				sb.Append ('0');
-				if (precision > 0) {
-					sb.Append ('.');
-					sb.Append ('0', precision);
-				}
+			ResetCharBuf (precision + 8);
 
-				if (upper)
-					sb.Append ('E');
-				else
-					sb.Append ('e');
+			if (!_positive)
+				Append (nfi.NegativeSign);
 
-				sb.Append (nfi.PositiveSign);
-				sb.Append ('0', 3);
-				
-				return sb.ToString ();
-			}
-
-			int exponent = 0;
-			while (!(ns.DecimalPointPosition == 1 && ns.GetChar (0) != '0')) {
-				if (ns.DecimalPointPosition > 1) {
-					ns.Divide10 (1);
-					exponent ++;
-				} else {
-					ns.Multiply10 (1);
-					exponent --;
-				}
-			}
-
-			if (ns.RoundDecimal (precision)) {
-				ns.Divide10 (1);
-				exponent ++;
-			}
-
-			StringBuilder cb = new StringBuilder (ns.DecimalDigits + 1 + 8);
-
-			if (!ns.Positive) {
-				cb.Append (nfi.NegativeSign);
-			}
-
-			ns.AppendIntegerString (ns.IntegerDigits > 0 ? ns.IntegerDigits : 1, cb);
+			AppendOneDigit (digits - 1);
 
 			if (precision > 0) {
-				cb.Append (nfi.NumberDecimalSeparator);
-				ns.AppendDecimalString (precision, cb);
+				Append (nfi.NumberDecimalSeparator);
+				AppendDigits (digits - precision - 1, digits - _decPointPos);
 			}
 
-			if (upper)
-				cb.Append ('E');
-			else
-				cb.Append ('e');
+			AppendExponent (nfi, exponent, expDigits);
 
-			if (exponent >= 0)
-				cb.Append (nfi.PositiveSign);
-			else {
-				cb.Append (nfi.NegativeSign);
-				exponent = -exponent;
-			}
-
-			if (exponent == 0) {
-				cb.Append ('0', 3);
-			} else if (exponent < 10) {
-				cb.Append ('0', 2);
-				cb.Append (digitLowerTable [exponent]);
-			} else if (exponent < 100) {
-				cb.Append ('0', 1);
-				cb.Append (digitLowerTable [exponent / 10 % 10]);
-				cb.Append (digitLowerTable [exponent % 10]);
-			} else if (exponent < 1000) {
-				cb.Append (digitLowerTable [exponent / 100 % 10]);
-				cb.Append (digitLowerTable [exponent / 10 % 10]);
-				cb.Append (digitLowerTable [exponent % 10]);
-			/*} else { // exponent range is 0...+-324
-				int pos = cb.Length;
-				int count = 3;
-				while (exponent > 0 || --count > 0) {
-					cb.Insert (pos, digitLowerTable [exponent % 10]);
-					exponent /= 10;
-				}*/
-			}
-
-			return cb.ToString ();
+			return new string (_cbuf, 0, _ind);
 		}
-		#endregion
 
-		#region Custom
-		internal static string FormatCustom (string format, NumberStore ns, NumberFormatInfo nfi)
+		public string FormatCustom (string format, NumberFormatInfo nfi)
 		{
-			bool p = ns.Positive;
+			bool p = _positive;
 			int offset = 0;
 			int length = 0;
-			CustomInfo.GetActiveSection (format,ref p, ns.ZeroOnly, ref offset, ref length);
-			if (length == 0) {
-				return ns.Positive ? String.Empty : nfi.NegativeSign;
-			}
-			ns.Positive = p;
+			CustomInfo.GetActiveSection (format, ref p, IsZero, ref offset, ref length);
+			if (length == 0)
+				return _positive ? string.Empty : nfi.NegativeSign;
+			_positive = p;
 
 			CustomInfo info = CustomInfo.Parse (format, offset, length, nfi);
 #if false
-			Console.WriteLine("Format : {0}",format);
-			Console.WriteLine("DecimalDigits : {0}",info.DecimalDigits);
-			Console.WriteLine("DecimalPointPos : {0}",info.DecimalPointPos);
-			Console.WriteLine("DecimalTailSharpDigits : {0}",info.DecimalTailSharpDigits);
-			Console.WriteLine("IntegerDigits : {0}",info.IntegerDigits);
-			Console.WriteLine("IntegerHeadSharpDigits : {0}",info.IntegerHeadSharpDigits);
-			Console.WriteLine("IntegerHeadPos : {0}",info.IntegerHeadPos);
-			Console.WriteLine("UseExponent : {0}",info.UseExponent);
-			Console.WriteLine("ExponentDigits : {0}",info.ExponentDigits);
-			Console.WriteLine("ExponentTailSharpDigits : {0}",info.ExponentTailSharpDigits);
-			Console.WriteLine("ExponentNegativeSignOnly : {0}",info.ExponentNegativeSignOnly);
-			Console.WriteLine("DividePlaces : {0}",info.DividePlaces);
-			Console.WriteLine("Percents : {0}",info.Percents);
-			Console.WriteLine("Permilles : {0}",info.Permilles);
+			Console.WriteLine ("Format : {0}",format);
+			Console.WriteLine ("DecimalDigits : {0}",info.DecimalDigits);
+			Console.WriteLine ("DecimalPointPos : {0}",info.DecimalPointPos);
+			Console.WriteLine ("DecimalTailSharpDigits : {0}",info.DecimalTailSharpDigits);
+			Console.WriteLine ("IntegerDigits : {0}",info.IntegerDigits);
+			Console.WriteLine ("IntegerHeadSharpDigits : {0}",info.IntegerHeadSharpDigits);
+			Console.WriteLine ("IntegerHeadPos : {0}",info.IntegerHeadPos);
+			Console.WriteLine ("UseExponent : {0}",info.UseExponent);
+			Console.WriteLine ("ExponentDigits : {0}",info.ExponentDigits);
+			Console.WriteLine ("ExponentTailSharpDigits : {0}",info.ExponentTailSharpDigits);
+			Console.WriteLine ("ExponentNegativeSignOnly : {0}",info.ExponentNegativeSignOnly);
+			Console.WriteLine ("DividePlaces : {0}",info.DividePlaces);
+			Console.WriteLine ("Percents : {0}",info.Percents);
+			Console.WriteLine ("Permilles : {0}",info.Permilles);
 #endif
-			StringBuilder sb_int = new StringBuilder(info.IntegerDigits * 2);
-			StringBuilder sb_dec = new StringBuilder(info.DecimalDigits * 2);
-			StringBuilder sb_exp = (info.UseExponent ? new StringBuilder(info.ExponentDigits * 2) : null);
+			StringBuilder sb_int = new StringBuilder (info.IntegerDigits * 2);
+			StringBuilder sb_dec = new StringBuilder (info.DecimalDigits * 2);
+			StringBuilder sb_exp = (info.UseExponent ? new StringBuilder (info.ExponentDigits * 2) : null);
 
 			int diff = 0;
-			if (info.Percents > 0) {
-				ns.Multiply10 (2 * info.Percents);
-			}
-			if (info.Permilles > 0) {
-				ns.Multiply10 (3 * info.Permilles);
-			}
-			if (info.DividePlaces > 0) {
-				ns.Divide10 (info.DividePlaces);
-			}
+			if (info.Percents > 0)
+				Multiply10(2 * info.Percents);
+			if (info.Permilles > 0)
+				Multiply10(3 * info.Permilles);
+			if (info.DividePlaces > 0)
+				Divide10(info.DividePlaces);
 
 			bool expPositive = true;
 			if (info.UseExponent && (info.DecimalDigits > 0 || info.IntegerDigits > 0)) {
-				if (!ns.ZeroOnly) {
-					while (true) {
-						while (ns.IntegerDigits > info.IntegerDigits) {
-							ns.Divide10 (1);
-							diff--;
-							if (ns.IntegerDigits == 1 && ns.GetChar (0) == '0')
-								break;
-						}
-						while (ns.IntegerDigits < info.IntegerDigits || (ns.IntegerDigits == info.IntegerDigits && ns.GetChar (0) == '0')) {
-							ns.Multiply10 (1);
-							diff++;
-						}
-
-						if (!ns.RoundDecimal (info.DecimalDigits))
-							break;
-					}
+				if (!IsZero) {
+					RoundPos (info.DecimalDigits + info.IntegerDigits);
+					diff -= _decPointPos - info.IntegerDigits;
+					_decPointPos = info.IntegerDigits;
 				}
 
 				expPositive = diff <= 0;
-				NumberStore.AppendIntegerStringFromUInt32 (sb_exp, (uint)(diff >= 0 ? diff : -diff));
-			} else {
-				ns.RoundDecimal (info.DecimalDigits);
-				if (ns.ZeroOnly)
-					ns.Positive = true;
+				AppendNonNegativeNumber (sb_exp, diff < 0 ? -diff : diff);
 			}
+			else
+				RoundDecimal (info.DecimalDigits);
 
-			if (info.IntegerDigits != 0 || !ns.CheckZeroOnlyInteger ()) {
-				ns.AppendIntegerString (ns.IntegerDigits, sb_int);
-			}
-			/* if (sb_int.Length > info.IntegerDigits) {
-				int len = 0;
-				while (sb_int.Length > info.IntegerDigits && len < sb_int.Length) {
-					if (sb_int [len] == '0')
-						len ++;
-					else
-						break;
-				}
-				sb_int.Remove (0, len);
-			} */
+			if (info.IntegerDigits != 0 || !IsZeroInteger)
+				AppendIntegerString (IntegerDigits, sb_int);
 
-			ns.AppendDecimalString (ns.DecimalDigits, sb_dec);
+			AppendDecimalString (DecimalDigits, sb_dec);
 
 			if (info.UseExponent) {
 				if (info.DecimalDigits <= 0 && info.IntegerDigits <= 0)
-					ns.Positive = true;
+					_positive = true;
 
 				if (sb_int.Length < info.IntegerDigits)
 					sb_int.Insert (0, "0", info.IntegerDigits - sb_int.Length);
@@ -880,12 +1384,13 @@ namespace System
 
 				if (expPositive && !info.ExponentNegativeSignOnly)
 					sb_exp.Insert (0, nfi.PositiveSign);
-				else if(!expPositive)
+				else if (!expPositive)
 					sb_exp.Insert (0, nfi.NegativeSign);
-			} else {
+			}
+			else {
 				if (sb_int.Length < info.IntegerDigits - info.IntegerHeadSharpDigits)
 					sb_int.Insert (0, "0", info.IntegerDigits - info.IntegerHeadSharpDigits - sb_int.Length);
-				if (info.IntegerDigits == info.IntegerHeadSharpDigits && NumberStore.IsZeroOnly (sb_int))
+				if (info.IntegerDigits == info.IntegerHeadSharpDigits && IsZeroOnly (sb_int))
 					sb_int.Remove (0, sb_int.Length);
 			}
 
@@ -895,8 +1400,345 @@ namespace System
 			if (sb_dec.Length > info.DecimalDigits)
 				sb_dec.Remove (info.DecimalDigits, sb_dec.Length - info.DecimalDigits);
 
-			return info.Format (format, offset, length, nfi, ns.Positive, sb_int, sb_dec, sb_exp);
+			return info.Format (format, offset, length, nfi, _positive, sb_int, sb_dec, sb_exp);
 		}
+		#endregion public number formatting methods
+
+		#region StringBuilder formatting helpers
+
+		private static void ZeroTrimEnd (StringBuilder sb)
+		{
+			ZeroTrimEnd (sb, false);
+		}
+
+		private static void ZeroTrimEnd (StringBuilder sb, bool canEmpty)
+		{
+			int len = 0;
+			for (int i = sb.Length - 1; (canEmpty ? i >= 0 : i > 0); i--) {
+				if (sb [i] != '0')
+					break;
+				len++;
+			}
+
+			if (len > 0)
+				sb.Remove (sb.Length - len, len);
+		}
+
+		private static bool IsZeroOnly (StringBuilder sb)
+		{
+			for (int i = 0; i < sb.Length; i++)
+				if (char.IsDigit (sb [i]) && sb [i] != '0')
+					return false;
+			return true;
+		}
+
+		private static void AppendNonNegativeNumber (StringBuilder sb, int v)
+		{
+			if (v < 0)
+				throw new ArgumentException ();
+
+			int i = ScaleOrder (v) - 1;
+			do {
+				int n = v / (int)GetTenPowerOf (i);
+				sb.Append ((char)('0' | n));
+				v -= (int)GetTenPowerOf (i--) * n;
+			} while (i >= 0);
+		}
+
+		#endregion StringBuilder formatting helpers
+
+		#region Append helpers
+
+		private void AppendIntegerString (int minLength, StringBuilder sb)
+		{
+			if (_decPointPos <= 0) {
+				sb.Append ('0', minLength);
+				return;
+			}
+
+			if (_decPointPos < minLength)
+				sb.Append ('0', minLength - _decPointPos);
+
+			AppendDigits (_digitsLen - _decPointPos, _digitsLen, sb);
+		}
+
+		private void AppendIntegerString (int minLength)
+		{
+			if (_decPointPos <= 0) {
+				Append ('0', minLength);
+				return;
+			}
+
+			if (_decPointPos < minLength)
+				Append ('0', minLength - _decPointPos);
+
+			AppendDigits (_digitsLen - _decPointPos, _digitsLen);
+		}
+
+		private void AppendDecimalString (int precision, StringBuilder sb)
+		{
+			AppendDigits (_digitsLen - precision - _decPointPos, _digitsLen - _decPointPos, sb);
+		}
+
+		private void AppendDecimalString (int precision)
+		{
+			AppendDigits (_digitsLen - precision - _decPointPos, _digitsLen - _decPointPos);
+		}
+
+		private void AppendIntegerStringWithGroupSeparator (int[] groups, string groupSeparator)
+		{
+			if (IsZeroInteger) {
+				Append ('0');
+				return;
+			}
+
+			int total = 0;
+			int groupIndex = 0;
+			for (int i = 0; i < groups.Length; i++) {
+				total += groups [i];
+				if (total <= _decPointPos)
+					groupIndex = i;
+				else
+					break;
+			}
+
+			if (groups.Length > 0 && total > 0) {
+				int counter;
+				int groupSize = groups [groupIndex];
+				int fraction = _decPointPos > total ? _decPointPos - total : 0;
+				if (groupSize == 0) {
+					while (groupIndex >= 0 && groups [groupIndex] == 0)
+						groupIndex--;
+
+					groupSize = fraction > 0 ? fraction : groups [groupIndex];
+				}
+				if (fraction == 0)
+					counter = groupSize;
+				else {
+					groupIndex += fraction / groupSize;
+					counter = fraction % groupSize;
+					if (counter == 0)
+						counter = groupSize;
+					else
+						groupIndex++;
+				}
+
+				for (int i = 0; ;) {
+					if ((_decPointPos - i) <= counter || counter == 0) {
+						AppendDigits (_digitsLen - _decPointPos, _digitsLen - i);
+						break;
+					}
+					AppendDigits (_digitsLen - i - counter, _digitsLen - i);
+					i += counter;
+					Append (groupSeparator);
+					if (--groupIndex < groups.Length && groupIndex >= 0)
+						groupSize = groups [groupIndex];
+					counter = groupSize;
+				}
+			}
+			else {
+				AppendDigits (_digitsLen - _decPointPos, _digitsLen);
+			}
+		}
+
+		// minDigits is in the range 1..3
+		private void AppendExponent (NumberFormatInfo nfi, int exponent, int minDigits)
+		{
+			if (_specifierIsUpper || _specifier == 'R')
+				Append ('E');
+			else
+				Append ('e');
+
+			if (exponent >= 0)
+				Append (nfi.PositiveSign);
+			else {
+				Append (nfi.NegativeSign);
+				exponent = -exponent;
+			}
+
+			if (exponent == 0)
+				Append ('0', minDigits);
+			else if (exponent < 10) {
+				Append ('0', minDigits - 1);
+				Append ((char)('0' | exponent));
+			}
+			else {
+				int hexDigit = FastToDecHex (exponent);
+				if (exponent >= 100 || minDigits == 3)
+					Append ((char)('0' | (hexDigit >> 8)));
+				Append ((char)('0' | ((hexDigit >> 4) & 0xf)));
+				Append ((char)('0' | (hexDigit & 0xf)));
+			}
+		}
+
+		private void AppendOneDigit (int start)
+		{
+			if (_ind == _cbuf.Length)
+				Resize (_ind + 10);
+
+			start += _offset;
+			uint v;
+			if (start < 0)
+				v = 0;
+			else if (start < 8)
+				v = _val1;
+			else if (start < 16)
+				v = _val2;
+			else if (start < 24)
+				v = _val3;
+			else if (start < 32)
+				v = _val4;
+			else
+				v = 0;
+			v >>= (start & 0x7) << 2;
+			_cbuf [_ind++] = (char)('0' | v & 0xf);
+		}
+
+		private void AppendDigits (int start, int end)
+		{
+			if (start >= end)
+				return;
+
+			int i = _ind + (end - start);
+			if (i > _cbuf.Length)
+				Resize (i + 10);
+			_ind = i;
+
+			end += _offset;
+			start += _offset;
+
+			for (int next = start + 8 - (start & 0x7); ; start = next, next += 8) {
+				uint v;
+				if (next == 8)
+					v = _val1;
+				else if (next == 16)
+					v = _val2;
+				else if (next == 24)
+					v = _val3;
+				else if (next == 32)
+					v = _val4;
+				else
+					v = 0;
+				v >>= (start & 0x7) << 2;
+				if (next > end)
+					next = end;
+
+				_cbuf [--i] = (char)('0' | v & 0xf);
+				switch (next - start) {
+				case 8:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 7;
+				case 7:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 6;
+				case 6:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 5;
+				case 5:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 4;
+				case 4:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 3;
+				case 3:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 2;
+				case 2:
+					_cbuf [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 1;
+				case 1:
+					if (next == end)
+						return;
+					continue;
+				}
+			}
+		}
+
+		private void AppendDigits (int start, int end, StringBuilder sb)
+		{
+			if (start >= end)
+				return;
+
+			int i = sb.Length + (end - start);
+			sb.Length = i;
+
+			end += _offset;
+			start += _offset;
+
+			for (int next = start + 8 - (start & 0x7); ; start = next, next += 8) {
+				uint v;
+				if (next == 8)
+					v = _val1;
+				else if (next == 16)
+					v = _val2;
+				else if (next == 24)
+					v = _val3;
+				else if (next == 32)
+					v = _val4;
+				else
+					v = 0;
+				v >>= (start & 0x7) << 2;
+				if (next > end)
+					next = end;
+				sb [--i] = (char)('0' | v & 0xf);
+				switch (next - start) {
+				case 8:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 7;
+				case 7:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 6;
+				case 6:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 5;
+				case 5:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 4;
+				case 4:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 3;
+				case 3:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 2;
+				case 2:
+					sb [--i] = (char)('0' | (v >>= 4) & 0xf);
+					goto case 1;
+				case 1:
+					if (next == end)
+						return;
+					continue;
+				}
+			}
+		}
+
+		#endregion Append helpers
+
+		#region others
+
+		private void Multiply10(int count)
+		{
+			if (count <= 0 || _digitsLen == 0)
+				return;
+
+			_decPointPos += count;
+		}
+
+		private void Divide10(int count)
+		{
+			if (count <= 0 || _digitsLen == 0)
+				return;
+
+			_decPointPos -= count;
+		}
+
+		private NumberFormatter GetClone ()
+		{
+			return (NumberFormatter)this.MemberwiseClone ();
+		}
+
+		#endregion others
+
+		#region custom
 
 		private class CustomInfo
 		{
@@ -931,9 +1773,9 @@ namespace System
 							literal = '\0';
 						continue;
 					}
-					
+
 					if (literal == '\0' && format [i] == ';' && (i == 0 || format [i - 1] != '\\')) {
-						lens [index ++] = i - lastPos;
+						lens [index++] = i - lastPos;
 						lastPos = i + 1;
 						if (index == 3)
 							break;
@@ -956,7 +1798,8 @@ namespace System
 						offset = lens [0] + 1;
 						length = format.Length - offset;
 						return;
-					} else {
+					}
+					else {
 						offset = 0;
 						length = lens [0];
 						return;
@@ -978,7 +1821,8 @@ namespace System
 						offset = lens [0] + 1;
 						length = lens [1];
 						return;
-					} else {
+					}
+					else {
 						offset = 0;
 						length = lens [0];
 						return;
@@ -1000,7 +1844,8 @@ namespace System
 						offset = lens [0] + 1;
 						length = lens [1];
 						return;
-					} else {
+					}
+					else {
 						offset = 0;
 						length = lens [0];
 						return;
@@ -1041,7 +1886,7 @@ namespace System
 
 					switch (c) {
 					case '\\':
-						i ++;
+						i++;
 						continue;
 					case '\'':
 					case '\"':
@@ -1051,11 +1896,11 @@ namespace System
 						continue;
 					case '#':
 						if (sharpContinues && integerArea)
-							info.IntegerHeadSharpDigits ++;
+							info.IntegerHeadSharpDigits++;
 						else if (decimalArea)
-							info.DecimalTailSharpDigits ++;
+							info.DecimalTailSharpDigits++;
 						else if (exponentArea)
-							info.ExponentTailSharpDigits ++;
+							info.ExponentTailSharpDigits++;
 
 						goto case '0';
 					case '0':
@@ -1070,15 +1915,15 @@ namespace System
 							info.IntegerHeadPos = i;
 
 						if (integerArea) {
-							info.IntegerDigits ++;
+							info.IntegerDigits++;
 							if (groupSeparatorCounter > 0)
 								info.UseGroup = true;
 							groupSeparatorCounter = 0;
-						} else if (decimalArea) {
-							info.DecimalDigits ++;
-						} else if (exponentArea) {
-							info.ExponentDigits ++;
 						}
+						else if (decimalArea)
+							info.DecimalDigits++;
+						else if (exponentArea)
+							info.ExponentDigits++;
 						break;
 					case 'e':
 					case 'E':
@@ -1093,16 +1938,15 @@ namespace System
 							char nc = format [i + 1];
 							if (nc == '+')
 								info.ExponentNegativeSignOnly = false;
-							if (nc == '+' || nc == '-') {
-								i ++;
-							} else if (nc != '0' && nc != '#') {
+							if (nc == '+' || nc == '-')
+								i++;
+							else if (nc != '0' && nc != '#') {
 								info.UseExponent = false;
 								if (info.DecimalPointPos < 0)
 									integerArea = true;
 							}
-							c = '\0';
 						}
-						
+
 						break;
 					case '.':
 						integerArea = false;
@@ -1119,7 +1963,7 @@ namespace System
 						break;
 					case ',':
 						if (integerArea && info.IntegerDigits > 0)
-							groupSeparatorCounter ++;
+							groupSeparatorCounter++;
 						break;
 					default:
 						break;
@@ -1145,13 +1989,13 @@ namespace System
 				char literal = '\0';
 				bool integerArea = true;
 				bool decimalArea = false;
-				int  intSharpCounter = 0;
+				int intSharpCounter = 0;
 				int sb_int_index = 0;
 				int sb_dec_index = 0;
 
-				int[] groups = nfi.NumberGroupSizes;
+				int[] groups = nfi.RawNumberGroupSizes;
 				string groupSeparator = nfi.NumberGroupSeparator;
-				int intLen = 0, total = 0, groupIndex = 0, counter = 0, groupSize = 0, fraction = 0;
+				int intLen = 0, total = 0, groupIndex = 0, counter = 0, groupSize = 0;
 				if (UseGroup && groups.Length > 0) {
 					intLen = sb_int.Length;
 					for (int i = 0; i < groups.Length; i++) {
@@ -1160,26 +2004,26 @@ namespace System
 							groupIndex = i;
 					}
 					groupSize = groups [groupIndex];
-					fraction = intLen > total ? intLen - total : 0;
+					int fraction = intLen > total ? intLen - total : 0;
 					if (groupSize == 0) {
 						while (groupIndex >= 0 && groups [groupIndex] == 0)
-							groupIndex --;
-						
+							groupIndex--;
+
 						groupSize = fraction > 0 ? fraction : groups [groupIndex];
 					}
-					if (fraction == 0) {
+					if (fraction == 0)
 						counter = groupSize;
-					} else {
+					else {
 						groupIndex += fraction / groupSize;
 						counter = fraction % groupSize;
 						if (counter == 0)
 							counter = groupSize;
 						else
-							groupIndex ++;
+							groupIndex++;
 					}
-				} else {
-					UseGroup = false;
 				}
+				else
+					UseGroup = false;
 
 				for (int i = offset; i - offset < length; i++) {
 					char c = format [i];
@@ -1195,15 +2039,14 @@ namespace System
 
 					switch (c) {
 					case '\\':
-						i ++;
+						i++;
 						if (i - offset < length)
 							sb.Append (format [i]);
 						continue;
 					case '\'':
 					case '\"':
-						if (c == '\"' || c == '\'') {
+						if (c == '\"' || c == '\'')
 							literal = c;
-						}
 						continue;
 					case '#':
 						goto case '0';
@@ -1212,7 +2055,7 @@ namespace System
 							intSharpCounter++;
 							if (IntegerDigits - intSharpCounter < sb_int.Length + sb_int_index || c == '0')
 								while (IntegerDigits - intSharpCounter + sb_int_index < sb_int.Length) {
-									sb.Append (sb_int[ sb_int_index++]);
+									sb.Append (sb_int [sb_int_index++]);
 									if (UseGroup && --intLen > 0 && --counter == 0) {
 										sb.Append (groupSeparator);
 										if (--groupIndex < groups.Length && groupIndex >= 0)
@@ -1221,7 +2064,8 @@ namespace System
 									}
 								}
 							break;
-						} else if (decimalArea) {
+						}
+						else if (decimalArea) {
 							if (sb_dec_index < sb_dec.Length)
 								sb.Append (sb_dec [sb_dec_index++]);
 							break;
@@ -1238,16 +2082,15 @@ namespace System
 
 						bool flag1 = true;
 						bool flag2 = false;
-						
+
 						int q;
 						for (q = i + 1; q - offset < length; q++) {
 							if (format [q] == '0') {
 								flag2 = true;
 								continue;
 							}
-							if (q == i + 1 && (format [q] == '+' || format [q] == '-')) {
+							if (q == i + 1 && (format [q] == '+' || format [q] == '-'))
 								continue;
-							}
 							if (!flag2)
 								flag1 = false;
 							break;
@@ -1261,7 +2104,8 @@ namespace System
 							sb.Append (c);
 							sb.Append (sb_exp);
 							sb_exp = null;
-						} else
+						}
+						else
 							sb.Append (c);
 
 						break;
@@ -1298,1088 +2142,6 @@ namespace System
 			}
 		}
 
-		#endregion
-
-		#region Internal structures
-		internal struct NumberStore
-		{
-			bool _NaN;
-			bool _infinity;
-			bool _positive;
-			int  _decPointPos;
-			int  _defPrecision;
-			int  _defMaxPrecision;
-			int  _defByteSize;
-
-			byte[] _digits;
-
-			static uint [] IntList = new uint [] {
-				1,
-				10,
-				100,
-				1000,
-				10000,
-				100000,
-				1000000,
-				10000000,
-				100000000,
-				1000000000,
-			};
-
-			static ulong [] ULongList = new ulong [] {
-				1,
-				10,
-				100,
-				1000,
-				10000,
-				100000,
-				1000000,
-				10000000,
-				100000000,
-				1000000000,
-				10000000000,
-				100000000000,
-				1000000000000,
-				10000000000000,
-				100000000000000,
-				1000000000000000,
-				10000000000000000,
-				100000000000000000,
-				1000000000000000000,
-				10000000000000000000,
-			};
-
-			#region Constructors
-			public NumberStore (long value)
-			{
-				_infinity = _NaN = false;
-				_defByteSize = 8;
-				_defMaxPrecision = _defPrecision = 19;
-				_positive = value >= 0;
-
-				if (value == 0) {
-					_digits = new byte []{0};
-					_decPointPos = 1;
-					return;
-				}
-				
-				ulong v = (ulong)(_positive ? value : -value);
-
-				int i = 18, j = 0;
-
-				if (v < 10)
-					i = 0;
-				else if (v < 100)
-					i = 1;
-				else if (v < 1000)
-					i = 2;
-				else if (v < 10000)
-					i = 3;
-				else if (v < 100000)
-					i = 4;
-				else if (v < 1000000)
-					i = 5;
-				else if (v < 10000000)
-					i = 6;
-				else if (v < 100000000)
-					i = 7;
-				else if (v < 1000000000)
-					i = 8;
-				else if (v < 10000000000)
-					i = 9;
-				else if (v < 100000000000)
-					i = 10;
-				else if (v < 1000000000000)
-					i = 11;
-				else if (v < 10000000000000)
-					i = 12;
-				else if (v < 100000000000000)
-					i = 13;
-				else if (v < 1000000000000000)
-					i = 14;
-				else if (v < 10000000000000000)
-					i = 15;
-				else if (v < 100000000000000000)
-					i = 16;
-				else if (v < 1000000000000000000)
-					i = 17;
-				else
-					i = 18;
-
-				_digits = new byte [i + 1];
-				do {
-					ulong n = v / ULongList [i];
-					_digits [j++] = (byte)n;
-					v -= ULongList [i--] * n;
-				} while (i >= 0);
-
-				_decPointPos = _digits.Length;
-			}
-			public NumberStore (int value)
-			{
-				_infinity = _NaN = false;
-				_defByteSize = 4;
-				_defMaxPrecision = _defPrecision = 10;
-				_positive = value >= 0;
-
-				if (value == 0) {
-					_digits = new byte []{0};
-					_decPointPos = 1;
-					return;
-				}
-				
-				uint v = (uint)(_positive ? value : -value);
-
-				int i = 9, j = 0;
-
-				if (v < 10)
-					i = 0;
-				else if (v < 100)
-					i = 1;
-				else if (v < 1000)
-					i = 2;
-				else if (v < 10000)
-					i = 3;
-				else if (v < 100000)
-					i = 4;
-				else if (v < 1000000)
-					i = 5;
-				else if (v < 10000000)
-					i = 6;
-				else if (v < 100000000)
-					i = 7;
-				else if (v < 1000000000)
-					i = 8;
-				else
-					i = 9;
-
-				_digits = new byte [i + 1];
-				do {
-					uint n = v / IntList [i];
-					_digits [j++] = (byte)n;
-					v -= IntList [i--] * n;
-				} while (i >= 0);
-
-				_decPointPos = _digits.Length;
-			}
-			public NumberStore (short value) : this ((int)value)
-			{
-				_defByteSize = 2;
-				_defMaxPrecision = _defPrecision = 5;
-			}
-			public NumberStore (sbyte value) : this ((int)value)
-			{
-				_defByteSize = 1;
-				_defMaxPrecision = _defPrecision = 3;
-			}
-
-			public NumberStore (ulong value)
-			{
-				_infinity = _NaN = false;
-				_defByteSize = 8;
-				_defMaxPrecision = _defPrecision = 20;
-				_positive = true;
-
-				if (value == 0) {
-					_digits = new byte []{0};
-					_decPointPos = 1;
-					return;
-				}
-
-				int i = 19, j = 0;
-
-				if (value < 10)
-					i = 0;
-				else if (value < 100)
-					i = 1;
-				else if (value < 1000)
-					i = 2;
-				else if (value < 10000)
-					i = 3;
-				else if (value < 100000)
-					i = 4;
-				else if (value < 1000000)
-					i = 5;
-				else if (value < 10000000)
-					i = 6;
-				else if (value < 100000000)
-					i = 7;
-				else if (value < 1000000000)
-					i = 8;
-				else if (value < 10000000000)
-					i = 9;
-				else if (value < 100000000000)
-					i = 10;
-				else if (value < 1000000000000)
-					i = 11;
-				else if (value < 10000000000000)
-					i = 12;
-				else if (value < 100000000000000)
-					i = 13;
-				else if (value < 1000000000000000)
-					i = 14;
-				else if (value < 10000000000000000)
-					i = 15;
-				else if (value < 100000000000000000)
-					i = 16;
-				else if (value < 1000000000000000000)
-					i = 17;
-				else if (value < 10000000000000000000)
-					i = 18;
-				else
-					i = 19;
-
-				_digits = new byte [i + 1];
-				do {
-					ulong n = value / ULongList [i];
-					_digits [j++] = (byte)n;
-					value -= ULongList [i--] * n;
-				} while (i >= 0);
-
-				_decPointPos = _digits.Length;
-			}
-			public NumberStore (uint value)
-			{
-				_infinity = _NaN = false;
-				_positive = true;
-				_defByteSize = 4;
-				_defMaxPrecision = _defPrecision = 10;
-
-				if (value == 0) {
-					_digits = new byte []{0};
-					_decPointPos = 1;
-					return;
-				}
-				
-				int i = 9, j = 0;
-
-				if (value < 10)
-					i = 0;
-				else if (value < 100)
-					i = 1;
-				else if (value < 1000)
-					i = 2;
-				else if (value < 10000)
-					i = 3;
-				else if (value < 100000)
-					i = 4;
-				else if (value < 1000000)
-					i = 5;
-				else if (value < 10000000)
-					i = 6;
-				else if (value < 100000000)
-					i = 7;
-				else if (value < 1000000000)
-					i = 8;
-				else
-					i = 9;
-
-				_digits = new byte [i + 1];
-				do {
-					uint n = value / IntList [i];
-					_digits [j++] = (byte)n;
-					value -= IntList [i--] * n;
-				} while (i >= 0);
-
-				_decPointPos = _digits.Length;
-			}
-			public NumberStore (ushort value) : this ((uint)value)
-			{
-				_defByteSize = 2;
-				_defMaxPrecision = _defPrecision = 5;
-			}
-			public NumberStore (byte value) : this ((uint)value)
-			{
-				_defByteSize = 1;
-				_defMaxPrecision = _defPrecision = 3;
-			}
-
-			public NumberStore(double value)
-			{
-				_digits = null;
-				_defByteSize = 64;
-				_defPrecision = 15;
-				_defMaxPrecision = _defPrecision + 2;
-
-				if (double.IsNaN (value) || double.IsInfinity (value)) {
-					_NaN = double.IsNaN (value);
-					_infinity = double.IsInfinity (value);
-					_positive = value > 0;
-					_decPointPos = 0;
-					return;
-				} else {
-					_NaN = _infinity = false;
-				}
-
-				long bits = BitConverter.DoubleToInt64Bits (value);
-				_positive = (bits >= 0);
-				int e = (int) ((bits >> 52) & 0x7ffL);
-				long m = bits & 0xfffffffffffffL;
-
-				if (e == 0 && m == 0) {
-					_decPointPos = 1;
-					_digits = new byte []{0};
-					_positive = true;
-					return;
-				}
-
-				if (e == 0) {
-					e ++;
-				} else if (e != 0) {
-					m |= (1L << 52);
-				}
-
-				e -= 1075;
-
-				int nsize = 0;
-				while ((m & 1) == 0) {
-					m >>= 1;
-					e ++;
-					nsize ++;
-				}
-
-				long mt = m;
-				int length = 1;
-				byte[] temp = new byte [56];
-				for (int i = temp.Length - 1; i >= 0; i--, length++) {
-					temp [i] = (byte)(mt % 10);
-					mt /= 10;
-					if (mt == 0)
-						break;
-				}
-
-				_decPointPos = temp.Length - 1;
-
-				if (e >= 0) {
-					for (int i = 0; i < e; i++) {
-						if (MultiplyBy (ref temp, ref length, 2)) {
-							_decPointPos ++;
-						}
-					}
-				} else {
-					for (int i = 0; i < -e; i++) {
-						if (MultiplyBy (ref temp, ref length, 5)) {
-							_decPointPos ++;
-						}
-					}
-					_decPointPos += e;
-				}
-
-				int ulvc = 1;
-				ulong ulv = 0;
-				for (int i = 0; i < temp.Length; i++)
-					if (temp [i] != 0) {
-						_decPointPos -= i - 1;
-						_digits = new byte [temp.Length - i];
-						for (int q = i; q < temp.Length; q++) {
-							_digits [q - i] = temp [q];
-							if (ulvc < 20) {
-								ulv = ulv * 10 + temp [q];
-								ulvc ++;
-							}
-						}
-						break;
-					}
-
-				RoundEffectiveDigits (17, true, true);
-			}
-			public NumberStore(float value)
-			{
-				_digits = null;
-				_defByteSize = 32;
-				_defPrecision = 7;
-				_defMaxPrecision = _defPrecision + 2;
-
-				if (float.IsNaN (value) || float.IsInfinity (value)) {
-					_NaN = float.IsNaN (value);
-					_infinity = float.IsInfinity (value);
-					_positive = value > 0;
-					_decPointPos = 0;
-					return;
-				} else
-					_infinity = _NaN = false;
-
-				long bits = BitConverter.DoubleToInt64Bits (value);
-				_positive = (bits >= 0);
-				int e = (int) ((bits >> 52) & 0x7ffL);
-				long m = bits & 0xfffffffffffffL;
-
-				if (e == 0 && m == 0) {
-					_decPointPos = 1;
-					_digits = new byte []{0};
-					_positive = true;
-					return;
-				}
-
-				if (e == 0) {
-					e ++;
-				} else if (e != 0) {
-					m |= (1L << 52);
-				}
-
-				e -= 1075;
-
-				int nsize = 0;
-				while ((m & 1) == 0) {
-					m >>= 1;
-					e ++;
-					nsize ++;
-				}
-
-				long mt = m;
-				int length = 1;
-				byte[] temp = new byte [26];
-				for (int i = temp.Length - 1; i >= 0; i--, length++) {
-					temp [i] = (byte)(mt % 10);
-					mt /= 10;
-					if (mt == 0)
-						break;
-				}
-
-				_decPointPos = temp.Length - 1;
-
-				if (e >= 0) {
-					for (int i = 0; i < e; i++) {
-						if (MultiplyBy (ref temp, ref length, 2)) {
-							_decPointPos ++;
-						}
-					}
-				} else {
-					for (int i = 0; i < -e; i++) {
-						if (MultiplyBy (ref temp, ref length, 5)) {
-							_decPointPos ++;
-						}
-					}
-					_decPointPos += e;
-				}
-
-				int ulvc = 1;
-				ulong ulv = 0;
-				for (int i = 0; i < temp.Length; i++)
-					if (temp [i] != 0) {
-						_decPointPos -= i - 1;
-						_digits = new byte [temp.Length - i];
-						for (int q = i; q < temp.Length; q++) {
-							_digits [q - i] = temp [q];
-							if (ulvc < 20) {
-								ulv = ulv * 10 + temp [q];
-								ulvc ++;
-							}
-						}
-						break;
-					}
-
-				RoundEffectiveDigits (9, true, true);
-			}
-
-			internal bool MultiplyBy (ref byte[] buffer,ref int length, int amount)
-			{
-				int mod = 0;
-				int ret;
-				int start = buffer.Length - length - 1;
-				if (start < 0) start = 0;
-
-				for (int i = buffer.Length - 1; i > start; i--) {
-					ret = buffer [i] * amount + mod;
-					mod = ret / 10;
-					buffer [i] = (byte)(ret % 10);
-				}
-
-				if (mod != 0) {
-					length = buffer.Length - start;
-
-					if (start == 0) {
-						buffer [0] = (byte)mod;
-						Array.Copy (buffer, 0, buffer, 1, buffer.Length - 1);
-						buffer [0] = 0;
-						return true;
-					}
-					else {
-						buffer [start] = (byte)mod;
-					}
-				}
-
-				return false;
-			}
-
-
-			public NumberStore (decimal value)
-			{
-				int[] bits = decimal.GetBits (value);
-				_positive = (bits [3] & 0x80000000) == 0;
-				bits[3] = bits [3] & 0x7FFFFFFF;
-				int ss = (bits [3] & 0x1F0000) >> 16;
-				ulong lo = (ulong)((((ulong)bits[1]) << 32) | (uint)bits [0]);
-				ulong hi = (uint)bits [2];
-				uint rest = 0;
-
-				int digits = 0;
-				while (hi > 0 || lo > 0) {
-					digits ++;
-					DivideDecimal (ref lo, ref hi, 10, ref rest);
-				}
-
-				lo = (ulong)((((ulong)bits[1]) << 32) | (uint)bits [0]);
-				hi = (uint)bits [2];
-
-				_digits = new byte [digits];
-				int i = digits;
-				while (hi > 0 || lo > 0) {
-					DivideDecimal (ref lo, ref hi, 10, ref rest);
-					_digits [--i] = (byte)rest;
-				}
-
-				_infinity = _NaN = false;
-				_decPointPos = _digits.Length - ss;
-				_defPrecision = _defMaxPrecision = 100;
-				_defByteSize = 16;
-			}
-			static int DivideDecimal (ref ulong lo, ref ulong hi, uint factor, ref uint rest)
-			{
-				ulong a, b, c, h;
-
-				h = hi;
-				a = (uint)(h >> 32);
-				b = a / factor;
-				a -= b * factor;
-				a <<= 32;
-				a |= (uint) h;
-				c = a / factor;
-				a -= c * factor;
-				a <<= 32;
-				hi = b << 32 | (uint)c;
-
-				h = lo;
-				a |= (uint)(h >> 32);
-				b = a / factor;
-				a -= b * factor;
-				a <<= 32;
-				a |= (uint) h;
-				c = a / factor;
-				a -= c * factor;
-				lo = b << 32 | (uint)c;
-
-				rest = (uint)a;
-
-				a <<= 1;
-				return (a >= factor || (a == factor && (c & 1) == 1)) ? 1 : 0;
-			}
-			#endregion
-
-			#region Public Property
-			public bool IsNaN 
-			{
-				get { return _NaN; }
-			}
-			public bool IsInfinity {
-				get { return _infinity; }
-			}
-			public int DecimalPointPosition {
-				get { return _decPointPos; }
-			}
-			public bool Positive {
-				get { return _positive; }
-				set { _positive = value;}
-			}
-			public int DefaultPrecision {
-				get { return _defPrecision; }
-			}
-			public int DefaultMaxPrecision {
-				get { return _defMaxPrecision; }
-			}
-			public int DefaultByteSize {
-				get { return _defByteSize; }
-			}
-			public bool HasDecimal {
-				get { return _digits.Length > _decPointPos; }
-			}
-			public int IntegerDigits {
-				get { return _decPointPos > 0 ? _decPointPos : 1; }
-			}
-			public int DecimalDigits {
-				get { return HasDecimal ? _digits.Length - _decPointPos : 0; }
-			}
-			public bool IsFloatingSource {
-				get { return _defPrecision == 15 || _defPrecision == 7; }
-			}
-			public bool IsDecimalSource {
-				get { return _defPrecision > 30; }
-			}
-			public bool IsBankerApplicable {
-				get {
-					if ((_digits == null) || (_digits.Length < 2))
-						return false;
-					return ((_digits [_digits.Length - 2] & 1) == 1);
-				}
-			}
-			public bool ZeroOnly {
-				get {
-					for (int i = 0; i < _digits.Length; i++)
-						if (_digits [i] != 0)
-							return false;
-					return true;
-				}
-			}
-			#endregion
-
-			#region Public Method
-
-			#region Round
-			public bool RoundPos (int pos)
-			{
-				return RoundPos (pos, true);
-			}
-			public bool RoundPos (int pos, bool carryFive)
-			{
-				bool carry = false;
-
-				if (_decPointPos <= 0)
-					pos = pos - _decPointPos - 1;
-
-				if (pos >= _digits.Length)
-					return false;
-
-				if (pos < 0) {
-					_digits = new byte [1];
-					_digits [0] = 0;
-					_decPointPos = 1;
-					_positive = true;
-					return false;
-				}
-
-				for (int i = pos; i >= 0; i--) {
-					RoundHelper (i, carryFive, ref carry);
-					if (!carry)
-						break;
-				}
-
-				if (carry) {
-					byte[] temp = new byte [_digits.Length + 1];
-					_digits.CopyTo (temp, 1);
-					temp [0] = 1;
-					_digits = temp;
-					_decPointPos ++;
-					pos ++;
-				}
-
-				for (int i = pos; i < _digits.Length; i++)
-					_digits [i] = 0;
-				TrimDecimalEndZeros ();
-
-				return carry;
-			}
-			public bool RoundDecimal (int decimals)
-			{
-				return RoundDecimal (decimals, true, true);
-			}
-			public bool RoundDecimal (int decimals, bool carryFive, bool countZero)
-			{
-				bool carry = false;
-
-				if (countZero || (_decPointPos > 0))
-					decimals += _decPointPos;
-
-				if (!HasDecimal || decimals >= _digits.Length)
-					return false;
-
-				if (decimals < 0) {
-					_digits = new byte [1];
-					_digits [0] = 0;
-					_decPointPos = 1;
-					_positive = true;
-					return false;
-				}
-
-				for (int i = decimals; i >= 0; i--) {
-					RoundHelper (i, carryFive, ref carry);
-					if (!carry)
-						break;
-				}
-
-				if (carry) {
-					byte[] temp = new byte [_digits.Length + 1];
-					_digits.CopyTo (temp, 1);
-					temp [0] = 1;
-					_digits = temp;
-					_decPointPos ++;
-					decimals ++;
-				}
-
-				for (int i = decimals; i < _digits.Length; i++)
-					_digits [i] = 0;
-				TrimDecimalEndZeros ();
-
-				return carry;
-			}
-			void RoundHelper (int index, bool carryFive, ref bool carry)
-			{
-				if (carry) {
-					if (_digits [index] == 9) {
-						carry = true;
-						_digits [index] = 0;
-					} else {
-						carry = false;
-						_digits [index] ++;
-					}
-				} else if (_digits [index] >= (carryFive ? 5 : 6)) {
-					carry = true;
-				}
-			}
-			public bool RoundEffectiveDigits (int digits)
-			{
-				return RoundEffectiveDigits (digits, true, true);
-			}
-			public bool RoundEffectiveDigits (int digits, bool carryFive, bool carryEven)
-			{
-				bool carry = false;
-
-				if (digits >= _digits.Length || digits < 0)
-					return false;
-
-				if (digits + 1 < _digits.Length && _digits [digits + 1] == 5 && _digits [digits] % 2 == (carryEven ? 0 : 1))
-					carryFive = false;
-
-				/// are we cutting from the maximum precision ?
-				if (_digits.Length == _defMaxPrecision) {
-					// special case if we *aren't* cutting inside the extra precision (e.g. 16 on 17)
-					if (digits != _defMaxPrecision - 1) {
-						// ok, here we look at the *two* extra numbers we're keeping
-						// (we keep 17 digits while the true precision is 15 digits).
-						int extra = _digits[_defMaxPrecision - 2] * 10 + _digits[_defMaxPrecision - 1];
-						carry = (extra >= 50);
-						if (carry) {
-							_digits[_defMaxPrecision - 2] = 0;
-							_digits[_defMaxPrecision - 1] = 0;
-							int d = _digits.Length - 3;
-							CarryPropagation (ref d, carryFive, ref carry);
-						}
-					}
-				}
-				CarryPropagation (ref digits, carryFive, ref carry);
-
-				for (int i = digits; i < _digits.Length; i++)
-					_digits [i] = 0;
-				TrimDecimalEndZeros ();
-
-				return carry;
-			}
-
-			private void CarryPropagation (ref int digits, bool carryFive, ref bool carry)
-			{
-				for (int i = digits; i >= 0; i--) {
-					RoundHelper (i, carryFive, ref carry);
-					if (!carry)
-						break;
-				}
-
-				if (carry) {
-					byte[] temp = new byte[_digits.Length + 1];
-					_digits.CopyTo (temp, 1);
-					temp[0] = 1;
-					_digits = temp;
-					_decPointPos++;
-					digits++;
-				}
-			}
-
-			#endregion
-
-			#region Trim
-			public void TrimDecimalEndZeros ()
-			{
-				int len = 0;
-				for (int i = _digits.Length - 1; i >= 0; i --) {
-					if (_digits [i] != 0)
-						break;
-					len ++;
-				}
-
-				if (len > 0) {
-					byte[] temp = new byte [_digits.Length - len];
-					Array.Copy (_digits, 0, temp, 0, temp.Length);
-					_digits = temp;
-				}
-			}
-			public void TrimIntegerStartZeros ()
-			{
-				if (_decPointPos < 0 && _decPointPos >= _digits.Length)
-					return;
-
-				int len = 0;
-				for (int i = 0; i < _decPointPos && i < _digits.Length; i++) {
-					if (_digits [i] != 0)
-						break;
-					len ++;
-				}
-
-				if (len == _decPointPos)
-					len --;
-
-				if (len == _digits.Length) {
-					_digits = new byte [1];
-					_digits [0] = 0;
-					_decPointPos = 1;
-					_positive = true;
-				} else if (len > 0) {
-					byte[] temp = new byte [_digits.Length - len];
-					Array.Copy (_digits, len, temp, 0, temp.Length);
-					_digits = temp;
-					_decPointPos -= len;
-				}
-			}
-
-			#endregion
-
-			#region Integer
-			public void AppendIntegerString (int minLength, StringBuilder cb)
-			{
-				if (IntegerDigits == 0) {
-					cb.Append ('0', minLength);
-					return;
-				}
-				if (_decPointPos <= 0) {
-					cb.Append ('0', minLength);
-					return;
-				}
-
-				if (_decPointPos < minLength)
-					cb.Append ('0', minLength - _decPointPos);
-
-				for (int i = 0; i < _decPointPos; i++) {
-					if (i < _digits.Length)
-						cb.Append ((char)('0' + _digits [i]));
-					else
-						cb.Append ('0');
-				}
-			}
-			public void AppendIntegerStringWithGroupSeparator (StringBuilder sb, int[] groups, string groupSeparator)
-			{
-				if (_decPointPos <= 0) {
-					sb.Append ('0');
-					return;
-				}
-
-				int intLen = IntegerDigits;
-				int total = 0;
-				int groupIndex = 0;
-				for (int i = 0; i < groups.Length; i++) {
-					total += groups [i];
-					if (total <= intLen)
-						groupIndex = i;
-				}
-
-				if (groups.Length > 0 && total > 0) {
-					int counter;
-					int groupSize = groups [groupIndex];
-					int fraction = intLen > total ? intLen - total : 0;
-					if (groupSize == 0) {
-						while (groupIndex >= 0 && groups [groupIndex] == 0)
-							groupIndex --;
-						
-						groupSize = fraction > 0 ? fraction : groups [groupIndex];
-					}
-					if (fraction == 0) {
-						counter = groupSize;
-					} else {
-						groupIndex += fraction / groupSize;
-						counter = fraction % groupSize;
-						if (counter == 0)
-							counter = groupSize;
-						else
-							groupIndex ++;
-					}
-					
-					for (int i = 0; i < _decPointPos; i++) {
-						if (i < _digits.Length) {
-							sb.Append ((char)('0' + _digits [i]));
-						} else {
-							sb.Append ('0');
-						}
-
-						if (i < intLen - 1 && --counter == 0) {
-							sb.Append (groupSeparator);
-							if (--groupIndex < groups.Length && groupIndex >= 0)
-								groupSize = groups [groupIndex];
-							counter = groupSize;
-						}
-					}
-				} else {
-					for (int i = 0; i < _decPointPos; i++) {
-						if (i < _digits.Length) {
-							sb.Append ((char)('0' + _digits [i]));
-						} else {
-							sb.Append ('0');
-						}
-					}
-				}
-			}
-			#endregion
-
-			#region Decimal
-			public string GetDecimalString (int precision)
-			{
-				if (!HasDecimal)
-					return new string ('0', precision);
-
-				StringBuilder sb = new StringBuilder (precision);
-				for (int i = _decPointPos; i < _digits.Length && i < precision + _decPointPos; i++) {
-					if (i >= 0)
-						sb.Append ((char)('0' + _digits [i]));
-					else
-						sb.Append ('0');
-				}
-				if (sb.Length < precision)
-					sb.Append ('0', precision - sb.Length);
-				else if (sb.Length > precision)
-					sb.Remove (0, precision);
-				return sb.ToString ();
-			}
-
-			public void AppendDecimalString (int precision, StringBuilder cb)
-			{
-				if (!HasDecimal) {
-					cb.Append ('0', precision);
-					return;
-				}
-
-				int i = _decPointPos;
-				for (; i < _digits.Length && i < precision + _decPointPos; i++) {
-					if (i >= 0)
-						cb.Append ((char)('0' + _digits [i]));
-					else
-						cb.Append ('0');
-				}
-
-				i -= _decPointPos;
-				if (i < precision)
-					cb.Append ('0', precision - i);
-			}
-			#endregion
-
-			#region others
-			public bool CheckZeroOnlyInteger ()
-			{
-				for (int i = 0; i < _decPointPos && i < _digits.Length; i++) {
-					if (_digits [i] != 0)
-						return false;
-				}
-				return true;
-			}
-			public void Multiply10 (int count)
-			{
-				if (count <= 0)
-					return;
-
-				_decPointPos += count;
-
-				TrimIntegerStartZeros ();
-			}
-			public void Divide10 (int count)
-			{
-				if (count <= 0)
-					return;
-
-				_decPointPos -= count;
-			}
-			public override string ToString()
-			{
-				StringBuilder sb = new StringBuilder ();
-				AppendIntegerString (IntegerDigits, sb);
-				if (HasDecimal) {
-					sb.Append ('.');
-					AppendDecimalString (DecimalDigits, sb);
-				}
-				return sb.ToString ();
-			}
-			public char GetChar (int pos)
-			{
-				if (_decPointPos <= 0)
-					pos += _decPointPos - 1;
-				
-				if (pos < 0 || pos >= _digits.Length)
-					return '0';
-				else
-					return (char)('0' + _digits [pos]);
-			}
-			public byte GetDigitByte (int pos)
-			{
-				if (_decPointPos <= 0)
-					pos += _decPointPos - 1;
-				
-				if (pos < 0 || pos >= _digits.Length)
-					return 0;
-				else
-					return _digits [pos];
-			}
-			public NumberStore GetClone ()
-			{
-				NumberStore ns = new NumberStore ();
-
-				ns._decPointPos = this._decPointPos;
-				ns._defMaxPrecision = this._defMaxPrecision;
-				ns._defPrecision = this._defPrecision;
-				ns._digits = (byte[])this._digits.Clone ();
-				ns._infinity = this._infinity;
-				ns._NaN = this._NaN;
-				ns._positive = this._positive;
-
-				return ns;
-			}
-			public int GetDecimalPointPos ()
-			{
-				return _decPointPos;
-			}
-			public void SetDecimalPointPos (int dp)
-			{
-				_decPointPos = dp;
-			}
-			#endregion
-
-			#endregion
-
-			#region Public Static Method
-			public static bool IsZeroOnly (StringBuilder sb)
-			{
-				for (int i = 0; i < sb.Length; i++)
-					if (char.IsDigit (sb [i]) && sb [i] != '0')
-						return false;
-				return true;
-			}
-			public static void AppendIntegerStringFromUInt32 (StringBuilder sb, uint v)
-			{
-				if (v < 0)
-					throw new ArgumentException ();
-
-				int i = 9;
-
-				if (v >= 1000000000)
-					i = 9;
-				else if (v >= 100000000)
-					i = 8;
-				else if (v >= 10000000)
-					i = 7;
-				else if (v >= 1000000)
-					i = 6;
-				else if (v >= 100000)
-					i = 5;
-				else if (v >= 10000)
-					i = 4;
-				else if (v >= 1000)
-					i = 3;
-				else if (v >= 100)
-					i = 2;
-				else if (v >= 10)
-					i = 1;
-				else
-					i = 0;
-				do {
-					uint n = v / IntList [i];
-					sb.Append (NumberFormatter.digitLowerTable [n]);
-					v -= IntList [i--] * n;
-				} while (i >= 0);
-			}
-			#endregion
-		}
 		#endregion
 	}
 }

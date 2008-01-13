@@ -233,12 +233,14 @@ namespace System
 #endif
 		public override string ToString ()
 		{
-			return ToString (null, null);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (null);
+			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, provider);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
 		}
 
 		public string ToString (string format)

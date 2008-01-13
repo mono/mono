@@ -377,6 +377,7 @@ namespace MonoTests.System
 			list.Add (new Element (0.086d, "00000", "00000"));
 			list.Add (new Element (0.086d, "(###) ### - ####", "()  - "));
 			list.Add (new Element (0.086d, "#.##", ".09"));
+			list.Add (new Element (0.086d, "#.#", ".1"));
 			list.Add (new Element (0.086d, "0.00", "0.09"));
 			list.Add (new Element (0.086d, "00.00", "00.09"));
 			list.Add (new Element (0.086d, "#,#", ""));

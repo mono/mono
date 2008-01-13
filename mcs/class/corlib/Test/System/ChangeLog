@@ -1,3 +1,8 @@
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DecimalTest.cs, DoubleTest.cs: Add a few test cases as part of the
+	  NumberFormatter redesign.
+
 2008-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomainTest.cs: Add a test for #350530.

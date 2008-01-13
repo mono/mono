@@ -1,3 +1,13 @@
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatter.cs: Check in redesigned implementation. Improves
+	  double.ToString performance by 2-3 orders of magnitude and other
+	  primitive numeric types ToString performance.
+	* NumberFormatter.jvm.cs: The TARGET_JVM managed tables for NumberFormatter
+	  class for reuse if a completely managed NumberFormatter is required.
+	* Int16.cs UInt64.cs Double.cs UInt16.cs SByte.cs Byte.cs TimeSpan.cs
+	  Int32.cs Int64.cs Single.cs UInt32.cs: Adapt to new NumberFormatter.
+
 2008-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomain.cs: Check for a missing entry point in the ExecuteAssembly methods.

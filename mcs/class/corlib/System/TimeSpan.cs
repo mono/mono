@@ -376,16 +376,16 @@ namespace System
 			}
 
 			System.Globalization.NumberFormatInfo nfi = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
-			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Hours)), 2, nfi));
+			sb.Append (new NumberFormatter (null, (int)Math.Abs (Hours)).FormatDecimal(2, nfi));
 			sb.Append (':');
-			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Minutes)), 2, nfi));
+			sb.Append (new NumberFormatter (null, (int)Math.Abs (Minutes)).FormatDecimal(2, nfi));
 			sb.Append (':');
-			sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore ((int)Math.Abs (Seconds)), 2, nfi));
+			sb.Append (new NumberFormatter (null, (int)Math.Abs (Seconds)).FormatDecimal(2, nfi));
 
 			int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 			if (fractional != 0) {
 				sb.Append ('.');
-				sb.Append (NumberFormatter.FormatDecimal (new NumberFormatter.NumberStore (fractional), 7, nfi));
+				sb.Append (new NumberFormatter (null, (int)Math.Abs (fractional)).FormatDecimal(7, nfi));
 			}
 
 			return sb.ToString ();

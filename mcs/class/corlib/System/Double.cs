@@ -506,12 +506,14 @@ namespace System {
 #endif
 		public override string ToString ()
 		{
-			return ToString (null, null);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (null);
+			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
 		}
 
-		public string ToString (IFormatProvider fp)
+		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, fp);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
 		}
 
 		public string ToString (string format)
@@ -519,9 +521,9 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (fp);
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
 			return NumberFormatter.NumberToString (format, m_value, nfi);
 		}
 

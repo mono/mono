@@ -139,11 +139,10 @@ namespace MonoTests.System
 				new ToStringTest ("E6", 0.0012m, "1.200000E-003"),
 				new ToStringTest ("F4", -0.001234m, "-0.0012"),
 				new ToStringTest ("E3", -0.001234m, "-1.234E-003"),
-#if NET_1_0
-				new ToStringTest ("g", -0.000012m, "-1.2e-05"),
-#else
 				new ToStringTest ("g", -0.000012m, "-0.000012"),
-#endif
+				new ToStringTest ("g0", -0.000012m, "-1.2e-05"),
+				new ToStringTest ("g2", -0.000012m, "-1.2e-05"),
+				new ToStringTest ("g20", -0.000012m, "-1.2e-05"),
 				new ToStringTest ("g", -0.00012m, "-0.00012"),
 				new ToStringTest ("g4", -0.00012m, "-0.00012"),
 				new ToStringTest ("g7", -0.00012m, "-0.00012"),
@@ -155,6 +154,9 @@ namespace MonoTests.System
 				new ToStringTest ("g", -0.12m, "-0.12"),
 				new ToStringTest ("g", -1.2m, "-1.2"),
 				new ToStringTest ("g4", -120m, "-120"),
+				new ToStringTest ("g", -12.000m, "-12.000"),
+				new ToStringTest ("g0", -12.000m, "-12"),
+				new ToStringTest ("g6", -12.000m, "-12"),
 				new ToStringTest ("g", -12m, "-12"),
 				new ToStringTest ("g", -120m, "-120"),
 				new ToStringTest ("g", -1200m, "-1200"),

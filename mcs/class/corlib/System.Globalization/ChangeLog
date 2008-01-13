@@ -1,3 +1,8 @@
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatInfo.cs: Defined internal "Raw" APIs that do not clone the
+	  internal array members in order to improve performance of custom ToString.
+
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* CultureInfo.cs: Add a 'cached_serialized_form' field.
