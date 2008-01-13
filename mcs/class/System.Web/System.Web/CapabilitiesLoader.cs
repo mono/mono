@@ -442,6 +442,7 @@ namespace System.Web
 
 			TextReader input = new StreamReader (File.OpenRead (filename));
 #endif
+			using (input) {
 			string str;
 			Hashtable allhash = new Hashtable ();
 			int aux = 0;
@@ -475,6 +476,7 @@ namespace System.Web
 					continue;
 
 				data.Parent = (BrowserData) allhash [pname];
+			}
 			}
 		}
 
