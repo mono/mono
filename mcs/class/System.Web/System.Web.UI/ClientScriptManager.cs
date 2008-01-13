@@ -65,6 +65,7 @@ namespace System.Web.UI
 		Hashtable expandoAttributes;
 		bool _hasRegisteredForEventValidationOnCallback;
 		bool _pageInRender;
+		bool _initCallBackRegistered;
 #endif
 		
 		internal ClientScriptManager (Page page)
@@ -218,14 +219,16 @@ namespace System.Web.UI
 		{
 			RegisterWebFormClientScript ();
 
-			string formReference = page.IsMultiForm ? page.theForm + "." : String.Empty;
-
-			return formReference + "WebForm_DoCallback(" +
+			if (!_initCallBackRegistered) {
+				_initCallBackRegistered = true;
+				RegisterStartupScript (typeof (Page), "WebForm_InitCallback", page.WebFormScriptReference + ".WebForm_InitCallback();", true);
+			}
+			return page.WebFormScriptReference + ".WebForm_DoCallback(" +
 				target + "," +
-				((argument == null) ? "null" : argument) + "," +
+				(argument ?? "null") + "," +
 				clientCallback + "," +
-				((context == null) ? "null" : context) + "," +
-				((clientErrorCallback == null) ? "null" : clientErrorCallback) + "," +
+				(context ?? "null") + "," +
+				(clientErrorCallback ?? "null") + "," +
 				(useAsync ? "true" : "false") + ")";
 		}
 #endif

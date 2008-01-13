@@ -144,15 +144,12 @@ webForm.WebForm_DoPostBackWithOptions = function  (options) {
 		webForm.__doPostBack (options.eventTarget, options.eventArgument);
 }
 
-webForm.WebForm_InitCallback = function () {
-}
-
 webForm.WebForm_DoCallback = function (id, arg, callback, ctx, errorCallback, useAsync)
 {
-	var qs = webForm.WebForm_getFormData () + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
-  
-  if (webForm._form["__EVENTVALIDATION"])
-    qs += "&__EVENTVALIDATION=" + encodeURIComponent(webForm._form["__EVENTVALIDATION"].value);
+	var qs = webForm.__theFormPostData + "__CALLBACKTARGET=" + id + "&__CALLBACKARGUMENT=" + encodeURIComponent(arg);
+
+	if (webForm._form["__EVENTVALIDATION"])
+		qs += "&__EVENTVALIDATION=" + encodeURIComponent(webForm._form["__EVENTVALIDATION"].value);
 
 	var httpPost = null;
 	
@@ -245,9 +242,7 @@ webForm.WebForm_ClientCallback = function (doc, ctx, callback, errorCallback)
 	}
 }
 
-webForm.WebForm_getFormData = function ()
-{
-	var qs = "";
+webForm.WebForm_InitCallback = function () {
 	var len = this._form.elements.length;
 	for (n=0; n<len; n++) {
 		var elem = this._form.elements [n];
@@ -256,23 +251,27 @@ webForm.WebForm_getFormData = function ()
 			var type = elem.type;
 			if ((type == "text" || type == "hidden" || type == "password" ||
 				((type == "checkbox" || type == "radio") && elem.checked)) &&
-          (elem.id != "__EVENTVALIDATION")) {
-				qs += elem.name + "=" + encodeURIComponent (elem.value) + "&";
+				(elem.id != "__EVENTVALIDATION")) {
+					webForm.WebForm_InitCallbackInputField (elem);
 			}
 		} else if (tagName == "select") {
 			var selectCount = elem.options.length;
 			for (var j = 0; j < selectCount; j++) {
 				var selectChild = elem.options[j];
 				if (selectChild.selected == true) {
-					qs += elem.name + "=" + encodeURIComponent (elem.value) + "&";
+					webForm.WebForm_InitCallbackInputField (elem);
 				}
 			}
 		}
 		else if (tagName == "textarea") {
-			qs += elem.name + "=" + encodeURIComponent (elem.value) + "&";
+			webForm.WebForm_InitCallbackInputField (elem);
 		}
 	}
-	return qs;
+}
+
+webForm.WebForm_InitCallbackInputField = function (elem) {
+	webForm.__theFormPostCollection[webForm.__theFormPostCollection.length] = {"name" : elem.name, "value" : elem.value};
+	webForm.__theFormPostData  += elem.name + "=" + encodeURIComponent (elem.value) + "&";
 }
 
 webForm.WebForm_GetElementById = function (id)

@@ -1,3 +1,8 @@
+2008-01-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* webform.js:
+	make scripts compatible with MicrosoftAjaxLibrary.		
+
 2008-01-10 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* webform.js:
