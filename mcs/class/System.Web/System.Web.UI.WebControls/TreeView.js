@@ -22,13 +22,8 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	
 	if (tree.showImage) {
 		var image = document.getElementById (spanId + "_img");
-		if (tree.defaultImages) {
-			if (expand) image.src = image.src.replace ("plus","minus");
-			else image.src = image.src.replace ("minus","plus");
-		} else {
-			if (expand) image.src = tree.collapseImage;
-			else image.src = tree.expandImage;
-		}
+		if (expand) image.src = tree.collapseImage;
+		else image.src = tree.expandImage;
 		var alt;
 		if (expand) alt = tree.collapseAlt;
 		else alt = tree.expandAlt;

@@ -1,4 +1,10 @@
-2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+2008-01-13 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.cs:
+	* TreeView.js:
+	upgrade client side script due to changes in webform.js.		
+
+2008-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseCompareValidator.cs:
 	* BaseValidator.cs:
@@ -10,7 +16,7 @@
 	refactoring: If page contents instance of IScriptManager, validators call 
 	it's API instead Page.ClientScript.									
 
-2007-01-07 Igor Zelmanovich <igorz@mainsoft.com>
+2008-01-07 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Button.cs:
 	* ImageButton.cs:
@@ -18,11 +24,11 @@
 	for TARGET_J2EE used CreateActionUrl instead ResolveClientUrl
 	in GetPostBackOptions.			
 
-2007-01-06 Igor Zelmanovich <igorz@mainsoft.com>
+2008-01-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsView.cs: render invisible rows correct.
 
-2007-01-06 Igor Zelmanovich <igorz@mainsoft.com>
+2008-01-06 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DataControlField.cs: prevent infinite recursion
 

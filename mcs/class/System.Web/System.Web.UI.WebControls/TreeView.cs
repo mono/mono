@@ -1057,20 +1057,23 @@ namespace System.Web.UI.WebControls
 			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
 			
 			if (ShowExpandCollapse) {
-				bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
-				script += string.Format ("{0}.defaultImages = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (defaultImages));
 				ImageStyle imageStyle = GetImageStyle ();
-				if (!defaultImages) {
-					script += string.Format ("{0}.expandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
-					script += string.Format ("{0}.collapseImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
-				}
+				script += string.Format ("{0}.expandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
+				script += string.Format ("{0}.collapseImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
 				if (PopulateNodesFromClient)
 					script += string.Format ("{0}.noExpandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
 			}
 
 			if (Page != null) {
 				script += string.Format ("{0}.form = {1};\n", ctree, Page.theForm);
-				script += string.Format ("{0}.PopulateNode = function(nodeId) {{ {1}; }};\n", ctree, Page.ClientScript.GetCallbackEventReference ("this.uid", "nodeId", "TreeView_PopulateCallback", "this.treeId + \" \" + nodeId", "TreeView_PopulateCallback", false));
+				script += string.Format (
+@"{0}.PopulateNode = function(nodeId) {{
+	" + Page.WebFormScriptReference + @".__theFormPostData = """";
+	" + Page.WebFormScriptReference + @".__theFormPostCollection = new Array();
+	" + Page.WebFormScriptReference + @".WebForm_InitCallback();
+	{1};
+}};
+", ctree, Page.ClientScript.GetCallbackEventReference ("this.uid", "nodeId", "TreeView_PopulateCallback", "this.treeId + \" \" + nodeId", "TreeView_PopulateCallback", false));
 				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
 				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
