@@ -176,6 +176,90 @@ namespace MonoTests.System {
 			Assert.AreEqual ("jeudi, nov. 01 2007 09:00:00 -07:00", dto.ToString (format, new CultureInfo ("fr-FR")));
 			Assert.AreEqual ("jueves, nov 01 2007 09:00:00 -07:00", dto.ToString (format, new CultureInfo ("es-ES")));
 		}
+
+		[Test]
+		public void ParseExactDatesOnly ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Now;
+			CultureInfo fp = CultureInfo.InvariantCulture;
+
+			string[] formats = {
+				"d",
+				"M/dd/yyyy",
+				"M/d/y",
+				"M/d/yy",
+				//"M/d/yyy",
+				"M/d/yyyy",
+				"M/d/yyyyy",
+				"M/d/yyyyyy",
+				"M/dd/yyyy",
+				"MM/dd/yyyy",
+			};
+
+			foreach (string format in formats)
+			{
+				string serialized = dto.ToString (format, fp);
+				Assert.AreEqual (dto.Date, DateTimeOffset.ParseExact (serialized, format, fp).Date);
+
+			}
+		}
+
+		[Test]
+		public void ParseExactTest ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			DateTimeOffset[] dtos = {
+				new DateTimeOffset (2008, 01, 14, 13, 21, 0, new TimeSpan (1,0,0)),
+				new DateTimeOffset (2008, 01, 14, 13, 21, 0, new TimeSpan (-5,0,0)),
+			};
+
+			string[] formats = {
+				"M/dd/yyyy HH:m zzz",  "MM/dd/yyyy HH:m zzz",
+				"M/d/yyyy HH:m zzz",   "MM/d/yyyy HH:m zzz",
+				"M/dd/yy HH:m zzz",    "MM/dd/yy HH:m zzz",
+				"M/d/yy HH:m zzz",     "M/d/yy HH:m zzz",
+				"M/dd/yyyy H:m zzz",   "MM/dd/yyyy H:m zzz",
+				"M/d/yyyy H:m zzz",    "MM/d/yyyy H:m zzz",
+				"M/dd/yy H:m zzz",     "MM/dd/yy H:m zzz",
+				"M/d/yy H:m zzz",      "MM/d/yy H:m zzz",
+				"M/dd/yyyy HH:mm zzz", "MM/dd/yyyy HH:mm zzz",
+				"M/d/yyyy HH:mm zzz",  "MM/d/yyyy HH:mm zzz",
+				"M/dd/yy HH:mm zzz",   "MM/dd/yy HH:mm zzz",
+				"M/d/yy HH:mm zzz",    "M/d/yy HH:mm zzz",
+				"M/dd/yyyy H:m zzz",   "MM/dd/yyyy H:m zzz",
+				"M/d/yyyy H:m zzz",    "MM/d/yyyy H:m zzz",
+				"M/dd/yy H:m zzz",     "MM/dd/yy H:m zzz",
+				"M/d/yy H:m zzz",      "M/d/yy H:m zzz",
+				"ddd dd MMM yyyy h:mm tt zzz",
+			};
+
+			foreach (DateTimeOffset dto in dtos)
+				foreach (string format in formats)
+				{
+					string serialized = dto.ToString (format, fp);
+					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
+				}
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "d";
+			string date = "1/14/2008";
+			DateTimeOffset.ParseExact(date, format, fp);
+		}
+
+//		[Test]
+//		[ExpectedException (typeof (FormatException))]
+//		public void ParseExactFormatException1 ()
+//		{
+//			CultureInfo fp = CultureInfo.InvariantCulture;
+//			string format = "ddd dd MMM yyyy h:mm tt zzz";
+//			string date = "Mon 14 Jan 2008 2:56 PM +01";
+//			DateTimeOffset.ParseExact(date, format, fp);
+//		}
 	}
 }
 #endif
