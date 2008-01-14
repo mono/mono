@@ -90,6 +90,11 @@ namespace System.Linq.Expressions {
 		protected override void VisitUnary (UnaryExpression unary)
 		{
 			switch (unary.NodeType) {
+			case ExpressionType.ArrayLength:
+				Print ("{0}(", unary.NodeType);
+				Visit (unary.Operand);
+				Print (")");
+				return;
 			case ExpressionType.Quote:
 				Visit (unary.Operand);
 				return;

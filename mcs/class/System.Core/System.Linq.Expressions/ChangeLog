@@ -1,5 +1,9 @@
 2008-01-14  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionPrinter.cs: print ArrayLength.
+
+2008-01-14  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: TypeAs can't take value types.
 	* ExpressionPrinter.cs: implement TypeAs.
 
