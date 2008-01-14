@@ -244,28 +244,40 @@ namespace System.Web.Script.Serialization
 		}
 
 		static object Evaluate (object value) {
+			return Evaluate (value, false);
+		}
+
+		static object Evaluate (object value, bool convertListToArray) {
 			if (value is IDictionary<string, object>)
-				value = EvaluateDictionary ((IDictionary<string, object>) value);
+				value = EvaluateDictionary ((IDictionary<string, object>) value, convertListToArray);
 			else
 			if (value is IEnumerable<object>)
-				value = EvaluateList ((IEnumerable<object>) value);
+				value = EvaluateList ((IEnumerable<object>) value, convertListToArray);
 			return value;
 		}
 
 		static object EvaluateList (IEnumerable<object> e) {
+			return EvaluateList (e, false);
+		}
+
+		static object EvaluateList (IEnumerable<object> e, bool convertListToArray) {
 			ArrayList list = new ArrayList ();
 			foreach (object value in e)
-				list.Add (Evaluate(value));
+				list.Add (Evaluate (value, convertListToArray));
 
-			return list.ToArray ();
+			return convertListToArray ? (object) list.ToArray () : list;
 		}
 
 		static IDictionary<string, object> EvaluateDictionary (IDictionary<string, object> dict) {
+			return EvaluateDictionary (dict, false);
+		}
+
+		static IDictionary<string, object> EvaluateDictionary (IDictionary<string, object> dict, bool convertListToArray) {
 			if (dict is Dictionary<string, object>)
 				return dict;
 			Dictionary<string, object> d = new Dictionary<string, object> (StringComparer.Ordinal);
 			foreach (KeyValuePair<string, object> entry in dict) {
-				d.Add (entry.Key, Evaluate (entry.Value));
+				d.Add (entry.Key, Evaluate (entry.Value, convertListToArray));
 			}
 
 			return d;
@@ -365,7 +377,7 @@ namespace System.Web.Script.Serialization
 		}
 
 		public object DeserializeObject (string input) {
-			object obj = Evaluate (DeserializeObjectInternal (new StringReader (input)));
+			object obj = Evaluate (DeserializeObjectInternal (new StringReader (input)), true);
 			IDictionary dictObj = obj as IDictionary;
 			if (dictObj != null && dictObj.Contains(SerializedTypeNameKey)){
 				if (_typeResolver == null) {

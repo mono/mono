@@ -41,6 +41,8 @@ using System.Threading;
 using System.Text.RegularExpressions;
 using System.ComponentModel;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+using System.Web.UI.WebControls;
+using System.Collections.ObjectModel;
 
 
 namespace Tests.System.Web.Script.Serialization
@@ -474,6 +476,23 @@ namespace Tests.System.Web.Script.Serialization
 		}
 
 		[Test]
+		public void TestDeserializeConverter1 () {
+			JavaScriptSerializer serializer = new JavaScriptSerializer ();
+
+			serializer.RegisterConverters (new JavaScriptConverter [] { 
+            new ListItemCollectionConverter() });
+
+			ListBox ListBox1 = new ListBox ();
+			ListBox1.Items.Add ("a1");
+			ListBox1.Items.Add ("a2");
+			ListBox1.Items.Add ("a3");
+
+			string x = serializer.Serialize (ListBox1.Items);
+			ListItemCollection recoveredList = serializer.Deserialize<ListItemCollection> (x);
+			Assert.AreEqual (3, recoveredList.Count);
+		}
+
+		[Test]
 		public void TestSerialize1 () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
 			Assert.AreEqual("null", ser.Serialize(null));
@@ -574,6 +593,53 @@ namespace Tests.System.Web.Script.Serialization
 				d.Add ("numberFormat", ci.NumberFormat);
 				d.Add ("dateTimeFormat", ci.DateTimeFormat);
 				return d;
+			}
+		}
+
+		public class ListItemCollectionConverter : JavaScriptConverter
+		{
+			public override IEnumerable<Type> SupportedTypes {
+				//Define the ListItemCollection as a supported type.
+				get { return new ReadOnlyCollection<Type> (new Type [] { typeof (ListItemCollection) }); }
+			}
+
+			public override IDictionary<string, object> Serialize (object obj, JavaScriptSerializer serializer) {
+				ListItemCollection listType = obj as ListItemCollection;
+
+				if (listType != null) {
+					// Create the representation.
+					Dictionary<string, object> result = new Dictionary<string, object> ();
+					ArrayList itemsList = new ArrayList ();
+					foreach (ListItem item in listType) {
+						//Add each entry to the dictionary.
+						Dictionary<string, object> listDict = new Dictionary<string, object> ();
+						listDict.Add ("Value", item.Value);
+						listDict.Add ("Text", item.Text);
+						itemsList.Add (listDict);
+					}
+					result ["List"] = itemsList;
+
+					return result;
+				}
+				return new Dictionary<string, object> ();
+			}
+
+			public override object Deserialize (IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer) {
+				if (dictionary == null)
+					throw new ArgumentNullException ("dictionary");
+
+				if (type == typeof (ListItemCollection)) {
+					// Create the instance to deserialize into.
+					ListItemCollection list = new ListItemCollection ();
+
+					// Deserialize the ListItemCollection's items.
+					ArrayList itemsList = (ArrayList) dictionary ["List"];
+					for (int i = 0; i < itemsList.Count; i++)
+						list.Add (serializer.ConvertToType<ListItem> (itemsList [i]));
+
+					return list;
+				}
+				return null;
 			}
 		}
 
