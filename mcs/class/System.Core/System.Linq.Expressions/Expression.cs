@@ -940,6 +940,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("expression");
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			if (type.IsValueType && !IsNullable (type))
+				throw new ArgumentException ("TypeAs expect a reference or a nullable type");
 
 			return new UnaryExpression (ExpressionType.TypeAs, expression, type);
 		}

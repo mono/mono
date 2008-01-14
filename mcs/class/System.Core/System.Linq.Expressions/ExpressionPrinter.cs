@@ -91,7 +91,12 @@ namespace System.Linq.Expressions {
 		{
 			switch (unary.NodeType) {
 			case ExpressionType.Quote:
-				Visit(unary.Operand);
+				Visit (unary.Operand);
+				return;
+			case ExpressionType.TypeAs:
+				Print ("(");
+				Visit (unary.Operand);
+				Print (" As {0})", unary.Type.Name);
 				return;
 			}
 
