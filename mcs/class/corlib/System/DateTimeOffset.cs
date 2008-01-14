@@ -284,7 +284,6 @@ namespace System
 			return ParseExact (input, new string [] {format}, formatProvider, styles);
 		}
 
-		[MonoTODO]
 		public static DateTimeOffset ParseExact (string input, string[] formats, IFormatProvider formatProvider, DateTimeStyles styles)
 		{
 			if (input == null)
@@ -293,7 +292,311 @@ namespace System
 			if (input == String.Empty)
 				throw new FormatException ("input is an empty string");
 
-			throw new NotImplementedException ();
+			if (formats == null)
+				throw new ArgumentNullException ("formats");
+
+			if (formats.Length == 0)
+				throw new FormatException ("Invalid format specifier");
+
+			DateTimeOffset result;
+			if (!ParseExact (input, formats, DateTimeFormatInfo.GetInstance (formatProvider), styles, out result))
+				throw new FormatException ();
+
+			return result;
+		}
+
+		private static bool ParseExact (string input, string [] formats,
+				DateTimeFormatInfo dfi, DateTimeStyles styles, out DateTimeOffset ret)
+		{
+			foreach (string format in formats)
+			{
+				if (format == null || format == String.Empty)
+					throw new FormatException ("Invlid Format Sting");
+
+				DateTimeOffset result;
+				if (DoParse (input, format, false, out result, dfi, styles)) {
+					ret = result;
+					return true;
+				}
+			}
+			ret = DateTimeOffset.MinValue;
+			return false;
+		}
+
+		private static bool DoParse (string input, 
+				string format,
+				bool exact,
+				out DateTimeOffset result,
+				DateTimeFormatInfo dfi,
+				DateTimeStyles styles)
+		{
+			bool useutc=false, use_invariants = false;
+			if (format.Length == 1)
+				format = DateTimeUtils.GetStandardPattern (format[0], dfi, out useutc, out use_invariants, true);
+
+			int year = -1;
+			int month = -1;
+			int day = -1;
+			int hour = -1;
+			int minute = -1;
+			TimeSpan offset = TimeSpan.Zero;
+
+			int fi = 0; //format iterator
+			int ii = 0; //input iterator
+			while (fi < format.Length) {
+				int tokLen;
+				char ch = format [fi];
+
+				switch (ch) {
+				case 'd':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							day = Int32.Parse (input.Substring (ii, l));
+							ii += l;
+							break;
+						case 2:
+							day = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						case 3:
+						case 4:
+							ii = input.IndexOf (format [fi + tokLen]);
+							break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					
+					break;
+				case 'h':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch(tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							if (hour == -1)
+								hour = 0;
+							hour += Int32.Parse (input.Substring (ii, l));
+							ii += l;
+							break;
+						case 2:
+							if (hour == -1)
+								hour = 0;
+							hour += Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					break;
+				case 'H':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							hour = Int32.Parse (input.Substring (ii, l));
+							ii += l;
+							break;
+						case 2:
+							hour = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					break;
+				case 'm':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							minute = Int32.Parse (input.Substring (ii, l));
+							ii += l;
+							break;
+						case 2:
+							minute = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					break;
+				case 'M':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							month = Int32.Parse (input.Substring (ii, l));
+							ii += l;
+							break;
+						case 2:
+							month = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						case 3:
+							for (int i = 0; i < 13; i++)
+								if (input.Substring (ii).StartsWith (dfi.AbbreviatedMonthNames [i])) {
+									month = i + 1;
+									ii += dfi.AbbreviatedMonthNames [i].Length;
+									break;
+								}
+							break;
+						case 4:
+							for (int i = 0; i < 13; i++)
+								if (input.Substring (ii).StartsWith (dfi.MonthNames [i])) {
+									month = i + 1;
+									ii += dfi.MonthNames [i].Length;
+									break;
+								}
+							break;
+						default:
+							throw new FormatException ();
+					}
+					break;
+				case 't':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							if (input [ii] == dfi.PMDesignator [0]) {
+								if (hour == -1)
+									hour = 0;
+								hour += 12;
+							} else if (input [ii] != dfi.AMDesignator [0])
+								throw new FormatException ();
+							ii ++;
+							break;
+						case 2:
+							if (input.Substring (ii).StartsWith (dfi.PMDesignator)) {
+								if (hour == -1)
+									hour = 0;
+								hour += 12;
+								ii += dfi.PMDesignator.Length;
+							} else if (input.Substring (ii).StartsWith (dfi.AMDesignator))
+								ii += dfi.AMDesignator.Length;
+							else
+								throw new FormatException ();
+							break;
+
+						default:
+							throw new FormatException ();
+							break;
+					}
+					break;
+				case 'y':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							year = Int32.Parse (input.Substring (ii, l));
+							year += DateTime.Now.Year - DateTime.Now.Year % 100;
+							ii += l;
+							break;
+						case 2:
+							year = Int32.Parse (input.Substring (ii, 2));
+							year += DateTime.Now.Year - DateTime.Now.Year % 100;
+							ii += 2;
+							break;
+						case 3:
+							throw new NotImplementedException ();
+							//ToString ("yyy") seems to print 4-digits year...
+							year = Int32.Parse (input.Substring (ii, 3));
+							year += DateTime.Now.Year - DateTime.Now.Year % 1000;
+							ii += 3;
+							break;
+						default:
+							year = Int32.Parse (input.Substring (ii, tokLen));
+							ii += tokLen;
+							break;
+					}
+					break;
+				case 'z':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					int off_h, off_m = 0, sign;
+					switch (input[ii]) {
+						case '+': sign = 1; break;
+						case '-': sign = -1; break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					ii ++;
+					switch (tokLen) {
+						case 1:
+							int l = 1;
+							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
+								l = 2;
+							off_h = Int32.Parse (input.Substring (ii, l));
+							break;
+						case 2:
+							off_h = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						case 3:
+							off_h = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							if (input [ii++] != ':')
+								throw new FormatException ();
+							off_m = Int32.Parse (input.Substring (ii, 2));
+							ii += 2;
+							break;
+						default:
+							throw new FormatException ();
+							break;
+					}
+					offset = new TimeSpan (sign * off_h, sign * off_m, 0);
+					break;
+				case ':':
+					tokLen = 1;
+					if (!input.Substring (ii).StartsWith (dfi.TimeSeparator))
+						throw new FormatException ();
+					ii += dfi.TimeSeparator.Length;
+					break;
+				case '/':
+					tokLen = 1;
+					if (!input.Substring (ii).StartsWith (dfi.DateSeparator))
+						throw new FormatException ();
+					ii += dfi.DateSeparator.Length;
+					break;
+				case ' ':
+					tokLen = 1;
+					ii++;
+					break;
+				default:
+					tokLen = 1;
+					ii++;
+					Console.WriteLine ("un-parsed character: {0}", ch);
+					break;
+				}
+				fi += tokLen;
+			}
+
+			if (day > 0 && month > 0 && year > 0 && hour > 0 && minute > 0) {
+				result = new DateTimeOffset (year, month, day, hour, minute, 0, offset);
+				return true;
+			}
+			if (day > 0 && month > 0 && year > 0) {
+				result = new DateTimeOffset (year, month, day, 0, 0, 0, offset);
+				return true;
+			}
+
+			result = DateTimeOffset.MinValue;
+			return false;
 		}
 
 		public TimeSpan Subtract (DateTimeOffset other)

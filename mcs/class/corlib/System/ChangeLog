@@ -1,3 +1,8 @@
+2008-01-14  Sephane Delcroix  <sdelcroix@novell.com>
+
+	* DateTimeOffset.cs: ParseExact (string, string, IFormatProvider) 
+	implemented.
+
 2008-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* NumberFormatter.cs: Remove some redundant assignments.
