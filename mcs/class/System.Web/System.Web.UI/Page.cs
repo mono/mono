@@ -1580,10 +1580,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
 		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
-#if TARGET_J2EE
-		if (getFacesContext () != null)
-			SetupResponseWriter (output);
-#endif
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
 	}

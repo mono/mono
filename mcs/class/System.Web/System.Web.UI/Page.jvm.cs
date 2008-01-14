@@ -61,7 +61,6 @@ namespace System.Web.UI
 		FacesContext _facesContext;
 
 		static readonly java.util.List emptyList = java.util.Collections.unmodifiableList (new java.util.ArrayList ());
-		static readonly RenderKitFactory renderFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
 
 		bool _isMultiForm = false;
 		bool _isMultiFormInited = false;
@@ -366,19 +365,11 @@ namespace System.Web.UI
 			FacesContext facesContext = getFacesContext ();
 
 			ResponseWriter oldWriter = facesContext.getResponseWriter ();
-			ResponseWriter writer;
-			if (oldWriter != null) {
-				writer = oldWriter.cloneWithWriter (new AspNetResponseWriter (httpWriter));
-			}
-			else {
-				RenderKit renderKit = renderFactory.getRenderKit (facesContext, facesContext.getViewRoot ().getRenderKitId ());
+			if (oldWriter == null)
+				throw new InvalidOperationException ();
 
-				ServletResponse response = (ServletResponse) facesContext.getExternalContext ().getResponse ();
-
-				writer = renderKit.createResponseWriter (new AspNetResponseWriter (httpWriter),
-														 response.getContentType (), //TODO: is this the correct content type?
-														 response.getCharacterEncoding ());
-			}
+			ResponseWriter writer = oldWriter.cloneWithWriter (new AspNetResponseWriter (httpWriter));
+			
 			facesContext.setResponseWriter (writer);
 			return oldWriter;
 		}
