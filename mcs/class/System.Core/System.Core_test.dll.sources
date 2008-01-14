@@ -6,5 +6,6 @@ System.Linq/EnumerableTest.cs
 System.Linq.Expressions/ExpressionTest.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
+System.Linq.Expressions/ExpressionTest_TypeAs.cs
 System.Linq.Expressions/ExpressionTest_TypeIs.cs
 System.Linq.Expressions/ExpressionTest_Utils.cs
