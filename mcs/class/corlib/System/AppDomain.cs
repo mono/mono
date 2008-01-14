@@ -271,81 +271,81 @@ namespace System {
 			SetupInformationNoCopy.ShadowCopyDirectories = String.Empty;
 		}
 
-		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
+		public ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName)
 		{
-			return Activator.CreateComInstanceFrom (assemblyName, typeName);
+			return Activator.CreateComInstanceFrom (assemblyFile, typeName);
 		}
 
 #if NET_1_1
-		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
+		public ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
 			byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
-			return Activator.CreateComInstanceFrom (assemblyName, typeName, hashValue ,hashAlgorithm);
+			return Activator.CreateComInstanceFrom (assemblyFile, typeName, hashValue ,hashAlgorithm);
 		}
 #endif
 
-		public ObjectHandle CreateInstance (string assemblyName, string typeName)
+		public ObjectHandle CreateInstance (string assemblyFile, string typeName)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstance (assemblyName, typeName);
+			return Activator.CreateInstance (assemblyFile, typeName);
 		}
 
-		public ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes)
+		public ObjectHandle CreateInstance (string assemblyFile, string typeName, object[] activationAttributes)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
+			return Activator.CreateInstance (assemblyFile, typeName, activationAttributes);
 		}
 
-		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
+		public ObjectHandle CreateInstance (string assemblyFile, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes,
 		                                    Evidence securityAttributes)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+			return Activator.CreateInstance (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes, securityAttributes);
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyName, string typeName)
+		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName)
 		{
-			ObjectHandle oh = CreateInstance (assemblyName, typeName);
+			ObjectHandle oh = CreateInstance (assemblyFile, typeName);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
+		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName, object [] activationAttributes)
 		{
-			ObjectHandle oh = CreateInstance (assemblyName, typeName, activationAttributes);
+			ObjectHandle oh = CreateInstance (assemblyFile, typeName, activationAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		public object CreateInstanceAndUnwrap (string assemblyFile, string typeName, bool ignoreCase,
 		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                       object[] activationAttributes, Evidence securityAttributes)
 		{
-			ObjectHandle oh = CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+			ObjectHandle oh = CreateInstance (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes, securityAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName)
+		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstanceFrom (assemblyName, typeName);
+			return Activator.CreateInstanceFrom (assemblyFile, typeName);
 		}
 
-		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, object[] activationAttributes)
+		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object[] activationAttributes)
 		{
-			if (assemblyName == null)
-				throw new ArgumentNullException ("assemblyName");
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
 
-			return Activator.CreateInstanceFrom (assemblyName, typeName, activationAttributes);
+			return Activator.CreateInstanceFrom (assemblyFile, typeName, activationAttributes);
 		}
 
 		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, bool ignoreCase,
@@ -488,10 +488,10 @@ namespace System {
 		// AppDomain.DoCallBack works because AppDomain is a MarshalByRefObject
 		// so, when you call AppDomain.DoCallBack, that's a remote call
 		//
-		public void DoCallBack (CrossAppDomainDelegate theDelegate)
+		public void DoCallBack (CrossAppDomainDelegate callBackDelegate)
 		{
-			if (theDelegate != null)
-				theDelegate ();
+			if (callBackDelegate != null)
+				callBackDelegate ();
 		}
 
 		public int ExecuteAssembly (string assemblyFile)
@@ -1178,9 +1178,9 @@ namespace System {
 
 		[MonoTODO ("add support for new delegate")]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, string appBasePath,
-			string appRelativeSearchPath, bool shadowCopy, AppDomainInitializer adInit, string[] adInitArgs)
+			string appRelativeSearchPath, bool shadowCopyFiles, AppDomainInitializer adInit, string[] adInitArgs)
 		{
-			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopy);
+			return CreateDomain (friendlyName, securityInfo, appBasePath, appRelativeSearchPath, shadowCopyFiles);
 		}
 
 		public int ExecuteAssemblyByName (string assemblyName)

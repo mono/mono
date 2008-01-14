@@ -27,6 +27,6 @@
 //
 #if NET_2_0
 namespace System {
-	public delegate void Action <T> (T value);
+	public delegate void Action <T> (T obj);
 }
 #endif

@@ -69,8 +69,8 @@ namespace System
 			fusionLog = info.GetString ("BadImageFormat_FusionLog");
 		}
 
-		public BadImageFormatException (string message, Exception innerException)
-			: base (message, innerException)
+		public BadImageFormatException (string message, Exception inner)
+			: base (message, inner)
 		{
 			HResult = Result;
 		}
@@ -82,8 +82,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public BadImageFormatException (string message, string fileName, Exception innerException)
-			: base (message, innerException)
+		public BadImageFormatException (string message, string fileName, Exception inner)
+			: base (message, inner)
 		{
 			this.fileName = fileName;
 			HResult = Result;

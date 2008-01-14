@@ -1,6 +1,12 @@
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomainSetup.cs Buffer.cs Action.cs Array.cs BadImageFormatException.cs Byte.cs
+	Attribute.cs _AppDomain.cs Boolean.cs AppDomain.cs: Fix some argument names to be 
+	consistent with MS.
+
 2008-01-14  Sephane Delcroix  <sdelcroix@novell.com>
 
-	* DateTimeOffset.cs: start refactoring DoParse
+	* DateTimeOffset.cs: start refactoring DoParse.
 
 2008-01-14  Zoltan Varga  <vargaz@gmail.com>
 

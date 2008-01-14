@@ -66,31 +66,31 @@ namespace System
 		ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes);
 		ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
-			object[] activationAttributes, Evidence securityAttribtutes);
+			object[] activationAttributes, Evidence securityAttributes);
 
 		ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName);
-		ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, object[] activationAttributes);
-		ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, bool ignoreCase,
+		ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object[] activationAttributes);
+		ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
-			object[] activationAttributes, Evidence securityAttribtutes);
+			object[] activationAttributes, Evidence securityAttributes);
 
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir, Evidence evidence);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
-			PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPersmissions);
+			PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPermissions);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
 			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
-			PermissionSet refusedPersmissions);
+			PermissionSet refusedPermissions);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
-			string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPersmissions);
+			string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPermissions);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
 			string dir, Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
-			PermissionSet refusedPersmissions);
+			PermissionSet refusedPermissions);
 		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
 			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
-			PermissionSet refusedPersmissions, bool isSynchronized);
+			PermissionSet refusedPermissions, bool isSynchronized);
 
 		void DoCallBack (CrossAppDomainDelegate theDelegate);
 		bool Equals (object other);

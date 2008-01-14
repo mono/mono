@@ -190,9 +190,9 @@ namespace System
 			return GetCustomAttributes (element, attributeType, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (MemberInfo element, Type attributeType)
+		public static Attribute[] GetCustomAttributes (MemberInfo element, Type type)
 		{
-			return GetCustomAttributes (element, attributeType, true);
+			return GetCustomAttributes (element, type, true);
 		}
 
 		public static Attribute[] GetCustomAttributes (Assembly element, Type attributeType, bool inherit)
@@ -219,12 +219,12 @@ namespace System
 			return (Attribute []) element.GetCustomAttributes (attributeType, inherit);
 		}
 
-		public static Attribute[] GetCustomAttributes (MemberInfo element, Type attributeType, bool inherit)
+		public static Attribute[] GetCustomAttributes (MemberInfo element, Type type, bool inherit)
 		{
 			// element parameter is not allowed to be null
-			CheckParameters (element, attributeType);
+			CheckParameters (element, type);
 
-			return (Attribute []) element.GetCustomAttributes (attributeType, inherit);
+			return (Attribute []) element.GetCustomAttributes (type, inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (Module element, bool inherit)

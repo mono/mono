@@ -90,9 +90,9 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (byte value)
+		public bool Equals (byte obj)
 		{
-			return value == m_value;
+			return m_value == obj;
 		}
 #endif
 

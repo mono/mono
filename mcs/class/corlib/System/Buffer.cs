@@ -84,20 +84,20 @@ namespace System {
 			SetByteInternal (array, index, value);
 		}
 
-		public static void BlockCopy (Array src, int srcOffset, Array dest, int destOffset, int count)
+		public static void BlockCopy (Array src, int srcOffset, Array dst, int dstOffset, int count)
 		{
 			if (src == null)
 				throw new ArgumentNullException ("src");
 
-			if (dest == null)
-				throw new ArgumentNullException ("dest");
+			if (dst == null)
+				throw new ArgumentNullException ("dst");
 
 			if (srcOffset < 0)
 				throw new ArgumentOutOfRangeException ("srcOffset", Locale.GetText(
 					"Non-negative number required."));
 
-			if (destOffset < 0)
-				throw new ArgumentOutOfRangeException ("destOffset", Locale.GetText (
+			if (dstOffset < 0)
+				throw new ArgumentOutOfRangeException ("dstOffset", Locale.GetText (
 					"Non-negative number required."));
 
 			if (count < 0)
@@ -105,10 +105,10 @@ namespace System {
 					"Non-negative number required."));
 
 			// We do the checks in unmanaged code for performance reasons
-			bool res = BlockCopyInternal (src, srcOffset, dest, destOffset, count);
+			bool res = BlockCopyInternal (src, srcOffset, dst, dstOffset, count);
 			if (!res) {
 				// watch for integer overflow
-				if ((srcOffset > ByteLength (src) - count) || (destOffset > ByteLength (dest) - count))
+				if ((srcOffset > ByteLength (src) - count) || (dstOffset > ByteLength (dst) - count))
 					throw new ArgumentException (Locale.GetText (
 						"Offset and length were out of bounds for the array or count is greater than" + 
 						"the number of elements from index to the end of the source collection."));

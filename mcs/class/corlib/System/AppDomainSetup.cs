@@ -346,9 +346,9 @@ namespace System
 		}
 
 		[MonoNotSupported ("This method exists but not considered.")]
-		public void SetConfigurationBytes (byte [] bytes)
+		public void SetConfigurationBytes (byte [] value)
 		{
-			configuration_bytes = bytes;
+			configuration_bytes = value;
 		}
 #endif
 	}

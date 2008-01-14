@@ -131,9 +131,9 @@ namespace System
 			return !m_value ? -1 : 1;
 		}
 
-		public bool Equals (bool value)
+		public bool Equals (bool obj)
 		{
-			return m_value == value;
+			return m_value == obj;
 		}
 #endif
 

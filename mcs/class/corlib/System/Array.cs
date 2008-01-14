@@ -639,14 +639,14 @@ namespace System
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
-		public static Array CreateInstance (Type elementType, int[] lengths, int [] bounds)
+		public static Array CreateInstance (Type elementType, int[] lengths, int [] lowerBounds)
 		{
 			if (elementType == null)
 				throw new ArgumentNullException ("elementType");
 			if (lengths == null)
 				throw new ArgumentNullException ("lengths");
-			if (bounds == null)
-				throw new ArgumentNullException ("bounds");
+			if (lowerBounds == null)
+				throw new ArgumentNullException ("lowerBounds");
 
 			elementType = elementType.UnderlyingSystemType;
 			if (!elementType.IsSystemType)
@@ -655,14 +655,14 @@ namespace System
 			if (lengths.Length < 1)
 				throw new ArgumentException (Locale.GetText ("Arrays must contain >= 1 elements."));
 
-			if (lengths.Length != bounds.Length)
+			if (lengths.Length != lowerBounds.Length)
 				throw new ArgumentException (Locale.GetText ("Arrays must be of same size."));
 
-			for (int j = 0; j < bounds.Length; j ++) {
+			for (int j = 0; j < lowerBounds.Length; j ++) {
 				if (lengths [j] < 0)
 					throw new ArgumentOutOfRangeException ("lengths", Locale.GetText (
 						"Each value has to be >= 0."));
-				if ((long)bounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
+				if ((long)lowerBounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
 					throw new ArgumentOutOfRangeException ("lengths", Locale.GetText (
 						"Length + bound must not exceed Int32.MaxValue."));
 			}
@@ -670,7 +670,7 @@ namespace System
 			if (lengths.Length > 255)
 				throw new TypeLoadException ();
 
-			return CreateInstanceImpl (elementType, lengths, bounds);
+			return CreateInstanceImpl (elementType, lengths, lowerBounds);
 		}
 
 #if NET_1_1
@@ -2220,9 +2220,9 @@ namespace System
 		// The constrained copy should guarantee that if there is an exception thrown
 		// during the copy, the destination array remains unchanged.
 		// This is related to System.Runtime.Reliability.CER
-		public static void ConstrainedCopy (Array s, int s_i, Array d, int d_i, int c)
+		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
-			Copy (s, s_i, d, d_i, c);
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
 		}
 #endif 
 
