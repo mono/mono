@@ -261,7 +261,7 @@ namespace System.Web.UI.HtmlControls
 			// Allow the page to transform action to a portlet action url
 			string customAction = Attributes ["action"];
 			if (String.IsNullOrEmpty(customAction))
-				action = CreateActionUrl (Page.Request.CurrentExecutionFilePath + Page.Request.QueryStringRaw);
+				action = CreateActionUrl (VirtualPathUtility.ToAppRelative (Page.Request.CurrentExecutionFilePath) + Page.Request.QueryStringRaw);
 			else
 				action = customAction;
 
