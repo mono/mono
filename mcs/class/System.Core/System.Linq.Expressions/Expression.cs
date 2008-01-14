@@ -556,35 +556,33 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression MakeUnary (ExpressionType unaryType, Expression operand, Type type)
 		{
-			return MakeUnary (unaryType, operand, null, null);
+			return MakeUnary (unaryType, operand, type, null);
 		}
 
 		public static UnaryExpression MakeUnary (ExpressionType unaryType, Expression operand, Type type, MethodInfo method)
 		{
-			if (!IsUnaryOperator (unaryType))
-				throw new ArgumentException ("Make unary expect an unary operator");
-			if (operand == null)
-				throw new ArgumentNullException ("operand");
-
-			return new UnaryExpression (unaryType, operand, type != null ? type : operand.Type, method);
-		}
-
-		static bool IsUnaryOperator (ExpressionType type)
-		{
-			switch (type) {
+			switch (unaryType) {
 			case ExpressionType.ArrayLength:
+				return ArrayLength (operand);
 			case ExpressionType.Convert:
+				return Convert (operand, type, method);
 			case ExpressionType.ConvertChecked:
+				return ConvertChecked (operand, type, method);
 			case ExpressionType.Negate:
+				return Negate (operand, method);
 			case ExpressionType.NegateChecked:
+				return NegateChecked (operand, method);
 			case ExpressionType.Not:
+				return Not (operand, method);
 			case ExpressionType.Quote:
+				return Quote (operand);
 			case ExpressionType.TypeAs:
+				return TypeAs (operand, type);
 			case ExpressionType.UnaryPlus:
-				return true;
+				return UnaryPlus (operand, method);
 			}
 
-			return false;
+			throw new ArgumentException ("MakeUnary expect an unary operator");
 		}
 
 		[MonoTODO]

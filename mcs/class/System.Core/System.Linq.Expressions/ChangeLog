@@ -1,3 +1,8 @@
+2008-01-14  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: MakeUnary is expected to call the appropriate
+	factory methods.
+
 2008-01-14  Miguel de Icaza  <miguel@novell.com>
 
 	* Expression.cs (Constant, MakeBinary and consumers of it): Some
