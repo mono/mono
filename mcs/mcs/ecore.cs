@@ -2125,14 +2125,10 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, intermediate);
 		}
 
-		private bool IsNestedChild (Type t, Type parent)
+		static bool IsNestedChild (Type t, Type parent)
 		{
-			if (parent == null)
-				return false;
-
 			while (parent != null) {
-				parent = TypeManager.DropGenericTypeArguments (parent);
-				if (TypeManager.IsNestedChildOf (t, parent))
+				if (TypeManager.IsNestedChildOf (t, TypeManager.DropGenericTypeArguments (parent)))
 					return true;
 
 				parent = parent.BaseType;
@@ -2147,12 +2143,8 @@ namespace Mono.CSharp {
 				return null;
 
 			DeclSpace ds = ec.DeclContainer;
-			while (ds != null) {
-				if (IsNestedChild (t, ds.TypeBuilder))
-					break;
-
+			while (ds != null && !IsNestedChild (t, ds.TypeBuilder))
 				ds = ds.Parent;
-			}
 
 			if (ds == null)
 				return null;
