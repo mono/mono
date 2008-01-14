@@ -1,3 +1,6 @@
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Remove some duplicate code.
 
 Mon Jan 14 12:33:06 CET 2008  David S. Miller  <davem@davemloft.net>
 
