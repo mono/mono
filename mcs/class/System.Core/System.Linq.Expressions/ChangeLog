@@ -1,3 +1,11 @@
+2008-01-14  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs (Constant, MakeBinary and consumers of it): Some
+	more fill-up changes.
+
+	MakeBinary will need much more work to support user-provided
+	types. 
+
 2008-01-13  Jb Evain  <jbevain@novell.com>
 
 	* *.cs: fresh implementation.

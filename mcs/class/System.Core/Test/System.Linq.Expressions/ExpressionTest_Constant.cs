@@ -123,5 +123,22 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (OpClass), expr.Type, "Constant#31");
 			Assert.AreEqual ("value(MonoTests.System.Linq.Expressions.OpClass)", expr.ToString(), "Constant#32");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestInvalidCtor_1 ()
+		{
+			// null value, type == valuetype is invalid
+			Expression.Constant (null, typeof (int));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TestInvalidCtor_2 ()
+		{
+			// type mismatch: int value, type == double 
+			Expression.Constant (0, typeof (double));
+		}
+		
 	}
 }

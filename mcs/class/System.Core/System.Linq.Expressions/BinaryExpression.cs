@@ -35,8 +35,24 @@ namespace System.Linq.Expressions {
 
 		Expression left;
 		Expression right;
+		LambdaExpression conversion;
 		MethodInfo method;
+		bool lift_to_null;
 
+		internal BinaryExpression (Expression left, Expression right)
+		{
+			this.left = left;
+			this.right = right;
+		}
+
+		internal BinaryExpression (Expression left, Expression right, bool lift_to_null, MethodInfo method)
+		{
+			this.left = left;
+			this.right = right;
+			this.method = method;
+			this.lift_to_null = lift_to_null;
+		}
+		
 		public Expression Left {
 			get { return left; }
 		}
@@ -49,14 +65,13 @@ namespace System.Linq.Expressions {
 			get { return method; }
 		}
 
-		[MonoTODO]
+		
 		public bool IsLifted {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public bool IsLiftedToNull {
-			get { throw new NotImplementedException (); }
+			get { return lift_to_null; }
 		}
 
 		[MonoTODO]
