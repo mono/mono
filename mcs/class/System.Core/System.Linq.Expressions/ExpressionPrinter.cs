@@ -127,6 +127,8 @@ namespace System.Linq.Expressions {
 				return "!=";
 			case ExpressionType.OrElse:
 				return "||";
+			case ExpressionType.Power:
+				return "^";
 			case ExpressionType.RightShift:
 				return ">>";
 			case ExpressionType.Subtract:
