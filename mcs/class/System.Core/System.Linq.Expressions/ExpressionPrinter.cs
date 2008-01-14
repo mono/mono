@@ -161,6 +161,14 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitTypeIs (TypeBinaryExpression type)
 		{
+			switch (type.NodeType) {
+			case ExpressionType.TypeIs:
+				Print ("(");
+				Visit (type.Expression);
+				Print (" Is {0})",type.TypeOperand.Name);
+				return;
+			}
+
 			throw new NotImplementedException ();
 		}
 

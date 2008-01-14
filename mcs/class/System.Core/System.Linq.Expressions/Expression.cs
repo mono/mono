@@ -944,10 +944,14 @@ namespace System.Linq.Expressions {
 			return new UnaryExpression (ExpressionType.TypeAs, expression, type);
 		}
 
-		[MonoTODO]
 		public static TypeBinaryExpression TypeIs (Expression expression, Type type)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof (bool));
 		}
 
 		[MonoTODO]

@@ -1,5 +1,11 @@
 2008-01-14  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: implement TypeIs.
+	* ExpressionPrinter.cs: implement VisitTypeBinaryExpression.
+	* TypeBinaryExpression.cs: add proper ctor.
+
+2008-01-14  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs, ExpressionPrinter.cs: fix for Quote's type.
 
 2008-01-14  Jb Evain  <jbevain@novell.com>

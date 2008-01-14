@@ -42,5 +42,12 @@ namespace System.Linq.Expressions {
 		public Type TypeOperand {
 			get { return type_operand; }
 		}
+
+		internal TypeBinaryExpression (ExpressionType node_type, Expression expression, Type type_operand, Type type)
+			: base (node_type, type)
+		{
+			this.expression = expression;
+			this.type_operand = type_operand;
+		}
 	}
 }
