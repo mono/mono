@@ -1,3 +1,7 @@
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* SafeWaitHandle.cs: Fix some argument names to be consistent with MS.
+
 2007-07-18  Miguel de Icaza  <miguel@novell.com>
 
 	* SafeWaitHandle.cs: Do not call DangerousGetHandle here as it
