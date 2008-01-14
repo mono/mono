@@ -4,8 +4,6 @@
 	* mini-sparc.c (mono_arch_output_basic_block): Use a byte load in CHECK_THIS.
 	Fixes #353182.
 
-	* Makefile.am (version.h): Make this work with non-bash shells.
-
 2007-12-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_get_delegate_invoke_impl): Fix flushing of icache.
