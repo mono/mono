@@ -275,6 +275,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		static public Size MinimumFixedToolWindowSize {
+			get { return driver.MinimumFixedToolWindowSize; }
+		}
+
+		static public Size MinimumSizeableToolWindowSize {
+			get { return driver.MinimumSizeableToolWindowSize; }
+		}
+
+		static public Size MinimumNoBorderWindowSize {
+			get { return driver.MinimumNoBorderWindowSize; }
+		}
+
 		static public Size MinWindowTrackSize {
 			get {
 				return driver.MinWindowTrackSize;

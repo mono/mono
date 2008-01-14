@@ -2131,6 +2131,18 @@ namespace System.Windows.Forms {
 			}
 		} 
 
+		internal override Size MinimumFixedToolWindowSize {
+			get { return new Size (27, 22); }
+		}
+
+		internal override Size MinimumSizeableToolWindowSize {
+			get { return new Size (37, 22); }
+		}
+
+		internal override Size MinimumNoBorderWindowSize {
+			get { return new Size (2, 2); }
+		}
+		
 		internal override  Size MinWindowTrackSize {
 			get {
 				return new Size(1, 1);

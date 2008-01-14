@@ -2308,10 +2308,27 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			Size min_size;
+			
+			switch (FormBorderStyle) {
+				case FormBorderStyle.None:
+					min_size = XplatUI.MinimumNoBorderWindowSize;
+					break;
+				case FormBorderStyle.FixedToolWindow:
+					min_size = XplatUI.MinimumFixedToolWindowSize;
+					break;
+				case FormBorderStyle.SizableToolWindow:
+					min_size = XplatUI.MinimumSizeableToolWindowSize;
+					break;
+				default:
+					min_size = SystemInformation.MinimumWindowSize;
+					break;
+			}
+			
 			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width)
-				width = Math.Max (width, SystemInformation.MinimumWindowSize.Width);
+				width = Math.Max (width, min_size.Width);
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
-				height = Math.Max (height, SystemInformation.MinimumWindowSize.Height);
+				height = Math.Max (height, min_size.Height);
 				
 			base.SetBoundsCore (x, y, width, height, specified);
 

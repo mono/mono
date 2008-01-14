@@ -226,6 +226,9 @@ namespace System.Windows.Forms {
 		internal abstract Size MinimizedWindowSize { get; }
 		internal abstract Size MinimizedWindowSpacingSize { get; }
 		internal abstract Size MinimumWindowSize { get; }
+		internal virtual Size MinimumFixedToolWindowSize { get { return Size.Empty; } }
+		internal virtual Size MinimumSizeableToolWindowSize { get { return Size.Empty; } }
+		internal virtual Size MinimumNoBorderWindowSize { get { return Size.Empty; } }
 		internal abstract Size MinWindowTrackSize { get; }
 		internal abstract Size SmallIconSize { get; }
 		internal abstract int MouseButtonCount { get; }
