@@ -173,15 +173,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO ("Value not respected, always true")]
 		[DefaultValue(false)]
 		public bool AutoWordSelection {
-			get {
-				return auto_word_select;
-			}
-
-			set {
-				auto_word_select = true;
-			}
+			get { return auto_word_select; }
+			set { auto_word_select = value; }
 		}
 
 		[Browsable(false)]

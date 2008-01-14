@@ -143,7 +143,7 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool AllowMerge {
 			get { return this.allow_merge; }
-			set { this.allow_merge = false; }
+			set { this.allow_merge = value; }
 		}
 		
 		public override AnchorStyles Anchor {
