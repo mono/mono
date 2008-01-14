@@ -1,3 +1,9 @@
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Fix comments for NULL-ness of image parameter.
+	Fixes #353550.
+	(mono_class_from_name_case): Ditto.
+
 2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
 
 	* icall-def.h number-formatter.h icall.c: Implemented a cross app-domain
