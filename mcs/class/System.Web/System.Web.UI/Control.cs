@@ -1339,7 +1339,7 @@ namespace System.Web.UI
 				if (templateSourceDirectory == null || templateSourceDirectory.Length == 0)
 					return relativeUrl;
 
-				string basePath = context.Request.CurrentExecutionFilePath;
+				string basePath = context.Request.FilePath;
 
 				if (basePath.Length > 1 && basePath [basePath.Length - 1] != '/')
 					basePath = VirtualPathUtility.GetDirectory (basePath, false);

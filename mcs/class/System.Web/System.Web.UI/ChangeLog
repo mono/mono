@@ -1,3 +1,9 @@
+2008-01-14 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Control.cs: fixed ResolveClientUrl.
+	use Context.FilePath instead of Context.CurrentExecutionPath for 
+	resolvint app. releative path.	
+
 2008-13-01  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.jvm.cs: optimized SetupResponseWriter, fixed getChildCount and
