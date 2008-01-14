@@ -1,3 +1,8 @@
+2008-01-14  Andreia Gaita <avidigal@novell.com>
+
+	* Mono.Mozilla/interfaces/nsIDOMNSHTMLElement.cs: Added. Interface to
+	access the InnerHtml property of an element.
+
 2008-01-09  Andreia Gaita <avidigal@novell.com>
 
 	* Mono.Mozilla/Base.cs, 
