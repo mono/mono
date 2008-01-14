@@ -236,6 +236,8 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 
 		IResolveContext resolve_context;
+		LocalVariableReference expr_tree_variable;
+		static TypeExpr parameter_expr_tree_type;
 
 		Variable var;
 		public Variable Variable {
@@ -606,6 +608,47 @@ namespace Mono.CSharp {
 
 			return p;
 		}
+
+		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
+		{
+			if ((modFlags & Modifier.ISBYREF) != 0)
+				Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
+
+			LocalInfo variable = ec.CurrentBlock.AddTemporaryVariable (
+				ResolveParameterExpressionType (ec, Location), Location);
+			variable.Resolve (ec);
+
+			expr_tree_variable = new LocalVariableReference (
+				ec.CurrentBlock, variable.Name, Location, variable, false);
+
+			ArrayList arguments = new ArrayList (2);
+			arguments.Add (new Argument (new TypeOf (
+				new TypeExpression (parameter_type, Location), Location)));
+			arguments.Add (new Argument (new StringConstant (Name, Location)));
+			return new Assign (ExpressionTreeVariableReference (),
+				new Invocation (
+					new MemberAccess (LambdaExpression.System_Linq_Expressions_Expression, "Parameter", Location),
+					arguments));
+		}
+
+		public Expression ExpressionTreeVariableReference ()
+		{
+			return expr_tree_variable;
+		}
+
+		//
+		// System.Linq.Expressions.ParameterExpression type
+		//
+		public static TypeExpr ResolveParameterExpressionType (EmitContext ec, Location location)
+		{
+			if (parameter_expr_tree_type != null)
+				return parameter_expr_tree_type;
+
+			MemberAccess ma = new MemberAccess (
+				LambdaExpression.System_Linq_Expressions, "ParameterExpression", location);
+			parameter_expr_tree_type = ma.ResolveAsTypeTerminal (ec, false);
+			return parameter_expr_tree_type;
+		}
 	}
 
 	/// <summary>
@@ -947,6 +990,26 @@ namespace Mono.CSharp {
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
 			return this [pos].ModFlags;
+		}
+
+		public Expression CreateExpressionTree (EmitContext ec, Location loc)
+		{
+			ArrayList initializers = new ArrayList (count);
+			foreach (Parameter p in FixedParameters) {
+				//
+				// Each parameter expression is stored to local variable
+				// to save some memory when referenced later.
+				//
+				StatementExpression se = new StatementExpression (p.CreateExpressionTreeVariable (ec));
+				if (se.Resolve (ec))
+					ec.CurrentBlock.AddScopeStatement (se);
+				
+				initializers.Add (p.ExpressionTreeVariableReference ());
+			}
+
+			return new ArrayCreation (
+				Parameter.ResolveParameterExpressionType (ec, loc),
+				"[]", initializers, loc);
 		}
 
 		public Parameters Clone ()

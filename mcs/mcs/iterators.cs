@@ -938,7 +938,7 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters);
 		}
 
-		public override Expression Resolve (EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			throw new NotSupportedException ();
 		}

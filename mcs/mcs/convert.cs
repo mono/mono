@@ -1405,10 +1405,9 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.anonymous_method_type){
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
-
-				AnonymousMethod am = ame.Compatible (ec, target_type);
+				Expression am = ame.Compatible (ec, target_type);
 				if (am != null)
-					return am.Resolve (ec);
+					return am.DoResolve (ec);
 			}
 
 			return null;

@@ -282,6 +282,12 @@ namespace Mono.CSharp {
 		{
 			this.is_embedded = true;
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Report.Error (832, loc, "An expression tree cannot contain an assignment operator");
+			return null;
+		}
 
 		protected virtual Assign GetEmbeddedAssign (Location loc)
 		{

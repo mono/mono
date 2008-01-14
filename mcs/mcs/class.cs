@@ -3081,8 +3081,10 @@ namespace Mono.CSharp {
 		{
 			base.Emit ();
 
+#if GMCS_SOURCE
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				TypeBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+#endif			
 		}
 
 		public override TypeExpr[] GetClassBases (out TypeExpr base_class)
@@ -4565,9 +4567,11 @@ namespace Mono.CSharp {
 				MethodData.Emit (Parent);
 				base.Emit ();
 				
+#if GMCS_SOURCE				
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 					MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
-				
+#endif
+
 				Block = null;
 				MethodData = null;
 			} catch {

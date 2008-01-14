@@ -103,6 +103,12 @@ namespace Mono.CSharp {
 			return s;
 		}
 
+		public virtual Expression CreateExpressionTree (EmitContext ec)
+		{
+			Report.Error (834, loc, "A lambda expression with statement body cannot be converted to an expresion tree");
+			return null;
+		}
+
 		public Statement PerformClone ()
 		{
 			CloneContext clonectx = new CloneContext ();
@@ -1531,7 +1537,9 @@ namespace Mono.CSharp {
 		//
 		Block switch_block;
 
+		// TODO: merge with scope_initializers
 		ExpressionStatement scope_init;
+		ArrayList scope_initializers;
 
 		ArrayList anonymous_children;
 
@@ -1899,6 +1907,18 @@ namespace Mono.CSharp {
 				}
 			}
 			return null;
+		}
+
+		//
+		// It should be used by expressions which require to
+		// register a statement during resolve process.
+		//
+		public void AddScopeStatement (StatementExpression s)
+		{
+			if (scope_initializers == null)
+				scope_initializers = new ArrayList ();
+
+			scope_initializers.Add (s);
 		}
 		
 		public void AddStatement (Statement s)
@@ -2275,6 +2295,11 @@ namespace Mono.CSharp {
 			ec.Mark (StartLocation, true);
 			if (scope_init != null)
 				scope_init.EmitStatement (ec);
+			if (scope_initializers != null) {
+				foreach (StatementExpression s in scope_initializers)
+					s.Emit (ec);
+			}
+
 			DoEmit (ec);
 			ec.Mark (EndLocation, true); 
 
@@ -2605,6 +2630,11 @@ namespace Mono.CSharp {
 
 			scope_info = root_scope;
 			return root_scope;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return ((Statement) statements [0]).CreateExpressionTree (ec);
 		}
 
 		public void CreateIteratorHost (RootScopeInfo root)

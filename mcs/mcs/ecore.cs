@@ -1244,6 +1244,12 @@ namespace Mono.CSharp {
 
 			return cloned;
 		}
+
+		public virtual Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotImplementedException (
+				"Expression tree conversion not implemented for " + GetType ());
+		}
 	}
 
 	/// <summary>

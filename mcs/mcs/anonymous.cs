@@ -1124,6 +1124,8 @@ namespace Mono.CSharp {
 
 		public bool CreateAnonymousHelpers ()
 		{
+			// FIXME: this polutes expression trees implementation
+
 			Report.Debug (64, "ANONYMOUS METHOD EXPRESSION CREATE ROOT SCOPE",
 				      this, Host, container, loc);
 
@@ -1164,21 +1166,31 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected Expression CompatibleChecks (EmitContext ec, Type delegate_type)
+		protected Type CompatibleChecks (EmitContext ec, Type delegate_type)
 		{
 			if (!ec.IsAnonymousMethodAllowed) {
 				Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
 				return null;
 			}
 			
-			if (!TypeManager.IsDelegateType (delegate_type)){
-				Report.Error (1660, loc,
-					      "Cannot convert `{0}' to type " +
-					      "`{1}' because it is not a delegate type",
-					      GetSignatureForError (), TypeManager.CSharpName (delegate_type));
+			if (TypeManager.IsDelegateType (delegate_type))
+				return delegate_type;
+
+#if GMCS_SOURCE
+			if (TypeManager.DropGenericTypeArguments (delegate_type) == TypeManager.expression_type) {
+				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
+				if (TypeManager.IsDelegateType (delegate_type))
+					return delegate_type;
+
+				Report.Error (835, loc, "Cannot convert `{0}' to an expression tree of non-delegate type `{1}'",
+					GetSignatureForError (), TypeManager.CSharpName (delegate_type));
 				return null;
 			}
-			return this;
+#endif
+
+			Report.Error (1660, loc, "Cannot convert `{0}' to non-delegate type `{1}'",
+				      GetSignatureForError (), TypeManager.CSharpName (delegate_type));
+			return null;
 		}
 
 		protected bool VerifyExplicitParameters (Type delegate_type, ParameterData parameters, bool ignore_error)
@@ -1298,9 +1310,10 @@ namespace Mono.CSharp {
 		// Returns AnonymousMethod container if this anonymous method
 		// expression can be implicitly converted to the delegate type `delegate_type'
 		//
-		public AnonymousMethod Compatible (EmitContext ec, Type delegate_type)
+		public Expression Compatible (EmitContext ec, Type type)
 		{
-			if (CompatibleChecks (ec, delegate_type) == null)
+			Type delegate_type = CompatibleChecks (ec, type);
+			if (delegate_type == null)
 				return null;
 
 			//
@@ -1330,10 +1343,20 @@ namespace Mono.CSharp {
 				      TypeManager.IsGenericType (delegate_type), loc);
 
 			try {
-				return CompatibleMethod (ec, null, return_type, delegate_type);
+				AnonymousMethod am = CompatibleMethod (ec, null, return_type, delegate_type);
+				if (am != null && delegate_type != type)
+					return CreateExpressionTree (ec, delegate_type);
+
+				return am;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}
+		}
+
+		protected virtual Expression CreateExpressionTree (EmitContext ec, Type delegate_type)
+		{
+			Report.Error (1946, loc, "An anonymous method cannot be converted to an expression tree");
+			return null;
 		}
 
 		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
@@ -1437,10 +1460,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class AnonymousContainer : IAnonymousContainer
+	public abstract class AnonymousContainer : Expression, IAnonymousContainer
 	{
-		public readonly Location Location;
-
 		public Parameters Parameters;
 
 		//
@@ -1476,7 +1497,7 @@ namespace Mono.CSharp {
 			this.generic = generic;
 			this.Parameters = parameters;
 			this.Block = block;
-			this.Location = loc;
+			this.loc = loc;
 
 			block.AnonymousContainer = this;
 		}
@@ -1496,8 +1517,6 @@ namespace Mono.CSharp {
 		public abstract ScopeInfo Scope {
 			get;
 		}
-
-		public abstract string GetSignatureForError ();
 
 		public bool Compatible (EmitContext ec)
 		{
@@ -1570,8 +1589,6 @@ namespace Mono.CSharp {
 			return res;
 		}
 
-		public abstract Expression Resolve (EmitContext ec);
-
 		public virtual bool Define (EmitContext ec)
 		{
 			Report.Debug (64, "DEFINE ANONYMOUS METHOD #3", this, ec, aec, Block);
@@ -1594,6 +1611,11 @@ namespace Mono.CSharp {
 		}
 
 		protected abstract Method DoCreateMethodHost (EmitContext ec);
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
 
 		public Block Container {
 			get { return container; }
@@ -1762,7 +1784,7 @@ namespace Mono.CSharp {
 				scope == null ? Modifiers.PRIVATE : Modifiers.INTERNAL, member_name, Parameters);
 		}
 
-		public override Expression Resolve (EmitContext ec)
+		public override Expression DoResolve (EmitContext ec)
 		{
 			if (!Define (ec))
 				return null;

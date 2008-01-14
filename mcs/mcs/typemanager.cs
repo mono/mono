@@ -112,16 +112,21 @@ namespace Mono.CSharp {
 	static public Type coclass_attr_type;
 	static public Type comimport_attr_type;
 
-	/// 
-	/// .NET 2.0
-	///
-#if NET_2_0
+#if GMCS_SOURCE
+	// 
+	// C# 2.0
+	//
 	static internal Type runtime_compatibility_attr_type;
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
 	static internal Type default_charset_type;
 	static internal Type internals_visible_attr_type;
 	static internal Type type_forwarder_attr_type;
+
+	//
+	// C# 3.0
+	//
+	static internal Type expression_type;
 #endif
 
 	// 
@@ -208,14 +213,14 @@ namespace Mono.CSharp {
 	static internal ConstructorInfo struct_layout_attribute_ctor;
 	static public ConstructorInfo field_offset_attribute_ctor;
 	
-#if NET_2_0
-	/// C# 2.0
+#if GMCS_SOURCE
+	// C# 2.0
 	static internal CustomAttributeBuilder compiler_generated_attr;
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
-#endif
 
-	/// C# 3.0
+	// C# 3.0
 	static internal CustomAttributeBuilder extension_attribute_attr;
+#endif
 
 	static PtrHashtable builder_to_declspace;
 
@@ -1125,6 +1130,7 @@ namespace Mono.CSharp {
 		// C# 3.0
 		//
 		extension_attribute_type = CoreLookupType("System.Runtime.CompilerServices", "ExtensionAttribute", true);
+		expression_type = CoreLookupType ("System.Linq.Expressions", "Expression`1", true);
 #endif
 
 		//

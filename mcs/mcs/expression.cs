@@ -4027,6 +4027,11 @@ namespace Mono.CSharp {
 			return Name == pr.Name && referenced == pr.referenced;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return Parameter.ExpressionTreeVariableReference ();
+		}
+
 		//
 		// Notice that for ref/out parameters, the type exposed is not the
 		// same type exposed externally.

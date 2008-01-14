@@ -1,5 +1,12 @@
 2008-01-14  Marek Safar  <marek.safar@gmail.com>
 
+ 	* typemanager.cs, lambda.cs, parameter.cs, ecore.cs, class.cs, delegate.cs,
+ 	iterators.cs, convert.cs, assign.cs, anonymous.cs, expression.cs,
+ 	statement.cs: The first expression tree implementation drop, mostly
+ 	infrastructure work.
+
+2008-01-14  Marek Safar  <marek.safar@gmail.com>
+
  	* ecore.cs (IsNestedChild): Refactored.
 
 2008-01-11  Marek Safar  <marek.safar@gmail.com>
