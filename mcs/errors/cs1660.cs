@@ -1,4 +1,4 @@
-// CS1660: Cannot convert `anonymous method' to type `object' because it is not a delegate type
+// CS1660: Cannot convert `anonymous method' to non-delegate type `object'
 // Line: 9
 
 using System;

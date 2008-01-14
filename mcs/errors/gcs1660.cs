@@ -1,6 +1,5 @@
-// CS1660: Cannot convert `lambda expression' to type `object' because it is not a delegate type
-// Line: 10
-// Compiler options: -langversion:linq
+// CS1660: Cannot convert `lambda expression' to non-delegate type `object'
+// Line: 9
 
 using System;
 
