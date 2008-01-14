@@ -64,44 +64,52 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Add (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.Add, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Add (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.Add, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression AddChecked (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.AddChecked, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression AddChecked (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.AddChecked, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression And (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.And, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression And (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.And, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression AndAlso (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.AndAlso, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.AndAlso, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -182,9 +190,10 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Coalesce (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.Coalesce, left, right);
+			throw new NotImplementedException ();
 		}
 
 		public static BinaryExpression Coalesce (Expression left, Expression right, LambdaExpression conversion)
@@ -202,7 +211,7 @@ namespace System.Linq.Expressions {
 		{
 			if (value == null)
 				return new ConstantExpression (null, typeof (object));
-			
+
 			return Constant (value, value.GetType ());
 		}
 
@@ -221,7 +230,7 @@ namespace System.Linq.Expressions {
 			} else {
 				if (!(type.IsValueType && IsNullable (type)) && value.GetType () != type)
 					throw new ArgumentException ();
-					
+
 			}
 
 			return new ConstantExpression (value, type);
@@ -251,14 +260,16 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Divide (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.Divide, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Divide (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.Divide, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -276,9 +287,10 @@ namespace System.Linq.Expressions {
 		[MonoTODO]
 		public static BinaryExpression Equal (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.Equal, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression Equal (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			BinaryExpression ret = MakeBinary (ExpressionType.Equal, left, right, liftToNull, method);
@@ -286,14 +298,16 @@ namespace System.Linq.Expressions {
 			return ret;
 		}
 
+		[MonoTODO]
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.ExclusiveOr, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.ExclusiveOr, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -368,24 +382,28 @@ namespace System.Linq.Expressions {
 			return func.MakeGenericType (typeArgs);
 		}
 
+		[MonoTODO]
 		public static BinaryExpression GreaterThan (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.GreaterThan, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression GreaterThan (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.GreaterThan, left, right, liftToNull, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression GreaterThanOrEqual (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.GreaterThanOrEqual, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression GreaterThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.GreaterThanOrEqual, left, right, liftToNull, method);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -430,34 +448,40 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LeftShift (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.LeftShift, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LeftShift (Expression left, Expression right, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.LeftShift, left, right, false, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LessThan (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.LessThan, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LessThan (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.LessThan, left, right, liftToNull, method);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LessThanOrEqual (Expression left, Expression right)
 		{
-			return MakeBinary (ExpressionType.LessThanOrEqual, left, right);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static BinaryExpression LessThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			return MakeBinary (ExpressionType.LessThanOrEqual, left, right, liftToNull, method);
+			throw new NotImplementedException ();
 		}
 
 		public static MemberListBinding ListBind (MemberInfo member, params ElementInit [] initializers)
@@ -526,26 +550,61 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression MakeBinary (ExpressionType binaryType, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			if (left == null)
-				throw new ArgumentNullException ("left");
-			if (right == null)
-				throw new ArgumentNullException ("right");
-			if (method == null)
-				throw new ArgumentNullException ("method");
-
-			if (binaryType < 0 || binaryType > ExpressionType.TypeIs)
-				throw new ArgumentException ("Out of range", "binaryType");
-
-			BinaryExpression ret = new BinaryExpression (left, right, liftToNull, method);
-			ret.node_type = binaryType;
-
-			return ret;
+			return MakeBinary (binaryType, left, right, liftToNull, method, null);
 		}
 
-		[MonoTODO]
 		public static BinaryExpression MakeBinary (ExpressionType binaryType, Expression left, Expression right, bool liftToNull, MethodInfo method, LambdaExpression conversion)
 		{
-			throw new NotImplementedException ();
+			switch (binaryType) {
+			case ExpressionType.Add:
+				return Add (left, right, method);
+			case ExpressionType.AddChecked:
+				return AddChecked (left, right, method);
+			case ExpressionType.AndAlso:
+				return AndAlso (left, right);
+			case ExpressionType.Coalesce:
+				return Coalesce (left, right, conversion);
+			case ExpressionType.Divide:
+				return Divide (left, right, method);
+			case ExpressionType.Equal:
+				return Equal (left, right, liftToNull, method);
+			case ExpressionType.ExclusiveOr:
+				return ExclusiveOr (left, right, method);
+			case ExpressionType.GreaterThan:
+				return GreaterThan (left, right, liftToNull, method);
+			case ExpressionType.GreaterThanOrEqual:
+				return GreaterThanOrEqual (left, right, liftToNull, method);
+			case ExpressionType.LeftShift:
+				return LeftShift (left, right, method);
+			case ExpressionType.LessThan:
+				return LessThan (left, right, liftToNull, method);
+			case ExpressionType.LessThanOrEqual:
+				return LessThanOrEqual (left, right, liftToNull, method);
+			case ExpressionType.Modulo:
+				return Modulo (left, right, method);
+			case ExpressionType.Multiply:
+				return Multiply (left, right, method);
+			case ExpressionType.MultiplyChecked:
+				return MultiplyChecked (left, right, method);
+			case ExpressionType.NotEqual:
+				return NotEqual (left, right, liftToNull, method);
+			case ExpressionType.OrElse:
+				return OrElse (left, right);
+			case ExpressionType.Power:
+				return Power (left, right, method);
+			case ExpressionType.RightShift:
+				return RightShift (left, right, method);
+			case ExpressionType.Subtract:
+				return Subtract (left, right, method);
+			case ExpressionType.SubtractChecked:
+				return SubtractChecked (left, right, method);
+			case ExpressionType.And:
+				return And (left, right, method);
+			case ExpressionType.Or:
+				return Or (left, right, method);
+			}
+
+			throw new ArgumentException ("MakeBinary expect a binary node type");
 		}
 
 		[MonoTODO]

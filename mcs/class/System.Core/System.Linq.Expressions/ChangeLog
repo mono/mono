@@ -1,5 +1,14 @@
 2008-01-14  Jb Evain  <jbevain@novell.com>
 
+	* BinaryExpression.cs,
+	* Expression.cs: revert part of Miguel's last patch.
+	MakeBinary is expected to call the appropriate factory
+	methods. Whose methods that are responsible for creating
+	the good BinaryExpression, wether they use a custom method
+	or not.
+
+2008-01-14  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: MakeUnary is expected to call the appropriate
 	factory methods.
 
@@ -9,7 +18,7 @@
 	more fill-up changes.
 
 	MakeBinary will need much more work to support user-provided
-	types. 
+	types.
 
 2008-01-13  Jb Evain  <jbevain@novell.com>
 
