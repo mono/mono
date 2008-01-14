@@ -733,18 +733,17 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			return (LoadPostData (postDataKey, postCollection));
+			return DefaultLoadPostData (postDataKey, postCollection);
 		}
 
 		protected virtual void RaisePostDataChangedEvent ()
 		{
-			RaisePostDataChangedEvent ();
+			OnServerChange (EventArgs.Empty);
 		}
 #endif
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		bool DefaultLoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			/* postCollection contains the values that are
 			 * selected
@@ -791,10 +790,22 @@ namespace System.Web.UI.HtmlControls
 			return (changed);
 		}
 
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+#if NET_2_0
+			return LoadPostData (postDataKey, postCollection);
+#else
+			return DefaultLoadPostData (postDataKey, postCollection);
+#endif
+		}
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			RaisePostDataChangedEvent ();
+#else
 			OnServerChange (EventArgs.Empty);
+#endif
 		}
-		
 	}
 }

@@ -1,3 +1,8 @@
+2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlSelect.cs: Fix infinite recursion (only in 2.0) found using 
+	Gendarme.
+
 2007-01-07 Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlForm.cs: refactoring.
