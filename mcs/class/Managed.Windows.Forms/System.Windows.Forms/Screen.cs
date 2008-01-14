@@ -43,7 +43,9 @@ namespace System.Windows.Forms {
 		private Rectangle	bounds;
 		private Rectangle	workarea;
 		private string		name;
-	
+#if NET_2_0
+		private int		bits_per_pixel;
+#endif
 		#endregion	// Local Variables
 
 		#region	Constructors
@@ -57,6 +59,9 @@ namespace System.Windows.Forms {
 			this.name = name;
 			this.bounds = bounds;
 			this.workarea = workarea;
+#if NET_2_0
+			this.bits_per_pixel = 32;
+#endif
 		}
 		#endregion	// Constructors
 
@@ -75,6 +80,13 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
+#if NET_2_0
+		[MonoTODO ("Stub, always returns 32")]
+		public int BitsPerPixel {
+			get { return bits_per_pixel; }
+		}
+#endif
+
 		public Rectangle Bounds {
 			get {
 				return this.bounds;
