@@ -1,3 +1,110 @@
+
+Mon Jan 14 12:33:06 CET 2008  David S. Miller  <davem@davemloft.net>
+
+	* mini.h (MonoInstList): New type.
+	(MONO_INST_LIST_INIT, MONO_INST_LIST_EMPTY,
+	__MONO_INST_LIST_ADD, MONO_INST_LIST_ADD,
+	MONO_INST_LIST_ADD_TAIL, __MONO_INST_LIST_DEL,
+	__MONO_INST_LIST_SPLICE, MONO_INST_LIST_SPLICE,
+	MONO_INST_LIST_SPLICE_TAIL, MONO_INST_LIST_SPLICE_INIST,
+	MONO_INST_LIST_SPLICE_TAIL_INIT, mono_container_of,
+	MONO_INST_LIST_ENTRY, MONO_INST_LIST_FIRST_ENTRY,
+	MONO_INST_LIST_LAST_ENTRY, MONO_INST_LIST_FOR_EACH,
+	MONO_INST_LIST_FOR_EACH_PREV, MONO_INST_LIST_FOR_EACH_SAFE,
+	MONO_INST_LIST_FOR_EACH_PREV_SAFE,
+	MONO_INST_LIST_FOR_EACH_ENTRY,
+	MONO_INST_LIST_FOR_EACH_ENTRY_REVERSE,
+	MONO_INST_LIST_FOR_EACH_ENTRY_SAFE,
+	mono_inst_list_first, mono_inst_list_last,
+	mono_inst_list_next, mono_inst_list_prev): New instruction
+	list handling interfaces.
+	(MonoBasicBlock): Remove 'last_ins' and 'code', replace with
+	list head 'ins_list'.
+	(MonoInst): Replace next pointer with list head 'node'.
+	(MonoCallInst): Make 'out_args' a MonoInstList.
+	(MONO_INST_NEW_CALL): Explicitly init ->out_args.
+	(MonoCompile): Delete reverse_inst_list and
+	reverse_inst_list_len.
+	* mini-hppa.c (mono_arch_call_opcode, NEW_INS,
+	mono_arch_lowering_pass, mono_arch_local_regalloc,
+	mono_arch_output_basic_block, mono_arch_emit_prolog):
+	Convert to new instruction lists.
+	(insert_after_ins): Delete.
+	* inssel.brg (MONO_EMIT_NEW_BRANCH_BLOCK): Convert to new
+	instruction lists.
+	* mini-hppa.h (MONO_EMIT_NEW_COMPARE_BRANCH_BLOCK): Likewise.
+	* mini.c (NEW_BBLOCK, ADD_BBLOCK, CHECK_BBLOCK,
+	split_bblock, mono_add_ins_to_end, mono_emit_call_args,
+	mono_emulate_opcode, mono_emit_load_got_addr,
+	inline_method, mono_method_to_ir, mono_print_bb_code,
+	print_dfn, decompose_pass, nullify_basic_block,
+	replace_out_block_in_code, remove_block_if_useless,
+	merge_basic_blocks, move_basic_block_to_end,
+	try_unsigned_compare, optimize_branches, mono_print_code,
+	mini_select_instructions, remove_critical_edges): Likewise.
+	* mini-amd64.c (emit_sig_cookie, mono_arch_call_opcode,
+	peephole_pass_1, peephole_pass, mono_arch_lowering_pass,
+	mono_arch_output_basic_block, mono_arch_emit_prolog):
+	Likewise.
+	* mini-mips.c (mono_arch_call_opcode, peephole_pass,
+	NEW_INS, mono_arch_lowering_pass, mono_arch_local_regalloc,
+	mono_arch_output_basic_block): Likewise.
+	(inst_list_prepend, insert_after_ins): Delete.
+	* mini-mips.h (MONO_EMIT_NEW_BRANCH_NONZERO_LABEL,
+	MONO_EMIT_NEW_COMPARE_BRANCH_BLOCK): Convert to new
+	instruction lists.
+	* mini-x86.c (emit_sig_cookie, mono_arch_call_opcode,
+	peephole_pass_1, peephole_pass, mono_arch_output_basic_block,
+	mono_arch_emit_prolog): Likewise.
+	* cfold.c (mono_constant_fold): Likewise.
+	* liveness.c (visit_bb, mono_analyze_liveness,
+	optimize_initlocals): Likewise.
+	* ssapre.c (dump_code, process_bb, code_motion): Likewise.
+	* graph.c (mono_draw_code_cfg): Likewise.
+	* ssa.c (mono_ssa_rename_vars, mono_ssa_compute,
+	mono_ssa_remove, mono_ssa_avoid_copies, mono_ssa_create_def_use,
+	mono_ssa_cprop): Likewise.
+	* abcremoval (get_relations_from_previous_bb, process_block):
+	Likewise.
+	* local-propagation (mono_cprop_invalidate_values,
+	mono_local_cprop_bb): Likewise.
+	* mini-s390x.c (mono_arch_call_opcode, emit_sig_cookie,
+	peephole_pass, mono_arch_output_basic_block,
+	mono_arch_emit_prolog):	Likewise.
+	* mini-arm.c (mono_arch_call_opcode, peephole_pass,
+	NEW_INS, mono_arch_lowering_pass, mono_arch_local_regalloc,
+	mono_arch_emit_prolog): Likewise.
+	(insert_after_ins): Delete.
+	* aliasing.c (print_code_with_aliasing_information,
+	mono_build_aliasing_information, mono_aliasing_deadce):
+	Convert to new instruction lists.
+	* mini-ia64.c (emit_sig_cookie, mono_arch_call_opcode,
+	peephole_pass, NEW_INS, mono_arch_lowering_pass,
+	mono_arch_local_regalloc, mono_arch_output_basic_block):
+	Likewise.
+	(insert_after_ins): Delete.
+	* mini-sparc.c (emit_sig_cookie, mono_arch_call_opcode,
+	peephole_pass, mono_arch_output_basic_block): Convert to
+	new instruction lists.
+	* mini-codegen (InstList, inst_list_prepend,
+	insert_after_ins): Delete.
+	(insert_before_ins, get_register_force_spilling,
+	get_register_spilling, free_up_ireg, free_up_reg,
+	create_copy_ins, create_spilled_store, alloc_int_reg,
+	alloc_float_reg, alloc_reg, mono_local_regalloc): Convert
+	to new instruction lists.
+	* mini-ppc.c (mono_arch_call_opcode, peephole_pass,
+	NEW_INS, mono_arch_lowering_pass, mono_arch_local_regalloc,
+	mono_arch_output_basic_block, mono_arch_emit_prolog): Likewise.
+	(insert_after_ins): Delete.
+	* mini-alpha.c (NEW_INS, peephole_pass, mono_arch_lowering_pass,
+	mono_arch_local_regalloc, mono_arch_output_basic_block,
+	mono_arch_call_opcode): Convert to new instruction lists.
+	(insert_after_ins): Delete.
+	* mini-s390.c (mono_arch_call_opcode, emit_sig_cookie,
+	peephole_pass, mono_arch_output_basic_block,
+	mono_arch_emit_prolog): Convert to new instruction lists.
+
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Use a 4 byte load in OP_CHECK_THIS.
