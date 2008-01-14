@@ -31,13 +31,16 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class DOMHTMLElement : DOMElement, IDOMHTMLElement
+	internal class HTMLElement : Element, IElement
 	{
 		private nsIDOMHTMLElement element;
 
-		public DOMHTMLElement (IWebBrowser control, nsIDOMHTMLElement domHtmlElement) : base (control, domHtmlElement as nsIDOMElement)
+		public HTMLElement (WebBrowser control, nsIDOMHTMLElement domHtmlElement) : base (control, domHtmlElement as nsIDOMElement)
 		{
-			this.element = nsDOMHTMLElement.GetProxy (control, domHtmlElement);
+			if (control.platform != control.enginePlatform)
+				this.element = nsDOMHTMLElement.GetProxy (control, domHtmlElement);
+			else
+				this.element = domHtmlElement;
 		}
 
 		#region IDisposable Members
@@ -52,17 +55,14 @@ namespace Mono.Mozilla.DOM
 		}		
 		#endregion
 
-		#region IDOMHTMLElement Members
+		#region IElement Members
 
-		public string InnerText
+		public new string InnerHTML
 		{
 			get {
-				this.element.getNodeValue (storage);
+				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
+				nsElem.getInnerHTML (storage);
 				return Base.StringGet (storage);
-			}
-			set {
-				Base.StringSet (storage, value);
-				this.element.setNodeValue (storage);
 			}
 		}
 

@@ -17,18 +17,63 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
 
 using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using Mono.WebBrowser;
+using Mono.WebBrowser.DOM;
 
-namespace Mono.WebBrowser.DOM
+namespace Mono.Mozilla.DOM
 {
-	public interface IDOMHTMLElement
+	internal class Attribute : Node, IAttribute
 	{
-		string InnerText { get; set; }
+		private nsIDOMAttr attribute;
+
+		public Attribute (WebBrowser control, nsIDOMAttr domAttribute)
+			: base (control, domAttribute as nsIDOMNode)
+		{
+			if (control.platform != control.enginePlatform)
+				this.attribute = nsDOMAttr.GetProxy (control, domAttribute);
+			else
+				this.attribute = domAttribute;
+		}
+
+		#region IDisposable Members
+		protected override void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					this.attribute = null;
+				}
+			}
+			base.Dispose (disposing);
+		}
+		#endregion
+
+		#region IAttribute Members
+		public string Name
+		{
+			get
+			{
+				this.attribute.getName (storage);
+				return Base.StringGet (storage);
+			}
+		}
+
+		public new string Value
+		{
+			get
+			{
+				this.attribute.getValue (storage);
+				return Base.StringGet (storage);
+			}
+		}
+		#endregion
 	}
 }

@@ -3,7 +3,7 @@
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3A1F2BAF-B92F-4F90-8250-A0F04ACCEAD0}</ProjectGuid>
+    <ProjectGuid>{5E6C996A-007F-40CE-B244-006EFCFB77D2}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>
@@ -83,13 +83,16 @@
     <Compile Include="Mono.Mozilla\Callback.cs" />
     <Compile Include="Mono.Mozilla\ICallback.cs" />
     <Compile Include="Mono.Mozilla\WebBrowser.cs" />
-    <Compile Include="Mono.Mozilla\DOM\DOMElement.cs" />
-    <Compile Include="Mono.Mozilla\DOM\DOMHTMLDocument.cs" />
-    <Compile Include="Mono.Mozilla\DOM\DOMHTMLElement.cs" />
-    <Compile Include="Mono.Mozilla\DOM\DOMNode.cs" />
-    <Compile Include="Mono.Mozilla\DOM\DOMNodeList.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Attribute.cs" />
+    <Compile Include="Mono.Mozilla\DOM\AttributeCollection.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Document.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMObject.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Element.cs" />
+    <Compile Include="Mono.Mozilla\DOM\HTMLElement.cs" />
+    <Compile Include="Mono.Mozilla\DOM\HTMLElementCollection.cs" />
     <Compile Include="Mono.Mozilla\DOM\Navigation.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Node.cs" />
+    <Compile Include="Mono.Mozilla\DOM\NodeList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMAttr.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCDATASection.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCharacterData.cs" />
@@ -108,6 +111,7 @@
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMNamedNodeMap.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMNode.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMNodeList.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMNSHTMLElement.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMProcessingInstruction.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMRange.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMText.cs" />
@@ -118,16 +122,19 @@
     <Compile Include="Mono.Mozilla\interfaces\nsISimpleEnumerator.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIURI.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIWebNavigation.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\extras\NodeType.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\nsIWriteSegmentFun.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\Options.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\IDOMElement.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLDocument.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\IDOMHTMLElement.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\IDOMNode.cs" />
-    <Compile Include="Mono.WebBrowser\DOM\IDOMNodeList.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IAttribute.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IAttributeCollection.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDocument.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IElement.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IElementCollection.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INavigation.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\INode.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\INodeList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />

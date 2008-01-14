@@ -24,66 +24,19 @@
 //
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Collections;
 using Mono.WebBrowser;
-using Mono.WebBrowser.DOM;
 
-namespace Mono.Mozilla.DOM
+namespace Mono.WebBrowser.DOM
 {
-	internal class DOMNode: DOMObject, IDOMNode
+	public interface IDocument : INode
 	{
-		private nsIDOMNode node;
-		Hashtable resources;
+		IElement Body { get; }
+		IElement DocumentElement { get; }
+		IElement GetElementById (string id);
+		IElementCollection GetElementsByTagName (string id);
+		string Title { get; set;}
+		string Url { get; }
 		
-		public DOMNode (IWebBrowser control, nsIDOMNode domNode) : base (control)
-		{
-			this.node = nsDOMNode.GetProxy (control, domNode);
-			resources = new Hashtable ();
-		}
-
-		#region IDisposable Members
-		protected override  void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					this.resources.Clear ();
-					this.node = null;
-				}
-			}
-			base.Dispose(disposing);
-		}		
-		#endregion
-
-		#region IDOMNode Members
-
-		public IDOMNode FirstChild {
-			get {
-				if (!resources.Contains ("FirstChild")) {
-					nsIDOMNode child;
-					this.node.getFirstChild (out child);
-					resources.Add ("FirstChild", new DOMNode (control, child));
-				}
-				return resources["FirstChild"] as IDOMNode;
-			}
-		}
-
-		public string LocalName {
-			get {
-				this.node.getLocalName (storage);
-				return Base.StringGet (storage);				
-			}
-		}
-
-		public string Value {
-			get
-			{
-				this.node.getNodeValue (storage);
-				return Base.StringGet (storage);
-			}
-		}
 		
-		#endregion
 	}
 }

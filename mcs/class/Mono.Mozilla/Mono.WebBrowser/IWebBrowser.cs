@@ -43,7 +43,7 @@ namespace Mono.WebBrowser
 		void Resize (int width, int height);
 		void Navigate (string url);
 
-		IDOMHTMLDocument Document { get; }
+		IDocument Document { get; }
 		INavigation Navigation { get; }
 
 		event EventHandler KeyDown;
@@ -112,6 +112,7 @@ namespace Mono.WebBrowser
 
 	public enum Platform
 	{
+		Unknown = 0,
 		Winforms = 1,
 		Gtk = 2
 	}

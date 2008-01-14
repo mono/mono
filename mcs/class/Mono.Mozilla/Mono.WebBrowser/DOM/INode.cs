@@ -17,23 +17,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007, 2008 Novell, Inc.
+// Copyright (c) 2007 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
 
 using System;
-using Mono.WebBrowser;
 
 namespace Mono.WebBrowser.DOM
 {
-	public interface IDOMHTMLDocument
+	public interface INode
 	{
-		IDOMHTMLElement Body { get; }
-		string Title { get; set;}
-		string Url { get; }
-		IDOMHTMLElement GetElementById (string id);
-		IDOMElement DocumentElement { get; }
+		INodeList ChildNodes { get; }
+		INode FirstChild { get; }
+		string LocalName { get; }
+		NodeType Type { get;}
+		string Value {get;} 
+		
+	}
+	
+	public enum NodeType
+	{
+		Element       = 1,
+		Attribute     = 2,
+		Text          = 3,
+		CDataSection  = 4,
+		EntityReference = 5,
+		Entity       = 6,
+		ProcessingInstruction = 7,
+		Comment       = 8,
+		Document      = 9,
+		DocumentType = 10,
+		DocumentFragment = 11,
+		Notation      = 12
 	}
 }

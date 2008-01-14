@@ -16,7 +16,7 @@ dohead()
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3A1F2BAF-B92F-4F90-8250-A0F04ACCEAD0}</ProjectGuid>
+    <ProjectGuid>{5E6C996A-007F-40CE-B244-006EFCFB77D2}</ProjectGuid>
     <Configuration Condition=" '\$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '\$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon>

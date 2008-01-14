@@ -1,5 +1,84 @@
 2008-01-14  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.Mozilla.dll.sources, Mono.Mozilla2K5.csproj: Updated.
+	
+	* build-csproj2k5: Fix guid.
+
+	* Mono.Mozilla/DOM/*, Mono.WebBrowser/DOM/*:
+	  - Reorganization to get rid of unneeded DOM prefix.
+	  - All constructors now get a proxy only if the application is running under
+	    a different toolkit than the mozilla engine. If they match, no proxies are
+	    needed since there is no need to switch threads.
+	
+	* Mono.Mozilla/DOM/DOMObject.cs:
+	  - Move resources list to here since most objects need one.
+	  - WebBrowser now has some internal methods, so store the class instead of the
+	    interface for child classes to use.
+	
+	* Mono.Mozilla/DOM/HTMLElement.cs, Mono.Mozilla/DOM/Element.cs: 
+	  IElement represents all element types (html or not), and is implemented
+	  by two classes, one that wraps html elements, and another that wraps other 
+	  element types. IElement represents both in the public API so it's easier 
+	  to deal with for the api user.
+	
+	* Mono.Mozilla/DOM/Attribute.cs, 
+	  Mono.Mozilla/DOM/AttributeCollection.cs,
+	  Mono.WebBrowser/DOM/IAttributeCollection.cs,
+	  Mono.WebBrowser/DOM/IAttribute.cs:
+	  Added. Represent attributes from an element.
+	  
+	* Mono.Mozilla/DOM/Document.cs, Mono.WebBrowser/DOM/IDocument.cs: 
+	  - renamed from DOMHTMLDocument and IDOMHTMLDocument, respectively
+	  - Added GetElementsByTagName method.
+	  - Document is now retrieved from the WebNavigation interface, so get a proxy for
+	    it in the constructor.
+	  - Add an internal method that returns the unmanaged resource, the Element.InnerText
+	    property needs to use it.
+	
+	* Mono.Mozilla/DOM/Element.cs, Mono.WebBrowser/DOM/IElement.cs: 
+	  - renamed from DOMElement and IDOMElement, respectively
+	  - Added the following properties: InnerText, InnerHTML, All (returns all child
+	    elements), HasAttribute, GetAttribute. InnerHTML is virtual, and is implemented
+	    in HTMLElement.
+
+	* Mono.Mozilla/DOM/HTMLElement.cs: Implement InnerHTML property. 
+
+	* Mono.Mozilla/DOM/HTMLElementCollection.cs: Added. Subclass of NodeList that
+	  represents a list of html elements.
+
+	* Mono.Mozilla/DOM/Navigation.cs: Added a Document property that uses the 
+	  nsIWebNavigation interface to access the Document directly instead of going 
+	  through gluezilla.
+	  
+	* Mono.Mozilla/DOM/Node.cs, Mono.WebBrowser/DOM/INode.cs: Renamed from 
+	  DOMNode and IDOMNode, respectively. Added the following properties:
+	  - Attributes (returns the attributes of a node)
+	  - ChildNodes
+	  - Type (returns the type of a node, i.e., Element, Attribute, etc)
+	  - FirstChild
+	  - LocalName
+	  Added public enumeration to determine a node type.
+
+	* Mono.Mozilla/DOM/NodeList.cs, Mono.WebBrowser/DOM/INodeList.cs: Renamed
+	  from DOMNodeList and IDOMNodeList, respectively. Allow subclasses to fill in and 
+	  access the collection of nodes, as well as override the loading method.
+	 
+	* Mono.Mozilla/interfaces/extras/NodeType.cs: Added. Represents the various 
+	  types of a Node (element, attribute, etc).
+	
+	* Mono.WebBrowser/DOM/IDOMHTMLElement.cs: Removed. Merged with IElement.
+	
+	* Mono.Mozilla/Base.cs: Add support for tracking which toolkit the 
+	  application is running under, so I know if I need to create threads and 
+	  proxies or not. Send that info to gluezilla, and get back which toolkit
+	  the mozilla engine is using.
+	  
+	* Mono.Mozilla/WebBrowser.cs: Save the application and engine toolkit info.
+	  Change the Document accessor so it goes through the Navigation object instead
+	  of thru gluezilla.
+
+2008-01-14  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla/interfaces/nsIDOMNSHTMLElement.cs: Added. Interface to
 	access the InnerHtml property of an element.
 

@@ -40,9 +40,10 @@ namespace Mono.Mozilla
 	public class WebBrowser : Component, IWebBrowser, ICallback
 	{
 		private bool loaded;
-		private DOM.DOMHTMLDocument document;
+		private DOM.Document document;
 		private DOM.Navigation navigation;
-		private Platform platform;
+		internal Platform platform;
+		internal Platform enginePlatform;
 
 		public WebBrowser (Platform platform)
 		{
@@ -60,16 +61,20 @@ namespace Mono.Mozilla
 		{
 			Base.Shutdown (this);
 		}
+		
+		internal void Reset ()
+		{
+			this.document = null;	
+		}
 
-		public IDOMHTMLDocument Document
+		public IDocument Document
 		{
 			get
 			{
 				if (document == null) {
-					nsIDOMHTMLDocument doc = Base.GetDOMDocument (this);
-					document = new DOM.DOMHTMLDocument (this, doc);
+					document = ((DOM.Navigation) Navigation).Document;
 				}
-				return document as IDOMHTMLDocument;
+				return document as IDocument;
 			}
 		}
 

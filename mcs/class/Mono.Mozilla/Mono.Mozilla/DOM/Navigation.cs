@@ -36,7 +36,7 @@ namespace Mono.Mozilla.DOM
 
 		private nsIWebNavigation navigation;
 		
-		public Navigation (IWebBrowser control, nsIWebNavigation webNav) : base (control)
+		public Navigation (WebBrowser control, nsIWebNavigation webNav) : base (control)
 		{
 			this.navigation = webNav;
 		}
@@ -137,5 +137,14 @@ namespace Mono.Mozilla.DOM
 		}
 
 		#endregion
+
+		internal Document Document
+		{
+			get {
+				nsIDOMDocument doc;
+				this.navigation.getDocument (out doc);
+				return new Document (control, doc as nsIDOMHTMLDocument);
+			}
+		}
 	}
 }

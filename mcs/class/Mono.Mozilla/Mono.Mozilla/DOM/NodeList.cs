@@ -33,15 +33,21 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class DOMNodeList : DOMObject, IDOMNodeList, IList
+	internal class NodeList : DOMObject, INodeList
 	{
-		private IWebBrowser control;
-		private nsIDOMNodeList unmanagedNodes;
-		private DOMNode [] nodes;
+		protected nsIDOMNodeList unmanagedNodes;
+		protected Node [] nodes;
 		
-		public DOMNodeList(IWebBrowser control, nsIDOMNodeList nodeList) : base (control)
+		public NodeList(WebBrowser control, nsIDOMNodeList nodeList) : base (control)
 		{
-			unmanagedNodes = nsDOMNodeList.GetProxy (control, nodeList);
+			if (control.platform != control.enginePlatform)
+				unmanagedNodes = nsDOMNodeList.GetProxy (control, nodeList);
+			else
+				unmanagedNodes = nodeList;
+		}
+
+		public NodeList (WebBrowser control) : base (control)
+		{
 		}
 		
 		#region IDisposable Members
@@ -57,8 +63,8 @@ namespace Mono.Mozilla.DOM
 		}		
 		#endregion
 
-		#region Private
-		private void Clear () 
+		#region Helpers
+		protected void Clear () 
 		{
 			if (nodes != null) {
 				for (int i = 0; i < nodes.Length; i++) {
@@ -68,16 +74,26 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 		
-		private void Load ()
+		internal virtual void Load ()
 		{
 			Clear ();
 			uint count;
 			unmanagedNodes.getLength (out count);
-			nodes = new DOMNode[count];
+			nodes = new Node[count];
 			for (int i = 0; i < count; i++) {
 				nsIDOMNode node;
 				unmanagedNodes.item ((uint)i, out node);
-				nodes[i] = new DOMNode (control, node);
+				ushort type;
+				node.getNodeType (out type);
+				switch (type) {
+					case (ushort)NodeType.Element:
+						nodes[i] = new HTMLElement (control, node as nsIDOMHTMLElement);
+						break;
+					default:
+						nodes[i] = new Node (control, node);
+						break;
+				}
+				
 			}
 		}
 		#endregion
@@ -85,7 +101,7 @@ namespace Mono.Mozilla.DOM
 		#region IEnumerable members
 		public IEnumerator GetEnumerator ()
 		{
-			return new DOMNodeListEnumerator (this);
+			return new NodeListEnumerator (this);
 		}
 		#endregion
 		
@@ -99,7 +115,7 @@ namespace Mono.Mozilla.DOM
 			get {
 				if (nodes == null)
 					Load ();
-				return nodes.GetLength(1); 
+				return nodes.GetLength(0); 
 			}
 		}
 		
@@ -155,7 +171,7 @@ namespace Mono.Mozilla.DOM
 			set {}
 		}
 		
-		public DOMNode this [int index] {
+		public INode this [int index] {
 			get {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
@@ -166,12 +182,12 @@ namespace Mono.Mozilla.DOM
 		
 		#endregion
 
-		internal class DOMNodeListEnumerator : IEnumerator {
+		internal class NodeListEnumerator : IEnumerator {
 
-			private DOMNodeList collection;
+			private NodeList collection;
 			private int index = -1;
 
-			public DOMNodeListEnumerator (DOMNodeList collection)
+			public NodeListEnumerator (NodeList collection)
 			{
 				this.collection = collection;
 			}

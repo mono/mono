@@ -17,58 +17,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007, 2008 Novell, Inc.
+// Copyright (c) 2007 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Collections;
-using Mono.WebBrowser;
 
-namespace Mono.Mozilla.DOM
+namespace Mono.WebBrowser.DOM
 {
-	internal class DOMObject : IDisposable
+	public interface IAttribute : INode
 	{
-		protected WebBrowser control;
-		internal HandleRef storage;
-		protected bool disposed = false;
-		protected Hashtable resources;
-
-		internal DOMObject (WebBrowser control)
-		{
-			this.control = control;
-			IntPtr p = Base.StringInit ();
-			storage = new HandleRef (this, p);
-			resources = new Hashtable ();
-		}
-
-		~DOMObject ()
-		{
-			Dispose (false);
-		}
-
-		#region IDisposable Members
-
-		protected virtual void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					Base.StringFinish (storage);
-				}
-				disposed = true;
-			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		#endregion
+		string Name { get;}
 	}
 }

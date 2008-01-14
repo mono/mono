@@ -27,8 +27,12 @@ using System;
 
 namespace Mono.WebBrowser.DOM
 {
-	public interface IDOMNode
+	public interface IElement : INode
 	{
-		string Value {get;} 
+		IElementCollection All { get; }
+		string InnerText { get; set; }
+		string InnerHTML { get; }
+		bool HasAttribute (string name);
+		string GetAttribute (string name);
 	}
 }

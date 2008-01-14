@@ -27,12 +27,41 @@
 //
 
 using System;
+using Mono.WebBrowser;
+using Mono.WebBrowser.DOM;
 
-namespace Mono.WebBrowser.DOM
+
+namespace Mono.Mozilla.DOM
 {
-	
-	
-	public interface IDOMNodeList
+	internal class HTMLElementCollection : NodeList
 	{
+		public HTMLElementCollection (WebBrowser control, nsIDOMNodeList nodeList) : base (control, nodeList)
+		{
+		}
+		
+		internal override void Load ()
+		{
+			Clear ();
+			uint count;
+			unmanagedNodes.getLength (out count);
+			nodes = new Node[count];
+			for (int i = 0; i < count; i++) {
+				nsIDOMNode node;
+				unmanagedNodes.item ((uint)i, out node);
+				nodes[i] = new HTMLElement (control, node as nsIDOMHTMLElement);
+			}
+		}
+		
+		#region IList members
+		public new IElement this [int index] {
+			get {
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("index");
+				return nodes [index] as IElement;
+			}
+			set {}
+		}
+		
+		#endregion
 	}
 }

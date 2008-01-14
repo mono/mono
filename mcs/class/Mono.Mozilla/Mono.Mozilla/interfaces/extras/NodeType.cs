@@ -27,31 +27,22 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
-using Mono.WebBrowser;
-using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class DOMElement : DOMNode, IDOMElement
+	public enum NodeType : ushort 
 	{
-		private nsIDOMElement element;
-		
-		public DOMElement(IWebBrowser control, nsIDOMElement domElement) : base (control, domElement as nsIDOMNode)
-		{
-			this.element = nsDOMElement.GetProxy (control, domElement);
-		}
-
-		#region IDisposable Members
-		protected override  void Dispose (bool disposing)
-		{
-			if (!disposed) {
-				if (disposing) {
-					this.element = null;
-				}
-			}
-			base.Dispose(disposing);
-		}		
-		#endregion
+		Element       = 1,
+		Attribute     = 2,
+		Text          = 3,
+		CDataSection  = 4,
+		EntityReference = 5,
+		Entity       = 6,
+		ProcessingInstruction = 7,
+		Comment       = 8,
+		Document      = 9,
+		DocumentType = 10,
+		DocumentFragment = 11,
+		Notation      = 12
 	}
 }

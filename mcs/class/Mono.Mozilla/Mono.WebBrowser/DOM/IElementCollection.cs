@@ -29,9 +29,9 @@
 using System;
 
 namespace Mono.WebBrowser.DOM
-{
-	public interface IDOMElement : IDOMNode
+{	
+	public interface IElementCollection : INodeList
 	{
-		
+		IElement this [int index]{ get; set; }
 	}
 }
