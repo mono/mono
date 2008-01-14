@@ -935,7 +935,7 @@ namespace System {
 #endif
 		public ConstructorInfo GetConstructor (Type[] types)
 		{
-			return GetConstructor (DefaultBindingFlags, null, CallingConventions.Any, types, null);
+			return GetConstructor (BindingFlags.Public|BindingFlags.Instance, null, CallingConventions.Any, types, null);
 		}
 
 #if NET_2_0

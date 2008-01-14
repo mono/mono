@@ -1,3 +1,8 @@
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (GetConstructor): Use correct binding flags in type (Type[]) overload.
+	Fixes #353604.
+
 2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.cs, Double.cs, Single.cs: Fix Single & Double default
