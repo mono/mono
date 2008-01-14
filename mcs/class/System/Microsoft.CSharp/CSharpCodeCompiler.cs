@@ -332,15 +332,13 @@ namespace Mono.CSharp
 				if (langver.Length >= 1 && langver [0] == 'v')
 					langver = langver.Substring (1);
 
-				// NOTE: when -langversion:linq becomes obsolete/default, the code
-				// below must be changed!
 				switch (langver) {
 					case "2.0":
-						// current default, omit the switch
+						args.Append ("/langversion:ISO-2");
 						break;
 
 					case "3.5":
-						args.Append ("/langversion:linq");
+						// current default, omit the switch
 						break;
 				}
 			}
