@@ -1,3 +1,7 @@
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* RegistryKey.cs: Fix some argument names to be consistent with MS.
+
 2007-10-13  kevin.fitzgerald@soarce.us
 
 	* UnixRegistryApi.cs: Escape the strings before passing them to

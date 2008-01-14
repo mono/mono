@@ -219,21 +219,21 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Open the sub key specified, for read access.
 		/// </summary>
-		public RegistryKey OpenSubKey (string keyName)
+		public RegistryKey OpenSubKey (string name)
 		{
-			return OpenSubKey (keyName, false);
+			return OpenSubKey (name, false);
 		}
 
 		
 		/// <summary>
 		///	Open the sub key specified.
 		/// </summary>
-		public RegistryKey OpenSubKey (string keyName, bool writtable)
+		public RegistryKey OpenSubKey (string name, bool writable)
 		{
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (keyName);
+			AssertKeyNameNotNull (name);
 
-			return RegistryApi.OpenSubKey (this, keyName, writtable);
+			return RegistryApi.OpenSubKey (this, name, writable);
 		}
 		
 		
@@ -345,47 +345,47 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Delete a sub tree (node, and values alike).
 		/// </summary>
-		public void DeleteSubKeyTree(string keyName)
+		public void DeleteSubKeyTree(string subkey)
 		{
 			// Note: this is done by deleting sub-nodes recursively.
 			// The preformance is not very good. There may be a 
 			// better way to implement this.
 			
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (keyName);
+			AssertKeyNameNotNull (subkey);
 			
-			RegistryKey child = OpenSubKey (keyName, true);
+			RegistryKey child = OpenSubKey (subkey, true);
 			if (child == null)
 				throw new ArgumentException ("Cannot delete a subkey tree"
 					+ " because the subkey does not exist.");
 
 			child.DeleteChildKeysAndValues ();
 			child.Close ();
-			DeleteSubKey (keyName, false);
+			DeleteSubKey (subkey, false);
 		}
 		
 
 		/// <summary>
 		///	Delete a value from the registry.
 		/// </summary>
-		public void DeleteValue(string value)
+		public void DeleteValue(string name)
 		{
-			DeleteValue (value, true);
+			DeleteValue (name, true);
 		}
 		
 		
 		/// <summary>
 		///	Delete a value from the registry.
 		/// </summary>
-		public void DeleteValue(string value, bool shouldThrowWhenKeyMissing)
+		public void DeleteValue(string name, bool throwOnMissingValue)
 		{
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (value);
+			AssertKeyNameNotNull (name);
 
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
 
-			RegistryApi.DeleteValue (this, value, shouldThrowWhenKeyMissing);
+			RegistryApi.DeleteValue (this, name, throwOnMissingValue);
 		}
 
 #if NET_2_0
