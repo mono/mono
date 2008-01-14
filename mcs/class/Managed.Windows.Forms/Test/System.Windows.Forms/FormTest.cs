@@ -2657,6 +2657,51 @@ namespace MonoTests.System.Windows.Forms
 			private bool _isDefault;
 			private DialogResult _dialogResult = DialogResult.None;
 		}
+		
+#if NET_2_0
+		[Test]
+		public void RestoreBounds ()
+		{
+			Form f = new Form ();
+			f.Show ();
+			
+			Assert.AreEqual (new Size (300, 300), f.RestoreBounds.Size, "A1");
+			
+			// Move the form
+			f.Location = new Point (0, 0);
+			Assert.AreEqual (new Rectangle (0, 0, 300, 300), f.RestoreBounds, "A2");
+			
+			// Resize the form
+			f.Size = new Size (250, 250);
+			Assert.AreEqual (new Rectangle (0, 0, 250, 250), f.RestoreBounds, "A3");
+			
+			// Minimize the form
+			f.WindowState = FormWindowState.Minimized;
+			Assert.AreEqual (new Rectangle (0, 0, 250, 250), f.RestoreBounds, "A4");
+
+			// Move the form (while minimized)
+			f.Location = new Point (10, 10);
+			Assert.AreEqual (new Rectangle (10, 10, 250, 250), f.RestoreBounds, "A5");
+
+			// Resize the form (while minimized)
+			f.Size = new Size (275, 275);
+			Assert.AreEqual (new Rectangle (10, 10, 275, 275), f.RestoreBounds, "A6");
+			
+			// Maximize the form
+			f.WindowState = FormWindowState.Maximized;
+			Assert.AreEqual (new Rectangle (10, 10, 275, 275), f.RestoreBounds, "A7");
+
+			// Move the form (while maximized)
+			f.Location = new Point (20, 20);
+			Assert.AreEqual (new Rectangle (20, 20, 275, 275), f.RestoreBounds, "A8");
+
+			// Resize the form (while maximized)
+			f.Size = new Size (285, 285);
+			Assert.AreEqual (new Rectangle (20, 20, 285, 285), f.RestoreBounds, "A9");
+			
+			f.Dispose ();
+		}
+#endif
 	}
 
 	public class TimeBombedForm : Form

@@ -98,6 +98,7 @@ namespace System.Windows.Forms {
 		private MenuStrip		main_menu_strip;
 		private bool			show_icon = true;
 		private bool			right_to_left_layout;
+		private Rectangle		restore_bounds;
 #endif
 		#endregion	// Local Variables
 
@@ -406,6 +407,10 @@ namespace System.Windows.Forms {
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
 			InternalClientSize = new Size (this.Width - (SystemInformation.FrameBorderSize.Width * 2), this.Height - (SystemInformation.FrameBorderSize.Height * 2) - SystemInformation.CaptionHeight);
+			
+#if NET_2_0
+			restore_bounds = Bounds;
+#endif
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -1137,6 +1142,11 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[Browsable (false)]
+		public Rectangle RestoreBounds {
+			get { return restore_bounds; }
+		}
+		
 		[Localizable (true)]
 		[DefaultValue (false)]
 		public virtual bool RightToLeftLayout {
@@ -2304,6 +2314,14 @@ namespace System.Windows.Forms {
 				height = Math.Max (height, SystemInformation.MinimumWindowSize.Height);
 				
 			base.SetBoundsCore (x, y, width, height, specified);
+
+#if NET_2_0
+			int restore_x = (specified & BoundsSpecified.X) == BoundsSpecified.X ? x : restore_bounds.X;
+			int restore_y = (specified & BoundsSpecified.Y) == BoundsSpecified.Y ? y : restore_bounds.Y;
+			int restore_w = (specified & BoundsSpecified.Width) == BoundsSpecified.Width ? width : restore_bounds.Width;
+			int restore_h = (specified & BoundsSpecified.Height) == BoundsSpecified.Height ? height : restore_bounds.Height;
+			restore_bounds = new Rectangle (restore_x, restore_y, restore_w, restore_h);
+#endif			
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -2579,6 +2597,11 @@ namespace System.Windows.Forms {
 		private void WmWindowPosChanged (ref Message m)
 		{
 			base.WndProc (ref m);
+
+#if NET_2_0
+			if (WindowState == FormWindowState.Normal)
+				restore_bounds = Bounds;
+#endif
 		}
 
 #if NET_2_0
