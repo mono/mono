@@ -1,3 +1,7 @@
+2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpCookie.cs: Fix HttpOnly setter. Found using Gendarme.
+
 2008-01-02  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* HttpContext.cs: added resource manager caching in GetResourceObject

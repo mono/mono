@@ -213,7 +213,10 @@ namespace System.Web {
 			}
 
 			set {
-				flags |= CookieFlags.HttpOnly;
+				if (value)
+					flags |= CookieFlags.HttpOnly;
+				else
+					flags &= ~CookieFlags.HttpOnly;
 			}
 		}
 #endif
