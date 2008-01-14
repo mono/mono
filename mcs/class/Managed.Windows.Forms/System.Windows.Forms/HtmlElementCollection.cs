@@ -26,34 +26,81 @@
 
 using System;
 using System.Collections;
+using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
 	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlElementCollection: ICollection, IEnumerable
 	{
-		[MonoTODO ("Needs Implementation")]
+		private IElementCollection collection;
+		private HtmlElement[] elements;
+
+		internal HtmlElementCollection (IElementCollection col)
+		{
+			collection = col;
+		}
+
+		private HtmlElementCollection (HtmlElement[] elems)
+		{
+			elements = elems;
+		}
+
 		public int Count
 		{
-			get { return 0; }
+			get { 
+				if (collection != null)
+					return collection.Count;
+				if (elements != null)
+					return elements.Length;
+				return 0;
+			}
 		}
 
-		[MonoTODO ("Needs Implementation")]
 		public HtmlElement this[string elementId]
 		{
-			get { return null; }
+			get {
+				if (collection != null) {
+					foreach (IElement elem in collection) {
+						if (elem.HasAttribute ("id") && elem.GetAttribute ("id").Equals (elementId)) {
+							return new HtmlElement (elem);
+						}
+					}					
+				}
+				if (elements != null) {
+					for (int i = 0; i < elements.Length; i++) {
+						if (elements[i].Id.Equals (elementId))
+							return elements[i];
+					}
+				}
+				return null;
+			}
 		}
 
-		[MonoTODO ("Needs Implementation")]
 		public HtmlElement this[int index]
 		{
-			get { return null; }
+			get {
+				if (collection != null)
+					return new HtmlElement(collection[index]);
+				if (elements != null)
+					return elements[index];
+				return null;
+			}
 		}
 
-		[MonoTODO ("Needs Implementation")]
 		public HtmlElementCollection GetElementsByName (string name)
 		{
-			throw new NotImplementedException ();
+			HtmlElement[] elems = new HtmlElement[this.Count];
+			int count = 0;
+			foreach (IElement elem in collection) {
+				if (elem.HasAttribute ("name") && elem.GetAttribute ("name").Equals (name)) {
+					elems[count] = new HtmlElement (elem);
+					count++;
+				}
+			}
+			HtmlElement[] resized = new HtmlElement [count];
+			elems.CopyTo (resized, 0);
+			return new HtmlElementCollection (resized);
 		}
 
 		[MonoTODO ("Needs Implementation")]

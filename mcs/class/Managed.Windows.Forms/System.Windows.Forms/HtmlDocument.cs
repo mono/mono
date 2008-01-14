@@ -77,7 +77,8 @@ namespace System.Windows.Forms
 
 		public HtmlElementCollection GetElementsByTagName (string tagName) 
 		{
-			throw new NotImplementedException ();
+			Mono.WebBrowser.DOM.IElementCollection col = webHost.Document.GetElementsByTagName (tagName);
+			return new HtmlElementCollection (col);
 		}
 
 		public override int GetHashCode () 

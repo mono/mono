@@ -32,31 +32,45 @@ namespace System.Windows.Forms
 	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlElement
 	{
-		private IDOMHTMLElement element;
-		internal HtmlElement (IDOMHTMLElement element)
+		private IElement element;
+		internal HtmlElement (IElement element)
 		{
 			this.element = element;
 		}
 
 		#region Properties
-		[MonoTODO ("Needs Implementation")]
 		public HtmlElementCollection All
 		{
-			get { throw new NotImplementedException (); }
+			get {
+				return new HtmlElementCollection (this.element.All);
+			}
 		}
 
-		[MonoTODO ("Needs Implementation")]
 		public string InnerHtml
 		{
-			get { return String.Empty; }
+			get { return this.element.InnerHTML; }
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO ("Needs Implementation")]
 		public string InnerText
 		{
 			get { return this.element.InnerText; }
 			set { this.element.InnerText = value; }
+		}
+
+		public string Id
+		{
+			get { return element.GetAttribute ("id"); }
+		}
+
+		public string Name
+		{
+			get { return element.GetAttribute ("name"); }
+		}
+
+		public HtmlElement FirstChild
+		{
+			get { return new HtmlElement ((IElement)element.FirstChild); }
 		}
 		#endregion
 
