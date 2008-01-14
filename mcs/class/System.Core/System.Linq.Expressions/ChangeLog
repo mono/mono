@@ -1,5 +1,9 @@
 2008-01-14  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ExpressionPrinter.cs: fix for Quote's type.
+
+2008-01-14  Jb Evain  <jbevain@novell.com>
+
 	* BinaryExpression.cs,
 	* Expression.cs: revert part of Miguel's last patch.
 	MakeBinary is expected to call the appropriate factory

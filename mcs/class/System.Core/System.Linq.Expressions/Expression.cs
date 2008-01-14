@@ -895,7 +895,7 @@ namespace System.Linq.Expressions {
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
-			return new UnaryExpression (ExpressionType.Quote, expression);
+			return new UnaryExpression (ExpressionType.Quote, expression, expression.GetType ());
 		}
 
 		[MonoTODO]
