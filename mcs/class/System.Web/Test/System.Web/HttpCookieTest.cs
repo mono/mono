@@ -393,5 +393,17 @@ namespace MonoTests.System.Web {
 				+ "%2b%253d%2bc%255e2&three=a%2b%2526%2bb",
 				cookie2.Values.ToString (), "#J10");
 		}
+#if NET_2_0
+		[Test]
+		public void HttpOnly ()
+		{
+			HttpCookie biscuit = new HttpCookie ("mium");
+			Assert.IsFalse (biscuit.HttpOnly, "default");
+			biscuit.HttpOnly = true;
+			Assert.IsTrue (biscuit.HttpOnly, "true");
+			biscuit.HttpOnly = false;
+			Assert.IsFalse (biscuit.HttpOnly, "false");
+		}
+#endif
 	}
 }

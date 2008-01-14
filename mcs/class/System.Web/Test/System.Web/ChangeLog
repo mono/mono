@@ -1,3 +1,7 @@
+2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpCookieTest.cs: Added HttpOnly test cases.
+
 2007-12-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpCookieCollectionTest.cs: Added test for string indexer and
