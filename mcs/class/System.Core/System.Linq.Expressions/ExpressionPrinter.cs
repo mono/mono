@@ -165,7 +165,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.TypeIs:
 				Print ("(");
 				Visit (type.Expression);
-				Print (" Is {0})",type.TypeOperand.Name);
+				Print (" Is {0})", type.TypeOperand.Name);
 				return;
 			}
 
