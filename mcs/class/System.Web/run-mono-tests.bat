@@ -46,7 +46,6 @@ REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\java_refs\framework\
 set TOMCAT_PATH=%VMW_HOME%\jakarta-tomcat\common\lib\
-set TOMCAT_SHARED_PATH=%VMW_HOME%\jakarta-tomcat\shared\lib\
 set JAVA_HOME=%VMW_HOME%\jre
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
@@ -58,7 +57,7 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%Mainsoft.Web.jar
 rem set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.Drawing.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%J2SE.Helpers.jar
 
-set FACES_PATH=%JGAC_PATH%\myfaces\
+set FACES_PATH=%JGAC_PATH%myfaces\
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%FACES_PATH%commons-beanutils-1.7.0.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%FACES_PATH%commons-codec-1.3.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%FACES_PATH%commons-collections-3.1.jar
@@ -78,7 +77,6 @@ set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\NunitWeb\NunitWeb\bin\De
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;Test\mainsoft\MainsoftWebTest\bin\Debug_Java20\HtmlCompare.jar
 
 set TOMCAT_CLASSPATH=%TOMCAT_PATH%servlet-api.jar
-set TOMCAT_CLASSPATH=%TOMCAT_CLASSPATH%;%TOMCAT_SHARED_PATH%myfaces-api-1.1.5.jar
 set NUNIT_OPTIONS=/exclude=NotWorking
 
 if "%GH_VERSION%"=="" (
