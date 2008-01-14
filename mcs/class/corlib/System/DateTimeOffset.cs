@@ -298,6 +298,12 @@ namespace System
 			if (formats.Length == 0)
 				throw new FormatException ("Invalid format specifier");
 
+			if ((styles & DateTimeStyles.AssumeLocal) != 0 && (styles & DateTimeStyles.AssumeUniversal) != 0)
+				throw new ArgumentException ("styles parameter contains incompatible flags");
+
+			if ((styles & DateTimeStyles.None) != 0 && (styles & DateTimeStyles.AllowWhiteSpaces) != 0)
+				throw new ArgumentException ("styles parameter contains incompatible flags");
+
 			DateTimeOffset result;
 			if (!ParseExact (input, formats, DateTimeFormatInfo.GetInstance (formatProvider), styles, out result))
 				throw new FormatException ();
@@ -330,10 +336,24 @@ namespace System
 				DateTimeFormatInfo dfi,
 				DateTimeStyles styles)
 		{
-			bool useutc=false, use_invariants = false;
+			if ((styles & DateTimeStyles.AllowLeadingWhite) != 0) {
+				format = format.TrimStart (null);
+				input = input.TrimStart (null);
+			}
+
+			if ((styles & DateTimeStyles.AllowTrailingWhite) != 0) {
+				format = format.TrimEnd (null);
+				input = input.TrimEnd (null);
+			}
+
+			bool allow_white_spaces = false;
+			if ((styles & DateTimeStyles.AllowInnerWhite) != 0)
+				allow_white_spaces = true;
+
+			bool useutc = false, use_invariants = false;
 			if (format.Length == 1)
 				format = DateTimeUtils.GetStandardPattern (format[0], dfi, out useutc, out use_invariants, true);
-
+		
 			int year = -1;
 			int month = -1;
 			int day = -1;
@@ -350,122 +370,54 @@ namespace System
 				switch (ch) {
 				case 'd':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
-					switch (tokLen) {
-						case 1:
-							int l = 1;
-							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
-								l = 2;
-							day = Int32.Parse (input.Substring (ii, l));
-							ii += l;
-							break;
-						case 2:
-							day = Int32.Parse (input.Substring (ii, 2));
-							ii += 2;
-							break;
-						case 3:
-						case 4:
-							ii = input.IndexOf (format [fi + tokLen]);
-							break;
-						default:
-							throw new FormatException ();
-							break;
+					if (day != -1 || tokLen > 4) {
+						result = MinValue;
+						return false;
 					}
-					
+					if (tokLen <= 2)
+						ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out day);
+					else {
+						int day_of_week;
+						ii += ParseEnum (input, ii, tokLen == 3 ? dfi.AbbreviatedDayNames : dfi.DayNames, allow_white_spaces, out day_of_week); 
+					} 
 					break;
 				case 'h':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
-					switch(tokLen) {
-						case 1:
-							int l = 1;
-							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
-								l = 2;
-							if (hour == -1)
-								hour = 0;
-							hour += Int32.Parse (input.Substring (ii, l));
-							ii += l;
-							break;
-						case 2:
-							if (hour == -1)
-								hour = 0;
-							hour += Int32.Parse (input.Substring (ii, 2));
-							ii += 2;
-							break;
-						default:
-							throw new FormatException ();
-							break;
+					if (hour != -1 || tokLen > 2) {
+						result = MinValue;
+						return false;
 					}
+					ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out hour);
 					break;
 				case 'H':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
-					switch (tokLen) {
-						case 1:
-							int l = 1;
-							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
-								l = 2;
-							hour = Int32.Parse (input.Substring (ii, l));
-							ii += l;
-							break;
-						case 2:
-							hour = Int32.Parse (input.Substring (ii, 2));
-							ii += 2;
-							break;
-						default:
-							throw new FormatException ();
-							break;
+					if (hour != -1 || tokLen > 2) {
+						result = MinValue;
+						return false;
 					}
+					ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out hour);
 					break;
 				case 'm':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
-					switch (tokLen) {
-						case 1:
-							int l = 1;
-							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
-								l = 2;
-							minute = Int32.Parse (input.Substring (ii, l));
-							ii += l;
-							break;
-						case 2:
-							minute = Int32.Parse (input.Substring (ii, 2));
-							ii += 2;
-							break;
-						default:
-							throw new FormatException ();
-							break;
+					if (minute != -1 || tokLen > 2) {
+						result = MinValue;
+						return false;
 					}
+					ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out minute);
 					break;
 				case 'M':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
-					switch (tokLen) {
-						case 1:
-							int l = 1;
-							if (input.Length != ii + 1 && System.Char.IsDigit (input[ii + 1]))
-								l = 2;
-							month = Int32.Parse (input.Substring (ii, l));
-							ii += l;
-							break;
-						case 2:
-							month = Int32.Parse (input.Substring (ii, 2));
-							ii += 2;
-							break;
-						case 3:
-							for (int i = 0; i < 13; i++)
-								if (input.Substring (ii).StartsWith (dfi.AbbreviatedMonthNames [i])) {
-									month = i + 1;
-									ii += dfi.AbbreviatedMonthNames [i].Length;
-									break;
-								}
-							break;
-						case 4:
-							for (int i = 0; i < 13; i++)
-								if (input.Substring (ii).StartsWith (dfi.MonthNames [i])) {
-									month = i + 1;
-									ii += dfi.MonthNames [i].Length;
-									break;
-								}
-							break;
-						default:
-							throw new FormatException ();
+					if (month != -1 || tokLen > 4) {
+						result = MinValue;
+						return false;
 					}
+					if (tokLen <= 2)
+						ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out month);
+					else {
+						ii += ParseEnum (input, ii, tokLen == 3 ? dfi.AbbreviatedMonthNames : dfi.MonthNames, allow_white_spaces, out month);
+						month += 1;
+					}
+
 					break;
 				case 't':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
@@ -573,7 +525,14 @@ namespace System
 						throw new FormatException ();
 					ii += dfi.DateSeparator.Length;
 					break;
+				case '%':
+					if (fi != 0)
+						throw new FormatException ();
+					tokLen = 1;
+					break;
 				case ' ':
+					if (input[ii] != ' ')
+						throw new FormatException ();
 					tokLen = 1;
 					ii++;
 					break;
@@ -586,6 +545,8 @@ namespace System
 				fi += tokLen;
 			}
 
+			//Console.WriteLine ("{0}-{1}-{2} {3}:{4} {5}", year, month, day, hour, minute, offset);
+
 			if (day > 0 && month > 0 && year > 0 && hour > 0 && minute > 0) {
 				result = new DateTimeOffset (year, month, day, hour, minute, 0, offset);
 				return true;
@@ -597,6 +558,44 @@ namespace System
 
 			result = DateTimeOffset.MinValue;
 			return false;
+		}
+
+		private static int ParseNumber (string input, int pos, int digits, bool leading_zero, bool allow_leading_white, out int result)
+		{
+			int char_parsed = 0;
+			int digit_parsed = 0;
+			result = 0;
+			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++, char_parsed++)
+				;
+
+			for (; pos < input.Length && Char.IsDigit (input[pos]) && digits > 0; pos ++, char_parsed++, digit_parsed++, digits --)
+				result = 10 * result + (byte) (input[pos] - '0');
+
+			if (leading_zero && digits > 0)
+				throw new FormatException ();
+
+			return char_parsed;
+		}
+
+		private static int ParseEnum (string input, int pos, string [] enums, bool allow_leading_white, out int result)
+		{
+			int char_parsed = 0;
+			result = -1;
+			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++, char_parsed++)
+				;
+			
+			for (int i = 0; i < enums.Length; i++)
+				if (input.Substring(pos).StartsWith (enums [i])) {
+					result = i;
+					break;
+				}
+
+			if (result >= 0)
+				char_parsed += enums[result].Length;
+
+			return char_parsed;
+				
+			
 		}
 
 		public TimeSpan Subtract (DateTimeOffset other)
