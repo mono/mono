@@ -1,3 +1,11 @@
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_allocate_vars): Make sure the LMF is always stored
+	at a constant offset from sp/fp.
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Compute the LMF address from fp/sp
+	instead of obtaining it from *lmf in the managed method case.
+
 2008-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-amd64.c (mono_arch_find_jit_info): Remove some duplicate code.
