@@ -507,13 +507,13 @@ namespace System {
 		public override string ToString ()
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (null);
-			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
+			return new NumberFormatter(null, m_value).FormatGeneral (nfi);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-			return new NumberFormatter(null, m_value).FormatGeneral (-1, nfi);
+			return new NumberFormatter(null, m_value).FormatGeneral (nfi);
 		}
 
 		public string ToString (string format)

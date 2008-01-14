@@ -1,7 +1,14 @@
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatter.cs, Double.cs, Single.cs: Fix Single & Double default
+	  ToString to handle +-Infinity & NaN.
+
+
 2008-01-14  Sephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffset.cs: ParseExact (string, string, IFormatProvider) 
 	implemented.
+
 
 2008-01-14  Zoltan Varga  <vargaz@gmail.com>
 

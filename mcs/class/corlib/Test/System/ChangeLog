@@ -1,3 +1,7 @@
+2008-01-14  Eyal Alaluf <eyala@mainsoft.com>
+
+	* DoubleTest.cs: Test +-Infinity & NaN default ToString (bug #353603)
+
 2008-01-14  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffsetTest.cs: Tests for ParseExact (string, string, 

@@ -2952,6 +2952,17 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void TestNaNToString ()
+		{
+			AssertEquals ("#01", "Infinity", Double.PositiveInfinity.ToString());
+			AssertEquals ("#02", "-Infinity", Double.NegativeInfinity.ToString());
+			AssertEquals ("#03", "NaN", Double.NaN.ToString());
+			AssertEquals ("#01", "Infinity", Single.PositiveInfinity.ToString());
+			AssertEquals ("#02", "-Infinity", Single.NegativeInfinity.ToString());
+			AssertEquals ("#03", "NaN", Single.NaN.ToString());
+		}
+
+		[Test]
 		public void Test11032 ()
 		{
 			AssertEquals ("#01", "Infinity", (Double.MaxValue / 0.0).ToString ("E99", _nfi)); 

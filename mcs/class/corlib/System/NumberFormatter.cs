@@ -1129,7 +1129,21 @@ namespace System
 			return nfc.FormatGeneral (_defPrecision + 2, nfi);
 		}
 
-		public string FormatGeneral (int precision, NumberFormatInfo nfi)
+		public string FormatGeneral (NumberFormatInfo nfi)
+		{
+			if (_NaN)
+				return nfi.NaNSymbol;
+
+			if (_infinity)
+				if (_positive)
+					return nfi.PositiveInfinitySymbol;
+				else
+					return nfi.NegativeInfinitySymbol;
+
+			return FormatGeneral (-1, nfi);
+		}
+
+		private string FormatGeneral (int precision, NumberFormatInfo nfi)
 		{
 			bool enableExp;
 			if (precision == -1) {
