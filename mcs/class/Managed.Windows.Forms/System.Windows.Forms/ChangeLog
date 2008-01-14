@@ -1,3 +1,8 @@
+2007-01-14  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Form.cs: In WmWindowPosChanged call base.WndProc including when state is
+	minimized. Fixes bug #325122 for Win32. Thanks  Srikanth Madikeri.
+
 2008-01-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: Since we don't propagate the WM_LBUTTONUP/WM_RBUTTONUP

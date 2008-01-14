@@ -2578,9 +2578,7 @@ namespace System.Windows.Forms {
 		
 		private void WmWindowPosChanged (ref Message m)
 		{
-			if (WindowState != FormWindowState.Minimized) {
-				base.WndProc (ref m);
-			}
+			base.WndProc (ref m);
 		}
 
 #if NET_2_0
