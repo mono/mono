@@ -45,6 +45,7 @@ using javax.faces;
 using javax.faces.context;
 using javax.faces.lifecycle;
 using javax.faces.webapp;
+using javax.faces.render;
 
 namespace Mainsoft.Web.Hosting
 {
@@ -57,9 +58,14 @@ namespace Mainsoft.Web.Hosting
 
 		static FacesContextFactory _facesContextFactory;
 		static Lifecycle _lifecycle;
+		static RenderKitFactory _renderKitFactory;
 
 		public BaseHttpServlet()
 		{
+		}
+
+		public static RenderKitFactory RenderKitFactory {
+			get { return _renderKitFactory; }
 		}
 
 		public static FacesContextFactory FacesContextFactory {
@@ -90,6 +96,8 @@ namespace Mainsoft.Web.Hosting
 			//So we can acquire it here once:
 			LifecycleFactory lifecycleFactory = (LifecycleFactory) FactoryFinder.getFactory (FactoryFinder.LIFECYCLE_FACTORY);
 			_lifecycle = lifecycleFactory.getLifecycle (context.getInitParameter (FacesServlet.LIFECYCLE_ID_ATTR) ?? LifecycleFactory.DEFAULT_LIFECYCLE);
+
+			_renderKitFactory = (RenderKitFactory) FactoryFinder.getFactory (FactoryFinder.RENDER_KIT_FACTORY);
 
 			AppDomain servletDomain = createServletDomain (config);
 			vmw.@internal.EnvironmentUtils.setAppDomain (servletDomain);
