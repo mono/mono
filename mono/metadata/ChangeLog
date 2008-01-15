@@ -1,3 +1,9 @@
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (do_mono_image_open): Pass TRUE as last_exists to 
+	mono_portability_find_file (). Fixes #325466.
+	(mono_image_get_public_key): Fix a warning.
+
 2008-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_from_name): Fix comments for NULL-ness of image parameter.
