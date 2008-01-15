@@ -1,3 +1,8 @@
+2008-01-16  Andreia Gaita <avidigal@novell.com>
+
+	* LinkLabel.cs: Reset focused_index when resellecting the control.
+	Fixes #323190
+
 2008-01-15  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Rework Grab/Ungrab handling to send some needed 

@@ -523,8 +523,10 @@ namespace System.Windows.Forms
 		protected override void Select (bool directed, bool forward)
 		{
 			if (directed) {
-				if (focused_index != -1)
+				if (focused_index != -1) {
 					sorted_links[focused_index].Focused = false;
+					focused_index = -1;
+				}
 
 				if (forward) {
 					for (int n = focused_index + 1; n < sorted_links.Length; n++) {
