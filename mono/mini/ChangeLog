@@ -1,5 +1,7 @@
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (peephole_pass): Sync store+load optimizations with the x86 version.
+
 	* mini-ia64.c (peephole_pass): Fix ia64 build.
 
 	* mini-amd64.c (peephole_pass): Fix a warning.
