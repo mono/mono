@@ -305,6 +305,10 @@ namespace System.Reflection {
 		{
 			if (types == null)
 				throw new ArgumentNullException ("types");
+			foreach (Type type in types)
+				if (type == null)
+					throw new ArgumentException ("Types cannot contain a null value");
+
 			MethodInfo ret = MakeGenericMethod_impl (types);
 			if (ret == null)
 				throw new ArgumentException (String.Format ("The method has {0} generic parameter(s) but {1} generic argument(s) were provided.", GetGenericArguments ().Length, types.Length));
