@@ -116,6 +116,12 @@ namespace Mono.Cecil {
 			m_resolved = true;
 		}
 
+		public CustomAttribute (MethodReference ctor, byte [] blob)
+		{
+			m_ctor = ctor;
+			m_blob = blob;
+		}
+
 		public TypeReference GetFieldType (string fieldName)
 		{
 			return (TypeReference) FieldTypes [fieldName];
