@@ -1,3 +1,9 @@
+2008-01-14  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs: Bring back the (most) of binary operators.  Added
+	type checking as well and reorganized the source file by topic
+	instead of alphabetical sorting.
+
 2008-01-14  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionPrinter.cs: print ArrayLength.
