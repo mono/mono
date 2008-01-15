@@ -966,10 +966,12 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static ParameterExpression Parameter (Type type, string name)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return new ParameterExpression (type, name);
 		}
 
 		[MonoTODO]

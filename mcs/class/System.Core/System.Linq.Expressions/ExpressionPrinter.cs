@@ -216,7 +216,8 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitParameter (ParameterExpression parameter)
 		{
-			throw new NotImplementedException ();
+			var name = parameter.Name;
+			Print (name == null ? "<param>" : name);
 		}
 
 		protected override void VisitMemberAccess (MemberExpression member)

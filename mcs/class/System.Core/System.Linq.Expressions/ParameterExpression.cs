@@ -37,5 +37,11 @@ namespace System.Linq.Expressions {
 		public string Name {
 			get { return name; }
 		}
+
+		internal ParameterExpression (Type type, string name)
+			: base (ExpressionType.Parameter, type)
+		{
+			this.name = name;
+		}
 	}
 }

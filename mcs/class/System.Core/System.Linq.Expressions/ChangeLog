@@ -1,5 +1,11 @@
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs,
+	ParameterExpression.cs,
+	ExpressionPrinter.cs: implement Expression.Parameter
+
+2008-01-15  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionPrinter.cs (VisitBinaryExpression): simple
 	implementation (probably misses a few cases).
 
