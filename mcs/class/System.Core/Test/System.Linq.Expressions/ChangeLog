@@ -1,5 +1,9 @@
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_Condition.cs: add tests for Expression.Condition.
+
+2008-01-15  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest.cs: tests for Expression.Parameter
 
 2008-01-09  Jb Evain  <jbevain@novell.com>
