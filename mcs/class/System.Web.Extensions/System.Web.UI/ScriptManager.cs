@@ -362,10 +362,6 @@ namespace System.Web.UI
 					throw new InvalidOperationException ();
 				if (!EnablePartialRendering && value)
 					throw new InvalidOperationException ("The SupportsPartialRendering property cannot be set when EnablePartialRendering is false.");
-#if TARGET_J2EE
-				if (!ServerSoftwareSupportsPartialRendering && value)
-					throw new InvalidOperationException ("The server software does not supports partial rendering.");
-#endif
 
 				_supportsPartialRendering = value;
 			}
@@ -374,38 +370,9 @@ namespace System.Web.UI
 		bool CheckSupportsPartialRendering () {
 			if (!EnablePartialRendering)
 				return false;
-#if TARGET_J2EE
-			if (!ServerSoftwareSupportsPartialRendering)
-				return false;
-#endif
 			// TODO: consider browser capabilities
 			return true;
 		}
-
-#if TARGET_J2EE
-		bool? _serverSoftwareSupportsPartialRendering;
-
-		bool ServerSoftwareSupportsPartialRendering {
-			get {
-				if (!_serverSoftwareSupportsPartialRendering.HasValue)
-					_serverSoftwareSupportsPartialRendering = CheckServerSoftwareSupportsPartialRendering ();
-				return _serverSoftwareSupportsPartialRendering.Value;
-			}
-		}
-
-		bool CheckServerSoftwareSupportsPartialRendering () {
-			string serverSoftware = Context.Request.ServerVariables ["SERVER_SOFTWARE"];
-			if (!String.IsNullOrEmpty (serverSoftware)) {
-
-				if (serverSoftware.IndexOf ("WebSphere", StringComparison.OrdinalIgnoreCase) >= 0)
-					return false;
-
-				if (serverSoftware.IndexOf ("Jetspeed", StringComparison.OrdinalIgnoreCase) >= 0)
-					return false;
-			}
-			return true;
-		}
-#endif
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
