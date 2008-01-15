@@ -380,7 +380,7 @@ namespace System.Windows.Forms {
 			SizeF current_scale = GetAutoScaleSize (DeviceContext, Font);
 
 			autoscale = true;
-			autoscale_base_size = new Size ((int)current_scale.Width, (int) current_scale.Height);
+			autoscale_base_size = new Size ((int)Math.Round (current_scale.Width), (int)Math.Round(current_scale.Height));
 			allow_transparency = false;
 			closing = false;
 			is_modal = false;
@@ -1826,7 +1826,7 @@ namespace System.Windows.Forms {
 		protected void ApplyAutoScaling()
 		{
 			SizeF current_size_f = GetAutoScaleSize (DeviceContext, Font);
-			Size current_size = new Size ((int) current_size_f.Width, (int) current_size_f.Height);
+			Size current_size = new Size ((int)Math.Round (current_size_f.Width), (int)Math.Round (current_size_f.Height));
 			float	dx;
 			float	dy;
 
