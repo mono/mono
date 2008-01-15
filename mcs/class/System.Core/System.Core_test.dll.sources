@@ -5,6 +5,7 @@ System.Collections.Generic/HashSetTest.cs
 System.Linq/EnumerableTest.cs
 System.Linq.Expressions/ExpressionTest.cs
 System.Linq.Expressions/ExpressionTest_ArrayLength.cs
+System.Linq.Expressions/ExpressionTest_CallWithExpression.cs
 System.Linq.Expressions/ExpressionTest_Condition.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
