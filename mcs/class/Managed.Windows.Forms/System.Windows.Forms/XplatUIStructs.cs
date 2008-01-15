@@ -98,6 +98,14 @@ namespace System.Windows.Forms {
 		WS_EX_PALETTEWINDOW	= WS_EX_WINDOWEDGE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST
 	}
 
+	[Flags]
+	internal enum ToolBarStyles : int {
+		TBSTYLE_TOOLTIPS    = 0x100,
+		TBSTYLE_FLAT        = 0x800,
+		TBSTYLE_LIST        = 0x1000,
+		TBSTYLE_TRANSPARENT = 0x8000
+	}
+	
 	internal enum Msg {
 		WM_NULL                   = 0x0000,
 		WM_CREATE                 = 0x0001,
