@@ -38,9 +38,9 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class WebServiceParser
 	{
-		public static Type GetCompiledType (string filePath, HttpContext context)
+		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{
-			return PageMapper.GetObjectType (context, context.Request.FilePath);
+			return PageMapper.GetObjectType (context, inputFile);
 		}
 	}
 }
