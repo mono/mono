@@ -1,5 +1,8 @@
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (add_general): Fix arm eabi parameter passing.
+	(mono_arch_output_basic_block): Fix localloc implementation.
+
 	* mini-amd64.c (peephole_pass): Sync store+load optimizations with the x86 version.
 
 	* mini-ia64.c (peephole_pass): Fix ia64 build.
