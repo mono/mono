@@ -2701,6 +2701,41 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Dispose ();
 		}
+		
+		[Test]  // Bug 353827
+		public void AutoScaleModeTest ()
+		{
+			Form f = new Form ();
+			
+			// AutoScale starts off true
+			Assert.AreEqual (true, f.AutoScale, "A1");
+			
+			// Setting AutoScaleMode turns AutoScale off
+			f.AutoScaleMode = AutoScaleMode.Font;
+			Assert.AreEqual (false, f.AutoScale, "A2");
+			Assert.AreEqual (AutoScaleMode.Font, f.AutoScaleMode, "A3");
+
+			// Changing Font resets AutoScaleBaseSize..
+			f.Font = new Font ("Arial", 10);
+			Assert.AreEqual (RoundSizeF (Form.GetAutoScaleSize (f.Font)), f.AutoScaleBaseSize, "A4");
+
+			f.Font = new Font ("Arial", 12);
+			Assert.AreEqual (RoundSizeF (Form.GetAutoScaleSize (f.Font)), f.AutoScaleBaseSize, "A5");
+			
+			// ..Until AutoScaleBaseSize is explicitly set
+			f.AutoScaleBaseSize = new Size (5, 13);
+			Assert.AreEqual (new Size (5, 13), f.AutoScaleBaseSize, "A6");
+
+			f.Font = new Font ("Arial", 14F);
+			Assert.IsTrue (RoundSizeF (Form.GetAutoScaleSize (f.Font)) != f.AutoScaleBaseSize, "A5");
+	
+			f.Dispose ();
+		}
+		
+		private Size RoundSizeF (SizeF sizef)
+		{
+			return new Size ((int)Math.Round (sizef.Width), (int)Math.Round (sizef.Height));
+		}
 #endif
 	}
 

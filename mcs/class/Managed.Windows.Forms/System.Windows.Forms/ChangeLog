@@ -1,3 +1,12 @@
+2008-01-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs: Setting AutoScaleMode to anything should set
+	Form.AutoScale to false.
+	* Form.cs: Setting AutoScale to true should set AutoScaleMode to None.
+	AutoScaleBaseSize should be changed on Font change unless it has been
+	explicitly set.
+	[Fixes bug #353827]
+
 2008-01-15  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: On instance of MenuTracker check if source control is

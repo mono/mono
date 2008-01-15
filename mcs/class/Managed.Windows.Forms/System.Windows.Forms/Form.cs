@@ -99,6 +99,7 @@ namespace System.Windows.Forms {
 		private bool			show_icon = true;
 		private bool			right_to_left_layout;
 		private Rectangle		restore_bounds;
+		private bool			autoscale_base_size_set;
 #endif
 		#endregion	// Local Variables
 
@@ -504,6 +505,11 @@ namespace System.Windows.Forms {
 
 			set {
 				autoscale = value;
+				
+#if NET_2_0
+				if (value)
+					AutoScaleMode = AutoScaleMode.None;
+#endif
 			}
 		}
 
@@ -522,6 +528,10 @@ namespace System.Windows.Forms {
 
 			set {
 				autoscale_base_size = value;
+				
+#if NET_2_0
+				autoscale_base_size_set = true;
+#endif
 			}
 		}
 
@@ -2041,6 +2051,13 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
+			
+#if NET_2_0
+			if (!autoscale_base_size_set) {
+				SizeF sizef = Form.GetAutoScaleSize (Font);
+				autoscale_base_size = new Size ((int)Math.Round (sizef.Width), (int)Math.Round (sizef.Height));
+			}
+#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

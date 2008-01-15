@@ -271,9 +271,11 @@ namespace System.Windows.Forms {
 			set {
 				if (auto_scale_mode != value) {
 					auto_scale_mode = value;
-
 					auto_scale_dimensions = CurrentAutoScaleDimensions;
 				}
+					
+				if (this is Form)
+					(this as Form).AutoScale = false;
 			}
 		}
 #endif // NET_2_0
