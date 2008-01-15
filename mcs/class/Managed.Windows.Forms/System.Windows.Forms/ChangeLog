@@ -1,3 +1,16 @@
+2008-01-15  Everaldo Canuto  <ecanuto@novell.com>
+
+	[Fixes bug #323241 Transparent toolbar support]
+
+	* ToolBar.cs: Define ToolBarStyles.TBSTYLE_FLAT in CreateParams when toolbar
+	is flat.
+
+	* Control.cs: Paint background as transparent in case of TBSTYLE_FLAT is
+	defined in control style to mimic win32 behavior.
+
+	* ThemeWin32Classic.cs: Don't paint background for flat apparence toolbar, 
+	it will be transparent.
+
 2008-01-14  Everaldo Canuto  <ecanuto@novell.com>
 
 	* XplatUIStructs.cs: Implement ToolBarStyles to use in Style property of

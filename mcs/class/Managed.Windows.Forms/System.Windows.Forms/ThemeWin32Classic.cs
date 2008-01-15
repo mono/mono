@@ -4913,14 +4913,7 @@ namespace System.Windows.Forms
 				}
 			} else {
 #endif
-				if (control.Appearance == ToolBarAppearance.Flat && control.Parent != null) {
-					if (control.Parent.BackgroundImage != null) {
-						using (TextureBrush b = new TextureBrush (control.Parent.BackgroundImage, WrapMode.Tile))
-							dc.FillRectangle (b, clip_rectangle);
-					} else {
-						dc.FillRectangle (ResPool.GetSolidBrush (control.Parent.BackColor), clip_rectangle);
-					}
-				} else {
+				if (control.Appearance != ToolBarAppearance.Flat || control.Parent == null) {
 					dc.FillRectangle (SystemBrushes.Control, clip_rectangle);
 				}
 

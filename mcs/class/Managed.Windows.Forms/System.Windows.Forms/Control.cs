@@ -1340,7 +1340,11 @@ namespace System.Windows.Forms
 
 		// This method exists so controls overriding OnPaintBackground can have default background painting done
 		internal virtual void PaintControlBackground (PaintEventArgs pevent) {
-			if (GetStyle(ControlStyles.SupportsTransparentBackColor) && (BackColor.A != 0xff)) {
+
+			bool tbstyle_flat = ((CreateParams.Style & (int) ToolBarStyles.TBSTYLE_FLAT) != 0);
+
+			// If we have transparent background
+			if (((BackColor.A != 0xff) && GetStyle(ControlStyles.SupportsTransparentBackColor)) || tbstyle_flat) {
 				if (parent != null) {
 					PaintEventArgs	parent_pe;
 					GraphicsState	state;
@@ -1402,9 +1406,11 @@ namespace System.Windows.Forms
 			}
 
 			if (background_image == null) {
-				Rectangle paintRect = new Rectangle(pevent.ClipRectangle.X, pevent.ClipRectangle.Y, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height);
-				Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
-				pevent.Graphics.FillRectangle(pen, paintRect);
+				if (!tbstyle_flat) {
+					Rectangle paintRect = new Rectangle(pevent.ClipRectangle.X, pevent.ClipRectangle.Y, pevent.ClipRectangle.Width, pevent.ClipRectangle.Height);
+					Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
+					pevent.Graphics.FillRectangle(pen, paintRect);
+				}
 				return;
 			}
 

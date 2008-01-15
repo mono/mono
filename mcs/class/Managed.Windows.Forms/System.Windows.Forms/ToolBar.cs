@@ -162,7 +162,15 @@ namespace System.Windows.Forms
 
 		#region protected Properties
 		protected override CreateParams CreateParams {
-			get { return base.CreateParams; }
+			get { 
+				CreateParams create_params = base.CreateParams;
+				
+				if (appearance == ToolBarAppearance.Flat) {
+					create_params.Style |= (int) ToolBarStyles.TBSTYLE_FLAT;
+				}
+				
+				return create_params;
+			}
 		}
 
 		protected override ImeMode DefaultImeMode {
