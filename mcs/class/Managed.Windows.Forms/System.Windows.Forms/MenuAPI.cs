@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 			foreach (MenuItem item in TopMenu.MenuItems)
 				AddShortcuts (item);
 
-			if (top_menu is ContextMenu) {Console.WriteLine(">>> {0}", (top_menu as ContextMenu).SourceControl);
+			if (top_menu is ContextMenu) {
 							
 				Control source_control = (top_menu as ContextMenu).SourceControl;
 #if NET_2_0				
