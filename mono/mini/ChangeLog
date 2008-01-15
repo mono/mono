@@ -1,5 +1,7 @@
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (peephole_pass): Fix ia64 build.
+
 	* mini-amd64.c (peephole_pass): Fix a warning.
 	
 	* mini-amd64.c (mono_arch_allocate_vars): Make sure the LMF is always stored
