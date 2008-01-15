@@ -601,7 +601,7 @@ namespace System.Configuration
 		
 			collectionAttribute = Attribute.GetCustomAttribute (t, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;
 			
-			PropertyInfo[] props = t.GetProperties ();
+			PropertyInfo[] props = t.GetProperties (BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static|BindingFlags.Instance);
 			foreach (PropertyInfo prop in props)
 			{
 				ConfigurationPropertyAttribute at = Attribute.GetCustomAttribute (prop, typeof(ConfigurationPropertyAttribute)) as ConfigurationPropertyAttribute;
