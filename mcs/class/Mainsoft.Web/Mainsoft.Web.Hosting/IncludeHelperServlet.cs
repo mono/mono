@@ -46,11 +46,6 @@ namespace Mainsoft.Web.Hosting
 		{
 		}
 
-		override public void init(ServletConfig config)
-		{
-			base.init(config);
-		}
-
 		override protected void service(HttpServletRequest req, HttpServletResponse resp)
 		{
 			string servletPath = ServletIncludeUtils.getServletPath(req);
@@ -60,12 +55,7 @@ namespace Mainsoft.Web.Hosting
 			dispatcher.include(req, wrapper);
 		}
 
-		override public void destroy()
-		{
-			base.destroy();
-		}
-
-		class AspxResponseWrapper : HttpServletResponseWrapper 
+		sealed class AspxResponseWrapper : HttpServletResponseWrapper 
 		{
 			public AspxResponseWrapper(HttpServletResponse resp, TextWriter writer) : base (resp)
 			{
@@ -77,10 +67,10 @@ namespace Mainsoft.Web.Hosting
 				return jwriter;
 			}
 
-			PrintWriter jwriter;
+			readonly PrintWriter jwriter;
 		}
 
-		class JavaWriterFromTextWriter : Writer
+		sealed class JavaWriterFromTextWriter : Writer
 		{
 			public JavaWriterFromTextWriter(TextWriter writer)
 			{
@@ -115,7 +105,7 @@ namespace Mainsoft.Web.Hosting
 				// Ignore close as we don't own here the writer.
 			}
 
-			TextWriter writer;
+			readonly TextWriter writer;
 		}
 	}
 }
