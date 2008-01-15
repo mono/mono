@@ -242,7 +242,6 @@ namespace MonoTests.System {
 					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
 				}
 		}
-
 		[Test]
 		public void ParseExactYearFormat ()
 		{
@@ -321,6 +320,63 @@ namespace MonoTests.System {
 			string date = "Mon 14 Jan 2008 2:56 PM +01: 00";
 			DateTimeOffset.ParseExact(date, format, fp);
 		}
+
+		[Test]
+		public void ParseExactWithSeconds ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			DateTimeOffset[] dtos = {
+				new DateTimeOffset (2008, 01, 14, 13, 21, 25, new TimeSpan (1,0,0)),
+				new DateTimeOffset (2008, 01, 14, 13, 21, 5, new TimeSpan (-5,0,0)),
+			};
+
+			string[] formats = {
+				"dddd, dd MMMM yyyy HH:mm:ss zzz",
+			};
+
+			foreach (DateTimeOffset dto in dtos)
+				foreach (string format in formats)
+				{
+					string serialized = dto.ToString (format, fp);
+					//Console.WriteLine ("{0} {1} {2}", format, dto, serialized);
+					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
+				}
+		}
+
+		[Test]
+		public void ParseExactWithFractions ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			DateTimeOffset[] dtos = {
+				new DateTimeOffset (2008, 1, 15, 14, 36, 44, 900, TimeSpan.Zero),
+			};
+
+			string[] formats = {
+				"M/d/yyyy H:m:ss,f zzz",
+				"M/d/yyyy H:m:ss,ff zzz",
+				"M/d/yyyy H:m:ss,fff zzz",
+				"M/d/yyyy H:m:ss,ffff zzz",
+				"M/d/yyyy H:m:ss,fffff zzz",
+				"M/d/yyyy H:m:ss,ffffff zzz",
+				"M/d/yyyy H:m:ss,fffffff zzz",
+				"M/d/yyyy H:m:ss,F zzz",
+				"M/d/yyyy H:m:ss,FF zzz",
+				"M/d/yyyy H:m:ss,FFF zzz",
+				"M/d/yyyy H:m:ss,FFFF zzz",
+				"M/d/yyyy H:m:ss,FFFFF zzz",
+				"M/d/yyyy H:m:ss,FFFFFF zzz",
+				"M/d/yyyy H:m:ss,FFFFFFF zzz",
+			};
+
+			foreach (DateTimeOffset dto in dtos)
+				foreach (string format in formats)
+				{
+					string serialized = dto.ToString (format, fp);
+					//Console.WriteLine ("{0} {1} {2}", format, dto, serialized);
+					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
+				}
+		}
+
 }
 }
 #endif

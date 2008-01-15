@@ -1,5 +1,9 @@
 2008-01-15  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* DateTimeOffset.cs: ParseExact: parse f, F, s too.
+
+2008-01-15  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* DateTimeOffset.cs: ParseExact: honor the DateTimeStyles parameter.
 
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>

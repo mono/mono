@@ -1,5 +1,9 @@
 2008-01-15  Stephane Delcroix  <sdelcroix@novell.com>
 
+	* DateTimeOffsetTest.cs: tests for parsing f, F, s
+
+2008-01-15  Stephane Delcroix  <sdelcroix@novell.com>
+
 	* DateTimeOffsetTest.cs: more tests, less bugs.
 
 2008-01-14  Eyal Alaluf <eyala@mainsoft.com>

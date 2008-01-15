@@ -350,13 +350,15 @@ namespace System
 			bool useutc = false, use_invariants = false;
 			if (format.Length == 1)
 				format = DateTimeUtils.GetStandardPattern (format[0], dfi, out useutc, out use_invariants, true);
-		
+
 			int year = -1;
 			int month = -1;
 			int day = -1;
 			int partial_hour = -1; // for 'hh tt' formats
 			int hour = -1;
 			int minute = -1;
+			int second = -1;
+			double fraction = -1;
 			int temp_int = -1;
 			TimeSpan offset = TimeSpan.MinValue;
 
@@ -378,6 +380,25 @@ namespace System
 						ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out day);
 					else
 						ii += ParseEnum (input, ii, tokLen == 3 ? dfi.AbbreviatedDayNames : dfi.DayNames, allow_white_spaces, out temp_int); 
+					break;
+				case 'f':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					ii += ParseNumber (input, ii, tokLen, true, allow_white_spaces, out temp_int);
+					if (fraction >= 0 || tokLen > 7 || temp_int == -1)
+						return false;
+					fraction = (double)temp_int / Math.Pow (10, tokLen);
+					break;
+				case 'F':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					int digits;
+					int read = ParseNumber (input, ii, tokLen, true, allow_white_spaces, out temp_int, out digits);
+					if (temp_int == -1)
+						ii += ParseNumber (input, ii, digits, true, allow_white_spaces, out temp_int);
+					else
+						ii += read;
+					if (fraction >= 0 || tokLen > 7 || temp_int == -1)
+						return false;	
+					fraction = (double)temp_int / Math.Pow (10, digits);	
 					break;
 				case 'h':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
@@ -420,6 +441,12 @@ namespace System
 					}
 
 					break;
+				case 's':
+					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
+					if (second != -1 || tokLen > 2)
+						return false;
+					ii += ParseNumber (input, ii, 2, tokLen == 2, allow_white_spaces, out second);
+					break;
 				case 't':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
 					if (hour != -1 || tokLen > 2)
@@ -449,7 +476,7 @@ namespace System
 					} else if (tokLen <= 4) { // yyy and yyyy accept up to 5 digits with leading 0
 						int digit_parsed;
 						ii += ParseNumber (input, ii, 5, false, allow_white_spaces, out year, out digit_parsed);
-						if (digit_parsed < tokLen || (digit_parsed > tokLen && (year / (10 ^ (digit_parsed - 1)) < 1)))
+						if (digit_parsed < tokLen || (digit_parsed > tokLen && (year / Math.Pow (10, digit_parsed - 1) < 1)))
 							return false;
 					} else
 						ii += ParseNumber (input, ii, tokLen, true, allow_white_spaces, out year);
@@ -493,19 +520,23 @@ namespace System
 					break;
 				case ' ':
 					tokLen = 1;
-					ii += ParseEnum (input, ii, new string [] {" "}, false, out temp_int);
+					ii += ParseChar (input, ii, ' ', false, out temp_int);
 					if (temp_int == -1)
 						return false;
 					break;
 				case '\\':
 					tokLen = 2;
-					ii += ParseEnum (input, ii, new string [] {format.Substring (fi + 1, 1)}, allow_white_spaces, out temp_int);
+					ii += ParseChar (input, ii, format [fi + 1], allow_white_spaces, out temp_int);
 					if (temp_int == -1)
 						return false;
 					break;
 				default:
-					Console.WriteLine ("un-parsed character: {0}", ch);
-					return false;
+					//Console.WriteLine ("un-parsed character: {0}", ch);
+					tokLen = 1;
+					ii += ParseChar (input, ii, format [fi], allow_white_spaces, out temp_int);
+					if (temp_int == -1)
+						return false;
+					break;
 				}
 				fi += tokLen;
 			}
@@ -519,9 +550,10 @@ namespace System
 
 			if (hour < 0)		hour = 0;
 			if (minute < 0)		minute = 0;
-
+			if (second < 0)		second = 0;
+			if (fraction < 0)	fraction = 0;
 			if (year > 0 && month > 0 && day > 0) {
-				result = new DateTimeOffset (year, month, day, hour, minute, 0, offset);
+				result = new DateTimeOffset (year, month, day, hour, minute, second, (int) (1000 * fraction), offset);
 				if ((styles & DateTimeStyles.AdjustToUniversal) != 0)
 					result = result.ToUniversalTime ();
 				return true;
@@ -573,6 +605,21 @@ namespace System
 				char_parsed += enums[result].Length;
 
 			return char_parsed;	
+		}
+	
+		private static int ParseChar (string input, int pos, char c, bool allow_leading_white, out int result)
+		{
+			int char_parsed = 0;
+			result = -1;
+			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++, char_parsed++)
+				;
+
+			if (pos < input.Length && input[pos] == c){
+				result = (int) c;
+				char_parsed ++;
+			}
+
+			return char_parsed;
 		}
 
 		public TimeSpan Subtract (DateTimeOffset other)
