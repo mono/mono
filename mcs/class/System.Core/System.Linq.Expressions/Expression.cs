@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 
 namespace System.Linq.Expressions {
@@ -517,28 +518,39 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (Expression instance, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			return Call (instance, method, null as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (MethodInfo method, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			return Call (null, method, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (Expression instance, MethodInfo method, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			return Call (instance, method, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (Expression instance, MethodInfo method, IEnumerable<Expression> arguments)
 		{
-			throw new NotImplementedException ();
+			if (method == null)
+				throw new ArgumentNullException ("method");
+			if (instance == null && !method.IsStatic)
+				throw new ArgumentNullException ("instance");
+			if (!method.DeclaringType.IsAssignableFrom (instance.Type))
+				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
+
+			var args = arguments.ToReadOnlyCollection ();
+			var parameters = method.GetParameters ();
+
+			if (args.Count != parameters.Length)
+				throw new ArgumentException ("The number of arguments doesn't match the number of parameters");
+
+			// TODO: check for assignability of the arguments on the parameters
+
+			return new MethodCallExpression (instance, method, args);
 		}
 
 		[MonoTODO]

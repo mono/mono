@@ -49,5 +49,13 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<Expression> Arguments {
 			get { return arguments; }
 		}
+
+		internal MethodCallExpression (Expression @object, MethodInfo method, ReadOnlyCollection<Expression> arguments)
+			: base (ExpressionType.Call, method.ReturnType)
+		{
+			this.@object = @object;
+			this.method = method;
+			this.arguments = arguments;
+		}
 	}
 }

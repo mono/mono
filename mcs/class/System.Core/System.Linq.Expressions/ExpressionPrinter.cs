@@ -230,14 +230,12 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		protected override void VisitMethodCall (MethodCallExpression methodCall)
+		protected override void VisitMethodCall (MethodCallExpression call)
 		{
-			throw new NotImplementedException ();
-		}
-
-		protected override void VisitExpressionList (ReadOnlyCollection<Expression> list)
-		{
-			throw new NotImplementedException ();
+			Visit (call.Object);
+			Print (".{0}(", call.Method.Name);
+			VisitExpressionList (call.Arguments);
+			Print (")");
 		}
 
 		protected override void VisitMemberAssignment (MemberAssignment assignment)
