@@ -7,7 +7,7 @@ using javax.servlet.http;
 
 namespace Mainsoft.Web.Hosting
 {
-	class ServletIncludeUtils
+	public class ServletIncludeUtils
 	{
 		public static void includeServlet (String servletPath, Object writer, Object aspPage, Object [] servletParams) {
 			// Need to define logic for resolving the servletPath. Share code with portlet createRenderUrl.
@@ -52,10 +52,10 @@ namespace Mainsoft.Web.Hosting
 			return oldval;
 		}
 
-		private static readonly String SERVLET_INCLUDE_HELPER_PATH = "/servletincludehelper";
-		private static readonly String ASPPAGE_ATTRIBUTE_NAME = "vmw.servlet.include.asppage";
-		private static readonly String SERVLET_PATH_ATTRIBUTE_NAME = "vmw.servlet.include.servlet.path";
-		private static readonly String SERVLET_PARAMS_ATTRIBUTE_NAME = "vmw.servlet.include.servlet.params";
-		private static readonly String TEXT_WRITER_ATTRIBUTE_NAME = "vmw.servlet.include.text.writer";
+		public static readonly String SERVLET_INCLUDE_HELPER_PATH = "/servletincludehelper";
+		public static readonly String ASPPAGE_ATTRIBUTE_NAME = "vmw.servlet.include.asppage";
+		public static readonly String SERVLET_PATH_ATTRIBUTE_NAME = "vmw.servlet.include.servlet.path";
+		public static readonly String SERVLET_PARAMS_ATTRIBUTE_NAME = "vmw.servlet.include.servlet.params";
+		public static readonly String TEXT_WRITER_ATTRIBUTE_NAME = "vmw.servlet.include.text.writer";
 	}
 }
