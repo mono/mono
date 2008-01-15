@@ -311,7 +311,8 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 			}
 
 			foreach (LogicalMethodInfo lmi in _methodMap.Values) {
-				foreach (Type param in lmi.GetParameterTypes ()) {
+				foreach (Type t in lmi.GetParameterTypes ()) {
+					Type param = GetTypeToGenerate (t);
 					if (!generatedTypes.Contains (param)) {
 						if (ShouldGenerateScript (param, false)) {
 							generatedTypes [param] = param;
@@ -320,6 +321,12 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 					}
 				}
 			}
+		}
+
+		static Type GetTypeToGenerate (Type type) {
+			if (type.IsArray)
+				return type.GetElementType ();
+			return type;
 		}
 
 		static readonly Type typeOfIEnumerable = typeof (IEnumerable);
@@ -335,6 +342,9 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 			// LAMESPEC: MS never create proxies for GenericTypes
 			//&& type.GetGenericTypeDefinition ().GetGenericArguments ().Length > 1
 			if (type.IsGenericType)
+				return false;
+
+			if (type == typeof (void))
 				return false;
 
 			if (typeOfIEnumerable.IsAssignableFrom (type) ||
