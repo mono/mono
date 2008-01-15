@@ -1,3 +1,7 @@
+2008-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlParserContextTests.cs: Added ctor tests.
+
 2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlUrlResolverTests.cs : fixed test; file://file.txt is to access
