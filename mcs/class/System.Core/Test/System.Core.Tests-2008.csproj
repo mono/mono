@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F902A50D-6156-4935-A1AC-E82DF0EB83D3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Core.Tests</RootNamespace>
+    <AssemblyName>System.Core.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="System.Collections.Generic\ChangeLog" />
+    <None Include="System.Linq.Expressions\ChangeLog" />
+    <None Include="System.Linq\ChangeLog" />
+    <None Include="System\ChangeLog" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="System.Collections.Generic\HashSetTest.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Add.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_AddChecked.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_And.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_AndAlso.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ArrayIndex.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ArrayLength.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Bind.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Call.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Constant.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Divide.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ExclusiveOr.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Field.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_LeftShift.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Modulo.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Multiply.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_MultiplyChecked.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Or.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_OrElse.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Property.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_PropertyOrField.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Quote.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_RightShift.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Subtract.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_SubtractChecked.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_TypeAs.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_TypeIs.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Utils.cs" />
+    <Compile Include="System.Linq\EnumerableTest.cs" />
+    <Compile Include="System.Linq\QueryableTest.cs" />
+    <Compile Include="System\TimeZoneInfo.AdjustmentRuleTest.cs" />
+    <Compile Include="System\TimeZoneInfo.TransitionTimeTest.cs" />
+    <Compile Include="System\TimeZoneInfoTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Core-2008.csproj">
+      <Project>{D287D5CA-4F81-4215-AFC8-8A1413696884}</Project>
+      <Name>System.Core-2008</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
