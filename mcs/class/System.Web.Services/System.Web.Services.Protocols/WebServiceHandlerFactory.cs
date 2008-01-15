@@ -98,7 +98,11 @@ namespace System.Web.Services.Protocols
 
 		public IHttpHandler GetHandler (HttpContext context, string verb, string url, string filePath)
 		{
+#if TARGET_J2EE
+			string fp = url;
+#else
 			string fp = filePath != null ? filePath.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/') : null;
+#endif
 			Type type = WebServiceParser.GetCompiledType (fp, context);
 
 			WSProtocol protocol = GuessProtocol (context, verb);
