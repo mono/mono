@@ -110,5 +110,39 @@ namespace MonoTests.System.Linq.Expressions {
 			action = Expression.GetActionType (new [] {typeof (int), typeof (int), typeof (int), typeof (int)});
 			Assert.AreEqual (typeof (Action<int, int, int, int>), action);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ParameterNullType ()
+		{
+			Expression.Parameter (null, "foo");
+		}
+
+		[Test]
+		public void ParameterNullName ()
+		{
+			var p = Expression.Parameter (typeof (string), null);
+			Assert.AreEqual (null, p.Name);
+			Assert.AreEqual (typeof (string), p.Type);
+			Assert.AreEqual ("<param>", p.ToString ());
+		}
+
+		[Test]
+		public void ParameterEmptyName ()
+		{
+			var p = Expression.Parameter (typeof (string), "");
+			Assert.AreEqual ("", p.Name);
+			Assert.AreEqual (typeof (string), p.Type);
+			Assert.AreEqual ("", p.ToString ());
+		}
+
+		[Test]
+		public void Parameter ()
+		{
+			var p = Expression.Parameter (typeof (string), "foo");
+			Assert.AreEqual ("foo", p.Name);
+			Assert.AreEqual (typeof (string), p.Type);
+			Assert.AreEqual ("foo", p.ToString ());
+		}
 	}
 }
