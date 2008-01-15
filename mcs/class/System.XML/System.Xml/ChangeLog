@@ -1,3 +1,8 @@
+2008-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlParserContext.cs : do not pass invalid URI to XmlTextReader#ctor
+	  even as a dummy. Fixed bug #353654.
+
 2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : added NET_3_5 members.

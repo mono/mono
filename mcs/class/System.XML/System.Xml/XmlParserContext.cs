@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System.Collections;
+using System.IO;
 using System.Text;
 using Mono.Xml;
 
@@ -138,7 +139,7 @@ namespace System.Xml
 				nt,
 				nsMgr,
 				(docTypeName != null && docTypeName != String.Empty) ?
-					new XmlTextReaderImpl ("", nt).GenerateDTDObjectModel (
+					new XmlTextReaderImpl (TextReader.Null, nt).GenerateDTDObjectModel (
 						docTypeName, pubId, sysId, internalSubset) : null,
 				baseURI,
 				xmlLang,
