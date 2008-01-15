@@ -1,3 +1,8 @@
+2008-01-15  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: clean the ToReadOnlyCollection extension
+	method.
+
 2007-12-18  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: refactor some Min.

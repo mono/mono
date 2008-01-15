@@ -2254,21 +2254,16 @@ namespace System.Linq
 
 		#endregion
 
-		// These methods are not included in the
-		// .NET Standard Query Operators Specification,
-		// but they provide additional useful commands
-
-		#region ToReadOnlyCollection
-		internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource> (IEnumerable<TSource> source)
+		internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource> (this IEnumerable<TSource> source)
 		{
 			if (source == null)
-				return new ReadOnlyCollection<TSource> (new List<TSource> ());
+				return new ReadOnlyCollection<TSource> (new TSource [0]); // could we singlotenize that?
 
-			if (typeof (ReadOnlyCollection<TSource>).IsInstanceOfType (source))
-				return source as ReadOnlyCollection<TSource>;
+			var ro = source as ReadOnlyCollection<TSource>;
+			if (ro != null)
+				return ro;
 
-			return new ReadOnlyCollection<TSource> (ToArray<TSource> (source));
+			return new ReadOnlyCollection<TSource> (source.ToArray<TSource> ());
 		}
-		#endregion
 	}
 }
