@@ -395,6 +395,26 @@ namespace MonoTests.System.Reflection
 				.MakeGenericMethod ();
 		}
 
+		public void SimpleGenericMethod<TFoo, TBar> () {}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MakeGenericMethodWithNullArray ()
+		{
+			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod");
+
+			gmi.MakeGenericMethod ((Type []) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MakeGenericMethodWithNullValueInTypesArray ()
+		{
+			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod");
+
+			gmi.MakeGenericMethod (new Type [] { typeof (int), null });
+		}
+
 		public static int? pass_nullable (int? i)
 		{
 			return i;
