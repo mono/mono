@@ -188,7 +188,7 @@ namespace MonoTests.System {
 				"M/dd/yyyy",
 				"M/d/y",
 				"M/d/yy",
-				//"M/d/yyy",
+				"M/d/yyy",
 				"M/d/yyyy",
 				"M/d/yyyyy",
 				"M/d/yyyyyy",
@@ -199,7 +199,8 @@ namespace MonoTests.System {
 			foreach (string format in formats)
 			{
 				string serialized = dto.ToString (format, fp);
-				Assert.AreEqual (dto.Date, DateTimeOffset.ParseExact (serialized, format, fp).Date);
+				//Console.WriteLine ("{0} {1} {2}", format, dto, serialized);
+				Assert.AreEqual (dto.Date, DateTimeOffset.ParseExact (serialized, format, fp).Date, format);
 
 			}
 		}
@@ -230,20 +231,60 @@ namespace MonoTests.System {
 				"M/d/yyyy H:m zzz",    "MM/d/yyyy H:m zzz",
 				"M/dd/yy H:m zzz",     "MM/dd/yy H:m zzz",
 				"M/d/yy H:m zzz",      "M/d/yy H:m zzz",
-				"ddd dd MMM yyyy h:mm tt zzz",
+				"ddd dd MMM yyyy h:mm tt zzz", 
 			};
 
 			foreach (DateTimeOffset dto in dtos)
 				foreach (string format in formats)
 				{
 					string serialized = dto.ToString (format, fp);
+					//Console.WriteLine ("{0} {1} {2}", format, dto, serialized);
 					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
 				}
 		}
 
 		[Test]
+		public void ParseExactYearFormat ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			DateTimeOffset[] dtos = {
+				new DateTimeOffset (2008, 01, 14, 13, 21, 0, new TimeSpan (1,0,0)),
+				new DateTimeOffset (2008, 01, 14, 13, 21, 0, new TimeSpan (-5,0,0)),
+				new DateTimeOffset (1978, 02, 16, 13, 21, 0, new TimeSpan (2,0,0)),
+				new DateTimeOffset (999, 9, 9, 9, 9, 0, new TimeSpan (3,0,0)),
+			};
+
+			string[] formats = {
+				"M/d/yyy H:m zzz",
+				"M/d/yyyy H:m zzz",
+				"M/d/yyyyy H:m zzz",
+				"M/d/yyyyyy H:m zzz",
+				"M/d/yyyyyyy H:m zzz",
+			};
+
+			foreach (DateTimeOffset dto in dtos)
+				foreach (string format in formats)
+				{
+					string serialized = dto.ToString (format, fp);
+					//Console.WriteLine ("{0} {1} {2}", format, dto, serialized);
+					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
+				}
+			
+		}
+
+		[Test]
 		[ExpectedException (typeof (FormatException))]
-		public void ParseExactFormatException ()
+		public void ParseExactYearException ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "M/d/yyyy H:m zzz";
+			string date = "1/15/999 10:58 +01:00";
+			DateTimeOffset.ParseExact(date, format, fp);	
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException1 ()
 		{
 			CultureInfo fp = CultureInfo.InvariantCulture;
 			string format = "d";
@@ -251,16 +292,36 @@ namespace MonoTests.System {
 			DateTimeOffset.ParseExact(date, format, fp);
 		}
 
-//		[Test]
-//		[ExpectedException (typeof (FormatException))]
-//		public void ParseExactFormatException1 ()
-//		{
-//			CultureInfo fp = CultureInfo.InvariantCulture;
-//			string format = "ddd dd MMM yyyy h:mm tt zzz";
-//			string date = "Mon 14 Jan 2008 2:56 PM +01";
-//			DateTimeOffset.ParseExact(date, format, fp);
-//		}
-	}
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException2 ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "ddd dd MMM yyyy h:mm tt zzz";
+			string date = "Mon 14 Jan 2008 2:56 PM +01";
+			DateTimeOffset.ParseExact(date, format, fp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException3 ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "ddd dd MMM yyyy h:mm tt zzz";
+			string date = "Mon 14 Jan 2008 2:56 PM +01:1";
+			DateTimeOffset.ParseExact(date, format, fp);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactFormatException4 ()
+		{
+			CultureInfo fp = CultureInfo.InvariantCulture;
+			string format = "ddd dd MMM yyyy h:mm tt zzz";
+			string date = "Mon 14 Jan 2008 2:56 PM +01: 00";
+			DateTimeOffset.ParseExact(date, format, fp);
+		}
+}
 }
 #endif
 
