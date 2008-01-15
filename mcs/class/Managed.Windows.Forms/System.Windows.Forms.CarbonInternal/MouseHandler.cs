@@ -74,7 +74,8 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			hwnd = Hwnd.ObjectFromHandle (view_handle);
 
-			client = (hwnd.ClientWindow == view_handle ? true : false);
+			if (hwnd != null)
+				client = (hwnd.ClientWindow == view_handle ? true : false);
 
 			if (XplatUICarbon.Grab.Hwnd != IntPtr.Zero) {
 				hwnd = Hwnd.ObjectFromHandle (XplatUICarbon.Grab.Hwnd); 

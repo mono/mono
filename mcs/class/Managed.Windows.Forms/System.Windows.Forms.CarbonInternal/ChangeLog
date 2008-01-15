@@ -1,5 +1,10 @@
 2008-01-15  Geoff Norton  <gnorton@novell.com>
 
+	* MouseHandler.cs: Avoid a NRE if we dont know the window the event 
+	came in on.
+
+2008-01-15  Geoff Norton  <gnorton@novell.com>
+
 	* ApplicationHandler.cs:  Fix the Grab declaration.
 	* MouseHandler.cs: Fix the grab declaration and a minor optimization.
 
