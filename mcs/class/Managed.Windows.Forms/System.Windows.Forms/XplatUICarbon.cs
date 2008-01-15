@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 		internal static IntPtr ActiveWindow;
 		internal static IntPtr ReverseWindow;
 
-		internal static Hwnd GrabHwnd;
 		internal static Hwnd MouseHwnd;
 
 		internal static Hashtable WindowBackgrounds;
@@ -70,7 +69,7 @@ namespace System.Windows.Forms {
 		internal Carbon.WindowHandler WindowHandler;
 		
 		// Carbon Specific
-		private static GrabStruct Grab;
+		internal static GrabStruct Grab;
 		private static Carbon.Caret Caret;
 		private static Carbon.Dnd Dnd;
 		private static Hashtable WindowMapping;
@@ -1401,13 +1400,23 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle) {
-			GrabHwnd = Hwnd.ObjectFromHandle (handle);
+			Grab.Hwnd = handle;
+			Grab.Confined = confine_to_handle != IntPtr.Zero;
+			/* FIXME: Set the Grab.Area */
 		}
 		
 		internal override void UngrabWindow(IntPtr hwnd) {
-			GrabHwnd = null;
-			Grab.Hwnd = IntPtr.Zero;
-			Grab.Confined = false;
+                        bool was_grabbed = Grab.Hwnd != IntPtr.Zero;
+
+                        Grab.Hwnd = IntPtr.Zero;
+                        Grab.Confined = false;
+
+                        if (was_grabbed) {
+                                // lparam should be the handle to the window gaining the mouse capture,
+                                // but we dont have that information like X11.
+                                // Also only generate WM_CAPTURECHANGED if the window actually was grabbed.
+                                SendMessage (hwnd, Msg.WM_CAPTURECHANGED, IntPtr.Zero, IntPtr.Zero);
+                        }
 		}
 		
 		internal override void HandleException(Exception e) {

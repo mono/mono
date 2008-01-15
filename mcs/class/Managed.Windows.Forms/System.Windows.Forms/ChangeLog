@@ -1,3 +1,8 @@
+2008-01-15  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  Rework Grab/Ungrab handling to send some needed 
+	messages.
+
 2008-01-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Change 2 more AutoScaleBaseSize calculation to round instead
