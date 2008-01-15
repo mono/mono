@@ -30,9 +30,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test.NET|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Test.NET\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework" />
     <Reference Include="System" />
+    <Reference Condition=" '$(Configuration)' == 'Test.NET' " Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <None Include="System.Collections.Generic\ChangeLog" />
@@ -77,7 +87,7 @@
     <Compile Include="System\TimeZoneInfoTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.Core-2008.csproj">
+    <ProjectReference Condition=" '$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release' "  Include="..\System.Core-2008.csproj">
       <Project>{D287D5CA-4F81-4215-AFC8-8A1413696884}</Project>
       <Name>System.Core-2008</Name>
       <Private>True</Private>
