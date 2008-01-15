@@ -1,5 +1,8 @@
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_fields): Set field.count for generic instances.
+	Fixes #350856.
+
 	* image.c (do_mono_image_open): Pass TRUE as last_exists to 
 	mono_portability_find_file (). Fixes #325466.
 	(mono_image_get_public_key): Fix a warning.
