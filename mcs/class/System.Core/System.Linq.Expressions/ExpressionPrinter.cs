@@ -166,7 +166,11 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitBinary (BinaryExpression binary)
 		{
-			throw new NotImplementedException ();
+			Print ("(");
+			Visit (binary.Left);
+			Print (" {0} ", OperatorToString (binary));
+			Visit (binary.Right);
+			Print (")");
 		}
 
 		protected override void VisitTypeIs (TypeBinaryExpression type)
