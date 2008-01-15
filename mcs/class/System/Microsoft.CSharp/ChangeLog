@@ -1,3 +1,8 @@
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* CSharpCodeCompiler.cs: Avoid setting results.CompiledAssembly since it might
+	be a netmodule. Fixes #353536.
+
 2008-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* CSharpCodeCompiler.cs: 3.0 is the default version now.

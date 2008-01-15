@@ -258,7 +258,7 @@ namespace Mono.CSharp
 						fs.Close();
 					}
 				} else {
-					results.CompiledAssembly = Assembly.LoadFrom(options.OutputAssembly);
+					// Avoid setting CompiledAssembly right now since the output might be a netmodule
 					results.PathToAssembly = options.OutputAssembly;
 				}
 			} else {
