@@ -74,15 +74,15 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			hwnd = Hwnd.ObjectFromHandle (view_handle);
 
-			if (XplatUICarbon.GrabHwnd != null) {
-				hwnd = XplatUICarbon.GrabHwnd; 
+			client = (hwnd.ClientWindow == view_handle ? true : false);
+
+			if (XplatUICarbon.Grab.Hwnd != IntPtr.Zero) {
+				hwnd = Hwnd.ObjectFromHandle (XplatUICarbon.Grab.Hwnd); 
 				client = true;
 			}
 			if (hwnd == null)
 				return true;
 			
-			client = (hwnd.ClientWindow == view_handle ? true : hwnd == XplatUICarbon.GrabHwnd ? true : false);
-
 			if (client) {
 				qdpoint.x = (short) point.x;
 				qdpoint.y = (short) point.y;

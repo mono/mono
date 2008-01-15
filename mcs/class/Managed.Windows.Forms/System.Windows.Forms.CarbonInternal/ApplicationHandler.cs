@@ -62,8 +62,8 @@ namespace System.Windows.Forms.CarbonInternal {
 					if (XplatUICarbon.FocusWindow != IntPtr.Zero) {
 						Driver.SendMessage (XplatUICarbon.FocusWindow, Msg.WM_KILLFOCUS, IntPtr.Zero, IntPtr.Zero);
 					} 
-					if (XplatUICarbon.GrabHwnd != null) {
-						Driver.SendMessage (XplatUICarbon.GrabHwnd.Handle, Msg.WM_LBUTTONDOWN, (IntPtr)MsgButtons.MK_LBUTTON, (IntPtr) (Driver.MousePosition.X << 16 | Driver.MousePosition.Y));
+					if (XplatUICarbon.Grab.Hwnd != IntPtr.Zero) {
+						Driver.SendMessage (Hwnd.ObjectFromHandle (XplatUICarbon.Grab.Hwnd).Handle, Msg.WM_LBUTTONDOWN, (IntPtr)MsgButtons.MK_LBUTTON, (IntPtr) (Driver.MousePosition.X << 16 | Driver.MousePosition.Y));
 					}
 					foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows)
 						if (XplatUICarbon.IsWindowVisible (utility_window))

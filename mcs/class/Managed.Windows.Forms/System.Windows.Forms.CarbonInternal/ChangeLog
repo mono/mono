@@ -1,3 +1,8 @@
+2008-01-15  Geoff Norton  <gnorton@novell.com>
+
+	* ApplicationHandler.cs:  Fix the Grab declaration.
+	* MouseHandler.cs: Fix the grab declaration and a minor optimization.
+
 2008-01-10  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHAndler.cs:  Mark all dirty areas as dirty with the Hwnd system.
