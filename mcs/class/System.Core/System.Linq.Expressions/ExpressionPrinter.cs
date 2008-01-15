@@ -211,7 +211,13 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitConditional (ConditionalExpression conditional)
 		{
-			throw new NotImplementedException ();
+			Print ("IIF(");
+			Visit (conditional.Test);
+			Print (", ");
+			Visit (conditional.IfTrue);
+			Print (", ");
+			Visit (conditional.IfFalse);
+			Print (")");
 		}
 
 		protected override void VisitParameter (ParameterExpression parameter)

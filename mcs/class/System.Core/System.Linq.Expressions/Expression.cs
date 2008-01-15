@@ -553,10 +553,20 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static ConditionalExpression Condition (Expression test, Expression ifTrue, Expression ifFalse)
 		{
-			throw new NotImplementedException ();
+			if (test == null)
+				throw new ArgumentNullException ("test");
+			if (ifTrue == null)
+				throw new ArgumentNullException ("ifTrue");
+			if (ifFalse == null)
+				throw new ArgumentNullException ("ifFalse");
+			if (test.Type != typeof (bool))
+				throw new ArgumentException ("Test expression should be of type bool");
+			if (ifTrue.Type != ifFalse.Type)
+				throw new ArgumentException ("The ifTrue and ifFalse type do not match");
+
+			return new ConditionalExpression (test, ifTrue, ifFalse);
 		}
 
 		public static ConstantExpression Constant (object value)

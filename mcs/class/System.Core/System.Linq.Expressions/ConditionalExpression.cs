@@ -47,5 +47,13 @@ namespace System.Linq.Expressions {
 		public Expression IfFalse {
 			get { return ifFalse; }
 		}
+
+		internal ConditionalExpression (Expression test, Expression ifTrue, Expression ifFalse)
+			: base (ExpressionType.Conditional, ifTrue.Type)
+		{
+			this.test = test;
+			this.ifTrue = ifTrue;
+			this.ifFalse = ifFalse;
+		}
 	}
 }

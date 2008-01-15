@@ -1,5 +1,10 @@
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ConditionalExpressionExpression.cs
+	ExpressionPrinter.cs : implement Expression.Condition.
+
+2008-01-15  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs,
 	ParameterExpression.cs,
 	ExpressionPrinter.cs: implement Expression.Parameter
