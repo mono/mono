@@ -120,8 +120,10 @@ namespace System.Web {
 			WorkerRequest = worker_request;
 			this.context = context;
 
+#if !TARGET_J2EE
 			if (worker_request != null)
 				use_chunked = (worker_request.GetHttpVersion () == "HTTP/1.1");
+#endif
 		}
 		
 		internal TextWriter SetTextWriter (TextWriter writer)
@@ -466,22 +468,26 @@ namespace System.Web {
 			if (headers_sent)
 				throw new HttpException ("headers have been already sent");
 			
+#if !TARGET_J2EE
 			if (String.Compare (name, "content-length", true, CultureInfo.InvariantCulture) == 0){
 				content_length = (long) UInt64.Parse (value);
 				use_chunked = false;
 				return;
 			}
+#endif
 
 			if (String.Compare (name, "content-type", true, CultureInfo.InvariantCulture) == 0){
 				ContentType = value;
 				return;
 			}
 
+#if !TARGET_J2EE
 			if (String.Compare (name, "transfer-encoding", true, CultureInfo.InvariantCulture) == 0){
 				transfer_encoding = value;
 				use_chunked = false;
 				return;
 			}
+#endif
 
 			if (String.Compare (name, "cache-control", true, CultureInfo.InvariantCulture) == 0){
 				user_cache_control = value;
@@ -597,6 +603,7 @@ namespace System.Web {
 		//   Cache-Control
 		void AddHeadersNoCache (ArrayList write_headers, bool final_flush)
 		{
+#if !TARGET_J2EE
 			//
 			// Transfer-Encoding
 			//
@@ -604,6 +611,7 @@ namespace System.Web {
 				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", "chunked"));
 			else if (transfer_encoding != null)
 				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", transfer_encoding));
+#endif
 
 			UnknownResponseHeader date_header = new UnknownResponseHeader ("Date",
 					DateTime.UtcNow.ToString ("r", CultureInfo.InvariantCulture));
@@ -615,6 +623,7 @@ namespace System.Web {
 			if (redirect_location != null)
 				write_headers.Add (new UnknownResponseHeader ("Location", redirect_location));
 			
+#if !TARGET_J2EE
 			//
 			// If Content-Length is set.
 			//
@@ -627,11 +636,9 @@ namespace System.Web {
 					// If we are buffering and this is the last flush, not a middle-flush,
 					// we know the content-length.
 					//
-#if !TARGET_JVM
 					content_length = output_stream.total;
 					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
 									      content_length.ToString (CultureInfo.InvariantCulture)));
-#endif
 				} else {
 					//
 					// We are buffering, and this is a flush in the middle.
@@ -650,6 +657,7 @@ namespace System.Web {
 					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
 				}
 			}
+#endif
 
 			//
 			// Cache Control, the cache policy takes precedence over the cache_control property.
