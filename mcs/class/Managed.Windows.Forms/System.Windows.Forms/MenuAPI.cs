@@ -51,8 +51,17 @@ namespace System.Windows.Forms {
 			foreach (MenuItem item in TopMenu.MenuItems)
 				AddShortcuts (item);
 
-			if (top_menu is ContextMenu) {
-				grab_control = (top_menu as ContextMenu).SourceControl.FindForm ();
+			if (top_menu is ContextMenu) {Console.WriteLine(">>> {0}", (top_menu as ContextMenu).SourceControl);
+							
+				Control source_control = (top_menu as ContextMenu).SourceControl;
+#if NET_2_0				
+				if (source_control.Parent != null && (source_control.Parent is ToolStripOverflow)) {
+					ToolStrip toolstrip = (source_control.Parent as ToolStripOverflow).ParentToolStrip;
+					if (toolstrip != null)
+						source_control = toolstrip.FindForm ();
+				}
+#endif
+				grab_control = source_control.FindForm ();
 				grab_control.ActiveTracker = this;
 			} else
 				grab_control = top_menu.Wnd.FindForm ();
