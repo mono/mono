@@ -557,6 +557,32 @@ namespace MonoTests.System.Net
 		}
 #endif
 
+		[Test]
+		public void LastModifiedKind () // bug #353495
+		{
+			const string reqURL = "http://coffeefaq.com/site/node/25";
+			const string dtFmt = "ddd, dd MMM yyyy HH:mm:ss";
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create (reqURL);
+			HttpWebResponse resp = (HttpWebResponse) req.GetResponse ();
+			DateTime lastMod = resp.LastModified;
+			string rawLastMod = resp.Headers ["Last-Modified"];
+			resp.Close ();
+			//Assert.AreEqual ("Tue, 15 Jan 2008 08:59:59 GMT", rawLastMod, "#1");
+#if NET_2_0
+			Assert.AreEqual (DateTimeKind.Local, lastMod.Kind, "#2");
+#endif
+			req = (HttpWebRequest) WebRequest.Create (reqURL);
+			req.IfModifiedSince = lastMod;
+			try {
+				resp = (HttpWebResponse) req.GetResponse ();
+				resp.Close ();
+				Assert.Fail ("Should result in 304");
+			} catch (WebException ex) {
+				Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#3");
+				Assert.AreEqual (((HttpWebResponse) ex.Response).StatusCode, HttpStatusCode.NotModified, "#4");
+			}
+		}
+
 		static byte [] EchoRequestHandler (Socket socket)
 		{
 			MemoryStream ms = new MemoryStream ();
