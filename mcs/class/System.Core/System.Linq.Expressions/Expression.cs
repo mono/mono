@@ -147,13 +147,13 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression Modulo (Expression left, Expression right, MethodInfo method)
 		{
 			BinaryCoreCheck (left, right);
-			
+
 			return MakeSimpleBinary (ExpressionType.Modulo, left, right, method);
 		}
 
 		public static BinaryExpression Multiply (Expression left, Expression right)
 		{
-			return Multiply (left, right);
+			return Multiply (left, right, null);
 		}
 
 		public static BinaryExpression Multiply (Expression left, Expression right, MethodInfo method)
@@ -198,7 +198,7 @@ namespace System.Linq.Expressions {
 
 			if (left.Type != typeof (double))
 				throw new InvalidOperationException ("Power only supports double arguments");
-			
+
 			return MakeSimpleBinary (ExpressionType.Power, left, right, method);
 		}
 
@@ -212,7 +212,7 @@ namespace System.Linq.Expressions {
 				t == typeof (short) || t == typeof (ushort) ||
 				t == typeof (long)  || t == typeof (ulong);
 		}
-		
+
 		public static BinaryExpression And (Expression left, Expression right)
 		{
 			return And (left, right, null);
@@ -245,7 +245,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right)
 		{
-			return ExclusiveOr (left, right);
+			return ExclusiveOr (left, right, null);
 		}
 
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right, MethodInfo method)
@@ -275,7 +275,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression RightShift (Expression left, Expression right)
 		{
-			return RightShift (left, right);
+			return RightShift (left, right, null);
 		}
 
 		public static BinaryExpression RightShift (Expression left, Expression right, MethodInfo method)
@@ -299,7 +299,7 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
 			// This does not work with int, int pairs;   Figure out when its valid
-			
+
 			throw new NotImplementedException ();
 		}
 
@@ -480,7 +480,7 @@ namespace System.Linq.Expressions {
 		}
 
 #endregion
-	
+
 		[MonoTODO]
 		public static MethodCallExpression ArrayIndex (Expression left, params Expression [] indexes)
 		{
