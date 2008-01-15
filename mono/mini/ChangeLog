@@ -1,5 +1,7 @@
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Avoid emitting a write barrier when storing NULL.
+
 	* mini-arm.c (add_general): Fix arm eabi parameter passing.
 	(mono_arch_output_basic_block): Fix localloc implementation.
 
