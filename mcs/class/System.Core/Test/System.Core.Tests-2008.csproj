@@ -60,17 +60,21 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_ArrayIndex.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_ArrayLength.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Bind.cs" />
-    <Compile Include="System.Linq.Expressions\ExpressionTest_Call.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_CallWithExpression.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_CallWithType.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Condition.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Constant.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Divide.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_ExclusiveOr.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Field.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LeftShift.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_MakeBinary.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Modulo.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Multiply.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MultiplyChecked.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Or.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_OrElse.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Power.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Property.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_PropertyOrField.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Quote.cs" />
@@ -87,7 +91,7 @@
     <Compile Include="System\TimeZoneInfoTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Condition=" '$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release' "  Include="..\System.Core-2008.csproj">
+    <ProjectReference Condition=" '$(Configuration)' == 'Debug' or '$(Configuration)' == 'Release' " Include="..\System.Core-2008.csproj">
       <Project>{D287D5CA-4F81-4215-AFC8-8A1413696884}</Project>
       <Name>System.Core-2008</Name>
       <Private>True</Private>
