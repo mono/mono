@@ -1,3 +1,8 @@
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_NumberFormatter_GetFormatterTables): Fix a
+	warning.
+
 2008-01-16  Wade Berrier <wberrier@novell.com>
 
 	* security.c: Add assembly.h header to appease some warnings
