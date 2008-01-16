@@ -129,8 +129,8 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Internal methods
-		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect) {
-			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height);
+		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect, bool invalidate) {
+			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height, invalidate);
 		}
 		
 		internal void AddExpose (Hwnd hwnd, bool client, Rectangle rect) {
@@ -696,6 +696,10 @@ namespace System.Windows.Forms {
 
 
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
+			AddExpose (hwnd, client, x, y, width, height, true);
+		}
+	
+		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height, bool invalidate) {
 			// Don't waste time
 			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
 				return;
@@ -714,7 +718,7 @@ namespace System.Windows.Forms {
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
 				if (!hwnd.expose_pending) {
-					if (!hwnd.nc_expose_pending) {
+					if (!hwnd.nc_expose_pending && invalidate) {
 						HIViewSetNeedsDisplayInRect (hwnd.ClientWindow, ref region, true);
 					}
 					hwnd.expose_pending = true;
@@ -722,7 +726,7 @@ namespace System.Windows.Forms {
 			} else {
 				hwnd.AddNcInvalidArea (x, y, width, height);
 				if (!hwnd.nc_expose_pending) {
-					if (!hwnd.expose_pending) {
+					if (!hwnd.expose_pending && invalidate) {
 						HIViewSetNeedsDisplayInRect (hwnd.WholeWindow, ref region, true);
 					}
 					hwnd.nc_expose_pending = true;

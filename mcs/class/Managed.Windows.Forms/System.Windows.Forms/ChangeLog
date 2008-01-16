@@ -1,3 +1,8 @@
+2008-01-16  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  Avoid some unecessary invalidation calls when
+	carbon signals us to redraw.  Fixes another portion of the flickering bug
+
 2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Form.cs: Prevent the MdiParent property to be set when value is the same
