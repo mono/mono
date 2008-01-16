@@ -2797,6 +2797,10 @@ namespace Mono.CSharp {
 
 		public override void EmitMeta (EmitContext ec)
 		{
+			// Avoid declaring an IL variable for this_variable since it is not accessed
+			// from the generated IL
+			if (this_variable != null)
+				Variables.Remove ("this");
 			base.EmitMeta (ec);
 			parameters.ResolveVariable (this);
 		}

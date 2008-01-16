@@ -1,3 +1,8 @@
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* statement.cs: Avoid declaring an IL variable for this_variable since it is
+	not accessed from the generated IL.
+
 2008-01-14  Marek Safar  <marek.safar@gmail.com>
 
  	* typemanager.cs, lambda.cs, parameter.cs, ecore.cs, class.cs, delegate.cs,
