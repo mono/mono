@@ -1,5 +1,7 @@
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-x86.md: Fix the length of some load membase opcodes. Fixes #354241.
+
 	* mini-amd64.h: Add some comments to the MonoLMF structure.
 
 	* mini-ops.h cpu-amd64.c: Add a OP_AMD64_SAVE_SP_TO_LMF opcode.
