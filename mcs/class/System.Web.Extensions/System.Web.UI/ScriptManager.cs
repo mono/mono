@@ -546,7 +546,7 @@ namespace System.Web.UI
 				// Register services
 				if (_services != null && _services.Count > 0) {
 					for (int i = 0; i < _services.Count; i++) {
-						RegisterServiceReference (_services [i]);
+						RegisterServiceReference (this, _services [i]);
 					}
 				}
 
@@ -554,7 +554,7 @@ namespace System.Web.UI
 					for (int i = 0; i < _proxies.Count; i++) {
 						ScriptManagerProxy proxy = _proxies [i];
 						for (int j = 0; j < proxy.Services.Count; j++) {
-							RegisterServiceReference (proxy.Services [j]);
+							RegisterServiceReference (proxy, proxy.Services [j]);
 						}
 					}
 				}
@@ -829,11 +829,11 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		void RegisterServiceReference (ServiceReference serviceReference) {
+		void RegisterServiceReference (Control control, ServiceReference serviceReference) {
 			if (serviceReference.InlineScript) {
-				string url = ResolveUrl (serviceReference.Path);
+				string url = control.ResolveUrl (serviceReference.Path);
 				LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (WebServiceParser.GetCompiledType (url, Context), url);
-				RegisterClientScriptBlock (this, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
+				RegisterClientScriptBlock (control, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
 			}
 			else {
 #if TARGET_J2EE
@@ -841,8 +841,8 @@ namespace System.Web.UI
 #else
 				string pathInfo = "/js";
 #endif
-				string url = String.Concat (ResolveClientUrl (serviceReference.Path), pathInfo);
-				RegisterClientScriptInclude (this, typeof (ScriptManager), url, url);
+				string url = String.Concat (control.ResolveClientUrl (serviceReference.Path), pathInfo);
+				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
 			}
 		}
 
