@@ -223,17 +223,11 @@ return this._invoke({0}.get_path(), '{1}',{2},{{{3}}},succeededCallback,failedCa
 			string service = isPage ? "PageMethods" : t.FullName;
 			
 			StringBuilder proxy = new StringBuilder ();
-			if (String.IsNullOrEmpty (ns))
-				proxy.AppendFormat (
-@"var {0}",
-	service);
-			else
-				proxy.AppendFormat (
-@"Type.registerNamespace('{0}');
-{1}",
-	ns, service);
+			List<string> registeredNamespaces = new List<string> ();
+			string scriptTypeDeclaration = EnsureNamespaceRegistered (ns, service, proxy, registeredNamespaces);
 			proxy.AppendFormat (
-@"=function() {{
+@"
+" + scriptTypeDeclaration + @"=function() {{
 {0}.initializeBase(this);
 this._timeout = 0;
 this._userContext = null;
@@ -278,7 +272,7 @@ this._failed = null;
 var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 					gtc = true;
 				}
-				GenerateScript (proxy, gsta);
+				GenerateScript (proxy, gsta, registeredNamespaces);
 			}
 
 			proxy.AppendLine ();
@@ -370,8 +364,10 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 				"Using the GenerateScriptTypes attribute is not supported for types in the following categories: primitive types; DateTime; generic types taking more than one parameter; types implementing IEnumerable or IDictionary; interfaces; Abstract classes; classes without a public default constructor.");
 		}
 
-		static void GenerateScript (StringBuilder proxy, GenerateScriptTypeAttribute gsta) {
+		static void GenerateScript (StringBuilder proxy, GenerateScriptTypeAttribute gsta, List<string> registeredNamespaces) {
 			string className = gsta.Type.FullName.Replace ('+', '_');
+			string ns = gsta.Type.Namespace;
+			string scriptTypeDeclaration = EnsureNamespaceRegistered (ns, className, proxy, registeredNamespaces);
 			proxy.AppendFormat (
 @"
 if (typeof({0}) === 'undefined') {{", className);
@@ -390,11 +386,25 @@ if (typeof({0}) === 'undefined') {{", className);
 				string typeId = String.IsNullOrEmpty (gsta.ScriptTypeId) ? gsta.Type.FullName : gsta.ScriptTypeId;
 				proxy.AppendFormat (
 @"
-{0}=gtc(""{1}"");
+" + scriptTypeDeclaration + @"=gtc(""{1}"");
 {0}.registerClass('{0}');",
 				className, typeId);
 			}
 			proxy.Append ('}');
+		}
+
+		static string EnsureNamespaceRegistered (string ns, string name, StringBuilder proxy, List<string> registeredNamespaces) {
+			if (String.IsNullOrEmpty (ns))
+				return "var " + name;
+
+			if (!registeredNamespaces.Contains (ns)) {
+				registeredNamespaces.Add (ns);
+				proxy.AppendFormat (
+@"
+Type.registerNamespace('{0}');",
+								   ns);
+			}
+			return name;
 		}
 
 		sealed class EnumPrototypeSerializer : JavaScriptSerializer.LazyDictionary
