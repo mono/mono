@@ -1,3 +1,16 @@
+2008-01-16  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h: A new data structure describing the layout of
+	a runtime generic context (MonoRuntimeGenericContextTemplate).
+
+	* metadata-internals.h: Added a hash table to MonoDomain that maps
+	from open generic classes to their runtime generic context
+	templates.
+
+	* object.c: Building of the runtime generic context, including
+	proper handling of generic type arguments of superclasses.
+	Building of the runtime generic context according to the template.
+
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_fields): Set field.count for generic instances.

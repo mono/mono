@@ -1,3 +1,8 @@
+2008-01-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: New type argument lookup code which uses the
+	runtime generic context template.
+
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Avoid emitting a write barrier when storing NULL.
