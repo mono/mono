@@ -894,6 +894,9 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (value == mdi_parent)
+					return;
+
 				if (value != null && !value.IsMdiContainer)
 					throw new ArgumentException ("Form that was specified to be "
 						+ "the MdiParent for this form is not an MdiContainer.");
