@@ -1,5 +1,10 @@
 2008-01-16 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* Wizard.cs:
+	manage history state on "MovePrevious" action.	
+
+2008-01-16 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* BulletedList.cs:
 	resolve BulletImageUrl,
 	register for event validation.	

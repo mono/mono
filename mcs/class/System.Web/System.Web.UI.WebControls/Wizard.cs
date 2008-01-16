@@ -1375,10 +1375,10 @@ namespace System.Web.UI.WebControls
 						int curStep = ActiveStepIndex;
 						OnPreviousButtonClick (args);
 						if (!args.Cancel) {
-							if (history != null && activeStepIndex < curStep)
-								history.Remove (ActiveStepIndex);
 							if (curStep == activeStepIndex)
 								ActiveStepIndex--;
+							if (history != null && activeStepIndex < curStep)
+								history.Remove (curStep);
 						}
 					}
 					break;
