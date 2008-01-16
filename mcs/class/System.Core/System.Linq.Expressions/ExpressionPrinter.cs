@@ -232,8 +232,12 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitMethodCall (MethodCallExpression call)
 		{
-			Visit (call.Object);
-			Print (".{0}(", call.Method.Name);
+			if (call.Object != null) {
+				Visit (call.Object);
+				Print (".");
+			}
+			Print (call.Method.Name);
+			Print ("(");
 			VisitExpressionList (call.Arguments);
 			Print (")");
 		}

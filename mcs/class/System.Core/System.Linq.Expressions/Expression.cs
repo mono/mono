@@ -68,7 +68,7 @@ namespace System.Linq.Expressions {
 		static void CheckMethod (MethodInfo m)
 		{
 		}
-		
+
 #region Binary Expressions
 
 		static void BinaryCoreCheck (Expression left, Expression right, MethodInfo method)
@@ -88,10 +88,10 @@ namespace System.Linq.Expressions {
 
 				if (pi.Length != 2)
 					throw new ArgumentException ("Must have only two parameters", "method");
-				
+
 				if (left.Type != pi [0].ParameterType)
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
-				
+
 				if (right.Type != pi [1].ParameterType)
 					throw new InvalidOperationException ("right-side argument type does not match right expression type");
 
@@ -104,14 +104,14 @@ namespace System.Linq.Expressions {
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
 			Type result = method == null ? left.Type : method.ReturnType;
-			
+
 			return new BinaryExpression (et, result, left, right, method);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			Type result = method == null ? typeof (bool) : method.ReturnType;
-			
+
 			return new BinaryExpression (et, result, left, right, method);
 		}
 
@@ -561,7 +561,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("method");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException ("instance");
-			if (!method.DeclaringType.IsAssignableFrom (instance.Type))
+			if (instance != null && !method.DeclaringType.IsAssignableFrom (instance.Type))
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
 			var args = arguments.ToReadOnlyCollection ();
