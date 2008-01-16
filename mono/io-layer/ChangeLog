@@ -1,5 +1,11 @@
 2008-01-16  Dick Porter  <dick@ximian.com>
 
+	* threads.c (_wapi_thread_set_termination_details): Move the
+	thread abandonment to outside the shared handle lock.  Fixes bug
+	349680.
+
+2008-01-16  Dick Porter  <dick@ximian.com>
+
 	* versioninfo.c (VerQueryValue): Include trailing null in returned
 	string length, for MS compatibility.
 
