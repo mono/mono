@@ -1,3 +1,7 @@
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads-types.h: Get rid of the unnecessary extern declarations.
+
 2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* icall.c (ves_icall_Type_GetField): if NonPublic flag is set, only
