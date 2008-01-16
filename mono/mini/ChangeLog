@@ -1,5 +1,13 @@
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h: Add some comments to the MonoLMF structure.
+
+	* mini-ops.h cpu-amd64.c: Add a OP_AMD64_SAVE_SP_TO_LMF opcode.
+	
+	* mini-amd64.c exceptions-amd64.c tramp-amd64.c: Avoid setting the rip field
+	in the LMF structure if possible. This saves two instructions in the
+	managed->native wrappers.
+
 	* mini-ops.h *.md: Make some opcodes names uniform by removing the op_ prefix.
 
 2008-01-16  Mark Probst  <mark.probst@gmail.com>
