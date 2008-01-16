@@ -2085,9 +2085,16 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-		[MonoTODO]
 		internal override SizeF GetAutoScaleSize(Font font) {
-			throw new NotImplementedException();
+			Graphics        g;
+			float           width;
+			string          magic_string = "The quick brown fox jumped over the lazy dog.";
+			double          magic_number = 44.549996948242189;
+
+			g = Graphics.FromImage (new Bitmap (1, 1));
+
+			width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
+			return new SizeF(width, font.Height);
 		}
 
 		internal override Point MousePosition {

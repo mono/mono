@@ -1,3 +1,8 @@
+2008-01-16  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Implement GetAutoScaleSize to fix Reflector on
+	trunk
+
 2008-01-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FolderBrowserDialog.cs: If we cannot interpret the user's requested
