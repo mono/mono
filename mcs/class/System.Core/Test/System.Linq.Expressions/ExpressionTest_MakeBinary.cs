@@ -23,6 +23,7 @@ using System;
 using System.Reflection;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace MonoTests.System.Linq.Expressions
@@ -30,6 +31,78 @@ namespace MonoTests.System.Linq.Expressions
 	[TestFixture]
 	public class ExpressionTest_MakeBinary {
 
+		public static int GoodMethod (string a, double d)
+		{
+			return 1;
+		}
+
+		public static int BadMethodSig_1 ()
+		{
+			return 1;
+		}
+
+		public static int BadMethodSig_2 (int a)
+		{
+			return 1;
+		}
+
+		public static int BadMethodSig_3 (int a, int b, int c)
+		{
+			return 1;
+		}
+		
+		static MethodInfo GM (string n)
+		{
+			MethodInfo [] methods = typeof (ExpressionTest_MakeBinary).GetMethods (
+				BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public);
+
+			foreach (MethodInfo m in methods)
+				if (m.Name == n)
+					return m;
+
+			throw new Exception (String.Format ("Method {0} not found", n));
+		}
+		
+		[Test]
+		public void MethodChecks ()
+		{
+			Expression left = Expression.Constant ("");
+			Expression right = Expression.Constant (1.0);
+
+			BinaryExpression r = Expression.Add (left, right, GM ("GoodMethod"));
+			Assert.AreEqual (r.Type, typeof (int));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MethodCheck_BadArgs ()
+		{
+			Expression left = Expression.Constant ("");
+			Expression right = Expression.Constant (1.0);
+
+			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_1"));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MethodCheck_BadArgs2 ()
+		{
+			Expression left = Expression.Constant ("");
+			Expression right = Expression.Constant (1.0);
+
+			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_2"));
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void MethodCheck_BadArgs3 ()
+		{
+			Expression left = Expression.Constant ("");
+			Expression right = Expression.Constant (1.0);
+
+			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_3"));
+		}
+		
 		static void PassInt (ExpressionType nt)
 		{
 			Expression left = Expression.Constant (1);
@@ -51,7 +124,7 @@ namespace MonoTests.System.Linq.Expressions
 			// If we get here, there was an error
 			Assert.Fail ("FailInt failed while creating an {0}", nt);
 		}
-		       
+
 		//
 		// Checks that we complain on the proper ExpressionTypes
 		//

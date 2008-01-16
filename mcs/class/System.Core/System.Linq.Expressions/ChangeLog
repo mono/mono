@@ -1,3 +1,8 @@
+2008-01-15  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs: Do validation on the method parameters and use
+	the return type if provided. 
+
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
 	* MethodCallExpression.cs, Expression.cs

@@ -65,32 +65,54 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+		static void CheckMethod (MethodInfo m)
+		{
+		}
+		
 #region Binary Expressions
 
-		static void BinaryCoreCheck (Expression left, Expression right)
+		static void BinaryCoreCheck (Expression left, Expression right, MethodInfo method)
 		{
 			if (left == null)
 				throw new ArgumentNullException ("left");
 			if (right == null)
 				throw new ArgumentNullException ("right");
 
-			if (left.Type != right.Type)
-				throw new InvalidOperationException ("Both expressions must have the same type");
+			if (method != null){
+				if (method.ReturnType == typeof (void))
+					throw new ArgumentException ("Specified method must return a value", "method");
+
+				if (!method.IsStatic)
+					throw new ArgumentException ("Method must be static", "method");
+				ParameterInfo [] pi = method.GetParameters ();
+
+				if (pi.Length != 2)
+					throw new ArgumentException ("Must have only two parameters", "method");
+				
+				if (left.Type != pi [0].ParameterType)
+					throw new InvalidOperationException ("left-side argument type does not match left expression type");
+				
+				if (right.Type != pi [1].ParameterType)
+					throw new InvalidOperationException ("right-side argument type does not match right expression type");
+
+			} else {
+				if (left.Type != right.Type)
+					throw new InvalidOperationException ("Both expressions must have the same type");
+			}
 		}
 
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
-			return new BinaryExpression (et, left.Type, left, right, method);
-		}
-
-		static BinaryExpression MakeSimpleBinary (ExpressionType et, Type result, Expression left, Expression right, MethodInfo method)
-		{
+			Type result = method == null ? left.Type : method.ReturnType;
+			
 			return new BinaryExpression (et, result, left, right, method);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			return new BinaryExpression (et, typeof (bool), left, right, method);
+			Type result = method == null ? typeof (bool) : method.ReturnType;
+			
+			return new BinaryExpression (et, result, left, right, method);
 		}
 
 		//
@@ -103,7 +125,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Add (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeSimpleBinary (ExpressionType.Add, left, right, method);
 		}
@@ -125,7 +147,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Subtract (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 			return MakeSimpleBinary (ExpressionType.Subtract, left, right, method);
 		}
 
@@ -136,7 +158,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression SubtractChecked (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 			return MakeSimpleBinary (ExpressionType.SubtractChecked, left, right, method);
 		}
 
@@ -147,7 +169,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Modulo (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeSimpleBinary (ExpressionType.Modulo, left, right, method);
 		}
@@ -159,7 +181,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Multiply (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeSimpleBinary (ExpressionType.Multiply, left, right, method);
 		}
@@ -171,7 +193,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression MultiplyChecked (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeSimpleBinary (ExpressionType.MultiplyChecked, left, right, method);
 		}
@@ -183,7 +205,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Divide (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeSimpleBinary (ExpressionType.Divide, left, right, method);
 		}
@@ -195,7 +217,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Power (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			if (left.Type != typeof (double))
 				throw new InvalidOperationException ("Power only supports double arguments");
@@ -221,7 +243,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression And (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			if (left.Type == typeof (bool) || IsInt (left.Type))
 				return MakeSimpleBinary (ExpressionType.And, left, right, method);
@@ -236,7 +258,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Or (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			if (left.Type == typeof (bool) || IsInt (left.Type))
 				return MakeSimpleBinary (ExpressionType.Or, left, right, method);
@@ -251,7 +273,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression ExclusiveOr (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			if (left.Type == typeof (bool) || IsInt (left.Type))
 				return MakeSimpleBinary (ExpressionType.ExclusiveOr, left, right, method);
@@ -266,7 +288,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression LeftShift (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			if (left.Type == typeof (int))
 				return MakeSimpleBinary (ExpressionType.LeftShift, left, right, method);
@@ -281,7 +303,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression RightShift (Expression left, Expression right, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 			if (left.Type == typeof (int))
 				return MakeSimpleBinary (ExpressionType.RightShift, left, right, method);
 
@@ -326,7 +348,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression Equal (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeBoolBinary (ExpressionType.Equal, left, right, liftToNull, method);
 		}
@@ -339,7 +361,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression NotEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeBoolBinary (ExpressionType.NotEqual, left, right, liftToNull, method);
 		}
@@ -351,7 +373,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression GreaterThan (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeBoolBinary (ExpressionType.GreaterThan, left, right, liftToNull, method);
 		}
@@ -364,7 +386,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression GreaterThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeBoolBinary (ExpressionType.GreaterThanOrEqual, left, right, liftToNull, method);
 		}
@@ -386,7 +408,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression LessThanOrEqual (Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, method);
 
 			return MakeBoolBinary (ExpressionType.LessThanOrEqual, left, right, liftToNull, method);
 		}
@@ -408,7 +430,7 @@ namespace System.Linq.Expressions {
 		[MonoTODO]
 		public static BinaryExpression Coalesce (Expression left, Expression right, LambdaExpression conversion)
 		{
-			BinaryCoreCheck (left, right);
+			BinaryCoreCheck (left, right, null);
 
 			throw new NotImplementedException ();
 		}
