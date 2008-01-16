@@ -1505,7 +1505,7 @@ namespace Mono.CSharp
 
 			++Indent;
 			foreach (CodeTypeParameter p in parameters) {
-				if (p.Constraints.Count == 0)
+				if (p.Constraints.Count == 0 && !p.HasConstructorConstraint)
 					continue;
 				Output.WriteLine ();
 				Output.Write ("where ");

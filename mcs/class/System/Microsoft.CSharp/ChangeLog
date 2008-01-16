@@ -1,3 +1,8 @@
+2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
+
+	* CSharpCodeGenerator.cs (GenerateGenericsConstraints): Take 
+	solitary constructor constraints into account. Fixes bug #353921.
+
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* CSharpCodeCompiler.cs: Avoid setting results.CompiledAssembly since it might
