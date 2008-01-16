@@ -1,3 +1,8 @@
+2008-01-16  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_module_string_read): Remove trailing null
+	when saving string.
+
 2008-01-16  Mark Probst  <mark.probst@gmail.com>
 
 	* class-internals.h: A new data structure describing the layout of

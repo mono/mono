@@ -1,3 +1,8 @@
+2008-01-16  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerQueryValue): Include trailing null in returned
+	string length, for MS compatibility.
+
 2008-01-09  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (get_ptr_from_rva, scan_resource_dir): Make it
