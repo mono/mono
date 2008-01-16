@@ -136,7 +136,10 @@ namespace Mainsoft.Web.Hosting
 				// Very important - to update Virtual Path!!!
 				AppDomain servletDomain = (AppDomain)this.getServletContext().getAttribute(J2EEConsts.APP_DOMAIN);
 				if (!_appVirDirInited) {
-					servletDomain.SetData (IAppDomainConfig.APP_VIRT_DIR, req.getContextPath ());
+					string appVPath = req.getContextPath ();
+					if (appVPath == null || appVPath.Length == 0)
+						appVPath = "/";
+					servletDomain.SetData (IAppDomainConfig.APP_VIRT_DIR, appVPath);
 					servletDomain.SetData (".hostingVirtualPath", req.getContextPath ());
 					_appVirDirInited = true;
 				}
