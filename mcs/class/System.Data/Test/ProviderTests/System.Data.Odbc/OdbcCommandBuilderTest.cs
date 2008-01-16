@@ -55,7 +55,7 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
@@ -75,7 +75,7 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
@@ -95,7 +95,7 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+				Assert.AreEqual ("UPDATE employee SET @p0 = ?, @p1 = ? WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
 						cmd.CommandText, "#2");
 				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
 			}
@@ -124,6 +124,126 @@ namespace MonoTests.System.Data
 			}
 		}
 
+#if NET_2_0
+
+		[Test]
+		public void GetInsertCommandTest_option_true ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetInsertCommand (true);
+				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+						cmd.CommandText, "#2");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetInsertCommandTest_option_false ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetInsertCommand (false);
+				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
+						cmd.CommandText, "#2");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetUpdateCommandTest_option_true ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			using (conn) {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetUpdateCommand (true);
+				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#2");
+				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+			}
+		}
+
+		[Test]
+		public void GetUpdateCommandTest_option_false ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			using (conn) {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetUpdateCommand (false);
+				Assert.AreEqual ("UPDATE employee SET @p0 = ?, @p1 = ? WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#2");
+				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+			}
+		}
+
+		[Test]
+		public void GetDeleteCommandTest_option_true ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetDeleteCommand (true);
+				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#2");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+		public void GetDeleteCommandTest_option_false ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				OdbcCommand cmd = cb.GetDeleteCommand (false);
+				Assert.AreEqual ("DELETE FROM employee WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
+						cmd.CommandText, "#2");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+#endif		
 		[Test]
 		public void GetDeleteCommandTest ()
 		{
@@ -137,7 +257,7 @@ namespace MonoTests.System.Data
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+				Assert.AreEqual ("DELETE FROM employee WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
