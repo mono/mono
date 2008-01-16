@@ -228,6 +228,7 @@ namespace System.Web
 			current_exe_path = null;
 			file_path = null;
 			base_virtual_dir = null;
+			form = null;
 		}
 
 	}
