@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls {
 					break;
 								
 				case BulletStyle.CustomImage:
-					writer.AddStyleAttribute (ListStyleImage, "url(" + BulletImageUrl+ ")");
+					writer.AddStyleAttribute (ListStyleImage, "url(" + ResolveClientUrl (BulletImageUrl) + ")");
 					break;
 			}
 
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
 
 				case BulletedListDisplayMode.LinkButton:
 					if (Enabled && item.Enabled)
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (CultureInfo.InvariantCulture))));
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (CultureInfo.InvariantCulture)), true));
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					writer.RenderBeginTag (HtmlTextWriterTag.A);

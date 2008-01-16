@@ -1,3 +1,9 @@
+2008-01-16 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* BulletedList.cs:
+	resolve BulletImageUrl,
+	register for event validation.	
+
 2008-01-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* TreeView.cs:
