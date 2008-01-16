@@ -612,7 +612,7 @@ namespace System.Configuration
 				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : null;
 
 				TypeConverterAttribute convertAttr = (TypeConverterAttribute) Attribute.GetCustomAttribute (prop, typeof (TypeConverterAttribute));
-				TypeConverter converter = convertAttr != null ? (TypeConverter) Activator.CreateInstance (Type.GetType (convertAttr.ConverterTypeName)) : null;
+				TypeConverter converter = convertAttr != null ? (TypeConverter) Activator.CreateInstance (Type.GetType (convertAttr.ConverterTypeName), true) : null;
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
 
 				cp.CollectionAttribute = Attribute.GetCustomAttribute (prop, typeof(ConfigurationCollectionAttribute)) as ConfigurationCollectionAttribute;				
