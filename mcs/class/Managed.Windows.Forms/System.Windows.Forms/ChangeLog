@@ -1,5 +1,10 @@
 2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Form.cs: Don't set mdi_parent as null when mdi window close is prevented, 
+	it prevents NRE when closing mdi child windows. Fixes bug #325211.
+
+2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
+
 	* InternalWindowManager.cs: Invalidade close button after mouse up when 
 	mdi form is prevented to close.
 

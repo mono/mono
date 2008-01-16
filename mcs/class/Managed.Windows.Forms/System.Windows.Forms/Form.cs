@@ -2618,14 +2618,13 @@ namespace System.Windows.Forms {
 				} else {
 					Dispose ();
 				}
+				mdi_parent = null;
 			} else {
 				if (is_modal) {
 					DialogResult = DialogResult.None;
 				}
 				closing = false;	
 			}
-
-			mdi_parent = null;
 		}
 		
 		private void WmWindowPosChanged (ref Message m)
