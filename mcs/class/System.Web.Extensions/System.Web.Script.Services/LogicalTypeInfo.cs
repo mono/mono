@@ -320,6 +320,11 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 		static Type GetTypeToGenerate (Type type) {
 			if (type.IsArray)
 				return type.GetElementType ();
+			if (type.IsGenericType) {
+				while (type.IsGenericType && type.GetGenericArguments ().Length == 1)
+					type = type.GetGenericArguments () [0];
+				return type;
+			}
 			return type;
 		}
 
@@ -333,11 +338,6 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 			if (Type.GetTypeCode (type) != TypeCode.Object)
 				return false;
 
-			// LAMESPEC: MS never create proxies for GenericTypes
-			//&& type.GetGenericTypeDefinition ().GetGenericArguments ().Length > 1
-			if (type.IsGenericType)
-				return false;
-
 			if (type == typeof (void))
 				return false;
 
@@ -348,6 +348,11 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 					ThrowOnIncorrectGenerateScriptAttribute ();
 				return false;
 			}
+
+			// LAMESPEC: MS never create proxies for GenericTypes
+			//&& type.GetGenericTypeDefinition ().GetGenericArguments ().Length > 1
+			if (type.IsGenericType)
+				return false;
 
 			ConstructorInfo ci = type.GetConstructor (Type.EmptyTypes);
 			if (!ci.IsPublic) {
