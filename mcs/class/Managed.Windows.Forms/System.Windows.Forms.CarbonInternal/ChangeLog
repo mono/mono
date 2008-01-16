@@ -1,5 +1,10 @@
 2008-01-16  Geoff Norton  <gnorton@novell.com>
 
+	* ControlHandler.cs:  Dont send another invalidate when carbon
+	already knows that the control is dirty.
+
+2008-01-16  Geoff Norton  <gnorton@novell.com>
+
 	* KeyboardHandler.cs: Track the control key(s) as well and put them
 	into KeyboardModifiers as toggled.
 	* MouseHandler.cs: Support simulating right click on single-button

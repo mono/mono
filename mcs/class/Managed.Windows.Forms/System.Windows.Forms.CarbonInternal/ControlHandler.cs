@@ -130,7 +130,7 @@ namespace System.Windows.Forms.CarbonInternal {
 						HIViewGetBounds (handle, ref bounds);
 					}
 
-					Driver.AddExpose (hwnd, client, bounds);
+					Driver.AddExpose (hwnd, client, bounds, false);
 
 					if (!hwnd.visible) {
 						if (client) {
