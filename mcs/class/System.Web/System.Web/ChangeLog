@@ -1,3 +1,12 @@
+2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
+
+	* HttpRequest.cs (get_UrlReferrer): Handle case when headers contain
+	invalid Url for referer.
+
+2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
+
+	* HttpCookieCollection.cs (AllKeys): Use Keys.CopyTo().
+
 2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpCookie.cs: Fix HttpOnly setter. Found using Gendarme.

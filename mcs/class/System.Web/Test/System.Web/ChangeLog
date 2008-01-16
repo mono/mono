@@ -1,3 +1,7 @@
+2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
+
+	* HttpRequestTest.cs (TestReferer): added test for invalid referer url.
+
 2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpCookieTest.cs: Added HttpOnly test cases.

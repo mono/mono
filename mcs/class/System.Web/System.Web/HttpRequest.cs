@@ -1069,7 +1069,11 @@ namespace System.Web {
 				if (hr == null)
 					return null;
 
-				return new Uri (hr);
+				Uri uri = null;
+				try {
+					uri = new Uri (hr);
+				} catch (UriFormatException) {}
+				return uri;
 			}
 		}
 

@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 
@@ -161,13 +162,8 @@ namespace System.Web {
 
 		public string[] AllKeys {
 			get {
-				/* XXX another inefficient copy due to
-				 * lack of exposure from the base
-				 * class */
 				string[] keys = new string [Keys.Count];
-				for (int i = 0; i < Keys.Count; i ++)
-					keys[i] = Keys[i];
-				
+				((ICollection)Keys).CopyTo (keys, 0);
 				return keys;
 			}
 		}

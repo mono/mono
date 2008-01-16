@@ -417,6 +417,7 @@ namespace MonoTests.System.Web {
 					case 1: return null;
 					case 2: return "http://www.mono-project.com/test.aspx";
 					case 15: return "http://www.mono-project.com";
+					case 33: return "x";
 					}
 					break;
 				case HttpWorkerRequest.HeaderUserAgent:
@@ -751,7 +752,10 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (null, c.Request.UrlReferrer, "REF1");
 
 			c = Cook (2);
-			Assert.AreEqual ("http://www.mono-project.com/test.aspx", c.Request.UrlReferrer.ToString (), "REF1");			
+			Assert.AreEqual ("http://www.mono-project.com/test.aspx", c.Request.UrlReferrer.ToString (), "REF1");
+
+			c = Cook (33);
+			Assert.AreEqual (null, c.Request.UrlReferrer, "REF1");			
 		}
 		
 
