@@ -573,8 +573,8 @@ namespace System
 			int char_parsed = 0;
 			digit_parsed = 0;
 			result = 0;
-			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++, char_parsed++)
-				;
+			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++)
+				char_parsed++;
 
 			for (; pos < input.Length && Char.IsDigit (input[pos]) && digits > 0; pos ++, char_parsed++, digit_parsed++, digits --)
 				result = 10 * result + (byte) (input[pos] - '0');
@@ -592,8 +592,8 @@ namespace System
 		{
 			int char_parsed = 0;
 			result = -1;
-			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++, char_parsed++)
-				;
+			for (; allow_leading_white && pos < input.Length && input[pos] == ' '; pos++)
+				char_parsed ++;
 			
 			for (int i = 0; i < enums.Length; i++)
 				if (input.Substring(pos).StartsWith (enums [i])) {
