@@ -1,3 +1,7 @@
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h *.md: Make some opcodes names uniform by removing the op_ prefix.
+
 2008-01-16  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: New type argument lookup code which uses the
