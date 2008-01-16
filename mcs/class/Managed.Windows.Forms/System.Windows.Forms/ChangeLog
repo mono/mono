@@ -1,5 +1,10 @@
 2008-01-16  Andreia Gaita <avidigal@novell.com>
 
+	* Control.cs: Check if there is a container before setting or getting
+	the validation flag.
+
+2008-01-16  Andreia Gaita <avidigal@novell.com>
+
 	* ContainerControl.cs: Add flag to track if a control cancels validation, 
 	so we don't fire click events.
 

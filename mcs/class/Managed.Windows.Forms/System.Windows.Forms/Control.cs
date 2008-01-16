@@ -1186,8 +1186,17 @@ namespace System.Windows.Forms
 		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } set { this.explicit_bounds = value; } }
 
 		internal bool ValidationFailed { 
-			get { return this.InternalGetContainerControl ().validation_failed; } 
-			set { this.InternalGetContainerControl ().validation_failed = value; } 
+			get { 
+				ContainerControl c = InternalGetContainerControl ();
+				if (c != null)
+					return c.validation_failed;
+				return false;
+			}
+			set { 
+				ContainerControl c = InternalGetContainerControl ();
+				if (c != null)
+					c.validation_failed = value; 
+			}
 		}
 		#endregion	// Internal Properties
 
