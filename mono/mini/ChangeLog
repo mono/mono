@@ -1,5 +1,7 @@
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-*.md: Fix the build.
+
 	* cpu-x86.md: Fix the length of some load membase opcodes. Fixes #354241.
 
 	* mini-amd64.h: Add some comments to the MonoLMF structure.
