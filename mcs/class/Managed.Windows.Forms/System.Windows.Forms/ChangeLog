@@ -1,5 +1,10 @@
 2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
 
+	* InternalWindowManager.cs: Invalidade close button after mouse up when 
+	mdi form is prevented to close.
+
+2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MdiClient.cs: Fix the minimum bounds on child window sizes when cascade,
 	thanks to Andy Hume. Fixes bug #325433.
 

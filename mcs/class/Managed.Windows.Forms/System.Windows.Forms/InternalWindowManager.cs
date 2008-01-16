@@ -1150,6 +1150,9 @@ namespace System.Windows.Forms {
 
 				button.State = ButtonState.Normal;
 			}
+
+			if (clicked_button == CloseButton && !form.closing)
+				XplatUI.InvalidateNC (form.Handle);
 		}
 
 		internal void MouseLeave (int x, int y)
