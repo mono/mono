@@ -1,3 +1,19 @@
+2008-01-16  Andreia Gaita <avidigal@novell.com>
+
+	* ContainerControl.cs: Add flag to track if a control cancels validation, 
+	so we don't fire click events.
+
+	* Control.cs: 
+	- (HandleClick) Check if validation was cancelled before  firing the click
+	events (doubleclicks are fired, but not clicks)
+	- (WmLButtonDown) Reset validation flag. The flag is normally reset on 
+	ContainerControl.set_ActiveControl, but in the case of non-selectable
+	controls, like a Label, activecontrol is not set. 
+
+	* ButtonBase.cs: Only fire clicks if validation passes.
+	
+	Fixes #353310
+
 2008-01-16  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Implement GetAutoScaleSize to fix Reflector on

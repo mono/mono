@@ -48,6 +48,8 @@ namespace System.Windows.Forms {
 		private AutoScaleMode	auto_scale_mode;
 #endif
 
+		internal bool validation_failed; //track whether validation was cancelled by a validating control
+
 		#region Public Constructors
 		public ContainerControl() {
 			active_control = null;
@@ -134,10 +136,12 @@ namespace System.Windows.Forms {
 					walk = walk.Parent;
 				}
 
+				validation_failed = false;
 				for (int i = 0; i < validation_chain.Count; i ++) {
 					if (!ValidateControl ((Control)validation_chain[i])) {
 						active_control = value = (Control)validation_chain[i];
 						fire_enter = true;
+						validation_failed = true;
 					}
 				}
 

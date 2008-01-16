@@ -1184,6 +1184,11 @@ namespace System.Windows.Forms
 		internal Size InternalClientSize { set { this.client_size = value; } }
 		internal virtual bool ActivateOnShow { get { return true; } }
 		internal Rectangle ExplicitBounds { get { return this.explicit_bounds; } set { this.explicit_bounds = value; } }
+
+		internal bool ValidationFailed { 
+			get { return this.InternalGetContainerControl ().validation_failed; } 
+			set { this.InternalGetContainerControl ().validation_failed = value; } 
+		}
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
@@ -1686,20 +1691,22 @@ namespace System.Windows.Forms
 		}
 
 		internal virtual void HandleClick(int clicks, MouseEventArgs me) {
-			if (GetStyle(ControlStyles.StandardClick)) {
-				if ((clicks > 1) && GetStyle(ControlStyles.StandardDoubleClick)) {
-#if !NET_2_0
-					OnDoubleClick(EventArgs.Empty);
-				} else {
-					OnClick(EventArgs.Empty);
+			bool standardclick = GetStyle (ControlStyles.StandardClick);
+			bool standardclickclick = GetStyle (ControlStyles.StandardDoubleClick);
+			if ((clicks > 1) && standardclick && standardclickclick) {
+#if NET_2_0
+				OnDoubleClick (me);
+				OnMouseDoubleClick (me);
 #else
-					OnDoubleClick(me);
-					OnMouseDoubleClick (me);
-				} else {
-					OnClick(me);
-					OnMouseClick (me);
+				OnDoubleClick(EventArgs.Empty);
 #endif
-				}
+			} else if (clicks == 1 && standardclick && !ValidationFailed) {
+#if NET_2_0
+				OnClick (me);
+				OnMouseClick (me);
+#else
+				OnClick(EventArgs.Empty);
+#endif
 			}
 		}
 		
@@ -5291,6 +5298,7 @@ namespace System.Windows.Forms
 		}
 					
 		private void WmLButtonDown (ref Message m) {
+			ValidationFailed = false;
 			if (CanSelect) {
 				Select (true, true);
 			}

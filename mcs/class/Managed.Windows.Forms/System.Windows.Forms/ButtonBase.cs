@@ -613,7 +613,8 @@ namespace System.Windows.Forms {
 				}
 
 				if (ClientRectangle.Contains (mevent.Location))
-					OnClick (EventArgs.Empty);
+					if (!ValidationFailed)
+						OnClick (EventArgs.Empty);
 			}
 			
 			base.OnMouseUp (mevent);
