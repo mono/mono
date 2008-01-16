@@ -1,3 +1,8 @@
+2008-01-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OdbcCommandBuilder.cs: Implemented 2.0 APIs and code
+	restructuring. 
+	
 2007-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataReader.cs: Code formatting, spaces to tabs.

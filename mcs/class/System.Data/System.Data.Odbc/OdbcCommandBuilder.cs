@@ -62,6 +62,8 @@ namespace System.Data.Odbc
 
 		bool _disposed;
 
+		private OdbcRowUpdatingEventHandler rowUpdatingHandler;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -71,6 +73,7 @@ namespace System.Data.Odbc
 			_adapter = null;
 			_quotePrefix = String.Empty;
 			_quoteSuffix = String.Empty;
+			rowUpdatingHandler = null;
 		}
 
 		public OdbcCommandBuilder (OdbcDataAdapter adapter) 
@@ -96,12 +99,15 @@ namespace System.Data.Odbc
 			set {
 				if (_adapter == value)
 					return;
+
+				if (rowUpdatingHandler != null)
+					rowUpdatingHandler = new OdbcRowUpdatingEventHandler (OnRowUpdating);
 				
 				if (_adapter != null)
-					_adapter.RowUpdating -= new OdbcRowUpdatingEventHandler (OnRowUpdating);
+					_adapter.RowUpdating -= rowUpdatingHandler;
 				_adapter = value;
 				if (_adapter != null)
-					_adapter.RowUpdating += new OdbcRowUpdatingEventHandler (OnRowUpdating);
+					_adapter.RowUpdating += rowUpdatingHandler;
 			}
 		}
 
@@ -232,7 +238,7 @@ namespace System.Data.Odbc
 				columnName = schemaRow.IsNull ("ColumnName") ? String.Empty : (string) schemaRow ["ColumnName"];
 			return columnName;
 		}
-
+		
 		private OdbcParameter AddParameter (OdbcCommand cmd, string paramName, OdbcType odbcType,
 						    int length, string sourceColumnName, DataRowVersion rowVersion)
 		{
@@ -248,7 +254,7 @@ namespace System.Data.Odbc
 		/*
 		 * creates where clause for optimistic concurrency
 		 */
-		private string CreateOptWhereClause (OdbcCommand command)
+		private string CreateOptWhereClause (OdbcCommand command, bool option)
 		{
 			string [] whereClause = new string [Schema.Rows.Count];
 
@@ -260,7 +266,12 @@ namespace System.Data.Odbc
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = GetColumnName (schemaRow);
+				string columnName = null;
+				if (option)
+					columnName = GetColumnName (schemaRow);
+				else
+					columnName = String.Format ("@p{0}", count);
+				
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form delete command. Column name is missing!");
 
@@ -284,25 +295,24 @@ namespace System.Data.Odbc
 			return String.Join (" AND ", whereClause, 0, count);
 		}
 
-		public
-#if NET_2_0
-        new
-#endif // NET_2_0
-        OdbcCommand GetInsertCommand ()
+		private void CreateNewCommand (ref OdbcCommand command)
 		{
-			// FIXME: check validity of adapter
-			if (_insertCommand != null)
-				return _insertCommand;
-
-			if (_schema == null)
-				RefreshSchema ();
+			OdbcCommand sourceCommand = SelectCommand;
+			if (command == null) {
+				command = new OdbcCommand ();
+				command.Connection = sourceCommand.Connection;
+				command.CommandTimeout = sourceCommand.CommandTimeout;
+				command.Transaction = sourceCommand.Transaction;
+			}
+			command.CommandType = CommandType.Text;
+			command.UpdatedRowSource = UpdateRowSource.None;
+			command.Parameters.Clear ();
+		}
+		
+		private OdbcCommand CreateInsertCommand (bool option)
+		{
+			CreateNewCommand (ref _insertCommand);
 			
-			_insertCommand = new OdbcCommand ();
-			_insertCommand.Connection = DataAdapter.SelectCommand.Connection;
-			_insertCommand.Transaction = DataAdapter.SelectCommand.Transaction;
-			_insertCommand.CommandType = CommandType.Text;
-			_insertCommand.UpdatedRowSource = UpdateRowSource.None;
-
 			string query = String.Format ("INSERT INTO {0}", QuoteIdentifier (TableName));
 			string [] columns = new string [Schema.Rows.Count];
 			string [] values  = new string [Schema.Rows.Count];
@@ -315,7 +325,13 @@ namespace System.Data.Odbc
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = GetColumnName (schemaRow);
+				string columnName = null;
+				
+				if (option)
+					columnName = GetColumnName (schemaRow);
+				else
+					columnName = String.Format ("@p{0}", count); 
+				
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form insert command. Column name is missing!");
 
@@ -335,11 +351,26 @@ namespace System.Data.Odbc
 					       String.Join (", ", columns, 0, count),
 					       String.Join (", ", values, 0, count) );
 			_insertCommand.CommandText = query;
-			return _insertCommand;
+			return _insertCommand;			
+		}
+
+		public
+#if NET_2_0
+			new
+#endif // NET_2_0
+				OdbcCommand GetInsertCommand ()
+		{
+			// FIXME: check validity of adapter
+			if (_insertCommand != null)
+				return _insertCommand;
+
+			if (_schema == null)
+				RefreshSchema ();
+					
+			return CreateInsertCommand (false);
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public new OdbcCommand GetInsertCommand (bool option)
 		{
 			// FIXME: check validity of adapter
@@ -349,32 +380,13 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			if (option == false) {
-				return GetInsertCommand ();
-			} else {
-				throw new NotImplementedException ();
-			}
+			return CreateInsertCommand (option);
 		}
 #endif // NET_2_0
 			
-		public
-#if NET_2_0
-                new
-#endif // NET_2_0
-                OdbcCommand GetUpdateCommand ()
+		private OdbcCommand CreateUpdateCommand (bool option)
 		{
-			// FIXME: check validity of adapter
-			if (_updateCommand != null)
-				return _updateCommand;
-
-			if (_schema == null)
-				RefreshSchema ();
-			
-			_updateCommand = new OdbcCommand ();
-			_updateCommand.Connection = DataAdapter.SelectCommand.Connection;
-			_updateCommand.Transaction = DataAdapter.SelectCommand.Transaction;
-			_updateCommand.CommandType = CommandType.Text;
-			_updateCommand.UpdatedRowSource = UpdateRowSource.None;
+			CreateNewCommand (ref _updateCommand);
 
 			string query = String.Format ("UPDATE {0} SET", QuoteIdentifier (TableName));
 			string [] setClause = new string [Schema.Rows.Count];
@@ -387,7 +399,12 @@ namespace System.Data.Odbc
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = GetColumnName (schemaRow);
+				string columnName = null; 
+				if (option)
+					columnName = GetColumnName (schemaRow);
+				else
+					columnName = String.Format ("@p{0}", count);
+				
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form update command. Column name is missing!");
 
@@ -402,18 +419,33 @@ namespace System.Data.Odbc
 
 			// create where clause. odbc uses positional parameters. so where class
 			// is created seperate from the above loop.
-			string whereClause = CreateOptWhereClause (_updateCommand);
+			string whereClause = CreateOptWhereClause (_updateCommand, option);
 			
 			query = String.Format ("{0} {1} WHERE ({2})", 
 					       query, 
 					       String.Join (", ", setClause, 0, count),
 					       whereClause);
 			_updateCommand.CommandText = query;
-			return _updateCommand;
+			return _updateCommand;			
+		}
+		
+		public
+#if NET_2_0
+			new
+#endif // NET_2_0
+				OdbcCommand GetUpdateCommand ()
+		{
+			// FIXME: check validity of adapter
+			if (_updateCommand != null)
+				return _updateCommand;
+
+			if (_schema == null)
+				RefreshSchema ();
+
+			return CreateUpdateCommand (false);
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public new OdbcCommand GetUpdateCommand (bool option)
 		{
 			// FIXME: check validity of adapter
@@ -423,19 +455,27 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			if (option == false) {
-				return GetUpdateCommand ();
-			} else {
-				throw new NotImplementedException ();
-			}
+			return CreateUpdateCommand (option);
 		}
 #endif // NET_2_0
+		
+		private OdbcCommand CreateDeleteCommand (bool option)
+		{
+			CreateNewCommand (ref _deleteCommand);
+
+			string query = String.Format ("DELETE FROM {0}", QuoteIdentifier (TableName));
+			string whereClause = CreateOptWhereClause (_deleteCommand, option);
 			
+			query = String.Format ("{0} WHERE ({1})", query, whereClause);
+			_deleteCommand.CommandText = query;
+			return _deleteCommand;			
+		}
+
 		public
 #if NET_2_0
-                new
+			new
 #endif // NET_2_0
-                OdbcCommand GetDeleteCommand ()
+				OdbcCommand GetDeleteCommand ()
 		{
 			// FIXME: check validity of adapter
 			if (_deleteCommand != null)
@@ -444,22 +484,10 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 			
-			_deleteCommand = new OdbcCommand ();
-			_deleteCommand.Connection = DataAdapter.SelectCommand.Connection;
-			_deleteCommand.Transaction = DataAdapter.SelectCommand.Transaction;
-			_deleteCommand.CommandType = CommandType.Text;
-			_deleteCommand.UpdatedRowSource = UpdateRowSource.None;
-
-			string query = String.Format ("DELETE FROM {0}", QuoteIdentifier (TableName));
-			string whereClause = CreateOptWhereClause (_deleteCommand);
-			
-			query = String.Format ("{0} WHERE ({1})", query, whereClause);
-			_deleteCommand.CommandText = query;
-			return _deleteCommand;
+			return CreateDeleteCommand (false);
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public new OdbcCommand GetDeleteCommand (bool option)
 		{
 			// FIXME: check validity of adapter
@@ -469,18 +497,14 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			if (option == false) {
-				return GetDeleteCommand ();
-			} else {
-				throw new NotImplementedException ();
-			}
+			return CreateDeleteCommand (option);
 		}
 #endif // NET_2_0
 
 #if ONLY_1_1
 		public
 #else
-                new
+        new
 #endif // NET_2_0
                 void RefreshSchema ()
 		{
@@ -538,11 +562,21 @@ namespace System.Data.Odbc
 		{
 			return GetParameterName (position);
 		}
-                
-		[MonoTODO]
+            
+		// FIXME: According to MSDN - "if this method is called again with
+		// the same DbDataAdapter, the DbCommandBuilder is unregistered for 
+		// that DbDataAdapter's RowUpdating event" - this behaviour is yet
+		// to be verified		
 		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
 		{
-			throw new NotImplementedException ();
+			if (!(adapter is OdbcDataAdapter)) {
+				throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
+			}
+			
+			if (rowUpdatingHandler == null)
+				rowUpdatingHandler = new OdbcRowUpdatingEventHandler (OnRowUpdating);
+			
+			((OdbcDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
 		}
 
 #endif // NET_2_0
@@ -561,16 +595,15 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		// FIXME:  Not sure what the extra "connection" param does!
 		public string QuoteIdentifier (string unquotedIdentifier, OdbcConnection connection)
 		{
-			throw new NotImplementedException ();
+			return QuoteIdentifier (unquotedIdentifier);
 		}
 
-		[MonoTODO]
-		public string UnquoteIdentifier (string unquotedIdentifier, OdbcConnection connection)
+		public string UnquoteIdentifier (string quotedIdentifier, OdbcConnection connection)
 		{
-			throw new NotImplementedException ();
+			return UnquoteIdentifier (quotedIdentifier);
 		}
 #endif		
 
@@ -597,6 +630,7 @@ namespace System.Data.Odbc
 		{
 			if (args.Command != null)
 				return;
+			Console.WriteLine (Environment.StackTrace);
 			try {
 				switch (args.StatementType) {
 				case StatementType.Insert:
