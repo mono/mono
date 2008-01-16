@@ -1,3 +1,7 @@
+2008-01-16  Wade Berrier <wberrier@novell.com>
+
+	* security.c: Add assembly.h header to appease some warnings
+
 2008-01-16  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_module_string_read): Remove trailing null
