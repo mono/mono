@@ -1,3 +1,9 @@
+2008-01-06  Geoff Norton  <gnorton@novell.com>
+
+	* ControlHandler.cs:  Flicker be gone!  Generate our messages in
+	AddExpose instead of trusting apples compositing manager which doesn't
+	work for our use case.
+
 2008-01-16  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHandler.cs:  Dont send another invalidate when carbon

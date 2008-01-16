@@ -130,8 +130,6 @@ namespace System.Windows.Forms.CarbonInternal {
 						HIViewGetBounds (handle, ref bounds);
 					}
 
-					Driver.AddExpose (hwnd, client, bounds, false);
-
 					if (!hwnd.visible) {
 						if (client) {
 							hwnd.expose_pending = false;
@@ -141,24 +139,12 @@ namespace System.Windows.Forms.CarbonInternal {
                                                 return false;
 					}
 
-					if (client) {
-						if (!hwnd.expose_pending) {
-                                                	return false;
-						}
-                                                msg.message = Msg.WM_PAINT;
-					} else {
-						if (!hwnd.nc_expose_pending) {
-                                                	return false;
-						}
-						//DrawBackground here
+					if (!client) {
 						DrawBorders (hwnd);
-						Region region = new Region (hwnd.Invalid);
-						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
-						msg.message = Msg.WM_NCPAINT;
-						msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
-						msg.refobject = region;
-						
 					}
+
+					Driver.AddExpose (hwnd, client, bounds);
+
 					return true;
 				}
 				case kEventControlVisibilityChanged: {
