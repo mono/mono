@@ -297,42 +297,9 @@ namespace System.Reflection.Emit
 								       ParameterModifier[] modifiers)
 		{
 			check_created ();
-			
-			if (ctors == null)
-				return null;
 
-			ConstructorBuilder found = null;
-			int count = 0;
-			
-			foreach (ConstructorBuilder cb in ctors) {
-				if (callConvention != CallingConventions.Any && cb.CallingConvention != callConvention)
-					continue;
-				found = cb;
-				count++;
-			}
-
-			if (count == 0)
-				return null;
-			if (types == null) {
-				if (count > 1)
-					throw new AmbiguousMatchException ();
-				return found;
-			}
-			MethodBase[] match = new MethodBase [count];
-			if (count == 1)
-				match [0] = found;
-			else {
-				count = 0;
-				foreach (ConstructorInfo m in ctors) {
-					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
-						continue;
-					match [count++] = m;
-				}
-			}
-			if (binder == null)
-				binder = Binder.DefaultBinder;
-			return (ConstructorInfo) binder.SelectMethod (bindingAttr, match,
-				types, modifiers);
+			return created.GetConstructor (bindingAttr, binder, 
+				callConvention, types, modifiers);
 		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
@@ -809,6 +776,9 @@ namespace System.Reflection.Emit
 #endif
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
 		{
+			if (is_created)
+				return created.GetConstructors (bindingAttr);
+
 			if (ctors == null)
 				return new ConstructorInfo [0];
 			ArrayList l = new ArrayList ();
@@ -964,15 +934,8 @@ namespace System.Reflection.Emit
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
 		{
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-			// FIXME: In the generic case, this leads to a crash
-			// http://bugzilla.ximian.com/show_bug.cgi?id=82625
 			if (created != null)
 				return created.GetFields (bindingAttr);
-#else
-			if (created != null)
-				return created.GetFields (bindingAttr);
-#endif
 
 			if (fields == null)
 				return new FieldInfo [0];
@@ -1044,15 +1007,53 @@ namespace System.Reflection.Emit
 		private MethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type)
 		{
 			MethodInfo[] candidates;
+			bool match;
+			MethodAttributes mattrs;
+
 			if (((bindingAttr & BindingFlags.DeclaredOnly) == 0) && (parent != null)) {
-				BindingFlags parentBindingAttr = bindingAttr & (~BindingFlags.Static);
-				MethodInfo [] parent_methods = parent.GetMethods (parentBindingAttr);
-				if (methods == null)
-					candidates = parent_methods;
-				else {
-					candidates = new MethodInfo [methods.Length + parent_methods.Length];
-					parent_methods.CopyTo (candidates, 0);
-					methods.CopyTo (candidates, parent_methods.Length);
+				MethodInfo [] parent_methods = parent.GetMethods (bindingAttr);
+				ArrayList parent_candidates = new ArrayList (parent_methods.Length);
+
+				bool flatten = (bindingAttr & BindingFlags.FlattenHierarchy) != 0;
+
+				for (int i = 0; i < parent_methods.Length; i++) {
+					MethodInfo m = parent_methods [i];
+
+					mattrs = m.Attributes;
+
+					if (m.IsStatic && !flatten)
+						continue;
+
+					switch (mattrs & MethodAttributes.MemberAccessMask) {
+					case MethodAttributes.Public:
+						match = (bindingAttr & BindingFlags.Public) != 0;
+						break;
+					case MethodAttributes.Assembly:
+#if NET_2_0
+						match = (bindingAttr & BindingFlags.NonPublic) != 0;
+#else
+						match = false;
+#endif
+						break;
+					case MethodAttributes.Private:
+						match = false;
+						break;
+					default:
+						match = (bindingAttr & BindingFlags.NonPublic) != 0;
+						break;
+					}
+
+					if (match)
+						parent_candidates.Add (m);
+				}
+
+				if (methods == null) {
+					candidates = new MethodInfo [parent_candidates.Count];
+					parent_candidates.CopyTo (candidates);
+				} else {
+					candidates = new MethodInfo [methods.Length + parent_candidates.Count];
+					parent_candidates.CopyTo (candidates, 0);
+					methods.CopyTo (candidates, parent_candidates.Count);
 				}
 			}
 			else
@@ -1062,8 +1063,6 @@ namespace System.Reflection.Emit
 				return new MethodInfo [0];
 
 			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
 
 			foreach (MethodInfo c in candidates) {
 				if (c == null)
@@ -1188,6 +1187,9 @@ namespace System.Reflection.Emit
 
 		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
 		{
+			if (is_created)
+				return created.GetProperties (bindingAttr);
+
 			if (properties == null)
 				return new PropertyInfo [0];
 			ArrayList l = new ArrayList ();

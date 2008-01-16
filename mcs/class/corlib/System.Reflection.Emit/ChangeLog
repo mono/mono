@@ -1,3 +1,26 @@
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs (GetConstructorImpl): Use GetConstructor on created
+	type. Original implementation did not take into account the binding
+	flags and failed with a NotSupportedException if the default binder
+	checked if a ParamArrayAttribute was defined. It also does not make
+	sense to return a ConstructorBuilder once the type is emitted.
+	(GetConstructors): When the type is emitted, use GetConstructors
+	on the created type.
+	(GetFields): Removed duplicate code.
+	(GetMethodsByName): Fixed matching of methods in the parent class
+	depending on their accessibility:
+	- Private: never include private methods of parent
+	- Public: ignore if Public flag is not set
+	- Assembly: ignore if NonPublic is not set or when on the 1.0 profile
+	- Rest (Family, FamANDAssem, FamORAssem): ignore if NonPublic flag is
+	  not set
+	Static methods of the parent are ignored unless the FlattenHierarchy
+	flag is set.
+	(GetProperties): When the type is emitted, use GetProperties on the
+	created type as the TypeBuilder implementation itself does not include
+	properties from the parent class.
+
 2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs (UnprotectedGetName): Set the public key token

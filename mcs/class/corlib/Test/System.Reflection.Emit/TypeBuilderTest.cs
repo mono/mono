@@ -1637,7 +1637,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // GetConstructor (BindingFlags, Binder, Type [], ParameterModifier [])
-		[Category ("NotWorking")] // bug #322762
 		public void GetConstructor2_Complete ()
 		{
 			BindingFlags flags;
@@ -2871,7 +2870,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test] // GetConstructors (BindingFlags)
-		[Category ("NotWorking")] // bug #322762
 		public void GetConstructors2_Complete ()
 		{
 			BindingFlags flags;
@@ -3297,7 +3295,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetEventsFlagsComplete_Inheritance ()
 		{
 			EventInfo [] events;
@@ -3551,7 +3548,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetEventFlagsComplete_Inheritance ()
 		{
 			BindingFlags flags;
@@ -4316,7 +4312,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetFieldsFlagsComplete_Inheritance ()
 		{
 			FieldInfo [] fields;
@@ -4647,7 +4642,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetFieldFlagsComplete_Inheritance ()
 		{
 			BindingFlags flags;
@@ -5337,7 +5331,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetPropertiesFlagsComplete_Inheritance ()
 		{
 			PropertyInfo [] props;
@@ -5630,7 +5623,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetMethodFlagsComplete ()
 		{
 			BindingFlags flags;
@@ -6418,7 +6410,6 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[Category ("NotDotNet")] // mcs depends on this
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetMethodsFlagsIncomplete_Inheritance ()
 		{
 			MethodInfo [] methods;
@@ -7165,7 +7156,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #322762
 		public void TestGetMethodsFlagsComplete_Inheritance ()
 		{
 			MethodInfo [] methods;

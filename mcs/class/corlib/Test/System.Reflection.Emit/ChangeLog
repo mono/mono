@@ -1,3 +1,7 @@
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Enabled tests for bug #322762.
+
 2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Added (NotWorking) test for bug #351932.
