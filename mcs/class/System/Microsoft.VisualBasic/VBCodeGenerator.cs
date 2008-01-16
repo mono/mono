@@ -814,6 +814,11 @@ namespace Microsoft.VisualBasic
 				output.Write ("Function ");
 
 			output.Write (GetMethodName(method));
+
+#if NET_2_0
+			OutputTypeParameters (method.TypeParameters);
+#endif
+
 			output.Write ('(');
 			OutputParameters (method.Parameters);
 			output.Write (')');
@@ -1020,6 +1025,9 @@ namespace Microsoft.VisualBasic
 				}
 
 				output.Write (CreateEscapedIdentifier (delegateDecl.Name));
+#if NET_2_0
+				OutputTypeParameters (delegateDecl.TypeParameters);
+#endif
 				output.Write ("(");
 				OutputParameters (delegateDecl.Parameters);
 				Output.Write (")");
@@ -1030,8 +1038,10 @@ namespace Microsoft.VisualBasic
 				Output.WriteLine ("");
 			} else {
 				OutputTypeAttributes (declaration);
-
 				output.Write (CreateEscapedIdentifier (declaration.Name));
+#if NET_2_0
+				OutputTypeParameters (declaration.TypeParameters);
+#endif
 
 				if (IsCurrentEnum) {
 					if (declaration.BaseTypes.Count > 0) {
@@ -1443,6 +1453,54 @@ namespace Microsoft.VisualBasic
 				}
 			}
 		}
+
+#if NET_2_0
+		void OutputTypeParameters (CodeTypeParameterCollection parameters)
+		{
+			int count = parameters.Count;
+			if (count == 0)
+				return;
+
+			Output.Write ("(Of ");
+			for (int i = 0; i < count; ++i) {
+				if (i > 0)
+					Output.Write (", ");
+				CodeTypeParameter p = parameters [i];
+				Output.Write (p.Name);
+				OutputTypeParameterConstraints (p);
+			}
+			Output.Write (')');
+		}
+
+		void OutputTypeParameterConstraints (CodeTypeParameter parameter)
+		{
+			int constraint_count = parameter.Constraints.Count +
+				(parameter.HasConstructorConstraint ? 1 : 0);
+
+			if (constraint_count == 0)
+				return;
+
+			Output.Write (" As ");
+
+			if (constraint_count > 1)
+				Output.Write (" {");
+
+			for (int i = 0; i < parameter.Constraints.Count; i++) {
+				if (i > 0)
+					Output.Write (", ");
+				OutputType (parameter.Constraints [i]);
+			}
+
+			if (parameter.HasConstructorConstraint) {
+				if (constraint_count > 1)
+					Output.Write (", ");
+				Output.Write ("New");
+			}
+
+			if (constraint_count > 1)
+				Output.Write ("}");
+		}
+#endif
 
 		protected override void OutputTypeNamePair (CodeTypeReference typeRef, String name)
 		{

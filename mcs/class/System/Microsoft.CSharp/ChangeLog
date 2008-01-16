@@ -1,3 +1,8 @@
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Cosmetic changes to the code emitted for
+	type constraints. Allows our unit tests to pass on both Mono and MS.
+
 2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
 
 	* CSharpCodeGenerator.cs (GenerateGenericsConstraints): Take 

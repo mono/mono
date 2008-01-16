@@ -1503,31 +1503,42 @@ namespace Mono.CSharp
 			if (count == 0)
 				return;
 
-			++Indent;
-			foreach (CodeTypeParameter p in parameters) {
-				if (p.Constraints.Count == 0 && !p.HasConstructorConstraint)
-					continue;
+			bool indented = false;
+			
+			for (int i = 0; i < count; i++) {
+				CodeTypeParameter p = parameters [i];
+				bool hasConstraints = (p.Constraints.Count != 0);
 				Output.WriteLine ();
+				if (!hasConstraints && !p.HasConstructorConstraint)
+					continue;
+
+				if (!indented) {
+					++Indent;
+					indented = true;
+				}
+
 				Output.Write ("where ");
 				Output.Write (p.Name);
 				Output.Write (" : ");
 
-				bool is_first = true;
-				foreach (CodeTypeReference r in p.Constraints) {
-					if (is_first)
-						is_first = false;
-					else
+				for (int j = 0; j < p.Constraints.Count; j++) {
+					if (j > 0)
 						Output.Write (", ");
-					OutputType (r);
-				}
-				if (p.HasConstructorConstraint) {
-					if (!is_first)
-						Output.Write (", ");
-					Output.Write ("new ()");
+					OutputType (p.Constraints [j]);
 				}
 
+				if (p.HasConstructorConstraint) {
+					if (hasConstraints)
+						Output.Write (", ");
+					Output.Write ("new");
+					if (hasConstraints)
+						Output.Write (" ");
+					Output.Write ("()");
+				}
 			}
-			--Indent;
+
+			if (indented)
+				--Indent;
 		}
 
 		string GetTypeArguments (CodeTypeReferenceCollection collection)

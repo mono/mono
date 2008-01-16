@@ -160,5 +160,324 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Class{0}" +
 				"End Namespace{0}", NewLine), Generate (options), "#B2");
 		}
+
+#if NET_2_0
+		[Test]
+		public void Type_TypeParameters ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+			type.TypeParameters.Add (new CodeTypeParameter ("T"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#1");
+
+			type.TypeParameters.Add (new CodeTypeParameter ("As"));
+			type.TypeParameters.Add (new CodeTypeParameter ("New"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T, As, New){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#2");
+
+			CodeTypeParameter typeParamR = new CodeTypeParameter ("R");
+			typeParamR.Constraints.Add (new CodeTypeReference (typeof (IComparable)));
+			type.TypeParameters.Add (typeParamR);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T, As, New, R As System.IComparable){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#3");
+
+			type.TypeParameters.Add (new CodeTypeParameter ("S"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T, As, New, R As System.IComparable, S){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#4");
+		}
+
+		[Test]
+		public void Type_TypeParameters_Constraints ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+
+			CodeTypeParameter typeParamT = new CodeTypeParameter ("T");
+			typeParamT.Constraints.Add (new CodeTypeReference (typeof (IComparable)));
+			type.TypeParameters.Add (typeParamT);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As System.IComparable){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#1");
+
+			typeParamT.Constraints.Add (new CodeTypeReference (typeof (ICloneable)));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As  {{System.IComparable, System.ICloneable}}){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#2");
+
+			typeParamT.HasConstructorConstraint = true;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As  {{System.IComparable, System.ICloneable, New}}){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#3");
+
+			CodeTypeParameter typeParamS = new CodeTypeParameter ("S");
+			typeParamS.Constraints.Add (new CodeTypeReference (typeof (IDisposable)));
+			type.TypeParameters.Add (typeParamS);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As  {{System.IComparable, System.ICloneable, New}}, S As System.IDisposable){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#4");
+
+			CodeTypeParameter typeParamR = new CodeTypeParameter ("R");
+			typeParamR.HasConstructorConstraint = true;
+			type.TypeParameters.Add (typeParamR);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As  {{System.IComparable, System.ICloneable, New}}, S As System.IDisposable, R As New){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#5");
+		}
+
+		[Test]
+		public void Type_TypeParameters_ConstructorConstraint ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+
+			CodeTypeParameter typeParam = new CodeTypeParameter ("T");
+			typeParam.HasConstructorConstraint = true;
+			type.TypeParameters.Add (typeParam);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass(Of T As New){0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate ());
+		}
+
+		[Test]
+		public void Method_TypeParameters ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "SomeMethod";
+			type.Members.Add (method);
+
+			method.TypeParameters.Add (new CodeTypeParameter ("T"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#1");
+
+			method.TypeParameters.Add (new CodeTypeParameter ("As"));
+			method.TypeParameters.Add (new CodeTypeParameter ("New"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T, As, New)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#2");
+
+			CodeTypeParameter typeParamR = new CodeTypeParameter ("R");
+			typeParamR.Constraints.Add (new CodeTypeReference (typeof (IComparable)));
+			method.TypeParameters.Add (typeParamR);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T, As, New, R As System.IComparable)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#3");
+
+			method.TypeParameters.Add (new CodeTypeParameter ("S"));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T, As, New, R As System.IComparable, S)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#4");
+		}
+
+		[Test]
+		public void Method_TypeParameters_Constraints ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "SomeMethod";
+			type.Members.Add (method);
+
+			CodeTypeParameter typeParamT = new CodeTypeParameter ("T");
+			typeParamT.Constraints.Add (new CodeTypeReference (typeof (IComparable)));
+			method.TypeParameters.Add (typeParamT);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As System.IComparable)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#1");
+
+			typeParamT.Constraints.Add (new CodeTypeReference (typeof (ICloneable)));
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As  {{System.IComparable, System.ICloneable}})(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#2");
+
+			typeParamT.HasConstructorConstraint = true;
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As  {{System.IComparable, System.ICloneable, New}})(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#3");
+
+			CodeTypeParameter typeParamS = new CodeTypeParameter ("S");
+			typeParamS.Constraints.Add (new CodeTypeReference (typeof (IDisposable)));
+			method.TypeParameters.Add (typeParamS);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As  {{System.IComparable, System.ICloneable, New}}, S As System.IDisposable)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#4");
+
+			CodeTypeParameter typeParamR = new CodeTypeParameter ("R");
+			typeParamR.HasConstructorConstraint = true;
+			method.TypeParameters.Add (typeParamR);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As  {{System.IComparable, System.ICloneable, New}}, S As System.IDisposable, R As New)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate (), "#5");
+		}
+
+		[Test]
+		public void Method_TypeParameters_ConstructorConstraint ()
+		{
+			codeNamespace.Name = "SomeNS";
+
+			CodeTypeDeclaration type = new CodeTypeDeclaration ("SomeClass");
+			codeNamespace.Types.Add (type);
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "SomeMethod";
+			type.Members.Add (method);
+
+			CodeTypeParameter typeParam = new CodeTypeParameter ("T");
+			typeParam.HasConstructorConstraint = true;
+			method.TypeParameters.Add (typeParam);
+
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"{0}" +
+				"Namespace SomeNS{0}" +
+				"    {0}" +
+				"    Public Class SomeClass{0}" +
+				"        {0}" +
+				"        Private Sub SomeMethod(Of T As New)(){0}" +
+				"        End Sub{0}" +
+				"    End Class{0}" +
+				"End Namespace{0}", NewLine), Generate ());
+		}
+#endif
 	}
 }

@@ -24,8 +24,8 @@ namespace MonoTests.Microsoft.CSharp
 	[TestFixture]
 	public class CodeGeneratorFromCompileUnitTest : CodeGeneratorTestBase
 	{
-		private string codeUnitHeader = "";
-		private CodeCompileUnit codeUnit = null;
+		private string codeUnitHeader = string.Empty;
+		private CodeCompileUnit codeUnit;
 
 		public CodeGeneratorFromCompileUnitTest ()
 		{
@@ -53,7 +53,7 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public void DefaultCodeUnitTest ()
 		{
-			Assert.AreEqual ("", Generate ());
+			Assert.AreEqual (string.Empty, Generate ());
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace MonoTests.Microsoft.CSharp
 		public void ReferencedTest ()
 		{
 			codeUnit.ReferencedAssemblies.Add ("System.dll");
-			Assertion.AssertEquals ("", Generate ());
+			Assert.AreEqual (string.Empty, Generate ());
 		}
 
 		[Test]

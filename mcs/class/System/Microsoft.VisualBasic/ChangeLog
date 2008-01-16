@@ -1,3 +1,7 @@
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Implement support for type parameters.
+
 2007-12-21  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* VBCodeGenerator.cs: Split array of keywords in two, one for 1.1 and one
