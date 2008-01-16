@@ -1,3 +1,24 @@
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c (ves_icall_Type_GetField): if NonPublic flag is set, only
+	return field from parent class if not private.
+	(ves_icall_Type_GetFields_internal): if NonPublic flag is set, only
+	returns fields from parent class if they are not private.
+	(method_nonpublic): added function to determine if a given method
+	should be considered non-public. Returns false for private methods
+	on parent class, and internal methods from parent on the 1.0 profile.
+	(ves_icall_Type_GetMethodsByName): if NonPublic flag is set, then
+	use method_nonpublic function to determine whether method should be
+	returned.
+	(property_accessor_public): use newly introduced method_nonpublic
+	function to determine whether accessor is non-public. 
+	(ves_icall_MonoType_GetEvent): If NonPublic flag is set, only return
+	event from parent class if not private. Only return static event if
+	Static flag is set, and only return static event from parent class if
+	FlattenHierarchy flag is set.
+	(ves_icall_Type_GetEvents_internal): If NonPublic flag is set, only
+	include non-private events from parent class.
+
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_NumberFormatter_GetFormatterTables): Fix a
