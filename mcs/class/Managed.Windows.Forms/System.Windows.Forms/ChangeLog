@@ -6,6 +6,13 @@
 
 2008-01-16  Geoff Norton  <gnorton@novell.com>
 
+	* XplatUICarbon.cs:  Flicker be gone!  Generate our messages in
+	AddExpose instead of trusting apples compositing manager which doesn't
+	work for our use case.  Remove some dead code causing warnings and 
+	redecorate some other code to prevent warnings.
+
+2008-01-16  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUICarbon.cs:  Avoid some unecessary invalidation calls when
 	carbon signals us to redraw.  Fixes another portion of the flickering bug
 

@@ -129,8 +129,8 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Internal methods
-		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect, bool invalidate) {
-			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height, invalidate);
+		internal void AddExpose (Hwnd hwnd, bool client, Carbon.HIRect rect) {
+			AddExpose (hwnd, client, (int) rect.origin.x, (int) rect.origin.y, (int) rect.size.width, (int) rect.size.height);
 		}
 		
 		internal void AddExpose (Hwnd hwnd, bool client, Rectangle rect) {
@@ -693,13 +693,7 @@ namespace System.Windows.Forms {
 			DestroyCaret (hwnd.Handle);
 		}
 
-
-
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
-			AddExpose (hwnd, client, x, y, width, height, true);
-		}
-	
-		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height, bool invalidate) {
 			// Don't waste time
 			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
 				return;
@@ -718,17 +712,23 @@ namespace System.Windows.Forms {
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
 				if (!hwnd.expose_pending) {
-					if (!hwnd.nc_expose_pending && invalidate) {
-						HIViewSetNeedsDisplayInRect (hwnd.ClientWindow, ref region, true);
-					}
+					MSG msg = new MSG ();
+					msg.message = Msg.WM_PAINT;
+					msg.hwnd = hwnd.Handle;
+					MessageQueue.Enqueue (msg);
 					hwnd.expose_pending = true;
 				}
 			} else {
 				hwnd.AddNcInvalidArea (x, y, width, height);
 				if (!hwnd.nc_expose_pending) {
-					if (!hwnd.expose_pending && invalidate) {
-						HIViewSetNeedsDisplayInRect (hwnd.WholeWindow, ref region, true);
-					}
+					MSG msg = new MSG ();
+					Region rgn = new Region (hwnd.Invalid);
+					IntPtr hrgn = rgn.GetHrgn (null); // Graphics object isn't needed
+					msg.message = Msg.WM_NCPAINT;
+					msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
+					msg.refobject = rgn;
+					msg.hwnd = hwnd.Handle;
+					MessageQueue.Enqueue (msg);
 					hwnd.nc_expose_pending = true;
 				}
 			}
@@ -956,9 +956,6 @@ namespace System.Windows.Forms {
 
 				CreateNewWindow (windowklass, attributes, ref rect, ref WindowHandle);
 
-#if DEBUG_DIRTY
-				HIViewFlashDirtyArea (WindowHandle);
-#endif
 				Carbon.EventHandler.InstallWindowHandler (WindowHandle);
 				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 1), ref WindowView);
 				HIViewFindByID (HIViewGetRoot (WindowHandle), new Carbon.HIViewID (Carbon.EventHandler.kEventClassWindow, 7), ref GrowBox);
@@ -2180,8 +2177,6 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewFindByID (IntPtr rootWnd, Carbon.HIViewID id, ref IntPtr outPtr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int HIViewFlashDirtyArea (IntPtr view);
-		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIGrowBoxViewSetTransparent (IntPtr GrowBox, bool transparency);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static IntPtr HIViewGetRoot (IntPtr hWnd);
@@ -2216,7 +2211,7 @@ namespace System.Windows.Forms {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static int HIViewSetFrame (IntPtr view_handle, ref Carbon.HIRect bounds);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int HIViewSetNeedsDisplayInRect (IntPtr view_handle, ref Carbon.HIRect rect, bool needs_display);
+		internal extern static int HIViewSetNeedsDisplayInRect (IntPtr view_handle, ref Carbon.HIRect rect, bool needs_display);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static void SetRect (ref Carbon.Rect r, short left, short top, short right, short bottom);
@@ -2278,7 +2273,7 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr __CFStringMakeConstantString (string cString);
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		extern static int CFRelease (IntPtr wHnd);
+		internal extern static int CFRelease (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static short GetMBarHeight ();
 		
