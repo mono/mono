@@ -72,5 +72,12 @@ namespace MonoTests.System.Linq.Expressions {
 			var call = Expression.Call (Expression.Constant (new object ()), typeof (object).GetMethod ("ToString"));
 			Assert.AreEqual ("value(System.Object).ToString()", call.ToString ());
 		}
+
+		[Test]
+		public void CallStringIsNullOrEmpty()
+		{
+			var call = Expression.Call (null, typeof (string).GetMethod ("IsNullOrEmpty"), Expression.Constant(""));
+			Assert.AreEqual ("IsNullOrEmpty(\"\")", call.ToString ());
+		}
 	}
 }

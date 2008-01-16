@@ -1,3 +1,7 @@
+2008-01-16  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_CallWithExpression.cs: test for static method.
+
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_CallWithExpression.cs: tests
