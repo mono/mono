@@ -1,5 +1,10 @@
 2008-01-15  Geoff Norton  <gnorton@novell.com>
 
+	* ControlHandler.cs:  Only mark the dirty area as dirty when we are
+	told to expose by the subsystem.
+
+2008-01-15  Geoff Norton  <gnorton@novell.com>
+
 	* MouseHandler.cs: Avoid a NRE if we dont know the window the event 
 	came in on.
 

@@ -87,9 +87,11 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventParamDirectObject = 757935405;
 		internal const uint kEventParamControlPart = 1668313716;
 		internal const uint kEventParamControlLikesDrag = 1668047975;
+		internal const uint kEventParamRgnHandle = 1919381096;
 		internal const uint typeControlRef = 1668575852;
 		internal const uint typeCGContextRef = 1668183160;
 		internal const uint typeQDPoint = 1363439732;
+		internal const uint typeQDRgnHandle = 1919381096;
 		internal const uint typeControlPartCode = 1668313716;
 		internal const uint typeBoolean = 1651470188;
 
@@ -110,8 +112,24 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			switch (kind) {
 				case kEventControlDraw: {
+					IntPtr rgn = IntPtr.Zero;
 					HIRect bounds = new HIRect ();
-					HIViewGetBounds (handle, ref bounds);
+				
+					GetEventParameter (eventref, kEventParamRgnHandle, typeQDRgnHandle, IntPtr.Zero, (uint) Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref rgn);
+
+					if (rgn != IntPtr.Zero) {
+						Rect rbounds = new Rect ();
+						
+						GetRegionBounds (rgn, ref rbounds);
+						
+						bounds.origin.x = rbounds.left;
+						bounds.origin.y = rbounds.top;
+						bounds.size.width = rbounds.right - rbounds.left;
+						bounds.size.height = rbounds.bottom - rbounds.top;
+					} else {
+						HIViewGetBounds (handle, ref bounds);
+					}
+
 					Driver.AddExpose (hwnd, client, bounds);
 
 					if (!hwnd.visible) {
@@ -144,10 +162,6 @@ namespace System.Windows.Forms.CarbonInternal {
 					return true;
 				}
 				case kEventControlVisibilityChanged: {
-					HIRect bounds = new HIRect ();
-
-					HIViewGetBounds (handle, ref bounds);
-					Driver.AddExpose (hwnd, client, bounds);
 					if (client) {
 						msg.message = Msg.WM_SHOWWINDOW;
 						msg.lParam = (IntPtr) 0;
@@ -224,6 +238,8 @@ namespace System.Windows.Forms.CarbonInternal {
 			}
 		}
 			
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetRegionBounds (IntPtr rgnhandle, ref Rect region);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref IntPtr data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
