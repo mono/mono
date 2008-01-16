@@ -384,8 +384,14 @@ namespace System.Windows.Forms {
 					if (!Path.IsPathRooted (value))
 						return;
 
-					if (Check_if_path_is_child_of_RootFolder (value)) {
-						SetSelectedPath (Path.GetFullPath (value));
+					try {
+						if (Check_if_path_is_child_of_RootFolder (value))
+							SetSelectedPath (Path.GetFullPath (value));
+					} catch (Exception) {
+						// If we can't set the user's requested path, the
+						// best we can do is not crash and reset to the default
+						EndUpdate ();
+						RootFolder = rootFolder;
 					}
 				}
 			}

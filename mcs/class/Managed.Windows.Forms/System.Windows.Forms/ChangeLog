@@ -1,3 +1,9 @@
+2008-01-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FolderBrowserDialog.cs: If we cannot interpret the user's requested
+	SelectedPath, just display the default dialog instead of crashing.
+	[Fixes bug #348989]
+
 2008-01-16  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Avoid some unecessary invalidation calls when
