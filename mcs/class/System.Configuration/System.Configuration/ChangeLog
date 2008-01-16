@@ -1,5 +1,7 @@
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* PropertyInformation.cs: Allow non-public constructors. Fixes #353557.
+
 	* ConfigurationElement.cs: Consider non-public properties as well. Fixes
 	#353553.
 

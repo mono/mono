@@ -107,7 +107,7 @@ namespace System.Configuration
 			get {
 				if (origin == PropertyValueOrigin.Default) {
 					if (property.IsElement) {
-						ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (Type);
+						ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (Type, true);
 						elem.InitFromProperty (this);
 						if (owner != null && owner.IsReadOnly ())
 							elem.SetReadOnly ();
