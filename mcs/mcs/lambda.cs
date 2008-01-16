@@ -34,20 +34,8 @@ namespace Mono.CSharp {
 				explicit_parameters = !(parameters.FixedParameters [0] is ImplicitLambdaParameter);
 		}
 
-		public static Expression System_Linq_Expressions;
-		public static Expression System_Linq_Expressions_Expression;
-
 		protected override Expression CreateExpressionTree (EmitContext ec, Type delegate_type)
 		{
-			System_Linq_Expressions = new MemberAccess (
-					new MemberAccess (new SimpleName ("System", loc), "Linq", loc), "Expressions", loc);
-
-			System_Linq_Expressions_Expression = new MemberAccess (
-				System_Linq_Expressions, "Expression", loc);
-
-			MemberAccess lambda = new MemberAccess (System_Linq_Expressions_Expression, "Lambda",
-				new TypeArguments (loc, new TypeExpression (delegate_type, loc)), loc);
-
 			Expression args = Parameters.CreateExpressionTree (ec, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)
@@ -56,9 +44,9 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList (2);
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
-			Expression invocation = new Invocation (lambda, arguments);
-
-			return invocation;
+			return CreateExpressionFactoryCall ("Lambda",
+				new TypeArguments (loc, new TypeExpression (delegate_type, loc)),
+				arguments);
 		}
 
 		public override bool HasExplicitParameters {

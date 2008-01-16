@@ -1,3 +1,9 @@
+2008-01-16  Marek Safar  <marek.safar@gmail.com>
+
+ 	* generic.cs, typemanager.cs, lambda.cs, parameter.cs, ecore.cs, constant.cs,
+ 	expression.cs: Implemented Add, And, AndAlso, and ArrayIndex (without unary
+ 	operator) expressions. 
+ 	 	
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* statement.cs: Avoid declaring an IL variable for this_variable since it is

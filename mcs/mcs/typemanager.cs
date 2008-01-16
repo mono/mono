@@ -3733,4 +3733,17 @@ public sealed class TypeHandle : IMemberContainer {
 	}
 }
 
+	//
+	// Common expressions used by expression trees
+	//
+	static class ExpressionTreeManager
+	{
+		public static MemberAccess Namespace = new MemberAccess (
+			new MemberAccess (new SimpleName ("System", Location.Null), "Linq", Location.Null),
+			"Expressions", Location.Null);
+			
+		public static MemberAccess Type =
+			new MemberAccess (Namespace, "Expression", Location.Null);
+	}
+
 }

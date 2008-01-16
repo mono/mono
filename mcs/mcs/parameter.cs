@@ -626,9 +626,7 @@ namespace Mono.CSharp {
 				new TypeExpression (parameter_type, Location), Location)));
 			arguments.Add (new Argument (new StringConstant (Name, Location)));
 			return new Assign (ExpressionTreeVariableReference (),
-				new Invocation (
-					new MemberAccess (LambdaExpression.System_Linq_Expressions_Expression, "Parameter", Location),
-					arguments));
+				Expression.CreateExpressionFactoryCall ("Parameter", null, arguments, Location));
 		}
 
 		public Expression ExpressionTreeVariableReference ()
@@ -645,7 +643,7 @@ namespace Mono.CSharp {
 				return parameter_expr_tree_type;
 
 			MemberAccess ma = new MemberAccess (
-				LambdaExpression.System_Linq_Expressions, "ParameterExpression", location);
+				ExpressionTreeManager.Namespace, "ParameterExpression", location);
 			parameter_expr_tree_type = ma.ResolveAsTypeTerminal (ec, false);
 			return parameter_expr_tree_type;
 		}

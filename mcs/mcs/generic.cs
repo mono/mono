@@ -3133,6 +3133,11 @@ namespace Mono.CSharp {
 			{
 				return new Unwrap (expr).Resolve (ec) as Unwrap;
 			}
+			
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return expr.CreateExpressionTree (ec);
+			}			
 
 			public override Expression DoResolve (EmitContext ec)
 			{

@@ -888,6 +888,11 @@ namespace Mono.CSharp {
 			return new MethodGroupExpr (members, type, loc);
 		}
 
+		protected virtual void Error_NegativeArrayIndex (Location loc)
+		{
+			throw new NotImplementedException ();
+		}
+
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
@@ -1145,11 +1150,6 @@ namespace Mono.CSharp {
 				return 0;
 		}
 
-		public static void Error_NegativeArrayIndex (Location loc)
-		{
-			Report.Error (248, loc, "Cannot create an array with a negative size");
-		}
-
 		protected void Error_CannotCallAbstractBase (string name)
 		{
 			Report.Error (205, loc, "Cannot call an abstract base member `{0}'", name);
@@ -1170,21 +1170,21 @@ namespace Mono.CSharp {
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
-		public Expression ExpressionToArrayArgument (EmitContext ec, Expression source, Location loc)
+		public Expression ConvertExpressionToArrayIndex (EmitContext ec, Expression source)
 		{
-			Expression target;
+			Expression converted;
 			
 			using (ec.With (EmitContext.Flags.CheckState, true)) {
-				target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
-				if (target == null)
-					target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
-				if (target == null)
-					target = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, loc);
-				if (target == null)
-					target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
+				converted = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, source.loc);
+				if (converted == null)
+					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, source.loc);
+				if (converted == null)
+					converted = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, source.loc);
+				if (converted == null)
+					converted = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, source.loc);
 
-				if (target == null) {
-					source.Error_ValueCannotBeConverted (ec, loc, TypeManager.int32_type, false);
+				if (converted == null) {
+					source.Error_ValueCannotBeConverted (ec, source.loc, TypeManager.int32_type, false);
 					return null;
 				}
 			}
@@ -1192,24 +1192,15 @@ namespace Mono.CSharp {
 			//
 			// Only positive constants are allowed at compile time
 			//
-			if (target is Constant){
-				if (target is IntConstant){
-					if (((IntConstant) target).Value < 0){
-						Error_NegativeArrayIndex (loc);
-						return null;
-					}
+			Constant c = converted as Constant;
+			if (c != null) {
+				if (c.IsNegative) {
+					Error_NegativeArrayIndex (source.loc);
 				}
-
-				if (target is LongConstant){
-					if (((LongConstant) target).Value < 0){
-						Error_NegativeArrayIndex (loc);
-						return null;
-					}
-				}
-				
+				return c;
 			}
 
-			return target;
+			return new ArrayIndexCast (converted).Resolve (ec);
 		}
 
 		//
@@ -1249,6 +1240,23 @@ namespace Mono.CSharp {
 		{
 			throw new NotImplementedException (
 				"Expression tree conversion not implemented for " + GetType ());
+		}
+
+		protected Expression CreateExpressionFactoryCall (string name, ArrayList args)
+		{
+			return CreateExpressionFactoryCall (name, null, args, loc);
+		}
+
+		protected Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args)
+		{
+			return CreateExpressionFactoryCall (name, typeArguments, args, loc);
+		}
+
+		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
+		{
+			return new Invocation (
+				new MemberAccess (ExpressionTreeManager.Type, name, typeArguments, loc),
+				args);
 		}
 	}
 

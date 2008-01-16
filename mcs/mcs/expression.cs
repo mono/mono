@@ -3038,6 +3038,32 @@ namespace Mono.CSharp {
 			target.left = left.Clone (clonectx);
 			target.right = right.Clone (clonectx);
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			string method_name;
+			switch (oper) {
+				case Operator.Addition:
+					if (ec.CheckState)
+						method_name = "AddChecked";
+					else
+						method_name = "Add";
+					break;
+				case Operator.BitwiseAnd:
+					method_name = "And";
+					break;
+				case Operator.LogicalAnd:
+					method_name = "AndAlso";
+					break;
+				default:
+					throw new InternalErrorException ("Unknown expression tree binary operator " + oper);
+			}
+
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (left.CreateExpressionTree (ec)));
+			args.Add (new Argument (right.CreateExpressionTree (ec)));
+			return CreateExpressionFactoryCall (method_name, args);
+		}
 	}
 
 	//
@@ -4205,19 +4231,6 @@ namespace Mono.CSharp {
 				ml.AddressOf (ec, mode);
 		}
 
-		public void EmitArrayArgument (EmitContext ec)
-		{
-			Type argtype = Expr.Type;
-			Expr.Emit (ec);
-				
-			if (argtype == TypeManager.uint32_type)
-				ec.ig.Emit (OpCodes.Conv_U);
-			else if (argtype == TypeManager.int64_type)
-				ec.ig.Emit (OpCodes.Conv_Ovf_I);
-			else if (argtype == TypeManager.uint64_type)
-				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
-		}
-
 		public Argument Clone (CloneContext clonectx)
 		{
 			return new Argument (Expr.Clone (clonectx), ArgType);
@@ -5366,6 +5379,11 @@ namespace Mono.CSharp {
 		{
 			Error (178, "Invalid rank specifier: expected `,' or `]'");
 		}
+
+		protected override void Error_NegativeArrayIndex (Location loc)
+		{
+			Report.Error (248, loc, "Cannot create an array with a negative size");
+		}
 		
 		bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
@@ -5572,13 +5590,9 @@ namespace Mono.CSharp {
 
 			foreach (Argument a in arguments){
 				if (!a.Resolve (ec, loc))
-					return null;
+					continue;
 
-				Expression real_arg = ExpressionToArrayArgument (ec, a.Expr, loc);
-				if (real_arg == null)
-					return null;
-
-				a.Expr = real_arg;
+				a.Expr = ConvertExpressionToArrayIndex (ec, a.Expr);
 			}
 							
 			eclass = ExprClass.Value;
@@ -5864,17 +5878,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void EmitArrayArguments (EmitContext ec)
-		{
-			foreach (Argument a in arguments)
-				a.EmitArrayArgument (ec);
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
-			EmitArrayArguments (ec);
+
+			foreach (Argument a in arguments)
+				a.Emit (ec);
+
 			if (arguments.Count == 1)
 				ig.Emit (OpCodes.Newarr, array_element_type);
 			else {
@@ -7078,6 +7088,16 @@ namespace Mono.CSharp {
 			return Expr != null;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (Arguments.Count + 1);
+			args.Add (new Argument (Expr.CreateExpressionTree (ec)));
+			foreach (Argument a in Arguments)
+				args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+
+			return CreateExpressionFactoryCall ("ArrayIndex", args);
+		}
+
 		Expression MakePointerAccess (EmitContext ec, Type t)
 		{
 			if (t == TypeManager.void_ptr_type){
@@ -7189,6 +7209,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return ea.CreateExpressionTree (ec);
+		}
+
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			return DoResolve (ec);
@@ -7208,41 +7233,20 @@ namespace Mono.CSharp {
 #endif
 
 			Type t = ea.Expr.Type;
-			if (t.GetArrayRank () != ea.Arguments.Count){
+			if (t.GetArrayRank () != ea.Arguments.Count) {
 				Report.Error (22, ea.Location, "Wrong number of indexes `{0}' inside [], expected `{1}'",
 					  ea.Arguments.Count.ToString (), t.GetArrayRank ().ToString ());
 				return null;
 			}
 
-                        type = TypeManager.GetElementType (t);
-                        if (type.IsPointer && !ec.InUnsafe){
+			type = TypeManager.GetElementType (t);
+			if (type.IsPointer && !ec.InUnsafe) {
 				UnsafeError (ea.Location);
 				return null;
 			}
 
-			foreach (Argument a in ea.Arguments){
-				Type argtype = a.Type;
-
-				if (argtype == TypeManager.int32_type ||
-				    argtype == TypeManager.uint32_type ||
-				    argtype == TypeManager.int64_type ||
-				    argtype == TypeManager.uint64_type) {
-					Constant c = a.Expr as Constant;
-					if (c != null && c.IsNegative) {
-						Report.Warning (251, 2, ea.Location, "Indexing an array with a negative index (array indices always start at zero)");
-					}
-					continue;
-				}
-
-				//
-				// Mhm.  This is strage, because the Argument.Type is not the same as
-				// Argument.Expr.Type: the value changes depending on the ref/out setting.
-				//
-				// Wonder if I will run into trouble for this.
-				//
-				a.Expr = ExpressionToArrayArgument (ec, a.Expr, ea.Location);
-				if (a.Expr == null)
-					return null;
+			foreach (Argument a in ea.Arguments) {
+				a.Expr = ConvertExpressionToArrayIndex (ec, a.Expr);
 			}
 			
 			eclass = ExprClass.Variable;
@@ -7297,6 +7301,11 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_I);
 			else
 				ig.Emit (OpCodes.Ldelem_Ref);
+		}
+
+		protected override void Error_NegativeArrayIndex (Location loc)
+		{
+			Report.Warning (251, 2, loc, "Indexing an array with a negative index (array indices always start at zero)");
 		}
 
 		/// <summary>
@@ -7410,7 +7419,7 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < ea.Arguments.Count; ++i) {
-				((Argument)ea.Arguments [i]).EmitArrayArgument (ec);
+				((Argument)ea.Arguments [i]).Emit (ec);
 				if (!prepare_for_load)
 					continue;
 
@@ -8347,6 +8356,52 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			IntLiteral.EmitInt (ig, 0);
 			ig.Emit (OpCodes.Ldelema, array_type);
+		}
+	}
+
+	//
+	// Encapsulates a conversion rules required for array indexes
+	//
+	public class ArrayIndexCast : Expression
+	{
+		Expression expr;
+
+		public ArrayIndexCast (Expression expr)
+		{
+			this.expr = expr;
+			this.loc = expr.Location;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (TypeManager.int32_type, loc), loc)));
+			return CreateExpressionFactoryCall ("ConvertChecked", args);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = expr.Type;
+			eclass = expr.eclass;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+				
+			if (type == TypeManager.int32_type)
+				return;
+
+			if (type == TypeManager.uint32_type)
+				ec.ig.Emit (OpCodes.Conv_U);
+			else if (type == TypeManager.int64_type)
+				ec.ig.Emit (OpCodes.Conv_Ovf_I);
+			else if (type == TypeManager.uint64_type)
+				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
+			else
+				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);
 		}
 	}
 

@@ -13,6 +13,7 @@ namespace Mono.CSharp {
 
 	using System;
 	using System.Reflection.Emit;
+	using System.Collections;
 
 	/// <summary>
 	///   Base class for constants and literals.
@@ -149,6 +150,18 @@ namespace Mono.CSharp {
 			throw new Exception ("Unknown type for constant (" + t +
 					"), details: " + v);
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (this));
+			args.Add (new Argument (
+				new TypeOf (new TypeExpression (type, Location), Location)));
+
+			return CreateExpressionFactoryCall ("Constant", args);
+		}
+
+
 		/// <summary>
 		/// Maybe ConvertTo name is better. It tries to convert `this' constant to target_type.
 		/// It throws OverflowException 
