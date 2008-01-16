@@ -1,3 +1,8 @@
+2008-01-16  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MdiClient.cs: Fix the minimum bounds on child window sizes when cascade,
+	thanks to Andy Hume. Fixes bug #325433.
+
 2008-01-16  Andreia Gaita <avidigal@novell.com>
 
 	* LinkLabel.cs: Reset focused_index when resellecting the control.

@@ -262,14 +262,6 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void LayoutMdi (MdiLayout value) {
 
-			int max_width = Int32.MaxValue;
-			int max_height = Int32.MaxValue;
-
-			if (Parent != null) {
-				max_width = Parent.Width;
-				max_height = Parent.Height;
-			}
-
 			// Don't forget to always call ArrangeIconicWindows 
 			ArrangeIconicWindows (true);
 
@@ -285,13 +277,15 @@ namespace System.Windows.Forms {
 					if (form.WindowState == FormWindowState.Maximized)
 						form.WindowState = FormWindowState.Normal;
 
-					form.Width = System.Convert.ToInt32(ClientSize.Width * 0.8);
-					form.Height = System.Convert.ToInt32(ClientSize.Height * 0.8);
+					form.Width = System.Convert.ToInt32 (ClientSize.Width * 0.8);
+					form.Height = Math.Max (
+								System.Convert.ToInt32 (ClientSize.Height * 0.8),
+								SystemInformation.MinimumWindowSize.Height + 2);
 
 					int l = 22 * i;
 					int t = 22 * i;
 
-					if (i != 0 && (l + form.Width > max_width || t + form.Height > max_height)) {
+					if (i != 0 && (l + form.Width > ClientSize.Width || t + form.Height > ClientSize.Height)) {
 						i = 0;
 						l = 22 * i;
 						t = 22 * i;
