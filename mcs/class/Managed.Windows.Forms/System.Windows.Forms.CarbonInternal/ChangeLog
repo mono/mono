@@ -1,3 +1,10 @@
+2008-01-16  Geoff Norton  <gnorton@novell.com>
+
+	* KeyboardHandler.cs: Track the control key(s) as well and put them
+	into KeyboardModifiers as toggled.
+	* MouseHandler.cs: Support simulating right click on single-button
+	mouse macintoshs with the standard Control+Click usage pattern.
+
 2008-01-15  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHandler.cs:  Only mark the dirty area as dirty when we are

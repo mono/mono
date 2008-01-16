@@ -82,6 +82,22 @@ namespace System.Windows.Forms.CarbonInternal {
 				msg.message = Msg.WM_SYSKEYUP;
 				vkey = (int) VirtualKeys.VK_MENU;
 				keys &= ~Keys.Alt;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.controlKey) == (uint)KeyboardModifiers.controlKey && ((modifiers & (uint)KeyboardModifiers.controlKey) == 0)) {
+				msg.message = Msg.WM_KEYDOWN;
+				vkey = (int) VirtualKeys.VK_CONTROL;
+				keys |= Keys.Control;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.controlKey) == 0 && ((modifiers & (uint)KeyboardModifiers.controlKey) == (uint)KeyboardModifiers.controlKey)) {
+				msg.message = Msg.WM_KEYUP;
+				vkey = (int) VirtualKeys.VK_CONTROL;
+				keys &= ~Keys.Control;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.rightControlKey) == (uint)KeyboardModifiers.rightControlKey && ((modifiers & (uint)KeyboardModifiers.rightControlKey) == 0)) {
+				msg.message = Msg.WM_KEYDOWN;
+				vkey = (int) VirtualKeys.VK_CONTROL;
+				keys |= Keys.Control;
+			} else if ((new_modifiers & (uint)KeyboardModifiers.rightControlKey) == 0 && ((modifiers & (uint)KeyboardModifiers.rightControlKey) == (uint)KeyboardModifiers.rightControlKey)) {
+				msg.message = Msg.WM_KEYUP;
+				vkey = (int) VirtualKeys.VK_CONTROL;
+				keys &= ~Keys.Control;
 			} else {
 				vkey = -1;
 				return false;

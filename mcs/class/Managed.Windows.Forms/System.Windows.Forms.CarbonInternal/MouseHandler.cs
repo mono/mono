@@ -59,6 +59,10 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			GetEventParameter (eventref, kEventParamMouseLocation, typeQDPoint, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref qdpoint);
 			GetEventParameter (eventref, kEventParamMouseButton, typeMouseButton, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
+			
+			if (button == 1 && ((Driver.ModifierKeys & Keys.Control) != 0))
+				button = 2;
+
 
 			point.x = qdpoint.x;
 			point.y = qdpoint.y;
@@ -221,5 +225,8 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal static extern int HIViewGetSubviewHit (IntPtr content_view, ref CGPoint point, bool tval, ref IntPtr hit_view);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewFindByID (IntPtr root_window, HIViewID id, ref IntPtr view_handle);
+		
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int GetCurrentEventButtonState ();
 	}
 }
