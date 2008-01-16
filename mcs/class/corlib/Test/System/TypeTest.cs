@@ -2442,6 +2442,41 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] // GetConstructor (Type [])
+		public void GetConstructor1 ()
+		{
+			Type type;
+			ConstructorInfo ctor;
+
+			type = typeof (CtorsA);
+			ctor = type.GetConstructor (Type.EmptyTypes);
+			Assert.IsNotNull (ctor, "#A1");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#A2");
+			Assert.IsFalse (ctor.IsStatic, "#A3");
+			Assert.IsTrue (ctor.IsPublic, "#A4");
+			Assert.AreEqual (".ctor", ctor.Name, "#A5");
+
+			type = typeof (CtorsB);
+			ctor = type.GetConstructor (Type.EmptyTypes);
+			Assert.IsNotNull (ctor, "#B1");
+			Assert.AreEqual (0, ctor.GetParameters ().Length, "#B2");
+			Assert.IsFalse (ctor.IsStatic, "#B3");
+			Assert.IsTrue (ctor.IsPublic, "#B4");
+			Assert.AreEqual (".ctor", ctor.Name, "#B5");
+
+			type = typeof (CtorsC);
+			ctor = type.GetConstructor (Type.EmptyTypes);
+			Assert.IsNull (ctor, "#C");
+
+			type = typeof (CtorsC);
+			ctor = type.GetConstructor (new Type [] { typeof (int) });
+			Assert.IsNotNull (ctor, "#D1");
+			Assert.AreEqual (1, ctor.GetParameters ().Length, "#D2");
+			Assert.IsFalse (ctor.IsStatic, "#D3");
+			Assert.IsTrue (ctor.IsPublic, "#D4");
+			Assert.AreEqual (".ctor", ctor.Name, "#D5");
+		}
+
+		[Test] // GetConstructor (Type [])
 		public void GetConstructor1_Types_Null ()
 		{
 			try {
@@ -3078,6 +3113,31 @@ PublicKeyToken=b77a5c561934e089"));
 			internal static int IntStat
 			{
 				get { return 0; }
+			}
+		}
+
+		class CtorsA
+		{
+			static CtorsA ()
+			{
+			}
+		}
+
+		class CtorsB
+		{
+			public CtorsB ()
+			{
+			}
+		}
+
+		class CtorsC
+		{
+			static CtorsC ()
+			{
+			}
+
+			public CtorsC (int x)
+			{
 			}
 		}
 	}

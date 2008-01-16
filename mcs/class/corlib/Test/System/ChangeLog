@@ -1,3 +1,7 @@
+2008-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added test for GetConstructor (Type []).
+
 2008-01-15  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* DateTimeOffsetTest.cs: tests for parsing f, F, s
