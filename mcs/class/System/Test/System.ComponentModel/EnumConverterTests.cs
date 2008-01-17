@@ -135,9 +135,6 @@ namespace MonoTests.System.ComponentModel
 #endif
 
 		[Test]
-#if TARGET_JVM
-		[NUnit.Framework.Category("NotWorking")]
-#endif
 		public void ConvertFrom_String ()
 		{
 			EnumConverter converter = new EnumConverter (typeof (E));
