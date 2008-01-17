@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app id="WebApp_ID">
+
+  <display-name>Mainsoft for Java EE application</display-name>
+  <description>Mainsoft for Java EE application.</description>
+  <context-param>
+    <param-name>EnableSessionPersistency</param-name>
+    <param-value>False</param-value>
+  </context-param>
+  <context-param>
+    <param-name>DataDirectory</param-name>
+    <param-value>App_Data</param-value>
+  </context-param>
+
+
+  <context-param>
+    <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+    <param-value>client</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.application.CONFIG_FILES</param-name>
+    <param-value>/WEB-INF/faces-config.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+    <param-value>.aspx</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>Mainsoft.Web.SessionState.SessionListener</listener-class>
+  </listener>
+
+  <servlet>
+    <servlet-name>VmwIncludeHelperServlet</servlet-name>
+    <servlet-class>Mainsoft.Web.Hosting.IncludeHelperServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <servlet-class>GhDynamicHttpServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>/aspnetconfig</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>/aspnetconfig/</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>/assemblies/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.mdf</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.lck</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.properties</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.dat</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.ctrl</url-pattern>
+  </servlet-mapping>
+
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.aspx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.asmx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.ashx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.invoke</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.soap</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.rem</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.axd</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.master</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.resource</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.skin</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.browser</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.sitemap</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.webinfo</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.resx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.asax</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.ascx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.config</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.Config</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.cs</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.vb</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.csproj</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.vbproj</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.licx</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.dll</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.class</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwDynamicServlet</servlet-name>
+    <url-pattern>*.jar</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>VmwIncludeHelperServlet</servlet-name>
+    <url-pattern>/servletincludehelper</url-pattern>
+  </servlet-mapping>
+
+  <session-config>
+    <session-timeout>20</session-timeout>
+  </session-config>
+
+  <welcome-file-list>
+    <welcome-file>Default.aspx</welcome-file>
+  </welcome-file-list>
+
+</web-app>
