@@ -103,7 +103,7 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
-		public virtual MethodInfo MakeGenericMethod (params Type [] types)
+		public virtual MethodInfo MakeGenericMethod (params Type [] typeArguments)
 		{
 			throw new NotSupportedException (this.GetType().ToString ());
 		}

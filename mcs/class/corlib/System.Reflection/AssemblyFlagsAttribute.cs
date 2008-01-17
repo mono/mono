@@ -58,9 +58,9 @@ namespace System.Reflection
 #if NET_2_0
 		[Obsolete("")]
 #endif
-		public AssemblyFlagsAttribute (int flags)
+		public AssemblyFlagsAttribute (int assemblyFlags)
 		{
-			this.flags = (uint)flags;
+			this.flags = (uint)assemblyFlags;
 		}
 #endif
 

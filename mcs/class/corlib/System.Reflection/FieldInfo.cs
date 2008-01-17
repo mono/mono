@@ -132,7 +132,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public abstract void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
+		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
 #if ONLY_1_1
 		public new Type GetType ()

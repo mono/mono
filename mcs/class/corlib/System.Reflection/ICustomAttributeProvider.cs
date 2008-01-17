@@ -40,12 +40,12 @@ namespace System.Reflection {
 	public interface ICustomAttributeProvider {
 
 		object [] GetCustomAttributes (bool inherit);
-		object [] GetCustomAttributes (Type attribute_type, bool inherit);
+		object [] GetCustomAttributes (Type attributeType, bool inherit);
 
 		/// <summary>
 		///   Probes whether one or more `attribute_type' types are
 		///   defined by this member
 		/// </summary>
-		bool IsDefined (Type attribute_type, bool inherit);
+		bool IsDefined (Type attributeType, bool inherit);
 	}
 }

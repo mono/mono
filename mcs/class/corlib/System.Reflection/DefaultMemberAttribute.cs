@@ -43,9 +43,9 @@ namespace System.Reflection {
 	public sealed class DefaultMemberAttribute : Attribute {
 		string member_name;
 		
-		public DefaultMemberAttribute (string member_name)
+		public DefaultMemberAttribute (string memberName)
 		{
-			this.member_name = member_name;
+			this.member_name = memberName;
 		}
 
 		public string MemberName {

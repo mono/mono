@@ -148,13 +148,13 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetField (name, BindingFlags.Public | BindingFlags.Static) : null;
 		}
 	
-		public FieldInfo GetField (string name, BindingFlags flags) 
+		public FieldInfo GetField (string name, BindingFlags bindingAttr) 
 		{
 			if (IsResource ())
 				return null;
 
 			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetField (name, flags) : null;
+			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
 		}
 	
 		public FieldInfo[] GetFields () 
@@ -205,21 +205,21 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0
-		public MethodInfo[] GetMethods (BindingFlags flags) {
+		public MethodInfo[] GetMethods (BindingFlags bindingFlags) {
 			if (IsResource ())
 				return new MethodInfo [0];
 
 			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethods (flags) : new MethodInfo [0];
+			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
 		}
 
-		public FieldInfo[] GetFields (BindingFlags flags) 
+		public FieldInfo[] GetFields (BindingFlags bindingFlags)
 		{
 			if (IsResource ())
 				return new FieldInfo [0];
 
 			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetFields (flags) : new FieldInfo [0];
+			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 #endif
 	

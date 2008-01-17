@@ -51,8 +51,8 @@ namespace System.Reflection
 		{
 		}
 
-		public TargetException (string message, Exception innerException)
-			: base (message, innerException)
+		public TargetException (string message, Exception inner)
+			: base (message, inner)
 		{
 		}
 

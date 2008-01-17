@@ -77,11 +77,11 @@ namespace System.Reflection {
 		}
 #endif
 
-		public abstract bool IsDefined (Type attribute_type, bool inherit);
+		public abstract bool IsDefined (Type attributeType, bool inherit);
 
 		public abstract object [] GetCustomAttributes (bool inherit);
 
-		public abstract object [] GetCustomAttributes (Type attribute_type, bool inherit);
+		public abstract object [] GetCustomAttributes (Type attributeType, bool inherit);
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public

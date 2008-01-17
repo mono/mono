@@ -77,14 +77,14 @@ namespace System.Reflection {
 			return (memberInfo.GetHashCode () << 16) + typedArgument.GetHashCode ();
 		}
 
-		public static bool operator == (CustomAttributeNamedArgument obj1, CustomAttributeNamedArgument obj2)
+		public static bool operator == (CustomAttributeNamedArgument left, CustomAttributeNamedArgument right)
 		{
-			return obj1.Equals (obj2);
+			return left.Equals (right);
 		}
 
-		public static bool operator != (CustomAttributeNamedArgument obj1, CustomAttributeNamedArgument obj2)
+		public static bool operator != (CustomAttributeNamedArgument left, CustomAttributeNamedArgument right)
 		{
-			return !obj1.Equals (obj2);
+			return !left.Equals (right);
 		}
 	}
 

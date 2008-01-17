@@ -46,22 +46,22 @@ namespace System.Reflection {
 			get;
 		}
 
-		FieldInfo    GetField   (string name, BindingFlags binding_attr);
-		FieldInfo [] GetFields  (BindingFlags binding_attr);
-		MemberInfo[] GetMember  (string name, BindingFlags binding_attr);
-		MemberInfo[] GetMembers (BindingFlags binding_attr);
-		MethodInfo   GetMethod  (string name, BindingFlags binding_attr);
-		MethodInfo   GetMethod  (string name, BindingFlags binding_attr,
+		FieldInfo    GetField   (string name, BindingFlags bindingAttr);
+		FieldInfo [] GetFields  (BindingFlags bindingAttr);
+		MemberInfo[] GetMember  (string name, BindingFlags bindingAttr);
+		MemberInfo[] GetMembers (BindingFlags bindingAttr);
+		MethodInfo   GetMethod  (string name, BindingFlags bindingAttr);
+		MethodInfo   GetMethod  (string name, BindingFlags bindingAttr,
 					 Binder binder, Type [] types, ParameterModifier [] modifiers);
-		MethodInfo[] GetMethods (BindingFlags binding_attr);
+		MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
-		PropertyInfo [] GetProperties (BindingFlags binding_attr);
-		PropertyInfo    GetProperty   (string name, BindingFlags binding_attr);
-		PropertyInfo    GetProperty   (string name, BindingFlags binding_attr,
-					       Binder binder, Type return_type, Type [] types,
+		PropertyInfo [] GetProperties (BindingFlags bindingAttr);
+		PropertyInfo    GetProperty   (string name, BindingFlags bindingAttr);
+		PropertyInfo    GetProperty   (string name, BindingFlags bindingAttr,
+					       Binder binder, Type returnType, Type [] types,
 					       ParameterModifier [] modifiers);
 
-		object InvokeMember (string name, BindingFlags invoke_attr,
+		object InvokeMember (string name, BindingFlags invokeAttr,
 				     Binder binder, object target, object [] args,
 				     ParameterModifier [] modifiers,
 				     CultureInfo culture,

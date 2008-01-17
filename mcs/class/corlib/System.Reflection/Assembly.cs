@@ -534,9 +534,9 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);
 		}
 
-		public static Assembly ReflectionOnlyLoad (string assemblyName) 
+		public static Assembly ReflectionOnlyLoad (string assemblyString) 
 		{
-			return AppDomain.CurrentDomain.Load (assemblyName, null, true);
+			return AppDomain.CurrentDomain.Load (assemblyString, null, true);
 		}
 
 		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) 

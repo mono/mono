@@ -85,14 +85,14 @@ namespace System.Reflection {
 			return (argumentType.GetHashCode () << 16) + (value != null ? value.GetHashCode () : 0);
 		}
 
-		public static bool operator == (CustomAttributeTypedArgument obj1, CustomAttributeTypedArgument obj2)
+		public static bool operator == (CustomAttributeTypedArgument left, CustomAttributeTypedArgument right)
 		{
-			return obj1.Equals (obj2);
+			return left.Equals (right);
 		}
 
-		public static bool operator != (CustomAttributeTypedArgument obj1, CustomAttributeTypedArgument obj2)
+		public static bool operator != (CustomAttributeTypedArgument left, CustomAttributeTypedArgument right)
 		{
-			return !obj1.Equals (obj2);
+			return !left.Equals (right);
 		}
 	}
 
