@@ -47,10 +47,9 @@ namespace System.Web.UI.HtmlControls
 	[SupportsEventValidation]
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler, IParserAccessor {
 
-		DataSourceView boundDataSourceView;
-		IDataSource boundDataSource;
+		DataSourceView _boundDataSourceView;
 		private bool requiresDataBinding;
-		IEnumerable data;
+		bool _initialized;
 #else
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler {
 #endif
@@ -112,10 +111,12 @@ namespace System.Web.UI.HtmlControls
 				return ViewState.GetString ("DataSourceID", "");
 			}
 			set {
-				if (datasource != null)
-			  		throw new HttpException ("Only one of DataSource and DataSourceID can be specified.");
+				if (DataSourceID == value)
+					return;
 				ViewState ["DataSourceID"] = value;
-
+				if (_boundDataSourceView != null)
+					_boundDataSourceView.DataSourceViewChanged -= OnDataSourceViewChanged;
+				_boundDataSourceView = null;
 				OnDataPropertyChanged ();
 			}
 		}
@@ -206,6 +207,8 @@ namespace System.Web.UI.HtmlControls
 			get {
 				if (items == null) {
 					items = new ListItemCollection ();
+					if (IsTrackingViewState)
+						((IStateManager) items).TrackViewState ();
 				}
 
 				return (items);
@@ -422,24 +425,21 @@ namespace System.Web.UI.HtmlControls
 				DataBind ();
 		}
 
-		private void SelectCallback (IEnumerable data)
-		{
-			this.data = data;
-		}
-
 		protected virtual IEnumerable GetData ()
 		{
-			IEnumerable result;
+			if (DataSource != null && IsBoundUsingDataSourceID)
+				throw new HttpException ("Control bound using both DataSourceID and DataSource properties.");
 
-			if (DataSourceID.Length == 0)
+			if (DataSource != null)
+				return DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+
+			if (!IsBoundUsingDataSourceID)
 				return null;
 
-			boundDataSourceView = boundDataSource.GetView (String.Empty);
-			boundDataSourceView.Select (new DataSourceSelectArguments (), SelectCallback);
-			boundDataSourceView.DataSourceViewChanged += OnDataSourceViewChanged;
+			IEnumerable result = null;
 
-			result = data;
-			data = null;
+			DataSourceView boundDataSourceView = ConnectToDataSource ();
+			boundDataSourceView.Select (DataSourceSelectArguments.Empty, delegate (IEnumerable data) { result = data; });
 
 			return result;
 		}
@@ -449,13 +449,11 @@ namespace System.Web.UI.HtmlControls
 		{
 			object first = null;
 			object second = null;
-			int[] selected = null;
 
-			Triplet triplet = savedState as Triplet;
-			if (triplet != null) {
-				first = triplet.First;
-				second = triplet.Second;
-				selected = triplet.Third as int[];
+			Pair pair = savedState as Pair;
+			if (pair != null) {
+				first = pair.First;
+				second = pair.Second;
 			}
 
 			base.LoadViewState (first);
@@ -463,10 +461,6 @@ namespace System.Web.UI.HtmlControls
 			if (second != null) {
 				IStateManager manager = Items as IStateManager;
 				manager.LoadViewState (second);
-			}
-
-			if (selected != null) {
-				Select (selected);
 			}
 		}
 
@@ -482,11 +476,10 @@ namespace System.Web.UI.HtmlControls
 			IEnumerable list;
 
 #if NET_2_0
-			if (IsBoundUsingDataSourceID)
 				list = GetData ();
-			else
-#endif
+#else
 				list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+#endif
 
 			if (list == null) {
 				return;
@@ -527,11 +520,16 @@ namespace System.Web.UI.HtmlControls
 				ListItem item = new ListItem (text, value);
 				listitems.Add (item);
 			}
+#if NET_2_0
+			RequiresDataBinding = false;
+			IsDataBound = true;
+#endif
 		}
 
 #if NET_2_0
 		protected virtual void OnDataPropertyChanged ()
 		{
+			if (_initialized)
 			RequiresDataBinding = true;
 		}
 
@@ -544,21 +542,46 @@ namespace System.Web.UI.HtmlControls
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+
+			Page.PreLoad += new EventHandler (OnPagePreLoad);
+		}
+
+		protected virtual void OnPagePreLoad (object sender, EventArgs e) {
+			Initialize ();
 		}
 
 		protected internal override void OnLoad (EventArgs e)
 		{
-			if ((Page != null) && !Page.IsPostBack)
-				RequiresDataBinding = true;
+			if (!_initialized)
+				Initialize ();
 
 			base.OnLoad (e);
+		}
+
+		void Initialize () {
+			_initialized = true;
+
+			if (!IsDataBound)
+				RequiresDataBinding = true;
 
 			if (IsBoundUsingDataSourceID)
 				ConnectToDataSource ();
 		}
 
-		void ConnectToDataSource ()
+		bool IsDataBound {
+			get {
+				return ViewState.GetBool ("_DataBound", false);
+			}
+			set {
+				ViewState ["_DataBound"] = value;
+			}
+		}
+
+		DataSourceView ConnectToDataSource ()
 		{
+			if (_boundDataSourceView != null)
+				return _boundDataSourceView;
+
 			/* verify that the data source exists and is an IDataSource */
 			object ctrl = null;
 			if (Page != null)
@@ -575,7 +598,9 @@ namespace System.Web.UI.HtmlControls
 				throw new HttpException (String.Format (format, ID, DataSourceID));
 			}
 
-			boundDataSource = (IDataSource)ctrl;
+			_boundDataSourceView = ((IDataSource)ctrl).GetView (String.Empty);
+			_boundDataSourceView.DataSourceViewChanged += OnDataSourceViewChanged;
+			return _boundDataSourceView;
 		}
 #endif
 
@@ -683,7 +708,6 @@ namespace System.Web.UI.HtmlControls
 		{
 			object first = null;
 			object second = null;
-			object selected = null;
 
 			first = base.SaveViewState ();
 
@@ -692,15 +716,10 @@ namespace System.Web.UI.HtmlControls
 				second = manager.SaveViewState ();
 			}
 
-			selected = SelectedIndices;
-			
-			if (first == null &&
-			    second == null &&
-			    selected == null) {
+			if (first == null && second == null)
 				return (null);
-			}
 
-			return (new Triplet (first, second, selected));
+			return new Pair (first, second);
 		}
 
 		/* "internal infrastructure" according to the docs,
