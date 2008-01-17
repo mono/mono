@@ -147,7 +147,10 @@ namespace System.IO.IsolatedStorage {
 			if ((scope & IsolatedStorageScope.Assembly) != 0) {
 				Evidence e = Assembly.GetCallingAssembly ().UnprotectedGetEvidence ();
 				storageFile._fullEvidences = e;
-				storageFile._assemblyIdentity = GetTypeFromEvidence (e, assemblyEvidenceType);
+				if ((scope & IsolatedStorageScope.Domain) != 0)
+					storageFile._assemblyIdentity = GetTypeFromEvidence (e, assemblyEvidenceType);
+				else
+					storageFile._assemblyIdentity = GetAssemblyIdentityFromEvidence (e);
 			}
 			storageFile.PostInit ();
 			return storageFile;
