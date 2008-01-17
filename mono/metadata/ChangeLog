@@ -1,3 +1,22 @@
+2008-01-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (in_any_exception_block): added, check if offset
+	is part of any exception handling clause.
+
+	* verify.c (get_stack_type): added VAR and MVAR types.
+
+	* verify.c (do_stobj): better error messages.
+
+	* verify.c (do_cpobj): added, check cpobj.
+
+	* verify.c (do_initobj): added, check initobj.
+
+	* verify.c (do_sizeof): added, check sizeof.
+
+	* verify.c (do_localloc): added, check localloc.
+
+	* verify.c: adde proper verification for cpobj, initobj, sizeof and localloc.
+
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-builder.c (mono_mb_emit_native_call): Get rid of the unused
