@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Security;
@@ -385,6 +386,30 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Evidence ae = new Evidence ();
 			ae.AddHost (new Zone (SecurityZone.Internet));
 			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null, ae, typeof (Zone));
+		}
+
+		[Test]
+		public void RegressionBNC354539 ()
+		{
+			string filename = "test-bnc-354539";
+			byte[] expected = new byte[] { 0x01, 0x42, 0x00 };
+			byte[] actual = new byte [expected.Length];
+
+			using (IsolatedStorageFile file = IsolatedStorageFile.GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null)) {
+				using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream (filename, FileMode.Create, FileAccess.Write, FileShare.None, file)) {
+					stream.Write (expected, 0, expected.Length);
+				}
+			}
+
+			using (IsolatedStorageFile file = IsolatedStorageFile.GetUserStoreForAssembly ()) {
+				using (IsolatedStorageFileStream stream = new IsolatedStorageFileStream (filename, FileMode.Open, FileAccess.Read, FileShare.Read, file)) {
+					stream.Read (actual, 0, actual.Length);
+				}
+
+				file.DeleteFile (filename);
+			}
+			
+			Assert.AreEqual (expected, actual);
 		}
 	}
 }
