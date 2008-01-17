@@ -558,6 +558,7 @@ namespace MonoTests.System.Net
 #endif
 
 		[Test]
+		[Category ("NotWorking")] // #353495
 		public void LastModifiedKind () // bug #353495
 		{
 			const string reqURL = "http://coffeefaq.com/site/node/25";
