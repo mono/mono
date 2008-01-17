@@ -829,17 +829,24 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (desc == null)
 				return;
 
+			bool changed = false;
 			for (int i = 0; i < ((GridEntry)property_grid.SelectedGridItem).SelectedObjects.Length; i ++) {
 				object target = property_grid.GetTarget (property_grid.SelectedGridItem, i);
-				desc.SetValue(target, newVal);
+				object currentVal = desc.GetValue (target);
+				if (!Object.Equals (currentVal, newVal)) {
+					desc.SetValue (target, newVal);
+					changed = true;
+				}
 			}
 
-			// TODO - What else should RefreshProperties.All do?
-			RefreshPropertiesAttribute refresh_attr = (RefreshPropertiesAttribute) desc.Attributes [typeof (RefreshPropertiesAttribute)];
-			if (refresh_attr != null && refresh_attr.RefreshProperties != RefreshProperties.None)
-				Invalidate ();
-
-			property_grid.PropertyValueChangedInternal ();
+			if (changed) {
+				// TODO - What else should RefreshProperties.All do?
+				RefreshPropertiesAttribute refresh_attr = (RefreshPropertiesAttribute) desc.Attributes [typeof (RefreshPropertiesAttribute)];
+				if (refresh_attr != null && refresh_attr.RefreshProperties != RefreshProperties.None)
+					Invalidate ();
+	
+				property_grid.PropertyValueChangedInternal ();
+			}
 		}
 	
 		private void DropDownButtonClicked (object sender, EventArgs e) {
@@ -899,8 +906,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				(ITypeDescriptorContext)property_grid.SelectedGridItem,
 				service_container,
 				initial_value);
-			if (value != initial_value)
-				SetPropertyValue (value);
+			SetPropertyValue (value);
 		}
 		
 		private void DialogButtonClicked(object sender, EventArgs e) {
