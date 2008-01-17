@@ -1,5 +1,10 @@
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Install a callback with the runtime which will be called
+	when a thread receives an async exception while in unmanaged code.
+
+	* mini.c driver.c: Update after mono_get_native_wrapper () signature change.
+
 	* mini-s390x.c (mono_arch_output_basic_block): Fix s390x build.
 
 2008-01-16  Wade Berrier  <wberrier@novell.com>
