@@ -49,10 +49,14 @@ using javax.faces.render;
 
 namespace Mainsoft.Web.Hosting
 {
+	public interface IJDBCDriverDeregisterer
+	{
+		void DeregisterDriver (java.sql.Driver driver);
+	}
 	/// <summary>
 	/// <para>This class supports the Framework infrastructure and is not intended to be used directly from your code.</para>
 	/// </summary>
-	public class BaseHttpServlet : HttpServlet
+	public class BaseHttpServlet : HttpServlet, IJDBCDriverDeregisterer
 	{
 		bool _appVirDirInited = false;
 
@@ -180,7 +184,7 @@ namespace Mainsoft.Web.Hosting
 			DestroyRuntime (getServletContext (), this);
 		}
 
-		public static void DestroyRuntime (ServletContext context, object evidence) {
+		public static void DestroyRuntime (ServletContext context, IJDBCDriverDeregisterer evidence) {
 			AppDomain servletDomain = (AppDomain) context.getAttribute (J2EEConsts.APP_DOMAIN);
 			if (servletDomain == null)
 				return;
@@ -195,6 +199,18 @@ namespace Mainsoft.Web.Hosting
 					FactoryFinder.releaseFactories ();
 				}
 				catch (FacesException) { }
+
+				java.lang.ClassLoader appClassLoader = vmw.common.TypeUtils.ToClass (evidence).getClassLoader ();
+
+				IJDBCDriverDeregisterer dereg = evidence;
+
+				java.util.Enumeration en = java.sql.DriverManager.getDrivers ();
+				while (en.hasMoreElements ()) {
+					Object o = en.nextElement ();
+					if (vmw.common.TypeUtils.ToClass (o).getClassLoader () == appClassLoader)
+						dereg.DeregisterDriver ((java.sql.Driver) o);
+				}
+
 				java.lang.Thread.currentThread ().setContextClassLoader (null);
 			}
 			catch (Exception e) {
@@ -276,6 +292,14 @@ namespace Mainsoft.Web.Hosting
 				//servletDomain.SetData(".hostingInstallDir", "/");
 				return servletDomain;
 		}
+
+		#region IJDBCDriverDeregisterer Members
+
+		public void DeregisterDriver (java.sql.Driver driver) {
+			java.sql.DriverManager.deregisterDriver (driver);
+		}
+
+		#endregion
 	}
 }
 
