@@ -1848,7 +1848,12 @@ public class CreateKeyboards
 		VirtualKeys.VK_OEM_3, VirtualKeys.VK_OEM_5, VirtualKeys.VK_W, VirtualKeys.VK_X, VirtualKeys.VK_C,
 		VirtualKeys.VK_V, VirtualKeys.VK_B, VirtualKeys.VK_N, VirtualKeys.VK_OEM_COMMA, VirtualKeys.VK_OEM_PERIOD,
 		VirtualKeys.VK_OEM_2, VirtualKeys.VK_OEM_8, 
-		VirtualKeys.VK_OEM_102 // the 102nd key (actually to the right of l-shift)
+		VirtualKeys.VK_OEM_ATTN,
+		VirtualKeys.VK_OEM_102, // the 102nd key (actually to the right of l-shift)
+		VirtualKeys.VK_OEM_COPY,
+		VirtualKeys.VK_OEM_AUTO,
+		VirtualKeys.VK_OEM_ENLW,
+		VirtualKeys.VK_OEM_BACKTAB,
 	};
 
 	//// WRONG
@@ -2054,6 +2059,11 @@ public class CreateKeyboards
 		VK_ICO_HELP		= 0xE3,
 		VK_ICO_00		= 0xE4,
 		VK_PROCESSKEY		= 0xE5,
+		VK_OEM_ATTN		= 0xF0,
+		VK_OEM_COPY		= 0xF2,
+		VK_OEM_AUTO		= 0xF3,
+		VK_OEM_ENLW		= 0xF4,
+		VK_OEM_BACKTAB		= 0xF5,
 		VK_ATTN			= 0xF6,
 		VK_CRSEL		= 0xF7,
 		VK_EXSEL		= 0xF8,

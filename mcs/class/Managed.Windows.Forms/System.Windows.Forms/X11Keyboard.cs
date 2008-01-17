@@ -778,9 +778,9 @@ namespace System.Windows.Forms {
 			(int) VirtualKeys.VK_BACK, (int) VirtualKeys.VK_TAB, 0, (int) VirtualKeys.VK_CLEAR, 0, (int) VirtualKeys.VK_RETURN, 0, 0,	    /* FF08 */
 			0, 0, 0, (int) VirtualKeys.VK_PAUSE, (int) VirtualKeys.VK_SCROLL, 0, 0, 0,			     /* FF10 */
 			0, 0, 0, (int) VirtualKeys.VK_ESCAPE, 0, 0, 0, 0,			      /* FF18 */
+			0, 0, (int) VirtualKeys.VK_NONCONVERT, (int) VirtualKeys.VK_CONVERT, 0, 0, 0, 0,					    /* FF20 */
+			0, 0, (int) VirtualKeys.VK_OEM_AUTO, 0, 0, 0, 0, 0,					    /* FF28 */
 			/* unused */
-			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF20 */
-			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF28 */
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF30 */
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF38 */
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF40 */

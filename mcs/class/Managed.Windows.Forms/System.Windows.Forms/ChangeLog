@@ -1,3 +1,8 @@
+2008-01-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XplatUIStructs.cs, X11Keyboard.cs :
+	  added some more VK_* keys to be handled.
+
 2008-01-16  Andreia Gaita <avidigal@novell.com>
 
 	* Control.cs: Check if there is a container before setting or getting
