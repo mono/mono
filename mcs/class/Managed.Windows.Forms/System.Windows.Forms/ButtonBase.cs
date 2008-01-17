@@ -86,9 +86,11 @@ namespace System.Windows.Forms {
 			text_format.Alignment = StringAlignment.Center;
 			text_format.LineAlignment = StringAlignment.Center;
 			text_format.HotkeyPrefix = HotkeyPrefix.Show;
+			text_format.FormatFlags |= StringFormatFlags.LineLimit;
 
 			text_format_flags = TextFormatFlags.HorizontalCenter;
 			text_format_flags |= TextFormatFlags.VerticalCenter;
+			text_format_flags |= TextFormatFlags.TextBoxControl;
 
 			SetStyle (ControlStyles.ResizeRedraw | 
 				ControlStyles.Opaque | 

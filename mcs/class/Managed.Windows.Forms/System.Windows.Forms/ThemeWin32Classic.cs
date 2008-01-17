@@ -197,6 +197,10 @@ namespace System.Windows.Forms
 
 		public virtual void DrawButtonText (Graphics g, Button button, Rectangle textBounds)
 		{
+			// Ensure that at least one line is going to get displayed.
+			// Line limit does not ensure that despite its description.
+			textBounds.Height = Math.Max (textBounds.Height, button.Font.Height);
+			
 			if (button.Enabled)
 				TextRenderer.DrawTextInternal (g, button.Text, button.Font, textBounds, button.ForeColor, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			else
@@ -855,6 +859,10 @@ namespace System.Windows.Forms
 				text_rect.X++;
 				text_rect.Y++;
 			}
+			
+			// Ensure that at least one line is going to get displayed.
+			// Line limit does not ensure that despite its description.
+			text_rect.Height = Math.Max (button.Font.Height, text_rect.Height);
 			
 			if (button.Enabled) {					
 				dc.DrawString(button.Text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
