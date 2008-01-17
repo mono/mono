@@ -815,7 +815,6 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ResolveUrl ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (ResolveUrl_Load));
@@ -863,7 +862,6 @@ namespace MonoTests.System.Web.UI
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Category ("NotWorking")]
 		public void ResolveUrl2 ()
 		{
 			WebTest t = new WebTest ("ResolveUrl.aspx");

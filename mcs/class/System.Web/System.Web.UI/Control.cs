@@ -1272,20 +1272,29 @@ namespace System.Web.UI
 			if (relativeUrl == null)
 				throw new ArgumentNullException ("relativeUrl");
 
-			if (relativeUrl == "")
-				return "";
+			if (relativeUrl == String.Empty)
+				return relativeUrl;
+
+			if (VirtualPathUtility.IsAbsolute (relativeUrl))
+				return relativeUrl;
 
 			if (relativeUrl [0] == '#')
 				return relativeUrl;
 
+#if NET_2_0
+			string ts = AppRelativeTemplateSourceDirectory;
+#else
 			string ts = TemplateSourceDirectory;
+#endif
 			if (ts == null || ts.Length == 0 ||
 				Context == null || Context.Response == null ||
-				!UrlUtils.IsRelativeUrl (relativeUrl))
+				relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
 
 			HttpResponse resp = Context.Response;
-			return resp.ApplyAppPathModifier (UrlUtils.Combine (ts, relativeUrl));
+			if (!VirtualPathUtility.IsAppRelative (relativeUrl))
+				relativeUrl = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (ts), relativeUrl);
+			return resp.ApplyAppPathModifier (relativeUrl);
 		}
 
 
