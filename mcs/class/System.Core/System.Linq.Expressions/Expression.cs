@@ -963,10 +963,22 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static MemberExpression MakeMemberAccess (Expression expression, MemberInfo member)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+			if (member == null)
+				throw new ArgumentNullException ("member");
+
+			var field = member as FieldInfo;
+			if (field != null)
+				return Field (expression, field);
+
+			var property = member as PropertyInfo;
+			if (property != null)
+				return Property (expression, property);
+
+			throw new ArgumentException ("Member should either be a field or a property");
 		}
 
 		public static UnaryExpression MakeUnary (ExpressionType unaryType, Expression operand, Type type)
