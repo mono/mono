@@ -166,6 +166,14 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitBinary (BinaryExpression binary)
 		{
+			if (binary.NodeType == ExpressionType.ArrayIndex) {
+				Visit (binary.Left);
+				Print ("[");
+				Visit (binary.Right);
+				Print ("]");
+				return;
+			}
+
 			Print ("(");
 			Visit (binary.Left);
 			Print (" {0} ", OperatorToString (binary));

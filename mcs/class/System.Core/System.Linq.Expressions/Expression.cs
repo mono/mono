@@ -40,6 +40,9 @@ namespace System.Linq.Expressions {
 		ExpressionType node_type;
 		Type type;
 
+		static BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
+		static BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
+
 		public ExpressionType NodeType {
 			get { return node_type; }
 		}
@@ -91,7 +94,7 @@ namespace System.Linq.Expressions {
 		{
 			if (IsInt (t))
 				return true;
-			
+
 			switch (Type.GetTypeCode (t)) {
 			case TypeCode.Single:
 			case TypeCode.Double:
@@ -104,8 +107,8 @@ namespace System.Linq.Expressions {
 
 		static MethodInfo GetBinaryOperator (string oper_name, Type on_type, Expression left, Expression right)
 		{
-			MethodInfo [] methods = on_type.GetMethods (BindingFlags.Static | BindingFlags.Public);
-			
+			MethodInfo [] methods = on_type.GetMethods (PublicStatic);
+
 			foreach (MethodInfo m in methods){
 				if (m.Name != oper_name)
 					continue;
@@ -126,7 +129,7 @@ namespace System.Linq.Expressions {
 
 			return null;
 		}
-		
+
 		//
 		// Performs basic checks on the incoming expressions for binary expressions
 		// and any provided MethodInfo.
@@ -183,7 +186,7 @@ namespace System.Linq.Expressions {
 		}
 
 		//
-		// This is like BinaryCoreCheck, but if no method is used adds the restriction that 
+		// This is like BinaryCoreCheck, but if no method is used adds the restriction that
 		// only ints and bools are allowed
 		//
 		static MethodInfo BinaryBitwiseCoreCheck (string oper_name, Expression left, Expression right, MethodInfo method)
@@ -192,7 +195,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("left");
 			if (right == null)
 				throw new ArgumentNullException ("right");
-				
+
 			if (method == null){
 				// avoid reflection shortcut and catches Ints/bools before we check Numbers in general
 				if (left.Type == right.Type && (left.Type == typeof (bool) || IsInt (left.Type)))
@@ -203,7 +206,7 @@ namespace System.Linq.Expressions {
 			method = BinaryCoreCheck (oper_name, left, right, method);
 			if (method == null){
 				//
-				// The check in BinaryCoreCheck allows a bit more than we do 
+				// The check in BinaryCoreCheck allows a bit more than we do
 				// (floats and doubles).  Catch this here
 				//
 				throw new InvalidOperationException ("Types not supported");
@@ -248,7 +251,7 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression AddChecked (Expression left, Expression right, MethodInfo method)
 		{
 			method = BinaryCoreCheck ("op_Addition", left, right, method);
-			
+
 			return MakeSimpleBinary (ExpressionType.AddChecked, left, right, method);
 		}
 
@@ -508,10 +511,26 @@ namespace System.Linq.Expressions {
 		//
 		// Miscelaneous
 		//
-		[MonoTODO]
-		public static BinaryExpression ArrayIndex (Expression left, Expression index)
+
+		static void ArrayCheck (Expression array)
 		{
-			throw new NotImplementedException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (!array.Type.IsArray)
+				throw new ArgumentException ("The array argument must be of type array");
+		}
+
+		public static BinaryExpression ArrayIndex (Expression array, Expression index)
+		{
+			ArrayCheck (array);
+			if (index == null)
+				throw new ArgumentNullException ("index");
+			if (array.Type.GetArrayRank () != 1)
+				throw new ArgumentException ("The array argument must be a single dimensional array");
+			if (index.Type != typeof (int))
+				throw new ArgumentException ("The index must be of type int");
+
+			return new BinaryExpression (ExpressionType.ArrayIndex, array.Type.GetElementType (), array, index);
 		}
 
 		public static BinaryExpression Coalesce (Expression left, Expression right)
@@ -596,16 +615,27 @@ namespace System.Linq.Expressions {
 
 #endregion
 
-		[MonoTODO]
-		public static MethodCallExpression ArrayIndex (Expression left, params Expression [] indexes)
+		public static MethodCallExpression ArrayIndex (Expression array, params Expression [] indexes)
 		{
-			throw new NotImplementedException ();
+			return ArrayIndex (array, indexes as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
-		public static MethodCallExpression ArrayIndex (Expression left, IEnumerable<Expression> indexes)
+		public static MethodCallExpression ArrayIndex (Expression array, IEnumerable<Expression> indexes)
 		{
-			throw new NotImplementedException ();
+			ArrayCheck (array);
+
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			var args = indexes.ToReadOnlyCollection ();
+			if (array.Type.GetArrayRank () != args.Count)
+				throw new ArgumentException ("The number of arguments doesn't match the rank of the array");
+
+			foreach (var arg in args)
+				if (arg.Type != typeof (int))
+					throw new ArgumentException ("The index must be of type int");
+
+			return Call (array, array.Type.GetMethod ("Get", PublicInstance), args);
 		}
 
 		public static UnaryExpression ArrayLength (Expression array)

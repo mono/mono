@@ -39,6 +39,13 @@ namespace System.Linq.Expressions {
 		MethodInfo method;
 		bool lift_to_null;
 
+		internal BinaryExpression (ExpressionType node_type, Type type, Expression left, Expression right)
+			: base (node_type, type)
+		{
+			this.left = left;
+			this.right = right;
+		}
+
 		internal BinaryExpression (ExpressionType node_type, Type type, Expression left, Expression right, MethodInfo method)
 			: base (node_type, type)
 		{
@@ -46,7 +53,7 @@ namespace System.Linq.Expressions {
 			this.right = right;
 			this.method = method;
 		}
-		
+
 		internal BinaryExpression (ExpressionType node_type, Type type, Expression left, Expression right, bool lift_to_null,
 					   MethodInfo method, LambdaExpression conversion) : base (node_type, type)
 		{
