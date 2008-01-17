@@ -1,5 +1,10 @@
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h (MONO_ARCH_HAVE_NOTIFY_PENDING_EXC): Turn on this for amd64.
+
+	* exceptions-amd64.c (mono_arch_notify_pending_exc): New function to 
+	process async exceptions received while in unmanaged code.
+
 	* mini.c (mini_init): Install a callback with the runtime which will be called
 	when a thread receives an async exception while in unmanaged code.
 
