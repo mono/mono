@@ -291,12 +291,55 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		[MonoTODO]
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder,
 								       CallingConventions callConvention, Type[] types,
 								       ParameterModifier[] modifiers)
 		{
 			check_created ();
+
+			if (created == typeof (object)) {
+				/* 
+				 * This happens when building corlib. Calling created.GetConstructor 
+				 * would return constructors from the real mscorlib, instead of the
+				 * newly built one.
+				 */
+
+				if (ctors == null)
+					return null;
+ 
+				ConstructorBuilder found = null;
+				int count = 0;
+			
+				foreach (ConstructorBuilder cb in ctors) {
+					if (callConvention != CallingConventions.Any && cb.CallingConvention != callConvention)
+						continue;
+					found = cb;
+					count++;
+				}
+
+				if (count == 0)
+					return null;
+				if (types == null) {
+					if (count > 1)
+						throw new AmbiguousMatchException ();
+					return found;
+				}
+				MethodBase[] match = new MethodBase [count];
+				if (count == 1)
+					match [0] = found;
+				else {
+					count = 0;
+					foreach (ConstructorInfo m in ctors) {
+						if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
+							continue;
+						match [count++] = m;
+					}
+				}
+				if (binder == null)
+					binder = Binder.DefaultBinder;
+				return (ConstructorInfo) binder.SelectMethod (bindingAttr, match,
+															  types, modifiers);
+			}
 
 			return created.GetConstructor (bindingAttr, binder, 
 				callConvention, types, modifiers);
