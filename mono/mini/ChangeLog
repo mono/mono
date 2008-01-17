@@ -1,5 +1,11 @@
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Use the no-spilling optimization for CEE_CALLI
+	as well.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Save an instruction if the LMF is at
+	offset 0.
+
 	* mini-amd64.h (MONO_ARCH_HAVE_NOTIFY_PENDING_EXC): Turn on this for amd64.
 
 	* exceptions-amd64.c (mono_arch_notify_pending_exc): New function to 
