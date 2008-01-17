@@ -48,7 +48,7 @@ namespace MonoTests.System.Linq.Expressions
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ArgTypesDifferent ()
 		{
-			Expression.AndAlso (Expression.Constant (1), Expression.Constant (2.0));
+			Expression.MultiplyChecked (Expression.Constant (1), Expression.Constant (2.0));
 		}
 
 		[Test]

@@ -1,3 +1,9 @@
+2008-01-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs: Add support for user-defined operators. 
+
+	Put back various binary operator tests.
+
 2008-01-16  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, ExpressionPrinter.cs: fix call for static methods.
