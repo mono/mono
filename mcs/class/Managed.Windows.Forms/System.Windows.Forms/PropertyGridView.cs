@@ -1083,6 +1083,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					grid_textbox.Font = bold_font;
 				else
 					grid_textbox.Font = this.Font;
+				Invalidate (e.ChangedItem.Bounds);
 			}
 		}
 
