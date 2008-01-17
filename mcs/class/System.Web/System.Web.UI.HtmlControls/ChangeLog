@@ -1,5 +1,9 @@
 2008-01-17 Igor Zelmanovich  <igorz@mainsoft.com>
 
+	* HtmlSelect.cs: refactoring. 
+
+2008-01-17 Igor Zelmanovich  <igorz@mainsoft.com>
+
 	* HtmlSelect.cs: fix databinding (only 2.0), state management. 
 
 2008-01-14  Sebastien Pouliot  <sebastien@ximian.com>
