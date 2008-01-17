@@ -72,19 +72,34 @@ namespace System.Linq.Expressions {
 #region Binary Expressions
 		static bool IsInt (Type t)
 		{
-			return
-				t == typeof (int)   || t == typeof (uint) ||
-				t == typeof (short) || t == typeof (ushort) ||
-				t == typeof (long)  || t == typeof (ulong);
+			switch (Type.GetTypeCode (t)) {
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.Int16:
+			case TypeCode.UInt16:
+			case TypeCode.Int32:
+			case TypeCode.UInt32:
+			case TypeCode.Int64:
+			case TypeCode.UInt64:
+				return true;
+			}
+
+			return false;
 		}
 
 		static bool IsNumber (Type t)
 		{
-			return
-				t == typeof (int)   || t == typeof (uint) ||
-				t == typeof (short) || t == typeof (ushort) ||
-				t == typeof (long)  || t == typeof (ulong) ||
-				t == typeof (float) || t == typeof (double);
+			if (IsInt (t))
+				return true;
+			
+			switch (Type.GetTypeCode (t)) {
+			case TypeCode.Single:
+			case TypeCode.Double:
+			case TypeCode.Decimal:
+				return true;
+			}
+
+			return false;
 		}
 
 		static MethodInfo GetBinaryOperator (string oper_name, Type on_type, Expression left, Expression right)

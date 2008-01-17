@@ -1,3 +1,7 @@
+2008-01-17  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: Use TypeCode for IsInt and IsNumber.
+
 2008-01-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Expression.cs: Add support for user-defined operators. 
