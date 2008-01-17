@@ -44,7 +44,8 @@ namespace System.Windows.Forms {
 		public Menu CurrentMenu;
 		public Menu TopMenu;
 		Form grab_control;
-
+		Point last_motion = Point.Empty;
+		
 	    public MenuTracker (Menu top_menu)
 		{
 			TopMenu = CurrentMenu = top_menu;
@@ -178,6 +179,13 @@ namespace System.Windows.Forms {
 
 		public void OnMotion (MouseEventArgs args)
 		{
+			// Windows helpfully sends us MOUSEMOVE messages when any key is pressed.
+			// So if the mouse hasn't actually moved since the last MOUSEMOVE, ignore it.
+			if (args.Location == last_motion)
+				return;
+				
+			last_motion = args.Location;
+			
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
 			UpdateCursor ();

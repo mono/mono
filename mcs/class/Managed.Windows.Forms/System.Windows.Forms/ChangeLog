@@ -1,3 +1,10 @@
+2008-01-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MenuAPI.cs: Windows sends us MOUSEMOVE messages when any key is pressed.
+	If the mouse hasn't actually moved, ignore these messages so the currently
+	highlighted menuitem isn't reset to the one under the mouse.
+	[Fixes bug #333668]
+
 2008-01-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: When the property changes Invalidate the GridItem
