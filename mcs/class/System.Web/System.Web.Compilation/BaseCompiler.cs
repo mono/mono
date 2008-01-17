@@ -285,7 +285,7 @@ namespace System.Web.Compilation
 
 			string arvp = Path.Combine (parser.BaseVirtualDir, Path.GetFileName (parser.InputFile));
 			if (VirtualPathUtility.IsAbsolute (arvp))
-				arvp = "~" + arvp;
+				arvp = VirtualPathUtility.ToAppRelative (arvp);
 
 			CodeTypeReference baseTypeRef = new CodeTypeReference (baseType.FullName);
 			if (parser.BaseTypeIsGlobal)

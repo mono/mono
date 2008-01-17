@@ -405,10 +405,7 @@ namespace System.Web.UI
 						string path = ((TemplateControl) this).AppRelativeVirtualPath;
 
 						if (path != null) {
-							// Pretend our application virtual root is "/" even if it isn't - we just
-							// want to get an absolute url out of relative one, without the real
-							// application root prepended to it.
-							string ret = VirtualPathUtility.GetDirectory (VirtualPathUtility.ToAbsolute (path, "/"));
+							string ret = VirtualPathUtility.GetDirectory (VirtualPathUtility.ToAbsolute (path));
 							int len = ret.Length;
 							if (len <= 1)
 								return ret;
