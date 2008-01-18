@@ -47,6 +47,30 @@ namespace System.Linq.Expressions {
 		MethodInfo method;
 		bool lift_to_null;
 
+		public Expression Left {
+			get { return left; }
+		}
+
+		public Expression Right {
+			get { return right; }
+		}
+
+		public MethodInfo Method {
+			get { return method; }
+		}
+
+		public bool IsLifted {
+			get { throw new NotImplementedException (); }
+		}
+
+		public bool IsLiftedToNull {
+			get { return lift_to_null; }
+		}
+
+		public LambdaExpression Conversion {
+			get { return conversion; }
+		}
+
 		internal BinaryExpression (ExpressionType node_type, Type type, Expression left, Expression right)
 			: base (node_type, type)
 		{
@@ -72,26 +96,6 @@ namespace System.Linq.Expressions {
 			this.conversion = conversion;
 		}
 
-		public Expression Left {
-			get { return left; }
-		}
-
-		public Expression Right {
-			get { return right; }
-		}
-
-		public MethodInfo Method {
-			get { return method; }
-		}
-
-		public bool IsLifted {
-			get { throw new NotImplementedException (); }
-		}
-
-		public bool IsLiftedToNull {
-			get { return lift_to_null; }
-		}
-
 		static bool IsUnsigned (Type t)
 		{
 			if (t.IsPointer)
@@ -99,22 +103,22 @@ namespace System.Linq.Expressions {
 
 			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
 		}
-				
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-                        OpCode opcode;
-			
+			OpCode opcode;
+
 			left.Emit (ec);
 			right.Emit (ec);
 
-                        bool is_unsigned = IsUnsigned (left.Type);
+			bool is_unsigned = IsUnsigned (left.Type);
 
 			switch (NodeType){
 			case ExpressionType.Add:
 				opcode = OpCodes.Add;
 				break;
-				
+
 			case ExpressionType.AddChecked:
 				if (left.Type == typeof (int) || left.Type == typeof (long))
 					opcode = OpCodes.Add_Ovf;
@@ -123,7 +127,7 @@ namespace System.Linq.Expressions {
 				else
 					opcode = OpCodes.Add;
 				break;
-				
+
 			case ExpressionType.Subtract:
 				opcode = OpCodes.Sub;
 				break;
@@ -136,7 +140,7 @@ namespace System.Linq.Expressions {
 				else
 					opcode = OpCodes.Sub;
 				break;
-				
+
 			case ExpressionType.Multiply:
 				opcode = OpCodes.Mul;
 				break;
@@ -149,7 +153,7 @@ namespace System.Linq.Expressions {
 				else
 					opcode = OpCodes.Mul;
 				break;
-				
+
 			case ExpressionType.Divide:
 				if (is_unsigned)
 					opcode = OpCodes.Div_Un;
@@ -158,35 +162,35 @@ namespace System.Linq.Expressions {
 				break;
 
 			case ExpressionType.Modulo:
-                                if (is_unsigned)
-                                        opcode = OpCodes.Rem_Un;
-                                else
-                                        opcode = OpCodes.Rem;
-                                break;
+				if (is_unsigned)
+					opcode = OpCodes.Rem_Un;
+				else
+					opcode = OpCodes.Rem;
+				break;
 
 			case ExpressionType.RightShift:
-                                if (is_unsigned)
-                                        opcode = OpCodes.Shr_Un;
-                                else
-                                        opcode = OpCodes.Shr;
-                                break;
+				if (is_unsigned)
+					opcode = OpCodes.Shr_Un;
+				else
+					opcode = OpCodes.Shr;
+				break;
 
-                        case ExpressionType.LeftShift:
-                                opcode = OpCodes.Shl;
-                                break;
+			case ExpressionType.LeftShift:
+				opcode = OpCodes.Shl;
+				break;
 
 			case ExpressionType.And:
-                                opcode = OpCodes.And;
+				opcode = OpCodes.And;
 				break;
-				
+
 			case ExpressionType.Or:
-                                opcode = OpCodes.Or;
+				opcode = OpCodes.Or;
 				break;
 
 			case ExpressionType.ExclusiveOr:
 				opcode = OpCodes.Xor;
 				break;
-					
+
 			case ExpressionType.AndAlso:
 			case ExpressionType.Coalesce:
 			case ExpressionType.Equal:
@@ -198,21 +202,11 @@ namespace System.Linq.Expressions {
 			case ExpressionType.OrElse:
 			case ExpressionType.Power:
 				throw new NotImplementedException (String.Format ("No support for {0} node yet", NodeType));
-					
+
 			default:
 				throw new Exception (String.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
 			ig.Emit (opcode);
-		}
-		
-		[MonoTODO]
-		public LambdaExpression Conversion {
-			get {
-				if (this.NodeType != ExpressionType.Coalesce)
-					return null;
-
-				throw new System.NotImplementedException ();
-			}
 		}
 	}
 }
