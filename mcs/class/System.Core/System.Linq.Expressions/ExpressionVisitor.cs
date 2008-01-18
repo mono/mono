@@ -51,6 +51,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.ArrayLength:
 			case ExpressionType.Quote:
 			case ExpressionType.TypeAs:
+			case ExpressionType.UnaryPlus:
 				VisitUnary ((UnaryExpression) expression);
 				break;
 			case ExpressionType.Add:

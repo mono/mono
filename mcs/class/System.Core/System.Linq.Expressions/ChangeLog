@@ -1,3 +1,7 @@
+2008-01-18  Jb Evain  <jbevain@novell.com>
+
+	* Expression[Printer|Visitor].cs: implement UnaryPlus, Not, Negate.
+
 2008-01-18  Miguel de Icaza  <miguel@novell.com>
 
 	* BinaryExpression.cs: Add support for emitting code for some

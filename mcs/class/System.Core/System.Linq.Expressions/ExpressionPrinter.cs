@@ -95,6 +95,15 @@ namespace System.Linq.Expressions {
 				Visit (unary.Operand);
 				Print (")");
 				return;
+			case ExpressionType.Negate:
+				Print ("-");
+				Visit (unary.Operand);
+				return;
+			case ExpressionType.Not:
+				Print ("Not(");
+				Visit (unary.Operand);
+				Print (")");
+				return;
 			case ExpressionType.Quote:
 				Visit (unary.Operand);
 				return;
@@ -102,6 +111,10 @@ namespace System.Linq.Expressions {
 				Print ("(");
 				Visit (unary.Operand);
 				Print (" As {0})", unary.Type.Name);
+				return;
+			case ExpressionType.UnaryPlus:
+				Print ("+");
+				Visit (unary.Operand);
 				return;
 			}
 

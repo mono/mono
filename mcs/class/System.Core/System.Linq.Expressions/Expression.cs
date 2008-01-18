@@ -89,6 +89,63 @@ namespace System.Linq.Expressions {
 			return t == typeof (float) || t == typeof (double) || t == typeof (decimal);
 		}
 
+		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Expression expression)
+		{
+			var methods = on_type.GetMethods (PublicStatic);
+
+			foreach (var method in methods) {
+				if (method.Name != oper_name)
+					continue;
+
+				var parameters = method.GetParameters ();
+				if (parameters.Length != 1)
+					continue;
+
+				if (!parameters [0].ParameterType.IsAssignableFrom (expression.Type))
+					continue;
+
+				return method;
+			}
+
+			return null;
+		}
+
+		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method)
+		{
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			if (method != null) {
+				if (method.ReturnType == typeof (void))
+					throw new ArgumentException ("Specified method must return a value", "method");
+
+				if (!method.IsStatic)
+					throw new ArgumentException ("Method must be static", "method");
+
+				var parameters = method.GetParameters ();
+
+				if (parameters.Length != 1)
+					throw new ArgumentException ("Must have only one parameters", "method");
+
+				if (!parameters [0].ParameterType.IsAssignableFrom (expression.Type))
+					throw new InvalidOperationException ("left-side argument type does not match left expression type");
+
+				return method;
+			} else {
+				if (IsNumber (expression.Type))
+					return null;
+
+				if (oper_name != null) {
+					method = GetUnaryOperator (oper_name, expression.Type, expression);
+					if (method != null)
+						return method;
+				}
+
+				throw new InvalidOperationException (
+					String.Format ("Operation {0} not defined for {1}", oper_name != null ? oper_name.Substring (3) : "is", expression.Type));
+			}
+		}
+
 		static MethodInfo GetBinaryOperator (string oper_name, Type on_type, Expression left, Expression right)
 		{
 			MethodInfo [] methods = on_type.GetMethods (PublicStatic);
@@ -205,6 +262,13 @@ namespace System.Linq.Expressions {
 			return new BinaryExpression (et, result, left, right, method);
 		}
 
+		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
+		{
+			Type result = method == null ? expression.Type : method.ReturnType;
+
+			return new UnaryExpression (et, expression, result, method);
+		}
+
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
 			Type result = method == null ? typeof (bool) : method.ReturnType;
@@ -263,7 +327,7 @@ namespace System.Linq.Expressions {
 			// The check in BinaryCoreCheck allows a bit more than we do
 			// (byte, sbyte, short, ushort).  Catch that here
 			//
-			
+
 			if (method == null){
 				Type ltype = left.Type;
 
@@ -1050,28 +1114,28 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static UnaryExpression Negate (Expression expression)
 		{
-			throw new NotImplementedException ();
+			return Negate (expression, null);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression Negate (Expression expression, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
+
+			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression NegateChecked (Expression expression)
 		{
-			throw new NotImplementedException ();
+			return NegateChecked (expression, null);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression NegateChecked (Expression expression, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
+
+			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
 
 		[MonoTODO]
@@ -1134,16 +1198,16 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static UnaryExpression Not (Expression expression)
 		{
-			throw new NotImplementedException ();
+			return Not (expression, null);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression Not (Expression expression, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			method = UnaryCoreCheck ("op_LogicalNot", expression, method);
+
+			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
 
 		public static ParameterExpression Parameter (Type type, string name)
@@ -1208,16 +1272,16 @@ namespace System.Linq.Expressions {
 			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof (bool));
 		}
 
-		[MonoTODO]
 		public static UnaryExpression UnaryPlus (Expression expression)
 		{
-			throw new NotImplementedException ();
+			return UnaryPlus (expression, null);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression UnaryPlus (Expression expression, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			method = UnaryCoreCheck ("op_UnaryPlus", expression, method);
+
+			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
 		}
 
 		static bool IsNullable (Type type)
