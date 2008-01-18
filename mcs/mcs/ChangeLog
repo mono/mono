@@ -1,5 +1,11 @@
 2008-01-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #353526
+ 	* generic.cs: A type inference of params arguments may not required any
+ 	temporary array creation.
+ 	
+2008-01-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #353534
  	* generic.cs, ecore.cs, expression.cs: A method group type inference is
  	supported for delegates only.

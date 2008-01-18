@@ -2522,13 +2522,16 @@ namespace Mono.CSharp {
 			//
 			Type method_parameter = null;
 			for (int i = 0; i < arg_count; i++) {
+				Argument a = (Argument) arguments [i];
+				
 				if (i < params_arguments_start) {
 					method_parameter = methodParameters.Types [i];
 				} else if (i == params_arguments_start) {
-					method_parameter = TypeManager.GetElementType (methodParameters.Types [params_arguments_start]);
+					if (arg_count == params_arguments_start + 1 && TypeManager.HasElementType (a.Type))
+						method_parameter = methodParameters.Types [params_arguments_start];
+					else
+						method_parameter = TypeManager.GetElementType (methodParameters.Types [params_arguments_start]);
 				}
-
-				Argument a = (Argument) arguments[i];
 
 				//
 				// When a lambda expression, an anonymous method
