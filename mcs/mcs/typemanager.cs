@@ -76,6 +76,7 @@ namespace Mono.CSharp {
 	static public Type monitor_type;
 	static public Type interlocked_type;
 	static public Type runtime_field_handle_type;
+	static public Type runtime_method_handle_type;
 	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
 	static public Type attribute_usage_type;
@@ -1057,6 +1058,7 @@ namespace Mono.CSharp {
 		type_type     = CoreLookupType ("System", "Type");
 
 		runtime_field_handle_type = CoreLookupType ("System", "RuntimeFieldHandle");
+		runtime_method_handle_type = CoreLookupType ("System", "RuntimeMethodHandle");
 		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle");
 		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeHelpers");
 		default_member_type  = CoreLookupType ("System.Reflection", "DefaultMemberAttribute");

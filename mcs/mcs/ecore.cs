@@ -1322,7 +1322,12 @@ namespace Mono.CSharp {
 				return new EmptyConstantCast (c, type);
 
 			return new EmptyCast (child, type);
-		}		
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return child.CreateExpressionTree (ec);
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -3512,6 +3517,11 @@ namespace Mono.CSharp {
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return new Cast (new TypeExpression (typeof (MethodInfo), loc), new TypeOfMethod (this));
+		}
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
@@ -4871,7 +4881,23 @@ namespace Mono.CSharp {
 				return is_static;
 			}
 		}
-		
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			if (IsSingleDimensionalArrayLength ()) {
+				ArrayList args = new ArrayList (1);
+				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
+				return CreateExpressionFactoryCall ("ArrayLength", args);
+			}
+
+			// TODO: it's waiting for PropertyExpr refactoring
+			//ArrayList args = new ArrayList (2);
+			//args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
+			//args.Add (getter expression);
+			//return CreateExpressionFactoryCall ("Property", args);
+			return base.CreateExpressionTree (ec);
+		}
+
 		public override Type DeclaringType {
 			get {
 				return PropertyInfo.DeclaringType;
@@ -5005,6 +5031,22 @@ namespace Mono.CSharp {
 			if (accessor == null && lvalue)
 				accessor = getter;
 			return accessor != null && IsAccessorAccessible (invocation_type, accessor, out dummy);
+		}
+
+		bool IsSingleDimensionalArrayLength ()
+		{
+			if (getter == TypeManager.system_int_array_get_length ||
+				getter == TypeManager.int_array_get_length) {
+				Type iet = InstanceExpression.Type;
+
+				//
+				// System.Array.Length can be called, but the Type does not
+				// support invoking GetArrayRank, so test for that case first
+				//
+				return iet != TypeManager.array_type && (iet.GetArrayRank () == 1);
+			}
+
+			return false;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -5148,21 +5190,12 @@ namespace Mono.CSharp {
 			//
 			// Special case: length of single dimension array property is turned into ldlen
 			//
-			if ((getter == TypeManager.system_int_array_get_length) ||
-			    (getter == TypeManager.int_array_get_length)){
-				Type iet = InstanceExpression.Type;
-
-				//
-				// System.Array.Length can be called, but the Type does not
-				// support invoking GetArrayRank, so test for that case first
-				//
-				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)) {
-					if (!prepared)
-						EmitInstance (ec, false);
-					ec.ig.Emit (OpCodes.Ldlen);
-					ec.ig.Emit (OpCodes.Conv_I4);
-					return;
-				}
+			if (IsSingleDimensionalArrayLength ()) {
+				if (!prepared)
+					EmitInstance (ec, false);
+				ec.ig.Emit (OpCodes.Ldlen);
+				ec.ig.Emit (OpCodes.Conv_I4);
+				return;
 			}
 
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, getter, null, loc, prepared, false);

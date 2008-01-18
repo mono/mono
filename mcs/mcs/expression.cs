@@ -121,15 +121,9 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	/// <summary>
-	///   Unary expressions.  
-	/// </summary>
-	///
-	/// <remarks>
-	///   Unary implements unary expressions.   It derives from
-	///   ExpressionStatement becuase the pre/post increment/decrement
-	///   operators can be used in a statement context.
-	/// </remarks>
+	//
+	//   Unary implements unary expressions.
+	//
 	public class Unary : Expression {
 		public enum Operator : byte {
 			UnaryPlus, UnaryNegation, LogicalNot, OnesComplement,
@@ -4278,6 +4272,24 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (Arguments.Count + 3);
+			if (mg.IsInstance)
+				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
+			else
+				args.Add (new Argument (new NullConstant (loc).CreateExpressionTree (ec)));
+
+			args.Add (new Argument (mg.CreateExpressionTree (ec)));
+			foreach (Argument a in Arguments) {
+				Expression e = a.Expr.CreateExpressionTree (ec);
+				if (e != null)
+					args.Add (new Argument (e));
+			}
+
+			return CreateExpressionFactoryCall ("Call", args);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// Don't resolve already resolved expression
@@ -6162,6 +6174,14 @@ namespace Mono.CSharp {
 				variable_info.SetAssigned (ec);
 			}
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (this));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Constant", args);
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -6318,6 +6338,12 @@ namespace Mono.CSharp {
 				return retval;
 			}
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Report.Error (1952, loc, "An expression tree cannot contain a method with variable arguments");
+			return null;
+		}		
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -6466,6 +6492,37 @@ namespace Mono.CSharp {
 			// See description in TypeOf.
 			eclass = ExprClass.Value;
 			return this;
+		}
+	}
+
+	internal class TypeOfMethod : Expression
+	{
+		readonly MethodGroupExpr method;
+		static MethodInfo get_type_from_handle;
+
+		static TypeOfMethod ()
+		{
+			get_type_from_handle = typeof (MethodBase).GetMethod ("GetMethodFromHandle",
+				new Type [] { TypeManager.runtime_method_handle_type });
+		}
+
+		public TypeOfMethod (MethodGroupExpr method)
+		{
+			this.method = method;
+			loc = method.Location;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = typeof (MethodBase);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo)method);
+			ec.ig.Emit (OpCodes.Call, get_type_from_handle);
 		}
 	}
 
