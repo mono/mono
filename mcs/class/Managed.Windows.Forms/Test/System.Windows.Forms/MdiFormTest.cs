@@ -1444,7 +1444,6 @@ namespace MonoTests.System.Windows.Forms
 		private string events_fired;
 		
 		[Test]
-		[NUnit.Framework.Category ("RunMe")]
 		public void MdiClosingClosedEvent ()
 		{
 			Form f = new Form ();
