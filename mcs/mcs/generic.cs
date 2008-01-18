@@ -3025,6 +3025,9 @@ namespace Mono.CSharp {
 			}
 
 			if (e is MethodGroupExpr) {
+				if (!TypeManager.IsDelegateType (t))
+					return 0;
+
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;
 				if (!TypeManager.IsGenericType (rtype))

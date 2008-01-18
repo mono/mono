@@ -1,5 +1,11 @@
 2008-01-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #353534
+ 	* generic.cs, ecore.cs, expression.cs: A method group type inference is
+ 	supported for delegates only.
+ 	
+2008-01-18  Marek Safar  <marek.safar@gmail.com>
+
  	* generic.cs: Fixed 3.0 type inference fixing phase to determine a unique
  	type for more than 1 candidates.
  	

@@ -4161,15 +4161,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-	        public static string FullDesc (Argument a)
+		public string GetSignatureForError ()
 		{
-			if (a.ArgType == AType.ArgList)
-				return "__arglist";
+			if (Expr.eclass == ExprClass.MethodGroup)
+				return Expr.ExprClassName;
 
-			return (a.ArgType == AType.Ref ? "ref " :
-				(a.ArgType == AType.Out ? "out " : "")) +
-				TypeManager.CSharpName (a.Expr.Type);
-		}
+			return ArgType == AType.Ref ? "ref " :
+				ArgType == AType.Out ? "out " : "" +
+				Expr.GetSignatureForError ();
+		}		
 
 		public bool ResolveMethodGroup (EmitContext ec)
 		{

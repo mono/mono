@@ -3587,7 +3587,7 @@ namespace Mono.CSharp {
 					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
 						index, Parameter.GetModifierSignature (mod));
 			} else {
-				string p1 = Argument.FullDesc (a);
+				string p1 = a.GetSignatureForError ();
 				string p2 = TypeManager.CSharpName (paramType);
 
 				if (p1 == p2) {
@@ -3665,6 +3665,7 @@ namespace Mono.CSharp {
 			//
 			// 2. Each argument has to be implicitly convertible to method parameter
 			//
+			method = candidate;
 			Parameter.Modifier p_mod = 0;
 			Type pt = null;
 			for (int i = 0; i < arg_count; i++) {
@@ -3705,7 +3706,6 @@ namespace Mono.CSharp {
 			if (arg_count != param_count)
 				params_expanded_form = true;			
 			
-			method = candidate;			
 			return 0;
 		}
 
@@ -4024,7 +4024,7 @@ namespace Mono.CSharp {
 					ParameterData pd = TypeManager.GetParameterData (best_candidate);
 					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
 					if (arg_count == pd.Count || pd.HasParams) {
-						if (TypeManager.IsGenericMethod (best_candidate)) {
+						if (TypeManager.IsGenericMethodDefinition (best_candidate)) {
 							if (type_arguments == null) {
 								Report.Error (411, loc,
 									"The type arguments for method `{0}' cannot be inferred from " +
