@@ -1,5 +1,9 @@
 2008-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_call_opcode): Emit the save_sp_to_lmf instruction at
+	the end.
+	(mono_arch_emit_prolog): Add more first bblock optimizations.
+
 	* mini-amd64.c (mono_arch_call_opcode): Keep assignments to the arg registers
 	in order if possible.
 	(mono_arch_emit_prolog): Optimize assignments to arg registers in the first
