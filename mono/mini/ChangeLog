@@ -1,3 +1,7 @@
+2008-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (type_from_op): Calling add.ovf on floats in not valid IL code.
+
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Use the no-spilling optimization for CEE_CALLI
