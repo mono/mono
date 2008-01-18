@@ -85,6 +85,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Controls.Add(dropdown_button);
 			Controls.Add(dialog_button);
 
+			SetStyle (ControlStyles.Selectable, true);
+
 			ResumeLayout(false);
 
 			dropdown_button.Paint+=new PaintEventHandler(dropdown_button_Paint);
@@ -94,6 +96,17 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		
 		#endregion Contructors
+
+		#region Protected Instance Properties
+
+		protected override void OnGotFocus (EventArgs args)
+		{
+			base.OnGotFocus (args);
+			textbox.Focus ();
+			textbox.SelectionLength = 0;
+		}
+
+		#endregion
 
 		#region Public Instance Properties
 
@@ -204,27 +217,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		#endregion Private Helper Methods
-
-		internal void SendMouseDown (Point location)
-		{
-			if (Visible) {
-				XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int) MsgButtons.MK_LBUTTON), Control.MakeParam (location.X, location.Y));
-					
-				if (textbox.Visible) {
-					Point pnt = textbox.PointToClient (PointToScreen (location));
-
-					//
-					// Here we have a little problem:
-					//	The actual click that causes this function to be called, will generate a MOUSE_MOVE message in XplatUIX11 (sent to the PropertyGrid itself)
-					//	This manual button-down message will cause an implicit grab to be taken.
-					//	Then when the MOUSE_MOVE is processed, the message will be sent to the textbox, since it has a grab.
-					// So here's the solution: swallow the implicit grab.
-					textbox.SwallowCapture = true;
-					XplatUI.SendMessage (textbox.Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int)MsgButtons.MK_LBUTTON), Control.MakeParam (pnt.X, pnt.Y));
-					textbox.SwallowCapture = false;
-				}
-			}
-		}	
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ToggleValueEvent]);

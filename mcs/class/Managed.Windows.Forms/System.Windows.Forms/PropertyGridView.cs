@@ -273,8 +273,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							foundItem.Expanded = !foundItem.Expanded;
 
 					this.property_grid.SelectedGridItem = foundItem;
-					
-					grid_textbox.SendMouseDown (grid_textbox.PointToClient (PointToScreen (e.Location)));
 				}
 				
 				base.OnMouseDown (e);
@@ -1018,7 +1016,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						ClientRectangle.Width - xloc - (vbar.Visible ? vbar.Width : 0),
 						row_height - 2);
 			grid_textbox.Visible = true;
-
+			grid_textbox.Select ();
 			ResumeLayout (false);
 		}
 

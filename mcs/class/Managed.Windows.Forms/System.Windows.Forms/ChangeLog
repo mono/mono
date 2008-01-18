@@ -1,5 +1,11 @@
 2008-01-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	 * PropertyGridView.cs, PropertyGridTextBox.cs: 
+	 Drop WM_LBUTTONDOWN msg sending and use focusing instead.
+	 [Fixes #339005 and #348209]
+
+2008-01-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	 * PropertyGridView.cs: Hide the grid text box before adjusting it
 	 for the newly selected GridItem.
 	 [Fixes #338999]
