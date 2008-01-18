@@ -139,9 +139,9 @@ namespace System.Windows.Forms {
 		// Convenience method for fire BOTH OnClosing and OnFormClosing events
 		// Returns the value of Cancel, so true means the Close was cancelled,
 		// and you shouldn't close the form.
-		internal bool FireClosingEvents (CloseReason reason)
+		internal bool FireClosingEvents (CloseReason reason, bool cancel)
 		{
-			CancelEventArgs cea = new CancelEventArgs ();
+			CancelEventArgs cea = new CancelEventArgs (cancel);
 			this.OnClosing (cea);
 			
 #if NET_2_0
@@ -150,6 +150,16 @@ namespace System.Windows.Forms {
 			return fcea.Cancel;
 #else
 			return cea.Cancel;
+#endif
+		}
+
+		// Convenience method for fire BOTH OnClosed and OnFormClosed events
+		private void FireClosedEvents (CloseReason reason)
+		{
+			this.OnClosed (EventArgs.Empty);
+
+#if NET_2_0
+			this.OnFormClosed (new FormClosedEventArgs (reason));
 #endif
 		}
 		
@@ -2566,7 +2576,7 @@ namespace System.Windows.Forms {
 			base.WndProc (ref m);
 		}
 		
-		internal bool RaiseCloseEvents (bool last_check)
+		internal bool RaiseCloseEvents (bool last_check, bool cancel)
 		{
 			if (last_check && Visible) {
 				Hide ();
@@ -2576,13 +2586,14 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			
-			bool cancelled = FireClosingEvents (CloseReason.UserClosing);
+			bool cancelled = FireClosingEvents (CloseReason.UserClosing, cancel);
 			if (!cancelled) {
 				if (!last_check || DialogResult != DialogResult.None) {
-					OnClosed (EventArgs.Empty);
-#if NET_2_0
-					OnFormClosed (new FormClosedEventArgs (CloseReason.UserClosing));
-#endif
+					if (mdi_container != null)
+						foreach (Form mdi_child in mdi_container.MdiChildren)
+							mdi_child.FireClosedEvents (CloseReason.UserClosing);
+
+					FireClosedEvents (CloseReason.UserClosing);
 				}
 				closing = true;
 			} else {
@@ -2609,13 +2620,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (mdi_container != null) {
-				foreach (Form mdi_child in mdi_container.MdiChildren) {
-					mdi_child.FireClosingEvents (CloseReason.MdiFormClosing);
-				}
-			}
+			bool mdi_cancel = false;
+			
+			// Give any MDI children the opportunity to cancel the close
+			if (mdi_container != null)
+				foreach (Form mdi_child in mdi_container.MdiChildren)
+					mdi_cancel = mdi_child.FireClosingEvents (CloseReason.MdiFormClosing, mdi_cancel);
 
-			if (suppress_closing_events || !RaiseCloseEvents (false)) {
+			if (suppress_closing_events || !RaiseCloseEvents (false, mdi_cancel)) {
 				if (is_modal) {
 					Hide ();
 				} else {

@@ -545,7 +545,7 @@ namespace System.Windows.Forms
 
 				foreach (Form f in forms_to_close) {
 					// Give each form a chance to cancel the Application.Exit
-					e.Cancel = f.FireClosingEvents (CloseReason.ApplicationExitCall);
+					e.Cancel = f.FireClosingEvents (CloseReason.ApplicationExitCall, false);
 
 					if (e.Cancel)
 						return;
@@ -879,7 +879,7 @@ namespace System.Windows.Forms
 				#if DebugRunLoop
 					Console.WriteLine ("   Done with the SetModal");
 				#endif
-				old.RaiseCloseEvents (true);
+				old.RaiseCloseEvents (true, false);
 				old.is_modal = false;
 			}
 

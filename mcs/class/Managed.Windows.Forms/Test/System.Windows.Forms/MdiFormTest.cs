@@ -1440,5 +1440,113 @@ namespace MonoTests.System.Windows.Forms
 			main.Show ();
 			Assert.AreEqual ("{Width=224, Height=37}", child1.ClientSize.ToString (), "#03");
 		}
+		
+		private string events_fired;
+		
+		[Test]
+		[NUnit.Framework.Category ("RunMe")]
+		public void MdiClosingClosedEvent ()
+		{
+			Form f = new Form ();
+			f.IsMdiContainer = true;
+			
+			MdiChild mdi = new MdiChild ();
+			mdi.can_close = false;
+			mdi.MdiParent = f;
+
+			f.Closing += new CancelEventHandler (f_Closing);
+			f.Closed += new EventHandler (f_Closed);
+			mdi.Closing += new CancelEventHandler (mdi_Closing);
+			mdi.Closed += new EventHandler (mdi_Closed);
+
+#if NET_2_0
+			f.FormClosing += new FormClosingEventHandler (f_FormClosing);
+			f.FormClosed += new FormClosedEventHandler (f_FormClosed);
+			mdi.FormClosing += new FormClosingEventHandler (mdi_FormClosing);
+			mdi.FormClosed += new FormClosedEventHandler (mdi_FormClosed);
+#endif
+
+			f.Show ();
+			mdi.Show ();
+			
+			events_fired = string.Empty;
+			
+			f.Close ();
+			
+#if NET_2_0
+			Assert.AreEqual ("Child.Closing: True, Child.FormClosing: True, Parent.Closing: True, Parent.FormClosing: True, ", events_fired, "A1-2.0");
+#else
+			Assert.AreEqual ("Child.Closing: True, Parent.Closing: True, ", events_fired, "A1-1.1");
+#endif
+
+			events_fired = string.Empty;
+			mdi.can_close = true;
+			f.Close ();
+			
+#if NET_2_0
+			Assert.AreEqual ("Child.Closing: False, Child.FormClosing: False, Parent.Closing: False, Parent.FormClosing: False, Child.Closed, Child.FormClosed, Parent.Closed, Parent.FormClosed, ", events_fired, "A2-2.0");
+#else
+			Assert.AreEqual ("Child.Closing: False, Parent.Closing: False, Child.Closed, Parent.Closed, ", events_fired, "A2-1.1");
+#endif
+
+			f.Dispose ();
+		}
+
+#if NET_2_0
+		void mdi_FormClosed (object sender, FormClosedEventArgs e)
+		{
+			events_fired += "Child.FormClosed, ";
+		}
+
+		void mdi_FormClosing (object sender, FormClosingEventArgs e)
+		{
+			events_fired += string.Format ("Child.FormClosing: {0}, ", e.Cancel);
+		}
+
+		void f_FormClosed (object sender, FormClosedEventArgs e)
+		{
+			events_fired += "Parent.FormClosed, ";
+		}
+
+		void f_FormClosing (object sender, FormClosingEventArgs e)
+		{
+			events_fired += string.Format ("Parent.FormClosing: {0}, ", e.Cancel);
+		}
+#endif
+
+		void mdi_Closed (object sender, EventArgs e)
+		{
+			events_fired += "Child.Closed, ";
+		}
+
+		void mdi_Closing (object sender, CancelEventArgs e)
+		{
+			events_fired += string.Format ("Child.Closing: {0}, ", e.Cancel);
+		}
+
+		void f_Closed (object sender, EventArgs e)
+		{
+			events_fired += "Parent.Closed, ";
+		}
+
+		void f_Closing (object sender, CancelEventArgs e)
+		{
+			events_fired += string.Format ("Parent.Closing: {0}, ", e.Cancel);
+		}
+		
+		private class MdiChild : Form
+		{
+			public bool can_close = false;
+			
+			public MdiChild ()
+			{
+				Closing += new CancelEventHandler (MdiChild_Closing);
+			}
+
+			void MdiChild_Closing (object sender, CancelEventArgs e)
+			{
+				e.Cancel = !can_close;
+			}
+		}
 	}
 }
