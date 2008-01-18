@@ -38,5 +38,10 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<Expression> Expressions {
 			get { return expressions; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

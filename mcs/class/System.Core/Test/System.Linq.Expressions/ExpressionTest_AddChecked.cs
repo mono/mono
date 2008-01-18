@@ -120,5 +120,71 @@ namespace MonoTests.System.Linq.Expressions
 				expr.ToString(), "AddChecked#18");
 		}
 
+		//
+		// This method makes sure that compiling an AddChecked on two values
+		// throws an OverflowException, if it doesnt, it fails
+		//
+		static void MustOverflow<T> (T v1, T v2)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				Expression.AddChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			Func<T> del = l.Compile ();
+			T res = default (T);
+			try {
+				res = del ();
+			} catch (OverflowException){
+				// OK
+				return;
+			}
+			throw new Exception (String.Format ("AddChecked on {2} should have thrown an exception with values {0} {1}, result was: {3}",
+							    v1, v2, v1.GetType (), res));
+		}
+
+		//
+		// This routine should execute the code, but not throw an
+		// overflow exception
+		//
+		static void MustNotOverflow<T> (T v1, T v2)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				Expression.AddChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			Func<T> del = l.Compile ();
+			T res = del ();
+		}
+		
+		[Test]
+		public void TestOverflows ()
+		{
+			// These should overflow, check the various types and codepaths
+			// in BinaryExpression:
+			MustOverflow<int> (Int32.MaxValue, 1);
+			MustOverflow<int> (Int32.MinValue, -11);
+			MustOverflow<long> (Int64.MaxValue, 1);
+			MustOverflow<long> (Int64.MinValue, -1);
+
+			// unsigned values use Add_Ovf_Un, check that too:
+			MustOverflow<ulong> (UInt64.MaxValue, 1);
+			MustOverflow<uint>  (UInt32.MaxValue, 1);
+		}
+
+		//
+		// These should not overflow
+		//
+		[Test]
+		public void TestNoOverflow ()
+		{
+			// Simple stuff
+			MustNotOverflow<int> (10, 20);
+
+			// Stuff that just fits in 32 bits, does not overflow:
+			MustNotOverflow<byte> (Byte.MaxValue, 2);
+			MustNotOverflow<sbyte> (SByte.MaxValue, 2);
+			MustNotOverflow<short> (Int16.MaxValue, 2);
+			MustNotOverflow<ushort> (UInt16.MaxValue, 2);
+
+			// Doubles, floats, do not overflow
+			MustNotOverflow<float> (Single.MaxValue, 1);
+			MustNotOverflow<double> (Double.MaxValue, 1);
+		}
 	}
 }

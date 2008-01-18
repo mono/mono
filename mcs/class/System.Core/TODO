@@ -1,0 +1,25 @@
+Binary missing:
+			case ExpressionType.AndAlso:
+			case ExpressionType.Coalesce:
+			case ExpressionType.Equal:
+			case ExpressionType.GreaterThan:
+			case ExpressionType.GreaterThanOrEqual:
+			case ExpressionType.LessThan:
+			case ExpressionType.LessThanOrEqual:
+			case ExpressionType.NotEqual:
+			case ExpressionType.OrElse:
+			case ExpressionType.Power:
+       
+Tests missing:
+
+	Must write tests for all the codepaths currently in
+	BinaryExpression.Emit (specially the XXXChecked variants as
+	those so far have shown most of the problems).
+
+	Missing:
+		Add, Subtract, Multiply, Divide, Modulo, <<, >> And, Or, Xor
+
+		MultiplyChecked, DivideChecked, 
+
+
+

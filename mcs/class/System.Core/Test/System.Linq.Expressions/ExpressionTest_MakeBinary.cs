@@ -185,5 +185,27 @@ namespace MonoTests.System.Linq.Expressions
 			FailInt (ExpressionType.TypeIs);
 #endif
 		}
+		
+		public delegate Expression BinaryExpr (Expression a, Expression b);
+
+		public T CodeGen<T> (BinaryExpr bin, T v1, T v2)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				bin (Expression.Constant(v1), Expression.Constant(v2)),
+				new ParameterExpression [0]);
+			Func<T> fi = l.Compile ();
+			return fi ();
+		}
+		
+		[Test]
+		public void TestOperations ()
+		{
+			Assert.AreEqual (30, CodeGen<int> ((a, b) => Expression.Add (a, b), 10, 20));
+			Assert.AreEqual (-12, CodeGen<int> ((a, b) => Expression.Subtract (a, b), 11, 23));
+			Assert.AreEqual (253, CodeGen<int> ((a, b) => Expression.Multiply (a, b), 11, 23));
+			Assert.AreEqual (33, CodeGen<int> ((a, b) => Expression.Divide (a, b), 100, 3));
+			Assert.AreEqual (100.0/3, CodeGen<double> ((a, b) => Expression.Divide (a, b), 100, 3));
+		}
+
 	}
 }

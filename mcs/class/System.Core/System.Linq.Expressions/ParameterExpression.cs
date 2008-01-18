@@ -43,5 +43,10 @@ namespace System.Linq.Expressions {
 		{
 			this.name = name;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

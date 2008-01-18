@@ -57,5 +57,10 @@ namespace System.Linq.Expressions {
 			this.method = method;
 			this.arguments = arguments;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -45,5 +45,11 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<ElementInit> Initializers {
 			get { return initializers; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

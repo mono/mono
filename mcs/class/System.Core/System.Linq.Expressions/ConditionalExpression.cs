@@ -55,5 +55,11 @@ namespace System.Linq.Expressions {
 			this.ifTrue = ifTrue;
 			this.ifFalse = ifFalse;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

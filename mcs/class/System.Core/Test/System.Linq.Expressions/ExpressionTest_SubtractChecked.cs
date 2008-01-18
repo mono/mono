@@ -120,5 +120,97 @@ namespace MonoTests.System.Linq.Expressions
 				expr.ToString(), "SubtractChecked#18");
 		}
 
+		//
+		// This method makes sure that compiling an AddChecked on two values
+		// throws an OverflowException, if it doesnt, it fails
+		//
+		static void MustOverflow<T> (T v1, T v2)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				Expression.SubtractChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			Func<T> del = l.Compile ();
+			T res = default (T);
+			try {
+				res = del ();
+			} catch (OverflowException){
+				// OK
+				return;
+			}
+			throw new Exception (String.Format ("SubtractChecked on {2} should have thrown an exception with values {0} {1}, result was: {3}",
+							    v1, v2, v1.GetType (), res));
+		}
+
+		//
+		// This routine should execute the code, but not throw an
+		// overflow exception
+		//
+		static void MustNotOverflow<T> (T v1, T v2)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				Expression.SubtractChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			Func<T> del = l.Compile ();
+			T res = del ();
+		}
+
+		//
+		// SubtractChecked is not defined for small types (byte, sbyte, short, ushort)
+		//
+		static void InvalidOperation<T> (T v1, T v2)
+		{
+			try {
+				Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+					Expression.SubtractChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			} catch (InvalidOperationException){
+				// OK
+				return;
+			}
+			throw new Exception (String.Format ("SubtractChecked should have thrown for the creation of a tree with {0} operands", v1.GetType ()));
+		}
+		
+		[Test]
+		public void TestOverflows ()
+		{
+			// These should overflow, check the various types and codepaths
+			// in BinaryExpression:
+			MustOverflow<int> (Int32.MinValue, 1);
+			MustOverflow<int> (Int32.MaxValue, -1);
+			MustOverflow<long> (Int64.MinValue, 1);
+			MustOverflow<long> (Int64.MaxValue, -1);
+
+			MustOverflow<ushort> (UInt16.MinValue, 1);
+			
+			// unsigned values use Sub_Ovf_Un, check that too:
+			MustOverflow<ulong> (0, 1);
+			MustOverflow<uint>  (0, 1);
+		}
+
+		[Test]
+		public void TestBugCompatibility ()
+		{
+			// This one does not overflow on .NET (!!!)
+			// Sounds very odd, should file a bug with MS.
+			MustNotOverflow<short> (Int16.MinValue, 1);
+		}
+		
+		//
+		// These should not overflow
+		//
+		[Test]
+		public void TestNoOverflow ()
+		{
+			// Simple stuff
+			MustNotOverflow<int> (10, 20);
+
+			// There are invalid:
+			InvalidOperation<byte> (Byte.MinValue, 1);
+			InvalidOperation<sbyte> (SByte.MaxValue, 2);
+
+			MustNotOverflow<short> (Int16.MaxValue, 2);
+			MustNotOverflow<ushort> (UInt16.MaxValue, 2);
+
+			// Doubles, floats, do not overflow
+			MustNotOverflow<float> (Single.MaxValue, 1);
+			MustNotOverflow<double> (Double.MaxValue, 1);
+		}
 	}
 }

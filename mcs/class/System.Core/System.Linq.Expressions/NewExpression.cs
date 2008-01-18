@@ -49,5 +49,10 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<MemberInfo> Members {
 			get { return members; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

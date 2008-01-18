@@ -49,5 +49,10 @@ namespace System.Linq.Expressions {
 			this.expression = expression;
 			this.type_operand = type_operand;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

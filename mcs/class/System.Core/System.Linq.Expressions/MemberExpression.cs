@@ -44,5 +44,10 @@ namespace System.Linq.Expressions {
 		public MemberInfo Member {
 			get { return member; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

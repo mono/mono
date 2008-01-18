@@ -45,5 +45,11 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<Expression> Arguments {
 			get { return arguments; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

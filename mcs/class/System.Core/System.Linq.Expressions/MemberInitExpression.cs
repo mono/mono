@@ -44,5 +44,10 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<MemberBinding> Bindings {
 			get { return bindings; }
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

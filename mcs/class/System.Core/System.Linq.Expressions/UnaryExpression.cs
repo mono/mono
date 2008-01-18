@@ -72,5 +72,10 @@ namespace System.Linq.Expressions {
 			this.operand = operand;
 			this.method = method;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -143,6 +143,11 @@ namespace System.Linq.Expressions {
 			get { return parameters; }
 		}
 
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		public Delegate Compile ()
 		{
 			if (lambda_delegate == null){
