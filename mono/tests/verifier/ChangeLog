@@ -1,3 +1,7 @@
+2008-01-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: added tests for ovf math with floats.
+
 2008-01-17 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_localloc_test.sh: test generator for localloc.
