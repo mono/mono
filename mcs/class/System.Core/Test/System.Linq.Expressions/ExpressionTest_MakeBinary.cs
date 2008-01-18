@@ -80,7 +80,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression left = Expression.Constant ("");
 			Expression right = Expression.Constant (1.0);
 
-			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_1"));
+			Expression.Add (left, right, GM ("BadMethodSig_1"));
 		}
 
 		[Test]
@@ -90,7 +90,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression left = Expression.Constant ("");
 			Expression right = Expression.Constant (1.0);
 
-			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_2"));
+			Expression.Add (left, right, GM ("BadMethodSig_2"));
 		}
 
 		[Test]
@@ -100,7 +100,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression left = Expression.Constant ("");
 			Expression right = Expression.Constant (1.0);
 
-			BinaryExpression r = Expression.Add (left, right, GM ("BadMethodSig_3"));
+			Expression.Add (left, right, GM ("BadMethodSig_3"));
 		}
 		
 		static void PassInt (ExpressionType nt)
@@ -111,6 +111,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.MakeBinary (nt, left, right);
 		}
 
+#if false
 		static void FailInt (ExpressionType nt)
 		{
 			Expression left = Expression.Constant (1);
@@ -124,7 +125,7 @@ namespace MonoTests.System.Linq.Expressions
 			// If we get here, there was an error
 			Assert.Fail ("FailInt failed while creating an {0}", nt);
 		}
-
+#endif
 		//
 		// Checks that we complain on the proper ExpressionTypes
 		//

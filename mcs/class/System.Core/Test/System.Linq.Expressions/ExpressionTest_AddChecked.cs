@@ -149,7 +149,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression<Func<T>> l = Expression.Lambda<Func<T>> (
 				Expression.AddChecked (Expression.Constant (v1), Expression.Constant (v2)));
 			Func<T> del = l.Compile ();
-			T res = del ();
+			del ();
 		}
 		
 		//
@@ -158,7 +158,7 @@ namespace MonoTests.System.Linq.Expressions
 		static void InvalidOperation<T> (T v1, T v2)
 		{
 			try {
-				Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+				Expression.Lambda<Func<T>> (
 					Expression.AddChecked (Expression.Constant (v1), Expression.Constant (v2)));
 			} catch (InvalidOperationException){
 				// OK

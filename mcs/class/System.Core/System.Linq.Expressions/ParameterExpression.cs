@@ -3,6 +3,7 @@
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
+//   Miguel de Icaza (miguel@novell.com)
 //
 // (C) 2008 Novell, Inc. (http://www.novell.com)
 //
@@ -27,6 +28,7 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -46,7 +48,9 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			int p = ec.GetParameterPosition (this);
+
+			ec.ig.Emit (OpCodes.Ldarg, p);
 		}
 	}
 }

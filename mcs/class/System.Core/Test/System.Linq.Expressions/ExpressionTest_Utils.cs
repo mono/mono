@@ -169,6 +169,13 @@ namespace MonoTests.System.Linq.Expressions
 		public delegate int TestDelegate(int i);
 		public event TestDelegate TestEvent;
 
+		void DoNothing ()
+		{
+			// Just to avoid a compiler warning
+			if (TestEvent != null)
+				return;
+		}
+
 		public static int StaticField = 0;
 		public static int StaticProperty { get { return StaticField; } set { StaticField = value; }}
 		public static int StaticMethod (int i) { return 1 + i; }

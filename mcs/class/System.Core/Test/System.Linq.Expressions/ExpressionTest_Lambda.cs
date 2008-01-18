@@ -108,6 +108,33 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void ParameterOutOfScope ()
+		{
+			ParameterExpression a = Expression.Parameter(typeof (int), "a");
+			ParameterExpression second_a = Expression.Parameter(typeof(int), "a");
+
+			// Here we have the same name for the parameter expression, but
+			// we pass a different object to the Lambda expression, so they are
+			// different, this should throw
+			Expression<Func<int,int>> l = Expression.Lambda<Func<int,int>>(a, new ParameterExpression [] { second_a });
+			l.Compile ();
+		}
+
+		[Test]
+		public void ParameterRefTest ()
+		{
+			ParameterExpression a = Expression.Parameter(typeof(int), "a");
+			ParameterExpression b = Expression.Parameter(typeof(int), "b");
+
+			Expression<Func<int,int,int>> l = Expression.Lambda<Func<int,int,int>>(
+				Expression.Add (a, b), new ParameterExpression [] { a, b });
+			Func<int,int,int> xx = l.Compile ();
+			int res = xx (10, 20);
+			Assert.AreEqual (res, 30);
+		}
+		
+		[Test]
 		public void Compile ()
 		{
 			Expression<Func<int>> l = Expression.Lambda<Func<int>> (Expression.Constant (1), new ParameterExpression [0]);

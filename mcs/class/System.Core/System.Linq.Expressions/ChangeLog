@@ -1,3 +1,7 @@
+2008-01-18  Miguel de Icaza  <miguel@novell.com>
+
+	* ParameterExpression.cs: Add emit support.
+
 2008-01-18  Jb Evain  <jbevain@novell.com>
 
 	* Expression[Printer|Visitor].cs: implement UnaryPlus, Not, Negate.

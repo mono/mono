@@ -73,6 +73,17 @@ namespace System.Linq.Expressions {
 		{
 			return Method.CreateDelegate (Owner.delegate_type);			
 		}
+
+		internal int GetParameterPosition (ParameterExpression p)
+		{
+			ReadOnlyCollection<ParameterExpression> pars = Owner.Parameters;
+			
+			for (int i = 0; i < pars.Count; i++){
+				if (pars [i] == p)
+					return i;
+			}
+			throw new InvalidOperationException ("Parameter not in scope");
+		}
 	}
 	
 	public class LambdaExpression : Expression {
