@@ -97,12 +97,7 @@ namespace System.Linq.Expressions {
 			if (t.IsPointer)
 				return IsUnsigned (t.GetElementType ());
 
-			TypeCode tc = Type.GetTypeCode (t);
-			return tc == TypeCode.UInt16 ||
-				tc == TypeCode.UInt32 ||
-				tc == TypeCode.UInt64 ||
-				tc == TypeCode.Byte;
-
+			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
 		}
 				
 		internal override void Emit (EmitContext ec)

@@ -75,17 +75,11 @@ namespace System.Linq.Expressions {
 #region Binary Expressions
 		static bool IsInt (Type t)
 		{
-			switch (Type.GetTypeCode (t)) {
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.Int16:
-			case TypeCode.UInt16:
-			case TypeCode.Int32:
-			case TypeCode.UInt32:
-			case TypeCode.Int64:
-			case TypeCode.UInt64:
+			if (t == typeof (byte) || t == typeof (sbyte) ||
+			    t == typeof (short) || t == typeof (ushort) ||
+			    t == typeof (int) || t == typeof (uint) ||
+			    t == typeof (long) || t == typeof (ulong))
 				return true;
-			}
 
 			return false;
 		}
@@ -95,12 +89,8 @@ namespace System.Linq.Expressions {
 			if (IsInt (t))
 				return true;
 
-			switch (Type.GetTypeCode (t)) {
-			case TypeCode.Single:
-			case TypeCode.Double:
-			case TypeCode.Decimal:
+			if (t == typeof (float) || t == typeof (double) || t == typeof (decimal))
 				return true;
-			}
 
 			return false;
 		}
