@@ -1,3 +1,10 @@
+2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (set_failure_from_loader_error): add BadImageException to the
+	list of exceptions that can cause a type to fail to load.
+
+	* class.c (mono_class_get_exception_for_failure): same.
+
 2008-01-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (in_any_exception_block): added, check if offset
