@@ -1,3 +1,12 @@
+//
+// ExpressionTest_Utils.cs
+//
+// Author:
+//   Federico Di Gregorio <fog@initd.org>
+//   Jb Evain (jbevain@novell.com)
+//
+// (C) 2008 Novell, Inc. (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -15,9 +24,8 @@
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Authors:
-//		Federico Di Gregorio <fog@initd.org>
 
 using System;
 using System.Reflection;
@@ -87,6 +95,60 @@ namespace MonoTests.System.Linq.Expressions
 		public static bool operator false (OpClass a)
 		{
 			return false;
+		}
+
+		public static bool operator > (OpClass a, OpClass b)
+		{
+			return false;
+		}
+
+		public static bool operator < (OpClass a, OpClass b)
+		{
+			return false;
+		}
+
+		public static bool operator >= (OpClass a, OpClass b)
+		{
+			return false;
+		}
+
+		public static bool operator <= (OpClass a, OpClass b)
+		{
+			return false;
+		}
+
+		public static OpClass operator + (OpClass a)
+		{
+			return a;
+		}
+
+		public static OpClass operator - (OpClass a)
+		{
+			return a;
+		}
+
+		public static OpClass operator ! (OpClass a)
+		{
+			return a;
+		}
+
+		public static OpClass operator ~ (OpClass a)
+		{
+			return a;
+		}
+
+		public static void WrongUnaryReturnVoid (OpClass a)
+		{
+		}
+
+		public static OpClass WrongUnaryParameterCount (OpClass a, OpClass b)
+		{
+			return a;
+		}
+
+		public OpClass WrongUnaryNotStatic (OpClass a)
+		{
+			return a;
 		}
 	}
 

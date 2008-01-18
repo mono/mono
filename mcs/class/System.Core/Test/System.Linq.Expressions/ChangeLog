@@ -1,3 +1,9 @@
+2008-01-18  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_Negate.cs
+	ExpressionTest_Not.cs
+	ExpressionTest_UnaryPlus.cs: test for some unary operators.
+
 2008-01-16  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_CallWithExpression.cs: test for static method.
