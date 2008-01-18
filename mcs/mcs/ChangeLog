@@ -1,5 +1,10 @@
 2008-01-18  Marek Safar  <marek.safar@gmail.com>
 
+ 	* generic.cs: Fixed 3.0 type inference fixing phase to determine a unique
+ 	type for more than 1 candidates.
+ 	
+2008-01-18  Marek Safar  <marek.safar@gmail.com>
+
  	* typemanager.cs, ecore.cs, expression.cs: Implemented ArrayLength and Call
  	expressions.
  	

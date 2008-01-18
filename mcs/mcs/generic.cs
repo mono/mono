@@ -2799,27 +2799,33 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			// TODO: Review, I think it is still wrong
+			//
+			// Determines a unique type from which there is
+			// a standard implicit conversion to all the other
+			// candidate types.
+			//
 			Type best_candidate = null;
-			for (int ci = 0; ci < candidates.Count; ++ci) {
-				TypeExpr candidate = new TypeExpression ((Type)candidates[ci], Location.Null);
-				bool failed = false;
-				for (int cii = 0; cii < candidates.Count; ++cii) {
+			int cii;
+			int candidates_count = candidates.Count;
+			for (int ci = 0; ci < candidates_count; ++ci) {
+				Type candidate = (Type)candidates [ci];
+				for (cii = 0; cii < candidates_count; ++cii) {
 					if (cii == ci)
 						continue;
 
-					if (!Convert.ImplicitStandardConversionExists (candidate, (Type)candidates[cii])) {
-						failed = true;
+					if (!Convert.ImplicitStandardConversionExists (
+						new TypeExpression ((Type)candidates [cii], Location.Null), candidate)) {
+						break;
 					}
 				}
 
-				if (failed)
+				if (cii != candidates_count)
 					continue;
 
 				if (best_candidate != null)
 					return false;
 
-				best_candidate = candidate.Type;
+				best_candidate = candidate;
 			}
 
 			if (best_candidate == null)
@@ -2905,6 +2911,13 @@ namespace Mono.CSharp {
 			// Remove ref, out modifiers
 			if (v.IsByRef)
 				v = v.GetElementType ();
+			
+			// If V is one of the unfixed type arguments
+			int pos = IsUnfixed (v);
+			if (pos != -1) {
+				AddToBounds (u, pos);
+				return 1;
+			}			
 
 			// If U is an array type
 			if (u.IsArray) {
@@ -2983,13 +2996,7 @@ namespace Mono.CSharp {
 				return score;
 			}
 
-			// If V is one of the unfixed type arguments
-			int pos = IsUnfixed (v);
-			if (pos == -1)
-				return 0;
-
-			AddToBounds (u, pos);
-			return 1;
+			return 0;
 		}
 
 		//
