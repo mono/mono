@@ -1,5 +1,10 @@
 2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): fixed ovf ops with
+	float values. They are unverifiable now.
+
+2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (set_failure_from_loader_error): add BadImageException to the
 	list of exceptions that can cause a type to fail to load.
 
