@@ -2736,6 +2736,76 @@ namespace MonoTests.System.Windows.Forms
 		{
 			return new Size ((int)Math.Round (sizef.Width), (int)Math.Round (sizef.Height));
 		}
+		
+		[Test] // Bug 354669
+		public void AutoScaleDetails ()
+		{
+			ProtectedForm f = new ProtectedForm ();
+			f.Show ();
+			
+			f.SuspendLayout ();
+			
+			// First AutoScaleMode shouldn't reset AutoScaleDimensions
+			f.AutoScaleDimensions = new SizeF (3F, 3F);
+			f.AutoScaleMode = AutoScaleMode.Font;
+			Assert.AreEqual (new SizeF (3F, 3F), f.AutoScaleDimensions, "A1");
+			
+			// Subsequent calls will reset it to 0, 0
+			f.AutoScaleMode = AutoScaleMode.Dpi;
+			Assert.AreEqual (SizeF.Empty, f.AutoScaleDimensions, "A2");
+
+			f.ResumeLayout ();
+			
+			// CurrentAutoScaleDimensions should be nonzero
+			Assert.IsFalse (f.CurrentAutoScaleDimensions == SizeF.Empty, "A3");
+			
+			// AutoScaleDimensions and CurrentAutoScaleDimensions should match after ResumeLayout
+			Assert.AreEqual (f.AutoScaleDimensions, f.CurrentAutoScaleDimensions, "A4");
+
+			// CurrentAutoScaleDimensions should match AutoScaleDimensions for AutoScaleMode.None
+			f.SuspendLayout ();
+			f.AutoScaleMode = AutoScaleMode.None;
+			f.AutoScaleDimensions = new SizeF (5F, 5F);
+
+			Assert.AreEqual (new SizeF (5F, 5F), f.AutoScaleDimensions, "A5");
+			Assert.AreEqual (f.AutoScaleDimensions, f.CurrentAutoScaleDimensions, "A6");
+
+			// ResumeLayout changes nothing
+			f.ResumeLayout ();
+
+			Assert.AreEqual (new SizeF (5F, 5F), f.AutoScaleDimensions, "A7");
+			Assert.AreEqual (f.AutoScaleDimensions, f.CurrentAutoScaleDimensions, "A8");
+
+			// AutoScaleFactor should be ~2,2 if PerformAutoScale hasn't run
+			f.ClientSize = new Size (150, 150);
+			f.SuspendLayout ();
+			f.AutoScaleMode = AutoScaleMode.Dpi;
+			f.AutoScaleDimensions = new SizeF (f.CurrentAutoScaleDimensions.Width / 2F, f.CurrentAutoScaleDimensions.Height / 2F);
+			f.ClientSize = new Size (200, 200);
+
+			Assert.AreEqual (new Size (2, 2), RoundSizeF (f.GetPublicAutoScaleFactor ()), "A9");
+
+			// AutoScaleFactor should be 1 after ResumeLayout
+			f.ResumeLayout ();
+
+			Assert.AreEqual (new SizeF (1F, 1F), f.GetPublicAutoScaleFactor (), "A10");
+			Assert.AreEqual (new Size (400, 400), f.ClientSize, "A11");
+			
+			// PerformAutoScale happens immediately when layout not suspended
+			f.ClientSize = new Size (125, 125);
+			f.AutoScaleDimensions = new SizeF (f.CurrentAutoScaleDimensions.Width / 2F, f.CurrentAutoScaleDimensions.Height / 2F);
+			Assert.AreEqual (new Size (250, 250), f.ClientSize, "A12");
+			
+			f.Dispose ();
+		}
+		
+		private class ProtectedForm : Form
+		{
+			public SizeF GetPublicAutoScaleFactor ()
+			{
+				return AutoScaleFactor;
+			}
+		}
 #endif
 	}
 

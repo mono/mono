@@ -113,7 +113,7 @@ namespace System.Windows.Forms
 			Dock
 		}
 		Layout.LayoutEngine layout_engine;
-		int layout_suspended;
+		internal int layout_suspended;
 		bool layout_pending; // true if our parent needs to re-layout us
 		internal AnchorStyles anchor_style; // anchoring requirements for our control
 		internal DockStyle dock_style; // docking requirements for our control
@@ -4070,6 +4070,11 @@ namespace System.Windows.Forms
 			}
 
 			if (layout_suspended == 0) {
+#if NET_2_0
+				if (this is ContainerControl)
+					(this as ContainerControl).PerformDelayedAutoScale();
+#endif
+
 				if (!performLayout)
 					foreach (Control c in Controls.GetAllControls ())
 						c.UpdateDistances ();

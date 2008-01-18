@@ -46,6 +46,8 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private SizeF		auto_scale_dimensions;
 		private AutoScaleMode	auto_scale_mode;
+		private bool		auto_scale_mode_set;
+		private bool		auto_scale_pending;
 #endif
 
 		internal bool validation_failed; //track whether validation was cancelled by a validating control
@@ -248,17 +250,16 @@ namespace System.Windows.Forms {
 				if (auto_scale_dimensions != value) {
 					auto_scale_dimensions = value;
 					
-					if (AutoScaleFactor != new SizeF (1, 1))
-						PerformAutoScale ();
+					PerformAutoScale ();
 				}
 			}
 		}
 
 		protected SizeF AutoScaleFactor {
 			get {
-				if (auto_scale_dimensions.IsEmpty) {
-					return new SizeF(1f, 1f);
-				}
+				if (auto_scale_dimensions.IsEmpty)
+					return new SizeF (1f, 1f);
+
 				return new SizeF(CurrentAutoScaleDimensions.Width / auto_scale_dimensions.Width,
 					CurrentAutoScaleDimensions.Height / auto_scale_dimensions.Height);
 			}
@@ -275,7 +276,13 @@ namespace System.Windows.Forms {
 			set {
 				if (auto_scale_mode != value) {
 					auto_scale_mode = value;
-					auto_scale_dimensions = CurrentAutoScaleDimensions;
+
+					if (auto_scale_mode_set)
+						auto_scale_dimensions = SizeF.Empty;
+
+					auto_scale_mode_set = true;
+
+					PerformAutoScale ();
 				}
 					
 				if (this is Form)
@@ -351,11 +358,27 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public void PerformAutoScale ()
 		{
-			SuspendLayout ();
-			Scale (AutoScaleFactor);
-			ResumeLayout (false);
-			
+			if (layout_suspended > 0) {
+				auto_scale_pending = true;
+				return;
+			}
+			// Set this first so we don't get called again from
+			// PerformDelayedAutoScale after ResumeLayout
+			auto_scale_pending = false;
+
+			if (AutoScaleFactor != new SizeF(1F, 1F)) {
+				SuspendLayout ();
+				Scale (AutoScaleFactor);
+				ResumeLayout (false);
+			}
+
 			auto_scale_dimensions = CurrentAutoScaleDimensions;
+		}
+
+		internal void PerformDelayedAutoScale ()
+		{
+			if (auto_scale_pending)
+				PerformAutoScale ();
 		}
 #endif
 

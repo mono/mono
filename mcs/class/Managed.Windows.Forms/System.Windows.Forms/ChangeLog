@@ -1,3 +1,9 @@
+2008-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ContainerControl.cs, Control.cs: Apply patch from James Purcell
+	that makes our AutoScale* stuff more tolerant to different orders
+	of being set.  [Fixes bug #354669]
+
 2008-01-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGridView.cs, PropertyGridTextBox.cs: 

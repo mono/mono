@@ -1,5 +1,9 @@
 2008-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FormTest.cs: Add test from James Purcell for bug #354669.
+
+2008-01-18  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiFormTest.cs: Add test for bug #354286.
 
 2008-01-15  Jonathan Pobst  <monkey@jpobst.com>
