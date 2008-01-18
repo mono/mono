@@ -1,3 +1,9 @@
+2008-01-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGridView.cs: Hide the grid text box before adjusting it
+	 for the newly selected GridItem.
+	 [Fixes #338999]
+
 2008-01-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Give MDI children the opportunity to cancel the parent form
