@@ -892,12 +892,7 @@ namespace System.Linq.Expressions {
 
 		public static LambdaExpression Lambda (Type delegateType, Expression body, params ParameterExpression [] parameters)
 		{
-			if (delegateType == null)
-				throw new ArgumentNullException ("delegateType");
-			if (body == null)
-				throw new ArgumentNullException ("body");
-
-			return new LambdaExpression (delegateType, body, new ReadOnlyCollection<ParameterExpression> (parameters));
+			return Lambda (delegateType, body, parameters as IEnumerable<ParameterExpression>);
 		}
 
 		[MonoTODO]
@@ -908,7 +903,7 @@ namespace System.Linq.Expressions {
 			if (body == null)
 				throw new ArgumentNullException ("body");
 
-			return new LambdaExpression (delegateType, body, parameters);
+			return new LambdaExpression (delegateType, body, parameters.ToReadOnlyCollection ());
 		}
 
 		public static MemberListBinding ListBind (MemberInfo member, params ElementInit [] initializers)

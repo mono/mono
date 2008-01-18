@@ -95,11 +95,6 @@ namespace System.Linq.Expressions {
 			
 			return target.IsAssignableFrom (source);
 		}
-
-		internal LambdaExpression (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
-			: this (delegateType, body, new ReadOnlyCollection<ParameterExpression> (new List<ParameterExpression> (parameters)))
-			{
-			}
 				
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 			: base (ExpressionType.Lambda, body.Type)
