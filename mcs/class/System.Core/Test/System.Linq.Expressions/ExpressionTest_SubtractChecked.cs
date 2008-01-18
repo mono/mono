@@ -153,7 +153,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		//
-		// SubtractChecked is not defined for small types (byte, sbyte, short, ushort)
+		// SubtractChecked is not defined for small types (byte, sbyte)
 		//
 		static void InvalidOperation<T> (T v1, T v2)
 		{

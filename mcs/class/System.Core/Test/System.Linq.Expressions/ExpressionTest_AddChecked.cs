@@ -152,6 +152,21 @@ namespace MonoTests.System.Linq.Expressions
 			T res = del ();
 		}
 		
+		//
+		// SubtractChecked is not defined for small types (byte, sbyte)
+		//
+		static void InvalidOperation<T> (T v1, T v2)
+		{
+			try {
+				Expression<Func<T>> l = Expression.Lambda<Func<T>> (
+					Expression.AddChecked (Expression.Constant (v1), Expression.Constant (v2)));
+			} catch (InvalidOperationException){
+				// OK
+				return;
+			}
+			throw new Exception (String.Format ("AddChecked should have thrown for the creation of a tree with {0} operands", v1.GetType ()));
+		}
+
 		[Test]
 		public void TestOverflows ()
 		{
@@ -176,9 +191,11 @@ namespace MonoTests.System.Linq.Expressions
 			// Simple stuff
 			MustNotOverflow<int> (10, 20);
 
+			// These are invalid:
+			InvalidOperation<byte> (Byte.MaxValue, 2);
+			InvalidOperation<sbyte> (SByte.MaxValue, 2);
+			
 			// Stuff that just fits in 32 bits, does not overflow:
-			MustNotOverflow<byte> (Byte.MaxValue, 2);
-			MustNotOverflow<sbyte> (SByte.MaxValue, 2);
 			MustNotOverflow<short> (Int16.MaxValue, 2);
 			MustNotOverflow<ushort> (UInt16.MaxValue, 2);
 

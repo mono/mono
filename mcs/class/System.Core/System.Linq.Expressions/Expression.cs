@@ -300,6 +300,18 @@ namespace System.Linq.Expressions {
 		{
 			method = BinaryCoreCheck ("op_Addition", left, right, method);
 
+			//
+			// The check in BinaryCoreCheck allows a bit more than we do
+			// (byte, sbyte).  Catch that here
+			//
+			
+			if (method == null){
+				Type ltype = left.Type;
+
+				if (ltype == typeof (byte) || ltype == typeof (sbyte))
+					throw new InvalidOperationException (String.Format ("SubtractChecked not defined for {0} and {1}", left.Type, right.Type));
+			}
+
 			return MakeSimpleBinary (ExpressionType.AddChecked, left, right, method);
 		}
 
@@ -325,7 +337,7 @@ namespace System.Linq.Expressions {
 
 			//
 			// The check in BinaryCoreCheck allows a bit more than we do
-			// (byte, sbyte, short, ushort).  Catch that here
+			// (byte, sbyte).  Catch that here
 			//
 
 			if (method == null){
