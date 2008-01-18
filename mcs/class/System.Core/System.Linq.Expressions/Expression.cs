@@ -874,10 +874,12 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)
 		{
-			throw new NotImplementedException ();
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return new Expression<TDelegate> (body, parameters);
 		}
 
 		[MonoTODO]
@@ -892,16 +894,25 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static LambdaExpression Lambda (Type delegateType, Expression body, params ParameterExpression [] parameters)
 		{
-			throw new NotImplementedException ();
+			if (delegateType == null)
+				throw new ArgumentNullException ("delegateType");
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return new LambdaExpression (delegateType, body, new ReadOnlyCollection<ParameterExpression> (parameters));
 		}
 
 		[MonoTODO]
 		public static LambdaExpression Lambda (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
 		{
-			throw new NotImplementedException ();
+			if (delegateType == null)
+				throw new ArgumentNullException ("delegateType");
+			if (body == null)
+				throw new ArgumentNullException ("body");
+
+			return new LambdaExpression (delegateType, body, parameters);
 		}
 
 		public static MemberListBinding ListBind (MemberInfo member, params ElementInit [] initializers)
@@ -1221,6 +1232,15 @@ namespace System.Linq.Expressions {
 		static bool IsNullable (Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
+		}
+
+		//
+		// This method must be overwritten by derived classes to
+		// compile the expression
+		//
+		internal virtual void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException (String.Format ("{0} does not implement Emit yet", GetType ()));
 		}
 	}
 }

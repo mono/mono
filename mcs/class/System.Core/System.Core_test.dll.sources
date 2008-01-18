@@ -14,6 +14,7 @@ System.Linq.Expressions/ExpressionTest_Condition.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Divide.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
+System.Linq.Expressions/ExpressionTest_Lambda.cs
 System.Linq.Expressions/ExpressionTest_LeftShift.cs
 System.Linq.Expressions/ExpressionTest_MakeBinary.cs
 System.Linq.Expressions/ExpressionTest_Modulo.cs

@@ -1,3 +1,16 @@
+2008-01-17  Miguel de Icaza  <miguel@novell.com>
+
+	Beginning of code generation framework for Linq.Expressions.
+	Some code was borrowed by from the C# compiler
+	
+	* Expression_T.cs: Fill in the blanks.
+	
+	* LambdaExpression.cs: Validation of parameters mostly, a tiny bit
+	of codegen.
+
+	* ConstantExpression.cs: Mostly done, need to write tests for
+	non-fundamental types and other ValueType initializations. 
+
 2008-01-17  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: implement MakeMemberAccess.

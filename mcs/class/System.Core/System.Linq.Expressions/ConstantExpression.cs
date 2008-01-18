@@ -3,8 +3,13 @@
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
+//   Miguel de Icaza (miguel@novell.com)
 //
-// (C) 2008 Novell, Inc. (http://www.novell.com)
+// Some code is based on the Mono C# compiler:
+//   Marek Safar (marek.safar@seznam.cz)
+//   Martin Baulig (martin@ximian.com)
+//
+// (C) 2001-2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,11 +32,12 @@
 //
 
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
 	public sealed class ConstantExpression : Expression {
-
 		object value;
 
 		public object Value {
@@ -42,6 +48,97 @@ namespace System.Linq.Expressions {
 			: base (ExpressionType.Constant, type)
 		{
 			this.value = value;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			switch (Type.GetTypeCode (Type)){
+			case TypeCode.Byte:
+				ig.Emit (OpCodes.Ldc_I4, (int) ((byte)value));
+				return;
+					      
+			case TypeCode.SByte:
+				ig.Emit (OpCodes.Ldc_I4, (int) ((sbyte)value));
+				return;
+					
+			case TypeCode.Int16:
+				ig.Emit (OpCodes.Ldc_I4, (int) ((short)value));
+				return;
+				
+			case TypeCode.UInt16:
+				ig.Emit (OpCodes.Ldc_I4, (int) ((ushort)value));
+				return;
+				
+			case TypeCode.Int32:
+				ig.Emit (OpCodes.Ldc_I4, (int) value);
+				return;
+				
+			case TypeCode.UInt32:
+				ig.Emit (OpCodes.Ldc_I4, unchecked ((int) ((uint)Value)));
+				return;
+				
+			case TypeCode.Int64:
+				ig.Emit (OpCodes.Ldc_I8, (long) value);
+				return;
+					
+			case TypeCode.UInt64:
+				ig.Emit (OpCodes.Ldc_I8, unchecked ((long) ((ulong)value)));
+				return;
+
+			case TypeCode.Boolean:
+				if ((bool) Value)
+					ig.Emit (OpCodes.Ldc_I4_1);
+				else
+					ec.ig.Emit (OpCodes.Ldc_I4_0);
+				return;
+				
+			case TypeCode.Char:
+				ig.Emit (OpCodes.Ldc_I4, (int) ((char) value));
+				return;
+				
+			case TypeCode.Single:
+				ig.Emit (OpCodes.Ldc_R4, (float) value);
+				return;
+				
+			case TypeCode.Double:
+				ig.Emit (OpCodes.Ldc_R8, (double) value);
+				return;
+				
+			case TypeCode.Decimal: {
+				Decimal v = (decimal) value;
+				int [] words = Decimal.GetBits (v);
+				int power = (words [3] >> 16) & 0xff;
+				Type ti = typeof (int);
+				
+				if (power == 0 && v <= int.MaxValue && v >= int.MinValue) {
+					ig.Emit (OpCodes.Ldc_I4, (int) v);
+					
+					ig.Emit (OpCodes.Newobj, typeof (Decimal).GetConstructor (new Type [1] { ti }));
+					return;
+				}
+				ig.Emit (OpCodes.Ldc_I4, words [0]);
+				ig.Emit (OpCodes.Ldc_I4, words [1]);
+				ig.Emit (OpCodes.Ldc_I4, words [2]);
+				// sign
+				ig.Emit (OpCodes.Ldc_I4, words [3] >> 31);
+
+				// power
+				ig.Emit (OpCodes.Ldc_I4, power);
+
+				ig.Emit (OpCodes.Newobj, typeof (Decimal).GetConstructor (new Type [5] { ti, ti, ti, typeof(bool), typeof(byte) }));
+				return;
+                        }
+
+			case TypeCode.String:
+				ig.Emit (OpCodes.Ldstr, (string) value);
+				return;
+			}
+
+			// FIXME: complete the implementation
+			
+			throw new NotImplementedException (String.Format ("No support for constants of type {0} yet", Type));
 		}
 	}
 }

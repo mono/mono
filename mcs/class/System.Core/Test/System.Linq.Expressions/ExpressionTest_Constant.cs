@@ -139,6 +139,50 @@ namespace MonoTests.System.Linq.Expressions
 			// type mismatch: int value, type == double 
 			Expression.Constant (0, typeof (double));
 		}
+
+		static T Check<T> (T val)
+		{
+			Expression<Func<T>> l = Expression.Lambda<Func<T>> (Expression.Constant (val), new ParameterExpression [0]);
+			Func<T> fi = l.Compile ();
+			return fi ();
+		}
 		
+		[Test]
+		public void ConstantCodeGen ()
+		{
+			Assert.AreEqual (Check<int> (0), 0, "int");
+			Assert.AreEqual (Check<int> (128), 128, "int2");
+			Assert.AreEqual (Check<int> (-128), -128, "int3");
+			Assert.AreEqual (Check<int> (Int32.MinValue), Int32.MinValue, "int4");
+			Assert.AreEqual (Check<int> (Int32.MaxValue), Int32.MaxValue, "int5");
+			Assert.AreEqual (Check<uint> (128), 128, "uint");
+			Assert.AreEqual (Check<uint> (0), 0, "uint2");
+			Assert.AreEqual (Check<uint> (UInt32.MinValue), UInt32.MinValue, "uint3");
+			Assert.AreEqual (Check<uint> (UInt32.MaxValue), UInt32.MaxValue, "uint4");
+			Assert.AreEqual (Check<byte> (10), 10, "byte");
+			Assert.AreEqual (Check<byte> (Byte.MinValue), Byte.MinValue, "byte2");
+			Assert.AreEqual (Check<byte> (Byte.MaxValue), Byte.MaxValue, "byte3");
+			Assert.AreEqual (Check<short> (128), 128, "short");
+			Assert.AreEqual (Check<short> (-128), -128, "short");
+			Assert.AreEqual (Check<short> (Int16.MinValue), Int16.MinValue, "short2");
+			Assert.AreEqual (Check<short> (Int16.MaxValue), Int16.MaxValue, "short3");
+			Assert.AreEqual (Check<ushort> (128), 128, "ushort");
+			Assert.AreEqual (Check<ushort> (UInt16.MinValue), UInt16.MinValue, "short2");
+			Assert.AreEqual (Check<ushort> (UInt16.MaxValue), UInt16.MaxValue, "short3");
+			Assert.AreEqual (Check<bool> (true), true, "bool1");
+			Assert.AreEqual (Check<bool> (false), false, "bool2");
+			Assert.AreEqual (Check<long> (Int64.MaxValue), Int64.MaxValue, "long");
+			Assert.AreEqual (Check<long> (Int64.MinValue), Int64.MinValue, "long2");
+			Assert.AreEqual (Check<ulong> (UInt64.MaxValue), UInt64.MaxValue, "ulong");
+			Assert.AreEqual (Check<ulong> (UInt64.MinValue), UInt64.MinValue, "ulong2");
+			Assert.AreEqual (Check<ushort> (200), 200, "ushort");
+			Assert.AreEqual (Check<float> (2.0f), 2.0f, "float");
+			Assert.AreEqual (Check<double> (2.312), 2.312, "double");
+			Assert.AreEqual (Check<string> ("dingus"), "dingus", "string");
+			Assert.AreEqual (Check<decimal> (1.3m), 1.3m, "");
+
+			// this forces the other code path for decimal.
+			Assert.AreEqual (Check<decimal> (3147483647m), 3147483647m, "decimal");
+		}
 	}
 }
