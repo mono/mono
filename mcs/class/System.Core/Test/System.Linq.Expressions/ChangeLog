@@ -1,5 +1,10 @@
 2008-01-18  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_GreaterThan|GreaterThanOrEqual.cs
+	* ExpressionTest_LessThan|LessThanOrEqual.cs: new tests.
+
+2008-01-18  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_Negate.cs
 	ExpressionTest_Not.cs
 	ExpressionTest_UnaryPlus.cs: test for some unary operators.
