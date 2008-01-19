@@ -1,3 +1,9 @@
+2008-01-19  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_stringtable_block): Cope when the StringTable
+	block is first in the resources data, and we just need to step
+	over it.  Fixes bug 354856.
+
 2008-01-16  Dick Porter  <dick@ximian.com>
 
 	* threads.c (_wapi_thread_set_termination_details): Move the
