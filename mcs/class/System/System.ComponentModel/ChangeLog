@@ -1,3 +1,7 @@
+2008-01-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* MaskedTextProvider.cs: Fix IsPassword (found by Gendarme)
+
 2008-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CultureInfoConverter.cs: Gendarme's AvoidToStringOnStringsRule in

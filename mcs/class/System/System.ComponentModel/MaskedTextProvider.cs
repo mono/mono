@@ -1917,7 +1917,7 @@ namespace System.ComponentModel {
 				return password_char != char.MinValue;
 			}
 			set {
-				password_char = DefaultPasswordChar;
+				password_char = value ? DefaultPasswordChar : char.MinValue;
 			}
 		}
 		

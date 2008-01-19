@@ -2006,6 +2006,19 @@ namespace MonoTests.System.ComponentModel
 
 		}
 		[Test]
+		public void IsPasswordTest () 
+		{
+			MaskedTextProvider mtp = new MaskedTextProvider ("a");
+			Assert.IsFalse (mtp.IsPassword, "#01");
+			Assert.AreEqual (char.MinValue, mtp.PasswordChar, "#02");
+			mtp.IsPassword = true;
+			Assert.IsTrue (mtp.IsPassword, "#03");
+			Assert.AreEqual ('*', mtp.PasswordChar, "#04");
+			mtp.IsPassword = false;
+			Assert.IsFalse (mtp.IsPassword, "#05");
+			Assert.AreEqual (char.MinValue, mtp.PasswordChar, "#06");
+		}
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_string_int_int_MaskedTextResultHintTestException ()
 		{
