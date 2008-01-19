@@ -2097,6 +2097,52 @@ Services
 			Assert.AreEqual ("<x><foo>1</foo><bar>2</bar><baz>3</baz><tem>4</tem></x>", sw.ToString ());
 		}
 
+		[Test]
+		public void CopyOfIXPathNavigable ()
+		{
+			string xsl = @"
+<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+  xmlns:foo='urn:Foo'>
+  <xsl:template match='/'>
+    <xsl:copy-of select='foo:MyCustomFunction()'/>
+  </xsl:template>
+</xsl:stylesheet>";
+			string xml = @"
+<family>
+  <person>
+    <given-name age='10'>
+      <name>Fred</name>
+      <nick-name>Freddy</nick-name>
+    </given-name>
+    <family-name>Smith</family-name>
+  </person>
+  <person>
+    <given-name age='10'>
+      <name>Robert</name>
+      <nick-name>Bob</nick-name>
+    </given-name>
+    <family-name>Smith</family-name>
+  </person>
+</family>";
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			XsltArgumentList args = new XsltArgumentList();
+			args.AddExtensionObject ("urn:Foo", new CopyOfIXPathNavigableClass ());
+			StringWriter sw = new StringWriter ();
+			t.Transform (new XPathDocument (new StringReader (xml)), args, new XmlTextWriter (sw));
+			Assert.AreEqual ("<root><child0 /><child1 /></root>", sw.ToString ());
+		}
+
+		public class CopyOfIXPathNavigableClass
+		{
+			public object MyCustomFunction ()
+			{
+				XmlDocument doc = new XmlDocument ();
+				doc .LoadXml ("<root><child0 /><child1 /></root>");
+				return doc.DocumentElement;
+			}
+		}
+
 #if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()

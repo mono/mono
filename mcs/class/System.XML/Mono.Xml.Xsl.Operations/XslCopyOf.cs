@@ -137,18 +137,16 @@ namespace Mono.Xml.Xsl.Operations {
 
 			object o = p.Evaluate (select);
 			XPathNodeIterator itr = o as XPathNodeIterator;
-			if (itr == null) {
-				XPathNavigator nav = o as XPathNavigator; // RTF
-				if (nav != null)
-					itr = nav.SelectChildren (XPathNodeType.All);
-			}
 			if (itr != null) {
 				while (itr.MoveNext ())
 					CopyNode (p, itr.Current);
 			} else {
-				p.Out.WriteString (XPathFunctions.ToString (o));
+				XPathNavigator nav = o as XPathNavigator; // RTF
+				if (nav != null)
+					CopyNode (p, nav);
+				else
+					p.Out.WriteString (XPathFunctions.ToString (o));
 			}
-
 		}
 	}
 }

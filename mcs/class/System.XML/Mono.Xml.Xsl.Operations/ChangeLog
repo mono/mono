@@ -1,3 +1,9 @@
+2008-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCopyOf.cs : when the evaluated argument was RTF (it could happen
+	  when variable or extensions are used), copy the node itself, not
+	  only its children. Fixed bug #322551.
+
 2007-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslValueOf.cs : allow external elements in xsl:value-of.
