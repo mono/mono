@@ -2,6 +2,7 @@
 
 	* AppDomainTest.cs: Added test for DefineDynamicAssembly overload
 	taking IEnumerable<CustomAttributeBuilder>.
+	* EnvironmentCas.cs: Fixed line ending.
 
 2008-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
