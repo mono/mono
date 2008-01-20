@@ -1,3 +1,9 @@
+2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyNameTest.cs: Added test for effect of AssemblyNameFlags on
+	FullName. Added test for PublicKey with value "null". Added ctor test
+	for Retargetable spec.
+
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
 	* MethodInfoTest.cs: Add test for null arguments to

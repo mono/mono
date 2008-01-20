@@ -441,6 +441,28 @@ public class AssemblyNameTest {
 	}
 
 	[Test]
+	public void FullName_Flags ()
+	{
+		const string assemblyName = "TestAssembly";
+
+		// tests for AssemblyName with only name
+		an = new AssemblyName ();
+#if NET_2_0
+		an.Flags = AssemblyNameFlags.EnableJITcompileOptimizer |
+			AssemblyNameFlags.EnableJITcompileTracking |
+			AssemblyNameFlags.PublicKey |
+			AssemblyNameFlags.Retargetable;
+#else
+		an.Flags = AssemblyNameFlags.PublicKey |
+			AssemblyNameFlags.Retargetable;
+#endif
+		an.Name = assemblyName;
+		Assert.AreEqual (assemblyName + ", Retargetable=Yes", an.FullName, "#1");
+		an.Flags = AssemblyNameFlags.None;
+		Assert.AreEqual (assemblyName, an.FullName, "#2");
+	}
+
+	[Test]
 	public void FullName_Name ()
 	{
 		const string assemblyName = "TestAssembly";
@@ -476,7 +498,15 @@ public class AssemblyNameTest {
 		an = new AssemblyName ();
 		an.Name = assemblyName;
 		an.CultureInfo = CultureInfo.InvariantCulture;
-		Assert.AreEqual (assemblyName + ", Culture=neutral", an.FullName, "FullName4#1");
+		Assert.AreEqual (assemblyName + ", Culture=neutral", an.FullName, "#1");
+		an.CultureInfo = new CultureInfo ("nl-BE");
+		Assert.AreEqual (assemblyName + ", Culture=nl-BE", an.FullName, "#2");
+		an.Name = null;
+#if NET_2_0
+		Assert.AreEqual (string.Empty, an.FullName, "#3");
+#else
+		Assert.IsNull (an.FullName, "#4");
+#endif
 	}
 
 	[Test]
@@ -1324,8 +1354,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, Version=1.2.3.4, Culture=neutral, PublicKeyToken=" +
-			GetTokenString (pk_token1), an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 	[Test] // ctor (String)
@@ -1407,7 +1436,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, Culture=en-US", an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 	[Test] // ctor (String)
@@ -1544,7 +1573,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.AreEqual (publicKey1, an.GetPublicKey (), "GetPublicKey");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token1), an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 	[Test]
@@ -1568,7 +1597,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token1), an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 	[Test] // ctor (String)
@@ -1592,7 +1621,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.AreEqual (pk_token3, an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token3), an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 	[Test] // ctor (String)
@@ -1619,13 +1648,24 @@ public class AssemblyNameTest {
 		
 		try {
 			new AssemblyName (assemblyName + ", PublicKey=0024000004800000940000000602000000240000525341310004000011000000e39d99616f48cf7d6d59f345e485e713e89b8b1265a31b1a393e9894ee3fbddaf382dcaf4083dc31ee7a40a2a25c69c6d019fba9f37ec17fd680e4f6fe3b5305f71ae9e494e3501d92508c2e98ca1e22991a217aa8ce259c9882ffdfff4fbc6fa5e6660a8ff951cd94ed011e5633651b64e8f4522519b6ec84921ee22e4840e");
-			Assert.Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (FileLoadException ex) {
 			// The given assembly name or codebase was invalid
-			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#2");
-			Assert.IsNull (ex.FileName, "#3");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.FileName, "#A3");
+			Assert.IsNull (ex.InnerException, "#A4");
+			Assert.IsNotNull (ex.Message, "#A5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", PublicKey=null");
+			Assert.Fail ("#B1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.FileName, "#B3");
+			Assert.IsNull (ex.InnerException, "#B4");
+			Assert.IsNotNull (ex.Message, "#B5");
 		}
 	}
 
@@ -1653,21 +1693,38 @@ public class AssemblyNameTest {
 		const string assemblyName = "TestAssembly";
 
 		an = new AssemblyName (assemblyName + ", PublicKeyToken=" + GetTokenString (pk_token1));
-		Assert.IsNull (an.CodeBase, "CodeBase");
-		Assert.IsNull (an.CultureInfo, "CultureInfo");
-		Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
-		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
-		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "FullName");
-		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "HashAlgorithm");
-		Assert.IsNull (an.KeyPair, "KeyPair");
-		Assert.AreEqual (assemblyName, an.Name, "Name");
-		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "PA");
-		Assert.IsNull (an.Version, "Version");
+		Assert.IsNull (an.CodeBase, "#A:CodeBase");
+		Assert.IsNull (an.CultureInfo, "#A:CultureInfo");
+		Assert.IsNull (an.EscapedCodeBase, "#A:EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#A:Flags");
+		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token1), an.FullName, "#A:FullName");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "#A:HashAlgorithm");
+		Assert.IsNull (an.KeyPair, "#A:KeyPair");
+		Assert.AreEqual (assemblyName, an.Name, "#A:Name");
+		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "#A:PA");
+		Assert.IsNull (an.Version, "#A:Version");
 		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
-			an.VersionCompatibility, "VersionCompatibility");
-		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
-		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, PublicKeyToken=" + GetTokenString (pk_token1), an.ToString (), "ToString");
+			an.VersionCompatibility, "#A:VersionCompatibility");
+		Assert.IsNull (an.GetPublicKey (), "#A:GetPublicKey");
+		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#A:GetPublicKeyToken");
+		Assert.AreEqual (an.FullName, an.ToString (), "#A:ToString");
+
+		an = new AssemblyName (assemblyName + ", PublicKeyToken=null");
+		Assert.IsNull (an.CodeBase, "#B:CodeBase");
+		Assert.IsNull (an.CultureInfo, "#B:CultureInfo");
+		Assert.IsNull (an.EscapedCodeBase, "#B:EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#B:Flags");
+		//Assert.AreEqual ("TestAssembly, PublicKeyToken=null", an.FullName, "#B:FullName");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "#B:HashAlgorithm");
+		Assert.IsNull (an.KeyPair, "#B:KeyPair");
+		Assert.AreEqual (assemblyName, an.Name, "#B:Name");
+		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "#B:PA");
+		Assert.IsNull (an.Version, "#B:Version");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+			an.VersionCompatibility, "#B:VersionCompatibility");
+		Assert.IsNull (an.GetPublicKey (), "#B:GetPublicKey");
+		Assert.AreEqual (new byte [0], an.GetPublicKeyToken (), "#B:GetPublicKeyToken");
+		Assert.AreEqual (an.FullName, an.ToString (), "#B:ToString");
 	}
 
 	[Test] // ctor (String)
@@ -1705,6 +1762,174 @@ public class AssemblyNameTest {
 	}
 
 	[Test] // ctor (String)
+	public void Constructor1_Retargetable ()
+	{
+		const string assemblyName = "TestAssembly";
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=Yes");
+			Assert.Fail ("#A1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.FileName, "#A3");
+			Assert.IsNull (ex.InnerException, "#A4");
+			Assert.IsNotNull (ex.Message, "#A5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=No");
+			Assert.Fail ("#B1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.FileName, "#B3");
+			Assert.IsNull (ex.InnerException, "#B4");
+			Assert.IsNotNull (ex.Message, "#B5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Version=1.0.0.0, Retargetable=Yes");
+			Assert.Fail ("#C1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.FileName, "#C3");
+			Assert.IsNull (ex.InnerException, "#C4");
+			Assert.IsNotNull (ex.Message, "#C5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Version=1.0.0.0, Culture=neutral, Retargetable=Yes");
+			Assert.Fail ("#D1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#D2");
+			Assert.IsNull (ex.FileName, "#D3");
+			Assert.IsNull (ex.InnerException, "#D4");
+			Assert.IsNotNull (ex.Message, "#D5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Version=1.0.0.0, PublicKeyToken=null, Retargetable=Yes");
+			Assert.Fail ("#E1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#E2");
+			Assert.IsNull (ex.FileName, "#E3");
+			Assert.IsNull (ex.InnerException, "#E4");
+			Assert.IsNotNull (ex.Message, "#E5");
+		}
+
+		an = new AssemblyName (assemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null, Retargetable=yEs");
+		Assert.IsNull (an.CodeBase, "F:CodeBase");
+		Assert.AreEqual (CultureInfo.InvariantCulture, an.CultureInfo, "#F:CultureInfo");
+		Assert.IsNull (an.EscapedCodeBase, "#F:EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.Retargetable, an.Flags, "#F:Flags");
+		Assert.AreEqual ("TestAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null, Retargetable=Yes", an.FullName, "#F:FullName");
+		Assert.IsNull (an.GetPublicKey (), "#F:GetPublicKey");
+		Assert.AreEqual (new byte [0], an.GetPublicKeyToken (), "#F:GetPublicKeyToken");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "#F:HashAlgorithm");
+		Assert.IsNull (an.KeyPair, "#F:KeyPair");
+		Assert.AreEqual (assemblyName, an.Name, "#F:Name");
+		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "#F:PA");
+		Assert.AreEqual (an.FullName, an.ToString (), "#F:ToString");
+		Assert.AreEqual (new Version (1, 0, 0, 0), an.Version, "#F:Version");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+			an.VersionCompatibility, "#F:VersionCompatibility");
+
+		an = new AssemblyName (assemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=null, Retargetable=nO");
+		Assert.IsNull (an.CodeBase, "G:CodeBase");
+		Assert.AreEqual (CultureInfo.InvariantCulture, an.CultureInfo, "#G:CultureInfo");
+		Assert.IsNull (an.EscapedCodeBase, "#G:EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#G:Flags");
+		Assert.AreEqual ("TestAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null", an.FullName, "#G:FullName");
+		Assert.IsNull (an.GetPublicKey (), "#G:GetPublicKey");
+		Assert.AreEqual (new byte [0], an.GetPublicKeyToken (), "#G:GetPublicKeyToken");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "#G:HashAlgorithm");
+		Assert.IsNull (an.KeyPair, "#G:KeyPair");
+		Assert.AreEqual (assemblyName, an.Name, "#G:Name");
+		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "#G:PA");
+		Assert.AreEqual (an.FullName, an.ToString (), "#G:ToString");
+		Assert.AreEqual (new Version (1, 0, 0, 0), an.Version, "#G:Version");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+			an.VersionCompatibility, "#G:VersionCompatibility");
+
+		an = new AssemblyName (assemblyName + ", Version=1.0.0.0, Culture=neutral, PublicKeyToken=" + GetTokenString (pk_token1) + ", Retargetable=yes");
+		Assert.IsNull (an.CodeBase, "H:CodeBase");
+		Assert.AreEqual (CultureInfo.InvariantCulture, an.CultureInfo, "#H:CultureInfo");
+		Assert.IsNull (an.EscapedCodeBase, "#H:EscapedCodeBase");
+		Assert.AreEqual (AssemblyNameFlags.Retargetable, an.Flags, "#H:Flags");
+		Assert.AreEqual ("TestAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=" + GetTokenString (pk_token1) + ", Retargetable=Yes", an.FullName, "#H:FullName");
+		Assert.IsNull (an.GetPublicKey (), "#H:GetPublicKey");
+		Assert.AreEqual (pk_token1, an.GetPublicKeyToken (), "#H:GetPublicKeyToken");
+		Assert.AreEqual (AssemblyHashAlgorithm.None, an.HashAlgorithm, "#H:HashAlgorithm");
+		Assert.IsNull (an.KeyPair, "#H:KeyPair");
+		Assert.AreEqual (assemblyName, an.Name, "#H:Name");
+		Assert.AreEqual (ProcessorArchitecture.None, an.ProcessorArchitecture, "#H:PA");
+		Assert.AreEqual (an.FullName, an.ToString (), "#H:ToString");
+		Assert.AreEqual (new Version (1, 0, 0, 0), an.Version, "#H:Version");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+			an.VersionCompatibility, "#H:VersionCompatibility");
+	}
+
+	[Test] // ctor (String)
+	public void Constructor1_Retargetable_Incomplete ()
+	{
+		const string assemblyName = "TestAssembly";
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=");
+			Assert.Fail ("#1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#2");
+			Assert.IsNull (ex.FileName, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
+			Assert.IsNotNull (ex.Message, "#5");
+		}
+	}
+
+	[Test] // ctor (String)
+	public void Constructor1_Retargetable_Invalid ()
+	{
+		const string assemblyName = "TestAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=False");
+			Assert.Fail ("#A1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.FileName, "#A3");
+			Assert.IsNull (ex.InnerException, "#A4");
+			Assert.IsNotNull (ex.Message, "#A5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=1");
+			Assert.Fail ("#B1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.FileName, "#B3");
+			Assert.IsNull (ex.InnerException, "#B4");
+			Assert.IsNotNull (ex.Message, "#B5");
+		}
+
+		try {
+			new AssemblyName (assemblyName + ", Retargetable=True");
+			Assert.Fail ("#C1");
+		} catch (FileLoadException ex) {
+			// The given assembly name or codebase was invalid
+			Assert.AreEqual (typeof (FileLoadException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.FileName, "#C3");
+			Assert.IsNull (ex.InnerException, "#C4");
+			Assert.IsNotNull (ex.Message, "#C5");
+		}
+	}
+
+	[Test] // ctor (String)
 	[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM.
 	public void Constructor1_Version ()
 	{
@@ -1726,7 +1951,7 @@ public class AssemblyNameTest {
 			an.VersionCompatibility, "VersionCompatibility");
 		Assert.IsNull (an.GetPublicKey (), "GetPublicKey");
 		Assert.IsNull (an.GetPublicKeyToken (), "GetPublicKeyToken");
-		Assert.AreEqual ("TestAssembly, Version=1.2.3.4", an.ToString (), "ToString");
+		Assert.AreEqual (an.FullName, an.ToString (), "ToString");
 	}
 
 

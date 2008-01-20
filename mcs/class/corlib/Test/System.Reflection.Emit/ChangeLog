@@ -1,3 +1,9 @@
+2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilderTest.cs: Added tests for DefineUnmanagedResource and
+	DefineVersionInfoResource overloads that check whether only a single
+	unmanaged resource can be defined. Improved test for SetCustomAttribute.
+
 2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Enabled tests for bug #322762.

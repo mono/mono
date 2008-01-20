@@ -92,7 +92,7 @@ namespace System.Reflection {
 				throw new ArgumentNullException ("assemblyName");
 			if (assemblyName.Length < 1)
 				throw new ArgumentException ("assemblyName cannot have zero length.");
-			
+				
 			if (!ParseName (this, assemblyName))
 				throw new FileLoadException ("The assembly name is invalid.");
 		}
@@ -184,6 +184,10 @@ namespace System.Reflection {
 							fname.Append (pub_tok[i].ToString ("x2"));
 					}
 				}
+
+				if ((Flags & AssemblyNameFlags.Retargetable) != 0)
+					fname.Append (", Retargetable=Yes");
+
 				return fname.ToString ();
 			}
 		}

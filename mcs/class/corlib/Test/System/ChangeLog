@@ -1,3 +1,8 @@
+2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppDomainTest.cs: Added test for DefineDynamicAssembly overload
+	taking IEnumerable<CustomAttributeBuilder>.
+
 2008-01-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added test for GetConstructor (Type []).

@@ -1191,6 +1191,173 @@ namespace MonoTests.System
 		}
 
 		[Test] // DynamicDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
+		[Category ("NotWorking")]
+		public void DefineDynamicAssembly11 ()
+		{
+			List<CustomAttributeBuilder> cattrs;
+			AssemblyBuilder ab;
+			Attribute attr;
+			AssemblyName name;
+			string assemblyFile;
+			string current_dir = Directory.GetCurrentDirectory ();
+
+			name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly11A";
+
+			cattrs = new List<CustomAttributeBuilder> ();
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).
+				GetConstructor (new Type [] { typeof (string) }),
+				new object [] { "1.2.3.4"}));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).
+				GetConstructor (new Type [] { typeof (string) }),
+				new object [] { "nl-BE"}));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).
+				GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }),
+				new object [] { AssemblyHashAlgorithm.MD5 }));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).
+				GetConstructor (new Type [] { typeof (uint) }),
+				new object [] { (uint)0x0100 }));
+			cattrs.Add (new CustomAttributeBuilder (typeof (CLSCompliantAttribute).
+				GetConstructor (new Type [] { typeof (bool) }),
+				new object [] { true }));
+
+			ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Save, cattrs);
+
+			ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (ComVisibleAttribute).
+				GetConstructor (new Type [] { typeof (bool) }),
+				new object [] { true }));
+
+			ab.Save ("DefineDynamicAssembly11A.dll");
+
+			assemblyFile = Path.Combine (current_dir, "DefineDynamicAssembly11A.dll");
+
+			try {
+				AssemblyName an = AssemblyName.GetAssemblyName (assemblyFile);
+				Assert.AreEqual (CultureInfo.InvariantCulture, an.CultureInfo, "#A1");
+				Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "#A2");
+				Assert.AreEqual ("DefineDynamicAssembly11A, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", an.FullName, "#A3");
+				Assert.IsNull (an.GetPublicKey (), "#A4");
+				Assert.AreEqual (new byte [0], an.GetPublicKeyToken (), "#A5");
+				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "#A6");
+				Assert.IsNull (an.KeyPair, "#A7");
+				Assert.AreEqual ("DefineDynamicAssembly11A", an.Name, "#A8");
+				Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#A9");
+				Assert.AreEqual (an.FullName, an.ToString (), "#A10");
+				Assert.AreEqual (new Version (0, 0, 0, 0), an.Version, "#A11");
+				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "#A12");
+
+				Assembly a;
+
+				using (FileStream fs = File.OpenRead (assemblyFile)) {
+					byte [] buffer = new byte [fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					a = Assembly.Load (buffer);
+				}
+
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyVersionAttribute));
+				Assert.IsNotNull (attr, "#A13a");
+				Assert.AreEqual ("1.2.3.4", ((AssemblyVersionAttribute) attr).Version, "#A13b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyCultureAttribute));
+				Assert.IsNotNull (attr, "#A14a");
+				Assert.AreEqual ("nl-BE", ((AssemblyCultureAttribute) attr).Culture, "#A14b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyAlgorithmIdAttribute));
+				Assert.IsNotNull (attr, "#A15a");
+				Assert.AreEqual ((uint) AssemblyHashAlgorithm.MD5, ((AssemblyAlgorithmIdAttribute) attr).AlgorithmId, "#A15b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyFlagsAttribute));
+				Assert.IsNotNull (attr, "#A16a");
+				Assert.AreEqual ((uint) 0x0100, ((AssemblyFlagsAttribute) attr).Flags, "#A16b");
+				attr = Attribute.GetCustomAttribute (a, typeof (CLSCompliantAttribute));
+				Assert.IsNotNull (attr, "#A17a");
+				Assert.IsTrue (((CLSCompliantAttribute) attr).IsCompliant, "#A17b");
+				attr = Attribute.GetCustomAttribute (a, typeof (ComVisibleAttribute));
+				Assert.IsNotNull (attr, "#A18a");
+				Assert.IsTrue (((ComVisibleAttribute) attr).Value, "#A18b");
+			} finally {
+				File.Delete (assemblyFile);
+			}
+
+			name = new AssemblyName ();
+			name.CultureInfo = new CultureInfo ("fr-BE");
+			name.KeyPair = new StrongNameKeyPair (keyPair);
+			name.Name = "DefineDynamicAssembly11B";
+			name.Version = new Version (3, 2, 4, 1);
+
+			cattrs = new List<CustomAttributeBuilder> ();
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).
+				GetConstructor (new Type [] { typeof (string) }),
+				new object [] { "1.2.3.4"}));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).
+				GetConstructor (new Type [] { typeof (string) }),
+				new object [] { "nl-BE"}));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).
+				GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }),
+				new object [] { AssemblyHashAlgorithm.MD5 }));
+			cattrs.Add (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).
+				GetConstructor (new Type [] { typeof (uint) }),
+				new object [] { (uint)0x0100 }));
+			cattrs.Add (new CustomAttributeBuilder (typeof (CLSCompliantAttribute).
+				GetConstructor (new Type [] { typeof (bool) }),
+				new object [] { true }));
+
+			ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Save, cattrs);
+
+			ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (ComVisibleAttribute).
+				GetConstructor (new Type [] { typeof (bool) }),
+				new object [] { true }));
+
+			ab.Save ("DefineDynamicAssembly11B.dll");
+
+			assemblyFile = Path.Combine (current_dir, "DefineDynamicAssembly11B.dll");
+
+			try {
+				AssemblyName an = AssemblyName.GetAssemblyName (assemblyFile);
+				Assert.AreEqual ("fr-BE", an.CultureInfo.Name, "#B1");
+				Assert.AreEqual (AssemblyNameFlags.PublicKey, an.Flags, "#B2");
+				Assert.AreEqual ("DefineDynamicAssembly11B, Version=3.2.4.1, Culture=fr-BE, PublicKeyToken=ce5276d8687ec6dc", an.FullName, "#B3");
+				Assert.AreEqual (publicKey, an.GetPublicKey (), "#B4");
+				Assert.AreEqual (pk_token, an.GetPublicKeyToken (), "#B5");
+				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "#B6");
+				Assert.IsNull (an.KeyPair, "#B7");
+				Assert.AreEqual ("DefineDynamicAssembly11B", an.Name, "#B8");
+				Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#B9");
+				Assert.AreEqual (an.FullName, an.ToString (), "#B10");
+				Assert.AreEqual (new Version (3, 2, 4, 1), an.Version, "#B11");
+				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "#B12");
+
+				Assembly a;
+
+				using (FileStream fs = File.OpenRead (assemblyFile)) {
+					byte [] buffer = new byte [fs.Length];
+					fs.Read (buffer, 0, buffer.Length);
+					a = Assembly.Load (buffer);
+				}
+
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyVersionAttribute));
+				Assert.IsNotNull (attr, "#B13a");
+				Assert.AreEqual ("1.2.3.4", ((AssemblyVersionAttribute) attr).Version, "#B13b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyCultureAttribute));
+				Assert.IsNotNull (attr, "#B14a");
+				Assert.AreEqual ("nl-BE", ((AssemblyCultureAttribute) attr).Culture, "#B14b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyAlgorithmIdAttribute));
+				Assert.IsNotNull (attr, "#B15a");
+				Assert.AreEqual ((uint) AssemblyHashAlgorithm.MD5, ((AssemblyAlgorithmIdAttribute) attr).AlgorithmId, "#B15b");
+				attr = Attribute.GetCustomAttribute (a, typeof (AssemblyFlagsAttribute));
+				Assert.IsNotNull (attr, "#B16a");
+				Assert.AreEqual ((uint) 0x0100, ((AssemblyFlagsAttribute) attr).Flags, "#B16b");
+				attr = Attribute.GetCustomAttribute (a, typeof (CLSCompliantAttribute));
+				Assert.IsNotNull (attr, "#B17a");
+				Assert.IsTrue (((CLSCompliantAttribute) attr).IsCompliant, "#B17b");
+				attr = Attribute.GetCustomAttribute (a, typeof (ComVisibleAttribute));
+				Assert.IsNotNull (attr, "#B18a");
+				Assert.IsTrue (((ComVisibleAttribute) attr).Value, "#B18b");
+			} finally {
+				File.Delete (assemblyFile);
+			}
+		}
+
+		[Test] // DynamicDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly11_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -2668,18 +2835,18 @@ namespace MonoTests.System
 			Assert.AreEqual (0, a.Length, "Count");
 		}
 
-	    [Test]
+		[Test]
 		public void ReflectionOnlyAssemblyResolve ()
 		{
 			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += new ResolveEventHandler(CurrentDomain_ReflectionOnlyAssemblyResolve);
 			Assembly asm = Assembly.ReflectionOnlyLoad(Assembly.LoadWithPartialName("System").FullName);
 			asm.GetTypes();
-	    }
+		}
 
-	    private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
+		private static Assembly CurrentDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
 		{
 			return Assembly.ReflectionOnlyLoad(args.Name);
-        }
+		}
 #endif
 
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
@@ -2972,5 +3139,7 @@ namespace MonoTests.System
 			0xf5, 0xff, 0xce, 0xd7, 0x6e, 0x5c, 0x6f, 0xb1, 0xf5, 0x7d, 0xd3,
 			0x56, 0xf9, 0x67, 0x27, 0xa4, 0xa5, 0x48, 0x5b, 0x07, 0x93, 0x44,
 			0x00, 0x4a, 0xf8, 0xff, 0xa4, 0xcb };
+
+		static byte [] pk_token = { 0xce, 0x52, 0x76, 0xd8, 0x68, 0x7e, 0Xc6, 0xdc };
 	}
 }

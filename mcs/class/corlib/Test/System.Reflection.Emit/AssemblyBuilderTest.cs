@@ -592,8 +592,64 @@ public class AssemblyBuilderTest
 		ab.DefineDynamicModule ("foo4", "foo4.dll", true);
 	}
 
-	[Test]
-	public void TestDefineUnmanagedResource_Resource_Null ()
+	[Test] // DefineUnmanagedResource (byte [])
+	[Category ("NotWorking")]
+	public void TestDefineUnmanagedResource1_ResourceAlreadyDefined ()
+	{
+		string version_res = Path.Combine (tempDir, "version.res");
+		using (FileStream fs = File.OpenWrite (version_res)) {
+			fs.WriteByte (0x0a);
+		}
+
+		ab.DefineUnmanagedResource (new byte [0]);
+
+		try {
+			ab.DefineUnmanagedResource (new byte [0]);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			ab.DefineUnmanagedResource (version_res);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ();
+			Assert.Fail ("#C1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+			Assert.IsNull (ex.ParamName, "#C5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+			Assert.Fail ("#D1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+			Assert.IsNull (ex.InnerException, "#D3");
+			Assert.IsNotNull (ex.Message, "#D4");
+			Assert.IsNull (ex.ParamName, "#D5");
+		}
+	}
+
+	[Test] // DefineUnmanagedResource (byte [])
+	public void TestDefineUnmanagedResource1_Resource_Null ()
 	{
 		try {
 			ab.DefineUnmanagedResource ((byte []) null);
@@ -607,23 +663,71 @@ public class AssemblyBuilderTest
 		}
 	}
 
-	[Test]
-	public void TestDefineUnmanagedResource_ResourceFileName_Null ()
+	[Test] // DefineUnmanagedResource (String)
+	[Category ("NotWorking")]
+	public void TestDefineUnmanagedResource2_ResourceAlreadyDefined ()
 	{
+		string version_res = Path.Combine (tempDir, "version.res");
+		using (FileStream fs = File.OpenWrite (version_res)) {
+			fs.WriteByte (0x0a);
+		}
+
+		ab.DefineUnmanagedResource (version_res);
+
 		try {
-			ab.DefineUnmanagedResource ((string) null);
-			Assert.Fail ("#1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
-			Assert.IsNull (ex.InnerException, "#3");
-			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNotNull (ex.ParamName, "#5");
-			Assert.AreEqual ("resourceFileName", ex.ParamName, "#6");
+			ab.DefineUnmanagedResource (new byte [0]);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			ab.DefineUnmanagedResource (version_res);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ();
+			Assert.Fail ("#C1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+			Assert.IsNull (ex.ParamName, "#C5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+			Assert.Fail ("#D1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+			Assert.IsNull (ex.InnerException, "#D3");
+			Assert.IsNotNull (ex.Message, "#D4");
+			Assert.IsNull (ex.ParamName, "#D5");
 		}
 	}
 
-	[Test]
-	public void TestDefineUnmanagedResource_ResourceFileName_Empty ()
+	[Test] // DefinedUnmanagedResource (String)
+	[ExpectedException (typeof (FileNotFoundException))]
+	public void TestDefineUnmanagedResource2_ResourceFile_DoesNotExist ()
+	{
+		ab.DefineUnmanagedResource ("not-exists.txt");
+	}
+
+	[Test] // DefinedUnmanagedResource (String)
+	public void TestDefineUnmanagedResource2_ResourceFileName_Empty ()
 	{
 		try {
 			ab.DefineUnmanagedResource (string.Empty);
@@ -637,11 +741,131 @@ public class AssemblyBuilderTest
 		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (FileNotFoundException))]
-	public void TestDefineUnmanagedResource_ResourceFile_DoesNotExist ()
+	[Test] // DefinedUnmanagedResource (String)
+	public void TestDefineUnmanagedResource2_ResourceFileName_Null ()
 	{
-		ab.DefineUnmanagedResource ("not-exists.txt");
+		try {
+			ab.DefineUnmanagedResource ((string) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNotNull (ex.ParamName, "#5");
+			Assert.AreEqual ("resourceFileName", ex.ParamName, "#6");
+		}
+	}
+
+	[Test] // DefineVersionInfoResource ()
+	[Category ("NotWorking")]
+	public void TestDefineVersionInfoResource1_ResourceAlreadyDefined ()
+	{
+		string version_res = Path.Combine (tempDir, "version.res");
+		using (FileStream fs = File.OpenWrite (version_res)) {
+			fs.WriteByte (0x0a);
+		}
+
+		ab.DefineVersionInfoResource ();
+
+		try {
+			ab.DefineUnmanagedResource (new byte [0]);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			ab.DefineUnmanagedResource (version_res);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ();
+			Assert.Fail ("#C1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+			Assert.IsNull (ex.ParamName, "#C5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+			Assert.Fail ("#D1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+			Assert.IsNull (ex.InnerException, "#D3");
+			Assert.IsNotNull (ex.Message, "#D4");
+			Assert.IsNull (ex.ParamName, "#D5");
+		}
+	}
+
+	[Test] // DefineVersionInfoResource (String, String, String, String, String)
+	[Category ("NotWorking")]
+	public void TestDefineVersionInfoResource2_ResourceAlreadyDefined ()
+	{
+		string version_res = Path.Combine (tempDir, "version.res");
+		using (FileStream fs = File.OpenWrite (version_res)) {
+			fs.WriteByte (0x0a);
+		}
+
+		ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+
+		try {
+			ab.DefineUnmanagedResource (new byte [0]);
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsNull (ex.ParamName, "#A5");
+		}
+
+		try {
+			ab.DefineUnmanagedResource (version_res);
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsNull (ex.ParamName, "#B5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ();
+			Assert.Fail ("#C1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+			Assert.IsNull (ex.ParamName, "#C5");
+		}
+
+		try {
+			ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+			Assert.Fail ("#D1");
+		} catch (ArgumentException ex) {
+			// Native resource has already been defined
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+			Assert.IsNull (ex.InnerException, "#D3");
+			Assert.IsNotNull (ex.Message, "#D4");
+			Assert.IsNull (ex.ParamName, "#D5");
+		}
 	}
 
 	[Test]
@@ -690,9 +914,20 @@ public class AssemblyBuilderTest
 		}
 	}
 
-	[Test]
-	public void TestSetCustomAttribute ()
+	[Test] // SetCustomAttribute (CustomAttributeBuilder)
+	[Category ("NotWorking")]
+	public void TestSetCustomAttribute1 ()
 	{
+		Assembly a;
+		AssemblyName an;
+		AssemblyName check;
+		Attribute attr;
+		string filename;
+		
+		an = new AssemblyName ();
+		an.Name = "TestSetCustomAttributeA";
+
+		ab = domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, tempDir);
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).
 			GetConstructor (new Type [] { typeof (string) }), new object [] { "1.2.3.4"}));
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).
@@ -701,13 +936,136 @@ public class AssemblyBuilderTest
 			GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }),
 			new object [] { AssemblyHashAlgorithm.MD5 }));
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).
-			GetConstructor (new Type [] { typeof (uint) }), new object [] { (uint)0x0100 }));
+			GetConstructor (new Type [] { typeof (uint) }), new object [] { (uint)0xff }));
 		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyDelaySignAttribute).
 			GetConstructor (new Type [] { typeof (bool) }), new object [] { true }));
-		ab.SetCustomAttribute (typeof (FooAttribute).GetConstructor (new Type [] {}), new byte [0]);
-		ab.Save ("TestSetCustomAttribute.dll");
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (FooAttribute).
+			GetConstructor (Type.EmptyTypes), new object [0]));
+		ab.Save ("TestSetCustomAttributeA.dll");
 
-		/* We should read back the assembly and check the attributes ... */
+		filename = Path.Combine (tempDir, "TestSetCustomAttributeA.dll");
+		check = AssemblyName.GetAssemblyName (filename);
+		Assert.AreEqual (CultureInfo.InvariantCulture, check.CultureInfo, "#A1");
+#if NET_2_0
+		Assert.AreEqual (AssemblyNameFlags.None, check.Flags, "#A2");
+#else
+		Assert.AreEqual (AssemblyNameFlags.PublicKey, check.Flags, "#A2");
+#endif
+		Assert.AreEqual ("TestSetCustomAttributeA, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", check.FullName, "#A3");
+#if NET_2_0
+		Assert.IsNull (check.GetPublicKey (), "#A4");
+#else
+		Assert.AreEqual (new byte [0], check.GetPublicKey (), "#A4");
+#endif
+#if NET_2_0
+		Assert.AreEqual (new byte [0], check.GetPublicKeyToken (), "#A5");
+#else
+		Assert.IsNull (check.GetPublicKeyToken (), "#A5");
+#endif
+		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, check.HashAlgorithm, "#A6");
+		Assert.IsNull (check.KeyPair, "#A7");
+		Assert.AreEqual ("TestSetCustomAttributeA", check.Name, "#A8");
+#if NET_2_0
+		Assert.AreEqual (ProcessorArchitecture.MSIL, check.ProcessorArchitecture, "#A9");
+#endif
+		Assert.AreEqual (new Version (0, 0, 0, 0), check.Version, "#A10");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, check.VersionCompatibility, "#A11");
+
+		using (FileStream fs = File.OpenRead (filename)) {
+			byte [] buffer = new byte [fs.Length];
+			fs.Read (buffer, 0, buffer.Length);
+			a = Assembly.Load (buffer);
+		}
+
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyVersionAttribute));
+		Assert.IsNotNull (attr, "#A12a");
+		Assert.AreEqual ("1.2.3.4", ((AssemblyVersionAttribute) attr).Version, "#A12b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyCultureAttribute));
+		Assert.IsNotNull (attr, "#A13a");
+		Assert.AreEqual ("bar", ((AssemblyCultureAttribute) attr).Culture, "#A13b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyAlgorithmIdAttribute));
+		Assert.IsNotNull (attr, "#A14a");
+		Assert.AreEqual ((uint) AssemblyHashAlgorithm.MD5, ((AssemblyAlgorithmIdAttribute) attr).AlgorithmId, "#A14b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyFlagsAttribute));
+		Assert.IsNotNull (attr, "#A15a");
+		Assert.AreEqual ((uint) 0xff, ((AssemblyFlagsAttribute) attr).Flags, "#A15b");
+		attr = Attribute.GetCustomAttribute (a, typeof (FooAttribute));
+		Assert.IsNotNull (attr, "#A16");
+
+		an = new AssemblyName ();
+		an.CultureInfo = new CultureInfo ("nl-BE");
+		an.Flags = AssemblyNameFlags.Retargetable;
+		an.Name = "TestSetCustomAttributeB";
+#if NET_2_0
+		an.ProcessorArchitecture = ProcessorArchitecture.IA64;
+#endif
+		an.Version = new Version (1, 3, 5, 7);
+		an.VersionCompatibility = AssemblyVersionCompatibility.SameDomain;
+
+		ab = domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Save, tempDir);
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyVersionAttribute).
+			GetConstructor (new Type [] { typeof (string) }), new object [] { "1.2.3.4" }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyCultureAttribute).
+			GetConstructor (new Type [] { typeof (string) }), new object [] { "en-US" }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyAlgorithmIdAttribute).
+			GetConstructor (new Type [] { typeof (AssemblyHashAlgorithm) }),
+			new object [] { AssemblyHashAlgorithm.MD5 }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyFlagsAttribute).
+			GetConstructor (new Type [] { typeof (uint) }), new object [] { (uint) 0x0100 }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (AssemblyDelaySignAttribute).
+			GetConstructor (new Type [] { typeof (bool) }), new object [] { true }));
+		ab.SetCustomAttribute (new CustomAttributeBuilder (typeof (FooAttribute).
+			GetConstructor (Type.EmptyTypes), new object [0]));
+		ab.Save ("TestSetCustomAttributeB.dll");
+
+		filename = Path.Combine (tempDir, "TestSetCustomAttributeB.dll");
+		check = AssemblyName.GetAssemblyName (filename);
+		Assert.AreEqual ("nl-BE", check.CultureInfo.Name, "#B1");
+#if NET_2_0
+		Assert.AreEqual (AssemblyNameFlags.Retargetable, check.Flags, "#B2");
+#else
+		Assert.AreEqual (AssemblyNameFlags.PublicKey | AssemblyNameFlags.Retargetable, check.Flags, "#B2");
+#endif
+		Assert.AreEqual ("TestSetCustomAttributeB, Version=1.3.5.7, Culture=nl-BE, PublicKeyToken=null, Retargetable=Yes", check.FullName, "#B3");
+#if NET_2_0
+		Assert.IsNull (check.GetPublicKey (), "#B4");
+#else
+		Assert.AreEqual (new byte [0], check.GetPublicKey (), "#B4");
+#endif
+#if NET_2_0
+		Assert.AreEqual (new byte [0], check.GetPublicKeyToken (), "#B5");
+#else
+		Assert.IsNull (check.GetPublicKeyToken (), "#B5");
+#endif
+		Assert.AreEqual (AssemblyHashAlgorithm.SHA1, check.HashAlgorithm, "#B6");
+		Assert.IsNull (check.KeyPair, "#B7");
+		Assert.AreEqual ("TestSetCustomAttributeB", check.Name, "#B8");
+#if NET_2_0
+		Assert.AreEqual (ProcessorArchitecture.MSIL, check.ProcessorArchitecture, "#B9");
+#endif
+		Assert.AreEqual (new Version (1, 3, 5, 7), check.Version, "#B10");
+		Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, check.VersionCompatibility, "#B11");
+
+		using (FileStream fs = File.OpenRead (filename)) {
+			byte [] buffer = new byte [fs.Length];
+			fs.Read (buffer, 0, buffer.Length);
+			a = Assembly.Load (buffer);
+		}
+
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyVersionAttribute));
+		Assert.IsNotNull (attr, "#B12a");
+		Assert.AreEqual ("1.2.3.4", ((AssemblyVersionAttribute) attr).Version, "#B12b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyCultureAttribute));
+		Assert.IsNotNull (attr, "#B13a");
+		Assert.AreEqual ("en-US", ((AssemblyCultureAttribute) attr).Culture, "#B13b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyAlgorithmIdAttribute));
+		Assert.IsNotNull (attr, "#B14a");
+		Assert.AreEqual ((uint) AssemblyHashAlgorithm.MD5, ((AssemblyAlgorithmIdAttribute) attr).AlgorithmId, "#B14b");
+		attr = Attribute.GetCustomAttribute (a, typeof (AssemblyFlagsAttribute));
+		Assert.IsNotNull (attr, "#B15a");
+		Assert.AreEqual ((uint) 0x0100, ((AssemblyFlagsAttribute) attr).Flags, "#B15b");
+		attr = Attribute.GetCustomAttribute (a, typeof (FooAttribute));
+		Assert.IsNotNull (attr, "#B16");
 	}
 
 	// strongname generated using "sn -k unit.snk"
