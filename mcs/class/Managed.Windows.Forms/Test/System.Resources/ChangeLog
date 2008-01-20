@@ -1,7 +1,6 @@
-2007-12-01  Olivier Dufour <olivier.duff@gmail.com>
+2008-01-20  Olivier Dufour <olivier.duff@gmail.com>
 
-	* ResXResourceReaderTest.cs: Add tests to check GetMetadataEnumerator 
-	and UseResXDataNode in the reader.
+	* ResXResourceReaderTest.cs: Add tests to check GetNodePosition.
 
 2007-05-23  Andreia Gaita <avidigal@novell.com>
 
