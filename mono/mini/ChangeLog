@@ -1,3 +1,8 @@
+2008-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Optimize the omit fp case to save two
+	stack slots.
+
 2008-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Disable	the new optimization if
