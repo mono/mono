@@ -93,6 +93,9 @@ namespace System.Resources {
 				}
 #endif
 
+				if (type == typeof (MemoryStream))
+					return new MemoryStream (buffer);
+
 				return Activator.CreateInstance(type, BindingFlags.CreateInstance
 					| BindingFlags.Public | BindingFlags.Instance, null, 
 					new object[] { new MemoryStream (buffer) }, culture);
