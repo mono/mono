@@ -1,3 +1,10 @@
+2008-01-20  Juraj Skripsky  <js@hotfeet.ch>
+
+	* ReadOnlyCollectionTest.cs: Add test to verify that ReadOnlyCollection
+	is indeed only a simple wrapper for a given IList.
+	Add tests for ICollection.IsSynchronized, IList.IsFixedSize and
+	IList.IsReadOnly.
+
 2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CollectionTest.cs: Added test for ICollection.CopyTo.

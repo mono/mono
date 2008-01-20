@@ -38,6 +38,13 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Collections.ObjectModel
 {
+	class SyncPretendingList<T> : List<T>, ICollection
+	{
+		bool ICollection.IsSynchronized {
+			get { return true; }
+		}
+	}
+
 	[TestFixture]
 	public class ReadOnlyCollectionTest
 	{
@@ -51,6 +58,38 @@ namespace MonoTests.System.Collections.ObjectModel
 			ReadOnlyCollection <int> r = new ReadOnlyCollection <int> (c);
 			Assert.AreEqual (10, r [0], "#1");
 			Assert.AreEqual (7, r [1], "#2");
+		}
+		
+		[Test]
+		public void IsSimpleWrapper ()
+		{
+			Collection <int> c = new Collection <int> ();
+			c.Add (1);
+			
+			ReadOnlyCollection <int> r = new ReadOnlyCollection <int> (c);
+			Assert.AreEqual (1, r.Count, "#1");			
+
+			c.Remove (1);
+			Assert.AreEqual (0, r.Count, "#2");			
+		}
+		
+		[Test]
+		public void IList_Properties ()
+		{
+			List <int> l = new List <int> ();
+			ReadOnlyCollection <int> r = new ReadOnlyCollection <int> (l);
+
+			Assert.IsTrue (((IList)r).IsReadOnly, "#1");
+			Assert.IsTrue (((IList)r).IsFixedSize, "#2");
+		}
+		
+		[Test]
+		public void ICollection_Properties ()
+		{
+			List <int> l = new SyncPretendingList <int> ();
+			ReadOnlyCollection <int> r = new ReadOnlyCollection <int> (l);
+
+			Assert.IsFalse (((ICollection)r).IsSynchronized, "#1");
 		}
 
 		[Test]

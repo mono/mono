@@ -46,15 +46,12 @@ namespace System.Collections.ObjectModel
 	public class ReadOnlyCollection <T> : IList <T>, ICollection <T>, IEnumerable <T>, IList, ICollection, IEnumerable
 	{
 		IList <T> list;
-		object syncRoot;
 		
 		public ReadOnlyCollection (IList <T> list)
 		{
 			if (list == null)
 				throw new ArgumentNullException ("list");
 			this.list = list;
-			ICollection c = list as ICollection;
-			syncRoot = (c != null) ? c.SyncRoot : new object ();
 		}
 
 		void ICollection<T>.Add (T item)
@@ -174,15 +171,15 @@ namespace System.Collections.ObjectModel
 		}
 
 		bool ICollection.IsSynchronized {
-			get { return Collection <T>.IsSynchronized (list); }
+			get { return false; }
 		}
 		
 		object ICollection.SyncRoot {
-			get { return syncRoot; }
+			get { return this; }
 		}
 
 		bool IList.IsFixedSize {
-			get { return Collection <T>.IsFixedSize (list); }
+			get { return true; }
 		}
 		
 		bool IList.IsReadOnly {
