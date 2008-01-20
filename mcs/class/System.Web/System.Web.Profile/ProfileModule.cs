@@ -40,6 +40,10 @@ namespace System.Web.Profile
 		ProfileBase profile;
 		string anonymousCookieName = null;
 
+#if TARGET_J2EE
+		bool _OnLeaveCalled;
+#endif
+
 		public ProfileModule ()
 		{
 		}
@@ -70,6 +74,10 @@ namespace System.Web.Profile
 			if (!ProfileManager.Enabled)
 				return;
 
+#if TARGET_J2EE
+			_OnLeaveCalled = false;
+#endif
+
 			if (HttpContext.Current.Request.IsAuthenticated) {
 				HttpCookie cookie = app.Request.Cookies [anonymousCookieName];
 				if (cookie != null && (cookie.Expires != DateTime.MinValue && cookie.Expires > DateTime.Now)) {
@@ -87,7 +95,9 @@ namespace System.Web.Profile
 				}
 			}
 		}
-
+#if TARGET_J2EE
+		internal
+#endif
 		void OnLeave (object o, EventArgs eventArgs)
 		{
 			if (!ProfileManager.Enabled)
@@ -95,6 +105,13 @@ namespace System.Web.Profile
 
 			if (!app.Context.ProfileInitialized)
 				return;
+
+#if TARGET_J2EE
+			if (_OnLeaveCalled)
+				return;
+
+			_OnLeaveCalled = true;
+#endif
 
 			if (ProfileManager.AutomaticSaveEnabled) {
 				profile = app.Context.Profile;
