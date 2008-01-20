@@ -1,3 +1,9 @@
+2008-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Add a 'check_exceptions' 
+	argument here too and use it to avoid checking for pending exceptions if 
+	possible.
+
 2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* assembly.c (build_assembly_name): add arg for passing the assembly
