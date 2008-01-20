@@ -1,3 +1,22 @@
+2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* assembly.c (build_assembly_name): add arg for passing the assembly
+	flags. Do not consider a PublicKey with value "null" valid.
+        (mono_assembly_name_parse_full): added boolean argument that will be
+	set if the assembly name contains a PublicKeyToken spec. Added support
+	for the Retargetable spec for which only Yes or No are allowed as valid
+	value. Consider assembly name invalid if Retargetable spec is set, but
+	either version, culture or public key (token) are not specified.
+	* metadata-internals.h: sync signature of mono_assembly_name_parse_full
+	with implementation in assembly.c.
+	* icall.c (fill_reflection_assembly_name): also copy assembly flags
+	from MonoAssemblyName.
+	(ves_icall_System_Reflection_AssemblyName_ParseName): use newly
+	introduced argument for mono_assembly_name_parse_full to know if the
+	assembly name has a PublicKeyToken spec, and if it has instruct
+	fill_reflection_assembly_name to use default value for keyToken (if
+	PublicKeyToken is null).
+
 2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): fixed ovf ops with
