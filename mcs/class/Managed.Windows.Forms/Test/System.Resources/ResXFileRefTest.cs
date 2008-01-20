@@ -302,6 +302,15 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		public void ConvertFrom_Type_MemoryStream ()
+		{
+			string fileRef = _tempFileUTF7 + ";" + typeof (MemoryStream).AssemblyQualifiedName;
+			using (MemoryStream ms = (MemoryStream)_converter.ConvertFrom (fileRef)) {
+				Assert.IsTrue (ms.Length > 0);
+			}
+		}
+
+		[Test]
 		public void ConvertTo ()
 		{
 			ResXFileRef r = new ResXFileRef ("mono.bmp", "Bitmap");

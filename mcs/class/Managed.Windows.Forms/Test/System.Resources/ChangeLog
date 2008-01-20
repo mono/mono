@@ -1,3 +1,7 @@
+2008-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* ResXFileRefTest.cs: Add a test for #354994.
+
 2008-01-20  Olivier Dufour <olivier.duff@gmail.com>
 
 	* ResXResourceReaderTest.cs: Add tests to check GetNodePosition.
