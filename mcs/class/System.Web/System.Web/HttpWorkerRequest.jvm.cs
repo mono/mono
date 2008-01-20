@@ -44,20 +44,35 @@ namespace System.Web
 			throw new NotImplementedException ("SendResponseFromMemory: unsafe buffers (IntPtr) are not supported");
 		}
 
-		internal void SendResponseFromMemory (char [] data, int length)
-		{
+		internal void SendResponseFromMemory (string data, int offset, int length, Encoding encoding) {
+			java.io.Writer writer = GetOutputWriter (encoding);
+			if (writer == null) //if was redirected - silently returns null
+				return;
+
+			writer.write (data, offset, length);
+		}
+
+		internal void SendResponseFromMemory (char [] data, int offset, int length, Encoding encoding) {
+			java.io.Writer writer = GetOutputWriter (encoding);
+			if (writer == null) //if was redirected - silently returns null
+				return;
+
+			writer.write (data, offset, length);
+		}
+
+		java.io.Writer GetOutputWriter (Encoding encoding) {
 			if (_outputWriter == null) {
 				IServiceProvider prov = this as IServiceProvider;
 				if (prov == null)
 					; //throw ;
 
-				_outputWriter = (java.io.Writer) prov.GetService (typeof (java.io.Writer));
+				javax.servlet.http.HttpServletResponse sr = (javax.servlet.http.HttpServletResponse) prov.GetService (typeof (javax.servlet.http.HttpServletResponse));
+				if (sr != null)
+					sr.setCharacterEncoding (encoding.HeaderName);
 
-				if (_outputWriter == null) //if was redirected - silently returns null
-					return;
+				return (java.io.Writer) prov.GetService (typeof (java.io.Writer));
 			}
-
-			_outputWriter.write (data, 0, length);
+			return _outputWriter;
 		}
 
 	}

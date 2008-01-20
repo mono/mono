@@ -157,9 +157,11 @@ namespace System.Web
 			int _position = 0;
 			int _freeSpace = _preferredLength;
 			char [] buffer = new char [_preferredLength];
+			readonly Encoding _encoding;
 
-			public CharBucket ()
+			public CharBucket (Encoding encoding)
 			{
+				_encoding = encoding;
 			}
 
 			public override int Length
@@ -214,7 +216,7 @@ namespace System.Web
 				if (_position == 0)
 					return;
 
-				wr.SendResponseFromMemory (buffer, _position);
+				wr.SendResponseFromMemory (buffer, 0, _position, _encoding);
 			}
 
 			public override void Send (Stream stream)
@@ -375,12 +377,7 @@ namespace System.Web
 				response.WriteHeaders (false);
 				HttpWorkerRequest wr = response.WorkerRequest;
 				// Direct write because not buffering
-				if (offset == 0) {
-					wr.SendResponseFromMemory (buffer, count);
-				}
-				else {
-					UnsafeWrite (wr, buffer, offset, count);
-				}
+				wr.SendResponseFromMemory (buffer, offset, count, response.ContentEncoding);
 				wr.FlushResponse (false);
 			}
 			else {
@@ -409,12 +406,7 @@ namespace System.Web
 				response.WriteHeaders (false);
 				HttpWorkerRequest wr = response.WorkerRequest;
 				// Direct write because not buffering
-				if (offset == 0) {
-					wr.SendResponseFromMemory (s.ToCharArray (), count);
-				}
-				else {
-					UnsafeWrite (wr, s.ToCharArray (), offset, count);
-				}
+				wr.SendResponseFromMemory (s, offset, count, response.ContentEncoding);
 				wr.FlushResponse (false);
 			}
 			else {
@@ -474,15 +466,6 @@ namespace System.Web
 			Array.Copy (buffer, offset, copy, 0, count);
 			wr.SendResponseFromMemory (copy, count);
 		}
-		void UnsafeWrite (HttpWorkerRequest wr, char [] buffer, int offset, int count)
-		{
-			if (count <= 0)
-				return;
-
-			char [] copy = new char [count];
-			Array.Copy (buffer, offset, copy, 0, count);
-			wr.SendResponseFromMemory (copy, count);
-		}
 #else
 		unsafe void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
 		{
@@ -518,13 +501,13 @@ namespace System.Web
 		void AppendBuffer (char [] buffer, int offset, int count)
 		{
 			if (!(cur_bucket is CharBucket))
-				AppendBucket (new CharBucket ());
+				AppendBucket (new CharBucket (response.ContentEncoding));
 
 			dirty = true;
 
 			while (count > 0) {
 				if (cur_bucket.FreeSpace == 0)
-					AppendBucket (new CharBucket ());
+					AppendBucket (new CharBucket (response.ContentEncoding));
 
 				int len = count;
 				int freeSpace = cur_bucket.FreeSpace;
@@ -541,13 +524,13 @@ namespace System.Web
 		void AppendBuffer (string buffer, int offset, int count)
 		{
 			if (!(cur_bucket is CharBucket))
-				AppendBucket (new CharBucket ());
+				AppendBucket (new CharBucket (response.ContentEncoding));
 
 			dirty = true;
 
 			while (count > 0) {
 				if (cur_bucket.FreeSpace == 0)
-					AppendBucket (new CharBucket ());
+					AppendBucket (new CharBucket (response.ContentEncoding));
 
 				int len = count;
 				int freeSpace = cur_bucket.FreeSpace;
