@@ -21,11 +21,16 @@
 //
 // Authors:
 //	Andreia Gaita	(avidigal@novell.com)
+//  Olivier Dufour  olivier.duff@gmail.com
 //
 
 #if NET_2_0
 using System;
 using System.Runtime.Serialization;
+using System.Drawing;
+using System.ComponentModel;
+using System.Reflection;
+using System.ComponentModel.Design;
 
 namespace System.Resources
 {
@@ -37,6 +42,7 @@ namespace System.Resources
 		private Type type;
 		private ResXFileRef fileRef;
 		private string comment;
+		private Point pos;
 
 		public string Comment {
 			get { return this.comment; }
@@ -56,22 +62,8 @@ namespace System.Resources
 			get { return this.value; }
 		}
 
-		public ResXDataNode (string name, object value)
+		public ResXDataNode (string name, object value) : this (name, value, Point.Empty)
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			if (name.Length == 0)
-				throw new ArgumentException ("name");
-
-			Type type = (value == null) ? typeof (object) : value.GetType ();
-			if ((value != null) && !type.IsSerializable) {
-				throw new InvalidOperationException (String.Format ("'{0}' of type '{1}' cannot be added because it is not serializable", name, type));
-			}
-
-			this.type = type;
-			this.name = name;
-			this.value = value;
 		}
 
 		public ResXDataNode (string name, ResXFileRef fileRef)
@@ -87,6 +79,57 @@ namespace System.Resources
 
 			this.name = name;
 			this.fileRef = fileRef;
+			pos = Point.Empty;
+		}
+
+		internal ResXDataNode (string name, object value, Point position)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (name.Length == 0)
+				throw new ArgumentException ("name");
+
+			Type type = (value == null) ? typeof (object) : value.GetType ();
+			if ((value != null) && !type.IsSerializable) {
+				throw new InvalidOperationException (String.Format ("'{0}' of type '{1}' cannot be added because it is not serializable", name, type));
+			}
+
+			this.type = type;
+			this.name = name;
+			this.value = value;
+			pos = position;
+		}
+
+		public Point GetNodePosition ()
+		{
+			return pos;
+		}
+		//TODO make this class internal for 1.1 and add field type_name, mime_type 
+		//move resolvetype and resolve value here
+
+		[MonoTODO ("Move the type parsing process from ResxResourceReader")]
+		public string GetValueTypeName (AssemblyName[] names)
+		{
+			return type.AssemblyQualifiedName;
+		}
+
+		[MonoTODO ("Move the type parsing process from ResxResourceReader")]
+		public string GetValueTypeName (ITypeResolutionService typeResolver)
+		{
+			return type.AssemblyQualifiedName;
+		}
+
+		[MonoTODO ("Move the value parsing process from ResxResourceReader")]
+		public Object GetValue (AssemblyName[] names)
+		{
+			return value;
+		}
+		
+		[MonoTODO ("Move the value parsing process from ResxResourceReader")]
+		public Object GetValue (ITypeResolutionService typeResolver)
+		{
+			return value;
 		}
 
 		#region ISerializable Members

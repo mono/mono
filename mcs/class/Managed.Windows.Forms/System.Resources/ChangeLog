@@ -1,3 +1,8 @@
+2008-01-20  Olivier Dufour <olivier.duff@gmail.com>
+
+	* ResXDataNode.cs: Add GetNodePosition, GetValueTypeName, GetValue
+	* ResXResourceReader.cs: Add Node Position
+
 2007-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResXResourceReader.cs: fix build.

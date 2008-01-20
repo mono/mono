@@ -25,7 +25,7 @@
 //	Paolo Molaro	lupus@ximian.com
 //	Peter Bartok	pbartok@novell.com
 //	Gert Driesen	drieseng@users.sourceforge.net
-//
+//  Olivier Dufour  olivier.duff@gmail.com
 
 using System;
 using System.Collections;
@@ -38,6 +38,7 @@ using System.Resources;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
 using System.Reflection;
+using System.Drawing;
 
 namespace System.Resources
 {
@@ -304,14 +305,16 @@ namespace System.Resources
 
 		private void ParseDataNode (bool meta)
 		{
-			string name = GetAttribute ("name");
-			string type_name = GetAttribute ("type");
-			string mime_type = GetAttribute ("mimetype");
 #if NET_2_0
 			Hashtable hashtable = (meta ? hashtm : hasht);
+			Point pos = new Point (xmlReader.LineNumber, xmlReader.LinePosition);
 #else
 			Hashtable hashtable = hasht;
 #endif
+			string name = GetAttribute ("name");
+			string type_name = GetAttribute ("type");
+			string mime_type = GetAttribute ("mimetype");
+
 
 			Type type = type_name == null ? null : ResolveType (type_name);
 
@@ -323,7 +326,7 @@ namespace System.Resources
 				
 #if NET_2_0
 				if (useResXDataNodes)
-					hashtable [name] = new ResXDataNode(name, null);
+					hashtable [name] = new ResXDataNode (name, null, pos);
 				else
 #endif
 					hashtable [name] = null;
@@ -381,7 +384,7 @@ namespace System.Resources
 					+ "was '{0}'.", obj));
 #if NET_2_0
 			if (useResXDataNodes)
-				hashtable [name] = new ResXDataNode(name, obj);
+				hashtable [name] = new ResXDataNode(name, obj, pos);
 			else
 #endif
 			hashtable [name] = obj;
