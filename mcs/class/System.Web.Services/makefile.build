@@ -12,12 +12,12 @@
   <property name="rules" value="RUNTIME"/>
 
   <property name="msbuild_file" value="System.Web.Services20.sln"/>
-  <property name="override_config" value="${ghconfiguration_ver}"/>
+  <property name="override_config" value="${ghconfiguration_ver}${configappend}"/>
   
   <!--Fileset describing project output files. Uset by copy/delete rules in framework-->
   <fileset id="output" basedir="${project::get-base-directory()}\bin" failonempty="true">
-	<include name="${ghconfiguration_ver}\System.Web.Services.jar"/>
-	<include name="${ghconfiguration_ver}\System.Web.Services.dll"/>
+	<include name="${ghconfiguration_ver}${configappend}\System.Web.Services.jar"/>
+	<include name="${ghconfiguration_ver}${configappend}\System.Web.Services.dll"/>
   </fileset>
 
   <!--END MANDATORY SECTION-->

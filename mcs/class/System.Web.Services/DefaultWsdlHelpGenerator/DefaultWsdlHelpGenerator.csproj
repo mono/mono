@@ -1,4 +1,22 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_prepare|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;JAVA</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>False</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>1</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>True</UseTestingPage>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -90,11 +108,27 @@
     </AdditionalClassPath>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20_prepare|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <SkipValidation>False</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>1</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>True</UseTestingPage>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <BaseAddress>285212672</BaseAddress>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Mainsoft.Web.AspnetConfig, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="myfaces, Version=1.6.65535.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="rt, Version=1.6.65535.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -102,6 +136,7 @@
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
+    <Reference Include="System.Web.Services, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
@@ -132,7 +167,7 @@
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-web-aspnetconfig="" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-web-aspnetconfig="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
