@@ -249,11 +249,19 @@ namespace System.Web.UI
 		}
 
 		string ResolveAppRelativeFromFullPath (string url) {
-			Uri uri = new Uri (url);
-			if (String.Compare (uri.Scheme, Page.Request.Url.Scheme, StringComparison.OrdinalIgnoreCase) == 0 &&
-				String.Compare (uri.Host, Page.Request.Url.Host, StringComparison.OrdinalIgnoreCase) == 0 &&
-				uri.Port == Page.Request.Url.Port)
-				return VirtualPathUtility.ToAppRelative (uri.PathAndQuery);
+			try {
+				Uri uri = new Uri (url);
+				if (String.Compare (uri.Scheme, Page.Request.Url.Scheme, StringComparison.OrdinalIgnoreCase) == 0 &&
+					String.Compare (uri.Host, Page.Request.Url.Host, StringComparison.OrdinalIgnoreCase) == 0 &&
+					uri.Port == Page.Request.Url.Port)
+					return VirtualPathUtility.ToAppRelative (uri.PathAndQuery);
+			}
+			catch (Exception e) {
+				//don't care
+#if DEBUG
+				Console.WriteLine (e.ToString ());
+#endif
+			}
 			return url;
 		}
 
