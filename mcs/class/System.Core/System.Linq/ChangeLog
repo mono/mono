@@ -1,5 +1,9 @@
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs: more ArgumentNullExceptions.
+
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: fix some more ArgumentNullException.
 
 2008-01-21  Jb Evain  <jbevain@novell.com>

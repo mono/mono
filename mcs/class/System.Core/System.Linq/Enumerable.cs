@@ -1822,10 +1822,16 @@ namespace System.Linq
 		#endregion
 
 		#region Skip
+
 		public static IEnumerable<TSource> Skip<TSource> (this IEnumerable<TSource> source, int count)
 		{
 			Check.Source (source);
 
+			return CreateSkipIterator (source, count);
+		}
+
+		static IEnumerable<TSource> CreateSkipIterator<TSource> (IEnumerable<TSource> source, int count)
+		{
 			int i = 0;
 			foreach (var element in source) {
 				if (i++ < count)
@@ -1834,17 +1840,20 @@ namespace System.Linq
 				yield return element;
 			}
 		}
+
 		#endregion
 
 		#region SkipWhile
 
-
-		public static IEnumerable<TSource> SkipWhile<TSource> (
-				this IEnumerable<TSource> source,
-				Func<TSource, bool> predicate)
+		public static IEnumerable<TSource> SkipWhile<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateSkipWhileIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateSkipWhileIterator<TSource> (IEnumerable<TSource> source, Func<TSource, bool> predicate)
+		{
 			bool yield = false;
 
 			foreach (TSource element in source) {
@@ -1858,11 +1867,15 @@ namespace System.Linq
 			}
 		}
 
-		public static IEnumerable<TSource> SkipWhile<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, int, bool> predicate)
+		public static IEnumerable<TSource> SkipWhile<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateSkipWhileIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateSkipWhileIterator<TSource> (IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+		{
 			int counter = 0;
 			bool yield = false;
 
@@ -2034,6 +2047,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			return CreateTakeIterator (source, count);
+		}
+
+		static IEnumerable<TSource> CreateTakeIterator<TSource> (IEnumerable<TSource> source, int count)
+		{
 			if (count <= 0)
 				yield break;
 
@@ -2054,6 +2072,11 @@ namespace System.Linq
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateTakeWhileIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateTakeWhileIterator<TSource> (IEnumerable<TSource> source, Func<TSource, bool> predicate)
+		{
 			foreach (TSource element in source) {
 				if (!predicate (element))
 					yield break;
@@ -2066,6 +2089,11 @@ namespace System.Linq
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateTakeWhileIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateTakeWhileIterator<TSource> (IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+		{
 			int counter = 0;
 			foreach (var element in source) {
 				if (!predicate (element, counter))
@@ -2265,7 +2293,12 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			var items = new List<TSource> (); // TODO: use a HashSet here
+			return CreateUnionIterator (first, second, comparer);
+		}
+
+		static IEnumerable<TSource> CreateUnionIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+		{
+			var items = new HashSet<TSource> ();
 			foreach (var element in first) {
 				if (! items.Contains (element, comparer)) {
 					items.Add (element);
@@ -2285,22 +2318,29 @@ namespace System.Linq
 
 		#region Where
 
-		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, bool> predicate)
+		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateWhereIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateWhereIterator<TSource> (IEnumerable<TSource> source, Func<TSource, bool> predicate)
+		{
 			foreach (TSource element in source)
 				if (predicate (element))
 					yield return element;
 		}
 
-
-		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, int, bool> predicate)
+		public static IEnumerable<TSource> Where<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
+			return CreateWhereIterator (source, predicate);
+		}
+
+		static IEnumerable<TSource> CreateWhereIterator<TSource> (this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+		{
 			int counter = 0;
 			foreach (TSource element in source) {
 				if (predicate (element, counter))
