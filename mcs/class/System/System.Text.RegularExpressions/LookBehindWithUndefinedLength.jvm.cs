@@ -8,7 +8,8 @@ namespace System.Text.RegularExpressions
 {
 	sealed class LookBehindWithUndefinedLength : IConstructType
 	{
-		private const string DEFINITION = @"\(\?<[=!].*(?:[\*\+]|\{\d+,\}).*\)";
+		//private const string DEFINITION = @"\(\?<[=!].*(?:[\*\+]|\{\d+,\}).*\)";
+		private const string DEFINITION = @"\(\?<[=!][^\)]*\)";
 
 		public bool HasConstruct (string pattern, RegexOptions options) {
 			return JavaUtils.IsMatch (pattern, DEFINITION);

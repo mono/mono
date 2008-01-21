@@ -45,17 +45,17 @@ namespace System.Text.RegularExpressions
 		private const string NUMBERED_GROUP_PATTERN_1 = @"\(\?<\d+>.*\)";
 		private const string NUMBERED_GROUP_PATTERN_2 = @"\(\?'\d+'.*\)";
 		private const string LEFT_PAREN = @"\(";
-		private const string ESCAPED_LEFT_PAREN_TEMPL = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823})\\\(";
+		private const string ESCAPED_LEFT_PAREN_TEMPL = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823})\\\(";
 		private const string NON_CAPTURED_GROUP_PATTERN = @"(?:^\?[:imnsx=!>-]|^\?<[!=])";
 		private const string NAMED_GROUP_PATTERN1 = @"^\?<([A-Za-z]\w*)>";
 		private const string NAMED_GROUP_PATTERN2 = @"^\?'([A-Za-z]\w*)'";
 		private const string NUMBERED_GROUP_PATTERN1 = @"^\?<(\d+)>";
 		private const string NUMBERED_GROUP_PATTERN2 = @"^\?'(\d+)'";
 		private const string QUESTION = "?";
-		private const string REMOVED_NAME_PATTERN_TEMPL1 = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\()\?<[A-Za-z]\w*>";
-		private const string REMOVED_NAME_PATTERN_TEMPL2 = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\()\?'[A-Za-z]\w*'";
-		private const string REMOVED_NUMBERED_PATTERN_TEMPL1 = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\()\?<\d+>";
-		private const string REMOVED_NUMBERED_PATTERN_TEMPL2 = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\()\?'\d+'";
+		private const string REMOVED_NAME_PATTERN_TEMPL1 = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\()\?<[A-Za-z]\w*>";
+		private const string REMOVED_NAME_PATTERN_TEMPL2 = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\()\?'[A-Za-z]\w*'";
+		private const string REMOVED_NUMBERED_PATTERN_TEMPL1 = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\()\?<\d+>";
+		private const string REMOVED_NUMBERED_PATTERN_TEMPL2 = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\()\?'\d+'";
 
 
 		public bool HasConstruct (string pattern, RegexOptions options) {

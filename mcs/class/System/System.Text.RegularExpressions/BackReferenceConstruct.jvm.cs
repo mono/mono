@@ -39,9 +39,9 @@ namespace System.Text.RegularExpressions
 {
 	sealed class BackReferenceConstruct : IConstructType
 	{
-		private const string NUMBER_BACK_REFERENCE_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823})\\(\d+)";
-		private const string NAME_1_BACK_REFERENCE_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823})\\k<(\w+)>";
-		private const string NAME_2_BACK_REFERENCE_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823})\\k'(\w+)'";
+		private const string NUMBER_BACK_REFERENCE_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823})\\(\d+)";
+		private const string NAME_1_BACK_REFERENCE_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823})\\k<(\w+)>";
+		private const string NAME_2_BACK_REFERENCE_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823})\\k'(\w+)'";
 		private const string NUMBER = @"\d+";
 
 

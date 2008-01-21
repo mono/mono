@@ -38,15 +38,15 @@ namespace System.Text.RegularExpressions
 {
 	sealed class ReplacedRegularCharacterConstruct : IConstructType
 	{
-		private const string BACKSLASH_IN_CC_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\\b(?=[^\[\]]*\])";
-		private const string BRACKET_IN_CC_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\[(?=[^\[\]]*\])";
+		private const string BACKSLASH_IN_CC_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\\b(?=[^\[\]]*\])";
+		private const string BRACKET_IN_CC_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\[(?=[^\[\]]*\])";
 		private const string BACKSLASH = @"\\u0008";
 		private const string BRACKET = @"\\[";
-		private const string LEFT_FIGURE_PAREN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*)(?<!(?:\A|[^\\])(?:[\\]{2})*\\[pP])\{(?!\d\d*(,(\d\d*)?)?\})";
-		private const string RIGHT_FIGURE_PAREN = @"(?<!(\A|[^\\])(\\{2})*(?:\\|(?:\{\d\d*(,(\d\d*)?)?)|(?:\\[pP]\{\w\w*)))\}";
+		private const string LEFT_FIGURE_PAREN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*)(?<!(?:\A|[^\\])(?:[\\]{2})*\\[pP])\{(?!\d\d*(,(\d\d*)?)?\})";
+		private const string RIGHT_FIGURE_PAREN = @"(?<!(?:[^\\]|\A)(\\{2})*(?:\\(?:[pP]\{\w\w*)?|(?:\{\d\d*(,(\d\d*)?)?)))\}";
 		private const string ESC_LEFT_FIGURE = @"\\{";
 		private const string ESC_RIGHT_FIGURE = @"\\}";
-		private const string NULL_PATTERN = @"(?<=(?:\A|[^\\])(?:[\\]{2})*)\\0(?!\d)";
+		private const string NULL_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*)\\0(?!\d)";
 		private const string JAVA_NULL = @"\\u0000";
 
 		public bool HasConstruct (string pattern, RegexOptions options) {

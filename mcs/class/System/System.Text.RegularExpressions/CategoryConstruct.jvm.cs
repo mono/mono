@@ -38,7 +38,7 @@ namespace System.Text.RegularExpressions
 {
 	sealed class CategoryConstruct : IConstructType
 	{
-		private const string DEFINITION = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\\[pP]\{)Is(?=\w+\})";
+		private const string DEFINITION = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\\[pP]\{)Is(?=\w+\})";
 		private const string IS_CATEGORY = @"In";
 
 		public bool HasConstruct (string pattern, RegexOptions options) {

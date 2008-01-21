@@ -39,7 +39,7 @@ namespace System.Text.RegularExpressions
 {
 	sealed class InlineExplicitCaptureConstruct : IConstructType
 	{
-		private const string DEFINITION = @"(?<=(?:\A|[^\\])(?:[\\]{2}){0,1073741823}\()\?[imsx]*n[-imsx]*:[^\)]+\)";
+		private const string DEFINITION = @"(?<=(?:[^\\]|\A)(?:[\\]{2}){0,1073741823}\()\?[imsx]*n[-imsx]*:[^\)]+\)";
 
 		public bool HasConstruct (string pattern, RegexOptions options) {
 			return JavaUtils.IsMatch (pattern, DEFINITION);
