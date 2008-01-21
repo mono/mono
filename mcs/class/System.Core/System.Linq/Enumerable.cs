@@ -584,9 +584,9 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateDistinctIterator<TSource> (IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
 		{
-			var items = new HashSet<TSource> ();
+			var items = new HashSet<TSource> (comparer);
 			foreach (var element in source) {
-				if (! items.Contains (element, comparer)) {
+				if (! items.Contains (element)) {
 					items.Add (element);
 					yield return element;
 				}
@@ -939,9 +939,9 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateIntersectIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			List<TSource> items = new List<TSource> (Distinct (first));
-			foreach (TSource element in second) {
-				if (items.Contains (element, comparer))
+			var items = new HashSet<TSource> (second, comparer);
+			foreach (TSource element in first) {
+				if (items.Contains (element))
 					yield return element;
 			}
 		}
@@ -2321,9 +2321,9 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateUnionIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			var items = new HashSet<TSource> ();
+			var items = new HashSet<TSource> (comparer);
 			foreach (var element in first) {
-				if (! items.Contains (element, comparer)) {
+				if (! items.Contains (element)) {
 					items.Add (element);
 					yield return element;
 				}
