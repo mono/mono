@@ -71,8 +71,8 @@ namespace Mono.Mozilla
 		{
 			get
 			{
-				if (document == null) {
-					document = ((DOM.Navigation) Navigation).Document;
+				if (navigation != null && document == null) {
+					document = navigation.Document;
 				}
 				return document as IDocument;
 			}
