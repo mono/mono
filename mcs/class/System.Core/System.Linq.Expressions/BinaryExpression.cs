@@ -45,7 +45,7 @@ namespace System.Linq.Expressions {
 		Expression right;
 		LambdaExpression conversion;
 		MethodInfo method;
-		bool lift_to_null;
+		bool lift_to_null, is_lifted;
 
 		public Expression Left {
 			get { return left; }
@@ -60,7 +60,7 @@ namespace System.Linq.Expressions {
 		}
 
 		public bool IsLifted {
-			get { throw new NotImplementedException (); }
+			get { return is_lifted;  }
 		}
 
 		public bool IsLiftedToNull {
@@ -87,13 +87,14 @@ namespace System.Linq.Expressions {
 		}
 
 		internal BinaryExpression (ExpressionType node_type, Type type, Expression left, Expression right, bool lift_to_null,
-					   MethodInfo method, LambdaExpression conversion) : base (node_type, type)
+					   bool is_lifted, MethodInfo method, LambdaExpression conversion) : base (node_type, type)
 		{
 			this.left = left;
 			this.right = right;
 			this.method = method;
-			this.lift_to_null = lift_to_null;
 			this.conversion = conversion;
+			this.lift_to_null = lift_to_null;
+			this.is_lifted = is_lifted;
 		}
 
 		static bool IsUnsigned (Type t)

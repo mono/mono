@@ -150,6 +150,29 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			return a;
 		}
+
+		public static bool operator == (OpClass a, OpClass b)
+		{
+			return ((object) a) == ((object) b);
+		}
+
+		public static bool operator != (OpClass a, OpClass b)
+		{
+			return ((object) a) != ((object) b);
+		}
+
+		//
+		// Required when you have == or !=
+		//
+		public override bool Equals (object o)
+		{
+			return ((object)this) == o;
+		}
+
+		public override int GetHashCode ()
+		{
+			return 1;
+		}
 	}
 
 	public class NoOpClass

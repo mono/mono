@@ -1,3 +1,14 @@
+2008-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	Introduce support for Nullable arguments, no code is generated for
+	these yet, its only tests + node creation behavior at this point.
+	
+	* Expression.cs (BinaryCoreCheck): Do not allow "int?" and "int"
+	as operators, they must both be nullable.
+
+	NullableTypes in the arguments are transformed into the underlying
+	values when doing the method validation.  
+
 2008-01-18  Miguel de Icaza  <miguel@novell.com>
 
 	* ParameterExpression.cs: Add emit support.

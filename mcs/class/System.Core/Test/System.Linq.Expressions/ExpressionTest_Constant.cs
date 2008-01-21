@@ -146,6 +146,15 @@ namespace MonoTests.System.Linq.Expressions
 			Func<T> fi = l.Compile ();
 			return fi ();
 		}
+
+		[Test]
+		public void NullableConstant_ToConstant ()
+		{
+			int? a = 1;
+			ConstantExpression c = Expression.Constant (a);
+			Assert.AreEqual (typeof (int), c.Type, "#1");
+			Assert.AreEqual (1, c.Value, "#2");
+		}
 		
 		[Test]
 		public void ConstantCodeGen ()

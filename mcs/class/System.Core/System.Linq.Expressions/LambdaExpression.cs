@@ -64,7 +64,12 @@ namespace System.Linq.Expressions {
 			// dumping these types in this class
 			//
 			Type owner_of_code = typeof (EmitContext);
-			
+
+
+			//
+			// FIXME: Need to force this to be verifiable, see:
+			// https://bugzilla.novell.com/show_bug.cgi?id=355005
+			//
 			Method = new DynamicMethod (GenName (), Owner.Type, ParamTypes, owner_of_code);
 			ig = Method.GetILGenerator ();
 		}

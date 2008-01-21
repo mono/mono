@@ -193,20 +193,32 @@ namespace System.Linq.Expressions {
 				if (pi.Length != 2)
 					throw new ArgumentException ("Must have only two parameters", "method");
 
-				if (left.Type != pi [0].ParameterType)
+				Type ltype = left.Type.IsValueType && IsNullable (left.Type) ? GetNullableOf(left.Type) : left.Type;
+				Type rtype = left.Type.IsValueType && IsNullable (right.Type) ? GetNullableOf(right.Type) :right.Type;
+					
+				if (ltype != pi [0].ParameterType)
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
 
-				if (right.Type != pi [1].ParameterType)
+				if (rtype != pi [1].ParameterType)
 					throw new InvalidOperationException ("right-side argument type does not match right expression type");
 
 				return method;
 			} else {
 				Type ltype = left.Type;
 				Type rtype = right.Type;
+				Type ultype = left.Type;
+				Type urtype = right.Type;
 
+				if (IsNullable (ltype))
+					ultype = GetNullableOf (ltype);
+
+				if (IsNullable (rtype))
+					urtype = GetNullableOf (rtype);
+
+				
 				// Use IsNumber to avoid expensive reflection.
-				if (IsNumber (ltype)){
-					if (ltype == rtype)
+				if (IsNumber (ultype)){
+					if (ultype == urtype && ltype == rtype)
 						return method;
 
 					if (oper_name != null){
@@ -221,6 +233,13 @@ namespace System.Linq.Expressions {
 						return method;
 				}
 
+				//
+				// == and != allow reference types without operators defined.
+				//
+				if (!ltype.IsValueType && !rtype.IsValueType &&
+				    (oper_name == "op_Equality" || oper_name == "op_Inequality"))
+					return null;
+				
 				throw new InvalidOperationException (
 					String.Format ("Operation {0} not defined for {1} and {2}", oper_name != null ? oper_name.Substring (3) : "is", ltype, rtype));
 			}
@@ -271,9 +290,59 @@ namespace System.Linq.Expressions {
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
 		{
-			Type result = method == null ? typeof (bool) : method.ReturnType;
+			Type result;
+			Type ltype = left.Type;
+			Type rtype = right.Type;
+			bool lnullable = IsNullable (ltype);
+			bool rnullable = IsNullable (rtype);
+			bool is_lifted;
 
-			return new BinaryExpression (et, result, left, right, method);
+			//
+			// Implement the rules as described in "Expression.Equal" method.  
+			//
+			if (method == null){
+				if (lnullable == false && rnullable == false){
+					is_lifted = false;
+					result = typeof (bool);
+				} else if (lnullable && rnullable){
+					is_lifted = true;
+					result = liftToNull ? typeof(bool?) : typeof (bool);
+				} else
+					throw new Exception ("Internal error: this should have been caught in BinaryCoreCheck");
+			} else {
+				ParameterInfo [] pi = method.GetParameters ();
+				Type mltype = pi [0].ParameterType;
+				Type mrtype = pi [1].ParameterType;
+				
+				if (ltype == mltype && rtype == mrtype){
+					is_lifted = false;
+					result = method.ReturnType;
+				}
+				else if (ltype.IsValueType && rtype.IsValueType &&
+					   ((lnullable && GetNullableOf (ltype) == mltype) ||
+					    (rnullable && GetNullableOf (rtype) == mrtype))){
+					is_lifted = true;
+					if (method.ReturnType == typeof(bool)){
+						result = liftToNull ? typeof(bool?) : typeof(bool);
+					} else {
+						//
+						// This behavior is not documented: what
+						// happens if the result is not typeof(bool), but
+						// the parameters are nullable: the result
+						// becomes nullable<returntype>
+						//
+						// See:
+						// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=323139
+						result = typeof (Nullable<>).MakeGenericType (method.ReturnType);
+							//Type.GetType ("System.Nullable`1[" + method.ReturnType.ToString () + "]");
+					}
+				} else {
+					is_lifted = false;
+					result = method.ReturnType;
+				}
+			}
+
+			return new BinaryExpression (et, result, left, right, liftToNull, is_lifted, method, null);
 		}
 
 		//
@@ -1301,6 +1370,14 @@ namespace System.Linq.Expressions {
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 
+		//
+		// returns the T in a a Nullable<T> type.
+		//
+		static Type GetNullableOf (Type type)
+		{
+			return type.GetGenericArguments () [0];
+		}
+		
 		//
 		// This method must be overwritten by derived classes to
 		// compile the expression
