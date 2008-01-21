@@ -18,6 +18,7 @@
   <fileset id="output" basedir="${project::get-base-directory()}\bin" failonempty="true">
 	<include name="${ghconfiguration}\Mainsoft.Web.jar"/>
 	<include name="${ghconfiguration}\Mainsoft.Web.dll"/>
+	<include name="${ghconfiguration}\Mainsoft.Web.XML"/>
   </fileset>
 
   <!--END MANDATORY SECTION-->
