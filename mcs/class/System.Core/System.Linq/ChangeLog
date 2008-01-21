@@ -1,3 +1,7 @@
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: fix IterateNullable.
+
 2008-01-15  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: clean the ToReadOnlyCollection extension

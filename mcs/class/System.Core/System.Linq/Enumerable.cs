@@ -1145,7 +1145,7 @@ namespace System.Linq
 			if (counter == 0)
 				return null;
 
-			return initValue;
+			return value;
 		}
 
 		public static TSource Max<TSource> (this IEnumerable<TSource> source)
