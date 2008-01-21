@@ -24,7 +24,7 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		protected override sealed Object getTreeStructureToSave (FacesContext facesContext) {
-			return null;
+			return String.Empty;
 		}
 
 		public override UIViewRoot restoreView (FacesContext facesContext,
