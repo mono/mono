@@ -1,5 +1,9 @@
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs: fix Concat et SelectMany.
+
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: fix range.
 
 2008-01-21  Jb Evain  <jbevain@novell.com>

@@ -465,6 +465,11 @@ namespace System.Linq
 		{
 			Check.FirstAndSecond (first, second);
 
+			return CreateConcatIterator (first, second);
+		}
+
+		static IEnumerable<TSource> CreateConcatIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second)
+		{
 			foreach (TSource element in first)
 				yield return element;
 			foreach (TSource element in second)
@@ -1716,7 +1721,7 @@ namespace System.Linq
 		{
 			int counter = 0;
 			foreach (TSource element in source) {
-				foreach (TResult item in selector (element, counter++))
+				foreach (TResult item in selector (element, counter))
 					yield return item;
 				counter++;
 			}
