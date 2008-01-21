@@ -1,3 +1,9 @@
+2008-01-21 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebUIValidation_2.0.js:
+	fixed CompareValidatorEvaluateIsValid.
+	works correctly with operator="datatypecheck"
+		
 2008-01-13 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* webform.js:

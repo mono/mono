@@ -380,18 +380,24 @@ webForm.CompareValidatorEvaluateIsValid = function (validator)
 		webForm.ValidatorSucceeded (validator);
 		return true;
 	}
-	var compare = "";
-	if (typeof(validator.controltocompare) == "string" && document.getElementById(validator.controltocompare))
-		compare = webForm.ValidatorTrim(webForm.ValidatorGetValue(validator.controltocompare));
-	else if (typeof(validator.valuetocompare) == "string")
-		compare = validator.valuetocompare;
-
+	
 	var left = webForm.Convert (ctrl_value, DataType, validator);
  	if (left == null) {
 		webForm.ValidatorFailed (validator);
 		return false;
 	}
+	
+	if (Operator == "datatypecheck") {
+		webForm.ValidatorSucceeded (validator);
+		return true;
+	}
       
+	var compare = null;
+	if (typeof(validator.controltocompare) == "string" && document.getElementById(validator.controltocompare))
+		compare = webForm.ValidatorTrim(webForm.ValidatorGetValue(validator.controltocompare));
+	else if (typeof(validator.valuetocompare) == "string")
+		compare = validator.valuetocompare;
+
 	var right = compare != null ? webForm.Convert (compare, DataType, validator) : null;
 	if (right == null) {
 		webForm.ValidatorSucceeded (validator);
