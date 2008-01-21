@@ -83,7 +83,7 @@ namespace Mono.CSharp.Linq
 			protected override MethodGroupExpr DoResolveOverload (EmitContext ec)
 			{
 				mg.CustomErrorHandler = this;
-				MethodGroupExpr rmg = mg.OverloadResolve (ec, Arguments, false, loc);
+				MethodGroupExpr rmg = mg.OverloadResolve (ec, ref Arguments, false, loc);
 				return rmg;
 			}
 

@@ -927,7 +927,7 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList (1);
 			arguments.Add (new Argument (e, Argument.AType.Expression));
 			operator_group = operator_group.OverloadResolve (
-				ec, arguments, false, loc);
+				ec, ref arguments, false, loc);
 
 			if (operator_group == null)
 				return null;
@@ -3100,10 +3100,10 @@ namespace Mono.CSharp {
 			base.EmitCall (ec, arguments);
 		}
 
-		public override MethodGroupExpr OverloadResolve (EmitContext ec, ArrayList arguments, bool may_fail, Location loc)
+		public override MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList arguments, bool may_fail, Location loc)
 		{
 			if ((ExtensionExpression.eclass & (ExprClass.Value | ExprClass.Variable)) == 0)
-				return base.OverloadResolve (ec, arguments, may_fail, loc);
+				return base.OverloadResolve (ec, ref arguments, may_fail, loc);
 
 			if (arguments == null)
 				arguments = new ArrayList (1);
@@ -3122,7 +3122,7 @@ namespace Mono.CSharp {
 		MethodGroupExpr ResolveOverloadExtensions (EmitContext ec, ArrayList arguments, NamespaceEntry ns, Location loc)
 		{
 			// Use normal resolve rules
-			MethodGroupExpr mg = base.OverloadResolve (ec, arguments, ns != null, loc);
+			MethodGroupExpr mg = base.OverloadResolve (ec, ref arguments, ns != null, loc);
 			if (mg != null)
 				return mg;
 
@@ -3132,7 +3132,7 @@ namespace Mono.CSharp {
 			// Search continues
 			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
 			if (e == null)
-				return base.OverloadResolve (ec, arguments, false, loc);
+				return base.OverloadResolve (ec, ref arguments, false, loc);
 
 			e.ExtensionExpression = ExtensionExpression;
 			return e.ResolveOverloadExtensions (ec, arguments, e.namespace_entry, loc);
@@ -3547,7 +3547,7 @@ namespace Mono.CSharp {
 		
 		public virtual void EmitArguments (EmitContext ec, ArrayList arguments)
 		{
-			Invocation.EmitArguments (ec, best_candidate, arguments, false, null);  
+			Invocation.EmitArguments (ec, arguments, false, null);  
 		}
 		
 		public virtual void EmitCall (EmitContext ec, ArrayList arguments)
@@ -3876,7 +3876,7 @@ namespace Mono.CSharp {
 		///            that is the best match of me on Arguments.
 		///
 		/// </summary>
-		public virtual MethodGroupExpr OverloadResolve (EmitContext ec, ArrayList Arguments,
+		public virtual MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList Arguments,
 			bool may_fail, Location loc)
 		{
 			bool method_params = false;
@@ -4004,7 +4004,7 @@ namespace Mono.CSharp {
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
 						ex_method_lookup.SetTypeArguments (type_arguments);
-						return ex_method_lookup.OverloadResolve (ec, Arguments, may_fail, loc);
+						return ex_method_lookup.OverloadResolve (ec, ref Arguments, may_fail, loc);
 					}
 				}
 				
@@ -4048,7 +4048,7 @@ namespace Mono.CSharp {
 							}
 						}
 						
-						if (VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
+						if (VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
 							throw new InternalErrorException ("Overload verification expected failure");
 						return null;
 					}
@@ -4132,7 +4132,9 @@ namespace Mono.CSharp {
 			//
 
 			best_candidate = (MethodBase) candidates [0];
-			method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+			if (delegate_type == null)
+				method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+
 			for (int ix = 1; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
 
@@ -4223,7 +4225,7 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-			if (!VerifyArgumentsCompat (ec, Arguments, arg_count, best_candidate,
+			if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate,
 				method_params, may_fail, loc))
 				return null;
 
@@ -4249,7 +4251,7 @@ namespace Mono.CSharp {
 			type_arguments = ta;
 		}
 
-		public bool VerifyArgumentsCompat (EmitContext ec, ArrayList arguments,
+		public bool VerifyArgumentsCompat (EmitContext ec, ref ArrayList arguments,
 							  int arg_count, MethodBase method,
 							  bool chose_params_expanded,
 							  bool may_fail, Location loc)
@@ -4259,9 +4261,11 @@ namespace Mono.CSharp {
 			int errors = Report.Errors;
 			Parameter.Modifier p_mod = 0;
 			Type pt = null;
-			int a_idx = 0;
+			int a_idx = 0, a_pos = 0;
 			Argument a = null;
-			for (; a_idx < arg_count; a_idx++) {
+			ArrayList params_initializers = null;
+
+			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = (Argument) arguments [a_idx];
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.ParameterModifier (a_idx);
@@ -4281,8 +4285,10 @@ namespace Mono.CSharp {
 					}
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
-						if (chose_params_expanded)
+						if (chose_params_expanded) {
+							params_initializers = new ArrayList (arg_count - a_idx);
 							pt = TypeManager.GetElementType (pt);
+						}
 					} else if (p_mod != 0) {
 						pt = TypeManager.GetElementType (pt);
 					}
@@ -4301,25 +4307,59 @@ namespace Mono.CSharp {
 					continue;
 				}
 		
-				if (TypeManager.IsEqual (a.Type, pt))
+				Expression conv;
+				if (TypeManager.IsEqual (a.Type, pt)) {
+					conv = a.Expr;
+				} else {
+					conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
+					if (conv == null)
+						break;
+				}
+
+				//
+				// Convert params arguments to an array initializer
+				//
+				if (params_initializers != null) {
+					params_initializers.Add (conv);
+					arguments.RemoveAt (a_idx--);
+					--arg_count;
 					continue;
+				}
 				
-				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
-				if (conv == null)
-					break;
-
-				if (!chose_params_expanded && (p_mod & Parameter.Modifier.PARAMS) != 0 && a.Type == TypeManager.null_type)
-					conv.Type = pd.ParameterType (a_idx);
-
 				// Update the argument with the implicit conversion
 				a.Expr = conv;
 			}
 
-			if (a_idx == arg_count)
-				return true;
+			//
+			// Fill not provided arguments required by params modifier
+			//
+			if (params_initializers == null && pd.HasParams && arg_count < pd.Count) {
+				if (arguments == null)
+					arguments = new ArrayList (1);
 
-			if (!may_fail && Report.Errors == errors)
-				Error_InvalidArguments (ec, loc, a_idx, method, a, pd, pt);
+				pt = pd.Types [GetApplicableParametersCount (method, pd) - 1];
+				pt = TypeManager.GetElementType (pt);
+				params_initializers = new ArrayList (0);
+			}
+
+			if (a_idx == arg_count) {
+				//
+				// Append an array argument with all params arguments
+				//
+				if (params_initializers != null) {
+					arguments.Add (new Argument (
+						new ArrayCreation (new TypeExpression (pt, loc), "[]",
+						params_initializers, loc).Resolve (ec)));
+				}
+				return true;
+			}
+
+			if (!may_fail && Report.Errors == errors) {
+				if (CustomErrorHandler != null)
+					CustomErrorHandler.NoExactMatch (ec, best_candidate);
+				else
+					Error_InvalidArguments (ec, loc, a_pos, method, a, pd, pt);
+			}
 			return false;
 		}
 	}

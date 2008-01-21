@@ -562,7 +562,7 @@ namespace Mono.CSharp {
 			}
 
 			return me.VerifyArgumentsCompat (
-					ec, args, arg_count, mb, 
+					ec, ref args, arg_count, mb, 
 					is_params_applicable || (!is_applicable && params_method),
 					false, loc);
 		}
@@ -674,8 +674,8 @@ namespace Mono.CSharp {
 						atype = atype.GetElementType ();
 						break;
 					case Parameter.Modifier.ARGLIST:
-						// TODO: investigate and test
-						throw new NotImplementedException ();
+						// __arglist is not valid
+						throw new InternalErrorException ("__arglist modifier");
 					default:
 						atype_modifier = Argument.AType.Expression;
 						break;
@@ -692,7 +692,9 @@ namespace Mono.CSharp {
 			MethodInfo invoke_method = Delegate.GetInvokeMethod (ec.ContainerType, type);
 			method_group.DelegateType = type;
 			method_group.CustomErrorHandler = this;
-			method_group = method_group.OverloadResolve (ec, CreateDelegateMethodArguments (invoke_method), false, loc);
+
+			ArrayList arguments = CreateDelegateMethodArguments (invoke_method);
+			method_group = method_group.OverloadResolve (ec, ref arguments, false, loc);
 			if (method_group == null)
 				return null;
 

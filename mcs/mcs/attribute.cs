@@ -85,7 +85,7 @@ namespace Mono.CSharp {
 		public readonly Expression LeftExpr;
 		public readonly string Identifier;
 
-		readonly ArrayList PosArguments;
+		ArrayList PosArguments;
 		ArrayList NamedArguments;
 
 		bool resolve_error;
@@ -432,7 +432,7 @@ namespace Mono.CSharp {
 			if (mg == null)
 				return null;
 
-			mg = mg.OverloadResolve (ec, PosArguments, false, Location);
+			mg = mg.OverloadResolve (ec, ref PosArguments, false, Location);
 			if (mg == null)
 				return null;
 			
@@ -452,46 +452,12 @@ namespace Mono.CSharp {
 			ParameterData pd = TypeManager.GetParameterData (constructor);
 
 			int pos_arg_count = PosArguments.Count;
-			int last_real_param = pd.Count;
-
 			pos_values = new object [pos_arg_count];
-
-			if (pd.HasParams) {
-				// When the params is not filled we need to put one
-				if (last_real_param > pos_arg_count) {
-					object [] new_pos_values = new object [pos_arg_count + 1];
-					pos_values.CopyTo (new_pos_values, 0);
-					new_pos_values [pos_arg_count] = new object [] {} ;
-					pos_values = new_pos_values;
-				}
-				last_real_param--;
-			}
-
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) PosArguments [j];
 
 				if (!a.Expr.GetAttributableValue (a.Type, out pos_values [j]))
 					return null;
-				
-				if (j < last_real_param)
-					continue;
-				
-				if (j == last_real_param) {
-					object [] array = new object [pos_arg_count - last_real_param];
-					array [0] = pos_values [j];
-					pos_values [j] = array;
-					continue;
-				}
-
-				object [] params_array = (object []) pos_values [last_real_param];
-				params_array [j - last_real_param] = pos_values [j];
-			}
-
-			// Adjust the size of the pos_values if it had params
-			if (last_real_param != pos_arg_count) {
-				object [] new_pos_values = new object [last_real_param + 1];
-				Array.Copy (pos_values, new_pos_values, last_real_param + 1);
-				pos_values = new_pos_values;
 			}
 
 			// Here we do the checks which should be done by corlib or by runtime.

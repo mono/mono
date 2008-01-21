@@ -4644,7 +4644,7 @@ namespace Mono.CSharp {
 
 	public abstract class ConstructorInitializer : Expression
 	{
-		readonly ArrayList argument_list;
+		ArrayList argument_list;
 		MethodGroupExpr base_constructor_group;
 		
 		public ConstructorInitializer (ArrayList argument_list, Location loc)
@@ -4700,7 +4700,7 @@ namespace Mono.CSharp {
 				return false;
 			
 			base_constructor_group = base_constructor_group.OverloadResolve (
-				ec, argument_list, false, loc);
+				ec, ref argument_list, false, loc);
 			
 			if (base_constructor_group == null)
 				return false;

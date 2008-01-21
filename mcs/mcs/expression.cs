@@ -46,9 +46,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (args != null) 
-				Invocation.EmitArguments (ec, mi, args, false, null);
-
+			Invocation.EmitArguments (ec, args, false, null);
 			ec.ig.Emit (OpCodes.Call, mi);
 			return;
 		}
@@ -66,7 +64,7 @@ namespace Mono.CSharp {
                                 return null;
 
                         args.Add (a);
-			mg = mg.OverloadResolve (ec, args, false, loc);
+			mg = mg.OverloadResolve (ec, ref args, false, loc);
 
 			if (mg == null)
 				return null;
@@ -1981,7 +1979,7 @@ namespace Mono.CSharp {
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 
-					union = union.OverloadResolve (ec, args, true, Location.Null);
+					union = union.OverloadResolve (ec, ref args, true, Location.Null);
 
 					if (union != null) {
 						MethodInfo mi = (MethodInfo) union;
@@ -2130,7 +2128,7 @@ namespace Mono.CSharp {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (left, Argument.AType.Expression));
 						args.Add (new Argument (left, Argument.AType.Expression));
-						if (left_operators.OverloadResolve (ec, args, true, Location.Null) != null)
+						if (left_operators.OverloadResolve (ec, ref args, true, Location.Null) != null)
 							Warning_UnintendedReferenceComparison (loc, "right", l);
 					}
 
@@ -2139,7 +2137,7 @@ namespace Mono.CSharp {
 						ArrayList args = new ArrayList (2);
 						args.Add (new Argument (right, Argument.AType.Expression));
 						args.Add (new Argument (right, Argument.AType.Expression));
-						if (right_operators.OverloadResolve (ec, args, true, Location.Null) != null)
+						if (right_operators.OverloadResolve (ec, ref args, true, Location.Null) != null)
 							Warning_UnintendedReferenceComparison (loc, "left", r);
 					}
 
@@ -2433,7 +2431,7 @@ namespace Mono.CSharp {
 				ArrayList args = new ArrayList (2);
 				args.Add (new Argument (left, Argument.AType.Expression));
 				args.Add (new Argument (right, Argument.AType.Expression));
-				ops = ops.OverloadResolve (ec, args, true, Location.Null);
+				ops = ops.OverloadResolve (ec, ref args, true, Location.Null);
 				return new BinaryMethod (type, (MethodInfo)ops, args);
 			}
 
@@ -3085,8 +3083,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (Arguments != null) 
-				Invocation.EmitArguments (ec, method, Arguments, false, null);
+			Invocation.EmitArguments (ec, Arguments, false, null);
 			
 			if (method is MethodInfo)
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -3100,30 +3097,21 @@ namespace Mono.CSharp {
 	// b, c, d... may be strings or objects.
 	//
 	public class StringConcat : Expression {
-		ArrayList operands;
-		bool invalid = false;
-		bool emit_conv_done = false;
-		//
-		// Are we also concating objects?
-		//
-		bool is_strings_only = true;
+		ArrayList arguments;
 		
 		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
 		{
 			this.loc = loc;
 			type = TypeManager.string_type;
 			eclass = ExprClass.Value;
-		
-			operands = new ArrayList (2);
+
+			arguments = new ArrayList (2);
 			Append (ec, left);
 			Append (ec, right);
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (invalid)
-				return null;
-			
 			return this;
 		}
 		
@@ -3134,119 +3122,54 @@ namespace Mono.CSharp {
 			//
 			StringConstant sc = operand as StringConstant;
 			if (sc != null) {
-// TODO: it will be better to do this silently as an optimalization
-// int i = 0;
-// string s = "" + i;
-// because this code has poor performace
-//				if (sc.Value.Length == 0)
-//					Report.Warning (-300, 3, Location, "Appending an empty string has no effect. Did you intend to append a space string?");
-
-				if (operands.Count != 0) {
-					StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
-					if (last_operand != null) {
-						operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value, last_operand.Location);
+				if (arguments.Count != 0) {
+					Argument last_argument = (Argument) arguments [arguments.Count - 1];
+					StringConstant last_expr_constant = last_argument.Expr as StringConstant;
+					if (last_expr_constant != null) {
+						last_argument.Expr = new StringConstant (
+							last_expr_constant.Value + sc.Value, sc.Location);
 						return;
 					}
 				}
+			} else {
+				//
+				// Multiple (3+) concatenation are resolved as multiple StringConcat instances
+				//
+				StringConcat concat_oper = operand as StringConcat;
+				if (concat_oper != null) {
+					arguments.AddRange (concat_oper.arguments);
+					return;
+				}
 			}
-			
-
-			//
-			// Multiple (3+) concatenation are resolved as multiple StringConcat instances
-			//
-			StringConcat concat_oper = operand as StringConcat;
-			if (concat_oper != null) {
-				operands.AddRange (concat_oper.operands);
-				return;
-			}			
 			
 			//
 			// Conversion to object
 			//
 			if (operand.Type != TypeManager.string_type) {
-				Expression no = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
-				
-				if (no == null) {
+				Expression expr = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
+				if (expr == null) {
 					Binary.Error_OperatorCannotBeApplied (loc, "+", TypeManager.string_type, operand.Type);
-					invalid = true;
+					return;
 				}
-				operand = no;
+				operand = expr;
 			}
 			
-			operands.Add (operand);
+			arguments.Add (new Argument (operand));
+		}
+
+		Expression CreateConcatInvocation ()
+		{
+			return new Invocation (
+				new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "String", loc), "Concat", loc),
+				arguments, true);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			MethodInfo concat_method = null;
-			
-			//
-			// Do conversion to arguments; check for strings only
-			//
-			
-			// This can get called multiple times, so we have to deal with that.
-			if (!emit_conv_done) {
-				emit_conv_done = true;
-				for (int i = 0; i < operands.Count; i ++) {
-					Expression e = (Expression) operands [i];
-					is_strings_only &= e.Type == TypeManager.string_type;
-				}
-				
-				for (int i = 0; i < operands.Count; i ++) {
-					Expression e = (Expression) operands [i];
-					
-					if (! is_strings_only && e.Type == TypeManager.string_type) {
-						// need to make sure this is an object, because the EmitParams
-						// method might look at the type of this expression, see it is a
-						// string and emit a string [] when we want an object [];
-						
-						e = EmptyCast.Create (e, TypeManager.object_type);
-					}
-					operands [i] = new Argument (e, Argument.AType.Expression);
-				}
-			}
-			
-			//
-			// Find the right method
-			//
-			switch (operands.Count) {
-			case 1:
-				//
-				// This should not be possible, because simple constant folding
-				// is taken care of in the Binary code.
-				//
-				throw new Exception ("how did you get here?");
-			
-			case 2:
-				concat_method = is_strings_only ? 
-					TypeManager.string_concat_string_string :
-					TypeManager.string_concat_object_object ;
-				break;
-			case 3:
-				concat_method = is_strings_only ? 
-					TypeManager.string_concat_string_string_string :
-					TypeManager.string_concat_object_object_object ;
-				break;
-			case 4:
-				//
-				// There is not a 4 param overlaod for object (the one that there is
-				// is actually a varargs methods, and is only in corlib because it was
-				// introduced there before.).
-				//
-				if (!is_strings_only)
-					goto default;
-				
-				concat_method = TypeManager.string_concat_string_string_string_string;
-				break;
-			default:
-				concat_method = is_strings_only ? 
-					TypeManager.string_concat_string_dot_dot_dot :
-					TypeManager.string_concat_object_dot_dot_dot ;
-				break;
-			}
-			
-			Invocation.EmitArguments (ec, concat_method, operands, false, null);
-			ec.ig.Emit (OpCodes.Call, concat_method);
+			Expression concat = CreateConcatInvocation ();
+			concat = concat.Resolve (ec);
+			if (concat != null)
+				concat.Emit (ec);
 		}
 	}
 
@@ -3274,7 +3197,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			Invocation.EmitArguments (ec, method, args, false, null);
+			Invocation.EmitArguments (ec, args, false, null);
 			
 			ig.Emit (OpCodes.Call, (MethodInfo) method);
 			ig.Emit (OpCodes.Castclass, type);
@@ -3339,7 +3262,7 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList (2);
 			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
-			operator_group = operator_group.OverloadResolve (ec, arguments, false, loc);
+			operator_group = operator_group.OverloadResolve (ec, ref arguments, false, loc);
 			if (operator_group == null) {
 				Error19 ();
 				return null;
@@ -4238,6 +4161,7 @@ namespace Mono.CSharp {
 		protected ArrayList Arguments;
 		Expression expr;
 		protected MethodGroupExpr mg;
+		bool arguments_resolved;
 		
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
@@ -4253,6 +4177,12 @@ namespace Mono.CSharp {
 			
 			Arguments = arguments;
 			loc = expr.Location;
+		}
+
+		public Invocation (Expression expr, ArrayList arguments, bool arguments_resolved)
+			: this (expr, arguments)
+		{
+			this.arguments_resolved = arguments_resolved;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -4316,8 +4246,7 @@ namespace Mono.CSharp {
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
-			if (Arguments != null)
-			{
+			if (Arguments != null && !arguments_resolved) {
 				for (int i = 0; i < Arguments.Count; ++i)
 				{
 					if (!((Argument)Arguments[i]).Resolve(ec, loc))
@@ -4383,7 +4312,7 @@ namespace Mono.CSharp {
 
 		protected virtual MethodGroupExpr DoResolveOverload (EmitContext ec)
 		{
-			return mg.OverloadResolve (ec, Arguments, false, loc);
+			return mg.OverloadResolve (ec, ref Arguments, false, loc);
 		}
 
 		bool IsSpecialMethodInvocation (MethodBase method)
@@ -4398,38 +4327,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		// <summary>
-		//   Emits the list of arguments as an array
-		// </summary>
-		static void EmitParams (EmitContext ec, ArrayList arguments, int idx, int count)
-		{
-			ILGenerator ig = ec.ig;
-			Type t = null;
-			for (int j = 0; j < count; j++){
-				Argument a = (Argument) arguments [j + idx];
-				if (j == 0) {
-					t = a.Expr.Type;
-					IntConstant.EmitInt (ig, count);
-					ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
-				}
-				
-				ig.Emit (OpCodes.Dup);
-				IntConstant.EmitInt (ig, j);
-
-				bool is_stobj, has_type_arg;
-				OpCode op = ArrayAccess.GetStoreOpcode (t, out is_stobj, out has_type_arg);
-				if (is_stobj)
-					ig.Emit (OpCodes.Ldelema, t);
-
-				a.Emit (ec);
-
-				if (has_type_arg)
-					ig.Emit (op, t);
-				else
-					ig.Emit (op);
-			}
-		}
-		
 		/// <summary>
 		///   Emits a list of resolved Arguments that are in the arguments
 		///   ArrayList.
@@ -4444,10 +4341,12 @@ namespace Mono.CSharp {
 		///   which will be duplicated before any other args. Only EmitCall
 		///   should be using this interface.
 		/// </summary>
-		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments, bool dup_args, LocalTemporary this_arg)
+		public static void EmitArguments (EmitContext ec, ArrayList arguments, bool dup_args, LocalTemporary this_arg)
 		{
-			ParameterData pd = mb == null ? null : TypeManager.GetParameterData (mb);
-			int top = pd.Count;
+			if (arguments == null)
+				return;
+
+			int top = arguments.Count;
 			LocalTemporary [] temps = null;
 			
 			if (dup_args && top != 0)
@@ -4455,42 +4354,7 @@ namespace Mono.CSharp {
 
 			int argument_index = 0;
 			Argument a;
-			for (int i = 0; i < top; i++){
-				if (pd != null){
-					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
-						Type p_type = pd.ParameterType (i);
-						int params_args_count = arguments == null ?
-							0 : arguments.Count - top + 1;
-
-						// Fill not provided argument
-						if (params_args_count <= 0) {
-							ILGenerator ig = ec.ig;
-							IntConstant.EmitInt (ig, 0);
-							ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (p_type));
-						} else {
-							//
-							// Special case if we are passing the same data as the
-							// params argument, we do not need to recreate an array.
-							//
-							a = (Argument) arguments [argument_index];
-							if (params_args_count == 1 && p_type == a.Type) {
-								++argument_index;
-								a.Emit (ec);
-							} else {
-								EmitParams (ec, arguments, i, params_args_count);
-								argument_index += params_args_count;
-							}
-						}
-
-						if (dup_args) {
-							ec.ig.Emit (OpCodes.Dup);
-							temps [i] = new LocalTemporary (p_type);
-							temps [i].Store (ec);
-						}
-						continue;
-					}
-				}
-
+			for (int i = 0; i < top; i++) {
 				a = (Argument) arguments [argument_index++];
 				a.Emit (ec);
 				if (dup_args) {
@@ -4690,7 +4554,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!omit_args)
-				EmitArguments (ec, method, Arguments, dup_args, this_arg);
+				EmitArguments (ec, Arguments, dup_args, this_arg);
 
 #if GMCS_SOURCE
 			if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
@@ -5120,7 +4984,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			method = method.OverloadResolve (ec, Arguments, false, loc);
+			method = method.OverloadResolve (ec, ref Arguments, false, loc);
 			if (method == null)
 				return null;
 
@@ -6343,7 +6207,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (1952, loc, "An expression tree cannot contain a method with variable arguments");
 			return null;
-		}		
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -6768,8 +6632,10 @@ namespace Mono.CSharp {
 					"System.NullReferenceException");
 			}
 
-			if (args != null)
-				args.Resolve (ec);
+			if (args != null) {
+				if (!args.Resolve (ec))
+					return null;
+			}
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (
@@ -7843,7 +7709,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = new IndexerMethodGroupExpr (ilist, loc);
-			mg = mg.OverloadResolve (ec, arguments, false, loc);
+			mg = mg.OverloadResolve (ec, ref arguments, false, loc);
 			if (mg == null)
 				return null;
 
