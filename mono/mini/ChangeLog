@@ -1,3 +1,7 @@
+2008-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h (MONO_ARCH_AOT_SUPPORTED): Disable AOT for apple x86.
+
 2008-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Optimize the omit fp case to save two
