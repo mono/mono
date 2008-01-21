@@ -32,6 +32,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
 
 namespace System.Linq.Expressions {
 
@@ -40,6 +41,11 @@ namespace System.Linq.Expressions {
 		internal Type [] ParamTypes;
 		internal DynamicMethod Method;
 		internal ILGenerator ig;
+
+		// When debugging:
+		internal AssemblyBuilder ab;
+		internal TypeBuilder tb;
+		internal MethodBuilder mb;
 		
 		static object mlock = new object ();
 		static int method_count;
@@ -70,12 +76,39 @@ namespace System.Linq.Expressions {
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			//
-			Method = new DynamicMethod (GenName (), Owner.Type, ParamTypes, owner_of_code);
-			ig = Method.GetILGenerator ();
+			string name = GenName ();
+			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
+				string fname = "linq" + (method_count-1) + ".dll";
+				ab = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (fname),
+										AssemblyBuilderAccess.RunAndSave, "/tmp");
+				ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
+				tb = b.DefineType ("LINQ", TypeAttributes.Public);
+				mb = tb.DefineMethod ("A", MethodAttributes.Static, Owner.Type, ParamTypes);
+				ig = mb.GetILGenerator ();
+			} else {
+				Method = new DynamicMethod (name, Owner.Type, ParamTypes, owner_of_code);
+			
+				ig = Method.GetILGenerator ();
+			}
 		}
 
 		internal Delegate CreateDelegate ()
 		{
+			if (ab != null){
+				tb.CreateType ();
+				ab.Save ("linq" + (method_count-1) + ".dll");
+
+				// This does not work, need to figure out why, for now
+				// makes debugging harder (only one linq file will work unless
+				// you do not compile them
+				Delegate d = Delegate.CreateDelegate (Owner.delegate_type, tb, mb, true);
+
+				ab = null;
+				tb = null;
+
+				//Console.WriteLine ("got: {0}", d);
+				return null;
+			}
 			return Method.CreateDelegate (Owner.delegate_type);			
 		}
 
@@ -167,6 +200,7 @@ namespace System.Linq.Expressions {
 				body.Emit (ec);
 
 				ec.ig.Emit (OpCodes.Ret);
+
 				lambda_delegate = ec.CreateDelegate ();
 			}
 			return lambda_delegate;

@@ -277,8 +277,23 @@ namespace System.Linq.Expressions {
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
 			Type result = method == null ? left.Type : method.ReturnType;
-
-			return new BinaryExpression (et, result, left, right, method);
+			bool is_lifted;
+			
+			if (method == null){
+				if (IsNullable (left.Type)){
+					if (!IsNullable (right.Type))
+						throw new Exception ("Assertion, internal error: left is nullable, requires right to be as well");
+					is_lifted = true;
+				} else
+					is_lifted = false;
+			} else {
+				//
+				// FIXME: implement
+				//
+				is_lifted = false;
+			}
+			
+			return new BinaryExpression (et, result, left, right, false, is_lifted, method, null);
 		}
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)

@@ -1,3 +1,19 @@
+2008-01-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Start code generation for nullables, currently this generates
+	incorrect code for things like:
+	
+	Expression<Func<int?, int?, int?>> e2 = (a, b) => a + b;
+	e2.Compile ().Invoke (null, 3))
+
+	This should return null, but returns something else.
+
+	* Introduce LINQ_DBG env variable, which generates a linq file in
+	/tmp;   It currently does not work as well as it should, as the
+	Func<> parameters do not mwatch the generated method.
+	Investigate. 
+	
+
 2008-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	Introduce support for Nullable arguments, no code is generated for

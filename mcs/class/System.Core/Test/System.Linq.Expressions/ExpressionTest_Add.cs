@@ -81,9 +81,10 @@ namespace MonoTests.System.Linq.Expressions
 			int? a = 1;
 			int? b = 2;
 
-			BinaryExpression expr = Expression.Add (Expression.Constant (a), Expression.Constant (b));
+			BinaryExpression expr = Expression.Add (Expression.Constant (a,typeof(int?)),
+								Expression.Constant (b, typeof(int?)));
 			Assert.AreEqual (ExpressionType.Add, expr.NodeType, "Add#05");
-			Assert.AreEqual (typeof (int), expr.Type, "Add#06");
+			Assert.AreEqual (typeof (int?), expr.Type, "Add#06");
 			Assert.IsNull (expr.Method, "Add#07");
 			Assert.AreEqual ("(1 + 2)", expr.ToString(), "Add#08");
 		}

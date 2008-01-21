@@ -105,13 +105,70 @@ namespace System.Linq.Expressions {
 			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
 		}
 
+		static void EmitMethod ()
+		{
+			throw new NotImplementedException ("Support for MethodInfo-based BinaryExpressions not yet supported");
+		}
+
+		static MethodInfo GetMethodNoPar (Type t, string name)
+		{
+			MethodInfo [] methods = t.GetMethods ();
+			foreach (MethodInfo m in methods){
+				if (m.Name != name)
+					continue;
+				if (m.GetParameters ().Length == 0)
+					return m;
+			}
+			throw new Exception (String.Format ("Internal error: method {0} with no parameters not found on {1}",
+							    name, t));
+		}
+		
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			OpCode opcode;
 
-			left.Emit (ec);
-			right.Emit (ec);
+			if (method != null){
+				EmitMethod ();
+				return;
+			}
+
+			Label? empty_value = null;
+			LocalBuilder ret = null;
+
+			if (IsLifted){
+				LocalBuilder vleft, vright;
+
+				empty_value = ig.DefineLabel ();
+				ret = ig.DeclareLocal (Type);
+				
+				vleft = ig.DeclareLocal (left.Type);
+				left.Emit (ec);
+				ig.Emit (OpCodes.Stloc, vleft);
+
+				vright = ig.DeclareLocal (right.Type);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Stloc, vright);
+
+				MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+				
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, empty_value.Value);
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, empty_value.Value);
+
+				MethodInfo get_value_or_default = GetMethodNoPar (left.Type, "GetValueOrDefault");
+				
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, get_value_or_default);
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, get_value_or_default);
+			} else {
+				left.Emit (ec);
+				right.Emit (ec);
+			}
 
 			bool is_unsigned = IsUnsigned (left.Type);
 
@@ -208,6 +265,20 @@ namespace System.Linq.Expressions {
 				throw new Exception (String.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
 			ig.Emit (opcode);
+
+			if (IsLifted){
+				Label skip = ig.DefineLabel ();
+				ig.Emit (OpCodes.Br, skip);
+				ig.MarkLabel (empty_value.Value);
+				ig.Emit (OpCodes.Ldloc, ret);
+				ig.Emit (OpCodes.Initobj, Type);
+				Label end = ig.DefineLabel ();
+				ig.Emit (OpCodes.Br, end);
+				
+				ig.MarkLabel (skip);
+				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
+				ig.MarkLabel (end);
+			}
 		}
 	}
 }

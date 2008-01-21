@@ -141,5 +141,19 @@ namespace MonoTests.System.Linq.Expressions
 			Func<int> fi = l.Compile ();
 			fi ();
 		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void ReturnValueCheck ()
+		{
+			ParameterExpression p1 = Expression.Parameter(typeof(int?), "va");
+			ParameterExpression p2 = Expression.Parameter(typeof(int?), "vb");
+			Expression add = Expression.Add(p1, p2);
+			
+
+			// This should throw, since the add.Type is "int?" and the return
+			// type we have here is int.
+			Expression<Func<int?, int?, int>> efu = Expression.Lambda<Func<int?,int?,int>> (add, p1, p2);
+		}
 	}
 }
