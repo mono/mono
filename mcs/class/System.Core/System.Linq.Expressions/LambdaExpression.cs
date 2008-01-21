@@ -42,13 +42,8 @@ namespace System.Linq.Expressions {
 		internal DynamicMethod Method;
 		internal ILGenerator ig;
 
-		// When debugging:
-		internal AssemblyBuilder ab;
-		internal TypeBuilder tb;
-		internal MethodBuilder mb;
-		
 		static object mlock = new object ();
-		static int method_count;
+		internal static int method_count;
 		static string GenName ()
 		{
 			lock (mlock){
@@ -77,38 +72,13 @@ namespace System.Linq.Expressions {
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			//
 			string name = GenName ();
-			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
-				string fname = "linq" + (method_count-1) + ".dll";
-				ab = Thread.GetDomain ().DefineDynamicAssembly (new AssemblyName (fname),
-										AssemblyBuilderAccess.RunAndSave, "/tmp");
-				ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
-				tb = b.DefineType ("LINQ", TypeAttributes.Public);
-				mb = tb.DefineMethod ("A", MethodAttributes.Static, Owner.Type, ParamTypes);
-				ig = mb.GetILGenerator ();
-			} else {
-				Method = new DynamicMethod (name, Owner.Type, ParamTypes, owner_of_code);
+			Method = new DynamicMethod (name, Owner.Type, ParamTypes, owner_of_code);
 			
-				ig = Method.GetILGenerator ();
-			}
+			ig = Method.GetILGenerator ();
 		}
 
 		internal Delegate CreateDelegate ()
 		{
-			if (ab != null){
-				tb.CreateType ();
-				ab.Save ("linq" + (method_count-1) + ".dll");
-
-				// This does not work, need to figure out why, for now
-				// makes debugging harder (only one linq file will work unless
-				// you do not compile them
-				Delegate d = Delegate.CreateDelegate (Owner.delegate_type, tb, mb, true);
-
-				ab = null;
-				tb = null;
-
-				//Console.WriteLine ("got: {0}", d);
-				return null;
-			}
 			return Method.CreateDelegate (Owner.delegate_type);			
 		}
 
@@ -198,10 +168,26 @@ namespace System.Linq.Expressions {
 				EmitContext ec = new EmitContext (this);
 				
 				body.Emit (ec);
-
 				ec.ig.Emit (OpCodes.Ret);
 
 				lambda_delegate = ec.CreateDelegate ();
+
+				if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
+					string fname = "linq" + (EmitContext.method_count-1) + ".dll";
+					AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
+						new AssemblyName (fname), AssemblyBuilderAccess.RunAndSave, "/tmp");
+					
+					ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
+					TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
+					MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
+					ec.ig = mb.GetILGenerator ();
+					
+					body.Emit (ec);
+					ec.ig.Emit (OpCodes.Ret);
+					
+					tb.CreateType ();
+					ab.Save (fname);
+				}
 			}
 			return lambda_delegate;
 		}
