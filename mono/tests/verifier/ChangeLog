@@ -1,3 +1,11 @@
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldftn_no_visibility.il: added. visibility
+	check for ldftn.
+
+	* unverifiable_ldvirtftn_no_visibility.il: added. visibility
+	check for ldvirtftn.
+
 2008-01-18 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_tests.sh: added tests for ovf math with floats.
