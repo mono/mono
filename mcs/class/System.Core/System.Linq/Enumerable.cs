@@ -853,7 +853,7 @@ namespace System.Linq
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector,
 			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
-			IEqualityComparer<TKey> comparer)		
+			IEqualityComparer<TKey> comparer)
 		{
 			throw new NotImplementedException ();
 		}
@@ -914,6 +914,11 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
+			return CreateIntersectIterator (first, second, comparer);
+		}
+
+		static IEnumerable<TSource> CreateIntersectIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+		{
 			List<TSource> items = new List<TSource> (Distinct (first));
 			foreach (TSource element in second) {
 				if (items.Contains (element, comparer))
@@ -1523,6 +1528,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			return CreateOfTypeIterator<TResult> (source);
+		}
+
+		static IEnumerable<TResult> CreateOfTypeIterator<TResult> (IEnumerable source)
+		{
 			foreach (object element in source)
 				if (element is TResult)
 					yield return (TResult) element;
@@ -1580,6 +1590,11 @@ namespace System.Linq
 			if (count < 0 || upto > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
+			return CreateRangeIterator (start, upto);
+		}
+
+		static IEnumerable<int> CreateRangeIterator (int start, int upto)
+		{
 			for (int i = start; i <= upto; i++)
 				yield return i;
 		}
@@ -1593,6 +1608,11 @@ namespace System.Linq
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ();
 
+			return CreateRepeatIterator (element, count);
+		}
+
+		static IEnumerable<TResult> CreateRepeatIterator<TResult> (TResult element, int count)
+		{
 			for (int i = 0; i < count; i++)
 				yield return element;
 		}
@@ -1606,7 +1626,12 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			List<TSource> list = new List<TSource> (source);
+			return CreateReverseIterator (source);
+		}
+
+		static IEnumerable<TSource> CreateReverseIterator<TSource> (IEnumerable<TSource> source)
+		{
+			var list = new List<TSource> (source);
 			list.Reverse ();
 			return list;
 		}
@@ -1615,20 +1640,28 @@ namespace System.Linq
 
 		#region Select
 
-		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source,
-				Func<TSource, TResult> selector)
+		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, TResult> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
+			return CreateSelectIterator (source, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectIterator<TSource, TResult> (IEnumerable<TSource> source, Func<TSource, TResult> selector)
+		{
 			foreach (TSource element in source)
 				yield return selector (element);
 		}
 
-		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source,
-				Func<TSource, int, TResult> selector)
+		public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, int, TResult> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
+			return CreateSelectIterator (source, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectIterator<TSource, TResult> (IEnumerable<TSource> source, Func<TSource, int, TResult> selector)
+		{
 			int counter = 0;
 			foreach (TSource element in source) {
 				yield return selector (element, counter);
@@ -1640,22 +1673,29 @@ namespace System.Linq
 
 		#region SelectMany
 
-		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source,
-				Func<TSource, IEnumerable<TResult>> selector)
+		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
+			return CreateSelectManyIterator (source, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TResult> (IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector)
+		{
 			foreach (TSource element in source)
 				foreach (TResult item in selector (element))
 					yield return item;
 		}
 
-
-		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source,
-				Func<TSource, int, IEnumerable<TResult>> selector)
+		public static IEnumerable<TResult> SelectMany<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, int, IEnumerable<TResult>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
+			return CreateSelectManyIterator (source, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TResult> (IEnumerable<TSource> source, Func<TSource, int, IEnumerable<TResult>> selector)
+		{
 			int counter = 0;
 			foreach (TSource element in source) {
 				foreach (TResult item in selector (element, counter++))
@@ -1669,16 +1709,28 @@ namespace System.Linq
 		{
 			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
 
+			return CreateSelectManyIterator (source, collectionSelector, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TCollection, TResult> (IEnumerable<TSource> source,
+			Func<TSource, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
+		{
 			foreach (TSource element in source)
 				foreach (TCollection collection in collectionSelector (element))
 					yield return selector (element, collection);
 		}
 
 		public static IEnumerable<TResult> SelectMany<TSource, TCollection, TResult> (this IEnumerable<TSource> source,
-		Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
+			Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
 		{
 			Check.SourceAndCollectionSelectors (source, collectionSelector, selector);
 
+			return CreateSelectManyIterator (source, collectionSelector, selector);
+		}
+
+		static IEnumerable<TResult> CreateSelectManyIterator<TSource, TCollection, TResult> (IEnumerable<TSource> source,
+			Func<TSource, int, IEnumerable<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> selector)
+		{
 			int counter = 0;
 			foreach (TSource element in source)
 				foreach (TCollection collection in collectionSelector (element, counter++))
