@@ -18,7 +18,7 @@ namespace from
 		{
 			int[] i2 = new int [] { 0, 1 };
 			int[] i_b = new int [] { 0, 1 };
-			ITest[] join_test = null;
+			ITest[] join_test = new ITest[0];
 			
 			IEnumerable<int> e;
 			IEnumerable<IGrouping<int,int>> g;
