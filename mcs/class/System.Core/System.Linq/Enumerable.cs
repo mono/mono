@@ -543,6 +543,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			return CreateDefaultIfEmptyIterator (source, defaultValue);
+		}
+
+		static IEnumerable<TSource> CreateDefaultIfEmptyIterator<TSource> (IEnumerable<TSource> source, TSource defaultValue)
+		{
 			bool empty = true;
 			foreach (TSource item in source) {
 				empty = false;
@@ -569,7 +574,12 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			var items = new List<TSource> (); // TODO: use a HashSet here
+			return CreateDistinctIterator (source, comparer);
+		}
+
+		static IEnumerable<TSource> CreateDistinctIterator<TSource> (IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
+		{
+			var items = new HashSet<TSource> ();
 			foreach (var element in source) {
 				if (! items.Contains (element, comparer)) {
 					items.Add (element);
@@ -651,7 +661,12 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			var items = new List<TSource> (Distinct (second));
+			return CreateExceptIterator (first, second, comparer);
+		}
+
+		static IEnumerable<TSource> CreateExceptIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
+		{
+			var items = new HashSet<TSource> (Distinct (second));
 			foreach (TSource element in first) {
 				if (! items.Contains (element, comparer))
 					yield return element;
@@ -1585,12 +1600,15 @@ namespace System.Linq
 
 		public static IEnumerable<int> Range (int start, int count)
 		{
-			int upto = (start + count - 1);
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
 
-			if (count < 0 || upto > int.MaxValue)
+			long upto = ((long) start + count) - 1;
+
+			if (upto > int.MaxValue)
 				throw new ArgumentOutOfRangeException ();
 
-			return CreateRangeIterator (start, upto);
+			return CreateRangeIterator (start, (int) upto);
 		}
 
 		static IEnumerable<int> CreateRangeIterator (int start, int upto)
