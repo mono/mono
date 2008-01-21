@@ -13,14 +13,12 @@ System.Linq.Expressions/ExpressionTest_CallWithExpression.cs
 System.Linq.Expressions/ExpressionTest_Condition.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Divide.cs
-System.Linq.Expressions/ExpressionTest_Equal.cs
 System.Linq.Expressions/ExpressionTest_GreaterThan.cs
 System.Linq.Expressions/ExpressionTest_GreaterThanOrEqual.cs
 System.Linq.Expressions/ExpressionTest_Lambda.cs
 System.Linq.Expressions/ExpressionTest_LessThan.cs
 System.Linq.Expressions/ExpressionTest_LessThanOrEqual.cs
 System.Linq.Expressions/ExpressionTest_LeftShift.cs
-System.Linq.Expressions/ExpressionTest_Lift.cs
 System.Linq.Expressions/ExpressionTest_MakeBinary.cs
 System.Linq.Expressions/ExpressionTest_Modulo.cs
 System.Linq.Expressions/ExpressionTest_MultiplyChecked.cs
