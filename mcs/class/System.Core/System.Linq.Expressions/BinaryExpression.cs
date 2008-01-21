@@ -267,17 +267,15 @@ namespace System.Linq.Expressions {
 			ig.Emit (opcode);
 
 			if (IsLifted){
+				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
+
 				Label skip = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br, skip);
 				ig.MarkLabel (empty_value.Value);
 				ig.Emit (OpCodes.Ldloc, ret);
 				ig.Emit (OpCodes.Initobj, Type);
-				Label end = ig.DefineLabel ();
-				ig.Emit (OpCodes.Br, end);
 				
 				ig.MarkLabel (skip);
-				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
-				ig.MarkLabel (end);
 			}
 		}
 	}
