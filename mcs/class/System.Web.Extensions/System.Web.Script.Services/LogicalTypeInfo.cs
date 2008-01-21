@@ -251,12 +251,12 @@ this._failed = null;
 {0}.get_path = function() {{ return {0}._staticInstance.get_path(); }}
 {0}.set_timeout = function(value) {{ {0}._staticInstance.set_timeout(value); }}
 {0}.get_timeout = function() {{ return {0}._staticInstance.get_timeout(); }}
-{0}.set_defaultUserContext = function(value) {{ {0}._staticInstance.set_userContext(value); }}
-{0}.get_defaultUserContext = function() {{ return {0}._staticInstance.get_userContext(); }}
-{0}.set_defaultSucceededCallback = function(value) {{ {0}._staticInstance.set_succeeded(value); }}
-{0}.get_defaultSucceededCallback = function() {{ return {0}._staticInstance.get_succeeded(); }}
-{0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance.set_failed(value); }}
-{0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance.get_failed(); }}
+{0}.set_defaultUserContext = function(value) {{ {0}._staticInstance.set_defaultUserContext(value); }}
+{0}.get_defaultUserContext = function() {{ return {0}._staticInstance.get_defaultUserContext(); }}
+{0}.set_defaultSucceededCallback = function(value) {{ {0}._staticInstance.set_defaultSucceededCallback(value); }}
+{0}.get_defaultSucceededCallback = function() {{ return {0}._staticInstance.get_defaultSucceededCallback(); }}
+{0}.set_defaultFailedCallback = function(value) {{ {0}._staticInstance.set_defaultFailedCallback(value); }}
+{0}.get_defaultFailedCallback = function() {{ return {0}._staticInstance.get_defaultFailedCallback(); }}
 {0}.set_path(""{1}"");",
 			service, filePath);
 
