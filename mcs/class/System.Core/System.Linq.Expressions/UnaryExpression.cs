@@ -28,6 +28,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -75,6 +76,12 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
+			var il = ec.ig;
+
+			operand.Emit (ec);
+
+			bool is_unsigned = IsUnsigned (operand.Type);
+
 			throw new NotImplementedException ();
 		}
 	}

@@ -1385,6 +1385,14 @@ namespace System.Linq.Expressions {
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 
+		protected static bool IsUnsigned (Type t)
+		{
+			if (t.IsPointer)
+				return IsUnsigned (t.GetElementType ());
+
+			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
+		}
+
 		//
 		// returns the T in a a Nullable<T> type.
 		//

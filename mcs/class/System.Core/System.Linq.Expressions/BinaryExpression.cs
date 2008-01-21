@@ -97,14 +97,6 @@ namespace System.Linq.Expressions {
 			this.is_lifted = is_lifted;
 		}
 
-		static bool IsUnsigned (Type t)
-		{
-			if (t.IsPointer)
-				return IsUnsigned (t.GetElementType ());
-
-			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
-		}
-
 		static void EmitMethod ()
 		{
 			throw new NotImplementedException ("Support for MethodInfo-based BinaryExpressions not yet supported");

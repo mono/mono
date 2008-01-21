@@ -1,3 +1,9 @@
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, UnaryExpression.cs, BinaryExpression.cs:
+	Move the IsUnsigned helper from BinaryExpression to Expression,
+	so it can be used in UnaryExpression.
+
 2008-01-21  Miguel de Icaza  <miguel@novell.com>
 
 	* Start code generation for nullables, currently this generates
