@@ -1,5 +1,9 @@
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs (Iterate): protect against null selectors.
+
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: fix IterateNullable.
 
 2008-01-15  Jb Evain  <jbevain@novell.com>

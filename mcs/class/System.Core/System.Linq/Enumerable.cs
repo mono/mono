@@ -1087,7 +1087,7 @@ namespace System.Linq
 
 		static T Iterate<T> (IEnumerable<T> source, T initValue, Func<T, T, bool> selector)
 		{
-			Check.Source (source);
+			Check.SourceAndSelector (source, selector);
 
 			int counter = 0;
 			foreach (var element in source) {
@@ -1129,7 +1129,7 @@ namespace System.Linq
 
 		static T? IterateNullable<T> (IEnumerable<T?> source, T initValue, Func<T?, T?, bool> selector) where T : struct
 		{
-			Check.Source (source);
+			Check.SourceAndSelector (source, selector);
 
 			int counter = 0;
 			T? value = initValue;
