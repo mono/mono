@@ -68,7 +68,7 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void Number ()
 		{
-			var up = Expression.UnaryPlus (Expression.Constant (1));
+			var up = Expression.UnaryPlus (1.ToConstant ());
 			Assert.AreEqual ("+1", up.ToString ());
 		}
 

@@ -268,4 +268,12 @@ namespace MonoTests.System.Linq.Expressions
 			return a;
 		}
 	}
+
+	static class ExpressionExtensions {
+
+		public static ConstantExpression ToConstant<T> (this T t)
+		{
+			return Expression.Constant (t);
+		}
+	}
 }
