@@ -1044,17 +1044,20 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 
-		private void SelectedObjectsChanged (object sender, EventArgs args) {
-			SelectedGridItemChanged (sender, new SelectedGridItemChangedEventArgs (property_grid.SelectedGridItem, property_grid.SelectedGridItem));
+		private void SelectedObjectsChanged (object sender, EventArgs args) 
+		{
+			SelectedGridItemChanged (sender, new SelectedGridItemChangedEventArgs (property_grid.SelectedGridItem, null));
 		}
 
-		private void SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) {
+		private void SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e) 
+		{
 			grid_textbox_Hide ();
+
+			if (e.NewSelection == null)
+				return;
 			if (e.OldSelection != null)
 				InvalidateGridItemLabel (e.OldSelection);
 				
-			if (e.NewSelection == null)
-				return;
 
 			InvalidateGridItemLabel (e.NewSelection);
 

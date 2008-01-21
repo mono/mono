@@ -1,5 +1,11 @@
 2008-01-21  Ivan N. Zlatev  <contact@i-nz.net>
 
+	 * PropertyGridView.cs: Just hide the grid textbox and do nothing more 
+	 when the current object selection changes. 
+	 Fixes failing test SelectedObject_Null2.B5.
+
+2008-01-21  Ivan N. Zlatev  <contact@i-nz.net>
+
 	 * PropertyGrid.cs: Process Browsable properties with 
 	 DesignerSerializationVisibilityAttribute.Content as being expandable.
 	 This seems also what MS does. Without this e.g SplitContainer.Panel1/2
