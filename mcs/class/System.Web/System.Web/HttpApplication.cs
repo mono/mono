@@ -1018,12 +1018,6 @@ namespace System.Web {
 			}
 #if TARGET_J2EE
 			if (doProcessHandler) {
-				foreach (IHttpModule module in Modules) {
-					if (module is System.Web.Profile.ProfileModule) {
-						((System.Web.Profile.ProfileModule) module).OnLeave (this, EventArgs.Empty);
-						break;
-					}
-				}
 				yield return false;
 				goto processHandler;
 			}
