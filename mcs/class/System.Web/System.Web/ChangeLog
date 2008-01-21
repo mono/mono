@@ -1,3 +1,8 @@
+2008-01-21  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpRequest.cs: Form validation: ensure the collection is accessible after
+		validation failed.
+
 2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
 
 	* HttpRequest.cs (get_UrlReferrer): Handle case when headers contain

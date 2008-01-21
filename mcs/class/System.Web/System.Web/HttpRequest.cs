@@ -608,8 +608,8 @@ namespace System.Web {
 				}
 
 				if (validate_form && !checked_form){
-					ValidateNameValueCollection ("Form", form);
 					checked_form = true;
+					ValidateNameValueCollection ("Form", form);
 				}
 				
 				return form;
