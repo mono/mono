@@ -4,7 +4,7 @@
 // passing simple type parameters and the user context.  
 function AddWithContext(a,  b, userContext)
 {
-    Samples.AspNet.WebService.Add(a, b, 
+    Sys.Net.MultipleCallers.WebService.Add(a, b, 
     SucceededCallbackWithContext, FailedCallback, userContext, null);
 }
 
@@ -13,7 +13,7 @@ function AddWithContext(a,  b, userContext)
 // passing the method name.  
 function AddWithMethod(a,  b)
 {
-    Samples.AspNet.WebService.Add(a, b, 
+    Sys.Net.MultipleCallers.WebService.Add(a, b, 
     SucceededCallbackWithContext, FailedCallback);
 }
 

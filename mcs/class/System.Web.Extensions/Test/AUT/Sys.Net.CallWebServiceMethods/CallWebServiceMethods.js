@@ -4,7 +4,7 @@
 // passing the callback function. 
 function GetNoReturn()
 {
-    Samples.AspNet.WebService.GetServerTime();
+    Sys.Net.CallWebServiceMethods.WebService.GetServerTime();
     alert("This method does not return a value.");
     
 }
@@ -14,7 +14,7 @@ function GetNoReturn()
 // passes the event callback function.  
 function GetTime()
 {
-    Samples.AspNet.WebService.GetServerTime(
+    Sys.Net.CallWebServiceMethods.WebService.GetServerTime(
     SucceededCallback);
     
 }
@@ -25,7 +25,7 @@ function GetTime()
 // callback function  
 function Add(a,  b)
 {
-    Samples.AspNet.WebService.Add(a, b, 
+    Sys.Net.CallWebServiceMethods.WebService.Add(a, b, 
     SucceededCallback);
 }
 
@@ -33,7 +33,7 @@ function Add(a,  b)
 // that returns an XmlDocument type.  
 function GetXmlDocument() 
 {
-    Samples.AspNet.WebService.GetXmlDocument(
+    Sys.Net.CallWebServiceMethods.WebService.GetXmlDocument(
         SucceededCallbackWithContext, FailedCallback,
         "XmlDocument")
 }
@@ -43,7 +43,7 @@ function GetXmlDocument()
 function MakeGetRequest() 
 {
 
-    Samples.AspNet.WebService.EchoStringAndDate(
+    Sys.Net.CallWebServiceMethods.WebService.EchoStringAndDate(
         new Date("1/1/2007"), " Happy",
         SucceededCallback, 
         FailedCallback, "HappyNewYear");

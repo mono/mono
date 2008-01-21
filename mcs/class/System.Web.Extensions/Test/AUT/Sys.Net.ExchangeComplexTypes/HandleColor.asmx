@@ -1,4 +1,4 @@
-<%@ WebService Language="C#" Class="Samples.AspNet.HandleColor" %>
+<%@ WebService Language="C#" Class="Sys.Net.ExchangeComplexTypes.HandleColor" %>
 
 using System;
 using System.Web;
@@ -8,7 +8,7 @@ using System.Web.Script.Services;
 using System.Web.Script.Serialization;
 using System.Collections.Generic;
 
-namespace Samples.AspNet
+namespace Sys.Net.ExchangeComplexTypes
 {
     // Define the color object to
     // exchange with the client.

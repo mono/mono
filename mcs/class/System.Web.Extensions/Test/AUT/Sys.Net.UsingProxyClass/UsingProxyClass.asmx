@@ -1,4 +1,4 @@
-<%@ WebService Language="C#" Class="Samples.AspNet.UsingProxyClass" %>
+<%@ WebService Language="C#" Class="Sys.Net.UsingProxyClass.UsingProxyClass" %>
 
 using System;
 using System.Web;
@@ -8,7 +8,7 @@ using System.Web.Script.Services;
 using System.Web.Script.Serialization;
 using System.Collections.Generic;
 
-namespace Samples.AspNet
+namespace Sys.Net.UsingProxyClass
 {
     // Define the color type to
     // exchange with the client.

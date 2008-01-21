@@ -3,7 +3,7 @@
 // This function can cause a divide by zero error.  
 function Div(a, b)
 {
-    Samples.AspNet.WebService.Div(a, b, 
+    Sys.Net.ErrorHandlingTutorial.WebService.Div(a, b, 
         SucceededCallback, FailedCallback);
 }
 

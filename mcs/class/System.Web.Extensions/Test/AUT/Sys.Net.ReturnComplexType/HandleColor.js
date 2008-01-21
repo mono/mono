@@ -8,7 +8,7 @@ function GetDefaultColor()
 {
     // Call the Web service method to get 
     // the default color.
-    Samples.AspNet.HandleColor.GetDefaultColor(
+    Sys.Net.ReturnComplexType.HandleColor.GetDefaultColor(
         SucceededCallback);  
      
 }

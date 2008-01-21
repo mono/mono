@@ -1,4 +1,4 @@
-<%@ WebService Language="C#" Class="Samples.AspNet.HandleColor" %>
+<%@ WebService Language="C#" Class="Sys.Net.PassComplexType.HandleColor" %>
 
 using System;
 using System.Web;
@@ -7,7 +7,7 @@ using System.Web.Services.Protocols;
 using System.Web.Script.Services;
 using System.Web.Script.Serialization;
 
-namespace Samples.AspNet
+namespace Sys.Net.PassComplexType
 {
     // Define the color object to
     // exchange with the client.

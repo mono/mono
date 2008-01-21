@@ -6,7 +6,7 @@ function OnDefaultColor()
 {
     // Call the Web service method to get 
     // the default color.
-    Samples.AspNet.HandleColor.GetDefaultColor(
+    Sys.Net.PassComplexType.HandleColor.GetDefaultColor(
         OnSucceeded);  
      
 }
@@ -19,7 +19,7 @@ function OnChangeDefaultColor(comboObject)
     // Create an instance 
     // of the server color object.
     var color = 
-        new Samples.AspNet.ColorObject();
+        new Sys.Net.PassComplexType.ColorObject();
 
     // Get the user's selected color.
     var selectionIndex = 
@@ -39,7 +39,7 @@ function OnChangeDefaultColor(comboObject)
     color.rgb = colorArray;
 
     // Call the Web service method to change the color.
-    Samples.AspNet.HandleColor.ChangeDefaultColor(
+    Sys.Net.PassComplexType.HandleColor.ChangeDefaultColor(
         color, OnSucceeded);  
 }
 

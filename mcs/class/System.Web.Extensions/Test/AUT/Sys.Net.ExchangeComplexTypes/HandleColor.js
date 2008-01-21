@@ -11,11 +11,11 @@
 function GetServerColors()  
 {
   // Gets the default color.
-    Samples.AspNet.HandleColor.GetDefaultColor(
+    Sys.Net.ExchangeComplexTypes.HandleColor.GetDefaultColor(
         SucceededCallback, FailedCallback);  
         
     // Get selection list colors.
-    Samples.AspNet.HandleColor.GetColorList(
+    Sys.Net.ExchangeComplexTypes.HandleColor.GetColorList(
         SucceededCallback, FailedCallback);
         
       
@@ -28,7 +28,7 @@ function OnChangeDefaultColor(comboObject)
     // Create an instance 
     // of the server color object.
     var color = 
-        new Samples.AspNet.ColorObject();
+        new Sys.Net.ExchangeComplexTypes.ColorObject();
 
     // Get the user's selected color.
     var selectionIndex = 
@@ -48,7 +48,7 @@ function OnChangeDefaultColor(comboObject)
     color.rgb = colorArray;
 
     // Call the Web service method to change the color.
-    Samples.AspNet.HandleColor.ChangeDefaultColor(
+    Sys.Net.ExchangeComplexTypes.HandleColor.ChangeDefaultColor(
         color, SucceededCallback, FailedCallback);  
 }
 

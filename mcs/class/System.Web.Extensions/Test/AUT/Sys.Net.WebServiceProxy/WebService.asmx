@@ -1,4 +1,4 @@
-<%@ WebService Language="C#" Class="Samples.AspNet.WebService" %>
+<%@ WebService Language="C#" Class="Sys.Net.WebServiceProxy.WebService" %>
  
 using System;
 using System.Web;
@@ -6,8 +6,8 @@ using System.Web.Services;
 using System.Xml;
 using System.Web.Services.Protocols;
 using System.Web.Script.Services;
- 
-namespace Samples.AspNet
+
+namespace Sys.Net.WebServiceProxy
 {
     [WebService(Namespace = "http://tempuri.org/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]

@@ -18,10 +18,10 @@ function pageLoad()
         document.getElementById("ResultId");
     
     // Assign default values to the generated proxy.
-    Samples.AspNet.UsingProxyClass.set_timeout(200);
-    Samples.AspNet.UsingProxyClass.set_defaultUserContext("Default context");
-    Samples.AspNet.UsingProxyClass.set_defaultSucceededCallback(SucceededCallback);
-    Samples.AspNet.UsingProxyClass.set_defaultFailedCallback(FailedCallback);
+    Sys.Net.UsingProxyClass.UsingProxyClass.set_timeout(200);
+    Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultUserContext("Default context");
+    Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultSucceededCallback(SucceededCallback);
+    Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultFailedCallback(FailedCallback);
 }
 
 // This function shows how to get 
@@ -29,7 +29,7 @@ function pageLoad()
 function GetDefaultColor()
 {
     // Gets the default color obiect.
-    Samples.AspNet.UsingProxyClass.GetDefaultColor();  
+    Sys.Net.UsingProxyClass.UsingProxyClass.GetDefaultColor();  
         
 }
 
@@ -39,7 +39,7 @@ function SetColor()
 {
     // Instantiate a color object.
     var color = 
-        new Samples.AspNet.ColorObject();
+        new Sys.Net.UsingProxyClass.ColorObject();
 
     // Define a color array (blue).
     var colorArray = new Array("00", "00", "FF");
@@ -51,7 +51,7 @@ function SetColor()
    
     // Assign default values for the generated proxy using
     // a proxy instance.
-    proxyInstance = new  Samples.AspNet.UsingProxyClass();
+    proxyInstance = new  Sys.Net.UsingProxyClass.UsingProxyClass();
     proxyInstance.set_timeout(1000);
     proxyInstance.set_defaultUserContext("New context");
     proxyInstance.set_defaultSucceededCallback(SucceededCallback);
