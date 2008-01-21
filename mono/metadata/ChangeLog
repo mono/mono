@@ -1,3 +1,8 @@
+2008-01-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove already created
+	instantiations from the type cache.
+
 2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_ldstr): fixed token verification. previous code was 100% broken.
