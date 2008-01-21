@@ -45,8 +45,8 @@ namespace Mainsoft.Web
 		/// </summary>
 		/// <param name="context"></param>
 		/// <returns></returns>
-		public static ServletHttpContext GetCurrent (HttpContext context) {
-			return BaseHttpContext.GetBaseHttpContext (context) as ServletHttpContext;
+		public static new ServletHttpContext GetCurrent (HttpContext context) {
+			return BaseHttpContext.GetCurrent (context) as ServletHttpContext;
 		}
 
 		private new ServletWorkerRequest Worker {

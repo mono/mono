@@ -31,6 +31,7 @@ using System.Text;
 using System.Configuration;
 using System.Web;
 using Mainsoft.Web.Hosting;
+using javax.faces.lifecycle;
 
 namespace Mainsoft.Web
 {
@@ -44,7 +45,7 @@ namespace Mainsoft.Web
 			context.Items [_contextKey] = this;
 		}
 
-		protected static BaseHttpContext GetBaseHttpContext(HttpContext context) {
+		public static BaseHttpContext GetCurrent(HttpContext context) {
 			if (context == null)
 				throw new ArgumentNullException ("context");
 
@@ -52,6 +53,9 @@ namespace Mainsoft.Web
 			return baseContext ?? GetWorker (context).CreateContext (context);
 		}
 
+		public Lifecycle Lifecycle {
+			get { return BaseHttpServlet.Lifecycle; }
+		}
 
 		protected BaseWorkerRequest Worker {
 			get { return GetWorker (_context); }
