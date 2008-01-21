@@ -3151,6 +3151,9 @@ primary_expression
 	  {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotAvailable (lt1.Location, "namespace alias qualifier");
+
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, lt2.Location);
 	  }
 	| parenthesized_expression

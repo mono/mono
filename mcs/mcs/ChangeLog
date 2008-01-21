@@ -1,5 +1,10 @@
 2008-01-21  Marek Safar  <marek.safar@gmail.com>
 
+ 	* cs-parser.jay, expression.cs: Check `namespace alias qualifier' language
+ 	feature in parser only as we do in other cases.
+ 	
+2008-01-21  Marek Safar  <marek.safar@gmail.com>
+
  	* attribute.cs, ecore.cs, class.cs, delegate.cs, expression.cs, linq.cs,
  	typemanager.cs: A refactoring of params arguments to reuse existing
  	expressions (params -> array initializer) to emit params argument instead
