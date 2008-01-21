@@ -1,5 +1,10 @@
 2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* invalid_ldstr_bad_token.il: added. check the index
+	against the the #US heap.
+
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* unverifiable_newobj_no_visibility.il: added. visibility
 	check for newobj.
 
