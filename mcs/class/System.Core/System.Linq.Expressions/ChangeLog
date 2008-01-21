@@ -1,3 +1,7 @@
+2008-01-21  Marek Safar  <marek.safar@gmail.com>
+
+	* BinaryExpression.cs: Fixed initobj initialization.
+
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, UnaryExpression.cs, BinaryExpression.cs:

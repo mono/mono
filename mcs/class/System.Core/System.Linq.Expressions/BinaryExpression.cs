@@ -262,9 +262,9 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
 
 				Label skip = ig.DefineLabel ();
-				ig.Emit (OpCodes.Br, skip);
+				ig.Emit (OpCodes.Br_S, skip);
 				ig.MarkLabel (empty_value.Value);
-				ig.Emit (OpCodes.Ldloc, ret);
+				ig.Emit (OpCodes.Ldloca, ret);
 				ig.Emit (OpCodes.Initobj, Type);
 				
 				ig.MarkLabel (skip);
