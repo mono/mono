@@ -1,5 +1,10 @@
 2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* unverifiable_newobj_no_visibility.il: added. visibility
+	check for newobj.
+
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* unverifiable_ldftn_no_visibility.il: added. visibility
 	check for ldftn.
 
