@@ -236,7 +236,7 @@ namespace System.Windows.Forms
 		protected override void OnLostFocus (EventArgs e)
 		{
 			base.OnLostFocus (e);
-			WebHost.FocusOut ();
+//			WebHost.FocusOut ();
 		}
 
 		protected override void OnParentChanged (EventArgs e)
@@ -293,7 +293,10 @@ namespace System.Windows.Forms
 		internal WebBrowserBase ()
 		{
 			webHost = Mono.WebBrowser.Manager.GetNewInstance ();
-			webHost.Load (this.Handle, this.Width, this.Height);
+			bool loaded = webHost.Load (this.Handle, this.Width, this.Height);
+			if (!loaded)
+				return;
+				
 			state = State.Loaded;
 
 			webHost.MouseClick += new EventHandler (OnWebHostMouseClick);

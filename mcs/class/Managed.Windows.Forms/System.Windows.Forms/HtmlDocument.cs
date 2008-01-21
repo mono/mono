@@ -26,6 +26,7 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms
 {
@@ -46,7 +47,8 @@ namespace System.Windows.Forms
 
 		public HtmlElement CreateElement (string elementTag) 
 		{ 
-			throw new NotImplementedException ();
+			Mono.WebBrowser.DOM.IElement element = webHost.Document.CreateElement (elementTag);
+			return new HtmlElement (element);
 		}
 
 		public void DetachEventHandler (string eventName, EventHandler eventHandler) 
@@ -54,15 +56,19 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
+		public override bool Equals (object obj) {
+			return this == (HtmlDocument) obj;
+		}
 
 		public void ExecCommand (string command, bool showUI, Object value) 
 		{
 			throw new NotImplementedException ();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void Focus () 
 		{
-			throw new NotImplementedException ();
+			webHost.FocusIn (Mono.WebBrowser.FocusOption.None);
 		}
 
 		public HtmlElement GetElementById (string id)
@@ -72,7 +78,10 @@ namespace System.Windows.Forms
 
 		public HtmlElement GetElementFromPoint (Point point) 
 		{
-			throw new NotImplementedException ();
+			Mono.WebBrowser.DOM.IElement elem = webHost.Document.GetElement (point.X, point.Y);
+			if (elem != null)
+				return new HtmlElement(elem);
+			return null;
 		}
 
 		public HtmlElementCollection GetElementsByTagName (string tagName) 
@@ -96,14 +105,35 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
+		public static bool operator ==(HtmlDocument left, HtmlDocument right) {
+			if ((object)left == (object)right) {
+				return true;
+			}
+
+			if ((object)left == null || (object)right == null) {
+				return false;
+			}
+
+			return left.Equals (right); 
+		}
+
+		public static bool operator !=(HtmlDocument left, HtmlDocument right) {
+			return !(left == right);
+		}
+
+
 		public HtmlDocument OpenNew (bool replaceInHistory) 
 		{
-			throw new NotImplementedException ();
+			Mono.WebBrowser.DOM.LoadFlags flags = Mono.WebBrowser.DOM.LoadFlags.None;
+			if (replaceInHistory)
+				flags |= Mono.WebBrowser.DOM.LoadFlags.ReplaceHistory;
+			webHost.Navigation.Go ("about:blank", flags);
+			return this;
 		}
 
 		public void Write (string text) 
 		{
-			throw new NotImplementedException ();
+			webHost.Document.Write (text);
 		}
 
 		#endregion
@@ -131,10 +161,7 @@ namespace System.Windows.Forms
 			set { throw new NotImplementedException (); }
 		}
 		public HtmlElement Body {
-			get {
-				return new HtmlElement (webHost.Document.Body);
-			}
-			set { throw new NotImplementedException (); }
+			get { return new HtmlElement (webHost.Document.Body); }
 		}
 		public string Cookie
 		{
