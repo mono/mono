@@ -1,5 +1,11 @@
 2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_ldstr): added, verifies if the #US token is valid.
+
+	* verify.c (mono_method_verify): removed old TODO
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_newobj): add visibility check.
 
 2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
