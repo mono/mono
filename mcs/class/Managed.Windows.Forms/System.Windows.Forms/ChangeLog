@@ -1,3 +1,10 @@
+2008-01-21  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGrid.cs: Process Browsable properties with 
+	 DesignerSerializationVisibilityAttribute.Content as being expandable.
+	 This seems also what MS does. Without this e.g SplitContainer.Panel1/2
+	 will not be expandable. We should be nested components-friendly now.
+
 2008-01-21  Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs: Check if control was loaded properly, 

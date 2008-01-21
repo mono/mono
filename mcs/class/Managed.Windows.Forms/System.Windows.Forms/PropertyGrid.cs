@@ -1486,7 +1486,11 @@ namespace System.Windows.Forms {
 
 			PropertyDescriptor property = grid_entry.PropertyDescriptor;
 
-			if (property == null || property.Converter == null || !property.Converter.GetPropertiesSupported ())
+			if (property == null || property.Converter == null)
+				return;
+
+			if (!property.Converter.GetPropertiesSupported () && 
+			    !property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
 				return;
 
 			object [] objs = grid_entry.SelectedObjects;
