@@ -264,6 +264,7 @@ namespace System.Linq.Expressions {
 				Label skip = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br_S, skip);
 				ig.MarkLabel (empty_value.Value);
+				ig.Emit (OpCodes.Ldloc, ret);
 				ig.Emit (OpCodes.Ldloca, ret);
 				ig.Emit (OpCodes.Initobj, Type);
 				
