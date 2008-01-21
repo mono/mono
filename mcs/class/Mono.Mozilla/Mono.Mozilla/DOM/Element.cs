@@ -111,6 +111,37 @@ namespace Mono.Mozilla.DOM
 			return val;
 		}
 		#endregion
+		
+		internal int Top {
+			get {
+				int ret;
+				((nsIDOMNSHTMLElement)this.element).getOffsetTop (out ret);
+				return ret;
+			}
+		}
+
+		internal int Left {
+			get {
+				int ret;
+				((nsIDOMNSHTMLElement)this.element).getOffsetLeft (out ret);
+				return ret;
+			}
+		}
 	
+		internal int Width {
+			get {
+				int ret;
+				((nsIDOMNSHTMLElement)this.element).getOffsetWidth (out ret);
+				return ret;
+			}
+		}
+
+		internal int Height {
+			get {
+				int ret;
+				((nsIDOMNSHTMLElement)this.element).getOffsetHeight (out ret);
+				return ret;
+			}
+		}
 	}
 }

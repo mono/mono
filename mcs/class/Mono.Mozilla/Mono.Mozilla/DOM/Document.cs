@@ -34,7 +34,7 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Document : Node, IDocument
 	{
-		private nsIDOMHTMLDocument document;
+		internal nsIDOMHTMLDocument document;
 
 		public Document (WebBrowser control, nsIDOMHTMLDocument document)
 			: base (control, document)
@@ -124,6 +124,14 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public IElement CreateElement (string tagName)
+		{
+			nsIDOMElement nsElement;
+			Base.StringSet (storage, tagName);
+			this.document.createElement (storage, out nsElement);
+			return new HTMLElement (control, (nsIDOMHTMLElement)nsElement);
+		}
+
 		public IElement GetElementById (string id)
 		{
 			if (!resources.Contains ("GetElementById" + id)) {
@@ -140,11 +148,36 @@ namespace Mono.Mozilla.DOM
 			if (!resources.Contains ("GetElementsByTagName" + name)) {
 				nsIDOMNodeList nodes;
 				this.document.getElementsByTagName (storage, out nodes);
-				resources.Add ("GetElementsByTagName" + name, nodes);
+				resources.Add ("GetElementsByTagName" + name, new HTMLElementCollection(control, nodes));
 			}
 			return resources["GetElementsByTagName" + name] as IElementCollection;
 		}
 
+		public IElement GetElement (int x, int y)
+		{
+			nsIDOMNodeList nodes;
+			this.document.getChildNodes (out nodes);
+			HTMLElementCollection col = new HTMLElementCollection(control, nodes);
+			IElement ret = null;
+			foreach (Element el in col) {
+				if (el.Left <= x && el.Top <= y &&
+					el.Left + el.Width >= x && el.Top + el.Height >= y) {
+					ret = el;
+					break;
+				}
+			}
+			return ret;
+		}
+
+		public bool Equals (IDocument obj) {
+			Document doc = (Document) obj;
+			return doc.document == this.document;
+		}
+		
+		public void Write (string text) {
+			Base.StringSet (storage, text);
+			this.document.write (storage);
+		}
 
 		#endregion
 	}

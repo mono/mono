@@ -1,5 +1,30 @@
 2008-01-21  Andreia Gaita <avidigal@novell.com>
 
+	* Mono.WebBrowser/DOM/INavigation.cs: Add Go overload with flags, 
+	and LoadFlags enumeration.
+
+	* Mono.WebBrowser/DOM/IDocument.cs: Add CreateElement, GetElement,
+	Equals and Write.
+
+	* Mono.Mozilla/DOM/Document.cs: Add CreateElement, GetElement,
+	Equals and Write implementations.
+	Fix GetElementsByTagName to return a proper IElementCollection instance.
+
+	* Mono.Mozilla/DOM/Element.cs: Add Top, Left, Width and Height
+	properties to support retrieving elements by location.
+
+	* Mono.Mozilla/DOM/Navigation.cs: Reset WebBrowser object cache
+	so that the next time Document (and others, eventually) is accessed, 
+	it will be retrieved from mozilla. This should happen on any
+	action that causes a document reload.
+	
+	Add Go overload to support flags when loading an uri (bypassing proxies,
+	refreshing from cache, etc).
+
+	* Mono.Mozilla/DOM/HTMLElementCollection.cs: Fix inheritance
+
+2008-01-21  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.Mozilla/WebBrowser.cs: fix Document accessor
 
 2008-01-14  Andreia Gaita <avidigal@novell.com>

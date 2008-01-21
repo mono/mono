@@ -33,7 +33,7 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class HTMLElementCollection : NodeList
+	internal class HTMLElementCollection : NodeList, IElementCollection
 	{
 		public HTMLElementCollection (WebBrowser control, nsIDOMNodeList nodeList) : base (control, nodeList)
 		{

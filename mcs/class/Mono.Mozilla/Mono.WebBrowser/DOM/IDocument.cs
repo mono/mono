@@ -31,12 +31,15 @@ namespace Mono.WebBrowser.DOM
 	public interface IDocument : INode
 	{
 		IElement Body { get; }
+		IElement CreateElement (string tagName);
 		IElement DocumentElement { get; }
 		IElement GetElementById (string id);
+		IElement GetElement (int x, int y);
 		IElementCollection GetElementsByTagName (string id);
 		string Title { get; set;}
 		string Url { get; }
+		void Write (string text);
 		
-		
+		bool Equals (IDocument obj);
 	}
 }

@@ -83,7 +83,7 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return false;
 
-			//return Base.Back (control);
+			control.Reset ();
 			return navigation.goBack () == 0;
 		}
 
@@ -92,12 +92,13 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return false;
 
-			//return Base.Forward (control);
+			control.Reset ();
 			return navigation.goForward () == 0;
 		}
 
 		public void Home ()
 		{
+			control.Reset ();
 			Base.Home (control);
 		}
 
@@ -106,7 +107,7 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return;
 
-			//Base.Reload (control, ReloadOption.None);
+			control.Reset ();
 			navigation.reload ((uint)ReloadOption.None);
 		}
 
@@ -115,7 +116,7 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return;
 
-			//Base.Reload (control, option);
+			control.Reset ();
 			navigation.reload ((uint)option);
 		}
 
@@ -124,7 +125,6 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return;
 
-			//Base.Stop (control);
 			navigation.stop ((uint)StopOption.All);
 		}
 		
@@ -133,7 +133,17 @@ namespace Mono.Mozilla.DOM
 			if (navigation == null)
 				return;
 
-			navigation.loadURI (url, (uint)ReloadOption.None, null, null, null);
+			control.Reset ();
+			navigation.loadURI (url, (uint)LoadFlags.None, null, null, null);
+		}
+
+		public void Go (string url, LoadFlags flags) 
+		{
+			if (navigation == null)
+				return;
+				
+			control.Reset ();
+			navigation.loadURI (url, (uint)flags, null, null, null);
 		}
 
 		#endregion

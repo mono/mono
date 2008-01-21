@@ -39,5 +39,17 @@ namespace Mono.WebBrowser.DOM
 		void Reload (ReloadOption option);
 		void Stop ();
 		void Go (string url);
+		void Go (string url, LoadFlags flags);
+	}
+	
+	[Flags]
+	public enum LoadFlags : uint {
+		None = 0x0000,
+		AsMetaRefresh = 0x0010,
+		AsLinkClick = 0x0020,
+		BypassHistory = 0x0040,
+		ReplaceHistory = 0x0080,
+		BypassLocalCache = 0x0100,
+		BypassProxy = 0x0200
 	}
 }
