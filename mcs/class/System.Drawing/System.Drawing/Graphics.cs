@@ -1723,6 +1723,9 @@ namespace System.Drawing
 				if (GDIPlus.Display == IntPtr.Zero) {
 					GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);
 				}
+				if (hwnd == IntPtr.Zero) {
+					hwnd = GDIPlus.XRootWindow (GDIPlus.Display, GDIPlus.XDefaultScreen (GDIPlus.Display));
+				}
 
 				return FromXDrawable (hwnd, GDIPlus.Display);
 

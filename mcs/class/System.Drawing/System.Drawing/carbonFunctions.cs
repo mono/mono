@@ -65,6 +65,16 @@ namespace System.Drawing {
 			IntPtr port = IntPtr.Zero;
 			IntPtr window = IntPtr.Zero;
 
+			if (handle == IntPtr.Zero) {
+				// FIXME: Can we actually get a CGContextRef for the desktop?  this makes context IntPtr.Zero
+				port = GetQDGlobalsThePort ();
+				CreateCGContextForPort (port, ref context);
+
+				Rect desktop_bounds = CGDisplayBounds (CGMainDisplayID ());
+
+				return new CarbonContext (port, context, (int)desktop_bounds.size.width, (int)desktop_bounds.size.height);
+			}
+
 			QDRect window_bounds = new QDRect ();
 			Rect view_bounds = new Rect ();
 
@@ -147,6 +157,11 @@ namespace System.Drawing {
 		#endregion
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr CGMainDisplayID ();
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern Rect CGDisplayBounds (IntPtr display);
+
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewGetBounds (IntPtr vHnd, ref Rect r);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewConvertRect (ref Rect r, IntPtr a, IntPtr b);
@@ -158,6 +173,8 @@ namespace System.Drawing {
 		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref QDRect rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetWindowPort (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr GetQDGlobalsThePort ();
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CreateCGContextForPort (IntPtr port, ref IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

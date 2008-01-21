@@ -1477,6 +1477,9 @@ namespace System.Drawing
 		[DllImport ("libX11", EntryPoint="XRootWindow")]
 		internal extern static IntPtr XRootWindow(IntPtr display, int screen);
 			
+		[DllImport ("libX11", EntryPoint="XDefaultScreen")]
+		internal extern static int XDefaultScreen(IntPtr display);
+
 		[DllImport ("libX11", EntryPoint="XDefaultDepth")]
 		internal extern static uint XDefaultDepth(IntPtr display, int screen);
 
