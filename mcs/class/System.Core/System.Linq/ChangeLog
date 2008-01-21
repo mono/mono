@@ -1,5 +1,10 @@
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs: correctly throw ArgumentNullException
+	for Cast.
+
+2008-01-21  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs (Iterate): protect against null selectors.
 
 2008-01-21  Jb Evain  <jbevain@novell.com>

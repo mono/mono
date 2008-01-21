@@ -448,6 +448,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			return CreateCastIterator<TResult> (source);
+		}
+
+		static IEnumerable<TResult> CreateCastIterator<TResult> (IEnumerable source)
+		{
 			foreach (object element in source)
 				yield return (TResult) element;
 		}
