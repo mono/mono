@@ -1,5 +1,9 @@
 2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_newobj): add visibility check.
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_load_function_ptr): add visibility check.
 
 2008-01-21  Massimiliano Mantione  <massi@ximian.com>
