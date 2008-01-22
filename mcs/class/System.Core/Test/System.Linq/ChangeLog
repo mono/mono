@@ -1,3 +1,8 @@
+2008-01-22  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableMoreTest.cs: add tests by
+	Andreas Noever <andreas.noever@gmail.com>.
+
 2007-11-27  Scott Peterson <lunchtimemama@gmail.com>
 
 	* EnumerableTest.cs: Added orderby test.
