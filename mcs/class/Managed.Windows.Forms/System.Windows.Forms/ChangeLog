@@ -1,3 +1,10 @@
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Run Flat, Button appearance, 2.0 CheckBoxes
+	through the normal flat button code and don't draw the checkbox glyph.
+	* Theme.cs: Button->ButtonBase signature change.
+	[Fixes bug #324755]
+
 2008-01-22  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LinkLabel.cs: Uses new class LinkLabelPainter.

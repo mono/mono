@@ -187,7 +187,7 @@ namespace System.Windows.Forms
 			ControlPaint.DrawFocusRectangle (g, Rectangle.Inflate (button.ClientRectangle, -4, -4));
 		}
 
-		public virtual void DrawButtonImage (Graphics g, Button button, Rectangle imageBounds)
+		public virtual void DrawButtonImage (Graphics g, ButtonBase button, Rectangle imageBounds)
 		{
 			if (button.Enabled)
 				g.DrawImage (button.Image, imageBounds);
@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 				CPDrawImageDisabled (g, button.Image, imageBounds.Left, imageBounds.Top, ColorControl);
 		}
 
-		public virtual void DrawButtonText (Graphics g, Button button, Rectangle textBounds)
+		public virtual void DrawButtonText (Graphics g, ButtonBase button, Rectangle textBounds)
 		{
 			// Ensure that at least one line is going to get displayed.
 			// Line limit does not ensure that despite its description.
@@ -209,7 +209,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region FlatStyle Button Style
-		public override void DrawFlatButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
+		public override void DrawFlatButton (Graphics g, ButtonBase b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
 		{
 			// Draw Button Background
 			if (b.BackgroundImage == null)
@@ -228,7 +228,7 @@ namespace System.Windows.Forms
 				DrawFlatButtonText (g, b, textBounds);
 		}
 
-		public virtual void DrawFlatButtonBackground (Graphics g, Button button, Rectangle clipArea)
+		public virtual void DrawFlatButtonBackground (Graphics g, ButtonBase button, Rectangle clipArea)
 		{
 			if (button.Pressed)
 				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Pressed, button.BackColor, button.ForeColor, button.FlatAppearance);
@@ -246,7 +246,7 @@ namespace System.Windows.Forms
 				ThemeElements.DrawFlatButton (g, button.ClientRectangle, ButtonThemeState.Normal, button.BackColor, button.ForeColor, button.FlatAppearance);
 		}
 
-		public virtual void DrawFlatButtonFocus (Graphics g, Button button)
+		public virtual void DrawFlatButtonFocus (Graphics g, ButtonBase button)
 		{
 			if (!button.Pressed) {
 				Color focus_color = ControlPaint.Dark (button.BackColor);
@@ -254,13 +254,13 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public virtual void DrawFlatButtonImage (Graphics g, Button button, Rectangle imageBounds)
+		public virtual void DrawFlatButtonImage (Graphics g, ButtonBase button, Rectangle imageBounds)
 		{
 			// No changes from Standard for image for this theme
 			DrawButtonImage (g, button, imageBounds);
 		}
 
-		public virtual void DrawFlatButtonText (Graphics g, Button button, Rectangle textBounds)
+		public virtual void DrawFlatButtonText (Graphics g, ButtonBase button, Rectangle textBounds)
 		{
 			// No changes from Standard for text for this theme
 			DrawButtonText (g, button, textBounds);
@@ -887,11 +887,15 @@ namespace System.Windows.Forms
 		public override void DrawCheckBox (Graphics g, CheckBox cb, Rectangle glyphArea, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle)
 		{
 			// Draw Button Background
-			if (cb.Appearance == Appearance.Button)
+			if (cb.Appearance == Appearance.Button && cb.FlatStyle != FlatStyle.Flat)
 				ButtonBase_DrawButton (cb, g);
-			else
+			else if (cb.Appearance != Appearance.Button)
 				DrawCheckBoxGlyph (g, cb, glyphArea);
 
+			// Draw the borders and such for a Flat CheckBox Button
+			if (cb.Appearance == Appearance.Button && cb.FlatStyle == FlatStyle.Flat)
+			DrawFlatButton (g, cb, textBounds, imageBounds, clipRectangle);
+			
 			// If we have an image, draw it
 			if (imageBounds.Size != Size.Empty)
 				DrawCheckBoxImage (g, cb, imageBounds);

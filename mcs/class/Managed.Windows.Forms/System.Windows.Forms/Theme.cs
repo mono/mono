@@ -711,7 +711,7 @@ namespace System.Windows.Forms
 #endif
 		public abstract void CalculateButtonTextAndImageLayout (ButtonBase b, out Rectangle textRectangle, out Rectangle imageRectangle);
 		public abstract void DrawButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
-		public abstract void DrawFlatButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
+		public abstract void DrawFlatButton (Graphics g, ButtonBase b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		public abstract void DrawPopupButton (Graphics g, Button b, Rectangle textBounds, Rectangle imageBounds, Rectangle clipRectangle);
 		#endregion	// Button
 
