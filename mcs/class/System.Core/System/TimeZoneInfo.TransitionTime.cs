@@ -182,7 +182,9 @@ namespace System
 	
 			public override bool Equals (object other)
 			{
-				return this == (TransitionTime) other;
+				if (other is TransitionTime)
+					return this == (TransitionTime) other;
+				return false;
 			}
 
 			public bool Equals (TimeZoneInfo.TransitionTime other)

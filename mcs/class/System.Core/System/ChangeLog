@@ -1,3 +1,8 @@
+2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeZoneInfo.TransitionTime.cs: Avoid NRE on bad cast if null is
+	provided to Equals(object). Found with Gendarme.
+
 2008-01-08  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneInfo.TransitionTime.cs: fully qualify System.DayOfWeek in 
