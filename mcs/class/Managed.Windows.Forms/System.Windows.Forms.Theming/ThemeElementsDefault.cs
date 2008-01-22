@@ -47,6 +47,15 @@ namespace System.Windows.Forms.Theming
 			}
 		}
 
+		protected Default.LinkLabelPainter linklabelPainter;
+		public virtual Default.LinkLabelPainter LinkLabelPainter {
+			get {
+				if (linklabelPainter == null)
+					linklabelPainter = new Default.LinkLabelPainter ();
+				return linklabelPainter;
+			}
+		}
+
 #if NET_2_0
 		protected Default.ToolStripPainter toolStripPainter;
 		public virtual Default.ToolStripPainter ToolStripPainter {

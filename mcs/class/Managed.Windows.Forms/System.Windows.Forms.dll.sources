@@ -39,6 +39,7 @@ System.Windows.Forms.RTF/StyleElement.cs
 System.Windows.Forms.RTF/StyleType.cs
 System.Windows.Forms.RTF/TextMap.cs
 System.Windows.Forms.RTF/TokenClass.cs
+System.Windows.Forms.Theming/Default/LinkLabelPainter.cs
 System.Windows.Forms/AccessibleEvents.cs
 System.Windows.Forms/AccessibleNavigation.cs
 System.Windows.Forms/AccessibleObject.cs

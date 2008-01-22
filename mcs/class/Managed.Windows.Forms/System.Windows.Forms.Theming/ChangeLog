@@ -1,3 +1,11 @@
+2008-01-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* ThemeElementsDefault.cs: Add LinkLabelPainter references. Also add some 
+	public properties to gets painters, it reduce some source line width because 
+	we can refer to Painters using "ThemeElements.LinkLabelPainter" as example.
+	
+	* ThemeElements.cs: Add LinkLabelPainter references.
+	
 2007-08-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeElementsDefault.cs: Add accessor for RadioButtonPainter.

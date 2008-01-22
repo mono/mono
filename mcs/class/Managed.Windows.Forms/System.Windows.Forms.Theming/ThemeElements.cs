@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
+//	Everaldo Canuto  <ecanuto@novell.com>
 
 using System;
 using System.Drawing;
@@ -79,6 +80,37 @@ namespace System.Windows.Forms.Theming
 		{
 			theme.ButtonPainter.DrawPopup (g, bounds, state, backColor, foreColor);
 		}
+		#endregion
+		
+		#region Painters
+
+		public virtual Default.ButtonPainter ButtonPainter {
+			get { return theme.ButtonPainter; }
+		}
+
+		public static Default.LinkLabelPainter LinkLabelPainter	{
+			get { return theme.LinkLabelPainter; }
+
+		}
+
+		public virtual Default.TabControlPainter TabControlPainter {
+			get { return theme.TabControlPainter; }
+		}
+
+#if NET_2_0
+		public virtual Default.CheckBoxPainter CheckBoxPainter {
+			get { return theme.CheckBoxPainter; }
+		}
+
+		public virtual Default.RadioButtonPainter RadioButtonPainter {
+			get { return theme.RadioButtonPainter; }
+		}
+
+		public virtual Default.ToolStripPainter ToolStripPainter {
+			get { return theme.ToolStripPainter; }
+		}
+#endif
+
 		#endregion
 	}
 
