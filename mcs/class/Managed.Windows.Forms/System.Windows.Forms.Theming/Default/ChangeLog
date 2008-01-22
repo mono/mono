@@ -1,3 +1,7 @@
+2008-01-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* LinkLabelPainter.cs: Added.
+
 2007-09-04  Everaldo Canuto  <everaldo@simios.org>
 
 	* CheckBoxPainter.cs: Adjust checkbox light color to ControlLightLight to
