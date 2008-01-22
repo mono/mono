@@ -1270,12 +1270,16 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!TypeManager.IsDelegateType (delegate_type)) {
+#if GMCS_SOURCE
 				if (TypeManager.DropGenericTypeArguments (delegate_type) != TypeManager.expression_type)
 					return false;
 
 				delegate_type = delegate_type.GetGenericArguments () [0];
 				if (!TypeManager.IsDelegateType (delegate_type))
 					return false;
+#else
+				return false;
+#endif
 			}
 			
 			ParameterData d_params = TypeManager.GetDelegateParameters (delegate_type);

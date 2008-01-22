@@ -123,12 +123,12 @@ namespace Mono.CSharp {
 	static internal Type default_charset_type;
 	static internal Type internals_visible_attr_type;
 	static internal Type type_forwarder_attr_type;
+#endif
 
 	//
 	// C# 3.0
 	//
 	static internal Type expression_type;
-#endif
 
 	// 
 	// Expressions representing the internal types.  Used during declaration
