@@ -2453,6 +2453,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Point (225, 287), button1.Location, "A3");
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void DisposeEnumerator ()
+		{
+			// We can modify the collection while looping through it without crashing
+			Control c = new Control ();
+
+			c.Controls.Add (new Control ());
+			c.Controls.Add (new Control ());
+			
+			foreach (Control c1 in c.Controls)
+				c.Controls.Remove (c1);
+		}
 	}
 
 	[TestFixture]

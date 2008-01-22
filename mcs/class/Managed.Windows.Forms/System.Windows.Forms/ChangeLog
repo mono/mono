@@ -1,3 +1,9 @@
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Implement a custom enumerator so people can delete
+	from the Controls collection while in a foreach.
+	[Fixes bug #355074]
+
 2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGridView.cs: Fix focusing behavior:

@@ -735,7 +735,7 @@ namespace System.Windows.Forms
 			public IEnumerator
 #endif
 			GetEnumerator () {
-				return list.GetEnumerator();
+				return new ControlCollectionEnumerator (list);
 			}
 
 			internal IEnumerator GetAllEnumerator () {
@@ -973,6 +973,41 @@ namespace System.Windows.Forms
 				return clone;
 			}
 			#endregion // ControlCollection Interface Methods
+		
+			private class ControlCollectionEnumerator : IEnumerator
+			{
+				private ArrayList list;
+				int position = -1;
+				
+				public ControlCollectionEnumerator (ArrayList collection)
+				{
+					list = collection;
+				}
+				
+				#region IEnumerator Members
+				public object Current {
+					get {
+						try {
+							return list[position];
+						} catch (IndexOutOfRangeException) {
+							throw new InvalidOperationException ();
+						}
+					 }
+				}
+
+				public bool MoveNext ()
+				{
+					position++;
+					return (position < list.Count);
+				}
+
+				public void Reset ()
+				{
+					position = -1;
+				}
+
+				#endregion
+			}
 		}
 		#endregion	// ControlCollection Class
 		
