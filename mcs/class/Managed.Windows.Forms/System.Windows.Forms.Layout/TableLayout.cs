@@ -468,7 +468,7 @@ namespace System.Windows.Forms.Layout
 					current_pos.Offset (panel.column_widths[x] + border_width, 0);
 				}
 
-				current_pos.Offset ((-1 * current_pos.X) + border_width, panel.row_heights[y] + border_width);
+				current_pos.Offset ((-1 * current_pos.X) + border_width + panel.DisplayRectangle.Left, panel.row_heights[y] + border_width);
 			}
 		}
 	}

@@ -1,3 +1,9 @@
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: When we reset our current_pos back to the left
+	beginning, make sure we take padding into account.
+	[Fixes bug #354676]
+
 2007-12-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: Use ExplicitBounds so that we get the user requested

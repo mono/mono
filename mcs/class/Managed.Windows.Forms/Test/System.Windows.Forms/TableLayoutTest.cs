@@ -1263,6 +1263,33 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void Bug354676 ()
+		{
+			Form f = new Form ();
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.Dock = DockStyle.Fill;
+			tlp.Padding = new Padding (40);
+			tlp.RowCount = 2;
+			tlp.ColumnCount = 1;
+			f.Controls.Add (tlp);
+
+			Button b1 = new Button ();
+			tlp.Controls.Add (b1);
+
+			Button b2 = new Button ();
+			tlp.Controls.Add (b2);
+
+			f.Show ();
+
+			Assert.AreEqual (new Rectangle (43, 43, 75, 23), b1.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (43, 72, 75, 23), b2.Bounds, "A2");
+			
+			f.Close ();
+			f.Dispose ();
+		}
 	}
 }
 #endif
