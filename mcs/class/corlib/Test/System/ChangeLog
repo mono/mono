@@ -1,3 +1,8 @@
+2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTimeOffsetTest.cs: Add test case for Equals to	validate 
+	Gendarme's finding.
+
 2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppDomainTest.cs: Added test for DefineDynamicAssembly overload

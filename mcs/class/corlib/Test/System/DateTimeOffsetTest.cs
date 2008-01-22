@@ -377,7 +377,17 @@ namespace MonoTests.System {
 				}
 		}
 
-}
+		[Test]
+		public void EqualsObject ()
+		{
+			DateTimeOffset offset1 = new DateTimeOffset ();
+			Assert.IsFalse (offset1.Equals (null), "null"); // found using Gendarme :)
+			Assert.IsTrue (offset1.Equals (offset1), "self");
+			DateTimeOffset offset2 = new DateTimeOffset (DateTime.Today);
+			Assert.IsFalse (offset1.Equals (offset2), "1!=2");
+			Assert.IsFalse (offset2.Equals (offset1), "2!=1");
+		}
+	}
 }
 #endif
 
