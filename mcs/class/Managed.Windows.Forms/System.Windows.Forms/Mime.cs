@@ -123,7 +123,7 @@ namespace System.Windows.Forms
 			FDOMimeConfigReader fmcr = new FDOMimeConfigReader ();
 			int buffer_length = fmcr.Init ();
 			
-			if (buffer_length != -1) {
+			if (buffer_length >= 32) {
 				buffer = new byte [buffer_length];
 				mime_available = true;
 			}
@@ -245,7 +245,7 @@ namespace System.Windows.Forms
 		private void GoByFileName ()
 		{
 			// check if we can open the file
-			if (!OpenFile ()) {
+			if (!MimeAvailable || !OpenFile ()) {
 				// couldn't open the file, check globals only
 				CheckGlobalPatterns ();
 				

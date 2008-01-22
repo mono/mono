@@ -1,3 +1,9 @@
+2008-01-22 Geoff Norton  <gnorton@novell.com>
+
+	* Mime.cs:  Avoid a needles exception on OSX if we dont have a buffer
+	acquired.  Also ensure the buffer is large enough to grab the header
+	we need on linux boxes.
+
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Implement a custom enumerator so people can delete
