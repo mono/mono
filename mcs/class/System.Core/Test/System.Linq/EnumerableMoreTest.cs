@@ -661,7 +661,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SumArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
