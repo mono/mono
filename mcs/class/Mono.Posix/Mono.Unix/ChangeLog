@@ -1,3 +1,8 @@
+2008-01-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UnixPipes.cs: Fix Equals to avoid NRE (and return false if object 
+	is null). Found using Gendarme.
+
 2007-12-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixEnvironment.cs: Update MachineName property accesor to use uname(2)

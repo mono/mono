@@ -57,7 +57,7 @@ namespace Mono.Unix {
 
 		public override bool Equals (object value)
 		{
-			if (value.GetType() != GetType())
+			if ((value == null) || (value.GetType () != GetType ()))
 				return false;
 			UnixPipes other = (UnixPipes) value;
 			return Reading.Handle == other.Reading.Handle &&
