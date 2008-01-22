@@ -53,7 +53,7 @@
         </div>
 
     </div>
-        <input type="hidden" id="__PAGENAMESPACE" value="xyz" />
+        <input type="hidden" id="__NAMESPACE" value="xyz_" />
     </form>
 </body>
 </html>
