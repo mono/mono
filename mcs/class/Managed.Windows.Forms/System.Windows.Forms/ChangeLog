@@ -1,3 +1,7 @@
+2008-01-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Hwnd.cs: Create a public property for the Graphics we keep around.
+
 2008-01-21  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGridView.cs: Just hide the grid textbox and do nothing more 
