@@ -43,7 +43,64 @@ class Tester
 		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a & b;
 
 		AssertNodeType (e, ExpressionType.And);
-		Assert (false, e.Compile ().Invoke (false, true));
+		Func<bool,bool,bool> c = e.Compile ();
+		
+		Assert (true,  c (true, true));
+		Assert (false, c (true, false));
+		Assert (false, c (false, true));
+		Assert (false, c (false, false));
+	}
+
+	void OrTest ()
+	{
+		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a & b;
+
+		AssertNodeType (e, ExpressionType.Or);
+		Func<bool,bool,bool> c = e.Compile ();
+		
+		Assert (true,  c (true, true));
+		Assert (true, c (true, false));
+		Assert (true, c (false, true));
+		Assert (false, c (false, false));
+	}
+	
+	void AndNullableTest ()
+	{
+		Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a & b;
+
+		AssertNodeType (e, ExpressionType.And);
+		Func<bool?,bool?,bool?> c = e.Compile ();
+		
+		
+		Assert (true,  c (true, true));
+		Assert (false, c (true, false));
+		Assert (false, c (false, true));
+		Assert (false, c (false, false));
+
+		Assert (null,  c (true, null));
+		Assert (false, c (false, null));
+		Assert (false, c (null, false));
+		Assert (null,  c (true, null));
+		Assert (null, c (null, null));
+	}
+	
+	void OrNullableTest ()
+	{
+		Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a & b;
+
+		AssertNodeType (e, ExpressionType.Or);
+		Func<bool?,bool?,bool?> c = e.Compile ();
+		
+		Assert (true,  c (true, true));
+		Assert (true,  c (true, false));
+		Assert (true,  c (false, true));
+		Assert (false, c (false, false));
+
+		Assert (true, c (true, null));
+		Assert (null, c (false, null));
+		Assert (null, c (null, false));
+		Assert (true, c (true, null));
+		Assert (null, c (null, null));
 	}
 
 	void AndAlsoTest ()
