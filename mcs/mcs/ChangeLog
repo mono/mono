@@ -1,3 +1,8 @@
+2008-01-22  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #354663
+	* expression.cs (Binary.IsUnsignedType): Fix typo.
+
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
  	* ecore.cs, expression.cs, generic.cs: Implemented NewArrayInit expression.

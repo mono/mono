@@ -1743,11 +1743,11 @@ namespace Mono.CSharp {
 
 		static bool IsUnsigned (Type t)
 		{
-			if (t.IsPointer)
-				return IsUnsigned (t.GetElementType ());
-			
+			while (t.IsPointer)
+				t = t.GetElementType ();
+
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
-				t == TypeManager.short_type || t == TypeManager.byte_type);
+				t == TypeManager.ushort_type || t == TypeManager.byte_type);
 		}
 
 		Expression Make32or64 (EmitContext ec, Expression e)
