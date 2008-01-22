@@ -41,7 +41,7 @@
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
                     WarningLevel = "1"
-                />
+                />                
                 <Config
                     Name = "Debug 2.0"
                     AllowUnsafeBlocks = "true"
@@ -68,7 +68,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "NET_1_1"
+                    DefineConstants = "NET_1_1 ONLY_1_1"
                     DocumentationFile = ""
                     DebugSymbols = "false"
                     FileAlignment = "4096"
@@ -125,8 +125,13 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
                 />
                 <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.Xml"
+                    AssemblyName = "System.XML"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
             </References>
@@ -134,12 +139,12 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "Consts.cs"
+                    RelPath = "..\..\build\common\Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "MonoTODOAttribute.cs"
+                    RelPath = "..\..\build\common\MonoTODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -147,242 +152,6 @@
                     RelPath = "Assembly\Locale.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "resources\16_computer.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_dialog-error.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_dialog-information.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_dialog-warning.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_document-open.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_folder.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_folder-remote.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_printer.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_user-desktop.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\16_user-home.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\1-up.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\22_page-magnifier.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\2-up.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_computer.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_document-open.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_folder-remote.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_printer.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_user-desktop.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\32_user-home.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\3-up.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\4-up.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\6-up.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\computer.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-error.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-information.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-question.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\dialog-warning.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\DnDCopy.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.DnDCopy.cur"
-                />
-                <File
-                    RelPath = "resources\DnDLink.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.DnDLink.cur"
-                />
-                <File
-                    RelPath = "resources\DnDMove.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.DnDMove.cur"
-                />
-                <File
-                    RelPath = "resources\DnDNo.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.DnDNo.cur"
-                />
-                <File
-                    RelPath = "resources\document-open.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\folder.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\folder-new.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\folder-remote.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\go-previous.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\go-top.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\image-missing.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\image-x-generic.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\keyboards.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_delete.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_end.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_first.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_next.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_plus.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\nav_previous.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\NESW.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.NESW.cur"
-                />
-                <File
-                    RelPath = "resources\NWSE.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.NWSE.cur"
-                />
-                <File
-                    RelPath = "resources\preferences-system-windows.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\SplitterNS.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.SplitterNS.cur"
-                />
-                <File
-                    RelPath = "resources\SplitterWE.cur"
-                    BuildAction = "EmbeddedResource"
-                    CustomToolNamespace = "System.Windows.Forms.SplitterWE.cur"
-                />
-                <File
-                    RelPath = "resources\System.Windows.Forms.de.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\System.Windows.Forms.en.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\System.Windows.Forms.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\text-x-generic.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\user-desktop.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\user-home.png"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "System.Resources\ResXDataNode.cs"
@@ -411,6 +180,166 @@
                 />
                 <File
                     RelPath = "System.Resources\ResXResourceWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\ComponentEditorForm.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\ComponentEditorPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\EventsTab.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\IUIService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\IWindowsFormsEditorService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\PropertyTab.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Design\WindowsFormsComponentEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Charcode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Charset.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\CharsetFlags.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\CharsetType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\ClassDelegate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Color.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\DestinationDelegate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Font.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\KeyStruct.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\KeysInit.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Major.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Minor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Picture.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\RTF.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\RTFException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\StandardCharCode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\StandardCharName.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\Style.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\StyleElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\StyleType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\TextMap.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.RTF\TokenClass.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\Default\LinkLabelPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -526,7 +455,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\AxHost.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -595,12 +524,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\BindingsCollection.cs"
+                    RelPath = "System.Windows.Forms\BindingSource.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\BindingSource.cs"
+                    RelPath = "System.Windows.Forms\BindingsCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -631,12 +560,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Button.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ButtonBase.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -681,7 +610,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\CheckBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -690,12 +619,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\CheckedListBox.cs"
-                    SubType = "Component"
+                    RelPath = "System.Windows.Forms\CheckState.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\CheckState.cs"
+                    RelPath = "System.Windows.Forms\CheckedListBox.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -716,7 +645,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ColorDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -731,7 +660,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ColumnHeader.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -786,7 +715,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ComboBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -801,7 +730,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\CommonDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -811,7 +740,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ContainerControl.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -826,7 +755,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ContextMenu.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -836,7 +765,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Control.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -911,12 +840,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGrid.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridBoolColumn.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -926,7 +855,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridColumnStyle.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -946,17 +875,17 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridTableStyle.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridTextBoxColumn.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1325,17 +1254,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DataGridViewEditMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DataGridViewEditingControlShowingEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridViewEditingControlShowingEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\DataGridViewEditMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1505,6 +1434,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DataGridViewRowStateChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DataGridViewRowsAddedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1521,16 +1460,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DataGridViewRowsRemovedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\DataGridViewRowStateChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\DataGridViewRowStateChangedEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1621,7 +1550,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\DateTimePicker.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1645,18 +1574,18 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\DockingBehavior.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\DockStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\DockingBehavior.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\DomainUpDown.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1761,7 +1690,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ErrorProvider.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1771,7 +1700,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\FileDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1791,7 +1720,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\FixedSizeTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1821,17 +1750,17 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\FolderBrowserDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\FontDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\Form.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1925,22 +1854,27 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\GridTablesFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\GridTableStylesCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\GridTablesFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\GroupBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\GroupBoxRenderer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\HScrollBar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1971,17 +1905,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\HelpProvider.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\HorizontalAlignment.cs"
                     SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\HScrollBar.cs"
-                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2050,12 +1979,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\IBindableComponent.cs"
+                    RelPath = "System.Windows.Forms\IButtonControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\IButtonControl.cs"
+                    RelPath = "System.Windows.Forms\IBindableComponent.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2120,6 +2049,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IMessageFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\IRootGridEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\IWin32Window.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\IWindowTarget.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ImageIndexConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2136,7 +2085,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ImageList.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2155,18 +2104,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\IMessageFilter.cs"
+                    RelPath = "System.Windows.Forms\ImplicitHScrollBar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\ImplicitHScrollBar.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ImplicitVScrollBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2220,11 +2164,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\IRootGridEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ItemActivation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2245,16 +2184,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\ItemCheckedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\ItemCheckedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ItemCheckEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2265,27 +2194,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ItemCheckedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ItemCheckedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ItemDragEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ItemDragEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\IWin32Window.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\IWindowTarget.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\KeyboardLayouts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2310,6 +2234,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\KeyboardLayouts.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\Keys.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2321,7 +2250,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Label.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2336,7 +2265,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\LabelEditTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2401,7 +2330,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\LinkLabel.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2431,12 +2360,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ListBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ListControl.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2451,7 +2380,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ListView.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2520,11 +2449,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\ListViewVirtualItems.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ListViewVirtualItemsSelectionRangeChangedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2535,12 +2459,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\MainMenu.cs"
-                    SubType = "Component"
+                    RelPath = "System.Windows.Forms\MWFCategoryAttribute.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\MaskedTextBox.cs"
+                    RelPath = "System.Windows.Forms\MWFDescriptionAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\MainMenu.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2560,8 +2489,13 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\MaskedTextBox.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\MdiClient.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2591,12 +2525,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Menu.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\MenuAPI.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2606,7 +2540,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MenuItem.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2671,7 +2605,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MonthCalendar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2686,16 +2620,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MouseEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\MWFCategoryAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\MWFDescriptionAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2726,17 +2650,17 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\NotifyIcon.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\NumericTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\NumericUpDown.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2750,13 +2674,18 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\OSFeature.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\OpacityConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\OpenFileDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2766,16 +2695,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Orientation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\OSFeature.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\OSXStructs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2796,7 +2715,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PageSetupDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2811,12 +2730,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Panel.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\PictureBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2871,17 +2790,17 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PrintDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\PrintPreviewControl.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\PrintPreviewDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2896,7 +2815,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ProgressBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2916,7 +2835,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PropertyGrid.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2926,12 +2845,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PropertyGridTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\PropertyGridView.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -2996,7 +2915,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\RadioButton.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3031,7 +2950,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\RichTextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3086,7 +3005,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\SaveFileDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3100,13 +3019,8 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\ScrollableControl.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\ScrollBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3146,6 +3060,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ScrollProperties.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ScrollableControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3206,7 +3125,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\SizeGrip.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3231,7 +3150,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Splitter.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3261,7 +3180,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\StatusBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3276,7 +3195,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\StatusBarPanel.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3336,7 +3255,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TabControl.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3366,6 +3285,21 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TabDrawMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TabPage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TabRenderer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\TabSizeMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3430,28 +3364,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\TabPage.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TabRenderer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\TabSizeMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Windows.Forms\TextBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\TextBoxBase.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3521,7 +3440,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ThreadExceptionDialog.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3531,12 +3450,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Timer.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3546,7 +3465,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolBarButton.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3630,17 +3549,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ToolStripDropDownCloseReason.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ToolStripDropDownClosedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolStripDropDownClosedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\ToolStripDropDownCloseReason.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3921,7 +3840,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ToolTip.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3936,7 +3855,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TrackBar.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -3986,7 +3905,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\TreeView.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -4071,7 +3990,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\UpDownBase.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -4086,7 +4005,12 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\UserControl.cs"
-                    SubType = "Component"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\VScrollBar.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -4097,11 +4021,6 @@
                 <File
                     RelPath = "System.Windows.Forms\View.cs"
                     SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\VScrollBar.cs"
-                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -4225,12 +4144,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\XplatUIDriver.cs"
+                    RelPath = "System.Windows.Forms\XplatUICarbon.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\XplatUIOSX.cs"
+                    RelPath = "System.Windows.Forms\XplatUIDriver.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4246,51 +4165,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\XplatUIX11.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\ComponentEditorForm.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\ComponentEditorPage.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\EventsTab.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\IUIService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\IWindowsFormsEditorService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\PropertyTab.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.Design\WindowsFormsComponentEditor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4320,112 +4194,67 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Charcode.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\ApplicationHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Charset.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\ControlHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\CharsetFlags.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\Dnd.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\CharsetType.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\EventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\ClassDelegate.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\EventHandlerBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Color.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\Enums.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\DestinationDelegate.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\HIObjectHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Font.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\IEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\KeysInit.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\KeyboardHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\KeyStruct.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\MouseHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Major.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\Pasteboard.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Minor.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\Structs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms.RTF\Picture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\RTF.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\RTFException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\StandardCharCode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\StandardCharName.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\Style.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\StyleElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\StyleType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\TextMap.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms.RTF\TokenClass.cs"
+                    RelPath = "System.Windows.Forms.CarbonInternal\WindowHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4461,6 +4290,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Theming\Default\CheckBoxPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\Default\RadioButtonPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4730,6 +4564,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.WebBrowserDialogs\AlertCheck.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.WebBrowserDialogs\ConfirmCheck.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.WebBrowserDialogs\Generic.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.WebBrowserDialogs\Prompt.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.X11Internal\X11Atoms.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4769,8 +4623,255 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "resources\System.Windows.Forms.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\System.Windows.Forms.en.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\System.Windows.Forms.de.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\SplitterNS.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.SplitterNS.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\SplitterWE.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.SplitterWE.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\NESW.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.NESW.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\NWSE.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.NWSE.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDNo.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDNo.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDCopy.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDCopy.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDLink.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDLink.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDMove.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDMove.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\keyboards.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_computer.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_computer.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\computer.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_document-open.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_document-open.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\document-open.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_folder.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\folder-new.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\folder.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_folder-remote.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_folder-remote.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\folder-remote.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\go-previous.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\go-top.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\22_page-magnifier.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\preferences-system-windows.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_printer.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_printer.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\text-x-generic.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_user-desktop.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_user-desktop.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\user-desktop.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_user-home.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\32_user-home.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\user-home.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\dialog-error.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_dialog-error.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\dialog-information.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_dialog-information.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\dialog-question.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\dialog-warning.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\16_dialog-warning.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\1-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\2-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\3-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\4-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\6-up.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_delete.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_end.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_first.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_next.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_plus.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\nav_previous.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\image-missing.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\image-x-generic.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Consts.cs"
+                    Link = "common/Consts.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MonoTODOAttribute.cs"
+                    Link = "common/MonoTODOAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
             </Include>
         </Files>
     </CSHARP>
 </VisualStudioProject>
-
