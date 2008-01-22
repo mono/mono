@@ -100,5 +100,38 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) & value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "And#13");
 		}
+
+		[Test]
+		public void AndTest ()
+		{
+			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a & b;
+			
+			Func<bool,bool,bool> c = e.Compile ();
+			
+			Assert.AreEqual (true,  c (true, true), "t1");
+			Assert.AreEqual (false, c (true, false), "t2");
+			Assert.AreEqual (false, c (false, true), "t3");
+			Assert.AreEqual (false, c (false, false), "t4");
+		}
+		
+		[Test]
+		public void AndNullableTest ()
+		{
+			Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a & b;
+			
+			Func<bool?,bool?,bool?> c = e.Compile ();
+			
+			
+			Assert.AreEqual (true,  c (true, true), "a1");
+			Assert.AreEqual (false, c (true, false), "a2");
+			Assert.AreEqual (false, c (false, true), "a3");
+			Assert.AreEqual (false, c (false, false), "a4");
+			
+			Assert.AreEqual (null,  c (true, null),  "a5");
+			Assert.AreEqual (false, c (false, null), "a6");
+			Assert.AreEqual (false, c (null, false), "a7");
+			Assert.AreEqual (null,  c (true, null),  "a8");
+			Assert.AreEqual (null, c (null, null),   "a9");
+		}
 	}
 }

@@ -215,6 +215,13 @@ namespace System.Linq.Expressions {
 				if (IsNullable (rtype))
 					urtype = GetNullableOf (rtype);
 
+				if (oper_name == "op_BitwiseOr" || oper_name == "op_BitwiseAnd"){
+					if (ultype == typeof (bool)){
+						if (ultype == urtype && ltype == rtype)
+							return null;
+					}
+				}
+				
 				if (oper_name == "op_LogicalAnd" || oper_name == "op_LogicalOr"){
 					if (ultype == typeof (bool)){
 						if (ultype == urtype && ltype == rtype)
@@ -271,7 +278,6 @@ namespace System.Linq.Expressions {
 				// avoid reflection shortcut and catches Ints/bools before we check Numbers in general
 				if (left.Type == right.Type && (left.Type == typeof (bool) || IsInt (left.Type)))
 					return method;
-
 			}
 
 			method = BinaryCoreCheck (oper_name, left, right, method);
@@ -280,7 +286,8 @@ namespace System.Linq.Expressions {
 				// The check in BinaryCoreCheck allows a bit more than we do
 				// (floats and doubles).  Catch this here
 				//
-				throw new InvalidOperationException ("Types not supported");
+				if (left.Type == typeof(double) || left.Type == typeof(float))
+					throw new InvalidOperationException ("Types not supported");
 			}
 			return method;
 		}
@@ -704,12 +711,44 @@ namespace System.Linq.Expressions {
 			return Coalesce (left, right, null);
 		}
 
-		[MonoTODO]
 		public static BinaryExpression Coalesce (Expression left, Expression right, LambdaExpression conversion)
 		{
-			BinaryCoreCheck (null, left, right, null);
+			if (left == null)
+				throw new ArgumentNullException ("left");
+			if (right == null)
+				throw new ArgumentNullException ("right");
 
-			throw new NotImplementedException ();
+			//
+			// First arg must ne nullable (either Nullable<T> or a reference type
+			//
+			if (left.Type.IsValueType && !IsNullable (left.Type))
+				throw new InvalidOperationException ("Left expression can never be null");
+			
+			Type result = null;
+
+			if (IsNullable (left.Type)){
+				Type lbase = GetNullableOf (left.Type);
+				
+				if (!IsNullable (right.Type) && lbase.IsAssignableFrom (right.Type))
+					result = lbase;
+			}
+
+			if (result == null && left.Type.IsAssignableFrom (right.Type))
+				result = left.Type;
+
+			if (result == null){
+				if (IsNullable (left.Type) && right.Type.IsAssignableFrom (GetNullableOf (left.Type))){
+					result = right.Type;
+				}
+			}
+
+			if (result == null)
+				throw new ArgumentException ("Incompatible argument types");
+
+			//
+			// FIXME: What do we do with "conversion"?
+			//
+			return new BinaryExpression (ExpressionType.Coalesce, result, left, right, false, false, null, conversion);
 		}
 
 		//
@@ -1390,12 +1429,12 @@ namespace System.Linq.Expressions {
 			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
 		}
 
-		static bool IsNullable (Type type)
+		internal static bool IsNullable (Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
 		}
 
-		protected static bool IsUnsigned (Type t)
+		internal static bool IsUnsigned (Type t)
 		{
 			if (t.IsPointer)
 				return IsUnsigned (t.GetElementType ());
@@ -1406,7 +1445,7 @@ namespace System.Linq.Expressions {
 		//
 		// returns the T in a a Nullable<T> type.
 		//
-		static Type GetNullableOf (Type type)
+		internal static Type GetNullableOf (Type type)
 		{
 			return type.GetGenericArguments () [0];
 		}

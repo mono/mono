@@ -176,9 +176,13 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Ldloca, vright);
 				ig.Emit (OpCodes.Call, has_value);
 				ig.Emit (OpCodes.Brfalse, both_are_null);
+				ig.Emit (OpCodes.Ldloca, vright);
 				ig.Emit (OpCodes.Call, get_value);
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
+
+			// right_is_null:
+				ig.MarkLabel (right_is_null);
 				ig.Emit (OpCodes.Pop);
 
 			// both_are_null:
@@ -200,6 +204,53 @@ namespace System.Linq.Expressions {
 				ig.Emit (and ? OpCodes.And : OpCodes.Or);
 			}
 			
+		}
+
+		void EmitCoalesce (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			LocalBuilder vleft;
+			LocalBuilder vright;
+					
+			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+			
+			Label exit = ig.DefineLabel ();
+			Label try_right = ig.DefineLabel ();
+			Label setup_null = ig.DefineLabel ();
+
+			vleft = EmitStored (ec, left);
+			if (IsNullable (left.Type)){
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, has_value);
+			} else 
+				ig.Emit (OpCodes.Ldloc, vleft);
+			
+			ig.Emit (OpCodes.Brfalse, try_right);
+			ig.Emit (OpCodes.Ldloc, vleft);
+			ig.Emit (OpCodes.Br, exit);
+			
+		// try_right;
+			ig.MarkLabel (try_right);
+			vright = EmitStored (ec, right);
+			if (IsNullable (right.Type)){
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, has_value);
+			} else
+				ig.Emit (OpCodes.Ldloc, vright);
+			
+			ig.Emit (OpCodes.Brfalse, setup_null);
+			ig.Emit (OpCodes.Ldloc, vright);
+			ig.Emit (OpCodes.Br, exit);
+
+		// setup_null:
+			ig.MarkLabel (setup_null);
+			LocalBuilder ret = ig.DeclareLocal (Type);
+			ig.Emit (OpCodes.Ldloca, ret);
+			ig.Emit (OpCodes.Initobj, Type);
+			
+		// exit:
+			ig.MarkLabel (exit);
 		}
 		
 		internal override void Emit (EmitContext ec)
@@ -229,6 +280,10 @@ namespace System.Linq.Expressions {
 			case ExpressionType.OrElse:
 				Console.WriteLine ("LINQ/BinaryExpression: OrElse code path not yet reviewed");
 				EmitLogical (ec, false, true);
+				return;
+
+			case ExpressionType.Coalesce:
+				EmitCoalesce (ec);
 				return;
 			}
 			

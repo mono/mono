@@ -1,3 +1,20 @@
+2008-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* BinaryExpression.cs (EmitCoalesce): Add support for emitting
+	code for Coalesce.
+
+	TODO: this does not use the "Conversion" Lambda, which am not sure
+	who generates this or what it is used for.
+
+	(EmitLogical): Fix a couple of bugs in AndAlso, OrElse.	
+
+	* Expression.cs: Add support for Coalesce.
+	(BinaryCoreCheck): Move more checking here, instead of the helper
+	routines, will remove them next.
+	
+	* LambdaExpression.cs (Compile): Create the delegate last, so we
+	manage to save the assembly while debugging in case of error
+
 2008-01-21  Miguel de Icaza  <miguel@novell.com>
 
 	* Expression.cs (BinaryCoreCheck): Add checking for a few

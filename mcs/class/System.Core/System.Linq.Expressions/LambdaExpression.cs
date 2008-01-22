@@ -171,8 +171,6 @@ namespace System.Linq.Expressions {
 				body.Emit (ec);
 				ec.ig.Emit (OpCodes.Ret);
 
-				lambda_delegate = ec.CreateDelegate ();
-
 				if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
 					string fname = "linq" + (EmitContext.method_count-1) + ".dll";
 					AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
@@ -189,6 +187,8 @@ namespace System.Linq.Expressions {
 					tb.CreateType ();
 					ab.Save (fname);
 				}
+				
+				lambda_delegate = ec.CreateDelegate ();
 			}
 			return lambda_delegate;
 		}
