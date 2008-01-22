@@ -739,7 +739,7 @@ namespace Mono.Unix.Native {
 
 		public override bool Equals (object obj)
 		{
-			if (obj.GetType() != GetType())
+			if ((obj == null) || (obj.GetType () != GetType ()))
 				return false;
 			Flock value = (Flock) obj;
 			return l_type == value.l_type && l_whence == value.l_whence && 

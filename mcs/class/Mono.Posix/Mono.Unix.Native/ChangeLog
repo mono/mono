@@ -1,3 +1,8 @@
+2008-01-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Syscall.cs: Fix Flock.Equals to avoid NRE (and return false if object 
+	is null). Found using Gendarme.
+
 2008-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Syscall.cs: Add ST_NOEXEC, ST_REMOUNT, ST_BIND to MountFlags.  Patch from
