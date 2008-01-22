@@ -1,5 +1,5 @@
 //
-// System.MonoType
+// System.Reflection.MonoGenericClass
 //
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
@@ -40,9 +40,15 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection
 {
+	/*
+	 * MonoGenericClass represents an instantiation of a generic TypeBuilder. MS
+	 * calls this class TypeBuilderInstantiation (a much better name). MS returns 
+	 * NotImplementedException for many of the methods but we can't do that as gmcs
+	 * depends on them.
+	 */
 	internal class MonoGenericClass : MonoType
 	{
-		protected Type generic_type;
+		protected TypeBuilder generic_type;
 		bool initialized;
 
 		internal MonoGenericClass ()
@@ -82,14 +88,6 @@ namespace System.Reflection
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		EventInfo[] get_event_info ()
-		{
-			if (generic_type is TypeBuilder)
-				return ((TypeBuilder) generic_type).GetEvents_internal (flags);
-			else
-				return generic_type.GetEvents (flags);
-		}
-
 		void initialize ()
 		{
 			if (initialized)
@@ -100,10 +98,10 @@ namespace System.Reflection
 				parent.initialize ();
 
 			initialize (generic_type.GetMethods (flags),
-				    generic_type.GetConstructors (flags),
-				    generic_type.GetFields (flags),
-				    generic_type.GetProperties (flags),
-				    get_event_info ());
+						generic_type.GetConstructors (flags),
+						generic_type.GetFields (flags),
+						generic_type.GetProperties (flags),
+						generic_type.GetEvents_internal (flags));
 
 			initialized = true;
 		}
