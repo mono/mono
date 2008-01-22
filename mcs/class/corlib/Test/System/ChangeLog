@@ -1,6 +1,13 @@
+2008-01-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+        * AppDomainTest.cs: Added DefineDynamicAssembly tests for invalid
+        AssemblyBuilderAccess argument. Enabled test for DefineDynamicAssembly
+        overload taking IEnumerable<CustomAttributeBuilder>. Fixed typo in
+        comments.
+
 2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* DateTimeOffsetTest.cs: Add test case for Equals to	validate 
+	* DateTimeOffsetTest.cs: Add test case for Equals to validate 
 	Gendarme's finding.
 
 2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>

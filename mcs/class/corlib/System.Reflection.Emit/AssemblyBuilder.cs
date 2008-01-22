@@ -123,14 +123,35 @@ namespace System.Reflection.Emit {
 		bool created;
 		bool is_module_only;
 		private Mono.Security.StrongName sn;
+		readonly bool is_compiler_context;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
-		
+
+		/* Keep this in sync with codegen.cs in mcs */
+		private const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
+
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
+#if BOOTSTRAP_WITH_OLDLIB
+			is_compiler_context = true;
+#else
+			is_compiler_context = (access & COMPILER_ACCESS) != 0;
+#endif
+
+			// remove Mono specific flag to allow enum check to pass
+			access &= ~COMPILER_ACCESS;
+
+#if NET_2_0
+			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
+				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
+					"Argument value {0} is not valid.", (int) access),
+					"access");
+#endif
+
 			name = n.Name;
 			this.access = (uint)access;
+			flags = (uint) n.Flags;
 
 			// don't call GetCurrentDirectory for Run-only builders (CAS may not like that)
 			if (IsSave && (directory == null || directory.Length == 0)) {
@@ -618,6 +639,15 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
+		/*
+		 * This is set when the the AssemblyBuilder is created by (g)mcs
+		 * or vbnc.
+		 */
+		internal bool IsCompilerContext
+		{
+			get { return is_compiler_context; }
+		}
+
 		internal bool IsSave {
 			get {
 				return access != (uint)AssemblyBuilderAccess.Run;
@@ -759,30 +789,31 @@ namespace System.Reflection.Emit {
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 
-			string attrname = customBuilder.Ctor.ReflectedType.FullName;
-			byte[] data;
-			int pos;
+			if (IsCompilerContext) {
+				string attrname = customBuilder.Ctor.ReflectedType.FullName;
+				byte [] data;
+				int pos;
 
-			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
-				version = create_assembly_version (customBuilder.string_arg ());
-				return;
-			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
-				culture = GetCultureString (customBuilder.string_arg ());
-			} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				algid = (uint)data [pos];
-				algid |= ((uint)data [pos + 1]) << 8;
-				algid |= ((uint)data [pos + 2]) << 16;
-				algid |= ((uint)data [pos + 3]) << 24;
-			} else if (attrname == "System.Reflection.AssemblyFlagsAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				flags = (uint)data [pos];
-				flags |= ((uint)data [pos + 1]) << 8;
-				flags |= ((uint)data [pos + 2]) << 16;
-				flags |= ((uint)data [pos + 3]) << 24;
-				return;
+				if (attrname == "System.Reflection.AssemblyVersionAttribute") {
+					version = create_assembly_version (customBuilder.string_arg ());
+					return;
+				} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
+					culture = GetCultureString (customBuilder.string_arg ());
+				} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
+					data = customBuilder.Data;
+					pos = 2;
+					algid = (uint) data [pos];
+					algid |= ((uint) data [pos + 1]) << 8;
+					algid |= ((uint) data [pos + 2]) << 16;
+					algid |= ((uint) data [pos + 3]) << 24;
+				} else if (attrname == "System.Reflection.AssemblyFlagsAttribute") {
+					data = customBuilder.Data;
+					pos = 2;
+					flags = (uint) data [pos];
+					flags |= ((uint) data [pos + 1]) << 8;
+					flags |= ((uint) data [pos + 2]) << 16;
+					flags |= ((uint) data [pos + 3]) << 24;
+				}
 			}
 
 			if (cattrs != null) {

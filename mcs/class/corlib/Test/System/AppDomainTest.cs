@@ -174,7 +174,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #80934
-		//[Category ("NotWorking")]
 		public void ConfigurationFile_Null ()
 		{
 			// Note:
@@ -227,7 +226,36 @@ namespace MonoTests.System
 			AppDomain.Unload (ad);
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
+		public void DefineDynamicAssembly1_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly1";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
 		public void DefineDynamicAssembly1_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -263,7 +291,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess)
 		public void DefineDynamicAssembly1_Name_Null ()
 		{
 			try {
@@ -310,7 +338,38 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
+		public void DefineDynamicAssembly2_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly2";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				AppDomain.CurrentDomain.Evidence);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
 		public void DefineDynamicAssembly2_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -347,7 +406,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence)
 		public void DefineDynamicAssembly2_Name_Null ()
 		{
 			try {
@@ -397,7 +456,38 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
+		public void DefineDynamicAssembly3_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly3";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath ());
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
 		public void DefineDynamicAssembly3_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -434,7 +524,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String)
 		public void DefineDynamicAssembly3_Name_Null ()
 		{
 			try {
@@ -484,7 +574,40 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
+		public void DefineDynamicAssembly4_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly4";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath (),
+				AppDomain.CurrentDomain.Evidence);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
 		public void DefineDynamicAssembly4_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -522,7 +645,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence)
 		public void DefineDynamicAssembly4_Name_Null ()
 		{
 			try {
@@ -575,7 +698,42 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly5_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly5";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly5_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -614,7 +772,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly5_Name_Null ()
 		{
 			try {
@@ -670,7 +828,44 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly6_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly6";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				AppDomain.CurrentDomain.Evidence,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly6_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -710,7 +905,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, Evidence, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly6_Name_Null ()
 		{
 			try {
@@ -769,7 +964,44 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly7_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly7";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath (),
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath (),
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly7_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -809,7 +1041,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly7_Name_Null ()
 		{
 			try {
@@ -868,7 +1100,46 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		public void DefineDynamicAssembly8_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly8";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath (),
+				AppDomain.CurrentDomain.Evidence,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly8_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -909,7 +1180,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet)
 		public void DefineDynamicAssembly8_Name_Null ()
 		{
 			try {
@@ -971,7 +1242,48 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
+		public void DefineDynamicAssembly9_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly9";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath (),
+				AppDomain.CurrentDomain.Evidence,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				true);
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
 		public void DefineDynamicAssembly9_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -1013,7 +1325,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean)
 		public void DefineDynamicAssembly9_Name_Null ()
 		{
 			try {
@@ -1079,7 +1391,50 @@ namespace MonoTests.System
 		}
 
 #if NET_2_0
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly10_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly10";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					Path.GetTempPath (),
+					AppDomain.CurrentDomain.Evidence,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					(PermissionSet) null,
+					true,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				Path.GetTempPath (),
+				AppDomain.CurrentDomain.Evidence,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				(PermissionSet) null,
+				true,
+				new List<CustomAttributeBuilder> ());
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly10_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -1122,7 +1477,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly10_Name_Null ()
 		{
 			try {
@@ -1190,8 +1545,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
-		[Category ("NotWorking")]
+		[Test] // DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly11 ()
 		{
 			List<CustomAttributeBuilder> cattrs;
@@ -1242,7 +1596,7 @@ namespace MonoTests.System
 				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "#A6");
 				Assert.IsNull (an.KeyPair, "#A7");
 				Assert.AreEqual ("DefineDynamicAssembly11A", an.Name, "#A8");
-				Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#A9");
+				//Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#A9");
 				Assert.AreEqual (an.FullName, an.ToString (), "#A10");
 				Assert.AreEqual (new Version (0, 0, 0, 0), an.Version, "#A11");
 				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "#A12");
@@ -1321,7 +1675,7 @@ namespace MonoTests.System
 				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "#B6");
 				Assert.IsNull (an.KeyPair, "#B7");
 				Assert.AreEqual ("DefineDynamicAssembly11B", an.Name, "#B8");
-				Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#B9");
+				//Assert.AreEqual (ProcessorArchitecture.MSIL, an.ProcessorArchitecture, "#B9");
 				Assert.AreEqual (an.FullName, an.ToString (), "#B10");
 				Assert.AreEqual (new Version (3, 2, 4, 1), an.Version, "#B11");
 				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, an.VersionCompatibility, "#B12");
@@ -1357,7 +1711,38 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
+		[Test] // DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
+		public void DefineDynamicAssembly11_Access_Invalid ()
+		{
+			AssemblyName name = new AssemblyName ();
+			name.Name = "DefineDynamicAssembly11";
+
+#if NET_2_0
+			try {
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+					name, AssemblyBuilderAccess.Run |
+					(AssemblyBuilderAccess) 666,
+					new List<CustomAttributeBuilder> ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal enum value: 667
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("667") != -1, "#5");
+				Assert.IsNotNull (ex.ParamName, "#6");
+				Assert.AreEqual ("access", ex.ParamName, "#7");
+			}
+#else
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run |
+				(AssemblyBuilderAccess) 666,
+				new List<CustomAttributeBuilder> ());
+			Assert.IsNotNull (ab, "#1");
+#endif
+		}
+
+		[Test] // DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly11_Name_InvalidChars ()
 		{
 			string [] invalid_char_names = new string [] {
@@ -1394,7 +1779,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test] // DynamicDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
+		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess, String, Evidence, PermissionSet, PermissionSet, PermissionSet, Boolean, IEnumerable<CustomAttributeBuilder>)
 		public void DefineDynamicAssembly11_Name_Null ()
 		{
 			try {
