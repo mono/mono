@@ -91,6 +91,22 @@ namespace MonoTests.System
 				TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 0, 0), 3, 4, (DayOfWeek)12);
 			}
 		}
+
+		[TestFixture]
+		public class NonExceptional {
+
+			[Test]
+			public void EqualsObject ()
+			{
+				DateTime dt = new DateTime (1, 1, 1, 2, 0, 0, DateTimeKind.Unspecified);
+				TimeZoneInfo.TransitionTime tt1 = TimeZoneInfo.TransitionTime.CreateFixedDateRule (dt, 1, 21);
+				Assert.IsFalse (tt1.Equals (null), "null"); // found using Gendarme :)
+				Assert.IsTrue (tt1.Equals (tt1), "self");
+				TimeZoneInfo.TransitionTime tt2 = TimeZoneInfo.TransitionTime.CreateFixedDateRule (dt, 2, 12);
+				Assert.IsFalse (tt2.Equals (tt1), "1!=2");
+				Assert.IsFalse (tt1.Equals (tt2), "2!=1");
+			}
+		}
 	}
 }
 #endif
