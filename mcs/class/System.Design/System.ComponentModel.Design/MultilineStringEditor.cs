@@ -77,7 +77,7 @@ namespace System.ComponentModel.Design
 					control.Text = editContent;
 
 					editorService.DropDownControl (control);
-					return editContent;
+					return control.Text;
 				}
 			}
 			return base.EditValue (context, provider, value);

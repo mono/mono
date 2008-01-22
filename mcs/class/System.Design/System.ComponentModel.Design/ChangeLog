@@ -1,3 +1,9 @@
+2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * MutilineStringEditor.cs: Fix EditValue to return the new
+	 value not the old one.
+	 [Fixes #354991]
+
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* UndoEngine.cs: implemented.
