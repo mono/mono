@@ -9,8 +9,8 @@ class C
 {
 	public static void Main ()
 	{
-		List<int> first  = null;
-		List<int> second = null;
+		List<int> first  = new List<int> ();
+		List<int> second = new List<int> ();
 
 		IEnumerable<int> q = first.Except(second);
 	}

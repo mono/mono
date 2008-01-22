@@ -1,3 +1,7 @@
+2008-01-22  Raja R Harinath  <harinath@hurrynot.org>
+
+	* gtest-exmethod-08.cs: Initialize 'first' and 'second' to non-null.
+
 2008-01-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (VALID_PROFILE): New.  Disable tests for other profiles.
