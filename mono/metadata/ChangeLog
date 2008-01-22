@@ -1,5 +1,18 @@
 2008-01-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* object-internals.h (MonoReflectionGenericClass): Make the 'generic_type' field
+	a MonoReflectionTypeBuilder since it is always of that type.
+
+	* reflection.c (mono_type_get_object): Remove an unneccesary check.	
+
+	* reflection.c (mono_generic_class_get_object): Simplify this a bit.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Ditto.
+	
+	* icall.c (ves_icall_MonoGenericClass_GetParentType): Ditto.
+
+	* icall.c (ves_icall_MonoGenericClass_GetInterfaces): Ditto.
+
 	* reflection.c (mono_reflection_create_runtime_class): Remove already created
 	instantiations from the type cache.
 
