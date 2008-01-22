@@ -416,7 +416,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ElementAtArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// ElementAt<TSource> (int)
@@ -439,7 +439,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ElementAtOrDefaultArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// ElementAtOrDefault<TSource> (int)
@@ -554,7 +554,7 @@ namespace MonoTests.System.Linq {
 		[Ignore ("Takes some time.")]
 		public void CountOverflowTest ()
 		{
-			BigEnumerable data = new BigEnumerable ((ulong) int.MaxValue + 1);
+			//BigEnumerable data = new BigEnumerable ((ulong) int.MaxValue + 1);
 
 			// Count<TSource> ()
 			//AssertException<OverflowException> (delegate () { data.Count (); });
@@ -598,7 +598,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ContainsArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Contains<TSource> (TSource)
@@ -1402,7 +1402,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void TakeArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Take<TSource> (int)
@@ -1453,7 +1453,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void SkipArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Skip<TSource> (int)
@@ -1843,7 +1843,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void DistinctArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Distinct<TSource> ()
@@ -1959,7 +1959,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ReverseArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Reverse<TSource> ()
@@ -2019,7 +2019,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void AsEnumerableArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 		}
 
@@ -2036,7 +2036,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ToArrayArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// ToArray<TSource> ()
@@ -2057,7 +2057,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void ToListArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// ToList<string> ()
@@ -2183,7 +2183,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void DefaultIfEmptyArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// DefaultIfEmpty<string> ()
@@ -2214,7 +2214,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void OfTypeArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// OfType<string> ()
@@ -2235,7 +2235,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void CastArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 
 			// Cast<string> ()
@@ -2258,7 +2258,7 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void RangeArgumentNullTest ()
 		{
-			string [] data = { "2", "1", "5", "3", "4" };
+			//string [] data = { "2", "1", "5", "3", "4" };
 
 		}
 

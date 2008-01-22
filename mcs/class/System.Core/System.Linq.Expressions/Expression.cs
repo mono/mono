@@ -587,7 +587,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
-			method = BinaryCoreCheck ("op_LogicalAnd", left, right, method);
+			method = BinaryCoreCheck ("op_BitwiseAnd", left, right, method);
 
 			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
 		}
@@ -599,7 +599,11 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
 		{
-			method = BinaryCoreCheck ("op_LogicalOr", left, right, method);
+			method = BinaryCoreCheck ("op_BitwiseOr", left, right, method);
+			if (method == null){
+				if (left.Type != typeof (bool))
+					throw new InvalidOperationException ("Only booleans are allowed for OrElse");
+			}
 
 			return MakeBoolBinary (ExpressionType.OrElse, left, right, false, method);
 		}

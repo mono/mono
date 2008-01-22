@@ -32,6 +32,7 @@ System.Linq.Expressions/ExpressionTest_NewArrayBounds.cs
 System.Linq.Expressions/ExpressionTest_NewArrayInit.cs
 System.Linq.Expressions/ExpressionTest_Not.cs
 System.Linq.Expressions/ExpressionTest_Or.cs
+System.Linq.Expressions/ExpressionTest_OrElse.cs
 System.Linq.Expressions/ExpressionTest_Power.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
 System.Linq.Expressions/ExpressionTest_RightShift.cs

@@ -42,6 +42,7 @@ namespace MonoTests.System
 				if (Environment.OSVersion.Platform != PlatformID.Unix)
 					return;
 				TimeZoneInfo local = TimeZoneInfo.Local;
+				Assert.IsNotNull (local);
 				Assert.IsTrue (true);
 			}
 		}

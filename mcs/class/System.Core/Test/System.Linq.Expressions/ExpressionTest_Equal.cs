@@ -119,8 +119,8 @@ namespace MonoTests.System.Linq.Expressions
 			int? a = 1;
 			int b = 2;
 
-			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof (int?)),
-								  Expression.Constant (b, typeof (int)));
+			Expression.Equal (Expression.Constant (a, typeof (int?)),
+					  Expression.Constant (b, typeof (int)));
 		}
 
 		[Test]

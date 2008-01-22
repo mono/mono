@@ -192,7 +192,7 @@ namespace MonoTests.System.Linq.Expressions
 		public delegate int TestDelegate(int i);
 		public event TestDelegate TestEvent;
 
-		void DoNothing ()
+		public void DoNothing ()
 		{
 			// Just to avoid a compiler warning
 			if (TestEvent != null)

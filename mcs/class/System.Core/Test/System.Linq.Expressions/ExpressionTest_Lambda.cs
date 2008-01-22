@@ -161,7 +161,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			// This should throw, since the add.Type is "int?" and the return
 			// type we have here is int.
-			Expression<Func<int?, int?, int>> efu = Expression.Lambda<Func<int?,int?,int>> (add, p1, p2);
+			Expression.Lambda<Func<int?,int?,int>> (add, p1, p2);
 		}
 	}
 }

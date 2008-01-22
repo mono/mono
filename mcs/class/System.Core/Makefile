@@ -7,7 +7,7 @@ LIBRARY = System.Core.dll
 LIB_MCS_FLAGS = -unsafe -d:LIBC /r:$(corlib)
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:NET_3_5
+LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
