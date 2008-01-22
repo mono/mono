@@ -827,7 +827,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MinArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
@@ -987,7 +986,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MaxArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
