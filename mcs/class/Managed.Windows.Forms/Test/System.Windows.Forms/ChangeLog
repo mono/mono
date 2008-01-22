@@ -1,5 +1,9 @@
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollabeControlTest.cs: Add test for bug #354676.
+
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ControlTest.cs: Add test for bug #355074.
 
 2008-01-18  Jonathan Pobst  <monkey@jpobst.com>

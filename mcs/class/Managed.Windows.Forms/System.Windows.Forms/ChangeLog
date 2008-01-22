@@ -1,3 +1,9 @@
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ScrollableControl.cs: With the advent of 2.0's Padding, DockPadding
+	becomes a wrapper around Padding.
+	[Fixes a part of bug #354676]
+
 2008-01-22 Geoff Norton  <gnorton@novell.com>
 
 	* Mime.cs:  Avoid a needles exception on OSX if we dont have a buffer

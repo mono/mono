@@ -59,14 +59,93 @@ namespace System.Windows.Forms {
 
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
 		#region Subclass DockPaddingEdges
-		public class DockPaddingEdges : ICloneable {
+		public class DockPaddingEdges : ICloneable
+		{
+			private Control	owner;
+			
+#if NET_2_0
+			internal DockPaddingEdges (Control owner)
+			{
+				this.owner = owner;
+			}
+
+			#region DockPaddingEdges Public Instance Properties
+			[RefreshProperties (RefreshProperties.All)]
+			public int All {
+				get { return owner.Padding.All; }
+				set { owner.Padding = new Padding (value); }
+			}
+
+			[RefreshProperties (RefreshProperties.All)]
+			public int Bottom {
+				get { return owner.Padding.Bottom; }
+				set { owner.Padding = new Padding (Left, Top, Right, value); }
+			}
+
+			[RefreshProperties (RefreshProperties.All)]
+			public int Left {
+				get { return owner.Padding.Left; }
+				set { owner.Padding = new Padding (value, Top, Right, Bottom); }
+			}
+
+			[RefreshProperties (RefreshProperties.All)]
+			public int Right {
+				get { return owner.Padding.Right; }
+				set { owner.Padding = new Padding (Left, Top, value, Bottom); }
+			}
+
+			[RefreshProperties (RefreshProperties.All)]
+			public int Top {
+				get { return owner.Padding.Top; }
+				set { owner.Padding = new Padding (Left, value, Right, Bottom); }
+			}
+			#endregion	// DockPaddingEdges Public Instance Properties
+
+			// Public Instance Methods
+			public override bool Equals (object other)
+			{
+				if (!(other is DockPaddingEdges)) {
+					return false;
+				}
+
+				if ((this.All == ((DockPaddingEdges)other).All) && (this.Left == ((DockPaddingEdges)other).Left) &&
+					(this.Right == ((DockPaddingEdges)other).Right) && (this.Top == ((DockPaddingEdges)other).Top) &&
+					(this.Bottom == ((DockPaddingEdges)other).Bottom)) {
+					return true;
+				}
+
+				return false;
+			}
+
+			public override int GetHashCode ()
+			{
+				return All * Top * Bottom * Right * Left;
+			}
+
+			public override string ToString ()
+			{
+				return "All = " + All.ToString () + " Top = " + Top.ToString () + " Left = " + Left.ToString () + " Bottom = " + Bottom.ToString () + " Right = " + Right.ToString ();
+			}
+
+			internal void Scale (float dx, float dy)
+			{
+				Left = (int)(Left * dx);
+				Right = (int)(Right * dx);
+				Top = (int)(Top * dy);
+				Bottom = (int)(Bottom * dy);
+			}
+
+			object ICloneable.Clone ()
+			{
+				return new DockPaddingEdges (owner);
+			}
+#else
 			#region DockPaddingEdges Local Variables
 			private int	all;
 			private int	left;
 			private int	right;
 			private int	top;
 			private int	bottom;
-			private Control	owner;
 			#endregion	// DockPaddingEdges Local Variables
 
 			#region DockPaddingEdges Constructor
@@ -198,6 +277,7 @@ namespace System.Windows.Forms {
 
 				return padding_edge;
 			}
+#endif
 		}
 		#endregion	// Subclass DockPaddingEdges
 

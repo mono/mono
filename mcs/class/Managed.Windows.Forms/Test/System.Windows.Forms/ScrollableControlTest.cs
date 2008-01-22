@@ -277,6 +277,41 @@ namespace MonoTests.System.Windows.Forms
 				return base.ScrollToControl (activeControl);
 			}
 		}
+		
+		[Test]
+		public void Padding ()
+		{
+			ScrollableControl c = new ScrollableControl ();
+			c.Dock = DockStyle.Fill;
+			c.Padding = new Padding (40);
+
+			Assert.AreEqual (40, c.Padding.All, "A1");
+			Assert.AreEqual (40, c.DockPadding.All, "A2");
+			
+			c.DockPadding.Right = 20;
+
+			Assert.AreEqual (20, c.Padding.Right, "A3");
+			Assert.AreEqual (20, c.DockPadding.Right, "A4");
+			
+			c.Padding = new Padding (40, 40, 40, 40);
+
+			Assert.AreEqual (40, c.Padding.Right, "A5");
+			Assert.AreEqual (40, c.DockPadding.Right, "A6");
+			
+			Form f = new Form ();
+			f.Controls.Add (c);
+			
+			Button b = new Button ();
+			c.Controls.Add (b);
+			
+			f.Show ();
+			
+			// Padding does not affect laying out the controls
+			Assert.AreEqual (new Point (0, 0), b.Location, "A7");
+			
+			f.Close ();
+			f.Dispose ();
+		}
 #endif
 	}
 }
