@@ -1,5 +1,10 @@
 2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
 
+	 * PropertyGridView.cs: IsValueTypeGridItem should return true 
+	 for Arrays as well.
+
+2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
+
 	 * PropertyGrid.cs, GridEntry.cs, PropertyGridView.cs:
 	  - Renamed GridEntry.SelectedObjects to TargetObjects to better
 	  reflect the property name role.

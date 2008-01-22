@@ -866,7 +866,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private bool IsValueTypeGridItem (GridItem item)
 		{
 			if (item != null && item.PropertyDescriptor != null && 
-			    item.PropertyDescriptor.PropertyType.IsValueType)
+			    (item.PropertyDescriptor.PropertyType.IsValueType ||
+			     item.PropertyDescriptor.PropertyType.IsArray))
 				return true;
 			return false;
 		}
