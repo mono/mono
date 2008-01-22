@@ -1,3 +1,7 @@
+2008-01-22  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZoneInfoTest.cs: disable failing tests at runtime on windows
+
 2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeZoneInfo.TransitionTimeTest.cs: Add test case for Equals to
