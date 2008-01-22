@@ -5348,6 +5348,23 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			if (dimensions != 1) {
+				Report.Error (838, loc, "An expression tree cannot contain a multidimensional array initializer");
+				return null;
+			}
+
+			ArrayList args = new ArrayList (array_data == null ? 1 : array_data.Count + 1);
+			args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
+			if (array_data != null) {
+				foreach (Expression e in array_data)
+					args.Add (new Argument (e.CreateExpressionTree (ec)));
+			}
+
+			return CreateExpressionFactoryCall ("NewArrayInit", args);
+		}		
+		
 		public void UpdateIndices ()
 		{
 			int i = 0;

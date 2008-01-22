@@ -1325,7 +1325,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return child.CreateExpressionTree (ec);
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (child.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Convert", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

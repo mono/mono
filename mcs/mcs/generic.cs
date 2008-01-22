@@ -3264,6 +3264,14 @@ namespace Mono.CSharp {
 			{
 				return new Wrap (expr).Resolve (ec) as Wrap;
 			}
+			
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				ArrayList args = new ArrayList (2);
+				args.Add (new Argument (expr.CreateExpressionTree (ec)));
+				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+				return CreateExpressionFactoryCall ("Convert", args);
+			}			
 
 			public override Expression DoResolve (EmitContext ec)
 			{

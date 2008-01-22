@@ -1,5 +1,9 @@
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
+ 	* ecore.cs, expression.cs, generic.cs: Implemented NewArrayInit expression.
+ 	
+2008-01-22  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #355161
  	* ecore.cs, expression.cs: Wider range of extension method supported
  	expressions.
