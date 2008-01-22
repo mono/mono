@@ -84,16 +84,14 @@ namespace System.Linq.Expressions {
 
 		internal int GetParameterPosition (ParameterExpression p)
 		{
-			ReadOnlyCollection<ParameterExpression> pars = Owner.Parameters;
-			
-			for (int i = 0; i < pars.Count; i++){
-				if (pars [i] == p)
-					return i;
-			}
-			throw new InvalidOperationException ("Parameter not in scope");
+			int position = Owner.Parameters.IndexOf (p);
+			if (position == -1)
+				throw new InvalidOperationException ("Parameter not in scope");
+
+			return position;
 		}
 	}
-	
+
 	public class LambdaExpression : Expression {
 
 		//
