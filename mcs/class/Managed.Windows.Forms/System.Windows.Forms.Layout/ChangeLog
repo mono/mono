@@ -1,5 +1,10 @@
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefaultLayout.cs: Remove using the padding.  This is now included
+	properly in the DisplayRectangle.  Fixes a broken test.
+
+2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayout.cs: When we reset our current_pos back to the left
 	beginning, make sure we take padding into account.
 	[Fixes bug #354676]
