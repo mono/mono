@@ -3,6 +3,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<script runat="server">
+
+	protected void Page_Load (object sender, EventArgs e) {
+
+	}
+
+	protected override void OnInit (EventArgs e) {
+		base.OnInit (e);
+
+		Calendar1.TodaysDate = Calendar2.TodaysDate = new DateTime (2007, 07, 01);
+	}
+</script>
+
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head id="Head1" runat="server">
     <title>UpdatePanel Tutorial</title>
