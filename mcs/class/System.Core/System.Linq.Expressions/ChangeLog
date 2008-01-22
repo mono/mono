@@ -1,3 +1,17 @@
+2008-01-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs (BinaryCoreCheck): Add checking for a few
+	operators here (to avoid doing a second pass, handles AndAlso and
+	OrElse). 
+
+	(AndAlso, OrElse): Add some code.
+
+	* BinaryExpression.cs: Instead of using GetValueOrDefault use
+	get_Value, as we already probed for the lack of value.
+
+	Split out support for And/Or to a separate routine as the code is
+	not very easy to share with the arithmetics code. 
+
 2008-01-21  Marek Safar  <marek.safar@gmail.com>
 
 	* BinaryExpression.cs: Fixed initobj initialization.

@@ -215,18 +215,29 @@ namespace System.Linq.Expressions {
 				if (IsNullable (rtype))
 					urtype = GetNullableOf (rtype);
 
-				
-				// Use IsNumber to avoid expensive reflection.
-				if (IsNumber (ultype)){
-					if (ultype == urtype && ltype == rtype)
-						return method;
+				if (oper_name == "op_LogicalAnd" || oper_name == "op_LogicalOr"){
+					if (ultype == typeof (bool)){
+						if (ultype == urtype && ltype == rtype)
+							return null;
 
-					if (oper_name != null){
 						method = GetBinaryOperator (oper_name, rtype, left, right);
 						if (method != null)
 							return method;
 					}
+				} else {
+					// Use IsNumber to avoid expensive reflection.
+					if (IsNumber (ultype)){
+						if (ultype == urtype && ltype == rtype)
+							return method;
+						
+						if (oper_name != null){
+							method = GetBinaryOperator (oper_name, rtype, left, right);
+							if (method != null)
+								return method;
+						}
+					}
 				}
+				
 				if (oper_name != null){
 					method = GetBinaryOperator (oper_name, ltype, left, right);
 					if (method != null)
@@ -567,24 +578,23 @@ namespace System.Linq.Expressions {
 			return AndAlso (left, right, null);
 		}
 
-		[MonoTODO]
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
-			// This does not work with int, int pairs;   Figure out when its valid
+			method = BinaryCoreCheck ("op_LogicalAnd", left, right, method);
 
-			throw new NotImplementedException ();
+			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
 		}
 
-		[MonoTODO]
 		public static BinaryExpression OrElse (Expression left, Expression right)
 		{
-			throw new NotImplementedException ();
+			return OrElse (left, right, null);
 		}
 
-		[MonoTODO]
 		public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			method = BinaryCoreCheck ("op_LogicalOr", left, right, method);
+
+			return MakeBoolBinary (ExpressionType.OrElse, left, right, false, method);
 		}
 
 		//

@@ -114,6 +114,93 @@ namespace System.Linq.Expressions {
 			throw new Exception (String.Format ("Internal error: method {0} with no parameters not found on {1}",
 							    name, t));
 		}
+
+		LocalBuilder EmitStored (EmitContext ec, Expression expr)
+		{
+			LocalBuilder lb = ec.ig.DeclareLocal (expr.Type);
+			expr.Emit (ec);
+			ec.ig.Emit (OpCodes.Stloc, lb);
+
+			return lb;
+		}
+		
+		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
+		{
+			ILGenerator ig = ec.ig;
+			if (IsLifted){
+				LocalBuilder ret = ig.DeclareLocal (Type);
+				LocalBuilder vleft = null, vright = null;
+				MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+				MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
+
+				vleft = EmitStored (ec, left);
+				if (!short_circuit)
+					vright = EmitStored (ec, right);
+				
+				Label left_is_null = ig.DefineLabel ();
+				Label left_is_false = ig.DefineLabel ();
+				Label right_is_null = ig.DefineLabel ();
+				Label create  = ig.DefineLabel ();
+				Label exit = ig.DefineLabel ();
+				Label both_are_null = ig.DefineLabel ();
+				
+				// Check left
+				
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, left_is_null);
+				
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, get_value);					
+				ig.Emit (OpCodes.Dup);
+				
+				left_is_false = ig.DefineLabel ();
+				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
+				
+				// Deal with right
+				if (short_circuit)
+					vright = EmitStored (ec, right);
+				
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, right_is_null);
+				
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, get_value);
+
+				ig.Emit (and ? OpCodes.And : OpCodes.Or);
+				ig.Emit (OpCodes.Br, create);
+
+			// left_is_null:
+				ig.MarkLabel (left_is_null);
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, both_are_null);
+				ig.Emit (OpCodes.Call, get_value);
+				ig.Emit (OpCodes.Dup);
+				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
+				ig.Emit (OpCodes.Pop);
+
+			// both_are_null:
+				ig.MarkLabel (both_are_null);
+				ig.Emit (OpCodes.Ldloca, ret);
+				ig.Emit (OpCodes.Initobj, Type);
+				ig.Emit (OpCodes.Ldloca, ret);
+				ig.Emit (OpCodes.Br, exit);
+				
+			// create:
+				ig.MarkLabel (create);
+				ig.Emit (OpCodes.Newobj, Type.GetConstructors ()[0]);
+
+			// exit:
+				ig.MarkLabel (exit);
+			} else {
+				left.Emit (ec);
+				right.Emit (ec);
+				ig.Emit (and ? OpCodes.And : OpCodes.Or);
+			}
+			
+		}
 		
 		internal override void Emit (EmitContext ec)
 		{
@@ -125,6 +212,26 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
+			switch (NodeType){
+			case ExpressionType.And:
+				EmitLogical (ec, true, false);
+				return;
+				
+			case ExpressionType.Or:
+				EmitLogical (ec, false, false);
+				return;
+
+			case ExpressionType.AndAlso:
+				Console.WriteLine ("LINQ/BinaryExpression: AndAlso code path not yet reviewed");
+				EmitLogical (ec, true, true);
+				return;
+
+			case ExpressionType.OrElse:
+				Console.WriteLine ("LINQ/BinaryExpression: OrElse code path not yet reviewed");
+				EmitLogical (ec, false, true);
+				return;
+			}
+			
 			Label? empty_value = null;
 			LocalBuilder ret = null;
 
@@ -133,30 +240,23 @@ namespace System.Linq.Expressions {
 
 				empty_value = ig.DefineLabel ();
 				ret = ig.DeclareLocal (Type);
-				
-				vleft = ig.DeclareLocal (left.Type);
-				left.Emit (ec);
-				ig.Emit (OpCodes.Stloc, vleft);
 
-				vright = ig.DeclareLocal (right.Type);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Stloc, vright);
+				vleft = EmitStored (ec, left);
+				vright = EmitStored (ec, right);
 
 				MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
-				
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, empty_value.Value);
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, empty_value.Value);
+				MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
 
-				MethodInfo get_value_or_default = GetMethodNoPar (left.Type, "GetValueOrDefault");
-				
 				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, get_value_or_default);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, empty_value.Value);
 				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, get_value_or_default);
+				ig.Emit (OpCodes.Call, has_value);
+				ig.Emit (OpCodes.Brfalse, empty_value.Value);
+				ig.Emit (OpCodes.Ldloca, vleft);
+				ig.Emit (OpCodes.Call, get_value);
+				ig.Emit (OpCodes.Ldloca, vright);
+				ig.Emit (OpCodes.Call, get_value);
 			} else {
 				left.Emit (ec);
 				right.Emit (ec);
@@ -241,7 +341,6 @@ namespace System.Linq.Expressions {
 				opcode = OpCodes.Xor;
 				break;
 
-			case ExpressionType.AndAlso:
 			case ExpressionType.Coalesce:
 			case ExpressionType.Equal:
 			case ExpressionType.GreaterThan:
@@ -249,7 +348,6 @@ namespace System.Linq.Expressions {
 			case ExpressionType.LessThan:
 			case ExpressionType.LessThanOrEqual:
 			case ExpressionType.NotEqual:
-			case ExpressionType.OrElse:
 			case ExpressionType.Power:
 				throw new NotImplementedException (String.Format ("No support for {0} node yet", NodeType));
 

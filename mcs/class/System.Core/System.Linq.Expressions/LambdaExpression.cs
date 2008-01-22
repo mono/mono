@@ -124,11 +124,12 @@ namespace System.Linq.Expressions {
 			
 			MethodInfo [] invokes = delegateType.GetMethods (BindingFlags.Instance | BindingFlags.Public);
 			MethodInfo invoke = null;
-			foreach (MethodInfo m in invokes)
+			foreach (MethodInfo m in invokes){
 				if (m.Name == "Invoke"){
 					invoke = m;
 					break;
 				}
+			}
 			if (invoke == null)
 				throw new ArgumentException ("delegate must contain an Invoke method", "delegateType");
 
