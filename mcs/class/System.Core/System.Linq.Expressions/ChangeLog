@@ -1,3 +1,11 @@
+2008-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* Expression.cs: There is no op_LogicalAnd or op_LogicalOr, I just
+	used those from mcs, that was wrong.   use the proper ones, clean
+	up the result.
+
+	* BinaryExpression.cs: Add method invocations for binary methods. 
+
 2008-01-22  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, ExpressionPrinter.cs: implement NewArrayList.

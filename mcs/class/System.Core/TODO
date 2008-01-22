@@ -1,5 +1,13 @@
+Things missing:
+
+       Coalesce's conversion, what is this used for?
+
+       Constant generation of objects, how are those Constants in the first place?
+
+       Try: 
+       	    OrElse (Constant (new Boo(), new Boo ()))
+
 Binary missing:
-			case ExpressionType.AndAlso:
 			case ExpressionType.Coalesce:
 			case ExpressionType.Equal:
 			case ExpressionType.GreaterThan:
@@ -7,7 +15,6 @@ Binary missing:
 			case ExpressionType.LessThan:
 			case ExpressionType.LessThanOrEqual:
 			case ExpressionType.NotEqual:
-			case ExpressionType.OrElse:
 			case ExpressionType.Power:
        
 Tests missing:
@@ -21,5 +28,5 @@ Tests missing:
 
 		MultiplyChecked, DivideChecked, 
 
-
-
+		case ExpressionType.OrElse:
+		case ExpressionType.AndAlso:

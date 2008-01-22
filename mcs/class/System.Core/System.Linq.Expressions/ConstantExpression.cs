@@ -134,10 +134,11 @@ namespace System.Linq.Expressions {
 			case TypeCode.String:
 				ig.Emit (OpCodes.Ldstr, (string) value);
 				return;
+
+			case TypeCode.Object:
+				break;
 			}
 
-			// FIXME: complete the implementation
-			
 			throw new NotImplementedException (String.Format ("No support for constants of type {0} yet", Type));
 		}
 	}

@@ -222,26 +222,15 @@ namespace System.Linq.Expressions {
 					}
 				}
 				
-				if (oper_name == "op_LogicalAnd" || oper_name == "op_LogicalOr"){
-					if (ultype == typeof (bool)){
-						if (ultype == urtype && ltype == rtype)
-							return null;
-
+				// Use IsNumber to avoid expensive reflection.
+				if (IsNumber (ultype)){
+					if (ultype == urtype && ltype == rtype)
+						return method;
+					
+					if (oper_name != null){
 						method = GetBinaryOperator (oper_name, rtype, left, right);
 						if (method != null)
 							return method;
-					}
-				} else {
-					// Use IsNumber to avoid expensive reflection.
-					if (IsNumber (ultype)){
-						if (ultype == urtype && ltype == rtype)
-							return method;
-						
-						if (oper_name != null){
-							method = GetBinaryOperator (oper_name, rtype, left, right);
-							if (method != null)
-								return method;
-						}
 					}
 				}
 				
@@ -288,7 +277,8 @@ namespace System.Linq.Expressions {
 				//
 				if (left.Type == typeof(double) || left.Type == typeof(float))
 					throw new InvalidOperationException ("Types not supported");
-			}
+			} 
+			
 			return method;
 		}
 
@@ -603,6 +593,11 @@ namespace System.Linq.Expressions {
 			if (method == null){
 				if (left.Type != typeof (bool))
 					throw new InvalidOperationException ("Only booleans are allowed for OrElse");
+			} else {
+				// The method should have identical parameter and return types.
+
+				if (left.Type != right.Type || method.ReturnType != left.Type)
+					throw new ArgumentException ("left, right and return type must match");
 			}
 
 			return MakeBoolBinary (ExpressionType.OrElse, left, right, false, method);

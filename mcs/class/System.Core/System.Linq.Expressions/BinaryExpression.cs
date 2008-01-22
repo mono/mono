@@ -97,9 +97,11 @@ namespace System.Linq.Expressions {
 			this.is_lifted = is_lifted;
 		}
 
-		static void EmitMethod ()
+		void EmitMethod (EmitContext ec)
 		{
-			throw new NotImplementedException ("Support for MethodInfo-based BinaryExpressions not yet supported");
+			left.Emit (ec);
+			right.Emit (ec);
+			ec.ig.Emit (OpCodes.Call, Method);
 		}
 
 		static MethodInfo GetMethodNoPar (Type t, string name)
@@ -259,7 +261,7 @@ namespace System.Linq.Expressions {
 			OpCode opcode;
 
 			if (method != null){
-				EmitMethod ();
+				EmitMethod (ec);
 				return;
 			}
 

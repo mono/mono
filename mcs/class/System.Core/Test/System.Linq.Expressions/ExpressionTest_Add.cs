@@ -96,14 +96,45 @@ namespace MonoTests.System.Linq.Expressions
 			// exists in the very simple class we're using for the tests.
 			MethodInfo mi = typeof (OpClass).GetMethod ("op_Addition");
 
-			BinaryExpression expr = Expression.Add (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
+			OpClass left = new OpClass ();
+			BinaryExpression expr = Expression.Add (Expression.Constant (left), Expression.Constant (new OpClass ()));
 			Assert.AreEqual (ExpressionType.Add, expr.NodeType, "Add#09");
 			Assert.AreEqual (typeof (OpClass), expr.Type, "Add#10");
 			Assert.AreEqual (mi, expr.Method, "Add#11");
 			Assert.AreEqual ("op_Addition", expr.Method.Name, "Add#12");
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) + value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "Add#13");
+
+			Expression<Func<OpClass>> l = Expression.Lambda<Func<OpClass>> (expr);
+
+#if false
+
+	//
+	// We do not have support for objects that are not really
+	// constants, like this case.   Need to figure out what to do
+	// with those
+	//
+	
+			Func<OpClass> compiled = l.Compile ();
+			Assert.AreEqual (left, compiled  ());
+#endif
 		}
 
+		public class S {
+			public static int MyAdder (int a, int b){
+				return 1000;
+			}
+		}
+		
+		[Test]
+		public void TestMethodAddition ()
+		{
+			BinaryExpression expr = Expression.Add (Expression.Constant (1), Expression.Constant (2), typeof(S).GetMethod("MyAdder"));
+			Expression<Func<int>> l = Expression.Lambda<Func<int>> (expr);
+
+			Func<int> compiled = l.Compile ();
+			Assert.AreEqual (1000, compiled ());
+			
+		}
 	}
 }

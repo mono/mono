@@ -97,5 +97,35 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) || value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "OrElse#09");
 		}
+
+		public class BrokenMethod {
+			public static int operator | (BrokenMethod a, BrokenMethod b)
+			{
+				return 1;
+			}
+		}
+
+		public class BrokenMethod2 {
+			public static BrokenMethod2 operator | (BrokenMethod2 a, int b)
+			{
+				return null;
+			}
+		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MethodInfoReturnType ()
+		{
+			Expression.OrElse (Expression.Constant (new BrokenMethod ()),
+					   Expression.Constant (new BrokenMethod ()));
+		}
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void MethodInfoReturnType2 ()
+		{
+			Expression.OrElse (Expression.Constant (new BrokenMethod2 ()),
+					   Expression.Constant (1));
+		}
 	}
 }
