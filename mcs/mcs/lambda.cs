@@ -36,6 +36,9 @@ namespace Mono.CSharp {
 
 		protected override Expression CreateExpressionTree (EmitContext ec, Type delegate_type)
 		{
+			if (ec.IsInProbingMode)
+				return this;
+			
 			Expression args = Parameters.CreateExpressionTree (ec, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)
@@ -187,7 +190,8 @@ namespace Mono.CSharp {
 		{		
 			if (ec.ReturnType == TypeManager.void_type) {
 				statement_return = true;
-				return Expr.Resolve (ec) != null;
+				Expr = Expr.Resolve (ec);
+				return Expr != null;
 			}
 
 			return base.Resolve (ec);

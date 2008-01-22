@@ -4041,7 +4041,7 @@ namespace Mono.CSharp {
 								return null;
 							}
 						} else {
-							if (type_arguments != null) {
+							if (type_arguments != null && !TypeManager.IsGenericMethod (best_candidate)) {
 								Namespace.Error_TypeArgumentsCannotBeUsed (best_candidate, loc);
 								return null;
 							}

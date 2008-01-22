@@ -2582,8 +2582,12 @@ namespace Mono.CSharp {
 			// an output type inference is made
 			for (int i = 0; i < arg_count; i++) {
 				Type t_i = methodParameters.ParameterType (i);
-				if (!TypeManager.IsDelegateType (t_i))
-					continue;
+				if (!TypeManager.IsDelegateType (t_i)) {
+					if (TypeManager.DropGenericTypeArguments (t_i) != TypeManager.expression_type)
+						continue;
+
+					t_i = t_i.GetGenericArguments () [0];
+				}
 
 				MethodInfo mi = Delegate.GetInvokeMethod (t_i, t_i);
 				Type rtype = mi.ReturnType;
@@ -2746,12 +2750,17 @@ namespace Mono.CSharp {
 		public bool FixIndependentTypeArguments (ParameterData methodParameters, ref bool fixed_any)
 		{
 			ArrayList types_to_fix = new ArrayList (unfixed_types);
-			foreach (Type t in methodParameters.Types) {
+			for (int i = 0; i < methodParameters.Types.Length; ++i) {
+				Type t = methodParameters.Types [i];
 				if (t.IsGenericParameter)
 					continue;
 
-				if (!TypeManager.IsDelegateType (t))
-					continue;
+				if (!TypeManager.IsDelegateType (t)) {
+					if (TypeManager.DropGenericTypeArguments (t) != TypeManager.expression_type)
+						continue;
+
+					t = t.GetGenericArguments () [0];
+				}
 
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;

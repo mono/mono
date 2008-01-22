@@ -1269,9 +1269,15 @@ namespace Mono.CSharp {
 			if (!HasExplicitParameters)
 				return false;
 
-			if (!TypeManager.IsDelegateType (delegate_type))
-				return false;
+			if (!TypeManager.IsDelegateType (delegate_type)) {
+				if (TypeManager.DropGenericTypeArguments (delegate_type) != TypeManager.expression_type)
+					return false;
 
+				delegate_type = delegate_type.GetGenericArguments () [0];
+				if (!TypeManager.IsDelegateType (delegate_type))
+					return false;
+			}
+			
 			ParameterData d_params = TypeManager.GetDelegateParameters (delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;

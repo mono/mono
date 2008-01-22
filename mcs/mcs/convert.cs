@@ -901,9 +901,10 @@ namespace Mono.CSharp {
 				return true;
 
 			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type))
+				if (!TypeManager.IsDelegateType (target_type) &&
+					TypeManager.DropGenericTypeArguments (target_type) != TypeManager.expression_type)
 					return false;
-
+				
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
 				return ame.ImplicitStandardConversionExists (target_type);
 			}
