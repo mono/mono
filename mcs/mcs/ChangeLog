@@ -1,3 +1,9 @@
+2008-01-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* codegen.cs: Use magic value for AssemblyBuilderAccess to instruct
+	AssemblyBuilder to operate in compiler context. Fixes mcs part of
+	bug #354970.
+
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355148

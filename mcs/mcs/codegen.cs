@@ -106,6 +106,9 @@ namespace Mono.CSharp {
 		//
 		static public bool Init (string name, string output, bool want_debugging_support)
 		{
+			/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
+			const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
+
 			FileName = output;
 			AssemblyName an = Assembly.GetAssemblyName (name, output);
 			if (an == null)
@@ -131,7 +134,7 @@ namespace Mono.CSharp {
 
 			try {
 				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
-					AssemblyBuilderAccess.Save, Dirname (name));
+					AssemblyBuilderAccess.Save | COMPILER_ACCESS, Dirname (name));
 			}
 			catch (ArgumentException) {
 				// specified key may not be exportable outside it's container
