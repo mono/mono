@@ -17,6 +17,17 @@ class Tester
 			throw new ApplicationException (expected + " != " + value);
 	}
 
+	static void Assert<T> (T[] expected, T[] value)
+	{
+		if (expected.Length != value.Length)
+			throw new ApplicationException ("Array length does not match " + expected.Length + " != " + value.Length);
+
+		for (int i = 0; i < expected.Length; ++i) {
+			if (!EqualityComparer<T>.Default.Equals (expected [i], value [i]))
+				throw new ApplicationException ("Index " + i + ": " + expected [i] + " != " + value [i]);
+		}
+	}
+
 	void AddTest ()
 	{
 		Expression<Func<int, int, int>> e = (int a, int b) => a + b;
@@ -50,19 +61,6 @@ class Tester
 		Assert (false, c (false, true));
 		Assert (false, c (false, false));
 	}
-
-	void OrTest ()
-	{
-		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a & b;
-
-		AssertNodeType (e, ExpressionType.Or);
-		Func<bool,bool,bool> c = e.Compile ();
-		
-		Assert (true,  c (true, true));
-		Assert (true, c (true, false));
-		Assert (true, c (false, true));
-		Assert (false, c (false, false));
-	}
 	
 	void AndNullableTest ()
 	{
@@ -70,7 +68,6 @@ class Tester
 
 		AssertNodeType (e, ExpressionType.And);
 		Func<bool?,bool?,bool?> c = e.Compile ();
-		
 		
 		Assert (true,  c (true, true));
 		Assert (false, c (true, false));
@@ -84,25 +81,6 @@ class Tester
 		Assert (null, c (null, null));
 	}
 	
-	void OrNullableTest ()
-	{
-		Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a & b;
-
-		AssertNodeType (e, ExpressionType.Or);
-		Func<bool?,bool?,bool?> c = e.Compile ();
-		
-		Assert (true,  c (true, true));
-		Assert (true,  c (true, false));
-		Assert (true,  c (false, true));
-		Assert (false, c (false, false));
-
-		Assert (true, c (true, null));
-		Assert (null, c (false, null));
-		Assert (null, c (null, false));
-		Assert (true, c (true, null));
-		Assert (null, c (null, null));
-	}
-
 	void AndAlsoTest ()
 	{
 		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a && b;
@@ -159,8 +137,7 @@ class Tester
 		Expression<Func<string, string>> e2 = (string a) => InstanceMethod (a);
 		AssertNodeType (e2, ExpressionType.Call);
 		Assert ("abc", e2.Compile ().Invoke ("abc"));
-/*
-		// TODO: implement
+
 		Expression<Func<int, string, int, object>> e3 = (int index, string a, int b) => InstanceParamsMethod (index, a, b);
 		AssertNodeType (e3, ExpressionType.Call);
 		Assert<object> (4, e3.Compile ().Invoke (1, "a", 4));
@@ -168,13 +145,62 @@ class Tester
 		Expression<Func<object>> e4 = () => InstanceParamsMethod (0);
 		AssertNodeType (e4, ExpressionType.Call);
 		Assert<object> ("<empty>", e4.Compile ().Invoke ());
-*/
 
 		Expression<Func<int, int>> e5 = (int a) => GenericMethod (a);
 		AssertNodeType (e5, ExpressionType.Call);
 		Assert (5, e5.Compile ().Invoke (5));
 	}
-	
+
+	void NewArrayInitTest ()
+	{
+		Expression<Func<int[]>> e = () => new int[0];
+		AssertNodeType (e, ExpressionType.NewArrayInit);
+		Assert (new int[0], e.Compile ().Invoke ());
+		
+		e = () => new int [] {};
+		AssertNodeType (e, ExpressionType.NewArrayInit);
+		Assert (new int [0], e.Compile ().Invoke ());		
+
+		Expression<Func<ushort, ulong? []>> e2 = (ushort a) => new ulong? [] { a };
+		AssertNodeType (e2, ExpressionType.NewArrayInit);
+		Assert (new ulong? [1] { ushort.MaxValue }, e2.Compile ().Invoke (ushort.MaxValue));
+
+		Expression<Func<char [] []>> e3 = () => new char [] [] { new char [] { 'a' } };
+		AssertNodeType (e3, ExpressionType.NewArrayInit); 
+		Assert (new char[] { 'a' }, e3.Compile ().Invoke ()[0]);
+	}
+
+	void OrTest ()
+	{
+		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a | b;
+
+		AssertNodeType (e, ExpressionType.Or);
+		Func<bool, bool, bool> c = e.Compile ();
+
+		Assert (true, c (true, true));
+		Assert (true, c (true, false));
+		Assert (true, c (false, true));
+		Assert (false, c (false, false));
+	}
+
+	void OrNullableTest ()
+	{
+		Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a | b;
+
+		AssertNodeType (e, ExpressionType.Or);
+		Func<bool?, bool?, bool?> c = e.Compile ();
+
+		Assert (true, c (true, true));
+		Assert (true, c (true, false));
+		Assert (true, c (false, true));
+		Assert (false, c (false, false));
+
+		Assert (true, c (true, null));
+		Assert (null, c (false, null));
+		Assert (null, c (null, false));
+		Assert (true, c (true, null));
+		Assert (null, c (null, null));
+	}
 	
 	//
 	// Test helpers
@@ -203,14 +229,20 @@ class Tester
 	{
 		Tester e = new Tester ();
 		e.AddTest ();
+		e.AndNullableTest ();
 		e.AddCheckedTest ();
 		e.AndTest ();
 		e.AndAlsoTest ();
 		e.ArrayIndexTest ();
+		e.ArrayLengthTest ();
 		e.CallTest ();
+		e.NewArrayInitTest ();
+		e.OrTest ();
+		e.OrNullableTest ();
 		
 		return 0;
 	}
 }
+
 
 
