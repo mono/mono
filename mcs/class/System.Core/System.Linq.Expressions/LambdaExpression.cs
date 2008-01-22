@@ -116,22 +116,14 @@ namespace System.Linq.Expressions {
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 			: base (ExpressionType.Lambda, body.Type)
 		{
-			if (!delegateType.IsSubclassOf (typeof (System.Delegate))){
+			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
 				throw new ArgumentException ("delegateType");
-			}
-			
-			MethodInfo [] invokes = delegateType.GetMethods (BindingFlags.Instance | BindingFlags.Public);
-			MethodInfo invoke = null;
-			foreach (MethodInfo m in invokes){
-				if (m.Name == "Invoke"){
-					invoke = m;
-					break;
-				}
-			}
+
+			var invoke = delegateType.GetMethod ("Invoke", BindingFlags.Instance | BindingFlags.Public);
 			if (invoke == null)
 				throw new ArgumentException ("delegate must contain an Invoke method", "delegateType");
 
-			ParameterInfo [] invoke_parameters = invoke.GetParameters ();
+			var invoke_parameters = invoke.GetParameters ();
 			if (invoke_parameters.Length != parameters.Count)
 				throw new ArgumentException ("Different number of arguments in delegate {0}", "delegateType");
 
