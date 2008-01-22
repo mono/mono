@@ -1044,6 +1044,13 @@ namespace MonoTests.System.Drawing {
 			bitmap.Dispose ();
 		}
 
+		[Test] // bug #355141
+		public void FromHwnd_Zero ()
+		{
+			Graphics g = Graphics.FromHwnd (IntPtr.Zero);
+			Assert.IsNotNull (g);
+		}
+
 		private void CheckDefaultProperties (string message, Graphics g)
 		{
 			Assert.IsTrue (g.Clip.IsInfinite (g), message + ".Clip.IsInfinite");

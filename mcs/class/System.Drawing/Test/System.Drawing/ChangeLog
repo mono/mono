@@ -1,3 +1,7 @@
+2008-01-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestGraphics.cs: Added test for bug #355141.
+
 2008-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Don't use internal Unit enum anymore.
