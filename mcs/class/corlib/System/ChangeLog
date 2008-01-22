@@ -1,3 +1,8 @@
+2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTimeOffset.cs: Avoid NRE on bad cast if null is provided to
+	Equals(object). Found using Gendarme.
+
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* DateTimeOffset.cs: Fix warnings.

@@ -178,7 +178,9 @@ namespace System
 
 		public override bool Equals (object other)
 		{
-			return UtcDateTime == ((DateTimeOffset) other).UtcDateTime;
+			if (other is DateTimeOffset)
+				return UtcDateTime == ((DateTimeOffset) other).UtcDateTime;
+			return false;
 		}
 
 		public static bool Equals (DateTimeOffset first, DateTimeOffset second)
