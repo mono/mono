@@ -48,7 +48,7 @@ namespace MonoTests.System.Linq.Expressions
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void NonNullLeftParameter ()
 		{
-			// This throws because they are both doubles, which are never 
+			// This throws because they are both doubles, which are never
 			Expression.Coalesce (Expression.Constant (1.0), Expression.Constant (2.0));
 		}
 
@@ -68,9 +68,11 @@ namespace MonoTests.System.Linq.Expressions
 			ParameterExpression pa = Expression.Parameter (typeof (int?), "a");
 			ParameterExpression pb = Expression.Parameter (typeof (int?), "b");
 			BinaryExpression c = Expression.Coalesce (pa, pb);
-			
+			Assert.AreEqual ("(a ?? b)", c.ToString ());
+
 			Expression<Func<int?, int?, int?>> e = Expression.Lambda<Func<int?,int?,int?>>(
 				c, new ParameterExpression [] { pa, pb });
+			Assert.AreEqual ("(a, b) => (a ?? b)", e.ToString ());
 
 			Func<int?,int?,int?> comp = e.Compile ();
 

@@ -60,7 +60,7 @@ namespace MonoTests.System.Linq.Expressions
 
 		public struct D {
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void NoOperatorClass ()
@@ -72,9 +72,10 @@ namespace MonoTests.System.Linq.Expressions
 		public void Numeric ()
 		{
 			BinaryExpression expr = Expression.Equal (Expression.Constant (1), Expression.Constant (2));
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType, "Equal#01");
-			Assert.AreEqual (typeof (bool), expr.Type, "Equal#02");
-			Assert.IsNull (expr.Method, "Equal#03");
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.IsNull (expr.Method);
+			Assert.AreEqual ("(1 = 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -86,11 +87,12 @@ namespace MonoTests.System.Linq.Expressions
 			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof(int?)),
 								  Expression.Constant (b, typeof(int?)),
 								  false, null);
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType, "Add#05");
-			Assert.AreEqual (typeof (bool), expr.Type, "Equal#06");
-			Assert.AreEqual (true, expr.IsLifted, "Equal#07");
-			Assert.AreEqual (false, expr.IsLiftedToNull, "Equal#07");
-			Assert.IsNull (expr.Method, "Equal#08");
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.AreEqual (true, expr.IsLifted);
+			Assert.AreEqual (false, expr.IsLiftedToNull);
+			Assert.IsNull (expr.Method);
+			Assert.AreEqual ("(1 = 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -102,11 +104,12 @@ namespace MonoTests.System.Linq.Expressions
 			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof(int?)),
 								  Expression.Constant (b, typeof(int?)),
 								  true, null);
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType, "Equal#01");
-			Assert.AreEqual (typeof (bool?), expr.Type, "Equal#02");
-			Assert.AreEqual (true, expr.IsLifted, "Equal#03");
-			Assert.AreEqual (true, expr.IsLiftedToNull, "Equal#04");
-			Assert.IsNull (expr.Method, "Equal#04");
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool?), expr.Type);
+			Assert.AreEqual (true, expr.IsLifted);
+			Assert.AreEqual (true, expr.IsLiftedToNull);
+			Assert.IsNull (expr.Method);
+			Assert.AreEqual ("(1 = 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -119,7 +122,7 @@ namespace MonoTests.System.Linq.Expressions
 			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof (int?)),
 								  Expression.Constant (b, typeof (int)));
 		}
-		
+
 		[Test]
 		public void UserDefinedClass ()
 		{
@@ -128,10 +131,12 @@ namespace MonoTests.System.Linq.Expressions
 			MethodInfo mi = typeof (OpClass).GetMethod ("op_Equality");
 
 			BinaryExpression expr = Expression.Equal (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType, "Add#09");
-			Assert.AreEqual (typeof (bool), expr.Type, "Add#10");
-			Assert.AreEqual (mi, expr.Method, "Add#11");
-			Assert.AreEqual ("op_Equality", expr.Method.Name, "Add#12");
+			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (typeof (bool), expr.Type);
+			Assert.AreEqual (mi, expr.Method);
+			Assert.AreEqual ("op_Equality", expr.Method.Name);
+
+			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) = value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
 		}
 
 		//
@@ -141,8 +146,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void UserDefinedEqual ()
 		{
-			
+
 		}
-		
+
 	}
 }

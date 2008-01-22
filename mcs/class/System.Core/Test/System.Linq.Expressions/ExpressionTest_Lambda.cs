@@ -81,7 +81,7 @@ namespace MonoTests.System.Linq.Expressions
 		public void InvalidArgType ()
 		{
 			// invalid argument type
-			
+
 			ParameterExpression p = Expression.Parameter (typeof (string), "AAA");
 			Expression.Lambda (typeof (delegate_object_int), Expression.Constant ("foo"), new ParameterExpression [1] {p});
 		}
@@ -91,11 +91,11 @@ namespace MonoTests.System.Linq.Expressions
 		public void InvalidArgType2 ()
 		{
 			// invalid argument type
-			
+
 			ParameterExpression p = Expression.Parameter (typeof (string), "AAA");
 			Expression.Lambda (typeof (delegate_object_object), Expression.Constant ("foo"), new ParameterExpression [1] {p});
 		}
-		
+
 		[Test]
 		public void Assignability ()
 		{
@@ -104,7 +104,9 @@ namespace MonoTests.System.Linq.Expressions
 
 			// allowed delegate has string, delegate has base class (object)
 			ParameterExpression p = Expression.Parameter (typeof (object), "ParObject");
-			Expression.Lambda (typeof (delegate_object_string), Expression.Constant (""), new ParameterExpression [1] {p});
+			var l = Expression.Lambda (typeof (delegate_object_string), Expression.Constant (""), new ParameterExpression [1] {p});
+
+			Assert.AreEqual ("ParObject => \"\"", l.ToString ());
 		}
 
 		[Test]
@@ -129,15 +131,21 @@ namespace MonoTests.System.Linq.Expressions
 
 			Expression<Func<int,int,int>> l = Expression.Lambda<Func<int,int,int>>(
 				Expression.Add (a, b), new ParameterExpression [] { a, b });
+
+			Assert.AreEqual ("(a, b) => (a + b)", l.ToString ());
+
 			Func<int,int,int> xx = l.Compile ();
 			int res = xx (10, 20);
 			Assert.AreEqual (res, 30);
 		}
-		
+
 		[Test]
 		public void Compile ()
 		{
 			Expression<Func<int>> l = Expression.Lambda<Func<int>> (Expression.Constant (1), new ParameterExpression [0]);
+
+			Assert.AreEqual ("() => 1", l.ToString ());
+
 			Func<int> fi = l.Compile ();
 			fi ();
 		}
@@ -149,7 +157,7 @@ namespace MonoTests.System.Linq.Expressions
 			ParameterExpression p1 = Expression.Parameter(typeof(int?), "va");
 			ParameterExpression p2 = Expression.Parameter(typeof(int?), "vb");
 			Expression add = Expression.Add(p1, p2);
-			
+
 
 			// This should throw, since the add.Type is "int?" and the return
 			// type we have here is int.
