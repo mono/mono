@@ -134,7 +134,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Divide:
 				return "/";
 			case ExpressionType.Equal:
-				return "==";
+				return "=";
 			case ExpressionType.ExclusiveOr:
 				return "^";
 			case ExpressionType.GreaterThan:
@@ -290,7 +290,17 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitLambda (LambdaExpression lambda)
 		{
-			throw new NotImplementedException ();
+			if (lambda.Parameters.Count != 1) {
+				Print ("(");
+				// replace when the patch to the visitor is in
+				// VisitExpressionList (lambda.Parameters);
+				VisitList (lambda.Parameters, Visit);
+				Print (")");
+			} else
+				Visit (lambda.Parameters [0]);
+
+			Print (" => ");
+			Visit (lambda.Body);
 		}
 
 		protected override void VisitNew (NewExpression nex)
