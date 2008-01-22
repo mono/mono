@@ -274,6 +274,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							foundItem.Expanded = !foundItem.Expanded;
 
 					this.property_grid.SelectedGridItem = foundItem;
+					if (!GridLabelHitTest (e.X))
+						FocusSelection ();
 				}
 				
 				base.OnMouseDown (e);
@@ -320,6 +322,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Select (this);
 		}
 
+		private void FocusSelection ()
+		{
+			Select (grid_textbox);
+		}
+
 		protected override bool ProcessDialogKey (Keys keyData) {
 			GridItem selectedItem = property_grid.SelectedGridItem;
 			if (selectedItem != null
@@ -333,6 +340,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				case Keys.Escape:
 					grid_textbox.Text = selectedItem.PropertyDescriptor.Converter.ConvertToString(selectedItem.Value);
 					UnfocusSelection ();
+					return true;
+				case Keys.Tab:
+					FocusSelection ();
 					return true;
 				default:
 					return false;
@@ -554,6 +564,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			get {
 				return splitter_percent;
 			}
+		}
+
+		private bool GridLabelHitTest (int x)
+		{
+			if (0 <= x && x <= splitter_percent * this.Width)
+				return true;
+			return false;
 		}
 
 		private GridItem GetSelectedGridItem (GridItemCollection grid_items, int y, ref int current) {
@@ -1041,7 +1058,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						ClientRectangle.Width - xloc - (vbar.Visible ? vbar.Width : 0),
 						row_height - 2);
 			grid_textbox.Visible = true;
-			grid_textbox.Select ();
 			ResumeLayout (false);
 		}
 

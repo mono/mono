@@ -1,5 +1,11 @@
 2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
 
+	 * PropertyGridView.cs: Fix focusing behavior:
+	 - Tab should focus the grid text box.
+	 - Clicking on the labels shouldn't focus the grid text box.
+
+2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
+
 	 * PropertyGridView.cs: IsValueTypeGridItem should return true 
 	 for Arrays as well.
 
