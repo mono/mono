@@ -6650,15 +6650,24 @@ namespace Mono.CSharp {
 			}
 #endif
 			if (member_lookup == null) {
-				ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Identifier);
-				if (ex_method_lookup != null) {
-					ex_method_lookup.ExtensionExpression = expr_resolved;
+				ExprClass expr_eclass = expr_resolved.eclass;
 
-					if (args != null) {
-						ex_method_lookup.SetTypeArguments (args);
+				//
+				// Extension methods are not allowed on all expression types
+				//
+				if (expr_eclass == ExprClass.Value || expr_eclass == ExprClass.Variable ||
+					expr_eclass == ExprClass.IndexerAccess || expr_eclass == ExprClass.PropertyAccess ||
+					expr_eclass == ExprClass.EventAccess) {
+					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Identifier);
+					if (ex_method_lookup != null) {
+						ex_method_lookup.ExtensionExpression = expr_resolved;
+
+						if (args != null) {
+							ex_method_lookup.SetTypeArguments (args);
+						}
+
+						return ex_method_lookup.DoResolve (ec);
 					}
-
-					return ex_method_lookup.DoResolve (ec);
 				}
 
 				expr = expr_resolved;

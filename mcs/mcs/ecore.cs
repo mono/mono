@@ -3101,9 +3101,6 @@ namespace Mono.CSharp {
 
 		public override MethodGroupExpr OverloadResolve (EmitContext ec, ref ArrayList arguments, bool may_fail, Location loc)
 		{
-			if ((ExtensionExpression.eclass & (ExprClass.Value | ExprClass.Variable)) == 0)
-				return base.OverloadResolve (ec, ref arguments, may_fail, loc);
-
 			if (arguments == null)
 				arguments = new ArrayList (1);
 

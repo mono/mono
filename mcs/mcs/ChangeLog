@@ -1,3 +1,9 @@
+2008-01-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #355161
+ 	* ecore.cs, expression.cs: Wider range of extension method supported
+ 	expressions.
+ 
 2008-01-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: Use magic value for AssemblyBuilderAccess to instruct
