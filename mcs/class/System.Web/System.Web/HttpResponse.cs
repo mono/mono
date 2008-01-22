@@ -700,6 +700,8 @@ namespace System.Web {
 			if (headers_sent)
 				return;
 
+			headers_sent = true;
+
 			if (cached_response != null)
 				cached_response.SetHeaders (headers);
 
@@ -728,7 +730,6 @@ namespace System.Web {
 					header.SendContent (WorkerRequest);
 				}
 			}
-			headers_sent = true;
 		}
 
 		internal void DoFilter (bool close)

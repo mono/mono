@@ -1,3 +1,8 @@
+2008-01-22  Konstantin Triger <kostat@mainsoft.com>
+
+	* HttpResponse.cs: move headers_sent initialization up to prevent additional
+		trial to send headers if an exception is thrown.
+
 2008-01-21  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpRequest.cs: Form validation: ensure the collection is accessible after
