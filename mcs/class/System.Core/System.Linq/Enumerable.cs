@@ -2189,6 +2189,9 @@ namespace System.Linq
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
+			if (comparer == null)
+				comparer = EqualityComparer<TKey>.Default;
+
 			var dict = new Dictionary<TKey, TElement> (comparer);
 			foreach (var e in source)
 				dict.Add (keySelector (e), elementSelector (e));
