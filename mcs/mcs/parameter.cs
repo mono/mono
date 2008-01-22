@@ -642,9 +642,9 @@ namespace Mono.CSharp {
 			if (parameter_expr_tree_type != null)
 				return parameter_expr_tree_type;
 
-			MemberAccess ma = new MemberAccess (
-				ExpressionTreeManager.Namespace, "ParameterExpression", location);
-			parameter_expr_tree_type = ma.ResolveAsTypeTerminal (ec, false);
+			parameter_expr_tree_type = new TypeExpression (LinqExpression.parameter_expression_type, location).
+				ResolveAsTypeTerminal (ec, false);
+
 			return parameter_expr_tree_type;
 		}
 	}

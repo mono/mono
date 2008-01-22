@@ -3708,14 +3708,26 @@ public sealed class TypeHandle : IMemberContainer {
 	//
 	// Common expressions used by expression trees
 	//
-	static class ExpressionTreeManager
+	static class LinqExpression
 	{
-		public static MemberAccess Namespace = new MemberAccess (
-			new MemberAccess (new SimpleName ("System", Location.Null), "Linq", Location.Null),
-			"Expressions", Location.Null);
-			
-		public static MemberAccess Type =
-			new MemberAccess (Namespace, "Expression", Location.Null);
-	}
+		//
+		// These represent types thare are loaded from System.Core, similar
+		// in spirit to the TypeManger _type variables.
+		// 
+		public static Type expression_type;
+		public static Type parameter_expression_type;
 
+		//
+		// The expressions represeing the internal types, if used
+		//
+		public static TypeExpr expression_type_expr;
+		
+		static LinqExpression ()
+		{
+			expression_type = TypeManager.CoreLookupType ("System.Linq.Expressions", "Expression");
+			parameter_expression_type = TypeManager.CoreLookupType ("System.Linq.Expressions", "ParameterExpression");
+
+			expression_type_expr = new TypeExpression (expression_type, Location.Null);
+		}
+	}
 }

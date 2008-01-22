@@ -1,3 +1,23 @@
+2008-01-22  Miguel de Icaza  <miguel@novell.com>
+
+	* typemanager.cs (LinqExpression): renamed from
+	ExpressionTreeManager, for a shorter name.
+
+	Use TypeManager.CoreLookupType to lookup types from our core
+	assemblies and turn those into "Type" variables.
+
+	Consumers that previously used "Namespace" and "Type" from this
+	class should instead use the TypeExpression which is a type that
+	is fully resolved (without involving the regular C# resolution
+	rules). 
+
+	This typically looks like this:
+
+	TypeExpression texpr = new TypeExpression (LinqExpression.expression_type, loc);
+	new MemberAccess (texpr, name, type_arguments, loc)
+
+	This avoids the problem in: #355178
+
 2008-01-21  Marek Safar  <marek.safar@gmail.com>
 
  	* cs-parser.jay, expression.cs: Check `namespace alias qualifier' language

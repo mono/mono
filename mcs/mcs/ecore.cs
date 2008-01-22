@@ -1254,9 +1254,8 @@ namespace Mono.CSharp {
 
 		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
 		{
-			return new Invocation (
-				new MemberAccess (ExpressionTreeManager.Type, name, typeArguments, loc),
-				args);
+			TypeExpression texpr = new TypeExpression (LinqExpression.expression_type, loc);
+			return new Invocation (new MemberAccess (texpr, name, typeArguments, loc), args);
 		}
 	}
 
