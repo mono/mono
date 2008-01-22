@@ -33,7 +33,7 @@ using System.Linq;
 using NUnit.Framework;
 
 
-namespace System.Core.Tests.System.Linq {
+namespace MonoTests.System.Linq {
 
 	[TestFixture]
 	public class EnumerableMoreTest {
