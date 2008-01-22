@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2008 Novell, Inc.
 //
 // Authors:
 //	Jonathan Chambers (jonathan.chambers@ansys.com)
+//      Ivan N. Zlatev	  (contact@i-nz.net)
 //
 
 // NOT COMPLETE
@@ -39,7 +40,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private GridItemCollection grid_items;
 		private GridItem parent;
 		private PropertyDescriptor property_descriptor;
-		private object[] selected_objects;
+		private object[] target_objects;
 		private int top;
 		private Rectangle plus_minus_bounds;
 		private Rectangle bounds;
@@ -57,7 +58,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public GridEntry(PropertyGridView view, object[] objs, PropertyDescriptor prop_desc) : this (view) {
-			selected_objects = objs;
+			target_objects = objs;
 			property_descriptor = prop_desc;
 		}
 		#endregion	// Constructors
@@ -125,7 +126,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (Value == null) /* not sure if this is always right.. */
 				return false;
 
-			return PropertyDescriptor.CanResetValue(selected_objects[0]);
+			return PropertyDescriptor.CanResetValue(target_objects[0]);
 		}
 
 		public override object Value
@@ -135,12 +136,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 				 * someplace else, maybe when we're
 				 * initially populating the
 				 * PropertyGrid? */
-				if (selected_objects == null || selected_objects.Length == 0 || property_descriptor == null)
+				if (target_objects == null || target_objects.Length == 0 || property_descriptor == null)
 					return null;
 
-				object v = property_descriptor.GetValue(selected_objects[0]);
-				for (int i = 1; i < selected_objects.Length; i ++) {
-					if (!Object.Equals (v, property_descriptor.GetValue(selected_objects[i])))
+				object v = property_descriptor.GetValue(target_objects[0]);
+				for (int i = 1; i < target_objects.Length; i ++) {
+					if (!Object.Equals (v, property_descriptor.GetValue(target_objects[i])))
 						return null;
 				}
 
@@ -201,12 +202,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		#endregion
 
-		internal object[] SelectedObjects {
+		internal object[] TargetObjects {
 			get {
-				return selected_objects;
+				return target_objects;
 			}
 			set {
-				selected_objects = value;
+				target_objects = value;
 			}
 		}
 

@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2005 Novell, Inc.
+// Copyright (c) 2004-2008 Novell, Inc.
 //
 // Authors:
 //	Jonathan Chambers (jonathan.chambers@ansys.com)
+//      Ivan N. Zlatev	  (contact@i-nz.net)
 //
 
 // NOT COMPLETE
@@ -1436,7 +1437,7 @@ namespace System.Windows.Forms {
 				if (grid_entry == null || grid_entry is CategoryGridEntry) {
 					grid_entry = new GridEntry (property_grid_view, objs, property);
 				} else {
-					grid_entry.SelectedObjects = objs;
+					grid_entry.TargetObjects = objs;
 				}
 					
 				grid_entry.SetParent (parent_grid_item);
@@ -1481,7 +1482,7 @@ namespace System.Windows.Forms {
 			if (grid_entry == null)
 				return;
 
-			if (grid_entry.SelectedObjects == null)
+			if (grid_entry.TargetObjects == null)
 				return;
 
 			PropertyDescriptor property = grid_entry.PropertyDescriptor;
@@ -1493,7 +1494,7 @@ namespace System.Windows.Forms {
 			    !property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
 				return;
 
-			object [] objs = grid_entry.SelectedObjects;
+			object [] objs = grid_entry.TargetObjects;
 			object [] subobjs = new object [objs.Length];
 			
 			for (int i = 0; i < objs.Length; i++)
@@ -1549,18 +1550,6 @@ namespace System.Windows.Forms {
 			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,help_panel.Width-1,help_panel.Height-1 );
 		}
 
-		internal object GetTarget (GridItem item, int selected_index)
-		{
-			object target = ((GridEntry)item).SelectedObjects[selected_index];
-
-			while (item.Parent != null && item.Parent.GridItemType != GridItemType.Property)
-				item = item.Parent;
-
-			if (item.Parent != null && item.Parent.PropertyDescriptor != null)
-				target = item.Parent.PropertyDescriptor.GetValue (((GridEntry)item.Parent).SelectedObjects[selected_index]);
-
-			return target;
-		}
 		#endregion	// Private Helper Methods
 
 #region Internal helper classes

@@ -1,3 +1,14 @@
+2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGrid.cs, GridEntry.cs, PropertyGridView.cs:
+	  - Renamed GridEntry.SelectedObjects to TargetObjects to better
+	  reflect the property name role.
+	  - PropertyGrid.GetTarget is not required as the target is known
+	  (TargetObjects).
+	  - Setting values will handle value types as a special case now and
+	  populate them up in the chain.
+	  [Fixes #354990]
+
 2008-01-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Hwnd.cs: Create a public property for the Graphics we keep around.

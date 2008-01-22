@@ -19,10 +19,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2008 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //      Jonathan Chambers	(jonathan.chambers@ansys.com)
+//      Ivan N. Zlatev		(contact@i-nz.net)
 //
 //
 
@@ -819,34 +820,57 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			CloseDropDown ();
 		}
 
-		private void SetPropertyValue(object newVal) {
-			if (property_grid.SelectedGridItem == null)
+		private void SetPropertyValue(object newVal) 
+		{
+			GridEntry selectedItem = (GridEntry) property_grid.SelectedGridItem;
+			if (selectedItem == null || selectedItem.PropertyDescriptor == null)
 				return;
 
-			PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
-			if (desc == null)
-				return;
-
+			PropertyDescriptor property = selectedItem.PropertyDescriptor;
 			bool changed = false;
-			for (int i = 0; i < ((GridEntry)property_grid.SelectedGridItem).SelectedObjects.Length; i ++) {
-				object target = property_grid.GetTarget (property_grid.SelectedGridItem, i);
-				object currentVal = desc.GetValue (target);
+			foreach (object targetObject in selectedItem.TargetObjects) {
+				object currentVal = property.GetValue (targetObject);
 				if (!Object.Equals (currentVal, newVal)) {
-					desc.SetValue (target, newVal);
+					property.SetValue (targetObject, newVal);
+					// Value Types are weired when handled via SetValue (structs specifically).
+					// Populate them up the chaing by hand.
+					// 
+					if (IsValueTypeGridItem (selectedItem.Parent)) {
+						object value = targetObject;
+						GridEntry entry = (GridEntry) selectedItem.Parent;
+						object[] targets = entry.TargetObjects;
+						while (IsValueTypeGridItem (entry)) {
+							foreach (object target in targets)
+								entry.PropertyDescriptor.SetValue (target, value);
+							value = targets[0];
+
+							if (entry.Parent != null)
+								targets = ((GridEntry)entry.Parent).TargetObjects;
+							entry = (GridEntry)entry.Parent;
+						}
+					}
 					changed = true;
 				}
 			}
 
 			if (changed) {
 				// TODO - What else should RefreshProperties.All do?
-				RefreshPropertiesAttribute refresh_attr = (RefreshPropertiesAttribute) desc.Attributes [typeof (RefreshPropertiesAttribute)];
+				RefreshPropertiesAttribute refresh_attr = (RefreshPropertiesAttribute) property.Attributes [typeof (RefreshPropertiesAttribute)];
 				if (refresh_attr != null && refresh_attr.RefreshProperties != RefreshProperties.None)
 					Invalidate ();
-	
+
 				property_grid.PropertyValueChangedInternal ();
 			}
 		}
-	
+
+		private bool IsValueTypeGridItem (GridItem item)
+		{
+			if (item != null && item.PropertyDescriptor != null && 
+			    item.PropertyDescriptor.PropertyType.IsValueType)
+				return true;
+			return false;
+		}
+
 		private void DropDownButtonClicked (object sender, EventArgs e) {
 			UITypeEditor editor = property_grid.SelectedGridItem.PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 			if (editor == null) {
