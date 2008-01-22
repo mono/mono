@@ -1,3 +1,8 @@
+2008-01-22  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #355148
+ 	* ecore.cs, expression.cs: Correctly report misused ref and out modifiers.
+ 	
 2008-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (CreateExpressionTree): Add support for or and

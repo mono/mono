@@ -3577,9 +3577,9 @@ namespace Mono.CSharp {
 			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
 
 			string index = (idx + 1).ToString ();
-			if ((mod & Parameter.Modifier.ISBYREF) != (a.Modifier & Parameter.Modifier.ISBYREF) ||
-				(mod & Parameter.Modifier.ISBYREF) != 0) {
-				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
+			if (((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) ^
+				(a.Modifier & (Parameter.Modifier.REF | Parameter.Modifier.OUT))) != 0) {
+				if ((mod & Parameter.Modifier.ISBYREF) == 0)
 					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
 						index, Parameter.GetModifierSignature (a.Modifier));
 				else

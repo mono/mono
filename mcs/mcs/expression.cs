@@ -4097,9 +4097,7 @@ namespace Mono.CSharp {
 			if (Expr.eclass == ExprClass.MethodGroup)
 				return Expr.ExprClassName;
 
-			return ArgType == AType.Ref ? "ref " :
-				ArgType == AType.Out ? "out " : "" +
-				Expr.GetSignatureForError ();
+			return Expr.GetSignatureForError ();
 		}		
 
 		public bool ResolveMethodGroup (EmitContext ec)
