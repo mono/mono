@@ -2901,16 +2901,16 @@ namespace Mono.CSharp {
 						opcode = OpCodes.Mul;
 				} else
 					opcode = OpCodes.Mul;
-
+				
 				break;
-
+				
 			case Operator.Division:
 				if (is_unsigned)
 					opcode = OpCodes.Div_Un;
 				else
 					opcode = OpCodes.Div;
 				break;
-
+				
 			case Operator.Modulus:
 				if (is_unsigned)
 					opcode = OpCodes.Rem_Un;
@@ -3035,20 +3035,28 @@ namespace Mono.CSharp {
 		{
 			string method_name;
 			switch (oper) {
-				case Operator.Addition:
-					if (ec.CheckState)
-						method_name = "AddChecked";
-					else
-						method_name = "Add";
-					break;
-				case Operator.BitwiseAnd:
-					method_name = "And";
-					break;
-				case Operator.LogicalAnd:
-					method_name = "AndAlso";
-					break;
-				default:
-					throw new InternalErrorException ("Unknown expression tree binary operator " + oper);
+			case Operator.Addition:
+				if (ec.CheckState)
+					method_name = "AddChecked";
+				else
+					method_name = "Add";
+				break;
+			case Operator.BitwiseAnd:
+				method_name = "And";
+				break;
+			case Operator.LogicalAnd:
+				method_name = "AndAlso";
+				break;
+				
+			case Operator.BitwiseOr:
+				method_name = "Or";
+				break;
+
+			case Operator.LogicalOr:
+				method_name = "OrElse";
+				break;
+			default:
+				throw new InternalErrorException ("Unknown expression tree binary operator " + oper);
 			}
 
 			ArrayList args = new ArrayList (2);

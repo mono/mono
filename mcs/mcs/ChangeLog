@@ -1,5 +1,8 @@
 2008-01-22  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs (CreateExpressionTree): Add support for or and
+	logical or, and indent following the coding conventions.
+
 	* typemanager.cs (LinqExpression): renamed from
 	ExpressionTreeManager, for a shorter name.
 
