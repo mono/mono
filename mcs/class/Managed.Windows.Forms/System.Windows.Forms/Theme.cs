@@ -809,10 +809,6 @@ namespace System.Windows.Forms
 		public abstract Size LabelDefaultSize{get;}
 		#endregion	// Label
 
-		#region LinkLabel
-		public abstract void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label);
-		#endregion	// LinkLabel
-		
 		#region ListBox
 		// Drawing
 		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);

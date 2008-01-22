@@ -22,6 +22,7 @@
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //	Chris Toshok  <toshok@ximian.com>
+//	Everaldo Canuto  <ecanuto@novell.com>
 //
 // Based on work by:
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
@@ -33,6 +34,7 @@ using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Theming;
 
 namespace System.Windows.Forms
 {
@@ -481,7 +483,7 @@ namespace System.Windows.Forms
 			// and can have transparent colors.
 			base.InvokePaintBackground (this, pevent);
 			
-			ThemeEngine.Current.DrawLinkLabel (pevent.Graphics, pevent.ClipRectangle, this);
+			ThemeElements.LinkLabelPainter.Draw (pevent.Graphics, pevent.ClipRectangle, this);
 			// Do not call base.OnPaint since it's the Label class 
 		}
 
