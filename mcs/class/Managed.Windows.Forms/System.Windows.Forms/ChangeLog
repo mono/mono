@@ -1,3 +1,8 @@
+2008-01-22  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MessageBox.cs: Adjust right border space, we don't need to add 
+	"space_border*2" two times.
+
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScrollableControl.cs: With the advent of 2.0's Padding, DockPadding

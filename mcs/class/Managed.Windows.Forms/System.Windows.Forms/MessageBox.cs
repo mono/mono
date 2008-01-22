@@ -221,7 +221,6 @@ namespace System.Windows.Forms
 					if (tsize.Height < icon_image.Height)
 						tsize.Height = icon_image.Height;
 				} else {
-					tsize.Width += space_border * 2;
 					text_rect.Location = new Point (space_border + button_space, space_border);
 				}
 				tsize.Height += space_border * 2;
