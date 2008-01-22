@@ -1,5 +1,9 @@
 2008-01-22  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ExpressionPrinter.cs: implement NewArrayList.
+
+2008-01-22  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs, ExpressionPrinter.cs, NewArrayExpression.cs:
 	implement Expression.NewArrayBounds.
 

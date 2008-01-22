@@ -1339,16 +1339,31 @@ namespace System.Linq.Expressions {
 			return new NewArrayExpression (ExpressionType.NewArrayBounds, type.MakeArrayType (array_bounds.Count), array_bounds);
 		}
 
-		[MonoTODO]
-		public static NewArrayExpression NewArrayInit (Type type, params Expression [] bounds)
+		public static NewArrayExpression NewArrayInit (Type type, params Expression [] initializers)
 		{
-			throw new NotImplementedException ();
+			return NewArrayInit (type, initializers as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
-		public static NewArrayExpression NewArrayInit (Type type, IEnumerable<Expression> bounds)
+		public static NewArrayExpression NewArrayInit (Type type, IEnumerable<Expression> initializers)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (initializers == null)
+				throw new ArgumentNullException ("initializers");
+
+			var array_initializers = initializers.ToReadOnlyCollection ();
+
+			foreach (var expression in initializers) {
+				if (expression == null)
+					throw new ArgumentNullException ("initializers");
+
+				if (!type.IsAssignableFrom (expression.Type))
+					throw new InvalidOperationException ();
+
+				// TODO: Quote elements if type == typeof (Expression)
+			}
+
+			return new NewArrayExpression (ExpressionType.NewArrayInit, type.MakeArrayType (), array_initializers);
 		}
 
 		public static UnaryExpression Not (Expression expression)
