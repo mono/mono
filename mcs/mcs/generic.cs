@@ -3449,24 +3449,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class LiftedConditional : Lifted
-		{
-			Expression true_expr, false_expr;
-
-			public LiftedConditional (Expression expr, Expression true_expr, Expression false_expr,
-						  Location loc)
-				: base (expr, loc)
-			{
-				this.true_expr = true_expr;
-				this.false_expr = false_expr;
-			}
-
-			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
-			{
-				return new Conditional (unwrap, true_expr, false_expr);
-			}
-		}
-
 		public class LiftedBinaryOperator : Binary
 		{
 			Expression underlying, null_value, bool_wrap;
@@ -3755,58 +3737,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class OperatorTrueOrFalse : Expression
-		{
-			public readonly bool IsTrue;
-
-			Expression expr;
-			Unwrap unwrap;
-
-			public OperatorTrueOrFalse (Expression expr, bool is_true, Location loc)
-			{
-				this.IsTrue = is_true;
-				this.expr = expr;
-				this.loc = loc;
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				unwrap = Unwrap.Create (expr, ec);
-				if (unwrap == null)
-					return null;
-
-				if (unwrap.Type != TypeManager.bool_type)
-					return null;
-
-				type = TypeManager.bool_type;
-				eclass = ExprClass.Value;
-				return this;
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				Label is_null_label = ig.DefineLabel ();
-				Label end_label = ig.DefineLabel ();
-
-				unwrap.EmitCheck (ec);
-				ig.Emit (OpCodes.Brfalse, is_null_label);
-
-				unwrap.Emit (ec);
-				if (!IsTrue) {
-					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Ceq);
-				}
-				ig.Emit (OpCodes.Br, end_label);
-
-				ig.MarkLabel (is_null_label);
-				ig.Emit (OpCodes.Ldc_I4_0);
-
-				ig.MarkLabel (end_label);
-			}
-		}
-
 		public class NullCoalescingOperator : Expression
 		{
 			Expression left, right;
@@ -3821,6 +3751,14 @@ namespace Mono.CSharp {
 
 				eclass = ExprClass.Value;
 			}
+			
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				ArrayList args = new ArrayList (2);
+				args.Add (new Argument (left.CreateExpressionTree (ec)));
+				args.Add (new Argument (right.CreateExpressionTree (ec)));
+				return CreateExpressionFactoryCall ("Coalesce", args);
+			}			
 
 			public override Expression DoResolve (EmitContext ec)
 			{

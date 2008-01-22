@@ -3451,11 +3451,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-#if GMCS_SOURCE
-			if (TypeManager.IsNullableValueType (expr.Type))
-				return new Nullable.LiftedConditional (expr, true_expr, false_expr, loc).Resolve (ec);
-#endif
-			
 			if (expr.Type != TypeManager.bool_type){
 				expr = Expression.ResolveBoolean (
 					ec, expr, loc);

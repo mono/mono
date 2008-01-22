@@ -914,12 +914,6 @@ namespace Mono.CSharp {
 		static Expression GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
 		{
 			MethodGroupExpr operator_group;
-
-#if GMCS_SOURCE
-			if (TypeManager.IsNullableType (e.Type))
-				return new Nullable.OperatorTrueOrFalse (e, is_true, loc).Resolve (ec);
-#endif
-
 			operator_group = MethodLookup (ec.ContainerType, e.Type, is_true ? "op_True" : "op_False", loc) as MethodGroupExpr;
 			if (operator_group == null)
 				return null;
