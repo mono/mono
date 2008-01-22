@@ -1319,16 +1319,24 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static NewArrayExpression NewArrayBounds (Type type, params Expression [] bounds)
 		{
-			throw new NotImplementedException ();
+			return NewArrayBounds (type, bounds as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static NewArrayExpression NewArrayBounds (Type type, IEnumerable<Expression> bounds)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (bounds == null)
+				throw new ArgumentNullException ("bounds");
+
+			var array_bounds = bounds.ToReadOnlyCollection ();
+			foreach (var expression in array_bounds)
+				if (!IsInt (expression.Type))
+					throw new ArgumentException ("The bounds collection can only contain expression of integers types");
+
+			return new NewArrayExpression (ExpressionType.NewArrayBounds, type.MakeArrayType (array_bounds.Count), array_bounds);
 		}
 
 		[MonoTODO]

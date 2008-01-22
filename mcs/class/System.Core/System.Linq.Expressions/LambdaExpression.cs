@@ -156,29 +156,30 @@ namespace System.Linq.Expressions {
 
 		public Delegate Compile ()
 		{
-			if (lambda_delegate == null){
-				var ec = new EmitContext (this);
+			if (lambda_delegate != null)
+				return lambda_delegate;
+
+			var ec = new EmitContext (this);
+
+			Emit (ec);
+
+			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
+				string fname = "linq" + (EmitContext.method_count-1) + ".dll";
+				AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
+					new AssemblyName (fname), AssemblyBuilderAccess.RunAndSave, "/tmp");
+				
+				ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
+				TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
+				MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
+				ec.ig = mb.GetILGenerator ();
 
 				Emit (ec);
 
-				if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
-					string fname = "linq" + (EmitContext.method_count-1) + ".dll";
-					AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
-						new AssemblyName (fname), AssemblyBuilderAccess.RunAndSave, "/tmp");
-					
-					ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
-					TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
-					MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
-					ec.ig = mb.GetILGenerator ();
-
-					Emit (ec);
-
-					tb.CreateType ();
-					ab.Save (fname);
-				}
-				
-				lambda_delegate = ec.CreateDelegate ();
+				tb.CreateType ();
+				ab.Save (fname);
 			}
+			
+			lambda_delegate = ec.CreateDelegate ();
 			return lambda_delegate;
 		}
 	}

@@ -39,6 +39,12 @@ namespace System.Linq.Expressions {
 			get { return expressions; }
 		}
 
+		internal NewArrayExpression (ExpressionType et, Type type, ReadOnlyCollection<Expression> expressions)
+			: base (et, type)
+		{
+			this.expressions = expressions;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();

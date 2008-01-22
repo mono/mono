@@ -1,5 +1,10 @@
 2008-01-22  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ExpressionPrinter.cs, NewArrayExpression.cs:
+	implement Expression.NewArrayBounds.
+
+2008-01-22  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionPrinter.cs: fix Lambda and Equal.
 
 2008-01-22  Miguel de Icaza  <miguel@novell.com>

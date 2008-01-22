@@ -320,6 +320,16 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitNewArray (NewArrayExpression newArray)
 		{
+			switch (newArray.NodeType) {
+			case ExpressionType.NewArrayBounds:
+				Print ("new ");
+				Print (newArray.Type);
+				Print ("(");
+				VisitExpressionList (newArray.Expressions);
+				Print (")");
+				return;
+			}
+
 			throw new NotImplementedException ();
 		}
 
