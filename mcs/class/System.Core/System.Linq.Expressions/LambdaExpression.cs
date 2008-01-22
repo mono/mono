@@ -160,16 +160,16 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			body.Emit (ec);
+			ec.ig.Emit (OpCodes.Ret);
 		}
-		
+
 		public Delegate Compile ()
 		{
 			if (lambda_delegate == null){
-				EmitContext ec = new EmitContext (this);
-				
-				body.Emit (ec);
-				ec.ig.Emit (OpCodes.Ret);
+				var ec = new EmitContext (this);
+
+				Emit (ec);
 
 				if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
 					string fname = "linq" + (EmitContext.method_count-1) + ".dll";
@@ -180,10 +180,9 @@ namespace System.Linq.Expressions {
 					TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
 					MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
 					ec.ig = mb.GetILGenerator ();
-					
-					body.Emit (ec);
-					ec.ig.Emit (OpCodes.Ret);
-					
+
+					Emit (ec);
+
 					tb.CreateType ();
 					ab.Save (fname);
 				}
