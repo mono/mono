@@ -207,5 +207,92 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (100.0/3, CodeGen<double> ((a, b) => Expression.Divide (a, b), 100, 3));
 		}
 
+		void CTest<T> (ExpressionType node, bool r, T a, T b)
+		{
+			ParameterExpression pa = Expression.Parameter(typeof(T), "a");
+			ParameterExpression pb = Expression.Parameter(typeof(T), "b");
+
+			BinaryExpression p = Expression.MakeBinary (node, Expression.Constant (a), Expression.Constant(b));
+			Expression<Func<T,T,bool>> pexpr = Expression.Lambda<Func<T,T,bool>> (
+				p, new ParameterExpression [] { pa, pb });
+			
+			Func<T,T,bool> compiled = pexpr.Compile ();
+			Assert.AreEqual (r, compiled (a, b), String.Format ("{0} ({1},{2}) == {3}", node, a, b, r));
+		}
+
+		[Test]
+		public void ComparisonTests ()
+		{
+			ExpressionType t = ExpressionType.Equal;
+		
+			CTest<byte>   (t, true,   10,  10);
+			CTest<sbyte>  (t, false,   1,   5);
+			CTest<sbyte>  (t, true,    1,   1);
+			CTest<int>    (t, true,    1,   1);
+			CTest<double> (t, true,  1.0, 1.0);
+			CTest<string> (t, true,  "",  "");
+			CTest<string> (t, true,  "Hey",  "Hey");
+			CTest<string> (t, false,  "Hey",  "There");
+
+			t = ExpressionType.NotEqual;
+			
+			CTest<byte>   (t, false,   10,  10);
+			CTest<sbyte>  (t, true,   1,   5);
+			CTest<sbyte>  (t, false,    1,   1);
+			CTest<int>    (t, false,    1,   1);
+			CTest<double> (t, false,  1.0, 1.0);
+			CTest<double> (t, false,  1.0, 1.0);
+			CTest<string> (t, false,  "",  "");
+			CTest<string> (t, false,  "Hey",  "Hey");
+			CTest<string> (t, true,  "Hey",  "There");
+
+			t = ExpressionType.GreaterThan;
+			CTest<byte>   (t, true,   5,  1);
+			CTest<byte>   (t, false,   10,  10);
+			CTest<sbyte>  (t, false,   1,   5);
+			CTest<sbyte>  (t, false,    1,   1);
+			CTest<int>    (t, false,    1,   1);
+			CTest<uint>   (t, true,     1,   0);
+			CTest<ulong>  (t, true,     Int64.MaxValue,  0);
+			CTest<double> (t, false,  1.0, 1.0);
+			CTest<double> (t, false,  1.0, 1.0);
+
+			
+			t = ExpressionType.LessThan;
+			CTest<byte>   (t, false,   5,  1);
+			CTest<byte>   (t, false,   10,  10);
+			CTest<sbyte>  (t, true,   1,   5);
+			CTest<sbyte>  (t, false,    1,   1);
+			CTest<int>    (t, false,    1,   1);
+			CTest<uint>   (t, false,     1,   0);
+			CTest<ulong>  (t, false,     Int64.MaxValue,  0);
+			CTest<double> (t, false,  1.0, 1.0);
+			CTest<double> (t, false,  1.0, 1.0);
+
+			t = ExpressionType.GreaterThanOrEqual;
+			CTest<byte>   (t, true,   5,  1);
+			CTest<byte>   (t, true,   10,  10);
+			CTest<sbyte>  (t, false,   1,   5);
+			CTest<sbyte>  (t, true,    1,   1);
+			CTest<int>    (t, true,    1,   1);
+			CTest<uint>   (t, true,     1,   0);
+			CTest<ulong>  (t, true,     Int64.MaxValue,  0);
+			CTest<double> (t, true,  1.0, 1.0);
+			CTest<double> (t, true,  1.0, 1.0);
+
+			
+			t = ExpressionType.LessThanOrEqual;
+			CTest<byte>   (t, false,   5,  1);
+			CTest<byte>   (t, true,   10,  10);
+			CTest<sbyte>  (t, true,   1,   5);
+			CTest<sbyte>  (t, true,    1,   1);
+			CTest<int>    (t, true,    1,   1);
+			CTest<uint>   (t, false,     1,   0);
+			CTest<ulong>  (t, false,     Int64.MaxValue,  0);
+			CTest<double> (t, true,  1.0, 1.0);
+			CTest<double> (t, true,  1.0, 1.0);
+			
+		}
+
 	}
 }

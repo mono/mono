@@ -287,6 +287,12 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Coalesce:
 				EmitCoalesce (ec);
 				return;
+
+			case ExpressionType.Power:
+				left.Emit (ec);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (System.Math).GetMethod ("Pow"));
+				return;
 			}
 			
 			Label? empty_value = null;
@@ -398,24 +404,64 @@ namespace System.Linq.Expressions {
 				opcode = OpCodes.Xor;
 				break;
 
-			case ExpressionType.Coalesce:
-			case ExpressionType.Equal:
 			case ExpressionType.GreaterThan:
+				if (is_unsigned)
+					opcode = OpCodes.Cgt_Un;
+				else
+					opcode = OpCodes.Cgt;
+				break;
+				
 			case ExpressionType.GreaterThanOrEqual:
+				Type le = left.Type;
+				
+				if (is_unsigned || (le == typeof (double) || le == typeof (float)))
+					ig.Emit (OpCodes.Clt_Un);
+				else
+					ig.Emit (OpCodes.Clt);
+				
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+				
 			case ExpressionType.LessThan:
+				if (is_unsigned)
+					opcode = OpCodes.Clt_Un;
+				else
+					opcode = OpCodes.Clt;
+				break;
+				
 			case ExpressionType.LessThanOrEqual:
+				Type lt = left.Type;
+				
+				if (is_unsigned || (lt == typeof (double) || lt == typeof (float)))
+					ig.Emit (OpCodes.Cgt_Un);
+				else
+					ig.Emit (OpCodes.Cgt);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+				
+			case ExpressionType.Equal:
+				opcode = OpCodes.Ceq;
+				break;
+				
 			case ExpressionType.NotEqual:
-			case ExpressionType.Power:
-				throw new NotImplementedException (String.Format ("No support for {0} node yet", NodeType));
-
+				ig.Emit (OpCodes.Ceq);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+				
 			default:
 				throw new Exception (String.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
 			ig.Emit (opcode);
-
+			
 			if (IsLifted){
 				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
-
+				
 				Label skip = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br_S, skip);
 				ig.MarkLabel (empty_value.Value);

@@ -81,7 +81,6 @@ namespace MonoTests.System.Linq.Expressions
 		public void InvalidArgType ()
 		{
 			// invalid argument type
-
 			ParameterExpression p = Expression.Parameter (typeof (string), "AAA");
 			Expression.Lambda (typeof (delegate_object_int), Expression.Constant ("foo"), new ParameterExpression [1] {p});
 		}

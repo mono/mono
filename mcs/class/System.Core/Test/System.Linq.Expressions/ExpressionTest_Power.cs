@@ -69,45 +69,24 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void ArgTypesFloat_OK ()
 		{
-			Expression.Power (Expression.Constant (1.0), Expression.Constant (2.0));
-		}
+			BinaryExpression p = Expression.Power (Expression.Constant (1.0), Expression.Constant (2.0));
 
-#if false
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void NoOperatorClass ()
-		{
-			Expression.Subtract (Expression.Constant (new NoOpClass ()), Expression.Constant (new NoOpClass ()));
-		}
-	
-		[Test]
-		public void Nullable ()
-		{
-			int? a = 1;
-			int? b = 2;
-
-			BinaryExpression expr = Expression.Subtract (Expression.Constant (a), Expression.Constant (b));
-			Assert.AreEqual (ExpressionType.Subtract, expr.NodeType, "Subtract#05");
-			Assert.AreEqual (typeof (int), expr.Type, "Subtract#06");
-			Assert.IsNull (expr.Method, "Subtract#07");
-			Assert.AreEqual ("(1 - 2)", expr.ToString(), "Subtract#08");
+			Assert.AreEqual (ExpressionType.Power, p.NodeType, "Power#01");
+			Assert.AreEqual (typeof (double), p.Type, "Add#02");
 		}
 
 		[Test]
-		public void UserDefinedClass ()
+		public void TestCompile ()
 		{
-			// We can use the simplest version of GetMethod because we already know only one
-			// exists in the very simple class we're using for the tests.
-			MethodInfo mi = typeof (OpClass).GetMethod ("op_Subtraction");
-
-			BinaryExpression expr = Expression.Subtract (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
-			Assert.AreEqual (ExpressionType.Subtract, expr.NodeType, "Subtract#09");
-			Assert.AreEqual (typeof (OpClass), expr.Type, "Subtract#10");
-			Assert.AreEqual (mi, expr.Method, "Subtract#11");
-			Assert.AreEqual ("op_Subtraction", expr.Method.Name, "Subtract#12");
-			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) - value(MonoTests.System.Linq.Expressions.OpClass))",
-				expr.ToString(), "Subtract#13");
+			ParameterExpression a = Expression.Parameter(typeof(double), "a");
+			ParameterExpression b = Expression.Parameter(typeof(double), "b");
+			BinaryExpression p = Expression.Power (a, b);
+			
+			Expression<Func<double,double,double>> pexpr = Expression.Lambda<Func<double,double,double>> (p, new ParameterExpression [] { a, b });
+			Func<double,double,double> compiled = pexpr.Compile ();
+			Assert.AreEqual (1, compiled (1, 10));
+			Assert.AreEqual (16, compiled (2, 4));
 		}
-#endif
+
 	}
 }

@@ -93,6 +93,13 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void StringS ()
+		{
+			Expression.GreaterThan (Expression.Constant (""), Expression.Constant (""));
+		}
+
+		[Test]
 		public void UserDefinedClass ()
 		{
 			MethodInfo mi = typeof (OpClass).GetMethod ("op_GreaterThan");
@@ -105,6 +112,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (mi, expr.Method);
 			Assert.AreEqual ("op_GreaterThan", expr.Method.Name);
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) > value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
+		}
+
+		[Test]
+		public void TestCompiled ()
+		{
+			ParameterExpression a = Expression.Parameter(typeof(int), "a");
+			ParameterExpression b = Expression.Parameter(typeof(int), "b");
+
+			BinaryExpression p = Expression.GreaterThan (a, b);
+
+			Expression<Func<int,int,bool>> pexpr = Expression.Lambda<Func<int,int,bool>> (
+				p, new ParameterExpression [] { a, b });
+			
+			Func<int,int,bool> compiled = pexpr.Compile ();
+			Assert.AreEqual (true, compiled (10, 1), "tc1");
+			Assert.AreEqual (true, compiled (1, 0), "tc2");
+			Assert.AreEqual (true, compiled (Int32.MinValue+1, Int32.MinValue), "tc3");
+			Assert.AreEqual (false, compiled (-1, 0), "tc4");
+			Assert.AreEqual (false, compiled (0, Int32.MaxValue), "tc5");
 		}
 	}
 }

@@ -1,5 +1,9 @@
 2008-01-22  Miguel de Icaza  <miguel@novell.com>
 
+	* BinaryExpression.cs: Unleash the power of cut and paste.
+
+	Bring a bunch of operatros from mcs/expression.cs
+
 	* Expression.cs: There is no op_LogicalAnd or op_LogicalOr, I just
 	used those from mcs, that was wrong.   use the proper ones, clean
 	up the result.
