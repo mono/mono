@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		internal static IntPtr FocusWindow;
 		internal static IntPtr ActiveWindow;
 		internal static IntPtr ReverseWindow;
+		internal static IntPtr CaretWindow;
 
 		internal static Hwnd MouseHwnd;
 
@@ -247,7 +248,7 @@ namespace System.Windows.Forms {
 			CreateNewWindow (Carbon.WindowClass.kDocumentWindowClass, Carbon.WindowAttributes.kWindowStandardHandlerAttribute | Carbon.WindowAttributes.kWindowCloseBoxAttribute | Carbon.WindowAttributes.kWindowFullZoomAttribute | Carbon.WindowAttributes.kWindowCollapseBoxAttribute | Carbon.WindowAttributes.kWindowResizableAttribute | Carbon.WindowAttributes.kWindowCompositingAttribute, ref rect, ref FosterParent);
 			
 			CreateNewWindow (Carbon.WindowClass.kOverlayWindowClass, Carbon.WindowAttributes.kWindowNoUpdatesAttribute | Carbon.WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref ReverseWindow);
-			Carbon.EventHandler.InstallWindowHandler (ReverseWindow);
+			CreateNewWindow (Carbon.WindowClass.kOverlayWindowClass, Carbon.WindowAttributes.kWindowNoUpdatesAttribute | Carbon.WindowAttributes.kWindowNoActivatesAttribute, ref rect, ref CaretWindow);
 			
 			// Get some values about bar heights
 			Carbon.Rect structRect = new Carbon.Rect ();
@@ -657,14 +658,19 @@ namespace System.Windows.Forms {
 			if (Caret.On)
 				return;
 			Caret.On = true;
-			InvertCaret ();
+			ShowWindow (CaretWindow);
+			Graphics g = Graphics.FromHwnd (HIViewGetRoot (CaretWindow));
+
+			g.FillRectangle (new SolidBrush (Color.Black), new Rectangle (0, 0, Caret.Width, Caret.Height));
+
+			g.Dispose ();
 		}
 
 		private void HideCaret () {
 			if (!Caret.On)
 				return;
 			Caret.On = false;
-			InvertCaret ();
+			HideWindow (CaretWindow);
 		}
 		
 		private void AccumulateDestroyedHandles (Control c, ArrayList list) {
@@ -1652,14 +1658,12 @@ namespace System.Windows.Forms {
 
 		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
 			if (Caret.Hwnd == hwnd) {
-				Carbon.CGPoint cpt = new Carbon.CGPoint ();
-				cpt.x = x;
-				cpt.y = y;
-				HIViewConvertPoint (ref cpt, hwnd, IntPtr.Zero);
+				ClientToScreen (hwnd, ref x, ref y);
+				SizeWindow (new Rectangle (x, y, Caret.Width, Caret.Height), CaretWindow);
 				Caret.Timer.Stop ();
 				HideCaret ();
-				Caret.X = (int)cpt.x;
-				Caret.Y = (int)cpt.y-23;
+				Caret.X = x;
+				Caret.Y = y;
 				if (Caret.Visible == 1) {
 					ShowCaret ();
 					Caret.Timer.Start ();
@@ -2036,12 +2040,12 @@ namespace System.Windows.Forms {
 		 *
 		 * PROBLEMS: This has some flicker / banding
 		 */
-		internal void SizeReversibleWindow (Rectangle rect) {
+		internal void SizeWindow (Rectangle rect, IntPtr window) {
 			Carbon.Rect qrect = new Carbon.Rect ();
 
 			SetRect (ref qrect, (short)rect.X, (short)rect.Y, (short)(rect.X+rect.Width), (short)(rect.Y+rect.Height));
 
-			SetWindowBounds (ReverseWindow, 33, ref qrect);
+			SetWindowBounds (window, 33, ref qrect);
 		}
 
 		internal override void DrawReversibleLine(Point start, Point end, Color backColor) {
@@ -2070,7 +2074,7 @@ namespace System.Windows.Forms {
 				size_rect.X += new_x;
 				size_rect.Y += new_y;
 
-				SizeReversibleWindow (size_rect);
+				SizeWindow (size_rect, ReverseWindow);
 				ShowWindow (ReverseWindow);
 
 				rect.X = 0;
