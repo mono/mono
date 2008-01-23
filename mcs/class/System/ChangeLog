@@ -1,3 +1,7 @@
+2008-01-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added FileVersionInfoTest.cs.
+
 2007-12-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CheckoutExceptionTest.cs.

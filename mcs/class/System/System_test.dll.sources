@@ -169,6 +169,7 @@ System.Diagnostics/EventInstanceTest.cs
 System.Diagnostics/EventLogPermissionAttributeTest.cs
 System.Diagnostics/EventLogPermissionTest.cs
 System.Diagnostics/EventSourceCreationDataTest.cs
+System.Diagnostics/FileVersionInfoTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
 System.Diagnostics/ProcessStartInfoTest.cs

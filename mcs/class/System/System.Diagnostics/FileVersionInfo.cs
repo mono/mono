@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Permissions;
@@ -281,6 +282,11 @@ namespace System.Diagnostics {
 				new FileIOPermission (FileIOPermissionAccess.Read, fileName).Demand ();
 			}
 #endif
+
+			string absolute = Path.GetFullPath (fileName);
+			if (!File.Exists (absolute))
+				throw new FileNotFoundException (fileName);
+
 			FileVersionInfo fvi = new FileVersionInfo ();
 			fvi.GetVersionInfo_internal (fileName);
 			return fvi;
