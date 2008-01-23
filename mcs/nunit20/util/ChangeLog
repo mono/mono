@@ -1,3 +1,9 @@
+2008-01-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (install-symlink, uninstall-symlink): New.  In the
+	net_2_0 profile, just install a symlink to the 1.1 profile library
+	in the compiler search path.
+
 2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added NET_2_0 projects files for VS2005

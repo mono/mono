@@ -1,3 +1,9 @@
+2008-01-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* mocks/Makefile (install-symlink, uninstall-symlink): New.  In the
+	net_2_0 profile, just install a symlink to the 1.1 profile library
+	in the compiler search path.
+
 2007-01-04  Miguel de Icaza  <miguel@novell.com>
 
 	* nunit-console/ConsoleUi.cs: Do not use the word "failure" if
