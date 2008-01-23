@@ -1295,7 +1295,8 @@ namespace MonoTests.System.Windows.Forms
 		public void Bug355408 ()
 		{
 			Form f = new Form ();
-
+			f.ClientSize = new Size (300, 300);
+			
 			TableLayoutPanel tlp = new TableLayoutPanel ();
 			tlp.Dock = DockStyle.Fill;
 			tlp.RowCount = 2;
@@ -1318,7 +1319,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (new Rectangle (3, 3, 75, 23), b1.Bounds, "A1");
 			Assert.AreEqual (new Rectangle (84, 3, 75, 23), b2.Bounds, "A2");
-			Assert.AreEqual (new Rectangle (3, 32, 278, 229), b3.Bounds, "A3");
+			Assert.AreEqual (new Rectangle (3, 32, 294, 265), b3.Bounds, "A3");
 
 			f.Close ();
 			f.Dispose ();

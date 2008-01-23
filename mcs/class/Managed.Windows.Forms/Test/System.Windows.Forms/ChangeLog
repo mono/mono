@@ -1,5 +1,10 @@
 2008-01-23  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutTest.cs: Set ClientSize to a known size to 
+	make Bug355408 () WM independent.
+
+2008-01-23  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TableLayoutTest.cs: Add test for bug #355408.
 
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
