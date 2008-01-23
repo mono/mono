@@ -3441,8 +3441,8 @@ namespace System.Windows.Forms {
 			Keys modifiers = Control.ModifierKeys;
 			bool isControl = (modifiers & Keys.Control) != 0;
 			bool isShift = (modifiers & Keys.Shift) != 0;
-			bool isRowHeader = hitTest.Type == DataGridViewHitTestType.RowHeader;
-			bool isColHeader = hitTest.Type == DataGridViewHitTestType.ColumnHeader;
+			//bool isRowHeader = hitTest.Type == DataGridViewHitTestType.RowHeader;
+			//bool isColHeader = hitTest.Type == DataGridViewHitTestType.ColumnHeader;
 			DataGridViewSelectionMode mode;
 			
 			switch (hitTest.Type) {

@@ -119,7 +119,6 @@ namespace System.Windows.Forms
 		internal DockStyle dock_style; // docking requirements for our control
 		LayoutType layout_type;
 		private bool recalculate_distances = true;  // Delay anchor calculations
-		private bool nested_layout = false;
 
 		// Please leave the next 2 as internal until DefaultLayout (2.0) is rewritten
 		internal int			dist_right; // distance to the right border of the parent
@@ -148,6 +147,7 @@ namespace System.Windows.Forms
 		Size minimum_size;
 		Padding margin;
 		private ContextMenuStrip context_menu_strip;
+		private bool nested_layout = false;
 		Point auto_scroll_offset;
 		private AutoSizeMode auto_size_mode;
 		private bool suppressing_key_press;

@@ -1619,8 +1619,6 @@ namespace System.Windows.Forms {
 						 
 		public void Activate ()
 		{
-			Form	active;
-
 			if (IsHandleCreated) {
 				if (IsMdiChild) {
 					MdiParent.ActivateMdiChild (this);

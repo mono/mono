@@ -294,7 +294,6 @@ namespace System.Windows.Forms {
 			ArrayList siblings = parent.children;
 
 			foreach (Hwnd sibling in siblings) {
-				bool clip = false;
 				IntPtr sibling_handle = whole_window;
 
 				if (sibling == this)

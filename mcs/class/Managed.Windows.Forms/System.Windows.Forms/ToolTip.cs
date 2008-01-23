@@ -674,6 +674,7 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 
+#if NET_2_0
 		private void HookupFormEvents (Form form)
 		{
 			hooked_form = form;
@@ -681,18 +682,6 @@ namespace System.Windows.Forms {
 			form.Deactivate += new EventHandler (Form_Deactivate);
 			form.Closed += new EventHandler (Form_Closed);
 			form.Resize += new EventHandler (Form_Resize);
-		}
-
-		private void UnhookFormEvents ()
-		{
-			if (hooked_form == null)
-				return;
-
-			hooked_form.Deactivate -= new EventHandler (Form_Deactivate);
-			hooked_form.Closed -= new EventHandler (Form_Closed);
-			hooked_form.Resize -= new EventHandler (Form_Resize);
-
-			hooked_form = null;
 		}
 
 		private void HookupControlEvents (Control control)
@@ -713,6 +702,19 @@ namespace System.Windows.Forms {
 			control.MouseLeave -= new EventHandler (control_MouseLeave);
 			control.MouseDown -= new MouseEventHandler (control_MouseDown);
 		}
+#endif
+		private void UnhookFormEvents ()
+		{
+			if (hooked_form == null)
+				return;
+
+			hooked_form.Deactivate -= new EventHandler (Form_Deactivate);
+			hooked_form.Closed -= new EventHandler (Form_Closed);
+			hooked_form.Resize -= new EventHandler (Form_Resize);
+
+			hooked_form = null;
+		}
+
 
 		private void Form_Resize (object sender, EventArgs e)
 		{
@@ -863,7 +865,8 @@ namespace System.Windows.Forms {
 			if (last_control == sender)
 				last_control = null;
 		}
-		
+
+#if NET_2_0
 		private void Hide (Control sender)
 		{
 			timer.Stop();
@@ -876,6 +879,7 @@ namespace System.Windows.Forms {
 			if (last_control == sender)
 				last_control = null;
 		}
+#endif
 
 		private void control_MouseMove(object sender, MouseEventArgs e) {
 			if (state != TipState.Down) {

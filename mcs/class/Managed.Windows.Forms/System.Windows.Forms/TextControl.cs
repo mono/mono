@@ -3063,7 +3063,6 @@ namespace System.Windows.Forms {
 		internal void ReplaceSelection(string s, bool select_new) {
 			int		i;
 
-			int selection_pos_on_line = selection_start.pos;
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			SuspendRecalc ();
 

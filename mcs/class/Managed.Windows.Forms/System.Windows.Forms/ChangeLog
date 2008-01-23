@@ -1,5 +1,20 @@
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Form.cs: Remove unused declaration of 'active' in Activate method.
+	* Control.cs: Move declaration of nested_layout inside '#if NET_2_0" to 
+	prevent compilation warnings.
+	* TextControl.cs: Remove unused declaration of selection_pos_on_line.
+	* Hwnd.cs: Remove unused declaration of clip in GetClippingRectangles.
+	* Bindings.cs: Remove unused formatting_enabled declaration.
+	* ToolTip.cs: Put some methods inside '#if NET_2_0" to prevent compilation 
+	warnings.
+	* TreeView.cs: Put some methods inside '#if NET_2_0" to prevent compilation 
+	warnings.
+	* PropertyGridView.cs: Remove usused 'ex' declaration.
+	* DataGridView.cs: Remove unused declarations.
+
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	[Fixes bugs #343966, #338511 and other non reported (context)menu bugs]
 	
 	* Form.cs: Remove all active_tracker (used by menu) stuff, it is now moved 

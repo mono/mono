@@ -50,7 +50,6 @@ namespace System.Windows.Forms {
 		private Type data_type;
 
 #if NET_2_0
-		private bool formatting_enabled;
 		private DataSourceUpdateMode datasource_update_mode;
 		private object null_value;
 		private string format_string;
@@ -89,7 +88,6 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-			formatting_enabled = formattingEnabled;
 			datasource_update_mode = dataSourceUpdateMode;
 			null_value = nullValue;
 			format_string = formatString;

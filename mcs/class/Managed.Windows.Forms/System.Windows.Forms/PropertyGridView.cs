@@ -771,7 +771,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							//Console.WriteLine("No converter for type {0}",desc.PropertyType);
 						}
 					}
-					catch (Exception ex) {
+					catch /*(Exception ex)*/ {
 						//Console.WriteLine("Error converting string: " + ex.Message);
 					}
 				}

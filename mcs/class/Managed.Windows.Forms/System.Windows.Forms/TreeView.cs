@@ -1291,6 +1291,7 @@ namespace System.Windows.Forms {
 			return (x > l && x < l + 10);
 		}
 
+#if NET_2_0
 		private bool IsImage (TreeNode node, int x)
 		{
 			if (ImageList == null)
@@ -1305,6 +1306,7 @@ namespace System.Windows.Forms {
 				
 			return false;
 		}
+#endif
 		
 		private int CheckBoxLeft (TreeNode node)
 		{
