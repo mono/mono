@@ -2340,25 +2340,6 @@ namespace System.Windows.Forms
 
 		#endregion	// HScrollBar
 
-		#region Label
-		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) 
-		{		
-			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
-
-			if (label.Enabled) {
-				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
-			} else {
-				ControlPaint.DrawStringDisabled (dc, label.Text, label.Font, label.BackColor, clip_rectangle, label.string_format);
-			}
-		}
-
-		public override Size LabelDefaultSize {
-			get {
-				return new Size (100, 23);
-			}
-		}
-		#endregion	// Label
-
 		#region ListBox
 
 		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
