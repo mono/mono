@@ -666,7 +666,7 @@ namespace System.Web {
 						Error (this, EventArgs.Empty);
 					} catch (ThreadAbortException taex){
 						context.ClearError ();
-						if (context.Response.FlagEnd == taex.ExceptionState)
+						if (FlagEnd.Value == taex.ExceptionState)
 							// This happens on Redirect() or End()
 							Thread.ResetAbort ();
 						else
@@ -706,7 +706,7 @@ namespace System.Web {
 					ProcessError (new HttpException ("The request timed out."));
 				else {
 					context.ClearError ();
-					if (context.Response.FlagEnd != obj)
+					if (FlagEnd.Value != obj)
 						context.AddError (taex);
 				}
 

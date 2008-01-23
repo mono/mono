@@ -318,7 +318,7 @@ namespace System.Web.UI
 		void HandleException (Exception ex) {
 			try {
 				if (ex is ThreadAbortException) {
-					if (_context.Response.FlagEnd == ((ThreadAbortException) ex).ExceptionState) {
+					if (FlagEnd.Value == ((ThreadAbortException) ex).ExceptionState) {
 						Thread.ResetAbort ();
 						return;
 					}

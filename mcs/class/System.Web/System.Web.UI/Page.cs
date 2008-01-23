@@ -1272,7 +1272,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			HandleException (ex);
 #else
 		} catch (ThreadAbortException taex) {
-			if (context.Response.FlagEnd == taex.ExceptionState)
+			if (FlagEnd.Value == taex.ExceptionState)
 				Thread.ResetAbort ();
 			else
 				throw;

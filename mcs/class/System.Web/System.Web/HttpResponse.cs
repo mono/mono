@@ -95,11 +95,6 @@ namespace System.Web {
 		//
 		string app_path_mod;
 		
-		//
-		// Passed as flags
-		//
-		internal object FlagEnd = new object ();
-
 #if NET_2_0
 		bool is_request_being_redirected;
 		Encoding headerEncoding;
@@ -586,7 +581,7 @@ namespace System.Web {
 				return;
 			
 			if (context.TimeoutPossible) {
-				Thread.CurrentThread.Abort (FlagEnd);
+				Thread.CurrentThread.Abort (FlagEnd.Value);
 			} else {
 				// If this is called from an async event, signal the completion
 				// but don't throw.
@@ -1057,6 +1052,14 @@ namespace System.Web {
 			output_stream.ReleaseResources (true);
 			output_stream = null;
 		}
+	}
+
+#if TARGET_J2EE
+	public 
+#endif	
+	static class FlagEnd
+	{
+		public static readonly object Value = new object ();
 	}
 }
 

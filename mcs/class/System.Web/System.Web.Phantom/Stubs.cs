@@ -35,3 +35,13 @@ namespace System.Web.J2EE
 		}
 	}
 }
+
+namespace System.Web
+{
+
+	public static class FlagEnd
+	{
+		public static readonly object Value = new object ();
+	}
+
+}
