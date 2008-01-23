@@ -619,14 +619,6 @@ namespace System.Windows.Forms
 			OnSplitterMoved (args);
 		}
 
-		private void SplitterIncrementalMove (int delta)
-		{
-			SplitterBeginMove (new Point (splitter_rectangle.X, splitter_rectangle.Y));
-			Point moveTo = new Point (splitter_rectangle.X + delta, splitter_rectangle.Y + delta);
-			SplitterMove (moveTo);
-			SplitterEndMove (moveTo, false);
-		}
-
 		private void SplitterSetCursor (Orientation orientation)
 		{
 			if (restore_cursor == null)

@@ -50,10 +50,10 @@ namespace System.Windows.Forms {
 		private Type data_type;
 
 #if NET_2_0
-		private DataSourceUpdateMode datasource_update_mode;
-		private object null_value;
-		private string format_string;
-		private IFormatProvider format_info;
+		//private DataSourceUpdateMode datasource_update_mode;
+		//private object null_value;
+		//private string format_string;
+		//private IFormatProvider format_info;
 #endif
 		#region Public Constructors
 #if NET_2_0
@@ -88,10 +88,10 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-			datasource_update_mode = dataSourceUpdateMode;
-			null_value = nullValue;
-			format_string = formatString;
-			format_info = formatInfo;
+			//datasource_update_mode = dataSourceUpdateMode;
+			//null_value = nullValue;
+			//format_string = formatString;
+			//format_info = formatInfo;
 		}
 #else
 		public Binding (string propertyName, object dataSource, string dataMember)

@@ -1,5 +1,10 @@
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* SplitContainer.cs: Remove unused declarations.
+	* Binding.cs: Remove unused declarations.
+
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Form.cs: Remove unused declaration of 'active' in Activate method.
 	* Control.cs: Move declaration of nested_layout inside '#if NET_2_0" to 
 	prevent compilation warnings.
