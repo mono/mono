@@ -1,5 +1,11 @@
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: When FindForm fails uses FindRootParent to find the control to
+	be used as grab_control. Also save status of capture before show ContextMenu
+	and restore it after close.
+
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
 	* Control.cs: Internal FindRootParent method added to return high control
 	in parent tree.
 
