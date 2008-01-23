@@ -801,14 +801,6 @@ namespace System.Windows.Forms
 		public abstract Size HScrollBarDefaultSize{get;}	// Default size of the scrollbar
 		#endregion	// HScrollBar
 
-		#region Label
-		// Drawing
-		public abstract void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label);
-
-		// Sizing
-		public abstract Size LabelDefaultSize{get;}
-		#endregion	// Label
-
 		#region ListBox
 		// Drawing
 		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);
