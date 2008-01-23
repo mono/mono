@@ -176,6 +176,17 @@ namespace System.Windows.Forms {
 				result |= (int)MsgButtons.MK_RBUTTON;
 			}
 
+			Keys mods = ModifierKeys;
+			if ((mods & Keys.Control) != 0) {
+				result |= (int)MsgButtons.MK_CONTROL;
+			}
+
+			if ((mods & Keys.Shift) != 0) {
+				result |= (int)MsgButtons.MK_SHIFT;
+			}
+
+			result |= Delta << 16;
+
 			return (IntPtr)result;
 		}
 

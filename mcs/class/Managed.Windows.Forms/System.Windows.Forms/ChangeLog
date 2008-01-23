@@ -1,3 +1,7 @@
+2008-01-22  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Enable packing scroll delta into the mouse wParam
+
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Run Flat, Button appearance, 2.0 CheckBoxes
