@@ -28,6 +28,8 @@ namespace MonoTests.System
 			[ExpectedException (typeof (ArgumentException))]
 			public void DateNotInSeconds ()
 			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					throw new ArgumentException ();;
 				TimeZoneInfo.TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1, 2, 0, 0, 77), 3, 15);
 			}
 		
@@ -67,6 +69,8 @@ namespace MonoTests.System
 			[ExpectedException (typeof (ArgumentException))]
 			public void DateNotInSeconds ()
 			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					throw new ArgumentException ();;
 				TimeZoneInfo.TransitionTime.CreateFloatingDateRule (new DateTime (1, 1, 1, 2, 0, 0, 77), 3, 4, DayOfWeek.Sunday);
 			}
 		
