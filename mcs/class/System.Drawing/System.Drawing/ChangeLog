@@ -1,5 +1,9 @@
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
+	* carbonFunction.cs:  Remove some debug code.  Thanks spouliot.
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunctions.cs: Dont crash when we have an orphaned handle.
 
 2008-01-23  Geoff Norton  <gnorton@novell.com>

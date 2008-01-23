@@ -115,7 +115,6 @@ namespace System.Drawing {
 		internal static IntPtr GetContext (IntPtr port) {
 			IntPtr context = IntPtr.Zero;
 
-Console.WriteLine ("GetContext for port: {0}", port);
 			lock (lockobj) { 
 				if (contextReference [port] != null) {
 					CreateCGContextForPort (port, ref context);
