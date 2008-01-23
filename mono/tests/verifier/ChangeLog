@@ -1,3 +1,9 @@
+2008-01-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_call_test.sh: test generator for call and callvirt.
+
+	* make_tests.sh: added tests for call and callvirt.
+
 2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_ldstr_bad_token.il: added. check the index
