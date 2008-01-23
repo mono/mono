@@ -106,9 +106,6 @@ namespace Mono.CSharp {
 		//
 		static public bool Init (string name, string output, bool want_debugging_support)
 		{
-			/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
-			const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
-
 			FileName = output;
 			AssemblyName an = Assembly.GetAssemblyName (name, output);
 			if (an == null)
@@ -133,6 +130,13 @@ namespace Mono.CSharp {
 			current_domain = AppDomain.CurrentDomain;
 
 			try {
+#if MS_COMPATIBLE
+				const AssemblyBuilderAccess COMPILER_ACCESS = 0;
+#else
+				/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
+				const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
+#endif
+				
 				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
 					AssemblyBuilderAccess.Save | COMPILER_ACCESS, Dirname (name));
 			}
@@ -143,7 +147,7 @@ namespace Mono.CSharp {
 						RootContext.StrongNameKeyContainer + "'.");
 					Environment.Exit (1);
 				}
-				return false;
+				throw;
 			}
 			catch (CryptographicException) {
 				if ((RootContext.StrongNameKeyContainer != null) || (RootContext.StrongNameKeyFile != null)) {

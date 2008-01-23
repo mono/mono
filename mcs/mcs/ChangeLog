@@ -1,3 +1,7 @@
+2008-01-23  Marek Safar  <marek.safar@gmail.com>
+
+ 	* codegen.cs: Fixed AssemblyBuilder initialization on other platforms.
+
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs, generic.cs: Implicit bool? to bool conversion is
