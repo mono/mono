@@ -1,3 +1,8 @@
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Control.cs: Internal FindRootParent method added to return high control
+	in parent tree.
+
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Ensure that we always have a host window.  Prevents

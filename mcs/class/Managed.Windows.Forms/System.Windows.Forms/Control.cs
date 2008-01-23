@@ -3750,6 +3750,16 @@ namespace System.Windows.Forms
 			return result.EndInvoke ();
 		}
 
+		internal Control FindRootParent ()
+		{
+			Control	c = this;
+			
+			while (c.Parent != null)
+				c = c.Parent;
+
+			return c;
+		}
+
 		public Form FindForm() {
 			Control	c;
 
