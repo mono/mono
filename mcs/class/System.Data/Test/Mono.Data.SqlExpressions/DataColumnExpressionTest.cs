@@ -22,6 +22,19 @@ namespace Monotests_Mono.Data.SqlExpressions
 			table.Rows.Add (row);
 			Assert.AreEqual (0, (int)table.Rows[0][2], "#1");
 		}
+		
+		[Test]
+		public void TestDataColumnLikeExpr ()
+		{
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("c1");
+			dt.Rows.Add (new string [] { null });
+			dt.Rows.Add (new string [] { "xax" });
+			dt.Columns.Add ("c2", typeof (bool), "c1 LIKE '%a%'");
+			Assert.IsFalse ((bool) dt.Rows [0] [1]);
+			Assert.IsTrue ((bool) dt.Rows [1] [1]);
+		}
+		
 		[Test]
 		public void TestDataColumnExpr0Literal ()
 		{
