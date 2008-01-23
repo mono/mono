@@ -56,7 +56,9 @@ namespace System.Drawing {
 			IntPtr port = IntPtr.Zero;
 			IntPtr window = IntPtr.Zero;
 
-			if (handle == IntPtr.Zero) {
+			window = GetControlOwner (handle);
+
+			if (handle == IntPtr.Zero || window == IntPtr.Zero) {
 				// FIXME: Can we actually get a CGContextRef for the desktop?  this makes context IntPtr.Zero
 				port = GetQDGlobalsThePort ();
 				CreateCGContextForPort (port, ref context);
@@ -69,7 +71,6 @@ namespace System.Drawing {
 			QDRect window_bounds = new QDRect ();
 			Rect view_bounds = new Rect ();
 
-			window = GetControlOwner (handle);
 			port = GetWindowPort (window);
 			
 			context = GetContext (port);
@@ -114,6 +115,7 @@ namespace System.Drawing {
 		internal static IntPtr GetContext (IntPtr port) {
 			IntPtr context = IntPtr.Zero;
 
+Console.WriteLine ("GetContext for port: {0}", port);
 			lock (lockobj) { 
 				if (contextReference [port] != null) {
 					CreateCGContextForPort (port, ref context);

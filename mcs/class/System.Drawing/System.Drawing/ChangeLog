@@ -1,5 +1,9 @@
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
+	* carbonFunctions.cs: Dont crash when we have an orphaned handle.
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunctions.cs: If we get a -ve size from carbon, swizzle to 
 	0 to prevent a OOM from cairo malloc.  Remove support for
 	GetCGContextForNSView as its deprecated and doesn't work.
