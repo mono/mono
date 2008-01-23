@@ -1,3 +1,9 @@
+2008-01-23  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_string_block): When stepping over the
+	StringTable block, do not read an extra block at the end.  Fixes
+	the new part of bug 354856.
+
 2008-01-19  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (get_stringtable_block): Cope when the StringTable
