@@ -1524,7 +1524,7 @@ namespace MonoTests.System.Resources
 				enumerator.MoveNext ();
 				ResXDataNode node = enumerator.Value as ResXDataNode;
 				Assert.IsNotNull (node, "#A1");
-				Assert.AreEqual(new Point(1, 1020), node.GetNodePosition (), "#A2");
+				Assert.AreEqual(new Point(1, 717), node.GetNodePosition (), "#A2");
 			}
 		}
 
