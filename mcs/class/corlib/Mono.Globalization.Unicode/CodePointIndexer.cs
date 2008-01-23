@@ -53,6 +53,7 @@ namespace Mono.Globalization.Unicode
 
 		// This class is used to compactize indexes to limited areas so that
 		// we can save extraneous 0,0,0,0,0... in the tables.
+		[Serializable]
 		internal class TableRange
 		{
 			public TableRange (int start, int end, int indexStart)
