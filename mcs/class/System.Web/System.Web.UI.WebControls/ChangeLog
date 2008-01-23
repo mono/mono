@@ -1,5 +1,11 @@
 2008-01-23 Igor Zelmanovich <igorz@mainsoft.com>
 
+	* ValidationSummary.cs:
+	refactoring: If page contents instance of IScriptManager, it calls 
+	it's API instead Page.ClientScript.									
+
+2008-01-23 Igor Zelmanovich <igorz@mainsoft.com>
+
 	* Menu.cs: fixed rendering.
 
 2008-01-16 Igor Zelmanovich <igorz@mainsoft.com>

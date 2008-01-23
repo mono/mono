@@ -179,19 +179,19 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 #if NET_2_0
 				if (ValidationGroup != String.Empty)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
+					RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup);
 
 				if (HeaderText.Length > 0)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "headertext", HeaderText);
+					RegisterExpandoAttribute (ClientID, "headertext", HeaderText);
 
 				if (ShowMessageBox)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "showmessagebox", "True");
+					RegisterExpandoAttribute (ClientID, "showmessagebox", "True");
 
 				if (!ShowSummary)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "showsummary", "False");
+					RegisterExpandoAttribute (ClientID, "showsummary", "False");
 
 				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
-					Page.ClientScript.RegisterExpandoAttribute (ClientID, "displaymode", DisplayMode.ToString ());
+					RegisterExpandoAttribute (ClientID, "displaymode", DisplayMode.ToString ());
 #else
 				if (HeaderText != "")
 					writer.AddAttribute ("headertext", HeaderText);
@@ -210,6 +210,19 @@ namespace System.Web.UI.WebControls {
 					writer.AddStyleAttribute ("display", "none");
 			}
 		}
+
+#if NET_2_0
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue) {
+			RegisterExpandoAttribute (controlId, attributeName, attributeValue, false);
+		}
+
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
+			if (Page.ScriptManager != null)
+				Page.ScriptManager.RegisterExpandoAttributeExternal (this, controlId, attributeName, attributeValue, encode);
+			else
+				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
+		}
+#endif
 
 #if NET_2_0
 		protected internal
@@ -256,6 +269,18 @@ namespace System.Web.UI.WebControls {
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel (ValidationGroup)) {
 #else
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
+#endif
+#if NET_2_0
+				if (Page.ScriptManager != null) {
+					Page.ScriptManager.RegisterArrayDeclarationExternal (this, "Page_ValidationSummaries", String.Concat ("document.getElementById ('", ClientID, "')"));
+					Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), ClientID + "DisposeScript",
+@"
+document.getElementById('" + ClientID + @"').dispose = function() {
+	Array.remove(Page_ValidationSummaries, document.getElementById('" + ClientID + @"'));
+}
+", true);
+					}
+				else
 #endif
 				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
 									    String.Concat ("document.getElementById ('", ClientID, "')"));
