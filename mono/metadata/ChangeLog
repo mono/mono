@@ -1,3 +1,8 @@
+2008-01-23  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_threads_set_shutting_down): Simplify shutdown
+	procedure, and make it work on windows.
+
 2008-01-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (MonoReflectionGenericClass): Make the 'generic_type' field
