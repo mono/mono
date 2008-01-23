@@ -2806,6 +2806,21 @@ namespace MonoTests.System.Windows.Forms
 				return AutoScaleFactor;
 			}
 		}
+		
+		[Test] // Bug #355703
+		public void AutoScaleSticks ()
+		{
+			Form f = new Form ();
+
+			f.AutoScale = false;
+			Assert.AreEqual (false, f.AutoScale, "A1");
+
+			f.AutoScale = true;
+			Assert.AreEqual (true, f.AutoScale, "A2");
+			
+			f.AutoScaleMode = AutoScaleMode.None;
+			Assert.AreEqual (false, f.AutoScale, "A3");
+		}
 #endif
 	}
 

@@ -516,7 +516,7 @@ namespace System.Windows.Forms {
 				autoscale = value;
 				
 #if NET_2_0
-				if (value)
+				if (value && AutoScaleMode != AutoScaleMode.None)
 					AutoScaleMode = AutoScaleMode.None;
 #endif
 			}
