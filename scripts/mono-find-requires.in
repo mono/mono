@@ -4,8 +4,9 @@
 #
 # Authors:
 #       Ben Maurer (bmaurer@ximian.com)
+#       Wade Berrier (wberrier@novell.com)
 #
-# (C) 2005 Novell (http://www.novell.com)
+# (C) 2008 Novell (http://www.novell.com)
 #
 
 IFS=$'\n'
@@ -69,6 +70,9 @@ REQUIRES=$(
 			}
 		    ') 2> /dev/null
 	done
+)
+
+rpm_config_REQUIRES=$(
 	# Parse the xml .config files to see what native binaries we call into
 	# TODO: also check monodis --moduleref
 	for i in "${configlist[@]}"; do
@@ -110,9 +114,22 @@ REQUIRES=$(
 				}
 			}
 			if(!ignore) {
-				system("rpm -q --whatprovides --queryformat \"%{NAME}\n\" ""\""req"'$libext'""\"")
+				print req"'$libext'"
 			}
 		} ' $i 2>/dev/null
+	done
+)
+
+# Resolve provides to packages, warning on missing to stderr
+config_REQUIRES=$(
+	for i in ${rpm_config_REQUIRES[@]} ; do
+		out=$(rpm -q --whatprovides --queryformat "%{NAME}\n" $i)
+		if [ $? -eq 0 ] ; then
+			echo $out
+		else
+			# echo to stderr
+			echo "mono-find-requires: Warning, could not find package that provides: $i" >&2
+		fi
 	done
 )
 
@@ -140,9 +157,10 @@ PROVIDES=$(
 # in PROVIDES. While RPM functions correctly when such deps exist,
 # they make the metadata a bit bloated.
 #
+# TODO: make this use the mono-find-provides script, to share code
 
 # Filter out dups from both lists
-REQUIRES=$(echo "$REQUIRES" | sort | uniq)
+REQUIRES=$(echo "$REQUIRES" "$config_REQUIRES"  | sort | uniq)
 PROVIDES=$(echo "$PROVIDES" | sort | uniq)
 
 #
