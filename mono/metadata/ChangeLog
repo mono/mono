@@ -1,3 +1,8 @@
+2008-01-24  Raja R Harinath  <harinath@hurrynot.org>
+
+	* class.c (mono_class_inflate_generic_method_full): Don't modify
+	iresult->context after cache check.
+
 2008-01-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_inflate_generic_method_full): Change the
