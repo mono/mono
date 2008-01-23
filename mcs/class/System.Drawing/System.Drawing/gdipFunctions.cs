@@ -59,9 +59,8 @@ namespace System.Drawing
 		public const int FACESIZE = 32;
 		public const int LANG_NEUTRAL = 0;
 		public static IntPtr Display = IntPtr.Zero;
-		public static bool UseX11Drawable;
-		public static bool UseQuartzDrawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_CARBON_BACKEND") != null);
-		public static bool UseCocoaDrawable = (Environment.GetEnvironmentVariable ("MONO_GDIP_USE_COCOA_BACKEND") != null);
+		public static bool UseX11Drawable = false;
+		public static bool UseCarbonDrawable = false;
 
 		#region gdiplus.dll functions
 
@@ -99,10 +98,27 @@ namespace System.Drawing
 
 		static GDIPlus ()
 		{
-			// check for Unix platforms - see FAQ for more details
-			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
-			UseX11Drawable = ((platform == 4) || (platform == 128));
+			if ((platform == 4) || (platform == 128)) {
+				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+					UseX11Drawable = true;
+				} else {
+					IntPtr buf = Marshal.AllocHGlobal (8192);
+					// This is kind of a hack but gets us sysname from uname (struct utsname *name) on
+					// linux and darwin
+					if (uname (buf) != 0) {
+						// WTH: We couldn't detect the OS; lets default to X11
+						UseX11Drawable = true;
+					} else {
+						string os = Marshal.PtrToStringAnsi (buf);
+						if (os == "Darwin")
+							UseCarbonDrawable = true;
+						else
+							UseX11Drawable = true;
+					}
+					Marshal.FreeHGlobal (buf);
+				}
+			}
 
 			GdiplusStartupInput input = GdiplusStartupInput.MakeGdiplusStartupInput();
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
@@ -122,12 +138,12 @@ namespace System.Drawing
 
 		static public bool RunningOnWindows ()
 		{
-			return !UseX11Drawable;
+			return !UseX11Drawable && !UseCarbonDrawable;
 		}
 
 		static public bool RunningOnUnix ()
 		{
-			return UseX11Drawable;
+			return UseX11Drawable || UseCarbonDrawable;
 		}
 		
 		// Copies a Ptr to an array of Points and releases the memory
@@ -1922,7 +1938,7 @@ namespace System.Drawing
 		
 		/* Mac only function calls */
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreateFromQuartz_macosx (IntPtr cgref, int width, int height, out IntPtr graphics);
+		internal static extern Status GdipCreateFromContext_macosx (IntPtr cgref, int width, int height, out IntPtr graphics);
 
 		/* Linux only function calls*/
 		[DllImport("gdiplus.dll")]
@@ -1963,6 +1979,9 @@ namespace System.Drawing
 			StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, StreamSeekDelegate doSeek, 
 			StreamCloseDelegate close, StreamSizeDelegate size, IntPtr hdc, EmfType type, ref Rectangle frameRect, 
 			MetafileFrameUnit frameUnit, [MarshalAs (UnmanagedType.LPWStr)] string description, out IntPtr metafile);
+
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
 #endregion
 	}
 }

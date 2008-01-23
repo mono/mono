@@ -188,7 +188,7 @@ namespace System.Drawing
 
 			if (GDIPlus.UseX11Drawable) {
 				CopyFromScreenX11 (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
-			} else if (GDIPlus.UseCocoaDrawable || GDIPlus.UseQuartzDrawable) {
+			} else if (GDIPlus.UseCarbonDrawable) {
 				CopyFromScreenMac (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
 			} else {
 				CopyFromScreenWin32 (sourceX, sourceY, destinationX, destinationY, blockRegionSize, copyPixelOperation);
@@ -274,7 +274,7 @@ namespace System.Drawing
 		{
 			Status status;
 			if (! disposed) {
-				if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero) {
+				if (GDIPlus.UseCarbonDrawable && context.ctx != IntPtr.Zero) {
 					Flush ();
 					Carbon.CGContextSynchronize (context.ctx);
 					Carbon.ReleaseContext (context.port, context.ctx);
@@ -1665,7 +1665,7 @@ namespace System.Drawing
 
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if ((GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable) && context.ctx != IntPtr.Zero)
+			if (GDIPlus.UseCarbonDrawable && context.ctx != IntPtr.Zero)
 				Carbon.CGContextSynchronize (context.ctx);
 		}
 
@@ -1698,21 +1698,9 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 
-			if (GDIPlus.UseCocoaDrawable) {
-				throw new NotImplementedException ();
-/* TODO: Fix this code to handle the new libgdiplus
-				CarbonContext context = Carbon.GetCGContextForNSView (hwnd);
-				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
-				
-				Graphics g = new Graphics (graphics);
-				g.context = context;
-				
-				return g;
-*/
-			}
-			if (GDIPlus.UseQuartzDrawable) {
+			if (GDIPlus.UseCarbonDrawable) {
 				CarbonContext context = Carbon.GetCGContextForView (hwnd);
-				GDIPlus.GdipCreateFromQuartz_macosx (context.ctx, context.width, context.height, out graphics);
+				GDIPlus.GdipCreateFromContext_macosx (context.ctx, context.width, context.height, out graphics);
 				
 				Graphics g = new Graphics (graphics);
 				g.context = context;

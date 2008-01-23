@@ -51,15 +51,6 @@ namespace System.Drawing {
 			}
 		}
 
-		internal static CarbonContext GetCGContextForNSView (IntPtr handle) {
-			IntPtr context = IntPtr.Zero;
-			Rect view_bounds = new Rect ();
-
-			context = objc_msgSend (objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext")), sel_registerName ("graphicsPort"));
-			objc_msgSend_stret (ref view_bounds, handle, sel_registerName ("bounds"));
-			return new CarbonContext (IntPtr.Zero, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
-		}
-
 		internal static CarbonContext GetCGContextForView (IntPtr handle) {
 			IntPtr context = IntPtr.Zero;
 			IntPtr port = IntPtr.Zero;
@@ -88,6 +79,9 @@ namespace System.Drawing {
 			HIViewGetBounds (handle, ref view_bounds);
 
 			HIViewConvertRect (ref view_bounds, handle, IntPtr.Zero);
+			
+			if (view_bounds.size.height < 0) view_bounds.size.height = 0;
+			if (view_bounds.size.width < 0) view_bounds.size.width = 0;
 
 			CGContextTranslateCTM (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
 
