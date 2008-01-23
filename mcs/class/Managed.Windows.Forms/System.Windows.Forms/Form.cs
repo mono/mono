@@ -86,7 +86,6 @@ namespace System.Windows.Forms {
 		private double			opacity;
 		internal ApplicationContext	context;
 		Color				transparency_key;
-		internal MenuTracker		active_tracker;
 		private bool			is_loaded;
 		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
@@ -937,17 +936,6 @@ namespace System.Windows.Forms {
 						RecreateHandle ();
 				}
 				is_toplevel = mdi_parent == null;
-			}
-		}
-
-		internal MenuTracker ActiveTracker {
-			get { return active_tracker; }
-			set {
-				if (value == active_tracker)
-					return;
-
-				Capture = value != null;
-				active_tracker = value;
 			}
 		}
 
@@ -2534,25 +2522,6 @@ namespace System.Windows.Forms {
 				break;
 			}
 
-			case Msg.WM_MOUSEMOVE: {
-				WmMouseMove (ref m);
-				break;
-			}
-
-			case Msg.WM_LBUTTONDOWN:
-			case Msg.WM_MBUTTONDOWN:
-			case Msg.WM_RBUTTONDOWN: {
-				WmButtonDown (ref m);
-				return;
-			}
-
-			case Msg.WM_LBUTTONUP:
-			case Msg.WM_MBUTTONUP:
-			case Msg.WM_RBUTTONUP: {
-				WmButtonUp (ref m);
-				return;
-			}
-
 			case Msg.WM_GETMINMAXINFO: {
 				WmGetMinMaxInfo (ref m);
 				break;
@@ -2812,78 +2781,6 @@ namespace System.Windows.Forms {
 				Marshal.StructureToPtr (ncp, m.LParam, true);
 			}
 			DefWndProc (ref m);		
-		}
-		
-		private void WmMouseMove (ref Message m)
-		{
-			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-				MouseEventArgs args = new MouseEventArgs (
-					FromParamToMouseButtons ((int)m.WParam.ToInt32 ()),
-					mouse_clicks,
-					Control.MousePosition.X,
-					Control.MousePosition.Y,
-					0);
-
-				active_tracker.OnMotion (args);
-				return;
-			}
-			base.WndProc (ref m);
-		}
-		
-		private void WmButtonDown (ref Message m)
-		{
-			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-				MouseEventArgs args = new MouseEventArgs (
-					FromParamToMouseButtons ((int)m.WParam.ToInt32 ()),
-					mouse_clicks,
-					Control.MousePosition.X,
-					Control.MousePosition.Y,
-					0);
-
-				if (!active_tracker.OnMouseDown (args)) {
-					Control control = GetRealChildAtPoint (Cursor.Position);
-					if (control != null) {
-						Point pt = control.PointToClient (Cursor.Position);
-						XplatUI.SendMessage (control.Handle, (Msg)m.Msg, m.WParam, MakeParam (pt.X, pt.Y));
-					}
-				}
-
-				return;
-			}
-
-			base.WndProc (ref m);
-		}
-		
-		private void WmButtonUp (ref Message m)
-		{
-			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
-				MouseButtons mb = FromParamToMouseButtons ((int)m.WParam.ToInt32 ());
-
-				// We add in the button that was released (not sent in WParam)
-				switch ((Msg)m.Msg) {
-				case Msg.WM_LBUTTONUP:
-					mb |= MouseButtons.Left;
-					break;
-				case Msg.WM_MBUTTONUP:
-					mb |= MouseButtons.Middle;
-					break;
-				case Msg.WM_RBUTTONUP:
-					mb |= MouseButtons.Right;
-					break;
-				}
-
-				MouseEventArgs args = new MouseEventArgs (
-					mb,
-					mouse_clicks,
-					Control.MousePosition.X,
-					Control.MousePosition.Y,
-					0);
-
-				active_tracker.OnMouseUp (args);
-				mouse_clicks = 1;
-				return;
-			}
-			base.WndProc (ref m);
 		}
 		
 		private void WmGetMinMaxInfo (ref Message m)

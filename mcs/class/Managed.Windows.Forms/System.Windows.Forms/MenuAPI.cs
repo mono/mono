@@ -43,7 +43,7 @@ namespace System.Windows.Forms {
 		internal bool hotkey_active;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
-		Form grab_control;
+		Control grab_control;
 		Point last_motion = Point.Empty;
 		
 	    public MenuTracker (Menu top_menu)
@@ -53,16 +53,13 @@ namespace System.Windows.Forms {
 				AddShortcuts (item);
 
 			if (top_menu is ContextMenu) {
-							
+	
 				Control source_control = (top_menu as ContextMenu).SourceControl;
-#if NET_2_0				
-				if (source_control.Parent != null && (source_control.Parent is ToolStripOverflow)) {
-					ToolStrip toolstrip = (source_control.Parent as ToolStripOverflow).ParentToolStrip;
-					if (toolstrip != null)
-						source_control = toolstrip.FindForm ();
-				}
-#endif
 				grab_control = source_control.FindForm ();
+
+				if (grab_control == null)
+					grab_control = source_control;
+
 				grab_control.ActiveTracker = this;
 			} else
 				grab_control = top_menu.Wnd.FindForm ();
@@ -775,9 +772,9 @@ namespace System.Windows.Forms {
 	internal class PopUpWindow : Control
 	{
 		private Menu menu;
-		private Form form;
+		private Control form;
 
-		public PopUpWindow (Form form, Menu menu): base ()
+		public PopUpWindow (Control form, Menu menu): base ()
 		{
 			this.menu = menu;
 			this.form = form;

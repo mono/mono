@@ -1,3 +1,25 @@
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	[Fixes bugs #343966, #338511 and other non reported (context)menu bugs]
+	
+	* Form.cs: Remove all active_tracker (used by menu) stuff, it is now moved 
+	to Control class, it makes possible to grab menu to controls that can't 
+	reach Form using parent tree. Handle for WmButtonUp, WmButtonDown and
+	WmMouseMove removed since it was used only to track menu events.
+
+	* Control.cs:
+	- Moved all active_tracker stuff from Form.
+	- ProcessActiveTracker added to prevent code duplicity, now mouse events 
+	can call this method instead of reimplement all necessary code handle for
+	menu tracker.
+	- Call to ProcessActiveTracker for mouse events (WmButtonUp, WmButtonDown
+	and WmMouseMove).
+	
+	* MenuAPI.cs: 
+	- Remove special handle to ToolStripOverflow, now we can grab menu to 
+	controls that can't reach Form using parent tree.
+	- Change type of grab_control from Form to Control.
+
 2008-01-22  Geoff Norton  <gnorton@novell.com>
 
 	* TextBoxBase.cs: Split up the sizing of controls and placing of 

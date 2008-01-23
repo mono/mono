@@ -1146,6 +1146,20 @@ namespace System.Windows.Forms
 		#endregion 	// Public Constructors
 
 		#region Internal Properties
+		
+		private MenuTracker active_tracker;
+		
+		internal MenuTracker ActiveTracker {
+			get { return active_tracker; }
+			set {
+				if (value == active_tracker)
+					return;
+
+				Capture = value != null;
+				active_tracker = value;
+			}
+		}
+
 		// Control is currently selected, like Focused, except maintains state
 		// when Form loses focus
 		internal bool InternalSelected {
@@ -1309,7 +1323,50 @@ namespace System.Windows.Forms
 		internal Graphics DeviceContext {
 			get { return Hwnd.bmp_g; }
 		}
-		
+
+		private void ProcessActiveTracker (ref Message m)
+		{
+			bool is_up = ((Msg) m.Msg == Msg.WM_LBUTTONUP) ||
+						 ((Msg) m.Msg == Msg.WM_RBUTTONUP);
+			
+			MouseButtons mb = FromParamToMouseButtons ((int) m.WParam.ToInt32 ());
+			
+			// We add in the button that was released (not sent in WParam)
+			if (is_up) {
+				switch ((Msg)m.Msg) {
+				case Msg.WM_LBUTTONUP:
+					mb |= MouseButtons.Left;
+					break;
+				case Msg.WM_RBUTTONUP:
+					mb |= MouseButtons.Right;
+					break;
+				}
+			}
+			
+			MouseEventArgs args = new MouseEventArgs (
+				mb,
+				mouse_clicks,
+				Control.MousePosition.X,
+				Control.MousePosition.Y,
+				0);
+
+			if (is_up) {
+				active_tracker.OnMouseUp (args);
+				mouse_clicks = 1;
+			} else {
+				if (!active_tracker.OnMouseDown (args)) {
+					Control control = GetRealChildAtPoint (Cursor.Position);
+					if (control != null) {
+						Point pt = control.PointToClient (Cursor.Position);
+						XplatUI.SendMessage (control.Handle, 
+							(Msg)m.Msg, 
+							m.WParam, 
+							MakeParam (pt.X, pt.Y));
+					}
+				}
+			}
+		}
+
 		private Control FindControlToInvokeOn ()
 		{
 			Control p = this;
@@ -1564,7 +1621,6 @@ namespace System.Windows.Forms
 				buttons |= MouseButtons.Right;
 				
 			return buttons;
-
 		}
 
 		internal virtual void FireEnter () {
@@ -5142,7 +5198,6 @@ namespace System.Windows.Forms
 					return;
 				}
 
-
 				case Msg.WM_MOUSEMOVE: {
 					WmMouseMove (ref m);
 					return;
@@ -5326,7 +5381,14 @@ namespace System.Windows.Forms
 			m.Result = (IntPtr)1;
 		}
 
-		private void WmLButtonUp (ref Message m) {
+		private void WmLButtonUp (ref Message m)
+		{
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			MouseEventArgs me;
 
 			me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
@@ -5345,8 +5407,15 @@ namespace System.Windows.Forms
 				mouse_clicks = 1;
 			}
 		}
-					
-		private void WmLButtonDown (ref Message m) {
+
+		private void WmLButtonDown (ref Message m)
+		{
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+		
 			ValidationFailed = false;
 			if (CanSelect) {
 				Select (true, true);
@@ -5398,7 +5467,14 @@ namespace System.Windows.Forms
 				0));
 		}
 
-		private void WmRButtonUp (ref Message m) {
+		private void WmRButtonUp (ref Message m)
+		{
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			MouseEventArgs	me;
 			Point		pt;
 
@@ -5424,7 +5500,14 @@ namespace System.Windows.Forms
 			}
 		}
 					
-		private void WmRButtonDown (ref Message m) {
+		private void WmRButtonDown (ref Message m)
+		{
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -5488,6 +5571,18 @@ namespace System.Windows.Forms
 
 
 		private void WmMouseMove (ref Message m) {
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				MouseEventArgs args = new MouseEventArgs (
+					FromParamToMouseButtons ((int)m.WParam.ToInt32 ()),
+					mouse_clicks,
+					Control.MousePosition.X,
+					Control.MousePosition.Y,
+					0);
+
+				active_tracker.OnMotion (args);
+				return;
+			}
+			
 			OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, 
 				LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
