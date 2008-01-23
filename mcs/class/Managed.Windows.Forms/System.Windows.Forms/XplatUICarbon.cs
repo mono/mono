@@ -955,6 +955,9 @@ namespace System.Windows.Forms {
 					attributes |= Carbon.WindowAttributes.kWindowResizableAttribute;
 					windowklass = Carbon.WindowClass.kUtilityWindowClass;
 				}
+				if (windowklass == Carbon.WindowClass.kOverlayWindowClass) {
+					attributes = Carbon.WindowAttributes.kWindowCompositingAttribute | Carbon.WindowAttributes.kWindowStandardHandlerAttribute;
+				}
 				attributes |= Carbon.WindowAttributes.kWindowLiveResizeAttribute;
 
 				Carbon.Rect rect = new Carbon.Rect ();
@@ -1890,8 +1893,9 @@ namespace System.Windows.Forms {
 			hwnd.height = height;
 		}
 		
-		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
-			IntPtr window = HIViewGetWindow (hwnd);
+		internal override void SetWindowState(IntPtr handle, FormWindowState state) {
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			IntPtr window = HIViewGetWindow (handle);
 
 			switch (state) {
 				case FormWindowState.Minimized: {
@@ -1903,7 +1907,16 @@ namespace System.Windows.Forms {
 					break;
 				}
 				case FormWindowState.Maximized: {
-					ZoomWindow (window, 8, false);
+					Form form = Control.FromHandle (hwnd.Handle) as Form;
+					if (form != null && form.FormBorderStyle == FormBorderStyle.None) {
+						Carbon.Rect rect = new Carbon.Rect ();
+						Carbon.HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
+						SetRect (ref rect, (short)0, (short)0, (short)bounds.size.width, (short)bounds.size.height);
+						SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
+						HIViewSetFrame (hwnd.whole_window, ref bounds);
+					} else {
+						ZoomWindow (window, 8, false);
+					}
 					break;
 				}
 			}

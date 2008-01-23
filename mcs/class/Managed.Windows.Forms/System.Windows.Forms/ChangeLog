@@ -1,3 +1,8 @@
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Ensure that we always have a host window.  Prevents
+	a crash in certain cases.  Support for fullscreen windows in certain cases.
+
 2008-01-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Don't set AutoScaleMode in AutoScale if we don't have to.
