@@ -1,3 +1,9 @@
+2008-01-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayout.cs: Don't include Dock.Fill, multicolumn/multirow spanned
+	controls when calculating column/row sizes.
+	[Fixes bug #355408]
+
 2008-01-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Remove using the padding.  This is now included
