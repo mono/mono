@@ -1865,7 +1865,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void PositionControls ()
+		private void SizeControls ()
 		{
 			if (hscroll.Visible) {
 				//vscroll.Maximum += hscroll.Height;
@@ -1884,7 +1884,10 @@ namespace System.Windows.Forms
 
 			document.ViewPortWidth = canvas_width;
 			document.ViewPortHeight = canvas_height;
+		}
 
+		private void PositionControls ()
+		{
 			if (canvas_height < 1 || canvas_width < 1)
 				return;
 
@@ -1980,6 +1983,7 @@ namespace System.Windows.Forms
 		internal void CalculateScrollBars ()
 		{
 			// FIXME - need separate calculations for center and right alignment
+			SizeControls ();
 
 			if (document.Width >= document.ViewPortWidth) {
 				hscroll.SetValues (0, Math.Max (1, document.Width), -1,

@@ -84,12 +84,25 @@ namespace System.Windows.Forms {
 			default_class_name = "SWFClass" + System.Threading.Thread.GetDomainID().ToString();
 
 			if (RunningOnUnix) {
-				if (Environment.GetEnvironmentVariable ("MONO_MWF_USE_CARBON_BACKEND") != null)
-					driver=XplatUICarbon.GetInstance ();
-				else if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null)
+				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
 					driver=XplatUIX11_new.GetInstance ();
-				else
-					driver=XplatUIX11.GetInstance ();
+				} else if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+					driver = XplatUIX11.GetInstance ();
+				} else {
+					IntPtr buf = Marshal.AllocHGlobal (8192);
+					// This is a hacktastic way of getting sysname from uname ()
+					if (uname (buf) != 0) {
+						// WTF: We cannot run uname
+						driver=XplatUIX11.GetInstance ();
+					} else {
+						string os = Marshal.PtrToStringAnsi (buf);
+						if (os == "Darwin")
+							driver=XplatUICarbon.GetInstance ();
+						else
+							driver=XplatUIX11.GetInstance ();
+					}
+					Marshal.FreeHGlobal (buf);
+				}
 			} else {
 				driver=XplatUIWin32.GetInstance();
 			}
@@ -1218,5 +1231,7 @@ namespace System.Windows.Forms {
 		public delegate bool ObjectToClipboard(ref int type, object obj, out byte[] data);
 		#endregion	// Delegates
 
+		[DllImport ("libc")]
+		static extern int uname (IntPtr buf);
 	}
 }

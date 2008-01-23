@@ -1,3 +1,14 @@
+2008-01-22  Geoff Norton  <gnorton@novell.com>
+
+	* TextBoxBase.cs: Split up the sizing of controls and placing of 
+	controls.  Fixes a bug where scrollbars in Reflector could be sized
+	wrong and have non-working thumbers.
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUI.cs: Refactor environment variables to default support to the
+	Carbon driver on the Mac.
+
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* Label.cs: Uses new LabelPainter for drawing operations.
