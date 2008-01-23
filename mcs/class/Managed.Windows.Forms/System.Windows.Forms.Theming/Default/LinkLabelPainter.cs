@@ -54,7 +54,7 @@ namespace System.Windows.Forms.Theming.Default
 			return label.LinkColor;
 		}
 		
-		public void Draw (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
+		public virtual void Draw (Graphics dc, Rectangle clip_rectangle, LinkLabel label)
 		{
 			label.DrawImage (dc, label.Image, label.ClientRectangle, label.ImageAlign);
 
