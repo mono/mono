@@ -1,4 +1,10 @@
-2008-01-06  Geoff Norton  <gnorton@novell.com>
+2008-01-22  Geoff Norton  <gnorton@novell.com>
+	
+	* EventHandler.cs: Subscribe to the MouseWheel and MouseScroll events.
+	* MouseHandler.cs: Post MOUSEWHEEL events when scrolling with old
+	mice, and mighty mice, and two-finger scrolling.
+
+2008-01-16  Geoff Norton  <gnorton@novell.com>
 
 	* ControlHandler.cs:  Flicker be gone!  Generate our messages in
 	AddExpose instead of trusting apples compositing manager which doesn't

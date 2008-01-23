@@ -36,11 +36,19 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventMouseEntered = 8;
 		internal const uint kEventMouseExited = 9;
 		internal const uint kEventMouseWheelMoved = 10;
+		internal const uint kEventMouseScroll = 11;
 
 		internal const uint kEventParamMouseLocation = 1835822947;
 		internal const uint kEventParamMouseButton = 1835168878;
+		internal const uint kEventParamMouseWheelAxis = 1836540280;
+		internal const uint kEventParamMouseWheelDelta = 1836541036;
+		internal const uint typeLongInteger = 1819242087;
+		internal const uint typeMouseWheelAxis = 1836540280;
 		internal const uint typeMouseButton = 1835168878;
 		internal const uint typeQDPoint = 1363439732;
+
+		internal const uint kEventMouseWheelAxisX = 0;
+		internal const uint kEventMouseWheelAxisY = 1;
 
 		internal const uint DoubleClickInterval = 7500000;
 		internal static ClickStruct ClickPending;
@@ -125,6 +133,21 @@ namespace System.Windows.Forms.CarbonInternal {
 				case kEventMouseMoved:
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
 					msg.wParam = Driver.GetMousewParam (0);
+					break;
+				case kEventMouseWheelMoved:
+				case kEventMouseScroll:
+					UInt16 axis = 0;
+					Int32 delta = 0;
+
+					GetEventParameter (eventref, kEventParamMouseWheelAxis, typeMouseWheelAxis, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (UInt16)), IntPtr.Zero, ref axis);
+					GetEventParameter (eventref, kEventParamMouseWheelDelta, typeLongInteger, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (Int32)), IntPtr.Zero, ref delta);
+
+					if (axis == kEventMouseWheelAxisY) {
+						msg.hwnd = XplatUICarbon.FocusWindow;
+						msg.message = Msg.WM_MOUSEWHEEL;
+						msg.wParam = Driver.GetMousewParam (delta*40);
+						return true;
+					}
 					break;
 				default:
 					return false;
@@ -212,6 +235,8 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref QDPoint data);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref Int32 data);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref ushort data);
 
