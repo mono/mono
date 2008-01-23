@@ -33,6 +33,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Theming;
 
 namespace System.Windows.Forms
 {
@@ -268,7 +269,7 @@ namespace System.Windows.Forms
 #endif
 
 		protected override Size DefaultSize {
-			get {return ThemeEngine.Current.LabelDefaultSize;}
+			get { return ThemeElements.LabelPainter.DefaultSize; }
 		}
 
 		[DefaultValue(FlatStyle.Standard)]
@@ -648,7 +649,7 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
-			ThemeEngine.Current.DrawLabel (pevent.Graphics, ClientRectangle, this);
+			ThemeElements.LabelPainter.Draw (pevent.Graphics, ClientRectangle, this);
 			base.OnPaint(pevent);
 		}
 

@@ -1,3 +1,9 @@
+2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Label.cs: Uses new LabelPainter for drawing operations.
+	* ThemeWin32Classic.cs: DrawLabel and LabelDefaultSize removed.
+	* Theme.cs: DrawLabel and LabelDefaultSize removed.
+
 2008-01-22  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Enable packing scroll delta into the mouse wParam
