@@ -1,3 +1,7 @@
+2008-01-23  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (NO_INSTALL) [PROFILE=net_2_0]: Install the dll.
+
 2006-08-09  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* added NET_2_0 projects files for VS2005
