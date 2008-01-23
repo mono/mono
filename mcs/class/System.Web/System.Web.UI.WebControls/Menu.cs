@@ -1844,12 +1844,10 @@ namespace System.Web.UI.WebControls
 
 			if (itemSpacing != Unit.Empty)
 				RenderMenuItemSpacing (writer, itemSpacing, vertical);
-			else if (!vertical && (notLast || displayChildren)) {
-				if (!displayChildren || !dynamicChildren) {
+			else if (!vertical && (notLast || (displayChildren && !dynamicChildren))) {
 					writer.AddStyleAttribute ("width", "3px");
 					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 					writer.RenderEndTag ();
-				}
 			}
 
 			// Submenu
