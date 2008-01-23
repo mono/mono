@@ -1,4 +1,8 @@
 2008-01-23  Geoff Norton  <gnorton@novell.com>
+	
+	* XplatUICarbon.cs: Remove some dead code that was causing warnings.
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Re-enabled Carets in QuickDraw as a overlay window.
 

@@ -53,7 +53,6 @@ namespace System.Windows.Forms {
 
 		internal static Hwnd MouseHwnd;
 
-		internal static Hashtable WindowBackgrounds;
 		internal static MouseButtons MouseState;
 		internal static Carbon.Hover Hover;
 
@@ -229,7 +228,6 @@ namespace System.Windows.Forms {
 			// Initialize the Carbon Specific stuff
 			WindowMapping = new Hashtable ();
 			HandleMapping = new Hashtable ();
-			WindowBackgrounds = new Hashtable ();
 			UtilityWindows = new ArrayList ();
 			
 			// Initialize the FosterParent
@@ -520,10 +518,6 @@ namespace System.Windows.Forms {
 			} while (!done);
 		}
 
-		//TODO: The old implementation does QD drawing where we cannot do that anymore
-		private void InvertCaret () {
-		}
-		
 		private void SendParentNotify(IntPtr child, Msg cause, int x, int y) {
 			Hwnd hwnd;
 			
@@ -725,7 +719,6 @@ namespace System.Windows.Forms {
 				height = hwnd.height - y;
 			}
 
-			Carbon.HIRect region = new Carbon.HIRect (x, y, width, height);
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
 				if (!hwnd.expose_pending) {

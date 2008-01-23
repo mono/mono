@@ -1,3 +1,7 @@
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
+	* ControlHandler.cs: Remove some dead code that was causing warnings.
+
 2008-01-22  Geoff Norton  <gnorton@novell.com>
 	
 	* EventHandler.cs: Subscribe to the MouseWheel and MouseScroll events.

@@ -187,18 +187,6 @@ namespace System.Windows.Forms.CarbonInternal {
 			return false;
 		}
 
-		private void DrawBackground (Hwnd hwnd, IntPtr eventref, HIRect bounds) {
-			if (XplatUICarbon.WindowBackgrounds [hwnd] != null) {
-				IntPtr context = IntPtr.Zero;
-				Color color = (Color) XplatUICarbon.WindowBackgrounds [hwnd];
-
-				GetEventParameter (eventref, kEventParamCGContextRef, typeCGContextRef, IntPtr.Zero, (uint) Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref context); 
-				
-				CGContextSetRGBFillColor (context, (float) color.R / 255, (float) color.G / 255, (float) color.B / 255, (float) color.A / 255);
-				CGContextFillRect (context, bounds);
-			}
-		}
-
 		private void DrawBorders (Hwnd hwnd) {
 			switch (hwnd.border_style) {
 				case FormBorderStyle.Fixed3D: {
@@ -237,10 +225,5 @@ namespace System.Windows.Forms.CarbonInternal {
 		static extern int HIViewGetFrame (IntPtr handle, ref HIRect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static bool HIViewIsVisible (IntPtr vHnd);
-
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int CGContextSetRGBFillColor (IntPtr cgContext, float r, float g, float b, float alpha);
-		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern int CGContextFillRect (IntPtr context, HIRect rect);
 	}
 }
