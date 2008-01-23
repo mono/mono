@@ -88,9 +88,12 @@ namespace System.Windows.Forms.Theming
 			get { return theme.ButtonPainter; }
 		}
 
+		public static Default.LabelPainter LabelPainter	{
+			get { return theme.LabelPainter; }
+		}
+
 		public static Default.LinkLabelPainter LinkLabelPainter	{
 			get { return theme.LinkLabelPainter; }
-
 		}
 
 		public virtual Default.TabControlPainter TabControlPainter {
