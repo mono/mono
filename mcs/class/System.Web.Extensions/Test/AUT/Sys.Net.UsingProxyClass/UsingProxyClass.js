@@ -18,7 +18,7 @@ function pageLoad()
         document.getElementById("ResultId");
     
     // Assign default values to the generated proxy.
-    Sys.Net.UsingProxyClass.UsingProxyClass.set_timeout(200);
+    //Sys.Net.UsingProxyClass.UsingProxyClass.set_timeout(200);
     Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultUserContext("Default context");
     Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultSucceededCallback(SucceededCallback);
     Sys.Net.UsingProxyClass.UsingProxyClass.set_defaultFailedCallback(FailedCallback);

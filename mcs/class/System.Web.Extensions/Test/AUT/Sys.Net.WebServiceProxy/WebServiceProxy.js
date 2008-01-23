@@ -10,7 +10,7 @@ function GetTime()
 {
     Sys.Net.WebServiceProxy.invoke(webServicePath, 
         webMethod, false,{}, OnSucceeded, 
-        OnFailed,"User Context",1000000);
+        OnFailed,"User Context",30000);
             
 }
 
@@ -24,7 +24,7 @@ function GetGreetings()
     Sys.Net.WebServiceProxy.invoke(webServicePath, 
         webMethod, true,
         {"greeting":"Have a nice day", "name":" to You (via GET)!"},
-        OnSucceeded,OnFailed, "User Context",100);
+        OnSucceeded,OnFailed, "User Context",30000);
 
 }
 
@@ -37,7 +37,7 @@ function PostGreetings()
     Sys.Net.WebServiceProxy.invoke(webServicePath, 
         webMethod, false,
         {"greeting":"Have a nice day", "name":" to You (via POST)!"},
-        OnSucceeded,OnFailed, "User Context",100);
+        OnSucceeded,OnFailed, "User Context",30000);
 
 }
 

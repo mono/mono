@@ -16,7 +16,7 @@ function pageLoad()
     
     // Assign default values for the generated proxy using
     // the (generated) static proxy.
-    Samples.AspNet.ServerTypes.set_timeout(200);
+    //Samples.AspNet.ServerTypes.set_timeout(200);
     Samples.AspNet.ServerTypes.set_defaultUserContext("Default context");
     Samples.AspNet.ServerTypes.set_defaultSucceededCallback(SucceededCallback);
     Samples.AspNet.ServerTypes.set_defaultFailedCallback(FailedCallback);

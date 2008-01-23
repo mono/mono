@@ -33,6 +33,7 @@ function applicationInitHandler() {
     $create(Demo.HighVis, null, null, null, $get('Button2'));
 }
 
+/*        
 // Attach a handler to the load event.
 Sys.Application.add_load(applicationLoadHandler);
 
@@ -43,7 +44,6 @@ function applicationLoadHandler() {
         window.location = "AfterHours.aspx";
     }
 }
-/*        
 // Attach a handler to the unLoad event.
 Sys.Application.add_unload(applicationUnloadHandler);
 
