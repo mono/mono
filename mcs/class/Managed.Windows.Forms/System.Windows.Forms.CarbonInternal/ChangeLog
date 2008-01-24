@@ -1,5 +1,9 @@
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
+	* Cursor.cs: Expose the colors to avoid some warnings until we use them
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
 	* MouseHandler.cs: Send HITTEST events.
 	* Cursor.cs: Initial support for Theme cursors.  Custom cursors not
 	quite yet.

@@ -106,6 +106,18 @@ namespace System.Windows.Forms.CarbonInternal {
 			}
 		}
 
+		public Color CursorColor {
+			get {
+				return cursor_color;
+			}
+		}
+
+		public Color MaskColor {
+			get {
+				return mask_color;
+			}
+		}
+
 		public int HotSpotX {
 			get { 
 				return hot_x;
