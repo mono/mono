@@ -826,16 +826,7 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (0, Enumerable.Empty<decimal?> ().Sum ());
 		}
 
-		// This test fails on Windows
-		//5) MonoTests.System.Linq.EnumerableMoreTest.MinArgumentNullTest : System.MissingMethodException :
-		//     Method not found: 'System.Nullable`1<Double> System.Linq.Enumerable.Min(System.Collections.Generic.IEnumerable`1<!!0>,
-		//     System.Func`2<!!0,System.Nullable`1<Single>>)'.
-		//   at MonoTests.System.Linq.EnumerableMoreTest.<>c__CompilerGenerated32.<MinArgumentNullTest>c__281()
-		//   at MonoTests.System.Linq.EnumerableMoreTest.AssertException[T](Action action)
-		//   at MonoTests.System.Linq.EnumerableMoreTest.MinArgumentNullTest()
-		//		
 		[Test]
-		[Category("NotWorking")]
 		public void MinArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
