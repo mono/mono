@@ -33,7 +33,7 @@
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
 #include <mono/metadata/attrdefs.h>
-#include <mono/os/gc_wrapper.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-counters.h>
 
 MonoStats mono_stats;
@@ -655,6 +655,9 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	iresult->context = *context;
 	iresult->declaring = method;
 
+	if (!context->method_inst && method->generic_container)
+		iresult->context.method_inst = method->generic_container->context.method_inst;
+
 	mono_loader_lock ();
 	cached = mono_method_inflated_lookup (iresult, FALSE);
 	if (cached) {
@@ -665,16 +668,20 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 
 	sig = mono_method_signature (method);
 	if (sig->pinvoke) {
-		iresult->method.pinvoke = *(MonoMethodPInvoke*)method;
+		memcpy (&iresult->method.pinvoke, method, sizeof (MonoMethodPInvoke));
 	} else {
-		iresult->method.normal = *(MonoMethodNormal*)method;
+		memcpy (&iresult->method.normal, method, sizeof (MonoMethodNormal));
 		iresult->method.normal.header = NULL;
 	}
 
 	result = (MonoMethod *) iresult;
 	result->is_inflated = 1;
-	/* result->generic_container = NULL; */
 	result->signature = NULL;
+
+	if (context->method_inst)
+		result->generic_container = NULL;
+
+	/* Due to the memcpy above, !context->method_inst => result->generic_container == method->generic_container */
 
 	if (!klass_hint || !klass_hint->generic_class ||
 	    klass_hint->generic_class->container_class != method->klass ||
@@ -690,11 +697,6 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 		if (inflated)
 			mono_metadata_free_type (inflated);
 	}
-
-	if (context->method_inst)
-		result->generic_container = NULL;
-	else if (method->generic_container)
-		iresult->context.method_inst = method->generic_container->context.method_inst;
 
 	mono_method_inflated_lookup (iresult, TRUE);
 	mono_loader_unlock ();
@@ -805,6 +807,7 @@ mono_class_setup_fields (MonoClass *class)
 		MonoClass *gklass = class->generic_class->container_class;
 		mono_class_setup_fields (gklass);
 		top = gklass->field.count;
+		class->field.count = gklass->field.count;
 	}
 
 	class->instance_size = 0;
@@ -2886,6 +2889,10 @@ set_failure_from_loader_error (MonoClass *class, MonoLoaderError *error)
 		break;
 	}
 
+	case MONO_EXCEPTION_BAD_IMAGE:
+		class->exception_data = error->msg;
+		break;
+
 	default :
 		g_assert_not_reached ();
 	}
@@ -3636,6 +3643,9 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 
 	klass->name = gklass->name;
 	klass->name_space = gklass->name_space;
+	
+	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
+	
 	klass->image = gklass->image;
 	klass->flags = gklass->flags;
 	klass->type_token = gklass->type_token;
@@ -3706,6 +3716,8 @@ mono_generic_class_get_class (MonoGenericClass *gclass)
 	if (MONO_CLASS_IS_INTERFACE (klass))
 		setup_interface_offsets (klass, 0);
 
+	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	
 	mono_loader_unlock ();
 
 	return klass;
@@ -4529,8 +4541,15 @@ mono_class_get_full (MonoImage *image, guint32 type_token, MonoGenericContext *c
 {
 	MonoClass *class = NULL;
 
-	if (image->dynamic)
+	if (image->dynamic) {
+		int table = mono_metadata_token_table (type_token);
+
+		if (table != MONO_TABLE_TYPEDEF && table != MONO_TABLE_TYPEREF && table != MONO_TABLE_TYPESPEC) {
+			mono_loader_set_error_bad_image (g_strdup ("Bad type token."));
+			return NULL;
+		}
 		return mono_lookup_dynamic_token (image, type_token, context);
+	}
 
 	switch (type_token & 0xff000000){
 	case MONO_TOKEN_TYPE_DEF:
@@ -4718,7 +4737,7 @@ find_nocase (gpointer key, gpointer value, gpointer user_data)
 
 /**
  * mono_class_from_name_case:
- * @image: The MonoImage where the type is looked up in, or NULL for looking up in all loaded assemblies
+ * @image: The MonoImage where the type is looked up in
  * @name_space: the type namespace
  * @name: the type short name.
  *
@@ -4811,7 +4830,7 @@ return_nested_in (MonoClass *class, char *nested) {
 
 /**
  * mono_class_from_name:
- * @image: The MonoImage where the type is looked up in, or NULL for looking up in all loaded assemblies
+ * @image: The MonoImage where the type is looked up in
  * @name_space: the type namespace
  * @name: the type short name.
  *
@@ -4967,6 +4986,14 @@ mono_class_has_variant_generic_params (MonoClass *klass)
 	return FALSE;
 }
 
+/**
+ * mono_class_is_assignable_from:
+ * @klass: the class to be assigned to
+ * @oklass: the source class
+ *
+ * Return: true if an instance of object oklass can be assigned to an
+ * instance of object @klass
+ */
 gboolean
 mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 {
@@ -5073,10 +5100,11 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 	return mono_class_has_parent (oklass, klass);
 }	
 
-/*
+/**
  * mono_class_get_cctor:
+ * @klass: A MonoClass pointer
  *
- *   Returns the static constructor of @klass if it exists, NULL otherwise.
+ * Returns: the static constructor of @klass if it exists, NULL otherwise.
  */
 MonoMethod*
 mono_class_get_cctor (MonoClass *klass)
@@ -5092,10 +5120,11 @@ mono_class_get_cctor (MonoClass *klass)
 	return mono_class_get_method_from_name_flags (klass, ".cctor", -1, METHOD_ATTRIBUTE_SPECIAL_NAME);
 }
 
-/*
+/**
  * mono_class_get_finalizer:
+ * @klass: The MonoClass pointer
  *
- *   Returns the finalizer method of @klass if it exists, NULL otherwise.
+ * Returns: the finalizer method of @klass if it exists, NULL otherwise.
  */
 MonoMethod*
 mono_class_get_finalizer (MonoClass *klass)
@@ -5115,10 +5144,12 @@ mono_class_get_finalizer (MonoClass *klass)
 	}
 }
 
-/*
+/**
  * mono_class_needs_cctor_run:
+ * @klass: the MonoClass pointer
+ * @caller: a MonoMethod describing the caller
  *
- *  Determines whenever the class has a static constructor and whenever it
+ * Determines whenever the class has a static constructor and whenever it
  * needs to be called when executing CALLER.
  */
 gboolean
@@ -5836,6 +5867,18 @@ mono_field_get_flags (MonoClassField *field)
 }
 
 /**
+ * mono_field_get_offset;
+ * @field: the MonoClassField to act on
+ *
+ * Returns: the field offset.
+ */
+guint32
+mono_field_get_offset (MonoClassField *field)
+{
+	return field->offset;
+}
+
+/**
  * mono_field_get_data;
  * @field: the MonoClassField to act on
  *
@@ -6167,6 +6210,9 @@ mono_class_get_exception_for_failure (MonoClass *klass)
 		g_free (msg);
 
 		return ex;
+	}
+	case MONO_EXCEPTION_BAD_IMAGE: {
+		return mono_get_exception_bad_image_format (klass->exception_data);
 	}
 	default: {
 		MonoLoaderError *error;

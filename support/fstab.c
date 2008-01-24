@@ -32,40 +32,40 @@ G_BEGIN_DECLS
 
 typedef struct checklist mph_fstab;
 
-static const size_t
+static const mph_string_offset_t
 fstab_offsets[] = {
-	offsetof (struct checklist, fs_spec),
-	offsetof (struct checklist, fs_dir),
-	offsetof (struct checklist, fs_type)
+	MPH_STRING_OFFSET (struct checklist, fs_spec, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct checklist, fs_dir,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct checklist, fs_type, MPH_STRING_OFFSET_PTR)
 };
 
-static const size_t
+static const mph_string_offset_t
 mph_fstab_offsets[] = {
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_spec, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_file, MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_type, MPH_STRING_OFFSET_PTR)
 };
 
 #elif defined (HAVE_FSTAB_H)
 
 typedef struct fstab mph_fstab;
 
-static const size_t
+static const mph_string_offset_t
 fstab_offsets[] = {
-	offsetof (struct fstab, fs_spec),
-	offsetof (struct fstab, fs_file),
-	offsetof (struct fstab, fs_vfstype),
-	offsetof (struct fstab, fs_mntops),
-	offsetof (struct fstab, fs_type)
+	MPH_STRING_OFFSET (struct fstab, fs_spec,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_file,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_vfstype,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_mntops,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct fstab, fs_type,     MPH_STRING_OFFSET_PTR)
 };
 
-static const size_t
+static const mph_string_offset_t
 mph_fstab_offsets[] = {
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_vfstype),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_mntops),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_type)
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_spec,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_file,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_vfstype,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_mntops,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_type,     MPH_STRING_OFFSET_PTR)
 };
 
 #endif /* def HAVE_FSTAB_H */
@@ -110,20 +110,20 @@ copy_fstab (struct Mono_Posix_Syscall__Fstab *to, mph_fstab *from)
 
 typedef struct vfstab mph_fstab;
 
-static const size_t
+static const mph_string_offset_t
 vfstab_offsets[] = {
-	offsetof (struct vfstab, vfs_special),
-	offsetof (struct vfstab, vfs_mountp),
-	offsetof (struct vfstab, vfs_fstype),
-	offsetof (struct vfstab, vfs_mntopts)
+	MPH_STRING_OFFSET (struct vfstab, vfs_special,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct vfstab, vfs_mountp,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct vfstab, vfs_fstype,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct vfstab, vfs_mntopts,  MPH_STRING_OFFSET_PTR)
 };
 
-static const size_t
+static const mph_string_offset_t
 mph_fstab_offsets[] = {
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_spec),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_file),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_vfstype),
-	offsetof (struct Mono_Posix_Syscall__Fstab, fs_mntops)
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_spec,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_file,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_vfstype,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Fstab, fs_mntops,   MPH_STRING_OFFSET_PTR)
 };
 
 /*

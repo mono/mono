@@ -176,6 +176,7 @@ enum {
 	MONO_EXCEPTION_METHOD_ACCESS = 9,
 	MONO_EXCEPTION_FIELD_ACCESS = 10,
 	MONO_EXCEPTION_GENERIC_SHARING_FAILED = 11,
+	MONO_EXCEPTION_BAD_IMAGE = 12
 	/* add other exception type */
 };
 
@@ -187,6 +188,11 @@ typedef struct {
 	/* domain_vtables is indexed by the domain id and the size is max_domain + 1 */
 	MonoVTable *domain_vtables [MONO_ZERO_LEN_ARRAY];
 } MonoClassRuntimeInfo;
+
+typedef struct {
+	int num_arg_infos;
+	MonoType *arg_infos [MONO_ZERO_LEN_ARRAY];
+} MonoRuntimeGenericContextTemplate;
 
 struct _MonoClass {
 	/* element class for arrays and enum */
@@ -474,6 +480,8 @@ struct _MonoGenericParam {
 	guint16 flags;
 	guint16 num;
 	MonoClass** constraints; /* NULL means end of list */
+	/* If owner is NULL, this is the image whose mempool this struct was allocated from */
+	MonoImage *image;
 };
 
 /*
@@ -516,6 +524,7 @@ typedef struct {
 	MonoClass *klass; /* If kind != TYPE */
 	const char *member_name; /* If kind != TYPE */
 	gboolean ref_only; /* If kind == ASSEMBLY */
+	char *msg; /* If kind == BAD_IMAGE */
 } MonoLoaderError;
 
 #define mono_class_has_parent(klass,parent) (((klass)->idepth >= (parent)->idepth) && ((klass)->supertypes [(parent)->idepth - 1] == (parent)))
@@ -553,6 +562,10 @@ typedef struct {
 	gulong generics_sharable_methods;
 	gulong generics_unsharable_methods;
 	gulong generics_shared_methods;
+	gulong minor_gc_count;
+	gulong major_gc_count;
+	gulong minor_gc_time_usecs;
+	gulong major_gc_time_usecs;
 	gboolean enabled;
 } MonoStats;
 
@@ -798,6 +811,8 @@ mono_loader_set_error_method_load (const char *class_name, const char *member_na
 
 void
 mono_loader_set_error_field_load (MonoClass *klass, const char *member_name) MONO_INTERNAL;
+void
+mono_loader_set_error_bad_image (char *msg) MONO_INTERNAL;
 
 MonoException *
 mono_loader_error_prepare_exception (MonoLoaderError *error) MONO_INTERNAL;
@@ -894,6 +909,9 @@ mono_type_get_basic_type_from_generic (MonoType *type) MONO_INTERNAL;
 
 gboolean
 mono_class_generic_sharing_enabled (MonoClass *class) MONO_INTERNAL;
+
+MonoRuntimeGenericContextTemplate*
+mono_class_get_runtime_generic_context_template (MonoClass *class) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_CLASS_INTERBALS_H__ */
 

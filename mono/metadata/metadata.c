@@ -954,7 +954,10 @@ mono_metadata_decode_row (const MonoTableInfo *t, int idx, guint32 *res, int res
 {
 	guint32 bitfield = t->size_bitfield;
 	int i, count = mono_metadata_table_count (bitfield);
-	const char *data = t->base + idx * t->row_size;
+	const char *data;
+
+	g_assert (idx < t->rows);
+	data = t->base + idx * t->row_size;
 	
 	g_assert (res_size == count);
 	
@@ -989,10 +992,12 @@ mono_metadata_decode_row_col (const MonoTableInfo *t, int idx, guint col)
 {
 	guint32 bitfield = t->size_bitfield;
 	int i;
-	register const char *data = t->base + idx * t->row_size;
+	register const char *data; 
 	register int n;
 	
+	g_assert (idx < t->rows);
 	g_assert (col < mono_metadata_table_count (bitfield));
+	data = t->base + idx * t->row_size;
 
 	n = mono_metadata_table_size (bitfield, 0);
 	for (i = 0; i < col; ++i) {
@@ -2057,6 +2062,23 @@ retry:
 		goto retry;
 	case MONO_TYPE_FNPTR:
 		return signature_in_image (type->data.method, image);
+	case MONO_TYPE_VAR:
+		if (type->data.generic_param->owner) {
+			g_assert (!type->data.generic_param->owner->is_method);
+			return type->data.generic_param->owner->owner.klass->image == image;
+		} else {
+			return type->data.generic_param->image == image;
+		}
+	case MONO_TYPE_MVAR:
+		if (type->data.generic_param->owner) {
+			g_assert (type->data.generic_param->owner->is_method);
+			if (!type->data.generic_param->owner->owner.method)
+				/* RefEmit created generic param whose method is not finished */
+				return FALSE;
+			return type->data.generic_param->owner->owner.method->klass->image == image;
+		} else {
+			return type->data.generic_param->image == image;
+		}
 	default:
 		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type () */
 		return image == mono_class_from_mono_type (type)->image;
@@ -2514,6 +2536,7 @@ mono_metadata_parse_generic_param (MonoImage *m, MonoGenericContainer *generic_c
 		param->name = mono_mempool_alloc0 (m->mempool, 8);
 		sprintf ((char*)param->name, "%d", index);
 		param->num = index;
+		param->image = m;
 
 		return param;
 	}
@@ -3981,6 +4004,23 @@ gboolean
 mono_metadata_type_equal (MonoType *t1, MonoType *t2)
 {
 	return do_mono_metadata_type_equal (t1, t2, FALSE);
+}
+
+/**
+ * mono_metadata_type_equal_full:
+ * @t1: a type
+ * @t2: another type
+ * @signature_only: if signature only comparison should be made
+ *
+ * Determine if @t1 and @t2 are signature compatible if @signature_only is #TRUE, otherwise
+ * behaves the same way as mono_metadata_type_equal.
+ * The function mono_metadata_type_equal(a, b) is just a shortcut for mono_metadata_type_equal_full(a, b, FALSE).
+ * Returns: #TRUE if @t1 and @t2 are equal taking @signature_only into account.
+ */
+gboolean
+mono_metadata_type_equal_full (MonoType *t1, MonoType *t2, gboolean signature_only)
+{
+	return do_mono_metadata_type_equal (t1, t2, signature_only);
 }
 
 /**

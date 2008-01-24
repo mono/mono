@@ -1,3 +1,245 @@
+2008-01-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_call_test.sh: test generator for call and callvirt.
+
+	* make_tests.sh: added tests for call and callvirt.
+
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldstr_bad_token.il: added. check the index
+	against the the #US heap.
+
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_newobj_no_visibility.il: added. visibility
+	check for newobj.
+
+2008-01-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldftn_no_visibility.il: added. visibility
+	check for ldftn.
+
+	* unverifiable_ldvirtftn_no_visibility.il: added. visibility
+	check for ldvirtftn.
+
+2008-01-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: added tests for ovf math with floats.
+
+2008-01-17 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_localloc_test.sh: test generator for localloc.
+
+	* make_tests.sh: added tests for localloc.
+
+2008-01-17 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_sizeof_test.sh: test generator for sizeof.
+
+	* make_tests.sh: added tests for sizeof.
+
+2008-01-17 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_cp_test.sh: test generator for cpobj.
+
+	* make_tests.sh: added tests for cpobj.
+
+2008-01-17 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_initobj_invalid_token_out_of_bounds.il: tests for initobj.
+
+	* invalid_initobj_invalid_token_type.il: same.
+
+	* make_initobj_test.sh: test generator for initobj.
+
+	* make_tests.sh: added tests for initobj.
+
+2008-01-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldfld_reference_type_by_ref.il: new test for ldfld.
+
+	* invalid_stojb_bad_token.il: test for bad ldobj token.
+
+	* invalid_stojb_token_out_of_bounds.il: same.
+
+	* make_stobj_test.sh: new test generator.
+
+	* make_test.sh: added new tests for stobj.
+	
+2008-01-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_ldftn_method_spec_token.il: new test
+	for loading function pointers for generic methods.
+
+2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for unbox.any.
+
+	* make_unbox_any_test.sh: new test generator.
+
+2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for add|sub|mul ovf;
+
+	* unverifiable_unbox_toke_is_reference_type.il: New test for regressions
+	found while validating vbnc.
+
+	* valid_stind_ref_with_boxed_value.il: same.
+	*  valid_ldelema_enum_array.il: same.
+
+2008-01-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_isinst_with_boxed_valuetype.il: New test for regressions
+	found while validating vbnc.
+
+	* valid_ldfld_valuetype_by_ref.il: same.
+	* valid_ldfld_valuetype_by_value.il: same.
+	* valid_stelem_ref_boxed_value.il: same.
+	* valid_stloc_boxed_valuetype.il: same.
+	* valid_sub_class_of_generic_type_is_compatible.il: same.
+	* unverifiable_ldfld_valuetype_boxed.il:  same.
+	* unverifiable_ldfld_reference_type_by_ref.il: same.
+
+	* make_test.sh: new tests for stfld and cgt.un.
+	
+
+2008-01-08 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_delegate_test.sh: increased max stack for
+	ldvirtftn tests.
+
+	* make_tests.sh: added new tests for delegates
+	constructed with ldvirtftn.
+
+2008-01-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_delegate_test.sh: added.
+
+	* make_tests.sh: added new tests for delegates
+	constructed with ldftn.
+
+2008-01-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldvirtftn_invalid_token_type.il: added.
+	
+	* make_ldvirtftn_test.sh: added.
+
+	* invalid_ldvirtftn_invalid_token_out_of_bounds.il: added.
+
+	* make_ldftn_test.sh: changed to allow more tests.
+
+	* make_tests.sh: added new tests for ldvirtftn and
+	a buch more for ldftn.
+
+2007-12-31 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_ldftn_invalid_token_out_of_bounds.il: added.
+	
+	* invalid_ldftn_invalid_token_type.il: added.
+
+	* make_ldftn_test.sh: added.
+
+	* make_test.sh: new tests for ldftn.
+
+	* AssemblyRunner.cs: added BadImageFormatException
+	to the list of invalid code errors. Removed
+	some dead code and an useless message.
+
+
+2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_non_empty_stack_at_try_begin.il: added.
+
+	* valid_branch_to_first_intruction_of_try.il: added.
+
+
+2007-12-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_exception_overlap_test.sh: new test generator.
+
+	* make_tests.sh: new tests for exception clause restrictions
+	enumerated in P1 12.4.2.7.
+
+	* invalid_catch_block_starts_after_prefix.il: new test
+	for a catch block that starts in the middle of an instruction.
+
+2007-12-24 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_switch_test.sh: new test generator.
+
+	* make_exception_branch_test.sh: the filter
+	handler did not pop the exception argument.
+
+	* make_tests.sh: add tests for switch.
+
+2007-12-21 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_branch_test.sh: new test generator.
+
+	* make_exception_branch_test.sh: added
+	support to test generator to specify
+	the expected result.
+
+	* make_tests.sh: some results for
+	make_exception_branch_test.sh were
+	wrong, fixed that.
+
+	* make_tests.sh: added some tests
+	to beq and bge.
+
+	* make_tests.sh added tests for br.
+
+2007-12-20 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_exception_sequence.il: new test
+	for what blocks take an exception on
+	stack at the begin.
+
+2007-12-19 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_empty_catch_block.il
+	* invalid_empty_fault_block.il
+	* invalid_empty_filter_block.il
+	* invalid_empty_finally_block.il
+	* invalid_empty_handler_block.il
+	* invalid_empty_try_block.il
+	tests for empty protected blocks.
+
+	* invalid_exception_blocks_order.il:
+	test for the required ordering of exception
+	clauses.
+
+	* invalid_finally_block_overlap_try_block.il
+	* invalid_try_block_includes_catch_block.il
+	* invalid_try_block_inside_filter_block.il
+	tests for ill formed exception clauses.
+		
+	* invalid_fallout_of_filter_block.il
+	* invalid_fallout_of_handler_block.il
+	* invalid_fallthru_into_filter_block.il
+	* invalid_fallthru_into_handler_block.il
+	* unverifiable_fallout_of_catch_block.il
+	* unverifiable_fallout_of_fault_block.il
+	* unverifiable_fallout_of_finally_block.il
+	* unverifiable_fallout_of_try_block.il
+	* unverifiable_fallthru_into_catch_block.il
+	* unverifiable_fallthru_into_fault_block.il
+	* unverifiable_fallthru_into_finally_block.il
+	* valid_end_try_block_with_throw.il:
+	tests for fallthru in and out of protected blocks.
+
+2007-12-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for filter
+
+	* make_filter_test.sh: new test generator
+
+2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_test.sh: added tests for endfilter
+
+	* make_endfilter_test.sh: new test generator
+
 2007-12-14 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* Makefile: add support to check strict tests.

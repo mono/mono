@@ -174,6 +174,22 @@ do
   I=`expr $I + 1`
 done
 
+#tests for the difference between cgt.un and others
+I=1
+for TYPE in string object
+do
+	./make_bin_test.sh bin_cgt_un_a_${I} valid 'cgt.un' "${TYPE}" 'object'
+	./make_bin_test.sh bin_cgt_un_b_${I} valid 'cgt.un' 'object' "${TYPE}"
+  I=`expr $I + 1`
+done
+
+
+for TYPE in int32 float32 int64 "int32&" "native int" 
+do
+	./make_bin_test.sh bin_cgt_un_a_${I} unverifiable 'cgt.un' "${TYPE}" 'object'
+	./make_bin_test.sh bin_cgt_un_b_${I} unverifiable 'cgt.un' 'object' "${TYPE}"
+  I=`expr $I + 1`
+
 for OP in ceq
 do
   ./make_bin_test.sh bin_comp_op_27_${I} unverifiable $OP 'native int' 'native int&'
@@ -551,7 +567,7 @@ do
 done
 
 #Field store parameter compatibility leads to invalid code
-#Calling method with diferent verification types on stack lead to invalid code
+#Calling method with different verification types on stack lead to invalid code
 I=1
 for OP in "stfld TYPE1 Class::fld" "stsfld TYPE1 Class::sfld\n\tpop"  "call void Class::Method(TYPE1)"
 do
@@ -807,21 +823,35 @@ done
 I=1
 for OP in br "ldc.i4.0\n\tbrfalse"
 do
-  ./make_exception_branch_test.sh in_try_${I} "$OP branch_target1"
-  ./make_exception_branch_test.sh in_catch_${I} "$OP branch_target2"
-  ./make_exception_branch_test.sh in_finally_${I} "$OP branch_target3"
-  ./make_exception_branch_test.sh in_filter_${I} "$OP branch_target4"
-  ./make_exception_branch_test.sh out_try_${I} "" "$OP branch_target5"
-  ./make_exception_branch_test.sh out_catch_${I} "" "" "$OP branch_target5"
-  ./make_exception_branch_test.sh out_finally_${I} "" "" "" "$OP branch_target5"
-  ./make_exception_branch_test.sh out_filter_${I} "" "" "" "" "$OP branch_target5"
+  ./make_exception_branch_test.sh in_try_${I} unverifiable "$OP branch_target1"
+  ./make_exception_branch_test.sh in_catch_${I} unverifiable "$OP branch_target2"
+  ./make_exception_branch_test.sh in_finally_${I} invalid "$OP branch_target3"
+  ./make_exception_branch_test.sh in_filter_${I} unverifiable "$OP branch_target4"
+  ./make_exception_branch_test.sh out_try_${I} unverifiable "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_catch_${I} unverifiable "" "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_finally_${I} unverifiable "" "" "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_filter_${I} unverifiable "" "" "" "" "$OP branch_target5"
   I=`expr $I + 1`
 done
 
-./make_exception_branch_test.sh ret_out_try "" "ldc.i4.0\n\tret"
-./make_exception_branch_test.sh ret_out_catch "" "" "ldc.i4.0\n\tret"
-./make_exception_branch_test.sh ret_out_finally "" "" "" "ldc.i4.0\n\tret"
-./make_exception_branch_test.sh ret_out_filter "" "" "" "" "ldc.i4.0\n\tret"
+for OP in "ldloc.0\n\tldloc.1\n\tbeq" "ldloc.0\n\tldloc.1\n\tbge"
+do
+  ./make_exception_branch_test.sh in_try_${I} invalid "$OP branch_target1"
+  ./make_exception_branch_test.sh in_catch_${I} invalid "$OP branch_target2"
+  ./make_exception_branch_test.sh in_finally_${I} invalid "$OP branch_target3"
+  ./make_exception_branch_test.sh in_filter_${I} invalid "$OP branch_target4"
+  ./make_exception_branch_test.sh out_try_${I} invalid "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_catch_${I} invalid "" "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_finally_${I} unverifiable "" "" "" "$OP branch_target5"
+  ./make_exception_branch_test.sh out_filter_${I} unverifiable "" "" "" "" "$OP branch_target5"
+  I=`expr $I + 1`
+done
+
+./make_exception_branch_test.sh ret_out_try unverifiable "" "ldc.i4.0\n\tret"
+./make_exception_branch_test.sh ret_out_catch unverifiable "" "" "ldc.i4.0\n\tret"
+./make_exception_branch_test.sh ret_out_finally unverifiable "" "" "" "ldc.i4.0\n\tret"
+./make_exception_branch_test.sh ret_out_filter unverifiable "" "" "" "" "ldc.i4.0\n\tret"
+
 
 # Unary branch op type tests (see 3.17)
 
@@ -1390,7 +1420,7 @@ do
 	./make_field_store_test.sh field_store_${I}_4 unverifiable "${OP} int32 ClassA::fld" int32 'class MyValueType'
 	./make_field_store_test.sh field_store_${I}_5 valid "${OP} int32 ClassA::fld" int32 'class ClassA' yes
 	./make_field_store_test.sh field_store_${I}_6 valid "${OP} int32 ClassA::fld" int32 'class SubClass' yes
-	#ldfld and ldflda works diferent with value objects, you cannot take the address of a value-object on the stack
+	#ldfld and ldflda works different with value objects, you cannot take the address of a value-object on the stack
 	#./make_field_store_test.sh field_store_${I}_7 valid "${OP} int32 MyValueType::fld" int32 'class MyValueType'
 	#Not usefull as it throws NRE
 	#./make_field_store_test.sh field_store_${I}_8 valid "${OP} int32 MyValueType::fld" int32 'class MyValueType \&'
@@ -1430,6 +1460,12 @@ do
 done
 
 ./make_field_store_test.sh static_field_store_2_25 unverifiable 'ldsflda int32 ClassA::st_const_field\n\tpop' int32 'class ClassA'
+
+
+#stfld with null values
+./make_field_store_test.sh field_store_null_value valid "ldnull\n\tstfld string ClassA::fld\n\tldc.i4.0" 'string' 'class ClassA' yes
+./make_field_store_test.sh field_store_null_object valid "pop\n\tldnull\n\tldnull\n\tstfld string ClassA::fld\n\tldc.i4.0" 'string' 'class ClassA' yes
+
 
 ./make_field_valuetype_test.sh value_type_field_load_1 valid 'ldfld int32 MyValueType::fld' 'ldloc.0'
 ./make_field_valuetype_test.sh value_type_field_load_2 unverifiable 'ldflda int32 MyValueType::fld' 'ldloc.0'
@@ -1799,7 +1835,7 @@ do
 	I=`expr $I + 1`
 done
 
-#static members are diferent from instance members
+#static members are different from instance members
 I=1
 for OP in "ldc.i4.0\n\t\tstsfld int32 Class::sfld" "ldsfld int32 Class::sfld\n\n\tpop" "ldsflda int32 Class::sfld\n\n\tpop" 
 do
@@ -2229,7 +2265,7 @@ done
 # Box void type.
 #./make_unary_test.sh box_void unverifiable "box [mscorlib]System.Void\n\tpop" "class [mscorlib]System.Void"
 I=1;
-for OP in "native int" "int32*" typedref int16 string float32
+for OP in "native int" "int32*" typedref int16 float32
 do
 	./make_unbox_test.sh unbox_bad_stack_${I} unverifiable "${OP}" int32 "nop" "yes"
 	I=`expr $I + 1`
@@ -2561,7 +2597,6 @@ do
 done
 
 
-#TODO validate delegate construction (Wait for ldftn, ldvirtftn and calli to be fully checking)
 #underflow
 ./make_newobj_test.sh newobj_underflow invalid "newobj instance void class ClassA::.ctor(int32,int32)" "int32" "int32"
 
@@ -3190,4 +3225,785 @@ done
 
 ./make_endfinally_test.sh endfinally_clean_stack valid finally 8 "ldc.i4.0"
 ./make_endfinally_test.sh endfault_clean_stack valid fault 8 "ldc.i4.0"
+
+
+
+# endfilter
+
+#valid endfilter
+./make_endfilter_test.sh endfilter_at_end_of_filter_block valid 9
+
+#endfilter outside protected block
+./make_endfilter_test.sh endfilter_outside_protected_block invalid 1 "ldc.i4.1\n\t\tendfilter"
+
+#endfilter inside bad protected block
+./make_endfilter_test.sh endfilter_inside_protected_block_3 invalid 3 "ldc.i4.1\n\t\tendfilter"
+./make_endfilter_test.sh endfilter_inside_protected_block_5 strict 5 "ldc.i4.1\n\t\tendfilter"
+
+for I in {2,4,6};
+do
+	./make_endfilter_test.sh endfilter_inside_protected_block_${I} unverifiable ${I} "ldc.i4.1\n\t\tendfilter"
+done
+
+
+#endfilter is the first instruction
+./make_endfilter_test.sh endfilter_first_instruction_of_filter_block invalid 7 "ldc.i4.1\n\tendfilter"
+./make_endfilter_test.sh endfilter_in_the_midle_instruction_of_filter_block invalid 8 "ldc.i4.1\n\t\tendfilter"
+
+#stack sizes
+
+./make_endfilter_test.sh endfilter_empty_stack strict 9 "pop"
+./make_endfilter_test.sh endfilter_too_big strict 9 "ldc.i4.0"
+
+
+I=1
+for OP in "ldc.i8 0" "ldnull" "ldc.r4 0" "ldc.r8 1" "ldc.i4.0\n\t\tconv.i" "ldc.r8 99999"
+do
+	./make_endfilter_test.sh endfilter_bad_arg_${I} strict 9 "pop\t\n\n${OP}"
+	I=`expr $I + 1`
+done
+
+
+# leave
+
+#leave in all positions
+
+EXTRA="ldloc.0\n\tbrfalse END"
+
+#it's "OK" to use leave as a br
+./make_leave_test.sh "filter_block_test_1" valid "1" "leave END" "$EXTRA"
+
+#but not ok to leave finally or filter
+for I in {2..3};
+do
+	./make_leave_test.sh "filter_block_test_${I}" unverifiable "${I}" "leave END" "${EXTRA}_${I}"
+done
+
+#neither is to branch to invalid regions of code
+./make_leave_test.sh "filter_branch_before_start" invalid "1" "leave -400" "$EXTRA"
+./make_leave_test.sh "filter_branch_after_end" invalid "1" "leave 400" "$EXTRA"
+
+
+# br.X
+#valid tests
+for I in {1..6}; do
+	./make_branch_test.sh branch_inside_same_block_${I} valid ${I} "br BLOCK_${I}";
+	./make_branch_test.sh branch_inside_same_block_${I}_s valid ${I} "br.s BLOCK_${I}";
+done
+
+#branching outside of the protected block
+for I in {2..6}; do
+	./make_branch_test.sh branch_outside_protected_block_${I} unverifiable ${I} "br END";
+done
+
+#branching to a protected block from the outside
+for I in {2..6}; do
+	if [ "$I" == "4" ]; then
+		./make_branch_test.sh branch_inside_protected_block_from_outside_${I}_finally invalid 1 "br BLOCK_${I}" "finally";
+		./make_branch_test.sh branch_inside_protected_block_from_outside_${I}_fault invalid 1 "br BLOCK_${I}" "fault";
+	else
+		./make_branch_test.sh branch_inside_protected_block_from_outside_${I} unverifiable 1 "br BLOCK_${I}";
+	fi
+done
+
+
+#branching out of range
+./make_branch_test.sh branch_out_of_bounds_before_start invalid 1 "br -1000";
+./make_branch_test.sh branch_out_of_bounds_after_end invalid 1 "br 1000";
+
+#branching in the middle of an instruction
+./make_branch_test.sh branch_middle_of_instruction invalid 1 "br 2";
+
+#branching in between prefix and instruction 
+./make_branch_test.sh branch_middle_of_instruction_prefix_1 invalid 1 "br AFTER_FIRST_PREFIX";
+./make_branch_test.sh branch_middle_of_instruction_prefix_2 invalid 1 "br AFTER_SECOND_PREFIX";
+
+#TODO test the encoding of the switch table
+# switch
+#valid tests
+for I in {1..6}; do
+	./make_switch_test.sh switch_inside_same_block_${I} valid ${I} "ldloc.0" "switch (BLOCK_${I}, BLOCK_${I}_B)";
+done
+
+./make_switch_test.sh switch_with_native_int_on_stack valid 1 "ldloc.1" "switch (BLOCK_1, BLOCK_1_B)";
+
+#branching outside of the protected block
+for I in {2..6}; do
+	./make_switch_test.sh switch_outside_protected_block_${I} unverifiable ${I} "ldloc.0" "switch (END, BLOCK_1, BLOCK_1_B)";
+done
+
+#branching to a protected block from the outside
+for I in {2..6}; do
+	if [ "$I" == "4" ]; then
+		./make_switch_test.sh switch_inside_protected_block_from_outside_${I}_finally invalid 1 "ldloc.0" "switch (BLOCK_${I}, BLOCK_${I}_B)" "finally";
+		./make_switch_test.sh switch_inside_protected_block_from_outside_${I}_fault invalid 1 "ldloc.0" "switch (BLOCK_${I}, BLOCK_${I}_B)" "fault";
+	else
+		./make_switch_test.sh switch_inside_protected_block_from_outside_${I} unverifiable 1 "ldloc.0" "switch (BLOCK_${I}, BLOCK_${I}_B)";
+	fi
+done
+
+#TODO branching out of range (FIX ilasm first)
+#./make_switch_test.sh switch_out_of_bounds_before_start invalid 1 "ldloc.0" "switch (-1000, -2000)"
+#./make_switch_test.sh switch_out_of_bounds_after_end invalid 1 "ldloc.0" "switch (BLOCK_1, 1000, 1500)"
+
+#empty stack
+./make_switch_test.sh switch_empty_stack invalid 1 "nop" "switch (BLOCK_1, BLOCK_1_B)"
+
+#wrong type on stack
+I=1
+for TYPE in "ldnull" "ldc.i8 0" "ldc.r4 0" "ldc.r8 0"
+do
+	./make_switch_test.sh switch_bad_type_on_stack_${I} unverifiable 1 "$TYPE" "switch (BLOCK_1, BLOCK_1_B)"
+	I=`expr $I + 1`
+done
+
+#switch landing in the middle of instructions
+#FIXME (ilasm don't work with offsets on switch statements)
+#./make_switch_test.sh switch_target_middle_of_instruction invalid 1 "ldloc.1" "switch (BLOCK_1, BLOCK_1)";
+
+./make_switch_test.sh switch_target_between_prefix_1 invalid 1 "ldloc.1" "switch (AFTER_FIRST_PREFIX, BLOCK_1)";
+./make_switch_test.sh switch_target_between_prefix_2 invalid 1 "ldloc.1" "switch (AFTER_SECOND_PREFIX, BLOCK_1)";
+./make_switch_test.sh switch_target_bad_merge_point invalid 1 "ldloc.1" "switch (INVALID_MERGE_POINT, BLOCK_1)";
+
+
+#TESTS for exception clauses. As described in P1 12.4.2.7.
+#regions must not overlap with each other
+./make_exception_overlap_test.sh exception_entry_overlap_separate_1 valid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh exception_entry_overlap_separate_2 valid ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" 
+
+./make_exception_overlap_test.sh exception_entry_overlap_try_over_catch invalid ".try TRY_BLOCK_1 to CATCH_BLOCK_1_A catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh exception_entry_overlap_try_over_filter invalid ".try TRY_BLOCK_1 to FILTER_BLOCK_3_A filter FILTER_BLOCK_3 handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" "yes"
+
+#blocks start in the middle of an intruction
+./make_exception_overlap_test.sh try_block_start_in_the_middle_of_a_instruction invalid ".try AFTER_PREFIX_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh catch_block_start_in_the_middle_of_a_instruction invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler AFTER_PREFIX_2 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh filter_block_start_in_the_middle_of_a_instructior invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END filter AFTER_PREFIX_4 handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" "yes"
+
+
+#block end in the middle of an instruction
+./make_exception_overlap_test.sh try_block_end_in_the_middle_of_a_instruction invalid ".try TRY_BLOCK_1 to AFTER_PREFIX_4 catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh catch_block_end_in_the_middle_of_a_instruction invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to AFTER_PREFIX_5" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+
+#regions are disjoint
+./make_exception_overlap_test.sh exception_entry_overlap_disjoint_1 valid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END"
+
+./make_exception_overlap_test.sh exception_entry_overlap_disjoint_2 valid ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+#nesting
+./make_exception_overlap_test.sh nested_exception_entry_comes_first valid ".try TRY_BLOCK_1_A to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_1 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh nested_exception_entry_comes_after invalid ".try TRY_BLOCK_1 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" ".try TRY_BLOCK_1_A to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END"
+
+
+#mutual protectiong
+./make_exception_overlap_test.sh exception_same_try valid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END"
+
+./make_exception_overlap_test.sh exception_same_catch invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" ".try TRY_BLOCK_2 to TRY_BLOCK_2_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END"
+
+./make_exception_overlap_test.sh exception_same_try_with_catch_and_filter valid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_2 to CATCH_BLOCK_2_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END filter FILTER_BLOCK_3 handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" "yes"
+
+./make_exception_overlap_test.sh exception_same_try_with_catch_and_finally invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END finally handler FINALLY_BLOCK_1 to FINALLY_BLOCK_1_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" "no" "yes"
+
+./make_exception_overlap_test.sh exception_same_try_with_catch_and_fault invalid ".try TRY_BLOCK_1 to TRY_BLOCK_1_END fault handler FINALLY_BLOCK_1 to FINALLY_BLOCK_1_END" ".try TRY_BLOCK_1 to TRY_BLOCK_1_END catch [mscorlib]System.Exception handler CATCH_BLOCK_1 to CATCH_BLOCK_1_END" "no" "yes"
+
+
+#ldftn
+./make_ldftn_test.sh ldftn_static_method valid "ldftn void class Driver::Method()"
+./make_ldftn_test.sh ldftn_virtual_method valid "ldftn instance void class Driver::VirtMethod()"
+./make_ldftn_test.sh ldftn_corlib_method valid "ldftn instance string string::ToUpper()"
+
+#this is encoded as a memberref
+./make_ldftn_test.sh ldftn_bad_function invalid "ldftn void class Test::NonPresent()"
+
+./make_ldftn_test.sh ldftn_overflow invalid "ldftn instance void class Driver::Method()" "ldc.i4.0\n\tldc.i4.0"
+
+./make_ldftn_test.sh ldftn_ctor unverifiable "ldftn void class Test::.ctor()"
+./make_ldftn_test.sh ldftn_static_method valid "ldftn void class Test::StaticMethod()"
+./make_ldftn_test.sh ldftn_non_virtual_method valid "ldftn instance void class Test::Method()"
+./make_ldftn_test.sh ldftn_virtual_method valid "ldftn instance void class Test::VirtMethod()"
+
+
+#ldvirtftn
+#TODO test visibility for ldftn and ldvirtftn
+
+./make_ldvirtftn_test.sh ldvirtftn_virt_method valid "ldvirtftn instance void class Test::VirtMethod()" "newobj void class Test::.ctor()"
+./make_ldvirtftn_test.sh ldvirtftn_virt_underflow invalid "ldvirtftn instance void class Test::VirtMethod()" "nop"
+./make_ldvirtftn_test.sh ldvirtftn_valid_obj_on_stack valid "ldvirtftn instance string object::ToString()" "newobj void object::.ctor()"
+
+I=1
+for TYPE in "ldc.i4.0" "ldc.i8 0" "ldc.r4 2" "ldc.i4.1\n\tconv.i" "ldloca 0" "ldloc.1"
+do
+	./make_ldvirtftn_test.sh ldvirtftn_invalid_type_on_stack_${I} unverifiable "ldvirtftn instance string object::ToString()" "$TYPE"
+	I=`expr $I + 1`
+done
+
+./make_ldvirtftn_test.sh ldvirtftn_non_virtual_method valid "ldvirtftn instance void class Test::Method()" "newobj void class Test::.ctor()"
+
+./make_ldvirtftn_test.sh ldvirtftn_ctor unverifiable "ldvirtftn void class Test::.ctor()" "newobj void class Test::.ctor()"
+./make_ldvirtftn_test.sh ldvirtftn_static_method unverifiable "ldvirtftn void class Test::StaticMethod()" "newobj void class Test::.ctor()"
+./make_ldvirtftn_test.sh ldvirtftn_method_not_present invalid "ldvirtftn void class Test::NonExistant()" "newobj void Test::.ctor()"
+
+
+./make_ldvirtftn_test.sh ldvirtftn_method_stack_type_obj_compatible_1 valid "ldvirtftn instance string object::ToString()" "newobj void Test::.ctor()"
+./make_ldvirtftn_test.sh ldvirtftn_method_stack_type_obj_compatible_2 valid "ldvirtftn void class Test::VirtMethod()" "newobj void Test::.ctor()"
+./make_ldvirtftn_test.sh ldvirtftn_method_stack_type_obj_compatible_3 unverifiable "ldvirtftn void class Test::VirtMethod()" "newobj void object::.ctor()"
+
+
+#Delegates
+#ldftn delegates
+#pure native int
+./make_delegate_test.sh delegate_with_native_int unverifiable "ldarg.1\n\tconv.i" "DelegateNoArg" "ldarg.0"
+
+#random types
+I=1;
+for TYPE in "ldc.i4.0" "ldc.i8 0" "ldc.r4 0" "ldc.r8 1" "ldarga 1"
+do
+	./make_delegate_test.sh delegate_with_bad_type_${I} unverifiable "ldftn void Driver::Method()" "DelegateNoArg" "$TYPE"
+	I=`expr $I + 1`
+done
+
+#ldftn
+#static method
+./make_delegate_test.sh delegate_ldftn_static_method_1 valid "ldftn void Driver::Method()" "DelegateNoArg" "ldnull"
+./make_delegate_test.sh delegate_ldftn_static_method_2 valid "ldftn void Driver::Method2(int32)" "DelegateIntArg" "ldnull"
+./make_delegate_test.sh delegate_ldftn_static_method_3 unverifiable "ldftn void Driver::Method2(int32)" "DelegateNoArg" "ldnull"
+./make_delegate_test.sh delegate_ldftn_static_method_4 unverifiable "ldftn void Driver::Method()" "DelegateIntArg" "ldnull"
+
+#non-virtual
+#null this
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_1 valid "ldftn instance void Driver::NonVirtMethod()" "DelegateNoArg" "ldnull"
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_2 valid "ldftn instance void Driver::NonVirtMethod2(int32)" "DelegateIntArg" "ldnull"
+
+#method on this
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_3 valid "ldftn instance void Driver::NonVirtMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_4 valid "ldftn instance void Driver::NonVirtMethod2(int32)" "DelegateIntArg" "newobj instance void class Driver::.ctor()"
+#method on parent
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_5 valid "ldftn instance void Parent::ParentMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+
+#invalid this
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_6 unverifiable "ldftn instance void Driver::NonVirtMethod()" "DelegateNoArg" "newobj void object::.ctor()"
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_7 unverifiable "ldftn instance void Driver::NonVirtMethod()" "DelegateNoArg" "newobj void Parent::.ctor()"
+
+#virtual methods
+./make_delegate_test.sh delegate_ldftn_virtual_method_1 valid "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0"
+./make_delegate_test.sh delegate_ldftn_virtual_method_2 valid "ldftn instance void Driver::VirtMethod2(int32)" "DelegateIntArg" "ldarg.0"
+./make_delegate_test.sh delegate_ldftn_virtual_method_3 valid "ldftn instance void Driver::ParentVirtMethod()" "DelegateNoArg" "ldarg.0"
+./make_delegate_test.sh delegate_ldftn_virtual_method_4 valid "ldftn instance void Parent::ParentVirtMethod()" "DelegateNoArg" "ldarg.0"
+
+#other forms of ldarg
+./make_delegate_test.sh delegate_ldftn_virtual_method_5 valid "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.s 0"
+./make_delegate_test.sh delegate_ldftn_virtual_method_6 valid "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg 0"
+
+#object is not this
+./make_delegate_test.sh delegate_ldftn_virtual_method_7 unverifiable "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+./make_delegate_test.sh delegate_ldftn_virtual_method_8 unverifiable "ldftn instance void Parent::VirtMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+./make_delegate_test.sh delegate_ldftn_virtual_method_9 unverifiable "ldftn instance void Driver::ParentVirtMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+./make_delegate_test.sh delegate_ldftn_virtual_method_10 unverifiable "ldftn instance void Parent::ParentVirtMethod()" "DelegateNoArg" "newobj instance void class Driver::.ctor()"
+
+#static method
+./make_delegate_test.sh delegate_ldftn_virtual_method_11 unverifiable "ldftn void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0" "Driver"
+./make_delegate_test.sh delegate_ldftn_virtual_method_12 unverifiable "ldftn void Parent::VirtMethod()" "DelegateNoArg" "ldarg.0" "Driver"
+./make_delegate_test.sh delegate_ldftn_virtual_method_13 unverifiable "ldftn void Parent::ParentVirtMethod()" "DelegateNoArg" "ldarg.0" "Driver"
+
+#final virtual
+./make_delegate_test.sh delegate_ldftn_virtual_method_14 valid "ldftn instance void Driver::SealedVirtMethod()" "DelegateNoArg" "ldarg.0" "Driver"
+./make_delegate_test.sh delegate_ldftn_virtual_method_15 unverifiable "ldftn instance void Parent::SealedVirtMethod()" "DelegateNoArg" "ldarg.0" "Driver"
+./make_delegate_test.sh delegate_ldftn_virtual_method_16 unverifiable "ldftn instance void Parent::SealedVirtMethod()" "DelegateNoArg" "ldarg.0" "Parent"
+
+
+#instruction sequence
+./make_delegate_test.sh delegate_ldftn_bad_sequence unverifiable "ldftn void Driver::Method()\n\t\tnop" "DelegateNoArg" "ldarg.0"
+#this one is terribly hard to read
+
+./make_delegate_test.sh delegate_ldftn_different_basic_block unverifiable "pop\n\t\tpop\n\t\tldarg.0\n\t\tldftn void Driver::Method()" "DelegateNoArg" "ldarg.0\n\t\tldftn void Driver::Method()\n\t\tldarg.1\n\t\tbrfalse DELEGATE_OP"
+
+#it's not necessary to test split due to a protected block since the stack must be empty at the beginning.
+
+
+#virtual method with starg.0
+./make_delegate_test.sh delegate_ldftn_virtual_method_with_starg0_1 unverifiable "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\tstarg.s 0\n\tldarg.0"
+./make_delegate_test.sh delegate_ldftn_virtual_method_with_starg0_2 unverifiable "ldftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\tstarg 0\n\tldarg.0"
+
+#value types
+./make_delegate_test.sh delegate_ldftn_non_virtual_method_valuetype valid "ldftn instance void MyValueType::NonVirtMethod()" "DelegateNoArg" "ldloc.0\n\tbox MyValueType"
+./make_delegate_test.sh delegate_ldftn_virtual_method_valuetype valid "ldftn instance string MyValueType::ToString()" "ToStringDelegate" "ldloc.0\n\tbox MyValueType"
+
+./make_delegate_test.sh delegate_ldftn_virtual_method_valuetype_byref unverifiable "ldftn instance string MyValueType::ToString()" "ToStringDelegate" "ldloca 0"
+
+
+#ldvirtftn
+#ok cases
+./make_delegate_test.sh delegate_ldvirtftn_non_virtual_method valid "ldvirtftn instance void Driver::NonVirtMethod()" "DelegateNoArg" "ldarg.0\n\tdup"
+./make_delegate_test.sh delegate_ldvirtftn_virtual_method valid "ldvirtftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\tdup"
+
+#wrong instruction sequence
+./make_delegate_test.sh delegate_ldvirtftn_bad_sequence unverifiable "ldvirtftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\tldarg.0"
+
+./make_delegate_test.sh delegate_ldvirtftn_different_basic_block unverifiable "pop\n\t\tdup\n\t\tldvirtftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\t\tldarg.0\n\t\tldvirtftn instance void Driver::VirtMethod()\n\t\tldarg.1\n\t\tbrfalse DELEGATE_OP"
+
+./make_delegate_test.sh delegate_ldvirtftn_different_basic_block_dup unverifiable "DUP_OP: ldvirtftn instance void Driver::VirtMethod()" "DelegateNoArg" "ldarg.0\n\t\tdup\n\t\tldarg.1\n\t\tbrfalse DUP_OP\n\t\tpop\n\t\tdup"
+
+
+#tests for ovf opcodes
+I=1
+for OP in "add.ovf" "add.ovf.un" "mul.ovf" "mul.ovf.un" "sub.ovf" "sub.ovf.un" 
+do
+	for TYPE in "object" "string" "float32" "float64" "int32*" "typedref" "int32[]" "int32[,]" "method int32 *(int32)"
+	do
+		./make_bin_test.sh bin_ovf_math_1_${I} unverifiable $OP int32 "${TYPE}"
+		./make_bin_test.sh bin_ovf_math_2_${I} unverifiable $OP int64 "${TYPE}"
+		./make_bin_test.sh bin_ovf_math_3_${I} unverifiable $OP "native int" "${TYPE}"
+		./make_bin_test.sh bin_ovf_math_4_${I} unverifiable $OP "int32&" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int32" "native int"
+	do
+		./make_bin_test.sh bin_ovf_math_5_${I} valid $OP int32 "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int32" "native int"
+	do
+		./make_bin_test.sh bin_ovf_math_6_${I} valid $OP "native int" "${TYPE}"
+		I=`expr $I + 1`
+	done
+done
+	
+for OP in "add.ovf.un" "sub.ovf.un" 
+do
+	for TYPE in "int32" "native int" "int32&"
+	do
+		./make_bin_test.sh bin_ovf_math_7_${I} unverifiable $OP "int32&" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int32" "native int" "int32&"
+	do
+		./make_bin_test.sh bin_ovf_math_8_${I} unverifiable $OP "${TYPE}" "int32&"
+		I=`expr $I + 1`
+	done
+done
+
+#should be invalid
+for OP in "add.ovf" "mul.ovf" "mul.ovf.un" "sub.ovf"
+do
+	for TYPE in "int32" "native int" "int32&"
+	do
+		./make_bin_test.sh bin_ovf_math_7_${I} unverifiable $OP "int32&" "${TYPE}"
+		I=`expr $I + 1`
+	done
+
+	for TYPE in "int32" "native int" "int32&"
+	do
+		./make_bin_test.sh bin_ovf_math_8_${I} unverifiable $OP "${TYPE}" "int32&"
+		I=`expr $I + 1`
+	done
+done
+
+#ovf math doesn't work with floats
+I=1
+for OP in "add.ovf.un" "add.ovf" "sub.ovf.un" "sub.ovf" "mul.ovf.un" "mul.ovf"
+do
+	for TYPE in "float32" "float64"
+	do
+		./make_bin_test.sh bin_ovf_math_f_${I} unverifiable $OP "${TYPE}" "${TYPE}"
+		I=`expr $I + 1`
+	done
+done
+
+#unbox.any
+
+./make_unbox_any_test.sh unbox_any_valuetype valid object int32 "stloc.1" "ldc.i4.0\n\tbox int32"
+./make_unbox_any_test.sh unbox_any_reference valid object string "stloc.1" "ldstr \"str\""
+./make_unbox_any_test.sh unbox_any_reference_null valid object string "stloc.1" "ldnull"
+
+#object is not a reference type
+I=1
+for TYPE in "ldc.i4.0" "ldc.i8 0" "ldc.r8 0" "ldloca 0" "ldc.i4.0\n\tconv.u"
+do
+	./make_unbox_any_test.sh unbox_any_bad_object_${I} unverifiable object int32 "stloc.1" "$TYPE"
+	I=`expr $I + 1`
+done
+
+#token is byref, byref-like or void
+./make_unbox_any_test.sh unbox_any_bad_token_1 invalid object "int32\&" "pop" "ldnull"
+./make_unbox_any_test.sh unbox_any_bad_token_2 unverifiable object typedref "pop" "ldnull"
+./make_unbox_any_test.sh unbox_any_bad_token_3 invalid object void "pop" "ldnull"
+
+
+
+#stobj
+#bad src
+I=1
+for TYPE in "int32" "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]" "native int"
+do
+	./make_stobj_test.sh stobj_simple_${I} valid "$TYPE" "$TYPE\&" "$TYPE" 
+	I=`expr $I + 1`
+done
+
+
+for TYPE in "int32*" "typedref" "method int32 *(int32)"
+do
+	./make_stobj_test.sh stobj_simple_${I} unverifiable "$TYPE" "$TYPE\&" "$TYPE" 
+	I=`expr $I + 1`
+done
+
+for TYPE in "int32\&" "void"
+do
+	./make_stobj_test.sh stobj_simple_${I} invalid "$TYPE" "$TYPE\&" "$TYPE" 
+	I=`expr $I + 1`
+done
+
+#src should not be ptr or byref
+I=1
+for TYPE in "int32\&" "int32*" "typedref"
+do
+	./make_stobj_test.sh stobj_bad_src_${I} unverifiable "$TYPE" "int32\&" "int32" 
+	I=`expr $I + 1`
+done
+
+#dest type is not a managed pointer
+I=1
+for TYPE in "int32" "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]" "native int"
+do
+	./make_stobj_test.sh stobj_dest_not_managed_pointer_${I} unverifiable "$TYPE" "$TYPE" "$TYPE" 
+	I=`expr $I + 1`
+done
+
+#src is compat to dest
+I=1
+for TYPE in "int8" "unsigned int8" "bool" "int16" "unsigned int16" "char" "int32" "unsigned int32" "native int" "native unsigned int"
+do 
+	./make_stobj_test.sh stobj_src_compat_to_token_${I} valid "$TYPE" "int32\&" "int32" 
+	I=`expr $I + 1`
+done
+
+for TYPE in "int64" "unsigned int64" "float32" "float64" string object
+do 
+	./make_stobj_test.sh stobj_src_compat_to_token_${I} unverifiable "$TYPE" "int32\&" "int32" 
+	I=`expr $I + 1`
+done
+
+for TYPE in string object Class
+do 
+	./make_stobj_test.sh stobj_src_compat_to_token_${I} valid "$TYPE" "object\&" "object" 
+	I=`expr $I + 1`
+done
+
+./make_stobj_test.sh stobj_src_compat_to_token_boxed_vt valid "int32" "object\&" "object" "box int32"
+./make_stobj_test.sh stobj_src_compat_to_token_null_literal valid "object" "object\&" "object" "pop\n\tldnull"
+
+
+#token type subtype of dest_type
+for TYPE in string object Class "int32[]" "int32[,]"
+do 
+	./make_stobj_test.sh stobj_token_subtype_of_dest_${I} valid "$TYPE" "object\&" "$TYPE" 
+	I=`expr $I + 1`
+done
+
+
+
+
+#initobj
+I=1
+for TYPE in int32 int64 float32 float64 object string MyStruct Class "valuetype StructTemplate\`1<object>" "native int"
+do
+	./make_initobj_test.sh initobj_good_types_${I} valid "${TYPE}\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#pointers
+I=1
+for TYPE in "native int" "int32*"
+do
+	./make_initobj_test.sh initobj_pointer_like_types_${I} unverifiable "${TYPE}" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#bad dest
+I=1
+for TYPE in int32 int64 float32 float64 string MyStruct typedref
+do
+	./make_initobj_test.sh initobj_wrong_on_stack_types_${I} unverifiable "${TYPE}" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+#invalid token
+I=1
+for TYPE in "int32\&" void
+do
+	./make_initobj_test.sh initobj_bad_token_type_${I} invalid "int32\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#bad token
+I=1
+for TYPE in int64 float32 float64 object string MyStruct Class "valuetype StructTemplate\`1<object>"
+do
+	./make_initobj_test.sh initobj_wrong_type_on_stack_${I} unverifiable "int32\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#type and token are compatible
+./make_initobj_test.sh initobj_compatible_type_on_stack_1 valid "int32\&" "native int"
+./make_initobj_test.sh initobj_compatible_type_on_stack_2 strict "object\&" "string"
+./make_initobj_test.sh initobj_compatible_type_on_stack_3 unverifiable "string\&" "object"
+
+./make_initobj_test.sh initobj_stack_underflow invalid "int32\&" "int32" "pop"
+
+./make_initobj_test.sh initobj_null_literal unverifiable "int32\&" "int32" "pop\n\tldnull"
+./make_initobj_test.sh initobj_boxed_value unverifiable "int32\&" "int32" "pop\n\tldc.i4.0\n\tbox int32"
+
+
+
+#cpobj
+I=1
+for TYPE in int32 int64 float32 float64 object string "valuetype MyStruct" "int32[]" "int32[,]" "native int"
+do
+	./make_cpobj_test.sh cpobj_simple_${I} valid "${TYPE}\&" "${TYPE}\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#should be able to use unmanaged types
+for TYPE in "int32*" "typedref" "method int32 *(int32)"
+do
+	./make_cpobj_test.sh cpobj_simple_${I} unverifiable "${TYPE}\&" "${TYPE}\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#should be able to use invalid types
+for TYPE in "int32\&" "void"
+do
+	./make_cpobj_test.sh cpobj_simple_${I} invalid "${TYPE}\&" "${TYPE}\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#src not a managed pointer
+I=1
+for TYPE in "int32" "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]" "native int"
+do
+	./make_cpobj_test.sh cpobj_src_not_byref_${I} unverifiable "${TYPE}" "${TYPE}\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#dest not a managed pointer
+I=1
+for TYPE in "int32" "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]" "native int"
+do
+	./make_cpobj_test.sh cpobj_dest_not_byref_${I} unverifiable "${TYPE}\&" "${TYPE}" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#src and dest not a managed pointer
+I=1
+for TYPE in "int32" "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]" "native int"
+do
+	./make_cpobj_test.sh cpobj_src_and_dest_not_byref_${I} unverifiable "${TYPE}" "${TYPE}" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+
+#bad token type
+I=1
+for TYPE in "int32\&" "void"
+do
+	./make_cpobj_test.sh cpobj_bad_token_type_${I} invalid "int32\&" "int32\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#src compat to token
+./make_cpobj_test.sh cpobj_src_compat_1 valid "int32\&" "int32\&" "native int"
+./make_cpobj_test.sh cpobj_src_compat_2 valid "native int\&" "int32\&" "int32"
+
+./make_cpobj_test.sh cpobj_src_compat_3 valid "string\&" "object\&" "object"
+./make_cpobj_test.sh cpobj_src_compat_4 valid "Class\&" "object\&" "object"
+
+./make_cpobj_test.sh cpobj_src_compat_5 unverifiable "object\&" "string\&" "string"
+./make_cpobj_test.sh cpobj_src_compat_6 unverifiable "object\&" "Class\&" "Class"
+
+
+#src not compat to token
+I=1
+for TYPE in  "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]"
+do
+	./make_cpobj_test.sh cpobj_src_not_compat_to_token_${I} unverifiable "${TYPE}\&" "int32\&" "int32"
+	I=`expr $I + 1`
+done
+
+#token compat to dest
+./make_cpobj_test.sh cpobj_token_compat_1 valid "int32\&" "int32\&" "native int"
+./make_cpobj_test.sh cpobj_token_compat_2 valid "int32\&" "native int\&" "int32"
+
+./make_cpobj_test.sh cpobj_token_compat_3 valid "Class\&" "object\&" "Class"
+./make_cpobj_test.sh cpobj_token_compat_4 valid "string\&" "object\&" "string"
+
+./make_cpobj_test.sh cpobj_token_compat_5 unverifiable "object\&" "Class\&" "object"
+./make_cpobj_test.sh cpobj_token_compat_6 unverifiable "object\&" "string\&" "object"
+
+#token to compat to dest
+I=1
+for TYPE in  "int64" "float32" "float64" Class MyStruct string object "int32[]" "int32[,]"
+do
+	./make_cpobj_test.sh cpobj_token_not_compat_to_dest${I} unverifiable "int32\&" "int32\&" "${TYPE}"
+	I=`expr $I + 1`
+done
+
+#src and dest not a managed pointer
+./make_cpobj_test.sh cpobj_bad_src_and_dest unverifiable "int32" "int32" "int32"
+
+#src or dest are null or boxed
+./make_cpobj_test.sh cpobj_src_is_null unverifiable "int32\&" "int32\&" "int32" "pop\n\tldnull"
+./make_cpobj_test.sh cpobj_dest_is_null unverifiable "int32\&" "int32\&" "int32" "pop\n\tpop\n\tldnull\n\tldloc.0"
+
+./make_cpobj_test.sh cpobj_src_is_boxed unverifiable "int32" "int32\&" "int32" "box int32"
+./make_cpobj_test.sh cpobj_dest_is_boxed unverifiable "int32\&" "int32" "int32" "pop\n\tbox int32\n\tldloc.0"
+
+./make_cpobj_test.sh cpobj_underflow_1 invalid "int32\&" "int32\&" "int32" "pop"
+./make_cpobj_test.sh cpobj_underflow_2 invalid "int32\&" "int32\&" "int32" "pop\n\tpop"
+
+
+
+#sizeof
+I=1
+for TYPE in int32 object string "int32[]" "native int" "int32[,]" typedref "int32*" "method int32 *(int32)" "class Template\`1<int32>" "valuetype MyStruct"
+do
+	./make_sizeof_test.sh sizeof_${I} valid "$TYPE"
+	I=`expr $I + 1`
+done
+
+for TYPE in void "int32&"
+do
+	./make_sizeof_test.sh sizeof_${I} invalid "$TYPE"
+	I=`expr $I + 1`
+done
+
+
+#localloc
+
+#valid types
+I=1
+for INIT in "ldc.i4.1" "ldc.i4.1\n\tconv.i" 
+do
+	./make_localloc_test.sh localloc_stack_type_$I unverifiable "$INIT"
+	I=`expr $I + 1`
+done
+
+#these types should be invalid
+for INIT in "ldc.i8 2" "ldc.r4 2.2" "ldc.r8 2.2" "ldloca 1"
+do
+	./make_localloc_test.sh localloc_stack_type_$I unverifiable "$INIT"
+	I=`expr $I + 1`
+done
+
+#stack underflow
+./make_localloc_test.sh localloc_empty_stack invalid 
+./make_localloc_test.sh localloc_stack_with_more_than_2_items invalid "ldc.i4.1\n\tldc.i4.1"
+
+#inside exception blocks
+./make_localloc_test.sh localloc_inside_catch_handler invalid "ldc.i4.1" "catch"
+./make_localloc_test.sh localloc_inside_filter invalid "ldc.i4.1" "filter"
+./make_localloc_test.sh localloc_inside_handler invalid "ldc.i4.1" "handler"
+./make_localloc_test.sh localloc_inside_finally invalid "ldc.i4.1" "finally"
+./make_localloc_test.sh localloc_inside_fault invalid "ldc.i4.1" "fault"
+
+
+
+
+
+
+#tests for call and callvirt
+
+#call test
+#invalid method token
+#valid
+#validate the this pointer for signatures with HASTHIS. 
+#this ptr: reference types must be a value, value type can be a MP or a BT.
+#number of args
+#args are compatible
+#method is abstract
+#calling base class constructor
+#calling a value type constructor
+#visibility
+#calling non-final virtual calls on something not a boxed valuetype, this arg must have THIS_POINTER_MASK and no starg.0 or ldarga.0 happens
+
+
+I=1
+for CTYPE in "call" "callvirt"
+do
+	./make_call_test.sh call_${I}_non_virtual_1 valid "${CTYPE} instance void ClassA::Method1()" "newobj instance void ClassA::.ctor()"
+	./make_call_test.sh call_${I}_non_virtual_2 valid "${CTYPE} instance void ClassA::Method1()" "ldnull"
+	./make_call_test.sh call_${I}_non_virtual_3 valid "${CTYPE} instance void ClassA::Method2(int32)" "newobj instance void ClassA::.ctor()\n\t\tldc.i4.0"
+	./make_call_test.sh call_${I}_non_virtual_underflow invalid "${CTYPE} instance void ClassA::Method12(int32)" "newobj instance void ClassA::.ctor()"
+	./make_call_test.sh call_${I}_non_virtual_bad_this invalid "${CTYPE} instance void ClassA::Method12(int32)" "newobj instance void ClassB::.ctor()"
+
+	./make_call_test.sh call_${I}_non_virtual_compat_this_1 valid "${CTYPE} instance void ClassA::Method1()" "newobj instance void ClassC::.ctor()"
+	./make_call_test.sh call_${I}_non_virtual_compat_this_2 valid "${CTYPE} instance void ClassC::Method1()" "newobj instance void ClassC::.ctor()"
+	./make_call_test.sh call_${I}_non_virtual_compat_this_3 unverifiable "${CTYPE} instance void ClassC::Method1()" "newobj instance void ClassA::.ctor()"
+
+	./make_call_test.sh call_${I}_final_virtual_method_1 valid "${CTYPE} instance void ClassC::VirtMethod()" "newobj instance void ClassC::.ctor()"
+
+	./make_call_test.sh call_${I}_virtual_method_1 valid "${CTYPE} instance void Driver::VirtMethod()" "ldarg.0" "instance"
+	./make_call_test.sh call_${I}_virtual_method_2 valid "${CTYPE} instance void BaseClass::VirtMethod()" "ldarg.0" "instance"
+
+	I=`expr $I + 1`
+done
+
+
+#tests for call only
+./make_call_test.sh call_global_1 valid "call void GlobalMethod1()"
+./make_call_test.sh call_global_2 valid "call void GlobalMethod2(int32)" "ldc.i4.0"
+./make_call_test.sh call_global_underflow invalid "call void GlobalMethod2(int32)" ""
+./make_call_test.sh call_abstract_method unverifiable "call instance void InterfaceA::AbsMethod()" "newobj instance void ImplIfaceA::.ctor()"
+./make_call_test.sh call_final_virtual_method_2 unverifiable "call instance void ClassC::VirtMethod()" "newobj instance void ClassA::.ctor()"
+./make_call_test.sh call_final_virtual_method_3 unverifiable "call instance void ClassA::VirtMethod()" "newobj instance void ClassA::.ctor()"
+
+./make_call_test.sh call_virtual_method_3 unverifiable "call instance void BaseClass::VirtMethod()" "ldarg.0" "instance" "ldarg.0\n\t\tstarg 0" 
+./make_call_test.sh call_virtual_method_4 unverifiable "call instance void BaseClass::VirtMethod()" "ldarg.0" "instance" "ldarga 0\n\t\tpop"
+
+#value type (we can call non final virtual on boxed VT)
+./make_call_test.sh call_valuetype_1 valid "call instance void MyValueType::Method()" "ldloca 0"
+./make_call_test.sh call_valuetype_2 unverifiable "call instance void MyValueType::Method()" "ldloc.0\n\t\tbox MyValueType"
+./make_call_test.sh call_valuetype_3 unverifiable "call instance void MyValueType::Method()" "ldloc.0"
+
+./make_call_test.sh call_valuetype_4 unverifiable "call instance int32 [mscorlib]System.ValueType::GetHashCode()" "ldloca 0" "static" "pop"
+./make_call_test.sh call_valuetype_5 valid "call instance int32 MyValueType::GetHashCode()" "ldloca 0" "static" "pop"
+
+./make_call_test.sh call_valuetype_6 valid "call instance int32 [mscorlib]System.ValueType::GetHashCode()"  "ldloc.0\n\t\tbox MyValueType" "static" "pop"
+./make_call_test.sh call_valuetype_7 valid "call instance bool object::Equals(object)" "ldloc.0\n\t\tbox MyValueType\n\t\tldnull" "static" "pop"
+
+./make_call_test.sh call_valuetype_8 valid "call instance int32 [mscorlib]System.Object::GetHashCode()"  "ldloc.0\n\t\tbox MyValueType" "static" "pop"
+
+#tests for callvirt only
+#FIXME ilasm encode the signature with instance even if it doesn't state so.
+#./make_call_test.sh call_virt_global_1 invalid "callvirt void GlobalMethod1()"
+
+./make_call_test.sh callvirt_abstract_method valid "callvirt instance void InterfaceA::AbsMethod()" "newobj instance void ImplIfaceA::.ctor()"
+./make_call_test.sh callvirt_final_virtual_method_2 unverifiable "callvirt instance void ClassC::VirtMethod()" "newobj instance void ClassA::.ctor()"
+./make_call_test.sh callvirt_final_virtual_method_3 valid "callvirt instance void ClassA::VirtMethod()" "newobj instance void ClassA::.ctor()"
+
+./make_call_test.sh callvirt_virtual_method_3 valid "callvirt instance void BaseClass::VirtMethod()" "ldarg.0" "instance" "ldarg.0\n\t\tstarg 0" 
+./make_call_test.sh callvirt_virtual_method_4 valid "callvirt instance void BaseClass::VirtMethod()" "ldarg.0" "instance" "ldarga 0\n\t\tpop"
+
+#value type (we can call non final virtual on boxed VT)
+./make_call_test.sh callvirt_valuetype_1 unverifiable "callvirt instance void MyValueType::Method()" "ldloca 0"
+./make_call_test.sh callvirt_valuetype_2 unverifiable "callvirt instance void MyValueType::Method()" "ldloc.0\n\t\tbox MyValueType"
+./make_call_test.sh callvirt_valuetype_3 unverifiable "callvirt instance void MyValueType::Method()" "ldloc.0"
+
+./make_call_test.sh callvirt_valuetype_4 unverifiable "callvirt instance int32 [mscorlib]System.ValueType::GetHashCode()" "ldloca 0" "static" "pop"
+./make_call_test.sh callvirt_valuetype_5 unverifiable "callvirt instance int32 MyValueType::GetHashCode()" "ldloca 0" "static" "pop"
+
+./make_call_test.sh callvirt_valuetype_6 valid "callvirt instance int32 [mscorlib]System.ValueType::GetHashCode()"  "ldloc.0\n\t\tbox MyValueType" "static" "pop"
+./make_call_test.sh callvirt_valuetype_7 valid "callvirt instance bool object::Equals(object)" "ldloc.0\n\t\tbox MyValueType\n\t\tldnull" "static" "pop"
+./make_call_test.sh callvirt_valuetype_8 valid "callvirt instance int32 [mscorlib]System.Object::GetHashCode()"  "ldloc.0\n\t\tbox MyValueType" "static" "pop"
+
+
+
 

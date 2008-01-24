@@ -2902,6 +2902,12 @@ int Mono_Posix_FromMountFlags (guint64 x, guint64 *r)
 #else /* def ST_APPEND */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ST_APPEND */
+	if ((x & Mono_Posix_MountFlags_ST_BIND) == Mono_Posix_MountFlags_ST_BIND)
+#ifdef ST_BIND
+		*r |= ST_BIND;
+#else /* def ST_BIND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_BIND */
 	if ((x & Mono_Posix_MountFlags_ST_IMMUTABLE) == Mono_Posix_MountFlags_ST_IMMUTABLE)
 #ifdef ST_IMMUTABLE
 		*r |= ST_IMMUTABLE;
@@ -2932,6 +2938,12 @@ int Mono_Posix_FromMountFlags (guint64 x, guint64 *r)
 #else /* def ST_NODIRATIME */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ST_NODIRATIME */
+	if ((x & Mono_Posix_MountFlags_ST_NOEXEC) == Mono_Posix_MountFlags_ST_NOEXEC)
+#ifdef ST_NOEXEC
+		*r |= ST_NOEXEC;
+#else /* def ST_NOEXEC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_NOEXEC */
 	if ((x & Mono_Posix_MountFlags_ST_NOSUID) == Mono_Posix_MountFlags_ST_NOSUID)
 #ifdef ST_NOSUID
 		*r |= ST_NOSUID;
@@ -2944,6 +2956,12 @@ int Mono_Posix_FromMountFlags (guint64 x, guint64 *r)
 #else /* def ST_RDONLY */
 		{errno = EINVAL; return -1;}
 #endif /* ndef ST_RDONLY */
+	if ((x & Mono_Posix_MountFlags_ST_REMOUNT) == Mono_Posix_MountFlags_ST_REMOUNT)
+#ifdef ST_REMOUNT
+		*r |= ST_REMOUNT;
+#else /* def ST_REMOUNT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef ST_REMOUNT */
 	if ((x & Mono_Posix_MountFlags_ST_SYNCHRONOUS) == Mono_Posix_MountFlags_ST_SYNCHRONOUS)
 #ifdef ST_SYNCHRONOUS
 		*r |= ST_SYNCHRONOUS;
@@ -2970,6 +2988,10 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	if ((x & ST_APPEND) == ST_APPEND)
 		*r |= Mono_Posix_MountFlags_ST_APPEND;
 #endif /* ndef ST_APPEND */
+#ifdef ST_BIND
+	if ((x & ST_BIND) == ST_BIND)
+		*r |= Mono_Posix_MountFlags_ST_BIND;
+#endif /* ndef ST_BIND */
 #ifdef ST_IMMUTABLE
 	if ((x & ST_IMMUTABLE) == ST_IMMUTABLE)
 		*r |= Mono_Posix_MountFlags_ST_IMMUTABLE;
@@ -2990,6 +3012,10 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	if ((x & ST_NODIRATIME) == ST_NODIRATIME)
 		*r |= Mono_Posix_MountFlags_ST_NODIRATIME;
 #endif /* ndef ST_NODIRATIME */
+#ifdef ST_NOEXEC
+	if ((x & ST_NOEXEC) == ST_NOEXEC)
+		*r |= Mono_Posix_MountFlags_ST_NOEXEC;
+#endif /* ndef ST_NOEXEC */
 #ifdef ST_NOSUID
 	if ((x & ST_NOSUID) == ST_NOSUID)
 		*r |= Mono_Posix_MountFlags_ST_NOSUID;
@@ -2998,6 +3024,10 @@ int Mono_Posix_ToMountFlags (guint64 x, guint64 *r)
 	if ((x & ST_RDONLY) == ST_RDONLY)
 		*r |= Mono_Posix_MountFlags_ST_RDONLY;
 #endif /* ndef ST_RDONLY */
+#ifdef ST_REMOUNT
+	if ((x & ST_REMOUNT) == ST_REMOUNT)
+		*r |= Mono_Posix_MountFlags_ST_REMOUNT;
+#endif /* ndef ST_REMOUNT */
 #ifdef ST_SYNCHRONOUS
 	if ((x & ST_SYNCHRONOUS) == ST_SYNCHRONOUS)
 		*r |= Mono_Posix_MountFlags_ST_SYNCHRONOUS;

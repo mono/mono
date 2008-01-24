@@ -200,6 +200,7 @@ struct _MonoImage {
 	GHashTable *isinst_cache;
 	GHashTable *castclass_cache;
 	GHashTable *proxy_isinst_cache;
+	GHashTable *rgctx_template_hash;
 
 	/*
 	 * indexed by token and MonoGenericContext pointer
@@ -421,7 +422,8 @@ gboolean
 mono_assembly_name_parse_full 		     (const char	   *name,
 					      MonoAssemblyName	   *aname,
 					      gboolean save_public_key,
-					      gboolean *is_version_defined) MONO_INTERNAL;
+					      gboolean *is_version_defined,
+						  gboolean *is_token_defined) MONO_INTERNAL;
 
 guint32 mono_metadata_get_generic_param_row (MonoImage *image, guint32 token, guint32 *owner);
 
@@ -435,6 +437,10 @@ mono_get_shared_generic_inst (MonoGenericContainer *container) MONO_INTERNAL;
 
 int
 mono_type_stack_size_internal (MonoType *t, int *align, gboolean allow_open) MONO_INTERNAL;
+
+gboolean
+mono_metadata_type_equal_full (MonoType *t1, MonoType *t2, gboolean signature_only) MONO_INTERNAL;
+
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

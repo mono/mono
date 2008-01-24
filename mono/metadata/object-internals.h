@@ -936,7 +936,7 @@ typedef struct {
 typedef struct _MonoReflectionGenericClass MonoReflectionGenericClass;
 struct _MonoReflectionGenericClass {
 	MonoReflectionType type;
-	MonoReflectionType *generic_type;
+	MonoReflectionTypeBuilder *generic_type;
 	guint32 initialized;
 };
 
@@ -953,6 +953,7 @@ typedef struct {
 	MonoArray   *keyToken;
 	guint32     versioncompat;
 	MonoObject *version;
+	guint32     processor_architecture;
 } MonoReflectionAssemblyName;
 
 typedef struct {

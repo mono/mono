@@ -57,6 +57,7 @@
 #include <mono/metadata/security.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/cil-coff.h>
+#include <mono/metadata/number-formatter.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
 #include <mono/io-layer/io-layer.h>
@@ -269,12 +270,15 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	if (!ec->valuetype) {
 		if (!mono_object_isinst (value, ec))
 			INVALID_CAST;
-		*ea = (gpointer)value;
+		mono_gc_wbarrier_set_arrayref (this, ea, (MonoObject*)value);
 		return;
 	}
 
 	if (mono_object_isinst (value, ec)) {
-		memcpy (ea, (char *)value + sizeof (MonoObject), esize);
+		if (ec->has_references)
+			mono_value_copy (ea, (char*)value + sizeof (MonoObject), ec);
+		else
+			memcpy (ea, (char *)value + sizeof (MonoObject), esize);
 		return;
 	}
 
@@ -1778,23 +1782,23 @@ ves_icall_get_property_info (MonoReflectionProperty *property, MonoPropertyInfo 
 	MONO_ARCH_SAVE_REGS;
 
 	if ((req_info & PInfo_ReflectedType) != 0)
-		info->parent = mono_type_get_object (domain, &property->klass->byval_arg);
+		MONO_STRUCT_SETREF (info, parent, mono_type_get_object (domain, &property->klass->byval_arg));
 	else if ((req_info & PInfo_DeclaringType) != 0)
-		info->parent = mono_type_get_object (domain, &property->property->parent->byval_arg);
+		MONO_STRUCT_SETREF (info, parent, mono_type_get_object (domain, &property->property->parent->byval_arg));
 
 	if ((req_info & PInfo_Name) != 0)
-		info->name = mono_string_new (domain, property->property->name);
+		MONO_STRUCT_SETREF (info, name, mono_string_new (domain, property->property->name));
 
 	if ((req_info & PInfo_Attributes) != 0)
 		info->attrs = property->property->attrs;
 
 	if ((req_info & PInfo_GetMethod) != 0)
-		info->get = property->property->get ?
-			    mono_method_get_object (domain, property->property->get, property->klass): NULL;
+		MONO_STRUCT_SETREF (info, get, property->property->get ?
+							mono_method_get_object (domain, property->property->get, property->klass): NULL);
 	
 	if ((req_info & PInfo_SetMethod) != 0)
-		info->set = property->property->set ?
-			    mono_method_get_object (domain, property->property->set, property->klass): NULL;
+		MONO_STRUCT_SETREF (info, set, property->property->set ?
+							mono_method_get_object (domain, property->property->set, property->klass): NULL);
 	/* 
 	 * There may be other methods defined for properties, though, it seems they are not exposed 
 	 * in the reflection API 
@@ -2293,22 +2297,12 @@ ves_icall_MonoGenericClass_GetParentType (MonoReflectionGenericClass *type)
 	gclass = (MonoDynamicGenericClass *) type->type.type->data.generic_class;
 
 	domain = mono_object_domain (type);
-	klass = mono_class_from_mono_type (type->generic_type->type);
+	klass = mono_class_from_mono_type (type->generic_type->type.type);
 
 	if (!klass->generic_class && !klass->generic_container)
 		return NULL;
 
-	if (!strcmp (type->generic_type->object.vtable->klass->name, "TypeBuilder")) {
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *) type->generic_type;
-		parent = tb->parent;
-	} else if (klass->wastypebuilder) {
-		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder *) type->generic_type;
-		parent = tb->parent;
-	} else {
-		MonoClass *pklass = klass->parent;
-		if (pklass)
-			parent = mono_type_get_object (domain, &pklass->byval_arg);
-	}
+	parent = type->generic_type->parent;
 
 	if (!parent || (parent->type->type != MONO_TYPE_GENERICINST))
 		return NULL;
@@ -2343,14 +2337,8 @@ ves_icall_MonoGenericClass_GetInterfaces (MonoReflectionGenericClass *type)
 	gclass = type->type.type->data.generic_class;
 	g_assert (gclass->is_dynamic);
 
-	if (!strcmp (type->generic_type->object.vtable->klass->name, "TypeBuilder")) {
-		tb = (MonoReflectionTypeBuilder *) type->generic_type;
-		icount = tb->interfaces ? mono_array_length (tb->interfaces) : 0;
-	} else {
-		klass = gclass->container_class;
-		mono_class_init (klass);
-		icount = klass->interface_count;
-	}
+	tb = type->generic_type;
+	icount = tb->interfaces ? mono_array_length (tb->interfaces) : 0;
 
 	res = mono_array_new (domain, System_Reflection_MonoGenericClass, icount);
 
@@ -3249,9 +3237,10 @@ handle_parent:
 		if ((field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) == FIELD_ATTRIBUTE_PUBLIC) {
 			if (bflags & BFLAGS_Public)
 				match++;
-		} else {
-			if (bflags & BFLAGS_NonPublic)
+		} else if ((klass == startklass) || (field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) != FIELD_ATTRIBUTE_PRIVATE) {
+			if (bflags & BFLAGS_NonPublic) {
 				match++;
+			}
 		}
 		if (!match)
 			continue;
@@ -3318,11 +3307,9 @@ handle_parent:
 		if ((field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) == FIELD_ATTRIBUTE_PUBLIC) {
 			if (bflags & BFLAGS_Public)
 				match++;
-		} else {
+		} else if ((klass == startklass) || (field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) != FIELD_ATTRIBUTE_PRIVATE) {
 			if (bflags & BFLAGS_NonPublic) {
-				/* Serialization currently depends on the old behavior.
-				 * if ((field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK) != FIELD_ATTRIBUTE_PRIVATE || startklass == klass)*/
-					match++;
+				match++;
 			}
 		}
 		if (!match)
@@ -3361,6 +3348,21 @@ handle_parent:
 		 */
 	}
 	return res;
+}
+
+static gboolean
+method_nonpublic (MonoMethod* method, gboolean start_klass)
+{
+	switch (method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) {
+		case METHOD_ATTRIBUTE_ASSEM:
+			return (start_klass || mono_defaults.generic_ilist_class);
+		case METHOD_ATTRIBUTE_PRIVATE:
+			return start_klass;
+		case METHOD_ATTRIBUTE_PUBLIC:
+			return FALSE;
+		default:
+			return TRUE;
+	}
 }
 
 static MonoArray*
@@ -3419,8 +3421,7 @@ handle_parent:
 		if ((method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC) {
 			if (bflags & BFLAGS_Public)
 				match++;
-		} else {
-			if (bflags & BFLAGS_NonPublic)
+		} else if ((bflags & BFLAGS_NonPublic) && method_nonpublic (method, (klass == startklass))) {
 				match++;
 		}
 		if (!match)
@@ -3581,6 +3582,15 @@ property_equal (MonoProperty *prop1, MonoProperty *prop2)
 	return TRUE;
 }
 
+static gboolean
+property_accessor_nonpublic (MonoMethod* accessor, gboolean start_klass)
+{
+	if (!accessor)
+		return FALSE;
+
+	return method_nonpublic (accessor, start_klass);
+}
+
 static MonoArray*
 ves_icall_Type_GetPropertiesByName (MonoReflectionType *type, MonoString *name, guint32 bflags, MonoBoolean ignore_case, MonoReflectionType *reftype)
 {
@@ -3642,9 +3652,11 @@ handle_parent:
 			(prop->set && ((prop->set->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC))) {
 			if (bflags & BFLAGS_Public)
 				match++;
-		} else {
-			if (bflags & BFLAGS_NonPublic)
+		} else if (bflags & BFLAGS_NonPublic) {
+			if (property_accessor_nonpublic(prop->get, startklass == klass) ||
+				property_accessor_nonpublic(prop->set, startklass == klass)) {
 				match++;
+			}
 		}
 		if (!match)
 			continue;
@@ -3737,11 +3749,23 @@ handle_parent:
 			} else {
 				if (!(bflags & BFLAGS_NonPublic))
 					continue;
+				if ((klass != startklass) && (method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PRIVATE)
+					continue;
 			}
 		}
 		else
 			if (!(bflags & BFLAGS_NonPublic))
 				continue;
+
+		if (method->flags & METHOD_ATTRIBUTE_STATIC) {
+			if (!(bflags & BFLAGS_Static))
+				continue;
+			if (!(bflags & BFLAGS_FlattenHierarchy) && (klass != startklass))
+				continue;
+		} else {
+			if (!(bflags & BFLAGS_Instance))
+				continue;
+		}
 
 		g_free (event_name);
 		return mono_event_get_object (domain, startklass, event);
@@ -3796,7 +3820,7 @@ handle_parent:
 			if ((method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC) {
 				if (bflags & BFLAGS_Public)
 					match++;
-			} else {
+			} else if ((klass == startklass) || (method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) != METHOD_ATTRIBUTE_PRIVATE) {
 				if (bflags & BFLAGS_NonPublic)
 					match++;
 			}
@@ -4257,7 +4281,7 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 
 	if (count > 0) {
 		MonoMethodDesc *desc = mono_method_desc_new (
-			"System.Globalization.CultureInfo:CreateSpecificCulture(string)", TRUE);
+			"System.Globalization.CultureInfo:CreateCulture(string,bool)", TRUE);
 		create_culture = mono_method_desc_search_in_image (desc, mono_defaults.corlib);
 		g_assert (create_culture);
 		mono_method_desc_free (desc);
@@ -4284,8 +4308,10 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 		MONO_OBJECT_SETREF (aname, version, create_version (domain, aname->major, aname->minor, aname->build, aname->revision));
 
 		if (create_culture) {
-			gpointer args [1];
+			gpointer args [2];
+			gboolean assembly_ref = TRUE;
 			args [0] = mono_string_new (domain, mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_CULTURE]));
+			args [1] = &assembly_ref;
 			MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
 		}
 		
@@ -4302,6 +4328,8 @@ ves_icall_System_Reflection_Assembly_GetReferencedAssemblies (MonoReflectionAsse
 				MONO_OBJECT_SETREF (aname, keyToken, mono_array_new (domain, mono_defaults.byte_class, pkey_len));
 				memcpy (mono_array_addr (aname->keyToken, guint8, 0), pkey_ptr, pkey_len);
 			}
+		} else {
+			MONO_OBJECT_SETREF (aname, keyToken, mono_array_new (domain, mono_defaults.byte_class, 0));
 		}
 		
 		/* note: this function doesn't return the codebase on purpose (i.e. it can
@@ -4690,13 +4718,14 @@ ves_icall_System_MonoType_getFullName (MonoReflectionType *object, gboolean full
 }
 
 static void
-fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *aname, MonoAssemblyName *name, const char *absolute, gboolean by_default_version)
+fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *aname, MonoAssemblyName *name, const char *absolute, gboolean by_default_version, gboolean default_publickey, gboolean default_token)
 {
 	static MonoMethod *create_culture = NULL;
-	gpointer args [1];
+	gpointer args [2];
 	guint32 pkey_len;
 	const char *pkey_ptr;
 	gchar *codebase;
+	gboolean assembly_ref = FALSE;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -4704,8 +4733,11 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 	aname->major = name->major;
 	aname->minor = name->minor;
 	aname->build = name->build;
+	aname->flags = name->flags;
 	aname->revision = name->revision;
 	aname->hashalg = name->hash_alg;
+	aname->versioncompat = 1; /* SameMachine (default) */
+
 	if (by_default_version)
 		MONO_OBJECT_SETREF (aname, version, create_version (domain, name->major, name->minor, name->build, name->revision));
 	
@@ -4716,7 +4748,7 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 	}
 
 	if (!create_culture) {
-		MonoMethodDesc *desc = mono_method_desc_new ("System.Globalization.CultureInfo:CreateSpecificCulture(string)", TRUE);
+		MonoMethodDesc *desc = mono_method_desc_new ("System.Globalization.CultureInfo:CreateCulture(string,bool)", TRUE);
 		create_culture = mono_method_desc_search_in_image (desc, mono_defaults.corlib);
 		g_assert (create_culture);
 		mono_method_desc_free (desc);
@@ -4724,6 +4756,7 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 
 	if (name->culture) {
 		args [0] = mono_string_new (domain, name->culture);
+		args [1] = &assembly_ref;
 		MONO_OBJECT_SETREF (aname, cultureInfo, mono_runtime_invoke (create_culture, NULL, args, NULL));
 	}
 
@@ -4733,6 +4766,10 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 
 		MONO_OBJECT_SETREF (aname, publicKey, mono_array_new (domain, mono_defaults.byte_class, pkey_len));
 		memcpy (mono_array_addr (aname->publicKey, guint8, 0), pkey_ptr, pkey_len);
+		aname->flags |= ASSEMBLYREF_FULL_PUBLIC_KEY_FLAG;
+	} else if (default_publickey) {
+		MONO_OBJECT_SETREF (aname, publicKey, mono_array_new (domain, mono_defaults.byte_class, 0));
+		aname->flags |= ASSEMBLYREF_FULL_PUBLIC_KEY_FLAG;
 	}
 
 	/* MonoAssemblyName keeps the public key token as an hexadecimal string */
@@ -4748,6 +4785,8 @@ fill_reflection_assembly_name (MonoDomain *domain, MonoReflectionAssemblyName *a
 			*p |= g_ascii_xdigit_value (name->public_key_token [j++]);
 			p++;
 		}
+	} else if (default_token) {
+		MONO_OBJECT_SETREF (aname, keyToken, mono_array_new (domain, mono_defaults.byte_class, 0));
 	}
 }
 
@@ -4761,13 +4800,15 @@ ves_icall_System_Reflection_Assembly_FillName (MonoReflectionAssembly *assembly,
 
 	if (g_path_is_absolute (mass->image->name)) {
 		fill_reflection_assembly_name (mono_object_domain (assembly),
-			aname, &mass->aname, mass->image->name, TRUE);
+			aname, &mass->aname, mass->image->name, TRUE,
+			TRUE, mono_get_runtime_info ()->framework_version [0] >= '2');
 		return;
 	}
 	absolute = g_build_filename (mass->basedir, mass->image->name, NULL);
 
 	fill_reflection_assembly_name (mono_object_domain (assembly),
-		aname, &mass->aname, absolute, TRUE);
+		aname, &mass->aname, absolute, TRUE, TRUE,
+		mono_get_runtime_info ()->framework_version [0] >= '2');
 
 	g_free (absolute);
 }
@@ -4805,7 +4846,9 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoString *fname,
 		mono_raise_exception (mono_get_exception_argument ("assemblyFile", "The file does not contain a manifest"));
 	}
 
-	fill_reflection_assembly_name (mono_domain_get (), aname, &name, filename, TRUE);
+	fill_reflection_assembly_name (mono_domain_get (), aname, &name, filename,
+		TRUE, mono_get_runtime_info ()->framework_version [0] == '1',
+		mono_get_runtime_info ()->framework_version [0] >= '2');
 
 	g_free (filename);
 	mono_image_close (image);
@@ -5021,12 +5064,14 @@ ves_icall_System_Reflection_AssemblyName_ParseName (MonoReflectionAssemblyName *
 	MonoDomain *domain = mono_object_domain (name);
 	char *val;
 	gboolean is_version_defined;
+	gboolean is_token_defined;
 
 	val = mono_string_to_utf8 (assname);
-	if (!mono_assembly_name_parse_full (val, &aname, TRUE, &is_version_defined))
+	if (!mono_assembly_name_parse_full (val, &aname, TRUE, &is_version_defined, &is_token_defined))
 		return FALSE;
 	
-	fill_reflection_assembly_name (domain, name, &aname, "", is_version_defined);
+	fill_reflection_assembly_name (domain, name, &aname, "", is_version_defined,
+		FALSE, is_token_defined);
 
 	mono_assembly_name_free (&aname);
 	g_free ((guint8*) aname.public_key);
@@ -5749,12 +5794,18 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 		tz_info.StandardDate.wYear = year;
 		convert_to_absolute_date(&tz_info.StandardDate);
 		err = SystemTimeToFileTime (&tz_info.StandardDate, &ft);
-		g_assert(err);
+		//g_assert(err);
+		if (err == 0)
+			return 0;
+		
 		mono_array_set ((*data), gint64, 1, FILETIME_ADJUST + (((guint64)ft.dwHighDateTime<<32) | ft.dwLowDateTime));
 		tz_info.DaylightDate.wYear = year;
 		convert_to_absolute_date(&tz_info.DaylightDate);
 		err = SystemTimeToFileTime (&tz_info.DaylightDate, &ft);
-		g_assert(err);
+		//g_assert(err);
+		if (err == 0)
+			return 0;
+		
 		mono_array_set ((*data), gint64, 0, FILETIME_ADJUST + (((guint64)ft.dwHighDateTime<<32) | ft.dwLowDateTime));
 	}
 	mono_array_set ((*data), gint64, 2, (tz_info.Bias + tz_info.StandardBias) * -600000000LL);
@@ -6132,6 +6183,9 @@ static void
 ves_icall_System_Environment_Exit (int result)
 {
 	MONO_ARCH_SAVE_REGS;
+
+	if (!mono_threads_set_shutting_down ())
+		return;
 
 	mono_runtime_set_shutting_down ();
 
@@ -6755,6 +6809,23 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionType 
 
 	while ((m = mono_class_get_methods (klass, &iter)))
 		prelink_method (m);
+}
+
+/* These parameters are "readonly" in corlib/System/NumberFormatter.cs */
+static void
+ves_icall_System_NumberFormatter_GetFormatterTables (guint64 const **mantissas,
+					    gint32 const **exponents,
+					    gunichar2 const **digitLowerTable,
+					    gunichar2 const **digitUpperTable,
+					    gint64 const **tenPowersList,
+					    gint32 const **decHexDigits)
+{
+	*mantissas = Formatter_MantissaBitsTable;
+	*exponents = Formatter_TensExponentTable;
+	*digitLowerTable = Formatter_DigitLowerTable;
+	*digitUpperTable = Formatter_DigitUpperTable;
+	*tenPowersList = Formatter_TenPowersList;
+	*decHexDigits = Formatter_DecHexDigits;
 }
 
 /* These parameters are "readonly" in corlib/System/Char.cs */

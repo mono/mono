@@ -578,6 +578,8 @@ int Mono_Posix_ToMmapProts (int x, int *r);
 enum Mono_Posix_MountFlags {
 	Mono_Posix_MountFlags_ST_APPEND            = 0x0000000000000100,
 	#define Mono_Posix_MountFlags_ST_APPEND      Mono_Posix_MountFlags_ST_APPEND
+	Mono_Posix_MountFlags_ST_BIND              = 0x0000000000001000,
+	#define Mono_Posix_MountFlags_ST_BIND        Mono_Posix_MountFlags_ST_BIND
 	Mono_Posix_MountFlags_ST_IMMUTABLE         = 0x0000000000000200,
 	#define Mono_Posix_MountFlags_ST_IMMUTABLE   Mono_Posix_MountFlags_ST_IMMUTABLE
 	Mono_Posix_MountFlags_ST_MANDLOCK          = 0x0000000000000040,
@@ -588,10 +590,14 @@ enum Mono_Posix_MountFlags {
 	#define Mono_Posix_MountFlags_ST_NODEV       Mono_Posix_MountFlags_ST_NODEV
 	Mono_Posix_MountFlags_ST_NODIRATIME        = 0x0000000000000800,
 	#define Mono_Posix_MountFlags_ST_NODIRATIME  Mono_Posix_MountFlags_ST_NODIRATIME
+	Mono_Posix_MountFlags_ST_NOEXEC            = 0x0000000000000008,
+	#define Mono_Posix_MountFlags_ST_NOEXEC      Mono_Posix_MountFlags_ST_NOEXEC
 	Mono_Posix_MountFlags_ST_NOSUID            = 0x0000000000000002,
 	#define Mono_Posix_MountFlags_ST_NOSUID      Mono_Posix_MountFlags_ST_NOSUID
 	Mono_Posix_MountFlags_ST_RDONLY            = 0x0000000000000001,
 	#define Mono_Posix_MountFlags_ST_RDONLY      Mono_Posix_MountFlags_ST_RDONLY
+	Mono_Posix_MountFlags_ST_REMOUNT           = 0x0000000000000020,
+	#define Mono_Posix_MountFlags_ST_REMOUNT     Mono_Posix_MountFlags_ST_REMOUNT
 	Mono_Posix_MountFlags_ST_SYNCHRONOUS       = 0x0000000000000010,
 	#define Mono_Posix_MountFlags_ST_SYNCHRONOUS Mono_Posix_MountFlags_ST_SYNCHRONOUS
 	Mono_Posix_MountFlags_ST_WRITE             = 0x0000000000000080,
@@ -1372,6 +1378,7 @@ struct Mono_Posix_Syscall__Dirent;
 struct Mono_Posix_Syscall__Fstab;
 struct Mono_Posix_Syscall__Group;
 struct Mono_Posix_Syscall__Passwd;
+struct Mono_Posix_Syscall__Utsname;
 struct Mono_Posix_Timeval;
 struct Mono_Posix_Timezone;
 struct Mono_Posix_Utimbuf;
@@ -1489,6 +1496,16 @@ struct Mono_Posix_Syscall__Passwd {
 	void*        pw_dir;
 	void*        pw_shell;
 	void*        _pw_buf_;
+};
+
+struct Mono_Posix_Syscall__Utsname {
+	void* sysname;
+	void* nodename;
+	void* release;
+	void* version;
+	void* machine;
+	void* domainname;
+	void* _buf_;
 };
 
 struct Mono_Posix_Timeval {
@@ -1678,6 +1695,7 @@ gint64 Mono_Posix_Syscall_telldir (void* dir);
 gint64 Mono_Posix_Syscall_time (gint64* t);
 int Mono_Posix_Syscall_truncate (const char* path, gint64 length);
 int Mono_Posix_Syscall_ttyname_r (int fd, char* buf, guint64 buflen);
+int Mono_Posix_Syscall_uname (struct Mono_Posix_Syscall__Utsname* buf);
 int Mono_Posix_Syscall_utime (const char* filename, struct Mono_Posix_Utimbuf* buf, int use_buf);
 int Mono_Posix_Syscall_utimes (const char* filename, struct Mono_Posix_Timeval* tvp);
 int Mono_Posix_Syscall_WEXITSTATUS (int status);

@@ -138,11 +138,11 @@ void _wapi_thread_set_termination_details (gpointer handle,
 #ifdef DEBUG
 	g_message ("%s: Thread %p terminating", __func__, handle);
 #endif
+
+	_wapi_thread_abandon_mutexes (handle);
 	
 	thr_ret = _wapi_handle_lock_shared_handles ();
 	g_assert (thr_ret == 0);
-	
-	_wapi_thread_abandon_mutexes (handle);
 	
 	ok = _wapi_lookup_handle (handle, WAPI_HANDLE_THREAD,
 				  (gpointer *)&thread_handle);
@@ -249,7 +249,25 @@ static void *thread_start_routine (gpointer args)
 
 	thr_ret = pthread_setspecific (thread_hash_key,
 				       (void *)thread->handle);
-	g_assert (thr_ret == 0);
+	if (thr_ret != 0) {
+		/* This is only supposed to happen when Mono is
+		   shutting down.  We cannot assert on it, though,
+		   because we must not depend on metadata, which is
+		   where the shutdown code is.
+
+		   This is a race condition which arises because
+		   pthreads don't allow creation of suspended threads.
+		   Once Mono is set to shut down no new thread is
+		   allowed to start, even though threads may still be
+		   created.  We emulate suspended threads in this
+		   function by calling _wapi_thread_suspend() below.
+
+		   So it can happen that even though Mono is already
+		   shutting down we still end up here, and at this
+		   point the thread_hash_key might already be
+		   destroyed. */
+		pthread_exit (NULL);
+	}
 
 	thread->id = pthread_self();
 

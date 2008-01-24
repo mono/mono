@@ -19,8 +19,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <mono/os/gc_wrapper.h>
-
+#include <mono/metadata/gc-internal.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/domain-internals.h>
 #include "mono/metadata/metadata-internals.h"
@@ -55,7 +54,7 @@
  * Changes which are already detected at runtime, like the addition
  * of icalls, do not require an increment.
  */
-#define MONO_CORLIB_VERSION 63
+#define MONO_CORLIB_VERSION 65
 
 typedef struct
 {
@@ -116,7 +115,7 @@ mono_runtime_init (MonoDomain *domain, MonoThreadStartCB start_cb,
 
 	mono_portability_helpers_init ();
 	
-	MONO_GC_PRE_INIT ();
+	mono_gc_base_init ();
 	mono_monitor_init ();
 	mono_thread_pool_init ();
 	mono_marshal_init ();
@@ -1397,10 +1396,17 @@ ves_icall_System_AppDomain_LoadAssembly (MonoAppDomain *ad,  MonoString *assRef,
 	ass = mono_assembly_load_full_nosearch (&aname, NULL, &status, refOnly);
 	mono_assembly_name_free (&aname);
 
-	if (!ass && (refass = mono_try_assembly_resolve (domain, assRef, refOnly)) == NULL){
-		/* FIXME: it doesn't make much sense since we really don't have a filename ... */
-		MonoException *exc = mono_get_exception_file_not_found2 (NULL, assRef);
-		mono_raise_exception (exc);
+	if (!ass) {
+		/* MS.NET doesn't seem to call the assembly resolve handler for refonly assemblies */
+		if (!refOnly)
+			refass = mono_try_assembly_resolve (domain, assRef, refOnly);
+		else
+			refass = NULL;
+		if (!refass) {
+			/* FIXME: it doesn't make much sense since we really don't have a filename ... */
+			MonoException *exc = mono_get_exception_file_not_found2 (NULL, assRef);
+			mono_raise_exception (exc);
+		}
 	}
 
 	if (refass == NULL)
@@ -1449,26 +1455,17 @@ ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id)
 }
 
 gint32
-ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad, MonoString *file, 
-					    MonoObject *evidence, MonoArray *args)
+ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad, 
+											MonoReflectionAssembly *refass, MonoArray *args)
 {
-	MonoAssembly *assembly;
 	MonoImage *image;
 	MonoMethod *method;
-	char *filename;
-	gint32 res;
-	MonoReflectionAssembly *refass;
 
 	MONO_ARCH_SAVE_REGS;
 
-	filename = mono_string_to_utf8 (file);
-	assembly = mono_assembly_open (filename, NULL);
-	g_free (filename);
-
-	if (!assembly)
-		mono_raise_exception (mono_get_exception_file_not_found2 (NULL, file));
-
-	image = assembly->image;
+	g_assert (refass);
+	image = refass->assembly->image;
+	g_assert (image);
 
 	method = mono_get_method (image, mono_image_get_entry_point (image), NULL);
 
@@ -1478,12 +1475,7 @@ ves_icall_System_AppDomain_ExecuteAssembly (MonoAppDomain *ad, MonoString *file,
 	if (!args)
 		args = (MonoArray *) mono_array_new (ad->data, mono_defaults.string_class, 0);
 
-	refass = mono_assembly_get_object (ad->data, assembly);
-	MONO_OBJECT_SETREF (refass, evidence, evidence);
-
-	res = mono_runtime_exec_main (method, (MonoArray *)args, NULL);
-
-	return res;
+	return mono_runtime_exec_main (method, (MonoArray *)args, NULL);
 }
 
 gint32 

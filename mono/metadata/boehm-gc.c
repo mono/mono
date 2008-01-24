@@ -5,12 +5,12 @@
 
 #include "config.h"
 #define GC_I_HIDE_POINTERS
-#include <mono/os/gc_wrapper.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/metadata/mono-gc.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/class-internals.h>
-#include <mono/metadata/marshal.h>
+#include <mono/metadata/method-builder.h>
 #include <mono/metadata/opcodes.h>
 #include <mono/utils/mono-logger.h>
 
@@ -23,6 +23,10 @@
 #include "private/pthread_support.h"
 #endif
 
+#define GC_NO_DESCRIPTOR ((gpointer)(0 | GC_DS_LENGTH))
+
+static gboolean gc_initialized = FALSE;
+
 static void
 mono_gc_warning (char *msg, GC_word arg)
 {
@@ -32,11 +36,71 @@ mono_gc_warning (char *msg, GC_word arg)
 void
 mono_gc_base_init (void)
 {
+	if (gc_initialized)
+		return;
+
+	/*
+	 * Handle the case when we are called from a thread different from the main thread,
+	 * confusing libgc.
+	 * FIXME: Move this to libgc where it belongs.
+	 *
+	 * we used to do this only when running on valgrind,
+	 * but it happens also in other setups.
+	 */
+#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
+	{
+		size_t size;
+		void *sstart;
+		pthread_attr_t attr;
+		pthread_getattr_np (pthread_self (), &attr);
+		pthread_attr_getstack (&attr, &sstart, &size);
+		pthread_attr_destroy (&attr); 
+		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
+#ifdef __ia64__
+		/*
+		 * The calculation above doesn't seem to work on ia64, also we need to set
+		 * GC_register_stackbottom as well, but don't know how.
+		 */
+#else
+		/* apparently with some linuxthreads implementations sstart can be NULL,
+		 * fallback to the more imprecise method (bug# 78096).
+		 */
+		if (sstart) {
+			GC_stackbottom = (char*)sstart + size;
+		} else {
+			int dummy;
+			gsize stack_bottom = (gsize)&dummy;
+			stack_bottom += 4095;
+			stack_bottom &= ~4095;
+			GC_stackbottom = (char*)stack_bottom;
+		}
+#endif
+	}
+#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
+		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
+#else
+	{
+		int dummy;
+		gsize stack_bottom = (gsize)&dummy;
+		stack_bottom += 4095;
+		stack_bottom &= ~4095;
+		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
+		GC_stackbottom = (char*)stack_bottom;
+	}
+#endif
+
+	GC_init ();
 	GC_no_dls = TRUE;
 	GC_oom_fn = mono_gc_out_of_memory;
 	GC_set_warn_proc (mono_gc_warning);
 	GC_finalize_on_demand = 1;
 	GC_finalizer_notifier = mono_gc_finalize_notify;
+
+#ifdef HAVE_GC_GCJ_MALLOC
+	GC_init_gcj_malloc (5, NULL);
+#endif
+
+	gc_initialized = TRUE;
 }
 
 void
@@ -103,7 +167,9 @@ mono_gc_enable (void)
 gboolean
 mono_gc_is_gc_thread (void)
 {
-#ifdef USE_INCLUDED_LIBGC
+#if GC_VERSION_MAJOR >= 7
+	return TRUE;
+#elif defined(USE_INCLUDED_LIBGC)
 	return GC_thread_is_registered ();
 #else
 	return TRUE;
@@ -115,6 +181,25 @@ extern int GC_thread_register_foreign (void *base_addr);
 gboolean
 mono_gc_register_thread (void *baseptr)
 {
+#if GC_VERSION_MAJOR >= 7
+	struct GC_stack_base sb;
+	int res;
+
+	res = GC_get_stack_base (&sb);
+	if (res != GC_SUCCESS) {
+		sb.mem_base = baseptr;
+#ifdef __ia64__
+		/* Can't determine the register stack bounds */
+		g_error ("mono_gc_register_thread failed ().\n");
+#endif
+	}
+	res = GC_register_my_thread (&sb);
+	if ((res != GC_SUCCESS) && (res != GC_DUPLICATE)) {
+		g_warning ("GC_register_my_thread () failed.\n");
+		return FALSE;
+	}
+	return TRUE;
+#else
 	if (mono_gc_is_gc_thread())
 		return TRUE;
 #if defined(USE_INCLUDED_LIBGC) && !defined(PLATFORM_WIN32)
@@ -122,13 +207,14 @@ mono_gc_register_thread (void *baseptr)
 #else
 	return FALSE;
 #endif
+#endif
 }
 
 gboolean
 mono_object_is_alive (MonoObject* o)
 {
 #ifdef USE_INCLUDED_LIBGC
-	return GC_is_marked (o);
+	return GC_is_marked ((gpointer)o);
 #else
 	return TRUE;
 #endif
@@ -164,6 +250,25 @@ mono_gc_enable_events (void)
 
 #endif
 
+int
+mono_gc_register_root (char *start, size_t size, void *descr)
+{
+	/* for some strange reason, they want one extra byte on the end */
+	GC_add_roots (start, start + size + 1);
+
+	return TRUE;
+}
+
+void
+mono_gc_deregister_root (char* addr)
+{
+#ifndef PLATFORM_WIN32
+	/* FIXME: libgc doesn't define this work win32 for some reason */
+	/* FIXME: No size info */
+	GC_remove_roots (addr, addr + sizeof (gpointer) + 1);
+#endif
+}
+
 void
 mono_gc_weak_link_add (void **link_addr, MonoObject *obj)
 {
@@ -189,9 +294,36 @@ mono_gc_weak_link_get (void **link_addr)
 }
 
 void*
+mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
+{
+	return mono_gc_make_descr_from_bitmap (bitmap, numbits);
+}
+
+void*
+mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+{
+	return mono_gc_make_descr_from_bitmap (bitmap, numbits);
+}
+
+void*
+mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
+{
+	/* libgc has no usable support for arrays... */
+	return GC_NO_DESCRIPTOR;
+}
+
+void*
 mono_gc_make_descr_from_bitmap (gsize *bitmap, int numbits)
 {
+#ifdef HAVE_GC_GCJ_MALLOC
+	/* It seems there are issues when the bitmap doesn't fit: play it safe */
+	if (numbits >= 30)
+		return GC_NO_DESCRIPTOR;
+	else
+		return (gpointer)GC_make_descriptor ((GC_bitmap)bitmap, numbits);
+#else
 	return NULL;
+#endif
 }
 
 void*
@@ -480,7 +612,6 @@ create_allocator (int atype, int offset)
 }
 
 static MonoMethod* alloc_method_cache [ATYPE_NUM];
-#define GC_NO_DESCRIPTOR ((gpointer)(0 | GC_DS_LENGTH))
 
 /*
  * If possible, generate a managed method that can quickly allocate objects in class

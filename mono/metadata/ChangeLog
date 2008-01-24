@@ -1,6 +1,755 @@
-2007-12-18  Zoltan Varga  <vargaz@gmail.com>
+2008-01-24  Raja R Harinath  <harinath@hurrynot.org>
 
-	* mempool.c (mono_mempool_destroy): Remove some debug cruft.
+	* class.c (mono_class_inflate_generic_method_full): Don't modify
+	iresult->context after cache check.
+
+2008-01-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_inflate_generic_method_full): Change the
+	struct assignments to memcpy for better visibility and add some comments.
+
+2008-01-23  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_threads_set_shutting_down): Simplify shutdown
+	procedure, and make it work on windows.
+
+2008-01-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoReflectionGenericClass): Make the 'generic_type' field
+	a MonoReflectionTypeBuilder since it is always of that type.
+
+	* reflection.c (mono_type_get_object): Remove an unneccesary check.	
+
+	* reflection.c (mono_generic_class_get_object): Simplify this a bit.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Ditto.
+	
+	* icall.c (ves_icall_MonoGenericClass_GetParentType): Ditto.
+
+	* icall.c (ves_icall_MonoGenericClass_GetInterfaces): Ditto.
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove already created
+	instantiations from the type cache.
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_ldstr): fixed token verification. previous code was 100% broken.
+
+	* verify.c (do_unbox_value): push a controled mutability managed pointer.
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_ldstr): added, verifies if the #US token is valid.
+
+	* verify.c (mono_method_verify): removed old TODO
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_newobj): add visibility check.
+
+2008-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_load_function_ptr): add visibility check.
+
+2008-01-21  Massimiliano Mantione  <massi@ximian.com>
+	*class.c:
+	mono_generic_class_get_class: hook profiler events.
+	mono_field_get_offset: added to support heap-shot in the new profiler.
+	*class.h: exported mono_field_get_offset.
+	* reflection.c:
+	mono_reflection_setup_internal_class: hook profiler events.
+
+2008-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_native_wrapper): Add a 'check_exceptions' 
+	argument here too and use it to avoid checking for pending exceptions if 
+	possible.
+
+2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* assembly.c (build_assembly_name): add arg for passing the assembly
+	flags. Do not consider a PublicKey with value "null" valid.
+        (mono_assembly_name_parse_full): added boolean argument that will be
+	set if the assembly name contains a PublicKeyToken spec. Added support
+	for the Retargetable spec for which only Yes or No are allowed as valid
+	value. Consider assembly name invalid if Retargetable spec is set, but
+	either version, culture or public key (token) are not specified.
+	* metadata-internals.h: sync signature of mono_assembly_name_parse_full
+	with implementation in assembly.c.
+	* icall.c (fill_reflection_assembly_name): also copy assembly flags
+	from MonoAssemblyName.
+	(ves_icall_System_Reflection_AssemblyName_ParseName): use newly
+	introduced argument for mono_assembly_name_parse_full to know if the
+	assembly name has a PublicKeyToken spec, and if it has instruct
+	fill_reflection_assembly_name to use default value for keyToken (if
+	PublicKeyToken is null).
+
+2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): fixed ovf ops with
+	float values. They are unverifiable now.
+
+2008-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (set_failure_from_loader_error): add BadImageException to the
+	list of exceptions that can cause a type to fail to load.
+
+	* class.c (mono_class_get_exception_for_failure): same.
+
+2008-01-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (in_any_exception_block): added, check if offset
+	is part of any exception handling clause.
+
+	* verify.c (get_stack_type): added VAR and MVAR types.
+
+	* verify.c (do_stobj): better error messages.
+
+	* verify.c (do_cpobj): added, check cpobj.
+
+	* verify.c (do_initobj): added, check initobj.
+
+	* verify.c (do_sizeof): added, check sizeof.
+
+	* verify.c (do_localloc): added, check localloc.
+
+	* verify.c: adde proper verification for cpobj, initobj, sizeof and localloc.
+
+2008-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-builder.c (mono_mb_emit_native_call): Get rid of the unused
+	save_lmf/restore_lmf opcodes.
+
+	* threads.c (mono_threads_install_notify_pending_exc): New function to
+	install a callback notifying the JIT there is a pending exception on a thread.
+	(mono_thread_request_interruption): Call the new callback.
+	(mono_thread_get_and_clear_pending_exception): New function to return the
+	exception pending on a thread.
+
+	* marshal.c (mono_marshal_get_icall_wrapper): Add a check_exceptions argument
+	to turn off checking for pending exceptions.
+	(mono_marshal_get_native_wrapper): Ditto.
+
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads-types.h: Get rid of the unnecessary extern declarations.
+
+2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c (ves_icall_Type_GetField): if NonPublic flag is set, only
+	return field from parent class if not private.
+	(ves_icall_Type_GetFields_internal): if NonPublic flag is set, only
+	returns fields from parent class if they are not private.
+	(method_nonpublic): added function to determine if a given method
+	should be considered non-public. Returns false for private methods
+	on parent class, and internal methods from parent on the 1.0 profile.
+	(ves_icall_Type_GetMethodsByName): if NonPublic flag is set, then
+	use method_nonpublic function to determine whether method should be
+	returned.
+	(property_accessor_public): use newly introduced method_nonpublic
+	function to determine whether accessor is non-public. 
+	(ves_icall_MonoType_GetEvent): If NonPublic flag is set, only return
+	event from parent class if not private. Only return static event if
+	Static flag is set, and only return static event from parent class if
+	FlattenHierarchy flag is set.
+	(ves_icall_Type_GetEvents_internal): If NonPublic flag is set, only
+	include non-private events from parent class.
+
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_NumberFormatter_GetFormatterTables): Fix a
+	warning.
+
+2008-01-16  Wade Berrier <wberrier@novell.com>
+
+	* security.c: Add assembly.h header to appease some warnings
+
+2008-01-16  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_module_string_read): Remove trailing null
+	when saving string.
+
+2008-01-16  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h: A new data structure describing the layout of
+	a runtime generic context (MonoRuntimeGenericContextTemplate).
+
+	* metadata-internals.h: Added a hash table to MonoDomain that maps
+	from open generic classes to their runtime generic context
+	templates.
+
+	* object.c: Building of the runtime generic context, including
+	proper handling of generic type arguments of superclasses.
+	Building of the runtime generic context according to the template.
+
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Set field.count for generic instances.
+	Fixes #350856.
+
+	* image.c (do_mono_image_open): Pass TRUE as last_exists to 
+	mono_portability_find_file (). Fixes #325466.
+	(mono_image_get_public_key): Fix a warning.
+
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Fix comments for NULL-ness of image parameter.
+	Fixes #353550.
+	(mono_class_from_name_case): Ditto.
+
+2008-01-13  Eyal Alaluf <eyala@mainsoft.com>
+
+	* icall-def.h number-formatter.h icall.c: Implemented a cross app-domain
+	  common storage for the tables used in the System/NumberFormatter class.
+
+2008-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix a typo.
+
+2008-01-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_boxable_mono_type): check if the token is valid.
+
+	* verify.c (set_stack_value): changed to add an error if an
+	invalid type is set on stack. Changed all callers due to signature change.
+
+	* verify.c (do_stobj): implement stobj validation.
+
+2008-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): No need to
+	set container->is_method, it was set earlier.
+
+	* metadata.c (type_in_image): Handle MVARs which belong to not finished
+	generic methods.
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Set
+	is_method of the generic container to TRUE for methods.
+
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (type_in_image): Handle type parameters properly.
+
+	* class-internals.h (MonoGenericParam): Add an 'image' argument to track
+	memory ownership of this structure.
+
+2008-01-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_boxable_mono_type): make typedref types been just
+	unverifiable. check for void type.
+
+	* verify.c (do_unbox_any): added, verify opcode unbox.any.
+
+	* verify.c (do_load_function_ptr): accept method spec tokens.
+
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_class_native_size): Always set *align even if this is called
+	recursively.
+
+2008-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify.c (mono_verify_corlib): Remove this as it was not used and was 
+	out-of-date.
+
+2008-01-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: removed some old unused tables. A huge bunch of small fixes
+	to things found while testing the verifier with mono basic.
+
+	* verify.c (dump_stack_value): dump null literal flag to.
+
+	* verify.c (verify_type_compatibility_full): fix comparison
+	for types that have a generic super type.
+
+	* verify.c (verify_stack_type_compatibility): fix compatibility
+	between null literals and reference types. fix compatibility between
+	boxed valuetypes and object. fix corner case test for enums.
+
+	* verify.c (do_cmp_op): proper verification of cgt.un in case
+	of reference types.
+
+	* verify.c (do_invoke_method): fix error message.
+
+	* verify.c (do_store_indirect
+
+	* verify.c (check_is_valid_type_for_field_ops): proper verification
+	of managed pointers to valuetypes and boxed valuetypes. proper verification
+	of null literals.
+
+	* verify.c (do_unbox_value): expect valuetypes to be always boxed. don't
+	allow token to be a reference type.
+
+	* verify.c (do_cast): proper handling of boxes valuetypes.
+
+	* verify.c (do_stelem): proper handling of storing a boxed valuetype
+	in object[].
+
+	* verify.c (mono_method_verify): pass the opcode to do_cmp_op
+	to handle cgt.un properly. Implement add/mul/sub ovf opcodes.
+	fixed the decoding of unbox_any
+
+2008-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_deregister_root): Fix the size passed to libgc.
+
+2008-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_newobj): do delegate verification.
+
+	* verify.c (verify_delegate_compatibility): perform delegate
+	verification.
+
+	* verify.c (verify_ldftn_delegate): perform tests related to
+	ldftn delegates.
+
+	* verify.c (mono_delegate_signature_equal): perform the
+	slightly diferent signature comparison required by delegates.
+
+	* metadata.c (mono_metadata_type_equal_full): added and exported
+	as MONO_INTERNAL. This is a version of mono_metadata_type_equal that
+	allows signature only comparison.
+
+	* metadata-internal.h (mono_metadata_type_equal_full): added and exported
+	as MONO_INTERNAL.
+
+2008-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added a bunch of stack_slot_* functions to
+	make access to stack slot type easier. This is required to
+	allow optional flags, like null literal, boxed value and
+	this pointer.
+	All access paths to IlStackDesc::stype have been changed 
+	to use these new funcions.
+	Removed a bunch of unused functions and cleared all warnings.
+	This patch introduces the usage of the this pointer and 
+	boxed value flags.
+
+2008-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_deregister_root): Fix win32 build.
+
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_ExecuteAssembly): Change signature to
+	match managed version.
+
+	* appdomain.c: Bump corlib version.
+	
+	* appdomain.c (ves_icall_System_AppDomain_ExecuteAssembly): Check for a null
+	argument.
+
+2008-01-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetReferencedAssemblies)
+	Set public key token to zero-length byte array if assembly is not
+	strongnamed.
+
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Use a write barrier when
+	writing a vtype array elem.
+
+2007-01-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* assembly.c (build_assembly_name): return FALSE if length of token is
+	not 16 (if not "null").
+	(mono_assembly_name_parse_full): return FALSE if value of version,
+	culture, token or key is 0.
+	* icall.c (fill_reflection_assembly_name): add boolean arguments to
+	specify whether public key and public key token must be set to default
+	value (zero-length byte array) if not available. Set versioncompat to
+	SameMachine. If public key is available or the default is set, then
+	set PublicKey flag.
+	(ves_icall_System_Reflection_Assembly_FillName): if no public key
+	is available, use empty byte array as default value. On the 2.0
+	profile, use default value for public key token if not set.
+	(ves_icall_System_Reflection_InternalGetAssemblyName): on the 1.0
+	profile, use default value for public key if not set. On the 2.0
+	profile, use default value for public key token if not set.
+	(ves_icall_System_Reflection_AssemblyName_ParseName): do not set
+	default values for public key and public key token.
+
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoReflectionAssemblyName): Add 'processor_architecture'
+	field to keep it in synch with the managed object.
+
+	* marshal.c (emit_marshal_object): Add support for byref marshalling of
+	delegates. Fixes #351520.
+
+	* sgen-gc.c (conservatively_pin_objects_from): Tell valgrind that the pin queue
+	contains defined memory.
+	
+	* sgen-gc.c: Fix 64 bit warnings. Fix some typos. Update GC stats in mono_stats.
+
+	* sgen-gc.c (build_nursery_fragments): Handle half-constructed objects correctly.
+	
+	* sgen-gc.c (check_consistency): New helper function to do a consistency check
+	of the GC data structures.
+
+	* gc-internal.h: Moved the REGISTER/UNREGISTER macros here from os/gc_wrapper.h.
+
+	* *.c: Include metadata/gc-internal.h instead of os/gc_wrapper.h.
+	
+	* object.c (mono_array_full_copy): Fix detection of whenever to use a write
+	barrier.
+	(mono_array_clone_in_domain): Ditto.
+	(mono_array_clone_in_domain): Ditto.
+
+	* threads.c (start_wrapper): Register the thread start argument as a GC root.
+	(cache_culture): Use a write barrier.
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Call a write barrier.
+	(ves_icall_get_property_info): Ditto.
+
+	* object.h (MONO_STRUCT_SETREF): New macro.
+
+	* class-internals.h (MonoStats): Add some GC statistics.
+
+	* boehm-gc.c null-gc.c: Define mono_gc_deregister_root ().
+
+2008-01-04  Andreas Faerber  <andreas.faerber@web.de>
+
+	* exception.c (mono_exception_from_name_two_strings):
+	Break from loop after method is found.
+
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_module_string_read): Rename variable to
+	reflect correct usage, after fixing bug 345972.
+
+2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_create_fnptr_from_mono_method): 
+	created a MonoType function pointer instance to be used during
+	verification. The verifier releases this memory at end.
+
+	* verify.c (mono_method_is_constructor): extracted repeated
+	checks for constructor into a single class.
+
+	* verify.c (do_push_field): use new extracted method
+	for constructor check.
+
+	* verify.c (do_newobj): same.
+
+	* verify.c (do_ldftn): renamed to do_load_function_ptr
+	and make it verify ldvirtftn too.
+
+	* verify.c (mono_method_verify: proper verification
+	of ldvirtftn. release created MonoMethod instances.
+
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (token_bounds_check): added.
+
+	* verify.c (do_ldftn): added.
+
+	* verify.c (mono_method_verify): proper verificartion of ldftn.
+
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_decode_row): Assert if index is bigger
+	than the table row count. It's the resposibility of the caller to
+	make the bounds check and raise the correct error.
+
+	* metadata.c (mono_metadata_decode_row_col): Same.
+
+	* loader.c (mono_get_method_from_token): perform bounds check
+	on token for methoddef table.
+
+2007-12-29  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c
+	(ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData): Turn the
+	assert into a negative result, the managed code already coped with
+	that.
+
+	Some folks on Windows reported this error. 
+
+2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* appdomain.c: Bump corlib version.
+	* icall.c:
+	(ves_icall_System_Reflection_Assembly_GetReferencedAssemblies): Use
+	CultureInfo.CreateCulture to create CultureInfo for name.
+	(fill_reflection_assembly_name): Use CultureInfo.CreateCulture to
+	create CultureInfo for name. Fixes bug #347174.
+
+2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added IL_CODE_FLAG_STACK_INITED and IL_CODE_STACK_MERGED
+	flags.
+
+	* verify.c (is_valid_branch_instruction): allow branching to the
+	first instruction of the protected block.
+
+	* verify.c (is_valid_cmp_branch_instruction): same.
+
+	* verify.c (stack_init): use IL_CODE_FLAG_STACK_INITED flag to
+	avoid double initialization.
+
+	* verify.c (merge_stacks): use IL_CODE_STACK_MERGED to
+	detect which cases the eval stack should just be copied.
+
+	* verify.c (mono_method_verify): check if the eval stack
+	is empty when entering a protected block.
+
+2007-12-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added is_clause_in_range, is_clause_inside_range,
+	is_clause_nested and verify_clause_relationship. They perform
+	the verifications stated in P1 12.4.2.7.
+
+	* verify.c (mono_method_verify): remove some unused variables,
+	add the new exception clause checks, add instruction border
+	checks for protected block start/end, improved some error 
+	messages and fixed a bug in the way invalid instruction access
+	is detected.
+
+2007-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_register_thread): Use the new GC_register_my_thread () routine
+	from GC 7.0 if available.
+
+	* object.c: Remove an unused define.
+	
+	* object.c (mono_class_compute_gc_descriptor): Fix a warning.
+
+	* boehm-gc.c (mono_gc_make_descr_for_array): Implement.
+
+	* null-gc.c (mono_gc_make_descr_for_array): Implement.
+
+	* object.c (mono_class_compute_gc_descriptor): Remove an #ifdef SGEN_GC.
+
+	* gc-internal.h: Change the signature of mono_gc_make_descr_for_string ()
+	to take the same arguments as the other make_descr functions.
+
+	* boehm-gc.c null-gc.c: Add implementation for make_descr functions.
+
+	* objects.c: Get rid of the MAKE_DESCRIPTOR macros, call make_descr functions
+	directly.
+
+	* boehm-gc.c (mono_gc_base_init): Moved the setting of GC_stackbottom here from
+	mini.c.
+
+	* object.c (mono_class_compute_gc_descriptor): Move the GC_init_gcj_malloc () 
+	call to boehm-gc.c.
+
+	* boehm-gc.c (mono_gc_register_root): Fix a warning.
+
+	* null-gc.c (mono_gc_register_root): Fix a warning.
+
+	* reflection.c (ALLOC_REFENTRY): Use mono_gc_alloc_fixed for boehm as well.
+
+	* boehm-gc.c (mono_gc_register_root): Moved definition here from gc_wrapper.h.
+	(mono_gc_base_init): Call GC_init ().
+
+	* null-gc.c: Define mono_gc_register_root () as a no-op.
+
+	* domain.c appdomain.c: Call mono_gc_base_init () instead of MONO_GC_PRE_INIT ().
+
+2007-12-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: add prototype for merge_stacks at top
+
+	* verify.c (do_switch): added.
+
+	* verify.c (merge_stacks): on some cases the stack merging
+	was not happening properly. Unequal stack sizes at merge
+	points should be invalid.
+
+	* verify.c (mono_method_verify): added more debug info on stack state.
+	verify switch properly.
+
+2007-12-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-builder.h: New file, moved the mono_mb_ declarations here from 
+	marshal.h.
+
+	* boehm-gc.c marshal.c: Include method-builder.h.
+
+	* marshal.c: Use mono_mb_emit_branch_label () in a few places.
+
+	* marshal.c: Remove some code which is now in method-builder.c.
+
+2007-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-builder.c: New file, extraction of the method builder functionality 
+	from marshal.c.
+
+	* marshal.c: Move the mb functions into method-builder.c.
+
+	* marshal.h marshal.c: Export some mono_mb_... functions.
+
+	* marshal.c: Use mono_mb_get_label () and mono_mb_patch_branch () in all places.
+
+	* loader.c (field_from_memberref): Remove the dynamic case, it is handled in
+	the caller.
+
+	* class.c (mono_class_get_full): Check the token type in the dynamic case.
+
+	* loader.c (mono_field_from_token): Ditto.	
+
+	* loader.c (mono_get_method_from_token): Change the check so it checks memberref
+	type as well.
+	
+	* loader.c (mono_get_method_from_token): Check the token type in the dynamic case.
+	Fixes #342565.
+
+	* class-internals.h: Add new loader error type MONO_EXCEPTION_BAD_IMAGE plus
+	a helper function for setting it.
+
+	* loader.c (mono_loader_error_prepare_exception): Handle MONO_EXCEPTION_BAD_IMAGE.
+
+	
+	* assembly.c: Significally simplify code now that referenced assemblies are 
+	loaded lazily. Get rid of the 'loading' hashtables. Hopefully fixes #347629.
+
+	* threads.h: Don't include  the internal threads-types.h header file. Fixes
+	#349952.
+
+2007-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added enum value IL_CODE_FLAG_WAS_TARGET, to represent
+	instructions that were target of branches or are at protected block boundaries.
+
+	* verify.c (in_same_block): handle filter clauses.
+
+	* verify.c (is_valid_branch_instruction): added. checks the target of
+	instructions br or brtrue/false.
+
+	* verify.c (is_valid_cmp_branch_instruction): added. checks the target of
+	binary branch instructions such as beq and bge.
+
+	* verify.c (init_stack_with_value): renamed to init_stack_with_value_at_exception_boundary
+	and made it pin the instruction as been part of the exception block.
+
+	* verify.c (do_boolean_branch_op): use is_valid_branch_instruction instead
+	of in_same_block.
+
+ 	* verify.c (do_branch_op): use is_valid_cmp_branch_instruction instead
+	of in_same_block.
+
+	* verify.c (do_ret): ret from a protected block is unverifiable and
+	not invalid.
+
+	* verify.c (do_static_branch): verify br and br.s instructions.
+
+	* verify.c (merge_stacks): add extra param to support detection
+	of branches in the middle of instructions.
+	
+	* verify.c (mono_method_verify): verify branches and exception blocks
+	that target the middle of instructions. Proper verification of br and br.s.
+
+2007-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (reflection_methodbuilder_from_ctor_builder): Initialize
+	skip_visibility field.
+	(reflection_methodbuilder_from_dynamic_method): Ditto.
+
+	* object.c (mono_class_compute_gc_descriptor): Remove more unused icall
+	registrations. Fixes #348193.
+
+	* threads.h: Move the internal mono_thread_get_pending_exception () to
+	threads-types.h and rename it to mono_thread_get_undeniable_exception ().
+
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_compute_gc_descriptor): Remove unused GC_gcj_fast_malloc
+	icall registration. Fixes #348193.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Put all runtime invoke wrappers
+	for corlib classes into object. Fixes #349621.
+
+2007-12-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* icall.c (property_accessor_nonpublic): new function to determine
+	whether an accessor allows a property to be considered non-public.
+	Returns false for private accessor(s) from parent class, and internal
+	accessor(s) from parent on 2.0 profile (and higher).
+	(ves_icall_Type_GetPropertiesByName): Use newly introduced function
+	to determine whether property should be included if NonPublic flag
+	is set. Fixes bug #349078.
+
+2007-12-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (init_stack_with_value): added.
+
+	* verify.c (mono_method_verify): extracted common
+	code for exception initialization into init_stack_with_value.
+
+	* verify.c (mono_method_verify): initialize the exception
+	for handler clauses as well.
+
+	* verify.c (mono_method_verify): fix the exception clause
+	ordering rules, it should use handler end offset and not
+	start offset.
+
+Thu Dec 20 12:27:24 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* rawbuffer.c: remove useless warning.
+
+Thu Dec 20 12:10:38 CET 2007 Paolo Molaro <lupus@ximian.com>
+
+	* threads.h, threads-types.h: move functions to the correct header
+	(fixes bug#349952).
+
+2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): proper verification
+	of exception handling clauses ranges and fallthru in
+	and out of protected blocks.
+
+2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): fixed compilation issue.
+
+2007-12-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): a printf slipped in, changed
+	to use verifier debug macro.
+
+2007-12-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_leave): check for filter clauses.
+
+	* verify.c (do_filter): added.
+
+	* verify.c (mono_method_verify): property verification of leave.
+
+
+2007-12-18  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Disable calls to _wapi_thread_signal_self() to fix
+	Win32 build, until we figure out how to do the proper thing on
+	Win32.
+
+2007-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Fix a crash introduced
+	by the previous patch.
+	
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssembly): Avoid calling
+	the assembly resolve handler for refonly assemblies.
+
+2007-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c, thread-types.h, icall.c: New shutdown safeguards.
+	Make sure only one thread is allowed to commence shutdown, and
+	don't allow new threads to be started once shutdown is in
+	progress.
+
+2007-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_correct_endfilter): added.
+
+	* verify.c (is_unverifiable_endfilter): added.
+
+	* verify.c (do_endfilter): added.
+
+	* verify.c (mono_method_verify): property verification of endfilter
+	and fixed a corner case or endfinally.
 
 2007-12-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
@@ -15,7 +764,6 @@
 	* pedump.c: added support to fail fast and non-strict verification.
 
 	* verify.c: added support for both fail fast and non-strict verification.
-
 
 2007-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
 

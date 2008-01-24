@@ -358,6 +358,30 @@ even if they are only defined in a single file.
 When using the "-debug" flag, MCS will generate a file with the
 extension .mdb that contains the debugging information for the
 generated assembly.  This file is consumed by the Mono debugger (mdb).
+.SH ENVIRONMENT VARIABLES
+.TP
+.I "MCS_COLORS"
+If this variable is set, it contains a string in the form
+"foreground,background" that specifies which color to use to display
+errors on some terminals.  
+.Sp
+The background is optional and defaults to your terminal current
+background.   The possible colors for foreground are:
+.B black, red, brightred, green, brightgreen, yellow, brightyellow,
+blue, brightblue, magenta, brightmagenta, cyan, brightcyan, grey,
+white and brightwhite.
+.Sp
+The possible colors for background are: black, red, green, yellow,
+blue, magenta, cyan, grey and white.
+.Sp 
+For example, you could set these variable from your shell:
+.nf
+	export MCS_COLORS
+	MCS_COLORS=errors=brightwhite,red
+.fi
+.Sp
+You can disable the built-in color scheme by setting this variable to
+"disable".
 .SH NOTES
 During compilation the MCS compiler defines the __MonoCS__ symbol,
 this can be used by pre-processor instructions to compile Mono C#

@@ -1,3 +1,32 @@
+2008-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* runtime/Makefile.am (mcs-compileall): Remove some whitespace after
+	a backslash.
+
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (DIST_SUBDIRS): Use $(eglib_dir) instead of eglib to
+	fix make dist.
+
+2008-01-05  Andreas Faerber  <andreas.faerber@web.de>
+
+	* configure.in: Add support for building with eglib and VPATH.
+	Fixes #351893.
+
+2008-01-05  Andreas Faerber  <andreas.faerber@web.de>
+
+	* configure.in: Define eglib_dir.
+	* Makefile.am: Add eglib to subdirectory lists.
+
+2007-12-31  Jonathan Chambers  <joncham@gmail.com>
+
+	* winconfig.h: Define HAVE_GETPROCESSID.
+	Contributed under MIT/X11 license.
+
+2007-12-28  Everaldo Canuto  <ecanuto@novell.com>
+
+	* configure.in: Add support for oprofile.
+
 2007-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Add check for sys/mkdev.h.

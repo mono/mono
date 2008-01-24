@@ -33,7 +33,7 @@
 #include "cil-coff.h"
 #include "rawbuffer.h"
 #include "mono-endian.h"
-#include <mono/os/gc_wrapper.h>
+#include <mono/metadata/gc-internal.h>
 
 typedef struct {
 	char *p;
@@ -1370,6 +1370,8 @@ mono_image_basic_method (ReflectionMethodBuilder *mb, MonoDynamicImage *assembly
 static void
 reflection_methodbuilder_from_method_builder (ReflectionMethodBuilder *rmb, MonoReflectionMethodBuilder *mb)
 {
+	memset (rmb, 0, sizeof (ReflectionMethodBuilder));
+
 	rmb->ilgen = mb->ilgen;
 	rmb->rtype = mb->rtype;
 	rmb->parameters = mb->parameters;
@@ -1385,6 +1387,7 @@ reflection_methodbuilder_from_method_builder (ReflectionMethodBuilder *rmb, Mono
 	rmb->name = mb->name;
 	rmb->table_idx = &mb->table_idx;
 	rmb->init_locals = mb->init_locals;
+	rmb->skip_visibility = FALSE;
 	rmb->return_modreq = mb->return_modreq;
 	rmb->return_modopt = mb->return_modopt;
 	rmb->param_modreq = mb->param_modreq;
@@ -1408,6 +1411,8 @@ reflection_methodbuilder_from_ctor_builder (ReflectionMethodBuilder *rmb, MonoRe
 {
 	const char *name = mb->attrs & METHOD_ATTRIBUTE_STATIC ? ".cctor": ".ctor";
 
+	memset (rmb, 0, sizeof (ReflectionMethodBuilder));
+
 	rmb->ilgen = mb->ilgen;
 	rmb->rtype = mono_type_get_object (mono_domain_get (), &mono_defaults.void_class->byval_arg);
 	rmb->parameters = mb->parameters;
@@ -1423,6 +1428,7 @@ reflection_methodbuilder_from_ctor_builder (ReflectionMethodBuilder *rmb, MonoRe
 	rmb->name = mono_string_new (mono_domain_get (), name);
 	rmb->table_idx = &mb->table_idx;
 	rmb->init_locals = mb->init_locals;
+	rmb->skip_visibility = FALSE;
 	rmb->return_modreq = NULL;
 	rmb->return_modopt = NULL;
 	rmb->param_modreq = mb->param_modreq;
@@ -1436,6 +1442,8 @@ reflection_methodbuilder_from_ctor_builder (ReflectionMethodBuilder *rmb, MonoRe
 static void
 reflection_methodbuilder_from_dynamic_method (ReflectionMethodBuilder *rmb, MonoReflectionDynamicMethod *mb)
 {
+	memset (rmb, 0, sizeof (ReflectionMethodBuilder));
+
 	rmb->ilgen = mb->ilgen;
 	rmb->rtype = mb->rtype;
 	rmb->parameters = mb->parameters;
@@ -5182,9 +5190,7 @@ reflected_hash (gconstpointer a) {
         mono_domain_unlock (domain); \
 	} while (0)
 
-#if HAVE_BOEHM_GC
-#define ALLOC_REFENTRY GC_MALLOC (sizeof (ReflectedEntry))
-#elif HAVE_SGEN_GC
+#ifndef HAVE_NULL_GC
 #define ALLOC_REFENTRY mono_gc_alloc_fixed (sizeof (ReflectedEntry), NULL)
 #else
 #define ALLOC_REFENTRY mono_mempool_alloc (domain->mp, sizeof (ReflectedEntry))
@@ -5488,10 +5494,9 @@ mono_generic_class_get_object (MonoDomain *domain, MonoType *geninst)
 #endif
 
 	res->type.type = geninst;
-	if (gklass->wastypebuilder && gklass->reflection_info)
-		MONO_OBJECT_SETREF (res, generic_type, gklass->reflection_info);
-	else
-		MONO_OBJECT_SETREF (res, generic_type, mono_type_get_object (domain, &gklass->byval_arg));
+	g_assert (gklass->reflection_info);
+	g_assert (!strcmp (((MonoObject*)gklass->reflection_info)->vtable->klass->name, "TypeBuilder"));
+	MONO_OBJECT_SETREF (res, generic_type, gklass->reflection_info);
 
 	return res;
 }
@@ -5546,7 +5551,8 @@ mono_type_get_object (MonoDomain *domain, MonoType *type)
 		mono_domain_unlock (domain);
 		return res;
 	}
-	if ((type->type == MONO_TYPE_GENERICINST) && type->data.generic_class->is_dynamic && !(type->data.generic_class->container_class && type->data.generic_class->container_class->wastypebuilder)) {
+	/* Create a MonoGenericClass object for instantiations of not finished TypeBuilders */
+	if ((type->type == MONO_TYPE_GENERICINST) && type->data.generic_class->is_dynamic && !type->data.generic_class->container_class->wastypebuilder) {
 		res = (MonoReflectionType *)mono_generic_class_get_object (domain, type);
 		mono_g_hash_table_insert (domain->type_hash, type, res);
 		mono_domain_unlock (domain);
@@ -8303,6 +8309,8 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 	klass->name_space = mono_string_to_utf8_mp (klass->image->mempool, tb->nspace);
 	klass->type_token = MONO_TOKEN_TYPE_DEF | tb->table_idx;
 	klass->flags = tb->attrs;
+	
+	mono_profiler_class_event (klass, MONO_PROFILE_START_LOAD);
 
 	klass->element_class = klass;
 
@@ -8350,6 +8358,8 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 
 	/*g_print ("setup %s as %s (%p)\n", klass->name, ((MonoObject*)tb)->vtable->klass->name, tb);*/
 
+	mono_profiler_class_loaded (klass, MONO_PROFILE_OK);
+	
 	mono_loader_unlock ();
 }
 
@@ -8684,7 +8694,6 @@ reflection_methodbuilder_to_mono_method (MonoClass *klass,
 		m->generic_container = container = rmb->generic_container;
 		container->type_argc = count;
 		container->type_params = g_new0 (MonoGenericParam, count);
-		container->is_method = TRUE;
 		container->owner.method = m;
 
 		for (i = 0; i < count; i++) {
@@ -8896,11 +8905,8 @@ mono_reflection_bind_generic_parameters (MonoReflectionType *type, int type_argc
 		is_dynamic = TRUE;
 	} else if (!strcmp (((MonoObject *) type)->vtable->klass->name, "MonoGenericClass")) {
 		MonoReflectionGenericClass *rgi = (MonoReflectionGenericClass *) type;
-		MonoReflectionType *rgt = rgi->generic_type;
 
-		g_assert (!strcmp (((MonoObject *) rgt)->vtable->klass->name, "TypeBuilder"));
-		tb = (MonoReflectionTypeBuilder *) rgt;
-
+		tb = rgi->generic_type;
 		is_dynamic = TRUE;
 	}
 
@@ -9030,7 +9036,7 @@ inflate_method (MonoReflectionGenericClass *type, MonoObject *obj)
 	MonoMethod *method;
 	MonoClass *gklass;
 
-	gklass = mono_class_from_mono_type (type->generic_type->type);
+	gklass = mono_class_from_mono_type (type->generic_type->type.type);
 
 	if (!strcmp (obj->vtable->klass->name, "MethodBuilder"))
 		method = methodbuilder_to_mono_method (gklass, (MonoReflectionMethodBuilder *) obj);
@@ -9422,6 +9428,20 @@ typebuilder_setup_events (MonoClass *klass)
 	}
 }
 
+static gboolean
+remove_instantiations_of (gpointer key,
+						  gpointer value,
+						  gpointer user_data)
+{
+	MonoType *type = (MonoType*)key;
+	MonoClass *klass = (MonoClass*)user_data;
+
+	if ((type->type == MONO_TYPE_GENERICINST) && (type->data.generic_class->container_class == klass))
+		return TRUE;
+	else
+		return FALSE;
+}
+
 MonoReflectionType*
 mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 {
@@ -9503,6 +9523,15 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	typebuilder_setup_events (klass);
 	
 	klass->wastypebuilder = TRUE;
+
+	/* 
+	 * If we are a generic TypeBuilder, there might be instantiations in the type cache
+	 * which have type System.Reflection.MonoGenericClass, but after the type is created, 
+	 * we want to return normal System.MonoType objects, so clear these out from the cache.
+	 */
+	if (domain->type_hash && klass->generic_container)
+		mono_g_hash_table_foreach_remove (domain->type_hash, remove_instantiations_of, klass);
+
 	mono_loader_unlock ();
 	mono_domain_unlock (domain);
 
@@ -9528,8 +9557,10 @@ mono_reflection_initialize_generic_parameter (MonoReflectionGenericParam *gparam
 	param = g_new0 (MonoGenericParam, 1);
 
 	if (gparam->mbuilder) {
-		if (!gparam->mbuilder->generic_container)
+		if (!gparam->mbuilder->generic_container) {
 			gparam->mbuilder->generic_container = g_new0 (MonoGenericContainer, 1);
+			gparam->mbuilder->generic_container->is_method = TRUE;
+		}
 		param->owner = gparam->mbuilder->generic_container;
 	} else if (gparam->tbuilder) {
 		g_assert (gparam->tbuilder->generic_container);

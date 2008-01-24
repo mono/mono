@@ -20,8 +20,6 @@
 
 G_BEGIN_DECLS
 
-typedef struct _MonoMethodBuilder MonoMethodBuilder;
-
 /* marshaling helper functions */
 
 void
@@ -93,89 +91,6 @@ mono_marshal_free_asany (MonoObject *o, gpointer ptr, MonoMarshalNative string_e
 MonoMethod*
 mono_marshal_get_write_barrier (void) MONO_INTERNAL;
 
-/* method builder functions */
-
-void
-mono_mb_free (MonoMethodBuilder *mb) MONO_INTERNAL;
-
-MonoMethodBuilder *
-mono_mb_new (MonoClass *klass, const char *name, MonoWrapperType type) MONO_INTERNAL;
-
-void
-mono_mb_patch_addr (MonoMethodBuilder *mb, int pos, int value) MONO_INTERNAL;
-
-void
-mono_mb_patch_addr_s (MonoMethodBuilder *mb, int pos, gint8 value) MONO_INTERNAL;
-
-void
-mono_mb_patch_short_branch (MonoMethodBuilder *mb, guint32 pos) MONO_INTERNAL;
-
-int
-mono_mb_get_label (MonoMethodBuilder *mb) MONO_INTERNAL;
-
-guint32
-mono_mb_add_data (MonoMethodBuilder *mb, gpointer data) MONO_INTERNAL;
-
-void
-mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpointer func) MONO_INTERNAL;
-
-void
-mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *opt_sig) MONO_INTERNAL;
-
-void
-mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func) MONO_INTERNAL;
-
-int
-mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type) MONO_INTERNAL;
-
-MonoMethod *
-mono_mb_create_method (MonoMethodBuilder *mb, MonoMethodSignature *signature, int max_stack) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldarg (MonoMethodBuilder *mb, guint argnum) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldarg_addr (MonoMethodBuilder *mb, guint argnum) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldloc (MonoMethodBuilder *mb, guint num) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldloc_addr (MonoMethodBuilder *mb, guint locnum) MONO_INTERNAL;
-
-void
-mono_mb_emit_stloc (MonoMethodBuilder *mb, guint num) MONO_INTERNAL;
-
-void
-mono_mb_emit_exception (MonoMethodBuilder *mb, const char *exc_name, const char *msg) MONO_INTERNAL;
-
-void
-mono_mb_emit_icon (MonoMethodBuilder *mb, gint32 value) MONO_INTERNAL;
-
-guint32
-mono_mb_emit_branch (MonoMethodBuilder *mb, guint8 op) MONO_INTERNAL;
-
-guint32
-mono_mb_emit_short_branch (MonoMethodBuilder *mb, guint8 op) MONO_INTERNAL;
-
-void
-mono_mb_emit_add_to_local (MonoMethodBuilder *mb, guint16 local, gint32 incr) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldflda (MonoMethodBuilder *mb, gint32 offset) MONO_INTERNAL;
-
-void
-mono_mb_emit_byte (MonoMethodBuilder *mb, guint8 op) MONO_INTERNAL;
-
-void
-mono_mb_emit_i2 (MonoMethodBuilder *mb, gint16 data) MONO_INTERNAL;
-
-void
-mono_mb_emit_i4 (MonoMethodBuilder *mb, gint32 data) MONO_INTERNAL;
-
-void
-mono_mb_emit_ldstr (MonoMethodBuilder *mb, char *str) MONO_INTERNAL;
-
 guint
 mono_type_to_ldind (MonoType *type) MONO_INTERNAL;
 
@@ -215,10 +130,10 @@ MonoMethod *
 mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, MonoObject *this) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func) MONO_INTERNAL;
+mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func, gboolean check_exceptions) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_native_wrapper (MonoMethod *method) MONO_INTERNAL;
+mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions) MONO_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_native_func_wrapper (MonoImage *image, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func) MONO_INTERNAL;

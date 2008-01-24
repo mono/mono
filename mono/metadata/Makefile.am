@@ -53,6 +53,8 @@ libmonoruntime_la_SOURCES = \
 	sgen-gc.h	\
 	gc.c		\
 	gc-internal.h	\
+	method-builder.h \
+	method-builder.c \
 	marshal.c	\
 	marshal.h	\
 	mono-mlist.c	\
@@ -113,6 +115,7 @@ libmonoruntime_la_SOURCES = \
 	cil-coff.h	\
 	metadata.c	\
 	metadata-internals.h	\
+	number-formatter.h	\
 	verify.c	\
 	mono-endian.c	\
 	mono-endian.h	\

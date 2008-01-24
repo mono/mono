@@ -121,12 +121,6 @@ static MonoAssembly *corlib;
 #define mono_assemblies_unlock() LeaveCriticalSection (&assemblies_mutex)
 static CRITICAL_SECTION assemblies_mutex;
 
-/* A hastable of thread->assembly list mappings */
-static GHashTable *assemblies_loading;
-
-/* A hashtable of reflection only load thread->assemblies mappings */
-static GHashTable *assemblies_refonly_loading;
-
 /* If defined, points to the bundled assembly information */
 const MonoBundledAssembly **bundles;
 
@@ -381,26 +375,11 @@ mono_assembly_names_equal (MonoAssemblyName *l, MonoAssemblyName *r)
 static MonoAssembly*
 search_loaded (MonoAssemblyName* aname, gboolean refonly)
 {
-	GList *tmp;
 	MonoAssembly *ass;
-	GList *loading;
 
 	ass = mono_assembly_invoke_search_hook_internal (aname, refonly, FALSE);
 	if (ass)
 		return ass;
-	
-	/*
-	 * The assembly might be under load by this thread. In this case, it is
-	 * safe to return an incomplete instance to prevent loops.
-	 */
-	loading = g_hash_table_lookup (refonly ? assemblies_refonly_loading : assemblies_loading, (gpointer)GetCurrentThreadId ());
-	for (tmp = loading; tmp; tmp = tmp->next) {
-		ass = tmp->data;
-		if (!mono_assembly_names_equal (aname, &ass->aname))
-			continue;
-
-		return ass;
-	}
 
 	return NULL;
 }
@@ -648,9 +627,6 @@ mono_assemblies_init (void)
 	check_extra_gac_path_env ();
 
 	InitializeCriticalSection (&assemblies_mutex);
-
-	assemblies_loading = g_hash_table_new (NULL, NULL);
-	assemblies_refonly_loading = g_hash_table_new (NULL, NULL);
 }
 
 gboolean
@@ -856,8 +832,11 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	 * it inside a critical section.
 	 */
 	mono_assemblies_lock ();
-	if (!image->references)
-		mono_assembly_load_references (image, &status);
+	if (!image->references) {
+		MonoTableInfo *t = &image->tables [MONO_TABLE_ASSEMBLYREF];
+	
+		image->references = g_new0 (MonoAssembly *, t->rows + 1);
+	}
 	reference = image->references [index];
 	mono_assemblies_unlock ();
 	if (reference)
@@ -939,13 +918,8 @@ mono_assembly_load_reference (MonoImage *image, int index)
 void
 mono_assembly_load_references (MonoImage *image, MonoImageOpenStatus *status)
 {
-	MonoTableInfo *t;
-
+	/* This is a no-op now but it is part of the embedding API so we can't remove it */
 	*status = MONO_IMAGE_OK;
-
-	t = &image->tables [MONO_TABLE_ASSEMBLYREF];
-	
-	image->references = g_new0 (MonoAssembly *, t->rows + 1);
 }
 
 typedef struct AssemblyLoadHook AssemblyLoadHook;
@@ -1382,7 +1356,7 @@ mono_assembly_load_friends (MonoAssembly* ass)
 		slen = mono_metadata_decode_value (data + 2, &data);
 		aname = g_new0 (MonoAssemblyName, 1);
 		/*g_print ("friend ass: %s\n", data);*/
-		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL)) {
+		if (mono_assembly_name_parse_full (data, aname, TRUE, NULL, NULL)) {
 			ass->friend_assembly_names = g_slist_prepend (ass->friend_assembly_names, aname);
 		} else {
 			g_free (aname);
@@ -1415,8 +1389,6 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 {
 	MonoAssembly *ass, *ass2;
 	char *base_dir;
-	GList *loading;
-	GHashTable *ass_loading;
 
 	if (!image->tables [MONO_TABLE_ASSEMBLY].rows) {
 		/* 'image' doesn't have a manifest -- maybe someone is trying to Assembly.Load a .netmodule */
@@ -1443,14 +1415,6 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 #endif
 
 	/*
-	 * To avoid deadlocks and scalability problems, we load assemblies outside
-	 * the assembly lock. This means that multiple threads might try to load
-	 * the same assembly at the same time. The first one to load it completely
-	 * "wins", the other threads free their copy and use the one loaded by
-	 * the winning thread.
-	 */
-
-	/*
 	 * Create assembly struct, and enter it into the assembly cache
 	 */
 	ass = g_new0 (MonoAssembly, 1);
@@ -1460,10 +1424,10 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	mono_profiler_assembly_event (ass, MONO_PROFILE_START_LOAD);
 
+	mono_assembly_fill_assembly_name (image, &ass->aname);
+
 	/* Add a non-temporary reference because of ass->image */
 	mono_image_addref (image);
-
-	mono_assembly_fill_assembly_name (image, &ass->aname);
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Image addref %s %p -> %s %p: %d\n", ass->aname.name, ass, image->name, image, image->ref_count);
 
@@ -1483,47 +1447,9 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 			return ass2;
 		}
 	}
-	ass_loading = refonly ? assemblies_refonly_loading : assemblies_loading;
-	loading = g_hash_table_lookup (ass_loading, (gpointer)GetCurrentThreadId ());
-	loading = g_list_prepend (loading, ass);
-	g_hash_table_insert (ass_loading, (gpointer)GetCurrentThreadId (), loading);
-	mono_assemblies_unlock ();
 
 	g_assert (image->assembly == NULL);
 	image->assembly = ass;
-
-	mono_assembly_load_references (image, status);
-
-	mono_assemblies_lock ();
-
-	loading = g_hash_table_lookup (ass_loading, (gpointer)GetCurrentThreadId ());
-	loading = g_list_remove (loading, ass);
-	if (loading == NULL)
-		/* Prevent memory leaks */
-		g_hash_table_remove (ass_loading, (gpointer)GetCurrentThreadId ());
-	else
-		g_hash_table_insert (ass_loading, (gpointer)GetCurrentThreadId (), loading);
-	if (*status != MONO_IMAGE_OK) {
-		mono_assemblies_unlock ();
-		
-		mono_profiler_assembly_loaded (ass, MONO_PROFILE_FAILED);
-		
-		mono_assembly_close (ass);
-		return NULL;
-	}
-
-	if (ass->aname.name) {
-		ass2 = search_loaded (&ass->aname, refonly);
-		if (ass2) {
-			/* Somebody else has loaded the assembly before us */
-			mono_assemblies_unlock ();
-			
-			mono_profiler_assembly_loaded (ass, MONO_PROFILE_FAILED);
-			
-			mono_assembly_close (ass);
-			return ass2;
-		}
-	}
 
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	if (mono_defaults.internals_visible_class)
@@ -1637,7 +1563,7 @@ parse_public_key (const gchar *key, gchar** pubkey)
 }
 
 static gboolean
-build_assembly_name (const char *name, const char *version, const char *culture, const char *token, const char *key, MonoAssemblyName *aname, gboolean save_public_key)
+build_assembly_name (const char *name, const char *version, const char *culture, const char *token, const char *key, guint32 flags, MonoAssemblyName *aname, gboolean save_public_key)
 {
 	gint major, minor, build, revision;
 	gint len;
@@ -1666,6 +1592,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 			aname->revision = 0;
 	}
 	
+	aname->flags = flags;
 	aname->name = g_strdup (name);
 	
 	if (culture) {
@@ -1676,13 +1603,17 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	}
 	
 	if (token && strncmp (token, "null", 4) != 0) {
+		/* the constant includes the ending NULL, hence the -1 */
+		if (strlen (token) != (MONO_PUBLIC_KEY_TOKEN_LENGTH - 1)) {
+			return FALSE;
+		}
 		char *lower = g_ascii_strdown (token, MONO_PUBLIC_KEY_TOKEN_LENGTH);
 		g_strlcpy ((char*)aname->public_key_token, lower, MONO_PUBLIC_KEY_TOKEN_LENGTH);
 		g_free (lower);
 	}
 
-	if (key && strncmp (key, "null", 4) != 0) {
-		if (!parse_public_key (key, &pkey)) {
+	if (key) {
+		if (strcmp (key, "null") == 0 || !parse_public_key (key, &pkey)) {
 			mono_assembly_name_free (aname);
 			return FALSE;
 		}
@@ -1699,7 +1630,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 		else
 			g_free (pkey);
 	}
-	
+
 	return TRUE;
 }
 
@@ -1715,30 +1646,36 @@ parse_assembly_directory_name (const char *name, const char *dirname, MonoAssemb
 		return FALSE;
 	}
 	
-	res = build_assembly_name (name, parts[0], parts[1], parts[2], NULL, aname, FALSE);
+	res = build_assembly_name (name, parts[0], parts[1], parts[2], NULL, 0, aname, FALSE);
 	g_strfreev (parts);
 	return res;
 }
 
 gboolean
-mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboolean save_public_key, gboolean *is_version_defined)
+mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboolean save_public_key, gboolean *is_version_defined, gboolean *is_token_defined)
 {
 	gchar *dllname;
 	gchar *version = NULL;
 	gchar *culture = NULL;
 	gchar *token = NULL;
 	gchar *key = NULL;
+	gchar *retargetable = NULL;
 	gboolean res;
 	gchar *value;
 	gchar **parts;
 	gchar **tmp;
 	gboolean version_defined;
+	gboolean token_defined;
+	guint32 flags = 0;
 
 	if (!is_version_defined)
 		is_version_defined = &version_defined;
 	*is_version_defined = FALSE;
+	if (!is_token_defined)
+		is_token_defined = &token_defined;
+	*is_token_defined = FALSE;
 	
-	parts = tmp = g_strsplit (name, ",", 4);
+	parts = tmp = g_strsplit (name, ",", 6);
 	if (!tmp || !*tmp) {
 		g_strfreev (tmp);
 		return FALSE;
@@ -1753,24 +1690,51 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		if (!g_ascii_strncasecmp (value, "Version=", 8)) {
 			*is_version_defined = TRUE;
 			version = g_strstrip (value + 8);
+			if (strlen (version) == 0) {
+				return FALSE;
+			}
 			tmp++;
 			continue;
 		}
 
 		if (!g_ascii_strncasecmp (value, "Culture=", 8)) {
 			culture = g_strstrip (value + 8);
+			if (strlen (culture) == 0) {
+				return FALSE;
+			}
 			tmp++;
 			continue;
 		}
 
 		if (!g_ascii_strncasecmp (value, "PublicKeyToken=", 15)) {
+			*is_token_defined = TRUE;
 			token = g_strstrip (value + 15);
+			if (strlen (token) == 0) {
+				return FALSE;
+			}
 			tmp++;
 			continue;
 		}
 
 		if (!g_ascii_strncasecmp (value, "PublicKey=", 10)) {
 			key = g_strstrip (value + 10);
+			if (strlen (key) == 0) {
+				return FALSE;
+			}
+			tmp++;
+			continue;
+		}
+
+		if (!g_ascii_strncasecmp (value, "Retargetable=", 13)) {
+			retargetable = g_strstrip (value + 13);
+			if (strlen (retargetable) == 0) {
+				return FALSE;
+			}
+			if (!g_ascii_strcasecmp (retargetable, "yes")) {
+				flags |= ASSEMBLYREF_RETARGETABLE_FLAG;
+			} else if (g_ascii_strcasecmp (retargetable, "no")) {
+				return FALSE;
+			}
 			tmp++;
 			continue;
 		}
@@ -1785,7 +1749,13 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 		return FALSE;
 	}
 
-	res = build_assembly_name (dllname, version, culture, token, key, aname, save_public_key);
+	/* if retargetable flag is set, then we must have a fully qualified name */
+	if (retargetable != NULL && (version == NULL || culture == NULL || (key == NULL && token == NULL))) {
+		return FALSE;
+	}
+
+	res = build_assembly_name (dllname, version, culture, token, key, flags,
+		aname, save_public_key);
 	g_strfreev (parts);
 	return res;
 }
@@ -1803,7 +1773,7 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname)
 {
-	return mono_assembly_name_parse_full (name, aname, FALSE, NULL);
+	return mono_assembly_name_parse_full (name, aname, FALSE, NULL, NULL);
 }
 
 static MonoAssembly*
@@ -2395,14 +2365,7 @@ mono_assembly_close (MonoAssembly *assembly)
 MonoImage*
 mono_assembly_load_module (MonoAssembly *assembly, guint32 idx)
 {
-	MonoImageOpenStatus status;
-	MonoImage *module;
-
-	module = mono_image_load_file_for_image (assembly->image, idx);
-	if (module)
-		mono_assembly_load_references (module, &status);
-
-	return module;
+	return mono_image_load_file_for_image (assembly->image, idx);
 }
 
 void
@@ -2434,9 +2397,6 @@ mono_assemblies_cleanup (void)
 	GSList *l;
 
 	DeleteCriticalSection (&assemblies_mutex);
-
-	g_hash_table_destroy (assemblies_loading);
-	g_hash_table_destroy (assemblies_refonly_loading);
 
 	for (l = loaded_assembly_bindings; l; l = l->next) {
 		MonoAssemblyBindingInfo *info = l->data;

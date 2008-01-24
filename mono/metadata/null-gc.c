@@ -11,6 +11,11 @@
 #ifdef HAVE_NULL_GC
 
 void
+mono_gc_base_init (void)
+{
+}
+
+void
 mono_gc_collect (int generation)
 {
 }
@@ -84,6 +89,17 @@ mono_gc_enable_events (void)
 {
 }
 
+int
+mono_gc_register_root (char *start, size_t size, void *descr)
+{
+	return TRUE;
+}
+
+void
+mono_gc_deregister_root (char* addr)
+{
+}
+
 void
 mono_gc_weak_link_add (void **link_addr, MonoObject *obj)
 {
@@ -100,6 +116,24 @@ MonoObject*
 mono_gc_weak_link_get (void **link_addr)
 {
 	return *link_addr;
+}
+
+void*
+mono_gc_make_descr_for_string (gsize *bitmap, int numbits)
+{
+	return NULL;
+}
+
+void*
+mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
+{
+	return NULL;
+}
+
+void*
+mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
+{
+	return NULL;
 }
 
 void*

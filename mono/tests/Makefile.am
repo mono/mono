@@ -40,7 +40,7 @@ STRESS_TESTS_SRC=	\
 	thread-stress.cs	\
 	gc-stress.cs
 
-TEST_CS_SRC=			\
+BASE_TEST_CS_SRC=		\
 	array-init.cs		\
 	arraylist.cs		\
 	assemblyresolve_event.cs	\
@@ -242,7 +242,18 @@ TEST_CS_SRC=			\
 	imt_big_iface_test.cs \
 	dbnull-missing.cs	\
 	test-type-ctor.cs 	\
-	soft-float-tests.cs
+	soft-float-tests.cs	\
+	thread-exit.cs
+
+if AMD64
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
+else
+if X86
+TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
+else
+TEST_CS_SRC = $(BASE_TEST_CS_SRC)
+endif
+endif
 
 if X86
 # bug #71274
@@ -258,6 +269,7 @@ DISABLED_TESTS=			\
 	delegate-async-exception.exe	\
 	delegate-delegate-exception.exe	\
 	appdomain-unload.exe		\
+	bug-77127.exe \
 	$(PLATFORM_DISABLED_TESTS)
 
 # These only compile with MS CSC
@@ -288,7 +300,8 @@ TEST_IL_SRC=			\
 	even-odd.il		\
 	bug-82022.il	\
 	vt-sync-method.il	\
-	enum_types.il
+	enum_types.il	\
+	invalid-token.il
 
 #	bug-318677.il
 

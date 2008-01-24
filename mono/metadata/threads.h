@@ -1,5 +1,5 @@
 /*
- * threads.h: Thread support internal calls
+ * threads.h: Threading API
  *
  * Author:
  *	Dick Porter (dick@ximian.com)
@@ -14,7 +14,6 @@
 #include <mono/utils/mono-membar.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/appdomain.h>
-#include <mono/metadata/threads-types.h>
 
 G_BEGIN_DECLS
 
@@ -32,8 +31,6 @@ extern void mono_thread_suspend_all_other_threads (void);
 extern void mono_thread_push_appdomain_ref (MonoDomain *domain);
 extern void mono_thread_pop_appdomain_ref (void);
 extern gboolean mono_thread_has_appdomain_ref (MonoThread *thread, MonoDomain *domain);
-
-extern MonoException * mono_thread_get_pending_exception (void);
 
 extern gboolean mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout);
 extern void mono_threads_clear_cached_culture (MonoDomain *domain);
@@ -66,10 +63,6 @@ extern gboolean mono_thread_interruption_requested (void);
 extern void mono_thread_interruption_checkpoint (void);
 extern void mono_thread_force_interruption_checkpoint (void);
 extern gint32* mono_thread_interruption_request_flag (void);
-
-extern void mono_thread_set_state (MonoThread *thread, MonoThreadState state);
-extern void mono_thread_clr_state (MonoThread *thread, MonoThreadState state);
-extern gboolean mono_thread_test_state (MonoThread *thread, MonoThreadState test);
 
 G_END_DECLS
 

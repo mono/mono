@@ -33,7 +33,7 @@
 #include "mono/metadata/profiler-private.h"
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/mono-debug-debugger.h"
-#include <mono/os/gc_wrapper.h>
+#include <mono/metadata/gc-internal.h>
 #include <mono/utils/strenc.h>
 
 #ifdef HAVE_BOEHM_GC
@@ -41,16 +41,11 @@
 #define ALLOC_PTRFREE(obj,vt,size) do { (obj) = GC_MALLOC_ATOMIC ((size)); (obj)->vtable = (vt); (obj)->synchronisation = NULL;} while (0)
 #define ALLOC_OBJECT(obj,vt,size) do { (obj) = GC_MALLOC ((size)); (obj)->vtable = (vt);} while (0)
 #ifdef HAVE_GC_GCJ_MALLOC
-#define CREATION_SPEEDUP 1
 #define GC_NO_DESCRIPTOR ((gpointer)(0 | GC_DS_LENGTH))
 #define ALLOC_TYPED(dest,size,type) do { (dest) = GC_GCJ_MALLOC ((size),(type)); } while (0)
-#define MAKE_STRING_DESCRIPTOR(bitmap,sz) GC_make_descriptor((GC_bitmap)(bitmap),(sz))
-#define MAKE_DESCRIPTOR(bitmap,sz,objsize) GC_make_descriptor((GC_bitmap)(bitmap),(sz))
 #else
 #define GC_NO_DESCRIPTOR (NULL)
 #define ALLOC_TYPED(dest,size,type) do { (dest) = GC_MALLOC ((size)); *(gpointer*)dest = (type);} while (0)
-#define MAKE_STRING_DESCRIPTOR(bitmap,sz) NULL
-#define MAKE_DESCRIPTOR(bitmap,sz,objsize) NULL
 #endif
 #else
 #ifdef HAVE_SGEN_GC
@@ -58,16 +53,12 @@
 #define ALLOC_PTRFREE(obj,vt,size) do { (obj) = mono_gc_alloc_obj (vt, size);} while (0)
 #define ALLOC_OBJECT(obj,vt,size) do { (obj) = mono_gc_alloc_obj (vt, size);} while (0)
 #define ALLOC_TYPED(dest,size,type) do { (dest) = mono_gc_alloc_obj (type, size);} while (0)
-#define MAKE_STRING_DESCRIPTOR(bitmap,sz) mono_gc_make_descr_for_string ()
-#define MAKE_DESCRIPTOR(bitmap,sz,objsize) mono_gc_make_descr_for_object ((bitmap), (sz), (objsize))
 #else
 #define NEED_TO_ZERO_PTRFREE 1
 #define GC_NO_DESCRIPTOR (NULL)
 #define ALLOC_PTRFREE(obj,vt,size) do { (obj) = malloc ((size)); (obj)->vtable = (vt); (obj)->synchronisation = NULL;} while (0)
 #define ALLOC_OBJECT(obj,vt,size) do { (obj) = calloc (1, (size)); (obj)->vtable = (vt);} while (0)
 #define ALLOC_TYPED(dest,size,type) do { (dest) = calloc (1, (size)); *(gpointer*)dest = (type);} while (0)
-#define MAKE_STRING_DESCRIPTOR(bitmap,sz) NULL
-#define MAKE_DESCRIPTOR(bitmap,sz,objsize) NULL
 #endif
 #endif
 
@@ -859,15 +850,19 @@ mono_class_compute_gc_descriptor (MonoClass *class)
 		mono_register_jit_icall (mono_string_alloc, "mono_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 
 #ifdef HAVE_GC_GCJ_MALLOC
-
-		GC_init_gcj_malloc (5, NULL);
-
+		/* 
+		 * This is not needed unless the relevant code in mono_get_allocation_ftn () is 
+		 * turned on.
+		 */
+#if 0
 #ifdef GC_REDIRECT_TO_LOCAL
 		mono_register_jit_icall (GC_local_gcj_malloc, "GC_local_gcj_malloc", mono_create_icall_signature ("object int ptr"), FALSE);
 		mono_register_jit_icall (GC_local_gcj_fast_malloc, "GC_local_gcj_fast_malloc", mono_create_icall_signature ("object int ptr"), FALSE);
 #endif
 		mono_register_jit_icall (GC_gcj_malloc, "GC_gcj_malloc", mono_create_icall_signature ("object int ptr"), FALSE);
 		mono_register_jit_icall (GC_gcj_fast_malloc, "GC_gcj_fast_malloc", mono_create_icall_signature ("object int ptr"), FALSE);
+#endif
+
 #endif
 		gcj_inited = TRUE;
 		mono_loader_unlock ();
@@ -884,11 +879,9 @@ mono_class_compute_gc_descriptor (MonoClass *class)
 
 	bitmap = default_bitmap;
 	if (class == mono_defaults.string_class) {
-		class->gc_descr = (gpointer)MAKE_STRING_DESCRIPTOR (bitmap, 2);
+		class->gc_descr = (gpointer)mono_gc_make_descr_for_string (bitmap, 2);
 	} else if (class->rank) {
 		mono_class_compute_gc_descriptor (class->element_class);
-#ifdef HAVE_SGEN_GC
-		/* libgc has no usable support for arrays... */
 		if (!class->element_class->valuetype) {
 			gsize abm = 1;
 			class->gc_descr = mono_gc_make_descr_for_array (TRUE, &abm, 1, sizeof (gpointer));
@@ -896,29 +889,23 @@ mono_class_compute_gc_descriptor (MonoClass *class)
 				class->name_space, class->name);*/
 		} else {
 			/* remove the object header */
-			bitmap = compute_class_bitmap (class->element_class, default_bitmap, sizeof (default_bitmap) * 8, - (sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
+			bitmap = compute_class_bitmap (class->element_class, default_bitmap, sizeof (default_bitmap) * 8, - (int)(sizeof (MonoObject) / sizeof (gpointer)), &max_set, FALSE);
 			class->gc_descr = mono_gc_make_descr_for_array (TRUE, bitmap, mono_array_element_size (class) / sizeof (gpointer), mono_array_element_size (class));
 			/*printf ("new vt array descriptor: 0x%x for %s.%s\n", class->gc_descr,
 				class->name_space, class->name);*/
 			if (bitmap != default_bitmap)
 				g_free (bitmap);
 		}
-#endif
 	} else {
 		/*static int count = 0;
 		if (count++ > 58)
 			return;*/
 		bitmap = compute_class_bitmap (class, default_bitmap, sizeof (default_bitmap) * 8, 0, &max_set, FALSE);
-#ifdef HAVE_BOEHM_GC
-		/* It seems there are issues when the bitmap doesn't fit: play it safe */
-		if (max_set >= 30) {
-			/*g_print ("disabling typed alloc (%d) for %s.%s\n", max_set, class->name_space, class->name);*/
-			if (bitmap != default_bitmap)
-				g_free (bitmap);
-			return;
-		}
-#endif
-		class->gc_descr = (gpointer)MAKE_DESCRIPTOR (bitmap, max_set + 1, class->instance_size);
+		class->gc_descr = (gpointer)mono_gc_make_descr_for_object (bitmap, max_set + 1, class->instance_size);
+		/*
+		if (class->gc_descr == GC_NO_DESCRIPTOR)
+			g_print ("disabling typed alloc (%d) for %s.%s\n", max_set, class->name_space, class->name);
+		*/
 		/*printf ("new descriptor: %p 0x%x for %s.%s\n", class->gc_descr, bitmap [0], class->name_space, class->name);*/
 		if (bitmap != default_bitmap)
 			g_free (bitmap);
@@ -1241,6 +1228,105 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 	vt->imt_collisions_bitmap |= imt_collisions_bitmap;
 }
 
+static gboolean
+include_arg_info (MonoType *type, MonoRuntimeGenericContextTemplate *parent_template)
+{
+	int i;
+
+	if (!MONO_TYPE_IS_REFERENCE (type) &&
+			mono_type_get_type (type) != MONO_TYPE_VAR &&
+			mono_type_get_type (type) != MONO_TYPE_MVAR)
+		return FALSE;
+
+	if (!parent_template)
+		return TRUE;
+
+	for (i = 0; i < parent_template->num_arg_infos; ++i)
+		if (type == parent_template->arg_infos [i])
+			return FALSE;
+
+	return TRUE;
+}
+
+/**
+ * mono_class_get_runtime_generic_context_template:
+ * @class: an open generic class
+ *
+ * Returns the generic context template for the class.  Might have to
+ * build it first.
+ */
+MonoRuntimeGenericContextTemplate*
+mono_class_get_runtime_generic_context_template (MonoClass *class)
+{
+	int num_parent_args, num_class_args, total_num_args;
+	MonoRuntimeGenericContextTemplate *parent_template, *template;
+	MonoGenericInst *inst;
+	int i, j;
+	MonoImage *image = class->image;
+
+	mono_loader_lock ();
+	if (!image->rgctx_template_hash)
+		image->rgctx_template_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	template = g_hash_table_lookup (image->rgctx_template_hash, class);
+
+	if (template) {
+		mono_loader_unlock ();
+		return template;
+	}
+
+	if (class->parent)
+		parent_template = mono_class_get_runtime_generic_context_template (class->parent);
+	else
+		parent_template = NULL;
+
+	if (parent_template)
+		num_parent_args = parent_template->num_arg_infos;
+	else
+		num_parent_args = 0;
+
+	if (class->generic_class)
+		inst = class->generic_class->context.class_inst;
+	else if (class->generic_container)
+		inst = class->generic_container->context.class_inst;
+	else
+		inst = NULL;
+
+	num_class_args = 0;
+	if (inst) {
+		for (i = 0; i < inst->type_argc; ++i) {
+			if (include_arg_info (inst->type_argv [i], parent_template))
+				++num_class_args;
+		}
+	}
+
+	total_num_args = num_parent_args + num_class_args;
+
+	template = mono_mempool_alloc (image->mempool,
+		sizeof (MonoRuntimeGenericContextTemplate) + sizeof (MonoType*) * total_num_args);
+
+	template->num_arg_infos = total_num_args;
+
+	if (num_parent_args > 0)
+		memcpy (template->arg_infos, parent_template->arg_infos,
+			sizeof (MonoType*) * parent_template->num_arg_infos);
+
+	j = 0;
+	if (inst) {
+		for (i = 0; i < inst->type_argc; ++i) {
+			MonoType *type = inst->type_argv [i];
+
+			if (include_arg_info (type, parent_template))
+				template->arg_infos [num_parent_args + j++] = type;
+		}
+	}
+	g_assert (j == num_class_args);
+
+	g_hash_table_insert (image->rgctx_template_hash, class, template);
+	mono_loader_unlock ();
+
+	return template;
+}
+
 static void
 mono_class_setup_runtime_generic_context (MonoClass *class, MonoDomain *domain)
 {
@@ -1249,15 +1335,20 @@ mono_class_setup_runtime_generic_context (MonoClass *class, MonoDomain *domain)
 	MonoClass *super;
 	MonoRuntimeGenericSuperInfo *super_infos;
 	MonoRuntimeGenericContext *rgctx;
-	MonoGenericInst *class_inst = class->generic_class->context.class_inst;
+	MonoRuntimeGenericContextTemplate *rgctx_template;
+	MonoGenericContext *context = &class->generic_class->context;
 	int i;
 
+	rgctx_template = mono_class_get_runtime_generic_context_template (class->generic_class->container_class);
+
+	mono_domain_lock (domain);
 	/* We don't allocate arg_infos because we don't use it yet.
 	 */
 	super_infos = mono_mempool_alloc0 (domain->mp,
 		sizeof (MonoRuntimeGenericSuperInfo) * depth +
 		sizeof (MonoRuntimeGenericContext) +
-		sizeof (MonoRuntimeGenericArgInfo) * class_inst->type_argc);
+		sizeof (MonoRuntimeGenericArgInfo) * rgctx_template->num_arg_infos);
+	mono_domain_unlock (domain);
 
 	rgctx = vtable->runtime_generic_context = (MonoRuntimeGenericContext*) (super_infos + depth);
 
@@ -1274,8 +1365,20 @@ mono_class_setup_runtime_generic_context (MonoClass *class, MonoDomain *domain)
 		depth++;
 	}
 
-	for (i = 0; i < class_inst->type_argc; ++i) {
-		MonoClass *arg_class = mono_class_from_mono_type (class_inst->type_argv [i]);
+	for (i = 0; i < rgctx_template->num_arg_infos; ++i) {
+		MonoType *arg_info = rgctx_template->arg_infos [i];
+		MonoType *arg_type;
+		MonoClass *arg_class;
+
+		if (!arg_info)
+			continue;
+
+		arg_type = mono_class_inflate_generic_type (arg_info, context);
+
+		if (!MONO_TYPE_IS_REFERENCE (arg_type))
+			continue;
+
+		arg_class = mono_class_from_mono_type (arg_type);
 
 		vtable = mono_class_vtable (domain, arg_class);
 
@@ -1600,6 +1703,10 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		}
 	}
 
+	/* FIXME: We need to generate a runtime generic context not
+	   only for generic classes but also for non-generic classes
+	   which derive (directly or indirectly) from generic
+	   classes. */
 	if (class->generic_class && mono_class_generic_sharing_enabled (class))
 		mono_class_setup_runtime_generic_context (class, domain);
 
@@ -3453,8 +3560,8 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 	g_assert (size == mono_array_length (dest));
 	size *= mono_array_element_size (klass);
 #ifdef HAVE_SGEN_GC
-	if (klass->valuetype) {
-		if (klass->has_references)
+	if (klass->element_class->valuetype) {
+		if (klass->element_class->has_references)
 			mono_value_copy_array (dest, 0, src, mono_array_length (src));
 		else
 			memcpy (&dest->vector, &src->vector, size);
@@ -3490,8 +3597,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 
 		size *= mono_array_element_size (klass);
 #ifdef HAVE_SGEN_GC
-		if (klass->valuetype) {
-			if (klass->has_references)
+		if (klass->element_class->valuetype) {
+			if (klass->element_class->has_references)
 				mono_value_copy_array (o, 0, array, mono_array_length (array));
 			else
 				memcpy (&o->vector, &array->vector, size);
@@ -3513,8 +3620,8 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 	}
 	o = mono_array_new_full (domain, klass, sizes, sizes + klass->rank);
 #ifdef HAVE_SGEN_GC
-	if (klass->valuetype) {
-		if (klass->has_references)
+	if (klass->element_class->valuetype) {
+		if (klass->element_class->has_references)
 			mono_value_copy_array (o, 0, array, mono_array_length (array));
 		else
 			memcpy (&o->vector, &array->vector, size);

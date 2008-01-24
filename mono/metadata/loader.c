@@ -191,6 +191,27 @@ mono_loader_set_error_field_load (MonoClass *klass, const char *member_name)
 }
 
 /*
+ * mono_loader_set_error_bad_image:
+ *
+ * Set the loader error for this thread. 
+ */
+void
+mono_loader_set_error_bad_image (char *msg)
+{
+	MonoLoaderError *error;
+
+	if (mono_loader_get_last_error ())
+		return;
+
+	error = g_new0 (MonoLoaderError, 1);
+	error->exception_type = MONO_EXCEPTION_BAD_IMAGE;
+	error->msg = msg;
+
+	set_loader_error (error);
+}	
+
+
+/*
  * mono_loader_get_last_error:
  *
  *   Returns information about the last type load exception encountered by the loader, or
@@ -215,6 +236,7 @@ mono_loader_clear_error (void)
 	if (ex) {
 		g_free (ex->class_name);
 		g_free (ex->assembly_name);
+		g_free (ex->msg);
 		g_free (ex);
 	
 		TlsSetValue (loader_error_thread_id, NULL);
@@ -244,10 +266,10 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 		
 		class_name = mono_string_new (mono_domain_get (), cname);
 
-                ex = mono_get_exception_type_load (class_name, aname);
+		ex = mono_get_exception_type_load (class_name, aname);
 		g_free (cname);
 		g_free (aname);
-                break;
+		break;
         }
 	case MONO_EXCEPTION_MISSING_METHOD: {
 		char *cname = g_strdup (error->class_name);
@@ -270,11 +292,11 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 		class_name = g_strdup_printf ("%s%s%s", cnspace, cnspace ? "." : "", cname);
 		
 		ex = mono_get_exception_missing_field (class_name, cmembername);
-                g_free (class_name);
+		g_free (class_name);
 		g_free (cname);
 		g_free (cmembername);
 		g_free (cnspace);
-                break;
+		break;
         }
 	
 	case MONO_EXCEPTION_FILE_NOT_FOUND: {
@@ -293,7 +315,15 @@ mono_loader_error_prepare_exception (MonoLoaderError *error)
 		g_free (filename);
 		break;
 	}
-	
+
+	case MONO_EXCEPTION_BAD_IMAGE: {
+		char *msg = g_strdup (error->msg);
+		mono_loader_clear_error ();
+		ex = mono_get_exception_bad_image_format (msg);
+		g_free (msg);
+		break;
+	}
+
 	default:
 		g_assert_not_reached ();
 	}
@@ -313,12 +343,6 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	const char *fname;
 	const char *ptr;
 	guint32 idx = mono_metadata_token_index (token);
-
-	if (image->dynamic) {
-		MonoClassField *result = mono_lookup_dynamic_token (image, token, context);
-		*retklass = result->parent;
-		return result;
-	}
 
 	mono_metadata_decode_row (&tables [MONO_TABLE_MEMBERREF], idx-1, cols, MONO_MEMBERREF_SIZE);
 	nindex = cols [MONO_MEMBERREF_CLASS] >> MONO_MEMBERREF_PARENT_BITS;
@@ -398,7 +422,16 @@ mono_field_from_token (MonoImage *image, guint32 token, MonoClass **retklass,
 	MonoClassField *field;
 
 	if (image->dynamic) {
-		MonoClassField *result = mono_lookup_dynamic_token (image, token, context);
+		MonoClassField *result;
+		MonoClass *handle_class;
+
+		*retklass = NULL;
+		result = mono_lookup_dynamic_token_class (image, token, TRUE, &handle_class, context);
+		// This checks the memberref type as well
+		if (result && handle_class != mono_defaults.fieldhandle_class) {
+			mono_loader_set_error_bad_image (g_strdup ("Bad field token."));
+			return NULL;
+		}
 		*retklass = result->parent;
 		return result;
 	}
@@ -1282,8 +1315,17 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	int size, i;
 	guint32 cols [MONO_TYPEDEF_SIZE];
 
-	if (image->dynamic)
-		return mono_lookup_dynamic_token (image, token, context);
+	if (image->dynamic) {
+		MonoClass *handle_class;
+
+		result = mono_lookup_dynamic_token_class (image, token, TRUE, &handle_class, context);
+		// This checks the memberref type as well
+		if (result && handle_class != mono_defaults.methodhandle_class) {
+			mono_loader_set_error_bad_image (g_strdup ("Bad method token."));
+			return NULL;
+		}
+		return result;
+	}
 
 	if (table != MONO_TABLE_METHOD) {
 		if (table == MONO_TABLE_METHODSPEC) {
@@ -1297,6 +1339,11 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	}
 
 	if (used_context) *used_context = FALSE;
+
+	if (idx > image->tables [MONO_TABLE_METHOD].rows) {
+		mono_loader_set_error_bad_image (g_strdup ("Bad method token."));
+		return NULL;
+	}
 
 	mono_metadata_decode_row (&image->tables [MONO_TABLE_METHOD], idx - 1, cols, 6);
 

@@ -1,3 +1,52 @@
+2008-01-23  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_string_block): When stepping over the
+	StringTable block, do not read an extra block at the end.  Fixes
+	the new part of bug 354856.
+
+2008-01-19  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_stringtable_block): Cope when the StringTable
+	block is first in the resources data, and we just need to step
+	over it.  Fixes bug 354856.
+
+2008-01-16  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_set_termination_details): Move the
+	thread abandonment to outside the shared handle lock.  Fixes bug
+	349680.
+
+2008-01-16  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerQueryValue): Include trailing null in returned
+	string length, for MS compatibility.
+
+2008-01-09  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_ptr_from_rva, scan_resource_dir): Make it
+	work on big-endian systems.
+	(scan_resource_dir): Copy the resource directory entry and
+	byteswap if necessary so it works big-endian.  This fixes bug
+	345972 for real this time.
+	(VerQueryValue): String values set the length to the number of
+	unicode chars, but the data length reported was already correct so
+	don't halve it again.  Fixes the previous fix for bug 345972.
+	(GetFileVersionInfo): On big-endian systems, scan the resource
+	data and turn all unicode strings into UTF-16BE.  FileVersionInfo
+	now works big-endian.
+
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerQueryValue): Returned buffer length counts
+	chars not bytes for string data.  Fixes bug 345972 again.
+	(get_enclosing_section_header): Make sure values read are treated
+	as LE.  Fixes crash on ppc reported in bug 345972.
+
+2007-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Guard against a race condition involving
+	thread_hash_key that can occur during shutdown.
+
 2007-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Include sys/mkdev.h if exists. Fixes solaris x86 build.

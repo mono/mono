@@ -18,22 +18,22 @@
 
 G_BEGIN_DECLS
 
-static const size_t
+static const mph_string_offset_t
 passwd_offsets[] = {
-	offsetof (struct passwd, pw_name),
-	offsetof (struct passwd, pw_passwd),
-	offsetof (struct passwd, pw_gecos),
-	offsetof (struct passwd, pw_dir),
-	offsetof (struct passwd, pw_shell)
+	MPH_STRING_OFFSET (struct passwd, pw_name,    MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct passwd, pw_passwd,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct passwd, pw_gecos,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct passwd, pw_dir,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct passwd, pw_shell,   MPH_STRING_OFFSET_PTR)
 };
 
-static const size_t
+static const mph_string_offset_t
 mph_passwd_offsets[] = {
-	offsetof (struct Mono_Posix_Syscall__Passwd, pw_name),
-	offsetof (struct Mono_Posix_Syscall__Passwd, pw_passwd),
-	offsetof (struct Mono_Posix_Syscall__Passwd, pw_gecos),
-	offsetof (struct Mono_Posix_Syscall__Passwd, pw_dir),
-	offsetof (struct Mono_Posix_Syscall__Passwd, pw_shell)
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_name,    MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_passwd,  MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_gecos,   MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_dir,     MPH_STRING_OFFSET_PTR),
+	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_shell,   MPH_STRING_OFFSET_PTR)
 };
 
 /*

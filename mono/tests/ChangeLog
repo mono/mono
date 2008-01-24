@@ -1,3 +1,25 @@
+2008-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (DISABLED_TESTS): Disable bug-77127.exe for now to make the
+	build green.
+
+2008-01-04  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: Make it work on automake-1.6
+
+2007-12-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid-token.il, Makefile.am: Add test for loading
+	invalid tokens.
+
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Enable the async-exc-compilation test on x86/amd64.
+
+2007-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* thread-exit.cs, Makefile.am: Test case for #347676.
+
 2007-12-09  Robert Jordan  <robertj@gmx.net>
 
 	* bug-323114.cs: Add test case for #323114.
