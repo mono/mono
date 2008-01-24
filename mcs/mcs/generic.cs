@@ -3380,6 +3380,11 @@ namespace Mono.CSharp {
 				this.expr = expr;
 				this.loc = loc;
 			}
+			
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return expr.CreateExpressionTree (ec);
+			}			
 
 			public override Expression DoResolve (EmitContext ec)
 			{
@@ -3775,9 +3780,23 @@ namespace Mono.CSharp {
 			
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
-				ArrayList args = new ArrayList (2);
+				UserCast uc = left as UserCast;
+				Expression conversion = null;
+				if (uc != null) {
+					left = uc.Source;
+
+					ArrayList c_args = new ArrayList (2);
+					c_args.Add (new Argument (uc.CreateExpressionTree (ec)));
+					c_args.Add (new Argument (left.CreateExpressionTree (ec)));
+					conversion = CreateExpressionFactoryCall ("Lambda", c_args);
+				}
+
+				ArrayList args = new ArrayList (3);
 				args.Add (new Argument (left.CreateExpressionTree (ec)));
 				args.Add (new Argument (right.CreateExpressionTree (ec)));
+				if (conversion != null)
+					args.Add (new Argument (conversion));
+				
 				return CreateExpressionFactoryCall ("Coalesce", args);
 			}			
 

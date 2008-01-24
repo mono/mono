@@ -89,9 +89,8 @@ namespace Mono.CSharp {
 			return new UserOperatorCall (mg, args, null, loc);
 		}
 
-		[Obsolete ("It may not be compatible with expression trees")]
-		public MethodInfo Method {
-			get { return (MethodInfo)mg; }
+		public MethodGroupExpr Method {
+			get { return mg; }
 		}
 	}
 
@@ -1044,7 +1043,7 @@ namespace Mono.CSharp {
 				if (method == null)
 					LoadOneAndEmitOp (ec, expr.Type);
 				else
-					ec.ig.Emit (OpCodes.Call, method.Method);
+					ec.ig.Emit (OpCodes.Call, (MethodInfo)method.Method);
 				recurse = false;
 				return;
 			}
@@ -2012,15 +2011,12 @@ namespace Mono.CSharp {
 
 				if (union != null) {
 					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left, Argument.AType.Expression));
-					args.Add (new Argument (right, Argument.AType.Expression));
+					args.Add (new Argument (left));
+					args.Add (new Argument (right));
 
-					union = union.OverloadResolve (ec, ref args, true, Location.Null);
-
-					if (union != null) {
-						MethodInfo mi = (MethodInfo) union;
-						return new BinaryMethod (mi.ReturnType, mi, args);
-					}
+					union = union.OverloadResolve (ec, ref args, true, loc);
+					if (union != null)
+						return new UserOperatorCall (union, args, CreateExpressionTree, loc);				
 				}
 			}
 
@@ -3066,13 +3062,18 @@ namespace Mono.CSharp {
 			target.left = left.Clone (clonectx);
 			target.right = right.Clone (clonectx);
 		}
-
+		
 		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return CreateExpressionTree (ec, null);
+		}
+
+		Expression CreateExpressionTree (EmitContext ec, MethodGroupExpr method)		
 		{
 			string method_name;
 			switch (oper) {
 			case Operator.Addition:
-				if (ec.CheckState)
+				if (method == null && ec.CheckState)
 					method_name = "AddChecked";
 				else
 					method_name = "Add";
@@ -3104,6 +3105,9 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (left.CreateExpressionTree (ec)));
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
+			if (method != null)
+				args.Add (new Argument (method.CreateExpressionTree (ec)));
+			
 			return CreateExpressionFactoryCall (method_name, args);
 		}
 	}
@@ -3273,7 +3277,8 @@ namespace Mono.CSharp {
 	public class ConditionalLogicalOperator : Expression {
 		Expression left, right;
 		bool is_and;
-		Expression op_true, op_false, op;
+		Expression op_true, op_false;
+		UserOperatorCall op;
 		LocalTemporary left_temp;
 
 		public ConditionalLogicalOperator (bool is_and, Expression left, Expression right, Type t, Location loc)
@@ -3285,6 +3290,15 @@ namespace Mono.CSharp {
 			this.right = right;
 			this.is_and = is_and;
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (3);
+			args.Add (new Argument (left.CreateExpressionTree (ec)));
+			args.Add (new Argument (right.CreateExpressionTree (ec)));
+			args.Add (new Argument (op.Method.CreateExpressionTree (ec)));
+			return CreateExpressionFactoryCall (is_and ? "AndAlso" : "OrAlso", args);
+		}		
 
 		protected void Error19 ()
 		{
@@ -6430,7 +6444,7 @@ namespace Mono.CSharp {
 
 	internal class TypeOfMethod : Expression
 	{
-		readonly MethodGroupExpr method;
+		readonly MethodInfo method;
 		static MethodInfo get_type_from_handle;
 
 		static TypeOfMethod ()
@@ -6439,10 +6453,10 @@ namespace Mono.CSharp {
 				new Type [] { TypeManager.runtime_method_handle_type });
 		}
 
-		public TypeOfMethod (MethodGroupExpr method)
+		public TypeOfMethod (MethodInfo method, Location loc)
 		{
 			this.method = method;
-			loc = method.Location;
+			this.loc = loc;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -6454,7 +6468,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo)method);
+			ec.ig.Emit (OpCodes.Ldtoken, method);
 			ec.ig.Emit (OpCodes.Call, get_type_from_handle);
 		}
 	}
@@ -6960,6 +6974,12 @@ namespace Mono.CSharp {
 			Expr = e;
 			loc = l;
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, true))
+				return Expr.CreateExpressionTree (ec);
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -7008,6 +7028,12 @@ namespace Mono.CSharp {
 		{
 			Expr = e;
 			loc = l;
+		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			using (ec.With (EmitContext.Flags.AllCheckStateFlags, false))
+				return Expr.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8165,7 +8191,7 @@ namespace Mono.CSharp {
 	}	
 
 	public class UserCast : Expression {
-		MethodBase method;
+		MethodInfo method;
 		Expression source;
 		
 		public UserCast (MethodInfo method, Expression source, Location l)
@@ -8182,6 +8208,16 @@ namespace Mono.CSharp {
 				return source;
 			}
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (source.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new Cast (new TypeExpression (typeof (MethodInfo), loc),
+				new TypeOfMethod (method, loc))));
+			return CreateExpressionFactoryCall ("Convert", args);
+		}
 			
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -8193,15 +8229,8 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
 			source.Emit (ec);
-			
-			if (method is MethodInfo)
-				ig.Emit (OpCodes.Call, (MethodInfo) method);
-			else
-				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
+			ec.ig.Emit (OpCodes.Call, method);
 		}
 	}
 
@@ -8725,7 +8754,7 @@ namespace Mono.CSharp {
 				if (e == EmptyExpressionStatement.Instance)
 					initializers.RemoveAt (i--);
 				else
-					initializers [i] = e;				
+					initializers [i] = e;
 			}
 
 			type = typeof (CollectionOrObjectInitializers);

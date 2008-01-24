@@ -1322,7 +1322,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-			return CreateExpressionFactoryCall ("Convert", args);
+			return CreateExpressionFactoryCall (ec.CheckState ? "ConvertChecked" : "Convert", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -3513,7 +3513,8 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return new Cast (new TypeExpression (typeof (MethodInfo), loc), new TypeOfMethod (this));
+			return new Cast (new TypeExpression (typeof (MethodInfo), loc),
+				new TypeOfMethod ((MethodInfo)best_candidate, loc));
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
