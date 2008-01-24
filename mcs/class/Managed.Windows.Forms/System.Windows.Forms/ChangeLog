@@ -1,3 +1,8 @@
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs:  Ensure that windows are created in their initial 
+	FormWindowState.  Finished fixing Fullscreen windows on Carbon
+
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: When FindForm fails uses FindRootParent to find the control to

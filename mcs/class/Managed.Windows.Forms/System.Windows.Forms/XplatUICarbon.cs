@@ -1043,6 +1043,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if (StyleSet (cp.Style, WindowStyles.WS_MINIMIZE)) {
+				SetWindowState(hwnd.Handle, FormWindowState.Minimized);
+			} else if (StyleSet (cp.Style, WindowStyles.WS_MAXIMIZE)) {
+				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
+			}
+
 			return hwnd.Handle;
 		}
 
