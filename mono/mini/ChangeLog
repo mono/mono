@@ -1,3 +1,13 @@
+2008-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_IS_COND_BRANCH_OP): Move these macros here from mini.c. Fix
+	some typos.
+	(NOT_IMPLEMENTED): New helper macro.
+	(MONO_BB_FOR_EACH_INS): New helper macro to iterate through the instructions
+	of a bb.
+
+	* *.c: Use the new helper macro.
+
 2008-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.h (MONO_ARCH_AOT_SUPPORTED): Disable AOT for apple x86.
