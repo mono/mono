@@ -616,10 +616,8 @@ namespace Mono.CSharp {
 					return resolved;
 
 				FullNamedExpression fne = Name.GetTypeExpression ().ResolveAsTypeStep (this, false);
-				if (fne == null) {
-					Error_NamespaceNotFound (Location, Name.ToString ());
+				if (fne == null)
 					return null;
-				}
 
 				resolved = fne as Namespace;
 				if (resolved == null) {

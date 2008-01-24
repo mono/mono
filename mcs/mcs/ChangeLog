@@ -1,5 +1,10 @@
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #354310
+ 	* namespace.cs: Removed redundant check.
+
+2008-01-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #354928
  	* expression.cs: ElementInitializers can be resolved only once.
  	
