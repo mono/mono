@@ -145,8 +145,8 @@ namespace System
 				if (timeOfDay.Kind != DateTimeKind.Unspecified)
 					throw new ArgumentException ("timeOfDay parameter Kind's property is not DateTimeKind.Unspecified");
 
-				if (timeOfDay.Ticks % TimeSpan.TicksPerSecond != 0)
-					throw new ArgumentException ("timeOfDay parameter does not represent a whole number of seconds");
+				if (timeOfDay.Ticks % TimeSpan.TicksPerMillisecond != 0)
+					throw new ArgumentException ("timeOfDay parameter does not represent a whole number of milliseconds");
 
 				if (month < 1 || month > 12)
 					throw new ArgumentOutOfRangeException ("month parameter is less than 1 or greater than 12");
