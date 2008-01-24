@@ -1,4 +1,4 @@
-// cs0077.cs: The as operator must be used with a reference type (`ErrorCS0077.Foo' is a value type)
+// CS0077: The `as' operator cannot be used with a non-nullable value type `ErrorCS0077.Foo'
 // Line: 10
 
 using System;
