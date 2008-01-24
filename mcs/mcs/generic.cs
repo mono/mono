@@ -3173,6 +3173,11 @@ namespace Mono.CSharp {
 				eclass = expr.eclass;
 				return this;
 			}
+			
+			public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+			{
+				return DoResolve (ec);
+			}			
 
 			public override void Emit (EmitContext ec)
 			{
