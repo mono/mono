@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
@@ -27,6 +27,8 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Globalization;
+using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
@@ -34,21 +36,30 @@ namespace System.Windows.Forms
 	public sealed class HtmlDocument
 	{
 		Mono.WebBrowser.IWebBrowser webHost;
-		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost)
+		IDocument document;
+
+		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost) : this (webHost, webHost.Document)
+		{
+		}
+
+		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost, IDocument doc)
 		{
 			this.webHost = webHost;
+			this.document = doc;
 		}
 
 		#region Methods
 
 
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
-		{ }
+		{ 
+			throw new NotImplementedException ();
+		}
 
 		public HtmlElement CreateElement (string elementTag) 
 		{ 
-			Mono.WebBrowser.DOM.IElement element = webHost.Document.CreateElement (elementTag);
-			return new HtmlElement (element);
+			Mono.WebBrowser.DOM.IElement element = document.CreateElement (elementTag);
+			return new HtmlElement (webHost, element);
 		}
 
 		public void DetachEventHandler (string eventName, EventHandler eventHandler) 
@@ -73,26 +84,26 @@ namespace System.Windows.Forms
 
 		public HtmlElement GetElementById (string id)
 		{
-			return new HtmlElement (webHost.Document.GetElementById (id));
+			return new HtmlElement (webHost, document.GetElementById (id));
 		}
 
 		public HtmlElement GetElementFromPoint (Point point) 
 		{
-			Mono.WebBrowser.DOM.IElement elem = webHost.Document.GetElement (point.X, point.Y);
+			Mono.WebBrowser.DOM.IElement elem = document.GetElement (point.X, point.Y);
 			if (elem != null)
-				return new HtmlElement(elem);
+				return new HtmlElement(webHost, elem);
 			return null;
 		}
 
 		public HtmlElementCollection GetElementsByTagName (string tagName) 
 		{
-			Mono.WebBrowser.DOM.IElementCollection col = webHost.Document.GetElementsByTagName (tagName);
-			return new HtmlElementCollection (col);
+			Mono.WebBrowser.DOM.IElementCollection col = document.GetElementsByTagName (tagName);
+			return new HtmlElementCollection (webHost, col);
 		}
 
 		public override int GetHashCode () 
 		{ 
-			return base.GetHashCode (); 
+			return document.GetHashCode (); 
 		}
 
 		public Object InvokeScript (string scriptName)
@@ -133,87 +144,121 @@ namespace System.Windows.Forms
 
 		public void Write (string text) 
 		{
-			webHost.Document.Write (text);
+			document.Write (text);
 		}
 
 		#endregion
 
 		#region Properties
-		[MonoTODO ("Needs Implementation")]
-
-		public HtmlElement ActiveElement
-		{
-			get { throw new NotImplementedException (); }
+		public HtmlElement ActiveElement {
+			get { 
+				Mono.WebBrowser.DOM.IElement element = document.Active;
+				if (element == null)
+					return null;
+				return new HtmlElement (webHost, element);
+			
+			}
 		}
 		public Color ActiveLinkColor {
-			get { throw new NotImplementedException ();}
-			set { throw new NotImplementedException (); } 
+			get { return ParseColor(document.ActiveLinkColor); }
+			set { document.ActiveLinkColor = value.ToArgb().ToString(); }
 		}
 
 		public HtmlElementCollection All
 		{
-			get { throw new NotImplementedException (); }
+			get {
+				return new HtmlElementCollection (webHost, document.DocumentElement.All);
+			}
 		}
 
 		public Color BackColor
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return ParseColor(document.BackColor); }
+			set { document.BackColor = value.ToArgb().ToString(); }
 		}
+		
 		public HtmlElement Body {
-			get { return new HtmlElement (webHost.Document.Body); }
+			get { return new HtmlElement (webHost, document.Body); }
 		}
 		public string Cookie
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return document.Cookie; }
+			set { document.Cookie = value; }
 		}
 		public string DefaultEncoding { get { throw new NotImplementedException (); } }
 		public string Domain
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return document.Domain; }
+			set { throw new NotSupportedException ("Setting the domain is not supported per the DOM Level 2 HTML specification. Sorry."); }
 		}
 		public Object DomDocument { get { throw new NotImplementedException (); } }
+		
 		public string Encoding
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return document.Charset; }
+			set { document.Charset = value; }
 		}
+
 		public bool Focused { get { throw new NotImplementedException (); } }
 		public Color ForeColor
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return ParseColor(document.ForeColor); }
+			set { document.ForeColor = value.ToArgb().ToString(); }
 		}
-		public HtmlElementCollection Forms { get { throw new NotImplementedException (); } }
-		public HtmlElementCollection Images { get { throw new NotImplementedException (); } }
+		
+		public HtmlElementCollection Forms { 
+			get { return new HtmlElementCollection (webHost, document.Forms); } 
+		}
+		
+		public HtmlElementCollection Images { 
+			get { return new HtmlElementCollection (webHost, document.Images); } 	
+		}
 		public Color LinkColor
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return ParseColor(document.LinkColor); }
+			set { document.LinkColor = value.ToArgb().ToString(); }
 		}
-		public HtmlElementCollection Links { get { throw new NotImplementedException (); } }
+		
+		public HtmlElementCollection Links {
+			get { return new HtmlElementCollection (webHost, document.Links); } 
+		}
+		
 		public bool RightToLeft
 		{
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+		
 		public string Title
 		{
-			get { return webHost.Document.Title; }
-			set { webHost.Document.Title = value; }
+			get { return document.Title; }
+			set { document.Title = value; }
 		}
-		public Uri Url { get { throw new NotImplementedException (); } }
+		
+		public Uri Url { 
+			get { return new Uri (document.Url); } 
+		}
+		
 		public Color VisitedLinkColor
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return ParseColor(document.VisitedLinkColor); }
+			set { document.VisitedLinkColor =  value.ToArgb().ToString(); }
 		}
-		public HtmlWindow Window { get { throw new NotImplementedException (); } }
+		
+		public HtmlWindow Window { 
+			get { return new HtmlWindow (webHost, webHost.Window); } 
+		
+		}
 
 
 		#endregion
+		
+		private Color ParseColor (string color) {
+			if (color.IndexOf ("#") >= 0) {
+				return Color.FromArgb (int.Parse (color.Substring (color.IndexOf ("#") + 1), NumberStyles.HexNumber));
+			}
+			return Color.FromName (color);
+		}
 	}
 }
 

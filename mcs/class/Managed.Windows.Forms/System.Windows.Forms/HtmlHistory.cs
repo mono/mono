@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,16 +17,26 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
+//
+// Authors:
+//	Andreia Gaita (avidigal@novell.com)
 //
 
-using System;
 
 #if NET_2_0
+using System;
+using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
 	public sealed class HtmlHistory {
+
+		private Mono.WebBrowser.IWebBrowser webHost;
+		internal HtmlHistory (Mono.WebBrowser.IWebBrowser webHost)
+		{
+			this.webHost = webHost;
+		}
 	}
 }
 

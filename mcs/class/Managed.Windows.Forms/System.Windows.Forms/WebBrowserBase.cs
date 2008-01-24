@@ -17,12 +17,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
 
 #if NET_2_0
+
+#undef debug
 
 using System;
 using System.Collections;
@@ -224,6 +226,9 @@ namespace System.Windows.Forms
 
 		protected override void OnGotFocus (EventArgs e)
 		{
+#if debug
+			Console.Error.WriteLine ("WebBrowserBase: OnGotFocus");
+#endif
 			base.OnGotFocus (e);
 			WebHost.FocusIn (Mono.WebBrowser.FocusOption.FocusFirstElement);
 		}
@@ -235,6 +240,9 @@ namespace System.Windows.Forms
 
 		protected override void OnLostFocus (EventArgs e)
 		{
+#if debug
+			Console.Error.WriteLine ("WebBrowserBase: OnLostFocus");
+#endif
 			base.OnLostFocus (e);
 //			WebHost.FocusOut ();
 		}
@@ -303,7 +311,7 @@ namespace System.Windows.Forms
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
 			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
-			webHost.Navigated += new EventHandler (OnWebHostNavigated);
+			webHost.Completed += new EventHandler (OnWebHostCompleted);
 		}
 
 		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)
@@ -382,13 +390,16 @@ namespace System.Windows.Forms
 		/// <param name="e"></param>
 		private void OnWebHostFocus (object sender, EventArgs e)
 		{
+#if debug
+			Console.Error.WriteLine ("WebBrowserBase: OnWebHostFocus");
+#endif
 			this.Focus ();
 		}
 		
 		#endregion
 
 		internal abstract bool OnNewWindowInternal ();
-		internal abstract void OnWebHostNavigated (object sender, EventArgs e);
+		internal abstract void OnWebHostCompleted (object sender, EventArgs e);
 		#endregion
 	
 	}

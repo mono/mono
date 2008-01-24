@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
@@ -213,56 +213,56 @@ namespace System.Windows.Forms
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (urlString);
+			WebHost.Navigation.Go (urlString);
 		}
 
 		public void Navigate (Uri url)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (url.ToString ());
+			WebHost.Navigation.Go (url.ToString ());
 		}
 
 		public void Navigate (string urlString, bool newWindow)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (urlString);
+			WebHost.Navigation.Go (urlString);
 		}
 
 		public void Navigate (string urlString, string targetFrameName)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (urlString);
+			WebHost.Navigation.Go (urlString);
 		}
 
 		public void Navigate (Uri url, bool newWindow)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (url.ToString ());
+			WebHost.Navigation.Go (url.ToString ());
 		}
 
 		public void Navigate (Uri url, string targetFrameName)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (url.ToString ());
+			WebHost.Navigation.Go (url.ToString ());
 		}
 
 		public void Navigate (string urlString, string targetFrameName, byte[] postData, string additionalHeaders)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (urlString);
+			WebHost.Navigation.Go (urlString);
 		}
 
 		public void Navigate (Uri url, string targetFrameName, byte[] postData, string additionalHeaders)
 		{
 			documentReady = false;
 			document = null;
-			WebHost.Navigate (url.ToString ());
+			WebHost.Navigation.Go (url.ToString ());
 		}
 
 		public override void Refresh ()
@@ -533,7 +533,7 @@ namespace System.Windows.Forms
 			return c.Cancel;
 		}
 
-		internal override void OnWebHostNavigated (object sender, EventArgs e)
+		internal override void OnWebHostCompleted (object sender, EventArgs e)
 		{
 			documentReady = true;
 			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (WebHost.Document.Url));

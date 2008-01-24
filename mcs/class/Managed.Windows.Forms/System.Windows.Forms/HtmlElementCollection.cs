@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita	<avidigal@novell.com>
@@ -26,52 +26,44 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlElementCollection: ICollection, IEnumerable
 	{
-		private IElementCollection collection;
-		private HtmlElement[] elements;
+		private List<HtmlElement> elements;
+		private Mono.WebBrowser.IWebBrowser webHost;
 
-		internal HtmlElementCollection (IElementCollection col)
+		internal HtmlElementCollection (Mono.WebBrowser.IWebBrowser webHost, IElementCollection col)
 		{
-			collection = col;
+			elements = new List<HtmlElement>();
+			foreach (IElement elem in col) {
+				elements.Add (new HtmlElement (webHost, elem));
+			}
+			this.webHost = webHost;
 		}
 
-		private HtmlElementCollection (HtmlElement[] elems)
+		private HtmlElementCollection (Mono.WebBrowser.IWebBrowser webHost, List<HtmlElement> elems)
 		{
 			elements = elems;
+			this.webHost = webHost;
 		}
 
 		public int Count
 		{
 			get { 
-				if (collection != null)
-					return collection.Count;
-				if (elements != null)
-					return elements.Length;
-				return 0;
+				return elements.Count;
 			}
 		}
 
 		public HtmlElement this[string elementId]
 		{
 			get {
-				if (collection != null) {
-					foreach (IElement elem in collection) {
-						if (elem.HasAttribute ("id") && elem.GetAttribute ("id").Equals (elementId)) {
-							return new HtmlElement (elem);
-						}
-					}					
-				}
-				if (elements != null) {
-					for (int i = 0; i < elements.Length; i++) {
-						if (elements[i].Id.Equals (elementId))
-							return elements[i];
-					}
+				foreach (HtmlElement element in elements) {
+					if (element.Id.Equals (elementId))
+						return element;
 				}
 				return null;
 			}
@@ -80,38 +72,33 @@ namespace System.Windows.Forms
 		public HtmlElement this[int index]
 		{
 			get {
-				if (collection != null)
-					return new HtmlElement(collection[index]);
-				if (elements != null)
-					return elements[index];
-				return null;
+				if (index > elements.Count || index < 0)
+					return null;
+				return elements[index];
 			}
 		}
 
 		public HtmlElementCollection GetElementsByName (string name)
 		{
-			HtmlElement[] elems = new HtmlElement[this.Count];
-			int count = 0;
-			foreach (IElement elem in collection) {
+			List<HtmlElement> elems = new List<HtmlElement>();
+
+			foreach (HtmlElement elem in elements) {
 				if (elem.HasAttribute ("name") && elem.GetAttribute ("name").Equals (name)) {
-					elems[count] = new HtmlElement (elem);
-					count++;
+					elems.Add (new HtmlElement (webHost, elem.element));
 				}
 			}
-			HtmlElement[] resized = new HtmlElement [count];
-			elems.CopyTo (resized, 0);
-			return new HtmlElementCollection (resized);
+			return new HtmlElementCollection (webHost, elems);
 		}
 
-		[MonoTODO ("Needs Implementation")]
+		
 		public IEnumerator GetEnumerator ()
 		{
-			return null;
+			return elements.GetEnumerator ();
 		}
 
 		void ICollection.CopyTo (Array dest, int index)
 		{
-			throw new NotImplementedException ();
+			elements.CopyTo (dest as HtmlElement[], index);
 		}
 
 		object ICollection.SyncRoot
@@ -123,8 +110,6 @@ namespace System.Windows.Forms
 		{
 			get { return false; }
 		}
-
-
 	}
 }
 

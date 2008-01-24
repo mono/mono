@@ -1,3 +1,39 @@
+2008-01-24  Andreia Gaita <avidigal@novell.com>
+
+	* HtmlDocument.cs:
+	- Save a reference to the IDocument in the instance and
+	  use that one instead of going to WebHost.Document; the document that the 
+	  WebHost returns might not be the right one (in case of frames).
+	- Use the hashcode returned from the IDocument interface.
+	- Implemented: ActiveElement, ActiveLinkColor, All, BackColor, Cookie, 
+	  Domain (setter is not supported), Encoding, ForeColor, Forms, Images, 
+	  LinkColor, Url, VisitedColor, Window
+
+	* HtmlElement.cs: 
+	- Implemented: CanHaveChildren, Children, Document, GetAttribute, 
+	  set_Attribute, NextSibling, Parent, TagName, AppendChild, 
+	  GetElementsByTagName, GetHashCode, HasAttribute, InsertAdjacentElement,
+	  SetAttribute, Equals, equality operators.
+	- Added stubs for: AttachEventHandler, DetachEventHandler, Focus, 
+	  InvokeMember, RaiseEvent, RemoveFocus, ScrollIntoView, 
+	
+	* HtmlElementCollection.cs: Change implementation to use a generic
+	collection. Implemented Enumerator and CopyTo
+
+	* HtmlHistory.cs: Add constructor, no implementation yet.
+
+	* HtmlWindow.cs: Initial implementation with: Name, Parent, Alert,
+	Confirm, Prompt, Navigation, ScrollTo, Open, OpenNew, GetHashCode, 
+	Equals, equality operators.
+
+	* HtmlWindowCollection.cs: Implemented. 
+
+	* WebBrowser.cs: Use the Navigation object to navigate (WebHost.Navigate
+	has been deprecated).
+
+	* WebBrowserBase.cs: Use Completed event to track document loading
+	(Navigated has been deprecated)
+
 2008-01-24  Jonatham Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs: Add tab stops and NoWrap to dropdown MenuItems.  Top

@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -17,16 +17,84 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
+//
+// Authors:
+//	Andreia Gaita (avidigal@novell.com)
 //
 
-using System;
 
 #if NET_2_0
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Mono.WebBrowser.DOM;
+
 namespace System.Windows.Forms
 {
-	public sealed class HtmlWindowCollection {
+	public sealed class HtmlWindowCollection: ICollection, IEnumerable {
+		private List<HtmlWindow> windows;
+		private Mono.WebBrowser.IWebBrowser webHost;
+
+		internal HtmlWindowCollection (Mono.WebBrowser.IWebBrowser webHost, IWindowCollection col)
+		{
+			windows = new List<HtmlWindow>();
+			foreach (IWindow window in col) {
+				windows.Add (new HtmlWindow (webHost, window));
+			}
+
+			this.webHost = webHost;
+		}
+		
+		public int Count
+		{
+			get { 
+				return windows.Count;
+			}
+		}		
+
+		public HtmlWindow this[string name]
+		{
+			get {
+				foreach (HtmlWindow window in windows) {
+					if (window.Name.Equals (name))
+						return window;
+				}
+				return null;
+			}
+		}
+		
+		public HtmlWindow this[int index]
+		{
+			get {
+				if (index > windows.Count || index < 0)
+					return null;
+				return windows[index];
+			}
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return windows.GetEnumerator ();
+		}
+
+		void ICollection.CopyTo (Array dest, int index)
+		{
+			windows.CopyTo (dest as HtmlWindow[], index);
+		}
+
+		object ICollection.SyncRoot
+		{
+			get { return this; }
+		}
+
+		bool ICollection.IsSynchronized
+		{
+			get { return false; }
+		}
+		
+
 	}
 }
 
