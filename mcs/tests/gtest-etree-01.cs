@@ -3,6 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
+public struct InverseLogicalOperator
+{
+	bool value;
+	public InverseLogicalOperator (bool value)
+	{
+		this.value = value;
+	}
+
+	public static bool operator true (InverseLogicalOperator u)
+	{
+		return u.value;
+	}
+
+	public static bool operator false (InverseLogicalOperator u)
+	{
+		return u.value;
+	}
+}
+
+/*
+public struct MyTypeMyType<T>
+{
+	T value;
+
+	public MyType (T value)
+	{
+		this.value = value;
+	}
+
+	public static implicit operator T (MyType<T> o)
+	{
+		return o.value;
+	}
+}
+*/
+
 class Tester
 {
 	static void AssertNodeType (LambdaExpression e, ExpressionType et)
@@ -151,6 +187,50 @@ class Tester
 		Assert (5, e5.Compile ().Invoke (5));
 	}
 
+	void CoalesceTest ()
+	{
+		Expression<Func<uint?, uint>> e = (uint? a) => a ?? 99;
+		AssertNodeType (e, ExpressionType.Coalesce);
+		var r = e.Compile ();
+		Assert ((uint)5, r.Invoke (5));
+		Assert ((uint)99, r.Invoke (null));
+
+// TODO: implement
+//		Expression<Func<MyType<bool>?, bool>> e2 = (MyType<bool>? a) => a ?? false;
+//		AssertNodeType (e2, ExpressionType.Coalesce);
+//		var r2 = e2.Compile ();
+//		Assert (true, r2.Invoke (new MyType<bool> (true)));
+//		Assert (false, r2.Invoke (null));
+	}
+
+	void ConditionTest ()
+	{
+		Expression<Func<bool, byte, int, int>> e = (bool a, byte b, int c) => (a ? b : c);
+		AssertNodeType (e, ExpressionType.Conditional);
+		var r = e.Compile ();
+		Assert (3, r.Invoke (true, 3, 999999));
+		Assert (999999, r.Invoke (false, 3, 999999));
+
+		Expression<Func<int, decimal, decimal?>> e2 = (int a, decimal d) => (a > 0 ? d : a < 0 ? -d : (decimal?)null);
+		AssertNodeType (e2, ExpressionType.Conditional);
+		var r2 = e2.Compile ();
+		Assert (null, r2.Invoke (0, 10));
+		Assert (50, r2.Invoke (1, 50));
+		Assert (30, r2.Invoke (-7, -30));
+
+		Expression<Func<bool?, int?>> e3 = (bool? a) => ((bool)a ? 3 : -2);
+		AssertNodeType (e3, ExpressionType.Convert);
+		var r3 = e3.Compile ();
+		Assert (3, r3.Invoke (true));
+		Assert (-2, r3.Invoke (false));
+
+		Expression<Func<InverseLogicalOperator, byte, byte, byte>> e4 = (InverseLogicalOperator a, byte b, byte c) => (a ? b : c);
+		AssertNodeType (e4, ExpressionType.Conditional);
+		var r4 = e4.Compile ();
+		Assert (3, r4.Invoke (new InverseLogicalOperator (true), 3, 4));
+		Assert (4, r4.Invoke (new InverseLogicalOperator (false), 3, 4));
+	}
+
 	void NewArrayInitTest ()
 	{
 		Expression<Func<int[]>> e = () => new int[0];
@@ -236,6 +316,8 @@ class Tester
 		e.ArrayIndexTest ();
 		e.ArrayLengthTest ();
 		e.CallTest ();
+		e.CoalesceTest ();
+		e.ConditionTest ();
 		e.NewArrayInitTest ();
 		e.OrTest ();
 		e.OrNullableTest ();
@@ -243,6 +325,7 @@ class Tester
 		return 0;
 	}
 }
+
 
 
 
