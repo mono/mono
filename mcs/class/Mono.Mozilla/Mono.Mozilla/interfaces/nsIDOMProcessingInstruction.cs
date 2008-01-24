@@ -168,7 +168,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMProcessingInstruction {
 		public static nsIDOMProcessingInstruction GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMProcessingInstruction obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMProcessingInstruction).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMProcessingInstruction).GUID, obj);
 			return o as nsIDOMProcessingInstruction;
 		}
 	}

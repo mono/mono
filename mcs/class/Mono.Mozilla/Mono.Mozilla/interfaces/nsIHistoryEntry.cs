@@ -57,7 +57,7 @@ namespace Mono.Mozilla {
 	internal class nsHistoryEntry {
 		public static nsIHistoryEntry GetProxy (Mono.WebBrowser.IWebBrowser control, nsIHistoryEntry obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIHistoryEntry).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIHistoryEntry).GUID, obj);
 			return o as nsIHistoryEntry;
 		}
 	}

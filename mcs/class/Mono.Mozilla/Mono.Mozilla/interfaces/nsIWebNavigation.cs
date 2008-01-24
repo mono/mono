@@ -105,7 +105,7 @@ namespace Mono.Mozilla {
 	internal class nsWebNavigation {
 		public static nsIWebNavigation GetProxy (Mono.WebBrowser.IWebBrowser control, nsIWebNavigation obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIWebNavigation).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIWebNavigation).GUID, obj);
 			return o as nsIWebNavigation;
 		}
 	}

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007, 2008 Novell, Inc.
+// Copyright (c) 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -28,31 +28,15 @@ using Mono.WebBrowser;
 
 namespace Mono.WebBrowser.DOM
 {
-	public interface INavigation
+	public interface IWindow
 	{
-		bool CanGoBack { get; }
-		bool CanGoForward { get; }
-		bool Back ();
-		bool Forward ();
-		void Home ();
-		void Reload ();
-		void Reload (ReloadOption option);
-		void Stop ();
-		void Go (string url);
-		void Go (string url, LoadFlags flags);
+		string Name { get; set; }
+		IWindow Parent { get; }
+		IWindow Top { get; }
 		
+		bool Equals (IWindow obj);		
 		int GetHashCode ();
-	}
-	
-	[Flags]
-	public enum LoadFlags : uint {
-		None = 0x0000,
-		AsMetaRefresh = 0x0010,
-		AsLinkClick = 0x0020,
-		BypassHistory = 0x0040,
-		ReplaceHistory = 0x0080,
-		BypassLocalCache = 0x0100,
-		BypassProxy = 0x0200,
-		CharsetChange = 0x0400
+		void Open (string url);
+		void ScrollTo (int x, int y);
 	}
 }

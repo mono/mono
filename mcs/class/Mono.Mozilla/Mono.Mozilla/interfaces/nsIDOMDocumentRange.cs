@@ -49,7 +49,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMDocumentRange {
 		public static nsIDOMDocumentRange GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDocumentRange obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentRange).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentRange).GUID, obj);
 			return o as nsIDOMDocumentRange;
 		}
 	}

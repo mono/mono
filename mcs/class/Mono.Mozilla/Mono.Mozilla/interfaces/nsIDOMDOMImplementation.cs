@@ -65,7 +65,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMDOMImplementation {
 		public static nsIDOMDOMImplementation GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDOMImplementation obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMDOMImplementation).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDOMImplementation).GUID, obj);
 			return o as nsIDOMDOMImplementation;
 		}
 	}

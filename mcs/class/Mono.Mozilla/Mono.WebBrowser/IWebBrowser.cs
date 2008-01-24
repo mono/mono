@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -41,8 +41,8 @@ namespace Mono.WebBrowser
 		void Activate ();
 		void Deactivate ();
 		void Resize (int width, int height);
-		void Navigate (string url);
 
+		IWindow Window { get; }
 		IDocument Document { get; }
 		INavigation Navigation { get; }
 
@@ -59,7 +59,10 @@ namespace Mono.WebBrowser
 		event EventHandler Focus;
 		event CreateNewWindowEventHandler CreateNewWindow;
 		event AlertEventHandler Alert;
-		event EventHandler Navigated;
+		event EventHandler Transferring;
+		event EventHandler DocumentCompleted;
+		event EventHandler Completed;
+		
 	}
 
 	public enum ReloadOption : uint

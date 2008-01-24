@@ -93,6 +93,18 @@
     <Compile Include="Mono.Mozilla\DOM\Navigation.cs" />
     <Compile Include="Mono.Mozilla\DOM\Node.cs" />
     <Compile Include="Mono.Mozilla\DOM\NodeList.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Window.cs" />
+    <Compile Include="Mono.Mozilla\DOM\WindowCollection.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDocCharset.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMAbstractView.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMBarProp.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentView.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMWindow.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMWindowCollection.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIInterfaceRequestor.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsISelection.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserChromeFocus.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIWebBrowserFocus.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMAttr.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCDATASection.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCharacterData.cs" />
@@ -135,6 +147,8 @@
     <Compile Include="Mono.WebBrowser\DOM\INavigation.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INode.cs" />
     <Compile Include="Mono.WebBrowser\DOM\INodeList.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IWindow.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IWindowCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />

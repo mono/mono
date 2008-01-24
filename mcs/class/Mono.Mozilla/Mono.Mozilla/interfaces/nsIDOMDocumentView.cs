@@ -32,30 +32,25 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("a6cf907d-15b3-11d2-932e-00805f8add32")]
+	[Guid ("1ACDB2BA-1DD2-11B2-95BC-9542495D2569")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIDOMNodeList {
+	internal interface nsIDOMDocumentView {
 
-#region nsIDOMNodeList
+#region nsIDOMDocumentView
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int item (
-				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getLength ( out uint ret);
+		int getDefaultView ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMAbstractView ret);
 
 #endregion
 	}
 
 
-	internal class nsDOMNodeList {
-		public static nsIDOMNodeList GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMNodeList obj)
+	internal class nsDOMDocumentView {
+		public static nsIDOMDocumentView GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDocumentView obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMNodeList).GUID, obj);
-			return o as nsIDOMNodeList;
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentView).GUID, obj);
+			return o as nsIDOMDocumentView;
 		}
 	}
 }

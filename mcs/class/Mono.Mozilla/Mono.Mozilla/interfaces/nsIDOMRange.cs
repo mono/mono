@@ -156,7 +156,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMRange {
 		public static nsIDOMRange GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMRange obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMRange).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMRange).GUID, obj);
 			return o as nsIDOMRange;
 		}
 	}

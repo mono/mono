@@ -32,30 +32,27 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("a6cf907d-15b3-11d2-932e-00805f8add32")]
+	[Guid ("033A1470-8B2A-11d3-AF88-00A024FFC08C")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIDOMNodeList {
+	internal interface nsIInterfaceRequestor {
 
-#region nsIDOMNodeList
+#region nsIInterfaceRequestor
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int item (
-				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getLength ( out uint ret);
+		int getInterface (
+				[MarshalAs (UnmanagedType.LPStruct)]   Guid uuid,
+				  out IntPtr result);
 
 #endregion
 	}
 
 
-	internal class nsDOMNodeList {
-		public static nsIDOMNodeList GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMNodeList obj)
+	internal class nsInterfaceRequestor {
+		public static nsIInterfaceRequestor GetProxy (Mono.WebBrowser.IWebBrowser control, nsIInterfaceRequestor obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMNodeList).GUID, obj);
-			return o as nsIDOMNodeList;
+			object o = Base.GetProxyForObject (control, typeof(nsIInterfaceRequestor).GUID, obj);
+			return o as nsIInterfaceRequestor;
 		}
 	}
 }

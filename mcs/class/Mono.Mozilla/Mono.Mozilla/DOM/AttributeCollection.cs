@@ -92,5 +92,9 @@ namespace Mono.Mozilla.DOM
 			return ret != null;
 		}
 		#endregion
+		
+		public override int GetHashCode () {
+			return this.unmanagedNodes.GetHashCode ();
+		}
 	}
 }

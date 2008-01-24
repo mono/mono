@@ -201,7 +201,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMComment {
 		public static nsIDOMComment GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMComment obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMComment).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMComment).GUID, obj);
 			return o as nsIDOMComment;
 		}
 	}

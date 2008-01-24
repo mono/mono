@@ -67,10 +67,82 @@ namespace Mono.Mozilla.DOM
 
 		#region IDocument Members
 
-		public IElement Body
-		{
-			get
-			{
+		public IElement Active {
+			get {
+				nsIDOMElement element;
+				nsIWebBrowserFocus webBrowserFocus = (nsIWebBrowserFocus) (control.navigation.navigation);
+				if (webBrowserFocus == null)
+					return null;
+				webBrowserFocus.getFocusedElement (out element);
+				return new Element (control, element) as IElement;
+			}
+		}
+
+		public string ActiveLinkColor {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getALink(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setALink(storage);
+			}
+		}
+				
+		public IElementCollection Anchors {
+			get {
+				nsIDOMHTMLCollection ret;
+				this.document.getAnchors (out ret);
+				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
+			}
+
+		}
+
+		public IElementCollection Applets {
+			get {
+				nsIDOMHTMLCollection ret;
+				this.document.getApplets (out ret);
+				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
+			}
+
+		}
+
+		public string Background {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getBackground(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setBackground(storage);
+			}
+		}
+
+		public string BackColor {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getBgColor(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setBgColor(storage);
+			}
+		}
+
+		public IElement Body {
+			get {
 				if (!resources.Contains ("Body")) {
 					nsIDOMHTMLElement element;
 					this.document.getBody (out element);
@@ -81,10 +153,60 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
-		public IElement DocumentElement
-		{
-			get
-			{
+		// This is the most ugly code *ever*. TODO: find out why a simple thing as getting the 
+		// document encoding is not available in any frozen public interface
+		public string Charset {
+			get {		
+				nsIDOMDocumentView docView = (nsIDOMDocumentView) this.document;
+				nsIDOMAbstractView abstractView;
+				docView.getDefaultView (out abstractView);
+
+				nsIInterfaceRequestor requestor = (nsIInterfaceRequestor) abstractView;
+
+				IntPtr ret;				
+				requestor.getInterface (typeof(nsIDocCharset).GUID, out ret);
+				nsIDocCharset charset = (nsIDocCharset) Marshal.GetObjectForIUnknown (ret);
+
+				StringBuilder s = new StringBuilder (30);
+				IntPtr r = Marshal.StringToHGlobalUni (s.ToString ());
+				charset.getCharset (ref r);
+
+				return Marshal.PtrToStringAnsi (r);
+			}
+			set {
+				nsIDOMDocumentView docView = (nsIDOMDocumentView) this.document;
+				nsIDOMAbstractView abstractView;
+				docView.getDefaultView (out abstractView);
+
+				nsIInterfaceRequestor requestor = (nsIInterfaceRequestor) abstractView;
+
+				IntPtr ret;
+				requestor.getInterface (typeof (nsIDocCharset).GUID, out ret);
+				nsIDocCharset charset = (nsIDocCharset) Marshal.GetTypedObjectForIUnknown (ret, typeof (nsIDocCharset));
+
+				charset.setCharset (value);
+				control.navigation.Go (this.Url, LoadFlags.CharsetChange);
+			}
+		}
+
+		public string Cookie {
+			get {
+				this.document.getCookie (storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				this.document.setCookie (storage);
+			}
+		}
+		public string Domain {
+			get {
+				this.document.getDomain (storage);
+				return Base.StringGet (storage);
+			}
+		}
+		public IElement DocumentElement {
+			get {
 				if (!resources.Contains ("DocumentElement")) {
 					nsIDOMElement element;
 					this.document.getDocumentElement (out element);
@@ -94,35 +216,96 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
-		public string Text
-		{
-			set
-			{
+		public string ForeColor {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getText(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setText(storage);
 			}
 		}
 
-		public string Title
-		{
-			get
-			{
+		public IElementCollection Forms {
+			get {
+				nsIDOMHTMLCollection ret;
+				this.document.getForms (out ret);
+				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
+			}
+
+		}
+
+		public IElementCollection Images {
+			get {
+				nsIDOMHTMLCollection ret;
+				this.document.getImages (out ret);
+				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
+			}
+
+		}
+
+		public string LinkColor {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getLink(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setLink(storage);
+			}
+		}
+
+		public IElementCollection Links {
+			get {
+				nsIDOMHTMLCollection ret;
+				this.document.getLinks (out ret);
+				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
+			}
+
+		}
+
+		public string Title {
+			get {
 				this.document.getTitle (storage);
 				return Base.StringGet (storage);
 			}
-			set
-			{
+			set {
 				Base.StringSet (storage, value);
 				this.document.setTitle (storage);
 			}
 		}
 
-		public string Url
-		{
-			get
-			{
-				((nsIDOMHTMLDocument) this.document).getURL (storage);
+		public string Url {
+			get {
+				this.document.getURL (storage);
 				return Base.StringGet (storage);
 			}
 		}
+
+		public string VisitedLinkColor {
+			get {
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).getVLink(storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				Base.StringSet (storage, value);
+				nsIDOMHTMLElement element;
+				this.document.getBody (out element);
+				((nsIDOMHTMLBodyElement)element).setVLink(storage);
+			}
+		}
+
 
 		public IElement CreateElement (string tagName)
 		{
@@ -180,5 +363,9 @@ namespace Mono.Mozilla.DOM
 		}
 
 		#endregion
+		
+		public override int GetHashCode () {
+			return this.document.GetHashCode ();
+		}		
 	}
 }

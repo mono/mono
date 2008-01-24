@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -168,34 +168,6 @@ namespace Mono.Mozilla
 		}
 
 		// navigation
-		public static void Navigate (IWebBrowser control, string uri)
-		{
-			if (!isInitialized ())
-				return;
-			BindingInfo info = getBinding (control);
-
-			gluezilla_navigate (info.gluezilla, uri);
-		}
-
-
-		public static bool Forward (IWebBrowser control)
-		{
-			if (!isInitialized ())
-				return false;
-			BindingInfo info = getBinding (control);
-
-			return gluezilla_forward (info.gluezilla);
-		}
-
-		public static bool Back (IWebBrowser control)
-		{
-			if (!isInitialized ())
-				return false;
-			BindingInfo info = getBinding (control);
-
-			return gluezilla_back (info.gluezilla);
-		}
-
 		public static void Home (IWebBrowser control)
 		{
 			if (!isInitialized ())
@@ -203,33 +175,6 @@ namespace Mono.Mozilla
 			BindingInfo info = getBinding (control);
 
 			gluezilla_home (info.gluezilla);
-		}
-
-		public static void Stop (IWebBrowser control)
-		{
-			if (!isInitialized ())
-				return;
-			BindingInfo info = getBinding (control);
-
-			gluezilla_stop (info.gluezilla);
-		}
-
-		public static void Reload (IWebBrowser control, ReloadOption option)
-		{
-			if (!isInitialized ())
-				return;
-			BindingInfo info = getBinding (control);
-
-			gluezilla_reload (info.gluezilla, option);
-		}
-
-		public static nsIDOMHTMLDocument GetDOMDocument (IWebBrowser control)
-		{
-			if (!isInitialized ())
-				return null;
-			BindingInfo info = getBinding (control);
-
-			return gluezilla_getDomDocument (info.gluezilla);
 		}
 
 		public static nsIWebNavigation GetWebNavigation (IWebBrowser control)
@@ -261,18 +206,9 @@ namespace Mono.Mozilla
 		{
 			gluezilla_stringSet (str, text);
 		}
-/*		
-		public static nsIServiceManager GetServiceManager (IWebBrowser control)
-		{
-			if (!isInitialized ())
-				return null;
-			BindingInfo info = getBinding (control);
 
-			return gluezilla_getServiceManager (info.gluezilla);
-		}
-*/
 
-		public static object GetProxyForObject (IWebBrowser control, Guid iid, Type type, object obj)
+		public static object GetProxyForObject (IWebBrowser control, Guid iid, object obj)
 		{
 			if (!isInitialized ())
 				return null;
@@ -281,7 +217,7 @@ namespace Mono.Mozilla
 			IntPtr ret;
 			gluezilla_getProxyForObject (info.gluezilla, iid, obj, out ret);
 			
-			object o = Marshal.GetTypedObjectForIUnknown (ret, type);
+			object o = Marshal.GetObjectForIUnknown (ret);
 			return o;
 		}
 
@@ -291,7 +227,6 @@ namespace Mono.Mozilla
 
 		[DllImport("gluezilla")]
 		private static extern IntPtr gluezilla_init (Platform platform, IntPtr events, string startDir, string dataDir, out Platform mozPlatform);
-//		private static extern IntPtr gluezilla_init (IntPtr events, string startDir, string dataDir);
 
 		[DllImport ("gluezilla")]
 		private static extern IntPtr gluezilla_shutdown (IntPtr instance);
@@ -312,23 +247,10 @@ namespace Mono.Mozilla
 		private static extern int gluezilla_resize (IntPtr instance, Int32 width, Int32 height);
 
 		// navigation
-		[DllImport("gluezilla")]
-		private static extern int gluezilla_navigate (IntPtr instance, string uri);
-		[DllImport ("gluezilla")]
-		private static extern bool gluezilla_forward (IntPtr instance);
-		[DllImport ("gluezilla")]
-		private static extern bool gluezilla_back (IntPtr instance);
 		[DllImport ("gluezilla")]
 		private static extern int gluezilla_home (IntPtr instance);
-		[DllImport ("gluezilla")]
-		private static extern int gluezilla_stop (IntPtr instance);
-		[DllImport ("gluezilla")]
-		private static extern int gluezilla_reload (IntPtr instance, ReloadOption option);
 
 		// dom
-		[DllImport ("gluezilla")]
-		[return:MarshalAs(UnmanagedType.Interface)]
-		private static extern nsIDOMHTMLDocument gluezilla_getDomDocument (IntPtr instance);
 		[DllImport ("gluezilla")]
 		[return:MarshalAs(UnmanagedType.Interface)]
 		private static extern nsIWebNavigation gluezilla_getWebNavigation (IntPtr instance);
@@ -341,10 +263,6 @@ namespace Mono.Mozilla
 		private static extern IntPtr gluezilla_stringGet (HandleRef str);
 		[DllImport ("gluezilla")]
 		private static extern void gluezilla_stringSet (HandleRef str, [MarshalAs (UnmanagedType.LPWStr)] string text);
-
-
-//		[DllImport ("gluezilla")]
-//		private static extern nsIServiceManager gluezilla_getServiceManager (IntPtr instance);
 
 		[DllImport ("gluezilla")]
 		private static extern void gluezilla_getProxyForObject (

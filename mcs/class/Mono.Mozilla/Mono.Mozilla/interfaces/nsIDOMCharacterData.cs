@@ -198,7 +198,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMCharacterData {
 		public static nsIDOMCharacterData GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMCharacterData obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMCharacterData).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMCharacterData).GUID, obj);
 			return o as nsIDOMCharacterData;
 		}
 	}

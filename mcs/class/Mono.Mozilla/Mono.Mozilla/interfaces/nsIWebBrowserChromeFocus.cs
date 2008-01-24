@@ -32,30 +32,29 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("a6cf907d-15b3-11d2-932e-00805f8add32")]
+	[Guid ("d2206418-1dd1-11b2-8e55-acddcd2bcfb8")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIDOMNodeList {
+	internal interface nsIWebBrowserChromeFocus {
 
-#region nsIDOMNodeList
+#region nsIWebBrowserChromeFocus
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int item (
-				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
+		int focusNextElement ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getLength ( out uint ret);
+		int focusPrevElement ();
 
 #endregion
 	}
 
 
-	internal class nsDOMNodeList {
-		public static nsIDOMNodeList GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMNodeList obj)
+	internal class nsWebBrowserChromeFocus {
+		public static nsIWebBrowserChromeFocus GetProxy (Mono.WebBrowser.IWebBrowser control, nsIWebBrowserChromeFocus obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMNodeList).GUID, obj);
-			return o as nsIDOMNodeList;
+			object o = Base.GetProxyForObject (control, typeof(nsIWebBrowserChromeFocus).GUID, obj);
+			return o as nsIWebBrowserChromeFocus;
 		}
 	}
 }

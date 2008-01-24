@@ -32,30 +32,53 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("a6cf907d-15b3-11d2-932e-00805f8add32")]
+	[Guid ("9c5d3c58-1dd1-11b2-a1c9-f3699284657a")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIDOMNodeList {
+	internal interface nsIWebBrowserFocus {
 
-#region nsIDOMNodeList
+#region nsIWebBrowserFocus
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int item (
-				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
+		int activate ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getLength ( out uint ret);
+		int deactivate ();
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int setFocusAtFirstElement ();
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int setFocusAtLastElement ();
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int getFocusedWindow ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMWindow ret);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int setFocusedWindow ([MarshalAs (UnmanagedType.Interface)]  nsIDOMWindow value);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int getFocusedElement ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMElement ret);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int setFocusedElement ([MarshalAs (UnmanagedType.Interface)]  nsIDOMElement value);
 
 #endregion
 	}
 
 
-	internal class nsDOMNodeList {
-		public static nsIDOMNodeList GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMNodeList obj)
+	internal class nsWebBrowserFocus {
+		public static nsIWebBrowserFocus GetProxy (Mono.WebBrowser.IWebBrowser control, nsIWebBrowserFocus obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMNodeList).GUID, obj);
-			return o as nsIDOMNodeList;
+			object o = Base.GetProxyForObject (control, typeof(nsIWebBrowserFocus).GUID, obj);
+			return o as nsIWebBrowserFocus;
 		}
 	}
 }

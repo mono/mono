@@ -34,7 +34,7 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Node: DOMObject, INode
 	{
-		private nsIDOMNode node;
+		internal nsIDOMNode node;
 		
 		public Node (WebBrowser control, nsIDOMNode domNode) : base (control)
 		{
@@ -58,7 +58,6 @@ namespace Mono.Mozilla.DOM
 		#endregion
 
 		#region INode Members
-
 		public virtual IAttributeCollection Attributes
 		{
 			get
@@ -95,10 +94,63 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public virtual INode LastChild {
+			get {
+				if (!resources.Contains ("LastChild")) {
+					nsIDOMNode child;
+					this.node.getLastChild (out child);
+					resources.Add ("LastChild", new Node (control, child));
+				}
+				return resources["LastChild"] as INode;
+			}
+		}
+		
+		public virtual INode Parent {
+			get {
+				if (!resources.Contains ("Parent")) {
+					nsIDOMNode parent;
+					this.node.getParentNode (out parent);
+					resources.Add ("Parent", new Node (control, parent));
+				}
+				return resources["Parent"] as INode;
+			}
+		}
+
+		public virtual INode Previous {
+			get {
+				if (!resources.Contains ("Previous")) {
+					nsIDOMNode child;
+					this.node.getPreviousSibling (out child);
+					resources.Add ("Previous", new Node (control, child));
+				}
+				return resources["Previous"] as INode;
+			}
+		}
+
+		public virtual INode Next {
+			get {
+				if (!resources.Contains ("Next")) {
+					nsIDOMNode child;
+					this.node.getNextSibling (out child);
+					resources.Add ("Next", new Node (control, child));
+				}
+				return resources["Next"] as INode;
+			}
+		}
+
+
 		public virtual string LocalName {
 			get {
 				this.node.getLocalName (storage);
 				return Base.StringGet (storage);				
+			}
+		}
+		
+		public IDocument Owner {
+			get {
+				nsIDOMDocument doc;
+				this.node.getOwnerDocument (out doc);
+				return new Document (control, doc as Mono.Mozilla.nsIDOMHTMLDocument);
 			}
 		}
 
@@ -119,5 +171,19 @@ namespace Mono.Mozilla.DOM
 		}
 		
 		#endregion
+		
+		#region Methods
+		public virtual IElement InsertBefore (INode child, INode refChild) {
+			nsIDOMNode newChild;
+			Node elem = (Node) child;
+			Node reference = (Node) refChild;
+			this.node.insertBefore (elem.node, reference.node, out newChild);
+			return new Element (control, newChild as nsIDOMElement);
+		}		
+		#endregion
+		
+		public override int GetHashCode () {
+			return this.node.GetHashCode ();
+		}		
 	}
 }

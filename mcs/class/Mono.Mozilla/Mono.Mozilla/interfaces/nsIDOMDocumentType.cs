@@ -180,7 +180,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMDocumentType {
 		public static nsIDOMDocumentType GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDocumentType obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentType).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentType).GUID, obj);
 			return o as nsIDOMDocumentType;
 		}
 	}

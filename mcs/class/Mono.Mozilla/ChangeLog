@@ -1,3 +1,57 @@
+2008-01-24  Andreia Gaita <avidigal@novell.com>
+
+	* Mono.Mozilla.dll.sources, Mono.Mozilla.2K5.csproj: Added files.
+
+	* Mono.Mozilla/interfaces/*.cs: Add yet more mozilla interfaces to 
+	support getting windows, page encodings, dealing with focused elements.
+	Update GetProxyForObject signature.
+
+	* Mono.Mozilla/Base.cs: Remove unneeded navigation methods, Navigation
+	now goes through the Navigation object. 
+	(GetProxyForObject): Use GetObjectForIUnknown instead of 
+	GetTypedObjectForIUnknown, this one is not working properly. GetProxyForObject
+	now has two parameters, instead of three (no need to send the type). All the
+	interfaces have been regenerated and xpidl2cs changed for the new signature.
+
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: 
+	Implement Window getter. Add events	and event watcher to track page loading.
+	
+	* Mono.Mozilla/DOM/Attribute.cs, Mono.WebBrowser/DOM/IAttribute.cs:
+	Add GetHashCode
+
+	* Mono.WebBrowser/DOM/IDocument.cs, Mono.Mozilla/DOM/Document.cs:
+	Implemented: Active, ActiveLinkColor, Anchors, Applets, Background, BackColor,
+	Charset, Cookie, Domain, ForeColor, Forms, Images, LinkColor, Links, 
+	VisitedLinkColor, GetElement, Equals, GetHashCode
+
+	* Mono.WebBrowser/DOM/IElement.cs, Mono.Mozilla/DOM/Element.cs:
+	Implemented: Children, TagName, AppendChild, Equals, GetElementsByTagName, 
+	GetHashCode, SetAttribute.
+	Changed get_All to return all children recursively.
+	
+	* Mono.WebBrowser/DOM/IElementCollection.cs: Fix header. Add GetHashCode.
+	
+	* Mono.Mozilla/DOM/HTMLElementCollection.cs: Fix header. Change Load() so
+	it only includes html elements in the collection.
+
+	* Mono.WebBrowser/DOM/INavigation.cs, Mono.Mozilla/DOM/Navigation.cs: 
+	Implement GetHashCode. Add CharsetChange option to the load flags so support
+	refreshing a page after an encoding change.
+
+	* Mono.WebBrowser/DOM/INode.cs, Mono.Mozilla/DOM/Node.cs:
+	Implement: InsertBefore, LastChild, Next, Owner, Parent, Previous, GetHashCode
+
+	* Mono.WebBrowser/DOM/INodeList.cs, Mono.Mozilla/DOM/NodeList.cs:
+	Fix header. Implement GetHashCode. Add support for creating empty 
+	collections that get nodes added later, add support for removing nodes. 
+
+	* Mono.WebBrowser/DOM/IWindow.cs, Mono.Mozilla/DOM/Window.cs:
+	Added. Represents a window (top level or frame) and wraps nsIDOMWindow.
+
+	* Mono.WebBrowser/DOM/IWindowCollection.cs, 
+	Mono.Mozilla/DOM/WindowCollection.cs:
+	Added. Represents a collection of windows, wraps nsIDOMWindowCollection.
+
 2008-01-21  Andreia Gaita <avidigal@novell.com>
 
 	* Mono.WebBrowser/DOM/INavigation.cs: Add Go overload with flags, 

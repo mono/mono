@@ -32,128 +32,108 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("07a22cc0-0ce5-11d3-9331-00104ba0fd40")]
+	[Guid ("B2C7ED59-8634-4352-9E37-5484C8B6E4E1")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIURI {
+	internal interface nsISelection {
 
-#region nsIURI
+#region nsISelection
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getSpec (  /*AUTF8String*/ HandleRef ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setSpec ( /*AUTF8String*/ HandleRef value);
+		int getAnchorNode ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getPrePath (  /*AUTF8String*/ HandleRef ret);
+		int getAnchorOffset ( out int ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getScheme (  /*ACString*/ HandleRef ret);
+		int getFocusNode ([MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setScheme ( /*ACString*/ HandleRef value);
+		int getFocusOffset ( out int ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getUserPass (  /*AUTF8String*/ HandleRef ret);
+		int getIsCollapsed ( out bool ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setUserPass ( /*AUTF8String*/ HandleRef value);
+		int getRangeCount ( out int ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getUsername (  /*AUTF8String*/ HandleRef ret);
+		int getRangeAt (
+				   int index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMRange ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setUsername ( /*AUTF8String*/ HandleRef value);
+		int collapse (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMNode parentNode,
+				   int offset);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getPassword (  /*AUTF8String*/ HandleRef ret);
+		int extend (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMNode parentNode,
+				   int offset);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setPassword ( /*AUTF8String*/ HandleRef value);
+		int collapseToStart ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getHostPort (  /*AUTF8String*/ HandleRef ret);
+		int collapseToEnd ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setHostPort ( /*AUTF8String*/ HandleRef value);
+		int containsNode (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMNode node,
+				   bool entirelyContained, out bool ret);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getHost (  /*AUTF8String*/ HandleRef ret);
+		int selectAllChildren (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMNode parentNode);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setHost ( /*AUTF8String*/ HandleRef value);
+		int addRange (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMRange range);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getPort ( out int ret);
+		int removeRange (
+				[MarshalAs (UnmanagedType.Interface)]   nsIDOMRange range);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setPort ( int value);
+		int removeAllRanges ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getPath (  /*AUTF8String*/ HandleRef ret);
+		int deleteFromDocument ();
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setPath ( /*AUTF8String*/ HandleRef value);
+		int selectionLanguageChange (
+				   bool langRTL);
 
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int equals (
-				[MarshalAs (UnmanagedType.Interface)]   nsIURI other, out bool ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int schemeIs (
-				[MarshalAs (UnmanagedType.LPStr)]   string scheme, out bool ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int clone ([MarshalAs (UnmanagedType.Interface)]  out nsIURI ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int resolve (
-				   /*AUTF8String*/ HandleRef relativePath,  /*AUTF8String*/ HandleRef ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getAsciiSpec (  /*ACString*/ HandleRef ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getAsciiHost (  /*ACString*/ HandleRef ret);
-
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getOriginCharset (  /*ACString*/ HandleRef ret);
+		int toString ([MarshalAs(UnmanagedType.LPWStr)]   string ret);
 
 #endregion
 	}
 
 
-	internal class nsURI {
-		public static nsIURI GetProxy (Mono.WebBrowser.IWebBrowser control, nsIURI obj)
+	internal class nsSelection {
+		public static nsISelection GetProxy (Mono.WebBrowser.IWebBrowser control, nsISelection obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIURI).GUID, obj);
-			return o as nsIURI;
+			object o = Base.GetProxyForObject (control, typeof(nsISelection).GUID, obj);
+			return o as nsISelection;
 		}
 	}
 }

@@ -337,7 +337,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMHTMLBodyElement {
 		public static nsIDOMHTMLBodyElement GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMHTMLBodyElement obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMHTMLBodyElement).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMHTMLBodyElement).GUID, obj);
 			return o as nsIDOMHTMLBodyElement;
 		}
 	}

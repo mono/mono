@@ -32,30 +32,35 @@ using System.Text;
 
 namespace Mono.Mozilla {
 
-	[Guid ("a6cf907d-15b3-11d2-932e-00805f8add32")]
+	[Guid ("a6cf906f-15b3-11d2-932e-00805f8add32")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport ()]
-	internal interface nsIDOMNodeList {
+	internal interface nsIDOMWindowCollection {
 
-#region nsIDOMNodeList
-		[PreserveSigAttribute]
-		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int item (
-				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMNode ret);
-
+#region nsIDOMWindowCollection
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int getLength ( out uint ret);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int item (
+				   uint index,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMWindow ret);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int namedItem (
+				   /*DOMString*/ HandleRef name,[MarshalAs (UnmanagedType.Interface)]  out nsIDOMWindow ret);
 
 #endregion
 	}
 
 
-	internal class nsDOMNodeList {
-		public static nsIDOMNodeList GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMNodeList obj)
+	internal class nsDOMWindowCollection {
+		public static nsIDOMWindowCollection GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMWindowCollection obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMNodeList).GUID, obj);
-			return o as nsIDOMNodeList;
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMWindowCollection).GUID, obj);
+			return o as nsIDOMWindowCollection;
 		}
 	}
 }

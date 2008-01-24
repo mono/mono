@@ -59,7 +59,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMHTMLCollection {
 		public static nsIDOMHTMLCollection GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMHTMLCollection obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMHTMLCollection).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMHTMLCollection).GUID, obj);
 			return o as nsIDOMHTMLCollection;
 		}
 	}

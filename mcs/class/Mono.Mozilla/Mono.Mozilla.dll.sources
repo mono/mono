@@ -14,6 +14,18 @@ Mono.Mozilla/DOM/HTMLElementCollection.cs
 Mono.Mozilla/DOM/Navigation.cs
 Mono.Mozilla/DOM/Node.cs
 Mono.Mozilla/DOM/NodeList.cs
+Mono.Mozilla/DOM/Window.cs
+Mono.Mozilla/DOM/WindowCollection.cs
+Mono.Mozilla/interfaces/nsIDocCharset.cs
+Mono.Mozilla/interfaces/nsIDOMAbstractView.cs
+Mono.Mozilla/interfaces/nsIDOMBarProp.cs
+Mono.Mozilla/interfaces/nsIDOMDocumentView.cs
+Mono.Mozilla/interfaces/nsIDOMWindow.cs
+Mono.Mozilla/interfaces/nsIDOMWindowCollection.cs
+Mono.Mozilla/interfaces/nsIInterfaceRequestor.cs
+Mono.Mozilla/interfaces/nsISelection.cs
+Mono.Mozilla/interfaces/nsIWebBrowserChromeFocus.cs
+Mono.Mozilla/interfaces/nsIWebBrowserFocus.cs
 Mono.Mozilla/interfaces/nsIDOMAttr.cs
 Mono.Mozilla/interfaces/nsIDOMCDATASection.cs
 Mono.Mozilla/interfaces/nsIDOMCharacterData.cs
@@ -56,3 +68,5 @@ Mono.WebBrowser/DOM/IElementCollection.cs
 Mono.WebBrowser/DOM/INavigation.cs
 Mono.WebBrowser/DOM/INode.cs
 Mono.WebBrowser/DOM/INodeList.cs
+Mono.WebBrowser/DOM/IWindow.cs
+Mono.WebBrowser/DOM/IWindowCollection.cs

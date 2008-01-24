@@ -53,7 +53,7 @@ namespace Mono.Mozilla {
 	internal class nsSimpleEnumerator {
 		public static nsISimpleEnumerator GetProxy (Mono.WebBrowser.IWebBrowser control, nsISimpleEnumerator obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsISimpleEnumerator).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsISimpleEnumerator).GUID, obj);
 			return o as nsISimpleEnumerator;
 		}
 	}

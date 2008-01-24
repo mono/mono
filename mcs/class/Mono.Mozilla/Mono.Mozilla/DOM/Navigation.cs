@@ -34,7 +34,7 @@ namespace Mono.Mozilla.DOM
 	internal class Navigation: DOMObject, INavigation
 	{
 
-		private nsIWebNavigation navigation;
+		internal nsIWebNavigation navigation;
 		
 		public Navigation (WebBrowser control, nsIWebNavigation webNav) : base (control)
 		{
@@ -156,5 +156,9 @@ namespace Mono.Mozilla.DOM
 				return new Document (control, doc as nsIDOMHTMLDocument);
 			}
 		}
+		
+		public override int GetHashCode () {
+			return this.navigation.GetHashCode ();
+		}		
 	}
 }

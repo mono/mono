@@ -176,7 +176,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMAttr {
 		public static nsIDOMAttr GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMAttr obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMAttr).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMAttr).GUID, obj);
 			return o as nsIDOMAttr;
 		}
 	}

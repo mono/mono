@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -41,7 +41,7 @@ namespace Mono.Mozilla
 	{
 		private bool loaded;
 		private DOM.Document document;
-		private DOM.Navigation navigation;
+		internal DOM.Navigation navigation;
 		internal Platform platform;
 		internal Platform enginePlatform;
 
@@ -67,11 +67,25 @@ namespace Mono.Mozilla
 			this.document = null;	
 		}
 
+		public IWindow Window
+		{
+			get
+			{
+				if (Navigation != null) {
+					nsIWebBrowserFocus webBrowserFocus = (nsIWebBrowserFocus) (navigation.navigation);
+					nsIDOMWindow window;
+					webBrowserFocus.getFocusedWindow (out window);
+					return new DOM.Window (this, window) as IWindow;
+				}
+				return null;
+			}
+		}
+
 		public IDocument Document
 		{
 			get
 			{
-				if (navigation != null && document == null) {
+				if (Navigation != null && document == null) {
 					document = navigation.Document;
 				}
 				return document as IDocument;
@@ -114,14 +128,6 @@ namespace Mono.Mozilla
 		{
 			Base.Resize (this, width, height);
 		}
-
-		public void Navigate (string url)
-		{
-			this.document = null;
-			this.navigation = null;
-			Base.Navigate (this, url);
-		}
-
 		#endregion
 
 		#region Events
@@ -209,13 +215,26 @@ namespace Mono.Mozilla
 		}
 
 
-		static object NavigatedEvent = new object ();
-		public event EventHandler Navigated
+		static object TransferringEvent = new object ();
+		public event EventHandler Transferring
 		{
-			add { Events.AddHandler (NavigatedEvent, value); }
-			remove { Events.RemoveHandler (NavigatedEvent, value); }
+			add { Events.AddHandler (TransferringEvent, value); }
+			remove { Events.RemoveHandler (TransferringEvent, value); }
 		}
 
+		static object DocumentCompletedEvent = new object ();
+		public event EventHandler DocumentCompleted
+		{
+			add { Events.AddHandler (DocumentCompletedEvent, value); }
+			remove { Events.RemoveHandler (DocumentCompletedEvent, value); }
+		}
+
+		static object CompletedEvent = new object ();
+		public event EventHandler Completed
+		{
+			add { Events.AddHandler (CompletedEvent, value); }
+			remove { Events.RemoveHandler (CompletedEvent, value); }
+		}
 		#endregion
 
 
@@ -288,14 +307,66 @@ namespace Mono.Mozilla
 
 		public void OnStateChange (Int32 status, UInt32 state)
 		{
-			//if ((state & (uint) StateFlags.Start) != 0 && (state & (uint) StateFlags.IsDocument) != 0)
-			//{
-			//    EventHandler eh = (EventHandler) (Events[NavigatedEvent]);
-			//    if (eh != null) {
-			//        EventArgs e = new EventArgs ();
-			//        eh (this, e);
-			//    }
-			//}
+			System.Text.StringBuilder s = new System.Text.StringBuilder ();
+			if ((state & (uint) StateFlags.Start) != 0) {
+				s.Append ("Start\t");
+			}
+			if ((state & (uint) StateFlags.Redirecting) != 0) {
+				s.Append ("Redirecting\t");
+			}
+			if ((state & (uint) StateFlags.Transferring) != 0) {
+				s.Append ("Transferring\t");
+			}
+			if ((state & (uint) StateFlags.Negotiating) != 0) {
+				s.Append ("Negotiating\t");
+			}
+			if ((state & (uint) StateFlags.Stop) != 0) {
+				s.Append ("Stop\t");
+			}
+			if ((state & (uint) StateFlags.IsRequest) != 0) {
+				s.Append ("Request\t");
+			}
+			if ((state & (uint) StateFlags.IsDocument) != 0) {
+				s.Append ("Document\t");
+			}
+			if ((state & (uint) StateFlags.IsNetwork) != 0) {
+				s.Append ("Network\t");
+			}
+			if ((state & (uint) StateFlags.IsWindow) != 0) {
+				s.Append ("Window\t");
+			}
+			Console.Error.WriteLine (s.ToString ());
+			if ((state & (uint) StateFlags.Transferring) != 0 && 
+				(state & (uint) StateFlags.IsRequest) != 0 &&
+				(state & (uint) StateFlags.IsDocument) != 0
+				)
+			{
+			    EventHandler eh = (EventHandler) (Events[TransferringEvent]);
+			    if (eh != null) {
+			        EventArgs e = new EventArgs ();
+			        eh (this, e);
+			    }
+			} else if ((state & (uint) StateFlags.Stop) != 0 && 
+				(state & (uint) StateFlags.IsDocument) != 0
+				)
+			{
+			    EventHandler eh = (EventHandler) (Events[DocumentCompletedEvent]);
+			    if (eh != null) {
+			        EventArgs e = new EventArgs ();
+			        eh (this, e);
+			    }
+			} else if ((state & (uint) StateFlags.Stop) != 0 && 
+				(state & (uint) StateFlags.IsNetwork) != 0 &&
+				(state & (uint) StateFlags.IsWindow) != 0
+				)
+			{
+			    EventHandler eh = (EventHandler) (Events[CompletedEvent]);
+			    if (eh != null) {
+			        EventArgs e = new EventArgs ();
+			        eh (this, e);
+			    }
+			}  
+			Console.Error.WriteLine ("{0} completed", s.ToString ());
 		}
 
 		public void OnProgress (Int32 currentTotalProgress, Int32 maxTotalProgress)
@@ -310,11 +381,13 @@ namespace Mono.Mozilla
 
 		public void OnLocationChanged (string uri)
 		{
+			/*
 			EventHandler eh = (EventHandler) (Events[NavigatedEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
 				eh (this, e);
 			}
+			*/
 		}
 
 		public void OnStatusChange (string message, Int32 status)
@@ -650,8 +723,7 @@ namespace Mono.Mozilla
 		public void OnGeneric (IntPtr type)
 		{
 			string t = Marshal.PtrToStringUni (type);
-			Trace.WriteLine (t);
-			Trace.Flush ();
+			Console.Error.WriteLine (t);
 
 		}
 		#endregion

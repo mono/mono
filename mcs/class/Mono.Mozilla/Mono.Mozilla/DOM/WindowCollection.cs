@@ -30,23 +30,23 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla.DOM
 {
-	internal class NodeList : DOMObject, INodeList
+	internal class WindowCollection : DOMObject, IWindowCollection
 	{
-		protected nsIDOMNodeList unmanagedNodes;
-		protected INode [] nodes;
-		protected int nodeCount;
+		protected nsIDOMWindowCollection unmanagedWindows;
+		protected IWindow [] windows;
+		protected int windowCount;
 		
-		public NodeList(WebBrowser control, nsIDOMNodeList nodeList) : base (control)
+		public WindowCollection (WebBrowser control, nsIDOMWindowCollection windowCol) : base (control)
 		{
 			if (control.platform != control.enginePlatform)
-				unmanagedNodes = nsDOMNodeList.GetProxy (control, nodeList);
+				unmanagedWindows = nsDOMWindowCollection.GetProxy (control, windowCol);
 			else
-				unmanagedNodes = nodeList;
+				unmanagedWindows = windowCol;
 		}
 
-		public NodeList (WebBrowser control) : base (control)
+		public WindowCollection (WebBrowser control) : base (control)
 		{
-			nodes = new Node[0];
+			windows = new Window[0];
 		}
 		
 		#region IDisposable Members
@@ -64,59 +64,51 @@ namespace Mono.Mozilla.DOM
 		#region Helpers
 		protected void Clear () 
 		{
-			if (nodes != null) {
-				for (int i = 0; i < nodeCount; i++) {
-					nodes[i] = null;
+			if (windows != null) {
+				for (int i = 0; i < windowCount; i++) {
+					windows[i] = null;
 				}
-				nodeCount = 0;
-				unmanagedNodes = null;
+				windowCount = 0;
+				windows = null;
 			}
 		}
-		
-		internal virtual void Load ()
+
+		internal void Load ()
 		{
 			Clear ();
 			uint count;
-			unmanagedNodes.getLength (out count);
-			nodeCount = (int) count; // hmm.... not good
-			nodes = new Node[nodeCount];
-			for (int i = 0; i < nodeCount; i++) {
-				nsIDOMNode node;
-				unmanagedNodes.item ((uint)i, out node);
-				ushort type;
-				node.getNodeType (out type);
-				switch (type) {
-					case (ushort)NodeType.Element:
-						nodes[i] = new HTMLElement (control, node as nsIDOMHTMLElement);
-						break;
-					default:
-						nodes[i] = new Node (control, node);
-						break;
-				}				
+			unmanagedWindows.getLength (out count);
+			Window[] tmpwindows = new Window[count];
+			for (int i = 0; i < count;i++) {
+				nsIDOMWindow window;
+				unmanagedWindows.item ((uint)i, out window);
+				tmpwindows[windowCount++] = new Window (control, (nsIDOMWindow)window);
 			}
+			windows = new Window[windowCount];
+			Array.Copy (tmpwindows, windows, windowCount);
 		}
 		#endregion
 		
 		#region IEnumerable members
 		public IEnumerator GetEnumerator () 
 		{
-			return new NodeListEnumerator (this);
+			return new WindowEnumerator (this);
 		}
 		#endregion
 		
 		#region ICollection members
 		public void CopyTo (Array dest, int index) 
 		{
-			if (nodes != null) {
-				Array.Copy (nodes, 0, dest, index, nodeCount);
+			if (windows != null) {
+				Array.Copy (windows, 0, dest, index, windowCount);
 			}
 		}
 	
 		public int Count {
 			get {
-				if (unmanagedNodes != null && nodes == null)
+				if (unmanagedWindows != null && windows == null)
 					Load ();
-				return nodeCount; 
+				return windowCount; 
 			}
 		}
 		
@@ -148,61 +140,61 @@ namespace Mono.Mozilla.DOM
 		
 		public void RemoveAt (int index)
 		{
-			if (index > nodeCount || index < 0)
+			if (index > windowCount || index < 0)
 				return;			
-			Array.Copy (nodes, index + 1, nodes, index, (nodeCount - index) - 1);
-			nodeCount--;
-			nodes[nodeCount] = null;
+			Array.Copy (windows, index + 1, windows, index, (windowCount - index) - 1);
+			windowCount--;
+			windows[windowCount] = null;
 		}
 		
-		public void Remove (INode node) 
+		public void Remove (IWindow window) 
 		{
-			this.RemoveAt (IndexOf (node));
+			this.RemoveAt (IndexOf (window));
 		}
 
-		void IList.Remove (object node) 
+		void IList.Remove (object window) 
 		{
-			Remove (node as INode);
+			Remove (window as IWindow);
 		}
 		
-		public void Insert (int index, INode value) 
+		public void Insert (int index, IWindow value) 
 		{
-			if (index > nodeCount)
-				index = nodeCount;
-			INode[] tmp = new Node[nodeCount+1];
+			if (index > windowCount)
+				index = windowCount;
+			IWindow[] tmp = new Window[windowCount+1];
 			if (index > 0)
-				Array.Copy (nodes, 0, tmp, 0, index);
+				Array.Copy (windows, 0, tmp, 0, index);
 			tmp[index] = value;
-			if (index < nodeCount)
-				Array.Copy (nodes, index, tmp, index + 1, (nodeCount - index));
-			nodes = tmp;
-			nodeCount++;
+			if (index < windowCount)
+				Array.Copy (windows, index, tmp, index + 1, (windowCount - index));
+			windows = tmp;
+			windowCount++;
 		}
 
 		void IList.Insert (int index, object value) 
 		{
-			this.Insert (index, value as INode);
+			this.Insert (index, value as IWindow);
 		}
 		
-		public int IndexOf (INode node) 
+		public int IndexOf (IWindow window) 
 		{
-			return Array.IndexOf (nodes, node);
+			return Array.IndexOf (windows, window);
 		}
 
-		int IList.IndexOf (object node) 
+		int IList.IndexOf (object window) 
 		{
-			return IndexOf (node as INode);
+			return IndexOf (window as IWindow);
 		}
 		
 		
-		public bool Contains (INode node)
+		public bool Contains (IWindow window)
 		{
-			return this.IndexOf (node) != -1;
+			return this.IndexOf (window) != -1;
 		}
 		
-		bool IList.Contains (object node)
+		bool IList.Contains (object window)
 		{
-			return Contains (node as INode);			
+			return Contains (window as IWindow);			
 		}
 		
 		void IList.Clear () 
@@ -210,15 +202,15 @@ namespace Mono.Mozilla.DOM
 			this.Clear ();
 		}
 		
-		public int Add (INode node) 
+		public int Add (IWindow window) 
 		{
-			this.Insert (nodeCount + 1, node as INode);
-			return nodeCount - 1;
+			this.Insert (windowCount + 1, window as IWindow);
+			return windowCount - 1;
 		}
 		
-		int IList.Add (object node) 
+		int IList.Add (object window) 
 		{
-			return Add (node as INode);
+			return Add (window as IWindow);
 		}
 		
 		object IList.this [int index] {
@@ -226,37 +218,37 @@ namespace Mono.Mozilla.DOM
 				return this [index]; 
 			}
 			set { 
-				this [index] = value as INode; 
+				this [index] = value as IWindow; 
 			}
 		}
 		
-		public INode this [int index] {
+		public IWindow this [int index] {
 			get {
-				if (index < 0 || index >= nodeCount)
+				if (index < 0 || index >= windowCount)
 					throw new ArgumentOutOfRangeException ("index");
-				return nodes [index];								
+				return windows [index];								
 			}
 			set {
-				if (index < 0 || index >= nodeCount)
+				if (index < 0 || index >= windowCount)
 					throw new ArgumentOutOfRangeException ("index");
-				nodes [index] = value as INode;
+				windows [index] = value as IWindow;
 			}
 		}
 		
 		#endregion
 		
 		public override int GetHashCode () {
-			if (this.unmanagedNodes != null)
-				return this.unmanagedNodes.GetHashCode ();
+			if (this.unmanagedWindows != null)
+				return this.unmanagedWindows.GetHashCode ();
 			return base.GetHashCode ();
 		}		
 
-		internal class NodeListEnumerator : IEnumerator {
+		internal class WindowEnumerator : IEnumerator {
 
-			private NodeList collection;
+			private WindowCollection collection;
 			private int index = -1;
 
-			public NodeListEnumerator (NodeList collection)
+			public WindowEnumerator (WindowCollection collection)
 			{
 				this.collection = collection;
 			}
@@ -283,5 +275,5 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 		
-	}	
+	}
 }

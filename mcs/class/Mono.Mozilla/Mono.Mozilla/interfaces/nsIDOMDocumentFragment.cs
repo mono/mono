@@ -156,7 +156,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMDocumentFragment {
 		public static nsIDOMDocumentFragment GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMDocumentFragment obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentFragment).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMDocumentFragment).GUID, obj);
 			return o as nsIDOMDocumentFragment;
 		}
 	}

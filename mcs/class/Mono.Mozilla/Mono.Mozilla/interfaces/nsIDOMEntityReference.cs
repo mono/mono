@@ -156,7 +156,7 @@ namespace Mono.Mozilla {
 	internal class nsDOMEntityReference {
 		public static nsIDOMEntityReference GetProxy (Mono.WebBrowser.IWebBrowser control, nsIDOMEntityReference obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIDOMEntityReference).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIDOMEntityReference).GUID, obj);
 			return o as nsIDOMEntityReference;
 		}
 	}

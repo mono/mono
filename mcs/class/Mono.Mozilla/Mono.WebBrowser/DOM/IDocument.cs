@@ -30,16 +30,34 @@ namespace Mono.WebBrowser.DOM
 {
 	public interface IDocument : INode
 	{
-		IElement Body { get; }
-		IElement CreateElement (string tagName);
-		IElement DocumentElement { get; }
-		IElement GetElementById (string id);
-		IElement GetElement (int x, int y);
-		IElementCollection GetElementsByTagName (string id);
-		string Title { get; set;}
-		string Url { get; }
-		void Write (string text);
+		IElement 			Active { get; }
+		string 				ActiveLinkColor { get; set;}
+		IElementCollection 	Anchors { get; }
+		IElementCollection 	Applets { get; }
+		string 				Background { get; set; }
+		string 				BackColor { get; set; }
+		IElement 			Body { get; }
+		string 				Charset { get; set; }
+		string 				Cookie { get; set; }
+		IElement 			DocumentElement { get; }
+		string 				Domain { get; }
+		string 				ForeColor { get; set; }
+		IElementCollection 	Forms { get; }
+		IElementCollection 	Images { get; }
+		string 				LinkColor { get; set; }
+		IElementCollection 	Links { get; }
+		string 				Title { get; set;}
+		string 				Url { get; }
+		string 				VisitedLinkColor { get; set; }
+
+		IElement 			CreateElement (string tagName);
+		IElement 			GetElementById (string id);
+		IElement 			GetElement (int x, int y);
+		IElementCollection 	GetElementsByTagName (string id);
+		void 				Write (string text);
 		
-		bool Equals (IDocument obj);
+		bool 				Equals (IDocument obj);
+		
+		int GetHashCode ();
 	}
 }

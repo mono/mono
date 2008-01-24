@@ -70,7 +70,7 @@ namespace Mono.Mozilla {
 	internal class nsInputStream {
 		public static nsIInputStream GetProxy (Mono.WebBrowser.IWebBrowser control, nsIInputStream obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsIInputStream).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsIInputStream).GUID, obj);
 			return o as nsIInputStream;
 		}
 	}

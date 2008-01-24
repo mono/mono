@@ -77,7 +77,7 @@ namespace Mono.Mozilla {
 	internal class nsSHistoryListener {
 		public static nsISHistoryListener GetProxy (Mono.WebBrowser.IWebBrowser control, nsISHistoryListener obj)
 		{
-			object o = Base.GetProxyForObject (control, typeof(nsISHistoryListener).GUID, obj.GetType (), obj);
+			object o = Base.GetProxyForObject (control, typeof(nsISHistoryListener).GUID, obj);
 			return o as nsISHistoryListener;
 		}
 	}

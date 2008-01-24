@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2007 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
@@ -29,12 +29,19 @@ namespace Mono.WebBrowser.DOM
 {
 	public interface INode
 	{
-		INodeList ChildNodes { get; }
-		INode FirstChild { get; }
-		string LocalName { get; }
-		NodeType Type { get;}
-		string Value {get;} 
+		INodeList 	ChildNodes { get; }
+		INode 		FirstChild { get; }
+		IElement	InsertBefore (INode child, INode refChild);
+		INode 		LastChild { get; }
+		string 		LocalName { get; }
+		INode 		Next { get; }
+		IDocument 	Owner { get; }
+		INode		Parent {get;}
+		INode 		Previous { get; }
+		NodeType 	Type { get;}
+		string 		Value {get;} 
 		
+		int 		GetHashCode ();
 	}
 	
 	public enum NodeType
