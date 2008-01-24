@@ -1,5 +1,13 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_emit_prolog): Fix build.
+
+	* mini-s390x.c (mono_arch_emit_prolog): Fix build.
+
+	* mini-ppc.c (mono_arch_emit_prolog): Fix build.
+
+	* cpu-amd64.md: Use smaller sizes for int opcodes.
+
 	* *.c: Get rid of the NOT_IMPLEMENTED define which is now in mini.h.
 
 	* *.cs: Add some tests from the linear-ir branch. Move structs tests to 
