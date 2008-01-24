@@ -131,6 +131,16 @@ namespace System.Windows.Forms.CarbonInternal {
 					break;
 				case kEventMouseDragged:
 				case kEventMouseMoved:
+					if (XplatUICarbon.Grab.Hwnd == IntPtr.Zero) {
+						IntPtr ht = IntPtr.Zero;
+						if (client) {
+							ht = (IntPtr) HitTest.HTCLIENT;
+							NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+						} else {
+	                                                ht = (IntPtr) NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam).ToInt32 ();
+							NativeWindow.WndProc(hwnd.client_window, Msg.WM_SETCURSOR, msg.hwnd, ht);
+						}
+					}
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE);
 					msg.wParam = Driver.GetMousewParam (0);
 					break;
@@ -160,11 +170,13 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal bool TranslateMessage (ref MSG msg) {
 			if (msg.message == Msg.WM_MOUSEMOVE || msg.message == Msg.WM_NCMOUSEMOVE) {
 				Hwnd hwnd = Hwnd.ObjectFromHandle (msg.hwnd);
-				if (XplatUICarbon.MouseHwnd == null) 
+				if (XplatUICarbon.MouseHwnd == null) { 
 					Driver.PostMessage (hwnd.Handle, Msg.WM_MOUSE_ENTER, IntPtr.Zero, IntPtr.Zero);
-				else if (XplatUICarbon.MouseHwnd.Handle != hwnd.Handle) {
+					Cursor.SetCursor (hwnd.Cursor);
+				} else if (XplatUICarbon.MouseHwnd.Handle != hwnd.Handle) {
 					Driver.PostMessage (XplatUICarbon.MouseHwnd.Handle, Msg.WM_MOUSELEAVE, IntPtr.Zero, IntPtr.Zero);
 					Driver.PostMessage (hwnd.Handle, Msg.WM_MOUSE_ENTER, IntPtr.Zero, IntPtr.Zero);
+					Cursor.SetCursor (hwnd.Cursor);
 				}
 				XplatUICarbon.MouseHwnd = hwnd;
 			}
