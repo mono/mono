@@ -1,5 +1,7 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (SUBDIRS): Or if INTERP_SUPPORTED is true.
+	
 	* Makefile.am (SUBDIRS): Only set this on arm.
 
 2007-11-20  Zoltan Varga  <vargaz@gmail.com>
