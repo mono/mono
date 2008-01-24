@@ -1,3 +1,9 @@
+2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeData.cs : fixed setter which did not actually see the argument.
+	* XmlTypeMapElementInfo.cs : some cosmetic fixes for gendarme-
+	  reported issues.
+
 2007-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTypeMapping.cs : to get schema provider method, check base

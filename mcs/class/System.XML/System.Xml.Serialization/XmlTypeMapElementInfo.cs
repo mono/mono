@@ -153,17 +153,27 @@ namespace System.Xml.Serialization
 		public bool IsTextElement
 		{
 			get { return ElementName == "<text>"; }
-			set { ElementName = "<text>"; Namespace = string.Empty; }
+			set {
+				if (!value)
+					throw new Exception ("INTERNAL ERROR; someone wrote unexpected code in sys.xml");
+				ElementName = "<text>"; Namespace = string.Empty;
+			}
 		}
 
 		public bool IsUnnamedAnyElement
 		{
 			get { return ElementName == string.Empty; }
-			set { ElementName = string.Empty; Namespace = string.Empty; }
+			set {
+				if (!value)
+					throw new Exception ("INTERNAL ERROR; someone wrote unexpected code in sys.xml");
+				ElementName = string.Empty; Namespace = string.Empty;
+			}
 		}
 
 		public override bool Equals (object other)
 		{
+			if (other == null)
+				return false;
 			XmlTypeMapElementInfo oinfo = (XmlTypeMapElementInfo)other;
 			if (_elementName != oinfo._elementName) return false;
 			if (_type.XmlType != oinfo._type.XmlType) return false;

@@ -247,7 +247,7 @@ namespace System.Xml.Serialization
 
 			set
 			{
-				nullableOverride = true;
+				nullableOverride = value;
 			}
 		}
 
