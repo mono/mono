@@ -133,6 +133,30 @@ namespace Mainsoft.Web.Hosting
 
 		protected override void service (HttpServletRequest req, HttpServletResponse resp)
 		{
+			const string assemblies = "/assemblies";
+			const string getping = "getping";
+			const string setping = "setping";
+			string servletPath = req.getServletPath ();
+
+			if (String.CompareOrdinal (assemblies, 0, servletPath, 0, assemblies.Length) == 0) {
+				if (servletPath.Length == assemblies.Length ||
+						servletPath [assemblies.Length] == '/') {
+					string requestURI = req.getRequestURI ();
+					bool getp = requestURI.EndsWith (getping, StringComparison.Ordinal);
+					if (!getp && requestURI.EndsWith (setping, StringComparison.Ordinal)) {
+						getServletContext ().setAttribute (getping, "1");
+						getp = true;
+					}
+
+					if (getp) {
+						string ping = (string) getServletContext ().getAttribute (getping);
+						if (ping == null)
+							ping = "0";
+						resp.getOutputStream ().print (ping);
+						return;
+					}
+				}
+			}
 			resp.setContentType ("text/html");
 
 			try 
