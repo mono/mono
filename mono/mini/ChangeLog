@@ -1,5 +1,9 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h *.c: Change cfg->vars to contain the MonoMethodVar entries directly
+	instead of though a pointer to save an indirection when accessing elements of
+	the array.
+
 	* mini.h (MONO_IS_COND_BRANCH_OP): Move these macros here from mini.c. Fix
 	some typos.
 	(NOT_IMPLEMENTED): New helper macro.
