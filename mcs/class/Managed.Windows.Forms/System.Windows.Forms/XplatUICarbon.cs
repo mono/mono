@@ -1064,77 +1064,16 @@ namespace System.Windows.Forms {
 			return CreateWindow(create_params);
 		}
 
-		[MonoTODO]
-		internal override Bitmap DefineStdCursorBitmap (StdCursor id)
-		{
-			throw new NotImplementedException ();
+		internal override Bitmap DefineStdCursorBitmap (StdCursor id) {
+			return Carbon.Cursor.DefineStdCursorBitmap (id);
 		}
-		[MonoTODO]
-		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
-			return IntPtr.Zero;
+
+		internal override IntPtr DefineCursor (Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
+			return Carbon.Cursor.DefineCursor (bitmap, mask, cursor_pixel, mask_pixel, xHotSpot, yHotSpot);
 		}
 		
-		internal override IntPtr DefineStdCursor(StdCursor id) {
-			switch (id) {
-				case StdCursor.AppStarting:
-					return (IntPtr)Carbon.ThemeCursor.kThemeSpinningCursor;
-				case StdCursor.Arrow:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.Cross:
-					return (IntPtr)Carbon.ThemeCursor.kThemeCrossCursor;
-				case StdCursor.Default:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.Hand:
-					return (IntPtr)Carbon.ThemeCursor.kThemeOpenHandCursor;
-				case StdCursor.Help:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.HSplit:
-					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftRightCursor;
-				case StdCursor.IBeam:
-					return (IntPtr)Carbon.ThemeCursor.kThemeIBeamCursor;
-				case StdCursor.No:
-					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
-				case StdCursor.NoMove2D:
-					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
-				case StdCursor.NoMoveHoriz:
-					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
-				case StdCursor.NoMoveVert:
-					return (IntPtr)Carbon.ThemeCursor.kThemeNotAllowedCursor;
-				case StdCursor.PanEast:
-					return (IntPtr)Carbon.ThemeCursor.kThemeResizeRightCursor;
-				case StdCursor.PanNE:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanNorth:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanNW:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanSE:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanSouth:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanSW:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.PanWest:
-					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftCursor;
-				case StdCursor.SizeAll:
-					return (IntPtr)Carbon.ThemeCursor.kThemeResizeLeftRightCursor;
-				case StdCursor.SizeNESW:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.SizeNS:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.SizeNWSE:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.SizeWE:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.UpArrow:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.VSplit:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-				case StdCursor.WaitCursor:
-					return (IntPtr)Carbon.ThemeCursor.kThemeSpinningCursor;
-				default:
-					return (IntPtr)Carbon.ThemeCursor.kThemeArrowCursor;
-			}
+		internal override IntPtr DefineStdCursor (StdCursor id) {
+			return Carbon.Cursor.DefineStdCursor (id);
 		}
 		
 		internal override IntPtr DefWndProc(ref Message msg) {
@@ -1173,6 +1112,57 @@ namespace System.Windows.Forms {
 						}
 					}
 					break;
+				}
+				case Msg.WM_SETCURSOR: {
+					// Pass to parent window first
+					while ((hwnd.parent != null) && (msg.Result == IntPtr.Zero)) {
+						hwnd = hwnd.parent;
+						msg.Result = NativeWindow.WndProc(hwnd.Handle, Msg.WM_SETCURSOR, msg.HWnd, msg.LParam);
+					}
+
+					if (msg.Result == IntPtr.Zero) {
+						IntPtr handle;
+
+						switch((HitTest)(msg.LParam.ToInt32() & 0xffff)) {
+							case HitTest.HTBOTTOM:		handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTBORDER:		handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
+							case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
+							case HitTest.HTERROR:		if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
+												//FIXME: AudibleAlert();
+											}
+											handle = Cursors.Default.handle;
+											break;
+
+							case HitTest.HTHELP:		handle = Cursors.Help.handle; break;
+							case HitTest.HTLEFT:		handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTRIGHT:		handle = Cursors.SizeWE.handle; break;
+							case HitTest.HTTOP:		handle = Cursors.SizeNS.handle; break;
+							case HitTest.HTTOPLEFT:		handle = Cursors.SizeNWSE.handle; break;
+							case HitTest.HTTOPRIGHT:	handle = Cursors.SizeNESW.handle; break;
+
+							#if SameAsDefault
+							case HitTest.HTGROWBOX:
+							case HitTest.HTSIZE:
+							case HitTest.HTZOOM:
+							case HitTest.HTVSCROLL:
+							case HitTest.HTSYSMENU:
+							case HitTest.HTREDUCE:
+							case HitTest.HTNOWHERE:
+							case HitTest.HTMAXBUTTON:
+							case HitTest.HTMINBUTTON:
+							case HitTest.HTMENU:
+							case HitTest.HSCROLL:
+							case HitTest.HTBOTTOM:
+							case HitTest.HTCAPTION:
+							case HitTest.HTCLIENT:
+							case HitTest.HTCLOSE:
+							#endif
+							default: handle = Cursors.Default.handle; break;
+						}
+						SetCursor(msg.HWnd, handle);
+					}
+					return (IntPtr)1;
 				}
 			}
 			return IntPtr.Zero;
@@ -1674,10 +1664,7 @@ namespace System.Windows.Forms {
 		internal override void SetCursor(IntPtr window, IntPtr cursor) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
 
-			if (hwnd.Handle == window)
-				hwnd.ClientCursor = cursor;
-			else
-				hwnd.WholeCursor = cursor;
+			hwnd.Cursor = cursor;
 		}
 		
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {

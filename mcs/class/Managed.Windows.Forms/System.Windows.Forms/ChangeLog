@@ -11,6 +11,12 @@
 
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
+	* Hwnd.cs: Refactor Whole/Client pointer to 1 element for Cursors.
+	* XplatUICarbon.cs: Refactor some dead code out to Cursor.cs and make
+	it work again.  Handle HITTEST events.
+
+2008-01-23  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUICarbon.cs: Ensure that we always have a host window.  Prevents
 	a crash in certain cases.  Support for fullscreen windows in certain cases.
 

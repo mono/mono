@@ -44,8 +44,7 @@ namespace System.Windows.Forms {
 		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
-		internal IntPtr		client_cursor;
-		internal IntPtr		whole_cursor;
+		internal IntPtr		cursor;
 		internal Menu		menu;
 		internal TitleStyle	title_style;
 		internal FormBorderStyle	border_style;
@@ -103,6 +102,7 @@ namespace System.Windows.Forms {
 			border_style = FormBorderStyle.None;
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
+			cursor = IntPtr.Zero;
 			handle = IntPtr.Zero;
 			parent = null;
 			invalid_list = new ArrayList();
@@ -409,13 +409,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public IntPtr ClientCursor {
+		public IntPtr Cursor {
 			get {
-				return client_cursor;
+				return cursor;
 			}
 
 			set {
-				client_cursor = value;
+				cursor = value;
 			}
 		}
 
@@ -678,16 +678,6 @@ namespace System.Windows.Forms {
 
 			set {
 				user_data = value;
-			}
-		}
-
-		public IntPtr WholeCursor {
-			get {
-				return whole_cursor;
-			}
-
-			set {
-				whole_cursor = value;
 			}
 		}
 
