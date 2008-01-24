@@ -1,3 +1,9 @@
+2008-01-24  Jonatham Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Add tab stops and NoWrap to dropdown MenuItems.  Top
+	level MenuItems do not respect tabs.
+	[Fixes bug #355196]
+
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs:  Ensure that windows are created in their initial 

@@ -75,6 +75,8 @@ namespace System.Windows.Forms
 			string_format_menu_text.LineAlignment = StringAlignment.Center;
 			string_format_menu_text.Alignment = StringAlignment.Near;
 			string_format_menu_text.HotkeyPrefix = HotkeyPrefix.Show;
+			string_format_menu_text.SetTabStops (0f, new float [] { 50f });
+			string_format_menu_text.FormatFlags |= StringFormatFlags.NoWrap;
 
 			string_format_menu_shortcut = new StringFormat ();	
 			string_format_menu_shortcut.LineAlignment = StringAlignment.Center;
@@ -2958,7 +2960,7 @@ namespace System.Windows.Forms
 				return;
 			} else {		
 				SizeF size;
-				size =  dc.MeasureString (item.Text, MenuFont);
+				size =  dc.MeasureString (item.Text, MenuFont, int.MaxValue, string_format_menu_text);
 				item.Width = (int) size.Width;
 				item.Height = (int) size.Height;
 	
