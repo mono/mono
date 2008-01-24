@@ -1,5 +1,7 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.c: Get rid of the NOT_IMPLEMENTED define which is now in mini.h.
+
 	* *.cs: Add some tests from the linear-ir branch. Move structs tests to 
 	objects.cs.
 
