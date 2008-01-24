@@ -16,6 +16,7 @@ System.Linq.Expressions/ExpressionTest_Condition.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Divide.cs
 System.Linq.Expressions/ExpressionTest_Equal.cs
+System.Linq.Expressions/ExpressionTest_Field.cs
 System.Linq.Expressions/ExpressionTest_GreaterThan.cs
 System.Linq.Expressions/ExpressionTest_GreaterThanOrEqual.cs
 System.Linq.Expressions/ExpressionTest_Lambda.cs
@@ -34,6 +35,7 @@ System.Linq.Expressions/ExpressionTest_Not.cs
 System.Linq.Expressions/ExpressionTest_Or.cs
 System.Linq.Expressions/ExpressionTest_OrElse.cs
 System.Linq.Expressions/ExpressionTest_Power.cs
+System.Linq.Expressions/ExpressionTest_Property.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
 System.Linq.Expressions/ExpressionTest_RightShift.cs
 System.Linq.Expressions/ExpressionTest_SubtractChecked.cs
