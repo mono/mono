@@ -4,7 +4,7 @@
 // Author:
 //   Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2004 Novell
+// (C) 2004-2008 Novell
 //
 
 //
@@ -39,7 +39,6 @@ namespace System.Windows.Forms.Design
 		{
 		}
 
-		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
 		{
 			if (context != null && provider != null)
@@ -49,7 +48,7 @@ namespace System.Windows.Forms.Design
 				{
 					// Create the UI editor control
 					DockEditorControl dockEditorControl = new DockEditorControl(editorService); 
-					dockEditorControl.DockStyle = (DockStyle)context.Instance;
+					dockEditorControl.DockStyle = (DockStyle) value;
 					editorService.DropDownControl(dockEditorControl);
 
 					return dockEditorControl.DockStyle;

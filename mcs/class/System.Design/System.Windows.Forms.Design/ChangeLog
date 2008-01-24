@@ -1,3 +1,9 @@
+2008-01-24  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * DockEditor.cs: ITypeDescriptorContext.Instance doesn't 
+	 contain the current value. It could contain the owner.
+	 Use the initial value parameter.
+
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 	
 	* ParentControlDesigner.cs: Create a Transaction when adding a
