@@ -1345,7 +1345,7 @@ namespace MonoTests.System.Windows.Forms
 			t2.Dock = DockStyle.Fill;
 			tlp.Controls.Add (t2);
 
-			Assert.AreEqual (new Size (212, 26), tlp.PreferredSize, "A1");
+			Assert.AreEqual (new Size (212, t1.Height + 6), tlp.PreferredSize, "A1");
 
 			f.Dispose ();
 		}
@@ -1373,7 +1373,7 @@ namespace MonoTests.System.Windows.Forms
 			t2.Dock = DockStyle.Fill;
 			tlp.Controls.Add (t2);
 
-			Assert.AreEqual (new Size (212, 26), tlp.PreferredSize, "A1");
+			Assert.AreEqual (new Size (212, t1.Height + 6), tlp.PreferredSize, "A1");
 
 			f.Dispose ();
 		}
