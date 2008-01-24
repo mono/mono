@@ -1,13 +1,12 @@
-<<<<<<< .working
-2008-01-02  Zoltan Varga  <vargaz@gmail.com>
-=======
-2008-01-21  Zoltan Varga  <vargaz@gmail.com>
->>>>>>> .merge-right.r93796
+2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
-<<<<<<< .working
+	* method-to-ir.c: Remove some macros which are in mini.h.
+
+2008-01-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (MONO_EMIT_NEW_BRANCH_BLOCK): Don't start a new basic block here.
 	(mono_op_to_op_imm): Add OP_AMD64_ICOMPARE_MEMBASE_IMM.
-=======
+
 	* mini-x86.h (MONO_ARCH_AOT_SUPPORTED): Disable AOT for apple x86.
 
 2008-01-20  Zoltan Varga  <vargaz@gmail.com>

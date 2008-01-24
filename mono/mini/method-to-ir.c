@@ -97,13 +97,6 @@
 		}			\
 	} while (0)
 
-/* 
- * this is used to determine when some branch optimizations are possible: we exclude FP compares
- * because they have weird semantics with NaNs.
- */
-#define MONO_IS_COND_BRANCH_OP(ins) (((ins)->opcode >= CEE_BEQ && (ins)->opcode <= CEE_BLT_UN) || ((ins)->opcode >= OP_LBEQ && (ins)->opcode <= OP_LBLT_UN) || ((ins)->opcode >= OP_FBEQ && (ins)->opcode <= OP_FBLT_UN) || ((ins)->opcode >= OP_IBEQ && (ins)->opcode <= OP_IBLT_UN))
-#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && (ins)->inst_left->inst_left->type != STACK_R8)
-
 /* Determine whenever 'ins' represents a load of the 'this' argument */
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && ((ins)->opcode == OP_MOVE) && ((ins)->sreg1 == cfg->args [0]->dreg))
 
