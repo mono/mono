@@ -42,6 +42,9 @@ namespace System.Linq.Expressions {
 
 		static BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
 		static BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
+		static BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+		static BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+		static BindingFlags All = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
 		public ExpressionType NodeType {
 			get { return node_type; }
@@ -994,16 +997,30 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static MemberExpression Field (Expression expression, FieldInfo field)
 		{
-			throw new NotImplementedException ();
+			if (field == null)
+				throw new ArgumentNullException ("field");
+			if (!field.IsStatic) {
+				if (expression == null)
+					throw new ArgumentNullException ("expression");
+				if (!field.DeclaringType.IsAssignableFrom (expression.Type))
+					throw new ArgumentException ("field");
+			}
+
+			return new MemberExpression (expression, field, field.FieldType);
 		}
 
-		[MonoTODO]
 		public static MemberExpression Field (Expression expression, string fieldName)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			var field = expression.Type.GetField (fieldName, AllInstance);
+			if (field == null)
+				throw new ArgumentException (string.Format ("No field named {0} on {1}", fieldName, expression.Type));
+
+			return new MemberExpression (expression, field, field.FieldType);
 		}
 
 		public static Type GetActionType (params Type [] typeArgs)
@@ -1385,22 +1402,64 @@ namespace System.Linq.Expressions {
 			return new ParameterExpression (type, name);
 		}
 
-		[MonoTODO]
 		public static MemberExpression Property (Expression expression, MethodInfo propertyAccessor)
 		{
-			throw new NotImplementedException ();
+			if (propertyAccessor == null)
+				throw new ArgumentNullException ("propertyAccessor");
+
+			if (!propertyAccessor.IsStatic) {
+				if (expression == null)
+					throw new ArgumentNullException ("expression");
+				if (!propertyAccessor.DeclaringType.IsAssignableFrom (expression.Type))
+					throw new ArgumentException ("expression");
+			}
+
+			var prop = GetAssociatedProperty (propertyAccessor);
+			if (prop == null)
+				throw new ArgumentException (string.Format ("Method {0} has no associated property", propertyAccessor));
+
+			return new MemberExpression (expression, prop, prop.PropertyType);
 		}
 
-		[MonoTODO]
+		static PropertyInfo GetAssociatedProperty (MethodInfo method)
+		{
+			foreach (var prop in method.DeclaringType.GetProperties (All)) {
+				if (prop.GetGetMethod (true) == method)
+					return prop;
+			}
+
+			return null;
+		}
+
 		public static MemberExpression Property (Expression expression, PropertyInfo property)
 		{
-			throw new NotImplementedException ();
+			if (property == null)
+				throw new ArgumentNullException ("property");
+
+			var getter = property.GetGetMethod (true);
+			if (getter == null)
+				throw new ArgumentException ("getter");
+
+			if (!getter.IsStatic) {
+				if (expression == null)
+					throw new ArgumentNullException ("expression");
+				if (!property.DeclaringType.IsAssignableFrom (expression.Type))
+					throw new ArgumentException ("expression");
+			}
+
+			return new MemberExpression (expression, property, property.PropertyType);
 		}
 
-		[MonoTODO]
 		public static MemberExpression Property (Expression expression, string propertyName)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			var prop = expression.Type.GetProperty (propertyName, AllInstance);
+			if (prop == null)
+				throw new ArgumentException (string.Format ("No property named {0} on {1}", propertyName, expression.Type));
+
+			return new MemberExpression (expression, prop, prop.PropertyType);
 		}
 
 		[MonoTODO]

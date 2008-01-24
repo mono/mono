@@ -45,6 +45,13 @@ namespace System.Linq.Expressions {
 			get { return member; }
 		}
 
+		internal MemberExpression (Expression expression, MemberInfo member, Type type)
+			: base (ExpressionType.MemberAccess, type)
+		{
+			this.expression = expression;
+			this.member = member;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();

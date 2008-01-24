@@ -246,9 +246,14 @@ namespace System.Linq.Expressions {
 			Print (parameter.Name ?? "<param>");
 		}
 
-		protected override void VisitMemberAccess (MemberExpression member)
+		protected override void VisitMemberAccess (MemberExpression access)
 		{
-			throw new NotImplementedException ();
+			if (access.Expression == null)
+				Print (access.Member.DeclaringType.Name);
+			else
+				Visit (access.Expression);
+
+			Print (".{0}", access.Member.Name);
 		}
 
 		protected override void VisitMethodCall (MethodCallExpression call)
