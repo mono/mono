@@ -1,5 +1,8 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.cs: Add some tests from the linear-ir branch. Move structs tests to 
+	objects.cs.
+
 	* driver.c (mono_main): Add a --break-at-bb command line argument for JIT
 	debugging.
 
