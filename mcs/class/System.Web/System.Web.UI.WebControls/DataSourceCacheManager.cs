@@ -116,6 +116,9 @@ namespace System.Web.UI.WebControls
 		{
 			StringBuilder sb = new StringBuilder (methodName);
 
+			if (owner != null)
+				sb.Append (owner.ID);
+
 			for (int i = 0; i < parameters.Count; i++) {
 				sb.Append (parameters [i].Name);
 				sb.Append (parameters [i].GetValue (context, owner));
