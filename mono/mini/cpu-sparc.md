@@ -314,8 +314,8 @@ adc_imm: dest:i src1:i len:64
 sbb: dest:i src1:i src2:i len:4
 sbb_imm: dest:i src1:i len:64
 br_reg: src1:i len:8
-op_bigmul: len:2 dest:L src1:a src2:i
-op_bigmul_un: len:2 dest:L src1:a src2:i
+bigmul: len:2 dest:L src1:a src2:i
+bigmul_un: len:2 dest:L src1:a src2:i
 fmove: dest:f src1:f len:8
 
 # 32 bit opcodes

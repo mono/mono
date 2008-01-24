@@ -64,7 +64,7 @@ MINI_OP(OP_VCALL2, 	"vcall2", NONE, NONE, NONE)
 MINI_OP(OP_VCALL2_REG,	"vcall2_reg", NONE, IREG, NONE)
 MINI_OP(OP_VCALL2_MEMBASE,	"vcall2_membase", NONE, IREG, NONE)
 
-MINI_OP(OP_CALL,        "op_call", IREG, NONE, NONE)
+MINI_OP(OP_CALL,        "call", IREG, NONE, NONE)
 MINI_OP(OP_CALL_REG,	"call_reg", IREG, IREG, NONE)
 MINI_OP(OP_CALL_MEMBASE,	"call_membase", IREG, IREG, NONE)
 MINI_OP(OP_CALLVIRT, "callvirt", IREG, NONE, NONE)
@@ -497,7 +497,7 @@ MINI_OP(OP_FGETLOW32, "float_getlow32", IREG, FREG, NONE)
 MINI_OP(OP_FGETHIGH32, "float_gethigh32", IREG, FREG, NONE)
 
 MINI_OP(OP_GROUP, "group", NONE, NONE, NONE)
-MINI_OP(OP_JUMP_TABLE, "op_jump_table", IREG, NONE, NONE)
+MINI_OP(OP_JUMP_TABLE, "jump_table", IREG, NONE, NONE)
 
 /* aot compiler */
 MINI_OP(OP_AOTCONST, "aot_const", IREG, NONE, NONE)
@@ -514,11 +514,11 @@ MINI_OP(OP_ENDFILTER,  "endfilter", NONE, IREG, NONE)
 MINI_OP(OP_ENDFINALLY,  "endfinally", NONE, NONE, NONE)
 
 /* inline (long)int * (long)int */
-MINI_OP(OP_BIGMUL, "op_bigmul", NONE, NONE, NONE)
-MINI_OP(OP_BIGMUL_UN, "op_bigmul_un", NONE, NONE, NONE)
+MINI_OP(OP_BIGMUL, "bigmul", NONE, NONE, NONE)
+MINI_OP(OP_BIGMUL_UN, "bigmul_un", NONE, NONE, NONE)
 
-MINI_OP(OP_MIN, "op_min", IREG, IREG, IREG)
-MINI_OP(OP_MAX, "op_max", IREG, IREG, IREG)
+MINI_OP(OP_MIN, "min", IREG, IREG, IREG)
+MINI_OP(OP_MAX, "max", IREG, IREG, IREG)
 
 MINI_OP(OP_IMIN, "int_min", IREG, IREG, IREG)
 MINI_OP(OP_IMAX, "int_max", IREG, IREG, IREG)
@@ -728,6 +728,7 @@ MINI_OP(OP_AMD64_MUL_REG_MEMBASE,        "amd64_mul_reg_membase", NONE, IREG, IR
 
 MINI_OP(OP_AMD64_OUTARG_ALIGN_STACK,     "amd64_outarg_align_stack", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_LOADI8_MEMINDEX,        "amd64_loadi8_memindex", NONE, NONE, NONE)
+MINI_OP(OP_AMD64_SAVE_SP_TO_LMF,         "amd64_save_sp_to_lmf", NONE, NONE, NONE)
 #endif
 
 #if  defined(__ppc__) || defined(__powerpc__)	

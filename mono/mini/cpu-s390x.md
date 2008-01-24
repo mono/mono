@@ -165,7 +165,6 @@ div: dest:a src1:i src2:i len:10
 div_imm: dest:i src1:i src2:i len:24
 div_un_imm: dest:i src1:i src2:i len:24
 dup:
-endfilter: len:28
 endfinally: len:28
 endmac:
 fcall: dest:g len:26 clob:c
@@ -475,10 +474,10 @@ newobj:
 nop: len:4
 not: dest:i src1:i len:12
 oparglist: src1:i len:28
-op_bigmul: len:2 dest:i src1:a src2:i
-op_bigmul_un: len:2 dest:i src1:a src2:i
-op_endfilter: src1:i len:28
-op_rethrow: src1:i len:26
+bigmul: len:2 dest:i src1:a src2:i
+bigmul_un: len:2 dest:i src1:a src2:i
+endfilter: src1:i len:28
+rethrow: src1:i len:26
 or: dest:i src1:i src2:i len:8
 or_imm: dest:i src1:i len:24
 outarg: src1:i len:1
@@ -507,7 +506,6 @@ rem_un_imm: dest:i src1:i src2:i len:24
 rename:
 ret:
 retarg:
-rethrow:
 s390_bkchain: len: 8 dest:i src1:i
 s390_move: len:48 dest:b src1:b
 s390_setf4ret: dest:f src1:f len:4

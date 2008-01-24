@@ -66,7 +66,6 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-mmap.h>
-#include <mono/os/gc_wrapper.h>
 
 #include "mini.h"
 #include <string.h>
@@ -206,6 +205,9 @@ guint8* mono_trampoline_code [MONO_TRAMPOLINE_NUM];
  */
 gssize
 mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
+
+/* Whenever to check for pending exceptions in managed-to-native wrappers */
+gboolean check_for_pending_exc = TRUE;
 
 gboolean
 mono_running_on_valgrind (void)
@@ -1676,6 +1678,8 @@ type_from_op (MonoInst *ins) {
 	case CEE_SUB_OVF_UN:
 		ins->type = bin_num_table [ins->inst_i0->type] [ins->inst_i1->type];
 		ins->opcode += ovfops_op_map [ins->inst_i0->type];
+		if (ins->type == STACK_R8)
+			ins->type = STACK_INV;
 		return;
 	default:
 		g_error ("opcode 0x%04x not handled in type from op", ins->opcode);
@@ -2991,13 +2995,22 @@ mono_emit_call_args (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignatu
 	return call;
 }
 
-inline static int
+inline static MonoCallInst*
 mono_emit_calli (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignature *sig, 
 		 MonoInst **args, MonoInst *addr, const guint8 *ip)
 {
 	MonoCallInst *call = mono_emit_call_args (cfg, bblock, sig, args, TRUE, FALSE, ip, FALSE);
 
 	call->inst.inst_i0 = addr;
+
+	return call;
+}
+
+inline static int
+mono_emit_calli_spilled (MonoCompile *cfg, MonoBasicBlock *bblock, MonoMethodSignature *sig, 
+						 MonoInst **args, MonoInst *addr, const guint8 *ip)
+{
+	MonoCallInst *call = mono_emit_calli (cfg, bblock, sig, args, addr, ip);
 
 	return mono_spill_call (cfg, bblock, call, sig, FALSE, ip, FALSE);
 }
@@ -3513,18 +3526,21 @@ handle_delegate_ctor (MonoCompile *cfg, MonoBasicBlock *bblock, MonoClass *klass
 	/* Inline the contents of mono_delegate_ctor */
 
 	/* Set target field */
-	NEW_TEMPLOAD (cfg, obj, temp);
-	NEW_ICONST (cfg, offset_ins, G_STRUCT_OFFSET (MonoDelegate, target));
-	MONO_INST_NEW (cfg, ins, OP_PADD);
-	ins->cil_code = ip;
-	ins->inst_left = obj;
-	ins->inst_right = offset_ins;
+	/* Optimize away setting of NULL target */
+	if (!(target->opcode == OP_PCONST && target->inst_p0 == 0)) {
+		NEW_TEMPLOAD (cfg, obj, temp);
+		NEW_ICONST (cfg, offset_ins, G_STRUCT_OFFSET (MonoDelegate, target));
+		MONO_INST_NEW (cfg, ins, OP_PADD);
+		ins->cil_code = ip;
+		ins->inst_left = obj;
+		ins->inst_right = offset_ins;
 
-	MONO_INST_NEW (cfg, store, CEE_STIND_REF);
-	store->cil_code = ip;
-	store->inst_left = ins;
-	store->inst_right = target;
-	mono_bblock_add_inst (bblock, store);
+		MONO_INST_NEW (cfg, store, CEE_STIND_REF);
+		store->cil_code = ip;
+		store->inst_left = ins;
+		store->inst_right = target;
+		mono_bblock_add_inst (bblock, store);
+	}
 
 	/* Set method field */
 	NEW_TEMPLOAD (cfg, obj, temp);
@@ -5512,6 +5528,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoMethodSignature *fsig = NULL;
 			int temp, array_rank = 0;
 			int virtual = *ip == CEE_CALLVIRT;
+			gboolean no_spill;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -5559,7 +5576,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 
 				if (mono_method_signature (cmethod)->pinvoke) {
-					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod);
+					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
 					fsig = mono_method_signature (wrapper);
 				} else if (constrained_call) {
 					fsig = mono_method_signature (cmethod);
@@ -5674,7 +5691,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				NEW_TEMPLOAD (cfg, addr, temp);
 				NEW_TEMPLOAD (cfg, sp [0], this_arg_temp->inst_c0);
 
-				if ((temp = mono_emit_calli (cfg, bblock, fsig, sp, addr, ip)) != -1) {
+				if ((temp = mono_emit_calli_spilled (cfg, bblock, fsig, sp, addr, ip)) != -1) {
 					NEW_TEMPLOAD (cfg, *sp, temp);
 					sp++;
 				}
@@ -5762,7 +5779,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					/* Prevent inlining of methods that call wrappers */
 					INLINE_FAILURE;
-					cmethod = mono_marshal_get_native_wrapper (cmethod);
+					cmethod = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
 					allways = TRUE;
 				}
 
@@ -5827,13 +5844,27 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
+			if (ip_in_bb (cfg, bblock, ip + 5) 
+				&& (!MONO_TYPE_ISSTRUCT (fsig->ret))
+				&& (!MONO_TYPE_IS_VOID (fsig->ret) || (cmethod && cmethod->string_ctor))
+				&& (CODE_IS_STLOC (ip + 5) || ip [5] == CEE_POP || ip [5] == CEE_RET))
+				/* No need to spill */
+				no_spill = TRUE;
+			else
+				no_spill = FALSE;
+
 			if (*ip == CEE_CALLI) {
 				/* Prevent inlining of methods with indirect calls */
 				INLINE_FAILURE;
-				if ((temp = mono_emit_calli (cfg, bblock, fsig, sp, addr, ip)) != -1) {
-					NEW_TEMPLOAD (cfg, *sp, temp);
-					sp++;
-				}	      				
+				if (no_spill) {
+					ins = (MonoInst*)mono_emit_calli (cfg, bblock, fsig, sp, addr, ip);
+					*sp++ = ins;					
+				} else {
+					if ((temp = mono_emit_calli_spilled (cfg, bblock, fsig, sp, addr, ip)) != -1) {
+						NEW_TEMPLOAD (cfg, *sp, temp);
+						sp++;
+					}
+				}			
 			} else if (array_rank) {
 				MonoInst *addr;
 
@@ -5900,11 +5931,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						NEW_TEMPLOAD (cfg, *sp, temp);
 						sp++;
 					}
-				} else if (ip_in_bb (cfg, bblock, ip + 5) 
-				    && (!MONO_TYPE_ISSTRUCT (fsig->ret))
-				    && (!MONO_TYPE_IS_VOID (fsig->ret) || cmethod->string_ctor)
-				    && (CODE_IS_STLOC (ip + 5) || ip [5] == CEE_POP || ip [5] == CEE_RET)) {
-					/* no need to spill */
+				} else if (no_spill) {
 					ins = (MonoInst*)mono_emit_method_call (cfg, bblock, cmethod, fsig, sp, ip, virtual ? sp [0] : NULL);
 					*sp++ = ins;
 				} else {
@@ -6213,7 +6240,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 #endif
 #if HAVE_WRITE_BARRIERS
-			if (*ip == CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER) {
+			if (*ip == CEE_STIND_REF && method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER && !((sp [-1]->opcode == OP_PCONST) && (sp [-1]->inst_p0 == 0))) {
 				/* insert call to write barrier */
 				MonoMethod *write_barrier = mono_marshal_get_write_barrier ();
 				sp -= 2;
@@ -7160,7 +7187,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoClassField *field;
 			gpointer addr = NULL;
 			gboolean shared_access = FALSE;
-			int relation;
+			int relation = 0;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -7623,7 +7650,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				 * for small sizes open code the memcpy
 				 * ensure the rva field is big enough
 				 */
-				if ((cfg->opt & MONO_OPT_INTRINS) && ip_in_bb (cfg, bblock, ip + 6) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, ins, &data_size))) {
+				if ((cfg->opt & MONO_OPT_INTRINS) && ip + 6 < end && ip_in_bb (cfg, bblock, ip + 6) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, ins, &data_size))) {
 					MonoMethod *memcpy_method = get_memcpy_method ();
 					MonoInst *data_offset, *add;
 					MonoInst *iargs [3];
@@ -8113,7 +8140,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
 					load->cil_code = ip;
 
-					temp = mono_emit_jit_icall (cfg, bblock, mono_thread_get_pending_exception, NULL, ip);
+					temp = mono_emit_jit_icall (cfg, bblock, mono_thread_get_undeniable_exception, NULL, ip);
 					NEW_TEMPLOAD (cfg, *sp, temp);
 				
 					MONO_INST_NEW (cfg, ins, OP_THROW_OR_NULL);
@@ -9125,7 +9152,7 @@ mono_icall_get_wrapper (MonoJitICallInfo* callinfo)
 	}
 
 	name = g_strdup_printf ("__icall_wrapper_%s", callinfo->name);
-	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func);
+	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func, check_for_pending_exc);
 	g_free (name);
 
 	trampoline = mono_create_ftnptr (domain, mono_create_jit_trampoline_in_domain (domain, wrapper));
@@ -10323,7 +10350,11 @@ setup_jit_tls_data (gpointer stack_start, gpointer abort_func)
 	jit_tls->end_of_stack = stack_start;
 
 	lmf = g_new0 (MonoLMF, 1);
+#ifdef MONO_ARCH_INIT_TOP_LMF_ENTRY
+	MONO_ARCH_INIT_TOP_LMF_ENTRY (lmf);
+#else
 	lmf->ebp = -1;
+#endif
 
 	jit_tls->first_lmf = lmf;
 
@@ -12621,7 +12652,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 				if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
 					mono_lookup_pinvoke_call (method, NULL, NULL);
 		}
-			nm = mono_marshal_get_native_wrapper (method);
+			nm = mono_marshal_get_native_wrapper (method, check_for_pending_exc);
 			return mono_get_addr_from_ftnptr (mono_compile_method (nm));
 
 			//if (mono_debug_format != MONO_DEBUG_FORMAT_NONE) 
@@ -13659,56 +13690,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (getenv ("MONO_DEBUG") != NULL)
 		mini_parse_debug_options ();
 
-	/*
-	 * Handle the case when we are called from a thread different from the main thread,
-	 * confusing libgc.
-	 * FIXME: Move this to libgc where it belongs.
-	 *
-	 * we used to do this only when running on valgrind,
-	 * but it happens also in other setups.
-	 */
-#if defined(HAVE_BOEHM_GC)
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
-	{
-		size_t size;
-		void *sstart;
-		pthread_attr_t attr;
-		pthread_getattr_np (pthread_self (), &attr);
-		pthread_attr_getstack (&attr, &sstart, &size);
-		pthread_attr_destroy (&attr); 
-		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
-#ifdef __ia64__
-		/*
-		 * The calculation above doesn't seem to work on ia64, also we need to set
-		 * GC_register_stackbottom as well, but don't know how.
-		 */
-#else
-		/* apparently with some linuxthreads implementations sstart can be NULL,
-		 * fallback to the more imprecise method (bug# 78096).
-		 */
-		if (sstart) {
-			GC_stackbottom = (char*)sstart + size;
-		} else {
-			gsize stack_bottom = (gsize)&domain;
-			stack_bottom += 4095;
-			stack_bottom &= ~4095;
-			GC_stackbottom = (char*)stack_bottom;
-		}
-#endif
-	}
-#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
-#else
-	{
-		gsize stack_bottom = (gsize)&domain;
-		stack_bottom += 4095;
-		stack_bottom &= ~4095;
-		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
-		GC_stackbottom = (char*)stack_bottom;
-	}
-#endif
-#endif
-	MONO_GC_PRE_INIT ();
+	mono_gc_base_init ();
 
 	mono_jit_tls_id = TlsAlloc ();
 	setup_jit_tls_data ((gpointer)-1, mono_thread_abort);
@@ -13720,6 +13702,16 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_runtime_install_handlers ();
 	mono_threads_install_cleanup (mini_thread_cleanup);
+
+#ifdef MONO_ARCH_HAVE_NOTIFY_PENDING_EXC
+	// This is experimental code so provide an env var to switch it off
+	if (getenv ("MONO_DISABLE_PENDING_EXCEPTIONS")) {
+		printf ("MONO_DISABLE_PENDING_EXCEPTIONS env var set.\n");
+	} else {
+		check_for_pending_exc = FALSE;
+		mono_threads_install_notify_pending_exc (mono_arch_notify_pending_exc);
+	}
+#endif
 
 #define JIT_TRAMPOLINES_WORK
 #ifdef JIT_TRAMPOLINES_WORK
@@ -13796,7 +13788,7 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_arch_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", 
 				 "void ptr", TRUE);
 #endif
-	register_icall (mono_thread_get_pending_exception, "mono_thread_get_pending_exception", "object", FALSE);
+	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", "object", FALSE);
 	register_icall (mono_thread_interruption_checkpoint, "mono_thread_interruption_checkpoint", "void", FALSE);
 	register_icall (mono_thread_force_interruption_checkpoint, "mono_thread_force_interruption_checkpoint", "void", FALSE);
 	register_icall (mono_load_remote_field_new, "mono_load_remote_field_new", "object object ptr ptr", FALSE);
@@ -14018,7 +14010,12 @@ print_jit_stats (void)
 		g_print ("JIT info table lookups: %ld\n", mono_stats.jit_info_table_lookup_count);
 
 		g_print ("Hazardous pointers:     %ld\n", mono_stats.hazardous_pointer_count);
-
+#ifdef HAVE_SGEN_GC
+		g_print ("Minor GC collections:   %ld\n", mono_stats.minor_gc_count);
+		g_print ("Major GC collections:   %ld\n", mono_stats.major_gc_count);
+		g_print ("Minor GC time in msecs: %lf\n", (double)mono_stats.minor_gc_time_usecs / 1000.0);
+		g_print ("Major GC time in msecs: %lf\n", (double)mono_stats.major_gc_time_usecs / 1000.0);
+#endif
 		if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 			g_print ("\nDecl security check   : %ld\n", mono_jit_stats.cas_declsec_check);
 			g_print ("LinkDemand (user)     : %ld\n", mono_jit_stats.cas_linkdemand);

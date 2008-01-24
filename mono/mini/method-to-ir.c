@@ -1704,6 +1704,8 @@ type_from_op (MonoInst *ins, MonoInst *src1, MonoInst *src2) {
 	case CEE_SUB_OVF_UN:
 		ins->type = bin_num_table [src1->type] [src2->type];
 		ins->opcode += ovfops_op_map [src1->type];
+		if (ins->type == STACK_R8)
+			ins->type = STACK_INV;
 		return;
 	case OP_LOAD_MEMBASE:
 		ins->type = STACK_PTR;
@@ -7095,7 +7097,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						goto load_error;
 
 				if (mono_method_signature (cmethod)->pinvoke) {
-					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod);
+					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
 					fsig = mono_method_signature (wrapper);
 				} else if (constrained_call) {
 					fsig = mono_method_signature (cmethod);
@@ -7268,7 +7270,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 					/* Prevent inlining of methods that call wrappers */
 					INLINE_FAILURE;
-					cmethod = mono_marshal_get_native_wrapper (cmethod);
+					cmethod = mono_marshal_get_native_wrapper (cmethod, check_for_pending_exc);
 					allways = TRUE;
 				}
 
@@ -8783,7 +8785,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			 * for small sizes open code the memcpy
 			 * ensure the rva field is big enough
 			 */
-			if ((cfg->opt & MONO_OPT_INTRINS) && ip_in_bb (cfg, bblock, ip + 6) && (len_ins->opcode == OP_ICONST) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, klass, len_ins->inst_c0, &data_size))) {
+			if ((cfg->opt & MONO_OPT_INTRINS) && ip + 6 < end && ip_in_bb (cfg, bblock, ip + 6) && (len_ins->opcode == OP_ICONST) && (data_ptr = initialize_array_data (method, cfg->compile_aot, ip, klass, len_ins->inst_c0, &data_size))) {
 				MonoMethod *memcpy_method = get_memcpy_method ();
 				MonoInst *iargs [3];
 				int add_reg = alloc_preg (cfg);
@@ -9204,7 +9206,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					  NEW_TEMPLOAD (cfg, load, mono_find_exvar_for_offset (cfg, clause->handler_offset)->inst_c0);
 					*/
 
-					exc_ins = mono_emit_jit_icall (cfg, mono_thread_get_pending_exception, NULL);
+					exc_ins = mono_emit_jit_icall (cfg, mono_thread_get_undeniable_exception, NULL);
 
 					NEW_BBLOCK (cfg, dont_throw);
 
@@ -11207,11 +11209,11 @@ mono_spill_global_vars (MonoCompile *cfg)
  * - create a helper function for allocating a stack slot, taking into account 
  *   MONO_CFG_HAS_SPILLUP.
  * - merge new GC changes in mini.c.
- * - merge the soft float support.
  * - merge r68207.
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
  * - merge the generics sharing static fields changes.
+ * - merge the delegate ctor changes.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
@@ -11222,7 +11224,7 @@ mono_spill_global_vars (MonoCompile *cfg)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 91290 in mini, 93793 elsewhere.
+ * - LAST MERGE: 93793 (except 92841).
  */
 
 /*

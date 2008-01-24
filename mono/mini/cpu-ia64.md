@@ -246,8 +246,8 @@ float_conv_to_u: dest:i src1:f len:48
 fmove: dest:f src1:f len:48
 call_handler: len:96
 start_handler: len:96
-endfinally: len:96
 endfilter: len:96
+endfinally: len:96
 aot_const: dest:i len:48
 tls_get: dest:i len:48
 atomic_add_i4: src1:b src2:i dest:i len:48
@@ -272,8 +272,8 @@ abs: dest:f src1:f len:48
 tan: dest:f src1:f len:48
 atan: dest:f src1:f len:48
 sqrt: dest:f src1:f len:48
-op_bigmul: len:48 dest:i src1:a src2:i
-op_bigmul_un: len:48 dest:i src1:a src2:i
+bigmul: len:48 dest:i src1:a src2:i
+bigmul_un: len:48 dest:i src1:a src2:i
 sext_i1: dest:i src1:i len:48
 sext_i2: dest:i src1:i len:48
 sext_i4: dest:i src1:i len:48

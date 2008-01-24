@@ -181,6 +181,29 @@ int_clt: dest:i len:12
 int_clt_un: dest:i len:12
 
 localloc: dest:i src1:i len:60
+<<<<<<< .working
+=======
+unaligned.:
+volatile.:
+tail.:
+initobj:
+cpblk:
+initblk:
+sizeof:
+refanytype:
+illegal:
+endmac:
+mono_objaddr:
+mono_ldptr:
+mono_vtaddr:
+mono_newobj:
+mono_retobj:
+load:
+ldaddr:
+store:
+phi:
+rename:
+>>>>>>> .merge-right.r93796
 compare: src1:i src2:i len:4
 icompare: src1:i src2:i len:4
 fcompare: src1:f src2:f len:12
@@ -358,6 +381,11 @@ float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
+<<<<<<< .working
+=======
+call_handler: len:12
+endfilter: src1:i len:16
+>>>>>>> .merge-right.r93796
 aot_const: dest:i len:16
 sqrt: dest:f src1:f len:4
 
@@ -379,6 +407,6 @@ int_sbb_imm: dest:i src1:i len:12
 
 arm_rsbs_imm: dest:i src1:i len:4
 arm_rsc_imm: dest:i src1:i len:4
-op_bigmul: len:8 dest:l src1:i src2:i
-op_bigmul_un: len:8 dest:l src1:i src2:i
+bigmul: len:8 dest:l src1:i src2:i
+bigmul_un: len:8 dest:l src1:i src2:i
 tls_get: len:8 dest:i

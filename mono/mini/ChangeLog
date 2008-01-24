@@ -1,7 +1,112 @@
+<<<<<<< .working
 2008-01-02  Zoltan Varga  <vargaz@gmail.com>
+=======
+2008-01-21  Zoltan Varga  <vargaz@gmail.com>
+>>>>>>> .merge-right.r93796
 
+<<<<<<< .working
 	* method-to-ir.c (MONO_EMIT_NEW_BRANCH_BLOCK): Don't start a new basic block here.
 	(mono_op_to_op_imm): Add OP_AMD64_ICOMPARE_MEMBASE_IMM.
+=======
+	* mini-x86.h (MONO_ARCH_AOT_SUPPORTED): Disable AOT for apple x86.
+
+2008-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Optimize the omit fp case to save two
+	stack slots.
+
+2008-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Disable	the new optimization if
+	profiling is enabled.
+	
+	* mini-amd64.c (mono_arch_call_opcode): Emit the save_sp_to_lmf instruction at
+	the end.
+	(mono_arch_emit_prolog): Add more first bblock optimizations.
+
+	* mini-amd64.c (mono_arch_call_opcode): Keep assignments to the arg registers
+	in order if possible.
+	(mono_arch_emit_prolog): Optimize assignments to arg registers in the first
+	bblock, since the arguments are still in their original registers.
+
+	* mini.c (type_from_op): Calling add.ovf on floats is not valid IL code.
+
+2008-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Use the no-spilling optimization for CEE_CALLI
+	as well.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Save an instruction if the LMF is at
+	offset 0.
+
+	* mini-amd64.h (MONO_ARCH_HAVE_NOTIFY_PENDING_EXC): Turn on this for amd64.
+
+	* exceptions-amd64.c (mono_arch_notify_pending_exc): New function to 
+	process async exceptions received while in unmanaged code.
+
+	* mini.c (mini_init): Install a callback with the runtime which will be called
+	when a thread receives an async exception while in unmanaged code.
+
+	* mini.c driver.c: Update after mono_get_native_wrapper () signature change.
+
+	* mini-s390x.c (mono_arch_output_basic_block): Fix s390x build.
+
+2008-01-16  Wade Berrier  <wberrier@novell.com>
+
+	* cpu-g4.md:
+	* cpu-arm.md:
+	* cpu-s390x.md:
+	fix build
+
+2008-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Remove some gccism which prevents
+	compilation with sun cc.
+
+	* cpu-*.md: Fix the build.
+
+	* cpu-x86.md: Fix the length of some load membase opcodes. Fixes #354241.
+
+	* mini-amd64.h: Add some comments to the MonoLMF structure.
+
+	* mini-ops.h cpu-amd64.c: Add a OP_AMD64_SAVE_SP_TO_LMF opcode.
+	
+	* mini-amd64.c exceptions-amd64.c tramp-amd64.c: Avoid setting the rip field
+	in the LMF structure if possible. This saves two instructions in the
+	managed->native wrappers.
+
+	* mini-ops.h *.md: Make some opcodes names uniform by removing the op_ prefix.
+
+2008-01-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: New type argument lookup code which uses the
+	runtime generic context template.
+
+2008-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Avoid emitting a write barrier when storing NULL.
+
+	* mini-arm.c (add_general): Fix arm eabi parameter passing.
+	(mono_arch_output_basic_block): Fix localloc implementation.
+
+	* mini-amd64.c (peephole_pass): Sync store+load optimizations with the x86 version.
+
+	* mini-ia64.c (peephole_pass): Fix ia64 build.
+
+	* mini-amd64.c (peephole_pass): Fix a warning.
+	
+	* mini-amd64.c (mono_arch_allocate_vars): Make sure the LMF is always stored
+	at a constant offset from sp/fp.
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Compute the LMF address from fp/sp
+	instead of obtaining it from *lmf in the managed method case.
+
+2008-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Remove some duplicate code.
+
+Mon Jan 14 12:33:06 CET 2008  David S. Miller  <davem@davemloft.net>
+>>>>>>> .merge-right.r93796
 
 	* mini.h (MonoBasicBlock): Add an 'extended' flag to mark whenever this bblock
 	is extended.
@@ -62,6 +167,90 @@
 
 	* liveness.c (mono_analyze_liveness): Reorganize this to improve data locality
 	a bit.
+
+2008-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Use a 4 byte load in OP_CHECK_THIS.
+
+	* mini-sparc.c (mono_arch_output_basic_block): Use a byte load in CHECK_THIS.
+	Fixes #353182.
+
+	* Makefile.am (version.h): Make this work with non-bash shells.
+
+2008-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_delegate_ctor): Optimize away setting of NULL target.
+
+2008-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix possible reading of invalid memory in 
+	the InitializeArray optimization.
+
+2008-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c driver.c: Don't include os/gc_wrapper.h.
+
+2008-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (print_jit_stats): Print GC statistics if available.
+
+2008-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_allocate_vars): Align argument storage offsets to 8.
+
+2007-12-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_get_delegate_invoke_impl): Fix flushing of icache.
+
+2007-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Move the setting of GC_stackbottom to mono_gc_base_init ().
+	
+	* mini.c (mini_init): Call mono_gc_base_init () instead of MONO_GC_PRE_INIT ().
+
+	* driver.c (mono_main): Ditto.
+
+2007-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_delegate_invoke ().
+
+	* aot-compiler.c (emit_klass_info): Avoid emitting info if one of the methods
+	in the vtable can't be encoded.
+	(compile_method): Ditto.
+
+2007-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (setup_jit_tls_data): Use the MONO_ARCH_INIT_TOP_LMF_ENTRY macro if
+	defined.
+
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c tramp-amd64.c: Rename lmf->ebp to 
+	lmf->rbp.
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Fix the detection of whenever
+	the top LMF entry belongs to the current method.
+
+	* mini.c: Update after renaming of mono_thread_get_pending_exception ().
+
+2007-12-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Fix a warning.
+	
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Ditto.
+
+	* tramp-sparc.c (mono_arch_create_trampoline_code): Check for thread interruption.
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code): Ditto.
+
+	* tramp-x86.c (mono_arch_create_trampoline_code): Check for thread interruption.
+
+	* cpu-amd64.md mini-amd64.h mini-amd64.c inssel-amd64.brg: Add ulong->double 
+	implementation.
+
+	* basic-float.cs: Add an ulong->double cast test.
+
+2007-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Fix a warning.
 
 2007-12-14  Zoltan Varga  <vargaz@gmail.com>
 

@@ -235,18 +235,18 @@ storei4_membase_reg: dest:b src1:i len:7
 storei8_membase_imm: dest:b 
 storei8_membase_reg: dest:b src1:i 
 storer4_membase_reg: dest:b src1:f len:7
-storer8_membase_reg: dest:b src1:f len:6
-load_membase: dest:i src1:b len:6
+storer8_membase_reg: dest:b src1:f len:7
+load_membase: dest:i src1:b len:7
 loadi1_membase: dest:y src1:b len:7
 loadu1_membase: dest:y src1:b len:7
 loadi2_membase: dest:i src1:b len:7
 loadu2_membase: dest:i src1:b len:7
-loadi4_membase: dest:i src1:b len:6
-loadu4_membase: dest:i src1:b len:6
+loadi4_membase: dest:i src1:b len:7
+loadu4_membase: dest:i src1:b len:7
 loadi8_membase: dest:i src1:b
-loadr4_membase: dest:f src1:b len:6
-loadr8_membase: dest:f src1:b len:6
-loadr8_spill_membase: src1:b len:8
+loadr4_membase: dest:f src1:b len:7
+loadr8_membase: dest:f src1:b len:7
+loadr8_spill_membase: src1:b len:9
 load_mem: dest:i len:9
 loadi4_mem: dest:i len:9
 loadu1_mem: dest:i len:9
@@ -381,15 +381,15 @@ load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7
 
 x86_test_null: src1:i len:2
-x86_compare_membase_reg: src1:b src2:i len:6
+x86_compare_membase_reg: src1:b src2:i len:7
 x86_compare_membase_imm: src1:b len:11
 x86_compare_membase8_imm: src1:b len:8
 x86_compare_mem_imm: len:11
-x86_compare_reg_membase: src1:i src2:b len:6
+x86_compare_reg_membase: src1:i src2:b len:7
 x86_inc_reg: dest:i src1:i clob:1 len:1
-x86_inc_membase: src1:b len:6
+x86_inc_membase: src1:b len:7
 x86_dec_reg: dest:i src1:i clob:1 len:1
-x86_dec_membase: src1:b len:6
+x86_dec_membase: src1:b len:7
 x86_add_membase_imm: src1:b len:11
 x86_sub_membase_imm: src1:b len:11
 x86_and_membase_imm: src1:b len:11
@@ -411,7 +411,7 @@ x86_xor_reg_membase: dest:i src1:i src2:b clob:1 len:6
 
 x86_push: src1:i len:1
 x86_push_imm: len:5
-x86_push_membase: src1:b len:6
+x86_push_membase: src1:b len:7
 x86_push_obj: src1:b len:30
 x86_push_got_entry: src1:b len:7
 x86_lea: dest:i src1:i src2:i len:7
@@ -448,8 +448,8 @@ abs: dest:f src1:f len:2
 tan: dest:f src1:f len:49
 atan: dest:f src1:f len:8
 sqrt: dest:f src1:f len:2
-op_bigmul: len:2 dest:l src1:a src2:i
-op_bigmul_un: len:2 dest:l src1:a src2:i
+bigmul: len:2 dest:l src1:a src2:i
+bigmul_un: len:2 dest:l src1:a src2:i
 sext_i1: dest:i src1:y len:3
 sext_i2: dest:i src1:y len:3
 tls_get: dest:i len:20

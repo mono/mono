@@ -123,12 +123,18 @@ struct sigcontext {
 #define inst_sreg2_high sreg2>>3
 
 struct MonoLMF {
+	/* 
+	 * If the lowest bit is set to 1, then this LMF has the rip field set. Otherwise,
+	 * the rip field is not set, and the rsp field points to the stack location where
+	 * the caller ip is saved.
+	 */
 	gpointer    previous_lmf;
 	gpointer    lmf_addr;
+	/* This is only set in trampoline LMF frames */
 	MonoMethod *method;
 	guint64     rip;
 	guint64     rbx;
-	guint64     ebp;
+	guint64     rbp;
 	guint64     rsp;
 	guint64     r12;
 	guint64     r13;
@@ -173,6 +179,8 @@ typedef struct {
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer)((ctx)->rip))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)((ctx)->rbp))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)((ctx)->rsp))
+
+#define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
 #ifdef _MSC_VER
 
@@ -252,7 +260,6 @@ typedef struct {
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 
 #define MONO_ARCH_EMULATE_CONV_R8_UN    1
-#define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 1
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_HAVE_IS_INT_OVERFLOW 1
 
@@ -272,6 +279,7 @@ typedef struct {
 #define MONO_ARCH_VTABLE_REG AMD64_R11
 #define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CMOV_OPS 1
+#define MONO_ARCH_HAVE_NOTIFY_PENDING_EXC 1
 
 #define MONO_ARCH_AOT_SUPPORTED 1
 

@@ -199,7 +199,6 @@ setret: dest:a src1:i len:3
 setlret: dest:i src1:i src2:i len:5
 checkthis: src1:b len:5
 call: dest:a clob:c len:64
-op_call: dest:a clob:c len:64
 ret: len:2
 voidcall: clob:c len:64
 voidcall_reg: src1:i clob:c len:64
@@ -304,7 +303,7 @@ cond_exc_ic: len:8
 cond_exc_inc: len:8
 
 long_conv_to_ovf_i: dest:i src1:i src2:i len:40
-long_conv_to_r_un: dest:f src1:i src2:i len:48 
+long_conv_to_r_un: dest:f src1:i len:64
 
 long_mul_ovf: dest:i src1:i src2:i clob:1 len:16
 long_mul_ovf_un: dest:i src1:i src2:i len:22
@@ -366,7 +365,7 @@ float_conv_to_u: dest:i src1:f len:46
 fmove: dest:f src1:f len:8
 call_handler: len:14
 aot_const: dest:i len:10
-op_jump_table: dest:i len:18
+jump_table: dest:i len:18
 x86_test_null: src1:i len:5
 x86_compare_membase_reg: src1:b src2:i len:9
 x86_compare_membase_imm: src1:b len:13
@@ -440,6 +439,7 @@ amd64_xor_membase_imm: src1:b len:13
 
 amd64_set_xmmreg_r4: dest:f src1:f len:14 clob:m
 amd64_set_xmmreg_r8: dest:f src1:f len:14 clob:m
+amd64_save_sp_to_lmf: len:16
 atomic_add_i4: src1:b src2:i dest:i len:32
 atomic_add_new_i4: src1:b src2:i dest:i len:32
 atomic_exchange_i4: src1:b src2:i dest:i len:32
@@ -462,8 +462,8 @@ abs: dest:f src1:f len:32
 tan: dest:f src1:f len:59
 atan: dest:f src1:f len:9
 sqrt: dest:f src1:f len:32
-op_bigmul: len:3 dest:i src1:a src2:i
-op_bigmul_un: len:3 dest:i src1:a src2:i
+bigmul: len:3 dest:i src1:a src2:i
+bigmul_un: len:3 dest:i src1:a src2:i
 sext_i1: dest:i src1:i len:4
 sext_i2: dest:i src1:i len:4
 sext_i4: dest:i src1:i len:8

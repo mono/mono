@@ -281,7 +281,9 @@ typedef struct {
 #define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 
+#if !defined(__APPLE__)
 #define MONO_ARCH_AOT_SUPPORTED 1
+#endif
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)

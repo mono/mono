@@ -42,7 +42,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
-#include <mono/os/gc_wrapper.h>
+#include <mono/metadata/gc-internal.h>
 #include "mono/utils/mono-counters.h"
 
 #include "mini.h"
@@ -1265,7 +1265,7 @@ mono_main (int argc, char* argv[])
 
 	if (enable_profile) {
 		/* Needed because of TLS accesses in mono_profiler_load () */
-		MONO_GC_PRE_INIT ();
+		mono_gc_base_init ();
 		mono_profiler_load (profile_options);
 	}
 
@@ -1458,7 +1458,7 @@ mono_main (int argc, char* argv[])
 		if ((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 			(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
 			MonoMethod *nm;
-			nm = mono_marshal_get_native_wrapper (method);
+			nm = mono_marshal_get_native_wrapper (method, TRUE);
 			cfg = mini_method_compile (nm, opt, mono_get_root_domain (), FALSE, FALSE, part);
 		}
 		else
@@ -1515,7 +1515,7 @@ mono_main (int argc, char* argv[])
 			for (i = 0; i < count; ++i) {
 				if ((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 					(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
-					method = mono_marshal_get_native_wrapper (method);
+					method = mono_marshal_get_native_wrapper (method, TRUE);
 
 				cfg = mini_method_compile (method, opt, mono_get_root_domain (), FALSE, FALSE, 0);
 				mono_destroy_compile (cfg);

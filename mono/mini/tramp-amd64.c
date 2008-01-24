@@ -175,7 +175,7 @@ guchar*
 mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 {
 	guint8 *buf, *code, *tramp, *br [2];
-	int i, lmf_offset, offset, arg_offset, tramp_offset, saved_regs_offset, saved_fpregs_offset, framesize;
+	int i, lmf_offset, offset, res_offset, arg_offset, tramp_offset, saved_regs_offset, saved_fpregs_offset, framesize;
 	gboolean has_caller;
 
 	if (tramp_type == MONO_TRAMPOLINE_JUMP)
@@ -220,6 +220,9 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	} else {
 		amd64_mov_membase_imm (code, AMD64_RBP, tramp_offset, 0, 8);
 	}
+
+	offset += 8;
+	res_offset = - offset;
 
 	/* Save all registers */
 
@@ -266,7 +269,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rip), AMD64_R11, 8);
 	/* Save fp */
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RSP, framesize, 8);
-	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, ebp), AMD64_R11, 8);
+	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, rbp), AMD64_R11, 8);
 	/* Save sp */
 	amd64_mov_reg_reg (code, AMD64_R11, AMD64_RSP, 8);
 	amd64_alu_reg_imm (code, X86_ADD, AMD64_R11, framesize + 16);
@@ -295,7 +298,9 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	/* Save lmf_addr */
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), AMD64_RAX, 8);
 	/* Save previous_lmf */
+	/* Set the lowest bit to 1 to signal that this LMF has the ip field set */
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RAX, 0, 8);
+	amd64_alu_reg_imm_size (code, X86_ADD, AMD64_R11, 1, 8);
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), AMD64_R11, 8);
 	/* Set new lmf */
 	amd64_lea_membase (code, AMD64_R11, AMD64_RBP, lmf_offset);
@@ -322,9 +327,17 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	amd64_mov_reg_imm (code, AMD64_RAX, tramp);
 	amd64_call_reg (code, AMD64_RAX);
 
+	/* Check for thread interruption */
+	/* This is not perf critical code so no need to check the interrupt flag */
+	amd64_mov_membase_reg (code, AMD64_RBP, res_offset, AMD64_RAX, 8);
+	amd64_mov_reg_imm (code, AMD64_RAX, (guint8*)mono_thread_interruption_checkpoint);
+	amd64_call_reg (code, AMD64_RAX);
+	amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RBP, res_offset, 8);	
+
 	/* Restore LMF */
 
 	amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, previous_lmf), 8);
+	amd64_alu_reg_imm_size (code, X86_SUB, AMD64_RCX, 1, 8);
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), 8);
 	amd64_mov_membase_reg (code, AMD64_R11, 0, AMD64_RCX, 8);
 
