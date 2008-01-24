@@ -33,8 +33,8 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms.CarbonInternal {
 	internal class Cursor {
                 internal static Bitmap DefineStdCursorBitmap (StdCursor id) {
+			// FIXME
 			return new Bitmap (16, 16);
-			throw new NotImplementedException ("We dont support bitmaps of std cursors yet");
                 }
                 internal static IntPtr DefineCursor (Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
 			CarbonCursor cc = new CarbonCursor (bitmap, mask, cursor_pixel, mask_pixel, xHotSpot, yHotSpot);
