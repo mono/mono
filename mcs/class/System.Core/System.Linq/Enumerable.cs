@@ -1550,7 +1550,7 @@ namespace System.Linq
 			});
 		}
 
-		public static double? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
+		public static float? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
