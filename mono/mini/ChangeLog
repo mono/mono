@@ -1,5 +1,7 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_output_basic_block): Remove some unecessary code.
+
 	* mini-s390.c (mono_arch_emit_prolog): Fix build.
 
 	* mini-s390x.c (mono_arch_emit_prolog): Fix build.
