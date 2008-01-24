@@ -1,3 +1,9 @@
+2008-01-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs (InvokeMember_WithoutDefaultValue): Added test for bug #348522.
+	It call InvokeMember passing as method argument Missing.Value and a binder that
+	returns a method that doesn't have a default value for it's parameter.
+
 2008-01-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
         * AppDomainTest.cs: Added DefineDynamicAssembly tests for invalid

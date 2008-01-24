@@ -1,3 +1,8 @@
+2008-01-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoType.cs (InvokeMember): Check for parameters without default value which
+	the supplied argument is Missing.Value. Fixes one of the issues of #348522.
+
 2008-01-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeOffset.cs: Avoid NRE on bad cast if null is provided to

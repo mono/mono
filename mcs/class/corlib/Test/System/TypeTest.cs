@@ -180,6 +180,49 @@ namespace MonoTests.System
 	{
 	}
 #endif
+	public class Bug348522
+	{
+		public void Test (int __argument)
+		{
+		}
+	}
+
+	public class FirstMethodBinder : Binder
+	{
+		public override MethodBase BindToMethod (BindingFlags bindingAttr, MethodBase [] match, ref object [] args,
+							 ParameterModifier [] modifiers, CultureInfo culture, string [] names,
+							 out object state)
+		{
+			state = null;
+			return match [0];
+		}
+		
+		public override object ChangeType (object value, Type type1, CultureInfo culture)
+		{
+			return value;
+		}
+		
+		// The rest is just to please the compiler
+		public override FieldInfo BindToField (BindingFlags a, FieldInfo[] b, object c, CultureInfo d)
+		{
+			return null;
+		}
+		
+		public override void ReorderArgumentArray(ref object[] a, object b)
+		{
+		}
+		
+		public override MethodBase SelectMethod(BindingFlags a, MethodBase[] b, Type[] c, ParameterModifier[] d)
+		{
+		    return null;
+		}
+		
+		public override PropertyInfo SelectProperty(BindingFlags a, PropertyInfo[] b, Type c, Type[] d, ParameterModifier[] e)
+		{
+			return null;
+		}
+	}
+
 
 	[TestFixture]
 	public class TypeTest
@@ -2042,6 +2085,24 @@ PublicKeyToken=b77a5c561934e089"));
 				null, null, new object [] { "1", "2", "3", "4" });
 			Assert.IsNotNull (result, "#B1");
 			Assert.AreEqual ("#A:1|2,3,4", result, "#B2");
+		}
+
+	
+		[Test] // bug #348522
+		public void InvokeMember_WithoutDefaultValue ()
+		{
+			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.InvokeMethod;;
+			try {
+				typeof (Bug348522).InvokeMember ("Test", flags, new FirstMethodBinder (), new Bug348522(),
+					new object [] {Missing.Value}, null, null, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("__argument", ex.ParamName, "#6");
+			}
 		}
 
 		class X

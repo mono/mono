@@ -386,6 +386,10 @@ namespace System
 						throwMissingMethodDescription = "Cannot find method " + name + ".";
 				} else {
 					ParameterInfo[] parameters = m.GetParameters();
+					for (int i = 0; i < parameters.Length; ++i) {
+						if (System.Reflection.Missing.Value == args [i] && (parameters [i].Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.HasDefault)
+							throw new ArgumentException (parameters [i].Name);
+					}
 					bool hasParamArray = parameters.Length > 0 ? Attribute.IsDefined (parameters [parameters.Length - 1], 
 						typeof (ParamArrayAttribute)) : false;
 					if (hasParamArray)
